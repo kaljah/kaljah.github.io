@@ -1,14 +1,13 @@
-import { ChevronDown, Download, FilePlus, FileSpreadsheet, FileText, Funnel, Plus, RotateCcw } from "lucide-react";
+import { ChevronDown, Download, FilePlus, FileSpreadsheet, FileText, Funnel, Plus, RotateCcw, Search } from "lucide-react";
 import { NativeSelect } from "../ui/NativeSelect";
-import { Button, DataTable, Menu, MenuContent, MenuItem, MenuTrigger, PageHeader, Field, StatusPill } from "../ui";
+import { Badge, Button, Card, CardHeader, DataTable, Dialog, Field, Input, Menu, MenuContent, MenuItem, MenuTrigger, Page, PageHeader, SegmentedControl, StatusPill, Textarea } from "../ui";
+import { controlClass } from "../components/import-wizard/mapping";
 import React, { useState, useEffect } from "react";
 import api from "../api";
 import { useAuth } from "../context/AuthContext";
-import "./Reports.css";
 import { useToast } from "../components/Toast";
 import LoadingSpinner from "../components/LoadingSpinner";
 import MultiSelectDropdown from "../components/MultiSelectDropdown";
-import "../pages/Dashboard.css";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
 import { getActiveGwpFactors } from "../constants";
 import { apiError } from "../utils/apiError";
@@ -31,7 +30,7 @@ const fmt = (num) =>
 const RECORD_COLUMNS = [
   { accessorKey: "id", header: "ID", cell: (c) => <span className="text-xs text-text-secondary">{c.getValue()}</span> },
   { id: "date", header: "Date", accessorFn: (r) => r.year * 100 + r.month, cell: (c) => `${c.row.original.month}/${c.row.original.year}` },
-  { accessorKey: "scope", header: "Scope", cell: (c) => <span className={`scope-badge scope-${c.getValue()}`}>Scope {c.getValue()}</span> },
+  { accessorKey: "scope", header: "Scope", cell: (c) => <Badge tone={{ 1: "brand", 2: "info" }[c.getValue()] || "neutral"}>Scope {c.getValue()}</Badge> },
   { accessorKey: "division", header: "Division", cell: (c) => NA(c.getValue()) },
   { accessorKey: "field", header: "Field", cell: (c) => NA(c.getValue()) },
   { accessorKey: "facility_name", header: "Facility", cell: (c) => NA(c.getValue()) },
@@ -500,350 +499,277 @@ const Reports = () => {
     setReportSelectedRegions((prev) => prev.filter((v) => v !== val));
   };
 
+  const selectBase = (label, value, onChange, children, extra = {}) => (
+    <Field label={label} className={extra.className}>
+      <NativeSelect className={controlClass} value={value} onChange={onChange}>
+        {children}
+      </NativeSelect>
+    </Field>
+  );
+  const MONTHS = [...Array(12)].map((_, i) => ({ value: i + 1, label: new Date(0, i).toLocaleString("default", { month: "long" }) }));
+  const uniq = (key) => [...new Set(facilities.map((f) => f[key]))].filter(Boolean);
+  const gwpOptions = (suffix = "") => (
+    <>
+      <option value="AR5">{`${gwpOptionLabel("AR5", "100")}${suffix}`}</option>
+      <option value="AR6">{gwpOptionLabel("AR6", "100")}</option>
+      <option value="AR4">{gwpOptionLabel("AR4", "100")}</option>
+      <option value="20yr">{gwpOptionLabel("AR5", "20")}</option>
+    </>
+  );
+  const onGwp = (e) => {
+    gwpTouched.current = true;
+    setReportGwpStandard(e.target.value);
+  };
+  const FORMATS = [
+    { value: "master", label: "🏆 2025 Master Analytical Report (Vertical A4, 15 Charts, 18 Tables)" },
+    { value: "iso", label: "📋 ISO 14064-1 Compliance Report" },
+  ];
+  const years = availableFilters.years;
+
   return (
-    <div className="reports-page">
-      <div className="reports-container">
-        <div className="content-wrapper">
-          <PageHeader
-            title="Reports"
-            description={
-              <>
-                Emission database and exports. Complete history of all recorded emissions and compliance data.{" "}
-                <span className="font-semibold text-text">
-                  Total records: {totalRecords} | Showing: {emissions.length}
-                </span>
-              </>
-            }
-            actions={
-              <>
-                <Button variant="secondary" onClick={resetFilters}>
-                  <RotateCcw className="size-4" aria-hidden="true" />
-                  Reset filters
+    <Page className="reports-page max-w-[1600px]">
+      <PageHeader
+        title="Reports"
+        description={
+          <>
+            Emission database and exports. Complete history of all recorded emissions and compliance data.{" "}
+            <span className="font-semibold text-text">
+              Total records: {totalRecords} | Showing: {emissions.length}
+            </span>
+          </>
+        }
+        actions={
+          <>
+            <Button variant="secondary" onClick={resetFilters}>
+              <RotateCcw className="size-4" aria-hidden="true" />
+              Reset filters
+            </Button>
+            <Menu>
+              <MenuTrigger asChild>
+                <Button>
+                  <Download className="size-4" aria-hidden="true" />
+                  Export
+                  <ChevronDown className="size-4" aria-hidden="true" />
                 </Button>
-                <Menu>
-                  <MenuTrigger asChild>
-                    <Button>
-                      <Download className="size-4" aria-hidden="true" />
-                      Export
-                      <ChevronDown className="size-4" aria-hidden="true" />
-                    </Button>
-                  </MenuTrigger>
-                  <MenuContent>
-                    <MenuItem icon={FileSpreadsheet} onSelect={handleOGMPExport}>
-                      OGMP 2.0 (Excel)
-                    </MenuItem>
-                    <MenuItem icon={FileSpreadsheet} onSelect={handleExcelExport}>
-                      Excel export
-                    </MenuItem>
-                    <MenuItem icon={FileText} onSelect={handlePDFExport}>
-                      PDF report
-                    </MenuItem>
-                    <MenuItem icon={FileText} onSelect={() => handleMasterReportDownload()}>
-                      2025 Master report (PDF)
-                    </MenuItem>
-                  </MenuContent>
-                </Menu>
-              </>
-            }
-            className="mb-6"
-          />
+              </MenuTrigger>
+              <MenuContent>
+                <MenuItem icon={FileSpreadsheet} onSelect={handleOGMPExport}>
+                  OGMP 2.0 (Excel)
+                </MenuItem>
+                <MenuItem icon={FileSpreadsheet} onSelect={handleExcelExport}>
+                  Excel export
+                </MenuItem>
+                <MenuItem icon={FileText} onSelect={handlePDFExport}>
+                  PDF report
+                </MenuItem>
+                <MenuItem icon={FileText} onSelect={() => handleMasterReportDownload()}>
+                  2025 Master report (PDF)
+                </MenuItem>
+              </MenuContent>
+            </Menu>
+          </>
+        }
+      />
 
-          {/* NEW: Create Report Card (Matches Legacy UI) */}
-          <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.78))] [backdrop-filter:blur(14px)] [border-radius:var(--radius-lg)] [padding:28px] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card)] [position:relative] [overflow:hidden] [transition:transform_0.22s_ease,_box-shadow_0.22s_ease] hover:[border-color:rgba(255,_255,_255,_0.95)] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:4px] before:[height:100%] before:[background:var(--accent-gradient,_linear-gradient(135deg,_var(--accent-color)_0%,_#ff8a4d_100%))] mb-[24px]!">
-            <div className="[display:flex] [align-items:center] [gap:12px] [margin-bottom:20px]">
-              <div className="[background:rgba(255,_102,_0,_0.1)] [padding:10px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [color:var(--color-link)]">
-                <FilePlus size={24} aria-hidden="true" />
-              </div>
-              <h3 className="card-title">Create New Report</h3>
-            </div>
+      <Card>
+        <CardHeader title={<span className="flex items-center gap-3"><FilePlus className="size-6 text-brand-500" aria-hidden="true" /> Create New Report</span>} />
+        <div className="grid items-end gap-5 [grid-template-columns:repeat(auto-fit,minmax(200px,1fr))]">
+          {selectBase(
+            "Reporting Year *",
+            reportYear,
+            (e) => setReportYear(e.target.value),
+            <>
+              <option value="all">All Years</option>
+              {years.length > 0 ? (
+                years.map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))
+              ) : (
+                <option value={new Date().getFullYear()}>{new Date().getFullYear()}</option>
+              )}
+            </>,
+          )}
+          {selectBase(
+            "Compare With",
+            comparisonYear,
+            (e) => setComparisonYear(e.target.value),
+            <>
+              <option value="none">None (Single Year)</option>
+              {years
+                .filter((y) => y.toString() !== reportYear)
+                .map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))}
+              {baseYear && <option value="baseline">Baseline ({baseYear})</option>}
+            </>,
+          )}
+          {selectBase("GWP Metric Standard", reportGwpStandard, onGwp, gwpOptions())}
+          <div className="flex w-full flex-col gap-1.5 [grid-column:span_2] max-[640px]:[grid-column:auto]">
+            <span className="text-sm font-medium text-text">
+              Regions / Facilities <span className="text-danger-fg">*</span>
+            </span>
+            <React.Suspense fallback={<div>Loading...</div>}>
+              <MultiSelectDropdown options={regionOptions} selectedValues={reportSelectedRegions} onChange={setReportSelectedRegions} label="Select Regions..." />
+            </React.Suspense>
+          </div>
+          <Button size="lg" onClick={openConfigModal} loading={loading} disabled={loading}>
+            <Plus className="size-[18px]" aria-hidden="true" />
+            {loading ? "Generating..." : "Create Report"}
+          </Button>
+        </div>
 
-            <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))] [gap:20px] [align-items:end]!">
-              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
-                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">
-                  Reporting Year{" "}
-                  <span className="text-[color:var(--danger)]!">*</span>
-                </label>
-                <NativeSelect
-                  className="component-select"
-                  value={reportYear}
-                  onChange={(e) => setReportYear(e.target.value)}
-                >
-                  <option value="all">All Years</option>
-                  {availableFilters.years.length > 0 ? (
-                    availableFilters.years.map((y) => (
-                      <option key={y} value={y}>
-                        {y}
-                      </option>
-                    ))
-                  ) : (
-                    <option value={new Date().getFullYear()}>
-                      {new Date().getFullYear()}
-                    </option>
-                  )}
-                </NativeSelect>
-              </div>
-
-              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
-                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Compare With</label>
-                <NativeSelect
-                  className="component-select"
-                  value={comparisonYear}
-                  onChange={(e) => setComparisonYear(e.target.value)}
-                >
-                  <option value="none">None (Single Year)</option>
-                  {availableFilters.years
-                    .filter((y) => y.toString() !== reportYear)
-                    .map((y) => (
-                      <option key={y} value={y}>
-                        {y}
-                      </option>
-                    ))}
-                  {baseYear && <option value="baseline">Baseline ({baseYear})</option>}
-                </NativeSelect>
-              </div>
-
-              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
-                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">GWP Metric Standard</label>
-                <NativeSelect
-                  className="component-select"
-                  value={reportGwpStandard}
-                  onChange={(e) => { gwpTouched.current = true; setReportGwpStandard(e.target.value); }}
-                >
-                  <option value="AR5">{gwpOptionLabel("AR5", "100")}</option>
-                  <option value="AR6">{gwpOptionLabel("AR6", "100")}</option>
-                  <option value="AR4">{gwpOptionLabel("AR4", "100")}</option>
-                  <option value="20yr">{gwpOptionLabel("AR5", "20")}</option>
-                </NativeSelect>
-              </div>
-
-              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%] [flex:2]!">
-                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">
-                  Regions / Facilities{" "}
-                  <span className="text-[color:var(--danger)]!">*</span>
-                </label>
-                {/* MultiSelect Component */}
-                <React.Suspense fallback={<div>Loading...</div>}>
-                  <MultiSelectDropdown
-                    options={regionOptions}
-                    selectedValues={reportSelectedRegions}
-                    onChange={setReportSelectedRegions}
-                    label="Select Regions..."
-                  />
-                </React.Suspense>
-              </div>
-
-              <button
-                className={`[background:linear-gradient(135deg,_var(--accent-color)_0%,_#ff8a4d_100%)] [color:white] [padding:12px_28px] [border-radius:var(--radius-md)] [font-weight:600] [border:none] [display:flex] [align-items:center] [justify-content:center] [gap:10px] [height:45px] [transition:all_0.2s] [width:100%] hover:[box-shadow:0_4px_15px_rgba(255,_102,_0,_0.3)] hover:[transform:translateY(-1px)] ${loading ? "[opacity:0.7]!" : "[opacity:1]!"} ${loading ? "[cursor:not-allowed]!" : "[cursor:pointer]!"}`}
-                onClick={openConfigModal}
-                disabled={loading}
-              >
-                <Plus size={18} strokeWidth={2.5} aria-hidden="true" />
-                {loading ? "Generating..." : "Create Report"}
-              </button>
-            </div>
-
-            {/* Chips */}
-            <div
-              className="flex! flex-wrap! gap-[8px]! mt-[15px]!"
-            >
-              {reportSelectedRegions.map((rId) => {
-                const rName =
-                  facilities.find((f) => f.id.toString() === rId)?.name || rId;
-                return (
-                  <span
-                    key={rId}
-                    className="inline-flex! items-center! p-[4px_10px]! rounded-[16px]! bg-[color:rgba(255,_107,_0,_0.1)]! text-[color:var(--primary-color)]! text-[length:0.85rem]!"
-                  >
+        {reportSelectedRegions.length > 0 && (
+          <ul className="m-0 mt-4 flex list-none flex-wrap gap-2 p-0">
+            {reportSelectedRegions.map((rId) => {
+              const rName = facilities.find((f) => f.id.toString() === rId)?.name || rId;
+              return (
+                <li key={rId}>
+                  <Badge tone="brand" className="gap-1.5 px-2.5 py-1 text-sm">
                     {rName}
-                    <button
-                      onClick={() => removeRegion(rId)}
-                      className={`[background:none]! [border:none]! [color:inherit]! [margin-left:6px]! [cursor:pointer]! [padding:0]!`}
-                    >
+                    <button type="button" aria-label={`Remove ${rName}`} onClick={() => removeRegion(rId)} className="cursor-pointer border-0 bg-transparent p-0 text-inherit">
                       ×
                     </button>
-                  </span>
-                );
-              })}
-            </div>
+                  </Badge>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </Card>
+
+      <Card>
+        <CardHeader title={<span className="flex items-center gap-3"><Funnel className="size-6 text-brand-500" aria-hidden="true" /> Filter &amp; Group Data</span>} />
+        <div className="grid items-end gap-5 [grid-template-columns:repeat(auto-fit,minmax(200px,1fr))]">
+          {selectBase(
+            "Inventory Scope",
+            scope,
+            (e) => setScope(e.target.value),
+            <>
+              <option value="all">Total Inventory (Scope 1,2,3)</option>
+              <option value="1">Scope 1 (Direct)</option>
+              <option value="2">Scope 2 (Indirect)</option>
+              <option value="3">Scope 3 (Value Chain)</option>
+            </>,
+          )}
+          {selectBase(
+            "Reporting Year",
+            year,
+            (e) => setYear(e.target.value),
+            <>
+              <option value="all">All Years</option>
+              {years.map((y) => (
+                <option key={y} value={y}>
+                  {y}
+                </option>
+              ))}
+            </>,
+          )}
+          {selectBase(
+            "Month",
+            month,
+            (e) => setMonth(e.target.value),
+            <>
+              <option value="all">All Months</option>
+              {MONTHS.map((m) => (
+                <option key={m.value} value={m.value}>
+                  {m.label}
+                </option>
+              ))}
+            </>,
+          )}
+          {selectBase(
+            "Region (Grid)",
+            regionId,
+            (e) => setRegionId(e.target.value),
+            <>
+              <option value="all">All Regions</option>
+              {facilities.map((f) => (
+                <option key={f.id} value={f.id}>
+                  {f.name} {f.field ? ` - ${f.field}` : ""}
+                </option>
+              ))}
+            </>,
+          )}
+          {scope === "1" &&
+            selectBase(
+              "Process Type",
+              processType,
+              (e) => setProcessType(e.target.value),
+              <>
+                <option value="all">All Processes</option>
+                <option value="combustion">Stationary Combustion</option>
+                <option value="mobile">Mobile Combustion</option>
+                <option value="flaring">Flaring</option>
+                <option value="venting">Venting</option>
+                <option value="fugitive">Fugitive Emissions</option>
+                <option value="pneumatic">Pneumatic Devices</option>
+                <option value="tank">Storage Tank</option>
+              </>,
+            )}
+          {selectBase(
+            "Division",
+            division,
+            (e) => setDivision(e.target.value),
+            <>
+              <option value="all">All Divisions</option>
+              {uniq("division").map((d) => (
+                <option key={d} value={d}>
+                  {d}
+                </option>
+              ))}
+            </>,
+          )}
+          {selectBase(
+            "Field",
+            field,
+            (e) => setField(e.target.value),
+            <>
+              <option value="all">All Fields</option>
+              {uniq("field").map((f) => (
+                <option key={f} value={f}>
+                  {f}
+                </option>
+              ))}
+            </>,
+          )}
+          {selectBase(
+            "Calc Method",
+            methodFilter,
+            (e) => setMethodFilter(e.target.value),
+            <>
+              <option value="all">All Methods</option>
+              <option value="custom">Custom Factor</option>
+              <option value="API">API Engine</option>
+              <option value="Location-based">Location-based</option>
+            </>,
+          )}
+          {selectBase(
+            "Group By",
+            groupBy,
+            (e) => setGroupBy(e.target.value),
+            <>
+              <option value="none">No Grouping</option>
+              <option value="facility">By Facility</option>
+              <option value="process">By Category/Process</option>
+              <option value="month">By Month</option>
+              <option value="scope">By Scope</option>
+            </>,
+          )}
+        </div>
+      </Card>
+
+      <Card>
+        <Field label="Search">
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-secondary" aria-hidden="true" />
+            <Input className="pl-9" placeholder="Search records..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
           </div>
-
-          {/* Filter Card */}
-          <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.78))] [backdrop-filter:blur(14px)] [border-radius:var(--radius-lg)] [padding:28px] [margin-bottom:32px] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card)] [position:relative] [overflow:hidden] [transition:transform_0.22s_ease,_box-shadow_0.22s_ease] hover:[border-color:rgba(255,_255,_255,_0.95)] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:4px] before:[height:100%] before:[background:var(--accent-gradient,_linear-gradient(135deg,_var(--accent-color)_0%,_#ff8a4d_100%))]">
-            <div className="[display:flex] [align-items:center] [gap:12px] [margin-bottom:20px]">
-              <div className="[background:rgba(255,_102,_0,_0.1)] [padding:10px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [color:var(--color-link)]">
-                <Funnel size={24} aria-hidden="true" />
-              </div>
-              <h3 className="card-title">Filter & Group Data</h3>
-            </div>
-
-            <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))] [gap:20px] [align-items:end]">
-              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
-                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Inventory Scope</label>
-                <NativeSelect
-                  className="component-select"
-                  value={scope}
-                  onChange={(e) => setScope(e.target.value)}
-                >
-                  <option value="all">Total Inventory (Scope 1,2,3)</option>
-                  <option value="1">Scope 1 (Direct)</option>
-                  <option value="2">Scope 2 (Indirect)</option>
-                  <option value="3">Scope 3 (Value Chain)</option>
-                </NativeSelect>
-              </div>
-
-              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
-                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Reporting Year</label>
-                <NativeSelect
-                  className="component-select"
-                  value={year}
-                  onChange={(e) => {
-                    console.log(
-                      "[Reports] User changed Year to:",
-                      e.target.value,
-                    );
-                    setYear(e.target.value);
-                  }}
-                >
-                  <option value="all">All Years</option>
-                  {availableFilters.years.map((y) => (
-                    <option key={y} value={y}>
-                      {y}
-                    </option>
-                  ))}
-                </NativeSelect>
-              </div>
-
-              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
-                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Month</label>
-                <NativeSelect
-                  className="component-select"
-                  value={month}
-                  onChange={(e) => setMonth(e.target.value)}
-                >
-                  <option value="all">All Months</option>
-                  {[...Array(12)].map((_, i) => (
-                    <option key={i + 1} value={i + 1}>
-                      {new Date(0, i).toLocaleString("default", {
-                        month: "long",
-                      })}
-                    </option>
-                  ))}
-                </NativeSelect>
-              </div>
-              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
-                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Region (Grid)</label>
-                <NativeSelect
-                  className="component-select"
-                  value={regionId}
-                  onChange={(e) => setRegionId(e.target.value)}
-                >
-                  <option value="all">All Regions</option>
-                  {facilities.map((f) => (
-                    <option key={f.id} value={f.id}>
-                      {f.name} {f.field ? ` - ${f.field}` : ""}
-                    </option>
-                  ))}
-                </NativeSelect>
-              </div>
-
-              {scope === "1" && (
-                <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
-                  <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Process Type</label>
-                  <NativeSelect
-                    className="component-select"
-                    value={processType}
-                    onChange={(e) => setProcessType(e.target.value)}
-                  >
-                    <option value="all">All Processes</option>
-                    <option value="combustion">Stationary Combustion</option>
-                    <option value="mobile">Mobile Combustion</option>
-                    <option value="flaring">Flaring</option>
-                    <option value="venting">Venting</option>
-                    <option value="fugitive">Fugitive Emissions</option>
-                    <option value="pneumatic">Pneumatic Devices</option>
-                    <option value="tank">Storage Tank</option>
-                  </NativeSelect>
-                </div>
-              )}
-              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
-                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Division</label>
-                <NativeSelect
-                  className="component-select"
-                  value={division}
-                  onChange={(e) => setDivision(e.target.value)}
-                >
-                  <option value="all">All Divisions</option>
-                  {[...new Set(facilities.map((f) => f.division))]
-                    .filter(Boolean)
-                    .map((div) => (
-                      <option key={div} value={div}>
-                        {div}
-                      </option>
-                    ))}
-                </NativeSelect>
-              </div>
-              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
-                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Field</label>
-                <NativeSelect
-                  className="component-select"
-                  value={field}
-                  onChange={(e) => setField(e.target.value)}
-                >
-                  <option value="all">All Fields</option>
-                  {[...new Set(facilities.map((f) => f.field))]
-                    .filter(Boolean)
-                    .map((fld) => (
-                      <option key={fld} value={fld}>
-                        {fld}
-                      </option>
-                    ))}
-                </NativeSelect>
-              </div>
-              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
-                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Calc Method</label>
-                <NativeSelect
-                  className="component-select"
-                  value={methodFilter}
-                  onChange={(e) => setMethodFilter(e.target.value)}
-                >
-                  <option value="all">All Methods</option>
-                  <option value="custom">Custom Factor</option>
-                  <option value="API">API Engine</option>
-                  <option value="Location-based">Location-based</option>
-                </NativeSelect>
-              </div>
-              <div className="[display:flex] [flex-direction:column] [gap:6px] [width:100%]">
-                <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Group By</label>
-                <NativeSelect
-                  className="component-select"
-                  value={groupBy}
-                  onChange={(e) => setGroupBy(e.target.value)}
-                >
-                  <option value="none">No Grouping</option>
-                  <option value="facility">By Facility</option>
-                  <option value="process">By Category/Process</option>
-                  <option value="month">By Month</option>
-                  <option value="scope">By Scope</option>
-                </NativeSelect>
-              </div>
-            </div>
-          </div>
-
-          {/* Filters */}
-          <div className="[background:var(--bg-card)] [padding:20px_24px] [border-radius:var(--radius-lg)] [margin-bottom:24px] [display:flex] [gap:20px] [align-items:center] [border:1px_solid_var(--border-color)] [flex-wrap:wrap]">
-            <div className="search-input-wrapper">
-              <label className="[display:block] [font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary)] [margin-bottom:8px]">Search</label>
-              <div className="relative!">
-                <input
-                  type="text"
-                  className="[width:100%] [padding:10px_12px_10px_36px] [background:var(--bg-input)] [border:1px_solid_var(--border-color)] [&&]:[border-radius:var(--radius-md)] [color:var(--text-primary)] [font-size:var(--text-base)] [outline:none] [transition:all_0.2s] [box-sizing:border-box] focus:[border-color:var(--accent-color)] focus:[background:var(--color-white)]"
-                  placeholder="Search records..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-            </div>
-          </div>
+        </Field>
+      </Card>
 
           {/* Data Grid */}
           {loading && (
@@ -894,148 +820,70 @@ const Reports = () => {
             </div>
           )}
 
-          {!loading && totalPages > 1 && (
-            <div className="[display:flex] [justify-content:space-between] [align-items:center] [padding:16px_24px] [border-top:1px_solid_var(--border-color)] [background:var(--bg-card)]">
-              <button
-                className="[background:var(--bg-card)]! [border:1px_solid_var(--border-color)]! [color:var(--text-primary)] [padding:8px_16px] [&&]:[border-radius:var(--radius-md)]! [cursor:pointer] [font-size:var(--text-base)] [transition:all_0.2s] [&:hover:not(:disabled)]:[background:var(--bg-hover)]! [&:hover:not(:disabled)]:[border-color:var(--accent-color)]! disabled:[opacity:0.5] disabled:[cursor:not-allowed]"
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-              >
-                Previous
-              </button>
-              <span
-                className="text-[length:0.9rem]! text-[color:var(--text-secondary)]!"
-              >
-                Page {page} of {totalPages} ({totalRecords} records)
-              </span>
-              <button
-                className="[background:var(--bg-card)]! [border:1px_solid_var(--border-color)]! [color:var(--text-primary)] [padding:8px_16px] [&&]:[border-radius:var(--radius-md)]! [cursor:pointer] [font-size:var(--text-base)] [transition:all_0.2s] [&:hover:not(:disabled)]:[background:var(--bg-hover)]! [&:hover:not(:disabled)]:[border-color:var(--accent-color)]! disabled:[opacity:0.5] disabled:[cursor:not-allowed]"
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page === totalPages}
-              >
-                Next
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
 
-      {showConfigModal && (
-        <div className="modal-overlay">
-          <div className="modal-content max-w-[560px]!">
-            <div className="modal-header">
-              <h2>Generate Executive GHG Report</h2>
-              <button className="close-btn [background:none] [border:none] [font-size:var(--text-xl)] [cursor:pointer] [color:var(--color-ink-500)]" onClick={() => setShowConfigModal(false)}>×</button>
-            </div>
-            <div className="modal-body flex! flex-col! gap-[16px]!">
-              <div className="input-group">
-                <label className="font-semibold!">Select Report Format</label>
-                <div className="flex! gap-[10px]! mt-[6px]!">
-                  <button
-                    type="button"
-                    onClick={() => setReportFormat("master")}
-                    style={{
-                      flex: 1,
-                      padding: '10px 14px',
-                      borderRadius: '8px',
-                      border: reportFormat === "master" ? '2px solid #f97316' : '1px solid #cbd5e1',
-                      background: reportFormat === "master" ? '#fff7ed' : '#ffffff',
-                      color: reportFormat === "master" ? '#c2410c' : '#475569',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      textAlign: 'left',
-                      fontSize: '0.85rem'
-                    }}
-                  >
-                    🏆 2025 Master Analytical Report (Vertical A4, 15 Charts, 18 Tables)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setReportFormat("iso")}
-                    style={{
-                      flex: 1,
-                      padding: '10px 14px',
-                      borderRadius: '8px',
-                      border: reportFormat === "iso" ? '2px solid var(--primary-color, #2563eb)' : '1px solid #cbd5e1',
-                      background: reportFormat === "iso" ? '#eff6ff' : '#ffffff',
-                      color: reportFormat === "iso" ? '#1d4ed8' : '#475569',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      textAlign: 'left',
-                      fontSize: '0.85rem'
-                    }}
-                  >
-                    📋 ISO 14064-1 Compliance Report
-                  </button>
-                </div>
-              </div>
-
-              {reportFormat === "master" ? (
-                <div className="bg-[color:#f8fafc]! p-[14px]! rounded-[8px]! [border:1px_solid_#e2e8f0]!">
-                  <h4 className="m-[0_0_6px_0]! text-[color:#0f172a]! text-[length:0.9rem]!">
-                    Authentic Groupement Berkine (HBNS & El Merk) 2021–2025
-                  </h4>
-                  <ul className="m-[0]! pl-[20px]! text-[length:0.8rem]! text-[color:#475569]! leading-[1.5]!">
-                    <li><strong>Vertical A4 Portrait</strong> format (25 publication pages).</li>
-                    <li><strong>15 High-Resolution Charts (300 DPI)</strong>: Scopes 1 & 2, SANGEA modules, 2030 decarbonization target trajectory (-25%), methane abatement (-76.7%), routine vs safety flaring, intensities, JV equity allocation, and Criteria Air Pollutants.</li>
-                    <li><strong>18 Multi-Year Appendix Tables</strong>: Complete raw tables A.1 through A.16 matching Groupement Berkine's corporate reporting standards.</li>
-                  </ul>
-                </div>
-              ) : (
-                <>
-                  <p className="text-[length:0.875rem]! text-[color:var(--text-secondary)]!">
-                    To ensure 100% compliance with ISO 14064-1, please provide the following mandatory declarations before generating the report.
-                  </p>
-                  <div className="input-group">
-                    <label>Exclusion Criteria (Significance)</label>
-                    <p className="text-[length:0.75rem]! text-[color:var(--text-muted)]! mb-[4px]!">
-                      Document the criteria used to define which indirect emissions are significant and justify any exclusions.
-                    </p>
-                    <textarea
-                      value={exclusionCriteria}
-                      onChange={(e) => setExclusionCriteria(e.target.value)}
-                      rows={2}
-                      className="w-full! p-[8px]! [border:1px_solid_#e2e8f0]! rounded-[4px]! [resize:vertical]!"
-                    />
-                  </div>
-                  <div className="input-group">
-                    <label>Verification Status</label>
-                    <p className="text-[length:0.75rem]! text-[color:var(--text-muted)]! mb-[4px]!">
-                      State whether the report has been verified, the type of verification, and the level of assurance.
-                    </p>
-                    <input
-                      type="text"
-                      value={verificationStatus}
-                      onChange={(e) => setVerificationStatus(e.target.value)}
-                      className="w-full! p-[8px]! [border:1px_solid_#e2e8f0]! rounded-[4px]!"
-                    />
-                  </div>
-                  <Field className="input-group" label="GWP Metric Standard">
-<NativeSelect
-                      className="component-select"
-                      value={reportGwpStandard}
-                      onChange={(e) => { gwpTouched.current = true; setReportGwpStandard(e.target.value); }}
-                      style={{ width: '100%', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '4px' }}
-                    >
-                      <option value="AR5">{`${gwpOptionLabel("AR5", "100")} — Default`}</option>
-                      <option value="AR6">{gwpOptionLabel("AR6", "100")}</option>
-                      <option value="AR4">{gwpOptionLabel("AR4", "100")}</option>
-                      <option value="20yr">{gwpOptionLabel("AR5", "20")}</option>
-                    </NativeSelect>
-</Field>
-                </>
-              )}
-            </div>
-            <div className="modal-footer mt-[24px]! flex! justify-end! gap-[12px]!">
-              <Button variant="secondary" type="submit" onClick={() => setShowConfigModal(false)}>Cancel</Button>
-              <Button type="submit" onClick={handleGenerateModalReport} disabled={loading} style={{ background: reportFormat === 'master' ? 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)' : undefined, border: 'none' }}>
-                {loading ? "Generating..." : reportFormat === 'master' ? "Download Master Report (PDF)" : "Generate ISO PDF"}
-              </Button>
-            </div>
-          </div>
+      {!loading && totalPages > 1 && (
+        <div className="flex items-center justify-between gap-3 border-t border-border px-6 py-4">
+          <Button variant="secondary" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
+            Previous
+          </Button>
+          <span className="text-sm text-text-secondary">
+            Page {page} of {totalPages} ({totalRecords} records)
+          </span>
+          <Button variant="secondary" onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}>
+            Next
+          </Button>
         </div>
       )}
-    </div>
+
+      <Dialog
+        open={showConfigModal}
+        onOpenChange={(o) => !o && setShowConfigModal(false)}
+        title="Generate Executive GHG Report"
+        maxWidth="35rem"
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setShowConfigModal(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleGenerateModalReport} loading={loading} disabled={loading}>
+              {loading ? "Generating..." : reportFormat === "master" ? "Download Master Report (PDF)" : "Generate ISO PDF"}
+            </Button>
+          </>
+        }
+      >
+        <div className="flex flex-col gap-4">
+          <SegmentedControl label="Report format" value={reportFormat} onChange={setReportFormat} options={FORMATS} className="flex-col sm:flex-row" />
+
+          {reportFormat === "master" ? (
+            <div className="rounded-md border border-border bg-ink-50 p-3.5">
+              <h4 className="m-0 mb-1.5 text-base font-semibold text-text">Authentic Groupement Berkine (HBNS &amp; El Merk) 2021–2025</h4>
+              <ul className="m-0 flex list-disc flex-col gap-1 pl-5 text-sm leading-normal text-text-secondary">
+                <li>
+                  <strong>Vertical A4 Portrait</strong> format (25 publication pages).
+                </li>
+                <li>
+                  <strong>15 High-Resolution Charts (300 DPI)</strong>: Scopes 1 &amp; 2, SANGEA modules, 2030 decarbonization target trajectory (-25%), methane abatement (-76.7%), routine flaring reduction and more.
+                </li>
+                <li>
+                  <strong>18 Multi-Year Appendix Tables</strong>: Complete raw tables A.1 through A.16 matching Groupement Berkine&apos;s corporate reporting standards.
+                </li>
+              </ul>
+            </div>
+          ) : (
+            <>
+              <p className="m-0 text-sm text-text-secondary">To ensure 100% compliance with ISO 14064-1, please provide the following mandatory declarations before generating the report.</p>
+              <Field label="Exclusion Criteria (Significance)" hint="Document the criteria used to define which indirect emissions are significant and justify any exclusions.">
+                <Textarea rows={2} value={exclusionCriteria} onChange={(e) => setExclusionCriteria(e.target.value)} />
+              </Field>
+              <Field label="Verification Status" hint="State whether the report has been verified, the type of verification, and the level of assurance.">
+                <Input value={verificationStatus} onChange={(e) => setVerificationStatus(e.target.value)} />
+              </Field>
+              {selectBase("GWP Metric Standard", reportGwpStandard, onGwp, gwpOptions(" — Default"))}
+            </>
+          )}
+        </div>
+      </Dialog>
+    </Page>
   );
 };
 

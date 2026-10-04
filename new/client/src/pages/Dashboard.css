@@ -100,13 +100,6 @@
 
 /* Detailed Table Refinements */
 
-.card-title {
-  font-size: var(--text-md);
-  font-weight: 600;
-  color: var(--color-ink-800);
-  margin: 0;
-}
-
 .data-table {
   width: 100%;
   border-collapse: collapse;
@@ -209,11 +202,6 @@
   border-radius: var(--radius-lg);
   position: relative;
   overflow: hidden;
-}
-
-.card-title,
-.card-subtitle {
-  color: var(--color-ink-800);
 }
 
 .form-group {
