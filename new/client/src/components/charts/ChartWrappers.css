@@ -1,54 +1,324 @@
+/* ============================================================
+   MODERN CHART DESIGN SYSTEM STYLES
+   Unified tokens: Slate neutrals, vibrant accents, frosted glass
+   ============================================================ */
+
 .chart-wrapper {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.chart-wrapper.standalone {
+  background: var(--bg-card, rgba(255, 255, 255, 0.95));
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color, rgba(226, 232, 240, 0.85));
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+  margin-bottom: 24px;
 }
 
 .chart-title {
-  margin: 0 0 16px 0;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--text-primary);
+  margin: 0 0 18px 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-/* CustomTooltip */
-.custom-tooltip {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(8px);
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+/* Empty Chart State */
+.chart-wrapper.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(248, 250, 252, 0.5);
+  border: 1px dashed rgba(203, 213, 225, 0.8);
+  border-radius: 14px;
+}
+
+.chart-empty-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--text-secondary, #64748b);
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.chart-empty-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(226, 232, 240, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+}
+
+/* ============================================================
+   MODERN FROSTED GLASS TOOLTIP
+   ============================================================ */
+
+.custom-tooltip,
+.modern-chart-tooltip {
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  border-radius: 12px;
   padding: 12px 16px;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 12px 30px -4px rgba(15, 23, 42, 0.12), 0 4px 8px -2px rgba(15, 23, 42, 0.04);
+  min-width: 160px;
+  max-width: 280px;
+  pointer-events: none;
+  font-family: inherit;
+  transition: all 0.1s ease-out;
+}
+
+.tooltip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 8px 0;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.7);
 }
 
 .tooltip-label {
-  margin: 0 0 6px 0;
-  font-size: 0.85rem;
-  color: #64748b;
-  font-weight: 600;
-}
-
-.tooltip-value {
   margin: 0;
-  font-size: 1rem;
+  font-size: 0.82rem;
   font-weight: 700;
   color: #1e293b;
+  letter-spacing: -0.01em;
 }
 
-/* Recharts Overrides */
-.recharts-legend-item-text {
-  color: var(--text-primary) !important;
-}
-
-.recharts-label {
-  fill: var(--text-secondary, #64748b);
-  font-size: 0.75rem;
+.tooltip-badge {
+  font-size: 0.7rem;
   font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(255, 102, 0, 0.1);
+  color: var(--accent-color, #ff6600);
 }
 
-.recharts-pie-label-line {
-  stroke: #cbd5e1;
+.tooltip-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tooltip-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.82rem;
+}
+
+.tooltip-item-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #64748b;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tooltip-color-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.tooltip-color-dot.circle {
+  border-radius: 50%;
+}
+
+.tooltip-item-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  color: #0f172a;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+.tooltip-pct-chip {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(15, 23, 42, 0.05);
+  color: #475569;
+}
+
+/* ============================================================
+   DONUT CHART CENTER KPI OVERLAY
+   ============================================================ */
+
+.donut-container-relative {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.donut-center-kpi {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  max-width: 110px;
+}
+
+.donut-center-val {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.donut-center-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-top: 3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 90px;
+}
+
+.donut-center-sub {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--accent-color, #ff6600);
+  margin-top: 2px;
+}
+
+/* ============================================================
+   MODERN INTERACTIVE CHART LEGEND
+   ============================================================ */
+
+.modern-chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  justify-content: center;
+  align-items: center;
+  padding-top: 14px;
+}
+
+.legend-item-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  color: #475569;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.legend-item-pill:hover {
+  background: rgba(241, 245, 249, 0.8);
+  color: #0f172a;
+}
+
+.legend-item-pill.dimmed {
+  opacity: 0.35;
+}
+
+.legend-item-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-item-val {
+  font-weight: 700;
+  color: #0f172a;
+  font-variant-numeric: tabular-nums;
+  margin-left: 2px;
+}
+
+/* ============================================================
+   RECHARTS SVG & ANIMATION OVERRIDES
+   ============================================================ */
+
+.recharts-default-tooltip {
+  border: none !important;
+  background: transparent !important;
+}
+
+.recharts-cartesian-grid line {
+  stroke: rgba(226, 232, 240, 0.75);
+}
+
+.recharts-cartesian-axis-line {
+  display: none !important;
+}
+
+.recharts-cartesian-axis-tick-line {
+  display: none !important;
+}
+
+.recharts-cartesian-axis-tick-value {
+  fill: #64748b !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  font-family: inherit !important;
+}
+
+.recharts-legend-item-text {
+  color: #334155 !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  font-family: inherit !important;
+}
+
+.recharts-tooltip-cursor {
+  stroke: #cbd5e1 !important;
+  stroke-width: 1.5px !important;
+  stroke-dasharray: 4 4 !important;
+}
+
+.recharts-bar-rectangle:hover {
+  filter: brightness(1.08);
+  transition: filter 0.15s ease;
+}
+
+.recharts-pie-sector:hover {
+  filter: brightness(1.05);
+  transition: filter 0.15s ease;
 }
