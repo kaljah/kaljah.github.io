@@ -29,7 +29,8 @@ const NavItem = ({ route, showLabel, onNavigate }) => {
       aria-label={showLabel ? undefined : route.title}
       className={({ isActive }) =>
         cn(
-          "relative flex h-10 items-center gap-3 rounded-md px-3 text-base font-medium no-underline transition-colors",
+          "relative flex h-10 items-center rounded-md text-base font-medium no-underline transition-colors",
+          showLabel ? "gap-3 px-3" : "justify-center px-0",
           isActive ? "bg-selected-bg text-selected-fg" : "text-text-secondary hover:bg-ink-100 hover:text-text",
         )
       }
@@ -37,7 +38,7 @@ const NavItem = ({ route, showLabel, onNavigate }) => {
       {({ isActive }) => (
         <>
           {isActive && <span aria-hidden="true" className="absolute inset-y-2 left-0 w-[3px] rounded-full bg-brand-500" />}
-          <Icon className={cn("size-[18px] shrink-0", isActive && "text-brand-500")} aria-hidden="true" />
+          <Icon className={cn("size-[18px] shrink-0", isActive ? "text-brand-500" : "text-text-secondary")} aria-hidden="true" />
           {showLabel && <span className="truncate">{route.title}</span>}
         </>
       )}
@@ -83,7 +84,7 @@ const NavList = ({ user, showLabel, onNavigate }) => {
 };
 
 const Brand = ({ showLabel }) => (
-  <div className="flex h-16 shrink-0 items-center gap-3 px-4">
+  <div className={cn("flex h-16 shrink-0 items-center", showLabel ? "gap-3 px-4" : "justify-center px-0")}>
     <img src={`${import.meta.env.BASE_URL}carbon_tech.svg`} alt="" className="size-8 shrink-0" />
     {showLabel && <span className="truncate text-md font-bold text-text">Carbon tech</span>}
   </div>
@@ -174,7 +175,10 @@ const Sidebar = () => {
             }}
             aria-label={collapsed ? "Pin sidebar open" : "Collapse sidebar"}
             aria-keyshortcuts="["
-            className="flex h-10 w-full cursor-pointer items-center gap-3 rounded-md border-0 bg-transparent px-3 text-base font-medium text-text-secondary transition-colors hover:bg-ink-100 hover:text-text"
+            className={cn(
+              "flex h-10 w-full cursor-pointer items-center rounded-md border-0 bg-transparent text-base font-medium text-text-secondary transition-colors hover:bg-ink-100 hover:text-text",
+              expanded ? "gap-3 px-3" : "justify-center px-0",
+            )}
           >
             {collapsed ? (
               <PanelLeftOpen className="size-[18px] shrink-0" aria-hidden="true" />
