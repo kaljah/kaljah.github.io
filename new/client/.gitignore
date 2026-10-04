@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 e2e/artifacts/baseline/
 e2e/artifacts/*.png
+
+out/
+test-results/

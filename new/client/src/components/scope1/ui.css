@@ -153,9 +153,9 @@
 /* section 2: process, method and factor stacked full width */
 .s1-actions button {
   height: 46px;
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-  margin: 0 !important;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin: 0;
 }
 
 /* process forms: fields flow in one responsive grid; blocks that are not a single field span the row */
@@ -163,13 +163,10 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 14px 16px;
-  margin-top: 0 !important;
+  margin-top: 0;
 }
 .s1-inputs > div[class$="-form"] > :not(.input-group) {
   grid-column: 1 / -1;
-}
-.s1-inputs div[style*="grid-template-columns"]:not([style*="px"]) {
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
 }
 
 .s1-span-2 {
@@ -183,7 +180,7 @@
     grid-template-columns: 1fr 1fr;
   }
   .s1-actions button {
-    flex: none !important;
+    flex: none;
     width: 100%;
   }
 }
