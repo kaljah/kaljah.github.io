@@ -31,6 +31,8 @@ export default defineConfig({
   },
 
   build: {
+    target: 'esnext',
+    minify: false,
     sourcemap: false,            // No source maps in production builds
     chunkSizeWarningLimit: 500,  // Warn on chunks > 500KB
     rollupOptions: {

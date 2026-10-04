@@ -306,7 +306,7 @@ const UncertaintyAssessment = () => {
 
             <div className="uncertainty-grid">
               {section.top_contributors.map((factor, fIdx) => (
-                <div key={fIdx} className="[background:var(--bg-card,_rgba(255,_255,_255,_0.78))] [backdrop-filter:blur(14px)] [-webkit-backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [&&]:[border-radius:var(--radius-lg)] [padding:24px] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] [box-shadow:var(--shadow-card,_0_4px_6px_-1px_rgba(0,_0,_0,_0.1))] hover:[transform:translateY(-3px)] hover:[box-shadow:var(_--shadow-card-elevated,_0_10px_25px_-5px_rgba(0,_0,_0,_0.12)_)] hover:[border-color:rgba(255,_255,_255,_0.95)]">
+                <div key={fIdx} className="[background:var(--bg-card,_rgba(255,_255,_255,_0.78))] [backdrop-filter:blur(14px)] [-webkit-backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [&&]:[border-radius:var(--radius-lg)] [padding:24px] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] [box-shadow:var(--shadow-card,_0_4px_6px_-1px_rgba(0,_0,_0,_0.1))] hover:[transform:translateY(-3px)] hover:[box-shadow:var(--shadow-card-elevated,_0_10px_25px_-5px_rgba(0,_0,_0,_0.12))] hover:[border-color:rgba(255,_255,_255,_0.95)]">
                   <div className="[display:flex] [justify-content:space-between] [align-items:flex-start] [margin-bottom:15px]">
                     <div>
                       <div className="factor-name">{factor.name}</div>
