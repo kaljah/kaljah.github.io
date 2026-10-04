@@ -148,7 +148,7 @@ export const LineChart = ({
             }}
           />
           {showLegend && chartLines.length > 0 && (
-            <Legend wrapperStyle={{ color: "var(--text-primary)" }} />
+            <Legend wrapperStyle={{ color: "var(--text-primary)" }} formatter={(value) => <span className="text-text">{value}</span>} />
           )}
           {chartLines.map((line, idx) => {
             const isTrajectory = line.dataKey === "trajectory";

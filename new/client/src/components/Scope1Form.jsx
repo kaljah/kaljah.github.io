@@ -2005,16 +2005,15 @@ const Scope1Form = () => {
 
         <div className="s1-actions">
           <button
-            className="btn-add-draft"
+            className="btn-add-draft flex-1"
             disabled={submitting}
             onClick={() => handleAddEntry("Draft")}
             style={{
-              flex: 1,
               background: "rgba(255, 255, 255, 0.9)",
               border: "1px solid var(--border-color)",
               color: "var(--text-primary)",
               fontWeight: 600,
-              padding: "10px 16px",
+              padding: "0 16px",
               borderRadius: "10px",
               cursor: submitting ? "not-allowed" : "pointer",
               opacity: submitting ? 0.6 : 1,
@@ -2023,11 +2022,10 @@ const Scope1Form = () => {
             {submitting ? "Saving..." : "Save draft"}
           </button>
           <button
-            className="btn-add-activity"
+            className="btn-add-activity flex-[1.5]"
             disabled={submitting}
             onClick={() => handleAddEntry("Verified")}
             style={{
-              flex: 1.5,
               cursor: submitting ? "not-allowed" : "pointer",
               opacity: submitting ? 0.6 : 1,
             }}

@@ -261,7 +261,7 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
                                     }}
                                   />
                                   <NativeSelect
-                                    className="mole-input w-[110px]! p-[6px_8px]! text-[length:0.8rem]!"
+                                    className="mole-input w-[110px]! max-[600px]:w-full! p-[6px_8px]! text-[length:0.8rem]!"
                                    
                                     value={formData.hhv_unit || "BTU/scf"}
                                     onChange={(e) => handleFormChange("hhv_unit", e.target.value)}
@@ -361,12 +361,7 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
                         </button>
                       </div>
                       <div
-                        style={{
-                          display: "grid",
-                          gridTemplateColumns: "1fr 1fr",
-                          gap: "10px",
-                          marginTop: "10px",
-                        }}
+                        className="grid gap-[10px] [grid-template-columns:1fr_1fr] max-[600px]:[grid-template-columns:1fr] mt-[10px]"
                       >
                         {["co2", "ch4", "n2o"]
                           .filter((gas) =>
@@ -396,7 +391,7 @@ const Scope1ProcessSection = ({ activePresetId, currentProcessValue, dataSourceR
                                  
                                 />
                                 <NativeSelect
-                                  className="component-select w-[80px]! p-[4px]!"
+                                  className="component-select w-[80px]! max-[600px]:w-full! p-[4px]!"
                                   value={specFactors[`${gas}Unit`] || ""}
                                   onChange={(e) =>
                                     setSpecFactors((p) => ({

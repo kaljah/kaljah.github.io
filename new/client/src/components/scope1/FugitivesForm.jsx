@@ -234,7 +234,7 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
       {/* ==================================================================== */}
       {activeTier === "tier1" && (
         <div className="[margin-bottom:12px]">
-          <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1.5fr", gap: "12px" }}>
+          <div className="grid gap-[12px] [grid-template-columns:2fr_1fr_1.5fr] max-[600px]:[grid-template-columns:1fr]">
             <div className="input-group">
               <label>Facility Type</label>
               <CustomDropdown
@@ -299,7 +299,7 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
 
           {/* Tier 2A: Equipment Count Form */}
           {tier2SubMethod === "equipment" && (
-            <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1.2fr 0.8fr 1.2fr", gap: "12px" }}>
+            <div className="grid gap-[12px] [grid-template-columns:1.2fr_1.2fr_0.8fr_1.2fr] max-[600px]:[grid-template-columns:1fr]">
               <div className="input-group">
                 <label>Industry Segment / Table</label>
                 <CustomDropdown

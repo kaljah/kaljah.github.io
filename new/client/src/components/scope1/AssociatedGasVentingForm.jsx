@@ -193,7 +193,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                   required
                 />
                 <NativeSelect
-                  className="mole-input w-[130px]!"
+                  className="mole-input w-[130px]! max-[600px]:w-full!"
                  
                   value={data.oil_unit || data.unit || "bbl"}
                   onChange={(e) => {
@@ -280,7 +280,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                   required
                 />
                 <NativeSelect
-                  className="mole-input w-[150px]!"
+                  className="mole-input w-[150px]! max-[600px]:w-full!"
                  
                   value={data.oil_unit || "bbl/day"}
                   onChange={(e) => {
@@ -315,7 +315,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                   required
                 />
                 <NativeSelect
-                  className="mole-input w-[120px]!"
+                  className="mole-input w-[120px]! max-[600px]:w-full!"
                  
                   value={data.gor_unit || "scf/bbl"}
                   onChange={(e) => onChange("gor_unit", e.target.value)}
@@ -351,7 +351,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                   required
                 />
                 <NativeSelect
-                  className="mole-input w-[100px]!"
+                  className="mole-input w-[100px]! max-[600px]:w-full!"
                  
                   value={data.duration_unit || "days"}
                   onChange={(e) => onChange("duration_unit", e.target.value)}
@@ -410,7 +410,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
             <div className="flex! items-center! gap-[6px]!">
               <span className="text-[length:0.75rem]! text-[color:#6b7280]!">Unit</span>
               <NativeSelect
-                className="mole-input w-[110px]! p-[4px_8px]! text-[length:0.8rem]!"
+                className="mole-input w-[110px]! max-[600px]:w-full! p-[4px_8px]! text-[length:0.8rem]!"
                
                 value={data.gas_volume_unit || "scf"}
                 onChange={(e) => onChange("gas_volume_unit", e.target.value)}
@@ -528,7 +528,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                     required
                   />
                   <NativeSelect
-                    className="mole-input w-[130px]!"
+                    className="mole-input w-[130px]! max-[600px]:w-full!"
                    
                     value={data.vent_rate_unit || "scfh"}
                     onChange={(e) => onChange("vent_rate_unit", e.target.value)}
@@ -578,7 +578,7 @@ const AssociatedGasVentingForm = ({ data = {}, onChange, sourceType, periodDays 
                   required
                 />
                 <NativeSelect
-                  className="mole-input w-[140px]!"
+                  className="mole-input w-[140px]! max-[600px]:w-full!"
                  
                   value={data.vent_volume_unit || data.unit || "scf"}
                   onChange={(e) => {

@@ -437,7 +437,7 @@ const NotificationCenter = () => {
   const trayPanel = isOpen && (
     <div
       ref={panelRef}
-      className="notification-tray-panel"
+      className="notification-tray-panel z-[999999] pointer-events-auto"
       style={{
         position: "fixed",
         top: panelPos.top,

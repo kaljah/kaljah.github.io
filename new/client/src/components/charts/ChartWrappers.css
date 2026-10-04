@@ -1,10 +1,6 @@
 /* CustomTooltip */
 
 /* Recharts Overrides */
-.recharts-legend-item-text {
-  color: var(--text-primary) !important;
-}
-
 .recharts-label {
   fill: var(--text-secondary, var(--color-ink-500));
   font-size: var(--text-sm);

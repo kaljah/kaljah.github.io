@@ -12,11 +12,7 @@ const AGRForm = ({ data, onChange, sourceType }) => {
           <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
         </label>
         <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 130px",
-            gap: "10px",
-          }}
+          className="grid gap-[10px] [grid-template-columns:1fr_130px] max-[600px]:[grid-template-columns:1fr]"
         >
           <Input
             type="number"

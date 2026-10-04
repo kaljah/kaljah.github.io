@@ -148,7 +148,7 @@
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum";
   font-weight: 600;
-  color: var(--text-primary, var(--color-ink-900)) !important;
+  color: var(--text-primary, var(--color-ink-900));
 }
 
 .text-right {
@@ -235,7 +235,7 @@
   gap: 8px;
   margin-left: 10px;
   height: auto;
-  flex-wrap: nowrap !important;
+  flex-wrap: nowrap;
   white-space: nowrap;
 }
 

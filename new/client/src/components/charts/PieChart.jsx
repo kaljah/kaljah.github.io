@@ -150,6 +150,7 @@ export const PieChart = ({
               height={36}
               wrapperStyle={{ fontSize: "12px", paddingTop: "20px" }}
               iconType="circle"
+              formatter={(value) => <span className="text-text">{value}</span>}
             />
           )}
         </RechartsPie>

@@ -88,11 +88,7 @@ const DrillingForm = ({ data, onChange, sourceType }) => {
               Gas composition
             </h5>
             <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: "14px",
-              }}
+              className="grid gap-[14px] [grid-template-columns:1fr_1fr] max-[600px]:[grid-template-columns:1fr]"
             >
               <div className="input-group mb-[0px]!">
                 <label className="text-[length:0.8rem]!">

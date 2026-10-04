@@ -144,8 +144,8 @@
   background: rgba(254, 243, 199, 0.4);
 }
 
-.wizard-table tr.row-selected td {
-  background: rgba(255, 102, 0, 0.05) !important;
+.wizard-table tr.row-selected.row-selected td {
+  background: rgba(255, 102, 0, 0.05);
 }
 
 /* Anomaly Badges */

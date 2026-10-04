@@ -116,7 +116,7 @@ export const BarChart = ({
             tickFormatter={formatValue}
           />
           <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(241, 245, 249, 0.6)" }} />
-          {showLegend && <Legend />}
+          {showLegend && <Legend formatter={(value) => <span className="text-text">{value}</span>} />}
           {bars && bars.length > 0 ? (
             bars.map((b, idx) => (
               <Bar

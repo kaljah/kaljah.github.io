@@ -31,7 +31,7 @@ const NumUnit = ({ label, field, unitField, units, data, onChange, placeholder, 
       {label}
       {required && <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>}
     </label>
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 110px", gap: "8px" }}>
+    <div className="grid gap-[8px] [grid-template-columns:1fr_110px] max-[600px]:[grid-template-columns:1fr]">
       <Input
         type="number"
         min="0"

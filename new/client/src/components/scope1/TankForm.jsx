@@ -16,11 +16,7 @@ const TankForm = ({ data, onChange, sourceType }) => {
           <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
         </label>
         <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 100px",
-            gap: "10px",
-          }}
+          className="grid gap-[10px] [grid-template-columns:1fr_100px] max-[600px]:[grid-template-columns:1fr]"
         >
           <Input
             type="number"

@@ -74,14 +74,6 @@ select.component-select option {
   padding: 10px 14px;
 }
 
-.component-select option:hover,
-.component-select option:checked,
-select.component-select option:hover,
-select.component-select option:checked {
-  background-color: rgba(255, 102, 0, 0.1) !important;
-  color: var(--color-link) !important;
-  font-weight: 600;
-}
 
 .component-select option:disabled,
 select.component-select option:disabled {

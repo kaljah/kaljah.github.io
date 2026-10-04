@@ -39,11 +39,7 @@ const AdipicAcidForm = ({ data, onChange }) => {
             <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
           </label>
           <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 120px",
-              gap: "10px",
-            }}
+            className="grid gap-[10px] [grid-template-columns:1fr_120px] max-[600px]:[grid-template-columns:1fr]"
           >
             <Input
               type="number"

@@ -22,7 +22,7 @@ const BlowdownForm = ({ data, onChange }) => {
               required
             />
             <NativeSelect
-              className="mole-input w-[80px]!"
+              className="mole-input w-[80px]! max-[600px]:w-full!"
              
               value={data.blowdown_unit || "m3"}
               onChange={(e) => onChange("blowdown_unit", e.target.value)}
