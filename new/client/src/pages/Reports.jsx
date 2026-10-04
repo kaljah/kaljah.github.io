@@ -1,11 +1,13 @@
+import { ChevronDown, Download, FilePlus, FileSpreadsheet, FileText, Funnel, Plus, RotateCcw, Search } from "lucide-react";
+import { NativeSelect } from "../ui/NativeSelect";
+import { Badge, Button, Card, CardHeader, DataTable, Dialog, Field, Input, Menu, MenuContent, MenuItem, MenuTrigger, Page, PageHeader, SegmentedControl, StatusPill, Textarea } from "../ui";
+import { controlClass } from "../components/import-wizard/mapping";
 import React, { useState, useEffect } from "react";
 import api from "../api";
 import { useAuth } from "../context/AuthContext";
-import "./Reports.css";
 import { useToast } from "../components/Toast";
 import LoadingSpinner from "../components/LoadingSpinner";
 import MultiSelectDropdown from "../components/MultiSelectDropdown";
-import "../pages/Dashboard.css";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
 import { getActiveGwpFactors } from "../constants";
 import { apiError } from "../utils/apiError";
@@ -18,6 +20,47 @@ const gwpOptionLabel = (standard, horizon) => {
   const f = getActiveGwpFactors(standard, horizon);
   return `IPCC ${standard} (${horizon}-yr: CH4=${f.CH4}, N2O=${f.N2O})`;
 };
+
+const NA = (v) => v || "N/A";
+const fmt = (num) =>
+  num === null || num === undefined
+    ? "0.00"
+    : parseFloat(num).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 3 });
+
+const RECORD_COLUMNS = [
+  { accessorKey: "id", header: "ID", cell: (c) => <span className="text-xs text-text-secondary">{c.getValue()}</span> },
+  { id: "date", header: "Date", accessorFn: (r) => r.year * 100 + r.month, cell: (c) => `${c.row.original.month}/${c.row.original.year}` },
+  { accessorKey: "scope", header: "Scope", cell: (c) => <Badge tone={{ 1: "brand", 2: "info" }[c.getValue()] || "neutral"}>Scope {c.getValue()}</Badge> },
+  { accessorKey: "division", header: "Division", cell: (c) => NA(c.getValue()) },
+  { accessorKey: "field", header: "Field", cell: (c) => NA(c.getValue()) },
+  { accessorKey: "facility_name", header: "Facility", cell: (c) => NA(c.getValue()) },
+  { accessorKey: "group_name", header: "Group", cell: (c) => NA(c.getValue()) },
+  { accessorKey: "equipment_id", header: "Equipment", cell: (c) => NA(c.getValue()) },
+  { accessorKey: "process_type", header: "Category/Process", cell: (c) => <span className="font-medium">{c.getValue()}</span> },
+  { accessorKey: "fuel", header: "Fuel/Source", cell: (c) => NA(c.getValue()) },
+  { accessorKey: "factor_type", header: "Factor Type", cell: (c) => <span className="text-sm">{NA(c.getValue())}</span> },
+  {
+    accessorKey: "amount",
+    header: "Qty",
+    meta: { numeric: true },
+    cell: (c) =>
+      c.getValue() ? (
+        <>
+          {fmt(c.getValue())} <span className="text-xs text-text-secondary">{c.row.original.unit}</span>
+        </>
+      ) : (
+        "-"
+      ),
+  },
+  {
+    accessorKey: "co2e_total",
+    header: "Total",
+    meta: { numeric: true, unit: "tCO₂e" },
+    // BUG-UI-06 FIX: show an em dash for null instead of a misleading 0.00
+    cell: (c) => <span className="font-bold text-primary">{c.getValue() != null ? fmt(c.getValue()) : "—"}</span>,
+  },
+  { accessorKey: "status", header: "Status", cell: (c) => <StatusPill status={c.getValue() || "Verified"} /> },
+];
 
 const Reports = () => {
   const { user } = useAuth();
@@ -456,539 +499,288 @@ const Reports = () => {
     setReportSelectedRegions((prev) => prev.filter((v) => v !== val));
   };
 
+  const selectBase = (label, value, onChange, children, extra = {}) => (
+    <Field label={label} className={extra.className}>
+      <NativeSelect className={controlClass} value={value} onChange={onChange}>
+        {children}
+      </NativeSelect>
+    </Field>
+  );
+  const MONTHS = [...Array(12)].map((_, i) => ({ value: i + 1, label: new Date(0, i).toLocaleString("default", { month: "long" }) }));
+  const uniq = (key) => [...new Set(facilities.map((f) => f[key]))].filter(Boolean);
+  const gwpOptions = (suffix = "") => (
+    <>
+      <option value="AR5">{`${gwpOptionLabel("AR5", "100")}${suffix}`}</option>
+      <option value="AR6">{gwpOptionLabel("AR6", "100")}</option>
+      <option value="AR4">{gwpOptionLabel("AR4", "100")}</option>
+      <option value="20yr">{gwpOptionLabel("AR5", "20")}</option>
+    </>
+  );
+  const onGwp = (e) => {
+    gwpTouched.current = true;
+    setReportGwpStandard(e.target.value);
+  };
+  const FORMATS = [
+    { value: "master", label: "🏆 2025 Master Analytical Report (Vertical A4, 15 Charts, 18 Tables)" },
+    { value: "iso", label: "📋 ISO 14064-1 Compliance Report" },
+  ];
+  const years = availableFilters.years;
+
   return (
-    <div className="reports-page">
-      <header className="top-bar">
-        <div className="breadcrumbs">
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            style={{ marginRight: "8px" }}
-          >
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-            <polyline points="14 2 14 8 20 8" />
-            <line x1="16" y1="13" x2="8" y2="13" />
-            <line x1="16" y1="17" x2="8" y2="17" />
-            <line x1="10" y1="9" x2="8" y2="9" />
-          </svg>
-          <span>Dashboard</span>
-          <span style={{ margin: "0 8px", color: "var(--text-secondary)" }}>
-            /
-          </span>
-          <span style={{ fontWeight: 600, color: "var(--text-primary)" }}>
-            Reports
-          </span>
-        </div>
-        <div className="top-actions">
-          <span style={{ fontWeight: 600, fontSize: "0.9rem" }}>
-            {user?.fullName || "User"}
-          </span>
-        </div>
-      </header>
+    <Page className="reports-page max-w-[1600px]">
+      <PageHeader
+        title="Reports"
+        description={
+          <>
+            Emission database and exports. Complete history of all recorded emissions and compliance data.{" "}
+            <span className="font-semibold text-text">
+              Total records: {totalRecords} | Showing: {emissions.length}
+            </span>
+          </>
+        }
+        actions={
+          <>
+            <Button variant="secondary" onClick={resetFilters}>
+              <RotateCcw className="size-4" aria-hidden="true" />
+              Reset filters
+            </Button>
+            <Menu>
+              <MenuTrigger asChild>
+                <Button>
+                  <Download className="size-4" aria-hidden="true" />
+                  Export
+                  <ChevronDown className="size-4" aria-hidden="true" />
+                </Button>
+              </MenuTrigger>
+              <MenuContent>
+                <MenuItem icon={FileSpreadsheet} onSelect={handleOGMPExport}>
+                  OGMP 2.0 (Excel)
+                </MenuItem>
+                <MenuItem icon={FileSpreadsheet} onSelect={handleExcelExport}>
+                  Excel export
+                </MenuItem>
+                <MenuItem icon={FileText} onSelect={handlePDFExport}>
+                  PDF report
+                </MenuItem>
+                <MenuItem icon={FileText} onSelect={() => handleMasterReportDownload()}>
+                  2025 Master report (PDF)
+                </MenuItem>
+              </MenuContent>
+            </Menu>
+          </>
+        }
+      />
 
-      <div className="reports-container">
-        <div className="content-wrapper">
-          <div className="reports-header">
-            <div className="reports-title">
-              <h2>Emission Database</h2>
-              <p className="reports-subtitle">
-                Complete history of all recorded emissions and compliance data.
-                <span
-                  style={{
-                    marginLeft: "10px",
-                    color: "var(--primary-color)",
-                    fontWeight: 600,
-                  }}
-                >
-                  Total Records: {totalRecords} | Showing: {emissions.length}
-                </span>
-              </p>
-            </div>
-            <div className="reports-actions">
-              <button
-                className="btn-action"
-                onClick={resetFilters}
-                style={{
-                  background: "#f8fafc",
-                  color: "#64748b",
-                  border: "1px solid #e2e8f0",
-                }}
-              >
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  style={{ marginRight: "6px" }}
-                >
-                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-                  <path d="M3 3v5h5" />
-                </svg>
-                Reset Filters
-              </button>
-              <button
-                className="btn-action btn-excel"
-                onClick={handleOGMPExport}
-                style={{
-                  background:
-                    "linear-gradient(135deg, #10b981 0%, #059669 100%)",
-                  color: "#ffffff",
-                  border: "none",
-                }}
-              >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                  <polyline points="7 10 12 15 17 10"></polyline>
-                  <line x1="12" y1="15" x2="12" y2="3"></line>
-                </svg>
-                OGMP 2.0 (Excel)
-              </button>
-              <button
-                className="btn-action btn-excel"
-                onClick={handleExcelExport}
-              >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                  <polyline points="7 10 12 15 17 10"></polyline>
-                  <line x1="12" y1="15" x2="12" y2="3"></line>
-                </svg>
-                Excel Export
-              </button>
-              <button className="btn-action btn-pdf" onClick={handlePDFExport}>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                  <polyline points="14 2 14 8 20 8"></polyline>
-                </svg>
-                PDF Report
-              </button>
-              <button
-                className="btn-action"
-                onClick={() => handleMasterReportDownload()}
-                style={{
-                  background: "linear-gradient(135deg, #ea580c 0%, #c2410c 100%)",
-                  color: "#ffffff",
-                  border: "none",
-                  fontWeight: 600,
-                  boxShadow: "0 2px 8px rgba(234, 88, 12, 0.25)",
-                }}
-              >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                  <polyline points="14 2 14 8 20 8"></polyline>
-                  <line x1="16" y1="13" x2="8" y2="13"></line>
-                  <line x1="16" y1="17" x2="8" y2="17"></line>
-                </svg>
-                2025 Master Report (PDF)
-              </button>
-            </div>
+      <Card>
+        <CardHeader title={<span className="flex items-center gap-3"><FilePlus className="size-6 text-brand-500" aria-hidden="true" /> Create New Report</span>} />
+        <div className="grid items-end gap-5 [grid-template-columns:repeat(auto-fit,minmax(200px,1fr))]">
+          {selectBase(
+            "Reporting Year *",
+            reportYear,
+            (e) => setReportYear(e.target.value),
+            <>
+              <option value="all">All Years</option>
+              {years.length > 0 ? (
+                years.map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))
+              ) : (
+                <option value={new Date().getFullYear()}>{new Date().getFullYear()}</option>
+              )}
+            </>,
+          )}
+          {selectBase(
+            "Compare With",
+            comparisonYear,
+            (e) => setComparisonYear(e.target.value),
+            <>
+              <option value="none">None (Single Year)</option>
+              {years
+                .filter((y) => y.toString() !== reportYear)
+                .map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))}
+              {baseYear && <option value="baseline">Baseline ({baseYear})</option>}
+            </>,
+          )}
+          {selectBase("GWP Metric Standard", reportGwpStandard, onGwp, gwpOptions())}
+          <div className="flex w-full flex-col gap-1.5 [grid-column:span_2] max-[640px]:[grid-column:auto]">
+            <span className="text-sm font-medium text-text">
+              Regions / Facilities <span className="text-danger-fg">*</span>
+            </span>
+            <React.Suspense fallback={<div>Loading...</div>}>
+              <MultiSelectDropdown options={regionOptions} selectedValues={reportSelectedRegions} onChange={setReportSelectedRegions} label="Select Regions..." />
+            </React.Suspense>
           </div>
+          <Button size="lg" onClick={openConfigModal} loading={loading} disabled={loading}>
+            <Plus className="size-[18px]" aria-hidden="true" />
+            {loading ? "Generating..." : "Create Report"}
+          </Button>
+        </div>
 
-          {/* NEW: Create Report Card (Matches Legacy UI) */}
-          <div className="create-report-card" style={{ marginBottom: "24px" }}>
-            <div className="card-header">
-              <div className="card-icon">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                  <polyline points="14 2 14 8 20 8" />
-                  <line x1="12" y1="18" x2="12" y2="12" />
-                  <line x1="9" y1="15" x2="15" y2="15" />
-                </svg>
-              </div>
-              <h3 className="card-title">Create New Report</h3>
-            </div>
-
-            <div className="report-controls-grid" style={{ alignItems: "end" }}>
-              <div className="control-group">
-                <label className="input-label">
-                  Reporting Year{" "}
-                  <span style={{ color: "var(--danger)" }}>*</span>
-                </label>
-                <select
-                  className="component-select"
-                  value={reportYear}
-                  onChange={(e) => setReportYear(e.target.value)}
-                >
-                  <option value="all">All Years</option>
-                  {availableFilters.years.length > 0 ? (
-                    availableFilters.years.map((y) => (
-                      <option key={y} value={y}>
-                        {y}
-                      </option>
-                    ))
-                  ) : (
-                    <option value={new Date().getFullYear()}>
-                      {new Date().getFullYear()}
-                    </option>
-                  )}
-                </select>
-              </div>
-
-              <div className="control-group">
-                <label className="input-label">Compare With</label>
-                <select
-                  className="component-select"
-                  value={comparisonYear}
-                  onChange={(e) => setComparisonYear(e.target.value)}
-                >
-                  <option value="none">None (Single Year)</option>
-                  {availableFilters.years
-                    .filter((y) => y.toString() !== reportYear)
-                    .map((y) => (
-                      <option key={y} value={y}>
-                        {y}
-                      </option>
-                    ))}
-                  {baseYear && <option value="baseline">Baseline ({baseYear})</option>}
-                </select>
-              </div>
-
-              <div className="control-group">
-                <label className="input-label">GWP Metric Standard</label>
-                <select
-                  className="component-select"
-                  value={reportGwpStandard}
-                  onChange={(e) => { gwpTouched.current = true; setReportGwpStandard(e.target.value); }}
-                >
-                  <option value="AR5">{gwpOptionLabel("AR5", "100")}</option>
-                  <option value="AR6">{gwpOptionLabel("AR6", "100")}</option>
-                  <option value="AR4">{gwpOptionLabel("AR4", "100")}</option>
-                  <option value="20yr">{gwpOptionLabel("AR5", "20")}</option>
-                </select>
-              </div>
-
-              <div className="control-group" style={{ flex: 2 }}>
-                <label className="input-label">
-                  Regions / Facilities{" "}
-                  <span style={{ color: "var(--danger)" }}>*</span>
-                </label>
-                {/* MultiSelect Component */}
-                <React.Suspense fallback={<div>Loading...</div>}>
-                  <MultiSelectDropdown
-                    options={regionOptions}
-                    selectedValues={reportSelectedRegions}
-                    onChange={setReportSelectedRegions}
-                    label="Select Regions..."
-                  />
-                </React.Suspense>
-              </div>
-
-              <button
-                className="btn-create"
-                onClick={openConfigModal}
-                disabled={loading}
-                style={{
-                  opacity: loading ? 0.7 : 1,
-                  cursor: loading ? "not-allowed" : "pointer",
-                }}
-              >
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                >
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                {loading ? "Generating..." : "Create Report"}
-              </button>
-            </div>
-
-            {/* Chips */}
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "8px",
-                marginTop: "15px",
-              }}
-            >
-              {reportSelectedRegions.map((rId) => {
-                const rName =
-                  facilities.find((f) => f.id.toString() === rId)?.name || rId;
-                return (
-                  <span
-                    key={rId}
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      padding: "4px 10px",
-                      borderRadius: "16px",
-                      background: "rgba(255, 107, 0, 0.1)",
-                      color: "var(--primary-color)",
-                      fontSize: "0.85rem",
-                    }}
-                  >
+        {reportSelectedRegions.length > 0 && (
+          <ul className="m-0 mt-4 flex list-none flex-wrap gap-2 p-0">
+            {reportSelectedRegions.map((rId) => {
+              const rName = facilities.find((f) => f.id.toString() === rId)?.name || rId;
+              return (
+                <li key={rId}>
+                  <Badge tone="brand" className="gap-1.5 px-2.5 py-1 text-sm">
                     {rName}
-                    <button
-                      onClick={() => removeRegion(rId)}
-                      style={{
-                        background: "none",
-                        border: "none",
-                        color: "inherit",
-                        marginLeft: "6px",
-                        cursor: "pointer",
-                        padding: 0,
-                      }}
-                    >
+                    <button type="button" aria-label={`Remove ${rName}`} onClick={() => removeRegion(rId)} className="cursor-pointer border-0 bg-transparent p-0 text-inherit">
                       ×
                     </button>
-                  </span>
-                );
-              })}
-            </div>
+                  </Badge>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </Card>
+
+      <Card>
+        <CardHeader title={<span className="flex items-center gap-3"><Funnel className="size-6 text-brand-500" aria-hidden="true" /> Filter &amp; Group Data</span>} />
+        <div className="grid items-end gap-5 [grid-template-columns:repeat(auto-fit,minmax(200px,1fr))]">
+          {selectBase(
+            "Inventory Scope",
+            scope,
+            (e) => setScope(e.target.value),
+            <>
+              <option value="all">Total Inventory (Scope 1,2,3)</option>
+              <option value="1">Scope 1 (Direct)</option>
+              <option value="2">Scope 2 (Indirect)</option>
+              <option value="3">Scope 3 (Value Chain)</option>
+            </>,
+          )}
+          {selectBase(
+            "Reporting Year",
+            year,
+            (e) => setYear(e.target.value),
+            <>
+              <option value="all">All Years</option>
+              {years.map((y) => (
+                <option key={y} value={y}>
+                  {y}
+                </option>
+              ))}
+            </>,
+          )}
+          {selectBase(
+            "Month",
+            month,
+            (e) => setMonth(e.target.value),
+            <>
+              <option value="all">All Months</option>
+              {MONTHS.map((m) => (
+                <option key={m.value} value={m.value}>
+                  {m.label}
+                </option>
+              ))}
+            </>,
+          )}
+          {selectBase(
+            "Region (Grid)",
+            regionId,
+            (e) => setRegionId(e.target.value),
+            <>
+              <option value="all">All Regions</option>
+              {facilities.map((f) => (
+                <option key={f.id} value={f.id}>
+                  {f.name} {f.field ? ` - ${f.field}` : ""}
+                </option>
+              ))}
+            </>,
+          )}
+          {scope === "1" &&
+            selectBase(
+              "Process Type",
+              processType,
+              (e) => setProcessType(e.target.value),
+              <>
+                <option value="all">All Processes</option>
+                <option value="combustion">Stationary Combustion</option>
+                <option value="mobile">Mobile Combustion</option>
+                <option value="flaring">Flaring</option>
+                <option value="venting">Venting</option>
+                <option value="fugitive">Fugitive Emissions</option>
+                <option value="pneumatic">Pneumatic Devices</option>
+                <option value="tank">Storage Tank</option>
+              </>,
+            )}
+          {selectBase(
+            "Division",
+            division,
+            (e) => setDivision(e.target.value),
+            <>
+              <option value="all">All Divisions</option>
+              {uniq("division").map((d) => (
+                <option key={d} value={d}>
+                  {d}
+                </option>
+              ))}
+            </>,
+          )}
+          {selectBase(
+            "Field",
+            field,
+            (e) => setField(e.target.value),
+            <>
+              <option value="all">All Fields</option>
+              {uniq("field").map((f) => (
+                <option key={f} value={f}>
+                  {f}
+                </option>
+              ))}
+            </>,
+          )}
+          {selectBase(
+            "Calc Method",
+            methodFilter,
+            (e) => setMethodFilter(e.target.value),
+            <>
+              <option value="all">All Methods</option>
+              <option value="custom">Custom Factor</option>
+              <option value="API">API Engine</option>
+              <option value="Location-based">Location-based</option>
+            </>,
+          )}
+          {selectBase(
+            "Group By",
+            groupBy,
+            (e) => setGroupBy(e.target.value),
+            <>
+              <option value="none">No Grouping</option>
+              <option value="facility">By Facility</option>
+              <option value="process">By Category/Process</option>
+              <option value="month">By Month</option>
+              <option value="scope">By Scope</option>
+            </>,
+          )}
+        </div>
+      </Card>
+
+      <Card>
+        <Field label="Search">
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-secondary" aria-hidden="true" />
+            <Input className="pl-9" placeholder="Search records..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
           </div>
-
-          {/* Filter Card */}
-          <div className="create-report-card">
-            <div className="card-header">
-              <div className="card-icon">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-                </svg>
-              </div>
-              <h3 className="card-title">Filter & Group Data</h3>
-            </div>
-
-            <div className="report-controls-grid">
-              <div className="control-group">
-                <label className="input-label">Inventory Scope</label>
-                <select
-                  className="component-select"
-                  value={scope}
-                  onChange={(e) => setScope(e.target.value)}
-                >
-                  <option value="all">Total Inventory (Scope 1,2,3)</option>
-                  <option value="1">Scope 1 (Direct)</option>
-                  <option value="2">Scope 2 (Indirect)</option>
-                  <option value="3">Scope 3 (Value Chain)</option>
-                </select>
-              </div>
-
-              <div className="control-group">
-                <label className="input-label">Reporting Year</label>
-                <select
-                  className="component-select"
-                  value={year}
-                  onChange={(e) => {
-                    console.log(
-                      "[Reports] User changed Year to:",
-                      e.target.value,
-                    );
-                    setYear(e.target.value);
-                  }}
-                >
-                  <option value="all">All Years</option>
-                  {availableFilters.years.map((y) => (
-                    <option key={y} value={y}>
-                      {y}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="control-group">
-                <label className="input-label">Month</label>
-                <select
-                  className="component-select"
-                  value={month}
-                  onChange={(e) => setMonth(e.target.value)}
-                >
-                  <option value="all">All Months</option>
-                  {[...Array(12)].map((_, i) => (
-                    <option key={i + 1} value={i + 1}>
-                      {new Date(0, i).toLocaleString("default", {
-                        month: "long",
-                      })}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="control-group">
-                <label className="input-label">Region (Grid)</label>
-                <select
-                  className="component-select"
-                  value={regionId}
-                  onChange={(e) => setRegionId(e.target.value)}
-                >
-                  <option value="all">All Regions</option>
-                  {facilities.map((f) => (
-                    <option key={f.id} value={f.id}>
-                      {f.name} {f.field ? ` - ${f.field}` : ""}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {scope === "1" && (
-                <div className="control-group">
-                  <label className="input-label">Process Type</label>
-                  <select
-                    className="component-select"
-                    value={processType}
-                    onChange={(e) => setProcessType(e.target.value)}
-                  >
-                    <option value="all">All Processes</option>
-                    <option value="combustion">Stationary Combustion</option>
-                    <option value="mobile">Mobile Combustion</option>
-                    <option value="flaring">Flaring</option>
-                    <option value="venting">Venting</option>
-                    <option value="fugitive">Fugitive Emissions</option>
-                    <option value="pneumatic">Pneumatic Devices</option>
-                    <option value="tank">Storage Tank</option>
-                  </select>
-                </div>
-              )}
-              <div className="control-group">
-                <label className="input-label">Division</label>
-                <select
-                  className="component-select"
-                  value={division}
-                  onChange={(e) => setDivision(e.target.value)}
-                >
-                  <option value="all">All Divisions</option>
-                  {[...new Set(facilities.map((f) => f.division))]
-                    .filter(Boolean)
-                    .map((div) => (
-                      <option key={div} value={div}>
-                        {div}
-                      </option>
-                    ))}
-                </select>
-              </div>
-              <div className="control-group">
-                <label className="input-label">Field</label>
-                <select
-                  className="component-select"
-                  value={field}
-                  onChange={(e) => setField(e.target.value)}
-                >
-                  <option value="all">All Fields</option>
-                  {[...new Set(facilities.map((f) => f.field))]
-                    .filter(Boolean)
-                    .map((fld) => (
-                      <option key={fld} value={fld}>
-                        {fld}
-                      </option>
-                    ))}
-                </select>
-              </div>
-              <div className="control-group">
-                <label className="input-label">Calc Method</label>
-                <select
-                  className="component-select"
-                  value={methodFilter}
-                  onChange={(e) => setMethodFilter(e.target.value)}
-                >
-                  <option value="all">All Methods</option>
-                  <option value="custom">Custom Factor</option>
-                  <option value="API">API Engine</option>
-                  <option value="Location-based">Location-based</option>
-                </select>
-              </div>
-              <div className="control-group">
-                <label className="input-label">Group By</label>
-                <select
-                  className="component-select"
-                  value={groupBy}
-                  onChange={(e) => setGroupBy(e.target.value)}
-                >
-                  <option value="none">No Grouping</option>
-                  <option value="facility">By Facility</option>
-                  <option value="process">By Category/Process</option>
-                  <option value="month">By Month</option>
-                  <option value="scope">By Scope</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          {/* Filters */}
-          <div className="filters-container">
-            <div className="search-input-wrapper">
-              <label className="input-label">Search</label>
-              <div style={{ position: "relative" }}>
-                <input
-                  type="text"
-                  className="search-input"
-                  placeholder="Search records..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-            </div>
-          </div>
+        </Field>
+      </Card>
 
           {/* Data Grid */}
           {loading && (
-            <div style={{ minHeight: "300px" }}>
+            <div className="min-h-[300px]!">
               <LoadingSpinner />
             </div>
           )}
 
           {!loading && emissions.length === 0 && (
             <div
-              style={{
-                textAlign: "center",
-                padding: "40px",
-                color: "var(--text-secondary)",
-              }}
+              className="text-center! p-[40px]! text-[color:var(--text-secondary)]!"
             >
               No emission records found. Adjust your filters or add new
               emissions.
@@ -996,265 +788,102 @@ const Reports = () => {
           )}
 
           {!loading && emissions.length > 0 && (
-            <div className="table-container">
-              <div className="grid-header">
-                <div className="cell">ID</div>
-                <div className="cell">Date</div>
-                <div className="cell">Scope</div>
-                <div className="cell">Division</div>
-                <div className="cell">Field</div>
-                <div className="cell">Facility</div>
-                <div className="cell">Group</div>
-                <div className="cell">Equipment</div>
-                <div className="cell">Category/Process</div>
-                <div className="cell">Fuel/Source</div>
-                <div className="cell">Factor Type</div>
-                <div className="cell cell-number">Qty</div>
-                <div className="cell cell-number">Total (tCO₂e)</div>
-                <div className="cell">Status</div>
-              </div>
-              {/* Rows (BUG-022: rendered through getGroupedData so Group By takes effect) */}
-              {(groupBy === "none"
-                ? [[null, emissions]]
-                : Object.entries(getGroupedData())
-              ).map(([groupKey, rows]) => (
-                <React.Fragment key={groupKey ?? "__all__"}>
+            <div className="flex flex-col gap-4" role="region" aria-label="Emission records">
+              {/* BUG-022: rendered through getGroupedData so Group By takes effect */}
+              {(groupBy === "none" ? [[null, emissions]] : Object.entries(getGroupedData())).map(([groupKey, rows]) => (
+                <section key={groupKey ?? "__all__"} className="flex flex-col gap-2">
                   {groupKey !== null && (
-                    <div
-                      className="grid-row grid-group-header"
-                      style={{ background: "var(--bg-hover)", fontWeight: 700 }}
-                    >
-                      <div className="cell" style={{ gridColumn: "1 / 13" }}>
-                        {groupKey}
-                        <span style={{ fontWeight: 400, marginLeft: "8px", opacity: 0.7 }}>
+                    <h3 className="m-0 flex flex-wrap items-baseline justify-between gap-2 rounded-md bg-ink-100 px-3 py-2 text-base font-semibold text-text">
+                      <span>
+                        {groupKey}{" "}
+                        <span className="font-normal text-text-secondary">
                           ({rows.length} record{rows.length === 1 ? "" : "s"} on this page)
                         </span>
-                      </div>
-                      <div
-                        className="cell cell-number cell-total"
-                        title="Subtotal of the records shown on this page"
-                      >
-                        {formatNumber(
-                          rows.reduce((sum, r) => sum + (Number(r.co2e_total) || 0), 0),
-                        )}
-                      </div>
-                      <div className="cell" style={{ fontSize: "0.75rem", opacity: 0.7 }}>
-                        Subtotal
-                      </div>
-                    </div>
+                      </span>
+                      <span title="Subtotal of the records shown on this page">
+                        Subtotal {formatNumber(rows.reduce((sum, r) => sum + (Number(r.co2e_total) || 0), 0))} tCO₂e
+                      </span>
+                    </h3>
                   )}
-              {rows.map((row) => (
-                <div key={row.id} className="grid-row">
-                  <div
-                    className="cell"
-                    style={{ fontSize: "0.75rem", opacity: 0.7 }}
-                  >
-                    {row.id}
-                  </div>
-                  <div className="cell">
-                    {row.month}/{row.year}
-                  </div>
-                  <div className="cell">
-                    <span className={`scope-badge scope-${row.scope}`}>
-                      Scope {row.scope}
-                    </span>
-                  </div>
-                  <div className="cell">{row.division || "N/A"}</div>
-                  <div className="cell">{row.field || "N/A"}</div>
-                  <div className="cell">{row.facility_name || "N/A"}</div>
-                  <div className="cell">{row.group_name || "N/A"}</div>
-                  <div className="cell">{row.equipment_id || "N/A"}</div>
-                  <div className="cell" style={{ fontWeight: 500 }}>
-                    {row.process_type}
-                  </div>
-                  <div className="cell">{row.fuel || "N/A"}</div>
-                  <div className="cell" style={{ fontSize: "0.85rem" }}>
-                    {row.factor_type || "N/A"}
-                  </div>
-                  <div className="cell cell-number">
-                    {row.amount ? formatNumber(row.amount) : "-"}
-                    <span
-                      style={{
-                        fontSize: "0.7rem",
-                        marginLeft: "4px",
-                        opacity: 0.7,
-                      }}
-                    >
-                      {row.unit}
-                    </span>
-                  </div>
-                  <div
-                    className="cell cell-number cell-total"
-                    style={{ color: "var(--primary-color)", fontWeight: 700 }}
-                  >
-                    {/* BUG-UI-06 FIX: Show '—' for null instead of misleading '0.00' */}
-                    {row.co2e_total != null
-                      ? formatNumber(row.co2e_total)
-                      : "—"}
-                  </div>
-                  <div className="cell">
-                    <span
-                      style={{
-                        fontSize: "0.8rem",
-                        padding: "2px 8px",
-                        borderRadius: "4px",
-                        background: "rgba(16, 185, 129, 0.1)",
-                        color: "#10b981",
-                      }}
-                    >
-                      {row.status || "Verified"}
-                    </span>
-                  </div>
-                </div>
-              ))}
-                </React.Fragment>
+                  <DataTable
+                    tableId="reports"
+                    caption={groupKey ?? "Emission records"}
+                    columns={RECORD_COLUMNS}
+                    data={rows}
+                    getRowId={(r) => String(r.id)}
+                    pageSize={Math.max(rows.length, 1)}
+                    showPagination={false}
+                    showColumnMenu={groupKey === null}
+                  />
+                </section>
               ))}
             </div>
           )}
 
-          {!loading && totalPages > 1 && (
-            <div className="pagination-wrapper">
-              <button
-                className="btn-page"
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-              >
-                Previous
-              </button>
-              <span
-                style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }}
-              >
-                Page {page} of {totalPages} ({totalRecords} records)
-              </span>
-              <button
-                className="btn-page"
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page === totalPages}
-              >
-                Next
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
 
-      {showConfigModal && (
-        <div className="modal-overlay">
-          <div className="modal-content" style={{ maxWidth: '560px' }}>
-            <div className="modal-header">
-              <h2>Generate Executive GHG Report</h2>
-              <button className="close-btn" onClick={() => setShowConfigModal(false)}>×</button>
-            </div>
-            <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div className="input-group">
-                <label style={{ fontWeight: 600 }}>Select Report Format</label>
-                <div style={{ display: 'flex', gap: '10px', marginTop: '6px' }}>
-                  <button
-                    type="button"
-                    onClick={() => setReportFormat("master")}
-                    style={{
-                      flex: 1,
-                      padding: '10px 14px',
-                      borderRadius: '8px',
-                      border: reportFormat === "master" ? '2px solid #f97316' : '1px solid #cbd5e1',
-                      background: reportFormat === "master" ? '#fff7ed' : '#ffffff',
-                      color: reportFormat === "master" ? '#c2410c' : '#475569',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      textAlign: 'left',
-                      fontSize: '0.85rem'
-                    }}
-                  >
-                    🏆 2025 Master Analytical Report (Vertical A4, 15 Charts, 18 Tables)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setReportFormat("iso")}
-                    style={{
-                      flex: 1,
-                      padding: '10px 14px',
-                      borderRadius: '8px',
-                      border: reportFormat === "iso" ? '2px solid var(--primary-color, #2563eb)' : '1px solid #cbd5e1',
-                      background: reportFormat === "iso" ? '#eff6ff' : '#ffffff',
-                      color: reportFormat === "iso" ? '#1d4ed8' : '#475569',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      textAlign: 'left',
-                      fontSize: '0.85rem'
-                    }}
-                  >
-                    📋 ISO 14064-1 Compliance Report
-                  </button>
-                </div>
-              </div>
-
-              {reportFormat === "master" ? (
-                <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                  <h4 style={{ margin: '0 0 6px 0', color: '#0f172a', fontSize: '0.9rem' }}>
-                    Authentic Groupement Berkine (HBNS & El Merk) 2021–2025
-                  </h4>
-                  <ul style={{ margin: '0', paddingLeft: '20px', fontSize: '0.8rem', color: '#475569', lineHeight: '1.5' }}>
-                    <li><strong>Vertical A4 Portrait</strong> format (25 publication pages).</li>
-                    <li><strong>15 High-Resolution Charts (300 DPI)</strong>: Scopes 1 & 2, SANGEA modules, 2030 decarbonization target trajectory (-25%), methane abatement (-76.7%), routine vs safety flaring, intensities, JV equity allocation, and Criteria Air Pollutants.</li>
-                    <li><strong>18 Multi-Year Appendix Tables</strong>: Complete raw tables A.1 through A.16 matching Groupement Berkine's corporate reporting standards.</li>
-                  </ul>
-                </div>
-              ) : (
-                <>
-                  <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-                    To ensure 100% compliance with ISO 14064-1, please provide the following mandatory declarations before generating the report.
-                  </p>
-                  <div className="input-group">
-                    <label>Exclusion Criteria (Significance)</label>
-                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>
-                      Document the criteria used to define which indirect emissions are significant and justify any exclusions.
-                    </p>
-                    <textarea
-                      value={exclusionCriteria}
-                      onChange={(e) => setExclusionCriteria(e.target.value)}
-                      rows={2}
-                      style={{ width: '100%', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '4px', resize: 'vertical' }}
-                    />
-                  </div>
-                  <div className="input-group">
-                    <label>Verification Status</label>
-                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>
-                      State whether the report has been verified, the type of verification, and the level of assurance.
-                    </p>
-                    <input
-                      type="text"
-                      value={verificationStatus}
-                      onChange={(e) => setVerificationStatus(e.target.value)}
-                      style={{ width: '100%', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '4px' }}
-                    />
-                  </div>
-                  <div className="input-group">
-                    <label>GWP Metric Standard</label>
-                    <select
-                      className="component-select"
-                      value={reportGwpStandard}
-                      onChange={(e) => { gwpTouched.current = true; setReportGwpStandard(e.target.value); }}
-                      style={{ width: '100%', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '4px' }}
-                    >
-                      <option value="AR5">{`${gwpOptionLabel("AR5", "100")} — Default`}</option>
-                      <option value="AR6">{gwpOptionLabel("AR6", "100")}</option>
-                      <option value="AR4">{gwpOptionLabel("AR4", "100")}</option>
-                      <option value="20yr">{gwpOptionLabel("AR5", "20")}</option>
-                    </select>
-                  </div>
-                </>
-              )}
-            </div>
-            <div className="modal-footer" style={{ marginTop: '24px', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
-              <button className="btn-secondary" onClick={() => setShowConfigModal(false)}>Cancel</button>
-              <button className="btn-primary" onClick={handleGenerateModalReport} disabled={loading} style={{ background: reportFormat === 'master' ? 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)' : undefined, border: 'none' }}>
-                {loading ? "Generating..." : reportFormat === 'master' ? "Download Master Report (PDF)" : "Generate ISO PDF"}
-              </button>
-            </div>
-          </div>
+      {!loading && totalPages > 1 && (
+        <div className="flex items-center justify-between gap-3 border-t border-border px-6 py-4">
+          <Button variant="secondary" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
+            Previous
+          </Button>
+          <span className="text-sm text-text-secondary">
+            Page {page} of {totalPages} ({totalRecords} records)
+          </span>
+          <Button variant="secondary" onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}>
+            Next
+          </Button>
         </div>
       )}
-    </div>
+
+      <Dialog
+        open={showConfigModal}
+        onOpenChange={(o) => !o && setShowConfigModal(false)}
+        title="Generate Executive GHG Report"
+        maxWidth="35rem"
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setShowConfigModal(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleGenerateModalReport} loading={loading} disabled={loading}>
+              {loading ? "Generating..." : reportFormat === "master" ? "Download Master Report (PDF)" : "Generate ISO PDF"}
+            </Button>
+          </>
+        }
+      >
+        <div className="flex flex-col gap-4">
+          <SegmentedControl label="Report format" value={reportFormat} onChange={setReportFormat} options={FORMATS} className="flex-col sm:flex-row" />
+
+          {reportFormat === "master" ? (
+            <div className="rounded-md border border-border bg-ink-50 p-3.5">
+              <h4 className="m-0 mb-1.5 text-base font-semibold text-text">Authentic Groupement Berkine (HBNS &amp; El Merk) 2021–2025</h4>
+              <ul className="m-0 flex list-disc flex-col gap-1 pl-5 text-sm leading-normal text-text-secondary">
+                <li>
+                  <strong>Vertical A4 Portrait</strong> format (25 publication pages).
+                </li>
+                <li>
+                  <strong>15 High-Resolution Charts (300 DPI)</strong>: Scopes 1 &amp; 2, SANGEA modules, 2030 decarbonization target trajectory (-25%), methane abatement (-76.7%), routine flaring reduction and more.
+                </li>
+                <li>
+                  <strong>18 Multi-Year Appendix Tables</strong>: Complete raw tables A.1 through A.16 matching Groupement Berkine&apos;s corporate reporting standards.
+                </li>
+              </ul>
+            </div>
+          ) : (
+            <>
+              <p className="m-0 text-sm text-text-secondary">To ensure 100% compliance with ISO 14064-1, please provide the following mandatory declarations before generating the report.</p>
+              <Field label="Exclusion Criteria (Significance)" hint="Document the criteria used to define which indirect emissions are significant and justify any exclusions.">
+                <Textarea rows={2} value={exclusionCriteria} onChange={(e) => setExclusionCriteria(e.target.value)} />
+              </Field>
+              <Field label="Verification Status" hint="State whether the report has been verified, the type of verification, and the level of assurance.">
+                <Input value={verificationStatus} onChange={(e) => setVerificationStatus(e.target.value)} />
+              </Field>
+              {selectBase("GWP Metric Standard", reportGwpStandard, onGwp, gwpOptions(" — Default"))}
+            </>
+          )}
+        </div>
+      </Dialog>
+    </Page>
   );
 };
 

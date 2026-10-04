@@ -1,4 +1,6 @@
 import React, { useEffect } from "react";
+import { Input, Field } from "../../ui";
+import { NativeSelect } from "../../ui/NativeSelect";
 import CustomDropdown from "../CustomDropdown";
 import { API_FACTORS } from "../../utils/EmissionFactors";
 
@@ -63,24 +65,21 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
   return (
     <div className="combustion-form">
       <div className="form-grid-2">
-        <div className="input-group">
-          <label>
-            {isFlaring
+        <Field className="input-group" label={<>{isFlaring
               ? "Gas Volume Flared"
               : data.process_type === "loading"
                 ? "Volume Loaded"
                 : data.process_type === "separation"
                   ? "Volume treated"
-                  : "Quantity"}
-          </label>
-          <input
+                  : "Quantity"}</>}>
+<Input
             type="number"
-            className="mole-input"
+           
             value={data.amount || ""}
             onChange={(e) => onChange("amount", e.target.value)}
             placeholder="0.00"
           />
-        </div>
+</Field>
 
         <div className="input-group">
           <label>Unit</label>
@@ -94,28 +93,28 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
 
       {/* HHV — required in specific (Tier 3) mode */}
       {needsHHV && sourceType === "specific" && (
-        <div className="s1-block" style={{ marginTop: "14px" }}>
-          <div className="form-grid-2" style={{ gap: "10px" }}>
-            <div className="input-group" style={{ marginBottom: 0 }}>
-              <label style={{ fontSize: "0.75rem" }}>
+        <div className="[margin-bottom:12px] mt-[14px]!">
+          <div className="form-grid-2 gap-[10px]!">
+            <div className="input-group mb-[0px]!">
+              <label className="text-[length:0.75rem]!">
                 HHV
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
               </label>
-              <input
+              <Input
                 id="hhv-input"
                 type="number"
-                className="mole-input"
+               
                 value={data.hhv || ""}
                 onChange={(e) => onChange("hhv", e.target.value)}
                 placeholder={
                   isFlaring ? "e.g. 983 (natural gas)" : "e.g. 1020 (BTU/scf)"
                 }
-                style={{ borderColor: !data.hhv ? "#fbbf24" : "#d1fae5" }}
+                className={`${!data.hhv ? "[border-color:#fbbf24]!" : "[border-color:#d1fae5]!"}`}
               />
             </div>
-            <div className="input-group" style={{ marginBottom: 0 }}>
-              <label style={{ fontSize: "0.75rem" }}>HHV Unit</label>
-              <select
+            <div className="input-group mb-[0px]!">
+              <label className="text-[length:0.75rem]!">HHV Unit</label>
+              <NativeSelect
                 className="component-select"
                 value={data.hhv_unit || "BTU/scf"}
                 onChange={(e) => onChange("hhv_unit", e.target.value)}
@@ -127,27 +126,27 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
                 <option value="BTU/gal">BTU/gal</option>
                 <option value="BTU/lb">BTU/lb</option>
                 <option value="kcal/m3">kcal/m³</option>
-              </select>
+              </NativeSelect>
             </div>
           </div>
 
           {/* Combustion efficiency — required for stationary combustion */}
           {isCombustion && (
             <div
-              className="input-group"
-              style={{ marginTop: "10px", marginBottom: 0 }}
+              className="input-group mt-[10px]! mb-[0px]!"
+             
             >
-              <label style={{ fontSize: "0.75rem" }}>
+              <label className="text-[length:0.75rem]!">
                 Combustion efficiency
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
               </label>
               <div
-                style={{ display: "flex", gap: "8px", alignItems: "center" }}
+                className="flex! gap-[8px]! items-center!"
               >
-                <input
+                <Input
                   id="combustion-efficiency-input"
                   type="number"
-                  className="mole-input"
+                 
                   min="0"
                   max="100"
                   step="0.1"
@@ -169,11 +168,7 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
                   }}
                 />
                 <span
-                  style={{
-                    fontSize: "0.8rem",
-                    color: "#6b7280",
-                    whiteSpace: "nowrap",
-                  }}
+                  className="text-[length:0.8rem]! text-[color:#6b7280]! whitespace-nowrap!"
                 >
                   %
                 </span>
@@ -183,10 +178,10 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
 
           {/* Flare type & CH4 content for flaring */}
           {isFlaring && (
-            <div className="form-grid-2" style={{ gap: "10px", marginTop: "10px" }}>
-              <div className="input-group" style={{ marginBottom: 0 }}>
-                <label style={{ fontSize: "0.75rem" }}>Flare Type</label>
-                <select
+            <div className="form-grid-2 gap-[10px]! mt-[10px]!">
+              <div className="input-group mb-[0px]!">
+                <label className="text-[length:0.75rem]!">Flare Type</label>
+                <NativeSelect
                   className="component-select"
                   value={data.flare_type || "elevated"}
                   onChange={(e) => onChange("flare_type", e.target.value)}
@@ -196,17 +191,17 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
                     Enclosed Ground Flare (η_d=99.5%)
                   </option>
                   <option value="pit">Pit / Open Burn (η_d=95%)</option>
-                </select>
+                </NativeSelect>
               </div>
-              <div className="input-group" style={{ marginBottom: 0 }}>
-                <label style={{ fontSize: "0.75rem" }}>
+              <div className="input-group mb-[0px]!">
+                <label className="text-[length:0.75rem]!">
                   CH₄ (%)
-                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+                  <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
                 </label>
-                <input
+                <Input
                   id="flare-ch4-input"
                   type="number"
-                  className="mole-input"
+                 
                   min="0"
                   max="100"
                   step="0.1"
@@ -221,14 +216,14 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
           {/* Operating conditions: a gas volume in m3 / cf read at these conditions is
               converted to standard conditions (scf and Sm3 are already standard) */}
           <div
-            className="form-grid-2"
-            style={{ gap: "10px", marginTop: "10px" }}
+            className="form-grid-2 gap-[10px]! mt-[10px]!"
+           
           >
-            <div className="input-group" style={{ marginBottom: 0 }}>
-              <label style={{ fontSize: "0.75rem" }}>Operating Temp (°F)</label>
-              <input
+            <div className="input-group mb-[0px]!">
+              <label className="text-[length:0.75rem]!">Operating Temp (°F)</label>
+              <Input
                 type="number"
-                className="mole-input"
+               
                 value={
                   data.operating_temperature !== undefined
                     ? data.operating_temperature
@@ -241,13 +236,13 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
                 placeholder="Def: 60°F"
               />
             </div>
-            <div className="input-group" style={{ marginBottom: 0 }}>
-              <label style={{ fontSize: "0.75rem" }}>
+            <div className="input-group mb-[0px]!">
+              <label className="text-[length:0.75rem]!">
                 Pressure (psia)
               </label>
-              <input
+              <Input
                 type="number"
-                className="mole-input"
+               
                 value={
                   data.operating_pressure !== undefined
                     ? data.operating_pressure

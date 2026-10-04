@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Input, Field } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
 import { FieldGrid, Segmented } from "./ui";
 
@@ -132,18 +133,17 @@ const RATE_UNITS = [
 ];
 
 const Num = ({ label, field, data, onChange, placeholder }) => (
-  <div className="input-group">
-    <label>{label}</label>
-    <input
+  <Field className="input-group" label={<>{label}</>}>
+<Input
       type="number"
       min="0"
       step="any"
-      className="mole-input"
+     
       value={data[field] ?? ""}
       onChange={(e) => onChange(field, e.target.value)}
       placeholder={placeholder}
     />
-  </div>
+</Field>
 );
 
 const Pick = ({ label, field, options, data, onChange }) => (
@@ -224,7 +224,7 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
   // ==========================================================================
 
   return (
-    <div className="fugitives-form-v2" style={{ fontFamily: "inherit" }}>
+    <div className="fugitives-form-v2 [font-family:inherit]!">
       {/* HEADER WITH ONSHORE BADGE */}
 
       {/* METHODOLOGY TIER SELECTOR */}
@@ -233,8 +233,8 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
       {/* TIER 1 INPUTS: FACILITY-LEVEL (TABLES 7-1, 7-2)                      */}
       {/* ==================================================================== */}
       {activeTier === "tier1" && (
-        <div className="s1-block">
-          <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1.5fr", gap: "12px" }}>
+        <div className="[margin-bottom:12px]">
+          <div className="grid gap-[12px] [grid-template-columns:2fr_1fr_1.5fr] max-[600px]:[grid-template-columns:1fr]">
             <div className="input-group">
               <label>Facility Type</label>
               <CustomDropdown
@@ -251,18 +251,17 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
               />
             </div>
 
-            <div className="input-group">
-              <label>Production Volume</label>
-              <input
+            <Field className="input-group" label="Production Volume">
+<Input
                 type="number"
                 min="0"
                 step="any"
-                className="mole-input"
+               
                 value={data.amount ?? ""}
                 onChange={(e) => onChange("amount", e.target.value)}
                 placeholder="e.g. 120000"
               />
-            </div>
+</Field>
 
             <div className="input-group">
               <label>Production Unit</label>
@@ -280,8 +279,8 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
       {/* TIER 2 INPUTS: EQUIPMENT OR COMPONENT POPULATION                     */}
       {/* ==================================================================== */}
       {activeTier === "tier2" && (
-        <div className="s1-block">
-          <div style={{ marginBottom: "16px" }}>
+        <div className="[margin-bottom:12px]">
+          <div className="mb-[16px]!">
             <Segmented
               ariaLabel="Tier 2 method"
               value={tier2SubMethod}
@@ -300,7 +299,7 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
 
           {/* Tier 2A: Equipment Count Form */}
           {tier2SubMethod === "equipment" && (
-            <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1.2fr 0.8fr 1.2fr", gap: "12px" }}>
+            <div className="grid gap-[12px] [grid-template-columns:1.2fr_1.2fr_0.8fr_1.2fr] max-[600px]:[grid-template-columns:1fr]">
               <div className="input-group">
                 <label>Industry Segment / Table</label>
                 <CustomDropdown
@@ -372,8 +371,8 @@ const FugitivesForm = ({ data = {}, onChange, sourceType = "default" }) => {
       {/* TIER 3 INPUTS: DETECTION & MEASUREMENT                               */}
       {/* ==================================================================== */}
       {activeTier === "tier3" && (
-        <div className="s1-block">
-          <div style={{ marginBottom: "16px" }}>
+        <div className="[margin-bottom:12px]">
+          <div className="mb-[16px]!">
             <Segmented
               ariaLabel="Tier 3 method"
               value={tier3Method}

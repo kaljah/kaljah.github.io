@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { Input } from "../ui";
+import { NativeSelect } from "../ui/NativeSelect";
 import { X, PlusCircle, CheckCircle2, AlertCircle, FileText } from "lucide-react";
 import api from "../api";
 import { useToast } from "./Toast";
@@ -89,7 +91,7 @@ const QuickAddCustomFactorModal = ({
   };
 
   return (
-    <div
+    <div role="presentation"
       className="modal-overlay"
       style={{
         position: "fixed",
@@ -123,35 +125,19 @@ const QuickAddCustomFactorModal = ({
       >
         {/* Header */}
         <div
-          style={{
-            padding: "16px 20px",
-            borderBottom: "1px solid #e5e7eb",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            background: "#f9fafb",
-          }}
+          className="p-[16px_20px]! [border-bottom:1px_solid_#e5e7eb]! flex! items-center! justify-between! bg-[color:#f9fafb]!"
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <div className="flex! items-center! gap-[8px]!">
             <div
-              style={{
-                width: "32px",
-                height: "32px",
-                borderRadius: "8px",
-                background: "rgba(255, 102, 0, 0.1)",
-                color: "var(--accent-color, #ff6600)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
+              className="w-[32px]! h-[32px]! rounded-[8px]! bg-[color:rgba(255,_102,_0,_0.1)]! text-[color:var(--color-link)]! flex! items-center! justify-center!"
             >
               <PlusCircle size={18} />
             </div>
             <div>
-              <h3 style={{ margin: 0, fontSize: "1rem", fontWeight: 600, color: "#111827" }}>
+              <h3 className="m-[0px]! text-[length:1rem]! font-semibold! text-[color:#111827]!">
                 Register Tier 2 Custom Factor
               </h3>
-              <p style={{ margin: 0, fontSize: "0.75rem", color: "#6b7280" }}>
+              <p className="m-[0px]! text-[length:0.75rem]! text-[color:#6b7280]!">
                 Add a site-calibrated or supplier emission factor without leaving this form
               </p>
             </div>
@@ -160,21 +146,14 @@ const QuickAddCustomFactorModal = ({
             type="button"
             onClick={onClose}
             disabled={loading}
-            style={{
-              border: "none",
-              background: "transparent",
-              color: "#9ca3af",
-              cursor: "pointer",
-              padding: "4px",
-              borderRadius: "4px",
-            }}
+            className="[border:none]! bg-[color:transparent]! text-[color:#9ca3af]! cursor-pointer! p-[4px]! rounded-[4px]!"
           >
             <X size={20} />
           </button>
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} style={{ padding: "20px" }}>
+        <form onSubmit={handleSubmit} className="p-[20px]!">
           {error && (
             <div
               style={{
@@ -195,24 +174,18 @@ const QuickAddCustomFactorModal = ({
             </div>
           )}
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+          <div className="flex! flex-col! gap-[14px]!">
             {/* Factor Name */}
             <div>
               <label
-                style={{
-                  display: "block",
-                  fontSize: "0.75rem",
-                  fontWeight: 600,
-                  color: "#374151",
-                  marginBottom: "4px",
-                }}
+                className="block! text-[length:0.75rem]! font-semibold! text-[color:#374151]! mb-[4px]!"
               >
-                Factor Name <span style={{ color: "#ef4444" }}>*</span>
+                Factor Name <span className="text-[color:#b91c1c]!">*</span>
               </label>
-              <input
+              <Input
                 type="text"
-                className="mole-input"
-                style={{ width: "100%", padding: "8px 10px", fontSize: "0.85rem" }}
+               
+                className="w-full! p-[8px_10px]! text-[length:0.85rem]!"
                 placeholder="e.g. Hassi R'Mel Fuel Gas 2026, Skikda Distillate"
                 value={formData.factor_name}
                 onChange={(e) => handleChange("factor_name", e.target.value)}
@@ -224,19 +197,13 @@ const QuickAddCustomFactorModal = ({
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
               <div>
                 <label
-                  style={{
-                    display: "block",
-                    fontSize: "0.75rem",
-                    fontWeight: 600,
-                    color: "#374151",
-                    marginBottom: "4px",
-                  }}
+                  className="block! text-[length:0.75rem]! font-semibold! text-[color:#374151]! mb-[4px]!"
                 >
-                  Factor Unit <span style={{ color: "#ef4444" }}>*</span>
+                  Factor Unit <span className="text-[color:#b91c1c]!">*</span>
                 </label>
-                <select
-                  className="mole-input"
-                  style={{ width: "100%", padding: "8px 10px", fontSize: "0.85rem" }}
+                <NativeSelect
+                  className="mole-input w-full! p-[8px_10px]! text-[length:0.85rem]!"
+                 
                   value={formData.unit}
                   onChange={(e) => handleChange("unit", e.target.value)}
                 >
@@ -247,25 +214,19 @@ const QuickAddCustomFactorModal = ({
                   <option value="kg/gal">kg / Gallon (Liquid fuel)</option>
                   <option value="kg/kg">kg / kg (Mass basis)</option>
                   <option value="tonne/tonne">tonne / tonne (Mass basis)</option>
-                </select>
+                </NativeSelect>
               </div>
 
               <div>
                 <label
-                  style={{
-                    display: "block",
-                    fontSize: "0.75rem",
-                    fontWeight: 600,
-                    color: "#374151",
-                    marginBottom: "4px",
-                  }}
+                  className="block! text-[length:0.75rem]! font-semibold! text-[color:#374151]! mb-[4px]!"
                 >
                   Parent / Reference Fuel
                 </label>
-                <input
+                <Input
                   type="text"
-                  className="mole-input"
-                  style={{ width: "100%", padding: "8px 10px", fontSize: "0.85rem" }}
+                 
+                  className="w-full! p-[8px_10px]! text-[length:0.85rem]!"
                   placeholder="e.g. Natural Gas, Diesel"
                   value={formData.parent_fuel}
                   onChange={(e) => handleChange("parent_fuel", e.target.value)}
@@ -275,42 +236,25 @@ const QuickAddCustomFactorModal = ({
 
             {/* Gas Emission Factors */}
             <div
-              style={{
-                background: "#f9fafb",
-                border: "1px solid #e5e7eb",
-                borderRadius: "8px",
-                padding: "12px",
-              }}
+              className="bg-[color:#f9fafb]! [border:1px_solid_#e5e7eb]! rounded-[8px]! p-[12px]!"
             >
               <div
-                style={{
-                  fontSize: "0.75rem",
-                  fontWeight: 600,
-                  color: "#4b5563",
-                  marginBottom: "8px",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.025em",
-                }}
+                className="text-[length:0.75rem]! font-semibold! text-[color:#4b5563]! mb-[8px]! uppercase! [letter-spacing:0.025em]!"
               >
                 Emission Factors ({formData.unit})
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px" }}>
                 <div>
                   <label
-                    style={{
-                      display: "block",
-                      fontSize: "0.7rem",
-                      color: "#6b7280",
-                      marginBottom: "2px",
-                    }}
+                    className="block! text-[length:0.7rem]! text-[color:#6b7280]! mb-[2px]!"
                   >
                     CO₂ Factor
                   </label>
-                  <input
+                  <Input
                     type="number"
                     step="any"
-                    className="mole-input"
-                    style={{ width: "100%", padding: "6px 8px", fontSize: "0.85rem" }}
+                   
+                    className="w-full! p-[6px_8px]! text-[length:0.85rem]!"
                     placeholder="e.g. 53.06"
                     value={formData.co2_factor}
                     onChange={(e) => handleChange("co2_factor", e.target.value)}
@@ -318,20 +262,15 @@ const QuickAddCustomFactorModal = ({
                 </div>
                 <div>
                   <label
-                    style={{
-                      display: "block",
-                      fontSize: "0.7rem",
-                      color: "#6b7280",
-                      marginBottom: "2px",
-                    }}
+                    className="block! text-[length:0.7rem]! text-[color:#6b7280]! mb-[2px]!"
                   >
                     CH₄ Factor
                   </label>
-                  <input
+                  <Input
                     type="number"
                     step="any"
-                    className="mole-input"
-                    style={{ width: "100%", padding: "6px 8px", fontSize: "0.85rem" }}
+                   
+                    className="w-full! p-[6px_8px]! text-[length:0.85rem]!"
                     placeholder="e.g. 0.001"
                     value={formData.ch4_factor}
                     onChange={(e) => handleChange("ch4_factor", e.target.value)}
@@ -339,20 +278,15 @@ const QuickAddCustomFactorModal = ({
                 </div>
                 <div>
                   <label
-                    style={{
-                      display: "block",
-                      fontSize: "0.7rem",
-                      color: "#6b7280",
-                      marginBottom: "2px",
-                    }}
+                    className="block! text-[length:0.7rem]! text-[color:#6b7280]! mb-[2px]!"
                   >
                     N₂O Factor
                   </label>
-                  <input
+                  <Input
                     type="number"
                     step="any"
-                    className="mole-input"
-                    style={{ width: "100%", padding: "6px 8px", fontSize: "0.85rem" }}
+                   
+                    className="w-full! p-[6px_8px]! text-[length:0.85rem]!"
                     placeholder="e.g. 0.0001"
                     value={formData.n2o_factor}
                     onChange={(e) => handleChange("n2o_factor", e.target.value)}
@@ -365,21 +299,15 @@ const QuickAddCustomFactorModal = ({
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
               <div>
                 <label
-                  style={{
-                    display: "block",
-                    fontSize: "0.75rem",
-                    fontWeight: 600,
-                    color: "#374151",
-                    marginBottom: "4px",
-                  }}
+                  className="block! text-[length:0.75rem]! font-semibold! text-[color:#374151]! mb-[4px]!"
                 >
                   Heating Value (HHV)
                 </label>
-                <input
+                <Input
                   type="number"
                   step="any"
-                  className="mole-input"
-                  style={{ width: "100%", padding: "8px 10px", fontSize: "0.85rem" }}
+                 
+                  className="w-full! p-[8px_10px]! text-[length:0.85rem]!"
                   placeholder="e.g. 1085 (Btu/scf)"
                   value={formData.hhv_factor}
                   onChange={(e) => handleChange("hhv_factor", e.target.value)}
@@ -388,35 +316,22 @@ const QuickAddCustomFactorModal = ({
 
               <div>
                 <label
-                  style={{
-                    display: "block",
-                    fontSize: "0.75rem",
-                    fontWeight: 600,
-                    color: "#374151",
-                    marginBottom: "4px",
-                  }}
+                  className="block! text-[length:0.75rem]! font-semibold! text-[color:#374151]! mb-[4px]!"
                 >
                   Factor Uncertainty (±%)
                 </label>
-                <div style={{ position: "relative" }}>
-                  <input
+                <div className="relative!">
+                  <Input
                     type="number"
                     step="0.1"
-                    className="mole-input"
-                    style={{ width: "100%", padding: "8px 10px", fontSize: "0.85rem" }}
+                   
+                    className="w-full! p-[8px_10px]! text-[length:0.85rem]!"
                     placeholder="7.0"
                     value={formData.uncertainty}
                     onChange={(e) => handleChange("uncertainty", e.target.value)}
                   />
                   <span
-                    style={{
-                      position: "absolute",
-                      right: "10px",
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      fontSize: "0.75rem",
-                      color: "#9ca3af",
-                    }}
+                    className="[position:absolute]! [right:10px]! [top:50%]! [transform:translateY(-50%)]! text-[length:0.75rem]! text-[color:#9ca3af]!"
                   >
                     % (Tier 2 default: ±7%)
                   </span>
@@ -427,20 +342,14 @@ const QuickAddCustomFactorModal = ({
             {/* Audit Reference / Source */}
             <div>
               <label
-                style={{
-                  display: "block",
-                  fontSize: "0.75rem",
-                  fontWeight: 600,
-                  color: "#374151",
-                  marginBottom: "4px",
-                }}
+                className="block! text-[length:0.75rem]! font-semibold! text-[color:#374151]! mb-[4px]!"
               >
                 Data Source / Lab Certificate Reference
               </label>
-              <input
+              <Input
                 type="text"
-                className="mole-input"
-                style={{ width: "100%", padding: "8px 10px", fontSize: "0.85rem" }}
+               
+                className="w-full! p-[8px_10px]! text-[length:0.85rem]!"
                 placeholder="e.g. Sonatrach Analysis Certificate #2026-GC-041, Naftal Slip"
                 value={formData.source}
                 onChange={(e) => handleChange("source", e.target.value)}
@@ -450,35 +359,22 @@ const QuickAddCustomFactorModal = ({
 
           {/* Footer Actions */}
           <div
-            style={{
-              marginTop: "20px",
-              paddingTop: "14px",
-              borderTop: "1px solid #e5e7eb",
-              display: "flex",
-              justifyContent: "flex-end",
-              gap: "10px",
-            }}
+            className="mt-[20px]! pt-[14px]! [border-top:1px_solid_#e5e7eb]! flex! justify-end! gap-[10px]!"
           >
             <button
               type="button"
-              className="btn btn-secondary"
+              className="btn btn-secondary p-[8px_16px]! text-[length:0.85rem]!"
               onClick={onClose}
               disabled={loading}
-              style={{ padding: "8px 16px", fontSize: "0.85rem" }}
+             
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="btn btn-primary"
+              className="btn btn-primary p-[8px_20px]! text-[length:0.85rem]! flex! items-center! gap-[6px]!"
               disabled={loading}
-              style={{
-                padding: "8px 20px",
-                fontSize: "0.85rem",
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-              }}
+             
             >
               {loading ? (
                 "Saving..."

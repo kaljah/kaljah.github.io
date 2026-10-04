@@ -2,6 +2,7 @@
 // (Section 6), measured / engineered gas volumes, and combustion / waste-gas methods
 // (Sections 4 and 5). The server routes on activity_key, vent_method and combustion_method.
 import React, { useEffect, useState } from "react";
+import { Input, Field } from "../../ui";
 import api from "../../api";
 import CustomDropdown from "../CustomDropdown";
 import { FieldGrid, MoreOptions, Segmented } from "./ui";
@@ -9,36 +10,33 @@ import { applyChoice, currentChoice, sectionChoices } from "./methodChoices";
 
 // ---------------------------------------------------------------------------
 const Num = ({ label, field, data, onChange, placeholder, required }) => (
-  <div className="input-group">
-    <label>
-      {label}
-      {required && <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>}
-    </label>
-    <input
+  <Field className="input-group" label={<>{label}
+      {required && <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>}</>}>
+<Input
       type="number"
       min="0"
       step="any"
-      className="mole-input"
+     
       value={data[field] ?? ""}
       onChange={(e) => onChange(field, e.target.value)}
       placeholder={placeholder}
       required={required}
     />
-  </div>
+</Field>
 );
 
 const NumUnit = ({ label, field, unitField, units, data, onChange, placeholder, required }) => (
   <div className="input-group">
     <label>
       {label}
-      {required && <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>}
+      {required && <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>}
     </label>
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 110px", gap: "8px" }}>
-      <input
+    <div className="grid gap-[8px] [grid-template-columns:1fr_110px] max-[600px]:[grid-template-columns:1fr]">
+      <Input
         type="number"
         min="0"
         step="any"
-        className="mole-input"
+       
         value={data[field] ?? ""}
         onChange={(e) => {
           onChange(field, e.target.value);
@@ -105,10 +103,10 @@ export function ActivityFactorForm({ processType, data, onChange }) {
   };
 
   return (
-    <div className="s1-stack">
+    <div className="[display:grid] [grid-template-columns:1fr] [gap:16px]">
       <div className="input-group">
         <label>
-          Source<span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+          Source<span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
         </label>
         <CustomDropdown
           options={rows.map((r) => ({ value: r.key, label: r.label }))}
@@ -150,7 +148,7 @@ export function VentedGasForm({ data, onChange }) {
   const canFlare = ["volume", "gor", "rate_days", "actual"].includes(m);
   const noComposition = ["co2_mass", "agr_balance", "thc_mass", "reported_mass"].includes(m);
   return (
-    <div className="s1-stack">
+    <div className="[display:grid] [grid-template-columns:1fr] [gap:16px]">
       {m === "volume" && (
         <FieldGrid>
           <NumUnit label="Gas volume" field="gas_volume" unitField="gas_volume_unit" units={GAS_UNITS} data={data} onChange={onChange} required />
@@ -253,7 +251,7 @@ export function CombustionMethodForm({ data, onChange }) {
   const energyBy = data.energy_basis || "fuel";
 
   return (
-    <div className="s1-stack">
+    <div className="[display:grid] [grid-template-columns:1fr] [gap:16px]">
       {m === "carbon_content" && (
         <FieldGrid min={170}>
           <NumUnit label="Fuel burned" field="fuel_volume" unitField="fuel_volume_unit" units={LIQ_UNITS.map((u) => u.toLowerCase())} data={data} onChange={onChange} required />
@@ -265,7 +263,7 @@ export function CombustionMethodForm({ data, onChange }) {
         <>
           <div className="input-group">
             <label>
-              Equipment<span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+              Equipment<span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
             </label>
             <CustomDropdown
               options={equip.map((e) => ({ value: e.key, label: e.label }))}
@@ -429,7 +427,7 @@ export function SectionMethodPanel({ processType, sourceType, data, onChange, le
   else if (selected.startsWith("comb:")) body = <CombustionMethodForm data={data} onChange={onChange} />;
 
   return (
-    <div className="s1-stack">
+    <div className="[display:grid] [grid-template-columns:1fr] [gap:16px]">
       {choices.length > 1 && (
         <Segmented
           ariaLabel="Calculation method"

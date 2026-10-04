@@ -8,6 +8,7 @@ import React, {
 } from "react";
 import { createPortal } from "react-dom";
 import "./CustomDropdown.css";
+import { ChevronDown } from "lucide-react";
 
 const CustomDropdown = ({
   options = [],
@@ -230,9 +231,9 @@ const CustomDropdown = ({
       displayContent = renderOption(selectedOption);
     } else if (selectedOption.subLabel) {
       displayContent = (
-        <div className="selected-with-sub">
+        <div className="[display:flex] [align-items:center] [gap:2px]">
           {selectedOption.label}{" "}
-          <span className="sub-label"> - {selectedOption.subLabel}</span>
+          <span className="[font-size:var(--text-xs)]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-weight:600]! [display:inline-block] [margin-left:2px]"> - {selectedOption.subLabel}</span>
         </div>
       );
     } else {
@@ -252,6 +253,7 @@ const CustomDropdown = ({
         ref={triggerRef}
         id={id}
         className="dropdown-selected"
+        data-testid="select-trigger"
         onClick={handleToggle}
         onKeyDown={handleKeyDown}
         aria-haspopup="listbox"
@@ -265,17 +267,8 @@ const CustomDropdown = ({
           ariaLabel ? undefined : ariaLabelledBy || autoLabelId || undefined
         }
       >
-        <span className="display-text">{displayContent}</span>
-        <svg
-          width="10"
-          height="10"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="3"
-        >
-          <polyline points="6 9 12 15 18 9" />
-        </svg>
+        <span className="[display:flex] [align-items:center] [overflow:hidden] [text-overflow:ellipsis] [white-space:nowrap]">{displayContent}</span>
+        <ChevronDown size={10} strokeWidth={3} aria-hidden="true" />
       </button>
 
       {isOpen &&
@@ -300,6 +293,7 @@ const CustomDropdown = ({
               width: `${position.width}px`,
               maxHeight: `${position.maxHeight}px`,
               zIndex: 999999,
+              pointerEvents: "auto",
             }}
           >
             {options.map((option, idx) => {
@@ -308,16 +302,8 @@ const CustomDropdown = ({
                   <div
                     key={`header-${idx}`}
                     role="presentation"
-                    className="dropdown-header"
-                    style={{
-                      padding: "5px 10px",
-                      fontSize: "0.8rem",
-                      fontWeight: 600,
-                      color: "var(--accent-color)",
-                      textTransform: "uppercase",
-                      background: "rgba(255,255,255,0.02)",
-                      pointerEvents: "none",
-                    }}
+                    className="dropdown-header p-[5px_10px]! text-[length:0.8rem]! font-semibold! text-[color:var(--color-link)]! uppercase! bg-[color:rgba(255,255,255,0.02)]! [pointer-events:none]!"
+                   
                   >
                     {option.label}
                   </div>
@@ -329,6 +315,7 @@ const CustomDropdown = ({
                   id={optionId(idx)}
                   role="option"
                   aria-selected={value === option.value}
+                  data-testid="select-option"
                   className={`dropdown-option ${value === option.value ? "selected" : ""} ${activeIndex === idx ? "active" : ""}`}
                   onClick={() => handleSelect(option.value)}
                   onMouseEnter={() => setActiveIndex(idx)}
@@ -336,9 +323,9 @@ const CustomDropdown = ({
                   {renderOption ? (
                     renderOption(option)
                   ) : option.subLabel ? (
-                    <div className="option-with-sub">
+                    <div className="[display:flex] [align-items:center] [gap:2px]">
                       {option.label}{" "}
-                      <span className="sub-label"> - {option.subLabel}</span>
+                      <span className="[font-size:var(--text-xs)]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-weight:600]! [display:inline-block] [margin-left:2px]"> - {option.subLabel}</span>
                     </div>
                   ) : (
                     option.label

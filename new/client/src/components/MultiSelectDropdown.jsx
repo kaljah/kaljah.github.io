@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
+import { activateOnKey } from "../utils/a11yKeys";
 import { createPortal } from "react-dom";
 import "./CustomDropdown.css";
+import { ChevronDown } from "lucide-react";
 
 const MultiSelectDropdown = ({
   options = [],
@@ -106,7 +108,7 @@ const MultiSelectDropdown = ({
       style={{ width: "100%", position: "relative" }}
     >
       <div
-        className="dropdown-selected"
+        className="dropdown-selected p-[10px_12px]! [border:1px_solid_var(--border-color)]! rounded-[6px]! bg-[color:var(--bg-card)]! text-[color:var(--text-primary)]! cursor-pointer! flex! justify-between! items-center! min-h-[42px]!"
         onClick={handleToggle}
         role="button"
         tabIndex={0}
@@ -123,25 +125,10 @@ const MultiSelectDropdown = ({
             handleToggle();
           }
         }}
-        style={{
-          padding: "10px 12px",
-          border: "1px solid var(--border-color)",
-          borderRadius: "6px",
-          background: "var(--bg-card)",
-          color: "var(--text-primary)",
-          cursor: "pointer",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          minHeight: "42px",
-        }}
+       
       >
         <span
-          style={{
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
+          className="whitespace-nowrap! overflow-hidden! [text-overflow:ellipsis]!"
         >
           {selectedValues.length === 0
             ? label
@@ -149,16 +136,7 @@ const MultiSelectDropdown = ({
               ? "All Selected"
               : `${selectedValues.length} Selected`}
         </span>
-        <svg
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <path d="M6 9l6 6 6-6" />
-        </svg>
+        <ChevronDown size={14} aria-hidden="true" />
       </div>
 
       {isOpen &&
@@ -177,25 +155,21 @@ const MultiSelectDropdown = ({
               width: `${position.width}px`,
               maxHeight: `${position.maxHeight}px`,
               zIndex: 999999,
+              pointerEvents: "auto",
               overflowY: "auto",
             }}
           >
-            <div
-              className="dropdown-option"
+            <div role="button" tabIndex={0} onKeyDown={activateOnKey}
+              className="dropdown-option p-[8px_12px]! [border-bottom:1px_solid_var(--border-color)]! font-semibold! cursor-pointer!"
               onClick={handleSelectAll}
-              style={{
-                padding: "8px 12px",
-                borderBottom: "1px solid var(--border-color)",
-                fontWeight: 600,
-                cursor: "pointer",
-              }}
+             
             >
               {selectedValues.length === options.length
                 ? "Deselect All"
                 : "Select All"}
             </div>
             {options.map((opt) => (
-              <div
+              <div role="button" tabIndex={0} onKeyDown={activateOnKey}
                 key={opt.value}
                 className="dropdown-option"
                 onClick={() => toggleOption(opt.value)}
@@ -214,18 +188,13 @@ const MultiSelectDropdown = ({
                   type="checkbox"
                   checked={selectedValues.includes(opt.value)}
                   readOnly
-                  style={{ cursor: "pointer" }}
+                  className="cursor-pointer!"
                 />
                 <span>
                   {opt.label}
                   {opt.subLabel && (
                     <span
-                      style={{
-                        fontSize: "0.72rem",
-                        color: "#94a3b8",
-                        marginLeft: "4px",
-                        fontWeight: 500,
-                      }}
+                      className="text-[length:0.72rem]! text-[color:#475569]! ml-[4px]! font-medium!"
                     >
                       {" "}
                       - {opt.subLabel}

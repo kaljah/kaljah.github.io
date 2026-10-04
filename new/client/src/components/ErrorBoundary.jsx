@@ -1,4 +1,5 @@
 import React from "react";
+import { CircleAlert, RefreshCw } from "lucide-react";
 import "./ErrorBoundary.css";
 
 class ErrorBoundary extends React.Component {
@@ -39,24 +40,13 @@ class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="error-boundary-container">
-          <div className="error-boundary-card">
-            <div className="error-icon">
-              <svg
-                width="64"
-                height="64"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="8" x2="12" y2="12" />
-                <line x1="12" y1="16" x2="12.01" y2="16" />
-              </svg>
+        <div className="[min-height:100vh] [display:flex] [align-items:center] [justify-content:center] [padding:20px] [background:linear-gradient(135deg,_var(--color-ink-900)_0%,_var(--color-ink-800)_100%)]">
+          <div className="[background:rgba(255,_255,_255,_0.05)] [backdrop-filter:blur(20px)] [border:1px_solid_rgba(255,_255,_255,_0.1)] [&&]:[border-radius:var(--radius-lg)] [padding:40px]! [max-width:600px] [width:100%] [text-align:center] [box-shadow:var(--shadow-raised)] [@media(max-width:768px)]:[padding:30px_20px]!">
+            <div className="[color:var(--color-red-700)] [margin-bottom:24px] [animation:pulse_2s_ease-in-out_infinite]">
+              <CircleAlert size="64" strokeWidth="2" aria-hidden="true" />
             </div>
 
-            <h1 className="error-title">Something went wrong</h1>
+            <h1 className="[font-size:var(--text-2xl)]! [font-weight:700]! [color:var(--text-primary)] [margin:0_0_16px_0] [@media(max-width:768px)]:[font-size:var(--text-xl)]!">Something went wrong</h1>
             <p className="error-message">
               We're sorry, but an unexpected error occurred. Please try
               reloading the page or contact support if the problem persists.
@@ -64,9 +54,9 @@ class ErrorBoundary extends React.Component {
 
             {Boolean(import.meta.env?.DEV) &&
               this.state.error && (
-                <details className="error-details">
+                <details className="[background:rgba(0,_0,_0,_0.3)] [border:1px_solid_rgba(255,_255,_255,_0.1)] [&&]:[border-radius:var(--radius-md)] [padding:16px] [margin-bottom:24px] [text-align:left] [&_summary]:[cursor:pointer] [&_summary]:[font-weight:600] [&_summary]:[color:var(--color-amber-700)] [&_summary]:[margin-bottom:12px] [&_summary]:[user-select:none] [&&]:[&_summary:hover]:[color:#fbbf24]">
                   <summary>Error Details (Development Only)</summary>
-                  <div className="error-stack">
+                  <div className="[margin-top:12px] [font-size:var(--text-base)] [color:rgba(255,_255,_255,_0.7)] [&_strong]:[color:var(--color-red-700)] [&_pre]:[background:rgba(0,_0,_0,_0.4)] [&_pre]:[padding:12px] [&_pre]:[border-radius:var(--radius-sm)] [&_pre]:[overflow-x:auto] [&_pre]:[margin-top:8px] [&_pre]:[font-size:var(--text-sm)] [&_pre]:[line-height:1.5] [&_pre]:[white-space:pre-wrap] [&_pre]:[word-wrap:break-word]">
                     <p>
                       <strong>Error:</strong> {this.state.error.toString()}
                     </p>
@@ -77,18 +67,9 @@ class ErrorBoundary extends React.Component {
                 </details>
               )}
 
-            <div className="error-actions">
+            <div className="[display:flex] [gap:12px] [justify-content:center] [margin-bottom:24px] [@media(max-width:768px)]:[flex-direction:column]">
               <button className="error-btn primary" onClick={this.handleReload}>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
-                </svg>
+                <RefreshCw size={16} aria-hidden="true" />
                 Reload Page
               </button>
               <button
@@ -99,7 +80,7 @@ class ErrorBoundary extends React.Component {
               </button>
             </div>
 
-            <div className="error-footer">
+            <div className="[padding-top:24px] [border-top:1px_solid_rgba(255,_255,_255,_0.1)] [font-size:var(--text-base)] [color:var(--text-secondary)] [&_a]:[color:var(--color-green-700)] [&_a]:[text-decoration:none] [&&]:[&_a:hover]:[text-decoration:underline]">
               <p>
                 Need help? Contact support at{" "}
                 <a href="mailto:support@example.com">support@example.com</a>

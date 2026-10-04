@@ -1,4 +1,7 @@
+import { PageHeader, Button } from "../ui";
+import { NativeSelect } from "../ui/NativeSelect";
 import React, { useState, useEffect } from "react";
+import { activateOnKey } from "../utils/a11yKeys";
 import {
   Search,
   Book,
@@ -79,7 +82,7 @@ const ReferenceData = () => {
   const categories = {
     custom: {
       title: "Custom & Regional Factors",
-      icon: <Star size={20} style={{ color: "#10b981" }} />,
+      icon: <Star size={20} className="text-[color:#2e7d32]!" />,
       color: "#10b981",
       factors: customFactors
         .filter((f) => f.name?.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -133,7 +136,7 @@ const ReferenceData = () => {
     conversions: {
       title: "Unit Conversions",
       icon: <Ruler size={20} />,
-      color: "#14b8a6",
+      color: "#ff6600",
       isStatic: true,
       columns: ["From Unit", "To Unit", "Multiplier / Factor"],
       items: [
@@ -351,71 +354,36 @@ const ReferenceData = () => {
 
   return (
     <div className="reference-data">
-      <header
-        className="top-bar"
-        style={{
-          padding: "0 0 30px 0",
-          border: "none",
-          background: "transparent",
-        }}
-      >
-        <div className="breadcrumbs">
-          <Book
-            size={14}
-            style={{ marginRight: "8px", color: "var(--text-secondary)" }}
-          />
-          <span>Resource Center</span>
-          <span style={{ margin: "0 8px", color: "var(--text-secondary)" }}>
-            /
-          </span>
-          <span style={{ fontWeight: 600, color: "var(--text-primary)" }}>
-            Reference Data Library
-          </span>
-        </div>
-      </header>
+      <PageHeader
+        className="mb-8"
+        title="Reference Data Library"
+        description={
+          <>
+            Centralized repository for emission factors, global warming potentials (GWPs), unit conversions, and data
+            quality tiers. Custom regional factors tagged with <Star size={14} className="custom-star inline" aria-hidden="true" />{" "}
+            override global defaults.
+          </>
+        }
+      />
 
-      <div style={{ marginBottom: "40px" }}>
-        <h1
-          style={{
-            fontSize: "2.5rem",
-            fontWeight: 800,
-            color: "#1e293b",
-            margin: "0 0 10px 0",
-          }}
-        >
-          Reference Data Library
-        </h1>
-        <p style={{ fontSize: "1.1rem", color: "#64748b", maxWidth: "800px" }}>
-          Centralized repository for emission factors, global warming potentials
-          (GWPs), unit conversions, and data quality tiers. Custom regional
-          factors tagged with <Star size={14} className="custom-star" />{" "}
-          override global defaults.
-        </p>
-      </div>
-
-      <div className="search-bar-container">
+      <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.78))] [backdrop-filter:blur(14px)] [-webkit-backdrop-filter:blur(14px)] [padding:20px_24px] [border-radius:var(--radius-lg)] [margin-bottom:28px] [box-shadow:var(--shadow-card)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [display:flex] [gap:16px] [align-items:center]">
         <div className="search-input-wrapper">
           <Search
-            className="search-icon"
+            className="search-icon [position:absolute]! [left:16px]! [top:50%]! [transform:translateY(-50%)]! opacity-[0.4]!"
             size={18}
-            style={{
-              position: "absolute",
-              left: "16px",
-              top: "50%",
-              transform: "translateY(-50%)",
-              opacity: 0.4,
-            }}
+           
           />
           <input
             type="text"
-            className="search-input-field"
+            className="[width:100%] [padding:11px_16px_11px_42px] [background:rgba(255,_255,_255,_0.85)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [&&]:[border-radius:var(--radius-md)] [font-size:var(--text-md)] [color:var(--text-primary,_var(--color-ink-900))] [outline:none] [transition:all_0.2s_ease] focus:[border-color:var(--accent-color,_var(--color-brand-500))] focus:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.15)]"
             placeholder="Search by name, fuel type, code, or value..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <select
+        <NativeSelect
           className="filter-select"
+          aria-label="Filter by category"
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
         >
@@ -431,22 +399,21 @@ const ReferenceData = () => {
           <option value="liquids">Liquids</option>
           <option value="solids">Solids</option>
           <option value="equipment">Equipment</option>
-        </select>
+        </NativeSelect>
       </div>
 
       {loadErrors.length > 0 && (
         <div
           role="alert"
-          style={{ margin: "0 0 16px", padding: "12px 16px", borderRadius: 8, background: "#fef2f2",
-                   border: "1px solid #fecaca", color: "#991b1b", display: "flex", gap: 12, alignItems: "center" }}
+          className="m-[0_0_16px]! p-[12px_16px]! rounded-[8px]! bg-[color:#fef2f2]! [border:1px_solid_#fecaca]! text-[color:#991b1b]! flex! gap-[12px]! items-center!"
         >
-          <div style={{ flex: 1 }}>{loadErrors.map((e) => <div key={e}>{e}</div>)}</div>
-          <button type="button" className="btn-ghost" onClick={() => { setLoading(true); fetchData(); }}>Retry</button>
+          <div className="flex-1!">{loadErrors.map((e) => <div key={e}>{e}</div>)}</div>
+          <Button type="button" variant="ghost" onClick={() => { setLoading(true); fetchData(); }}>Retry</Button>
         </div>
       )}
       {loading ? (
         <div
-          style={{ textAlign: "center", padding: "100px", color: "#64748b" }}
+          className="text-center! p-[100px]! text-[color:#64748b]!"
         >
           Loading Library Assets...
         </div>
@@ -458,7 +425,7 @@ const ReferenceData = () => {
               className="category-section"
               style={{ borderLeftColor: cat.color }}
             >
-              <div
+              <div role="button" tabIndex={0} onKeyDown={activateOnKey}
                 className="category-header"
                 onClick={() => toggleCategory(key)}
               >
@@ -466,8 +433,8 @@ const ReferenceData = () => {
                   {cat.icon}
                   {cat.title}
                   <span
-                    className="count-badge"
-                    style={{ background: cat.color }}
+                    className="[background:var(--color-primary)] [padding:3px_10px] [border-radius:999px] [font-size:var(--text-sm)] [font-weight:700] bg-[color:var(--color-ink-100)]! text-[color:var(--color-ink-800)]!"
+                   
                   >
                     {cat.isStatic
                       ? cat.filteredItems.length
@@ -482,7 +449,7 @@ const ReferenceData = () => {
               </div>
 
               {!collapsed[key] && (
-                <div className="factors-table-container">
+                <div className="[width:100%] [overflow-x:auto]">
                   <table className="factors-table">
                     <thead>
                       <tr>
@@ -555,11 +522,11 @@ const ReferenceData = () => {
                                 </>
                               )}
                               <td>
-                                <div style={{ display: "flex", gap: "6px" }}>
+                                <div className="flex! gap-[6px]!">
                                   {f.usage.map((u, uIdx) => (
                                     <span
                                       key={uIdx}
-                                      className={`usage-badge usage-${u.toLowerCase()}`}
+                                      className={`[display:inline-flex] [padding:4px_10px] [border-radius:var(--radius-md)] [font-size:var(--text-xs)] [font-weight:700] [text-transform:uppercase] usage-${u.toLowerCase()}`}
                                     >
                                       {u}
                                     </span>
@@ -576,22 +543,16 @@ const ReferenceData = () => {
           ))}
           {visibleCategories.length === 0 && (
             <div
-              style={{
-                textAlign: "center",
-                padding: "60px",
-                background: "rgba(255,255,255,0.4)",
-                borderRadius: "16px",
-                border: "1px dashed rgba(0,0,0,0.1)",
-              }}
+              className="text-center! p-[60px]! bg-[color:rgba(255,255,255,0.4)]! rounded-[16px]! [border:1px_dashed_rgba(0,0,0,0.1)]!"
             >
               <Info
                 size={40}
-                style={{ color: "#94a3b8", marginBottom: "16px" }}
+                className="text-[color:#475569]! mb-[16px]!"
               />
-              <h3 style={{ color: "#1e293b", marginBottom: "8px" }}>
+              <h3 className="text-[color:#1e293b]! mb-[8px]!">
                 No factors found
               </h3>
-              <p style={{ color: "#64748b" }}>
+              <p className="text-[color:#64748b]!">
                 Try adjusting your search term or category filter.
               </p>
             </div>

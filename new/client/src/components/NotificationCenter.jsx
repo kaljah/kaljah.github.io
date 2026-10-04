@@ -90,25 +90,7 @@ const BellButton = ({ count, onClick }) => (
     <Bell size={20} strokeWidth={1.75} />
     {count > 0 && (
       <span
-        style={{
-          position: "absolute",
-          top: 3,
-          right: 3,
-          minWidth: 16,
-          height: 16,
-          background: "#ef4444",
-          borderRadius: 8,
-          border: "1.5px solid var(--bg-card, #ffffff)",
-          fontSize: "0.6rem",
-          fontWeight: 700,
-          color: "#fff",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "0 3px",
-          lineHeight: 1,
-          letterSpacing: "-0.02em",
-        }}
+        className="[position:absolute]! [top:3px]! [right:3px]! min-w-[16px]! h-[16px]! bg-[color:#ef4444]! rounded-[8px]! [border:1.5px_solid_var(--bg-card,_#ffffff)]! text-[length:0.6rem]! font-bold! text-[color:#fff]! flex! items-center! justify-center! p-[0_3px]! leading-[1]! [letter-spacing:-0.02em]!"
       >
         {count > 99 ? "99+" : count}
       </span>
@@ -150,58 +132,28 @@ const NotifRow = ({ n, onMarkRead, onDelete }) => {
       </div>
 
       {/* Content */}
-      <div style={{ flex: 1, minWidth: 0 }}>
+      <div className="flex-1! min-w-0!">
         <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
-            marginBottom: 2,
-          }}
+          className="flex! items-center! gap-[6px]! mb-[2px]!"
         >
           {!n.is_read && (
             <span
-              style={{
-                width: 6,
-                height: 6,
-                borderRadius: "50%",
-                background: "#3b82f6",
-                flexShrink: 0,
-              }}
+              className="w-[6px]! h-[6px]! [border-radius:50%]! bg-[color:#3b82f6]! shrink-0!"
             />
           )}
           <span
-            style={{
-              fontWeight: 600,
-              fontSize: "0.82rem",
-              color: "var(--text-primary, #0f172a)",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}
+            className="font-semibold! text-[length:0.82rem]! text-[color:var(--text-primary,_#0f172a)]! whitespace-nowrap! overflow-hidden! [text-overflow:ellipsis]!"
           >
             {n.title}
           </span>
         </div>
         <p
-          style={{
-            margin: 0,
-            fontSize: "0.78rem",
-            color: "var(--text-secondary, #475569)",
-            lineHeight: 1.45,
-            wordBreak: "break-word",
-            opacity: n.is_read ? 0.75 : 1,
-          }}
+          className={`[margin:0]! [font-size:0.78rem]! [color:var(--text-secondary,_#475569)]! [line-height:1.45]! [word-break:break-word]! ${n.is_read ? "[opacity:0.75]!" : "[opacity:1]!"}`}
         >
           {n.message}
         </p>
         <span
-          style={{
-            display: "block",
-            marginTop: 5,
-            fontSize: "0.7rem",
-            color: "var(--text-muted, #94a3b8)",
-          }}
+          className="block! mt-[5px]! text-[length:0.7rem]! text-[color:var(--text-muted,_#94a3b8)]!"
         >
           {relativeTime(n.time)}
         </span>
@@ -209,7 +161,7 @@ const NotifRow = ({ n, onMarkRead, onDelete }) => {
 
       {/* Action buttons */}
       <div
-        style={{ display: "flex", gap: 2, flexShrink: 0, alignItems: "center" }}
+        className="flex! gap-[2px]! shrink-0! items-center!"
       >
         {!n.is_read && (
           <button
@@ -485,7 +437,7 @@ const NotificationCenter = () => {
   const trayPanel = isOpen && (
     <div
       ref={panelRef}
-      className="notification-tray-panel"
+      className="notification-tray-panel z-[999999] pointer-events-auto"
       style={{
         position: "fixed",
         top: panelPos.top,
@@ -509,56 +461,24 @@ const NotificationCenter = () => {
     >
       {/* ── Header ── */}
       <div
-        style={{
-          padding: "14px 18px 12px",
-          borderBottom: "1px solid var(--border-color, rgba(226, 232, 240, 0.8))",
-          background: "rgba(255, 255, 255, 0.7)",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          gap: 8,
-        }}
+        className="p-[14px_18px_12px]! [border-bottom:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]! bg-[color:rgba(255,_255,_255,_0.7)]! flex! justify-between! items-center! gap-[8px]!"
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <div className="flex! items-center! gap-[10px]!">
           <span
-            style={{
-              fontWeight: 700,
-              fontSize: "0.92rem",
-              color: "var(--text-primary, #0f172a)",
-              letterSpacing: "-0.01em",
-            }}
+            className="font-bold! text-[length:0.92rem]! text-[color:var(--text-primary,_#0f172a)]! [letter-spacing:-0.01em]!"
           >
             Notifications
           </span>
           {notifications.length > 0 && (
             <span
-              style={{
-                fontSize: "0.72rem",
-                fontWeight: 700,
-                color: "var(--text-secondary, #64748b)",
-                background: "var(--bg-hover, #f1f5f9)",
-                borderRadius: 999,
-                padding: "2px 8px",
-              }}
+              className="text-[length:0.72rem]! font-bold! text-[color:var(--text-secondary,_#64748b)]! bg-[color:var(--bg-hover,_#f1f5f9)]! rounded-[999px]! p-[2px_8px]!"
             >
               {notifications.length}
             </span>
           )}
           {/* Live indicator */}
           <span
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 4,
-              fontSize: "0.65rem",
-              fontWeight: 700,
-              color: "#059669",
-              background: "rgba(16,185,129,0.1)",
-              border: "1px solid rgba(16,185,129,0.25)",
-              borderRadius: 20,
-              padding: "2px 8px",
-              letterSpacing: "0.03em",
-            }}
+            className="inline-flex! items-center! gap-[4px]! text-[length:0.65rem]! font-bold! text-[color:#059669]! bg-[color:rgba(16,185,129,0.1)]! [border:1px_solid_rgba(16,185,129,0.25)]! rounded-[20px]! p-[2px_8px]! [letter-spacing:0.03em]!"
           >
             <span
               style={{
@@ -574,7 +494,7 @@ const NotificationCenter = () => {
         </div>
 
         {/* Header actions */}
-        <div style={{ display: "flex", gap: 4 }}>
+        <div className="flex! gap-[4px]!">
           {hasUnread && (
             <button
               onClick={handleMarkAllRead}
@@ -601,7 +521,7 @@ const NotificationCenter = () => {
               title="Delete all notifications"
               style={{
                 ...headerActionBtn,
-                color: "#ef4444",
+                color: "#b91c1c",
                 opacity: isDeleting ? 0.5 : 1,
               }}
               onMouseEnter={(e) =>
@@ -619,27 +539,13 @@ const NotificationCenter = () => {
       </div>
 
       {/* ── Notification list ── */}
-      <div style={{ maxHeight: 420, overflowY: "auto" }}>
+      <div className={`[max-height:420px]! [overflow-y:auto]!`}>
         {notifications.length === 0 ? (
           <div
-            style={{
-              padding: "40px 24px",
-              textAlign: "center",
-              color: "var(--text-secondary, #64748b)",
-            }}
+            className="p-[40px_24px]! text-center! text-[color:var(--text-secondary,_#64748b)]!"
           >
             <div
-              style={{
-                width: 48,
-                height: 48,
-                borderRadius: 14,
-                background: "var(--bg-hover, #f8fafc)",
-                border: "1px solid var(--border-color, #e2e8f0)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                margin: "0 auto 12px",
-              }}
+              className="w-[48px]! h-[48px]! rounded-[14px]! bg-[color:var(--bg-hover,_#f8fafc)]! [border:1px_solid_var(--border-color,_#e2e8f0)]! flex! items-center! justify-center! m-[0_auto_12px]!"
             >
               <Bell
                 size={22}
@@ -647,15 +553,11 @@ const NotificationCenter = () => {
                 strokeWidth={1.75}
               />
             </div>
-            <p style={{ margin: 0, fontSize: "0.88rem", fontWeight: 700, color: "var(--text-primary, #0f172a)" }}>
+            <p className="m-[0px]! text-[length:0.88rem]! font-bold! text-[color:var(--text-primary,_#0f172a)]!">
               No notifications
             </p>
             <p
-              style={{
-                margin: "4px 0 0",
-                fontSize: "0.78rem",
-                color: "var(--text-secondary, #64748b)",
-              }}
+              className="m-[4px_0_0]! text-[length:0.78rem]! text-[color:var(--text-secondary,_#64748b)]!"
             >
               You're all caught up
             </p>
@@ -675,19 +577,9 @@ const NotificationCenter = () => {
       {/* ── Footer ── */}
       {notifications.length > 0 && (
         <div
-          style={{
-            padding: "9px 18px",
-            borderTop: "1px solid var(--border-color, #e2e8f0)",
-            background: "var(--bg-hover, #f8fafc)",
-            fontSize: "0.74rem",
-            color: "var(--text-secondary, #64748b)",
-            fontWeight: 500,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
+          className="p-[9px_18px]! [border-top:1px_solid_var(--border-color,_#e2e8f0)]! bg-[color:var(--bg-hover,_#f8fafc)]! text-[length:0.74rem]! text-[color:var(--text-secondary,_#64748b)]! font-medium! flex! justify-between! items-center!"
         >
-          <span style={{ fontWeight: 600, color: hasUnread ? "#ea580c" : "inherit" }}>
+          <span className={`[font-weight:600]! ${hasUnread ? "[color:#ea580c]!" : "[color:inherit]!"}`}>
             {unreadCount} unread
           </span>
           <span>Showing {notifications.length} notifications</span>
@@ -697,7 +589,7 @@ const NotificationCenter = () => {
   );
 
   return (
-    <div ref={dropdownRef} style={{ position: "relative" }}>
+    <div ref={dropdownRef} className="relative!">
       <BellButton count={unreadCount} onClick={() => setIsOpen((o) => !o)} />
 
       {isOpen && typeof document !== "undefined" && createPortal(trayPanel, document.body)}

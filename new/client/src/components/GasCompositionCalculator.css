@@ -1,7 +1,3 @@
-.comp-calc-container {
-  color: var(--text-primary);
-}
-
 .comp-calc-grid {
   display: grid;
   grid-template-columns: 1fr 340px;
@@ -13,13 +9,13 @@
   padding: 15px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
 }
 
 .calculation-mode-selector label {
   display: block;
   margin-bottom: 12px;
-  font-size: 0.85rem;
+  font-size: var(--text-base);
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -30,7 +26,7 @@
   gap: 8px;
   background: rgba(0, 0, 0, 0.2);
   padding: 4px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 }
 
 .mode-tabs button {
@@ -39,9 +35,9 @@
   background: transparent;
   border: none;
   color: var(--text-secondary);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: var(--text-base);
   font-weight: 600;
   transition: all 0.2s;
 }
@@ -52,54 +48,36 @@
 }
 
 .mode-tabs button.active {
-  background: var(--accent-color);
+  background: var(--color-primary);
   color: white;
   box-shadow: 0 2px 8px rgba(255, 102, 0, 0.2);
 }
 
-.total-display-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 15px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 25px;
-}
-
 .total-info .label {
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: var(--text-base);
   margin-right: 10px;
 }
 
 .total-info .value {
-  font-size: 1.4rem;
+  font-size: var(--text-xl);
   font-weight: 700;
 }
 
 .total-info .value.valid {
-  color: #10b981;
+  color: var(--color-green-700);
 }
 
 .total-info .value.invalid {
-  color: #ef4444;
+  color: var(--color-red-700);
 }
 
 .status-badge {
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
   padding: 4px 12px;
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   background: rgba(255, 255, 255, 0.05);
   color: var(--text-secondary);
-}
-
-.component-inputs-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 15px;
-  margin-bottom: 30px;
 }
 
 .params-section {
@@ -110,36 +88,8 @@
 
 .params-section h4 {
   margin: 0 0 15px 0;
-  color: var(--accent-color);
-  font-size: 1rem;
-}
-
-.params-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 20px;
-}
-
-.calc-btn {
-  width: 100%;
-  padding: 14px;
-  background: var(--accent-color);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.calc-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.calc-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(255, 102, 0, 0.3);
+  color: var(--color-link);
+  font-size: var(--text-md);
 }
 
 .comp-results {
@@ -151,17 +101,17 @@
 .result-card {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 20px;
   margin-bottom: 20px;
 }
 
 .result-card h4 {
   margin: 0 0 15px 0;
-  font-size: 0.85rem;
+  font-size: var(--text-base);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--accent-color);
+  color: var(--color-link);
 }
 
 .result-row {
@@ -177,22 +127,22 @@
 
 .result-row span {
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: var(--text-base);
 }
 
 .result-card.main strong {
-  font-size: 1.1rem;
+  font-size: var(--text-lg);
   color: var(--text-primary);
 }
 
 .result-card.main strong small {
-  font-size: 0.75rem;
+  font-size: var(--text-sm);
   opacity: 0.7;
   margin-left: 4px;
 }
 
 .apply-actions h4 {
-  font-size: 0.85rem;
+  font-size: var(--text-base);
   color: var(--text-secondary);
   margin: 0 0 12px 0;
 }
@@ -206,33 +156,17 @@
 .apply-buttons button {
   padding: 10px;
   background: rgba(16, 185, 129, 0.1);
-  border: 1px solid #10b981;
-  color: #10b981;
-  border-radius: 6px;
+  border: 1px solid var(--color-green-500);
+  color: var(--color-green-700);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-weight: 600;
   transition: all 0.2s;
 }
 
 .apply-buttons button:hover {
-  background: #10b981;
+  background: var(--color-green-700);
   color: white;
-}
-
-.no-results {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  color: var(--text-secondary);
-  opacity: 0.5;
-}
-
-.no-results .icon {
-  font-size: 3rem;
-  margin-bottom: 15px;
 }
 
 @media (max-width: 850px) {

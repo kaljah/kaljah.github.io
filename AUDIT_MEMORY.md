@@ -206,3 +206,25 @@ Still open for review: S4/M9 claim "deprecated" but `new/server.rar`, `calculati
 - 2026-10-01 · Checked against the API Compendium 2021 (audit/CALC_CSV_AUDIT_2026-09-30.md #40-43): gas densities moved from the 15 C values (0.6785 / 1.861) to the Compendium standard conditions, 60 F / 14.696 psia, 23.685 m3/kg-mole (0.67722 / 1.85814; 0.17 % lower everywhere), in one definition used by server, client and validation model; WEC threshold uses the 40 CFR 99.20 density of 0.0192 mt/Mscf; Table 7-76 has no time basis (LNG refusal stays); Eq 7-6 confirms the CH4 weight fraction for fugitive screening. Backend 1,948 / 0 failed.
 - 2026-10-01 · Invented / hard-coded values (audit/CALC_CSV_AUDIT_2026-09-30.md #44-57): mock ERP sync inserting fake Scope 3 records removed; compressor seal factors (15/1.5/1.2 kg/hr, false 'Table 7-3' citation) replaced by Compendium Tables 6-30/6-37/6-38/6-40/6-41 and labelled Tier 1; legacy engine placeholder engineering branches removed; dehydrator solubility model alias closed; tank table default labelled Tier 1; Eq 6-11 CH4 required; forms no longer pre-fill counts / oil / composition or submit blank counts as 1; GWP label, WEC rate label, export years, report GWP default, plume rings, QA fallback, email status and year pickers made truthful. Catalogs: 131/131 API and 82/82 combustion factors found in the Compendium. Backend 1,965 / 0 failed.
 - 2026-10-02 · 10k audit round 2 on current main (audit/UPLOAD_10K_AUDIT.md "Round 2"): 30,000 rows through the UI, 20 page views (every KPI and chart tooltip), uncertainty recomputed, exports reconciled. Engine 0 errors, tables 0 display errors. Fixed: WEC liability shown for 2024/2025 and non-US facilities (P.L. 119-21: charge from 2034 emissions, US subpart W only); PDF detail table cut at 500 rows without a note; Carbon Intensity totals vs intensity basis; Target Path legend without a line and Compare Regions facilities from the first year only; hard-coded "Baseline (2020)" and invented 2020 fallback; raw process keys in Excel / PDF / OGMP exports; flaring tCO2e rounded twice; Windows temp-file test.
+
+
+---
+
+## UI modernization (2026-10-02, branch `feat/ui-modernization`)
+
+Plan: `docs/ui-modernization-plan.md`. Decisions taken: S-1 system font stack (no web font); S-2 scope colors orange/blue/violet; S-3 primary fill darkened to `#c2410c` (AA); S-4 single account menu in the top bar; S-5 login intro video removed; S-6 feature branch.
+
+| ID | Status | Location | Issue | Fix |
+|----|--------|----------|-------|-----|
+| UI-01 | FIXED | CarbonIntensity.css | `:root` override turned the app accent teal after visiting Carbon/Methane Intensity | Variables scoped to `.intensity-content`; remaining teal tints converted to brand tints |
+| UI-02 | FIXED | Login.css | `:root` override changed global tokens, second orange | Scoped to `.login-body`, brand primary |
+| UI-03 | FIXED | index.css / vite.config.js | Tailwind v4 never compiled (`@tailwind` v3 directives) | `@tailwindcss/vite`, theme+utilities layers only, scan limited to new folders |
+| UI-04 | FIXED | SkeletonLoader.jsx | Invisible (Tailwind classes, undefined `--surface-color`) | Rewritten with real CSS |
+| UI-05/06 | FIXED | CSS | Font stack varied per page; unused Orbitron request | One system stack; Orbitron removed |
+| UI-07 | FIXED | legacy.css | `.btn-ghost` / `.btn-secondary-unified` undefined | Defined (temporary, replaced by `Button` in Phase 4) |
+| UI-08 | PARTIAL | CarbonIntensity.css | `.card` collision | Scoped to `.intensity-content`; other duplicates tracked by `ui:metrics` |
+| UI-09 | FIXED | docs, Modal, Toast, ManageData | Accessibility audit overstated; modals/toasts/tabs lacked a11y | Doc corrected; Radix dialogs; live region; tabs are buttons |
+| UI-10 | FIXED | repo | Dead video/CSS/page, unused deps | Removed |
+| UI-11/12 | FIXED | UploadProgress, Sidebar | `alert()`, asset paths ignoring base path | Toast; `import.meta.env.BASE_URL` |
+
+Conventions added: new UI goes in `new/client/src/ui` (tokens in `styles/tokens.css`, no hex values or inline styles there; stylelint and ESLint enforce). Routes, nav, breadcrumbs, titles and access rules live in `app/routes.config.js` and `app/access.js` (role matrix covered by `app/__tests__/routes.test.jsx`). `npm run ui:metrics -- --check` is a CI ratchet.

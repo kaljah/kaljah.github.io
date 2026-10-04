@@ -1,4 +1,7 @@
+
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { Button, Textarea } from "../ui";
+import { NativeSelect } from "../ui/NativeSelect";
 import { showReviewResult } from "../utils/reviewResult";
 import { createPortal } from 'react-dom';
 import { 
@@ -480,12 +483,12 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
   if (!isOpen) return null;
 
   const modalContent = (
-    <div className="batch-wizard-backdrop" onClick={(e) => { if (e.target === e.currentTarget && !rejectionModal.isOpen) onClose(); }}>
-      <div className="batch-wizard-modal">
+    <div role="presentation" className="[position:fixed] [inset:0] [background:rgba(15,_23,_42,_0.65)] [backdrop-filter:blur(8px)] [-webkit-backdrop-filter:blur(8px)] [z-index:10000] [display:flex] [align-items:center] [justify-content:center] [padding:24px] [animation:wizardFadeIn_0.2s_cubic-bezier(0.16,_1,_0.3,_1)]" onClick={(e) => { if (e.target === e.currentTarget && !rejectionModal.isOpen) onClose(); }}>
+      <div className="[background:var(--bg-card-elevated,_var(--color-white))] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.9))] [&&]:[border-radius:var(--radius-lg)] [width:100%] [max-width:1440px] [height:calc(100vh_-_48px)] [max-height:940px] [display:flex] [flex-direction:column] [box-shadow:var(--shadow-overlay)] [overflow:hidden] [animation:wizardSlideUp_0.25s_cubic-bezier(0.16,_1,_0.3,_1)]">
         {/* ── Wizard Header ── */}
-        <div className="batch-wizard-header">
-          <div className="wizard-header-title-group">
-            <div className="wizard-badge-icon">
+        <div className="[padding:18px_28px] [border-bottom:1px_solid_var(--border-color,_var(--color-ink-200))] [background:rgba(255,_255,_255,_0.95)] [display:flex] [justify-content:space-between] [align-items:center] [gap:20px] [flex-shrink:0]">
+          <div className="[display:flex] [align-items:center] [gap:14px]">
+            <div className="[width:44px] [height:44px] [border-radius:var(--radius-md)] [background:linear-gradient(135deg,_rgba(255,_102,_0,_0.15)_0%,_rgba(255,_102,_0,_0.05)_100%)] [border:1px_solid_rgba(255,_102,_0,_0.25)] [color:var(--color-link)] [display:flex] [align-items:center] [justify-content:center] [flex-shrink:0]">
               <Sparkles size={24} />
             </div>
             <div className="wizard-title-text">
@@ -494,30 +497,30 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
             </div>
           </div>
 
-          <div className="wizard-header-actions">
-            <button
-              className="btn-ghost"
+          <div className="[display:flex] [align-items:center] [gap:12px]">
+            <Button
+              variant="ghost" type="submit"
               onClick={fetchAllPendingData}
               disabled={loading || isProcessing}
               style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', border: '1px solid var(--border-color)', borderRadius: '9px', padding: '7px 14px', fontSize: '0.82rem', background: '#ffffff', cursor: 'pointer' }}
             >
               <RefreshCw size={14} style={{ animation: loading ? 'spin 1s linear infinite' : 'none' }} />
               Reload All
-            </button>
-            <button
-              className="btn-ghost"
+            </Button>
+            <Button
+              variant="ghost" type="submit"
               onClick={onClose}
               style={{ padding: '7px', borderRadius: '9px', border: '1px solid var(--border-color)', cursor: 'pointer', background: '#ffffff' }}
               title="Close Wizard (Esc)"
             >
               <X size={18} />
-            </button>
+            </Button>
           </div>
         </div>
 
         {/* ── KPI Summary Strip ── */}
-        <div className="batch-wizard-kpis">
-          <div className="kpi-chip-group">
+        <div className="[padding:14px_28px] [background:var(--bg-body,_var(--color-ink-50))] [border-bottom:1px_solid_var(--border-color,_var(--color-ink-200))] [display:flex] [align-items:center] [justify-content:space-between] [gap:16px] [flex-wrap:wrap] [flex-shrink:0]">
+          <div className="[display:flex] [align-items:center] [gap:10px] [flex-wrap:wrap]">
             <div className="kpi-chip">
               <span>Total Staged:</span>
               <strong>{stats.totalCount} records</strong>
@@ -537,10 +540,10 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <div className="flex! gap-[10px]! items-center!">
             {stats.weirdCount > 0 && (
               <button
-                className="btn-wizard-action btn-wizard-select-weird"
+                className="[display:inline-flex] [align-items:center] [gap:6px] [padding:8px_14px] [border-radius:var(--radius-md)] [font-size:var(--text-sm)] [font-weight:600] [cursor:pointer] [border:1px_solid_transparent] [transition:all_0.15s_ease] [background:rgba(245,_158,_11,_0.12)] [color:var(--color-amber-700)] [&&]:[border-color:rgba(245,_158,_11,_0.3)] hover:[background:var(--color-amber-700)] hover:[color:var(--color-white)]"
                 onClick={handleSelectAllWeird}
                 title="Select all flagged anomalies for batch rejection or inspection"
               >
@@ -549,7 +552,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
               </button>
             )}
             <button
-              className="btn-wizard-action btn-wizard-approve-all"
+              className="[display:inline-flex] [align-items:center] [gap:6px] [padding:8px_14px] [border-radius:var(--radius-md)] [font-size:var(--text-sm)] [font-weight:600] [cursor:pointer] [border:1px_solid_transparent] [transition:all_0.15s_ease] [background:var(--color-green-700)] [color:var(--color-white)] hover:[background:var(--color-green-600)] hover:[transform:translateY(-1px)] hover:[box-shadow:0_3px_8px_rgba(16,_185,_129,_0.3)]"
               onClick={() => handleApproveAll(false)}
               disabled={loading || isProcessing || stats.totalCount === 0}
               title="Verify all pending records across all scopes without exception"
@@ -558,7 +561,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
               Approve All ({stats.totalCount})
             </button>
             <button
-              className="btn-wizard-action btn-wizard-reject-all"
+              className="[display:inline-flex] [align-items:center] [gap:6px] [padding:8px_14px] [border-radius:var(--radius-md)] [font-size:var(--text-sm)] [font-weight:600] [cursor:pointer] [border:1px_solid_transparent] [transition:all_0.15s_ease] [background:rgba(239,_68,_68,_0.1)] [color:var(--color-red-700)] [&&]:[border-color:rgba(239,_68,_68,_0.25)] hover:[background:var(--color-red-700)] hover:[color:var(--color-white)] hover:[transform:translateY(-1px)] hover:[box-shadow:0_3px_8px_rgba(239,_68,_68,_0.3)]"
               onClick={() => setRejectionModal({ isOpen: true, mode: 'all', targetItem: null, reason: '' })}
               disabled={loading || isProcessing || stats.totalCount === 0}
               title="Delete all pending records with audit justification"
@@ -570,10 +573,10 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
         </div>
 
         {/* ── Toolbar: Filters & Filtered Actions ── */}
-        <div className="batch-wizard-toolbar">
-          <div className="toolbar-filter-cluster">
+        <div className="[padding:12px_28px] [border-bottom:1px_solid_var(--border-color,_var(--color-ink-200))] [background:var(--color-white)] [display:flex] [align-items:center] [justify-content:space-between] [gap:16px] [flex-wrap:wrap] [flex-shrink:0]">
+          <div className="[display:flex] [align-items:center] [gap:10px] [flex-wrap:wrap]">
             {/* Scope Tabs */}
-            <div className="segmented-group">
+            <div className="[display:inline-flex] [background:var(--bg-body,_var(--color-ink-100))] [border-radius:var(--radius-md)] [padding:3px] [gap:3px]">
               <button className={`segmented-item-btn ${scopeFilter === 'all' ? 'active' : ''}`} onClick={() => setScopeFilter('all')}>
                 All Scopes ({stats.totalCount})
               </button>
@@ -589,7 +592,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
             </div>
 
             {/* QA Anomaly Filter */}
-            <div className="segmented-group">
+            <div className="[display:inline-flex] [background:var(--bg-body,_var(--color-ink-100))] [border-radius:var(--radius-md)] [padding:3px] [gap:3px]">
               <button className={`segmented-item-btn ${qaFilter === 'all' ? 'active' : ''}`} onClick={() => setQaFilter('all')}>
                 All Data
               </button>
@@ -604,7 +607,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
             </div>
 
             {/* Facility Select */}
-            <select
+            <NativeSelect
               value={facilityFilter}
               onChange={(e) => setFacilityFilter(e.target.value)}
               className="component-select"
@@ -614,11 +617,11 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
               {facilities.map(f => (
                 <option key={f.id} value={f.id}>{f.name}</option>
               ))}
-            </select>
+            </NativeSelect>
 
             {/* Year Select */}
             {availableYears.length > 0 && (
-              <select
+              <NativeSelect
                 value={yearFilter}
                 onChange={(e) => setYearFilter(e.target.value)}
                 className="component-select"
@@ -628,38 +631,38 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                 {availableYears.map(y => (
                   <option key={y} value={y}>{y}</option>
                 ))}
-              </select>
+              </NativeSelect>
             )}
 
             {/* Search Box */}
-            <div className="wizard-search-box">
+            <div className="[display:flex] [align-items:center] [gap:8px] [background:var(--bg-body,_var(--color-ink-100))] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [&&]:[border-radius:var(--radius-md)] [padding:6px_12px] [min-width:220px] [transition:border-color_0.2s] focus-within:[border-color:var(--accent-color,_var(--color-brand-500))] focus-within:[background:var(--color-white)] focus-within:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.12)]">
               <Search size={14} color="var(--text-secondary)" />
               <input
                 type="text"
                 placeholder="Search by facility, fuel, category..."
-                className="wizard-search-input"
+                className="[border:none] [background:transparent] [font-size:var(--text-base)] [color:var(--text-primary,_var(--color-ink-900))] [width:100%] [outline:none]"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               {searchQuery && (
-                <button className="btn-ghost" onClick={() => setSearchQuery('')} style={{ padding: 2, cursor: 'pointer' }}>
+                <Button variant="ghost" type="submit" onClick={() => setSearchQuery('')} className="p-[2px]! cursor-pointer!">
                   <X size={12} />
-                </button>
+                </Button>
               )}
             </div>
           </div>
 
-          <div className="toolbar-action-cluster">
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
+          <div className="[display:flex] [align-items:center] [gap:10px] [flex-wrap:wrap]">
+            <span className="text-[length:0.8rem]! text-[color:var(--text-secondary)]! font-semibold!">
               Showing {filteredRecords.length} of {stats.totalCount}
             </span>
 
             {/* Action on Filtered Set */}
             {(scopeFilter !== 'all' || qaFilter !== 'all' || facilityFilter !== 'all' || yearFilter !== 'all' || searchQuery) && filteredRecords.length > 0 && (
-              <div style={{ display: 'flex', gap: '8px' }}>
+              <div className="flex! gap-[8px]!">
                 <button
-                  className="btn-wizard-action btn-wizard-approve-all"
-                  style={{ padding: '6px 12px', fontSize: '0.78rem' }}
+                  className="[display:inline-flex] [align-items:center] [gap:6px] [border-radius:var(--radius-md)] [font-weight:600] [cursor:pointer] [border:1px_solid_transparent] [transition:all_0.15s_ease] [background:var(--color-green-700)] [color:var(--color-white)] hover:[background:var(--color-green-600)] hover:[transform:translateY(-1px)] hover:[box-shadow:0_3px_8px_rgba(16,_185,_129,_0.3)] p-[6px_12px]! text-[length:0.78rem]!"
+                 
                   onClick={() => handleApproveAll(true)}
                   disabled={isProcessing}
                 >
@@ -667,8 +670,8 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                   Approve Filtered ({filteredRecords.length})
                 </button>
                 <button
-                  className="btn-wizard-action btn-wizard-reject-all"
-                  style={{ padding: '6px 12px', fontSize: '0.78rem' }}
+                  className="[display:inline-flex] [align-items:center] [gap:6px] [border-radius:var(--radius-md)] [font-weight:600] [cursor:pointer] [border:1px_solid_transparent] [transition:all_0.15s_ease] [background:rgba(239,_68,_68,_0.1)] [color:var(--color-red-700)] [&&]:[border-color:rgba(239,_68,_68,_0.25)] hover:[background:var(--color-red-700)] hover:[color:var(--color-white)] hover:[transform:translateY(-1px)] hover:[box-shadow:0_3px_8px_rgba(239,_68,_68,_0.3)] p-[6px_12px]! text-[length:0.78rem]!"
+                 
                   onClick={() => setRejectionModal({ isOpen: true, mode: 'filtered', targetItem: null, reason: '' })}
                   disabled={isProcessing}
                 >
@@ -682,21 +685,21 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
 
         {/* ── Floating Selected Batch Bar ── */}
         {selectedKeys.size > 0 && (
-          <div className="wizard-batch-banner">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-              <span style={{ fontWeight: 700, fontSize: '0.92rem', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+          <div className="[padding:10px_28px] [background:linear-gradient(135deg,_var(--color-ink-800)_0%,_var(--color-ink-900)_100%)] [color:var(--color-white)] [display:flex] [align-items:center] [justify-content:space-between] [gap:16px] [flex-shrink:0] [animation:wizardBannerIn_0.2s_ease-out]">
+            <div className="flex! items-center! gap-[14px]!">
+              <span className="font-bold! text-[length:0.92rem]! inline-flex! items-center! gap-[8px]!">
                 <CheckSquare size={16} color="#38bdf8" />
                 {selectedKeys.size} record{selectedKeys.size > 1 ? 's' : ''} selected
               </span>
-              <span style={{ color: 'rgba(255,255,255,0.4)' }}>•</span>
-              <span style={{ fontSize: '0.84rem', color: '#cbd5e1' }}>
-                Impact: <strong style={{ color: '#ffffff' }}>{selectedImpactTco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong> tCO₂e
+              <span className="text-[color:rgba(255,255,255,0.4)]!">•</span>
+              <span className="text-[length:0.84rem]! text-[color:#cbd5e1]!">
+                Impact: <strong className="text-[color:#ffffff]!">{selectedImpactTco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong> tCO₂e
               </span>
             </div>
 
-            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <div className="flex! gap-[10px]! items-center!">
               <button
-                className="btn-wizard-action btn-wizard-approve-all"
+                className="[display:inline-flex] [align-items:center] [gap:6px] [padding:8px_14px] [border-radius:var(--radius-md)] [font-size:var(--text-sm)] [font-weight:600] [cursor:pointer] [border:1px_solid_transparent] [transition:all_0.15s_ease] [background:var(--color-green-700)] [color:var(--color-white)] hover:[background:var(--color-green-600)] hover:[transform:translateY(-1px)] hover:[box-shadow:0_3px_8px_rgba(16,_185,_129,_0.3)]"
                 onClick={handleApproveSelected}
                 disabled={isProcessing}
               >
@@ -704,74 +707,74 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                 Approve Selected ({selectedKeys.size})
               </button>
               <button
-                className="btn-wizard-action btn-wizard-reject-all"
+                className="[display:inline-flex] [align-items:center] [gap:6px] [padding:8px_14px] [border-radius:var(--radius-md)] [font-size:var(--text-sm)] [font-weight:600] [cursor:pointer] [border:1px_solid_transparent] [transition:all_0.15s_ease] [background:rgba(239,_68,_68,_0.1)] [color:var(--color-red-700)] [&&]:[border-color:rgba(239,_68,_68,_0.25)] hover:[background:var(--color-red-700)] hover:[color:var(--color-white)] hover:[transform:translateY(-1px)] hover:[box-shadow:0_3px_8px_rgba(239,_68,_68,_0.3)]"
                 onClick={() => setRejectionModal({ isOpen: true, mode: 'selected', targetItem: null, reason: '' })}
                 disabled={isProcessing}
               >
                 <X size={14} />
                 Reject Selected ({selectedKeys.size})
               </button>
-              <button
-                className="btn-ghost"
+              <Button
+                variant="ghost" type="submit"
                 onClick={() => setSelectedKeys(new Set())}
-                style={{ color: '#94a3b8', fontSize: '0.82rem', padding: '6px 10px', cursor: 'pointer' }}
+                className="text-[color:#475569]! text-[length:0.82rem]! p-[6px_10px]! cursor-pointer!"
               >
                 Deselect
-              </button>
+              </Button>
             </div>
           </div>
         )}
 
         {/* ── Table Body ── */}
-        <div className="batch-wizard-body">
+        <div className="[flex:1] [overflow-y:auto] [overflow-x:auto] [padding:0] [position:relative]">
           {loading ? (
-            <div className="wizard-empty-state">
-              <RefreshCw size={36} style={{ animation: 'spin 1s linear infinite', color: 'var(--accent-color)' }} />
-              <p style={{ fontWeight: 600 }}>Loading 100% of pending records across all scopes...</p>
+            <div className="[padding:64px_24px] [text-align:center] [display:flex] [flex-direction:column] [align-items:center] [gap:14px] [color:var(--text-secondary,_var(--color-ink-500))]">
+              <RefreshCw size={36} style={{ animation: 'spin 1s linear infinite', color: 'var(--color-link)' }} />
+              <p className="font-semibold!">Loading 100% of pending records across all scopes...</p>
             </div>
           ) : stats.totalCount === 0 ? (
-            <div className="wizard-empty-state">
-              <div className="wizard-empty-icon">
+            <div className="[padding:64px_24px] [text-align:center] [display:flex] [flex-direction:column] [align-items:center] [gap:14px] [color:var(--text-secondary,_var(--color-ink-500))]">
+              <div className="[width:64px] [height:64px] [border-radius:var(--radius-lg)] [background:rgba(16,_185,_129,_0.1)] [color:var(--color-green-700)] [display:flex] [align-items:center] [justify-content:center]">
                 <CheckCircle size={32} />
               </div>
-              <h3 style={{ margin: 0, fontSize: '1.2rem', color: 'var(--text-primary)' }}>All Pending Data Verified</h3>
-              <p style={{ margin: 0, maxWidth: 460, fontSize: '0.88rem' }}>
+              <h3 className="m-[0px]! text-[length:1.2rem]! text-[color:var(--text-primary)]!">All Pending Data Verified</h3>
+              <p className="m-[0px]! max-w-[460px]! text-[length:0.88rem]!">
                 There are currently no records awaiting Maker-Checker approval. Staged bulk import entries will appear here automatically.
               </p>
             </div>
           ) : filteredRecords.length === 0 ? (
-            <div className="wizard-empty-state">
+            <div className="[padding:64px_24px] [text-align:center] [display:flex] [flex-direction:column] [align-items:center] [gap:14px] [color:var(--text-secondary,_var(--color-ink-500))]">
               <Filter size={32} color="var(--text-muted)" />
-              <h3 style={{ margin: 0, fontSize: '1.1rem' }}>No Matching Records</h3>
-              <p style={{ margin: 0, fontSize: '0.86rem' }}>No records match your active scope, anomaly, or search filters.</p>
-              <button
-                className="btn-ghost"
+              <h3 className="m-[0px]! text-[length:1.1rem]!">No Matching Records</h3>
+              <p className="m-[0px]! text-[length:0.86rem]!">No records match your active scope, anomaly, or search filters.</p>
+              <Button
+                variant="ghost" type="submit"
                 onClick={() => { setScopeFilter('all'); setQaFilter('all'); setFacilityFilter('all'); setYearFilter('all'); setSearchQuery(''); }}
                 style={{ border: '1px solid var(--border-color)', borderRadius: '8px', padding: '6px 14px', fontSize: '0.82rem', marginTop: '8px', cursor: 'pointer' }}
               >
                 Reset Filters
-              </button>
+              </Button>
             </div>
           ) : (
             <table className="wizard-table">
               <thead>
                 <tr>
-                  <th style={{ width: 44, textAlign: 'center' }}>
+                  <th className="w-[44px]! text-center!">
                     <input
                       type="checkbox"
-                      style={{ cursor: 'pointer' }}
+                      className="cursor-pointer!"
                       checked={filteredRecords.length > 0 && filteredRecords.every(r => selectedKeys.has(r.key))}
                       onChange={handleToggleSelectAllInView}
                     />
                   </th>
-                  <th style={{ width: 80 }}>Ref ID</th>
-                  <th style={{ width: 90 }}>Scope</th>
-                  <th style={{ width: 100 }}>Period</th>
-                  <th style={{ minWidth: 160 }}>Facility</th>
-                  <th style={{ minWidth: 240 }}>Activity Details</th>
-                  <th style={{ width: 130, textAlign: 'right' }}>Emissions</th>
-                  <th style={{ width: 190 }}>Integrity Status</th>
-                  <th style={{ width: 100, textAlign: 'center' }}>Review Action</th>
+                  <th className="w-[80px]!">Ref ID</th>
+                  <th className="w-[90px]!">Scope</th>
+                  <th className="w-[100px]!">Period</th>
+                  <th className="min-w-[160px]!">Facility</th>
+                  <th className="min-w-[240px]!">Activity Details</th>
+                  <th className="w-[130px]! text-right!">Emissions</th>
+                  <th className="w-[190px]!">Integrity Status</th>
+                  <th className="w-[100px]! text-center!">Review Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -781,16 +784,16 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
 
                   return (
                     <tr key={item.key} className={`${isSelected ? 'row-selected' : ''} ${item.isWeird ? 'row-weird' : ''}`}>
-                      <td style={{ textAlign: 'center' }}>
+                      <td className="text-center!">
                         <input
                           type="checkbox"
-                          style={{ cursor: 'pointer' }}
+                          className="cursor-pointer!"
                           checked={isSelected}
                           onChange={() => handleToggleKey(item.key)}
                         />
                       </td>
                       <td>
-                        <span style={{ fontFamily: 'monospace', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                        <span className="font-mono! text-[length:0.8rem]! text-[color:var(--text-secondary)]!">
                           #{String(item.id).slice(-5)}
                         </span>
                       </td>
@@ -800,25 +803,25 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                         </span>
                       </td>
                       <td>
-                        <span style={{ fontWeight: 500 }}>{item.date}</span>
+                        <span className="font-medium!">{item.date}</span>
                       </td>
                       <td>
-                        <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{facName}</span>
+                        <span className="font-semibold! text-[color:var(--text-primary)]!">{facName}</span>
                       </td>
                       <td>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                          <span style={{ fontSize: '0.84rem' }}>{item.desc}</span>
+                        <div className="flex! flex-col! gap-[2px]!">
+                          <span className="text-[length:0.84rem]!">{item.desc}</span>
                         </div>
                       </td>
-                      <td style={{ textAlign: 'right' }}>
-                        <strong className="num-tabular" style={{ fontSize: '0.9rem' }}>
+                      <td className="text-right!">
+                        <strong className="num-tabular text-[length:0.9rem]!">
                           {item.tco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </strong>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginLeft: '4px' }}>tCO₂e</span>
+                        <span className="text-[length:0.75rem]! text-[color:var(--text-secondary)]! ml-[4px]!">tCO₂e</span>
                       </td>
                       <td>
                         {item.isWeird ? (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                          <div className="flex! flex-col! gap-[3px]!">
                             <span
                               className={`anomaly-pill ${item.severity}`}
                               title={item.reasons.join(" · ")}
@@ -826,7 +829,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                               <AlertTriangle size={12} />
                               {item.severity === 'danger' ? 'Suspicious Data' : 'Notice'}
                             </span>
-                            <span style={{ fontSize: '0.72rem', color: item.severity === 'danger' ? '#dc2626' : '#b45309', lineHeight: 1.2 }}>
+                            <span className={`[font-size:0.72rem]! [line-height:1.2]! ${item.severity === 'danger' ? "[color:#dc2626]!" : "[color:#b45309]!"}`}>
                               {item.reasons[0]}
                               {item.reasons.length > 1 && ` (+${item.reasons.length - 1} more)`}
                             </span>
@@ -838,21 +841,12 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                           </span>
                         )}
                       </td>
-                      <td style={{ textAlign: 'center' }}>
-                        <div className="review-actions-group" style={{ justifyContent: 'center' }}>
+                      <td className="text-center!">
+                        <div className="[display:flex] [align-items:center] [gap:8px] justify-center!">
                           {item.created_by && String(item.created_by) === String(user?.id) ? (
                             <span 
-                              className="badge-maker"
-                              style={{ 
-                                fontSize: '0.7rem', 
-                                padding: '4px 8px', 
-                                borderRadius: '6px', 
-                                background: 'rgba(239, 68, 68, 0.1)', 
-                                color: '#ef4444', 
-                                border: '1px solid rgba(239, 68, 68, 0.25)', 
-                                fontWeight: 600, 
-                                whiteSpace: 'nowrap' 
-                              }}
+                              className="badge-maker text-[length:0.7rem]! p-[4px_8px]! rounded-[6px]! bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:#b91c1c]! [border:1px_solid_rgba(239,_68,_68,_0.25)]! font-semibold! whitespace-nowrap!"
+                             
                               title="Maker-Checker: You created this record and cannot self-approve."
                             >
                               Self-Submitted
@@ -888,14 +882,14 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
 
       {/* ── Nested Rejection Reason Prompt Modal ── */}
       {rejectionModal.isOpen && (
-        <div className="rejection-modal-backdrop" onClick={(e) => { if (e.target === e.currentTarget && !isProcessing) setRejectionModal(prev => ({ ...prev, isOpen: false })); }}>
-          <div className="rejection-modal">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div style={{ width: 36, height: 36, borderRadius: '10px', background: 'rgba(239, 68, 68, 0.1)', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div role="presentation" className="[position:fixed] [inset:0] [background:rgba(15,_23,_42,_0.5)] [backdrop-filter:blur(6px)] [display:flex] [align-items:center] [justify-content:center] [z-index:1000] [animation:fadeIn_0.2s_ease-out]" onClick={(e) => { if (e.target === e.currentTarget && !isProcessing) setRejectionModal(prev => ({ ...prev, isOpen: false })); }}>
+          <div className="[background:var(--bg-card-elevated)] [border:1px_solid_var(--border-color)] [&&]:[border-radius:var(--radius-lg)] [width:90%] [max-width:520px] [padding:28px] [box-shadow:var(--shadow-card-elevated)] [display:flex] [flex-direction:column] [gap:20px] [animation:scaleUp_0.25s_cubic-bezier(0.16,_1,_0.3,_1)]">
+            <div className="flex! justify-between! items-center!">
+              <div className="flex! items-center! gap-[10px]!">
+                <div className="w-[36px]! h-[36px]! rounded-[10px]! bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:#dc2626]! flex! items-center! justify-center!">
                   <Trash2 size={20} />
                 </div>
-                <h3 style={{ margin: 0, fontWeight: 700, fontSize: '1.1rem' }}>
+                <h3 className="m-[0px]! font-bold! text-[length:1.1rem]!">
                   {rejectionModal.mode === 'single'
                     ? `Reject Record #${rejectionModal.targetItem?.id}`
                     : rejectionModal.mode === 'selected'
@@ -905,24 +899,24 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
                     : `Reject ${filteredRecords.length} Filtered Records`}
                 </h3>
               </div>
-              <button
-                className="btn-ghost"
+              <Button
+                variant="ghost" type="submit"
                 onClick={() => !isProcessing && setRejectionModal(prev => ({ ...prev, isOpen: false }))}
-                style={{ padding: '6px', cursor: 'pointer' }}
+                className="p-[6px]! cursor-pointer!"
               >
                 <X size={18} />
-              </button>
+              </Button>
             </div>
 
-            <p style={{ margin: 0, fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+            <p className="m-[0px]! text-[length:0.86rem]! text-[color:var(--text-secondary)]! leading-[1.5]!">
               Maker-Checker governance requires a recorded audit reason before rejecting staged bulk entries. This justification will be logged in the immutable audit trail.
             </p>
 
             <div>
-              <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
+              <label className="block! mb-[8px]! text-[length:0.78rem]! font-semibold! text-[color:var(--text-secondary)]! uppercase!">
                 Quick Audit Justifications
               </label>
-              <div className="rejection-quick-chips">
+              <div className="[display:flex] [flex-wrap:wrap] [gap:8px]">
                 {QUICK_REJECTION_REASONS.map(reason => (
                   <button
                     key={reason}
@@ -937,38 +931,38 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
             </div>
 
             <div>
-              <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
+              <label className="block! mb-[8px]! text-[length:0.78rem]! font-semibold! text-[color:var(--text-secondary)]! uppercase!">
                 Custom Justification / Details
               </label>
-              <textarea
-                className="mole-input"
+              <Textarea
+               
                 rows={3}
                 placeholder="Describe reason for refusal..."
                 value={rejectionModal.reason}
                 onChange={(e) => setRejectionModal(prev => ({ ...prev, reason: e.target.value }))}
-                style={{ resize: 'vertical' }}
+                className="[resize:vertical]!"
               />
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-              <button
+            <div className="flex! justify-end! gap-[10px]!">
+              <Button
                 type="button"
-                className="btn-ghost"
+                variant="ghost"
                 onClick={() => setRejectionModal(prev => ({ ...prev, isOpen: false }))}
                 disabled={isProcessing}
-                style={{ padding: '8px 16px', borderRadius: '10px', cursor: 'pointer' }}
+                className="p-[8px_16px]! rounded-[10px]! cursor-pointer!"
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
-                className="btn-primary"
-                style={{ background: '#ef4444', padding: '8px 18px', borderRadius: '10px' }}
+                
+                className="bg-[color:#ef4444]! p-[8px_18px]! rounded-[10px]!"
                 onClick={handleConfirmRejection}
                 disabled={isProcessing || !rejectionModal.reason.trim()}
               >
                 {isProcessing ? 'Processing...' : 'Confirm Rejection'}
-              </button>
+              </Button>
             </div>
           </div>
         </div>

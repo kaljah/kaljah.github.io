@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Input } from "../ui";
 import api from "../api";
 import { useToast } from "./Toast";
 import Modal from "./Modal";
@@ -269,7 +270,7 @@ const GasCompositionCalculator = ({
       title="Gas Composition Calculator"
       maxWidth="1400px"
     >
-      <div className="comp-calc-container">
+      <div className="[color:var(--text-primary)]">
         <div className="comp-calc-grid">
           {/* Left: Inputs */}
           <div className="comp-inputs">
@@ -291,7 +292,7 @@ const GasCompositionCalculator = ({
               </div>
             </div>
 
-            <div className="total-display-card">
+            <div className="[background:rgba(255,_255,_255,_0.03)] [border:1px_solid_var(--border-color)] [&&]:[border-radius:var(--radius-md)] [padding:15px_20px] [display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:25px]">
               <div className="total-info">
                 <span className="label">Total Composition:</span>
                 <span
@@ -303,7 +304,7 @@ const GasCompositionCalculator = ({
               <span className="status-badge">{getStatusText()}</span>
             </div>
 
-            <div className="component-inputs-grid">
+            <div className="[display:grid] [grid-template-columns:repeat(auto-fill,_minmax(140px,_1fr))] [gap:15px] [margin-bottom:30px]">
               {Object.entries(COMPONENT_DATA).map(([key, data]) => (
                 <div key={key} className="input-group">
                   <label>{data.name}</label>
@@ -321,7 +322,7 @@ const GasCompositionCalculator = ({
 
             <div className="params-section">
               <h4>Operating Parameters</h4>
-              <div className="params-grid">
+              <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(180px,_1fr))] [gap:20px]">
                 <div className="input-group">
                   <label>Molar Volume (L/mol)</label>
                   <input
@@ -348,7 +349,7 @@ const GasCompositionCalculator = ({
             </div>
 
             <button
-              className="calc-btn"
+              className="[width:100%] [padding:14px] [background:var(--color-primary)] [color:white] [border:none] [&&]:[border-radius:var(--radius-md)] [font-weight:700] [cursor:pointer] [transition:all_0.2s] disabled:[opacity:0.5] disabled:[cursor:not-allowed] [&:hover:not(:disabled)]:[transform:translateY(-2px)] [&:hover:not(:disabled)]:[box-shadow:0_5px_15px_rgba(255,_102,_0,_0.3)]"
               onClick={calculate}
               disabled={totalMolePct === 0}
             >
@@ -446,18 +447,18 @@ const GasCompositionCalculator = ({
                 <div className="result-card save-section">
                   <h4>Save to Manage Data</h4>
                   <div className="save-input-group">
-                    <input
+                    <Input
                       type="text"
-                      className="mole-input"
+                     
                       placeholder="Factor Name (e.g. Field A Gas)"
                       value={saveName}
                       onChange={(e) => setSaveName(e.target.value)}
                     />
                     <button
-                      className="btn-primary"
+                      className="btn-primary mt-[10px]! w-full!"
                       onClick={handleSave}
                       disabled={isSaving || !saveName}
-                      style={{ marginTop: "10px", width: "100%" }}
+                     
                     >
                       {isSaving ? "Saving..." : "Save Factor"}
                     </button>
@@ -465,7 +466,7 @@ const GasCompositionCalculator = ({
                 </div>
               </div>
             ) : (
-              <div className="no-results">
+              <div className="[height:100%] [display:flex] [flex-direction:column] [justify-content:center] [align-items:center] [text-align:center] [color:var(--text-secondary)] [opacity:0.5] [&_.icon]:[font-size:var(--text-3xl)]! [&_.icon]:[margin-bottom:15px]!">
                 <span className="icon">📊</span>
                 <p>Enter composition to view results</p>
               </div>

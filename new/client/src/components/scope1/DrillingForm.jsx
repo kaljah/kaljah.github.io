@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Input, Field } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
 
 const DrillingForm = ({ data, onChange, sourceType }) => {
@@ -33,19 +34,16 @@ const DrillingForm = ({ data, onChange, sourceType }) => {
   }, [isTier1, isDefaultDays]);
 
   return (
-    <div className="drilling-form" style={{ marginTop: "15px" }}>
+    <div className="drilling-form mt-[15px]!">
 
       <div className="form-grid-2">
-        <div className="input-group">
-          <label>
-            {isTier1 && !isDefaultDays ? "Wells Drilled" : "Drilling Days"}
-            <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-          </label>
-          <input
+        <Field className="input-group" label={<>{isTier1 && !isDefaultDays ? "Wells Drilled" : "Drilling Days"}
+            <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
             type="number"
             min="0"
             step="1"
-            className="mole-input"
+           
             value={data.amount || data.quantity || ""}
             onChange={(e) => {
               onChange("amount", e.target.value);
@@ -55,7 +53,7 @@ const DrillingForm = ({ data, onChange, sourceType }) => {
               isTier1 && !isDefaultDays ? "Number of wells" : "Total drilling days"
             }
           />
-        </div>
+</Field>
 
       </div>
 
@@ -63,7 +61,7 @@ const DrillingForm = ({ data, onChange, sourceType }) => {
 
       {isTier2Plus && (
         <>
-          <div className="input-group" style={{ marginTop: "12px" }}>
+          <div className="input-group mt-[12px]!">
             <label>Mud Type</label>
             <CustomDropdown
               options={[
@@ -82,41 +80,26 @@ const DrillingForm = ({ data, onChange, sourceType }) => {
           </div>
 
           <div
-            style={{
-              marginTop: "15px",
-              padding: "14px",
-              background: "#f8fafc",
-              border: "1px solid #e2e8f0",
-              borderRadius: "6px",
-            }}
+            className="mt-[15px]! p-[14px]! bg-[color:#f8fafc]! [border:1px_solid_#e2e8f0]! rounded-[6px]!"
           >
             <h5
-              style={{
-                margin: "0 0 10px 0",
-                fontSize: "0.85rem",
-                color: "#1e293b",
-                fontWeight: 600,
-              }}
+              className="m-[0_0_10px_0]! text-[length:0.85rem]! text-[color:#1e293b]! font-semibold!"
             >
               Gas composition
             </h5>
             <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: "14px",
-              }}
+              className="grid gap-[14px] [grid-template-columns:1fr_1fr] max-[600px]:[grid-template-columns:1fr]"
             >
-              <div className="input-group" style={{ marginBottom: 0 }}>
-                <label style={{ fontSize: "0.8rem" }}>
+              <div className="input-group mb-[0px]!">
+                <label className="text-[length:0.8rem]!">
                   CH₄ fraction
                 </label>
-                <input
+                <Input
                   type="number"
                   step="0.0001"
                   min="0"
                   max="1.0"
-                  className="mole-input"
+                 
                   value={
                     data.ch4_fraction !== undefined
                       ? data.ch4_fraction
@@ -127,16 +110,16 @@ const DrillingForm = ({ data, onChange, sourceType }) => {
                 />
               </div>
 
-              <div className="input-group" style={{ marginBottom: 0 }}>
-                <label style={{ fontSize: "0.8rem" }}>
+              <div className="input-group mb-[0px]!">
+                <label className="text-[length:0.8rem]!">
                   CO₂ fraction
                 </label>
-                <input
+                <Input
                   type="number"
                   step="0.0001"
                   min="0"
                   max="1.0"
-                  className="mole-input"
+                 
                   value={
                     data.co2_fraction !== undefined ? data.co2_fraction : ""
                   }

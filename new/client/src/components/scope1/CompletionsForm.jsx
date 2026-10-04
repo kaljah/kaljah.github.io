@@ -1,4 +1,6 @@
 import React, { useEffect } from "react";
+import { Input, Field } from "../../ui";
+import { NativeSelect } from "../../ui/NativeSelect";
 import CustomDropdown from "../CustomDropdown";
 
 /**
@@ -132,7 +134,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
   }, [currentTier, factorKey]);
 
   return (
-    <div className="completions-form" style={{ marginTop: "15px" }}>
+    <div className="completions-form mt-[15px]!">
       {/* HEADER & TIER SELECTOR */}
 
       {/* ========================================================================= */}
@@ -141,13 +143,10 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
       {isTier1 && (
         <div>
 
-          <div className="form-grid-3" style={{ marginBottom: "16px" }}>
-            <div className="input-group">
-              <label>
-                Well type
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-              </label>
-              <select
+          <div className="form-grid-3 mb-[16px]!">
+            <Field className="input-group" label={<>Well type
+                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<NativeSelect
                 className="mole-input"
                 value={wellType}
                 onChange={(e) => {
@@ -156,15 +155,12 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
               >
                 <option value="gas">Gas Well</option>
                 <option value="oil">Oil Well</option>
-              </select>
-            </div>
+              </NativeSelect>
+</Field>
 
-            <div className="input-group">
-              <label>
-                Fracturing
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-              </label>
-              <select
+            <Field className="input-group" label={<>Fracturing
+                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<NativeSelect
                 className="mole-input"
                 value={fracturing}
                 onChange={(e) => {
@@ -178,15 +174,12 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
               >
                 <option value="hf">With Hydraulic Fracturing</option>
                 <option value="no_hf">Without Hydraulic Fracturing</option>
-              </select>
-            </div>
+              </NativeSelect>
+</Field>
 
-            <div className="input-group">
-              <label>
-                Disposition
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-              </label>
-              <select
+            <Field className="input-group" label={<>Disposition
+                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<NativeSelect
                 className="mole-input"
                 value={disposition}
                 onChange={(e) => {
@@ -209,23 +202,20 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                     <option value="flared">Flared Completion</option>
                   </>
                 )}
-              </select>
-            </div>
+              </NativeSelect>
+</Field>
           </div>
 
           {/* ACTIVE FACTOR BADGE */}
 
           <div className="form-grid-3">
-            <div className="input-group">
-              <label>
-                Completions
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-              </label>
-              <input
+            <Field className="input-group" label={<>Completions
+                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
                 type="number"
                 min="1"
                 step="1"
-                className="mole-input"
+               
                 value={data.amount || data.events || "1"}
                 onChange={(e) => {
                   onChange("amount", e.target.value);
@@ -234,39 +224,33 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                 placeholder="1"
                 required
               />
-            </div>
+</Field>
 
-            <div className="input-group">
-              <label>
-                CH₄ (%)
-              </label>
-              <input
+            <Field className="input-group" label="CH₄ (%)">
+<Input
                 type="number"
                 min="0"
                 max="100"
                 step="0.1"
-                className="mole-input"
+               
                 value={data.ch4_content !== undefined && data.ch4_content !== null ? data.ch4_content : ""}
                 onChange={(e) => onChange("ch4_content", e.target.value)}
                 placeholder="78.8"
               />
-            </div>
+</Field>
 
-            <div className="input-group">
-              <label>
-                CO₂ (%)
-              </label>
-              <input
+            <Field className="input-group" label="CO₂ (%)">
+<Input
                 type="number"
                 min="0"
                 max="100"
                 step="0.01"
-                className="mole-input"
+               
                 value={data.co2_content !== undefined && data.co2_content !== null ? data.co2_content : ""}
                 onChange={(e) => onChange("co2_content", e.target.value)}
                 placeholder="0.44"
               />
-            </div>
+</Field>
           </div>
         </div>
       )}
@@ -277,10 +261,10 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
       {isTier2 && (
         <div>
 
-          <div className="input-group" style={{ marginBottom: "16px" }}>
+          <div className="input-group mb-[16px]!">
             <label>
               Model
-              <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+              <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
             </label>
             <CustomDropdown
               options={[
@@ -304,30 +288,24 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 
           {/* Model 1: Rate × Duration */}
           {activeMethod === "rate_duration" && (
-            <div className="form-grid-3" style={{ marginBottom: "16px" }}>
-              <div className="input-group">
-                <label>
-                  Flowback rate
-                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-                </label>
-                <input
+            <div className="form-grid-3 mb-[16px]!">
+              <Field className="input-group" label={<>Flowback rate
+                  <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
                   type="number"
                   min="0"
                   step="any"
-                  className="mole-input"
+                 
                   value={data.comp_rate || ""}
                   onChange={(e) => onChange("comp_rate", e.target.value)}
                   placeholder="e.g. 50"
                   required
                 />
-              </div>
+</Field>
 
-              <div className="input-group">
-                <label>
-                  Flowback Rate Unit
-                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-                </label>
-                <select
+              <Field className="input-group" label={<>Flowback Rate Unit
+                  <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<NativeSelect
                   className="mole-input"
                   value={data.comp_rate_unit || "Mcf/hr"}
                   onChange={(e) => onChange("comp_rate_unit", e.target.value)}
@@ -338,95 +316,80 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                   <option value="scf/day">scf / day</option>
                   <option value="m3/day">m³ / day</option>
                   <option value="m3/hr">m³ / hr</option>
-                </select>
-              </div>
+                </NativeSelect>
+</Field>
 
-              <div className="input-group">
-                <label>
-                  Duration (h)
-                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-                </label>
-                <input
+              <Field className="input-group" label={<>Duration (h)
+                  <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
                   type="number"
                   min="0"
                   step="0.5"
-                  className="mole-input"
+                 
                   value={data.comp_duration || ""}
                   onChange={(e) => onChange("comp_duration", e.target.value)}
                   placeholder="e.g. 24"
                   required
                 />
-              </div>
+</Field>
             </div>
           )}
 
           {/* Model 2: Liquid × GOR (API Eq. 6-12) */}
           {activeMethod === "gor" && (
-            <div className="form-grid-3" style={{ marginBottom: "16px" }}>
-              <div className="input-group">
-                <label>
-                  Total Liquid Flowback (bbl)
-                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-                </label>
-                <input
+            <div className="form-grid-3 mb-[16px]!">
+              <Field className="input-group" label={<>Total Liquid Flowback (bbl)
+                  <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
                   type="number"
                   min="0"
                   step="any"
-                  className="mole-input"
+                 
                   value={data.comp_liquid_bbl || ""}
                   onChange={(e) => onChange("comp_liquid_bbl", e.target.value)}
                   placeholder="e.g. 5000"
                   required
                 />
-              </div>
+</Field>
 
-              <div className="input-group">
-                <label>
-                  Flowback GOR (scf/bbl)
-                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-                </label>
-                <input
+              <Field className="input-group" label={<>Flowback GOR (scf/bbl)
+                  <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
                   type="number"
                   min="0"
                   step="any"
-                  className="mole-input"
+                 
                   value={data.comp_gor || ""}
                   onChange={(e) => onChange("comp_gor", e.target.value)}
                   placeholder="e.g. 1500"
                   required
                 />
-              </div>
+</Field>
 
-              <div className="input-group">
-                <label>
-                  Gas Produced to Sales (Mcf)
-                </label>
-                <input
+              <Field className="input-group" label="Gas Produced to Sales (Mcf)">
+<Input
                   type="number"
                   min="0"
                   step="any"
-                  className="mole-input"
+                 
                   value={data.comp_gas_produced_mcf || ""}
                   onChange={(e) => onChange("comp_gas_produced_mcf", e.target.value)}
                   placeholder="0"
                 />
-              </div>
+</Field>
             </div>
           )}
 
           {/* Model 3: API Eq. 6-7 (V_cc = V_Pi × T) */}
           {activeMethod === "api_equation_6_7" && (
-            <div className="form-grid-3" style={{ marginBottom: "16px" }}>
-              <div className="input-group">
-                <label>
-                  Production / Well Test Rate (V_Pi)
-                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-                </label>
-                <input
+            <div className="form-grid-3 mb-[16px]!">
+              <Field className="input-group" label={<>Production / Well Test Rate (V_Pi)
+                  <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
                   type="number"
                   min="0"
                   step="any"
-                  className="mole-input"
+                 
                   value={data.comp_daily_prod_rate || data.comp_rate || ""}
                   onChange={(e) => {
                     onChange("comp_daily_prod_rate", e.target.value);
@@ -435,14 +398,11 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                   placeholder="e.g. 250"
                   required
                 />
-              </div>
+</Field>
 
-              <div className="input-group">
-                <label>
-                  Production Rate Unit
-                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-                </label>
-                <select
+              <Field className="input-group" label={<>Production Rate Unit
+                  <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<NativeSelect
                   className="mole-input"
                   value={data.comp_prod_rate_unit || "Mcf/day"}
                   onChange={(e) => onChange("comp_prod_rate_unit", e.target.value)}
@@ -451,19 +411,16 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                   <option value="Mcf/hr">Mcf / hr</option>
                   <option value="m3/day">m³ / day</option>
                   <option value="m3/hr">m³ / hr</option>
-                </select>
-              </div>
+                </NativeSelect>
+</Field>
 
-              <div className="input-group">
-                <label>
-                  Vent Duration Before Separation (hrs)
-                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-                </label>
-                <input
+              <Field className="input-group" label={<>Vent Duration Before Separation (hrs)
+                  <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
                   type="number"
                   min="0"
                   step="0.5"
-                  className="mole-input"
+                 
                   value={data.comp_duration || data.vent_duration_hours || ""}
                   onChange={(e) => {
                     onChange("comp_duration", e.target.value);
@@ -472,47 +429,42 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                   placeholder="e.g. 12"
                   required
                 />
-              </div>
+</Field>
             </div>
           )}
 
           {/* Gas Properties & Control for Tier 2 */}
           <div className="form-grid-4">
-            <div className="input-group">
-              <label>
-                CH₄ (%)
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-              </label>
-              <input
+            <Field className="input-group" label={<>CH₄ (%)
+                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
                 type="number"
                 min="0"
                 max="100"
                 step="0.1"
-                className="mole-input"
+               
                 value={data.ch4_content !== undefined && data.ch4_content !== null ? data.ch4_content : ""}
                 onChange={(e) => onChange("ch4_content", e.target.value)}
                 placeholder="e.g. 85"
                 required
               />
-            </div>
+</Field>
 
-            <div className="input-group">
-              <label>CO₂ (%)</label>
-              <input
+            <Field className="input-group" label="CO₂ (%)">
+<Input
                 type="number"
                 min="0"
                 max="100"
                 step="0.1"
-                className="mole-input"
+               
                 value={data.co2_content || ""}
                 onChange={(e) => onChange("co2_content", e.target.value)}
                 placeholder="e.g. 1.5"
               />
-            </div>
+</Field>
 
-            <div className="input-group">
-              <label>Flowback Disposition</label>
-              <select
+            <Field className="input-group" label="Flowback Disposition">
+<NativeSelect
                 className="mole-input"
                 value={data.comp_disposition || "vented"}
                 onChange={(e) => {
@@ -523,25 +475,22 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                 <option value="vented">Vented directly to atmosphere</option>
                 <option value="flared">Routed to Flare</option>
                 <option value="rec">Recovered / REC (Zero Venting)</option>
-              </select>
-            </div>
+              </NativeSelect>
+</Field>
 
-            <div className="input-group">
-              <label>
-                Flare efficiency (%)
-              </label>
-              <input
+            <Field className="input-group" label="Flare efficiency (%)">
+<Input
                 type="number"
                 min="0"
                 max="100"
                 step="0.1"
-                className="mole-input"
+               
                 value={data.comp_flare_eff || "98"}
                 onChange={(e) => onChange("comp_flare_eff", e.target.value)}
                 placeholder="98"
                 disabled={data.comp_disposition !== "flared"}
               />
-            </div>
+</Field>
           </div>
         </div>
       )}
@@ -553,17 +502,14 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
         <div>
 
           {/* Section 1: Metered Gas & Injected N2 Deduction */}
-          <div className="form-grid-4" style={{ marginBottom: "16px" }}>
-            <div className="input-group">
-              <label>
-                Metered volume
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-              </label>
-              <input
+          <div className="form-grid-4 mb-[16px]!">
+            <Field className="input-group" label={<>Metered volume
+                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
                 type="number"
                 min="0"
                 step="any"
-                className="mole-input"
+               
                 value={data.comp_volume || data.flowback_volume || data.amount || ""}
                 onChange={(e) => {
                   onChange("comp_volume", e.target.value);
@@ -573,14 +519,11 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                 placeholder="e.g. 500"
                 required
               />
-            </div>
+</Field>
 
-            <div className="input-group">
-              <label>
-                Volume Unit
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-              </label>
-              <select
+            <Field className="input-group" label={<>Volume Unit
+                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<NativeSelect
                 className="mole-input"
                 value={data.volume_unit || "Mcf"}
                 onChange={(e) => {
@@ -591,33 +534,29 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                 <option value="Mcf">Mcf (thousand scf)</option>
                 <option value="scf">scf</option>
                 <option value="m3">m³</option>
-              </select>
-            </div>
+              </NativeSelect>
+</Field>
 
-            <div className="input-group">
-              <label>
-                Injected N₂
+            <Field className="input-group" label={<>Injected N₂
                 <span
-                  style={{ marginLeft: "4px", fontSize: "0.7rem", color: "#6b7280", cursor: "help" }}
+                  className="ml-[4px]! text-[length:0.7rem]! text-[color:#6b7280]! [cursor:help]!"
                   title="Non-combustible gases such as nitrogen are deducted from total flowback volume. Injected CO2 is NOT deducted per API §6.2.3.1."
                 >
                   ⓘ
-                </span>
-              </label>
-              <input
+                </span></>}>
+<Input
                 type="number"
                 min="0"
                 step="any"
-                className="mole-input"
+               
                 value={data.comp_injected_n2 || ""}
                 onChange={(e) => onChange("comp_injected_n2", e.target.value)}
                 placeholder="0"
               />
-            </div>
+</Field>
 
-            <div className="input-group">
-              <label>Injected N₂ Unit</label>
-              <select
+            <Field className="input-group" label="Injected N₂ Unit">
+<NativeSelect
                 className="mole-input"
                 value={data.comp_injected_n2_unit || "scf"}
                 onChange={(e) => onChange("comp_injected_n2_unit", e.target.value)}
@@ -625,112 +564,95 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                 <option value="scf">scf</option>
                 <option value="Mcf">Mcf</option>
                 <option value="m3">m³</option>
-              </select>
-            </div>
+              </NativeSelect>
+</Field>
           </div>
 
           {/* Section 2: Initial Unmetered Flowback (API Eq. 6-5) */}
           <div
-            style={{
-              background: "#f9fafb",
-              border: "1px solid #e5e7eb",
-              borderRadius: "6px",
-              padding: "12px",
-              marginBottom: "16px",
-            }}
+            className="bg-[color:#f9fafb]! [border:1px_solid_#e5e7eb]! rounded-[6px]! p-[12px]! mb-[16px]!"
           >
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
-              <label style={{ fontWeight: 600, fontSize: "0.85rem", color: "#374151", margin: 0 }}>
+            <div className="flex! items-center! justify-between! mb-[8px]!">
+              <label className="font-semibold! text-[length:0.85rem]! text-[color:#374151]! m-[0px]!">
                 Unmetered flowback
               </label>
             </div>
             <div className="form-grid-2">
-              <div className="input-group">
-                <label>
-                  Unmetered time (h)
-                </label>
-                <input
+              <Field className="input-group" label="Unmetered time (h)">
+<Input
                   type="number"
                   min="0"
                   step="0.5"
-                  className="mole-input"
+                 
                   value={data.comp_initial_flowback_hours || ""}
                   onChange={(e) => onChange("comp_initial_flowback_hours", e.target.value)}
                   placeholder="e.g. 4"
                 />
-              </div>
+</Field>
 
-              <div className="input-group">
-                <label>
-                  Metered time (h)
-                </label>
-                <input
+              <Field className="input-group" label="Metered time (h)">
+<Input
                   type="number"
                   min="0"
                   step="0.5"
-                  className="mole-input"
+                 
                   value={data.comp_duration || ""}
                   onChange={(e) => onChange("comp_duration", e.target.value)}
                   placeholder="e.g. 24"
                 />
-              </div>
+</Field>
             </div>
           </div>
 
           {/* Section 3: Gas Composition */}
-          <div className="form-grid-2" style={{ marginBottom: "16px" }}>
-            <div className="input-group">
-              <label>
-                CH₄ (%)
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-              </label>
-              <input
+          <div className="form-grid-2 mb-[16px]!">
+            <Field className="input-group" label={<>CH₄ (%)
+                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
                 type="number"
                 min="0"
                 max="100"
                 step="0.1"
-                className="mole-input"
+               
                 value={data.ch4_content !== undefined && data.ch4_content !== null ? data.ch4_content : ""}
                 onChange={(e) => onChange("ch4_content", e.target.value)}
                 placeholder="e.g. 85.5"
                 required
               />
-            </div>
+</Field>
 
-            <div className="input-group">
-              <label>CO₂ (%)</label>
-              <input
+            <Field className="input-group" label="CO₂ (%)">
+<Input
                 type="number"
                 min="0"
                 max="100"
                 step="0.1"
-                className="mole-input"
+               
                 value={data.co2_content || ""}
                 onChange={(e) => onChange("co2_content", e.target.value)}
                 placeholder="e.g. 1.2"
               />
-            </div>
+</Field>
 
-            <div className="input-group">
-              <label>C₂+ (%)</label>
-              <input
+            <Field className="input-group" label="C₂+ (%)">
+<Input
                 type="number"
                 min="0"
                 max="100"
                 step="0.1"
-                className="mole-input"
+               
                 value={data.comp_c2plus_content || ""}
                 onChange={(e) => onChange("comp_c2plus_content", e.target.value)}
                 placeholder="e.g. 5"
               />
-            </div>
+</Field>
           </div>
 
           {/* Section 4: Gas Disposition / Fate Split */}
-          <div className="input-group" style={{ marginBottom: "16px" }}>
+          <div className="input-group mb-[16px]!">
             <label>
               Gas disposition
-              <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+              <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
             </label>
             <CustomDropdown
               options={[
@@ -749,16 +671,10 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
 
           {tier3Disposition === "split" && (
             <div
-              style={{
-                background: "#f0fdf4",
-                border: "1px solid #bbf7d0",
-                borderRadius: "6px",
-                padding: "12px",
-                marginBottom: "16px",
-              }}
+              className="bg-[color:#f0fdf4]! [border:1px_solid_#bbf7d0]! rounded-[6px]! p-[12px]! mb-[16px]!"
             >
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
-                <span style={{ fontWeight: 600, fontSize: "0.85rem", color: "#166534" }}>
+              <div className="flex! justify-between! mb-[8px]!">
+                <span className="font-semibold! text-[length:0.85rem]! text-[color:#166534]!">
                   Custom Split Allocation (must sum to 100%)
                 </span>
                 {(() => {
@@ -768,11 +684,7 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                   const sumP = Math.round((fV > 1 ? fV : fV * 100) + (fF > 1 ? fF : fF * 100) + (fR > 1 ? fR : fR * 100));
                   return (
                     <span
-                      style={{
-                        fontWeight: 700,
-                        fontSize: "0.85rem",
-                        color: sumP === 100 ? "#16a34a" : "#dc2626",
-                      }}
+                      className={`[font-weight:700]! [font-size:0.85rem]! ${sumP === 100 ? "[color:#16a34a]!" : "[color:#dc2626]!"}`}
                     >
                       Total: {sumP}% {sumP === 100 ? "✓" : "⚠ (must equal 100%)"}
                     </span>
@@ -781,14 +693,13 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
               </div>
 
               <div className="form-grid-3">
-                <div className="input-group">
-                  <label>Vented (%)</label>
-                  <input
+                <Field className="input-group" label="Vented (%)">
+<Input
                     type="number"
                     min="0"
                     max="100"
                     step="1"
-                    className="mole-input"
+                   
                     value={data.comp_frac_vented || ""}
                     onChange={(e) => {
                       onChange("comp_frac_vented", e.target.value);
@@ -796,16 +707,15 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                     }}
                     placeholder="e.g. 20"
                   />
-                </div>
+</Field>
 
-                <div className="input-group">
-                  <label>Flared (%)</label>
-                  <input
+                <Field className="input-group" label="Flared (%)">
+<Input
                     type="number"
                     min="0"
                     max="100"
                     step="1"
-                    className="mole-input"
+                   
                     value={data.comp_frac_flared || ""}
                     onChange={(e) => {
                       onChange("comp_frac_flared", e.target.value);
@@ -813,16 +723,15 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                     }}
                     placeholder="e.g. 50"
                   />
-                </div>
+</Field>
 
-                <div className="input-group">
-                  <label>Recovered / REC (%)</label>
-                  <input
+                <Field className="input-group" label="Recovered / REC (%)">
+<Input
                     type="number"
                     min="0"
                     max="100"
                     step="1"
-                    className="mole-input"
+                   
                     value={data.comp_frac_recovered || ""}
                     onChange={(e) => {
                       onChange("comp_frac_recovered", e.target.value);
@@ -830,28 +739,25 @@ const CompletionsForm = ({ data, onChange, sourceType }) => {
                     }}
                     placeholder="e.g. 30"
                   />
-                </div>
+</Field>
               </div>
             </div>
           )}
 
           {(tier3Disposition === "flared" || (tier3Disposition === "split" && parseFloat(data.comp_frac_flared || 0) > 0)) && (
-            <div className="form-grid-2" style={{ marginBottom: "16px" }}>
-              <div className="input-group">
-                <label>
-                  Flare efficiency (%)
-                </label>
-                <input
+            <div className="form-grid-2 mb-[16px]!">
+              <Field className="input-group" label="Flare efficiency (%)">
+<Input
                   type="number"
                   min="0"
                   max="100"
                   step="0.1"
-                  className="mole-input"
+                 
                   value={data.comp_flare_eff || "98"}
                   onChange={(e) => onChange("comp_flare_eff", e.target.value)}
                   placeholder="98"
                 />
-              </div>
+</Field>
             </div>
           )}
         </div>

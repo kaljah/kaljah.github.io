@@ -1,0 +1,191 @@
+/* Design tokens. The only place hex values live (enforced by stylelint, see docs/ui-modernization-plan.md).
+   Colors are the app's existing palette; this file only gives them names and roles. */
+@theme static {
+  --color-*: initial;
+  --text-*: initial;
+  --radius-*: initial;
+  --shadow-*: initial;
+  --breakpoint-*: initial;
+  --font-*: initial;
+  --ease-*: initial;
+
+  /* Fonts (S-1: system stack, which renders Segoe UI on Windows as it does today) */
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Palette */
+  --color-white: #fff;
+
+  --color-brand-50: #fff7ed;
+  --color-brand-100: #ffedd5;
+  --color-brand-400: #ff8533;
+  --color-brand-500: #f60; /* the accent: borders, icons, decorative fills */
+  --color-brand-600: #e65c00; /* focus ring */
+  --color-brand-700: #c2410c; /* primary fill with white text, orange text (AA) */
+  --color-brand-800: #9a3412; /* primary hover */
+
+  --color-ink-900: #0f172a;
+  --color-ink-800: #1e293b;
+  --color-ink-700: #334155;
+  --color-ink-600: #475569;
+  --color-ink-500: #64748b;
+  --color-ink-400: #94a3b8; /* disabled and decorative only */
+  --color-ink-300: #cbd5e1;
+  --color-ink-200: #e2e8f0;
+  --color-ink-100: #f1f5f9;
+  --color-ink-50: #f8fafc;
+
+  --color-green-50: #ecfdf5;
+  --color-green-500: #10b981;
+  --color-green-600: #059669;
+  --color-green-700: #2e7d32;
+  --color-green-900: #1b5e20;
+
+  --color-blue-50: #eff6ff;
+  --color-blue-500: #3b82f6;
+  --color-blue-600: #2563eb;
+  --color-blue-700: #1d4ed8;
+  --color-sky-600: #0284c7;
+
+  --color-amber-50: #fffbeb;
+  --color-amber-500: #f59e0b;
+  --color-amber-600: #d97706;
+  --color-amber-700: #b45309;
+
+  --color-red-50: #fef2f2;
+  --color-red-500: #ef4444;
+  --color-red-600: #dc2626;
+  --color-red-700: #b91c1c;
+
+  --color-violet-500: #8b5cf6;
+  --color-violet-700: #6d28d9;
+
+  /* Roles (S-3: primary fill is darkened to pass AA with white text) */
+  --color-primary: var(--color-brand-700);
+  --color-primary-hover: var(--color-brand-800);
+  --color-on-primary: var(--color-white);
+  --color-link: var(--color-brand-700);
+  --color-focus: var(--color-brand-600);
+  --color-selected-bg: var(--color-brand-50);
+  --color-selected-fg: var(--color-brand-700);
+
+  --color-text: var(--color-ink-900);
+  --color-text-secondary: var(--color-ink-500);
+  --color-text-disabled: var(--color-ink-400);
+  --color-border: var(--color-ink-200);
+  --color-surface: var(--color-white);
+  --color-canvas: var(--color-ink-100);
+
+  --color-success: var(--color-green-500);
+  --color-success-bg: var(--color-green-50);
+  --color-success-fg: var(--color-green-700);
+  --color-warning: var(--color-amber-500);
+  --color-warning-bg: var(--color-amber-50);
+  --color-warning-fg: var(--color-amber-700);
+  --color-danger: var(--color-red-500);
+  --color-danger-bg: var(--color-red-50);
+  --color-danger-fg: var(--color-red-700);
+  --color-info: var(--color-blue-500);
+  --color-info-bg: var(--color-blue-50);
+  --color-info-fg: var(--color-blue-700);
+
+  /* Data categories (S-2) */
+  --color-scope-1: var(--color-brand-500);
+  --color-scope-2: var(--color-blue-500);
+  --color-scope-3: var(--color-violet-500);
+  --color-unc-low: var(--color-green-500);
+  --color-unc-medium: var(--color-amber-500);
+  --color-unc-high: var(--color-red-500);
+
+  /* Type scale */
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1rem;
+  --text-sm: 0.8125rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base: 0.875rem;
+  --text-base--line-height: 1.375rem;
+  --text-md: 1rem;
+  --text-md--line-height: 1.5rem;
+  --text-lg: 1.125rem;
+  --text-lg--line-height: 1.625rem;
+  --text-xl: 1.5rem;
+  --text-xl--line-height: 2rem;
+  --text-2xl: 1.875rem;
+  --text-2xl--line-height: 2.25rem;
+  --text-3xl: 2.25rem;
+  --text-3xl--line-height: 2.5rem;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  --shadow-xs: 0 1px 3px rgba(15, 23, 42, 0.04);
+  --shadow-card: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
+  --shadow-raised: 0 12px 32px -4px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.03);
+  --shadow-overlay: 0 12px 32px -4px rgba(15, 23, 42, 0.15);
+
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 56.25rem;
+  --breakpoint-lg: 75rem;
+  --breakpoint-xl: 96rem;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:root {
+  --z-sticky: 100;
+  --z-sidebar: 200;
+  --z-topbar: 300;
+  --z-dropdown: 1000;
+  --z-overlay: 10000; /* above legacy 9999 modals until Phase 5 */
+  --z-modal: 10001;
+  --z-popover: 10002;
+  --z-toast: 100000;
+  --z-banner: 100001;
+
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 300ms;
+
+  --chart-1: var(--color-brand-500);
+  --chart-2: var(--color-blue-500);
+  --chart-3: var(--color-green-500);
+  --chart-4: var(--color-violet-500);
+  --chart-5: var(--color-amber-500);
+  --chart-6: var(--color-sky-600);
+  --chart-7: var(--color-ink-500);
+  --chart-8: var(--color-red-500);
+
+  /* Bridge: legacy variable names used by existing stylesheets. Removed in Phase 5. */
+  --accent-color: var(--color-brand-500);
+  --accent-hover: var(--color-brand-600);
+  --accent-subtle: rgba(255, 102, 0, 0.1);
+  --accent-gradient: linear-gradient(135deg, #f60 0%, #ff8533 100%);
+  --primary-gradient: linear-gradient(135deg, #c2410c 0%, #9a3412 100%);
+  --bg-body: var(--color-ink-100);
+  --bg-card: rgba(255, 255, 255, 0.9);
+  --bg-card-elevated: rgba(255, 255, 255, 0.96);
+  --bg-hover: rgba(255, 247, 237, 0.85);
+  --text-primary: var(--color-ink-900);
+  --text-main: var(--color-ink-900);
+  --text-secondary: var(--color-ink-500);
+  --text-muted: var(--color-ink-500);
+  --text-disabled: var(--color-ink-400);
+  --border-color: rgba(226, 232, 240, 0.8);
+  --border-light: var(--color-ink-200);
+  --border-focus: var(--color-brand-500);
+  --danger: #ef4444;
+  --danger-bg: rgba(239, 68, 68, 0.1);
+  --success: #10b981;
+  --success-bg: rgba(16, 185, 129, 0.1);
+  --warning: #f59e0b;
+  --warning-bg: rgba(245, 158, 11, 0.1);
+  --info: #3b82f6;
+  --info-bg: rgba(59, 130, 246, 0.1);
+  --shadow-card-elevated: 0 12px 32px -4px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.03);
+  --shadow-hover: 0 16px 36px -4px rgba(255, 102, 0, 0.12), 0 6px 16px -2px rgba(15, 23, 42, 0.04);
+  --sidebar-width: 260px;
+
+  font-family: var(--font-sans);
+}

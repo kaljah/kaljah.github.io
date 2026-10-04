@@ -1,3 +1,4 @@
+import { Button, PageHeader, SegmentedControl } from "../ui";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import api from "../api";
@@ -268,80 +269,57 @@ const SbtiDashboard = () => {
   const currentYear = sbtiData?.current_year || sbtiData?.latest_actual_year || ytdYear || new Date().getFullYear();
 
   return (
-    <div className="sbti-container" style={{ opacity: isUpdating ? 0.8 : 1, transition: "opacity 0.2s ease" }}>
+    <div className="[padding:24px] [max-width:1600px] [margin:0_auto] [display:flex] [flex-direction:column] [gap:24px]" style={{ opacity: isUpdating ? 0.8 : 1, transition: "opacity 0.2s ease" }}>
       {/* Top Header */}
-      <div className="sbti-header">
-        <div className="sbti-title-group">
-          <h1>
-            <Target size={28} className="text-primary" />
-            SBTi & Net-Zero Trajectory Dashboard
-          </h1>
-          <p>
-            Track corporate decarbonization against Science Based Targets initiative (SBTi) 1.5°C & Well-Below 2°C pathways per Corporate Net-Zero Standard v1.2.
-          </p>
-        </div>
-
-        <div className="sbti-header-actions">
-          {/* Scope Disaggregation Toggle */}
-          <div className="sbti-scope-toggle">
-            <button
-              className={`btn-scope ${scopeMode === "all" ? "active" : ""}`}
-              onClick={() => handleScopeModeChange("all")}
-              title="Track across all scopes (Scope 1, 2, and 3)"
-            >
-              All Scopes (1+2+3)
-            </button>
-            <button
-              className={`btn-scope ${scopeMode === "s1_s2" ? "active" : ""}`}
-              onClick={() => handleScopeModeChange("s1_s2")}
-              title="Track operational emissions (Scope 1 and 2 only)"
-            >
-              Scope 1+2 (Operational)
-            </button>
-          </div>
-
-          {(user?.role === "admin" || user?.role === "superuser") && (
-            <button
-              className="btn-secondary"
-              onClick={() => setShowConfig(!showConfig)}
-              style={{ display: "flex", alignItems: "center", gap: "6px" }}
-            >
-              <Sliders size={16} />
-              {showConfig ? "Hide Target Settings" : "Configure Target"}
-            </button>
-          )}
-
-          {isConfigured && (
-            <button
-              className="btn-secondary"
-              onClick={exportCsv}
-              style={{ display: "flex", alignItems: "center", gap: "6px" }}
-            >
-              <Download size={16} />
-              Export Pathway CSV
-            </button>
-          )}
-        </div>
-      </div>
+      <PageHeader
+        className="mb-6"
+        title="SBTi & Net-Zero Trajectory"
+        description="Track corporate decarbonization against Science Based Targets initiative (SBTi) 1.5°C & Well-Below 2°C pathways per Corporate Net-Zero Standard v1.2."
+        actions={
+          <>
+            <SegmentedControl
+              label="Scope coverage"
+              value={scopeMode}
+              onChange={handleScopeModeChange}
+              options={[
+                { value: "all", label: "All scopes (1+2+3)", title: "Track across all scopes (Scope 1, 2, and 3)" },
+                { value: "s1_s2", label: "Scope 1+2 (operational)", title: "Track operational emissions (Scope 1 and 2 only)" },
+              ]}
+            />
+            {(user?.role === "admin" || user?.role === "superuser") && (
+              <Button variant="secondary" onClick={() => setShowConfig(!showConfig)}>
+                <Sliders className="size-4" aria-hidden="true" />
+                {showConfig ? "Hide target settings" : "Configure target"}
+              </Button>
+            )}
+            {isConfigured && (
+              <Button variant="secondary" onClick={exportCsv}>
+                <Download className="size-4" aria-hidden="true" />
+                Export pathway CSV
+              </Button>
+            )}
+          </>
+        }
+      />
 
       {/* Target Setting Drawer / Form */}
       {showConfig && (
-        <div className="sbti-config-panel">
+        <div className="[background:var(--card-bg,_var(--color-white))] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [&&]:[border-radius:var(--radius-lg)] [padding:24px] [box-shadow:var(--shadow-card)]">
           <div className="sbti-config-header">
             <h3>
               <Globe size={20} className="text-primary" />
               SBTi Corporate Target Setup
             </h3>
-            <span style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>
+            <span className="text-[length:0.85rem]! text-[color:var(--text-secondary)]!">
               Per SBTi Corporate Net-Zero Standard v1.2 (Criteria C24 / NZ-C1)
             </span>
           </div>
 
           <form onSubmit={handleSaveTarget}>
-            <div className="sbti-form-grid">
+            <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))] [gap:16px] [align-items:flex-end]">
               <div className="sbti-form-group">
                 <label>Pathway Alignment</label>
-                <div style={{ display: "flex", gap: "8px" }}>
+                <div className="flex! gap-[8px]!">
                   <button
                     type="button"
                     className={`btn-secondary ${targetForm.pathway_type === "1.5C" ? "active" : ""}`}
@@ -377,7 +355,7 @@ const SbtiDashboard = () => {
                 <label>Base Year</label>
                 <input
                   type="number"
-                  className="sbti-input"
+                  className="[padding:10px_14px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [background:var(--input-bg,_var(--color-ink-50))] [color:var(--text-main,_var(--color-ink-900))] [font-size:var(--text-md)] [transition:all_0.2s] focus:[outline:none] focus:[border-color:var(--primary,_var(--color-brand-500))] focus:[background:var(--card-bg,_var(--color-white))] focus:[box-shadow:0_0_0_3px_rgba(249,_115,_22,_0.1)]"
                   min="2015"
                   max="2035"
                   value={targetForm.base_year}
@@ -387,11 +365,11 @@ const SbtiDashboard = () => {
               </div>
 
               <div className="sbti-form-group">
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div className="flex! justify-between! items-center!">
                   <label>Base Year Baseline (tCO2e)</label>
                   <button
                     type="button"
-                    className="btn-autofill"
+                    className="[display:inline-flex] [align-items:center] [gap:5px] [padding:4px_10px] [font-size:var(--text-sm)] [font-weight:600] [border-radius:var(--radius-sm)] [background:rgba(37,_99,_235,_0.1)] [color:var(--color-blue-600)] [border:1px_solid_rgba(37,_99,_235,_0.2)] [cursor:pointer] [transition:all_0.2s] hover:[background:rgba(37,_99,_235,_0.2)] hover:[border-color:var(--color-blue-600)]"
                     onClick={handleAutoFillBaseline}
                     title="Auto-fill with verified emissions for base year"
                   >
@@ -402,7 +380,7 @@ const SbtiDashboard = () => {
                 <input
                   type="number"
                   step="0.01"
-                  className="sbti-input"
+                  className="[padding:10px_14px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [background:var(--input-bg,_var(--color-ink-50))] [color:var(--text-main,_var(--color-ink-900))] [font-size:var(--text-md)] [transition:all_0.2s] focus:[outline:none] focus:[border-color:var(--primary,_var(--color-brand-500))] focus:[background:var(--card-bg,_var(--color-white))] focus:[box-shadow:0_0_0_3px_rgba(249,_115,_22,_0.1)]"
                   min="0.01"
                   value={targetForm.base_year_emissions}
                   onChange={(e) => setTargetForm({ ...targetForm, base_year_emissions: parseFloat(e.target.value) || 0 })}
@@ -414,7 +392,7 @@ const SbtiDashboard = () => {
                 <label>Net-Zero Target Year</label>
                 <input
                   type="number"
-                  className="sbti-input"
+                  className="[padding:10px_14px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [background:var(--input-bg,_var(--color-ink-50))] [color:var(--text-main,_var(--color-ink-900))] [font-size:var(--text-md)] [transition:all_0.2s] focus:[outline:none] focus:[border-color:var(--primary,_var(--color-brand-500))] focus:[background:var(--card-bg,_var(--color-white))] focus:[box-shadow:0_0_0_3px_rgba(249,_115,_22,_0.1)]"
                   min="2030"
                   max="2070"
                   value={targetForm.target_year}
@@ -430,7 +408,7 @@ const SbtiDashboard = () => {
                   step="0.1"
                   min="0.1"
                   max="25.0"
-                  className="sbti-input"
+                  className="[padding:10px_14px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [background:var(--input-bg,_var(--color-ink-50))] [color:var(--text-main,_var(--color-ink-900))] [font-size:var(--text-md)] [transition:all_0.2s] focus:[outline:none] focus:[border-color:var(--primary,_var(--color-brand-500))] focus:[background:var(--card-bg,_var(--color-white))] focus:[box-shadow:0_0_0_3px_rgba(249,_115,_22,_0.1)]"
                   value={targetForm.reduction_rate_pct}
                   onChange={(e) => setTargetForm({ ...targetForm, reduction_rate_pct: parseFloat(e.target.value) || 0 })}
                   required
@@ -440,9 +418,9 @@ const SbtiDashboard = () => {
               <div className="sbti-form-group">
                 <button
                   type="submit"
-                  className="btn-primary"
+                  className="btn-primary flex! items-center! justify-center! gap-[8px]! h-[42px]!"
                   disabled={savingTarget}
-                  style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", height: "42px" }}
+                 
                 >
                   <Save size={16} />
                   {savingTarget ? "Saving Target..." : "Save SBTi Target"}
@@ -454,35 +432,35 @@ const SbtiDashboard = () => {
       )}
 
       {/* KPI Cards */}
-      <div className="sbti-kpi-grid">
-        <div className="sbti-kpi-card">
-          <div className="sbti-kpi-header">
-            <span className="sbti-kpi-title">Base Year Baseline</span>
-            <div className="sbti-kpi-icon">
+      <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(240px,_1fr))] [gap:18px]">
+        <div className="[padding:22px_24px] [border-radius:var(--radius-lg)] [background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [display:flex] [flex-direction:column] [justify-content:space-between] [position:relative] [overflow:hidden] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated,_0_8px_24px_rgba(0,_0,_0,_0.08))] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:4px] before:[height:100%] before:[background:var(--primary,_var(--color-brand-500))] before:[border-radius:var(--radius-sm)_0_0_var(--radius-sm)] [&.success::before]:[background:var(--color-green-500)] [&&]:[&.warning::before]:[background:var(--color-amber-500)] [&&]:[&&]:[&.info::before]:[background:var(--color-blue-500)] [&&]:[&&]:[&&]:[&.neutral::before]:[background:var(--color-ink-400)]">
+          <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
+            <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.05em]">Base Year Baseline</span>
+            <div className="[width:36px] [height:36px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [background:rgba(249,_115,_22,_0.1)] [color:var(--color-link)] [&.success]:[background:rgba(16,_185,_129,_0.1)] [&.success]:[color:var(--color-green-700)] [&&]:[&.warning]:[background:rgba(245,_158,_11,_0.1)] [&&]:[&.warning]:[color:var(--color-amber-700)] [&&]:[&&]:[&.info]:[background:rgba(59,_130,_246,_0.1)] [&&]:[&&]:[&.info]:[color:var(--color-blue-700)] [&&]:[&&]:[&&]:[&.neutral]:[background:rgba(148,_163,_184,_0.15)] [&&]:[&&]:[&&]:[&.neutral]:[color:var(--color-ink-500)]">
               <Calendar size={18} />
             </div>
           </div>
-          <div className="sbti-kpi-value">
+          <div className="[font-size:var(--text-2xl)] [font-weight:700] [color:var(--text-main,_var(--color-ink-900))] [margin-bottom:4px]">
             {formatNumber(sbtiData?.base_year_emissions || 0, 0)}
-            <span className="sbti-kpi-unit">tCO2e</span>
+            <span className="[font-size:var(--text-base)] [font-weight:500] [color:var(--text-secondary,_var(--color-ink-500))] [margin-left:4px]">tCO2e</span>
           </div>
-          <div className="sbti-kpi-subtitle">
+          <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))] [display:flex] [align-items:center] [gap:4px]">
             Base Year: {sbtiData?.base_year || "Not Set"}
           </div>
         </div>
 
-        <div className="sbti-kpi-card info">
-          <div className="sbti-kpi-header">
-            <span className="sbti-kpi-title">Current Year Target</span>
-            <div className="sbti-kpi-icon info">
+        <div className="[padding:22px_24px] [border-radius:var(--radius-lg)] [background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [display:flex] [flex-direction:column] [justify-content:space-between] [position:relative] [overflow:hidden] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated,_0_8px_24px_rgba(0,_0,_0,_0.08))] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:4px] before:[height:100%] before:[background:var(--primary,_var(--color-brand-500))] before:[border-radius:var(--radius-sm)_0_0_var(--radius-sm)] [&.success::before]:[background:var(--color-green-500)] [&&]:[&.warning::before]:[background:var(--color-amber-500)] [&&]:[&&]:[&.info::before]:[background:var(--color-blue-500)] [&&]:[&&]:[&&]:[&.neutral::before]:[background:var(--color-ink-400)] info">
+          <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
+            <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.05em]">Current Year Target</span>
+            <div className="[width:36px] [height:36px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [background:rgba(249,_115,_22,_0.1)] [color:var(--color-link)] [&.success]:[background:rgba(16,_185,_129,_0.1)] [&.success]:[color:var(--color-green-700)] [&&]:[&.warning]:[background:rgba(245,_158,_11,_0.1)] [&&]:[&.warning]:[color:var(--color-amber-700)] [&&]:[&&]:[&.info]:[background:rgba(59,_130,_246,_0.1)] [&&]:[&&]:[&.info]:[color:var(--color-blue-700)] [&&]:[&&]:[&&]:[&.neutral]:[background:rgba(148,_163,_184,_0.15)] [&&]:[&&]:[&&]:[&.neutral]:[color:var(--color-ink-500)] info">
               <Target size={18} />
             </div>
           </div>
-          <div className="sbti-kpi-value">
+          <div className="[font-size:var(--text-2xl)] [font-weight:700] [color:var(--text-main,_var(--color-ink-900))] [margin-bottom:4px]">
             {currentTarget == null ? "—" : formatNumber(currentTarget, 0)}
-            <span className="sbti-kpi-unit">tCO2e</span>
+            <span className="[font-size:var(--text-base)] [font-weight:500] [color:var(--text-secondary,_var(--color-ink-500))] [margin-left:4px]">tCO2e</span>
           </div>
-          <div className="sbti-kpi-subtitle">
+          <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))] [display:flex] [align-items:center] [gap:4px]">
             {currentActual != null
               ? `Actual: ${formatNumber(currentActual, 0)} tCO2e (${currentYear})`
               : isYtd
@@ -491,10 +469,10 @@ const SbtiDashboard = () => {
           </div>
         </div>
 
-        <div className={`sbti-kpi-card ${isConfigured && !noData ? (isOnTrack ? "success" : "warning") : "neutral"}`}>
-          <div className="sbti-kpi-header">
-            <span className="sbti-kpi-title">Pathway Status</span>
-            <div className={`sbti-kpi-icon ${isConfigured && !noData ? (isOnTrack ? "success" : "warning") : "neutral"}`}>
+        <div className={`[padding:22px_24px] [border-radius:var(--radius-lg)] [background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [display:flex] [flex-direction:column] [justify-content:space-between] [position:relative] [overflow:hidden] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated,_0_8px_24px_rgba(0,_0,_0,_0.08))] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:4px] before:[height:100%] before:[background:var(--primary,_var(--color-brand-500))] before:[border-radius:var(--radius-sm)_0_0_var(--radius-sm)] [&.success::before]:[background:var(--color-green-500)] [&&]:[&.warning::before]:[background:var(--color-amber-500)] [&&]:[&&]:[&.info::before]:[background:var(--color-blue-500)] [&&]:[&&]:[&&]:[&.neutral::before]:[background:var(--color-ink-400)] ${isConfigured && !noData ? (isOnTrack ? "success" : "warning") : "neutral"}`}>
+          <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
+            <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.05em]">Pathway Status</span>
+            <div className={`[width:36px] [height:36px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [background:rgba(249,_115,_22,_0.1)] [color:var(--color-link)] [&.success]:[background:rgba(16,_185,_129,_0.1)] [&.success]:[color:var(--color-green-700)] [&&]:[&.warning]:[background:rgba(245,_158,_11,_0.1)] [&&]:[&.warning]:[color:var(--color-amber-700)] [&&]:[&&]:[&.info]:[background:rgba(59,_130,_246,_0.1)] [&&]:[&&]:[&.info]:[color:var(--color-blue-700)] [&&]:[&&]:[&&]:[&.neutral]:[background:rgba(148,_163,_184,_0.15)] [&&]:[&&]:[&&]:[&.neutral]:[color:var(--color-ink-500)] ${isConfigured && !noData ? (isOnTrack ? "success" : "warning") : "neutral"}`}>
               {isConfigured && !noData ? (
                 isOnTrack ? <CheckCircle size={18} /> : <AlertTriangle size={18} />
               ) : (
@@ -502,12 +480,12 @@ const SbtiDashboard = () => {
               )}
             </div>
           </div>
-          <div className="sbti-kpi-value">
+          <div className="[font-size:var(--text-2xl)] [font-weight:700] [color:var(--text-main,_var(--color-ink-900))] [margin-bottom:4px]">
             <span className={`status-pill ${isConfigured && !noData ? (isOnTrack ? "on-track" : "behind") : "not-set"}`}>
               {!isConfigured ? "NOT CONFIGURED" : noData ? "NO DATA" : isOnTrack ? "ON TRACK" : "BEHIND TARGET"}
             </span>
           </div>
-          <div className="sbti-kpi-subtitle">
+          <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))] [display:flex] [align-items:center] [gap:4px]">
             {!isConfigured
               ? "Set corporate baseline & targets to track alignment"
               : noData
@@ -516,18 +494,18 @@ const SbtiDashboard = () => {
           </div>
         </div>
 
-        <div className="sbti-kpi-card success">
-          <div className="sbti-kpi-header">
-            <span className="sbti-kpi-title">Net-Zero Goal ({sbtiData?.target_year || 2050})</span>
-            <div className="sbti-kpi-icon success">
+        <div className="[padding:22px_24px] [border-radius:var(--radius-lg)] [background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [display:flex] [flex-direction:column] [justify-content:space-between] [position:relative] [overflow:hidden] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated,_0_8px_24px_rgba(0,_0,_0,_0.08))] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:4px] before:[height:100%] before:[background:var(--primary,_var(--color-brand-500))] before:[border-radius:var(--radius-sm)_0_0_var(--radius-sm)] [&.success::before]:[background:var(--color-green-500)] [&&]:[&.warning::before]:[background:var(--color-amber-500)] [&&]:[&&]:[&.info::before]:[background:var(--color-blue-500)] [&&]:[&&]:[&&]:[&.neutral::before]:[background:var(--color-ink-400)] success">
+          <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
+            <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.05em]">Net-Zero Goal ({sbtiData?.target_year || 2050})</span>
+            <div className="[width:36px] [height:36px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [background:rgba(249,_115,_22,_0.1)] [color:var(--color-link)] [&.success]:[background:rgba(16,_185,_129,_0.1)] [&.success]:[color:var(--color-green-700)] [&&]:[&.warning]:[background:rgba(245,_158,_11,_0.1)] [&&]:[&.warning]:[color:var(--color-amber-700)] [&&]:[&&]:[&.info]:[background:rgba(59,_130,_246,_0.1)] [&&]:[&&]:[&.info]:[color:var(--color-blue-700)] [&&]:[&&]:[&&]:[&.neutral]:[background:rgba(148,_163,_184,_0.15)] [&&]:[&&]:[&&]:[&.neutral]:[color:var(--color-ink-500)] success">
               <TrendingDown size={18} />
             </div>
           </div>
-          <div className="sbti-kpi-value">
+          <div className="[font-size:var(--text-2xl)] [font-weight:700] [color:var(--text-main,_var(--color-ink-900))] [margin-bottom:4px]">
             {formatNumber(sbtiData?.target_emissions_final || 0, 0)}
-            <span className="sbti-kpi-unit">tCO2e</span>
+            <span className="[font-size:var(--text-base)] [font-weight:500] [color:var(--text-secondary,_var(--color-ink-500))] [margin-left:4px]">tCO2e</span>
           </div>
-          <div className="sbti-kpi-subtitle">
+          <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))] [display:flex] [align-items:center] [gap:4px]">
             {isConfigured
               ? `Residual Floor: ${formatNumber(sbtiData?.residual_floor || 0, 0)} tCO2e (10% Cap)`
               : "Linear Rate: 4.2% per year"}
@@ -536,18 +514,18 @@ const SbtiDashboard = () => {
       </div>
 
       {/* Main Trajectory Charts Grid */}
-      <div className="sbti-charts-grid">
-        <div className="sbti-card">
-          <div className="sbti-card-header">
+      <div className="[display:grid] [grid-template-columns:2fr_1fr]! [gap:24px] [@media(max-width:1100px)]:[grid-template-columns:1fr]!">
+        <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [&&]:[border-radius:var(--radius-lg)] [padding:24px] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[border-color:var(--border-color-hover,_rgba(255,_255,_255,_0.95))]">
+          <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:18px]">
             <div>
-              <h3 className="sbti-card-title">{sbtiData?.pathway_label || "Decarbonization Pathway"}</h3>
-              <p className="sbti-card-subtitle">
+              <h3 className="[font-size:var(--text-lg)] [font-weight:700] [color:var(--text-main,_var(--color-ink-900))] [margin-bottom:2px]">{sbtiData?.pathway_label || "Decarbonization Pathway"}</h3>
+              <p className="[font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-500))]">
                 Linear reduction trajectory from base year {sbtiData?.base_year || 2024} to target year {sbtiData?.target_year || 2050} (Residual emissions capped at 10% per NZ-C1)
               </p>
             </div>
           </div>
 
-          <div style={{ height: "360px", width: "100%" }}>
+          <div className="h-[360px]! w-full!">
             {sbtiData?.trajectory && sbtiData.trajectory.length > 0 ? (
               <LineChart
                 data={sbtiData.trajectory}
@@ -556,24 +534,24 @@ const SbtiDashboard = () => {
                 height={350}
               />
             ) : (
-              <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%", color: "#94a3b8" }}>
+              <div className="flex! justify-center! items-center! h-full! text-[color:#475569]!">
                 No trajectory configured. Click "Configure Target" to set baseline and targets.
               </div>
             )}
           </div>
         </div>
 
-        <div className="sbti-card">
-          <div className="sbti-card-header">
+        <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [&&]:[border-radius:var(--radius-lg)] [padding:24px] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[border-color:var(--border-color-hover,_rgba(255,_255,_255,_0.95))]">
+          <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:18px]">
             <div>
-              <h3 className="sbti-card-title">Emissions Composition by Scope</h3>
-              <p className="sbti-card-subtitle">
+              <h3 className="[font-size:var(--text-lg)] [font-weight:700] [color:var(--text-main,_var(--color-ink-900))] [margin-bottom:2px]">Emissions Composition by Scope</h3>
+              <p className="[font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-500))]">
                 Verified Scope 1, Scope 2, and Scope 3 breakdown
               </p>
             </div>
           </div>
 
-          <div style={{ height: "360px", width: "100%" }}>
+          <div className="h-[360px]! w-full!">
             {sbtiData?.trajectory && sbtiData.trajectory.length > 0 ? (
               <BarChart
                 data={sbtiData.trajectory.filter((t) => t.actual !== null && t.actual !== undefined && t.actual > 0)}
@@ -582,7 +560,7 @@ const SbtiDashboard = () => {
                 height={350}
               />
             ) : (
-              <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%", color: "#94a3b8" }}>
+              <div className="flex! justify-center! items-center! h-full! text-[color:#475569]!">
                 No verified emissions history available.
               </div>
             )}
@@ -591,17 +569,17 @@ const SbtiDashboard = () => {
       </div>
 
       {/* Milestone & Projection Table */}
-      <div className="sbti-card">
-        <div className="sbti-card-header">
+      <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [&&]:[border-radius:var(--radius-lg)] [padding:24px] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[border-color:var(--border-color-hover,_rgba(255,_255,_255,_0.95))]">
+        <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:18px]">
           <div>
-            <h3 className="sbti-card-title">Annual Pathway Milestones & Verification Data</h3>
-            <p className="sbti-card-subtitle">
+            <h3 className="[font-size:var(--text-lg)] [font-weight:700] [color:var(--text-main,_var(--color-ink-900))] [margin-bottom:2px]">Annual Pathway Milestones & Verification Data</h3>
+            <p className="[font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-500))]">
               Yearly comparison of targets, actual emissions, and progress towards net-zero alignment ({scopeMode === "s1_s2" ? "Scope 1+2 Operational View" : "All Scopes View"})
             </p>
           </div>
         </div>
 
-        <div className="sbti-table-container">
+        <div className="[overflow-x:auto] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [background:var(--bg-card,_rgba(255,_255,_255,_0.6))] [backdrop-filter:blur(8px)]" tabIndex={0} role="region" aria-label="Pathway table">
           <table className="sbti-table">
             <thead>
               <tr>
@@ -637,10 +615,10 @@ const SbtiDashboard = () => {
 
                   return (
                     <tr key={row.year}>
-                      <td style={{ fontWeight: 600 }}>{row.year}</td>
-                      <td style={{ fontWeight: 500 }}>{formatNumber(row.sbti_target, 1)} tCO2e</td>
-                      <td style={{ color: "var(--text-primary, #0f172a)", fontWeight: 500 }}>{formatNumber(row.bau_projection, 1)} tCO2e</td>
-                      <td style={{ fontWeight: hasActual ? 700 : 400, color: hasActual ? "var(--text-primary, #0f172a)" : "#64748b" }}>
+                      <td className="font-semibold!">{row.year}</td>
+                      <td className="font-medium!">{formatNumber(row.sbti_target, 1)} tCO2e</td>
+                      <td className="text-[color:var(--text-primary,_#0f172a)]! font-medium!">{formatNumber(row.bau_projection, 1)} tCO2e</td>
+                      <td className={`${hasActual ? "[font-weight:700]!" : "[font-weight:400]!"} ${hasActual ? "[color:var(--text-primary,_#0f172a)]!" : "[color:#64748b]!"}`}>
                         {hasActual ? `${formatNumber(row.actual, 1)} tCO2e` : "—"}
                       </td>
                       <td>{hasActual ? `${formatNumber(row.scope1, 1)}` : "—"}</td>
@@ -649,7 +627,7 @@ const SbtiDashboard = () => {
                       <td>{hasActual ? `${formatNumber(row.scope12, 1)}` : "—"}</td>
                       <td>
                         {variance !== null ? (
-                          <span style={{ color: variance <= 0 ? "#10b981" : "#ef4444", fontWeight: 600 }}>
+                          <span className={`[font-weight:600]! ${variance <= 0 ? "[color:#2e7d32]!" : "[color:#b91c1c]!"}`}>
                             {variance > 0 ? `+${formatNumber(variance, 1)}` : formatNumber(variance, 1)} tCO2e
                           </span>
                         ) : (
@@ -666,7 +644,7 @@ const SbtiDashboard = () => {
                 })
               ) : (
                 <tr>
-                  <td colSpan="10" style={{ textAlign: "center", padding: "30px", color: "#94a3b8" }}>
+                  <td colSpan="10" className="text-center! p-[30px]! text-[color:#475569]!">
                     No trajectory milestone records found.
                   </td>
                 </tr>

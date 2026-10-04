@@ -1,4 +1,5 @@
 import React from "react";
+import { Input, Field } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
 
 const DehydratorForm = ({ data, onChange, sourceType }) => {
@@ -13,53 +14,49 @@ const DehydratorForm = ({ data, onChange, sourceType }) => {
       {/* Simple Mode: Throughput Only */}
       {!isEngineering && (
         <>
-          <div className="input-group">
-            <label>Throughput (MMscf/yr)</label>
-            <input
+          <Field className="input-group" label="Throughput (MMscf/yr)">
+<Input
               type="number"
-              className="mole-input"
+             
               value={data.dehy_throughput || ""}
               onChange={(e) => onChange("dehy_throughput", e.target.value)}
               placeholder="Annual throughput"
             />
-          </div>
+</Field>
         </>
       )}
 
       {/* Engineering Mode: Full API 5.3 Inputs */}
       {isEngineering && (
         <>
-          <div className="input-group">
-            <label>
-              Throughput (MMscf/yr)
-              <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-            </label>
-            <input
+          <Field className="input-group" label={<>Throughput (MMscf/yr)
+              <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
               type="number"
-              className="mole-input"
+             
               value={data.dehy_throughput || ""}
               onChange={(e) => onChange("dehy_throughput", e.target.value)}
               placeholder="Volume"
               required
             />
-          </div>
+</Field>
 
           <div className="input-group">
             <label>
               Glycol pump rate
-              <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+              <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
             </label>
-            <div style={{ display: "flex", gap: "10px" }}>
+            <div className="flex! gap-[10px]!">
               <input
                 type="number"
-                className="mole-input"
+                className="mole-input flex-1!"
                 value={data.dehy_pump_rate || ""}
                 onChange={(e) => onChange("dehy_pump_rate", e.target.value)}
                 placeholder="Rate"
-                style={{ flex: 1 }}
+               
                 required
               />
-              <div style={{ width: "100px" }}>
+              <div className="w-[100px]!">
                 <CustomDropdown
                   options={[
                     { value: "gph", label: "gal/hr" },
@@ -73,14 +70,11 @@ const DehydratorForm = ({ data, onChange, sourceType }) => {
             </div>
           </div>
 
-          <div className="input-group">
-            <label>
-              CH₄ (%)
-              <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-            </label>
-            <input
+          <Field className="input-group" label={<>CH₄ (%)
+              <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
               type="number"
-              className="mole-input"
+             
               value={
                 data.dehy_ch4_content !== undefined &&
                 data.dehy_ch4_content !== null
@@ -91,58 +85,48 @@ const DehydratorForm = ({ data, onChange, sourceType }) => {
               placeholder="e.g. 85"
               required
             />
-          </div>
+</Field>
 
-          <div className="input-group">
-            <label>
-              Hours per year
-              <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-            </label>
-            <input
+          <Field className="input-group" label={<>Hours per year
+              <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
               type="number"
-              className="mole-input"
+             
               value={data.dehy_hours || ""}
               onChange={(e) => onChange("dehy_hours", e.target.value)}
               placeholder="whole month if blank"
               required
             />
-          </div>
+</Field>
 
-          <div className="input-group">
-            <label>
-              Contactor pressure (psig)
-              <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-            </label>
-            <input
+          <Field className="input-group" label={<>Contactor pressure (psig)
+              <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
               type="number"
-              className="mole-input"
+             
               value={data.dehy_press !== undefined ? data.dehy_press : ""}
               onChange={(e) => onChange("dehy_press", e.target.value)}
               placeholder="e.g. 1000"
               required
             />
-          </div>
+</Field>
 
-          <div className="input-group">
-            <label>
-              Contactor temp (°F)
-              <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-            </label>
-            <input
+          <Field className="input-group" label={<>Contactor temp (°F)
+              <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
               type="number"
-              className="mole-input"
+             
               value={data.dehy_temp !== undefined ? data.dehy_temp : ""}
               onChange={(e) => onChange("dehy_temp", e.target.value)}
               placeholder="e.g. 100"
               required
             />
-          </div>
+</Field>
 
-          <div className="input-group">
-            <label>Stripping gas (scf/h)</label>
-            <input
+          <Field className="input-group" label="Stripping gas (scf/h)">
+<Input
               type="number"
-              className="mole-input"
+             
               value={
                 data.dehy_stripping_rate !== undefined &&
                 data.dehy_stripping_rate !== null
@@ -152,7 +136,7 @@ const DehydratorForm = ({ data, onChange, sourceType }) => {
               onChange={(e) => onChange("dehy_stripping_rate", e.target.value)}
               placeholder="0 (Optional stripping gas)"
             />
-          </div>
+</Field>
 
           <div className="input-group">
             <label>Control device</label>
@@ -170,16 +154,15 @@ const DehydratorForm = ({ data, onChange, sourceType }) => {
           </div>
 
           {data.dehy_control !== "none" && (
-            <div className="input-group">
-              <label>Control Efficiency (%)</label>
-              <input
+            <Field className="input-group" label="Control Efficiency (%)">
+<Input
                 type="number"
-                className="mole-input"
+               
                 value={data.dehy_eff || ""}
                 onChange={(e) => onChange("dehy_eff", e.target.value)}
                 placeholder="e.g. 60 (flash) or 90 (condenser)"
               />
-            </div>
+</Field>
           )}
         </>
       )}

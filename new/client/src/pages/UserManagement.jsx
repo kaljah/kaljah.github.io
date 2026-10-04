@@ -1,24 +1,15 @@
+import UserManagementBlock from "./user-management/UserManagementBlock";
+import { Globe, Plus, Shield as ShieldIcon, User as UserIcon, Users as UsersIcon, Wrench as WrenchIcon } from "lucide-react";
+import UserManagementBlock1205 from "./user-management/UserManagementBlock1205";
+import UserManagementBlock1503 from "./user-management/UserManagementBlock1503";
 import React, { useState, useEffect } from "react";
+import { NativeSelect } from "../ui/NativeSelect";
 import api from "../api";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../components/Toast";
 import Drawer from "../components/Drawer";
 import ConfirmModal from "../components/ConfirmModal";
-import {
-  UserPlus,
-  UserCheck,
-  KeyRound,
-  Lock,
-  Shield,
-  Eye,
-  EyeOff,
-  Check,
-  User,
-  Mail,
-  Briefcase,
-  AlertCircle,
-  CheckCircle2,
-} from "lucide-react";
+import { UserPlus, UserCheck, KeyRound, Lock, Shield, Eye, EyeOff, Check, User, Mail, Briefcase, AlertCircle, CheckCircle2 } from "lucide-react";
 
 /* ─── tiny keyframe injection ─────────────────────────────────────────────── */
 const STYLE_ID = "um-keyframes";
@@ -33,41 +24,53 @@ if (!document.getElementById(STYLE_ID)) {
   document.head.appendChild(s);
 }
 
+// Darker text shades with at least 4.5:1 contrast on the matching 10% tint backgrounds
+const AA_TEXT = {
+  "#10b981": "#2e7d32",
+  "#ef4444": "#b91c1c",
+  "#ff6600": "#c2410c",
+  "#f59e0b": "#b45309",
+  "#8b5cf6": "#6d28d9",
+  "#3b82f6": "#1d4ed8",
+  "#0284c7": "#0369a1",
+};
+const aa = (c) => AA_TEXT[c] || c;
+
 /* ─── role metadata ────────────────────────────────────────────────────────── */
 const ROLE_META = {
   admin: {
     label: "Admin",
-    color: "#10b981",
+    color: "#2e7d32",
     bg: "#ecfdf5",
     border: "rgba(16,185,129,.25)",
   },
   it_admin: {
     label: "IT Manager",
-    color: "#f59e0b",
+    color: "#b45309",
     bg: "#fffbeb",
     border: "rgba(245,158,11,.25)",
   },
   it_manager: {
     label: "IT Manager",
-    color: "#f59e0b",
+    color: "#b45309",
     bg: "#fffbeb",
     border: "rgba(245,158,11,.25)",
   },
   it: {
     label: "IT",
-    color: "#0284c7",
+    color: "#0369a1",
     bg: "#f0f9ff",
     border: "rgba(2,132,199,.25)",
   },
   superuser: {
     label: "Super User",
-    color: "#8b5cf6",
+    color: "#6d28d9",
     bg: "#f3e8ff",
     border: "rgba(139,92,246,.25)",
   },
   user: {
     label: "User",
-    color: "#3b82f6",
+    color: "#1d4ed8",
     bg: "#eff6ff",
     border: "rgba(59,130,246,.25)",
   },
@@ -75,7 +78,7 @@ const ROLE_META = {
 const getRoleMeta = (role) =>
   ROLE_META[role] || {
     label: role?.toUpperCase?.() || "UNKNOWN",
-    color: "#64748b",
+    color: "#475569",
     bg: "#f1f5f9",
     border: "#e2e8f0",
   };
@@ -106,7 +109,7 @@ const S = {
     alignItems: "center",
     gap: "7px",
     background: "#fff7ed",
-    color: "#ff6600",
+    color: "#c2410c",
     border: "1px solid rgba(255,102,0,.15)",
     borderRadius: "100px",
     padding: "4px 12px",
@@ -126,8 +129,8 @@ const S = {
   },
   pageTitle: {
     margin: 0,
-    fontSize: "1.9rem",
-    fontWeight: 800,
+    fontSize: "var(--text-xl)",
+    fontWeight: 700,
     color: "var(--text-primary)",
     lineHeight: 1.1,
   },
@@ -222,7 +225,7 @@ const S = {
     textAlign: "left",
     padding: "11px 16px",
     background: "var(--bg-body)",
-    color: "var(--text-secondary)",
+    color: "var(--color-ink-600)",
     fontWeight: 700,
     fontSize: "0.72rem",
     textTransform: "uppercase",
@@ -262,7 +265,7 @@ const S = {
     padding: "3px 10px",
     borderRadius: "100px",
     background: bg,
-    color: color,
+    color: aa(color),
     border: `1px solid ${border}`,
     fontSize: "0.78rem",
     fontWeight: 700,
@@ -721,13 +724,13 @@ const UserManagement = () => {
   if (!["it_admin", "it_manager", "it"].includes(user?.role)) {
     return (
       <div style={{ ...S.page, textAlign: "center", paddingTop: "80px" }}>
-        <div style={{ marginBottom: "20px", color: "#94a3b8" }}>
-          <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <div className="mb-[20px]! text-[color:#475569]!">
+          <Lock size="52" strokeWidth="1.5" aria-hidden="true" />
         </div>
-        <h2 style={{ color: "var(--text-primary)", margin: "0 0 8px" }}>
+        <h2 className="text-[color:var(--text-primary)]! m-[0_0_8px]!">
           Unauthorized
         </h2>
-        <p style={{ color: "var(--text-secondary)" }}>
+        <p className="text-[color:var(--text-secondary)]!">
           You do not have permission to access the IT Management portal.
         </p>
       </div>
@@ -787,8 +790,9 @@ const UserManagement = () => {
           </p>
         </div>
         <div style={S.heroRight}>
-          <select
+          <NativeSelect
             id="um-filter-role"
+            aria-label="Filter by role"
             value={filterRole}
             onChange={(e) => setFilterRole(e.target.value)}
             style={S.select}
@@ -799,10 +803,11 @@ const UserManagement = () => {
             <option value="admin">Admin</option>
             <option value="it_manager">IT Manager</option>
             <option value="it">IT</option>
-          </select>
+          </NativeSelect>
 
-          <select
+          <NativeSelect
             id="um-filter-region"
+            aria-label="Filter by region"
             value={filterRegion}
             onChange={(e) => setFilterRegion(e.target.value)}
             style={S.select}
@@ -813,7 +818,7 @@ const UserManagement = () => {
                 {r}
               </option>
             ))}
-          </select>
+          </NativeSelect>
 
           {!isITOnly && (
             <button
@@ -831,17 +836,7 @@ const UserManagement = () => {
                   "0 4px 12px rgba(255,102,0,.25)";
               }}
             >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-              >
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
-              </svg>
+              <Plus size={16} strokeWidth={2.5} aria-hidden="true" />
               Add New User
             </button>
           )}
@@ -855,35 +850,35 @@ const UserManagement = () => {
           {
             label: "Total Users",
             value: totalUsers,
-            icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
+            icon: <UsersIcon size={20} strokeWidth={2} aria-hidden="true" />,
             color: "#6366f1",
             bg: "#eef2ff",
           },
           {
             label: "Standard Users",
             value: standardCount,
-            icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
+            icon: <UserIcon size={20} strokeWidth={2} aria-hidden="true" />,
             color: "#3b82f6",
             bg: "#eff6ff",
           },
           {
             label: "Admins",
             value: adminCount,
-            icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
+            icon: <ShieldIcon size={20} strokeWidth={2} aria-hidden="true" />,
             color: "#10b981",
             bg: "#ecfdf5",
           },
           {
             label: "IT Admins",
             value: itAdminCount,
-            icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>,
+            icon: <WrenchIcon size={20} strokeWidth={2} aria-hidden="true" />,
             color: "#f59e0b",
             bg: "#fffbeb",
           },
           {
             label: "Regions",
             value: regions.length,
-            icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>,
+            icon: <Globe size={20} aria-hidden="true" />,
             color: "#ff6600",
             bg: "#fff7ed",
           },
@@ -912,924 +907,52 @@ const UserManagement = () => {
       </div>
 
       {/* ── Users Table ── */}
-      <div style={S.tableCard}>
-        <div style={S.tableToolbar}>
-          <div>
-            <p style={S.tableCardTitle}>Registered Users</p>
-            <p style={S.tableCardSub}>
-              {loading
-                ? "Loading…"
-                : `${filteredUsers.length} of ${totalUsers} users shown`}
-            </p>
-          </div>
-        </div>
-
-        <div style={S.tableWrap}>
-          <table style={S.table}>
-            <thead>
-              <tr>
-                {[
-                  "User",
-                  "Email",
-                  "Department / Job Title",
-                  "Role",
-                  "Region Access",
-                  "Joined",
-                  "Actions",
-                ].map((h) => (
-                  <th key={h} style={S.th}>
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan="7" style={S.emptyCell}>
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        gap: "10px",
-                      }}
-                    >
-                      <svg
-                        width="32"
-                        height="32"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="#ff6600"
-                        strokeWidth="2"
-                        style={{ animation: "spin 1s linear infinite" }}
-                      >
-                        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
-                      </svg>
-                      Loading users…
-                    </div>
-                  </td>
-                </tr>
-              ) : filteredUsers.length === 0 ? (
-                <tr>
-                  <td colSpan="7" style={S.emptyCell}>
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        gap: "8px",
-                      }}
-                    >
-                      <span style={{ color: "var(--text-secondary)" }}><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
-                      No users match the current filters.
-                    </div>
-                  </td>
-                </tr>
-              ) : (
-                filteredUsers.map((u, idx) => {
-                  const meta = getRoleMeta(u.role);
-                  const initials = (u.fullName || "?")
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")
-                    .slice(0, 2)
-                    .toUpperCase();
-                  const isHovered = hoveredRow === u.id;
-
-                  return (
-                    <tr
-                      key={u.id}
-                      onMouseEnter={() => setHoveredRow(u.id)}
-                      onMouseLeave={() => setHoveredRow(null)}
-                      style={{
-                        background: isHovered
-                          ? "var(--bg-hover)"
-                          : "transparent",
-                        transition: "background .15s",
-                        animation: `um-slide-in .3s ease ${idx * 40}ms both`,
-                      }}
-                    >
-                      {/* User */}
-                      <td style={S.td}>
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "10px",
-                          }}
-                        >
-                          <div style={S.avatar(meta.color)}>{initials}</div>
-                          <div>
-                            <div
-                              style={{
-                                fontWeight: 700,
-                                color: "var(--text-primary)",
-                                lineHeight: 1.2,
-                              }}
-                            >
-                              {u.fullName}
-                            </div>
-                            <div
-                              style={{
-                                fontSize: "0.75rem",
-                                color: "var(--text-secondary)",
-                                marginTop: "2px",
-                              }}
-                            >
-                              {u.orgName || "—"}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-
-                      {/* Email */}
-                      <td
-                        style={{
-                          ...S.td,
-                          color: "var(--text-secondary)",
-                          fontFamily: "monospace",
-                          fontSize: "0.82rem",
-                        }}
-                      >
-                        {u.email}
-                      </td>
-
-                      {/* Department / Job Title */}
-                      <td style={S.td}>
-                        {u.department || u.jobTitle ? (
-                          <div>
-                            {u.department && (
-                              <div
-                                style={{
-                                  fontWeight: 600,
-                                  color: "var(--text-primary)",
-                                  fontSize: "0.85rem",
-                                }}
-                              >
-                                {u.department}
-                              </div>
-                            )}
-                            {u.jobTitle && (
-                              <div
-                                style={{
-                                  fontSize: "0.75rem",
-                                  color: "var(--text-secondary)",
-                                  marginTop: "2px",
-                                }}
-                              >
-                                {u.jobTitle}
-                              </div>
-                            )}
-                          </div>
-                        ) : (
-                          <span
-                            style={{
-                              color: "var(--text-secondary)",
-                              fontStyle: "italic",
-                              fontSize: "0.8rem",
-                            }}
-                          >
-                            Not set
-                          </span>
-                        )}
-                      </td>
-
-                      {/* Role */}
-                      <td style={S.td}>
-                        <span
-                          style={S.regionPill(meta.color, meta.bg, meta.border)}
-                        >
-                          {meta.label}
-                        </span>
-                      </td>
-
-                      {/* Region Access */}
-                      <td style={S.td}>
-                        {u.role === "admin" ? (
-                          <span
-                            style={S.regionPill(
-                              "#10b981",
-                              "#ecfdf5",
-                              "rgba(16,185,129,.25)",
-                            )}
-                          >
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                            All Regions
-                          </span>
-                        ) : u.role === "it_admin" || u.role === "it_manager" || u.role === "it" ? (
-                          <span
-                            style={S.regionPill(
-                              "#ef4444",
-                              "#fef2f2",
-                              "rgba(239,68,68,.25)",
-                            )}
-                          >
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                            No Data Access
-                          </span>
-                        ) : u.location ? (
-                          <span
-                            style={S.regionPill(
-                              "#ff6600",
-                              "#fff7ed",
-                              "rgba(255,102,0,.25)",
-                            )}
-                          >
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                            {u.location}
-                          </span>
-                        ) : (
-                          <span
-                            style={{
-                              color: "var(--text-secondary)",
-                              fontStyle: "italic",
-                              fontSize: "0.8rem",
-                            }}
-                          >
-                            None
-                          </span>
-                        )}
-                      </td>
-
-                      {/* Joined */}
-                      <td
-                        style={{
-                          ...S.td,
-                          color: "var(--text-secondary)",
-                          fontSize: "0.8rem",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {u.created_at
-                          ? new Date(u.created_at).toLocaleDateString("en-GB", {
-                              day: "2-digit",
-                              month: "short",
-                              year: "numeric",
-                            })
-                          : "—"}
-                      </td>
-
-                      {/* Actions */}
-                      <td style={{ ...S.td, whiteSpace: "nowrap" }}>
-                        {!isITOnly && (
-                          <button
-                            id={`um-edit-btn-${u.id}`}
-                            style={S.iconBtn("#6366f1")}
-                            onClick={() => handleOpenModal(u)}
-                            title="Edit User Information"
-                            onMouseEnter={(e) =>
-                              (e.currentTarget.style.background = "#eef2ff")
-                            }
-                            onMouseLeave={(e) =>
-                              (e.currentTarget.style.background = "none")
-                            }
-                          >
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                          </button>
-                        )}
-                        <button
-                          id={`um-reset-pwd-btn-${u.id}`}
-                          style={S.iconBtn("#f59e0b")}
-                          onClick={() => handleOpenResetPassword(u)}
-                          title="Modify / Reset Password"
-                          onMouseEnter={(e) =>
-                            (e.currentTarget.style.background = "#fffbeb")
-                          }
-                          onMouseLeave={(e) =>
-                            (e.currentTarget.style.background = "none")
-                          }
-                        >
-                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
-                        </button>
-                        {!isITOnly && (
-                          <button
-                            id={`um-delete-btn-${u.id}`}
-                            style={S.iconBtn("#ef4444")}
-                            onClick={() => handleDelete(u.id)}
-                            title="Revoke Access"
-                            onMouseEnter={(e) =>
-                              (e.currentTarget.style.background = "#fef2f2")
-                            }
-                            onMouseLeave={(e) =>
-                              (e.currentTarget.style.background = "none")
-                            }
-                          >
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <UserManagementBlock
+        S={S}
+        filteredUsers={filteredUsers}
+        getRoleMeta={getRoleMeta}
+        handleDelete={handleDelete}
+        handleOpenModal={handleOpenModal}
+        handleOpenResetPassword={handleOpenResetPassword}
+        hoveredRow={hoveredRow}
+        isITOnly={isITOnly}
+        loading={loading}
+        setHoveredRow={setHoveredRow}
+        totalUsers={totalUsers}
+      />
 
       {/* ── Slide-Over Drawer: Add / Edit User ── */}
-      <Drawer
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title={editingUser ? "Edit User Information" : "Register New User"}
-        subtitle={
-          editingUser
-            ? `Update profile details for ${editingUser.fullName || editingUser.email}`
-            : "Provision a new system identity and configure role access"
-        }
-        icon={editingUser ? UserCheck : UserPlus}
-        iconColor={editingUser ? "#6366f1" : "#ff6600"}
-        iconBg={editingUser ? "rgba(99, 102, 241, 0.12)" : "rgba(255, 102, 0, 0.12)"}
-        width="560px"
-      >
-        <form id="um-user-form" onSubmit={handleSubmit}>
-          {/* Section 1: Profile & Identity */}
-          <div style={S.drawerSection}>
-            <div style={S.sectionHeader}>
-              <span style={S.sectionIconBadge("#6366f1")}>
-                <User size={14} />
-              </span>
-              <span style={S.sectionTitle}>Profile & Identity</span>
-            </div>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-              <div style={S.formGroup}>
-                <label style={S.label}>
-                  Full Name <span style={{ color: "#ef4444" }}>*</span>
-                </label>
-                <input
-                  id="um-modal-fullname"
-                  type="text"
-                  value={formData.fullName}
-                  onChange={(e) =>
-                    setFormData({ ...formData, fullName: e.target.value })
-                  }
-                  style={inputStyle("fullName")}
-                  {...focusProps("fullName")}
-                  placeholder="e.g. Jane Smith"
-                />
-              </div>
-
-              <div style={S.formGroup}>
-                <label style={S.label}>
-                  Email Address <span style={{ color: "#ef4444" }}>*</span>
-                </label>
-                <input
-                  id="um-modal-email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) =>
-                    setFormData({ ...formData, email: e.target.value })
-                  }
-                  style={inputStyle("email")}
-                  {...focusProps("email")}
-                  placeholder="e.g. jane.smith@company.com"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Section 2: Organization & Title */}
-          <div style={S.drawerSection}>
-            <div style={S.sectionHeader}>
-              <span style={S.sectionIconBadge("#0ea5e9")}>
-                <Briefcase size={14} />
-              </span>
-              <span style={S.sectionTitle}>Organization & Title</span>
-            </div>
-
-            <div style={S.formRow}>
-              <div style={S.formGroup}>
-                <label style={S.label}>Department</label>
-                <input
-                  id="um-modal-department"
-                  type="text"
-                  value={formData.department}
-                  onChange={(e) =>
-                    setFormData({ ...formData, department: e.target.value })
-                  }
-                  style={inputStyle("department")}
-                  {...focusProps("department")}
-                  placeholder="e.g. Engineering"
-                />
-              </div>
-
-              <div style={S.formGroup}>
-                <label style={S.label}>Job Title</label>
-                <input
-                  id="um-modal-jobtitle"
-                  type="text"
-                  value={formData.jobTitle}
-                  onChange={(e) =>
-                    setFormData({ ...formData, jobTitle: e.target.value })
-                  }
-                  style={inputStyle("jobTitle")}
-                  {...focusProps("jobTitle")}
-                  placeholder="e.g. Lead Carbon Analyst"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Section 3: Access Governance & Scope */}
-          <div style={S.drawerSection}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
-              <div style={{ ...S.sectionHeader, marginBottom: 0 }}>
-                <span style={S.sectionIconBadge("#f59e0b")}>
-                  <Shield size={14} />
-                </span>
-                <span style={S.sectionTitle}>Access Governance & Scope</span>
-              </div>
-            </div>
-
-            <div style={S.formRow}>
-              <div style={S.formGroup}>
-                <label style={S.label}>System Role</label>
-                <select
-                  id="um-modal-role"
-                  value={formData.role}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      role: e.target.value,
-                      location: ["user", "superuser"].includes(e.target.value)
-                        ? formData.location || regions[0] || ""
-                        : "",
-                    })
-                  }
-                  style={inputStyle("role")}
-                  {...focusProps("role")}
-                >
-                  <option value="user">Standard User</option>
-                  <option value="superuser">Super User</option>
-                  <option value="admin">Admin (All Data)</option>
-                  <option value="it_manager">IT Manager</option>
-                  <option value="it">IT</option>
-                </select>
-              </div>
-
-              {(["user", "superuser"].includes(formData.role) || formData.location) && (
-                <div style={S.formGroup}>
-                  <label style={S.label}>Assigned Region</label>
-                  <select
-                    id="um-modal-region"
-                    value={formData.location}
-                    onChange={(e) =>
-                      setFormData({ ...formData, location: e.target.value })
-                    }
-                    style={{
-                      ...inputStyle("location"),
-                      borderColor:
-                        !formData.location
-                          ? "#ef4444"
-                          : focusedField === "location"
-                          ? "#ff6600"
-                          : "var(--border-color)",
-                    }}
-                    {...focusProps("location")}
-                  >
-                    <option value="">— Select a Region —</option>
-                    {regions.map((r) => (
-                      <option key={r} value={r}>
-                        {r}
-                      </option>
-                    ))}
-                  </select>
-                  {!formData.location && (
-                    <p style={{ fontSize: "0.72rem", color: "#ef4444", marginTop: "4px" }}>
-                      ↑ Required — choose an assigned region
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {editingUser && (
-              <div style={{ ...S.formGroup, marginTop: "14px" }}>
-                <label style={S.label}>Account Status</label>
-                <select
-                  id="um-modal-status"
-                  value={formData.status || "active"}
-                  onChange={(e) =>
-                    setFormData({ ...formData, status: e.target.value })
-                  }
-                  style={inputStyle("status")}
-                  {...focusProps("status")}
-                >
-                  <option value="active">Active (Full Access Granted)</option>
-                  <option value="disabled">Disabled (Account Suspended)</option>
-                </select>
-              </div>
-            )}
-          </div>
-
-          {/* Section 4: Initial Password (Register only) */}
-          {!editingUser && (
-            <div style={S.drawerSection}>
-              <div style={S.sectionHeader}>
-                <span style={S.sectionIconBadge("#10b981")}>
-                  <KeyRound size={14} />
-                </span>
-                <span style={S.sectionTitle}>Initial Credentials</span>
-              </div>
-
-              <div style={S.formGroup}>
-                <label style={S.label}>
-                  Temporary Password <span style={{ color: "#ef4444" }}>*</span>
-                </label>
-                <input
-                  id="um-modal-password"
-                  type="text"
-                  value={formData.password}
-                  onChange={(e) =>
-                    setFormData({ ...formData, password: e.target.value })
-                  }
-                  style={{
-                    ...inputStyle("password"),
-                    borderColor:
-                      formData.password && formData.password.length < 10
-                        ? "#ef4444"
-                        : focusedField === "password"
-                        ? "#ff6600"
-                        : "var(--border-color)",
-                  }}
-                  {...focusProps("password")}
-                  placeholder="Minimum 10 characters"
-                />
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "6px" }}>
-                  <span style={{ fontSize: "0.74rem", color: formData.password.length >= 10 ? "#10b981" : "#94a3b8" }}>
-                    {formData.password.length >= 10 ? "✓ Meets minimum length requirement" : "Requires at least 10 characters"}
-                  </span>
-                  <span style={{ fontSize: "0.74rem", fontWeight: 600, color: formData.password.length >= 10 ? "#10b981" : "#ef4444" }}>
-                    {formData.password.length}/10 chars
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Action Buttons Right Under Form Fields */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              alignItems: "center",
-              gap: "12px",
-              marginTop: "24px",
-              paddingTop: "16px",
-              borderTop: "1px solid var(--border-color)",
-            }}
-          >
-            <button
-              id="um-modal-cancel"
-              type="button"
-              style={S.btnSecondary}
-              onClick={() => setIsModalOpen(false)}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.background = "var(--bg-hover)")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.background = "transparent")
-              }
-            >
-              Cancel
-            </button>
-            <button
-              id="um-modal-submit"
-              type="submit"
-              style={S.btnPrimary}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-1px)";
-                e.currentTarget.style.boxShadow =
-                  "0 8px 20px rgba(255,102,0,.35)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "none";
-                e.currentTarget.style.boxShadow =
-                  "0 4px 12px rgba(255,102,0,.25)";
-              }}
-            >
-              {editingUser ? (
-                <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                  <UserCheck size={16} />
-                  Save Changes
-                </span>
-              ) : (
-                <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                  <UserPlus size={16} />
-                  Create User
-                </span>
-              )}
-            </button>
-          </div>
-        </form>
-      </Drawer>
+      <UserManagementBlock1205
+        S={S}
+        editingUser={editingUser}
+        focusProps={focusProps}
+        focusedField={focusedField}
+        formData={formData}
+        handleSubmit={handleSubmit}
+        inputStyle={inputStyle}
+        isModalOpen={isModalOpen}
+        regions={regions}
+        setFormData={setFormData}
+        setIsModalOpen={setIsModalOpen}
+      />
 
       {/* ── Slide-Over Drawer: Reset Password ── */}
-      <Drawer
-        isOpen={!!resetTarget}
-        onClose={() => setResetTarget(null)}
-        title="Reset User Password"
-        subtitle={resetTarget ? `Administrative credential overwrite for ${resetTarget.email}` : ""}
-        icon={KeyRound}
-        iconColor="#f59e0b"
-        iconBg="rgba(245, 158, 11, 0.12)"
-        width="540px"
-      >
-        {resetTarget && (
-          <form id="um-reset-pwd-form" onSubmit={handleResetPasswordSubmit}>
-            {/* Target user info card */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "14px",
-                padding: "14px 16px",
-                borderRadius: "14px",
-                background: "var(--bg-body)",
-                border: "1px solid var(--border-color)",
-                marginBottom: "20px",
-              }}
-            >
-              <div
-                style={{
-                  width: "44px",
-                  height: "44px",
-                  borderRadius: "12px",
-                  background: "rgba(245, 158, 11, 0.15)",
-                  border: "1px solid rgba(245, 158, 11, 0.3)",
-                  color: "#f59e0b",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontWeight: 800,
-                  fontSize: "1.1rem",
-                  flexShrink: 0,
-                }}
-              >
-                {resetTarget.fullName?.charAt(0)?.toUpperCase() || "U"}
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div
-                  style={{
-                    fontWeight: 700,
-                    color: "var(--text-primary)",
-                    fontSize: "0.98rem",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  {resetTarget.fullName}
-                </div>
-                <div
-                  style={{
-                    fontSize: "0.8rem",
-                    color: "var(--text-secondary)",
-                    fontFamily: "monospace",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  {resetTarget.email}
-                </div>
-              </div>
-              {resetTarget.role && (
-                <span
-                  style={S.roleBadge(
-                    getRoleMeta(resetTarget.role).color,
-                    getRoleMeta(resetTarget.role).bg,
-                    getRoleMeta(resetTarget.role).border,
-                  )}
-                >
-                  {getRoleMeta(resetTarget.role).label}
-                </span>
-              )}
-            </div>
-
-            {/* Security Notice */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "flex-start",
-                gap: "10px",
-                padding: "12px 14px",
-                borderRadius: "10px",
-                background: "rgba(239, 68, 68, 0.06)",
-                border: "1px solid rgba(239, 68, 68, 0.2)",
-                marginBottom: "22px",
-                fontSize: "0.8rem",
-                color: "#dc2626",
-                lineHeight: 1.45,
-              }}
-            >
-              <AlertCircle size={17} style={{ flexShrink: 0, marginTop: "2px" }} />
-              <div>
-                <strong>Security Impact:</strong> This will overwrite the user's password immediately. Active sessions will be terminated and the user must sign in with the new credentials.
-              </div>
-            </div>
-
-            {/* New Password input */}
-            <div style={{ ...S.formGroup, marginBottom: "20px" }}>
-              <label style={S.label}>New Password</label>
-              <div style={{ position: "relative" }}>
-                <input
-                  id="um-reset-pwd-input"
-                  type={resetPwdShow ? "text" : "password"}
-                  value={resetPwd}
-                  onChange={(e) => setResetPwd(e.target.value)}
-                  style={{
-                    ...S.input,
-                    paddingRight: "44px",
-                    borderColor:
-                      resetPwd && resetPwd.length < 10
-                        ? "#ef4444"
-                        : focusedField === "resetPwd"
-                        ? "#f59e0b"
-                        : "var(--border-color)",
-                    boxShadow:
-                      focusedField === "resetPwd"
-                        ? "0 0 0 3px rgba(245,158,11,.15)"
-                        : "none",
-                  }}
-                  onFocus={() => setFocusedField("resetPwd")}
-                  onBlur={() => setFocusedField(null)}
-                  placeholder="Min 10 chars · Aa1!..."
-                  autoComplete="new-password"
-                />
-                <button
-                  type="button"
-                  onClick={() => setResetPwdShow((s) => !s)}
-                  style={{
-                    position: "absolute",
-                    right: "12px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    color: "var(--text-secondary)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    padding: "4px",
-                  }}
-                  title={resetPwdShow ? "Hide password" : "Show password"}
-                >
-                  {resetPwdShow ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
-              </div>
-
-              {/* Password strength visual meter */}
-              {resetPwd && (
-                <div style={{ marginTop: "10px" }}>
-                  <div style={{ display: "flex", gap: "4px", marginBottom: "8px" }}>
-                    {[
-                      resetPwd.length >= 10,
-                      /[A-Z]/.test(resetPwd),
-                      /[a-z]/.test(resetPwd),
-                      /[0-9]/.test(resetPwd),
-                      /[!@#$%^&*(),.?":{}<>\-_+=[\]\\/~`]/.test(resetPwd),
-                    ].map((ok, i) => (
-                      <div
-                        key={i}
-                        style={{
-                          flex: 1,
-                          height: "4px",
-                          borderRadius: "2px",
-                          background: ok ? "#10b981" : "var(--border-color)",
-                          transition: "background .2s",
-                        }}
-                      />
-                    ))}
-                  </div>
-
-                  {/* Requirements breakdown tags */}
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
-                    {[
-                      { label: "10+ Chars", ok: resetPwd.length >= 10 },
-                      { label: "Uppercase (A-Z)", ok: /[A-Z]/.test(resetPwd) },
-                      { label: "Lowercase (a-z)", ok: /[a-z]/.test(resetPwd) },
-                      { label: "Number (0-9)", ok: /[0-9]/.test(resetPwd) },
-                      { label: "Special symbol", ok: /[!@#$%^&*(),.?":{}<>\-_+=[\]\\/~`]/.test(resetPwd) },
-                    ].map((req, idx) => (
-                      <span
-                        key={idx}
-                        style={{
-                          fontSize: "0.7rem",
-                          padding: "2px 8px",
-                          borderRadius: "4px",
-                          background: req.ok ? "rgba(16, 185, 129, 0.1)" : "rgba(100, 116, 139, 0.08)",
-                          color: req.ok ? "#10b981" : "var(--text-secondary)",
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: "3px",
-                          fontWeight: req.ok ? 600 : 400,
-                        }}
-                      >
-                        {req.ok ? <Check size={10} /> : "·"} {req.label}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Confirm Password input */}
-            <div style={S.formGroup}>
-              <label style={S.label}>Confirm New Password</label>
-              <input
-                id="um-reset-pwd-confirm"
-                type={resetPwdShow ? "text" : "password"}
-                value={resetPwdConfirm}
-                onChange={(e) => setResetPwdConfirm(e.target.value)}
-                style={{
-                  ...S.input,
-                  borderColor:
-                    resetPwdConfirm && resetPwdConfirm !== resetPwd
-                      ? "#ef4444"
-                      : resetPwdConfirm && resetPwdConfirm === resetPwd
-                      ? "#10b981"
-                      : focusedField === "resetPwdConfirm"
-                      ? "#f59e0b"
-                      : "var(--border-color)",
-                }}
-                onFocus={() => setFocusedField("resetPwdConfirm")}
-                onBlur={() => setFocusedField(null)}
-                placeholder="Re-enter the new password"
-                autoComplete="new-password"
-              />
-              {resetPwdConfirm && resetPwdConfirm !== resetPwd && (
-                <p style={{ fontSize: "0.75rem", color: "#ef4444", marginTop: "6px", display: "flex", alignItems: "center", gap: "4px" }}>
-                  <AlertCircle size={13} /> Passwords do not match
-                </p>
-              )}
-              {resetPwdConfirm && resetPwdConfirm === resetPwd && resetPwd.length >= 10 && (
-                <p style={{ fontSize: "0.75rem", color: "#10b981", marginTop: "6px", display: "flex", alignItems: "center", gap: "4px" }}>
-                  <CheckCircle2 size={13} /> Passwords match
-                </p>
-              )}
-            </div>
-
-            {/* Action Buttons Right Under Form Fields */}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "flex-end",
-                alignItems: "center",
-                gap: "12px",
-                marginTop: "24px",
-                paddingTop: "16px",
-                borderTop: "1px solid var(--border-color)",
-              }}
-            >
-              <button
-                id="um-reset-pwd-cancel"
-                type="button"
-                style={S.btnSecondary}
-                onClick={() => setResetTarget(null)}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.background = "var(--bg-hover)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.background = "transparent")
-                }
-              >
-                Cancel
-              </button>
-              <button
-                id="um-reset-pwd-submit"
-                type="submit"
-                disabled={resetLoading || resetPwd !== resetPwdConfirm || resetPwd.length < 10}
-                style={{
-                  ...S.btnPrimary,
-                  background: "linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%)",
-                  boxShadow: "0 4px 12px rgba(245,158,11,.3)",
-                  opacity:
-                    resetLoading || resetPwd !== resetPwdConfirm || resetPwd.length < 10
-                      ? 0.6
-                      : 1,
-                  cursor:
-                    resetLoading || resetPwd !== resetPwdConfirm || resetPwd.length < 10
-                      ? "not-allowed"
-                      : "pointer",
-                }}
-              >
-                {resetLoading ? (
-                  "Resetting…"
-                ) : (
-                  <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                    <KeyRound size={16} />
-                    Reset Password
-                  </span>
-                )}
-              </button>
-            </div>
-          </form>
-        )}
-      </Drawer>
+      <UserManagementBlock1503
+        S={S}
+        focusedField={focusedField}
+        getRoleMeta={getRoleMeta}
+        handleResetPasswordSubmit={handleResetPasswordSubmit}
+        resetLoading={resetLoading}
+        resetPwd={resetPwd}
+        resetPwdConfirm={resetPwdConfirm}
+        resetPwdShow={resetPwdShow}
+        resetTarget={resetTarget}
+        setFocusedField={setFocusedField}
+        setResetPwd={setResetPwd}
+        setResetPwdConfirm={setResetPwdConfirm}
+        setResetPwdShow={setResetPwdShow}
+        setResetTarget={setResetTarget}
+      />
 
       <ConfirmModal
         isOpen={!!deleteTargetUser}

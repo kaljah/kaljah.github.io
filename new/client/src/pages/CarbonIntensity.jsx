@@ -1,28 +1,16 @@
+import CarbonIntensityCarbonIntensity from "./carbon-intensity/CarbonIntensityCarbonIntensity";
+import { useAnalyticsFilter } from "../filters/useAnalyticsFilter";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import api from "../api";
 import { useToast } from "../components/Toast";
 import LoadingSpinner from "../components/LoadingSpinner";
-import { BarChart, LineChart } from "../components/charts";
+import { cn } from "../ui/cn";
+import { CbamSection, RegionalCharts, TrendSection } from "./carbon-intensity/CarbonIntensitySections";
 import { useLayout } from "../context/LayoutContext";
 import CustomDropdown from "../components/CustomDropdown";
 import { formatNumber } from "../utils/formatters";
-import { getActiveGwpFactors } from "../constants";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
-import {
-  Cloud,
-  Flame,
-  Activity,
-  BarChart2,
-  Grid,
-  Layers,
-  ShieldCheck,
-  FileText,
-  ToggleLeft,
-  ToggleRight,
-  ArrowUpRight,
-} from "lucide-react";
-import "./CarbonIntensity.css";
 import "./TopBarFilters.css";
 
 const CarbonIntensity = () => {
@@ -31,11 +19,11 @@ const CarbonIntensity = () => {
   const { setTopBarLeft, setTopBarRight } = useLayout();
 
   // Filter states
-  const [currentActivity, setCurrentActivity] = useState("all");
-  const [currentDivision, setCurrentDivision] = useState("all");
-  const [currentRegion, setCurrentRegion] = useState("all");
-  const [currentSegment, setCurrentSegment] = useState("all");
-  const [selectedYear, setSelectedYear] = useState("all");
+  const [currentActivity, setCurrentActivity] = useAnalyticsFilter("activity");
+  const [currentDivision, setCurrentDivision] = useAnalyticsFilter("division");
+  const [currentRegion, setCurrentRegion] = useAnalyticsFilter("region");
+  const [currentSegment, setCurrentSegment] = useAnalyticsFilter("segment");
+  const [selectedYear, setSelectedYear] = useAnalyticsFilter("year");
   const [facilities, setFacilities] = useState([]);
   const [availableYears, setAvailableYears] = useState([]);
   const [availableSegments, setAvailableSegments] = useState([]);
@@ -66,8 +54,7 @@ const CarbonIntensity = () => {
     totalOilProduction: 0,
     totalGasProduction: 0,
     totalBoe: 0,
-    totalFlaringVolume: 0,
-  });
+    totalFlaringVolume: 0 });
 
   const [isReady, setIsReady] = useState(false);
   const [regionalData, setRegionalData] = useState([]);
@@ -76,8 +63,6 @@ const CarbonIntensity = () => {
   const [loading, setLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const isFirstLoadRef = useRef(true);
-
-  const GAS_TO_BOE = 0.178;
 
   // Initial load
   useEffect(() => {
@@ -105,7 +90,6 @@ const CarbonIntensity = () => {
         if (filterRes.data && filterRes.data.segments) {
           setAvailableSegments(filterRes.data.segments);
         }
-        setSelectedYear("all");
 
         const opDefaults = getUserOperationalDefaults(user, facilitiesData);
         if (opDefaults.isRestricted || facilitiesData.length === 1) {
@@ -174,8 +158,7 @@ const CarbonIntensity = () => {
         year: selectedYear,
         facilityId: currentRegion,
         activity: currentActivity,
-        division: currentDivision,
-      });
+        division: currentDivision });
       if (currentSegment !== "all") {
         params.append("segment", currentSegment);
       }
@@ -253,8 +236,7 @@ const CarbonIntensity = () => {
         usedScope1: wS1Sum / 1000,
         usedScope1Gwp20: wS1Gwp20Sum / 1000,
         usedScope3: wS3Sum / 1000,
-        usedFlaring: wFlaringSum / 1000,
-      });
+        usedFlaring: wFlaringSum / 1000 });
     } catch (error) {
       console.error("Failed to load intensity stats:", error);
       toast.error("Failed to load carbon intensity metrics");
@@ -275,8 +257,7 @@ const CarbonIntensity = () => {
     try {
       const params = new URLSearchParams({
         activity: currentActivity,
-        division: currentDivision,
-      });
+        division: currentDivision });
       if (currentSegment !== "all") {
         params.append("segment", currentSegment);
       }
@@ -361,8 +342,7 @@ const CarbonIntensity = () => {
       ...filtered.map((f) => ({
         value: f.id.toString(),
         label: f.name,
-        subLabel: f.field,
-      })),
+        subLabel: f.field })),
     ];
   };
 
@@ -376,8 +356,7 @@ const CarbonIntensity = () => {
               { value: "all", label: "All Years" },
               ...availableYears.map((y) => ({
                 value: y.toString(),
-                label: y.toString(),
-              })),
+                label: y.toString() })),
             ]}
             value={selectedYear}
             onChange={setSelectedYear}
@@ -460,19 +439,9 @@ const CarbonIntensity = () => {
         co2_100: tBoe > 0 ? wCo2 / tBoe : 0,
         co2_20: tBoe > 0 ? wCo2Gwp20 / tBoe : 0,
         active_co2:
-          tBoe > 0 ? (gwpHorizon === "20" ? wCo2Gwp20 / tBoe : wCo2 / tBoe) : 0,
-      };
+          tBoe > 0 ? (gwpHorizon === "20" ? wCo2Gwp20 / tBoe : wCo2 / tBoe) : 0 };
     });
   }, [rawTrendData, currentRegion, gwpHorizon]);
-
-  const getHeatmapClass = (val) => {
-    if (val === null || val === undefined || isNaN(val) || val === 0) return "heat-null";
-    if (val < 18) return "heat-lux";
-    if (val < 28) return "heat-low";
-    if (val < 38) return "heat-mid";
-    if (val < 48) return "heat-high";
-    return "heat-crit";
-  };
 
   const currentDisplayCo2Intensity =
     gwpHorizon === "20" ? stats.avgCo2IntensityGwp20 : stats.avgCo2Intensity;
@@ -493,9 +462,7 @@ const CarbonIntensity = () => {
     const excluded = (total || 0) - (used || 0);
     if (!(excluded > Math.max(0.5, Math.abs(total || 0) * 1e-6))) return null;
     return (
-      <div className="kpi-note">
-        {formatNumber(excluded)} t from years without production are not in this intensity
-      </div>
+      <p className="m-0 mt-2 text-sm text-warning-fg">{formatNumber(excluded)} t from years without production are not in this intensity</p>
     );
   };
 
@@ -505,508 +472,33 @@ const CarbonIntensity = () => {
     );
 
   return (
-    <div
-      className="intensity-content"
-      style={{
-        opacity: isUpdating ? 0.82 : 1,
-        transition: "opacity 0.2s ease",
-      }}
-    >
-      <div className="intensity-grid">
-        {/* KPI HERO CARD */}
-        <div className="hero-card">
-          <div className="hero-header">
-            <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-              <h2 className="grid-title">
-                <Activity size={24} color="var(--accent-color)" />
-                Carbon Intensity & Product Embodiment
-              </h2>
-              <div className="year-badge">
-                {selectedYear === "all" ? "All-Time" : selectedYear} Performance
-              </div>
-            </div>
-
-            {/* GWP Time Horizon Toggle */}
-            <div className="gwp-toggle-container">
-              <span className="gwp-toggle-label">GWP Horizon:</span>
-              <div className="gwp-pill-group">
-                {(() => {
-                  const f100 = getActiveGwpFactors(activeGwpStandard, "100");
-                  const f20 = getActiveGwpFactors(activeGwpStandard, "20");
-                  return (
-                    <>
-                      <button
-                        className={`gwp-pill ${gwpHorizon === "100" ? "active" : ""}`}
-                        onClick={() => setGwpHorizon("100")}
-                        title={`IPCC ${activeGwpStandard} 100-Year GWP (CH4: ${f100.CH4}, N2O: ${f100.N2O})`}
-                      >
-                        {activeGwpStandard} 100-Yr
-                      </button>
-                      <button
-                        className={`gwp-pill ${gwpHorizon === "20" ? "active" : ""}`}
-                        onClick={() => setGwpHorizon("20")}
-                        title={`IPCC ${activeGwpStandard} 20-Year GWP (CH4: ${f20.CH4}, N2O: ${f20.N2O})`}
-                      >
-                        {activeGwpStandard} 20-Yr
-                      </button>
-                    </>
-                  );
-                })()}
-              </div>
-            </div>
-          </div>
-
-          {/* Horizontal 4-KPI Grid */}
-          <div className="kpi-grid-4">
-            <div className="kpi-card">
-              <div className="kpi-header">
-                <div className="kpi-icon co2">
-                  <Cloud size={20} />
-                </div>
-                <span className="kpi-label">GHG Intensity (Avg)</span>
-              </div>
-              <div className="kpi-value-container">
-                <span
-                  className="total-value co2"
-                  style={
-                    currentDisplayCo2Intensity === null
-                      ? { fontSize: "1.25rem", color: "#f59e0b" }
-                      : undefined
-                  }
-                >
-                  {currentDisplayCo2Intensity === null
-                    ? "Pending Production"
-                    : (currentDisplayCo2Intensity ?? 0).toFixed(2)}
-                </span>
-                <span className="kpi-unit">
-                  {currentDisplayCo2Intensity === null ? "" : "kg CO₂e / BOE"}
-                </span>
-              </div>
-              <div className="kpi-footer">
-                <span className="gwp-subtag">
-                  {gwpHorizon === "20" ? "GWP₂₀ Active" : "GWP₁₀₀ Standard"}
-                </span>
-                <span>
-                  Total:{" "}
-                  <strong>{formatNumber(currentDisplayTotalCo2e)} tCO₂e</strong>
-                </span>
-              </div>
-              {excludedNote(currentDisplayTotalCo2e, currentUsedCo2e)}
-            </div>
-
-            <div className="kpi-card">
-              <div className="kpi-header">
-                <div className="kpi-icon scope1">
-                  <Layers size={20} />
-                </div>
-                <span className="kpi-label">Scope 1 Direct Intensity</span>
-              </div>
-              <div className="kpi-value-container">
-                <span
-                  className="total-value scope1"
-                  style={
-                    currentDisplayScope1Intensity === null
-                      ? { fontSize: "1.25rem", color: "#f59e0b" }
-                      : undefined
-                  }
-                >
-                  {currentDisplayScope1Intensity === null
-                    ? "Pending Production"
-                    : (currentDisplayScope1Intensity ?? 0).toFixed(2)}
-                </span>
-                <span className="kpi-unit">
-                  {currentDisplayScope1Intensity === null ? "" : "kg CO₂e / BOE"}
-                </span>
-              </div>
-              <div className="kpi-footer">
-                <span>
-                  Scope 2:{" "}
-                  <strong>
-                    {stats.avgScope2Intensity === null
-                      ? "Pending"
-                      : `${(stats.avgScope2Intensity ?? 0).toFixed(2)} kg/BOE`}
-                  </strong>
-                </span>
-                <span>
-                  Total S1: <strong>{formatNumber(currentDisplayTotalScope1)} t</strong>
-                </span>
-              </div>
-              {excludedNote(currentDisplayTotalScope1, currentUsedScope1)}
-            </div>
-
-            <div className="kpi-card">
-              <div className="kpi-header">
-                <div className="kpi-icon flare">
-                  <Flame size={20} />
-                </div>
-                <span className="kpi-label">Flaring Carbon Intensity</span>
-              </div>
-              <div className="kpi-value-container">
-                <span className="total-value flare">
-                  {(stats.avgFlaringIntensity ?? 0).toFixed(2)}
-                </span>
-                <span className="kpi-unit">kg CO₂e / BOE</span>
-              </div>
-              <div className="kpi-footer">
-                <span>
-                  Flared:{" "}
-                  <strong>
-                    {formatNumber(stats.totalFlaringEmissions)} tCO₂e
-                  </strong>
-                </span>
-              </div>
-              {excludedNote(stats.totalFlaringEmissions, stats.usedFlaring)}
-            </div>
-
-            <div className="kpi-card">
-              <div className="kpi-header">
-                <div className="kpi-icon scope3">
-                  <ShieldCheck size={20} />
-                </div>
-                <span className="kpi-label">Scope 3 Value Chain</span>
-              </div>
-              <div className="kpi-value-container">
-                <span className="total-value scope3">
-                  {(stats.avgScope3Intensity ?? 0).toFixed(2)}
-                </span>
-                <span className="kpi-unit">kg CO₂e / BOE</span>
-              </div>
-              <div className="kpi-footer">
-                <span>
-                  Total S3:{" "}
-                  <strong>{formatNumber(stats.totalScope3)} tCO₂e</strong>
-                </span>
-              </div>
-              {excludedNote(stats.totalScope3, stats.usedScope3)}
-            </div>
-          </div>
-
-          {/* Production Context Bar */}
-          <div className="scope-breakdown">
-            <div className="scope-item">
-              <span className="label">Total Oil Production</span>
-              <span className="val">
-                {formatNumber(stats.totalOilProduction, 0)} bbl
-              </span>
-            </div>
-            <div className="scope-item bordered">
-              <span className="label">Total Gas Production</span>
-              <span className="val">
-                {formatNumber(stats.totalGasProduction, 0)} mscf
-              </span>
-            </div>
-            <div className="scope-item bordered">
-              <span className="label">Combined Production (BOE)</span>
-              <span
-                className="val"
-                style={{ color: "var(--accent-color)", fontWeight: 700 }}
-              >
-                {formatNumber(stats.totalBoe, 0)} BOE
-              </span>
-            </div>
-            <div className="scope-item bordered">
-              <span className="label">Total Gas Flared</span>
-              <span className="val flare-val">
-                {formatNumber(stats.totalFlaringVolume, 0)} m³
-              </span>
-            </div>
-          </div>
-        </div>
-
-                {/* EU CBAM COMPLIANCE & PRODUCT EMBODIMENT SECTION */}
-                <div className="card cbam-section">
-                    <div className="chart-header">
-                        <div>
-                            <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <FileText size={20} color="var(--accent-color)" />
-                                EU CBAM Product Specific Embedded Emissions
-                            </h3>
-                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', margin: '4px 0 0 0' }}>
-                                Direct & indirect specific embedded emissions per export product (EU Regulation 2023/956)
-                            </p>
-                        </div>
-                        <div className="cbam-benchmark-badge">
-                            EU ETS Benchmark (Product-Specific): ~0.025 - 1.2 tCO₂e/t
-                        </div>
-                    </div>
-
-                    {cbamProducts.length > 0 ? (
-                        <div className="table-responsive" style={{ marginTop: '16px' }}>
-                            <table className="custom-table">
-                                <thead>
-                                    <tr>
-                                        <th>Facility</th>
-                                        <th>Product Name</th>
-                                        <th>EU CN Code</th>
-                                        <th>Period</th>
-                                        <th>Export Qty (t)</th>
-                                        <th>Destination</th>
-                                        <th>Direct Intensity (tCO₂e/t)</th>
-                                        <th>Indirect Intensity (tCO₂e/t)</th>
-                                        <th>Total Embedded (tCO₂e)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {cbamProducts.map((p, idx) => {
-                                        const fac = facilities.find(f => String(f.id) === String(p.facility_id));
-                                        const facName = fac ? fac.name : (p.facilityName || p.facility_name || '—');
-                                        const prodName = p.productName || p.product_name || '—';
-                                        const cn = p.cnCode || p.cn_code || '—';
-                                        const qty = p.quantityTonnes ?? p.quantity_tonnes ?? 0;
-                                        const dest = p.exportDestination || p.export_destination || 'EU';
-                                        const directInt = p.specificEmbeddedDirect ?? p.specific_embedded_direct;
-                                        const indirInt = p.specificEmbeddedIndirect ?? p.specific_embedded_indirect;
-                                        const totEmb = p.totalEmbeddedEmissions ?? p.total_embedded_emissions ?? (qty * ((directInt || 0) + (indirInt || 0)));
-                                        return (
-                                            <tr key={p.id || idx}>
-                                                <td style={{ fontWeight: 600 }}>{facName}</td>
-                                                <td>{prodName}</td>
-                                                <td><span className="code-pill">{cn}</span></td>
-                                                <td>{p.year}-{String(p.month || 1).padStart(2, '0')}</td>
-                                                <td>{formatNumber(qty, 0)}</td>
-                                                <td>{dest}</td>
-                                                <td><strong style={{ color: '#0d9488' }}>{typeof directInt === 'number' ? directInt.toFixed(4) : '—'}</strong></td>
-                                                <td>{typeof indirInt === 'number' ? indirInt.toFixed(4) : '—'}</td>
-                                                <td><strong>{formatNumber(totEmb, 1)}</strong></td>
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
-                        </div>
-                    ) : (
-                        <div className="cbam-empty-state">
-                            <p>No CBAM product export records registered for the selected filters. Track exports via <strong>Manage Data &gt; CBAM Products</strong>.</p>
-                        </div>
-                    )}
-                </div>
-
-        {/* Regional Bar Charts */}
-        <div className="chart-grid">
-          <div className="card">
-            <div className="chart-header">
-              <div className="chart-title-wrapper">
-                <h3>GHG Intensity by Facility (kg CO₂e / BOE)</h3>
-                <div
-                  className="chart-indicator"
-                  style={{ background: "#0d9488" }}
-                ></div>
-              </div>
-            </div>
-            <div style={{ height: "300px" }}>
-              <BarChart
-                data={regionalData.map((d) => ({
-                  name: d.facility_name,
-                  value:
-                    gwpHorizon === "20"
-                      ? d.co2_intensity_gwp20 || d.co2_intensity
-                      : d.co2_intensity,
-                }))}
-                dataKey="value"
-                xKey="name"
-                color="#0d9488"
-              />
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="chart-header">
-              <div className="chart-title-wrapper">
-                <h3>Scope 1 Direct vs Scope 2 Intensity</h3>
-                <div
-                  className="chart-indicator"
-                  style={{ background: "#2563eb" }}
-                ></div>
-              </div>
-            </div>
-            <div style={{ height: "300px" }}>
-              <BarChart
-                data={regionalData.map((d) => ({
-                  name: d.facility_name,
-                  scope1: Number(
-                    (
-                      (gwpHorizon === "20"
-                        ? d.scope1_intensity_gwp20 || d.scope1_intensity
-                        : d.scope1_intensity) || 0
-                    ).toFixed(2)
-                  ),
-                  scope2: Number((d.scope2_intensity || 0).toFixed(2)),
-                }))}
-                bars={[
-                  {
-                    dataKey: "scope1",
-                    name: gwpHorizon === "20" ? "Scope 1 (GWP₂₀ Direct)" : "Scope 1 (Direct)",
-                    color: "#2563eb",
-                  },
-                  { dataKey: "scope2", name: "Scope 2 (Indirect)", color: "#0ea5e9" },
-                ]}
-                xKey="name"
-              />
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="chart-header">
-              <div className="chart-title-wrapper">
-                <h3>Oil BOE Contribution by Facility</h3>
-                <div
-                  className="chart-indicator"
-                  style={{ background: "#ea580c" }}
-                ></div>
-              </div>
-            </div>
-            <div style={{ height: "300px" }}>
-              <BarChart
-                data={regionalData.map((d) => ({
-                  name: d.facility_name,
-                  value: d.total_oil || 0,
-                }))}
-                dataKey="value"
-                xKey="name"
-                color="#ea580c"
-              />
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="chart-header">
-              <div className="chart-title-wrapper">
-                <h3>Gas BOE Contribution by Facility</h3>
-                <div
-                  className="chart-indicator"
-                  style={{ background: "#8b5cf6" }}
-                ></div>
-              </div>
-            </div>
-            <div style={{ height: "300px" }}>
-              <BarChart
-                data={regionalData.map((d) => ({
-                  name: d.facility_name,
-                  value: (d.total_gas || 0) * GAS_TO_BOE,
-                }))}
-                dataKey="value"
-                xKey="name"
-                color="#8b5cf6"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Historical Trends Section */}
-        <div className="card trend-section">
-          <div className="chart-header">
-            <div>
-              <h3 style={{ marginBottom: "4px" }}>
-                Historical Carbon Intensity Trends
-              </h3>
-              <p
-                style={{
-                  color: "var(--text-secondary)",
-                  fontSize: "0.9rem",
-                  margin: 0,
-                }}
-              >
-                5-Year Performance Track (kg CO₂e / BOE)
-              </p>
-            </div>
-            <div className="trend-view-controls">
-              <div className="view-toggle">
-                <button
-                  className={`view-btn ${trendView === "chart" ? "active" : ""}`}
-                  onClick={() => setTrendView("chart")}
-                >
-                  <BarChart2 size={16} /> Chart
-                </button>
-                <button
-                  className={`view-btn ${trendView === "heatmap" ? "active" : ""}`}
-                  onClick={() => setTrendView("heatmap")}
-                >
-                  <Grid size={16} /> Heatmap
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {trendView === "chart" ? (
-            <div style={{ height: "350px" }}>
-              <LineChart
-                data={trendChartData}
-                xKey="year"
-                series={[
-                  {
-                    key: "co2_100",
-                    color: "#0d9488",
-                    name: `GHG Intensity (${activeGwpStandard} 100-Yr GWP)`,
-                  },
-                  {
-                    key: "co2_20",
-                    color: "#ea580c",
-                    name: `GHG Intensity (${activeGwpStandard} 20-Yr GWP)`,
-                    dash: "5 5",
-                  },
-                ]}
-              />
-            </div>
-          ) : (
-            <div className="heatmap-container">
-              <div className="heatmap-header">
-                <div
-                  className="heatmap-header-cell"
-                  style={{ textAlign: "left" }}
-                >
-                  FACILITY / REGION
-                </div>
-                {rawTrendData.map((d) => (
-                  <div key={d.year} className="heatmap-header-cell">
-                    {d.year}
-                  </div>
-                ))}
-              </div>
-              <div className="heatmap-body">
-                {regionalData.length > 0 ? (
-                  regionalData.map((facData) => (
-                    <div key={facData.facility_id} className="heatmap-row">
-                      <div className="heatmap-label">
-                        {facData.facility_name}
-                      </div>
-                      {rawTrendData.map((yData) => {
-                        const record = yData.data.find(
-                          (r) => r.facility_id === facData.facility_id,
-                        );
-                        const rawVal = record
-                          ? gwpHorizon === "20"
-                            ? record.co2_intensity_gwp20 || record.co2_intensity
-                            : record.co2_intensity
-                          : 0;
-                        const numVal = Number(rawVal);
-                        const val = isFinite(numVal) ? numVal : 0;
-                        return (
-                          <div
-                            key={yData.year}
-                            className={`heatmap-cell ${getHeatmapClass(val)}`}
-                            title={`${yData.year} Intensity: ${val.toFixed(3)} kg CO2e/BOE`}
-                          >
-                            {val > 0 ? val.toFixed(2) : "-"}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ))
-                ) : (
-                  <p
-                    style={{
-                      textAlign: "center",
-                      padding: "40px",
-                      color: "var(--text-secondary)",
-                    }}
-                  >
-                    No regional data available
-                  </p>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
+    <div className={cn("intensity-content min-h-[calc(100vh-64px)] bg-ink-50 p-4 transition-opacity duration-200 md:p-8", isUpdating && "opacity-80")}>
+      <div className="intensity-grid mx-auto flex max-w-[1600px] flex-col gap-8">
+        <CarbonIntensityCarbonIntensity
+          activeGwpStandard={activeGwpStandard}
+          currentDisplayCo2Intensity={currentDisplayCo2Intensity}
+          currentDisplayScope1Intensity={currentDisplayScope1Intensity}
+          currentDisplayTotalCo2e={currentDisplayTotalCo2e}
+          currentDisplayTotalScope1={currentDisplayTotalScope1}
+          currentUsedCo2e={currentUsedCo2e}
+          currentUsedScope1={currentUsedScope1}
+          excludedNote={excludedNote}
+          gwpHorizon={gwpHorizon}
+          selectedYear={selectedYear}
+          setGwpHorizon={setGwpHorizon}
+          stats={stats}
+        />
+        <CbamSection products={cbamProducts} facilities={facilities} />
+        <RegionalCharts data={regionalData} gwpHorizon={gwpHorizon} />
+        <TrendSection
+          view={trendView}
+          onView={setTrendView}
+          trendChartData={trendChartData}
+          rawTrendData={rawTrendData}
+          regionalData={regionalData}
+          gwpHorizon={gwpHorizon}
+          activeGwpStandard={activeGwpStandard}
+        />
       </div>
     </div>
   );

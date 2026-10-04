@@ -14,7 +14,7 @@ import { test, expect } from '@playwright/test';
 import path from 'path';
 import fs from 'fs';
 
-const FRONTEND = 'http://127.0.0.1:5173';
+const FRONTEND = process.env.E2E_BASE_URL || 'http://127.0.0.1:5173';
 const BACKEND = 'http://127.0.0.1:5000';
 const SCREENSHOT_DIR = 'C:/Users/samsung/Desktop/H2/test_results/screenshots';
 
@@ -67,9 +67,9 @@ test.describe('Baseline UX/UI Audit: Dashboard & Intensity Pages', () => {
     await page.screenshot({ path: path.join(SCREENSHOT_DIR, '01_dashboard_initial_view.png'), fullPage: true });
 
     // Verify Hero Card Initial Stats
-    const grossText = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
-    const netText = await page.locator('.stat-item:has-text("Net Emissions") .stat-value').innerText();
-    const ch4Text = await page.locator('.stat-item:has-text("Total CH4") .stat-value').innerText();
+    const grossText = await page.locator('[data-testid="kpi-gross"] [data-testid="kpi-value"]').innerText();
+    const netText = await page.locator('[data-testid="kpi-net"] [data-testid="kpi-value"]').innerText();
+    const ch4Text = await page.locator('[data-testid="kpi-ch4"] [data-testid="kpi-value"]').innerText();
     console.log(`[DASHBOARD BASELINE] Gross: ${grossText}, Net: ${netText}, CH4: ${ch4Text}`);
 
     // Verify Scope Pills
@@ -97,7 +97,7 @@ test.describe('Baseline UX/UI Audit: Dashboard & Intensity Pages', () => {
         if (await yrOpt.isVisible()) {
           await yrOpt.click();
           await page.waitForTimeout(800);
-          const yrGross = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
+          const yrGross = await page.locator('[data-testid="kpi-gross"] [data-testid="kpi-value"]').innerText();
           console.log(`[YEAR TEST] ${yr} -> Gross Emissions: ${yrGross}`);
           expect(yrGross).not.toContain('NaN');
           expect(yrGross).not.toContain('undefined');
@@ -120,7 +120,7 @@ test.describe('Baseline UX/UI Audit: Dashboard & Intensity Pages', () => {
         if (await segOpt.isVisible()) {
           await segOpt.click();
           await page.waitForTimeout(800);
-          const segGross = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
+          const segGross = await page.locator('[data-testid="kpi-gross"] [data-testid="kpi-value"]').innerText();
           console.log(`[SUPPLY CHAIN TEST] ${seg} -> Gross: ${segGross}`);
         } else {
           await page.keyboard.press('Escape');
@@ -151,7 +151,7 @@ test.describe('Baseline UX/UI Audit: Dashboard & Intensity Pages', () => {
       if (await tosyaliWest.isVisible()) {
         await tosyaliWest.click();
         await page.waitForTimeout(800);
-        const tosyaliGross = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
+        const tosyaliGross = await page.locator('[data-testid="kpi-gross"] [data-testid="kpi-value"]').innerText();
         console.log(`[REGION/FACILITY TEST] West (Tosyali) -> Gross: ${tosyaliGross}`);
       } else {
         await page.keyboard.press('Escape');
@@ -175,7 +175,7 @@ test.describe('Baseline UX/UI Audit: Dashboard & Intensity Pages', () => {
       const gwpLabelBefore = await gwpToggleBtn.innerText();
       await gwpToggleBtn.click();
       await page.waitForTimeout(800);
-      const grossGwp20 = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
+      const grossGwp20 = await page.locator('[data-testid="kpi-gross"] [data-testid="kpi-value"]').innerText();
       console.log(`[GWP TOGGLE] Switched from ${gwpLabelBefore} -> Gross: ${grossGwp20}`);
       await page.screenshot({ path: path.join(SCREENSHOT_DIR, '03_dashboard_gwp20_active.png'), fullPage: true });
 
@@ -262,14 +262,14 @@ test.describe('Baseline UX/UI Audit: Dashboard & Intensity Pages', () => {
     expect(s1Int).not.toContain('NaN');
 
     // Test Dual GWP Horizon: 100-Yr vs 20-Yr
-    const btn20 = page.locator('.gwp-pill:has-text("20-Yr")');
+    const btn20 = page.locator('[role="radio"]:has-text("20-Yr")');
     if (await btn20.isVisible()) {
       await btn20.click();
       await page.waitForTimeout(600);
       const ghgInt20 = await kpiCards.nth(0).locator('.total-value').innerText();
       console.log(`[CARBON INTENSITY GWP20] GHG Intensity 20-Yr: ${ghgInt20}`);
       await page.screenshot({ path: path.join(SCREENSHOT_DIR, '08_carbon_intensity_gwp20.png'), fullPage: true });
-      await page.locator('.gwp-pill:has-text("100-Yr")').click();
+      await page.locator('[role="radio"]:has-text("100-Yr")').click();
       await page.waitForTimeout(500);
     }
 

@@ -1,4 +1,6 @@
+
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { NativeSelect } from "../ui/NativeSelect";
 import { useNavigate } from "react-router-dom";
 import {
   MapContainer,
@@ -50,6 +52,11 @@ import api from "../api";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../components/Toast";
 import { getUserOperationalDefaults, isUnrestrictedLocation } from "../utils/userDefaults";
+import { Badge, Banner, IconButton, cn } from "../ui";
+import ExplorerHud from "./explorer/ExplorerHud";
+import ExplorerDrawer from "./explorer/ExplorerDrawer";
+import ExplorerLegend from "./explorer/ExplorerLegend";
+import ExplorerDossier from "./explorer/ExplorerDossier";
 import "./MethaneExplorer.css";
 
 // Fix Leaflet tile sizing when mounted inside animated route transitions
@@ -669,13 +676,13 @@ const EmissionsMap = () => {
 
   if (loading) {
     return (
-      <div className="methane-explorer-loading">
-        <div className="telemetry-loader">
-          <div className="scanner-line"></div>
-          <Satellite size={34} className="spin-slow" color="#ff6600" />
+      <div className="[display:flex] [flex-direction:column] [align-items:center] [justify-content:center] [height:calc(100vh_-_72px)] [gap:16px] [background:var(--color-ink-50)] [color:var(--color-ink-900)]">
+        <div className="[position:relative] [width:80px] [height:80px] [border:2px_solid_rgba(255,_102,_0,_0.2)] [&&]:[border-radius:50%] [display:flex] [align-items:center] [justify-content:center] [box-shadow:0_4px_20px_rgba(255,_102,_0,_0.15)]">
+          <div className="[position:absolute] [inset:0] [border-radius:50%] [border-top:3px_solid_var(--color-brand-500)] [animation:spin_1.2s_cubic-bezier(0.5,_0,_0.5,_1)_infinite]"></div>
+          <Satellite size={34} className="[animation:spin_8s_linear_infinite]!" color="#ff6600" />
         </div>
-        <div className="loading-title">LOADING METHANE EXPLORER</div>
-        <div className="loading-subtitle">
+        <div className="[font-size:var(--text-md)] [font-weight:800] [letter-spacing:0.08em] [color:var(--color-ink-900)]">LOADING METHANE EXPLORER</div>
+        <div className="[font-size:var(--text-sm)] [color:var(--color-ink-500)] [max-width:420px] [text-align:center] [line-height:1.5]">
           Fetching operational facilities and emission inventories...
         </div>
       </div>
@@ -690,165 +697,47 @@ const EmissionsMap = () => {
         transition: "opacity 0.2s ease",
       }}
     >
-      {/* 1. TOP MISSION TELEMETRY HUD BAR (WHITE LIGHT THEME) */}
-      <header className="mission-hud">
-        <div className="hud-left">
-          <div className="hud-brand">
-            <div className="radar-ping">
-              <span className="ping-core"></span>
-              <span className="ping-wave"></span>
-            </div>
-            <div>
-              <div className="brand-title">METHANE RECON COCKPIT</div>
-              <div className="brand-sub">COPERNICUS SENTINEL-5P TROPOMI</div>
-            </div>
-          </div>
+      <ExplorerHud
+        connected={isSatelliteConnected}
+        onConfigure={() => navigate("/settings")}
+        metrics={telemetryMetrics}
+        viewMode={viewMode}
+        onViewMode={setViewMode}
+        baseMaps={BASE_MAPS}
+        baseLayer={mapBaseLayer}
+        onBaseLayer={setMapBaseLayer}
+        formatCompact={formatCompact}
+      />
 
-          <div className="hud-status-badge">
-            {isSatelliteConnected ? (
-              <span className="status-pill live" title="Connected to Copernicus Data Space">
-                <Radio size={12} className="pulse-icon" /> S5P STREAM LIVE
-              </span>
-            ) : (
-              <button
-                className="status-pill offline"
-                onClick={() => navigate("/settings")}
-                title="Configure CDSE API credentials in Settings"
-              >
-                <Satellite size={12} /> CONFIGURE S5P
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Real-time KPI Counters */}
-        <div className="hud-kpis">
-          <div className="kpi-item">
-            <span className="kpi-label">Monitored Assets</span>
-            <span className="kpi-value">{telemetryMetrics.activeAssets}</span>
-          </div>
-          <div className="kpi-divider"></div>
-          <div className="kpi-item">
-            <span className="kpi-label">
-              {viewMode === "methane" ? "Regional Methane" : "Regional GHG"}
-            </span>
-            <span className="kpi-value highlight-accent">
-              {viewMode === "methane"
-                ? `${formatCompact(telemetryMetrics.totalMethane)} t`
-                : `${formatCompact(telemetryMetrics.totalGhg)} t`}
-            </span>
-          </div>
-          <div className="kpi-divider"></div>
-          <div className="kpi-item">
-            <span className="kpi-label">Mean Loss Intensity</span>
-            <span className="kpi-value">
-              {telemetryMetrics.avgMethaneIntensity}{" "}
-              <span className="kpi-unit">kg/boe</span>
-            </span>
-          </div>
-          <div className="kpi-divider"></div>
-          <div className="kpi-item">
-            <span className="kpi-label">Super-Emitters</span>
-            <span
-              className={`kpi-value ${telemetryMetrics.superEmitters > 0 ? "kpi-alert" : ""}`}
-            >
-              {telemetryMetrics.superEmitters}
-            </span>
-          </div>
-        </div>
-
-        {/* View Mode & Basemap Selector */}
-        <div className="hud-actions">
-          {/* Mode Switcher */}
-          <div className="segmented-control mode-selector">
-            <button
-              className={`seg-btn ${viewMode === "methane" ? "active" : ""}`}
-              onClick={() => setViewMode("methane")}
-              title="Focus on Methane (CH4) emissions"
-            >
-              <Flame size={13} />
-              <span>CH₄ Flux</span>
-            </button>
-            <button
-              className={`seg-btn ${viewMode === "total" ? "active" : ""}`}
-              onClick={() => setViewMode("total")}
-              title="Focus on Total GHG (CO2e) emissions"
-            >
-              <TrendingUp size={13} />
-              <span>Total GHG</span>
-            </button>
-          </div>
-
-          {/* Basemap Switcher */}
-          <div className="segmented-control basemap-selector">
-            {Object.entries(BASE_MAPS).map(([key, mapInfo]) => {
-              const IconComp = mapInfo.icon;
-              return (
-                <button
-                  key={key}
-                  className={`seg-btn ${mapBaseLayer === key ? "active" : ""}`}
-                  onClick={() => setMapBaseLayer(key)}
-                  title={`Switch to ${mapInfo.name}`}
-                >
-                  <IconComp size={13} />
-                  <span>{mapInfo.name.split(" ")[0]}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </header>
-
-      {/* 2. SATELLITE NEW-PASS OVERPASS TOAST */}
       {satelliteAlert && (
-        <aside className="satellite-alert-toast" role="alert">
-          <div className="toast-header">
-            <div className="toast-title">
-              {satelliteAlert.anomaly >= 30 ? (
-                <span className="badge-danger">
-                  <AlertCircle size={14} /> HIGH CH₄ ANOMALY DETECTED
-                </span>
-              ) : (
-                <span className="badge-info">
-                  <Satellite size={14} /> NEW S5P OVERPASS
-                </span>
-              )}
-            </div>
-            <button
-              className="toast-close-btn"
-              onClick={() => setSatelliteAlert(null)}
-              title="Dismiss notification"
-            >
-              <X size={14} />
-            </button>
+        <Banner
+          tone={satelliteAlert.anomaly >= 30 ? "danger" : "info"}
+          title={satelliteAlert.anomaly >= 30 ? "High CH₄ anomaly detected" : "New S5P overpass"}
+          className="absolute right-5 top-[78px] z-1001 min-w-80 max-w-96 bg-surface shadow-lg"
+          actions={
+            <IconButton label="Dismiss notification" className="size-7" onClick={() => setSatelliteAlert(null)}>
+              <X className="size-3.5" aria-hidden="true" />
+            </IconButton>
+          }
+        >
+          <p className="m-0 text-sm text-ink-700">
+            <strong>{satelliteAlert.facility}</strong> • {satelliteAlert.date} at {satelliteAlert.time || "11:30 UTC"}
+          </p>
+          <div className="mt-1.5 flex flex-wrap gap-2">
+            <Badge>ΔCH₄ +{satelliteAlert.anomaly.toFixed(1)} ppb</Badge>
+            <Badge>● {satelliteAlert.type || "NRTI"}</Badge>
+            {satelliteAlert.count > 1 && <Badge>+{satelliteAlert.count - 1} more</Badge>}
           </div>
-          <div className="toast-body">
-            <strong>{satelliteAlert.facility}</strong> • {satelliteAlert.date} at{" "}
-            {satelliteAlert.time || "11:30 UTC"}
-          </div>
-          <div className="toast-meta">
-            <span className="stat-pill">
-              ΔCH₄ +{satelliteAlert.anomaly.toFixed(1)} ppb
-            </span>
-            <span className="stat-pill stream">
-              ● {satelliteAlert.type || "NRTI"}
-            </span>
-            {satelliteAlert.count > 1 && (
-              <span className="stat-pill count">
-                +{satelliteAlert.count - 1} more
-              </span>
-            )}
-          </div>
-        </aside>
+        </Banner>
       )}
 
       {/* 3. LEAFLET INTERACTIVE GEOSPATIAL MAP CANVAS */}
-      <div className="explorer-map-container">
+      <div className="[position:absolute] [inset:0] [width:100%] [height:100%] [z-index:1]">
         <MapContainer
           center={mapCenter}
           zoom={mapZoom}
           zoomControl={false}
-          style={{ height: "100%", width: "100%" }}
+          className="h-full! w-full!"
         >
           {/* Dynamic Light Basemap Layer */}
           <TileLayer
@@ -947,20 +836,20 @@ const EmissionsMap = () => {
                     direction="top"
                     offset={[0, -10]}
                     opacity={0.98}
-                    className="custom-leaflet-tooltip"
+                    className="[background:rgba(255,_255,_255,_0.98)]! [backdrop-filter:blur(14px)]! [border:1px_solid_rgba(255,_102,_0,_0.4)]! [&&]:[border-radius:var(--radius-md)]! [box-shadow:var(--shadow-card)]! [padding:8px_12px]! [color:var(--color-ink-900)]! before:[border-top-color:rgba(255,_255,_255,_0.98)]!"
                   >
-                    <div className="marker-tooltip-card">
-                      <div className="tooltip-header">
-                        <span className="tooltip-name">{fac.name}</span>
+                    <div className="[display:flex] [flex-direction:column] [gap:3px]">
+                      <div className="[display:flex] [align-items:center] [gap:8px]">
+                        <span className="[font-size:var(--text-sm)] [font-weight:800] [color:var(--color-ink-900)]">{fac.name}</span>
                         <span className={`tooltip-badge ${severity}`}>
                           {severity.toUpperCase()}
                         </span>
                       </div>
-                      <div className="tooltip-sub">
+                      <div className="[font-size:var(--text-xs)] [color:var(--color-ink-500)]">
                         {fac.region || "Region"} •{" "}
                         {fac.activity || fac.division || "Facility"}
                       </div>
-                      <div className="tooltip-emission">
+                      <div className="[display:flex] [align-items:center] [gap:5px] [font-size:var(--text-sm)] [font-weight:700] [color:var(--color-link)] [margin-top:2px]">
                         <Flame size={12} />
                         <span>
                           {viewMode === "methane"
@@ -978,658 +867,80 @@ const EmissionsMap = () => {
       </div>
 
       {/* 4. COLLAPSIBLE LEFT INTELLIGENCE & RECON DRAWER (WHITE LIGHT THEME) */}
-      <div className={`drawer-container left-drawer ${isDrawerOpen ? "open" : "collapsed"}`}>
+      <div
+        className={cn(
+          "pointer-events-none absolute bottom-5 left-4 top-[78px] z-950 w-[340px] transition-transform duration-300 ease-out",
+          !isDrawerOpen && "-translate-x-[346px]",
+        )}
+      >
         <button
-          className="drawer-toggle-tab"
+          type="button"
+          className="pointer-events-auto absolute -right-9 top-3.5 flex h-11 w-9 cursor-pointer items-center justify-center rounded-r-md border border-l-0 border-border bg-surface text-brand-700 shadow-md hover:bg-ink-50"
           onClick={() => setIsDrawerOpen(!isDrawerOpen)}
           title={isDrawerOpen ? "Collapse drawer" : "Expand drawer"}
           aria-label={isDrawerOpen ? "Collapse drawer" : "Expand drawer"}
         >
-          {isDrawerOpen ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
+          {isDrawerOpen ? <ChevronLeft className="size-4" aria-hidden="true" /> : <ChevronRight className="size-4" aria-hidden="true" />}
         </button>
 
         {isDrawerOpen && (
-          <div className="drawer-inner">
-            {/* Drawer Header */}
-            <div className="drawer-header">
-              <div className="title-row">
-                <Sliders size={17} color="#ff6600" />
-                <h3>Target Reconnaissance</h3>
-              </div>
-              <span className="target-count-badge">
-                {filteredFacilities.length} ASSETS
-              </span>
-            </div>
-
-            {/* Quick Search */}
-            <div className="filter-group">
-              <label className="filter-title">Search Asset / Field</label>
-              <div className="search-input-wrapper">
-                <Search size={15} className="search-icon" />
-                <input
-                  type="text"
-                  placeholder="Search name, region, division..."
-                  value={filters.search}
-                  onChange={(e) =>
-                    setFilters({ ...filters, search: e.target.value })
-                  }
-                  className="recon-input"
-                  id="recon-search-input"
-                />
-                {filters.search && (
-                  <button
-                    className="clear-search-btn"
-                    onClick={() => setFilters({ ...filters, search: "" })}
-                    title="Clear search"
-                  >
-                    <X size={13} />
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Filter Row 1: Region & Accounting Year */}
-            <div className="filter-row">
-              {/* Region Filter */}
-              <div className="filter-group flex-1">
-                <label className="filter-title">Region / Basin</label>
-                <select
-                  value={filters.region}
-                  onChange={(e) =>
-                    setFilters({ ...filters, region: e.target.value })
-                  }
-                  className="recon-select"
-                  id="filter-region-select"
-                >
-                  <option value="all">All Regions</option>
-                  {availableRegions.map((reg) => (
-                    <option key={reg} value={reg}>
-                      {reg}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Year Filter */}
-              <div className="filter-group flex-1">
-                <label className="filter-title">Accounting Year</label>
-                <select
-                  value={filters.year}
-                  onChange={(e) =>
-                    setFilters({ ...filters, year: e.target.value })
-                  }
-                  className="recon-select"
-                  id="filter-year-select"
-                >
-                  <option value="all">All Years</option>
-                  {availableYears.map((y) => (
-                    <option key={y} value={y}>
-                      {y}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            {/* Filter Row 2: Activity */}
-            <div className="filter-group">
-              <label className="filter-title">Activity Type</label>
-              <select
-                value={filters.activity}
-                onChange={(e) =>
-                  setFilters({ ...filters, activity: e.target.value })
-                }
-                className="recon-select"
-                id="filter-activity-select"
-              >
-                <option value="all">All Activities</option>
-                {availableActivities.map((act) => (
-                  <option key={act} value={act}>
-                    {act}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Severity Filter Pills */}
-            <div className="filter-group">
-              <label className="filter-title">Anomaly Severity</label>
-              <div className="severity-pills">
-                {[
-                  { id: "all", label: "All" },
-                  { id: "high", label: "Super-Emitters", color: "#ef4444" },
-                  { id: "medium", label: "Moderate", color: "#f59e0b" },
-                  { id: "baseline", label: "Baseline", color: "#10b981" },
-                ].map((pill) => (
-                  <button
-                    key={pill.id}
-                    className={`pill-btn ${filters.severity === pill.id ? "active" : ""}`}
-                    onClick={() =>
-                      setFilters({ ...filters, severity: pill.id })
-                    }
-                  >
-                    {pill.color && (
-                      <span
-                        className="pill-dot"
-                        style={{ backgroundColor: pill.color }}
-                      ></span>
-                    )}
-                    <span>{pill.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Sentinel-5P Satellite Overlay Controls Card */}
-            <div className="sat-overlay-card">
-              <div className="sat-card-top">
-                <div className="sat-card-title">
-                  <Satellite size={15} color="#0284c7" />
-                  <span>Sentinel-5P Overlay</span>
-                </div>
-                <label className="switch-toggle">
-                  <input
-                    type="checkbox"
-                    checked={showSatelliteLayer}
-                    onChange={(e) => setShowSatelliteLayer(e.target.checked)}
-                    id="toggle-sat-layer-checkbox"
-                  />
-                  <span className="slider round"></span>
-                </label>
-              </div>
-
-              {showSatelliteLayer && (
-                <div className="sat-card-controls">
-                  <div className="slider-row">
-                    <span className="control-label">
-                      Opacity: {Math.round(satelliteOpacity * 100)}%
-                    </span>
-                    <input
-                      type="range"
-                      min="0.15"
-                      max="1.0"
-                      step="0.05"
-                      value={satelliteOpacity}
-                      onChange={(e) =>
-                        setSatelliteOpacity(Number(e.target.value))
-                      }
-                      className="recon-range-slider"
-                      id="satellite-opacity-slider"
-                    />
-                  </div>
-
-                  <div className="toggles-subrow">
-                    <label className="recon-checkbox-label">
-                      <input
-                        type="checkbox"
-                        checked={showPlumeRings}
-                        onChange={(e) => setShowPlumeRings(e.target.checked)}
-                      />
-                      <span title="Symbol size by emission severity; not a modelled plume">Severity Rings</span>
-                    </label>
-
-                    <label className="recon-checkbox-label">
-                      <input
-                        type="checkbox"
-                        checked={showLegend}
-                        onChange={(e) => setShowLegend(e.target.checked)}
-                      />
-                      <span>Legend</span>
-                    </label>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Target Asset List Header */}
-            <div className="target-list-heading">
-              <span>Facility Inventory</span>
-              <span className="subtext">Click to inspect</span>
-            </div>
-
-            {/* Neat Target Facility Cards */}
-            <div className="target-cards-scroll">
-              {filteredFacilities.length === 0 ? (
-                <div className="empty-target-state">
-                  <AlertCircle size={22} color="#94a3b8" />
-                  <span>No assets match current reconnaissance filters.</span>
-                  <button
-                    className="btn-reset-filters"
-                    onClick={handleResetFilters}
-                  >
-                    <RotateCcw size={12} />
-                    <span>Reset All Filters</span>
-                  </button>
-                </div>
-              ) : (
-                filteredFacilities.map((fac) => {
-                  const facilityStats = getIntensityData(fac.id);
-                  const isSelected = selectedFacility?.id === fac.id;
-                  const val =
-                    viewMode === "methane"
-                      ? facilityStats.total_ch4 || 0
-                      : facilityStats.total_co2e || 0;
-                  const severity = getSeverityLevel(val);
-
-                  return (
-                    <div
-                      key={fac.id}
-                      className={`target-card ${isSelected ? "selected" : ""}`}
-                      onClick={() => handleSelectFacility(fac)}
-                    >
-                      <div className="target-card-left">
-                        <span className={`beacon-dot ${severity}`}></span>
-                        <div className="target-card-info">
-                          <div className="target-card-title">{fac.name}</div>
-                          <div className="target-card-meta">
-                            {fac.region && (
-                              <span className="region-tag">{fac.region}</span>
-                            )}
-                            <span className="activity-text">
-                              {fac.activity || fac.division || "Industrial Asset"}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="target-card-right">
-                        <span className="target-card-val">
-                          {formatCompact(val)}
-                        </span>
-                        <span className="target-card-unit">
-                          {viewMode === "methane" ? "tCH₄" : "tCO₂e"}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })
-              )}
-            </div>
-          </div>
+          <ExplorerDrawer
+            filters={filters}
+            onFilters={setFilters}
+            regions={availableRegions}
+            years={availableYears}
+            activities={availableActivities}
+            count={filteredFacilities.length}
+            satellite={{
+              show: showSatelliteLayer,
+              onShow: setShowSatelliteLayer,
+              opacity: satelliteOpacity,
+              onOpacity: setSatelliteOpacity,
+              rings: showPlumeRings,
+              onRings: setShowPlumeRings,
+              legend: showLegend,
+              onLegend: setShowLegend,
+            }}
+            facilities={filteredFacilities}
+            selectedId={selectedFacility?.id}
+            viewMode={viewMode}
+            getStats={getIntensityData}
+            getSeverity={getSeverityLevel}
+            formatCompact={formatCompact}
+            onSelect={handleSelectFacility}
+            onReset={handleResetFilters}
+          />
         )}
       </div>
 
-      {/* 5. CALIBRATED SPECTRAL ABSORPTION RAMP LEGEND (WHITE LIGHT THEME) */}
-      {showSatelliteLayer && showLegend && (
-        <aside className="spectral-legend-card" role="region" aria-label="Spectral Legend">
-          <div className="legend-header">
-            <div className="legend-title">
-              <Satellite size={14} color="#0284c7" />
-              <span>TROPOMI CH₄ Column Mole Fraction</span>
-            </div>
-            <button
-              className="legend-close"
-              onClick={() => setShowLegend(false)}
-              title="Hide Legend"
-            >
-              <X size={12} />
-            </button>
-          </div>
-          <div className="spectral-gradient-track"></div>
-          <div className="spectral-scale-ticks">
-            <span>&lt;1,750</span>
-            <span>1,800</span>
-            <span>1,850</span>
-            <span>1,900</span>
-            <span>&ge;1,950 ppb</span>
-          </div>
-          <div className="legend-footer-info">
-            <span>SWIR Band 7/8 (2.3 µm) • L3 5.5×7 km</span>
-            <a
-              href="https://dataspace.copernicus.eu"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cdse-portal-link"
-            >
-              CDSE Hub <ExternalLink size={10} />
-            </a>
-          </div>
-        </aside>
-      )}
+      {showSatelliteLayer && showLegend && <ExplorerLegend onClose={() => setShowLegend(false)} />}
 
-      {/* 6. SLIDE-IN RIGHT FACILITY RECONNAISSANCE DOSSIER (WHITE LIGHT THEME) */}
       {selectedFacility && (
-        <section className="facility-dossier-panel" aria-label="Facility Reconnaissance Dossier">
-          {/* Dossier Header */}
-          <div className="dossier-header">
-            <button
-              className="dossier-close-btn"
-              onClick={() => setSelectedFacility(null)}
-              title="Close Dossier"
-            >
-              <X size={16} />
-            </button>
-
-            <div className="dossier-tag">
-              <span className="target-pulse"></span>
-              <span>FACILITY RECONNAISSANCE DOSSIER</span>
-            </div>
-            <h3 className="dossier-facility-name">{selectedFacility.name}</h3>
-
-            <div className="dossier-geo-row">
-              <div className="geo-location">
-                <MapPin size={13} color="#ff6600" />
-                <span>
-                  {selectedFacility.region ? `${selectedFacility.region} Region` : "Algeria"} •{" "}
-                  {selectedFacility.activity || selectedFacility.division || "Facility"}
-                </span>
-              </div>
-              <button
-                className="coords-badge"
-                onClick={handleCopyCoords}
-                title="Copy coordinates to clipboard"
-              >
-                {copiedCoords ? (
-                  <>
-                    <Check size={11} color="#10b981" />
-                    <span>Copied!</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy size={11} />
-                    <span>
-                      {Number(selectedFacility.latitude || 0).toFixed(4)}°N,{" "}
-                      {Number(selectedFacility.longitude || 0).toFixed(4)}°E
-                    </span>
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-
-          {/* SATELLITE TOP-DOWN INTELLIGENCE SECTION */}
-          <div className="dossier-sat-card">
-            <div className="sat-card-top-bar">
-              <div className="sat-label-left">
-                <Satellite size={16} color="#0284c7" />
-                <strong>Copernicus Sentinel-5P Overpass</strong>
-              </div>
-              {loadingSatelliteData ? (
-                <div className="sat-loading-indicator">
-                  <RefreshCw size={12} className="spin-fast" color="#0284c7" />
-                  <span>STAC Query...</span>
-                </div>
-              ) : (
-                satelliteObservation?.summary?.stream_type && (
-                  <span className="stream-badge">
-                    ● {satelliteObservation.summary.stream_type}
-                  </span>
-                )
-              )}
-            </div>
-
-            {loadingSatelliteData ? (
-              <div className="sat-skeleton-loader">
-                <div className="skeleton-line"></div>
-                <div className="skeleton-line short"></div>
-              </div>
-            ) : satelliteObservation &&
-              satelliteObservation.authenticated &&
-              satelliteObservation.summary ? (
-              <div className="sat-telemetry-body">
-                {/* 4-Stat Telemetry Matrix */}
-                <div className="telemetry-grid">
-                  <div className="telemetry-box">
-                    <span className="box-label">Mean CH₄ Column</span>
-                    <span className="box-val">
-                      {Number(
-                        satelliteObservation.summary.mean_ch4_column_ppb || 0
-                      ).toFixed(1)}{" "}
-                      <span className="val-unit">ppb</span>
-                    </span>
-                  </div>
-
-                  <div className="telemetry-box">
-                    <span className="box-label">Max Anomaly (&Delta;CH₄)</span>
-                    <span
-                      className={`box-val ${
-                        Number(satelliteObservation.summary.max_anomaly_ppb || 0) >= 25
-                          ? "alert-red"
-                          : "alert-amber"
-                      }`}
-                    >
-                      +
-                      {Number(
-                        satelliteObservation.summary.max_anomaly_ppb || 0
-                      ).toFixed(1)}{" "}
-                      <span className="val-unit">ppb</span>
-                    </span>
-                  </div>
-
-                  <div className="telemetry-box">
-                    <span className="box-label">Inferred Emission Rate</span>
-                    <span className="box-val highlight-amber">
-                      {Number(
-                        satelliteObservation.summary.estimated_emission_rate_kg_hr || 0
-                      ) > 0
-                        ? `${Number(
-                            satelliteObservation.summary
-                              .estimated_emission_rate_kg_hr
-                          ).toFixed(1)} kg/hr`
-                        : "Background"}
-                    </span>
-                  </div>
-
-                  <div className="telemetry-box">
-                    <span className="box-label">Annualized Satellite Flux</span>
-                    <span className="box-val">
-                      {Number(
-                        satelliteObservation.summary.annualized_ch4_tonnes || 0
-                      ) > 0
-                        ? `${Number(
-                            satelliteObservation.summary.annualized_ch4_tonnes
-                          ).toFixed(1)} t/yr`
-                        : "0.0 t/yr"}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Overpass Metadata Strip */}
-                <div className="sat-pass-meta">
-                  <div className="meta-item">
-                    <span className="meta-title">Overpass:</span>
-                    <span className="meta-data">
-                      {satelliteObservation.summary.latest_observation_date}{" "}
-                      {satelliteObservation.summary.latest_observation_time
-                        ? `(${satelliteObservation.summary.latest_observation_time})`
-                        : ""}
-                    </span>
-                  </div>
-                  <div className="meta-item">
-                    <span className="meta-title">QA Confidence:</span>
-                    <span className="meta-data">
-                      {(
-                        Number(satelliteObservation.summary.mean_qa_score || 0) *
-                        100
-                      ).toFixed(0)}
-                      %
-                    </span>
-                  </div>
-                </div>
-
-                {/* TOP-DOWN vs BOTTOM-UP RECONCILIATION BENCHMARK */}
-                {reconciliationAnalysis && (
-                  <div
-                    className="reconciliation-meter-box"
-                    style={{ borderColor: `${reconciliationAnalysis.color}50` }}
-                  >
-                    <div className="meter-header">
-                      <div className="meter-title">
-                        <Activity size={13} color={reconciliationAnalysis.color} />
-                        <span>OGMP 2.0 Reconciliation Gap</span>
-                      </div>
-                      <span
-                        className="recon-status-badge"
-                        style={{
-                          backgroundColor: `${reconciliationAnalysis.color}15`,
-                          color: reconciliationAnalysis.color,
-                          borderColor: `${reconciliationAnalysis.color}40`,
-                        }}
-                      >
-                        {reconciliationAnalysis.label}
-                      </span>
-                    </div>
-                    <div className="meter-explanation">
-                      {reconciliationAnalysis.deltaText}
-                    </div>
-                  </div>
-                )}
-
-                {/* Level 5 OGMP Reconciliation Button */}
-                <button
-                  className="btn-reconcile-ogmp"
-                  onClick={handleExportToOgmp}
-                  disabled={exportingOgmp}
-                  id="reconcile-ogmp-btn"
-                >
-                  {exportingOgmp ? (
-                    <>
-                      <span className="recon-spinner"></span>
-                      <span>Recording Level 5 Verification...</span>
-                    </>
-                  ) : (
-                    <>
-                      <ShieldCheck size={16} />
-                      <span>Reconcile into OGMP 2.0 Ledger</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            ) : (
-              <div className="sat-unconfigured-card">
-                <AlertCircle size={18} color="#d97706" />
-                <div className="unconfigured-text">
-                  <div className="unconf-title">Copernicus Live Feed Unconfigured</div>
-                  <div className="unconf-desc">
-                    Connect your free Copernicus Data Space Ecosystem (CDSE)
-                    credentials in Settings to stream verified Sentinel-5P overpasses.
-                  </div>
-                  <button
-                    className="btn-link-settings"
-                    onClick={() => navigate("/settings")}
-                  >
-                    Configure in Settings &rarr;
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {loadingSurveys && <div className="card-section-title">Loading recorded surveys…</div>}
-          {/* REAL DATABASE VERIFIED OGMP SURVEYS SECTION (IF RECORDED) */}
-          {existingSurveys.length > 0 && (
-            <div className="dossier-surveys-card">
-              <div className="card-section-title">
-                <ShieldCheck size={15} color="#10b981" />
-                <span>Verified OGMP Surveys in Database ({existingSurveys.length})</span>
-              </div>
-              <div className="surveys-list">
-                {existingSurveys.slice(0, 3).map((survey) => (
-                  <div key={survey.id} className="survey-item">
-                    <div className="survey-item-top">
-                      <span className="survey-type">{survey.survey_type || survey.surveyType}</span>
-                      <span className="survey-date">{survey.survey_date || survey.surveyDate}</span>
-                    </div>
-                    <div className="survey-item-metrics">
-                      <span>Rate: <strong>{Number(survey.measured_rate_kg_hr || survey.measuredRateKgHr || 0).toFixed(1)} kg/hr</strong></span>
-                      <span>Annual: <strong>{Number(survey.estimated_annual_tch4 || survey.estimatedAnnualTch4 || 0).toFixed(1)} tCH₄</strong></span>
-                      <span className="survey-status-badge">{survey.reconciliation_status || "Recorded"}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* BOTTOM-UP REPORTED ENGINEERING INVENTORY METRICS (REAL DATABASE VALUES) */}
-          <div className="dossier-bottomup-card">
-            <div className="card-section-title">
-              <BarChart3 size={15} color="#ff6600" />
-              <span>Bottom-Up Reported Inventory</span>
-            </div>
-
-            <div className="bottomup-metrics-grid">
-              {/* Main Emission Highlight */}
-              <div className="stat-card span-2 main-accent">
-                <span className="stat-card-title">
-                  {viewMode === "methane"
-                    ? "Reported Methane (CH₄)"
-                    : "Reported Total GHG"}
-                </span>
-                <span className="stat-card-number">
-                  {viewMode === "methane"
-                    ? `${formatCompact(selectedStats.total_ch4)} tCH₄`
-                    : `${formatCompact(selectedStats.total_co2e)} tCO₂e`}
-                </span>
-                <span className="stat-card-sub">
-                  Verified Bottom-Up Engineering Ledger
-                </span>
-              </div>
-
-              {/* Hydrocarbon Production */}
-              <div className="stat-card">
-                <span className="stat-card-title">Production</span>
-                <span className="stat-card-number emerald">
-                  {formatCompact(selectedStats.total_boe)}
-                </span>
-                <span className="stat-card-sub">BOE / Year</span>
-              </div>
-
-              {/* Carbon / Methane Intensity */}
-              <div className="stat-card">
-                <span className="stat-card-title">
-                  {viewMode === "methane"
-                    ? "Methane Intensity"
-                    : "Carbon Intensity"}
-                </span>
-                <span className="stat-card-number amber">
-                  {viewMode === "methane"
-                    ? Number(selectedStats.ch4_intensity || 0).toFixed(3)
-                    : Number(selectedStats.co2_intensity || 0).toFixed(2)}
-                </span>
-                <span className="stat-card-sub">
-                  {viewMode === "methane" ? "kgCH₄/boe" : "kgCO₂e/boe"}
-                </span>
-              </div>
-
-              {/* Flaring Intensity */}
-              <div className="stat-card">
-                <span className="stat-card-title">Flaring Intensity</span>
-                <span className="stat-card-number danger">
-                  {Number(selectedStats.api_flaring_intensity || 0).toFixed(2)}
-                </span>
-                <span className="stat-card-sub">kgCO₂e/boe</span>
-              </div>
-
-              {/* Asset Division Identifier */}
-              <div className="stat-card">
-                <span className="stat-card-title">Asset Code</span>
-                <span className="stat-card-number mono">
-                  {selectedFacility.code || "N/A"}
-                </span>
-                <span className="stat-card-sub">Database Ref</span>
-              </div>
-            </div>
-          </div>
-
-          {/* QUICK FOCUS ACTION BUTTONS */}
-          <div className="dossier-actions">
-            <button
-              className="btn-action-focus"
-              onClick={() => {
-                const lat = Number(selectedFacility.latitude);
-                const lon = Number(selectedFacility.longitude);
-                if (!isNaN(lat) && !isNaN(lon)) {
-                  setMapZoom(11);
-                  setMapCenter([lat, lon]);
-                }
-              }}
-            >
-              <Target size={16} />
-              <span>Center Aerial Camera (Zoom 11x)</span>
-            </button>
-          </div>
-        </section>
+        <ExplorerDossier
+          facility={selectedFacility}
+          stats={selectedStats}
+          viewMode={viewMode}
+          formatCompact={formatCompact}
+          copiedCoords={copiedCoords}
+          onCopyCoords={handleCopyCoords}
+          onClose={() => setSelectedFacility(null)}
+          satelliteLoading={loadingSatelliteData}
+          satelliteObservation={satelliteObservation}
+          reconciliation={reconciliationAnalysis}
+          exporting={exportingOgmp}
+          onExport={handleExportToOgmp}
+          onConfigure={() => navigate("/settings")}
+          loadingSurveys={loadingSurveys}
+          surveys={existingSurveys}
+          onCenter={() => {
+            const lat = Number(selectedFacility.latitude);
+            const lon = Number(selectedFacility.longitude);
+            if (!isNaN(lat) && !isNaN(lon)) {
+              setMapZoom(11);
+              setMapCenter([lat, lon]);
+            }
+          }}
+        />
       )}
     </div>
   );

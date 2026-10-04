@@ -1,3 +1,9 @@
+import EmissionsOverviewCard from "./dashboard/EmissionsOverviewCard";
+import FlaringComplianceCard from "./dashboard/FlaringComplianceCard";
+import DetailedBreakdownSection from "./dashboard/DetailedBreakdownSection";
+import { useAnalyticsFilter } from "../filters/useAnalyticsFilter";
+import { SegmentedControl, Badge, cn } from "../ui";
+import { PendingBanner, TrendCard, DonutCard, SbtiCard, CategoricalCard } from "./dashboard/DashboardCards";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -11,23 +17,11 @@ import {
 } from "../components/charts";
 import CustomDropdown from "../components/CustomDropdown";
 import {
-  formatCompactNumber,
-  formatNumber,
   calculateTrend,
 } from "../utils/formatters";
 import { useLayout } from "../context/LayoutContext";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
-import {
-  ChevronDown,
-  ChevronUp,
-  Clock,
-  Eye,
-  EyeOff,
-  ArrowRight,
-  Flame,
-  CheckCircle2,
-  AlertTriangle,
-} from "lucide-react";
+
 import "./Dashboard.css";
 import "./TopBarFilters.css";
 import { useGwpStandard } from "../hooks/useGwpStandard";
@@ -73,10 +67,10 @@ const DashboardEnhanced = () => {
 
   // Filter states
   const [isReady, setIsReady] = useState(false);
-  const [currentActivity, setCurrentActivity] = useState("all");
-  const [currentDivision, setCurrentDivision] = useState("all");
-  const [currentRegion, setCurrentRegion] = useState("all");
-  const [currentSegment, setCurrentSegment] = useState("all");
+  const [currentActivity, setCurrentActivity] = useAnalyticsFilter("activity");
+  const [currentDivision, setCurrentDivision] = useAnalyticsFilter("division");
+  const [currentRegion, setCurrentRegion] = useAnalyticsFilter("region");
+  const [currentSegment, setCurrentSegment] = useAnalyticsFilter("segment");
   const [facilities, setFacilities] = useState([]);
   const [availableFilters, setAvailableFilters] = useState({
     years: [],
@@ -105,7 +99,7 @@ const DashboardEnhanced = () => {
   const [flaringData, setFlaringData] = useState(null);
   const [trendData, setTrendData] = useState([]);
   const [categoricalData, setCategoricalData] = useState([]);
-  const [currentYear, setCurrentYear] = useState("all");
+  const [currentYear, setCurrentYear] = useAnalyticsFilter("year");
   const [expandedActivities, setExpandedActivities] = useState({});
   const [expandedDivisions, setExpandedDivisions] = useState({});
   const [goal, setGoal] = useState(null);
@@ -650,7 +644,7 @@ const DashboardEnhanced = () => {
     "#6366f1",
     "#ef4444",
     "#ec4899",
-    "#14b8a6",
+    "#ff6600",
     "#a855f7",
   ];
   const ACTIVITY_COLOR_MAP = {
@@ -728,66 +722,38 @@ const DashboardEnhanced = () => {
     );
 
     setTopBarRight(
-      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-        {/* Dual GWP Horizon Toggle */}
-        <div
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            background: "var(--bg-card, rgba(255, 255, 255, 0.08))",
-            borderRadius: "8px",
-            padding: "2px",
-            border: "1px solid var(--border-color, rgba(226, 232, 240, 0.8))",
-          }}
-          title={
-            activeGwp
-              ? `Global Warming Potential Horizon: 100-Year (Standard, CH4=${activeGwp.CH4}) vs 20-Year (Near-term, CH4=${activeGwp.CH4_20}) per IPCC ${activeGwpStandard}`
-              : "Global Warming Potential Horizon: 100-Year (Standard) vs 20-Year (Near-term)"
-          }
-        >
-          <button
-            type="button"
-            style={{
-              padding: "4px 8px",
-              fontSize: "0.75rem",
-              fontWeight: 600,
-              borderRadius: "6px",
-              border: "none",
-              cursor: "pointer",
-              background: gwpHorizon === "100" ? "var(--accent-color, #ff6600)" : "transparent",
-              color: gwpHorizon === "100" ? "#fff" : "var(--text-secondary)",
-              transition: "all 0.15s ease",
-            }}
-            onClick={() => setGwpHorizon("100")}
-          >
-            GWP-100
-          </button>
-          <button
-            type="button"
-            style={{
-              padding: "4px 8px",
-              fontSize: "0.75rem",
-              fontWeight: 600,
-              borderRadius: "6px",
-              border: "none",
-              cursor: "pointer",
-              background: gwpHorizon === "20" ? "#ef4444" : "transparent",
-              color: gwpHorizon === "20" ? "#fff" : "var(--text-secondary)",
-              transition: "all 0.15s ease",
-            }}
-            onClick={() => setGwpHorizon("20")}
-          >
-            GWP-20
-          </button>
-        </div>
+      <div className="flex! items-center! gap-[10px]!">
+        {/* GWP horizon */}
+        <SegmentedControl
+          label="GWP horizon"
+          size="sm"
+          value={gwpHorizon}
+          onChange={setGwpHorizon}
+          options={[
+            {
+              value: "100",
+              label: "GWP-100",
+              title: activeGwp
+                ? `100-Year (Standard, CH4=${activeGwp.CH4}) per IPCC ${activeGwpStandard}`
+                : "100-Year (Standard)",
+            },
+            {
+              value: "20",
+              label: "GWP-20",
+              title: activeGwp
+                ? `20-Year (Near-term, CH4=${activeGwp.CH4_20}) per IPCC ${activeGwpStandard}`
+                : "20-Year (Near-term)",
+            },
+          ]}
+        />
 
         {goal ? (
-          <div className="topbar-goal-badge">
-            <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
-              Target {goal.year}: <strong style={{ color: "var(--text-primary)" }}>{Number(goal.target_amount).toLocaleString()} tCO₂e</strong>
+          <div className="[display:flex] [align-items:center] [gap:8px] [background:rgba(255,_255,_255,_0.8)] [padding:4px_10px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [font-size:var(--text-sm)]">
+            <span className="text-[length:0.8rem]! text-[color:var(--text-secondary)]!">
+              Target {goal.year}: <strong className="text-[color:var(--text-primary)]!">{Number(goal.target_amount).toLocaleString()} tCO₂e</strong>
             </span>
             <button
-              className="btn-target-action"
+              className="btn-target-action [padding:6px_14px] [font-size:var(--text-sm)] [font-weight:600] [border-radius:var(--radius-md)] [background:rgba(255,_255,_255,_0.9)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [color:var(--text-primary)] [cursor:pointer] [transition:all_0.2s_ease] [white-space:nowrap] hover:[border-color:var(--accent-color,_var(--color-brand-500))] hover:[color:var(--color-link)]"
               onClick={() => navigate("/manage-data", { state: { tab: "goals" } })}
               title="Manage emission goals and base years in Manage Data"
             >
@@ -796,7 +762,7 @@ const DashboardEnhanced = () => {
           </div>
         ) : (
           <button
-            className="btn-target-action"
+            className="btn-target-action [padding:6px_14px] [font-size:var(--text-sm)] [font-weight:600] [border-radius:var(--radius-md)] [background:rgba(255,_255,_255,_0.9)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [color:var(--text-primary)] [cursor:pointer] [transition:all_0.2s_ease] [white-space:nowrap] hover:[border-color:var(--accent-color,_var(--color-brand-500))] hover:[color:var(--color-link)]"
             onClick={() => navigate("/manage-data", { state: { tab: "goals" } })}
             title="Set emission targets in Manage Data"
           >
@@ -871,975 +837,122 @@ const DashboardEnhanced = () => {
     return <LoadingSpinner message="Loading Dashboard Data..." fullScreen />;
   }
 
+  // every facility of any year when comparing, otherwise the headline series that have data
+  const trendLines = isCompareMode
+  ? // every facility of any year (the first year's facilities only, before)
+    [...new Set(trendData.flatMap((p) => Object.keys(p)))]
+      .filter((k) => k !== "year" && k !== "trajectory" && k !== "forecast")
+      .map((k, i) => ({
+        dataKey: k,
+        name: k,
+        color: `hsl(${(i * 137.5) % 360}, 70%, 60%)`,
+      }))
+  : [
+      {
+        dataKey: "emissions",
+        name: "Total Emissions",
+        color: "#ff6600",
+      },
+      {
+        dataKey: "scope1",
+        name: "Scope 1",
+        color: "#3b82f6",
+      },
+      {
+        dataKey: "trajectory",
+        name: "Target Path",
+        color: "#10b981",
+        strokeDasharray: "5 5",
+      },
+      {
+        dataKey: "forecast",
+        name: "Forecast",
+        color: "#8b5cf6",
+        strokeDasharray: "3 3",
+      },
+    ].filter((l) => trendData.some((p) => p[l.dataKey] != null)) // no legend entry without a line;
+
   return (
     <div
-      className="dashboard-content"
+      className="[min-height:100vh] [background:transparent] [padding:24px_32px_48px]! [position:relative] [overflow-x:hidden] [color:var(--text-primary,_var(--color-ink-900))] [@media_print]:[padding:20px]! [@media_print]:[max-width:100%]! [@media(max-width:768px)]:[padding:14px_12px_36px]!"
       style={{
         opacity: isUpdating ? 0.8 : 1,
         transition: "opacity 0.15s ease",
       }}
     >
-      <div className="dashboard-grid">
-        <div className="dashboard-header-row">
-          <h1 className="grid-title">GHG Emissions Dashboard</h1>
-          <div className="live-badge">
-            <div className={`pulse-dot ${isUpdating ? "updating" : ""}`}></div>
-            {isUpdating ? "Syncing filters..." : `Live Content • Updated ${lastUpdated}`}
-          </div>
+      <div className="dashboard-grid [display:flex] [flex-direction:column] [gap:24px] [max-width:1600px] [margin:0_auto] [&>*]:[opacity:0] [&>*]:[animation:dashboardFadeIn_0.5s_cubic-bezier(0.16,_1,_0.3,_1)_forwards] [&&]:[&>*:nth-child(1)]:[animation-delay:0.05s] [&&]:[&&]:[&>*:nth-child(2)]:[animation-delay:0.12s] [&&]:[&&]:[&&]:[&>*:nth-child(3)]:[animation-delay:0.18s] [&&]:[&&]:[&&]:[&&]:[&>*:nth-child(4)]:[animation-delay:0.24s] [&&]:[&&]:[&&]:[&&]:[&&]:[&>*:nth-child(5)]:[animation-delay:0.30s]">
+        <div className="mb-5 flex items-center justify-between gap-3">
+          <h1 className="grid-title m-0 text-xl font-bold text-text">GHG Emissions Dashboard</h1>
+          <Badge className="live-badge gap-2 bg-surface/80 px-3.5 py-1.5 text-sm text-text-secondary">
+            <span className={cn("size-2 rounded-full bg-green-500", isUpdating && "animate-pulse")} aria-hidden="true" />
+            {isUpdating ? "Syncing filters..." : `Live content • Updated ${lastUpdated}`}
+          </Badge>
         </div>
 
         {pendingCount > 0 && (
-          <div className={`pending-banner-card ${includePending ? "active-preview" : ""}`}>
-            <div className="pending-banner-left">
-              <div className="pending-banner-icon">
-                <Clock size={20} />
-              </div>
-              <div className="pending-banner-info">
-                <div className="pending-banner-header">
-                  <h3 className="pending-banner-title">
-                    {includePending
-                      ? "Previewing Pending & Verified Emissions"
-                      : "Pending Records Awaiting Review"}
-                  </h3>
-                  <span className={`pending-badge ${includePending ? "active-preview-badge" : ""}`}>
-                    {includePending ? "Live Preview Active" : "Pending Approval"}
-                  </span>
-                </div>
-                <p className="pending-banner-desc">
-                  There are <strong>{pendingCount.toLocaleString()}</strong> emission records
-                  {pendingCo2e > 0 && (
-                    <span className="pending-co2e-highlight">
-                      {pendingCo2e.toLocaleString()} tCO₂e
-                    </span>
-                  )}
-                  pending approval.
-                  {!includePending
-                    ? " Official metrics currently display verified records only."
-                    : " Dashboard metrics now combine pending drafts and verified records."}
-                </p>
-              </div>
-            </div>
-
-            <div className="pending-banner-actions">
-              <label
-                className="pending-toggle-wrapper"
-                title="Toggle pending emissions preview"
-              >
-                <span className="pending-toggle-label">
-                  {includePending ? <Eye size={15} /> : <EyeOff size={15} />}
-                  <span>Preview Pending Data</span>
-                </span>
-                <div className={`pending-switch ${includePending ? "active" : ""}`}>
-                  <input
-                    type="checkbox"
-                    checked={includePending}
-                    onChange={(e) => setIncludePending(e.target.checked)}
-                    className="pending-switch-input"
-                  />
-                  <span className="pending-switch-slider" />
-                </div>
-              </label>
-
-              {['admin', 'superuser'].includes(user?.role) && (
-                <button
-                  type="button"
-                  className="pending-review-btn"
-                  onClick={() => navigate('/manage-data', { state: { tab: 'pending' } })}
-                  title="Go to Manage Data to review pending records"
-                >
-                  <span>Review Now</span>
-                  <ArrowRight size={14} />
-                </button>
-              )}
-            </div>
-          </div>
+          <PendingBanner
+            count={pendingCount}
+            co2e={pendingCo2e}
+            includePending={includePending}
+            onIncludePending={setIncludePending}
+            canReview={["admin", "superuser"].includes(user?.role)}
+            onReview={() => navigate("/manage-data", { state: { tab: "pending" } })}
+          />
         )}
 
-
         {/* Hero Overview Card */}
-        <div className="card hero-card glass-panel">
-          <div className="hero-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h2 className="hero-title">Emissions Overview</h2>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <div className="location-badge">
-                {currentRegion !== "all"
-                  ? facilities.find((f) => f.id.toString() === currentRegion)
-                      ?.name || "Region"
-                  : currentDivision !== "all"
-                    ? currentDivision
-                    : currentActivity !== "all"
-                      ? currentActivity
-                      : "All Regions"}
-              </div>
-              <button
-                onClick={handleExportPDF}
-                disabled={exportingPDF}
-                className="btn-secondary-unified"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '6px 14px',
-                  borderRadius: '10px',
-                  background: 'rgba(255, 255, 255, 0.9)',
-                  border: '1px solid var(--border-color)',
-                  fontSize: '0.85rem',
-                  fontWeight: 600,
-                  cursor: exportingPDF ? 'not-allowed' : 'pointer',
-                  color: 'var(--text-primary)',
-                  opacity: exportingPDF ? 0.7 : 1,
-                }}
-                title="Export multi-page executive summary PDF"
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
-                  <path d="M6 14h12v8H6z" />
-                </svg>
-                {exportingPDF ? "Generating PDF..." : "Export Executive Brief (PDF)"}
-              </button>
-            </div>
-          </div>
-
-          <div className="hero-stats-grid">
-            <div className="stat-item">
-              <div className="stat-label">Gross Operational Emissions (Scope 1+2)</div>
-              <div className="stat-value-row">
-                <div className="stat-value">
-                  {formatCompactNumber(stats.totalEmissions)}
-                </div>
-                <span className="stat-unit">tCO₂e</span>
-                {currentYear !== "all" && variance.emissions !== "—" && (
-                  <span
-                    className={`variance-badge ${variance.emissions.startsWith("+") ? "danger" : "success"}`}
-                  >
-                    {variance.emissions}
-                  </span>
-                )}
-              </div>
-              {goal && goal.target_amount > 0 && (
-                <div className="stat-sublabel" style={{ marginTop: "8px" }}>
-                  <span
-                    className={`goal-progress-badge ${
-                      stats.totalEmissions / goal.target_amount > 1
-                        ? "danger"
-                        : stats.totalEmissions / goal.target_amount > 0.9
-                          ? "warning"
-                          : "normal"
-                    }`}
-                  >
-                    {(
-                      (stats.totalEmissions / goal.target_amount) *
-                      100
-                    ).toFixed(1)}
-                    % GOAL
-                  </span>
-                </div>
-              )}
-            </div>
-
-            <div className="stat-item border-left">
-              <div className="stat-label">Net Emissions</div>
-              <div className="stat-value-row">
-                <div className="stat-value success">
-                  {formatCompactNumber(stats.netEmissions)}
-                </div>
-                <span className="stat-unit">tCO₂e</span>
-              </div>
-              <div className="stat-sublabel">
-                Less{" "}
-                <span className="success-text">
-                  {formatCompactNumber(stats.mitigation)}
-                </span>{" "}
-                Mitigation
-              </div>
-            </div>
-
-            <div className="stat-item border-left">
-              <div className="stat-label">Total CH4 (Methane)</div>
-              <div className="stat-value-row">
-                <div className="stat-value warning">
-                  {formatCompactNumber(stats.methaneEmissions)}
-                </div>
-                <span className="stat-unit">tCH₄</span>
-              </div>
-            </div>
-
-            <div className="stat-item border-left">
-              <div className="stat-label">Performance Intensity</div>
-              <div className="stat-value-row">
-                <div
-                  className="stat-value"
-                  style={{
-                    color: !hasProductionData && stats.totalEmissions > 0 ? "#f59e0b" : "#8b5cf6",
-                    fontSize: !hasProductionData && stats.totalEmissions > 0 ? "1.25rem" : undefined,
-                  }}
-                >
-                  {!hasProductionData && stats.totalEmissions > 0 ? "Pending" : formatCompactNumber(intensity, 2)}
-                </div>
-                <span className="stat-unit">
-                  {!hasProductionData && stats.totalEmissions > 0 ? "Production" : "kg/BOE"}
-                </span>
-                {currentYear !== "all" && variance.intensity !== "—" && hasProductionData && (
-                  <span
-                    className={`variance-badge ${variance.intensity.startsWith("+") ? "danger" : "success"}`}
-                  >
-                    {variance.intensity}
-                  </span>
-                )}
-              </div>
-              <div className="stat-sublabel">
-                {!hasProductionData && stats.totalEmissions > 0 ? (
-                  <span style={{ color: "#d97706", fontWeight: 600 }}>Production figures required</span>
-                ) : (
-                  "CO₂e Intensity (Scope 1+2)"
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className="scope-pills-row">
-            <div className="scope-pill scope-1">
-              <span className="pill-label">Scope 1 (Direct)</span>
-              <span className="pill-value">
-                {formatCompactNumber(stats.scope1)} tCO₂e
-              </span>
-            </div>
-            <div className="scope-pill scope-2">
-              <span className="pill-label">Scope 2 (Indirect)</span>
-              <span className="pill-value">
-                {formatCompactNumber(stats.scope2)} tCO₂e
-              </span>
-            </div>
-            <div className="scope-pill scope-3">
-              <span className="pill-label">Scope 3 (Supply Chain)</span>
-              <span className="pill-value">
-                {formatCompactNumber(stats.scope3)} tCO₂e
-              </span>
-            </div>
-          </div>
-        </div>
+        <EmissionsOverviewCard
+        currentActivity={currentActivity}
+        currentDivision={currentDivision}
+        currentRegion={currentRegion}
+        currentYear={currentYear}
+        exportingPDF={exportingPDF}
+        facilities={facilities}
+        goal={goal}
+        handleExportPDF={handleExportPDF}
+        hasProductionData={hasProductionData}
+        intensity={intensity}
+        stats={stats}
+        variance={variance}
+      />
 
         {/* --- Operational Flaring & Decree 21-330 Regulatory Compliance Banner --- */}
         {flaringData && (flaringData.total_flaring?.volume_knm3 > 0 || stats.flaring > 0) && (
-          <div className="card glass-panel flaring-kpi-banner">
-            <div className="flaring-banner-header">
-              <div className="flaring-banner-title-group">
-                <div className="flaring-banner-icon">
-                  <Flame size={22} />
-                </div>
-                <div>
-                  <h3 className="flaring-banner-title">
-                    Operational Flaring &amp; Regulatory Compliance
-                  </h3>
-                  <p className="flaring-banner-sub">
-                    Executive Decree 21-330 Article 9 (1.00% Gas Production Threshold) •{" "}
-                    {flaringData.year === "all" ? "All years" : `Year ${flaringData.year}`} • GWP-{flaringData.gwp_horizon || "100"}
-                    {flaringData.includes_pending ? " • incl. Pending" : " • Verified only"}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flaring-banner-badges">
-                <span
-                  className={`flaring-badge ${flaringData.is_compliant === true ? "compliant" : flaringData.is_compliant === false ? "non-compliant" : ""}`}
-                >
-                  {flaringData.is_compliant === true ? (
-                    <CheckCircle2 size={13} />
-                  ) : (
-                    <AlertTriangle size={13} />
-                  )}
-                  {flaringData.compliance_status}
-                </span>
-
-                <span className="flaring-badge dre">
-                  {flaringData.measured_dre_pct != null
-                    ? `${flaringData.dre_method}: ${flaringData.measured_dre_pct}% DRE`
-                    : flaringData.dre_method}
-                </span>
-
-                {flaringData.yoy_change_pct != null && flaringData.yoy_change_pct !== 0 && (
-                  <span className="flaring-badge yoy">
-                    {flaringData.yoy_change_pct > 0 ? `+${flaringData.yoy_change_pct}% YoY` : `${flaringData.yoy_change_pct}% YoY`}
-                  </span>
-                )}
-              </div>
-            </div>
-
-            <div className="flaring-streams-grid">
-              <div className="flaring-stream-item total-stream">
-                <div className="stream-label">Total Flared Volume</div>
-                <div className="stream-value">
-                  {formatNumber(flaringData.total_flaring?.volume_knm3 ?? 0, 0)}
-                  <span className="stream-unit" title="thousand standard m³ (15.6 °C / 60 °F, 1 atm)">kSm³</span>
-                </div>
-                <div className="stream-sublabel">
-                  <strong>{formatCompactNumber(flaringData.total_flaring?.tco2e ?? 0)}</strong> tCO₂e • 100% Stream
-                </div>
-              </div>
-
-              <div className="flaring-stream-item routine-stream">
-                <div className="stream-label">Routine Flaring</div>
-                <div className="stream-value">
-                  {formatNumber(flaringData.routine_flaring?.volume_knm3 ?? 0, 0)}
-                  <span className="stream-unit" title="thousand standard m³ (15.6 °C / 60 °F, 1 atm)">kSm³</span>
-                </div>
-                <div className="stream-sublabel">
-                  <strong>{flaringData.routine_flaring?.percentage ?? 0}%</strong> of total • {formatCompactNumber(flaringData.routine_flaring?.tco2e ?? 0)} tCO₂e
-                </div>
-              </div>
-
-              <div className="flaring-stream-item non-routine-stream">
-                <div className="stream-label">Non-Routine Flaring</div>
-                <div className="stream-value">
-                  {formatNumber(flaringData.non_routine_flaring?.volume_knm3 ?? 0, 0)}
-                  <span className="stream-unit" title="thousand standard m³ (15.6 °C / 60 °F, 1 atm)">kSm³</span>
-                </div>
-                <div className="stream-sublabel">
-                  <strong>{flaringData.non_routine_flaring?.percentage ?? 0}%</strong> of total • {formatCompactNumber(flaringData.non_routine_flaring?.tco2e ?? 0)} tCO₂e
-                </div>
-              </div>
-
-              <div className="flaring-stream-item safety-stream">
-                <div className="stream-label">Safety &amp; Purge Flaring</div>
-                <div className="stream-value">
-                  {formatNumber(flaringData.safety_flaring?.volume_knm3 ?? 0, 0)}
-                  <span className="stream-unit" title="thousand standard m³ (15.6 °C / 60 °F, 1 atm)">kSm³</span>
-                </div>
-                <div className="stream-sublabel">
-                  <strong>{flaringData.safety_flaring?.percentage ?? 0}%</strong> of total • {formatCompactNumber(flaringData.safety_flaring?.tco2e ?? 0)} tCO₂e
-                </div>
-              </div>
-
-              {flaringData.unclassified_flaring?.volume_knm3 > 0 && (
-                <div className="flaring-stream-item">
-                  <div className="stream-label">Unclassified Flaring</div>
-                  <div className="stream-value">
-                    {formatNumber(flaringData.unclassified_flaring.volume_knm3, 0)}
-                    <span className="stream-unit" title="thousand standard m³ (15.6 °C / 60 °F, 1 atm)">kSm³</span>
-                  </div>
-                  <div className="stream-sublabel">
-                    <strong>{flaringData.unclassified_flaring.percentage}%</strong> of total • {formatCompactNumber(flaringData.unclassified_flaring.tco2e)} tCO₂e • stream not recorded
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {flaringData.gas_production_m3 > 0 && flaringData.flaring_intensity_pct != null && (
-              <div className="flaring-intensity-bar-card">
-                <div className="flaring-intensity-meta">
-                  <span>
-                    <strong>Decree 21-330 Flaring Intensity:</strong>{" "}
-                    <span style={{ color: flaringData.is_compliant ? "#15803d" : "#b91c1c", fontWeight: 700 }}>
-                      {flaringData.flaring_intensity_pct}%
-                    </span>{" "}
-                    of Gross Gas Produced ({formatCompactNumber(flaringData.gas_production_m3 / 1e6, 2)} MMSm³)
-                  </span>
-                  <span style={{ fontSize: "0.78rem", color: "#64748b" }}>
-                    Statutory Limit: <strong>1.00%</strong> (Executive Decree 21-330 Art. 9)
-                  </span>
-                </div>
-                <div className="flaring-progress-track">
-                  <div
-                    className="flaring-progress-fill"
-                    style={{
-                      width: `${Math.min(100, (flaringData.flaring_intensity_pct / 1.00) * 100)}%`,
-                      backgroundColor: flaringData.is_compliant ? "#10b981" : "#ef4444",
-                    }}
-                  />
-                  <div
-                    className="flaring-progress-marker"
-                    style={{ left: "100%" }}
-                    title="1.00% Statutory Ceiling"
-                  />
-                </div>
-              </div>
-            )}
-          </div>
+          <FlaringComplianceCard
+        flaringData={flaringData}
+      />
         )}
 
-        {/* --- Primary Analytics Grid: Trend Line (2fr) + Donuts (1fr) --- */}
-        <div className="charts-section">
-          {/* Trend Chart */}
-          <div className="card trend-card-enhanced glass-panel">
-            <div className="card-header-row">
-              <div>
-                <h3 className="card-title">Emissions Trend & Projection</h3>
-                <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
-                  Historical inventory trajectory with 5-year predictive forecast
-                </p>
-              </div>
-              <div className="card-header-actions">
-                <button
-                  className={`compare-toggle-btn ${isCompareMode ? "active" : ""}`}
-                  onClick={() => setIsCompareMode(!isCompareMode)}
-                >
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="M18 20V10M12 20V4M6 20v-6" />
-                  </svg>
-                  {isCompareMode ? "Standard View" : "Compare Regions"}
-                </button>
-              </div>
-            </div>
-            <div
-              className="chart-container"
-              style={{
-                height: "360px",
-                width: "100%",
-                minWidth: 0,
-                position: "relative",
-              }}
-            >
-              <LineChartWrapper
-                data={trendData}
-                xKey="year"
-                lines={
-                  isCompareMode
-                    ? // every facility of any year (the first year's facilities only, before)
-                      [...new Set(trendData.flatMap((p) => Object.keys(p)))]
-                        .filter((k) => k !== "year" && k !== "trajectory" && k !== "forecast")
-                        .map((k, i) => ({
-                          dataKey: k,
-                          name: k,
-                          color: `hsl(${(i * 137.5) % 360}, 70%, 60%)`,
-                        }))
-                    : [
-                        {
-                          dataKey: "emissions",
-                          name: "Total Emissions",
-                          color: "#ff6600",
-                        },
-                        {
-                          dataKey: "scope1",
-                          name: "Scope 1",
-                          color: "#3b82f6",
-                        },
-                        {
-                          dataKey: "trajectory",
-                          name: "Target Path",
-                          color: "#10b981",
-                          strokeDasharray: "5 5",
-                        },
-                        {
-                          dataKey: "forecast",
-                          name: "Forecast",
-                          color: "#8b5cf6",
-                          strokeDasharray: "3 3",
-                        },
-                      ].filter((l) => trendData.some((p) => p[l.dataKey] != null)) // no legend entry without a line
-                }
-                height={360}
-              />
-            </div>
-          </div>
-
-          {/* Donut Charts Column (1fr) */}
-          <div className="donuts-row">
-            <div className="card donut-card-enhanced glass-panel">
-              <div className="donut-header">
-                <h3 className="donut-title activity">Emissions by Activity</h3>
-              </div>
-              <div
-                className="chart-container"
-                style={{
-                  height: "195px",
-                  width: "100%",
-                  minWidth: 0,
-                  position: "relative",
-                }}
-              >
-                <PieChartWrapper
-                  data={activityChartData}
-                  height={195}
-                  innerRadius={50}
-                  outerRadius={75}
-                  centerSub="tCO₂e"
-                  formatValue={formatCompactNumber}
-                />
-              </div>
-            </div>
-            <div className="card donut-card-enhanced glass-panel">
-              <div className="donut-header">
-                <h3 className="donut-title source">Emissions by Source</h3>
-              </div>
-              <div
-                className="chart-container"
-                style={{
-                  height: "195px",
-                  width: "100%",
-                  minWidth: 0,
-                  position: "relative",
-                }}
-              >
-                <PieChartWrapper
-                  data={sourceChartData}
-                  height={195}
-                  innerRadius={50}
-                  outerRadius={75}
-                  centerSub="tCO₂e"
-                  formatValue={formatCompactNumber}
-                />
-              </div>
-            </div>
+        <div className="charts-section grid gap-6 [grid-template-columns:2fr_1fr] max-[1200px]:grid-cols-1">
+          <TrendCard data={trendData} lines={trendLines} compare={isCompareMode} onCompare={() => setIsCompareMode(!isCompareMode)} />
+          <div className="flex min-w-0 flex-col gap-6">
+            <DonutCard title="Emissions by Activity" data={activityChartData} />
+            <DonutCard title="Emissions by Source" data={sourceChartData} />
           </div>
         </div>
 
-        {/* SBTi Trajectory Pathway - Full Width Banner */}
-        {sbtiData && sbtiData.trajectory && sbtiData.trajectory.length > 0 && (
-          <div className="card full-width-card glass-panel" style={{ padding: '24px', borderRadius: '20px' }}>
-            <div className="card-header-row" style={{ marginBottom: '16px' }}>
-              <div>
-                <h3 className="card-subtitle" style={{ fontSize: '1.15rem', fontWeight: 700 }}>
-                  {sbtiData.pathway_label || "Decarbonization Trajectory"}
-                </h3>
-                <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-                  Progress monitoring against corporate Net-Zero targets from Base Year {sbtiData.base_year} to Target Year {sbtiData.target_year}
-                </p>
-              </div>
-              <button
-                className="btn-secondary-unified"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  padding: "8px 16px",
-                  borderRadius: "10px",
-                  background: "rgba(255, 255, 255, 0.8)",
-                  border: "1px solid var(--border-color)",
-                  cursor: "pointer",
-                  fontSize: "0.85rem",
-                  fontWeight: 600,
-                  color: "var(--text-primary)"
-                }}
-                onClick={() => navigate("/sbti")}
-              >
-                View Full SBTi Dashboard →
-              </button>
-            </div>
-            <div className="chart-container" style={{ height: "320px", width: "100%" }}>
-              <LineChartWrapper
-                data={sbtiData.trajectory}
-                xAxisKey="year"
-                series={[
-                  {
-                    dataKey: "actual",
-                    name: "Actual Verified Emissions",
-                    color: "#3b82f6",
-                    strokeWidth: 3
-                  },
-                  {
-                    dataKey: "sbti_target",
-                    name: sbtiData?.pathway_label || "Linear Target", // BUG-059: label follows the stored pathway
-                    color: "#10b981",
-                    strokeDasharray: "5 5",
-                    strokeWidth: 2
-                  },
-                  {
-                    dataKey: "bau_projection",
-                    name: "Business as Usual (+1.5%/yr)",
-                    color: "#ef4444",
-                    strokeDasharray: "3 3",
-                    strokeWidth: 2
-                  }
-                ]}
-                height={320}
-              />
-            </div>
-          </div>
-        )}
+        {sbtiData?.trajectory?.length > 0 && <SbtiCard sbti={sbtiData} onOpen={() => navigate("/sbti")} />}
 
-        {/* Categorical Breakdown Cards */}
+        <CategoricalCard
+          collapsed={categoricalCollapsed}
+          onToggle={() => setCategoricalCollapsed(!categoricalCollapsed)}
+          activities={getActivityOptions().filter((o) => o.value !== "all")}
+          hierarchy={getHierarchicalData}
+        />
 
-        <div
-          className={`card categorical-card glass-panel ${categoricalCollapsed ? "collapsed-card" : ""}`}
-        >
-          <div
-            className="card-header-row clickable-card-header"
-            onClick={() => setCategoricalCollapsed(!categoricalCollapsed)}
-            style={{
-              cursor: "pointer",
-              userSelect: "none",
-              marginBottom: categoricalCollapsed ? "0" : "24px",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <h3 className="card-subtitle">Categorical Emissions Overview</h3>
-              <div className="card-info-badge">
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                </svg>
-                Activity → Division → Region
-              </div>
-            </div>
-            <div
-              className="collapse-toggle-icon"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                color: "#64748b",
-              }}
-            >
-              {categoricalCollapsed ? (
-                <ChevronDown size={18} />
-              ) : (
-                <ChevronUp size={18} />
-              )}
-            </div>
-          </div>
-          <div
-            className={`collapsible-body-wrapper ${categoricalCollapsed ? "collapsed" : ""}`}
-          >
-            <div className="categorical-hierarchy-grid">
-              {getActivityOptions()
-                .filter((o) => o.value !== "all")
-                .map((opt) => (
-                  <div key={opt.value} className="activity-group">
-                    <div className="activity-group-header">{opt.label}</div>
-                    {getHierarchicalData[opt.value] ? (
-                      Object.entries(
-                        getHierarchicalData[opt.value].divisions,
-                      ).map(([div, divData]) => (
-                        <div key={div} className="division-group">
-                          <div className="division-group-header">{div}</div>
-                          <div className="region-cards-grid">
-                            {divData.regions.map((reg, ridx) => (
-                              <div key={ridx} className="region-compact-card">
-                                <div className="region-name">
-                                  {reg.region}{" "}
-                                  {reg.field && (
-                                    <span className="region-field">
-                                      - {reg.field}
-                                    </span>
-                                  )}
-                                </div>
-                                <div className="region-value">
-                                  {formatCompactNumber(reg.total_emissions)}{" "}
-                                  <span className="unit">tCO₂e</span>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="no-data-msg">
-                        No emissions data for this activity
-                      </div>
-                    )}
-                  </div>
-                ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="main-dashboard-grid">
-          <div className="detailed-breakdown-section">
-            <div
-              className={`card detailed-table-card glass-panel ${detailedBreakdownCollapsed ? "collapsed-card" : ""}`}
-            >
-              <div
-                className="table-header-row clickable-card-header"
-                onClick={() =>
-                  setDetailedBreakdownCollapsed(!detailedBreakdownCollapsed)
-                }
-                style={{
-                  cursor: "pointer",
-                  userSelect: "none",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <h3 className="card-title" style={{ margin: 0 }}>
-                  Detailed Breakdown
-                </h3>
-                <div
-                  className="collapse-toggle-icon"
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    color: "#64748b",
-                  }}
-                >
-                  {detailedBreakdownCollapsed ? (
-                    <ChevronDown size={18} />
-                  ) : (
-                    <ChevronUp size={18} />
-                  )}
-                </div>
-              </div>
-              <div
-                className={`collapsible-body-wrapper ${detailedBreakdownCollapsed ? "collapsed" : ""}`}
-              >
-                <div className="table-container" style={{ marginTop: "16px" }}>
-                  <table className="data-table">
-                    <thead>
-                      <tr>
-                        <th>Category / Source</th>
-                        <th className="text-right">Results (tCO₂e)</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr className="summary-row">
-                        <td>Scope 1 (Direct)</td>
-                        <td className="text-right font-bold">
-                          {formatCompactNumber(stats.scope1)}
-                        </td>
-                      </tr>
-                      <tr className="detail-row">
-                        <td className="indent">Combustion (stationary &amp; mobile)</td>
-                        <td className="text-right">
-                          {formatCompactNumber(stats.combustion)}
-                        </td>
-                      </tr>
-                      <tr className="detail-row">
-                        <td className="indent">Flaring</td>
-                        <td className="text-right">
-                          {formatCompactNumber(stats.flaring)}
-                        </td>
-                      </tr>
-                      {flaringData && (flaringData.routine_flaring?.volume_knm3 > 0 || flaringData.non_routine_flaring?.volume_knm3 > 0 || flaringData.safety_flaring?.volume_knm3 > 0) && (
-                        <>
-                          <tr className="detail-row" style={{ fontSize: "0.82rem", color: "#64748b", background: "rgba(248, 250, 252, 0.5)" }}>
-                            <td style={{ paddingLeft: "36px" }}>↳ Routine ({flaringData.routine_flaring?.percentage ?? 0}%)</td>
-                            <td className="text-right font-normal">
-                              {formatCompactNumber(flaringData.routine_flaring?.tco2e ?? 0)}
-                            </td>
-                          </tr>
-                          <tr className="detail-row" style={{ fontSize: "0.82rem", color: "#64748b", background: "rgba(248, 250, 252, 0.5)" }}>
-                            <td style={{ paddingLeft: "36px" }}>↳ Non-Routine ({flaringData.non_routine_flaring?.percentage ?? 0}%)</td>
-                            <td className="text-right font-normal">
-                              {formatCompactNumber(flaringData.non_routine_flaring?.tco2e ?? 0)}
-                            </td>
-                          </tr>
-                          <tr className="detail-row" style={{ fontSize: "0.82rem", color: "#64748b", background: "rgba(248, 250, 252, 0.5)" }}>
-                            <td style={{ paddingLeft: "36px" }}>↳ Safety &amp; Purge ({flaringData.safety_flaring?.percentage ?? 0}%)</td>
-                            <td className="text-right font-normal">
-                              {formatCompactNumber(flaringData.safety_flaring?.tco2e ?? 0)}
-                            </td>
-                          </tr>
-                        </>
-                      )}
-                      <tr className="detail-row">
-                        <td className="indent">Venting</td>
-                        <td className="text-right">
-                          {formatCompactNumber(stats.venting)}
-                        </td>
-                      </tr>
-                      <tr className="detail-row">
-                        <td className="indent">Equipment Leaks / Fugitives</td>
-                        <td className="text-right">
-                          {formatCompactNumber(stats.fugitive)}
-                        </td>
-                      </tr>
-                      <tr className="detail-row">
-                        <td className="indent">Other Sources</td>
-                        <td className="text-right">
-                          {formatCompactNumber(stats.other)}
-                        </td>
-                      </tr>
-                      <tr className="summary-row">
-                        <td>Scope 2 (Indirect - Energy)</td>
-                        <td className="text-right font-bold">
-                          {formatCompactNumber(stats.scope2)}
-                        </td>
-                      </tr>
-                      <tr className="summary-row">
-                        <td>Scope 3 (Supply Chain)</td>
-                        <td className="text-right font-bold">
-                          {formatCompactNumber(stats.scope3)}
-                        </td>
-                      </tr>
-                      <tr className="total-row">
-                        <td>Total Footprint (Scopes 1+2+3)</td>
-                        <td className="text-right">
-                          {formatCompactNumber(
-                            (stats.scope1 || 0) +
-                              (stats.scope2 || 0) +
-                              (stats.scope3 || 0)
-                          )}
-                        </td>
-                      </tr>
-                      <tr
-                        className="total-row"
-                        style={{ color: "#10b981", borderTop: "none" }}
-                      >
-                        <td>Net Footprint</td>
-                        <td className="text-right">
-                          {formatCompactNumber(
-                            (stats.scope1 || 0) +
-                              (stats.scope2 || 0) +
-                              (stats.scope3 || 0) -
-                              (stats.mitigation || 0)
-                          )}
-                        </td>
-                      </tr>
-
-                      <tr className="header-divider">
-                        <td colSpan="2">Organizational Breakdown</td>
-                      </tr>
-                      {Object.entries(getHierarchicalData).map(
-                        ([act, actData]) => (
-                          <React.Fragment key={act}>
-                            <tr
-                              className="act-row clickable"
-                              onClick={() => toggleActivity(act)}
-                            >
-                              <td>
-                                <span className="toggle-icon">
-                                  {expandedActivities[act] ? "▼" : "▶"}
-                                </span>
-                                {formatActivityName(act)}
-                              </td>
-                              <td className="text-right font-bold">
-                                {formatCompactNumber(actData.total)}
-                              </td>
-                            </tr>
-                            {expandedActivities[act] &&
-                              Object.entries(actData.divisions).map(
-                                ([div, divData]) => (
-                                  <React.Fragment key={div}>
-                                    <tr
-                                      className="div-row clickable"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        toggleDivision(div);
-                                      }}
-                                    >
-                                      <td className="indent">
-                                        <span className="toggle-icon">
-                                          {expandedDivisions[div] ? "▼" : "▶"}
-                                        </span>
-                                        {div}
-                                      </td>
-                                      <td className="text-right">
-                                        {formatCompactNumber(divData.total)}
-                                      </td>
-                                    </tr>
-                                    {expandedDivisions[div] &&
-                                      divData.regions.map((reg, ridx) => (
-                                        <tr key={ridx} className="reg-row">
-                                          <td className="indent-double">
-                                            {reg.region}
-                                          </td>
-                                          <td className="text-right">
-                                            {formatCompactNumber(
-                                              reg.total_emissions,
-                                            )}
-                                          </td>
-                                        </tr>
-                                      ))}
-                                  </React.Fragment>
-                                ),
-                              )}
-                          </React.Fragment>
-                        ),
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="dashboard-sidebar">
-            {/* Moved Trend Chart to Top */}
-
-            <div className="card library-card">
-              <div className="card-header-row">
-                <h3 className="card-title">Reference Libraries</h3>
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  style={{ opacity: 0.3 }}
-                >
-                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-                </svg>
-              </div>
-              <div className="library-list">
-                <div className="library-item">
-                  <div className="dot blue"></div>
-                  API Compendium: 2021
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                  >
-                    <polyline points="9 18 15 12 9 6" />
-                  </svg>
-                </div>
-                <div className="library-item">
-                  <div className="dot green"></div>
-                  ISO 14064-1:2018
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                  >
-                    <polyline points="9 18 15 12 9 6" />
-                  </svg>
-                </div>
-                <div className="library-item">
-                  <div className="dot orange"></div>
-                  GRI 305 Standards
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                  >
-                    <polyline points="9 18 15 12 9 6" />
-                  </svg>
-                </div>
-              </div>
-              <button
-                className="manage-factors-btn"
-                onClick={() =>
-                  navigate("/manage-data", { state: { tab: "factors" } })
-                }
-              >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                >
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                Manage Custom Factors
-              </button>
-            </div>
-          </div>
-        </div>
+        <DetailedBreakdownSection
+        detailedBreakdownCollapsed={detailedBreakdownCollapsed}
+        expandedActivities={expandedActivities}
+        expandedDivisions={expandedDivisions}
+        flaringData={flaringData}
+        formatActivityName={formatActivityName}
+        getHierarchicalData={getHierarchicalData}
+        navigate={navigate}
+        setDetailedBreakdownCollapsed={setDetailedBreakdownCollapsed}
+        stats={stats}
+        toggleActivity={toggleActivity}
+        toggleDivision={toggleDivision}
+      />
       </div>
     </div>
   );

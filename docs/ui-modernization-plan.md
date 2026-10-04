@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Scope** | `new/client` (React 19.2, Vite 7.3, React Router 7.13) |
-| **Status** | Draft for review, 2026-10-02 |
+| **Status** | In progress on `feat/ui-modernization`. Decisions made 2026-10-02: S-1 system font, S-2 yes, S-3 darken to `#c2410c`, S-4 yes, S-5 remove intro, S-6 yes. See "Implementation status" at the end. |
 | **Hard constraint** | Keep the light theme and the color palette (`AUDIT_MEMORY.md` §0 "UI theme (preserved)"). This plan only assigns *roles* to existing colors and removes accidental near-duplicates. |
 | **Baseline** | vitest: 8 files, 38 tests passing. ESLint: 0 errors, 38 warnings. Client CSS: 39 files, 18,556 lines. Built JS 775 KB gzip, CSS 51 KB gzip. |
 | **Evidence** | Code survey, plus every route checked in the running app (admin session) at 1440 px, and the Dashboard also at 390 px, on 2026-10-02 |
@@ -1148,3 +1148,54 @@ npm run ui:metrics -- --check       # CI ratchet
 npx playwright test                 # needs the backend on :5000 and storageState.json
 npx playwright test --grep @baseline   # capture the route screenshots (P0-1)
 ```
+
+
+---
+
+## Implementation status (updated as work lands)
+
+| Phase | Status | Notes |
+|---|---|---|
+| P0 | Done | S-1 resolved as the system stack, so no web font was added. Login intro removed (S-5). `data-testid` hooks added to `CustomDropdown`; a Playwright run against a worktree server is possible via `E2E_BASE_URL`. |
+| P1 | Done | Deviation: `base.css` and `legacy.css` are unlayered (only Tailwind `theme`/`utilities` are layered), so the focus ring beats legacy `outline: none` rules and legacy cascade order is unchanged. Gallery at `/__ui` (dev only, excluded from production builds). 1,511 CSS hex literals were replaced by tokens (CSS hex count 1,823 to about 290). |
+| P2 | Done | Button, IconButton, Badge/StatusPill, Card, Page/PageHeader, Banner, StatCard, Num/Unit, Field/Input/NumberInput/Textarea/Switch, SegmentedControl, Tabs, Dialog/Sheet/ConfirmDialog, Menu, Popover, Tooltip, DataTable, Skeleton, EmptyState, Select/MultiSelect (wrapping the existing dropdowns), RadioCardGroup, Stepper, FilterBar, chart theme. `Modal`, `ConfirmModal`, `Drawer` are adapters. |
+| P3 | Done | Route config, guards, sidebar, top bar, command palette, banner stack, document titles, shared analytics filters (URL + sessionStorage) on Dashboard, Carbon Intensity and Methane Intensity. Page-injected filters render in a dedicated filter row under the top bar. |
+| P4 | Pragmatic subset done | Reports (PageHeader + Export menu), Dashboard (SegmentedControl GWP toggle, neutral KPI values), Calculations history (sticky header, pinned first/last columns, opt-in uncertainty columns), Audit Trail (compact table view + details dialog), Login (logo, show/hide password, Banner, reduced motion), Uncertainty (consistent band colors), Manage Data tabs (real buttons), scope colors (S-2), standard page title size. Not rewritten onto the kit: the remaining markup of ManageData, Scope1Form, Settings, QA, SBTi, Reference Data, User Management, Emissions Map and the import wizards. They still use legacy markup and CSS, with tokens, accessible dialogs and AA colors applied underneath. |
+| P5 | Mostly done | axe-core (WCAG 2.0/2.1 A and AA) reports zero violations on all 13 admin routes and on the gallery with dialogs open; `e2e/a11y.spec.js` enforces it. 29 clickable non-semantic elements now have role, tabindex and Enter/Space activation. Not done: retiring `utils/a11yLabels.js` (forms are not all on `Field`), removing legacy CSS, and the `User Management` route (IT roles) was not scanned. |
+
+Later work (same branch): ManageData split into per-tab components and Scope1Form into three sections (AST codemods, `scripts/split-managedata*.mjs` and `scripts/extract-jsx.mjs`, behavior-neutral); 178 dead CSS rules pruned (`scripts/prune-css.mjs`); radius, shadow and font-size values mapped to tokens (`scripts/normalize-css.mjs`; distinct font sizes 51 to 10, radii 27 to 12); 111 raw `<select>` elements now go through `ui/NativeSelect`; 435 static inline styles converted to utility classes (`scripts/inline-to-tailwind.mjs`, inline styles 1,436 to 942). All of these were checked with the pixel-diff harness (`e2e/visual-baseline.spec.js` plus `scripts/compare-baseline.mjs`); the only differences were intended (text-size normalization, and spacing utilities on migrated pages that had been inert).
+
+Section extraction was then applied to the other very large files (Dashboard, UserManagement, BulkImportModal, MethaneIntensity, ColumnMappingWizard, Settings, QADashboard, CarbonIntensity, Scope1ImportWizard, Scope2Form, Scope3Form, AuditTrail) with the automatic mode of `scripts/extract-jsx.mjs` (`--auto 120 --max 450`): candidates that depend on `.map()` callback variables are skipped, module-level locals become props. Pixel diffs were unchanged and `e2e/pages-smoke.spec.js` clicks through every tab and toggle.
+
+Further passes: legacy buttons (35) and text fields (207) now use `Button`/`Input`/`Textarea`, 202 `input-group` wrappers use `Field`, a second inline-style pass brought inline styles from 1,436 to 361, and an AA pass (`scripts/aa-colors.mjs`, `scripts/aa-inline.mjs`) moved text colors to AA-safe shades and darkened fills that carry white text. That pass also fixed real findings in the import wizards, Scope 2/3 forms and the IT User Management page (unnamed close buttons, unfocusable scroll regions, contrast).
+
+Deviations to revisit: Tailwind now also scans `src/pages` and `src/components` (needed for the converted inline styles), so legacy class names that equal Tailwind utilities (`text-right`, `font-bold`, `flex`, `border`, `visible`) now take effect. `--z-overlay/modal/popover` are 10000+ until the legacy 9999 modals are gone. Inline SVG replacement stopped at 8 of 123 (lucide redrew most Feather icons, so an exact match is rare).
+
+### Status update (latest round)
+- Reports records table now uses `DataTable` (one table per group when Group By is active, with a subtotal heading). `DataTable` gained `showColumnMenu` and `showPagination` props.
+- `inline-to-tailwind` also maps `fontFamily: monospace` and `minHeight`; inline styles now 346.
+- Still open: inline styles (target ≤150), legacy CSS (about 16.8k lines, target ≤6k), JS hex colors in charts/PDF, `.input-group` wrappers around `CustomDropdown`, z-index/`!important` cleanup, retiring `a11yLabels.js`. Branch is not merged.
+
+### Status update: legacy CSS conversion (css-to-utilities)
+Legacy page and component CSS was moved into Tailwind arbitrary-property utilities in the JSX by an AST codemod, with the legacy cascade modeled explicitly so the result matches the original pixel for pixel on the probed states.
+
+- Tools (`new/client/scripts/`): `prune-css.mjs` (dead rules, whole-token match), `css-to-utilities.mjs` (the conversion), `fix-longhand-order.mjs` (a longhand after its shorthand gets `[&&]:` because Tailwind orders arbitrary properties by name), `drop-shadowed-utilities.mjs` (plain Tailwind classes that a converted rule always shadowed).
+- A class is converted only when every rule that mentions it can be expressed as utilities and the remaining unlayered rules cannot disagree. The codemod models, per property: specificity, source order (same file, or CSS import order inside each route chunk), reach of context rules (lead class files in the same chunk), element and universal rules, `!important` (layered important beats unlayered important, so an important declaration may only move when no remaining important rule can reach the element), inline styles and important utilities on the element, component tags, dynamic class strings, and print / reduced-motion rules. Anything it cannot decide stays in the CSS.
+- Verification: `scripts/probe/probe-routes.spec.js` (14 routes at 3 widths) and `scripts/probe/probe-states.spec.js` (about 110 states: every Manage Data, Settings and QA tab, scope 1 process types, dialogs, menus, login) dump geometry and computed styles (`npx playwright test -c scripts/probe/playwright.probe.config.js`, `PROBE_DIR=<folder>`); `scripts/probe/compare-probes.mjs` diffs two folders. The converted build was compared with the unconverted one served from a second git worktree, in dev and in a production build (`VITE_API_URL=/api vite build` plus `vite preview`), and the whole Playwright suite fails the same 27 pre-existing specs on both. Remaining differences are data or animation noise (audit rows, chart SVG, ping animation, live clock).
+- Result: client CSS 16.8k lines to about 8.5k (6k target not reached). Related passes in the same round: `inline-to-tailwind` now converts any static inline property (arbitrary-property utility) unless an `!important` legacy rule can reach the element or a legacy selector keys on the `style` attribute (inline styles 346 to 262; the remaining ones are dynamic values or blocked for those reasons), and `add-roles.mjs` gave the last 20 clickable non-semantic elements a role (0 left). What is left is mostly entangled rules: context rules whose descendants have both a winning and a losing legacy competitor, shared legacy classes in `styles/legacy.css`, keyframes and print rules, data-URI backgrounds, and classes built from dynamic prefixes. Moving those needs page rewrites onto the kit, not a mechanical pass.
+- Inline SVG icons: the import wizards' icon libraries now use lucide-react (`scripts/icons-to-lucide.mjs`) and known Feather shapes in User Management were swapped, taking inline svgs from 108 to 32.
+
+### Status update: final round (page rewrites)
+- Rewritten on the kit: Emissions Map, Dashboard, the import wizards (Scope 1, 2, 3 and the generic `ColumnMappingWizard` all configure one `ImportWizard`), `UploadProgress`, Audit Trail and Settings. Their CSS files are deleted.
+- Unreferenced code removed (`BulkImportModal`, `CsvUploader`, `FormField`, `useFormDraft`, stray patch scripts).
+- Metrics now: CSS 5,416 lines (target ≤6,000, met), inline SVGs 0 (met), inline styles 145 (≤150, met), `!important` 40 outside `base.css` and print/reduced-motion blocks (target ≤10, not met).
+- Why `!important` is open: the remaining 40 sit in Scope 1, Emissions, ManageData, Dashboard, Reports, Leaflet (13, third-party overrides) and `legacy.css`. Stripping them changed rendering in the computed-style probes, so they go only when ManageData, Emissions, CarbonIntensity and QADashboard are rewritten onto the kit (ManageData alone is about 4,800 lines).
+- Tests: Dashboard test hooks (`grid-title`, `live-badge`, `detailed-table-card`, `pending-*`, `stat-label`) are kept as plain marker classes and the dashboard POM uses semantic selectors. Remaining e2e failures are the bulk-upload and Scope 1 audit specs and hard-coded dashboard numbers; all fail on the baseline too.
+- `scripts/inline-conditional-to-tailwind.mjs` moves inline styles, including conditional values, into utilities with a selector reach check against legacy `!important` rules.
+- Branch is not merged.
+
+### Status update: Emissions, CarbonIntensity, QADashboard
+- Emissions page shell, CarbonIntensity (shared pages/intensity/IntensityParts: KpiTile, HeroPanel, ChartCard, Heatmap) and QADashboard (pages/qa/QaPanels, kit Tabs and ConfirmDialog) are on the kit; QADashboard.css is deleted and Emissions.css shrank to the shared form styles.
+- CarbonIntensity.css stays until MethaneIntensity moves onto IntensityParts (it still uses hero-card, kpi-card and the heatmap rules).
+- Metrics: CSS 4,894 lines, inline styles 137, inline SVGs 0, !important 36 (outside base.css and print/reduced-motion).
+- Stable test hooks were kept as marker classes (kpi-card, cbam-section, chart-grid, view-btn, heatmap-*, scope-breakdown) so the e2e audits still find them.

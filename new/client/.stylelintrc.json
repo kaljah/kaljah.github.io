@@ -1,0 +1,72 @@
+{
+  "extends": [
+    "stylelint-config-standard"
+  ],
+  "rules": {
+    "color-no-hex": true,
+    "declaration-no-important": true,
+    "declaration-property-value-allowed-list": {
+      "z-index": [
+        "/^var[(]--z-/",
+        "0",
+        "1",
+        "-1",
+        "auto"
+      ]
+    },
+    "font-family-no-missing-generic-family-keyword": true,
+    "selector-class-pattern": null,
+    "custom-property-pattern": null,
+    "at-rule-no-unknown": [
+      true,
+      {
+        "ignoreAtRules": [
+          "theme",
+          "source",
+          "utility",
+          "variant",
+          "custom-variant",
+          "apply"
+        ]
+      }
+    ],
+    "import-notation": null,
+    "no-descending-specificity": null,
+    "alpha-value-notation": null,
+    "color-function-notation": null,
+    "value-keyword-case": null,
+    "declaration-block-no-redundant-longhand-properties": null,
+    "shorthand-property-no-redundant-values": null,
+    "color-function-alias-notation": null,
+    "number-max-precision": null,
+    "length-zero-no-unit": null,
+    "selector-not-notation": null,
+    "media-feature-range-notation": null,
+    "comment-empty-line-before": null,
+    "custom-property-empty-line-before": null,
+    "declaration-empty-line-before": null,
+    "rule-empty-line-before": null,
+    "at-rule-empty-line-before": null
+  },
+  "overrides": [
+    {
+      "files": [
+        "src/styles/tokens.css"
+      ],
+      "rules": {
+        "color-no-hex": null
+      }
+    },
+    {
+      "files": [
+        "src/styles/base.css"
+      ],
+      "rules": {
+        "declaration-no-important": null
+      }
+    }
+  ],
+  "ignoreFiles": [
+    "src/styles/legacy.css"
+  ]
+}

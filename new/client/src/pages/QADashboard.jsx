@@ -1,18 +1,16 @@
+import QADashboardZeroAnomaliesDetected from "./qa/QADashboardZeroAnomaliesDetected";
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { NativeSelect } from "../ui/NativeSelect";
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import { useToast } from '../components/Toast';
-import { 
-    Download, AlertTriangle, CheckCircle, RefreshCw, ChevronLeft, ChevronRight,
-    Search, Shield, Layers, Sparkles, Check, X, ArrowRight,
-    AlertCircle, Database, MapPin, Zap, Flame, FileText, CheckSquare, Square,
-    ChevronDown, ChevronUp, Eye
-} from 'lucide-react';
+import { AlertTriangle, Download, Layers, RefreshCw, Shield } from 'lucide-react';
+import { Badge, Button, Card, ConfirmDialog, Page, Tabs, TabsContent, TabsList, TabsTrigger } from '../ui';
+import { cn } from '../ui/cn';
+import { controlClass } from '../components/import-wizard/mapping';
+import { QaKpis, DiagnosticsPanel, UncertaintyPanel } from './qa/QaPanels';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorBoundary from '../components/ErrorBoundary';
-import Modal from '../components/Modal';
-import './Dashboard.css';
-import './QADashboard.css';
 
 const PAGE_SIZE = 100;
 
@@ -276,22 +274,20 @@ export default function QADashboard() {
 
     if (loading && !data) {
         return (
-            <div className="qa-dashboard-page">
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-                    <LoadingSpinner message="Scanning inventory & loading diagnostics..." />
-                </div>
+            <div className="flex min-h-[60vh] items-center justify-center">
+                <LoadingSpinner message="Scanning inventory & loading diagnostics..." />
             </div>
         );
     }
 
     if (!data) {
         return (
-            <div className="qa-dashboard-page">
-                <div className="qa-hero-card">
-                    <h2 className="qa-title">QA/QC & Diagnostics</h2>
-                    <p className="qa-subtitle">No data available for the current selection.</p>
-                </div>
-            </div>
+            <Page className="max-w-[1600px]">
+                <Card>
+                    <h2 className="qa-title m-0 mb-2 text-xl font-bold text-text">QA/QC & Diagnostics</h2>
+                    <p className="m-0 text-md text-text-secondary">No data available for the current selection.</p>
+                </Card>
+            </Page>
         );
     }
 
@@ -317,851 +313,125 @@ export default function QADashboard() {
     const totalPages = Math.ceil((total_flagged_count || 0) / PAGE_SIZE);
     const currentPage = Math.floor(offset / PAGE_SIZE) + 1;
 
-    // Health color determination
-    const healthColor = healthScore >= 80 ? '#10b981' : healthScore >= 60 ? '#f59e0b' : '#ef4444';
-    const healthStatusText = healthScore >= 80 ? 'Optimal & Verified' : healthScore >= 60 ? 'Attention Needed' : 'Action Required';
-
-    // Render helper for diagnostic finding card with sample inspection
-    const renderFindingCard = (item, type, icon) => {
-        const isExpanded = expandedFindingId === item.id;
-        const hasSamples = item.sample_records && item.sample_records.length > 0;
-
-        return (
-            <div key={`${type}-${item.id}`} className={`qa-issue-item ${type}`}>
-                <div className="qa-issue-main-row">
-                    <div className="qa-issue-content">
-                        <div className="qa-issue-title-row">
-                            {icon}
-                            <span className="qa-issue-title">{item.title}</span>
-                            <span className={`qa-issue-impact-badge ${item.impact ? item.impact.toLowerCase() : 'low'}`}>
-                                {item.impact ? `${item.impact} Impact` : 'Optimization'}
-                            </span>
-                            {item.affected_count > 0 && (
-                                <span className="qa-issue-count-pill">
-                                    {item.affected_count} {item.id === 'unused_facilities' ? 'facilities' : 'records'}
-                                </span>
-                            )}
-                        </div>
-                        <p className="qa-issue-desc">{item.description}</p>
-                    </div>
-
-                    <div className="qa-issue-actions-group">
-                        {hasSamples && (
-                            <button
-                                type="button"
-                                className="qa-btn-action qa-btn-inspect"
-                                onClick={() => setExpandedFindingId(prev => prev === item.id ? null : item.id)}
-                                title={isExpanded ? "Collapse preview" : "Inspect sample records"}
-                            >
-                                <Eye size={13} />
-                                <span>{isExpanded ? 'Hide' : `Inspect (${item.sample_records.length})`}</span>
-                                {isExpanded ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
-                            </button>
-                        )}
-                        <button
-                            type="button"
-                            className="qa-btn-action qa-btn-secondary"
-                            onClick={() => handleFindingAction(item)}
-                        >
-                            {item.action || 'Resolve'} <ArrowRight size={13} />
-                        </button>
-                    </div>
-                </div>
-
-                {/* Collapsible Sample Records Inspector */}
-                {isExpanded && hasSamples && (
-                    <div className="qa-issue-samples-container">
-                        <div className="qa-samples-header">
-                            <span style={{ fontWeight: 600, color: '#0f172a' }}>
-                                Sample Affected Entries (Showing {item.sample_records.length} of {item.affected_count})
-                            </span>
-                            <span className="qa-samples-hint">
-                                Direct correction available via the &ldquo;{item.action || 'Resolve'}&rdquo; button.
-                            </span>
-                        </div>
-                        <div className="qa-samples-table-wrap">
-                            <table className="qa-samples-table">
-                                <thead>
-                                    <tr>
-                                        {item.id === 'unused_facilities' ? (
-                                            <>
-                                                <th>Facility ID</th>
-                                                <th>Facility Name</th>
-                                                <th>Location / Field</th>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <th>Record ID</th>
-                                                <th>Facility</th>
-                                                <th>Year</th>
-                                                <th>Process Type</th>
-                                                <th>Details</th>
-                                            </>
-                                        )}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {item.sample_records.map((s, sIdx) => (
-                                        <tr key={sIdx}>
-                                            {item.id === 'unused_facilities' ? (
-                                                <>
-                                                    <td style={{ fontFamily: 'monospace', fontWeight: 600 }}>#{s.id}</td>
-                                                    <td><strong>{s.name}</strong></td>
-                                                    <td>{s.location || '-'}</td>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <td style={{ fontFamily: 'monospace', fontWeight: 600 }}>#{s.id}</td>
-                                                    <td>{s.facility || (s.facility_id ? `Facility #${s.facility_id}` : 'Unassigned Boundary')}</td>
-                                                    <td>{s.year || '-'}</td>
-                                                    <td><span className="qa-sample-tag">{s.process || '—'}</span></td>
-                                                    <td>
-                                                        {s.fuel && <span style={{ marginRight: '8px' }}>Fuel: <strong>{s.fuel}</strong></span>}
-                                                        {s.quantity !== undefined && <span>Qty: <strong>{s.quantity === null ? 'None' : s.quantity}</strong></span>}
-                                                        {s.co2e !== undefined && <span style={{ marginLeft: '8px' }}>CO₂e: <strong>{s.co2e === null ? 'None' : s.co2e}</strong></span>}
-                                                    </td>
-                                                </>
-                                            )}
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                )}
-            </div>
-        );
-    };
-
     return (
         <ErrorBoundary>
-            <div 
-                className="qa-dashboard-page" 
-                style={{ opacity: isUpdating ? 0.75 : 1, transition: 'opacity 0.2s ease' }}
-            >
-                {/* ── Executive Assurance Header ─────────────────────────── */}
-                <div className="qa-hero-card">
-                    <div className="qa-header-top">
-                        <div className="qa-title-group">
-                            <div className="qa-badge-assurance">
-                                <Shield size={13} /> ISO 14064-1 & GHG PROTOCOL ASSURANCE
-                            </div>
-                            <h1 className="qa-title">QA/QC & System Diagnostics</h1>
-                            <p className="qa-subtitle">
+            <Page className={cn("max-w-[1600px] px-4 pb-12 pt-6 transition-opacity duration-200 sm:px-8", isUpdating && "opacity-75")}>
+                <Card className="p-7">
+                    <div className="flex flex-wrap items-start justify-between gap-5">
+                        <div className="flex min-w-0 flex-col gap-1.5">
+                            <Badge tone="brand" className="w-fit gap-1.5 px-3 py-1 uppercase tracking-wide">
+                                <Shield className="size-3.5" aria-hidden="true" /> ISO 14064-1 &amp; GHG Protocol Assurance
+                            </Badge>
+                            <h1 className="qa-title m-0 text-xl font-bold text-text">QA/QC &amp; System Diagnostics</h1>
+                            <p className="m-0 max-w-3xl text-md leading-normal text-text-secondary">
                                 Automated data validation, IPCC SRSS uncertainty estimation, and inventory anomaly resolution workflow.
                             </p>
                         </div>
-
-                        {/* Top Global Controls */}
-                        <div className="qa-header-controls">
-                            {/* Scope Selector */}
-                            <select
-                                className="qa-filter-select"
-                                value={scopeFilter}
-                                onChange={e => { setScopeFilter(e.target.value); setOffset(0); }}
-                                title="Filter by GHG Scope"
-                            >
+                        <div className="flex flex-wrap items-center gap-2.5">
+                            <NativeSelect className={cn(controlClass, "qa-filter-select h-[38px] w-auto")} aria-label="Filter by GHG Scope" value={scopeFilter} onChange={e => { setScopeFilter(e.target.value); setOffset(0); }} title="Filter by GHG Scope">
                                 <option value="all">All Scopes (1, 2, 3)</option>
                                 <option value="1">Scope 1 (Direct)</option>
                                 <option value="2">Scope 2 (Electricity)</option>
                                 <option value="3">Scope 3 (Value Chain)</option>
-                            </select>
-
-                            {/* Year Selector */}
-                            <select
-                                className="qa-filter-select"
-                                value={yearFilter}
-                                onChange={e => { setYearFilter(e.target.value); setOffset(0); }}
-                                title="Filter by Reporting Year"
-                            >
+                            </NativeSelect>
+                            <NativeSelect className={cn(controlClass, "qa-filter-select h-[38px] w-auto")} aria-label="Filter by Reporting Year" value={yearFilter} onChange={e => { setYearFilter(e.target.value); setOffset(0); }} title="Filter by Reporting Year">
                                 <option value="all">All Reporting Years</option>
                                 {Array.from({ length: new Date().getFullYear() - 2019 }, (_, i) => new Date().getFullYear() - i).map(y => (
                                     <option key={y} value={y}>{y}</option>
                                 ))}
-                            </select>
-
-                            {/* Refresh Diagnostics */}
-                            <button
-                                className="qa-btn-action qa-btn-secondary"
-                                onClick={() => fetchDashboard(true)}
-                                disabled={runningDiagnostics || isUpdating}
-                                title="Re-run data health checks and anomaly diagnostics"
-                            >
-                                <RefreshCw size={14} className={runningDiagnostics || isUpdating ? 'spin-icon' : ''} />
+                            </NativeSelect>
+                            <Button variant="secondary" onClick={() => fetchDashboard(true)} disabled={runningDiagnostics || isUpdating} title="Re-run data health checks and anomaly diagnostics">
+                                <RefreshCw className={cn("size-3.5", (runningDiagnostics || isUpdating) && "animate-spin")} aria-hidden="true" />
                                 {runningDiagnostics ? 'Scanning…' : 'Run Diagnostics'}
-                            </button>
-
-                            {/* Export CSV Report */}
-                            <button
-                                className="qa-btn-action qa-btn-primary"
-                                onClick={handleExport}
-                                disabled={exporting}
-                                title="Export complete QA/QC compliance report as CSV"
-                            >
-                                <Download size={14} />
+                            </Button>
+                            <Button onClick={handleExport} loading={exporting} disabled={exporting} title="Export complete QA/QC compliance report as CSV">
+                                <Download className="size-3.5" aria-hidden="true" />
                                 {exporting ? 'Exporting…' : 'Export QA Report'}
-                            </button>
+                            </Button>
                         </div>
                     </div>
-                </div>
+                </Card>
 
-                {/* ── Executive KPI Grid (4 Cards) ───────────────────────── */}
-                <div className="qa-kpi-grid">
-                    {/* Card 1: Health & Completeness */}
-                    <div className="qa-kpi-card">
-                        <div className="qa-kpi-header">
-                            <span className="qa-kpi-label">Data Health Score</span>
-                            <div className="qa-kpi-icon-wrap" style={{ color: healthColor, background: `${healthColor}15` }}>
-                                <Sparkles size={16} />
-                            </div>
-                        </div>
-                        <div className="qa-kpi-body">
-                            <span className="qa-kpi-value" style={{ color: healthColor }}>
-                                {healthScore}
-                            </span>
-                            <span className="qa-kpi-unit">/ 100</span>
-                        </div>
-                        <div className="qa-kpi-footer">
-                            <span>Status: <strong style={{ color: healthColor }}>{healthStatusText}</strong></span>
-                            <span>Completeness: <strong>{completeness}%</strong></span>
-                        </div>
-                    </div>
+                <QaKpis
+                    diagnostics={diagnostics}
+                    uncertainty={tier1_uncertainty}
+                    anomalies={anomaliesSummary}
+                    totalRecords={totalRecords}
+                    activeFacilities={activeFacilities}
+                    totalFacilities={totalFacilities}
+                    healthScore={healthScore}
+                    completeness={completeness}
+                />
 
-                    {/* Card 2: IPCC Tier 1 Uncertainty (SRSS) */}
-                    <div className="qa-kpi-card">
-                        <div className="qa-kpi-header">
-                            <span className="qa-kpi-label" title="IPCC Approach 1, Verified records, 95 % confidence (k = 2)">
-                                Inventory Uncertainty (95% CI{tier1_uncertainty.year ? `, ${tier1_uncertainty.year}` : ""})
-                            </span>
-                            <div className="qa-kpi-icon-wrap" style={{ color: '#f59e0b', background: 'rgba(245, 158, 11, 0.12)' }}>
-                                <AlertTriangle size={16} />
-                            </div>
-                        </div>
-                        <div className="qa-kpi-body">
-                            <span className="qa-kpi-value" style={{ color: '#d97706' }}>
-                                {tier1_uncertainty.overall != null ? `±${(tier1_uncertainty.overall * 100).toFixed(2)}` : "n/a"}
-                            </span>
-                            <span className="qa-kpi-unit">{tier1_uncertainty.overall != null ? "%" : ""}</span>
-                        </div>
-                        <div className="qa-kpi-footer">
-                            <span>S1: {tier1_uncertainty.scope1 != null ? `±${(tier1_uncertainty.scope1 * 100).toFixed(1)}%` : "n/a"}</span>
-                            <span>S2: {tier1_uncertainty.scope2 != null ? `±${(tier1_uncertainty.scope2 * 100).toFixed(1)}%` : "n/a"}</span>
-                            <span>S3: {tier1_uncertainty.scope3 != null ? `±${(tier1_uncertainty.scope3 * 100).toFixed(1)}%` : "n/a"}</span>
-                        </div>
-                    </div>
+                <Tabs value={activeTab} onValueChange={setActiveTab}>
+                    <TabsList aria-label="QA sections" className="border-b-2">
+                        <TabsTrigger value="queue" badge={anomaliesSummary.all}>
+                            <AlertTriangle className="size-[15px]" aria-hidden="true" /> Anomaly Resolution Queue
+                        </TabsTrigger>
+                        <TabsTrigger value="diagnostics" badge={totalFindings}>
+                            <Shield className="size-[15px]" aria-hidden="true" /> Health &amp; Completeness Diagnostics
+                        </TabsTrigger>
+                        <TabsTrigger value="uncertainty">
+                            <Layers className="size-[15px]" aria-hidden="true" /> Uncertainty &amp; Rigor Analysis (IPCC)
+                        </TabsTrigger>
+                    </TabsList>
 
-                    {/* Card 3: Flagged Anomalies Queue */}
-                    <div className="qa-kpi-card">
-                        <div className="qa-kpi-header">
-                            <span className="qa-kpi-label">Flagged Anomalies</span>
-                            <div className="qa-kpi-icon-wrap" style={{ color: '#ef4444', background: 'rgba(239, 68, 68, 0.12)' }}>
-                                <AlertCircle size={16} />
-                            </div>
-                        </div>
-                        <div className="qa-kpi-body">
-                            <span className="qa-kpi-value" style={{ color: anomaliesSummary.all > 0 ? '#ef4444' : '#10b981' }}>
-                                {anomaliesSummary.all}
-                            </span>
-                            <span className="qa-kpi-unit">active</span>
-                        </div>
-                        <div className="qa-kpi-footer">
-                            <span>Pending: <strong>{anomaliesSummary.pending}</strong></span>
-                            <span>Verified: <strong style={{ color: '#10b981' }}>{anomaliesSummary.verified}</strong></span>
-                            <span>Rejected: <strong style={{ color: '#ef4444' }}>{anomaliesSummary.rejected}</strong></span>
-                        </div>
-                    </div>
+                    <TabsContent value="queue">
+                        <QADashboardZeroAnomaliesDetected
+                            PAGE_SIZE={PAGE_SIZE}
+                            anomaliesSummary={anomaliesSummary}
+                            currentPage={currentPage}
+                            data={data}
+                            filteredRecords={filteredRecords}
+                            handleBulkResolve={handleBulkResolve}
+                            handleSingleResolve={handleSingleResolve}
+                            offset={offset}
+                            resolving={resolving}
+                            returned_count={returned_count}
+                            searchQuery={searchQuery}
+                            selectedIds={selectedIds}
+                            setOffset={setOffset}
+                            setSearchQuery={setSearchQuery}
+                            setSelectedIds={setSelectedIds}
+                            setStatusFilter={setStatusFilter}
+                            statusFilter={statusFilter}
+                            toggleSelect={toggleSelect}
+                            toggleSelectAll={toggleSelectAll}
+                            totalPages={totalPages}
+                            total_flagged_count={total_flagged_count}
+                        />
+                    </TabsContent>
 
-                    {/* Card 4: Inventory & Facility Coverage */}
-                    <div className="qa-kpi-card">
-                        <div className="qa-kpi-header">
-                            <span className="qa-kpi-label">Inventory Coverage</span>
-                            <div className="qa-kpi-icon-wrap" style={{ color: '#3b82f6', background: 'rgba(59, 130, 246, 0.12)' }}>
-                                <Database size={16} />
-                            </div>
-                        </div>
-                        <div className="qa-kpi-body">
-                            <span className="qa-kpi-value">
-                                {totalRecords.toLocaleString()}
-                            </span>
-                            <span className="qa-kpi-unit">entries</span>
-                        </div>
-                        <div className="qa-kpi-footer">
-                            <span>Active Facilities: <strong>{activeFacilities}/{totalFacilities}</strong></span>
-                            <span>Custom Factors: <strong>{diagnostics.total_custom_factors ?? 0}</strong></span>
-                        </div>
-                    </div>
-                </div>
+                    <TabsContent value="diagnostics">
+                        <DiagnosticsPanel
+                            healthScore={healthScore}
+                            completeness={completeness}
+                            dim={dimCompleteness}
+                            issues={issues}
+                            warnings={warnings}
+                            suggestions={suggestions}
+                            expandedId={expandedFindingId}
+                            onExpand={setExpandedFindingId}
+                            onAction={handleFindingAction}
+                        />
+                    </TabsContent>
 
-                {/* ── Segmented Navigation Tabs ───────────────────────────── */}
-                <div className="qa-tabs-container">
-                    <button
-                        className={`qa-tab-btn ${activeTab === 'queue' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('queue')}
-                    >
-                        <AlertTriangle size={15} />
-                        <span>Anomaly Resolution Queue</span>
-                        <span className="qa-tab-count-pill">{anomaliesSummary.all}</span>
-                    </button>
+                    <TabsContent value="uncertainty">
+                        <UncertaintyPanel uncertainty={tier1_uncertainty} />
+                    </TabsContent>
+                </Tabs>
+            </Page>
 
-                    <button
-                        className={`qa-tab-btn ${activeTab === 'diagnostics' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('diagnostics')}
-                    >
-                        <Shield size={15} />
-                        <span>Health & Completeness Diagnostics</span>
-                        <span className="qa-tab-count-pill">{totalFindings}</span>
-                    </button>
-
-                    <button
-                        className={`qa-tab-btn ${activeTab === 'uncertainty' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('uncertainty')}
-                    >
-                        <Layers size={15} />
-                        <span>Uncertainty & Rigor Analysis (IPCC)</span>
-                    </button>
-                </div>
-
-                {/* ════════════════════════════════════════════════════════════
-                    TAB 1: ANOMALY RESOLUTION QUEUE
-                   ════════════════════════════════════════════════════════════ */}
-                {activeTab === 'queue' && (
-                    <div className="qa-panel-card">
-                        {/* Table Toolbar */}
-                        <div className="qa-table-toolbar">
-                            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
-                                {/* Search Box */}
-                                <div className="qa-search-box">
-                                    <Search size={14} />
-                                    <input
-                                        type="text"
-                                        className="qa-search-input"
-                                        placeholder="Search by ID, process, or reason…"
-                                        value={searchQuery}
-                                        onChange={e => setSearchQuery(e.target.value)}
-                                    />
-                                </div>
-
-                                {/* Status Filters */}
-                                <div className="qa-status-filters">
-                                    <button
-                                        className={`qa-status-filter-btn ${statusFilter === 'all' ? 'active' : ''}`}
-                                        onClick={() => { setStatusFilter('all'); setOffset(0); }}
-                                    >
-                                        <span>All Statuses</span>
-                                        {anomaliesSummary.all > 0 && (
-                                            <span className="qa-status-pill-count">{anomaliesSummary.all}</span>
-                                        )}
-                                    </button>
-                                    <button
-                                        className={`qa-status-filter-btn ${statusFilter === 'pending' ? 'active' : ''}`}
-                                        onClick={() => { setStatusFilter('pending'); setOffset(0); }}
-                                    >
-                                        <span>Pending Review</span>
-                                        {anomaliesSummary.pending > 0 && (
-                                            <span className="qa-status-pill-count">{anomaliesSummary.pending}</span>
-                                        )}
-                                    </button>
-                                    <button
-                                        className={`qa-status-filter-btn ${statusFilter === 'verified' ? 'active' : ''}`}
-                                        onClick={() => { setStatusFilter('verified'); setOffset(0); }}
-                                    >
-                                        <span>Verified</span>
-                                        {anomaliesSummary.verified > 0 && (
-                                            <span className="qa-status-pill-count">{anomaliesSummary.verified}</span>
-                                        )}
-                                    </button>
-                                    <button
-                                        className={`qa-status-filter-btn ${statusFilter === 'rejected' ? 'active' : ''}`}
-                                        onClick={() => { setStatusFilter('rejected'); setOffset(0); }}
-                                    >
-                                        <span>Rejected</span>
-                                        {anomaliesSummary.rejected > 0 && (
-                                            <span className="qa-status-pill-count">{anomaliesSummary.rejected}</span>
-                                        )}
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Bulk Action Controls (When items selected) */}
-                            {selectedIds.size > 0 ? (
-                                <div className="qa-bulk-actions-bar">
-                                    <span style={{ fontSize: '0.82rem', color: '#9a3412', fontWeight: 600 }}>
-                                        {selectedIds.size} record{selectedIds.size > 1 ? 's' : ''} selected
-                                    </span>
-                                    <button
-                                        className="qa-btn-inline qa-btn-approve"
-                                        style={{ padding: '6px 12px', fontSize: '0.8rem' }}
-                                        onClick={() => handleBulkResolve('Verified')}
-                                        disabled={resolving}
-                                    >
-                                        <Check size={13} style={{ marginRight: 4 }} />
-                                        {resolving ? '…' : 'Approve Selected'}
-                                    </button>
-                                    <button
-                                        className="qa-btn-inline qa-btn-reject"
-                                        style={{ padding: '6px 12px', fontSize: '0.8rem' }}
-                                        onClick={() => handleBulkResolve('Rejected')}
-                                        disabled={resolving}
-                                    >
-                                        <X size={13} style={{ marginRight: 4 }} />
-                                        {resolving ? '…' : 'Reject Flags'}
-                                    </button>
-                                    <button
-                                        style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: '0.78rem', textDecoration: 'underline' }}
-                                        onClick={() => setSelectedIds(new Set())}
-                                    >
-                                        Deselect
-                                    </button>
-                                </div>
-                            ) : (
-                                <span style={{ fontSize: '0.82rem', color: '#64748b' }}>
-                                    Showing {filteredRecords.length} flagged records
-                                </span>
-                            )}
-                        </div>
-
-                        {/* Table or Empty State */}
-                        {filteredRecords.length === 0 ? (
-                            <div style={{ padding: '64px 24px', textAlign: 'center' }}>
-                                {total_flagged_count === 0 ? (
-                                    <>
-                                        <div style={{ 
-                                            background: '#ecfdf5', color: '#10b981', width: '64px', height: '64px', 
-                                            borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                                            margin: '0 auto 16px auto' 
-                                        }}>
-                                            <CheckCircle size={32} />
-                                        </div>
-                                        <h3 style={{ fontSize: '1.25rem', color: '#0f172a', fontWeight: 700, marginBottom: '8px' }}>
-                                            Zero Anomalies Detected
-                                        </h3>
-                                        <p style={{ color: '#64748b', maxWidth: '440px', margin: '0 auto' }}>
-                                            No statistical outliers or data quality flags detected matching your current filters.
-                                            {/* BUG-084: say what is actually known, not "fully verified" */}
-                                            {data.pending_review_count > 0
-                                                ? ` ${data.pending_review_count} record(s) are still awaiting reviewer approval.`
-                                                : " All records in scope have been reviewed."}
-                                        </p>
-                                    </>
-                                ) : (
-                                    <>
-                                        <div style={{ 
-                                            background: '#fef3c7', color: '#b45309', width: '64px', height: '64px', 
-                                            borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                                            margin: '0 auto 16px auto' 
-                                        }}>
-                                            <Search size={32} />
-                                        </div>
-                                        <h3 style={{ fontSize: '1.25rem', color: '#0f172a', fontWeight: 700, marginBottom: '8px' }}>
-                                            No Matching Records
-                                        </h3>
-                                        <p style={{ color: '#64748b', maxWidth: '440px', margin: '0 auto 16px auto' }}>
-                                            No flagged records match your current search query "{searchQuery}" or status filter "{statusFilter}".
-                                        </p>
-                                        <button
-                                            className="qa-btn-action qa-btn-secondary"
-                                            onClick={() => { setSearchQuery(''); setStatusFilter('all'); setOffset(0); }}
-                                        >
-                                            Clear Filters
-                                        </button>
-                                    </>
-                                )}
-                            </div>
-                        ) : (
-                            <>
-                                <div className="qa-table-container">
-                                    <table className="qa-table">
-                                        <thead>
-                                            <tr>
-                                                <th className="qa-th" style={{ width: '40px' }}>
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={
-                                                            filteredRecords.length > 0 && 
-                                                            filteredRecords.every(r => selectedIds.has(`${r.scope}-${r.id}`))
-                                                        }
-                                                        onChange={() => toggleSelectAll(filteredRecords)}
-                                                    />
-                                                </th>
-                                                <th className="qa-th">Record ID</th>
-                                                <th className="qa-th">Scope</th>
-                                                <th className="qa-th">Period</th>
-                                                <th className="qa-th">Process / Source</th>
-                                                <th className="qa-th">QA Flag Reason</th>
-                                                <th className="qa-th">Emissions (tCO₂e)</th>
-                                                <th className="qa-th">Status</th>
-                                                <th className="qa-th" style={{ textAlign: 'right' }}>Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {filteredRecords.map(record => {
-                                                const key = `${record.scope}-${record.id}`;
-                                                const isSelected = selectedIds.has(key);
-                                                const status = (record.status || 'Pending Review').toLowerCase();
-                                                const statusClass = status.includes('verified') ? 'verified' : status.includes('rejected') ? 'rejected' : 'pending';
-
-                                                return (
-                                                    <tr 
-                                                        key={key} 
-                                                        className={`qa-tr ${isSelected ? 'selected' : ''}`}
-                                                    >
-                                                        <td className="qa-td">
-                                                            <input
-                                                                type="checkbox"
-                                                                checked={isSelected}
-                                                                onChange={() => toggleSelect(record.scope, record.id)}
-                                                            />
-                                                        </td>
-                                                        <td className="qa-td" style={{ fontFamily: 'monospace', fontWeight: 600, color: '#0f172a' }}>
-                                                            {record.record_id || `REC-${record.id}`}
-                                                        </td>
-                                                        <td className="qa-td">
-                                                            <span className={`qa-scope-badge scope-${record.scope}`}>
-                                                                Scope {record.scope}
-                                                            </span>
-                                                        </td>
-                                                        <td className="qa-td" style={{ color: '#475569' }}>
-                                                            {record.year || '—'} {record.month ? `/ M${record.month}` : ''}
-                                                        </td>
-                                                        <td className="qa-td" style={{ fontWeight: 500, color: '#1e293b' }}>
-                                                            {record.process_type || '—'}
-                                                        </td>
-                                                        <td className="qa-td">
-                                                            <span className="qa-flag-badge">
-                                                                <AlertTriangle size={13} />
-                                                                {record.qa_flag}
-                                                            </span>
-                                                        </td>
-                                                        <td className="qa-td" style={{ fontFamily: 'monospace', fontWeight: 700, color: '#0f172a' }}>
-                                                            {record.co2e != null ? Number(record.co2e).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
-                                                        </td>
-                                                        <td className="qa-td">
-                                                            <span className={`qa-status-pill ${statusClass}`}>
-                                                                {record.status || 'Pending Review'}
-                                                            </span>
-                                                        </td>
-                                                        <td className="qa-td" style={{ textAlign: 'right' }}>
-                                                            <div style={{ display: 'inline-flex', gap: '6px' }}>
-                                                                <button
-                                                                    className="qa-btn-inline qa-btn-approve"
-                                                                    onClick={() => handleSingleResolve(record.scope, record.id, 'Verified')}
-                                                                    disabled={resolving}
-                                                                    title="Approve / Mark Verified"
-                                                                >
-                                                                    <Check size={13} />
-                                                                </button>
-                                                                <button
-                                                                    className="qa-btn-inline qa-btn-reject"
-                                                                    onClick={() => handleSingleResolve(record.scope, record.id, 'Rejected')}
-                                                                    disabled={resolving}
-                                                                    title="Reject / Outlier"
-                                                                >
-                                                                    <X size={13} />
-                                                                </button>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                );
-                                            })}
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                                {/* Pagination Controls */}
-                                {total_flagged_count > PAGE_SIZE && (
-                                    <div style={{ 
-                                        padding: '16px 24px', display: 'flex', alignItems: 'center', 
-                                        justifyContent: 'space-between', borderTop: '1px solid rgba(226,232,240,0.8)' 
-                                    }}>
-                                        <span style={{ fontSize: '0.82rem', color: '#64748b' }}>
-                                            {searchQuery || statusFilter !== 'all'
-                                                ? `Showing ${filteredRecords.length} filtered record${filteredRecords.length === 1 ? '' : 's'} on this page (${total_flagged_count} total in inventory)`
-                                                : `Showing ${offset + 1}–${Math.min(offset + returned_count, total_flagged_count)} of ${total_flagged_count} flagged records`
-                                            }
-                                        </span>
-                                        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                                            <button
-                                                className="qa-btn-action qa-btn-secondary"
-                                                style={{ height: '32px', padding: '0 10px' }}
-                                                onClick={() => setOffset(Math.max(0, offset - PAGE_SIZE))}
-                                                disabled={offset === 0}
-                                            >
-                                                <ChevronLeft size={14} />
-                                            </button>
-                                            <span style={{ fontSize: '0.82rem', color: '#334155', fontWeight: 600, padding: '0 8px' }}>
-                                                Page {currentPage} / {totalPages}
-                                            </span>
-                                            <button
-                                                className="qa-btn-action qa-btn-secondary"
-                                                style={{ height: '32px', padding: '0 10px' }}
-                                                onClick={() => setOffset(offset + PAGE_SIZE)}
-                                                disabled={offset + PAGE_SIZE >= total_flagged_count}
-                                            >
-                                                <ChevronRight size={14} />
-                                            </button>
-                                        </div>
-                                    </div>
-                                )}
-                            </>
-                        )}
-                    </div>
-                )}
-
-                {/* ════════════════════════════════════════════════════════════
-                    TAB 2: HEALTH & COMPLETENESS DIAGNOSTICS
-                   ════════════════════════════════════════════════════════════ */}
-                {activeTab === 'diagnostics' && (
-                    <div className="qa-panel-card">
-                        <div className="qa-diagnostics-container">
-                            {/* Completeness by Dimension */}
-                            <div className="qa-completeness-card">
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                                    <div>
-                                        <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700, color: '#0f172a' }}>
-                                            Inventory Completeness by Attribute
-                                        </h3>
-                                        <p style={{ margin: '4px 0 0', fontSize: '0.82rem', color: '#64748b' }}>
-                                            Evaluates key GHG Protocol and ISO 14064 required fields across all reported records.
-                                        </p>
-                                    </div>
-                                    <div style={{ textAlign: 'right' }}>
-                                        <span style={{ fontSize: '1.5rem', fontWeight: 800, color: healthColor }}>
-                                            {completeness}%
-                                        </span>
-                                        <div style={{ fontSize: '0.72rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>
-                                            Overall Completeness
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Dimension Bars */}
-                                <div className="qa-progress-row">
-                                    <div className="qa-progress-info">
-                                        <span>Organizational Facility Assignment</span>
-                                        <strong>{dimCompleteness.facility}%</strong>
-                                    </div>
-                                    <div className="qa-progress-bar-track">
-                                        <div 
-                                            className="qa-progress-bar-fill" 
-                                            style={{ width: `${dimCompleteness.facility}%`, background: '#10b981' }} 
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="qa-progress-row">
-                                    <div className="qa-progress-info">
-                                        <span>Source & Fuel Type Specifications</span>
-                                        <strong>{dimCompleteness.fuel_source}%</strong>
-                                    </div>
-                                    <div className="qa-progress-bar-track">
-                                        <div 
-                                            className="qa-progress-bar-fill" 
-                                            style={{ width: `${dimCompleteness.fuel_source}%`, background: '#3b82f6' }} 
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="qa-progress-row">
-                                    <div className="qa-progress-info">
-                                        <span>Activity Quantities & Physical Units</span>
-                                        <strong>{dimCompleteness.activity_amount}%</strong>
-                                    </div>
-                                    <div className="qa-progress-bar-track">
-                                        <div 
-                                            className="qa-progress-bar-fill" 
-                                            style={{ width: `${dimCompleteness.activity_amount}%`, background: '#f59e0b' }} 
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="qa-progress-row">
-                                    <div className="qa-progress-info">
-                                        <span>Calculated CO₂e Emissions Integrity</span>
-                                        <strong>{dimCompleteness.calculation}%</strong>
-                                    </div>
-                                    <div className="qa-progress-bar-track">
-                                        <div 
-                                            className="qa-progress-bar-fill" 
-                                            style={{ width: `${dimCompleteness.calculation}%`, background: '#8b5cf6' }} 
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Categorized Findings List */}
-                            <div>
-                                <h3 style={{ margin: '0 0 14px 0', fontSize: '1.05rem', fontWeight: 700, color: '#0f172a' }}>
-                                    Diagnostic Findings & Action Items ({totalFindings + suggestions.length})
-                                </h3>
-
-                                <div className="qa-issues-grid">
-                                    {/* Critical Issues */}
-                                    {issues.map(issue => renderFindingCard(issue, 'critical', <AlertCircle size={16} color="#ef4444" />))}
-
-                                    {/* Warnings */}
-                                    {warnings.map(warn => renderFindingCard(warn, 'warning', <AlertTriangle size={16} color="#f59e0b" />))}
-
-                                    {/* Suggestions / Advisory */}
-                                    {suggestions.map(sug => renderFindingCard(sug, 'info', <Shield size={16} color="#3b82f6" />))}
-
-                                    {/* All Clear state */}
-                                    {issues.length === 0 && warnings.length === 0 && suggestions.length === 0 && (
-                                        <div style={{ 
-                                            padding: '48px 24px', textAlign: 'center', background: 'rgba(16, 185, 129, 0.05)', 
-                                            borderRadius: '16px', border: '1px solid rgba(16, 185, 129, 0.2)' 
-                                        }}>
-                                            <Sparkles size={36} color="#10b981" style={{ margin: '0 auto 12px' }} />
-                                            <h4 style={{ margin: '0 0 6px 0', fontSize: '1.15rem', color: '#065f46', fontWeight: 700 }}>
-                                                All Quality Gates Passed
-                                            </h4>
-                                            <p style={{ margin: 0, color: '#047857', fontSize: '0.88rem' }}>
-                                                Your inventory meets 100% of data completeness and validity requirements.
-                                            </p>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {/* ════════════════════════════════════════════════════════════
-                    TAB 3: UNCERTAINTY & RIGOR ANALYSIS (IPCC SRSS)
-                   ════════════════════════════════════════════════════════════ */}
-                {activeTab === 'uncertainty' && (
-                    <div className="qa-panel-card">
-                        <div className="qa-uncertainty-container">
-                            {/* Standards Formula Card */}
-                            <div className="qa-formula-card">
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <div>
-                                        <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: '#0f172a' }}>
-                                            IPCC Tier 1 Error Propagation (Square Root of Sum of Squares)
-                                        </h3>
-                                        <p style={{ margin: '4px 0 0', fontSize: '0.84rem', color: '#64748b' }}>
-                                            Complies with ISO 14064-1:2018 §7.5 and GHG Protocol Corporate Standard Chapter 11.
-                                        </p>
-                                    </div>
-                                    <span style={{ 
-                                        background: 'rgba(255, 102, 0, 0.1)', color: 'var(--accent-color, #ff6600)', 
-                                        padding: '4px 10px', borderRadius: '6px', fontSize: '0.78rem', fontWeight: 700 
-                                    }}>
-                                        95% Confidence Interval (k=2)
-                                    </span>
-                                </div>
-
-                                <div className="qa-formula-box">
-                                    U_total = √[ (U₁ · E₁)² + (U₂ · E₂)² + (U₃ · E₃)² ] / ( E₁ + E₂ + E₃ )
-                                </div>
-
-                                <p style={{ fontSize: '0.84rem', color: '#475569', margin: 0, lineHeight: 1.5 }}>
-                                    Each scope uncertainty is propagated from activity data precision and emission factor variance.
-                                    Higher granularity (e.g. facility-specific continuous monitoring or Tier 3 custom factors) reduces total uncertainty.
-                                </p>
-                            </div>
-
-                            {/* Scope-by-Scope Uncertainty Cards */}
-                            <div className="qa-scopes-unc-grid">
-                                {/* Scope 1 */}
-                                <div className="qa-scope-unc-card">
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <span className="qa-scope-badge scope-1">Scope 1 (Direct)</span>
-                                        <Flame size={16} color="#059669" />
-                                    </div>
-                                    <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#0f172a' }}>
-                                        ±{((tier1_uncertainty.scope1 || 0) * 100).toFixed(2)}%
-                                    </div>
-                                    <div style={{ fontSize: '0.82rem', color: '#64748b' }}>
-                                        Total Audited: <strong>{(tier1_uncertainty.s1_total_tco2e || 0).toLocaleString(undefined, { maximumFractionDigits: 1 })} tCO₂e</strong>
-                                    </div>
-                                    <div style={{ fontSize: '0.76rem', color: '#94a3b8', borderTop: '1px solid #f1f5f9', paddingTop: '8px' }}>
-                                        Combustion, flaring, vented & fugitive sources
-                                    </div>
-                                </div>
-
-                                {/* Scope 2 */}
-                                <div className="qa-scope-unc-card">
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <span className="qa-scope-badge scope-2">Scope 2 (Indirect)</span>
-                                        <Zap size={16} color="#2563eb" />
-                                    </div>
-                                    <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#0f172a' }}>
-                                        ±{((tier1_uncertainty.scope2 || 0) * 100).toFixed(2)}%
-                                    </div>
-                                    <div style={{ fontSize: '0.82rem', color: '#64748b' }}>
-                                        Total Audited: <strong>{(tier1_uncertainty.s2_total_tco2e || 0).toLocaleString(undefined, { maximumFractionDigits: 1 })} tCO₂e</strong>
-                                    </div>
-                                    <div style={{ fontSize: '0.76rem', color: '#94a3b8', borderTop: '1px solid #f1f5f9', paddingTop: '8px' }}>
-                                        Purchased electricity & grid emission factors
-                                    </div>
-                                </div>
-
-                                {/* Scope 3 */}
-                                <div className="qa-scope-unc-card">
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <span className="qa-scope-badge scope-3">Scope 3 (Value Chain)</span>
-                                        <Layers size={16} color="#7c3aed" />
-                                    </div>
-                                    <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#0f172a' }}>
-                                        ±{((tier1_uncertainty.scope3 || 0) * 100).toFixed(2)}%
-                                    </div>
-                                    <div style={{ fontSize: '0.82rem', color: '#64748b' }}>
-                                        Total Audited: <strong>{(tier1_uncertainty.s3_total_tco2e || 0).toLocaleString(undefined, { maximumFractionDigits: 1 })} tCO₂e</strong>
-                                    </div>
-                                    <div style={{ fontSize: '0.76rem', color: '#94a3b8', borderTop: '1px solid #f1f5f9', paddingTop: '8px' }}>
-                                        Upstream & downstream category estimations
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )}
-            </div>
-
-            <Modal
-                isOpen={resolveModal.isOpen}
-                onClose={() => setResolveModal({ isOpen: false, resolution: null })}
+            <ConfirmDialog
+                open={resolveModal.isOpen}
+                onCancel={() => setResolveModal({ isOpen: false, resolution: null })}
+                onConfirm={confirmBulkResolve}
+                loading={resolving}
                 title={`Confirm Bulk ${resolveModal.resolution === 'Verified' ? 'Verification' : 'Rejection'}`}
-            >
-                <div style={{ padding: "8px 0" }}>
-                    <p style={{ margin: "0 0 20px 0", color: "#475569", fontSize: "0.95rem", lineHeight: 1.5 }}>
-                        Are you sure you want to mark <strong>{selectedIds.size}</strong> selected record(s) as <strong>{resolveModal.resolution}</strong>?
-                    </p>
-                    <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
-                        <button
-                            type="button"
-                            style={{
-                                background: "#f1f5f9",
-                                color: "#475569",
-                                border: "1px solid #cbd5e1",
-                                padding: "8px 16px",
-                                borderRadius: "8px",
-                                fontWeight: 600,
-                                cursor: "pointer",
-                            }}
-                            onClick={() => setResolveModal({ isOpen: false, resolution: null })}
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="button"
-                            style={{
-                                background: resolveModal.resolution === 'Verified' ? '#10b981' : '#ef4444',
-                                color: '#ffffff',
-                                border: 'none',
-                                padding: '8px 16px',
-                                borderRadius: '8px',
-                                fontWeight: 600,
-                                cursor: 'pointer',
-                            }}
-                            onClick={confirmBulkResolve}
-                            disabled={resolving}
-                        >
-                            {resolving ? "Updating…" : `Confirm ${resolveModal.resolution === 'Verified' ? 'Verification' : 'Rejection'}`}
-                        </button>
-                    </div>
-                </div>
-            </Modal>
+                message={<>Are you sure you want to mark <strong>{selectedIds.size}</strong> selected record(s) as <strong>{resolveModal.resolution}</strong>?</>}
+                confirmLabel={`Confirm ${resolveModal.resolution === 'Verified' ? 'Verification' : 'Rejection'}`}
+                confirmVariant={resolveModal.resolution === 'Verified' ? 'primary' : 'danger'}
+            />
         </ErrorBoundary>
     );
 }

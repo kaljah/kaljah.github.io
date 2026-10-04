@@ -1,4 +1,6 @@
 import React, { useEffect } from "react";
+import { Input, Field } from "../../ui";
+import { NativeSelect } from "../../ui/NativeSelect";
 import CustomDropdown from "../CustomDropdown";
 import { Segmented } from "./ui";
 
@@ -67,7 +69,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
   }, [currentTier]);
 
   return (
-    <div className="unloading-form" style={{ marginTop: "15px" }}>
+    <div className="unloading-form mt-[15px]!">
       {/* HEADER & TIER BADGE */}
 
       {/* ========================================================================= */}
@@ -77,12 +79,9 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
         <div>
 
           <div className="form-grid-2">
-            <div className="input-group">
-              <label>
-                Lift type
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-              </label>
-              <select
+            <Field className="input-group" label={<>Lift type
+                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<NativeSelect
                 className="mole-input"
                 value={unloadingType}
                 onChange={(e) => {
@@ -92,19 +91,16 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
               >
                 <option value="plunger">Plunger lift</option>
                 <option value="non_plunger">Non-plunger</option>
-              </select>
-            </div>
+              </NativeSelect>
+</Field>
 
-            <div className="input-group">
-              <label>
-                Wells
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-              </label>
-              <input
+            <Field className="input-group" label={<>Wells
+                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
                 type="number"
                 min="1"
                 step="1"
-                className="mole-input"
+               
                 value={data.well_count || data.wells || data.amount || ""}
                 onChange={(e) => {
                   onChange("well_count", e.target.value);
@@ -115,50 +111,41 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                 placeholder="e.g. 5"
                 required
               />
-            </div>
+</Field>
 
-            <div className="input-group">
-              <label>
-                CH₄ (mol %)
-              </label>
-              <input
+            <Field className="input-group" label="CH₄ (mol %)">
+<Input
                 type="number"
                 step="0.01"
                 min="0"
                 max="100"
-                className="mole-input"
+               
                 value={data.ch4_content ?? ""}
                 onChange={(e) => onChange("ch4_content", e.target.value)}
                 placeholder="e.g. 81.6"
               />
-            </div>
+</Field>
 
-            <div className="input-group">
-              <label>
-                CO₂ (mol %)
-              </label>
-              <input
+            <Field className="input-group" label="CO₂ (mol %)">
+<Input
                 type="number"
                 step="0.01"
                 min="0"
                 max="100"
-                className="mole-input"
+               
                 value={data.co2_content ?? ""}
                 onChange={(e) => onChange("co2_content", e.target.value)}
                 placeholder="0.0"
               />
-            </div>
+</Field>
 
-            <div className="input-group">
-              <label>
-                Control efficiency (%)
-              </label>
-              <input
+            <Field className="input-group" label="Control efficiency (%)">
+<Input
                 type="number"
                 step="0.1"
                 min="0"
                 max="100"
-                className="mole-input"
+               
                 value={data.control_efficiency ?? ""}
                 onChange={(e) => {
                   onChange("control_efficiency", e.target.value);
@@ -166,7 +153,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                 }}
                 placeholder="0"
               />
-            </div>
+</Field>
           </div>
         </div>
       )}
@@ -178,12 +165,9 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
         <div>
 
           <div className="form-grid-2">
-            <div className="input-group">
-              <label>
-                Lift type
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-              </label>
-              <select
+            <Field className="input-group" label={<>Lift type
+                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<NativeSelect
                 className="mole-input"
                 value={unloadingType}
                 onChange={(e) => {
@@ -193,19 +177,16 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
               >
                 <option value="plunger">Plunger Lift</option>
                 <option value="non_plunger">Non-Plunger Lift</option>
-              </select>
-            </div>
+              </NativeSelect>
+</Field>
 
-            <div className="input-group">
-              <label>
-                Events
-                <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-              </label>
-              <input
+            <Field className="input-group" label={<>Events
+                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
                 type="number"
                 min="0"
                 step="1"
-                className="mole-input"
+               
                 value={data.events || data.unload_events || data.unload_freq || data.amount || ""}
                 onChange={(e) => {
                   onChange("events", e.target.value);
@@ -217,11 +198,10 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                 placeholder="e.g. 15"
                 required
               />
-            </div>
+</Field>
 
-            <div className="input-group">
-              <label>Region / Basin</label>
-              <select
+            <Field className="input-group" label="Region / Basin">
+<NativeSelect
                 className="mole-input"
                 value={selectedRegion}
                 onChange={(e) => onChange("region", e.target.value)}
@@ -231,18 +211,15 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                 <option value="gulf_coast">Gulf Coast Basin</option>
                 <option value="midcontinent">Midcontinent Basin</option>
                 <option value="rocky_mountain">Rocky Mountain Basin</option>
-              </select>
-            </div>
+              </NativeSelect>
+</Field>
 
-            <div className="input-group">
-              <label>
-                Wells
-              </label>
-              <input
+            <Field className="input-group" label="Wells">
+<Input
                 type="number"
                 min="1"
                 step="1"
-                className="mole-input"
+               
                 value={data.well_count || data.wells || 1}
                 onChange={(e) => {
                   onChange("well_count", e.target.value);
@@ -250,46 +227,41 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                 }}
                 placeholder="1"
               />
-            </div>
+</Field>
 
-            <div className="input-group">
-              <label>
-                CH₄ (mol %)
-              </label>
-              <input
+            <Field className="input-group" label="CH₄ (mol %)">
+<Input
                 type="number"
                 step="0.01"
                 min="0"
                 max="100"
-                className="mole-input"
+               
                 value={data.ch4_content !== undefined && data.ch4_content !== null ? data.ch4_content : ""}
                 onChange={(e) => onChange("ch4_content", e.target.value)}
                 placeholder="e.g. 85.3"
               />
-            </div>
+</Field>
 
-            <div className="input-group">
-              <label>CO₂ (mol %)</label>
-              <input
+            <Field className="input-group" label="CO₂ (mol %)">
+<Input
                 type="number"
                 step="0.01"
                 min="0"
                 max="100"
-                className="mole-input"
+               
                 value={data.co2_content !== undefined && data.co2_content !== null ? data.co2_content : ""}
                 onChange={(e) => onChange("co2_content", e.target.value)}
                 placeholder="e.g. 1.5"
               />
-            </div>
+</Field>
 
-            <div className="input-group">
-              <label>Control efficiency (%)</label>
-              <input
+            <Field className="input-group" label="Control efficiency (%)">
+<Input
                 type="number"
                 step="0.1"
                 min="0"
                 max="100"
-                className="mole-input"
+               
                 value={data.control_efficiency ?? ""}
                 onChange={(e) => {
                   onChange("control_efficiency", e.target.value);
@@ -297,7 +269,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                 }}
                 placeholder="0"
               />
-            </div>
+</Field>
           </div>
         </div>
       )}
@@ -308,7 +280,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
       {isTier3 && (
         <div>
           {/* METHOD SELECTION TABS */}
-          <div style={{ marginBottom: "16px" }}>
+          <div className="mb-[16px]!">
             <Segmented
               ariaLabel="Engineering method"
               value={activeMethod}
@@ -326,12 +298,9 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
             <div>
 
               <div className="form-grid-2">
-                <div className="input-group">
-                  <label>
-                    Lift type
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-                  </label>
-                  <select
+                <Field className="input-group" label={<>Lift type
+                    <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<NativeSelect
                     className="mole-input"
                     value={unloadingType}
                     onChange={(e) => {
@@ -341,19 +310,16 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                   >
                     <option value="plunger">Plunger lift</option>
                     <option value="non_plunger">Non-plunger</option>
-                  </select>
-                </div>
+                  </NativeSelect>
+</Field>
 
-                <div className="input-group">
-                  <label>
-                    Events per year
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-                  </label>
-                  <input
+                <Field className="input-group" label={<>Events per year
+                    <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
                     type="number"
                     min="0"
                     step="1"
-                    className="mole-input"
+                   
                     value={data.unload_events || data.unload_freq || data.events || data.amount || ""}
                     onChange={(e) => {
                       onChange("unload_events", e.target.value);
@@ -365,18 +331,15 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                     placeholder="e.g. 12"
                     required
                   />
-                </div>
+</Field>
 
-                <div className="input-group">
-                  <label>
-                    Tubing diameter (in)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-                  </label>
-                  <input
+                <Field className="input-group" label={<>Tubing diameter (in)
+                    <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
                     type="number"
                     step="0.001"
                     min="0.1"
-                    className="mole-input"
+                   
                     value={data.unload_diam || data.diameter || ""}
                     onChange={(e) => {
                       onChange("unload_diam", e.target.value);
@@ -385,18 +348,15 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                     placeholder="e.g. 10.0"
                     required
                   />
-                </div>
+</Field>
 
-                <div className="input-group">
-                  <label>
-                    Well Depth (ft)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-                  </label>
-                  <input
+                <Field className="input-group" label={<>Well Depth (ft)
+                    <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
                     type="number"
                     step="1"
                     min="1"
-                    className="mole-input"
+                   
                     value={data.unload_depth || data.well_depth || ""}
                     onChange={(e) => {
                       onChange("unload_depth", e.target.value);
@@ -405,18 +365,15 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                     placeholder="e.g. 12000"
                     required
                   />
-                </div>
+</Field>
 
-                <div className="input-group">
-                  <label>
-                    Shut-in pressure (psig)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-                  </label>
-                  <input
+                <Field className="input-group" label={<>Shut-in pressure (psig)
+                    <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
                     type="number"
                     step="0.1"
                     min="0"
-                    className="mole-input"
+                   
                     value={data.unload_press || data.pressure || ""}
                     onChange={(e) => {
                       onChange("unload_press", e.target.value);
@@ -425,82 +382,71 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                     placeholder="e.g. 250"
                     required
                   />
-                </div>
+</Field>
 
-                <div className="input-group">
-                  <label>
-                    Sales flow rate (scf/hr)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-                  </label>
-                  <input
+                <Field className="input-group" label={<>Sales flow rate (scf/hr)
+                    <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
                     type="number"
                     step="1"
                     min="0"
-                    className="mole-input"
+                   
                     value={data.sfr !== undefined && data.sfr !== null ? data.sfr : ""}
                     onChange={(e) => onChange("sfr", e.target.value)}
                     placeholder="e.g. 35000"
                     required
                   />
-                </div>
+</Field>
 
-                <div className="input-group">
-                  <label>
-                    Venting time (h/event)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-                  </label>
-                  <input
+                <Field className="input-group" label={<>Venting time (h/event)
+                    <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
                     type="number"
                     step="0.1"
                     min="0"
-                    className="mole-input"
+                   
                     value={data.hours_open !== undefined && data.hours_open !== null ? data.hours_open : ""}
                     onChange={(e) => onChange("hours_open", e.target.value)}
                     placeholder="e.g. 1.0"
                     required
                   />
-                </div>
+</Field>
 
-                <div className="input-group">
-                  <label>
-                    CH₄ (mol %)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-                  </label>
-                  <input
+                <Field className="input-group" label={<>CH₄ (mol %)
+                    <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
                     type="number"
                     step="0.01"
                     min="0"
                     max="100"
-                    className="mole-input"
+                   
                     value={data.ch4_content ?? ""}
                     onChange={(e) => onChange("ch4_content", e.target.value)}
                     placeholder="e.g. 80.0"
                     required
                   />
-                </div>
+</Field>
 
-                <div className="input-group">
-                  <label>CO₂ (mol %)</label>
-                  <input
+                <Field className="input-group" label="CO₂ (mol %)">
+<Input
                     type="number"
                     step="0.01"
                     min="0"
                     max="100"
-                    className="mole-input"
+                   
                     value={data.co2_content ?? ""}
                     onChange={(e) => onChange("co2_content", e.target.value)}
                     placeholder="e.g. 3.0"
                   />
-                </div>
+</Field>
 
-                <div className="input-group">
-                  <label>Control efficiency (%)</label>
-                  <input
+                <Field className="input-group" label="Control efficiency (%)">
+<Input
                     type="number"
                     step="0.1"
                     min="0"
                     max="100"
-                    className="mole-input"
+                   
                     value={data.control_efficiency ?? ""}
                     onChange={(e) => {
                       onChange("control_efficiency", e.target.value);
@@ -508,7 +454,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                     }}
                     placeholder="0"
                   />
-                </div>
+</Field>
               </div>
             </div>
           )}
@@ -518,101 +464,83 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
             <div>
 
               <div className="form-grid-2">
-                <div className="input-group">
-                  <label>
-                    Shut-In Pressure Pshut (psia)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-                  </label>
-                  <input
+                <Field className="input-group" label={<>Shut-In Pressure Pshut (psia)
+                    <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
                     type="number"
                     step="0.1"
                     min="14.7"
-                    className="mole-input"
+                   
                     value={data.p_shut !== undefined && data.p_shut !== null ? data.p_shut : ""}
                     onChange={(e) => onChange("p_shut", e.target.value)}
                     placeholder="e.g. 150"
                     required
                   />
-                </div>
+</Field>
 
-                <div className="input-group">
-                  <label>
-                    Flow-Line Pressure Pline (psia)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-                  </label>
-                  <input
+                <Field className="input-group" label={<>Flow-Line Pressure Pline (psia)
+                    <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
                     type="number"
                     step="0.1"
                     min="14.7"
-                    className="mole-input"
+                   
                     value={data.p_line !== undefined && data.p_line !== null ? data.p_line : ""}
                     onChange={(e) => onChange("p_line", e.target.value)}
                     placeholder="e.g. 100"
                     required
                   />
-                </div>
+</Field>
 
-                <div className="input-group">
-                  <label>
-                    Separator Pressure Psep (psia)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-                  </label>
-                  <input
+                <Field className="input-group" label={<>Separator Pressure Psep (psia)
+                    <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
                     type="number"
                     step="0.1"
                     min="0"
-                    className="mole-input"
+                   
                     value={data.p_sep !== undefined && data.p_sep !== null ? data.p_sep : ""}
                     onChange={(e) => onChange("p_sep", e.target.value)}
                     placeholder="e.g. 50"
                     required
                   />
-                </div>
+</Field>
 
-                <div className="input-group">
-                  <label>
-                    Gas Production Rate SFRp (scf/hr)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-                  </label>
-                  <input
+                <Field className="input-group" label={<>Gas Production Rate SFRp (scf/hr)
+                    <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
                     type="number"
                     step="1"
                     min="0"
-                    className="mole-input"
+                   
                     value={data.sfr_p !== undefined && data.sfr_p !== null ? data.sfr_p : ""}
                     onChange={(e) => onChange("sfr_p", e.target.value)}
                     placeholder="e.g. 12000"
                     required
                   />
-                </div>
+</Field>
 
-                <div className="input-group">
-                  <label>
-                    Venting Time Tp (hours/event)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-                  </label>
-                  <input
+                <Field className="input-group" label={<>Venting Time Tp (hours/event)
+                    <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
                     type="number"
                     step="0.05"
                     min="0"
-                    className="mole-input"
+                   
                     value={data.t_p !== undefined && data.t_p !== null ? data.t_p : ""}
                     onChange={(e) => onChange("t_p", e.target.value)}
                     placeholder="e.g. 0.5"
                     required
                   />
-                </div>
+</Field>
 
-                <div className="input-group">
-                  <label>
-                    Events per year
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-                  </label>
-                  <input
+                <Field className="input-group" label={<>Events per year
+                    <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
                     type="number"
                     min="1"
                     step="1"
-                    className="mole-input"
+                   
                     value={data.unload_events || data.events || data.amount || ""}
                     onChange={(e) => {
                       onChange("unload_events", e.target.value);
@@ -623,48 +551,43 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                     placeholder="e.g. 50"
                     required
                   />
-                </div>
+</Field>
 
-                <div className="input-group">
-                  <label>
-                    CH₄ (mol %)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-                  </label>
-                  <input
+                <Field className="input-group" label={<>CH₄ (mol %)
+                    <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
                     type="number"
                     step="0.01"
                     min="0"
                     max="100"
-                    className="mole-input"
+                   
                     value={data.ch4_content ?? ""}
                     onChange={(e) => onChange("ch4_content", e.target.value)}
                     placeholder="e.g. 85.0"
                     required
                   />
-                </div>
+</Field>
 
-                <div className="input-group">
-                  <label>CO₂ (mol %)</label>
-                  <input
+                <Field className="input-group" label="CO₂ (mol %)">
+<Input
                     type="number"
                     step="0.01"
                     min="0"
                     max="100"
-                    className="mole-input"
+                   
                     value={data.co2_content ?? ""}
                     onChange={(e) => onChange("co2_content", e.target.value)}
                     placeholder="e.g. 1.0"
                   />
-                </div>
+</Field>
 
-                <div className="input-group">
-                  <label>Control efficiency (%)</label>
-                  <input
+                <Field className="input-group" label="Control efficiency (%)">
+<Input
                     type="number"
                     step="0.1"
                     min="0"
                     max="100"
-                    className="mole-input"
+                   
                     value={data.control_efficiency ?? ""}
                     onChange={(e) => {
                       onChange("control_efficiency", e.target.value);
@@ -672,7 +595,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                     }}
                     placeholder="0"
                   />
-                </div>
+</Field>
               </div>
             </div>
           )}
@@ -682,16 +605,13 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
             <div>
 
               <div className="form-grid-2">
-                <div className="input-group">
-                  <label>
-                    Frequency (events/yr)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-                  </label>
-                  <input
+                <Field className="input-group" label={<>Frequency (events/yr)
+                    <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
                     type="number"
                     min="0"
                     step="1"
-                    className="mole-input"
+                   
                     value={data.unload_freq || data.unload_events || data.events || data.amount || ""}
                     onChange={(e) => {
                       onChange("unload_freq", e.target.value);
@@ -703,18 +623,15 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                     placeholder="e.g. 12"
                     required
                   />
-                </div>
+</Field>
 
-                <div className="input-group">
-                  <label>
-                    Tubing diameter (in)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-                  </label>
-                  <input
+                <Field className="input-group" label={<>Tubing diameter (in)
+                    <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
                     type="number"
                     step="0.001"
                     min="0.1"
-                    className="mole-input"
+                   
                     value={data.unload_diam || data.diameter || ""}
                     onChange={(e) => {
                       onChange("unload_diam", e.target.value);
@@ -723,18 +640,15 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                     placeholder="e.g. 2.5"
                     required
                   />
-                </div>
+</Field>
 
-                <div className="input-group">
-                  <label>
-                    Well Depth (ft)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-                  </label>
-                  <input
+                <Field className="input-group" label={<>Well Depth (ft)
+                    <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
                     type="number"
                     step="1"
                     min="1"
-                    className="mole-input"
+                   
                     value={data.unload_depth || data.well_depth || ""}
                     onChange={(e) => {
                       onChange("unload_depth", e.target.value);
@@ -743,18 +657,15 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                     placeholder="e.g. 5000"
                     required
                   />
-                </div>
+</Field>
 
-                <div className="input-group">
-                  <label>
-                    Surface Pressure (psig)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-                  </label>
-                  <input
+                <Field className="input-group" label={<>Surface Pressure (psig)
+                    <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
                     type="number"
                     step="0.1"
                     min="0"
-                    className="mole-input"
+                   
                     value={data.unload_press || data.pressure || ""}
                     onChange={(e) => {
                       onChange("unload_press", e.target.value);
@@ -763,60 +674,54 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                     placeholder="e.g. 150"
                     required
                   />
-                </div>
+</Field>
 
-                <div className="input-group">
-                  <label>
-                    CH₄ (mol %)
-                    <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-                  </label>
-                  <input
+                <Field className="input-group" label={<>CH₄ (mol %)
+                    <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
                     type="number"
                     step="0.01"
                     min="0"
                     max="100"
-                    className="mole-input"
+                   
                     value={data.ch4_content ?? ""}
                     onChange={(e) => onChange("ch4_content", e.target.value)}
                     placeholder="e.g. 85.0"
                     required
                   />
-                </div>
+</Field>
 
-                <div className="input-group">
-                  <label>CO₂ (mol %)</label>
-                  <input
+                <Field className="input-group" label="CO₂ (mol %)">
+<Input
                     type="number"
                     step="0.01"
                     min="0"
                     max="100"
-                    className="mole-input"
+                   
                     value={data.co2_content ?? ""}
                     onChange={(e) => onChange("co2_content", e.target.value)}
                     placeholder="e.g. 1"
                   />
-                </div>
+</Field>
 
-                <div className="input-group">
-                  <label>Well Temperature (°F)</label>
-                  <input
+                <Field className="input-group" label="Well Temperature (°F)">
+<Input
                     type="number"
                     step="0.1"
-                    className="mole-input"
+                   
                     value={data.unload_temp ?? ""}
                     onChange={(e) => onChange("unload_temp", e.target.value)}
                     placeholder="60"
                   />
-                </div>
+</Field>
 
-                <div className="input-group">
-                  <label>Control efficiency (%)</label>
-                  <input
+                <Field className="input-group" label="Control efficiency (%)">
+<Input
                     type="number"
                     step="0.1"
                     min="0"
                     max="100"
-                    className="mole-input"
+                   
                     value={data.control_efficiency ?? ""}
                     onChange={(e) => {
                       onChange("control_efficiency", e.target.value);
@@ -824,7 +729,7 @@ const UnloadingForm = ({ data, onChange, sourceType }) => {
                     }}
                     placeholder="0"
                   />
-                </div>
+</Field>
               </div>
             </div>
           )}

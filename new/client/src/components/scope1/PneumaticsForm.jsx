@@ -1,4 +1,5 @@
 import React from "react";
+import { Input, Field } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
 
 const PneumaticsForm = ({ data, onChange, sourceType }) => {
@@ -9,20 +10,17 @@ const PneumaticsForm = ({ data, onChange, sourceType }) => {
 
       {/* Device Type removed as per request */}
 
-      <div className="input-group">
-        <label>
-          Devices
-          <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-        </label>
-        <input
+      <Field className="input-group" label={<>Devices
+          <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
           type="number"
-          className="mole-input"
+         
           value={data.amount || ""}
           onChange={(e) => onChange("amount", e.target.value)}
           placeholder="Count"
           required
         />
-      </div>
+</Field>
 
       {/* Engineering Mode: Additional Inputs */}
       {isEngineering && (
@@ -30,18 +28,14 @@ const PneumaticsForm = ({ data, onChange, sourceType }) => {
           <div className="input-group">
             <label>
               Bleed rate
-              <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+              <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
             </label>
             <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 100px",
-                gap: "10px",
-              }}
+              className="grid gap-[10px] [grid-template-columns:1fr_100px] max-[600px]:[grid-template-columns:1fr]"
             >
-              <input
+              <Input
                 type="number"
-                className="mole-input"
+               
                 value={data.pneu_bleed_rate || ""}
                 onChange={(e) => onChange("pneu_bleed_rate", e.target.value)}
                 placeholder="e.g. 15.4"
@@ -58,14 +52,11 @@ const PneumaticsForm = ({ data, onChange, sourceType }) => {
             </div>
           </div>
 
-          <div className="input-group">
-            <label>
-              CH₄ (%)
-              <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-            </label>
-            <input
+          <Field className="input-group" label={<>CH₄ (%)
+              <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
               type="number"
-              className="mole-input"
+             
               value={
                 data.pneu_ch4_content !== undefined &&
                 data.pneu_ch4_content !== null
@@ -76,22 +67,19 @@ const PneumaticsForm = ({ data, onChange, sourceType }) => {
               placeholder="e.g. 85"
               required
             />
-          </div>
+</Field>
 
-          <div className="input-group">
-            <label>
-              Hours per year
-              <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-            </label>
-            <input
+          <Field className="input-group" label={<>Hours per year
+              <span className="text-[color:#b91c1c]! ml-[3px]!">*</span></>}>
+<Input
               type="number"
-              className="mole-input"
+             
               value={data.pneu_hours || ""}
               onChange={(e) => onChange("pneu_hours", e.target.value)}
               placeholder="whole month if blank"
               required
             />
-          </div>
+</Field>
         </>
       )}
     </div>

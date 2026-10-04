@@ -1,3 +1,5 @@
+import { CircleAlert, Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { Banner } from "../ui";
 import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -36,6 +38,8 @@ const GhgCloud = () => {
   }, []);
 
   useEffect(() => {
+    // no continuous animation for users who prefer reduced motion
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return undefined;
     let animationFrameId;
     const animate = () => {
       // Cloud 1 (CO2 - Orange/Grey) follows quickly
@@ -59,9 +63,9 @@ const GhgCloud = () => {
   }, []);
 
   return (
-    <div className="ghg-cloud-container">
-      <div className="ghg-cloud ch4-cloud" ref={cloud2Ref}></div>
-      <div className="ghg-cloud co2-cloud" ref={cloud1Ref}></div>
+    <div className="[position:absolute] [top:0] [left:0] [right:0] [bottom:0] [pointer-events:none] [z-index:1] [overflow:hidden]">
+      <div className="ghg-cloud [background:radial-gradient(_circle,_rgba(16,_185,_129,_0.5)_0%,_rgba(15,_23,_42,_0.2)_50%,_transparent_70%_)] [width:900px]! [height:900px]!" ref={cloud2Ref}></div>
+      <div className="ghg-cloud [background:radial-gradient(_circle,_rgba(255,_102,_0,_0.6)_0%,_rgba(100,_116,_139,_0.3)_50%,_transparent_70%_)]" ref={cloud1Ref}></div>
       <div className="ghg-noise-overlay"></div>
     </div>
   );
@@ -70,6 +74,7 @@ const GhgCloud = () => {
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
   // Forgot password modal state
@@ -78,17 +83,8 @@ const Login = () => {
   const [forgotLoading, setForgotLoading] = useState(false);
   const [forgotMsg, setForgotMsg] = useState({ text: "", type: "" });
 
-  // Intro video state
-  const [showIntro, setShowIntro] = useState(true);
-  const [introFading, setIntroFading] = useState(false);
-
   const { login, sessionExpired, setSessionExpired } = useAuth();
   const navigate = useNavigate();
-
-  const handleIntroEnd = () => {
-    setIntroFading(true);
-    setTimeout(() => setShowIntro(false), 800); // Matches CSS transition duration
-  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -131,25 +127,7 @@ const Login = () => {
   };
 
   return (
-    <div className="login-body">
-      {showIntro && (
-        <div
-          className={`login-intro-overlay ${introFading ? "intro-fade-out" : ""}`}
-        >
-          <video
-            src="/login_animation.mp4"
-            autoPlay
-            muted
-            playsInline
-            onEnded={handleIntroEnd}
-            className="login-intro-video"
-          />
-          <button className="skip-intro-btn" onClick={handleIntroEnd}>
-            Skip Intro
-          </button>
-        </div>
-      )}
-
+    <div className="[--primary:var(--color-brand-700)] [&&]:[--primary-hover:var(--color-brand-800)] [--accent:var(--color-green-500)] [--bg-page:var(--color-ink-50)] [--text-main:var(--color-ink-900)] [--text-muted:var(--color-ink-500)] [--border-light:var(--color-ink-200)] [min-height:100vh] [display:flex] [justify-content:center] [align-items:center] [background-color:var(--bg-page)] [font-family:inherit] [color:var(--text-main)] [padding:20px] [position:relative] [overflow:hidden] before:[content:''] before:[position:absolute] before:[top:-20%] before:[right:-10%] before:[width:600px] before:[height:600px] before:[border-radius:50%] before:[background:radial-gradient(_circle,_rgba(255,_102,_0,_0.04)_0%,_transparent_70%_)] before:[pointer-events:none] before:[z-index:0] after:[content:''] after:[position:absolute] after:[bottom:-20%] after:[left:-10%] after:[width:600px] after:[height:600px] after:[border-radius:50%] after:[background:radial-gradient(_circle,_rgba(16,_185,_129,_0.04)_0%,_transparent_70%_)] after:[pointer-events:none] after:[z-index:0]">
       <GhgCloud />
 
       <motion.div
@@ -159,65 +137,23 @@ const Login = () => {
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
         {/* Welcome Text */}
-        <div className="login-header">
+        <div className="[text-align:center] [margin-bottom:32px] [&_h2]:[font-size:var(--text-2xl)] [&_h2]:[font-weight:800] [&_h2]:[color:var(--text-main)] [&_h2]:[margin-bottom:8px] [&_h2]:[letter-spacing:-0.5px] [&&]:[&_p]:[color:var(--text-muted)] [&&]:[&&]:[&_p]:[font-size:var(--text-md)]">
+          <img src={`${import.meta.env.BASE_URL}carbon_tech.svg`} alt="Carbon Tech" className="[display:block] [width:48px] [height:48px] [margin:0_auto_12px]" />
           <h2>Welcome Back</h2>
           <p>Sign in to your GHG Reporting Platform</p>
         </div>
 
         {/* Inactivity Session Expiration Banner */}
         {sessionExpired && (
-          <div
-            className="session-expired-alert"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              padding: "12px 14px",
-              background: "#fffbeb",
-              border: "1px solid #fde68a",
-              borderRadius: "10px",
-              color: "#92400e",
-              fontSize: "0.85rem",
-              marginBottom: "16px",
-              lineHeight: 1.4,
-            }}
-          >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              style={{ flexShrink: 0, color: "#d97706" }}
-            >
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="12" y1="8" x2="12" y2="12"></line>
-              <line x1="12" y1="16" x2="12.01" y2="16"></line>
-            </svg>
-            <span>
-              Your session timed out after 10 minutes of inactivity. Please sign in again to resume your work.
-            </span>
-          </div>
+          <Banner tone="warning" className="mb-4">
+            Your session timed out after 10 minutes of inactivity. Please sign in again to resume your work.
+          </Banner>
         )}
 
         {/* Error Message */}
         {error && (
           <div className="error-message">
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="12" y1="8" x2="12" y2="12"></line>
-              <line x1="12" y1="16" x2="12.01" y2="16"></line>
-            </svg>
+            <CircleAlert size="18" strokeWidth="2" aria-hidden="true" />
             {error}
           </div>
         )}
@@ -243,27 +179,16 @@ const Login = () => {
               visible: { opacity: 1, y: 0 },
             }}
           >
-            <div className="input-wrapper">
-              <span className="input-icon">
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                  <polyline points="22,6 12,13 2,6"></polyline>
-                </svg>
+            <div className="[position:relative]">
+              <span className="input-icon [position:absolute] [left:16px] [top:50%] [transform:translateY(-50%)] [color:var(--color-ink-600)] [transition:color_0.3s]">
+                <Mail size={18} aria-hidden="true" />
               </span>
               <input
                 type="text"
-                className="form-control"
+                className="[width:100%] [padding:14px_16px_14px_48px] [border:1px_solid_var(--border-light)] [&&]:[border-radius:var(--radius-md)] [font-size:var(--text-md)] [color:var(--text-main)]! [transition:all_0.2s] [background:#fafafa] placeholder:[color:var(--color-ink-400)]! focus:[outline:none] focus:[border-color:var(--primary)] focus:[background:var(--color-white)] focus:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.1)] [&:focus+.input-icon]:[color:var(--primary)]!"
                 required
                 placeholder="Email Address"
+                aria-label="Email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="username"
@@ -278,45 +203,36 @@ const Login = () => {
               visible: { opacity: 1, y: 0 },
             }}
           >
-            <div className="input-wrapper">
-              <span className="input-icon">
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <rect
-                    x="3"
-                    y="11"
-                    width="18"
-                    height="11"
-                    rx="2"
-                    ry="2"
-                  ></rect>
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                </svg>
+            <div className="[position:relative]">
+              <span className="input-icon [position:absolute] [left:16px] [top:50%] [transform:translateY(-50%)] [color:var(--color-ink-600)] [transition:color_0.3s]">
+                <Lock size="18" strokeWidth="2" aria-hidden="true" />
               </span>
               <input
-                type="password"
-                className="form-control"
+                type={showPassword ? "text" : "password"}
+                className="[width:100%] [padding:14px_16px_14px_48px] [border:1px_solid_var(--border-light)] [&&]:[border-radius:var(--radius-md)] [font-size:var(--text-md)] [color:var(--text-main)]! [transition:all_0.2s] [background:#fafafa] placeholder:[color:var(--color-ink-400)]! focus:[outline:none] focus:[border-color:var(--primary)] focus:[background:var(--color-white)] focus:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.1)] [&:focus+.input-icon]:[color:var(--primary)]!"
                 required
                 placeholder="Password"
+                aria-label="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
               />
+              <button
+                type="button"
+                className="[position:absolute] [top:50%] [right:12px] [transform:translateY(-50%)] [display:inline-flex] [padding:6px] [border:0] [&&]:[border-radius:var(--radius-md)] [background:transparent] [color:var(--color-ink-500)] [cursor:pointer] hover:[background:var(--color-ink-100)] hover:[color:var(--color-ink-900)]"
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                aria-pressed={showPassword}
+              >
+                {showPassword ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
+              </button>
             </div>
           </motion.div>
 
-          <div className="login-actions-row">
+          <div className="[display:flex] [justify-content:flex-end] [margin-top:8px] [margin-bottom:8px]">
             <button
               type="button"
-              className="forgot-password-link"
+              className="[background:none] [border:none] [color:var(--primary)] [font-size:var(--text-base)] [font-weight:500] [cursor:pointer] [padding:0] [transition:color_0.2s] hover:[color:var(--primary-hover)] hover:[text-decoration:underline]"
               onClick={() => {
                 setForgotEmail(email || "");
                 setForgotMsg({ text: "", type: "" });
@@ -342,8 +258,8 @@ const Login = () => {
         </motion.form>
 
         {/* Footer / Compliance */}
-        <div className="login-footer">
-          <div className="mini-badges">
+        <div className="[margin-top:40px] [text-align:center] [border-top:1px_solid_var(--border-light)] [padding-top:24px] [&_p]:[color:var(--text-muted)] [&_p]:[font-size:var(--text-sm)]">
+          <div className="[display:flex] [justify-content:center] [gap:12px] [margin-bottom:16px]">
             <span className="badge">API Compliant</span>
             <span className="badge">ISO 14064 Ready</span>
             <span className="badge">SOC2 Secured</span>
@@ -355,7 +271,7 @@ const Login = () => {
       {/* Forgot Password Modal */}
       <AnimatePresence>
         {showForgotModal && (
-          <div className="forgot-modal-overlay" onClick={() => setShowForgotModal(false)}>
+          <div role="presentation" className="[position:fixed] [inset:0] [background:rgba(15,_23,_42,_0.6)] [backdrop-filter:blur(8px)] [display:flex] [align-items:center] [justify-content:center] [z-index:1000] [padding:20px]" onClick={() => setShowForgotModal(false)}>
             <motion.div
               className="forgot-modal-content"
               onClick={(e) => e.stopPropagation()}
@@ -364,7 +280,7 @@ const Login = () => {
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               transition={{ duration: 0.2 }}
             >
-              <div className="forgot-modal-header">
+              <div className="[margin-bottom:20px] [text-align:left] [&_h3]:[font-size:var(--text-xl)] [&_h3]:[font-weight:700] [&_h3]:[color:var(--text-main)] [&_h3]:[margin-bottom:6px] [&&]:[&&]:[&_p]:[font-size:var(--text-base)] [&&]:[&_p]:[color:var(--text-muted)] [&_p]:[line-height:1.4]">
                 <h3>Reset Your Password</h3>
                 <p>
                   Enter your account email. A notification will be dispatched to your IT Administrator to reset your credentials.
@@ -378,26 +294,14 @@ const Login = () => {
               )}
 
               <form onSubmit={handleForgotPassword}>
-                <div className="form-group" style={{ marginBottom: '16px' }}>
-                  <div className="input-wrapper">
-                    <span className="input-icon">
-                      <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                        <polyline points="22,6 12,13 2,6"></polyline>
-                      </svg>
+                <div className="form-group mb-[16px]!">
+                  <div className="[position:relative]">
+                    <span className="input-icon [position:absolute] [left:16px] [top:50%] [transform:translateY(-50%)] [color:var(--color-ink-600)] [transition:color_0.3s]">
+                      <Mail size={18} aria-hidden="true" />
                     </span>
                     <input
                       type="email"
-                      className="form-control"
+                      className="[width:100%] [padding:14px_16px_14px_48px] [border:1px_solid_var(--border-light)] [&&]:[border-radius:var(--radius-md)] [font-size:var(--text-md)] [color:var(--text-main)]! [transition:all_0.2s] [background:#fafafa] placeholder:[color:var(--color-ink-400)]! focus:[outline:none] focus:[border-color:var(--primary)] focus:[background:var(--color-white)] focus:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.1)] [&:focus+.input-icon]:[color:var(--primary)]!"
                       required
                       placeholder="Enter registered email"
                       value={forgotEmail}
@@ -407,7 +311,7 @@ const Login = () => {
                   </div>
                 </div>
 
-                <div className="forgot-modal-actions">
+                <div className="[display:flex] [gap:12px] [margin-top:20px]">
                   <button
                     type="button"
                     className="btn-secondary"
@@ -417,8 +321,8 @@ const Login = () => {
                   </button>
                   <button
                     type="submit"
-                    className="btn-primary"
-                    style={{ margin: 0, flex: 1.2 }}
+                    className="btn-primary m-[0px]! [flex:1.2]!"
+                   
                     disabled={forgotLoading}
                   >
                     {forgotLoading ? "Sending..." : "Notify IT Admin"}
