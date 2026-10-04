@@ -28,7 +28,7 @@ import { test, expect } from '@playwright/test';
 import fs from 'fs';
 import { execFileSync } from 'child_process';
 
-const FRONTEND = 'http://127.0.0.1:5173';
+const FRONTEND = process.env.E2E_BASE_URL || 'http://127.0.0.1:5173';
 const BACKEND = 'http://127.0.0.1:5000';
 const DB_PATH = 'c:/Users/samsung/Desktop/H2/new/server/ghg_app.db';
 const SCREENSHOT_DIR = 'C:/Users/samsung/Desktop/H2/test_results/screenshots';
@@ -667,6 +667,9 @@ test.describe('Advanced Scope 1 Calculations: Tier 1 & Tier 3 Full Audit', () =>
       'EQUIPMENT ID', 'PROCESS', 'ACTIVITY/FUEL', 'FACTOR TYPE', 'QUANTITY',
       'TOTAL', 'ACTIONS'
     ];
+    // uncertainty columns are opt-in since the table is 22 columns wide
+    const uncToggle = page.getByRole('button', { name: /show uncertainty columns/i });
+    if (await uncToggle.count()) await uncToggle.click();
     const headerRowText = (await page.locator('table.excel-table thead tr').first().innerText()).toUpperCase();
     for (const h of expectedHeaders) {
       expect(headerRowText).toContain(h);

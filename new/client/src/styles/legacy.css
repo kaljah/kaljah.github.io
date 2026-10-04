@@ -1,0 +1,176 @@
+/* Legacy global classes, kept until every page is migrated to src/ui (see docs/ui-modernization-plan.md). */
+
+/* Enhanced Glassmorphism & Card Utilities */
+.glass-panel {
+  background: var(--bg-card);
+  backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.22s ease;
+}
+
+.glass-panel:hover {
+  border-color: rgba(255, 255, 255, 0.98);
+}
+
+/* Card Icon Badges */
+
+/* Universal Status Badges */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.status-pill.verified, .status-pill.approved, .status-pill.achieved, .status-pill.active, .status-pill.on-track {
+  background: var(--success-bg);
+  color: var(--color-green-700);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.status-pill.pending, .status-pill.draft, .status-pill.warning {
+  background: var(--warning-bg);
+  color: var(--color-amber-700);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.status-pill.rejected, .status-pill.off-track, .status-pill.danger {
+  background: var(--danger-bg);
+  color: var(--color-red-700);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.status-pill.info, .status-pill.projected {
+  background: var(--info-bg);
+  color: var(--color-blue-600);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+
+/* Universal Component Select & Option Styling */
+.component-select,
+select.component-select {
+  width: 100%;
+  background-color: var(--color-white);
+  border: 1px solid var(--border-color, var(--color-ink-200));
+  border-radius: var(--radius-md);
+  padding: 10px 36px 10px 14px;
+  font-size: var(--text-base);
+  font-family: inherit;
+  font-weight: 500;
+  color: var(--text-primary, var(--color-ink-900));
+  line-height: 1.4;
+  cursor: pointer;
+  outline: none;
+  box-sizing: border-box;
+  box-shadow: var(--shadow-xs);
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+  appearance: none;
+  appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+}
+
+.component-select:hover,
+select.component-select:hover {
+  border-color: rgba(255, 102, 0, 0.45);
+  background-color: var(--color-white);
+  box-shadow: 0 2px 8px rgba(255, 102, 0, 0.08);
+}
+
+.component-select:focus,
+select.component-select:focus {
+  border-color: var(--accent-color, #f60);
+  background-color: var(--color-white);
+  box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.15);
+  outline: none;
+}
+
+.component-select:disabled,
+select.component-select:disabled {
+  background-color: var(--color-ink-50);
+  border-color: var(--color-ink-200);
+  color: var(--text-muted, var(--color-ink-400));
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Global Select Options Styling */
+.component-select option,
+select.component-select option,
+select option {
+  background-color: var(--color-white);
+  color: var(--text-primary, var(--color-ink-900));
+  font-size: var(--text-base);
+  font-family: inherit;
+  font-weight: 500;
+  padding: 10px 14px;
+}
+
+.component-select option:hover,
+.component-select option:checked,
+select.component-select option:hover,
+select.component-select option:checked,
+select option:hover,
+select option:checked {
+  background-color: rgba(255, 102, 0, 0.1);
+  color: var(--color-link);
+  font-weight: 600;
+}
+
+.component-select option:disabled,
+select.component-select option:disabled,
+select option:disabled {
+  color: var(--text-muted, var(--color-ink-400));
+  background-color: var(--color-ink-50);
+}
+
+/* ============================================================
+   GLOBAL MOBILE RESPONSIVE UTILITIES
+   ============================================================ */
+@media (max-width: 768px) {
+  html, body {
+    height: 100dvh;
+  }
+
+  .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Temporary: these classes were used (34x) but never defined. Replaced by <Button variant> in Phase 4. */
+
+/* Foreign portals (CustomDropdown, MultiSelectDropdown) must stay clickable while a Radix modal
+   sets pointer-events: none on the body. */
+.dropdown-portal,
+[role="listbox"] {
+  pointer-events: auto;
+}
+
+/* One page-title size and weight for every page (was 28-48px at weights 700-900).
+   Higher specificity than the per-page rules; removed when pages move to PageHeader. */
+h1.grid-title,
+h1.section-title,
+h1.qa-title,
+h1.settings-title,
+h1.ua-title,
+.reports-header h1,
+.page-header h1 {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  letter-spacing: normal;
+  line-height: 1.25;
+}

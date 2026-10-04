@@ -1,6 +1,7 @@
 import { chromium } from '@playwright/test';
 import path from 'path';
 import os from 'os';
+import fs from 'fs';
 
 const CHROMIUM_1208 = path.join(
   os.homedir(),
@@ -10,14 +11,14 @@ const CHROMIUM_1208 = path.join(
 
 async function globalAuth() {
   const browser = await chromium.launch({
-    executablePath: CHROMIUM_1208,
+    ...(fs.existsSync(CHROMIUM_1208) ? { executablePath: CHROMIUM_1208 } : {}),
     headless: true,
   });
   const context = await browser.newContext();
   const page = await context.newPage();
 
   console.log('Navigating to login page...');
-  await page.goto('http://127.0.0.1:5173/login', { waitUntil: 'domcontentloaded' });
+  await page.goto(`${process.env.E2E_BASE_URL || 'http://127.0.0.1:5173'}/login`, { waitUntil: 'domcontentloaded' });
   await page.waitForTimeout(1500);
 
   const skipBtn = page.locator('button.skip-intro-btn, button:has-text("Skip Intro")');

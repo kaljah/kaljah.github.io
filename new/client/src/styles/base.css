@@ -1,0 +1,166 @@
+/* Base styles. Unlayered on purpose: page stylesheets are unlayered too, and the
+   focus ring must beat the legacy `outline: none` rules until pages are migrated. */
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background-color: var(--bg-body);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  background-image:
+    radial-gradient(at 0% 0%, hsla(28deg, 100%, 74%, 0.08) 0, transparent 45%),
+    radial-gradient(at 50% 0%, hsla(225deg, 39%, 30%, 0.04) 0, transparent 50%),
+    radial-gradient(at 100% 100%, hsla(339deg, 49%, 30%, 0.03) 0, transparent 40%);
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+/* Modern Minimal Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-ink-300);
+  border-radius: 999px;
+  transition: background 0.2s ease;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-ink-400);
+}
+
+/* Tabular Numerals for Data Integrity */
+.num-tabular, .kpi-number, .stat-value {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  color: var(--text-primary, var(--color-ink-900));
+}
+
+/* Visible keyboard focus: 2px --color-focus ring (3.56:1 on white). Replaces the 18% glow (1.22:1). */
+:focus-visible {
+  outline: 2px solid var(--color-focus) !important;
+  outline-offset: 2px;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline-offset: 0;
+}
+
+::selection {
+  background: var(--color-brand-100);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================================================
+   Global Print Stylesheet (Ctrl + P / Physical & PDF Report Printing)
+   ========================================================================== */
+@media print {
+  /* Hide navigation, toolbars, buttons, modals, and toasts */
+  .sidebar,
+  .app-sidebar,
+  .topbar,
+  header,
+  nav,
+  button,
+  .btn,
+  .btn-primary,
+  .btn-secondary,
+  .btn-outline,
+  .modal,
+  .modal-overlay,
+  .modal-backdrop,
+  .toast,
+  .toast-container,
+  #offline-banner,
+  .action-buttons,
+  .pagination,
+  .filter-bar,
+  .search-box {
+    display: none !important;
+  }
+
+  /* Reset layout constraints for clean page printing */
+  html,
+  body,
+  #root,
+  .app-container,
+  .main-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: var(--color-white) !important;
+    color: var(--color-ink-900) !important;
+    box-shadow: none !important;
+  }
+
+  /* Prevent awkward page splits inside charts, metric cards, and table rows */
+  .glass-card,
+  .glass-panel,
+  .kpi-card,
+  .chart-container,
+  table,
+  tr,
+  figure {
+    break-inside: avoid !important;
+    box-shadow: none !important;
+    border: 1px solid var(--color-ink-300) !important;
+  }
+
+  /* Table styling for crisp print readability */
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  th,
+  td {
+    border: 1px solid var(--color-ink-300) !important;
+    padding: 6px 8px !important;
+    color: var(--color-ink-900) !important;
+  }
+
+  th {
+    background-color: var(--color-ink-100) !important;
+    font-weight: 700 !important;
+  }
+}
+
+@keyframes ui-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

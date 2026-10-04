@@ -12,18 +12,18 @@ export class DashboardPage {
     this.page = page;
 
     // Header & Hero Overview
-    this.gridTitle = page.locator('.grid-title');
-    this.liveBadge = page.locator('.live-badge');
+    this.gridTitle = page.getByRole('heading', { name: 'GHG Emissions Dashboard' });
+    this.liveBadge = page.getByText(/Live content|Syncing filters/);
     this.heroCard = page.locator('.hero-card');
     this.locationBadge = page.locator('.location-badge');
     this.exportPdfButton = page.locator('button:has-text("Export Executive Brief")');
 
     // Key Performance Indicators (KPIs)
-    this.grossEmissionsValue = page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value');
-    this.netEmissionsValue = page.locator('.stat-item:has-text("Net Emissions") .stat-value');
-    this.methaneValue = page.locator('.stat-item:has-text("Total CH4") .stat-value');
-    this.intensityValue = page.locator('.stat-item:has-text("Performance Intensity") .stat-value');
-    this.mitigationLabel = page.locator('.stat-item:has-text("Net Emissions") .stat-sublabel');
+    this.grossEmissionsValue = page.locator('[data-testid="kpi-gross"] [data-testid="kpi-value"]');
+    this.netEmissionsValue = page.locator('[data-testid="kpi-net"] [data-testid="kpi-value"]');
+    this.methaneValue = page.locator('[data-testid="kpi-ch4"] [data-testid="kpi-value"]');
+    this.intensityValue = page.locator('[data-testid="kpi-intensity"] [data-testid="kpi-value"]');
+    this.mitigationLabel = page.locator('[data-testid="kpi-net"] [data-testid="kpi-footnote"]');
 
     // GWP Horizon Toggles
     this.gwp100Btn = page.locator('button:has-text("GWP-100")');
@@ -38,12 +38,12 @@ export class DashboardPage {
     this.regionFilter = page.locator('.filter-wrapper').filter({ hasText: /Region/i });
 
     // Review / Pending banner
-    this.pendingReviewBanner = page.locator('.pending-review-banner');
-    this.reviewNowBtn = page.locator('.pending-review-banner button:has-text("Review Now")');
+    this.pendingReviewBanner = page.getByText(/Pending records awaiting review|Previewing pending/);
+    this.reviewNowBtn = page.getByRole('button', { name: /Review now/i });
 
     // Visual Sections
     this.emissionsTrendSection = page.locator('.card:has-text("Emissions Trend"), .trend-chart-card');
-    this.breakdownSection = page.locator('.card:has-text("Operational Breakdown"), .breakdown-card');
+    this.breakdownSection = page.locator('section:has-text("Detailed breakdown")');
     this.hierarchicalTable = page.locator('.hierarchical-table, .breakdown-table');
   }
 

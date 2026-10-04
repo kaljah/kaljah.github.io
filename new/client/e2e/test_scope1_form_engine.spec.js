@@ -17,7 +17,7 @@ import path from 'path';
 import fs from 'fs';
 import { execFileSync } from 'child_process';
 
-const FRONTEND = 'http://127.0.0.1:5173';
+const FRONTEND = process.env.E2E_BASE_URL || 'http://127.0.0.1:5173';
 const BACKEND = 'http://127.0.0.1:5000';
 const DB_PATH = 'c:/Users/samsung/Desktop/H2/new/server/ghg_app.db';
 const SCREENSHOT_DIR = 'C:/Users/samsung/Desktop/H2/test_results/screenshots';

@@ -8,6 +8,21 @@
 
 ---
 
+## Correction (2026-10-02)
+
+An audit of the code against this document found that several claims below were not true of the shipped application. They are corrected here and tracked in `docs/ui-modernization-plan.md` (section 2.1, UI-09).
+
+| Claim below | Verified state on 2026-10-02 | Status after the UI modernization branch |
+|---|---|---|
+| Tailwind focus rings on all controls | No `focus:ring` classes existed; a global rule removed the outline and drew an 18% orange glow (1.22:1) | Global 2px `--color-focus` ring (3.56:1) in `styles/base.css` |
+| Modals trap focus and return it on close | `Modal`/`ConfirmModal` had no focus management; `Drawer` only locked scroll | All three are adapters over Radix Dialog (focus trap and return, Escape, scroll lock) |
+| Toasts use `aria-live` / `role="status"` | Neither was present | `Toast` has a labeled live region; errors use `role="alert"` |
+| Colors meet WCAG AA | White on `#ff6600` is 2.94:1; `#10b981` text on white 2.54:1; `#94a3b8` 2.56:1 | Primary fill darkened to `#c2410c` (5.18:1); KPI values neutral; remaining text-contrast items are tracked per page |
+| Full keyboard navigability | Manage Data tabs were `div` elements with `onClick` and no `tabIndex` | Converted to buttons; 21+ other clickable non-semantic elements remain (tracked by `npm run ui:metrics`) |
+| No `prefers-reduced-motion` handling | Not mentioned; none existed | Global reduced-motion rule in `styles/base.css` |
+
+Automated verification (2026-10-02): axe-core 4.x with the wcag2a, wcag2aa and wcag21aa rule sets reports 0 violations on all 13 admin routes (`/`, `/carbon-intensity`, `/methane-intensity`, `/sbti`, `/methane-explorer`, `/emissions`, `/manage-data`, `/reference-data`, `/reports`, `/uncertainty`, `/qa-dashboard`, `/audit-trail`, `/settings`) and on the component gallery with dialog, side panel, confirm and menu open. `e2e/a11y.spec.js` repeats this scan with zero serious or critical findings allowed. Also scanned with zero violations: the login page, the IT-role page (`/user-management`, run against a throwaway database with a seeded IT account; opt-in spec via `E2E_IT_EMAIL` / `E2E_IT_PASSWORD`), the Manage Data and Scope 1 import wizards while open, and the Scope 2 and Scope 3 forms (`e2e/a11y-dialogs.spec.js`). Not covered: manual screen-reader testing and the remaining modals that open only after data-dependent steps.
+
 ## 1. Executive Accessibility Summary
 
 The frontend application (`new/client/src/`) was evaluated against the W3C Web Content Accessibility Guidelines (WCAG) 2.1 Level AA criteria.
