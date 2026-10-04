@@ -1193,3 +1193,9 @@ Legacy page and component CSS was moved into Tailwind arbitrary-property utiliti
 - Tests: Dashboard test hooks (`grid-title`, `live-badge`, `detailed-table-card`, `pending-*`, `stat-label`) are kept as plain marker classes and the dashboard POM uses semantic selectors. Remaining e2e failures are the bulk-upload and Scope 1 audit specs and hard-coded dashboard numbers; all fail on the baseline too.
 - `scripts/inline-conditional-to-tailwind.mjs` moves inline styles, including conditional values, into utilities with a selector reach check against legacy `!important` rules.
 - Branch is not merged.
+
+### Status update: Emissions, CarbonIntensity, QADashboard
+- Emissions page shell, CarbonIntensity (shared pages/intensity/IntensityParts: KpiTile, HeroPanel, ChartCard, Heatmap) and QADashboard (pages/qa/QaPanels, kit Tabs and ConfirmDialog) are on the kit; QADashboard.css is deleted and Emissions.css shrank to the shared form styles.
+- CarbonIntensity.css stays until MethaneIntensity moves onto IntensityParts (it still uses hero-card, kpi-card and the heatmap rules).
+- Metrics: CSS 4,894 lines, inline styles 137, inline SVGs 0, !important 36 (outside base.css and print/reduced-motion).
+- Stable test hooks were kept as marker classes (kpi-card, cbam-section, chart-grid, view-btn, heatmap-*, scope-breakdown) so the e2e audits still find them.
