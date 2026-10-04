@@ -1348,7 +1348,7 @@ const DashboardEnhanced = () => {
               <div
                 className="chart-container"
                 style={{
-                  height: "170px",
+                  height: "195px",
                   width: "100%",
                   minWidth: 0,
                   position: "relative",
@@ -1356,9 +1356,11 @@ const DashboardEnhanced = () => {
               >
                 <PieChartWrapper
                   data={activityChartData}
-                  height={170}
+                  height={195}
                   innerRadius={50}
                   outerRadius={75}
+                  centerSub="tCO₂e"
+                  formatValue={formatCompactNumber}
                 />
               </div>
             </div>
@@ -1369,7 +1371,7 @@ const DashboardEnhanced = () => {
               <div
                 className="chart-container"
                 style={{
-                  height: "170px",
+                  height: "195px",
                   width: "100%",
                   minWidth: 0,
                   position: "relative",
@@ -1377,9 +1379,11 @@ const DashboardEnhanced = () => {
               >
                 <PieChartWrapper
                   data={sourceChartData}
-                  height={170}
+                  height={195}
                   innerRadius={50}
                   outerRadius={75}
+                  centerSub="tCO₂e"
+                  formatValue={formatCompactNumber}
                 />
               </div>
             </div>

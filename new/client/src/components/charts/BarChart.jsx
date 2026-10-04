@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
   BarChart as RechartsBar,
   Bar,
+  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -11,6 +12,15 @@ import {
 } from "recharts";
 import "./ChartWrappers.css";
 
+const MODERN_BAR_PALETTE = [
+  "#ff6600",
+  "#2563eb",
+  "#10b981",
+  "#8b5cf6",
+  "#f59e0b",
+  "#06b6d4",
+];
+
 export const BarChart = ({
   data,
   dataKey,
@@ -19,19 +29,14 @@ export const BarChart = ({
   xKey = "name",
   xAxisKey,
   title,
-  color = "#10b981",
+  color = "#ff6600",
   height = 300,
   showLegend = true,
-  formatValue = (val) => {
-    if (val === null || val === undefined || isNaN(val)) return "0";
-    const num = Number(val);
-    if (!isFinite(num)) return "0";
-    if (Math.abs(num) >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
-    if (Math.abs(num) >= 1000) return `${(num / 1000).toFixed(1)}k`;
-    return num.toLocaleString();
-  },
+  formatValue,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
+  const [activeBarKey, setActiveBarKey] = useState(null);
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -39,27 +44,80 @@ export const BarChart = ({
   const finalXKey = xAxisKey || xKey || "name";
   const finalDataKey = dataKey || barKey || "value";
 
+  const defaultFormat = (val) => {
+    if (val === null || val === undefined || isNaN(val)) return "0";
+    const num = Number(val);
+    if (!isFinite(num)) return "0";
+    if (Math.abs(num) >= 1_000_000) return `${(num / 1_000_000).toFixed(1)}M`;
+    if (Math.abs(num) >= 1_000) return `${(num / 1_000).toFixed(1)}k`;
+    return num.toLocaleString(undefined, { maximumFractionDigits: 1 });
+  };
+
+  const valueFormatter = formatValue || defaultFormat;
+
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
-      const label = payload[0].payload && payload[0].payload[finalXKey]
-        ? payload[0].payload[finalXKey]
-        : "";
+      const label =
+        payload[0].payload && payload[0].payload[finalXKey] !== undefined
+          ? payload[0].payload[finalXKey]
+          : "";
+
       return (
-        <div className="custom-tooltip">
-          <p className="tooltip-label">{label}</p>
-          {payload.map((entry, idx) => (
-            <p
-              key={idx}
-              className="tooltip-value"
-              style={{ color: entry.color || entry.fill }}
-            >
-              {entry.name || entry.dataKey}: {formatValue(entry.value)}
-            </p>
-          ))}
+        <div className="modern-chart-tooltip">
+          <div className="tooltip-header">
+            <span className="tooltip-label">{label}</span>
+            <span className="tooltip-badge">
+              {payload.length} {payload.length === 1 ? "value" : "breakdowns"}
+            </span>
+          </div>
+          <div className="tooltip-items-list">
+            {payload.map((entry, idx) => (
+              <div key={idx} className="tooltip-item-row">
+                <div className="tooltip-item-left">
+                  <span
+                    className="tooltip-color-dot"
+                    style={{ backgroundColor: entry.color || entry.fill }}
+                  />
+                  <span title={entry.name || entry.dataKey}>
+                    {entry.name || entry.dataKey}
+                  </span>
+                </div>
+                <div className="tooltip-item-right">
+                  <span>{valueFormatter(entry.value)}</span>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       );
     }
     return null;
+  };
+
+  const renderLegend = ({ payload }) => {
+    if (!payload || payload.length === 0) return null;
+    return (
+      <div className="modern-chart-legend">
+        {payload.map((entry, idx) => {
+          const isDimmed =
+            activeBarKey !== null && activeBarKey !== entry.dataKey;
+          return (
+            <div
+              key={`legend-${idx}`}
+              className={`legend-item-pill ${isDimmed ? "dimmed" : ""}`}
+              onMouseEnter={() => setActiveBarKey(entry.dataKey)}
+              onMouseLeave={() => setActiveBarKey(null)}
+            >
+              <span
+                className="legend-item-dot"
+                style={{ backgroundColor: entry.color }}
+              />
+              <span className="legend-item-name">{entry.value}</span>
+            </div>
+          );
+        })}
+      </div>
+    );
   };
 
   if (!isMounted) {
@@ -75,61 +133,127 @@ export const BarChart = ({
 
   if (!data || data.length === 0) {
     return (
-      <div className="chart-wrapper empty">
-        <div
-          style={{
-            height,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "var(--text-muted, #94a3b8)",
-          }}
-        >
-          No data available
+      <div
+        className="chart-wrapper empty"
+        style={{ height: typeof height === "number" ? `${height}px` : height }}
+      >
+        <div className="chart-empty-content">
+          <div className="chart-empty-icon">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="12" y1="20" x2="12" y2="10" />
+              <line x1="18" y1="20" x2="18" y2="4" />
+              <line x1="6" y1="20" x2="6" y2="16" />
+            </svg>
+          </div>
+          <span>No benchmark data available</span>
         </div>
       </div>
     );
   }
 
+  const hasMultipleBars = bars && bars.length > 0;
+
   return (
-    <div className="chart-wrapper">
+    <div
+      className="chart-wrapper"
+      style={{
+        height: "100%",
+        width: "100%",
+        minWidth: 0,
+        padding: 0,
+        background: "transparent",
+        boxShadow: "none",
+        border: "none",
+      }}
+    >
       {title && <h3 className="chart-title">{title}</h3>}
-      <ResponsiveContainer width="100%" height={height}>
-        <RechartsBar data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+      <ResponsiveContainer width="100%" height={height} debounce={100}>
+        <RechartsBar
+          data={data}
+          margin={{ top: 12, right: 12, left: -4, bottom: 4 }}
+        >
           <CartesianGrid
-            strokeDasharray="3 3"
-            stroke="#e2e8f0"
+            strokeDasharray="4 4"
+            stroke="rgba(226, 232, 240, 0.75)"
             vertical={false}
           />
+
           <XAxis
             dataKey={finalXKey}
             stroke="#cbd5e1"
-            tick={{ fill: "#475569", fontSize: 11, fontWeight: 600 }}
+            tick={{ fill: "#64748b", fontSize: 11, fontWeight: 600 }}
             axisLine={false}
             tickLine={false}
+            dy={8}
           />
+
           <YAxis
             stroke="#cbd5e1"
-            tick={{ fill: "#475569", fontSize: 11, fontWeight: 600 }}
+            tick={{ fill: "#64748b", fontSize: 11, fontWeight: 600 }}
             axisLine={false}
             tickLine={false}
-            tickFormatter={formatValue}
+            tickFormatter={valueFormatter}
+            dx={-4}
           />
-          <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(241, 245, 249, 0.6)" }} />
-          {showLegend && <Legend />}
-          {bars && bars.length > 0 ? (
-            bars.map((b, idx) => (
-              <Bar
-                key={idx}
-                dataKey={b.dataKey}
-                name={b.name || b.dataKey}
-                fill={b.color || color}
-                stackId={b.stackId}
-                radius={b.stackId ? [0, 0, 0, 0] : [6, 6, 0, 0]}
-              />
-            ))
+
+          <Tooltip
+            content={<CustomTooltip />}
+            cursor={{ fill: "rgba(241, 245, 249, 0.65)", radius: 6 }}
+          />
+
+          {showLegend && hasMultipleBars && (
+            <Legend content={renderLegend} verticalAlign="bottom" />
+          )}
+
+          {hasMultipleBars ? (
+            bars.map((b, idx) => {
+              const bKey = b.dataKey;
+              const isDimmed = activeBarKey !== null && activeBarKey !== bKey;
+              const barColor =
+                b.color ||
+                b.fill ||
+                MODERN_BAR_PALETTE[idx % MODERN_BAR_PALETTE.length];
+              const isTopInStack =
+                !b.stackId || idx === bars.length - 1;
+
+              return (
+                <Bar
+                  key={idx}
+                  dataKey={bKey}
+                  name={b.name || bKey}
+                  fill={barColor}
+                  stackId={b.stackId}
+                  maxBarSize={44}
+                  radius={isTopInStack ? [6, 6, 0, 0] : [0, 0, 0, 0]}
+                  opacity={isDimmed ? 0.35 : 1}
+                  animationDuration={800}
+                />
+              );
+            })
           ) : (
-            <Bar dataKey={finalDataKey} fill={color} radius={[6, 6, 0, 0]} />
+            <Bar
+              dataKey={finalDataKey}
+              fill={color}
+              maxBarSize={44}
+              radius={[6, 6, 0, 0]}
+              animationDuration={800}
+            >
+              {data.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={entry.color || entry.fill || color}
+                />
+              ))}
+            </Bar>
           )}
         </RechartsBar>
       </ResponsiveContainer>
@@ -138,4 +262,3 @@ export const BarChart = ({
 };
 
 export default BarChart;
-

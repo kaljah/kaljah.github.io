@@ -764,8 +764,8 @@ const MethaneIntensity = () => {
             </div>
           </div>
 
-          {/* Horizontal 4-KPI Grid */}
-          <div className="kpi-grid-4">
+          {/* Horizontal 3-KPI Grid */}
+          <div className="kpi-grid">
             <div className="kpi-card">
               <div className="kpi-header">
                 <div className="kpi-icon ch4">
@@ -954,48 +954,6 @@ const MethaneIntensity = () => {
                   <strong>
                     {formatNumber(stats.totalFlaringVolume, 0)} m³
                   </strong>
-                </span>
-              </div>
-            </div>
-
-            <div className="kpi-card">
-              <div className="kpi-header">
-                <div
-                  className="kpi-icon wec"
-                  style={{
-                    background: "rgba(239, 68, 68, 0.1)",
-                    color: "#ef4444",
-                  }}
-                >
-                  <AlertTriangle size={20} />
-                </div>
-                <span className="kpi-label">EPA WEC Liability</span>
-              </div>
-              <div className="kpi-value-container">
-                <span
-                  className="total-value"
-                  style={{
-                    color: !stats.wecAssessed ? "#64748b" : stats.totalWecFeeUsd > 0 ? "#ef4444" : "#10b981",
-                  }}
-                >
-                  {stats.wecAssessed ? `$${formatNumber(stats.totalWecFeeUsd, 0)}` : "—"}
-                </span>
-                <span className="kpi-unit">
-                  {stats.wecAssessed ? "USD Est." : stats.wecReason || "Select a single year"}
-                </span>
-              </div>
-              <div className="kpi-footer">
-                <span>
-                  Rate:{" "}
-                  <strong>
-                    {stats.wecRate
-                      ? `$${formatNumber(stats.wecRate, 0)}`
-                      : selectedYear === "all"
-                        ? "per year"
-                        : "—"}
-                    /t CH₄
-                  </strong>{" "}
-                  (CAA §136, from 2034 emissions)
                 </span>
               </div>
             </div>

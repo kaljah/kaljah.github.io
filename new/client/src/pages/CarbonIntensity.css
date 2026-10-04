@@ -593,6 +593,7 @@
 
 /* Responsive adjustments */
 @media (max-width: 1200px) {
+  .kpi-grid,
   .kpi-grid-4 {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -602,6 +603,7 @@
 }
 
 @media (max-width: 768px) {
+  .kpi-grid,
   .kpi-grid-4 {
     grid-template-columns: 1fr;
   }
