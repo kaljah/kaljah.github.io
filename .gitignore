@@ -112,3 +112,27 @@ test_results/
 **/test-results/
 playwright-report/
 **/storageState.json
+
+# Archive directory for deprecated scratch scripts
+archive/
+
+# Antigravity IDE state (machine-local, never commit)
+/brain/
+/annotations/
+/conversations/
+/builtin/
+/mcp/
+/bin/
+/.antigravity/
+/agyhub_summaries_proto.pb
+/antigravity_state.pbtxt
+/mcp_config.json
+/mcp_config.json.backup
+
+# Generated outputs and archives
+*.rar
+*.log
+graphify-out/
+new/server/audit_*_bugs*.json
+new/server/upload_jobs/
+new/server/backups/
