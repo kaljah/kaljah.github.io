@@ -100,6 +100,7 @@ Other: `new/setup.bat` / `new/start_all.bat` (Windows native launch scripts for 
   - Unit conversions use canonical formulas in `calculations/units.py`.
   - Gas compositions are treated as volume/mole fractions directly without double percentage division.
   - `compute_emissions` tries the dispatcher first and falls back to legacy factor math (`server_default` / `server_specific` / `server_custom_factor`) for zero activity, entered Tier 3 factors, saved custom factors and processes the dispatcher does not model. This is intentional, not dead code (11 uses in ~2,500 tests; none on the API Compendium exhibit tests). Set the `calculations.legacy_engine` logger to DEBUG to see each use.
+  - `CalculationDispatcher._dispatch_impl` is a flat `if/elif` chain over process types; each branch body lives in a function in `calculations/dispatcher_branches_{combustion,venting,fugitive}.py` (first argument is the dispatcher; `dispatcher.py` imports them last). Add a new process family by adding a branch there. Calculator classes are likewise split across `vented_*.py` and re-exported from `vented.py` / `vented_production.py`.
   - Dispatcher (`calculations/dispatcher.py`) maps process-type aliases (e.g. `flaring`, `tank_flashing`, `compressor_seal`) to API-Compendium-2021 calculators in `combustion.py`, `vented.py`, `fugitive.py`, `midstream.py`, `indirect.py` and `stoichiometry.py`.
   - Zero-activity/throughput records cleanly compute zero emissions.
 - **Scope 2 Dual Reporting Architecture.**
