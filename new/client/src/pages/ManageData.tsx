@@ -1439,9 +1439,9 @@ const ManageDataInner: React.FC = () => {
             <div className="manage-container">
                 <div className="manage-layout mx-auto grid w-full max-w-[1600px] items-start gap-6 p-4 md:grid-cols-[240px_1fr] md:p-6">
                     {/* Sidebar Navigation */}
-                    <Card as="aside" className="p-4 md:sticky md:top-6">
+                    <Card as="aside" className="min-w-0 p-4 md:sticky md:top-6">
                         <h3 className="m-0 mb-4 ml-3 text-sm font-semibold uppercase tracking-widest text-text-secondary">Management</h3>
-                        <nav aria-label="Manage data sections" className="flex flex-col gap-1">
+                        <nav aria-label="Manage data sections" className="flex flex-col gap-1 max-md:flex-row max-md:overflow-x-auto max-md:pb-1">
                             {NAV.map((n) => (
                                 <button
                                     key={n.id}
@@ -1449,7 +1449,7 @@ const ManageDataInner: React.FC = () => {
                                     aria-current={activeTab === n.id ? 'page' : undefined}
                                     onClick={() => handleTabChange(n.id)}
                                     className={cn(
-                                        "manage-nav-item flex w-full cursor-pointer items-center justify-between gap-3 rounded-md border-0 bg-transparent px-4 py-3 text-left text-base font-medium text-text-secondary transition-colors hover:bg-ink-100 hover:text-text",
+                                        "manage-nav-item flex w-full cursor-pointer items-center justify-between gap-3 rounded-md border-0 bg-transparent px-4 py-3 text-left text-base font-medium text-text-secondary transition-colors hover:bg-ink-100 hover:text-text max-md:w-auto! max-md:shrink-0 max-md:whitespace-nowrap",
                                         activeTab === n.id && "active bg-brand-50 font-semibold text-link hover:bg-brand-50 hover:text-link",
                                     )}
                                 >

@@ -587,7 +587,7 @@ const Reports: React.FC = () => {
         description={
           <>
             Emission database and exports. Complete history of all recorded emissions and compliance data.{" "}
-            <span className="font-semibold text-text">
+            <span className="whitespace-nowrap font-semibold text-text">
               Total records: {totalRecords} | Showing: {emissions.length}
             </span>
           </>
