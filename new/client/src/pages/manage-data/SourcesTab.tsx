@@ -68,7 +68,7 @@ const SourcesTab: React.FC<SourcesTabProps> = ({
       Manage operational equipment and emission sources.
     </p>
 
-    <div className="grid-forms" style={{ gridTemplateColumns: "repeat(3, 1fr)" }}>
+    <div className="grid-forms md:[grid-template-columns:repeat(3,1fr)]!">
       <Field
         className="input-group"
         label={

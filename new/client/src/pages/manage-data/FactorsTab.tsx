@@ -72,7 +72,7 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
   workbench,
 }) => (
   <div className="manage-card glass-panel">
-    <div className="flex! justify-between! items-start! mb-[32px]!">
+    <div className="flex! flex-wrap! justify-between! items-start! gap-[12px]! mb-[32px]!">
       <div>
         <h2 className="mb-[8px]! font-bold!">Custom Emission Factors</h2>
         <p className="text-[color:var(--text-secondary)]! m-[0px]!">
@@ -89,6 +89,7 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
           padding: "8px 16px",
           fontSize: "0.9rem",
           width: "auto",
+          whiteSpace: "nowrap",
         }}
       >
         <Upload size={16} /> Bulk Import (CSV)
@@ -96,7 +97,7 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
     </div>
 
     {/* Create/Edit Form */}
-    <div className="grid-forms">
+    <div className="grid-forms md:[grid-template-columns:repeat(3,1fr)]!">
       <Field className="input-group" label="Factor Name">
         <Input
           type="text"
@@ -198,7 +199,7 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
           step="0.1"
         />
       </Field>
-      <div className="input-group [grid-column:span_2]!">
+      <div className="input-group md:[grid-column:span_2]!">
         <label>Lab Certification / Source Reference</label>
         <Input
           type="text"
@@ -208,7 +209,7 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
           placeholder="e.g. Lab GC Report #2026-ARZ-01 / ISO 17025 / EPD Ref"
         />
       </div>
-      <div className="input-group [grid-column:span_3]!">
+      <div className="input-group md:[grid-column:span_3]!">
         <label>Description & Technical Justification</label>
         <Textarea
           name="description"
@@ -226,7 +227,7 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
       <h4 className="m-[0_0_15px_0]! text-[length:1rem]! flex! items-center! gap-[8px]!">
         <Database size={16} /> EF Uncertainty Workbench (ISO 14064-1 compliant)
       </h4>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "15px" }}>
+      <div className="grid grid-cols-1 gap-[15px] md:grid-cols-3">
         <div className="input-group">
           <label className="text-[length:0.8rem]!">Meter Precision (±%)</label>
           <Input

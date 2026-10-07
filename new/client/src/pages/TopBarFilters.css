@@ -11,8 +11,8 @@
 
 .dashboard-filters .filter-wrapper {
   min-width: 105px;
-  max-width: 140px;
-  flex: 1;
+  max-width: 220px; /* size to the label ("All Supply Chains") */
+  flex: 0 0 auto;
 }
 
 @media (max-width: 768px) {
