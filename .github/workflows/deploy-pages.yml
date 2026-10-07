@@ -47,6 +47,16 @@ jobs:
       - name: Install backend dependencies
         run: pip install -r requirements.txt pytest pytest-timeout hypothesis
 
+      - name: Reject tracked machine-local and generated files
+        working-directory: .
+        run: |
+          bad=$(git ls-files | grep -E '^(brain|annotations|conversations|builtin|mcp|bin)/|\.rar$|\.log$|\.db$|^graphify-out/' || true)
+          if [ -n "$bad" ]; then
+            echo "These files must not be tracked (see .gitignore):"
+            echo "$bad"
+            exit 1
+          fi
+
       - name: Backend module size ratchet
         run: python scripts/loc_ratchet.py --check
 
