@@ -136,3 +136,6 @@ graphify-out/
 new/server/audit_*_bugs*.json
 new/server/upload_jobs/
 new/server/backups/
+
+# Generated bundle analyser output
+new/client/stats.html
