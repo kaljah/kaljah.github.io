@@ -14,6 +14,7 @@
     "e2e:smoke": "playwright test e2e/deep_user_audit/deep_user_journey.spec.js e2e/deep_user_audit/deep_business_functionality.spec.js",
     "e2e:full": "playwright test e2e/deep_user_audit/",
     "typecheck": "tsc --noEmit",
+    "check:ts": "node scripts/check-no-js.mjs",
     "lint:css": "stylelint \"src/styles/**/*.css\" \"src/ui/**/*.css\" \"src/app/**/*.css\"",
     "ui:metrics": "node scripts/ui-metrics.mjs"
   },

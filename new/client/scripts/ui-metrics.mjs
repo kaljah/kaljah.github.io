@@ -18,7 +18,9 @@ const walk = (dir, out = []) => {
 
 const files = walk(SRC);
 const css = files.filter((f) => extname(f) === ".css" && !/[\/]styles[\/]tokens\.css$/.test(f));
-const code = files.filter((f) => [".jsx", ".js"].includes(extname(f)));
+// The client is TypeScript; .jsx/.js are kept so any leftover legacy file is still counted.
+const code = files.filter((f) => [".jsx", ".js", ".tsx", ".ts"].includes(extname(f)));
+const jsx = code.filter((f) => [".jsx", ".tsx"].includes(extname(f)));
 const read = (f) => readFileSync(f, "utf8");
 const count = (files_, re) => files_.reduce((n, f) => n + (read(f).match(re) || []).length, 0);
 
@@ -37,14 +39,13 @@ function importantOutsideAllowed() {
 }
 
 const metrics = {
-  inlineStyleObjects: count(code.filter((f) => f.endsWith(".jsx")), /style=\{\{/g),
+  inlineStyleObjects: count(jsx, /style=\{\{/g),
   hexColorsInCss: count(css, /#[0-9a-fA-F]{3,8}\b/g),
   hexColorsInJs: count(code, /["'`]#[0-9a-fA-F]{3,8}\b/g),
   importantDeclarations: importantOutsideAllowed(),
-  inlineSvgs: count(code.filter((f) => f.endsWith(".jsx")), /<svg\b/g),
-  nativeSelects: count(code.filter((f) => f.endsWith(".jsx")), /<select\b/g),
-  clickableDivsWithoutRole: code
-    .filter((f) => f.endsWith(".jsx"))
+  inlineSvgs: count(jsx, /<svg\b/g),
+  nativeSelects: count(jsx, /<select\b/g),
+  clickableDivsWithoutRole: jsx
     .reduce((n, f) => n + (read(f).match(/<(div|span|tr|li|td)\b[^>]*onClick[^>]*>/g) || []).filter((t) => !/role=/.test(t)).length, 0),
   cssFiles: css.length,
   cssLines: css.reduce((n, f) => n + read(f).split("\n").length, 0),
