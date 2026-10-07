@@ -113,9 +113,13 @@ def create_scope3_emission():
     facility_id = data.get("facility_id")
     if not facility_id:
         return jsonify({"error": "Missing facility_id"}), 422
+    try:
+        facility_id_int = int(facility_id)
+    except (ValueError, TypeError):
+        return jsonify({"error": "facility_id must be a valid integer"}), 422
 
     allowed_fids = get_allowed_facility_ids(user)
-    if allowed_fids is not None and int(facility_id) not in allowed_fids:
+    if allowed_fids is not None and facility_id_int not in allowed_fids:
         return jsonify({"error": "Unauthorized for this facility"}), 403
 
     initial_status = initial_record_status(user, data.get("status"))
@@ -148,7 +152,7 @@ def create_scope3_emission():
         emission_factor = scope3_ef_kg_per_unit(activity_data, co2e_val, emission_factor)
 
     emission = Scope3Emission(
-        facility_id=data.get("facility_id"),
+        facility_id=facility_id_int,
         year=year_val,
         month=month_val,
         category=category_val,
@@ -181,36 +185,33 @@ def create_scope3_emission():
         db.session.add(emission)
         db.session.flush()
         emission_id_val = emission.id
+
+        if user:
+            log_activity_and_notify(
+                action="CREATE",
+                record_id=str(emission_id_val),
+                user=user,
+                request=request,
+                entity="Scope3Emission",
+                facility_id=emission.facility_id,
+                details=f"Created Scope 3 emission: {emission.category} ({emission.co2e:.2f} tCO2e, Status: {initial_status})",
+            )
+
+            if initial_status in ("Pending", "Pending Approval"):
+                from models import Notification
+                admins = User.query.filter_by(role="admin", status="active").all()
+                for admin in admins:
+                    Notification.create(
+                        user_id=admin.id,
+                        type="audit",
+                        title="New Scope 3 Emission Pending Review",
+                        message=f"A new Scope 3 emission record ({emission.category}) was submitted by {user.fullName} and is awaiting your approval.",
+                    )
         db.session.commit()
     except Exception as e:
         db.session.rollback()
         current_app.logger.error(f"Failed to create Scope 3 emission: {e}")
         return jsonify({"error": "Failed to create Scope 3 emission"}), 500
-
-    try:
-        log_activity_and_notify(
-            action="CREATE",
-            record_id=str(emission_id_val),
-            user=user,
-            request=request,
-            entity="Scope3Emission",
-            details=f"Created Scope 3 emission: {emission.category} ({emission.co2e:.2f} tCO2e, Status: {initial_status})",
-        )
-        db.session.commit()
-
-        if initial_status in ("Pending", "Pending Approval"):
-            from models import Notification
-            admins = User.query.filter_by(role="admin", status="active").all()
-            for admin in admins:
-                Notification.create(
-                    user_id=admin.id,
-                    type="audit",
-                    title="New Scope 3 Emission Pending Review",
-                    message=f"A new Scope 3 emission record ({emission.category}) was submitted by {user.fullName} and is awaiting your approval.",
-                )
-            db.session.commit()
-    except Exception:
-        db.session.rollback()
 
     from routes.dashboard import clear_dashboard_cache
     clear_dashboard_cache()
@@ -328,6 +329,17 @@ def update_scope3_emission(emission_id):
         emission.notes = data["notes"]
 
     try:
+        from utils import log_activity_and_notify
+        log_activity_and_notify(
+            action="UPDATE",
+            record_id=str(emission.id),
+            user=user,
+            request=request,
+            entity="Scope3Emission",
+            entity_id=str(emission.id),
+            facility_id=emission.facility_id,
+            details=f"Updated Scope 3 emission: {emission.category} ({emission.co2e:.2f} tCO2e, Status: {emission.status})",
+        )
         db.session.commit()
     except Exception as e:
         db.session.rollback()
@@ -475,15 +487,6 @@ def bulk_import_scope3():
             errors.append(f"Row {i}: {str(e)}")
 
     try:
-        db.session.commit()
-    except Exception as e:
-        db.session.rollback()
-        return internal_error(e, "Failed to bulk import Scope 3 emissions")
-
-    from routes.dashboard import clear_dashboard_cache
-
-    clear_dashboard_cache()
-    try:
         if bulk_status in ("Pending", "Pending Approval") and imported_count > 0:
             from models import Notification
             admins = User.query.filter_by(role="admin", status="active").all()
@@ -494,7 +497,6 @@ def bulk_import_scope3():
                     title="Scope 3 Bulk Upload Pending Review",
                     message=f"{imported_count} new Scope 3 emission records were uploaded by {user.fullName} and are awaiting your approval.",
                 )
-            db.session.commit()
 
         if imported_count > 0:
             log_activity_and_notify(
@@ -505,9 +507,13 @@ def bulk_import_scope3():
                 entity="Scope3Emission",
                 details=f"Bulk imported {imported_count} Scope 3 records (Status: {bulk_status})",
             )
-            db.session.commit()
-    except Exception:
+        db.session.commit()
+    except Exception as e:
         db.session.rollback()
+        return internal_error(e, "Failed to bulk import Scope 3 emissions")
+
+    from routes.dashboard import clear_dashboard_cache
+    clear_dashboard_cache()
 
     return jsonify(
         {"message": f"Successfully imported {imported_count} records", "errors": errors}
@@ -522,7 +528,7 @@ def calculate_eeio():
         return jsonify({"error": "No data provided"}), 400
         
     naics_code = str(data.get("naics_code", ""))
-    spend_usd = float(data.get("spend_usd", 0))
+    spend_usd = parse_number(data.get("spend_usd"), "spend_usd", required=False, min_value=0, default=0.0)
     
     if spend_usd <= 0:
         return jsonify({"co2e": 0, "emission_factor": 0, "message": "Zero spend"}), 200

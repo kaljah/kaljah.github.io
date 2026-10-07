@@ -230,10 +230,13 @@ def test_mapping_is_scope_aware():
 def test_process_labels_match_the_client():
     from services.scope1_calc import PROCESS_LABELS
 
-    src = open(os.path.join(os.path.dirname(__file__), "..", "..", "client", "src", "utils", "EmissionFactors.js"),
-               encoding="utf-8").read()
-    block = src[src.index("export const PROCESS_TYPES = {"):]
-    block = block[:block.index("};")]
+    path = os.path.join(os.path.dirname(__file__), "..", "..", "client", "src", "utils", "EmissionFactors.ts")
+    if not os.path.exists(path):
+        path = os.path.join(os.path.dirname(__file__), "..", "..", "client", "src", "utils", "EmissionFactors.js")
+    src = open(path, encoding="utf-8").read()
+    match = re.search(r"export const PROCESS_TYPES(?::\s*Record<[^>]+>)?\s*=\s*\{", src)
+    block = src[match.end() - 1 :]
+    block = block[: block.index("};")]
     client_labels = dict(re.findall(r'^\s*([a-z0-9_]+):\s*"([^"]+)"', block, re.M))
     assert client_labels == PROCESS_LABELS
 
@@ -442,9 +445,11 @@ def test_scope3_takes_the_form_factor_when_none_is_given(app, client, env):
 def test_scope3_factor_table_matches_the_client():
     from emission_factors.scope3_activity_factors import SCOPE3_ACTIVITY_FACTORS
 
-    src = open(os.path.join(os.path.dirname(__file__), "..", "..", "client", "src", "utils", "scope3Factors.js"),
-               encoding="utf-8").read()
-    rows = re.findall(r'\{ value: "([^"]+)", unit: "([^"]+)", factor: ([0-9.]+|null) \}', src)
+    path = os.path.join(os.path.dirname(__file__), "..", "..", "client", "src", "utils", "scope3Factors.ts")
+    if not os.path.exists(path):
+        path = os.path.join(os.path.dirname(__file__), "..", "..", "client", "src", "utils", "scope3Factors.js")
+    src = open(path, encoding="utf-8").read()
+    rows = re.findall(r'\{\s*value:\s*"([^"]+)",\s*unit:\s*"([^"]+)",\s*factor:\s*([0-9.]+|null)\s*\}', src)
     ours = [(v, u, f) for cat in SCOPE3_ACTIVITY_FACTORS.values() for v, u, f in cat]
     assert [(v, u, None if f == "null" else float(f)) for v, u, f in rows] == ours
 

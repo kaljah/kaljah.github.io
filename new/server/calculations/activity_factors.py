@@ -15,6 +15,7 @@ Values were read from the Compendium tables named in `table` (scratch/2021-API-G
   basis: CH4 mole fraction of the factor (site CH4 content scales the CH4 factor)
   toc:   factor is total organic compound mass; CH4 = TOC x CH4 weight fraction (default 15 %)
 """
+import math
 from .base import BaseCalculator
 from .units import CONVERSIONS, calculate_co2e
 from .uncertainty import propagate_uncertainty, resolve_tier
@@ -163,13 +164,21 @@ def activity_factor_list(process=None):
 
 
 def _frac(v):
-    """Site composition inputs are percentages (0-100)."""
+    """Normalize gas composition input whether provided as decimal fraction (0-1.0) or percentage (0-100%)."""
     if v in (None, ""):
         return None
-    x = float(v)
-    if not 0.0 <= x <= 100.0:
-        raise ValueError("Gas content must be between 0 and 100 %")
-    return x / 100.0
+    s = str(v).replace("%", "").strip()
+    try:
+        x = float(s)
+    except (ValueError, TypeError):
+        raise ValueError(f"Invalid gas content: {v}")
+    if not math.isfinite(x) or x < 0:
+        raise ValueError("Gas content must be a non-negative number")
+    if x > 100.0:
+        raise ValueError("Gas content cannot exceed 100 %")
+    if "%" in str(v) or x > 1.0:
+        return x / 100.0
+    return x
 
 
 class ActivityFactorCalculator(BaseCalculator):
@@ -224,6 +233,11 @@ class ActivityFactorCalculator(BaseCalculator):
             # gas under 1 % CH4 does not occur for these factors
             x_ch4 = float(ch4_content)
         x_co2 = _frac(co2_content) or 0.0
+        if x_co2 > 0 and co2_content not in (None, ""):
+            # Consistent basis: if CH4 is entered as a fraction (<= 1.0) and CO2 <= 1.0, retain as fraction
+            if float(ch4_content or 0) <= 1.0 and float(co2_content) <= 1.0:
+                x_co2 = float(co2_content)
+
         gas = row["gas_scf"]
         if row["toc"]:
             w = _frac(toc_ch4_wt)
@@ -240,8 +254,8 @@ class ActivityFactorCalculator(BaseCalculator):
                     co2 = n * gas * x_co2 * SCF_TO_M3 * RHO_CO2 / 1000.0
                 else:
                     x_used = x_ch4 if x_ch4 else (basis or None)
-                    if not x_used:
-                        raise ValueError("CO2 needs the site CH4 content for this factor")
+                    if not x_used or x_used <= 0:
+                        raise ValueError("CO2 needs a positive site CH4 content for this factor")
                     co2 = ch4 * (x_co2 / x_used) * (44.01 / 16.04)
             else:
                 co2 = 0.0

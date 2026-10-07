@@ -1,5 +1,8 @@
 import logging
+import os
 from logging.config import fileConfig
+
+os.environ["ALEMBIC_RUNNING"] = "1"
 
 from flask import current_app
 
@@ -87,19 +90,29 @@ def run_migrations_online():
                 directives[:] = []
                 logger.info("No changes in schema detected.")
 
+    def include_object(object, name, type_, reflected, compare_to):
+        if type_ == "table" and name in ["id_high_water"]:
+            return False
+        return True
+
     conf_args = current_app.extensions["migrate"].configure_args
     if conf_args.get("process_revision_directives") is None:
         conf_args["process_revision_directives"] = process_revision_directives
+    if conf_args.get("include_object") is None:
+        conf_args["include_object"] = include_object
 
     connectable = get_engine()
 
     with connectable.connect() as connection:
+        if connection.dialect.name == "sqlite":
+            connection.exec_driver_sql("PRAGMA foreign_keys = OFF")
         context.configure(
             connection=connection, target_metadata=get_metadata(), **conf_args
         )
 
         with context.begin_transaction():
             context.run_migrations()
+        connection.commit()
 
 
 if context.is_offline_mode():

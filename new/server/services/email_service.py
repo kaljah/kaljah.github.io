@@ -5,31 +5,35 @@ from email.mime.multipart import MIMEMultipart
 from flask import current_app
 
 def is_smtp_configured() -> bool:
-    """Check if outbound SMTP configuration is active."""
+    """
+    Check if outbound SMTP configuration is active.
+    Default: DISABLED in favor of air-gapped / on-premise in-app notification system.
+    """
+    if os.environ.get("DISABLE_OUTBOUND_EMAIL", "true").lower() in ("true", "1", "yes"):
+        return False
     return bool(os.environ.get("SMTP_HOST") and os.environ.get("SMTP_USER"))
 
 def send_email(to_email: str, subject: str, text_body: str, html_body: str = None) -> bool:
     """
     Dispatches outbound email using configured SMTP provider.
-    Gracefully falls back to structured application logging when SMTP
-    credentials are not configured (e.g. development, testing, staging).
+    When outbound email is disabled (default for on-premise / air-gapped deployment),
+    alerts are routed exclusively through the in-app Notification system and logged.
     """
-    from_email = os.environ.get("EMAIL_FROM", "noreply@ghg-enterprise.com")
-    smtp_host = os.environ.get("SMTP_HOST")
-    smtp_port = int(os.environ.get("SMTP_PORT", 587))
-    smtp_user = os.environ.get("SMTP_USER")
-    smtp_pass = os.environ.get("SMTP_PASSWORD")
-    use_tls = os.environ.get("SMTP_USE_TLS", "true").lower() in ("true", "1", "yes")
-
     if not is_smtp_configured():
-        # no SMTP server: nothing is sent (it was logged as "dispatched" and reported as sent)
-        current_app.logger.warning(
-            f"[EmailService] NOT SENT (SMTP not configured) to: {to_email} | Subject: '{subject}'\n"
-            f"  Content: {text_body[:200]}..."
+        current_app.logger.info(
+            f"[EmailService] Outbound email disabled (in-app notifications only). "
+            f"Notification suppressed for: {to_email} | Subject: '{subject}'"
         )
         return False
 
     try:
+        from_email = os.environ.get("EMAIL_FROM", "noreply@ghg-enterprise.com")
+        smtp_host = os.environ.get("SMTP_HOST")
+        smtp_port = int(os.environ.get("SMTP_PORT", 587))
+        smtp_user = os.environ.get("SMTP_USER")
+        smtp_pass = os.environ.get("SMTP_PASSWORD")
+        use_tls = os.environ.get("SMTP_USE_TLS", "true").lower() in ("true", "1", "yes")
+
         msg = MIMEMultipart("alternative")
         msg["Subject"] = subject
         msg["From"] = from_email

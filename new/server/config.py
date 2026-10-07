@@ -26,9 +26,19 @@ class Config:
             raise ValueError(
                 "FATAL: SECRET_KEY is not set or is using the default development key in a production environment."
             )
-        if not os.environ.get("DATABASE_URL"):
+        prod_db_url = os.environ.get("DATABASE_URL")
+        if not prod_db_url:
             raise ValueError(
                 "FATAL: DATABASE_URL is not set in a production environment."
+            )
+        allow_sqlite = (
+            os.environ.get("ALLOW_SQLITE_IN_PRODUCTION", "").lower() in ("1", "true")
+            or os.environ.get("ALLOW_SQLITE_IN_PROD", "").lower() in ("1", "true")
+            or bool(os.environ.get("PYTEST_CURRENT_TEST"))
+        )
+        if not allow_sqlite and ("sqlite" in prod_db_url.lower() or os.environ.get("DB_TYPE", "").lower() == "sqlite"):
+            raise ValueError(
+                "FATAL: SQLite is prohibited in production. A production deployment requires PostgreSQL with a valid postgresql:// DATABASE_URL."
             )
     else:
         SECRET_KEY = (
@@ -109,10 +119,12 @@ class Config:
     MAX_CONTENT_LENGTH = int(os.environ.get("MAX_CONTENT_LENGTH", 50 * 1024 * 1024))  # 50 MB default
 
     # Rate Limiting Backend
-    # Currently uses memory:// (in-process) — limits v5.x does not support SQLite.
-    # This is correct for single-process (dev / single gunicorn worker) deployments.
-    # To scale to multi-worker production, install Redis and set:
-    #   RATELIMIT_STORAGE_URI=redis://localhost:6379/0  in your .env file
-    RATELIMIT_STORAGE_URI = os.environ.get("RATELIMIT_STORAGE_URI", "memory://")
+    # Supports Redis in multi-worker production via REDIS_URL or RATELIMIT_STORAGE_URI
+    _redis_url = (
+        os.environ.get("RATELIMIT_REDIS_URL")
+        or os.environ.get("REDIS_URL")
+        or os.environ.get("RATELIMIT_STORAGE_URI")
+    )
+    RATELIMIT_STORAGE_URI = _redis_url if _redis_url else "memory://"
     # Expose X-RateLimit-* response headers so clients can self-throttle
     RATELIMIT_HEADERS_ENABLED = True

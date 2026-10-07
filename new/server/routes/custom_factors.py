@@ -42,6 +42,9 @@ def get_custom_factors():
                 "co2_uncertainty": float(f.co2_uncertainty or 0),
                 "ch4_uncertainty": float(f.ch4_uncertainty or 0),
                 "n2o_uncertainty": float(f.n2o_uncertainty or 0),
+                "status": getattr(f, "status", None) or "Approved",
+                "approved_by": getattr(f, "approved_by", None),
+                "approved_at": f.approved_at.isoformat() if getattr(f, "approved_at", None) else None,
                 "is_archived": bool(f.is_archived),
             }
             for f in factors
@@ -189,6 +192,10 @@ def create_custom_factor():
     if _name_taken(factor_name):
         return jsonify({"error": f"A custom factor named '{factor_name}' already exists"}), 409
 
+    # Maker-checker policy for custom factors:
+    # Only admin creates pre-approved factors; superusers/others require admin approval.
+    initial_factor_status = "Approved" if user and user.role == "admin" else "Pending"
+
     factor = CustomFactor(
         name=factor_name,
         co2_factor=co2_factor,
@@ -207,17 +214,14 @@ def create_custom_factor():
         ch4_uncertainty=ch4_uncertainty,
         n2o_uncertainty=n2o_uncertainty,
         created_by=user_id,
+        status=initial_factor_status,
+        approved_by=user_id if initial_factor_status == "Approved" else None,
+        approved_at=datetime.datetime.now(datetime.timezone.utc) if initial_factor_status == "Approved" else None,
     )
 
     try:
         db.session.add(factor)
-        db.session.commit()
-    except Exception as e:
-        db.session.rollback()
-        current_app.logger.error(f"Error creating custom factor: {e}")
-        return jsonify({"error": "Failed to create custom factor"}), 500
-
-    try:
+        db.session.flush()
         log_activity_and_notify(
             action="CREATE",
             record_id=str(factor.id),
@@ -228,7 +232,9 @@ def create_custom_factor():
         )
         db.session.commit()
     except Exception as e:
-        current_app.logger.error(f"Audit log error on custom factor create: {e}")
+        db.session.rollback()
+        current_app.logger.error(f"Error creating custom factor: {e}")
+        return jsonify({"error": "Failed to create custom factor"}), 500
 
     warnings = _check_plausibility(data)
     resp_data = {"message": "Custom factor created", "id": factor.id}
@@ -309,13 +315,6 @@ def update_custom_factor(factor_id):
     factor.updated_at = datetime.datetime.now(datetime.timezone.utc)
 
     try:
-        db.session.commit()
-    except Exception as e:
-        db.session.rollback()
-        current_app.logger.error(f"Error updating custom factor: {e}")
-        return jsonify({"error": "Failed to update custom factor"}), 500
-
-    try:
         log_activity_and_notify(
             action="UPDATE",
             record_id=str(factor.id),
@@ -326,7 +325,9 @@ def update_custom_factor(factor_id):
         )
         db.session.commit()
     except Exception as e:
-        current_app.logger.error(f"Audit log error on custom factor update: {e}")
+        db.session.rollback()
+        current_app.logger.error(f"Error updating custom factor: {e}")
+        return jsonify({"error": "Failed to update custom factor"}), 500
 
     return jsonify({"message": "Custom factor updated"})
 
@@ -354,13 +355,6 @@ def delete_custom_factor(factor_id):
     factor_name = factor.name
     try:
         db.session.delete(factor)
-        db.session.commit()
-    except Exception as e:
-        db.session.rollback()
-        current_app.logger.error(f"Error deleting custom factor: {e}")
-        return jsonify({"error": "Failed to delete custom factor"}), 500
-
-    try:
         log_activity_and_notify(
             action="DELETE",
             record_id=str(factor_id),
@@ -371,7 +365,9 @@ def delete_custom_factor(factor_id):
         )
         db.session.commit()
     except Exception as e:
-        current_app.logger.error(f"Audit log error on custom factor delete: {e}")
+        db.session.rollback()
+        current_app.logger.error(f"Error deleting custom factor: {e}")
+        return jsonify({"error": "Failed to delete custom factor"}), 500
 
     return jsonify({"message": "Custom factor deleted"})
 
@@ -387,16 +383,20 @@ def archive_custom_factor(factor_id):
     restore = bool((request.get_json(silent=True) or {}).get("restore"))
     if restore and _name_taken(factor.name, exclude_id=factor.id):
         return jsonify({"error": f"An active custom factor named '{factor.name}' already exists"}), 409
-    factor.is_archived = not restore
-    log_activity_and_notify(
-        action="RESTORE" if restore else "ARCHIVE",
-        record_id=str(factor.id),
-        user=user,
-        request=request,
-        entity="CustomFactor",
-        details=f"Custom factor {'restored' if restore else 'archived'}: {factor.name}",
-    )
-    db.session.commit()
+    try:
+        factor.is_archived = not restore
+        log_activity_and_notify(
+            action="RESTORE" if restore else "ARCHIVE",
+            record_id=str(factor.id),
+            user=user,
+            request=request,
+            entity="CustomFactor",
+            details=f"Custom factor {'restored' if restore else 'archived'}: {factor.name}",
+        )
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to {'restore' if restore else 'archive'} factor: {e}"}), 500
     return jsonify({"message": f"Custom factor {'restored' if restore else 'archived'}", "archived": factor.is_archived})
 
 
@@ -448,6 +448,7 @@ def import_custom_factors():
             continue
         seen.add(name.lower())
 
+        initial_factor_status = "Approved" if user and user.role == "admin" else "Pending"
         factor = CustomFactor(
             name=name,
             co2_factor=co2_factor,
@@ -466,28 +467,63 @@ def import_custom_factors():
             ch4_uncertainty=ch4_uncertainty,
             n2o_uncertainty=n2o_uncertainty,
             created_by=user_id,
+            status=initial_factor_status,
+            approved_by=user_id if initial_factor_status == "Approved" else None,
+            approved_at=datetime.datetime.now(datetime.timezone.utc) if initial_factor_status == "Approved" else None,
         )
         db.session.add(factor)
         imported_count += 1
 
     try:
+        if imported_count > 0:
+            log_activity_and_notify(
+                action="IMPORT",
+                record_id=str(imported_count),
+                user=user,
+                request=request,
+                entity="CustomFactor",
+                details=f"Bulk imported {imported_count} custom emission factors",
+            )
         db.session.commit()
     except Exception as e:
         db.session.rollback()
         current_app.logger.error(f"Error importing custom factors: {e}")
         return jsonify({"error": "Failed to import custom factors"}), 500
 
+    return jsonify({"message": f"{imported_count} factors imported successfully", "imported": imported_count, "skipped": skipped})
+ 
+ 
+@custom_factors_bp.route("/<int:factor_id>/approve", methods=["POST"])
+@login_required
+def approve_custom_factor(factor_id):
+    """Approve a pending custom emission factor (Admin only)."""
+    user = get_current_user()
+    if not user or user.role != "admin":
+        return jsonify({"error": "Only Compliance Administrators can approve custom emission factors"}), 403
+
+    factor = db.session.get(CustomFactor, factor_id)
+    if not factor or factor.is_archived:
+        return jsonify({"error": "Custom factor not found"}), 404
+
+    if getattr(factor, "status", None) == "Approved":
+        return jsonify({"message": "Factor is already approved", "id": factor.id}), 200
+
     try:
+        factor.status = "Approved"
+        factor.approved_by = user.id
+        factor.approved_at = datetime.datetime.now(datetime.timezone.utc)
+
         log_activity_and_notify(
-            action="IMPORT",
-            record_id=str(imported_count),
+            action="APPROVE",
+            record_id=str(factor.id),
             user=user,
             request=request,
             entity="CustomFactor",
-            details=f"Bulk imported {imported_count} custom emission factors",
+            entity_id=str(factor.id),
+            details=f"Approved custom emission factor '{factor.name}' (ID: {factor.id})",
         )
         db.session.commit()
     except Exception as e:
-        current_app.logger.error(f"Audit log error on custom factor import: {e}")
-
-    return jsonify({"message": f"{imported_count} factors imported successfully", "imported": imported_count, "skipped": skipped})
+        db.session.rollback()
+        return jsonify({"error": f"Failed to approve custom factor: {e}"}), 500
+    return jsonify({"message": f"Custom factor '{factor.name}' approved successfully", "id": factor.id}), 200

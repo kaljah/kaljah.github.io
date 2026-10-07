@@ -2196,7 +2196,7 @@ class AssociatedGasVentingCalculator(BaseCalculator):
             # If site-specific CH4 is provided, adjust CH4 factor by (c_ch4 / 0.816)
             adj_ratio = 1.0
             if c_ch4 is not None and c_ch4 > 0:
-                adj_ratio = c_ch4 / ch4_mol_basis
+                adj_ratio = c_ch4 / ch4_mol_basis if ch4_mol_basis and ch4_mol_basis > 0 else 1.0
             else:
                 c_ch4 = ch4_mol_basis
 
@@ -2205,7 +2205,7 @@ class AssociatedGasVentingCalculator(BaseCalculator):
 
             # CO2 adjustment per Table 6-8 footnote b:
             # Adjusted based on the relative concentrations of CH4 and CO2
-            if c_co2 is not None and c_co2 > 0:
+            if c_co2 is not None and c_co2 > 0 and c_ch4 and c_ch4 > 0:
                 co2_tonnes = ch4_tonnes * (c_co2 / c_ch4) * (self.MW_CO2 / self.MW_CH4)
             else:
                 co2_tonnes = 0.0

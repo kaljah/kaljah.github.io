@@ -20,218 +20,70 @@ MW = {
 GWP = {"CH4": DEFAULT_GWP["CH4"], "N2O": DEFAULT_GWP["N2O"]}
 
 
-class GHGCalculator:
-    def _to_rankine(self, val, unit):
-        u = unit.lower()
-        if u in ["r", "rankine"]:
-            return val
-        if u in ["f", "fahrenheit"]:
-            return val + 459.67
-        if u in ["c", "celsius", "centigrade"]:
-            return (val * 1.8) + 32 + 459.67
-        if u in ["k", "kelvin"]:
-            return val * 1.8
-        raise ValueError(f"Unknown temperature unit: {unit}")
+from .units import (
+    factor_to_kg_per_activity,
+    parse_factor_unit,
+    convert,
+    UnitError,
+)
 
-    def _to_psia(self, val, unit):
-        u = unit.lower()
-        if u == "psia":
-            return val
-        if u == "psig":
-            return val + 14.696
-        if u in ["kpa", "kilopascal"]:
-            return val * 0.145038
-        if u in ["mpa", "megapascal"]:
-            return val * 145.038
-        if u in ["pa", "pascal"]:
-            return val * 0.000145038
-        if u in ["bar", "bars"]:
-            return val * 14.5038
-        if u in ["mbar", "millibar"]:
-            return val * 0.0145038
-        if u in ["atm", "atmosphere"]:
-            return val * 14.696
-        if u in ["kg/cm2", "kgf/cm2"]:
-            return val * 14.2233
-        if u in ["mmhg", "torr"]:
-            return val * 0.0193368
-        if u in ["inhg"]:
-            return val * 0.491154
-        if u in ["inh2o"]:
-            return val * 0.036127
-        raise ValueError(f"Unknown pressure unit: {unit}")
 
-    def _to_density_lb_gal(self, val, unit):
-        u = unit.lower()
-        if u in ["lb/gal", "ppg"]:
-            return val
-        if u in ["lb/ft3", "pcf"]:
-            return val / 7.48052
-        if u in ["kg/m3", "kg/m³"]:
-            return val * 0.0083454
-        if u in ["g/cm3", "g/ml", "kg/l", "sg", "specific_gravity"]:
-            return val * 8.3454
-        if u in ["api", "degrees_api"]:
-            sg = 141.5 / (val + 131.5)
-            return sg * 8.3454
-        raise ValueError(f"Unknown density unit: {unit}")
+def _convert_factor_to_kg(val, factor_unit, activity_unit, hhv=0, hours=None):
+    """Canonical unit conversion using calculations.units.factor_to_kg_per_activity."""
+    if val is None:
+        return 0.0
+    if not factor_unit or factor_unit == activity_unit:
+        return float(val)
+    val_float = float(val)
 
-    def _to_ft3(self, val, unit):
-        u = unit.lower()
-        if u in ["ft3", "cf", "cubic_feet", "scf"]:
-            return val
-        if u in ["m3", "cubic_meters", "m³"]:
-            return val * 35.3147
-        if u in ["mmscf"]:
-            return val * 1000000.0
-        if u in ["mscf", "mcf"]:
-            return val * 1000.0
-        if u in ["gal", "gallons", "us_gal"]:
-            return val * 0.133681
-        if u in ["bbl", "barrel", "barrels"]:
-            return val * 5.61458
-        if u in ["l", "liter", "liters"]:
-            return val * 0.0353147
-        if u in ["in3", "ci"]:
-            return val / 1728.0
-        raise ValueError(f"Unknown volume unit: {unit}")
+    hhv_mj = None
+    if hhv and float(hhv or 0) > 0:
+        hhv_mj = float(hhv) * 0.001055056 if float(hhv) > 500 else float(hhv)
 
-    def _normalize_unit(self, u):
-        if not u:
-            return ""
-        return (
-            str(u)
-            .replace("\u00c2", "")
-            .replace("\u00b3", "3")
-            .replace("^", "")
-            .replace(" ", "")
-            .lower()
+    return factor_to_kg_per_activity(
+        val_float, factor_unit, activity_unit, hours=hours, hhv_mj_per_unit=hhv_mj
+    )
+
+
+def _calculate_default_kg(amount, unit, hhv, factor_data, gas, hours=None):
+    """Calculates kg of gas using factor_data and canonical unit conversion."""
+    if not factor_data:
+        return 0.0
+
+    raw_val = (
+        factor_data.get(gas)
+        or factor_data.get("factor")
+        or factor_data.get("total")
+        or (factor_data.get("co2") if gas == "co2" else None)
+        or 0.0
+    )
+    try:
+        val = float(raw_val or 0.0)
+    except (ValueError, TypeError):
+        return 0.0
+    if val <= 0:
+        return 0.0
+
+    raw_unit = str(factor_data.get("unit") or "").strip()
+    if not raw_unit or raw_unit.lower() == str(unit).lower():
+        if "tonnes" in raw_unit.lower():
+            val *= 1000.0
+        return float(amount) * val
+
+    hhv_mj = None
+    if hhv and float(hhv or 0) > 0:
+        hhv_mj = float(hhv) * 0.001055056 if float(hhv) > 500 else float(hhv)
+
+    try:
+        kg_per_activity = factor_to_kg_per_activity(
+            val, raw_unit, unit, hours=hours, hhv_mj_per_unit=hhv_mj
         )
+        return float(amount) * kg_per_activity
+    except UnitError:
+        if "tonne" in raw_unit.lower():
+            val *= 1000.0
+        return float(amount) * val
 
-    def convert_factor_to_kg(self, value, factor_unit, activity_unit, hhv=0):
-        if value is None:
-            return 0
-        if not factor_unit or factor_unit == activity_unit:
-            return value
-
-        f_unit = self._normalize_unit(factor_unit)
-        a_unit = self._normalize_unit(activity_unit)
-        val = float(value)
-
-        # Normalize numerator to kg
-        if f_unit.startswith("lb"):
-            val *= 0.453592
-        elif f_unit.startswith("tonne"):
-            val *= 1000
-        elif f_unit.startswith("g/"):
-            val /= 1000
-
-        # Normalize denominator
-        factor_denom = f_unit.split("/")[1] if "/" in f_unit else f_unit
-
-        # Handle Energy-based factor denominator (e.g. kg/MMBtu)
-        if factor_denom == "mmbtu":
-            # Calculate how many MMBtu are in 1 activity_unit
-            energy_per_unit = self.calculate_energy(1.0, activity_unit, hhv)
-            return val * energy_per_unit
-
-        conv = {
-            "m3": 1,
-            "scf": 35.3147,
-            "mcf": 0.0353147,
-            "mmscf": 3.53147e-5,
-            "mscf": 0.0353147,
-            "gal": 264.172,
-            "l": 1000,
-            "bbl": 264.172 / 42.0,
-            "kg": 1,
-            "lb": 2.20462,
-            "tonne": 0.001,
-            "tonnes": 0.001,
-            "hr": 1,
-            "yr": 8760,
-            "day": 24,
-        }
-
-        f = conv.get(factor_denom, 1)
-        a = conv.get(a_unit, 1)
-
-        return val * (f / a)
-
-    def calculate_energy(self, amount, unit, hhv):
-        u = self._normalize_unit(unit)
-        if u == "mmbtu":
-            return amount
-
-        adj = amount
-        if u == "m3":
-            adj *= 35.3147
-        elif u == "l":
-            adj *= 0.264172
-        elif u == "bbl":
-            adj *= 42
-        elif u == "kg":
-            adj *= 2.20462
-        elif u == "tonne" or u == "tonnes":
-            adj *= 2204.62
-        elif u == "mcf" or u == "mscf":
-            adj *= 1000
-        elif u == "gal":
-            adj *= 1  # Assuming gal is base for liquid if not caught
-
-        # hhv is usually Btu/scf or Btu/gal or Btu/lb
-        # Simplification: assuming hhv unit matches source volume/mass unit scale
-        # Ideally we need explicit hhv unit. For now relying on standard API factors.
-
-        return (adj * hhv) / 1000000.0
-
-    def calculate_default_kg(self, amount, unit, hhv, factor_data, gas):
-        if not factor_data:
-            return 0
-
-        # Simple Factor
-        if "type" in factor_data:  # Equipment factor
-            # Check for 'factor' (legacy), then 'total', then requested gas, then 'co2'
-            v = amount * (
-                factor_data.get("factor")
-                or factor_data.get("total")
-                or factor_data.get(gas)
-                or factor_data.get("co2")
-                or 0
-            )
-            if "tonnes" in str(factor_data.get("unit", "")).lower():
-                v *= 1000
-            return v
-
-        f_unit = self._normalize_unit(factor_data.get("unit", ""))
-
-        # Volume based factor (e.g. kg/m3)
-        if f_unit == "kg/m3":
-            vol = amount
-            u = self._normalize_unit(unit)
-            if u == "scf":
-                vol *= 0.0283168
-            elif u in ["mcf", "mscf"]:
-                vol *= 28.3168
-            elif u == "l":
-                vol *= 0.001
-            elif u == "gal":
-                vol *= 0.00378541
-            elif u == "bbl":
-                vol *= 0.158987
-            return vol * (factor_data.get(gas) or 0)
-
-        # Energy based factor (kg/MMBtu)
-        e = self.calculate_energy(amount, unit, hhv)
-        return e * (factor_data.get(gas) or 0)
-
-    # --- Fugitive Calculations ---
-
-    # (placeholder fugitive / completion / unloading helpers removed: no caller; the API 2021 calculators
-    # in calculations/ implement those methods)
-
-
-ghg_calc = GHGCalculator()
 
 
 def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standard=None):
@@ -396,27 +248,30 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
 
             # Prefer the explicit 'Raw' value (user entered in a different unit)
             raw = spec.get(f"{gas}Raw")
-            if raw is not None and raw != "":
+            if raw is not None and str(raw).strip() != "":
                 try:
-                    return ghg_calc.convert_factor_to_kg(
-                        float(raw), spec.get(f"{gas}Unit") or base_unit, unit, hhv
-                    )
-                except:
-                    pass
+                    raw_val = float(raw)
+                except (ValueError, TypeError):
+                    raise ValueError(f"Specific factor '{gas}' has invalid raw value: {raw}")
+                target_unit = spec.get(f"{gas}Unit") or base_unit
+                if not target_unit or target_unit == unit:
+                    return raw_val
+                return _convert_factor_to_kg(
+                    raw_val, target_unit, unit, hhv=hhv, hours=payload.get("hours")
+                )
 
             # Otherwise use the direct value — but STILL convert from its declared unit
             val = spec.get(gas)
-            if val is not None and val != "":
+            if val is not None and str(val).strip() != "":
                 try:
                     raw_val = float(val)
-                    # If unit matches activity unit, no conversion needed
-                    if gas_unit and gas_unit != unit:
-                        return ghg_calc.convert_factor_to_kg(
-                            raw_val, gas_unit, unit, hhv
-                        )
-                    return raw_val
-                except:
-                    pass
+                except (ValueError, TypeError):
+                    raise ValueError(f"Specific factor '{gas}' has invalid value: {val}")
+                if gas_unit and gas_unit != unit:
+                    return _convert_factor_to_kg(
+                        raw_val, gas_unit, unit, hhv=hhv, hours=payload.get("hours")
+                    )
+                return raw_val
             return None
 
         f_co2 = get_factor("co2")
@@ -427,21 +282,21 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
         em["co2"] = (
             (amount * f_co2)
             if f_co2 is not None
-            else ghg_calc.calculate_default_kg(amount, unit, hhv, factor_data, "co2")
+            else _calculate_default_kg(amount, unit, hhv, factor_data, "co2")
         )
 
         if process in ["combustion", "flaring", "venting"]:
             em["ch4"] = (
                 (amount * f_ch4)
                 if f_ch4 is not None
-                else ghg_calc.calculate_default_kg(
+                else _calculate_default_kg(
                     amount, unit, hhv, factor_data, "ch4"
                 )
             )
             em["n2o"] = (
                 (amount * f_n2o)
                 if f_n2o is not None
-                else ghg_calc.calculate_default_kg(
+                else _calculate_default_kg(
                     amount, unit, hhv, factor_data, "n2o"
                 )
             )
@@ -466,11 +321,9 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
 
     if factor_data and factor_data.get("type"):
         # Use individual gas factors directly (correct for custom factors which carry co2/ch4/n2o fields).
-        # Previously used: em['ch4'] = (v / gwp_dict['CH4']) / 1000.0 — this back-calculated CH4
-        # from total CO2e by dividing by GWP, which produces a physically meaningless value.
-        co2_kg = ghg_calc.calculate_default_kg(amount, unit, hhv, factor_data, "co2")
-        ch4_kg = ghg_calc.calculate_default_kg(amount, unit, hhv, factor_data, "ch4")
-        n2o_kg = ghg_calc.calculate_default_kg(amount, unit, hhv, factor_data, "n2o")
+        co2_kg = _calculate_default_kg(amount, unit, hhv, factor_data, "co2")
+        ch4_kg = _calculate_default_kg(amount, unit, hhv, factor_data, "ch4")
+        n2o_kg = _calculate_default_kg(amount, unit, hhv, factor_data, "n2o")
 
         em["co2"] = co2_kg / 1000.0
         em["ch4"] = ch4_kg / 1000.0
@@ -486,9 +339,9 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
     # Apply process-specific gas calculation rules per API Compendium 2021
 
     # Calculate base emissions from factors
-    co2_kg = ghg_calc.calculate_default_kg(amount, unit, hhv, factor_data, "co2")
-    ch4_kg = ghg_calc.calculate_default_kg(amount, unit, hhv, factor_data, "ch4")
-    n2o_kg = ghg_calc.calculate_default_kg(amount, unit, hhv, factor_data, "n2o")
+    co2_kg = _calculate_default_kg(amount, unit, hhv, factor_data, "co2")
+    ch4_kg = _calculate_default_kg(amount, unit, hhv, factor_data, "ch4")
+    n2o_kg = _calculate_default_kg(amount, unit, hhv, factor_data, "n2o")
 
     # Process-specific gas emission matrix (API 2021)
     # Determine which gases to calculate based on process type

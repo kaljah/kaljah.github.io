@@ -278,8 +278,8 @@ def register():
 
     creator_id = session.get("user_id")
     creator = db.session.get(User, creator_id) if creator_id else None
-    if creator and creator.role in ["it_admin", "it_manager", "it"] and role_requested == "admin":
-        return jsonify({"error": "IT administrators cannot create accounts with business admin role"}), 403
+    if creator and creator.role in ["it", "it_admin"] and role_requested in ["admin", "superuser", "it_manager"]:
+        return jsonify({"error": "Forbidden: Client IT staff cannot create Compliance Admin or Superuser accounts"}), 403
 
     user = User(
         fullName=data.get("fullName"),
@@ -333,9 +333,13 @@ def register():
     )
 
 
+def get_login_rate_limit():
+    return os.environ.get("LOGIN_RATE_LIMIT", "20 per 15 minutes")
+
+
 @auth_bp.route("/login", methods=["POST"])
 @csrf.exempt
-@limiter.limit(os.environ.get("LOGIN_RATE_LIMIT", "20 per 15 minutes"))
+@limiter.limit(get_login_rate_limit)
 def login():
     data = request.get_json()
     if not data or not data.get("email") or not data.get("password"):
@@ -583,7 +587,22 @@ def update_profile():
     if "consolidationApproach" in data:
         user.consolidationApproach = data["consolidationApproach"]
 
-    db.session.commit()
+    try:
+        from utils import log_activity_and_notify
+        log_activity_and_notify(
+            action="UPDATE",
+            record_id=str(user.id),
+            user=user,
+            request=request,
+            entity="User",
+            entity_id=str(user.id),
+            details=f"User {user.email} updated profile information",
+        )
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Failed to update profile: {e}")
+        return jsonify({"error": "Failed to update profile"}), 500
 
     return jsonify({"message": "Profile updated successfully"})
 
@@ -617,6 +636,8 @@ def change_password():
 
     user.set_password(new_password)
     user.password_updated_at = datetime.datetime.now(datetime.timezone.utc)
+    # Session fixation / exfiltration protection: regenerate session ID on credential change
+    user.session_version = int(user.session_version or 0) + 1  # BUG-114: other sessions end
 
     # Audit + commit atomically
     try:
@@ -628,15 +649,12 @@ def change_password():
             entity="User",
             details=f"Password changed for user: {user.email}",
         )
-        db.session.commit()  # commits: password hash + activity log + notification
+        db.session.commit()  # commits: password hash + session version + activity log + notification
     except Exception as e:
         db.session.rollback()
         current_app.logger.error(f"Audit Log Error on change_password: {e}")
         return jsonify({"error": "Failed to update password"}), 500
 
-    # Session fixation / exfiltration protection: regenerate session ID on credential change
-    user.session_version = int(user.session_version or 0) + 1  # BUG-114: other sessions end
-    db.session.commit()
     session.clear()
     session.permanent = True
     session["user_id"] = user.id
@@ -670,7 +688,22 @@ def upload_avatar():
         return jsonify({"error": err_msg}), 400
 
     user.profilePic = avatar_url
-    db.session.commit()
+    try:
+        from utils import log_activity_and_notify
+        log_activity_and_notify(
+            action="UPDATE",
+            record_id=str(user.id),
+            user=user,
+            request=request,
+            entity="User",
+            entity_id=str(user.id),
+            details=f"User {user.email} updated profile picture",
+        )
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Failed to update avatar: {e}")
+        return jsonify({"error": "Failed to update avatar"}), 500
 
     return jsonify({"message": "Avatar updated successfully", "avatarUrl": avatar_url})
 
@@ -790,10 +823,25 @@ def recalculate_all_emissions_gwp(standard, previous=None):
             if entry is not None and e.electricity_kwh:
                 e.emission_factor = grid_factor_kg_co2e_per_kwh(entry, gwp=new_gwp)
                 e.co2e = e.electricity_kwh * e.emission_factor / 1000.0
+                e.co2e_location_based = e.co2e
+                if not getattr(e, "market_instrument_type", None) or e.market_instrument_type in ("None", "Grid Average / Residual Mix"):
+                    e.co2e_market_based = e.co2e
+                elif getattr(e, "market_emission_factor", None) is not None:
+                    e.co2e_market_based = e.electricity_kwh * float(e.market_emission_factor) / 1000.0
         elif "steam" in st and old_std and e.co2e and e.emission_factor == _NG_BOILER:
-            e.co2e = e.co2e * _steam_k(new_gwp) / _steam_k(old_std)
+            ratio = _steam_k(new_gwp) / _steam_k(old_std)
+            e.co2e = e.co2e * ratio
+            if getattr(e, "co2e_location_based", None) is not None:
+                e.co2e_location_based = e.co2e_location_based * ratio
+            if getattr(e, "co2e_market_based", None) is not None:
+                e.co2e_market_based = e.co2e_market_based * ratio
 
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as exc:
+        db.session.rollback()
+        current_app.logger.error(f"Failed to commit GWP recalculations: {exc}")
+        raise
 
     # Clear dashboard cache
     try:
@@ -905,18 +953,24 @@ def update_settings():
                 val = data[k]
                 if k in ["copernicus_password", "copernicus_client_secret"] and str(val).strip() in ["********", ""]:
                     continue  # Do not overwrite existing secret with mask or empty string
-                if k == "ogmp_default_base_year":
-                    val = int(val)
-                elif k in ["reconciliation_threshold", "ogmp_upstream_target_pct", "ogmp_midstream_target_pct", "copernicus_qa_threshold"]:
-                    val = float(val)
-                elif k in ["copernicus_enabled", "auto_flag_discrepancy"]:
-                    val = bool(val)
+                try:
+                    if k == "ogmp_default_base_year":
+                        val = int(val)
+                    elif k in ["reconciliation_threshold", "ogmp_upstream_target_pct", "ogmp_midstream_target_pct", "copernicus_qa_threshold"]:
+                        val = float(val)
+                    elif k in ["copernicus_enabled", "auto_flag_discrepancy"]:
+                        val = bool(val)
+                except (ValueError, TypeError):
+                    return jsonify({"error": f"Invalid numerical value for '{k}'"}), 400
                 _app_settings[k] = val
                 save_setting_to_db(k, val)
 
         if "wec_fee_rates" in data and isinstance(data["wec_fee_rates"], dict):
             rates = _app_settings.get("wec_fee_rates", {})
-            rates.update({str(k): float(v) for k, v in data["wec_fee_rates"].items()})
+            try:
+                rates.update({str(k): float(v) for k, v in data["wec_fee_rates"].items()})
+            except (ValueError, TypeError):
+                return jsonify({"error": "Invalid numerical rate in wec_fee_rates"}), 400
             _app_settings["wec_fee_rates"] = rates
             save_setting_to_db("wec_fee_rates", rates)
 
@@ -1162,6 +1216,14 @@ def admin_reset_password(id):
 
     current_admin_id = session.get("user_id")
     admin_user = db.session.get(User, current_admin_id) if current_admin_id else None
+
+    # Separation of Duties: Client IT staff (it, it_admin) CANNOT reset passwords for Admin or Superuser accounts.
+    # Only it_manager (vendor platform operator) or an Admin can reset Admin/Superuser passwords.
+    if admin_user and admin_user.role in ["it", "it_admin"]:
+        if user.role in ["admin", "superuser", "it_manager"]:
+            return jsonify({
+                "error": "Forbidden: Client IT staff cannot reset passwords for Compliance Admin or Superuser accounts"
+            }), 403
 
     data = request.get_json(silent=True) or {}
     new_password = data.get("newPassword", "").strip()

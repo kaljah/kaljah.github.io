@@ -869,16 +869,13 @@ def create_base_year_recalculation():
     except (ValueError, TypeError):
         return jsonify({"error": "year must be an integer"}), 400
 
+    from input_validation import parse_number, ValidationError
     try:
-        prev_em = (
-            float(data["previous_emissions"])
-            if data.get("previous_emissions") not in (None, "")
-            else None
+        prev_em = parse_number(
+            data.get("previous_emissions"), "previous_emissions", required=False, min_value=0
         )
-        adj_em = (
-            float(data["adjusted_emissions"])
-            if data.get("adjusted_emissions") not in (None, "")
-            else None
+        adj_em = parse_number(
+            data.get("adjusted_emissions"), "adjusted_emissions", required=False, min_value=0
         )
 
         recalc = BaseYearRecalculation(
@@ -898,10 +895,7 @@ def create_base_year_recalculation():
         else:
             base_year_singleton = BaseYear(id=1, year=year_val, locked=1)
             db.session.merge(base_year_singleton)
-
-        db.session.commit()
-
-        clear_dashboard_cache()
+        db.session.flush()
 
         log_activity_and_notify(
             action="CREATE",
@@ -913,7 +907,12 @@ def create_base_year_recalculation():
         )
         db.session.commit()
 
+        clear_dashboard_cache()
+
         return jsonify({"message": "Base year recalculation recorded", "id": recalc.id}), 201
+    except ValidationError:
+        db.session.rollback()
+        raise
     except Exception as e:
         db.session.rollback()
         return internal_error(e)
@@ -1203,11 +1202,13 @@ def get_uncertainty_analysis():
     if facility_id and allowed_fids is not None and facility_id not in allowed_fids:
         return jsonify({"error": "Forbidden: You do not have access to this facility"}), 403
 
+    include_gwp = request.args.get("gwp_uncertainty", "").strip().lower() in ("true", "1", "yes")
     result = _query_uncertainty(
         year=year,
         allowed_fids=allowed_fids,
         facility_id=facility_id,
         scope=scope,
+        include_gwp_uncertainty=include_gwp,
     )
 
     # CSV export
@@ -1269,7 +1270,7 @@ def _filtered_facility_ids(allowed_fids, activity=None, division=None, segment=N
 @cached(
     cache=DASHBOARD_CACHE, key=make_cache_key("_query_uncertainty"), lock=CACHE_LOCK
 )
-def _query_uncertainty(year=None, allowed_fids=None, facility_id=None, scope="all"):
+def _query_uncertainty(year=None, allowed_fids=None, facility_id=None, scope="all", include_gwp_uncertainty=False):
     """Inventory uncertainty (95 %, k = 2) - see services/inventory_uncertainty.py (RC-10)."""
     from services.inventory_uncertainty import inventory_uncertainty
 
@@ -1278,7 +1279,13 @@ def _query_uncertainty(year=None, allowed_fids=None, facility_id=None, scope="al
         cy = datetime.now(timezone.utc).year
         year = db.session.query(func.max(Emission.year)).filter(
             Emission.status == "Verified", Emission.year <= cy).scalar() or cy
-    return inventory_uncertainty(int(year), allowed_fids=allowed_fids, facility_id=facility_id, scope=scope)
+    return inventory_uncertainty(
+        int(year),
+        allowed_fids=allowed_fids,
+        facility_id=facility_id,
+        scope=scope,
+        include_gwp_uncertainty=include_gwp_uncertainty,
+    )
 
 
 @dashboard_bp.route("/exclusions", methods=["GET"])

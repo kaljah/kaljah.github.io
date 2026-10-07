@@ -64,8 +64,8 @@ class IndirectSteamCalculator(BaseCalculator):
 
         # GHG Protocol Scope 2 & API Eq 8-2: Multiplicative net efficiency
         # Net efficiency = Boiler Efficiency * (1 - Transmission Loss)
-        b_eff = float(boiler_efficiency or 0.80)
-        t_loss = float(transmission_loss or 0.0)
+        b_eff = float(0.80 if boiler_efficiency in (None, "") else boiler_efficiency)
+        t_loss = float(0.0 if transmission_loss in (None, "") else transmission_loss)
         net_efficiency = b_eff * (1.0 - t_loss)
         if net_efficiency <= 0:
             raise ValueError(

@@ -21,8 +21,9 @@ def rate_limit_client():
 
 
 
-def test_login_rate_limit_exceeded(rate_limit_client):
+def test_login_rate_limit_exceeded(rate_limit_client, monkeypatch):
     """Verify login endpoint rate limiting triggers after 20 attempts."""
+    monkeypatch.setenv("LOGIN_RATE_LIMIT", "20 per 15 minutes")
     payload = {"email": "test_rl@example.com", "password": "WrongPassword123!"}
     for _ in range(20):
         rate_limit_client.post("/api/auth/login", json=payload)

@@ -117,7 +117,7 @@ def test_pdf_report_says_when_the_detail_table_is_cut(app, client, env, monkeypa
     res = client.get(f"/api/reports/export?year=2011&facility_id={fid}&scope=all")
     assert res.status_code == 200 and res.data[:4] == b"%PDF"
     assert any("The table lists the 2 most recent of 4 records" in t for t in texts)
-    detail = tables[-1]
+    detail = next(t for t in tables if len(t) > 0 and t[0] and t[0][0] == "Date")
     assert len(detail) == 3  # header + 2 rows
     procs = {row[2] for t in tables for row in t[1:] if len(row) > 2}
     assert "tank_flashing" not in procs and "desiccant_dehydrator" not in procs

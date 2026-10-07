@@ -36,12 +36,50 @@ def _frac(v, name, required=False):
         if required:
             raise ValueError(f"Missing required field: {name}")
         return 0.0
-    x = float(v)
+    s = str(v).replace("%", "").strip()
+    x = float(s)
     if not math.isfinite(x) or x < 0:
         raise ValueError(f"'{name}' must be a non-negative number")
     if x > 100.0:
         raise ValueError(f"'{name}' cannot exceed 100 %")
-    return x / 100.0  # composition and efficiency inputs are percentages (0-100)
+    if "%" in str(v) or x > 1.0:
+        return x / 100.0
+    return x
+
+
+def _parse_fractions(inputs_dict, field_names):
+    """
+    Parses a set of related gas stream composition fields handling both percentage (0-100%)
+    and fractional (0-1.0) inputs consistently.
+    If any field is > 1.0, has a '%' sign, or the sum of raw numbers > 1.0001,
+    all fields in the stream are treated as percentages and divided by 100.0.
+    If all fields are <= 1.0 and sum <= 1.0001, they are treated as fractional fractions.
+    """
+    parsed = {}
+    is_percentage = False
+    raw_nums = {}
+    for name in field_names:
+        v = inputs_dict.get(name)
+        if v not in (None, ""):
+            s = str(v).replace("%", "").strip()
+            x = float(s)
+            if not math.isfinite(x) or x < 0:
+                raise ValueError(f"'{name}' must be a non-negative number")
+            if x > 100.0:
+                raise ValueError(f"'{name}' cannot exceed 100 %")
+            raw_nums[name] = x
+            if "%" in str(v) or x > 1.0:
+                is_percentage = True
+
+    if not is_percentage and sum(raw_nums.values()) > 1.0001:
+        is_percentage = True
+
+    for name in field_names:
+        if name in raw_nums:
+            parsed[name] = raw_nums[name] / 100.0 if is_percentage else raw_nums[name]
+        else:
+            parsed[name] = 0.0
+    return parsed
 
 
 def _or(v, default):
@@ -119,8 +157,10 @@ class VentedGasCalculator(BaseCalculator):
                 raise ValueError("Hydrocarbon loss unit must be t, kg, lb or short_ton")
             m = _num(i.get("thc_loss") if i.get("thc_loss") not in (None, "") else i.get("amount"),
                      "total hydrocarbon loss") * to_t[u]
-            w_ch4 = _frac(i.get("ch4_wt_pct"), "CH4 in vent (wt %)", required=True)
-            w_co2 = _frac(i.get("co2_wt_pct"), "CO2 in vent (wt %)")
+            if i.get("ch4_wt_pct") in (None, ""):
+                raise ValueError("Missing required field: CH4 in vent (wt %)")
+            fracs = _parse_fractions(i, ["ch4_wt_pct", "co2_wt_pct"])
+            w_ch4, w_co2 = fracs["ch4_wt_pct"], fracs["co2_wt_pct"]
             if w_ch4 + w_co2 > 1.0001:
                 raise ValueError("Vent composition exceeds 100 wt %")
             ch4, co2, v_scf = m * w_ch4, m * w_co2, None
@@ -132,8 +172,10 @@ class VentedGasCalculator(BaseCalculator):
             v_sour = _num(i.get("sour_gas_volume") if i.get("sour_gas_volume") not in (None, "") else i.get("amount"),
                           "sour (inlet) gas volume") * GAS_UNITS[u]
             v_sweet = _num(i.get("sweet_gas_volume"), "sweet (outlet) gas volume") * GAS_UNITS[u]
-            y_sour = _frac(i.get("sour_co2_content"), "sour gas CO2 (mol %)", required=True)
-            y_sweet = _frac(i.get("sweet_co2_content"), "sweet gas CO2 (mol %)")
+            if i.get("sour_co2_content") in (None, ""):
+                raise ValueError("Missing required field: sour gas CO2 (mol %)")
+            fracs = _parse_fractions(i, ["sour_co2_content", "sweet_co2_content"])
+            y_sour, y_sweet = fracs["sour_co2_content"], fracs["sweet_co2_content"]
             co2_scf = v_sour * y_sour - v_sweet * y_sweet
             if co2_scf < 0:
                 raise ValueError("Sweet gas carries more CO2 than the sour gas; check the volumes and CO2 contents")
@@ -152,9 +194,10 @@ class VentedGasCalculator(BaseCalculator):
             activity = (n * v, "m3 released")
         else:
             v_scf = self.gas_volume_scf(method, i)
-            y_ch4 = _frac(i.get("ch4_content"), "CH4 content (mol %)", required=True)
-            y_co2 = _frac(i.get("co2_content"), "CO2 content (mol %)")
-            y_c2 = _frac(i.get("c2plus_content"), "C2+ content (mol %)")
+            if i.get("ch4_content") in (None, ""):
+                raise ValueError("Missing required field: CH4 content (mol %)")
+            fracs = _parse_fractions(i, ["ch4_content", "co2_content", "c2plus_content"])
+            y_ch4, y_co2, y_c2 = fracs["ch4_content"], fracs["co2_content"], fracs["c2plus_content"]
             if y_ch4 + y_co2 + y_c2 > 1.0001:
                 raise ValueError("Gas composition exceeds 100 %")
             v_m3 = v_scf * SCF_TO_M3

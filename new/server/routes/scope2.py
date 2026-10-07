@@ -269,6 +269,10 @@ def get_scope2_emissions():
                     "cooling_ton": float(e.cooling_ton or 0),
                     "emission_factor": float(e.emission_factor or 0),
                     "co2e": float(e.co2e or 0),
+                    "co2e_location_based": float(e.co2e_location_based if e.co2e_location_based is not None else (e.co2e or 0)),
+                    "co2e_market_based": float(e.co2e_market_based if e.co2e_market_based is not None else (e.co2e or 0)),
+                    "market_instrument_type": e.market_instrument_type,
+                    "market_emission_factor": float(e.market_emission_factor) if e.market_emission_factor is not None else None,
                     "location": e.location,
                     "grid_region": e.grid_region,
                     "activity": e.activity,
@@ -303,9 +307,13 @@ def create_scope2_emission():
     facility_id = data.get("facility_id")
     if not facility_id:
         return jsonify({"error": "Missing facility_id"}), 422
+    try:
+        facility_id_int = int(facility_id)
+    except (ValueError, TypeError):
+        return jsonify({"error": "facility_id must be a valid integer"}), 422
 
     allowed_fids = get_allowed_facility_ids(user)
-    if allowed_fids is not None and int(facility_id) not in allowed_fids:
+    if allowed_fids is not None and facility_id_int not in allowed_fids:
         return jsonify({"error": "Unauthorized for this facility"}), 403
 
     user_id = user.id
@@ -319,7 +327,11 @@ def create_scope2_emission():
 
     # BUG-099: CO2e is always computed server-side; a client-supplied co2e is ignored.
     co2e = 0.0
+    co2e_location = 0.0
+    co2e_market = 0.0
     emission_factor = 0.0
+    market_ef = None
+    market_instrument_type = (data.get("market_instrument_type") or "").strip() or None
     electricity_kwh = 0.0
     heat_mmbtu = 0.0
 
@@ -340,12 +352,30 @@ def create_scope2_emission():
             return jsonify({"error": "'electricity_kwh' must be greater than 0"}), 400
 
         grid_region = data.get("grid_region") or data.get("location")
-        emission_factor, _ = resolve_electricity_factor(grid_region, data.get("emission_factor"))
-        co2e = (electricity_kwh * emission_factor) / 1000.0
+        location_ef, _ = resolve_electricity_factor(grid_region, data.get("emission_factor"))
+        co2e_location = (electricity_kwh * location_ef) / 1000.0
+
+        # Market-based calculation (GHG Protocol Scope 2 Guidance)
+        raw_mkt_ef = data.get("market_emission_factor")
+        if raw_mkt_ef not in (None, ""):
+            market_ef = parse_number(raw_mkt_ef, "market_emission_factor", required=False, min_value=0, max_value=MAX_GRID_EF_KG_PER_KWH)
+        elif market_instrument_type and market_instrument_type.lower() in ("rec", "ppa_zero", "go_zero", "renewable_ppa", "green_tariff_zero"):
+            market_ef = 0.0
+        elif data.get("emission_factor") is not None and market_instrument_type:
+            market_ef = parse_number(data.get("emission_factor"), "emission_factor", required=False, min_value=0, max_value=MAX_GRID_EF_KG_PER_KWH)
+        else:
+            market_ef = location_ef
+
+        co2e_market = (electricity_kwh * market_ef) / 1000.0
+        co2e = co2e_location
+        emission_factor = location_ef
 
     elif source_type == "indirect_steam":
         try:
             co2e, heat_mmbtu, emission_factor = _calc_indirect_steam(data)
+            co2e_location = co2e
+            co2e_market = co2e
+            market_ef = emission_factor
         except ValidationError:
             raise
         except Exception as exc:
@@ -355,6 +385,8 @@ def create_scope2_emission():
     elif source_type == "cogen_allocation":
         try:
             co2e = _calc_cogen_allocation(data)
+            co2e_location = co2e
+            co2e_market = co2e
             # the allocated heat output, as the file upload stores it
             heat_mmbtu = parse_number(data.get("heat_output_mmbtu") or ((data.get("calc_inputs") or {}).get(
                 "cogen_allocation") or {}).get("heat_output"), "heat_output", required=False, min_value=0, default=0.0)
@@ -404,6 +436,10 @@ def create_scope2_emission():
         cooling_ton=cooling_ton_val,
         emission_factor=emission_factor,
         co2e=co2e,
+        co2e_location_based=co2e_location,
+        co2e_market_based=co2e_market,
+        market_instrument_type=market_instrument_type,
+        market_emission_factor=market_ef,
         uncertainty=final_uncertainty,
         location=data.get("location") or data.get("grid_region"),
         grid_region=data.get("grid_region") or data.get("location"),
@@ -420,14 +456,8 @@ def create_scope2_emission():
         db.session.add(emission)
         db.session.flush()
         emission_id_val = emission.id
-        db.session.commit()
-    except Exception as e:
-        db.session.rollback()
-        current_app.logger.error(f"Failed to create Scope 2 emission: {e}")
-        return jsonify({"error": "Failed to create Scope 2 emission"}), 500
 
-    if user:
-        try:
+        if user:
             from utils import log_activity_and_notify
             log_activity_and_notify(
                 action="CREATE",
@@ -436,6 +466,7 @@ def create_scope2_emission():
                 request=request,
                 entity="Scope2Emission",
                 entity_id=str(emission_id_val),
+                facility_id=emission.facility_id,
                 details=f"Created Scope 2 emission: {source_type} ({co2e:.2f} tCO2e, Status: {initial_status})",
             )
             from status import PENDING_STATUS_SET
@@ -449,12 +480,11 @@ def create_scope2_emission():
                         title="New Scope 2 Emission Pending Review",
                         message=f"A new Scope 2 emission record ({source_type}) was submitted by {user.fullName} and is awaiting your approval.",
                     )
-            # the audit entry is committed for every status (browser test #18: a Verified record left
-            # no audit trace because the commit only ran for pending records)
-            db.session.commit()
-        except Exception:
-            current_app.logger.exception("Failed to write the Scope 2 audit entry")
-            db.session.rollback()
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Failed to create Scope 2 emission: {e}")
+        return jsonify({"error": "Failed to create Scope 2 emission"}), 500
 
     from routes.dashboard import clear_dashboard_cache
     clear_dashboard_cache()
@@ -485,6 +515,10 @@ def create_scope2_emission():
                     "unit": "kWh" if source_type == "electricity" else (data.get("unit") or "MMBtu"),
                     "emission_factor": emission.emission_factor,
                     "co2e": co2e,
+                    "co2e_location_based": co2e_location,
+                    "co2e_market_based": co2e_market,
+                    "market_instrument_type": market_instrument_type,
+                    "market_emission_factor": market_ef,
                     "uncertainty": final_uncertainty,
                     "location": emission.location or emission.grid_region,
                     "status": emission.status,
@@ -585,21 +619,42 @@ def update_scope2_emission(emission_id):
             return jsonify({"error": "A CHP allocation is recalculated from the facility total emissions (or fuel "
                                      "consumed), heat output and power output: give all three"}), 422
         emission.co2e = round(_calc_cogen_allocation(data), 4)
+        emission.co2e_location_based = emission.co2e
+        emission.co2e_market_based = emission.co2e
         emission.heat_mmbtu = parse_number(heat_in, "heat_output", min_value=0)
         activity_changed = False
+
+    if "market_instrument_type" in data:
+        emission.market_instrument_type = str(data["market_instrument_type"] or "").strip() or None
+        activity_changed = True
+    if "market_emission_factor" in data:
+        raw_m_ef = data["market_emission_factor"]
+        emission.market_emission_factor = parse_number(raw_m_ef, "market_emission_factor", required=False, min_value=0, max_value=MAX_GRID_EF_KG_PER_KWH) if raw_m_ef not in (None, "") else None
+        activity_changed = True
 
     if activity_changed:
         factor = emission.emission_factor or 0.0
         st = (emission.source_type or "").strip().lower()
         if st in ["electricity"] or "electric" in st:
-            emission.co2e = round((emission.electricity_kwh * factor) / 1000.0, 4)
+            emission.co2e_location_based = round((emission.electricity_kwh * factor) / 1000.0, 4)
+            m_ef = emission.market_emission_factor if emission.market_emission_factor is not None else factor
+            if emission.market_instrument_type and emission.market_instrument_type.lower() in ("rec", "ppa_zero", "go_zero", "renewable_ppa", "green_tariff_zero"):
+                m_ef = 0.0
+            emission.co2e_market_based = round((emission.electricity_kwh * m_ef) / 1000.0, 4)
+            emission.co2e = emission.co2e_location_based
         elif st in ["steam", "indirect_steam"] or "steam" in st:
             emission.co2e, emission.heat_mmbtu = _recalc_indirect_steam(
                 emission, data, factor, old_heat, old_co2e, old_ef, old_tons)
+            emission.co2e_location_based = emission.co2e
+            emission.co2e_market_based = emission.co2e
         elif st in ["heat"] or "heat" in st:
             emission.co2e = round((emission.heat_mmbtu * factor) / 1000.0, 4)
+            emission.co2e_location_based = emission.co2e
+            emission.co2e_market_based = emission.co2e
         elif st in ["cooling"] or "cool" in st:
             emission.co2e = round((emission.cooling_ton * factor) / 1000.0, 4)
+            emission.co2e_location_based = emission.co2e
+            emission.co2e_market_based = emission.co2e
 
     if "uncertainty" in data:
         emission.uncertainty = parse_number(data["uncertainty"], "uncertainty", required=False, min_value=0, max_value=2)
@@ -776,6 +831,17 @@ def bulk_import_scope2():
 
             co2e_val = (kwh * ef) / 1000
 
+            # Market-based calculation for bulk import
+            mkt_inst = (rec.get("market_instrument_type") or "").strip() or None
+            mkt_ef_raw = rec.get("market_emission_factor")
+            if mkt_ef_raw not in (None, ""):
+                mkt_ef = parse_number(mkt_ef_raw, "market_emission_factor", required=False, min_value=0, max_value=MAX_GRID_EF_KG_PER_KWH)
+            elif mkt_inst and mkt_inst.lower() in ("rec", "ppa_zero", "go_zero", "renewable_ppa", "green_tariff_zero"):
+                mkt_ef = 0.0
+            else:
+                mkt_ef = ef
+            co2e_mkt_val = (kwh * mkt_ef) / 1000.0
+
             # Default Scope 2 uncertainty
             u_res = propagate_uncertainty(
                 co2e_val,
@@ -795,6 +861,10 @@ def bulk_import_scope2():
                 electricity_kwh=kwh,
                 emission_factor=ef,
                 co2e=co2e_val,
+                co2e_location_based=co2e_val,
+                co2e_market_based=co2e_mkt_val,
+                market_instrument_type=mkt_inst,
+                market_emission_factor=mkt_ef,
                 uncertainty=final_uncertainty,
                 grid_region=grid_region,
                 location=grid_region,
@@ -815,24 +885,20 @@ def bulk_import_scope2():
             errors.append(f"Row {i}: invalid row")
 
     try:
+        if imported_count > 0:
+            log_activity_and_notify(
+                "IMPORT",
+                str(imported_count),
+                f"Bulk imported {imported_count} Scope 2 records",
+                user=user,
+                request=request,
+                entity="Scope2Emission",
+            )
         db.session.commit()
     except Exception as e:
         db.session.rollback()
         current_app.logger.error(f"Failed to bulk import Scope 2 emissions: {e}")
         return jsonify({"error": "Failed to bulk import Scope 2 emissions"}), 500
-
-    try:
-        log_activity_and_notify(
-            "IMPORT",
-            str(imported_count),
-            f"Bulk imported {imported_count} Scope 2 records",
-            user=user,
-            request=request,
-            entity="Scope2Emission",
-        )
-        db.session.commit()
-    except Exception:
-        db.session.rollback()
 
     from routes.dashboard import clear_dashboard_cache
 

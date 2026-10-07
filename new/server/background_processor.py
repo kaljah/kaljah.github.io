@@ -15,7 +15,9 @@ upload_jobs = {}
 upload_jobs_lock = threading.Lock()
 
 UPLOAD_JOB_DIR = os.environ.get("UPLOAD_JOB_DIR") or os.path.join(
-    __import__("tempfile").gettempdir(), "ghg_upload_jobs")
+    os.path.dirname(os.path.abspath(__file__)), "upload_jobs"
+)
+os.makedirs(UPLOAD_JOB_DIR, exist_ok=True)
 STALE_JOB_SECONDS = 600  # a job whose worker stopped writing for this long was interrupted
 _last_persist = {}
 
@@ -1039,6 +1041,7 @@ def _process_file_thread(
                         )
                     db.session.commit()
                 except Exception as notif_err:
+                    db.session.rollback()
                     import traceback as _tb
                     _tb.print_exc()
 
@@ -1538,9 +1541,22 @@ def _process_row_scope2(
     )
     if action == "error":
         return None, [existing]
+    mkt_inst = str(row.get("market_instrument_type") or row.get("market_instrument") or "").strip() or None
+    mkt_ef_val = None
+    raw_mkt_ef = row.get("market_emission_factor") or row.get("supplier_emission_factor") or row.get("supplier_factor")
+    if raw_mkt_ef not in (None, ""):
+        mkt_ef_val = _clean_float(raw_mkt_ef, default=None)
+    elif mkt_inst and mkt_inst.lower() in ("rec", "ppa_zero", "go_zero", "renewable_ppa", "green_tariff_zero"):
+        mkt_ef_val = 0.0
+    else:
+        mkt_ef_val = ef
+    co2e_mkt = (kwh * mkt_ef_val) / 1000.0 if source_type == "electricity" else co2e
+
     values = {
         "source_type": source_type, "electricity_kwh": kwh, "heat_mmbtu": heat_mmbtu, "steam_ton": steam_ton,
-        "emission_factor": ef, "co2e": co2e, "uncertainty": unc, "grid_region": grid_region or None,
+        "emission_factor": ef, "co2e": co2e, "co2e_location_based": co2e, "co2e_market_based": co2e_mkt,
+        "market_instrument_type": mkt_inst, "market_emission_factor": mkt_ef_val,
+        "uncertainty": unc, "grid_region": grid_region or None,
         "location": meter or grid_region or None,
     }
     if action == "update":
@@ -1559,6 +1575,10 @@ def _process_row_scope2(
         steam_ton=steam_ton,
         emission_factor=ef,
         co2e=co2e,
+        co2e_location_based=co2e,
+        co2e_market_based=co2e_mkt,
+        market_instrument_type=mkt_inst,
+        market_emission_factor=mkt_ef_val,
         uncertainty=unc,
         grid_region=grid_region or None,
         location=meter or grid_region or None,

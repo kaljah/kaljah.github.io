@@ -11,6 +11,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "e2e": "playwright test",
+    "e2e:smoke": "playwright test e2e/deep_user_audit/deep_user_journey.spec.js e2e/deep_user_audit/deep_business_functionality.spec.js",
+    "e2e:full": "playwright test e2e/deep_user_audit/",
+    "typecheck": "tsc --noEmit",
     "lint:css": "stylelint \"src/styles/**/*.css\" \"src/ui/**/*.css\" \"src/app/**/*.css\"",
     "ui:metrics": "node scripts/ui-metrics.mjs"
   },
@@ -48,6 +51,7 @@
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^14.6.7",
+    "@types/leaflet": "^1.9.22",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
@@ -67,6 +71,7 @@
     "stylelint": "^17.16.0",
     "stylelint-config-standard": "^40.0.0",
     "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
     "vite": "^7.2.4",
     "vitest": "^5.0.1"
   }

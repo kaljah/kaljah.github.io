@@ -73,8 +73,9 @@ def _method_tier(factor_source):
     return {"custom": "Tier 2", "specific": "Tier 3"}.get(src, "Tier 1")
 
 
-def inventory_uncertainty(year, allowed_fids=None, facility_id=None, scope="all", statuses=("Verified",)):
+def inventory_uncertainty(year, allowed_fids=None, facility_id=None, scope="all", statuses=("Verified",), include_gwp_uncertainty=False):
     from calculations.constants import get_active_gwp
+    from calculations.uncertainty import GWP_UNCERTAINTY_1SIGMA
 
     g = get_active_gwp(horizon="100")
     gwp = {"co2": 1.0, "ch4": float(g["CH4"]), "n2o": float(g["N2O"])}
@@ -126,8 +127,11 @@ def inventory_uncertainty(year, allowed_fids=None, facility_id=None, scope="all"
                 u_ef, bad1 = _valid(efc if has_components else comb)
                 flagged += int(bad1)
                 u_ef = u_ef if u_ef is not None else dflt
-                ef_lin[key][gas] += u_ef * e_gas[gas]
-                rec_u95 = max(rec_u95, u_ef * K95)
+                # IPCC AR5 Chapter 8 GWP uncertainty propagation
+                gwp_u = GWP_UNCERTAINTY_1SIGMA.get(gas, 0.0) if include_gwp_uncertainty else 0.0
+                effective_u_ef = math.sqrt(u_ef ** 2 + gwp_u ** 2) if gwp_u > 0 else u_ef
+                ef_lin[key][gas] += effective_u_ef * e_gas[gas]
+                rec_u95 = max(rec_u95, effective_u_ef * K95)
             flagged += int(bad_ad)
             if has_components:
                 ad_sq[key] += (u_ad * e_tot) ** 2
@@ -213,4 +217,5 @@ def inventory_uncertainty(year, allowed_fids=None, facility_id=None, scope="all"
         "has_data": total > 0,
         "scope": scope,
         "facility_id": facility_id,
+        "gwp_uncertainty_included": include_gwp_uncertainty,
     }

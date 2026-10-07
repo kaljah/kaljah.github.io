@@ -195,9 +195,13 @@ def get_qaqc_dashboard():
         from services.inventory_uncertainty import inventory_uncertainty
 
         cy = datetime.now(timezone.utc).year
+        unc_year = None
         if year_arg and year_arg not in ["all", ""]:
-            unc_year = int(year_arg)
-        else:
+            try:
+                unc_year = int(year_arg)
+            except (ValueError, TypeError):
+                unc_year = None
+        if unc_year is None:
             unc_year = db.session.query(func.max(Emission.year)).filter(
                 Emission.status == "Verified", Emission.year <= cy).scalar() or cy
         unc = {sc: inventory_uncertainty(unc_year, allowed_fids=allowed_fids, scope=sc) for sc in ("all", "1", "2", "3")}
