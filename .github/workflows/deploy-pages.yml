@@ -47,6 +47,9 @@ jobs:
       - name: Install backend dependencies
         run: pip install -r requirements.txt pytest pytest-timeout hypothesis
 
+      - name: Backend module size ratchet
+        run: python scripts/loc_ratchet.py --check
+
       - name: Run full backend test suite
         env:
           FLASK_ENV: testing

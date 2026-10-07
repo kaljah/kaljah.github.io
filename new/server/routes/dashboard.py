@@ -34,6 +34,36 @@ CACHE_LOCK = threading.Lock()
 _LOCAL_CACHE_EPOCH = 0.0
 _LAST_EPOCH_CHECK = 0.0
 
+# Hit/miss counters for the batch-all cache; summarised in the log every _CACHE_LOG_EVERY lookups.
+_CACHE_STATS = {"hits": 0, "misses": 0}
+_CACHE_STATS_LOCK = threading.Lock()
+_CACHE_LOG_EVERY = 1000
+
+
+def _record_cache_lookup(hit):
+    with _CACHE_STATS_LOCK:
+        _CACHE_STATS["hits" if hit else "misses"] += 1
+        total = _CACHE_STATS["hits"] + _CACHE_STATS["misses"]
+        if total < _CACHE_LOG_EVERY:
+            return
+        hits, misses = _CACHE_STATS["hits"], _CACHE_STATS["misses"]
+        _CACHE_STATS["hits"] = _CACHE_STATS["misses"] = 0
+    current_app.logger.info(
+        "dashboard batch-all cache: %d hits, %d misses (%.0f%% hit rate) over %d lookups",
+        hits, misses, 100.0 * hits / total, total,
+    )
+
+
+def cache_stats():
+    """Current batch-all cache counters (since the last log line or reset)."""
+    with _CACHE_STATS_LOCK:
+        return dict(_CACHE_STATS)
+
+
+def reset_cache_stats():
+    with _CACHE_STATS_LOCK:
+        _CACHE_STATS["hits"] = _CACHE_STATS["misses"] = 0
+
 
 def _get_global_cache_epoch():
     """Fetches the latest global cache epoch timestamp from DB to sync multi-worker Gunicorn processes."""
@@ -168,9 +198,15 @@ def get_batch_dashboard_data():
         gwp_horizon,
         user.id if user else 0,
     )
+    # Honour invalidations made by other workers before trusting this worker's cache
+    # (at most one database read per second; a no-op on SQLite).
+    _get_global_cache_epoch()
     with CACHE_LOCK:
-        if cache_key in DASHBOARD_CACHE:
-            return jsonify(DASHBOARD_CACHE[cache_key])
+        cached_result = DASHBOARD_CACHE.get(cache_key)
+    if cached_result is not None:
+        _record_cache_lookup(hit=True)
+        return jsonify(cached_result)
+    _record_cache_lookup(hit=False)
 
     # Capture app reference NOW (inside the request context) so worker
     # threads can push their own app context independently.

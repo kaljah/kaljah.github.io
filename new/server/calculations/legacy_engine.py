@@ -1,5 +1,22 @@
+import logging
+
 from .dispatcher import dispatcher as api2021_dispatcher
 from .constants import DEFAULT_GWP, get_active_gwp
+
+log = logging.getLogger(__name__)
+
+
+def _note_fallback(branch, process, payload):
+    """The API 2021 dispatcher did not produce a result; the older factor math is used.
+
+    This is the designated path for entered Tier 3 factors, saved custom factors, zero
+    activity and catalog factors of processes the dispatcher does not model (measured over
+    the whole test suite: 11 uses in ~2,500 tests). Logged at DEBUG; raise the level of this
+    logger to measure how often it runs."""
+    log.debug(
+        "legacy calculation fallback used: branch=%s process=%s factor_source=%s",
+        branch, process or "?", (payload.get("factor_source") or "default"),
+    )
 
 
 # Constants
@@ -317,6 +334,7 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
             em["co"] /= 1000.0
 
         calc_method = "server_specific"
+        _note_fallback(calc_method, process, payload)
         return em, calc_method
 
     if factor_data and factor_data.get("type"):
@@ -333,6 +351,7 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
         )
 
         calc_method = "server_custom_factor"
+        _note_fallback(calc_method, process, payload)
         return em, calc_method
 
     # --- DEFAULT/CUSTOM MODE: Factor-Based Calculation ---
@@ -404,6 +423,7 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
         em["co2"] + (em["ch4"] * gwp_dict["CH4"]) + (em["n2o"] * gwp_dict["N2O"])
     )
 
+    _note_fallback(calc_method, process, payload)
     return em, calc_method
 
 
