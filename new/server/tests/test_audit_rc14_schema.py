@@ -18,7 +18,8 @@ PROD_SECRET = "regression-test-secret-key-that-is-long-enough-0123456789abcdef"
 
 def _env(db_path, **extra):
     env = {k: v for k, v in os.environ.items() if k not in ("FLASK_ENV", "APP_ENV", "ENVIRONMENT")}
-    env.update(DATABASE_URL="sqlite:///" + db_path.replace("\\", "/"), SEED_ADMIN="false", FLASK_APP="app.py")
+    env.update(DATABASE_URL="sqlite:///" + db_path.replace("\\", "/"), SEED_ADMIN="false", FLASK_APP="app.py",
+               ALLOW_MEMORY_LIMITER="true")
     env.update(extra)
     return env
 

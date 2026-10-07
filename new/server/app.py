@@ -347,7 +347,7 @@ app.register_blueprint(equity_bp, url_prefix="/api/equity")
 
 # Swagger UI Configuration (SEC-05 & INFO-01: Disabled in production unless explicitly enabled)
 if (
-    os.environ.get("FLASK_ENV") != "production"
+    not app.config.get("IS_PRODUCTION")
     or os.environ.get("ENABLE_PUBLIC_SWAGGER", "false").lower() == "true"
 ):
     try:
