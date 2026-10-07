@@ -97,11 +97,12 @@ def test_delete_mitigation_invalid_id_format(client, test_users):
 def test_ogmp_survey_null_measured_rate(client, test_users):
     """Verify get_ogmp_surveys handles records with null measured_rate_kg_hr without TypeError."""
     with app.app_context():
-        fac = Facility.query.first()
-        if not fac:
-            fac = Facility(name="Test Field Fac", code="TFF-01", segment="Upstream", activity="Upstream Oil & Gas")
-            db.session.add(fac)
-            db.session.commit()
+        # Own facility: a facility left behind by an earlier test can be filtered out of the listing.
+        import uuid as _uuid
+        fac = Facility(name=f"Test Field Fac {_uuid.uuid4().hex[:8]}", segment="Upstream",
+                       activity="Upstream Oil & Gas")
+        db.session.add(fac)
+        db.session.commit()
         fac_id = fac.id
 
         survey = OgmpSurvey(
