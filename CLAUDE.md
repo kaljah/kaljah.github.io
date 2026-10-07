@@ -69,7 +69,10 @@ Other: `new/setup.bat` / `new/start_all.bat` (Windows native launch scripts for 
 - **SQLite connect hook.** It enables WAL mode, foreign keys and `busy_timeout`, and runs periodic WAL checkpoints in development.
 - **Config (`config.py`).**
   - SQLite `ghg_app.db` is permitted only in local development.
-  - Production (detected from `FLASK_ENV`/`APP_ENV`/`ENVIRONMENT`) strictly enforces PostgreSQL (`DB_TYPE=postgres`) and refuses to start without a real `SECRET_KEY` and a valid `DATABASE_URL`.
+  - Production is detected from `FLASK_ENV`/`APP_ENV`/`ENVIRONMENT` and fails closed: only `development`, `dev`, `local`, `testing` and `test` (or unset) are non-production; any other value (`production`, `prod`, `staging`, `live`, ...) is production. Production strictly enforces PostgreSQL (`DB_TYPE=postgres`) and refuses to start without a real `SECRET_KEY` and a valid `DATABASE_URL`.
+  - Production also refuses to start with an empty or `*` `ALLOWED_ORIGINS`, and without a shared rate-limit store (`REDIS_URL`; `ALLOW_MEMORY_LIMITER=true` opts out for a single worker). The GitHub Pages origin `https://kaljah.github.io` is still appended when missing from `ALLOWED_ORIGINS` (with a warning in production) until `CORS_STRICT=true` is set.
+  - Code should read `app.config["IS_PRODUCTION"]`, not compare `FLASK_ENV` to `"production"`.
+  - Config tests run `config` in subprocesses (`tests/test_config_safety.py`); production subprocess tests need `ALLOW_MEMORY_LIMITER=true` or a Redis URL.
   - Reverse proxy support is configured via `ProxyFix` when `TRUSTED_PROXIES` is set.
 - **Dashboard cache.** SQLAlchemy `before_commit`/`after_commit` hooks call `routes.dashboard.clear_dashboard_cache()` when Emission, Scope2/3, ProductionData, Facility, CustomFactor or OgmpSurvey rows change.
 - **Blueprints (`routes/`).** Each is mounted at `/api/<name>`. The exceptions are `managedata_bp` (mounted at `/api`) and `factors_bp` (no prefix; its routes carry their own paths).

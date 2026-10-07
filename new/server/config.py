@@ -1,3 +1,4 @@
+import logging
 import os
 from datetime import timedelta
 from dotenv import load_dotenv
@@ -13,7 +14,10 @@ class Config:
         or os.environ.get("ENVIRONMENT")
         or "development"
     ).lower()
-    _is_production = _env_name in ["production", "prod", "staging"]
+    # Fail closed: only these names are treated as non-production. Any other value
+    # (production, prod, staging, live, ...) enforces the production safety checks below.
+    _NON_PRODUCTION_ENVS = {"development", "dev", "local", "testing", "test"}
+    _is_production = _env_name not in _NON_PRODUCTION_ENVS
     IS_PRODUCTION = _is_production
 
     if _is_production:
@@ -41,9 +45,13 @@ class Config:
                 "FATAL: SQLite is prohibited in production. A production deployment requires PostgreSQL with a valid postgresql:// DATABASE_URL."
             )
     else:
-        SECRET_KEY = (
-            os.environ.get("SECRET_KEY") or "dev-secret-key-change-in-prod-please"
-        )
+        SECRET_KEY = os.environ.get("SECRET_KEY")
+        if not SECRET_KEY:
+            SECRET_KEY = "dev-secret-key-change-in-prod-please"
+            logging.getLogger(__name__).warning(
+                "SECRET_KEY is not set; using the built-in development key. "
+                "This is only acceptable for local development and testing."
+            )
 
     _default_origins = (
         "http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:3000,"
@@ -55,8 +63,25 @@ class Config:
         for o in os.environ.get("ALLOWED_ORIGINS", _default_origins).split(",")
         if o.strip()
     ]
-    if "https://kaljah.github.io" not in ALLOWED_ORIGINS:
-        ALLOWED_ORIGINS.append("https://kaljah.github.io")
+    if _is_production and (not ALLOWED_ORIGINS or "*" in ALLOWED_ORIGINS):
+        raise ValueError(
+            "FATAL: ALLOWED_ORIGINS must list explicit origins in production "
+            "(empty and '*' are not allowed with credentialed requests)."
+        )
+    # Transitional: the GitHub Pages frontend origin used to be appended unconditionally.
+    # Set CORS_STRICT=true once ALLOWED_ORIGINS lists every origin you need.
+    _legacy_pages_origin = "https://kaljah.github.io"
+    if _legacy_pages_origin not in ALLOWED_ORIGINS:
+        if os.environ.get("CORS_STRICT", "").lower() in ("1", "true", "yes"):
+            pass
+        else:
+            ALLOWED_ORIGINS.append(_legacy_pages_origin)
+            if _is_production:
+                logging.getLogger(__name__).warning(
+                    "ALLOWED_ORIGINS does not list %s; it is still added for compatibility. "
+                    "Add it explicitly and set CORS_STRICT=true to remove this fallback.",
+                    _legacy_pages_origin,
+                )
 
     # Database Configuration
     # Defaults to SQLite, can be overridden by DB_TYPE env var
@@ -126,5 +151,16 @@ class Config:
         or os.environ.get("RATELIMIT_STORAGE_URI")
     )
     RATELIMIT_STORAGE_URI = _redis_url if _redis_url else "memory://"
+    # With several workers, memory:// gives every worker its own counters, so the effective
+    # limit is the setting multiplied by the worker count. Production needs a shared store.
+    if (
+        _is_production
+        and RATELIMIT_STORAGE_URI.startswith("memory://")
+        and os.environ.get("ALLOW_MEMORY_LIMITER", "").lower() not in ("1", "true", "yes")
+    ):
+        raise ValueError(
+            "FATAL: production needs a shared rate-limit store. Set REDIS_URL "
+            "(or RATELIMIT_STORAGE_URI), or ALLOW_MEMORY_LIMITER=true for a single worker."
+        )
     # Expose X-RateLimit-* response headers so clients can self-throttle
     RATELIMIT_HEADERS_ENABLED = True

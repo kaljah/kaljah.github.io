@@ -22,7 +22,7 @@ def seed_admin():
         it_admin_email = os.environ.get("IT_ADMIN_EMAIL", "itadmin@ghg.com").strip().lower()
         it_admin_password = os.environ.get("IT_ADMIN_PASSWORD")
 
-        is_production = os.environ.get("FLASK_ENV") == "production"
+        is_production = bool(app.config.get("IS_PRODUCTION"))
         if is_production and (not admin_password or not it_admin_password):
             raise ValueError(
                 "FATAL: ADMIN_PASSWORD and IT_ADMIN_PASSWORD must be explicitly set via environment variables in production."
