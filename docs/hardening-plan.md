@@ -11,11 +11,11 @@ Derived from a read-only review of the codebase (see the System Map artifact). E
 | Phase | State | Notes |
 |-------|-------|-------|
 | 0 Safety net | Done | Baseline: backend 2,528 passed / 1 skipped; frontend lint, typecheck, lint:css, vitest (103) green after fixing 5 lint errors and re-baselining the UI ratchet. `.git` backed up outside the repo. |
-| 1 Repo hygiene | 1.1-1.4 done locally; 1.6 and 1.5 pending | Loose root files and Antigravity state deleted/untracked in 3 commits. **Not pushed.** History rewrite (1.5) and the CI check (1.6) still to do. Databases were never tracked (`*.db` is ignored). |
+| 1 Repo hygiene | 1.1-1.4 and 1.6 done; 1.5 prepared, **push pending** | Loose root files and Antigravity state deleted/untracked; CI rejects tracked machine-local files. The history rewrite was run on a scratch mirror (581 MB to 85 MB, tip-of-`main` tree identical) but **nothing is pushed**: the force-push was blocked and needs you to run it. GitHub `main` also holds 56 later "Antigravity Sync" commits (state files only) that the rewrite drops. Databases were never tracked (`*.db` is ignored). |
 | 2 Production config | Done | Fail-closed environment detection, CORS checks, shared rate-limit store required in production. 14 tests. Needs `REDIS_URL` set in production before deploy. |
 | 3 Cache and docs | Done | Found and fixed a real bug: `batch-all` never checked the shared invalidation epoch, so with several workers a cache hit could serve stale data for up to 5 minutes. Counters added. `schema_sync.py` docstring fixed. |
 | 4 Calculation fallback | Measured; retirement dropped | See Phase 4 below. |
-| 5 Module splits | 5.1 done | Ratchet script and CI step added; splitting not started. |
+| 5 Module splits | 5.1-5.4 done; 5.5 not started | `routes/emissions.py` 4,178 to 1,138 lines (9 modules), `reports.py` 1,541 to 608, `dashboard.py` 1,779 to 1,188. Route table identical (189 rules) after every split; suite 2,549 passed. Left: `dispatcher.py` (2,395), `vented*.py`, `auth.py` (1,264), and the 828-line CSV template function. |
 | 6 Frontend finish | 6.1, 6.2 done | Also fixed `ui-metrics` so it scans `.ts/.tsx` (five metrics were reading 0 because they scanned nothing). |
 
 ## Phase 0 - Safety net (before touching anything)
