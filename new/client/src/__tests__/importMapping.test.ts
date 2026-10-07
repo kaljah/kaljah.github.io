@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { autoDetectMapping, missingRequiredFields, normHeader } from "../utils/importMapping";
 
-const F = (key, label, required = false) => ({ key, label, required });
+const F = (key: string, label: string, required = false) => ({ key, label, required });
 
 describe("import column mapping", () => {
   it("reads template headers without tags and unit notes", () => {

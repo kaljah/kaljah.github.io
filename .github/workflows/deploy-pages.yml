@@ -137,6 +137,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: No new JavaScript sources (TypeScript only)
+        run: npm run check:ts
+
       - name: Lint design-system CSS
         run: npm run lint:css
 

@@ -4,8 +4,10 @@ import { CATEGORY_ACTIVITIES } from "../utils/scope3Factors";
 // Expected values re-derived from the source tables (AR5: CH4 28, N2O 265)
 const MI = 1.609344;
 const SHORT_TON_MILE = 0.90718474 * MI; // tonne-km
-const epa = (co2, ch4G, n2oG, per) => (co2 + (ch4G * 28) / 1000 + (n2oG * 265) / 1000) / per;
-const find = (cat, name) => CATEGORY_ACTIVITIES[cat].find((a) => a.value === name).factor;
+const epa = (co2: number, ch4G: number, n2oG: number, per: number) =>
+  (co2 + (ch4G * 28) / 1000 + (n2oG * 265) / 1000) / per;
+const find = (cat: number, name: string) =>
+  CATEGORY_ACTIVITIES[cat].find((a) => a.value === name)!.factor;
 
 describe("Scope 3 factors", () => {
   it("transport = EPA Emission Factors Hub 2025 Table 8 (per short ton-mile)", () => {

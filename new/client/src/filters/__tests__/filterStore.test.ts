@@ -25,7 +25,7 @@ describe("filterStore", () => {
     setFilter("year", "2025");
     setFilter("year", "2025");
     expect(listener).toHaveBeenCalledTimes(1);
-    expect(JSON.parse(sessionStorage.getItem("ct.analyticsFilters")).year).toBe("2025");
+    expect(JSON.parse(sessionStorage.getItem("ct.analyticsFilters") ?? "{}").year).toBe("2025");
     off();
     setFilter("year", "2024");
     expect(listener).toHaveBeenCalledTimes(1);
