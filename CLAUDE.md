@@ -36,6 +36,7 @@ python -m pytest tests/test_combustion.py::<test_name> -q     # single test
 python -m pytest -x --timeout=300                            # CI test run
 ```
 - `new/server/pytest.ini` also collects `test_*.py` in the server dir itself (ignoring `test_runner.py`). The root `pytest.ini` runs from the repo root and additionally collects `validation/`.
+- `python scripts/loc_ratchet.py --check` (CI gate) fails if a file in `routes/`, `calculations/` or `services/` grows past `scripts/loc_baseline.json`, or a new one exceeds 800 lines. After shrinking a file, lock it in with `--write`.
 - `tests/conftest.py` sets `FLASK_ENV=testing`, uses a temporary `tests/test_app.db`, sets `SEED_ADMIN=false`, turns off CSRF and turns off the rate limiter.
 - `new/server/requirements.txt` includes `pytest`, `pytest-timeout`, `hypothesis`, `pytest-benchmark`, and `redis`.
 - CI (`.github/workflows/deploy-pages.yml`) also runs these gate groups separately:
@@ -49,6 +50,7 @@ npm run dev      # :5173, proxies /api -> 127.0.0.1:5000
 npm run build
 npm run lint     # ESLint 9 (0 errors)
 npm run typecheck   # tsc --noEmit (client is migrating to TypeScript)
+npm run check:ts    # fails on any .js/.jsx under src/ (TypeScript only)
 npm run lint:css    # stylelint on src/styles, src/ui, src/app
 npm run ui:metrics -- --check   # UI metrics ratchet (baseline: ui-metrics.baseline.json)
 npm run test     # vitest + jsdom; only picks up src/**/*.{test,spec}.*
@@ -74,7 +76,7 @@ Other: `new/setup.bat` / `new/start_all.bat` (Windows native launch scripts for 
   - Code should read `app.config["IS_PRODUCTION"]`, not compare `FLASK_ENV` to `"production"`.
   - Config tests run `config` in subprocesses (`tests/test_config_safety.py`); production subprocess tests need `ALLOW_MEMORY_LIMITER=true` or a Redis URL.
   - Reverse proxy support is configured via `ProxyFix` when `TRUSTED_PROXIES` is set.
-- **Dashboard cache.** SQLAlchemy `before_commit`/`after_commit` hooks call `routes.dashboard.clear_dashboard_cache()` when Emission, Scope2/3, ProductionData, Facility, CustomFactor or OgmpSurvey rows change.
+- **Dashboard cache.** SQLAlchemy `before_commit`/`after_commit` hooks call `routes.dashboard.clear_dashboard_cache()` when Emission, Scope2/3, ProductionData, Facility, CustomFactor or OgmpSurvey rows change. On Postgres this bumps a shared epoch in `system_settings`; every `batch-all` request calls `_get_global_cache_epoch()` (at most one DB read per second) before trusting its per-process cache, so other workers drop stale results. `routes.dashboard.cache_stats()` exposes hit/miss counters (also logged every 1000 lookups).
 - **Blueprints (`routes/`).** Each is mounted at `/api/<name>`. The exceptions are `managedata_bp` (mounted at `/api`) and `factors_bp` (no prefix; its routes carry their own paths).
 - **`extensions.py`.**
   - `db` is created with `expire_on_commit=False`.
@@ -96,6 +98,7 @@ Other: `new/setup.bat` / `new/start_all.bat` (Windows native launch scripts for 
   - Routes and `background_processor.py` call `calculations.compute_emissions` (in `calculations/legacy_engine.py`).
   - Unit conversions use canonical formulas in `calculations/units.py`.
   - Gas compositions are treated as volume/mole fractions directly without double percentage division.
+  - `compute_emissions` tries the dispatcher first and falls back to legacy factor math (`server_default` / `server_specific` / `server_custom_factor`) for zero activity, entered Tier 3 factors, saved custom factors and processes the dispatcher does not model. This is intentional, not dead code (11 uses in ~2,500 tests; none on the API Compendium exhibit tests). Set the `calculations.legacy_engine` logger to DEBUG to see each use.
   - Dispatcher (`calculations/dispatcher.py`) maps process-type aliases (e.g. `flaring`, `tank_flashing`, `compressor_seal`) to API-Compendium-2021 calculators in `combustion.py`, `vented.py`, `fugitive.py`, `midstream.py`, `indirect.py` and `stoichiometry.py`.
   - Zero-activity/throughput records cleanly compute zero emissions.
 - **Scope 2 Dual Reporting Architecture.**
