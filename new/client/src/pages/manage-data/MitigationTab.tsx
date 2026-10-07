@@ -86,7 +86,7 @@ const MitigationTab: React.FC<MitigationTabProps> = ({
       </button>
     </div>
 
-    <div className="grid-forms" style={{ gridTemplateColumns: "repeat(3, 1fr)" }}>
+    <div className="grid-forms md:[grid-template-columns:repeat(3,1fr)]!">
       <Field
         className="input-group"
         label={

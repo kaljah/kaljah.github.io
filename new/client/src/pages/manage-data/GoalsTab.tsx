@@ -144,7 +144,7 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
       </div>
 
       {/* Goal Input Form */}
-      <div className="grid-forms" style={{ gridTemplateColumns: "repeat(3, 1fr)", background: "#fafafa", padding: "20px", borderRadius: "12px", border: "1px solid var(--border-color)" }}>
+      <div className="grid-forms md:[grid-template-columns:repeat(3,1fr)]!" style={{ background: "#fafafa", padding: "20px", borderRadius: "12px", border: "1px solid var(--border-color)" }}>
         <Field className="input-group" label="Target Year">
           <Input
             type="number"
@@ -272,7 +272,7 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
       </div>
 
       {/* Base Year Input Form */}
-      <div className="grid-forms" style={{ gridTemplateColumns: "repeat(4, 1fr)", background: "#fafafa", padding: "20px", borderRadius: "12px", border: "1px solid var(--border-color)", gap: "16px" }}>
+      <div className="grid-forms md:[grid-template-columns:repeat(4,1fr)]!" style={{ background: "#fafafa", padding: "20px", borderRadius: "12px", border: "1px solid var(--border-color)", gap: "16px" }}>
         <Field className="input-group" label="Base Year">
           <Input
             type="number"
@@ -309,7 +309,7 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
             <Plus size={16} /> Save Recalculation
           </button>
         </div>
-        <div className="input-group  [grid-column:span_4]!">
+        <div className="input-group md:[grid-column:span_4]!">
           <label>Reason for Change / Recalculation Justification *</label>
           <Textarea
             value={baseYearForm.reason || ""}
@@ -435,7 +435,7 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
         )}
       </div>
 
-      <div className="grid-forms" style={{ gridTemplateColumns: "repeat(3, 1fr)", gap: "16px" }}>
+      <div className="grid-forms md:[grid-template-columns:repeat(3,1fr)]!" style={{ gap: "16px" }}>
         <Field className="input-group" label="Base Year">
           <Input
             type="number"
