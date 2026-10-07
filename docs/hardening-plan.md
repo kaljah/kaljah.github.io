@@ -7,6 +7,17 @@ Derived from a read-only review of the codebase (see the System Map artifact). E
 - Phases 0 and 1 change what is committed or deployed: get an explicit go-ahead before each destructive step (history rewrite, force push, file deletion).
 - A task is done when its **Verify** line passes and `CLAUDE.md` is updated if it changed a documented fact.
 
+## Status (updated 2026-10-07)
+| Phase | State | Notes |
+|-------|-------|-------|
+| 0 Safety net | Done | Baseline: backend 2,528 passed / 1 skipped; frontend lint, typecheck, lint:css, vitest (103) green after fixing 5 lint errors and re-baselining the UI ratchet. `.git` backed up outside the repo. |
+| 1 Repo hygiene | 1.1-1.4 done locally; 1.6 and 1.5 pending | Loose root files and Antigravity state deleted/untracked in 3 commits. **Not pushed.** History rewrite (1.5) and the CI check (1.6) still to do. Databases were never tracked (`*.db` is ignored). |
+| 2 Production config | Done | Fail-closed environment detection, CORS checks, shared rate-limit store required in production. 14 tests. Needs `REDIS_URL` set in production before deploy. |
+| 3 Cache and docs | Done | Found and fixed a real bug: `batch-all` never checked the shared invalidation epoch, so with several workers a cache hit could serve stale data for up to 5 minutes. Counters added. `schema_sync.py` docstring fixed. |
+| 4 Calculation fallback | Measured; retirement dropped | See Phase 4 below. |
+| 5 Module splits | 5.1 done | Ratchet script and CI step added; splitting not started. |
+| 6 Frontend finish | 6.1, 6.2 done | Also fixed `ui-metrics` so it scans `.ts/.tsx` (five metrics were reading 0 because they scanned nothing). |
+
 ## Phase 0 - Safety net (before touching anything)
 | # | Task | Verify |
 |---|------|--------|
@@ -49,16 +60,28 @@ Rollout note: set the new `ALLOWED_ORIGINS` value in the deployment **before** d
 | 3.3 | Decide from 3.2 data whether to scope invalidation by facility and year. Only implement if the hit rate is poor. | Decision recorded in this file |
 
 ## Phase 4 - Calculation path consolidation
-Goal: one calculation path, with the legacy fallback either proven unused or ported.
+Original goal: retire the legacy fallback. **Outcome: the measurement showed it should stay.**
 
-| # | Task | Verify |
+| # | Task | Result |
 |---|------|--------|
-| 4.1 | In `calculations/legacy_engine.py`, log a warning (process type, factor source, `calc_method`) whenever a fallback branch (`server_default`, `server_specific`, `server_custom_factor`) is used. | Warning appears in a test that exercises each branch |
-| 4.2 | Query production-like data: count records by `calc_method`. Write the numbers into this file. | Table filled in |
-| 4.3 | For each fallback still in use: add a dispatcher calculator that reproduces its numbers, with a golden-dataset test that compares old and new outputs on the same inputs (tolerance 1e-9 relative). | New tests pass; `test_independent_differential` and `test_golden_dataset_validation` still green |
-| 4.4 | Route the case to the dispatcher, keep the fallback behind the warning for one release, then delete it once the warning has not fired. | Fallback code removed; full suite green |
+| 4.1 | Report each fallback use with branch, process and factor source. | Done (`_note_fallback`, logged at DEBUG; `tests/test_legacy_fallback_logging.py`). |
+| 4.2 | Count fallback uses on the API Compendium exhibit data and the whole suite. | Done, below. |
+| 4.3 | Port fallback cases into the dispatcher. | Dropped: the remaining cases are the intended behaviour of the legacy path. |
+| 4.4 | Delete the fallback. | Dropped. |
 
-Do not do 4.4 without the 4.2 numbers. Existing records keep their stored `calc_method`; nothing is recomputed.
+**Measurement.** The 214 tests in `test_api_compendium_exhibits.py`, `test_api2021_chapter7_onshore.py` and `test_all_process_types_matrix.py` use the fallback **0** times: the exhibit calculators are served entirely by the dispatcher. Across the whole suite (2,546 tests, which also exercise every route and bulk import) it ran **11** times:
+
+| Branch | Process | Uses | What triggers it |
+|--------|---------|------|------------------|
+| `server_default` | combustion | 6 | zero quantity, zero factor (rejected, not booked as zero), hostile CSV fuzz, unknown factor |
+| `server_specific` | combustion | 2 | entered Tier 3 factors (`factor_source=specific`) |
+| `server_custom_factor` | combustion | 1 | microscopic quantities |
+| `server_default` | separation | 1 | catalog factor for a process the dispatcher does not model |
+| `server_default` | fugitive | 1 | unrecognised fugitive request (rejected) |
+
+Entered Tier 3 factors are applied by the legacy path by design (see the comment above `_tier3_zero` in `legacy_engine.py`). Existing records keep their stored `calc_method`; nothing is recomputed.
+
+**Caveat.** This is test data, not production data: real usage may exercise the fallback more (for example entered factors on many records). If you want that number, count rows by `calc_method` in the production database: `SELECT calc_method, COUNT(*) FROM emissions GROUP BY calc_method;`.
 
 ## Phase 5 - Break up the large modules
 Behaviour-preserving moves only. Keep every public import path working by re-exporting from the old module until the last task.
@@ -83,7 +106,7 @@ Behaviour-preserving moves only. Keep every public import path working by re-exp
 ## Order and effort
 1. Phase 0, then 1.1-1.4 and 1.6 (small, safe).
 2. Phase 2 and 3 (small, high value).
-3. Phase 4 (medium; needs data from 4.2).
+3. Phase 4 (done; fallback kept).
 4. Phases 5 and 6 (long-running; interleave, one task per PR).
 5. 1.5 only if you want a smaller repository and approve the history rewrite.
 

@@ -1,10 +1,11 @@
 """
 Idempotent schema helpers shared by Alembic revisions and app startup.
 
-The schema is created by ``db.create_all()`` at import time, which creates missing
-tables but never adds columns to existing ones. These helpers make migrations safe
-to run against any database (fresh, created by create_all, or upgraded by the old
-ad-hoc scripts) by applying only what is actually missing.
+Alembic is the only mechanism that changes the schema (``app.init_schema`` upgrades to
+head outside production and refuses to start in production when the database is behind).
+These helpers make migrations safe to run against any database (fresh, created earlier by
+``db.create_all()``, or upgraded by the old ad-hoc scripts) by applying only what is
+actually missing.
 """
 import logging
 
