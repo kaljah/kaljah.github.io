@@ -194,6 +194,19 @@ def canonicalize(payload, delta=None):
         for k, v in delta.items():
             if k not in ("amount", "quantity", "fuel", "fuel_type"):
                 out[k] = v
+        # Keep calc_inputs synchronized with the edited activity amount/unit/fuel
+        ptype = out.get("process_type") or out.get("source_type")
+        if ptype and isinstance(out.get("calc_inputs"), dict):
+            ci = out["calc_inputs"].get(ptype)
+            if isinstance(ci, dict):
+                ci_copy = dict(ci)
+                if "amount" in out:
+                    ci_copy["amount"] = out["amount"]
+                if "unit" in out:
+                    ci_copy["unit"] = out["unit"]
+                if "fuel" in out:
+                    ci_copy["fuel"] = out["fuel"]
+                out["calc_inputs"] = {**out["calc_inputs"], ptype: ci_copy}
     if out.get("process_type") and not out.get("source_type"):
         out["source_type"] = out["process_type"]
     return out

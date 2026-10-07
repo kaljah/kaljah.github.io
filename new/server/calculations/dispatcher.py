@@ -677,10 +677,15 @@ class CalculationDispatcher:
                         "Missing required gas composition (C1 mole fraction) for Tier 3 specific calculation"
                     )
 
-        # Extract common quantity
-        raw_qty = flat_inputs.get("amount") or flat_inputs.get("quantity") or 0
+        raw_qty = flat_inputs.get("amount") if flat_inputs.get("amount") not in [None, ""] else flat_inputs.get("quantity")
+        if isinstance(raw_qty, str):
+            s = raw_qty.strip()
+            if "," in s and "." not in s:
+                raw_qty = s.replace(",", ".")
+            else:
+                raw_qty = s.replace(",", "")
         try:
-            quantity = float(raw_qty)
+            quantity = float(raw_qty or 0)
         except (ValueError, TypeError):
             raise ValueError(f"Invalid numeric quantity/amount: {raw_qty}")
         if math.isnan(quantity) or math.isinf(quantity):
@@ -2358,7 +2363,7 @@ class CalculationDispatcher:
             inputs.get("factor_source")
             or uncertainties.get("_factor_source", "default")
         )
-        _cat = PROCESS_CATEGORY.get(str(process_type).lower(), "combustion")
+        _cat = PROCESS_CATEGORY.get(str(process_type).lower(), str(process_type).lower())
 
         def wrap(val, gas):
             return propagate_uncertainty(

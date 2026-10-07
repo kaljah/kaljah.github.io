@@ -271,3 +271,142 @@ def test_it_manager_full_management_capabilities(client):
     assert client.get("/api/facilities").status_code == 403
     assert client.get("/api/emissions").status_code == 403
 
+
+def test_it_user_cannot_reset_admin_or_superuser_password(client, test_accounts):
+    """IT and IT Admin roles cannot reset password for Admin or Superuser accounts (403 Forbidden)."""
+    with app.app_context():
+        admin_u = User.query.filter_by(role="admin").first()
+        if not admin_u:
+            admin_u = User(
+                email="admin_sec_test@domain.com",
+                fullName="Compliance Admin",
+                orgName="Energy Corp",
+                sector="Energy",
+                role="admin",
+            )
+            admin_u.set_password("AdminSecurePass123!")
+            db.session.add(admin_u)
+            db.session.commit()
+        admin_id = admin_u.id
+
+        super_u = User.query.filter_by(role="superuser").first()
+        if not super_u:
+            super_u = User(
+                email="super_sec_test@domain.com",
+                fullName="Operational Lead",
+                orgName="Energy Corp",
+                sector="Energy",
+                role="superuser",
+                location="Hassi Messaoud",
+            )
+            super_u.set_password("SuperSecurePass123!")
+            db.session.add(super_u)
+            db.session.commit()
+        super_id = super_u.id
+
+    # Test as IT Support
+    with client.session_transaction() as sess:
+        sess["user_id"] = test_accounts["it_id"]
+
+    res_admin = client.post(
+        f"/api/auth/users/{admin_id}/reset-password",
+        json={"newPassword": "HackedPassword123!"},
+    )
+    assert res_admin.status_code == 403
+
+    res_super = client.post(
+        f"/api/auth/users/{super_id}/reset-password",
+        json={"newPassword": "HackedPassword123!"},
+    )
+    assert res_super.status_code == 403
+
+    # Test as IT Admin
+    with client.session_transaction() as sess:
+        sess["user_id"] = test_accounts["it_admin_id"]
+
+    res_admin2 = client.post(
+        f"/api/auth/users/{admin_id}/reset-password",
+        json={"newPassword": "HackedPassword123!"},
+    )
+    assert res_admin2.status_code == 403
+
+    res_super2 = client.post(
+        f"/api/auth/users/{super_id}/reset-password",
+        json={"newPassword": "HackedPassword123!"},
+    )
+    assert res_super2.status_code == 403
+
+
+def test_it_admin_cannot_create_admin_or_superuser(client, test_accounts):
+    """IT Admin cannot create business admin or superuser accounts (403 Forbidden)."""
+    with client.session_transaction() as sess:
+        sess["user_id"] = test_accounts["it_admin_id"]
+
+    res_admin = client.post(
+        "/api/auth/register",
+        json={
+            "fullName": "Disallowed Admin",
+            "email": "disallowed_admin@domain.com",
+            "orgName": "Energy Corp",
+            "sector": "Energy",
+            "password": "Password123!@#",
+            "role": "admin",
+        },
+    )
+    assert res_admin.status_code == 403
+
+    res_super = client.post(
+        "/api/auth/register",
+        json={
+            "fullName": "Disallowed Superuser",
+            "email": "disallowed_super@domain.com",
+            "orgName": "Energy Corp",
+            "sector": "Energy",
+            "password": "Password123!@#",
+            "role": "superuser",
+        },
+    )
+    assert res_super.status_code == 403
+
+
+def test_it_user_cannot_access_equity_or_cap_data(client, test_accounts):
+    """IT roles cannot access Joint Venture partners, equity shares, CAP emissions or CAP compliance."""
+    with client.session_transaction() as sess:
+        sess["user_id"] = test_accounts["it_id"]
+
+    assert client.get("/api/equity/partners").status_code == 403
+    assert client.get("/api/equity/shares").status_code == 403
+    assert client.get("/api/cap/emissions").status_code == 403
+    assert client.get("/api/cap/compliance").status_code == 403
+    assert client.get("/api/satellite/sentinel5p/layer-config").status_code == 403
+    assert client.get("/api/satellite/sentinel5p/query").status_code == 403
+
+
+def test_non_numeric_facility_id_returns_422(client, test_accounts):
+    """Invalid / non-numeric facility_id returns HTTP 422 Unprocessable Entity instead of 500 error."""
+    with app.app_context():
+        admin_u = User.query.filter_by(role="admin").first()
+        admin_id = admin_u.id
+
+    with client.session_transaction() as sess:
+        sess["user_id"] = admin_id
+
+    # Scope 2
+    res_s2 = client.post(
+        "/api/scope2",
+        json={"facility_id": "not-an-id", "year": 2024, "month": 6, "source_type": "electricity"},
+    )
+    assert res_s2.status_code == 422
+
+    # Scope 3
+    res_s3 = client.post(
+        "/api/scope3",
+        json={"facility_id": "bad_fid", "year": 2024, "category": "Category 1", "amount": 100, "emission_factor": 1.5},
+    )
+    assert res_s3.status_code == 422
+
+    # CAP
+    res_cap = client.get("/api/cap/emissions?facility_id=non_int")
+    assert res_cap.status_code == 422
+
+

@@ -2,7 +2,7 @@ from flask import request, jsonify, session, current_app
 import json
 from . import facilities_bp
 from utils import get_allowed_facility_ids, log_activity_and_notify, facility_in_user_scope, facility_change_allowed
-from input_validation import parse_number, require_text
+from input_validation import parse_number, require_text, parse_year
 from models import Facility, User
 from extensions import db
 from sqlalchemy.exc import IntegrityError
@@ -178,7 +178,7 @@ def add_facility():
         segment=data.get("segment"),
         operator_status=data.get("operator_status", "operated"),
         country=data.get("country", "Algeria"),
-        ogmp_membership_year=int(data.get("ogmp_membership_year", 2023) or 2023),
+        ogmp_membership_year=parse_year(data.get("ogmp_membership_year"), required=False) or 2023,
         reconciliation_threshold=parse_number(
             data.get("reconciliation_threshold"), "reconciliation_threshold", required=False, min_value=0, max_value=1000, default=20.0
         ),
@@ -298,7 +298,7 @@ def update_facility(facility_id):
     if "country" in data:
         facility.country = data["country"]
     if "ogmp_membership_year" in data and data["ogmp_membership_year"] is not None:
-        facility.ogmp_membership_year = int(data["ogmp_membership_year"])
+        facility.ogmp_membership_year = parse_year(data["ogmp_membership_year"], required=False)
     if (
         "reconciliation_threshold" in data
         and data["reconciliation_threshold"] is not None
@@ -477,7 +477,20 @@ def import_facilities():
         imported_count += 1
 
     try:
+        if imported_count > 0:
+            from utils import log_activity_and_notify
+            log_activity_and_notify(
+                action="IMPORT",
+                record_id=str(imported_count),
+                user=user,
+                request=request,
+                entity="Facility",
+                details=f"Bulk imported {imported_count} facilities",
+            )
         db.session.commit()
+    except IntegrityError:
+        db.session.rollback()
+        return jsonify({"error": "One or more facilities have duplicate codes"}), 409
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Failed to import facilities"}), 500

@@ -155,6 +155,134 @@ PROCESS_CATEGORY = {
 }
 
 # ---------------------------------------------------------------------------
+# GWP UNCERTAINTIES (IPCC AR5 Chapter 8 / IPCC 2006 GL Vol. 1 §3.3)
+# ---------------------------------------------------------------------------
+# Relative standard uncertainty (1σ) for 100-year Global Warming Potential metrics
+GWP_UNCERTAINTY_1SIGMA = {
+    "co2": 0.0,    # Reference gas, identically zero uncertainty by definition
+    "ch4": 0.30,   # ±30% standard uncertainty (IPCC AR5 Ch. 8 §8.7 / Table 8.SM.16)
+    "n2o": 0.20,   # ±20% standard uncertainty (IPCC AR5 Ch. 8 §8.7 / Table 8.SM.16)
+}
+
+
+def propagate_co2e_uncertainty(
+    e_co2,
+    u_co2=None,
+    e_ch4=0.0,
+    u_ch4=None,
+    e_n2o=0.0,
+    u_n2o=None,
+    gwp_dict=None,
+    include_gwp_uncertainty=True,
+    gwp_uncertainties=None,
+):
+    """
+    Propagates constituent greenhouse gas emissions and uncertainties into total CO2e uncertainty.
+    Complies with IPCC AR5 Chapter 8 and IPCC 2006 GL Vol. 1 §3.3 (Taylor series error propagation).
+
+    Formula:
+      E_CO2e = E_CO2 + (GWP_CH4 * E_CH4) + (GWP_N2O * E_N2O)
+      Var(E_CO2) = (E_CO2 * u_CO2)^2
+      Var(E_CH4_CO2e) = (GWP_CH4 * E_CH4)^2 * (u_CH4^2 + u_GWP_CH4^2)   [if include_gwp_uncertainty]
+      Var(E_N2O_CO2e) = (GWP_N2O * E_N2O)^2 * (u_N2O^2 + u_GWP_N2O^2)   [if include_gwp_uncertainty]
+      sigma_CO2e = sqrt(Var(E_CO2) + Var(E_CH4_CO2e) + Var(E_N2O_CO2e))
+      u_CO2e = sigma_CO2e / E_CO2e
+
+    Args:
+        e_co2: CO2 emission in physical tonnes (or dict from propagate_uncertainty)
+        u_co2: Relative standard uncertainty (1σ, decimal) or None if e_co2 is dict
+        e_ch4: CH4 emission in physical tonnes (or dict from propagate_uncertainty)
+        u_ch4: Relative standard uncertainty (1σ, decimal) or None if e_ch4 is dict
+        e_n2o: N2O emission in physical tonnes (or dict from propagate_uncertainty)
+        u_n2o: Relative standard uncertainty (1σ, decimal) or None if e_n2o is dict
+        gwp_dict: dict with GWP factors (defaults to AR5: CH4=28, N2O=265)
+        include_gwp_uncertainty: bool, whether to include GWP parameter uncertainty
+        gwp_uncertainties: optional dict overriding GWP relative 1σ uncertainties
+
+    Returns:
+        dict with total_co2e, sigma_co2e, relative_uncertainty_1sigma,
+                  relative_uncertainty_95pct, ci_95_abs, lower_bound_95, upper_bound_95
+    """
+    from .constants import get_active_gwp
+
+    gwps = get_active_gwp(gwp_dict=gwp_dict)
+    gwp_ch4 = float(gwps.get("CH4", 28.0))
+    gwp_n2o = float(gwps.get("N2O", 265.0))
+
+    val_co2 = float(e_co2["value"] if isinstance(e_co2, dict) else (e_co2 or 0.0))
+    unc_co2 = float(
+        e_co2.get("relative_uncertainty_1sigma", e_co2.get("uncertainty", 0.0))
+        if isinstance(e_co2, dict)
+        else (u_co2 or 0.0)
+    )
+
+    val_ch4 = float(e_ch4["value"] if isinstance(e_ch4, dict) else (e_ch4 or 0.0))
+    unc_ch4 = float(
+        e_ch4.get("relative_uncertainty_1sigma", e_ch4.get("uncertainty", 0.0))
+        if isinstance(e_ch4, dict)
+        else (u_ch4 or 0.0)
+    )
+
+    val_n2o = float(e_n2o["value"] if isinstance(e_n2o, dict) else (e_n2o or 0.0))
+    unc_n2o = float(
+        e_n2o.get("relative_uncertainty_1sigma", e_n2o.get("uncertainty", 0.0))
+        if isinstance(e_n2o, dict)
+        else (u_n2o or 0.0)
+    )
+
+    gwp_uncs = gwp_uncertainties or GWP_UNCERTAINTY_1SIGMA
+    u_gwp_ch4 = float(gwp_uncs.get("ch4", 0.30)) if include_gwp_uncertainty else 0.0
+    u_gwp_n2o = float(gwp_uncs.get("n2o", 0.20)) if include_gwp_uncertainty else 0.0
+
+    co2e_co2 = val_co2 * 1.0
+    co2e_ch4 = val_ch4 * gwp_ch4
+    co2e_n2o = val_n2o * gwp_n2o
+    total_co2e = co2e_co2 + co2e_ch4 + co2e_n2o
+
+    # Variance contributions per gas
+    var_co2 = (val_co2 * unc_co2) ** 2
+    var_ch4 = (co2e_ch4 ** 2) * (unc_ch4 ** 2 + u_gwp_ch4 ** 2)
+    var_n2o = (co2e_n2o ** 2) * (unc_n2o ** 2 + u_gwp_n2o ** 2)
+
+    total_var = var_co2 + var_ch4 + var_n2o
+    sigma_co2e = math.sqrt(total_var)
+    abs_total = abs(total_co2e)
+    rel_1sigma = (sigma_co2e / abs_total) if abs_total > 1e-12 else 0.0
+    ci_95_abs = COVERAGE_FACTOR_95 * sigma_co2e
+    rel_95 = COVERAGE_FACTOR_95 * rel_1sigma
+    lower_95 = max(0.0, total_co2e - ci_95_abs)
+    upper_95 = total_co2e + ci_95_abs
+
+    return {
+        "total_co2e": total_co2e,
+        "sigma_co2e": sigma_co2e,
+        "relative_uncertainty_1sigma": rel_1sigma,
+        "relative_uncertainty_95pct": rel_95,
+        "ci_95_abs": ci_95_abs,
+        "lower_bound_95": lower_95,
+        "upper_bound_95": upper_95,
+        "coverage_factor": COVERAGE_FACTOR_95,
+        "confidence_level_pct": 95,
+        "gwp_uncertainty_included": include_gwp_uncertainty,
+        "gas_breakdown": {
+            "co2": {"co2e": co2e_co2, "sigma": math.sqrt(var_co2), "u_rel": unc_co2},
+            "ch4": {
+                "co2e": co2e_ch4,
+                "sigma": math.sqrt(var_ch4),
+                "u_rel": math.sqrt(unc_ch4 ** 2 + u_gwp_ch4 ** 2),
+                "u_gwp": u_gwp_ch4,
+            },
+            "n2o": {
+                "co2e": co2e_n2o,
+                "sigma": math.sqrt(var_n2o),
+                "u_rel": math.sqrt(unc_n2o ** 2 + u_gwp_n2o ** 2),
+                "u_gwp": u_gwp_n2o,
+            },
+        },
+    }
+
+
+# ---------------------------------------------------------------------------
 # CORE PROPAGATION FUNCTIONS
 # ---------------------------------------------------------------------------
 
@@ -542,9 +670,15 @@ def resolve_ef_uncertainty(
     if measured_u is not None and float(measured_u) > 0:
         return float(measured_u)
 
-    category = PROCESS_CATEGORY.get(str(process_type).lower(), "combustion")
+    proc_key = str(process_type or "").lower().strip()
+    category = PROCESS_CATEGORY.get(proc_key)
     gas_lu = str(gas).lower()
     tier_key = {Tier.T1: "T1", Tier.T2: "T2", Tier.T3: "T3"}.get(tier, "T1")
+
+    if not category:
+        # For unclassified processes, avoid deceptively narrow combustion bounds; default to 15%
+        return 0.15
+
     try:
         return DEFAULT_EF_UNCERTAINTY[category][gas_lu][tier_key]
     except KeyError:

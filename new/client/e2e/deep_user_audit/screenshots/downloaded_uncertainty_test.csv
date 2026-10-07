@@ -1,0 +1,16 @@
+Category,Total Emissions (tCO2e),Uncertainty (±%),Level
+Drilling Operations,660911.93,±52.2%,high
+Stationary Combustion,198701.12,±19.0%,medium
+Scope 3 (Value Chain),120892.87,±30.0%,medium
+Flaring,87684.8,±3.7%,low
+Venting (Blowdown),57047.2,±32.1%,high
+Scope 2 (Indirect),34959.0,±10.0%,medium
+Onshore Equipment Leaks / Fugitives,26728.8,±30.5%,high
+Well Completions & Workovers,21.0,±31.4%,high
+Mobile Combustion,10.24,±10.2%,medium
+Associated Gas Venting,3.92,±42.7%,high
+Storage Tank - Flashing/Events,0.01,±42.6%,high
+
+Overall Inventory Uncertainty,,±29.43%,
+Confidence Level,,95%,
+Coverage Factor (k),,2.0,

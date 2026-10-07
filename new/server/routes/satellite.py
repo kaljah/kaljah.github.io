@@ -108,10 +108,10 @@ def get_satellite_layer_config():
     user = get_current_user()
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
-    if user.role == "it_admin":
+    if user.role in ["it_admin", "it", "it_manager"]:
         return (
             jsonify(
-                {"error": "Forbidden: IT Administrators cannot access operational satellite data"}
+                {"error": "Forbidden: IT personnel cannot access operational satellite data"}
             ),
             403,
         )
@@ -131,10 +131,10 @@ def get_facility_satellite_data():
     user = get_current_user()
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
-    if user.role == "it_admin":
+    if user.role in ["it_admin", "it", "it_manager"]:
         return (
             jsonify(
-                {"error": "Forbidden: IT Administrators cannot access operational satellite data"}
+                {"error": "Forbidden: IT personnel cannot access operational satellite data"}
             ),
             403,
         )
@@ -142,9 +142,15 @@ def get_facility_satellite_data():
     user_id = user.id
     body = request.get_json(silent=True) or {}
 
-    facility_id = body.get("facility_id") or request.args.get("facility_id", type=int)
+    facility_id_raw = body.get("facility_id") if "facility_id" in body else request.args.get("facility_id")
+    facility_id = None
+    if facility_id_raw not in (None, ""):
+        try:
+            facility_id = int(facility_id_raw)
+        except (ValueError, TypeError):
+            return jsonify({"error": "facility_id must be a valid integer"}), 400
     allowed_fids = get_allowed_facility_ids(user)
-    if facility_id and allowed_fids is not None and int(facility_id) not in allowed_fids:
+    if facility_id and allowed_fids is not None and facility_id not in allowed_fids:
         return jsonify({"error": "Unauthorized facility"}), 403
 
     lat = body.get("latitude") or request.args.get("latitude", type=float)
@@ -156,7 +162,7 @@ def get_facility_satellite_data():
     )
 
     if facility_id:
-        facility = db.session.get(Facility, int(facility_id))
+        facility = db.session.get(Facility, facility_id)
         if facility and facility.latitude and facility.longitude:
             lat = facility.latitude
             lon = facility.longitude
@@ -202,10 +208,10 @@ def export_satellite_to_ogmp():
     user = get_current_user()
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
-    if user.role == "it_admin":
+    if user.role in ["it_admin", "it", "it_manager"]:
         return (
             jsonify(
-                {"error": "Forbidden: IT Administrators cannot access operational satellite data"}
+                {"error": "Forbidden: IT personnel cannot access operational satellite data"}
             ),
             403,
         )
@@ -213,12 +219,16 @@ def export_satellite_to_ogmp():
     user_id = user.id
     data = request.get_json() or {}
 
-    facility_id = data.get("facility_id")
-    if not facility_id:
+    facility_id_raw = data.get("facility_id")
+    if not facility_id_raw:
         return jsonify({"error": "facility_id is required"}), 400
+    try:
+        facility_id = int(facility_id_raw)
+    except (ValueError, TypeError):
+        return jsonify({"error": "facility_id must be a valid integer"}), 400
 
     allowed_fids = get_allowed_facility_ids(user)
-    if allowed_fids is not None and int(facility_id) not in allowed_fids:
+    if allowed_fids is not None and facility_id not in allowed_fids:
         return jsonify({"error": "Unauthorized facility"}), 403
 
     facility = db.session.get(Facility, facility_id)
@@ -235,9 +245,12 @@ def export_satellite_to_ogmp():
     except (ValueError, IndexError):
         year = datetime.now(timezone.utc).year
 
-    delta_ppb = float(data.get("delta_ch4_ppb") or data.get("anomaly_ppb") or 0.0)
-    wind_speed = float(data.get("wind_speed_m_s") or 3.5)
-    pbl_height = float(data.get("pbl_height_m") or 1200.0)
+    try:
+        delta_ppb = float(data.get("delta_ch4_ppb") or data.get("anomaly_ppb") or 0.0)
+        wind_speed = float(data.get("wind_speed_m_s") or 3.5)
+        pbl_height = float(data.get("pbl_height_m") or 1200.0)
+    except (ValueError, TypeError):
+        return jsonify({"error": "Atmospheric parameters (delta_ch4_ppb, wind_speed_m_s, pbl_height_m) must be numbers"}), 400
     operator_notes = (
         data.get("operator_notes")
         or data.get("notes")
@@ -245,14 +258,17 @@ def export_satellite_to_ogmp():
     )
 
     # Use explicit emission rate if sent from verified S5P pass, or compute from physical formula
-    if data.get("estimated_emission_rate_kg_hr") is not None:
-        measured_rate_kg_hr = float(data.get("estimated_emission_rate_kg_hr") or 0.0)
-    elif data.get("measured_rate_kg_hr") is not None:
-        measured_rate_kg_hr = float(data.get("measured_rate_kg_hr") or 0.0)
-    else:
-        measured_rate_kg_hr = sentinel5p_service.estimate_emission_rate_from_anomaly(
-            delta_ch4_ppb=delta_ppb, wind_speed_m_s=wind_speed, pbl_height_m=pbl_height
-        )
+    try:
+        if data.get("estimated_emission_rate_kg_hr") is not None:
+            measured_rate_kg_hr = float(data.get("estimated_emission_rate_kg_hr") or 0.0)
+        elif data.get("measured_rate_kg_hr") is not None:
+            measured_rate_kg_hr = float(data.get("measured_rate_kg_hr") or 0.0)
+        else:
+            measured_rate_kg_hr = sentinel5p_service.estimate_emission_rate_from_anomaly(
+                delta_ch4_ppb=delta_ppb, wind_speed_m_s=wind_speed, pbl_height_m=pbl_height
+            )
+    except (ValueError, TypeError):
+        return jsonify({"error": "Emission rate must be a valid number"}), 400
 
     # BUG-075: annualise on the same basis as manual surveys (8,760 h unless an explicit
     # operating duration is given); the observed rate itself is kept in measured_rate_kg_hr.
@@ -346,10 +362,10 @@ def poll_new_satellite_passes():
     user = get_current_user()
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
-    if user.role == "it_admin":
+    if user.role in ["it_admin", "it", "it_manager"]:
         return (
             jsonify(
-                {"error": "Forbidden: IT Administrators cannot access operational satellite data"}
+                {"error": "Forbidden: IT personnel cannot access operational satellite data"}
             ),
             403,
         )
@@ -498,6 +514,7 @@ def poll_new_satellite_passes():
             user.preferences = json.dumps(prefs)
             db.session.commit()
         except Exception as exc:
+            db.session.rollback()
             logger.warning(f"[PollPasses] Could not persist seen product IDs: {exc}")
 
     return (

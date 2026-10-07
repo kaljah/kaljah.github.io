@@ -20,7 +20,10 @@ def test_bug013_client_constants_match_server():
     import os
     import re
 
-    js = open(os.path.join(os.path.dirname(__file__), "..", "..", "client", "src", "constants.js"), encoding="utf-8").read()
+    path = os.path.join(os.path.dirname(__file__), "..", "..", "client", "src", "constants.ts")
+    if not os.path.exists(path):
+        path = os.path.join(os.path.dirname(__file__), "..", "..", "client", "src", "constants.js")
+    js = open(path, encoding="utf-8").read()
     for block, std in (("GWP_AR5", "AR5"), ("GWP_AR6", "AR6")):
         body = js[js.index(block):js.index("}", js.index(block))]
         for key, horizon, gas in (("CH4_20", "20", "CH4"), ("N2O_20", "20", "N2O")):

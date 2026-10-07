@@ -348,6 +348,10 @@ class CustomFactor(db.Model):
     created_at = db.Column(db.DateTime, default=utc_now)
     # BUG-056: referenced factors are archived instead of deleted (ids are never reused)
     is_archived = db.Column(db.Boolean, default=False, server_default="0", nullable=False)
+    # Maker-checker approval workflow
+    status = db.Column(db.String(20), default="Approved", server_default="Approved", nullable=False, index=True)
+    approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    approved_at = db.Column(db.DateTime, nullable=True)
 
 
 class ActivityLog(db.Model):
@@ -433,6 +437,11 @@ class Scope2Emission(db.Model):
     cooling_ton = db.Column(db.Float, default=0)
     emission_factor = db.Column(db.Float)
     co2e = db.Column(db.Float)
+    # Scope 2 Dual Reporting (GHG Protocol Scope 2 Guidance)
+    co2e_location_based = db.Column(db.Float, nullable=True)
+    co2e_market_based = db.Column(db.Float, nullable=True)
+    market_instrument_type = db.Column(db.String(50), nullable=True)  # PPA, REC, GO, supplier_tariff, residual_mix
+    market_emission_factor = db.Column(db.Float, nullable=True)
     uncertainty = db.Column(db.Float, nullable=True)  # 1-sigma relative uncertainty
     uncertainty_pct = db.Column(db.Float, nullable=True)  # Overall combined uncertainty percentage
     qa_flag = db.Column(db.String(255), nullable=True)

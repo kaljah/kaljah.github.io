@@ -10,6 +10,7 @@ from models import (
 )
 from extensions import db
 from utils import internal_error
+from input_validation import ValidationError, parse_year, parse_month, parse_number
 
 # Activities that are NOT oil & gas — excluded from OGMP 2.0 scope
 NON_OG_ACTIVITIES = [
@@ -89,8 +90,9 @@ def add_production():
     if not require_facility_access(user, fid):
         return jsonify({'error': 'Access to this facility is denied'}), 403
 
-    year = data.get('year')
-    month = data.get('month')
+    from input_validation import parse_year, parse_month
+    year = parse_year(data.get('year'))
+    month = parse_month(data.get('month'), required=True)
     try:
         oil_amount = float(data.get('oil_amount', 0) if data.get('oil_amount') is not None else (data.get('oil_production', 0) or 0))
         gas_amount = float(data.get('gas_amount', 0) if data.get('gas_amount') is not None else (data.get('gas_production', 0) or 0))
@@ -265,6 +267,16 @@ def bulk_import_production():
     imported_count, row_errors = process_json_records("production", records, user)
     
     try:
+        if imported_count > 0:
+            from utils import log_activity_and_notify
+            log_activity_and_notify(
+                action="BULK_IMPORT",
+                record_id=f"count:{imported_count}",
+                user=user,
+                request=request,
+                entity="ProductionData",
+                details=f"Bulk imported {imported_count} production records",
+            )
         db.session.commit()
     except Exception as e:
         db.session.rollback()
@@ -397,11 +409,16 @@ def save_ogmp_survey():
     measured_rate_kg_hr = parse_number(data.get('measured_rate_kg_hr', data.get('measuredRateKgHr')), 'measured_rate_kg_hr', min_value=0)
     operating_hours = parse_number(data.get('operating_hours_year', data.get('operatingHoursYear')), 'operating_hours_year',
                                    required=False, min_value=0, max_value=8784, default=8760.0)
-    detection_threshold = float(data.get('detection_threshold') or data.get('detectionThreshold')) if data.get('detection_threshold') is not None or data.get('detectionThreshold') is not None else None
+    detection_threshold = parse_number(
+        data.get('detection_threshold') if data.get('detection_threshold') not in (None, '') else data.get('detectionThreshold'),
+        'detection_threshold',
+        required=False,
+        min_value=0,
+    )
     instrument_vendor = (data.get('instrument_vendor') or data.get('instrumentVendor') or '').strip()
     # BUG-052: the status is derived on the server; a manual override needs a justification
     requested_status = (data.get('reconciliation_status') or data.get('reconciliationStatus') or '').strip()
-    override_reason = (data.get('reconciliation_override_reason') or '').strip()
+    override_reason = (data.get('reconciliation_override_reason') or data.get('operator_notes') or data.get('operatorNotes') or '').strip()
     operator_notes = data.get('operator_notes') or data.get('operatorNotes') or ''
 
     if not facility_id or not survey_date or measured_rate_kg_hr < 0:
@@ -428,7 +445,7 @@ def save_ogmp_survey():
     variance_pct, variance_flag, reconciliation_status = reconcile(estimated_annual_tch4, bottom_up_tch4, threshold)
     if requested_status and requested_status != reconciliation_status:
         if not override_reason:
-            return jsonify({'error': f"Computed status is '{reconciliation_status}'; overriding it to '{requested_status}' requires reconciliation_override_reason"}), 400
+            return jsonify({'error': 'A valid justification is required when overriding the derived reconciliation status.'}), 400
         operator_notes = (operator_notes + f"\n[Status override: {reconciliation_status} -> {requested_status}] {override_reason}").strip()
         reconciliation_status = requested_status
 
@@ -539,14 +556,13 @@ def log_level_upgrade():
     if is_it_role(user):
         return jsonify({'error': 'IT administrators are not authorized to modify operational OGMP data.'}), 403
     data = request.get_json() or {}
-    facility_id = data.get('facility_id')
-    old_level = int(data.get('old_level', 3))
-    new_level = int(data.get('new_level', 4))
-    source_type_code = data.get('source_type_code', 'ALL')
-    justification = data.get('justification', '')
-    target_date = data.get('target_date', '')
+    try:
+        old_level = int(data.get('old_level', 3))
+        new_level = int(data.get('new_level', 4))
+    except (ValueError, TypeError):
+        return jsonify({'error': 'Valid level (1-5) required'}), 400
 
-    if not facility_id or new_level < 1 or new_level > 5:
+    if not facility_id or old_level < 1 or old_level > 5 or new_level < 1 or new_level > 5:
         return jsonify({'error': 'Valid facility ID and level (1-5) required'}), 400
     try:
         facility_id = int(facility_id)
@@ -567,6 +583,18 @@ def log_level_upgrade():
     )
     try:
         db.session.add(log)
+        db.session.flush()
+        from utils import log_activity_and_notify
+        log_activity_and_notify(
+            action="UPGRADE_LEVEL",
+            record_id=str(log.id),
+            user=user,
+            request=request,
+            entity="LevelUpgradeLog",
+            entity_id=str(log.id),
+            facility_id=facility_id,
+            details=f"Upgraded OGMP level from {old_level} to {new_level} for facility #{facility_id} ({source_type_code})",
+        )
         db.session.commit()
     except Exception as e:
         db.session.rollback()
@@ -678,14 +706,15 @@ def save_cbam_export():
         data = request.get_json() or {}
         record_id = data.get('id')
         facility_id = data.get('facility_id') or data.get('facilityId')
-        year = int(data.get('year', 2026))
-        month = int(data.get('month', 1))
+        from input_validation import parse_year, parse_month, parse_number
+        year = parse_year(data.get('year', 2026), required=False) or 2026
+        month = parse_month(data.get('month', 1), required=False) or 1
         product_name = (data.get('product_name') or data.get('productName') or '').strip()
         cn_code = (data.get('cn_code') or data.get('cnCode') or '').strip()
-        quantity_tonnes = float(data.get('quantity_tonnes') or data.get('quantityTonnes') or 0.0)
+        quantity_tonnes = parse_number(data.get('quantity_tonnes') or data.get('quantityTonnes'), 'quantity_tonnes', required=False, min_value=0, default=0.0)
         export_destination = (data.get('export_destination') or data.get('exportDestination') or 'EU').strip()
-        specific_embedded_direct = float(data.get('specific_embedded_direct') or data.get('specificEmbeddedDirect') or 0.0)
-        specific_embedded_indirect = float(data.get('specific_embedded_indirect') or data.get('specificEmbeddedIndirect') or 0.0)
+        specific_embedded_direct = parse_number(data.get('specific_embedded_direct') or data.get('specificEmbeddedDirect'), 'specific_embedded_direct', required=False, min_value=0, default=0.0)
+        specific_embedded_indirect = parse_number(data.get('specific_embedded_indirect') or data.get('specificEmbeddedIndirect'), 'specific_embedded_indirect', required=False, min_value=0, default=0.0)
         notes = (data.get('notes') or '').strip()
 
         if not facility_id or not product_name or not cn_code or quantity_tonnes <= 0:
@@ -769,6 +798,9 @@ def save_cbam_export():
         from routes.dashboard import clear_dashboard_cache
         clear_dashboard_cache()
         return jsonify({'message': 'CBAM Export saved successfully', 'id': record.id})
+    except ValidationError:
+        db.session.rollback()
+        raise
     except Exception as e:
         import traceback
         from flask import current_app

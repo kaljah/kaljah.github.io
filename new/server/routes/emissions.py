@@ -537,8 +537,8 @@ def add_bulk_upload():
 
     fac_name_map = build_name_map(all_facilities)
 
-    # Pre-fetch user's custom factors
-    custom_factors = CustomFactor.query.filter_by(created_by=user.id, is_archived=False).all()
+    # Pre-fetch custom factors
+    custom_factors = CustomFactor.query.filter(CustomFactor.is_archived.is_(False)).all()
     cf_name_map = build_name_map(custom_factors)
 
     valid_records = []
@@ -983,7 +983,6 @@ def add_bulk_upload():
         if new_emissions:
             db.session.add_all(new_emissions)
             try:
-                db.session.commit()
                 # If records are pending approval, notify all admins
                 if bulk_status in ("Pending", "Pending Approval"):
                     admins = User.query.filter_by(role="admin", status="active").all()
@@ -994,7 +993,15 @@ def add_bulk_upload():
                             title="Scope 1 Bulk Upload Pending Review",
                             message=f"{len(new_emissions)} new Scope 1 emission records were uploaded by {user.fullName} and are awaiting your approval.",
                         )
-                    db.session.commit()
+                log_activity_and_notify(
+                    action="BULK_IMPORT",
+                    record_id=f"count:{len(new_emissions)}",
+                    user=user,
+                    request=request,
+                    entity="Emission",
+                    details=f"Bulk uploaded {len(new_emissions)} Scope 1 records (Status: {bulk_status})",
+                )
+                db.session.commit()
             except Exception as e:
                 db.session.rollback()
                 return internal_error(e, "Failed to save to database")
@@ -2603,8 +2610,12 @@ def upload_start():
                     except OSError:
                         pass
                     return jsonify({"error": "Invalid or corrupted XLSX file"}), 400
-        except Exception:
-            pass
+        except OSError as e:
+            try:
+                os.remove(path)
+            except OSError:
+                pass
+            return jsonify({"error": f"Failed to read uploaded file: {e}"}), 400
 
     from flask import current_app
 
@@ -2618,6 +2629,20 @@ def upload_start():
         scope=scope,
         overwrite_duplicates=overwrite_duplicates,
     )
+
+    try:
+        log_activity_and_notify(
+            action="UPLOAD_START",
+            record_id=str(job_id),
+            user=user,
+            request=request,
+            entity="BulkJob",
+            details=f"Queued bulk upload job '{file.filename}' for scope {scope}",
+        )
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.warning(f"Failed to log upload_start activity: {e}")
 
     return jsonify({"job_id": job_id})
 
@@ -2864,27 +2889,15 @@ def add_emission():
     uncertainty = {"co2": record.uncertainty, "ch4": record.uncertainty_ch4, "n2o": record.uncertainty_n2o}
     record.ogmp_level = ogmp_level_for(record)
 
+    facility = db.session.get(Facility, data.get("facility_id"))
+    facility_name = facility.name if facility else "Unknown"
+
     db.session.add(record)
     try:
         db.session.flush()
         record_id_val = record.id
-        db.session.commit()
-    except Exception:
-        db.session.rollback()
-        current_app.logger.exception("Failed to record emission")
-        return jsonify({"error": "Failed to record emission"}), 500
-    try:
-        from routes.dashboard import clear_dashboard_cache
 
-        clear_dashboard_cache()  # BUG-071: flushed rows are invisible to the before_commit hook
-    except Exception:
-        pass
-
-    facility = db.session.get(Facility, data.get("facility_id"))
-    facility_name = facility.name if facility else "Unknown"
-
-    # --- Audit Log ---
-    try:
+        # --- Audit Log ---
         log_details = f"Added {record.process_type} emission: {record.quantity} {record.unit} of {record.fuel_type} for {facility_name} ({record.month}/{record.year})"
         log_activity_and_notify(
             action="CREATE",
@@ -2892,6 +2905,8 @@ def add_emission():
             user=user,
             request=request,
             entity="Emission",
+            entity_id=str(record_id_val),
+            facility_id=record.facility_id,
             details=log_details,
         )
         if record.status in ("Pending", "Pending Approval"):
@@ -2903,75 +2918,74 @@ def add_emission():
                     title="New Scope 1 Emission Pending Review",
                     message=f"A new Scope 1 emission record ({record.process_type}, {facility_name}) was submitted by {user.fullName} and is awaiting your approval.",
                 )
+
+        # --- Notification Logic: Check Goal ---
+        try:
+            # Check user preference first
+            prefs = json.loads(user.preferences or "{}")
+            if prefs.get("notifTargets", True):  # Default to True
+                current_year = data.get("year")
+                if current_year:
+                    # Get Total Emissions for Year
+                    total_emissions = (
+                        db.session.query(func.sum(Emission.co2e_total))
+                        .filter(Emission.year == current_year, Emission.status == "Verified")
+                        .scalar()
+                        or 0
+                    ) + (
+                        db.session.query(func.sum(Scope2Emission.co2e))
+                        .filter(Scope2Emission.year == current_year, Scope2Emission.status == "Verified")
+                        .scalar()
+                        or 0
+                    )
+
+                    # Get Goal
+                    goal = db.session.get(Goal, current_year)
+
+                    if goal and goal.target_amount > 0:
+                        percent = total_emissions / goal.target_amount
+
+                        title = None
+                        msg = None
+                        n_type = None
+
+                        if percent >= 1.0:
+                            title = f"Goal Exceeded for {current_year}"
+                            msg = f"Emissions ({total_emissions:.1f}t) have exceeded the goal of {goal.target_amount}t."
+                            n_type = "critical"
+                        elif percent >= 0.8:
+                            title = f"Goal Warning for {current_year}"
+                            msg = f"You have reached {percent*100:.0f}% of your emission goal ({total_emissions:.1f} / {goal.target_amount}t)."
+                            n_type = "warning"
+
+                        if title:
+                            from datetime import timedelta
+
+                            cutoff = datetime.datetime.now(datetime.timezone.utc) - timedelta(hours=24)
+                            existing = Notification.query.filter(
+                                Notification.user_id == user.id,
+                                Notification.type == n_type,
+                                Notification.title == title,
+                                Notification.is_read == False,
+                                Notification.created_at >= cutoff,
+                            ).first()
+                            if not existing:
+                                Notification.create(
+                                    title=title, message=msg, type=n_type, user_id=user.id
+                                )
+                            elif existing.message != msg:
+                                existing.message = msg
+        except Exception as e:
+            current_app.logger.warning(f"Notification check error: {e}")
+
         db.session.commit()
-    except Exception as e:
+    except Exception:
         db.session.rollback()
-        current_app.logger.warning(f"Audit Log Error: {e}")
+        current_app.logger.exception("Failed to record emission and audit trail")
+        return jsonify({"error": "Failed to record emission"}), 500
 
-    # --- Notification Logic: Check Goal ---
-    try:
-        # Check user preference first
-        prefs = json.loads(user.preferences or "{}")
-        if prefs.get("notifTargets", True):  # Default to True
-            current_year = data.get("year")
-            if current_year:
-                # Get Total Emissions for Year
-                total_emissions = (
-                    db.session.query(func.sum(Emission.co2e_total))
-                    .filter(Emission.year == current_year, Emission.status == "Verified")
-                    .scalar()
-                    or 0
-                ) + (
-                    db.session.query(func.sum(Scope2Emission.co2e))
-                    .filter(Scope2Emission.year == current_year, Scope2Emission.status == "Verified")
-                    .scalar()
-                    or 0
-                )
-
-                # Get Goal
-                goal = db.session.get(Goal, current_year)
-
-                if goal and goal.target_amount > 0:
-                    percent = total_emissions / goal.target_amount
-
-                    title = None
-                    msg = None
-                    n_type = None
-
-                    if percent >= 1.0:
-                        title = f"Goal Exceeded for {current_year}"
-                        msg = f"Emissions ({total_emissions:.1f}t) have exceeded the goal of {goal.target_amount}t."
-                        n_type = "critical"
-                    elif percent >= 0.8:
-                        title = f"Goal Warning for {current_year}"
-                        msg = f"You have reached {percent*100:.0f}% of your emission goal ({total_emissions:.1f} / {goal.target_amount}t)."
-                        n_type = "warning"
-
-                    if title:
-                        # EXTRA-08 FIX: Deduplicate — only create a new notification if
-                        # an unread notification of the same type and year doesn't exist.
-                        from datetime import timedelta
-
-                        cutoff = datetime.datetime.now(datetime.timezone.utc) - timedelta(hours=24)
-                        existing = Notification.query.filter(
-                            Notification.user_id == user.id,
-                            Notification.type == n_type,
-                            Notification.title == title,
-                            Notification.is_read == False,
-                            Notification.created_at >= cutoff,
-                        ).first()
-                        if not existing:
-                            Notification.create(
-                                title=title, message=msg, type=n_type, user_id=user.id
-                            )
-                            db.session.commit()
-                        elif existing.message != msg:
-                            # keep the unread notice current: it quoted the total at the time it was
-                            # first raised (browser test: 660,945 t while the year stood at 891,521 t)
-                            existing.message = msg
-                            db.session.commit()
-    except Exception as e:
-        current_app.logger.warning(f"Notification check error: {e}")
+    from routes.dashboard import clear_dashboard_cache
+    clear_dashboard_cache()
 
     # Return emission result with uncertainty
     return (
@@ -3009,8 +3023,11 @@ def delete_emission(id):
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
 
-    record = Emission.query.filter_by(record_id=id).first() or db.session.get(
-        Emission, int(id) if str(id).isdigit() else -1
+    clean_id = str(id)[3:] if str(id).startswith("s1_") else str(id)
+    record = (
+        Emission.query.filter_by(record_id=id).first()
+        or Emission.query.filter_by(record_id=clean_id).first()
+        or db.session.get(Emission, int(clean_id) if clean_id.isdigit() else -1)
     )
     if not record:
         return jsonify({"error": "Record not found"}), 404
@@ -3058,9 +3075,12 @@ def update_emission(id):
     if user.role in ["auditor", "it_admin", "it_manager", "it"]:
         return jsonify({"error": "Read-only or administrative role cannot modify emission records"}), 403
 
-    data = request.get_json()  # EXTRA-03 FIX: removed duplicate call below
-    record = Emission.query.filter_by(record_id=id).first() or db.session.get(
-        Emission, int(id) if str(id).isdigit() else -1
+    data = request.get_json()
+    clean_id = str(id)[3:] if str(id).startswith("s1_") else str(id)
+    record = (
+        Emission.query.filter_by(record_id=id).first()
+        or Emission.query.filter_by(record_id=clean_id).first()
+        or db.session.get(Emission, int(clean_id) if clean_id.isdigit() else -1)
     )  # EXTRA-02 FIX
 
     if not record:
@@ -3919,10 +3939,13 @@ def approve_emission(emission_id):
     scope = str(req_data.get("scope") or request.args.get("scope") or "1")
     try:
         decide_single(get_current_user(), scope, emission_id, "approve", request=request)
+        db.session.commit()
     except DecisionError as err:
         db.session.rollback()
         return jsonify({"error": err.message}), err.status
-    db.session.commit()
+    except Exception as err:
+        db.session.rollback()
+        return internal_error(err)
     from routes.dashboard import clear_dashboard_cache
 
     clear_dashboard_cache()
@@ -3940,10 +3963,13 @@ def reject_emission(emission_id):
     reason = str(req_data.get("reason") or "Rejected by reviewer")
     try:
         decide_single(get_current_user(), scope, emission_id, "reject", reason=reason, request=request)
+        db.session.commit()
     except DecisionError as err:
         db.session.rollback()
         return jsonify({"error": err.message}), err.status
-    db.session.commit()
+    except Exception as err:
+        db.session.rollback()
+        return internal_error(err)
     from routes.dashboard import clear_dashboard_cache
 
     clear_dashboard_cache()
@@ -3986,10 +4012,13 @@ def _batch_decide(decision):
             if ids is not None and not ids:
                 continue
             done += decide(user, scope, ids, decision, reason=reason, request=request)
+        db.session.commit()
     except DecisionError as err:
         db.session.rollback()
         return jsonify({"error": err.message}), err.status
-    db.session.commit()
+    except Exception as err:
+        db.session.rollback()
+        return internal_error(err)
     from routes.dashboard import clear_dashboard_cache
 
     clear_dashboard_cache()
@@ -4044,7 +4073,13 @@ def get_pending_emissions():
     # drafts are the maker's unsubmitted work: they enter review only when submitted (browser test)
     pending_statuses = ["Pending", "Pending Approval", "Pending Review"]
     fetch_all = request.args.get("all", "").lower() == "true"
-    limit_val = None if fetch_all else int(request.args.get("limit", 200))
+    if fetch_all:
+        limit_val = None
+    else:
+        try:
+            limit_val = max(1, min(1000, int(request.args.get("limit", 200))))
+        except (ValueError, TypeError):
+            limit_val = 200
 
     def q_scope1():
         q = Emission.query.filter(Emission.status.in_(pending_statuses))

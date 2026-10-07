@@ -98,12 +98,7 @@ def add_source():
     )
     try:
         db.session.add(source)
-        db.session.commit()
-    except Exception as e:
-        db.session.rollback()
-        return internal_error(e, "Failed to add source")
-
-    try:
+        db.session.flush()
         log_activity_and_notify(
             "CREATE",
             source.id,
@@ -113,8 +108,10 @@ def add_source():
             entity="EmissionSource",
         )
         db.session.commit()
-    except Exception:
+    except Exception as e:
         db.session.rollback()
+        return internal_error(e, "Failed to add source")
+
     return jsonify({"message": "Source added", "id": source.id}), 201
 
 
@@ -134,12 +131,6 @@ def delete_source(source_id):
 
     try:
         db.session.delete(source)
-        db.session.commit()
-    except Exception as e:
-        db.session.rollback()
-        return internal_error(e, "Failed to delete source")
-
-    try:
         log_activity_and_notify(
             "DELETE",
             source_id,
@@ -149,8 +140,10 @@ def delete_source(source_id):
             entity="EmissionSource",
         )
         db.session.commit()
-    except Exception:
+    except Exception as e:
         db.session.rollback()
+        return internal_error(e, "Failed to delete source")
+
     return jsonify({"message": "Source deleted"})
 
 
@@ -170,12 +163,6 @@ def bulk_import_sources():
 
     imported_count, row_errors = process_json_records("sources", records, user)
     try:
-        db.session.commit()
-    except Exception as e:
-        db.session.rollback()
-        return internal_error(e, "Failed to bulk import sources")
-
-    try:
         log_activity_and_notify(
             "CREATE",
             "bulk",
@@ -185,8 +172,10 @@ def bulk_import_sources():
             entity="EmissionSource",
         )
         db.session.commit()
-    except Exception:
+    except Exception as e:
         db.session.rollback()
+        return internal_error(e, "Failed to bulk import sources")
+
     return jsonify({"message": f"{imported_count} sources imported", "errors": row_errors}), 201
 
 
@@ -295,6 +284,18 @@ def add_mitigation():
         )
         db.session.add(project)
         try:
+            db.session.flush()
+            from utils import log_activity_and_notify
+            log_activity_and_notify(
+                action="CREATE",
+                record_id=f"proj_{project.id}",
+                user=user,
+                request=request,
+                entity="MitigationProject",
+                entity_id=str(project.id),
+                facility_id=project.facility_id,
+                details=f"Created mitigation project '{project.name}' ({project.quantity_tco2e} tCO2e)",
+            )
             db.session.commit()
         except Exception as e:
             db.session.rollback()
@@ -320,6 +321,17 @@ def add_mitigation():
         )
         db.session.add(mitigation)
         try:
+            db.session.flush()
+            from utils import log_activity_and_notify
+            log_activity_and_notify(
+                action="CREATE",
+                record_id=f"rec_{mitigation.id}",
+                user=user,
+                request=request,
+                entity="MitigationRecord",
+                entity_id=str(mitigation.id),
+                details=f"Created mitigation record ({mitigation.type}, {mitigation.quantity_tco2e} tCO2e)",
+            )
             db.session.commit()
         except Exception as e:
             db.session.rollback()
@@ -374,6 +386,17 @@ def delete_mitigation(mitigation_id):
 
     try:
         db.session.delete(item)
+        from utils import log_activity_and_notify
+        log_activity_and_notify(
+            action="DELETE",
+            record_id=str(mitigation_id),
+            user=user,
+            request=request,
+            entity=item.__class__.__name__,
+            entity_id=str(item.id),
+            facility_id=getattr(item, "facility_id", None),
+            details=f"Deleted {item.__class__.__name__} #{item.id}",
+        )
         db.session.commit()
     except Exception as e:
         db.session.rollback()
@@ -464,21 +487,26 @@ def save_reporting_metadata():
         db.session.add(metadata)
 
     try:
-        db.session.commit()
-    except Exception as e:
-        db.session.rollback()
-        return internal_error(e, "Failed to save reporting metadata")
-
-    # --- Audit Notification ---
-    try:
+        from utils import log_activity_and_notify
+        log_activity_and_notify(
+            action="UPDATE",
+            record_id=str(year),
+            user=user,
+            request=request,
+            entity="ReportingMetadata",
+            entity_id=str(year),
+            details=f"Reporting metadata for {year} was updated",
+        )
         Notification.create(
             title="Reporting Metadata Updated",
             message=f"Reporting metadata for {year} was updated.",
             type="audit",
             user_id=None,
         )
+        db.session.commit()
     except Exception as e:
-        print(f"Audit Notif Error: {e}")
+        db.session.rollback()
+        return internal_error(e, "Failed to save reporting metadata")
 
     return jsonify({"message": "Reporting metadata saved"})
 
@@ -591,12 +619,6 @@ def bulk_import_mitigation():
     imported_count, row_errors = process_json_records("mitigation", records, user)
 
     try:
-        db.session.commit()
-    except Exception as e:
-        db.session.rollback()
-        return internal_error(e, "Failed to bulk import mitigation projects")
-
-    try:
         log_activity_and_notify(
             "CREATE",
             "bulk",
@@ -608,8 +630,10 @@ def bulk_import_mitigation():
         db.session.commit()
         from routes.dashboard import clear_dashboard_cache
         clear_dashboard_cache()
-    except Exception:
+    except Exception as e:
         db.session.rollback()
+        return internal_error(e, "Failed to bulk import mitigation projects")
+
     return jsonify({"message": f"{imported_count} mitigation projects imported", "errors": row_errors}), 201
 
 
@@ -685,6 +709,16 @@ def delete_goal(year):
         if not goal:
             return jsonify({"error": "Goal not found"}), 404
         db.session.delete(goal)
+        from utils import log_activity_and_notify
+        log_activity_and_notify(
+            action="DELETE",
+            record_id=f"goal-{year}",
+            user=user,
+            request=request,
+            entity="Goal",
+            entity_id=str(year),
+            details=f"Deleted emission goal for year {year}",
+        )
         db.session.commit()
         from routes.dashboard import clear_dashboard_cache
         clear_dashboard_cache()
@@ -791,6 +825,7 @@ def add_base_year_recalculation():
             created_by=user_id,
         )
         db.session.add(recalc)
+        db.session.flush()
 
         # Keep BaseYear singleton synchronized
         base_year_singleton = db.session.get(BaseYear, 1)
@@ -800,6 +835,16 @@ def add_base_year_recalculation():
             base_year_singleton = BaseYear(id=1, year=year, locked=1)
             db.session.add(base_year_singleton)
 
+        from utils import log_activity_and_notify
+        log_activity_and_notify(
+            action="CREATE",
+            record_id=str(recalc.id),
+            user=user,
+            request=request,
+            entity="BaseYearRecalculation",
+            entity_id=str(recalc.id),
+            details=f"Recalculated base year {year}: {reason}",
+        )
         db.session.commit()
         from routes.dashboard import clear_dashboard_cache
         clear_dashboard_cache()
@@ -826,18 +871,29 @@ def delete_base_year_recalculation(rec_id):
         rec = db.session.get(BaseYearRecalculation, rec_id)
         if not rec:
             return jsonify({"error": "Recalculation record not found"}), 404
+        rec_year = rec.year
         db.session.delete(rec)
-        db.session.commit()
 
         # Resync singleton with latest remaining
-        latest = BaseYearRecalculation.query.order_by(
+        latest = BaseYearRecalculation.query.filter(BaseYearRecalculation.id != rec_id).order_by(
             BaseYearRecalculation.recalc_date.desc()
         ).first()
         if latest:
             singleton = db.session.get(BaseYear, 1)
             if singleton:
                 singleton.year = latest.year
-                db.session.commit()
+
+        from utils import log_activity_and_notify
+        log_activity_and_notify(
+            action="DELETE",
+            record_id=str(rec_id),
+            user=user,
+            request=request,
+            entity="BaseYearRecalculation",
+            entity_id=str(rec_id),
+            details=f"Deleted base year recalculation #{rec_id} (year {rec_year})",
+        )
+        db.session.commit()
 
         from routes.dashboard import clear_dashboard_cache
         clear_dashboard_cache()
@@ -942,12 +998,16 @@ def manage_sbti():
         scope_coverage=scope_coverage,
         created_by=user.id,
     )
-    db.session.add(new_target)
-    log_activity_and_notify(
-        action="CREATE", record_id="sbti", user=user, request=request, entity="SbtiTarget",
-        details=f"SBTi target set: {pathway_type}, {scope_coverage}, base {base_year} = {base_year_emissions} t, {reduction_rate_pct}%/yr to {target_year}",
-    )
-    db.session.commit()
+    try:
+        db.session.add(new_target)
+        log_activity_and_notify(
+            action="CREATE", record_id="sbti", user=user, request=request, entity="SbtiTarget",
+            details=f"SBTi target set: {pathway_type}, {scope_coverage}, base {base_year} = {base_year_emissions} t, {reduction_rate_pct}%/yr to {target_year}",
+        )
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return internal_error(e)
     clear_dashboard_cache()
     return jsonify({"message": "SBTi Target saved successfully"}), 201
 
@@ -977,6 +1037,7 @@ def _verified_totals_by_scope(year, allowed_fids):
 # --- Audit Stats Alias (/api/audit/stats) ---
 @managedata_bp.route("/audit/stats", methods=["GET"])
 @managedata_bp.route("/audit/stats/", methods=["GET"])
+@login_required
 def managedata_audit_stats():
     from routes.audit import get_audit_stats
     return get_audit_stats()

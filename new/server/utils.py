@@ -20,9 +20,9 @@ def is_unrestricted_location(loc):
 
 def get_allowed_facility_ids(user):
     """
-    Returns None if user is admin or superuser with unrestricted location (allowed all).
-    Returns [] for it_admin (zero facility/emission data access).
-    Returns a list of facility IDs if user is restricted to a region/location/name.
+    Returns None if user is admin (only admin has unrestricted global access).
+    Returns [] for it, it_admin, it_manager (zero facility/emission data access).
+    Returns a list of facility IDs if user is restricted to a region/location/facility (including superuser).
     """
     if not user:
         return []
@@ -31,17 +31,14 @@ def get_allowed_facility_ids(user):
     if user.role in ["it_admin", "it_manager", "it"]:
         return []
 
-    # Admin has full unrestricted data access.
+    # Admin is the ONLY role with unrestricted global access to all facilities.
     if user.role == "admin":
         return None
 
-    # Superuser with unrestricted location has full access across all facilities
+    # Superuser and regular users are strictly scoped to their assigned facility/region.
     user_region = str(user.location).strip() if user.location else ""
-    if user.role == "superuser" and is_unrestricted_location(user_region):
-        return None
-
     if not user_region or is_unrestricted_location(user_region):
-        return []  # No region assigned, no access for restricted role
+        return []  # No specific facility/region assigned, no access for scoped role
 
     facilities = Facility.query.filter(
         db.or_(
@@ -95,8 +92,6 @@ def facility_in_user_scope(user, region=None, location=None, name=None):
     if user.role == "admin":
         return True
     user_loc = str(user.location or "").strip().lower()
-    if user.role == "superuser" and is_unrestricted_location(user_loc):
-        return True
     if not user_loc or is_unrestricted_location(user_loc):
         return False
     return user_loc in {str(v or "").strip().lower() for v in (region, location, name)}
@@ -110,7 +105,7 @@ def facility_change_allowed(user, current, region=None, location=None, name=None
     """
     if not facility_in_user_scope(user, region, location, name):
         return False
-    if user.role == "admin" or (user.role == "superuser" and is_unrestricted_location(user.location)):
+    if user.role == "admin":
         return True
     user_loc = str(user.location or "").strip().lower()
     old_region = str(getattr(current, "region", None) or "").strip().lower()
@@ -284,6 +279,10 @@ def log_activity_and_notify(
 def internal_error(exc, message="Internal server error", status=500, **extra):
     """BUG-087: log the exception server-side and return a generic body (no exception text)."""
     from flask import current_app, jsonify
+    from input_validation import ValidationError
+
+    if isinstance(exc, ValidationError):
+        return jsonify({"error": exc.message, "field": exc.field, "code": 400}), 400
 
     try:
         current_app.logger.error("%s: %s", message, exc, exc_info=exc)

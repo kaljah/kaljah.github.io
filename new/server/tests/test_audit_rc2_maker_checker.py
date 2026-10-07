@@ -29,7 +29,7 @@ def test_bug070_reject_requires_pending_status(client, ctx, status):
     fac = make_facility(region="West")
     admin = make_user("admin", "Global")
     e = _emission(fac, status=status, created_by=admin.id, approved_by=admin.id)
-    login(client, make_user("superuser", "Global"))
+    login(client, make_user("superuser", "West"))
     r = client.post(f"/api/emissions/reject/{e.id}", json={"scope": "1", "reason": "x"})
     assert r.status_code == 409
     db.session.expire_all()
@@ -43,7 +43,7 @@ def test_bug067_last_modifier_cannot_approve(client, ctx):
     fac = make_facility(region="West")
     maker = make_user("user", "West")
     e = _emission(fac, created_by=maker.id)
-    su = make_user("superuser", "Global")
+    su = make_user("superuser", "West")
     login(client, su)
     r = client.put(f"/api/emissions/{e.id}", json={"month": 4})
     assert r.status_code == 200, r.get_data(as_text=True)
@@ -63,7 +63,7 @@ def test_bug067_superuser_edit_of_verified_record_returns_it_to_review(client, c
     fac = make_facility(region="West")
     admin = make_user("admin", "Global")
     e = _emission(fac, status="Verified", created_by=admin.id, approved_by=admin.id)
-    login(client, make_user("superuser", "Global"))
+    login(client, make_user("superuser", "West"))
     assert client.put(f"/api/emissions/{e.id}", json={"year": 2023}).status_code == 200
     db.session.expire_all()
     row = db.session.get(Emission, e.id)
@@ -129,7 +129,7 @@ def test_bug092_maker_notified_on_reject_with_reason(client, ctx):
 
 def test_bug060_superuser_scope2_manual_entry_is_pending(client, ctx):
     fac = make_facility(region="West")
-    login(client, make_user("superuser", "Global"))
+    login(client, make_user("superuser", "West"))
     r = client.post("/api/scope2", json={"facility_id": fac.id, "year": 2024, "month": 1,
                                          "electricity_kwh": 1000, "grid_region": "Algerian National Grid"})
     assert r.status_code in (200, 201), r.get_data(as_text=True)

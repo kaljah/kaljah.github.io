@@ -61,7 +61,12 @@ from routes.dashboard import clear_dashboard_cache
 import re
 from werkzeug.exceptions import HTTPException
 
-if os.environ.get("USE_PROXY_FIX", "false").lower() == "true":
+_use_proxy = (
+    os.environ.get("USE_PROXY_FIX", "").lower() == "true"
+    or os.environ.get("BEHIND_PROXY", "").lower() == "true"
+    or app.config.get("IS_PRODUCTION", False)
+)
+if _use_proxy:
     from werkzeug.middleware.proxy_fix import ProxyFix
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
@@ -77,7 +82,10 @@ def set_sqlite_pragmas(dbapi_conn, _):
     # BUG-016: pragmas only. Schema changes (e.g. custom_factors.description) are Alembic revisions.
     if isinstance(dbapi_conn, sqlite3.Connection):
         cursor = dbapi_conn.cursor()
-        cursor.execute("PRAGMA foreign_keys = ON")
+        if not os.environ.get("ALEMBIC_RUNNING"):
+            cursor.execute("PRAGMA foreign_keys = ON")
+        else:
+            cursor.execute("PRAGMA foreign_keys = OFF")
         cursor.execute("PRAGMA journal_mode = WAL")
         cursor.execute("PRAGMA synchronous = NORMAL")
         cursor.execute("PRAGMA busy_timeout = 30000")
@@ -474,7 +482,11 @@ def init_schema():
     if auto == "true" or (auto != "false" and not app.config.get("IS_PRODUCTION")):
         from flask_migrate import upgrade
 
-        upgrade(directory=migrate.directory)
+        os.environ["ALEMBIC_RUNNING"] = "1"
+        try:
+            upgrade(directory=migrate.directory)
+        finally:
+            os.environ.pop("ALEMBIC_RUNNING", None)
         app.logger.info("Database upgraded to Alembic head %s", ", ".join(sorted(heads)))
         return
     raise RuntimeError(

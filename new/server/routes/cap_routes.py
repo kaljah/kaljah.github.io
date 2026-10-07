@@ -17,6 +17,7 @@ DEFAULT_DECREE_06_138_LIMITS = [
 
 def ensure_default_limits():
     """Ensure Algerian Executive Decree 06-138 limits are populated."""
+    added = False
     for item in DEFAULT_DECREE_06_138_LIMITS:
         exists = CapRegulatoryLimit.query.filter_by(
             standard_name="Executive Decree 06-138", pollutant=item["pollutant"]
@@ -30,7 +31,12 @@ def ensure_default_limits():
                 notes=item["notes"],
             )
             db.session.add(lim)
-    db.session.commit()
+            added = True
+    if added:
+        try:
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
 
 
 @cap_bp.route("/limits", methods=["GET"])
@@ -57,6 +63,8 @@ def get_regulatory_limits():
 def get_cap_emissions():
     """Retrieve Criteria Air Pollutant records filtered by facility, year, or source module."""
     user = get_current_user()
+    if user and user.role in ["it", "it_admin", "it_manager"]:
+        return jsonify({"error": "Forbidden: IT personnel cannot access operational CAP emission data"}), 403
     allowed_fids = get_allowed_facility_ids(user)
 
     query = CapEmission.query
@@ -67,11 +75,11 @@ def get_cap_emissions():
     if facility_id and facility_id != "all":
         try:
             fid = int(facility_id)
-            if allowed_fids is not None and fid not in allowed_fids:
-                return jsonify({"error": "Unauthorized facility"}), 403
-            query = query.filter(CapEmission.facility_id == fid)
-        except ValueError:
-            pass
+        except (ValueError, TypeError):
+            return jsonify({"error": "facility_id must be a valid integer"}), 422
+        if allowed_fids is not None and fid not in allowed_fids:
+            return jsonify({"error": "Unauthorized facility"}), 403
+        query = query.filter(CapEmission.facility_id == fid)
 
     year = request.args.get("year")
     if year and year != "all":
@@ -154,7 +162,11 @@ def create_or_update_cap_emission():
 
     rec_id = data.get("id")
     if rec_id:
-        record = db.session.get(CapEmission, int(rec_id))
+        try:
+            rec_id = int(rec_id)
+        except (ValueError, TypeError):
+            return jsonify({"error": "id must be an integer", "field": "id"}), 400
+        record = db.session.get(CapEmission, rec_id)
         if not record:
             return jsonify({"error": "Record not found"}), 404
         if not require_facility_access(user, record.facility_id):
@@ -207,6 +219,8 @@ def get_cap_compliance():
     """
     ensure_default_limits()
     user = get_current_user()
+    if user and user.role in ["it", "it_admin", "it_manager"]:
+        return jsonify({"error": "Forbidden: IT personnel cannot access operational CAP compliance data"}), 403
     allowed_fids = get_allowed_facility_ids(user)
 
     year = request.args.get("year", 2025)
@@ -223,7 +237,13 @@ def get_cap_compliance():
 
     facility_id = request.args.get("facility_id")
     if facility_id and facility_id != "all":
-        fac_q = fac_q.filter(Facility.id == int(facility_id))
+        try:
+            fid = int(facility_id)
+        except (ValueError, TypeError):
+            return jsonify({"error": "facility_id must be a valid integer"}), 422
+        if allowed_fids is not None and fid not in allowed_fids:
+            return jsonify({"error": "Unauthorized facility"}), 403
+        fac_q = fac_q.filter(Facility.id == fid)
 
     facilities = fac_q.all()
     results = []

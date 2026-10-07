@@ -111,8 +111,9 @@ def test_chapter_7_rows():
         assert CAT[key]["toc_ef_kg_hr"] == pytest.approx(kg) and CAT[key]["ch4"] == pytest.approx(t)
 
 
-# ---- the client catalog lists only server factors, with the same values ----
-CLIENT = os.path.join(os.path.dirname(__file__), "..", "..", "client", "src", "utils", "EmissionFactors.js")
+CLIENT_TS = os.path.join(os.path.dirname(__file__), "..", "..", "client", "src", "utils", "EmissionFactors.ts")
+CLIENT_JS = os.path.join(os.path.dirname(__file__), "..", "..", "client", "src", "utils", "EmissionFactors.js")
+CLIENT = CLIENT_TS if os.path.exists(CLIENT_TS) else CLIENT_JS
 
 
 @pytest.mark.skipif(shutil.which("node") is None, reason="node not available")
@@ -121,7 +122,11 @@ def test_client_catalog_matches_server():
               "o[k] = { co2: v.co2, ch4: v.ch4, n2o: v.n2o, hhv: v.hhv, usage: v.usage }; "
               "console.log(JSON.stringify(o)); })")
     url = "file:///" + os.path.abspath(CLIENT).replace("\\", "/")
-    out = subprocess.run(["node", "-e", script, url], capture_output=True, text=True, encoding="utf-8", timeout=60)
+    node_cmd = ["node"]
+    if CLIENT.endswith(".ts"):
+        node_cmd.append("--experimental-strip-types")
+    node_cmd.extend(["-e", script, url])
+    out = subprocess.run(node_cmd, capture_output=True, text=True, encoding="utf-8", timeout=60)
     assert out.returncode == 0, out.stderr
     client = json.loads(out.stdout)
     # client-side names of server-computed Tier 1 choices (the server applies Table 6-3 / 6-5 / 6-6 / 6-10)

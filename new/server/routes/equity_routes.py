@@ -18,6 +18,7 @@ DEFAULT_JV_PARTNERS = [
 
 def ensure_default_partners():
     """Ensure baseline international JV partners are seeded."""
+    added = False
     for p in DEFAULT_JV_PARTNERS:
         exists = JvPartner.query.filter_by(name=p["name"]).first()
         if not exists:
@@ -28,12 +29,20 @@ def ensure_default_partners():
                 is_operator=p["is_operator"],
             )
             db.session.add(partner)
-    db.session.commit()
+            added = True
+    if added:
+        try:
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
 
 
 @equity_bp.route("/partners", methods=["GET"])
 @login_required
 def get_partners():
+    user = get_current_user()
+    if user and user.role in ["it", "it_admin", "it_manager"]:
+        return jsonify({"error": "Forbidden: IT roles do not have access to Joint Venture equity data"}), 403
     ensure_default_partners()
     partners = JvPartner.query.order_by(JvPartner.name).all()
     return jsonify([
@@ -52,6 +61,8 @@ def get_partners():
 @login_required
 def get_equity_shares():
     user = get_current_user()
+    if user and user.role in ["it", "it_admin", "it_manager"]:
+        return jsonify({"error": "Forbidden: IT roles do not have access to Joint Venture equity data"}), 403
     allowed_fids = get_allowed_facility_ids(user)
 
     query = FacilityEquityShare.query
@@ -209,6 +220,8 @@ def get_equity_allocation():
     """
     ensure_default_partners()
     user = get_current_user()
+    if user and user.role in ["it", "it_admin", "it_manager"]:
+        return jsonify({"error": "Forbidden: IT roles do not have access to Joint Venture equity data"}), 403
     allowed_fids = get_allowed_facility_ids(user)
 
     year = request.args.get("year")
@@ -223,9 +236,12 @@ def get_equity_allocation():
         fac_q = fac_q.filter(Facility.id.in_(allowed_fids))
     if facility_id and facility_id != "all":
         try:
-            fac_q = fac_q.filter(Facility.id == int(facility_id))
-        except ValueError:
-            pass
+            fid = int(facility_id)
+        except (ValueError, TypeError):
+            return jsonify({"error": "facility_id must be a valid integer"}), 400
+        if allowed_fids is not None and fid not in allowed_fids:
+            return jsonify({"error": "Unauthorized facility"}), 403
+        fac_q = fac_q.filter(Facility.id == fid)
 
     facilities = fac_q.all()
     partners = JvPartner.query.order_by(JvPartner.name).all()

@@ -1,15 +1,15 @@
 {
-  "inlineStyleObjects": 121,
-  "hexColorsInCss": 105,
-  "hexColorsInJs": 273,
-  "importantDeclarations": 3,
+  "inlineStyleObjects": 0,
+  "hexColorsInCss": 122,
+  "hexColorsInJs": 0,
+  "importantDeclarations": 18,
   "inlineSvgs": 0,
-  "nativeSelects": 2,
+  "nativeSelects": 0,
   "clickableDivsWithoutRole": 0,
   "cssFiles": 29,
-  "cssLines": 4611,
-  "distinctFontSizes": 8,
-  "distinctBorderRadii": 5,
-  "distinctBoxShadows": 35,
-  "duplicateClassDefinitions": 24
+  "cssLines": 4945,
+  "distinctFontSizes": 17,
+  "distinctBorderRadii": 12,
+  "distinctBoxShadows": 37,
+  "duplicateClassDefinitions": 25
 }
