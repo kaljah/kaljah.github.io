@@ -1,4 +1,0 @@
-64c64
-<         diff_co2 = max(0.0, (cin - cout) / max(0.0001, 1.0 - cout))
----
->         diff_co2 = max(0.0, cin - cout)
