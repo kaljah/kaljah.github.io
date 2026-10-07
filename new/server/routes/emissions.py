@@ -29,7 +29,8 @@ from sqlalchemy import cast, String, literal, Float, union_all, or_
 from services.ogmp import ogmp_level_for
 from process_categories import NON_COMBUSTION_PROCESSES
 from utils import internal_error
-from routes.emissions_templates import get_csv_template, get_excel_template  # noqa: F401  (registers the template routes)
+from routes.emissions_template_csv import get_csv_template  # noqa: F401  (registers the CSV template route)
+from routes.emissions_template_excel import get_excel_template  # noqa: F401  (registers the Excel template route)
 
 
 
