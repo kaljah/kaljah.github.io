@@ -21,7 +21,7 @@ Companion to `docs/sonatrach-readiness-plan.md` (the what and why). This file is
 | Recovery of unmerged branches | Done 2026-10-08 | Audit 2026-10-01 (security fixes and owner decisions) and the Scope 1 100k import audit (S1K-F1..F37) ported from `ccr-669f6fbd-pew7ww` and `ccr-b93733a1-u3m8s8`; the other branches' work was already on main or superseded. Reports in `docs/validation/FULL_AUDIT_2026-10-01.md` and `SCOPE1_100K_BULK_AUDIT_2026-10-01.md`. |
 | T8.1 HR-06 custom factors | Done locally 2026-10-08 (branch `task/hr06-custom-factors`) | Source required, out-of-range needs justification, second approver, form field; 2,705 backend tests pass (1 skipped), 122 client tests pass |
 | M0 Kick-off pack | Written 2026-10-08, waiting for your review and for Sonatrach/HSE answers | `docs/sonatrach/questions-it.md`, `questions-security.md`, `hse-answer-sheets.md`, `glossary-fr.csv` (189 terms). HR-01 is already harmonized in code (0.0001 kg/MMBtu everywhere), so the 2026-09-20 audit text is out of date on that point. |
-| M1 Deployment package | Not started | |
+| M1 Deployment package | Native Linux install written 2026-10-08 (owner decision: no Docker, Sonatrach servers, offline, Sonatrach's own PostgreSQL). Not yet run on a real server. | `deploy/native/` (build-bundle.sh, install.sh, upgrade.sh, ghg.service, nginx-ghg.conf, ghg.env.example), `docs/sonatrach/install-linux.md`. Covers T1.1-T1.3 without containers; T1.4 (CI check) and a Windows Server variant are still to do. Checked: all 51 runtime packages have Linux Python 3.11 wheels (58 MB); the production web build uses `/` and `/api`. |
 | M2 Offline operation | Not started | |
 | M3 Backups, releases, upgrades | Not started | |
 | M4 Security hardening | Not started | |
