@@ -2,7 +2,7 @@ import React from "react";
 import { ArrowRight, BarChart3, ChevronDown, ChevronUp, Clock, Eye, EyeOff, Hexagon } from "lucide-react";
 import { Badge, Banner, Button, Card, CardHeader, Switch } from "../../ui";
 import { cn } from "../../ui/cn";
-import { PieChart as PieChartWrapper, LineChart as LineChartWrapper } from "../../components/charts";
+import { BarChart as BarChartWrapper, LineChart as LineChartWrapper } from "../../components/charts";
 import { formatCompactNumber } from "../../utils/formatters";
 
 export interface PendingBannerProps {
@@ -99,12 +99,15 @@ export const DonutCard: React.FC<DonutCardProps> = ({ title, data }) => (
   <Card className="min-w-0">
     <h3 className="m-0 mb-3 text-md font-bold text-ink-800">{title}</h3>
     <div className="relative h-[195px] w-full min-w-0">
-      <PieChartWrapper
+      <BarChartWrapper
         data={data}
+        dataKey="value"
+        xKey="name"
         height={195}
-        innerRadius={50}
-        outerRadius={75}
-        centerSub="tCO₂e"
+        horizontal
+        sortDesc
+        showShare
+        showLegend={false}
         formatValue={formatCompactNumber}
       />
     </div>

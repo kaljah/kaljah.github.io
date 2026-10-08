@@ -10,6 +10,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
+  ReferenceLine,
 } from "recharts";
 import "./ChartWrappers.css";
 
@@ -43,6 +44,15 @@ export interface BarChartProps {
   height?: number | string;
   showLegend?: boolean;
   formatValue?: (val: any) => string;
+  /** Horizontal bars (category names on the left): best for ranking and for long names. */
+  horizontal?: boolean;
+  /** Sort single-series bars from largest to smallest. */
+  sortDesc?: boolean;
+  /** Append each bar's share of the total to its value label. */
+  showShare?: boolean;
+  /** Draw a dashed target/threshold line at this value (single-series only). */
+  referenceValue?: number;
+  referenceLabel?: string;
 }
 
 export const BarChart: React.FC<BarChartProps> = ({
@@ -56,6 +66,11 @@ export const BarChart: React.FC<BarChartProps> = ({
   height = 300,
   showLegend = true,
   formatValue,
+  horizontal = false,
+  sortDesc = false,
+  showShare = false,
+  referenceValue,
+  referenceLabel,
 }) => {
   const [isMounted] = useState<boolean>(() => typeof window !== "undefined");
   const [activeBarKey, setActiveBarKey] = useState<string | null>(null);
@@ -80,7 +95,8 @@ export const BarChart: React.FC<BarChartProps> = ({
   const manyCategories = (data?.length || 0) > 4;
   const shortLabel = (v: any): string => {
     const s = String(v ?? "");
-    return s.length > 16 ? `${s.slice(0, 15)}…` : s;
+    const max = horizontal ? 24 : 16;
+    return s.length > max ? `${s.slice(0, max - 1)}…` : s;
   };
 
   const valueFormatter = formatValue || defaultFormat;
@@ -192,6 +208,17 @@ export const BarChart: React.FC<BarChartProps> = ({
 
   const hasMultipleBars = bars && bars.length > 0;
 
+  const hasMultiple = bars.length > 0;
+  const rows =
+    sortDesc && !hasMultiple
+      ? [...data].sort((a, b) => Number(b[finalDataKey] || 0) - Number(a[finalDataKey] || 0))
+      : data;
+  const total = rows.reduce((acc, r) => acc + (Number(r[finalDataKey]) || 0), 0);
+  const labelFormatter = (v: any) => {
+    const base = valueFormatter(v);
+    return showShare && total > 0 ? `${base} (${((Number(v) / total) * 100).toFixed(0)}%)` : base;
+  };
+  const chartHeight = typeof height === "number" ? height : parseInt(String(height), 10) || 300;
   return (
     <div
       className="chart-wrapper"
@@ -208,15 +235,16 @@ export const BarChart: React.FC<BarChartProps> = ({
       {title && <h3 className="chart-title">{title}</h3>}
       <ResponsiveContainer
         width="100%"
-        height={typeof height === "number" ? height : (parseInt(String(height), 10) || 300)}
+        height={chartHeight}
         debounce={100}
       >
         <RechartsBar
-          data={data}
-          margin={{ top: 20, right: 12, left: -4, bottom: 4 }}
+          data={rows}
+          layout={horizontal ? "vertical" : "horizontal"}
+          margin={horizontal ? { top: referenceValue != null ? 24 : 8, right: showShare ? 104 : 64, left: 4, bottom: 4 } : { top: 20, right: 12, left: -4, bottom: 4 }}
         >
           <defs>
-            <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id={gradientId} x1="0" y1="0" x2={horizontal ? "1" : "0"} y2={horizontal ? "0" : "1"}>
               <stop offset="0%" style={{ stopColor: color, stopOpacity: 1 }} />
               <stop offset="100%" style={{ stopColor: color, stopOpacity: 0.72 }} />
             </linearGradient>
@@ -224,10 +252,37 @@ export const BarChart: React.FC<BarChartProps> = ({
           <CartesianGrid
             strokeDasharray="4 4"
             stroke="rgba(226, 232, 240, 0.75)"
-            vertical={false}
+            vertical={horizontal}
+            horizontal={!horizontal}
           />
 
-          <XAxis
+          {horizontal ? (
+            <>
+              <XAxis
+                type="number"
+                tickCount={4}
+                domain={referenceValue != null ? [0, (max: number) => Math.max(max, referenceValue * 1.15)] : undefined}
+                stroke="var(--color-ink-300)"
+                tick={{ fill: "var(--color-ink-500)", fontSize: 11, fontWeight: 600 }}
+                axisLine={false}
+                tickLine={false}
+                tickFormatter={valueFormatter}
+              />
+              <YAxis
+                type="category"
+                dataKey={finalXKey}
+                width={150}
+                stroke="var(--color-ink-300)"
+                tick={{ fill: "var(--color-ink-700)", fontSize: 12, fontWeight: 600 }}
+                axisLine={false}
+                tickLine={false}
+                interval={0}
+                tickFormatter={shortLabel}
+              />
+            </>
+          ) : (
+            <>
+              <XAxis
             dataKey={finalXKey}
             stroke="var(--color-ink-300)"
             tick={{ fill: "var(--color-ink-500)", fontSize: 11, fontWeight: 600 }}
@@ -241,7 +296,8 @@ export const BarChart: React.FC<BarChartProps> = ({
             height={manyCategories ? 64 : 30}
           />
 
-          <YAxis
+              <YAxis
+            domain={referenceValue != null ? [0, (max: number) => Math.max(max, referenceValue * 1.15)] : undefined}
             stroke="var(--color-ink-300)"
             tick={{ fill: "var(--color-ink-500)", fontSize: 11, fontWeight: 600 }}
             axisLine={false}
@@ -249,6 +305,8 @@ export const BarChart: React.FC<BarChartProps> = ({
             tickFormatter={valueFormatter}
             dx={-4}
           />
+            </>
+          )}
 
           <Tooltip
             content={renderTooltip}
@@ -289,27 +347,37 @@ export const BarChart: React.FC<BarChartProps> = ({
               dataKey={finalDataKey}
               fill={`url(#${gradientId})`}
               maxBarSize={44}
-              radius={[6, 6, 0, 0]}
+              radius={horizontal ? [0, 6, 6, 0] : [6, 6, 0, 0]}
               animationDuration={800}
               onMouseEnter={(_: unknown, i: number) => setHoverIndex(i)}
               onMouseLeave={() => setHoverIndex(null)}
             >
-              {data.map((entry, index) => (
+              {rows.map((entry, index) => (
                 <Cell
                   key={`cell-${index}`}
                   fill={entry.color || entry.fill || `url(#${gradientId})`}
                   opacity={hoverIndex !== null && hoverIndex !== index ? 0.45 : 1}
                 />
               ))}
-              {data.length <= 8 && (
+              {rows.length <= (horizontal ? 12 : 8) && (
                 <LabelList
                   dataKey={finalDataKey}
-                  position="top"
-                  formatter={valueFormatter}
+                  position={horizontal ? "right" : "top"}
+                  formatter={labelFormatter}
                   style={VALUE_LABEL_STYLE}
                 />
               )}
             </Bar>
+          )}
+
+          {referenceValue != null && !hasMultipleBars && (
+            <ReferenceLine
+              {...(horizontal ? { x: referenceValue } : { y: referenceValue })}
+              stroke="var(--color-red-500)"
+              strokeDasharray="5 4"
+              strokeWidth={1.5}
+              label={referenceLabel ? { value: referenceLabel, position: horizontal ? "top" : "insideTopRight", fill: "var(--color-red-500)", fontSize: 11, fontWeight: 600 } : undefined}
+            />
           )}
         </RechartsBar>
       </ResponsiveContainer>
