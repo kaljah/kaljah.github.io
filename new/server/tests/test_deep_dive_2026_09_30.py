@@ -190,7 +190,7 @@ def test_csv_row_with_more_values_than_header_is_refused(admin2):
 
 
 def test_custom_factor_parent_fuel_is_a_catalog_fuel(admin2):
-    base = {"co2_factor": 73.96, "unit": "kg/MMBtu", "hhv_factor": 138000}
+    base = {"co2_factor": 73.96, "unit": "kg/MMBtu", "hhv_factor": 138000, "source": "Test source"}
     r = admin2.post("/api/custom-factors", json=dict(base, name="DD diesel typo", parent_fuel="Deisel"))
     assert r.status_code == 400 and "catalog fuel" in r.get_json()["error"]
     r = admin2.post("/api/custom-factors", json=dict(base, name="DD diesel ok", parent_fuel="diesel"))

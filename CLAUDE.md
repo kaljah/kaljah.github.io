@@ -115,6 +115,7 @@ Other: `new/setup.bat` / `new/start_all.bat` (Windows native launch scripts for 
 - **Maker-Checker Workflow.**
   - Custom emission factors created by non-admins are assigned `Pending` status.
   - Only compliance `admin` accounts can approve custom factors via `POST /api/custom-factors/<id>/approve`.
+  - HR-06 governance (`services/custom_factor_policy.py`): a `source` is required; a value above the bounds (CO2 500, CH4 100, N2O 10 kg/MMBtu) is refused with 422 unless `justification` (10+ characters) is sent, and is then saved `Pending` with the reason appended to `description`; an admin cannot approve a factor they created (set `CUSTOM_FACTOR_SECOND_APPROVER=false` for a one-admin install); factors used by records cannot change values (audit O-04).
 - **Constants.**
   - Units: `calculations/units.py` `CONVERSIONS`.
   - GWPs: `calculations/constants.py` (AR4, AR5 default, AR6, 20-year values; `get_active_gwp()` resolves active set). Keep in sync with `new/client/src/constants.ts`.

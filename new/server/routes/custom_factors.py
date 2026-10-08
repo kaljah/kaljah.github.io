@@ -4,6 +4,9 @@ from models import CustomFactor, User
 from extensions import db
 from routes.auth import superuser_required, login_required
 from utils import log_activity_and_notify, get_current_user
+from services.custom_factor_policy import (
+    PLAUSIBILITY_BOUNDS, check_update, factor_references, governance, second_approver_required, with_justification,
+)
 
 custom_factors_bp = Blueprint("custom_factors", __name__)
 
@@ -116,32 +119,6 @@ VALUE_FIELDS = (
 )
 
 
-def _factor_references(factor):
-    """Emission records that use this factor, by FK, legacy id string, payload or name (BUG-056)."""
-    from models import Emission, Scope2Emission
-
-    fid = factor.id
-    s1 = Emission.query.filter(
-        db.or_(
-            Emission.custom_factor_id == fid,
-            Emission.fuel_type == str(fid),
-            Emission.fuel_type == factor.name,
-            Emission.source_payload.like(f'%"custom_factor_id": {fid},%'),
-            Emission.source_payload.like(f'%"custom_factor_id": {fid}}}%'),
-            Emission.source_payload.like(f'%"custom_factor_id": "{fid}"%'),
-        )
-    ).count()
-    s2 = Scope2Emission.query.filter(Scope2Emission.source_type == factor.name).count()
-    return s1 + s2
-
-
-PLAUSIBILITY_BOUNDS = {
-    "co2_factor": (0.0, 500.0),    # API 2021: typical solid fuels ~100 kg/MMBtu
-    "ch4_factor": (0.0, 100.0),    # API 2021: max ~5 for most fuels
-    "n2o_factor": (0.0, 10.0),     # API 2021: max ~0.5 for most fuels
-}
-
-
 def _check_plausibility(data):
     """Flags any extreme or out-of-bounds custom factor values for user review."""
     warnings = []
@@ -199,9 +176,11 @@ def create_custom_factor():
     if _name_taken(factor_name):
         return jsonify({"error": f"A custom factor named '{factor_name}' already exists"}), 409
 
-    # Maker-checker policy for custom factors:
-    # Only admin creates pre-approved factors; superusers/others require admin approval.
-    initial_factor_status = "Approved" if user and user.role == "admin" else "Pending"
+    # Maker-checker policy for custom factors (HR-06): source required, out-of-range values need a
+    # justification, and every factor is approved by an admin other than its creator.
+    gov_error, initial_factor_status, justification = governance(user, data, co2_factor, ch4_factor, n2o_factor)
+    if gov_error:
+        return jsonify({"error": gov_error}), 422
 
     factor = CustomFactor(
         name=factor_name,
@@ -214,7 +193,7 @@ def create_custom_factor():
         usage=data.get("usage", "Custom"),
         parent_fuel=parent_fuel,
         source=data.get("source"),
-        description=data.get("description"),
+        description=with_justification(data.get("description"), justification),
         version=data.get("version"),
         uncertainty=uncertainty,
         co2_uncertainty=co2_uncertainty,
@@ -307,6 +286,14 @@ def update_custom_factor(factor_id):
         db.session.rollback()
         return jsonify({"error": str(err)}), 400
 
+    range_error, justification = check_update(factor, data)
+    if range_error:
+        db.session.rollback()
+        return jsonify({"error": range_error}), 422
+    if justification:
+        factor.description = with_justification(factor.description, justification)
+        factor.status, factor.approved_by, factor.approved_at = "Pending", None, None
+
     if "usage" in data:
         factor.usage = data["usage"]
     if "parent_fuel" in data:
@@ -325,7 +312,7 @@ def update_custom_factor(factor_id):
     changes = {f: (before[f], getattr(factor, f)) for f in tracked if before[f] != getattr(factor, f)}
     value_changes = [f for f in changes if f in VALUE_FIELDS]
     if value_changes:
-        refs = _factor_references(factor)
+        refs = factor_references(factor)
         if refs:
             # Audit O-04: records keep the values they were calculated with; changing a factor in
             # place would leave them inconsistent with the factor they cite. A new version is a new
@@ -382,7 +369,7 @@ def delete_custom_factor(factor_id):
     if not factor:
         return jsonify({"error": "Factor not found"}), 404
 
-    refs = _factor_references(factor)
+    refs = factor_references(factor)
     if refs > 0:
         # BUG-056: a factor used by emission records cannot be deleted (its id must never be
         # reused); archive it instead via POST /api/custom-factors/<id>/archive.
@@ -487,7 +474,11 @@ def import_custom_factors():
             continue
         seen.add(name.lower())
 
-        initial_factor_status = "Approved" if user and user.role == "admin" else "Pending"
+        gov_error, initial_factor_status, justification = governance(user, factor_data, co2_factor, ch4_factor, n2o_factor)
+        if gov_error:
+            seen.discard(name.lower())
+            skipped.append({"row": i + 1, "error": gov_error})
+            continue
         factor = CustomFactor(
             name=name,
             co2_factor=co2_factor,
@@ -499,7 +490,7 @@ def import_custom_factors():
             usage=factor_data.get("usage", "Custom"),
             parent_fuel=parent_fuel,
             source=factor_data.get("source"),
-            description=factor_data.get("description"),
+            description=with_justification(factor_data.get("description"), justification),
             version=factor_data.get("version"),
             uncertainty=uncertainty,
             co2_uncertainty=co2_uncertainty,
@@ -546,6 +537,9 @@ def approve_custom_factor(factor_id):
 
     if getattr(factor, "status", None) == "Approved":
         return jsonify({"message": "Factor is already approved", "id": factor.id}), 200
+
+    if second_approver_required() and factor.created_by == user.id:
+        return jsonify({"error": "A different administrator must approve a factor you created"}), 403
 
     try:
         factor.status = "Approved"

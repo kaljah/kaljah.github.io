@@ -292,6 +292,7 @@ class TestMakerCheckerSegregationOfDuties:
             "n2o_factor": 0.0001,
             "unit": "kg/MMBtu",
             "hhv_factor": 1050.0,
+            "source": "API Compendium 2021 Table 5-1",
         })
         assert res_c.status_code == 201
         cf_id = res_c.get_json()["id"]
