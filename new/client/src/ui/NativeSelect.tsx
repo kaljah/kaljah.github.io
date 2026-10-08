@@ -1,5 +1,6 @@
 import React from "react";
 import { useFieldContext } from "./Field";
+import { cn } from "./cn";
 
 export interface NativeSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {}
 
@@ -21,6 +22,7 @@ export const NativeSelect = React.forwardRef<HTMLSelectElement, NativeSelectProp
       aria-describedby={props["aria-describedby"] ?? field?.describedBy}
       required={props.required ?? field?.required}
       {...props}
+      className={cn(props.className, "pr-8")}
     />
   );
 });

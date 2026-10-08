@@ -11,20 +11,6 @@
   }
 }
 
-/* TopBar Filters Horizontal Row */
-.dashboard-filters {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: nowrap;
-}
-
-.dashboard-filters .filter-wrapper {
-  min-width: 105px;
-  max-width: 140px;
-  flex: 1;
-}
-
 /* Header Row */
 
 
@@ -216,17 +202,7 @@
   font-size: var(--text-base);
 }
 
-/* TopBar Filter Styles */
-.dashboard-filters {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-left: 10px;
-  height: auto;
-  flex-wrap: nowrap;
-  white-space: nowrap;
-}
-
+/* TopBar filter row: see TopBarFilters.css */
 .filter-wrapper {
   display: flex;
   align-items: center;
@@ -248,23 +224,6 @@
 
 /* Mobile (max-width: 768px) */
 @media (max-width: 768px) {
-
-  .dashboard-filters {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 4px;
-    width: 100%;
-    scrollbar-width: none;
-  }
-
-  .dashboard-filters::-webkit-scrollbar {
-    display: none;
-  }
-
-  .dashboard-filters .filter-wrapper {
-    min-width: 110px;
-    flex-shrink: 0;
-  }
 
   .hero-header {
     flex-direction: column;

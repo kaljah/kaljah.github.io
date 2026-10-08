@@ -5,7 +5,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap; /* the row has no visible scrollbar on desktop, so wrap instead of hiding filters */
   white-space: nowrap;
 }
 
@@ -17,6 +17,7 @@
 
 @media (max-width: 768px) {
   .dashboard-filters {
+    flex-wrap: nowrap; /* one swipeable row on phones */
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     padding-bottom: 4px;

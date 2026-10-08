@@ -67,8 +67,8 @@ const GhgCloud: React.FC = () => {
 
   return (
     <div className="[position:absolute] [top:0] [left:0] [right:0] [bottom:0] [pointer-events:none] [z-index:1] [overflow:hidden]">
-      <div className="ghg-cloud [background:radial-gradient(_circle,_rgba(16,_185,_129,_0.5)_0%,_rgba(15,_23,_42,_0.2)_50%,_transparent_70%_)] [width:900px]! [height:900px]!" ref={cloud2Ref}></div>
-      <div className="ghg-cloud [background:radial-gradient(_circle,_rgba(255,_102,_0,_0.6)_0%,_rgba(100,_116,_139,_0.3)_50%,_transparent_70%_)]" ref={cloud1Ref}></div>
+      <div className="ghg-cloud [background:radial-gradient(_circle,_rgba(16,_185,_129,_0.3)_0%,_rgba(16,_185,_129,_0.1)_50%,_transparent_70%_)] [width:900px]! [height:900px]!" ref={cloud2Ref}></div>
+      <div className="ghg-cloud [background:radial-gradient(_circle,_rgba(255,_102,_0,_0.35)_0%,_rgba(255,_102,_0,_0.1)_50%,_transparent_70%_)]" ref={cloud1Ref}></div>
       <div className="ghg-noise-overlay"></div>
     </div>
   );
@@ -262,7 +262,7 @@ const Login: React.FC = () => {
 
         {/* Footer / Compliance */}
         <div className="[margin-top:40px] [text-align:center] [border-top:1px_solid_var(--border-light)] [padding-top:24px] [&_p]:[color:var(--text-muted)] [&_p]:[font-size:var(--text-sm)]">
-          <div className="[display:flex] [justify-content:center] [gap:12px] [margin-bottom:16px]">
+          <div className="[display:flex] [flex-wrap:wrap] [justify-content:center] [gap:8px] [margin-bottom:16px]">
             <span className="badge">API Compliant</span>
             <span className="badge">ISO 14064 Ready</span>
             <span className="badge">SOC2 Secured</span>

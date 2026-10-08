@@ -55,7 +55,8 @@ const MethaneIntensityOGMP20Level: React.FC<MethaneIntensityOGMP20LevelProps> = 
       className={`[max-height:1500px] [opacity:1]! [overflow:hidden] [transition:max-height_0.4s_cubic-bezier(0.4,_0,_0.2,_1),_opacity_0.3s_ease,_margin-top_0.3s_ease] [margin-top:16px] [&.collapsed]:[max-height:0] [&.collapsed]:[opacity:0]! [&.collapsed]:[margin-top:0] [&.collapsed]:[pointer-events:none] ${ogmpCollapsed ? "collapsed" : ""}`}
     >
       {ogmpSurveys.length > 0 ? (
-        <div className="table-responsive">
+        // Scrolls sideways when the table is wider than the card; focusable so keyboard users can scroll it.
+        <div className="table-responsive" tabIndex={0} role="region" aria-label="OGMP 2.0 site-level surveys">
           <table className="custom-table">
             <thead>
               <tr>

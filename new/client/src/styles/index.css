@@ -1,6 +1,7 @@
-/* Entry stylesheet. Only the Tailwind theme and utilities layers are used (no preflight),
+/* Entry stylesheet. Only the Tailwind theme and utilities layers are used (no preflight); `base`
+   holds control defaults that any utility or legacy rule overrides,
    and class scanning is limited to the new folders until pages are migrated. */
-@layer theme, utilities;
+@layer theme, base, utilities;
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities) source(none);
 @import "./tokens.css";

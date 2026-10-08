@@ -44,11 +44,11 @@ const MethaneIntensityOGMP20Gold: React.FC<MethaneIntensityOGMP20GoldProps> = ({
         </p>
       </div>
 
-      <div className="flex! items-center! gap-[16px]!">
+      <div className="flex! min-w-0 items-center! gap-[16px]!">
         {/* Interactive Baseline Selector UI button/pill matching theme */}
         <div
           role="presentation"
-          className="[display:flex] [align-items:center] [gap:10px] [background:var(--bg-app)] [padding:6px_12px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color)]"
+          className="min-w-0 [display:flex] [flex-wrap:wrap] [align-items:center] [gap:10px] [background:var(--bg-app)] [padding:6px_12px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color)]"
           onClick={(e) => e.stopPropagation()}
         >
           <span className="[font-size:var(--text-sm)] [font-weight:600] [color:var(--text-secondary)]">
@@ -58,7 +58,7 @@ const MethaneIntensityOGMP20Gold: React.FC<MethaneIntensityOGMP20GoldProps> = ({
             />
             Base Year:
           </span>
-          <div className="[display:flex] [gap:6px]">
+          <div className="[display:flex] [flex-wrap:wrap] [gap:6px]">
             {Array.from({ length: new Date().getFullYear() - 2020 }, (_, i) => 2021 + i).map((yr) => (
               <button
                 key={yr}
@@ -83,7 +83,7 @@ const MethaneIntensityOGMP20Gold: React.FC<MethaneIntensityOGMP20GoldProps> = ({
       className={`[max-height:2500px] [opacity:1] [overflow:hidden] [transition:max-height_0.45s_cubic-bezier(0.4,_0,_0.2,_1),_opacity_0.3s_ease,_margin-top_0.3s_ease] [&.collapsed]:[max-height:0] [&.collapsed]:[opacity:0] [&.collapsed]:[margin-top:0] [&.collapsed]:[pointer-events:none] ${roadmapCollapsed ? "collapsed" : ""}`}
     >
       {/* Facility Roadmap Cards Grid */}
-      <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(480px,_1fr))] [gap:20px]">
+      <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(min(480px,_100%),_1fr))] [gap:20px]">
         {(ogmpRoadmapData.length > 0 ? ogmpRoadmapData : facilities).map(
           (fac) => {
             const facName = fac.facility_name || fac.name;
