@@ -378,7 +378,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   className="input-group"
                   label={
                     <>
-                      Tubing diameter (in)
+                      {unloadingType === "plunger" ? "Tubing diameter (in)" : "Casing diameter (in)"}
                       <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                     </>
                   }
@@ -401,7 +401,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   className="input-group"
                   label={
                     <>
-                      Well Depth (ft)
+                      {unloadingType === "plunger" ? "Tubing depth to plunger bumper (ft)" : "Well depth (ft)"}
                       <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                     </>
                   }
@@ -424,7 +424,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   className="input-group"
                   label={
                     <>
-                      Shut-in pressure (psig)
+                      Flow-line pressure (psig)
                       <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                     </>
                   }
@@ -447,7 +447,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   className="input-group"
                   label={
                     <>
-                      Sales flow rate (scf/hr)
+                      Flow-line gas rate (scf/hr)
                       <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                     </>
                   }
@@ -467,7 +467,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   className="input-group"
                   label={
                     <>
-                      Venting time (h/event)
+                      Hours open to atmosphere (h/event)
                       <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                     </>
                   }

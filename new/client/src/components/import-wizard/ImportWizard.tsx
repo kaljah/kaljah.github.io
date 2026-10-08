@@ -8,6 +8,9 @@ import { autoDetectMapping, missingRequiredFields } from "../../utils/importMapp
 import { useToast } from "../Toast";
 import UploadProgress from "../UploadProgress";
 import { FieldGroup, FieldGroupData, FileDrop, InfoNote, RegionAccess } from "./mapping";
+import { fittingMappings, withSavedMapping, type SavedMapping } from "../../utils/savedMappings";
+import { EMPTY_CHECK, FileCheckPanel, type FileCheckState } from "./FileCheck";
+import { SavedMappingBar } from "./SavedMappingBar";
 
 export interface ImportWizardMode {
   value: string;
@@ -36,6 +39,12 @@ export interface ImportWizardProps {
   overwriteHint?: string;
   reviewable?: boolean;
   regionAccess?: boolean;
+  /** check the file before importing (POST /emissions/upload/check: a sample is calculated, nothing saved) */
+  checkBeforeImport?: boolean;
+  /** changes when an option outside the wizard that the upload sends (extraForm) changes: a check becomes out of date */
+  optionsKey?: string;
+  /** keys always offered in the short field list (besides the mapped and the missing required fields) */
+  alwaysShownKeys?: string[];
   onClose: () => void;
   onUploadSuccess?: () => void;
 }
@@ -62,6 +71,9 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
   overwriteHint,
   reviewable = true,
   regionAccess = true,
+  checkBeforeImport = false,
+  optionsKey = "",
+  alwaysShownKeys = [],
   onClose,
   onUploadSuccess,
 }) => {
@@ -85,6 +97,12 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
   const [overwrite, setOverwrite] = useState<boolean>(false); // replace records that already exist
   const [allowedRegions, setAllowedRegions] = useState<string[] | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [maxBytes, setMaxBytes] = useState<number | null>(null); // server upload limit, checked when a file is picked
+  const [savedMappings, setSavedMappings] = useState<SavedMapping[]>([]);
+  const [appliedSaved, setAppliedSaved] = useState<SavedMapping | null>(null);
+  const [showAllFields, setShowAllFields] = useState<boolean>(false);
+  const [check, setCheck] = useState<FileCheckState>(EMPTY_CHECK);
+  const scope = scopeFor(mode);
 
   useEffect(() => {
     api
@@ -98,16 +116,38 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
         setIsAdmin(role === "admin");
       })
       .catch(() => {});
+    api
+      .get("/emissions/upload/limits")
+      .then((res) => setMaxBytes(res.data?.max_bytes || null))
+      .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    api
+      .get("/emissions/upload/mappings", { params: { scope } })
+      .then((res) => setSavedMappings(Array.isArray(res.data) ? res.data : []))
+      .catch(() => setSavedMappings([]));
+  }, [scope]);
 
   const groups = useMemo(() => fieldGroupsFor(mode), [fieldGroupsFor, mode]);
   const allFields = useMemo(() => groups.flatMap((g) => g.fields), [groups]);
-  const shownGroups = useMemo(
-    () => groups.map((g) => ({ ...g, fields: g.fields.filter((f) => !fieldFilter || fieldFilter(g, f)) })).filter((g) => g.fields.length),
-    [groups, fieldFilter],
-  );
   const missingRequired = missingRequiredFields(allFields, mapping);
   const canSubmit = missingRequired.length === 0 || headers.length === 0;
+  // short list by default: the fields mapped to the file's columns, required fields still missing, and alwaysShownKeys
+  const shortList = useMemo(
+    () => new Set([...alwaysShownKeys, ...Object.keys(mapping).filter((k) => mapping[k]), ...missingRequired.map((f) => f.key)]),
+    [alwaysShownKeys, mapping, missingRequired],
+  );
+  const compact = headers.length > 0 && !showAllFields && !searchQuery;
+  const matchedColumns = useMemo(() => new Set(Object.values(mapping).filter(Boolean)), [mapping]);
+  const fitting = useMemo(() => fittingMappings(savedMappings, headers), [savedMappings, headers]);
+  const shownGroups = useMemo(
+    () =>
+      groups
+        .map((g) => ({ ...g, fields: g.fields.filter((f) => (!fieldFilter || fieldFilter(g, f)) && (!compact || shortList.has(f.key))) }))
+        .filter((g) => g.fields.length),
+    [groups, fieldFilter, compact, shortList],
+  );
   const restricted = regionAccess && !isAdmin && allowedRegions !== null;
   const noRegions = restricted && allowedRegions.length === 0;
 
@@ -115,10 +155,17 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
     (f: File | null | undefined) => {
       if (!f) return;
       setParseError("");
+      setCheck(EMPTY_CHECK);
+      if (maxBytes && f.size > maxBytes) {
+        // refused when picked, not after the upload
+        setParseError(`This file is ${(f.size / 1048576).toFixed(1)} MB; the upload limit is ${(maxBytes / 1048576).toFixed(0)} MB. Split it into smaller files.`);
+        return;
+      }
       if (f.name.toLowerCase().endsWith(".xlsx")) {
         setFile(f);
         setHeaders([]);
         setMapping({});
+        setAppliedSaved(null);
         setStep(MAP);
         return;
       }
@@ -132,15 +179,17 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
             return;
           }
           const hdrs = results.meta.fields;
+          const { mapping: m, applied } = withSavedMapping(autoDetectMapping(hdrs, allFields), savedMappings, hdrs);
           setHeaders(hdrs);
-          setMapping(autoDetectMapping(hdrs, allFields));
+          setMapping(m);
+          setAppliedSaved(applied);
           setFile(f);
           setStep(MAP);
         },
         error: () => setParseError("Failed to parse file. Please ensure it is a valid CSV."),
       });
     },
-    [allFields, MAP],
+    [allFields, MAP, maxBytes, savedMappings],
   );
 
   const onDrop = (e: React.DragEvent) => {
@@ -153,25 +202,112 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
     e.target.value = "";
   };
 
-  const handleSubmit = async () => {
-    if (!file) return;
-    setSubmitting(true);
+  const uploadForm = (f: File) => {
     const form = new FormData();
-    form.append("file", file);
-    form.append("scope", scopeFor(mode));
+    form.append("file", f);
+    form.append("scope", scope);
     form.append("overwrite_duplicates", overwrite ? "true" : "false");
     extraForm?.(form);
     form.append("column_mapping", JSON.stringify(mapping));
+    return form;
+  };
+
+  // Check the file: the server calculates a sample spread over the file and counts every row; nothing is saved
+  const skipStaleRef = useRef(false); // the mapping was just set from the check's own column names
+  const [recheck, setRecheck] = useState(false);
+  const runCheck = useCallback(async () => {
+    if (!file) return;
+    setCheck({ ...EMPTY_CHECK, loading: true });
+    const form = uploadForm(file);
+    form.append("sample_rows", "2000");
     try {
-      const res = await api.post("/emissions/upload/start", form, { headers: { "Content-Type": "multipart/form-data" } });
+      const res = await api.post("/emissions/upload/check", form, { headers: { "Content-Type": "multipart/form-data" } });
+      setCheck({ ...EMPTY_CHECK, data: res.data });
+      const xlHeaders = res.data?.preview?.columns?.headers;
+      if (headers.length === 0 && Array.isArray(xlHeaders) && xlHeaders.length) {
+        // Excel: the mapping can be shown now that the column names are known; a saved mapping that fits is
+        // applied and the file checked again with it
+        const { mapping: m, applied } = withSavedMapping(autoDetectMapping(xlHeaders, allFields), savedMappings, xlHeaders);
+        skipStaleRef.current = !applied;
+        setHeaders(xlHeaders);
+        setMapping(m);
+        setAppliedSaved(applied);
+        if (applied) setRecheck(true);
+      }
+    } catch (err: any) {
+      setCheck({ ...EMPTY_CHECK, error: err.response?.data?.error || err.message });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [file, scope, overwrite, mapping, headers.length, allFields, savedMappings, extraForm]);
+
+  // first check when the mapping step opens; later changes only mark the result out of date
+  const checkedFileRef = useRef<File | null>(null);
+  useEffect(() => {
+    if (checkBeforeImport && step === MAP && file && checkedFileRef.current !== file && (headers.length === 0 || canSubmit)) {
+      checkedFileRef.current = file;
+      runCheck();
+    }
+  }, [checkBeforeImport, step, MAP, file, headers.length, canSubmit, runCheck]);
+  const firstRender = useRef(true);
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+    if (skipStaleRef.current) {
+      skipStaleRef.current = false;
+      return;
+    }
+    setCheck((c) => (c.data || c.error ? { ...c, stale: true } : c));
+  }, [mapping, overwrite, optionsKey]);
+  useEffect(() => {
+    if (recheck) {
+      setRecheck(false);
+      runCheck();
+    }
+  }, [recheck, runCheck]);
+
+  const applySaved = (m: SavedMapping | null) => {
+    const auto = autoDetectMapping(headers, allFields);
+    setMapping(m ? { ...auto, ...m.mapping } : auto);
+    setAppliedSaved(m);
+  };
+  const saveMapping = async (name: string) => {
+    try {
+      const res = await api.post("/emissions/upload/mappings", { scope, name, headers, mapping });
+      setSavedMappings((list) => [res.data, ...list.filter((x) => x.id !== res.data.id)]);
+      setAppliedSaved(res.data);
+      toast.success(`Mapping "${name}" saved: it will be applied to files with these columns.`);
+      return true;
+    } catch (err: any) {
+      toast.error(err.response?.data?.error || "The mapping could not be saved.");
+      return false;
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!file) return;
+    setSubmitting(true);
+    try {
+      const res = await api.post("/emissions/upload/start", uploadForm(file), { headers: { "Content-Type": "multipart/form-data" } });
       setJobId(res.data.job_id);
+      if (appliedSaved) api.post(`/emissions/upload/mappings/${appliedSaved.id}/used`).catch(() => {});
       setStep(RUN);
     } catch (err: any) {
-      toast.error("Upload error: " + (err.response?.data?.error || err.message));
+      const msg =
+        err.response?.data?.error ||
+        (err.response?.status === 413 ? "The file is larger than the server's upload limit; split it into smaller files." : err.message);
+      toast.error("Upload error: " + msg);
     } finally {
       setSubmitting(false);
     }
   };
+  const preview = check.data?.preview;
+  const startLabel = submitting
+    ? "Starting…"
+    : preview
+      ? `Import ${preview.is_estimate ? "about " : ""}${preview.estimated_ok.toLocaleString("en-US")} rows`
+      : "Start import";
 
   const preStep = step <= offset ? preSteps[step - 1] : null;
   const footer =
@@ -182,8 +318,12 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
           {step === 1 ? "Cancel" : "Back"}
         </Button>
         {step === MAP ? (
-          <Button onClick={handleSubmit} loading={submitting} disabled={submitting || (!canSubmit && headers.length > 0) || noRegions}>
-            {submitting ? "Starting…" : "Start import"}
+          <Button
+            onClick={handleSubmit}
+            loading={submitting}
+            disabled={submitting || (!canSubmit && headers.length > 0) || noRegions || (!!preview && !check.stale && !preview.is_estimate && preview.estimated_ok === 0)}
+          >
+            {startLabel}
           </Button>
         ) : (
           <Button onClick={() => setStep((s) => s + 1)} disabled={step === FILE ? !file : preStep?.canNext === false}>
@@ -213,6 +353,7 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
             )}
             {restricted && allowedRegions && <RegionAccess regions={allowedRegions} />}
             <FileDrop inputRef={fileInputRef} dragging={dragging} onDragging={setDragging} onDrop={onDrop} onFileChange={onFileChange} error={parseError} />
+            {maxBytes && <p className="m-0 text-xs text-text-secondary">Up to {(maxBytes / 1048576).toFixed(0)} MB per file · no row limit</p>}
             {fileExtras}
           </>
         )}
@@ -231,13 +372,27 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
                 </div>
                 {headers.length > 0 && (
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-success-bg px-2.5 py-1 text-xs font-semibold text-success-fg">
-                    <Wand2 className="size-3.5" aria-hidden="true" /> {Object.keys(mapping).length} auto-detected
+                    <Wand2 className="size-3.5" aria-hidden="true" /> {headers.filter((h) => matchedColumns.has(h)).length} of {headers.length} columns matched
                   </span>
                 )}
               </div>
             )}
             {headers.length === 0 && (
-              <InfoNote>Excel file — processed server-side. Type column names exactly as they appear in your file, or leave blank to skip that field.</InfoNote>
+              <InfoNote>
+                {checkBeforeImport
+                  ? "Excel file: reading its columns with the check below. The column mapping appears when the check is done."
+                  : "Excel file — processed server-side. Type column names exactly as they appear in your file, or leave blank to skip that field."}
+              </InfoNote>
+            )}
+            {headers.length > 0 && (
+              <SavedMappingBar
+                applied={appliedSaved}
+                fitting={fitting}
+                canSave={matchedColumns.size > 0}
+                defaultName={(file?.name || "").replace(/\.[^.]+$/, "").slice(0, 80)}
+                onApply={applySaved}
+                onSave={saveMapping}
+              />
             )}
             {headers.length > 0 && missingRequired.length > 0 && (
               <Banner tone="warning">
@@ -266,13 +421,24 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
 
             {mappingExtras}
 
-            <label className={cn("flex cursor-pointer flex-wrap items-center gap-2 text-sm font-medium text-text-secondary")}>
-              <input type="checkbox" className="size-4 accent-brand-500" checked={overwrite} onChange={(e) => setOverwrite(e.target.checked)} />
-              <span>
+            {checkBeforeImport && <FileCheckPanel check={check} onRecheck={runCheck} canRun={headers.length === 0 || canSubmit} />}
+
+            <label className={cn("flex cursor-pointer items-start gap-2 text-sm font-medium text-text-secondary")}>
+              <input type="checkbox" className="mt-0.5 size-4 shrink-0 accent-brand-500" checked={overwrite} onChange={(e) => setOverwrite(e.target.checked)} />
+              <span className="min-w-0 flex-1">
                 {overwriteLabel}
                 {overwriteHint && <span className="block text-xs font-normal">{overwriteHint}</span>}
               </span>
             </label>
+
+            {headers.length > 0 && (
+              <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-text-secondary">
+                <span>{showAllFields ? "All fields are shown." : "Showing the fields matched to your file and any required field still missing."}</span>
+                <Button variant="link" size="sm" className="h-auto px-0" onClick={() => setShowAllFields((v) => !v)}>
+                  {showAllFields ? "Show only my file's fields" : "Show all fields"}
+                </Button>
+              </div>
+            )}
 
             <div className="flex flex-col gap-2.5">
               {shownGroups.map((group) => (

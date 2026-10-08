@@ -1,10 +1,10 @@
 import React, { useCallback, useState } from "react";
-import { Activity, Container, Cpu, Download, Droplets, File as FileIcon, FileSpreadsheet, Flame, Layers, Settings, TriangleAlert, Wind, Zap } from "lucide-react";
-import { Badge, Banner, Button, Field, NativeSelect, RadioCardGroup } from "../ui";
+import { Activity, Container, Cpu, Download, Droplets, File as FileIcon, FileSpreadsheet, Flame, Layers, Settings, Wind, Zap } from "lucide-react";
+import { Badge, Banner, Button, RadioCardGroup } from "../ui";
 import api from "../api";
 import { useToast } from "./Toast";
 import ImportWizard from "./import-wizard/ImportWizard";
-import { controlClass, FieldGroupData } from "./import-wizard/mapping";
+import { FieldGroupData } from "./import-wizard/mapping";
 import { cn } from "../ui/cn";
 
 // ─── Process catalogue (keys are the server's Scope 1 process types) ─────────
@@ -19,7 +19,7 @@ export interface ProcessCatalogueItem {
 
 const PROCESS_CATALOGUE: ProcessCatalogueItem[] = [
   { key: "combustion",    label: "Combustion",             icon: Flame,     tier3Extra: ["hhv", ...COMP, "combustion_efficiency", "operating_temperature", "temp_unit", "operating_pressure", "press_unit", "z_factor"] },
-  { key: "flaring",       label: "Flaring",                icon: Flame,     tier3Extra: ["flare_type", "control_efficiency", ...COMP] },
+  { key: "flaring",       label: "Flaring",                icon: Flame,     tier3Extra: ["flare_type", "combustion_efficiency", "destruction_efficiency", "control_efficiency", ...COMP] },
   { key: "venting",       label: "Venting",                icon: Wind,      tier3Extra: ["vent_method", "disposition", "ch4_content", "co2_content"] },
   { key: "blowdown",      label: "Blowdowns",              icon: Zap,       tier3Extra: ["blowdown_pressure", "blowdown_events", "blowdown_temp", "blowdown_temp_unit", "blowdown_press_unit", "z_factor", "ch4_content", "co2_content"] },
   { key: "tank_flashing", label: "Tank Flashing",          icon: Container, tier3Extra: ["tank_gor", "tank_ch4_content", "tank_control_eff", "tank_api_gravity"] },
@@ -93,7 +93,8 @@ const FIELD_GROUPS: FieldGroupData[] = [
     icon: Flame,
     tier3Only: true,
     fields: [
-      { key: "combustion_efficiency", label: "Combustion Efficiency %", required: false, hint: "Defaults to 99.5 % for combustion" },
+      { key: "combustion_efficiency", label: "Combustion Efficiency %", required: false, hint: "Combustion: defaults to 99.5 %. Flaring: % of carbon converted to CO2 (blank = 98 %)" },
+      { key: "destruction_efficiency", label: "Flare Destruction Efficiency %", required: false, hint: "% of CH4 destroyed (blank = 98 %, 99.5 % for enclosed ground flares)" },
       { key: "flare_type",           label: "Flare Type",             required: false, hint: "elevated | enclosed_ground | air_assisted | steam_assisted" },
       { key: "control_efficiency",   label: "Flare Control Efficiency %", required: false, hint: "Flare destruction efficiency %" },
       { key: "operating_temperature",label: "Metering Temp",          required: false, hint: "Only for volumes in m3 / cf read at metering conditions" },
@@ -201,25 +202,32 @@ const FIELD_GROUPS: FieldGroupData[] = [
 ];
 
 const TIER_OPTIONS = [
-  { value: "1", title: "Tier 1 — Standard", badge: <Badge tone="info">Minimum fields</Badge>, description: "Uses API Compendium default emission factors. Only requires fuel type, quantity, and unit. Fast and simple." },
-  { value: "3", title: "Tier 3 — Engineering", badge: <Badge tone="success">Full precision</Badge>, description: "Uses actual gas composition (C1–C10), operating conditions (T/P), and process-specific parameters for maximum accuracy." },
-  { value: "auto", title: "Both Tiers — Auto Detect", badge: <Badge tone="brand">Recommended</Badge>, description: "Mixes Tier 1 and Tier 3 rows in one file. The system detects per-row: if gas composition columns are filled, Tier 3 is used; otherwise Tier 1." },
+  { value: "1", title: "Tier 1 — Standard", badge: <Badge tone="info">Minimum fields</Badge>, description: "Every row uses the API Compendium default factors (the file's factor_type column is ignored). Needs fuel, quantity and unit." },
+  { value: "2", title: "Tier 2 — Custom / Site Factors", badge: <Badge tone="info">Site data</Badge>, description: "Every row uses your saved custom factors (Manage Data › Custom Factors), or a catalog fuel with your measured HHV / density." },
+  { value: "3", title: "Tier 3 — Engineering", badge: <Badge tone="success">Full precision</Badge>, description: "Every row is calculated from site data: gas composition (C1–C10), operating conditions and process parameters." },
+  { value: "auto", title: "Per row — mixed tiers", badge: <Badge tone="brand">Recommended</Badge>, description: "Mixes Tier 1, 2 and 3 rows in one file. Each row's factor_type column (default / custom / specific) selects its tier." },
 ];
 
 const TIER_NOTE: Record<string, string> = {
   "1": "Tier 1 only requires: Region, Date, Process, Fuel, Quantity, Unit.",
+  "2": "Tier 2 requires the Tier 1 fields with factor_type custom and either a saved custom factor name in Fuel, or a catalog fuel with hhv (and hhv_unit) / density.",
   "3": "Tier 3 requires all Tier 1 fields plus gas composition and process engineering parameters.",
-  auto: "Auto-detect is ideal when you have a mix of sources — some with gas composition data (Tier 3) and some without (Tier 1).",
+  auto: "Auto-detect is ideal for a mix of sources: each row's factor_type column selects Tier 1, 2 or 3.",
 };
 
-const SCOPE_OPTIONS = [
-  { value: "all", title: "All Processes", description: "Your file contains a Process column that identifies the type (Combustion, Flaring, Venting, etc.) for each row." },
-  { value: "specific", title: "Specific Process(es)", description: "Your file is dedicated to one or more specific processes. Select which ones apply to filter the column mapping to only the relevant fields." },
-];
+// the tier chosen in step 1 is the one the server applies (it used to be a second, independent
+// "Default factor" select in the mapping step: choosing Tier 3 in step 1 still imported per row)
+const TIER_TO_FACTOR: Record<string, string> = { "1": "default", "2": "custom", "3": "specific", auto: "auto" };
+const TIER_LABEL: Record<string, string> = {
+  "1": "Tier 1 for every row",
+  "2": "Tier 2 for every row",
+  "3": "Tier 3 for every row",
+  auto: "Tier per row (factor_type column)",
+};
 
 const TEMPLATES = [
-  { fmt: "excel" as const, icon: FileSpreadsheet, title: "Excel Template", note: "With dropdowns, sample data & engineering sheets" },
-  { fmt: "csv" as const, icon: FileIcon, title: "CSV Template", note: "Lightweight flat file — best for large datasets" },
+  { fmt: "excel" as const, icon: FileSpreadsheet, title: "Excel template", recommended: true, note: "Dropdowns for your facilities, processes, and the fuels and units of each process; examples and a reference sheet" },
+  { fmt: "csv" as const, icon: FileIcon, title: "CSV template", recommended: false, note: "Same columns, for exports from other systems. Example rows dated EXAMPLE are never imported." },
 ];
 
 interface ProcessTileProps {
@@ -251,13 +259,13 @@ export interface Scope1ImportWizardProps {
   onUploadSuccess?: () => void;
 }
 
-/** Scope 1 bulk import: pick the calculation tier and process scope, then the shared file and column-mapping steps. */
+/** Scope 1 bulk import: pick the calculation tier, then the shared file, check and column-mapping steps. */
 export const Scope1ImportWizard: React.FC<Scope1ImportWizardProps> = ({ onClose, onUploadSuccess }) => {
   const toast = useToast();
   const [tier, setTier] = useState<string>("auto");
-  const [processScope, setProcessScope] = useState<string>("all");
+  // processes whose Tier 3 input columns the template adds (none selected = every process)
   const [selectedProcesses, setSelectedProcesses] = useState<string[]>([]);
-  const [globalFactor, setGlobalFactor] = useState<string>("auto");
+  const [optionalCols, setOptionalCols] = useState<boolean>(false);
 
   const toggleProcess = (key: string) => setSelectedProcesses((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]));
 
@@ -266,25 +274,18 @@ export const Scope1ImportWizard: React.FC<Scope1ImportWizardProps> = ({ onClose,
     [tier],
   );
 
-  // Tier 1 hides the engineering groups; a specific-process file keeps only the parameters those processes use.
-  const fieldFilter = useCallback(
-    (group: FieldGroupData, field: any) => {
-      if (!group.tier3Only) return true;
-      if (tier === "1") return false;
-      if (processScope !== "specific") return true;
-      return selectedProcesses.some((pk) => PROCESS_CATALOGUE.find((p) => p.key === pk)?.tier3Extra.includes(field.key));
-    },
-    [tier, processScope, selectedProcesses],
-  );
+  // Tier 1 and Tier 2 files have no engineering inputs
+  const fieldFilter = useCallback((group: FieldGroupData) => !(group.tier3Only && (tier === "1" || tier === "2")), [tier]);
 
   const downloadTemplate = async (fmt: "excel" | "csv") => {
     try {
-      const processParam = processScope === "specific" && selectedProcesses.length ? selectedProcesses.join(",") : "all";
-      const res = await api.get(`/emissions/template/${fmt}?tier=${tier}&process=${processParam}`, { responseType: "blob" });
+      const processParam = selectedProcesses.length ? selectedProcesses.join(",") : "all";
+      const res = await api.get(`/emissions/template/${fmt}?tier=${tier}&process=${processParam}${optionalCols ? "&optional=1" : ""}`, { responseType: "blob" });
       const url = URL.createObjectURL(new Blob([res.data]));
       const a = document.createElement("a");
       a.href = url;
-      a.download = fmt === "excel" ? "Scope1_Template.xlsx" : "scope1_template.csv";
+      const stem = `scope1_template_${tier === "auto" ? "per_row" : `tier${tier}`}`;
+      a.download = fmt === "excel" ? `${stem}.xlsx` : `${stem}.csv`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -295,43 +296,15 @@ export const Scope1ImportWizard: React.FC<Scope1ImportWizardProps> = ({ onClose,
 
   const preSteps = [
     {
-      label: "Upload mode",
+      label: "Calculation",
       content: (
         <div className="flex flex-col gap-3">
           <h3 className="m-0 flex items-center gap-2 text-md font-bold text-text">
             <Settings className="size-4 text-brand-500" aria-hidden="true" /> Select calculation tier
           </h3>
           <p className="m-0 text-sm text-text-secondary">Choose how emissions will be calculated for each row in your file.</p>
-          <RadioCardGroup label="Calculation tier" value={tier} onChange={setTier} options={TIER_OPTIONS} />
+          <RadioCardGroup label="Calculation tier" value={tier} onChange={setTier} options={TIER_OPTIONS} columns="md:grid-cols-2" />
           <Banner tone="info">{TIER_NOTE[tier]}</Banner>
-        </div>
-      ),
-    },
-    {
-      label: "Process scope",
-      canNext: processScope !== "specific" || selectedProcesses.length > 0,
-      content: (
-        <div className="flex flex-col gap-3">
-          <h3 className="m-0 flex items-center gap-2 text-md font-bold text-text">
-            <Layers className="size-4 text-brand-500" aria-hidden="true" /> Process scope
-          </h3>
-          <p className="m-0 text-sm text-text-secondary">Does your file contain data for all process types, or a specific process?</p>
-          <RadioCardGroup label="Process scope" value={processScope} onChange={setProcessScope} options={SCOPE_OPTIONS} columns="md:grid-cols-2" />
-          {processScope === "specific" && (
-            <div className="flex flex-col gap-2.5">
-              <p className="m-0 text-sm font-semibold text-text">Select which processes are in your file:</p>
-              <div className="grid gap-2 [grid-template-columns:repeat(auto-fill,minmax(170px,1fr))]">
-                {PROCESS_CATALOGUE.map((p) => (
-                  <ProcessTile key={p.key} process={p} selected={selectedProcesses.includes(p.key)} onToggle={() => toggleProcess(p.key)} />
-                ))}
-              </div>
-              {selectedProcesses.length === 0 && (
-                <p role="status" className="m-0 flex items-center gap-1.5 text-sm font-medium text-warning-fg">
-                  <TriangleAlert className="size-4" aria-hidden="true" /> Select at least one process type to continue.
-                </p>
-              )}
-            </div>
-          )}
         </div>
       ),
     },
@@ -340,36 +313,55 @@ export const Scope1ImportWizard: React.FC<Scope1ImportWizardProps> = ({ onClose,
   const fileExtras = (
     <>
       <div className="flex flex-col gap-2.5">
-        <p className="m-0 text-sm font-medium text-text-secondary">Don't have a file? Download a pre-configured template:</p>
+        <p className="m-0 text-sm font-medium text-text-secondary">Don't have a file? Download a template made for {TIER_LABEL[tier]}:</p>
+        {(tier === "3" || tier === "auto") && (
+          <div className="flex flex-col gap-2">
+            <p className="m-0 text-xs text-text-secondary">Add the Tier 3 input columns for{selectedProcesses.length ? "" : " every process"}:</p>
+            <div className="grid gap-2 [grid-template-columns:repeat(auto-fill,minmax(170px,1fr))]">
+              {PROCESS_CATALOGUE.map((p) => (
+                <ProcessTile key={p.key} process={p} selected={selectedProcesses.includes(p.key)} onToggle={() => toggleProcess(p.key)} />
+              ))}
+            </div>
+          </div>
+        )}
+        <label className="flex cursor-pointer items-center gap-2 text-sm text-text-secondary">
+          <input type="checkbox" className="size-4 accent-brand-500" checked={optionalCols} onChange={(e) => setOptionalCols(e.target.checked)} />
+          Include optional columns (activity, division, field, metering conditions, uncertainty)
+        </label>
         <div className="flex flex-wrap gap-2.5">
-          {TEMPLATES.map(({ fmt, icon: Icon, title, note }) => (
-            <Button key={fmt} variant="secondary" className="h-auto min-w-0 flex-1 justify-start gap-3 px-4 py-3 text-left" onClick={() => downloadTemplate(fmt)}>
-              <Icon className="size-5 shrink-0 text-brand-700" aria-hidden="true" />
+          {TEMPLATES.map(({ fmt, icon: Icon, title, note, recommended }) => (
+            <Button
+              key={fmt}
+              variant={recommended ? "primary" : "secondary"}
+              className="h-auto min-w-0 flex-1 justify-start gap-3 px-4 py-3 text-left"
+              onClick={() => downloadTemplate(fmt)}
+            >
+              <Icon className="size-5 shrink-0" aria-hidden="true" />
               <span className="flex flex-col">
-                <strong className="text-sm">{title}</strong>
-                <small className="text-xs font-normal text-text-secondary">{note}</small>
+                <strong className="text-sm">
+                  {title}
+                  {recommended && " (recommended)"}
+                </strong>
+                <small className="text-xs font-normal opacity-80">{note}</small>
               </span>
               <Download className="ml-auto size-4 shrink-0" aria-hidden="true" />
             </Button>
           ))}
         </div>
+        <p className="m-0 text-xs text-text-secondary">
+          Have an export from another system? Upload it as it is: you match its columns once and can save that mapping for the next file.
+        </p>
       </div>
       <div className="flex flex-wrap gap-2">
-        <Badge tone={tier === "1" ? "info" : tier === "3" ? "success" : "brand"}>{tier === "1" ? "Tier 1" : tier === "3" ? "Tier 3" : "Auto-detect"}</Badge>
-        <Badge>{processScope === "all" ? "All processes" : `${selectedProcesses.length} process${selectedProcesses.length !== 1 ? "es" : ""} selected`}</Badge>
+        <Badge tone={tier === "3" ? "success" : tier === "auto" ? "brand" : "info"}>{TIER_LABEL[tier]}</Badge>
       </div>
     </>
   );
 
   const mappingExtras = (
-    <Field label="Default factor when not specified in file">
-      <NativeSelect className={controlClass} value={globalFactor} onChange={(e) => setGlobalFactor(e.target.value)}>
-        <option value="auto">Auto-detect from file</option>
-        <option value="default">Force Standard (API Compendium)</option>
-        <option value="custom">Force Custom Factors</option>
-        <option value="specific">Force Tier 3 (site data)</option>
-      </NativeSelect>
-    </Field>
+    <p className="m-0 text-sm text-text-secondary">
+      Calculation: <strong className="text-text">{TIER_LABEL[tier]}</strong> (chosen in the first step)
+    </p>
   );
 
   return (
@@ -382,8 +374,12 @@ export const Scope1ImportWizard: React.FC<Scope1ImportWizardProps> = ({ onClose,
       fieldFilter={fieldFilter}
       fileExtras={fileExtras}
       mappingExtras={mappingExtras}
-      extraForm={(form) => form.append("global_factor_type", globalFactor)}
+      extraForm={(form) => form.append("global_factor_type", TIER_TO_FACTOR[tier] || "auto")}
+      optionsKey={tier}
+      checkBeforeImport
+      alwaysShownKeys={["fuel"]}
       finalLabel="Submitted for review"
+      overwriteLabel="Replace existing records. A row for the same facility, month, process, fuel and equipment as a record already in the platform replaces it, and that record goes back to Pending review. Unticked, such rows are skipped and listed as duplicates."
       onClose={onClose}
       onUploadSuccess={onUploadSuccess}
     />

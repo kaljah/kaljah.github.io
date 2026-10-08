@@ -130,11 +130,12 @@ describe("UnloadingForm & API Compendium 2021 Reference Integrity", () => {
     // one tier selector: the page-level Calculation Methodology control (the form has no tier buttons)
     expect(screen.queryByText(/Tier 3: Engineering/i)).toBeNull();
     expect(screen.getByText(/Events per year/i)).toBeInTheDocument();
-    expect(screen.getByText(/Tubing diameter \(in\)/i)).toBeInTheDocument();
-    expect(screen.getByText(/Well Depth \(ft\)/i)).toBeInTheDocument();
-    expect(screen.getByText(/Shut-in pressure \(psig\)/i)).toBeInTheDocument();
-    expect(screen.getByText(/Sales flow rate \(scf\/hr\)/i)).toBeInTheDocument();
-    expect(screen.getByText(/Venting time \(h\/event\)/i)).toBeInTheDocument();
+    // Eq 6-10 for a non-plunger well: casing diameter, well depth, flow-line pressure and rate (Exhibit 6-8)
+    expect(screen.getByText(/Casing diameter \(in\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/^Well depth \(ft\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/Flow-line pressure \(psig\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/Flow-line gas rate \(scf\/hr\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/Hours open to atmosphere \(h\/event\)/i)).toBeInTheDocument();
   });
 
   it("renders Equation 6-11 parameters when automated plunger lift is selected", () => {
