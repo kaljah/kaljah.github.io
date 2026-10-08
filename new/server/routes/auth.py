@@ -254,6 +254,10 @@ def superuser_required(f):
 ROLE_RANK = {"user": 0, "it": 1, "superuser": 2, "admin": 3, "it_admin": 4, "it_manager": 4}
 BUSINESS_ROLES = ("admin", "superuser")
 BUSINESS_ROLE_GRANTORS = ("admin", "it_manager")  # separation of duties (update_user and register)
+SUPERUSER_REGION_ERROR = (
+    "A superuser is limited to one facility or region: set a specific location "
+    "(organisation-wide access is the admin role)"
+)
 
 
 @auth_bp.route("/register", methods=["POST"])
@@ -290,6 +294,8 @@ def register():
         return jsonify({"error": "Forbidden: IT Administrators cannot assign business compliance roles (admin, superuser)"}), 403
     if creator and ROLE_RANK.get(role_requested, 0) > ROLE_RANK.get(creator.role, 0):
         return jsonify({"error": "Cannot assign a role higher than your own"}), 403
+    if role_requested == "superuser" and is_unrestricted_location(data.get("location")):
+        return jsonify({"error": SUPERUSER_REGION_ERROR, "field": "location"}), 400
 
     user = User(
         fullName=data.get("fullName"),
