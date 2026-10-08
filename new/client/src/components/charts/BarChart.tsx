@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useId, useState } from "react";
 import {
   BarChart as RechartsBar,
   Bar,
   Cell,
+  LabelList,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -56,6 +57,8 @@ export const BarChart: React.FC<BarChartProps> = ({
 }) => {
   const [isMounted] = useState<boolean>(() => typeof window !== "undefined");
   const [activeBarKey, setActiveBarKey] = useState<string | null>(null);
+  const [hoverIndex, setHoverIndex] = useState<number | null>(null);
+  const gradientId = `bar-grad-${useId().replace(/:/g, "")}`;
 
   const finalXKey = xAxisKey || xKey || "name";
   const finalDataKey = dataKey || "value";
@@ -208,8 +211,14 @@ export const BarChart: React.FC<BarChartProps> = ({
       >
         <RechartsBar
           data={data}
-          margin={{ top: 12, right: 12, left: -4, bottom: 4 }}
+          margin={{ top: 20, right: 12, left: -4, bottom: 4 }}
         >
+          <defs>
+            <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" style={{ stopColor: color, stopOpacity: 1 }} />
+              <stop offset="100%" style={{ stopColor: color, stopOpacity: 0.72 }} />
+            </linearGradient>
+          </defs>
           <CartesianGrid
             strokeDasharray="4 4"
             stroke="rgba(226, 232, 240, 0.75)"
@@ -276,17 +285,28 @@ export const BarChart: React.FC<BarChartProps> = ({
           ) : (
             <Bar
               dataKey={finalDataKey}
-              fill={color}
+              fill={`url(#${gradientId})`}
               maxBarSize={44}
               radius={[6, 6, 0, 0]}
               animationDuration={800}
+              onMouseEnter={(_: unknown, i: number) => setHoverIndex(i)}
+              onMouseLeave={() => setHoverIndex(null)}
             >
               {data.map((entry, index) => (
                 <Cell
                   key={`cell-${index}`}
-                  fill={entry.color || entry.fill || color}
+                  fill={entry.color || entry.fill || `url(#${gradientId})`}
+                  opacity={hoverIndex !== null && hoverIndex !== index ? 0.45 : 1}
                 />
               ))}
+              {data.length <= 8 && (
+                <LabelList
+                  dataKey={finalDataKey}
+                  position="top"
+                  formatter={valueFormatter}
+                  style={{ fill: "var(--color-ink-700)", fontSize: 11, fontWeight: 600 }}
+                />
+              )}
             </Bar>
           )}
         </RechartsBar>
