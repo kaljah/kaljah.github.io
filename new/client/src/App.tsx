@@ -5,7 +5,8 @@ import { AuthProvider } from "./context/AuthContext";
 import { LayoutProvider } from "./context/LayoutContext";
 import { ToastProvider } from "./components/Toast";
 import ErrorBoundary from "./components/ErrorBoundary";
-import Login from "./pages/Login";
+// Login is the only user of framer-motion; loading it lazily keeps ~0.5 MB out of the entry chunk.
+const Login = React.lazy(() => import("./pages/Login"));
 import AppShell from "./app/shell/AppShell";
 import RequireRole from "./app/RequireRole";
 import { ALIASES, ROUTES } from "./app/routes.config";
@@ -18,7 +19,14 @@ const UiGallery = import.meta.env.DEV
 // Routes, guards, navigation and titles all come from app/routes.config.js.
 const AppRoutes: React.FC = () => (
   <Routes>
-    <Route path="/login" element={<Login />} />
+    <Route
+      path="/login"
+      element={
+        <React.Suspense fallback={null}>
+          <Login />
+        </React.Suspense>
+      }
+    />
     {UiGallery && (
       <Route
         path="/__ui"
