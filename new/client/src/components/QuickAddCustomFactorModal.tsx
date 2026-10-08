@@ -100,36 +100,15 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
 
   return (
     <div role="presentation"
-      className="modal-overlay"
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: "rgba(17, 24, 39, 0.6)",
-        backdropFilter: "blur(4px)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 9999,
-        padding: "16px",
-      }}
+      className="modal-overlay [position:fixed]! [top:0]! [left:0]! [right:0]! [bottom:0]! [background-color:rgba(17,_24,_39,_0.6)]! [backdrop-filter:blur(4px)]! [display:flex]! [align-items:center]! [justify-content:center]! [z-index:9999]! [padding:16px]!"
+     
       onClick={(e) => {
         if (e.target === e.currentTarget && !loading) onClose();
       }}
     >
       <div
-        className="modal-card"
-        style={{
-          background: "var(--color-white)",
-          borderRadius: "12px",
-          width: "100%",
-          maxWidth: "560px",
-          boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
-          border: "1px solid var(--color-legacy-e5e7eb)",
-          overflow: "hidden",
-        }}
+        className="modal-card [background:var(--color-white)]! [border-radius:12px]! [width:100%]! [max-width:560px]! [box-shadow:0_20px_25px_-5px_rgba(0,_0,_0,_0.1),_0_10px_10px_-5px_rgba(0,_0,_0,_0.04)]! [border:1px_solid_var(--color-legacy-e5e7eb)]! [overflow:hidden]!"
+       
       >
         {/* Header */}
         <div
@@ -164,18 +143,7 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
         <form onSubmit={handleSubmit} className="p-[20px]!">
           {error && (
             <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                padding: "10px 12px",
-                backgroundColor: "var(--color-red-50)",
-                border: "1px solid var(--color-legacy-fee2e2)",
-                borderRadius: "6px",
-                color: "var(--color-red-700)",
-                fontSize: "0.8rem",
-                marginBottom: "16px",
-              }}
+              className="[display:flex]! [align-items:center]! [gap:8px]! [padding:10px_12px]! [background-color:var(--color-red-50)]! [border:1px_solid_var(--color-legacy-fee2e2)]! [border-radius:6px]! [color:var(--color-red-700)]! [font-size:0.8rem]! [margin-bottom:16px]!"
             >
               <AlertCircle size={16} />
               <span>{error}</span>
@@ -202,7 +170,7 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
             </div>
 
             {/* Units & Base Fuel */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+            <div className="[display:grid]! [grid-template-columns:1fr_1fr]! [gap:12px]!">
               <div>
                 <label
                   className="block! text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]! mb-[4px]!"
@@ -251,7 +219,7 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
               >
                 Emission Factors ({formData.unit})
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px" }}>
+              <div className="[display:grid]! [grid-template-columns:1fr_1fr_1fr]! [gap:10px]!">
                 <div>
                   <label
                     className="block! text-[length:0.7rem]! text-[color:var(--color-legacy-6b7280)]! mb-[2px]!"
@@ -304,7 +272,7 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
             </div>
 
             {/* HHV & Uncertainty */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+            <div className="[display:grid]! [grid-template-columns:1fr_1fr]! [gap:12px]!">
               <div>
                 <label
                   className="block! text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]! mb-[4px]!"

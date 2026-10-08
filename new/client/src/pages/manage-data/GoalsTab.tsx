@@ -144,7 +144,7 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
       </div>
 
       {/* Goal Input Form */}
-      <div className="grid-forms md:[grid-template-columns:repeat(3,1fr)]!" style={{ background: "var(--color-legacy-fafafa)", padding: "20px", borderRadius: "12px", border: "1px solid var(--border-color)" }}>
+      <div className="grid-forms md:[grid-template-columns:repeat(3,1fr)]! [background:var(--color-legacy-fafafa)]! [padding:20px]! [border-radius:12px]! [border:1px_solid_var(--border-color)]!">
         <Field className="input-group" label="Target Year">
           <Input
             type="number"
@@ -179,7 +179,7 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
                 setEditingGoalYear(null);
                 setGoalForm({ year: new Date().getFullYear(), target_amount: "" });
               }}
-              style={{ height: "46px", padding: "0 12px", border: "1px solid var(--border-color)", borderRadius: "8px" }}
+              className="[height:46px]! [padding:0_12px]! [border:1px_solid_var(--border-color)]! [border-radius:8px]!"
             >
               Cancel
             </Button>
@@ -232,7 +232,7 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
                         variant="ghost"
                         type="submit"
                         onClick={() => handleEditGoal(g)}
-                        style={{ padding: "4px 8px", fontSize: "0.8rem", border: "1px solid var(--border-color)", borderRadius: "6px" }}
+                        className="[padding:4px_8px]! [font-size:0.8rem]! [border:1px_solid_var(--border-color)]! [border-radius:6px]!"
                         title="Edit Goal"
                       >
                         Edit
@@ -272,7 +272,7 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
       </div>
 
       {/* Base Year Input Form */}
-      <div className="grid-forms md:[grid-template-columns:repeat(4,1fr)]!" style={{ background: "var(--color-legacy-fafafa)", padding: "20px", borderRadius: "12px", border: "1px solid var(--border-color)", gap: "16px" }}>
+      <div className="grid-forms md:[grid-template-columns:repeat(4,1fr)]! [background:var(--color-legacy-fafafa)]! [padding:20px]! [border-radius:12px]! [border:1px_solid_var(--border-color)]! [gap:16px]!">
         <Field className="input-group" label="Base Year">
           <Input
             type="number"
@@ -435,7 +435,7 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
         )}
       </div>
 
-      <div className="grid-forms md:[grid-template-columns:repeat(3,1fr)]!" style={{ gap: "16px" }}>
+      <div className="grid-forms md:[grid-template-columns:repeat(3,1fr)]! [gap:16px]!">
         <Field className="input-group" label="Base Year">
           <Input
             type="number"

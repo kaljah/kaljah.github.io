@@ -80,17 +80,9 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
         </p>
       </div>
       <button
-        className="action-btn"
+        className="action-btn [display:flex]! [align-items:center]! [gap:8px]! [padding:8px_16px]! [font-size:0.9rem]! [width:auto]! [white-space:nowrap]!"
         onClick={() => setImportModal({ isOpen: true, type: "custom_factors" })}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "8px",
-          padding: "8px 16px",
-          fontSize: "0.9rem",
-          width: "auto",
-          whiteSpace: "nowrap",
-        }}
+       
       >
         <Upload size={16} /> Bulk Import (CSV)
       </button>

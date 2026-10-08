@@ -126,9 +126,8 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
 
   return (
     <div
-      className={`custom-dropdown ${isOpen ? "open" : ""}`}
+      className={`custom-dropdown [position:relative]! [width:100%]! ${isOpen ? "open" : ""}`}
       ref={dropdownRef}
-      style={{ width: "100%", position: "relative" }}
     >
       <div
         className="dropdown-selected p-[10px_12px]! [border:1px_solid_var(--border-color)]! rounded-[6px]! bg-[color:var(--bg-card)]! text-[color:var(--text-primary)]! cursor-pointer! flex! justify-between! items-center! min-h-[42px]!"

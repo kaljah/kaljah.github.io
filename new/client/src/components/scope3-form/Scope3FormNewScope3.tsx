@@ -171,12 +171,7 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
     </div>
 
     <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-        gap: "20px",
-        marginBottom: "20px",
-      }}
+      className="[display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))]! [gap:20px]! [margin-bottom:20px]!"
     >
       <Field className="input-group" label="Year">
         <Input
@@ -217,11 +212,7 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
     </div>
 
     <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-        gap: "20px",
-      }}
+      className="[display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))]! [gap:20px]!"
     >
       <div className="input-group">
         <label>Activity Type</label>

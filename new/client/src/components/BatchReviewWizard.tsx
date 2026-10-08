@@ -544,7 +544,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
               variant="ghost" type="button"
               onClick={fetchAllPendingData}
               disabled={loading || isProcessing}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', border: '1px solid var(--border-color)', borderRadius: '9px', padding: '7px 14px', fontSize: '0.82rem', background: 'var(--color-white)', cursor: 'pointer' }}
+              className="[display:inline-flex]! [align-items:center]! [gap:6px]! [border:1px_solid_var(--border-color)]! [border-radius:9px]! [padding:7px_14px]! [font-size:0.82rem]! [background:var(--color-white)]! [cursor:pointer]!"
             >
               <RefreshCw size={14} style={{ animation: loading ? 'spin 1s linear infinite' : 'none' }} />
               Reload All
@@ -552,7 +552,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
             <Button
               variant="ghost" type="button"
               onClick={onClose}
-              style={{ padding: '7px', borderRadius: '9px', border: '1px solid var(--border-color)', cursor: 'pointer', background: 'var(--color-white)' }}
+              className="[padding:7px]! [border-radius:9px]! [border:1px_solid_var(--border-color)]! [cursor:pointer]! [background:var(--color-white)]!"
               title="Close Wizard (Esc)"
             >
               <X size={18} />
@@ -655,8 +655,8 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
             <NativeSelect
               value={facilityFilter}
               onChange={(e) => setFacilityFilter(e.target.value)}
-              className="component-select"
-              style={{ width: 'auto', padding: '6px 30px 6px 12px', fontSize: '0.8rem', height: '34px' }}
+              className="component-select [width:auto]! [padding:6px_30px_6px_12px]! [font-size:0.8rem]! [height:34px]!"
+             
             >
               <option value="all">All Facilities</option>
               {facilities.map(f => (
@@ -669,8 +669,8 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
               <NativeSelect
                 value={yearFilter}
                 onChange={(e) => setYearFilter(e.target.value)}
-                className="component-select"
-                style={{ width: 'auto', padding: '6px 30px 6px 12px', fontSize: '0.8rem', height: '34px' }}
+                className="component-select [width:auto]! [padding:6px_30px_6px_12px]! [font-size:0.8rem]! [height:34px]!"
+               
               >
                 <option value="all">All Years</option>
                 {availableYears.map(y => (
@@ -797,7 +797,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
               <Button
                 variant="ghost" type="button"
                 onClick={() => { setScopeFilter('all'); setQaFilter('all'); setFacilityFilter('all'); setYearFilter('all'); setSearchQuery(''); }}
-                style={{ border: '1px solid var(--border-color)', borderRadius: '8px', padding: '6px 14px', fontSize: '0.82rem', marginTop: '8px', cursor: 'pointer' }}
+                className="[border:1px_solid_var(--border-color)]! [border-radius:8px]! [padding:6px_14px]! [font-size:0.82rem]! [margin-top:8px]! [cursor:pointer]!"
               >
                 Reset Filters
               </Button>

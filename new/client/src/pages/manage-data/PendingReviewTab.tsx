@@ -244,17 +244,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
           <Button
             variant="ghost"
             type="submit"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "8px",
-              border: "1px solid var(--border-color)",
-              borderRadius: "10px",
-              padding: "8px 16px",
-              background: "var(--bg-card)",
-              fontWeight: 500,
-              cursor: "pointer",
-            }}
+            className="[display:inline-flex]! [align-items:center]! [gap:8px]! [border:1px_solid_var(--border-color)]! [border-radius:10px]! [padding:8px_16px]! [background:var(--bg-card)]! [font-weight:500]! [cursor:pointer]!"
             onClick={() => fetchPendingEmissions()}
             disabled={isRefreshingPending}
           >
@@ -263,19 +253,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
           </Button>
           <Button
             type="submit"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "8px",
-              borderRadius: "10px",
-              padding: "8px 18px",
-              background: "linear-gradient(135deg, var(--color-brand-500), var(--color-legacy-ea580c))",
-              color: "var(--color-white)",
-              fontWeight: 600,
-              border: "none",
-              boxShadow: "0 4px 14px rgba(255, 102, 0, 0.35)",
-              cursor: "pointer",
-            }}
+            className="[display:inline-flex]! [align-items:center]! [gap:8px]! [border-radius:10px]! [padding:8px_18px]! [background:linear-gradient(135deg,_var(--color-brand-500),_var(--color-legacy-ea580c))]! [color:var(--color-white)]! [font-weight:600]! [border:none]! [box-shadow:0_4px_14px_rgba(255,_102,_0,_0.35)]! [cursor:pointer]!"
             onClick={() => setIsBatchWizardOpen(true)}
           >
             <Sparkles size={16} />
@@ -390,8 +368,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
           {/* QA Filter Pills */}
           <div className="inline-flex! bg-[color:rgba(15,_23,_42,_0.05)]! rounded-[10px]! p-[3px]! gap-[3px]!">
             <button
-              className={`pending-tab-btn ${pendingQaFilter === "all" ? "active" : ""}`}
-              style={{ padding: "6px 12px", fontSize: "0.78rem" }}
+              className={`pending-tab-btn [padding:6px_12px]! [font-size:0.78rem]! ${pendingQaFilter === "all" ? "active" : ""}`}
               onClick={() => setPendingQaFilter("all")}
             >
               All QA
@@ -552,15 +529,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
               <Button
                 variant="ghost"
                 type="submit"
-                style={{
-                  fontSize: "0.8rem",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  padding: "6px 12px",
-                  border: "1px solid var(--border-color)",
-                  borderRadius: "8px",
-                }}
+                className="[font-size:0.8rem]! [display:inline-flex]! [align-items:center]! [gap:6px]! [padding:6px_12px]! [border:1px_solid_var(--border-color)]! [border-radius:8px]!"
                 onClick={handleSelectAllPendingToggle}
               >
                 {filteredPendingRecords.every((r) => selectedPendingKeys.has(r.key)) ? (

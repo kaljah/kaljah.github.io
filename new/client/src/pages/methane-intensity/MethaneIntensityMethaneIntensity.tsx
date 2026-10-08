@@ -159,16 +159,7 @@ const MethaneIntensityMethaneIntensity: React.FC<MethaneIntensityMethaneIntensit
 
         {/* Upstream & Midstream Segment Loss Rates */}
         <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "6px",
-            margin: "8px 0 6px 0",
-            padding: "6px 8px",
-            background: "var(--bg-secondary, rgba(255,255,255,0.03))",
-            borderRadius: "8px",
-            border: "1px solid var(--border-color, var(--color-legacy-e5e7eb))",
-          }}
+          className="[display:grid]! [grid-template-columns:1fr_1fr]! [gap:6px]! [margin:8px_0_6px_0]! [padding:6px_8px]! [background:var(--bg-secondary,_rgba(255,255,255,0.03))]! [border-radius:8px]! [border:1px_solid_var(--border-color,_var(--color-legacy-e5e7eb))]!"
         >
           <div>
             <div

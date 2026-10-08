@@ -275,7 +275,7 @@ export const PieChart: React.FC<PieChartProps> = ({
 
       {/* Modern Interactive Legend Pills */}
       {showLegend && sanitizedData.length > 0 && (
-        <div className="modern-chart-legend" style={{ paddingTop: "6px" }}>
+        <div className="modern-chart-legend [padding-top:6px]!">
           {sanitizedData.map((item, idx) => {
             const isDimmed = activeIndex !== null && activeIndex !== idx;
             const val = Number(item[dataKey]) || 0;
