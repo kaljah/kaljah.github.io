@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { BarChart } from "../components/charts";
 import {
   Info,
   Download,
@@ -320,6 +321,34 @@ const UncertaintyAssessment: React.FC = () => {
               High Uncertainty (&gt; ±30%)
             </div>
           </div>
+
+          {/* ── Uncertainty by category, ranked, against the high-uncertainty threshold ── */}
+          {data.categories.length > 0 && (
+            <div className="category-section [margin-bottom:24px]">
+              <div className="category-header">
+                <h3 className="category-title">Uncertainty by Category (±%)</h3>
+              </div>
+              <div className="h-[260px] w-full min-w-0">
+                <BarChart
+                  data={data.categories.map((c) => {
+                    const value = Math.abs(parseFloat(String(c.uncertainty_pct).replace(/[^0-9.\-]/g, ""))) || 0;
+                    // Same bands as the legend above: low <= 10, medium <= 30, high > 30.
+                    const color = value <= 10 ? "var(--color-unc-low)" : value <= 30 ? "var(--color-unc-medium)" : "var(--color-unc-high)";
+                    return { name: c.category, value, color };
+                  })}
+                  dataKey="value"
+                  xKey="name"
+                  color="var(--color-unc-high)"
+                  horizontal
+                  sortDesc
+                  height={260}
+                  referenceValue={30}
+                  referenceLabel="High (±30%)"
+                  formatValue={(v) => `±${Number(v).toFixed(1)}%`}
+                />
+              </div>
+            </div>
+          )}
 
           {/* ── Category Sections ── */}
           <div className="category-grid">
