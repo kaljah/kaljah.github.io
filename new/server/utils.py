@@ -40,11 +40,14 @@ def get_allowed_facility_ids(user):
     if not user_region or is_unrestricted_location(user_region):
         return []  # No specific facility/region assigned, no access for scoped role
 
+    # Audit 2026-10-01 (A-04): user.location is a value, not a LIKE pattern ("West_Field" matched
+    # "WestXField"; "%" matched every facility), so the wildcards are escaped.
+    pattern = user_region.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
     facilities = Facility.query.filter(
         db.or_(
-            Facility.region.ilike(user_region),
-            Facility.location.ilike(user_region),
-            Facility.name.ilike(user_region),
+            Facility.region.ilike(pattern, escape="\\"),
+            Facility.location.ilike(pattern, escape="\\"),
+            Facility.name.ilike(pattern, escape="\\"),
         )
     ).all()
 
@@ -260,10 +263,10 @@ def log_activity_and_notify(
         elif user.role == "user":
             superusers = User.query.filter_by(role="superuser", status="active").all()
             for su in superusers:
-                if (
-                    not su.location
-                    or su.location == user.location
-                    or su.location == "all"
+                if (  # superusers are facility/region-scoped: only their own scope's activity
+                    su.location
+                    and not is_unrestricted_location(su.location)
+                    and str(su.location).strip().lower() == str(user.location or "").strip().lower()
                 ):
                     Notification.create(
                         user_id=su.id,

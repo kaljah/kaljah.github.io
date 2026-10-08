@@ -56,3 +56,18 @@ describe("short headers", () => {
     expect(m.flare_type).toBeUndefined();
   });
 });
+
+describe("generic single-word fields (S1K-F12)", () => {
+  it("does not map Activity to activity_key or Hours to operating_hours", () => {
+    const fields = [F("activity", "Activity"), F("pneu_hours", "Pneumatic Hours"), F("unload_press", "Shut-in Pressure")];
+    const m = autoDetectMapping(["activity_key", "operating_hours", "blowdown_pressure"], fields);
+    expect(m.activity).toBeUndefined();
+    expect(m.pneu_hours).toBeUndefined();
+    expect(m.unload_press).toBeUndefined();
+  });
+
+  it("still maps the exact header", () => {
+    const m = autoDetectMapping(["Activity"], [F("activity", "Activity")]);
+    expect(m.activity).toBe("Activity");
+  });
+});

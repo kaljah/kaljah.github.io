@@ -4,7 +4,7 @@ import { NativeSelect } from "../../ui/NativeSelect";
 import { Eye, Trash2 } from "lucide-react";
 import api from "../../api";
 import { formatEmission, formatNumber } from "../../utils/formatters";
-import { PROCESS_TYPES, factorTypeLabel } from "./shared";
+import { PROCESS_TYPES, factorTypeLabel, processLabel } from "./shared";
 
 export interface Scope1HistoryEntry {
   id: string | number;
@@ -153,19 +153,30 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
       <button
         className="action-btn bg-[color:var(--color-green-500)]! p-[6px_14px]! text-[length:0.82rem]! whitespace-nowrap!"
         onClick={async () => {
-          // BUG-095: export every matching record (server-side filters), not just the visible page
+          // BUG-095: export every matching record (server-side filters), not just the visible page.
+          // S1K-F13: the server caps one request at 5,000 records ("limit=all" silently returned
+          // 5,000 of 83,147), so the export pages through the whole result.
           try {
-            const res = await api.get("/emissions/", {
-              params: {
-                scope: "1",
-                limit: "all",
-                ...(filterYear && { year: filterYear }),
-                ...(filterProcess && { process_type: filterProcess }),
-                ...(filterSearch && { search: filterSearch }),
-              },
-            });
-            const rows = res.data?.emissions || res.data?.data || res.data || [];
-            exportToCSV(Array.isArray(rows) ? rows : [], "scope1_export.csv");
+            const rows: any[] = [];
+            const PAGE = 5000;
+            let total = Infinity;
+            while (rows.length < total) {
+              const res = await api.get("/emissions", {
+                params: {
+                  scope: "1",
+                  limit: PAGE,
+                  offset: rows.length,
+                  ...(filterYear && { year: filterYear }),
+                  ...(filterProcess && { process: filterProcess }),
+                  ...(filterSearch && { search: filterSearch }),
+                },
+              });
+              const page = res.data?.emissions || res.data?.data || (Array.isArray(res.data) ? res.data : []);
+              total = Number(res.data?.total ?? res.headers?.["x-total-count"] ?? rows.length + page.length);
+              if (!page.length) break;
+              rows.push(...page);
+            }
+            exportToCSV(rows, "scope1_export.csv");
           } catch (err: any) {
             toast.error(err.response?.data?.error || "Export failed");
           }
@@ -267,19 +278,7 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
                   <td>{entry.group_name || entry.group || "-"}</td>
                   <td>{entry.equipment_id || "-"}</td>
                   <td>
-                    {(() => {
-                      const k = (entry.process || entry.process_type || "") as string;
-                      const v = (PROCESS_TYPES as Record<string, any>)[k];
-                      // keys the form does not list (e.g. stoichiometry) get a readable label
-                      const other: Record<string, string> = { stoichiometry: "Carbon Mass Balance (Stoichiometry)" };
-                      return (
-                        (typeof v === "string" ? v : v?.label) ||
-                        other[k] ||
-                        String(k || "")
-                          .replace(/_/g, " ")
-                          .replace(/^\w/, (c) => c.toUpperCase())
-                      );
-                    })()}
+                    {processLabel(entry)}
                   </td>
                   <td>{entry.fuel || entry.fuel_type || entry.activity_data_label || "-"}</td>
                   <td className={`[font-weight:500]! ${factorType === "Default" ? "[color:var(--color-green-700)]!" : "[color:var(--color-blue-700)]!"}`}>

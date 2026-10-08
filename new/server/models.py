@@ -127,7 +127,8 @@ class Emission(db.Model):
     group_name = db.Column(db.String(120), index=True)
     equipment_id = db.Column(db.String(50))
     process_type = db.Column(db.String(50), index=True)
-    fuel_type = db.Column(db.String(50))
+    # 255: catalog fuel names (75 chars) and activity-factor labels (70) overflowed 50 on PostgreSQL
+    fuel_type = db.Column(db.String(255))
     quantity = db.Column(db.Float)
     unit = db.Column(db.String(20))
     factor_source = db.Column(db.String(50))
@@ -804,4 +805,30 @@ class FacilityEquityShare(db.Model):
         db.Index("ix_fac_partner_date", "facility_id", "partner_id", "effective_start_date"),
     )
 
+
+class ImportMapping(db.Model):
+    """A column mapping a user saved in the import wizard: re-applied to files with the same columns
+    (a monthly export from the same system), so the columns are not matched by hand again."""
+    __tablename__ = "import_mappings"
+    __table_args__ = (db.UniqueConstraint("user_id", "scope", "name", name="uq_import_mapping_user_scope_name"),)
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False, index=True)
+    scope = db.Column(db.String(20), nullable=False, default="1")
+    name = db.Column(db.String(80), nullable=False)
+    headers = db.Column(db.Text, nullable=False)   # JSON list of the file's column names
+    mapping = db.Column(db.Text, nullable=False)   # JSON object field -> column name
+    created_at = db.Column(db.DateTime, default=utc_now)
+    updated_at = db.Column(db.DateTime, default=utc_now, onupdate=utc_now)
+    last_used_at = db.Column(db.DateTime, nullable=True)
+
+    def to_dict(self):
+        import json
+
+        return {
+            "id": self.id, "scope": self.scope, "name": self.name,
+            "headers": json.loads(self.headers or "[]"), "mapping": json.loads(self.mapping or "{}"),
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
+            "last_used_at": self.last_used_at.isoformat() if self.last_used_at else None,
+        }
 

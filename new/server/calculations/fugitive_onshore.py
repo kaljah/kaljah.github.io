@@ -57,6 +57,19 @@ _MASS_KG_PER_HR = {"kg/hr": 1.0, "kg/h": 1.0, "kg/hour": 1.0, "lb/hr": 0.4535923
                    "t/yr": 1000.0 / 8760.0, "tpy": 1000.0 / 8760.0}
 
 
+def _rate_tables_extend():
+    """S1K-F16: every volume-rate spelling of the shared parser (Mcf/day, scf/hr, Nm3/h ...) and mass
+    rates per hour / day (g/hr, kg/day ...)."""
+    from .units import MASS_UNITS_TO_KG, TIME_UNITS_TO_HOURS
+    for m, kg in MASS_UNITS_TO_KG.items():
+        for t, h in TIME_UNITS_TO_HOURS.items():
+            if t in ("hr", "h", "hour", "day", "d", "s", "sec", "min", "yr", "year"):
+                _MASS_KG_PER_HR.setdefault(f"{m}/{t}", kg / h)
+
+
+_rate_tables_extend()
+
+
 def convert_fugitive_flow_to_kg_hr(value: float, unit: str, ch4_mol: float = None, co2_mol: float = None) -> dict:
     """Measured leak rate -> kg/hr of CH4 and CO2.
 
@@ -75,7 +88,14 @@ def convert_fugitive_flow_to_kg_hr(value: float, unit: str, ch4_mol: float = Non
         ch4_kg = val * _MASS_KG_PER_HR[u]
         co2_kg = ch4_kg * (y_co2 / float(ch4_mol)) * (MW_CO2 / MW_CH4) if (y_co2 and ch4_mol) else 0.0
         return {"ch4_kg_hr": ch4_kg, "co2_kg_hr": co2_kg}
-    raise ValueError(f"Unknown leak rate unit '{unit}'")
+    from .units import UnitError, volume_rate_m3_per_hour
+    try:   # any other volume-rate spelling ("Mcf/day", "Nm3/h", "scfm") through the shared parser
+        m3_hr = val * volume_rate_m3_per_hour(u)
+    except UnitError:
+        raise ValueError(f"Unknown leak rate unit '{unit}'")
+    if ch4_mol in (None, ""):
+        raise ValueError("A volumetric leak rate needs the gas CH4 content (mol %)")
+    return {"ch4_kg_hr": m3_hr * float(ch4_mol) * DENSITY_CH4, "co2_kg_hr": m3_hr * y_co2 * DENSITY_CO2}
 
 
 # API Compendium 2021 Table 7-8 - facility-level average equipment leak factors for onshore

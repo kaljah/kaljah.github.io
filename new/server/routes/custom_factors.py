@@ -109,6 +109,13 @@ def _require_some_factor(co2, ch4, n2o):
         raise ValueError("At least one of co2_factor, ch4_factor or n2o_factor must be greater than 0")
 
 
+# fields that change the numbers calculated with a factor (refused while records use it)
+VALUE_FIELDS = (
+    "unit", "co2_factor", "ch4_factor", "n2o_factor", "co_factor", "hhv_factor", "parent_fuel",
+    "uncertainty", "co2_uncertainty", "ch4_uncertainty", "n2o_uncertainty",
+)
+
+
 def _factor_references(factor):
     """Emission records that use this factor, by FK, legacy id string, payload or name (BUG-056)."""
     from models import Emission, Scope2Emission
@@ -259,6 +266,9 @@ def update_custom_factor(factor_id):
     if not data:
         return jsonify({"error": "No data provided"}), 400
 
+    tracked = VALUE_FIELDS + ("name", "usage", "source", "description", "version")
+    before = {f: getattr(factor, f) for f in tracked}
+
     if "factor_name" in data or "name" in data or "fuel_name" in data:
         fn = (data.get("factor_name") or data.get("name") or data.get("fuel_name") or "").strip()
         if not fn:
@@ -312,16 +322,45 @@ def update_custom_factor(factor_id):
     if "version" in data:
         factor.version = data["version"]
 
+    changes = {f: (before[f], getattr(factor, f)) for f in tracked if before[f] != getattr(factor, f)}
+    value_changes = [f for f in changes if f in VALUE_FIELDS]
+    if value_changes:
+        refs = _factor_references(factor)
+        if refs:
+            # Audit O-04: records keep the values they were calculated with; changing a factor in
+            # place would leave them inconsistent with the factor they cite. A new version is a new
+            # factor; the old one is archived (still shown on its records, hidden from new entries).
+            db.session.rollback()
+            return jsonify({
+                "error": (f"'{factor.name}' is used by {refs} emission records, so its values cannot be "
+                          f"changed ({', '.join(value_changes)}). Create a new factor with the new values "
+                          "and archive this one."),
+                "references": refs,
+                "fields": value_changes,
+            }), 409
+        if user.role != "admin" and factor.status == "Approved":
+            # maker-checker: new values from a non-admin need approval again
+            changes["status"] = (factor.status, "Pending")
+            factor.status = "Pending"
+            factor.approved_by = None
+            factor.approved_at = None
+    if not changes:
+        return jsonify({"message": "Custom factor updated"})
+
     factor.updated_at = datetime.datetime.now(datetime.timezone.utc)
 
     try:
+        # one commit for the change and its audit entry, with the old and new values (audit O-04)
         log_activity_and_notify(
             action="UPDATE",
             record_id=str(factor.id),
             user=user,
             request=request,
             entity="CustomFactor",
-            details=f"Custom factor updated: {factor.name}",
+            details=f"Custom factor updated: {factor.name} ("
+            + "; ".join(f"{f}: {old!r} -> {new!r}" for f, (old, new) in changes.items()) + ")",
+            old_values={f: old for f, (old, _new) in changes.items()},
+            new_values={f: new for f, (_old, new) in changes.items()},
         )
         db.session.commit()
     except Exception as e:

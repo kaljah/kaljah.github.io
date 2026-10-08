@@ -358,7 +358,7 @@ class TestCombustionTier3Pipeline:
 class TestFlaringTier3Pipeline:
     """
     Validates flaring dual-efficiency model (API §5.2).
-    Elevated flare defaults: eta_c=0.984, eta_d=0.98.
+    Elevated flare defaults: eta_c=0.98 (Compendium Eq 5-2), eta_d=0.98.
     """
 
     def test_flaring_elevated_default_efficiency(self, auth_client, facility_id):
@@ -366,9 +366,9 @@ class TestFlaringTier3Pipeline:
         FLARING T3: Elevated flare, 90% C1, no native CO2.
 
         Reference:
-          vol = 500 m3, c1 = 0.90, eta_c = 0.984, eta_d = 0.98
+          vol = 500 m3, c1 = 0.90, eta_c = 0.98, eta_d = 0.98
           total_C_moles = 0.90 * 1 = 0.90
-          co2_combusted_vol = 500 * 0.90 * 0.984 = 442.8 m3
+          co2_combusted_vol = 500 * 0.90 * 0.98 = 441.0 m3
           co2_combusted_kg = 442.8 * 1.85814 = 824.0508 kg
           co2_tonnes = 0.8240508 t
 
@@ -380,7 +380,7 @@ class TestFlaringTier3Pipeline:
 
         volume = 500.0
         c1 = 0.90
-        eta_c = 0.984
+        eta_c = 0.98
         eta_d = 0.98
 
         # INDEPENDENT REFERENCE CALCULATION
@@ -423,8 +423,8 @@ class TestFlaringTier3Pipeline:
         FLARING T3: Gas with native CO2 content.
 
         Reference:
-          vol = 1000 m3, c1=0.80, co2_native=0.05, eta_c=0.984, eta_d=0.98
-          co2_combusted_vol = 1000 * 0.80 * 0.984 = 787.2 m3
+          vol = 1000 m3, c1=0.80, co2_native=0.05, eta_c=0.98, eta_d=0.98
+          co2_combusted_vol = 1000 * 0.80 * 0.98 = 784.0 m3
           co2_combusted_kg = 787.2 * 1.85814 = 1464.9192 kg
           co2_native_kg = 1000 * 0.05 * 1.85814 = 93.05 kg
           total_co2_tonnes = (1464.9192 + 93.05) / 1000 = 1.5579... t
@@ -434,7 +434,7 @@ class TestFlaringTier3Pipeline:
         volume = 1000.0
         c1 = 0.80
         co2_native = 0.05
-        eta_c = 0.984
+        eta_c = 0.98
         eta_d = 0.98
 
         # INDEPENDENT REFERENCE
@@ -467,7 +467,7 @@ class TestFlaringTier3Pipeline:
     def test_flaring_enclosed_higher_efficiency(self, auth_client, facility_id):
         """
         FLARING T3: Enclosed/ground flare uses higher efficiencies.
-        Default for enclosed: eta_c=0.996, eta_d=0.995
+        Default for enclosed: eta_c=0.98, eta_d=0.995 (0.5 % residual CH4)
 
         Reference: vol=200 m3, c1=0.92, enclosed
         """
@@ -475,7 +475,7 @@ class TestFlaringTier3Pipeline:
 
         volume = 200.0
         c1 = 0.92
-        eta_c = 0.996
+        eta_c = 0.98
         eta_d = 0.995
 
         # INDEPENDENT REFERENCE
@@ -1027,7 +1027,7 @@ class TestIntermediateValues:
         """
         vol = 500.0
         c1 = 0.90
-        eta_c = 0.984  # elevated flare combustion
+        eta_c = 0.98  # elevated flare combustion
         eta_d = 0.98   # elevated flare destruction
 
         # These use different efficiencies

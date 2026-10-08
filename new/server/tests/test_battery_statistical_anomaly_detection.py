@@ -95,7 +95,7 @@ class TestStatisticalZScoreAndIQRBattery:
         res = detector._z_score_check(1500.0, history)
         assert res["flagged"] is True
         assert res["z_score"] > 3.0
-        assert "standard deviations from the 12-month average" in res["message"]
+        assert "standard deviations from the average of the same source over the previous 12 months" in res["message"]
 
     def test_extreme_low_outlier_z_score(self, detector):
         history = [1010.0, 990.0, 1020.0, 980.0, 1005.0, 995.0, 1015.0, 985.0, 1000.0, 1002.0, 998.0, 1000.0]

@@ -56,7 +56,9 @@ class TestRegressionArchive:
         Bug ID: B2
         Description: Missing flare type support and hardcoded efficiencies.
         Original Failure: All flare types received same generic efficiency.
-        Expected Behavior: Enclosed ground flares have higher efficiency (99.6% / 99.5%) than open pit (92% / 95%).
+        Expected Behavior: the flare type selects the residual CH4 of API Compendium 2021 Section 5.1.2:
+        0.5 % (99.5 % destruction) for a well-designed enclosed flare, 2 % otherwise; carbon conversion is
+        98 % (Eq 5-2) for every type. The former 99.6 / 92 % conversions had no source.
         """
         res_enclosed = IndependentFlaringModel.calculate(10_000.0, "m3", 0.85, flare_type="enclosed")
         res_pit = IndependentFlaringModel.calculate(10_000.0, "m3", 0.85, flare_type="pit")
@@ -64,7 +66,8 @@ class TestRegressionArchive:
         # Pit flare has higher unburnt methane (lower destruction efficiency)
         assert res_pit["ch4"] > res_enclosed["ch4"]
         assert pytest.approx(res_enclosed["eta_d"], rel=1e-4) == 0.995
-        assert pytest.approx(res_pit["eta_d"], rel=1e-4) == 0.950
+        assert pytest.approx(res_pit["eta_d"], rel=1e-4) == 0.980
+        assert res_enclosed["eta_c"] == res_pit["eta_c"] == 0.98
 
     def test_reg_b03_fugitive_screening_fallback_hours(self):
         """

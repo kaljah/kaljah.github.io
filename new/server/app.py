@@ -231,10 +231,7 @@ def after_request(response):
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
 
     # Disable caching for API endpoints to prevent stale browser reads.
-    # Exception: SSE stream — it sets its own Cache-Control / Connection headers.
-    if request.path.startswith("/api") and not request.path.startswith(
-        "/api/notifications/stream"
-    ):
+    if request.path.startswith("/api"):
         response.headers["Cache-Control"] = (
             "no-store, no-cache, must-revalidate, max-age=0"
         )
@@ -263,6 +260,24 @@ def not_found_error(error):
             }
         ),
         404,
+    )
+
+
+@app.errorhandler(413)
+def too_large_error(error):
+    # an upload over MAX_CONTENT_LENGTH: say what the limit is and what to do (the generic Werkzeug text
+    # "The data value transmitted exceeds the capacity limit" gave neither). Imports have no row limit.
+    limit_mb = (app.config.get("MAX_CONTENT_LENGTH") or 0) / (1024 * 1024)
+    return (
+        jsonify(
+            {
+                "error": f"The file is larger than the {limit_mb:,.0f} MB upload limit; split it into smaller files. "
+                         "No rows were saved.",
+                "code": 413,
+                "request_id": getattr(request, "id", ""),
+            }
+        ),
+        413,
     )
 
 

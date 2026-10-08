@@ -245,6 +245,7 @@ const iconBtnStyle: React.CSSProperties = {
 
 // ─── Main component ───────────────────────────────────────────────────────────
 const TOAST_BURST = 3;
+const POLL_INTERVAL_MS = 30_000;
 
 const NotificationCenter: React.FC = () => {
   const { user } = useAuth();
@@ -256,16 +257,14 @@ const NotificationCenter: React.FC = () => {
   const panelRef = useRef<HTMLDivElement>(null);
   const [panelPos, setPanelPos] = useState<{ top: number; right: number }>({ top: 64, right: 24 });
   const lastIdRef = useRef<number>(0);
-  const esRef = useRef<EventSource | null>(null);
-  const retryDelayRef = useRef<number>(1000);
   const toast = useToast();
-  // The stream and the history load depend on WHO is signed in, not on the identity of the
+  // Polling and the history load depend on WHO is signed in, not on the identity of the
   // user / toast objects: those change on re-renders, and every change re-ran the effect
-  // (a new history request and a new stream several times a second).
+  // (a new history request several times a second).
   const userId = user?.id ?? null;
   const toastRef = useRef(toast);
   toastRef.current = toast;
-  // stream bursts are coalesced: more than TOAST_BURST notifications within 500 ms give one toast
+  // bursts are coalesced: more than TOAST_BURST notifications within 500 ms give one toast
   const pendingToastsRef = useRef<NotificationItem[]>([]);
   const toastTimerRef = useRef<any>(null);
   const queueToast = useCallback((notif: NotificationItem) => {
@@ -313,84 +312,56 @@ const NotificationCenter: React.FC = () => {
     }
   }, [isOpen, updatePosition]);
 
-  // ── Fetch history ─────────────────────────────────────────────────────
-  const fetchNotifications = useCallback(async () => {
-    if (!userId) return;
-    try {
-      const res = await api.get<NotificationItem[]>("/notifications");
-      if (res.status === 200) {
+  // ── Polling (audit O-02) ──────────────────────────────────────────────
+  // Notifications are polled instead of streamed: a Server-Sent Events stream held one server
+  // worker thread per open tab, so a handful of open tabs stopped the API answering.
+  const fetchNotifications = useCallback(
+    async ({ announce = false }: { announce?: boolean } = {}) => {
+      if (!userId) return;
+      try {
+        const res = await api.get<NotificationItem[]>("/notifications");
+        if (res.status !== 200 || !activeRef.current) return;
         const data = res.data;
+        if (announce) {
+          data
+            .filter((n) => n.id > lastIdRef.current && !n.is_read)
+            .reverse()
+            .forEach(queueToast);
+        }
         setNotifications(data);
         setUnreadCount(data.filter((n) => !n.is_read).length);
         if (data.length > 0) {
-          lastIdRef.current = Math.max(...data.map((n) => n.id));
+          lastIdRef.current = Math.max(lastIdRef.current, ...data.map((n) => n.id));
         }
-      }
-    } catch (err) {
-      console.error("Failed to fetch notifications", err);
-    }
-  }, [userId]);
-
-  // ── SSE connection ────────────────────────────────────────────────────
-  const connectSSE = useCallback(() => {
-    if (!userId || !activeRef.current) return;
-    if (esRef.current) esRef.current.close();
-
-    const base = import.meta.env.VITE_API_URL || "/api";
-    const url = `${base}/notifications/stream?last_id=${lastIdRef.current}`;
-    const es = new EventSource(url, { withCredentials: true });
-    esRef.current = es;
-
-    es.onopen = () => {
-      retryDelayRef.current = 1000;
-    };
-
-    es.onmessage = (event) => {
-      try {
-        const notif: NotificationItem = JSON.parse(event.data);
-        if (notif.id > lastIdRef.current) lastIdRef.current = notif.id;
-        setNotifications((prev) => [notif, ...prev]);
-        setUnreadCount((prev) => prev + 1);
-        queueToast(notif);
       } catch (err) {
-        console.error("SSE parse error", err);
+        console.error("Failed to fetch notifications", err);
       }
-    };
-
-    es.onerror = () => {
-      es.close();
-      if (esRef.current === es) esRef.current = null;
-      if (!activeRef.current) return;
-      const delay = retryDelayRef.current;
-      retryDelayRef.current = Math.min(delay * 2, 30_000);
-      setTimeout(() => {
-        if (activeRef.current && !esRef.current) connectSSE();
-      }, delay);
-    };
-  }, [userId, queueToast]);
+    },
+    [userId, queueToast],
+  );
 
   // ── Mount / unmount ───────────────────────────────────────────────────
   useEffect(() => {
     if (!userId) {
-      if (esRef.current) {
-        esRef.current.close();
-        esRef.current = null;
-      }
       setNotifications([]);
       setUnreadCount(0);
       return;
     }
 
     activeRef.current = true;
-    fetchNotifications().then(() => connectSSE());
+    lastIdRef.current = 0;
+    fetchNotifications();
+    const poll = () => {
+      if (document.visibilityState === "visible") fetchNotifications({ announce: true });
+    };
+    const timer = setInterval(poll, POLL_INTERVAL_MS);
+    document.addEventListener("visibilitychange", poll);
     return () => {
       activeRef.current = false;
-      if (esRef.current) {
-        esRef.current.close();
-        esRef.current = null;
-      }
+      clearInterval(timer);
+      document.removeEventListener("visibilitychange", poll);
     };
-  }, [userId, fetchNotifications, connectSSE]);
+  }, [userId, fetchNotifications]);
 
   // ── Click-outside ─────────────────────────────────────────────────────
   useEffect(() => {

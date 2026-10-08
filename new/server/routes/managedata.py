@@ -452,8 +452,9 @@ def save_reporting_metadata():
     user = get_current_user()
     if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to modify reporting metadata."}), 403
-    if not user or user.role not in ["admin", "superuser"]:
-        return jsonify({"error": "Administrator privileges required to modify reporting metadata."}), 403
+    # one row per year for the whole organisation: organisation-wide admins only
+    if not user or user.role not in ["admin", "superuser"] or get_allowed_facility_ids(user) is not None:
+        return jsonify({"error": "Organisation-wide administrator privileges required to modify reporting metadata."}), 403
 
     data = request.get_json() or {}
     year = data.get("year")
@@ -702,8 +703,9 @@ def delete_goal(year):
     user = get_current_user()
     if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to modify corporate emission targets."}), 403
-    if not user or user.role not in ["admin", "superuser"]:
-        return jsonify({"error": "Administrator privileges required to modify corporate emission targets."}), 403
+    # Audit 2026-10-01 (A-05): same rule as saving a goal (organisation-wide admins only)
+    if not user or user.role not in ["admin", "superuser"] or get_allowed_facility_ids(user) is not None:
+        return jsonify({"error": "Organisation-wide administrator privileges required to modify corporate emission targets."}), 403
     try:
         goal = Goal.query.filter_by(year=year).first()
         if not goal:
@@ -795,8 +797,9 @@ def add_base_year_recalculation():
     user = get_current_user()
     if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to modify base year recalculation data."}), 403
-    if not user or user.role not in ["admin", "superuser"]:
-        return jsonify({"error": "Administrator privileges required to modify base year recalculation data."}), 403
+    # Audit A-05: the base year is organisation-wide; a facility-scoped superuser may not move it
+    if not user or user.role not in ["admin", "superuser"] or get_allowed_facility_ids(user) is not None:
+        return jsonify({"error": "Organisation-wide administrator privileges required to modify base year recalculation data."}), 403
     try:
         data = request.get_json() or {}
         if not data.get("year") or not data.get("reason"):
@@ -865,8 +868,9 @@ def delete_base_year_recalculation(rec_id):
     user = get_current_user()
     if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to modify base year recalculation data."}), 403
-    if not user or user.role not in ["admin", "superuser"]:
-        return jsonify({"error": "Administrator privileges required to modify base year recalculation data."}), 403
+    # Audit A-05: the base year is organisation-wide; a facility-scoped superuser may not move it
+    if not user or user.role not in ["admin", "superuser"] or get_allowed_facility_ids(user) is not None:
+        return jsonify({"error": "Organisation-wide administrator privileges required to modify base year recalculation data."}), 403
     try:
         rec = db.session.get(BaseYearRecalculation, rec_id)
         if not rec:

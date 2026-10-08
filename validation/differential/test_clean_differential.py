@@ -163,11 +163,12 @@ class TestCleanDifferential:
                 pressure=inputs.get("initial_press") or inputs.get("pressure", 500.0),
                 events=inputs.get("events", 1),
                 ch4_content=inputs.get("ch4_fraction", 0.88),
+                co2_content=inputs.get("co2_fraction", 0.0),
                 uncertainties={},
                 press_unit=units.get("press_unit", "psig"),
             )
             prod_co2e = res["total_co2e"]
-            notes = "Blowdown model expands total vessel inventory rather than differential vented gas."
+            notes = "Both sides expand the full vessel inventory (P_abs / P_std), not the differential vented gas."
 
         elif calc_type == "venting_tank_flashing":
             ref_res = ref_calculate_tank_flashing(
@@ -266,9 +267,11 @@ class TestCleanDifferential:
         abs_diff = abs(prod_co2e - ref_co2e) if prod_co2e is not None else float("inf")
         rel_diff = abs_diff / ref_co2e if ref_co2e and ref_co2e != 0 else (0.0 if abs_diff < 1e-6 else 1.0)
 
-        # Allow 3-5% engineering discrepancy for blowdown inventory model vs delta P
-        allowed_tol = 0.05 if calc_type in ["venting_blowdown", "blowdown"] else tolerance
-        is_pass = abs_diff <= allowed_tol or rel_diff <= 0.05
+        # `tolerance` is relative, as in tests/test_golden_dataset_validation.py (0.001 = 0.1 %). An expected
+        # value of 0 must come out as 0. (The check used to pass anything within 5 % of the expected value,
+        # whatever the case's tolerance.)
+        allowed_tol = tolerance
+        is_pass = rel_diff <= allowed_tol if ref_co2e else abs_diff <= 1e-9
 
         record = {
             "test_id": test_id,

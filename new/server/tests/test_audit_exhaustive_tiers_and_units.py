@@ -59,6 +59,12 @@ def test_app():
         yield flask_app
 
 
+def _gas_analysis(process_id):
+    """Gas analysis a process needs for a gas volume: completions take no default CH4 content
+    (85 % used to be assumed for an unanalysed flowback gas; S1K-F28)."""
+    return {"ch4_content": 85.0} if process_id == "completions" else {}
+
+
 def _get_base_unit(process_id, category):
     if process_id in ("drilling", "mud_degassing"):
         return "days"
@@ -86,6 +92,7 @@ class TestAllProcessTypesTier1Exhaustive:
             "unit": unit,
             "fuel_type": "Natural Gas" if meta["category"] == "combustion" else None,
             "hhv": 1020.0,
+            **_gas_analysis(process_id),
         }
         factor_data = {
             "co2": 53.06 if meta["category"] == "combustion" else 1.5,
@@ -125,8 +132,10 @@ class TestAllProcessTypesTier1Exhaustive:
         k = 3.5
         x = 500.0
 
-        p1 = {"process_type": process_id, "factor_source": "default", "amount": x, "quantity": x, "unit": unit}
-        p2 = {"process_type": process_id, "factor_source": "default", "amount": x * k, "quantity": x * k, "unit": unit}
+        gas = _gas_analysis(process_id)
+        p1 = {"process_type": process_id, "factor_source": "default", "amount": x, "quantity": x, "unit": unit, **gas}
+        p2 = {"process_type": process_id, "factor_source": "default", "amount": x * k, "quantity": x * k, "unit": unit,
+              **gas}
 
         r1 = dispatcher.dispatch(process_id, p1, factor_data, {}, gwp_dict=GWP_AR5)
         r2 = dispatcher.dispatch(process_id, p2, factor_data, {}, gwp_dict=GWP_AR5)
@@ -165,6 +174,7 @@ class TestAllProcessTypesTier2Exhaustive:
             "quantity": 750.0,
             "unit": unit,
             "hhv": 1085.0,
+            **_gas_analysis(process_id),
         }
         res = dispatcher.dispatch(process_id, payload, custom_ef, {}, gwp_dict=GWP_AR5)
         assert res is not None
@@ -181,8 +191,9 @@ class TestAllProcessTypesTier2Exhaustive:
             "oil_unit": "bbl/day",
             "gor": 450.0,
             "gas_to_vent_fraction": 0.15,
-            "ch4_fraction": 0.85,
-            "co2_fraction": 0.02,
+            # the gas analysis is required (70 % CH4 / 10 % CO2 used to be assumed; S1K-F28)
+            "ch4_content": 85.0,
+            "co2_content": 2.0,
         }
         res = dispatcher.dispatch("associated_gas_venting", payload, {}, {}, gwp_dict=GWP_AR5)
         assert res["results"]["ch4"]["value"] > 0

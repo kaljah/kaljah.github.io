@@ -343,6 +343,7 @@ def test_high_gor_qa_warning(calc):
         oil_production=100,
         gor=150000,
         venting_duration=10,
+        ch4_content=0.70,
     )
     qa_flags = res["metadata"]["qa_flags"]
     assert any("High GOR anomaly" in flag for flag in qa_flags)

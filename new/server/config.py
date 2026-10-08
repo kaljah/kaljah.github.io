@@ -100,6 +100,14 @@ class Config:
             "DATABASE_URL"
         ) or "sqlite:///" + os.path.join(BASE_DIR, "ghg_app.db")
 
+    # a driver-less URL means psycopg (v3) under SQLAlchemy 2.1+, which is not installed: the requirements ship
+    # psycopg2-binary, so "postgresql://" (docker-compose) failed at startup with "No module named 'psycopg'".
+    # Heroku-style "postgres://" is not accepted by SQLAlchemy at all.
+    for _prefix in ("postgresql://", "postgres://"):
+        if str(SQLALCHEMY_DATABASE_URI).startswith(_prefix):
+            SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://" + SQLALCHEMY_DATABASE_URI[len(_prefix):]
+            break
+
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     if "sqlite" in str(SQLALCHEMY_DATABASE_URI).lower():
         if str(SQLALCHEMY_DATABASE_URI).startswith("sqlite:///:memory:"):

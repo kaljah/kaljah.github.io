@@ -425,11 +425,11 @@ def test_bulk_anomaly_flag_persistence(client, test_users):
     from calculations.anomaly import AnomalyDetector
     anomaly_detector = AnomalyDetector()
     with app.app_context():
-        # Seed 3 baseline emissions to establish statistical distribution
-        for m in [1, 2, 3]:
+        # Seed 3 baseline emissions in the 12 months before the checked record (2026-09)
+        for m in [6, 7, 8]:
             base_e = Emission(
                 facility_id=test_users["facility_id"],
-                year=2025,
+                year=2026,
                 month=m,
                 process_type="combustion",
                 fuel_type="Diesel",
@@ -896,16 +896,13 @@ def test_ogmp_survey_zero_top_down_no_false_discrepancy(client, test_users):
 # AUDIT REMEDIATION REGRESSION TESTS (DEFECTS 1 - 12)
 # ===========================================================================
 
-def test_notifications_stream_heartbeat_init(client, test_users):
-    """Defect 1: Verify SSE stream initializes last_heartbeat and does not raise UnboundLocalError."""
+def test_notifications_stream_removed(client, test_users):
+    """Defect 1 (superseded, audit O-02): the SSE stream held one worker thread per open tab; the
+    client now polls /api/notifications, and the stream endpoint no longer exists."""
     with client.session_transaction() as sess:
         sess["user_id"] = test_users["admin"]
-    res = client.get("/api/notifications/stream")
-    try:
-        assert res.status_code == 200
-        assert "text/event-stream" in res.content_type
-    finally:
-        res.close()
+    assert client.get("/api/notifications/stream").status_code == 404
+    assert client.get("/api/notifications").status_code == 200
 
 
 def test_scope2_steam_recalculation_enthalpy(client, test_users):

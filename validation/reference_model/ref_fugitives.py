@@ -7,7 +7,7 @@ Governing equations:
 - US EPA Protocol for Equipment Leak Emission Estimates (EPA-453/R-95-017)
 """
 
-from .ref_constants import resolve_gwp
+from .ref_constants import _frac, resolve_gwp
 
 DEFAULT_COMPONENT_EF_KG_HR = {
     "valve": 0.0045,
@@ -46,8 +46,8 @@ def ref_calculate_component_fugitives(
     ct = str(component_type or "valve").lower().strip().replace(" ", "_")
     ef = float(ef_kg_hr) if ef_kg_hr is not None else DEFAULT_COMPONENT_EF_KG_HR.get(ct, 0.0045)
 
-    c1 = float(ch4_fraction or 0.90)
-    co2_f = float(co2_fraction or 0.01)
+    c1 = _frac(ch4_fraction, 0.90)
+    co2_f = _frac(co2_fraction, 0.01)
 
     total_leak_kg = count * ef * hrs
     ch4_tonnes = (total_leak_kg * c1) / 1000.0

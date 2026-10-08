@@ -145,10 +145,8 @@ const Settings: React.FC = () => {
     }
   };
 
-  const isAdmin =
-    user?.role === "admin" ||
-    user?.role === "superuser" ||
-    user?.role === "it_admin";
+  // same rule as PUT /api/auth/settings: organisation-wide settings are admin only
+  const isAdmin = user?.role === "admin";
 
   const handleSaveGlobal = async () => {
     if (!isAdmin) {

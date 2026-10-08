@@ -24,7 +24,7 @@ Setting `SEED_ADMIN=true` also seeds the admin and IT-admin accounts on startup.
 
 Database Management & Migrations (run from `new/server`):
 ```bash
-flask db upgrade                   # run Alembic migrations up to head (a6274c2ef1f5)
+flask db upgrade                   # run Alembic migrations up to head (c3f9a2d18e47)
 python scripts/backup.py [--output path/to/backup.sql]    # PostgreSQL/SQLite automated backup
 python scripts/restore.py <path/to/backup.sql>            # safe restore with confirmation
 ```
@@ -67,7 +67,7 @@ Other: `new/setup.bat` / `new/start_all.bat` (Windows native launch scripts for 
 ## Backend architecture
 
 - **`app.py` creates a module-level `app`, not a factory.** Tests use `from app import app`. Importing it has side effects: it runs `init_schema()`, creates indexes and optionally seeds admins. `init_schema()` upgrades the database to the Alembic head outside production (or with `AUTO_MIGRATE=true`) and refuses to start in production if the database is behind head (`AUTO_MIGRATE=false` disables the auto-upgrade). It does not call `db.create_all()`; only `seed_admin.py` and `build_csv_guide.py` do, and `schema_sync.py`'s docstring is out of date on this point.
-- **Schema changes.** Alembic migrations (`migrations/`) manage schema evolution up to head revision `a6274c2ef1f5` (audit hardening and foreign keys). The preceding `b2d5f8e31a42` introduced Scope 2 dual-reporting columns, custom factor approval metadata, and composite indexes.
+- **Schema changes.** Alembic migrations (`migrations/`) manage schema evolution up to head revision `c3f9a2d18e47` (`import_mappings`, saved import column mappings), after `b7e2d4c91a05` (`emissions.fuel_type` widened to 255) and `a6274c2ef1f5` (audit hardening and foreign keys). The earlier `b2d5f8e31a42` introduced Scope 2 dual-reporting columns, custom factor approval metadata, and composite indexes.
 - **SQLite connect hook.** It enables WAL mode, foreign keys and `busy_timeout`, and runs periodic WAL checkpoints in development.
 - **Config (`config.py`).**
   - SQLite `ghg_app.db` is permitted only in local development.
@@ -77,7 +77,7 @@ Other: `new/setup.bat` / `new/start_all.bat` (Windows native launch scripts for 
   - Config tests run `config` in subprocesses (`tests/test_config_safety.py`); production subprocess tests need `ALLOW_MEMORY_LIMITER=true` or a Redis URL.
   - Reverse proxy support is configured via `ProxyFix` when `TRUSTED_PROXIES` is set.
 - **Dashboard cache.** SQLAlchemy `before_commit`/`after_commit` hooks call `routes.dashboard.clear_dashboard_cache()` when Emission, Scope2/3, ProductionData, Facility, CustomFactor or OgmpSurvey rows change. On Postgres this bumps a shared epoch in `system_settings`; every `batch-all` request calls `_get_global_cache_epoch()` (at most one DB read per second) before trusting its per-process cache, so other workers drop stale results. `routes.dashboard.cache_stats()` exposes hit/miss counters (also logged every 1000 lookups).
-- **Route modules.** Large blueprints are split across files that register on the same blueprint: `emissions.py` imports `emissions_bulk_upload`, `_export`, `_import`, `_review`, `_template_csv`, `_template_excel` (and `reports.py` imports `reports_export`, `reports_ogmp`; `dashboard.py` imports `dashboard_sbti`, `_ogmp`, `_flaring`, `_bridge` (`/api/dashboard/yoy-bridge`, built on `_query_summary` so it reconciles with the yearly totals); `auth.py` imports `auth_settings`, `auth_users` and re-exports their names lazily via `__getattr__`). The helpers stay in the parent module (the splits import them back from it), and the parent imports the split modules last. When moving a route, compare `app.url_map` before and after.
+- **Route modules.** Large blueprints are split across files that register on the same blueprint: `emissions.py` imports `emissions_bulk_upload`, `_export`, `_import`, `_mappings`, `_review`, `_template_csv`, `_template_excel` (and `reports.py` imports `reports_export`, `reports_ogmp`; `dashboard.py` imports `dashboard_sbti`, `_ogmp`, `_flaring`, `_bridge` (`/api/dashboard/yoy-bridge`, built on `_query_summary` so it reconciles with the yearly totals); `auth.py` imports `auth_settings`, `auth_users` and re-exports their names lazily via `__getattr__`). The helpers stay in the parent module (the splits import them back from it), and the parent imports the split modules last. When moving a route, compare `app.url_map` before and after.
 - **Blueprints (`routes/`).** Each is mounted at `/api/<name>`. The exceptions are `managedata_bp` (mounted at `/api`) and `factors_bp` (no prefix; its routes carry their own paths).
 - **`extensions.py`.**
   - `db` is created with `expire_on_commit=False`.
@@ -123,7 +123,8 @@ Other: `new/setup.bat` / `new/start_all.bat` (Windows native launch scripts for 
   - Frontend includes `components/modals/EditEmissionModal.tsx` allowing authorized users to edit activity values, fuel types, units, and Scope 2 market instruments directly from the Reports and Review interfaces.
   - Physical edits transition records back to `Pending` for compliance review.
 - **Emission columns** (`co2e_total`, `co2e_location_based`, `co2e_market_based`, etc.) are stored in tonnes.
-- **Bulk uploads.** Staged uploads are saved in isolated application instance storage (`INSTANCE_PATH/bulk_uploads`), protected against OS `/tmp` collisions and double-insert races.
+- **Bulk uploads.** Staged uploads are saved in isolated application instance storage (`INSTANCE_PATH/bulk_uploads`), protected against OS `/tmp` collisions and double-insert races. There is no row limit (batched flush on PostgreSQL); the request size is capped by `MAX_CONTENT_LENGTH` (`GET /api/emissions/upload/limits`) and each user may run `MAX_CONCURRENT_UPLOADS_PER_USER` (default 3) jobs at once. `POST /api/emissions/upload/check` calculates a sample of a file without saving anything; skip reasons are grouped by `services/import_feedback.py`. Scope 1 CSV/Excel templates are built from one column spec in `services/scope1_template.py` (example rows are dated EXAMPLE and never imported). Saved column mappings live in `import_mappings` (`routes/emissions_mappings.py`).
+- **Notifications.** The client polls `GET /api/notifications` every 30 s and when the tab becomes visible; there is no streaming endpoint (an SSE stream held one worker thread per open tab).
 - **Audit logging & Transaction Atomicity.** All mutating routes log activity via `utils.log_activity_and_notify(...)` and commit the data change and audit row atomically in a single database transaction. Audit chain verification streams using `yield_per(1000)` to guarantee constant memory usage.
 
 ## Frontend architecture
