@@ -13,12 +13,12 @@ import {
 import "./ChartWrappers.css";
 
 const MODERN_BAR_PALETTE = [
-  "#ff6600",
-  "#2563eb",
-  "#10b981",
-  "#8b5cf6",
-  "#f59e0b",
-  "#06b6d4",
+  "var(--color-brand-500)",
+  "var(--color-blue-600)",
+  "var(--color-green-500)",
+  "var(--color-violet-500)",
+  "var(--color-amber-500)",
+  "var(--color-cyan-500)",
 ];
 
 export interface BarItemConfig {
@@ -49,7 +49,7 @@ export const BarChart: React.FC<BarChartProps> = ({
   xKey = "name",
   xAxisKey,
   title,
-  color = "#ff6600",
+  color = "var(--color-brand-500)",
   height = 300,
   showLegend = true,
   formatValue,
@@ -209,16 +209,16 @@ export const BarChart: React.FC<BarChartProps> = ({
 
           <XAxis
             dataKey={finalXKey}
-            stroke="#cbd5e1"
-            tick={{ fill: "#64748b", fontSize: 11, fontWeight: 600 }}
+            stroke="var(--color-ink-300)"
+            tick={{ fill: "var(--color-ink-500)", fontSize: 11, fontWeight: 600 }}
             axisLine={false}
             tickLine={false}
             dy={8}
           />
 
           <YAxis
-            stroke="#cbd5e1"
-            tick={{ fill: "#64748b", fontSize: 11, fontWeight: 600 }}
+            stroke="var(--color-ink-300)"
+            tick={{ fill: "var(--color-ink-500)", fontSize: 11, fontWeight: 600 }}
             axisLine={false}
             tickLine={false}
             tickFormatter={valueFormatter}

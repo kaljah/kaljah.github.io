@@ -9,14 +9,14 @@ import {
 import "./ChartWrappers.css";
 
 const MODERN_PALETTE = [
-  "#ff6600", // Core brand orange
-  "#2563eb", // Royal blue
-  "#10b981", // Emerald green
-  "#8b5cf6", // Purple / Violet
-  "#f59e0b", // Amber warm gold
-  "#06b6d4", // Cyan
-  "#ec4899", // Rose
-  "#64748b", // Slate neutral
+  "var(--color-brand-500)", // Core brand orange
+  "var(--color-blue-600)", // Royal blue
+  "var(--color-green-500)", // Emerald green
+  "var(--color-violet-500)", // Purple / Violet
+  "var(--color-amber-500)", // Amber warm gold
+  "var(--color-cyan-500)", // Cyan
+  "var(--color-pink-500)", // Rose
+  "var(--color-ink-500)", // Slate neutral
 ];
 
 export interface PieChartProps {
@@ -117,7 +117,7 @@ export const PieChart: React.FC<PieChartProps> = ({
       const val = Number(item.value) || 0;
       const pct =
         totalValue > 0 ? ((val / totalValue) * 100).toFixed(1) : "0";
-      const itemColor = item.payload._color || item.color || "#ff6600";
+      const itemColor = item.payload._color || item.color || "var(--color-brand-500)";
 
       return (
         <div className="modern-chart-tooltip">
@@ -227,7 +227,7 @@ export const PieChart: React.FC<PieChartProps> = ({
                   <Cell
                     key={`cell-${index}`}
                     fill={entry._color}
-                    stroke="#ffffff"
+                    stroke="var(--color-white)"
                     strokeWidth={isSelected ? 3 : 2}
                     opacity={isDimmed ? 0.4 : 1}
                     style={{
