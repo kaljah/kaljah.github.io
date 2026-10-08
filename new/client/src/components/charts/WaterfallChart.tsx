@@ -111,7 +111,7 @@ export const WaterfallChart: React.FC<WaterfallChartProps> = ({
   const signed = (d: number) => (labelMode === "percent" && start > 0 ? pctSigned(d) : absSigned(d));
 
   return (
-    <div ref={wrapRef} className="chart-wrapper" role="img" aria-label={`Emissions bridge from ${startLabel} to ${endLabel}`}>
+    <div ref={wrapRef} className="chart-wrapper" role="figure" aria-label={`Emissions bridge from ${startLabel} to ${endLabel}`}>
       {exportName && (
         <ChartExport
           className="h-7"

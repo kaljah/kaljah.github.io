@@ -200,17 +200,22 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
       </Field>
 
       <div className="input-group">
-        <label>
-          Oil ({prodForm.oil_unit || "bbl"}){" "}
+        {/* The converter button sits beside the label, not inside it (a label may only hold its own control). */}
+        <div className="mb-2 flex items-center gap-2">
+          <label htmlFor="prod-oil-amount" className="m-0!">
+            Oil ({prodForm.oil_unit || "bbl"})
+          </label>
           <button
+            type="button"
             onClick={openOilConverter}
-            className="text-[length:0.65rem]! p-[2px_4px]! ml-[8px]! cursor-pointer! bg-[color:var(--accent-color)]! text-[color:white]! [border:none]! rounded-[3px]!"
+            className="cursor-pointer rounded-sm border-0 bg-brand-700 px-1.5 py-0.5 text-xs font-semibold text-white hover:bg-brand-800"
           >
             Convert m³
           </button>
-        </label>
+        </div>
         <div className="flex! gap-[8px]!">
           <input
+            id="prod-oil-amount"
             type="number"
             value={prodForm.oil_amount || ""}
             onChange={(e) => setProdForm({ ...prodForm, oil_amount: e.target.value })}
@@ -220,6 +225,7 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
           <NativeSelect
             value={prodForm.oil_unit || "bbl"}
             onChange={(e) => setProdForm({ ...prodForm, oil_unit: e.target.value })}
+            aria-label="Oil unit"
             className="component-select w-[80px]!"
           >
             <option value="bbl">bbl</option>
@@ -229,17 +235,22 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
       </div>
 
       <div className="input-group">
-        <label>
-          Gas ({prodForm.gas_unit || "mscf"}){" "}
+        {/* The converter button sits beside the label, not inside it (a label may only hold its own control). */}
+        <div className="mb-2 flex items-center gap-2">
+          <label htmlFor="prod-gas-amount" className="m-0!">
+            Gas ({prodForm.gas_unit || "mscf"})
+          </label>
           <button
+            type="button"
             onClick={openGasConverter}
-            className="text-[length:0.65rem]! p-[2px_4px]! ml-[8px]! cursor-pointer! bg-[color:var(--accent-color)]! text-[color:white]! [border:none]! rounded-[3px]!"
+            className="cursor-pointer rounded-sm border-0 bg-brand-700 px-1.5 py-0.5 text-xs font-semibold text-white hover:bg-brand-800"
           >
             Convert m³
           </button>
-        </label>
+        </div>
         <div className="flex! gap-[8px]!">
           <input
+            id="prod-gas-amount"
             type="number"
             value={prodForm.gas_amount || ""}
             onChange={(e) => setProdForm({ ...prodForm, gas_amount: e.target.value })}
@@ -249,6 +260,7 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
           <NativeSelect
             value={prodForm.gas_unit || "mscf"}
             onChange={(e) => setProdForm({ ...prodForm, gas_unit: e.target.value })}
+            aria-label="Gas unit"
             className="component-select w-[80px]!"
           >
             <option value="mscf">mscf</option>
@@ -352,7 +364,7 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
       </button>
     </div>
 
-    <div className="table-container mt-[40px]!">
+    <div className="table-container mt-[40px]!" tabIndex={0} role="region" aria-label="Production records">
       <table className="data-table">
         <thead>
           <tr>

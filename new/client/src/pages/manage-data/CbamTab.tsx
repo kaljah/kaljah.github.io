@@ -279,7 +279,7 @@ const CbamTab: React.FC<CbamTabProps> = ({
       )}
     </div>
 
-    <div className="table-container mt-[40px]!">
+    <div className="table-container mt-[40px]!" tabIndex={0} role="region" aria-label="CBAM product export records">
       <div className="flex! justify-between! items-center! mb-[16px]!">
         <h3>CBAM Product Export Records</h3>
         <span className="text-[length:0.85rem]! text-[color:var(--text-secondary)]!">

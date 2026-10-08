@@ -188,7 +188,7 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
       </div>
 
       {/* Goals Table */}
-      <div className="table-container mt-[20px]!">
+      <div className="table-container mt-[20px]!" tabIndex={0} role="region" aria-label="Emission goals">
         <table className="data-table">
           <thead>
             <tr>
@@ -321,7 +321,7 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
       </div>
 
       {/* Base Years Recalculation History Table */}
-      <div className="table-container mt-[20px]!">
+      <div className="table-container mt-[20px]!" tabIndex={0} role="region" aria-label="Base year recalculation history">
         <table className="data-table">
           <thead>
             <tr>
