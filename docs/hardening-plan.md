@@ -116,3 +116,9 @@ Behaviour-preserving moves only. Keep every public import path working by re-exp
 2. Whether to rewrite history (1.5).
 3. The production `ALLOWED_ORIGINS` value, and whether you run more than one worker (decides how strict 2.4 is).
 4. Whether production data exists to run 4.2 against, or whether a representative test dataset should be used.
+
+## Final state (2026-10-08)
+- Static inline styles: 6 left in the `ui:metrics` count. They are intentional: spinners, the notification bell, the pulse dot and chart containers use `animation`/`transition` (a layered `!important` utility would lose to the global reduced-motion rules) or computed sizes.
+- `!important` outside print/reduced-motion blocks: 17. 15 are in `ChartWrappers.css` and override Recharts' inline SVG styles (axis lines, tick fonts, tooltip chrome); 2 are `.heat-*` text colours that must beat the cell's own colour rule. Removing them changes rendering.
+- Native `<select>`: 2 occurrences. One is the shared `ui/NativeSelect` component itself; the other is the import-wizard column mapper. No page uses a bare select.
+- The 139-test Playwright matrix stays `workflow_dispatch` only: its specs need accounts (e.g. `itadmin@sonatrach.dz`) and local seed scripts that do not exist in a clean clone. The smoke tier (21 tests) runs on every push and pull request.
