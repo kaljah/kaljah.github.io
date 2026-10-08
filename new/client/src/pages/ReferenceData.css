@@ -97,7 +97,7 @@
 }
 
 .factors-table tr:hover td {
-  background: #fdfdfd;
+  background: var(--color-legacy-fdfdfd);
 }
 
 .factor-name {
@@ -106,28 +106,28 @@
 }
 
 .usage-combustion {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-legacy-fef3c7);
+  color: var(--color-legacy-92400e);
 }
 
 .usage-flaring {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--color-legacy-fee2e2);
+  color: var(--color-legacy-991b1b);
 }
 
 .usage-venting {
-  background: #dcfce7;
-  color: #166534;
+  background: var(--color-legacy-dcfce7);
+  color: var(--color-legacy-166534);
 }
 
 .usage-custom {
-  background: #e0f2fe;
-  color: #075985;
+  background: var(--color-legacy-e0f2fe);
+  color: var(--color-legacy-075985);
 }
 
 .usage-tank {
-  background: #f3e8ff;
-  color: #6b21a8;
+  background: var(--color-legacy-f3e8ff);
+  color: var(--color-legacy-6b21a8);
 }
 
 .custom-star {

@@ -78,7 +78,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  border: 1px solid #fee2e2;
+  border: 1px solid var(--color-legacy-fee2e2);
 }
 
 .badge {
@@ -114,14 +114,14 @@
 
 .forgot-status-msg.success {
   background: var(--color-green-50);
-  color: #065f46;
-  border: 1px solid #a7f3d0;
+  color: var(--color-legacy-065f46);
+  border: 1px solid var(--color-legacy-a7f3d0);
 }
 
 .forgot-status-msg.error {
   background: var(--color-red-50);
-  color: #991b1b;
-  border: 1px solid #fecaca;
+  color: var(--color-legacy-991b1b);
+  border: 1px solid var(--color-legacy-fecaca);
 }
 
 .btn-secondary {

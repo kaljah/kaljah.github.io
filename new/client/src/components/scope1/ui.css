@@ -2,8 +2,8 @@
 .s1-form {
   --s1-ink: var(--color-ink-900);
   --s1-muted: var(--color-ink-500);
-  --s1-line: #e5e7eb;
-  --s1-soft: #f9fafb;
+  --s1-line: var(--color-legacy-e5e7eb);
+  --s1-soft: var(--color-legacy-f9fafb);
   --s1-accent: var(--accent-color, var(--color-brand-500));
   background: var(--color-white);
   border: 1px solid var(--s1-line);
@@ -34,7 +34,7 @@
 .s1-form select.mole-input {
   height: 40px;
   border-radius: var(--radius-md);
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--color-legacy-d1d5db);
   padding: 0 12px;
   font-size: var(--text-base);
   width: 100%;
@@ -74,7 +74,7 @@
   flex-wrap: wrap;
   gap: 4px;
   padding: 4px;
-  background: #f3f4f6;
+  background: var(--color-legacy-f3f4f6);
   border-radius: var(--radius-md);
   border: none;
 }
@@ -86,7 +86,7 @@
   padding: 7px 14px;
   font-size: var(--text-sm);
   font-weight: 500;
-  color: #4b5563;
+  color: var(--color-legacy-4b5563);
   cursor: pointer;
   display: inline-flex;
   align-items: center;

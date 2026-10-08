@@ -22,7 +22,7 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 20px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--color-legacy-eeeeee);
   padding-bottom: 8px;
 }
 
@@ -60,7 +60,7 @@
 .custom-dropdown-toggle {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--color-legacy-d1d5db);
   border-radius: var(--radius-sm);
   font-size: var(--text-md);
   transition: border-color 0.15s ease;
@@ -69,12 +69,12 @@
 .mole-input:focus,
 .component-select:focus {
   outline: none;
-  border-color: #ff6b00;
+  border-color: var(--color-legacy-ff6b00);
   box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1);
 }
 
 .mole-input.readonly {
-  background-color: #f9fafb;
+  background-color: var(--color-legacy-f9fafb);
   color: var(--color-ink-600);
   cursor: default;
 }
@@ -112,7 +112,7 @@
 
 .table-controls {
   padding: 15px 20px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--color-legacy-eeeeee);
   color: var(--color-ink-700);
   font-weight: 600;
 }
@@ -122,8 +122,8 @@
   align-items: center;
   gap: 8px;
   background-color: white;
-  border: 1px solid #d1d5db;
-  color: #4b5563;
+  border: 1px solid var(--color-legacy-d1d5db);
+  color: var(--color-legacy-4b5563);
   padding: 6px 12px;
   border-radius: var(--radius-sm);
   font-size: var(--text-base);
@@ -134,7 +134,7 @@
 }
 
 .gas-calc-btn:hover {
-  background-color: #f9fafb;
+  background-color: var(--color-legacy-f9fafb);
   border-color: var(--color-ink-400);
   color: var(--color-ink-900);
   transform: translateY(-1px);
@@ -197,8 +197,8 @@
   gap: 6px;
   padding: 4px 8px;
   border-radius: var(--radius-sm);
-  border: 1px solid #e5e7eb;
-  background: #f9fafb;
+  border: 1px solid var(--color-legacy-e5e7eb);
+  background: var(--color-legacy-f9fafb);
   font-size: var(--text-xs);
   color: var(--color-ink-700);
   cursor: pointer;
@@ -206,7 +206,7 @@
 }
 
 .preset-chip:hover {
-  background: #f3f4f6;
+  background: var(--color-legacy-f3f4f6);
   border-color: var(--color-ink-300);
   transform: translateY(-1px);
 }
@@ -228,18 +228,18 @@
 }
 
 .preset-citation-badge.legal {
-  background: #dbeafe;
-  color: #1e40af;
+  background: var(--color-legacy-dbeafe);
+  color: var(--color-legacy-1e40af);
 }
 
 .preset-citation-badge.standard {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-legacy-fef3c7);
+  color: var(--color-legacy-92400e);
 }
 
 .preset-citation-badge.api {
-  background: #e0e7ff;
-  color: #3730a3;
+  background: var(--color-legacy-e0e7ff);
+  color: var(--color-legacy-3730a3);
 }
 
 .tier2-inputs-grid {

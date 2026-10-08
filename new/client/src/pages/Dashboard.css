@@ -124,7 +124,7 @@
 }
 
 .data-table tr:hover:not(.header-divider) td {
-  background: #fffafa;
+  background: var(--color-legacy-fffafa);
 }
 
 .header-divider td {

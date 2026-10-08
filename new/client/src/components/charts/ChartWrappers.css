@@ -25,7 +25,7 @@
   margin: 0 0 18px 0;
   font-size: 1.05rem;
   font-weight: 700;
-  color: var(--text-primary, #0f172a);
+  color: var(--text-primary, var(--color-ink-900));
   letter-spacing: -0.01em;
   display: flex;
   align-items: center;
@@ -48,7 +48,7 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  color: var(--text-secondary, #64748b);
+  color: var(--text-secondary, var(--color-ink-500));
   font-size: 0.88rem;
   font-weight: 500;
 }
@@ -61,7 +61,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #94a3b8;
+  color: var(--color-ink-400);
 }
 
 /* ============================================================
@@ -97,7 +97,7 @@
   margin: 0;
   font-size: 0.82rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--color-ink-800);
   letter-spacing: -0.01em;
 }
 
@@ -107,7 +107,7 @@
   padding: 1px 6px;
   border-radius: 4px;
   background: rgba(255, 102, 0, 0.1);
-  color: var(--accent-color, #ff6600);
+  color: var(--accent-color, var(--color-brand-500));
 }
 
 .tooltip-items-list {
@@ -128,7 +128,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #64748b;
+  color: var(--color-ink-500);
   font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -151,7 +151,7 @@
   align-items: center;
   gap: 6px;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--color-ink-900);
   font-variant-numeric: tabular-nums;
   flex-shrink: 0;
 }
@@ -162,7 +162,7 @@
   padding: 1px 5px;
   border-radius: 4px;
   background: rgba(15, 23, 42, 0.05);
-  color: #475569;
+  color: var(--color-ink-600);
 }
 
 /* ============================================================
@@ -196,7 +196,7 @@
 .donut-center-val {
   font-size: 1.15rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--color-ink-900);
   letter-spacing: -0.02em;
   line-height: 1.1;
   font-variant-numeric: tabular-nums;
@@ -205,7 +205,7 @@
 .donut-center-label {
   font-size: 0.68rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--color-ink-500);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   margin-top: 3px;
@@ -218,7 +218,7 @@
 .donut-center-sub {
   font-size: 0.7rem;
   font-weight: 700;
-  color: var(--accent-color, #ff6600);
+  color: var(--accent-color, var(--color-brand-500));
   margin-top: 2px;
 }
 
@@ -242,7 +242,7 @@
   padding: 3px 8px;
   border-radius: 6px;
   font-size: 0.78rem;
-  color: #475569;
+  color: var(--color-ink-600);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -251,7 +251,7 @@
 
 .legend-item-pill:hover {
   background: rgba(241, 245, 249, 0.8);
-  color: #0f172a;
+  color: var(--color-ink-900);
 }
 
 .legend-item-pill.dimmed {
@@ -267,7 +267,7 @@
 
 .legend-item-val {
   font-weight: 700;
-  color: #0f172a;
+  color: var(--color-ink-900);
   font-variant-numeric: tabular-nums;
   margin-left: 2px;
 }
@@ -294,21 +294,21 @@
 }
 
 .recharts-cartesian-axis-tick-value {
-  fill: #64748b !important;
+  fill: var(--color-ink-500) !important;
   font-size: 11px !important;
   font-weight: 600 !important;
   font-family: inherit !important;
 }
 
 .recharts-legend-item-text {
-  color: #334155 !important;
+  color: var(--color-ink-700) !important;
   font-size: 12px !important;
   font-weight: 500 !important;
   font-family: inherit !important;
 }
 
 .recharts-tooltip-cursor {
-  stroke: #cbd5e1 !important;
+  stroke: var(--color-ink-300) !important;
   stroke-width: 1.5px !important;
   stroke-dasharray: 4 4 !important;
 }
