@@ -23,6 +23,12 @@ const MODERN_BAR_PALETTE = [
   "var(--color-cyan-500)",
 ];
 
+const STATUS_COLORS = {
+  good: "var(--color-green-600)",
+  warn: "var(--color-amber-500)",
+  bad: "var(--color-red-500)",
+};
+
 const VALUE_LABEL_STYLE: React.CSSProperties = { fill: "var(--color-ink-700)", fontSize: 11, fontWeight: 600 };
 
 export interface BarItemConfig {
@@ -53,6 +59,12 @@ export interface BarChartProps {
   /** Draw a dashed target/threshold line at this value (single-series only). */
   referenceValue?: number;
   referenceLabel?: string;
+  /** Makes single-series bars clickable (and reachable by keyboard); receives the clicked data row. */
+  onSelect?: (row: any) => void;
+  /** Accessible name for a bar button, e.g. (row) => `Open records for ${row.name}`. */
+  selectLabel?: (row: any) => string;
+  /** Color each single-series bar by status: below warnAt is good, up to badAt is a warning, above badAt is bad. */
+  thresholds?: { warnAt: number; badAt: number; labels?: [string, string, string] };
 }
 
 export const BarChart: React.FC<BarChartProps> = ({
@@ -71,6 +83,9 @@ export const BarChart: React.FC<BarChartProps> = ({
   showShare = false,
   referenceValue,
   referenceLabel,
+  onSelect,
+  selectLabel,
+  thresholds,
 }) => {
   const [isMounted] = useState<boolean>(() => typeof window !== "undefined");
   const [activeBarKey, setActiveBarKey] = useState<string | null>(null);
@@ -218,6 +233,14 @@ export const BarChart: React.FC<BarChartProps> = ({
     const base = valueFormatter(v);
     return showShare && total > 0 ? `${base} (${((Number(v) / total) * 100).toFixed(0)}%)` : base;
   };
+  const statusFill = (v: number): string | undefined =>
+    !thresholds
+      ? undefined
+      : v > thresholds.badAt
+        ? STATUS_COLORS.bad
+        : v >= thresholds.warnAt
+          ? STATUS_COLORS.warn
+          : STATUS_COLORS.good;
   const chartHeight = typeof height === "number" ? height : parseInt(String(height), 10) || 300;
   return (
     <div
@@ -349,13 +372,15 @@ export const BarChart: React.FC<BarChartProps> = ({
               maxBarSize={44}
               radius={horizontal ? [0, 6, 6, 0] : [6, 6, 0, 0]}
               animationDuration={800}
+              className={onSelect ? "cursor-pointer" : undefined}
+              onClick={onSelect ? (_: unknown, i: number) => onSelect(rows[i]) : undefined}
               onMouseEnter={(_: unknown, i: number) => setHoverIndex(i)}
               onMouseLeave={() => setHoverIndex(null)}
             >
               {rows.map((entry, index) => (
                 <Cell
                   key={`cell-${index}`}
-                  fill={entry.color || entry.fill || `url(#${gradientId})`}
+                  fill={entry.color || entry.fill || statusFill(Number(entry[finalDataKey]) || 0) || `url(#${gradientId})`}
                   opacity={hoverIndex !== null && hoverIndex !== index ? 0.45 : 1}
                 />
               ))}
@@ -381,6 +406,32 @@ export const BarChart: React.FC<BarChartProps> = ({
           )}
         </RechartsBar>
       </ResponsiveContainer>
+      {thresholds && !hasMultipleBars && (
+        // Color is not the only signal: the legend names each state and the values stay labeled on the bars.
+        <ul className="m-0 mt-1 flex list-none flex-wrap justify-center gap-x-4 gap-y-1 p-0 text-xs text-ink-600">
+          {(thresholds.labels || ["Within target", "Near target", "Above target"]).map((label, i) => (
+            <li key={label} className="inline-flex items-center gap-1.5">
+              <span
+                aria-hidden="true"
+                className={`inline-block size-2.5 rounded-full ${["bg-green-600", "bg-amber-500", "bg-red-500"][i]}`}
+              />
+              {label}
+            </li>
+          ))}
+        </ul>
+      )}
+      {onSelect && !hasMultipleBars && (
+        // Recharts bars are not focusable: this visually hidden list gives keyboard and screen-reader users the same action.
+        <ul className="sr-only">
+          {rows.map((r, i) => (
+            <li key={i}>
+              <button type="button" onClick={() => onSelect(r)}>
+                {selectLabel ? selectLabel(r) : `Open ${r[finalXKey]}`}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };

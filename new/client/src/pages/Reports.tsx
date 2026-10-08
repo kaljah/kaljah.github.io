@@ -3,6 +3,7 @@ import { NativeSelect } from "../ui/NativeSelect";
 import { Badge, Button, Card, CardHeader, DataTable, Dialog, Field, Input, Menu, MenuContent, MenuItem, MenuTrigger, Page, PageHeader, SegmentedControl, StatusPill, Textarea, type BadgeTone } from "../ui";
 import { controlClass } from "../components/import-wizard/mapping";
 import React, { useState, useEffect, useMemo, useRef } from "react";
+import { useSearchParams } from "react-router-dom";
 import api from "../api";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../components/Toast";
@@ -97,6 +98,15 @@ const RECORD_COLUMNS: ColumnDef<EmissionRecord, any>[] = [
 ];
 
 const Reports: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  // Deep link from a chart (?year=2025&facility=3&scope=1&process=flaring&month=4): read once on arrival.
+  const [deepLink] = useState(() => ({
+    year: searchParams.get("year"),
+    month: searchParams.get("month"),
+    facility: searchParams.get("facility"),
+    scope: searchParams.get("scope"),
+    process: searchParams.get("process"),
+  }));
   const { user } = useAuth();
   const toast = useToast();
   const [facilities, setFacilities] = useState<Facility[]>([]);
@@ -137,13 +147,13 @@ const Reports: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   // Filters
-  const [year, setYear] = useState<string>("all");
-  const [month, setMonth] = useState<string>("all");
+  const [year, setYear] = useState<string>(deepLink.year || "all");
+  const [month, setMonth] = useState<string>(deepLink.month || "all");
   const [division, setDivision] = useState<string>("all");
   const [field, setField] = useState<string>("all");
   const [methodFilter, setMethodFilter] = useState<string>("all");
-  const [regionId, setRegionId] = useState<string>("all");
-  const [processType, setProcessType] = useState<string>("all");
+  const [regionId, setRegionId] = useState<string>(deepLink.facility || "all");
+  const [processType, setProcessType] = useState<string>(deepLink.process || "all");
   const [searchTerm, setSearchTerm] = useState<string>("");
   // BUG-021: debounce the search box so we issue one request per pause, not per keystroke
   const [debouncedSearch, setDebouncedSearch] = useState<string>("");
@@ -154,7 +164,7 @@ const Reports: React.FC = () => {
   const [totalPages, setTotalPages] = useState<number>(1);
   const [totalRecords, setTotalRecords] = useState<number>(0);
 
-  const [scope, setScope] = useState<string>("all");
+  const [scope, setScope] = useState<string>(deepLink.scope || "all");
 
   const resetFilters = () => {
     setYear("all");
@@ -196,7 +206,9 @@ const Reports: React.FC = () => {
         });
 
         // Sync year picker to the most recent year that has actual data
-        if (filterRes.data.years?.length > 0) {
+        if (deepLink.year) {
+          // a chart linked to a specific year: keep it
+        } else if (filterRes.data.years?.length > 0) {
           const mostRecentYear = filterRes.data.years[0].toString();
           setYear(mostRecentYear);
         } else {
@@ -205,7 +217,7 @@ const Reports: React.FC = () => {
 
         const opDefaults = getUserOperationalDefaults(user, facilitiesData);
         if (opDefaults.isRestricted || facilitiesData.length === 1) {
-          if (opDefaults.defaultFacilityId) setRegionId(opDefaults.defaultFacilityId);
+          if (opDefaults.defaultFacilityId && !deepLink.facility) setRegionId(opDefaults.defaultFacilityId);
           if (opDefaults.defaultDivision) setDivision(opDefaults.defaultDivision);
         }
       } catch (err) {

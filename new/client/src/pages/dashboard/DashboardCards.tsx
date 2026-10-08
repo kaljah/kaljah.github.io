@@ -3,7 +3,10 @@ import { ArrowRight, BarChart3, ChevronDown, ChevronUp, Clock, Eye, EyeOff, Hexa
 import { Badge, Banner, Button, Card, CardHeader, Switch } from "../../ui";
 import { cn } from "../../ui/cn";
 import { BarChart as BarChartWrapper, LineChart as LineChartWrapper, WaterfallChart } from "../../components/charts";
+import { useNavigate } from "react-router-dom";
 import api from "../../api";
+import { recordsLink } from "../../utils/reportLinks";
+import { describeBridge, describeRanking } from "../../utils/chartInsights";
 import { formatCompactNumber } from "../../utils/formatters";
 
 export interface PendingBannerProps {
@@ -94,11 +97,14 @@ export const TrendCard: React.FC<TrendCardProps> = ({ data, lines, compare, onCo
 export interface DonutCardProps {
   title: string;
   data: any[];
+  /** What the items are, for the takeaway sentence ("activity", "source"). */
+  noun?: string;
 }
 
-export const DonutCard: React.FC<DonutCardProps> = ({ title, data }) => (
+export const DonutCard: React.FC<DonutCardProps> = ({ title, data, noun }) => (
   <Card className="min-w-0">
-    <h3 className="m-0 mb-3 text-md font-bold text-ink-800">{title}</h3>
+    <h3 className="m-0 mb-1 text-md font-bold text-ink-800">{title}</h3>
+    <p className="m-0 mb-3 min-h-[1.25rem] text-xs text-ink-600">{describeRanking(data, noun)}</p>
     <div className="relative h-[195px] w-full min-w-0">
       <BarChartWrapper
         data={data}
@@ -227,6 +233,7 @@ interface BridgeData {
 export const BridgeCard: React.FC<BridgeCardProps> = ({ params }) => {
   const [bridge, setBridge] = React.useState<BridgeData | null>(null);
   const query = params.toString();
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     let cancelled = false;
@@ -254,6 +261,7 @@ export const BridgeCard: React.FC<BridgeCardProps> = ({ params }) => {
           {Math.abs(pct).toFixed(1)}%)
         </span>
       </div>
+      <p className="m-0 mb-3 text-sm text-ink-700">{describeBridge(bridge.start, bridge.end, bridge.steps)}</p>
       <WaterfallChart
         startLabel={String(bridge.prev_year)}
         endLabel={String(bridge.year)}
@@ -262,8 +270,12 @@ export const BridgeCard: React.FC<BridgeCardProps> = ({ params }) => {
         steps={bridge.steps}
         height={300}
         formatValue={formatCompactNumber}
+        // The records table filters by scope and year, not by source category, so a step opens its scope.
+        onSelectStep={(step) =>
+          navigate(recordsLink({ year: bridge.year, scope: step.name === "Scope 2" ? "2" : "1" }))
+        }
       />
-      <p className="mb-0 mt-2 text-xs text-ink-500">Axis is zoomed to the range the changes move through; it does not start at zero.</p>
+      <p className="mb-0 mt-2 text-xs text-ink-500">Axis is zoomed to the range the changes move through; it does not start at zero. Click a step to open that scope's records for the year.</p>
     </Card>
   );
 };

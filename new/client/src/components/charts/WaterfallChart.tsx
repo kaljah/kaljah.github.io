@@ -25,6 +25,8 @@ export interface WaterfallChartProps {
   steps: WaterfallStep[];
   height?: number;
   formatValue?: (val: number) => string;
+  /** Click (or keyboard) on a change step; the start and end totals are not clickable. */
+  onSelectStep?: (step: WaterfallStep) => void;
 }
 
 interface Row {
@@ -57,6 +59,7 @@ export const WaterfallChart: React.FC<WaterfallChartProps> = ({
   steps,
   height = 300,
   formatValue = (v) => String(v),
+  onSelectStep,
 }) => {
   const { rows, domain } = useMemo(() => {
     const out: Row[] = [{ name: startLabel, base: 0, value: start, kind: "total", top: start }];
@@ -131,7 +134,22 @@ export const WaterfallChart: React.FC<WaterfallChartProps> = ({
           />
           {/* invisible spacer that lifts each step to where the running total is */}
           <Bar dataKey="base" stackId="w" fill="transparent" isAnimationActive={false} />
-          <Bar dataKey="value" stackId="w" maxBarSize={48} radius={[4, 4, 0, 0]} animationDuration={700}>
+          <Bar
+            dataKey="value"
+            stackId="w"
+            maxBarSize={48}
+            radius={[4, 4, 0, 0]}
+            animationDuration={700}
+            className={onSelectStep ? "cursor-pointer" : undefined}
+            onClick={
+              onSelectStep
+                ? (_: unknown, i: number) => {
+                    const r = rows[i];
+                    if (r && r.kind !== "total") onSelectStep({ name: r.name, delta: r.delta ?? 0 });
+                  }
+                : undefined
+            }
+          >
             {rows.map((r, i) => (
               <Cell key={i} fill={COLORS[r.kind]} />
             ))}
@@ -153,6 +171,18 @@ export const WaterfallChart: React.FC<WaterfallChartProps> = ({
           </Bar>
         </RechartsBar>
       </ResponsiveContainer>
+      {onSelectStep && (
+        // Recharts bars are not focusable: a visually hidden list gives keyboard and screen-reader users the same action.
+        <ul className="sr-only">
+          {steps.map((s) => (
+            <li key={s.name}>
+              <button type="button" onClick={() => onSelectStep(s)}>
+                {`Open ${s.name} records`}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };

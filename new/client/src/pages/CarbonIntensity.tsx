@@ -559,7 +559,7 @@ const CarbonIntensity: React.FC = () => {
           stats={stats}
         />
         <CbamSection products={cbamProducts} facilities={facilities} />
-        <RegionalCharts data={regionalData} gwpHorizon={gwpHorizon} />
+        <RegionalCharts data={regionalData} gwpHorizon={gwpHorizon} year={selectedYear} />
         <TrendSection
           view={trendView}
           onView={(v: any) => setTrendView(v)}
