@@ -8,12 +8,13 @@ import json
 from extensions import db
 from flask import current_app, jsonify, request, session
 from models import Notification, User
-from utils import log_activity_and_notify
+from utils import is_unrestricted_location, log_activity_and_notify
 from . import auth_bp
 from routes.auth import (
     BUSINESS_ROLE_GRANTORS,
     BUSINESS_ROLES,
     ROLE_RANK,
+    SUPERUSER_REGION_ERROR,
     it_access_required,
     it_admin_required,
     register,
@@ -105,6 +106,9 @@ def update_user(id):
 
     if "location" in data:
         user.location = data["location"]
+    if ("role" in data or "location" in data) and user.role == "superuser" and is_unrestricted_location(user.location):
+        db.session.rollback()
+        return jsonify({"error": SUPERUSER_REGION_ERROR, "field": "location"}), 400
     if "status" in data:
         if data["status"] != user.status:
             user.session_version = int(user.session_version or 0) + 1  # BUG-114

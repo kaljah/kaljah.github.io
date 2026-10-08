@@ -170,8 +170,8 @@ const SbtiDashboard: React.FC = () => {
 
   const handleSaveTarget = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user || (user.role !== "admin" && user.role !== "superuser")) {
-      toast.show("Only administrators or superusers can update SBTi targets.", "error");
+    if (!user || user.role !== "admin") {
+      toast.show("Only administrators can update SBTi targets (they are organisation-wide).", "error");
       return;
     }
 
@@ -327,7 +327,7 @@ const SbtiDashboard: React.FC = () => {
                 { value: "s1_s2", label: "Scope 1+2 (operational)", title: "Track operational emissions (Scope 1 and 2 only)" },
               ]}
             />
-            {(user?.role === "admin" || user?.role === "superuser") && (
+            {user?.role === "admin" && (
               <Button variant="secondary" onClick={() => setShowConfig(!showConfig)}>
                 <Sliders className="size-4" aria-hidden="true" />
                 {showConfig ? "Hide target settings" : "Configure target"}

@@ -226,7 +226,8 @@ def update_settings():
     if user and user.role in ["it_admin", "it_manager"] and has_operational_keys:
         return jsonify({"error": "IT administrators are not authorized to modify operational GHG calculation standards or settings."}), 403
 
-    is_admin = user and user.role in ["admin", "superuser"]
+    # organisation-wide settings are admin only; superusers are limited to one facility/region
+    is_admin = bool(user and user.role == "admin")
     if has_operational_keys and not is_admin:
         return jsonify({"error": "Administrator privileges are required to modify system-wide calculation standards."}), 403
 
