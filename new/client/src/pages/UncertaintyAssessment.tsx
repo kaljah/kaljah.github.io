@@ -20,6 +20,8 @@ interface Contributor {
 
 interface CategorySection {
   category: string;
+  total_emissions?: number;
+  uncertainty_decimal?: number;
   level: string;
   uncertainty_pct: string;
   top_contributors: Contributor[];
@@ -348,6 +350,33 @@ const UncertaintyAssessment: React.FC = () => {
                   formatValue={(v) => `±${Number(v).toFixed(1)}%`}
                 />
               </div>
+            </div>
+          )}
+
+          {/* ── Emissions per category with the 95 % range ── */}
+          {data.categories.length > 0 && (
+            <div className="category-section [margin-bottom:24px]">
+              <div className="category-header">
+                <h3 className="category-title">Emissions by Category with 95% Range (tCO₂e)</h3>
+              </div>
+              <div className="h-[260px] w-full min-w-0">
+                <BarChart
+                  data={data.categories.map((c: any) => {
+                    const u = Number(c.uncertainty_decimal) || 0;
+                    const value = Number(c.total_emissions) || 0;
+                    const color = u <= 0.1 ? "var(--color-unc-low)" : u <= 0.3 ? "var(--color-unc-medium)" : "var(--color-unc-high)";
+                    return { name: c.category, value, range: value * u, color };
+                  })}
+                  dataKey="value"
+                  xKey="name"
+                  horizontal
+                  sortDesc
+                  height={260}
+                  errorKey="range"
+                  exportName="emissions-by-category-with-95-range"
+                />
+              </div>
+              <p className="mb-0 mt-2 text-xs text-ink-500">Bars show the category total; the whiskers show its 95% range (± the uncertainty above).</p>
             </div>
           )}
 

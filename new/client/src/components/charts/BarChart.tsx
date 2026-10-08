@@ -4,6 +4,7 @@ import {
   Bar,
   Cell,
   LabelList,
+  ErrorBar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -23,6 +24,25 @@ const MODERN_BAR_PALETTE = [
   "var(--color-amber-500)",
   "var(--color-cyan-500)",
 ];
+
+// Height of the CSV/PNG row that sits above a chart with exportName (the chart gives up this much height).
+const EXPORT_BAND = 32;
+// Height of the status legend under a chart with thresholds.
+const LEGEND_BAND = 28;
+
+// Phones get a narrower category axis so the bars keep most of the width.
+const useNarrow = (): boolean => {
+  const query = "(max-width: 639px)";
+  const [narrow, setNarrow] = useState<boolean>(() => typeof window !== "undefined" && !!window.matchMedia?.(query).matches);
+  React.useEffect(() => {
+    const mq = window.matchMedia?.(query);
+    if (!mq) return undefined;
+    const on = () => setNarrow(mq.matches);
+    mq.addEventListener("change", on);
+    return () => mq.removeEventListener("change", on);
+  }, []);
+  return narrow;
+};
 
 const STATUS_COLORS = {
   good: "var(--color-green-600)",
@@ -65,6 +85,8 @@ export interface BarChartProps {
   /** Accessible name for a bar button, e.g. (row) => `Open records for ${row.name}`. */
   selectLabel?: (row: any) => string;
   /** Color each single-series bar by status: below warnAt is good, up to badAt is a warning, above badAt is bad. */
+  /** Data field holding a symmetric error amount: draws whiskers (value ± error) and hides the value labels. */
+  errorKey?: string;
   /** Shows CSV/PNG buttons (on hover/focus) and uses this as the file name. */
   exportName?: string;
   thresholds?: { warnAt: number; badAt: number; labels?: [string, string, string] };
@@ -90,8 +112,10 @@ export const BarChart: React.FC<BarChartProps> = ({
   selectLabel,
   thresholds,
   exportName,
+  errorKey,
 }) => {
   const wrapRef = React.useRef<HTMLDivElement | null>(null);
+  const narrow = useNarrow();
   const [isMounted] = useState<boolean>(() => typeof window !== "undefined");
   const [activeBarKey, setActiveBarKey] = useState<string | null>(null);
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
@@ -115,7 +139,7 @@ export const BarChart: React.FC<BarChartProps> = ({
   const manyCategories = (data?.length || 0) > 4;
   const shortLabel = (v: any): string => {
     const s = String(v ?? "");
-    const max = horizontal ? 24 : 16;
+    const max = horizontal ? (narrow ? 13 : 24) : 16;
     return s.length > max ? `${s.slice(0, max - 1)}…` : s;
   };
 
@@ -250,7 +274,7 @@ export const BarChart: React.FC<BarChartProps> = ({
   return (
     <div
       ref={wrapRef}
-      className="chart-wrapper group relative"
+      className="chart-wrapper"
       style={{
         height: "100%",
         width: "100%",
@@ -263,7 +287,7 @@ export const BarChart: React.FC<BarChartProps> = ({
     >
       {exportName && (
         <ChartExport
-          className="absolute right-0 top-0 z-10 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100 pointer-coarse:opacity-100"
+          className="h-7"
           name={exportName}
           targetRef={wrapRef}
           header={hasMultipleBars ? [finalXKey, ...bars.map((b) => b.name || b.dataKey)] : [finalXKey, finalDataKey]}
@@ -273,7 +297,7 @@ export const BarChart: React.FC<BarChartProps> = ({
       {title && <h3 className="chart-title">{title}</h3>}
       <ResponsiveContainer
         width="100%"
-        height={chartHeight}
+        height={chartHeight - (exportName ? EXPORT_BAND : 0) - (thresholds && !hasMultipleBars ? LEGEND_BAND : 0)}
         debounce={100}
       >
         <RechartsBar
@@ -309,7 +333,7 @@ export const BarChart: React.FC<BarChartProps> = ({
               <YAxis
                 type="category"
                 dataKey={finalXKey}
-                width={150}
+                width={narrow ? 92 : 150}
                 stroke="var(--color-ink-300)"
                 tick={{ fill: "var(--color-ink-700)", fontSize: 12, fontWeight: 600 }}
                 axisLine={false}
@@ -399,7 +423,16 @@ export const BarChart: React.FC<BarChartProps> = ({
                   opacity={hoverIndex !== null && hoverIndex !== index ? 0.45 : 1}
                 />
               ))}
-              {rows.length <= (horizontal ? 12 : 8) && (
+              {errorKey && (
+                <ErrorBar
+                  dataKey={errorKey}
+                  direction={horizontal ? "x" : "y"}
+                  width={6}
+                  stroke="var(--color-ink-700)"
+                  strokeWidth={1.5}
+                />
+              )}
+              {!errorKey && rows.length <= (horizontal ? 12 : 8) && (
                 <LabelList
                   dataKey={finalDataKey}
                   position={horizontal ? "right" : "top"}
