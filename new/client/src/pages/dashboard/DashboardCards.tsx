@@ -2,7 +2,8 @@ import React from "react";
 import { ArrowRight, BarChart3, ChevronDown, ChevronUp, Clock, Eye, EyeOff, Hexagon } from "lucide-react";
 import { Badge, Banner, Button, Card, CardHeader, Switch } from "../../ui";
 import { cn } from "../../ui/cn";
-import { BarChart as BarChartWrapper, LineChart as LineChartWrapper } from "../../components/charts";
+import { BarChart as BarChartWrapper, LineChart as LineChartWrapper, WaterfallChart } from "../../components/charts";
+import api from "../../api";
 import { formatCompactNumber } from "../../utils/formatters";
 
 export interface PendingBannerProps {
@@ -208,3 +209,61 @@ export const CategoricalCard: React.FC<CategoricalCardProps> = ({ collapsed, onT
     </div>
   </Card>
 );
+
+export interface BridgeCardProps {
+  /** Same filter query the rest of the dashboard uses (facilityId, activity, division, segment, ...). */
+  params: URLSearchParams;
+}
+
+interface BridgeData {
+  year?: number;
+  prev_year?: number;
+  start?: number;
+  end?: number;
+  steps: { name: string; delta: number }[];
+}
+
+/** "What moved the total": Scope 1+2 change from the previous year with data to the selected year. */
+export const BridgeCard: React.FC<BridgeCardProps> = ({ params }) => {
+  const [bridge, setBridge] = React.useState<BridgeData | null>(null);
+  const query = params.toString();
+
+  React.useEffect(() => {
+    let cancelled = false;
+    api
+      .get(`/dashboard/yoy-bridge?${query}`)
+      .then((res) => !cancelled && setBridge(res.data))
+      .catch(() => !cancelled && setBridge(null));
+    return () => {
+      cancelled = true;
+    };
+  }, [query]);
+
+  if (!bridge || !bridge.steps.length || bridge.start == null || bridge.end == null) return null;
+  const change = bridge.end - bridge.start;
+  const pct = bridge.start ? (change / bridge.start) * 100 : 0;
+  return (
+    <Card className="min-w-0">
+      <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+        <h3 className="m-0 text-md font-bold text-ink-800">
+          What moved Scope 1+2 emissions, {bridge.prev_year} → {bridge.year}
+        </h3>
+        <span className="text-sm font-semibold text-ink-600">
+          {change >= 0 ? "+" : "−"}
+          {formatCompactNumber(Math.abs(change))} tCO₂e ({change >= 0 ? "+" : "−"}
+          {Math.abs(pct).toFixed(1)}%)
+        </span>
+      </div>
+      <WaterfallChart
+        startLabel={String(bridge.prev_year)}
+        endLabel={String(bridge.year)}
+        start={bridge.start}
+        end={bridge.end}
+        steps={bridge.steps}
+        height={300}
+        formatValue={formatCompactNumber}
+      />
+      <p className="mb-0 mt-2 text-xs text-ink-500">Axis is zoomed to the range the changes move through; it does not start at zero.</p>
+    </Card>
+  );
+};
