@@ -35,7 +35,7 @@ const MethaneIntensityOGMP20Gold: React.FC<MethaneIntensityOGMP20GoldProps> = ({
     >
       <div className="[display:flex] [flex-direction:column] [gap:4px] [&_h3]:[font-size:var(--text-lg)]! [&_h3]:[font-weight:700]! [&_h3]:[color:var(--text-primary)]! [&_h3]:[margin:0]! [&_h3]:[display:flex] [&_h3]:[align-items:center] [&_h3]:[gap:10px] [&&]:[&&]:[&_p]:[font-size:var(--text-base)]! [&&]:[&_p]:[color:var(--text-secondary)]! [&&]:[&_p]:[margin:0]!">
         <h3>
-          <Award size={22} color="#ff6600" />
+          <Award size={22} color="var(--color-brand-500)" />
           OGMP 2.0 Gold Standard Pathway & Milestone Roadmap
         </h3>
         <p>

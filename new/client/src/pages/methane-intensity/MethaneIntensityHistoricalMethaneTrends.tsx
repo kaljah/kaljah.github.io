@@ -60,28 +60,28 @@ const MethaneIntensityHistoricalMethaneTrends: React.FC<MethaneIntensityHistoric
           series={[
             {
               key: "loss_rate_pct",
-              color: "#2563eb",
+              color: "var(--color-blue-600)",
               name: "Overall Loss Rate (%)",
             },
             {
               key: "loss_rate_upstream_pct",
-              color: "#c2410c",
+              color: "var(--color-brand-700)",
               name: "Upstream Loss Rate (%)",
             },
             {
               key: "loss_rate_midstream_pct",
-              color: "#f59e0b",
+              color: "var(--color-amber-500)",
               name: "Midstream Loss Rate (%)",
             },
             {
               key: "target_020",
-              color: "#10b981",
+              color: "var(--color-green-500)",
               name: `OGMP Upstream Target (≤${upstreamTargetPct.toFixed(2)}%)`,
               strokeDasharray: "4 4",
             },
             {
               key: "target_005",
-              color: "#8b5cf6",
+              color: "var(--color-violet-500)",
               name: `OGMP Midstream Target (≤${midstreamTargetPct.toFixed(2)}%)`,
               strokeDasharray: "2 2",
             },

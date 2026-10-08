@@ -93,7 +93,7 @@ export const RegionalCharts: React.FC<RegionalChartsProps> = ({ data, gwpHorizon
   return (
     <div className="chart-grid grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(100%,450px),1fr))]">
       <ChartCard className="card" title="GHG Intensity by Facility (kg CO₂e / BOE)" rule="#ff6600">
-        <BarChart data={named((d) => ({ value: g20 ? d.co2_intensity_gwp20 || d.co2_intensity : d.co2_intensity }))} dataKey="value" xKey="name" color="#ff6600" />
+        <BarChart data={named((d) => ({ value: g20 ? d.co2_intensity_gwp20 || d.co2_intensity : d.co2_intensity }))} dataKey="value" xKey="name" color="var(--color-brand-500)" />
       </ChartCard>
       <ChartCard className="card" title="Scope 1 Direct vs Scope 2 Intensity" rule="#2563eb">
         <BarChart
@@ -102,7 +102,7 @@ export const RegionalCharts: React.FC<RegionalChartsProps> = ({ data, gwpHorizon
               scope2: Number((d.scope2_intensity || 0).toFixed(2)),
             }))}
             bars={[
-              { dataKey: "scope1", name: g20 ? "Scope 1 (GWP₂₀ Direct)" : "Scope 1 (Direct)", color: "#2563eb" },
+              { dataKey: "scope1", name: g20 ? "Scope 1 (GWP₂₀ Direct)" : "Scope 1 (Direct)", color: "var(--color-blue-600)" },
               { dataKey: "scope2", name: "Scope 2 (Indirect)", color: "#0ea5e9" },
             ]}
             xKey="name"
@@ -112,7 +112,7 @@ export const RegionalCharts: React.FC<RegionalChartsProps> = ({ data, gwpHorizon
         <BarChart data={named((d) => ({ value: d.total_oil || 0 }))} dataKey="value" xKey="name" color="#ea580c" />
       </ChartCard>
       <ChartCard className="card" title="Gas BOE Contribution by Facility" rule="#8b5cf6">
-        <BarChart data={named((d) => ({ value: (d.total_gas || 0) * GAS_TO_BOE }))} dataKey="value" xKey="name" color="#8b5cf6" />
+        <BarChart data={named((d) => ({ value: (d.total_gas || 0) * GAS_TO_BOE }))} dataKey="value" xKey="name" color="var(--color-violet-500)" />
       </ChartCard>
     </div>
   );
@@ -164,7 +164,7 @@ export const TrendSection: React.FC<TrendSectionProps> = ({ view, onView, trendC
             data={trendChartData}
             xKey="year"
             series={[
-              { key: "co2_100", color: "#c2410c", name: `GHG Intensity (${activeGwpStandard} 100-Yr GWP)` },
+              { key: "co2_100", color: "var(--color-brand-700)", name: `GHG Intensity (${activeGwpStandard} 100-Yr GWP)` },
               { key: "co2_20", color: "#ea580c", name: `GHG Intensity (${activeGwpStandard} 20-Yr GWP)`, dash: "5 5" },
             ]}
           />

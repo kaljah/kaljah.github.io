@@ -544,7 +544,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
               variant="ghost" type="button"
               onClick={fetchAllPendingData}
               disabled={loading || isProcessing}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', border: '1px solid var(--border-color)', borderRadius: '9px', padding: '7px 14px', fontSize: '0.82rem', background: '#ffffff', cursor: 'pointer' }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', border: '1px solid var(--border-color)', borderRadius: '9px', padding: '7px 14px', fontSize: '0.82rem', background: 'var(--color-white)', cursor: 'pointer' }}
             >
               <RefreshCw size={14} style={{ animation: loading ? 'spin 1s linear infinite' : 'none' }} />
               Reload All
@@ -552,7 +552,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
             <Button
               variant="ghost" type="button"
               onClick={onClose}
-              style={{ padding: '7px', borderRadius: '9px', border: '1px solid var(--border-color)', cursor: 'pointer', background: '#ffffff' }}
+              style={{ padding: '7px', borderRadius: '9px', border: '1px solid var(--border-color)', cursor: 'pointer', background: 'var(--color-white)' }}
               title="Close Wizard (Esc)"
             >
               <X size={18} />
@@ -646,7 +646,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
                 Weird Only ({stats.weirdCount})
               </button>
               <button type="button" className={`segmented-item-btn ${qaFilter === 'clean' ? 'active' : ''}`} onClick={() => setQaFilter('clean')}>
-                <CheckCircle size={13} color="#10b981" />
+                <CheckCircle size={13} color="var(--color-green-500)" />
                 Clean Only ({stats.cleanCount})
               </button>
             </div>

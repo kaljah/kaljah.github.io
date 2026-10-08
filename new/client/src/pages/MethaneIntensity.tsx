@@ -763,7 +763,7 @@ const MethaneIntensity: React.FC = () => {
                   }))}
                 dataKey="value"
                 xKey="name"
-                color="#2563eb"
+                color="var(--color-blue-600)"
               />
             </div>
           </div>
@@ -785,7 +785,7 @@ const MethaneIntensity: React.FC = () => {
                 }))}
                 dataKey="value"
                 xKey="name"
-                color="#ff6600"
+                color="var(--color-brand-500)"
               />
             </div>
           </div>
@@ -807,7 +807,7 @@ const MethaneIntensity: React.FC = () => {
                 }))}
                 dataKey="value"
                 xKey="name"
-                color="#3b82f6"
+                color="var(--color-blue-500)"
               />
             </div>
           </div>

@@ -114,7 +114,7 @@ const ReferenceData: React.FC = () => {
     custom: {
       title: "Custom & Regional Factors",
       icon: <Star size={20} className="text-[color:#2e7d32]!" />,
-      color: "#10b981",
+      color: "var(--color-green-500)",
       factors: customFactors
         .filter((f) => f.name?.toLowerCase().includes(searchTerm.toLowerCase()))
         .map((f) => ({
@@ -131,25 +131,25 @@ const ReferenceData: React.FC = () => {
     gases: {
       title: "Gaseous Fuels",
       icon: <Wind size={20} />,
-      color: "#3b82f6",
+      color: "var(--color-blue-500)",
       factors: filterFactors(apiFactors).filter((f) => f.type === "gases"),
     },
     liquids: {
       title: "Liquid Fuels",
       icon: <Database size={20} />,
-      color: "#8b5cf6",
+      color: "var(--color-violet-500)",
       factors: filterFactors(apiFactors).filter((f) => f.type === "liquids"),
     },
     solids: {
       title: "Solid Fuels",
       icon: <Zap size={20} />,
-      color: "#f59e0b",
+      color: "var(--color-amber-500)",
       factors: filterFactors(apiFactors).filter((f) => f.type === "solids"),
     },
     equipment: {
       title: "Equipment & Fugitive Factors",
       icon: <Filter size={20} />,
-      color: "#ff6600",
+      color: "var(--color-brand-500)",
       factors: filterFactors(apiFactors).filter((f) => f.type === "equipment"),
     },
     gwp: {
@@ -167,7 +167,7 @@ const ReferenceData: React.FC = () => {
     conversions: {
       title: "Unit Conversions",
       icon: <Ruler size={20} />,
-      color: "#ff6600",
+      color: "var(--color-brand-500)",
       isStatic: true,
       columns: ["From Unit", "To Unit", "Multiplier / Factor"],
       items: [
@@ -182,7 +182,7 @@ const ReferenceData: React.FC = () => {
     uncertainty: {
       title: "Data Quality & Uncertainty Tiers",
       icon: <Percent size={20} />,
-      color: "#ec4899",
+      color: "var(--color-pink-500)",
       isStatic: true,
       columns: ["Tier", "Condition", "Description"],
       items: [
@@ -338,7 +338,7 @@ const ReferenceData: React.FC = () => {
     scope2_defaults: {
       title: "Scope 2 & 3 Methodological Defaults",
       icon: <Settings size={20} />,
-      color: "#8b5cf6",
+      color: "var(--color-violet-500)",
       isStatic: true,
       columns: ["Category", "Parameter", "Default Value", "Source / Rationale"],
       items: [
@@ -518,7 +518,7 @@ const ReferenceData: React.FC = () => {
                                   key={i}
                                   style={
                                     i === 0
-                                      ? { fontWeight: 600, color: "#1e293b" }
+                                      ? { fontWeight: 600, color: "var(--color-ink-800)" }
                                       : {}
                                   }
                                 >

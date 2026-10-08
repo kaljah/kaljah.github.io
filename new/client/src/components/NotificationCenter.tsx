@@ -35,30 +35,30 @@ interface TypeConfig {
 const TYPE_CONFIG: Record<string, TypeConfig> = {
   critical: {
     Icon: AlertTriangle,
-    color: "#ef4444",
+    color: "var(--color-red-500)",
     bg: "rgba(239,68,68,0.12)",
   },
-  error: { Icon: AlertTriangle, color: "#ef4444", bg: "rgba(239,68,68,0.12)" },
+  error: { Icon: AlertTriangle, color: "var(--color-red-500)", bg: "rgba(239,68,68,0.12)" },
   warning: {
     Icon: AlertTriangle,
-    color: "#f59e0b",
+    color: "var(--color-amber-500)",
     bg: "rgba(245,158,11,0.12)",
   },
   SECURITY: {
     Icon: ShieldAlert,
-    color: "#f59e0b",
+    color: "var(--color-amber-500)",
     bg: "rgba(245,158,11,0.12)",
   },
-  system: { Icon: Settings2, color: "#8b5cf6", bg: "rgba(139,92,246,0.12)" },
-  audit: { Icon: FileText, color: "#10b981", bg: "rgba(16,185,129,0.12)" },
-  goal: { Icon: Zap, color: "#3b82f6", bg: "rgba(59,130,246,0.12)" },
-  info: { Icon: Info, color: "#3b82f6", bg: "rgba(59,130,246,0.12)" },
+  system: { Icon: Settings2, color: "var(--color-violet-500)", bg: "rgba(139,92,246,0.12)" },
+  audit: { Icon: FileText, color: "var(--color-green-500)", bg: "rgba(16,185,129,0.12)" },
+  goal: { Icon: Zap, color: "var(--color-blue-500)", bg: "rgba(59,130,246,0.12)" },
+  info: { Icon: Info, color: "var(--color-blue-500)", bg: "rgba(59,130,246,0.12)" },
 };
 
 const getTypeConfig = (type: string): TypeConfig =>
   TYPE_CONFIG[type] ?? {
     Icon: Info,
-    color: "#3b82f6",
+    color: "var(--color-blue-500)",
     bg: "rgba(59,130,246,0.12)",
   };
 
@@ -206,7 +206,7 @@ const NotifRow: React.FC<NotifRowProps> = ({ n, onMarkRead, onDelete }) => {
               (e.currentTarget.style.background = "transparent")
             }
           >
-            <CheckCheck size={13} color="#3b82f6" strokeWidth={2} />
+            <CheckCheck size={13} color="var(--color-blue-500)" strokeWidth={2} />
           </button>
         )}
         <button
@@ -224,7 +224,7 @@ const NotifRow: React.FC<NotifRowProps> = ({ n, onMarkRead, onDelete }) => {
             (e.currentTarget.style.background = "transparent")
           }
         >
-          <Trash2 size={13} color="#ef4444" strokeWidth={2} />
+          <Trash2 size={13} color="var(--color-red-500)" strokeWidth={2} />
         </button>
       </div>
     </div>
@@ -514,7 +514,7 @@ const NotificationCenter: React.FC = () => {
                 width: 6,
                 height: 6,
                 borderRadius: "50%",
-                background: "#10b981",
+                background: "var(--color-green-500)",
                 animation: "pulse-dot 2s ease-in-out infinite",
               }}
             />
@@ -531,7 +531,7 @@ const NotificationCenter: React.FC = () => {
               title="Mark all as read"
               style={{
                 ...headerActionBtn,
-                color: "#2563eb",
+                color: "var(--color-blue-600)",
               }}
               onMouseEnter={(e) =>
                 (e.currentTarget.style.background = "rgba(37, 99, 235, 0.08)")
@@ -552,7 +552,7 @@ const NotificationCenter: React.FC = () => {
               title="Delete all notifications"
               style={{
                 ...headerActionBtn,
-                color: "#b91c1c",
+                color: "var(--color-red-700)",
                 opacity: isDeleting ? 0.5 : 1,
               }}
               onMouseEnter={(e) =>

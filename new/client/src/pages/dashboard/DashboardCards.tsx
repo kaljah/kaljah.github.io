@@ -112,9 +112,9 @@ export const DonutCard: React.FC<DonutCardProps> = ({ title, data }) => (
 );
 
 const SBTI_SERIES = (label?: string) => [
-  { dataKey: "actual", name: "Actual Verified Emissions", color: "#3b82f6", strokeWidth: 3 },
-  { dataKey: "sbti_target", name: label || "Linear Target", color: "#10b981", strokeDasharray: "5 5", strokeWidth: 2 },
-  { dataKey: "bau_projection", name: "Business as Usual (+1.5%/yr)", color: "#ef4444", strokeDasharray: "3 3", strokeWidth: 2 },
+  { dataKey: "actual", name: "Actual Verified Emissions", color: "var(--color-blue-500)", strokeWidth: 3 },
+  { dataKey: "sbti_target", name: label || "Linear Target", color: "var(--color-green-500)", strokeDasharray: "5 5", strokeWidth: 2 },
+  { dataKey: "bau_projection", name: "Business as Usual (+1.5%/yr)", color: "var(--color-red-500)", strokeDasharray: "3 3", strokeWidth: 2 },
 ];
 
 export interface SbtiCardProps {

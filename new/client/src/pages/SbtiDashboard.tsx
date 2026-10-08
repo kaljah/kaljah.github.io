@@ -246,33 +246,33 @@ const SbtiDashboard: React.FC = () => {
     {
       dataKey: "sbti_target",
       name: `Corporate Target (${sbtiData?.reduction_rate_pct || 4.2}%/yr)`,
-      color: "#10b981",
+      color: "var(--color-green-500)",
       strokeWidth: 3,
     },
     {
       dataKey: "actual",
       name: `Actual Emissions (${scopeMode === "s1_s2" ? "Scope 1+2" : "Scope 1+2+3"})`,
-      color: "#ff6600",
+      color: "var(--color-brand-500)",
       strokeWidth: 3,
     },
     {
       dataKey: "sbti_15c",
       name: "1.5°C Benchmark (-4.2%/yr)",
-      color: "#059669",
+      color: "var(--color-green-600)",
       strokeWidth: 2,
       strokeDasharray: "4 4",
     },
     {
       dataKey: "sbti_wb2c",
       name: "Well-Below 2°C (-2.5%/yr)",
-      color: "#3b82f6",
+      color: "var(--color-blue-500)",
       strokeWidth: 2,
       strokeDasharray: "3 3",
     },
     {
       dataKey: "bau_projection",
       name: "Business As Usual (+1.5%/yr)",
-      color: "#94a3b8",
+      color: "var(--color-ink-400)",
       strokeWidth: 1.5,
       strokeDasharray: "5 5",
     },
@@ -280,9 +280,9 @@ const SbtiDashboard: React.FC = () => {
 
   // Scope breakdown bars
   const scopeBars = useMemo(() => [
-    { dataKey: "scope1", name: "Scope 1 (Direct)", color: "#ff6600", stackId: "a" },
-    { dataKey: "scope2", name: "Scope 2 (Indirect)", color: "#3b82f6", stackId: "a" },
-    { dataKey: "scope3", name: "Scope 3 (Value Chain)", color: "#8b5cf6", stackId: "a" },
+    { dataKey: "scope1", name: "Scope 1 (Direct)", color: "var(--color-brand-500)", stackId: "a" },
+    { dataKey: "scope2", name: "Scope 2 (Indirect)", color: "var(--color-blue-500)", stackId: "a" },
+    { dataKey: "scope3", name: "Scope 3 (Value Chain)", color: "var(--color-violet-500)", stackId: "a" },
   ], []);
 
   if (loading && !sbtiData) {
