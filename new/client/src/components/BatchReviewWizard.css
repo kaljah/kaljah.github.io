@@ -85,7 +85,7 @@
 }
 
 .segmented-item-btn.weird-active {
-  background: #fef3c7;
+  background: var(--color-legacy-fef3c7);
   color: var(--color-amber-700);
   font-weight: 700;
 }

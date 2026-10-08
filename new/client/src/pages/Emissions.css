@@ -131,7 +131,7 @@
 }
 
 .action-btn.primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--color-brand-600) 0%, #ff7519 100%);
+  background: linear-gradient(135deg, var(--color-brand-600) 0%, var(--color-legacy-ff7519) 100%);
   transform: translateY(-1px);
   box-shadow: 0 6px 18px rgba(255, 102, 0, 0.35);
 }
