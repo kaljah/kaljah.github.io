@@ -763,6 +763,10 @@ const MethaneIntensity: React.FC = () => {
                   }))}
                 dataKey="value"
                 xKey="name"
+                horizontal
+                sortDesc
+                referenceValue={upstreamTargetPct}
+                referenceLabel={`Target ${upstreamTargetPct}%`}
                 color="var(--color-blue-600)"
               />
             </div>
@@ -785,6 +789,8 @@ const MethaneIntensity: React.FC = () => {
                 }))}
                 dataKey="value"
                 xKey="name"
+                horizontal
+                sortDesc
                 color="var(--color-brand-500)"
               />
             </div>
@@ -807,6 +813,8 @@ const MethaneIntensity: React.FC = () => {
                 }))}
                 dataKey="value"
                 xKey="name"
+                horizontal
+                sortDesc
                 color="var(--color-blue-500)"
               />
             </div>
@@ -829,6 +837,8 @@ const MethaneIntensity: React.FC = () => {
                 }))}
                 dataKey="value"
                 xKey="name"
+                horizontal
+                sortDesc
                 color="var(--color-legacy-ea580c)"
               />
             </div>

@@ -93,7 +93,7 @@ export const RegionalCharts: React.FC<RegionalChartsProps> = ({ data, gwpHorizon
   return (
     <div className="chart-grid grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(100%,450px),1fr))]">
       <ChartCard className="card" title="GHG Intensity by Facility (kg CO₂e / BOE)" rule="var(--color-brand-500)">
-        <BarChart data={named((d) => ({ value: g20 ? d.co2_intensity_gwp20 || d.co2_intensity : d.co2_intensity }))} dataKey="value" xKey="name" color="var(--color-brand-500)" />
+        <BarChart data={named((d) => ({ value: g20 ? d.co2_intensity_gwp20 || d.co2_intensity : d.co2_intensity }))} dataKey="value" xKey="name" horizontal sortDesc color="var(--color-brand-500)" />
       </ChartCard>
       <ChartCard className="card" title="Scope 1 Direct vs Scope 2 Intensity" rule="var(--color-blue-600)">
         <BarChart
@@ -109,10 +109,10 @@ export const RegionalCharts: React.FC<RegionalChartsProps> = ({ data, gwpHorizon
           />
       </ChartCard>
       <ChartCard className="card" title="Oil BOE Contribution by Facility" rule="var(--color-legacy-ea580c)">
-        <BarChart data={named((d) => ({ value: d.total_oil || 0 }))} dataKey="value" xKey="name" color="var(--color-legacy-ea580c)" />
+        <BarChart data={named((d) => ({ value: d.total_oil || 0 }))} dataKey="value" xKey="name" horizontal sortDesc color="var(--color-legacy-ea580c)" />
       </ChartCard>
       <ChartCard className="card" title="Gas BOE Contribution by Facility" rule="var(--color-violet-500)">
-        <BarChart data={named((d) => ({ value: (d.total_gas || 0) * GAS_TO_BOE }))} dataKey="value" xKey="name" color="var(--color-violet-500)" />
+        <BarChart data={named((d) => ({ value: (d.total_gas || 0) * GAS_TO_BOE }))} dataKey="value" xKey="name" horizontal sortDesc color="var(--color-violet-500)" />
       </ChartCard>
     </div>
   );

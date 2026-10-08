@@ -258,7 +258,7 @@ const SbtiDashboard: React.FC = () => {
     {
       dataKey: "sbti_15c",
       name: "1.5°C Benchmark (-4.2%/yr)",
-      color: "var(--color-green-600)",
+      color: "var(--color-violet-500)",
       strokeWidth: 2,
       strokeDasharray: "4 4",
     },
