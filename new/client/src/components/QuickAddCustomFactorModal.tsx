@@ -122,7 +122,7 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
       <div
         className="modal-card"
         style={{
-          background: "#ffffff",
+          background: "var(--color-white)",
           borderRadius: "12px",
           width: "100%",
           maxWidth: "560px",
@@ -169,10 +169,10 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
                 alignItems: "center",
                 gap: "8px",
                 padding: "10px 12px",
-                backgroundColor: "#fef2f2",
+                backgroundColor: "var(--color-red-50)",
                 border: "1px solid #fee2e2",
                 borderRadius: "6px",
-                color: "#b91c1c",
+                color: "var(--color-red-700)",
                 fontSize: "0.8rem",
                 marginBottom: "16px",
               }}

@@ -308,10 +308,10 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
                             {
                               Verified: { background: "#dcfce7", color: "#166534" },
                               Pending: { background: "#fef9c3", color: "#854d0e" },
-                              Rejected: { background: "#fee2e2", color: "#b91c1c" },
+                              Rejected: { background: "#fee2e2", color: "var(--color-red-700)" },
                               Draft: { background: "#e0e7ff", color: "#3730a3" },
                             } as Record<string, React.CSSProperties>
-                          )[entry.status] || { background: "#f1f5f9", color: "#334155" }),
+                          )[entry.status] || { background: "var(--color-ink-100)", color: "var(--color-ink-700)" }),
                         }}
                       >
                         {entry.status}

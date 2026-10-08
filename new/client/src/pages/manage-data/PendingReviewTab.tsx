@@ -270,7 +270,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
               borderRadius: "10px",
               padding: "8px 18px",
               background: "linear-gradient(135deg, #ff6600, #ea580c)",
-              color: "#ffffff",
+              color: "var(--color-white)",
               fontWeight: 600,
               border: "none",
               boxShadow: "0 4px 14px rgba(255, 102, 0, 0.35)",

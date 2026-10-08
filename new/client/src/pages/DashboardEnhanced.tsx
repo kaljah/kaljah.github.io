@@ -701,27 +701,27 @@ const DashboardEnhanced: React.FC = () => {
         {
           name: "Combustion",
           value: Number((stats.combustion ?? 0).toFixed(2)),
-          color: "#10b981",
+          color: "var(--color-green-500)",
         },
         {
           name: "Flaring",
           value: Number((stats.flaring ?? 0).toFixed(2)),
-          color: "#ff6600",
+          color: "var(--color-brand-500)",
         },
         {
           name: "Venting",
           value: Number((stats.venting ?? 0).toFixed(2)),
-          color: "#f59e0b",
+          color: "var(--color-amber-500)",
         },
         {
           name: "Equipment Leaks",
           value: Number((stats.fugitive ?? 0).toFixed(2)),
-          color: "#8b5cf6",
+          color: "var(--color-violet-500)",
         },
         {
           name: "Other",
           value: Number((stats.other ?? 0).toFixed(2)),
-          color: "#3b82f6",
+          color: "var(--color-blue-500)",
         },
       ].filter((d) => d.value > 0),
     [stats],
@@ -925,23 +925,23 @@ const DashboardEnhanced: React.FC = () => {
         {
           dataKey: "emissions",
           name: "Total Emissions",
-          color: "#ff6600",
+          color: "var(--color-brand-500)",
         },
         {
           dataKey: "scope1",
           name: "Scope 1",
-          color: "#3b82f6",
+          color: "var(--color-blue-500)",
         },
         {
           dataKey: "trajectory",
           name: "Target Path",
-          color: "#10b981",
+          color: "var(--color-green-500)",
           strokeDasharray: "5 5",
         },
         {
           dataKey: "forecast",
           name: "Forecast",
-          color: "#8b5cf6",
+          color: "var(--color-violet-500)",
           strokeDasharray: "3 3",
         },
       ].filter((l) => trendData.some((p) => p[l.dataKey] != null));
