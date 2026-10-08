@@ -162,6 +162,15 @@ jobs:
         working-directory: new/client
         run: npx playwright install chromium --with-deps
 
+      - name: Seed E2E data (test sign-ins and sample data)
+        working-directory: new/server
+        env:
+          FLASK_ENV: testing
+          SECRET_KEY: "ci-e2e-secret-key-not-for-production"
+        run: |
+          python scripts/seed_e2e_user.py
+          python seed_showcase_data.py
+
       - name: Start Flask Backend Daemon
         working-directory: new/server
         env:
@@ -189,6 +198,12 @@ jobs:
             echo "Waiting for Vite server on :5173... ($i/30)"
             sleep 1
           done
+
+      - name: Create saved login for Playwright
+        working-directory: new/client
+        env:
+          E2E_BASE_URL: "http://127.0.0.1:5173"
+        run: node generate_storage_state.js
 
       - name: Run Full 19-Suite E2E Matrix (139 Tests)
         working-directory: new/client

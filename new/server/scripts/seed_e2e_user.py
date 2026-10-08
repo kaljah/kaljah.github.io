@@ -12,35 +12,40 @@ from app import app  # noqa: E402
 from extensions import db  # noqa: E402
 from models import User  # noqa: E402
 
-E2E_EMAIL = "a"
-E2E_PASSWORD = "a"
+# (email, password, role, full name). Throwaway sign-ins for CI and local test databases only.
+E2E_USERS = [
+    ("a", "a", "admin", "E2E Test User"),
+    ("itadmin@sonatrach.dz", "itadmin123", "it_admin", "E2E IT Admin"),
+    ("operator@sonatrach.dz", "operator123", "user", "E2E Operator"),
+]
 
 
 def main():
     if app.config.get("IS_PRODUCTION"):
-        raise SystemExit("Refusing to create the e2e test user: the configuration is production.")
+        raise SystemExit("Refusing to create the e2e test users: the configuration is production.")
     with app.app_context():
-        user = User.query.filter(db.func.lower(User.email) == E2E_EMAIL).first()
-        if user is None:
-            user = User(
-                fullName="E2E Test User",
-                orgName="E2E",
-                email=E2E_EMAIL,
-                role="admin",
-                sector="Oil & Gas",
-                department="QA",
-                jobTitle="Tester",
-                location="Global",
-                status="active",
-            )
-            db.session.add(user)
-            action = "created"
-        else:
-            user.role, user.status = "admin", "active"
-            action = "updated"
-        user.set_password(E2E_PASSWORD)
-        db.session.commit()
-        print(f"e2e user {E2E_EMAIL!r} {action} (id {user.id}, role {user.role})")
+        for email, password, role, name in E2E_USERS:
+            user = User.query.filter(db.func.lower(User.email) == email).first()
+            if user is None:
+                user = User(
+                    fullName=name,
+                    orgName="E2E",
+                    email=email,
+                    role=role,
+                    sector="Oil & Gas",
+                    department="QA",
+                    jobTitle="Tester",
+                    location="Global",
+                    status="active",
+                )
+                db.session.add(user)
+                action = "created"
+            else:
+                user.role, user.status = role, "active"
+                action = "updated"
+            user.set_password(password)
+            db.session.commit()
+            print(f"e2e user {email!r} {action} (id {user.id}, role {user.role})")
 
 
 if __name__ == "__main__":
