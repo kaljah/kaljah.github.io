@@ -13,7 +13,7 @@ export const AGRForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceTy
     <div className="agr-form">
       <div className="input-group">
         <label>
-          Throughput
+          Inlet (sour) gas throughput
           <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
         </label>
         <div className="grid gap-[10px] [grid-template-columns:1fr_130px] max-[600px]:[grid-template-columns:1fr]">

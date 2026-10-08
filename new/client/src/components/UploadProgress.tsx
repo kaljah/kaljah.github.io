@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, CircleAlert, CircleCheck, ChevronRight, Download, Loader, TriangleAlert, XCircle, type LucideIcon } from "lucide-react";
 import { Badge, Banner, Button, Card, type BadgeProps } from "../ui";
@@ -6,6 +6,7 @@ import { cn } from "../ui/cn";
 import { useAuth } from "../context/AuthContext";
 import api from "../api";
 import { useToast } from "./Toast";
+import SkipGroupList, { type SkipGroup } from "./SkipGroupList";
 
 export interface SkippedRow {
   row?: number;
@@ -56,6 +57,13 @@ const CATEGORIES: CategoryRule[] = [
 function categoryFromReason(reason = ""): { label: string; tone: NonNullable<BadgeProps["tone"]> } {
   const r = reason.toLowerCase();
   return CATEGORIES.find((c) => c.test(r)) ?? { label: "Other", tone: "neutral" };
+}
+
+function formatEta(sec: number): string {
+  if (sec < 60) return `${Math.max(1, Math.round(sec))} s`;
+  const m = Math.floor(sec / 60);
+  const s = Math.round(sec % 60);
+  return m >= 60 ? `${Math.floor(m / 60)} h ${m % 60} min` : `${m} min ${s.toString().padStart(2, "0")} s`;
 }
 
 const th = "sticky top-0 whitespace-nowrap border-b border-border bg-ink-50 px-3 py-2 text-left text-xs font-bold uppercase tracking-wide text-text-secondary";
@@ -139,14 +147,11 @@ const SkippedRows: React.FC<SkippedRowsProps> = ({ skippedCount, skippedPreview,
     <div className="mb-6 overflow-hidden rounded-md border border-border">
       <div className="flex w-full items-center bg-ink-50">
         <Disclosure open={open} onToggle={() => setOpen((v) => !v)} className="text-text">
-          <span>
-            {skippedCount.toLocaleString()} rows skipped — click to see reasons
-            {skippedCount > 100 && " (showing first 100)"}
-          </span>
+          <span>Row details{skippedCount > 100 ? " (first 100)" : ""}</span>
         </Disclosure>
         {hasErrorCsv && (
           <Button variant="secondary" size="sm" className="mr-3" onClick={onDownload}>
-            <Download className="size-4" aria-hidden="true" /> Download full CSV
+            <Download className="size-4" aria-hidden="true" /> Download all {skippedCount.toLocaleString("en-US")} skipped rows (CSV)
           </Button>
         )}
       </div>
@@ -206,13 +211,13 @@ const Anomalies: React.FC<AnomaliesProps> = ({ anomalies, count }) => {
       <Disclosure open={open} onToggle={() => setOpen((v) => !v)} className="w-full text-warning-fg hover:bg-amber-100/60">
         <TriangleAlert className="size-4 shrink-0" aria-hidden="true" />
         <span className="flex-1">
-          {count} statistical anomaly{count !== 1 ? "s" : ""} detected — click to review
+          {Number(count).toLocaleString("en-US")} statistical {count !== 1 ? "anomalies" : "anomaly"} detected — click to review
         </span>
       </Disclosure>
       {open && (
         <div className="border-t border-amber-500/30 p-4">
           <p className="m-0 mb-3 text-base leading-snug text-warning-fg">
-            These rows were imported but deviate significantly from historical values for the same facility and process type. Please review them carefully before approving.
+            These rows were imported but differ strongly from the same source (equipment, else fuel) at this facility over the previous 12 months. Check them before approving.
           </p>
           <Table head={["Row #", "Facility", "Value (tCO2e)", "Z-Score", "Expected Range", "Details"]}>
             {anomalies.map((a, i) => (
@@ -249,6 +254,10 @@ const UploadProgress: React.FC<UploadProgressProps> = ({ jobId, onComplete, onCa
   const [hasErrorCsv, setHasErrorCsv] = useState<boolean>(false);
   const [anomalyCount, setAnomalyCount] = useState<number>(0);
   const [anomalies, setAnomalies] = useState<AnomalyItem[]>([]);
+  const [skipGroups, setSkipGroups] = useState<SkipGroup[]>([]);
+  // rate measured from the first progress sample this screen saw (the job may have started earlier)
+  const rateStart = useRef<{ t: number; n: number } | null>(null);
+  const [eta, setEta] = useState<number | null>(null);
 
   useEffect(() => {
     if (!jobId) return;
@@ -266,6 +275,7 @@ const UploadProgress: React.FC<UploadProgressProps> = ({ jobId, onComplete, onCa
           error_csv_path?: string;
           anomaly_count?: number;
           anomalies?: AnomalyItem[];
+          skipped_groups?: SkipGroup[];
         }>(`/emissions/upload/status/${jobId}`);
         const data = res.data;
         setStatus(data.status);
@@ -278,6 +288,14 @@ const UploadProgress: React.FC<UploadProgressProps> = ({ jobId, onComplete, onCa
         setHasErrorCsv(!!(data.has_error_csv ?? data.error_csv_path));
         setAnomalyCount(data.anomaly_count || 0);
         setAnomalies(data.anomalies || []);
+        setSkipGroups(data.skipped_groups || []);
+        const now = Date.now();
+        if (!rateStart.current) rateStart.current = { t: now, n: data.processed || 0 };
+        const doneRows = (data.processed || 0) - rateStart.current.n;
+        const secs = (now - rateStart.current.t) / 1000;
+        if ((data.total || 0) > 0 && doneRows > 0 && secs >= 3) {
+          setEta(Math.max(0, (((data.total || 0) - (data.processed || 0)) * secs) / doneRows));
+        }
         if (data.status === "completed" || data.status === "error") clearInterval(interval);
       } catch (err) {
         console.error("Upload status poll failed", err);
@@ -310,8 +328,11 @@ const UploadProgress: React.FC<UploadProgressProps> = ({ jobId, onComplete, onCa
           <div className="mb-6 flex items-center gap-4">
             <Loader className="size-8 shrink-0 animate-spin text-brand-700" aria-hidden="true" />
             <div>
-              <p className="m-0 mb-1 text-md font-semibold text-text">Processing your file…</p>
-              <p className="m-0 text-base text-text-secondary">Large files may take several minutes. You can safely leave this page.</p>
+              <p className="m-0 mb-1 text-md font-semibold text-text">Importing your file…</p>
+              <p className="m-0 text-base text-text-secondary">
+                You can close this window: the import keeps running on the server. The file is saved in one go when every row is done, so its records appear
+                together at the end.
+              </p>
             </div>
           </div>
           <div role="progressbar" aria-label="Import progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress} className="mb-3 h-2 w-full overflow-hidden rounded-sm bg-ink-100">
@@ -320,8 +341,10 @@ const UploadProgress: React.FC<UploadProgressProps> = ({ jobId, onComplete, onCa
           <div className="flex justify-between text-base font-medium text-text-secondary">
             <span className="font-semibold text-brand-700">{progress}%</span>
             <span>
-              {processed.toLocaleString()} rows processed
-              {total > 0 ? ` of ~${total.toLocaleString()}` : ""}
+              {processed.toLocaleString("en-US")}
+              {total > 0 ? ` of ${total.toLocaleString("en-US")}` : ""} rows
+              {eta != null && progress < 99 ? ` · about ${formatEta(eta)} left` : ""}
+              {progress >= 99 && processed >= total && total > 0 ? " · saving…" : ""}
             </span>
           </div>
           {skippedCount > 0 && (
@@ -340,8 +363,29 @@ const UploadProgress: React.FC<UploadProgressProps> = ({ jobId, onComplete, onCa
             <Stat icon={CircleCheck} value={processed} label="Total Processed" />
           </div>
 
+          {skippedCount > 0 && skipGroups.length > 0 && (
+            <div className="mb-4 rounded-md border border-border bg-ink-50 p-4">
+              <p className="m-0 mb-1 text-base font-semibold text-text">
+                Why {skippedCount.toLocaleString("en-US")} row{skippedCount !== 1 ? "s were" : " was"} skipped
+              </p>
+              <p className="m-0 mb-3 text-sm text-text-secondary">
+                Fix these in your file and upload only the skipped rows again: the downloadable CSV holds them with their original columns (its first
+                column, the reason, is ignored on upload).
+              </p>
+              <SkipGroupList groups={skipGroups} limit={10} />
+            </div>
+          )}
           {skippedCount > 0 && <SkippedRows skippedCount={skippedCount} skippedPreview={skippedPreview} hasErrorCsv={hasErrorCsv} onDownload={downloadErrors} />}
           {anomalyCount > 0 && <Anomalies anomalies={anomalies} count={anomalyCount} />}
+
+          {reviewable && processed - skippedCount > 0 && (
+            <Banner tone="info" className="mb-2">
+              <strong>What happens next:</strong> the {(processed - skippedCount).toLocaleString("en-US")} imported record
+              {processed - skippedCount !== 1 ? "s are" : " is"} <em>Pending</em>.{" "}
+              {isReviewer ? "Review and approve them in Manage Data › Pending Review." : "An admin or superuser reviews and approves them."} Pending
+              records do not count in dashboards and reports until they are approved.
+            </Banner>
+          )}
 
           <div className="mt-6 flex items-center justify-end gap-3">
             {isReviewer ? (

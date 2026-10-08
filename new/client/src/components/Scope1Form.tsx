@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Input, Field } from "../ui";
 import { NativeSelect } from "../ui/NativeSelect";
 import api from "../api";
@@ -6,7 +6,7 @@ import CustomDropdown from "./CustomDropdown";
 import { useToast } from "./Toast";
 import { useAuth } from "../context/AuthContext";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
-import { PROCESS_TYPES, hideApiCitation, factorTypeLabel } from "./scope1-form/shared";
+import { PROCESS_TYPES, hideApiCitation, factorTypeLabel, processLabel } from "./scope1-form/shared";
 import Scope1ProcessSection from "./scope1-form/Scope1ProcessSection";
 import Scope1OptionsSection from "./scope1-form/Scope1OptionsSection";
 import Scope1History, { Scope1HistoryEntry } from "./scope1-form/Scope1History";
@@ -53,6 +53,7 @@ import {
   getSegmentBgColor,
   convertActivityData,
 } from "../utils/emissionFactorsAPI";
+import { hhvToBtu } from "../utils/hhv";
 
 interface FacilityItem {
   id: string | number;
@@ -177,7 +178,6 @@ export const Scope1Form: React.FC = () => {
 
   useEffect(() => {
     loadFacilities();
-    loadEntries();
     loadCustomFactors();
     loadEmissionSources();
   }, []);
@@ -515,10 +515,6 @@ export const Scope1Form: React.FC = () => {
     });
   };
 
-  useEffect(() => {
-    loadEntries();
-  }, [currentPage]);
-
   // Reset specific form data when process type changes
   useEffect(() => {
     setFormData({});
@@ -566,6 +562,7 @@ export const Scope1Form: React.FC = () => {
     const headers = [
       "Date",
       "Activity",
+      "Region / Facility",
       "Division",
       "Field",
       "Group",
@@ -584,15 +581,12 @@ export const Scope1Form: React.FC = () => {
     const rows = data.map((e) => [
       `${e.year}-${String(e.month).padStart(2, "0")}`,
       e.activity || "",
+      e.facility_name || e.region || "",
       e.division || "",
       e.field || "",
-      e.group || "",
+      e.group_name || e.group || "",
       e.equipment_id || "",
-      (PROCESS_TYPES as Record<string, any>)[e.process || e.process_type]?.label ||
-        (PROCESS_TYPES as Record<string, any>)[e.process || e.process_type] ||
-        e.process ||
-        e.process_type ||
-        "",
+      processLabel(e),
       e.fuel || e.fuel_type || e.activity_data_label || "",
       factorTypeLabel(e),
       e.amount || e.quantity || "",
@@ -636,7 +630,11 @@ export const Scope1Form: React.FC = () => {
     return opts;
   };
 
+  // S1K-F14: one request per page / filter change, and only the latest response is rendered (several
+  // effects fired duplicate requests and a late response could show another page's rows)
+  const entriesRequestSeq = useRef(0);
   const loadEntries = async () => {
+    const seq = ++entriesRequestSeq.current;
     setLoading(true);
     try {
       // BUG-UI-07 FIX: Include all active filter params in the API request
@@ -649,6 +647,7 @@ export const Scope1Form: React.FC = () => {
         ...(filterSearch && { search: filterSearch }),
       });
       const res = await api.get(`/emissions?${filterParams}`);
+      if (seq !== entriesRequestSeq.current) return; // a newer request was sent meanwhile
 
       // Safe handling of response data
       let allEntries: Scope1HistoryEntry[] = [];
@@ -677,7 +676,7 @@ export const Scope1Form: React.FC = () => {
     } catch (error) {
       console.error("Failed to load entries:", error);
     } finally {
-      setLoading(false);
+      if (seq === entriesRequestSeq.current) setLoading(false);
     }
   };
 
@@ -1186,6 +1185,11 @@ export const Scope1Form: React.FC = () => {
           finalAmount = amt;
           finalUnit = "bbl";
         }
+        // one activity representation: the method inputs carry the converted bbl too (the server
+        // refuses a row whose unit and tank_unit disagree, S1K-F9)
+        processInputs.amount = finalAmount;
+        processInputs.quantity = finalAmount;
+        processInputs.tank_unit = "bbl";
       }
 
       // 3. Pneumatics
@@ -1228,6 +1232,9 @@ export const Scope1Form: React.FC = () => {
         } else {
           finalAmount = parseFloat(formData.unload_events || formData.unload_freq || formData.events || formData.amount);
           finalUnit = "events";
+          // the lift-type select displays "Plunger lift" until changed: send what is displayed (the server
+          // requires it; it used to assume non-plunger)
+          processInputs.unloading_type = formData.unloading_type || formData.unload_type || "plunger";
         }
       }
 
@@ -1493,53 +1500,26 @@ export const Scope1Form: React.FC = () => {
         fuel_density: fuelDensity ? parseFloat(String(fuelDensity)) : undefined,
         data_source_ref: dataSourceRef || undefined,
 
-        // HHV & Combustion Parameters — for Tier 2 custom fuel properties or Tier 3 specific factor mode
-        // Convert user-entered HHV to BTU/unit matching the fuel quantity unit
+        // HHV & Combustion Parameters — for Tier 2 custom fuel properties or Tier 3 specific factor mode.
+        // The HHV is sent in Btu with its real basis (Btu/scf, Btu/gal or Btu/lb); the server converts it
+        // to the fuel's basis (with the density when that crosses volume / mass). It used to be sent as
+        // "BTU/unit", which the server reads in the catalog basis: an MJ/kg value for diesel (Btu/gal
+        // basis) was taken as Btu/gal, ~7x off.
         ...(() => {
           const isTier2Override = sourceType === "custom" && tier2Mode === "override";
           if ((sourceType !== "specific" && !isTier2Override) || !formData.hhv) return {};
-          const rawHHV = parseFloat(formData.hhv);
-          const hhvUnit = formData.hhv_unit || "BTU/scf";
-
-          // All conversions normalise to BTU per the same unit as the fuel quantity:
-          // Gas-volume fuels → BTU/scf  (1 scf = 1 ft³ at standard conditions)
-          // Liquid fuels     → BTU/gal
-          // Mass fuels       → BTU/lb
-          let hhvBtu = rawHHV;
-          switch (hhvUnit) {
-            case "BTU/scf":
-            case "BTU/ft3":
-              hhvBtu = rawHHV; // already correct for scf/ft3 gas
-              break;
-            case "MJ/m3":
-              // 1 MJ/m3 × (947.817 BTU/MJ) / (35.3147 scf/m3) = 26.839 BTU/scf
-              hhvBtu = (rawHHV * 947.817) / 35.3147;
-              break;
-            case "kcal/m3":
-              // 1 kcal/m3 × (3.96567 BTU/kcal) / (35.3147 scf/m3) = 0.11231 BTU/scf
-              hhvBtu = (rawHHV * 3.96567) / 35.3147;
-              break;
-            case "BTU/gal":
-              hhvBtu = rawHHV; // already correct for liquid-gal fuels
-              break;
-            case "BTU/lb":
-              hhvBtu = rawHHV; // already correct for mass-based fuels
-              break;
-            case "MJ/kg":
-              // 1 MJ/kg × (947.817 BTU/MJ) / (2.20462 lb/kg) = 430.0 BTU/lb
-              hhvBtu = (rawHHV * 947.817) / 2.20462;
-              break;
-            default:
-              hhvBtu = rawHHV;
-          }
-
+          const { hhv, hhvUnit } = hhvToBtu(parseFloat(formData.hhv), formData.hhv_unit || "BTU/scf");
           return {
-            hhv: hhvBtu, // always in BTU/unit after conversion
-            hhv_unit: "BTU/unit", // signal to backend that conversion is done
-            hhv_original: rawHHV, // preserve original for audit trail
-            hhv_original_unit: hhvUnit,
+            hhv,
+            hhv_unit: hhvUnit,
+            hhv_original: parseFloat(formData.hhv), // audit trail
+            hhv_original_unit: formData.hhv_unit || "BTU/scf",
             combustion_efficiency: formData.combustion_efficiency
               ? parseFloat(formData.combustion_efficiency) / 100.0
+              : undefined,
+            // flaring: CH4 destroyed (eta_d), separate from the carbon conversion (eta_c)
+            destruction_efficiency: formData.destruction_efficiency
+              ? parseFloat(formData.destruction_efficiency) / 100.0
               : undefined,
             flare_type: formData.flare_type || undefined,
           };
