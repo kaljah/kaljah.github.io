@@ -1,11 +1,19 @@
 name: E2E Browser Testing Matrix (Playwright)
 
-# Manual only for now. These specs cannot pass on a clean CI machine: they sign in as accounts that
-# only exist in a locally seeded database (for example itadmin@sonatrach.dz, or "a"/"a" through
-# generate_storage_state.js) and call local seed scripts. Re-enable the push, pull_request and
-# schedule triggers once CI seeds an admin (ADMIN_EMAIL/ADMIN_PASSWORD), the test accounts and
-# storageState.json before the run. See docs/hardening-plan.md.
+# Tier 1 (smoke, ~21 tests) runs on every push to main and every pull request. It seeds its own
+# data in CI: scripts/seed_e2e_user.py creates the "a"/"a" test sign-in (refuses to run in production)
+# and seed_showcase_data.py loads sample data, then generate_storage_state.js saves the login.
+# Tier 2 (the 139-test matrix) is manual only: its specs also need the itadmin/operator accounts and
+# local seed scripts that CI does not create yet. See docs/hardening-plan.md.
 on:
+  pull_request:
+    branches:
+      - main
+      - master
+  push:
+    branches:
+      - main
+      - master
   workflow_dispatch:
     inputs:
       test_tier:
@@ -24,7 +32,7 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────────
   e2e-smoke:
     name: "Tier 1: Critical-Path E2E Smoke (~15 Tests)"
-    if: github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.test_tier == 'smoke')
+    if: github.event_name == 'pull_request' || github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.test_tier == 'smoke')
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -57,6 +65,15 @@ jobs:
         working-directory: new/client
         run: npx playwright install chromium --with-deps
 
+      - name: Seed E2E data (test sign-in and sample data)
+        working-directory: new/server
+        env:
+          FLASK_ENV: testing
+          SECRET_KEY: "ci-e2e-secret-key-not-for-production"
+        run: |
+          python scripts/seed_e2e_user.py
+          python seed_showcase_data.py
+
       - name: Start Flask Backend Daemon
         working-directory: new/server
         env:
@@ -85,6 +102,12 @@ jobs:
             sleep 1
           done
 
+      - name: Create saved login for Playwright
+        working-directory: new/client
+        env:
+          E2E_BASE_URL: "http://127.0.0.1:5173"
+        run: node generate_storage_state.js
+
       - name: Run E2E Smoke Test Suite
         working-directory: new/client
         env:
@@ -106,7 +129,7 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────────
   e2e-full-matrix:
     name: "Tier 2: Full 19-Suite Matrix (139 Tests)"
-    if: github.event_name == 'push' || github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.test_tier == 'full')
+    if: github.event_name == 'workflow_dispatch' && inputs.test_tier == 'full'
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
