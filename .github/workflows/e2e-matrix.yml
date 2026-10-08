@@ -1,17 +1,11 @@
 name: E2E Browser Testing Matrix (Playwright)
 
+# Manual only for now. These specs cannot pass on a clean CI machine: they sign in as accounts that
+# only exist in a locally seeded database (for example itadmin@sonatrach.dz, or "a"/"a" through
+# generate_storage_state.js) and call local seed scripts. Re-enable the push, pull_request and
+# schedule triggers once CI seeds an admin (ADMIN_EMAIL/ADMIN_PASSWORD), the test accounts and
+# storageState.json before the run. See docs/hardening-plan.md.
 on:
-  pull_request:
-    branches:
-      - main
-      - master
-  push:
-    branches:
-      - main
-      - master
-  schedule:
-    # Nightly full regression at 02:00 UTC
-    - cron: "0 2 * * *"
   workflow_dispatch:
     inputs:
       test_tier:
