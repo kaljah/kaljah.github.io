@@ -142,3 +142,10 @@ new/client/stats.html
 
 # Playwright specs write screenshots here on every run (outputs, not baselines)
 new/client/e2e/deep_user_audit/screenshots/
+
+# Generated output of the Scope 1 100k audit tooling
+audit/scope1_100k/**/*.csv
+audit/scope1_100k/**/*.jsonl
+audit/scope1_100k/**/*.jsonl.gz
+audit/scope1_100k/**/results/
+audit/scope1_100k/out/
