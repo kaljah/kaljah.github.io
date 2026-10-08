@@ -1185,4 +1185,4 @@ def get_report_exclusions():
 
 
 # Route modules split out of this file; imported last because they use the helpers above.
-from routes import dashboard_flaring, dashboard_ogmp, dashboard_sbti  # noqa: E402,F401
+from routes import dashboard_bridge, dashboard_flaring, dashboard_ogmp, dashboard_sbti  # noqa: E402,F401

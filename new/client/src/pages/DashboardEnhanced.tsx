@@ -5,7 +5,7 @@ import FlaringComplianceCard from "./dashboard/FlaringComplianceCard";
 import DetailedBreakdownSection from "./dashboard/DetailedBreakdownSection";
 import { useAnalyticsFilter } from "../filters/useAnalyticsFilter";
 import { SegmentedControl, Badge, cn } from "../ui";
-import { PendingBanner, TrendCard, DonutCard, SbtiCard, CategoricalCard } from "./dashboard/DashboardCards";
+import { PendingBanner, TrendCard, DonutCard, SbtiCard, CategoricalCard, BridgeCard } from "./dashboard/DashboardCards";
 import { useAuth } from "../context/AuthContext";
 import api from "../api";
 import { useToast } from "../components/Toast";
@@ -1002,6 +1002,20 @@ const DashboardEnhanced: React.FC = () => {
             <DonutCard title="Emissions by Source" data={sourceChartData} />
           </div>
         </div>
+
+        <BridgeCard
+          params={
+            new URLSearchParams({
+              facilityId: currentRegion,
+              activity: currentActivity,
+              division: currentDivision,
+              ...(currentSegment !== "all" ? { segment: currentSegment } : {}),
+              ...(currentYear !== "all" ? { year: currentYear } : {}),
+              ...(includePending ? { includePending: "true" } : {}),
+              ...(gwpHorizon && gwpHorizon !== "100" ? { gwp_horizon: gwpHorizon } : {}),
+            })
+          }
+        />
 
         {sbtiData?.trajectory?.length > 0 && <SbtiCard sbti={sbtiData} onOpen={() => navigate("/sbti")} />}
 
