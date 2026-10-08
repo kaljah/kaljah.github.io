@@ -18,23 +18,24 @@ Companion to `docs/sonatrach-readiness-plan.md` (the what and why). This file is
 ## Status
 | Milestone | State | PRs |
 |-----------|-------|-----|
+| Recovery of unmerged branches | Done 2026-10-08 | Audit 2026-10-01 (security fixes and owner decisions) and the Scope 1 100k import audit (S1K-F1..F37) ported from `ccr-669f6fbd-pew7ww` and `ccr-b93733a1-u3m8s8`; the other branches' work was already on main or superseded. Reports in `docs/validation/FULL_AUDIT_2026-10-01.md` and `SCOPE1_100K_BULK_AUDIT_2026-10-01.md`. |
 | M0 Kick-off pack | Not started | |
 | M1 Deployment package | Not started | |
 | M2 Offline operation | Not started | |
 | M3 Backups, releases, upgrades | Not started | |
 | M4 Security hardening | Not started | |
 | M5 Single sign-on | Not started | |
-| M6 Organisation scope | Not started | |
+| M6 Organisation scope | T6.1 done (wildcards escaped, ported audit A-04) | |
 | M7 French | Not started | |
 | M8 Framework reports and methodology changes | Not started | |
 | M9 Scale and quality | Not started | |
 | M10 Handover pack | Not started | |
 
 ## Findings this plan fixes (found while planning, 2026-10-08)
-- **Facility scoping matches strings with `ILIKE`** (`utils.get_allowed_facility_ids`, `new/server/utils.py:39-49`). `user.location` is compared to facility region, location and name, unescaped, so `%` or `_` in a location act as wildcards: a location of `%` grants a `user` or `superuser` every facility. Only IT roles set `location`, but IT must have no data access, and an IT admin can create a `user` account with `location="%"`. Fixed in M6 (T6.1 is the quick patch, T6.2 the real fix).
-- **No deployment package**: `Dockerfile` and `docker-compose.yml` were removed in `9ac7e65`. The old Dockerfile had two concatenated builds (the second, Render-specific one wins and does not include the frontend) and the compose file hard-coded `SECRET_KEY` and `test/test` database credentials.
+- **Facility scoping matches strings with `ILIKE`** (wildcards fixed 2026-10-08; explicit scope assignments, T6.2, still to do) (`utils.get_allowed_facility_ids`, `new/server/utils.py:39-49`). `user.location` is compared to facility region, location and name, unescaped, so `%` or `_` in a location act as wildcards: a location of `%` grants a `user` or `superuser` every facility. Only IT roles set `location`, but IT must have no data access, and an IT admin can create a `user` account with `location="%"`. Fixed in M6 (T6.1 is the quick patch, T6.2 the real fix).
+- **No deployment package**: `Dockerfile` and `docker-compose.yml` were removed in `9ac7e65` (and on branch `ccr-669f6fbd-pew7ww` by owner decision for the Render deployment; on-premise needs a new package). The old Dockerfile had two concatenated builds (the second, Render-specific one wins and does not include the frontend) and the compose file hard-coded `SECRET_KEY` and `test/test` database credentials.
 - **Internet dependencies**: Google Fonts, Google and NASA GIBS map tiles, Copernicus/Sentinel-5P APIs. Sonatrach servers will likely have no outbound internet.
-- **Number parsing in bulk upload** uses `float()` directly (`routes/emissions_bulk_upload.py:124` and onwards), so a French-formatted `1,5` is rejected or, with thousands separators, misread.
+- **Number parsing in bulk upload** uses `float()` directly in `routes/emissions_bulk_upload.py`; the file import (`background_processor.py`) handles semicolon files with decimal commas and thousands separators, but T7.4 must cover every entry path.
 - **Size of the French work**: about 1,100 JSX text strings and 170 toast/alert messages in `new/client/src`, about 350 backend error messages in `routes/`, and the 1,780-line PDF generator (`src/utils/ModernReportGenerator.ts`).
 
 ## M0 - Kick-off pack (week 1, no code)
