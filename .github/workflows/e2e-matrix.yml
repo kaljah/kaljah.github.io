@@ -80,7 +80,8 @@ jobs:
           FLASK_ENV: testing
           SEED_ADMIN: "true"
           SECRET_KEY: "ci-e2e-secret-key-not-for-production"
-          RATELIMIT_ENABLED: "false"
+          # The specs sign in once per test (100+ logins); the production login limit is 20 per 15 minutes.
+          LOGIN_RATE_LIMIT: "100000 per minute"
           DISABLE_OUTBOUND_EMAIL: "true"
         run: |
           python app.py &
@@ -177,7 +178,8 @@ jobs:
           FLASK_ENV: testing
           SEED_ADMIN: "true"
           SECRET_KEY: "ci-e2e-secret-key-not-for-production"
-          RATELIMIT_ENABLED: "false"
+          # The specs sign in once per test (100+ logins); the production login limit is 20 per 15 minutes.
+          LOGIN_RATE_LIMIT: "100000 per minute"
           DISABLE_OUTBOUND_EMAIL: "true"
         run: |
           python app.py &
