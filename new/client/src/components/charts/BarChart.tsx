@@ -22,6 +22,8 @@ const MODERN_BAR_PALETTE = [
   "var(--color-cyan-500)",
 ];
 
+const VALUE_LABEL_STYLE: React.CSSProperties = { fill: "var(--color-ink-700)", fontSize: 11, fontWeight: 600 };
+
 export interface BarItemConfig {
   dataKey: string;
   name?: string;
@@ -304,7 +306,7 @@ export const BarChart: React.FC<BarChartProps> = ({
                   dataKey={finalDataKey}
                   position="top"
                   formatter={valueFormatter}
-                  style={{ fill: "var(--color-ink-700)", fontSize: 11, fontWeight: 600 }}
+                  style={VALUE_LABEL_STYLE}
                 />
               )}
             </Bar>
