@@ -87,6 +87,30 @@ def factor_hhv_unit(factor_data):
     return _BASEUNIT_HHV.get(str(factor_data.get("baseUnit") or "").strip().lower())
 
 
+_HHV_ENERGY_TO_BTU = {"btu": 1.0, "kbtu": 1e3, "mmbtu": 1e6, "mj": 1.0 / BTU_TO_MJ, "kj": 1e-3 / BTU_TO_MJ,
+                      "gj": 1e3 / BTU_TO_MJ, "kcal": 0.0041868 / BTU_TO_MJ, "kwh": 3.6 / BTU_TO_MJ, "therm": 1e5}
+
+
+def user_hhv(hhv, hhv_unit):
+    """A heating value entered with its own unit ("MJ/m3", "kcal/m3", "BTU/gal", "MJ/kg") ->
+    (value in Btu, "btu/<basis>"). No unit, or the form's already-converted "BTU/unit", keeps the
+    catalog basis: (hhv, None). An unreadable unit raises UnitError (S1K-F11: a bulk "MJ/m3" was
+    read as Btu/scf, 27x low)."""
+    if hhv in (None, "") or hhv_unit in (None, "") or str(hhv_unit).strip().lower() in ("btu/unit", "-"):
+        return hhv, None
+    hu = norm_unit(hhv_unit).replace(" ", "")
+    num, _, den = hu.partition("/")
+    mult = _HHV_ENERGY_TO_BTU.get(num)
+    if mult is None or not den:
+        raise UnitError(f"Unsupported HHV unit '{hhv_unit}' (use e.g. Btu/scf, MJ/m3, kcal/m3, Btu/gal, MJ/kg)")
+    den = {"ft3": "scf", "cf": "scf", "lb": "lb", "m³": "m3"}.get(den, den)
+    try:
+        unit_dimension(den)
+    except UnitError:
+        raise UnitError(f"Unsupported HHV unit '{hhv_unit}': '{den}' is not a volume or mass unit")
+    return float(hhv) * mult, f"btu/{den}"
+
+
 def fuel_basis(fuel_type, hhv_unit=None):
     """(basis unit, Btu multiplier) of a catalog HHV. BUG-027: from the factor, never from the activity unit."""
     if hhv_unit:
@@ -216,10 +240,13 @@ class CombustionCalculator(BaseCalculator):
         gwp_dict=None,
         density=None,
         hhv_unit=None,
+        carbon_wt=None,
         **comps,
     ):
         """
         Standard fuel-based combustion calculation with API §4.2.1 thermodynamic normalization.
+        carbon_wt: fuel carbon content (wt %, Tier 3 fuel analysis of a liquid or solid fuel): CO2 by
+        Eq 4-5 (fuel mass x carbon x 44/12, Exhibit 4.5); CH4 and N2O stay on the fuel factors.
         Emissions = Quantity * EF * (HHV if energy-based)
         """
         # Validate inputs
@@ -230,7 +257,7 @@ class CombustionCalculator(BaseCalculator):
             "gas",
             "Natural Gas",
             "natural_gas",
-        ] or str(fuel_unit).strip().lower().replace(" ", "") in GAS_VOLUME_UNITS  # any gas volume (Sm3, Nm3, Mscf...)
+        ] or norm_unit(fuel_unit).replace(" ", "") in GAS_VOLUME_UNITS  # any gas volume (Sm3, Nm3, Mscf, MMcf...)
 
         # Apply API §4.2.1 thermodynamic normalization to gas fuels if operating T/P supplied
         raw_quantity = fuel_quantity
@@ -272,7 +299,15 @@ class CombustionCalculator(BaseCalculator):
 
         # Tier 3 Gas Composition Override (Carbon Mass Balance)
         heavy_hc_warning = False
-        if "c1" in comps and comps["c1"] not in [None, "", "-"]:
+        # only a composition that carries hydrocarbons: the dispatcher always passes c1..c10 (0.0
+        # when no analysis was given), and a zero-carbon balance replaced the factor CO2 with 0
+        def _pos(v):
+            try:
+                return float(v) > 0
+            except (TypeError, ValueError):
+                return False
+
+        if any(_pos(comps.get(f"c{i}")) for i in range(1, 11)):
             raw_c = {f"c{i}": float(comps.get(f"c{i}") or 0.0) for i in range(1, 11)}
             raw_co2 = float(comps.get("co2_comp") or comps.get("co2_mol") or 0.0)
             total_raw = sum(raw_c.values()) + raw_co2
@@ -336,6 +371,27 @@ class CombustionCalculator(BaseCalculator):
                     density_ch4 = CONVERSIONS["density_ch4"]
                     ch4_slip_vol = vol_m3 * c_fractions["c1"] * max(0.0, 1.0 - eta_c)
                     ch4_val = (ch4_slip_vol * density_ch4) / 1000.0
+
+        # Tier 3 fuel analysis of a liquid / solid fuel: carbon mass balance, Eq 4-5 (Exhibit 4.5). The
+        # carbon content was ignored and the catalog CO2 factor stored instead (Exhibit 4.5: 45,060 t, not 50,966 t)
+        if carbon_wt not in (None, "", "-") and not any(_pos(comps.get(f"c{i}")) for i in range(1, 11)):
+            cw = float(carbon_wt)
+            cw = cw / 100.0 if cw > 1.0 else cw
+            if not 0.0 < cw <= 1.0:
+                raise ValueError("Fuel carbon content must be between 0 and 100 wt %")
+            dim, to_base = unit_dimension(fuel_unit)
+            if dim == "mass":
+                fuel_kg = raw_quantity * to_base
+            elif dim == "volume" and not is_gas_fuel:
+                rho = _density_kg_m3(density, "volume_liquid")
+                if not rho:
+                    raise UnitError("A fuel carbon content (wt %) on a liquid volume needs the fuel density")
+                fuel_kg = raw_quantity * to_base * rho
+            else:
+                raise UnitError("The fuel carbon content (wt %) needs the fuel quantity as a mass or a liquid volume; "
+                                "gas fuels use the gas analysis (mol %)")
+            eta_c = _normalize_efficiency(combustion_efficiency, default=1.0)
+            co2_val = fuel_kg * cw * eta_c * (44.01 / 12.011) / 1000.0
 
         # Resolve tier from factor_source (passed via uncertainties dict sidecar or defaults)
         uncertainties = uncertainties or {}
@@ -428,19 +484,12 @@ class FlaringCalculator(BaseCalculator):
         )
 
         # Determine efficiencies based on flare type or custom parameter overrides
+        # API Compendium 2021 Section 5.1: 98 % of the flare gas carbon to CO2 (Eq 5-2); 2 % residual CH4,
+        # or 0.5 % for a well-designed and operated (enclosed) flare. The former 98.4 / 99.6 / 92 %
+        # conversion defaults by flare type had no source.
         ft = str(flare_type or "elevated").lower().strip().replace("-", "_").replace(" ", "_")
-        if ft in ["enclosed", "enclosed_ground", "ground"]:
-            default_eta_c = 0.996
-            default_eta_d = 0.995  # Higher for enclosed
-        elif ft in ["elevated", "steam_assisted", "air_assisted", "unassisted", "flare", "open"]:
-            default_eta_c = 0.984
-            default_eta_d = 0.98
-        elif ft in ["pit", "open_pit", "other", "candle"]:
-            default_eta_c = 0.920
-            default_eta_d = 0.95
-        else:
-            default_eta_c = 0.984
-            default_eta_d = 0.98
+        default_eta_c = 0.98
+        default_eta_d = 0.995 if ft in ["enclosed", "enclosed_ground", "ground"] else 0.98
 
         eta_c = _normalize_efficiency(combustion_efficiency, default=default_eta_c)
         eta_d = _normalize_efficiency(destruction_efficiency, default=default_eta_d)

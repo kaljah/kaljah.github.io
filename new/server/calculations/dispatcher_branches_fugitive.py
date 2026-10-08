@@ -295,8 +295,12 @@ def calc_agr(self, calculator, flat_inputs, gwp_dict, uncertainties, unit):
         ["agr_throughput", "gas_throughput", "amount", "quantity", "throughput"],
         "gas throughput",
     )
+    if flat_inputs.get("agr_throughput") in (None, "", "-") and flat_inputs.get("gas_throughput") in (None, "", "-"):
+        agr_unit = self._method_unit(flat_inputs, ["agr_unit"], flat_inputs.get("unit"), None) or unit
+    else:
+        agr_unit = flat_inputs.get("agr_unit") or unit
     vol_mmscf = self._normalize_volume(
-        agr_vol, flat_inputs.get("agr_unit") or unit, "mmscf", flat_inputs.get("year"), flat_inputs.get("month")
+        agr_vol, agr_unit, "mmscf", flat_inputs.get("year"), flat_inputs.get("month")
     )
     raw_co2_in = self._require_float(
         flat_inputs, ["agr_co2_in", "co2_in", "co2_content"], "inlet CO2 mole %"

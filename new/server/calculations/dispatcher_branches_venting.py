@@ -13,7 +13,10 @@ def calc_venting(self, calculator, emission_factors, flat_inputs, gwp_dict, unce
         ["blowdown_volume", "amount", "quantity"],
         "vessel physical volume",
     )
-    raw_unit = flat_inputs.get("blowdown_unit") or unit or "m3"
+    if flat_inputs.get("blowdown_volume") in (None, "", "-"):   # the volume is the record quantity
+        raw_unit = self._method_unit(flat_inputs, ["blowdown_unit"], flat_inputs.get("unit"), "m3")
+    else:
+        raw_unit = flat_inputs.get("blowdown_unit") or unit or "m3"
     vol_m3 = self._normalize_volume(raw_vol, raw_unit, "m3", flat_inputs.get("year"), flat_inputs.get("month"))
     press = self._require_float(
         flat_inputs,
@@ -101,7 +104,11 @@ def calc_associated_gas_venting(self, calculator, emission_factors, flat_inputs,
         ["venting_duration", "duration", "hours", "days", "vent_duration"],
         None,
     )
-    duration_unit = flat_inputs.get("duration_unit") or "days"
+    # S1K-F20: the Tier 3 venting time is in hours (form "Venting time (h)", calculator
+    # default); a file without duration_unit was read in days (24x high)
+    is_t3 = str(tier_val or "").strip().lower() in ("tier3", "tier_3", "3", "t3") or \
+        str(factor_src or "").strip().lower() == "specific"
+    duration_unit = flat_inputs.get("duration_unit") or ("hours" if is_t3 else "days")
     period_duration = self._optional_float(
         flat_inputs,
         ["period_duration", "total_period", "period_days", "operating_days"],
@@ -186,24 +193,8 @@ def calc_tank(self, calculator, emission_factors, flat_inputs, gwp_dict, process
         ["amount", "quantity", "throughput"],
         "tank liquid throughput",
     )
-    t_unit = str(
-        flat_inputs.get("tank_unit")
-        or flat_inputs.get("throughput_unit")
-        or unit
-        or "bbl"
-    ).lower()
-    if t_unit in ["m3", "m³", "cubic_meters"]:
-        throughput_bbl = raw_throughput * CONVERSIONS.get(
-            "m3_to_bbl", 6.28981
-        )
-    elif t_unit in ["gal", "gallon", "gallons"]:
-        throughput_bbl = raw_throughput / 42.0
-    elif t_unit in ["l", "liter", "liters"]:
-        throughput_bbl = (raw_throughput / 1000.0) * CONVERSIONS.get(
-            "m3_to_bbl", 6.28981
-        )
-    else:
-        throughput_bbl = raw_throughput  # bbl
+    t_unit = self._method_unit(flat_inputs, ["tank_unit", "throughput_unit"], flat_inputs.get("unit"), "bbl")
+    throughput_bbl = self._liquid_bbl(raw_throughput, t_unit, "Tank throughput")
 
     # BUG-102: GOR is one of several methods; without it the Table 6-22 / 6-24 defaults (or
     # VBE / Standing / EUB when separator data are given) apply instead of zero emissions
@@ -270,8 +261,14 @@ def calc_pneumatic_devices(self, calculator, flat_inputs, gwp_dict, uncertaintie
                          "controllers need a controller type (Tables 6-14 / 6-15), monitoring "
                          "survey counts, or a measured bleed rate")
     bleed_rate = float(bleed_raw) if bleed_raw not in (None, "", "-") else None
-    if bleed_rate is not None and flat_inputs.get("pneu_bleed_unit", "scf") == "m3":
-        bleed_rate *= 35.3147  # m3 -> scf
+    if bleed_rate is not None:
+        # S1K-F4: every volume-rate spelling (scf, scf/hr, m3, m³, Sm3, m3/hr ...) -> scf/h;
+        # a mass rate or an unknown unit is refused (only the exact "m3" was converted)
+        from .units import UnitError, volume_rate_m3_per_hour
+        try:
+            bleed_rate *= volume_rate_m3_per_hour(flat_inputs.get("pneu_bleed_unit") or "scf") / CONVERSIONS["scf_to_m3"]
+        except UnitError as err:
+            raise ValueError(f"Pneumatic bleed rate unit: {err} (use scf/hr or m3/hr)")
     ch4_raw = next((flat_inputs.get(k) for k in ("pneu_ch4_content", "ch4_content", "c1", "gas_content")
                     if flat_inputs.get(k) not in (None, "", "-")), None)
     if ch4_raw is None and bleed_rate is not None and not ctype:

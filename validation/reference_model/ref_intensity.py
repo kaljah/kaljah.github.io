@@ -6,7 +6,7 @@ Governing standards:
 - IOGP Report 634: Carbon intensity indicators
 """
 
-from .ref_constants import DENSITY_CH4, CONV_MSCF_TO_M3
+from .ref_constants import _frac, DENSITY_CH4, CONV_MSCF_TO_M3
 
 
 def ref_calculate_carbon_intensity(scope1_tco2e, scope2_tco2e, oil_bbl, gas_mscf):
@@ -32,7 +32,7 @@ def ref_calculate_methane_loss_rate(methane_emissions_tonnes, gas_production_msc
         return 0.0
 
     prod_m3 = prod_mscf * CONV_MSCF_TO_M3
-    prod_ch4_kg = prod_m3 * float(ch4_mole_fraction or 0.90) * DENSITY_CH4
+    prod_ch4_kg = prod_m3 * _frac(ch4_mole_fraction, 0.90) * DENSITY_CH4
     prod_ch4_tonnes = prod_ch4_kg / 1000.0
     if prod_ch4_tonnes <= 0:
         return 0.0

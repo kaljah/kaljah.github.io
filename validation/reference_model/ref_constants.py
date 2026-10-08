@@ -110,3 +110,9 @@ def resolve_gwp(standard="AR5", horizon="100"):
     std = str(standard or "AR5").strip().upper()
     hor = str(horizon or "100").strip()
     return GWP_REGISTRY.get((std, hor), GWP_AR5_100)
+
+
+def _frac(value, default):
+    """A fraction input, the default only when it is missing: an explicit 0 stays 0
+    (`float(x or default)` turned "no CO2" into the default 1 %)."""
+    return default if value is None or value == "" else float(value)

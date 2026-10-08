@@ -667,18 +667,12 @@ def add_emission():
         )
 
     # BUG-007: plausibility bounds and statistical anomaly check on the manual path too
-    from calculations.anomaly import AnomalyDetector, plausibility_check
+    from calculations.anomaly import AnomalyDetector, plausibility_check, scope1_source
     from services.scope1_calc import apply_result
     from utils import initial_record_status, user_label
 
-    z_msg = None
-    try:
-        z = AnomalyDetector().check_scope1(int(data["facility_id"]), data["process_type"], em_result["totalCo2e"],
-                                           data["year"], data["month"])
-        z_msg = z.get("message") if z.get("flagged") else None
-    except Exception:
-        z_msg = None
-    verdict, qa_msg = plausibility_check(em_result["totalCo2e"], z_msg)
+    # the statistical check runs once the record carries its final source (equipment / fuel), below
+    verdict, qa_msg = plausibility_check(em_result["totalCo2e"], None)
     if verdict == "reject":
         return jsonify({"error": qa_msg, "field": "amount"}), 422
 
@@ -719,6 +713,20 @@ def add_emission():
 
     facility = db.session.get(Facility, data.get("facility_id"))
     facility_name = facility.name if facility else "Unknown"
+
+    # statistical anomaly against the same source's previous 12 months (flagged values need a reviewer)
+    if not qa_msg:
+        try:
+            z = AnomalyDetector().check_scope1(int(data["facility_id"]), record.process_type, em_result["totalCo2e"],
+                                               data["year"], data["month"],
+                                               source=scope1_source(record.equipment_id, record.fuel_type))
+            if z.get("flagged") and z.get("message"):
+                record.qa_flag = z["message"][:255]
+                if record.status == "Verified":
+                    record.status = "Pending"
+                    record.approved_by = record.approved_by_name = record.approved_at = None
+        except Exception:
+            pass
 
     db.session.add(record)
     try:
@@ -1135,4 +1143,4 @@ def bulk_delete_emissions():
 
 
 # Route modules split out of this file; imported last because they use the helpers above.
-from routes import emissions_bulk_upload, emissions_export, emissions_import, emissions_review  # noqa: E402,F401
+from routes import emissions_bulk_upload, emissions_export, emissions_import, emissions_mappings, emissions_review  # noqa: E402,F401

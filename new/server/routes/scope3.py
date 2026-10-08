@@ -495,7 +495,7 @@ def bulk_import_scope3():
                     user_id=admin.id,
                     type="audit",
                     title="Scope 3 Bulk Upload Pending Review",
-                    message=f"{imported_count} new Scope 3 emission records were uploaded by {user.fullName} and are awaiting your approval.",
+                    message=f"{imported_count:,} new Scope 3 emission records were uploaded by {user.fullName} and are awaiting your approval.",
                 )
 
         if imported_count > 0:

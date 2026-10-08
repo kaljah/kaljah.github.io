@@ -164,8 +164,10 @@ def delete_user(id):
 
     label = user_label(user)
     db.session.execute(text("DELETE FROM notifications WHERE user_id = :uid"), {"uid": id})
+    # saved import column mappings are personal (user_id is NOT NULL): they go with the account
+    db.session.execute(text("DELETE FROM import_mappings WHERE user_id = :uid"), {"uid": id})
     for table in db.metadata.sorted_tables:
-        if table.name in ("users", "notifications"):
+        if table.name in ("users", "notifications", "import_mappings"):
             continue
         for col in table.columns:
             if not any(fk.column.table.name == "users" for fk in col.foreign_keys):

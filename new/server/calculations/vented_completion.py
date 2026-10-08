@@ -300,7 +300,7 @@ class CompletionFlowbackCalculator(BaseCalculator):
         # =====================================================================
         # TIER 2 & TIER 3 VOLUMETRIC DETERMINATION
         # =====================================================================
-        actual_ch4_mol = y_ch4 if y_ch4 is not None else 0.85
+        actual_ch4_mol = y_ch4
         actual_co2_mol = y_co2
         method = raw_method
 
@@ -463,6 +463,13 @@ class CompletionFlowbackCalculator(BaseCalculator):
         vented_scf = initial_scf + (total_net_scf * f_vented)
         flared_scf = total_net_scf * f_flared
         recovered_scf = total_net_scf * f_rec
+
+        # Tier 2 / 3 gas volumes need the flowback gas analysis: an unanalysed gas was silently taken as
+        # 85 % CH4 (a zero volume stays a clean zero)
+        if actual_ch4_mol is None:
+            if vented_scf + flared_scf > 0:
+                raise ValueError("Missing required field: CH4 content of the flowback gas (mol %)")
+            actual_ch4_mol = 0.0
 
         # Conversions to m3 at standard conditions
         vented_m3 = convert(vented_scf, "scf", "m3")
