@@ -174,3 +174,20 @@ def normalize_scope3_category(value, field="category"):
     if number is None:
         raise ValidationError(f"'{field}' must be a GHG Protocol Scope 3 category (1-15)", field)
     return f"Category {number}"
+
+
+def merge_inputs(stored, edit):
+    """Merge a ``calc_inputs`` block from an edit over the stored one, process by process.
+
+    An edit may carry only some inputs of a process (the Reports edit modal sends just
+    amount/unit/fuel). Replacing the stored block would drop the process-specific inputs
+    (e.g. ``agr_co2_in``) and the recalculation would fail. Anything that is not a dict
+    of dicts is taken from the edit unchanged.
+    """
+    if not isinstance(stored, dict) or not isinstance(edit, dict):
+        return edit
+    merged = dict(stored)
+    for proc, vals in edit.items():
+        old = merged.get(proc)
+        merged[proc] = {**old, **vals} if isinstance(old, dict) and isinstance(vals, dict) else vals
+    return merged
