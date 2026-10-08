@@ -749,7 +749,7 @@ const MethaneIntensity: React.FC = () => {
               <div className="[display:flex] [flex-direction:column] [gap:8px]">
                 <h3>Methane Loss Rate by Facility (% of Gas Produced)</h3>
                 <div
-                  className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:#2563eb]!"
+                  className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:var(--color-blue-600)]!"
                 ></div>
               </div>
             </div>
@@ -773,7 +773,7 @@ const MethaneIntensity: React.FC = () => {
               <div className="[display:flex] [flex-direction:column] [gap:8px]">
                 <h3>Methane Intensity by Facility (kg CH₄ / BOE)</h3>
                 <div
-                  className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:#ff6600]!"
+                  className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:var(--color-brand-500)]!"
                 ></div>
               </div>
             </div>
@@ -795,7 +795,7 @@ const MethaneIntensity: React.FC = () => {
               <div className="[display:flex] [flex-direction:column] [gap:8px]">
                 <h3>Total Methane Emissions (tCH₄)</h3>
                 <div
-                  className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:#3b82f6]!"
+                  className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:var(--color-blue-500)]!"
                 ></div>
               </div>
             </div>
@@ -817,7 +817,7 @@ const MethaneIntensity: React.FC = () => {
               <div className="[display:flex] [flex-direction:column] [gap:8px]">
                 <h3>Gas Flaring Volume by Facility (m³)</h3>
                 <div
-                  className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:#ea580c]!"
+                  className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:var(--color-legacy-ea580c)]!"
                 ></div>
               </div>
             </div>
@@ -829,7 +829,7 @@ const MethaneIntensity: React.FC = () => {
                 }))}
                 dataKey="value"
                 xKey="name"
-                color="#ea580c"
+                color="var(--color-legacy-ea580c)"
               />
             </div>
           </div>

@@ -151,7 +151,7 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
         </Button>
       )}
       <button
-        className="action-btn bg-[color:#10b981]! p-[6px_14px]! text-[length:0.82rem]! whitespace-nowrap!"
+        className="action-btn bg-[color:var(--color-green-500)]! p-[6px_14px]! text-[length:0.82rem]! whitespace-nowrap!"
         onClick={async () => {
           // BUG-095: export every matching record (server-side filters), not just the visible page
           try {
@@ -174,7 +174,7 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
         ↓ Export CSV
       </button>
       <button
-        className="action-btn bg-[color:#10b981]! p-[6px_14px]! text-[length:0.82rem]! whitespace-nowrap!"
+        className="action-btn bg-[color:var(--color-green-500)]! p-[6px_14px]! text-[length:0.82rem]! whitespace-nowrap!"
         onClick={() => setImportModal({ isOpen: true, type: "activity" })}
       >
         ↑ Bulk Import (Wizard)
@@ -282,7 +282,7 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
                     })()}
                   </td>
                   <td>{entry.fuel || entry.fuel_type || entry.activity_data_label || "-"}</td>
-                  <td className={`[font-weight:500]! ${factorType === "Default" ? "[color:#2e7d32]!" : "[color:#1d4ed8]!"}`}>
+                  <td className={`[font-weight:500]! ${factorType === "Default" ? "[color:var(--color-green-700)]!" : "[color:var(--color-blue-700)]!"}`}>
                     {factorType}
                   </td>
                   <td>
@@ -306,10 +306,10 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
                           borderRadius: "4px",
                           ...((
                             {
-                              Verified: { background: "#dcfce7", color: "#166534" },
-                              Pending: { background: "#fef9c3", color: "#854d0e" },
-                              Rejected: { background: "#fee2e2", color: "var(--color-red-700)" },
-                              Draft: { background: "#e0e7ff", color: "#3730a3" },
+                              Verified: { background: "var(--color-legacy-dcfce7)", color: "var(--color-legacy-166534)" },
+                              Pending: { background: "var(--color-legacy-fef9c3)", color: "var(--color-legacy-854d0e)" },
+                              Rejected: { background: "var(--color-legacy-fee2e2)", color: "var(--color-red-700)" },
+                              Draft: { background: "var(--color-legacy-e0e7ff)", color: "var(--color-legacy-3730a3)" },
                             } as Record<string, React.CSSProperties>
                           )[entry.status] || { background: "var(--color-ink-100)", color: "var(--color-ink-700)" }),
                         }}
@@ -319,7 +319,7 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
                     )}
                   </td>
                   <td
-                    className={`[text-align:center]! [font-size:0.82rem]! ${entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0 ? "[color:#2e7d32]!" : "[color:var(--text-muted)]!"}`}
+                    className={`[text-align:center]! [font-size:0.82rem]! ${entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0 ? "[color:var(--color-green-700)]!" : "[color:var(--text-muted)]!"}`}
                     title="Standard Combined Uncertainty (1σ)"
                   >
                     {entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0
@@ -327,7 +327,7 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
                       : "—"}
                   </td>
                   <td
-                    className={`[text-align:center]! [font-size:0.82rem]! ${entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0 ? "[color:#1d4ed8]!" : "[color:var(--text-muted)]!"}`}
+                    className={`[text-align:center]! [font-size:0.82rem]! ${entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0 ? "[color:var(--color-blue-700)]!" : "[color:var(--text-muted)]!"}`}
                     title="Standard Combined Uncertainty (1σ)"
                   >
                     {entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0
@@ -335,7 +335,7 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
                       : "—"}
                   </td>
                   <td
-                    className={`[text-align:center]! [font-size:0.82rem]! ${entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0 ? "[color:#6d28d9]!" : "[color:var(--text-muted)]!"}`}
+                    className={`[text-align:center]! [font-size:0.82rem]! ${entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0 ? "[color:var(--color-violet-700)]!" : "[color:var(--text-muted)]!"}`}
                     title="Standard Combined Uncertainty (1σ)"
                   >
                     {entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0
@@ -343,7 +343,7 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
                       : "—"}
                   </td>
                   <td
-                    className={`[text-align:center]! [font-size:0.82rem]! ${entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0 ? "[color:#2e7d32]!" : "[color:var(--text-muted)]!"}`}
+                    className={`[text-align:center]! [font-size:0.82rem]! ${entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0 ? "[color:var(--color-green-700)]!" : "[color:var(--text-muted)]!"}`}
                     title="Expanded Uncertainty (95% Confidence Interval, k=2)"
                   >
                     {entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0
@@ -351,7 +351,7 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
                       : "—"}
                   </td>
                   <td
-                    className={`[text-align:center]! [font-size:0.82rem]! ${entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0 ? "[color:#1d4ed8]!" : "[color:var(--text-muted)]!"}`}
+                    className={`[text-align:center]! [font-size:0.82rem]! ${entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0 ? "[color:var(--color-blue-700)]!" : "[color:var(--text-muted)]!"}`}
                     title="Expanded Uncertainty (95% Confidence Interval, k=2)"
                   >
                     {entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0
@@ -359,7 +359,7 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
                       : "—"}
                   </td>
                   <td
-                    className={`[text-align:center]! [font-size:0.82rem]! ${entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0 ? "[color:#6d28d9]!" : "[color:var(--text-muted)]!"}`}
+                    className={`[text-align:center]! [font-size:0.82rem]! ${entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0 ? "[color:var(--color-violet-700)]!" : "[color:var(--text-muted)]!"}`}
                     title="Expanded Uncertainty (95% Confidence Interval, k=2)"
                   >
                     {entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0
@@ -368,14 +368,14 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
                   </td>
                   <td className="text-center! whitespace-nowrap!">
                     <button
-                      className="icon-button text-[color:#1d4ed8]! mr-[6px]!"
+                      className="icon-button text-[color:var(--color-blue-700)]! mr-[6px]!"
                       onClick={() => handleInspect(entry)}
                       title="Inspect Calculation Details"
                     >
                       <Eye size={16} />
                     </button>
                     <button
-                      className="icon-button text-[color:#b91c1c]!"
+                      className="icon-button text-[color:var(--color-red-700)]!"
                       onClick={() => handleDelete(entry.id)}
                       title="Delete"
                     >
@@ -388,7 +388,7 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
           })()}
         </tbody>
         <tfoot>
-          <tr className="[background-color:#f9fafb]! [font-weight:bold]!">
+          <tr className="[background-color:var(--color-legacy-f9fafb)]! [font-weight:bold]!">
             <td colSpan={14} className="text-right! pr-[15px]!">
               Total ({filterYear || filterProcess || filterSearch ? "Filtered" : "Page"}):
             </td>

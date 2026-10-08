@@ -38,7 +38,7 @@ export const DehydratorForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
             label={
               <>
                 Throughput (MMscf/yr)
-                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
               </>
             }
           >
@@ -54,7 +54,7 @@ export const DehydratorForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
           <div className="input-group">
             <label>
               Glycol pump rate
-              <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+              <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
             </label>
             <div className="flex! gap-[10px]!">
               <input
@@ -84,7 +84,7 @@ export const DehydratorForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
             label={
               <>
                 CH₄ (%)
-                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
               </>
             }
           >
@@ -106,7 +106,7 @@ export const DehydratorForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
             label={
               <>
                 Hours per year
-                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
               </>
             }
           >
@@ -124,7 +124,7 @@ export const DehydratorForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
             label={
               <>
                 Contactor pressure (psig)
-                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
               </>
             }
           >
@@ -142,7 +142,7 @@ export const DehydratorForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
             label={
               <>
                 Contactor temp (°F)
-                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
               </>
             }
           >

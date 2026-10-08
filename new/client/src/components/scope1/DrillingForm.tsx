@@ -47,7 +47,7 @@ export const DrillingForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sou
           label={
             <>
               {isTier1 && !isDefaultDays ? "Wells Drilled" : "Drilling Days"}
-              <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+              <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
             </>
           }
         >
@@ -87,8 +87,8 @@ export const DrillingForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sou
             />
           </div>
 
-          <div className="mt-[15px]! p-[14px]! bg-[color:#f8fafc]! [border:1px_solid_#e2e8f0]! rounded-[6px]!">
-            <h5 className="m-[0_0_10px_0]! text-[length:0.85rem]! text-[color:#1e293b]! font-semibold!">
+          <div className="mt-[15px]! p-[14px]! bg-[color:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! rounded-[6px]!">
+            <h5 className="m-[0_0_10px_0]! text-[length:0.85rem]! text-[color:var(--color-ink-800)]! font-semibold!">
               Gas composition
             </h5>
             <div className="grid gap-[14px] [grid-template-columns:1fr_1fr] max-[600px]:[grid-template-columns:1fr]">

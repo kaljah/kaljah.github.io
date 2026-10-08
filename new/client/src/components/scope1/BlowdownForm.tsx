@@ -15,7 +15,7 @@ export const BlowdownForm: React.FC<Scope1SubFormProps> = ({ data, onChange }) =
         <div className="input-group">
           <label>
             Physical Volume
-            <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+            <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
           </label>
           <div className="flex! gap-[10px]!">
             <Input
@@ -42,7 +42,7 @@ export const BlowdownForm: React.FC<Scope1SubFormProps> = ({ data, onChange }) =
           label={
             <>
               Pressure (psig)
-              <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+              <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
             </>
           }
         >
@@ -60,7 +60,7 @@ export const BlowdownForm: React.FC<Scope1SubFormProps> = ({ data, onChange }) =
           label={
             <>
               Number of Events
-              <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+              <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
             </>
           }
         >
@@ -78,7 +78,7 @@ export const BlowdownForm: React.FC<Scope1SubFormProps> = ({ data, onChange }) =
           label={
             <>
               CH₄ (%)
-              <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+              <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
             </>
           }
         >

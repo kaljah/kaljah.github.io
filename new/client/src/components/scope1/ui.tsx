@@ -77,7 +77,7 @@ export interface SegmentedProps {
 
 export const Segmented: React.FC<SegmentedProps> = ({ options, value, onChange, ariaLabel }) => (
   <div
-    className="[display:inline-flex] [flex-wrap:wrap] [gap:4px] [padding:4px] [background:#f3f4f6] [border-radius:var(--radius-md)] [border:none]"
+    className="[display:inline-flex] [flex-wrap:wrap] [gap:4px] [padding:4px] [background:var(--color-legacy-f3f4f6)] [border-radius:var(--radius-md)] [border:none]"
     role="radiogroup"
     aria-label={ariaLabel}
   >

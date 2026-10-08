@@ -182,7 +182,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
             <div className="input-group">
               <label>
                 Basin
-                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
               </label>
               <CustomDropdown
                 options={TABLE_6_8_BASINS.map((b) => ({
@@ -201,7 +201,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
             <div className="input-group">
               <label>
                 Oil production
-                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
               </label>
               <div className="flex! gap-[8px]!">
                 <input
@@ -236,9 +236,9 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
           </div>
 
           {/* Footnote b Gas Composition Adjustment */}
-          <div className="p-[14px]! bg-[color:#f8fafc]! [border:1px_solid_#e2e8f0]! rounded-[6px]! mb-[16px]!">
-            <div className="flex! items-center! gap-[6px]! mb-[10px]! text-[length:0.85rem]! font-semibold! text-[color:#334155]!">
-              <Info size={16} className="text-[color:#0369a1]!" />
+          <div className="p-[14px]! bg-[color:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! rounded-[6px]! mb-[16px]!">
+            <div className="flex! items-center! gap-[6px]! mb-[10px]! text-[length:0.85rem]! font-semibold! text-[color:var(--color-ink-700)]!">
+              <Info size={16} className="text-[color:var(--color-legacy-0369a1)]!" />
               <span>Gas composition</span>
             </div>
 
@@ -280,7 +280,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
             <div className="input-group">
               <label>
                 Oil production
-                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
               </label>
               <div className="flex! gap-[8px]!">
                 <input
@@ -316,7 +316,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
             <div className="input-group">
               <label>
                 GOR
-                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
               </label>
               <div className="flex! gap-[8px]!">
                 <input
@@ -349,7 +349,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
             <div className="input-group">
               <label>
                 Venting Duration
-                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
               </label>
               <div className="flex! gap-[8px]!">
                 <input
@@ -417,7 +417,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
           {/* Gas Volume Unit Selector for Partitioning */}
           <div className="mb-[10px]! flex! justify-end!">
             <div className="flex! items-center! gap-[6px]!">
-              <span className="text-[length:0.75rem]! text-[color:#6b7280]!">Unit</span>
+              <span className="text-[length:0.75rem]! text-[color:var(--color-legacy-6b7280)]!">Unit</span>
               <NativeSelect
                 className="mole-input w-[110px]! max-[600px]:w-full! p-[4px_8px]! text-[length:0.8rem]!"
                 value={data.gas_volume_unit || "scf"}
@@ -433,11 +433,11 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
           </div>
 
           {/* DISPOSITION PARTITIONING CARD (Zero Double-Counting) */}
-          <div className="p-[16px]! bg-[color:#f8fafc]! [border:1px_solid_#cbd5e1]! rounded-[8px]! mb-[16px]!">
+          <div className="p-[16px]! bg-[color:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-300)]! rounded-[8px]! mb-[16px]!">
             <div className="flex! items-center! justify-between! mb-[12px]!">
               <div className="flex! items-center! gap-[6px]!">
-                <Flame size={16} className="text-[color:#ea580c]!" />
-                <span className="font-bold! text-[length:0.85rem]! text-[color:#1e293b]!">Gas disposition</span>
+                <Flame size={16} className="text-[color:var(--color-legacy-ea580c)]!" />
+                <span className="font-bold! text-[length:0.85rem]! text-[color:var(--color-ink-800)]!">Gas disposition</span>
               </div>
             </div>
 
@@ -501,7 +501,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
               <div className="input-group">
                 <label>
                   Vent rate
-                  <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                  <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                 </label>
                 <div className="flex! gap-[8px]!">
                   <input
@@ -536,7 +536,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
                 label={
                   <>
                     Venting time (h)
-                    <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                    <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                   </>
                 }
               >
@@ -555,7 +555,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
             <div className="input-group">
               <label>
                 Total Measured Vent Gas Volume
-                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
               </label>
               <div className="flex! gap-[8px]!">
                 <input
@@ -596,7 +596,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
               label={
                 <>
                   CH₄ (mol %)
-                  <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                  <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                 </>
               }
             >
@@ -629,7 +629,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
 
       {/* WARNING NOTIFICATIONS & AUDIT FLAGS */}
       {isCompositionInvalid && (
-        <div className="flex! items-center! gap-[8px]! p-[10px_14px]! bg-[color:#fef2f2]! [border:1px_solid_#fecaca]! rounded-[6px]! mb-[16px]! text-[color:#991b1b]! text-[length:0.82rem]!">
+        <div className="flex! items-center! gap-[8px]! p-[10px_14px]! bg-[color:var(--color-red-50)]! [border:1px_solid_var(--color-legacy-fecaca)]! rounded-[6px]! mb-[16px]! text-[color:var(--color-legacy-991b1b)]! text-[length:0.82rem]!">
           <AlertTriangle size={16} />
           <span>
             <strong>Gas Composition Error:</strong> Sum of CH₄ ({ch4MolPct.toFixed(1)}%) and CO₂ ({co2MolPct.toFixed(1)}%) exceeds 100% (got {sumMolPct.toFixed(1)}%).
@@ -638,7 +638,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
       )}
 
       {isMassBalanceViolated && (
-        <div className="flex! items-center! gap-[8px]! p-[10px_14px]! bg-[color:#fef2f2]! [border:1px_solid_#fecaca]! rounded-[6px]! mb-[16px]! text-[color:#991b1b]! text-[length:0.82rem]!">
+        <div className="flex! items-center! gap-[8px]! p-[10px_14px]! bg-[color:var(--color-red-50)]! [border:1px_solid_var(--color-legacy-fecaca)]! rounded-[6px]! mb-[16px]! text-[color:var(--color-legacy-991b1b)]! text-[length:0.82rem]!">
           <AlertTriangle size={16} />
           <span>
             <strong>Mass Balance Violation:</strong> Recovered gas ({formatNumber(recoveredScf, 0)} scf) + Flared gas ({formatNumber(flaredScf, 0)} scf) exceeds total produced associated gas ({formatNumber(totalProducedGasScf, 0)} scf).
@@ -647,7 +647,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
       )}
 
       {isDurationExceeded && (
-        <div className="flex! items-center! gap-[8px]! p-[10px_14px]! bg-[color:#fffbeb]! [border:1px_solid_#fde68a]! rounded-[6px]! mb-[16px]! text-[color:#92400e]! text-[length:0.82rem]!">
+        <div className="flex! items-center! gap-[8px]! p-[10px_14px]! bg-[color:var(--color-amber-50)]! [border:1px_solid_var(--color-legacy-fde68a)]! rounded-[6px]! mb-[16px]! text-[color:var(--color-legacy-92400e)]! text-[length:0.82rem]!">
           <AlertTriangle size={16} />
           <span>
             <strong>Duration Warning:</strong> Venting duration ({durationDays} days) exceeds total operating period duration ({totalPeriodDays} days).
@@ -656,7 +656,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
       )}
 
       {isDurationMaxExceeded && (
-        <div className="flex! items-center! gap-[8px]! p-[10px_14px]! bg-[color:#fef2f2]! [border:1px_solid_#fecaca]! rounded-[6px]! mb-[16px]! text-[color:#991b1b]! text-[length:0.82rem]!">
+        <div className="flex! items-center! gap-[8px]! p-[10px_14px]! bg-[color:var(--color-red-50)]! [border:1px_solid_var(--color-legacy-fecaca)]! rounded-[6px]! mb-[16px]! text-[color:var(--color-legacy-991b1b)]! text-[length:0.82rem]!">
           <AlertTriangle size={16} />
           <span>
             <strong>Duration Error:</strong> Venting duration ({durationDays} days) exceeds maximum annual days (366 days).
@@ -665,7 +665,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
       )}
 
       {isGorHighAnomaly && (
-        <div className="flex! items-center! gap-[8px]! p-[10px_14px]! bg-[color:#fffbeb]! [border:1px_solid_#fde68a]! rounded-[6px]! mb-[16px]! text-[color:#92400e]! text-[length:0.82rem]!">
+        <div className="flex! items-center! gap-[8px]! p-[10px_14px]! bg-[color:var(--color-amber-50)]! [border:1px_solid_var(--color-legacy-fde68a)]! rounded-[6px]! mb-[16px]! text-[color:var(--color-legacy-92400e)]! text-[length:0.82rem]!">
           <AlertTriangle size={16} />
           <span>
             <strong>High GOR Audit Warning:</strong> GOR of {formatNumber(gorScfBbl, 0)} scf/bbl exceeds typical crude oil range (100,000 scf/bbl). Verify if reservoir fluid is gas-condensate.

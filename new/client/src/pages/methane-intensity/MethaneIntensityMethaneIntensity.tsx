@@ -44,7 +44,7 @@ const MethaneIntensityMethaneIntensity: React.FC<MethaneIntensityMethaneIntensit
           Methane Intensity & Loss Rate Analytics
         </h2>
         <div
-          className="year-badge [background:rgba(255,_102,_0,_0.1)] [padding:6px_16px] [border-radius:9999px] [font-size:var(--text-base)] [font-weight:600] [border:1px_solid_rgba(255,_102,_0,_0.2)] bg-[color:rgba(37,_99,_235,_0.1)]! text-[color:#2563eb]! [&&]:[border-color:rgba(37,_99,_235,_0.2)]!"
+          className="year-badge [background:rgba(255,_102,_0,_0.1)] [padding:6px_16px] [border-radius:9999px] [font-size:var(--text-base)] [font-weight:600] [border:1px_solid_rgba(255,_102,_0,_0.2)] bg-[color:rgba(37,_99,_235,_0.1)]! text-[color:var(--color-blue-600)]! [&&]:[border-color:rgba(37,_99,_235,_0.2)]!"
         >
           {selectedYear === "all" ? "All-Time" : selectedYear} Performance
         </div>
@@ -68,19 +68,19 @@ const MethaneIntensityMethaneIntensity: React.FC<MethaneIntensityMethaneIntensit
               : "rgba(239, 68, 68, 0.1)",
           border: `1px solid ${
             stats.ogmpGoldStatus === "Compliant"
-              ? "#10b981"
+              ? "var(--color-green-500)"
               : stats.ogmpGoldStatus === "Warning" ||
                 stats.ogmpGoldStatus === "Pending Production"
-              ? "#f59e0b"
-              : "#ef4444"
+              ? "var(--color-amber-500)"
+              : "var(--color-red-500)"
           }`,
           color:
             stats.ogmpGoldStatus === "Compliant"
-              ? "#2e7d32"
+              ? "var(--color-green-700)"
               : stats.ogmpGoldStatus === "Warning" ||
                 stats.ogmpGoldStatus === "Pending Production"
-              ? "#f59e0b"
-              : "#ef4444",
+              ? "var(--color-amber-500)"
+              : "var(--color-red-500)",
           fontWeight: 600,
           fontSize: "0.85rem",
         }}
@@ -125,7 +125,7 @@ const MethaneIntensityMethaneIntensity: React.FC<MethaneIntensityMethaneIntensit
       <div className="kpi-card">
         <div className="[display:flex] [align-items:center] [gap:12px] [margin-bottom:16px]">
           <div
-            className="kpi-icon loss bg-[color:rgba(59,_130,_246,_0.1)]! text-[color:#1d4ed8]!"
+            className="kpi-icon loss bg-[color:rgba(59,_130,_246,_0.1)]! text-[color:var(--color-blue-700)]!"
           >
             <Compass size={20} />
           </div>
@@ -137,13 +137,13 @@ const MethaneIntensityMethaneIntensity: React.FC<MethaneIntensityMethaneIntensit
             style={{
               color:
                 stats.totalGasProductionM3 === 0 && (stats.totalCh4Emissions ?? 0) > 0
-                  ? "#b45309"
+                  ? "var(--color-amber-700)"
                   : (stats.avgMethaneLossRatePct ?? 0) <= upstreamTargetPct
-                    ? "#10b981"
+                    ? "var(--color-green-500)"
                     : (stats.avgMethaneLossRatePct ?? 0) <=
                         upstreamTargetPct * 1.25
-                      ? "#f59e0b"
-                      : "#ef4444",
+                      ? "var(--color-amber-500)"
+                      : "var(--color-red-500)",
             }}
           >
             {stats.totalGasProductionM3 === 0 && (stats.totalCh4Emissions ?? 0) > 0
@@ -167,7 +167,7 @@ const MethaneIntensityMethaneIntensity: React.FC<MethaneIntensityMethaneIntensit
             padding: "6px 8px",
             background: "var(--bg-secondary, rgba(255,255,255,0.03))",
             borderRadius: "8px",
-            border: "1px solid var(--border-color, #e5e7eb)",
+            border: "1px solid var(--border-color, var(--color-legacy-e5e7eb))",
           }}
         >
           <div>
@@ -182,10 +182,10 @@ const MethaneIntensityMethaneIntensity: React.FC<MethaneIntensityMethaneIntensit
                 fontWeight: 700,
                 color:
                   stats.upstreamGasM3 === 0 && (stats.upstreamCh4Tonnes ?? 0) > 0
-                    ? "#b45309"
+                    ? "var(--color-amber-700)"
                     : (stats.upstreamLossRatePct ?? 0) <= upstreamTargetPct
-                      ? "#10b981"
-                      : "#ef4444",
+                      ? "var(--color-green-500)"
+                      : "var(--color-red-500)",
               }}
             >
               {stats.upstreamGasM3 === 0 && (stats.upstreamCh4Tonnes ?? 0) > 0
@@ -200,7 +200,7 @@ const MethaneIntensityMethaneIntensity: React.FC<MethaneIntensityMethaneIntensit
           </div>
 
           <div
-            className="[border-left:1px_solid_var(--border-color,_#e5e7eb)]! pl-[8px]!"
+            className="[border-left:1px_solid_var(--border-color,_var(--color-legacy-e5e7eb))]! pl-[8px]!"
           >
             <div
               className="text-[length:0.7rem]! text-[color:var(--text-secondary)]! uppercase! [letter-spacing:0.5px]! font-semibold!"
@@ -213,10 +213,10 @@ const MethaneIntensityMethaneIntensity: React.FC<MethaneIntensityMethaneIntensit
                 fontWeight: 700,
                 color:
                   stats.midstreamGasM3 === 0 && (stats.midstreamCh4Tonnes ?? 0) > 0
-                    ? "#b45309"
+                    ? "var(--color-amber-700)"
                     : (stats.midstreamLossRatePct ?? 0) <= midstreamTargetPct
-                      ? "#10b981"
-                      : "#ef4444",
+                      ? "var(--color-green-500)"
+                      : "var(--color-red-500)",
               }}
             >
               {stats.midstreamGasM3 === 0 && (stats.midstreamCh4Tonnes ?? 0) > 0
@@ -285,7 +285,7 @@ const MethaneIntensityMethaneIntensity: React.FC<MethaneIntensityMethaneIntensit
       <div className="scope-item bordered">
         <span className="label">Methane Loss Volume</span>
         <span
-          className="val text-[color:#2563eb]! font-bold!"
+          className="val text-[color:var(--color-blue-600)]! font-bold!"
         >
           {formatNumber(stats.totalCh4VolumeM3 ?? 0, 0)} m³
         </span>

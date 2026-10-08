@@ -84,7 +84,7 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
             <tr>
               <td colSpan={7} style={S.emptyCell}>
                 <div className="flex! flex-col! items-center! gap-[10px]!">
-                  <Loader size={32} color="#ff6600" style={{ animation: "spin 1s linear infinite" }} aria-hidden="true" />
+                  <Loader size={32} color="var(--color-brand-500)" style={{ animation: "spin 1s linear infinite" }} aria-hidden="true" />
                   Loading users…
                 </div>
               </td>
@@ -181,17 +181,17 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
                   {/* Region Access */}
                   <td style={S.td}>
                     {u.role === "admin" ? (
-                      <span style={S.regionPill("#10b981", "#ecfdf5", "rgba(16,185,129,.25)")}>
+                      <span style={S.regionPill("var(--color-green-500)", "var(--color-green-50)", "rgba(16,185,129,.25)")}>
                         <Globe size={12} aria-hidden="true" />
                         All Regions
                       </span>
                     ) : u.role === "it_admin" || u.role === "it_manager" || u.role === "it" ? (
-                      <span style={S.regionPill("#ef4444", "#fef2f2", "rgba(239,68,68,.25)")}>
+                      <span style={S.regionPill("var(--color-red-500)", "var(--color-red-50)", "rgba(239,68,68,.25)")}>
                         <Lock size={12} strokeWidth={2} aria-hidden="true" />
                         No Data Access
                       </span>
                     ) : u.location ? (
-                      <span style={S.regionPill("#ff6600", "#fff7ed", "rgba(255,102,0,.25)")}>
+                      <span style={S.regionPill("var(--color-brand-500)", "var(--color-brand-50)", "rgba(255,102,0,.25)")}>
                         <MapPinIcon size={11} strokeWidth={2} aria-hidden="true" />
                         {u.location}
                       </span>
@@ -225,11 +225,11 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
                     {!isITOnly && (
                       <button
                         id={`um-edit-btn-${u.id}`}
-                        style={S.iconBtn("#6366f1")}
+                        style={S.iconBtn("var(--color-legacy-6366f1)")}
                         onClick={() => handleOpenModal(u)}
                         title="Edit User Information"
                         onMouseEnter={(e) =>
-                          (e.currentTarget.style.background = "#eef2ff")
+                          (e.currentTarget.style.background = "var(--color-legacy-eef2ff)")
                         }
                         onMouseLeave={(e) =>
                           (e.currentTarget.style.background = "none")
@@ -240,11 +240,11 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
                     )}
                     <button
                       id={`um-reset-pwd-btn-${u.id}`}
-                      style={S.iconBtn("#f59e0b")}
+                      style={S.iconBtn("var(--color-amber-500)")}
                       onClick={() => handleOpenResetPassword(u)}
                       title="Modify / Reset Password"
                       onMouseEnter={(e) =>
-                        (e.currentTarget.style.background = "#fffbeb")
+                        (e.currentTarget.style.background = "var(--color-amber-50)")
                       }
                       onMouseLeave={(e) =>
                         (e.currentTarget.style.background = "none")
@@ -255,11 +255,11 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
                     {!isITOnly && (
                       <button
                         id={`um-delete-btn-${u.id}`}
-                        style={S.iconBtn("#ef4444")}
+                        style={S.iconBtn("var(--color-red-500)")}
                         onClick={() => handleDelete(u.id)}
                         title="Revoke Access"
                         onMouseEnter={(e) =>
-                          (e.currentTarget.style.background = "#fef2f2")
+                          (e.currentTarget.style.background = "var(--color-red-50)")
                         }
                         onMouseLeave={(e) =>
                           (e.currentTarget.style.background = "none")

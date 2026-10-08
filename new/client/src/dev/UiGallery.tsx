@@ -41,25 +41,25 @@ import {
 
 // Development-only catalogue of design tokens and components (route /__ui).
 const SWATCHES: [string, string][] = [
-  ["brand-500", "#ff6600"],
-  ["brand-600", "#e65c00"],
-  ["brand-700", "#c2410c"],
-  ["brand-50", "#fff7ed"],
-  ["ink-900", "#0f172a"],
-  ["ink-600", "#475569"],
-  ["ink-500", "#64748b"],
-  ["ink-400", "#94a3b8"],
-  ["ink-200", "#e2e8f0"],
-  ["ink-100", "#f1f5f9"],
-  ["green-500", "#10b981"],
-  ["green-700", "#2e7d32"],
-  ["blue-500", "#3b82f6"],
-  ["blue-700", "#1d4ed8"],
-  ["amber-500", "#f59e0b"],
-  ["amber-700", "#b45309"],
-  ["red-500", "#ef4444"],
-  ["red-700", "#b91c1c"],
-  ["violet-500", "#8b5cf6"],
+  ["brand-500", "var(--color-brand-500)"],
+  ["brand-600", "var(--color-brand-600)"],
+  ["brand-700", "var(--color-brand-700)"],
+  ["brand-50", "var(--color-brand-50)"],
+  ["ink-900", "var(--color-ink-900)"],
+  ["ink-600", "var(--color-ink-600)"],
+  ["ink-500", "var(--color-ink-500)"],
+  ["ink-400", "var(--color-ink-400)"],
+  ["ink-200", "var(--color-ink-200)"],
+  ["ink-100", "var(--color-ink-100)"],
+  ["green-500", "var(--color-green-500)"],
+  ["green-700", "var(--color-green-700)"],
+  ["blue-500", "var(--color-blue-500)"],
+  ["blue-700", "var(--color-blue-700)"],
+  ["amber-500", "var(--color-amber-500)"],
+  ["amber-700", "var(--color-amber-700)"],
+  ["red-500", "var(--color-red-500)"],
+  ["red-700", "var(--color-red-700)"],
+  ["violet-500", "var(--color-violet-500)"],
 ];
 
 const lin = (c: number): number => {
@@ -135,7 +135,7 @@ const UiGallery: React.FC = () => {
                 <div className="p-2 text-xs">
                   <p className="font-semibold text-text">{name}</p>
                   <p className="text-text-secondary">
-                    {hex} &middot; {contrast(hex, "#ffffff")}:1
+                    {hex} &middot; {contrast(hex, "var(--color-white)")}:1
                   </p>
                 </div>
               </div>

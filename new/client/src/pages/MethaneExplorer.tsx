@@ -579,13 +579,13 @@ const EmissionsMap: React.FC = () => {
     const level = getSeverityLevel(val);
     const color =
       level === "high"
-        ? "#ef4444"
+        ? "var(--color-red-500)"
         : level === "medium"
-          ? "#f59e0b"
-          : "#10b981";
+          ? "var(--color-amber-500)"
+          : "var(--color-green-500)";
     const baseRadius = level === "high" ? 8 : level === "medium" ? 6 : 5;
     const radius = isSelected ? baseRadius + 3 : baseRadius;
-    const border = isSelected ? "2.5px solid #ff6600" : "2px solid #ffffff";
+    const border = isSelected ? "2.5px solid var(--color-brand-500)" : "2px solid var(--color-white)";
     const glow = isSelected
       ? "0 0 12px rgba(255,102,0,0.8)"
       : "0 1px 4px rgba(0,0,0,0.3)";
@@ -651,7 +651,7 @@ const EmissionsMap: React.FC = () => {
         label: "Baseline / Undetected",
         ratio: 1.0,
         deltaText: "Atmospheric concentrations within natural background.",
-        color: "#10b981",
+        color: "var(--color-green-500)",
       };
     }
 
@@ -661,7 +661,7 @@ const EmissionsMap: React.FC = () => {
         label: "Unreported Top-Down Flux",
         ratio: 99.0,
         deltaText: `Satellite detects ${satelliteFluxTonnes.toFixed(1)} tCH₄/yr with zero reported bottom-up emissions.`,
-        color: "#ef4444",
+        color: "var(--color-red-500)",
       };
     }
 
@@ -673,7 +673,7 @@ const EmissionsMap: React.FC = () => {
         label: "Satellite Detects Excess",
         ratio,
         deltaText: `Satellite top-down flux is +${pctExcess}% above reported inventory. Possible fugitive venting or flare malfunction.`,
-        color: "#f59e0b",
+        color: "var(--color-amber-500)",
       };
     } else if (ratio <= 0.65) {
       const pctDeficit = Math.round((1 - ratio) * 100);
@@ -682,7 +682,7 @@ const EmissionsMap: React.FC = () => {
         label: "Below Satellite Detection",
         ratio,
         deltaText: `Satellite observation is -${pctDeficit}% lower than reported. May reflect intermittent operational shutdowns.`,
-        color: "#0284c7",
+        color: "var(--color-sky-600)",
       };
     } else {
       return {
@@ -690,7 +690,7 @@ const EmissionsMap: React.FC = () => {
         label: "Reconciled (±35%)",
         ratio,
         deltaText: "Top-down observation confirms bottom-up accounting within acceptable scientific uncertainty.",
-        color: "#10b981",
+        color: "var(--color-green-500)",
       };
     }
   }, [selectedFacility, satelliteObservation, getIntensityData]);
@@ -705,7 +705,7 @@ const EmissionsMap: React.FC = () => {
       <div className="[display:flex] [flex-direction:column] [align-items:center] [justify-content:center] [height:calc(100vh_-_72px)] [gap:16px] [background:var(--color-ink-50)] [color:var(--color-ink-900)]">
         <div className="[position:relative] [width:80px] [height:80px] [border:2px_solid_rgba(255,_102,_0,_0.2)] [&&]:[border-radius:50%] [display:flex] [align-items:center] [justify-content:center] [box-shadow:0_4px_20px_rgba(255,_102,_0,_0.15)]">
           <div className="[position:absolute] [inset:0] [border-radius:50%] [border-top:3px_solid_var(--color-brand-500)] [animation:spin_1.2s_cubic-bezier(0.5,_0,_0.5,_1)_infinite]"></div>
-          <Satellite size={34} className="[animation:spin_8s_linear_infinite]!" color="#ff6600" />
+          <Satellite size={34} className="[animation:spin_8s_linear_infinite]!" color="var(--color-brand-500)" />
         </div>
         <div className="[font-size:var(--text-md)] [font-weight:800] [letter-spacing:0.08em] [color:var(--color-ink-900)]">LOADING METHANE EXPLORER</div>
         <div className="[font-size:var(--text-sm)] [color:var(--color-ink-500)] [max-width:420px] [text-align:center] [line-height:1.5]">
@@ -807,10 +807,10 @@ const EmissionsMap: React.FC = () => {
 
             const plumeColor =
               severity === "high"
-                ? "#ef4444"
+                ? "var(--color-red-500)"
                 : severity === "medium"
-                  ? "#f59e0b"
-                  : "#10b981";
+                  ? "var(--color-amber-500)"
+                  : "var(--color-green-500)";
 
             return (
               <React.Fragment key={fac.id}>

@@ -92,10 +92,10 @@ export const RegionalCharts: React.FC<RegionalChartsProps> = ({ data, gwpHorizon
   const named = (fn: (d: any) => any) => data.map((d) => ({ name: d.facility_name, ...fn(d) }));
   return (
     <div className="chart-grid grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(100%,450px),1fr))]">
-      <ChartCard className="card" title="GHG Intensity by Facility (kg CO₂e / BOE)" rule="#ff6600">
+      <ChartCard className="card" title="GHG Intensity by Facility (kg CO₂e / BOE)" rule="var(--color-brand-500)">
         <BarChart data={named((d) => ({ value: g20 ? d.co2_intensity_gwp20 || d.co2_intensity : d.co2_intensity }))} dataKey="value" xKey="name" color="var(--color-brand-500)" />
       </ChartCard>
-      <ChartCard className="card" title="Scope 1 Direct vs Scope 2 Intensity" rule="#2563eb">
+      <ChartCard className="card" title="Scope 1 Direct vs Scope 2 Intensity" rule="var(--color-blue-600)">
         <BarChart
             data={named((d) => ({
               scope1: Number(((g20 ? d.scope1_intensity_gwp20 || d.scope1_intensity : d.scope1_intensity) || 0).toFixed(2)),
@@ -103,15 +103,15 @@ export const RegionalCharts: React.FC<RegionalChartsProps> = ({ data, gwpHorizon
             }))}
             bars={[
               { dataKey: "scope1", name: g20 ? "Scope 1 (GWP₂₀ Direct)" : "Scope 1 (Direct)", color: "var(--color-blue-600)" },
-              { dataKey: "scope2", name: "Scope 2 (Indirect)", color: "#0ea5e9" },
+              { dataKey: "scope2", name: "Scope 2 (Indirect)", color: "var(--color-legacy-0ea5e9)" },
             ]}
             xKey="name"
           />
       </ChartCard>
-      <ChartCard className="card" title="Oil BOE Contribution by Facility" rule="#ea580c">
-        <BarChart data={named((d) => ({ value: d.total_oil || 0 }))} dataKey="value" xKey="name" color="#ea580c" />
+      <ChartCard className="card" title="Oil BOE Contribution by Facility" rule="var(--color-legacy-ea580c)">
+        <BarChart data={named((d) => ({ value: d.total_oil || 0 }))} dataKey="value" xKey="name" color="var(--color-legacy-ea580c)" />
       </ChartCard>
-      <ChartCard className="card" title="Gas BOE Contribution by Facility" rule="#8b5cf6">
+      <ChartCard className="card" title="Gas BOE Contribution by Facility" rule="var(--color-violet-500)">
         <BarChart data={named((d) => ({ value: (d.total_gas || 0) * GAS_TO_BOE }))} dataKey="value" xKey="name" color="var(--color-violet-500)" />
       </ChartCard>
     </div>
@@ -165,7 +165,7 @@ export const TrendSection: React.FC<TrendSectionProps> = ({ view, onView, trendC
             xKey="year"
             series={[
               { key: "co2_100", color: "var(--color-brand-700)", name: `GHG Intensity (${activeGwpStandard} 100-Yr GWP)` },
-              { key: "co2_20", color: "#ea580c", name: `GHG Intensity (${activeGwpStandard} 20-Yr GWP)`, dash: "5 5" },
+              { key: "co2_20", color: "var(--color-legacy-ea580c)", name: `GHG Intensity (${activeGwpStandard} 20-Yr GWP)`, dash: "5 5" },
             ]}
           />
         </div>

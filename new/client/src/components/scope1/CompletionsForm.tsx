@@ -160,7 +160,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
               label={
                 <>
                   Well type
-                  <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                  <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                 </>
               }
             >
@@ -181,7 +181,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
               label={
                 <>
                   Fracturing
-                  <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                  <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                 </>
               }
             >
@@ -207,7 +207,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
               label={
                 <>
                   Disposition
-                  <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                  <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                 </>
               }
             >
@@ -244,7 +244,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
               label={
                 <>
                   Completions
-                  <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                  <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                 </>
               }
             >
@@ -295,7 +295,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
           <div className="input-group mb-[16px]!">
             <label>
               Model
-              <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+              <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
             </label>
             <CustomDropdown
               options={[
@@ -325,7 +325,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
                 label={
                   <>
                     Flowback rate
-                    <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                    <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                   </>
                 }
               >
@@ -345,7 +345,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
                 label={
                   <>
                     Flowback Rate Unit
-                    <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                    <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                   </>
                 }
               >
@@ -368,7 +368,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
                 label={
                   <>
                     Duration (h)
-                    <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                    <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                   </>
                 }
               >
@@ -393,7 +393,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
                 label={
                   <>
                     Total Liquid Flowback (bbl)
-                    <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                    <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                   </>
                 }
               >
@@ -413,7 +413,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
                 label={
                   <>
                     Flowback GOR (scf/bbl)
-                    <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                    <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                   </>
                 }
               >
@@ -449,7 +449,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
                 label={
                   <>
                     Production / Well Test Rate (V_Pi)
-                    <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                    <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                   </>
                 }
               >
@@ -472,7 +472,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
                 label={
                   <>
                     Production Rate Unit
-                    <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                    <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                   </>
                 }
               >
@@ -493,7 +493,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
                 label={
                   <>
                     Vent Duration Before Separation (hrs)
-                    <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                    <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                   </>
                 }
               >
@@ -520,7 +520,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
               label={
                 <>
                   CH₄ (%)
-                  <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                  <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                 </>
               }
             >
@@ -589,7 +589,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
               label={
                 <>
                   Metered volume
-                  <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                  <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                 </>
               }
             >
@@ -613,7 +613,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
               label={
                 <>
                   Volume Unit
-                  <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                  <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                 </>
               }
             >
@@ -637,7 +637,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
                 <>
                   Injected N₂
                   <span
-                    className="ml-[4px]! text-[length:0.7rem]! text-[color:#6b7280]! [cursor:help]!"
+                    className="ml-[4px]! text-[length:0.7rem]! text-[color:var(--color-legacy-6b7280)]! [cursor:help]!"
                     title="Non-combustible gases such as nitrogen are deducted from total flowback volume. Injected CO2 is NOT deducted per API §6.2.3.1."
                   >
                     ⓘ
@@ -669,9 +669,9 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
           </div>
 
           {/* Section 2: Initial Unmetered Flowback (API Eq. 6-5) */}
-          <div className="bg-[color:#f9fafb]! [border:1px_solid_#e5e7eb]! rounded-[6px]! p-[12px]! mb-[16px]!">
+          <div className="bg-[color:var(--color-legacy-f9fafb)]! [border:1px_solid_var(--color-legacy-e5e7eb)]! rounded-[6px]! p-[12px]! mb-[16px]!">
             <div className="flex! items-center! justify-between! mb-[8px]!">
-              <label className="font-semibold! text-[length:0.85rem]! text-[color:#374151]! m-[0px]!">
+              <label className="font-semibold! text-[length:0.85rem]! text-[color:var(--color-legacy-374151)]! m-[0px]!">
                 Unmetered flowback
               </label>
             </div>
@@ -707,7 +707,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
               label={
                 <>
                   CH₄ (%)
-                  <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                  <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                 </>
               }
             >
@@ -752,7 +752,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
           <div className="input-group mb-[16px]!">
             <label>
               Gas disposition
-              <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+              <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
             </label>
             <CustomDropdown
               options={[
@@ -770,9 +770,9 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
           </div>
 
           {tier3Disposition === "split" && (
-            <div className="bg-[color:#f0fdf4]! [border:1px_solid_#bbf7d0]! rounded-[6px]! p-[12px]! mb-[16px]!">
+            <div className="bg-[color:var(--color-legacy-f0fdf4)]! [border:1px_solid_var(--color-legacy-bbf7d0)]! rounded-[6px]! p-[12px]! mb-[16px]!">
               <div className="flex! justify-between! mb-[8px]!">
-                <span className="font-semibold! text-[length:0.85rem]! text-[color:#166534]!">
+                <span className="font-semibold! text-[length:0.85rem]! text-[color:var(--color-legacy-166534)]!">
                   Custom Split Allocation (must sum to 100%)
                 </span>
                 {(() => {
@@ -784,7 +784,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
                   );
                   return (
                     <span
-                      className={`[font-weight:700]! [font-size:0.85rem]! ${sumP === 100 ? "[color:#16a34a]!" : "[color:#dc2626]!"}`}
+                      className={`[font-weight:700]! [font-size:0.85rem]! ${sumP === 100 ? "[color:var(--color-legacy-16a34a)]!" : "[color:var(--color-red-600)]!"}`}
                     >
                       Total: {sumP}% {sumP === 100 ? "✓" : "⚠ (must equal 100%)"}
                     </span>

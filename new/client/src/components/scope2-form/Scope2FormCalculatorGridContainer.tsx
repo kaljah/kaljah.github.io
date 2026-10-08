@@ -56,7 +56,7 @@ const Scope2FormCalculatorGridContainer: React.FC<Scope2FormCalculatorGridContai
 }) => (
   <div className="calculator-grid-container [background:white] [border-radius:var(--radius-md)] [overflow:hidden] [box-shadow:var(--shadow-xs)] mt-[30px]!">
     <div className="table-controls flex! justify-between! items-center! p-[15px]!">
-      <strong className="text-[length:1rem]! text-[color:#374151]!">
+      <strong className="text-[length:1rem]! text-[color:var(--color-legacy-374151)]!">
         Recent Scope 2 (Electricity) Entries
       </strong>
       <button
@@ -108,7 +108,7 @@ const Scope2FormCalculatorGridContainer: React.FC<Scope2FormCalculatorGridContai
             </tr>
           ) : loadError ? (
             <tr>
-              <td colSpan={11} className="text-center! p-[40px]! text-[color:var(--danger,_#dc2626)]!">
+              <td colSpan={11} className="text-center! p-[40px]! text-[color:var(--danger,_var(--color-red-600))]!">
                 Could not load the records.{" "}
                 <Button type="button" variant="ghost" onClick={loadEntries}>
                   Retry
@@ -119,7 +119,7 @@ const Scope2FormCalculatorGridContainer: React.FC<Scope2FormCalculatorGridContai
             <tr>
               <td
                 colSpan={11}
-                className="text-center! p-[40px]! text-[color:#9ca3af]!"
+                className="text-center! p-[40px]! text-[color:var(--color-legacy-9ca3af)]!"
               >
                 No entries found
               </td>
@@ -169,30 +169,30 @@ const Scope2FormCalculatorGridContainer: React.FC<Scope2FormCalculatorGridContai
                       fontSize: "0.8rem",
                       color:
                         entry.source_type === "electricity"
-                          ? "#2e7d32"
+                          ? "var(--color-green-700)"
                           : entry.source_type === "indirect_steam"
-                          ? "#f59e0b"
-                          : "#8b5cf6",
+                          ? "var(--color-amber-500)"
+                          : "var(--color-violet-500)",
                       fontWeight: 600,
                     }}
                   >
                     {srcLabel}
                   </td>
                   <td>{entry.grid_region || "—"}</td>
-                  <td className="text-[length:0.8rem]! text-[color:#6b7280]!">
+                  <td className="text-[length:0.8rem]! text-[color:var(--color-legacy-6b7280)]!">
                     {entry.division} / {entry.field}
                   </td>
                   <td>{consumptionDisplay}</td>
                   <td>{efDisplay}</td>
-                  <td className="text-[color:#1d4ed8]! font-semibold!">
+                  <td className="text-[color:var(--color-blue-700)]! font-semibold!">
                     {formatEmission(entry.co2e, 3)}
                   </td>
-                  <td className="text-[color:#6b7280]! text-[length:0.85rem]!">
+                  <td className="text-[color:var(--color-legacy-6b7280)]! text-[length:0.85rem]!">
                     {entry.uncertainty != null
                       ? `${formatNumber(entry.uncertainty * 100, 1)}%`
                       : "—"}
                   </td>
-                  <td className="text-[color:#6b7280]! text-[length:0.85rem]!">
+                  <td className="text-[color:var(--color-legacy-6b7280)]! text-[length:0.85rem]!">
                     {entry.uncertainty != null
                       ? `${formatNumber(
                           entry.uncertainty * UNCERTAINTY_COVERAGE_K * 100,
@@ -200,16 +200,16 @@ const Scope2FormCalculatorGridContainer: React.FC<Scope2FormCalculatorGridContai
                         )}%`
                       : "—"}
                     {entry.status === "Draft" ? (
-                      <span className="ml-[8px]! text-[length:0.65rem]! bg-[color:#fee2e2]! text-[color:#b91c1c]! p-[2px_6px]! rounded-[4px]! font-semibold!">
+                      <span className="ml-[8px]! text-[length:0.65rem]! bg-[color:var(--color-legacy-fee2e2)]! text-[color:var(--color-red-700)]! p-[2px_6px]! rounded-[4px]! font-semibold!">
                         Draft
                       </span>
                     ) : entry.status === "Pending Approval" ||
                       entry.status === "Pending" ? (
-                      <span className="ml-[8px]! text-[length:0.65rem]! bg-[color:#fef3c7]! text-[color:#d97706]! p-[2px_6px]! rounded-[4px]! font-semibold!">
+                      <span className="ml-[8px]! text-[length:0.65rem]! bg-[color:var(--color-legacy-fef3c7)]! text-[color:var(--color-amber-600)]! p-[2px_6px]! rounded-[4px]! font-semibold!">
                         Pending
                       </span>
                     ) : (
-                      <span className="ml-[8px]! text-[length:0.65rem]! bg-[color:#dcfce7]! text-[color:#15803d]! p-[2px_6px]! rounded-[4px]! font-semibold!">
+                      <span className="ml-[8px]! text-[length:0.65rem]! bg-[color:var(--color-legacy-dcfce7)]! text-[color:var(--color-legacy-15803d)]! p-[2px_6px]! rounded-[4px]! font-semibold!">
                         Verified
                       </span>
                     )}
@@ -218,7 +218,7 @@ const Scope2FormCalculatorGridContainer: React.FC<Scope2FormCalculatorGridContai
                     <div className="flex! justify-center! gap-[8px]!">
                       <button
                         type="button"
-                        className="icon-button text-[color:#1d4ed8]!"
+                        className="icon-button text-[color:var(--color-blue-700)]!"
                         onClick={() => handleInspect(entry)}
                         title="Inspect Calculation Details"
                       >
@@ -248,11 +248,11 @@ const Scope2FormCalculatorGridContainer: React.FC<Scope2FormCalculatorGridContai
           )}
         </tbody>
         <tfoot>
-          <tr className={`[background-color:#f9fafb]! [font-weight:bold]!`}>
+          <tr className={`[background-color:var(--color-legacy-f9fafb)]! [font-weight:bold]!`}>
             <td colSpan={7} className="text-right! pr-[15px]!">
               Total (Page):
             </td>
-            <td className="text-[color:#1d4ed8]!">
+            <td className="text-[color:var(--color-blue-700)]!">
               {formatNumber(
                 entries.reduce((sum, e) => sum + (e.co2e || 0), 0),
                 3,
@@ -263,7 +263,7 @@ const Scope2FormCalculatorGridContainer: React.FC<Scope2FormCalculatorGridContai
         </tfoot>
       </table>
     </div>
-    <div className="pagination-controls p-[15px]! [border-top:1px_solid_#e5e7eb]! flex! justify-center! gap-[20px]! items-center!">
+    <div className="pagination-controls p-[15px]! [border-top:1px_solid_var(--color-legacy-e5e7eb)]! flex! justify-center! gap-[20px]! items-center!">
       <button
         type="button"
         className="action-btn secondary"
@@ -272,7 +272,7 @@ const Scope2FormCalculatorGridContainer: React.FC<Scope2FormCalculatorGridContai
       >
         Previous
       </button>
-      <span className="text-[length:0.9rem]! text-[color:#4b5563]!">
+      <span className="text-[length:0.9rem]! text-[color:var(--color-legacy-4b5563)]!">
         Page {currentPage} of {totalPages}
       </span>
       <button

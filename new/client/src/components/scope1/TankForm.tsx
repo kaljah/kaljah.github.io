@@ -17,7 +17,7 @@ export const TankForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceT
       <div className="input-group">
         <label>
           Throughput
-          <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+          <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
         </label>
         <div className="grid gap-[10px] [grid-template-columns:1fr_100px] max-[600px]:[grid-template-columns:1fr]">
           <Input
@@ -68,7 +68,7 @@ export const TankForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceT
                 label={
                   <>
                     GOR (scf/bbl)
-                    <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                    <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                   </>
                 }
               >
@@ -116,7 +116,7 @@ export const TankForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceT
             label={
               <>
                 CH₄ (%)
-                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
               </>
             }
           >
@@ -137,7 +137,7 @@ export const TankForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceT
               onChange={(e) => onChange("tank_control_eff", e.target.value)}
               placeholder="e.g. 95"
             />
-            <div className="text-[length:0.75rem]! text-[color:#888]! mt-[4px]!">
+            <div className="text-[length:0.75rem]! text-[color:var(--color-legacy-888888)]! mt-[4px]!">
               VRU, Flaring, etc. (0 = uncontrolled)
             </div>
           </div>

@@ -2,7 +2,7 @@ import React from "react";
 import { ExternalLink, Satellite, X } from "lucide-react";
 import { IconButton } from "../../ui";
 
-const RAMP = "linear-gradient(90deg, #313695 0%, #4575b4 20%, #74add1 40%, #abd9e9 60%, #fee090 75%, #f46d43 90%, #a50026 100%)";
+const RAMP = "linear-gradient(90deg, var(--color-legacy-313695) 0%, var(--color-legacy-4575b4) 20%, var(--color-legacy-74add1) 40%, var(--color-legacy-abd9e9) 60%, var(--color-legacy-fee090) 75%, var(--color-legacy-f46d43) 90%, var(--color-legacy-a50026) 100%)";
 
 export interface ExplorerLegendProps {
   onClose: () => void;

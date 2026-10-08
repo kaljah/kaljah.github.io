@@ -218,7 +218,7 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
                 <span>
                   {opt.label}
                   {opt.subLabel && (
-                    <span className="text-[length:0.72rem]! text-[color:#475569]! ml-[4px]! font-medium!">
+                    <span className="text-[length:0.72rem]! text-[color:var(--color-ink-600)]! ml-[4px]! font-medium!">
                       {" "}
                       - {opt.subLabel}
                     </span>

@@ -91,7 +91,7 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
 }) => (
   <div className="calc-panel">
     {/* EEIO Quick Spend Calculator */}
-    <div className="mt-[20px]! mb-[10px]! p-[16px]! bg-[color:#f8fafc]! [border:1px_solid_#e2e8f0]! rounded-[8px]!">
+    <div className="mt-[20px]! mb-[10px]! p-[16px]! bg-[color:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! rounded-[8px]!">
       <div
         role="button"
         tabIndex={0}
@@ -101,8 +101,8 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
       >
         <div className="flex! items-center! gap-[8px]!">
           <span className="text-[length:1.2rem]!">💰</span>
-          <strong className="text-[color:#334155]!">EEIO Quick Spend Calculator</strong>
-          <span className="text-[length:0.8rem]! text-[color:#64748b]! ml-[10px]!">
+          <strong className="text-[color:var(--color-ink-700)]!">EEIO Quick Spend Calculator</strong>
+          <span className="text-[length:0.8rem]! text-[color:var(--color-ink-500)]! ml-[10px]!">
             Convert financial spend to CO₂e using NAICS factors
           </span>
         </div>
@@ -139,7 +139,7 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
             />
           </div>
           <button
-            className="action-btn h-[38px]! p-[0_16px]! bg-[color:#3b82f6]! text-[color:white]!"
+            className="action-btn h-[38px]! p-[0_16px]! bg-[color:var(--color-blue-500)]! text-[color:white]!"
             onClick={handleCalculateEeio}
           >
             Calculate & Auto-fill
@@ -147,8 +147,8 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
         </div>
       )}
       {eeioResult && showEeioCalc && (
-        <div className="mt-[12px]! p-[12px]! bg-[color:#eff6ff]! [border:1px_solid_#bfdbfe]! rounded-[6px]!">
-          <div className="text-[length:0.85rem]! text-[color:#1e3a8a]!">
+        <div className="mt-[12px]! p-[12px]! bg-[color:var(--color-blue-50)]! [border:1px_solid_var(--color-legacy-bfdbfe)]! rounded-[6px]!">
+          <div className="text-[length:0.85rem]! text-[color:var(--color-legacy-1e3a8a)]!">
             <strong>Industry:</strong> {eeioResult.industry_name} <br />
             <strong>Factor:</strong> {eeioResult.emission_factor} {eeioResult.ef_unit} <br />
             <strong>Estimated Emissions:</strong>{" "}
@@ -164,7 +164,7 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
     <div className="flex! justify-between! items-center! mb-[20px]!">
       <h3 className="m-[0px]!">New Scope 3 Entry</h3>
       <div className="text-right!">
-        <span className="text-[color:#6d28d9]! font-semibold! text-[length:0.9rem]!">
+        <span className="text-[color:var(--color-violet-700)]! font-semibold! text-[length:0.9rem]!">
           Scope 3: Other Indirect
         </span>
       </div>

@@ -733,12 +733,12 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
           <div className="[padding:10px_28px] [background:linear-gradient(135deg,_var(--color-ink-800)_0%,_var(--color-ink-900)_100%)] [color:var(--color-white)] [display:flex] [align-items:center] [justify-content:space-between] [gap:16px] [flex-shrink:0] [animation:wizardBannerIn_0.2s_ease-out]">
             <div className="flex! items-center! gap-[14px]!">
               <span className="font-bold! text-[length:0.92rem]! inline-flex! items-center! gap-[8px]!">
-                <CheckSquare size={16} color="#38bdf8" />
+                <CheckSquare size={16} color="var(--color-legacy-38bdf8)" />
                 {selectedKeys.size} record{selectedKeys.size > 1 ? 's' : ''} selected
               </span>
               <span className="text-[color:rgba(255,255,255,0.4)]!">•</span>
-              <span className="text-[length:0.84rem]! text-[color:#cbd5e1]!">
-                Impact: <strong className="text-[color:#ffffff]!">{selectedImpactTco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong> tCO₂e
+              <span className="text-[length:0.84rem]! text-[color:var(--color-ink-300)]!">
+                Impact: <strong className="text-[color:var(--color-white)]!">{selectedImpactTco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong> tCO₂e
               </span>
             </div>
 
@@ -764,7 +764,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
               <Button
                 variant="ghost" type="button"
                 onClick={() => setSelectedKeys(new Set())}
-                className="text-[color:#475569]! text-[length:0.82rem]! p-[6px_10px]! cursor-pointer!"
+                className="text-[color:var(--color-ink-600)]! text-[length:0.82rem]! p-[6px_10px]! cursor-pointer!"
               >
                 Deselect
               </Button>
@@ -876,7 +876,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
                               <AlertTriangle size={12} />
                               {item.severity === 'danger' ? 'Suspicious Data' : 'Notice'}
                             </span>
-                            <span className={`[font-size:0.72rem]! [line-height:1.2]! ${item.severity === 'danger' ? "[color:#dc2626]!" : "[color:#b45309]!"}`}>
+                            <span className={`[font-size:0.72rem]! [line-height:1.2]! ${item.severity === 'danger' ? "[color:var(--color-red-600)]!" : "[color:var(--color-amber-700)]!"}`}>
                               {item.reasons[0]}
                               {item.reasons.length > 1 && ` (+${item.reasons.length - 1} more)`}
                             </span>
@@ -892,7 +892,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
                         <div className="[display:flex] [align-items:center] [gap:8px] justify-center!">
                           {item.created_by && String(item.created_by) === String(user?.id) ? (
                             <span 
-                              className="badge-maker text-[length:0.7rem]! p-[4px_8px]! rounded-[6px]! bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:#b91c1c]! [border:1px_solid_rgba(239,_68,_68,_0.25)]! font-semibold! whitespace-nowrap!"
+                              className="badge-maker text-[length:0.7rem]! p-[4px_8px]! rounded-[6px]! bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:var(--color-red-700)]! [border:1px_solid_rgba(239,_68,_68,_0.25)]! font-semibold! whitespace-nowrap!"
                              
                               title="Maker-Checker: You created this record and cannot self-approve."
                             >
@@ -933,7 +933,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
           <div className="[background:var(--bg-card-elevated)] [border:1px_solid_var(--border-color)] [&&]:[border-radius:var(--radius-lg)] [width:90%] [max-width:520px] [padding:28px] [box-shadow:var(--shadow-card-elevated)] [display:flex] [flex-direction:column] [gap:20px] [animation:scaleUp_0.25s_cubic-bezier(0.16,_1,_0.3,_1)]">
             <div className="flex! justify-between! items-center!">
               <div className="flex! items-center! gap-[10px]!">
-                <div className="w-[36px]! h-[36px]! rounded-[10px]! bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:#dc2626]! flex! items-center! justify-center!">
+                <div className="w-[36px]! h-[36px]! rounded-[10px]! bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:var(--color-red-600)]! flex! items-center! justify-center!">
                   <Trash2 size={20} />
                 </div>
                 <h3 className="m-[0px]! font-bold! text-[length:1.1rem]!">
@@ -1004,7 +1004,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
               <Button
                 type="button"
                 
-                className="bg-[color:#ef4444]! p-[8px_18px]! rounded-[10px]!"
+                className="bg-[color:var(--color-red-500)]! p-[8px_18px]! rounded-[10px]!"
                 onClick={handleConfirmRejection}
                 disabled={isProcessing || !rejectionModal.reason.trim()}
               >

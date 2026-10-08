@@ -127,13 +127,13 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
           width: "100%",
           maxWidth: "560px",
           boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
-          border: "1px solid #e5e7eb",
+          border: "1px solid var(--color-legacy-e5e7eb)",
           overflow: "hidden",
         }}
       >
         {/* Header */}
         <div
-          className="p-[16px_20px]! [border-bottom:1px_solid_#e5e7eb]! flex! items-center! justify-between! bg-[color:#f9fafb]!"
+          className="p-[16px_20px]! [border-bottom:1px_solid_var(--color-legacy-e5e7eb)]! flex! items-center! justify-between! bg-[color:var(--color-legacy-f9fafb)]!"
         >
           <div className="flex! items-center! gap-[8px]!">
             <div
@@ -142,10 +142,10 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
               <PlusCircle size={18} />
             </div>
             <div>
-              <h3 className="m-[0px]! text-[length:1rem]! font-semibold! text-[color:#111827]!">
+              <h3 className="m-[0px]! text-[length:1rem]! font-semibold! text-[color:var(--color-legacy-111827)]!">
                 Register Tier 2 Custom Factor
               </h3>
-              <p className="m-[0px]! text-[length:0.75rem]! text-[color:#6b7280]!">
+              <p className="m-[0px]! text-[length:0.75rem]! text-[color:var(--color-legacy-6b7280)]!">
                 Add a site-calibrated or supplier emission factor without leaving this form
               </p>
             </div>
@@ -154,7 +154,7 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
             type="button"
             onClick={onClose}
             disabled={loading}
-            className="[border:none]! bg-[color:transparent]! text-[color:#9ca3af]! cursor-pointer! p-[4px]! rounded-[4px]!"
+            className="[border:none]! bg-[color:transparent]! text-[color:var(--color-legacy-9ca3af)]! cursor-pointer! p-[4px]! rounded-[4px]!"
           >
             <X size={20} />
           </button>
@@ -170,7 +170,7 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
                 gap: "8px",
                 padding: "10px 12px",
                 backgroundColor: "var(--color-red-50)",
-                border: "1px solid #fee2e2",
+                border: "1px solid var(--color-legacy-fee2e2)",
                 borderRadius: "6px",
                 color: "var(--color-red-700)",
                 fontSize: "0.8rem",
@@ -186,9 +186,9 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
             {/* Factor Name */}
             <div>
               <label
-                className="block! text-[length:0.75rem]! font-semibold! text-[color:#374151]! mb-[4px]!"
+                className="block! text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]! mb-[4px]!"
               >
-                Factor Name <span className="text-[color:#b91c1c]!">*</span>
+                Factor Name <span className="text-[color:var(--color-red-700)]!">*</span>
               </label>
               <Input
                 type="text"
@@ -205,9 +205,9 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
               <div>
                 <label
-                  className="block! text-[length:0.75rem]! font-semibold! text-[color:#374151]! mb-[4px]!"
+                  className="block! text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]! mb-[4px]!"
                 >
-                  Factor Unit <span className="text-[color:#b91c1c]!">*</span>
+                  Factor Unit <span className="text-[color:var(--color-red-700)]!">*</span>
                 </label>
                 <NativeSelect
                   className="mole-input w-full! p-[8px_10px]! text-[length:0.85rem]!"
@@ -227,7 +227,7 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
 
               <div>
                 <label
-                  className="block! text-[length:0.75rem]! font-semibold! text-[color:#374151]! mb-[4px]!"
+                  className="block! text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]! mb-[4px]!"
                 >
                   Parent / Reference Fuel
                 </label>
@@ -244,17 +244,17 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
 
             {/* Gas Emission Factors */}
             <div
-              className="bg-[color:#f9fafb]! [border:1px_solid_#e5e7eb]! rounded-[8px]! p-[12px]!"
+              className="bg-[color:var(--color-legacy-f9fafb)]! [border:1px_solid_var(--color-legacy-e5e7eb)]! rounded-[8px]! p-[12px]!"
             >
               <div
-                className="text-[length:0.75rem]! font-semibold! text-[color:#4b5563]! mb-[8px]! uppercase! [letter-spacing:0.025em]!"
+                className="text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-4b5563)]! mb-[8px]! uppercase! [letter-spacing:0.025em]!"
               >
                 Emission Factors ({formData.unit})
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px" }}>
                 <div>
                   <label
-                    className="block! text-[length:0.7rem]! text-[color:#6b7280]! mb-[2px]!"
+                    className="block! text-[length:0.7rem]! text-[color:var(--color-legacy-6b7280)]! mb-[2px]!"
                   >
                     CO₂ Factor
                   </label>
@@ -270,7 +270,7 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
                 </div>
                 <div>
                   <label
-                    className="block! text-[length:0.7rem]! text-[color:#6b7280]! mb-[2px]!"
+                    className="block! text-[length:0.7rem]! text-[color:var(--color-legacy-6b7280)]! mb-[2px]!"
                   >
                     CH₄ Factor
                   </label>
@@ -286,7 +286,7 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
                 </div>
                 <div>
                   <label
-                    className="block! text-[length:0.7rem]! text-[color:#6b7280]! mb-[2px]!"
+                    className="block! text-[length:0.7rem]! text-[color:var(--color-legacy-6b7280)]! mb-[2px]!"
                   >
                     N₂O Factor
                   </label>
@@ -307,7 +307,7 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
               <div>
                 <label
-                  className="block! text-[length:0.75rem]! font-semibold! text-[color:#374151]! mb-[4px]!"
+                  className="block! text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]! mb-[4px]!"
                 >
                   Heating Value (HHV)
                 </label>
@@ -324,7 +324,7 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
 
               <div>
                 <label
-                  className="block! text-[length:0.75rem]! font-semibold! text-[color:#374151]! mb-[4px]!"
+                  className="block! text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]! mb-[4px]!"
                 >
                   Factor Uncertainty (±%)
                 </label>
@@ -339,7 +339,7 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
                     onChange={(e) => handleChange("uncertainty", e.target.value)}
                   />
                   <span
-                    className="[position:absolute]! [right:10px]! [top:50%]! [transform:translateY(-50%)]! text-[length:0.75rem]! text-[color:#9ca3af]!"
+                    className="[position:absolute]! [right:10px]! [top:50%]! [transform:translateY(-50%)]! text-[length:0.75rem]! text-[color:var(--color-legacy-9ca3af)]!"
                   >
                     % (Tier 2 default: ±7%)
                   </span>
@@ -350,7 +350,7 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
             {/* Audit Reference / Source */}
             <div>
               <label
-                className="block! text-[length:0.75rem]! font-semibold! text-[color:#374151]! mb-[4px]!"
+                className="block! text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]! mb-[4px]!"
               >
                 Data Source / Lab Certificate Reference
               </label>
@@ -367,7 +367,7 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
 
           {/* Footer Actions */}
           <div
-            className="mt-[20px]! pt-[14px]! [border-top:1px_solid_#e5e7eb]! flex! justify-end! gap-[10px]!"
+            className="mt-[20px]! pt-[14px]! [border-top:1px_solid_var(--color-legacy-e5e7eb)]! flex! justify-end! gap-[10px]!"
           >
             <button
               type="button"

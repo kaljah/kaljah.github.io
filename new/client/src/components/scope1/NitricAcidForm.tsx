@@ -26,7 +26,7 @@ export const NitricAcidForm: React.FC<Scope1SubFormProps> = ({ data, onChange })
         <div className="input-group">
           <label>
             Abatement Technology
-            <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+            <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
           </label>
           <CustomDropdown
             options={NITRIC_ACID_OPTIONS}
@@ -39,7 +39,7 @@ export const NitricAcidForm: React.FC<Scope1SubFormProps> = ({ data, onChange })
         <div className="input-group">
           <label>
             Production Quantity
-            <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+            <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
           </label>
           <div className="grid gap-[10px] [grid-template-columns:1fr_120px] max-[600px]:[grid-template-columns:1fr]">
             <Input

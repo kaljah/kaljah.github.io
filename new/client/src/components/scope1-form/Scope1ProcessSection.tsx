@@ -82,7 +82,7 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
         <div className="input-group">
           <div className="[display:flex] [flex-direction:column] [align-items:flex-start] [gap:6px] [margin-bottom:12px]">
             <label className="m-[0px]!">Method</label>
-            <div className="methodology-toggle [background:#f3f4f6] [padding:3px] [border-radius:var(--radius-md)] [display:flex] [gap:4px] [border:1px_solid_#e5e7eb] [@media(max-width:600px)]:[flex-wrap:wrap]">
+            <div className="methodology-toggle [background:var(--color-legacy-f3f4f6)] [padding:3px] [border-radius:var(--radius-md)] [display:flex] [gap:4px] [border:1px_solid_var(--color-legacy-e5e7eb)] [@media(max-width:600px)]:[flex-wrap:wrap]">
               {(SECTION_TIERS[processType]
                 ? SECTION_TIERS[processType]
                 : processType === "drilling"
@@ -259,14 +259,14 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
           {((sourceType === "custom" &&
             !["associated_gas_venting", "completions", "unloading", "fugitive"].includes(processType)) ||
             sourceType === "library") && (
-            <div className="[margin-top:10px] [background:#fafafa] [border:1px_solid_#e5e7eb] [&&]:[border-radius:var(--radius-md)] [padding:14px]">
+            <div className="[margin-top:10px] [background:var(--color-legacy-fafafa)] [border:1px_solid_var(--color-legacy-e5e7eb)] [&&]:[border-radius:var(--radius-md)] [padding:14px]">
               {sourceType === "custom" ? (
                 <>
                   {tier2Mode === "override" && (
                     <div className="[display:flex] [flex-direction:column] [gap:12px]">
                       {/* Base Fuel Dropdown */}
                       <div>
-                        <label className="block! text-[length:0.75rem]! font-semibold! text-[color:#374151]! mb-[4px]!">
+                        <label className="block! text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]! mb-[4px]!">
                           Fuel
                         </label>
                         <CustomDropdown
@@ -282,7 +282,7 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
                       </div>
 
                       {/* Presets Section */}
-                      <div className="[background:var(--color-white)] [border:1px_solid_#e5e7eb] [&&]:[border-radius:var(--radius-sm)] [padding:10px_12px]">
+                      <div className="[background:var(--color-white)] [border:1px_solid_var(--color-legacy-e5e7eb)] [&&]:[border-radius:var(--radius-sm)] [padding:10px_12px]">
                         <div className="[display:flex] [align-items:center] [justify-content:space-between] [margin-bottom:8px]">
                           <span className="[display:flex] [align-items:center] [gap:6px] [font-size:var(--text-sm)] [font-weight:600] [color:var(--color-ink-700)]">
                             <BookOpen size={14} className="text-[color:var(--color-link)]!" />
@@ -312,7 +312,7 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
                       {/* Measured Properties Grid */}
                       <div className="tier2-inputs-grid">
                         <div>
-                          <label className="block! text-[length:0.75rem]! font-semibold! text-[color:#374151]! mb-[4px]!">
+                          <label className="block! text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]! mb-[4px]!">
                             HHV
                           </label>
                           <div className="flex! gap-[6px]!">
@@ -343,7 +343,7 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
                         </div>
 
                         <div>
-                          <label className="block! text-[length:0.75rem]! font-semibold! text-[color:#374151]! mb-[4px]!">
+                          <label className="block! text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]! mb-[4px]!">
                             Density (kg/m³)
                           </label>
                           <Input
@@ -362,7 +362,7 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
 
                       {/* Data Source / Audit Reference Field */}
                       <div>
-                        <label className="block! text-[length:0.75rem]! font-semibold! text-[color:#374151]! mb-[4px]!">
+                        <label className="block! text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]! mb-[4px]!">
                           Ticket / lab ref
                         </label>
                         <Input

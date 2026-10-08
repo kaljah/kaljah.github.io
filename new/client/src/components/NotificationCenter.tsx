@@ -111,7 +111,7 @@ const BellButton: React.FC<BellButtonProps> = ({ count, onClick }) => (
     <Bell size={20} strokeWidth={1.75} />
     {count > 0 && (
       <span
-        className="[position:absolute]! [top:3px]! [right:3px]! min-w-[16px]! h-[16px]! bg-[color:#ef4444]! rounded-[8px]! [border:1.5px_solid_var(--bg-card,_#ffffff)]! text-[length:0.6rem]! font-bold! text-[color:#fff]! flex! items-center! justify-center! p-[0_3px]! leading-[1]! [letter-spacing:-0.02em]!"
+        className="[position:absolute]! [top:3px]! [right:3px]! min-w-[16px]! h-[16px]! bg-[color:var(--color-red-500)]! rounded-[8px]! [border:1.5px_solid_var(--bg-card,_var(--color-white))]! text-[length:0.6rem]! font-bold! text-[color:var(--color-white)]! flex! items-center! justify-center! p-[0_3px]! leading-[1]! [letter-spacing:-0.02em]!"
       >
         {count > 99 ? "99+" : count}
       </span>
@@ -132,7 +132,7 @@ const NotifRow: React.FC<NotifRowProps> = ({ n, onMarkRead, onDelete }) => {
     <div
       style={{
         padding: "12px 16px",
-        borderBottom: "1px solid var(--border-light, #f1f5f9)",
+        borderBottom: "1px solid var(--border-light, var(--color-ink-100))",
         background: n.is_read ? "transparent" : "rgba(255, 102, 0, 0.04)",
         display: "flex",
         gap: 12,
@@ -165,22 +165,22 @@ const NotifRow: React.FC<NotifRowProps> = ({ n, onMarkRead, onDelete }) => {
         >
           {!n.is_read && (
             <span
-              className="w-[6px]! h-[6px]! [border-radius:50%]! bg-[color:#3b82f6]! shrink-0!"
+              className="w-[6px]! h-[6px]! [border-radius:50%]! bg-[color:var(--color-blue-500)]! shrink-0!"
             />
           )}
           <span
-            className="font-semibold! text-[length:0.82rem]! text-[color:var(--text-primary,_#0f172a)]! whitespace-nowrap! overflow-hidden! [text-overflow:ellipsis]!"
+            className="font-semibold! text-[length:0.82rem]! text-[color:var(--text-primary,_var(--color-ink-900))]! whitespace-nowrap! overflow-hidden! [text-overflow:ellipsis]!"
           >
             {n.title}
           </span>
         </div>
         <p
-          className={`[margin:0]! [font-size:0.78rem]! [color:var(--text-secondary,_#475569)]! [line-height:1.45]! [word-break:break-word]! ${n.is_read ? "[opacity:0.75]!" : "[opacity:1]!"}`}
+          className={`[margin:0]! [font-size:0.78rem]! [color:var(--text-secondary,_var(--color-ink-600))]! [line-height:1.45]! [word-break:break-word]! ${n.is_read ? "[opacity:0.75]!" : "[opacity:1]!"}`}
         >
           {n.message}
         </p>
         <span
-          className="block! mt-[5px]! text-[length:0.7rem]! text-[color:var(--text-muted,_#94a3b8)]!"
+          className="block! mt-[5px]! text-[length:0.7rem]! text-[color:var(--text-muted,_var(--color-ink-400))]!"
         >
           {relativeTime(n.time)}
         </span>
@@ -474,7 +474,7 @@ const NotificationCenter: React.FC = () => {
         width: 380,
         maxWidth: "calc(100vw - 32px)",
         maxHeight: "calc(100vh - 90px)",
-        background: "var(--bg-card-elevated, #ffffff)",
+        background: "var(--bg-card-elevated, var(--color-white))",
         backdropFilter: "blur(20px)",
         WebkitBackdropFilter: "blur(20px)",
         border: "1px solid var(--border-color, rgba(226, 232, 240, 0.9))",
@@ -494,20 +494,20 @@ const NotificationCenter: React.FC = () => {
       >
         <div className="flex! items-center! gap-[10px]!">
           <span
-            className="font-bold! text-[length:0.92rem]! text-[color:var(--text-primary,_#0f172a)]! [letter-spacing:-0.01em]!"
+            className="font-bold! text-[length:0.92rem]! text-[color:var(--text-primary,_var(--color-ink-900))]! [letter-spacing:-0.01em]!"
           >
             Notifications
           </span>
           {notifications.length > 0 && (
             <span
-              className="text-[length:0.72rem]! font-bold! text-[color:var(--text-secondary,_#64748b)]! bg-[color:var(--bg-hover,_#f1f5f9)]! rounded-[999px]! p-[2px_8px]!"
+              className="text-[length:0.72rem]! font-bold! text-[color:var(--text-secondary,_var(--color-ink-500))]! bg-[color:var(--bg-hover,_var(--color-ink-100))]! rounded-[999px]! p-[2px_8px]!"
             >
               {notifications.length}
             </span>
           )}
           {/* Live indicator */}
           <span
-            className="inline-flex! items-center! gap-[4px]! text-[length:0.65rem]! font-bold! text-[color:#059669]! bg-[color:rgba(16,185,129,0.1)]! [border:1px_solid_rgba(16,185,129,0.25)]! rounded-[20px]! p-[2px_8px]! [letter-spacing:0.03em]!"
+            className="inline-flex! items-center! gap-[4px]! text-[length:0.65rem]! font-bold! text-[color:var(--color-green-600)]! bg-[color:rgba(16,185,129,0.1)]! [border:1px_solid_rgba(16,185,129,0.25)]! rounded-[20px]! p-[2px_8px]! [letter-spacing:0.03em]!"
           >
             <span
               style={{
@@ -573,22 +573,22 @@ const NotificationCenter: React.FC = () => {
       <div className={`[max-height:420px]! [overflow-y:auto]!`}>
         {notifications.length === 0 ? (
           <div
-            className="p-[40px_24px]! text-center! text-[color:var(--text-secondary,_#64748b)]!"
+            className="p-[40px_24px]! text-center! text-[color:var(--text-secondary,_var(--color-ink-500))]!"
           >
             <div
-              className="w-[48px]! h-[48px]! rounded-[14px]! bg-[color:var(--bg-hover,_#f8fafc)]! [border:1px_solid_var(--border-color,_#e2e8f0)]! flex! items-center! justify-center! m-[0_auto_12px]!"
+              className="w-[48px]! h-[48px]! rounded-[14px]! bg-[color:var(--bg-hover,_var(--color-ink-50))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! flex! items-center! justify-center! m-[0_auto_12px]!"
             >
               <Bell
                 size={22}
-                color="var(--text-muted, #94a3b8)"
+                color="var(--text-muted, var(--color-ink-400))"
                 strokeWidth={1.75}
               />
             </div>
-            <p className="m-[0px]! text-[length:0.88rem]! font-bold! text-[color:var(--text-primary,_#0f172a)]!">
+            <p className="m-[0px]! text-[length:0.88rem]! font-bold! text-[color:var(--text-primary,_var(--color-ink-900))]!">
               No notifications
             </p>
             <p
-              className="m-[4px_0_0]! text-[length:0.78rem]! text-[color:var(--text-secondary,_#64748b)]!"
+              className="m-[4px_0_0]! text-[length:0.78rem]! text-[color:var(--text-secondary,_var(--color-ink-500))]!"
             >
               You're all caught up
             </p>
@@ -608,9 +608,9 @@ const NotificationCenter: React.FC = () => {
       {/* ── Footer ── */}
       {notifications.length > 0 && (
         <div
-          className="p-[9px_18px]! [border-top:1px_solid_var(--border-color,_#e2e8f0)]! bg-[color:var(--bg-hover,_#f8fafc)]! text-[length:0.74rem]! text-[color:var(--text-secondary,_#64748b)]! font-medium! flex! justify-between! items-center!"
+          className="p-[9px_18px]! [border-top:1px_solid_var(--border-color,_var(--color-ink-200))]! bg-[color:var(--bg-hover,_var(--color-ink-50))]! text-[length:0.74rem]! text-[color:var(--text-secondary,_var(--color-ink-500))]! font-medium! flex! justify-between! items-center!"
         >
-          <span className={`[font-weight:600]! ${hasUnread ? "[color:#ea580c]!" : "[color:inherit]!"}`}>
+          <span className={`[font-weight:600]! ${hasUnread ? "[color:var(--color-legacy-ea580c)]!" : "[color:inherit]!"}`}>
             {unreadCount} unread
           </span>
           <span>Showing {notifications.length} notifications</span>

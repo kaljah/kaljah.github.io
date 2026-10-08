@@ -139,7 +139,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
           >
             <div className="flex! justify-between! items-center!">
               <div className="flex! items-center! gap-[12px]!">
-                <div className="w-[42px]! h-[42px]! rounded-[12px]! bg-[color:rgba(239,_68,_68,_0.12)]! flex! items-center! justify-center! text-[color:#dc2626]!">
+                <div className="w-[42px]! h-[42px]! rounded-[12px]! bg-[color:rgba(239,_68,_68,_0.12)]! flex! items-center! justify-center! text-[color:var(--color-red-600)]!">
                   <AlertTriangle size={22} />
                 </div>
                 <div>
@@ -163,7 +163,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
               </Button>
             </div>
 
-            <div className="bg-[color:rgba(239,_68,_68,_0.06)]! [border:1px_solid_rgba(239,_68,_68,_0.2)]! rounded-[12px]! p-[12px_14px]! text-[length:0.84rem]! text-[color:#b91c1c]! flex! gap-[10px]! items-start!">
+            <div className="bg-[color:rgba(239,_68,_68,_0.06)]! [border:1px_solid_rgba(239,_68,_68,_0.2)]! rounded-[12px]! p-[12px_14px]! text-[length:0.84rem]! text-[color:var(--color-red-700)]! flex! gap-[10px]! items-start!">
               <AlertCircle size={16} className="shrink-0! mt-[2px]!" />
               <span>
                 The record will be marked Rejected and excluded from totals; it is kept for the audit trail. The submitter is notified with your reason.
@@ -190,7 +190,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
 
             <div>
               <label className="block! text-[length:0.78rem]! font-semibold! text-[color:var(--text-secondary)]! mb-[8px]! uppercase! [letter-spacing:0.05em]!">
-                Audit Reason / Justification <span className="text-[color:#b91c1c]!">*</span>
+                Audit Reason / Justification <span className="text-[color:var(--color-red-700)]!">*</span>
               </label>
               <textarea
                 className="custom-input w-full! [resize:vertical]! text-[length:0.88rem]! p-[10px_12px]! rounded-[10px]!"
@@ -213,7 +213,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
               </Button>
               <button
                 type="button"
-                className="[background:#fee2e2] [color:var(--color-red-700)] [border:1px_solid_#fecaca] [cursor:pointer] [font-size:var(--text-base)] [transition:all_0.2s] hover:[background:var(--color-red-700)] hover:[color:white] inline-flex! items-center! gap-[8px]! p-[8px_18px]! rounded-[8px]!"
+                className="[background:var(--color-legacy-fee2e2)] [color:var(--color-red-700)] [border:1px_solid_var(--color-legacy-fecaca)] [cursor:pointer] [font-size:var(--text-base)] [transition:all_0.2s] hover:[background:var(--color-red-700)] hover:[color:white] inline-flex! items-center! gap-[8px]! p-[8px_18px]! rounded-[8px]!"
                 disabled={isProcessingBatch || !rejectionModal.reason.trim()}
                 onClick={handleConfirmReject}
               >
@@ -269,7 +269,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
               gap: "8px",
               borderRadius: "10px",
               padding: "8px 18px",
-              background: "linear-gradient(135deg, #ff6600, #ea580c)",
+              background: "linear-gradient(135deg, var(--color-brand-500), var(--color-legacy-ea580c))",
               color: "var(--color-white)",
               fontWeight: 600,
               border: "none",
@@ -300,7 +300,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
         </div>
 
         <div className="[background:var(--bg-card)] [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)] [&&]:[border-radius:var(--radius-lg)] [padding:20px] [display:flex] [align-items:center] [gap:16px] [box-shadow:var(--shadow-card)] [transition:all_0.2s_cubic-bezier(0.4,_0,_0.2,_1)] hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated)] hover:[border-color:rgba(255,_102,_0,_0.3)]">
-          <div className="[width:48px] [height:48px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [flex-shrink:0] bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:#b91c1c]!">
+          <div className="[width:48px] [height:48px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [flex-shrink:0] bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:var(--color-red-700)]!">
             <Flame size={22} />
           </div>
           <div className="[display:flex] [flex-direction:column] [gap:2px] [min-width:0]">
@@ -314,12 +314,12 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
         </div>
 
         <div className="[background:var(--bg-card)] [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)] [&&]:[border-radius:var(--radius-lg)] [padding:20px] [display:flex] [align-items:center] [gap:16px] [box-shadow:var(--shadow-card)] [transition:all_0.2s_cubic-bezier(0.4,_0,_0.2,_1)] hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated)] hover:[border-color:rgba(255,_102,_0,_0.3)]">
-          <div className={`[width:48px] [height:48px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [flex-shrink:0] ${pendingMetrics.flaggedCount > 0 ? "[background:rgba(245,_158,_11,_0.1)]!" : "[background:rgba(16,_185,_129,_0.1)]!"} ${pendingMetrics.flaggedCount > 0 ? "[color:#d97706]!" : "[color:#059669]!"}`}>
+          <div className={`[width:48px] [height:48px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [flex-shrink:0] ${pendingMetrics.flaggedCount > 0 ? "[background:rgba(245,_158,_11,_0.1)]!" : "[background:rgba(16,_185,_129,_0.1)]!"} ${pendingMetrics.flaggedCount > 0 ? "[color:var(--color-amber-600)]!" : "[color:var(--color-green-600)]!"}`}>
             {pendingMetrics.flaggedCount > 0 ? <AlertTriangle size={22} /> : <CheckCircle size={22} />}
           </div>
           <div className="[display:flex] [flex-direction:column] [gap:2px] [min-width:0]">
             <span className="[font-size:var(--text-sm)] [font-weight:600] [text-transform:uppercase] [letter-spacing:0.05em] [color:var(--text-secondary)]">Quality Audit</span>
-            <span className={`[font-size:var(--text-xl)] [font-weight:700] [line-height:1.2] ${pendingMetrics.flaggedCount > 0 ? "[color:#d97706]!" : "[color:inherit]!"}`}>
+            <span className={`[font-size:var(--text-xl)] [font-weight:700] [line-height:1.2] ${pendingMetrics.flaggedCount > 0 ? "[color:var(--color-amber-600)]!" : "[color:inherit]!"}`}>
               {pendingMetrics.flaggedCount} Flagged
             </span>
             <span className="[font-size:var(--text-sm)] [color:var(--text-muted)] [white-space:nowrap] [overflow:hidden] [text-overflow:ellipsis]">{pendingMetrics.cleanCount} clean records verified</span>
@@ -327,7 +327,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
         </div>
 
         <div className="[background:var(--bg-card)] [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)] [&&]:[border-radius:var(--radius-lg)] [padding:20px] [display:flex] [align-items:center] [gap:16px] [box-shadow:var(--shadow-card)] [transition:all_0.2s_cubic-bezier(0.4,_0,_0.2,_1)] hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated)] hover:[border-color:rgba(255,_102,_0,_0.3)]">
-          <div className="[width:48px] [height:48px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [flex-shrink:0] bg-[color:rgba(59,_130,_246,_0.1)]! text-[color:#2563eb]!">
+          <div className="[width:48px] [height:48px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [flex-shrink:0] bg-[color:rgba(59,_130,_246,_0.1)]! text-[color:var(--color-blue-600)]!">
             <Shield size={22} />
           </div>
           <div className="[display:flex] [flex-direction:column] [gap:2px] [min-width:0]">
@@ -378,7 +378,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
             className={`pending-tab-btn ${pendingScopeFilter === "3" ? "active" : ""}`}
             onClick={() => setPendingScopeFilter("3")}
           >
-            <span className="scope-tag [background:rgba(147,_51,_234,_0.1)] [color:#7c3aed] [border:1px_solid_rgba(147,_51,_234,_0.25)]! p-[1px_6px]! text-[length:0.7rem]!">S3</span>
+            <span className="scope-tag [background:rgba(147,_51,_234,_0.1)] [color:var(--color-legacy-7c3aed)] [border:1px_solid_rgba(147,_51,_234,_0.25)]! p-[1px_6px]! text-[length:0.7rem]!">S3</span>
             <span>Scope 3</span>
             <span className="pending-count-chip [display:inline-flex] [align-items:center] [justify-content:center] [min-width:20px] [height:20px] [padding:0_6px] [border-radius:var(--radius-md)] [font-size:var(--text-xs)] [font-weight:600] [background:rgba(15,_23,_42,_0.08)] [color:var(--text-secondary)]">
               {pendingMetrics.count3}
@@ -398,14 +398,14 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
             </button>
             <button
               className={`pending-tab-btn ${pendingQaFilter === "clean" ? "active" : ""}`}
-              style={{ padding: "6px 12px", fontSize: "0.78rem", color: pendingQaFilter === "clean" ? "#059669" : "inherit" }}
+              style={{ padding: "6px 12px", fontSize: "0.78rem", color: pendingQaFilter === "clean" ? "var(--color-green-600)" : "inherit" }}
               onClick={() => setPendingQaFilter("clean")}
             >
               Clean Only
             </button>
             <button
               className={`pending-tab-btn ${pendingQaFilter === "flagged" ? "active" : ""}`}
-              style={{ padding: "6px 12px", fontSize: "0.78rem", color: pendingQaFilter === "flagged" ? "#d97706" : "inherit" }}
+              style={{ padding: "6px 12px", fontSize: "0.78rem", color: pendingQaFilter === "flagged" ? "var(--color-amber-600)" : "inherit" }}
               onClick={() => setPendingQaFilter("flagged")}
             >
               Flagged Only
@@ -438,7 +438,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
           {pendingScopeFilter !== "all" && pendingMetrics[`count${pendingScopeFilter}`] > 0 && (
             <Button
               type="submit"
-              className="bg-[color:#10b981]! text-[length:0.82rem]! p-[8px_14px]! inline-flex! items-center! gap-[6px]!"
+              className="bg-[color:var(--color-green-500)]! text-[length:0.82rem]! p-[8px_14px]! inline-flex! items-center! gap-[6px]!"
               disabled={isProcessingBatch}
               onClick={() => handleApproveAllInScope(pendingScopeFilter)}
             >
@@ -454,12 +454,12 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
         <div className="[display:flex] [align-items:center] [justify-content:space-between] [background:linear-gradient(135deg,_var(--color-ink-800)_0%,_var(--color-ink-900)_100%)] [color:var(--color-white)] [padding:14px_24px] [border-radius:var(--radius-lg)] [box-shadow:var(--shadow-raised)] [animation:slideUp_0.25s_cubic-bezier(0.16,_1,_0.3,_1)]">
           <div className="flex! items-center! gap-[14px]! flex-wrap!">
             <span className="font-bold! text-[length:0.94rem]! inline-flex! items-center! gap-[8px]!">
-              <CheckSquare size={18} color="#38bdf8" />
+              <CheckSquare size={18} color="var(--color-legacy-38bdf8)" />
               {selectedPendingKeys.size} record{selectedPendingKeys.size > 1 ? "s" : ""} selected
             </span>
             <span className="text-[color:rgba(255,255,255,0.3)]!">•</span>
-            <span className="text-[length:0.84rem]! text-[color:#cbd5e1]!">
-              Cumulative: <strong className="text-[color:#ffffff]!">{selectedPendingImpactTco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong> tCO₂e
+            <span className="text-[length:0.84rem]! text-[color:var(--color-ink-300)]!">
+              Cumulative: <strong className="text-[color:var(--color-white)]!">{selectedPendingImpactTco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong> tCO₂e
             </span>
           </div>
           <div className="[display:flex] [align-items:center] [gap:10px]">
@@ -472,7 +472,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
               Approve Selected
             </button>
             <button
-              className="[display:inline-flex] [align-items:center] [gap:6px] [background:rgba(239,_68,_68,_0.15)] [color:#fca5a5] [border:1px_solid_rgba(239,_68,_68,_0.4)] [padding:8px_18px] [&&]:[border-radius:var(--radius-md)] [font-size:var(--text-base)] [font-weight:600] [cursor:pointer] [transition:all_0.15s] hover:[background:var(--color-red-700)] hover:[color:var(--color-white)] hover:[border-color:var(--color-red-500)] hover:[transform:translateY(-1px)]"
+              className="[display:inline-flex] [align-items:center] [gap:6px] [background:rgba(239,_68,_68,_0.15)] [color:var(--color-legacy-fca5a5)] [border:1px_solid_rgba(239,_68,_68,_0.4)] [padding:8px_18px] [&&]:[border-radius:var(--radius-md)] [font-size:var(--text-base)] [font-weight:600] [cursor:pointer] [transition:all_0.15s] hover:[background:var(--color-red-700)] hover:[color:var(--color-white)] hover:[border-color:var(--color-red-500)] hover:[transform:translateY(-1px)]"
               disabled={isProcessingBatch}
               onClick={handleOpenBatchRejectModal}
             >
@@ -542,7 +542,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
                 Showing {filteredPendingRecords.length} of {pendingMetrics.totalCount}
               </span>
               {pendingMetrics.loadedCount < pendingMetrics.totalCount && (
-                <span className="text-[length:0.78rem]! text-[color:#b45309]! ml-[8px]!">
+                <span className="text-[length:0.78rem]! text-[color:var(--color-amber-700)]! ml-[8px]!">
                   The first {pendingMetrics.loadedCount} are listed (200 per scope); decide on them to load the next ones, or use the Review Wizard to approve all
                 </span>
               )}
@@ -672,7 +672,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
                         <div className="[display:flex] [align-items:center] [gap:8px] justify-center!">
                           {item.created_by && String(item.created_by) === String(user?.id) ? (
                             <span
-                              className="badge-maker text-[length:0.7rem]! p-[4px_8px]! rounded-[6px]! bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:#b91c1c]! [border:1px_solid_rgba(239,_68,_68,_0.25)]! font-semibold! whitespace-nowrap!"
+                              className="badge-maker text-[length:0.7rem]! p-[4px_8px]! rounded-[6px]! bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:var(--color-red-700)]! [border:1px_solid_rgba(239,_68,_68,_0.25)]! font-semibold! whitespace-nowrap!"
                               title="Maker-Checker: You created this record and cannot self-approve."
                             >
                               Self-Submitted

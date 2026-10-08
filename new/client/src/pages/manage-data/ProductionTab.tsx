@@ -102,7 +102,7 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
           <>
             Activity
             {!isPrivileged && getAvailableActivities().length === 1 && (
-              <span className="text-[length:0.65rem]! bg-[color:#dbeafe]! text-[color:#1d4ed8]! rounded-[4px]! p-[1px_5px]! font-semibold!">
+              <span className="text-[length:0.65rem]! bg-[color:var(--color-legacy-dbeafe)]! text-[color:var(--color-blue-700)]! rounded-[4px]! p-[1px_5px]! font-semibold!">
                 Auto
               </span>
             )}
@@ -132,7 +132,7 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
           <>
             Division
             {!isPrivileged && getAvailableDivisions(prodForm.activity).length === 1 && (
-              <span className="text-[length:0.65rem]! bg-[color:#dbeafe]! text-[color:#1d4ed8]! rounded-[4px]! p-[1px_5px]! font-semibold!">
+              <span className="text-[length:0.65rem]! bg-[color:var(--color-legacy-dbeafe)]! text-[color:var(--color-blue-700)]! rounded-[4px]! p-[1px_5px]! font-semibold!">
                 Auto
               </span>
             )}
@@ -161,7 +161,7 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
           Region
           {!isPrivileged &&
             facilities.filter((f) => f.activity === prodForm.activity && f.division === prodForm.division).length === 1 && (
-              <span className="text-[length:0.65rem]! bg-[color:#dbeafe]! text-[color:#1d4ed8]! rounded-[4px]! p-[1px_5px]! font-semibold!">
+              <span className="text-[length:0.65rem]! bg-[color:var(--color-legacy-dbeafe)]! text-[color:var(--color-blue-700)]! rounded-[4px]! p-[1px_5px]! font-semibold!">
                 Auto
               </span>
             )}
@@ -391,7 +391,7 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
                       <>
                         {fac.name}
                         {fac.field && (
-                          <span className="text-[length:0.85em]! text-[color:#9ca3af]! font-normal!">
+                          <span className="text-[length:0.85em]! text-[color:var(--color-legacy-9ca3af)]! font-normal!">
                             -{fac.field}
                           </span>
                         )}
@@ -428,7 +428,7 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
                 </td>
                 <td className="text-center!">
                   <button
-                    className="[background:#fee2e2] [color:var(--color-red-700)] [border:1px_solid_#fecaca] [&&]:[border-radius:var(--radius-md)] [cursor:pointer] [transition:all_0.2s] hover:[background:var(--color-red-700)] hover:[color:white] p-[6px_12px]! text-[length:0.8rem]!"
+                    className="[background:var(--color-legacy-fee2e2)] [color:var(--color-red-700)] [border:1px_solid_var(--color-legacy-fecaca)] [&&]:[border-radius:var(--radius-md)] [cursor:pointer] [transition:all_0.2s] hover:[background:var(--color-red-700)] hover:[color:white] p-[6px_12px]! text-[length:0.8rem]!"
                     onClick={() => handleDeleteProduction(d.id)}
                   >
                     Delete

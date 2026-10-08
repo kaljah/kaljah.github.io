@@ -335,13 +335,13 @@ const CbamTab: React.FC<CbamTabProps> = ({
                   <td className="text-right! font-semibold!">{qTonnes.toLocaleString()}</td>
                   <td className="text-right!">{direct.toFixed(3)}</td>
                   <td className="text-right!">{indirect.toFixed(3)}</td>
-                  <td className="text-right! text-[color:#1d4ed8]! font-bold!">
+                  <td className="text-right! text-[color:var(--color-blue-700)]! font-bold!">
                     {totalEmbedded.toLocaleString(undefined, { maximumFractionDigits: 1 })}
                   </td>
                   <td className="text-center!">
                     <div className="flex! gap-[6px]! justify-center!">
                       <button
-                        className="action-btn p-[4px_8px]! text-[length:0.75rem]! bg-[color:#3b82f6]!"
+                        className="action-btn p-[4px_8px]! text-[length:0.75rem]! bg-[color:var(--color-blue-500)]!"
                         onClick={() => {
                           setEditingCbamId(c.id);
                           setCbamForm({
@@ -365,7 +365,7 @@ const CbamTab: React.FC<CbamTabProps> = ({
                         Edit
                       </button>
                       <button
-                        className="[background:#fee2e2] [color:var(--color-red-700)] [border:1px_solid_#fecaca] [&&]:[border-radius:var(--radius-md)] [cursor:pointer] [transition:all_0.2s] hover:[background:var(--color-red-700)] hover:[color:white] p-[4px_8px]! text-[length:0.75rem]!"
+                        className="[background:var(--color-legacy-fee2e2)] [color:var(--color-red-700)] [border:1px_solid_var(--color-legacy-fecaca)] [&&]:[border-radius:var(--radius-md)] [cursor:pointer] [transition:all_0.2s] hover:[background:var(--color-red-700)] hover:[color:white] p-[4px_8px]! text-[length:0.75rem]!"
                         onClick={() => handleDeleteCbamExport(c.id)}
                       >
                         Delete
