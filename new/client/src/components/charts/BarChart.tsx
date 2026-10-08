@@ -66,7 +66,16 @@ export const BarChart: React.FC<BarChartProps> = ({
     if (!isFinite(num)) return "0";
     if (Math.abs(num) >= 1_000_000) return `${(num / 1_000_000).toFixed(1)}M`;
     if (Math.abs(num) >= 1_000) return `${(num / 1_000).toFixed(1)}k`;
-    return num.toLocaleString(undefined, { maximumFractionDigits: 1 });
+    // Small magnitudes (rates, intensities) need more digits or every tick collapses to "0" / "0.1".
+    const digits = Math.abs(num) >= 10 ? 1 : Math.abs(num) >= 1 ? 2 : 3;
+    return num.toLocaleString(undefined, { maximumFractionDigits: digits });
+  };
+
+  // Show every category label (long names are shortened; the tooltip carries the full name).
+  const manyCategories = (data?.length || 0) > 4;
+  const shortLabel = (v: any): string => {
+    const s = String(v ?? "");
+    return s.length > 16 ? `${s.slice(0, 15)}…` : s;
   };
 
   const valueFormatter = formatValue || defaultFormat;
@@ -214,6 +223,11 @@ export const BarChart: React.FC<BarChartProps> = ({
             axisLine={false}
             tickLine={false}
             dy={8}
+            interval={0}
+            tickFormatter={shortLabel}
+            angle={manyCategories ? -30 : 0}
+            textAnchor={manyCategories ? "end" : "middle"}
+            height={manyCategories ? 64 : 30}
           />
 
           <YAxis

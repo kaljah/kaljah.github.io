@@ -96,7 +96,9 @@ export const PieChart: React.FC<PieChartProps> = ({
     typeof height === "number" ? height : parseInt(String(height), 10) || 300;
 
   // Split height between donut and legend if legend is shown
-  const legendSpace = showLegend ? (totalNumericHeight <= 200 ? 36 : 48) : 0;
+  // The pills wrap two to a row in narrow cards, so reserve a row per pair (max 3 rows) or the last ones get clipped.
+  const legendRows = Math.min(3, Math.max(1, Math.ceil(sanitizedData.length / 2)));
+  const legendSpace = showLegend ? 12 + 26 * legendRows : 0;
   const svgHeight = Math.max(110, totalNumericHeight - legendSpace);
 
   // Auto-clamp radii to guarantee donut never clips within SVG height
