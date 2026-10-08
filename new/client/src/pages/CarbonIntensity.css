@@ -298,11 +298,11 @@
 
 /* Professional Color Scale */
 .heat-lux {
-  background: var(--color-green-600);
-} /* Emerald */
+  background: var(--color-green-900);
+} /* Deep green */
 .heat-low {
-  background: var(--color-green-500);
-} /* Lighter Emerald */
+  background: var(--color-green-700);
+} /* Green (white text passes AA; the lighter emeralds did not) */
 .heat-mid {
   background: var(--color-amber-700);
   color: var(--color-white) !important;

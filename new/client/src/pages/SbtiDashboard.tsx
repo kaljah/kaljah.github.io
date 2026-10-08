@@ -242,41 +242,47 @@ const SbtiDashboard: React.FC = () => {
   };
 
   // Trajectory chart lines: Active Corporate Target + Actual + Reference Benchmarks + BAU
-  const trajectoryLines = useMemo(() => [
-    {
-      dataKey: "sbti_target",
-      name: `Corporate Target (${sbtiData?.reduction_rate_pct || 4.2}%/yr)`,
-      color: "var(--color-green-500)",
-      strokeWidth: 3,
-    },
-    {
-      dataKey: "actual",
-      name: `Actual Emissions (${scopeMode === "s1_s2" ? "Scope 1+2" : "Scope 1+2+3"})`,
-      color: "var(--color-brand-500)",
-      strokeWidth: 3,
-    },
-    {
-      dataKey: "sbti_15c",
-      name: "1.5°C Benchmark (-4.2%/yr)",
-      color: "var(--color-violet-500)",
-      strokeWidth: 2,
-      strokeDasharray: "4 4",
-    },
-    {
-      dataKey: "sbti_wb2c",
-      name: "Well-Below 2°C (-2.5%/yr)",
-      color: "var(--color-blue-500)",
-      strokeWidth: 2,
-      strokeDasharray: "3 3",
-    },
-    {
-      dataKey: "bau_projection",
-      name: "Business As Usual (+1.5%/yr)",
-      color: "var(--color-ink-400)",
-      strokeWidth: 1.5,
-      strokeDasharray: "5 5",
-    },
-  ], [sbtiData, scopeMode]);
+  // Draw order matters: later lines sit on top. The corporate target can equal the 1.5°C benchmark (4.2%/yr), so the
+  // target is a thick solid line underneath and the dashed benchmark runs over it; "1 0" is a solid dash pattern.
+  const trajectoryLines = useMemo(() => {
+    const rate = sbtiData?.reduction_rate_pct || 4.2;
+    return [
+      {
+        dataKey: "bau_projection",
+        name: "Business As Usual (+1.5%/yr)",
+        color: "var(--color-ink-400)",
+        strokeWidth: 1.5,
+        strokeDasharray: "5 5",
+      },
+      {
+        dataKey: "sbti_wb2c",
+        name: "Well-Below 2°C (-2.5%/yr)",
+        color: "var(--color-blue-500)",
+        strokeWidth: 2,
+        strokeDasharray: "3 3",
+      },
+      {
+        dataKey: "sbti_target",
+        name: `Corporate Target (${rate}%/yr${Number(rate) === 4.2 ? ", same as 1.5°C" : ""})`,
+        color: "var(--color-green-500)",
+        strokeWidth: 4,
+        strokeDasharray: "1 0",
+      },
+      {
+        dataKey: "sbti_15c",
+        name: "1.5°C Benchmark (-4.2%/yr)",
+        color: "var(--color-violet-500)",
+        strokeWidth: 2,
+        strokeDasharray: "4 4",
+      },
+      {
+        dataKey: "actual",
+        name: `Actual Emissions (${scopeMode === "s1_s2" ? "Scope 1+2" : "Scope 1+2+3"})`,
+        color: "var(--color-brand-500)",
+        strokeWidth: 3,
+      },
+    ];
+  }, [sbtiData, scopeMode]);
 
   // Scope breakdown bars
   const scopeBars = useMemo(() => [
