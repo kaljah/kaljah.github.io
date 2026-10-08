@@ -91,24 +91,21 @@ def test_production_rejects_empty_origin_list():
     assert "ALLOWED_ORIGINS" in p.stderr
 
 
-def test_listed_origin_is_used_and_legacy_pages_origin_is_kept_with_warning():
+def test_production_uses_exactly_the_listed_origins():
     p, out = _prod(ALLOWED_ORIGINS="https://app.example.com")
     assert p.returncode == 0, p.stderr[-500:]
-    assert out["origins"][0] == "https://app.example.com"
-    assert "https://kaljah.github.io" in out["origins"]
-    assert "CORS_STRICT" in p.stderr
-
-
-def test_cors_strict_drops_the_legacy_pages_origin():
-    p, out = _prod(ALLOWED_ORIGINS="https://app.example.com", CORS_STRICT="true")
-    assert p.returncode == 0, p.stderr[-500:]
     assert out["origins"] == ["https://app.example.com"]
+    assert "kaljah.github.io" not in p.stderr
 
 
-def test_cors_strict_keeps_an_explicitly_listed_pages_origin():
-    p, out = _prod(ALLOWED_ORIGINS="https://kaljah.github.io", CORS_STRICT="true")
+def test_github_pages_origin_is_not_added_anywhere():
+    # The Pages deployment was removed: the origin is neither a development default nor a production fallback.
+    _, prod = _prod(ALLOWED_ORIGINS="https://app.example.com", CORS_STRICT="false")
+    assert "https://kaljah.github.io" not in prod["origins"]
+    p, dev = _load(FLASK_ENV="development", SECRET_KEY="x" * 32)
     assert p.returncode == 0, p.stderr[-500:]
-    assert out["origins"] == ["https://kaljah.github.io"]
+    assert "https://kaljah.github.io" not in dev["origins"]
+    assert "http://localhost:5173" in dev["origins"]
 
 
 # ── rate-limit storage ─────────────────────────────────────────────────────────

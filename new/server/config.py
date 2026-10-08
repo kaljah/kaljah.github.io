@@ -55,8 +55,7 @@ class Config:
 
     _default_origins = (
         "http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:3000,"
-        "http://127.0.0.1:5173,http://127.0.0.1:5174,http://127.0.0.1:5175,http://127.0.0.1:3000,"
-        "https://kaljah.github.io"
+        "http://127.0.0.1:5173,http://127.0.0.1:5174,http://127.0.0.1:5175,http://127.0.0.1:3000"
     )
     ALLOWED_ORIGINS = [
         o.strip()
@@ -68,20 +67,8 @@ class Config:
             "FATAL: ALLOWED_ORIGINS must list explicit origins in production "
             "(empty and '*' are not allowed with credentialed requests)."
         )
-    # Transitional: the GitHub Pages frontend origin used to be appended unconditionally.
-    # Set CORS_STRICT=true once ALLOWED_ORIGINS lists every origin you need.
-    _legacy_pages_origin = "https://kaljah.github.io"
-    if _legacy_pages_origin not in ALLOWED_ORIGINS:
-        if os.environ.get("CORS_STRICT", "").lower() in ("1", "true", "yes"):
-            pass
-        else:
-            ALLOWED_ORIGINS.append(_legacy_pages_origin)
-            if _is_production:
-                logging.getLogger(__name__).warning(
-                    "ALLOWED_ORIGINS does not list %s; it is still added for compatibility. "
-                    "Add it explicitly and set CORS_STRICT=true to remove this fallback.",
-                    _legacy_pages_origin,
-                )
+    # Only the listed origins are allowed. (The GitHub Pages origin that used to be appended, and the
+    # CORS_STRICT switch that turned it off, were removed with the Pages deployment.)
 
     # Database Configuration
     # Defaults to SQLite, can be overridden by DB_TYPE env var
