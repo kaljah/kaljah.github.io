@@ -16,7 +16,8 @@ const walk = (dir, out = []) => {
   return out;
 };
 
-const files = walk(SRC);
+// Forward slashes on every platform: the exclusion regexes below (tokens.css, base.css) assume them.
+const files = walk(SRC).map((f) => f.replace(/\\/g, "/"));
 const css = files.filter((f) => extname(f) === ".css" && !/[\/]styles[\/]tokens\.css$/.test(f));
 // The client is TypeScript; .jsx/.js are kept so any leftover legacy file is still counted.
 const code = files.filter((f) => [".jsx", ".js", ".tsx", ".ts"].includes(extname(f)));
