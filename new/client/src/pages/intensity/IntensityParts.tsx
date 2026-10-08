@@ -53,7 +53,7 @@ export const KpiTile: React.FC<KpiTileProps> = ({
       <span className={cn("total-value font-bold leading-none tracking-tight tabular-nums", pending ? "text-lg text-warning-fg" : cn("text-3xl", VALUE_TONE[tone]))}>{value}</span>
       {unit && !pending && <span className="kpi-unit text-base font-medium text-text-secondary">{unit}</span>}
     </div>
-    <div className="kpi-footer mt-4 flex items-center justify-between gap-2 border-0 border-t border-dashed border-border pt-4 text-sm text-text-secondary [&_strong]:text-text">{footer}</div>
+    <div className="kpi-footer mt-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 border-0 border-t border-dashed border-border pt-4 text-sm text-text-secondary [&_strong]:text-text">{footer}</div>
     {note}
   </div>
 );
