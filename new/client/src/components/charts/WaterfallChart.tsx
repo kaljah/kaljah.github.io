@@ -69,6 +69,15 @@ export const WaterfallChart: React.FC<WaterfallChartProps> = ({
   exportName,
 }) => {
   const wrapRef = React.useRef<HTMLDivElement | null>(null);
+  // Eight step names do not fit side by side on a phone: tilt them there.
+  const [narrow, setNarrow] = React.useState<boolean>(() => typeof window !== "undefined" && !!window.matchMedia?.("(max-width: 639px)").matches);
+  React.useEffect(() => {
+    const mq = window.matchMedia?.("(max-width: 639px)");
+    if (!mq) return undefined;
+    const on = () => setNarrow(mq.matches);
+    mq.addEventListener("change", on);
+    return () => mq.removeEventListener("change", on);
+  }, []);
   const { rows, domain } = useMemo(() => {
     const out: Row[] = [{ name: startLabel, base: 0, value: start, kind: "total", top: start }];
     let running = start;
@@ -102,22 +111,25 @@ export const WaterfallChart: React.FC<WaterfallChartProps> = ({
   const signed = (d: number) => (labelMode === "percent" && start > 0 ? pctSigned(d) : absSigned(d));
 
   return (
-    <div ref={wrapRef} className="chart-wrapper group relative" role="img" aria-label={`Emissions bridge from ${startLabel} to ${endLabel}`}>
+    <div ref={wrapRef} className="chart-wrapper" role="img" aria-label={`Emissions bridge from ${startLabel} to ${endLabel}`}>
       {exportName && (
         <ChartExport
-          className="absolute right-0 top-0 z-10 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100 pointer-coarse:opacity-100"
+          className="h-7"
           name={exportName}
           targetRef={wrapRef}
           header={["Step", "Change (tCO2e)"]}
           rows={[[startLabel, start], ...steps.map((s) => [s.name, s.delta]), [endLabel, end]]}
         />
       )}
-      <ResponsiveContainer width="100%" height={height} debounce={100}>
+      <ResponsiveContainer width="100%" height={exportName ? height - 32 : height} debounce={100}>
         <RechartsBar data={rows} margin={{ top: 22, right: 12, left: -4, bottom: 4 }}>
           <CartesianGrid strokeDasharray="4 4" stroke="rgba(226, 232, 240, 0.75)" vertical={false} />
           <XAxis
             dataKey="name"
             interval={0}
+            angle={narrow ? -45 : 0}
+            textAnchor={narrow ? "end" : "middle"}
+            height={narrow ? 70 : 30}
             axisLine={false}
             tickLine={false}
             tick={{ fill: "var(--color-ink-600)", fontSize: 11, fontWeight: 600 }}
