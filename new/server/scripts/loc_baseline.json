@@ -44,7 +44,7 @@
   "routes/dashboard_flaring.py": 234,
   "routes/dashboard_ogmp.py": 188,
   "routes/dashboard_sbti.py": 207,
-  "routes/data.py": 843,
+  "routes/data.py": 847,
   "routes/emission_factors_routes.py": 426,
   "routes/emissions.py": 1146,
   "routes/emissions_bulk_upload.py": 542,
