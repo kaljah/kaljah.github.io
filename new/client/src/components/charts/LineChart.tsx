@@ -12,14 +12,14 @@ import {
 import "./ChartWrappers.css";
 
 const DEFAULT_LINE_COLORS = [
-  "#ff6600", // Core orange
-  "#2563eb", // Royal blue
-  "#10b981", // Emerald green
-  "#8b5cf6", // Violet
-  "#f59e0b", // Amber
-  "#06b6d4", // Cyan
-  "#ec4899", // Rose
-  "#64748b", // Slate
+  "var(--color-brand-500)", // Core orange
+  "var(--color-blue-600)", // Royal blue
+  "var(--color-green-500)", // Emerald green
+  "var(--color-violet-500)", // Violet
+  "var(--color-amber-500)", // Amber
+  "var(--color-cyan-500)", // Cyan
+  "var(--color-pink-500)", // Rose
+  "var(--color-ink-500)", // Slate
 ];
 
 export interface LineSeriesConfig {
@@ -230,8 +230,8 @@ export const LineChart: React.FC<LineChartProps> = ({
           <XAxis
             dataKey={finalXKey}
             type="category"
-            stroke="#cbd5e1"
-            tick={{ fill: "#64748b", fontSize: 11, fontWeight: 600 }}
+            stroke="var(--color-ink-300)"
+            tick={{ fill: "var(--color-ink-500)", fontSize: 11, fontWeight: 600 }}
             axisLine={false}
             tickLine={false}
             dy={8}
@@ -239,8 +239,8 @@ export const LineChart: React.FC<LineChartProps> = ({
           />
 
           <YAxis
-            stroke="#cbd5e1"
-            tick={{ fill: "#64748b", fontSize: 11, fontWeight: 600 }}
+            stroke="var(--color-ink-300)"
+            tick={{ fill: "var(--color-ink-500)", fontSize: 11, fontWeight: 600 }}
             axisLine={false}
             tickLine={false}
             tickFormatter={valueFormatter}
@@ -304,7 +304,7 @@ export const LineChart: React.FC<LineChartProps> = ({
                   isTrajectory || data.length > 15
                     ? false
                     : {
-                        fill: "#ffffff",
+                        fill: "var(--color-white)",
                         stroke: lineColor,
                         strokeWidth: 2,
                         r: 3.5,
@@ -312,7 +312,7 @@ export const LineChart: React.FC<LineChartProps> = ({
                 }
                 activeDot={{
                   fill: lineColor,
-                  stroke: "#ffffff",
+                  stroke: "var(--color-white)",
                   strokeWidth: 2.5,
                   r: isTrajectory ? 4.5 : 6,
                 }}
