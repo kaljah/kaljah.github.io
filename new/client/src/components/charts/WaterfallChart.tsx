@@ -10,6 +10,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { ChartExport } from "./ChartExport";
 import "./ChartWrappers.css";
 
 export interface WaterfallStep {
@@ -27,6 +28,10 @@ export interface WaterfallChartProps {
   formatValue?: (val: number) => string;
   /** Click (or keyboard) on a change step; the start and end totals are not clickable. */
   onSelectStep?: (step: WaterfallStep) => void;
+  /** Step labels as absolute values or as a percentage of the starting total. */
+  labelMode?: "absolute" | "percent";
+  /** Shows CSV/PNG buttons (on hover/focus) and uses this as the file name. */
+  exportName?: string;
 }
 
 interface Row {
@@ -60,7 +65,10 @@ export const WaterfallChart: React.FC<WaterfallChartProps> = ({
   height = 300,
   formatValue = (v) => String(v),
   onSelectStep,
+  labelMode = "absolute",
+  exportName,
 }) => {
+  const wrapRef = React.useRef<HTMLDivElement | null>(null);
   const { rows, domain } = useMemo(() => {
     const out: Row[] = [{ name: startLabel, base: 0, value: start, kind: "total", top: start }];
     let running = start;
@@ -88,10 +96,22 @@ export const WaterfallChart: React.FC<WaterfallChartProps> = ({
     return { rows: out, domain: [Math.max(0, lo - pad), hi + pad] as [number, number] };
   }, [startLabel, endLabel, start, end, steps]);
 
-  const signed = (d: number) => `${d > 0 ? "+" : d < 0 ? "−" : ""}${formatValue(Math.abs(d))}`;
+  const sign = (d: number) => (d > 0 ? "+" : d < 0 ? "−" : "");
+  const absSigned = (d: number) => `${sign(d)}${formatValue(Math.abs(d))}`;
+  const pctSigned = (d: number) => (start > 0 ? `${sign(d)}${Math.abs((d / start) * 100).toFixed(1)}%` : "");
+  const signed = (d: number) => (labelMode === "percent" && start > 0 ? pctSigned(d) : absSigned(d));
 
   return (
-    <div className="chart-wrapper" role="img" aria-label={`Emissions bridge from ${startLabel} to ${endLabel}`}>
+    <div ref={wrapRef} className="chart-wrapper group relative" role="img" aria-label={`Emissions bridge from ${startLabel} to ${endLabel}`}>
+      {exportName && (
+        <ChartExport
+          className="absolute right-0 top-0 z-10 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100 pointer-coarse:opacity-100"
+          name={exportName}
+          targetRef={wrapRef}
+          header={["Step", "Change (tCO2e)"]}
+          rows={[[startLabel, start], ...steps.map((s) => [s.name, s.delta]), [endLabel, end]]}
+        />
+      )}
       <ResponsiveContainer width="100%" height={height} debounce={100}>
         <RechartsBar data={rows} margin={{ top: 22, right: 12, left: -4, bottom: 4 }}>
           <CartesianGrid strokeDasharray="4 4" stroke="rgba(226, 232, 240, 0.75)" vertical={false} />
@@ -124,7 +144,11 @@ export const WaterfallChart: React.FC<WaterfallChartProps> = ({
                   <div className="tooltip-items-list">
                     <div className="tooltip-item-row">
                       <div className="tooltip-item-right">
-                        <span>{r.kind === "total" ? formatValue(r.value) : signed(r.delta ?? 0)} tCO₂e</span>
+                        <span>
+                          {r.kind === "total"
+                            ? `${formatValue(r.value)} tCO₂e`
+                            : `${absSigned(r.delta ?? 0)} tCO₂e${pctSigned(r.delta ?? 0) ? ` (${pctSigned(r.delta ?? 0)})` : ""}`}
+                        </span>
                       </div>
                     </div>
                   </div>

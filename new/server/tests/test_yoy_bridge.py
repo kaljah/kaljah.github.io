@@ -45,3 +45,19 @@ def test_route_is_closed_to_it_roles():
     client = app.test_client()
     login(client, make_user("it_admin"))
     assert client.get("/api/dashboard/yoy-bridge").status_code == 403
+
+
+def test_scope3_step_is_added_only_on_request():
+    rows = [_row(2024, combustion=100, scope3=40), _row(2025, combustion=100, scope3=55)]
+    plain = build_bridge(rows, 2025)
+    assert [s["name"] for s in plain["steps"]][-1] == "Scope 2" and plain["end"] == 100
+    with3 = build_bridge(rows, 2025, include_scope3=True)
+    assert with3["steps"][-1] == {"name": "Scope 3", "delta": 15}
+    assert with3["start"] == 140 and with3["end"] == 155 and with3["scope3"] is True and with3["reconciles"]
+
+
+def test_route_accepts_include_scope3():
+    client = app.test_client()
+    login(client, make_user("admin"))
+    r = client.get("/api/dashboard/yoy-bridge?year=all&includeScope3=true")
+    assert r.status_code == 200
