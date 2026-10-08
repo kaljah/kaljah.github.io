@@ -39,8 +39,27 @@ function importantOutsideAllowed() {
   return n;
 }
 
+// style={{ key: "literal", other: 12 }} with nothing dynamic inside (no identifiers, calls, ternaries, templates).
+const STATIC_ENTRY = /^\s*(?:[A-Za-z_$][\w$]*|"[^"]+")\s*:\s*(?:"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|-?\d+(?:\.\d+)?)\s*(?:,|$)/;
+function countStaticInlineStyles(src) {
+  let n = 0;
+  for (const m of src.matchAll(/style=\{\{([^{}]*)\}\}/g)) {
+    let body = m[1].trim();
+    if (!body) continue;
+    while (body) {
+      const hit = STATIC_ENTRY.exec(body);
+      if (!hit) break;
+      body = body.slice(hit[0].length).trim();
+    }
+    if (!body) n++;
+  }
+  return n;
+}
+
 const metrics = {
-  inlineStyleObjects: count(jsx, /style=\{\{/g),
+  // Only fully static style objects (every value a string or number literal) count: those can be classes.
+  // Data-driven ones (widths from props, computed positions) are the right use of an inline style.
+  inlineStyleObjects: jsx.reduce((n, f) => n + countStaticInlineStyles(read(f)), 0),
   hexColorsInCss: count(css, /#[0-9a-fA-F]{3,8}\b/g),
   hexColorsInJs: count(code, /["'`]#[0-9a-fA-F]{3,8}\b/g),
   importantDeclarations: importantOutsideAllowed(),

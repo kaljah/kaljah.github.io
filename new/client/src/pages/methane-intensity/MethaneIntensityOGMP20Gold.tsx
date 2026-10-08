@@ -54,11 +54,7 @@ const MethaneIntensityOGMP20Gold: React.FC<MethaneIntensityOGMP20GoldProps> = ({
           <span className="[font-size:var(--text-sm)] [font-weight:600] [color:var(--text-secondary)]">
             <Calendar
               size={14}
-              style={{
-                display: "inline",
-                verticalAlign: "middle",
-                marginRight: "4px",
-              }}
+              className="[display:inline]! [vertical-align:middle]! [margin-right:4px]!"
             />
             Base Year:
           </span>

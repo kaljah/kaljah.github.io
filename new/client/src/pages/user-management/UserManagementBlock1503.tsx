@@ -124,20 +124,7 @@ const UserManagementBlock1503: React.FC<UserManagementBlock1503Props> = ({
             <button
               type="button"
               onClick={() => setResetPwdShow((s) => !s)}
-              style={{
-                position: "absolute",
-                right: "12px",
-                top: "50%",
-                transform: "translateY(-50%)",
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                color: "var(--text-secondary)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: "4px",
-              }}
+              className="[position:absolute]! [right:12px]! [top:50%]! [transform:translateY(-50%)]! [background:none]! [border:none]! [cursor:pointer]! [color:var(--text-secondary)]! [display:flex]! [align-items:center]! [justify-content:center]! [padding:4px]!"
               title={resetPwdShow ? "Hide password" : "Show password"}
             >
               {resetPwdShow ? <EyeOff size={16} /> : <Eye size={16} />}

@@ -80,16 +80,9 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
         </p>
       </div>
       <button
-        className="action-btn"
+        className="action-btn [display:flex]! [align-items:center]! [gap:8px]! [padding:8px_16px]! [font-size:0.9rem]! [width:auto]!"
         onClick={() => setImportModal({ isOpen: true, type: "production" })}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "8px",
-          padding: "8px 16px",
-          fontSize: "0.9rem",
-          width: "auto",
-        }}
+       
       >
         <Upload size={16} /> Bulk Import (CSV)
       </button>
