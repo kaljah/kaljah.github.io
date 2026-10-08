@@ -250,7 +250,7 @@ const OgmpTab: React.FC<OgmpTabProps> = ({
       )}
     </div>
 
-    <div className="table-container mt-[40px]!">
+    <div className="table-container mt-[40px]!" tabIndex={0} role="region" aria-label="OGMP 2.0 survey records">
       <div className="flex! justify-between! items-center! mb-[16px]!">
         <h3>OGMP 2.0 Survey Records</h3>
         <span className="text-[length:0.85rem]! text-[color:var(--text-secondary)]!">

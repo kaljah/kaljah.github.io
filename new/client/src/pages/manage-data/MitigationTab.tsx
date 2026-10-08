@@ -233,7 +233,7 @@ const MitigationTab: React.FC<MitigationTabProps> = ({
       </button>
     </div>
 
-    <div className="table-container mt-[40px]!">
+    <div className="table-container mt-[40px]!" tabIndex={0} role="region" aria-label="Mitigation records">
       <h3>Mitigation Records</h3>
       <table className="data-table">
         <thead>

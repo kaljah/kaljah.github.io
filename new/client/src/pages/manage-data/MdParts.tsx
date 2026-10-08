@@ -71,7 +71,13 @@ export const RecordTable: React.FC<RecordTableProps> = ({
 }) => (
   <div className={cn("table-container mt-10", className)}>
     {title && <h3 className="m-0 mb-3 text-lg font-semibold text-text">{title}</h3>}
-    <div className="overflow-x-auto rounded-md border border-border">
+    {/* Focusable so keyboard users can scroll a wide table (axe scrollable-region-focusable). */}
+    <div
+      className="overflow-x-auto rounded-md border border-border"
+      tabIndex={0}
+      role="region"
+      aria-label={typeof title === "string" ? title : "Records"}
+    >
       <table className="data-table w-full border-collapse text-base">
         <thead>
           <tr>

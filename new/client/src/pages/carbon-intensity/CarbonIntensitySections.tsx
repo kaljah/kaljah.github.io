@@ -30,7 +30,7 @@ export const CbamSection: React.FC<CbamSectionProps> = ({ products, facilities }
     actions={<Badge tone="brand" className="cbam-benchmark-badge max-w-full shrink whitespace-normal px-3.5 py-1.5 text-sm">EU ETS Benchmark (Product-Specific): ~0.025 - 1.2 tCO₂e/t</Badge>}
   >
     {products.length > 0 ? (
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="CBAM embedded emissions by product">
         <table className="custom-table w-full border-collapse text-base">
           <thead>
             <tr>

@@ -217,7 +217,7 @@ const SourcesTab: React.FC<SourcesTabProps> = ({
       </button>
     </div>
 
-    <div className="table-container mt-[40px]!">
+    <div className="table-container mt-[40px]!" tabIndex={0} role="region" aria-label="Emission sources">
       <table className="data-table">
         <thead>
           <tr>

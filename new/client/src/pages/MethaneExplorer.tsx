@@ -575,7 +575,11 @@ const EmissionsMap: React.FC = () => {
     });
   };
 
-  const createSolidIcon = (val: number, isSelected: boolean) => {
+  // The marker is a keyboard button (Leaflet sets role="button"); this hidden text is its accessible name.
+  const escapeHtml = (text: string) =>
+    text.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] as string);
+
+  const createSolidIcon = (val: number, isSelected: boolean, label: string) => {
     const level = getSeverityLevel(val);
     const color =
       level === "high"
@@ -600,7 +604,7 @@ const EmissionsMap: React.FC = () => {
         border: ${border};
         box-shadow: ${glow};
         transition: all 0.2s ease;
-      "></div>`,
+      "></div><span class="sr-only">${escapeHtml(label)}</span>`,
       iconSize: [radius * 2, radius * 2],
       iconAnchor: [radius, radius],
     });
@@ -848,14 +852,23 @@ const EmissionsMap: React.FC = () => {
                   position={coords}
                   icon={createPulsingIcon(val)}
                   interactive={false}
+                  keyboard={false}
                 />
 
                 {/* Interactive Clickable Marker */}
                 <Marker
                   position={coords}
-                  icon={createSolidIcon(val, isSelected)}
+                  icon={createSolidIcon(val, isSelected, `${fac.name} (${severity} severity)`)}
                   eventHandlers={{
                     click: () => handleSelectFacility(fac),
+                    // Leaflet makes the marker a focusable button but does not turn Enter or Space into a click.
+                    keydown: (e: L.LeafletKeyboardEvent) => {
+                      const key = e.originalEvent.key;
+                      if (key === "Enter" || key === " ") {
+                        e.originalEvent.preventDefault();
+                        handleSelectFacility(fac);
+                      }
+                    },
                   }}
                 >
                   <Tooltip

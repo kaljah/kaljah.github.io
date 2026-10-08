@@ -313,7 +313,7 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
       )}
     </div>
 
-    <div className="table-container mt-[40px]!">
+    <div className="table-container mt-[40px]!" tabIndex={0} role="region" aria-label="Custom emission factors">
       <div className="flex! justify-between! items-center! mb-[16px]!">
         <h3 className="m-[0px]!">Custom Factors</h3>
       </div>
