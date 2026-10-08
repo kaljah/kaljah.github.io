@@ -556,6 +556,10 @@ def log_level_upgrade():
     if is_it_role(user):
         return jsonify({'error': 'IT administrators are not authorized to modify operational OGMP data.'}), 403
     data = request.get_json() or {}
+    facility_id = data.get('facility_id')
+    source_type_code = data.get('source_type_code', 'ALL')
+    justification = data.get('justification', '')
+    target_date = data.get('target_date', '')
     try:
         old_level = int(data.get('old_level', 3))
         new_level = int(data.get('new_level', 4))

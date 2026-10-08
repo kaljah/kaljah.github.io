@@ -3,6 +3,7 @@
 Split out of calculations/dispatcher.py unchanged (hardening plan, task 5.5). Each function is one
 branch of the process-type chain; ``self`` is the dispatcher. dispatcher.py imports them last.
 """
+from .combustion import factor_hhv_unit, user_hhv
 
 
 def calc_stationary_combustion(self, calculator, emission_factors, flat_inputs, gwp_dict, quantity, uncertainties, unit):
@@ -25,6 +26,7 @@ def calc_stationary_combustion(self, calculator, emission_factors, flat_inputs, 
     else:
         comb_eff_frac = comb_eff
 
+    t3_hhv, t3_hu = user_hhv(hhv_val, flat_inputs.get("hhv_unit"))
     comps = self._composition(flat_inputs)
     # Tier 3 fuel analysis needs the fuel composition or measured factors; an HHV alone
     # used to give a Verified 0 tCO2e record (Tier 3 browser test #10)
@@ -34,7 +36,10 @@ def calc_stationary_combustion(self, calculator, emission_factors, flat_inputs, 
         or (isinstance(_spec, dict) and str(_spec.get(k) or "").strip() not in ("", "0", "0.0", "-"))
         for k in ("co2", "ch4", "n2o")
     )
-    if not any(comps.get(f"c{i}") for i in range(1, 11)) and not comps.get("co2_comp") and not _measured:
+    carbon_wt = next((flat_inputs.get(k) for k in ("carbon_content", "carbon_wt_pct", "c_content")
+                      if flat_inputs.get(k) not in (None, "", "-")), None)
+    if (not any(comps.get(f"c{i}") for i in range(1, 11)) and not comps.get("co2_comp") and not _measured
+            and carbon_wt is None):
         raise ValueError(
             "Tier 3 fuel analysis needs the fuel gas composition (Gas analysis) or measured emission factors"
         )
@@ -53,13 +58,19 @@ def calc_stationary_combustion(self, calculator, emission_factors, flat_inputs, 
         ef_ch4=emission_factors.get("ch4", 0),
         ef_n2o=emission_factors.get("n2o", 0),
         uncertainties=uncertainties,
-        hhv=hhv_val,
+        hhv=t3_hhv,
         ef_unit=flat_inputs.get(
             "ef_unit", emission_factors.get("unit", "kg/unit")
         ),
         fuel_unit=unit,
-        fuel_type=flat_inputs.get("fuel_type")
-        or emission_factors.get("fuel_type", "unknown"),
+        # S1K-F2: the HHV basis comes from the factor (catalog type / hhv_unit), as at
+        # Tier 1; the fuel name made "Coke Oven Gas" a solid (short-ton basis)
+        fuel_type=(emission_factors.get("type") if str(emission_factors.get("type") or "").lower()
+                   in ("gases", "liquids", "solids") else None)
+        or flat_inputs.get("fuel_type") or emission_factors.get("fuel_type", "unknown"),
+        hhv_unit=t3_hu or factor_hhv_unit(emission_factors),
+        density=self._fuel_density(flat_inputs),
+        carbon_wt=carbon_wt,
         combustion_efficiency=comb_eff_frac,
         operating_temperature=flat_inputs.get("operating_temperature")
         or flat_inputs.get("temperature"),
@@ -182,6 +193,12 @@ def calc_drilling(self, calculator, emission_factors, flat_inputs, gwp_dict, unc
     unit_str = str(flat_inputs.get("unit") or unit or "").lower().strip()
     # Table 6-2 is per drilling day (or per well at Tier 1): a volume or mass is not an activity
     given_unit = str(flat_inputs.get("unit") or "").lower().strip()  # (not the dispatcher's "m3" default)
+    if given_unit in ("h", "hr", "hrs", "hour", "hours"):
+        # S1K-F16: drilling time given in hours is converted to drilling days (it was refused)
+        for k in ("amount", "quantity", "drilling_days"):
+            if flat_inputs.get(k) not in (None, "", "-"):
+                flat_inputs[k] = float(flat_inputs[k]) / 24.0
+        flat_inputs["unit"] = given_unit = unit_str = "days"
     if given_unit and given_unit not in ("days", "day", "d", "drilling_days", "well", "wells", "well_count"):
         raise ValueError(f"Drilling activity is in drilling days (or wells at Tier 1), not '{given_unit}'")
 
@@ -416,6 +433,12 @@ def calc_liquids_unloading(self, calculator, emission_factors, flat_inputs, gwp_
         depth_unit = flat_inputs.get("unload_depth_unit") or flat_inputs.get("depth_unit", "ft")
         diam_unit = flat_inputs.get("unload_diam_unit") or flat_inputs.get("diameter_unit", "in")
         press_unit = flat_inputs.get("unload_press_unit") or flat_inputs.get("press_unit", "psig")
+        # X (0.5 h plunger / 1 h non-plunger) and what D and Depth mean depend on the lift type: it is
+        # required (it defaulted to non-plunger while the form displayed "Plunger lift")
+        lift = str(flat_inputs.get("unloading_type") or flat_inputs.get("unload_type") or "").strip().lower()
+        lift = {"plunger_lift": "plunger", "non-plunger": "non_plunger", "nonplunger": "non_plunger"}.get(lift, lift)
+        if lift not in ("plunger", "non_plunger"):
+            raise ValueError("Missing required field: lift type (unloading_type: plunger or non_plunger) for Eq 6-10")
 
         return calculator.calculate_tier3_equation_6_10(
             events=events,
@@ -424,7 +447,7 @@ def calc_liquids_unloading(self, calculator, emission_factors, flat_inputs, gwp_
             pressure=press,
             sfr=sfr,
             hours_open=hours_open,
-            unloading_type=flat_inputs.get("unloading_type") or flat_inputs.get("unload_type", "non_plunger"),
+            unloading_type=lift,
             well_count=float(flat_inputs.get("well_count") or flat_inputs.get("wells") or 1),
             ch4_content=ch4_content,
             co2_content=co2_content,

@@ -7,6 +7,9 @@ import re
 import traceback
 from openpyxl import load_workbook
 
+from services.scope1_template import DATE_HELP, is_example_value
+
+
 # Job tracker. The running worker keeps the full job in memory; a snapshot is written to a JSON
 # file so that another worker process (Gunicorn), or the same server after a restart, can answer
 # status and error-file requests.
@@ -30,10 +33,27 @@ def _job_file(job_id):
     return os.path.join(UPLOAD_JOB_DIR, f"{job_id}.json")
 
 
+def _skip_groups(job):
+    """Grouped, actionable skip reasons over every skipped row (cached until the list grows)."""
+    from services.import_feedback import group_skips
+
+    skipped = job.get("skipped", [])
+    cached = job.get("_groups_cache")
+    if cached and cached[0] == len(skipped):
+        return cached[1]
+    groups = group_skips(skipped)
+    job["_groups_cache"] = (len(skipped), groups)
+    return groups
+
+
 def _snapshot(job):
     skipped = job.get("skipped", [])
     anomalies = job.get("anomalies", [])
     return {
+        "skipped_groups": _skip_groups(job),
+        "dry_run": bool(job.get("dry_run")),
+        "preview": job.get("preview"),
+        "started_at": job.get("created_at"),
         "status": job.get("status", "unknown"),
         "progress": job.get("progress", 0),
         "processed": job.get("processed", 0),
@@ -179,6 +199,7 @@ def _clean_float(val, default=0.0):
 from process_categories import NON_COMBUSTION_PROCESSES
 
 
+_THOUSANDS_NUMBER = re.compile(r"^[-+]?\d{1,3}(,\d{3})+(\.\d+)?([eE][-+]?\d+)?$")
 _DECIMAL_COMMA_NUMBER = re.compile(r"^([-+]?)(\d{1,3}(?:[.\s\u00a0\u202f]\d{3})+|\d+),(\d+)$")
 _GROUP_SEPARATORS = re.compile(r"[.\s\u00a0\u202f]")
 
@@ -340,7 +361,7 @@ def _is_template_note_row(row_dict):
     vals = [str(v).strip() for v in row_dict.values() if v is not None]
     if any(v.upper().startswith("[INSTRUCTION]") for v in vals):
         return True
-    return any(v.startswith("Date as YYYY-MM") for v in vals)
+    return any(v.startswith("Date as YYYY-MM") or v.startswith(DATE_HELP[:40]) for v in vals)
 
 
 def _canonical_header(header):
@@ -390,6 +411,104 @@ def _parse_row_period(row):
         return None, None, err.message
 
 
+class _InFile(int):
+    """Id of a row created earlier in this same file and already flushed (not yet committed): an
+    in-file repeat is still "earlier in this file", not a record of the platform."""
+
+
+# On PostgreSQL, rows of a Scope 1/2/3 import are flushed (not committed) in batches of this size and released
+# from the session: the file is still saved in one transaction, but memory no longer grows with the file
+# (a 100k-row file held every row object until the end: 1.1 GB peak, 346 MB with batches).
+FLUSH_EVERY = 2000
+# SQLite has one writer: a flush opens the write transaction and holds the database lock until the commit, so
+# every other save would wait (30 s busy timeout) for the whole import. On SQLite the rows stay staged until
+# the commit, as before; PostgreSQL locks only the new rows. Tests switch this on to exercise the flush path.
+FLUSH_ON_SQLITE = False
+
+
+def _flush_enabled(session):
+    try:
+        return FLUSH_ON_SQLITE or session.get_bind().dialect.name != "sqlite"
+    except Exception:
+        return False
+
+
+def _flush_pending(session, chunk, maps):
+    session.add_all(chunk)
+    session.flush()
+    ids = {id(o): o.id for o in chunk}
+    for m in maps:
+        for k, v in m.items():
+            if not isinstance(v, int) and id(v) in ids:
+                m[k] = _InFile(ids[id(v)])
+    for o in chunk:
+        session.expunge(o)
+    chunk.clear()
+
+
+def _preview_count(pv, row_dict, mapping):
+    def cell(key):
+        h = mapping.get(key)
+        return row_dict.get(h) if h else None
+
+    if is_example_value(cell("date")):
+        pv["examples"] = pv.get("examples", 0) + 1   # template example rows: reported, never imported
+        return
+    y, m, err = _parse_row_period({"date": cell("date"), "year": cell("year"), "month": cell("month")})
+    if err or not y:
+        pv["bad_dates"] += 1
+    else:
+        k = f"{int(y):04d}-{int(m or 1):02d}"
+        pv["dates"][k] = pv["dates"].get(k, 0) + 1
+    fac = str(cell("facility_name") or "").strip()
+    pv["facilities"][fac] = pv["facilities"].get(fac, 0) + 1
+    proc = str(cell("process") or "").strip()
+    pv["processes"][proc] = pv["processes"].get(proc, 0) + 1
+
+
+def _preview_summary(pv, rows, skipped_in_sample, headers, mapping, fac_name_map, fac_id_map):
+    from services.scope1_calc import SCOPE2_PROCESS_TYPES, normalize_process_type
+
+    def scope2(name):
+        n = name.strip().lower()
+        return bool(n) and (n in SCOPE2_PROCESS_TYPES or normalize_process_type(n) in SCOPE2_PROCESS_TYPES)
+
+    checked = pv["checked"]
+    ok = max(0, checked - skipped_in_sample)
+    ratio = (ok / checked) if checked else 0.0
+    dates = sorted(pv["dates"])
+
+    def known_fac(name):
+        k = name.strip().lower()
+        return bool(k) and (k in fac_name_map or k in fac_id_map)
+
+    facilities = [{"name": n or "(blank)", "rows": c, "known": known_fac(n)}
+                  for n, c in sorted(pv["facilities"].items(), key=lambda x: -x[1])]
+    processes = [{"name": n or "(blank)", "rows": c, "scope2": scope2(n),
+                  "known": bool(n) and bool(normalize_process_type(n)) and not scope2(n)}
+                 for n, c in sorted(pv["processes"].items(), key=lambda x: -x[1])]
+    matched = [h for h in headers if h and h in set(mapping.values())]
+    return {
+        "rows": rows,
+        "checked": checked,
+        "checked_ok": ok,
+        "checked_skipped": skipped_in_sample,
+        "estimated_ok": int(round(rows * ratio)) if checked < rows else ok,
+        "estimated_skipped": rows - (int(round(rows * ratio)) if checked < rows else ok),
+        "is_estimate": checked < rows,
+        "period": {"from": dates[0] if dates else None, "to": dates[-1] if dates else None,
+                   "months": len(dates), "unreadable_rows": pv["bad_dates"]},
+        "facilities": facilities[:50],
+        "unknown_facility_rows": sum(f["rows"] for f in facilities if not f["known"]),
+        "processes": processes[:50],
+        "unknown_process_rows": sum(p["rows"] for p in processes if not p["known"] and not p["scope2"]),
+        "scope2_rows": sum(p["rows"] for p in processes if p["scope2"]),
+        "example_rows": pv.get("examples", 0),
+        "columns": {"total": len([h for h in headers if h]), "headers": [h for h in headers if h], "matched": matched,
+                    "by_name": [h for h in headers if h and h not in matched]},
+    }
+
+
 def _dedupe(batch_keys, key, overwrite, describe):
     """BUG-057: returns ("new", None), ("error", message) or ("update", existing_object_or_id).
 
@@ -400,7 +519,7 @@ def _dedupe(batch_keys, key, overwrite, describe):
         return "new", None
     if not overwrite:
         existing = batch_keys[key]
-        where = "earlier in this file" if not isinstance(existing, int) else "in the platform"
+        where = "earlier in this file" if (not isinstance(existing, int) or isinstance(existing, _InFile)) else "in the platform"
         return "error", (f"Duplicate record: {describe} already exists {where}. Enable 'Overwrite Duplicates' to "
                          "replace it, or give each source its own Equipment ID / source reference to keep both.")
     return "update", batch_keys[key]
@@ -412,7 +531,10 @@ def _resolve_existing(model, existing):
     if existing is None:
         return None
     if isinstance(existing, int):
-        return db.session.get(model, existing)
+        obj = db.session.get(model, int(existing))
+        if obj is not None and isinstance(existing, _InFile):
+            obj._bulk_in_file = True  # flushed earlier in this file: an overwrite is not of a saved record
+        return obj
     return existing  # pending object from this file
 
 
@@ -426,7 +548,7 @@ def _bulk_overwrite(obj, values, user_id, label):
     old = {k: getattr(obj, k, None) for k in values}
     for k, v in values.items():
         setattr(obj, k, v)
-    was_saved = getattr(obj, "id", None) is not None
+    was_saved = getattr(obj, "id", None) is not None and not getattr(obj, "_bulk_in_file", False)
     obj.status = "Pending"
     obj.approved_by = None
     obj.approved_at = None
@@ -464,11 +586,13 @@ def _scope1_key(facility_id, year, month, process_type, fuel, equipment_id, sour
     return (facility_id, year, month, proc, fuel_k, (equipment_id or "").strip().lower(),
             (source_ref or "").strip().lower())
 
-MAX_IMPORT_ROWS = 50_000  # rows are held until the single commit at the end of the file
 
 
-class ImportTooLarge(Exception):
-    pass
+def active_job_count(user_id):
+    """Jobs of this user still processing in this worker (audit A-09: per-user upload cap)."""
+    with upload_jobs_lock:
+        return sum(1 for j in upload_jobs.values()
+                   if j.get("owner_id") == user_id and j.get("status") == "processing")
 
 
 def start_background_upload(
@@ -520,6 +644,33 @@ def start_background_upload(
     return job_id
 
 
+def run_file_check(app, file_path, original_filename, user_id, global_factor_type, provided_mapping=None,
+                   scope="1", overwrite_duplicates=False, sample_rows=2000):
+    """The "Check file" step: the import in dry-run mode (sample calculated, whole file counted, nothing
+    saved), run to completion on its own thread and session. Returns the job status with the preview."""
+    job_id = "check-" + str(uuid.uuid4())
+    with upload_jobs_lock:
+        upload_jobs[job_id] = {"status": "processing", "progress": 0, "processed": 0, "total": 0, "errors": [],
+                               "skipped": [], "error_csv_path": None, "anomalies": [], "created_at": time.time(),
+                               "owner_id": user_id, "dry_run": True}
+    t = threading.Thread(target=_process_file_thread, args=(app, job_id, file_path, original_filename, user_id,
+                                                            global_factor_type, provided_mapping, scope,
+                                                            overwrite_duplicates),
+                         kwargs={"dry_run": True, "sample_rows": sample_rows})
+    t.start()
+    t.join()
+    status = get_job_status(job_id)
+    with upload_jobs_lock:
+        upload_jobs.pop(job_id, None)
+    path = _job_file(job_id)
+    if path and os.path.exists(path):
+        try:
+            os.remove(path)
+        except OSError:
+            pass
+    return status
+
+
 def _job_view(job_id):
     """The job as this worker knows it, else its snapshot file (another worker or before a restart)."""
     with upload_jobs_lock:
@@ -555,6 +706,10 @@ def get_job_status(job_id):
         "has_error_csv": bool(job.get("error_csv_path")),  # BUG-076: no server path disclosure
         "anomaly_count": job.get("anomaly_count", 0),
         "anomalies": job.get("anomalies", []),  # first 50 anomalies for review
+        "skipped_groups": job.get("skipped_groups", []),  # every skipped row, grouped by cause, with the fix
+        "started_at": job.get("started_at") or job.get("created_at"),
+        "dry_run": bool(job.get("dry_run")),
+        "preview": job.get("preview"),
     }
 
 
@@ -568,7 +723,11 @@ def _process_file_thread(
     provided_mapping,
     scope=1,
     overwrite_duplicates=False,
+    dry_run=False,
+    sample_rows=None,
 ):
+    """Import a file. dry_run: calculate the first `sample_rows` rows, read every row for the file
+    statistics (rows, period, facilities, processes) and save nothing (the "Check file" step)."""
     wb = None
     f = None
     with app.app_context():
@@ -663,6 +822,10 @@ def _process_file_thread(
                 csv_source = True
                 total_rows = max(0, sum(1 for ln in decoded_text.split("\n") if ln.strip()) - 1)
 
+            if csv_source:
+                # rows counted with the CSV reader (quoted cells may span lines) for the progress bar.
+                # There is no row limit: the whole file is still saved in one transaction (all or nothing).
+                total_rows = sum(1 for _ in csv.reader(io.StringIO(decoded_text), delimiter=delimiter)) - 1
             _update_job(job_id, total=total_rows)
 
             # Resolve mapping: the automatic mapping, overridden by the columns the user chose in
@@ -765,8 +928,15 @@ def _process_file_thread(
                     cat = f"Category {n}" if n else (e.category or "")
                     batch_scope3_map[_scope3_key(e.facility_id, e.year, e.month, cat, e.sub_category, e.unit)] = e.id
 
+            flush_enabled = _flush_enabled(db.session) and not dry_run
+            # dry run: whole-file statistics (cheap) next to the calculated sample
+            pv = {"dates": {}, "bad_dates": 0, "facilities": {}, "processes": {}, "checked": 0}
+            import math as _math
+
+            sample_step = max(1, _math.ceil((total_rows or 0) / sample_rows)) if (dry_run and sample_rows) else 1
+
             # Initialize anomaly detector
-            from calculations.anomaly import BatchAnomalyDetector
+            from calculations.anomaly import BatchAnomalyDetector, scope1_source
             anomaly_detector = BatchAnomalyDetector()  # history read once per series
 
             # Headers for error CSV
@@ -795,9 +965,13 @@ def _process_file_thread(
                 if _is_template_note_row(row_dict):
                     continue  # the template's description / instruction row
                 processed += 1
-                if processed > MAX_IMPORT_ROWS:
-                    raise ImportTooLarge(
-                        f"The file has more than {MAX_IMPORT_ROWS:,} data rows; split it into smaller files. No rows were saved.")
+                if dry_run:
+                    _preview_count(pv, row_dict, mapping)
+                    # the sample is spread over the whole file (every k-th row): files are often sorted by
+                    # process or source, and the first rows alone misjudged a 100k file (47 % vs 16 % skipped)
+                    if sample_rows and sample_step > 1 and (processed - 1) % sample_step:
+                        continue  # not in the sample: statistics only
+                    pv["checked"] += 1
 
                 # Extract mapped values, preserving raw entries as case/spacing-insensitive fallbacks
                 mapped_data = {
@@ -840,6 +1014,10 @@ def _process_file_thread(
                     emission_obj = None
                     row_errors = [f"Row {line_no} has {len(raw_row)} values but the header has {len(headers)} "
                                   "columns: check for an extra comma / delimiter (values would shift columns)"]
+                elif is_example_value(mapped_data.get("date")):
+                    # a template example row left in the file: never a record
+                    emission_obj = None
+                    row_errors = ["Example row from the template (dated EXAMPLE): not imported"]
                 elif str(scope) == "2":
                     emission_obj, row_errors = _process_row_scope2(
                         mapped_data,
@@ -943,7 +1121,10 @@ def _process_file_thread(
                             mo = getattr(emission_obj, 'month', 0)
                             if scope == "1":
                                 co2e_val = getattr(emission_obj, 'co2e_total', 0) or 0
-                                anomaly = anomaly_detector.check_scope1(fac_id, getattr(emission_obj, 'process_type', ''), co2e_val, yr, mo)
+                                anomaly = anomaly_detector.check_scope1(
+                                    fac_id, getattr(emission_obj, 'process_type', ''), co2e_val, yr, mo,
+                                    source=scope1_source(getattr(emission_obj, 'equipment_id', None),
+                                                         getattr(emission_obj, 'fuel_type', None)))
                             elif scope == "2":
                                 co2e_val = getattr(emission_obj, 'co2e', 0) or 0
                                 anomaly = anomaly_detector.check_scope2(fac_id, getattr(emission_obj, 'source_type', ''), co2e_val, yr, mo)
@@ -966,6 +1147,9 @@ def _process_file_thread(
                                 })
                         except Exception:
                             pass  # Never let anomaly detection crash the upload
+                    # after the anomaly flag is set on the row: flush and release a full batch
+                    if str(scope) in ("1", "2", "3", "3_eeio") and len(chunk) >= FLUSH_EVERY and flush_enabled:
+                        _flush_pending(db.session, chunk, (batch_scope1_map, batch_scope2_map, batch_scope3_map))
 
 
                 # Update progress every 100 rows
@@ -978,9 +1162,17 @@ def _process_file_thread(
                         progress=min(99, int((processed / total_rows) * 100)) if total_rows > 0 else min(95, int(100 * (1.0 - (0.98 ** (processed / 100.0))))),
                     )
 
-            # One commit for the whole file. add_all (not bulk_save_objects): objects stay tracked, so
-            # an in-file duplicate can update them (BUG-057), and the dashboard-cache hook sees the new
-            # rows (BUG-071)
+            if dry_run:
+                db.session.rollback()  # nothing of a check is saved
+                with upload_jobs_lock:
+                    n_skip = len(upload_jobs.get(job_id, {}).get("skipped", []))
+                _update_job(job_id, processed=processed, progress=100, status="completed", dry_run=True,
+                            preview=_preview_summary(pv, processed, n_skip, headers, mapping, fac_name_map, fac_id_map))
+                return
+
+            # One commit for the whole file. add_all (not bulk_save_objects): pending objects stay tracked, so
+            # an in-file duplicate can update them (BUG-057; rows already flushed are reloaded by id), and the
+            # dashboard-cache hook sees the new rows (BUG-071)
             if chunk:
                 db.session.add_all(chunk)
             # BUG-058: one IMPORT summary entry per job, committed with the data
@@ -1034,7 +1226,7 @@ def _process_file_thread(
                             type="audit",
                             title=f"{scope_label} Bulk Upload Pending Review",
                             message=(
-                                f"{success_count} {scope_label} emission records were imported or updated "
+                                f"{success_count:,} {scope_label} emission records were imported or updated "
                                 f"by {user_obj.fullName if user_obj else 'a user'} and are "
                                 f"awaiting your approval."
                             ),
@@ -1079,7 +1271,6 @@ def _process_file_thread(
                     upload_jobs[job_id]["status"] = "error"
                     # BUG-087: the exception is logged; the job shows a generic message
                     upload_jobs[job_id]["errors"].append(
-                        str(e) if isinstance(e, ImportTooLarge) else
                         f"Fatal error: the import stopped unexpectedly (job {job_id}); see the server log. "
                         "No rows were saved.")
             _persist_job(job_id, force=True)
@@ -1144,6 +1335,9 @@ _MAP_BY_SCOPE = {
         ("combustion_efficiency", "combustion efficiency"),
         ("combustion_efficiency", "combustion eff"),
         ("flare_type", "flare type"),
+        ("destruction_efficiency", "destruction efficiency"),
+        ("destruction_efficiency", "flare destruction efficiency"),
+        ("destruction_efficiency", "destruction eff"),
         ("control_efficiency", "flare control efficiency"),
         ("control_efficiency", "control efficiency"),
         ("control_efficiency", "control eff"),
@@ -1318,6 +1512,18 @@ _MAP_BY_SCOPE = {
 }
 
 
+_EXACT_ONLY_TERMS = {"activity", "division", "field", "region", "notes", "hours", "pressure", "events",
+                     "diameter", "gor", "co2", "n2", "ppm", "service",
+                     "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10"}
+
+
+def _scope1_input_names():
+    from services.scope1_template import CORE, IDENT, OPTIONAL, TIER2, TIER3, ACTIVITY_TIME
+
+    return {c.key for c in CORE + IDENT + OPTIONAL + TIER2 + TIER3 + ACTIVITY_TIME} - {
+        "date", "facility_name", "process_type", "fuel", "quantity", "unit"}
+
+
 def _build_mapping(headers, scope=1):
     """Header -> field mapping for one import type. Headers are compared without the
     template tags and unit notes; exact names win over partial (word) matches."""
@@ -1344,11 +1550,19 @@ def _build_mapping(headers, scope=1):
                 mapping[sys_key] = h
                 break
 
-    # Pass 2: whole-word match for the remaining fields
+    # Pass 2: whole-word match for the remaining fields. S1K-F12 / F19: a generic single word
+    # ("activity", "region", "hours", "pressure", "events", "gor" ...) is also a word of other method
+    # columns ("activity_key", "operating_hours", "blowdown_pressure", "comp_gor"); it only matches a
+    # header that is exactly that word (activity_key values were stored as the business Activity)
+    # a header that is already the name of a Scope 1 input ("agr_control_eff") is that input, never a word
+    # match of another one ("control eff" -> control_efficiency)
+    own_names = _scope1_input_names() if scope == "1" else set()
     for h, h_norm in normalized_headers.items():
-        if h in mapping.values():
+        if h in mapping.values() or h_norm.replace(" ", "_") in own_names:
             continue
         for sys_key, search_term in sorted_expected:
+            if search_term in _EXACT_ONLY_TERMS:
+                continue
             if sys_key not in mapping and re.search(r"\b" + re.escape(search_term) + r"\b", h_norm):
                 mapping[sys_key] = h
                 break
@@ -2445,6 +2659,14 @@ def _process_row(
         return None, ["Missing quantity."]
     unit = str(row.get("unit") or "").strip()
     unit = _UNIT_SPELLING.get(unit.lower(), unit)  # "mmbtu" -> "MMBtu", as the form writes it
+    # S1K-F8: a quantity cell that carries its own unit ("928 m3") must agree with the unit column
+    # (the trailing text was dropped and the number booked in the unit column's unit)
+    if raw_qty is not None and isinstance(raw_qty, str):
+        m_tail = re.match(r"^\s*[-+]?[0-9.,\s ]+(?:[eE][-+]?[0-9]+)?\s*(\S.*?)?\s*$", raw_qty)
+        tail = (m_tail.group(1) or "").strip() if m_tail else ""
+        if tail and tail.lower().replace(" ", "") != unit.lower().replace(" ", ""):
+            return None, [f"Quantity '{raw_qty}' carries the unit '{tail}' but the unit column says "
+                          f"'{unit or '(empty)'}': put the number in quantity and the unit in unit"]
     if amount is not None and not unit:
         # BUG-111: a blank unit is a row error, never an assumed m3
         return None, ["Missing unit. Provide the activity unit (e.g. MMBtu, scf, gal, tonne)."]
@@ -2460,6 +2682,10 @@ def _process_row(
         if isinstance(k, str) and re.fullmatch(r"[a-z][a-z0-9_]*", k) and k not in squashed and v is not None and str(v).strip() != "":
             payload[k] = v
     payload = {k: _percent_text_to_number(k, v) for k, v in payload.items()}
+    # S1K-F17: "12,345.6" is accepted in the quantity column; the method columns (vent_volume, hhv,
+    # comp_rate ...) refused it. Only the unambiguous thousands-separator form is rewritten.
+    payload = {k: (v.replace(",", "") if isinstance(v, str) and _THOUSANDS_NUMBER.match(v.strip()) else v)
+               for k, v in payload.items()}
     payload.update({
         "year": year, "month": month, "facility_id": facility.id, "process_type": process_type,
         "source_type": process_type, "factor_source": factor_source, "unit": unit or None,
@@ -2474,11 +2700,18 @@ def _process_row(
     if factor_source == "custom" and fuel and not fuel.isdigit():
         if fuel.lower() in getattr(cf_name_map, "ambiguous", ()):
             return None, [f"Custom factor name '{fuel}' is not unique; rename the duplicates before importing"]
+        from routes.emissions import _lookup_api_factor
         cf = cf_name_map.get(fuel.lower())
-        if not cf:
+        site_props = any(str(row.get(k) or "").strip() not in ("", "-", "0") for k in ("hhv", "density", "fuel_density"))
+        if not cf and site_props and _lookup_api_factor(fuel):
+            # S1K-F18: Tier 2 "catalog factor + site fuel properties" (the form's Tier 2 mode)
+            cf = None
+        elif not cf:
             # BUG-042: a Tier 2 row never falls back to the catalog (or to zero)
-            return None, [f"Custom factor '{fuel}' not found. Save it under Manage Data > Custom Factors first."]
-        payload["custom_factor_id"] = cf.id
+            return None, [f"Custom factor '{fuel}' not found. Save it under Manage Data > Custom Factors first, "
+                          "or give the site HHV / density with a catalog fuel."]
+        if cf is not None:
+            payload["custom_factor_id"] = cf.id
 
     # Compendium activity rows (Section 6 tables): the activity_key column, or the row's label in
     # the fuel / factor column, selects the row as the form's factor list does
@@ -2570,7 +2803,10 @@ def _process_row(
     record.year, record.month = year, month
     record.activity = row.get("activity") or facility.activity
     record.division = row.get("division") or facility.division
-    record.region = row.get("region") or facility.region or facility.name
+    # S1K-F12: for liquids unloading / associated gas venting the "region" column is the basin input
+    # of the calculation (Table 6-10 / 6-8), not the organisational region of the record
+    basin_column = process_type in ("unloading", "liquids_unloading", "associated_gas_venting")
+    record.region = (None if basin_column else row.get("region")) or facility.region or facility.name
     record.field = row.get("field") or facility.field
     record.group_name = row.get("group") or row.get("group_name") or None
     record.equipment_id = equipment_id or None

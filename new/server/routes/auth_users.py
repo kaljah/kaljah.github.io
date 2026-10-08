@@ -8,9 +8,18 @@ import json
 from extensions import db
 from flask import current_app, jsonify, request, session
 from models import Notification, User
-from utils import log_activity_and_notify
+from utils import is_unrestricted_location, log_activity_and_notify
 from . import auth_bp
-from routes.auth import it_access_required, it_admin_required, register, validate_password_complexity
+from routes.auth import (
+    BUSINESS_ROLE_GRANTORS,
+    BUSINESS_ROLES,
+    ROLE_RANK,
+    SUPERUSER_REGION_ERROR,
+    it_access_required,
+    it_admin_required,
+    register,
+    validate_password_complexity,
+)
 
 
 @auth_bp.route("/users", methods=["POST"])
@@ -61,7 +70,6 @@ def update_user(id):
 
     data = request.get_json()
 
-    ROLE_RANK = {"user": 0, "it": 1, "superuser": 2, "admin": 3, "it_admin": 4, "it_manager": 4}
     VALID_ROLES = set(ROLE_RANK.keys())
     requester_rank = ROLE_RANK.get(it_admin.role if it_admin else "user", 0)
 
@@ -70,7 +78,7 @@ def update_user(id):
         if new_role not in VALID_ROLES:
             return jsonify({"error": f"Invalid role. Must be one of: {', '.join(sorted(VALID_ROLES))}"}), 400
         # Separation of Duties: IT Admin cannot assign business compliance Admin or Superuser role
-        if new_role in ["admin", "superuser"] and it_admin.role not in ["admin", "it_manager"]:
+        if new_role in BUSINESS_ROLES and it_admin.role not in BUSINESS_ROLE_GRANTORS:
             return jsonify({"error": "Forbidden: IT Administrators cannot assign business compliance roles (admin, superuser)"}), 403
         target_new_rank = ROLE_RANK.get(new_role, 0)
         if target_new_rank > requester_rank:
@@ -98,6 +106,9 @@ def update_user(id):
 
     if "location" in data:
         user.location = data["location"]
+    if ("role" in data or "location" in data) and user.role == "superuser" and is_unrestricted_location(user.location):
+        db.session.rollback()
+        return jsonify({"error": SUPERUSER_REGION_ERROR, "field": "location"}), 400
     if "status" in data:
         if data["status"] != user.status:
             user.session_version = int(user.session_version or 0) + 1  # BUG-114
@@ -153,8 +164,10 @@ def delete_user(id):
 
     label = user_label(user)
     db.session.execute(text("DELETE FROM notifications WHERE user_id = :uid"), {"uid": id})
+    # saved import column mappings are personal (user_id is NOT NULL): they go with the account
+    db.session.execute(text("DELETE FROM import_mappings WHERE user_id = :uid"), {"uid": id})
     for table in db.metadata.sorted_tables:
-        if table.name in ("users", "notifications"):
+        if table.name in ("users", "notifications", "import_mappings"):
             continue
         for col in table.columns:
             if not any(fk.column.table.name == "users" for fk in col.foreign_keys):
@@ -209,8 +222,13 @@ def admin_reset_password(id):
                 "error": "Forbidden: Client IT staff cannot reset passwords for Compliance Admin or Superuser accounts"
             }), 403
 
+    # Audit 2026-10-01 (A-01): a reset hands over the account, so only a strictly higher role may
+    # reset it (the IT role could take over IT admin accounts). Own password: /change-password.
+    if not admin_user or ROLE_RANK.get(user.role, 0) >= ROLE_RANK.get(admin_user.role, 0):
+        return jsonify({"error": "You can only reset the password of an account with a lower role than your own"}), 403
+
     data = request.get_json(silent=True) or {}
-    new_password = data.get("newPassword", "").strip()
+    new_password = str(data.get("newPassword") or "").strip()
 
     if not new_password:
         return jsonify({"error": "New password is required"}), 400

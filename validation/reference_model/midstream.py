@@ -39,7 +39,8 @@ class IndependentAGRModel:
             cout = cin
 
         diff_co2 = max(0.0, cin - cout)
-        co2_scf = tp_scf * diff_co2
+        # Eq 6-18 with the outlet stream reduced by the CO2 removed: V_out = V_in (1 - y_in) / (1 - y_out)
+        co2_scf = tp_scf * diff_co2 / (1.0 - cout)
         co2_m3 = co2_scf * 0.028316846592
         co2_mass_kg = co2_m3 * DENSITY_CO2_STD
 

@@ -185,12 +185,10 @@ class IndependentFlaringModel:
 
         # Default efficiencies by flare type
         ft = str(flare_type or "elevated").lower().strip().replace("-", "_").replace(" ", "_")
-        if ft in ["enclosed", "enclosed_ground", "ground"]:
-            default_eta_c, default_eta_d = 0.996, 0.995
-        elif ft in ["pit", "open_pit", "candle"]:
-            default_eta_c, default_eta_d = 0.920, 0.950
-        else:  # elevated, pipe, default
-            default_eta_c, default_eta_d = 0.984, 0.980
+        # API Compendium 2021 Section 5.1.2 / Table 5-2: 98 % carbon conversion (Eq 5-2); 2 % residual CH4,
+        # 0.5 % for a well-designed and operated (enclosed) flare
+        default_eta_c = 0.98
+        default_eta_d = 0.995 if ft in ["enclosed", "enclosed_ground", "ground"] else 0.98
 
         eta_c = float(combustion_eff if combustion_eff is not None else default_eta_c)
         if eta_c > 1.0:
