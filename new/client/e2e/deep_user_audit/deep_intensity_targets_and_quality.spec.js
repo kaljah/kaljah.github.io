@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
 
-const FRONTEND = 'http://localhost:5173';
+const FRONTEND = process.env.E2E_BASE_URL || 'http://127.0.0.1:5173';
 const BACKEND = 'http://127.0.0.1:5000';
 const SCREENSHOT_DIR = path.resolve('e2e/deep_user_audit/screenshots');
 const ARTIFACT_DIR = 'C:/Users/samsung/.gemini/antigravity/brain/145e1f58-77e7-4f5b-8573-5a1c4dc13171';
