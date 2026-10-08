@@ -93,7 +93,7 @@ const MitigationTab: React.FC<MitigationTabProps> = ({
           <>
             Activity
             {!isPrivileged && getAvailableActivities().length === 1 && (
-              <span className="text-[length:0.65rem]! bg-[color:#dbeafe]! text-[color:#1d4ed8]! rounded-[4px]! p-[1px_5px]! font-semibold!">
+              <span className="text-[length:0.65rem]! bg-[color:var(--color-legacy-dbeafe)]! text-[color:var(--color-blue-700)]! rounded-[4px]! p-[1px_5px]! font-semibold!">
                 Auto
               </span>
             )}
@@ -123,7 +123,7 @@ const MitigationTab: React.FC<MitigationTabProps> = ({
           <>
             Division
             {!isPrivileged && getAvailableDivisions(mitigationForm.activity).length === 1 && (
-              <span className="text-[length:0.65rem]! bg-[color:#dbeafe]! text-[color:#1d4ed8]! rounded-[4px]! p-[1px_5px]! font-semibold!">
+              <span className="text-[length:0.65rem]! bg-[color:var(--color-legacy-dbeafe)]! text-[color:var(--color-blue-700)]! rounded-[4px]! p-[1px_5px]! font-semibold!">
                 Auto
               </span>
             )}
@@ -152,7 +152,7 @@ const MitigationTab: React.FC<MitigationTabProps> = ({
           Region
           {!isPrivileged &&
             facilities.filter((f) => f.activity === mitigationForm.activity && f.division === mitigationForm.division).length === 1 && (
-              <span className="text-[length:0.65rem]! bg-[color:#dbeafe]! text-[color:#1d4ed8]! rounded-[4px]! p-[1px_5px]! font-semibold!">
+              <span className="text-[length:0.65rem]! bg-[color:var(--color-legacy-dbeafe)]! text-[color:var(--color-blue-700)]! rounded-[4px]! p-[1px_5px]! font-semibold!">
                 Auto
               </span>
             )}
@@ -233,7 +233,7 @@ const MitigationTab: React.FC<MitigationTabProps> = ({
         Save Record
       </button>
       <button
-        className="action-btn bg-[color:#10b981]!"
+        className="action-btn bg-[color:var(--color-green-500)]!"
         onClick={() => setImportModal({ isOpen: true, type: "mitigation" })}
       >
         <Upload size={16} /> Import Mitigation CSV
@@ -279,12 +279,12 @@ const MitigationTab: React.FC<MitigationTabProps> = ({
                     {m.status || "Active"}
                   </span>
                 </td>
-                <td className="text-right! text-[color:#2e7d32]! font-semibold!">
+                <td className="text-right! text-[color:var(--color-green-700)]! font-semibold!">
                   -{parseFloat(String(m.quantity_tco2e)).toLocaleString()}
                 </td>
                 <td className="text-center!">
                   <button
-                    className="[background:#fee2e2] [color:var(--color-red-700)] [border:1px_solid_#fecaca] [&&]:[border-radius:var(--radius-md)] [cursor:pointer] [transition:all_0.2s] hover:[background:var(--color-red-700)] hover:[color:white] p-[6px_12px]! text-[length:0.8rem]!"
+                    className="[background:var(--color-legacy-fee2e2)] [color:var(--color-red-700)] [border:1px_solid_var(--color-legacy-fecaca)] [&&]:[border-radius:var(--radius-md)] [cursor:pointer] [transition:all_0.2s] hover:[background:var(--color-red-700)] hover:[color:white] p-[6px_12px]! text-[length:0.8rem]!"
                     onClick={() => handleDeleteMitigation(m.id)}
                   >
                     Delete

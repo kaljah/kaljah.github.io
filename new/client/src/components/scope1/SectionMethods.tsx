@@ -23,7 +23,7 @@ const Num: React.FC<NumProps> = ({ label, field, data, onChange, placeholder, re
     label={
       <>
         {label}
-        {required && <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>}
+        {required && <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>}
       </>
     }
   >
@@ -63,7 +63,7 @@ const NumUnit: React.FC<NumUnitProps> = ({
   <div className="input-group">
     <label>
       {label}
-      {required && <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>}
+      {required && <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>}
     </label>
     <div className="grid gap-[8px] [grid-template-columns:1fr_110px] max-[600px]:[grid-template-columns:1fr]">
       <Input
@@ -153,7 +153,7 @@ export const ActivityFactorForm: React.FC<ActivityFactorFormProps> = ({ processT
     <div className="[display:grid] [grid-template-columns:1fr] [gap:16px]">
       <div className="input-group">
         <label>
-          Source<span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+          Source<span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
         </label>
         <CustomDropdown
           options={rows.map((r) => ({ value: r.key, label: r.label }))}
@@ -326,7 +326,7 @@ export const CombustionMethodForm: React.FC<CombustionMethodFormProps> = ({ data
         <>
           <div className="input-group">
             <label>
-              Equipment<span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+              Equipment<span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
             </label>
             <CustomDropdown
               options={equip.map((e) => ({ value: e.key, label: e.label }))}

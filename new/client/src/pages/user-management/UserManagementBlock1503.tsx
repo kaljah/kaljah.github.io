@@ -43,7 +43,7 @@ const UserManagementBlock1503: React.FC<UserManagementBlock1503Props> = ({
     title="Reset User Password"
     subtitle={resetTarget ? `Administrative credential overwrite for ${resetTarget.email}` : ""}
     icon={KeyRound}
-    iconColor="#f59e0b"
+    iconColor="var(--color-amber-500)"
     iconBg="rgba(245, 158, 11, 0.12)"
     width="540px"
   >
@@ -54,7 +54,7 @@ const UserManagementBlock1503: React.FC<UserManagementBlock1503Props> = ({
           className="flex! items-center! gap-[14px]! p-[14px_16px]! rounded-[14px]! bg-[color:var(--bg-body)]! [border:1px_solid_var(--border-color)]! mb-[20px]!"
         >
           <div
-            className="w-[44px]! h-[44px]! rounded-[12px]! bg-[color:rgba(245,_158,_11,_0.15)]! [border:1px_solid_rgba(245,_158,_11,_0.3)]! text-[color:#b45309]! flex! items-center! justify-center! [font-weight:800]! text-[length:1.1rem]! shrink-0!"
+            className="w-[44px]! h-[44px]! rounded-[12px]! bg-[color:rgba(245,_158,_11,_0.15)]! [border:1px_solid_rgba(245,_158,_11,_0.3)]! text-[color:var(--color-amber-700)]! flex! items-center! justify-center! [font-weight:800]! text-[length:1.1rem]! shrink-0!"
           >
             {resetTarget.fullName?.charAt(0)?.toUpperCase() || "U"}
           </div>
@@ -85,7 +85,7 @@ const UserManagementBlock1503: React.FC<UserManagementBlock1503Props> = ({
 
         {/* Security Notice */}
         <div
-          className="flex! items-start! gap-[10px]! p-[12px_14px]! rounded-[10px]! bg-[color:rgba(239,_68,_68,_0.06)]! [border:1px_solid_rgba(239,_68,_68,_0.2)]! mb-[22px]! text-[length:0.8rem]! text-[color:#dc2626]! leading-[1.45]!"
+          className="flex! items-start! gap-[10px]! p-[12px_14px]! rounded-[10px]! bg-[color:rgba(239,_68,_68,_0.06)]! [border:1px_solid_rgba(239,_68,_68,_0.2)]! mb-[22px]! text-[length:0.8rem]! text-[color:var(--color-red-600)]! leading-[1.45]!"
         >
           <AlertCircle size={17} className="shrink-0! mt-[2px]!" />
           <div>
@@ -107,9 +107,9 @@ const UserManagementBlock1503: React.FC<UserManagementBlock1503Props> = ({
                 paddingRight: "44px",
                 borderColor:
                   resetPwd && resetPwd.length < 10
-                    ? "#ef4444"
+                    ? "var(--color-red-500)"
                     : focusedField === "resetPwd"
-                    ? "#f59e0b"
+                    ? "var(--color-amber-500)"
                     : "var(--border-color)",
                 boxShadow:
                   focusedField === "resetPwd"
@@ -161,7 +161,7 @@ const UserManagementBlock1503: React.FC<UserManagementBlock1503Props> = ({
                       flex: 1,
                       height: "4px",
                       borderRadius: "2px",
-                      background: ok ? "#10b981" : "var(--border-color)",
+                      background: ok ? "var(--color-green-500)" : "var(--border-color)",
                       transition: "background .2s",
                     }}
                   />
@@ -184,7 +184,7 @@ const UserManagementBlock1503: React.FC<UserManagementBlock1503Props> = ({
                       padding: "2px 8px",
                       borderRadius: "4px",
                       background: req.ok ? "rgba(16, 185, 129, 0.1)" : "rgba(100, 116, 139, 0.08)",
-                      color: req.ok ? "#2e7d32" : "var(--text-secondary)",
+                      color: req.ok ? "var(--color-green-700)" : "var(--text-secondary)",
                       display: "inline-flex",
                       alignItems: "center",
                       gap: "3px",
@@ -211,11 +211,11 @@ const UserManagementBlock1503: React.FC<UserManagementBlock1503Props> = ({
               ...S.input,
               borderColor:
                 resetPwdConfirm && resetPwdConfirm !== resetPwd
-                  ? "#ef4444"
+                  ? "var(--color-red-500)"
                   : resetPwdConfirm && resetPwdConfirm === resetPwd
-                  ? "#10b981"
+                  ? "var(--color-green-500)"
                   : focusedField === "resetPwdConfirm"
-                  ? "#f59e0b"
+                  ? "var(--color-amber-500)"
                   : "var(--border-color)",
             }}
             onFocus={() => setFocusedField("resetPwdConfirm")}
@@ -224,12 +224,12 @@ const UserManagementBlock1503: React.FC<UserManagementBlock1503Props> = ({
             autoComplete="new-password"
           />
           {resetPwdConfirm && resetPwdConfirm !== resetPwd && (
-            <p className="text-[length:0.75rem]! text-[color:#b91c1c]! mt-[6px]! flex! items-center! gap-[4px]!">
+            <p className="text-[length:0.75rem]! text-[color:var(--color-red-700)]! mt-[6px]! flex! items-center! gap-[4px]!">
               <AlertCircle size={13} /> Passwords do not match
             </p>
           )}
           {resetPwdConfirm && resetPwdConfirm === resetPwd && resetPwd.length >= 10 && (
-            <p className="text-[length:0.75rem]! text-[color:#2e7d32]! mt-[6px]! flex! items-center! gap-[4px]!">
+            <p className="text-[length:0.75rem]! text-[color:var(--color-green-700)]! mt-[6px]! flex! items-center! gap-[4px]!">
               <CheckCircle2 size={13} /> Passwords match
             </p>
           )}
@@ -259,7 +259,7 @@ const UserManagementBlock1503: React.FC<UserManagementBlock1503Props> = ({
             disabled={resetLoading || resetPwd !== resetPwdConfirm || resetPwd.length < 10}
             style={{
               ...S.btnPrimary,
-              background: "linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%)",
+              background: "linear-gradient(135deg, var(--color-amber-500) 0%, var(--color-legacy-fbbf24) 100%)",
               boxShadow: "0 4px 12px rgba(245,158,11,.3)",
               opacity:
                 resetLoading || resetPwd !== resetPwdConfirm || resetPwd.length < 10

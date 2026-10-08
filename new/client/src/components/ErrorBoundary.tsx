@@ -61,7 +61,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
 
             {Boolean(import.meta.env?.DEV) &&
               this.state.error && (
-                <details className="[background:rgba(0,_0,_0,_0.3)] [border:1px_solid_rgba(255,_255,_255,_0.1)] [&&]:[border-radius:var(--radius-md)] [padding:16px] [margin-bottom:24px] [text-align:left] [&_summary]:[cursor:pointer] [&_summary]:[font-weight:600] [&_summary]:[color:var(--color-amber-700)] [&_summary]:[margin-bottom:12px] [&_summary]:[user-select:none] [&&]:[&_summary:hover]:[color:#fbbf24]">
+                <details className="[background:rgba(0,_0,_0,_0.3)] [border:1px_solid_rgba(255,_255,_255,_0.1)] [&&]:[border-radius:var(--radius-md)] [padding:16px] [margin-bottom:24px] [text-align:left] [&_summary]:[cursor:pointer] [&_summary]:[font-weight:600] [&_summary]:[color:var(--color-amber-700)] [&_summary]:[margin-bottom:12px] [&_summary]:[user-select:none] [&&]:[&_summary:hover]:[color:var(--color-legacy-fbbf24)]">
                   <summary>Error Details (Development Only)</summary>
                   <div className="[margin-top:12px] [font-size:var(--text-base)] [color:rgba(255,_255,_255,_0.7)] [&_strong]:[color:var(--color-red-700)] [&_pre]:[background:rgba(0,_0,_0,_0.4)] [&_pre]:[padding:12px] [&_pre]:[border-radius:var(--radius-sm)] [&_pre]:[overflow-x:auto] [&_pre]:[margin-top:8px] [&_pre]:[font-size:var(--text-sm)] [&_pre]:[line-height:1.5] [&_pre]:[white-space:pre-wrap] [&_pre]:[word-wrap:break-word]">
                     <p>

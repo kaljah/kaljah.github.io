@@ -113,7 +113,7 @@ const ReferenceData: React.FC = () => {
   const categories: Record<string, CategoryDef> = {
     custom: {
       title: "Custom & Regional Factors",
-      icon: <Star size={20} className="text-[color:#2e7d32]!" />,
+      icon: <Star size={20} className="text-[color:var(--color-green-700)]!" />,
       color: "var(--color-green-500)",
       factors: customFactors
         .filter((f) => f.name?.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -155,7 +155,7 @@ const ReferenceData: React.FC = () => {
     gwp: {
       title: "Global Warming Potentials (GWPs)",
       icon: <Globe size={20} />,
-      color: "#0ea5e9",
+      color: "var(--color-legacy-0ea5e9)",
       isStatic: true,
       columns: ["Gas", "AR4 (2007)", "AR5 (2013)", "AR6 (2021)"],
       items: [
@@ -206,7 +206,7 @@ const ReferenceData: React.FC = () => {
     hhv_defaults: {
       title: "Default Fuel Heating Values (HHV)",
       icon: <Flame size={20} />,
-      color: "#f97316",
+      color: "var(--color-legacy-f97316)",
       isStatic: true,
       columns: ["Fuel Type", "Default Heating Value", "Unit", "Usage context"],
       items: [
@@ -251,7 +251,7 @@ const ReferenceData: React.FC = () => {
     process_types: {
       title: "API Compendium Process Mappings",
       icon: <Activity size={20} />,
-      color: "#6366f1",
+      color: "var(--color-legacy-6366f1)",
       isStatic: true,
       columns: ["Process Name", "Category", "API Section", "Description"],
       items: [
@@ -435,7 +435,7 @@ const ReferenceData: React.FC = () => {
       {loadErrors.length > 0 && (
         <div
           role="alert"
-          className="m-[0_0_16px]! p-[12px_16px]! rounded-[8px]! bg-[color:#fef2f2]! [border:1px_solid_#fecaca]! text-[color:#991b1b]! flex! gap-[12px]! items-center!"
+          className="m-[0_0_16px]! p-[12px_16px]! rounded-[8px]! bg-[color:var(--color-red-50)]! [border:1px_solid_var(--color-legacy-fecaca)]! text-[color:var(--color-legacy-991b1b)]! flex! gap-[12px]! items-center!"
         >
           <div className="flex-1!">{loadErrors.map((e) => <div key={e}>{e}</div>)}</div>
           <Button type="button" variant="ghost" onClick={() => { setLoading(true); fetchData(); }}>Retry</Button>
@@ -443,7 +443,7 @@ const ReferenceData: React.FC = () => {
       )}
       {loading ? (
         <div
-          className="text-center! p-[100px]! text-[color:#64748b]!"
+          className="text-center! p-[100px]! text-[color:var(--color-ink-500)]!"
         >
           Loading Library Assets...
         </div>
@@ -576,12 +576,12 @@ const ReferenceData: React.FC = () => {
             >
               <Info
                 size={40}
-                className="text-[color:#475569]! mb-[16px]!"
+                className="text-[color:var(--color-ink-600)]! mb-[16px]!"
               />
-              <h3 className="text-[color:#1e293b]! mb-[8px]!">
+              <h3 className="text-[color:var(--color-ink-800)]! mb-[8px]!">
                 No factors found
               </h3>
-              <p className="text-[color:#64748b]!">
+              <p className="text-[color:var(--color-ink-500)]!">
                 Try adjusting your search term or category filter.
               </p>
             </div>

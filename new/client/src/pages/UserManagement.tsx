@@ -8,6 +8,7 @@ import api from "../api";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../components/Toast";
 import ConfirmModal from "../components/ConfirmModal";
+import { tint } from "../utils/colorMix";
 
 /* ─── tiny keyframe injection ─────────────────────────────────────────────── */
 const STYLE_ID = "um-keyframes";
@@ -24,13 +25,13 @@ if (!document.getElementById(STYLE_ID)) {
 
 // Darker text shades with at least 4.5:1 contrast on the matching 10% tint backgrounds
 const AA_TEXT: Record<string, string> = {
-  "#10b981": "#2e7d32",
-  "#ef4444": "#b91c1c",
-  "#ff6600": "#c2410c",
-  "#f59e0b": "#b45309",
-  "#8b5cf6": "#6d28d9",
-  "#3b82f6": "#1d4ed8",
-  "#0284c7": "#0369a1",
+  "var(--color-green-500)": "var(--color-green-700)",
+  "var(--color-red-500)": "var(--color-red-700)",
+  "var(--color-brand-500)": "var(--color-brand-700)",
+  "var(--color-amber-500)": "var(--color-amber-700)",
+  "var(--color-violet-500)": "var(--color-violet-700)",
+  "var(--color-blue-500)": "var(--color-blue-700)",
+  "var(--color-sky-600)": "var(--color-legacy-0369a1)",
 };
 const aa = (c: string) => AA_TEXT[c] || c;
 
@@ -38,47 +39,47 @@ const aa = (c: string) => AA_TEXT[c] || c;
 const ROLE_META: Record<string, RoleMeta> = {
   admin: {
     label: "Admin",
-    color: "#2e7d32",
-    bg: "#ecfdf5",
+    color: "var(--color-green-700)",
+    bg: "var(--color-green-50)",
     border: "rgba(16,185,129,.25)",
   },
   it_admin: {
     label: "IT Manager",
-    color: "#b45309",
-    bg: "#fffbeb",
+    color: "var(--color-amber-700)",
+    bg: "var(--color-amber-50)",
     border: "rgba(245,158,11,.25)",
   },
   it_manager: {
     label: "IT Manager",
-    color: "#b45309",
-    bg: "#fffbeb",
+    color: "var(--color-amber-700)",
+    bg: "var(--color-amber-50)",
     border: "rgba(245,158,11,.25)",
   },
   it: {
     label: "IT",
-    color: "#0369a1",
-    bg: "#f0f9ff",
+    color: "var(--color-legacy-0369a1)",
+    bg: "var(--color-legacy-f0f9ff)",
     border: "rgba(2,132,199,.25)",
   },
   superuser: {
     label: "Super User",
-    color: "#6d28d9",
-    bg: "#f3e8ff",
+    color: "var(--color-violet-700)",
+    bg: "var(--color-legacy-f3e8ff)",
     border: "rgba(139,92,246,.25)",
   },
   user: {
     label: "User",
-    color: "#1d4ed8",
-    bg: "#eff6ff",
+    color: "var(--color-blue-700)",
+    bg: "var(--color-blue-50)",
     border: "rgba(59,130,246,.25)",
   },
 };
 const getRoleMeta = (role?: string): RoleMeta =>
   (role && ROLE_META[role]) || {
     label: role?.toUpperCase?.() || "UNKNOWN",
-    color: "#475569",
-    bg: "#f1f5f9",
-    border: "#e2e8f0",
+    color: "var(--color-ink-600)",
+    bg: "var(--color-ink-100)",
+    border: "var(--color-ink-200)",
   };
 
 /* ─── shared inline style helpers ─────────────────────────────────────────── */
@@ -106,8 +107,8 @@ const S: Record<string, any> = {
     display: "inline-flex",
     alignItems: "center",
     gap: "7px",
-    background: "#fff7ed",
-    color: "#c2410c",
+    background: "var(--color-brand-50)",
+    color: "var(--color-brand-700)",
     border: "1px solid rgba(255,102,0,.15)",
     borderRadius: "100px",
     padding: "4px 12px",
@@ -121,7 +122,7 @@ const S: Record<string, any> = {
     width: "7px",
     height: "7px",
     borderRadius: "50%",
-    background: "#ff6600",
+    background: "var(--color-brand-500)",
     display: "inline-block",
     animation: "um-pulse-dot 2s infinite",
   },
@@ -244,8 +245,8 @@ const S: Record<string, any> = {
     width: "34px",
     height: "34px",
     borderRadius: "10px",
-    background: color + "20",
-    border: `1px solid ${color}30`,
+    background: tint(color, "20"),
+    border: `1px solid ${tint(color, "30")}`,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -310,8 +311,8 @@ const S: Record<string, any> = {
 
   /* primary button */
   btnPrimary: {
-    background: "linear-gradient(135deg, #ff6600 0%, #ff8533 100%)",
-    color: "#fff",
+    background: "linear-gradient(135deg, var(--color-brand-500) 0%, var(--color-brand-400) 100%)",
+    color: "var(--color-white)",
     border: "none",
     borderRadius: "10px",
     padding: "9px 18px",
@@ -387,7 +388,7 @@ const S: Record<string, any> = {
     width: "26px",
     height: "26px",
     borderRadius: "8px",
-    background: `${color}18`,
+    background: tint(color, "18"),
     color: color,
     display: "flex",
     alignItems: "center",
@@ -723,7 +724,7 @@ const UserManagement: React.FC = () => {
   if (!["it_admin", "it_manager", "it"].includes(user?.role || "")) {
     return (
       <div style={{ ...S.page, textAlign: "center", paddingTop: "80px" }}>
-        <div className="mb-[20px]! text-[color:#475569]!">
+        <div className="mb-[20px]! text-[color:var(--color-ink-600)]!">
           <Lock size={52} strokeWidth={1.5} aria-hidden="true" />
         </div>
         <h2 className="text-[color:var(--text-primary)]! m-[0_0_8px]!">
@@ -762,7 +763,7 @@ const UserManagement: React.FC = () => {
 
   const inputStyle = (field: string) => ({
     ...S.input,
-    borderColor: focusedField === field ? "#ff6600" : "var(--border-color)",
+    borderColor: focusedField === field ? "var(--color-brand-500)" : "var(--border-color)",
     boxShadow:
       focusedField === field ? "0 0 0 3px rgba(255,102,0,.12)" : "none",
   });
@@ -849,36 +850,36 @@ const UserManagement: React.FC = () => {
             label: "Total Users",
             value: totalUsers,
             icon: <UsersIcon size={20} strokeWidth={2} aria-hidden="true" />,
-            color: "#6366f1",
-            bg: "#eef2ff",
+            color: "var(--color-legacy-6366f1)",
+            bg: "var(--color-legacy-eef2ff)",
           },
           {
             label: "Standard Users",
             value: standardCount,
             icon: <UserIcon size={20} strokeWidth={2} aria-hidden="true" />,
-            color: "#3b82f6",
-            bg: "#eff6ff",
+            color: "var(--color-blue-500)",
+            bg: "var(--color-blue-50)",
           },
           {
             label: "Admins",
             value: adminCount,
             icon: <ShieldIcon size={20} strokeWidth={2} aria-hidden="true" />,
-            color: "#10b981",
-            bg: "#ecfdf5",
+            color: "var(--color-green-500)",
+            bg: "var(--color-green-50)",
           },
           {
             label: "IT Admins",
             value: itAdminCount,
             icon: <WrenchIcon size={20} strokeWidth={2} aria-hidden="true" />,
-            color: "#f59e0b",
-            bg: "#fffbeb",
+            color: "var(--color-amber-500)",
+            bg: "var(--color-amber-50)",
           },
           {
             label: "Regions",
             value: regions.length,
             icon: <Globe size={20} aria-hidden="true" />,
-            color: "#ff6600",
-            bg: "#fff7ed",
+            color: "var(--color-brand-500)",
+            bg: "var(--color-brand-50)",
           },
         ].map((stat) => (
           <div

@@ -2,6 +2,7 @@ import React from "react";
 import { Activity, AlertCircle, BarChart3, Check, Copy, MapPin, RefreshCw, Satellite, ShieldCheck, Target, X } from "lucide-react";
 import { Badge, Banner, Button, IconButton, Skeleton } from "../../ui";
 import { cn } from "../../ui/cn";
+import { tint } from "../../utils/colorMix";
 
 const Caption: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <span className="text-xs font-bold uppercase tracking-wide text-text-secondary">{children}</span>
@@ -100,14 +101,14 @@ const SatelliteSection: React.FC<SatelliteSectionProps> = ({ loading, observatio
           </dl>
 
           {reconciliation && (
-            <div className="mb-3 rounded-md border bg-surface p-2.5" style={{ borderColor: `${reconciliation.color}50` }}>
+            <div className="mb-3 rounded-md border bg-surface p-2.5" style={{ borderColor: tint(reconciliation.color, "50") }}>
               <div className="mb-1.5 flex items-center justify-between">
                 <span className="flex items-center gap-1.5 text-xs font-bold text-text">
                   <Activity className="size-3.5" style={{ color: reconciliation.color }} aria-hidden="true" /> OGMP 2.0 reconciliation gap
                 </span>
                 <span
                   className="rounded-sm border px-1.5 py-0.5 text-xs font-bold"
-                  style={{ backgroundColor: `${reconciliation.color}15`, color: reconciliation.color, borderColor: `${reconciliation.color}40` }}
+                  style={{ backgroundColor: tint(reconciliation.color, "15"), color: reconciliation.color, borderColor: tint(reconciliation.color, "40") }}
                 >
                   {reconciliation.label}
                 </span>

@@ -75,7 +75,7 @@ const SourcesTab: React.FC<SourcesTabProps> = ({
           <>
             Activity
             {!isPrivileged && getAvailableActivities().length === 1 && (
-              <span className="text-[length:0.65rem]! bg-[color:#dbeafe]! text-[color:#1d4ed8]! rounded-[4px]! p-[1px_5px]! font-semibold!">
+              <span className="text-[length:0.65rem]! bg-[color:var(--color-legacy-dbeafe)]! text-[color:var(--color-blue-700)]! rounded-[4px]! p-[1px_5px]! font-semibold!">
                 Auto
               </span>
             )}
@@ -105,7 +105,7 @@ const SourcesTab: React.FC<SourcesTabProps> = ({
           <>
             Division
             {!isPrivileged && getAvailableDivisions(sourceForm.activity).length === 1 && (
-              <span className="text-[length:0.65rem]! bg-[color:#dbeafe]! text-[color:#1d4ed8]! rounded-[4px]! p-[1px_5px]! font-semibold!">
+              <span className="text-[length:0.65rem]! bg-[color:var(--color-legacy-dbeafe)]! text-[color:var(--color-blue-700)]! rounded-[4px]! p-[1px_5px]! font-semibold!">
                 Auto
               </span>
             )}
@@ -134,7 +134,7 @@ const SourcesTab: React.FC<SourcesTabProps> = ({
           Region
           {!isPrivileged &&
             facilities.filter((f) => f.activity === sourceForm.activity && f.division === sourceForm.division).length === 1 && (
-              <span className="text-[length:0.65rem]! bg-[color:#dbeafe]! text-[color:#1d4ed8]! rounded-[4px]! p-[1px_5px]! font-semibold!">
+              <span className="text-[length:0.65rem]! bg-[color:var(--color-legacy-dbeafe)]! text-[color:var(--color-blue-700)]! rounded-[4px]! p-[1px_5px]! font-semibold!">
                 Auto
               </span>
             )}
@@ -204,7 +204,7 @@ const SourcesTab: React.FC<SourcesTabProps> = ({
         Add Source
       </button>
       <button
-        className="action-btn bg-[color:#10b981]!"
+        className="action-btn bg-[color:var(--color-green-500)]!"
         onClick={() => setImportModal({ isOpen: true, type: "sources" })}
       >
         <Upload size={16} /> Import Sources CSV
@@ -249,7 +249,7 @@ const SourcesTab: React.FC<SourcesTabProps> = ({
                       <>
                         {fac.name}
                         {fac.field && (
-                          <span className="text-[length:0.85em]! text-[color:#9ca3af]! font-normal!">
+                          <span className="text-[length:0.85em]! text-[color:var(--color-legacy-9ca3af)]! font-normal!">
                             -{fac.field}
                           </span>
                         )}
@@ -260,7 +260,7 @@ const SourcesTab: React.FC<SourcesTabProps> = ({
                 <td>{s.status}</td>
                 <td>
                   <button
-                    className="[background:#fee2e2] [color:var(--color-red-700)] [border:1px_solid_#fecaca] [&&]:[border-radius:var(--radius-md)] [cursor:pointer] [transition:all_0.2s] hover:[background:var(--color-red-700)] hover:[color:white] p-[4px_8px]! text-[length:0.75rem]!"
+                    className="[background:var(--color-legacy-fee2e2)] [color:var(--color-red-700)] [border:1px_solid_var(--color-legacy-fecaca)] [&&]:[border-radius:var(--radius-md)] [cursor:pointer] [transition:all_0.2s] hover:[background:var(--color-red-700)] hover:[color:white] p-[4px_8px]! text-[length:0.75rem]!"
                     onClick={() => handleDeleteSource(s.id)}
                   >
                     Delete

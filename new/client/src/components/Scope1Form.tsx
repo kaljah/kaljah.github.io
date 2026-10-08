@@ -352,7 +352,7 @@ export const Scope1Form: React.FC = () => {
         </div>
         {factorUnc && maxUncertainty > 0 && (
           <span
-            className="text-[length:0.65rem]! text-[color:#9ca3af]! font-medium! shrink-0!"
+            className="text-[length:0.65rem]! text-[color:var(--color-legacy-9ca3af)]! font-medium! shrink-0!"
             title={`Uncertainty: CO₂ ${formatUncertainty(factorUnc.co2)}, CH₄ ${formatUncertainty(factorUnc.ch4)}, N₂O ${formatUncertainty(factorUnc.n2o)}`}
           >
             {formatUncertainty(maxUncertainty)}

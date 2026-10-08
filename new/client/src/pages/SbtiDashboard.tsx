@@ -361,9 +361,9 @@ const SbtiDashboard: React.FC = () => {
                     onClick={() => handlePathwayChange("1.5C")}
                     style={{
                       flex: 1,
-                      background: targetForm.pathway_type === "1.5C" ? "rgba(16, 185, 129, 0.15)" : "var(--input-bg, #f8fafc)",
-                      borderColor: targetForm.pathway_type === "1.5C" ? "#10b981" : "var(--border-color, #e2e8f0)",
-                      color: targetForm.pathway_type === "1.5C" ? "#065f46" : "var(--text-secondary, #475569)",
+                      background: targetForm.pathway_type === "1.5C" ? "rgba(16, 185, 129, 0.15)" : "var(--input-bg, var(--color-ink-50))",
+                      borderColor: targetForm.pathway_type === "1.5C" ? "var(--color-green-500)" : "var(--border-color, var(--color-ink-200))",
+                      color: targetForm.pathway_type === "1.5C" ? "var(--color-legacy-065f46)" : "var(--text-secondary, var(--color-ink-600))",
                       fontWeight: 600,
                     }}
                   >
@@ -375,9 +375,9 @@ const SbtiDashboard: React.FC = () => {
                     onClick={() => handlePathwayChange("WB2C")}
                     style={{
                       flex: 1,
-                      background: targetForm.pathway_type === "WB2C" ? "rgba(59, 130, 246, 0.15)" : "var(--input-bg, #f8fafc)",
-                      borderColor: targetForm.pathway_type === "WB2C" ? "#3b82f6" : "var(--border-color, #e2e8f0)",
-                      color: targetForm.pathway_type === "WB2C" ? "#1e40af" : "var(--text-secondary, #475569)",
+                      background: targetForm.pathway_type === "WB2C" ? "rgba(59, 130, 246, 0.15)" : "var(--input-bg, var(--color-ink-50))",
+                      borderColor: targetForm.pathway_type === "WB2C" ? "var(--color-blue-500)" : "var(--border-color, var(--color-ink-200))",
+                      color: targetForm.pathway_type === "WB2C" ? "var(--color-legacy-1e40af)" : "var(--text-secondary, var(--color-ink-600))",
                       fontWeight: 600,
                     }}
                   >
@@ -568,7 +568,7 @@ const SbtiDashboard: React.FC = () => {
                 height={350}
               />
             ) : (
-              <div className="flex! justify-center! items-center! h-full! text-[color:#475569]!">
+              <div className="flex! justify-center! items-center! h-full! text-[color:var(--color-ink-600)]!">
                 No trajectory configured. Click "Configure Target" to set baseline and targets.
               </div>
             )}
@@ -594,7 +594,7 @@ const SbtiDashboard: React.FC = () => {
                 height={350}
               />
             ) : (
-              <div className="flex! justify-center! items-center! h-full! text-[color:#475569]!">
+              <div className="flex! justify-center! items-center! h-full! text-[color:var(--color-ink-600)]!">
                 No verified emissions history available.
               </div>
             )}
@@ -651,8 +651,8 @@ const SbtiDashboard: React.FC = () => {
                     <tr key={row.year}>
                       <td className="font-semibold!">{row.year}</td>
                       <td className="font-medium!">{formatNumber(row.sbti_target, 1)} tCO2e</td>
-                      <td className="text-[color:var(--text-primary,_#0f172a)]! font-medium!">{formatNumber(row.bau_projection, 1)} tCO2e</td>
-                      <td className={`${hasActual ? "[font-weight:700]!" : "[font-weight:400]!"} ${hasActual ? "[color:var(--text-primary,_#0f172a)]!" : "[color:#64748b]!"}`}>
+                      <td className="text-[color:var(--text-primary,_var(--color-ink-900))]! font-medium!">{formatNumber(row.bau_projection, 1)} tCO2e</td>
+                      <td className={`${hasActual ? "[font-weight:700]!" : "[font-weight:400]!"} ${hasActual ? "[color:var(--text-primary,_var(--color-ink-900))]!" : "[color:var(--color-ink-500)]!"}`}>
                         {hasActual ? `${formatNumber(row.actual, 1)} tCO2e` : "—"}
                       </td>
                       <td>{hasActual ? `${formatNumber(row.scope1, 1)}` : "—"}</td>
@@ -661,7 +661,7 @@ const SbtiDashboard: React.FC = () => {
                       <td>{hasActual ? `${formatNumber(row.scope12, 1)}` : "—"}</td>
                       <td>
                         {variance !== null ? (
-                          <span className={`[font-weight:600]! ${variance <= 0 ? "[color:#2e7d32]!" : "[color:#b91c1c]!"}`}>
+                          <span className={`[font-weight:600]! ${variance <= 0 ? "[color:var(--color-green-700)]!" : "[color:var(--color-red-700)]!"}`}>
                             {variance > 0 ? `+${formatNumber(variance, 1)}` : formatNumber(variance, 1)} tCO2e
                           </span>
                         ) : (
@@ -678,7 +678,7 @@ const SbtiDashboard: React.FC = () => {
                 })
               ) : (
                 <tr>
-                  <td colSpan={10} className="text-center! p-[30px]! text-[color:#475569]!">
+                  <td colSpan={10} className="text-center! p-[30px]! text-[color:var(--color-ink-600)]!">
                     No trajectory milestone records found.
                   </td>
                 </tr>

@@ -51,7 +51,7 @@ export const Scope3FormCalculatorGridContainer: React.FC<Scope3FormCalculatorGri
 }) => (
   <div className="calculator-grid-container [background:white] [border-radius:var(--radius-md)] [overflow:hidden] [box-shadow:var(--shadow-xs)] mt-[30px]!">
     <div className="table-controls flex! justify-between! items-center! p-[15px]!">
-      <strong className="text-[length:1rem]! text-[color:#374151]!">Documented Scope 3 Emissions</strong>
+      <strong className="text-[length:1rem]! text-[color:var(--color-legacy-374151)]!">Documented Scope 3 Emissions</strong>
       <button
         className="action-btn secondary flex! items-center! gap-[8px]! whitespace-nowrap!"
         onClick={() => setShowWizard(true)}
@@ -88,7 +88,7 @@ export const Scope3FormCalculatorGridContainer: React.FC<Scope3FormCalculatorGri
         <tbody>
           {loadError ? (
             <tr>
-              <td colSpan={10} className="text-center! text-[color:var(--danger,_#dc2626)]!">
+              <td colSpan={10} className="text-center! text-[color:var(--danger,_var(--color-red-600))]!">
                 Could not load the records.{" "}
                 <Button type="button" variant="ghost" onClick={loadEntries}>
                   Retry
@@ -122,21 +122,21 @@ export const Scope3FormCalculatorGridContainer: React.FC<Scope3FormCalculatorGri
                   {/* kg CO2e per activity unit; a supplier-reported total has no factor */}
                   {Number(entry.emission_factor) > 0 ? formatEmission(entry.emission_factor, 4) : "—"}
                 </td>
-                <td className="text-[color:#6d28d9]! font-semibold!">
+                <td className="text-[color:var(--color-violet-700)]! font-semibold!">
                   {formatEmission(entry.co2e || entry.emissions_tco2e, 3)}
                 </td>
-                <td className="text-[color:#6b7280]! text-[length:0.85rem]!">
+                <td className="text-[color:var(--color-legacy-6b7280)]! text-[length:0.85rem]!">
                   {entry.uncertainty != null
                     ? `${formatNumber(entry.uncertainty * 100, 1)}%`
                     : "—"}
                 </td>
-                <td className="text-[color:#6b7280]! text-[length:0.85rem]!">
+                <td className="text-[color:var(--color-legacy-6b7280)]! text-[length:0.85rem]!">
                   {entry.uncertainty != null
                     ? `${formatNumber(entry.uncertainty * UNCERTAINTY_COVERAGE_K * 100, 1)}%`
                     : "—"}
                   {entry.status === "Draft" && (
                     <span
-                      className="ml-[8px]! text-[length:0.65rem]! bg-[color:#fee2e2]! text-[color:#b91c1c]! p-[1px_5px]! rounded-[4px]!"
+                      className="ml-[8px]! text-[length:0.65rem]! bg-[color:var(--color-legacy-fee2e2)]! text-[color:var(--color-red-700)]! p-[1px_5px]! rounded-[4px]!"
                     >
                       Draft
                     </span>
@@ -144,14 +144,14 @@ export const Scope3FormCalculatorGridContainer: React.FC<Scope3FormCalculatorGri
                 </td>
                 <td className="text-center! whitespace-nowrap!">
                   <button
-                    className="icon-button text-[color:#1d4ed8]! mr-[8px]!"
+                    className="icon-button text-[color:var(--color-blue-700)]! mr-[8px]!"
                     onClick={() => handleInspect(entry)}
                     title="Inspect Calculation Details"
                   >
                     <Eye size={16} />
                   </button>
                   <button
-                    className="icon-button text-[color:#b91c1c]!"
+                    className="icon-button text-[color:var(--color-red-700)]!"
                     onClick={() => handleDelete(entry.id)}
                     title="Delete"
                   >
@@ -163,14 +163,14 @@ export const Scope3FormCalculatorGridContainer: React.FC<Scope3FormCalculatorGri
           )}
         </tbody>
         <tfoot>
-          <tr className={`[background-color:#f9fafb]! [font-weight:bold]!`}>
+          <tr className={`[background-color:var(--color-legacy-f9fafb)]! [font-weight:bold]!`}>
             <td
               colSpan={6}
               className="text-right! pr-[15px]!"
             >
               Total (Page):
             </td>
-            <td className="text-[color:#6d28d9]!">
+            <td className="text-[color:var(--color-violet-700)]!">
               {formatNumber(
                 entries.reduce(
                   (sum, e) => sum + Number(e.co2e || e.emissions_tco2e || 0),

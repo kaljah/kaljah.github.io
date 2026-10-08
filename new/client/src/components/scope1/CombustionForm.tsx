@@ -109,7 +109,7 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
             <div className="input-group mb-[0px]!">
               <label className="text-[length:0.75rem]!">
                 HHV
-                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
               </label>
               <Input
                 id="hhv-input"
@@ -117,7 +117,7 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
                 value={data.hhv || ""}
                 onChange={(e) => onChange("hhv", e.target.value)}
                 placeholder={isFlaring ? "e.g. 983 (natural gas)" : "e.g. 1020 (BTU/scf)"}
-                className={`${!data.hhv ? "[border-color:#fbbf24]!" : "[border-color:#d1fae5]!"}`}
+                className={`${!data.hhv ? "[border-color:var(--color-legacy-fbbf24)]!" : "[border-color:var(--color-legacy-d1fae5)]!"}`}
               />
             </div>
             <div className="input-group mb-[0px]!">
@@ -143,7 +143,7 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
             <div className="input-group mt-[10px]! mb-[0px]!">
               <label className="text-[length:0.75rem]!">
                 Combustion efficiency
-                <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
               </label>
               <div className="flex! gap-[8px]! items-center!">
                 <Input
@@ -157,10 +157,10 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
                   placeholder="e.g. 99.5"
                   style={{
                     flex: 1,
-                    borderColor: data.combustion_efficiency == null ? "#fbbf24" : "#d1fae5",
+                    borderColor: data.combustion_efficiency == null ? "var(--color-legacy-fbbf24)" : "var(--color-legacy-d1fae5)",
                   }}
                 />
-                <span className="text-[length:0.8rem]! text-[color:#6b7280]! whitespace-nowrap!">%</span>
+                <span className="text-[length:0.8rem]! text-[color:var(--color-legacy-6b7280)]! whitespace-nowrap!">%</span>
               </div>
             </div>
           )}
@@ -183,7 +183,7 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
               <div className="input-group mb-[0px]!">
                 <label className="text-[length:0.75rem]!">
                   CH₄ (%)
-                  <span className="text-[color:#b91c1c]! ml-[3px]!">*</span>
+                  <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                 </label>
                 <Input
                   id="flare-ch4-input"

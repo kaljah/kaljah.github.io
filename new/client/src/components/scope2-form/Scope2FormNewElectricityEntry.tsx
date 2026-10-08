@@ -85,7 +85,7 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
     className={`calc-panel [background:white]! [border-radius:8px]! [padding:25px]! [box-shadow:0_2px_10px_rgba(0,0,0,0.05)]!`}
   >
     <h2
-      className="text-[length:1.2rem]! [font-weight:bold]! mb-[25px]! text-[color:#333]!"
+      className="text-[length:1.2rem]! [font-weight:bold]! mb-[25px]! text-[color:var(--color-legacy-333333)]!"
     >
       New Electricity Entry
     </h2>

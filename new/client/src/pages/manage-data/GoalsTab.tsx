@@ -101,7 +101,7 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
           <span className="text-[length:0.8rem]! uppercase! [letter-spacing:0.05em]! text-[color:var(--color-link)]! font-bold!">
             GHG Protocol & OGMP 2.0 Baseline
           </span>
-          <span className="[display:inline-flex] [align-items:center] [gap:4px] [padding:3px_8px] [border-radius:var(--radius-sm)] [font-size:var(--text-sm)] [font-weight:600] [background:var(--color-green-50)] [color:var(--color-green-700)] [&&]:[border:1px_solid_#a7f3d0]">
+          <span className="[display:inline-flex] [align-items:center] [gap:4px] [padding:3px_8px] [border-radius:var(--radius-sm)] [font-size:var(--text-sm)] [font-weight:600] [background:var(--color-green-50)] [color:var(--color-green-700)] [&&]:[border:1px_solid_var(--color-legacy-a7f3d0)]">
             <CheckCircle size={12} /> Active Baseline
           </span>
         </div>
@@ -135,7 +135,7 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
       <div className="flex! justify-between! items-start! mb-[20px]!">
         <div>
           <h2 className="mb-[6px]! font-bold! flex! items-center! gap-[8px]!">
-            <Target size={22} color="var(--accent-color, #ff6600)" /> Yearly Emission Goals
+            <Target size={22} color="var(--accent-color, var(--color-brand-500))" /> Yearly Emission Goals
           </h2>
           <p className="text-[color:var(--text-secondary)]! m-[0px]! text-[length:0.9rem]!">
             Configure annual corporate emission limits and target pathways (tCO₂e) to monitor reduction trajectory.
@@ -144,7 +144,7 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
       </div>
 
       {/* Goal Input Form */}
-      <div className="grid-forms md:[grid-template-columns:repeat(3,1fr)]!" style={{ background: "#fafafa", padding: "20px", borderRadius: "12px", border: "1px solid var(--border-color)" }}>
+      <div className="grid-forms md:[grid-template-columns:repeat(3,1fr)]!" style={{ background: "var(--color-legacy-fafafa)", padding: "20px", borderRadius: "12px", border: "1px solid var(--border-color)" }}>
         <Field className="input-group" label="Target Year">
           <Input
             type="number"
@@ -211,7 +211,7 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
                 <tr key={g.year}>
                   <td className="font-bold! text-[length:0.95rem]!">
                     <span className="inline-flex! items-center! gap-[6px]!">
-                      <Calendar size={15} color="var(--accent-color, #ff6600)" />
+                      <Calendar size={15} color="var(--accent-color, var(--color-brand-500))" />
                       {g.year}
                     </span>
                   </td>
@@ -238,7 +238,7 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
                         Edit
                       </Button>
                       <button
-                        className="[background:#fee2e2] [color:var(--color-red-700)] [border:1px_solid_#fecaca] [&&]:[border-radius:var(--radius-md)] [cursor:pointer] [transition:all_0.2s] hover:[background:var(--color-red-700)] hover:[color:white] p-[4px_8px]! text-[length:0.8rem]!"
+                        className="[background:var(--color-legacy-fee2e2)] [color:var(--color-red-700)] [border:1px_solid_var(--color-legacy-fecaca)] [&&]:[border-radius:var(--radius-md)] [cursor:pointer] [transition:all_0.2s] hover:[background:var(--color-red-700)] hover:[color:white] p-[4px_8px]! text-[length:0.8rem]!"
                         onClick={() => handleDeleteGoal(g.year)}
                         title="Delete Goal"
                       >
@@ -259,7 +259,7 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
       <div className="flex! justify-between! items-start! mb-[16px]!">
         <div>
           <h2 className="mb-[6px]! font-bold! flex! items-center! gap-[8px]!">
-            <History size={22} color="var(--accent-color, #ff6600)" /> Base Years & Recalculations History
+            <History size={22} color="var(--accent-color, var(--color-brand-500))" /> Base Years & Recalculations History
           </h2>
           <p className="text-[color:var(--text-secondary)]! m-[0px]! text-[length:0.9rem]!">
             Document base year adjustments, justification audits, and baseline emissions changes in compliance with GHG Protocol.
@@ -272,7 +272,7 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
       </div>
 
       {/* Base Year Input Form */}
-      <div className="grid-forms md:[grid-template-columns:repeat(4,1fr)]!" style={{ background: "#fafafa", padding: "20px", borderRadius: "12px", border: "1px solid var(--border-color)", gap: "16px" }}>
+      <div className="grid-forms md:[grid-template-columns:repeat(4,1fr)]!" style={{ background: "var(--color-legacy-fafafa)", padding: "20px", borderRadius: "12px", border: "1px solid var(--border-color)", gap: "16px" }}>
         <Field className="input-group" label="Base Year">
           <Input
             type="number"
@@ -360,7 +360,7 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
                       <div className="flex! items-center! gap-[6px]!">
                         <span>{b.year}</span>
                         {isLatest && (
-                          <span className="[display:inline-flex] [align-items:center] [gap:4px] [padding:3px_8px] [border-radius:var(--radius-sm)] [font-weight:600] [background:var(--color-green-50)] [color:var(--color-green-700)] [&&]:[border:1px_solid_#a7f3d0] text-[length:0.7rem]!">
+                          <span className="[display:inline-flex] [align-items:center] [gap:4px] [padding:3px_8px] [border-radius:var(--radius-sm)] [font-weight:600] [background:var(--color-green-50)] [color:var(--color-green-700)] [&&]:[border:1px_solid_var(--color-legacy-a7f3d0)] text-[length:0.7rem]!">
                             Active
                           </span>
                         )}
@@ -389,7 +389,7 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
                       {diff !== null ? (
                         <span
                           style={{
-                            color: diff > 0 ? "#b91c1c" : diff < 0 ? "#15803d" : "var(--text-secondary)",
+                            color: diff > 0 ? "var(--color-red-700)" : diff < 0 ? "var(--color-legacy-15803d)" : "var(--text-secondary)",
                             fontWeight: 600,
                           }}
                         >
@@ -401,7 +401,7 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
                     </td>
                     <td className="text-center!">
                       <button
-                        className="[background:#fee2e2] [color:var(--color-red-700)] [border:1px_solid_#fecaca] [&&]:[border-radius:var(--radius-md)] [cursor:pointer] [transition:all_0.2s] hover:[background:var(--color-red-700)] hover:[color:white] p-[4px_8px]! text-[length:0.8rem]!"
+                        className="[background:var(--color-legacy-fee2e2)] [color:var(--color-red-700)] [border:1px_solid_var(--color-legacy-fecaca)] [&&]:[border-radius:var(--radius-md)] [cursor:pointer] [transition:all_0.2s] hover:[background:var(--color-red-700)] hover:[color:white] p-[4px_8px]! text-[length:0.8rem]!"
                         onClick={() => handleDeleteBaseYearRecalc(b.id)}
                         title="Delete Recalculation Entry"
                       >
@@ -422,14 +422,14 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
       <div className="flex! justify-between! items-start! mb-[20px]!">
         <div>
           <h2 className="mb-[6px]! font-bold! flex! items-center! gap-[8px]!">
-            <Target size={22} color="var(--accent-color, #ff6600)" /> Science-Based Targets (SBTi 1.5°C Trajectory)
+            <Target size={22} color="var(--accent-color, var(--color-brand-500))" /> Science-Based Targets (SBTi 1.5°C Trajectory)
           </h2>
           <p className="text-[color:var(--text-secondary)]! m-[0px]! text-[length:0.9rem]!">
             Configure enterprise decarbonization targets aligned with SBTi Net-Zero and Paris Agreement 1.5°C pathways.
           </p>
         </div>
         {hasSbti && (
-          <span className="[border-radius:var(--radius-sm)] [font-weight:600] [background:var(--color-green-50)] [color:var(--color-green-700)] [&&]:[border:1px_solid_#a7f3d0] inline-flex! items-center! gap-[6px]! text-[length:0.85rem]! p-[6px_14px]!">
+          <span className="[border-radius:var(--radius-sm)] [font-weight:600] [background:var(--color-green-50)] [color:var(--color-green-700)] [&&]:[border:1px_solid_var(--color-legacy-a7f3d0)] inline-flex! items-center! gap-[6px]! text-[length:0.85rem]! p-[6px_14px]!">
             <CheckCircle size={14} /> SBTi Target Active
           </span>
         )}

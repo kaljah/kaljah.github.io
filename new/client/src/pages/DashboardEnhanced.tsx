@@ -143,21 +143,21 @@ const formatActivityName = (act?: string): string => {
 
 // Palette: one distinct color per activity
 const ACTIVITY_PALETTE = [
-  "#f59e0b",
-  "#3b82f6",
-  "#10b981",
-  "#6366f1",
-  "#ef4444",
-  "#ec4899",
-  "#ff6600",
-  "#a855f7",
+  "var(--color-amber-500)",
+  "var(--color-blue-500)",
+  "var(--color-green-500)",
+  "var(--color-legacy-6366f1)",
+  "var(--color-red-500)",
+  "var(--color-pink-500)",
+  "var(--color-brand-500)",
+  "var(--color-legacy-a855f7)",
 ];
 
 const ACTIVITY_COLOR_MAP: Record<string, string> = {
-  "E&P (Upstream)": "#f59e0b", // amber
-  "LQS (Liquefaction)": "#3b82f6", // blue
-  "RPC (Refining)": "#10b981", // green
-  "TRC (Transport)": "#6366f1", // indigo
+  "E&P (Upstream)": "var(--color-amber-500)", // amber
+  "LQS (Liquefaction)": "var(--color-blue-500)", // blue
+  "RPC (Refining)": "var(--color-green-500)", // green
+  "TRC (Transport)": "var(--color-legacy-6366f1)", // indigo
 };
 
 const DashboardEnhanced: React.FC = () => {

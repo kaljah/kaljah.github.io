@@ -270,7 +270,7 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
       <Button
         variant="ghost"
         type="submit"
-        className="mt-[15px]! text-[color:#1d4ed8]! font-semibold! text-[length:0.85rem]!"
+        className="mt-[15px]! text-[color:var(--color-blue-700)]! font-semibold! text-[length:0.85rem]!"
         onClick={() => {
           const co2_u = Math.sqrt(
             Math.pow(workbench.meter_precision, 2) + Math.pow(workbench.lab_precision, 2),
@@ -355,7 +355,7 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
                 <td>{f.n2o_factor}</td>
                 <td className="max-w-[240px]!">
                   {f.source && (
-                    <span className="inline-block! text-[length:0.75rem]! bg-[color:#dbeafe]! text-[color:#1d4ed8]! p-[1px_6px]! rounded-[4px]! font-semibold! mb-[2px]!">
+                    <span className="inline-block! text-[length:0.75rem]! bg-[color:var(--color-legacy-dbeafe)]! text-[color:var(--color-blue-700)]! p-[1px_6px]! rounded-[4px]! font-semibold! mb-[2px]!">
                       {f.source}
                     </span>
                   )}
@@ -371,26 +371,26 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
                     <span className="text-[color:var(--text-secondary)]!">—</span>
                   )}
                 </td>
-                <td className={f.co2_uncertainty ? "[color:#2e7d32]!" : "[color:inherit]!"}>
+                <td className={f.co2_uncertainty ? "[color:var(--color-green-700)]!" : "[color:inherit]!"}>
                   {f.co2_uncertainty ? `±${f.co2_uncertainty}%` : "—"}
                 </td>
-                <td className={f.ch4_uncertainty ? "[color:#1d4ed8]!" : "[color:inherit]!"}>
+                <td className={f.ch4_uncertainty ? "[color:var(--color-blue-700)]!" : "[color:inherit]!"}>
                   {f.ch4_uncertainty ? `±${f.ch4_uncertainty}%` : "—"}
                 </td>
-                <td className={f.n2o_uncertainty ? "[color:#6d28d9]!" : "[color:inherit]!"}>
+                <td className={f.n2o_uncertainty ? "[color:var(--color-violet-700)]!" : "[color:inherit]!"}>
                   {f.n2o_uncertainty ? `±${f.n2o_uncertainty}%` : "—"}
                 </td>
                 <td>
                   {f.status === "Pending" ? (
-                    <span className="inline-block! text-[length:0.75rem]! bg-[color:#fef3c7]! text-[color:#92400e]! p-[2px_8px]! rounded-[4px]! font-semibold!">
+                    <span className="inline-block! text-[length:0.75rem]! bg-[color:var(--color-legacy-fef3c7)]! text-[color:var(--color-legacy-92400e)]! p-[2px_8px]! rounded-[4px]! font-semibold!">
                       Pending
                     </span>
                   ) : f.status === "Rejected" ? (
-                    <span className="inline-block! text-[length:0.75rem]! bg-[color:#fee2e2]! text-[color:#b91c1c]! p-[2px_8px]! rounded-[4px]! font-semibold!">
+                    <span className="inline-block! text-[length:0.75rem]! bg-[color:var(--color-legacy-fee2e2)]! text-[color:var(--color-red-700)]! p-[2px_8px]! rounded-[4px]! font-semibold!">
                       Rejected
                     </span>
                   ) : (
-                    <span className="inline-block! text-[length:0.75rem]! bg-[color:#dcfce7]! text-[color:#15803d]! p-[2px_8px]! rounded-[4px]! font-semibold!">
+                    <span className="inline-block! text-[length:0.75rem]! bg-[color:var(--color-legacy-dcfce7)]! text-[color:var(--color-legacy-15803d)]! p-[2px_8px]! rounded-[4px]! font-semibold!">
                       Approved
                     </span>
                   )}
@@ -399,7 +399,7 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
                   {user?.role === "admin" && f.status === "Pending" && (
                     <button
                       onClick={() => handleApproveFactor && handleApproveFactor(f.id)}
-                      className="text-[color:#15803d]! font-semibold! mr-[6px]!"
+                      className="text-[color:var(--color-legacy-15803d)]! font-semibold! mr-[6px]!"
                       title="Approve custom factor"
                     >
                       Approve

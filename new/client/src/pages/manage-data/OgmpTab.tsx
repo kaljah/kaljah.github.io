@@ -79,11 +79,11 @@ const OgmpTab: React.FC<OgmpTabProps> = ({
     </div>
 
     {/* O&G Scope Notice */}
-    <div className="flex! items-center! gap-[10px]! bg-[color:#eff6ff]! [border:1px_solid_#bfdbfe]! rounded-[10px]! p-[12px_16px]! mb-[24px]!">
+    <div className="flex! items-center! gap-[10px]! bg-[color:var(--color-blue-50)]! [border:1px_solid_var(--color-legacy-bfdbfe)]! rounded-[10px]! p-[12px_16px]! mb-[24px]!">
       <CircleAlert size={18} strokeWidth={2} className="shrink-0!" aria-hidden="true" />
       <div>
-        <strong className="text-[color:#1d4ed8]! text-[length:0.85rem]!">Oil & Gas Scope Only</strong>
-        <span className="text-[color:#1d4ed8]! text-[length:0.83rem]! ml-[8px]!">
+        <strong className="text-[color:var(--color-blue-700)]! text-[length:0.85rem]!">Oil & Gas Scope Only</strong>
+        <span className="text-[color:var(--color-blue-700)]! text-[length:0.83rem]! ml-[8px]!">
           OGMP 2.0 applies exclusively to Oil & Gas operations (Upstream, Midstream, LNG). Heavy industry facilities (Steel, Cement, Chemicals) are not in scope.
         </span>
       </div>
@@ -297,7 +297,7 @@ const OgmpTab: React.FC<OgmpTabProps> = ({
                   <td className="text-right! font-semibold!">
                     {mRate.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 2 })}
                   </td>
-                  <td className="text-right! text-[color:#2e7d32]! font-bold!">
+                  <td className="text-right! text-[color:var(--color-green-700)]! font-bold!">
                     {parseFloat(String(annualizedTonne)).toLocaleString(undefined, {
                       minimumFractionDigits: 1,
                       maximumFractionDigits: 1,
@@ -308,8 +308,8 @@ const OgmpTab: React.FC<OgmpTabProps> = ({
                       className={`status-badge ${isReconciled ? "active" : "planned"}`}
                       style={{
                         background: isReconciled ? "rgba(16, 185, 129, 0.12)" : "rgba(239, 68, 68, 0.12)",
-                        color: isReconciled ? "#2e7d32" : "#b91c1c",
-                        borderColor: isReconciled ? "#10b981" : "#ef4444",
+                        color: isReconciled ? "var(--color-green-700)" : "var(--color-red-700)",
+                        borderColor: isReconciled ? "var(--color-green-500)" : "var(--color-red-500)",
                       }}
                     >
                       {rStatus}
@@ -319,7 +319,7 @@ const OgmpTab: React.FC<OgmpTabProps> = ({
                   <td className="text-center!">
                     <div className="flex! gap-[6px]! justify-center!">
                       <button
-                        className="action-btn p-[4px_8px]! text-[length:0.75rem]! bg-[color:#3b82f6]!"
+                        className="action-btn p-[4px_8px]! text-[length:0.75rem]! bg-[color:var(--color-blue-500)]!"
                         onClick={() => {
                           setEditingOgmpId(o.id);
                           setOgmpForm({
@@ -340,7 +340,7 @@ const OgmpTab: React.FC<OgmpTabProps> = ({
                         Edit
                       </button>
                       <button
-                        className="[background:#fee2e2] [color:var(--color-red-700)] [border:1px_solid_#fecaca] [&&]:[border-radius:var(--radius-md)] [cursor:pointer] [transition:all_0.2s] hover:[background:var(--color-red-700)] hover:[color:white] p-[4px_8px]! text-[length:0.75rem]!"
+                        className="[background:var(--color-legacy-fee2e2)] [color:var(--color-red-700)] [border:1px_solid_var(--color-legacy-fecaca)] [&&]:[border-radius:var(--radius-md)] [cursor:pointer] [transition:all_0.2s] hover:[background:var(--color-red-700)] hover:[color:white] p-[4px_8px]! text-[length:0.75rem]!"
                         onClick={() => handleDeleteOgmpSurvey(o.id)}
                       >
                         Delete

@@ -54,7 +54,7 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
         : "Provision a new system identity and configure role access"
     }
     icon={editingUser ? UserCheck : UserPlus}
-    iconColor={editingUser ? "#6366f1" : "#ff6600"}
+    iconColor={editingUser ? "var(--color-legacy-6366f1)" : "var(--color-brand-500)"}
     iconBg={editingUser ? "rgba(99, 102, 241, 0.12)" : "rgba(255, 102, 0, 0.12)"}
     width="560px"
   >
@@ -62,7 +62,7 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
       {/* Section 1: Profile & Identity */}
       <div style={S.drawerSection}>
         <div style={S.sectionHeader}>
-          <span style={S.sectionIconBadge("#6366f1")}>
+          <span style={S.sectionIconBadge("var(--color-legacy-6366f1)")}>
             <User size={14} />
           </span>
           <span style={S.sectionTitle}>Profile & Identity</span>
@@ -71,7 +71,7 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
         <div className="flex! flex-col! gap-[14px]!">
           <div style={S.formGroup}>
             <label style={S.label}>
-              Full Name <span className="text-[color:#b91c1c]!">*</span>
+              Full Name <span className="text-[color:var(--color-red-700)]!">*</span>
             </label>
             <input
               id="um-modal-fullname"
@@ -88,7 +88,7 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
 
           <div style={S.formGroup}>
             <label style={S.label}>
-              Email Address <span className="text-[color:#b91c1c]!">*</span>
+              Email Address <span className="text-[color:var(--color-red-700)]!">*</span>
             </label>
             <input
               id="um-modal-email"
@@ -108,7 +108,7 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
       {/* Section 2: Organization & Title */}
       <div style={S.drawerSection}>
         <div style={S.sectionHeader}>
-          <span style={S.sectionIconBadge("#0ea5e9")}>
+          <span style={S.sectionIconBadge("var(--color-legacy-0ea5e9)")}>
             <Briefcase size={14} />
           </span>
           <span style={S.sectionTitle}>Organization & Title</span>
@@ -151,7 +151,7 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
       <div style={S.drawerSection}>
         <div className="flex! justify-between! items-center! mb-[14px]!">
           <div style={{ ...S.sectionHeader, marginBottom: 0 }}>
-            <span style={S.sectionIconBadge("#f59e0b")}>
+            <span style={S.sectionIconBadge("var(--color-amber-500)")}>
               <Shield size={14} />
             </span>
             <span style={S.sectionTitle}>Access Governance & Scope</span>
@@ -197,9 +197,9 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
                   ...inputStyle("location"),
                   borderColor:
                     !formData.location
-                      ? "#ef4444"
+                      ? "var(--color-red-500)"
                       : focusedField === "location"
-                      ? "#ff6600"
+                      ? "var(--color-brand-500)"
                       : "var(--border-color)",
                 }}
                 {...focusProps("location")}
@@ -212,7 +212,7 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
                 ))}
               </NativeSelect>
               {!formData.location && (
-                <p className="text-[length:0.72rem]! text-[color:#b91c1c]! mt-[4px]!">
+                <p className="text-[length:0.72rem]! text-[color:var(--color-red-700)]! mt-[4px]!">
                   ↑ Required — choose an assigned region
                 </p>
               )}
@@ -243,7 +243,7 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
       {!editingUser && (
         <div style={S.drawerSection}>
           <div style={S.sectionHeader}>
-            <span style={S.sectionIconBadge("#10b981")}>
+            <span style={S.sectionIconBadge("var(--color-green-500)")}>
               <KeyRound size={14} />
             </span>
             <span style={S.sectionTitle}>Initial Credentials</span>
@@ -251,7 +251,7 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
 
           <div style={S.formGroup}>
             <label style={S.label}>
-              Temporary Password <span className="text-[color:#b91c1c]!">*</span>
+              Temporary Password <span className="text-[color:var(--color-red-700)]!">*</span>
             </label>
             <input
               id="um-modal-password"
@@ -264,19 +264,19 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
                 ...inputStyle("password"),
                 borderColor:
                   formData.password && formData.password.length < 10
-                    ? "#ef4444"
+                    ? "var(--color-red-500)"
                     : focusedField === "password"
-                    ? "#ff6600"
+                    ? "var(--color-brand-500)"
                     : "var(--border-color)",
               }}
               {...focusProps("password")}
               placeholder="Minimum 10 characters"
             />
             <div className="flex! justify-between! items-center! mt-[6px]!">
-              <span className={`[font-size:0.74rem]! ${(formData.password?.length ?? 0) >= 10 ? "[color:#2e7d32]!" : "[color:#475569]!"}`}>
+              <span className={`[font-size:0.74rem]! ${(formData.password?.length ?? 0) >= 10 ? "[color:var(--color-green-700)]!" : "[color:var(--color-ink-600)]!"}`}>
                 {(formData.password?.length ?? 0) >= 10 ? "✓ Meets minimum length requirement" : "Requires at least 10 characters"}
               </span>
-              <span className={`[font-size:0.74rem]! [font-weight:600]! ${(formData.password?.length ?? 0) >= 10 ? "[color:#2e7d32]!" : "[color:#b91c1c]!"}`}>
+              <span className={`[font-size:0.74rem]! [font-weight:600]! ${(formData.password?.length ?? 0) >= 10 ? "[color:var(--color-green-700)]!" : "[color:var(--color-red-700)]!"}`}>
                 {formData.password?.length || 0}/10 chars
               </span>
             </div>

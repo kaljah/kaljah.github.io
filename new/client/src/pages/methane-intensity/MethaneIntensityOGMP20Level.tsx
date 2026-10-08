@@ -39,7 +39,7 @@ const MethaneIntensityOGMP20Level: React.FC<MethaneIntensityOGMP20LevelProps> = 
       </div>
       <div className="flex! items-center! gap-[12px]!">
         <div
-          className="ogmp-level-badge bg-[color:rgba(37,_99,_235,_0.1)]! text-[color:#2563eb]! p-[6px_14px]! rounded-[8px]! text-[length:0.85rem]! font-semibold!"
+          className="ogmp-level-badge bg-[color:rgba(37,_99,_235,_0.1)]! text-[color:var(--color-blue-600)]! p-[6px_14px]! rounded-[8px]! text-[length:0.85rem]! font-semibold!"
         >
           Gold Standard Pathway: Level 5 Reconciled
         </div>
@@ -110,7 +110,7 @@ const MethaneIntensityOGMP20Level: React.FC<MethaneIntensityOGMP20LevelProps> = 
                       <span className="code-pill [background:var(--bg-hover)] [padding:3px_8px] [border-radius:var(--radius-sm)] [font-family:monospace] [font-size:var(--text-sm)] [color:var(--text-primary)] [border:1px_solid_var(--border-color)]">{sType}</span>
                     </td>
                     <td>
-                      <strong className="text-[color:#2563eb]!">
+                      <strong className="text-[color:var(--color-blue-600)]!">
                         {typeof rateKgHr === "number"
                           ? rateKgHr.toFixed(2)
                           : "—"}
@@ -127,7 +127,7 @@ const MethaneIntensityOGMP20Level: React.FC<MethaneIntensityOGMP20LevelProps> = 
                     <td>
                       {variancePct !== null ? (
                         <span
-                          className={`[font-weight:700]! ${Math.abs(variancePct) <= (globalThreshold || 20.0) ? "[color:#2e7d32]!" : "[color:#b91c1c]!"}`}
+                          className={`[font-weight:700]! ${Math.abs(variancePct) <= (globalThreshold || 20.0) ? "[color:var(--color-green-700)]!" : "[color:var(--color-red-700)]!"}`}
                         >
                           {variancePct >= 0
                             ? `+${variancePct.toFixed(1)}%`
@@ -151,8 +151,8 @@ const MethaneIntensityOGMP20Level: React.FC<MethaneIntensityOGMP20LevelProps> = 
                               : "rgba(245, 158, 11, 0.1)",
                           color:
                             recStatus === "Reconciled"
-                              ? "#2e7d32"
-                              : "#b45309",
+                              ? "var(--color-green-700)"
+                              : "var(--color-amber-700)",
                         }}
                       >
                         {recStatus}

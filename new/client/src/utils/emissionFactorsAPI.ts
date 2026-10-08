@@ -188,11 +188,11 @@ export const formatUncertainty = (uncertainty?: number | null): string => {
  */
 export const getSegmentColor = (segment?: string): string => {
   const colors: Record<string, string> = {
-    Upstream: "#10b981", // Green
-    Midstream: "#3b82f6", // Blue
-    Downstream: "#8b5cf6", // Purple
+    Upstream: "var(--color-green-500)", // Green
+    Midstream: "var(--color-blue-500)", // Blue
+    Downstream: "var(--color-violet-500)", // Purple
   };
-  return (segment && colors[segment]) || "#6b7280"; // Gray default
+  return (segment && colors[segment]) || "var(--color-legacy-6b7280)"; // Gray default
 };
 
 /**
