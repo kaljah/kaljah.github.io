@@ -7,6 +7,7 @@ Governing equations:
 - 40 CFR §98.233(d), (e)
 """
 
+from .ref_constants import _frac
 from .ref_constants import (
     DENSITY_CO2,
     DENSITY_CH4,
@@ -53,14 +54,15 @@ def ref_calculate_agr(
 
     c_in = max(0.0, float(co2_inlet_fraction or 0.0))
     c_out = max(0.0, float(co2_outlet_fraction or 0.0))
-    delta_co2 = max(0.0, c_in - c_out)
+    # Eq 6-18 with the outlet stream reduced by the CO2 removed: V_out = V_in (1 - y_in) / (1 - y_out)
+    delta_co2 = max(0.0, c_in - c_out) / (1.0 - c_out)
 
     ctrl = max(0.0, min(1.0, float(control_eff or 0.0)))
     co2_vent_m3 = vol_m3 * delta_co2 * (1.0 - ctrl)
     co2_tonnes = (co2_vent_m3 * DENSITY_CO2) / 1000.0
 
     # Table 6-5 Methane co-absorption slip
-    ch4_feed_f = max(0.0, float(ch4_inlet_fraction or 0.85))
+    ch4_feed_f = max(0.0, _frac(ch4_inlet_fraction, 0.85))
     slip_f = max(0.0, float(ch4_slip_fraction or 0.0))
     ch4_slipped_m3 = vol_m3 * ch4_feed_f * slip_f * (1.0 - ctrl)
     ch4_tonnes = (ch4_slipped_m3 * DENSITY_CH4) / 1000.0

@@ -261,6 +261,7 @@ def add_bulk_upload():
             "h2s",
             "flare_type",
             "control_efficiency",
+            "destruction_efficiency",
             "ch4_content",
             "co2_content",
             "combustion_efficiency",
@@ -509,7 +510,7 @@ def add_bulk_upload():
                             user_id=admin.id,
                             type="audit",
                             title="Scope 1 Bulk Upload Pending Review",
-                            message=f"{len(new_emissions)} new Scope 1 emission records were uploaded by {user.fullName} and are awaiting your approval.",
+                            message=f"{len(new_emissions):,} new Scope 1 emission records were uploaded by {user.fullName} and are awaiting your approval.",
                         )
                 log_activity_and_notify(
                     action="BULK_IMPORT",

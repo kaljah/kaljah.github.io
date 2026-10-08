@@ -74,6 +74,11 @@ MASS_TO_T = {"t": 1.0, "tonne": 1.0, "tonnes": 1.0, "kg": 1e-3, "lb": 1 / 2204.6
 DENSITY_TO_LB_GAL = {"lb/gal": 1.0, "kg/m3": 1 / 119.826427, "kg/l": 8.34540445, "g/ml": 8.34540445}
 DIST_TO_MILE = {"mile": 1.0, "mi": 1.0, "miles": 1.0, "km": 0.621371192}
 
+# molecular weights, gross HHV at 60 F (Btu/scf, Table 3-8 basis of Exhibit 5.2: mix 1,838.9 Btu/scf) and
+# the natural gas N2O fuel factor of Table 4-6 (tonne / MMBtu HHV); C6+ as hexane
+HC_MW = {"ch4": 16.04, "c2h6": 30.07, "c3h8": 44.10, "c4h10": 58.12, "c5h12": 72.15, "c6plus": 86.18}
+HC_HHV_BTU_SCF = {"ch4": 1010.0, "c2h6": 1769.7, "c3h8": 2516.1, "c4h10": 3262.4, "c5h12": 4008.9, "c6plus": 4755.9}
+FLARE_N2O_T_PER_MMBTU = 9.50e-8
 # carbon mass fraction of hydrocarbons (Exhibit 5.2); C6+ as hexane
 HC_CARBON = {"ch4": 12.011 / 16.043, "c2h6": 2 * 12.011 / 30.069, "c3h8": 3 * 12.011 / 44.096,
              "c4h10": 4 * 12.011 / 58.122, "c5h12": 5 * 12.011 / 72.149, "c6plus": 6 * 12.011 / 86.175}
@@ -205,7 +210,14 @@ class CombustionMethodCalculator(BaseCalculator):
             hc_emitted = voc_t * w_hc / w_voc
             co2 = hc_emitted * c_mix * eff / (1 - eff) * C_TO_CO2 + voc_t * w_co2 / w_voc
             ch4 = hc_emitted * w["ch4"] / w_hc
-            inter.update(hc_emitted_t=hc_emitted, hc_carbon_wt=c_mix)
+            # N2O (Exhibit 5.2 step 3): hydrocarbon flared -> scf (MW of the mix) x HHV of the mix (Eq 3-11)
+            # x the natural gas fuel factor of Table 4-6, 9.50e-8 t N2O / MMBtu. It was stored as 0.
+            mol = {k: w[k] / HC_MW[k] for k in HC_CARBON}
+            mw_mix = w_hc / sum(mol.values())
+            hhv_btu_scf = sum(mol[k] * HC_HHV_BTU_SCF[k] for k in HC_CARBON) / sum(mol.values())
+            hc_flared_scf = hc_emitted / (1 - eff) * 1000.0 / 0.45359237 / mw_mix * 379.3
+            n2o = hc_flared_scf * hhv_btu_scf / 1e6 * FLARE_N2O_T_PER_MMBTU
+            inter.update(hc_emitted_t=hc_emitted, hc_carbon_wt=c_mix, hc_mw=mw_mix, hc_hhv_btu_scf=hhv_btu_scf)
 
         elif m == "thermal_oxidizer":
             if i.get("toc_mass") not in (None, ""):

@@ -9,6 +9,16 @@ from .units import CONVERSIONS, STD_PRESSURE_PSIA, STD_TEMP_K, calculate_co2e, n
 from calculations.vented import _propagate_vented_results, _split_vented_and_flared
 
 
+def _sfr_scf_per_hr(unit):
+    """scf/hr per one unit of a flow-line rate (scf/hr, scfh, Mcf/day, MMscf/day, m3/day, m3/hr ...)."""
+    from .units import UnitError, volume_rate_m3_per_hour
+
+    try:
+        return volume_rate_m3_per_hour(unit or "scf/hr") * CONVERSIONS["m3_to_scf"]
+    except UnitError as err:
+        raise ValueError(f"Flow-line rate unit: {err} (use scf/hr, Mcf/day or m3/day)")
+
+
 class LiquidsUnloadingCalculator(BaseCalculator):
     """
     API Compendium 2021 - Section 6.3.4: Well Venting from Liquids Unloading.
@@ -507,19 +517,8 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         p_abs = to_psia(p_val, pu)
         p_psig = max(0.0, p_abs - STD_PRESSURE_PSIA)
 
-        # SFR conversion to scf/hr
-        sfru = str(sfr_unit or "scf/hr").lower().strip()
-        if "day" in sfru:
-            if "m3" in sfru:
-                sfr_scf_hr = (sfr_val * CONVERSIONS["m3_to_scf"]) / 24.0
-            else:
-                sfr_scf_hr = sfr_val / 24.0
-        elif "m3" in sfru:
-            sfr_scf_hr = sfr_val * CONVERSIONS["m3_to_scf"]
-        elif "mcf" in sfru or "mscf" in sfru:
-            sfr_scf_hr = sfr_val * 1000.0
-        else:
-            sfr_scf_hr = sfr_val
+        # SFR conversion to scf/hr (every rate spelling; "Mcf/day" was read as scf/day, 1,000x low)
+        sfr_scf_hr = sfr_val * _sfr_scf_per_hr(sfr_unit)
 
         # Equation 6-10 parameters:
         # X: 0.5 for plunger lift, 1.0 for non-plunger
@@ -528,7 +527,10 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         z_param = 1.0 if hr_val >= 1.0 else 0.0
 
         wellbore_vol_scf = ev * (0.37e-3) * (d_in ** 2) * depth_ft * p_psig
-        flowline_vol_scf = sfr_scf_hr * max(0.0, hr_val - x_param) * z_param
+        # HR is the time one unloading event is left open: the flow-line term is per event, summed over the
+        # events like the wellbore term (40 CFR 98.233 Eq W-8). It was counted once per well-year
+        # (12 events open 3 h at 35,000 scf/h: 70,000 scf instead of 840,000 scf)
+        flowline_vol_scf = ev * sfr_scf_hr * max(0.0, hr_val - x_param) * z_param
         vr_per_well_scf = wellbore_vol_scf + flowline_vol_scf
 
         total_gas_scf = wc * vr_per_well_scf
@@ -666,18 +668,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
             )
 
         # Normalize SFRp to scf/hr
-        sfru = str(sfr_unit or "scf/hr").lower().strip()
-        if "day" in sfru:
-            if "m3" in sfru:
-                sfr_rate = (sfr_val * CONVERSIONS["m3_to_scf"]) / 24.0
-            else:
-                sfr_rate = sfr_val / 24.0
-        elif "m3" in sfru:
-            sfr_rate = sfr_val * CONVERSIONS["m3_to_scf"]
-        elif "mcf" in sfru or "mscf" in sfru:
-            sfr_rate = sfr_val * 1000.0
-        else:
-            sfr_rate = sfr_val
+        sfr_rate = sfr_val * _sfr_scf_per_hr(sfr_unit)
 
         # Equation 6-11: VR = sqrt(Pshut - Patm) / sqrt(Pline - Psep) * SFRp * Tp
         press_ratio = math.sqrt(p_shut_abs - p_atm_abs) / math.sqrt(p_line_abs - p_sep_abs)
