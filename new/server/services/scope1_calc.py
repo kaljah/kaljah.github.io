@@ -13,7 +13,7 @@ create, edit and import paths calculate from — and store — the same values:
 import json
 import math
 
-from input_validation import ValidationError, parse_number
+from input_validation import ValidationError, merge_inputs, parse_number
 
 # Scope 2 process types must never be booked in the Scope 1 table (BUG-068)
 SCOPE2_PROCESS_TYPES = {
@@ -193,7 +193,7 @@ def canonicalize(payload, delta=None):
     if delta is not None:
         for k, v in delta.items():
             if k not in ("amount", "quantity", "fuel", "fuel_type"):
-                out[k] = v
+                out[k] = merge_inputs(out.get(k), v) if k == "calc_inputs" else v  # edits may carry only some inputs
         # Keep calc_inputs synchronized with the edited activity amount/unit/fuel
         ptype = out.get("process_type") or out.get("source_type")
         if ptype and isinstance(out.get("calc_inputs"), dict):
