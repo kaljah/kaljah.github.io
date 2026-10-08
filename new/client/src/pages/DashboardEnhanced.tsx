@@ -998,8 +998,8 @@ const DashboardEnhanced: React.FC = () => {
         <div className="charts-section grid gap-6 [grid-template-columns:2fr_1fr] max-[1200px]:grid-cols-1">
           <TrendCard data={trendData} lines={trendLines} compare={isCompareMode} onCompare={() => setIsCompareMode(!isCompareMode)} />
           <div className="flex min-w-0 flex-col gap-6">
-            <DonutCard title="Emissions by Activity" data={activityChartData} />
-            <DonutCard title="Emissions by Source" data={sourceChartData} />
+            <DonutCard title="Emissions by Activity" data={activityChartData} noun="activity" />
+            <DonutCard title="Emissions by Source" data={sourceChartData} noun="source" />
           </div>
         </div>
 

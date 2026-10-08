@@ -4,6 +4,8 @@ import MethaneIntensityOGMP20Level from "./methane-intensity/MethaneIntensityOGM
 import MethaneIntensityHistoricalMethaneTrends from "./methane-intensity/MethaneIntensityHistoricalMethaneTrends";
 import { useAnalyticsFilter } from "../filters/useAnalyticsFilter";
 import React, { useState, useEffect, useMemo, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { recordsLink } from "../utils/reportLinks";
 import { useAuth } from "../context/AuthContext";
 import api from "../api";
 import { useToast } from "../components/Toast";
@@ -62,6 +64,8 @@ const MethaneIntensity: React.FC = () => {
   const [currentRegion, setCurrentRegion] = useAnalyticsFilter("region");
   const [currentSegment, setCurrentSegment] = useAnalyticsFilter("segment");
   const [selectedYear, setSelectedYear] = useAnalyticsFilter("year");
+  const navigate = useNavigate();
+  const openFacilityRecords = (r: any) => navigate(recordsLink({ facilityId: r.id, year: selectedYear }));
   const [facilities, setFacilities] = useState<Facility[]>([]);
   const [availableYears, setAvailableYears] = useState<(string | number)[]>([]);
   const [availableSegments, setAvailableSegments] = useState<string[]>([]);
@@ -758,6 +762,7 @@ const MethaneIntensity: React.FC = () => {
                 data={regionalData
                   .filter((d) => d.methane_loss_rate_pct != null) /* BUG-088: no gas production = no rate */
                   .map((d) => ({
+                    id: d.facility_id,
                     name: d.facility_name,
                     value: d.methane_loss_rate_pct || 0,
                   }))}
@@ -765,6 +770,9 @@ const MethaneIntensity: React.FC = () => {
                 xKey="name"
                 horizontal
                 sortDesc
+                onSelect={openFacilityRecords}
+                selectLabel={(r) => `Open ${r.name} records`}
+                thresholds={{ warnAt: upstreamTargetPct * 0.8, badAt: upstreamTargetPct, labels: ["Within target", "Within 20% of target", "Above target"] }}
                 referenceValue={upstreamTargetPct}
                 referenceLabel={`Target ${upstreamTargetPct}%`}
                 color="var(--color-blue-600)"
@@ -784,13 +792,16 @@ const MethaneIntensity: React.FC = () => {
             <div className="h-[300px]!">
               <BarChart
                 data={regionalData.map((d) => ({
-                  name: d.facility_name,
+                  id: d.facility_id,
+                    name: d.facility_name,
                   value: d.ch4_intensity || 0,
                 }))}
                 dataKey="value"
                 xKey="name"
                 horizontal
                 sortDesc
+                onSelect={openFacilityRecords}
+                selectLabel={(r) => `Open ${r.name} records`}
                 color="var(--color-brand-500)"
               />
             </div>
@@ -808,13 +819,16 @@ const MethaneIntensity: React.FC = () => {
             <div className="h-[300px]!">
               <BarChart
                 data={regionalData.map((d) => ({
-                  name: d.facility_name,
+                  id: d.facility_id,
+                    name: d.facility_name,
                   value: d.total_ch4 || 0,
                 }))}
                 dataKey="value"
                 xKey="name"
                 horizontal
                 sortDesc
+                onSelect={openFacilityRecords}
+                selectLabel={(r) => `Open ${r.name} records`}
                 color="var(--color-blue-500)"
               />
             </div>
@@ -832,13 +846,16 @@ const MethaneIntensity: React.FC = () => {
             <div className="h-[300px]!">
               <BarChart
                 data={regionalData.map((d) => ({
-                  name: d.facility_name,
+                  id: d.facility_id,
+                    name: d.facility_name,
                   value: d.flaring_volume || 0,
                 }))}
                 dataKey="value"
                 xKey="name"
                 horizontal
                 sortDesc
+                onSelect={openFacilityRecords}
+                selectLabel={(r) => `Open ${r.name} records`}
                 color="var(--color-legacy-ea580c)"
               />
             </div>
@@ -848,6 +865,7 @@ const MethaneIntensity: React.FC = () => {
         {/* Historical Trends Section */}
         <MethaneIntensityHistoricalMethaneTrends
           getHeatmapClass={getHeatmapClass}
+          onOpenCell={(facilityId, year) => navigate(recordsLink({ facilityId, year }))}
           midstreamTargetPct={midstreamTargetPct}
           rawTrendData={rawTrendData}
           regionalData={regionalData}

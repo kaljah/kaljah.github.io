@@ -1,9 +1,12 @@
 import React from "react";
 import { BarChart2, Grid } from "lucide-react";
 import { LineChart } from "../../components/charts";
+import { activateOnKey } from "../../utils/a11yKeys";
 
 export interface MethaneIntensityHistoricalMethaneTrendsProps {
   getHeatmapClass: (val: number) => string;
+  /** Clicking a cell opens that facility's records for that year. */
+  onOpenCell?: (facilityId: number | string, year: number | string) => void;
   midstreamTargetPct: number;
   rawTrendData: { year: number | string; data: any[] }[];
   regionalData: { facility_id: number | string; facility_name: string; [key: string]: any }[];
@@ -16,6 +19,7 @@ export interface MethaneIntensityHistoricalMethaneTrendsProps {
 // Extracted from MethaneIntensity.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const MethaneIntensityHistoricalMethaneTrends: React.FC<MethaneIntensityHistoricalMethaneTrendsProps> = ({
   getHeatmapClass,
+  onOpenCell,
   midstreamTargetPct,
   rawTrendData,
   regionalData,
@@ -118,7 +122,12 @@ const MethaneIntensityHistoricalMethaneTrends: React.FC<MethaneIntensityHistoric
                   return (
                     <div
                       key={yData.year}
-                      className={`heatmap-cell ${missing ? "" : getHeatmapClass(val)}`}
+                      className={`heatmap-cell ${missing ? "" : getHeatmapClass(val)} ${onOpenCell ? "cursor-pointer" : ""}`}
+                      role={onOpenCell ? "button" : undefined}
+                      tabIndex={onOpenCell ? 0 : undefined}
+                      aria-label={onOpenCell ? `Open ${facData.facility_name} records for ${yData.year}` : undefined}
+                      onClick={onOpenCell ? () => onOpenCell(facData.facility_id, yData.year) : undefined}
+                      onKeyDown={onOpenCell ? activateOnKey : undefined}
                       title={missing ? `${yData.year}: methane reported but no gas production recorded` : `${yData.year} Loss Rate: ${val.toFixed(3)}%`}
                     >
                       {missing ? "n/a" : val > 0 ? `${val.toFixed(3)}%` : "-"}
