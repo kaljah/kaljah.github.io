@@ -40,11 +40,14 @@ def get_allowed_facility_ids(user):
     if not user_region or is_unrestricted_location(user_region):
         return []  # No specific facility/region assigned, no access for scoped role
 
+    # Audit 2026-10-01 (A-04): user.location is a value, not a LIKE pattern ("West_Field" matched
+    # "WestXField"; "%" matched every facility), so the wildcards are escaped.
+    pattern = user_region.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
     facilities = Facility.query.filter(
         db.or_(
-            Facility.region.ilike(user_region),
-            Facility.location.ilike(user_region),
-            Facility.name.ilike(user_region),
+            Facility.region.ilike(pattern, escape="\\"),
+            Facility.location.ilike(pattern, escape="\\"),
+            Facility.name.ilike(pattern, escape="\\"),
         )
     ).all()
 

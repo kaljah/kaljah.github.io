@@ -40,6 +40,10 @@ _DEFAULT_APP_SETTINGS = {
 
 _app_settings = dict(_DEFAULT_APP_SETTINGS)
 
+# Organisation-wide keys (SystemSetting); never stored in or overridden by user preferences.
+# theme / unit_system stay per-user display preferences.
+GLOBAL_SETTING_KEYS = (set(_DEFAULT_APP_SETTINGS) - {"theme", "unit_system"}) | {"gwp_standard"}
+
 
 def load_settings_from_db():
     """Loads all system settings from SystemSetting table in DB into _app_settings."""
@@ -167,13 +171,14 @@ def get_settings():
     # Load fresh persistent settings from DB
     load_settings_from_db()
 
-    # Merge global settings with user preferences
+    # Merge global settings with user preferences (display preferences only: a copy of an
+    # organisation-wide key saved earlier must not mask the current global value, audit A-03)
     resp = dict(_app_settings)
     if user and user.preferences:
         try:
             prefs = json.loads(user.preferences)
             if isinstance(prefs, dict):
-                resp.update(prefs)
+                resp.update({k: v for k, v in prefs.items() if k not in GLOBAL_SETTING_KEYS})
         except Exception:
             pass
 
@@ -290,11 +295,12 @@ def update_settings():
             existing = json.loads(user.preferences) if user.preferences else {}
         except Exception:
             existing = {}
-        user_pref_keys = ["theme", "unit_system", "consolidation", "notifications", "language"]
+        # Audit A-03: organisation-wide keys live in SystemSetting only. Copying them into the
+        # admin's preferences stored the Copernicus secrets in plain text and pinned a stale GWP
+        # standard on that admin's Settings page (re-saving it reverted the global standard).
+        existing = {k: v for k, v in existing.items() if k not in GLOBAL_SETTING_KEYS}
         for k, v in data.items():
-            if is_admin or k in user_pref_keys or k not in operational_keys:
-                if k in ["copernicus_password", "copernicus_client_secret"] and str(v).strip() in ["********", ""]:
-                    continue
+            if k not in GLOBAL_SETTING_KEYS:
                 existing[k] = v
         user.preferences = json.dumps(existing)
 
