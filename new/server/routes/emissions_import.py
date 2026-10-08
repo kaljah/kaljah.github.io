@@ -6,7 +6,7 @@ registered on the same ``emissions_bp`` blueprint, so URLs and endpoint names ar
 import os
 import tempfile
 import uuid
-from background_processor import get_job_status, start_background_upload
+from background_processor import active_job_count, get_job_status, start_background_upload
 from calculations import compute_emissions
 from extensions import db
 from flask import current_app, jsonify, request, send_file
@@ -64,6 +64,12 @@ def upload_start():
             return jsonify({"error": "column_mapping is not valid JSON"}), 400
         if not isinstance(provided_mapping, dict):
             return jsonify({"error": "column_mapping must be an object of field -> column"}), 400
+
+    # Audit A-09: each job is a thread holding its parsed rows until its single commit;
+    # unbounded parallel uploads by one account could exhaust the worker's memory
+    max_jobs = int(os.environ.get("MAX_CONCURRENT_UPLOADS_PER_USER", "3"))
+    if active_job_count(user.id) >= max_jobs:
+        return jsonify({"error": f"You already have {max_jobs} uploads in progress. Wait for one to finish."}), 429
 
     fd, path = tempfile.mkstemp(suffix=ext)
     os.close(fd)  # H6: Close descriptor immediately to prevent leak

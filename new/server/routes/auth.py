@@ -11,6 +11,7 @@ from . import auth_bp
 from models import User, Notification, Facility
 from extensions import db, limiter, csrf
 from utils import log_activity_and_notify, is_unrestricted_location
+from werkzeug.security import check_password_hash, generate_password_hash
 
 
 def get_user_operational_defaults(user):
@@ -250,6 +251,11 @@ def superuser_required(f):
     return decorated_function
 
 
+ROLE_RANK = {"user": 0, "it": 1, "superuser": 2, "admin": 3, "it_admin": 4, "it_manager": 4}
+BUSINESS_ROLES = ("admin", "superuser")
+BUSINESS_ROLE_GRANTORS = ("admin", "it_manager")  # separation of duties (update_user and register)
+
+
 @auth_bp.route("/register", methods=["POST"])
 @limiter.limit("10 per hour")
 @it_admin_required
@@ -270,7 +276,6 @@ def register():
     if not valid:
         return jsonify({"error": err_msg}), 400
 
-    ROLE_RANK = {"user": 0, "it": 1, "superuser": 2, "admin": 3, "it_admin": 4, "it_manager": 4}
     VALID_ROLES = set(ROLE_RANK.keys())
     role_requested = str(data.get("role", "user")).strip().lower()
     if role_requested not in VALID_ROLES:
@@ -280,6 +285,11 @@ def register():
     creator = db.session.get(User, creator_id) if creator_id else None
     if creator and creator.role in ["it", "it_admin"] and role_requested in ["admin", "superuser", "it_manager"]:
         return jsonify({"error": "Forbidden: Client IT staff cannot create Compliance Admin or Superuser accounts"}), 403
+    # Audit 2026-10-01 (A-02): the same separation of duties as update_user
+    if role_requested in BUSINESS_ROLES and (not creator or creator.role not in BUSINESS_ROLE_GRANTORS):
+        return jsonify({"error": "Forbidden: IT Administrators cannot assign business compliance roles (admin, superuser)"}), 403
+    if creator and ROLE_RANK.get(role_requested, 0) > ROLE_RANK.get(creator.role, 0):
+        return jsonify({"error": "Cannot assign a role higher than your own"}), 403
 
     user = User(
         fullName=data.get("fullName"),
@@ -335,6 +345,9 @@ def register():
 
 def get_login_rate_limit():
     return os.environ.get("LOGIN_RATE_LIMIT", "20 per 15 minutes")
+
+
+_DUMMY_PASSWORD_HASH = generate_password_hash("timing-equaliser-not-a-real-account")
 
 
 @auth_bp.route("/login", methods=["POST"])
@@ -409,6 +422,10 @@ def login():
             }
         )
 
+    if user is None:
+        # Audit A-06: same password-hash work as for an existing account, so response time does
+        # not reveal which e-mail addresses are registered (forgot-password does the same)
+        check_password_hash(_DUMMY_PASSWORD_HASH, password_input)
     return jsonify({"error": "Invalid credentials"}), 401
 
 

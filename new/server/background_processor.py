@@ -471,6 +471,13 @@ class ImportTooLarge(Exception):
     pass
 
 
+def active_job_count(user_id):
+    """Jobs of this user still processing in this worker (audit A-09: per-user upload cap)."""
+    with upload_jobs_lock:
+        return sum(1 for j in upload_jobs.values()
+                   if j.get("owner_id") == user_id and j.get("status") == "processing")
+
+
 def start_background_upload(
     app,
     file_path,
