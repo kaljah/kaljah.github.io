@@ -300,7 +300,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
         }
       >
         <span className="[display:flex] [align-items:center] [overflow:hidden] [text-overflow:ellipsis] [white-space:nowrap]">{displayContent}</span>
-        <ChevronDown size={10} strokeWidth={3} aria-hidden="true" />
+        <ChevronDown size={14} aria-hidden="true" />
       </button>
 
       {isOpen &&

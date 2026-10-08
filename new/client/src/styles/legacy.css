@@ -136,6 +136,14 @@ select option:disabled {
   background-color: var(--color-ink-50);
 }
 
+/* Wide tables scroll inside their wrapper at every width; on desktop they were clipped by
+   collapsible sections that hide overflow. */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 /* ============================================================
    GLOBAL MOBILE RESPONSIVE UTILITIES
    ============================================================ */
@@ -144,11 +152,6 @@ select option:disabled {
     height: 100dvh;
   }
 
-  .table-responsive {
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
 }
 
 /* Temporary: these classes were used (34x) but never defined. Replaced by <Button variant> in Phase 4. */

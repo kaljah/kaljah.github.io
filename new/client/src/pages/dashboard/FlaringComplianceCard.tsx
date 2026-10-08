@@ -89,7 +89,10 @@ const FlaringComplianceCard: React.FC<FlaringComplianceCardProps> = ({ flaringDa
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <Badge tone={compliant === true ? "success" : compliant === false ? "danger" : "info"}>
+          <Badge
+            tone={compliant === true ? "success" : compliant === false ? "danger" : "info"}
+            className="max-w-full shrink whitespace-normal"
+          >
             {compliant === true ? (
               <CheckCircle2 className="size-3.5" aria-hidden="true" />
             ) : (
@@ -97,7 +100,7 @@ const FlaringComplianceCard: React.FC<FlaringComplianceCardProps> = ({ flaringDa
             )}
             {flaringData.compliance_status}
           </Badge>
-          <Badge tone="neutral">
+          <Badge tone="neutral" className="max-w-full shrink whitespace-normal">
             {flaringData.measured_dre_pct != null
               ? `${flaringData.dre_method}: ${flaringData.measured_dre_pct}% DRE`
               : flaringData.dre_method}

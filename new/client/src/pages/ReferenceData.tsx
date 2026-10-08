@@ -491,15 +491,15 @@ const ReferenceData: React.FC = () => {
                             <th>Name</th>
                             {key !== "equipment" ? (
                               <>
-                                <th>HHV</th>
-                                <th>CO₂</th>
-                                <th>CH₄</th>
-                                <th>N₂O</th>
+                                <th className="num">HHV</th>
+                                <th className="num">CO₂</th>
+                                <th className="num">CH₄</th>
+                                <th className="num">N₂O</th>
                                 <th>Unit</th>
                               </>
                             ) : (
                               <>
-                                <th>CH₄ Factor</th>
+                                <th className="num">CH₄ Factor</th>
                                 <th>Unit</th>
                                 <th>Description</th>
                               </>
@@ -537,15 +537,15 @@ const ReferenceData: React.FC = () => {
                               </td>
                               {key !== "equipment" ? (
                                 <>
-                                  <td>{f.hhv || "-"}</td>
-                                  <td>{f.co2 || "-"}</td>
-                                  <td>{f.ch4 || "-"}</td>
-                                  <td>{f.n2o || "-"}</td>
+                                  <td className="num">{f.hhv || "-"}</td>
+                                  <td className="num">{f.co2 || "-"}</td>
+                                  <td className="num">{f.ch4 || "-"}</td>
+                                  <td className="num">{f.n2o || "-"}</td>
                                   <td>{f.unit}</td>
                                 </>
                               ) : (
                                 <>
-                                  <td>{f.ch4 || "-"}</td>
+                                  <td className="num">{f.ch4 || "-"}</td>
                                   <td>{f.unit}</td>
                                   <td>{f.description}</td>
                                 </>

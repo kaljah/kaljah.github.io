@@ -38,13 +38,13 @@ const MethaneIntensityMethaneIntensity: React.FC<MethaneIntensityMethaneIntensit
 }) => (
   <div className="hero-card">
     <div className="hero-header">
-      <div className="flex! items-center! gap-[16px]!">
+      <div className="flex! flex-wrap! items-center! gap-[16px]!">
         <h2 className="grid-title">
           <Wind size={24} color="var(--accent-secondary)" />
           Methane Intensity & Loss Rate Analytics
         </h2>
         <div
-          className="year-badge [background:rgba(255,_102,_0,_0.1)] [padding:6px_16px] [border-radius:9999px] [font-size:var(--text-base)] [font-weight:600] [border:1px_solid_rgba(255,_102,_0,_0.2)] bg-[color:rgba(37,_99,_235,_0.1)]! text-[color:var(--color-blue-600)]! [&&]:[border-color:rgba(37,_99,_235,_0.2)]!"
+          className="year-badge whitespace-nowrap [background:rgba(255,_102,_0,_0.1)] [padding:6px_16px] [border-radius:9999px] [font-size:var(--text-base)] [font-weight:600] [border:1px_solid_rgba(255,_102,_0,_0.2)] bg-[color:rgba(37,_99,_235,_0.1)]! text-[color:var(--color-blue-600)]! [&&]:[border-color:rgba(37,_99,_235,_0.2)]!"
         >
           {selectedYear === "all" ? "All-Time" : selectedYear} Performance
         </div>

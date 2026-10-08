@@ -27,7 +27,7 @@ export const CbamSection: React.FC<CbamSectionProps> = ({ products, facilities }
       </span>
     }
     subtitle="Direct & indirect specific embedded emissions per export product (EU Regulation 2023/956)"
-    actions={<Badge tone="brand" className="cbam-benchmark-badge px-3.5 py-1.5 text-sm">EU ETS Benchmark (Product-Specific): ~0.025 - 1.2 tCO₂e/t</Badge>}
+    actions={<Badge tone="brand" className="cbam-benchmark-badge max-w-full shrink whitespace-normal px-3.5 py-1.5 text-sm">EU ETS Benchmark (Product-Specific): ~0.025 - 1.2 tCO₂e/t</Badge>}
   >
     {products.length > 0 ? (
       <div className="overflow-x-auto">

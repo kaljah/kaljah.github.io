@@ -11,7 +11,7 @@ interface MetricProps {
 
 // One telemetry figure in the HUD strip: small caption over a tabular value.
 const Metric: React.FC<MetricProps> = ({ label, children, tone }) => (
-  <div className="flex flex-col items-center gap-px px-2.5 first:pl-0 last:pr-0 [&:not(:first-child)]:border-l [&:not(:first-child)]:border-border">
+  <div className="flex flex-col items-center gap-px px-2 first:pl-0 last:pr-0 [&:not(:first-child)]:border-l [&:not(:first-child)]:border-border">
     <span className="whitespace-nowrap text-[0.62rem] font-bold uppercase tracking-wide text-text-secondary">{label}</span>
     <span className={cn("text-md font-extrabold tabular-nums text-text", tone === "accent" && "text-brand-700", tone === "alert" && "text-danger-fg")}>
       {children}
@@ -66,9 +66,10 @@ const ExplorerHud: React.FC<ExplorerHudProps> = ({
             <span className="size-2 rounded-full bg-brand-500" />
             <span className="absolute inset-0 animate-ping rounded-full border border-brand-500" />
           </span>
-          <div>
+          {/* The top bar already names the page on small screens; keep the heading for screen readers. */}
+          <div className="sr-only md:not-sr-only">
             <h1 className="m-0 whitespace-nowrap text-md font-bold text-text">Emissions Map</h1>
-            <p className="m-0 whitespace-nowrap text-xs font-semibold uppercase tracking-wide text-info-fg">Sentinel-5P TROPOMI</p>
+            <p className="m-0 hidden whitespace-nowrap text-xs font-semibold uppercase tracking-wide text-info-fg xl:block">Sentinel-5P TROPOMI</p>
           </div>
         </div>
         {connected ? (
@@ -76,13 +77,21 @@ const ExplorerHud: React.FC<ExplorerHudProps> = ({
             <Radio className="size-3" aria-hidden="true" /> S5P stream live
           </Badge>
         ) : (
-          <Button variant="secondary" size="sm" onClick={onConfigure} title="Configure CDSE API credentials in Settings">
-            <Satellite className="size-3.5" aria-hidden="true" /> Configure S5P
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={onConfigure}
+            title="Configure CDSE API credentials in Settings"
+            aria-label="Configure S5P"
+          >
+            <Satellite className="size-3.5" aria-hidden="true" />
+            <span className="hidden xl:inline">Configure S5P</span>
           </Button>
         )}
       </div>
 
-      <div className="flex items-center rounded-md border border-border bg-ink-50 px-3 py-1.5">
+      {/* Hidden below lg: the strip does not fit beside the title and the metric toggle. */}
+      <div className="hidden items-center rounded-md border border-border bg-ink-50 px-3 py-1.5 lg:flex">
         <Metric label="Monitored assets">{metrics.activeAssets}</Metric>
         <Metric label={viewMode === "methane" ? "Regional methane" : "Regional GHG"} tone="accent">
           {formatCompact(regional)} t
@@ -107,6 +116,7 @@ const ExplorerHud: React.FC<ExplorerHudProps> = ({
             { value: "total", label: labelWithIcon(TrendingUp, "Total GHG"), title: "Focus on Total GHG (CO2e) emissions" },
           ]}
         />
+        {Object.keys(baseMaps).length > 1 && (
         <SegmentedControl
           label="Basemap"
           size="sm"
@@ -119,6 +129,7 @@ const ExplorerHud: React.FC<ExplorerHudProps> = ({
             title: `Switch to ${info.name}`,
           }))}
         />
+        )}
       </div>
     </header>
   );
