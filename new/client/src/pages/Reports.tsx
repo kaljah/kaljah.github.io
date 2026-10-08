@@ -661,7 +661,7 @@ const Reports: React.FC = () => {
               {baseYear && <option value="baseline">Baseline ({baseYear})</option>}
             </>,
           )}
-          {selectBase("GWP Metric Standard", reportGwpStandard, onGwp, gwpOptions())}
+          {selectBase("GWP Metric Standard", reportGwpStandard, onGwp, gwpOptions(), { className: "sm:[grid-column:span_2]" })}
           <div className="flex w-full flex-col gap-1.5 [grid-column:span_2] max-[640px]:[grid-column:auto]">
             <span className="text-sm font-medium text-text">
               Regions / Facilities <span className="text-danger-fg">*</span>
