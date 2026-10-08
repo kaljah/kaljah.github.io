@@ -772,6 +772,7 @@ const MethaneIntensity: React.FC = () => {
                 sortDesc
                 onSelect={openFacilityRecords}
                 selectLabel={(r) => `Open ${r.name} records`}
+                exportName="methane-loss-rate-by-facility"
                 thresholds={{ warnAt: upstreamTargetPct * 0.8, badAt: upstreamTargetPct, labels: ["Within target", "Within 20% of target", "Above target"] }}
                 referenceValue={upstreamTargetPct}
                 referenceLabel={`Target ${upstreamTargetPct}%`}
@@ -802,6 +803,7 @@ const MethaneIntensity: React.FC = () => {
                 sortDesc
                 onSelect={openFacilityRecords}
                 selectLabel={(r) => `Open ${r.name} records`}
+                exportName="methane-intensity-by-facility"
                 color="var(--color-brand-500)"
               />
             </div>
@@ -829,6 +831,7 @@ const MethaneIntensity: React.FC = () => {
                 sortDesc
                 onSelect={openFacilityRecords}
                 selectLabel={(r) => `Open ${r.name} records`}
+                exportName="total-methane-emissions-by-facility"
                 color="var(--color-blue-500)"
               />
             </div>
@@ -856,6 +859,7 @@ const MethaneIntensity: React.FC = () => {
                 sortDesc
                 onSelect={openFacilityRecords}
                 selectLabel={(r) => `Open ${r.name} records`}
+                exportName="gas-flaring-volume-by-facility"
                 color="var(--color-legacy-ea580c)"
               />
             </div>

@@ -23,6 +23,11 @@ describe("describeBridge", () => {
       "Scope 1+2 rose 20.0% (+20K tCO₂e), mainly Flaring (+20K).",
     );
   });
+  it("uses the scope label it is given", () => {
+    expect(describeBridge(100000, 90000, [{ name: "Scope 3", delta: -10000 }], fmt, "Scope 1+2+3")).toBe(
+      "Scope 1+2+3 fell 10.0% (−10K tCO₂e), mainly Scope 3 (−10K).",
+    );
+  });
   it("handles no change at all", () => {
     expect(describeBridge(5, 5, [{ name: "Flaring", delta: 0 }], fmt)).toBe("Scope 1+2 emissions did not change.");
   });

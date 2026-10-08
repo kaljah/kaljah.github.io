@@ -12,6 +12,7 @@ import {
   Legend,
   ReferenceLine,
 } from "recharts";
+import { ChartExport } from "./ChartExport";
 import "./ChartWrappers.css";
 
 const MODERN_BAR_PALETTE = [
@@ -64,6 +65,8 @@ export interface BarChartProps {
   /** Accessible name for a bar button, e.g. (row) => `Open records for ${row.name}`. */
   selectLabel?: (row: any) => string;
   /** Color each single-series bar by status: below warnAt is good, up to badAt is a warning, above badAt is bad. */
+  /** Shows CSV/PNG buttons (on hover/focus) and uses this as the file name. */
+  exportName?: string;
   thresholds?: { warnAt: number; badAt: number; labels?: [string, string, string] };
 }
 
@@ -86,7 +89,9 @@ export const BarChart: React.FC<BarChartProps> = ({
   onSelect,
   selectLabel,
   thresholds,
+  exportName,
 }) => {
+  const wrapRef = React.useRef<HTMLDivElement | null>(null);
   const [isMounted] = useState<boolean>(() => typeof window !== "undefined");
   const [activeBarKey, setActiveBarKey] = useState<string | null>(null);
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
@@ -244,7 +249,8 @@ export const BarChart: React.FC<BarChartProps> = ({
   const chartHeight = typeof height === "number" ? height : parseInt(String(height), 10) || 300;
   return (
     <div
-      className="chart-wrapper"
+      ref={wrapRef}
+      className="chart-wrapper group relative"
       style={{
         height: "100%",
         width: "100%",
@@ -255,6 +261,15 @@ export const BarChart: React.FC<BarChartProps> = ({
         border: "none",
       }}
     >
+      {exportName && (
+        <ChartExport
+          className="absolute right-0 top-0 z-10 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100 pointer-coarse:opacity-100"
+          name={exportName}
+          targetRef={wrapRef}
+          header={hasMultipleBars ? [finalXKey, ...bars.map((b) => b.name || b.dataKey)] : [finalXKey, finalDataKey]}
+          rows={rows.map((r) => (hasMultipleBars ? [r[finalXKey], ...bars.map((b) => r[b.dataKey])] : [r[finalXKey], r[finalDataKey]]))}
+        />
+      )}
       {title && <h3 className="chart-title">{title}</h3>}
       <ResponsiveContainer
         width="100%"

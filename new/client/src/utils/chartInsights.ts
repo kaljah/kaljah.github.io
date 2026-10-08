@@ -16,15 +16,16 @@ export const describeBridge = (
   end: number,
   steps: BridgeStep[],
   fmt: Fmt = (v) => formatCompactNumber(v),
+  scopeLabel = "Scope 1+2",
 ): string => {
   const change = end - start;
   const movers = steps
     .filter((s) => Math.abs(s.delta) > 0)
     .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
-  if (Math.abs(change) < 0.5 && !movers.length) return "Scope 1+2 emissions did not change.";
+  if (Math.abs(change) < 0.5 && !movers.length) return `${scopeLabel} emissions did not change.`;
   const pct = start > 0 ? ` ${Math.abs((change / start) * 100).toFixed(1)}%` : "";
   const verb = change === 0 ? "was flat" : change < 0 ? `fell${pct}` : `rose${pct}`;
-  const head = `Scope 1+2 ${verb}${change === 0 ? "" : ` (${signed(change, fmt)} tCO₂e)`}`;
+  const head = `${scopeLabel} ${verb}${change === 0 ? "" : ` (${signed(change, fmt)} tCO₂e)`}`;
   if (!movers.length) return `${head}.`;
   const named = movers.slice(0, 2).map((m) => `${m.name} (${signed(m.delta, fmt)})`);
   return `${head}, mainly ${named.join(" and ")}.`;

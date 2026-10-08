@@ -344,6 +344,7 @@ const UncertaintyAssessment: React.FC = () => {
                   height={260}
                   referenceValue={30}
                   referenceLabel="High (±30%)"
+                  exportName="uncertainty-by-category"
                   formatValue={(v) => `±${Number(v).toFixed(1)}%`}
                 />
               </div>

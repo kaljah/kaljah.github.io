@@ -59,3 +59,19 @@ describe("chart click-through has a keyboard path", () => {
     expect(onSelectStep).toHaveBeenCalledWith({ name: "Scope 2", delta: -5 });
   });
 });
+
+describe("chart export", () => {
+  it("builds CSV with quoting and formula protection", async () => {
+    const { toCsv } = await import("../utils/chartExport");
+    expect(toCsv(["name", "value"], [["Plain", 1], ['A, "B"', 2], ["=SUM(A1)", 3]])).toBe(
+      'name,value\r\nPlain,1\r\n"A, ""B""",2\r\n\'=SUM(A1),3',
+    );
+  });
+  it("shows export buttons only when a chart opts in", () => {
+    const { rerender } = render(<BarChart data={[{ name: "A", value: 1 }]} dataKey="value" xKey="name" />);
+    expect(screen.queryByLabelText(/as CSV/)).toBeNull();
+    rerender(<BarChart data={[{ name: "A", value: 1 }]} dataKey="value" xKey="name" exportName="demo" />);
+    expect(screen.getByLabelText("Download demo data as CSV")).toBeInTheDocument();
+    expect(screen.getByLabelText("Download demo as an image")).toBeInTheDocument();
+  });
+});

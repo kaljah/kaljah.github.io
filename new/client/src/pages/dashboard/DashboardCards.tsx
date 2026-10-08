@@ -1,6 +1,6 @@
 import React from "react";
 import { ArrowRight, BarChart3, ChevronDown, ChevronUp, Clock, Eye, EyeOff, Hexagon } from "lucide-react";
-import { Badge, Banner, Button, Card, CardHeader, Switch } from "../../ui";
+import { Badge, Banner, Button, Card, CardHeader, SegmentedControl, Switch } from "../../ui";
 import { cn } from "../../ui/cn";
 import { BarChart as BarChartWrapper, LineChart as LineChartWrapper, WaterfallChart } from "../../components/charts";
 import { useNavigate } from "react-router-dom";
@@ -116,6 +116,7 @@ export const DonutCard: React.FC<DonutCardProps> = ({ title, data, noun }) => (
         showShare
         showLegend={false}
         formatValue={formatCompactNumber}
+        exportName={title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}
       />
     </div>
   </Card>
@@ -227,12 +228,17 @@ interface BridgeData {
   start?: number;
   end?: number;
   steps: { name: string; delta: number }[];
+  scope3?: boolean;
 }
 
-/** "What moved the total": Scope 1+2 change from the previous year with data to the selected year. */
+/** "What moved the total": change from the previous year with data to the selected year. */
 export const BridgeCard: React.FC<BridgeCardProps> = ({ params }) => {
   const [bridge, setBridge] = React.useState<BridgeData | null>(null);
-  const query = params.toString();
+  const [includeScope3, setIncludeScope3] = React.useState(false);
+  const [labelMode, setLabelMode] = React.useState<"absolute" | "percent">("absolute");
+  const full = new URLSearchParams(params);
+  if (includeScope3) full.set("includeScope3", "true");
+  const query = full.toString();
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -246,14 +252,31 @@ export const BridgeCard: React.FC<BridgeCardProps> = ({ params }) => {
     };
   }, [query]);
 
-  if (!bridge || !bridge.steps.length || bridge.start == null || bridge.end == null) return null;
+  const hasData = Boolean(bridge && bridge.steps.length && bridge.start != null && bridge.end != null);
+  // With Scope 3 on, keep the card (and its switch) so the user can turn it off again.
+  if (!hasData && !includeScope3) return null;
+  if (!bridge || !hasData || bridge.start == null || bridge.end == null) {
+    return (
+      <Card className="min-w-0">
+        <p className="m-0 text-sm text-ink-700">No earlier year to compare against with Scope 3 included.</p>
+        <div className="mt-3">
+          <Switch
+            label={<span className="text-sm font-semibold text-text-secondary">Include Scope 3</span>}
+            checked={includeScope3}
+            onChange={(e) => setIncludeScope3(e.target.checked)}
+          />
+        </div>
+      </Card>
+    );
+  }
+  const scopeLabel = bridge.scope3 ? "Scope 1+2+3" : "Scope 1+2";
   const change = bridge.end - bridge.start;
   const pct = bridge.start ? (change / bridge.start) * 100 : 0;
   return (
     <Card className="min-w-0">
       <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
         <h3 className="m-0 text-md font-bold text-ink-800">
-          What moved Scope 1+2 emissions, {bridge.prev_year} → {bridge.year}
+          What moved {scopeLabel} emissions, {bridge.prev_year} → {bridge.year}
         </h3>
         <span className="text-sm font-semibold text-ink-600">
           {change >= 0 ? "+" : "−"}
@@ -261,7 +284,28 @@ export const BridgeCard: React.FC<BridgeCardProps> = ({ params }) => {
           {Math.abs(pct).toFixed(1)}%)
         </span>
       </div>
-      <p className="m-0 mb-3 text-sm text-ink-700">{describeBridge(bridge.start, bridge.end, bridge.steps)}</p>
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+        <p className="m-0 text-sm text-ink-700">
+          {describeBridge(bridge.start, bridge.end, bridge.steps, undefined, scopeLabel)}
+        </p>
+        <div className="flex flex-wrap items-center gap-3">
+          <Switch
+            label={<span className="text-sm font-semibold text-text-secondary">Include Scope 3</span>}
+            checked={includeScope3}
+            onChange={(e) => setIncludeScope3(e.target.checked)}
+          />
+          <SegmentedControl
+            label="Step labels"
+            size="sm"
+            value={labelMode}
+            onChange={setLabelMode}
+            options={[
+              { value: "absolute", label: "tCO₂e" },
+              { value: "percent", label: "%" },
+            ]}
+          />
+        </div>
+      </div>
       <WaterfallChart
         startLabel={String(bridge.prev_year)}
         endLabel={String(bridge.year)}
@@ -270,12 +314,21 @@ export const BridgeCard: React.FC<BridgeCardProps> = ({ params }) => {
         steps={bridge.steps}
         height={300}
         formatValue={formatCompactNumber}
+        labelMode={labelMode}
+        exportName={`emissions-bridge-${bridge.prev_year}-${bridge.year}${bridge.scope3 ? "-with-scope3" : ""}`}
         // The records table filters by scope and year, not by source category, so a step opens its scope.
         onSelectStep={(step) =>
-          navigate(recordsLink({ year: bridge.year, scope: step.name === "Scope 2" ? "2" : "1" }))
+          navigate(
+            recordsLink({
+              year: bridge.year,
+              scope: step.name === "Scope 3" ? "3" : step.name === "Scope 2" ? "2" : "1",
+            }),
+          )
         }
       />
-      <p className="mb-0 mt-2 text-xs text-ink-500">Axis is zoomed to the range the changes move through; it does not start at zero. Click a step to open that scope's records for the year.</p>
+      <p className="mb-0 mt-2 text-xs text-ink-500">
+        Axis is zoomed to the range the changes move through; it does not start at zero. Click a step to open that scope's records for the year.
+      </p>
     </Card>
   );
 };
