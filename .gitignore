@@ -139,3 +139,6 @@ new/server/backups/
 
 # Generated bundle analyser output
 new/client/stats.html
+
+# Playwright specs write screenshots here on every run (outputs, not baselines)
+new/client/e2e/deep_user_audit/screenshots/
