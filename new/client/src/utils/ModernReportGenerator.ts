@@ -219,9 +219,15 @@ export async function generateModernPDF(api: any, filters: any): Promise<void> {
     const capCompliance = Array.isArray(capComplianceRes?.data) ? capComplianceRes.data : [];
     const capEmissions = Array.isArray(capEmissionsRes?.data) ? capEmissionsRes.data : [];
     const equityAllocations = Array.isArray(equityAllocRes?.data) ? equityAllocRes.data : [];
-    const allHistoricalProduction = Array.isArray(allProdRes?.data?.data || allProdRes?.data)
+    // the production tables cover the facilities the report covers (they printed company-wide
+    // production beside one facility's emissions)
+    const reportFacilityIds = Array.isArray(regionId)
+      ? (regionId.length ? regionId.map(String) : null)
+      : regionId && regionId !== "all" ? [String(regionId)] : null;
+    const allHistoricalProduction = (Array.isArray(allProdRes?.data?.data || allProdRes?.data)
       ? (allProdRes?.data?.data || allProdRes?.data)
-      : [];
+      : []
+    ).filter((p: any) => !reportFacilityIds || reportFacilityIds.includes(String(p.facilityId ?? p.facility_id)));
 
     let reportData: any[] =
       emissionsRes.data.emissions ||
@@ -483,7 +489,7 @@ export async function generateModernPDF(api: any, filters: any): Promise<void> {
     doc.text(`${fullData.totalScale} t`, 30, overlayY + 12);
     doc.setFontSize(8);
     doc.setTextColor(150, 160, 180);
-    doc.text("INTENSITY", 100, overlayY);
+    doc.text("INTENSITY (kg CO2e/BOE)", 100, overlayY);
     doc.setFontSize(16);
     doc.setTextColor(255, 255, 255);
     doc.text(`${fullData.intensityMetrics.avgCo2}`, 100, overlayY + 12);
@@ -1569,7 +1575,11 @@ Email: ${personResponsible.email || "N/A"}`;
       },
     });
 
-    const filename = `Groupement_Berkine_Master_GHG_Report_${isAllYears ? "All_Years" : selectedYear}.pdf`;
+    // named after what the report covers (every report was saved as the Berkine master report)
+    const scopeName = reportFacilities.length === 1
+      ? String(reportFacilities[0].name || "Facility").replace(/[^A-Za-z0-9]+/g, "_").replace(/^_|_$/g, "")
+      : "All_Facilities";
+    const filename = `GHG_Inventory_Report_${scopeName}_${isAllYears ? "All_Years" : selectedYear}.pdf`;
     const pdfBlob = doc.output("blob");
     const pdfBlobWithMime = new Blob([pdfBlob], { type: "application/pdf" });
     const url = window.URL.createObjectURL(pdfBlobWithMime);
@@ -1604,7 +1614,8 @@ async function fetchAllReportData(
     n2oTotal = 0;
   let scope1Total = 0,
     scope2Total = 0,
-    scope3Total = 0;
+    scope3Total = 0,
+    storedScope12 = 0;
   let processBreakdown: Record<string, number> = {
     Combustion: 0,
     Flaring: 0,
@@ -1674,6 +1685,7 @@ async function fetchAllReportData(
     if (scope === "2") scope2Total += tVal;
     else if (scope === "3") scope3Total += tVal;
     else scope1Total += tVal;
+    if (scope !== "3") storedScope12 += Number(r.co2e_total || 0) || tVal;
 
     const pType = (r.process_type || "").toLowerCase();
     let procCat = "Other";
@@ -1688,8 +1700,8 @@ async function fetchAllReportData(
         procCat = "Fugitive";
     }
 
-    if (!processBreakdown[procCat]) processBreakdown[procCat] = 0;
-    processBreakdown[procCat] += tVal;
+    // Scope 1 sources only: Scope 2 / 3 rows landed in "Other", which then read as the primary driver
+    if (scope === "1") processBreakdown[procCat] = (processBreakdown[procCat] || 0) + tVal;
 
     let efCo2 = r.ef_used_co2 || 0;
     let efCh4 = r.ef_used_ch4 || 0;
@@ -1702,10 +1714,12 @@ async function fetchAllReportData(
     if (efN2o === 0 && r.quantity > 0 && r.n2o_emissions > 0)
       efN2o = r.n2o_emissions / r.quantity;
 
+    // the activity period, not the entry date (every row showed the day it was typed in)
     const dateStr = r.date || r.timestamp;
     const dateObj = dateStr ? new Date(dateStr) : null;
-    const dateDisplay =
-      dateObj && !isNaN(dateObj.getTime())
+    const dateDisplay = r.year && r.month
+      ? `${r.year}-${String(r.month).padStart(2, "0")}`
+      : dateObj && !isNaN(dateObj.getTime())
         ? dateObj.toLocaleDateString()
         : `${r.year || "?"}/${r.month || "?"}`;
 
@@ -1746,8 +1760,10 @@ async function fetchAllReportData(
       }
     });
     totalProductionBoe = totalBoeSum;
+    // the server intensity is on the stored (system GWP-100) totals: re-base it on the requested GWP set
+    const gwpRatio = storedScope12 > 0 ? (scope1Total + scope2Total) / storedScope12 : 1;
     intensityMetrics = {
-      avgCo2: totalBoeSum > 0 ? (weightedCo2Sum / totalBoeSum).toFixed(4) : "0",
+      avgCo2: totalBoeSum > 0 ? ((weightedCo2Sum / totalBoeSum) * gwpRatio).toFixed(4) : "0",
       avgCh4: totalBoeSum > 0 ? (weightedCh4Sum / totalBoeSum).toFixed(4) : "0",
       totalProd: totalBoeSum.toLocaleString(undefined, {
         maximumFractionDigits: 0,

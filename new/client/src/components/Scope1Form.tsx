@@ -382,11 +382,6 @@ export const Scope1Form: React.FC = () => {
       "fugitive", "venting", "drilling", "completions", "unloading", "blowdown", "associated_gas_venting",
     ].includes(processType);
 
-  // Handle Resetting Fuel on Context Change
-  useEffect(() => {
-    setFormData((prev) => ({ ...prev, fuel: "" }));
-  }, [processType]);
-
   useEffect(() => {
     setFormData((prev) => {
       const isCustomId = !isNaN(parseInt(prev.fuel)) && String(parseInt(prev.fuel)) === String(prev.fuel);
@@ -516,10 +511,10 @@ export const Scope1Form: React.FC = () => {
     });
   };
 
-  // Form data is reset when the process changes in handleProcessChange (resetProcessInputs), before
-  // its defaults are set. A reset effect on processType also ran after the new section's own default
-  // effects (child effects run first) and wiped them: fugitive Tier 1 then submitted without
-  // facility_type (422) and drilling lost its "well" unit.
+  // Form data (fuel included) is reset when the process changes in handleProcessChange
+  // (resetProcessInputs), before its defaults are set. Reset effects on processType also ran after the
+  // new section's own default effects (child effects run first) and wiped them: fugitive Tier 1 then
+  // submitted without facility_type (422) or fuel, and drilling lost its "well" unit.
 
   const loadFacilities = async () => {
     try {
