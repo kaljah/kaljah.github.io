@@ -39,22 +39,16 @@ export interface ExplorerHudProps {
   };
   viewMode: string;
   onViewMode: (mode: string) => void;
-  baseMaps: Record<string, { icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean | "true" | "false" }>; name: string }>;
-  baseLayer: string;
-  onBaseLayer: (layer: string) => void;
   formatCompact: (v: any) => string;
 }
 
-/** Floating telemetry bar on top of the map: title and stream status, regional KPIs, view mode and basemap. */
+/** Floating telemetry bar on top of the map: title and stream status, regional KPIs and view mode. */
 const ExplorerHud: React.FC<ExplorerHudProps> = ({
   connected,
   onConfigure,
   metrics,
   viewMode,
   onViewMode,
-  baseMaps,
-  baseLayer,
-  onBaseLayer,
   formatCompact,
 }) => {
   const regional = viewMode === "methane" ? metrics.totalMethane : metrics.totalGhg;
@@ -116,20 +110,6 @@ const ExplorerHud: React.FC<ExplorerHudProps> = ({
             { value: "total", label: labelWithIcon(TrendingUp, "Total GHG"), title: "Focus on Total GHG (CO2e) emissions" },
           ]}
         />
-        {Object.keys(baseMaps).length > 1 && (
-        <SegmentedControl
-          label="Basemap"
-          size="sm"
-          className="[&_button]:whitespace-nowrap"
-          value={baseLayer}
-          onChange={onBaseLayer}
-          options={Object.entries(baseMaps).map(([key, info]) => ({
-            value: key,
-            label: labelWithIcon(info.icon, info.name.split(" ")[0]),
-            title: `Switch to ${info.name}`,
-          }))}
-        />
-        )}
       </div>
     </header>
   );

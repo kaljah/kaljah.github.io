@@ -10,6 +10,7 @@ from background_processor import active_job_count, get_job_status, start_backgro
 from calculations import compute_emissions
 from extensions import db
 from flask import current_app, jsonify, request, send_file
+from input_validation import decimal_mark_from, xlsx_signature_error
 from models import Emission, Facility, Notification, User
 from routes.auth import login_required
 from services.ogmp import ogmp_level_for
@@ -43,6 +44,7 @@ def _read_upload_request():
     mapping_str = request.form.get("column_mapping") or request.form.get("mapping")
     scope = request.form.get("scope", "1")
     overwrite_duplicates = request.form.get("overwrite_duplicates") == "true"
+    decimal_mark = decimal_mark_from(request.form)  # chosen per file in the wizard (F6)
 
     # BUG-001: the bulk job must enforce the same roles as the dedicated endpoints.
     if user.role in ["it_admin", "it_manager", "it"]:
@@ -70,25 +72,16 @@ def _read_upload_request():
     file.save(path)
 
     # Content sniffing check for Excel
-    if ext == ".xlsx":
+    if ext == ".xlsx" and (bad := xlsx_signature_error(path)):
         try:
-            with open(path, "rb") as f_check:
-                header = f_check.read(4)
-                if header != b"PK\x03\x04":
-                    try:
-                        os.remove(path)
-                    except OSError:
-                        pass
-                    return None, (jsonify({"error": "Invalid or corrupted XLSX file"}), 400)
-        except OSError as e:
-            try:
-                os.remove(path)
-            except OSError:
-                pass
-            return None, (jsonify({"error": f"Failed to read uploaded file: {e}"}), 400)
+            os.remove(path)
+        except OSError:
+            pass
+        return None, (jsonify({"error": bad}), 400)
 
     return {"user": user, "path": path, "filename": file.filename, "global_factor_type": global_factor_type,
-            "mapping": provided_mapping, "scope": scope, "overwrite": overwrite_duplicates}, None
+            "mapping": provided_mapping, "scope": scope, "overwrite": overwrite_duplicates,
+            "decimal_mark": decimal_mark}, None
 
 
 @emissions_bp.route("/upload/start", methods=["POST"])
@@ -115,6 +108,7 @@ def upload_start():
         provided_mapping=req["mapping"],
         scope=req["scope"],
         overwrite_duplicates=req["overwrite"],
+        decimal_mark=req["decimal_mark"],
     )
 
     try:
@@ -151,7 +145,8 @@ def upload_check():
         sample = 2000
     status = run_file_check(current_app._get_current_object(), req["path"], req["filename"], req["user"].id,
                             req["global_factor_type"], provided_mapping=req["mapping"], scope=req["scope"],
-                            overwrite_duplicates=req["overwrite"], sample_rows=sample)
+                            overwrite_duplicates=req["overwrite"], sample_rows=sample,
+                            decimal_mark=req["decimal_mark"])
     if not status or status.get("status") != "completed":
         errors = (status or {}).get("errors") or ["The file could not be checked."]
         return jsonify({"error": errors[0], "errors": errors}), 400

@@ -374,6 +374,9 @@ class ActivityLog(db.Model):
     facility_id = db.Column(db.Integer, nullable=True, index=True)
     metadata_json = db.Column("metadata", db.Text)
     timestamp = db.Column(db.DateTime, default=utc_now, index=True)
+    # F12 (pilot check 2026-10-09): hash chain, sealed when the row is written (services/audit_chain.py)
+    prev_hash = db.Column(db.String(64), nullable=True)
+    entry_hash = db.Column(db.String(64), nullable=True)
 
 
 

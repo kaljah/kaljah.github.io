@@ -3,8 +3,8 @@
 Split out of routes/reports.py unchanged (hardening plan, task 5.3). The routes are
 registered on the same ``reports_bp`` blueprint, so URLs and endpoint names are the same.
 """
-import hashlib
 import openpyxl
+from services.audit_chain import data_fingerprint, record_report_fingerprint
 from datetime import datetime, timezone
 from extensions import db
 from flask import current_app, jsonify, request, send_file
@@ -658,19 +658,18 @@ def export_ogmp_excel():
 
         autofit_columns(ws5)
 
-        # --- TAB 6: ISO 14064-3 / ISAE 3410 Audit Assurance Manifest ---
+        # --- TAB 6: Audit manifest: fingerprint of the data sheets, also recorded in the audit log ---
+        # (pilot check 2026-10-09, F12: it was a hash of the year and the time, labelled "Verified & Sealed")
+        wb_sha256 = data_fingerprint([[ws.title, [list(r) for r in ws.iter_rows(values_only=True)]] for ws in wb.worksheets])
         ws6 = wb.create_sheet(title="Audit Assurance")
         ws6.views.sheetView[0].showGridLines = True
         ws6.cell(row=1, column=1, value="SONATRACH ENTERPRISE CARBON ACCOUNTING PLATFORM").font = Font(name="Calibri", size=14, bold=True, color="1E3A8A")
-        ws6.cell(row=2, column=1, value="ISO 14064-3 / ISAE 3410 Third-Party Assurance & Audit Manifest").font = Font(name="Calibri", size=12, bold=True, color="334155")
-
-        wb_manifest_str = f"ogmp_disclosure|year={year}|fac_count={len(facilities)}|ts={datetime.now(timezone.utc).isoformat()}"
-        wb_sha256 = hashlib.sha256(wb_manifest_str.encode("utf-8")).hexdigest()
+        ws6.cell(row=2, column=1, value="Audit Manifest").font = Font(name="Calibri", size=12, bold=True, color="334155")
 
         audit_rows = [
-            ("Audit Standard", "ISO 14064-3 / ISAE 3410 Verification Specification"),
-            ("Cryptographic Fingerprint (SHA-256)", wb_sha256),
-            ("Tamper-Evident Status", "Verified & Sealed"),
+            ("Data Fingerprint (SHA-256)", wb_sha256),
+            ("Covers", "Every cell of the other sheets of this workbook"),
+            ("Check", "Matches the REPORT entry of the audit log written when this workbook was exported"),
             ("Export Timestamp (UTC)", datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")),
             ("Exporting Organization", getattr(user, "orgName", "Sonatrach")),
             ("Exporting User", f"{getattr(user, 'fullName', 'User')} ({getattr(user, 'email', '')})"),
@@ -705,8 +704,7 @@ def export_ogmp_excel():
             as_attachment=True,
             download_name=filename,
         )
-        resp.headers["X-Audit-SHA256"] = wb_sha256
-        resp.headers["X-Audit-Standard"] = "ISO 14064-3 / ISAE 3410"
+        record_report_fingerprint(resp, user, "OGMP 2.0 workbook", {"year": year}, len(facilities), wb_sha256)
         resp.headers["X-Audit-Timestamp"] = datetime.now(timezone.utc).isoformat()
         return resp
 

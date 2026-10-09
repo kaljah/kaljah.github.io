@@ -224,11 +224,8 @@ def get_equity_allocation():
         return jsonify({"error": "Forbidden: IT roles do not have access to Joint Venture equity data"}), 403
     allowed_fids = get_allowed_facility_ids(user)
 
-    year = request.args.get("year")
-    try:
-        yr = int(year) if year else 2025
-    except ValueError:
-        yr = 2025
+    year = (request.args.get("year") or "").strip()
+    yr = int(year) if year.isdigit() and 1900 <= int(year) <= 2100 else 2025  # malformed or out of range (F13): 2025
 
     facility_id = request.args.get("facility_id")
     fac_q = Facility.query

@@ -119,10 +119,9 @@ class Config:
 
     # Session Configuration (8-hour session lifetime)
     SESSION_COOKIE_HTTPONLY = True
-    SESSION_COOKIE_SAMESITE = os.environ.get(
-        "SESSION_COOKIE_SAMESITE",
-        "None" if _is_production else "Lax",
-    )
+    # Lax: the app and the API share one address (pilot check 2026-10-09, F14). "None" was needed only
+    # for the former GitHub Pages frontend on another domain; set SESSION_COOKIE_SAMESITE=None for that.
+    SESSION_COOKIE_SAMESITE = os.environ.get("SESSION_COOKIE_SAMESITE", "Lax")
     # Only set Secure in production to allow localhost testing
     SESSION_COOKIE_SECURE = _is_production
     PERMANENT_SESSION_LIFETIME = timedelta(hours=8)

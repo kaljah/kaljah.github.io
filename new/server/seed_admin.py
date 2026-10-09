@@ -37,11 +37,11 @@ def seed_admin():
             it_admin_password = secrets.token_urlsafe(16)
             print(f"[WARNING] IT_ADMIN_PASSWORD not set; generated dev password: {it_admin_password}")
 
-        it_email = os.environ.get("IT_EMAIL", "it@ghg.com").strip().lower()
+        # The optional IT support account (role "it") is created only when both IT_EMAIL and IT_PASSWORD are
+        # set (pilot check 2026-10-09, F1: it used to be created as it@ghg.com with a password that was only
+        # printed on the console, in production too).
+        it_email = os.environ.get("IT_EMAIL", "").strip().lower()
         it_password = os.environ.get("IT_PASSWORD")
-        if not it_password:
-            it_password = secrets.token_urlsafe(16)
-            print(f"[WARNING] IT_PASSWORD not set; generated dev password: {it_password}")
 
         users_to_seed = [
             {
@@ -58,14 +58,17 @@ def seed_admin():
                 "fullName": "IT Administrator",
                 "jobTitle": "Systems Administrator",
             },
-            {
+        ]
+        if it_email and it_password:
+            users_to_seed.append({
                 "email": it_email,
                 "password": it_password,
                 "role": "it",
                 "fullName": "IT Support",
                 "jobTitle": "IT Support Specialist",
-            },
-        ]
+            })
+        elif it_email or it_password:
+            print("[WARNING] IT_EMAIL and IT_PASSWORD must both be set to create the IT support account; skipped.")
 
         for u_data in users_to_seed:
             email = u_data["email"]

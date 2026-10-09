@@ -1,6 +1,6 @@
 import AuditTrailFiltersBarCard from "./audit-trail/AuditTrailFiltersBarCard";
 import AuditTrailAuditTimeline from "./audit-trail/AuditTrailAuditTimeline";
-import { AuditEmpty, AuditHeader, AuditPagination, AuditSkeleton, AuditStats, actionStyle } from "./audit-trail/AuditTrailChrome";
+import { AuditEmpty, AuditHeader, AuditIntegrityCheck, AuditPagination, AuditSkeleton, AuditStats, actionStyle } from "./audit-trail/AuditTrailChrome";
 import { Badge, DataTable, Dialog, type BadgeTone } from "../ui";
 import React, { useState, useEffect, useCallback } from "react";
 import api from "../api";
@@ -384,6 +384,7 @@ const AuditTrail: React.FC = () => {
     <div>
       <div className="mx-auto max-w-[1400px] px-4 py-5 md:px-7 md:py-6">
         <AuditHeader view={view} onView={setView} refreshing={isRefreshing} onRefresh={refreshAll} onExport={handleExport} />
+        <AuditIntegrityCheck />
         <AuditStats stats={stats} />
 
         <AuditTrailFiltersBarCard

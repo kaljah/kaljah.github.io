@@ -19,7 +19,7 @@ from app import app as flask_app
 from extensions import db
 from models import Emission, Facility, Scope2Emission, Scope3Emission, User
 from background_processor import (
-    _decimal_comma_to_point, _file_uncertainty, _process_file_thread, get_job_status, upload_jobs, upload_jobs_lock,
+    normalize_number_cell, _file_uncertainty, _process_file_thread, get_job_status, upload_jobs, upload_jobs_lock,
 )
 from calculations.units import compute_scope3_co2e, convert, normalize_efficiency
 from input_validation import ValidationError
@@ -54,7 +54,7 @@ def facility(user):
         return f.id
 
 
-def _upload(text, user_id, scope, name="audit.csv"):
+def _upload(text, user_id, scope, name="audit.csv", decimal_mark=None):
     with flask_app.app_context():
         db.session.commit()
     fd, path = tempfile.mkstemp(suffix=".csv")
@@ -66,7 +66,8 @@ def _upload(text, user_id, scope, name="audit.csv"):
             upload_jobs[job_id] = {"status": "processing", "progress": 0, "processed": 0, "total": 0, "errors": [],
                                    "skipped": [], "error_csv_path": None, "anomalies": []}
         _process_file_thread(app=flask_app, job_id=job_id, file_path=path, original_filename=name, user_id=user_id,
-                             global_factor_type="auto", provided_mapping=None, scope=scope, overwrite_duplicates=True)
+                             global_factor_type="auto", provided_mapping=None, scope=scope, overwrite_duplicates=True,
+                             decimal_mark=decimal_mark)
         return get_job_status(job_id)
     finally:
         if os.path.exists(path):  # the upload thread deletes its file
@@ -127,10 +128,15 @@ def test_scope3_bulk_row_with_eeio_method_column(user, facility):
 @pytest.mark.parametrize("cell, expected", [
     ("1,500", "1.500"), ("1,5", "1.5"), ("1.250,75", "1250.75"), ("12 345,6", "12345.6"), ("-0,25", "-0.25"),
     ("1 234,5", "1234.5"), ("2024-01", "2024-01"), ("Hassi Messaoud, Nord", "Hassi Messaoud, Nord"),
-    ("1,234,567", "1,234,567"), ("1500", "1500"),
+    ("1500", "1500"), ("1.500", "1500"),
 ])
 def test_decimal_comma_cells(cell, expected):
-    assert _decimal_comma_to_point(cell) == expected
+    assert normalize_number_cell(cell, "comma") == expected
+
+
+def test_decimal_comma_rejects_point_notation():
+    # "1,234,567" was left as text and later read as 1234567; in a decimal-comma file it is not a number
+    assert "not a decimal-comma number" in normalize_number_cell("1,234,567", "comma")
 
 
 def test_semicolon_csv_reads_comma_as_decimal(user, facility):
@@ -144,14 +150,23 @@ def test_semicolon_csv_reads_comma_as_decimal(user, facility):
         assert rec.co2_emissions == pytest.approx(1.5 * 53.06 / 1000.0)
 
 
-def test_comma_csv_keeps_thousands_separator(user, facility):
+@pytest.mark.parametrize("decimal_mark, expected", [("point", 1500.0), ("comma", 1.5), (None, None)])
+def test_comma_csv_reads_1_500_by_the_chosen_decimal_format(user, facility, decimal_mark, expected):
+    # Pilot check 2026-10-09 (F6): "1,500" was always read as 1500, a 1000x error for a French user.
+    # It is read by the format chosen for the file; without a choice it is refused as ambiguous.
     csv = ("Facility,Date,Process,Fuel,Quantity,Unit,Factor_Type\n"
            f'{FACILITY},2025-07,combustion,Natural Gas,"1,500",MMBtu,default\n')
-    status = _upload(csv, user, scope=1)
+    status = _upload(csv, user, scope=1, decimal_mark=decimal_mark)
     assert status["status"] == "completed", status
     with flask_app.app_context():
         rec = Emission.query.filter_by(facility_id=facility, year=2025, month=7).first()
-        assert rec.quantity == pytest.approx(1500.0)
+        if expected is None:
+            assert rec is None
+            assert "ambiguous" in str(status.get("skipped_groups") or status.get("skipped"))
+        else:
+            assert rec.quantity == pytest.approx(expected)
+            db.session.delete(rec)
+            db.session.commit()
 
 
 # -- 3. Bulk user uncertainty = manual form ------------------------------------------------------

@@ -1,7 +1,6 @@
 import json
 import os
 import datetime
-import re
 import socket
 import ipaddress
 from urllib.parse import urlparse
@@ -11,6 +10,8 @@ from . import auth_bp
 from models import User, Notification, Facility
 from extensions import db, limiter, csrf
 from utils import log_activity_and_notify, is_unrestricted_location
+from services.login_guard import (ACCOUNT_LOCKED, failed_sign_in, get_login_account_limit, get_login_rate_limit,  # noqa: F401
+                                  login_account_key, record_failed_sign_in, validate_password_complexity)
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
@@ -65,31 +66,6 @@ def get_user_operational_defaults(user):
 
     return defaults
 
-
-
-def validate_password_complexity(password: str):
-    """
-    Validates password against NIST SP 800-63B / corporate complexity rules:
-    - Minimum 10 characters
-    - At least 1 uppercase letter
-    - At least 1 lowercase letter
-    - At least 1 numeric digit
-    - At least 1 special character
-    """
-    if not password or len(password) < 10:
-        return False, "Password must be at least 10 characters long"
-    if not re.search(r"[A-Z]", password):
-        return False, "Password must contain at least one uppercase letter (A-Z)"
-    if not re.search(r"[a-z]", password):
-        return False, "Password must contain at least one lowercase letter (a-z)"
-    if not re.search(r"[0-9]", password):
-        return False, "Password must contain at least one numeric digit (0-9)"
-    if not re.search(r'[!@#$%^&*(),.?":{}|<>\-_+=\[\]\\\/~`]', password):
-        return (
-            False,
-            "Password must contain at least one special character (!@#$%^&*...)",
-        )
-    return True, ""
 
 
 def is_safe_image_url(url_str: str) -> tuple[bool, str]:
@@ -349,8 +325,6 @@ def register():
     )
 
 
-def get_login_rate_limit():
-    return os.environ.get("LOGIN_RATE_LIMIT", "20 per 15 minutes")
 
 
 _DUMMY_PASSWORD_HASH = generate_password_hash("timing-equaliser-not-a-real-account")
@@ -358,7 +332,9 @@ _DUMMY_PASSWORD_HASH = generate_password_hash("timing-equaliser-not-a-real-accou
 
 @auth_bp.route("/login", methods=["POST"])
 @csrf.exempt
-@limiter.limit(get_login_rate_limit)
+@limiter.limit(get_login_rate_limit, deduct_when=failed_sign_in)
+@limiter.limit(get_login_account_limit, key_func=login_account_key, deduct_when=failed_sign_in,
+               error_message=ACCOUNT_LOCKED)
 def login():
     data = request.get_json()
     if not data or not data.get("email") or not data.get("password"):
@@ -432,6 +408,7 @@ def login():
         # Audit A-06: same password-hash work as for an existing account, so response time does
         # not reveal which e-mail addresses are registered (forgot-password does the same)
         check_password_hash(_DUMMY_PASSWORD_HASH, password_input)
+    record_failed_sign_in(email_input, user)
     return jsonify({"error": "Invalid credentials"}), 401
 
 

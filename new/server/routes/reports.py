@@ -1,4 +1,5 @@
 from routes.auth import login_required
+from services.audit_chain import record_report_fingerprint
 from services.labels import process_label, scope2_source_label
 from flask import Blueprint, jsonify, request, send_file, current_app
 from datetime import datetime, timezone
@@ -313,9 +314,10 @@ def create_pdf_report(emissions_data, filters):
     )
     elements.append(Paragraph(footer_text, styles["Italic"]))
 
-    # ISO 14064-3 / ISAE 3410 Third-Party Assurance & Audit Manifest
-    manifest_token = f"records={len(emissions_data)}|scope={filters.get('scope')}|year={filters.get('year')}|month={filters.get('month')}|ts={datetime.now(timezone.utc).isoformat()}"
-    report_sha256 = hashlib.sha256(manifest_token.encode("utf-8")).hexdigest()
+    # Audit manifest: fingerprint of the report's data, also recorded in the audit log (F12)
+    from services.audit_chain import data_fingerprint
+
+    report_sha256 = data_fingerprint({"filters": filters, "records": emissions_data})
 
     elements.append(Spacer(1, 0.2 * inch))
     audit_heading_style = ParagraphStyle(
@@ -327,12 +329,12 @@ def create_pdf_report(emissions_data, filters):
         textColor=colors.HexColor("#1e293b"),
         spaceAfter=4,
     )
-    elements.append(Paragraph("ISO 14064-3 / ISAE 3410 Third-Party Assurance & Audit Manifest", audit_heading_style))
+    elements.append(Paragraph("Audit Manifest", audit_heading_style))
     audit_table_data = [
-        ["Assurance Standard", "ISO 14064-3 / ISAE 3410 Non-Repudiation Specification"],
-        ["Cryptographic Digest", f"{report_sha256[:32]}\n{report_sha256[32:]}"],
-        ["Assurance Status", "Digitally Sealed & Tamper-Evident"],
-        ["Sealed Timestamp (UTC)", datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")],
+        ["Data Fingerprint (SHA-256)", f"{report_sha256[:32]}\n{report_sha256[32:]}"],
+        ["Covers", "The records and filters of this report"],
+        ["Check", "Matches the REPORT entry of the audit log written when this report was generated"],
+        ["Generated (UTC)", datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")],
     ]
     audit_tbl = Table(audit_table_data, colWidths=[2.2 * inch, 5.0 * inch])
     audit_tbl.setStyle(
@@ -536,10 +538,8 @@ def generate_report():
             as_attachment=True,
             download_name=filename,
         )
-        resp.headers["X-Audit-SHA256"] = report_sha256
-        resp.headers["X-Audit-Standard"] = "ISO 14064-3 / ISAE 3410"
         resp.headers["X-Audit-Timestamp"] = datetime.now(timezone.utc).isoformat()
-        return resp
+        return record_report_fingerprint(resp, user, "PDF report", filters, len(emissions_data), report_sha256)
 
     except Exception as e:
         current_app.logger.error(f"Error generating PDF report: {e}", exc_info=True)

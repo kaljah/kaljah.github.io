@@ -43,11 +43,14 @@ def login(client, user):
     return r
 
 
-def upload(client, csv_text, scope, overwrite=True, filename="f.csv", wait=True):
+def upload(client, csv_text, scope, overwrite=True, filename="f.csv", wait=True, decimal_mark=None):
+    form = {"file": (io.BytesIO(csv_text.encode()), filename), "scope": scope,
+            "overwrite_duplicates": "true" if overwrite else "false"}
+    if decimal_mark:
+        form["decimal_mark"] = decimal_mark
     r = client.post(
         "/api/emissions/upload/start",
-        data={"file": (io.BytesIO(csv_text.encode()), filename), "scope": scope,
-              "overwrite_duplicates": "true" if overwrite else "false"},
+        data=form,
         content_type="multipart/form-data",
     )
     job = (r.get_json() or {}).get("job_id")

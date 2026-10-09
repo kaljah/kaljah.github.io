@@ -89,7 +89,14 @@ def prune_old_backups(backup_dir, retain_count=10):
 
 
 def main():
-    backup_dir = os.environ.get("BACKUP_DIR", "backups")
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Back up the GHG database (PostgreSQL or SQLite).")
+    parser.add_argument("sqlite_path", nargs="?", help="SQLite only: database file (default ghg_app.db)")
+    parser.add_argument("--output-dir", default=os.environ.get("BACKUP_DIR", "backups"),
+                        help="folder for the backup files (default: $BACKUP_DIR or ./backups)")
+    args = parser.parse_args()
+    backup_dir = args.output_dir
     retain_count = int(os.environ.get("BACKUP_RETAIN_COUNT", "14"))
     db_type = os.environ.get("DB_TYPE", "sqlite").lower()
     db_url = os.environ.get("DATABASE_URL", "")
@@ -103,7 +110,7 @@ def main():
         # SQLite
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         default_db = os.path.join(base_dir, "ghg_app.db")
-        db_path = sys.argv[1] if len(sys.argv) > 1 else default_db
+        db_path = args.sqlite_path or default_db
         if not os.path.exists(db_path):
             # Check current working directory
             if os.path.exists("ghg_app.db"):

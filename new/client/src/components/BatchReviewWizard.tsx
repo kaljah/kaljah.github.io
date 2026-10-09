@@ -397,7 +397,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
         by_scope
       });
 
-      showReviewResult(toast, "approved", res.data.approved_count, selectedKeys.size);
+      showReviewResult(toast, "approved", res.data.approved_count, selectedKeys.size, res.data.skipped);
       setSelectedKeys(new Set());
       fetchAllPendingData();
     } catch (err: any) {
@@ -430,7 +430,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
               scope: "all",
               approve_all: true
             });
-            showReviewResult(toast, "approved", res.data.approved_count);
+            showReviewResult(toast, "approved", res.data.approved_count, undefined, res.data.skipped);
           } else {
             // Scoped to current filters
             const by_scope: Record<string, number[]> = { "1": [], "2": [], "3": [] };
@@ -444,7 +444,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
               ids,
               by_scope
             });
-            showReviewResult(toast, "approved", res.data.approved_count);
+            showReviewResult(toast, "approved", res.data.approved_count, undefined, res.data.skipped);
           }
           setSelectedKeys(new Set());
           fetchAllPendingData();
@@ -488,14 +488,14 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
           by_scope,
           reason
         });
-        showReviewResult(toast, "rejected", res.data.rejected_count ?? res.data.deleted_count, selectedKeys.size);
+        showReviewResult(toast, "rejected", res.data.rejected_count ?? res.data.deleted_count, selectedKeys.size, res.data.skipped);
       } else if (rejectionModal.mode === 'all') {
         const res = await api.post('/emissions/reject/batch', {
           scope: "all",
           reject_all: true,
           reason
         });
-        showReviewResult(toast, "rejected", res.data.rejected_count ?? res.data.deleted_count);
+        showReviewResult(toast, "rejected", res.data.rejected_count ?? res.data.deleted_count, undefined, res.data.skipped);
       } else if (rejectionModal.mode === 'filtered') {
         const by_scope: Record<string, number[]> = { "1": [], "2": [], "3": [] };
         const ids: number[] = [];
@@ -509,7 +509,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
           by_scope,
           reason
         });
-        showReviewResult(toast, "rejected", res.data.rejected_count ?? res.data.deleted_count);
+        showReviewResult(toast, "rejected", res.data.rejected_count ?? res.data.deleted_count, undefined, res.data.skipped);
       }
 
       setRejectionModal({ isOpen: false, mode: 'selected', targetItem: null, reason: '' });
@@ -956,7 +956,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
             </div>
 
             <p className="m-[0px]! text-[length:0.86rem]! text-[color:var(--text-secondary)]! leading-[1.5]!">
-              Maker-Checker governance requires a recorded audit reason before rejecting staged bulk entries. This justification will be logged in the immutable audit trail.
+              Maker-Checker governance requires a recorded audit reason before rejecting staged bulk entries. This justification will be logged in the tamper-evident audit trail.
             </p>
 
             <div>

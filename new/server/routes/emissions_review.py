@@ -58,42 +58,13 @@ def reject_emission(emission_id):
     return jsonify({"success": True, "id": emission_id, "scope": scope, "status": "Rejected", "reason": reason})
 
 
-def _batch_targets(data, all_flag):
-    """Map the batch body to {scope: ids | None}. Plain `ids` are only unambiguous for one scope."""
-    scope = str(data.get("scope", "1"))
-    by_scope = data.get("by_scope") if isinstance(data.get("by_scope"), dict) else {}
-    picked = {}
-    for k in ("1", "2", "3", "cap"):
-        ids = by_scope.get(k) or (by_scope.get(int(k)) if k.isdigit() else None)
-        if ids:
-            picked[k] = list(ids)
-    if picked:
-        return picked
-    if scope == "all":
-        if all_flag:
-            return {"1": None, "2": None, "3": None}
-        return None  # ids without by_scope would hit the same ids in every table
-    if scope in ("1", "2", "3", "cap"):
-        return {scope: None if all_flag else list(data.get("ids") or [])}
-    return None
-
-
 def _batch_decide(decision):
-    from services.maker_checker import DecisionError, decide
+    """(decided ids, skipped records with the reason) of a batch call, or an error response."""
+    from services.maker_checker import DecisionError
+    from services.review_batch import run_batch
 
-    user = get_current_user()
-    data = request.get_json(silent=True) or {}
-    all_flag = bool(data.get("approve_all") if decision == "approve" else data.get("reject_all"))
-    targets = _batch_targets(data, all_flag)
-    if not targets:
-        return jsonify({"error": "Provide by_scope ids, a single scope with ids, or scope='all' with the all flag"}), 400
-    reason = str(data.get("reason") or "Batch rejected by reviewer")
-    done = []
     try:
-        for scope, ids in targets.items():
-            if ids is not None and not ids:
-                continue
-            done += decide(user, scope, ids, decision, reason=reason, request=request)
+        done, skipped = run_batch(get_current_user(), request.get_json(silent=True) or {}, decision, request)
         db.session.commit()
     except DecisionError as err:
         db.session.rollback()
@@ -104,7 +75,7 @@ def _batch_decide(decision):
     from routes.dashboard import clear_dashboard_cache
 
     clear_dashboard_cache()
-    return done
+    return done, skipped
 
 
 @emissions_bp.route("/approve/batch", methods=["POST"])
@@ -112,20 +83,24 @@ def _batch_decide(decision):
 def approve_batch_emissions():
     """Approve records awaiting review. Body: {by_scope: {"1": [...], ...}} or {scope, ids} or {scope: "all", approve_all: true}.
     Records the caller created or last modified are skipped (segregation of duties)."""
-    done = _batch_decide("approve")
-    if not isinstance(done, list):
-        return done
-    return jsonify({"success": True, "approved_count": len(done), "approved_ids": done})
+    result = _batch_decide("approve")
+    if not (isinstance(result, tuple) and isinstance(result[0], list)):
+        return result  # an error response (body, status)
+    done, skipped = result
+    return jsonify({"success": True, "approved_count": len(done), "approved_ids": done,
+                    "skipped_count": len(skipped), "skipped": skipped})
 
 
 @emissions_bp.route("/reject/batch", methods=["POST"])
 @login_required
 def reject_batch_emissions():
     """Reject records awaiting review (soft: status Rejected, excluded from totals)."""
-    done = _batch_decide("reject")
-    if not isinstance(done, list):
-        return done
-    return jsonify({"success": True, "deleted_count": len(done), "rejected_count": len(done), "rejected_ids": done})
+    result = _batch_decide("reject")
+    if not (isinstance(result, tuple) and isinstance(result[0], list)):
+        return result  # an error response (body, status)
+    done, skipped = result
+    return jsonify({"success": True, "deleted_count": len(done), "rejected_count": len(done), "rejected_ids": done,
+                    "skipped_count": len(skipped), "skipped": skipped})
 
 
 @emissions_bp.route("/erp/sync", methods=["POST"])

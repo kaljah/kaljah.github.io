@@ -20,7 +20,8 @@ import {
   Trash2,
   XCircle,
 } from "lucide-react";
-import { Badge, Button, Card, EmptyState, Menu, MenuContent, MenuItem, MenuTrigger, NativeSelect, SegmentedControl, Skeleton, StatCard, type BadgeTone } from "../../ui";
+import api from "../../api";
+import { Badge, Banner, Button, Card, EmptyState, Menu, MenuContent, MenuItem, MenuTrigger, NativeSelect, SegmentedControl, Skeleton, StatCard, type BadgeTone } from "../../ui";
 import { cn } from "../../ui/cn";
 
 export interface ActionStyleDef {
@@ -63,11 +64,12 @@ export const AuditHeader: React.FC<AuditHeaderProps> = ({ view, onView, refreshi
   <div className="mb-6 flex flex-col items-stretch justify-between gap-5 md:flex-row md:items-start">
     <div className="min-w-0">
       <Badge tone="brand" className="mb-2 gap-1.5 px-2.5 py-1 uppercase tracking-wide">
-        <Shield className="size-3.5" aria-hidden="true" /> Immutable Compliance Log
+        <Shield className="size-3.5" aria-hidden="true" /> Tamper-evident log
       </Badge>
       <h1 className="m-0 mb-1.5 text-xl font-bold text-text">Audit Trail &amp; System Activity</h1>
       <p className="m-0 max-w-3xl text-md leading-normal text-text-secondary">
-        Comprehensive tamper-evident record of all emissions data, authentication, calculations, and administrative actions
+        Every change to emissions data, sign-ins, calculations and administrative actions. Each entry is sealed into a
+        hash chain when it is written, so a later edit or deletion shows up when the log is verified.
       </p>
     </div>
 
@@ -200,3 +202,65 @@ export const AuditPagination: React.FC<AuditPaginationProps> = ({ page, totalPag
     </div>
   </Card>
 );
+
+interface ChainResult {
+  status: "verified" | "tampered";
+  total_records: number;
+  issue_count: number;
+  issues: { id: number; problem: string; detail: string }[];
+  chain_head_hash: string;
+  checkpoint_hmac: string;
+  verified_at: string;
+}
+
+/** Runs the hash-chain check of the whole log (GET /audit/verify-chain) and shows the outcome. */
+export const AuditIntegrityCheck: React.FC = () => {
+  const [result, setResult] = React.useState<ChainResult | null>(null);
+  const [error, setError] = React.useState("");
+  const [busy, setBusy] = React.useState(false);
+
+  const verify = async () => {
+    setBusy(true);
+    setError("");
+    try {
+      const res = await api.get("/audit/verify-chain");
+      setResult(res.data);
+    } catch (err: any) {
+      setResult(null);
+      setError(err.response?.data?.error || "The log could not be verified.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="mb-6 flex flex-col gap-3">
+      <div className="flex flex-wrap items-center gap-3">
+        <Button variant="secondary" onClick={verify} disabled={busy}>
+          <Shield className="size-4" aria-hidden="true" /> {busy ? "Verifying..." : "Verify integrity"}
+        </Button>
+        <span className="text-sm text-text-secondary">Checks every entry against the hash sealed when it was written.</span>
+      </div>
+      {error && <Banner tone="danger">{error}</Banner>}
+      {result && result.status === "verified" && (
+        <Banner tone="success" title={`Log intact: ${result.total_records.toLocaleString()} entries verified`}>
+          No entry was changed, removed or inserted. To detect a later removal of the newest entries, keep this checkpoint:{" "}
+          <span className="break-all font-mono text-xs">
+            {result.total_records} entries · head {result.chain_head_hash} · seal {result.checkpoint_hmac}
+          </span>
+        </Banner>
+      )}
+      {result && result.status === "tampered" && (
+        <Banner tone="danger" title={`Log altered: ${result.issue_count} problem${result.issue_count === 1 ? "" : "s"} in ${result.total_records.toLocaleString()} entries`}>
+          <ul className="m-0 mt-1 list-disc pl-5">
+            {result.issues.map((i) => (
+              <li key={`${i.id}-${i.problem}`}>
+                Entry #{i.id}: {i.detail}
+              </li>
+            ))}
+          </ul>
+        </Banner>
+      )}
+    </div>
+  );
+};

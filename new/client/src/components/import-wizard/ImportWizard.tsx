@@ -12,6 +12,11 @@ import { fittingMappings, withSavedMapping, type SavedMapping } from "../../util
 import { EMPTY_CHECK, FileCheckPanel, type FileCheckState } from "./FileCheck";
 import { SavedMappingBar } from "./SavedMappingBar";
 
+const DECIMAL_MARKS: { value: "comma" | "point"; label: string; example: string }[] = [
+  { value: "comma", label: "Decimal comma", example: "1 234,5" },
+  { value: "point", label: "Decimal point", example: "1,234.5" },
+];
+
 export interface ImportWizardMode {
   value: string;
   label: string;
@@ -95,6 +100,8 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
   const [jobId, setJobId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [overwrite, setOverwrite] = useState<boolean>(false); // replace records that already exist
+  // How the file writes decimals: chosen per file, never guessed ("1,000" is 1000 in English, 1 in French)
+  const [decimalMark, setDecimalMark] = useState<"comma" | "point" | null>(null);
   const [allowedRegions, setAllowedRegions] = useState<string[] | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [maxBytes, setMaxBytes] = useState<number | null>(null); // server upload limit, checked when a file is picked
@@ -154,6 +161,10 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
   const processFile = useCallback(
     (f: File | null | undefined) => {
       if (!f) return;
+      if (!decimalMark) {
+        setParseError("Choose how decimals are written in the file first.");
+        return;
+      }
       setParseError("");
       setCheck(EMPTY_CHECK);
       if (maxBytes && f.size > maxBytes) {
@@ -189,7 +200,7 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
         error: () => setParseError("Failed to parse file. Please ensure it is a valid CSV."),
       });
     },
-    [allFields, MAP, maxBytes, savedMappings],
+    [allFields, MAP, maxBytes, savedMappings, decimalMark],
   );
 
   const onDrop = (e: React.DragEvent) => {
@@ -207,6 +218,7 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
     form.append("file", f);
     form.append("scope", scope);
     form.append("overwrite_duplicates", overwrite ? "true" : "false");
+    if (decimalMark) form.append("decimal_mark", decimalMark);
     extraForm?.(form);
     form.append("column_mapping", JSON.stringify(mapping));
     return form;
@@ -238,7 +250,7 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
       setCheck({ ...EMPTY_CHECK, error: err.response?.data?.error || err.message });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [file, scope, overwrite, mapping, headers.length, allFields, savedMappings, extraForm]);
+  }, [file, scope, overwrite, decimalMark, mapping, headers.length, allFields, savedMappings, extraForm]);
 
   // first check when the mapping step opens; later changes only mark the result out of date
   const checkedFileRef = useRef<File | null>(null);
@@ -259,7 +271,7 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
       return;
     }
     setCheck((c) => (c.data || c.error ? { ...c, stale: true } : c));
-  }, [mapping, overwrite, optionsKey]);
+  }, [mapping, overwrite, decimalMark, optionsKey]);
   useEffect(() => {
     if (recheck) {
       setRecheck(false);
@@ -352,6 +364,31 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
               </div>
             )}
             {restricted && allowedRegions && <RegionAccess regions={allowedRegions} />}
+            <div className="flex flex-col gap-2">
+              <p id="decimal-mark-label" className="m-0 text-sm font-semibold text-text">
+                How are decimals written in this file?
+              </p>
+              <div role="radiogroup" aria-labelledby="decimal-mark-label" className="flex flex-wrap gap-2">
+                {DECIMAL_MARKS.map((d) => (
+                  <Button
+                    key={d.value}
+                    role="radio"
+                    aria-checked={decimalMark === d.value}
+                    variant={decimalMark === d.value ? "primary" : "secondary"}
+                    size="sm"
+                    onClick={() => {
+                      setDecimalMark(d.value);
+                      setParseError("");
+                    }}
+                  >
+                    {d.label} <span className="font-mono">{d.example}</span>
+                  </Button>
+                ))}
+              </div>
+              <p className="m-0 text-xs text-text-secondary">
+                Applies to CSV files and numbers typed as text in Excel. A number that does not match is reported, not guessed.
+              </p>
+            </div>
             <FileDrop inputRef={fileInputRef} dragging={dragging} onDragging={setDragging} onDrop={onDrop} onFileChange={onFileChange} error={parseError} />
             {maxBytes && <p className="m-0 text-xs text-text-secondary">Up to {(maxBytes / 1048576).toFixed(0)} MB per file · no row limit</p>}
             {fileExtras}
@@ -368,7 +405,10 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="m-0 truncate text-base font-semibold text-text">{file.name}</p>
-                  <p className="m-0 text-sm text-text-secondary">{(file.size / 1024).toFixed(1)} KB</p>
+                  <p className="m-0 text-sm text-text-secondary">
+                    {(file.size / 1024).toFixed(1)} KB
+                    {decimalMark && ` · ${DECIMAL_MARKS.find((d) => d.value === decimalMark)?.label.toLowerCase()} (${DECIMAL_MARKS.find((d) => d.value === decimalMark)?.example})`}
+                  </p>
                 </div>
                 {headers.length > 0 && (
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-success-bg px-2.5 py-1 text-xs font-semibold text-success-fg">
