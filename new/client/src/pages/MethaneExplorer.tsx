@@ -262,10 +262,12 @@ const EmissionsMap: React.FC = () => {
 
     const filtered = facilities.filter((f) => {
       // Region Filter — use region_identifier (= f.region ?? f.name) so facilities
-      // uploaded via bulk uploader (where region=NULL) still match correctly.
+      // uploaded via bulk uploader (where region=NULL) still match correctly. The options also list
+      // locations (and a regional user's scope can be a location), so a location matches too.
       const matchesRegion =
         filters.region === "all" ||
-        f.region_identifier === filters.region;
+        f.region_identifier === filters.region ||
+        f.location === filters.region;
 
       // Activity Filter
       const matchesActivity =
