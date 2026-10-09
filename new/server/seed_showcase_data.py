@@ -290,7 +290,9 @@ def seed():
                     base_co2 = 48000.0
                     base_ch4 = 95.0
 
-                # 1. Fuel Gas Combustion
+                # 1. Fuel Gas Combustion (CO2e from the stored gas masses, N2O included: AR5 28 / 265)
+                comb_co2, comb_ch4 = round(base_co2 * 0.70, 2), round(base_ch4 * 0.12, 2)
+                comb_n2o = round(base_co2 * 0.0004, 2)
                 db.session.add(Emission(
                     record_id=f"EM-COMB-{fac.id}-{yr}-{uuid.uuid4().hex[:6]}",
                     facility_id=fac.id,
@@ -300,10 +302,10 @@ def seed():
                     fuel_type="Natural Gas",
                     quantity=round(base_co2 * 0.52, 2),
                     unit="tonnes",
-                    co2_emissions=round(base_co2 * 0.70, 2),
-                    ch4_emissions=round(base_ch4 * 0.12, 2),
-                    n2o_emissions=round(base_co2 * 0.0004, 2),
-                    co2e_total=round(base_co2 * 0.70 + (base_ch4 * 0.12 * 28.0), 2),
+                    co2_emissions=comb_co2,
+                    ch4_emissions=comb_ch4,
+                    n2o_emissions=comb_n2o,
+                    co2e_total=round(comb_co2 + comb_ch4 * 28.0 + comb_n2o * 265.0, 2),
                     status="Verified",
                     activity=fac.activity,
                     division=fac.division,
@@ -316,6 +318,7 @@ def seed():
                 # 2. Operational Flaring
                 flaring_ch4 = round(base_ch4 * 0.28, 2)
                 flaring_co2 = round(base_co2 * 0.22, 2)
+                flaring_n2o = round(flaring_co2 * 0.0002, 2)
                 db.session.add(Emission(
                     record_id=f"EM-FLAR-{fac.id}-{yr}-{uuid.uuid4().hex[:6]}",
                     facility_id=fac.id,
@@ -327,8 +330,8 @@ def seed():
                     unit="tonnes",
                     co2_emissions=flaring_co2,
                     ch4_emissions=flaring_ch4,
-                    n2o_emissions=round(flaring_co2 * 0.0002, 2),
-                    co2e_total=round(flaring_co2 + (flaring_ch4 * 28.0), 2),
+                    n2o_emissions=flaring_n2o,
+                    co2e_total=round(flaring_co2 + flaring_ch4 * 28.0 + flaring_n2o * 265.0, 2),
                     status="Verified",
                     activity=fac.activity,
                     division=fac.division,
@@ -424,8 +427,8 @@ def seed():
                         sub_category="Chemicals, Catalysts & Drilling Mud",
                         activity_data=8500.0,
                         unit="tonnes",
-                        emission_factor=1.42,
-                        co2e=round(8500.0 * 1.42, 2),
+                        emission_factor=1420.0,  # kg CO2e per tonne (stored per activity unit in kg)
+                        co2e=round(8500.0 * 1420.0 / 1000.0, 2),
                         status="Verified",
                     ))
         db.session.commit()
