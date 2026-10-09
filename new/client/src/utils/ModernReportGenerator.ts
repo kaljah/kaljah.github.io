@@ -1265,7 +1265,8 @@ Email: ${personResponsible.email || "N/A"}`;
         ciTot == null ? "No production recorded" : ciTot < 15 ? "Below 15.0 kg/BOE" : "At or above 15.0 kg/BOE"],
       ["Carbon Intensity (Saleable Product)", `${fmt(ciSal)} kg CO2e / BOE`, "Company Protocol",
         ciSal == null ? "Saleable production not recorded" : "Normalized to commercial export sales"],
-      ["Methane Intensity (NGSI Protocol)", `${fmt(ngsiCh4, 3)} wt.%`, "NGSI Methane Protocol",
+      // ADM-16: NGSI is a mass ratio; the Methane Intensity page shows the OGMP loss rate (volume ratio)
+      ["Methane Intensity (NGSI: CH4 mass / gas mass)", `${fmt(ngsiCh4, 3)} wt.%`, "NGSI Methane Protocol (not the OGMP volume loss rate)",
         ngsiCh4 == null ? "Gas throughput not recorded" : ngsiCh4 <= 0.20 ? "Below the 0.20% methane intensity ceiling" : "Above the 0.20% methane intensity ceiling"],
       ["Flaring Intensity (Volume)", `${fmt(flaredSm3PerBoe)} Sm3 / BOE`, "World Bank GGFR Framework", flaredSm3PerBoe == null ? "Not assessable" : "Computed from recorded flaring and production"],
       ["Flaring Intensity (Gas Ratio)", `${fmt(flareIntensityVal, 3)} vol.%`, "Executive Decree 21-330 Art. 9",
@@ -1600,6 +1601,31 @@ Email: ${personResponsible.email || "N/A"}`;
       ? String(reportFacilities[0].name || "Facility").replace(/[^A-Za-z0-9]+/g, "_").replace(/^_|_$/g, "")
       : "All_Facilities";
     const filename = `GHG_Inventory_Report_${scopeName}_${isAllYears ? "All_Years" : selectedYear}.pdf`;
+
+    // ADM-15: the data fingerprint (SHA-256 of the report's records, filters and totals) is printed on the
+    // last page and recorded as a REPORT audit entry, like the server-built exports
+    const fingerprintData = {
+      filters: { year: selectedYear, regionId, scope, gwp: resolvedGwp.label },
+      rows: fullData.scope1Rows,
+      totals: { scope1: fullData.scope1Total, scope2: fullData.scope2Total, scope3: fullData.scope3Total },
+    };
+    let fingerprint = "";
+    try {
+      const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(JSON.stringify(fingerprintData)));
+      fingerprint = Array.from(new Uint8Array(digest)).map((b) => b.toString(16).padStart(2, "0")).join("");
+      doc.setPage(doc.getNumberOfPages());
+      doc.setFontSize(6.5);
+      doc.setTextColor(120, 120, 120);
+      doc.text(`Data fingerprint (SHA-256): ${fingerprint}`, margin, doc.internal.pageSize.getHeight() - 4);
+      await api.post("/reports/fingerprint", {
+        kind: "ISO 14064-1 PDF (browser)",
+        fingerprint,
+        filters: fingerprintData.filters,
+        record_count: fullData.scope1Rows.length,
+      });
+    } catch (e) {
+      console.warn("Report fingerprint not recorded", e);
+    }
     const pdfBlob = doc.output("blob");
     const pdfBlobWithMime = new Blob([pdfBlob], { type: "application/pdf" });
     const url = window.URL.createObjectURL(pdfBlobWithMime);

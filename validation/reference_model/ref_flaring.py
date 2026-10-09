@@ -17,18 +17,19 @@ from .ref_constants import (
 )
 from .ref_combustion import ref_normalize_gas_volume
 
-# API Compendium 2021 Section 5.1.2 / Table 5-2: 98 % carbon conversion (Eq 5-2); 2 % residual CH4, 0.5 % for a
-# well-designed and operated (enclosed) flare. No source gives a different conversion by flare type.
+# API Compendium 2021 Section 5.1.2 as corrected in December 2025: 96.5 % carbon conversion (Eq 5-2) and 2 %
+# residual CH4 for production flares, whatever the design; 0.5 % for refinery flares is set by facility segment
+# (pass the destruction efficiency). No source gives a different conversion by flare type.
 FLARE_DEFAULTS = {
-    "elevated": {"eta_c": 0.98, "eta_d": 0.980},
-    "steam_assisted": {"eta_c": 0.98, "eta_d": 0.980},
-    "air_assisted": {"eta_c": 0.98, "eta_d": 0.980},
-    "unassisted": {"eta_c": 0.98, "eta_d": 0.980},
-    "open": {"eta_c": 0.98, "eta_d": 0.980},
-    "enclosed": {"eta_c": 0.98, "eta_d": 0.995},
-    "ground": {"eta_c": 0.98, "eta_d": 0.995},
-    "pit": {"eta_c": 0.98, "eta_d": 0.980},
-    "open_pit": {"eta_c": 0.98, "eta_d": 0.980},
+    "elevated": {"eta_c": 0.965, "eta_d": 0.980},
+    "steam_assisted": {"eta_c": 0.965, "eta_d": 0.980},
+    "air_assisted": {"eta_c": 0.965, "eta_d": 0.980},
+    "unassisted": {"eta_c": 0.965, "eta_d": 0.980},
+    "open": {"eta_c": 0.965, "eta_d": 0.980},
+    "enclosed": {"eta_c": 0.965, "eta_d": 0.980},
+    "ground": {"eta_c": 0.965, "eta_d": 0.980},
+    "pit": {"eta_c": 0.965, "eta_d": 0.980},
+    "open_pit": {"eta_c": 0.965, "eta_d": 0.980},
 }
 
 
@@ -75,7 +76,7 @@ def ref_calculate_flaring(
         vol_m3 = norm_vol * CONV_MMSCF_TO_M3
 
     ft = str(flare_type or "elevated").lower().strip().replace("-", "_").replace(" ", "_")
-    defaults = FLARE_DEFAULTS.get(ft, {"eta_c": 0.984, "eta_d": 0.980})
+    defaults = FLARE_DEFAULTS.get(ft, {"eta_c": 0.965, "eta_d": 0.980})
     eta_c = defaults["eta_c"]
     eta_d = defaults["eta_d"]
 
