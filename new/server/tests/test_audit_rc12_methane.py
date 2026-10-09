@@ -42,16 +42,3 @@ def test_bug052_survey_override_needs_justification(client, app):
         rows = client.get(f"/api/data/ogmp-surveys?facilityId={f.id}").get_json()
         assert rows[0]["reconciliation_status"] == "Discrepancy Flagged"
         assert rows[0]["variance_pct"] == pytest.approx((51.78 * 8760 / 1000 - 100) / 100 * 100, rel=1e-3)
-
-
-def test_bug075_satellite_export_annualised_8760(client, app):
-    with app.app_context():
-        f = make_facility(region="West", activity="Upstream")
-        login(client, make_user("admin", "Global"))
-        r = client.post("/api/satellite/sentinel5p/export-to-ogmp", json={
-            "facility_id": f.id, "observation_date": "2024-06-01", "estimated_emission_rate_kg_hr": 100.0})
-        assert r.status_code in (200, 201), r.get_data(as_text=True)
-        from models import OgmpSurvey
-
-        s = OgmpSurvey.query.filter_by(facility_id=f.id).first()
-        assert s.estimated_annual_tch4 == pytest.approx(876.0) and s.measured_rate_kg_hr == pytest.approx(100.0)

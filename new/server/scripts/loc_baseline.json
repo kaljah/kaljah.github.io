@@ -63,7 +63,6 @@
   "routes/reports.py": 607,
   "routes/reports_export.py": 242,
   "routes/reports_ogmp.py": 722,
-  "routes/satellite.py": 523,
   "routes/scope2.py": 928,
   "routes/scope3.py": 565,
   "services/__init__.py": 1,
@@ -81,6 +80,5 @@
   "services/review_batch.py": 94,
   "services/scope1_calc.py": 438,
   "services/scope1_template.py": 667,
-  "services/scope2_activity.py": 25,
-  "services/sentinel5p.py": 462
+  "services/scope2_activity.py": 25
 }

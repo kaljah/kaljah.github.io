@@ -63,21 +63,15 @@ def test_a02_register_separation_of_duties(app, ctx, actor, role, expected):
 
 # ── A-03: global settings never land in (or are masked by) user preferences ─────
 def test_a03_settings_secret_not_copied_into_preferences(app, ctx):
-    from routes.auth import save_setting_to_db, _app_settings
-
-    before = _app_settings.get("copernicus_password", "")
     admin = make_user("admin")
-    try:
-        with app.test_client() as c:
-            login(c, admin)
-            r = c.put("/api/auth/settings", json={"copernicus_password": "S3cretValue", "language": "fr"})
-            assert r.status_code == 200
-        db.session.expire_all()
-        prefs = json.loads(db.session.get(User, admin.id).preferences or "{}")
-        assert "copernicus_password" not in prefs
-        assert prefs.get("language") == "fr"  # personal preferences are still saved
-    finally:
-        save_setting_to_db("copernicus_password", before)
+    with app.test_client() as c:
+        login(c, admin)
+        r = c.put("/api/auth/settings", json={"copernicus_password": "S3cretValue", "language": "fr"})
+        assert r.status_code == 200
+    db.session.expire_all()
+    prefs = json.loads(db.session.get(User, admin.id).preferences or "{}")
+    assert "copernicus_password" not in prefs
+    assert prefs.get("language") == "fr"  # personal preferences are still saved
 
 
 def test_a03_stale_preference_does_not_mask_global_gwp(app, ctx):

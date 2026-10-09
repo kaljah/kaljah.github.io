@@ -688,7 +688,7 @@ class SbtiTarget(db.Model):
 class SystemSetting(db.Model):
     """
     Persistent key-value store for application-wide settings
-    (GWP standard, OGMP parameters, WEC fees, Copernicus credentials, etc.)
+    (GWP standard, OGMP parameters, WEC fees, etc.)
     Survives server restarts and multi-worker deployments.
     """
     __tablename__ = "system_settings"

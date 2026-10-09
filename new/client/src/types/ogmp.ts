@@ -22,14 +22,3 @@ export interface OgmpSurvey {
   created_by?: number;
   created_at?: string;
 }
-
-export interface SatelliteObservation {
-  product_id: string;
-  sensing_time: string;
-  delta_ch4_ppb: number;
-  estimated_emission_rate_kg_hr: number;
-  wind_speed_m_s?: number;
-  pbl_height_m?: number;
-  facility_id?: number;
-  facility_name?: string;
-}

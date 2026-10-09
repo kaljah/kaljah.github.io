@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   MapContainer,
   TileLayer,
@@ -12,9 +11,8 @@ import {
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import {
-  X,
   Flame,
-  Satellite,
+  Map as MapIcon,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -22,10 +20,9 @@ import api from "../api";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../components/Toast";
 import { getUserOperationalDefaults, isUnrestrictedLocation } from "../utils/userDefaults";
-import { Badge, Banner, IconButton, cn } from "../ui";
+import { cn } from "../ui";
 import ExplorerHud from "./explorer/ExplorerHud";
 import ExplorerDrawer from "./explorer/ExplorerDrawer";
-import ExplorerLegend from "./explorer/ExplorerLegend";
 import ExplorerDossier from "./explorer/ExplorerDossier";
 import "./MethaneExplorer.css";
 
@@ -100,18 +97,8 @@ interface FilterState {
   severity: "all" | "high" | "medium" | "baseline" | string;
 }
 
-interface SatelliteAlertState {
-  count: number;
-  facility: string;
-  date: string;
-  time?: string;
-  anomaly: number;
-  type?: string;
-}
-
 const EmissionsMap: React.FC = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
   const toast = useToast?.() || {
     success: console.log,
     error: console.error,
@@ -144,20 +131,11 @@ const EmissionsMap: React.FC = () => {
   const [mapTiles, setMapTiles] = useState<MapTiles | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(true);
   const [showPlumeRings, setShowPlumeRings] = useState<boolean>(true);
-  const [showLegend, setShowLegend] = useState<boolean>(true);
   const [copiedCoords, setCopiedCoords] = useState<boolean>(false);
 
-  // Copernicus Sentinel-5P Satellite States & Real Database Surveys
-  const [satelliteConfig, setSatelliteConfig] = useState<any>(null);
-  const [showSatelliteLayer, setShowSatelliteLayer] = useState<boolean>(true);
-  const [satelliteOpacity, setSatelliteOpacity] = useState<number>(0.75);
-  const [satelliteObservation, setSatelliteObservation] = useState<any>(null);
-  const [loadingSatelliteData, setLoadingSatelliteData] = useState<boolean>(false);
+  // OGMP 2.0 site-level surveys recorded for the selected facility
   const [existingSurveys, setExistingSurveys] = useState<any[]>([]);
   const [loadingSurveys, setLoadingSurveys] = useState<boolean>(false);
-  const [exportingOgmp, setExportingOgmp] = useState<boolean>(false);
-  const [satelliteAlert, setSatelliteAlert] = useState<SatelliteAlertState | null>(null);
-  const satellitePollRef = useRef<any>(null);
   const selectedFacilityRef = useRef<FacilityRecord | null>(null);
 
   // Initial Data Fetch from real backend endpoints
@@ -175,22 +153,16 @@ const EmissionsMap: React.FC = () => {
 
       // Fetch authentic facilities from /api/facilities, verified intensity stats from /api/dashboard/intensity-stats,
       // and available years from /api/dashboard/years
-      const [facRes, statRes, yearRes, satConfigRes] = await Promise.all([
+      const [facRes, statRes, yearRes] = await Promise.all([
         api.get("/facilities"),
         api.get(`/dashboard/intensity-stats?${params.toString()}`),
         api.get("/dashboard/years"),
-        api
-          .get("/satellite/sentinel5p/layer-config")
-          .catch(() => ({ data: null })),
       ]);
 
       const fetchedFacilities: FacilityRecord[] = facRes.data || [];
       setFacilities(fetchedFacilities);
       setStats(statRes.data || []);
       setAvailableYears(yearRes.data || []);
-      if (satConfigRes && satConfigRes.data) {
-        setSatelliteConfig(satConfigRes.data);
-      }
 
       // Derive distinct regions and activities directly from the database facilities
       const regions = [
@@ -318,17 +290,16 @@ const EmissionsMap: React.FC = () => {
     setFilteredFacilities(filtered);
   }, [filters, facilities, viewMode, getIntensityData]);
 
-  // Keep a ref to selected facility so background polling has access without stale closures
+  // Keep a ref to the selected facility so a late survey response does not overwrite a newer selection
   useEffect(() => {
     selectedFacilityRef.current = selectedFacility;
   }, [selectedFacility]);
 
-  // Fetch real satellite observation and authentic database OGMP surveys for selected facility
-  const fetchFacilityData = useCallback(async (facility: FacilityRecord | null) => {
+  // Fetch the OGMP surveys recorded for the selected facility
+  const fetchFacilityData = useCallback((facility: FacilityRecord | null) => {
     if (!facility) return;
     const targetFacilityId = facility.id;
 
-    // 1. Fetch real OGMP survey records from database (/api/data/ogmp-surveys)
     setLoadingSurveys(true);
     api
       .get("/data/ogmp-surveys", { params: { facilityId: targetFacilityId } })
@@ -348,90 +319,16 @@ const EmissionsMap: React.FC = () => {
           setLoadingSurveys(false);
         }
       });
-
-    // 2. Fetch Copernicus Sentinel-5P satellite observation (/api/satellite/sentinel5p/facility-timeseries)
-    if (facility.latitude == null || facility.longitude == null) {
-      setSatelliteObservation(null);
-      return;
-    }
-
-    try {
-      setLoadingSatelliteData(true);
-      const res = await api.get("/satellite/sentinel5p/facility-timeseries", {
-        params: {
-          facility_id: facility.id,
-          latitude: facility.latitude,
-          longitude: facility.longitude,
-        },
-      });
-      if (selectedFacilityRef.current?.id === targetFacilityId) {
-        setSatelliteObservation(res.data);
-      }
-    } catch (err) {
-      console.error("Error fetching satellite observation:", err);
-      if (selectedFacilityRef.current?.id === targetFacilityId) {
-        setSatelliteObservation({
-          status: "error",
-          authenticated: false,
-          message: "Failed to connect to Copernicus CDSE.",
-        });
-      }
-    } finally {
-      if (selectedFacilityRef.current?.id === targetFacilityId) {
-        setLoadingSatelliteData(false);
-      }
-    }
   }, []);
 
   // Query authentic facility records whenever selection changes
   useEffect(() => {
     if (!selectedFacility) {
-      setSatelliteObservation(null);
       setExistingSurveys([]);
       return;
     }
     fetchFacilityData(selectedFacility);
   }, [selectedFacility, fetchFacilityData]);
-
-  // Background polling for new satellite passes (every 30 mins)
-  const pollSatellitePasses = useCallback(async () => {
-    try {
-      const res = await api.post("/satellite/sentinel5p/poll-new-passes");
-      const { new_passes = 0, detections = [] } = res.data || {};
-      if (new_passes > 0 && Array.isArray(detections) && detections.length > 0) {
-        const sorted = [...detections].sort(
-          (a, b) => (b.anomaly_ppb || 0) - (a.anomaly_ppb || 0),
-        );
-        const top = sorted[0];
-        if (top) {
-          setSatelliteAlert({
-            count: new_passes,
-            facility: top.facility_name,
-            date: top.pass_date,
-            time: top.pass_time,
-            anomaly: Number(top.anomaly_ppb || 0),
-            type: top.stream_type,
-          });
-          setTimeout(() => setSatelliteAlert(null), 12000);
-        }
-        const curr = selectedFacilityRef.current;
-        if (curr && detections.some((d: any) => d.facility_id === curr.id)) {
-          fetchFacilityData(curr);
-        }
-      }
-    } catch {
-      // Silently ignore background polling network blips
-    }
-  }, [fetchFacilityData]);
-
-  useEffect(() => {
-    const initialTimeout = setTimeout(pollSatellitePasses, 5000);
-    satellitePollRef.current = setInterval(pollSatellitePasses, 30 * 60 * 1000);
-    return () => {
-      clearTimeout(initialTimeout);
-      clearInterval(satellitePollRef.current);
-    };
-  }, [pollSatellitePasses]);
 
   // Facility selection handler
   const handleSelectFacility = (fac: FacilityRecord) => {
@@ -443,57 +340,6 @@ const EmissionsMap: React.FC = () => {
         setMapCenter([lat, lon]);
         setMapZoom(9);
       }
-    }
-  };
-
-  // Export & reconcile survey into OGMP 2.0 Level 5 database ledger
-  const handleExportToOgmp = async () => {
-    if (
-      !selectedFacility ||
-      !satelliteObservation ||
-      !satelliteObservation.summary
-    )
-      return;
-    try {
-      setExportingOgmp(true);
-      const res = await api.post("/satellite/sentinel5p/export-to-ogmp", {
-        facility_id: selectedFacility.id,
-        observation_date:
-          satelliteObservation.summary.latest_observation_date ||
-          new Date().toISOString().split("T")[0],
-        ch4_column_ppb: satelliteObservation.summary.mean_ch4_column_ppb,
-        anomaly_ppb: satelliteObservation.summary.max_anomaly_ppb,
-        estimated_emission_rate_kg_hr:
-          satelliteObservation.summary.estimated_emission_rate_kg_hr,
-        qa_score: satelliteObservation.summary.mean_qa_score,
-        notes: `Sentinel-5P Level-3 CH4 Top-Down observation reconciliation for ${selectedFacility.name}`,
-      });
-
-      if (
-        res.data &&
-        (res.data.success ||
-          res.status === 201 ||
-          res.data.id ||
-          res.data.survey_id)
-      ) {
-        const surveyId = res.data.survey_id || res.data.id || "";
-        toast.success(
-          `Top-Down Satellite record reconciled with OGMP 2.0 Ledger!${surveyId ? ` (Survey #${surveyId})` : ""}`,
-        );
-        // Refresh real surveys list from database
-        fetchFacilityData(selectedFacility);
-      } else {
-        toast.error(res.data?.message || "Failed to export survey to OGMP");
-      }
-    } catch (err: any) {
-      console.error("Export to OGMP failed:", err);
-      toast.error(
-        err.response?.data?.message ||
-          err.response?.data?.error ||
-          "Failed to reconcile with OGMP ledger",
-      );
-    } finally {
-      setExportingOgmp(false);
     }
   };
 
@@ -638,76 +484,16 @@ const EmissionsMap: React.FC = () => {
     };
   }, [filteredFacilities, getIntensityData]);
 
-  // Reconciliation analysis for selected facility
-  const reconciliationAnalysis = useMemo(() => {
-    if (!selectedFacility || !satelliteObservation?.summary) return null;
-    const s = getIntensityData(selectedFacility.id);
-    const reportedCh4Tonnes = Number(s.total_ch4 || 0);
-    const satelliteFluxTonnes = Number(
-      satelliteObservation.summary.annualized_ch4_tonnes || 0,
-    );
-
-    if (reportedCh4Tonnes <= 0 && satelliteFluxTonnes <= 0) {
-      return {
-        status: "baseline",
-        label: "Baseline / Undetected",
-        ratio: 1.0,
-        deltaText: "Atmospheric concentrations within natural background.",
-        color: "var(--color-green-500)",
-      };
-    }
-
-    if (reportedCh4Tonnes <= 0 && satelliteFluxTonnes > 0) {
-      return {
-        status: "unreported_anomaly",
-        label: "Unreported Top-Down Flux",
-        ratio: 99.0,
-        deltaText: `Satellite detects ${satelliteFluxTonnes.toFixed(1)} tCH₄/yr with zero reported bottom-up emissions.`,
-        color: "var(--color-red-500)",
-      };
-    }
-
-    const ratio = satelliteFluxTonnes / reportedCh4Tonnes;
-    if (ratio >= 1.35) {
-      const pctExcess = Math.round((ratio - 1) * 100);
-      return {
-        status: "excess",
-        label: "Satellite Detects Excess",
-        ratio,
-        deltaText: `Satellite top-down flux is +${pctExcess}% above reported inventory. Possible fugitive venting or flare malfunction.`,
-        color: "var(--color-amber-500)",
-      };
-    } else if (ratio <= 0.65) {
-      const pctDeficit = Math.round((1 - ratio) * 100);
-      return {
-        status: "deficit",
-        label: "Below Satellite Detection",
-        ratio,
-        deltaText: `Satellite observation is -${pctDeficit}% lower than reported. May reflect intermittent operational shutdowns.`,
-        color: "var(--color-sky-600)",
-      };
-    } else {
-      return {
-        status: "concordant",
-        label: "Reconciled (±35%)",
-        ratio,
-        deltaText: "Top-down observation confirms bottom-up accounting within acceptable scientific uncertainty.",
-        color: "var(--color-green-500)",
-      };
-    }
-  }, [selectedFacility, satelliteObservation, getIntensityData]);
-
   const selectedStats = selectedFacility
     ? getIntensityData(selectedFacility.id)
     : null;
-  const isSatelliteConnected = Boolean(satelliteConfig && satelliteConfig.connected);
 
   if (loading) {
     return (
       <div className="[display:flex] [flex-direction:column] [align-items:center] [justify-content:center] [height:calc(100vh_-_72px)] [gap:16px] [background:var(--color-ink-50)] [color:var(--color-ink-900)]">
         <div className="[position:relative] [width:80px] [height:80px] [border:2px_solid_rgba(255,_102,_0,_0.2)] [&&]:[border-radius:50%] [display:flex] [align-items:center] [justify-content:center] [box-shadow:0_4px_20px_rgba(255,_102,_0,_0.15)]">
           <div className="[position:absolute] [inset:0] [border-radius:50%] [border-top:3px_solid_var(--color-brand-500)] [animation:spin_1.2s_cubic-bezier(0.5,_0,_0.5,_1)_infinite]"></div>
-          <Satellite size={34} className="[animation:spin_8s_linear_infinite]!" color="var(--color-brand-500)" />
+          <MapIcon size={34} color="var(--color-brand-500)" />
         </div>
         <div className="[font-size:var(--text-md)] [font-weight:800] [letter-spacing:0.08em] [color:var(--color-ink-900)]">LOADING METHANE EXPLORER</div>
         <div className="[font-size:var(--text-sm)] [color:var(--color-ink-500)] [max-width:420px] [text-align:center] [line-height:1.5]">
@@ -726,35 +512,11 @@ const EmissionsMap: React.FC = () => {
       }}
     >
       <ExplorerHud
-        connected={isSatelliteConnected}
-        onConfigure={() => navigate("/settings")}
         metrics={telemetryMetrics}
         viewMode={viewMode}
         onViewMode={setViewMode}
         formatCompact={formatCompact}
       />
-
-      {satelliteAlert && (
-        <Banner
-          tone={satelliteAlert.anomaly >= 30 ? "danger" : "info"}
-          title={satelliteAlert.anomaly >= 30 ? "High CH₄ anomaly detected" : "New S5P overpass"}
-          className="absolute right-5 top-[78px] z-1001 min-w-80 max-w-96 bg-surface shadow-lg"
-          actions={
-            <IconButton label="Dismiss notification" className="size-7" onClick={() => setSatelliteAlert(null)}>
-              <X className="size-3.5" aria-hidden="true" />
-            </IconButton>
-          }
-        >
-          <p className="m-0 text-sm text-ink-700">
-            <strong>{satelliteAlert.facility}</strong> • {satelliteAlert.date} at {satelliteAlert.time || "11:30 UTC"}
-          </p>
-          <div className="mt-1.5 flex flex-wrap gap-2">
-            <Badge>ΔCH₄ +{satelliteAlert.anomaly.toFixed(1)} ppb</Badge>
-            <Badge>● {satelliteAlert.type || "NRTI"}</Badge>
-            {satelliteAlert.count > 1 && <Badge>+{satelliteAlert.count - 1} more</Badge>}
-          </div>
-        </Banner>
-      )}
 
       {/* 3. LEAFLET INTERACTIVE GEOSPATIAL MAP CANVAS */}
       <div className="[position:absolute] [inset:0] [width:100%] [height:100%] [z-index:1]">
@@ -770,17 +532,6 @@ const EmissionsMap: React.FC = () => {
               url={mapTiles.tile_url}
               attribution={mapTiles.attribution || ""}
               subdomains={mapTiles.subdomains || "abc"}
-            />
-          )}
-
-          {/* Sentinel-5P Methane Column WMS / Tile Overlay */}
-          {showSatelliteLayer && satelliteConfig?.tile_layer_template && (
-            <TileLayer
-              key={satelliteConfig.tile_layer_template}
-              url={satelliteConfig.tile_layer_template}
-              opacity={satelliteOpacity}
-              zIndex={400}
-              attribution='&copy; <a href="https://dataspace.copernicus.eu" target="_blank" rel="noopener noreferrer">Copernicus Sentinel-5P (ESA/EU)</a>'
             />
           )}
 
@@ -824,7 +575,7 @@ const EmissionsMap: React.FC = () => {
                       pathOptions={{
                         color: plumeColor,
                         fillColor: plumeColor,
-                        fillOpacity: satelliteOpacity * 0.12,
+                        fillOpacity: 0.09,
                         weight: 1,
                         dashArray: "4, 6",
                       }}
@@ -836,7 +587,7 @@ const EmissionsMap: React.FC = () => {
                       pathOptions={{
                         color: plumeColor,
                         fillColor: plumeColor,
-                        fillOpacity: satelliteOpacity * 0.28,
+                        fillOpacity: 0.21,
                         weight: 1.5,
                       }}
                     />
@@ -900,8 +651,8 @@ const EmissionsMap: React.FC = () => {
           })}
         </MapContainer>
         {mapTiles && !mapTiles.tile_url && (
-          <p className="absolute bottom-7 right-16 z-500 m-0 rounded-md border border-border bg-surface/90 px-2.5 py-1 text-xs text-text-secondary">
-            No basemap configured: facilities are shown by their coordinates (set MAP_TILE_URL to add one)
+          <p className="absolute bottom-7 left-1/2 z-500 m-0 -translate-x-1/2 whitespace-nowrap rounded-md border border-border bg-surface/90 px-2.5 py-1 text-xs text-text-secondary">
+            No basemap: facilities are shown at their coordinates
           </p>
         )}
       </div>
@@ -931,16 +682,8 @@ const EmissionsMap: React.FC = () => {
             years={availableYears}
             activities={availableActivities}
             count={filteredFacilities.length}
-            satellite={{
-              show: showSatelliteLayer,
-              onShow: setShowSatelliteLayer,
-              opacity: satelliteOpacity,
-              onOpacity: setSatelliteOpacity,
-              rings: showPlumeRings,
-              onRings: setShowPlumeRings,
-              legend: showLegend,
-              onLegend: setShowLegend,
-            }}
+            rings={showPlumeRings}
+            onRings={setShowPlumeRings}
             facilities={filteredFacilities}
             selectedId={selectedFacility?.id ?? null}
             viewMode={viewMode}
@@ -953,8 +696,6 @@ const EmissionsMap: React.FC = () => {
         )}
       </div>
 
-      {showSatelliteLayer && showLegend && <ExplorerLegend onClose={() => setShowLegend(false)} />}
-
       {selectedFacility && (
         <ExplorerDossier
           facility={selectedFacility}
@@ -964,12 +705,6 @@ const EmissionsMap: React.FC = () => {
           copiedCoords={copiedCoords}
           onCopyCoords={handleCopyCoords}
           onClose={() => setSelectedFacility(null)}
-          satelliteLoading={loadingSatelliteData}
-          satelliteObservation={satelliteObservation}
-          reconciliation={reconciliationAnalysis}
-          exporting={exportingOgmp}
-          onExport={handleExportToOgmp}
-          onConfigure={() => navigate("/settings")}
           loadingSurveys={loadingSurveys}
           surveys={existingSurveys}
           onCenter={() => {
