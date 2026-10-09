@@ -299,16 +299,13 @@ const Settings: React.FC = () => {
               Configure IPCC Global Warming Potential (GWP) conversion factors, OGMP 2.0 Gold Standard compliance parameters, and facility-specific reconciliation tolerances.
             </p>
           </div>
-          <Button
-            onClick={handleSaveGlobal}
-            loading={saving}
-            disabled={saving || !isAdmin}
-            title={!isAdmin ? "Administrator privileges required to modify settings" : "Save changes"}
-            id="save-settings-btn"
-          >
-            <Save className="size-4" aria-hidden="true" />
-            {saving ? "Saving..." : "Save All Changes"}
-          </Button>
+          {/* only an admin can change these settings: other roles see them read-only, with no save button */}
+          {isAdmin && (
+            <Button onClick={handleSaveGlobal} loading={saving} disabled={saving} title="Save changes" id="save-settings-btn">
+              <Save className="size-4" aria-hidden="true" />
+              {saving ? "Saving..." : "Save All Changes"}
+            </Button>
+          )}
         </div>
 
         <TabsList aria-label="Settings sections" className="border-b-0">
