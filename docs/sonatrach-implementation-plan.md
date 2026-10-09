@@ -76,7 +76,7 @@ Material for people to answer; Claude can write all of it from the code.
 ## M4 - Security hardening
 | # | Task | Files | Verify |
 |---|------|-------|--------|
-| T4.1 | Remove `@csrf.exempt` from `/api/auth/login` and `/forgot-password` (same origin makes the token work); the client fetches the token before login. | `routes/auth.py`, `src/api.ts`, `Login.tsx`, security tests | Login without token gets 400; e2e login passes |
+| T4.1 | Done 2026-10-09. Remove `@csrf.exempt` from `/api/auth/login` and `/forgot-password` (same origin makes the token work); the client fetches the token before login. | `routes/auth.py`, `src/api.ts`, `Login.tsx`, security tests | Login without token gets 400; e2e login passes |
 | T4.2 | Per-account lockout: failed-attempt counter and lock-until time, unlock by IT, audited. | migration, `models.py`, `routes/auth.py`, `auth_users.py` | Tests: lock after N failures, unlock, audit rows |
 | T4.3 | TOTP two-factor sign-in for local accounts (`pyotp`): enrolment with QR code, recovery codes, IT reset, enforced for `admin` and IT roles, optional for others (setting). | migration, `routes/auth*.py`, Settings and Login pages | Tests for enrolment, login, recovery, reset |
 | T4.4 | Idle session timeout (default 30 minutes, setting) alongside the 8-hour absolute limit. | `app.py`, `config.py`, client idle handler | Test: idle session rejected |

@@ -527,8 +527,16 @@ def ensure_database_indexes():
 
 
 def _is_schema_cli():
-    """True when this import comes from `flask db ...` (Alembic manages the schema itself)."""
-    return len(sys.argv) > 1 and sys.argv[1] == "db"
+    """True when this import comes from `flask db ...` (Alembic manages the schema itself).
+
+    Flask's own options may come first: `flask --app app db upgrade`, `flask -A app db upgrade`.
+    """
+    args = sys.argv[1:]
+    i = 0
+    while i < len(args) and args[i].startswith("-"):
+        # --app / -A / --env-file / -e take a value unless written as --app=value
+        i += 2 if args[i] in ("--app", "-A", "--env-file", "-e") else 1
+    return i < len(args) and args[i] == "db"
 
 
 def init_schema():

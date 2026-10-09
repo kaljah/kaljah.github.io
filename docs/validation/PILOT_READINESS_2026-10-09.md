@@ -45,6 +45,6 @@ Regression tests: `new/server/tests/test_pilot_readiness_2026_10_09.py`, `new/cl
 - Set `TRUSTED_PROXIES=1` behind nginx, and `ALLOWED_ORIGINS` to the Sonatrach hostname.
 - The web server that serves the SPA must send its own `Content-Security-Policy` (Flask's covers API responses only).
 - `MAP_TILE_URL`: an internal tile server, or none.
-- `WTF_CSRF_SSL_STRICT` is still `False` (it dates from the cross-domain GitHub Pages setup). Turn it on once the proxy passes the right host and scheme, and check that saving works.
+- Done 2026-10-09: `WTF_CSRF_SSL_STRICT` is on by default (env `WTF_CSRF_SSL_STRICT=false` turns it off), and sign-in / forgot-password now require the CSRF token. Previously: `WTF_CSRF_SSL_STRICT` was `False` (it dated from the cross-domain GitHub Pages setup). Turn it on once the proxy passes the right host and scheme, and check that saving works.
 - The audit chain attests to the log from the migration onward, not to edits made before it.
 - The OGMP workbook states "Operational Control (GHG Protocol Corporate Standard)" as the reporting boundary; the boundary approach (readiness plan A3) is still to be confirmed by HSE.
