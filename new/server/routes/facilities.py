@@ -7,7 +7,6 @@ from models import Facility, User
 from extensions import db
 from sqlalchemy.exc import IntegrityError
 from routes.auth import login_required
-import json
 
 
 @facilities_bp.route("", methods=["GET"])
@@ -376,20 +375,22 @@ def delete_facility(facility_id):
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
     if user.role not in ["admin", "superuser"]:
-        return (
-            jsonify({"error": "Forbidden: Only Administrators can delete facilities"}),
-            403,
-        )
-
-    facility = db.session.get(
-        Facility, facility_id
-    )  # API-02 FIX: replaced deprecated query.get
+        return jsonify({"error": "Forbidden: Only Administrators can delete facilities"}), 403
+    facility = db.session.get(Facility, facility_id)  # API-02 FIX: replaced deprecated query.get
     if not facility:
         return jsonify({"error": "Facility not found"}), 404
 
     allowed_fids = get_allowed_facility_ids(user)
     if allowed_fids is not None and facility.id not in allowed_fids:
         return jsonify({"error": "Unauthorized: Outside your region"}), 403
+    # Deleting the facility cascades to its records: the maker-checker rule for single records
+    # (only an administrator deletes Verified records) applies to the cascade as well.
+    if user.role != "admin":
+        from models import Emission, Scope2Emission, Scope3Emission
+        if any(m.query.filter_by(facility_id=facility.id, status="Verified").first()
+               for m in (Emission, Scope2Emission, Scope3Emission)):
+            return jsonify({"error": "Forbidden: this facility has approved (Verified) records; "
+                                     "only an administrator can delete it"}), 403
 
     try:
         db.session.delete(facility)
@@ -406,13 +407,7 @@ def delete_facility(facility_id):
             request=request,
             entity="Facility",
             details=log_details,
-            metadata_json=json.dumps(
-                {
-                    "name": facility.name,
-                    "code": facility.code,
-                    "location": facility.location,
-                }
-            ),
+            metadata_json=json.dumps({"name": facility.name, "code": facility.code, "location": facility.location}),
         )
         db.session.commit()
     except Exception as e:

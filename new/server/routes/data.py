@@ -33,9 +33,9 @@ def get_production():
     allowed_fids = get_allowed_facility_ids(user)
     if allowed_fids is not None:
         query = query.filter(ProductionData.facility_id.in_(allowed_fids))
-    if request.args.get('facilityId'):
+    if (fid_arg := request.args.get('facilityId') or request.args.get('facility_id')):
         try:
-            fid = int(request.args.get('facilityId'))
+            fid = int(fid_arg)
             if not require_facility_access(user, fid):
                 return jsonify({'error': 'Access to requested facility is denied'}), 403
             query = query.filter_by(facility_id=fid)
@@ -90,18 +90,21 @@ def add_production():
     if not require_facility_access(user, fid):
         return jsonify({'error': 'Access to this facility is denied'}), 403
 
-    from input_validation import parse_year, parse_month
+    from input_validation import parse_month, parse_number, parse_year
     year = parse_year(data.get('year'))
     month = parse_month(data.get('month'), required=True)
-    try:
-        oil_amount = float(data.get('oil_amount', 0) if data.get('oil_amount') is not None else (data.get('oil_production', 0) or 0))
-        gas_amount = float(data.get('gas_amount', 0) if data.get('gas_amount') is not None else (data.get('gas_production', 0) or 0))
-        gross_prod = float(data.get('gross_production', 0) if data.get('gross_production') is not None else 0)
-    except (ValueError, TypeError):
-        return jsonify({'error': 'Production amounts must be valid numbers'}), 400
-
-    if oil_amount < 0 or gas_amount < 0 or gross_prod < 0:
-        return jsonify({'error': 'Production amounts cannot be negative'}), 400
+    first = lambda *keys: next((data.get(k) for k in keys if data.get(k) is not None), None)  # noqa: E731
+    # SU-6: every quantity is finite, not negative and plausible (a negative or 1e300 total corrupted intensities)
+    oil_amount = parse_number(first('oil_amount', 'oil_production'), 'oil_amount', required=False, default=0.0,
+                              min_value=0, max_value=1e12)
+    gas_amount = parse_number(first('gas_amount', 'gas_production'), 'gas_amount', required=False, default=0.0,
+                              min_value=0, max_value=1e12)
+    gross_prod = parse_number(data.get('gross_production'), 'gross_production', required=False, default=0.0,
+                              min_value=0, max_value=1e12)
+    mm = {k: parse_number(data.get(k), k, required=False, default=0.0, min_value=0, max_value=1e5)
+          for k in ('gross_gas_mmsm3', 'gas_without_injected_mmsm3', 'injected_gas_mmsm3', 'crude_oil_mmboe',
+                    'condensate_mmboe', 'lpg_mmboe', 'ngl_mmboe', 'total_production_mmboe',
+                    'total_production_no_injected_mmboe', 'saleable_production_mmboe', 'fuel_gas_export_mmsm3')}
 
     oil_unit = data.get('oil_unit', 'bbl')
     gas_unit = data.get('gas_unit', 'mscf')
@@ -120,34 +123,16 @@ def add_production():
             month=month
         ).first()
         
-        gross_gas_mmsm3 = float(data.get('gross_gas_mmsm3') or 0.0)
-        gas_without_injected_mmsm3 = float(data.get('gas_without_injected_mmsm3') or 0.0)
-        injected_gas_mmsm3 = float(data.get('injected_gas_mmsm3') or 0.0)
-        crude_oil_mmboe = float(data.get('crude_oil_mmboe') or 0.0)
-        condensate_mmboe = float(data.get('condensate_mmboe') or 0.0)
-        lpg_mmboe = float(data.get('lpg_mmboe') or 0.0)
-        ngl_mmboe = float(data.get('ngl_mmboe') or 0.0)
-        total_production_mmboe = float(data.get('total_production_mmboe') or 0.0)
-        total_production_no_injected_mmboe = float(data.get('total_production_no_injected_mmboe') or 0.0)
-        saleable_production_mmboe = float(data.get('saleable_production_mmboe') or 0.0)
-        fuel_gas_export_mmsm3 = float(data.get('fuel_gas_export_mmsm3') or 0.0)
-
+        # OP-3: an operator may not silently overwrite production another user entered
+        if existing and user.role == 'user' and existing.created_by and existing.created_by != user.id:
+            raise PermissionError
         if existing:
             existing.oil_amount = oil_amount
             existing.gas_amount = gas_amount
             existing.oil_unit = oil_unit
             existing.gas_unit = gas_unit
-            existing.gross_gas_mmsm3 = gross_gas_mmsm3
-            existing.gas_without_injected_mmsm3 = gas_without_injected_mmsm3
-            existing.injected_gas_mmsm3 = injected_gas_mmsm3
-            existing.crude_oil_mmboe = crude_oil_mmboe
-            existing.condensate_mmboe = condensate_mmboe
-            existing.lpg_mmboe = lpg_mmboe
-            existing.ngl_mmboe = ngl_mmboe
-            existing.total_production_mmboe = total_production_mmboe
-            existing.total_production_no_injected_mmboe = total_production_no_injected_mmboe
-            existing.saleable_production_mmboe = saleable_production_mmboe
-            existing.fuel_gas_export_mmsm3 = fuel_gas_export_mmsm3
+            for k, v in mm.items():
+                setattr(existing, k, v)
             existing.activity = activity
             existing.division = division
             existing.field = field
@@ -163,17 +148,8 @@ def add_production():
                 gas_amount=gas_amount,
                 oil_unit=oil_unit,
                 gas_unit=gas_unit,
-                gross_gas_mmsm3=gross_gas_mmsm3,
-                gas_without_injected_mmsm3=gas_without_injected_mmsm3,
-                injected_gas_mmsm3=injected_gas_mmsm3,
-                crude_oil_mmboe=crude_oil_mmboe,
-                condensate_mmboe=condensate_mmboe,
-                lpg_mmboe=lpg_mmboe,
-                ngl_mmboe=ngl_mmboe,
-                total_production_mmboe=total_production_mmboe,
-                total_production_no_injected_mmboe=total_production_no_injected_mmboe,
-                saleable_production_mmboe=saleable_production_mmboe,
-                fuel_gas_export_mmsm3=fuel_gas_export_mmsm3,
+                created_by=user.id if user else None,
+                **mm,
                 activity=activity,
                 division=division,
                 field=field
@@ -197,6 +173,10 @@ def add_production():
 
     try:
         perform_upsert()
+    except PermissionError:
+        db.session.rollback()
+        return jsonify({'error': 'Forbidden: this month was entered by another user; ask them or a superuser '
+                                 'to change it'}), 403
     except IntegrityError:
         # Concurrent insert occurred between check and insert; retry once as update
         db.session.rollback()
@@ -229,6 +209,8 @@ def delete_production(record_id):
     
     if not require_facility_access(user, prod.facility_id):
         return jsonify({'error': 'Access to this facility is denied'}), 403
+    if user and user.role == 'user' and prod.created_by and prod.created_by != user.id:
+        return jsonify({'error': 'Forbidden: You do not have permission to delete records created by another user'}), 403
 
     try:
         log_activity_and_notify(

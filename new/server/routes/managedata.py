@@ -260,7 +260,10 @@ def add_mitigation():
     if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to modify operational mitigation data."}), 403
     data = request.get_json() or {}
-
+    from input_validation import parse_number  # SU-7: year "abc" and -5000 t were stored as given
+    data["year"] = parse_year(data.get("year"), required=False)
+    data["quantity_tco2e"] = parse_number(data.get("quantity_tco2e"), "quantity_tco2e", required=False, default=0.0,
+                                          min_value=0)
     facility_id = data.get("facility_id")
 
     if facility_id:
@@ -302,12 +305,7 @@ def add_mitigation():
 
         from routes.dashboard import clear_dashboard_cache
         clear_dashboard_cache()
-        return (
-            jsonify(
-                {"message": "Mitigation Project added", "id": f"proj_{project.id}"}
-            ),
-            201,
-        )
+        return jsonify({"message": "Mitigation Project added", "id": f"proj_{project.id}"}), 201
     else:
         # Create generic MitigationRecord
         mitigation = MitigationRecord(

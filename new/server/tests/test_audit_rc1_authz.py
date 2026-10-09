@@ -120,3 +120,94 @@ def test_bug045_invalid_coordinates_rejected_with_400(client, ctx, lat, lon):
     login(client, make_user("admin", "Global"))
     r = client.post("/api/facilities", json={"name": uniq("F"), "region": "West", "latitude": lat, "longitude": lon})
     assert r.status_code == 400
+
+
+# ── Superuser audit 2026-10-09 (SU-1): location / name may not name another region's scope ──
+
+def test_regional_superuser_cannot_put_facility_into_another_regions_scope(client, ctx):
+    west, north = uniq("West"), uniq("North")
+    make_facility(region=north)
+    own = make_facility(region=west)
+    login(client, make_user("superuser", west))
+    # create: region blank, name = own region (in scope), location = another region
+    r = client.post("/api/facilities/", json={"name": west, "location": north, "code": uniq("C")})
+    assert r.status_code == 403
+    r = client.post("/api/facilities/", json={"name": north, "region": west, "code": uniq("C")})
+    assert r.status_code == 403
+    # update: keep the region, point the location at another region
+    assert client.put(f"/api/facilities/{own.id}", json={"location": north}).status_code == 403
+    db.session.expire_all()
+    assert db.session.get(Facility, own.id).location == west
+
+
+def test_regional_superuser_can_still_edit_own_facility(client, ctx):
+    west = uniq("West")
+    own = make_facility(region=west, location="Shared town")
+    make_facility(region=uniq("North"), location="Shared town")  # a location two regions share is not a scope key
+    login(client, make_user("superuser", west))
+    r = client.put(f"/api/facilities/{own.id}", json={"location": "Shared town", "name": uniq("Renamed")})
+    assert r.status_code == 200, r.get_data(as_text=True)
+    r = client.post("/api/facilities/", json={"name": uniq("NEW"), "region": west, "location": "Field camp",
+                                              "code": uniq("C")})
+    assert r.status_code == 201, r.get_data(as_text=True)
+
+
+# ── SU-2: deleting a facility may not cascade-delete Verified records a superuser cannot delete ──
+
+def test_superuser_cannot_delete_facility_with_verified_records(client, ctx):
+    from models import Emission
+    west = uniq("West")
+    f = make_facility(region=west)
+    db.session.add(Emission(facility_id=f.id, year=2026, month=1, process_type="combustion", co2e_total=1.0,
+                            status="Verified"))
+    db.session.commit()
+    login(client, make_user("superuser", west))
+    assert client.delete(f"/api/facilities/{f.id}").status_code == 403
+    db.session.expire_all()
+    assert db.session.get(Facility, f.id) is not None
+    empty = make_facility(region=west)
+    assert client.delete(f"/api/facilities/{empty.id}").status_code == 200
+    login(client, make_user("admin", "Global"))
+    assert client.delete(f"/api/facilities/{f.id}").status_code == 200
+
+
+# ── SU-6 / OP-3: production data (the intensity denominator) ──
+
+def test_production_rejects_negative_and_absurd_values(client, ctx):
+    west = uniq("West")
+    f = make_facility(region=west)
+    login(client, make_user("superuser", west))
+    base = {"facility_id": f.id, "year": 2025, "month": 12, "oil_amount": 1}
+    for bad in ({"total_production_mmboe": -9}, {"oil_amount": 1e300}, {"saleable_production_mmboe": "nan"},
+                {"gas_amount": -1}):
+        assert client.post("/api/data/production", json={**base, **bad}).status_code == 400, bad
+    assert client.post("/api/data/production", json={**base, "total_production_mmboe": 0.5}).status_code == 201
+
+
+def test_operator_cannot_overwrite_or_delete_anothers_production(client, ctx):
+    from models import ProductionData
+    west = uniq("West")
+    f = make_facility(region=west)
+    login(client, make_user("user", west))
+    assert client.post("/api/data/production",
+                       json={"facility_id": f.id, "year": 2025, "month": 3, "oil_amount": 100}).status_code == 201
+    login(client, make_user("user", west))
+    r = client.post("/api/data/production", json={"facility_id": f.id, "year": 2025, "month": 3, "oil_amount": 1})
+    assert r.status_code == 403
+    rec = ProductionData.query.filter_by(facility_id=f.id, year=2025, month=3).first()
+    assert client.delete(f"/api/data/production/{rec.id}").status_code == 403
+    db.session.expire_all()
+    assert db.session.get(ProductionData, rec.id).oil_amount == 100
+    login(client, make_user("superuser", west))
+    assert client.post("/api/data/production",
+                       json={"facility_id": f.id, "year": 2025, "month": 3, "oil_amount": 2}).status_code == 201
+
+
+def test_mitigation_rejects_bad_year_and_negative_quantity(client, ctx):
+    west = uniq("West")
+    f = make_facility(region=west)
+    login(client, make_user("superuser", west))
+    base = {"facility_id": f.id, "name": "x", "type": "CCUS", "status": "Active"}
+    assert client.post("/api/mitigation", json={**base, "year": "abc", "quantity_tco2e": 5}).status_code == 400
+    assert client.post("/api/mitigation", json={**base, "year": 2025, "quantity_tco2e": -5000}).status_code == 400
+    assert client.post("/api/mitigation", json={**base, "year": 2025, "quantity_tco2e": 50}).status_code == 201

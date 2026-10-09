@@ -130,7 +130,25 @@ def facility_change_allowed(user, current, region=None, location=None, name=None
     user_loc = str(user.location or "").strip().lower()
     old_region = str(getattr(current, "region", None) or "").strip().lower()
     new_region = str(region or "").strip().lower()
-    return new_region == old_region or new_region in ("", user_loc)
+    if not (new_region == old_region or new_region in ("", user_loc)):
+        return False
+    # Scope matches region OR location OR name, so a location or name equal to another region's key
+    # (a facility region or a regional user's location) put the facility in that region's scope too.
+    foreign = _scope_keys() - {user_loc}
+    for field, value in (("region", region), ("location", location), ("name", name)):
+        v = str(value or "").strip().lower()
+        if v and v in foreign and v != str(getattr(current, field, None) or "").strip().lower():
+            return False
+    return True
+
+
+def _scope_keys():
+    """Lower-cased values a regional scope can be keyed on: facility regions and the locations of
+    region-scoped users."""
+    keys = {str(r or "").strip().lower() for (r,) in db.session.query(Facility.region).distinct()}
+    keys |= {str(loc or "").strip().lower() for (loc,) in
+             db.session.query(User.location).filter(User.role.in_(["user", "superuser"])).distinct()}
+    return {k for k in keys if k and not is_unrestricted_location(k)}
 
 
 class NameMap(dict):
