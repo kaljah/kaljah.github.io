@@ -129,7 +129,7 @@ def test_bug010_069_106_delete_user_with_references_keeps_evidence(client, ctx):
     _db.session.add(e)
     _db.session.commit()
     eid, mid, memail = e.id, maker.id, maker.email
-    login(client, make_user("it_admin", "Global"))
+    login(client, make_user("it_manager", "Global"))  # client IT staff may not delete an admin account
     r = client.delete(f"/api/auth/users/{mid}")
     assert r.status_code == 200, r.get_data(as_text=True)
     _db.session.expire_all()

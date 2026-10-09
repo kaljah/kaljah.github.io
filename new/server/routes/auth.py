@@ -230,15 +230,10 @@ def superuser_required(f):
 ROLE_RANK = {"user": 0, "it": 1, "superuser": 2, "admin": 3, "it_admin": 4, "it_manager": 4}
 BUSINESS_ROLES = ("admin", "superuser")
 BUSINESS_ROLE_GRANTORS = ("admin", "it_manager")  # separation of duties (update_user and register)
-# Client IT staff manage ordinary accounts only: they may not grant these roles, nor edit, deactivate
-# or delete accounts that hold them (it_admin and it_manager share a rank, so the rank check alone
-# let an it_admin promote to it_manager, which can then create admins).
-CLIENT_IT_ROLES = ("it", "it_admin")
-CLIENT_IT_PROTECTED_ROLES = ("admin", "superuser", "it_manager")
-SUPERUSER_REGION_ERROR = (
-    "A superuser is limited to one facility or region: set a specific location "
-    "(organisation-wide access is the admin role)"
-)
+CLIENT_IT_ROLES = ("it", "it_admin")  # client IT staff manage ordinary accounts only:
+CLIENT_IT_PROTECTED_ROLES = ("admin", "superuser", "it_manager")  # they may not grant, edit or delete these
+SUPERUSER_REGION_ERROR = ("A superuser is limited to one facility or region: set a specific location "
+                          "(organisation-wide access is the admin role)")
 
 
 @auth_bp.route("/register", methods=["POST"])

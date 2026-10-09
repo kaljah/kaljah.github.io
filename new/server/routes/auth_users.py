@@ -24,6 +24,11 @@ from routes.auth import (
 )
 
 
+def _user_json(u):
+    return {k: getattr(u, k) for k in ("id", "fullName", "email", "orgName", "role", "location", "department",
+                                       "jobTitle", "status")}
+
+
 @auth_bp.route("/users", methods=["POST"])
 @it_admin_required
 def create_user():
@@ -38,24 +43,11 @@ def get_users():
 
     # IT Admins have global authority over all accounts — no regional restriction
     users = User.query.order_by(User.created_at.desc()).all()
-    result = []
-    for u in users:
-        result.append(
-            {
-                "id": u.id,
-                "fullName": u.fullName,
-                "email": u.email,
-                "orgName": u.orgName,
-                "role": u.role,
-                "location": u.location,
-                "department": u.department,
-                "jobTitle": u.jobTitle,
-                "status": u.status,
-                "created_at": u.created_at.isoformat() if u.created_at else None,
-                "last_login": u.last_login.isoformat() if u.last_login else None,
-            }
-        )
-    return jsonify(result)
+    return jsonify([
+        dict(_user_json(u), created_at=u.created_at.isoformat() if u.created_at else None,
+             last_login=u.last_login.isoformat() if u.last_login else None)
+        for u in users
+    ])
 
 
 @auth_bp.route("/users/<int:id>", methods=["PUT"])
@@ -131,22 +123,7 @@ def update_user(id):
     )
     db.session.commit()
     # Return updated user so frontend can reflect changes immediately
-    return jsonify(
-        {
-            "message": "User updated successfully",
-            "user": {
-                "id": user.id,
-                "fullName": user.fullName,
-                "email": user.email,
-                "orgName": user.orgName,
-                "role": user.role,
-                "location": user.location,
-                "department": user.department,
-                "jobTitle": user.jobTitle,
-                "status": user.status,
-            },
-        }
-    )
+    return jsonify({"message": "User updated successfully", "user": _user_json(user)})
 
 
 @auth_bp.route("/users/<int:id>", methods=["DELETE"])

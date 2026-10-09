@@ -44,12 +44,10 @@ def get_flaring_summary():
 
     def streams_for(year_value):
         fd_q = apply_scope(FlaringDetail.query, FlaringDetail, **scope)
-        if year_value is not None:
-            fd_q = fd_q.filter(FlaringDetail.year == year_value)
+        fd_q = fd_q if year_value is None else fd_q.filter(FlaringDetail.year == year_value)
         fd = fd_q.all()
         em_q = apply_scope(Emission.query, Emission, **scope).filter(Emission.status.in_(statuses(include_pending)))
-        if year_value is not None:
-            em_q = em_q.filter(Emission.year == year_value)
+        em_q = em_q if year_value is None else em_q.filter(Emission.year == year_value)
         out = {k: {"m3": 0.0, "tco2e": 0.0} for k in ("routine", "non_routine", "safety", "unclassified")}
         # operator-reported stream volumes take precedence for the facilities that report them (the
         # sum of the parts); the other facilities keep their emission-record volumes. Replacing
@@ -86,8 +84,7 @@ def get_flaring_summary():
 
     # Gas produced over the same population and period
     prod_q = apply_scope(ProductionData.query, ProductionData, **scope)
-    if yr is not None:
-        prod_q = prod_q.filter(ProductionData.year == yr)
+    prod_q = prod_q if yr is None else prod_q.filter(ProductionData.year == yr)
     gas_m3, prod_unconverted = 0.0, 0
     for prow in prod_q.all():
         g = production_gas_m3(prow)
@@ -102,14 +99,18 @@ def get_flaring_summary():
         intensity = total_m3 / gas_m3 * 100.0
         compliant = intensity <= 1.00
         status_txt = "COMPLIANT (Under 1.00% Target)" if compliant else "EXCEEDS THRESHOLD (> 1.00%)"
+        if compliant and unconverted:  # flaring with no convertible volume: the % is only a lower bound
+            compliant, status_txt = None, f"Cannot assess: {unconverted} flaring record(s) have no gas volume"
+        elif not compliant and prod_unconverted:  # unconverted production: the % is only an upper bound
+            compliant, status_txt = None, f"Cannot assess: {prod_unconverted} production record(s) have no gas volume"
     else:
         intensity, compliant, status_txt = None, None, "No gas production recorded for this period"
 
     yoy = None
     if not all_years:
-        prev, _, _, _ = streams_for(yr - 1)
+        prev, prev_unconverted, _, _ = streams_for(yr - 1)
         prev_m3 = sum(v["m3"] for v in prev.values())
-        if prev_m3 > 0:
+        if prev_m3 > 0 and not unconverted and not prev_unconverted:
             yoy = (total_m3 - prev_m3) / prev_m3 * 100.0
 
     def block(key):
@@ -163,7 +164,7 @@ def get_granular_intensities():
     recorded (saleable production, gas throughput) are returned as null instead of invented
     constants. Same filters and role rules as the rest of the dashboard.
     """
-    from services.dashboard_filters import SCF_PER_BOE
+    from services.dashboard_filters import SCF_PER_BOE, apply_scope
     from services.intensity import intensity_cells
 
     user = get_current_user()
@@ -194,7 +195,6 @@ def get_granular_intensities():
     # saleable production only where it is actually recorded (no assumed 85 % fraction)
     # the same facility filters as the emissions (activity / division / segment were not applied,
     # so a filtered view divided its emissions by every facility's saleable production)
-    from services.dashboard_filters import apply_scope
     prod_q = apply_scope(ProductionData.query, ProductionData, allowed_fids=allowed_fids, facility_id=fac_filter,
                          activity=request.args.get("activity"), division=request.args.get("division"),
                          segment=request.args.get("segment"))
