@@ -6,6 +6,7 @@ import { NativeSelect } from "../ui/NativeSelect";
 import { showReviewResult } from '../utils/reviewResult';
 import { useLocation } from 'react-router-dom';
 import api from '../api';
+import { toCsv } from '../utils/chartExport';
 import { apiError } from '../utils/apiError';
 
 import ColumnMappingWizard from '../components/ColumnMappingWizard';
@@ -1245,17 +1246,8 @@ const ManageDataInner: React.FC = () => {
     const exportToCSV = (data: any[], filename: string) => {
         if (!data || data.length === 0) return toast.info('No data to export');
         const keys = Object.keys(data[0]);
-        const escapeCell = (val: any) => {
-            if (val === null || val === undefined) return '';
-            const str = String(val);
-            if (str.includes(',') || str.includes('"') || str.includes('\n') || str.includes('\r')) {
-                return `"${str.replace(/"/g, '""')}"`;
-            }
-            return str;
-        };
-        const headers = keys.map(escapeCell).join(',');
-        const rows = data.map(obj => keys.map(k => escapeCell(obj[k])).join(',')).join('\r\n');
-        const csvContent = "\uFEFF" + headers + "\r\n" + rows;
+        // shared CSV writer: RFC 4180 quoting, and cells a spreadsheet would run as a formula are neutralised
+        const csvContent = "\uFEFF" + toCsv(keys, data.map(obj => keys.map(k => obj[k])));
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");

@@ -250,6 +250,8 @@ export async function generateModernPDF(api: any, filters: any): Promise<void> {
     const settingsData = settingsRes.data || { gwp_standard: 'IPCC AR5' };
     const activeGwpChoice = requestedGwp || settingsData.gwp_standard || 'AR5';
     const resolvedGwp = resolveGwpFactors(activeGwpChoice);
+    // stored totals are on the system GWP set (recalculated when it changes), not the requested one
+    const storedGwp = resolveGwpFactors(settingsData.gwp_standard || 'AR5');
 
     // Client-side filtering by selected region array
     if (Array.isArray(regionId) && regionId.length > 0) {
@@ -282,6 +284,7 @@ export async function generateModernPDF(api: any, filters: any): Promise<void> {
       params,
       productionData,
       resolvedGwp.factors,
+      storedGwp.factors,
     );
 
     // Comparison Data
@@ -306,6 +309,7 @@ export async function generateModernPDF(api: any, filters: any): Promise<void> {
           compParams,
           cProdRes.data || [],
           resolvedGwp.factors,
+          storedGwp.factors,
         );
       } catch (e) {
         console.warn("Comparison Fetch Failed", e);
@@ -1593,6 +1597,7 @@ async function fetchAllReportData(
   params: any,
   productionData: any[] = [],
   gwpFactors: any = DEFAULT_GWP,
+  storedGwpFactors: any = gwpFactors,
 ) {
   let co2Total = 0,
     ch4Total = 0,
@@ -1621,9 +1626,13 @@ async function fetchAllReportData(
 
     // BUG-077: use the stored, server-calculated co2e_total (same basis as the dashboard);
     // re-deriving it client-side made the PDF disagree with the dashboard
+    // re-based on the requested GWP set by its CH4 / N2O difference (the PDF printed the AR5 totals under an AR4 label)
     let tVal = Number(r.co2e_total || 0);
     if (!tVal && (co2Val > 0 || ch4Val > 0 || n2oVal > 0)) {
       tVal = (co2Val * co2_factor) + (ch4Val * ch4_factor) + (n2oVal * n2o_factor);
+    } else if (tVal) {
+      tVal += ch4Val * (ch4_factor - Number(storedGwpFactors?.CH4 ?? ch4_factor))
+        + n2oVal * (n2o_factor - Number(storedGwpFactors?.N2O ?? n2o_factor));
     }
 
     let scope = String(r.scope || "");
@@ -1755,7 +1764,8 @@ async function fetchAllReportData(
     if (maxKey) primaryDriver = maxKey;
   }
 
-  const totalEmissions = scope1Total + scope2Total + scope3Total;
+  // the operational footprint every "Scope 1 & 2" / "Scopes 1+2" line prints; Scope 3 is reported beside it
+  const totalEmissions = scope1Total + scope2Total;
 
   return {
     scope1Rows,

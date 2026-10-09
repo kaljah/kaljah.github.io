@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { toCsv } from "../utils/chartExport";
 import { Input, Field } from "../ui";
 import { NativeSelect } from "../ui/NativeSelect";
 import api from "../api";
@@ -515,10 +516,10 @@ export const Scope1Form: React.FC = () => {
     });
   };
 
-  // Reset specific form data when process type changes
-  useEffect(() => {
-    setFormData({});
-  }, [processType]);
+  // Form data is reset when the process changes in handleProcessChange (resetProcessInputs), before
+  // its defaults are set. A reset effect on processType also ran after the new section's own default
+  // effects (child effects run first) and wiped them: fugitive Tier 1 then submitted without
+  // facility_type (422) and drilling lost its "well" unit.
 
   const loadFacilities = async () => {
     try {
@@ -597,10 +598,8 @@ export const Scope1Form: React.FC = () => {
       e.co2e_total || 0,
       e.status || "",
     ]);
-    const csv = [headers, ...rows]
-      .map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(","))
-      .join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
+    // shared CSV writer: also neutralises cells that a spreadsheet would run as a formula (=, +, -, @)
+    const blob = new Blob(["\uFEFF" + toCsv(headers, rows)], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
