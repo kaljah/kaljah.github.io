@@ -398,10 +398,12 @@ const Reports: React.FC = () => {
   const handleOGMPExport = async () => {
     try {
       toast.info("Generating OGMP 2.0 Excel Workbook...");
+      // the table's filters first (the export used the "Create report" year and every facility)
       const yr =
-        reportYear !== "all" ? reportYear : year !== "all" ? year
+        year !== "all" ? year : reportYear !== "all" ? reportYear
           : String(availableFilters.years[0] || new Date().getFullYear()); // latest year with data (was always 2024)
-      const response = await api.get(`/reports/ogmp-export?year=${yr}`, {
+      const response = await api.get("/reports/ogmp-export", {
+        params: { year: yr, ...(regionId !== "all" && { facility_id: regionId }) },
         responseType: "blob",
       });
       const url = window.URL.createObjectURL(
@@ -509,7 +511,16 @@ const Reports: React.FC = () => {
   }));
 
   const [showConfigModal, setShowConfigModal] = useState<boolean>(false);
-  const [reportFormat, setReportFormat] = useState<string>("master");
+  const [reportFormat, setReportFormat] = useState<string>("iso");
+  // A master report exists only for El Merk (facility 170) and, for organisation-wide accounts, the
+  // consolidated entity (server MASTER_REPORTS); it used to be offered (and fail) for every facility.
+  const masterAvailableFor = (ids: any[]): boolean => {
+    const sel = ids.map(String).filter((v) => v && v !== "all");
+    if (sel.length === 1) return sel[0] === "170";
+    return (sel.length === 0 || sel.length === facilities.length) && user?.role === "admin";
+  };
+  const dialogMasterAvailable = masterAvailableFor(reportSelectedRegions);
+  const effectiveReportFormat = reportFormat === "master" && !dialogMasterAvailable ? "iso" : reportFormat;
   const [exclusionCriteria, setExclusionCriteria] = useState<string>("Sources contributing less than 1% of the total footprint are excluded.");
   const [verificationStatus, setVerificationStatus] = useState<string>("Not externally verified");
 
@@ -523,7 +534,7 @@ const Reports: React.FC = () => {
 
   const handleGenerateModalReport = async () => {
     setShowConfigModal(false);
-    if (reportFormat === "master") {
+    if (effectiveReportFormat === "master") {
       await handleMasterReportDownload();
       return;
     }
@@ -587,7 +598,9 @@ const Reports: React.FC = () => {
     setReportGwpStandard(e.target.value);
   };
   const FORMATS = [
-    { value: "master", label: "🏆 2025 Master Analytical Report (Vertical A4, 15 Charts, 18 Tables)" },
+    ...(dialogMasterAvailable
+      ? [{ value: "master", label: "🏆 2025 Master Analytical Report (Vertical A4, 15 Charts, 18 Tables)" }]
+      : []),
     { value: "iso", label: "📋 ISO 14064-1 Compliance Report" },
   ];
   const years = availableFilters.years;
@@ -628,9 +641,11 @@ const Reports: React.FC = () => {
                 <MenuItem icon={FileText} onSelect={handlePDFExport}>
                   PDF report
                 </MenuItem>
-                <MenuItem icon={FileText} onSelect={() => handleMasterReportDownload()}>
-                  2025 Master report (PDF)
-                </MenuItem>
+                {masterAvailableFor(regionId === "all" ? [] : [regionId]) && (
+                  <MenuItem icon={FileText} onSelect={() => handleMasterReportDownload()}>
+                    2025 Master report (PDF)
+                  </MenuItem>
+                )}
               </MenuContent>
             </Menu>
           </>
@@ -911,15 +926,15 @@ const Reports: React.FC = () => {
               Cancel
             </Button>
             <Button onClick={handleGenerateModalReport} loading={loading} disabled={loading}>
-              {loading ? "Generating..." : reportFormat === "master" ? "Download Master Report (PDF)" : "Generate ISO PDF"}
+              {loading ? "Generating..." : effectiveReportFormat === "master" ? "Download Master Report (PDF)" : "Generate ISO PDF"}
             </Button>
           </>
         }
       >
         <div className="flex flex-col gap-4">
-          <SegmentedControl label="Report format" value={reportFormat} onChange={setReportFormat} options={FORMATS} className="flex-col sm:flex-row" />
+          <SegmentedControl label="Report format" value={effectiveReportFormat} onChange={setReportFormat} options={FORMATS} className="flex-col sm:flex-row" />
 
-          {reportFormat === "master" ? (
+          {effectiveReportFormat === "master" ? (
             <div className="rounded-md border border-border bg-ink-50 p-3.5">
               <h4 className="m-0 mb-1.5 text-base font-semibold text-text">Authentic Groupement Berkine (HBNS &amp; El Merk) 2021–2025</h4>
               <ul className="m-0 flex list-disc flex-col gap-1 pl-5 text-sm leading-normal text-text-secondary">
