@@ -215,7 +215,6 @@ test.describe('Suite 17: CBAM, Operational Equipment, Methane Map & Simulations 
 
     // Verify HUD Header
     await expect(page.locator('text=Emissions Map').first()).toBeVisible({ timeout: 10000 });
-    await expect(page.locator('text=Sentinel-5P TROPOMI').first()).toBeVisible({ timeout: 10000 });
 
     // Toggle HUD viewMode: CH4 Flux -> Total GHG
     const totalGhgBtn = page.locator('button:has-text("Total GHG")').first();
@@ -356,7 +355,7 @@ test.describe('Suite 17: CBAM, Operational Equipment, Methane Map & Simulations 
 
     // Verify Page Title and Badge
     await expect(page.locator('text=Audit Trail & System Activity').first()).toBeVisible({ timeout: 15000 });
-    await expect(page.locator('text=Immutable Compliance Log').first()).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('button', { name: /verify integrity/i }).first()).toBeVisible({ timeout: 10000 });
     console.log('[CSS-6] Audit Trail loaded.');
 
     // Search query

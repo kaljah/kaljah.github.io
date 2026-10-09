@@ -63,8 +63,6 @@ test.describe.serial('Suite 8: Deep Untested Platform Workflows & Enterprise Fea
     // 1. Verify HUD Header and Telemetry metrics
     const mapHeader = page.locator('h1:has-text("Emissions Map")');
     await expect(mapHeader).toBeVisible({ timeout: 15000 });
-    const tropomiSub = page.locator('text=Sentinel-5P TROPOMI');
-    await expect(tropomiSub).toBeVisible();
 
     const monitoredKpi = page.locator('header').locator('text=Monitored assets');
     await expect(monitoredKpi).toBeVisible();

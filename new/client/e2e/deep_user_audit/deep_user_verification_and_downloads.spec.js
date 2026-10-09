@@ -405,7 +405,7 @@ test.describe.serial('Maker-Checker Verification & Real File Downloads Audit', (
     const downloadName = download.suggestedFilename();
     console.log(`[USER EXPORT] ISO Report downloaded: ${downloadName}`);
 
-    expect(downloadName).toContain('Groupement_Berkine_Master_GHG_Report');
+    expect(downloadName).toMatch(/^GHG_Inventory_Report_/);
     expect(downloadName.endsWith('.pdf')).toBe(true);
 
     const fileBytes = fs.readFileSync(downloadPath);

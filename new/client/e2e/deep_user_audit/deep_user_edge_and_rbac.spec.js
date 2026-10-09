@@ -273,7 +273,7 @@ test.describe.serial('Edge Workflows, RBAC Personas & Untested User Journeys', (
 
     // 1. Test Oil Unit Converter (m³ to bbl)
     console.log('[USER PROD] Testing Oil Unit Converter modal (100 m³ -> bbl)...');
-    const convertOilBtn = page.locator('label:has-text("Oil") button:has-text("Convert m³")');
+    const convertOilBtn = page.locator('div:has(> label[for="prod-oil-amount"]) button:has-text("Convert m³")');
     await expect(convertOilBtn).toBeVisible();
     await convertOilBtn.click();
     await page.waitForTimeout(600);
@@ -289,7 +289,7 @@ test.describe.serial('Edge Workflows, RBAC Personas & Untested User Journeys', (
     await page.waitForTimeout(800);
 
     // Verify oil amount was populated with 628.98
-    const oilInput = page.locator('div.input-group:has-text("Oil") input[type="number"]').first();
+    const oilInput = page.locator('#prod-oil-amount');
     await expect(oilInput).toHaveValue('628.98');
     console.log('[USER PROD] Verified Oil converted to 628.98 bbl.');
     await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'edge04_oil_converter_applied.png') });
@@ -297,7 +297,7 @@ test.describe.serial('Edge Workflows, RBAC Personas & Untested User Journeys', (
 
     // 2. Test Gas Unit Converter (m³ to mscf)
     console.log('[USER PROD] Testing Gas Unit Converter modal (1000 m³ -> mscf)...');
-    const convertGasBtn = page.locator('label:has-text("Gas") button:has-text("Convert m³")');
+    const convertGasBtn = page.locator('div:has(> label[for="prod-gas-amount"]) button:has-text("Convert m³")');
     await expect(convertGasBtn).toBeVisible();
     await convertGasBtn.click();
     await page.waitForTimeout(600);
@@ -310,7 +310,7 @@ test.describe.serial('Edge Workflows, RBAC Personas & Untested User Journeys', (
     await page.waitForTimeout(800);
 
     // Verify gas amount was populated with 35.31
-    const gasInput = page.locator('div.input-group:has-text("Gas") input[type="number"]').first();
+    const gasInput = page.locator('#prod-gas-amount');
     await expect(gasInput).toHaveValue('35.31');
     console.log('[USER PROD] Verified Gas converted to 35.31 mscf.');
     await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'edge04_gas_converter_applied.png') });
