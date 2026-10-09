@@ -75,7 +75,7 @@ def send_password_reset_email(to_email: str, user_name: str, reset_link: str = N
         <div style="margin-top: 24px; padding: 12px; background: #f8fafc; border-left: 4px solid #ff6600; font-size: 0.85rem; color: #64748b;">
             If you did not request this, please notify your IT Security administrator immediately.
         </div>
-        <p style="margin-top: 24px; font-size: 0.8rem; color: #94a3b8;">&copy; GHG Enterprise Carbon Accounting Platform</p>
+        <p style="margin-top: 24px; font-size: 0.8rem; color: #94a3b8;">&copy; Neocarbon</p>
     </div>
     """
     return send_email(to_email, subject, text_body, html_body)
@@ -86,7 +86,7 @@ def send_batch_review_alert(admin_email: str, batch_count: int, uploader_name: s
     text_body = (
         f"Hello Administrator,\n\n"
         f"A batch of {batch_count} new emission records was submitted by {uploader_name} and is currently pending maker-checker verification.\n\n"
-        f"Please log into the GHG Platform to review and approve or reject these records.\n\n"
+        f"Please log into Neocarbon to review and approve or reject these records.\n\n"
         f"— GHG Enterprise Platform"
     )
     html_body = f"""
@@ -94,7 +94,7 @@ def send_batch_review_alert(admin_email: str, batch_count: int, uploader_name: s
         <h2 style="color: #0f172a; margin-bottom: 16px;">Emissions Pending Review</h2>
         <p>A new bulk upload batch of <strong>{batch_count} emission records</strong> was uploaded by <strong>{uploader_name}</strong>.</p>
         <p>Under enterprise Maker-Checker controls, these records require review and sign-off before inclusion in official ESG disclosures.</p>
-        <p style="margin-top: 24px; font-size: 0.8rem; color: #94a3b8;">&copy; GHG Enterprise Carbon Accounting Platform</p>
+        <p style="margin-top: 24px; font-size: 0.8rem; color: #94a3b8;">&copy; Neocarbon</p>
     </div>
     """
     return send_email(admin_email, subject, text_body, html_body)

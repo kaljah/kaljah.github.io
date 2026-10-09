@@ -431,7 +431,7 @@ if (
         API_URL = "/static/swagger.json"
 
         swaggerui_blueprint = get_swaggerui_blueprint(
-            SWAGGER_URL, API_URL, config={"app_name": "GHG Platform API Docs"}
+            SWAGGER_URL, API_URL, config={"app_name": "Neocarbon API Docs"}
         )
         app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
         csrf.exempt(swaggerui_blueprint)

@@ -1,5 +1,5 @@
 """
-Seed rich fictional data for Carbon Tech:
+Seed rich fictional data for Neocarbon:
 - Algerian oil, gas, refining, and petrochemical facilities with accurate coordinates
 - Multi-year monthly production data (2022-2026) in bbl and mscf
 - Comprehensive Scope 1 emissions (Combustion, Flaring, Venting, Fugitive) with status='Verified'

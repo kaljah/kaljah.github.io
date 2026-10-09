@@ -99,7 +99,7 @@ const NavList: React.FC<NavListProps> = ({ user, showLabel, onNavigate }) => {
 const Brand: React.FC<{ showLabel: boolean }> = ({ showLabel }) => (
   <div className={cn("flex h-16 shrink-0 items-center", showLabel ? "gap-3 px-4" : "justify-center px-0")}>
     <img src={`${import.meta.env.BASE_URL}carbon_tech.svg`} alt="" className="size-8 shrink-0" />
-    {showLabel && <span className="truncate text-md font-bold text-text">Carbon tech</span>}
+    {showLabel && <span className="truncate text-md font-bold text-text">Neocarbon</span>}
   </div>
 );
 

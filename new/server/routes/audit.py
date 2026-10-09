@@ -328,7 +328,7 @@ def export_audit_logs():
             json.dumps(serialized, indent=2),
             mimetype="application/json",
             headers={
-                "Content-Disposition": f'attachment; filename="carbon_tech_audit_{timestamp_str}.json"'
+                "Content-Disposition": f'attachment; filename="neocarbon_audit_{timestamp_str}.json"'
             },
         )
 
@@ -381,7 +381,7 @@ def export_audit_logs():
         output.getvalue(),
         mimetype="text/csv",
         headers={
-            "Content-Disposition": f'attachment; filename="carbon_tech_audit_{timestamp_str}.csv"'
+            "Content-Disposition": f'attachment; filename="neocarbon_audit_{timestamp_str}.csv"'
         },
     )
 
