@@ -128,8 +128,10 @@ class Config:
     SESSION_REFRESH_EACH_REQUEST = True
 
     # CSRF Configuration
-    # Disable strict referrer checking so GitHub Pages frontend can communicate with Render backend
-    WTF_CSRF_SSL_STRICT = False
+    # Over HTTPS a mutating request must also carry a Referer from this host. Behind a reverse proxy
+    # set TRUSTED_PROXIES so the app sees the original host and scheme; WTF_CSRF_SSL_STRICT=false
+    # turns the check off.
+    WTF_CSRF_SSL_STRICT = os.environ.get("WTF_CSRF_SSL_STRICT", "true").strip().lower() != "false"
     WTF_CSRF_TIME_LIMIT = 86400
 
     # API-03 FIX: Hard limit on all incoming request bodies — prevents large-payload DoS

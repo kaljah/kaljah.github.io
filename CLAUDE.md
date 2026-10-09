@@ -97,7 +97,7 @@ Other: `new/setup.bat` / `new/start_all.bat` (Windows native launch scripts for 
     - `it_manager`: SaaS Vendor / Platform Operator team.
   - Facility scoping goes through `utils.get_allowed_facility_ids` (where only `admin` receives global `None`) and `utils.require_facility_access`.
   - All facility ID query parameters are strictly validated (`422 Unprocessable Entity` on non-numeric input).
-- **CSRF.** `GET /api/csrf-token` sets the token, and mutating requests must send it as the `X-CSRFToken` header.
+- **CSRF.** `GET /api/csrf-token` sets the token, and mutating requests must send it as the `X-CSRFToken` header, sign-in and forgot-password included (no exemptions since 2026-10-09; sign-in starts a new session, so fetch a new token after it). `WTF_CSRF_SSL_STRICT` is on (env `WTF_CSRF_SSL_STRICT=false` turns it off): over HTTPS a write also needs a same-host `Referer`, so behind nginx set `TRUSTED_PROXIES`. The suite keeps an app context open, so a test that turns CSRF on must drop `g.csrf_token` before fetching a token (`tests/test_signin_csrf.py`).
 - **Calculation path.**
   - Routes and `background_processor.py` call `calculations.compute_emissions` (in `calculations/legacy_engine.py`).
   - Unit conversions use canonical formulas in `calculations/units.py`.

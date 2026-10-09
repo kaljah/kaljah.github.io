@@ -8,7 +8,7 @@ from functools import wraps
 from flask import request, jsonify, session, current_app
 from . import auth_bp
 from models import User, Notification, Facility
-from extensions import db, limiter, csrf
+from extensions import db, limiter
 from utils import log_activity_and_notify, is_unrestricted_location
 from services.login_guard import (ACCOUNT_LOCKED, failed_sign_in, get_login_account_limit, get_login_rate_limit,  # noqa: F401
                                   login_account_key, record_failed_sign_in, validate_password_complexity)
@@ -331,7 +331,6 @@ _DUMMY_PASSWORD_HASH = generate_password_hash("timing-equaliser-not-a-real-accou
 
 
 @auth_bp.route("/login", methods=["POST"])
-@csrf.exempt
 @limiter.limit(get_login_rate_limit, deduct_when=failed_sign_in)
 @limiter.limit(get_login_account_limit, key_func=login_account_key, deduct_when=failed_sign_in,
                error_message=ACCOUNT_LOCKED)
@@ -413,7 +412,6 @@ def login():
 
 
 @auth_bp.route("/forgot-password", methods=["POST"])
-@csrf.exempt
 @limiter.limit("5 per 15 minutes")
 def forgot_password():
     """
