@@ -1,7 +1,8 @@
 from flask import request, jsonify, session, current_app
 from sqlalchemy import func
 from . import emissions_bp
-from utils import get_current_user, get_allowed_facility_ids, require_facility_access
+from utils import get_current_user, get_allowed_facility_ids, log_activity_and_notify, require_facility_access
+from input_validation import choice
 from models import (
     User,
     Emission,
@@ -13,7 +14,6 @@ from models import (
     Facility,
 )
 from extensions import db, limiter
-from utils import log_activity_and_notify
 from services.labels import process_label, scope2_source_label
 from services.scope2_activity import scope2_activity
 from calculations import (
@@ -131,7 +131,7 @@ def get_emissions():
                 per_page = 50
         start = (page - 1) * per_page
 
-    scope = request.args.get("scope", "all")
+    scope = choice(request.args.get("scope", "all"), ("all", "1", "2", "3", "scope1", "scope2", "scope3"), "scope")
     year = request.args.get("year")
     month = request.args.get("month")
     facility_id = request.args.get("facilityId") or request.args.get("facility_id")

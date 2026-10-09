@@ -2,7 +2,7 @@ from routes.auth import login_required
 from flask import request, jsonify, session, current_app
 import json
 from . import data_bp
-from utils import get_current_user, get_allowed_facility_ids, log_activity_and_notify, require_facility_access
+from utils import facility_access_error, get_current_user, get_allowed_facility_ids, log_activity_and_notify, require_facility_access
 from sqlalchemy import func
 from models import (
     ProductionData, ActivityLog, User, Facility, OgmpSurvey, 
@@ -573,8 +573,8 @@ def log_level_upgrade():
     except (ValueError, TypeError):
         return jsonify({'error': 'Invalid facility ID'}), 400
 
-    if not require_facility_access(user, facility_id):
-        return jsonify({'error': 'Access to this facility is denied'}), 403
+    if (denied := facility_access_error(user, facility_id)):
+        return denied
 
     log = LevelUpgradeLog(
         facility_id=facility_id,

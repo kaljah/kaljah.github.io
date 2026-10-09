@@ -432,7 +432,7 @@ const ManageDataInner: React.FC = () => {
                 approve_all: false
             });
 
-            showReviewResult(toast, 'approved', res.data?.approved_count, selectedPendingKeys.size);
+            showReviewResult(toast, 'approved', res.data?.approved_count, selectedPendingKeys.size, res.data?.skipped);
             setSelectedPendingKeys(new Set());
             fetchPendingEmissions();
         } catch (err: any) {
@@ -471,7 +471,7 @@ const ManageDataInner: React.FC = () => {
                     reason: rejectionModal.reason.trim(),
                     reject_all: false
                 });
-                showReviewResult(toast, 'rejected', res.data?.rejected_count ?? res.data?.deleted_count, rejectionModal.recordIds.length);
+                showReviewResult(toast, 'rejected', res.data?.rejected_count ?? res.data?.deleted_count, rejectionModal.recordIds.length, res.data?.skipped);
             }
             setRejectionModal({ isOpen: false, isBatch: false, scope: '1', recordId: null, recordIds: [], reason: '' });
             setSelectedPendingKeys(new Set());
@@ -496,7 +496,7 @@ const ManageDataInner: React.FC = () => {
                 try {
                     const res = await api.post('/emissions/approve/batch', { approve_all: true, scope: String(scopeNum) });
                     // the server skips the reviewer's own records: report its count, not the request
-                    showReviewResult(toast, 'approved', res.data?.approved_count, count);
+                    showReviewResult(toast, 'approved', res.data?.approved_count, count, res.data?.skipped);
                     setSelectedPendingKeys(prev => {
                         const next = new Set(prev);
                         Array.from(next).forEach(k => {

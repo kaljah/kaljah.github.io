@@ -10,6 +10,7 @@ from services.labels import process_label, scope2_source_label
 from services.scope2_activity import scope2_activity
 from utils import get_allowed_facility_ids, get_current_user
 from routes.reports import create_pdf_report, reports_bp
+from services.audit_chain import record_report_fingerprint
 
 
 @reports_bp.route("/export", methods=["GET"])
@@ -228,12 +229,8 @@ def export_emissions():
         month_str = month if month and month != "all" else "all"
         filename = f"emissions_{year_str}_{month_str}.pdf"
 
-        return send_file(
-            pdf_buffer,
-            mimetype="application/pdf",
-            as_attachment=True,
-            download_name=filename,
-        )
+        resp = send_file(pdf_buffer, mimetype="application/pdf", as_attachment=True, download_name=filename)
+        return record_report_fingerprint(resp, user, "PDF export", filters, len(emissions_data), pdf_buffer.report_hash)
 
     except Exception as e:
         current_app.logger.error(f"Error exporting emissions: {e}", exc_info=True)

@@ -36,6 +36,73 @@ def _is_non_finite_value(value):
     return False
 
 
+def choice(value, allowed, field):
+    """`value` when it is one of `allowed`, else a ValidationError (400) naming the field."""
+    if value not in allowed:
+        raise ValidationError(f"'{field}' must be one of: {', '.join(allowed)}", field)
+    return value
+
+
+def decimal_mark_from(form):
+    """Decimal format of an uploaded file, chosen in the import wizard: "comma" (1 234,5), "point"
+    (1,234.5) or None when not given (API clients: only unambiguous numbers are read; F6)."""
+    mark = (form.get("decimal_mark") or "").strip().lower() or None
+    if mark not in (None, "comma", "point"):
+        raise ValidationError("decimal_mark must be 'comma' or 'point'", "decimal_mark")
+    return mark
+
+
+def xlsx_signature_error(path):
+    """Error text when an uploaded .xlsx file does not start like a zip workbook, else None."""
+    try:
+        with open(path, "rb") as f:
+            return None if f.read(4) == b"PK\x03\x04" else "Invalid or corrupted XLSX file"
+    except OSError as e:
+        return f"Failed to read uploaded file: {e}"
+
+
+def find_nul(payload, path=""):
+    """Dotted path of the first text value holding a NUL character (PostgreSQL refuses it), else None."""
+    if isinstance(payload, dict):
+        for key, value in payload.items():
+            found = find_nul(value, f"{path}.{key}" if path else str(key))
+            if found:
+                return found
+    elif isinstance(payload, list):
+        for i, value in enumerate(payload):
+            found = find_nul(value, f"{path}[{i}]")
+            if found:
+                return found
+    elif isinstance(payload, str) and "\x00" in payload:
+        return path or "value"
+    return None
+
+
+# Common filter parameters and their valid values (pilot check 2026-10-09, F13: 50 read endpoints
+# answered 500 to "year=abc", "facility_id=x" and the like). Empty, "all", the null spellings the
+# UI may send and the "baseline" year keyword (the configured base year) are left to the route.
+_PASS_THROUGH = {"", "all", "null", "none", "undefined", "baseline"}
+_QUERY_INT_RANGES = {"year": (1900, 2100), "month": (1, 12), "facility_id": (1, 2**31 - 1),
+                     "facilityId": (1, 2**31 - 1)}
+
+
+def invalid_query_parameter(args, numbers=True):
+    """(name, message) of the first NUL character or, with numbers, malformed common filter parameter."""
+    for name, value in args.items(multi=True):
+        if "\x00" in name or "\x00" in value:
+            return name, f"'{name}' contains an invalid character"
+        bounds = _QUERY_INT_RANGES.get(name) if numbers else None
+        if bounds is None or value.strip().lower() in _PASS_THROUGH:
+            continue
+        try:
+            number = int(value.strip())
+        except ValueError:
+            return name, f"'{name}' must be a whole number"
+        if not bounds[0] <= number <= bounds[1]:
+            return name, f"'{name}' must be between {bounds[0]} and {bounds[1]}"
+    return None
+
+
 def find_non_finite(payload, path=""):
     """Return the dotted path of the first NaN/±Infinity value in a JSON payload, else None."""
     if isinstance(payload, dict):

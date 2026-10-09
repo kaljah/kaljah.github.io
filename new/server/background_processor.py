@@ -200,17 +200,47 @@ from process_categories import NON_COMBUSTION_PROCESSES
 
 
 _THOUSANDS_NUMBER = re.compile(r"^[-+]?\d{1,3}(,\d{3})+(\.\d+)?([eE][-+]?\d+)?$")
-_DECIMAL_COMMA_NUMBER = re.compile(r"^([-+]?)(\d{1,3}(?:[.\s\u00a0\u202f]\d{3})+|\d+),(\d+)$")
-_GROUP_SEPARATORS = re.compile(r"[.\s\u00a0\u202f]")
+# Decimal format of an import file, chosen per file in the import wizard (pilot check 2026-10-09, F6).
+# The old guess read "1,000" as 1000 and "1.000" as 1: a silent 1000x error for a French user either
+# way. A number-like text cell is rewritten to point notation by the chosen format; one that does not
+# fit it keeps its text plus a reason, so the field is reported as unreadable instead of guessed.
+DECIMAL_MARKS = ("comma", "point")
+_NUMBER_LIKE = re.compile(r"^[-+]?[\d.,'\s\u00a0\u202f]*\d[\d.,'\s\u00a0\u202f]*$")
+_SPACE_GROUPS = re.compile(r"[\s\u00a0\u202f']")
+# Without a chosen format a dot is a decimal point (API clients, "14.696" psia); only a comma followed by
+# exactly three digits ("1,000": 1000 in English, 1 in French) is refused as ambiguous.
+_AMBIGUOUS_NUMBER = re.compile(r"[1-9]\d{0,2},\d{3}")
+# identifiers and labels that may look like numbers ("1.2", "001") are never rewritten
+_TEXT_COLUMN = re.compile(r"equipment|source|meter|group|facility|date|ref|name|code|region|basin|id$")
 
 
-def _decimal_comma_to_point(text):
-    """A number cell of a decimal-comma file ("1,5", "1.250,75", "12 345,6") in point notation;
-    any other text is returned unchanged."""
-    m = _DECIMAL_COMMA_NUMBER.match(text.strip())
-    if not m:
+def normalize_number_cell(text, decimal_mark=None):
+    """Point notation of a number-like cell under the file's decimal format ("comma", "point" or None
+    when the uploader did not say). Text that is not number-like is returned unchanged."""
+    stripped = text.strip()
+    if not _NUMBER_LIKE.match(stripped):
         return text
-    return m.group(1) + _GROUP_SEPARATORS.sub("", m.group(2)) + "." + m.group(3)
+    sign = stripped[0] if stripped[0] in "+-" else ""
+    body = _SPACE_GROUPS.sub("", stripped[len(sign):])
+    if decimal_mark == "comma":
+        if re.fullmatch(r"\d+", body):
+            return sign + body
+        if re.fullmatch(r"\d{1,3}(?:\.\d{3})+", body):
+            return sign + body.replace(".", "")
+        m = re.fullmatch(r"(\d{1,3}(?:\.\d{3})+|\d+),(\d+)", body)
+        if m:
+            return sign + m.group(1).replace(".", "") + "." + m.group(2)
+        return f"{stripped} [not a decimal-comma number: write 1 234,5]"
+    if decimal_mark == "point":
+        if re.fullmatch(r"\d+(?:\.\d+)?", body):
+            return sign + body
+        m = re.fullmatch(r"(\d{1,3}(?:,\d{3})+)(\.\d+)?", body)
+        if m:
+            return sign + m.group(1).replace(",", "") + (m.group(2) or "")
+        return f"{stripped} [not a decimal-point number: write 1,234.5]"
+    if _AMBIGUOUS_NUMBER.fullmatch(body):
+        return f"{stripped} [ambiguous: decimal or thousands separator? Choose the file's decimal format]"
+    return text
 
 
 def _xl_values(ws):
@@ -604,6 +634,7 @@ def start_background_upload(
     provided_mapping=None,
     scope=1,
     overwrite_duplicates=False,
+    decimal_mark=None,
 ):
     _prune_old_jobs()
     job_id = str(uuid.uuid4())
@@ -637,6 +668,7 @@ def start_background_upload(
             scope,
             overwrite_duplicates,
         ),
+        kwargs={"decimal_mark": decimal_mark},
     )
     thread.daemon = True
     thread.start()
@@ -645,7 +677,7 @@ def start_background_upload(
 
 
 def run_file_check(app, file_path, original_filename, user_id, global_factor_type, provided_mapping=None,
-                   scope="1", overwrite_duplicates=False, sample_rows=2000):
+                   scope="1", overwrite_duplicates=False, sample_rows=2000, decimal_mark=None):
     """The "Check file" step: the import in dry-run mode (sample calculated, whole file counted, nothing
     saved), run to completion on its own thread and session. Returns the job status with the preview."""
     job_id = "check-" + str(uuid.uuid4())
@@ -656,7 +688,7 @@ def run_file_check(app, file_path, original_filename, user_id, global_factor_typ
     t = threading.Thread(target=_process_file_thread, args=(app, job_id, file_path, original_filename, user_id,
                                                             global_factor_type, provided_mapping, scope,
                                                             overwrite_duplicates),
-                         kwargs={"dry_run": True, "sample_rows": sample_rows})
+                         kwargs={"dry_run": True, "sample_rows": sample_rows, "decimal_mark": decimal_mark})
     t.start()
     t.join()
     status = get_job_status(job_id)
@@ -725,6 +757,7 @@ def _process_file_thread(
     overwrite_duplicates=False,
     dry_run=False,
     sample_rows=None,
+    decimal_mark=None,
 ):
     """Import a file. dry_run: calculate the first `sample_rows` rows, read every row for the file
     statistics (rows, period, facilities, processes) and save nothing (the "Check file" step)."""
@@ -737,7 +770,8 @@ def _process_file_thread(
             headers = []
             rows_iterator = None
             csv_source = False  # CSV cells are positional by delimiter: an extra one shifts the row
-            decimal_comma = False  # set for semicolon CSVs (French / European Excel exports)
+            if decimal_mark not in DECIMAL_MARKS:
+                decimal_mark = None  # not chosen: unambiguous numbers only (see normalize_number_cell)
 
             # 1. Open File & Extract Headers
             tier3_data_map = {}
@@ -767,6 +801,9 @@ def _process_file_thread(
                                 continue
                             params = {}
                             skip = ("equipment", "equipment_id", "date", "process")
+                            raw = {h: (normalize_number_cell(v, decimal_mark) if isinstance(v, str)
+                                       and not _TEXT_COLUMN.search(_canonical_header(h) or str(h).lower()) else v)
+                                   for h, v in raw.items()}
                             for h, val in raw.items():  # unmapped columns by their field name
                                 ck = _canonical_header(h)
                                 if ck and ck not in skip and h not in t3_map.values() and val not in (None, "", "-"):
@@ -810,8 +847,9 @@ def _process_file_thread(
                 counts = {d: first_line.count(d) for d in (",", ";", "\t", "|")}
                 delimiter = max(counts, key=counts.get) if max(counts.values()) > 0 else ","
                 # Excel writes ";"-separated CSV where "," is the decimal separator: there "1,500"
-                # is 1.5, not 1500 (audit 2026-09-30)
-                decimal_comma = delimiter == ";"
+                # is 1.5, not 1500 (audit 2026-09-30). An explicit choice in the wizard wins.
+                if decimal_mark is None and delimiter == ";":
+                    decimal_mark = "comma"
 
                 f = io.StringIO(decoded_text)
                 reader = csv.reader(f, delimiter=delimiter)
@@ -947,6 +985,7 @@ def _process_file_thread(
             # import must not flush the staged rows (that would open the write transaction early).
             db.session.autoflush = False
 
+            text_columns = {i for i, h in enumerate(headers) if _TEXT_COLUMN.search(_canonical_header(h) or str(h).lower())}
             for line_no, raw_row in enumerate(rows_iterator, start=header_row_no + 1):
                 # Stop if empty row (Excel read_only sometimes yields empty trailing rows, or CSV whitespace-only rows)
                 if not any(str(c).strip() for c in raw_row if c is not None):
@@ -958,8 +997,8 @@ def _process_file_thread(
                     v = raw_row[i] if i < len(raw_row) else None
                     if isinstance(v, str) and v.strip() in ("", "-", "--"):
                         v = None
-                    elif decimal_comma and isinstance(v, str):
-                        v = _decimal_comma_to_point(v)
+                    elif isinstance(v, str) and i not in text_columns:
+                        v = normalize_number_cell(v, decimal_mark)
                     row_dict[h] = v
 
                 if _is_template_note_row(row_dict):
@@ -2776,7 +2815,14 @@ def _process_row(
 
     source_ref = str(_first(row, "source_ref", "meter_id", "data_source_ref") or "").strip()
     equipment_id = str(_first(row, "equipment_id", "equipment") or "").strip()
-    key = _scope1_key(facility.id, year, month, process_type, fuel, equipment_id, source_ref)
+    record = Emission(factor_source=factor_source, qa_flag=qa_msg[:255] if qa_msg else None)
+    apply_result(record, payload, em_result, method, factor_data, gwp_std)
+    record.ogmp_level = ogmp_level_for(record)
+
+    # The key uses the stored (catalog) process and fuel names, as the keys of the existing records
+    # do: a fuel written as an alias ("Diesel") must match the stored "Diesel (No. 2 Fuel Oil)".
+    key = _scope1_key(facility.id, year, month, record.process_type or process_type,
+                      record.fuel_type or fuel, equipment_id, source_ref)
     action, existing = _dedupe(
         batch_keys, key, overwrite_duplicates,
         f"Scope 1 emission for facility '{facility.name}' ({year}-{month:02d}, process '{process_type}', fuel '{fuel}'"
@@ -2784,10 +2830,6 @@ def _process_row(
     )
     if action == "error":
         return None, [existing]
-
-    record = Emission(factor_source=factor_source, qa_flag=qa_msg[:255] if qa_msg else None)
-    apply_result(record, payload, em_result, method, factor_data, gwp_std)
-    record.ogmp_level = ogmp_level_for(record)
 
     if action == "update":
         obj = _resolve_existing(Emission, existing)

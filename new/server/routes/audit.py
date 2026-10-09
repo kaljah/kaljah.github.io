@@ -399,48 +399,38 @@ def export_audit_logs():
 @audit_access_required
 def verify_audit_chain():
     """
-    Computes and verifies an append-only SHA-256 cryptographic hash-chain across all
-    ActivityLog entries to guarantee tamper-evident integrity for third-party audit assurance
-    (compliant with ISO 14064-3 and ISAE 3410 assurance requirements).
+    Verifies the audit log's hash chain (services/audit_chain.py): every entry is recomputed and compared
+    with the hash sealed when it was written, and each entry's link to the one before it is checked.
+    Reports "verified" only when no entry was changed, removed or inserted; otherwise "tampered" with the
+    entries concerned. Removing the newest entries is detected by comparing with a saved checkpoint
+    (chain_head_hash, total_records, checkpoint_hmac) through /verify-checkpoint.
     """
     user = get_current_user()
     if get_allowed_facility_ids(user) is not None and not is_it_role(user):
         return jsonify({"error": "Chain verification requires organisation-wide audit access"}), 403
-    from collections import deque
+    from services.audit_chain import GENESIS_HASH, verify_chain
 
     query = ActivityLog.query.order_by(ActivityLog.id.asc()).yield_per(1000)
-    total_records = 0
-    prev_hash = "0" * 64
-    sample_blocks = deque(maxlen=5)
-
-    for log in query:
-        total_records += 1
-        ts_str = log.timestamp.isoformat() if log.timestamp else ""
-        payload = f"{prev_hash}:{log.id}:{ts_str}:{log.action or ''}:{log.user_id or ''}:{log.record_id or ''}:{log.entity or ''}"
-        block_hash = hashlib.sha256(payload.encode("utf-8")).hexdigest()
-        prev_hash = block_hash
-        sample_blocks.append({
-            "id": log.id,
-            "hash": block_hash[:16] + "..." + block_hash[-8:],
-            "action": log.action,
-        })
+    total_records, head_hash, issues, issue_count = verify_chain(query)
 
     hmac_key = (current_app.config.get("SECRET_KEY") or "sonatrach-audit-secure-key").encode("utf-8")
-    checkpoint_payload = f"{prev_hash}:{total_records}"
+    checkpoint_payload = f"{head_hash}:{total_records}"
     checkpoint_hmac = hmac.new(hmac_key, checkpoint_payload.encode("utf-8"), hashlib.sha256).hexdigest()
+    ok = issue_count == 0
 
     return jsonify({
-        "status": "verified",
-        "is_tamper_evident": True,
+        "status": "verified" if ok else "tampered",
+        "is_intact": ok,
         "total_records": total_records,
-        "genesis_hash": "0" * 64,
-        "chain_head_hash": prev_hash,
+        "issue_count": issue_count,
+        "issues": issues,
+        "genesis_hash": GENESIS_HASH,
+        "chain_head_hash": head_hash,
         "checkpoint_hmac": checkpoint_hmac,
         "hmac_algorithm": "HMAC-SHA256",
-        "anchor_status": "anchored",
-        "sample_blocks": list(sample_blocks),
         "verified_at": datetime.now(timezone.utc).isoformat(),
-        "standard": "ISO 14064-3 / ISAE 3410 Cryptographic Non-Repudiation Assurance",
+        "method": "SHA-256 hash chain sealed at write time; save chain_head_hash, total_records and "
+                  "checkpoint_hmac to detect later removal of the newest entries.",
     })
 
 

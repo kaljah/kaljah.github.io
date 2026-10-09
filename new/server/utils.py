@@ -55,6 +55,19 @@ def get_allowed_facility_ids(user):
     return allowed_ids
 
 
+def facility_access_error(user, facility_id):
+    """Error response for a write to `facility_id`: 403 when the user may not use it, 404 when it does not
+    exist (an unknown id was a foreign-key error, a 500: pilot check 2026-10-09, F13). None when allowed."""
+    from flask import jsonify
+    from models import Facility
+
+    if not require_facility_access(user, facility_id):
+        return jsonify({"error": "Access to this facility is denied"}), 403
+    if db.session.get(Facility, int(facility_id)) is None:
+        return jsonify({"error": "Facility not found"}), 404
+    return None
+
+
 def require_facility_access(user, facility_id):
     """
     Checks if user has permission to access or modify data for the given facility_id.

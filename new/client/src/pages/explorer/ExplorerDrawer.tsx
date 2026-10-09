@@ -22,10 +22,12 @@ const DOT: Record<string, string> = {
 
 interface CheckRowProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
+  /** text colour; the default is too light on the tinted overlay panel */
+  tone?: string;
 }
 
-const CheckRow: React.FC<CheckRowProps> = ({ label, title, ...props }) => (
-  <label className="inline-flex cursor-pointer items-center gap-1.5 text-sm text-text-secondary">
+const CheckRow: React.FC<CheckRowProps> = ({ label, title, tone = "text-text-secondary", ...props }) => (
+  <label className={`inline-flex cursor-pointer items-center gap-1.5 text-sm ${tone}`}>
     <input type="checkbox" className="size-4 accent-brand-500" {...props} />
     <span title={title}>{label}</span>
   </label>
@@ -228,7 +230,7 @@ const ExplorerDrawer: React.FC<ExplorerDrawerProps> = ({
         </div>
         {satellite.show && (
           <div className="mt-2.5 flex flex-col gap-2">
-            <label className="flex flex-col gap-1 text-xs font-semibold text-text-secondary">
+            <label className="flex flex-col gap-1 text-xs font-semibold text-ink-700">
               Opacity: {Math.round(satellite.opacity * 100)}%
               <input
                 id="satellite-opacity-slider"
@@ -245,11 +247,12 @@ const ExplorerDrawer: React.FC<ExplorerDrawerProps> = ({
             <div className="flex justify-between">
               <CheckRow
                 label="Severity rings"
+                tone="text-ink-700"
                 title="Symbol size by emission severity; not a modelled plume"
                 checked={satellite.rings}
                 onChange={(e) => satellite.onRings(e.target.checked)}
               />
-              <CheckRow label="Legend" checked={satellite.legend} onChange={(e) => satellite.onLegend(e.target.checked)} />
+              <CheckRow label="Legend" tone="text-ink-700" checked={satellite.legend} onChange={(e) => satellite.onLegend(e.target.checked)} />
             </div>
           </div>
         )}

@@ -15,7 +15,6 @@ import {
   X,
   Flame,
   Satellite,
-  Layers,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -61,23 +60,13 @@ const MapController: React.FC<MapControllerProps> = ({ center, zoom }) => {
 };
 
 // Light-themed basemap options (no dark theme)
-const BASE_MAPS: Record<
-  string,
-  {
-    name: string;
-    url: string;
-    attribution: string;
-    icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean | "true" | "false" }>;
-    subdomains?: string;
-  }
-> = {
-  streets: {
-    name: "Standard Vector",
-    url: "https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&hl=en&gl=DZ",
-    attribution: '&copy; <a href="https://www.google.com/maps">Google Maps</a>',
-    icon: Layers,
-  },
-};
+// Basemap tiles come from the server (MAP_TILE_URL): none on an offline install, never a public tile
+// server by default (pilot check 2026-10-09, F5: the map used Google's tile server without an API key).
+interface MapTiles {
+  tile_url: string | null;
+  attribution: string | null;
+  subdomains: string | null;
+}
 
 interface FacilityRecord {
   id: number | string;
@@ -152,7 +141,7 @@ const EmissionsMap: React.FC = () => {
     severity: "all", // 'all' | 'high' | 'medium' | 'baseline'
   });
   const [viewMode, setViewMode] = useState<string>("methane"); // 'methane' (CH4 default) or 'total' (CO2e)
-  const [mapBaseLayer, setMapBaseLayer] = useState<string>("streets"); // Default clean light vector
+  const [mapTiles, setMapTiles] = useState<MapTiles | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(true);
   const [showPlumeRings, setShowPlumeRings] = useState<boolean>(true);
   const [showLegend, setShowLegend] = useState<boolean>(true);
@@ -239,6 +228,13 @@ const EmissionsMap: React.FC = () => {
   useEffect(() => {
     fetchData();
   }, [filters.year]);
+
+  useEffect(() => {
+    api
+      .get("/map-config")
+      .then((res) => setMapTiles(res.data))
+      .catch(() => setMapTiles({ tile_url: null, attribution: null, subdomains: null }));
+  }, []);
 
   // Helper to retrieve verified intensity stats for any facility
   const getIntensityData = useCallback(
@@ -733,9 +729,6 @@ const EmissionsMap: React.FC = () => {
         metrics={telemetryMetrics}
         viewMode={viewMode}
         onViewMode={setViewMode}
-        baseMaps={BASE_MAPS}
-        baseLayer={mapBaseLayer}
-        onBaseLayer={setMapBaseLayer}
         formatCompact={formatCompact}
       />
 
@@ -767,15 +760,16 @@ const EmissionsMap: React.FC = () => {
           center={mapCenter}
           zoom={mapZoom}
           zoomControl={false}
-          className="h-full! w-full!"
+          // without a basemap the map shows a light neutral ground, not Leaflet's grey (contrast of the panels on top)
+          className={cn("h-full! w-full!", mapTiles && !mapTiles.tile_url && "bg-ink-50!")}
         >
-          {/* Dynamic Light Basemap Layer */}
-          <TileLayer
-            key={mapBaseLayer}
-            url={(BASE_MAPS[mapBaseLayer] || BASE_MAPS.streets).url}
-            attribution={(BASE_MAPS[mapBaseLayer] || BASE_MAPS.streets).attribution}
-            subdomains={(BASE_MAPS[mapBaseLayer] || BASE_MAPS.streets).subdomains || "abc"}
-          />
+          {mapTiles?.tile_url && (
+            <TileLayer
+              url={mapTiles.tile_url}
+              attribution={mapTiles.attribution || ""}
+              subdomains={mapTiles.subdomains || "abc"}
+            />
+          )}
 
           {/* Sentinel-5P Methane Column WMS / Tile Overlay */}
           {showSatelliteLayer && satelliteConfig?.tile_layer_template && (
@@ -903,6 +897,11 @@ const EmissionsMap: React.FC = () => {
             );
           })}
         </MapContainer>
+        {mapTiles && !mapTiles.tile_url && (
+          <p className="absolute bottom-7 right-16 z-500 m-0 rounded-md border border-border bg-surface/90 px-2.5 py-1 text-xs text-text-secondary">
+            No basemap configured: facilities are shown by their coordinates (set MAP_TILE_URL to add one)
+          </p>
+        )}
       </div>
 
       {/* 4. COLLAPSIBLE LEFT INTELLIGENCE & RECON DRAWER (WHITE LIGHT THEME) */}

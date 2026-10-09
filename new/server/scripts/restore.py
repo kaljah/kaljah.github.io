@@ -69,7 +69,10 @@ def restore_postgres(backup_file, database_url):
         return False
 
     print(f"[INFO] Restoring PostgreSQL from {backup_file}...")
-    cmd = ["psql", "--dbname", database_url]
+    # Stop at the first failing statement and roll the whole restore back (pilot check 2026-10-09, F9):
+    # without ON_ERROR_STOP psql skips failing statements and exits 0, so a partial restore (once: an
+    # empty users table) was reported as a success. In one transaction the database stays as it was.
+    cmd = ["psql", "--dbname", database_url, "--quiet", "--set", "ON_ERROR_STOP=1", "--single-transaction"]
 
     try:
         if backup_file.endswith(".gz"):
@@ -82,7 +85,8 @@ def restore_postgres(backup_file, database_url):
                 stdout, stderr = proc.communicate(input=f_in.read())
 
         if proc.returncode != 0:
-            print(f"[ERROR] psql restore failed with code {proc.returncode}: {stderr.decode('utf-8', errors='ignore')}")
+            print(f"[ERROR] psql restore failed with code {proc.returncode}; nothing was changed "
+                  f"(the restore runs in one transaction): {stderr.decode('utf-8', errors='ignore').strip()}")
             return False
         print("[SUCCESS] PostgreSQL database restored successfully.")
         return True

@@ -1,6 +1,6 @@
 import os
 import sys
-from flask import Flask, jsonify, request
+from flask import Flask, Request, jsonify, request
 from flask_cors import CORS
 from flask_migrate import Migrate
 from config import Config
@@ -61,14 +61,24 @@ from routes.dashboard import clear_dashboard_cache
 import re
 from werkzeug.exceptions import HTTPException
 
-_use_proxy = (
-    os.environ.get("USE_PROXY_FIX", "").lower() == "true"
-    or os.environ.get("BEHIND_PROXY", "").lower() == "true"
-    or app.config.get("IS_PRODUCTION", False)
-)
-if _use_proxy:
+# X-Forwarded-* headers are trusted only when a reverse proxy is declared (pilot check 2026-10-09, F4):
+# trusted unconditionally in production, a client could send its own X-Forwarded-For and appear as a new
+# address on every sign-in attempt. TRUSTED_PROXIES = number of proxies in front of the app (nginx = 1).
+try:
+    _proxy_hops = int(os.environ.get("TRUSTED_PROXIES") or 0)
+except ValueError:
+    raise ValueError("TRUSTED_PROXIES must be the number of reverse proxies in front of the app (e.g. 1)")
+if not _proxy_hops and (os.environ.get("USE_PROXY_FIX", "").lower() == "true"
+                        or os.environ.get("BEHIND_PROXY", "").lower() == "true"):
+    _proxy_hops = 1
+if _proxy_hops:
     from werkzeug.middleware.proxy_fix import ProxyFix
-    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=_proxy_hops, x_proto=1, x_host=1, x_prefix=1)
+elif app.config.get("IS_PRODUCTION", False):
+    app.logger.warning(
+        "TRUSTED_PROXIES is not set: client addresses are taken from the connection. Behind a reverse proxy "
+        "set TRUSTED_PROXIES=1, or every user shares the proxy's address in the sign-in limit and audit log."
+    )
 
 # WAL checkpoint counter — runs PRAGMA wal_checkpoint(TRUNCATE) every 500 commits
 # to prevent the SQLite WAL file from growing unboundedly.
@@ -90,6 +100,24 @@ def set_sqlite_pragmas(dbapi_conn, _):
         cursor.execute("PRAGMA synchronous = NORMAL")
         cursor.execute("PRAGMA busy_timeout = 30000")
         cursor.close()
+
+
+class _LenientJSONRequest(Request):
+    """A body that is not JSON (missing Content-Type, malformed text) reads as an empty object: the route
+    then answers 400 for its missing fields. Flask raised 415 / 400 inside the routes' try blocks, which
+    turned it into a 500, and None broke the routes that call .get() on it (pilot check 2026-10-09, F13)."""
+
+    def on_json_loading_failed(self, e):
+        return {}
+
+
+app.request_class = _LenientJSONRequest
+
+
+# F12: seal every new audit log row into the hash chain when it is flushed
+from services.audit_chain import register as _register_audit_chain  # noqa: E402
+
+_register_audit_chain(db.session)
 
 
 @event.listens_for(db.session, "before_commit")
@@ -144,7 +172,7 @@ def handle_csrf_error(e):
 
 # ── Central input validation (audit RC-1) ──────────────────────────────────
 from flask.json.provider import DefaultJSONProvider
-from input_validation import ValidationError, find_non_finite, sanitize_non_finite
+from input_validation import ValidationError, find_non_finite, find_nul, invalid_query_parameter, sanitize_non_finite
 
 
 class FiniteJSONProvider(DefaultJSONProvider):
@@ -170,6 +198,26 @@ def reject_non_finite_json():
         bad = find_non_finite(payload) if payload is not None else None
         if bad:
             return jsonify({"error": f"'{bad}' must be a finite number", "field": bad, "code": 400}), 400
+        nul = find_nul(payload) if payload is not None else None
+        if nul:
+            return jsonify({"error": f"'{nul}' contains an invalid character", "field": nul, "code": 400}), 400
+
+
+# Routes whose filters crashed on a malformed year / month / facility id (F13). Other routes keep their
+# own documented answers (QA/QC ignores a bad year, equity answers 400, reports 404 for "[object Object]").
+_STRICT_FILTER_PREFIXES = ("/api/dashboard/", "/api/data/production")
+
+
+@app.before_request
+def reject_malformed_query_parameters():
+    """F13: a NUL character anywhere, or a malformed year / month / facility id on the dashboard and
+    production reads, is a 400 (422 for a facility id), not a 500 inside the route."""
+    if not request.path.startswith("/api"):
+        return None
+    bad = invalid_query_parameter(request.args, numbers=request.path.startswith(_STRICT_FILTER_PREFIXES))
+    if bad:
+        status = 422 if bad[0] in ("facility_id", "facilityId") else 400  # documented 422 for facility ids
+        return jsonify({"error": bad[1], "field": bad[0], "code": status}), status
 
 
 
@@ -221,9 +269,9 @@ def after_request(response):
     response.headers["Content-Security-Policy"] = (
         "default-src 'self'; "
         "script-src 'self'; "
-        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
-        "font-src 'self' https://fonts.gstatic.com; "
-        "img-src 'self' data: https:; "
+        "style-src 'self' 'unsafe-inline'; "
+        "font-src 'self'; "
+        "img-src 'self' data:; "
         "connect-src 'self'"
     )
     response.headers["X-Frame-Options"] = "DENY"
@@ -433,9 +481,9 @@ def ensure_admin_seeded():
                 db.session.add(user)
                 app.logger.info(f"Seeded {u['role']} account: {u['email']}")
             else:
-                # Do NOT overwrite existing user passwords on startup
-                user.status = "active"
-                app.logger.info(f"Verified existing account: {u['email']}")
+                # Neither the password nor the status of an existing account is changed on startup
+                # (pilot check 2026-10-09, F2: an account IT had disabled was re-enabled by every restart)
+                app.logger.info(f"Seeded account already exists, left unchanged: {u['email']}")
         db.session.commit()
     except Exception as e:
         app.logger.error(f"Failed to seed admin accounts: {e}")
@@ -554,6 +602,21 @@ def index():
 def health_check():
     # SEC-06 FIX: no longer expose DB engine name
     return jsonify({"status": "ok", "version": app.config.get("APP_VERSION", "1.0.0")})
+
+
+@app.route("/api/map-config")
+def map_config():
+    """Basemap tiles of the Emissions Map (pilot check 2026-10-09, F5). Empty unless MAP_TILE_URL is set:
+    an offline install shows the facilities without a basemap instead of calling an internet tile server."""
+    from flask import session as flask_session
+
+    if not flask_session.get("user_id"):
+        return jsonify({"error": "Not authenticated"}), 401
+    return jsonify({
+        "tile_url": os.environ.get("MAP_TILE_URL", "").strip() or None,
+        "attribution": os.environ.get("MAP_TILE_ATTRIBUTION", "").strip() or None,
+        "subdomains": os.environ.get("MAP_TILE_SUBDOMAINS", "").strip() or None,
+    })
 
 
 @app.route("/api/health/live")

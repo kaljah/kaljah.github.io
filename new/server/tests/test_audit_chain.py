@@ -1,4 +1,4 @@
-"""Tests for Cryptographic Audit Chain Verification (ISO 14064-3 / ISAE 3410)."""
+"""Audit log hash chain (sealed at write time) and the audit manifests of exported reports."""
 import pytest
 from tests.audit_helpers import login, make_user
 from models import ActivityLog
@@ -33,15 +33,12 @@ def test_verify_audit_chain_streaming(client, ctx):
     data = res.get_json()
 
     assert data["status"] == "verified"
-    assert data["is_tamper_evident"] is True
+    assert data["is_intact"] is True and data["issue_count"] == 0
     assert data["total_records"] >= 10
     assert len(data["genesis_hash"]) == 64
     assert len(data["chain_head_hash"]) == 64
     assert len(data["checkpoint_hmac"]) == 64
     assert data["hmac_algorithm"] == "HMAC-SHA256"
-    assert data["anchor_status"] == "anchored"
-    assert len(data["sample_blocks"]) <= 5
-    assert len(data["sample_blocks"]) > 0
 
 
 def test_hmac_checkpoint_verification_endpoint(client, ctx):
@@ -76,17 +73,19 @@ def test_hmac_checkpoint_verification_endpoint(client, ctx):
     assert t_data["status"] == "rejected"
 
 
-def test_pdf_report_contains_iso14064_cryptographic_assurance(client, ctx):
-    """Verifies that generated PDF compliance reports include cryptographic SHA-256 watermarks and headers."""
+def test_pdf_report_fingerprint_is_recorded_in_the_audit_log(client, ctx):
+    """The PDF carries a fingerprint of its data, and the same fingerprint is in a REPORT audit entry."""
     admin = make_user("admin", "Global")
     login(client, admin)
 
     res = client.post("/api/reports/generate", json={"filters": {"year": 2024, "scope": "all"}})
     assert res.status_code == 200
     assert "X-Audit-SHA256" in res.headers
-    assert res.headers["X-Audit-Standard"] == "ISO 14064-3 / ISAE 3410"
+    assert "X-Audit-Standard" not in res.headers  # no claim of conformance to an assurance standard
     assert "X-Audit-Timestamp" in res.headers
     assert len(res.headers["X-Audit-SHA256"]) == 64
+    assert ActivityLog.query.filter(ActivityLog.action == "REPORT",
+                                    ActivityLog.details.contains(res.headers["X-Audit-SHA256"])).count() == 1
     assert res.mimetype == "application/pdf"
     pdf_bytes = res.get_data()
     assert pdf_bytes.startswith(b"%PDF")
@@ -94,7 +93,7 @@ def test_pdf_report_contains_iso14064_cryptographic_assurance(client, ctx):
 
 
 def test_ogmp_excel_contains_audit_assurance_tab(client, ctx):
-    """Verifies that OGMP disclosure workbooks embed the ISO 14064-3 Audit Assurance worksheet."""
+    """OGMP disclosure workbooks embed the audit manifest sheet; its fingerprint is in the audit log."""
     import openpyxl
     import io
 
@@ -104,12 +103,13 @@ def test_ogmp_excel_contains_audit_assurance_tab(client, ctx):
     res = client.get("/api/reports/ogmp-export?year=2024")
     assert res.status_code == 200
     assert "X-Audit-SHA256" in res.headers
-    assert res.headers["X-Audit-Standard"] == "ISO 14064-3 / ISAE 3410"
     assert len(res.headers["X-Audit-SHA256"]) == 64
+    assert ActivityLog.query.filter(ActivityLog.action == "REPORT",
+                                    ActivityLog.details.contains(res.headers["X-Audit-SHA256"])).count() == 1
 
     wb = openpyxl.load_workbook(io.BytesIO(res.get_data()))
     assert "Audit Assurance" in wb.sheetnames
     ws = wb["Audit Assurance"]
-    assert "ISO 14064-3" in str(ws.cell(row=2, column=1).value)
-    assert ws.cell(row=5, column=1).value == "Audit Standard"
-    assert ws.cell(row=6, column=1).value == "Cryptographic Fingerprint (SHA-256)"
+    assert ws.cell(row=2, column=1).value == "Audit Manifest"
+    assert ws.cell(row=5, column=1).value == "Data Fingerprint (SHA-256)"
+    assert ws.cell(row=5, column=2).value == res.headers["X-Audit-SHA256"]

@@ -19,7 +19,8 @@ from extensions import db
 from utils import log_activity_and_notify, get_current_user, get_allowed_facility_ids
 from sqlalchemy import func, distinct, or_
 from routes.auth import login_required
-from utils import internal_error
+from utils import facility_access_error, internal_error
+from input_validation import parse_year
 
 managedata_bp = Blueprint("managedata", __name__)
 
@@ -78,9 +79,8 @@ def add_source():
     except (ValueError, TypeError):
         return jsonify({"error": "Invalid facility ID"}), 400
 
-    allowed_fids = get_allowed_facility_ids(user)
-    if allowed_fids is not None and fid not in allowed_fids:
-        return jsonify({"error": "Access to this facility is denied"}), 403
+    if (denied := facility_access_error(user, fid)):
+        return denied
 
     source = EmissionSource(
         facility_id=fid,
@@ -268,9 +268,8 @@ def add_mitigation():
             fid = int(facility_id)
         except (ValueError, TypeError):
             return jsonify({"error": "Invalid facility ID"}), 400
-        allowed_fids = get_allowed_facility_ids(user)
-        if allowed_fids is not None and fid not in allowed_fids:
-            return jsonify({"error": "Access to this facility is denied"}), 403
+        if (denied := facility_access_error(user, fid)):
+            return denied
 
         # Create MitigationProject
         project = MitigationProject(
@@ -414,11 +413,11 @@ def get_reporting_metadata():
     user = get_current_user()
     if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to view reporting metadata."}), 403
-    year = request.args.get("year")
-    if not year:
+    if not request.args.get("year"):
         return jsonify({"error": "Year required"}), 400
+    year = parse_year(request.args.get("year"))  # F13: a non-numeric year raised a 500
 
-    metadata = ReportingMetadata.query.filter_by(year=int(year)).first()
+    metadata = ReportingMetadata.query.filter_by(year=year).first()
     if not metadata:
         return jsonify(
             {
@@ -457,11 +456,11 @@ def save_reporting_metadata():
         return jsonify({"error": "Organisation-wide administrator privileges required to modify reporting metadata."}), 403
 
     data = request.get_json() or {}
-    year = data.get("year")
-    if not year:
+    if not data.get("year"):
         return jsonify({"error": "Year required"}), 400
+    year = parse_year(data.get("year"))  # F13: a non-numeric year raised a 500
 
-    metadata = ReportingMetadata.query.filter_by(year=int(year)).first()
+    metadata = ReportingMetadata.query.filter_by(year=year).first()
     if metadata:
         metadata.has_reduction_target = data.get(
             "has_reduction_target", metadata.has_reduction_target

@@ -124,17 +124,19 @@ class TestAuditChainTamperDetection:
             tampered_log.action = "TAMPERED_ACTION"
             db.session.commit()
 
-        # 3. Verify chain reflects tampering (head hash must change)
+        # 3. Verification reports the altered entry (its content no longer matches its sealed hash)
         res2 = client.get("/api/audit/verify-chain")
         assert res2.status_code == 200
-        tampered_hash = res2.get_json()["chain_head_hash"]
-        assert tampered_hash != legit_hash, "Hash chain failed to detect tampered historical record!"
+        body = res2.get_json()
+        assert body["status"] == "tampered", "Hash chain failed to detect tampered historical record!"
+        assert any(i["id"] == target_log_id and i["problem"] == "content_changed" for i in body["issues"])
 
         # Clean up / revert for subsequent tests
         with app.app_context():
             tampered_log = db.session.get(ActivityLog, target_log_id)
             tampered_log.action = "AUDIT_RECORD_2"
             db.session.commit()
+        assert client.get("/api/audit/verify-chain").get_json()["status"] == "verified"
 
     def test_hash_chain_detects_row_deletion(self, client, assurance_env):
         """Deleting an audit row completely invalidates the chain head hash."""
