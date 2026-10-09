@@ -195,13 +195,23 @@ APPROVER_ROLES = ("admin", "superuser")
 def initial_record_status(user, requested_status=None, channel="manual"):
     """Status for a newly created emission-type record.
 
-    channel: "manual" (form / API create) or "bulk" (file or JSON import).
+    channel: "manual" (form / API create) or "bulk" (file or JSON import). Compliance admins are
+    trusted for both: their records are Verified at once (decision 2026-10-09); everyone else's wait
+    for an approver.
     """
-    if channel == "bulk":
-        return STATUS_PENDING
-    if requested_status == STATUS_DRAFT:
+    if channel != "bulk" and requested_status == STATUS_DRAFT:
         return STATUS_DRAFT
     return STATUS_VERIFIED if user is not None and user.role == "admin" else STATUS_PENDING
+
+
+def bulk_status_fields(user):
+    """status / approved_by / approved_at for a record created or overwritten by a bulk import."""
+    import datetime
+
+    status = initial_record_status(user, channel="bulk")
+    verified = status == STATUS_VERIFIED
+    return {"status": status, "approved_by": user.id if verified else None,
+            "approved_at": datetime.datetime.now(datetime.timezone.utc) if verified else None}
 
 
 def can_approve(user, record):

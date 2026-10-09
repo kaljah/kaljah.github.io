@@ -569,6 +569,14 @@ def _resolve_existing(model, existing):
     return existing  # pending object from this file
 
 
+def _bulk_status(user_id):
+    from extensions import db
+    from models import User
+    from utils import bulk_status_fields
+
+    return bulk_status_fields(db.session.get(User, user_id) if user_id else None)
+
+
 def _bulk_overwrite(obj, values, user_id, label):
     """BUG-058: overwrite through the maker-checker: back to Pending, approval cleared,
     last maker recorded, old/new values captured in the audit trail."""
@@ -580,9 +588,8 @@ def _bulk_overwrite(obj, values, user_id, label):
     for k, v in values.items():
         setattr(obj, k, v)
     was_saved = getattr(obj, "id", None) is not None and not getattr(obj, "_bulk_in_file", False)
-    obj.status = "Pending"
-    obj.approved_by = None
-    obj.approved_at = None
+    for k, v in _bulk_status(user_id).items():  # Pending, or Verified for an admin's import
+        setattr(obj, k, v)
     if hasattr(obj, "approved_by_name"):
         obj.approved_by_name = None
     if hasattr(obj, "updated_by"):
@@ -1845,7 +1852,7 @@ def _process_row_scope2(
         division=row.get("division") or facility.division,
         field=row.get("field") or facility.field,
         created_by=user_id,
-        status="Pending",  # Maker-Checker: awaits reviewer approval
+        **_bulk_status(user_id),  # Maker-Checker: awaits reviewer approval (admins: Verified)
     )
     
     # QA/QC Anomaly Detection
@@ -1969,7 +1976,7 @@ def _process_row_scope3_eeio(
         data_quality="Average-data method",
         notes=row.get("notes", "Bulk Imported via EEIO"),
         created_by=user_id,
-        status="Pending",
+        **_bulk_status(user_id),
     )
     
     # QA/QC Anomaly Detection
@@ -2116,7 +2123,7 @@ def _process_row_scope3(
         uncertainty=unc,
         notes=row.get("notes", "Bulk Imported"),
         created_by=user_id,
-        status="Pending",  # Maker-Checker: awaits reviewer approval
+        **_bulk_status(user_id),  # Maker-Checker: awaits reviewer approval (admins: Verified)
     )
 
     # QA/QC Anomaly Detection
@@ -2864,7 +2871,8 @@ def _process_row(
     record.field = row.get("field") or facility.field
     record.group_name = row.get("group") or row.get("group_name") or None
     record.equipment_id = equipment_id or None
-    record.status = "Pending"  # Maker-Checker: bulk imports await reviewer approval
+    for k, v in _bulk_status(user_id).items():  # Pending (admins: Verified)
+        setattr(record, k, v)
     record.data_source_ref = source_ref or None
     if batch_keys is not None:
         batch_keys[key] = record  # BUG-057: later in-file repeats update this row

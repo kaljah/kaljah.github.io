@@ -91,7 +91,7 @@ def test_scope1_matches_manual_entry(app, client, env):
                 "uncertainty", "uncertainty_ch4", "ef_used_co2", "calc_method", "ef_key"):
         assert getattr(bulk, col) == getattr(man, col), col
     assert bulk.factor_source == "default"  # the tier, not the fuel category ("gases")
-    assert bulk.status == "Pending"
+    assert bulk.status == "Verified"  # an admin's import is Verified at once, like a manual entry
 
 
 def test_scope1_rejects_factor_of_another_process(app, client, env):

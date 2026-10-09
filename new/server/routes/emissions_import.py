@@ -15,7 +15,7 @@ from models import Emission, Facility, Notification, User
 from routes.auth import login_required
 from services.ogmp import ogmp_level_for
 from sqlalchemy import func
-from utils import get_allowed_facility_ids, get_current_user, log_activity_and_notify
+from utils import bulk_status_fields, get_allowed_facility_ids, get_current_user, log_activity_and_notify
 from . import emissions_bp
 from routes.emissions import resolve_gwp_dict, resolve_gwp_standard
 
@@ -326,9 +326,7 @@ def import_emissions():
                 created_by_name=user_label(user),
                 factor_source=rec_data.get("factor_source") or "default",
                 qa_flag=qa_msg[:255] if qa_msg else None,
-                status="Pending",  # D-04: all bulk imports queue as Pending
-                approved_by=None,
-                approved_at=None,
+                **bulk_status_fields(user),  # D-04: Pending until reviewed (admins: Verified)
             )
             apply_result(record, rec_data, em_result, method, factor_data, gwp_std)
             record.ogmp_level = ogmp_level_for(record)
