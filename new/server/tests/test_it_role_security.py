@@ -410,3 +410,56 @@ def test_non_numeric_facility_id_returns_422(client, test_accounts):
     assert res_cap.status_code == 422
 
 
+
+
+def _protected_account(email, role):
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        user = User(email=email, fullName=f"Protected {role}", orgName="Energy Corp", sector="Energy",
+                    role=role, location="Hassi Messaoud", status="active")
+        user.set_password("ProtectedPass123!")
+        db.session.add(user)
+    user.role, user.status, user.location = role, "active", "Hassi Messaoud"
+    db.session.commit()
+    return user.id
+
+
+def test_it_admin_cannot_promote_to_it_manager(client, test_accounts):
+    """it_admin and it_manager share a rank; promoting to it_manager would let IT create admins."""
+    with app.app_context():
+        db.session.get(User, test_accounts["target_id"]).role = "user"
+        db.session.commit()
+    with client.session_transaction() as sess:
+        sess["user_id"] = test_accounts["it_admin_id"]
+    for role in ("it_manager", " IT_MANAGER ", "admin", "superuser"):
+        res = client.put(f"/api/auth/users/{test_accounts['target_id']}", json={"role": role})
+        assert res.status_code == 403, role
+    with app.app_context():
+        assert db.session.get(User, test_accounts["target_id"]).role == "user"
+
+
+@pytest.mark.parametrize("role", ["admin", "superuser", "it_manager"])
+def test_it_admin_cannot_modify_or_delete_protected_accounts(client, test_accounts, role):
+    with app.app_context():
+        target_id = _protected_account(f"it_protected_{role}@domain.com", role)
+    with client.session_transaction() as sess:
+        sess["user_id"] = test_accounts["it_admin_id"]
+    for payload in ({"status": "inactive"}, {"location": "Oran"}, {"email": "taken@domain.com"},
+                    {"fullName": "Renamed"}, {"role": "user"}):
+        assert client.put(f"/api/auth/users/{target_id}", json=payload).status_code == 403, payload
+    assert client.delete(f"/api/auth/users/{target_id}").status_code == 403
+    with app.app_context():
+        user = db.session.get(User, target_id)
+        assert (user.role, user.status, user.location) == (role, "active", "Hassi Messaoud")
+
+
+def test_it_admin_account_edits_appear_in_it_audit_view(client, test_accounts):
+    with client.session_transaction() as sess:
+        sess["user_id"] = test_accounts["it_admin_id"]
+    assert client.put(f"/api/auth/users/{test_accounts['target_id']}",
+                      json={"jobTitle": "Audited Edit"}).status_code == 200
+    res = client.get("/api/audit/?entity=User&action=UPDATE")
+    assert res.status_code == 200
+    body = res.get_json()
+    rows = body.get("logs", body) if isinstance(body, dict) else body
+    assert any(str(r.get("recordId")) == str(test_accounts["target_id"]) for r in rows)
