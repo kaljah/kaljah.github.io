@@ -2,6 +2,7 @@ import React from "react";
 import { Input, Field } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
 import { NativeSelect } from "../../ui/NativeSelect";
+import { MARKET_INSTRUMENTS } from "./marketInstruments";
 
 export interface Scope2FormNewElectricityEntryProps {
   activity: string;
@@ -18,6 +19,8 @@ export interface Scope2FormNewElectricityEntryProps {
   handleSourceTypeChange: (type: string) => void;
   heatEff: string | number;
   heatOutput: string | number;
+  marketFactor: string;
+  marketInstrument: string;
   month: number | string;
   powerEff: string | number;
   powerOutput: string | number;
@@ -28,6 +31,8 @@ export interface Scope2FormNewElectricityEntryProps {
   setGridRegion: (g: string) => void;
   setHeatEff: (h: string) => void;
   setHeatOutput: (h: string) => void;
+  setMarketFactor: (f: string) => void;
+  setMarketInstrument: (m: string) => void;
   setMonth: (m: any) => void;
   setPowerEff: (p: string) => void;
   setPowerOutput: (p: string) => void;
@@ -58,6 +63,8 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
   handleSourceTypeChange,
   heatEff,
   heatOutput,
+  marketFactor,
+  marketInstrument,
   month,
   powerEff,
   powerOutput,
@@ -68,6 +75,8 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
   setGridRegion,
   setHeatEff,
   setHeatOutput,
+  setMarketFactor,
+  setMarketInstrument,
   setMonth,
   setPowerEff,
   setPowerOutput,
@@ -186,6 +195,29 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
               onChange={setGridRegion}
               placeholder="Select Grid..."
             />
+          </div>
+        )}
+        {sourceType === "electricity" && (
+          // market-based Scope 2 (dual reporting): contract instrument and its factor; blank = location-based
+          <div className={`form-grid-2 [grid-column:span_2]!`}>
+            <Field className="input-group" label="Market instrument (market-based)">
+              <NativeSelect value={marketInstrument} onChange={(e) => setMarketInstrument(e.target.value)}>
+                {MARKET_INSTRUMENTS.map((m) => (
+                  <option key={m.value} value={m.value}>{m.label}</option>
+                ))}
+              </NativeSelect>
+            </Field>
+            <Field className="input-group" label="Contract emission factor (kg CO2e/kWh)">
+              <Input
+                type="number"
+                step="any"
+                min={0}
+                value={marketFactor}
+                onChange={(e) => setMarketFactor(e.target.value)}
+                placeholder={marketInstrument === "REC" ? "blank = 0 (zero-carbon)" : "blank = grid factor"}
+                disabled={!marketInstrument}
+              />
+            </Field>
           </div>
         )}
         {sourceType === "indirect_steam" && (

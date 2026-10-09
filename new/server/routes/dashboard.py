@@ -493,7 +493,8 @@ def _query_summary(
     def blank(yr, fid):
         return {"year": yr, "facility_id": fid, "scope1_total": 0.0, "scope1_total_gwp100": 0.0,
                 "scope1_total_gwp20": 0.0, "gwp_horizon": 20 if is_20 else 100, "co2_total": 0.0,
-                "ch4_total": 0.0, "n2o_total": 0.0, "scope2_total": 0.0, "scope2_energy": 0.0,
+                "ch4_total": 0.0, "n2o_total": 0.0, "scope2_total": 0.0, "scope2_market_total": 0.0,
+                "scope2_energy": 0.0,
                 "combustion": 0.0, "flaring": 0.0, "venting": 0.0, "fugitive": 0.0, "process": 0.0, "other": 0.0}
 
     yearly = {}
@@ -513,21 +514,14 @@ def _query_summary(
         cat = source_category(r.process_type)
         d["venting" if cat == "vented" else cat] += shown
 
-    s2_cols = [Scope2Emission.year.label("year")]
-    if by_fac:
-        s2_cols.append(Scope2Emission.facility_id.label("facility_id"))
-    s2_q = db.session.query(*s2_cols, func.sum(Scope2Emission.co2e).label("scope2_total"),
-                            func.sum(Scope2Emission.electricity_kwh).label("scope2_energy"))
-    s2_q = apply_year(apply_scope(s2_q, Scope2Emission, **scope), Scope2Emission, year)
+    from services.scope2_gases import yearly_totals
+    s2_q = apply_year(apply_scope(Scope2Emission.query, Scope2Emission, **scope), Scope2Emission, year)
     s2_q = s2_q.filter(Scope2Emission.status.in_(statuses(include_pending)), Scope2Emission.year.isnot(None))
-    s2_rows = s2_q.group_by(*[c for c in (Scope2Emission.year, Scope2Emission.facility_id if by_fac else None)
-                              if c is not None]).all()
-    for r in s2_rows:
-        yr = int(r.year)
-        fid = getattr(r, "facility_id", "total") if by_fac else "total"
+    for (yr, fid), t in yearly_totals(s2_q, by_fac, horizon).items():
         d = yearly.setdefault((yr, fid), blank(yr, fid))
-        d["scope2_total"] += float(r.scope2_total or 0)  # Scope 2 stores CO2e only (no per-gas split)
-        d["scope2_energy"] += float(r.scope2_energy or 0)
+        d["scope2_total"] += t["location"]  # location-based (GHG Protocol default); market-based beside it
+        d["scope2_market_total"] += t["market"]
+        d["scope2_energy"] += t["energy"]
 
     for d in yearly.values():
         for k in ("scope1_total", "scope1_total_gwp100", "scope1_total_gwp20"):

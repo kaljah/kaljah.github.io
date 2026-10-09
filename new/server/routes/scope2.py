@@ -7,6 +7,7 @@ from routes.auth import login_required
 from calculations.uncertainty import propagate_uncertainty, Tier
 from utils import facility_access_error, get_current_user, get_allowed_facility_ids, require_facility_access, initial_record_status, log_activity_and_notify
 from input_validation import ValidationError, parse_number, parse_year, parse_month, require_plausible_co2e
+from services.scope2_gases import gas_split
 import datetime
 
 scope2_bp = Blueprint("scope2", __name__)
@@ -269,6 +270,7 @@ def get_scope2_emissions():
                     "cooling_ton": float(e.cooling_ton or 0),
                     "emission_factor": float(e.emission_factor or 0),
                     "co2e": float(e.co2e or 0),
+                    **gas_split(e),  # ADM-14: grid electricity split into CO2 / CH4 / N2O
                     "co2e_location_based": float(e.co2e_location_based if e.co2e_location_based is not None else (e.co2e or 0)),
                     "co2e_market_based": float(e.co2e_market_based if e.co2e_market_based is not None else (e.co2e or 0)),
                     "market_instrument_type": e.market_instrument_type,
@@ -499,9 +501,7 @@ def create_scope2_emission():
                 "status": initial_status,
                 "emissions": {
                     "totalCo2e": co2e,
-                    "co2": co2e,
-                    "ch4": 0.0,
-                    "n2o": 0.0,
+                    **gas_split(emission),
                     "uncertainty": final_uncertainty,
                 },
                 "record": {

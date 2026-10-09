@@ -3,6 +3,7 @@ import { Dialog, Button, Field, Input } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import api from "../../api";
 import { useToast } from "../Toast";
+import { MARKET_INSTRUMENTS } from "../scope2-form/marketInstruments";
 import { apiError } from "../../utils/apiError";
 
 export interface EditEmissionModalProps {
@@ -239,11 +240,9 @@ export const EditEmissionModal: React.FC<EditEmissionModalProps> = ({
                   value={formData.market_instrument_type}
                   onChange={(e) => handleChange("market_instrument_type", e.target.value)}
                 >
-                  <option value="">None (Location-based fallback)</option>
-                  <option value="PPA">Power Purchase Agreement (PPA)</option>
-                  <option value="REC">Renewable Energy Certificate (REC)</option>
-                  <option value="GO">Guarantee of Origin (GO)</option>
-                  <option value="supplier_tariff">Green Tariff / Supplier Specific</option>
+                  {MARKET_INSTRUMENTS.map((m) => (
+                    <option key={m.value} value={m.value}>{m.label}</option>
+                  ))}
                 </NativeSelect>
               </Field>
 

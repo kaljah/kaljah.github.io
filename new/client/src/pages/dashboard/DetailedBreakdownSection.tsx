@@ -55,6 +55,7 @@ export interface DetailedBreakdownSectionProps {
   stats: {
     scope1?: number;
     scope2?: number;
+    scope2Market?: number;
     scope3?: number;
     combustion?: number;
     flaring?: number;
@@ -124,7 +125,8 @@ const DetailedBreakdownSection: React.FC<DetailedBreakdownSectionProps> = ({
               <Row level={1} label="Venting" value={fmt(stats.venting)} />
               <Row level={1} label="Equipment Leaks / Fugitives" value={fmt(stats.fugitive)} />
               <Row level={1} label="Other Sources" value={fmt(stats.other)} />
-              <Row tone="summary" label="Scope 2 (Indirect - Energy)" value={fmt(stats.scope2)} />
+              <Row tone="summary" label="Scope 2 (Indirect - Energy), location-based" value={fmt(stats.scope2)} />
+              <Row level={1} label="Scope 2 market-based (contractual instruments; not added to the total)" value={fmt(stats.scope2Market ?? stats.scope2)} />
               <Row tone="summary" label="Scope 3 (Supply Chain)" value={fmt(stats.scope3)} />
               <Row tone="total" label="Total Footprint (Scopes 1+2+3)" value={fmt(total)} />
               <Row tone="net" label="Net Footprint" value={fmt(total - (stats.mitigation || 0))} />
