@@ -6,7 +6,7 @@ from electricity_factors import GRID_FACTORS, grid_entry, grid_factor_kg_co2e_pe
 from routes.auth import login_required
 from calculations.uncertainty import propagate_uncertainty, Tier
 from utils import facility_access_error, get_current_user, get_allowed_facility_ids, require_facility_access, initial_record_status, log_activity_and_notify
-from input_validation import ValidationError, parse_number, parse_year, parse_month
+from input_validation import ValidationError, parse_number, parse_year, parse_month, require_plausible_co2e
 import datetime
 
 scope2_bp = Blueprint("scope2", __name__)
@@ -425,6 +425,7 @@ def create_scope2_emission():
         if raw_amt > 0:
             cooling_ton_val = raw_amt
 
+    require_plausible_co2e(co2e, co2e_location, co2e_market)
     emission = Scope2Emission(
         facility_id=data.get("facility_id"),
         year=year_val,
@@ -660,7 +661,7 @@ def update_scope2_emission(emission_id):
         emission.uncertainty = parse_number(data["uncertainty"], "uncertainty", required=False, min_value=0, max_value=2)
     if "location" in data:
         emission.location = data["location"]
-
+    require_plausible_co2e(emission.co2e, emission.co2e_location_based, emission.co2e_market_based)
     try:
         from utils import log_activity_and_notify
         log_activity_and_notify(
@@ -755,14 +756,8 @@ def bulk_import_scope2():
 
     MAX_SYNCHRONOUS_IMPORT = 2500
     if len(records) > MAX_SYNCHRONOUS_IMPORT:
-        return (
-            jsonify(
-                {
-                    "error": f"Payload exceeds maximum synchronous limit of {MAX_SYNCHRONOUS_IMPORT} rows. Please split the batch."
-                }
-            ),
-            413,
-        )
+        return jsonify({"error": f"Payload exceeds maximum synchronous limit of {MAX_SYNCHRONOUS_IMPORT} rows. "
+                                 "Please split the batch."}), 413
 
     # BUG-060/RC-2: every bulk import is Pending until an approver reviews it (same as Scope 1/3).
     bulk_status = initial_record_status(user, channel="bulk")
@@ -853,6 +848,7 @@ def bulk_import_scope2():
             )
             final_uncertainty = u_res["relative_uncertainty"]
 
+            require_plausible_co2e(co2e_val, co2e_mkt_val)
             emission = Scope2Emission(
                 facility_id=facility.id,
                 year=row_year,

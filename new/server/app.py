@@ -193,6 +193,7 @@ app.json = FiniteJSONProvider(app)
 
 @app.errorhandler(ValidationError)
 def handle_validation_error(e):
+    db.session.rollback()  # a route may have changed a record before a later field was refused
     return jsonify({"error": e.message, "field": e.field, "code": 400}), 400
 
 
@@ -210,7 +211,7 @@ def reject_non_finite_json():
 
 # Routes whose filters crashed on a malformed year / month / facility id (F13). Other routes keep their
 # own documented answers (QA/QC ignores a bad year, equity answers 400, reports 404 for "[object Object]").
-_STRICT_FILTER_PREFIXES = ("/api/dashboard/", "/api/data/production")
+_STRICT_FILTER_PREFIXES = ("/api/dashboard/", "/api/data/production", "/api/emissions")
 
 
 @app.before_request
@@ -223,6 +224,11 @@ def reject_malformed_query_parameters():
     if bad:
         status = 422 if bad[0] in ("facility_id", "facilityId") else 400  # documented 422 for facility ids
         return jsonify({"error": bad[1], "field": bad[0], "code": status}), status
+    # the dashboard routes read facilityId; facility_id (the name the other APIs use) was silently
+    # ignored, so a filtered request answered with the totals of the whole scope
+    if request.path.startswith("/api/dashboard/") and "facility_id" in request.args and "facilityId" not in request.args:
+        from werkzeug.datastructures import ImmutableMultiDict
+        request.args = ImmutableMultiDict(list(request.args.items(multi=True)) + [("facilityId", request.args["facility_id"])])
 
 
 

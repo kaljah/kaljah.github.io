@@ -5,10 +5,11 @@ from sqlalchemy import func
 from routes.auth import login_required
 from calculations.uncertainty import propagate_uncertainty, Tier
 from calculations.units import compute_scope3_co2e
-from utils import facility_access_error, get_current_user, get_allowed_facility_ids, log_activity_and_notify, require_facility_access, initial_record_status
-from input_validation import ValidationError, parse_number, parse_year, parse_month, normalize_scope3_category
+from utils import facility_access_error, get_current_user, get_allowed_facility_ids, log_activity_and_notify, \
+    require_facility_access, initial_record_status, internal_error
+from input_validation import ValidationError, parse_number, parse_year, parse_month, normalize_scope3_category, \
+    require_plausible_co2e
 import datetime
-from utils import internal_error
 
 scope3_bp = Blueprint("scope3", __name__)
 
@@ -151,6 +152,7 @@ def create_scope3_emission():
         from calculations.units import scope3_ef_kg_per_unit
         emission_factor = scope3_ef_kg_per_unit(activity_data, co2e_val, emission_factor)
 
+    require_plausible_co2e(co2e_val)
     emission = Scope3Emission(
         facility_id=facility_id_int,
         year=year_val,
@@ -328,6 +330,7 @@ def update_scope3_emission(emission_id):
     if "notes" in data:
         emission.notes = data["notes"]
 
+    require_plausible_co2e(emission.co2e)
     try:
         from utils import log_activity_and_notify
         log_activity_and_notify(
@@ -420,14 +423,8 @@ def bulk_import_scope3():
 
     MAX_SYNCHRONOUS_IMPORT = 2500
     if len(records) > MAX_SYNCHRONOUS_IMPORT:
-        return (
-            jsonify(
-                {
-                    "error": f"Payload exceeds maximum synchronous limit of {MAX_SYNCHRONOUS_IMPORT} rows. Please split the batch."
-                }
-            ),
-            413,
-        )
+        return jsonify({"error": f"Payload exceeds maximum synchronous limit of {MAX_SYNCHRONOUS_IMPORT} rows. "
+                                 "Please split the batch."}), 413
 
     # D-04: every bulk import is Pending until a reviewer approves it (same as the file import)
     bulk_status = "Pending"
