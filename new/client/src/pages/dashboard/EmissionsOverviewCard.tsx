@@ -102,10 +102,11 @@ const EmissionsOverviewCard: React.FC<EmissionsOverviewCardProps> = ({
           className="p-4"
           data-testid="kpi-net"
           tone="success"
-          label="Net Emissions"
+          label="Gross less mitigation"
+          sublabel="Indicative, not the inventory total"
           value={stats.netEmissions}
           unit="tCO2e"
-          footnote={`Less ${formatCompactNumber(stats.mitigation)} mitigation`}
+          footnote={`Less ${formatCompactNumber(stats.mitigation)} reported mitigation. Inventory totals stay gross (GHG Protocol, ISO 14064-1).`}
         />
         <StatCard
           className="p-4"
