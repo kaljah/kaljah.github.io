@@ -8,6 +8,8 @@
    production stayed in the Decree 21-330 intensity denominator.
 4. Granular intensities: saleable production ignored the activity / division / segment filters.
 """
+import json
+
 import pytest
 
 from app import app as flask_app
@@ -206,3 +208,32 @@ def test_gwp_switch_recalculates_scope2(admin):
         back = {e.month: e.co2e for e in Scope2Emission.query.filter_by(facility_id=fid, year=2015)}
         assert back[1] == pytest.approx(before[1], rel=1e-9) and back[2] == pytest.approx(before[2], rel=1e-6)
         assert GWP_AR5["CH4"] == 28.0
+
+
+# -- DEC-3: a GWP switch recalculates Verified records losslessly and is audited -------------------
+
+def test_gwp_switch_audit_entry_and_lossless_round_trip(admin):
+    from models import ActivityLog, Emission
+
+    with flask_app.app_context():
+        fid = _facility("Full Audit GWP DEC3")
+        e = Emission(facility_id=fid, year=2014, month=1, process_type="combustion", co2_emissions=100.0,
+                     ch4_emissions=2.0, n2o_emissions=0.1, co2e_total=100.0 + 2.0 * 28 + 0.1 * 265, status="Verified")
+        from extensions import db
+        db.session.add(e)
+        db.session.commit()
+        eid = e.id
+    assert admin.put("/api/auth/settings", json={"gwp_standard": "AR5"}).status_code == 200
+    try:
+        assert admin.put("/api/auth/settings", json={"gwp_standard": "AR6"}).status_code == 200
+        with flask_app.app_context():
+            row = Emission.query.get(eid)
+            assert row.status == "Verified" and row.co2e_total == pytest.approx(100.0 + 2.0 * 27.9 + 0.1 * 273)
+            log = ActivityLog.query.filter_by(action="GWP_RECALCULATION").order_by(ActivityLog.id.desc()).first()
+            assert log is not None and "AR5 -> AR6" in log.details
+            assert json.loads(log.old_values)["gwp_standard"] == "AR5"
+            assert json.loads(log.new_values)["scope1_tco2e"] != json.loads(log.old_values)["scope1_tco2e"]
+    finally:
+        assert admin.put("/api/auth/settings", json={"gwp_standard": "AR5"}).status_code == 200
+    with flask_app.app_context():
+        assert Emission.query.get(eid).co2e_total == pytest.approx(100.0 + 2.0 * 28 + 0.1 * 265, rel=1e-12)
