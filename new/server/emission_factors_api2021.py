@@ -316,13 +316,19 @@ COMBUSTION_FACTORS = {
 }
 
 # FLARING EMISSION FACTORS (Section 5.2)
+# API Compendium 2021 Eq 5-2 / 5-4 / 5-6 on the Table 5-1 generic compositions, with the December 2025
+# corrections (Section 5.1.2): 96.5 % combustion efficiency for CO2 (was 98 %) and 98 % CH4 destruction
+# for production flares. Downstream (refinery) facilities get 99.5 % CH4 destruction at calculation time
+# (calculations/flare_defaults.py). N2O follows the CO2 (Eq 5-6).
+_FLARE_SOURCE = ("API Compendium 2021 Equations 5-2 / 5-4 / 5-6 (Dec 2025 corrections: 96.5 % combustion, "
+                 "98 % CH4 destruction); Table 5-1 {gas}")
 FLARING_FACTORS = {
     "Natural Gas (Flaring - Elevated)": {
         "code": "NG_Flare_Elev",
-        "co2": 1.9334,  # kg/Sm3, Equation 5-2
+        "co2": 1.9039,  # kg/Sm3, Equation 5-2
         "ch4": 0.012447,  # kg/Sm3, Equation 5-4
-        "n2o": 3.222e-06,  # kg/Sm3, Equation 5-6
-        "combustion_efficiency_co2": 0.98,
+        "n2o": 3.173e-06,  # kg/Sm3, Equation 5-6
+        "combustion_efficiency_co2": 0.965,
         "combustion_efficiency_ch4": 0.98,
         "uncertainty": {"co2": 0.02, "ch4": 0.25, "n2o": 0.50},
         "unit": "kg/m³",
@@ -330,14 +336,14 @@ FLARING_FACTORS = {
         "segment": "Upstream",
         "process_category": "flaring",
         "type": "gases",
-        "source": "API Compendium 2021 Equations 5-2 / 5-4 / 5-6; Table 5-1 processing-plant gas, 98 % (production flare)",
+        "source": _FLARE_SOURCE.format(gas="processing-plant gas"),
     },
     "Natural Gas (Flaring)": {
         "code": "NG_Flare",
-        "co2": 1.9334,  # kg/Sm3, Equation 5-2
+        "co2": 1.9039,  # kg/Sm3, Equation 5-2
         "ch4": 0.012447,  # kg/Sm3, Equation 5-4
-        "n2o": 3.222e-06,  # kg/Sm3, Equation 5-6
-        "combustion_efficiency_co2": 0.98,
+        "n2o": 3.173e-06,  # kg/Sm3, Equation 5-6
+        "combustion_efficiency_co2": 0.965,
         "combustion_efficiency_ch4": 0.98,
         "uncertainty": {"co2": 0.02, "ch4": 0.25, "n2o": 0.50},
         "unit": "kg/m³",
@@ -345,29 +351,32 @@ FLARING_FACTORS = {
         "segment": "Upstream",
         "process_category": "flaring",
         "type": "gases",
-        "source": "API Compendium 2021 Equations 5-2 / 5-4 / 5-6; Table 5-1 processing-plant gas, 98 % (production flare)",
+        "source": _FLARE_SOURCE.format(gas="processing-plant gas"),
     },
+    # The destruction efficiency now follows the facility segment, not the flare design: an enclosed
+    # flare at a production site takes the production default like any other (enter a measured
+    # efficiency at Tier 3 when it is better).
     "Natural Gas (Flaring - Enclosed)": {
         "code": "NG_Flare_Enc",
-        "co2": 1.9628,  # kg/Sm3, Equation 5-2
-        "ch4": 0.003112,  # kg/Sm3, Equation 5-4
-        "n2o": 3.271e-06,  # kg/Sm3, Equation 5-6
-        "combustion_efficiency_co2": 0.995,
-        "combustion_efficiency_ch4": 0.995,
+        "co2": 1.9039,  # kg/Sm3, Equation 5-2
+        "ch4": 0.012447,  # kg/Sm3, Equation 5-4
+        "n2o": 3.173e-06,  # kg/Sm3, Equation 5-6
+        "combustion_efficiency_co2": 0.965,
+        "combustion_efficiency_ch4": 0.98,
         "uncertainty": {"co2": 0.02, "ch4": 0.20, "n2o": 0.50},
         "unit": "kg/m³",
         "usage": ["flaring"],
         "segment": "Upstream",
         "process_category": "flaring",
         "type": "gases",
-        "source": "API Compendium 2021 Equations 5-2 / 5-4 / 5-6; Table 5-1 processing-plant gas, 99.5 % (well-designed flare)",
+        "source": _FLARE_SOURCE.format(gas="processing-plant gas"),
     },
     "Associated Gas (Flaring)": {
         "code": "AG_Flare",
-        "co2": 2.2762,  # kg/Sm3, Equation 5-2
+        "co2": 2.2414,  # kg/Sm3, Equation 5-2
         "ch4": 0.010836,  # kg/Sm3, Equation 5-4
-        "n2o": 3.794e-06,  # kg/Sm3, Equation 5-6
-        "combustion_efficiency_co2": 0.98,
+        "n2o": 3.736e-06,  # kg/Sm3, Equation 5-6
+        "combustion_efficiency_co2": 0.965,
         "combustion_efficiency_ch4": 0.98,
         "uncertainty": {"co2": 0.03, "ch4": 0.25, "n2o": 0.50},
         "unit": "kg/m³",
@@ -375,7 +384,7 @@ FLARING_FACTORS = {
         "segment": "Upstream",
         "process_category": "flaring",
         "type": "gases",
-        "source": "API Compendium 2021 Equations 5-2 / 5-4 / 5-6; Table 5-1 raw / produced gas, 98 %",
+        "source": _FLARE_SOURCE.format(gas="raw / produced gas"),
     },
 }
 

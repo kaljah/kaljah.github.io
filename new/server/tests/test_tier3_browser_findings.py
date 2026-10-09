@@ -109,7 +109,7 @@ def test_8_flaring_variants_metered_volume(app, process):
     em = run(app, process, top={"amount": 20e6, "unit": "scf", "hhv": 1020}, hhv=1020, ch4_content=80,
              unit="scf", amount=20e6)
     assert em["ch4"] == pytest.approx(gas(20e6, .8 * .02, 16.04), rel=0.01)
-    assert em["co2"] == pytest.approx(gas(20e6, .8 * .98, 44.01), rel=0.01)
+    assert em["co2"] == pytest.approx(gas(20e6, .8 * .965, 44.01), rel=0.01)
 
 
 # 9 — AGR: slip is a fraction of inlet CH4; blank slip -> Table 6-19; form percentages

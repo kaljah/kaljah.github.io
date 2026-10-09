@@ -120,12 +120,13 @@ $$\text{CO}_2\text{e} = (\text{Mass}_{\text{CO}_2} \times \text{GWP}_{\text{CO}_
 ### 4.3 Flaring Dual-Efficiency Model
 - **Calculation Name:** Flaring Dual-Efficiency Combustion & Destruction
 - **Purpose:** Separates flaring into hydrocarbon destruction efficiency ($\eta_d$) for unburnt methane and combustion efficiency ($\eta_c$) for carbon dioxide.
-- **Applicable Methodology:** API Compendium 2021 §5.2 (Equations 5-3, 5-4).
+- **Applicable Methodology:** API Compendium 2021 §5.1 (Equations 5-2, 5-4, 5-6), with API's December 2025 corrections to §5.1.2.
 - **Scope / Category:** Scope 1 / Flaring.
-- **Default Efficiencies by Flare Type:**
-  - Elevated / Pipe Flare: $\eta_c = 0.984$, $\eta_d = 0.980$
-  - Enclosed Ground Flare: $\eta_c = 0.996$, $\eta_d = 0.995$
-  - Open Pit / Candle Flare: $\eta_c = 0.920$, $\eta_d = 0.950$
+- **Default Efficiencies** (used when no measured value is entered):
+  - CO₂: $\eta_c = 0.965$ for every flare (Dec 2025 correction; was 0.98).
+  - CH₄: $\eta_d = 0.98$ for production flares (Upstream / Midstream facilities); $\eta_d = 0.995$ for well-designed and operated refinery flares, applied to Downstream facilities (`calculations/flare_defaults.py`). The flare design (elevated, enclosed, pit) no longer sets the default.
+  - Catalog factors (Table 5-1 generic compositions): natural gas 1.9039 kg CO₂/Sm³, associated gas 2.2414 kg CO₂/Sm³; CH₄ 0.012447 and 0.010836 kg/Sm³ (scaled ×0.25 at Downstream facilities); N₂O follows CO₂ (Eq 5-6).
+  - Records saved before this change keep their stored values until `scripts/recalculate_emissions.py --apply` is run.
 - **Formulas:**
   $$\text{CH}_{4,\text{unburnt}} (\text{tonnes}) = \frac{V_{std} \times x_{\text{CH4}} \times (1 - \eta_d) \times \rho_{\text{CH4}}}{1000}$$
   $$\text{CO}_{2,\text{total}} (\text{tonnes}) = \frac{V_{std} \times \left( \sum_{i=1}^{10} (i \cdot x_{Ci}) \cdot \eta_c + x_{\text{CO2,native}} \right) \times \rho_{\text{CO2}}}{1000}$$

@@ -1,7 +1,7 @@
 from .base import BaseCalculator
 from .uncertainty import propagate_uncertainty
 from .units import convert, calculate_co2e
-from .legacy_engine import compute_emissions
+from .flare_defaults import compute_emissions
 
 __all__ = [
     "BaseCalculator",

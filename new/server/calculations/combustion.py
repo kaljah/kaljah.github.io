@@ -484,12 +484,11 @@ class FlaringCalculator(BaseCalculator):
         )
 
         # Determine efficiencies based on flare type or custom parameter overrides
-        # API Compendium 2021 Section 5.1: 98 % of the flare gas carbon to CO2 (Eq 5-2); 2 % residual CH4,
-        # or 0.5 % for a well-designed and operated (enclosed) flare. The former 98.4 / 99.6 / 92 %
-        # conversion defaults by flare type had no source.
-        ft = str(flare_type or "elevated").lower().strip().replace("-", "_").replace(" ", "_")
-        default_eta_c = 0.98
-        default_eta_d = 0.995 if ft in ["enclosed", "enclosed_ground", "ground"] else 0.98
+        # API Compendium 2021 Section 5.1.2 as corrected in December 2025: 96.5 % of the flare gas carbon
+        # to CO2 (Eq 5-2) and 98 % CH4 destruction for production flares (Eq 5-4). Refinery flares
+        # (99.5 %) are set by facility segment in calculations/flare_defaults.py, not by flare type.
+        default_eta_c = 0.965
+        default_eta_d = 0.98
 
         eta_c = _normalize_efficiency(combustion_efficiency, default=default_eta_c)
         eta_d = _normalize_efficiency(destruction_efficiency, default=default_eta_d)

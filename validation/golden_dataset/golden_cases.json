@@ -63,17 +63,17 @@
     "gwp_horizon": "100",
     "intermediate_results": {},
     "expected_final_result": {
-      "co2": 91.08592780240659,
+      "co2": 89.72019632678911,
       "ch4": 0.5959552459362472,
       "n2o": 0.005,
-      "co2e": 109.09767468862151,
+      "co2e": 107.73194321300403,
       "vol_m3_std": 50000.0,
-      "eta_c": 0.98,
+      "eta_c": 0.965,
       "eta_d": 0.98
     },
     "expected_units": "tCO2e",
     "tolerance": 1e-05,
-    "assumptions": "Elevated flare default eta_c=0.98 (Compendium Eq 5-2), eta_d=0.980",
+    "assumptions": "Elevated flare default eta_c=0.965 (Compendium Eq 5-2, Dec 2025 corrections), eta_d=0.980",
     "is_invalid": false,
     "expected_error": null
   },

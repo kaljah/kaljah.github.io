@@ -97,7 +97,7 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
     // Update Oxidation Factor default based on mode
     setParams((prev) => ({
       ...prev,
-      oxidationFactor: mode === "flaring" ? 0.98 : 1.0,
+      oxidationFactor: mode === "flaring" ? 0.965 : 1.0, // API Compendium 2021, Dec 2025 corrections
     }));
   };
 
@@ -180,7 +180,7 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
       efN2OMass = (mixtureHHV * 0.0001) / 1000;
     } else if (activeProcessType === "flaring") {
       // API Compendium 2021 Section 5.1: Flaring
-      const combustionEff = params.oxidationFactor || 0.98;
+      const combustionEff = params.oxidationFactor || 0.965;
       const destructionEff = 0.98;
 
       // CO2 from combustion of hydrocarbons ONLY

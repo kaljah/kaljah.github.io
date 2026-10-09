@@ -144,8 +144,8 @@ TIER3 = (
     + _with(_p("flaring"), [
         Col("flare_type", "Flare design. Blank = elevated.",
             choices=("elevated", "enclosed_ground", "offshore_boom", "air_assisted", "steam_assisted")),
-        Col("combustion_efficiency", "Flaring: % of carbon converted to CO2. Blank = 98 %."),
-        Col("destruction_efficiency", "Flaring: % of CH4 destroyed. Blank = 98 % (99.5 % enclosed_ground)."),
+        Col("combustion_efficiency", "Flaring: % of carbon converted to CO2. Blank = 96.5 %."),
+        Col("destruction_efficiency", "Flaring: % of CH4 destroyed. Blank = 98 % (99.5 % at Downstream facilities)."),
     ])
     + _with(_p("venting"), [
         Col("blowdown_pressure", "Vessel pressure before the blowdown."),

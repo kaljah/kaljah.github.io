@@ -198,13 +198,13 @@ def test_f29_flare_voc_n2o_exhibit_5_2(user_id):
 def test_f29_flaring_default_efficiencies():
     from calculations.combustion import FlaringCalculator
 
-    for ftype, eta_d in (("elevated", 0.98), ("enclosed", 0.995), ("pit", 0.98)):
+    for ftype, eta_d in (("elevated", 0.98), ("enclosed", 0.98), ("pit", 0.98)):  # by segment, not design
         res = FlaringCalculator().calculate(gas_volume=1000.0, ch4_fraction=1.0, uncertainties={}, fuel_unit="m3",
                                             flare_type=ftype, c1=1.0)
         co2 = res["results"]["co2"]["value"]
         ch4 = res["results"]["ch4"]["value"]
         from calculations.units import CONVERSIONS
-        assert co2 == pytest.approx(1000 * 0.98 * CONVERSIONS["density_co2"] / 1000, rel=1e-6), ftype
+        assert co2 == pytest.approx(1000 * 0.965 * CONVERSIONS["density_co2"] / 1000, rel=1e-6), ftype
         assert ch4 == pytest.approx(1000 * (1 - eta_d) * CONVERSIONS["density_ch4"] / 1000, rel=1e-6), ftype
 
 
@@ -236,7 +236,7 @@ def test_flaring_measured_combustion_and_destruction_efficiency(user_id):
     assert got["ch4"] == pytest.approx(10000 * 0.04 * CONVERSIONS["density_ch4"] / 1000, rel=1e-6)
     # blank: API Compendium 2021 Eq 5-2 defaults (98 % / 2 % unburnt CH4)
     dflt = _ok(user_id, base)
-    assert dflt["co2"] == pytest.approx(10000 * 0.98 * CONVERSIONS["density_co2"] / 1000, rel=1e-6)
+    assert dflt["co2"] == pytest.approx(10000 * 0.965 * CONVERSIONS["density_co2"] / 1000, rel=1e-6)
     assert dflt["ch4"] == pytest.approx(10000 * 0.02 * CONVERSIONS["density_ch4"] / 1000, rel=1e-6)
     # only one given: the other keeps its default
     only_d = _ok(user_id, dict(base, destruction_efficiency="90"))
