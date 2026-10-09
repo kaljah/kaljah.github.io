@@ -141,7 +141,7 @@ const Login: React.FC = () => {
       >
         {/* Welcome Text */}
         <div className="[text-align:center] [margin-bottom:32px] [&_h2]:[font-size:var(--text-2xl)] [&_h2]:[font-weight:800] [&_h2]:[color:var(--text-main)] [&_h2]:[margin-bottom:8px] [&_h2]:[letter-spacing:-0.5px] [&&]:[&_p]:[color:var(--text-muted)] [&&]:[&&]:[&_p]:[font-size:var(--text-md)]">
-          <img src={`${import.meta.env.BASE_URL}carbon_tech.svg`} alt="Carbon Tech" className="[display:block] [width:48px] [height:48px] [margin:0_auto_12px]" />
+          <img src={`${import.meta.env.BASE_URL}carbon_tech.svg`} alt="Neocarbon" className="[display:block] [width:48px] [height:48px] [margin:0_auto_12px]" />
           <h2>Welcome Back</h2>
           <p>Sign in to your GHG Reporting Platform</p>
         </div>
@@ -267,7 +267,7 @@ const Login: React.FC = () => {
             <span className="badge">ISO 14064 Ready</span>
             <span className="badge">SOC2 Secured</span>
           </div>
-          <p>© {new Date().getFullYear()} Carbon Tech. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Neocarbon. All rights reserved.</p>
         </div>
       </motion.div>
 

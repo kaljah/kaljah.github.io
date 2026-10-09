@@ -226,7 +226,7 @@ const AuditTrail: React.FC = () => {
       const link = document.createElement("a");
       link.href = url;
       const dateStr = new Date().toISOString().slice(0, 10);
-      link.setAttribute("download", `carbon_tech_audit_${dateStr}.${format}`);
+      link.setAttribute("download", `neocarbon_audit_${dateStr}.${format}`);
       document.body.appendChild(link);
       link.click();
       link.remove();
