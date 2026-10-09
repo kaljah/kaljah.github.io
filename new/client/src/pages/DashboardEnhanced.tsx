@@ -50,6 +50,7 @@ interface DashboardStats {
   netEmissions: number;
   scope1: number;
   scope2: number;
+  scope2Market?: number; // market-based Scope 2 (dual reporting); scope2 is location-based
   scope3: number;
   mitigation: number;
   methaneEmissions: number;
@@ -407,6 +408,7 @@ const DashboardEnhanced: React.FC = () => {
         if (currentYear === "all" || year.toString() === currentYear) {
           totals.scope1 += s1;
           totals.scope2 += s2;
+          totals.scope2Market = (totals.scope2Market || 0) + (row.scope2_market_total ?? s2);
           totals.totalEmissions += total;
           totals.combustion += row.combustion || 0;
           totals.flaring += row.flaring || 0;

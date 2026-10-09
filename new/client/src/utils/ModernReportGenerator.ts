@@ -229,6 +229,20 @@ export async function generateModernPDF(api: any, filters: any): Promise<void> {
       : []
     ).filter((p: any) => !reportFacilityIds || reportFacilityIds.includes(String(p.facilityId ?? p.facility_id)));
 
+    // market-based Scope 2 (GHG Protocol dual reporting), shown beside the location-based figure
+    let scope2MarketTotal: number | null = null;
+    try {
+      const s2Res = await api.get("/scope2", {
+        params: { year: subFetchYear, ...(targetFacilityId && { facility_id: targetFacilityId }) },
+      });
+      const s2Rows: any[] = Array.isArray(s2Res.data) ? s2Res.data : s2Res.data?.data || [];
+      scope2MarketTotal = s2Rows
+        .filter((r) => r.status === "Verified" && (!reportFacilityIds || reportFacilityIds.includes(String(r.facility_id))))
+        .reduce((sum, r) => sum + Number(r.co2e_market_based ?? r.co2e ?? 0), 0);
+    } catch {
+      scope2MarketTotal = null;
+    }
+
     let reportData: any[] =
       emissionsRes.data.emissions ||
       emissionsRes.data.data ||
@@ -1000,6 +1014,12 @@ Email: ${personResponsible.email || "N/A"}`;
           "Category 2: Indirect emissions from imported energy (Scope 2)",
           fullData.scope2Total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
           fullData.totalEmissions > 0 ? ((fullData.scope2Total / fullData.totalEmissions) * 100).toFixed(1) + "%" : "0.0%",
+        ],
+        [
+          "    Scope 2 market-based (contractual instruments; reported beside, not added)",
+          scope2MarketTotal == null ? "n/a"
+            : scope2MarketTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+          "—",
         ],
         [
           "Categories 3-6: Value chain indirect GHG emissions (Scope 3)",

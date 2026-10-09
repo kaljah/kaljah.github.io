@@ -9,6 +9,7 @@ from models import Emission, Facility, Scope2Emission, Scope3Emission
 from routes.auth import login_required
 from services.labels import process_label, scope2_source_label
 from services.scope2_activity import scope2_activity
+from services.scope2_gases import gas_split
 from sqlalchemy import or_
 from utils import get_allowed_facility_ids, get_current_user
 from . import emissions_bp
@@ -181,10 +182,9 @@ def export_emissions():
                     "fuel": scope2_activity(r)[2],
                     "quantity": scope2_activity(r)[0],
                     "unit": scope2_activity(r)[1],
-                    "co2": 0.0,
-                    "ch4": 0.0,
-                    "n2o": 0.0,
+                    **gas_split(r),  # grid electricity split into CO2 / CH4 / N2O (ADM-14)
                     "co2e_total": float(r.co2e or 0),
+                    "co2e_market_based": float(r.co2e_market_based if r.co2e_market_based is not None else (r.co2e or 0)),
                     "status": r.status or "Verified",
                 }
             )
@@ -298,11 +298,7 @@ def export_emissions():
             cell.alignment = Alignment(horizontal="center", vertical="center")
 
         row_num = 5
-        total_qty = 0.0
-        total_co2 = 0.0
-        total_ch4 = 0.0
-        total_n2o = 0.0
-        total_co2e = 0.0
+        total_qty = total_co2 = total_ch4 = total_n2o = total_co2e = 0.0
 
         for item in export_data:
             total_qty += item["quantity"]
@@ -395,6 +391,7 @@ def export_emissions():
 
         s1_sum = sum(i["co2e_total"] for i in export_data if i["scope"] == 1)
         s2_sum = sum(i["co2e_total"] for i in export_data if i["scope"] == 2)
+        s2_market = sum(i.get("co2e_market_based", 0.0) for i in export_data if i["scope"] == 2)
         s3_sum = sum(i["co2e_total"] for i in export_data if i["scope"] == 3)
 
         sum_headers = ["Metric / Scope", "Value", "Unit"]
@@ -406,7 +403,8 @@ def export_emissions():
 
         summary_rows = [
             ("Scope 1 — Direct Operational Emissions", s1_sum, "tCO₂e"),
-            ("Scope 2 — Indirect Energy (electricity, steam, heat, cooling)", s2_sum, "tCO₂e"),
+            ("Scope 2 — Indirect Energy (electricity, steam, heat, cooling), location-based", s2_sum, "tCO₂e"),
+            ("Scope 2 — market-based (contractual instruments; not added to the total)", s2_market, "tCO₂e"),
             ("Scope 3 — Value Chain Emissions", s3_sum, "tCO₂e"),
             ("Grand Total CO₂e Footprint", total_co2e, "tCO₂e"),
             ("Total CO₂ Gas Mass", total_co2, "tonnes CO₂"),

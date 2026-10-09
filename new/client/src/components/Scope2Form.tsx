@@ -33,6 +33,8 @@ export const Scope2Form: React.FC = () => {
 
   // Process/Source State
   const [gridRegion, setGridRegion] = useState<string>("");
+  const [marketInstrument, setMarketInstrument] = useState<string>("");
+  const [marketFactor, setMarketFactor] = useState<string>("");
   const [amount, setAmount] = useState<string>("");
   const [unit, setUnit] = useState<string>("kWh");
   const [sourceType, setSourceType] = useState<string>("electricity");
@@ -211,6 +213,8 @@ export const Scope2Form: React.FC = () => {
           source_type: "electricity",
           electricity_kwh: electricityKwh,
           location: gridRegion,
+          ...(marketInstrument && { market_instrument_type: marketInstrument }),
+          ...(marketInstrument && marketFactor !== "" && { market_emission_factor: parseFloat(marketFactor) }),
         };
       } else if (sourceType === "indirect_steam") {
         // We'll call the engine directly or simulate the API call structure
@@ -373,6 +377,8 @@ export const Scope2Form: React.FC = () => {
         handleSourceTypeChange={handleSourceTypeChange}
         heatEff={heatEff}
         heatOutput={heatOutput}
+        marketFactor={marketFactor}
+        marketInstrument={marketInstrument}
         month={month}
         powerEff={powerEff}
         powerOutput={powerOutput}
@@ -383,6 +389,8 @@ export const Scope2Form: React.FC = () => {
         setGridRegion={setGridRegion}
         setHeatEff={setHeatEff}
         setHeatOutput={setHeatOutput}
+        setMarketFactor={setMarketFactor}
+        setMarketInstrument={setMarketInstrument}
         setMonth={setMonth}
         setPowerEff={setPowerEff}
         setPowerOutput={setPowerOutput}
