@@ -1,17 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { History, LogOut, Settings } from "lucide-react";
+import { History, KeyRound, LogOut, Settings } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger } from "../../ui";
 import { ACCESS } from "../access";
+import ChangePasswordDialog from "./ChangePasswordDialog";
 
 const AccountMenu: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const name = user?.fullName || user?.full_name || user?.email || "User";
   const initial = name.trim()[0]?.toUpperCase() || "U";
+  const [passwordOpen, setPasswordOpen] = useState(false);
 
   return (
+    <>
     <Menu>
       <MenuTrigger asChild>
         <button
@@ -42,12 +45,17 @@ const AccountMenu: React.FC = () => {
             Audit Trail
           </MenuItem>
         )}
+        <MenuItem icon={KeyRound} onSelect={() => setPasswordOpen(true)}>
+          Change password
+        </MenuItem>
         <MenuSeparator />
         <MenuItem icon={LogOut} danger onSelect={() => logout()}>
           Sign out
         </MenuItem>
       </MenuContent>
     </Menu>
+    <ChangePasswordDialog open={passwordOpen} onClose={() => setPasswordOpen(false)} />
+    </>
   );
 };
 

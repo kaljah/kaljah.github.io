@@ -626,8 +626,10 @@ def change_password():
     if not current_password or not new_password:
         return jsonify({"error": "Current and new passwords required"}), 400
 
-    if not user.check_password(current_password):
-        return jsonify({"error": "Current password incorrect"}), 401
+    if not user.check_password(current_password):  # 400, not 401: the client signs out on any 401
+        return jsonify({"error": "Current password incorrect", "field": "currentPassword"}), 400
+    if new_password == current_password:
+        return jsonify({"error": "The new password must differ from the current one", "field": "newPassword"}), 400
 
     # DB-02: Password complexity check
     valid, err_msg = validate_password_complexity(new_password)

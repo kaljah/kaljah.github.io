@@ -251,3 +251,17 @@ def test_facility_filters_are_validated_and_aliased(client, ctx):
     a = client.get(f"/api/dashboard/summary?year=2031&facility_id={f.id}").get_json()
     b = client.get(f"/api/dashboard/summary?year=2031&facilityId={f.id}").get_json()
     assert a == b
+
+
+# ── OP-4: change password (now offered to every role from the account menu) ──
+
+def test_change_password_errors_do_not_sign_out(client, ctx):
+    u = make_user("user", uniq("West"))
+    login(client, u)
+    r = client.post("/api/auth/change-password", json={"currentPassword": "wrong", "newPassword": "NewPass!2026x"})
+    assert r.status_code == 400 and r.get_json()["field"] == "currentPassword"  # a 401 signed the user out
+    r = client.post("/api/auth/change-password", json={"currentPassword": "AuditPass!2026", "newPassword": "AuditPass!2026"})
+    assert r.status_code == 400 and r.get_json()["field"] == "newPassword"
+    r = client.post("/api/auth/change-password", json={"currentPassword": "AuditPass!2026", "newPassword": "NewPass!2026x"})
+    assert r.status_code == 200
+    assert client.get("/api/auth/me").status_code == 200  # this session stays signed in
