@@ -211,3 +211,43 @@ def test_mitigation_rejects_bad_year_and_negative_quantity(client, ctx):
     assert client.post("/api/mitigation", json={**base, "year": "abc", "quantity_tco2e": 5}).status_code == 400
     assert client.post("/api/mitigation", json={**base, "year": 2025, "quantity_tco2e": -5000}).status_code == 400
     assert client.post("/api/mitigation", json={**base, "year": 2025, "quantity_tco2e": 50}).status_code == 201
+
+
+# ── Admin audit 2026-10-09: ADM-9 / ADM-11 / ADM-12 ──
+
+def test_scope2_and_scope3_refuse_implausible_values(client, ctx):
+    f = make_facility(region=uniq("West"))
+    login(client, make_user("admin", "Global"))
+    s2 = {"facility_id": f.id, "year": 2025, "month": 2, "source_type": "electricity", "unit": "kWh",
+          "grid_region": "Algeria", "emission_factor": 0.5}
+    r = client.post("/api/scope2", json={**s2, "electricity_kwh": 1e300})
+    assert r.status_code == 400 and "Implausible" in r.get_json()["error"]
+    ok = client.post("/api/scope2", json={**s2, "electricity_kwh": 10000})
+    assert ok.status_code == 201, ok.get_data(as_text=True)
+    r = client.put(f"/api/scope2/{ok.get_json()['id']}", json={"electricity_kwh": 1e300})
+    assert r.status_code == 400 and "Implausible" in r.get_json()["error"]
+    s3 = {"facility_id": f.id, "year": 2024, "month": 2, "category": 6, "unit": "km", "emission_factor": 0.2}
+    r = client.post("/api/scope3", json={**s3, "activity_data": 1e300})
+    assert r.status_code == 400 and "Implausible" in r.get_json()["error"]
+    assert client.post("/api/scope3", json={**s3, "activity_data": 10}).status_code in (200, 201)
+
+
+def test_facility_filters_are_validated_and_aliased(client, ctx):
+    login(client, make_user("admin", "Global"))
+    assert client.get("/api/emissions?facility_id=abc").status_code == 422
+    r = client.post("/api/emissions", json={"facility_id": 2**31 - 2, "year": 2025, "month": 1, "fuel": "Natural Gas",
+                                            "process_type": "combustion", "quantity": 10, "unit": "m3",
+                                            "factor_source": "default"})
+    assert r.status_code == 404
+    from models import Emission
+    f, other = make_facility(region=uniq("W")), make_facility(region=uniq("E"))
+    db.session.add_all([Emission(facility_id=f.id, year=2031, month=1, process_type="combustion", co2e_total=7.0,
+                                 co2_emissions=7.0, status="Verified"),
+                        Emission(facility_id=other.id, year=2031, month=1, process_type="combustion",
+                                 co2e_total=500.0, co2_emissions=500.0, status="Verified")])
+    db.session.commit()
+    from routes.dashboard import clear_dashboard_cache
+    clear_dashboard_cache()
+    a = client.get(f"/api/dashboard/summary?year=2031&facility_id={f.id}").get_json()
+    b = client.get(f"/api/dashboard/summary?year=2031&facilityId={f.id}").get_json()
+    assert a == b

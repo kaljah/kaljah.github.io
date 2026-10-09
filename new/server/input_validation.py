@@ -258,3 +258,14 @@ def merge_inputs(stored, edit):
         old = merged.get(proc)
         merged[proc] = {**old, **vals} if isinstance(old, dict) and isinstance(vals, dict) else vals
     return merged
+
+
+def require_plausible_co2e(*values, field="co2e"):
+    """Refuse a record whose tCO2e is above the hard plausibility bound (the Scope 1 rule, BUG-007):
+    1e300 kWh or bbl of Scope 2 / 3 activity was stored as a 1e296 t record."""
+    from calculations.anomaly import plausibility_check
+
+    for value in values:
+        verdict, message = plausibility_check(value)
+        if verdict == "reject":
+            raise ValidationError(message, field)

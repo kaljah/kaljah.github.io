@@ -167,11 +167,8 @@ def get_emissions():
                 pass
         if status_arg and status_arg != "all" and hasattr(model, "status"):
             q = q.filter(model.status.in_([x.strip() for x in status_arg.split(",") if x.strip()]))
-        if facility_id and facility_id != "all":
-            try:
-                q = q.filter(model.facility_id == int(facility_id))
-            except ValueError:
-                pass
+        if facility_id and facility_id != "all":  # malformed ids are refused (422) before the route
+            q = q.filter(model.facility_id == int(facility_id))
         # NEW-07 FIX: escape LIKE wildcards before filtering
         if division_arg and division_arg != "all":
             q = q.filter(
@@ -549,7 +546,8 @@ def add_emission():
         return jsonify({"error": "Unauthorized for this facility"}), 403
 
     facility = db.session.get(Facility, fac_id)
-
+    if facility is None:  # the save failed on the foreign key (500) for an admin
+        return jsonify({"error": "Facility not found", "field": "facility_id"}), 404
     # Process-specific input validation for associated_gas_venting
     p_type = (data.get("process_type") or "").lower().strip()
     if p_type in ["associated_gas_venting", "associated_venting", "associated_gas"]:

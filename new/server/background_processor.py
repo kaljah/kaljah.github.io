@@ -8,6 +8,7 @@ import traceback
 from openpyxl import load_workbook
 
 from services.scope1_template import DATE_HELP, is_example_value
+from calculations.anomaly import plausibility_check
 
 
 # Job tracker. The running worker keeps the full job in memory; a snapshot is written to a JSON
@@ -1814,6 +1815,9 @@ def _process_row_scope2(
         "uncertainty": unc, "grid_region": grid_region or None,
         "location": meter or grid_region or None,
     }
+    verdict, qa_msg = plausibility_check(co2e)  # the Scope 1 hard bound (1e300 kWh was stored)
+    if verdict == "reject":
+        return None, [f"Row {row_idx}: {qa_msg}"]
     if action == "update":
         obj = _resolve_existing(Scope2Emission, existing)
         if obj is not None:
@@ -1941,6 +1945,9 @@ def _process_row_scope3_eeio(
         "emission_factor": factor_data["kg_co2e_per_usd"], "co2e": tonnes_co2e,
         "notes": row.get("notes", "Bulk Imported via EEIO"), "uncertainty": unc,
     }
+    verdict, qa_msg = plausibility_check(tonnes_co2e)  # the Scope 1 hard bound (1e300 kWh was stored)
+    if verdict == "reject":
+        return None, [f"Row {row_idx}: {qa_msg}"]
     if action == "update":
         obj = _resolve_existing(Scope3Emission, existing)
         if obj is not None:
@@ -2087,6 +2094,9 @@ def _process_row_scope3(
         "category": cat_str, "sub_category": sub_cat, "activity_data": amt, "unit": row.get("unit"),
         "emission_factor": ef, "co2e": co2e, "notes": row.get("notes"), "uncertainty": unc,
     }
+    verdict, qa_msg = plausibility_check(co2e)  # the Scope 1 hard bound (1e300 kWh was stored)
+    if verdict == "reject":
+        return None, [f"Row {row_idx}: {qa_msg}"]
     if action == "update":
         obj = _resolve_existing(Scope3Emission, existing)
         if obj is not None:
