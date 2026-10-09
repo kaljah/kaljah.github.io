@@ -140,7 +140,7 @@ def test_gwp_horizon_consistency():
     assert co2e_ar5_20 == pytest.approx(expected_ar5_20, rel=1e-4)
 
     co2e_ar6 = calculate_co2e(co2, ch4, n2o, gwp_dict=GWP_AR6)
-    expected_ar6 = 100.0 * 1.0 + 10.0 * 27.9 + 1.0 * 273.0  # 100 + 279 + 273 = 652
+    expected_ar6 = 100.0 * 1.0 + 10.0 * 29.8 + 1.0 * 273.0  # 100 + 298 + 273 = 671
     assert co2e_ar6 == pytest.approx(expected_ar6, rel=1e-4)
 
 

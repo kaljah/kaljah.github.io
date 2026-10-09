@@ -73,9 +73,9 @@ $$\text{CO}_2\text{e} = (\text{Mass}_{\text{CO}_2} \times \text{GWP}_{\text{CO}_
 ### Registry of Supported GWP Profiles:
 1. **IPCC 5th Assessment Report (AR5 - 2013, WG1 Table 8.7) — Platform Default**:
    - 100-Year Horizon: $\text{CO}_2 = 1.0$, $\text{CH}_4 = 28.0$, $\text{N}_2\text{O} = 265.0$
-   - 20-Year Horizon: $\text{CO}_2 = 1.0$, $\text{CH}_4 = 82.5$, $\text{N}_2\text{O} = 268.0$
+   - 20-Year Horizon: $\text{CO}_2 = 1.0$, $\text{CH}_4 = 84.0$, $\text{N}_2\text{O} = 264.0$
 2. **IPCC 6th Assessment Report (AR6 - 2021, WG1 Table 7.15)**:
-   - 100-Year Horizon: $\text{CO}_2 = 1.0$, $\text{CH}_4 = 27.9$, $\text{N}_2\text{O} = 273.0$
+   - 100-Year Horizon: $\text{CO}_2 = 1.0$, $\text{CH}_4 = 29.8$ (fossil methane, used for oil and gas), $\text{N}_2\text{O} = 273.0$
    - 20-Year Horizon: $\text{CO}_2 = 1.0$, $\text{CH}_4 = 82.5$, $\text{N}_2\text{O} = 273.0$
 3. **IPCC 4th Assessment Report (AR4 - 2007)**:
    - 100-Year Horizon: $\text{CO}_2 = 1.0$, $\text{CH}_4 = 25.0$, $\text{N}_2\text{O} = 298.0$

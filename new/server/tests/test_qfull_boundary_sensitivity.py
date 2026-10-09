@@ -596,10 +596,10 @@ class TestCO2eSensitivity:
         }
         em_ar4, _ = compute_emissions(payload, {}, gwp_dict={"CO2": 1.0, "CH4": 25.0, "N2O": 298.0})
         em_ar5, _ = compute_emissions(payload, {}, gwp_dict={"CO2": 1.0, "CH4": 28.0, "N2O": 265.0})
-        em_ar6, _ = compute_emissions(payload, {}, gwp_dict={"CO2": 1.0, "CH4": 27.9, "N2O": 273.0})
+        em_ar6, _ = compute_emissions(payload, {}, gwp_dict={"CO2": 1.0, "CH4": 29.8, "N2O": 273.0})
 
         assert em_ar5["totalCo2e"] > em_ar4["totalCo2e"]  # 28 > 25
-        assert em_ar5["totalCo2e"] > em_ar6["totalCo2e"]  # 28 > 27.9
+        assert em_ar6["totalCo2e"] > em_ar5["totalCo2e"]  # 29.8 (fossil) > 28
 
         # All have same CH4 mass
         assert em_ar4["ch4"] == pytest.approx(em_ar5["ch4"], rel=1e-8)

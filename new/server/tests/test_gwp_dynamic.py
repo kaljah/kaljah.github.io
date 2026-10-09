@@ -15,7 +15,7 @@ def test_constants_and_helpers():
     assert ar5["N2O"] == 265.0
 
     ar6 = get_active_gwp("AR6")
-    assert ar6["CH4"] == 27.9
+    assert ar6["CH4"] == 29.8
     assert ar6["N2O"] == 273.0
 
     # Test 20-year horizon lookup
@@ -35,9 +35,9 @@ def test_calculate_co2e_dynamic():
     co2e_ar5 = calculate_co2e(co2, ch4, n2o, gwp_dict=GWP_AR5)
     assert pytest.approx(co2e_ar5, 0.01) == 331.0
 
-    # AR6: 10*1 + 2*27.9 + 1*273 = 10 + 55.8 + 273 = 338.8
+    # AR6: 10*1 + 2*29.8 + 1*273 = 10 + 59.6 + 273 = 342.6
     co2e_ar6 = calculate_co2e(co2, ch4, n2o, gwp_dict=GWP_AR6)
-    assert pytest.approx(co2e_ar6, 0.01) == 338.8
+    assert pytest.approx(co2e_ar6, 0.01) == 342.6
 
 
 def test_legacy_engine_dynamic_gwp():

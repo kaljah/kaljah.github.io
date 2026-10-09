@@ -75,7 +75,7 @@ CONVERSIONS = {
     # Global Warming Potentials (Comparison Reference)
     "GWP_AR4": {"ch4": 25, "n2o": 298},
     "GWP_AR5": DEFAULT_GWP,
-    "GWP_AR6": {"ch4": 27.9, "n2o": 273},
+    "GWP_AR6": {"ch4": 29.8, "n2o": 273},
 }
 
 
