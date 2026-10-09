@@ -1,25 +1,13 @@
 from flask import request, jsonify, session, current_app
 from sqlalchemy import func
 from . import emissions_bp
-from utils import get_current_user, get_allowed_facility_ids, log_activity_and_notify, require_facility_access
+from utils import facility_access_error, get_allowed_facility_ids, get_current_user, internal_error, log_activity_and_notify
 from input_validation import choice
-from models import (
-    User,
-    Emission,
-    Scope2Emission,
-    Scope3Emission,
-    Goal,
-    Notification,
-    CustomFactor,
-    Facility,
-)
+from models import CustomFactor, Emission, Facility, Goal, Notification, Scope2Emission, Scope3Emission, User
 from extensions import db, limiter
 from services.labels import process_label, scope2_source_label
 from services.scope2_activity import scope2_activity
-from calculations import (
-    compute_emissions,
-    calculate_co2e,
-)
+from calculations import calculate_co2e, compute_emissions
 from emission_factors import API_FACTORS, ALL_EMISSION_FACTORS
 from routes.auth import login_required
 import datetime
@@ -28,7 +16,6 @@ import json
 from sqlalchemy import cast, String, literal, Float, union_all, or_
 from services.ogmp import ogmp_level_for
 from process_categories import NON_COMBUSTION_PROCESSES
-from utils import internal_error
 from routes.emissions_template_csv import get_csv_template  # noqa: F401  (registers the CSV template route)
 from routes.emissions_template_excel import get_excel_template  # noqa: F401  (registers the Excel template route)
 
@@ -965,10 +952,10 @@ def update_emission(id):
     if "month" in data:
         record.month = parse_month(data["month"], required=True)
     if "facility_id" in data:
-        new_fid = int(data["facility_id"])
-        if not require_facility_access(user, new_fid):
-            return jsonify({"error": "Unauthorized to reassign to this facility"}), 403
-        record.facility_id = new_fid
+        denied = facility_access_error(user, data["facility_id"])
+        if denied:
+            return denied
+        record.facility_id = int(data["facility_id"])
     # BUG-067: every edit records the last maker; non-admin edits of decided records go back to review
     on_edit(record, user)
     # Recalculate whenever physical activity or factor inputs are modified (L9)

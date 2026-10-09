@@ -5,7 +5,7 @@ from sqlalchemy import func
 from electricity_factors import GRID_FACTORS, grid_entry, grid_factor_kg_co2e_per_kwh
 from routes.auth import login_required
 from calculations.uncertainty import propagate_uncertainty, Tier
-from utils import get_current_user, get_allowed_facility_ids, require_facility_access, initial_record_status, log_activity_and_notify
+from utils import facility_access_error, get_current_user, get_allowed_facility_ids, require_facility_access, initial_record_status, log_activity_and_notify
 from input_validation import ValidationError, parse_number, parse_year, parse_month
 import datetime
 
@@ -565,10 +565,10 @@ def update_scope2_emission(emission_id):
     data.pop("co2e", None)
 
     if "facility_id" in data:
-        new_fid = int(data["facility_id"])
-        if not require_facility_access(user, new_fid):
-            return jsonify({"error": "Unauthorized to reassign to this facility"}), 403
-        emission.facility_id = new_fid
+        denied = facility_access_error(user, data["facility_id"])
+        if denied:
+            return denied
+        emission.facility_id = int(data["facility_id"])
     if "year" in data:
         emission.year = parse_year(data["year"])
     if "month" in data:

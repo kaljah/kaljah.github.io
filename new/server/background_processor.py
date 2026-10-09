@@ -1283,7 +1283,9 @@ def _process_file_thread(
                     with open(error_file, "w", newline="", encoding="utf-8") as ef:
                         writer = csv.writer(ef)
                         writer.writerow(error_headers)
-                        writer.writerows(skipped_rows)
+                        # the cells echo the uploaded file, which an admin may open in Excel
+                        from routes.audit import sanitize_csv_cell
+                        writer.writerows([[sanitize_csv_cell(c) for c in row] for row in skipped_rows])
                     _update_job(job_id, error_csv_path=error_file)
                 except OSError:
                     traceback.print_exc()  # the import itself is committed; only the download is missing

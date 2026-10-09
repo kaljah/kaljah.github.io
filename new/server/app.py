@@ -119,6 +119,11 @@ from services.audit_chain import register as _register_audit_chain  # noqa: E402
 
 _register_audit_chain(db.session)
 
+# text longer than its column (or a list / object) is a 400 when assigned, not a 500 at commit
+from services.column_guard import register as _register_column_guard  # noqa: E402
+
+_register_column_guard(db.Model)
+
 
 @event.listens_for(db.session, "before_commit")
 def track_modified_entities(session):

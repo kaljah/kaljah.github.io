@@ -419,3 +419,70 @@ def test_f13_nul_character_in_json_is_refused(client, ctx):
 def test_f13_unknown_scope_in_emission_list_is_a_400(client, ctx):
     login(client, make_user("admin", "Global"))
     assert client.get("/api/emissions/?scope=zz").status_code == 400
+
+
+# ── second pass: missing quantity, edit to an unknown facility, error file cells ─────────────────
+
+
+def test_f15_manual_entry_without_a_quantity_is_refused(client, ctx):
+    fac = make_facility(region=uniq("PilotRegion"))
+    login(client, make_user("admin", "Global"))
+    body = {"facility_id": fac.id, "year": 2025, "month": 3, "process_type": "stationary_combustion",
+            "fuel_type": "Natural Gas", "unit": "scf", "tier": 1}
+    for qty in (None, ""):
+        r = client.post("/api/emissions/", json=dict(body, quantity=qty))
+        assert r.status_code == 422 and r.get_json()["field"] == "quantity"
+    assert Emission.query.filter_by(facility_id=fac.id).count() == 0
+    assert client.post("/api/emissions/", json=dict(body, quantity=0)).status_code == 201  # zero is a value
+
+
+def test_f16_edit_to_an_unknown_or_malformed_facility_is_a_client_error(client, ctx):
+    fac = make_facility(region=uniq("PilotRegion"))
+    login(client, make_user("admin", "Global"))
+    r = client.post("/api/emissions/", json={"facility_id": fac.id, "year": 2025, "month": 3, "quantity": 5,
+                                             "process_type": "stationary_combustion", "fuel_type": "Natural Gas",
+                                             "unit": "scf", "tier": 1})
+    rid = r.get_json()["id"]
+    s2 = client.post("/api/scope2", json={"year": 2025, "month": 3, "facility_id": fac.id, "source_type": "electricity",
+                                          "grid_region": "Algerian National Grid", "electricity_kwh": 1000}).get_json()["id"]
+    s3 = client.post("/api/scope3", json={"year": 2025, "month": 3, "facility_id": fac.id, "activity_data": 100,
+                                          "category": "Purchased Goods and Services", "unit": "USD",
+                                          "emission_factor": 0.5}).get_json()["id"]
+    for path in (f"/api/emissions/{rid}", f"/api/scope2/{s2}", f"/api/scope3/{s3}"):
+        for value, status in ((999999, 404), ("abc", 422), (None, 422), ([1], 422), (-1, 422), (1e308, 422)):
+            r = client.put(path, json={"facility_id": value})
+            assert r.status_code == status, (path, value, r.get_data(as_text=True)[:200])
+    assert db.session.get(Emission, rid).facility_id == fac.id
+    for fuel in ([1], {"a": 1}):  # crashed the factor lookup
+        assert client.put(f"/api/emissions/{rid}", json={"fuel_type": fuel}).status_code == 422
+
+
+def test_f18_text_too_long_or_not_text_is_a_400_not_a_500(client, ctx):
+    from models import Facility
+    fac = make_facility(region=uniq("PilotRegion"))
+    login(client, make_user("admin", "Global"))
+    for body in ({"name": "x" * 500}, {"region": {"a": 1}}, {"region": "y" * 101}):
+        r = client.put(f"/api/facilities/{fac.id}", json=body)
+        assert r.status_code == 400, (body, r.get_data(as_text=True)[:200])
+        assert r.get_json()["field"] == next(iter(body))
+    db.session.expire_all()
+    assert len(db.session.get(Facility, fac.id).name) < 120
+    fac.region = 1e308  # stored as its text, which PostgreSQL would otherwise expand to 309 digits
+    assert fac.region == "1e+308"
+    db.session.rollback()
+    cf = client.post("/api/custom-factors/", json={"name": uniq("CF"), "unit": "scf", "co2_factor": 0.05})
+    assert cf.status_code == 201, cf.get_json()
+    for name in (-1, [1], {"a": 1}, True):
+        assert client.put(f"/api/custom-factors/{cf.get_json()['id']}", json={"name": name}).status_code == 400
+    assert client.post("/api/custom-factors/", json={"name": 5, "unit": "scf", "co2_factor": 1}).status_code == 400
+
+
+def test_f17_upload_error_file_escapes_formula_cells(client, ctx):
+    fac = make_facility(region=uniq("PilotRegion"))
+    login(client, make_user("admin", "Global"))
+    csv = ("date,facility_name,process_type,fuel,quantity,unit,tier,equipment_id\n"
+           f"2025-06,{fac.name},combustion,Diesel,-5,liters,1,=HYPERLINK(\"http://x\")\n")
+    _, job, status = upload(client, csv, "1", decimal_mark="point")
+    assert status["status"] == "completed", status
+    body = client.get(f"/api/emissions/upload/errors/{job}").get_data(as_text=True)
+    assert "=HYPERLINK" in body and ",=HYPERLINK" not in body and "'=HYPERLINK" in body

@@ -61,9 +61,13 @@ def facility_access_error(user, facility_id):
     from flask import jsonify
     from models import Facility
 
-    if not require_facility_access(user, facility_id):
+    fid = facility_id if isinstance(facility_id, int) and not isinstance(facility_id, bool) else (
+        int(facility_id) if isinstance(facility_id, str) and facility_id.strip().isdigit() else None)
+    if fid is None or not 0 < fid < 2**31:
+        return jsonify({"error": "Invalid facility_id: must be a positive integer", "field": "facility_id"}), 422
+    if not require_facility_access(user, fid):
         return jsonify({"error": "Access to this facility is denied"}), 403
-    if db.session.get(Facility, int(facility_id)) is None:
+    if db.session.get(Facility, fid) is None:
         return jsonify({"error": "Facility not found"}), 404
     return None
 

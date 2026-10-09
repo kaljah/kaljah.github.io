@@ -125,11 +125,8 @@ def check_factor_usage(process_type, factor_data, fuel=None):
     for u in usage:
         if u == proc or (calc is not None and type(dispatcher.calculators.get(u)) is type(calc)):
             return
-    raise ValidationError(
-        f"'{fuel or factor_data.get('name') or 'This factor'}' is a {'/'.join(usage)} factor and does not apply to "
-        f"process '{process_type}'",
-        "fuel",
-    )
+    raise ValidationError(f"'{fuel or factor_data.get('name') or 'This factor'}' is a {'/'.join(usage)} factor and "
+                          f"does not apply to process '{process_type}'", "fuel")
 
 
 def custom_factor_data(cf):
@@ -175,11 +172,9 @@ def _set_alias(payload, keys, value):
 
 
 def canonicalize(payload, delta=None):
-    """Return a copy of `payload` with aliases synchronised.
-
-    `delta` (for edits) wins over the stored payload: when it carries any alias, every alias
-    takes the new value (BUG-003: a PUT of quantity used to leave the old `amount` in place).
-    """
+    """Return a copy of `payload` with aliases synchronised. `delta` (for edits) wins over the stored
+    payload: when it carries any alias, every alias takes the new value (BUG-003: a PUT of quantity
+    used to leave the old `amount` in place)."""
     out = dict(payload or {})
     src = delta if delta is not None else out
     for keys in (("amount", "quantity"), ("fuel", "fuel_type")):
@@ -216,21 +211,25 @@ def validate_activity(payload, require_unit):
     """BUG-050 / BUG-068 / BUG-109: validate before any calculator runs."""
     ptype = str(payload.get("process_type") or "").strip().lower()
     if ptype in SCOPE2_PROCESS_TYPES:
-        raise ValidationError(
-            f"'{payload.get('process_type')}' is a Scope 2 (purchased energy) source; record it on the Scope 2 page",
-            "process_type",
-        )
+        raise ValidationError(f"'{payload.get('process_type')}' is a Scope 2 (purchased energy) source; "
+                              "record it on the Scope 2 page", "process_type")
+    if any(isinstance(payload.get(k), (dict, list)) for k in ("fuel", "fuel_type", "unit", "process_type")):
+        raise ValidationError("fuel, unit and process type must be text", "fuel_type")
     amount = None
     if payload.get("amount") not in (None, ""):
         amount = parse_number(payload.get("amount"), "amount", min_value=0)
         _set_alias(payload, ("amount", "quantity"), amount)
+    # a missing quantity was saved as a verified zero record (pilot check); Tier 3 sends calc_inputs
+    ci_all = payload.get("calc_inputs") if isinstance(payload.get("calc_inputs"), dict) else {}
+    if amount is None and require_unit and not any(v not in (None, "", {}) for v in ci_all.values()) \
+            and ptype not in ENGINEERING_TIER2 and str(payload.get("tier") or "1").strip() != "3":
+        raise ValidationError("'quantity' is required", "quantity")
     if require_unit and amount is not None and not str(payload.get("unit") or "").strip():
         raise ValidationError("'unit' is required for the activity amount", "unit")
     # S1K-F6: "Mt" is the SI megatonne but "MT" is often a metric ton; the case-insensitive unit table
     # booked "1 Mt" as 1 tonne. Refused as ambiguous, like a bare "ton" in files.
     if str(payload.get("unit") or "").strip().lower().replace(".", "") in ("mt", "mts"):
-        raise ValidationError(
-            f"'{payload.get('unit')}' is ambiguous (megatonne or metric ton): write 'tonne' (1,000 kg)", "unit")
+        raise ValidationError(f"'{payload.get('unit')}' is ambiguous (megatonne or metric ton): write 'tonne' (1,000 kg)", "unit")
     # one activity representation: calc_inputs must not contradict the top-level activity
     ci = (payload.get("calc_inputs") or {}).get(payload.get("process_type") or "") or {}
     tier12 = str(payload.get("factor_source") or "default").lower() in ("default", "custom")

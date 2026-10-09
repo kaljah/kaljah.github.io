@@ -32,6 +32,10 @@ Bug hunt before the Sonatrach pilot, run against a production-mode install, then
 | F13 | Low | 11 write endpoints and 50 read-parameter cases answered 500 to malformed input (non-JSON body, unknown facility, junk ids, `year=abc`, NUL characters). | Non-JSON bodies read as `{}`; unknown facilities 404; ids validated; NUL characters refused; dashboard / production filters validated centrally. Both fuzz sweeps: 0 server errors. |
 | F14 | Low | Session cookie `SameSite=None`; CSP allowed Google Fonts and any https image. | `SameSite=Lax`; CSP without external sources. |
 | F10 | Low | `backup.py --output` documented but not implemented. | `--output-dir`. |
+| F15 | Medium | A manual Scope 1 entry without a quantity was saved as a Verified record of 0 t. | Refused (`'quantity' is required`) unless the entry is a Tier 3 / engineering calculation with its own inputs. A quantity of 0 is still accepted. |
+| F16 | Low | Editing a Scope 1, 2 or 3 record to an unknown or malformed facility answered 500. | 404 for an unknown facility, 422 for a malformed id (`utils.facility_access_error`). |
+| F17 | Low | The upload error file echoed uploaded cells unescaped; an admin can download any user's file, so a cell like `=HYPERLINK(...)` ran as a formula in Excel. | Cells are escaped like the other exports. |
+| F18 | Low | A second sweep that edited existing records found 40 more 500s: text longer than its column, lists or objects in text fields, numbers in name fields (PostgreSQL writes 1e308 out as 309 digits). | Every length-limited text column checks the value when it is assigned (`services/column_guard.py`): too long or not text is a 400 naming the field; numbers are stored as their text. Custom factor names and Scope 1 fuel types must be text. Edit sweep: 0 server errors. |
 | F8 | Decision | Admin manual entries are saved as Verified without a second reviewer (uploads go to Pending). | Kept as is (owner decision 2026-10-09). |
 
 Regression tests: `new/server/tests/test_pilot_readiness_2026_10_09.py`, `new/client/src/__tests__/importWizardDecimalMark.test.tsx`, `auditIntegrityCheck.test.tsx`, `reviewResultSkipped.test.ts`.

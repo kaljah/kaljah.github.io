@@ -94,6 +94,10 @@ def _canonical_factor_unit(unit):
     return canonical
 
 
+def _text(value):
+    return value.strip() if isinstance(value, str) else ""  # a number or object is no name (pilot check)
+
+
 def _name_taken(name, exclude_id=None):
     """BUG-065: factor names are unique (case-insensitive) among active factors."""
     q = CustomFactor.query.filter(db.func.lower(CustomFactor.name) == name.strip().lower(),
@@ -165,23 +169,19 @@ def _check_plausibility(data):
 @superuser_required
 def create_custom_factor():
     """Create a new custom emission factor (Super User / Admin only)"""
-    user_id = session.get("user_id")
-    user = db.session.get(User, user_id)
-
+    user = db.session.get(User, session.get("user_id"))
     data = request.get_json()
-    factor_name = (data.get("factor_name") or data.get("name") or data.get("fuel_name") or "").strip() if data else ""
+    factor_name = _text(data.get("factor_name") or data.get("name") or data.get("fuel_name")) if data else ""
     if not factor_name:
         return jsonify({"error": "Factor name is required"}), 400
 
+    field = "unit"
     try:
         unit = _canonical_factor_unit(data.get("unit"))
-    except ValueError as err:
-        return jsonify({"error": str(err), "field": "unit"}), 400
-
-    try:
+        field = "parent_fuel"
         parent_fuel = _canonical_parent_fuel(data.get("parent_fuel"))
     except ValueError as err:
-        return jsonify({"error": str(err), "field": "parent_fuel"}), 400
+        return jsonify({"error": str(err), "field": field}), 400
 
     try:
         co2_factor = _parse_non_negative_float(data.get("co2_factor"), "co2_factor")
@@ -220,9 +220,9 @@ def create_custom_factor():
         co2_uncertainty=co2_uncertainty,
         ch4_uncertainty=ch4_uncertainty,
         n2o_uncertainty=n2o_uncertainty,
-        created_by=user_id,
+        created_by=user.id,
         status=initial_factor_status,
-        approved_by=user_id if initial_factor_status == "Approved" else None,
+        approved_by=user.id if initial_factor_status == "Approved" else None,
         approved_at=datetime.datetime.now(datetime.timezone.utc) if initial_factor_status == "Approved" else None,
     )
 
@@ -270,7 +270,7 @@ def update_custom_factor(factor_id):
     before = {f: getattr(factor, f) for f in tracked}
 
     if "factor_name" in data or "name" in data or "fuel_name" in data:
-        fn = (data.get("factor_name") or data.get("name") or data.get("fuel_name") or "").strip()
+        fn = _text(data.get("factor_name") or data.get("name") or data.get("fuel_name"))
         if not fn:
             return jsonify({"error": "Factor name cannot be empty"}), 400
         if _name_taken(fn, exclude_id=factor.id):
@@ -456,8 +456,8 @@ def import_custom_factors():
     skipped = []
     seen = set()
     for i, factor_data in enumerate(factors_data):
-        name = (factor_data.get("name") or factor_data.get("factor_name") or "").strip()
-        unit = (factor_data.get("unit") or "").strip()
+        name = _text(factor_data.get("name") or factor_data.get("factor_name"))
+        unit = _text(factor_data.get("unit"))
         if not name or not unit:
             skipped.append({"row": i + 1, "error": "name and unit are required"})
             continue
