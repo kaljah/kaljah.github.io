@@ -228,7 +228,7 @@ def test_gwp_switch_audit_entry_and_lossless_round_trip(admin):
         assert admin.put("/api/auth/settings", json={"gwp_standard": "AR6"}).status_code == 200
         with flask_app.app_context():
             row = Emission.query.get(eid)
-            assert row.status == "Verified" and row.co2e_total == pytest.approx(100.0 + 2.0 * 27.9 + 0.1 * 273)
+            assert row.status == "Verified" and row.co2e_total == pytest.approx(100.0 + 2.0 * 29.8 + 0.1 * 273)
             log = ActivityLog.query.filter_by(action="GWP_RECALCULATION").order_by(ActivityLog.id.desc()).first()
             assert log is not None and "AR5 -> AR6" in log.details
             assert json.loads(log.old_values)["gwp_standard"] == "AR5"

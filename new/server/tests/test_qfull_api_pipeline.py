@@ -930,10 +930,10 @@ class TestGWPValidation:
         assert GWP_AR4["N2O"] == 298.0
 
     def test_gwp_ar6_values(self):
-        """AR6: CO2=1.0, CH4=27.9, N2O=273.0."""
+        """AR6: CO2=1.0, CH4=29.8 (fossil), N2O=273.0."""
         from calculations.constants import GWP_AR6
         assert GWP_AR6["CO2"] == 1.0
-        assert GWP_AR6["CH4"] == 27.9
+        assert GWP_AR6["CH4"] == 29.8
         assert GWP_AR6["N2O"] == 273.0
 
     def test_ar5_gives_higher_ch4_co2e_than_ar4(self):

@@ -7,7 +7,7 @@ Validates fundamental mathematical invariants across the calculation engine:
 3. Monotonicity: A > B ==> E(A) >= E(B)
 4. Non-negativity: X >= 0 ==> E(X) >= 0
 5. Zero activity: X == 0 ==> E(0) == 0
-6. GWP sensitivity order: AR5(CH4) > AR6(CH4) > AR4(CH4)
+6. GWP sensitivity order: AR6(CH4, fossil) > AR5(CH4) > AR4(CH4)
 """
 import pytest
 import math
@@ -118,9 +118,9 @@ class TestPropertyInvariantsHypothesis:
         ch4_t=st.floats(min_value=1.0, max_value=500.0, allow_nan=False, allow_infinity=False),
     )
     def test_gwp_ordering_invariant(self, ch4_t):
-        """GWP AR5 (28) > GWP AR6 (27.9) > GWP AR4 (25) for methane."""
+        """GWP AR6 fossil (29.8) > GWP AR5 (28) > GWP AR4 (25) for methane."""
         co2e_ar4 = calculate_co2e(0.0, ch4_t, 0.0, gwp_dict=GWP_AR4)
         co2e_ar5 = calculate_co2e(0.0, ch4_t, 0.0, gwp_dict=GWP_AR5)
         co2e_ar6 = calculate_co2e(0.0, ch4_t, 0.0, gwp_dict=GWP_AR6)
 
-        assert co2e_ar5 > co2e_ar6 > co2e_ar4
+        assert co2e_ar6 > co2e_ar5 > co2e_ar4

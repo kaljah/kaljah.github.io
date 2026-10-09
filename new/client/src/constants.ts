@@ -25,9 +25,9 @@ export const GWP_AR5: GwpEntry = {
 
 export const GWP_AR6: GwpEntry = {
   CO2: 1,
-  CH4: 27.9, // IPCC AR6 WG1 Table 7.15, generic CH4
+  CH4: 29.8, // IPCC AR6 WG1 Table 7.15, fossil CH4 (oil and gas methane; non-fossil is 27.9)
   N2O: 273,
-  CH4_20: 81.2, // BUG-013: GWP-20 matching the generic 27.9 GWP-100 (was 82.5, fossil)
+  CH4_20: 82.5, // IPCC AR6 WG1 Table 7.15, fossil CH4 GWP-20 (non-fossil is 81.2)
   N2O_20: 273,
 };
 

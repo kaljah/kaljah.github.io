@@ -32,7 +32,7 @@ const GWP_DATA = {
     n2o_100: GWP_AR6.N2O,
     co2: 1.0,
     description:
-      "Most recent scientific consensus incorporating updated radiative efficiency and tropospheric adjustments.",
+      "Most recent scientific consensus. Methane uses the fossil value (29.8 over 100 years, 82.5 over 20), which applies to oil and gas sources.",
   },
   AR4: {
     name: "IPCC 4th Assessment Report (AR4)",

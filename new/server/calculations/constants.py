@@ -12,9 +12,9 @@ GWP_AR4 = {"CO2": 1.0, "CH4": 25.0, "N2O": 298.0, "CH4_20": 72.0, "N2O_20": 289.
 # the table held 82.5 - the AR6 fossil-CH4 value - and 268, which matches no AR5 value)
 GWP_AR5 = {"CO2": 1.0, "CH4": 28.0, "N2O": 265.0, "CH4_20": 84.0, "N2O_20": 264.0}
 
-# IPCC 6th Assessment Report (AR6 - 2021, WG1 Table 7.15): methane 27.9 (100-yr) pairs with
-# 81.2 (20-yr); the fossil-methane pair is 29.8 / 82.5. N2O 273 for both horizons.
-GWP_AR6 = {"CO2": 1.0, "CH4": 27.9, "N2O": 273.0, "CH4_20": 81.2, "N2O_20": 273.0}
+# IPCC 6th Assessment Report (AR6 - 2021, WG1 Table 7.15): fossil methane 29.8 / 82.5 (oil and gas;
+# owner decision 2026-10-09; non-fossil is 27.9 / 81.2). N2O 273 for both horizons.
+GWP_AR6 = {"CO2": 1.0, "CH4": 29.8, "N2O": 273.0, "CH4_20": 82.5, "N2O_20": 273.0}
 
 # Standard registry
 GWP_STANDARDS = {"AR4": GWP_AR4, "AR5": GWP_AR5, "AR6": GWP_AR6}

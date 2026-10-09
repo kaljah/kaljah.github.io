@@ -35,10 +35,10 @@ class TestGWPHorizonsAndProfilesBattery:
         ("AR4", "20",  72.0, 289.0),
         ("AR5", "100", 28.0, 265.0),
         # audit BUG-013: IPCC AR5 WG1 Table 8.7 GWP-20 = CH4 84, N2O 264;
-        # IPCC AR6 WG1 Table 7.15: methane 27.9 (100-yr) / 81.2 (20-yr), N2O 273 / 273
+        # IPCC AR6 WG1 Table 7.15: fossil methane 29.8 (100-yr) / 82.5 (20-yr), N2O 273 / 273
         ("AR5", "20",  84.0, 264.0),
-        ("AR6", "100", 27.9, 273.0),
-        ("AR6", "20",  81.2, 273.0),
+        ("AR6", "100", 29.8, 273.0),
+        ("AR6", "20",  82.5, 273.0),
     ])
     def test_gwp_profile_resolution(self, std, horizon, exp_ch4, exp_n2o):
         gwp = get_active_gwp(standard=std, horizon=horizon)

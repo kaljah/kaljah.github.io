@@ -8,7 +8,7 @@ from calculations.units import composition_fractions
 # BUG-013: IPCC AR5 WG1 Table 8.7 and AR6 WG1 Table 7.15
 @pytest.mark.parametrize("std,h,ch4,n2o", [
     ("AR5", "20", 84.0, 264.0), ("AR5", "100", 28.0, 265.0),
-    ("AR6", "20", 81.2, 273.0), ("AR6", "100", 27.9, 273.0),
+    ("AR6", "20", 82.5, 273.0), ("AR6", "100", 29.8, 273.0),
     ("AR4", "20", 72.0, 289.0), ("AR4", "100", 25.0, 298.0),
 ])
 def test_bug013_gwp_tables(std, h, ch4, n2o):

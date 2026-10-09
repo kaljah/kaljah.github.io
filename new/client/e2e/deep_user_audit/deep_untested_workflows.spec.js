@@ -629,7 +629,7 @@ test.describe.serial('Suite 8: Deep Untested Platform Workflows & Enterprise Fea
     await expect(gwpSection.locator('text=AR4 (2007)')).toBeVisible();
     await expect(gwpSection.locator('text=AR6 (2021)')).toBeVisible();
     await expect(gwpSection.locator('text=Methane (CH₄)')).toBeVisible();
-    await expect(gwpSection.locator('text=27.9')).toBeVisible(); // AR6 CH4
+    await expect(gwpSection.locator('text=29.8 (fossil)')).toBeVisible(); // AR6 CH4
 
     // 2. Verify Unit Conversions table
     console.log('[E2E UNTESTED] Verifying Unit Conversions table...');

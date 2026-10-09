@@ -483,7 +483,7 @@ class TestMetrologyAndEngineeringPrecision:
         Mathematically proves AR4, AR5, and AR6 GWP multipliers match IPCC source tables:
         AR4: CH4 = 25,   N2O = 298
         AR5: CH4 = 28,   N2O = 265
-        AR6: CH4 = 27.9, N2O = 273
+        AR6: CH4 = 29.8 (fossil), N2O = 273
         """
         co2, ch4, n2o = 10.0, 2.0, 0.5
 
@@ -498,7 +498,7 @@ class TestMetrologyAndEngineeringPrecision:
         assert pytest.approx(float(ar5_expected), rel=1e-6) == ar5_calc
 
         # AR6 Analytical
-        ar6_expected = Decimal("10.0") * 1 + Decimal("2.0") * Decimal("27.9") + Decimal("0.5") * 273
+        ar6_expected = Decimal("10.0") * 1 + Decimal("2.0") * Decimal("29.8") + Decimal("0.5") * 273
         ar6_calc = calculate_co2e(co2, ch4, n2o, gwp_standard="AR6")
         assert pytest.approx(float(ar6_expected), rel=1e-6) == ar6_calc
 

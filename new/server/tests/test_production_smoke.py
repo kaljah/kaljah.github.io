@@ -100,7 +100,7 @@ def test_smoke_07_gwp_constants_accuracy(smoke_client):
     from calculations.constants import GWP_AR5, GWP_AR6
     assert GWP_AR5["CH4"] == 28.0
     assert GWP_AR5["N2O"] == 265.0
-    assert GWP_AR6["CH4"] == 27.9
+    assert GWP_AR6["CH4"] == 29.8
     assert GWP_AR6["N2O"] == 273.0
 
 

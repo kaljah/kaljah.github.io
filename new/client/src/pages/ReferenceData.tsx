@@ -160,7 +160,7 @@ const ReferenceData: React.FC = () => {
       columns: ["Gas", "AR4 (2007)", "AR5 (2013)", "AR6 (2021)"],
       items: [
         { gas: "Carbon Dioxide (CO₂)", ar4: "1", ar5: "1", ar6: "1" },
-        { gas: "Methane (CH₄)", ar4: "25", ar5: "28", ar6: "27.9" },
+        { gas: "Methane (CH₄)", ar4: "25", ar5: "28", ar6: "29.8 (fossil)" },
         { gas: "Nitrous Oxide (N₂O)", ar4: "298", ar5: "265", ar6: "273" },
       ],
     },
