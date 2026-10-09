@@ -56,14 +56,20 @@ SECURITY_ACTIONS = ["LOGIN", "LOGOUT", "REGISTER", "SECURITY", "UPDATE_PASSWORD"
 def _scoped_base(user):
     """Audit rows the user may see.
 
-    - IT roles: security / account-lifecycle actions only.
+    - IT roles: security / account-lifecycle actions only (including edits and deletions of
+      user accounts, so IT staff are accountable for the changes they make).
     - BUG-038: region-restricted business users see entries for facilities in their scope
       and their own actions; entries without a facility (other regions' users, legacy rows)
       stay hidden from them.
     """
     query = ActivityLog.query
     if user and is_it_role(user):
-        return query.filter(ActivityLog.action.in_(SECURITY_ACTIONS))
+        return query.filter(
+            db.or_(
+                ActivityLog.action.in_(SECURITY_ACTIONS),
+                db.and_(ActivityLog.entity == "User", ActivityLog.action.in_(["UPDATE", "DELETE_USER"])),
+            )
+        )
     allowed = get_allowed_facility_ids(user)
     if allowed is not None:
         user_id = user.id if user else -1

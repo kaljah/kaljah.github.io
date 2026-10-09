@@ -13,6 +13,8 @@ from . import auth_bp
 from routes.auth import (
     BUSINESS_ROLE_GRANTORS,
     BUSINESS_ROLES,
+    CLIENT_IT_PROTECTED_ROLES,
+    CLIENT_IT_ROLES,
     ROLE_RANK,
     SUPERUSER_REGION_ERROR,
     it_access_required,
@@ -68,7 +70,10 @@ def update_user(id):
     it_admin_id = session.get("user_id")
     it_admin = db.session.get(User, it_admin_id)
 
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
+    requester_is_client_it = bool(it_admin and it_admin.role in CLIENT_IT_ROLES)
+    if requester_is_client_it and user.role in CLIENT_IT_PROTECTED_ROLES:
+        return jsonify({"error": "Forbidden: Client IT staff cannot modify Compliance Admin, Superuser or platform operator accounts"}), 403
 
     VALID_ROLES = set(ROLE_RANK.keys())
     requester_rank = ROLE_RANK.get(it_admin.role if it_admin else "user", 0)
@@ -80,6 +85,8 @@ def update_user(id):
         # Separation of Duties: IT Admin cannot assign business compliance Admin or Superuser role
         if new_role in BUSINESS_ROLES and it_admin.role not in BUSINESS_ROLE_GRANTORS:
             return jsonify({"error": "Forbidden: IT Administrators cannot assign business compliance roles (admin, superuser)"}), 403
+        if requester_is_client_it and new_role in CLIENT_IT_PROTECTED_ROLES:
+            return jsonify({"error": "Forbidden: Client IT staff cannot assign the admin, superuser or it_manager role"}), 403
         target_new_rank = ROLE_RANK.get(new_role, 0)
         if target_new_rank > requester_rank:
             return jsonify({"error": "Cannot assign a role higher than your own"}), 403
@@ -156,6 +163,8 @@ def delete_user(id):
     # IT Admins have global authority over all user accounts — no regional restriction
     it_admin_id = session.get("user_id")
     it_admin = db.session.get(User, it_admin_id)
+    if it_admin and it_admin.role in CLIENT_IT_ROLES and user.role in CLIENT_IT_PROTECTED_ROLES:
+        return jsonify({"error": "Forbidden: Client IT staff cannot delete Compliance Admin, Superuser or platform operator accounts"}), 403
 
     # BUG-010 / BUG-069: derive every reference to users.id from the schema instead of a
     # hand-maintained list, and keep the maker-checker identity on the records.
@@ -216,8 +225,8 @@ def admin_reset_password(id):
 
     # Separation of Duties: Client IT staff (it, it_admin) CANNOT reset passwords for Admin or Superuser accounts.
     # Only it_manager (vendor platform operator) or an Admin can reset Admin/Superuser passwords.
-    if admin_user and admin_user.role in ["it", "it_admin"]:
-        if user.role in ["admin", "superuser", "it_manager"]:
+    if admin_user and admin_user.role in CLIENT_IT_ROLES:
+        if user.role in CLIENT_IT_PROTECTED_ROLES:
             return jsonify({
                 "error": "Forbidden: Client IT staff cannot reset passwords for Compliance Admin or Superuser accounts"
             }), 403
