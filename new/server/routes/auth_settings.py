@@ -3,7 +3,6 @@
 Split out of routes/auth.py unchanged (hardening plan, task 5.3). The routes are registered on the
 same ``auth_bp`` blueprint, and routes.auth re-exports every name, so imports and URLs are the same.
 """
-import datetime
 from extensions import db
 from flask import current_app, jsonify, request, session
 from models import User
@@ -80,84 +79,7 @@ def save_setting_to_db(key: str, val):
         current_app.logger.error(f"Failed to persist system setting '{key}': {e}")
 
 
-def recalculate_all_emissions_gwp(standard, previous=None):
-    """
-    Recalculates co2e_total for all stored Emission records in the database
-    using the specified GWP standard ('AR4', 'AR5', 'AR6').
-    Also updates gwp_version on the records and invalidates dashboard caches.
-
-    Scope 2 follows (audit 2026-09-30): grid electricity is recalculated from its grid region's
-    CO2 / CH4 / N2O, and steam from the default natural-gas boiler has its CH4 / N2O re-weighted
-    (the boiler fuel energy is recovered from the stored CO2e with the `previous` standard).
-    """
-    from models import Emission, Scope2Emission
-    from calculations.constants import GWP_STANDARDS, GWP_AR5, invalidate_gwp_cache
-    from sqlalchemy import func
-
-    invalidate_gwp_cache()  # a cached standard would keep new records on the old GWP for 30 s
-
-    std_dict = GWP_STANDARDS.get(standard, GWP_AR5)
-    co2_factor = float(std_dict.get("CO2", 1.0))
-    ch4_factor = float(std_dict.get("CH4", 28.0))
-    n2o_factor = float(std_dict.get("N2O", 265.0))
-
-    # Perform database update
-    db.session.query(Emission).update(
-        {
-            Emission.co2e_total: (
-                func.coalesce(Emission.co2_emissions, 0.0) * co2_factor
-                + func.coalesce(Emission.ch4_emissions, 0.0) * ch4_factor
-                + func.coalesce(Emission.n2o_emissions, 0.0) * n2o_factor
-            ),
-            Emission.gwp_version: standard,
-            Emission.updated_at: datetime.datetime.now(datetime.timezone.utc),
-        },
-        synchronize_session=False,
-    )
-
-    from electricity_factors import grid_entry, grid_factor_kg_co2e_per_kwh
-    from routes.scope2 import _DEFAULT_BOILER_EF_KG_PER_MMBTU as _NG_BOILER
-
-    new_gwp = {"CH4": ch4_factor, "N2O": n2o_factor}
-    old_std = GWP_STANDARDS.get(str(previous or "").upper()) if previous else None
-
-    def _steam_k(g):  # kg CO2e per MMBtu of boiler fuel (routes.scope2._calc_indirect_steam)
-        return _NG_BOILER + 0.001 * float(g["CH4"]) + 0.0001 * float(g["N2O"])
-
-    for e in Scope2Emission.query.all():
-        st = str(e.source_type or "").lower()
-        if "electric" in st:
-            entry = grid_entry(e.grid_region)[1] if e.grid_region else None
-            if entry is not None and e.electricity_kwh:
-                e.emission_factor = grid_factor_kg_co2e_per_kwh(entry, gwp=new_gwp)
-                e.co2e = e.electricity_kwh * e.emission_factor / 1000.0
-                e.co2e_location_based = e.co2e
-                if not getattr(e, "market_instrument_type", None) or e.market_instrument_type in ("None", "Grid Average / Residual Mix"):
-                    e.co2e_market_based = e.co2e
-                elif getattr(e, "market_emission_factor", None) is not None:
-                    e.co2e_market_based = e.electricity_kwh * float(e.market_emission_factor) / 1000.0
-        elif "steam" in st and old_std and e.co2e and e.emission_factor == _NG_BOILER:
-            ratio = _steam_k(new_gwp) / _steam_k(old_std)
-            e.co2e = e.co2e * ratio
-            if getattr(e, "co2e_location_based", None) is not None:
-                e.co2e_location_based = e.co2e_location_based * ratio
-            if getattr(e, "co2e_market_based", None) is not None:
-                e.co2e_market_based = e.co2e_market_based * ratio
-
-    try:
-        db.session.commit()
-    except Exception as exc:
-        db.session.rollback()
-        current_app.logger.error(f"Failed to commit GWP recalculations: {exc}")
-        raise
-
-    # Clear dashboard cache
-    try:
-        from routes.dashboard import DASHBOARD_CACHE
-
-        DASHBOARD_CACHE.clear()
-    except Exception:
-        pass
+from services.gwp_recalculation import recalculate_all_emissions_gwp  # noqa: E402,F401  (re-export)
 
 
 @auth_bp.route("/settings", methods=["GET"])
@@ -287,7 +209,7 @@ def update_settings():
         # If GWP standard was changed or set, recalculate existing emissions
         if gwp_changed:
             try:
-                recalculate_all_emissions_gwp(_app_settings["gwp_standard"], previous=previous_gwp)
+                recalculate_all_emissions_gwp(_app_settings["gwp_standard"], previous=previous_gwp, user=user)
             except Exception as e:
                 current_app.logger.error(f"Error recalculating emissions with new GWP: {e}")
 
