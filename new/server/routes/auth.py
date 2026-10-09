@@ -611,17 +611,12 @@ def update_profile():
 @limiter.limit("5 per hour")
 @login_required
 def change_password():
-    user_id = session.get("user_id")
-    if not user_id:
-        return jsonify({"error": "Not authenticated"}), 401
-
-    user = db.session.get(User, user_id)
+    user = db.session.get(User, session.get("user_id"))  # login_required: the session has a user id
     if not user:
         return jsonify({"error": "User not found"}), 404
 
-    data = request.get_json()
-    current_password = data.get("currentPassword")
-    new_password = data.get("newPassword")
+    data = request.get_json(silent=True) or {}
+    current_password, new_password = data.get("currentPassword"), data.get("newPassword")
 
     if not current_password or not new_password:
         return jsonify({"error": "Current and new passwords required"}), 400

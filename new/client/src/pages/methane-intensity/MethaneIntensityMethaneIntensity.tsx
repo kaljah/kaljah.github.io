@@ -129,7 +129,12 @@ const MethaneIntensityMethaneIntensity: React.FC<MethaneIntensityMethaneIntensit
           >
             <Compass size={20} />
           </div>
-          <span className="kpi-label">Methane Loss Rate</span>
+          <span
+            className="kpi-label"
+            title="CH4 volume emitted / gas produced (OGMP 2.0). Reports also give the NGSI intensity, a mass ratio (wt %), which reads lower."
+          >
+            Methane Loss Rate (vol. %)
+          </span>
         </div>
         <div className="[display:flex] [align-items:baseline] [gap:8px]">
           <span

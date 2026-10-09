@@ -43,7 +43,12 @@ const plural = (n: number, one: string, many: string) => (n === 1 ? one : many);
 
 const Warn: React.FC<{ children: React.ReactNode }> = ({ children }) => <p className="m-0 text-sm text-warning-fg">{children}</p>;
 
-export const FileCheckPanel: React.FC<{ check: FileCheckState; onRecheck: () => void; canRun: boolean }> = ({ check, onRecheck, canRun }) => {
+export const FileCheckPanel: React.FC<{ check: FileCheckState; onRecheck: () => void; canRun: boolean; mappedHere?: number }> = ({
+  check,
+  onRecheck,
+  canRun,
+  mappedHere,
+}) => {
   if (check.loading) {
     return (
       <div role="status" className="flex items-center gap-2 rounded-md border border-border bg-ink-50 px-4 py-3 text-sm text-text-secondary">
@@ -161,7 +166,12 @@ export const FileCheckPanel: React.FC<{ check: FileCheckState; onRecheck: () => 
       )}
       {p.columns && (
         <p className="m-0 text-xs text-text-secondary">
-          {p.columns.matched.length} of {p.columns.total} columns are matched to fields.
+          {p.columns.matched.length} of {p.columns.total} columns are matched to fields
+          {/* the mapping step counts only what it matched; the server also recognises some headers itself (SU-11) */}
+          {mappedHere != null && p.columns.matched.length > mappedHere
+            ? ` (${mappedHere} mapped above, ${p.columns.matched.length - mappedHere} more recognised by their header)`
+            : ""}
+          .
           {p.columns.by_name.length > 0 && (
             <>
               {" "}

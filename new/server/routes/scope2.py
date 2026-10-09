@@ -795,7 +795,7 @@ def bulk_import_scope2():
                 continue
 
             if allowed_fids is not None and facility.id not in allowed_fids:
-                errors.append(f"Row {i}: Unauthorized for facility '{facility.name}'")
+                errors.append(f"Row {i}: Unauthorized for facility '{f_val}'")  # not the stored name (SU-10)
                 continue
 
             # 2. Get Factor and Calculate

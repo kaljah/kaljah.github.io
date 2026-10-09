@@ -461,7 +461,12 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
 
             {mappingExtras}
 
-            {checkBeforeImport && <FileCheckPanel check={check} onRecheck={runCheck} canRun={headers.length === 0 || canSubmit} />}
+            {checkBeforeImport && <FileCheckPanel
+                check={check}
+                onRecheck={runCheck}
+                canRun={headers.length === 0 || canSubmit}
+                mappedHere={headers.length ? headers.filter((h) => matchedColumns.has(h)).length : undefined}
+              />}
 
             <label className={cn("flex cursor-pointer items-start gap-2 text-sm font-medium text-text-secondary")}>
               <input type="checkbox" className="mt-0.5 size-4 shrink-0 accent-brand-500" checked={overwrite} onChange={(e) => setOverwrite(e.target.checked)} />

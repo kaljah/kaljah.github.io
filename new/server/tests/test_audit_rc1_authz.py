@@ -265,3 +265,19 @@ def test_change_password_errors_do_not_sign_out(client, ctx):
     r = client.post("/api/auth/change-password", json={"currentPassword": "AuditPass!2026", "newPassword": "NewPass!2026x"})
     assert r.status_code == 200
     assert client.get("/api/auth/me").status_code == 200  # this session stays signed in
+
+
+# ── ADM-15: browser-generated reports leave a REPORT audit entry with their fingerprint ──
+
+def test_browser_report_fingerprint_is_audited(client, ctx):
+    from models import ActivityLog
+    login(client, make_user("admin", "Global"))
+    fp = "a" * 64
+    r = client.post("/api/reports/fingerprint", json={"kind": "ISO 14064-1 PDF (browser)", "fingerprint": fp,
+                                                      "filters": {"year": "2025"}, "record_count": 12})
+    assert r.status_code == 200 and r.headers["X-Audit-SHA256"] == fp
+    log = ActivityLog.query.filter_by(action="REPORT", record_id=fp[:16]).first()
+    assert log is not None and fp in log.details and "12 records" in log.details
+    assert client.post("/api/reports/fingerprint", json={"fingerprint": "nope"}).status_code == 400
+    login(client, make_user("it_admin", "Global"))
+    assert client.post("/api/reports/fingerprint", json={"fingerprint": fp}).status_code == 403
