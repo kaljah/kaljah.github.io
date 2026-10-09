@@ -378,8 +378,6 @@ def test_it_user_cannot_access_equity_or_cap_data(client, test_accounts):
     assert client.get("/api/equity/shares").status_code == 403
     assert client.get("/api/cap/emissions").status_code == 403
     assert client.get("/api/cap/compliance").status_code == 403
-    assert client.get("/api/satellite/sentinel5p/layer-config").status_code == 403
-    assert client.get("/api/satellite/sentinel5p/query").status_code == 403
 
 
 def test_non_numeric_facility_id_returns_422(client, test_accounts):

@@ -1,8 +1,7 @@
 import React from "react";
-import { Activity, AlertCircle, BarChart3, Check, Copy, MapPin, RefreshCw, Satellite, ShieldCheck, Target, X } from "lucide-react";
-import { Badge, Banner, Button, IconButton, Skeleton } from "../../ui";
+import { BarChart3, Check, Copy, MapPin, Target, X } from "lucide-react";
+import { Badge, Banner, Button, IconButton } from "../../ui";
 import { cn } from "../../ui/cn";
-import { tint } from "../../utils/colorMix";
 
 const Caption: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <span className="text-xs font-bold uppercase tracking-wide text-text-secondary">{children}</span>
@@ -38,108 +37,6 @@ const SectionTitle: React.FC<SectionTitleProps> = ({ icon: Icon, children }) => 
   </h4>
 );
 
-interface SatelliteSectionProps {
-  loading?: boolean;
-  observation?: any;
-  reconciliation?: {
-    color: string;
-    label: string;
-    deltaText: string;
-    [key: string]: any;
-  } | null;
-  exporting?: boolean;
-  onExport: () => void;
-  onConfigure: () => void;
-}
-
-const SatelliteSection: React.FC<SatelliteSectionProps> = ({ loading, observation, reconciliation, exporting, onExport, onConfigure }) => {
-  const summary = observation?.summary;
-  return (
-    <section className="mb-3.5 rounded-lg border border-blue-500/30 bg-info-bg p-3.5">
-      <div className="mb-3 flex items-center justify-between">
-        <h4 className="m-0 flex items-center gap-1.5 text-sm font-bold text-info-fg">
-          <Satellite className="size-4" aria-hidden="true" /> Copernicus Sentinel-5P overpass
-        </h4>
-        {loading ? (
-          <span className="flex items-center gap-1.5 text-xs text-info-fg">
-            <RefreshCw className="size-3 animate-spin" aria-hidden="true" /> STAC query…
-          </span>
-        ) : (
-          summary?.stream_type && <Badge tone="success">● {summary.stream_type}</Badge>
-        )}
-      </div>
-
-      {loading ? (
-        <div className="flex flex-col gap-2 py-3" role="status" aria-label="Loading satellite data">
-          <Skeleton className="h-3 w-full" />
-          <Skeleton className="h-3 w-2/3" />
-        </div>
-      ) : observation?.authenticated && summary ? (
-        <div>
-          <div className="mb-2.5 grid grid-cols-2 gap-2">
-            <Stat label="Mean CH₄ column" value={num(summary.mean_ch4_column_ppb)} unit="ppb" />
-            <Stat label="Max anomaly (ΔCH₄)" value={`+${num(summary.max_anomaly_ppb)}`} unit="ppb" tone={Number(summary.max_anomaly_ppb || 0) >= 25 ? "danger" : "warning"} />
-            <Stat
-              label="Inferred emission rate"
-              value={Number(summary.estimated_emission_rate_kg_hr || 0) > 0 ? `${num(summary.estimated_emission_rate_kg_hr)} kg/hr` : "Background"}
-              tone="warning"
-            />
-            <Stat label="Annualized satellite flux" value={`${Number(summary.annualized_ch4_tonnes || 0) > 0 ? num(summary.annualized_ch4_tonnes) : "0.0"} t/yr`} />
-          </div>
-
-          <dl className="m-0 mb-2.5 flex justify-between border-b border-border px-0.5 pb-1.5 text-xs text-text-secondary">
-            <div>
-              <dt className="mr-1 inline">Overpass:</dt>
-              <dd className="m-0 inline font-semibold text-text">
-                {summary.latest_observation_date} {summary.latest_observation_time ? `(${summary.latest_observation_time})` : ""}
-              </dd>
-            </div>
-            <div>
-              <dt className="mr-1 inline">QA confidence:</dt>
-              <dd className="m-0 inline font-semibold text-text">{(Number(summary.mean_qa_score || 0) * 100).toFixed(0)}%</dd>
-            </div>
-          </dl>
-
-          {reconciliation && (
-            <div className="mb-3 rounded-md border bg-surface p-2.5" style={{ borderColor: tint(reconciliation.color, "50") }}>
-              <div className="mb-1.5 flex items-center justify-between">
-                <span className="flex items-center gap-1.5 text-xs font-bold text-text">
-                  <Activity className="size-3.5" style={{ color: reconciliation.color }} aria-hidden="true" /> OGMP 2.0 reconciliation gap
-                </span>
-                <span
-                  className="rounded-sm border px-1.5 py-0.5 text-xs font-bold"
-                  style={{ backgroundColor: tint(reconciliation.color, "15"), color: reconciliation.color, borderColor: tint(reconciliation.color, "40") }}
-                >
-                  {reconciliation.label}
-                </span>
-              </div>
-              <p className="m-0 text-xs leading-snug text-text-secondary">{reconciliation.deltaText}</p>
-            </div>
-          )}
-
-          <Button id="reconcile-ogmp-btn" className="w-full" onClick={onExport} loading={exporting} disabled={exporting}>
-            <ShieldCheck className="size-4" aria-hidden="true" />
-            {exporting ? "Recording Level 5 verification…" : "Reconcile into OGMP 2.0 ledger"}
-          </Button>
-        </div>
-      ) : (
-        <div className="flex gap-3 p-2">
-          <AlertCircle className="size-[18px] shrink-0 text-warning-fg" aria-hidden="true" />
-          <div>
-            <p className="m-0 mb-1 text-sm font-bold text-warning-fg">Copernicus live feed unconfigured</p>
-            <p className="m-0 mb-2 text-xs leading-snug text-text-secondary">
-              Connect your free Copernicus Data Space Ecosystem (CDSE) credentials in Settings to stream verified Sentinel-5P overpasses.
-            </p>
-            <Button variant="secondary" size="sm" onClick={onConfigure}>
-              Configure in Settings →
-            </Button>
-          </div>
-        </div>
-      )}
-    </section>
-  );
-};
-
 export interface ExplorerDossierProps {
   facility: {
     id: number | string;
@@ -166,23 +63,12 @@ export interface ExplorerDossierProps {
   copiedCoords: boolean;
   onCopyCoords: () => void;
   onClose: () => void;
-  satelliteLoading?: boolean;
-  satelliteObservation?: any;
-  reconciliation?: {
-    color: string;
-    label: string;
-    deltaText: string;
-    [key: string]: any;
-  } | null;
-  exporting?: boolean;
-  onExport: () => void;
-  onConfigure: () => void;
   loadingSurveys?: boolean;
   surveys?: any[];
   onCenter: () => void;
 }
 
-/** Slide-in dossier for the selected facility: satellite evidence, OGMP surveys and the bottom-up inventory. */
+/** Slide-in dossier for the selected facility: recorded OGMP surveys and the bottom-up inventory. */
 const ExplorerDossier: React.FC<ExplorerDossierProps> = ({
   facility,
   stats,
@@ -191,12 +77,6 @@ const ExplorerDossier: React.FC<ExplorerDossierProps> = ({
   copiedCoords,
   onCopyCoords,
   onClose,
-  satelliteLoading,
-  satelliteObservation,
-  reconciliation,
-  exporting,
-  onExport,
-  onConfigure,
   loadingSurveys,
   surveys = [],
   onCenter,
@@ -234,14 +114,6 @@ const ExplorerDossier: React.FC<ExplorerDossierProps> = ({
         </div>
       </header>
 
-      <SatelliteSection
-        loading={satelliteLoading}
-        observation={satelliteObservation}
-        reconciliation={reconciliation}
-        exporting={exporting}
-        onExport={onExport}
-        onConfigure={onConfigure}
-      />
 
       {loadingSurveys && <p className="mb-2.5 text-sm font-extrabold uppercase tracking-wide text-text-secondary">Loading recorded surveys…</p>}
       {surveys.length > 0 && (

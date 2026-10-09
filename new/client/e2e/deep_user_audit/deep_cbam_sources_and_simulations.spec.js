@@ -205,7 +205,7 @@ test.describe('Suite 17: CBAM, Operational Equipment, Methane Map & Simulations 
     console.log(`[CSS-2] Artifact captured: ${screenshotFile}`);
   });
 
-  test('CSS-3: Methane Explorer Satellite Hotspot HUD & Facility Dossier Inspection', async ({ page }) => {
+  test('CSS-3: Methane Explorer HUD & Facility Dossier Inspection', async ({ page }) => {
     test.setTimeout(75000);
     await ensureAuthenticatedPage(page, `${FRONTEND}/methane-explorer`);
 

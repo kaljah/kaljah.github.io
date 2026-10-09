@@ -62,7 +62,7 @@ Material for people to answer; Claude can write all of it from the code.
 |---|------|-------|--------|
 | T2.1 | Self-host fonts; remove Google Fonts calls. | client `index.html`/CSS | No external request on first load (Playwright network log) |
 | T2.2 | Map tiles configurable (`MAP_TILE_URL`), default off on-premise with a plain basemap; Sonatrach can point it at an internal tile server. | Methane explorer components, `config.py` | Explorer loads with network blocked |
-| T2.3 | Satellite/Copernicus features behind `SATELLITE_ENABLED` (default false on-premise); routes return 404/disabled and the UI hides the menu entries. | `routes/satellite.py`, `services/sentinel5p.py`, `routes.config.ts` | Tests for both settings |
+| T2.3 | Done 2026-10-09 by removal (owner decision): the Copernicus integration is gone. (Originally planned as a `SATELLITE_ENABLED` switch.) | `routes/satellite.py`, `services/sentinel5p.py`, `routes.config.ts` | Tests for both settings |
 | T2.4 | Offline bundle: script that saves the images (`docker save`) with checksums and the install guide into one archive. | `deploy/make-bundle.sh` | Stack starts from the bundle in `docker run --network none` style isolation (no registry, no internet) |
 
 ## M3 - Backups, releases, upgrades

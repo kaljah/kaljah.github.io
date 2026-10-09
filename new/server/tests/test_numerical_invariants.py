@@ -50,7 +50,6 @@ from calculations.vented import (
     PneumaticDeviceCalculator,
 )
 from calculations.anomaly import AnomalyDetector
-from services.sentinel5p import Sentinel5PService
 
 
 # ===========================================================================
@@ -333,30 +332,6 @@ class TestAnomalyMathematics:
         res = detector._z_score_check(value=100.0, historical=[100.0, 100.0])
         assert res["flagged"] is False
         assert res["reason"] == "insufficient_history"
-
-
-# ===========================================================================
-# 6. SATELLITE ATMOSPHERIC FLUX MATHEMATICS
-# ===========================================================================
-
-class TestSatelliteFluxMathematics:
-    def test_column_mass_flux_linearity(self):
-        """Emission rate Q must scale linearly with delta_ppb and wind_speed."""
-        service = Sentinel5PService()
-        q1 = service.estimate_emission_rate_from_anomaly(delta_ch4_ppb=20.0, wind_speed_m_s=3.0)
-        q2 = service.estimate_emission_rate_from_anomaly(delta_ch4_ppb=40.0, wind_speed_m_s=3.0)
-        # Doubling delta_ppb must double emission rate
-        assert pytest.approx(q2, rel=1e-3) == q1 * 2.0
-
-        q_double_wind = service.estimate_emission_rate_from_anomaly(delta_ch4_ppb=20.0, wind_speed_m_s=6.0)
-        # Doubling wind speed must double emission rate
-        assert pytest.approx(q_double_wind, rel=1e-3) == q1 * 2.0
-
-    def test_zero_and_negative_anomaly_returns_zero(self):
-        """Zero or negative delta_ch4_ppb must return exactly 0.0 kg/hr."""
-        service = Sentinel5PService()
-        assert service.estimate_emission_rate_from_anomaly(0.0) == 0.0
-        assert service.estimate_emission_rate_from_anomaly(-10.0) == 0.0
 
 
 # ===========================================================================

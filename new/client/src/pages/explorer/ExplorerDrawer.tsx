@@ -1,6 +1,6 @@
 import React from "react";
-import { AlertCircle, RotateCcw, Satellite, Search, Sliders, X } from "lucide-react";
-import { Badge, Button, Field, IconButton, Input, NativeSelect, Switch } from "../../ui";
+import { AlertCircle, RotateCcw, Search, Sliders, X } from "lucide-react";
+import { Badge, Button, Field, IconButton, Input, NativeSelect } from "../../ui";
 import { cn } from "../../ui/cn";
 import { activateOnKey } from "../../utils/a11yKeys";
 
@@ -92,16 +92,8 @@ export interface ExplorerDrawerProps {
   years: (string | number)[];
   activities: string[];
   count: number;
-  satellite: {
-    show: boolean;
-    onShow: (val: boolean) => void;
-    opacity: number;
-    onOpacity: (val: number) => void;
-    rings: boolean;
-    onRings: (val: boolean) => void;
-    legend: boolean;
-    onLegend: (val: boolean) => void;
-  };
+  rings: boolean;
+  onRings: (val: boolean) => void;
   facilities: any[];
   selectedId: number | string | null;
   viewMode: string;
@@ -112,7 +104,7 @@ export interface ExplorerDrawerProps {
   onReset: () => void;
 }
 
-/** Left drawer of the emissions map: asset filters, the Sentinel-5P overlay controls and the facility inventory. */
+/** Left drawer of the emissions map: asset filters, map display options and the facility inventory. */
 const ExplorerDrawer: React.FC<ExplorerDrawerProps> = ({
   filters,
   onFilters,
@@ -120,7 +112,8 @@ const ExplorerDrawer: React.FC<ExplorerDrawerProps> = ({
   years,
   activities,
   count,
-  satellite,
+  rings,
+  onRings,
   facilities,
   selectedId,
   viewMode,
@@ -216,46 +209,14 @@ const ExplorerDrawer: React.FC<ExplorerDrawerProps> = ({
         </div>
       </fieldset>
 
-      <section className="rounded-md border border-blue-500/30 bg-info-bg p-3" aria-label="Sentinel-5P overlay">
-        <div className="flex items-center justify-between">
-          <span className="flex items-center gap-1.5 text-sm font-bold text-info-fg">
-            <Satellite className="size-4" aria-hidden="true" /> Sentinel-5P overlay
-          </span>
-          <Switch
-            id="toggle-sat-layer-checkbox"
-            aria-label="Show satellite layer"
-            checked={satellite.show}
-            onChange={(e) => satellite.onShow(e.target.checked)}
-          />
-        </div>
-        {satellite.show && (
-          <div className="mt-2.5 flex flex-col gap-2">
-            <label className="flex flex-col gap-1 text-xs font-semibold text-ink-700">
-              Opacity: {Math.round(satellite.opacity * 100)}%
-              <input
-                id="satellite-opacity-slider"
-                type="range"
-                min="0.15"
-                max="1"
-                step="0.05"
-                value={satellite.opacity}
-                onChange={(e) => satellite.onOpacity(Number(e.target.value))}
-                aria-label="Satellite layer opacity"
-                className="w-full cursor-pointer accent-blue-700"
-              />
-            </label>
-            <div className="flex justify-between">
-              <CheckRow
-                label="Severity rings"
-                tone="text-ink-700"
-                title="Symbol size by emission severity; not a modelled plume"
-                checked={satellite.rings}
-                onChange={(e) => satellite.onRings(e.target.checked)}
-              />
-              <CheckRow label="Legend" tone="text-ink-700" checked={satellite.legend} onChange={(e) => satellite.onLegend(e.target.checked)} />
-            </div>
-          </div>
-        )}
+      <section className="rounded-md border border-border bg-ink-50 p-3" aria-label="Map display">
+        <CheckRow
+          label="Severity rings"
+          tone="text-ink-700"
+          title="Symbol size by emission severity; not a modelled plume"
+          checked={rings}
+          onChange={(e) => onRings(e.target.checked)}
+        />
       </section>
 
       <div className="flex items-baseline justify-between text-xs font-bold uppercase tracking-wide text-text-secondary">

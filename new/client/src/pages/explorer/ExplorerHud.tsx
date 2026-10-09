@@ -1,6 +1,6 @@
 import React from "react";
-import { Flame, Radio, Satellite, TrendingUp } from "lucide-react";
-import { Badge, Button, SegmentedControl } from "../../ui";
+import { Flame, TrendingUp } from "lucide-react";
+import { SegmentedControl } from "../../ui";
 import { cn } from "../../ui/cn";
 
 interface MetricProps {
@@ -27,8 +27,6 @@ const labelWithIcon = (Icon: React.ComponentType<{ className?: string; "aria-hid
 );
 
 export interface ExplorerHudProps {
-  connected: boolean;
-  onConfigure: () => void;
   metrics: {
     activeAssets?: number;
     totalMethane?: number;
@@ -42,10 +40,8 @@ export interface ExplorerHudProps {
   formatCompact: (v: any) => string;
 }
 
-/** Floating telemetry bar on top of the map: title and stream status, regional KPIs and view mode. */
+/** Floating telemetry bar on top of the map: title, regional KPIs and view mode. */
 const ExplorerHud: React.FC<ExplorerHudProps> = ({
-  connected,
-  onConfigure,
   metrics,
   viewMode,
   onViewMode,
@@ -63,25 +59,9 @@ const ExplorerHud: React.FC<ExplorerHudProps> = ({
           {/* The top bar already names the page on small screens; keep the heading for screen readers. */}
           <div className="sr-only md:not-sr-only">
             <h1 className="m-0 whitespace-nowrap text-md font-bold text-text">Emissions Map</h1>
-            <p className="m-0 hidden whitespace-nowrap text-xs font-semibold uppercase tracking-wide text-info-fg xl:block">Sentinel-5P TROPOMI</p>
+            <p className="m-0 hidden whitespace-nowrap text-xs font-semibold uppercase tracking-wide text-info-fg xl:block">Reported inventory</p>
           </div>
         </div>
-        {connected ? (
-          <Badge tone="success" title="Connected to Copernicus Data Space">
-            <Radio className="size-3" aria-hidden="true" /> S5P stream live
-          </Badge>
-        ) : (
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={onConfigure}
-            title="Configure CDSE API credentials in Settings"
-            aria-label="Configure S5P"
-          >
-            <Satellite className="size-3.5" aria-hidden="true" />
-            <span className="hidden xl:inline">Configure S5P</span>
-          </Button>
-        )}
       </div>
 
       {/* Hidden below lg: the strip does not fit beside the title and the metric toggle. */}

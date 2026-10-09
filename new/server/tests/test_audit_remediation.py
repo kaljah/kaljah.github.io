@@ -581,21 +581,6 @@ def test_combustion_factor_prefix_tco2_and_gram():
     assert abs(convert_factor_to_kg_per_unit(500.0, "g/kwh", "kwh") - 0.5) < 1e-4
 
 
-def test_sentinel5p_column_mass_flux():
-    """Finding 7: Verify Sentinel-5P flux calculation uses full atmospheric column air mass (~10,332 kg/m2)."""
-    from services.sentinel5p import sentinel5p_service, TOTAL_COLUMN_AIR_MASS_KG_M2
-    # Check physical constant
-    assert 10300 < TOTAL_COLUMN_AIR_MASS_KG_M2 < 10350
-
-    rate = sentinel5p_service.estimate_emission_rate_from_anomaly(
-        delta_ch4_ppb=100.0,
-        wind_speed_m_s=3.0,
-        box_width_km=10.0,
-    )
-    # Expected: 100e-9 * (16.042 / 28.97) * 10332.27 * 10000 * 3.0 * 3600 = ~61791.64 kg CH4/hr
-    assert 60000 < rate < 63000
-
-
 def test_uncertainty_combine_sum_negative_sinks():
     """Finding 8: Verify combine_uncertainties_sum returns non-negative relative uncertainty on net sinks."""
     from calculations.uncertainty import combine_uncertainties_sum

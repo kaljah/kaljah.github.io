@@ -17,12 +17,6 @@ _DEFAULT_APP_SETTINGS = {
     "reconciliation_threshold": 20.0,
     "ogmp_upstream_target_pct": 0.20,
     "ogmp_midstream_target_pct": 0.05,
-    "copernicus_username": "",
-    "copernicus_password": "",
-    "copernicus_client_id": "",
-    "copernicus_client_secret": "",
-    "copernicus_qa_threshold": 0.5,
-    "copernicus_enabled": False,
     # CAA s.136 as amended by P.L. 119-21: the charge starts with 2034 emissions at $1,500 / t
     "wec_fee_rates": {"2034": 1500.0},
     "wec_first_year": 2034,
@@ -39,9 +33,16 @@ _DEFAULT_APP_SETTINGS = {
 
 _app_settings = dict(_DEFAULT_APP_SETTINGS)
 
+# Settings of the removed Copernicus / Sentinel-5P integration: an older database may still hold
+# them (credentials included), so they are never loaded, stored or returned.
+RETIRED_SETTING_KEYS = {
+    "copernicus_username", "copernicus_password", "copernicus_client_id",
+    "copernicus_client_secret", "copernicus_qa_threshold", "copernicus_enabled",
+}
+
 # Organisation-wide keys (SystemSetting); never stored in or overridden by user preferences.
 # theme / unit_system stay per-user display preferences.
-GLOBAL_SETTING_KEYS = (set(_DEFAULT_APP_SETTINGS) - {"theme", "unit_system"}) | {"gwp_standard"}
+GLOBAL_SETTING_KEYS = (set(_DEFAULT_APP_SETTINGS) - {"theme", "unit_system"}) | {"gwp_standard"} | RETIRED_SETTING_KEYS
 
 
 def load_settings_from_db():
@@ -51,6 +52,8 @@ def load_settings_from_db():
         from models import SystemSetting
         settings = SystemSetting.query.all()
         for s in settings:
+            if s.key in RETIRED_SETTING_KEYS:
+                continue
             try:
                 _app_settings[s.key] = json.loads(s.value)
             except Exception:
@@ -104,12 +107,6 @@ def get_settings():
         except Exception:
             pass
 
-    # Mask secrets before returning
-    if resp.get("copernicus_password"):
-        resp["copernicus_password"] = "********"
-    if resp.get("copernicus_client_secret"):
-        resp["copernicus_client_secret"] = "********"
-
     return jsonify(resp)
 
 
@@ -131,12 +128,6 @@ def update_settings():
         "reconciliation_threshold",
         "ogmp_upstream_target_pct",
         "ogmp_midstream_target_pct",
-        "copernicus_username",
-        "copernicus_password",
-        "copernicus_client_id",
-        "copernicus_client_secret",
-        "copernicus_qa_threshold",
-        "copernicus_enabled",
         "auto_flag_discrepancy",
         "wec_fee_rates",
     }
@@ -169,12 +160,6 @@ def update_settings():
             "reconciliation_threshold",
             "ogmp_upstream_target_pct",
             "ogmp_midstream_target_pct",
-            "copernicus_username",
-            "copernicus_password",
-            "copernicus_client_id",
-            "copernicus_client_secret",
-            "copernicus_qa_threshold",
-            "copernicus_enabled",
             "theme",
             "unit_system",
             "auto_flag_discrepancy",
@@ -183,14 +168,12 @@ def update_settings():
         for k in system_setting_keys:
             if k in data:
                 val = data[k]
-                if k in ["copernicus_password", "copernicus_client_secret"] and str(val).strip() in ["********", ""]:
-                    continue  # Do not overwrite existing secret with mask or empty string
                 try:
                     if k == "ogmp_default_base_year":
                         val = int(val)
-                    elif k in ["reconciliation_threshold", "ogmp_upstream_target_pct", "ogmp_midstream_target_pct", "copernicus_qa_threshold"]:
+                    elif k in ["reconciliation_threshold", "ogmp_upstream_target_pct", "ogmp_midstream_target_pct"]:
                         val = float(val)
-                    elif k in ["copernicus_enabled", "auto_flag_discrepancy"]:
+                    elif k == "auto_flag_discrepancy":
                         val = bool(val)
                 except (ValueError, TypeError):
                     return jsonify({"error": f"Invalid numerical value for '{k}'"}), 400
@@ -219,7 +202,7 @@ def update_settings():
         except Exception:
             existing = {}
         # Audit A-03: organisation-wide keys live in SystemSetting only. Copying them into the
-        # admin's preferences stored the Copernicus secrets in plain text and pinned a stale GWP
+        # admin's preferences stored credentials in plain text and pinned a stale GWP
         # standard on that admin's Settings page (re-saving it reverted the global standard).
         existing = {k: v for k, v in existing.items() if k not in GLOBAL_SETTING_KEYS}
         for k, v in data.items():
@@ -252,10 +235,6 @@ def update_settings():
         pass
 
     out_settings = dict(_app_settings)
-    if out_settings.get("copernicus_password"):
-        out_settings["copernicus_password"] = "********"
-    if out_settings.get("copernicus_client_secret"):
-        out_settings["copernicus_client_secret"] = "********"
 
     return jsonify(
         {"message": "Settings saved successfully", "settings": out_settings}

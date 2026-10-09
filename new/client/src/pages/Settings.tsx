@@ -1,10 +1,9 @@
 import SettingsIPCCGlobalWarming from "./settings/SettingsIPCCGlobalWarming";
 import SettingsOGMP20Framework from "./settings/SettingsOGMP20Framework";
 import SettingsFacilityLevelOGMPOverrides, { type FacilityItem, type FacilityEdit } from "./settings/SettingsFacilityLevelOGMPOverrides";
-import SettingsESACopernicusSentinel5P, { type ConnectionStatus } from "./settings/SettingsESACopernicusSentinel5P";
 import { Badge, Banner, Button, Card, Tabs, TabsContent, TabsList, TabsTrigger } from "../ui";
 import React, { useState, useEffect } from "react";
-import { Building2, Globe, Satellite, Save, SlidersHorizontal, Target } from "lucide-react";
+import { Building2, Globe, Save, SlidersHorizontal, Target } from "lucide-react";
 import api from "../api";
 import { useToast } from "../components/Toast";
 import { useAuth } from "../context/AuthContext";
@@ -64,18 +63,6 @@ const Settings: React.FC = () => {
   const [unitSystem, setUnitSystem] = useState<string>("metric");
   const [autoFlagDiscrepancy, setAutoFlagDiscrepancy] = useState<boolean>(true);
 
-  // Copernicus Sentinel-5P Satellite Integration States
-  const [copernicusUsername, setCopernicusUsername] = useState<string>("");
-  const [copernicusPassword, setCopernicusPassword] = useState<string>("");
-  const [copernicusClientId, setCopernicusClientId] = useState<string>("");
-  const [copernicusClientSecret, setCopernicusClientSecret] = useState<string>("");
-  const [copernicusQaThreshold, setCopernicusQaThreshold] = useState<number>(0.5);
-  const [copernicusEnabled, setCopernicusEnabled] = useState<boolean>(false);
-  const [authMode, setAuthMode] = useState<string>("password"); // 'password' or 'oauth_client'
-  const [testingConnection, setTestingConnection] = useState<boolean>(false);
-  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus | null>(null);
-  const [showGuide, setShowGuide] = useState<boolean>(false);
-
   // Facility specific overrides
   const [facilityEdits, setFacilityEdits] = useState<Record<string | number, FacilityEdit>>({});
 
@@ -102,20 +89,6 @@ const Settings: React.FC = () => {
           setUpstreamTarget(Number(settings.ogmp_upstream_target_pct));
         if (settings.ogmp_midstream_target_pct !== undefined)
           setMidstreamTarget(Number(settings.ogmp_midstream_target_pct));
-        if (settings.copernicus_username)
-          setCopernicusUsername(settings.copernicus_username);
-        if (settings.copernicus_password)
-          setCopernicusPassword(settings.copernicus_password);
-        if (settings.copernicus_client_id) {
-          setCopernicusClientId(settings.copernicus_client_id);
-          setAuthMode("oauth_client");
-        }
-        if (settings.copernicus_client_secret)
-          setCopernicusClientSecret(settings.copernicus_client_secret);
-        if (settings.copernicus_qa_threshold !== undefined)
-          setCopernicusQaThreshold(Number(settings.copernicus_qa_threshold));
-        if (settings.copernicus_enabled !== undefined)
-          setCopernicusEnabled(Boolean(settings.copernicus_enabled));
         // light theme only
         document.documentElement.removeAttribute("data-theme");
         if (settings.unit_system) setUnitSystem(settings.unit_system);
@@ -161,82 +134,17 @@ const Settings: React.FC = () => {
         reconciliation_threshold: Number(globalThreshold),
         ogmp_upstream_target_pct: Number(upstreamTarget),
         ogmp_midstream_target_pct: Number(midstreamTarget),
-        copernicus_username: copernicusUsername,
-        copernicus_client_id: copernicusClientId,
-        copernicus_qa_threshold: Number(copernicusQaThreshold),
-        copernicus_enabled: Boolean(copernicusEnabled),
         theme: "light",
         unit_system: unitSystem,
         auto_flag_discrepancy: autoFlagDiscrepancy,
       };
-      if (copernicusPassword && copernicusPassword !== "********") {
-        payload.copernicus_password = copernicusPassword;
-      }
-      if (copernicusClientSecret && copernicusClientSecret !== "********") {
-        payload.copernicus_client_secret = copernicusClientSecret;
-      }
       await api.post("/auth/settings", payload);
-      toast.success(
-        "System settings and Copernicus credentials saved successfully!",
-      );
+      toast.success("System settings saved successfully!");
     } catch (err: any) {
       console.error("Save failed:", err);
       toast.error(err?.response?.data?.message || err?.response?.data?.error || "Error saving settings");
     } finally {
       setSaving(false);
-    }
-  };
-
-  const handleTestConnection = async () => {
-    try {
-      setTestingConnection(true);
-      setConnectionStatus(null);
-      const payload =
-        authMode === "password"
-          ? {
-              copernicus_username: copernicusUsername,
-              ...(copernicusPassword && copernicusPassword !== "********"
-                ? { copernicus_password: copernicusPassword }
-                : {}),
-            }
-          : {
-              copernicus_client_id: copernicusClientId,
-              ...(copernicusClientSecret && copernicusClientSecret !== "********"
-                ? { copernicus_client_secret: copernicusClientSecret }
-                : {}),
-            };
-
-      const res = await api.post(
-        "/satellite/sentinel5p/test-connection",
-        payload,
-      );
-      if (res.data && res.data.connected) {
-        setConnectionStatus({
-          success: true,
-          message: res.data.message,
-          expires_in: res.data.expires_in,
-        });
-        toast.success(
-          "Copernicus Data Space connection verified successfully!",
-        );
-      } else {
-        setConnectionStatus({
-          success: false,
-          message: res.data.message || "Connection failed",
-        });
-        toast.error(
-          res.data.message || "Authentication rejected by Copernicus CDSE",
-        );
-      }
-    } catch (err: any) {
-      const msg =
-        err.response?.data?.message ||
-        err.message ||
-        "Failed to connect to Copernicus CDSE";
-      setConnectionStatus({ success: false, message: msg });
-      toast.error(msg);
-    } finally {
-      setTestingConnection(false);
     }
   };
 
@@ -283,7 +191,6 @@ const Settings: React.FC = () => {
     { value: "gwp", icon: Globe, label: "IPCC GWP Standards" },
     { value: "ogmp", icon: Target, label: "OGMP 2.0 Baseline & Thresholds" },
     { value: "facilities", icon: Building2, label: `Facility Overrides (${facilities.length})` },
-    { value: "satellite", icon: Satellite, label: "Copernicus Satellite (S5P)" },
   ];
 
   return (
@@ -319,7 +226,7 @@ const Settings: React.FC = () => {
 
       {!isAdmin && (
         <Banner tone="info" title="Read-only mode">
-          System methodologies (IPCC GWP standards, OGMP reconciliation parameters, and Copernicus satellite credentials) are centrally managed. Updates require an Administrator account.
+          System methodologies (IPCC GWP standards and OGMP reconciliation parameters) are centrally managed. Updates require an Administrator account.
         </Banner>
       )}
 
@@ -354,32 +261,6 @@ const Settings: React.FC = () => {
         />
       </TabsContent>
 
-      <TabsContent value="satellite" className="pt-0">
-        <SettingsESACopernicusSentinel5P
-          authMode={authMode}
-          connectionStatus={connectionStatus}
-          copernicusClientId={copernicusClientId}
-          copernicusClientSecret={copernicusClientSecret}
-          copernicusEnabled={copernicusEnabled}
-          copernicusPassword={copernicusPassword}
-          copernicusQaThreshold={copernicusQaThreshold}
-          copernicusUsername={copernicusUsername}
-          handleSaveGlobal={handleSaveGlobal}
-          handleTestConnection={handleTestConnection}
-          isAdmin={isAdmin}
-          saving={saving}
-          setAuthMode={setAuthMode}
-          setCopernicusClientId={setCopernicusClientId}
-          setCopernicusClientSecret={setCopernicusClientSecret}
-          setCopernicusEnabled={setCopernicusEnabled}
-          setCopernicusPassword={setCopernicusPassword}
-          setCopernicusQaThreshold={setCopernicusQaThreshold}
-          setCopernicusUsername={setCopernicusUsername}
-          setShowGuide={setShowGuide}
-          showGuide={showGuide}
-          testingConnection={testingConnection}
-        />
-      </TabsContent>
     </Tabs>
   );
 };

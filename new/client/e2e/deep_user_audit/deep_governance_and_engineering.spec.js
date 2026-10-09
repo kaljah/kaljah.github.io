@@ -342,9 +342,9 @@ test.describe.serial('Suite 9: Advanced Engineering, Governance & Enterprise Ope
     await saveBtn.click();
 
     // Verify toast
-    const successToast = page.locator('text=System settings and Copernicus credentials saved successfully!').first();
+    const successToast = page.locator('text=System settings saved successfully!').first();
     await expect(successToast).toBeVisible({ timeout: 10000 });
-    console.log('[E2E GOV] Verified "System settings and Copernicus credentials saved successfully!" notification.');
+    console.log('[E2E GOV] Verified "System settings saved successfully!" notification.');
   });
 
   // -------------------------------------------------------------------------

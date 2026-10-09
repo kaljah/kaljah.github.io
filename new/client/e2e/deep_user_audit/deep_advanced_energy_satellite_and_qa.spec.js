@@ -368,9 +368,9 @@ test.describe.serial('Suite 12: Advanced Energy Systems, Remote Sensing & Qualit
   });
 
   // -------------------------------------------------------------------------
-  // TEST 5: Geospatial Methane Explorer Sentinel-5P Overpass & OGMP Level 5 Reconciled Export
+  // TEST 5: Geospatial Methane Explorer facility dossier
   // -------------------------------------------------------------------------
-  test('ADV-5: Methane Explorer Satellite Overpass & OGMP Level 5 Reconciled Export (/methane-explorer)', async ({ page }) => {
+  test('ADV-5: Methane Explorer facility dossier (/methane-explorer)', async ({ page }) => {
     console.log('[E2E ADV] Navigating to Methane Explorer (/methane-explorer)...');
     await ensureAuthenticatedPage(page, `${FRONTEND}/methane-explorer`);
     await page.waitForTimeout(2000);
@@ -382,23 +382,13 @@ test.describe.serial('Suite 12: Advanced Energy Systems, Remote Sensing & Qualit
     await facilityCards.first().evaluate((el) => el.click());
     await page.waitForTimeout(1500);
 
-    // Verify Dossier is visible with Sentinel-5P telemetry
-    const dossierSentinel = page.locator('text=Copernicus Sentinel-5P overpass').first();
-    await expect(dossierSentinel).toBeVisible({ timeout: 10000 });
-    console.log('[E2E ADV] Explorer Dossier opened with facility telemetry.');
+    // Verify the dossier shows the facility's reported inventory
+    await expect(page.locator('text=Bottom-up reported inventory').first()).toBeVisible({ timeout: 10000 });
+    console.log('[E2E ADV] Explorer Dossier opened with the reported inventory.');
 
-    // Test Export to OGMP 2.0 Level 5 ledger or Configure
-    console.log('[E2E ADV] Checking OGMP 2.0 Level 5 reconciliation or configure action...');
-    const ogmpActionBtn = page.locator('button#reconcile-ogmp-btn, button:has-text("Reconcile into OGMP 2.0 ledger"), button:has-text("Configure in Settings")').first();
-    if (await ogmpActionBtn.isVisible({ timeout: 4000 }).catch(() => false)) {
-      await ogmpActionBtn.click();
-      await page.waitForTimeout(1000);
-      console.log('[E2E ADV] Triggered OGMP satellite reconciliation action.');
-    }
-
-    await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'adv05_satellite_ogmp_level5_reconciled.png') });
-    copyArtifact('adv05_satellite_ogmp_level5_reconciled.png');
-    console.log('[E2E ADV] Captured adv05_satellite_ogmp_level5_reconciled.png.');
+    await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'adv05_methane_explorer_dossier.png') });
+    copyArtifact('adv05_methane_explorer_dossier.png');
+    console.log('[E2E ADV] Captured adv05_methane_explorer_dossier.png.');
   });
 
   // -------------------------------------------------------------------------
@@ -455,62 +445,6 @@ test.describe.serial('Suite 12: Advanced Energy Systems, Remote Sensing & Qualit
         console.log(`[E2E ADV] Intercepted QA report: ${download.suggestedFilename()} (${stat.size} bytes).`);
       }
     }
-  });
-
-  // -------------------------------------------------------------------------
-  // TEST 7: ESA Copernicus Sentinel-5P CDSE Credentials & Connection Test
-  // -------------------------------------------------------------------------
-  test('ADV-7: ESA Copernicus Sentinel-5P CDSE Credentials & Connection Test (/settings)', async ({ page }) => {
-    console.log('[E2E ADV] Navigating to System Settings (/settings)...');
-    await ensureAuthenticatedPage(page, `${FRONTEND}/settings`);
-    await page.waitForTimeout(1500);
-
-    // Switch to Copernicus Sentinel-5P tab
-    console.log('[E2E ADV] Switching to Copernicus Sentinel-5P settings tab...');
-    const copernicusTab = page.locator('button[role="tab"]').filter({ hasText: 'Copernicus' }).first();
-    await expect(copernicusTab).toBeVisible({ timeout: 10000 });
-    await copernicusTab.click();
-    await page.waitForTimeout(800);
-
-    // Verify Sentinel-5P Settings Card
-    const copernicusTitle = page.locator('text=ESA Copernicus Sentinel-5P').first();
-    await expect(copernicusTitle).toBeVisible();
-    console.log('[E2E ADV] Confirmed ESA Copernicus Sentinel-5P integration settings.');
-
-    // Fill CDSE Username
-    const usernameInput = page.locator('input[placeholder="user@example.com"], input[placeholder="name@organization.com"]').first();
-    if (await usernameInput.isVisible().catch(() => false)) {
-      await usernameInput.fill('copernicus_ops@sonatrach.dz');
-    }
-
-    // Fill CDSE Password
-    const passwordInput = page.locator('input[type="password"]').first();
-    if (await passwordInput.isVisible().catch(() => false)) {
-      await passwordInput.fill('CDSE_Vault_2026!');
-    }
-
-    // Trigger Connection Test
-    console.log('[E2E ADV] Clicking "Test Connection" to validate CDSE credentials...');
-    const testConnBtn = page.locator('#test-copernicus-connection-btn, button:has-text("Test Copernicus Connection"), button:has-text("Test Connection")').first();
-    if (await testConnBtn.isVisible().catch(() => false)) {
-      await testConnBtn.click();
-      await page.waitForTimeout(1200);
-      console.log('[E2E ADV] Connection test initiated.');
-    }
-
-    await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'adv07_settings_copernicus_credentials.png') });
-    copyArtifact('adv07_settings_copernicus_credentials.png');
-    console.log('[E2E ADV] Captured adv07_settings_copernicus_credentials.png.');
-
-    // Save System Settings
-    console.log('[E2E ADV] Submitting System Settings and Copernicus credentials...');
-    const saveSettingsBtn = page.locator('#save-satellite-settings-btn, #save-settings-btn, button:has-text("Save Satellite Settings"), button:has-text("Save All Changes")').first();
-    await saveSettingsBtn.click();
-
-    // Verify success toast
-    const settingsToast = page.locator('text=System settings and Copernicus credentials saved successfully!').first();
-    await expect(settingsToast).toBeVisible({ timeout: 10000 });
-    console.log('[E2E ADV] Confirmed system settings saved notification toast.');
   });
 
 });

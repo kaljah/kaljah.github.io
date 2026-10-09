@@ -53,7 +53,7 @@ async function ensureAuthenticatedPage(page, targetUrl = '/') {
 test.describe.serial('Suite 8: Deep Untested Platform Workflows & Enterprise Features', () => {
 
   // -------------------------------------------------------------------------
-  // TEST 1: Geospatial Methane Explorer — Facility Dossier, Severity & Satellite
+  // TEST 1: Geospatial Methane Explorer — Facility Dossier & Severity
   // -------------------------------------------------------------------------
   test('UNTESTED-1: Geospatial Methane Explorer — Facility Selection, Dossier Drawer, Plume Rings, & Severity Filters', async ({ page }) => {
     console.log('[E2E UNTESTED] Navigating to Geospatial Methane Explorer (/methane-explorer)...');
@@ -113,13 +113,13 @@ test.describe.serial('Suite 8: Deep Untested Platform Workflows & Enterprise Fea
     await searchInput.fill('');
     await page.waitForTimeout(400);
 
-    // 5. Test Sentinel-5P overlay controls
-    const satSwitch = page.locator('#toggle-sat-layer-checkbox');
-    if (await satSwitch.isVisible()) {
-      const opacitySlider = page.locator('#satellite-opacity-slider');
-      await expect(opacitySlider).toBeVisible();
-      console.log('[E2E UNTESTED] Sentinel-5P overlay and opacity slider verified active.');
-    }
+    // 5. Severity rings toggle
+    const ringsToggle = page.getByLabel('Severity rings');
+    await expect(ringsToggle).toBeChecked();
+    await ringsToggle.uncheck();
+    await expect(ringsToggle).not.toBeChecked();
+    await ringsToggle.check();
+    console.log('[E2E UNTESTED] Severity rings toggle verified.');
 
     // 6. Select a facility to open ExplorerDossier
     console.log('[E2E UNTESTED] Clicking facility card to open ExplorerDossier...');
@@ -132,8 +132,8 @@ test.describe.serial('Suite 8: Deep Untested Platform Workflows & Enterprise Fea
     await page.waitForTimeout(1200);
 
     // Verify Dossier opened
-    const dossierSentinel = page.locator('text=Copernicus Sentinel-5P overpass');
-    await expect(dossierSentinel).toBeVisible({ timeout: 10000 });
+    const dossier = page.locator('section[aria-label="Facility Reconnaissance Dossier"]');
+    await expect(dossier).toBeVisible({ timeout: 10000 });
 
     const bottomUpSection = page.locator('text=Bottom-up reported inventory');
     await expect(bottomUpSection).toBeVisible();
@@ -150,7 +150,7 @@ test.describe.serial('Suite 8: Deep Untested Platform Workflows & Enterprise Fea
     if (await closeDossierBtn.isVisible()) {
       await closeDossierBtn.evaluate(el => el.click());
       await page.waitForTimeout(400);
-      await expect(dossierSentinel).not.toBeVisible();
+      await expect(dossier).not.toBeVisible();
       console.log('[E2E UNTESTED] Successfully closed ExplorerDossier.');
     }
   });

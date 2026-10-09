@@ -304,9 +304,9 @@ test.describe('Suite 14: Downstream Chemical Synthesis, Refining Asphalt Oxidati
     await saveBtn.click();
 
     // Verify success toast
-    const toast = page.locator('text=System settings and Copernicus credentials saved successfully!').first();
+    const toast = page.locator('text=System settings saved successfully!').first();
     await expect(toast).toBeVisible({ timeout: 10000 });
-    console.log('[E2E CHEM] Confirmed System settings and Copernicus credentials saved successfully toast.');
+    console.log('[E2E CHEM] Confirmed System settings saved successfully toast.');
   });
 
   // -------------------------------------------------------------------------

@@ -4,7 +4,6 @@ Validates:
 1. EU CBAM (Carbon Border Adjustment Mechanism) & Embedded Emissions Accounting
 2. Clean Air Act / Algerian Executive Decree 06-138 Statutory CAP Limits & Compliance
 3. GHG Protocol Scope 3 (Categories 1-15) Value Chain Calculation Rigor & Denominator Scaling
-4. Satellite Earth Observation (Sentinel-5P / TROPOMI) Plume Ingestion & OGMP Reconciliation
 5. Forensic Data Quality: Benford's Law Activity Distribution & Statistical Outlier Fencing
 """
 
@@ -341,43 +340,6 @@ class TestScope3ValueChainCalculationRigor:
             # Server must compute: 10,000 * 2.5 / 1000 = 25.0 tCO2e, ignoring 1.0
             assert pytest.approx(rec.co2e, rel=1e-5) == 25.0
             assert rec.status == "Pending"  # Maker-checker enforced
-
-
-# ==============================================================================
-# 4. SATELLITE EARTH OBSERVATION (SENTINEL-5P TROPOMI)
-# ==============================================================================
-
-class TestSatelliteMethanePlumeObservation:
-    """Audits satellite top-down methane plume rate conversion and reconciliation."""
-
-    def test_satellite_anomaly_to_annual_methane_reconciliation(self, client, advanced_audit_env):
-        """
-        Satellite survey records top-down plume:
-        500.0 kg/hr observed rate over 8,760 operating hours:
-        Annual Top-Down Methane = 500.0 * 8760 / 1000 = 4,380.000 tonnes CH4
-        Reconciled against bottom-up inventory.
-        """
-        admin = advanced_audit_env["admin"]
-        fac = advanced_audit_env["fac1"]
-        login(client, admin)
-
-        res = client.post("/api/satellite/sentinel5p/export-to-ogmp", json={
-            "facility_id": fac.id,
-            "survey_date": "2025-06-15",
-            "measured_rate_kg_hr": 500.0,
-            "operating_hours": 8760.0,
-            "operator_notes": "Sentinel-5P pass over Berkine basin facility",
-        })
-        assert res.status_code == 201
-        data = res.get_json()
-        assert pytest.approx(data["estimated_annual_tch4"], rel=1e-4) == 4380.0
-        survey_id = data["id"]
-
-        with app.app_context():
-            survey = db.session.get(OgmpSurvey, survey_id)
-            assert survey is not None
-            assert survey.survey_type == "Satellite (Sentinel-5P / TROPOMI)"
-            assert pytest.approx(survey.estimated_annual_tch4, rel=1e-4) == 4380.0
 
 
 # ==============================================================================
