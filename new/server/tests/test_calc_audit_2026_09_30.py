@@ -208,6 +208,7 @@ def _check(fuel, unit):
     ("Liquids Unloading - Plunger Lift (Tier 1 Default)", "scf"),
     ("Associated Gas Venting - US Average", "MMBtu"),
     ("Associated Gas Venting - US Average", "tonne"),
+    ("Natural Gas", "equipment"),  # a count (the fugitive form's equipment unit) is not an energy
 ])
 def test_incompatible_activity_unit_is_rejected(fuel, unit):
     with pytest.raises(ValidationError):
@@ -222,7 +223,7 @@ def test_incompatible_activity_unit_is_rejected(fuel, unit):
     ("Associated Gas Venting - US Average", "m3"),
     ("Natural Gas", "scf"),       # energy factor: volume via the heating value
     ("Natural Gas", "MMBtu"),
-    ("Natural Gas", "equipment"),  # not a parseable unit: left to the calculator
+    ("Natural Gas", "widgets"),  # not a parseable unit: left to the calculator
 ])
 def test_compatible_activity_unit_is_accepted(fuel, unit):
     _check(fuel, unit)

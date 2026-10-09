@@ -162,9 +162,7 @@ def normalize_gas_volume_to_standard(
 
     V_std = V_meas * (P_meas_abs / P_std) * (T_std / T_meas_abs) * (1 / Z)
     """
-    if volume is None:
-        return 0.0
-    vol = float(volume)
+    vol = float(volume) if volume is not None else 0.0
     if vol <= 0.0:
         return 0.0
 
@@ -599,10 +597,11 @@ _GASES = {"ch4": "ch4", "methane": "ch4", "co2": "co2", "n2o": "n2o", "co2e": "c
           "toc": "toc", "thc": "toc"}
 _COUNT_WORDS = {"count", "unit", "units", "source", "sources", "device", "devices", "well", "wells", "separator",
                 "separators", "compressor", "compressors", "component", "components", "event", "events", "valve",
-                "valves", "connector", "connectors", "each", "ea", "no", "pcs", "controller", "controllers",
-                "pump", "pumps", "tank", "tanks", "facility", "facilities", "site", "sites", "wellhead", "wellheads",
+                "valves", "connector", "connectors", "each", "ea", "no", "pcs", "controller", "controllers", "pump",
+                "pumps", "tank", "tanks", "facility", "facilities", "site", "sites", "wellhead", "wellheads",
                 "completion", "completions", "heater", "heaters", "header", "headers", "run", "runs", "leak", "leaks",
-                "workover", "workovers", "blowdown", "blowdowns", "vessel", "vessels", "dehydrator", "dehydrators"}
+                "workover", "workovers", "blowdown", "blowdowns", "vessel", "vessels", "dehydrator", "dehydrators",
+                "equipment", "leaker", "leakers"}
 
 
 class UnitError(ValueError):

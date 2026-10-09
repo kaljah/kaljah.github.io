@@ -165,3 +165,21 @@ def test_bug086_segment_category(world):
     assert segment_category("Downstream / Processing") == "downstream"
     assert segment_category("GNL Plant") == "midstream"
     assert segment_category("Oil & Gas") is None and segment_category(None) is None
+
+
+def test_flaring_record_without_gas_volume_is_not_reported_compliant(world):
+    """A flaring record in tonnes has no flared volume; 0 % intensity must not read as COMPLIANT."""
+    f = make_facility(region="West", segment="Upstream")
+    db.session.add_all([
+        Emission(facility_id=f.id, year=2031, month=1, process_type="flaring", co2e_total=6372.8, quantity=2000.0,
+                 unit="tonnes", status="Verified"),
+        ProductionData(facility_id=f.id, year=2031, month=1, gas_amount=10000.0, gas_unit="mscf"),
+    ])
+    db.session.commit()
+    from routes.dashboard import clear_dashboard_cache
+
+    clear_dashboard_cache()
+    fs = world["client"].get(f"/api/dashboard/flaring-summary?year=2031&facilityId={f.id}").get_json()
+    assert fs["records_with_unknown_volume_unit"] == 1
+    assert fs["is_compliant"] is None and fs["compliance_status"].startswith("Cannot assess")
+    assert fs["yoy_change_pct"] is None

@@ -161,6 +161,13 @@ for n, name, key, exp in ((15, "wellheads", "Wellhead - Gas", 2.36), (4, "separa
           "calc_inputs": {"fugitive": {"fugitive_tier": "tier2", "fugitive_method": "equipment", "equipment_count": n,
                                        "amount": n, "fuel": key, "operating_hours": 8760}}},
          {"ch4": exp})
+# the Scope 1 form sends unit "equipment" for the equipment-count method (it used to be refused as unknown)
+case("7-4", "Onshore gas equipment: 4 separators, form unit 'equipment'",
+     {"process_type": "fugitive", "factor_source": "custom", "fuel": "Separator - Gas Production", "amount": 4,
+      "unit": "equipment",
+      "calc_inputs": {"fugitive": {"fugitive_tier": "tier2", "fugitive_method": "equipment", "equipment_count": 4,
+                                   "amount": 4, "fuel": "Separator - Gas Production", "operating_hours": 8760}}},
+     {"ch4": 1.55})
 
 # 6-42 / 6-43 hydrogen plant, rigorous: feed 85 % CH4, 8 % C2H6, 3 % C4H10, 4 % N2
 case("6-42", "Hydrogen plant, feedstock carbon balance (Eq 6-49)",
