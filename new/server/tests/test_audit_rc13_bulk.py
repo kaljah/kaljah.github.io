@@ -51,13 +51,20 @@ def test_bug058_overwrite_resets_approval_and_logs_old_values(client, ctx):
                  quantity=10, unit="MMBtu", co2e_total=0.53, status="Verified", approved_by=admin.id, created_by=admin.id)
     db.session.add(e)
     db.session.commit()
-    login(client, make_user("admin", "Global"))
+    login(client, make_user("superuser", "West"))
     _, _, st = upload(client, _s1(fac, [("2024-06", 99, "MMBtu")]), "1", overwrite=True)
     assert st["status"] == "completed", st
     db.session.expire_all()
     row = db.session.get(Emission, e.id)
     assert row.quantity == 99 and row.status == "Pending"
     assert row.approved_by is None and row.approved_at is None
+    # an admin's overwrite is Verified at once, approved by that admin (decision 2026-10-09)
+    second = make_user("admin", "Global")
+    login(client, second)
+    _, _, st = upload(client, _s1(fac, [("2024-06", 77, "MMBtu")]), "1", overwrite=True)
+    db.session.expire_all()
+    row = db.session.get(Emission, e.id)
+    assert row.quantity == 77 and row.status == "Verified" and row.approved_by == second.id
     log = ActivityLog.query.filter_by(action="BULK_OVERWRITE", record_id=str(e.id)).first()
     assert log is not None and '"quantity": 10' in (log.old_values or "")
     assert ActivityLog.query.filter_by(action="IMPORT").count() >= 1

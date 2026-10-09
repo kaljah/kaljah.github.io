@@ -426,8 +426,8 @@ def bulk_import_scope3():
         return jsonify({"error": f"Payload exceeds maximum synchronous limit of {MAX_SYNCHRONOUS_IMPORT} rows. "
                                  "Please split the batch."}), 413
 
-    # D-04: every bulk import is Pending until a reviewer approves it (same as the file import)
-    bulk_status = "Pending"
+    # D-04: every bulk import is Pending until a reviewer approves it (admins: Verified)
+    bulk_status = initial_record_status(user, channel="bulk")
     allowed_fids = get_allowed_facility_ids(user)
 
     imported_count = 0

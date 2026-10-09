@@ -540,7 +540,7 @@ class TestCSVUploaderExhaustiveParity:
             assert len(row_errors) == 0, f"CSV processing errors: {row_errors}"
             assert emission_obj is not None
             assert emission_obj.co2e_total > 0
-            assert emission_obj.status == "Pending"
+            assert emission_obj.status == "Verified"  # an admin's import is Verified at once
 
     def test_csv_uploader_scope2_indirect_steam_parity(self, test_app):
         with test_app.app_context():

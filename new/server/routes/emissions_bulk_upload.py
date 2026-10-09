@@ -13,7 +13,7 @@ from models import CustomFactor, Emission, Facility, Notification, User
 from process_categories import NON_COMBUSTION_PROCESSES
 from routes.auth import login_required
 from services.ogmp import ogmp_level_for
-from utils import get_allowed_facility_ids, get_current_user, internal_error, log_activity_and_notify
+from utils import get_allowed_facility_ids, get_current_user, initial_record_status, internal_error, log_activity_and_notify
 from . import emissions_bp
 from routes.emissions import _lookup_api_factor, resolve_gwp_dict, resolve_gwp_standard
 
@@ -413,7 +413,7 @@ def add_bulk_upload():
 
         # Prepare Record — all bulk upload paths queue as Pending per Decision D-04
         rec_id = str(uuid.uuid4())
-        bulk_status = "Pending"
+        bulk_status = initial_record_status(user, channel="bulk")
         emission_obj = Emission(
             record_id=rec_id,
             year=year,
