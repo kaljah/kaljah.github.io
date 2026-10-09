@@ -92,14 +92,14 @@ def test_f1_solids_and_gases(app):
                                           ("Ethylene (Flaring)", 2), ("Propylene (Flaring)", 3)])
 def test_f1_pure_gas_flares_equation_5_3(app, fuel, carbons):
     em = calc(app, tier1("flaring", fuel, 1000, "m3"))
-    assert em["co2"] == pytest.approx(1000 / MV_SM3_PER_KMOL * carbons * 44.01 * 0.98 / 1000, rel=1e-3)
+    assert em["co2"] == pytest.approx(1000 / MV_SM3_PER_KMOL * carbons * 44.01 * 0.965 / 1000, rel=1e-3)
     assert not em["ch4"]
 
 
 def test_f1_flaring_variants_use_flaring_factors(app):
     em = calc(app, tier1("routine_flaring", "Natural Gas (Flaring - Elevated)", 1000, "m3"))
     # Equation 5-2 on the Table 5-1 processing-plant gas (CH4 91.9, NMHC 6.84 as C2, CO2 0.58 mol %), 98 %
-    assert em["co2"] == pytest.approx(((0.919 + 0.0684 * 2) * 0.98 + 0.0058) * 44.01 / MV_SM3_PER_KMOL, rel=1e-3)
+    assert em["co2"] == pytest.approx(((0.919 + 0.0684 * 2) * 0.965 + 0.0058) * 44.01 / MV_SM3_PER_KMOL, rel=1e-3)
 
 
 # ---- F4: separators / produced water are not tank flashing ----

@@ -16,8 +16,9 @@ CAT = {**ef.API_FACTORS, **ef.ALL_EMISSION_FACTORS}
 MV = 23.685  # Sm3 / kgmole, Compendium section 5.1.2
 
 
-def flare(ch4, nmhc_c, co2_in, de):
-    co2 = ((ch4 + nmhc_c) * de + co2_in) * 44.01 / MV
+def flare(ch4, nmhc_c, co2_in, de, ce=0.965):
+    """Eq 5-2 (combustion efficiency ce, 96.5 % per the Dec 2025 corrections) / Eq 5-4 (destruction de)."""
+    co2 = ((ch4 + nmhc_c) * ce + co2_in) * 44.01 / MV
     return co2, ch4 * (1 - de) * 16.04 / MV
 
 
@@ -44,7 +45,7 @@ def test_table_4_6_petroleum_coke_and_fuel_gas():
 @pytest.mark.parametrize("key,comp,de", [
     ("Natural Gas (Flaring)", (0.919, 0.0684 * 2, 0.0058), 0.98),
     ("Natural Gas (Flaring - Elevated)", (0.919, 0.0684 * 2, 0.0058), 0.98),
-    ("Natural Gas (Flaring - Enclosed)", (0.919, 0.0684 * 2, 0.0058), 0.995),
+    ("Natural Gas (Flaring - Enclosed)", (0.919, 0.0684 * 2, 0.0058), 0.98),  # by segment, not design
     ("Associated Gas (Flaring)", (0.80, 0.15 * 2 + 0.05 * 3, 0.0), 0.98),
 ])
 def test_flaring_rows_equations_5_2_5_4(key, comp, de):

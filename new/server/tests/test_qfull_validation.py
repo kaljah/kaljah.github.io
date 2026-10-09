@@ -245,7 +245,7 @@ class TestFlaringTier3:
         c1 = 0.90
         c2 = 0.05
         co2_native = 0.02
-        eta_c = 0.98
+        eta_c = 0.965
         eta_d = 0.98
         payload = {
             'process_type': 'flaring',
@@ -285,8 +285,8 @@ class TestFlaringTier3:
             'hhv': 1020.0
         }
         
-        eta_c = 0.98  # Compendium Eq 5-2 default (enclosed: only the residual CH4 is 0.5 %)
-        eta_d = 0.995  # Actual enclosed defaults from combustion.py line 413
+        eta_c = 0.965  # Compendium Eq 5-2, Dec 2025 corrections
+        eta_d = 0.98  # production flare (99.5 % only at Downstream facilities)
         
         co2_tonnes = 1000.0 * 1.0 * eta_c * DENSITY_CO2 / 1000
         ch4_tonnes = 1000.0 * 1.0 * (1 - eta_d) * DENSITY_CH4 / 1000

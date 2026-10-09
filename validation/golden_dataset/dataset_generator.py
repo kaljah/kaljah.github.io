@@ -119,7 +119,7 @@ def generate_golden_dataset():
         units="m3",
         emission_factor={"flare_type": "elevated", "ef_n2o": 0.0001, "ef_unit": "kg/m3"},
         expected_final_result=res_a2,
-        assumptions="Elevated flare default eta_c=0.98 (Compendium Eq 5-2), eta_d=0.980",
+        assumptions="Elevated flare default eta_c=0.965 (Compendium Eq 5-2, Dec 2025 corrections), eta_d=0.980",
     ))
 
     # A3. Liquids Unloading

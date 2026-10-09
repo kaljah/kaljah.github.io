@@ -93,8 +93,8 @@ const FIELD_GROUPS: FieldGroupData[] = [
     icon: Flame,
     tier3Only: true,
     fields: [
-      { key: "combustion_efficiency", label: "Combustion Efficiency %", required: false, hint: "Combustion: defaults to 99.5 %. Flaring: % of carbon converted to CO2 (blank = 98 %)" },
-      { key: "destruction_efficiency", label: "Flare Destruction Efficiency %", required: false, hint: "% of CH4 destroyed (blank = 98 %, 99.5 % for enclosed ground flares)" },
+      { key: "combustion_efficiency", label: "Combustion Efficiency %", required: false, hint: "Combustion: defaults to 99.5 %. Flaring: % of carbon converted to CO2 (blank = 96.5 %)" },
+      { key: "destruction_efficiency", label: "Flare Destruction Efficiency %", required: false, hint: "% of CH4 destroyed (blank = 98 %, 99.5 % at Downstream facilities)" },
       { key: "flare_type",           label: "Flare Type",             required: false, hint: "elevated | enclosed_ground | air_assisted | steam_assisted" },
       { key: "control_efficiency",   label: "Flare Control Efficiency %", required: false, hint: "Flare destruction efficiency %" },
       { key: "operating_temperature",label: "Metering Temp",          required: false, hint: "Only for volumes in m3 / cf read at metering conditions" },

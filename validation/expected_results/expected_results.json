@@ -21,12 +21,12 @@
     "methodology": "API Compendium 2021 \u00a75.2 (Dual-Efficiency)",
     "intermediate": {},
     "expected_final": {
-      "co2": 91.590976,
+      "co2": 89.72019632678911,
       "ch4": 0.5970800000000005,
       "n2o": 0.00018010480027959183,
-      "co2e": 108.35694377207412,
+      "co2e": 107.73194321300403,
       "vol_m3_std": 50000.0,
-      "eta_c": 0.984,
+      "eta_c": 0.965,
       "eta_d": 0.98
     },
     "expected_units": "tCO2e",

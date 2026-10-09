@@ -650,7 +650,7 @@ ${scopeText}`;
       ["Operational Flaring Volume", flaringSummary?.total_flaring ? `${flaringSummary.total_flaring.volume_knm3.toLocaleString()} kNm3` : na,
         flareIntensityHl != null ? `Flaring intensity ${flareIntensityHl}% of gross gas vs the 1.00% limit (${flaringSummary.compliance_status}).` : (flaringSummary?.compliance_status || "Flaring intensity not assessable for this period.")],
       ["Flare Destruction Efficiency (DRE)", flaringSummary?.measured_dre_pct != null ? `${flaringSummary.measured_dre_pct}% measured` : na,
-        flaringSummary?.dre_method || "No measured DRE recorded; calculations use the 98% default."],
+        flaringSummary?.dre_method || "No measured DRE recorded; calculations use the API defaults (96.5% combustion, 98% CH4 destruction; 99.5% at refineries)."],
     ];
 
     autoTable(doc, {

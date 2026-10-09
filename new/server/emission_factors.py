@@ -297,10 +297,10 @@ _MV_SM3_PER_KMOL = 23.685  # Sm3 / kgmole (Compendium section 5.1.2)
 
 
 def _pure_gas_flare(code, carbon_atoms, description):
-    co2 = carbon_atoms * 44.01 / _MV_SM3_PER_KMOL * 0.98
+    co2 = carbon_atoms * 44.01 / _MV_SM3_PER_KMOL * 0.965  # Dec 2025 correction: 96.5 % combustion efficiency
     return {"code": code, "co2": round(co2, 4), "ch4": 0.0, "n2o": round(co2 * 1e-4 / 60.0, 10),
             "unit": "kg/m³", "usage": ["flaring"], "type": "gases", "description": description,
-            "source": "API Compendium 2021 Section 5.1, Equations 5-3 and 5-6 (98 % combustion)",
+            "source": "API Compendium 2021 Section 5.1, Equations 5-3 and 5-6 (96.5 % combustion, Dec 2025 corrections)",
             "uncertainty": {"co2": 0.05, "ch4": 0.0, "n2o": 0.5}}
 
 
