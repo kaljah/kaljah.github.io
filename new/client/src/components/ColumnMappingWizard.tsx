@@ -10,10 +10,10 @@ import { TEMPLATES, TemplateField } from "./column-mapping/templates";
 import { t as tr } from "../i18n";
 
 const TITLES: Record<string, string> = {
-  sources: "Equipment",
-  custom_factors: "Custom Factors",
-  production: "Production Data",
-  mitigation: "Mitigation Projects",
+  sources: tr("Import Equipment"),
+  custom_factors: tr("Import Custom Factors"),
+  production: tr("Import Production Data"),
+  mitigation: tr("Import Mitigation Projects"),
 };
 
 // Server scope code for each wizard type; the other types upload under their own name.
@@ -212,7 +212,7 @@ export const ColumnMappingWizard: React.FC<ColumnMappingWizardProps> = ({ onClos
   const facilities = type === "facilities";
   return (
     <ImportWizard
-      title={`Import ${TITLES[type] || (facilities ? "Regions" : "Emissions Data")}`}
+      title={TITLES[type] || (facilities ? tr("Import Regions") : tr("Import Emissions Data"))}
       subtitle={tr("Upload a CSV or Excel file to bulk-import your records")}
       fieldGroupsFor={fieldGroupsFor}
       scopeFor={() => SCOPE_OF[type] || type}
@@ -220,9 +220,9 @@ export const ColumnMappingWizard: React.FC<ColumnMappingWizardProps> = ({ onClos
       fileExtras={fileExtras}
       mappingExtras={mappingExtras}
       extraForm={(form) => form.append("global_factor_type", globalFactor)}
-      finalLabel="Processing"
-      overwriteLabel={facilities ? "Overwrite existing Regions with the same name" : "Overwrite existing records with matching facility, date, and source"}
-      overwriteHint={facilities ? "If unchecked, duplicate regions will be skipped with an error." : "If unchecked, duplicate records will be skipped to prevent double-counting."}
+      finalLabel={tr("Processing")}
+      overwriteLabel={facilities ? tr("Overwrite existing Regions with the same name") : tr("Overwrite existing records with matching facility, date, and source")}
+      overwriteHint={facilities ? tr("If unchecked, duplicate regions will be skipped with an error.") : tr("If unchecked, duplicate records will be skipped to prevent double-counting.")}
       reviewable={type in SCOPE_OF}
       regionAccess={false}
       onClose={onClose}

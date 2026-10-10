@@ -109,11 +109,11 @@ export const FileCheckPanel: React.FC<{ check: FileCheckState; onRecheck: () => 
         {p.period?.from && (
           <>
             {" "}
-            · {p.period.from}{" "}{t("to")}{" "}{p.period.to} ({p.period.months} {plural(p.period.months || 0, "month", "months")})
+            · {p.period.from}{" "}{t("to")}{" "}{p.period.to} ({p.period.months} {plural(p.period.months || 0, t("month"), t("months"))})
           </>
         )}{" "}
-        · {fmt(facilities.length)} {plural(facilities.length, "facility", "facilities")} · {fmt(processes.length)}{" "}
-        {plural(processes.length, "process type", "process types")}
+        · {fmt(facilities.length)} {plural(facilities.length, t("facility"), t("facilities"))} · {fmt(processes.length)}{" "}
+        {plural(processes.length, t("process type"), t("process types"))}
       </p>
       <div className="grid gap-2 sm:grid-cols-2">
         <p className="m-0 rounded-md bg-success-bg px-3 py-2 text-sm text-success-fg">
@@ -168,7 +168,7 @@ export const FileCheckPanel: React.FC<{ check: FileCheckState; onRecheck: () => 
           {p.columns.matched.length}{" "}{t("of")}{" "}{p.columns.total}{" "}{t("columns are matched to fields")}
           {/* the mapping step counts only what it matched; the server also recognises some headers itself (SU-11) */}
           {mappedHere != null && p.columns.matched.length > mappedHere
-            ? ` (${mappedHere} mapped above, ${p.columns.matched.length - mappedHere} more recognised by their header)`
+            ? t(" ({{mapped}} mapped above, {{more}} more recognised by their header)", { mapped: mappedHere, more: p.columns.matched.length - mappedHere })
             : ""}
           .
           {p.columns.by_name.length > 0 && (

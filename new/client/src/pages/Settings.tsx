@@ -13,9 +13,9 @@ import { t } from "../i18n";
 
 const GWP_DATA = {
   AR5: {
-    name: "IPCC 5th Assessment Report (AR5)",
+    name: t("IPCC 5th Assessment Report (AR5)"),
     year: "2014",
-    status: "UNFCCC / EU Standard (Default)",
+    status: t("UNFCCC / EU Standard (Default)"),
     ch4_100: GWP_AR5.CH4,
     ch4_20: GWP_AR5.CH4_20,
     n2o_100: GWP_AR5.N2O,
@@ -24,9 +24,9 @@ const GWP_DATA = {
       t("Standard baseline used by OGMP 2.0, UNFCCC National Inventories, and corporate GHG reporting frameworks."),
   },
   AR6: {
-    name: "IPCC 6th Assessment Report (AR6)",
+    name: t("IPCC 6th Assessment Report (AR6)"),
     year: "2021",
-    status: "Latest IPCC Physical Science Basis",
+    status: t("Latest IPCC Physical Science Basis"),
     ch4_100: GWP_AR6.CH4,
     ch4_20: GWP_AR6.CH4_20,
     n2o_100: GWP_AR6.N2O,
@@ -35,9 +35,9 @@ const GWP_DATA = {
       t("Most recent scientific consensus. Methane uses the fossil value (29.8 over 100 years, 82.5 over 20), which applies to oil and gas sources."),
   },
   AR4: {
-    name: "IPCC 4th Assessment Report (AR4)",
+    name: t("IPCC 4th Assessment Report (AR4)"),
     year: "2007",
-    status: "Legacy Regulatory Frameworks",
+    status: t("Legacy Regulatory Frameworks"),
     ch4_100: GWP_AR4.CH4,
     ch4_20: GWP_AR4.CH4_20,
     n2o_100: GWP_AR4.N2O,
@@ -191,7 +191,7 @@ const Settings: React.FC = () => {
   const TABS = [
     { value: "gwp", icon: Globe, label: t("IPCC GWP Standards") },
     { value: "ogmp", icon: Target, label: t("OGMP 2.0 Baseline & Thresholds") },
-    { value: "facilities", icon: Building2, label: `Facility Overrides (${facilities.length})` },
+    { value: "facilities", icon: Building2, label: t("Facility Overrides ({{count}})", { count: facilities.length }) },
   ];
 
   return (

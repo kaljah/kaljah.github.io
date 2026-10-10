@@ -56,12 +56,12 @@ const EmissionsOverviewCard: React.FC<EmissionsOverviewCardProps> = ({
 }) => {
   const location =
     currentRegion !== "all"
-      ? facilities.find((f) => f.id.toString() === currentRegion)?.name || "Region"
+      ? facilities.find((f) => f.id.toString() === currentRegion)?.name || t("Region")
       : currentDivision !== "all"
         ? currentDivision
         : currentActivity !== "all"
           ? currentActivity
-          : "All Regions";
+          : t("All Regions");
   const compare = currentYear !== "all";
   const emissionsDelta = compare ? toDelta(variance.emissions) : null;
   const intensityDelta = compare && hasProductionData ? toDelta(variance.intensity) : null;
@@ -107,7 +107,7 @@ const EmissionsOverviewCard: React.FC<EmissionsOverviewCardProps> = ({
           sublabel={t("Indicative, not the inventory total")}
           value={stats.netEmissions}
           unit="tCO2e"
-          footnote={`Less ${formatCompactNumber(stats.mitigation)} reported mitigation. Inventory totals stay gross (GHG Protocol, ISO 14064-1).`}
+          footnote={t("Less {{value}} reported mitigation. Inventory totals stay gross (GHG Protocol, ISO 14064-1).", { value: formatCompactNumber(stats.mitigation) })}
         />
         <StatCard
           className="p-4"

@@ -487,7 +487,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
           {/* Measurement Mode Tabs */}
           <div className="mb-[16px]!">
             <Segmented
-              ariaLabel="Measurement mode"
+              ariaLabel={t("Measurement mode")}
               value={tier3Mode}
               onChange={(v) => onChange("tier3_mode", v)}
               options={[

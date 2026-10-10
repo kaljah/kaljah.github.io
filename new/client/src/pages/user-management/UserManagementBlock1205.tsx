@@ -51,7 +51,7 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
     title={editingUser ? t("Edit User Information") : t("Register New User")}
     subtitle={
       editingUser
-        ? `Update profile details for ${editingUser.fullName || editingUser.email}`
+        ? t("Update profile details for {{name}}", { name: editingUser.fullName || editingUser.email })
         : t("Provision a new system identity and configure role access")
     }
     icon={editingUser ? UserCheck : UserPlus}

@@ -23,6 +23,10 @@ import api from "../api";
 import { apiError } from "../utils/apiError";
 import "./ReferenceData.css";
 import { t } from "../i18n";
+import { PROCESS_TYPES } from "../utils/EmissionFactors";
+
+/** Process name shown on a factor's usage badge (the stored value is the process key). */
+const usageLabel = (key: string): string => PROCESS_TYPES[key] || key.replace(/_/g, " ");
 
 interface CustomFactor {
   name: string;
@@ -158,11 +162,11 @@ const ReferenceData: React.FC = () => {
       icon: <Globe size={20} />,
       color: "var(--color-legacy-0ea5e9)",
       isStatic: true,
-      columns: ["Gas", "AR4 (2007)", "AR5 (2013)", "AR6 (2021)"],
+      columns: [t("Gas"), "AR4 (2007)", "AR5 (2013)", "AR6 (2021)"],
       items: [
-        { gas: "Carbon Dioxide (CO₂)", ar4: "1", ar5: "1", ar6: "1" },
-        { gas: "Methane (CH₄)", ar4: "25", ar5: "28", ar6: "29.8 (fossil)" },
-        { gas: "Nitrous Oxide (N₂O)", ar4: "298", ar5: "265", ar6: "273" },
+        { gas: t("Carbon Dioxide (CO₂)"), ar4: "1", ar5: "1", ar6: "1" },
+        { gas: t("Methane (CH₄)"), ar4: "25", ar5: "28", ar6: t("29.8 (fossil)") },
+        { gas: t("Nitrous Oxide (N₂O)"), ar4: "298", ar5: "265", ar6: "273" },
       ],
     },
     conversions: {
@@ -170,14 +174,14 @@ const ReferenceData: React.FC = () => {
       icon: <Ruler size={20} />,
       color: "var(--color-brand-500)",
       isStatic: true,
-      columns: ["From Unit", "To Unit", "Multiplier / Factor"],
+      columns: [t("From Unit"), t("To Unit"), t("Multiplier / Factor")],
       items: [
-        { from: "1 MJ (Megajoule)", to: "MMBtu", mult: "0.000947817" },
-        { from: "1 GJ (Gigajoule)", to: "MMBtu", mult: "0.947817" },
+        { from: t("1 MJ (Megajoule)"), to: "MMBtu", mult: "0.000947817" },
+        { from: t("1 GJ (Gigajoule)"), to: "MMBtu", mult: "0.947817" },
         { from: "1 kWh", to: "MMBtu", mult: "0.003412142" },
         { from: "1 MWh", to: "MMBtu", mult: "3.412142" },
         { from: "1 BTU", to: "MMBtu", mult: "0.000001" },
-        { from: "1 BOE (Barrel of Oil Equivalent)", to: "MMBtu", mult: "5.8" },
+        { from: t("1 BOE (Barrel of Oil Equivalent)"), to: "MMBtu", mult: "5.8" },
       ],
     },
     uncertainty: {
@@ -185,22 +189,22 @@ const ReferenceData: React.FC = () => {
       icon: <Percent size={20} />,
       color: "var(--color-pink-500)",
       isStatic: true,
-      columns: ["Tier", "Condition", "Description"],
+      columns: [t("Tier"), t("Condition"), t("Description")],
       items: [
         {
-          tier: "Tier 3 (High)",
-          cond: "≤ 5% Uncertainty",
-          desc: "High quality data based on direct measurement (e.g. flow meter with ±2.0% calibration).",
+          tier: t("Tier 3 (High)"),
+          cond: t("≤ 5% Uncertainty"),
+          desc: t("High quality data based on direct measurement (e.g. flow meter with ±2.0% calibration)."),
         },
         {
-          tier: "Tier 2 (Medium)",
-          cond: "≤ 15% Uncertainty",
-          desc: "Good quality data based on engineering calculations and reliable operational parameters.",
+          tier: t("Tier 2 (Medium)"),
+          cond: t("≤ 15% Uncertainty"),
+          desc: t("Good quality data based on engineering calculations and reliable operational parameters."),
         },
         {
-          tier: "Tier 1 (Low)",
-          cond: "> 15% Uncertainty",
-          desc: "Estimated data based on generic default emission factors and production throughput.",
+          tier: t("Tier 1 (Low)"),
+          cond: t("> 15% Uncertainty"),
+          desc: t("Estimated data based on generic default emission factors and production throughput."),
         },
       ],
     },
@@ -209,43 +213,43 @@ const ReferenceData: React.FC = () => {
       icon: <Flame size={20} />,
       color: "var(--color-legacy-f97316)",
       isStatic: true,
-      columns: ["Fuel Type", "Default Heating Value", "Unit", "Usage context"],
+      columns: [t("Fuel Type"), t("Default Heating Value"), t("Unit"), t("Usage context")],
       items: [
         {
-          fuel: "Natural Gas",
+          fuel: t("Natural Gas"),
           hhv: "1,020",
           unit: "BTU/scf",
-          context: "Fallback for generic gas combustion",
+          context: t("Fallback for generic gas combustion"),
         },
         {
-          fuel: "Diesel",
+          fuel: t("Diesel"),
           hhv: "138,700",
           unit: "BTU/gal",
-          context: "Fallback for diesel generators/vehicles",
+          context: t("Fallback for diesel generators/vehicles"),
         },
         {
-          fuel: "Gasoline",
+          fuel: t("Gasoline"),
           hhv: "125,000",
           unit: "BTU/gal",
-          context: "Fallback for light vehicles",
+          context: t("Fallback for light vehicles"),
         },
         {
-          fuel: "Fuel Oil",
+          fuel: t("Fuel Oil"),
           hhv: "138,000",
           unit: "BTU/gal",
-          context: "Fallback for heavy heating oil",
+          context: t("Fallback for heavy heating oil"),
         },
         {
-          fuel: "Propane",
+          fuel: t("Propane"),
           hhv: "91,500",
           unit: "BTU/gal",
-          context: "Fallback for LPG",
+          context: t("Fallback for LPG"),
         },
         {
-          fuel: "Butane",
+          fuel: t("Butane"),
           hhv: "103,000",
           unit: "BTU/gal",
-          context: "Fallback for LPG",
+          context: t("Fallback for LPG"),
         },
       ],
     },
@@ -254,85 +258,85 @@ const ReferenceData: React.FC = () => {
       icon: <Activity size={20} />,
       color: "var(--color-legacy-6366f1)",
       isStatic: true,
-      columns: ["Process Name", "Category", "API Section", "Description"],
+      columns: [t("Process Name"), t("Category"), t("API Section"), t("Description")],
       items: [
         {
-          name: "Stationary Combustion",
-          cat: "Combustion",
-          sec: "Section 5.1",
-          desc: "Emissions from stationary fuel combustion sources",
+          name: t("Stationary Combustion"),
+          cat: t("Combustion"),
+          sec: t("Section 5.1"),
+          desc: t("Emissions from stationary fuel combustion sources"),
         },
         {
-          name: "Flaring",
-          cat: "Combustion",
-          sec: "Section 5.2",
-          desc: "Gas flaring with dual-efficiency model",
+          name: t("Flaring"),
+          cat: t("Combustion"),
+          sec: t("Section 5.2"),
+          desc: t("Gas flaring with dual-efficiency model"),
         },
         {
-          name: "Drilling - Mud Degassing",
-          cat: "Vented",
-          sec: "Section 6.2 & 6.3",
-          desc: "CH₄ emissions from well drilling (Table 6-3) and mud degassing (Table 6-2)",
+          name: t("Drilling - Mud Degassing"),
+          cat: t("Vented"),
+          sec: t("Section 6.2 & 6.3"),
+          desc: t("CH₄ emissions from well drilling (Table 6-3) and mud degassing (Table 6-2)"),
         },
         {
-          name: "Well Completions & Workovers",
-          cat: "Vented",
-          sec: "Section 6.3",
-          desc: "Flowback emissions during well completion",
+          name: t("Well Completions & Workovers"),
+          cat: t("Vented"),
+          sec: t("Section 6.3"),
+          desc: t("Flowback emissions during well completion"),
         },
         {
-          name: "Liquids Unloading",
-          cat: "Vented",
-          sec: "Section 6.4",
-          desc: "Gas venting during liquids unloading operations",
+          name: t("Liquids Unloading"),
+          cat: t("Vented"),
+          sec: t("Section 6.4"),
+          desc: t("Gas venting during liquids unloading operations"),
         },
         {
-          name: "Storage Tanks",
-          cat: "Vented",
-          sec: "Section 6.8",
-          desc: "Flash emissions from crude oil and condensate storage",
+          name: t("Storage Tanks"),
+          cat: t("Vented"),
+          sec: t("Section 6.8"),
+          desc: t("Flash emissions from crude oil and condensate storage"),
         },
         {
-          name: "Glycol Dehydrator",
-          cat: "Vented",
-          sec: "Section 6.11",
-          desc: "CH₄ emissions from glycol dehydrators",
+          name: t("Glycol Dehydrator"),
+          cat: t("Vented"),
+          sec: t("Section 6.11"),
+          desc: t("CH₄ emissions from glycol dehydrators"),
         },
         {
-          name: "Acid Gas Removal (AGR)",
-          cat: "Vented",
-          sec: "Section 6.12",
-          desc: "CO₂ venting from AGR units",
+          name: t("Acid Gas Removal (AGR)"),
+          cat: t("Vented"),
+          sec: t("Section 6.12"),
+          desc: t("CO₂ venting from AGR units"),
         },
         {
-          name: "Wellhead Fugitive Emissions",
-          cat: "Fugitive",
-          sec: "Section 7.2.2",
-          desc: "Equipment leaks from wellheads (oil/gas)",
+          name: t("Wellhead Fugitive Emissions"),
+          cat: t("Fugitive"),
+          sec: t("Section 7.2.2"),
+          desc: t("Equipment leaks from wellheads (oil/gas)"),
         },
         {
-          name: "Gathering & Boosting",
-          cat: "Fugitive",
-          sec: "Section 7.2.3",
-          desc: "Fugitive emissions from gathering and boosting facilities",
+          name: t("Gathering & Boosting"),
+          cat: t("Fugitive"),
+          sec: t("Section 7.2.3"),
+          desc: t("Fugitive emissions from gathering and boosting facilities"),
         },
         {
-          name: "Natural Gas Processing",
-          cat: "Fugitive",
-          sec: "Section 7.3",
-          desc: "Emissions from gas processing plants",
+          name: t("Natural Gas Processing"),
+          cat: t("Fugitive"),
+          sec: t("Section 7.3"),
+          desc: t("Emissions from gas processing plants"),
         },
         {
-          name: "Refinery Gas Systems",
-          cat: "Fugitive",
-          sec: "Section 7.4.1",
-          desc: "Fugitive emissions from refinery gas systems",
+          name: t("Refinery Gas Systems"),
+          cat: t("Fugitive"),
+          sec: t("Section 7.4.1"),
+          desc: t("Fugitive emissions from refinery gas systems"),
         },
         {
-          name: "Chemical Production (Process CO₂)",
-          cat: "Process",
-          sec: "Section 6 (Table 6-167)",
-          desc: "Process CO₂ from chemical manufacturing",
+          name: t("Chemical Production (Process CO₂)"),
+          cat: t("Process"),
+          sec: t("Section 6 (Table 6-167)"),
+          desc: t("Process CO₂ from chemical manufacturing"),
         },
       ],
     },
@@ -341,25 +345,25 @@ const ReferenceData: React.FC = () => {
       icon: <Settings size={20} />,
       color: "var(--color-violet-500)",
       isStatic: true,
-      columns: ["Category", "Parameter", "Default Value", "Source / Rationale"],
+      columns: [t("Category"), t("Parameter"), t("Default Value"), t("Source / Rationale")],
       items: [
         {
-          cat: "Scope 2 (Indirect Steam)",
-          param: "Boiler Emission Factor",
+          cat: t("Scope 2 (Indirect Steam)"),
+          param: t("Boiler Emission Factor"),
           val: "53.06 kg CO₂/MMBtu",
-          src: "API standard for generic natural gas fired boilers",
+          src: t("API standard for generic natural gas fired boilers"),
         },
         {
-          cat: "Scope 2 (Overall)",
-          param: "Normative Uncertainty",
+          cat: t("Scope 2 (Overall)"),
+          param: t("Normative Uncertainty"),
           val: "± 30%",
-          src: "GHG Protocol Value Chain default assigned when specific data is missing",
+          src: t("GHG Protocol Value Chain default assigned when specific data is missing"),
         },
         {
-          cat: "Scope 3 (Overall)",
-          param: "Normative Uncertainty",
+          cat: t("Scope 3 (Overall)"),
+          param: t("Normative Uncertainty"),
           val: "± 30%",
-          src: "GHG Protocol Value Chain default assigned when specific data is missing",
+          src: t("GHG Protocol Value Chain default assigned when specific data is missing"),
         },
       ],
     },
@@ -491,7 +495,7 @@ const ReferenceData: React.FC = () => {
                             <th>{t("Name")}</th>
                             {key !== "equipment" ? (
                               <>
-                                <th className="num">HHV</th>
+                                <th className="num">{t("HHV")}</th>
                                 <th className="num">{t("CO₂")}</th>
                                 <th className="num">{t("CH₄")}</th>
                                 <th className="num">N₂O</th>
@@ -557,7 +561,7 @@ const ReferenceData: React.FC = () => {
                                       key={uIdx}
                                       className={`[display:inline-flex] [padding:4px_10px] [border-radius:var(--radius-md)] [font-size:var(--text-xs)] [font-weight:700] [text-transform:uppercase] usage-${u.toLowerCase()}`}
                                     >
-                                      {u}
+                                      {t(usageLabel(u))}
                                     </span>
                                   ))}
                                 </div>

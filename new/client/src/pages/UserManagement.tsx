@@ -632,7 +632,7 @@ const UserManagement: React.FC = () => {
     } catch (error: any) {
       const status = error.response?.status;
       const errMsg =
-        error.response?.data?.error || error.message || "Failed to save user";
+        error.response?.data?.error || error.message || t("Failed to save user");
       console.error(
         "[UserManagement] handleSubmit failed:",
         status,
@@ -713,7 +713,7 @@ const UserManagement: React.FC = () => {
     try {
       setResetLoading(true);
       await api.post(`/auth/users/${resetTarget.id}/reset-password`, { newPassword: resetPwd });
-      toast.success(`Password for ${resetTarget.fullName} has been reset successfully.`);
+      toast.success(t("Password for {{name}} has been reset successfully.", { name: resetTarget.fullName ?? "" }));
       setResetTarget(null);
     } catch (err: any) {
       toast.error(err.response?.data?.error || t("Failed to reset password."));
@@ -957,7 +957,16 @@ const UserManagement: React.FC = () => {
       <ConfirmModal
         isOpen={!!deleteTargetUser}
         title={t("Revoke User Access")}
-        message={`Are you sure you want to permanently revoke access for ${deleteTargetUser?.fullName ? `"${deleteTargetUser.fullName}"` : "this user"} (${deleteTargetUser?.email || "selected account"})? This action cannot be undone.`}
+        message={
+          deleteTargetUser?.fullName
+            ? t('Are you sure you want to permanently revoke access for "{{name}}" ({{email}})? This action cannot be undone.', {
+                name: deleteTargetUser.fullName,
+                email: deleteTargetUser?.email || t("selected account"),
+              })
+            : t("Are you sure you want to permanently revoke access for this user ({{email}})? This action cannot be undone.", {
+                email: deleteTargetUser?.email || t("selected account"),
+              })
+        }
         confirmLabel={t("Revoke Access")}
         confirmVariant="danger"
         loading={deleteLoading}

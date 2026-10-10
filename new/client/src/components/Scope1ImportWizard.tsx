@@ -210,25 +210,25 @@ const TIER_OPTIONS = [
 ];
 
 const TIER_NOTE: Record<string, string> = {
-  "1": "Tier 1 only requires: Region, Date, Process, Fuel, Quantity, Unit.",
-  "2": "Tier 2 requires the Tier 1 fields with factor_type custom and either a saved custom factor name in Fuel, or a catalog fuel with hhv (and hhv_unit) / density.",
-  "3": "Tier 3 requires all Tier 1 fields plus gas composition and process engineering parameters.",
-  auto: "Auto-detect is ideal for a mix of sources: each row's factor_type column selects Tier 1, 2 or 3.",
+  "1": t("Tier 1 only requires: Region, Date, Process, Fuel, Quantity, Unit."),
+  "2": t("Tier 2 requires the Tier 1 fields with factor_type custom and either a saved custom factor name in Fuel, or a catalog fuel with hhv (and hhv_unit) / density."),
+  "3": t("Tier 3 requires all Tier 1 fields plus gas composition and process engineering parameters."),
+  auto: t("Auto-detect is ideal for a mix of sources: each row's factor_type column selects Tier 1, 2 or 3."),
 };
 
 // the tier chosen in step 1 is the one the server applies (it used to be a second, independent
 // "Default factor" select in the mapping step: choosing Tier 3 in step 1 still imported per row)
 const TIER_TO_FACTOR: Record<string, string> = { "1": "default", "2": "custom", "3": "specific", auto: "auto" };
 const TIER_LABEL: Record<string, string> = {
-  "1": "Tier 1 for every row",
-  "2": "Tier 2 for every row",
-  "3": "Tier 3 for every row",
-  auto: "Tier per row (factor_type column)",
+  "1": t("Tier 1 for every row"),
+  "2": t("Tier 2 for every row"),
+  "3": t("Tier 3 for every row"),
+  auto: t("Tier per row (factor_type column)"),
 };
 
 const TEMPLATES = [
-  { fmt: "excel" as const, icon: FileSpreadsheet, title: t("Excel template"), recommended: true, note: "Dropdowns for your facilities, processes, and the fuels and units of each process; examples and a reference sheet" },
-  { fmt: "csv" as const, icon: FileIcon, title: t("CSV template"), recommended: false, note: "Same columns, for exports from other systems. Example rows dated EXAMPLE are never imported." },
+  { fmt: "excel" as const, icon: FileSpreadsheet, title: t("Excel template"), recommended: true, note: t("Dropdowns for your facilities, processes, and the fuels and units of each process; examples and a reference sheet") },
+  { fmt: "csv" as const, icon: FileIcon, title: t("CSV template"), recommended: false, note: t("Same columns, for exports from other systems. Example rows dated EXAMPLE are never imported.") },
 ];
 
 interface ProcessTileProps {
@@ -271,7 +271,7 @@ export const Scope1ImportWizard: React.FC<Scope1ImportWizardProps> = ({ onClose,
   const toggleProcess = (key: string) => setSelectedProcesses((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]));
 
   const fieldGroupsFor = useCallback(
-    (): FieldGroupData[] => FIELD_GROUPS.map((g) => ({ ...g, badge: g.tier3Only && tier === "auto" ? "Tier 3" : undefined })),
+    (): FieldGroupData[] => FIELD_GROUPS.map((g) => ({ ...g, badge: g.tier3Only && tier === "auto" ? t("Tier 3") : undefined })),
     [tier],
   );
 
@@ -379,8 +379,8 @@ export const Scope1ImportWizard: React.FC<Scope1ImportWizardProps> = ({ onClose,
       optionsKey={tier}
       checkBeforeImport
       alwaysShownKeys={["fuel"]}
-      finalLabel="Submitted for review"
-      overwriteLabel="Replace existing records. A row for the same facility, month, process, fuel and equipment as a record already in the platform replaces it, and that record goes back to Pending review. Unticked, such rows are skipped and listed as duplicates."
+      finalLabel={t("Submitted for review")}
+      overwriteLabel={t("Replace existing records. A row for the same facility, month, process, fuel and equipment as a record already in the platform replaces it, and that record goes back to Pending review. Unticked, such rows are skipped and listed as duplicates.")}
       onClose={onClose}
       onUploadSuccess={onUploadSuccess}
     />

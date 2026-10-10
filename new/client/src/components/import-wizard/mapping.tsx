@@ -42,7 +42,7 @@ export const MappingRow: React.FC<MappingRowProps> = ({ field, headers, value, o
       </div>
       {headers.length > 0 ? (
         <select
-          aria-label={`File column for ${field.label}`}
+          aria-label={t("File column for {{field}}", { field: field.label })}
           className={cn(controlClass, mapped ? "border-green-500" : "border-border")}
           value={value}
           onChange={(e) => onChange(e.target.value)}
@@ -56,7 +56,7 @@ export const MappingRow: React.FC<MappingRowProps> = ({ field, headers, value, o
         </select>
       ) : (
         <input
-          aria-label={`File column for ${field.label}`}
+          aria-label={t("File column for {{field}}", { field: field.label })}
           className={cn(controlClass, mapped ? "border-green-500" : "border-border")}
           placeholder={t("Column name in your file")}
           value={value}

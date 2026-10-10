@@ -146,7 +146,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
                 <div>
                   <h3 className="m-[0px]! text-[length:1.15rem]! font-bold!">
                     {rejectionModal.isBatch
-                      ? `Reject ${rejectionModal.recordIds.length} Selected Record${rejectionModal.recordIds.length > 1 ? "s" : ""}`
+                      ? (rejectionModal.recordIds.length > 1 ? t("Reject {{count}} Selected Records", { count: rejectionModal.recordIds.length }) : t("Reject 1 Selected Record"))
                       : t("Reject Emission Record")}
                   </h3>
                   <p className="m-[2px_0_0_0]! text-[length:0.8rem]! text-[color:var(--text-secondary)]!">
@@ -183,7 +183,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
                     className={`rejection-chip ${rejectionModal.reason === reason ? "selected" : ""}`}
                     onClick={() => setRejectionModal((prev) => ({ ...prev, reason }))}
                   >
-                    {reason}
+                    {t(reason)}
                   </button>
                 ))}
               </div>
@@ -514,7 +514,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
               <h3 className="m-[0px]! text-[length:1.02rem]! font-bold!">
                 {pendingScopeFilter === "all"
                   ? t("All Pending Import Records")
-                  : `Scope ${pendingScopeFilter} Pending Records`}
+                  : t("Scope {{scope}} Pending Records", { scope: pendingScopeFilter })}
               </h3>
               <span className="bg-[color:rgba(15,_23,_42,_0.06)]! text-[color:var(--text-secondary)]! text-[length:0.78rem]! font-semibold! p-[2px_8px]! rounded-[8px]!">
                 {t("Showing")}{" "}{filteredPendingRecords.length}{" "}{t("of")}{" "}{pendingMetrics.totalCount}

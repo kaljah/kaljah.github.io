@@ -61,23 +61,23 @@ const fmt = (num: any) =>
     : parseFloat(num).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 3 });
 
 const RECORD_COLUMNS: ColumnDef<EmissionRecord, any>[] = [
-  { accessorKey: "id", header: "ID", cell: (c) => <span className="text-xs text-text-secondary">{c.getValue()}</span> },
-  { id: "date", header: "Date", accessorFn: (r) => r.year * 100 + r.month, cell: (c) => `${c.row.original.month}/${c.row.original.year}` },
-  { accessorKey: "scope", header: "Scope", cell: (c) => {
+  { accessorKey: "id", header: tr("ID"), cell: (c) => <span className="text-xs text-text-secondary">{c.getValue()}</span> },
+  { id: "date", header: tr("Date"), accessorFn: (r) => r.year * 100 + r.month, cell: (c) => `${c.row.original.month}/${c.row.original.year}` },
+  { accessorKey: "scope", header: tr("Scope"), cell: (c) => {
     const tones: Record<string | number, BadgeTone> = { 1: "brand", 2: "info" };
     return <Badge tone={tones[c.getValue()] || "neutral"}>{tr("Scope")}{" "}{c.getValue()}</Badge>;
   } },
-  { accessorKey: "division", header: "Division", cell: (c) => NA(c.getValue()) },
-  { accessorKey: "field", header: "Field", cell: (c) => NA(c.getValue()) },
-  { accessorKey: "facility_name", header: "Facility", cell: (c) => NA(c.getValue()) },
-  { accessorKey: "group_name", header: "Group", cell: (c) => NA(c.getValue()) },
-  { accessorKey: "equipment_id", header: "Equipment", cell: (c) => NA(c.getValue()) },
-  { accessorKey: "process_type", header: "Category/Process", cell: (c) => <span className="font-medium">{c.getValue()}</span> },
-  { accessorKey: "fuel", header: "Fuel/Source", cell: (c) => NA(c.getValue()) },
-  { accessorKey: "factor_type", header: "Factor Type", cell: (c) => <span className="text-sm">{NA(c.getValue())}</span> },
+  { accessorKey: "division", header: tr("Division"), cell: (c) => NA(c.getValue()) },
+  { accessorKey: "field", header: tr("Field"), cell: (c) => NA(c.getValue()) },
+  { accessorKey: "facility_name", header: tr("Facility"), cell: (c) => NA(c.getValue()) },
+  { accessorKey: "group_name", header: tr("Group"), cell: (c) => NA(c.getValue()) },
+  { accessorKey: "equipment_id", header: tr("Equipment"), cell: (c) => NA(c.getValue()) },
+  { accessorKey: "process_type", header: tr("Category/Process"), cell: (c) => <span className="font-medium">{c.getValue()}</span> },
+  { accessorKey: "fuel", header: tr("Fuel/Source"), cell: (c) => NA(c.getValue()) },
+  { accessorKey: "factor_type", header: tr("Factor Type"), cell: (c) => <span className="text-sm">{NA(c.getValue())}</span> },
   {
     accessorKey: "amount",
-    header: "Qty",
+    header: tr("Qty"),
     meta: { numeric: true },
     cell: (c) =>
       c.getValue() ? (
@@ -90,12 +90,12 @@ const RECORD_COLUMNS: ColumnDef<EmissionRecord, any>[] = [
   },
   {
     accessorKey: "co2e_total",
-    header: "Total",
+    header: tr("Total"),
     meta: { numeric: true, unit: "tCO₂e" },
     // BUG-UI-06 FIX: show an em dash for null instead of a misleading 0.00
     cell: (c) => <span className="font-bold text-primary">{c.getValue() != null ? fmt(c.getValue()) : "—"}</span>,
   },
-  { accessorKey: "status", header: "Status", cell: (c) => <StatusPill status={c.getValue() || "Verified"} /> },
+  { accessorKey: "status", header: tr("Status"), cell: (c) => <StatusPill status={c.getValue() || "Verified"} /> },
 ];
 
 const Reports: React.FC = () => {
@@ -119,7 +119,7 @@ const Reports: React.FC = () => {
       ...RECORD_COLUMNS,
       {
         id: "actions",
-        header: "Actions",
+        header: tr("Actions"),
         cell: (c) => (
           <Button
             variant="secondary"
@@ -421,7 +421,7 @@ const Reports: React.FC = () => {
         link.remove();
         window.URL.revokeObjectURL(url);
       }, 1000);
-      toast.success(`OGMP 2.0 Excel report for ${yr} downloaded successfully!`);
+      toast.success(tr("OGMP 2.0 Excel report for {{year}} downloaded successfully!", { year: yr }));
     } catch (error) {
       console.error("OGMP Excel export failed:", error);
       toast.error(tr("Failed to export OGMP 2.0 Excel report."));
@@ -438,10 +438,10 @@ const Reports: React.FC = () => {
           : null;
       const selectedId = explicitId || (reportSelectedRegions.length === 1 ? reportSelectedRegions[0] : (regionId !== "all" ? regionId : null));
       const isElMerk = selectedId === "170" || selectedId === 170;
-      const reportTitle = isElMerk ? "El Merk (Block 208) Master Report" : "Groupement Berkine Master Report";
+      const reportTitle = isElMerk ? tr("El Merk (Block 208) Master Report") : tr("Groupement Berkine Master Report");
       const downloadFilename = isElMerk ? "El_Merk_2025_Annual_GHG_Report.pdf" : "Groupement_Berkine_2025_Annual_GHG_Report.pdf";
 
-      toast.info(`Downloading ${reportTitle} (PDF)...`);
+      toast.info(tr("Downloading {{title}} (PDF)...", { title: reportTitle }));
       const endpoint = selectedId ? `/reports/master-annual-report?facility_id=${encodeURIComponent(selectedId)}` : "/reports/master-annual-report";
       const response = await api.get(endpoint, {
         responseType: "blob",
@@ -456,7 +456,7 @@ const Reports: React.FC = () => {
         link.remove();
         window.URL.revokeObjectURL(url);
       }, 1000);
-      toast.success(`${reportTitle} downloaded successfully!`);
+      toast.success(tr("{{title}} downloaded successfully!", { title: reportTitle }));
     } catch (error) {
       console.error("Master report download failed:", error);
       toast.error(tr("Failed to download Master Report."));
@@ -657,7 +657,7 @@ const Reports: React.FC = () => {
         <CardHeader title={<span className="flex items-center gap-3"><FilePlus className="size-6 text-brand-500" aria-hidden="true" />{" "}{tr("Create New Report")}</span>} />
         <div className="grid items-end gap-5 [grid-template-columns:repeat(auto-fit,minmax(200px,1fr))]">
           {selectBase(
-            "Reporting Year *",
+            tr("Reporting Year *"),
             reportYear,
             (e) => setReportYear(e.target.value),
             <>
@@ -674,7 +674,7 @@ const Reports: React.FC = () => {
             </>,
           )}
           {selectBase(
-            "Compare With",
+            tr("Compare With"),
             comparisonYear,
             (e) => setComparisonYear(e.target.value),
             <>
@@ -689,7 +689,7 @@ const Reports: React.FC = () => {
               {baseYear && <option value="baseline">{tr("Baseline (")}{baseYear})</option>}
             </>,
           )}
-          {selectBase("GWP Metric Standard", reportGwpStandard, onGwp, gwpOptions(), { className: "sm:[grid-column:span_2]" })}
+          {selectBase(tr("GWP Metric Standard"), reportGwpStandard, onGwp, gwpOptions(), { className: "sm:[grid-column:span_2]" })}
           <div className="flex w-full flex-col gap-1.5 [grid-column:span_2] max-[640px]:[grid-column:auto]">
             <span className="text-sm font-medium text-text">
               {tr("Regions / Facilities")}{" "}<span className="text-danger-fg">*</span>
@@ -727,7 +727,7 @@ const Reports: React.FC = () => {
         <CardHeader title={<span className="flex items-center gap-3"><Funnel className="size-6 text-brand-500" aria-hidden="true" />{" "}{tr("Filter & Group Data")}</span>} />
         <div className="grid items-end gap-5 [grid-template-columns:repeat(auto-fit,minmax(200px,1fr))]">
           {selectBase(
-            "Inventory Scope",
+            tr("Inventory Scope"),
             scope,
             (e) => setScope(e.target.value),
             <>
@@ -738,7 +738,7 @@ const Reports: React.FC = () => {
             </>,
           )}
           {selectBase(
-            "Reporting Year",
+            tr("Reporting Year"),
             year,
             (e) => setYear(e.target.value),
             <>
@@ -751,7 +751,7 @@ const Reports: React.FC = () => {
             </>,
           )}
           {selectBase(
-            "Month",
+            tr("Month"),
             month,
             (e) => setMonth(e.target.value),
             <>
@@ -764,7 +764,7 @@ const Reports: React.FC = () => {
             </>,
           )}
           {selectBase(
-            "Region (Grid)",
+            tr("Region (Grid)"),
             regionId,
             (e) => setRegionId(e.target.value),
             <>
@@ -778,7 +778,7 @@ const Reports: React.FC = () => {
           )}
           {scope === "1" &&
             selectBase(
-              "Process Type",
+              tr("Process Type"),
               processType,
               (e) => setProcessType(e.target.value),
               <>
@@ -793,7 +793,7 @@ const Reports: React.FC = () => {
               </>,
             )}
           {selectBase(
-            "Division",
+            tr("Division"),
             division,
             (e) => setDivision(e.target.value),
             <>
@@ -806,7 +806,7 @@ const Reports: React.FC = () => {
             </>,
           )}
           {selectBase(
-            "Field",
+            tr("Field"),
             field,
             (e) => setField(e.target.value),
             <>
@@ -819,7 +819,7 @@ const Reports: React.FC = () => {
             </>,
           )}
           {selectBase(
-            "Calc Method",
+            tr("Calc Method"),
             methodFilter,
             (e) => setMethodFilter(e.target.value),
             <>
@@ -830,7 +830,7 @@ const Reports: React.FC = () => {
             </>,
           )}
           {selectBase(
-            "Group By",
+            tr("Group By"),
             groupBy,
             (e) => setGroupBy(e.target.value),
             <>
@@ -958,7 +958,7 @@ const Reports: React.FC = () => {
               <Field label={tr("Verification Status")} hint={tr("State whether the report has been verified, the type of verification, and the level of assurance.")}>
                 <Input value={verificationStatus} onChange={(e) => setVerificationStatus(e.target.value)} />
               </Field>
-              {selectBase("GWP Metric Standard", reportGwpStandard, onGwp, gwpOptions(" — Default"))}
+              {selectBase(tr("GWP Metric Standard"), reportGwpStandard, onGwp, gwpOptions(tr(" — Default")))}
             </>
           )}
         </div>

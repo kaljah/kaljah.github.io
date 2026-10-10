@@ -86,7 +86,7 @@ export const QaKpis: React.FC<QaKpisProps> = ({ diagnostics, uncertainty, anomal
       </Tile>
       <Tile
         icon={AlertTriangle}
-        label={`Inventory Uncertainty (95% CI${uncertainty.year ? `, ${uncertainty.year}` : ""})`}
+        label={uncertainty.year ? t("Inventory Uncertainty (95% CI, {{year}})", { year: uncertainty.year }) : t("Inventory Uncertainty (95% CI)")}
         title={t("IPCC Approach 1 error propagation (square root of sum of squares)")}
         tone="bg-warning-bg text-warning-fg"
         value={uncertainty.overall != null ? `±${(uncertainty.overall * 100).toFixed(2)}` : "n/a"}
@@ -158,7 +158,7 @@ const SampleTable: React.FC<{ item: DiagnosticItem }> = ({ item }) => {
             <tr>
               {(facilities ? ["Facility ID", "Facility Name", "Location / Field"] : ["Record ID", "Facility", "Year", "Process Type", "Details"]).map((h) => (
                 <th key={h} scope="col" className={th}>
-                  {h}
+                  {t(h)}
                 </th>
               ))}
             </tr>
@@ -303,9 +303,9 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({ healthScore,
 };
 
 const SCOPES: { key: string; total: string; label: string; icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean | "true" | "false" }>; tone: BadgeTone; note: string }[] = [
-  { key: "scope1", total: "s1_total_tco2e", label: t("Scope 1"), icon: Flame, tone: "success", note: "Combustion, flaring, vented & fugitive sources" },
-  { key: "scope2", total: "s2_total_tco2e", label: t("Scope 2"), icon: Zap, tone: "info", note: "Purchased electricity & grid emission factors" },
-  { key: "scope3", total: "s3_total_tco2e", label: t("Scope 3"), icon: Layers, tone: "brand", note: "Upstream & downstream category estimations" },
+  { key: "scope1", total: "s1_total_tco2e", label: t("Scope 1"), icon: Flame, tone: "success", note: t("Combustion, flaring, vented & fugitive sources") },
+  { key: "scope2", total: "s2_total_tco2e", label: t("Scope 2"), icon: Zap, tone: "info", note: t("Purchased electricity & grid emission factors") },
+  { key: "scope3", total: "s3_total_tco2e", label: t("Scope 3"), icon: Layers, tone: "brand", note: t("Upstream & downstream category estimations") },
 ];
 
 export interface UncertaintyPanelProps {

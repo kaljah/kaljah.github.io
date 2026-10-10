@@ -85,7 +85,7 @@ export const Scope3Form: React.FC = () => {
       setBaseFactor(parseFloat(normalizedEf));
       setBaseUnit("USD");
     } catch (err: any) {
-      toast.show(err?.response?.data?.error || "Error calculating EEIO emissions", "error");
+      toast.show(err?.response?.data?.error || t("Error calculating EEIO emissions"), "error");
     }
   };
 
@@ -275,8 +275,8 @@ export const Scope3Form: React.FC = () => {
 
   const handleInspect = (entry: Scope3GridEntry) => {
     setInspectRecord({
-      process_type: `Scope 3 - Category ${entry.category}`,
-      fuel: entry.sub_category || entry.product_type || "N/A",
+      process_type: t("Scope 3 - Category {{category}}", { category: entry.category ?? "" }),
+      fuel: entry.sub_category ? t(entry.sub_category) : entry.product_type || t("N/A"),
       amount: Number(entry.activity_data || entry.volume || 0),
       unit: entry.unit || "unit",
       emissions: {
@@ -290,18 +290,18 @@ export const Scope3Form: React.FC = () => {
         ch4: 0,
         n2o: 0,
       },
-      method: entry.calculation_method || "Activity Data × Emission Factor",
+      method: entry.calculation_method || t("Activity Data × Emission Factor"),
       steps: [
         {
-          name: "Activity Normalization",
-          desc: `Recorded activity quantity: ${entry.activity_data || entry.volume || 0} ${entry.unit}`,
+          name: t("Activity Normalization"),
+          desc: t("Recorded activity quantity: {{amount}} {{unit}}", { amount: entry.activity_data || entry.volume || 0, unit: entry.unit ?? "" }),
         },
         {
-          name: "Emission Factor Application",
-          desc: `Applied factor: ${entry.emission_factor} kg CO₂e / ${entry.unit}`,
+          name: t("Emission Factor Application"),
+          desc: t("Applied factor: {{factor}} kg CO₂e / {{unit}}", { factor: entry.emission_factor ?? "", unit: entry.unit ?? "" }),
         },
         {
-          name: "CO₂e Calculation",
+          name: t("CO₂e Calculation"),
           desc: `(${entry.activity_data || entry.volume || 0} × ${entry.emission_factor}) ÷ 1,000 = ${formatNumber(entry.co2e || entry.emissions_tco2e, 3)} tCO₂e`,
         },
       ],
@@ -357,7 +357,7 @@ export const Scope3Form: React.FC = () => {
     if (!activities) {
       return [{ value: "", label: t("Select category first...") }];
     }
-    return activities.map((a: any) => ({ value: a.value, label: a.value }));
+    return activities.map((a: any) => ({ value: a.value, label: t(a.value) }));
   };
 
   const getFacilityOptions = () => [

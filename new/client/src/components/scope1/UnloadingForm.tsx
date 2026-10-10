@@ -312,7 +312,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
           {/* METHOD SELECTION TABS */}
           <div className="mb-[16px]!">
             <Segmented
-              ariaLabel="Engineering method"
+              ariaLabel={t("Engineering method")}
               value={activeMethod}
               onChange={(v) => onChange("calc_method", v)}
               options={[

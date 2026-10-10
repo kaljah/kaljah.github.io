@@ -114,9 +114,9 @@ const AuditTrailFiltersBarCard: React.FC<AuditTrailFiltersBarCardProps> = ({
       </div>
 
       <div className="flex flex-wrap items-end gap-3.5">
-        {select("User", filterUser, setFilterUser, "All Users", availableFilters.users)}
-        {select("Action", filterAction, setFilterAction, "All Actions", availableFilters.actions)}
-        {select("Entity", filterEntity, setFilterEntity, "All Entities", availableFilters.entities)}
+        {select(t("User"), filterUser, setFilterUser, t("All Users"), availableFilters.users)}
+        {select(t("Action"), filterAction, setFilterAction, t("All Actions"), availableFilters.actions)}
+        {select(t("Entity"), filterEntity, setFilterEntity, t("All Entities"), availableFilters.entities)}
         <Field label={t("Timeframe")} className="min-w-[150px] flex-1">
           <NativeSelect
             className={controlClass}
@@ -128,7 +128,7 @@ const AuditTrailFiltersBarCard: React.FC<AuditTrailFiltersBarCardProps> = ({
           >
             {TIMEFRAMES.map(([v, label]) => (
               <option key={v} value={v}>
-                {label}
+                {t(label)}
               </option>
             ))}
           </NativeSelect>
@@ -136,9 +136,9 @@ const AuditTrailFiltersBarCard: React.FC<AuditTrailFiltersBarCardProps> = ({
 
         {timeframe === "custom" && (
           <div className="flex items-center gap-2 pb-1">
-            {date("Start date", customStartDate, setCustomStartDate)}
+            {date(t("Start date"), customStartDate, setCustomStartDate)}
             <span className="text-sm text-text-secondary">{t("to")}</span>
-            {date("End date", customEndDate, setCustomEndDate)}
+            {date(t("End date"), customEndDate, setCustomEndDate)}
           </div>
         )}
 

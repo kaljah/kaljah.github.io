@@ -15,7 +15,7 @@ const TIER1_FACILITIES = [
   {
     id: "oil_production",
     label: t("Onshore Oil Production"),
-    sub: "0.5173 lb CH₄ per bbl oil produced",
+    sub: t("0.5173 lb CH₄ per bbl oil produced"),
     units: [
       { value: "bbl", label: t("bbl oil"), t_per_unit: 2.346e-4 },
       { value: "m3", label: t("m³ oil"), t_per_unit: 1.476e-3 },
@@ -24,7 +24,7 @@ const TIER1_FACILITIES = [
   {
     id: "gas_production",
     label: t("Onshore Gas Production"),
-    sub: "57.33 lb CH₄ per 10⁶ scf gas produced",
+    sub: t("57.33 lb CH₄ per 10⁶ scf gas produced"),
     units: [
       { value: "MMscf", label: t("MMscf gas"), t_per_unit: 2.601e-2 },
       { value: "Mcf", label: t("Mcf gas"), t_per_unit: 2.601e-5 },
@@ -292,7 +292,7 @@ export const FugitivesForm: React.FC<FugitivesFormProps> = ({
         <div className="[margin-bottom:12px]">
           <div className="mb-[16px]!">
             <Segmented
-              ariaLabel="Tier 2 method"
+              ariaLabel={t("Tier 2 method")}
               value={tier2SubMethod}
               onChange={(v) => {
                 if (v === tier2SubMethod) return;
@@ -393,7 +393,7 @@ export const FugitivesForm: React.FC<FugitivesFormProps> = ({
         <div className="[margin-bottom:12px]">
           <div className="mb-[16px]!">
             <Segmented
-              ariaLabel="Tier 3 method"
+              ariaLabel={t("Tier 3 method")}
               value={tier3Method}
               onChange={(v) => {
                 if (v === tier3Method) return;

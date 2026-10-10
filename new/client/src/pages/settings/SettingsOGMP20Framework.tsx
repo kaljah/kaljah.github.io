@@ -50,7 +50,7 @@ const SettingsOGMP20Framework: React.FC<SettingsOGMP20FrameworkProps> = ({
   <SettingsSection
     icon={Target}
     title={tr("OGMP 2.0 Framework & Threshold Configuration")}
-    intro="Establish global compliance benchmarks, default asset membership years, and acceptable reconciliation tolerances."
+    intro={tr("Establish global compliance benchmarks, default asset membership years, and acceptable reconciliation tolerances.")}
   >
     <div className="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))]">
       <Panel title={tr("Default OGMP 2.0 Membership Baseline Year")} hint={tr("The year from which the Gold Standard milestone clock begins (Year 0).")}>

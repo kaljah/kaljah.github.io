@@ -631,7 +631,7 @@ const DashboardEnhanced: React.FC = () => {
       { value: "all", label: tr("All Activities") },
       ...Array.from(activities)
         .sort()
-        .map((a) => ({ value: a as string, label: formatActivityName(a as string) })),
+        .map((a) => ({ value: a as string, label: tr(formatActivityName(a as string)) })),
     ];
   };
 
@@ -702,27 +702,27 @@ const DashboardEnhanced: React.FC = () => {
       [
         // BUG-UI-05 FIX: Guard with ?? 0 to prevent .toFixed() on undefined when stats update fails
         {
-          name: "Combustion",
+          name: tr("Combustion"),
           value: Number((stats.combustion ?? 0).toFixed(2)),
           color: "var(--color-green-500)",
         },
         {
-          name: "Flaring",
+          name: tr("Flaring"),
           value: Number((stats.flaring ?? 0).toFixed(2)),
           color: "var(--color-brand-500)",
         },
         {
-          name: "Venting",
+          name: tr("Venting"),
           value: Number((stats.venting ?? 0).toFixed(2)),
           color: "var(--color-amber-500)",
         },
         {
-          name: "Equipment Leaks",
+          name: tr("Equipment Leaks"),
           value: Number((stats.fugitive ?? 0).toFixed(2)),
           color: "var(--color-violet-500)",
         },
         {
-          name: "Other",
+          name: tr("Other"),
           value: Number((stats.other ?? 0).toFixed(2)),
           color: "var(--color-blue-500)",
         },
@@ -743,6 +743,7 @@ const DashboardEnhanced: React.FC = () => {
     return entries.map((entry, index) => {
       return {
         ...entry,
+        name: tr(entry.name),
         color:
           ACTIVITY_COLOR_MAP[entry.name] ||
           ACTIVITY_PALETTE[index % ACTIVITY_PALETTE.length],
@@ -810,15 +811,15 @@ const DashboardEnhanced: React.FC = () => {
               value: "100",
               label: "GWP-100",
               title: activeGwp
-                ? `100-Year (Standard, CH4=${activeGwp.CH4}) per IPCC ${activeGwpStandard}`
-                : "100-Year (Standard)",
+                ? tr("100-Year (Standard, CH4={{ch4}}) per IPCC {{standard}}", { ch4: activeGwp.CH4, standard: activeGwpStandard ?? "" })
+                : tr("100-Year (Standard)"),
             },
             {
               value: "20",
               label: "GWP-20",
               title: activeGwp
-                ? `20-Year (Near-term, CH4=${activeGwp.CH4_20}) per IPCC ${activeGwpStandard}`
-                : "20-Year (Near-term)",
+                ? tr("20-Year (Near-term, CH4={{ch4}}) per IPCC {{standard}}", { ch4: activeGwp.CH4_20 ?? "", standard: activeGwpStandard ?? "" })
+                : tr("20-Year (Near-term)"),
             },
           ]}
         />
@@ -927,7 +928,7 @@ const DashboardEnhanced: React.FC = () => {
     : [
         {
           dataKey: "emissions",
-          name: "Total Emissions",
+          name: tr("Total Emissions"),
           color: "var(--color-brand-500)",
         },
         {
@@ -937,13 +938,13 @@ const DashboardEnhanced: React.FC = () => {
         },
         {
           dataKey: "trajectory",
-          name: "Target Path",
+          name: tr("Target Path"),
           color: "var(--color-green-500)",
           strokeDasharray: "5 5",
         },
         {
           dataKey: "forecast",
-          name: "Forecast",
+          name: tr("Forecast"),
           color: "var(--color-violet-500)",
           strokeDasharray: "3 3",
         },
@@ -962,7 +963,7 @@ const DashboardEnhanced: React.FC = () => {
           <h1 className="grid-title m-0 text-xl font-bold text-text">{tr("GHG Emissions Dashboard")}</h1>
           <Badge className="live-badge gap-2 bg-surface/80 px-3.5 py-1.5 text-sm text-text-secondary">
             <span className={cn("size-2 rounded-full bg-green-500", isUpdating && "animate-pulse")} aria-hidden="true" />
-            {isUpdating ? tr("Syncing filters...") : `Live content • Updated ${lastUpdated}`}
+            {isUpdating ? tr("Syncing filters...") : tr("Live content • Updated {{time}}", { time: lastUpdated })}
           </Badge>
         </div>
 
@@ -1001,8 +1002,8 @@ const DashboardEnhanced: React.FC = () => {
         <div className="charts-section grid gap-6 [grid-template-columns:2fr_1fr] max-[1200px]:grid-cols-1">
           <TrendCard data={trendData} lines={trendLines} compare={isCompareMode} onCompare={() => setIsCompareMode(!isCompareMode)} />
           <div className="flex min-w-0 flex-col gap-6">
-            <DonutCard title={tr("Emissions by Activity")} data={activityChartData} noun="activity" />
-            <DonutCard title={tr("Emissions by Source")} data={sourceChartData} noun="source" />
+            <DonutCard title={tr("Emissions by Activity")} data={activityChartData} noun={tr("activity")} />
+            <DonutCard title={tr("Emissions by Source")} data={sourceChartData} noun={tr("source")} />
           </div>
         </div>
 

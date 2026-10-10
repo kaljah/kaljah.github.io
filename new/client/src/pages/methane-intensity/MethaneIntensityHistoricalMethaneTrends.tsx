@@ -66,28 +66,28 @@ const MethaneIntensityHistoricalMethaneTrends: React.FC<MethaneIntensityHistoric
             {
               key: "loss_rate_pct",
               color: "var(--color-blue-600)",
-              name: "Overall Loss Rate (%)",
+              name: t("Overall Loss Rate (%)"),
             },
             {
               key: "loss_rate_upstream_pct",
               color: "var(--color-brand-700)",
-              name: "Upstream Loss Rate (%)",
+              name: t("Upstream Loss Rate (%)"),
             },
             {
               key: "loss_rate_midstream_pct",
               color: "var(--color-amber-500)",
-              name: "Midstream Loss Rate (%)",
+              name: t("Midstream Loss Rate (%)"),
             },
             {
               key: "target_020",
               color: "var(--color-green-500)",
-              name: `OGMP Upstream Target (≤${upstreamTargetPct.toFixed(2)}%)`,
+              name: t("OGMP Upstream Target (≤{{value}}%)", { value: upstreamTargetPct.toFixed(2) }),
               strokeDasharray: "4 4",
             },
             {
               key: "target_005",
               color: "var(--color-violet-500)",
-              name: `OGMP Midstream Target (≤${midstreamTargetPct.toFixed(2)}%)`,
+              name: t("OGMP Midstream Target (≤{{value}}%)", { value: midstreamTargetPct.toFixed(2) }),
               strokeDasharray: "2 2",
             },
           ]}
@@ -126,10 +126,10 @@ const MethaneIntensityHistoricalMethaneTrends: React.FC<MethaneIntensityHistoric
                       className={`heatmap-cell ${missing ? "" : getHeatmapClass(val)} ${onOpenCell ? "cursor-pointer" : ""}`}
                       role={onOpenCell ? "button" : undefined}
                       tabIndex={onOpenCell ? 0 : undefined}
-                      aria-label={onOpenCell ? `Open ${facData.facility_name} records for ${yData.year}` : undefined}
+                      aria-label={onOpenCell ? t("Open {{facility}} records for {{year}}", { facility: facData.facility_name, year: yData.year }) : undefined}
                       onClick={onOpenCell ? () => onOpenCell(facData.facility_id, yData.year) : undefined}
                       onKeyDown={onOpenCell ? activateOnKey : undefined}
-                      title={missing ? `${yData.year}: methane reported but no gas production recorded` : `${yData.year} Loss Rate: ${val.toFixed(3)}%`}
+                      title={missing ? t("{{year}}: methane reported but no gas production recorded", { year: yData.year }) : t("{{year}} Loss Rate: {{pct}}%", { year: yData.year, pct: val.toFixed(3) })}
                     >
                       {missing ? "n/a" : val > 0 ? `${val.toFixed(3)}%` : "-"}
                     </div>

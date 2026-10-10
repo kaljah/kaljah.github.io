@@ -234,7 +234,7 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
                         }
                       }}
                     >
-                      <span className="tier-tag">{item.tier}</span>
+                      <span className="tier-tag">{item.tier ? t(item.tier) : ""}</span>
                       <span className="tier-label">{item.label}</span>
                     </button>
                   );

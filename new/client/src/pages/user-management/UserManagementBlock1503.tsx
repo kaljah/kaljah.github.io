@@ -42,7 +42,7 @@ const UserManagementBlock1503: React.FC<UserManagementBlock1503Props> = ({
     isOpen={!!resetTarget}
     onClose={() => setResetTarget(null)}
     title={t("Reset User Password")}
-    subtitle={resetTarget ? `Administrative credential overwrite for ${resetTarget.email}` : ""}
+    subtitle={resetTarget ? t("Administrative credential overwrite for {{email}}", { email: resetTarget.email }) : ""}
     icon={KeyRound}
     iconColor="var(--color-amber-500)"
     iconBg="rgba(245, 158, 11, 0.12)"

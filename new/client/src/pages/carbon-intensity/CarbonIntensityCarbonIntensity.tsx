@@ -72,8 +72,8 @@ const CarbonIntensityCarbonIntensity: React.FC<CarbonIntensityCarbonIntensityPro
             value={gwpHorizon}
             onChange={setGwpHorizon}
             options={[
-              { value: "100", label: `${activeGwpStandard} 100-Yr`, title: `IPCC ${activeGwpStandard} 100-Year GWP (CH4: ${f100.CH4}, N2O: ${f100.N2O})` },
-              { value: "20", label: `${activeGwpStandard} 20-Yr`, title: `IPCC ${activeGwpStandard} 20-Year GWP (CH4: ${f20.CH4}, N2O: ${f20.N2O})` },
+              { value: "100", label: `${activeGwpStandard} 100-Yr`, title: t("IPCC {{standard}} 100-Year GWP (CH4: {{ch4}}, N2O: {{n2o}})", { standard: activeGwpStandard, ch4: f100.CH4, n2o: f100.N2O }) },
+              { value: "20", label: `${activeGwpStandard} 20-Yr`, title: t("IPCC {{standard}} 20-Year GWP (CH4: {{ch4}}, N2O: {{n2o}})", { standard: activeGwpStandard, ch4: f20.CH4, n2o: f20.N2O }) },
             ]}
           />
         </div>
@@ -85,7 +85,7 @@ const CarbonIntensityCarbonIntensity: React.FC<CarbonIntensityCarbonIntensityPro
           tone="co2"
           label={t("GHG Intensity (Avg)")}
           pending={currentDisplayCo2Intensity === null}
-          value={currentDisplayCo2Intensity === null ? "Pending Production" : fixed(currentDisplayCo2Intensity)}
+          value={currentDisplayCo2Intensity === null ? t("Pending Production") : fixed(currentDisplayCo2Intensity)}
           unit={unit}
           footer={
             <>
@@ -102,7 +102,7 @@ const CarbonIntensityCarbonIntensity: React.FC<CarbonIntensityCarbonIntensityPro
           tone="scope1"
           label={t("Scope 1 Direct Intensity")}
           pending={currentDisplayScope1Intensity === null}
-          value={currentDisplayScope1Intensity === null ? "Pending Production" : fixed(currentDisplayScope1Intensity)}
+          value={currentDisplayScope1Intensity === null ? t("Pending Production") : fixed(currentDisplayScope1Intensity)}
           unit={unit}
           footer={
             <>

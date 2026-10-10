@@ -15,17 +15,17 @@ interface ComponentInfo {
 }
 
 const COMPONENT_DATA: Record<string, ComponentInfo> = {
-  CH4: { mw: 16.04, c: 1, hhv: 55.5, lhv: 50.0, name: "Methane (C1)" },
-  C2H6: { mw: 30.07, c: 2, hhv: 51.9, lhv: 47.5, name: "Ethane (C2)" },
-  C3H8: { mw: 44.1, c: 3, hhv: 50.35, lhv: 46.35, name: "Propane (C3)" },
-  iC4H10: { mw: 58.12, c: 4, hhv: 49.4, lhv: 45.6, name: "Isobutane (iC4)" },
-  nC4H10: { mw: 58.12, c: 4, hhv: 49.5, lhv: 45.75, name: "n-Butane (nC4)" },
-  iC5H12: { mw: 72.15, c: 5, hhv: 48.95, lhv: 45.3, name: "Isopentane (iC5)" },
-  nC5H12: { mw: 72.15, c: 5, hhv: 49.0, lhv: 45.4, name: "n-Pentane (nC5)" },
-  C6H14: { mw: 86.18, c: 6, hhv: 48.3, lhv: 44.7, name: "Hexanes+ (C6+)" },
-  CO2: { mw: 44.01, c: 1, hhv: 0, lhv: 0, name: "Carbon Dioxide (CO2)" },
-  N2O: { mw: 44.013, c: 0, hhv: 0, lhv: 0, name: "Nitrous Oxide (N2O)" },
-  N2: { mw: 28.01, c: 0, hhv: 0, lhv: 0, name: "Nitrogen (N2)" },
+  CH4: { mw: 16.04, c: 1, hhv: 55.5, lhv: 50.0, name: t("Methane (C1)") },
+  C2H6: { mw: 30.07, c: 2, hhv: 51.9, lhv: 47.5, name: t("Ethane (C2)") },
+  C3H8: { mw: 44.1, c: 3, hhv: 50.35, lhv: 46.35, name: t("Propane (C3)") },
+  iC4H10: { mw: 58.12, c: 4, hhv: 49.4, lhv: 45.6, name: t("Isobutane (iC4)") },
+  nC4H10: { mw: 58.12, c: 4, hhv: 49.5, lhv: 45.75, name: t("n-Butane (nC4)") },
+  iC5H12: { mw: 72.15, c: 5, hhv: 48.95, lhv: 45.3, name: t("Isopentane (iC5)") },
+  nC5H12: { mw: 72.15, c: 5, hhv: 49.0, lhv: 45.4, name: t("n-Pentane (nC5)") },
+  C6H14: { mw: 86.18, c: 6, hhv: 48.3, lhv: 44.7, name: t("Hexanes+ (C6+)") },
+  CO2: { mw: 44.01, c: 1, hhv: 0, lhv: 0, name: t("Carbon Dioxide (CO2)") },
+  N2O: { mw: 44.013, c: 0, hhv: 0, lhv: 0, name: t("Nitrous Oxide (N2O)") },
+  N2: { mw: 28.01, c: 0, hhv: 0, lhv: 0, name: t("Nitrogen (N2)") },
 };
 
 export interface GasCompositionCalculatorProps {
@@ -230,10 +230,10 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
   };
 
   const getStatusText = () => {
-    if (totalMolePct > 100.1) return "⚠️ Over 100%";
-    if (Math.abs(totalMolePct - 100) < 0.1) return "✓ Perfect 100%";
-    if (totalMolePct >= 99.5 && totalMolePct <= 100.5) return "✓ Valid (~100%)";
-    return `Need ${(100 - totalMolePct).toFixed(2)}%`;
+    if (totalMolePct > 100.1) return t("⚠️ Over 100%");
+    if (Math.abs(totalMolePct - 100) < 0.1) return t("✓ Perfect 100%");
+    if (totalMolePct >= 99.5 && totalMolePct <= 100.5) return t("✓ Valid (~100%)");
+    return t("Need {{pct}}%", { pct: (100 - totalMolePct).toFixed(2) });
   };
 
   const handleApply = (unit: string) => {

@@ -131,7 +131,7 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
           const pLabel = typeof pDef === "string" ? pDef : pDef?.label || p;
           return (
             <option key={p} value={p}>
-              {pLabel}
+              {t(pLabel)}
             </option>
           );
         })}
@@ -279,11 +279,11 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
                   <td>{entry.group_name || entry.group || "-"}</td>
                   <td>{entry.equipment_id || "-"}</td>
                   <td>
-                    {processLabel(entry)}
+                    {t(processLabel(entry))}
                   </td>
                   <td>{entry.fuel || entry.fuel_type || entry.activity_data_label || "-"}</td>
                   <td className={`[font-weight:500]! ${factorType === "Default" ? "[color:var(--color-green-700)]!" : "[color:var(--color-blue-700)]!"}`}>
-                    {factorType}
+                    {t(factorType)}
                   </td>
                   <td>
                     {(entry.amount ?? entry.quantity) != null && (entry.amount ?? entry.quantity) !== ""

@@ -1,4 +1,5 @@
 // Column mapping helpers shared by the bulk import wizards.
+import { t } from "../i18n";
 
 export interface ImportField {
   key: string;
@@ -79,5 +80,5 @@ export function missingRequiredFields(fields: ImportField[], mapping: Record<str
       if (withDate && ["date", "year", "month"].includes(f.key)) return !periodOk && f.key === "date";
       return true;
     })
-    .map((f) => (withDate && f.key === "date" ? { ...f, label: "Date (or Year and Month)" } : f));
+    .map((f) => (withDate && f.key === "date" ? { ...f, label: t("Date (or Year and Month)") } : f));
 }
