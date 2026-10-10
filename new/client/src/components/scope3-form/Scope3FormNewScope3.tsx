@@ -4,6 +4,7 @@ import ColumnMappingWizard from "../ColumnMappingWizard";
 import CustomDropdown from "../CustomDropdown";
 import { NativeSelect } from "../../ui/NativeSelect";
 import { activateOnKey } from "../../utils/a11yKeys";
+import { t } from "../../i18n";
 
 export interface Scope3FormNewScope3Props {
   UNIT_MULTIPLIERS: Record<string, Record<string, number>>;
@@ -101,9 +102,9 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
       >
         <div className="flex! items-center! gap-[8px]!">
           <span className="text-[length:1.2rem]!">💰</span>
-          <strong className="text-[color:var(--color-ink-700)]!">EEIO Quick Spend Calculator</strong>
+          <strong className="text-[color:var(--color-ink-700)]!">{t("EEIO Quick Spend Calculator")}</strong>
           <span className="text-[length:0.8rem]! text-[color:var(--color-ink-500)]! ml-[10px]!">
-            Convert financial spend to CO₂e using NAICS factors
+            {t("Convert financial spend to CO₂e using NAICS factors")}
           </span>
         </div>
         <span>{showEeioCalc ? "▲" : "▼"}</span>
@@ -112,10 +113,10 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
       {showEeioCalc && (
         <div className="mt-[16px]! flex! gap-[16px]! items-end!">
           <div className="input-group flex-1!">
-            <label>NAICS Code (6 digits)</label>
+            <label>{t("NAICS Code (6 digits)")}</label>
             <Input
               type="text"
-              placeholder="e.g. 331110 or steel"
+              placeholder={t("e.g. 331110 or steel")}
               value={eeioNaics}
               list="eeio-naics-options"
               onChange={(e) => {
@@ -130,7 +131,7 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
             </datalist>
           </div>
           <div className="input-group flex-1!">
-            <label>Spend Amount (USD)</label>
+            <label>{t("Spend Amount (USD)")}</label>
             <Input
               type="number"
               placeholder="0.00"
@@ -142,30 +143,30 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
             className="action-btn h-[38px]! p-[0_16px]! bg-[color:var(--color-blue-500)]! text-[color:white]!"
             onClick={handleCalculateEeio}
           >
-            Calculate & Auto-fill
+            {t("Calculate & Auto-fill")}
           </button>
         </div>
       )}
       {eeioResult && showEeioCalc && (
         <div className="mt-[12px]! p-[12px]! bg-[color:var(--color-blue-50)]! [border:1px_solid_var(--color-legacy-bfdbfe)]! rounded-[6px]!">
           <div className="text-[length:0.85rem]! text-[color:var(--color-legacy-1e3a8a)]!">
-            <strong>Industry:</strong> {eeioResult.industry_name} <br />
-            <strong>Factor:</strong> {eeioResult.emission_factor} {eeioResult.ef_unit} <br />
-            <strong>Estimated Emissions:</strong>{" "}
+            <strong>{t("Industry:")}</strong> {eeioResult.industry_name} <br />
+            <strong>{t("Factor:")}</strong> {eeioResult.emission_factor} {eeioResult.ef_unit} <br />
+            <strong>{t("Estimated Emissions:")}</strong>{" "}
             <span className="text-[length:1.1rem]! [font-weight:bold]!">
               {eeioResult.co2e.toLocaleString(undefined, { maximumFractionDigits: 2 })}
             </span>{" "}
-            tCO₂e
+            {t("tCO₂e")}
           </div>
         </div>
       )}
     </div>
 
     <div className="flex! justify-between! items-center! mb-[20px]!">
-      <h3 className="m-[0px]!">New Scope 3 Entry</h3>
+      <h3 className="m-[0px]!">{t("New Scope 3 Entry")}</h3>
       <div className="text-right!">
         <span className="text-[color:var(--color-violet-700)]! font-semibold! text-[length:0.9rem]!">
-          Scope 3: Other Indirect
+          {t("Scope 3: Other Indirect")}
         </span>
       </div>
     </div>
@@ -173,14 +174,14 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
     <div
       className="[display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))]! [gap:20px]! [margin-bottom:20px]!"
     >
-      <Field className="input-group" label="Year">
+      <Field className="input-group" label={t("Year")}>
         <Input
           type="number"
           value={year || ""}
           onChange={(e) => setYear(e.target.value)}
         />
       </Field>
-      <Field className="input-group" label="Month">
+      <Field className="input-group" label={t("Month")}>
         <NativeSelect
           className="component-select"
           value={month || 1}
@@ -194,7 +195,7 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
         </NativeSelect>
       </Field>
       <div className="input-group">
-        <label>Facility</label>
+        <label>{t("Facility")}</label>
         <CustomDropdown
           options={getFacilityOptions()}
           value={facilityId || ""}
@@ -202,7 +203,7 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
         />
       </div>
       <div className="input-group">
-        <label>Category</label>
+        <label>{t("Category")}</label>
         <CustomDropdown
           options={getCategoryOptions()}
           value={category}
@@ -215,14 +216,14 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
       className="[display:grid]! [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))]! [gap:20px]!"
     >
       <div className="input-group">
-        <label>Activity Type</label>
+        <label>{t("Activity Type")}</label>
         <CustomDropdown
           options={getActivityOptions()}
           value={activityType}
           onChange={setActivityType}
         />
       </div>
-      <Field className="input-group" label="Amount">
+      <Field className="input-group" label={t("Amount")}>
         <Input
           type="number"
           value={amount || ""}
@@ -232,7 +233,7 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
         />
       </Field>
       <div className="input-group">
-        <label>Unit</label>
+        <label>{t("Unit")}</label>
         {UNIT_MULTIPLIERS[baseUnit] ? (
           <NativeSelect
             className="component-select"
@@ -254,7 +255,7 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
           />
         )}
       </div>
-      <Field className="input-group" label="EF (kg CO₂e/unit)">
+      <Field className="input-group" label={t("EF (kg CO₂e/unit)")}>
         <Input
           type="number"
           value={emissionFactor || ""}
@@ -270,7 +271,7 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
         disabled={submitting}
         onClick={() => handleAddEntry("Draft")}
       >
-        {submitting ? "Saving..." : "Save as Draft (Maker Mode)"}
+        {submitting ? t("Saving...") : t("Save as Draft (Maker Mode)")}
       </button>
       <button
         className="btn-add-activity"
@@ -283,7 +284,7 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
           opacity: submitting ? 0.6 : 1,
         }}
       >
-        {submitting ? "Processing..." : "+ Calculate & Submit for Review"}
+        {submitting ? t("Processing...") : t("+ Calculate & Submit for Review")}
       </button>
     </div>
 

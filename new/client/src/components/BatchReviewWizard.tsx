@@ -13,6 +13,7 @@ import { useAuth } from '../context/AuthContext';
 import { getUserOperationalDefaults } from '../utils/userDefaults';
 import ConfirmModal from './ConfirmModal';
 import './BatchReviewWizard.css';
+import { t } from "../i18n";
 
 const QUICK_REJECTION_REASONS = [
   "Incorrect Emission Factor Applied",
@@ -177,7 +178,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
       setRawPending(res.data);
     } catch (err) {
       console.error("Failed to load all pending records", err);
-      toast.error("Failed to load pending records for wizard");
+      toast.error(t("Failed to load pending records for wizard"));
     } finally {
       setLoading(false);
     }
@@ -343,7 +344,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
   const handleSelectAllWeird = () => {
     const weirdKeys = filteredRecords.filter(r => r.isWeird).map(r => r.key);
     if (weirdKeys.length === 0) {
-      toast.info("No anomalous records in current view");
+      toast.info(t("No anomalous records in current view"));
       return;
     }
     setSelectedKeys(new Set(weirdKeys));
@@ -366,7 +367,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
   const handleApproveSingle = async (scope: string, id: number | string) => {
     try {
       await api.post(`/emissions/approve/${id}`, { scope: String(scope) });
-      toast.success("Record verified and committed to inventory");
+      toast.success(t("Record verified and committed to inventory"));
       setSelectedKeys(prev => {
         const next = new Set(prev);
         next.delete(`${scope}-${id}`);
@@ -374,7 +375,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
       });
       fetchAllPendingData();
     } catch (err: any) {
-      toast.error(err.response?.data?.error || "Failed to approve record");
+      toast.error(err.response?.data?.error || t("Failed to approve record"));
     }
   };
 
@@ -401,7 +402,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
       setSelectedKeys(new Set());
       fetchAllPendingData();
     } catch (err: any) {
-      toast.error(err.response?.data?.error || "Failed to approve selected records");
+      toast.error(err.response?.data?.error || t("Failed to approve selected records"));
     } finally {
       setIsProcessing(false);
     }
@@ -449,7 +450,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
           setSelectedKeys(new Set());
           fetchAllPendingData();
         } catch (err: any) {
-          toast.error(err.response?.data?.error || "Batch approval failed");
+          toast.error(err.response?.data?.error || t("Batch approval failed"));
         } finally {
           setIsProcessing(false);
         }
@@ -460,7 +461,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
   // Confirm Rejection Modal Submission
   const handleConfirmRejection = async () => {
     if (!rejectionModal.reason.trim()) {
-      toast.warning("Please provide or select a rejection justification");
+      toast.warning(t("Please provide or select a rejection justification"));
       return;
     }
 
@@ -473,7 +474,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
           scope: rejectionModal.targetItem.scope,
           reason
         });
-        toast.success("Record rejected and removed");
+        toast.success(t("Record rejected and removed"));
       } else if (rejectionModal.mode === 'selected') {
         const by_scope: Record<string, number[]> = { "1": [], "2": [], "3": [] };
         const ids: number[] = [];
@@ -516,7 +517,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
       setSelectedKeys(new Set());
       fetchAllPendingData();
     } catch (err: any) {
-      toast.error(err.response?.data?.error || "Failed to reject record(s)");
+      toast.error(err.response?.data?.error || t("Failed to reject record(s)"));
     } finally {
       setIsProcessing(false);
     }
@@ -534,8 +535,8 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
               <Sparkles size={24} />
             </div>
             <div className="wizard-title-text">
-              <h2>Pending Data Audit & Verification Wizard</h2>
-              <p>Unrestricted Maker-Checker verification pipeline · Auditing 100% of staged records across Scope 1, 2, and 3</p>
+              <h2>{t("Pending Data Audit & Verification Wizard")}</h2>
+              <p>{t("Unrestricted Maker-Checker verification pipeline · Auditing 100% of staged records across Scope 1, 2, and 3")}</p>
             </div>
           </div>
 
@@ -547,13 +548,13 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
               className="[display:inline-flex]! [align-items:center]! [gap:6px]! [border:1px_solid_var(--border-color)]! [border-radius:9px]! [padding:7px_14px]! [font-size:0.82rem]! [background:var(--color-white)]! [cursor:pointer]!"
             >
               <RefreshCw size={14} style={{ animation: loading ? 'spin 1s linear infinite' : 'none' }} />
-              Reload All
+              {t("Reload All")}
             </Button>
             <Button
               variant="ghost" type="button"
               onClick={onClose}
               className="[padding:7px]! [border-radius:9px]! [border:1px_solid_var(--border-color)]! [cursor:pointer]! [background:var(--color-white)]!"
-              title="Close Wizard (Esc)"
+              title={t("Close Wizard (Esc)")}
             >
               <X size={18} />
             </Button>
@@ -564,21 +565,21 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
         <div className="[padding:14px_28px] [background:var(--bg-body,_var(--color-ink-50))] [border-bottom:1px_solid_var(--border-color,_var(--color-ink-200))] [display:flex] [align-items:center] [justify-content:space-between] [gap:16px] [flex-wrap:wrap] [flex-shrink:0]">
           <div className="[display:flex] [align-items:center] [gap:10px] [flex-wrap:wrap]">
             <div className="kpi-chip">
-              <span>Total Staged:</span>
-              <strong>{stats.totalCount} records</strong>
+              <span>{t("Total Staged:")}</span>
+              <strong>{stats.totalCount}{" "}{t("records")}</strong>
             </div>
             <div className="kpi-chip">
-              <span>Cumulative Impact:</span>
-              <strong>{stats.totalTco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} tCO₂e</strong>
+              <span>{t("Cumulative Impact:")}</span>
+              <strong>{stats.totalTco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{" "}{t("tCO₂e")}</strong>
             </div>
             <div className="kpi-chip">
-              <span>Scope Distribution:</span>
+              <span>{t("Scope Distribution:")}</span>
               <strong>S1({stats.count1}) S2({stats.count2}) S3({stats.count3})</strong>
             </div>
             <div className={`kpi-chip ${stats.weirdCount > 0 ? 'weird' : ''}`}>
               <AlertTriangle size={14} />
-              <span>Suspicious / Weird:</span>
-              <strong>{stats.weirdCount} flagged</strong>
+              <span>{t("Suspicious / Weird:")}</span>
+              <strong>{stats.weirdCount}{" "}{t("flagged")}</strong>
             </div>
           </div>
 
@@ -588,10 +589,10 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
                 type="button"
                 className="[display:inline-flex] [align-items:center] [gap:6px] [padding:8px_14px] [border-radius:var(--radius-md)] [font-size:var(--text-sm)] [font-weight:600] [cursor:pointer] [border:1px_solid_transparent] [transition:all_0.15s_ease] [background:rgba(245,_158,_11,_0.12)] [color:var(--color-amber-700)] [&&]:[border-color:rgba(245,_158,_11,_0.3)] hover:[background:var(--color-amber-700)] hover:[color:var(--color-white)]"
                 onClick={handleSelectAllWeird}
-                title="Select all flagged anomalies for batch rejection or inspection"
+                title={t("Select all flagged anomalies for batch rejection or inspection")}
               >
                 <AlertTriangle size={14} />
-                Select All Weird ({stats.weirdCount})
+                {t("Select All Weird (")}{stats.weirdCount})
               </button>
             )}
             <button
@@ -599,20 +600,20 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
               className="[display:inline-flex] [align-items:center] [gap:6px] [padding:8px_14px] [border-radius:var(--radius-md)] [font-size:var(--text-sm)] [font-weight:600] [cursor:pointer] [border:1px_solid_transparent] [transition:all_0.15s_ease] [background:var(--color-green-700)] [color:var(--color-white)] hover:[background:var(--color-green-600)] hover:[transform:translateY(-1px)] hover:[box-shadow:0_3px_8px_rgba(16,_185,_129,_0.3)]"
               onClick={() => handleApproveAll(false)}
               disabled={loading || isProcessing || stats.totalCount === 0}
-              title="Verify all pending records across all scopes without exception"
+              title={t("Verify all pending records across all scopes without exception")}
             >
               <Check size={14} />
-              Approve All ({stats.totalCount})
+              {t("Approve All (")}{stats.totalCount})
             </button>
             <button
               type="button"
               className="[display:inline-flex] [align-items:center] [gap:6px] [padding:8px_14px] [border-radius:var(--radius-md)] [font-size:var(--text-sm)] [font-weight:600] [cursor:pointer] [border:1px_solid_transparent] [transition:all_0.15s_ease] [background:rgba(239,_68,_68,_0.1)] [color:var(--color-red-700)] [&&]:[border-color:rgba(239,_68,_68,_0.25)] hover:[background:var(--color-red-700)] hover:[color:var(--color-white)] hover:[transform:translateY(-1px)] hover:[box-shadow:0_3px_8px_rgba(239,_68,_68,_0.3)]"
               onClick={() => setRejectionModal({ isOpen: true, mode: 'all', targetItem: null, reason: '' })}
               disabled={loading || isProcessing || stats.totalCount === 0}
-              title="Delete all pending records with audit justification"
+              title={t("Delete all pending records with audit justification")}
             >
               <Trash2 size={14} />
-              Delete All ({stats.totalCount})
+              {t("Delete All (")}{stats.totalCount})
             </button>
           </div>
         </div>
@@ -623,31 +624,31 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
             {/* Scope Tabs */}
             <div className="[display:inline-flex] [background:var(--bg-body,_var(--color-ink-100))] [border-radius:var(--radius-md)] [padding:3px] [gap:3px]">
               <button type="button" className={`segmented-item-btn ${scopeFilter === 'all' ? 'active' : ''}`} onClick={() => setScopeFilter('all')}>
-                All Scopes ({stats.totalCount})
+                {t("All Scopes (")}{stats.totalCount})
               </button>
               <button type="button" className={`segmented-item-btn ${scopeFilter === '1' ? 'active' : ''}`} onClick={() => setScopeFilter('1')}>
-                Scope 1 ({stats.count1})
+                {t("Scope 1 (")}{stats.count1})
               </button>
               <button type="button" className={`segmented-item-btn ${scopeFilter === '2' ? 'active' : ''}`} onClick={() => setScopeFilter('2')}>
-                Scope 2 ({stats.count2})
+                {t("Scope 2 (")}{stats.count2})
               </button>
               <button type="button" className={`segmented-item-btn ${scopeFilter === '3' ? 'active' : ''}`} onClick={() => setScopeFilter('3')}>
-                Scope 3 ({stats.count3})
+                {t("Scope 3 (")}{stats.count3})
               </button>
             </div>
 
             {/* QA Anomaly Filter */}
             <div className="[display:inline-flex] [background:var(--bg-body,_var(--color-ink-100))] [border-radius:var(--radius-md)] [padding:3px] [gap:3px]">
               <button type="button" className={`segmented-item-btn ${qaFilter === 'all' ? 'active' : ''}`} onClick={() => setQaFilter('all')}>
-                All Data
+                {t("All Data")}
               </button>
               <button type="button" className={`segmented-item-btn ${qaFilter === 'weird' ? 'active weird-active' : ''}`} onClick={() => setQaFilter('weird')}>
                 <AlertTriangle size={13} />
-                Weird Only ({stats.weirdCount})
+                {t("Weird Only (")}{stats.weirdCount})
               </button>
               <button type="button" className={`segmented-item-btn ${qaFilter === 'clean' ? 'active' : ''}`} onClick={() => setQaFilter('clean')}>
                 <CheckCircle size={13} color="var(--color-green-500)" />
-                Clean Only ({stats.cleanCount})
+                {t("Clean Only (")}{stats.cleanCount})
               </button>
             </div>
 
@@ -658,7 +659,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
               className="component-select [width:auto]! [padding:6px_30px_6px_12px]! [font-size:0.8rem]! [height:34px]!"
              
             >
-              <option value="all">All Facilities</option>
+              <option value="all">{t("All Facilities")}</option>
               {facilities.map(f => (
                 <option key={f.id} value={f.id}>{f.name}</option>
               ))}
@@ -672,7 +673,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
                 className="component-select [width:auto]! [padding:6px_30px_6px_12px]! [font-size:0.8rem]! [height:34px]!"
                
               >
-                <option value="all">All Years</option>
+                <option value="all">{t("All Years")}</option>
                 {availableYears.map(y => (
                   <option key={y} value={y}>{y}</option>
                 ))}
@@ -684,7 +685,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
               <Search size={14} color="var(--text-secondary)" />
               <input
                 type="text"
-                placeholder="Search by facility, fuel, category..."
+                placeholder={t("Search by facility, fuel, category...")}
                 className="[border:none] [background:transparent] [font-size:var(--text-base)] [color:var(--text-primary,_var(--color-ink-900))] [width:100%] [outline:none]"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -699,7 +700,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
 
           <div className="[display:flex] [align-items:center] [gap:10px] [flex-wrap:wrap]">
             <span className="text-[length:0.8rem]! text-[color:var(--text-secondary)]! font-semibold!">
-              Showing {filteredRecords.length} of {stats.totalCount}
+              {t("Showing")}{" "}{filteredRecords.length}{" "}{t("of")}{" "}{stats.totalCount}
             </span>
 
             {/* Action on Filtered Set */}
@@ -712,7 +713,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
                   disabled={isProcessing}
                 >
                   <Check size={13} />
-                  Approve Filtered ({filteredRecords.length})
+                  {t("Approve Filtered (")}{filteredRecords.length})
                 </button>
                 <button
                   type="button"
@@ -721,7 +722,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
                   disabled={isProcessing}
                 >
                   <Trash2 size={13} />
-                  Reject Filtered ({filteredRecords.length})
+                  {t("Reject Filtered (")}{filteredRecords.length})
                 </button>
               </div>
             )}
@@ -734,11 +735,11 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
             <div className="flex! items-center! gap-[14px]!">
               <span className="font-bold! text-[length:0.92rem]! inline-flex! items-center! gap-[8px]!">
                 <CheckSquare size={16} color="var(--color-legacy-38bdf8)" />
-                {selectedKeys.size} record{selectedKeys.size > 1 ? 's' : ''} selected
+                {selectedKeys.size}{" "}{t("record")}{selectedKeys.size > 1 ? 's' : ''}{" "}{t("selected")}
               </span>
               <span className="text-[color:rgba(255,255,255,0.4)]!">•</span>
               <span className="text-[length:0.84rem]! text-[color:var(--color-ink-300)]!">
-                Impact: <strong className="text-[color:var(--color-white)]!">{selectedImpactTco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong> tCO₂e
+                {t("Impact:")}{" "}<strong className="text-[color:var(--color-white)]!">{selectedImpactTco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>{" "}{t("tCO₂e")}
               </span>
             </div>
 
@@ -750,7 +751,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
                 disabled={isProcessing}
               >
                 <Check size={14} />
-                Approve Selected ({selectedKeys.size})
+                {t("Approve Selected (")}{selectedKeys.size})
               </button>
               <button
                 type="button"
@@ -759,14 +760,14 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
                 disabled={isProcessing}
               >
                 <X size={14} />
-                Reject Selected ({selectedKeys.size})
+                {t("Reject Selected (")}{selectedKeys.size})
               </button>
               <Button
                 variant="ghost" type="button"
                 onClick={() => setSelectedKeys(new Set())}
                 className="text-[color:var(--color-ink-600)]! text-[length:0.82rem]! p-[6px_10px]! cursor-pointer!"
               >
-                Deselect
+                {t("Deselect")}
               </Button>
             </div>
           </div>
@@ -777,29 +778,29 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
           {loading ? (
             <div className="[padding:64px_24px] [text-align:center] [display:flex] [flex-direction:column] [align-items:center] [gap:14px] [color:var(--text-secondary,_var(--color-ink-500))]">
               <RefreshCw size={36} style={{ animation: 'spin 1s linear infinite', color: 'var(--color-link)' }} />
-              <p className="font-semibold!">Loading 100% of pending records across all scopes...</p>
+              <p className="font-semibold!">{t("Loading 100% of pending records across all scopes...")}</p>
             </div>
           ) : stats.totalCount === 0 ? (
             <div className="[padding:64px_24px] [text-align:center] [display:flex] [flex-direction:column] [align-items:center] [gap:14px] [color:var(--text-secondary,_var(--color-ink-500))]">
               <div className="[width:64px] [height:64px] [border-radius:var(--radius-lg)] [background:rgba(16,_185,_129,_0.1)] [color:var(--color-green-700)] [display:flex] [align-items:center] [justify-content:center]">
                 <CheckCircle size={32} />
               </div>
-              <h3 className="m-[0px]! text-[length:1.2rem]! text-[color:var(--text-primary)]!">All Pending Data Verified</h3>
+              <h3 className="m-[0px]! text-[length:1.2rem]! text-[color:var(--text-primary)]!">{t("All Pending Data Verified")}</h3>
               <p className="m-[0px]! max-w-[460px]! text-[length:0.88rem]!">
-                There are currently no records awaiting Maker-Checker approval. Staged bulk import entries will appear here automatically.
+                {t("There are currently no records awaiting Maker-Checker approval. Staged bulk import entries will appear here automatically.")}
               </p>
             </div>
           ) : filteredRecords.length === 0 ? (
             <div className="[padding:64px_24px] [text-align:center] [display:flex] [flex-direction:column] [align-items:center] [gap:14px] [color:var(--text-secondary,_var(--color-ink-500))]">
               <Filter size={32} color="var(--text-muted)" />
-              <h3 className="m-[0px]! text-[length:1.1rem]!">No Matching Records</h3>
-              <p className="m-[0px]! text-[length:0.86rem]!">No records match your active scope, anomaly, or search filters.</p>
+              <h3 className="m-[0px]! text-[length:1.1rem]!">{t("No Matching Records")}</h3>
+              <p className="m-[0px]! text-[length:0.86rem]!">{t("No records match your active scope, anomaly, or search filters.")}</p>
               <Button
                 variant="ghost" type="button"
                 onClick={() => { setScopeFilter('all'); setQaFilter('all'); setFacilityFilter('all'); setYearFilter('all'); setSearchQuery(''); }}
                 className="[border:1px_solid_var(--border-color)]! [border-radius:8px]! [padding:6px_14px]! [font-size:0.82rem]! [margin-top:8px]! [cursor:pointer]!"
               >
-                Reset Filters
+                {t("Reset Filters")}
               </Button>
             </div>
           ) : (
@@ -814,14 +815,14 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
                       onChange={handleToggleSelectAllInView}
                     />
                   </th>
-                  <th className="w-[80px]!">Ref ID</th>
-                  <th className="w-[90px]!">Scope</th>
-                  <th className="w-[100px]!">Period</th>
-                  <th className="min-w-[160px]!">Facility</th>
-                  <th className="min-w-[240px]!">Activity Details</th>
-                  <th className="w-[130px]! text-right!">Emissions</th>
-                  <th className="w-[190px]!">Integrity Status</th>
-                  <th className="w-[100px]! text-center!">Review Action</th>
+                  <th className="w-[80px]!">{t("Ref ID")}</th>
+                  <th className="w-[90px]!">{t("Scope")}</th>
+                  <th className="w-[100px]!">{t("Period")}</th>
+                  <th className="min-w-[160px]!">{t("Facility")}</th>
+                  <th className="min-w-[240px]!">{t("Activity Details")}</th>
+                  <th className="w-[130px]! text-right!">{t("Emissions")}</th>
+                  <th className="w-[190px]!">{t("Integrity Status")}</th>
+                  <th className="w-[100px]! text-center!">{t("Review Action")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -846,7 +847,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
                       </td>
                       <td>
                         <span className={`scope-tag scope-tag-${item.scope}`}>
-                          Scope {item.scope}
+                          {t("Scope")}{" "}{item.scope}
                         </span>
                       </td>
                       <td>
@@ -864,7 +865,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
                         <strong className="num-tabular text-[length:0.9rem]!">
                           {item.tco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </strong>
-                        <span className="text-[length:0.75rem]! text-[color:var(--text-secondary)]! ml-[4px]!">tCO₂e</span>
+                        <span className="text-[length:0.75rem]! text-[color:var(--text-secondary)]! ml-[4px]!">{t("tCO₂e")}</span>
                       </td>
                       <td>
                         {item.isWeird ? (
@@ -874,7 +875,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
                               title={item.reasons.join(" · ")}
                             >
                               <AlertTriangle size={12} />
-                              {item.severity === 'danger' ? 'Suspicious Data' : 'Notice'}
+                              {item.severity === 'danger' ? t("Suspicious Data") : t("Notice")}
                             </span>
                             <span className={`[font-size:0.72rem]! [line-height:1.2]! ${item.severity === 'danger' ? "[color:var(--color-red-600)]!" : "[color:var(--color-amber-700)]!"}`}>
                               {item.reasons[0]}
@@ -884,7 +885,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
                         ) : (
                           <span className="anomaly-pill clean">
                             <Check size={12} />
-                            Verified Structure
+                            {t("Verified Structure")}
                           </span>
                         )}
                       </td>
@@ -894,15 +895,15 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
                             <span 
                               className="badge-maker text-[length:0.7rem]! p-[4px_8px]! rounded-[6px]! bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:var(--color-red-700)]! [border:1px_solid_rgba(239,_68,_68,_0.25)]! font-semibold! whitespace-nowrap!"
                              
-                              title="Maker-Checker: You created this record and cannot self-approve."
+                              title={t("Maker-Checker: You created this record and cannot self-approve.")}
                             >
-                              Self-Submitted
+                              {t("Self-Submitted")}
                             </span>
                           ) : (
                             <button
                               type="button"
                               className="btn-review-action approve"
-                              title="Approve & Commit"
+                              title={t("Approve & Commit")}
                               onClick={() => handleApproveSingle(item.scope, item.id)}
                             >
                               <Check size={16} />
@@ -911,7 +912,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
                           <button
                             type="button"
                             className="btn-review-action reject"
-                            title="Reject (Specify Reason)"
+                            title={t("Reject (Specify Reason)")}
                             onClick={() => setRejectionModal({ isOpen: true, mode: 'single', targetItem: item, reason: '' })}
                           >
                             <X size={16} />
@@ -956,12 +957,12 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
             </div>
 
             <p className="m-[0px]! text-[length:0.86rem]! text-[color:var(--text-secondary)]! leading-[1.5]!">
-              Maker-Checker governance requires a recorded audit reason before rejecting staged bulk entries. This justification will be logged in the tamper-evident audit trail.
+              {t("Maker-Checker governance requires a recorded audit reason before rejecting staged bulk entries. This justification will be logged in the tamper-evident audit trail.")}
             </p>
 
             <div>
               <label className="block! mb-[8px]! text-[length:0.78rem]! font-semibold! text-[color:var(--text-secondary)]! uppercase!">
-                Quick Audit Justifications
+                {t("Quick Audit Justifications")}
               </label>
               <div className="[display:flex] [flex-wrap:wrap] [gap:8px]">
                 {QUICK_REJECTION_REASONS.map(reason => (
@@ -979,12 +980,12 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
 
             <div>
               <label className="block! mb-[8px]! text-[length:0.78rem]! font-semibold! text-[color:var(--text-secondary)]! uppercase!">
-                Custom Justification / Details
+                {t("Custom Justification / Details")}
               </label>
               <Textarea
                
                 rows={3}
-                placeholder="Describe reason for refusal..."
+                placeholder={t("Describe reason for refusal...")}
                 value={rejectionModal.reason}
                 onChange={(e) => setRejectionModal(prev => ({ ...prev, reason: e.target.value }))}
                 className="[resize:vertical]!"
@@ -999,7 +1000,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
                 disabled={isProcessing}
                 className="p-[8px_16px]! rounded-[10px]! cursor-pointer!"
               >
-                Cancel
+                {t("Cancel")}
               </Button>
               <Button
                 type="button"
@@ -1008,7 +1009,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
                 onClick={handleConfirmRejection}
                 disabled={isProcessing || !rejectionModal.reason.trim()}
               >
-                {isProcessing ? 'Processing...' : 'Confirm Rejection'}
+                {isProcessing ? t("Processing...") : t("Confirm Rejection")}
               </Button>
             </div>
           </div>
@@ -1019,7 +1020,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
         isOpen={confirmModal.isOpen}
         title={confirmModal.title}
         message={confirmModal.message}
-        confirmLabel="Approve Records"
+        confirmLabel={t("Approve Records")}
         confirmVariant="primary"
         loading={isProcessing}
         onConfirm={confirmModal.onConfirm || (() => {})}

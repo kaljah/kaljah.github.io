@@ -1,5 +1,6 @@
 import React from "react";
 import { AlertTriangle, Award, Calendar, Check, ChevronDown, ChevronUp } from "lucide-react";
+import { t } from "../../i18n";
 
 export interface MethaneIntensityOGMP20GoldProps {
   facilities: any[];
@@ -36,11 +37,10 @@ const MethaneIntensityOGMP20Gold: React.FC<MethaneIntensityOGMP20GoldProps> = ({
       <div className="[display:flex] [flex-direction:column] [gap:4px] [&_h3]:[font-size:var(--text-lg)]! [&_h3]:[font-weight:700]! [&_h3]:[color:var(--text-primary)]! [&_h3]:[margin:0]! [&_h3]:[display:flex] [&_h3]:[align-items:center] [&_h3]:[gap:10px] [&&]:[&&]:[&_p]:[font-size:var(--text-base)]! [&&]:[&_p]:[color:var(--text-secondary)]! [&&]:[&_p]:[margin:0]!">
         <h3>
           <Award size={22} color="var(--color-brand-500)" />
-          OGMP 2.0 Gold Standard Pathway & Milestone Roadmap
+          {t("OGMP 2.0 Gold Standard Pathway & Milestone Roadmap")}
         </h3>
         <p>
-          Multi-year reporting level progression towards Level 4/5
-          site-level measurement reconciliation.
+          {t("Multi-year reporting level progression towards Level 4/5 site-level measurement reconciliation.")}
         </p>
       </div>
 
@@ -56,7 +56,7 @@ const MethaneIntensityOGMP20Gold: React.FC<MethaneIntensityOGMP20GoldProps> = ({
               size={14}
               className="[display:inline]! [vertical-align:middle]! [margin-right:4px]!"
             />
-            Base Year:
+            {t("Base Year:")}
           </span>
           <div className="[display:flex] [flex-wrap:wrap] [gap:6px]">
             {Array.from({ length: new Date().getFullYear() - 2020 }, (_, i) => 2021 + i).map((yr) => (
@@ -152,9 +152,9 @@ const MethaneIntensityOGMP20Gold: React.FC<MethaneIntensityOGMP20GoldProps> = ({
                     <span className="[font-size:var(--text-md)] [font-weight:700] [color:var(--text-primary)]">{facName}</span>
                     <span className="[font-size:var(--text-sm)] [color:var(--text-secondary)]">
                       {opStatus === "operated"
-                        ? "Operated Asset (3-Yr Target)"
-                        : "Non-Operated Asset (5-Yr Target)"}{" "}
-                      • Base: {baseYear} • Target: {targetYear}
+                        ? t("Operated Asset (3-Yr Target)")
+                        : t("Non-Operated Asset (5-Yr Target)")}{" "}
+                      {t("• Base:")}{" "}{baseYear}{" "}{t("• Target:")}{" "}{targetYear}
                     </span>
                   </div>
                   <span
@@ -202,15 +202,15 @@ const MethaneIntensityOGMP20Gold: React.FC<MethaneIntensityOGMP20GoldProps> = ({
                 <div className="[display:grid] [grid-template-columns:repeat(3,_1fr)] [gap:10px] [background:var(--bg-card)] [border:1px_solid_var(--border-color)] [&&]:[border-radius:var(--radius-md)] [padding:10px_12px]">
                   <div className="[display:flex] [flex-direction:column] [gap:2px]">
                     <span className="[font-size:var(--text-xs)] [color:var(--text-secondary)] [font-weight:500]">
-                      Current Milestone
+                      {t("Current Milestone")}
                     </span>
                     <span className="[font-size:var(--text-base)] [font-weight:700] [color:var(--text-primary)] [&.variance-pass]:[color:var(--color-green-700)] [&&]:[&.variance-fail]:[color:var(--color-red-700)]">
-                      OGMP Level {highestLevel}
+                      {t("OGMP Level")}{" "}{highestLevel}
                     </span>
                   </div>
                   <div className="[display:flex] [flex-direction:column] [gap:2px]">
                     <span className="[font-size:var(--text-xs)] [color:var(--text-secondary)] [font-weight:500]">
-                      Reconciliation Var.
+                      {t("Reconciliation Var.")}
                     </span>
                     <span
                       className={`[font-size:var(--text-base)] [font-weight:700] [color:var(--text-primary)] [&.variance-pass]:[color:var(--color-green-700)] [&&]:[&.variance-fail]:[color:var(--color-red-700)] ${variancePct !== null ? (passThreshold ? "variance-pass" : "variance-fail") : ""}`}
@@ -219,19 +219,19 @@ const MethaneIntensityOGMP20Gold: React.FC<MethaneIntensityOGMP20GoldProps> = ({
                         ? variancePct >= 0
                           ? `+${Number(variancePct).toFixed(1)}%`
                           : `${Number(variancePct).toFixed(1)}%`
-                        : "Pending Survey"}
+                        : t("Pending Survey")}
                     </span>
                   </div>
                   <div className="[display:flex] [flex-direction:column] [gap:2px]">
                     <span className="[font-size:var(--text-xs)] [color:var(--text-secondary)] [font-weight:500]">
-                      Tolerance Limit
+                      {t("Tolerance Limit")}
                     </span>
                     <span className="[font-size:var(--text-base)] [font-weight:700] [color:var(--text-primary)] [&.variance-pass]:[color:var(--color-green-700)] [&&]:[&.variance-fail]:[color:var(--color-red-700)]">
                       ±{threshold.toFixed(1)}%{" "}
                       {variancePct !== null
                         ? passThreshold
-                          ? "(PASS)"
-                          : "(FLAGGED)"
+                          ? t("(PASS)")
+                          : t("(FLAGGED)")
                         : ""}
                     </span>
                   </div>

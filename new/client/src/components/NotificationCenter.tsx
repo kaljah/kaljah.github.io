@@ -15,6 +15,7 @@ import {
 import api from "../api";
 import { useToast } from "./Toast";
 import { useAuth } from "../context/AuthContext";
+import { t } from "../i18n";
 
 export interface NotificationItem {
   id: number;
@@ -84,7 +85,7 @@ const BellButton: React.FC<BellButtonProps> = ({ count, onClick }) => (
   <button
     type="button"
     onClick={onClick}
-    title="Notifications"
+    title={t("Notifications")}
     style={{
       position: "relative",
       background: "none",
@@ -197,7 +198,7 @@ const NotifRow: React.FC<NotifRowProps> = ({ n, onMarkRead, onDelete }) => {
               e.stopPropagation();
               onMarkRead(n.id);
             }}
-            title="Mark as read"
+            title={t("Mark as read")}
             style={iconBtnStyle}
             onMouseEnter={(e) =>
               (e.currentTarget.style.background = "rgba(59,130,246,0.15)")
@@ -215,7 +216,7 @@ const NotifRow: React.FC<NotifRowProps> = ({ n, onMarkRead, onDelete }) => {
             e.stopPropagation();
             onDelete(n.id);
           }}
-          title="Delete"
+          title={t("Delete")}
           style={iconBtnStyle}
           onMouseEnter={(e) =>
             (e.currentTarget.style.background = "rgba(239,68,68,0.12)")
@@ -395,7 +396,7 @@ const NotificationCenter: React.FC = () => {
       await api.post("/notifications/dismiss-all");
       setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
       setUnreadCount(0);
-      toast.success("All notifications marked as read");
+      toast.success(t("All notifications marked as read"));
     } catch (err) {
       console.error("Failed to mark all read", err);
     }
@@ -411,7 +412,7 @@ const NotificationCenter: React.FC = () => {
         setUnreadCount((prev) => Math.max(0, prev - 1));
     } catch (err) {
       console.error("Failed to delete notification", err);
-      toast.error("Could not delete notification");
+      toast.error(t("Could not delete notification"));
     }
   };
 
@@ -422,10 +423,10 @@ const NotificationCenter: React.FC = () => {
       await api.delete("/notifications/all");
       setNotifications([]);
       setUnreadCount(0);
-      toast.success("All notifications deleted");
+      toast.success(t("All notifications deleted"));
     } catch (err) {
       console.error("Failed to delete all notifications", err);
-      toast.error("Could not delete notifications");
+      toast.error(t("Could not delete notifications"));
     } finally {
       setIsDeleting(false);
     }
@@ -467,7 +468,7 @@ const NotificationCenter: React.FC = () => {
           <span
             className="font-bold! text-[length:0.92rem]! text-[color:var(--text-primary,_var(--color-ink-900))]! [letter-spacing:-0.01em]!"
           >
-            Notifications
+            {t("Notifications")}
           </span>
           {notifications.length > 0 && (
             <span
@@ -499,7 +500,7 @@ const NotificationCenter: React.FC = () => {
             <button
               type="button"
               onClick={handleMarkAllRead}
-              title="Mark all as read"
+              title={t("Mark all as read")}
               style={{
                 ...headerActionBtn,
                 color: "var(--color-blue-600)",
@@ -512,7 +513,7 @@ const NotificationCenter: React.FC = () => {
               }
             >
               <CheckCheck size={13} strokeWidth={2} />
-              <span>Mark read</span>
+              <span>{t("Mark read")}</span>
             </button>
           )}
           {notifications.length > 0 && (
@@ -520,7 +521,7 @@ const NotificationCenter: React.FC = () => {
               type="button"
               onClick={handleDeleteAll}
               disabled={isDeleting}
-              title="Delete all notifications"
+              title={t("Delete all notifications")}
               style={{
                 ...headerActionBtn,
                 color: "var(--color-red-700)",
@@ -534,7 +535,7 @@ const NotificationCenter: React.FC = () => {
               }
             >
               <Trash2 size={13} strokeWidth={2} />
-              <span>Clear all</span>
+              <span>{t("Clear all")}</span>
             </button>
           )}
         </div>
@@ -556,12 +557,12 @@ const NotificationCenter: React.FC = () => {
               />
             </div>
             <p className="m-[0px]! text-[length:0.88rem]! font-bold! text-[color:var(--text-primary,_var(--color-ink-900))]!">
-              No notifications
+              {t("No notifications")}
             </p>
             <p
               className="m-[4px_0_0]! text-[length:0.78rem]! text-[color:var(--text-secondary,_var(--color-ink-500))]!"
             >
-              You're all caught up
+              {t("You're all caught up")}
             </p>
           </div>
         ) : (
@@ -582,9 +583,9 @@ const NotificationCenter: React.FC = () => {
           className="p-[9px_18px]! [border-top:1px_solid_var(--border-color,_var(--color-ink-200))]! bg-[color:var(--bg-hover,_var(--color-ink-50))]! text-[length:0.74rem]! text-[color:var(--text-secondary,_var(--color-ink-500))]! font-medium! flex! justify-between! items-center!"
         >
           <span className={`[font-weight:600]! ${hasUnread ? "[color:var(--color-legacy-ea580c)]!" : "[color:inherit]!"}`}>
-            {unreadCount} unread
+            {unreadCount}{" "}{t("unread")}
           </span>
-          <span>Showing {notifications.length} notifications</span>
+          <span>{t("Showing")}{" "}{notifications.length}{" "}{t("notifications")}</span>
         </div>
       )}
     </div>

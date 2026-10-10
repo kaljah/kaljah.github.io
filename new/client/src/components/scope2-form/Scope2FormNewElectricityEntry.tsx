@@ -3,6 +3,7 @@ import { Input, Field } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
 import { NativeSelect } from "../../ui/NativeSelect";
 import { MARKET_INSTRUMENTS } from "./marketInstruments";
+import { t } from "../../i18n";
 
 export interface Scope2FormNewElectricityEntryProps {
   activity: string;
@@ -96,15 +97,15 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
     <h2
       className="text-[length:1.2rem]! [font-weight:bold]! mb-[25px]! text-[color:var(--color-legacy-333333)]!"
     >
-      New Electricity Entry
+      {t("New Electricity Entry")}
     </h2>
 
     {/* 1. IDENTITY & LOCATION */}
     <div className="mb-[30px]!">
-      <h4 className="section-title">1. IDENTITY &amp; LOCATION</h4>
+      <h4 className="section-title">{t("1. IDENTITY & LOCATION")}</h4>
       <div className="form-grid-4">
         <div className="input-group">
-          <label>Activity</label>
+          <label>{t("Activity")}</label>
           <input
             type="text"
             className="mole-input readonly"
@@ -113,7 +114,7 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
           />
         </div>
         <div className="input-group">
-          <label>Division</label>
+          <label>{t("Division")}</label>
           <input
             type="text"
             className="mole-input readonly"
@@ -122,16 +123,16 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
           />
         </div>
         <div className="input-group">
-          <label>Region</label>
+          <label>{t("Region")}</label>
           <CustomDropdown
             options={getFacilityOptions()}
             value={facilityId || ""}
             onChange={setFacilityId}
-            placeholder="Select Region..."
+            placeholder={t("Select Region...")}
           />
         </div>
         <div className="input-group">
-          <label>Field</label>
+          <label>{t("Field")}</label>
           <input
             type="text"
             className="mole-input readonly"
@@ -141,14 +142,14 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
         </div>
       </div>
       <div className="form-grid-3">
-        <Field className="input-group" label="Year">
+        <Field className="input-group" label={t("Year")}>
           <Input
             type="number"
             value={year || ""}
             onChange={(e) => setYear(e.target.value)}
           />
         </Field>
-        <Field className="input-group" label="Month">
+        <Field className="input-group" label={t("Month")}>
           <NativeSelect
             className="component-select"
             value={month || 1}
@@ -166,20 +167,20 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
 
     {/* 2. GRID & SOURCE DETAILS */}
     <div className="mb-[30px]!">
-      <h4 className="section-title">2. GRID &amp; SOURCE DETAILS</h4>
+      <h4 className="section-title">{t("2. GRID & SOURCE DETAILS")}</h4>
       <div className="form-grid-2">
         <div className="input-group">
-          <label>Source Type</label>
+          <label>{t("Source Type")}</label>
           <CustomDropdown
             options={[
               {
                 value: "electricity",
-                label: "Purchased Electricity (Grid)",
+                label: t("Purchased Electricity (Grid)"),
               },
-              { value: "indirect_steam", label: "Indirect Steam / Heat" },
+              { value: "indirect_steam", label: t("Indirect Steam / Heat") },
               {
                 value: "cogen_allocation",
-                label: "CHP / Cogeneration Allocation",
+                label: t("CHP / Cogeneration Allocation"),
               },
             ]}
             value={sourceType}
@@ -188,33 +189,33 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
         </div>
         {sourceType === "electricity" && (
           <div className="input-group">
-            <label>Grid Region</label>
+            <label>{t("Grid Region")}</label>
             <CustomDropdown
               options={getGridOptions()}
               value={gridRegion}
               onChange={setGridRegion}
-              placeholder="Select Grid..."
+              placeholder={t("Select Grid...")}
             />
           </div>
         )}
         {sourceType === "electricity" && (
           // market-based Scope 2 (dual reporting): contract instrument and its factor; blank = location-based
           <div className={`form-grid-2 [grid-column:span_2]!`}>
-            <Field className="input-group" label="Market instrument (market-based)">
+            <Field className="input-group" label={t("Market instrument (market-based)")}>
               <NativeSelect value={marketInstrument} onChange={(e) => setMarketInstrument(e.target.value)}>
                 {MARKET_INSTRUMENTS.map((m) => (
                   <option key={m.value} value={m.value}>{m.label}</option>
                 ))}
               </NativeSelect>
             </Field>
-            <Field className="input-group" label="Contract emission factor (kg CO2e/kWh)">
+            <Field className="input-group" label={t("Contract emission factor (kg CO2e/kWh)")}>
               <Input
                 type="number"
                 step="any"
                 min={0}
                 value={marketFactor}
                 onChange={(e) => setMarketFactor(e.target.value)}
-                placeholder={marketInstrument === "REC" ? "blank = 0 (zero-carbon)" : "blank = grid factor"}
+                placeholder={marketInstrument === "REC" ? t("blank = 0 (zero-carbon)") : t("blank = grid factor")}
                 disabled={!marketInstrument}
               />
             </Field>
@@ -222,14 +223,14 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
         )}
         {sourceType === "indirect_steam" && (
           <div className={`form-grid-2 [grid-column:span_2]!`}>
-            <Field className="input-group" label="Boiler Efficiency (0.0 - 1.0)">
+            <Field className="input-group" label={t("Boiler Efficiency (0.0 - 1.0)")}>
               <Input
                 type="number"
                 value={boilerEff}
                 onChange={(e) => setBoilerEff(e.target.value)}
               />
             </Field>
-            <Field className="input-group" label="Transmission Loss (0.0 - 1.0)">
+            <Field className="input-group" label={t("Transmission Loss (0.0 - 1.0)")}>
               <Input
                 type="number"
                 value={transLoss}
@@ -240,33 +241,33 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
         )}
         {sourceType === "cogen_allocation" && (
           <div className={`form-grid-3 [grid-column:span_2]!`}>
-            <Field className="input-group" label="Heat Output (MMBtu)">
+            <Field className="input-group" label={t("Heat Output (MMBtu)")}>
               <Input
                 type="number"
                 value={heatOutput}
                 onChange={(e) => setHeatOutput(e.target.value)}
               />
             </Field>
-            <Field className="input-group" label="Power Output (MWh)">
+            <Field className="input-group" label={t("Power Output (MWh)")}>
               <Input
                 type="number"
                 value={powerOutput}
                 onChange={(e) => setPowerOutput(e.target.value)}
               />
             </Field>
-            <Field className="input-group" label="Method">
+            <Field className="input-group" label={t("Method")}>
               <NativeSelect
                 className="component-select"
                 value={allocationMethod}
                 onChange={(e) => setAllocationMethod(e.target.value)}
               >
-                <option value="wri_efficiency">WRI Efficiency</option>
-                <option value="energy_content">Energy Content</option>
+                <option value="wri_efficiency">{t("WRI Efficiency")}</option>
+                <option value="energy_content">{t("Energy Content")}</option>
               </NativeSelect>
             </Field>
             {allocationMethod === "wri_efficiency" && (
               <>
-                <Field className="input-group" label="Heat Efficiency (%)">
+                <Field className="input-group" label={t("Heat Efficiency (%)")}>
                   <Input
                     type="number"
                     min="1"
@@ -276,7 +277,7 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
                     onChange={(e) => setHeatEff(e.target.value)}
                   />
                 </Field>
-                <Field className="input-group" label="Power Efficiency (%)">
+                <Field className="input-group" label={t("Power Efficiency (%)")}>
                   <Input
                     type="number"
                     min="1"
@@ -295,14 +296,14 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
 
     {/* 3. ACTIVITY DATA */}
     <div className="mb-[10px]!">
-      <h4 className="section-title">3. ACTIVITY DATA</h4>
+      <h4 className="section-title">{t("3. ACTIVITY DATA")}</h4>
       <div className="form-grid-2">
         <Field
           className="input-group"
           label={
             sourceType === "cogen_allocation"
-              ? "Total Facility Emissions (tCO2e)"
-              : "Usage Amount"
+              ? t("Total Facility Emissions (tCO2e)")
+              : t("Usage Amount")
           }
         >
           <Input
@@ -313,7 +314,7 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
           />
         </Field>
         <div className="input-group">
-          <label>Unit</label>
+          <label>{t("Unit")}</label>
           <CustomDropdown
             options={unitOptions}
             value={unit}
@@ -330,7 +331,7 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
         disabled={submitting}
         onClick={() => handleAddEntry("Draft")}
       >
-        {submitting ? "Saving..." : "Save as Draft (Maker Mode)"}
+        {submitting ? t("Saving...") : t("Save as Draft (Maker Mode)")}
       </button>
       <button
         type="button"
@@ -338,7 +339,7 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
         disabled={submitting}
         onClick={() => handleAddEntry("Verified")}
       >
-        {submitting ? "Processing..." : "+ Calculate & Submit for Review"}
+        {submitting ? t("Processing...") : t("+ Calculate & Submit for Review")}
       </button>
     </div>
   </div>

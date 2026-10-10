@@ -6,6 +6,7 @@ import { Badge, SegmentedControl } from "../../ui";
 import { BarChart, LineChart } from "../../components/charts";
 import { formatNumber } from "../../utils/formatters";
 import { ChartCard, Heatmap, type HeatmapRow } from "../intensity/IntensityParts";
+import { t } from "../../i18n";
 
 const th = "whitespace-nowrap border-b-2 border-border px-4 py-3 text-left text-sm font-semibold uppercase tracking-wide text-text-secondary";
 const td = "border-b border-border px-4 py-3.5 text-text";
@@ -23,14 +24,14 @@ export const CbamSection: React.FC<CbamSectionProps> = ({ products, facilities }
     className="cbam-section"
     title={
       <span className="flex items-center gap-2">
-        <FileText className="size-5 text-brand-500" aria-hidden="true" /> EU CBAM Product Specific Embedded Emissions
+        <FileText className="size-5 text-brand-500" aria-hidden="true" />{" "}{t("EU CBAM Product Specific Embedded Emissions")}
       </span>
     }
-    subtitle="Direct & indirect specific embedded emissions per export product (EU Regulation 2023/956)"
-    actions={<Badge tone="brand" className="cbam-benchmark-badge max-w-full shrink whitespace-normal px-3.5 py-1.5 text-sm">EU ETS Benchmark (Product-Specific): ~0.025 - 1.2 tCO₂e/t</Badge>}
+    subtitle={t("Direct & indirect specific embedded emissions per export product (EU Regulation 2023/956)")}
+    actions={<Badge tone="brand" className="cbam-benchmark-badge max-w-full shrink whitespace-normal px-3.5 py-1.5 text-sm">{t("EU ETS Benchmark (Product-Specific): ~0.025 - 1.2 tCO₂e/t")}</Badge>}
   >
     {products.length > 0 ? (
-      <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="CBAM embedded emissions by product">
+      <div className="overflow-x-auto" tabIndex={0} role="region" aria-label={t("CBAM embedded emissions by product")}>
         <table className="custom-table w-full border-collapse text-base">
           <thead>
             <tr>
@@ -75,7 +76,7 @@ export const CbamSection: React.FC<CbamSectionProps> = ({ products, facilities }
       </div>
     ) : (
       <p className="m-0 px-5 py-10 text-center text-base text-text-secondary">
-        No CBAM product export records registered for the selected filters. Track exports via <strong>Manage Data &gt; CBAM Products</strong>.
+        {t("No CBAM product export records registered for the selected filters. Track exports via")}{" "}<strong>{t("Manage Data > CBAM Products")}</strong>.
       </p>
     )}
   </ChartCard>
@@ -97,10 +98,10 @@ export const RegionalCharts: React.FC<RegionalChartsProps> = ({ data, gwpHorizon
   const named = (fn: (d: any) => any) => data.map((d) => ({ id: d.facility_id, name: d.facility_name, ...fn(d) }));
   return (
     <div className="chart-grid grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(100%,450px),1fr))]">
-      <ChartCard className="card" title="GHG Intensity by Facility (kg CO₂e / BOE)" rule="var(--color-brand-500)">
+      <ChartCard className="card" title={t("GHG Intensity by Facility (kg CO₂e / BOE)")} rule="var(--color-brand-500)">
         <BarChart data={named((d) => ({ value: g20 ? d.co2_intensity_gwp20 || d.co2_intensity : d.co2_intensity }))} dataKey="value" xKey="name" horizontal sortDesc onSelect={openRecords} selectLabel={(r) => `Open ${r.name} records`} exportName="ghg-intensity-by-facility" color="var(--color-brand-500)" />
       </ChartCard>
-      <ChartCard className="card" title="Scope 1 Direct vs Scope 2 Intensity" rule="var(--color-blue-600)">
+      <ChartCard className="card" title={t("Scope 1 Direct vs Scope 2 Intensity")} rule="var(--color-blue-600)">
         <BarChart
             data={named((d) => ({
               scope1: Number(((g20 ? d.scope1_intensity_gwp20 || d.scope1_intensity : d.scope1_intensity) || 0).toFixed(2)),
@@ -114,10 +115,10 @@ export const RegionalCharts: React.FC<RegionalChartsProps> = ({ data, gwpHorizon
             exportName="scope1-vs-scope2-intensity-by-facility"
           />
       </ChartCard>
-      <ChartCard className="card" title="Oil BOE Contribution by Facility" rule="var(--color-legacy-ea580c)">
+      <ChartCard className="card" title={t("Oil BOE Contribution by Facility")} rule="var(--color-legacy-ea580c)">
         <BarChart data={named((d) => ({ value: d.total_oil || 0 }))} dataKey="value" xKey="name" horizontal sortDesc onSelect={openRecords} selectLabel={(r) => `Open ${r.name} records`} exportName="oil-boe-by-facility" color="var(--color-legacy-ea580c)" />
       </ChartCard>
-      <ChartCard className="card" title="Gas BOE Contribution by Facility" rule="var(--color-violet-500)">
+      <ChartCard className="card" title={t("Gas BOE Contribution by Facility")} rule="var(--color-violet-500)">
         <BarChart data={named((d) => ({ value: (d.total_gas || 0) * GAS_TO_BOE }))} dataKey="value" xKey="name" horizontal sortDesc onSelect={openRecords} selectLabel={(r) => `Open ${r.name} records`} exportName="gas-boe-by-facility" color="var(--color-violet-500)" />
       </ChartCard>
     </div>
@@ -150,16 +151,16 @@ export const TrendSection: React.FC<TrendSectionProps> = ({ view, onView, trendC
   return (
     <ChartCard
       className="trend-section"
-      title="Historical Carbon Intensity Trends"
-      subtitle="5-Year Performance Track (kg CO₂e / BOE)"
+      title={t("Historical Carbon Intensity Trends")}
+      subtitle={t("5-Year Performance Track (kg CO₂e / BOE)")}
       actions={
         <SegmentedControl
-          label="Trend view"
+          label={t("Trend view")}
           value={view}
           onChange={onView}
           options={[
-            { value: "chart", className: "view-btn", label: <span className="inline-flex items-center gap-1.5"><BarChart2 className="size-4" aria-hidden="true" /> Chart</span> },
-            { value: "heatmap", className: "view-btn", label: <span className="inline-flex items-center gap-1.5"><Grid className="size-4" aria-hidden="true" /> Heatmap</span> },
+            { value: "chart", className: "view-btn", label: <span className="inline-flex items-center gap-1.5"><BarChart2 className="size-4" aria-hidden="true" />{" "}{t("Chart")}</span> },
+            { value: "heatmap", className: "view-btn", label: <span className="inline-flex items-center gap-1.5"><Grid className="size-4" aria-hidden="true" />{" "}{t("Heatmap")}</span> },
           ]}
         />
       }

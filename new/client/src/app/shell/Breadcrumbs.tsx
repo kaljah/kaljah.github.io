@@ -2,7 +2,8 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import { useLayout } from "../../context/LayoutContext";
-import { findRoute } from "../routes.config";
+import { NAV_GROUP_LABEL, findRoute } from "../routes.config";
+import { t } from "../../i18n";
 
 interface Crumb {
   label: React.ReactNode;
@@ -17,12 +18,12 @@ const Breadcrumbs: React.FC = () => {
   if (!route) return null;
 
   const crumbs: Crumb[] = [];
-  if (route.group) crumbs.push({ label: route.group });
+  if (route.group) crumbs.push({ label: NAV_GROUP_LABEL[route.group] });
   crumbs.push({ label: route.title, to: breadcrumbExtra ? route.path : undefined });
   if (breadcrumbExtra) crumbs.push({ label: breadcrumbExtra });
 
   return (
-    <nav aria-label="Breadcrumb" className="min-w-0">
+    <nav aria-label={t("Breadcrumb")} className="min-w-0">
       <ol className="m-0 flex min-w-0 list-none items-center gap-1.5 overflow-hidden whitespace-nowrap p-0 text-base">
         {crumbs.map((c, i) => {
           const last = i === crumbs.length - 1;

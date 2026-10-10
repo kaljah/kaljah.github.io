@@ -10,6 +10,7 @@ import {
   Legend,
 } from "recharts";
 import "./ChartWrappers.css";
+import { t } from "../../i18n";
 
 const DEFAULT_LINE_COLORS = [
   "var(--color-brand-500)", // Core orange
@@ -86,7 +87,7 @@ export const LineChart: React.FC<LineChartProps> = ({
           <div className="tooltip-header">
             <span className="tooltip-label">{xVal}</span>
             <span className="tooltip-badge">
-              {payload.length} {payload.length === 1 ? "metric" : "metrics"}
+              {payload.length} {payload.length === 1 ? t("metric") : t("metrics")}
             </span>
           </div>
           <div className="tooltip-items-list">
@@ -168,7 +169,7 @@ export const LineChart: React.FC<LineChartProps> = ({
               <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
             </svg>
           </div>
-          <span>No trend data available</span>
+          <span>{t("No trend data available")}</span>
         </div>
       </div>
     );

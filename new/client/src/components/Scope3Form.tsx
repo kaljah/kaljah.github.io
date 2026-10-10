@@ -11,6 +11,7 @@ import ConfirmModal from "./ConfirmModal";
 import Scope3FormNewScope3 from "./scope3-form/Scope3FormNewScope3";
 import Scope3FormCalculatorGridContainer, { Scope3GridEntry } from "./scope3-form/Scope3FormCalculatorGridContainer";
 import "./ScopeTables.css";
+import { t } from "../i18n";
 
 interface FacilityOption {
   id: string | number;
@@ -190,7 +191,7 @@ export const Scope3Form: React.FC = () => {
       }
     } catch (error) {
       console.error("Failed to load facilities:", error);
-      toast.error("Failed to load regions");
+      toast.error(t("Failed to load regions"));
     }
   };
 
@@ -217,7 +218,7 @@ export const Scope3Form: React.FC = () => {
     } catch (error) {
       console.error("Failed to load entries:", error);
       setLoadError(true);
-      toast.error("Failed to load Scope 3 data");
+      toast.error(t("Failed to load Scope 3 data"));
     }
   };
 
@@ -231,7 +232,7 @@ export const Scope3Form: React.FC = () => {
       !amount ||
       !emissionFactor
     ) {
-      toast.warning("Please fill in all required fields");
+      toast.warning(t("Please fill in all required fields"));
       return;
     }
 
@@ -258,15 +259,15 @@ export const Scope3Form: React.FC = () => {
       await api.post("/scope3", payload);
       toast.success(
         status === "Draft"
-          ? "Entry saved as draft"
-          : "Scope 3 entry added successfully",
+          ? t("Entry saved as draft")
+          : t("Scope 3 entry added successfully"),
       );
       setAmount("");
       setCurrentPage(1);
       loadEntries();
     } catch (error) {
       console.error("Failed to add entry:", error);
-      toast.error("Failed to add entry");
+      toast.error(t("Failed to add entry"));
     } finally {
       setSubmitting(false);
     }
@@ -309,7 +310,7 @@ export const Scope3Form: React.FC = () => {
 
   const handleImportSuccess = () => {
     loadEntries();
-    toast.success("Records imported successfully!");
+    toast.success(t("Records imported successfully!"));
   };
 
   const handleDelete = (id: string | number) => {
@@ -321,46 +322,46 @@ export const Scope3Form: React.FC = () => {
     setIsDeleting(true);
     try {
       await api.delete(`/scope3/${deleteTargetId}`);
-      toast.success("Entry deleted");
+      toast.success(t("Entry deleted"));
       setDeleteTargetId(null);
       loadEntries();
     } catch (error) {
       console.error("Failed to delete:", error);
-      toast.error("Failed to delete entry");
+      toast.error(t("Failed to delete entry"));
     } finally {
       setIsDeleting(false);
     }
   };
 
   const getCategoryOptions = () => [
-    { value: "", label: "Select Category..." },
-    { value: "1", label: "Cat 1: Purchased Goods & Services" },
-    { value: "2", label: "Cat 2: Capital Goods" },
-    { value: "3", label: "Cat 3: Fuel & Energy-Related" },
-    { value: "4", label: "Cat 4: Upstream Transportation" },
-    { value: "5", label: "Cat 5: Waste Generated" },
-    { value: "6", label: "Cat 6: Business Travel" },
-    { value: "7", label: "Cat 7: Employee Commuting" },
-    { value: "8", label: "Cat 8: Upstream Leased Assets" },
-    { value: "9", label: "Cat 9: Downstream Transportation" },
-    { value: "10", label: "Cat 10: Processing of Sold Products" },
-    { value: "11", label: "Cat 11: Use of Sold Products" },
-    { value: "12", label: "Cat 12: End-of-Life Treatment" },
-    { value: "13", label: "Cat 13: Downstream Leased Assets" },
-    { value: "14", label: "Cat 14: Franchises" },
-    { value: "15", label: "Cat 15: Investments" },
+    { value: "", label: t("Select Category...") },
+    { value: "1", label: t("Cat 1: Purchased Goods & Services") },
+    { value: "2", label: t("Cat 2: Capital Goods") },
+    { value: "3", label: t("Cat 3: Fuel & Energy-Related") },
+    { value: "4", label: t("Cat 4: Upstream Transportation") },
+    { value: "5", label: t("Cat 5: Waste Generated") },
+    { value: "6", label: t("Cat 6: Business Travel") },
+    { value: "7", label: t("Cat 7: Employee Commuting") },
+    { value: "8", label: t("Cat 8: Upstream Leased Assets") },
+    { value: "9", label: t("Cat 9: Downstream Transportation") },
+    { value: "10", label: t("Cat 10: Processing of Sold Products") },
+    { value: "11", label: t("Cat 11: Use of Sold Products") },
+    { value: "12", label: t("Cat 12: End-of-Life Treatment") },
+    { value: "13", label: t("Cat 13: Downstream Leased Assets") },
+    { value: "14", label: t("Cat 14: Franchises") },
+    { value: "15", label: t("Cat 15: Investments") },
   ];
 
   const getActivityOptions = () => {
     const activities = (CATEGORY_ACTIVITIES as Record<string, any[]>)[category];
     if (!activities) {
-      return [{ value: "", label: "Select category first..." }];
+      return [{ value: "", label: t("Select category first...") }];
     }
     return activities.map((a: any) => ({ value: a.value, label: a.value }));
   };
 
   const getFacilityOptions = () => [
-    { value: "", label: "Select Facility..." },
+    { value: "", label: t("Select Facility...") },
     ...facilities.map((f) => ({
       value: f.id.toString(),
       label: f.name,
@@ -428,7 +429,7 @@ export const Scope3Form: React.FC = () => {
           onUploadSuccess={() => {
             setShowWizard(false);
             loadEntries();
-            toast.success("Bulk import completed successfully");
+            toast.success(t("Bulk import completed successfully"));
           }}
         />
       )}
@@ -442,9 +443,9 @@ export const Scope3Form: React.FC = () => {
 
       <ConfirmModal
         isOpen={!!deleteTargetId}
-        title="Delete Scope 3 Entry"
-        message="Are you sure you want to delete this Scope 3 entry? This calculation record will be permanently removed."
-        confirmLabel="Delete Record"
+        title={t("Delete Scope 3 Entry")}
+        message={t("Are you sure you want to delete this Scope 3 entry? This calculation record will be permanently removed.")}
+        confirmLabel={t("Delete Record")}
         confirmVariant="danger"
         loading={isDeleting}
         onConfirm={handleConfirmDelete}

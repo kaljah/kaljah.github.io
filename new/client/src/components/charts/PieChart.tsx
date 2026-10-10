@@ -7,6 +7,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import "./ChartWrappers.css";
+import { t } from "../../i18n";
 
 const MODERN_PALETTE = [
   "var(--color-brand-500)", // Core brand orange
@@ -134,7 +135,7 @@ export const PieChart: React.FC<PieChartProps> = ({
                   className="tooltip-color-dot circle"
                   style={{ backgroundColor: itemColor }}
                 />
-                <span>Value</span>
+                <span>{t("Value")}</span>
               </div>
               <div className="tooltip-item-right">
                 <span>{valueFormatter(val)}</span>
@@ -177,7 +178,7 @@ export const PieChart: React.FC<PieChartProps> = ({
               <path d="M22 12A10 10 0 0 0 12 2v10z" />
             </svg>
           </div>
-          <span>No distribution data available</span>
+          <span>{t("No distribution data available")}</span>
         </div>
       </div>
     );
@@ -250,9 +251,9 @@ export const PieChart: React.FC<PieChartProps> = ({
           <div className="donut-center-kpi">
             <span
               className="donut-center-label"
-              title={activeItem ? activeItem[nameKey] : centerLabel || "Total"}
+              title={activeItem ? activeItem[nameKey] : centerLabel || t("Total")}
             >
-              {activeItem ? activeItem[nameKey] : centerLabel || "Total"}
+              {activeItem ? activeItem[nameKey] : centerLabel || t("Total")}
             </span>
             <span className="donut-center-val">
               {activeItem

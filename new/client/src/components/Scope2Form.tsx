@@ -13,6 +13,7 @@ import Scope2FormCalculatorGridContainer, {
   Scope2GridEntry,
 } from "./scope2-form/Scope2FormCalculatorGridContainer";
 import "./ScopeTables.css";
+import { t } from "../i18n";
 
 export const Scope2Form: React.FC = () => {
   const { user } = useAuth();
@@ -101,7 +102,7 @@ export const Scope2Form: React.FC = () => {
       }
     } catch (error) {
       console.error("Failed to load regions:", error);
-      toast.error("Failed to load regions");
+      toast.error(t("Failed to load regions"));
     }
   };
 
@@ -139,7 +140,7 @@ export const Scope2Form: React.FC = () => {
     } catch (error) {
       console.error("Failed to load entries:", error);
       setLoadError(true);
-      toast.error("Failed to load Scope 2 data");
+      toast.error(t("Failed to load Scope 2 data"));
     } finally {
       setLoading(false);
     }
@@ -149,16 +150,16 @@ export const Scope2Form: React.FC = () => {
   // and submit is blocked when it is not one of the displayed options
   const UNIT_OPTIONS: Record<string, Array<{ value: string; label: string }>> = {
     electricity: [
-      { value: "kWh", label: "kWh" },
-      { value: "MWh", label: "MWh" },
-      { value: "GWh", label: "GWh" },
+      { value: "kWh", label: t("kWh") },
+      { value: "MWh", label: t("MWh") },
+      { value: "GWh", label: t("GWh") },
     ],
     indirect_steam: [
-      { value: "btu", label: "Btu" },
-      { value: "mmbtu", label: "MMBtu" },
+      { value: "btu", label: t("Btu") },
+      { value: "mmbtu", label: t("MMBtu") },
       { value: "mj", label: "MJ" },
     ],
-    cogen_allocation: [{ value: "tonnes", label: "Tonnes CO2e" }],
+    cogen_allocation: [{ value: "tonnes", label: t("Tonnes CO2e") }],
   };
   const DEFAULT_UNIT: Record<string, string> = {
     electricity: "kWh",
@@ -173,12 +174,12 @@ export const Scope2Form: React.FC = () => {
 
   const handleAddEntry = async (status = "Verified") => {
     if (!year || !month || !facilityId || (sourceType === "electricity" && !gridRegion) || !amount) {
-      toast.warning("Please fill in all required fields");
+      toast.warning(t("Please fill in all required fields"));
       return;
     }
 
     if (!unitOptions.some((o) => o.value === unit)) {
-      toast.warning("Please select a unit");
+      toast.warning(t("Please select a unit"));
       return;
     }
 
@@ -186,7 +187,7 @@ export const Scope2Form: React.FC = () => {
       setSubmitting(true);
       const val = parseFloat(amount);
       if (val <= 0 && sourceType !== "cogen_allocation") {
-        toast.warning("Please enter a valid usage amount");
+        toast.warning(t("Please enter a valid usage amount"));
         return;
       }
 
@@ -249,13 +250,13 @@ export const Scope2Form: React.FC = () => {
       }
 
       await api.post("/scope2", payload);
-      toast.success(status === "Draft" ? "Entry saved as draft" : "Scope 2 entry added successfully");
+      toast.success(status === "Draft" ? t("Entry saved as draft") : t("Scope 2 entry added successfully"));
       setAmount("");
       setCurrentPage(1);
       loadEntries();
     } catch (error) {
       console.error("Failed to add entry:", error);
-      toast.error("Failed to add Scope 2 entry");
+      toast.error(t("Failed to add Scope 2 entry"));
     } finally {
       setSubmitting(false);
     }
@@ -310,7 +311,7 @@ export const Scope2Form: React.FC = () => {
 
   const handleImportSuccess = () => {
     loadEntries();
-    toast.success("Records imported successfully!");
+    toast.success(t("Records imported successfully!"));
   };
 
   const handleDelete = (id: string | number) => {
@@ -322,12 +323,12 @@ export const Scope2Form: React.FC = () => {
     setIsDeleting(true);
     try {
       await api.delete(`/scope2/${deleteTargetId}`);
-      toast.success("Entry deleted");
+      toast.success(t("Entry deleted"));
       setDeleteTargetId(null);
       loadEntries();
     } catch (error) {
       console.error("Failed to delete:", error);
-      toast.error("Failed to delete entry");
+      toast.error(t("Failed to delete entry"));
     } finally {
       setIsDeleting(false);
     }
@@ -347,7 +348,7 @@ export const Scope2Form: React.FC = () => {
   };
 
   const getFacilityOptions = () => [
-    { value: "", label: "Select Region..." },
+    { value: "", label: t("Select Region...") },
     ...facilities.map((f) => ({
       value: f.id.toString(),
       label: f.name,
@@ -356,7 +357,7 @@ export const Scope2Form: React.FC = () => {
   ];
 
   const getGridOptions = () => [
-    { value: "", label: "Select Grid Region..." },
+    { value: "", label: t("Select Grid Region...") },
     ...gridFactors.map((f) => ({ value: f.region, label: f.region })),
   ];
 
@@ -434,7 +435,7 @@ export const Scope2Form: React.FC = () => {
           onUploadSuccess={() => {
             setShowWizard(false);
             loadEntries();
-            toast.success("Bulk import completed successfully");
+            toast.success(t("Bulk import completed successfully"));
           }}
         />
       )}
@@ -448,9 +449,9 @@ export const Scope2Form: React.FC = () => {
 
       <ConfirmModal
         isOpen={!!deleteTargetId}
-        title="Delete Scope 2 Entry"
-        message="Are you sure you want to delete this Scope 2 entry? This calculation record will be permanently removed."
-        confirmLabel="Delete Record"
+        title={t("Delete Scope 2 Entry")}
+        message={t("Are you sure you want to delete this Scope 2 entry? This calculation record will be permanently removed.")}
+        confirmLabel={t("Delete Record")}
         confirmVariant="danger"
         loading={isDeleting}
         onConfirm={handleConfirmDelete}

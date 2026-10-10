@@ -9,6 +9,7 @@ import { useAuth } from "../context/AuthContext";
 import { useToast } from "../components/Toast";
 import ConfirmModal from "../components/ConfirmModal";
 import { tint } from "../utils/colorMix";
+import { t } from "../i18n";
 
 /* ─── tiny keyframe injection ─────────────────────────────────────────────── */
 const STYLE_ID = "um-keyframes";
@@ -38,19 +39,19 @@ const aa = (c: string) => AA_TEXT[c] || c;
 /* ─── role metadata ────────────────────────────────────────────────────────── */
 const ROLE_META: Record<string, RoleMeta> = {
   admin: {
-    label: "Admin",
+    label: t("Admin"),
     color: "var(--color-green-700)",
     bg: "var(--color-green-50)",
     border: "rgba(16,185,129,.25)",
   },
   it_admin: {
-    label: "IT Manager",
+    label: t("IT Manager"),
     color: "var(--color-amber-700)",
     bg: "var(--color-amber-50)",
     border: "rgba(245,158,11,.25)",
   },
   it_manager: {
-    label: "IT Manager",
+    label: t("IT Manager"),
     color: "var(--color-amber-700)",
     bg: "var(--color-amber-50)",
     border: "rgba(245,158,11,.25)",
@@ -62,13 +63,13 @@ const ROLE_META: Record<string, RoleMeta> = {
     border: "rgba(2,132,199,.25)",
   },
   superuser: {
-    label: "Super User",
+    label: t("Super User"),
     color: "var(--color-violet-700)",
     bg: "var(--color-legacy-f3e8ff)",
     border: "rgba(139,92,246,.25)",
   },
   user: {
-    label: "User",
+    label: t("User"),
     color: "var(--color-blue-700)",
     bg: "var(--color-blue-50)",
     border: "rgba(59,130,246,.25)",
@@ -470,7 +471,7 @@ const UserManagement: React.FC = () => {
         setUsers(serverUsers);
       }
     } catch {
-      if (!silent) toast.error("Failed to load users");
+      if (!silent) toast.error(t("Failed to load users"));
     }
 
     // --- Regions call (independent) ---
@@ -480,7 +481,7 @@ const UserManagement: React.FC = () => {
       setRegions(Array.isArray(data) ? data : []);
     } catch {
       setRegions([]);
-      if (!silent) toast.error("Failed to load facility regions");
+      if (!silent) toast.error(t("Failed to load facility regions"));
     }
 
     if (!silent) setLoading(false);
@@ -527,20 +528,20 @@ const UserManagement: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (user?.role === "it") {
-      toast.error("IT role cannot modify user accounts or profiles.");
+      toast.error(t("IT role cannot modify user accounts or profiles."));
       return;
     }
     try {
       if (editingUser) {
         if (!formData.fullName.trim()) {
-          toast.error("Full Name is required.");
+          toast.error(t("Full Name is required."));
           return;
         }
         if (
           !formData.email.trim() ||
           !/^[^@]+@[^@]+\.[^@]+$/.test(formData.email)
         ) {
-          toast.error("A valid Email address is required.");
+          toast.error(t("A valid Email address is required."));
           return;
         }
 
@@ -577,22 +578,22 @@ const UserManagement: React.FC = () => {
             ),
           );
         }
-        toast.success("User updated successfully");
+        toast.success(t("User updated successfully"));
       } else {
         // ── All validation done in JS (no native HTML5 `required`) ──
         if (!formData.fullName.trim()) {
-          toast.error("Full Name is required.");
+          toast.error(t("Full Name is required."));
           return;
         }
         if (
           !formData.email.trim() ||
           !/^[^@]+@[^@]+\.[^@]+$/.test(formData.email)
         ) {
-          toast.error("A valid Email address is required.");
+          toast.error(t("A valid Email address is required."));
           return;
         }
         if (!formData.password || formData.password.length < 10) {
-          toast.error("Password must be at least 10 characters.");
+          toast.error(t("Password must be at least 10 characters."));
           return;
         }
         if (
@@ -601,8 +602,8 @@ const UserManagement: React.FC = () => {
         ) {
           toast.error(
             regions.length === 0
-              ? "No regions loaded — restart the server and reload the page."
-              : "Please select an Assigned Region for this user.",
+              ? t("No regions loaded — restart the server and reload the page.")
+              : t("Please select an Assigned Region for this user."),
           );
           return;
         }
@@ -621,7 +622,7 @@ const UserManagement: React.FC = () => {
           created_at: new Date().toISOString(),
         };
         setUsers((prev) => [newUser, ...prev]);
-        toast.success("User created successfully");
+        toast.success(t("User created successfully"));
       }
       setIsModalOpen(false);
       // Delay background sync slightly so optimistic row renders first,
@@ -643,7 +644,7 @@ const UserManagement: React.FC = () => {
 
   const handleDelete = (target: number | string | ManagedUser) => {
     if (user?.role === "it") {
-      toast.error("IT role cannot delete users.");
+      toast.error(t("IT role cannot delete users."));
       return;
     }
     // Accepts either user object or user id
@@ -657,7 +658,7 @@ const UserManagement: React.FC = () => {
 
   const handleConfirmDelete = async () => {
     if (user?.role === "it") {
-      toast.error("IT role cannot delete users.");
+      toast.error(t("IT role cannot delete users."));
       return;
     }
     if (!deleteTargetUser?.id) return;
@@ -666,11 +667,11 @@ const UserManagement: React.FC = () => {
     try {
       await api.delete(`/auth/users/${targetId}`);
       setUsers((prev) => prev.filter((u) => u.id !== targetId));
-      toast.success("User deleted");
+      toast.success(t("User deleted"));
       setDeleteTargetUser(null);
       fetchData(true);
     } catch (error: any) {
-      toast.error(error.response?.data?.error || "Failed to delete user");
+      toast.error(error.response?.data?.error || t("Failed to delete user"));
       fetchData(true);
     } finally {
       setDeleteLoading(false);
@@ -695,18 +696,18 @@ const UserManagement: React.FC = () => {
     e.preventDefault();
     if (!resetTarget) return;
     if (!resetPwd || resetPwd.length < 10) {
-      toast.error("Password must be at least 10 characters.");
+      toast.error(t("Password must be at least 10 characters."));
       return;
     }
     // Basic complexity
-    if (!/[A-Z]/.test(resetPwd)) { toast.error("Password needs an uppercase letter."); return; }
-    if (!/[a-z]/.test(resetPwd)) { toast.error("Password needs a lowercase letter."); return; }
-    if (!/[0-9]/.test(resetPwd)) { toast.error("Password needs a digit."); return; }
+    if (!/[A-Z]/.test(resetPwd)) { toast.error(t("Password needs an uppercase letter.")); return; }
+    if (!/[a-z]/.test(resetPwd)) { toast.error(t("Password needs a lowercase letter.")); return; }
+    if (!/[0-9]/.test(resetPwd)) { toast.error(t("Password needs a digit.")); return; }
     if (!/[!@#$%^&*(),.?":{}<>\-_+=[\]\\/~`]/.test(resetPwd)) {
-      toast.error("Password needs a special character."); return;
+      toast.error(t("Password needs a special character.")); return;
     }
     if (resetPwd !== resetPwdConfirm) {
-      toast.error("Passwords do not match.");
+      toast.error(t("Passwords do not match."));
       return;
     }
     try {
@@ -715,7 +716,7 @@ const UserManagement: React.FC = () => {
       toast.success(`Password for ${resetTarget.fullName} has been reset successfully.`);
       setResetTarget(null);
     } catch (err: any) {
-      toast.error(err.response?.data?.error || "Failed to reset password.");
+      toast.error(err.response?.data?.error || t("Failed to reset password."));
     } finally {
       setResetLoading(false);
     }
@@ -728,10 +729,10 @@ const UserManagement: React.FC = () => {
           <Lock size={52} strokeWidth={1.5} aria-hidden="true" />
         </div>
         <h2 className="text-[color:var(--text-primary)]! m-[0_0_8px]!">
-          Unauthorized
+          {t("Unauthorized")}
         </h2>
         <p className="text-[color:var(--text-secondary)]!">
-          You do not have permission to access the IT Management portal.
+          {t("You do not have permission to access the IT Management portal.")}
         </p>
       </div>
     );
@@ -780,39 +781,39 @@ const UserManagement: React.FC = () => {
         <div style={S.heroLeft}>
           <span style={S.badge}>
             <span style={S.pulseDot} />
-            {isITOnly ? "IT CREDENTIALS CONSOLE" : "IT MANAGER CONSOLE"}
+            {isITOnly ? t("IT CREDENTIALS CONSOLE") : t("IT MANAGER CONSOLE")}
           </span>
-          <h1 style={S.pageTitle}>User Management</h1>
+          <h1 style={S.pageTitle}>{t("User Management")}</h1>
           <p style={S.pageSubtitle}>
             {isITOnly
-              ? "Modify user passwords and manage credentials"
-              : "Manage identities, roles, and regional workspace access"}
+              ? t("Modify user passwords and manage credentials")
+              : t("Manage identities, roles, and regional workspace access")}
           </p>
         </div>
         <div style={S.heroRight}>
           <NativeSelect
             id="um-filter-role"
-            aria-label="Filter by role"
+            aria-label={t("Filter by role")}
             value={filterRole}
             onChange={(e) => setFilterRole(e.target.value)}
             style={S.select}
           >
-            <option value="">All Roles</option>
-            <option value="user">Standard User</option>
-            <option value="superuser">Super User</option>
-            <option value="admin">Admin</option>
-            <option value="it_manager">IT Manager</option>
+            <option value="">{t("All Roles")}</option>
+            <option value="user">{t("Standard User")}</option>
+            <option value="superuser">{t("Super User")}</option>
+            <option value="admin">{t("Admin")}</option>
+            <option value="it_manager">{t("IT Manager")}</option>
             <option value="it">IT</option>
           </NativeSelect>
 
           <NativeSelect
             id="um-filter-region"
-            aria-label="Filter by region"
+            aria-label={t("Filter by region")}
             value={filterRegion}
             onChange={(e) => setFilterRegion(e.target.value)}
             style={S.select}
           >
-            <option value="">All Regions</option>
+            <option value="">{t("All Regions")}</option>
             {regions.map((r) => (
               <option key={r} value={r}>
                 {r}
@@ -837,7 +838,7 @@ const UserManagement: React.FC = () => {
               }}
             >
               <Plus size={16} strokeWidth={2.5} aria-hidden="true" />
-              Add New User
+              {t("Add New User")}
             </button>
           )}
         </div>
@@ -847,35 +848,35 @@ const UserManagement: React.FC = () => {
       <div style={S.statsRow}>
         {[
           {
-            label: "Total Users",
+            label: t("Total Users"),
             value: totalUsers,
             icon: <UsersIcon size={20} strokeWidth={2} aria-hidden="true" />,
             color: "var(--color-legacy-6366f1)",
             bg: "var(--color-legacy-eef2ff)",
           },
           {
-            label: "Standard Users",
+            label: t("Standard Users"),
             value: standardCount,
             icon: <UserIcon size={20} strokeWidth={2} aria-hidden="true" />,
             color: "var(--color-blue-500)",
             bg: "var(--color-blue-50)",
           },
           {
-            label: "Admins",
+            label: t("Admins"),
             value: adminCount,
             icon: <ShieldIcon size={20} strokeWidth={2} aria-hidden="true" />,
             color: "var(--color-green-500)",
             bg: "var(--color-green-50)",
           },
           {
-            label: "IT Admins",
+            label: t("IT Admins"),
             value: itAdminCount,
             icon: <WrenchIcon size={20} strokeWidth={2} aria-hidden="true" />,
             color: "var(--color-amber-500)",
             bg: "var(--color-amber-50)",
           },
           {
-            label: "Regions",
+            label: t("Regions"),
             value: regions.length,
             icon: <Globe size={20} aria-hidden="true" />,
             color: "var(--color-brand-500)",
@@ -955,9 +956,9 @@ const UserManagement: React.FC = () => {
 
       <ConfirmModal
         isOpen={!!deleteTargetUser}
-        title="Revoke User Access"
+        title={t("Revoke User Access")}
         message={`Are you sure you want to permanently revoke access for ${deleteTargetUser?.fullName ? `"${deleteTargetUser.fullName}"` : "this user"} (${deleteTargetUser?.email || "selected account"})? This action cannot be undone.`}
-        confirmLabel="Revoke Access"
+        confirmLabel={t("Revoke Access")}
         confirmVariant="danger"
         loading={deleteLoading}
         onConfirm={handleConfirmDelete}

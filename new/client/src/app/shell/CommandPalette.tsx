@@ -6,7 +6,8 @@ import { Calculator, CornerDownLeft, Search } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { ACCESS } from "../access";
 import { readRecent } from "../recentPages";
-import { ROUTES, type AppRoute } from "../routes.config";
+import { NAV_GROUP_LABEL, ROUTES, type AppRoute } from "../routes.config";
+import { t } from "../../i18n";
 
 const itemClass =
   "flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-base text-text data-[selected=true]:bg-ink-100";
@@ -32,10 +33,10 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onOpenChange }) =
 
   const actions = ACCESS.nonIT(user)
     ? [
-        { label: "New Scope 1 entry", to: "/emissions?scope=scope1" },
-        { label: "New Scope 2 entry", to: "/emissions?scope=scope2" },
-        { label: "New Scope 3 entry", to: "/emissions?scope=scope3" },
-        { label: "Manage custom emission factors", to: "/manage-data" },
+        { label: t("New Scope 1 entry"), to: "/emissions?scope=scope1" },
+        { label: t("New Scope 2 entry"), to: "/emissions?scope=scope2" },
+        { label: t("New Scope 3 entry"), to: "/emissions?scope=scope3" },
+        { label: t("Manage custom emission factors"), to: "/manage-data" },
       ]
     : [];
 
@@ -47,20 +48,20 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onOpenChange }) =
           aria-describedby={undefined}
           className="fixed left-1/2 top-[15vh] z-(--z-modal) w-[calc(100vw-2rem)] max-w-xl -translate-x-1/2 overflow-hidden rounded-lg border border-border bg-surface shadow-overlay"
         >
-          <RadixDialog.Title className="sr-only">Search pages and actions</RadixDialog.Title>
-          <Command label="Search pages and actions">
+          <RadixDialog.Title className="sr-only">{t("Search pages and actions")}</RadixDialog.Title>
+          <Command label={t("Search pages and actions")}>
             <div className="flex items-center gap-2 border-b border-border px-4">
               <Search className="size-4 shrink-0 text-text-secondary" aria-hidden="true" />
               <Command.Input
                 autoFocus
-                placeholder="Search pages and actions"
+                placeholder={t("Search pages and actions")}
                 className="h-12 w-full bg-transparent text-md text-text outline-none placeholder:text-text-disabled"
               />
             </div>
             <Command.List className="max-h-80 overflow-y-auto p-2">
-              <Command.Empty className="px-3 py-6 text-center text-base text-text-secondary">No results</Command.Empty>
+              <Command.Empty className="px-3 py-6 text-center text-base text-text-secondary">{t("No results")}</Command.Empty>
               {recent.length > 0 && (
-                <Command.Group heading="Recent" className={headingClass}>
+                <Command.Group heading={t("Recent")} className={headingClass}>
                   {recent
                     .map((p) => pages.find((r) => r.path === p))
                     .filter((r): r is AppRoute => Boolean(r))
@@ -72,17 +73,17 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onOpenChange }) =
                     ))}
                 </Command.Group>
               )}
-              <Command.Group heading="Pages" className={headingClass}>
+              <Command.Group heading={t("Pages")} className={headingClass}>
                 {pages.map((r) => (
                   <Command.Item key={r.path} value={`${r.title} ${r.group ?? ""}`} onSelect={() => go(r.path)} className={itemClass}>
                     <r.icon className="size-4 text-text-secondary" aria-hidden="true" />
                     {r.title}
-                    {r.group && <span className="ml-auto text-sm text-text-secondary">{r.group}</span>}
+                    {r.group && <span className="ml-auto text-sm text-text-secondary">{NAV_GROUP_LABEL[r.group]}</span>}
                   </Command.Item>
                 ))}
               </Command.Group>
               {actions.length > 0 && (
-                <Command.Group heading="Actions" className={headingClass}>
+                <Command.Group heading={t("Actions")} className={headingClass}>
                   {actions.map((a) => (
                     <Command.Item key={a.label} value={a.label} onSelect={() => go(a.to)} className={itemClass}>
                       <Calculator className="size-4 text-text-secondary" aria-hidden="true" />

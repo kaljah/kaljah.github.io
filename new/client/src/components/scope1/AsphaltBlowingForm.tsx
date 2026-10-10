@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Input } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
+import { t } from "../../i18n";
 
 export interface Scope1SubFormProps {
   data: Record<string, any>;
@@ -21,7 +22,7 @@ export const AsphaltBlowingForm: React.FC<Scope1SubFormProps> = ({ data, onChang
     <div className="asphalt-blowing-form">
       <div className="form-grid-2">
         <div className="input-group">
-          <label>Process Emission Factor</label>
+          <label>{t("Process Emission Factor")}</label>
           <input
             type="text"
             className="mole-input readonly"
@@ -32,7 +33,7 @@ export const AsphaltBlowingForm: React.FC<Scope1SubFormProps> = ({ data, onChang
 
         <div className="input-group">
           <label>
-            Asphalt Blown Throughput
+            {t("Asphalt Blown Throughput")}
             <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
           </label>
           <div className="grid gap-[10px] [grid-template-columns:1fr_120px] max-[600px]:[grid-template-columns:1fr]">
@@ -45,9 +46,9 @@ export const AsphaltBlowingForm: React.FC<Scope1SubFormProps> = ({ data, onChang
             />
             <CustomDropdown
               options={[
-                { value: "tonne", label: "tonne" },
-                { value: "ton", label: "short ton" },
-                { value: "kg", label: "kg" },
+                { value: "tonne", label: t("tonne") },
+                { value: "ton", label: t("short ton") },
+                { value: "kg", label: t("kg") },
               ]}
               value={data.unit || "tonne"}
               onChange={(val) => onChange("unit", val)}

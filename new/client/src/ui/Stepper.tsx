@@ -1,6 +1,7 @@
 import React from "react";
 import { Check } from "lucide-react";
 import { cn } from "./cn";
+import { t } from "../i18n";
 
 export interface StepperProps {
   steps: string[];
@@ -10,7 +11,7 @@ export interface StepperProps {
 
 /** Wizard progress header. steps: string[]; current: zero-based index. */
 export const Stepper: React.FC<StepperProps> = ({ steps, current, className }) => (
-  <ol aria-label="Progress" className={cn("m-0 flex list-none items-center gap-2 p-0", className)}>
+  <ol aria-label={t("Progress")} className={cn("m-0 flex list-none items-center gap-2 p-0", className)}>
     {steps.map((label, i) => {
       const done = i < current;
       const active = i === current;

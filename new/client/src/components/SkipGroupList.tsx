@@ -1,4 +1,5 @@
 import React from "react";
+import { t } from "../i18n";
 
 // Skipped rows grouped by cause: count, the column to fix and how (server: services/import_feedback.py)
 export interface SkipGroup {
@@ -30,12 +31,12 @@ export const SkipGroupList: React.FC<SkipGroupListProps> = ({ groups, scale = 1,
               {fmt(Math.round(g.count * scale))}
             </span>
             <span className="font-semibold text-text">{g.title}</span>
-            {g.column && <span className="font-mono text-xs text-text-secondary">column: {g.column}</span>}
+            {g.column && <span className="font-mono text-xs text-text-secondary">{t("column:")}{" "}{g.column}</span>}
           </div>
-          {g.fix && <p className="m-0 mt-1 text-text-secondary">How to fix: {g.fix}</p>}
+          {g.fix && <p className="m-0 mt-1 text-text-secondary">{t("How to fix:")}{" "}{g.fix}</p>}
           {g.rows && g.rows.length > 0 && (
             <p className="m-0 mt-1 text-xs text-text-secondary">
-              e.g. file line{g.rows.length > 1 ? "s" : ""} {g.rows.slice(0, 6).join(", ")}
+              {t("e.g. file line")}{g.rows.length > 1 ? "s" : ""} {g.rows.slice(0, 6).join(", ")}
               {g.count > 6 ? " …" : ""}
             </p>
           )}
@@ -43,7 +44,7 @@ export const SkipGroupList: React.FC<SkipGroupListProps> = ({ groups, scale = 1,
       ))}
       {groups.length > limit && (
         <li className="text-xs text-text-secondary">
-          + {groups.length - limit} other cause{groups.length - limit > 1 ? "s" : ""} (all are in the downloadable list after the import)
+          + {groups.length - limit}{" "}{t("other cause")}{groups.length - limit > 1 ? "s" : ""}{" "}{t("(all are in the downloadable list after the import)")}
         </li>
       )}
     </ul>

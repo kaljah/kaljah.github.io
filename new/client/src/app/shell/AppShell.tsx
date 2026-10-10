@@ -9,6 +9,7 @@ import AnalyticsFiltersSync from "../../filters/AnalyticsFiltersSync";
 import BannerStack from "./BannerStack";
 import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
+import { t } from "../../i18n";
 
 const CommandPalette = React.lazy(() => import("./CommandPalette"));
 
@@ -49,7 +50,7 @@ const AppShell: React.FC = () => {
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-(--z-banner) focus:rounded-md focus:bg-surface focus:px-4 focus:py-2 focus:shadow-overlay"
         >
-          Skip to content
+          {t("Skip to content")}
         </a>
         <AnalyticsFiltersSync />
         <BannerStack />

@@ -22,6 +22,7 @@ import {
 import api from "../api";
 import { apiError } from "../utils/apiError";
 import "./ReferenceData.css";
+import { t } from "../i18n";
 
 interface CustomFactor {
   name: string;
@@ -81,12 +82,12 @@ const ReferenceData: React.FC = () => {
       const d = customRes.value.data;
       setCustomFactors(Array.isArray(d) ? d : d?.data || []);
     } else {
-      errors.push(apiError(customRes.reason, "Custom factors could not be loaded"));
+      errors.push(apiError(customRes.reason, t("Custom factors could not be loaded")));
     }
     if (apiRes.status === "fulfilled") {
       setApiFactors(apiRes.value.data?.factors || {});
     } else {
-      errors.push(apiError(apiRes.reason, "The API emission-factor catalog could not be loaded"));
+      errors.push(apiError(apiRes.reason, t("The API emission-factor catalog could not be loaded")));
     }
     setLoadErrors(errors);
     setLoading(false);
@@ -112,7 +113,7 @@ const ReferenceData: React.FC = () => {
 
   const categories: Record<string, CategoryDef> = {
     custom: {
-      title: "Custom & Regional Factors",
+      title: t("Custom & Regional Factors"),
       icon: <Star size={20} className="text-[color:var(--color-green-700)]!" />,
       color: "var(--color-green-500)",
       factors: customFactors
@@ -129,31 +130,31 @@ const ReferenceData: React.FC = () => {
         })),
     },
     gases: {
-      title: "Gaseous Fuels",
+      title: t("Gaseous Fuels"),
       icon: <Wind size={20} />,
       color: "var(--color-blue-500)",
       factors: filterFactors(apiFactors).filter((f) => f.type === "gases"),
     },
     liquids: {
-      title: "Liquid Fuels",
+      title: t("Liquid Fuels"),
       icon: <Database size={20} />,
       color: "var(--color-violet-500)",
       factors: filterFactors(apiFactors).filter((f) => f.type === "liquids"),
     },
     solids: {
-      title: "Solid Fuels",
+      title: t("Solid Fuels"),
       icon: <Zap size={20} />,
       color: "var(--color-amber-500)",
       factors: filterFactors(apiFactors).filter((f) => f.type === "solids"),
     },
     equipment: {
-      title: "Equipment & Fugitive Factors",
+      title: t("Equipment & Fugitive Factors"),
       icon: <Filter size={20} />,
       color: "var(--color-brand-500)",
       factors: filterFactors(apiFactors).filter((f) => f.type === "equipment"),
     },
     gwp: {
-      title: "Global Warming Potentials (GWPs)",
+      title: t("Global Warming Potentials (GWPs)"),
       icon: <Globe size={20} />,
       color: "var(--color-legacy-0ea5e9)",
       isStatic: true,
@@ -165,7 +166,7 @@ const ReferenceData: React.FC = () => {
       ],
     },
     conversions: {
-      title: "Unit Conversions",
+      title: t("Unit Conversions"),
       icon: <Ruler size={20} />,
       color: "var(--color-brand-500)",
       isStatic: true,
@@ -180,7 +181,7 @@ const ReferenceData: React.FC = () => {
       ],
     },
     uncertainty: {
-      title: "Data Quality & Uncertainty Tiers",
+      title: t("Data Quality & Uncertainty Tiers"),
       icon: <Percent size={20} />,
       color: "var(--color-pink-500)",
       isStatic: true,
@@ -204,7 +205,7 @@ const ReferenceData: React.FC = () => {
       ],
     },
     hhv_defaults: {
-      title: "Default Fuel Heating Values (HHV)",
+      title: t("Default Fuel Heating Values (HHV)"),
       icon: <Flame size={20} />,
       color: "var(--color-legacy-f97316)",
       isStatic: true,
@@ -249,7 +250,7 @@ const ReferenceData: React.FC = () => {
       ],
     },
     process_types: {
-      title: "API Compendium Process Mappings",
+      title: t("API Compendium Process Mappings"),
       icon: <Activity size={20} />,
       color: "var(--color-legacy-6366f1)",
       isStatic: true,
@@ -336,7 +337,7 @@ const ReferenceData: React.FC = () => {
       ],
     },
     scope2_defaults: {
-      title: "Scope 2 & 3 Methodological Defaults",
+      title: t("Scope 2 & 3 Methodological Defaults"),
       icon: <Settings size={20} />,
       color: "var(--color-violet-500)",
       isStatic: true,
@@ -387,12 +388,11 @@ const ReferenceData: React.FC = () => {
     <div className="reference-data">
       <PageHeader
         className="mb-8"
-        title="Reference Data Library"
+        title={t("Reference Data Library")}
         description={
           <>
-            Centralized repository for emission factors, global warming potentials (GWPs), unit conversions, and data
-            quality tiers. Custom regional factors tagged with <Star size={14} className="custom-star inline" aria-hidden="true" />{" "}
-            override global defaults.
+            {t("Centralized repository for emission factors, global warming potentials (GWPs), unit conversions, and data quality tiers. Custom regional factors tagged with")}{" "}<Star size={14} className="custom-star inline" aria-hidden="true" />{" "}
+            {t("override global defaults.")}
           </>
         }
       />
@@ -406,29 +406,29 @@ const ReferenceData: React.FC = () => {
           <input
             type="text"
             className="[width:100%] [padding:11px_16px_11px_42px] [background:rgba(255,_255,_255,_0.85)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [&&]:[border-radius:var(--radius-md)] [font-size:var(--text-md)] [color:var(--text-primary,_var(--color-ink-900))] [outline:none] [transition:all_0.2s_ease] focus:[border-color:var(--accent-color,_var(--color-brand-500))] focus:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.15)]"
-            placeholder="Search by name, fuel type, code, or value..."
+            placeholder={t("Search by name, fuel type, code, or value...")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         <NativeSelect
           className="filter-select"
-          aria-label="Filter by category"
+          aria-label={t("Filter by category")}
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
         >
-          <option value="all">All Categories</option>
-          <option value="hhv_defaults">Default Heating Values</option>
-          <option value="process_types">API Process Mappings</option>
-          <option value="scope2_defaults">Scope 2 & 3 Defaults</option>
-          <option value="gwp">Global Warming Potentials</option>
-          <option value="conversions">Unit Conversions</option>
-          <option value="uncertainty">Data Quality Tiers</option>
-          <option value="custom">Custom & Regional</option>
-          <option value="gases">Gases</option>
-          <option value="liquids">Liquids</option>
-          <option value="solids">Solids</option>
-          <option value="equipment">Equipment</option>
+          <option value="all">{t("All Categories")}</option>
+          <option value="hhv_defaults">{t("Default Heating Values")}</option>
+          <option value="process_types">{t("API Process Mappings")}</option>
+          <option value="scope2_defaults">{t("Scope 2 & 3 Defaults")}</option>
+          <option value="gwp">{t("Global Warming Potentials")}</option>
+          <option value="conversions">{t("Unit Conversions")}</option>
+          <option value="uncertainty">{t("Data Quality Tiers")}</option>
+          <option value="custom">{t("Custom & Regional")}</option>
+          <option value="gases">{t("Gases")}</option>
+          <option value="liquids">{t("Liquids")}</option>
+          <option value="solids">{t("Solids")}</option>
+          <option value="equipment">{t("Equipment")}</option>
         </NativeSelect>
       </div>
 
@@ -438,14 +438,14 @@ const ReferenceData: React.FC = () => {
           className="m-[0_0_16px]! p-[12px_16px]! rounded-[8px]! bg-[color:var(--color-red-50)]! [border:1px_solid_var(--color-legacy-fecaca)]! text-[color:var(--color-legacy-991b1b)]! flex! gap-[12px]! items-center!"
         >
           <div className="flex-1!">{loadErrors.map((e) => <div key={e}>{e}</div>)}</div>
-          <Button type="button" variant="ghost" onClick={() => { setLoading(true); fetchData(); }}>Retry</Button>
+          <Button type="button" variant="ghost" onClick={() => { setLoading(true); fetchData(); }}>{t("Retry")}</Button>
         </div>
       )}
       {loading ? (
         <div
           className="text-center! p-[100px]! text-[color:var(--color-ink-500)]!"
         >
-          Loading Library Assets...
+          {t("Loading Library Assets...")}
         </div>
       ) : (
         <div className="factors-list">
@@ -488,23 +488,23 @@ const ReferenceData: React.FC = () => {
                           ))
                         ) : (
                           <>
-                            <th>Name</th>
+                            <th>{t("Name")}</th>
                             {key !== "equipment" ? (
                               <>
                                 <th className="num">HHV</th>
-                                <th className="num">CO₂</th>
-                                <th className="num">CH₄</th>
+                                <th className="num">{t("CO₂")}</th>
+                                <th className="num">{t("CH₄")}</th>
                                 <th className="num">N₂O</th>
-                                <th>Unit</th>
+                                <th>{t("Unit")}</th>
                               </>
                             ) : (
                               <>
-                                <th className="num">CH₄ Factor</th>
-                                <th>Unit</th>
-                                <th>Description</th>
+                                <th className="num">{t("CH₄ Factor")}</th>
+                                <th>{t("Unit")}</th>
+                                <th>{t("Description")}</th>
                               </>
                             )}
-                            <th>Usage</th>
+                            <th>{t("Usage")}</th>
                           </>
                         )}
                       </tr>
@@ -579,10 +579,10 @@ const ReferenceData: React.FC = () => {
                 className="text-[color:var(--color-ink-600)]! mb-[16px]!"
               />
               <h3 className="text-[color:var(--color-ink-800)]! mb-[8px]!">
-                No factors found
+                {t("No factors found")}
               </h3>
               <p className="text-[color:var(--color-ink-500)]!">
-                Try adjusting your search term or category filter.
+                {t("Try adjusting your search term or category filter.")}
               </p>
             </div>
           )}

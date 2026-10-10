@@ -4,6 +4,7 @@ import { NativeSelect } from "../../ui/NativeSelect";
 import CustomDropdown from "../../components/CustomDropdown";
 import { Upload } from "lucide-react";
 import PaginationControls from "./PaginationControls";
+import { t } from "../../i18n";
 
 export interface MitigationRecord {
   id: string | number;
@@ -65,9 +66,9 @@ const MitigationTab: React.FC<MitigationTabProps> = ({
   <div className="manage-card glass-panel">
     <div className="flex! justify-between! items-start! mb-[32px]!">
       <div>
-        <h2 className="mb-[8px]! font-bold!">Mitigation Projects</h2>
+        <h2 className="mb-[8px]! font-bold!">{t("Mitigation Projects")}</h2>
         <p className="text-[color:var(--text-secondary)]! m-[0px]!">
-          Record CCUS, RECs, and Carbon Offsets.
+          {t("Record CCUS, RECs, and Carbon Offsets.")}
         </p>
       </div>
       <button
@@ -75,7 +76,7 @@ const MitigationTab: React.FC<MitigationTabProps> = ({
         onClick={() => setImportModal({ isOpen: true, type: "mitigation" })}
        
       >
-        <Upload size={16} /> Bulk Import (CSV)
+        <Upload size={16} />{" "}{t("Bulk Import (CSV)")}
       </button>
     </div>
 
@@ -84,10 +85,10 @@ const MitigationTab: React.FC<MitigationTabProps> = ({
         className="input-group"
         label={
           <>
-            Activity
+            {t("Activity")}
             {!isPrivileged && getAvailableActivities().length === 1 && (
               <span className="text-[length:0.65rem]! bg-[color:var(--color-legacy-dbeafe)]! text-[color:var(--color-blue-700)]! rounded-[4px]! p-[1px_5px]! font-semibold!">
-                Auto
+                {t("Auto")}
               </span>
             )}
           </>
@@ -101,7 +102,7 @@ const MitigationTab: React.FC<MitigationTabProps> = ({
           className="component-select"
           disabled={!isPrivileged && getAvailableActivities().length === 1}
         >
-          <option value="">Select Activity</option>
+          <option value="">{t("Select Activity")}</option>
           {getAvailableActivities().map((a) => (
             <option key={a} value={a}>
               {ACTIVITY_LABELS[a] || a}
@@ -114,10 +115,10 @@ const MitigationTab: React.FC<MitigationTabProps> = ({
         className="input-group"
         label={
           <>
-            Division
+            {t("Division")}
             {!isPrivileged && getAvailableDivisions(mitigationForm.activity).length === 1 && (
               <span className="text-[length:0.65rem]! bg-[color:var(--color-legacy-dbeafe)]! text-[color:var(--color-blue-700)]! rounded-[4px]! p-[1px_5px]! font-semibold!">
-                Auto
+                {t("Auto")}
               </span>
             )}
           </>
@@ -131,7 +132,7 @@ const MitigationTab: React.FC<MitigationTabProps> = ({
           className="component-select"
           disabled={!mitigationForm.activity || (!isPrivileged && getAvailableDivisions(mitigationForm.activity).length === 1)}
         >
-          <option value="">Select Division</option>
+          <option value="">{t("Select Division")}</option>
           {getAvailableDivisions(mitigationForm.activity).map((d) => (
             <option key={d} value={d}>
               {d}
@@ -142,24 +143,24 @@ const MitigationTab: React.FC<MitigationTabProps> = ({
 
       <div className="input-group">
         <label className="flex! items-center! gap-[6px]!">
-          Region
+          {t("Region")}
           {!isPrivileged &&
             facilities.filter((f) => f.activity === mitigationForm.activity && f.division === mitigationForm.division).length === 1 && (
               <span className="text-[length:0.65rem]! bg-[color:var(--color-legacy-dbeafe)]! text-[color:var(--color-blue-700)]! rounded-[4px]! p-[1px_5px]! font-semibold!">
-                Auto
+                {t("Auto")}
               </span>
             )}
         </label>
         <CustomDropdown
           options={[
-            { value: "", label: "Select Region" },
+            { value: "", label: t("Select Region") },
             ...facilities
               .filter((f) => f.activity === mitigationForm.activity && f.division === mitigationForm.division)
               .map((f) => ({ value: f.id.toString(), label: f.name, subLabel: f.field })),
           ]}
           value={mitigationForm.facility_id != null ? String(mitigationForm.facility_id) : ""}
           onChange={(val) => setMitigationForm({ ...mitigationForm, facility_id: val })}
-          placeholder="Select Region"
+          placeholder={t("Select Region")}
           disabled={
             !mitigationForm.division ||
             (!isPrivileged &&
@@ -168,16 +169,16 @@ const MitigationTab: React.FC<MitigationTabProps> = ({
         />
       </div>
 
-      <Field className="input-group" label="Project Name">
+      <Field className="input-group" label={t("Project Name")}>
         <Input
           type="text"
           value={mitigationForm.name || ""}
           onChange={(e) => setMitigationForm({ ...mitigationForm, name: e.target.value })}
-          placeholder="e.g. Flare Reduction Unit 1"
+          placeholder={t("e.g. Flare Reduction Unit 1")}
         />
       </Field>
 
-      <Field className="input-group" label="Year">
+      <Field className="input-group" label={t("Year")}>
         <Input
           type="number"
           value={mitigationForm.year || ""}
@@ -185,21 +186,21 @@ const MitigationTab: React.FC<MitigationTabProps> = ({
         />
       </Field>
 
-      <Field className="input-group" label="Type">
+      <Field className="input-group" label={t("Type")}>
         <NativeSelect
           value={mitigationForm.type || "CCUS"}
           onChange={(e) => setMitigationForm({ ...mitigationForm, type: e.target.value })}
           className="component-select"
         >
-          <option value="CCUS">CCUS (Carbon Capture)</option>
-          <option value="REC">REC (Renewable Energy Credit)</option>
-          <option value="Offset">Carbon Offset</option>
-          <option value="Efficiency">Energy Efficiency</option>
-          <option value="Process">Process Improvement</option>
+          <option value="CCUS">{t("CCUS (Carbon Capture)")}</option>
+          <option value="REC">{t("REC (Renewable Energy Credit)")}</option>
+          <option value="Offset">{t("Carbon Offset")}</option>
+          <option value="Efficiency">{t("Energy Efficiency")}</option>
+          <option value="Process">{t("Process Improvement")}</option>
         </NativeSelect>
       </Field>
 
-      <Field className="input-group" label="Quantity (tCO₂e)">
+      <Field className="input-group" label={t("Quantity (tCO₂e)")}>
         <Input
           type="number"
           value={mitigationForm.quantity_tco2e || ""}
@@ -208,44 +209,44 @@ const MitigationTab: React.FC<MitigationTabProps> = ({
         />
       </Field>
 
-      <Field className="input-group" label="Status">
+      <Field className="input-group" label={t("Status")}>
         <NativeSelect
           value={mitigationForm.status || "Active"}
           onChange={(e) => setMitigationForm({ ...mitigationForm, status: e.target.value })}
           className="component-select"
         >
-          <option value="Active">Active</option>
-          <option value="Planned">Planned</option>
-          <option value="Completed">Completed</option>
+          <option value="Active">{t("Active")}</option>
+          <option value="Planned">{t("Planned")}</option>
+          <option value="Completed">{t("Completed")}</option>
         </NativeSelect>
       </Field>
     </div>
 
     <div className="flex! gap-[12px]! mt-[20px]!">
       <button className="action-btn" onClick={handleSaveMitigation}>
-        Save Record
+        {t("Save Record")}
       </button>
       <button
         className="action-btn bg-[color:var(--color-green-500)]!"
         onClick={() => setImportModal({ isOpen: true, type: "mitigation" })}
       >
-        <Upload size={16} /> Import Mitigation CSV
+        <Upload size={16} />{" "}{t("Import Mitigation CSV")}
       </button>
     </div>
 
-    <div className="table-container mt-[40px]!" tabIndex={0} role="region" aria-label="Mitigation records">
-      <h3>Mitigation Records</h3>
+    <div className="table-container mt-[40px]!" tabIndex={0} role="region" aria-label={t("Mitigation records")}>
+      <h3>{t("Mitigation Records")}</h3>
       <table className="data-table">
         <thead>
           <tr>
-            <th>Project Name</th>
-            <th>Activity</th>
-            <th>Region</th>
-            <th>Year</th>
-            <th>Type</th>
-            <th>Status</th>
-            <th className="text-right!">Quantity (tCO₂e)</th>
-            <th className="text-center!">Actions</th>
+            <th>{t("Project Name")}</th>
+            <th>{t("Activity")}</th>
+            <th>{t("Region")}</th>
+            <th>{t("Year")}</th>
+            <th>{t("Type")}</th>
+            <th>{t("Status")}</th>
+            <th className="text-right!">{t("Quantity (tCO₂e)")}</th>
+            <th className="text-center!">{t("Actions")}</th>
           </tr>
         </thead>
         <tbody>
@@ -269,7 +270,7 @@ const MitigationTab: React.FC<MitigationTabProps> = ({
                 <td>{m.mitigation_type || m.type}</td>
                 <td>
                   <span className={`status-badge ${m.status?.toLowerCase() || "active"}`}>
-                    {m.status || "Active"}
+                    {m.status || t("Active")}
                   </span>
                 </td>
                 <td className="text-right! text-[color:var(--color-green-700)]! font-semibold!">
@@ -280,7 +281,7 @@ const MitigationTab: React.FC<MitigationTabProps> = ({
                     className="[background:var(--color-legacy-fee2e2)] [color:var(--color-red-700)] [border:1px_solid_var(--color-legacy-fecaca)] [&&]:[border-radius:var(--radius-md)] [cursor:pointer] [transition:all_0.2s] hover:[background:var(--color-red-700)] hover:[color:white] p-[6px_12px]! text-[length:0.8rem]!"
                     onClick={() => handleDeleteMitigation(m.id)}
                   >
-                    Delete
+                    {t("Delete")}
                   </button>
                 </td>
               </tr>
@@ -289,8 +290,8 @@ const MitigationTab: React.FC<MitigationTabProps> = ({
             <tr>
               <td colSpan={8} className="text-center! p-[40px]! text-[color:var(--text-secondary)]!">
                 {mitigations.length === 0
-                  ? "No mitigation projects recorded yet."
-                  : "No mitigation projects found matching active filters."}
+                  ? t("No mitigation projects recorded yet.")
+                  : t("No mitigation projects found matching active filters.")}
               </td>
             </tr>
           )}

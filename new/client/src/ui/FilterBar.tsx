@@ -2,6 +2,7 @@ import React from "react";
 import { RotateCcw } from "lucide-react";
 import { Button } from "./Button";
 import { cn } from "./cn";
+import { t } from "../i18n";
 
 export interface FilterBarProps {
   children?: React.ReactNode;
@@ -21,7 +22,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 }) => (
   <div
     role="group"
-    aria-label="Filters"
+    aria-label={t("Filters")}
     className={cn("flex flex-wrap items-center justify-between gap-x-4 gap-y-2", className)}
   >
     <div className="flex flex-wrap items-center gap-2">
@@ -29,7 +30,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
       {activeCount > 0 && onReset && (
         <Button variant="ghost" size="sm" onClick={onReset}>
           <RotateCcw className="size-3.5" aria-hidden="true" />
-          Reset ({activeCount})
+          {t("Reset (")}{activeCount})
         </Button>
       )}
     </div>

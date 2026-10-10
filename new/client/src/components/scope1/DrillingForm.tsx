@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Input, Field } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
+import { t } from "../../i18n";
 
 export interface Scope1SubFormProps {
   data: Record<string, any>;
@@ -46,7 +47,7 @@ export const DrillingForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sou
           className="input-group"
           label={
             <>
-              {isTier1 && !isDefaultDays ? "Wells Drilled" : "Drilling Days"}
+              {isTier1 && !isDefaultDays ? t("Wells Drilled") : t("Drilling Days")}
               <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
             </>
           }
@@ -61,7 +62,7 @@ export const DrillingForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sou
               onChange("quantity", e.target.value);
             }}
             placeholder={
-              isTier1 && !isDefaultDays ? "Number of wells" : "Total drilling days"
+              isTier1 && !isDefaultDays ? t("Number of wells") : t("Total drilling days")
             }
           />
         </Field>
@@ -70,16 +71,16 @@ export const DrillingForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sou
       {isTier2Plus && (
         <>
           <div className="input-group mt-[12px]!">
-            <label>Mud Type</label>
+            <label>{t("Mud Type")}</label>
             <CustomDropdown
               options={[
                 {
                   value: "water_based",
-                  label: "Water-based",
+                  label: t("Water-based"),
                 },
                 {
                   value: "oil_based",
-                  label: "Oil-based / synthetic",
+                  label: t("Oil-based / synthetic"),
                 },
               ]}
               value={data.mud_type || "water_based"}
@@ -89,11 +90,11 @@ export const DrillingForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sou
 
           <div className="mt-[15px]! p-[14px]! bg-[color:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! rounded-[6px]!">
             <h5 className="m-[0_0_10px_0]! text-[length:0.85rem]! text-[color:var(--color-ink-800)]! font-semibold!">
-              Gas composition
+              {t("Gas composition")}
             </h5>
             <div className="grid gap-[14px] [grid-template-columns:1fr_1fr] max-[600px]:[grid-template-columns:1fr]">
               <div className="input-group mb-[0px]!">
-                <label className="text-[length:0.8rem]!">CH₄ fraction</label>
+                <label className="text-[length:0.8rem]!">{t("CH₄ fraction")}</label>
                 <Input
                   type="number"
                   step="0.0001"
@@ -110,7 +111,7 @@ export const DrillingForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sou
               </div>
 
               <div className="input-group mb-[0px]!">
-                <label className="text-[length:0.8rem]!">CO₂ fraction</label>
+                <label className="text-[length:0.8rem]!">{t("CO₂ fraction")}</label>
                 <Input
                   type="number"
                   step="0.0001"

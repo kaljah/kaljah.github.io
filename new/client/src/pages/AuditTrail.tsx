@@ -6,6 +6,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import api from "../api";
 import { useToast } from "../components/Toast";
 import type { ColumnDef } from "@tanstack/react-table";
+import { t } from "../i18n";
 
 export interface AuditLog {
   id: string | number;
@@ -186,7 +187,7 @@ const AuditTrail: React.FC = () => {
       });
     } catch (error) {
       console.error("Failed to fetch audit logs:", error);
-      toast.error("Failed to load audit logs");
+      toast.error(t("Failed to load audit logs"));
     } finally {
       setLoading(false);
       setIsRefreshing(false);
@@ -236,7 +237,7 @@ const AuditTrail: React.FC = () => {
       fetchStats(); // Update stats as export is logged
     } catch (error) {
       console.error("Export failed:", error);
-      toast.error("Failed to export audit logs");
+      toast.error(t("Failed to export audit logs"));
     }
   };
 
@@ -263,7 +264,7 @@ const AuditTrail: React.FC = () => {
     setCustomStartDate("");
     setCustomEndDate("");
     setPage(1);
-    toast.info("Filters reset to default");
+    toast.info(t("Filters reset to default"));
   };
 
   const hasActiveFilters =
@@ -367,7 +368,7 @@ const AuditTrail: React.FC = () => {
           className="cursor-pointer rounded-md border border-border bg-surface px-2 py-1 text-sm font-semibold text-text hover:bg-ink-100"
           onClick={() => setDetailLog(c.row.original)}
         >
-          Details
+          {t("Details")}
         </button>
       ),
     },
@@ -377,7 +378,7 @@ const AuditTrail: React.FC = () => {
     fetchAuditLogs(true);
     fetchStats();
     fetchFilters();
-    toast.info("Refreshed audit trail");
+    toast.info(t("Refreshed audit trail"));
   };
 
   return (
@@ -417,7 +418,7 @@ const AuditTrail: React.FC = () => {
         ) : view === "table" ? (
           <DataTable
             tableId="audit-trail"
-            caption="Audit trail events"
+            caption={t("Audit trail events")}
             density="compact"
             pageSize={100}
             data={auditLogs}
@@ -454,13 +455,13 @@ const AuditTrail: React.FC = () => {
       <Dialog
         open={Boolean(detailLog)}
         onOpenChange={(o) => !o && setDetailLog(null)}
-        title="Audit event"
+        title={t("Audit event")}
         description={detailLog ? `${detailLog.action} by ${detailLog.user || "System"} (${formatFullDateTime(detailLog.timestamp)})` : undefined}
         maxWidth="44rem"
       >
         {detailLog && (
           <div className="flex flex-col gap-3">
-            <p className="text-base text-text">{detailLog.description || detailLog.details || "No details recorded"}</p>
+            <p className="text-base text-text">{detailLog.description || detailLog.details || t("No details recorded")}</p>
             <pre className="max-h-96 overflow-auto rounded-md bg-ink-50 p-3 text-sm text-text">
               {JSON.stringify(detailLog, null, 2)}
             </pre>

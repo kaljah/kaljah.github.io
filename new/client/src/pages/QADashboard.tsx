@@ -11,6 +11,7 @@ import { controlClass } from '../components/import-wizard/mapping';
 import { QaKpis, DiagnosticsPanel, UncertaintyPanel } from './qa/QaPanels';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorBoundary from '../components/ErrorBoundary';
+import { t } from "../i18n";
 
 const PAGE_SIZE = 100;
 
@@ -80,10 +81,10 @@ export default function QADashboard() {
             const res = await api.get('/qaqc/dashboard', { params });
             setData(res.data);
             if (isManualRefresh) {
-                toast.success('Diagnostics and anomaly scans refreshed successfully');
+                toast.success(t("Diagnostics and anomaly scans refreshed successfully"));
             }
         } catch (err: any) {
-            toast.error(err.response?.data?.error || err.response?.data?.message || 'Failed to load QA/QC data');
+            toast.error(err.response?.data?.error || err.response?.data?.message || t("Failed to load QA/QC data"));
         } finally {
             setLoading(false);
             setIsUpdating(false);
@@ -117,9 +118,9 @@ export default function QADashboard() {
             a.click();
             a.remove();
             window.URL.revokeObjectURL(url);
-            toast.success('Compliance QA report exported successfully');
+            toast.success(t("Compliance QA report exported successfully"));
         } catch (err: any) {
-            toast.error(err.response?.data?.error || 'CSV Export failed');
+            toast.error(err.response?.data?.error || t("CSV Export failed"));
         } finally {
             setExporting(false);
         }
@@ -128,7 +129,7 @@ export default function QADashboard() {
     // ── Bulk resolve ───────────────────────────────────────────────────────
     const handleBulkResolve = (resolution: string) => {
         if (selectedIds.size === 0) {
-            toast.error('Select at least one record first');
+            toast.error(t("Select at least one record first"));
             return;
         }
         setResolveModal({ isOpen: true, resolution });
@@ -162,7 +163,7 @@ export default function QADashboard() {
             });
             fetchDashboard();
         } catch (err: any) {
-            toast.error(err.response?.data?.error || 'Bulk resolve failed');
+            toast.error(err.response?.data?.error || t("Bulk resolve failed"));
         } finally {
             setResolving(false);
         }
@@ -194,7 +195,7 @@ export default function QADashboard() {
             });
             fetchDashboard();
         } catch (err: any) {
-            toast.error(err.response?.data?.error || 'Resolution failed');
+            toast.error(err.response?.data?.error || t("Resolution failed"));
         } finally {
             setResolving(false);
         }
@@ -280,7 +281,7 @@ export default function QADashboard() {
     if (loading && !data) {
         return (
             <div className="flex min-h-[60vh] items-center justify-center">
-                <LoadingSpinner message="Scanning inventory & loading diagnostics..." />
+                <LoadingSpinner message={t("Scanning inventory & loading diagnostics...")} />
             </div>
         );
     }
@@ -289,8 +290,8 @@ export default function QADashboard() {
         return (
             <Page className="max-w-[1600px]">
                 <Card>
-                    <h2 className="qa-title m-0 mb-2 text-xl font-bold text-text">QA/QC & Diagnostics</h2>
-                    <p className="m-0 text-md text-text-secondary">No data available for the current selection.</p>
+                    <h2 className="qa-title m-0 mb-2 text-xl font-bold text-text">{t("QA/QC & Diagnostics")}</h2>
+                    <p className="m-0 text-md text-text-secondary">{t("No data available for the current selection.")}</p>
                 </Card>
             </Page>
         );
@@ -325,33 +326,33 @@ export default function QADashboard() {
                     <div className="flex flex-wrap items-start justify-between gap-5">
                         <div className="flex min-w-0 flex-col gap-1.5">
                             <Badge tone="brand" className="w-fit gap-1.5 px-3 py-1 uppercase tracking-wide">
-                                <Shield className="size-3.5" aria-hidden="true" /> ISO 14064-1 &amp; GHG Protocol Assurance
+                                <Shield className="size-3.5" aria-hidden="true" />{" "}{t("ISO 14064-1 & GHG Protocol Assurance")}
                             </Badge>
-                            <h1 className="qa-title m-0 text-xl font-bold text-text">QA/QC &amp; System Diagnostics</h1>
+                            <h1 className="qa-title m-0 text-xl font-bold text-text">{t("QA/QC & System Diagnostics")}</h1>
                             <p className="m-0 max-w-3xl text-md leading-normal text-text-secondary">
-                                Automated data validation, IPCC SRSS uncertainty estimation, and inventory anomaly resolution workflow.
+                                {t("Automated data validation, IPCC SRSS uncertainty estimation, and inventory anomaly resolution workflow.")}
                             </p>
                         </div>
                         <div className="flex flex-wrap items-center gap-2.5">
-                            <NativeSelect className={cn(controlClass, "qa-filter-select h-[38px] w-auto")} aria-label="Filter by GHG Scope" value={scopeFilter} onChange={e => { setScopeFilter(e.target.value); setOffset(0); }} title="Filter by GHG Scope">
-                                <option value="all">All Scopes (1, 2, 3)</option>
-                                <option value="1">Scope 1 (Direct)</option>
-                                <option value="2">Scope 2 (Electricity)</option>
-                                <option value="3">Scope 3 (Value Chain)</option>
+                            <NativeSelect className={cn(controlClass, "qa-filter-select h-[38px] w-auto")} aria-label={t("Filter by GHG Scope")} value={scopeFilter} onChange={e => { setScopeFilter(e.target.value); setOffset(0); }} title={t("Filter by GHG Scope")}>
+                                <option value="all">{t("All Scopes (1, 2, 3)")}</option>
+                                <option value="1">{t("Scope 1 (Direct)")}</option>
+                                <option value="2">{t("Scope 2 (Electricity)")}</option>
+                                <option value="3">{t("Scope 3 (Value Chain)")}</option>
                             </NativeSelect>
-                            <NativeSelect className={cn(controlClass, "qa-filter-select h-[38px] w-auto")} aria-label="Filter by Reporting Year" value={yearFilter} onChange={e => { setYearFilter(e.target.value); setOffset(0); }} title="Filter by Reporting Year">
-                                <option value="all">All Reporting Years</option>
+                            <NativeSelect className={cn(controlClass, "qa-filter-select h-[38px] w-auto")} aria-label={t("Filter by Reporting Year")} value={yearFilter} onChange={e => { setYearFilter(e.target.value); setOffset(0); }} title={t("Filter by Reporting Year")}>
+                                <option value="all">{t("All Reporting Years")}</option>
                                 {Array.from({ length: new Date().getFullYear() - 2019 }, (_, i) => new Date().getFullYear() - i).map(y => (
                                     <option key={y} value={y}>{y}</option>
                                 ))}
                             </NativeSelect>
-                            <Button variant="secondary" onClick={() => fetchDashboard(true)} disabled={runningDiagnostics || isUpdating} title="Re-run data health checks and anomaly diagnostics">
+                            <Button variant="secondary" onClick={() => fetchDashboard(true)} disabled={runningDiagnostics || isUpdating} title={t("Re-run data health checks and anomaly diagnostics")}>
                                 <RefreshCw className={cn("size-3.5", (runningDiagnostics || isUpdating) && "animate-spin")} aria-hidden="true" />
-                                {runningDiagnostics ? 'Scanning…' : 'Run Diagnostics'}
+                                {runningDiagnostics ? t("Scanning…") : t("Run Diagnostics")}
                             </Button>
-                            <Button onClick={handleExport} loading={exporting} disabled={exporting} title="Export complete QA/QC compliance report as CSV">
+                            <Button onClick={handleExport} loading={exporting} disabled={exporting} title={t("Export complete QA/QC compliance report as CSV")}>
                                 <Download className="size-3.5" aria-hidden="true" />
-                                {exporting ? 'Exporting…' : 'Export QA Report'}
+                                {exporting ? t("Exporting…") : t("Export QA Report")}
                             </Button>
                         </div>
                     </div>
@@ -369,15 +370,15 @@ export default function QADashboard() {
                 />
 
                 <Tabs value={activeTab} onValueChange={setActiveTab}>
-                    <TabsList aria-label="QA sections" className="border-b-2">
+                    <TabsList aria-label={t("QA sections")} className="border-b-2">
                         <TabsTrigger value="queue" badge={anomaliesSummary.all}>
-                            <AlertTriangle className="size-[15px]" aria-hidden="true" /> Anomaly Resolution Queue
+                            <AlertTriangle className="size-[15px]" aria-hidden="true" />{" "}{t("Anomaly Resolution Queue")}
                         </TabsTrigger>
                         <TabsTrigger value="diagnostics" badge={totalFindings}>
-                            <Shield className="size-[15px]" aria-hidden="true" /> Health &amp; Completeness Diagnostics
+                            <Shield className="size-[15px]" aria-hidden="true" />{" "}{t("Health & Completeness Diagnostics")}
                         </TabsTrigger>
                         <TabsTrigger value="uncertainty">
-                            <Layers className="size-[15px]" aria-hidden="true" /> Uncertainty &amp; Rigor Analysis (IPCC)
+                            <Layers className="size-[15px]" aria-hidden="true" />{" "}{t("Uncertainty & Rigor Analysis (IPCC)")}
                         </TabsTrigger>
                     </TabsList>
 
@@ -433,7 +434,7 @@ export default function QADashboard() {
                 onConfirm={confirmBulkResolve}
                 loading={resolving}
                 title={`Confirm Bulk ${resolveModal.resolution === 'Verified' ? 'Verification' : 'Rejection'}`}
-                message={<>Are you sure you want to mark <strong>{selectedIds.size}</strong> selected record(s) as <strong>{resolveModal.resolution}</strong>?</>}
+                message={<>{t("Are you sure you want to mark")}{" "}<strong>{selectedIds.size}</strong>{" "}{t("selected record(s) as")}{" "}<strong>{resolveModal.resolution}</strong>?</>}
                 confirmLabel={`Confirm ${resolveModal.resolution === 'Verified' ? 'Verification' : 'Rejection'}`}
                 confirmVariant={resolveModal.resolution === 'Verified' ? 'primary' : 'danger'}
             />

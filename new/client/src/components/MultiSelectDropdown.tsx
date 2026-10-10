@@ -3,6 +3,7 @@ import { activateOnKey } from "../utils/a11yKeys";
 import { createPortal } from "react-dom";
 import "./CustomDropdown.css";
 import { ChevronDown } from "lucide-react";
+import { t } from "../i18n";
 
 export interface MultiSelectDropdownOption {
   value: string | number;
@@ -152,7 +153,7 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
           {selectedValues.length === 0
             ? label
             : selectedValues.length === options.length
-              ? "All Selected"
+              ? t("All Selected")
               : `${selectedValues.length} Selected`}
         </span>
         <ChevronDown size={14} aria-hidden="true" />
@@ -186,8 +187,8 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
               onClick={handleSelectAll}
             >
               {selectedValues.length === options.length
-                ? "Deselect All"
-                : "Select All"}
+                ? t("Deselect All")
+                : t("Select All")}
             </div>
             {options.map((opt) => (
               <div

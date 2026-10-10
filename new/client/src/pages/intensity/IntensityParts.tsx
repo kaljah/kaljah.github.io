@@ -1,6 +1,7 @@
 import React from "react";
 import { Card } from "../../ui";
 import { cn } from "../../ui/cn";
+import { t } from "../../i18n";
 
 export type IntensityTone = "co2" | "scope1" | "flare" | "scope3" | "ch4";
 
@@ -172,7 +173,7 @@ export const Heatmap: React.FC<HeatmapProps> = ({ years, rows, empty = "No regio
   return (
     <div className="heatmap-container mt-6 overflow-x-auto rounded-md border border-border bg-ink-50 p-4">
       <div className="heatmap-header mb-4 grid gap-3 px-3" style={cols}>
-        <div className="text-left text-sm font-bold uppercase tracking-wide text-text-secondary">FACILITY / REGION</div>
+        <div className="text-left text-sm font-bold uppercase tracking-wide text-text-secondary">{t("FACILITY / REGION")}</div>
         {years.map((y) => (
           <div key={y} className="text-center text-sm font-bold uppercase tracking-wide text-text-secondary">
             {y}

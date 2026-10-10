@@ -3,6 +3,7 @@ import { Badge, Card, Field, controlClass } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import CustomDropdown from "../../components/CustomDropdown";
 import { cn } from "../../ui/cn";
+import { t } from "../../i18n";
 
 export interface TabCardProps {
   title?: React.ReactNode;
@@ -76,7 +77,7 @@ export const RecordTable: React.FC<RecordTableProps> = ({
       className="overflow-x-auto rounded-md border border-border"
       tabIndex={0}
       role="region"
-      aria-label={typeof title === "string" ? title : "Records"}
+      aria-label={typeof title === "string" ? title : t("Records")}
     >
       <table className="data-table w-full border-collapse text-base">
         <thead>
@@ -113,7 +114,7 @@ export const Td: React.FC<React.TdHTMLAttributes<HTMLTableCellElement>> = ({ cla
   <td className={cn("border-b border-ink-100 px-4 py-3 align-middle text-text", className)} {...props} />
 );
 
-const Auto = () => <Badge tone="info" className="px-1.5 py-0 text-[0.65rem]">Auto</Badge>;
+const Auto = () => <Badge tone="info" className="px-1.5 py-0 text-[0.65rem]">{t("Auto")}</Badge>;
 
 const labelWithAuto = (text: React.ReactNode, auto?: boolean) => (
   <span className="inline-flex items-center gap-1.5">
@@ -167,7 +168,7 @@ export const ScopeFields: React.FC<ScopeFieldsProps> = ({
     <>
       <Field label={labelWithAuto("Activity", lockActivity)}>
         <NativeSelect className={controlClass} value={form.activity || ""} onChange={(e) => setForm({ ...form, activity: e.target.value, division: "", facility_id: "" })} disabled={lockActivity}>
-          <option value="">Select Activity</option>
+          <option value="">{t("Select Activity")}</option>
           {activities.map((a) => (
             <option key={a} value={a}>
               {ACTIVITY_LABELS[a] || a}
@@ -177,7 +178,7 @@ export const ScopeFields: React.FC<ScopeFieldsProps> = ({
       </Field>
       <Field label={labelWithAuto("Division", lockDivision)}>
         <NativeSelect className={controlClass} value={form.division || ""} onChange={(e) => setForm({ ...form, division: e.target.value, facility_id: "" })} disabled={!form.activity || lockDivision}>
-          <option value="">Select Division</option>
+          <option value="">{t("Select Division")}</option>
           {divisions.map((d) => (
             <option key={d} value={d}>
               {d}
@@ -188,10 +189,10 @@ export const ScopeFields: React.FC<ScopeFieldsProps> = ({
       <div className="flex flex-col gap-1.5">
         <span className="text-sm font-medium text-text">{labelWithAuto("Region", lockRegion)}</span>
         <CustomDropdown
-          options={[{ value: "", label: "Select Region" }, ...regions.map((f) => ({ value: f.id.toString(), label: f.name, subLabel: f.field }))]}
+          options={[{ value: "", label: t("Select Region") }, ...regions.map((f) => ({ value: f.id.toString(), label: f.name, subLabel: f.field }))]}
           value={form.facility_id != null ? String(form.facility_id) : ""}
           onChange={(val) => setForm({ ...form, facility_id: val })}
-          placeholder="Select Region"
+          placeholder={t("Select Region")}
           disabled={!form.division || lockRegion}
         />
       </div>

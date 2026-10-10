@@ -7,6 +7,7 @@ import { useAuth } from "../context/AuthContext";
 import api from "../api";
 import { useToast } from "./Toast";
 import SkipGroupList, { type SkipGroup } from "./SkipGroupList";
+import { t } from "../i18n";
 
 export interface SkippedRow {
   row?: number;
@@ -44,19 +45,19 @@ interface CategoryRule {
 
 /* Skipped-row reasons are bucketed into categories so a long list can be filtered. */
 const CATEGORIES: CategoryRule[] = [
-  { test: (r) => r.includes("duplicate"), label: "Duplicate", tone: "warning" },
-  { test: (r) => r.includes("access denied") || r.includes("permission"), label: "Access Denied", tone: "danger" },
-  { test: (r) => r.includes("facility") || r.includes("region"), label: "Region", tone: "info" },
-  { test: (r) => r.includes("date") || r.includes("year"), label: "Date", tone: "info" },
-  { test: (r) => r.includes("factor"), label: "Factor", tone: "brand" },
-  { test: (r) => r.includes("quantity"), label: "Quantity", tone: "neutral" },
-  { test: (r) => r.includes("process"), label: "Process", tone: "neutral" },
-  { test: (r) => r.includes("calculation"), label: "Calculation", tone: "brand" },
+  { test: (r) => r.includes("duplicate"), label: t("Duplicate"), tone: "warning" },
+  { test: (r) => r.includes("access denied") || r.includes("permission"), label: t("Access Denied"), tone: "danger" },
+  { test: (r) => r.includes("facility") || r.includes("region"), label: t("Region"), tone: "info" },
+  { test: (r) => r.includes("date") || r.includes("year"), label: t("Date"), tone: "info" },
+  { test: (r) => r.includes("factor"), label: t("Factor"), tone: "brand" },
+  { test: (r) => r.includes("quantity"), label: t("Quantity"), tone: "neutral" },
+  { test: (r) => r.includes("process"), label: t("Process"), tone: "neutral" },
+  { test: (r) => r.includes("calculation"), label: t("Calculation"), tone: "brand" },
 ];
 
 function categoryFromReason(reason = ""): { label: string; tone: NonNullable<BadgeProps["tone"]> } {
   const r = reason.toLowerCase();
-  return CATEGORIES.find((c) => c.test(r)) ?? { label: "Other", tone: "neutral" };
+  return CATEGORIES.find((c) => c.test(r)) ?? { label: t("Other"), tone: "neutral" };
 }
 
 function formatEta(sec: number): string {
@@ -147,11 +148,11 @@ const SkippedRows: React.FC<SkippedRowsProps> = ({ skippedCount, skippedPreview,
     <div className="mb-6 overflow-hidden rounded-md border border-border">
       <div className="flex w-full items-center bg-ink-50">
         <Disclosure open={open} onToggle={() => setOpen((v) => !v)} className="text-text">
-          <span>Row details{skippedCount > 100 ? " (first 100)" : ""}</span>
+          <span>{t("Row details")}{skippedCount > 100 ? t(" (first 100)") : ""}</span>
         </Disclosure>
         {hasErrorCsv && (
           <Button variant="secondary" size="sm" className="mr-3" onClick={onDownload}>
-            <Download className="size-4" aria-hidden="true" /> Download all {skippedCount.toLocaleString("en-US")} skipped rows (CSV)
+            <Download className="size-4" aria-hidden="true" />{" "}{t("Download all")}{" "}{skippedCount.toLocaleString("en-US")}{" "}{t("skipped rows (CSV)")}
           </Button>
         )}
       </div>
@@ -188,7 +189,7 @@ const SkippedRows: React.FC<SkippedRowsProps> = ({ skippedCount, skippedPreview,
             {rows.length === 0 && (
               <tr>
                 <td colSpan={9} className="p-8 text-center text-text-secondary">
-                  No rows match this filter.
+                  {t("No rows match this filter.")}
                 </td>
               </tr>
             )}
@@ -211,13 +212,13 @@ const Anomalies: React.FC<AnomaliesProps> = ({ anomalies, count }) => {
       <Disclosure open={open} onToggle={() => setOpen((v) => !v)} className="w-full text-warning-fg hover:bg-amber-100/60">
         <TriangleAlert className="size-4 shrink-0" aria-hidden="true" />
         <span className="flex-1">
-          {Number(count).toLocaleString("en-US")} statistical {count !== 1 ? "anomalies" : "anomaly"} detected — click to review
+          {Number(count).toLocaleString("en-US")}{" "}{t("statistical")}{" "}{count !== 1 ? t("anomalies") : t("anomaly")}{" "}{t("detected — click to review")}
         </span>
       </Disclosure>
       {open && (
         <div className="border-t border-amber-500/30 p-4">
           <p className="m-0 mb-3 text-base leading-snug text-warning-fg">
-            These rows were imported but differ strongly from the same source (equipment, else fuel) at this facility over the previous 12 months. Check them before approving.
+            {t("These rows were imported but differ strongly from the same source (equipment, else fuel) at this facility over the previous 12 months. Check them before approving.")}
           </p>
           <Table head={["Row #", "Facility", "Value (tCO2e)", "Z-Score", "Expected Range", "Details"]}>
             {anomalies.map((a, i) => (
@@ -227,7 +228,7 @@ const Anomalies: React.FC<AnomaliesProps> = ({ anomalies, count }) => {
                 <td className={cn(td, "font-semibold text-warning-fg")}>{typeof a.value === "number" ? a.value.toFixed(2) : a.value}</td>
                 <td className={td}>{a.z_score != null ? `±${Math.abs(a.z_score).toFixed(1)}σ` : "—"}</td>
                 <td className={td}>{a.expected_range ? `${a.expected_range[0].toFixed(1)} – ${a.expected_range[1].toFixed(1)}` : "—"}</td>
-                <td className={cn(td, "max-w-[250px] whitespace-normal text-xs font-medium leading-snug text-danger-fg")}>{a.message || "Statistical outlier"}</td>
+                <td className={cn(td, "max-w-[250px] whitespace-normal text-xs font-medium leading-snug text-danger-fg")}>{a.message || t("Statistical outlier")}</td>
               </tr>
             ))}
           </Table>
@@ -315,7 +316,7 @@ const UploadProgress: React.FC<UploadProgressProps> = ({ jobId, onComplete, onCa
       a.click();
       a.remove();
     } catch {
-      toast.error("Failed to download error CSV.");
+      toast.error(t("Failed to download error CSV."));
     }
   };
 
@@ -328,28 +329,27 @@ const UploadProgress: React.FC<UploadProgressProps> = ({ jobId, onComplete, onCa
           <div className="mb-6 flex items-center gap-4">
             <Loader className="size-8 shrink-0 animate-spin text-brand-700" aria-hidden="true" />
             <div>
-              <p className="m-0 mb-1 text-md font-semibold text-text">Importing your file…</p>
+              <p className="m-0 mb-1 text-md font-semibold text-text">{t("Importing your file…")}</p>
               <p className="m-0 text-base text-text-secondary">
-                You can close this window: the import keeps running on the server. The file is saved in one go when every row is done, so its records appear
-                together at the end.
+                {t("You can close this window: the import keeps running on the server. The file is saved in one go when every row is done, so its records appear together at the end.")}
               </p>
             </div>
           </div>
-          <div role="progressbar" aria-label="Import progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress} className="mb-3 h-2 w-full overflow-hidden rounded-sm bg-ink-100">
+          <div role="progressbar" aria-label={t("Import progress")} aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress} className="mb-3 h-2 w-full overflow-hidden rounded-sm bg-ink-100">
             <div className="h-full rounded-sm bg-brand-500 transition-[width] duration-300 ease-out" style={{ width: `${progress}%` }} />
           </div>
           <div className="flex justify-between text-base font-medium text-text-secondary">
             <span className="font-semibold text-brand-700">{progress}%</span>
             <span>
               {processed.toLocaleString("en-US")}
-              {total > 0 ? ` of ${total.toLocaleString("en-US")}` : ""} rows
+              {total > 0 ? ` of ${total.toLocaleString("en-US")}` : ""}{" "}{t("rows")}
               {eta != null && progress < 99 ? ` · about ${formatEta(eta)} left` : ""}
-              {progress >= 99 && processed >= total && total > 0 ? " · saving…" : ""}
+              {progress >= 99 && processed >= total && total > 0 ? t(" · saving…") : ""}
             </span>
           </div>
           {skippedCount > 0 && (
             <Banner tone="warning" className="mt-4">
-              {skippedCount.toLocaleString()} rows skipped so far
+              {skippedCount.toLocaleString()}{" "}{t("rows skipped so far")}
             </Banner>
           )}
         </Card>
@@ -358,19 +358,18 @@ const UploadProgress: React.FC<UploadProgressProps> = ({ jobId, onComplete, onCa
       {status === "completed" && (
         <Card>
           <div className="mb-6 grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(200px,1fr))]">
-            <Stat icon={CircleCheck} tone="success" value={processed - skippedCount} label="Rows Imported" />
-            <Stat icon={TriangleAlert} tone={skippedCount > 0 ? "warning" : undefined} value={skippedCount} label="Rows Skipped" />
-            <Stat icon={CircleCheck} value={processed} label="Total Processed" />
+            <Stat icon={CircleCheck} tone="success" value={processed - skippedCount} label={t("Rows Imported")} />
+            <Stat icon={TriangleAlert} tone={skippedCount > 0 ? "warning" : undefined} value={skippedCount} label={t("Rows Skipped")} />
+            <Stat icon={CircleCheck} value={processed} label={t("Total Processed")} />
           </div>
 
           {skippedCount > 0 && skipGroups.length > 0 && (
             <div className="mb-4 rounded-md border border-border bg-ink-50 p-4">
               <p className="m-0 mb-1 text-base font-semibold text-text">
-                Why {skippedCount.toLocaleString("en-US")} row{skippedCount !== 1 ? "s were" : " was"} skipped
+                {t(skippedCount === 1 ? "Why 1 row was skipped" : "Why {{count}} rows were skipped", { count: skippedCount.toLocaleString("en-US") })}
               </p>
               <p className="m-0 mb-3 text-sm text-text-secondary">
-                Fix these in your file and upload only the skipped rows again: the downloadable CSV holds them with their original columns (its first
-                column, the reason, is ignored on upload).
+                {t("Fix these in your file and upload only the skipped rows again: the downloadable CSV holds them with their original columns (its first column, the reason, is ignored on upload).")}
               </p>
               <SkipGroupList groups={skipGroups} limit={10} />
             </div>
@@ -380,10 +379,10 @@ const UploadProgress: React.FC<UploadProgressProps> = ({ jobId, onComplete, onCa
 
           {reviewable && processed - skippedCount > 0 && (
             <Banner tone="info" className="mb-2">
-              <strong>What happens next:</strong> the {(processed - skippedCount).toLocaleString("en-US")} imported record
-              {processed - skippedCount !== 1 ? "s are" : " is"} <em>Pending</em>.{" "}
-              {isReviewer ? "Review and approve them in Manage Data › Pending Review." : "An admin or superuser reviews and approves them."} Pending
-              records do not count in dashboards and reports until they are approved.
+              <strong>{t("What happens next:")}</strong>{" "}
+              {t(processed - skippedCount === 1 ? "the imported record is" : "the {{count}} imported records are", { count: (processed - skippedCount).toLocaleString("en-US") })}{" "}
+              <em>{t("Pending")}</em>.{" "}
+              {isReviewer ? t("Review and approve them in Manage Data › Pending Review.") : t("An admin or superuser reviews and approves them.")}{" "}{t("Pending records do not count in dashboards and reports until they are approved.")}
             </Banner>
           )}
 
@@ -391,7 +390,7 @@ const UploadProgress: React.FC<UploadProgressProps> = ({ jobId, onComplete, onCa
             {isReviewer ? (
               <>
                 <Button variant="secondary" onClick={done}>
-                  Close
+                  {t("Close")}
                 </Button>
                 {reviewable && (
                   <Button
@@ -400,12 +399,12 @@ const UploadProgress: React.FC<UploadProgressProps> = ({ jobId, onComplete, onCa
                       navigate("/manage-data", { state: { tab: "pending" } });
                     }}
                   >
-                    Review Pending Records <ArrowRight className="size-4" aria-hidden="true" />
+                    {t("Review Pending Records")}{" "}<ArrowRight className="size-4" aria-hidden="true" />
                   </Button>
                 )}
               </>
             ) : (
-              <Button onClick={done}>Close & View Inventory</Button>
+              <Button onClick={done}>{t("Close & View Inventory")}</Button>
             )}
           </div>
         </Card>
@@ -418,8 +417,8 @@ const UploadProgress: React.FC<UploadProgressProps> = ({ jobId, onComplete, onCa
               <XCircle className="size-6" aria-hidden="true" />
             </span>
             <div>
-              <p className="m-0 mb-1 text-md font-semibold text-danger-fg">Upload Failed</p>
-              <p className="m-0 text-base text-text-secondary">A fatal error occurred while processing the file.</p>
+              <p className="m-0 mb-1 text-md font-semibold text-danger-fg">{t("Upload Failed")}</p>
+              <p className="m-0 text-base text-text-secondary">{t("A fatal error occurred while processing the file.")}</p>
             </div>
           </div>
           <div role="alert" className="mb-6 max-h-[200px] overflow-y-auto rounded-md border border-border bg-ink-50 p-4 font-mono text-sm text-ink-700">
@@ -431,7 +430,7 @@ const UploadProgress: React.FC<UploadProgressProps> = ({ jobId, onComplete, onCa
             ))}
           </div>
           <Button variant="secondary" onClick={onCancel}>
-            Go Back
+            {t("Go Back")}
           </Button>
         </Card>
       )}

@@ -1,6 +1,7 @@
 import React from "react";
 import { Input, Field } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
+import { t } from "../../i18n";
 
 export interface Scope1SubFormProps {
   data: Record<string, any>;
@@ -16,7 +17,7 @@ export const TankForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceT
     <div className="tank-form">
       <div className="input-group">
         <label>
-          Throughput
+          {t("Throughput")}
           <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
         </label>
         <div className="grid gap-[10px] [grid-template-columns:1fr_100px] max-[600px]:[grid-template-columns:1fr]">
@@ -24,14 +25,14 @@ export const TankForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceT
             type="number"
             value={data.amount || ""}
             onChange={(e) => onChange("amount", e.target.value)}
-            placeholder="Enter throughput"
+            placeholder={t("Enter throughput")}
             required
           />
           <CustomDropdown
             options={[
-              { value: "bbl", label: "bbl" },
+              { value: "bbl", label: t("bbl") },
               { value: "m3", label: "m³" },
-              { value: "gal", label: "gal" },
+              { value: "gal", label: t("gal") },
             ]}
             value={data.tank_unit || "bbl"}
             onChange={(val) => onChange("tank_unit", val)}
@@ -42,17 +43,17 @@ export const TankForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceT
       {/* Tank Type: only needed for engineering mode. Default/Custom uses the outer catalog dropdown */}
       {isEngineering && (
         <div className="input-group">
-          <label>Tank Type / Service</label>
+          <label>{t("Tank Type / Service")}</label>
           <CustomDropdown
             options={[
-              { value: "TankCrudeSmall", label: "Crude Oil (< 10 bbl/d)" },
-              { value: "TankCrudeLarge", label: "Crude Oil (> 10 bbl/d)" },
-              { value: "TankProdSmall", label: "Condensate (< 10 bbl/d)" },
-              { value: "TankProdLarge", label: "Condensate (> 10 bbl/d)" },
+              { value: "TankCrudeSmall", label: t("Crude Oil (< 10 bbl/d)") },
+              { value: "TankCrudeLarge", label: t("Crude Oil (> 10 bbl/d)") },
+              { value: "TankProdSmall", label: t("Condensate (< 10 bbl/d)") },
+              { value: "TankProdLarge", label: t("Condensate (> 10 bbl/d)") },
             ]}
             value={data.tank_type || "TankCrudeSmall"}
             onChange={(val) => onChange("tank_type", val)}
-            placeholder="Select Tank Type..."
+            placeholder={t("Select Tank Type...")}
           />
         </div>
       )}
@@ -67,7 +68,7 @@ export const TankForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceT
                 className="input-group"
                 label={
                   <>
-                    GOR (scf/bbl)
+                    {t("GOR (scf/bbl)")}
                     <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                   </>
                 }
@@ -81,7 +82,7 @@ export const TankForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceT
                 />
               </Field>
 
-              <Field className="input-group" label="Oil API Gravity">
+              <Field className="input-group" label={t("Oil API Gravity")}>
                 <Input
                   type="number"
                   value={data.tank_api_gravity || ""}
@@ -93,7 +94,7 @@ export const TankForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceT
           )}
 
           {/* Common Engineering Inputs */}
-          <Field className="input-group" label="Temperature (°F)">
+          <Field className="input-group" label={t("Temperature (°F)")}>
             <Input
               type="number"
               value={data.tank_temp || ""}
@@ -102,7 +103,7 @@ export const TankForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceT
             />
           </Field>
 
-          <Field className="input-group" label="Separator pressure (psig)">
+          <Field className="input-group" label={t("Separator pressure (psig)")}>
             <Input
               type="number"
               value={data.tank_sep_pressure || ""}
@@ -115,7 +116,7 @@ export const TankForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceT
             className="input-group"
             label={
               <>
-                CH₄ (%)
+                {t("CH₄ (%)")}
                 <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
               </>
             }
@@ -130,7 +131,7 @@ export const TankForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceT
           </Field>
 
           <div className="input-group">
-            <label>Control Efficiency (%)</label>
+            <label>{t("Control Efficiency (%)")}</label>
             <Input
               type="number"
               value={data.tank_control_eff || ""}
@@ -138,7 +139,7 @@ export const TankForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceT
               placeholder="e.g. 95"
             />
             <div className="text-[length:0.75rem]! text-[color:var(--color-legacy-888888)]! mt-[4px]!">
-              VRU, Flaring, etc. (0 = uncontrolled)
+              {t("VRU, Flaring, etc. (0 = uncontrolled)")}
             </div>
           </div>
         </>

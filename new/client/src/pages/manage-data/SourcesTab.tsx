@@ -5,6 +5,7 @@ import { NativeSelect } from "../../ui/NativeSelect";
 import CustomDropdown from "../../components/CustomDropdown";
 import { PROCESS_TYPES } from "../../utils/EmissionFactors";
 import PaginationControls from "./PaginationControls";
+import { t } from "../../i18n";
 
 export interface SourceRecord {
   id: string | number;
@@ -63,9 +64,9 @@ const SourcesTab: React.FC<SourcesTabProps> = ({
   sources,
 }) => (
   <div className="manage-card glass-panel">
-    <h2 className="mb-[8px]! font-bold!">Emission Sources Inventory</h2>
+    <h2 className="mb-[8px]! font-bold!">{t("Emission Sources Inventory")}</h2>
     <p className="text-[color:var(--text-secondary)]! mb-[32px]!">
-      Manage operational equipment and emission sources.
+      {t("Manage operational equipment and emission sources.")}
     </p>
 
     <div className="grid-forms md:[grid-template-columns:repeat(3,1fr)]!">
@@ -73,10 +74,10 @@ const SourcesTab: React.FC<SourcesTabProps> = ({
         className="input-group"
         label={
           <>
-            Activity
+            {t("Activity")}
             {!isPrivileged && getAvailableActivities().length === 1 && (
               <span className="text-[length:0.65rem]! bg-[color:var(--color-legacy-dbeafe)]! text-[color:var(--color-blue-700)]! rounded-[4px]! p-[1px_5px]! font-semibold!">
-                Auto
+                {t("Auto")}
               </span>
             )}
           </>
@@ -90,7 +91,7 @@ const SourcesTab: React.FC<SourcesTabProps> = ({
           className="component-select"
           disabled={!isPrivileged && getAvailableActivities().length === 1}
         >
-          <option value="">Select Activity</option>
+          <option value="">{t("Select Activity")}</option>
           {getAvailableActivities().map((a) => (
             <option key={a} value={a}>
               {ACTIVITY_LABELS[a] || a}
@@ -103,10 +104,10 @@ const SourcesTab: React.FC<SourcesTabProps> = ({
         className="input-group"
         label={
           <>
-            Division
+            {t("Division")}
             {!isPrivileged && getAvailableDivisions(sourceForm.activity).length === 1 && (
               <span className="text-[length:0.65rem]! bg-[color:var(--color-legacy-dbeafe)]! text-[color:var(--color-blue-700)]! rounded-[4px]! p-[1px_5px]! font-semibold!">
-                Auto
+                {t("Auto")}
               </span>
             )}
           </>
@@ -120,7 +121,7 @@ const SourcesTab: React.FC<SourcesTabProps> = ({
           className="component-select"
           disabled={!sourceForm.activity || (!isPrivileged && getAvailableDivisions(sourceForm.activity).length === 1)}
         >
-          <option value="">Select Division</option>
+          <option value="">{t("Select Division")}</option>
           {getAvailableDivisions(sourceForm.activity).map((d) => (
             <option key={d} value={d}>
               {d}
@@ -131,24 +132,24 @@ const SourcesTab: React.FC<SourcesTabProps> = ({
 
       <div className="input-group">
         <label className="flex! items-center! gap-[6px]!">
-          Region
+          {t("Region")}
           {!isPrivileged &&
             facilities.filter((f) => f.activity === sourceForm.activity && f.division === sourceForm.division).length === 1 && (
               <span className="text-[length:0.65rem]! bg-[color:var(--color-legacy-dbeafe)]! text-[color:var(--color-blue-700)]! rounded-[4px]! p-[1px_5px]! font-semibold!">
-                Auto
+                {t("Auto")}
               </span>
             )}
         </label>
         <CustomDropdown
           options={[
-            { value: "", label: "Select Region" },
+            { value: "", label: t("Select Region") },
             ...facilities
               .filter((f) => f.activity === sourceForm.activity && f.division === sourceForm.division)
               .map((f) => ({ value: f.id.toString(), label: f.name, subLabel: f.field })),
           ]}
           value={sourceForm.facility_id != null ? String(sourceForm.facility_id) : ""}
           onChange={(val) => setSourceForm({ ...sourceForm, facility_id: val })}
-          placeholder="Select Region"
+          placeholder={t("Select Region")}
           disabled={
             !sourceForm.division ||
             (!isPrivileged &&
@@ -157,22 +158,22 @@ const SourcesTab: React.FC<SourcesTabProps> = ({
         />
       </div>
 
-      <Field className="input-group" label="Source Name">
+      <Field className="input-group" label={t("Source Name")}>
         <Input
           type="text"
           value={sourceForm.name || ""}
           onChange={(e) => setSourceForm({ ...sourceForm, name: e.target.value })}
-          placeholder="e.g. Flare A"
+          placeholder={t("e.g. Flare A")}
         />
       </Field>
 
-      <Field className="input-group" label="Type">
+      <Field className="input-group" label={t("Type")}>
         <NativeSelect
           value={sourceForm.type || ""}
           onChange={(e) => setSourceForm({ ...sourceForm, type: e.target.value })}
           className="component-select"
         >
-          <option value="">Select Type</option>
+          <option value="">{t("Select Type")}</option>
           {Object.entries(PROCESS_TYPES).map(([val, label]) => (
             <option key={val} value={val}>
               {label}
@@ -181,16 +182,16 @@ const SourcesTab: React.FC<SourcesTabProps> = ({
         </NativeSelect>
       </Field>
 
-      <Field className="input-group" label="Equipment ID (Optional)">
+      <Field className="input-group" label={t("Equipment ID (Optional)")}>
         <Input
           type="text"
           value={sourceForm.equipment_id || ""}
           onChange={(e) => setSourceForm({ ...sourceForm, equipment_id: e.target.value })}
-          placeholder="e.g. COMP-001"
+          placeholder={t("e.g. COMP-001")}
         />
       </Field>
 
-      <Field className="input-group" label="Fuel">
+      <Field className="input-group" label={t("Fuel")}>
         <Input
           type="text"
           value={sourceForm.fuel_type || ""}
@@ -201,32 +202,32 @@ const SourcesTab: React.FC<SourcesTabProps> = ({
 
     <div className="flex! gap-[12px]! mt-[20px]!">
       <button className="action-btn" onClick={handleSaveSource}>
-        Add Source
+        {t("Add Source")}
       </button>
       <button
         className="action-btn bg-[color:var(--color-green-500)]!"
         onClick={() => setImportModal({ isOpen: true, type: "sources" })}
       >
-        <Upload size={16} /> Import Sources CSV
+        <Upload size={16} />{" "}{t("Import Sources CSV")}
       </button>
       <button
         className="action-btn bg-[color:var(--text-secondary)]!"
         onClick={() => exportToCSV(sources, "emission_sources.csv")}
       >
-        Export CSV
+        {t("Export CSV")}
       </button>
     </div>
 
-    <div className="table-container mt-[40px]!" tabIndex={0} role="region" aria-label="Emission sources">
+    <div className="table-container mt-[40px]!" tabIndex={0} role="region" aria-label={t("Emission sources")}>
       <table className="data-table">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Equipment ID</th>
-            <th>Type</th>
-            <th>Region</th>
-            <th>Status</th>
-            <th>Actions</th>
+            <th>{t("Name")}</th>
+            <th>{t("Equipment ID")}</th>
+            <th>{t("Type")}</th>
+            <th>{t("Region")}</th>
+            <th>{t("Status")}</th>
+            <th>{t("Actions")}</th>
           </tr>
         </thead>
         <tbody>
@@ -263,7 +264,7 @@ const SourcesTab: React.FC<SourcesTabProps> = ({
                     className="[background:var(--color-legacy-fee2e2)] [color:var(--color-red-700)] [border:1px_solid_var(--color-legacy-fecaca)] [&&]:[border-radius:var(--radius-md)] [cursor:pointer] [transition:all_0.2s] hover:[background:var(--color-red-700)] hover:[color:white] p-[4px_8px]! text-[length:0.75rem]!"
                     onClick={() => handleDeleteSource(s.id)}
                   >
-                    Delete
+                    {t("Delete")}
                   </button>
                 </td>
               </tr>
@@ -271,7 +272,7 @@ const SourcesTab: React.FC<SourcesTabProps> = ({
           {filteredSources.length === 0 && (
             <tr>
               <td colSpan={6} className="text-center! p-[40px]! text-[color:var(--text-secondary)]!">
-                No emission sources found.
+                {t("No emission sources found.")}
               </td>
             </tr>
           )}

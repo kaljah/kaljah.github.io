@@ -2,6 +2,7 @@ import React from "react";
 import { AlertTriangle, CheckCircle2, Flame } from "lucide-react";
 import { Badge, Card, StatCard, type StatCardTone } from "../../ui";
 import { formatCompactNumber } from "../../utils/formatters";
+import { t } from "../../i18n";
 
 const UNIT_TITLE = "thousand standard m³ (15.6 °C / 60 °F, 1 atm)";
 
@@ -71,19 +72,19 @@ const FlaringComplianceCard: React.FC<FlaringComplianceCardProps> = ({ flaringDa
   const showIntensity = (flaringData.gas_production_m3 ?? 0) > 0 && flaringData.flaring_intensity_pct != null;
 
   return (
-    <Card as="section" className="flaring-kpi-banner flex flex-col gap-5" aria-label="Operational flaring and regulatory compliance">
+    <Card as="section" className="flaring-kpi-banner flex flex-col gap-5" aria-label={t("Operational flaring and regulatory compliance")}>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex items-start gap-3">
           <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-md bg-brand-50 text-brand-700">
             <Flame className="size-5" aria-hidden="true" />
           </span>
           <div>
-            <h3 className="m-0 text-lg font-semibold text-text">Operational Flaring &amp; Regulatory Compliance</h3>
+            <h3 className="m-0 text-lg font-semibold text-text">{t("Operational Flaring & Regulatory Compliance")}</h3>
             <p className="m-0 mt-0.5 text-sm text-text-secondary">
-              Executive Decree 21-330 Article 9 (1.00% Gas Production Threshold) •{" "}
-              {flaringData.year === "all" ? "All years" : `Year ${flaringData.year}`} • GWP-
+              {t("Executive Decree 21-330 Article 9 (1.00% Gas Production Threshold) •")}{" "}
+              {flaringData.year === "all" ? t("All years") : `Year ${flaringData.year}`}{" "}{t("• GWP-")}
               {flaringData.gwp_horizon || "100"}
-              {flaringData.includes_pending ? " • incl. Pending" : " • Verified only"}
+              {flaringData.includes_pending ? t(" • incl. Pending") : t(" • Verified only")}
             </p>
           </div>
         </div>
@@ -112,28 +113,28 @@ const FlaringComplianceCard: React.FC<FlaringComplianceCardProps> = ({ flaringDa
       <div className={`grid gap-4 sm:grid-cols-2 ${(flaringData.unclassified_flaring?.volume_knm3 ?? 0) > 0 ? "lg:grid-cols-5" : "lg:grid-cols-4"}`}>
         <StreamTile
           testId="flaring-total"
-          label="Total Flared Volume"
+          label={t("Total Flared Volume")}
           stream={{ ...flaringData.total_flaring, percentage: null }}
           rule="border-l-brand-500"
           tone="brand"
         />
         <StreamTile
           testId="flaring-routine"
-          label="Routine Flaring"
+          label={t("Routine Flaring")}
           stream={flaringData.routine_flaring}
           rule="border-l-red-500"
           tone="danger"
         />
         <StreamTile
           testId="flaring-non-routine"
-          label="Non-Routine Flaring"
+          label={t("Non-Routine Flaring")}
           stream={flaringData.non_routine_flaring}
           rule="border-l-amber-500"
           tone="warning"
         />
         <StreamTile
           testId="flaring-safety"
-          label="Safety & Purge Flaring"
+          label={t("Safety & Purge Flaring")}
           stream={flaringData.safety_flaring}
           rule="border-l-blue-500"
           tone="info"
@@ -141,7 +142,7 @@ const FlaringComplianceCard: React.FC<FlaringComplianceCardProps> = ({ flaringDa
         {(flaringData.unclassified_flaring?.volume_knm3 ?? 0) > 0 && (
           <StreamTile
             testId="flaring-unclassified"
-            label="Unclassified Flaring"
+            label={t("Unclassified Flaring")}
             stream={flaringData.unclassified_flaring}
             rule="border-l-ink-400"
             tone="default"
@@ -153,17 +154,17 @@ const FlaringComplianceCard: React.FC<FlaringComplianceCardProps> = ({ flaringDa
         <div className="flex flex-col gap-2 rounded-md border border-border bg-ink-50 p-4">
           <div className="flex flex-wrap items-baseline justify-between gap-2 text-base text-text">
             <span>
-              <strong>Decree 21-330 Flaring Intensity:</strong>{" "}
+              <strong>{t("Decree 21-330 Flaring Intensity:")}</strong>{" "}
               <strong className={compliant ? "text-success-fg" : "text-danger-fg"}>{flaringData.flaring_intensity_pct}%</strong>{" "}
-              of Gross Gas Produced ({formatCompactNumber((flaringData.gas_production_m3 ?? 0) / 1e6, 2)} MMSm³)
+              {t("of Gross Gas Produced (")}{formatCompactNumber((flaringData.gas_production_m3 ?? 0) / 1e6, 2)}{" "}{t("MMSm³)")}
             </span>
             <span className="text-sm text-text-secondary">
-              Statutory limit: <strong>1.00%</strong> (Executive Decree 21-330 Art. 9)
+              {t("Statutory limit:")}{" "}<strong>1.00%</strong>{" "}{t("(Executive Decree 21-330 Art. 9)")}
             </span>
           </div>
           <div
             role="progressbar"
-            aria-label="Flaring intensity against the 1.00% statutory limit"
+            aria-label={t("Flaring intensity against the 1.00% statutory limit")}
             aria-valuemin={0}
             aria-valuemax={100}
             aria-valuenow={Math.min(100, flaringData.flaring_intensity_pct ?? 0)}

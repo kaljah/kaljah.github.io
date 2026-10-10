@@ -4,6 +4,7 @@ import { NativeSelect } from "../ui/NativeSelect";
 import { X, PlusCircle, CheckCircle2, AlertCircle } from "lucide-react";
 import api from "../api";
 import { useToast } from "./Toast";
+import { t } from "../i18n";
 
 export interface QuickAddCustomFactorModalProps {
   isOpen: boolean;
@@ -74,7 +75,7 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
       };
 
       const res = await api.post("/custom-factors", payload);
-      toast.success("Tier 2 custom factor registered successfully");
+      toast.success(t("Tier 2 custom factor registered successfully"));
       const createdFactor = res.data?.factor || {
         id: res.data?.id,
         factor_name: formData.factor_name.trim(),
@@ -122,10 +123,10 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
             </div>
             <div>
               <h3 className="m-[0px]! text-[length:1rem]! font-semibold! text-[color:var(--color-legacy-111827)]!">
-                Register Tier 2 Custom Factor
+                {t("Register Tier 2 Custom Factor")}
               </h3>
               <p className="m-[0px]! text-[length:0.75rem]! text-[color:var(--color-legacy-6b7280)]!">
-                Add a site-calibrated or supplier emission factor without leaving this form
+                {t("Add a site-calibrated or supplier emission factor without leaving this form")}
               </p>
             </div>
           </div>
@@ -156,13 +157,13 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
               <label
                 className="block! text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]! mb-[4px]!"
               >
-                Factor Name <span className="text-[color:var(--color-red-700)]!">*</span>
+                {t("Factor Name")}{" "}<span className="text-[color:var(--color-red-700)]!">*</span>
               </label>
               <Input
                 type="text"
                
                 className="w-full! p-[8px_10px]! text-[length:0.85rem]!"
-                placeholder="e.g. Hassi R'Mel Fuel Gas 2026, Skikda Distillate"
+                placeholder={t("e.g. Hassi R'Mel Fuel Gas 2026, Skikda Distillate")}
                 value={formData.factor_name}
                 onChange={(e) => handleChange("factor_name", e.target.value)}
                 required
@@ -175,7 +176,7 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
                 <label
                   className="block! text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]! mb-[4px]!"
                 >
-                  Factor Unit <span className="text-[color:var(--color-red-700)]!">*</span>
+                  {t("Factor Unit")}{" "}<span className="text-[color:var(--color-red-700)]!">*</span>
                 </label>
                 <NativeSelect
                   className="mole-input w-full! p-[8px_10px]! text-[length:0.85rem]!"
@@ -183,13 +184,13 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
                   value={formData.unit}
                   onChange={(e) => handleChange("unit", e.target.value)}
                 >
-                  <option value="kg/MMBtu">kg / MMBtu (Energy basis)</option>
-                  <option value="kg/m3">kg / m³ (Volumetric gas)</option>
-                  <option value="kg/scf">kg / scf (Volumetric gas)</option>
-                  <option value="kg/liter">kg / Liter (Liquid fuel)</option>
-                  <option value="kg/gal">kg / Gallon (Liquid fuel)</option>
-                  <option value="kg/kg">kg / kg (Mass basis)</option>
-                  <option value="tonne/tonne">tonne / tonne (Mass basis)</option>
+                  <option value="kg/MMBtu">{t("kg / MMBtu (Energy basis)")}</option>
+                  <option value="kg/m3">{t("kg / m³ (Volumetric gas)")}</option>
+                  <option value="kg/scf">{t("kg / scf (Volumetric gas)")}</option>
+                  <option value="kg/liter">{t("kg / Liter (Liquid fuel)")}</option>
+                  <option value="kg/gal">{t("kg / Gallon (Liquid fuel)")}</option>
+                  <option value="kg/kg">{t("kg / kg (Mass basis)")}</option>
+                  <option value="tonne/tonne">{t("tonne / tonne (Mass basis)")}</option>
                 </NativeSelect>
               </div>
 
@@ -197,13 +198,13 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
                 <label
                   className="block! text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]! mb-[4px]!"
                 >
-                  Parent / Reference Fuel
+                  {t("Parent / Reference Fuel")}
                 </label>
                 <Input
                   type="text"
                  
                   className="w-full! p-[8px_10px]! text-[length:0.85rem]!"
-                  placeholder="e.g. Natural Gas, Diesel"
+                  placeholder={t("e.g. Natural Gas, Diesel")}
                   value={formData.parent_fuel}
                   onChange={(e) => handleChange("parent_fuel", e.target.value)}
                 />
@@ -217,14 +218,14 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
               <div
                 className="text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-4b5563)]! mb-[8px]! uppercase! [letter-spacing:0.025em]!"
               >
-                Emission Factors ({formData.unit})
+                {t("Emission Factors (")}{formData.unit})
               </div>
               <div className="[display:grid]! [grid-template-columns:1fr_1fr_1fr]! [gap:10px]!">
                 <div>
                   <label
                     className="block! text-[length:0.7rem]! text-[color:var(--color-legacy-6b7280)]! mb-[2px]!"
                   >
-                    CO₂ Factor
+                    {t("CO₂ Factor")}
                   </label>
                   <Input
                     type="number"
@@ -240,7 +241,7 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
                   <label
                     className="block! text-[length:0.7rem]! text-[color:var(--color-legacy-6b7280)]! mb-[2px]!"
                   >
-                    CH₄ Factor
+                    {t("CH₄ Factor")}
                   </label>
                   <Input
                     type="number"
@@ -256,7 +257,7 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
                   <label
                     className="block! text-[length:0.7rem]! text-[color:var(--color-legacy-6b7280)]! mb-[2px]!"
                   >
-                    N₂O Factor
+                    {t("N₂O Factor")}
                   </label>
                   <Input
                     type="number"
@@ -277,14 +278,14 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
                 <label
                   className="block! text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]! mb-[4px]!"
                 >
-                  Heating Value (HHV)
+                  {t("Heating Value (HHV)")}
                 </label>
                 <Input
                   type="number"
                   step="any"
                  
                   className="w-full! p-[8px_10px]! text-[length:0.85rem]!"
-                  placeholder="e.g. 1085 (Btu/scf)"
+                  placeholder={t("e.g. 1085 (Btu/scf)")}
                   value={formData.hhv_factor}
                   onChange={(e) => handleChange("hhv_factor", e.target.value)}
                 />
@@ -294,7 +295,7 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
                 <label
                   className="block! text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]! mb-[4px]!"
                 >
-                  Factor Uncertainty (±%)
+                  {t("Factor Uncertainty (±%)")}
                 </label>
                 <div className="relative!">
                   <Input
@@ -309,7 +310,7 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
                   <span
                     className="[position:absolute]! [right:10px]! [top:50%]! [transform:translateY(-50%)]! text-[length:0.75rem]! text-[color:var(--color-legacy-9ca3af)]!"
                   >
-                    % (Tier 2 default: ±7%)
+                    {t("% (Tier 2 default: ±7%)")}
                   </span>
                 </div>
               </div>
@@ -320,13 +321,13 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
               <label
                 className="block! text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]! mb-[4px]!"
               >
-                Data Source / Lab Certificate Reference
+                {t("Data Source / Lab Certificate Reference")}
               </label>
               <Input
                 type="text"
                
                 className="w-full! p-[8px_10px]! text-[length:0.85rem]!"
-                placeholder="e.g. Sonatrach Analysis Certificate #2026-GC-041, Naftal Slip"
+                placeholder={t("e.g. Sonatrach Analysis Certificate #2026-GC-041, Naftal Slip")}
                 value={formData.source}
                 onChange={(e) => handleChange("source", e.target.value)}
               />
@@ -344,7 +345,7 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
               disabled={loading}
              
             >
-              Cancel
+              {t("Cancel")}
             </button>
             <button
               type="submit"
@@ -353,11 +354,11 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
              
             >
               {loading ? (
-                "Saving..."
+                t("Saving...")
               ) : (
                 <>
                   <CheckCircle2 size={16} />
-                  <span>Save & Apply Factor</span>
+                  <span>{t("Save & Apply Factor")}</span>
                 </>
               )}
             </button>

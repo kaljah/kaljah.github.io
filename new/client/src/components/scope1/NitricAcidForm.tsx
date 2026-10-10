@@ -1,10 +1,11 @@
 import React, { useEffect } from "react";
 import { Input } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
+import { t } from "../../i18n";
 
 const NITRIC_ACID_OPTIONS = [
-  { value: "Nitric Acid - With NSCR", label: "With Non-Selective Catalytic Reduction (NSCR) (2.0 kg N₂O/t)" },
-  { value: "Nitric Acid - Without NSCR", label: "Without NSCR / Uncontrolled (9.0 kg N₂O/t)" },
+  { value: "Nitric Acid - With NSCR", label: t("With Non-Selective Catalytic Reduction (NSCR) (2.0 kg N₂O/t)") },
+  { value: "Nitric Acid - Without NSCR", label: t("Without NSCR / Uncontrolled (9.0 kg N₂O/t)") },
 ];
 
 export interface Scope1SubFormProps {
@@ -25,20 +26,20 @@ export const NitricAcidForm: React.FC<Scope1SubFormProps> = ({ data, onChange })
       <div className="form-grid-2">
         <div className="input-group">
           <label>
-            Abatement Technology
+            {t("Abatement Technology")}
             <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
           </label>
           <CustomDropdown
             options={NITRIC_ACID_OPTIONS}
             value={data.fuel || "Nitric Acid - With NSCR"}
             onChange={(val) => onChange("fuel", val)}
-            placeholder="Select Abatement..."
+            placeholder={t("Select Abatement...")}
           />
         </div>
 
         <div className="input-group">
           <label>
-            Production Quantity
+            {t("Production Quantity")}
             <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
           </label>
           <div className="grid gap-[10px] [grid-template-columns:1fr_120px] max-[600px]:[grid-template-columns:1fr]">
@@ -51,9 +52,9 @@ export const NitricAcidForm: React.FC<Scope1SubFormProps> = ({ data, onChange })
             />
             <CustomDropdown
               options={[
-                { value: "tonne", label: "tonne HNO₃" },
-                { value: "ton", label: "short ton" },
-                { value: "kg", label: "kg" },
+                { value: "tonne", label: t("tonne HNO₃") },
+                { value: "ton", label: t("short ton") },
+                { value: "kg", label: t("kg") },
               ]}
               value={data.unit || "tonne"}
               onChange={(val) => onChange("unit", val)}

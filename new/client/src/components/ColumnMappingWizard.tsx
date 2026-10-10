@@ -7,6 +7,7 @@ import { useToast } from "./Toast";
 import ImportWizard from "./import-wizard/ImportWizard";
 import { controlClass, FieldGroupData, MappingField } from "./import-wizard/mapping";
 import { TEMPLATES, TemplateField } from "./column-mapping/templates";
+import { t as tr } from "../i18n";
 
 const TITLES: Record<string, string> = {
   sources: "Equipment",
@@ -59,12 +60,12 @@ const PROCESS_FIELDS: Record<string, string[]> = {
 };
 
 const TIER_OPTIONS = [
-  { value: "1", title: "Tier 1 (Default Factors)", description: "Basic calculation using industry defaults." },
-  { value: "3", title: "Tier 3 (Engineering)", description: "Advanced calculation using process specifications." },
+  { value: "1", title: tr("Tier 1 (Default Factors)"), description: tr("Basic calculation using industry defaults.") },
+  { value: "3", title: tr("Tier 3 (Engineering)"), description: tr("Advanced calculation using process specifications.") },
 ];
 const SCOPE_OPTIONS = [
-  { value: "all", title: "All Processes", description: "Upload data for various process types together." },
-  { value: "specific", title: "Choose by Process", description: "Upload data for a single specific process." },
+  { value: "all", title: tr("All Processes"), description: tr("Upload data for various process types together.") },
+  { value: "specific", title: tr("Choose by Process"), description: tr("Upload data for a single specific process.") },
 ];
 
 const asField = (f: TemplateField): MappingField => ({ key: f.id, label: f.label, required: f.required, hint: f.hint || "" });
@@ -78,7 +79,7 @@ function fieldsFor(type: string, tier: string, processScope: string, process: st
       const allowed = processScope === "all" ? [...new Set(Object.values(PROCESS_FIELDS).flat())] : PROCESS_FIELDS[process] || [];
       allowed.forEach((key) => {
         if (!fields.some((f) => f.key === key)) {
-          fields.push({ key, label: key.replace(/_/g, " ").toUpperCase(), hint: "Tier 3 specific", required: false });
+          fields.push({ key, label: key.replace(/_/g, " ").toUpperCase(), hint: tr("Tier 3 specific"), required: false });
         }
       });
     }
@@ -104,8 +105,8 @@ export const ColumnMappingWizard: React.FC<ColumnMappingWizardProps> = ({ onClos
   const fieldGroupsFor = useCallback((): FieldGroupData[] => {
     const fields = fieldsFor(type, tier, processScope, process);
     const groups: FieldGroupData[] = [
-      { id: "required", label: "Required fields", icon: Settings, fields: fields.filter((f) => f.required) },
-      { id: "optional", label: "Optional fields", icon: Settings, fields: fields.filter((f) => !f.required) },
+      { id: "required", label: tr("Required fields"), icon: Settings, fields: fields.filter((f) => f.required) },
+      { id: "optional", label: tr("Optional fields"), icon: Settings, fields: fields.filter((f) => !f.required) },
     ];
     return groups.filter((g) => g.fields.length > 0);
   }, [type, tier, processScope, process]);
@@ -122,7 +123,7 @@ export const ColumnMappingWizard: React.FC<ColumnMappingWizardProps> = ({ onClos
         a.click();
         a.remove();
       } catch {
-        toast.error("Template download failed.");
+        toast.error(tr("Template download failed."));
       }
       return;
     }
@@ -142,18 +143,18 @@ export const ColumnMappingWizard: React.FC<ColumnMappingWizardProps> = ({ onClos
       isEmissions
         ? [
             {
-              label: "Configuration",
+              label: tr("Configuration"),
               content: (
                 <div className="flex flex-col gap-5">
                   <section className="flex flex-col gap-3">
-                    <h3 className="m-0 text-md font-bold text-text">Calculation tier</h3>
-                    <RadioCardGroup label="Calculation tier" value={tier} onChange={setTier} options={TIER_OPTIONS} columns="md:grid-cols-2" />
+                    <h3 className="m-0 text-md font-bold text-text">{tr("Calculation tier")}</h3>
+                    <RadioCardGroup label={tr("Calculation tier")} value={tier} onChange={setTier} options={TIER_OPTIONS} columns="md:grid-cols-2" />
                   </section>
                   <section className="flex flex-col gap-3">
-                    <h3 className="m-0 text-md font-bold text-text">Process scope</h3>
-                    <RadioCardGroup label="Process scope" value={processScope} onChange={setProcessScope} options={SCOPE_OPTIONS} columns="md:grid-cols-2" />
+                    <h3 className="m-0 text-md font-bold text-text">{tr("Process scope")}</h3>
+                    <RadioCardGroup label={tr("Process scope")} value={processScope} onChange={setProcessScope} options={SCOPE_OPTIONS} columns="md:grid-cols-2" />
                     {processScope === "specific" && (
-                      <Field label="Select process type">
+                      <Field label={tr("Select process type")}>
                         <NativeSelect className={controlClass} value={process} onChange={(e) => setProcess(e.target.value)}>
                           {Object.entries(PROCESS_TYPES).map(([k, v]) => (
                             <option key={k} value={k}>
@@ -174,14 +175,14 @@ export const ColumnMappingWizard: React.FC<ColumnMappingWizardProps> = ({ onClos
 
   const fileExtras = (
     <div className="flex flex-col gap-2.5">
-      <p className="m-0 text-sm font-medium text-text-secondary">Don't have a file yet? Start from our template:</p>
+      <p className="m-0 text-sm font-medium text-text-secondary">{tr("Don't have a file yet? Start from our template:")}</p>
       <div className="grid gap-3 sm:grid-cols-2">
         {isEmissions && (
           <Button variant="secondary" className="h-auto justify-start gap-3 px-4 py-3 text-left" onClick={() => downloadTemplate("excel")}>
             <FileSpreadsheet className="size-5 shrink-0 text-brand-700" aria-hidden="true" />
             <span className="flex flex-col">
-              <strong className="text-sm">Excel Template</strong>
-              <small className="text-xs font-normal text-text-secondary">With dropdowns, sample data & engineering sheets</small>
+              <strong className="text-sm">{tr("Excel Template")}</strong>
+              <small className="text-xs font-normal text-text-secondary">{tr("With dropdowns, sample data & engineering sheets")}</small>
             </span>
             <Download className="ml-auto size-4 shrink-0" aria-hidden="true" />
           </Button>
@@ -189,8 +190,8 @@ export const ColumnMappingWizard: React.FC<ColumnMappingWizardProps> = ({ onClos
         <Button variant="secondary" className="h-auto justify-start gap-3 px-4 py-3 text-left" onClick={() => downloadTemplate("csv")}>
           <FileIcon className="size-5 shrink-0 text-brand-700" aria-hidden="true" />
           <span className="flex flex-col">
-            <strong className="text-sm">CSV Template</strong>
-            <small className="text-xs font-normal text-text-secondary">Lightweight flat file for maximum performance</small>
+            <strong className="text-sm">{tr("CSV Template")}</strong>
+            <small className="text-xs font-normal text-text-secondary">{tr("Lightweight flat file for maximum performance")}</small>
           </span>
           <Download className="ml-auto size-4 shrink-0" aria-hidden="true" />
         </Button>
@@ -199,11 +200,11 @@ export const ColumnMappingWizard: React.FC<ColumnMappingWizardProps> = ({ onClos
   );
 
   const mappingExtras = (
-    <Field label="Default factor type when not specified in file">
+    <Field label={tr("Default factor type when not specified in file")}>
       <NativeSelect className={controlClass} value={globalFactor} onChange={(e) => setGlobalFactor(e.target.value)}>
-        <option value="auto">Auto-detect from file</option>
-        <option value="default">Force Standard (API Compendium)</option>
-        <option value="custom">Force Custom Factors</option>
+        <option value="auto">{tr("Auto-detect from file")}</option>
+        <option value="default">{tr("Force Standard (API Compendium)")}</option>
+        <option value="custom">{tr("Force Custom Factors")}</option>
       </NativeSelect>
     </Field>
   );
@@ -212,7 +213,7 @@ export const ColumnMappingWizard: React.FC<ColumnMappingWizardProps> = ({ onClos
   return (
     <ImportWizard
       title={`Import ${TITLES[type] || (facilities ? "Regions" : "Emissions Data")}`}
-      subtitle="Upload a CSV or Excel file to bulk-import your records"
+      subtitle={tr("Upload a CSV or Excel file to bulk-import your records")}
       fieldGroupsFor={fieldGroupsFor}
       scopeFor={() => SCOPE_OF[type] || type}
       preSteps={preSteps}

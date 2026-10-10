@@ -23,6 +23,7 @@ import {
 import api from "../../api";
 import { Badge, Banner, Button, Card, EmptyState, Menu, MenuContent, MenuItem, MenuTrigger, NativeSelect, SegmentedControl, Skeleton, StatCard, type BadgeTone } from "../../ui";
 import { cn } from "../../ui/cn";
+import { t } from "../../i18n";
 
 export interface ActionStyleDef {
   icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean | "true" | "false" }>;
@@ -64,45 +65,44 @@ export const AuditHeader: React.FC<AuditHeaderProps> = ({ view, onView, refreshi
   <div className="mb-6 flex flex-col items-stretch justify-between gap-5 md:flex-row md:items-start">
     <div className="min-w-0">
       <Badge tone="brand" className="mb-2 gap-1.5 px-2.5 py-1 uppercase tracking-wide">
-        <Shield className="size-3.5" aria-hidden="true" /> Tamper-evident log
+        <Shield className="size-3.5" aria-hidden="true" />{" "}{t("Tamper-evident log")}
       </Badge>
-      <h1 className="m-0 mb-1.5 text-xl font-bold text-text">Audit Trail &amp; System Activity</h1>
+      <h1 className="m-0 mb-1.5 text-xl font-bold text-text">{t("Audit Trail & System Activity")}</h1>
       <p className="m-0 max-w-3xl text-md leading-normal text-text-secondary">
-        Every change to emissions data, sign-ins, calculations and administrative actions. Each entry is sealed into a
-        hash chain when it is written, so a later edit or deletion shows up when the log is verified.
+        {t("Every change to emissions data, sign-ins, calculations and administrative actions. Each entry is sealed into a hash chain when it is written, so a later edit or deletion shows up when the log is verified.")}
       </p>
     </div>
 
     <div className="flex flex-wrap items-center justify-between gap-3 md:justify-end">
       <SegmentedControl
-        label="Audit view"
+        label={t("Audit view")}
         value={view}
         onChange={onView}
         options={[
-          { value: "table", label: "Table" },
-          { value: "timeline", label: "Timeline" },
+          { value: "table", label: t("Table") },
+          { value: "timeline", label: t("Timeline") },
         ]}
       />
       <Button variant="secondary" onClick={onRefresh} disabled={refreshing}>
-        <RefreshCw className={cn("size-4", refreshing && "animate-spin")} aria-hidden="true" /> Refresh
+        <RefreshCw className={cn("size-4", refreshing && "animate-spin")} aria-hidden="true" />{" "}{t("Refresh")}
       </Button>
       <Menu>
         <MenuTrigger asChild>
           <Button>
-            <Download className="size-4" aria-hidden="true" /> Export Audit Log <ChevronDown className="size-3.5" aria-hidden="true" />
+            <Download className="size-4" aria-hidden="true" />{" "}{t("Export Audit Log")}{" "}<ChevronDown className="size-3.5" aria-hidden="true" />
           </Button>
         </MenuTrigger>
         <MenuContent>
           <MenuItem icon={FileSpreadsheet} onSelect={() => onExport("csv")}>
             <span className="flex flex-col">
-              <strong className="text-sm">CSV Spreadsheet</strong>
-              <span className="text-xs text-text-secondary">Compliant with audit tools &amp; Excel</span>
+              <strong className="text-sm">{t("CSV Spreadsheet")}</strong>
+              <span className="text-xs text-text-secondary">{t("Compliant with audit tools & Excel")}</span>
             </span>
           </MenuItem>
           <MenuItem icon={FileText} onSelect={() => onExport("json")}>
             <span className="flex flex-col">
-              <strong className="text-sm">JSON Structured Data</strong>
-              <span className="text-xs text-text-secondary">Full metadata &amp; field diffs</span>
+              <strong className="text-sm">{t("JSON Structured Data")}</strong>
+              <span className="text-xs text-text-secondary">{t("Full metadata & field diffs")}</span>
             </span>
           </MenuItem>
         </MenuContent>
@@ -123,15 +123,15 @@ export interface AuditStatsProps {
 /** Four headline counters. */
 export const AuditStats: React.FC<AuditStatsProps> = ({ stats }) => (
   <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-    <StatCard icon={Activity} label="Total Events Logged" valueText={stats.totalEvents.toLocaleString()} />
-    <StatCard icon={LogIn} label="User Logins" valueText={stats.totalLogins.toLocaleString()} />
-    <StatCard icon={Database} label="Data Changes" valueText={stats.dataMutations.toLocaleString()} />
-    <StatCard icon={ShieldAlert} label="Security & Alerts" valueText={stats.securityAlerts.toLocaleString()} />
+    <StatCard icon={Activity} label={t("Total Events Logged")} valueText={stats.totalEvents.toLocaleString()} />
+    <StatCard icon={LogIn} label={t("User Logins")} valueText={stats.totalLogins.toLocaleString()} />
+    <StatCard icon={Database} label={t("Data Changes")} valueText={stats.dataMutations.toLocaleString()} />
+    <StatCard icon={ShieldAlert} label={t("Security & Alerts")} valueText={stats.securityAlerts.toLocaleString()} />
   </div>
 );
 
 export const AuditSkeleton: React.FC = () => (
-  <div role="status" aria-label="Loading audit events" className="flex flex-col gap-4">
+  <div role="status" aria-label={t("Loading audit events")} className="flex flex-col gap-4">
     {[1, 2, 3, 4].map((i) => (
       <Card key={i} className="flex items-center gap-4">
         <Skeleton className="size-10 shrink-0 rounded-md" />
@@ -154,9 +154,9 @@ export const AuditEmpty: React.FC<AuditEmptyProps> = ({ filtered, onReset }) => 
   <Card>
     <EmptyState
       icon={Filter}
-      title="No audit records found"
-      description={filtered ? "No activity logs match your current filter and search criteria." : "No compliance audit records have been generated yet."}
-      action={filtered ? <Button onClick={onReset}>Clear All Filters</Button> : undefined}
+      title={t("No audit records found")}
+      description={filtered ? t("No activity logs match your current filter and search criteria.") : t("No compliance audit records have been generated yet.")}
+      action={filtered ? <Button onClick={onReset}>{t("Clear All Filters")}</Button> : undefined}
     />
   </Card>
 );
@@ -173,11 +173,11 @@ export interface AuditPaginationProps {
 export const AuditPagination: React.FC<AuditPaginationProps> = ({ page, totalPages, totalRecords, limit, onLimit, onPage }) => (
   <Card className="mt-7 flex flex-col items-stretch justify-between gap-4 px-5 py-4 text-center sm:flex-row sm:items-center sm:text-left">
     <p className="m-0 text-base text-text-secondary">
-      Page <strong>{page}</strong> of <strong>{totalPages}</strong> ({totalRecords} total events)
+      {t("Page")}{" "}<strong>{page}</strong>{" "}{t("of")}{" "}<strong>{totalPages}</strong> ({totalRecords}{" "}{t("total events)")}
     </p>
     <div className="flex flex-wrap items-center justify-center gap-4">
       <label className="flex items-center gap-2 text-sm text-text-secondary">
-        Rows:
+        {t("Rows:")}
         <NativeSelect
           className="h-8 rounded-md border border-border bg-surface px-2 text-sm text-text"
           value={limit}
@@ -189,14 +189,14 @@ export const AuditPagination: React.FC<AuditPaginationProps> = ({ page, totalPag
         </NativeSelect>
       </label>
       <div className="flex items-center gap-2.5">
-        <Button variant="secondary" size="sm" disabled={page <= 1} onClick={() => onPage(Math.max(1, page - 1))} title="Previous Page">
-          <ChevronLeft className="size-4" aria-hidden="true" /> Prev
+        <Button variant="secondary" size="sm" disabled={page <= 1} onClick={() => onPage(Math.max(1, page - 1))} title={t("Previous Page")}>
+          <ChevronLeft className="size-4" aria-hidden="true" />{" "}{t("Prev")}
         </Button>
         <span className="min-w-11 text-center text-sm font-semibold text-text-secondary">
           {page} / {totalPages}
         </span>
-        <Button variant="secondary" size="sm" disabled={page >= totalPages} onClick={() => onPage(Math.min(totalPages, page + 1))} title="Next Page">
-          Next <ChevronRight className="size-4" aria-hidden="true" />
+        <Button variant="secondary" size="sm" disabled={page >= totalPages} onClick={() => onPage(Math.min(totalPages, page + 1))} title={t("Next Page")}>
+          {t("Next")}{" "}<ChevronRight className="size-4" aria-hidden="true" />
         </Button>
       </div>
     </div>
@@ -237,16 +237,16 @@ export const AuditIntegrityCheck: React.FC = () => {
     <div className="mb-6 flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-3">
         <Button variant="secondary" onClick={verify} disabled={busy}>
-          <Shield className="size-4" aria-hidden="true" /> {busy ? "Verifying..." : "Verify integrity"}
+          <Shield className="size-4" aria-hidden="true" /> {busy ? t("Verifying...") : t("Verify integrity")}
         </Button>
-        <span className="text-sm text-text-secondary">Checks every entry against the hash sealed when it was written.</span>
+        <span className="text-sm text-text-secondary">{t("Checks every entry against the hash sealed when it was written.")}</span>
       </div>
       {error && <Banner tone="danger">{error}</Banner>}
       {result && result.status === "verified" && (
         <Banner tone="success" title={`Log intact: ${result.total_records.toLocaleString()} entries verified`}>
-          No entry was changed, removed or inserted. To detect a later removal of the newest entries, keep this checkpoint:{" "}
+          {t("No entry was changed, removed or inserted. To detect a later removal of the newest entries, keep this checkpoint:")}{" "}
           <span className="break-all font-mono text-xs">
-            {result.total_records} entries · head {result.chain_head_hash} · seal {result.checkpoint_hmac}
+            {result.total_records}{" "}{t("entries · head")}{" "}{result.chain_head_hash}{" "}{t("· seal")}{" "}{result.checkpoint_hmac}
           </span>
         </Banner>
       )}
@@ -255,7 +255,7 @@ export const AuditIntegrityCheck: React.FC = () => {
           <ul className="m-0 mt-1 list-disc pl-5">
             {result.issues.map((i) => (
               <li key={`${i.id}-${i.problem}`}>
-                Entry #{i.id}: {i.detail}
+                {t("Entry #")}{i.id}: {i.detail}
               </li>
             ))}
           </ul>

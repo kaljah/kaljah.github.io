@@ -8,6 +8,7 @@ import api from "../../api";
 import { recordsLink } from "../../utils/reportLinks";
 import { describeBridge, describeRanking } from "../../utils/chartInsights";
 import { formatCompactNumber } from "../../utils/formatters";
+import { t } from "../../i18n";
 
 export interface PendingBannerProps {
   count: number;
@@ -30,7 +31,7 @@ export const PendingBanner: React.FC<PendingBannerProps> = ({
   <Banner
     tone="warning"
     className={cn("pending-banner-card items-center bg-surface", includePending && "active-preview")}
-    title={includePending ? "Previewing pending & verified emissions" : "Pending records awaiting review"}
+    title={includePending ? t("Previewing pending & verified emissions") : t("Pending records awaiting review")}
     actions={
       <>
         <Switch
@@ -38,15 +39,15 @@ export const PendingBanner: React.FC<PendingBannerProps> = ({
           label={
             <span className="flex items-center gap-1.5 text-sm font-semibold text-text-secondary">
               {includePending ? <Eye className="size-4" aria-hidden="true" /> : <EyeOff className="size-4" aria-hidden="true" />}
-              Preview pending data
+              {t("Preview pending data")}
             </span>
           }
           checked={includePending}
           onChange={(e) => onIncludePending(e.target.checked)}
         />
         {canReview && (
-          <Button size="sm" onClick={onReview} title="Go to Manage Data to review pending records">
-            Review now <ArrowRight className="size-3.5" aria-hidden="true" />
+          <Button size="sm" onClick={onReview} title={t("Go to Manage Data to review pending records")}>
+            {t("Review now")}{" "}<ArrowRight className="size-3.5" aria-hidden="true" />
           </Button>
         )}
       </>
@@ -54,15 +55,15 @@ export const PendingBanner: React.FC<PendingBannerProps> = ({
   >
     <div className="flex flex-wrap items-center gap-2">
       <Badge tone="warning">
-        <Clock className="size-3" aria-hidden="true" /> {includePending ? "Live preview active" : "Pending approval"}
+        <Clock className="size-3" aria-hidden="true" /> {includePending ? t("Live preview active") : t("Pending approval")}
       </Badge>
       <span className="text-sm text-text-secondary">
-        There are <strong>{count.toLocaleString()}</strong> emission records
-        {co2e > 0 && <strong className="mx-1 tabular-nums text-warning-fg">{co2e.toLocaleString()} tCO₂e</strong>}
-        pending approval.{" "}
+        {t("There are")}{" "}<strong>{count.toLocaleString()}</strong>{" "}{t("emission records")}
+        {co2e > 0 && <strong className="mx-1 tabular-nums text-warning-fg">{co2e.toLocaleString()}{" "}{t("tCO₂e")}</strong>}
+        {t("pending approval.")}{" "}
         {includePending
-          ? "Dashboard metrics now combine pending drafts and verified records."
-          : "Official metrics currently display verified records only."}
+          ? t("Dashboard metrics now combine pending drafts and verified records.")
+          : t("Official metrics currently display verified records only.")}
       </span>
     </div>
   </Banner>
@@ -79,12 +80,12 @@ export interface TrendCardProps {
 export const TrendCard: React.FC<TrendCardProps> = ({ data, lines, compare, onCompare }) => (
   <Card className="min-w-0">
     <CardHeader
-      title="Emissions trend & projection"
-      description="Historical inventory trajectory with 5-year predictive forecast"
+      title={t("Emissions trend & projection")}
+      description={t("Historical inventory trajectory with 5-year predictive forecast")}
       actions={
         <Button variant="secondary" size="sm" aria-pressed={compare} onClick={onCompare} className="print:hidden">
           <BarChart3 className="size-4" aria-hidden="true" />
-          {compare ? "Standard view" : "Compare regions"}
+          {compare ? t("Standard view") : t("Compare regions")}
         </Button>
       }
     />
@@ -142,11 +143,11 @@ export interface SbtiCardProps {
 export const SbtiCard: React.FC<SbtiCardProps> = ({ sbti, onOpen }) => (
   <Card className="p-6">
     <CardHeader
-      title={sbti.pathway_label || "Decarbonization trajectory"}
+      title={sbti.pathway_label || t("Decarbonization trajectory")}
       description={`Progress monitoring against corporate Net-Zero targets from Base Year ${sbti.base_year} to Target Year ${sbti.target_year}`}
       actions={
         <Button variant="secondary" onClick={onOpen}>
-          View full SBTi dashboard <ArrowRight className="size-4" aria-hidden="true" />
+          {t("View full SBTi dashboard")}{" "}<ArrowRight className="size-4" aria-hidden="true" />
         </Button>
       }
     />
@@ -177,9 +178,9 @@ export const CategoricalCard: React.FC<CategoricalCardProps> = ({ collapsed, onT
       )}
     >
       <span className="flex flex-wrap items-center gap-3">
-        <span className="text-lg font-semibold text-text">Categorical emissions overview</span>
+        <span className="text-lg font-semibold text-text">{t("Categorical emissions overview")}</span>
         <Badge className="gap-1.5 px-2.5 py-1 text-sm">
-          <Hexagon className="size-3.5" aria-hidden="true" /> Activity → Division → Region
+          <Hexagon className="size-3.5" aria-hidden="true" />{" "}{t("Activity → Division → Region")}
         </Badge>
       </span>
       {collapsed ? <ChevronDown className="size-[18px] text-ink-500" aria-hidden="true" /> : <ChevronUp className="size-[18px] text-ink-500" aria-hidden="true" />}
@@ -200,7 +201,7 @@ export const CategoricalCard: React.FC<CategoricalCardProps> = ({ collapsed, onT
                           {reg.region} {reg.field && <span className="font-medium text-text-secondary">- {reg.field}</span>}
                         </div>
                         <div className="text-base font-bold tabular-nums text-text">
-                          {formatCompactNumber(reg.total_emissions)} <span className="text-xs font-normal text-text-secondary">tCO₂e</span>
+                          {formatCompactNumber(reg.total_emissions)} <span className="text-xs font-normal text-text-secondary">{t("tCO₂e")}</span>
                         </div>
                       </li>
                     ))}
@@ -208,7 +209,7 @@ export const CategoricalCard: React.FC<CategoricalCardProps> = ({ collapsed, onT
                 </div>
               ))
             ) : (
-              <p className="m-0 py-2 text-sm italic text-text-secondary">No emissions data for this activity</p>
+              <p className="m-0 py-2 text-sm italic text-text-secondary">{t("No emissions data for this activity")}</p>
             )}
           </div>
         ))}
@@ -258,10 +259,10 @@ export const BridgeCard: React.FC<BridgeCardProps> = ({ params }) => {
   if (!bridge || !hasData || bridge.start == null || bridge.end == null) {
     return (
       <Card className="min-w-0">
-        <p className="m-0 text-sm text-ink-700">No earlier year to compare against with Scope 3 included.</p>
+        <p className="m-0 text-sm text-ink-700">{t("No earlier year to compare against with Scope 3 included.")}</p>
         <div className="mt-3">
           <Switch
-            label={<span className="text-sm font-semibold text-text-secondary">Include Scope 3</span>}
+            label={<span className="text-sm font-semibold text-text-secondary">{t("Include Scope 3")}</span>}
             checked={includeScope3}
             onChange={(e) => setIncludeScope3(e.target.checked)}
           />
@@ -276,11 +277,11 @@ export const BridgeCard: React.FC<BridgeCardProps> = ({ params }) => {
     <Card className="min-w-0">
       <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
         <h3 className="m-0 text-md font-bold text-ink-800">
-          What moved {scopeLabel} emissions, {bridge.prev_year} → {bridge.year}
+          {t("What moved")}{" "}{scopeLabel}{" "}{t("emissions,")}{" "}{bridge.prev_year} → {bridge.year}
         </h3>
         <span className="text-sm font-semibold text-ink-600">
           {change >= 0 ? "+" : "−"}
-          {formatCompactNumber(Math.abs(change))} tCO₂e ({change >= 0 ? "+" : "−"}
+          {formatCompactNumber(Math.abs(change))}{" "}{t("tCO₂e (")}{change >= 0 ? "+" : "−"}
           {Math.abs(pct).toFixed(1)}%)
         </span>
       </div>
@@ -290,17 +291,17 @@ export const BridgeCard: React.FC<BridgeCardProps> = ({ params }) => {
         </p>
         <div className="flex flex-wrap items-center gap-3">
           <Switch
-            label={<span className="text-sm font-semibold text-text-secondary">Include Scope 3</span>}
+            label={<span className="text-sm font-semibold text-text-secondary">{t("Include Scope 3")}</span>}
             checked={includeScope3}
             onChange={(e) => setIncludeScope3(e.target.checked)}
           />
           <SegmentedControl
-            label="Step labels"
+            label={t("Step labels")}
             size="sm"
             value={labelMode}
             onChange={setLabelMode}
             options={[
-              { value: "absolute", label: "tCO₂e" },
+              { value: "absolute", label: t("tCO₂e") },
               { value: "percent", label: "%" },
             ]}
           />
@@ -327,7 +328,7 @@ export const BridgeCard: React.FC<BridgeCardProps> = ({ params }) => {
         }
       />
       <p className="mb-0 mt-2 text-xs text-ink-500">
-        Axis is zoomed to the range the changes move through; it does not start at zero. Click a step to open that scope's records for the year.
+        {t("Axis is zoomed to the range the changes move through; it does not start at zero. Click a step to open that scope's records for the year.")}
       </p>
     </Card>
   );

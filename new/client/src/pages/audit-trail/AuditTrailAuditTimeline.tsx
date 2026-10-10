@@ -3,6 +3,7 @@ import { ArrowRight, Calendar, ChevronDown, ChevronUp, Clock, Code, Database, Gl
 import { Badge, Button, Card } from "../../ui";
 import { cn } from "../../ui/cn";
 import type { ActionStyleDef } from "./AuditTrailChrome";
+import { t } from "../../i18n";
 
 const mono = "font-mono text-sm";
 
@@ -25,7 +26,7 @@ const Diff: React.FC<DiffProps> = ({ log, formatDiffVal }) => {
   return (
     <div className="mb-3 rounded-md border border-border bg-ink-50 px-3.5 py-2.5">
       <p className="m-0 mb-2 flex items-center gap-1.5 text-sm font-bold uppercase tracking-wide text-text-secondary">
-        <History className="size-3" aria-hidden="true" /> Field-level changes
+        <History className="size-3" aria-hidden="true" />{" "}{t("Field-level changes")}
       </p>
       {structured ? (
         <div className="flex flex-col gap-1.5">
@@ -50,12 +51,12 @@ const Diff: React.FC<DiffProps> = ({ log, formatDiffVal }) => {
         <div className="flex flex-col gap-1 text-sm text-text-secondary">
           {log.old_values && (
             <div>
-              <strong>Before:</strong> {formatDiffVal(log.old_values)}
+              <strong>{t("Before:")}</strong> {formatDiffVal(log.old_values)}
             </div>
           )}
           {log.new_values && (
             <div>
-              <strong>After:</strong> {formatDiffVal(log.new_values)}
+              <strong>{t("After:")}</strong> {formatDiffVal(log.new_values)}
             </div>
           )}
         </div>
@@ -129,7 +130,7 @@ const AuditTrailAuditTimeline: React.FC<AuditTrailAuditTimelineProps> = ({
               </span>
             </div>
 
-            <p className="m-0 mb-3 text-md leading-relaxed text-ink-700">{log.description || log.details || "No details recorded"}</p>
+            <p className="m-0 mb-3 text-md leading-relaxed text-ink-700">{log.description || log.details || t("No details recorded")}</p>
 
             {Boolean(log.old_values || log.new_values) && <Diff log={log} formatDiffVal={formatDiffVal} />}
 
@@ -137,12 +138,12 @@ const AuditTrailAuditTimeline: React.FC<AuditTrailAuditTimelineProps> = ({
 
             <div className="flex flex-wrap items-center justify-between gap-2 border-t border-ink-100 pt-2.5 text-sm text-text-secondary">
               <div className="flex flex-wrap items-center gap-4">
-                <Meta icon={Database}>Ref: #{log.entityId || log.recordId || "N/A"}</Meta>
-                <Meta icon={Globe}>IP: {log.ipAddress || "Local / System"}</Meta>
+                <Meta icon={Database}>{t("Ref: #")}{log.entityId || log.recordId || "N/A"}</Meta>
+                <Meta icon={Globe}>{t("IP:")}{" "}{log.ipAddress || t("Local / System")}</Meta>
                 <Meta icon={Calendar}>{formatFullDateTime(log.timestamp)}</Meta>
               </div>
-              <Button variant="ghost" size="sm" aria-expanded={raw} onClick={() => toggleRawData(log.id)} title="Toggle technical audit JSON">
-                <Code className="size-3" aria-hidden="true" /> {raw ? "Hide raw" : "Raw JSON"}
+              <Button variant="ghost" size="sm" aria-expanded={raw} onClick={() => toggleRawData(log.id)} title={t("Toggle technical audit JSON")}>
+                <Code className="size-3" aria-hidden="true" /> {raw ? t("Hide raw") : t("Raw JSON")}
                 {raw ? <ChevronUp className="size-3" aria-hidden="true" /> : <ChevronDown className="size-3" aria-hidden="true" />}
               </Button>
             </div>

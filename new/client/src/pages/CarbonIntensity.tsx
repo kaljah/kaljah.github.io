@@ -12,6 +12,7 @@ import CustomDropdown from "../components/CustomDropdown";
 import { formatNumber } from "../utils/formatters";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
 import "./TopBarFilters.css";
+import { t } from "../i18n";
 
 interface Facility {
   id: string | number;
@@ -306,7 +307,7 @@ const CarbonIntensity: React.FC = () => {
       });
     } catch (error) {
       console.error("Failed to load intensity stats:", error);
-      toast.error("Failed to load carbon intensity metrics");
+      toast.error(t("Failed to load carbon intensity metrics"));
     } finally {
       setLoading(false);
       setIsUpdating(false);
@@ -364,7 +365,7 @@ const CarbonIntensity: React.FC = () => {
   };
 
   const getSegmentOptions = () => [
-    { value: "all", label: "All Supply Chains" },
+    { value: "all", label: t("All Supply Chains") },
     ...availableSegments.map((s) => ({ value: s, label: s })),
   ];
 
@@ -374,7 +375,7 @@ const CarbonIntensity: React.FC = () => {
     );
     const activities = new Set(filtered.map((f) => f.activity).filter(Boolean));
     return [
-      { value: "all", label: "All Activities" },
+      { value: "all", label: t("All Activities") },
       ...Array.from(activities)
         .sort()
         .map((a) => ({ value: a as string, label: a as string })),
@@ -382,7 +383,7 @@ const CarbonIntensity: React.FC = () => {
   };
 
   const getDivisionOptions = () => {
-    let divisions = [{ value: "all", label: "All Divisions" }];
+    let divisions = [{ value: "all", label: t("All Divisions") }];
     const filtered = facilities.filter(
       (f) =>
         (currentSegment === "all" || f.segment === currentSegment) &&
@@ -405,7 +406,7 @@ const CarbonIntensity: React.FC = () => {
         (currentDivision === "all" || f.division === currentDivision),
     );
     return [
-      { value: "all", label: "All Regions" },
+      { value: "all", label: t("All Regions") },
       ...filtered.map((f) => ({
         value: f.id.toString(),
         label: f.name,
@@ -421,7 +422,7 @@ const CarbonIntensity: React.FC = () => {
         <div className="filter-wrapper">
           <CustomDropdown
             options={[
-              { value: "all", label: "All Years" },
+              { value: "all", label: t("All Years") },
               ...availableYears.map((y) => ({
                 value: y.toString(),
                 label: y.toString(),
@@ -429,7 +430,7 @@ const CarbonIntensity: React.FC = () => {
             ]}
             value={selectedYear}
             onChange={setSelectedYear}
-            placeholder="Year"
+            placeholder={t("Year")}
           />
         </div>
         <div className="filter-wrapper">
@@ -437,7 +438,7 @@ const CarbonIntensity: React.FC = () => {
             options={getSegmentOptions()}
             value={currentSegment}
             onChange={handleSegmentChange}
-            placeholder="Supply Chain"
+            placeholder={t("Supply Chain")}
           />
         </div>
         <div className="filter-wrapper">
@@ -445,7 +446,7 @@ const CarbonIntensity: React.FC = () => {
             options={getActivityOptions()}
             value={currentActivity}
             onChange={handleActivityChange}
-            placeholder="Activity"
+            placeholder={t("Activity")}
           />
         </div>
         <div className="filter-wrapper">
@@ -453,7 +454,7 @@ const CarbonIntensity: React.FC = () => {
             options={getDivisionOptions()}
             value={currentDivision}
             onChange={handleDivisionChange}
-            placeholder="Division"
+            placeholder={t("Division")}
           />
         </div>
         <div className="filter-wrapper">
@@ -461,7 +462,7 @@ const CarbonIntensity: React.FC = () => {
             options={getRegionOptions()}
             value={currentRegion}
             onChange={setCurrentRegion}
-            placeholder="Region"
+            placeholder={t("Region")}
           />
         </div>
       </div>,
@@ -532,13 +533,13 @@ const CarbonIntensity: React.FC = () => {
     const excluded = (total || 0) - (used || 0);
     if (!(excluded > Math.max(0.5, Math.abs(total || 0) * 1e-6))) return null;
     return (
-      <p className="m-0 mt-2 text-sm text-warning-fg">{formatNumber(excluded)} t from years without production are not in this intensity</p>
+      <p className="m-0 mt-2 text-sm text-warning-fg">{formatNumber(excluded)}{" "}{t("t from years without production are not in this intensity")}</p>
     );
   };
 
   if (loading && regionalData.length === 0)
     return (
-      <LoadingSpinner message="Calculating Carbon Intensity..." fullScreen />
+      <LoadingSpinner message={t("Calculating Carbon Intensity...")} fullScreen />
     );
 
   return (

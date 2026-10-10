@@ -2,6 +2,7 @@ import React from "react";
 import { BarChart2, Grid } from "lucide-react";
 import { LineChart } from "../../components/charts";
 import { activateOnKey } from "../../utils/a11yKeys";
+import { t } from "../../i18n";
 
 export interface MethaneIntensityHistoricalMethaneTrendsProps {
   getHeatmapClass: (val: number) => string;
@@ -32,10 +33,10 @@ const MethaneIntensityHistoricalMethaneTrends: React.FC<MethaneIntensityHistoric
     <div className="chart-header">
       <div>
         <h3 className="mb-[4px]!">
-          Historical Methane Trends & Targets
+          {t("Historical Methane Trends & Targets")}
         </h3>
         <p className="text-[color:var(--text-secondary)]! text-[length:0.9rem]! m-[0px]!">
-          5-Year Methane Loss Rate (%) vs OGMP 2.0 Targets (&le;{upstreamTargetPct.toFixed(2)}% Upstream / &le;{midstreamTargetPct.toFixed(2)}% Midstream)
+          {t("5-Year Methane Loss Rate (%) vs OGMP 2.0 Targets (≤")}{upstreamTargetPct.toFixed(2)}{t("% Upstream / ≤")}{midstreamTargetPct.toFixed(2)}{t("% Midstream)")}
         </p>
       </div>
       <div className="[display:flex] [gap:12px] [align-items:center]">
@@ -44,13 +45,13 @@ const MethaneIntensityHistoricalMethaneTrends: React.FC<MethaneIntensityHistoric
             className={`view-btn ${trendView === "chart" ? "active" : ""}`}
             onClick={() => setTrendView("chart")}
           >
-            <BarChart2 size={16} /> Chart
+            <BarChart2 size={16} />{" "}{t("Chart")}
           </button>
           <button
             className={`view-btn ${trendView === "heatmap" ? "active" : ""}`}
             onClick={() => setTrendView("heatmap")}
           >
-            <Grid size={16} /> Heatmap
+            <Grid size={16} />{" "}{t("Heatmap")}
           </button>
         </div>
       </div>
@@ -96,7 +97,7 @@ const MethaneIntensityHistoricalMethaneTrends: React.FC<MethaneIntensityHistoric
       <div className="heatmap-container [margin-top:24px] [overflow-x:auto] [background:var(--bg-app)] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color)] [padding:16px]">
         <div className="heatmap-header [display:grid] [grid-template-columns:200px_repeat(5,_1fr)] [gap:12px] [margin-bottom:16px] [padding:0_12px]">
           <div className="[font-size:var(--text-sm)] [font-weight:700] [color:var(--text-secondary)] [text-transform:uppercase] [letter-spacing:0.05em] text-left!">
-            FACILITY / REGION
+            {t("FACILITY / REGION")}
           </div>
           {rawTrendData.map((d) => (
             <div key={d.year} className="[font-size:var(--text-sm)] [font-weight:700] [color:var(--text-secondary)] [text-transform:uppercase] [text-align:center] [letter-spacing:0.05em]">
@@ -138,7 +139,7 @@ const MethaneIntensityHistoricalMethaneTrends: React.FC<MethaneIntensityHistoric
             ))
           ) : (
             <p className="text-center! p-[40px]! text-[color:var(--text-secondary)]!">
-              No regional data available
+              {t("No regional data available")}
             </p>
           )}
         </div>

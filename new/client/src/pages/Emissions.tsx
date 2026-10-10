@@ -17,6 +17,7 @@ import {
   STAGE_SCOPE2,
   STAGE_SCOPE3,
 } from "../utils/constants";
+import { t } from "../i18n";
 
 interface ScopeCardConfig {
   number: string;
@@ -35,7 +36,7 @@ interface ScopeCardConfig {
 const SCOPE_CARDS: ScopeCardConfig[] = [
   {
     number: "01",
-    title: "Scope 1",
+    title: t("Scope 1"),
     tag: "Direct Emissions",
     desc: "Combustion, flaring, fugitive & vented emissions from sources owned or controlled by your organisation.",
     chips: ["Stationary Combustion", "Flaring", "Fugitive", "+ more"],
@@ -47,7 +48,7 @@ const SCOPE_CARDS: ScopeCardConfig[] = [
   },
   {
     number: "02",
-    title: "Scope 2",
+    title: t("Scope 2"),
     tag: "Indirect Energy",
     desc: "Indirect emissions from the generation of purchased electricity, steam, heat, or cooling consumed by your organisation.",
     chips: ["Electricity", "Steam / Heat", "CHP"],
@@ -59,7 +60,7 @@ const SCOPE_CARDS: ScopeCardConfig[] = [
   },
   {
     number: "03",
-    title: "Scope 3",
+    title: t("Scope 3"),
     tag: "Value Chain",
     desc: "All other indirect emissions in your value chain — upstream inputs, downstream product use, and logistics.",
     chips: ["Upstream", "Downstream", "Logistics", "+ more"],
@@ -143,7 +144,7 @@ const Emissions: React.FC = () => {
             ))}
           </span>
           <span className="mt-auto inline-flex items-center gap-1 text-base font-semibold text-link">
-            Open calculator
+            {t("Open calculator")}
             <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
           </span>
         </button>
@@ -152,9 +153,9 @@ const Emissions: React.FC = () => {
   );
 
   const SCOPE_TABS = [
-    { value: STAGE_SCOPE1_SUB_SELECTION, label: "01 Scope 1" },
-    { value: STAGE_SCOPE2, label: "02 Scope 2" },
-    { value: STAGE_SCOPE3, label: "03 Scope 3" },
+    { value: STAGE_SCOPE1_SUB_SELECTION, label: t("01 Scope 1") },
+    { value: STAGE_SCOPE2, label: t("02 Scope 2") },
+    { value: STAGE_SCOPE3, label: t("03 Scope 3") },
   ];
   const content = "w-full px-3 md:px-10";
 
@@ -162,9 +163,9 @@ const Emissions: React.FC = () => {
     <div>
       {stage !== STAGE_SCOPE_SELECTION && (
         <div className="flex flex-wrap items-center justify-end gap-2 px-3 pt-4 md:px-6">
-          <SegmentedControl label="Scope" value={stage} onChange={(v: any) => goToStage(v)} options={SCOPE_TABS} />
-          <Button variant="ghost" size="sm" onClick={() => goToStage(STAGE_SCOPE_SELECTION)} title="Back to Scope Selection">
-            <ArrowLeft className="size-4" aria-hidden="true" /> All Scopes
+          <SegmentedControl label={t("Scope")} value={stage} onChange={(v: any) => goToStage(v)} options={SCOPE_TABS} />
+          <Button variant="ghost" size="sm" onClick={() => goToStage(STAGE_SCOPE_SELECTION)} title={t("Back to Scope Selection")}>
+            <ArrowLeft className="size-4" aria-hidden="true" />{" "}{t("All Scopes")}
           </Button>
         </div>
       )}
@@ -173,9 +174,9 @@ const Emissions: React.FC = () => {
         {stage === STAGE_SCOPE_SELECTION && (
           <div className={content}>
             <div className="pb-1 pt-5 md:pt-9">
-              <h2 className="m-0 mb-2.5 text-xl font-bold text-text">Emission Calculator</h2>
+              <h2 className="m-0 mb-2.5 text-xl font-bold text-text">{t("Emission Calculator")}</h2>
               <p className="m-0 mb-5 text-base leading-relaxed text-text-secondary md:mb-9 md:text-md">
-                Select a GHG scope to begin logging and calculating emissions for your facility.
+                {t("Select a GHG scope to begin logging and calculating emissions for your facility.")}
               </p>
             </div>
             {renderSelectionScreen()}

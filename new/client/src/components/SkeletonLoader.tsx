@@ -1,5 +1,6 @@
 import React from "react";
 import "./SkeletonLoader.css";
+import { t } from "../i18n";
 
 export interface SkeletonRowProps {
   columns?: number;
@@ -19,7 +20,7 @@ export interface SkeletonTableProps {
 }
 
 export const SkeletonTable: React.FC<SkeletonTableProps> = ({ rows = 5, columns = 5 }) => (
-  <div className="[width:100%]" role="status" aria-label="Loading">
+  <div className="[width:100%]" role="status" aria-label={t("Loading")}>
     {Array.from({ length: rows }).map((_, i) => (
       <SkeletonRow key={i} columns={columns} />
     ))}
@@ -27,7 +28,7 @@ export const SkeletonTable: React.FC<SkeletonTableProps> = ({ rows = 5, columns 
 );
 
 export const SkeletonCard: React.FC = () => (
-  <div className="skeleton-card" role="status" aria-label="Loading">
+  <div className="skeleton-card" role="status" aria-label={t("Loading")}>
     <div className="[background:var(--border-light)] [border-radius:var(--radius-sm)] [animation:skeleton-pulse_1.4s_ease-in-out_infinite] [width:33%] [height:20px] [margin-bottom:16px]" />
     <div className="[background:var(--border-light)] [border-radius:var(--radius-sm)] [animation:skeleton-pulse_1.4s_ease-in-out_infinite] [width:50%] [height:40px]" />
   </div>

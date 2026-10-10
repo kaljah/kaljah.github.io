@@ -6,6 +6,7 @@ import { Segmented } from "./ui";
 import { formatNumber } from "../../utils/formatters";
 import { Info, AlertTriangle, Flame } from "lucide-react";
 import { TABLE_6_8_BASINS } from "./agvBasins";
+import { t } from "../../i18n";
 
 /**
  * AssociatedGasVentingForm — Complete UI Pipeline for Associated Gas Venting
@@ -18,38 +19,38 @@ import { TABLE_6_8_BASINS } from "./agvBasins";
  */
 
 const OIL_UNITS = [
-  { value: "bbl", label: "Barrels (bbl)" },
-  { value: "m3", label: "Cubic meters (m³)" },
-  { value: "kbbl", label: "Thousand barrels (kbbl)" },
-  { value: "mbbl", label: "Million barrels (mbbl)" },
+  { value: "bbl", label: t("Barrels (bbl)") },
+  { value: "m3", label: t("Cubic meters (m³)") },
+  { value: "kbbl", label: t("Thousand barrels (kbbl)") },
+  { value: "mbbl", label: t("Million barrels (mbbl)") },
 ];
 
 const OIL_RATE_UNITS = [
-  { value: "bbl/day", label: "Barrels / day (bpd)" },
-  { value: "bbl", label: "Total barrels (bbl)" },
-  { value: "m3/day", label: "Cubic meters / day (m³/day)" },
-  { value: "m3", label: "Total cubic meters (m³)" },
+  { value: "bbl/day", label: t("Barrels / day (bpd)") },
+  { value: "bbl", label: t("Total barrels (bbl)") },
+  { value: "m3/day", label: t("Cubic meters / day (m³/day)") },
+  { value: "m3", label: t("Total cubic meters (m³)") },
 ];
 
 const GOR_UNITS = [
-  { value: "scf/bbl", label: "scf / bbl" },
-  { value: "m3/m3", label: "m³ / m³ (sm³/sm³)" },
-  { value: "sm3/m3", label: "sm³ / m³" },
+  { value: "scf/bbl", label: t("scf / bbl") },
+  { value: "m3/m3", label: t("m³ / m³ (sm³/sm³)") },
+  { value: "sm3/m3", label: t("sm³ / m³") },
 ];
 
 const GAS_VOL_UNITS = [
-  { value: "scf", label: "Standard cubic feet (scf)" },
-  { value: "m3", label: "Cubic meters (m³)" },
-  { value: "Mcf", label: "Thousand scf (Mcf)" },
-  { value: "MMscf", label: "Million scf (MMscf)" },
+  { value: "scf", label: t("Standard cubic feet (scf)") },
+  { value: "m3", label: t("Cubic meters (m³)") },
+  { value: "Mcf", label: t("Thousand scf (Mcf)") },
+  { value: "MMscf", label: t("Million scf (MMscf)") },
 ];
 
 const VENT_RATE_UNITS = [
-  { value: "scfh", label: "scf / hour (scfh)" },
-  { value: "scf/day", label: "scf / day (scfd)" },
-  { value: "scfm", label: "scf / minute (scfm)" },
-  { value: "m3/hr", label: "m³ / hour (m³/hr)" },
-  { value: "m3/day", label: "m³ / day (m³/day)" },
+  { value: "scfh", label: t("scf / hour (scfh)") },
+  { value: "scf/day", label: t("scf / day (scfd)") },
+  { value: "scfm", label: t("scf / minute (scfm)") },
+  { value: "m3/hr", label: t("m³ / hour (m³/hr)") },
+  { value: "m3/day", label: t("m³ / day (m³/day)") },
 ];
 
 export interface AssociatedGasVentingFormProps {
@@ -181,7 +182,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
           <div className="form-grid-2">
             <div className="input-group">
               <label>
-                Basin
+                {t("Basin")}
                 <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
               </label>
               <CustomDropdown
@@ -200,7 +201,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
 
             <div className="input-group">
               <label>
-                Oil production
+                {t("Oil production")}
                 <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
               </label>
               <div className="flex! gap-[8px]!">
@@ -239,12 +240,12 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
           <div className="p-[14px]! bg-[color:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! rounded-[6px]! mb-[16px]!">
             <div className="flex! items-center! gap-[6px]! mb-[10px]! text-[length:0.85rem]! font-semibold! text-[color:var(--color-ink-700)]!">
               <Info size={16} className="text-[color:var(--color-legacy-0369a1)]!" />
-              <span>Gas composition</span>
+              <span>{t("Gas composition")}</span>
             </div>
 
             <div className="form-grid-2 mb-[0px]!">
               <div className="input-group mb-[0px]!">
-                <label className="text-[length:0.8rem]!">CH₄ (mol %)</label>
+                <label className="text-[length:0.8rem]!">{t("CH₄ (mol %)")}</label>
                 <Input
                   type="number"
                   min="0"
@@ -256,13 +257,13 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
                 />
               </div>
               <div className="input-group mb-[0px]!">
-                <label className="text-[length:0.8rem]!">CO₂ (mol %)</label>
+                <label className="text-[length:0.8rem]!">{t("CO₂ (mol %)")}</label>
                 <Input
                   type="number"
                   min="0"
                   max="100"
                   step="0.01"
-                  placeholder="Default: 0.0%"
+                  placeholder={t("Default: 0.0%")}
                   value={data.co2_content !== undefined ? data.co2_content : ""}
                   onChange={(e) => onChange("co2_content", e.target.value)}
                 />
@@ -279,7 +280,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
           <div className="form-grid-2">
             <div className="input-group">
               <label>
-                Oil production
+                {t("Oil production")}
                 <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
               </label>
               <div className="flex! gap-[8px]!">
@@ -348,7 +349,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
           <div className="form-grid-2">
             <div className="input-group">
               <label>
-                Venting Duration
+                {t("Venting Duration")}
                 <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
               </label>
               <div className="flex! gap-[8px]!">
@@ -368,13 +369,13 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
                   value={data.duration_unit || "days"}
                   onChange={(e) => onChange("duration_unit", e.target.value)}
                 >
-                  <option value="days">days</option>
-                  <option value="hours">hours</option>
+                  <option value="days">{t("days")}</option>
+                  <option value="hours">{t("hours")}</option>
                 </NativeSelect>
               </div>
             </div>
 
-            <Field className="input-group" label="Period (days)">
+            <Field className="input-group" label={t("Period (days)")}>
               <Input
                 type="number"
                 min="1"
@@ -389,25 +390,25 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
 
           {/* Gas Composition */}
           <div className="form-grid-2">
-            <Field className="input-group" label="CH₄ (mol %)">
+            <Field className="input-group" label={t("CH₄ (mol %)")}>
               <Input
                 type="number"
                 min="0"
                 max="100"
                 step="0.01"
-                placeholder="Default: 70.0%"
+                placeholder={t("Default: 70.0%")}
                 value={data.ch4_content !== undefined ? data.ch4_content : "70.0"}
                 onChange={(e) => onChange("ch4_content", e.target.value)}
               />
             </Field>
 
-            <Field className="input-group" label="CO₂ (mol %)">
+            <Field className="input-group" label={t("CO₂ (mol %)")}>
               <Input
                 type="number"
                 min="0"
                 max="100"
                 step="0.01"
-                placeholder="Default: 10.0%"
+                placeholder={t("Default: 10.0%")}
                 value={data.co2_content !== undefined ? data.co2_content : "10.0"}
                 onChange={(e) => onChange("co2_content", e.target.value)}
               />
@@ -417,7 +418,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
           {/* Gas Volume Unit Selector for Partitioning */}
           <div className="mb-[10px]! flex! justify-end!">
             <div className="flex! items-center! gap-[6px]!">
-              <span className="text-[length:0.75rem]! text-[color:var(--color-legacy-6b7280)]!">Unit</span>
+              <span className="text-[length:0.75rem]! text-[color:var(--color-legacy-6b7280)]!">{t("Unit")}</span>
               <NativeSelect
                 className="mole-input w-[110px]! max-[600px]:w-full! p-[4px_8px]! text-[length:0.8rem]!"
                 value={data.gas_volume_unit || "scf"}
@@ -437,13 +438,13 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
             <div className="flex! items-center! justify-between! mb-[12px]!">
               <div className="flex! items-center! gap-[6px]!">
                 <Flame size={16} className="text-[color:var(--color-legacy-ea580c)]!" />
-                <span className="font-bold! text-[length:0.85rem]! text-[color:var(--color-ink-800)]!">Gas disposition</span>
+                <span className="font-bold! text-[length:0.85rem]! text-[color:var(--color-ink-800)]!">{t("Gas disposition")}</span>
               </div>
             </div>
 
             <div className="form-grid-3 mb-[12px]!">
               <div className="input-group mb-[0px]!">
-                <label className="text-[length:0.78rem]!">Produced</label>
+                <label className="text-[length:0.78rem]!">{t("Produced")}</label>
                 <input
                   type="text"
                   className="mole-input readonly"
@@ -453,7 +454,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
               </div>
 
               <div className="input-group mb-[0px]!">
-                <label className="text-[length:0.78rem]!">Recovered ({gasVolUnit})</label>
+                <label className="text-[length:0.78rem]!">{t("Recovered (")}{gasVolUnit})</label>
                 <Input
                   type="number"
                   min="0"
@@ -465,7 +466,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
               </div>
 
               <div className="input-group mb-[0px]!">
-                <label className="text-[length:0.78rem]!">Flared ({gasVolUnit})</label>
+                <label className="text-[length:0.78rem]!">{t("Flared (")}{gasVolUnit})</label>
                 <Input
                   type="number"
                   min="0"
@@ -490,8 +491,8 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
               value={tier3Mode}
               onChange={(v) => onChange("tier3_mode", v)}
               options={[
-                { value: "rate", label: "Rate × duration" },
-                { value: "volume", label: "Total volume" },
+                { value: "rate", label: t("Rate × duration") },
+                { value: "volume", label: t("Total volume") },
               ]}
             />
           </div>
@@ -500,7 +501,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
             <div className="form-grid-2">
               <div className="input-group">
                 <label>
-                  Vent rate
+                  {t("Vent rate")}
                   <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                 </label>
                 <div className="flex! gap-[8px]!">
@@ -535,7 +536,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
                 className="input-group"
                 label={
                   <>
-                    Venting time (h)
+                    {t("Venting time (h)")}
                     <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                   </>
                 }
@@ -554,7 +555,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
           ) : (
             <div className="input-group">
               <label>
-                Total Measured Vent Gas Volume
+                {t("Total Measured Vent Gas Volume")}
                 <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
               </label>
               <div className="flex! gap-[8px]!">
@@ -595,7 +596,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
               className="input-group"
               label={
                 <>
-                  CH₄ (mol %)
+                  {t("CH₄ (mol %)")}
                   <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                 </>
               }
@@ -612,7 +613,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
               />
             </Field>
 
-            <Field className="input-group" label="CO₂ (mol %)">
+            <Field className="input-group" label={t("CO₂ (mol %)")}>
               <Input
                 type="number"
                 min="0"
@@ -632,7 +633,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
         <div className="flex! items-center! gap-[8px]! p-[10px_14px]! bg-[color:var(--color-red-50)]! [border:1px_solid_var(--color-legacy-fecaca)]! rounded-[6px]! mb-[16px]! text-[color:var(--color-legacy-991b1b)]! text-[length:0.82rem]!">
           <AlertTriangle size={16} />
           <span>
-            <strong>Gas Composition Error:</strong> Sum of CH₄ ({ch4MolPct.toFixed(1)}%) and CO₂ ({co2MolPct.toFixed(1)}%) exceeds 100% (got {sumMolPct.toFixed(1)}%).
+            <strong>{t("Gas Composition Error:")}</strong>{" "}{t("Sum of CH₄ (")}{ch4MolPct.toFixed(1)}{t("%) and CO₂ (")}{co2MolPct.toFixed(1)}{t("%) exceeds 100% (got")}{" "}{sumMolPct.toFixed(1)}%).
           </span>
         </div>
       )}
@@ -641,7 +642,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
         <div className="flex! items-center! gap-[8px]! p-[10px_14px]! bg-[color:var(--color-red-50)]! [border:1px_solid_var(--color-legacy-fecaca)]! rounded-[6px]! mb-[16px]! text-[color:var(--color-legacy-991b1b)]! text-[length:0.82rem]!">
           <AlertTriangle size={16} />
           <span>
-            <strong>Mass Balance Violation:</strong> Recovered gas ({formatNumber(recoveredScf, 0)} scf) + Flared gas ({formatNumber(flaredScf, 0)} scf) exceeds total produced associated gas ({formatNumber(totalProducedGasScf, 0)} scf).
+            <strong>{t("Mass Balance Violation:")}</strong>{" "}{t("Recovered gas (")}{formatNumber(recoveredScf, 0)}{" "}{t("scf) + Flared gas (")}{formatNumber(flaredScf, 0)}{" "}{t("scf) exceeds total produced associated gas (")}{formatNumber(totalProducedGasScf, 0)}{" "}{t("scf).")}
           </span>
         </div>
       )}
@@ -650,7 +651,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
         <div className="flex! items-center! gap-[8px]! p-[10px_14px]! bg-[color:var(--color-amber-50)]! [border:1px_solid_var(--color-legacy-fde68a)]! rounded-[6px]! mb-[16px]! text-[color:var(--color-legacy-92400e)]! text-[length:0.82rem]!">
           <AlertTriangle size={16} />
           <span>
-            <strong>Duration Warning:</strong> Venting duration ({durationDays} days) exceeds total operating period duration ({totalPeriodDays} days).
+            <strong>{t("Duration Warning:")}</strong>{" "}{t("Venting duration (")}{durationDays}{" "}{t("days) exceeds total operating period duration (")}{totalPeriodDays}{" "}{t("days).")}
           </span>
         </div>
       )}
@@ -659,7 +660,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
         <div className="flex! items-center! gap-[8px]! p-[10px_14px]! bg-[color:var(--color-red-50)]! [border:1px_solid_var(--color-legacy-fecaca)]! rounded-[6px]! mb-[16px]! text-[color:var(--color-legacy-991b1b)]! text-[length:0.82rem]!">
           <AlertTriangle size={16} />
           <span>
-            <strong>Duration Error:</strong> Venting duration ({durationDays} days) exceeds maximum annual days (366 days).
+            <strong>{t("Duration Error:")}</strong>{" "}{t("Venting duration (")}{durationDays}{" "}{t("days) exceeds maximum annual days (366 days).")}
           </span>
         </div>
       )}
@@ -668,7 +669,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
         <div className="flex! items-center! gap-[8px]! p-[10px_14px]! bg-[color:var(--color-amber-50)]! [border:1px_solid_var(--color-legacy-fde68a)]! rounded-[6px]! mb-[16px]! text-[color:var(--color-legacy-92400e)]! text-[length:0.82rem]!">
           <AlertTriangle size={16} />
           <span>
-            <strong>High GOR Audit Warning:</strong> GOR of {formatNumber(gorScfBbl, 0)} scf/bbl exceeds typical crude oil range (100,000 scf/bbl). Verify if reservoir fluid is gas-condensate.
+            <strong>{t("High GOR Audit Warning:")}</strong>{" "}{t("GOR of")}{" "}{formatNumber(gorScfBbl, 0)}{" "}{t("scf/bbl exceeds typical crude oil range (100,000 scf/bbl). Verify if reservoir fluid is gas-condensate.")}
           </span>
         </div>
       )}

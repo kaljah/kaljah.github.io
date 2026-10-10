@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from "react";
 import api, { fetchCsrfToken } from "../api";
 import type { User, AuthContextType } from "../types/auth";
+import { currentLanguage, setLanguage } from "../i18n";
 
 declare global {
   interface Window {
@@ -239,6 +240,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (settingsRes.data) {
         setPreferences(settingsRes.data);
         applyTheme("light");
+        // The account's language wins; an account without one takes this browser's choice.
+        const saved = settingsRes.data.language;
+        if (saved === "en" || saved === "fr") {
+          if (saved !== currentLanguage()) setLanguage(saved);
+        } else if (currentLanguage() !== "en") {
+          api.put("/auth/settings", { language: currentLanguage() }).catch(() => {});
+        }
       }
     } catch (e) {
       console.error("Failed to fetch settings on login", e);

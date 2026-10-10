@@ -7,8 +7,9 @@ import { useLayout } from "../../context/LayoutContext";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { Tooltip, cn } from "../../ui";
 import { ACCESS } from "../access";
-import { NAV_GROUPS, ROUTES, type AppRoute } from "../routes.config";
+import { NAV_GROUPS, NAV_GROUP_LABEL, ROUTES, type AppRoute } from "../routes.config";
 import type { User } from "../../types/auth";
+import { t } from "../../i18n";
 
 const STORAGE_KEY = "ct.sidebar.collapsed";
 
@@ -65,14 +66,14 @@ const NavList: React.FC<NavListProps> = ({ user, showLabel, onNavigate }) => {
   const settings = visible.find((r) => r.group === null);
   return (
     <>
-      <nav aria-label="Main" className="flex-1 overflow-y-auto overflow-x-hidden px-2 py-2">
+      <nav aria-label={t("Main")} className="flex-1 overflow-y-auto overflow-x-hidden px-2 py-2">
         {NAV_GROUPS.map((group) => {
           const items = visible.filter((r) => r.group === group);
           if (!items.length) return null;
           return (
             <div key={group} className="mb-3">
               {showLabel ? (
-                <p className="px-3 pb-1 pt-2 text-xs font-medium uppercase tracking-wide text-text-secondary">{group}</p>
+                <p className="px-3 pb-1 pt-2 text-xs font-medium uppercase tracking-wide text-text-secondary">{NAV_GROUP_LABEL[group]}</p>
               ) : (
                 <div aria-hidden="true" className="mx-3 my-2 h-px bg-border" />
               )}
@@ -99,7 +100,7 @@ const NavList: React.FC<NavListProps> = ({ user, showLabel, onNavigate }) => {
 const Brand: React.FC<{ showLabel: boolean }> = ({ showLabel }) => (
   <div className={cn("flex h-16 shrink-0 items-center", showLabel ? "gap-3 px-4" : "justify-center px-0")}>
     <img src={`${import.meta.env.BASE_URL}carbon_tech.svg`} alt="" className="size-8 shrink-0" />
-    {showLabel && <span className="truncate text-md font-bold text-text">Neocarbon</span>}
+    {showLabel && <span className="truncate text-md font-bold text-text">{t("Neocarbon")}</span>}
   </div>
 );
 
@@ -145,10 +146,10 @@ const Sidebar: React.FC = () => {
             aria-describedby={undefined}
             className="fixed inset-y-0 left-0 z-(--z-modal) flex w-72 max-w-[85vw] flex-col bg-surface shadow-overlay"
           >
-            <RadixDialog.Title className="sr-only">Navigation</RadixDialog.Title>
+            <RadixDialog.Title className="sr-only">{t("Navigation")}</RadixDialog.Title>
             <div className="flex items-center justify-between pr-3">
               <Brand showLabel />
-              <RadixDialog.Close aria-label="Close navigation" className="inline-flex size-9 cursor-pointer border-0 bg-transparent items-center justify-center rounded-md text-text-secondary hover:bg-ink-100">
+              <RadixDialog.Close aria-label={t("Close navigation")} className="inline-flex size-9 cursor-pointer border-0 bg-transparent items-center justify-center rounded-md text-text-secondary hover:bg-ink-100">
                 <X className="size-5" aria-hidden="true" />
               </RadixDialog.Close>
             </div>
@@ -189,7 +190,7 @@ const Sidebar: React.FC = () => {
               setCollapsed((c) => !c);
               setPeek(false);
             }}
-            aria-label={collapsed ? "Pin sidebar open" : "Collapse sidebar"}
+            aria-label={collapsed ? t("Pin sidebar open") : t("Collapse sidebar")}
             aria-keyshortcuts="["
             className={cn(
               "flex h-10 w-full cursor-pointer items-center rounded-md border-0 bg-transparent text-base font-medium text-text-secondary transition-colors hover:bg-ink-100 hover:text-text",
@@ -201,7 +202,7 @@ const Sidebar: React.FC = () => {
             ) : (
               <PanelLeftClose className="size-[18px] shrink-0" aria-hidden="true" />
             )}
-            {expanded && <span className="truncate">{collapsed ? "Pin open" : "Collapse"}</span>}
+            {expanded && <span className="truncate">{collapsed ? t("Pin open") : t("Collapse")}</span>}
           </button>
         </div>
       </aside>

@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Input, Field } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import { Segmented } from "./ui";
+import { t } from "../../i18n";
 
 /**
  * UnloadingForm — Complete Liquids Unloading UI Pipeline
@@ -98,7 +99,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
               className="input-group"
               label={
                 <>
-                  Lift type
+                  {t("Lift type")}
                   <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                 </>
               }
@@ -111,8 +112,8 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   onChange("unload_type", e.target.value);
                 }}
               >
-                <option value="plunger">Plunger lift</option>
-                <option value="non_plunger">Non-plunger</option>
+                <option value="plunger">{t("Plunger lift")}</option>
+                <option value="non_plunger">{t("Non-plunger")}</option>
               </NativeSelect>
             </Field>
 
@@ -120,7 +121,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
               className="input-group"
               label={
                 <>
-                  Wells
+                  {t("Wells")}
                   <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                 </>
               }
@@ -141,7 +142,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
               />
             </Field>
 
-            <Field className="input-group" label="CH₄ (mol %)">
+            <Field className="input-group" label={t("CH₄ (mol %)")}>
               <Input
                 type="number"
                 step="0.01"
@@ -153,7 +154,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
               />
             </Field>
 
-            <Field className="input-group" label="CO₂ (mol %)">
+            <Field className="input-group" label={t("CO₂ (mol %)")}>
               <Input
                 type="number"
                 step="0.01"
@@ -165,7 +166,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
               />
             </Field>
 
-            <Field className="input-group" label="Control efficiency (%)">
+            <Field className="input-group" label={t("Control efficiency (%)")}>
               <Input
                 type="number"
                 step="0.1"
@@ -191,7 +192,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
               className="input-group"
               label={
                 <>
-                  Lift type
+                  {t("Lift type")}
                   <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                 </>
               }
@@ -204,8 +205,8 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   onChange("unload_type", e.target.value);
                 }}
               >
-                <option value="plunger">Plunger Lift</option>
-                <option value="non_plunger">Non-Plunger Lift</option>
+                <option value="plunger">{t("Plunger Lift")}</option>
+                <option value="non_plunger">{t("Non-Plunger Lift")}</option>
               </NativeSelect>
             </Field>
 
@@ -213,7 +214,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
               className="input-group"
               label={
                 <>
-                  Events
+                  {t("Events")}
                   <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                 </>
               }
@@ -235,21 +236,21 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
               />
             </Field>
 
-            <Field className="input-group" label="Region / Basin">
+            <Field className="input-group" label={t("Region / Basin")}>
               <NativeSelect
                 className="mole-input"
                 value={selectedRegion}
                 onChange={(e) => onChange("region", e.target.value)}
               >
-                <option value="Average">National Average</option>
-                <option value="appalachia">Appalachia Basin</option>
-                <option value="gulf_coast">Gulf Coast Basin</option>
-                <option value="midcontinent">Midcontinent Basin</option>
-                <option value="rocky_mountain">Rocky Mountain Basin</option>
+                <option value="Average">{t("National Average")}</option>
+                <option value="appalachia">{t("Appalachia Basin")}</option>
+                <option value="gulf_coast">{t("Gulf Coast Basin")}</option>
+                <option value="midcontinent">{t("Midcontinent Basin")}</option>
+                <option value="rocky_mountain">{t("Rocky Mountain Basin")}</option>
               </NativeSelect>
             </Field>
 
-            <Field className="input-group" label="Wells">
+            <Field className="input-group" label={t("Wells")}>
               <Input
                 type="number"
                 min="1"
@@ -263,7 +264,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
               />
             </Field>
 
-            <Field className="input-group" label="CH₄ (mol %)">
+            <Field className="input-group" label={t("CH₄ (mol %)")}>
               <Input
                 type="number"
                 step="0.01"
@@ -275,7 +276,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
               />
             </Field>
 
-            <Field className="input-group" label="CO₂ (mol %)">
+            <Field className="input-group" label={t("CO₂ (mol %)")}>
               <Input
                 type="number"
                 step="0.01"
@@ -287,7 +288,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
               />
             </Field>
 
-            <Field className="input-group" label="Control efficiency (%)">
+            <Field className="input-group" label={t("Control efficiency (%)")}>
               <Input
                 type="number"
                 step="0.1"
@@ -315,9 +316,9 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
               value={activeMethod}
               onChange={(v) => onChange("calc_method", v)}
               options={[
-                { value: "api_equation_6_10", label: "Wellbore + flow" },
-                { value: "api_equation_6_11", label: "Automated plunger" },
-                { value: "api_equation_6_3", label: "Well decompression" },
+                { value: "api_equation_6_10", label: t("Wellbore + flow") },
+                { value: "api_equation_6_11", label: t("Automated plunger") },
+                { value: "api_equation_6_3", label: t("Well decompression") },
               ]}
             />
           </div>
@@ -330,7 +331,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   className="input-group"
                   label={
                     <>
-                      Lift type
+                      {t("Lift type")}
                       <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                     </>
                   }
@@ -343,8 +344,8 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                       onChange("unload_type", e.target.value);
                     }}
                   >
-                    <option value="plunger">Plunger lift</option>
-                    <option value="non_plunger">Non-plunger</option>
+                    <option value="plunger">{t("Plunger lift")}</option>
+                    <option value="non_plunger">{t("Non-plunger")}</option>
                   </NativeSelect>
                 </Field>
 
@@ -352,7 +353,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   className="input-group"
                   label={
                     <>
-                      Events per year
+                      {t("Events per year")}
                       <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                     </>
                   }
@@ -378,7 +379,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   className="input-group"
                   label={
                     <>
-                      {unloadingType === "plunger" ? "Tubing diameter (in)" : "Casing diameter (in)"}
+                      {unloadingType === "plunger" ? t("Tubing diameter (in)") : t("Casing diameter (in)")}
                       <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                     </>
                   }
@@ -401,7 +402,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   className="input-group"
                   label={
                     <>
-                      {unloadingType === "plunger" ? "Tubing depth to plunger bumper (ft)" : "Well depth (ft)"}
+                      {unloadingType === "plunger" ? t("Tubing depth to plunger bumper (ft)") : t("Well depth (ft)")}
                       <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                     </>
                   }
@@ -424,7 +425,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   className="input-group"
                   label={
                     <>
-                      Flow-line pressure (psig)
+                      {t("Flow-line pressure (psig)")}
                       <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                     </>
                   }
@@ -447,7 +448,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   className="input-group"
                   label={
                     <>
-                      Flow-line gas rate (scf/hr)
+                      {t("Flow-line gas rate (scf/hr)")}
                       <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                     </>
                   }
@@ -467,7 +468,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   className="input-group"
                   label={
                     <>
-                      Hours open to atmosphere (h/event)
+                      {t("Hours open to atmosphere (h/event)")}
                       <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                     </>
                   }
@@ -487,7 +488,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   className="input-group"
                   label={
                     <>
-                      CH₄ (mol %)
+                      {t("CH₄ (mol %)")}
                       <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                     </>
                   }
@@ -504,7 +505,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   />
                 </Field>
 
-                <Field className="input-group" label="CO₂ (mol %)">
+                <Field className="input-group" label={t("CO₂ (mol %)")}>
                   <Input
                     type="number"
                     step="0.01"
@@ -516,7 +517,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   />
                 </Field>
 
-                <Field className="input-group" label="Control efficiency (%)">
+                <Field className="input-group" label={t("Control efficiency (%)")}>
                   <Input
                     type="number"
                     step="0.1"
@@ -542,7 +543,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   className="input-group"
                   label={
                     <>
-                      Shut-In Pressure Pshut (psia)
+                      {t("Shut-In Pressure Pshut (psia)")}
                       <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                     </>
                   }
@@ -562,7 +563,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   className="input-group"
                   label={
                     <>
-                      Flow-Line Pressure Pline (psia)
+                      {t("Flow-Line Pressure Pline (psia)")}
                       <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                     </>
                   }
@@ -582,7 +583,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   className="input-group"
                   label={
                     <>
-                      Separator Pressure Psep (psia)
+                      {t("Separator Pressure Psep (psia)")}
                       <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                     </>
                   }
@@ -602,7 +603,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   className="input-group"
                   label={
                     <>
-                      Gas Production Rate SFRp (scf/hr)
+                      {t("Gas Production Rate SFRp (scf/hr)")}
                       <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                     </>
                   }
@@ -622,7 +623,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   className="input-group"
                   label={
                     <>
-                      Venting Time Tp (hours/event)
+                      {t("Venting Time Tp (hours/event)")}
                       <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                     </>
                   }
@@ -642,7 +643,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   className="input-group"
                   label={
                     <>
-                      Events per year
+                      {t("Events per year")}
                       <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                     </>
                   }
@@ -667,7 +668,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   className="input-group"
                   label={
                     <>
-                      CH₄ (mol %)
+                      {t("CH₄ (mol %)")}
                       <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                     </>
                   }
@@ -684,7 +685,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   />
                 </Field>
 
-                <Field className="input-group" label="CO₂ (mol %)">
+                <Field className="input-group" label={t("CO₂ (mol %)")}>
                   <Input
                     type="number"
                     step="0.01"
@@ -696,7 +697,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   />
                 </Field>
 
-                <Field className="input-group" label="Control efficiency (%)">
+                <Field className="input-group" label={t("Control efficiency (%)")}>
                   <Input
                     type="number"
                     step="0.1"
@@ -722,7 +723,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   className="input-group"
                   label={
                     <>
-                      Frequency (events/yr)
+                      {t("Frequency (events/yr)")}
                       <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                     </>
                   }
@@ -748,7 +749,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   className="input-group"
                   label={
                     <>
-                      Tubing diameter (in)
+                      {t("Tubing diameter (in)")}
                       <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                     </>
                   }
@@ -771,7 +772,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   className="input-group"
                   label={
                     <>
-                      Well Depth (ft)
+                      {t("Well Depth (ft)")}
                       <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                     </>
                   }
@@ -794,7 +795,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   className="input-group"
                   label={
                     <>
-                      Surface Pressure (psig)
+                      {t("Surface Pressure (psig)")}
                       <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                     </>
                   }
@@ -817,7 +818,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   className="input-group"
                   label={
                     <>
-                      CH₄ (mol %)
+                      {t("CH₄ (mol %)")}
                       <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                     </>
                   }
@@ -834,7 +835,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   />
                 </Field>
 
-                <Field className="input-group" label="CO₂ (mol %)">
+                <Field className="input-group" label={t("CO₂ (mol %)")}>
                   <Input
                     type="number"
                     step="0.01"
@@ -846,7 +847,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   />
                 </Field>
 
-                <Field className="input-group" label="Well Temperature (°F)">
+                <Field className="input-group" label={t("Well Temperature (°F)")}>
                   <Input
                     type="number"
                     step="0.1"
@@ -856,7 +857,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   />
                 </Field>
 
-                <Field className="input-group" label="Control efficiency (%)">
+                <Field className="input-group" label={t("Control efficiency (%)")}>
                   <Input
                     type="number"
                     step="0.1"

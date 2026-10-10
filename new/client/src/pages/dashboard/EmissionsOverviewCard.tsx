@@ -2,6 +2,7 @@ import React from "react";
 import { Printer } from "lucide-react";
 import { Badge, Button, Card, StatCard } from "../../ui";
 import { formatCompactNumber } from "../../utils/formatters";
+import { t } from "../../i18n";
 
 // "+5.2%" / "-3.1%" / "—" (from the parent) to a signed fraction, or null when there is no comparison
 const toDelta = (text?: string): number | null => {
@@ -68,9 +69,9 @@ const EmissionsOverviewCard: React.FC<EmissionsOverviewCardProps> = ({
   const intensityPending = !hasProductionData && stats.totalEmissions > 0;
 
   return (
-    <Card as="section" className="hero-card flex flex-col gap-5" aria-label="Emissions overview">
+    <Card as="section" className="hero-card flex flex-col gap-5" aria-label={t("Emissions overview")}>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold uppercase tracking-wide text-text">Emissions Overview</h2>
+        <h2 className="text-lg font-semibold uppercase tracking-wide text-text">{t("Emissions Overview")}</h2>
         <div className="flex flex-wrap items-center gap-2">
           <Badge tone="brand">{location}</Badge>
           <Button
@@ -78,10 +79,10 @@ const EmissionsOverviewCard: React.FC<EmissionsOverviewCardProps> = ({
             size="sm"
             onClick={handleExportPDF}
             loading={exportingPDF}
-            title="Export multi-page executive summary PDF"
+            title={t("Export multi-page executive summary PDF")}
           >
             <Printer className="size-4" aria-hidden="true" />
-            {exportingPDF ? "Generating PDF..." : "Export Executive Brief (PDF)"}
+            {exportingPDF ? t("Generating PDF...") : t("Export Executive Brief (PDF)")}
           </Button>
         </div>
       </div>
@@ -91,19 +92,19 @@ const EmissionsOverviewCard: React.FC<EmissionsOverviewCardProps> = ({
           className="p-4"
           data-testid="kpi-gross"
           tone="brand"
-          label="Gross Operational Emissions"
-          sublabel="Scope 1+2"
+          label={t("Gross Operational Emissions")}
+          sublabel={t("Scope 1+2")}
           value={stats.totalEmissions}
           unit="tCO2e"
-          delta={emissionsDelta === null ? undefined : { value: emissionsDelta, goodWhen: "down", label: "vs prior year" }}
+          delta={emissionsDelta === null ? undefined : { value: emissionsDelta, goodWhen: "down", label: t("vs prior year") }}
           footnote={goalShare === null ? undefined : `${goalShare.toFixed(1)}% of target`}
         />
         <StatCard
           className="p-4"
           data-testid="kpi-net"
           tone="success"
-          label="Gross less mitigation"
-          sublabel="Indicative, not the inventory total"
+          label={t("Gross less mitigation")}
+          sublabel={t("Indicative, not the inventory total")}
           value={stats.netEmissions}
           unit="tCO2e"
           footnote={`Less ${formatCompactNumber(stats.mitigation)} reported mitigation. Inventory totals stay gross (GHG Protocol, ISO 14064-1).`}
@@ -112,7 +113,7 @@ const EmissionsOverviewCard: React.FC<EmissionsOverviewCardProps> = ({
           className="p-4"
           data-testid="kpi-ch4"
           tone="warning"
-          label="Total CH4 (Methane)"
+          label={t("Total CH4 (Methane)")}
           value={stats.methaneEmissions}
           unit="tCH4"
         />
@@ -120,30 +121,30 @@ const EmissionsOverviewCard: React.FC<EmissionsOverviewCardProps> = ({
           className="p-4"
           data-testid="kpi-intensity"
           tone={intensityPending ? "warning" : "purple"}
-          label="Performance Intensity"
-          sublabel="CO2e intensity (Scope 1+2)"
+          label={t("Performance Intensity")}
+          sublabel={t("CO2e intensity (Scope 1+2)")}
           value={intensity}
-          valueText={intensityPending ? "Pending" : undefined}
+          valueText={intensityPending ? t("Pending") : undefined}
           format="compact"
           decimals={2}
           unit={intensityPending ? "Production" : "kg/BOE"}
-          delta={intensityDelta === null ? undefined : { value: intensityDelta, goodWhen: "down", label: "vs prior year" }}
-          footnote={intensityPending ? "Production figures required" : undefined}
+          delta={intensityDelta === null ? undefined : { value: intensityDelta, goodWhen: "down", label: t("vs prior year") }}
+          footnote={intensityPending ? t("Production figures required") : undefined}
         />
       </div>
 
       <div className="[display:flex]! [gap:16px]! [background:rgba(255,_255,_255,_0.4)] [padding:16px] [border-radius:var(--radius-lg)] [border:1px_solid_rgba(226,_232,_240,_0.5)] [@media(max-width:768px)]:[flex-direction:column] [@media(max-width:768px)]:[gap:10px]! [@media(max-width:480px)]:[display:grid]! [@media(max-width:480px)]:[grid-template-columns:1fr] [@media(max-width:480px)]:[width:100%]">
         <div className="scope-pill [flex:1] [display:flex] [justify-content:space-between] [align-items:center] [padding:10px_16px] [border-radius:var(--radius-md)] [font-size:var(--text-base)] [font-weight:600] [&.scope-1]:[background:var(--color-brand-50)] [&.scope-1]:[color:var(--color-brand-700)] [&&]:[&.scope-2]:[background:var(--color-legacy-dbeafe)] [&&]:[&.scope-2]:[color:var(--color-legacy-1e40af)] [&&]:[&&]:[&.scope-3]:[background:var(--color-legacy-f3e8ff)] [&&]:[&&]:[&.scope-3]:[color:var(--color-legacy-6b21a8)] scope-1">
-          <span className="pill-label">Scope 1 (Direct)</span>
-          <span className="pill-value [background:rgba(255,_255,_255,_0.85)] [padding:3px_10px] [border-radius:var(--radius-sm)] [font-weight:700] [box-shadow:var(--shadow-xs)]">{formatCompactNumber(stats.scope1)} tCO₂e</span>
+          <span className="pill-label">{t("Scope 1 (Direct)")}</span>
+          <span className="pill-value [background:rgba(255,_255,_255,_0.85)] [padding:3px_10px] [border-radius:var(--radius-sm)] [font-weight:700] [box-shadow:var(--shadow-xs)]">{formatCompactNumber(stats.scope1)}{" "}{t("tCO₂e")}</span>
         </div>
         <div className="scope-pill [flex:1] [display:flex] [justify-content:space-between] [align-items:center] [padding:10px_16px] [border-radius:var(--radius-md)] [font-size:var(--text-base)] [font-weight:600] [&.scope-1]:[background:var(--color-brand-50)] [&.scope-1]:[color:var(--color-brand-700)] [&&]:[&.scope-2]:[background:var(--color-legacy-dbeafe)] [&&]:[&.scope-2]:[color:var(--color-legacy-1e40af)] [&&]:[&&]:[&.scope-3]:[background:var(--color-legacy-f3e8ff)] [&&]:[&&]:[&.scope-3]:[color:var(--color-legacy-6b21a8)] scope-2">
-          <span className="pill-label">Scope 2 (Indirect)</span>
-          <span className="pill-value [background:rgba(255,_255,_255,_0.85)] [padding:3px_10px] [border-radius:var(--radius-sm)] [font-weight:700] [box-shadow:var(--shadow-xs)]">{formatCompactNumber(stats.scope2)} tCO₂e</span>
+          <span className="pill-label">{t("Scope 2 (Indirect)")}</span>
+          <span className="pill-value [background:rgba(255,_255,_255,_0.85)] [padding:3px_10px] [border-radius:var(--radius-sm)] [font-weight:700] [box-shadow:var(--shadow-xs)]">{formatCompactNumber(stats.scope2)}{" "}{t("tCO₂e")}</span>
         </div>
         <div className="scope-pill [flex:1] [display:flex] [justify-content:space-between] [align-items:center] [padding:10px_16px] [border-radius:var(--radius-md)] [font-size:var(--text-base)] [font-weight:600] [&.scope-1]:[background:var(--color-brand-50)] [&.scope-1]:[color:var(--color-brand-700)] [&&]:[&.scope-2]:[background:var(--color-legacy-dbeafe)] [&&]:[&.scope-2]:[color:var(--color-legacy-1e40af)] [&&]:[&&]:[&.scope-3]:[background:var(--color-legacy-f3e8ff)] [&&]:[&&]:[&.scope-3]:[color:var(--color-legacy-6b21a8)] scope-3">
-          <span className="pill-label">Scope 3 (Supply Chain)</span>
-          <span className="pill-value [background:rgba(255,_255,_255,_0.85)] [padding:3px_10px] [border-radius:var(--radius-sm)] [font-weight:700] [box-shadow:var(--shadow-xs)]">{formatCompactNumber(stats.scope3)} tCO₂e</span>
+          <span className="pill-label">{t("Scope 3 (Supply Chain)")}</span>
+          <span className="pill-value [background:rgba(255,_255,_255,_0.85)] [padding:3px_10px] [border-radius:var(--radius-sm)] [font-weight:700] [box-shadow:var(--shadow-xs)]">{formatCompactNumber(stats.scope3)}{" "}{t("tCO₂e")}</span>
         </div>
       </div>
     </Card>

@@ -18,6 +18,7 @@ import { CH4_DENSITY_KG_M3 } from "../constants";
 import { Download } from "lucide-react";
 import "./CarbonIntensity.css";
 import "./TopBarFilters.css";
+import { t } from "../i18n";
 
 interface Facility {
   id: string | number;
@@ -328,7 +329,7 @@ const MethaneIntensity: React.FC = () => {
       });
     } catch (error) {
       console.error("Failed to load methane stats:", error);
-      toast.error("Failed to load methane intensity metrics");
+      toast.error(t("Failed to load methane intensity metrics"));
     } finally {
       setLoading(false);
       setIsUpdating(false);
@@ -475,7 +476,7 @@ const MethaneIntensity: React.FC = () => {
       toast.success(`OGMP 2.0 Excel Report for ${yr} downloaded successfully!`);
     } catch (err) {
       console.error("Export error:", err);
-      toast.error("Failed to export OGMP Excel report");
+      toast.error(t("Failed to export OGMP Excel report"));
     } finally {
       setExporting(false);
     }
@@ -501,7 +502,7 @@ const MethaneIntensity: React.FC = () => {
   };
 
   const getSegmentOptions = () => [
-    { value: "all", label: "All Supply Chains" },
+    { value: "all", label: t("All Supply Chains") },
     ...availableSegments.map((s) => ({ value: s, label: s })),
   ];
 
@@ -511,7 +512,7 @@ const MethaneIntensity: React.FC = () => {
     );
     const activities = new Set(filtered.map((f) => f.activity).filter(Boolean));
     return [
-      { value: "all", label: "All Activities" },
+      { value: "all", label: t("All Activities") },
       ...Array.from(activities)
         .sort()
         .map((a) => ({ value: a as string, label: a as string })),
@@ -519,7 +520,7 @@ const MethaneIntensity: React.FC = () => {
   };
 
   const getDivisionOptions = () => {
-    let divisions = [{ value: "all", label: "All Divisions" }];
+    let divisions = [{ value: "all", label: t("All Divisions") }];
     const filtered = facilities.filter(
       (f) =>
         (currentSegment === "all" || f.segment === currentSegment) &&
@@ -542,7 +543,7 @@ const MethaneIntensity: React.FC = () => {
         (currentDivision === "all" || f.division === currentDivision),
     );
     return [
-      { value: "all", label: "All Regions" },
+      { value: "all", label: t("All Regions") },
       ...filtered.map((f) => ({
         value: f.id.toString(),
         label: f.name,
@@ -558,7 +559,7 @@ const MethaneIntensity: React.FC = () => {
         <div className="filter-wrapper">
           <CustomDropdown
             options={[
-              { value: "all", label: "All Years" },
+              { value: "all", label: t("All Years") },
               ...availableYears.map((y) => ({
                 value: y.toString(),
                 label: y.toString(),
@@ -566,7 +567,7 @@ const MethaneIntensity: React.FC = () => {
             ]}
             value={selectedYear}
             onChange={setSelectedYear}
-            placeholder="Year"
+            placeholder={t("Year")}
           />
         </div>
         <div className="filter-wrapper">
@@ -574,7 +575,7 @@ const MethaneIntensity: React.FC = () => {
             options={getSegmentOptions()}
             value={currentSegment}
             onChange={handleSegmentChange}
-            placeholder="Supply Chain"
+            placeholder={t("Supply Chain")}
           />
         </div>
         <div className="filter-wrapper">
@@ -582,7 +583,7 @@ const MethaneIntensity: React.FC = () => {
             options={getActivityOptions()}
             value={currentActivity}
             onChange={handleActivityChange}
-            placeholder="Activity"
+            placeholder={t("Activity")}
           />
         </div>
         <div className="filter-wrapper">
@@ -590,7 +591,7 @@ const MethaneIntensity: React.FC = () => {
             options={getDivisionOptions()}
             value={currentDivision}
             onChange={handleDivisionChange}
-            placeholder="Division"
+            placeholder={t("Division")}
           />
         </div>
         <div className="filter-wrapper">
@@ -598,7 +599,7 @@ const MethaneIntensity: React.FC = () => {
             options={getRegionOptions()}
             value={currentRegion}
             onChange={setCurrentRegion}
-            placeholder="Region"
+            placeholder={t("Region")}
           />
         </div>
       </div>,
@@ -609,10 +610,10 @@ const MethaneIntensity: React.FC = () => {
         className="[display:inline-flex] [align-items:center] [gap:8px] [background:linear-gradient(135deg,_var(--color-green-700)_0%,_var(--color-green-700)_100%)] [color:var(--color-white)] [font-size:var(--text-base)] [font-weight:600] [padding:8px_16px] [border-radius:var(--radius-md)] [border:none] [cursor:pointer] [box-shadow:0_4px_12px_rgba(16,_185,_129,_0.25)] [transition:all_0.2s_ease] [&:hover:not(:disabled)]:[transform:translateY(-1px)] [&:hover:not(:disabled)]:[box-shadow:0_6px_18px_rgba(16,_185,_129,_0.35)] disabled:[opacity:0.6] disabled:[cursor:not-allowed]"
         onClick={handleExportExcel}
         disabled={exporting}
-        title="Download 5-Tab OGMP 2.0 Disclosure Workbook (.xlsx)"
+        title={t("Download 5-Tab OGMP 2.0 Disclosure Workbook (.xlsx)")}
       >
         <Download size={16} />
-        {exporting ? "Exporting..." : "Export OGMP 2.0 (Excel)"}
+        {exporting ? t("Exporting...") : t("Export OGMP 2.0 (Excel)")}
       </button>,
     );
 
@@ -702,7 +703,7 @@ const MethaneIntensity: React.FC = () => {
   if (loading && regionalData.length === 0)
     return (
       <LoadingSpinner
-        message="Calculating Methane Intensity & Loss Rates..."
+        message={t("Calculating Methane Intensity & Loss Rates...")}
         fullScreen
       />
     );
@@ -751,7 +752,7 @@ const MethaneIntensity: React.FC = () => {
           <div className="card">
             <div className="chart-header">
               <div className="[display:flex] [flex-direction:column] [gap:8px]">
-                <h3>Methane Loss Rate by Facility (% of Gas Produced)</h3>
+                <h3>{t("Methane Loss Rate by Facility (% of Gas Produced)")}</h3>
                 <div
                   className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:var(--color-blue-600)]!"
                 ></div>
@@ -784,7 +785,7 @@ const MethaneIntensity: React.FC = () => {
           <div className="card">
             <div className="chart-header">
               <div className="[display:flex] [flex-direction:column] [gap:8px]">
-                <h3>Methane Intensity by Facility (kg CH₄ / BOE)</h3>
+                <h3>{t("Methane Intensity by Facility (kg CH₄ / BOE)")}</h3>
                 <div
                   className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:var(--color-brand-500)]!"
                 ></div>
@@ -812,7 +813,7 @@ const MethaneIntensity: React.FC = () => {
           <div className="card">
             <div className="chart-header">
               <div className="[display:flex] [flex-direction:column] [gap:8px]">
-                <h3>Total Methane Emissions (tCH₄)</h3>
+                <h3>{t("Total Methane Emissions (tCH₄)")}</h3>
                 <div
                   className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:var(--color-blue-500)]!"
                 ></div>
@@ -840,7 +841,7 @@ const MethaneIntensity: React.FC = () => {
           <div className="card">
             <div className="chart-header">
               <div className="[display:flex] [flex-direction:column] [gap:8px]">
-                <h3>Gas Flaring Volume by Facility (m³)</h3>
+                <h3>{t("Gas Flaring Volume by Facility (m³)")}</h3>
                 <div
                   className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:var(--color-legacy-ea580c)]!"
                 ></div>
