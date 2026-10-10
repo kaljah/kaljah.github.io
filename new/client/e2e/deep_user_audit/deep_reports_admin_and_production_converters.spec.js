@@ -159,8 +159,8 @@ test.describe('Suite 16: Deep Untested Reports Configuration, Admin Controls & P
     const configDialogHeading = page.locator('h2:has-text("Generate Executive GHG Report")');
     await expect(configDialogHeading).toBeVisible({ timeout: 6000 });
 
-    // Switch report format to ISO 14064-1 Compliance Report
-    const isoFormatOption = page.locator('button:has-text("ISO 14064-1 Compliance Report")').first();
+    // Switch report format to ISO 14064-1 Report
+    const isoFormatOption = page.locator('button:has-text("ISO 14064-1 Report")').first();
     if (await isoFormatOption.isVisible().catch(() => false)) {
       await isoFormatOption.click();
       await page.waitForTimeout(600);

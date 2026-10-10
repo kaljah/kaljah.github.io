@@ -327,7 +327,7 @@ export const UncertaintyPanel: React.FC<UncertaintyPanelProps> = ({ uncertainty 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h3 className="m-0 text-lg font-bold text-text">{t("IPCC Tier 1 Error Propagation (Square Root of Sum of Squares)")}</h3>
-          <p className="m-0 mt-1 text-sm text-text-secondary">{t("Complies with ISO 14064-1:2018 §7.5 and GHG Protocol Corporate Standard Chapter 11.")}</p>
+          <p className="m-0 mt-1 text-sm text-text-secondary">{t("Follows ISO 14064-1:2018 §7.5 and GHG Protocol Corporate Standard Chapter 11.")}</p>
         </div>
         <Badge tone="brand">{t("95% Confidence Interval (k=2)")}</Badge>
       </div>
