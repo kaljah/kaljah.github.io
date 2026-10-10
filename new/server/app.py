@@ -20,16 +20,24 @@ app.config.from_object(Config)
 # ── Rotating log handler (50 MB max, 3 backups) ────────────────────────────
 # Replaces unbounded trace.log writes. All unhandled exceptions and warnings
 # route through app.logger which writes to this rotating file.
-_log_dir = os.path.dirname(os.path.abspath(__file__))
-_log_path = os.path.join(_log_dir, "trace.log")
-_rotating_handler = RotatingFileHandler(
-    _log_path, maxBytes=50 * 1024 * 1024, backupCount=3, encoding="utf-8"
-)
-_rotating_handler.setFormatter(
-    logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s")
-)
-_rotating_handler.setLevel(logging.WARNING)
-app.logger.addHandler(_rotating_handler)
+# LOG_FILE sets the file (default: trace.log next to this module); an empty LOG_FILE keeps logs on
+# the console only (journald, docker logs). An unwritable path warns instead of stopping the app.
+_log_path = os.environ.get("LOG_FILE")
+if _log_path is None:
+    _log_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "trace.log")
+if _log_path:
+    try:
+        _rotating_handler = RotatingFileHandler(
+            _log_path, maxBytes=50 * 1024 * 1024, backupCount=3, encoding="utf-8"
+        )
+    except OSError as _log_err:
+        app.logger.warning("Log file %s not writable (%s); logging to the console only", _log_path, _log_err)
+    else:
+        _rotating_handler.setFormatter(
+            logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s")
+        )
+        _rotating_handler.setLevel(logging.WARNING)
+        app.logger.addHandler(_rotating_handler)
 app.logger.setLevel(logging.INFO)
 
 

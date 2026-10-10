@@ -149,3 +149,8 @@ audit/scope1_100k/**/*.jsonl
 audit/scope1_100k/**/*.jsonl.gz
 audit/scope1_100k/**/results/
 audit/scope1_100k/out/
+
+# Deployment: local settings, certificates and release bundles
+deploy/.env
+deploy/certs/
+deploy/release/

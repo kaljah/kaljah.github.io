@@ -1,0 +1,60 @@
+name: Deployment package
+
+# Builds the container images, starts the full stack (PostgreSQL, Redis, API, nginx) the way an
+# on-premise install does, and runs deploy/smoke-test.sh through nginx over HTTPS, so the package
+# cannot break unnoticed.
+on:
+  pull_request:
+    branches: [main, master]
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  stack:
+    name: Build images and smoke-test the stack
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      COMPOSE: docker compose -f deploy/compose.yml --env-file deploy/.env
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Test settings and certificate
+        run: |
+          mkdir -p deploy/certs
+          openssl req -x509 -newkey rsa:2048 -nodes -days 2 -subj "/CN=neocarbon.test" \
+            -keyout deploy/certs/privkey.pem -out deploy/certs/fullchain.pem
+          chmod 644 deploy/certs/*.pem
+          {
+            echo "SERVER_NAME=neocarbon.test"
+            echo "SECRET_KEY=$(openssl rand -hex 32)"
+            echo "POSTGRES_PASSWORD=$(openssl rand -hex 16)"
+            echo "ADMIN_EMAIL=admin@ci.test"
+            echo "ADMIN_PASSWORD=Ci!Admin#Password2026"
+            echo "IT_ADMIN_EMAIL=itadmin@ci.test"
+            echo "IT_ADMIN_PASSWORD=Ci!ItAdmin#Password2026"
+            echo "NEOCARBON_VERSION=ci"
+          } > deploy/.env
+
+      - name: Build images
+        run: $COMPOSE build
+
+      - name: Start the stack
+        run: |
+          $COMPOSE up -d --wait --wait-timeout 180
+          $COMPOSE ps
+
+      - name: Create the admin accounts
+        run: $COMPOSE run --rm app seed-admin
+
+      - name: Smoke test through nginx
+        run: deploy/smoke-test.sh https://127.0.0.1 admin@ci.test 'Ci!Admin#Password2026' -f deploy/compose.yml --env-file deploy/.env
+
+      - name: Logs
+        if: failure()
+        run: $COMPOSE logs --no-color --tail 200
+
+      - name: Stop
+        if: always()
+        run: $COMPOSE down -v
