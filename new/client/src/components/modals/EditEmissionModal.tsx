@@ -5,6 +5,7 @@ import api from "../../api";
 import { useToast } from "../Toast";
 import { MARKET_INSTRUMENTS } from "../scope2-form/marketInstruments";
 import { apiError } from "../../utils/apiError";
+import { editRequest, editScope } from "./editEmissionRequest";
 
 export interface EditEmissionModalProps {
   isOpen: boolean;
@@ -66,42 +67,7 @@ export const EditEmissionModal: React.FC<EditEmissionModalProps> = ({
 
     setLoading(true);
     try {
-      const isScope2 = Number(emission.scope) === 2 || Boolean(emission.grid_region);
-      const cleanId = String(emission.id).replace(/^(s1_|s2_|s3_)/, "");
-      const url = isScope2 ? `/scope2/${cleanId}` : `/emissions/${cleanId}`;
-
-      const payload: Record<string, any> = {
-        year: Number(formData.year),
-        month: Number(formData.month),
-        facility_id: formData.facility_id ? Number(formData.facility_id) : undefined,
-      };
-
-      if (isScope2) {
-        payload.electricity_kwh = Number(formData.amount || formData.electricity_kwh);
-        payload.grid_region = formData.grid_region || undefined;
-        payload.market_instrument_type = formData.market_instrument_type || undefined;
-        if (formData.market_emission_factor) {
-          payload.market_emission_factor = Number(formData.market_emission_factor);
-        }
-      } else {
-        payload.process_type = formData.process_type;
-        payload.fuel = formData.fuel;
-        payload.fuel_type = formData.fuel;
-        payload.amount = Number(formData.amount);
-        payload.quantity = Number(formData.amount);
-        payload.unit = formData.unit;
-        payload.recalculate = true;
-        if (formData.process_type) {
-          payload.calc_inputs = {
-            [formData.process_type]: {
-              amount: Number(formData.amount),
-              unit: formData.unit,
-              fuel: formData.fuel,
-            },
-          };
-        }
-      }
-
+      const { url, payload } = editRequest(emission, formData);
       await api.put(url, payload);
       toast.success("Emission record updated successfully. Record returned to Pending review for verification.");
       if (onSuccess) onSuccess();
@@ -165,16 +131,19 @@ export const EditEmissionModal: React.FC<EditEmissionModalProps> = ({
             </NativeSelect>
           </Field>
 
-          <Field label="Month *">
-            <NativeSelect
-              value={formData.month}
-              onChange={(e) => handleChange("month", e.target.value)}
-            >
-              {MONTHS.map((m) => (
-                <option key={m.value} value={m.value}>{m.label}</option>
-              ))}
-            </NativeSelect>
-          </Field>
+          {/* Scope 3 records are yearly */}
+          {editScope(emission) !== 3 && (
+            <Field label="Month *">
+              <NativeSelect
+                value={formData.month}
+                onChange={(e) => handleChange("month", e.target.value)}
+              >
+                {MONTHS.map((m) => (
+                  <option key={m.value} value={m.value}>{m.label}</option>
+                ))}
+              </NativeSelect>
+            </Field>
+          )}
         </div>
 
         {facilities.length > 0 && (
@@ -231,7 +200,7 @@ export const EditEmissionModal: React.FC<EditEmissionModalProps> = ({
           </Field>
         </div>
 
-        {(Number(emission.scope) === 2 || formData.market_instrument_type) && (
+        {(editScope(emission) === 2 || formData.market_instrument_type) && (
           <div className="mt-2 flex flex-col gap-4 border-t border-border pt-4">
             <h4 className="text-sm font-semibold text-text">Scope 2 Dual-Reporting Attributes</h4>
             <div className="grid grid-cols-2 gap-4">
