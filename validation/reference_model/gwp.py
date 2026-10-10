@@ -16,9 +16,9 @@ INDEPENDENT_GWP_REGISTRY = {
         "20": {"CO2": 1.0, "CH4": 84.0, "N2O": 264.0},
     },
     "AR6": {
-        "100": {"CO2": 1.0, "CH4": 27.9, "N2O": 273.0},
-        # AR6 WG1 Table 7.15: CH4 27.9 (100-yr) pairs with 81.2 (20-yr); 82.5 is the fossil-CH4 pair
-        "20": {"CO2": 1.0, "CH4": 81.2, "N2O": 273.0},
+        # AR6 WG1 Table 7.15, fossil CH4 (oil and gas methane; non-fossil is 27.9 / 81.2)
+        "100": {"CO2": 1.0, "CH4": 29.8, "N2O": 273.0},
+        "20": {"CO2": 1.0, "CH4": 82.5, "N2O": 273.0},
     },
 }
 
