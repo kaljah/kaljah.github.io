@@ -1,0 +1,25 @@
+# Only new/client, new/server and deploy/ go into the image build context.
+*
+!new/client/
+!new/server/
+!deploy/
+new/client/node_modules
+new/client/dist
+new/client/test-results
+new/client/playwright-report
+new/client/storageState.json
+new/client/e2e/**/screenshots
+new/server/**/__pycache__
+new/server/.hypothesis
+new/server/.pytest_cache
+new/server/*.db
+new/server/*.db-*
+new/server/tests/*.db
+new/server/instance
+new/server/upload_jobs
+new/server/backups
+new/server/trace.log
+new/server/.env
+deploy/.env
+deploy/certs
+deploy/release

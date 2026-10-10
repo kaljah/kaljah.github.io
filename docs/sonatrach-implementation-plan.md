@@ -20,7 +20,7 @@ Companion to `docs/sonatrach-readiness-plan.md` (the what and why). This file is
 |-----------|-------|-----|
 | Recovery of unmerged branches | Done 2026-10-08 | Audit 2026-10-01 (security fixes and owner decisions) and the Scope 1 100k import audit (S1K-F1..F37) ported from `ccr-669f6fbd-pew7ww` and `ccr-b93733a1-u3m8s8`; the other branches' work was already on main or superseded. Reports in `docs/validation/FULL_AUDIT_2026-10-01.md` and `SCOPE1_100K_BULK_AUDIT_2026-10-01.md`. |
 | M0 Kick-off pack | Not started | |
-| M1 Deployment package | Not started | |
+| M1 Deployment package | Done 2026-10-10 (T1.1-T1.4; T1.5 moot, the Pages deployment is gone): `deploy/`, `docs/deployment.md`, CI `package.yml`. Also covers T2.4 (offline bundle, `deploy/release.sh`) and a native install (`deploy/native/`). | |
 | M2 Offline operation | Not started | |
 | M3 Backups, releases, upgrades | Not started | |
 | M4 Security hardening | Not started | |
