@@ -262,11 +262,6 @@ const Login: React.FC = () => {
 
         {/* Footer / Compliance */}
         <div className="[margin-top:40px] [text-align:center] [border-top:1px_solid_var(--border-light)] [padding-top:24px] [&_p]:[color:var(--text-muted)] [&_p]:[font-size:var(--text-sm)]">
-          <div className="[display:flex] [flex-wrap:wrap] [justify-content:center] [gap:8px] [margin-bottom:16px]">
-            <span className="badge">API Compliant</span>
-            <span className="badge">ISO 14064 Ready</span>
-            <span className="badge">SOC2 Secured</span>
-          </div>
           <p>© {new Date().getFullYear()} Neocarbon. All rights reserved.</p>
         </div>
       </motion.div>

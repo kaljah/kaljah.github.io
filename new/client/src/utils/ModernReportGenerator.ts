@@ -355,7 +355,7 @@ export async function generateModernPDF(api: any, filters: any): Promise<void> {
       doc.setFontSize(8);
       doc.setTextColor(...THEME.textMuted);
       doc.text(
-        `Sonatrach GHG Inventory ${isAllYears ? "Historical" : selectedYear} | ISO 14064-1 Compliant`,
+        `Sonatrach GHG Inventory ${isAllYears ? "Historical" : selectedYear} | Prepared following ISO 14064-1`,
         margin,
         pageHeight - 6,
       );
@@ -485,7 +485,7 @@ export async function generateModernPDF(api: any, filters: any): Promise<void> {
       pageHeight - 55,
     );
     doc.text(
-      "API COMPENDIUM 2021 / ISO 14064-1 COMPLIANT",
+      "PREPARED FOLLOWING API COMPENDIUM 2021 / ISO 14064-1",
       25,
       pageHeight - 50,
     );
