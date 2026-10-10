@@ -75,7 +75,7 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
               "Actions",
             ].map((h) => (
               <th key={h} style={S.th}>
-                {h}
+                {t(h)}
               </th>
             ))}
           </tr>

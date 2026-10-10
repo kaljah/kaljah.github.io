@@ -4,7 +4,7 @@ import { Badge, Card, StatCard, type StatCardTone } from "../../ui";
 import { formatCompactNumber } from "../../utils/formatters";
 import { t } from "../../i18n";
 
-const UNIT_TITLE = "thousand standard m³ (15.6 °C / 60 °F, 1 atm)";
+const UNIT_TITLE = t("thousand standard m³ (15.6 °C / 60 °F, 1 atm)");
 
 export interface FlaringStreamData {
   volume_knm3?: number;
@@ -23,7 +23,7 @@ interface StreamTileProps {
 }
 
 // One flaring stream tile: volume, share of total and tCO2e. The left rule and tone colors the stream category.
-const StreamTile: React.FC<StreamTileProps> = ({ label, stream, rule, tone = "default", testId, shareLabel = "of total" }) => (
+const StreamTile: React.FC<StreamTileProps> = ({ label, stream, rule, tone = "default", testId, shareLabel = t("of total") }) => (
   <StatCard
     data-testid={testId}
     className={`border-l-4 p-4 ${rule}`}
@@ -35,7 +35,7 @@ const StreamTile: React.FC<StreamTileProps> = ({ label, stream, rule, tone = "de
     unit="kSm3"
     footnote={
       stream?.percentage == null
-        ? `${formatCompactNumber(stream?.tco2e ?? 0)} tCO₂e • 100% Stream`
+        ? `${formatCompactNumber(stream?.tco2e ?? 0)} tCO₂e • ${t("100% Stream")}`
         : `${stream.percentage}% ${shareLabel} • ${formatCompactNumber(stream?.tco2e ?? 0)} tCO₂e`
     }
     title={UNIT_TITLE}

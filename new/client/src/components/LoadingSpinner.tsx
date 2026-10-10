@@ -1,5 +1,6 @@
 import React from "react";
 import "./LoadingSpinner.css";
+import { t } from "../i18n";
 
 export interface LoadingSpinnerProps {
   size?: "small" | "medium" | "large" | string;
@@ -10,7 +11,7 @@ export interface LoadingSpinnerProps {
 const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   size = "medium",
   fullScreen = false,
-  message = "Loading System Resources...",
+  message = t("Loading System Resources..."),
 }) => {
   const sizeClass = `spinner-${size}`;
 

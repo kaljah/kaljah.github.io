@@ -44,24 +44,24 @@ const detectAnomalies = (record: any, facilitiesList: any[]): AnomalyResult => {
   const val = Number(record.co2e_total ?? record.co2e ?? 0);
   const qty = Number(record.quantity ?? record.electricity_kwh ?? record.activity_data ?? 0);
   if (val <= 0 || qty <= 0) {
-    reasons.push(`Zero or negative value (Impact: ${val}, Qty: ${qty})`);
+    reasons.push(t("Zero or negative value (Impact: {{val}}, Qty: {{qty}})", { val, qty }));
     severity = 'danger';
   }
 
   // 3. Extreme outliers
   if (val > 10000) {
-    reasons.push(`Extreme emission spike: ${val.toLocaleString()} tCO2e`);
+    reasons.push(t("Extreme emission spike: {{value}} tCO2e", { value: val.toLocaleString() }));
     if (severity !== 'danger') severity = 'warning';
   }
   if (qty > 10000000) {
-    reasons.push(`High volume metric: ${qty.toLocaleString()}`);
+    reasons.push(t("High volume metric: {{value}}", { value: qty.toLocaleString() }));
     if (severity !== 'danger') severity = 'warning';
   }
 
   // 4. Unlinked / unknown facility
   const hasFac = facilitiesList?.some(f => String(f.id) === String(record.facility_id));
   if (!record.facility_id || !hasFac) {
-    reasons.push(`Unlinked facility ID: #${record.facility_id || 'null'}`);
+    reasons.push(t("Unlinked facility ID: #{{id}}", { id: record.facility_id || 'null' }));
     severity = 'danger';
   }
 
@@ -70,25 +70,25 @@ const detectAnomalies = (record: any, facilitiesList: any[]): AnomalyResult => {
   const mo = Number(record.month);
   const currYear = new Date().getFullYear();
   if (!yr || yr < 2000 || yr > currYear + 1) {
-    reasons.push(`Unusual year: ${yr}`);
+    reasons.push(t("Unusual year: {{year}}", { year: yr }));
     if (severity !== 'danger') severity = 'warning';
   }
   if (!mo || mo < 1 || mo > 12) {
-    reasons.push(`Invalid month: ${mo}`);
+    reasons.push(t("Invalid month: {{month}}", { month: mo }));
     severity = 'danger';
   }
 
   // 6. Missing scope category info
   if (record.scope === '1' && !record.process_type && !record.fuel_type) {
-    reasons.push('Missing process & fuel type');
+    reasons.push(t("Missing process & fuel type"));
     if (severity !== 'danger') severity = 'warning';
   }
   if (record.scope === '2' && !record.source_type) {
-    reasons.push('Missing electricity/steam source');
+    reasons.push(t("Missing electricity/steam source"));
     if (severity !== 'danger') severity = 'warning';
   }
   if (record.scope === '3' && !record.category) {
-    reasons.push('Missing Scope 3 category');
+    reasons.push(t("Missing Scope 3 category"));
     if (severity !== 'danger') severity = 'warning';
   }
 
@@ -223,7 +223,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
         date: `${r.year}-${String(r.month || 1).padStart(2, '0')}`,
         facility_id: r.facility_id,
         created_by: r.created_by,
-        desc: `${r.process_type || 'General'} · ${r.fuel_type || ''} (${Number(r.quantity || 0).toLocaleString()} ${r.unit || ''})`,
+        desc: `${r.process_type || t("General")} · ${r.fuel_type || ''} (${Number(r.quantity || 0).toLocaleString()} ${r.unit || ''})`,
         tco2e: Number(r.co2e_total || 0),
         qa_flag: r.qa_flag,
         ...anomaly
@@ -241,7 +241,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
         date: `${r.year}-${String(r.month || 1).padStart(2, '0')}`,
         facility_id: r.facility_id,
         created_by: r.created_by,
-        desc: `${r.source_type || 'Electricity'} (${Number(r.electricity_kwh || 0).toLocaleString()} kWh)`,
+        desc: `${r.source_type || t("Electricity")} (${Number(r.electricity_kwh || 0).toLocaleString()} kWh)`,
         tco2e: Number(r.co2e || 0),
         qa_flag: r.qa_flag,
         ...anomaly
@@ -259,7 +259,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
         date: `${r.year}-${String(r.month || 1).padStart(2, '0')}`,
         facility_id: r.facility_id,
         created_by: r.created_by,
-        desc: `${r.category || 'Scope 3'}${r.sub_category ? ` · ${r.sub_category}` : ''}`,
+        desc: `${r.category || t("Scope 3")}${r.sub_category ? ` · ${r.sub_category}` : ''}`,
         tco2e: Number(r.co2e || 0),
         qa_flag: r.qa_flag,
         ...anomaly
@@ -348,7 +348,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
       return;
     }
     setSelectedKeys(new Set(weirdKeys));
-    toast.info(`Selected ${weirdKeys.length} anomalous records for review`);
+    toast.info(t("Selected {{count}} anomalous records for review", { count: weirdKeys.length }));
   };
 
   // Toggle single item selection
@@ -414,12 +414,12 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
     if (targetCount === 0) return;
 
     const msg = isFiltered
-      ? `Approve all ${targetCount} currently filtered records across active criteria?`
-      : `Approve ALL ${targetCount} pending records in the system across all scopes?`;
+      ? t("Approve all {{count}} currently filtered records across active criteria?", { count: targetCount })
+      : t("Approve ALL {{count}} pending records in the system across all scopes?", { count: targetCount });
 
     setConfirmModal({
       isOpen: true,
-      title: isFiltered ? "Batch Approve Filtered Records" : "Batch Approve All Records",
+      title: isFiltered ? t("Batch Approve Filtered Records") : t("Batch Approve All Records"),
       message: msg,
       onConfirm: async () => {
         setConfirmModal(prev => ({ ...prev, isOpen: false }));
@@ -828,7 +828,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
               <tbody>
                 {filteredRecords.map(item => {
                   const isSelected = selectedKeys.has(item.key);
-                  const facName = facilities.find(f => f.id === item.facility_id)?.name || (item.facility_id ? `Facility #${item.facility_id}` : 'Unassigned');
+                  const facName = facilities.find(f => f.id === item.facility_id)?.name || (item.facility_id ? t("Facility #{{id}}", { id: item.facility_id }) : t("Unassigned"));
 
                   return (
                     <tr key={item.key} className={`${isSelected ? 'row-selected' : ''} ${item.isWeird ? 'row-weird' : ''}`}>
@@ -879,7 +879,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
                             </span>
                             <span className={`[font-size:0.72rem]! [line-height:1.2]! ${item.severity === 'danger' ? "[color:var(--color-red-600)]!" : "[color:var(--color-amber-700)]!"}`}>
                               {item.reasons[0]}
-                              {item.reasons.length > 1 && ` (+${item.reasons.length - 1} more)`}
+                              {item.reasons.length > 1 && ` ${t("(+{{count}} more)", { count: item.reasons.length - 1 })}`}
                             </span>
                           </div>
                         ) : (
@@ -939,12 +939,12 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
                 </div>
                 <h3 className="m-[0px]! font-bold! text-[length:1.1rem]!">
                   {rejectionModal.mode === 'single'
-                    ? `Reject Record #${rejectionModal.targetItem?.id}`
+                    ? t("Reject Record #{{id}}", { id: rejectionModal.targetItem?.id ?? "" })
                     : rejectionModal.mode === 'selected'
-                    ? `Reject ${selectedKeys.size} Selected Records`
+                    ? t("Reject {{count}} Selected Records", { count: selectedKeys.size })
                     : rejectionModal.mode === 'all'
-                    ? `Delete ALL ${stats.totalCount} Pending Records`
-                    : `Reject ${filteredRecords.length} Filtered Records`}
+                    ? t("Delete ALL {{count}} Pending Records", { count: stats.totalCount })
+                    : t("Reject {{count}} Filtered Records", { count: filteredRecords.length })}
                 </h3>
               </div>
               <Button
@@ -972,7 +972,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
                     className={`rejection-chip ${rejectionModal.reason === reason ? 'selected' : ''}`}
                     onClick={() => setRejectionModal(prev => ({ ...prev, reason }))}
                   >
-                    {reason}
+                    {t(reason)}
                   </button>
                 ))}
               </div>

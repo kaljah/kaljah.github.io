@@ -48,10 +48,10 @@ interface MatrixRow {
 }
 
 const ROWS: MatrixRow[] = [
-  { name: "Carbon Dioxide (CO₂)", values: [1, 1, 1], context: "Universal baseline anchor", plain: true },
-  { name: "Methane (CH₄) - 100 Year", key: "CH4", context: "Corporate GHG Inventory / Scope 1", active: "AR5" },
-  { name: "Methane (CH₄) - 20 Year", key: "CH4_20", context: "Near-Term Climate Impact / ESG Analytics" },
-  { name: "Nitrous Oxide (N₂O) - 100 Year", key: "N2O", context: "Flaring / Combustion byproducts" },
+  { name: "Carbon Dioxide (CO₂)", values: [1, 1, 1], context: t("Universal baseline anchor"), plain: true },
+  { name: "Methane (CH₄) - 100 Year", key: "CH4", context: t("Corporate GHG Inventory / Scope 1"), active: "AR5" },
+  { name: "Methane (CH₄) - 20 Year", key: "CH4_20", context: t("Near-Term Climate Impact / ESG Analytics") },
+  { name: "Nitrous Oxide (N₂O) - 100 Year", key: "N2O", context: t("Flaring / Combustion byproducts") },
 ];
 
 const th = "whitespace-nowrap border-b border-border bg-surface px-3.5 py-2.5 text-left text-xs font-bold uppercase tracking-wide text-text-secondary";
@@ -82,7 +82,7 @@ const SettingsIPCCGlobalWarming: React.FC<SettingsIPCCGlobalWarmingProps> = ({
   <SettingsSection
     icon={Scale}
     title={t("IPCC Global Warming Potential (GWP) Standard")}
-    intro="Select which Intergovernmental Panel on Climate Change (IPCC) assessment report conversion factors are applied to Methane (CH₄) and Nitrous Oxide (N₂O) emissions calculations."
+    intro={t("Select which Intergovernmental Panel on Climate Change (IPCC) assessment report conversion factors are applied to Methane (CH₄) and Nitrous Oxide (N₂O) emissions calculations.")}
   >
     <RadioCardGroup
       label={t("IPCC GWP standard")}
@@ -139,7 +139,7 @@ const SettingsIPCCGlobalWarming: React.FC<SettingsIPCCGlobalWarmingProps> = ({
               return (
                 <tr key={row.name} className={cn(gwpStandard === row.active && "bg-brand-50")}>
                   <td className={td}>
-                    <strong>{row.name}</strong>
+                    <strong>{t(row.name)}</strong>
                   </td>
                   {cells.map((value, i) => (
                     <td key={i} className={td}>

@@ -129,9 +129,9 @@ const Scope2FormCalculatorGridContainer: React.FC<Scope2FormCalculatorGridContai
             entries.map((entry) => {
               const srcLabel =
                 ({
-                  electricity: "Grid Electricity",
-                  indirect_steam: "Indirect Steam / Heat",
-                  cogen_allocation: "CHP / Cogen Allocation",
+                  electricity: t("Grid Electricity"),
+                  indirect_steam: t("Indirect Steam / Heat"),
+                  cogen_allocation: t("CHP / Cogen Allocation"),
                 } as Record<string, string>)[entry.source_type] || entry.source_type;
 
               let consumptionDisplay = "-";
@@ -142,7 +142,7 @@ const Scope2FormCalculatorGridContainer: React.FC<Scope2FormCalculatorGridContai
                   ? `${formatNumber(entry.heat_mmbtu, 2)} MMBtu`
                   : "-";
               } else if (entry.source_type === "cogen_allocation") {
-                consumptionDisplay = `${formatNumber(entry.co2e, 3)} tCO₂e allocated`;
+                consumptionDisplay = t("{{value}} tCO₂e allocated", { value: formatNumber(entry.co2e, 3) });
               }
 
               // a 0 factor (renewable contract) is a value, not a missing factor

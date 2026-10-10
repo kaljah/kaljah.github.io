@@ -124,9 +124,9 @@ export const DonutCard: React.FC<DonutCardProps> = ({ title, data, noun }) => (
 );
 
 const SBTI_SERIES = (label?: string) => [
-  { dataKey: "actual", name: "Actual Verified Emissions", color: "var(--color-blue-500)", strokeWidth: 3 },
-  { dataKey: "sbti_target", name: label || "Linear Target", color: "var(--color-green-500)", strokeDasharray: "5 5", strokeWidth: 2 },
-  { dataKey: "bau_projection", name: "Business as Usual (+1.5%/yr)", color: "var(--color-red-500)", strokeDasharray: "3 3", strokeWidth: 2 },
+  { dataKey: "actual", name: t("Actual Verified Emissions"), color: "var(--color-blue-500)", strokeWidth: 3 },
+  { dataKey: "sbti_target", name: label || t("Linear Target"), color: "var(--color-green-500)", strokeDasharray: "5 5", strokeWidth: 2 },
+  { dataKey: "bau_projection", name: t("Business as Usual (+1.5%/yr)"), color: "var(--color-red-500)", strokeDasharray: "3 3", strokeWidth: 2 },
 ];
 
 export interface SbtiCardProps {
@@ -144,7 +144,7 @@ export const SbtiCard: React.FC<SbtiCardProps> = ({ sbti, onOpen }) => (
   <Card className="p-6">
     <CardHeader
       title={sbti.pathway_label || t("Decarbonization trajectory")}
-      description={`Progress monitoring against corporate Net-Zero targets from Base Year ${sbti.base_year} to Target Year ${sbti.target_year}`}
+      description={t("Progress monitoring against corporate Net-Zero targets from Base Year {{base}} to Target Year {{target}}", { base: sbti.base_year ?? "", target: sbti.target_year ?? "" })}
       actions={
         <Button variant="secondary" onClick={onOpen}>
           {t("View full SBTi dashboard")}{" "}<ArrowRight className="size-4" aria-hidden="true" />

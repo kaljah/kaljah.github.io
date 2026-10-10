@@ -87,8 +87,8 @@ const ExplorerHud: React.FC<ExplorerHudProps> = ({
           value={viewMode}
           onChange={onViewMode}
           options={[
-            { value: "methane", label: labelWithIcon(Flame, "CH₄ Flux"), title: t("Focus on Methane (CH4) emissions") },
-            { value: "total", label: labelWithIcon(TrendingUp, "Total GHG"), title: t("Focus on Total GHG (CO2e) emissions") },
+            { value: "methane", label: labelWithIcon(Flame, t("CH₄ Flux")), title: t("Focus on Methane (CH4) emissions") },
+            { value: "total", label: labelWithIcon(TrendingUp, t("Total GHG")), title: t("Focus on Total GHG (CO2e) emissions") },
           ]}
         />
       </div>

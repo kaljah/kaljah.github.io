@@ -98,14 +98,14 @@ const Login: React.FC = () => {
       await login(email, password);
       navigate("/");
     } catch (err: any) {
-      setError(err?.response?.data?.error || "Invalid credentials");
+      setError(err?.response?.data?.error || t("Invalid credentials"));
     }
   };
 
   const handleForgotPassword = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!forgotEmail.trim()) {
-      setForgotMsg({ text: "Please enter your email address.", type: "error" });
+      setForgotMsg({ text: t("Please enter your email address."), type: "error" });
       return;
     }
     setForgotLoading(true);
@@ -113,7 +113,7 @@ const Login: React.FC = () => {
     try {
       const res = await api.post<{ message?: string }>("/auth/forgot-password", { email: forgotEmail.trim() });
       setForgotMsg({
-        text: res.data.message || "Password reset request submitted. Your IT Administrator has been notified.",
+        text: res.data.message || t("Password reset request submitted. Your IT Administrator has been notified."),
         type: "success",
       });
       setTimeout(() => {
@@ -122,7 +122,7 @@ const Login: React.FC = () => {
       }, 1000);
     } catch (err: any) {
       setForgotMsg({
-        text: err?.response?.data?.error || "Failed to submit request. Please try again later.",
+        text: err?.response?.data?.error || t("Failed to submit request. Please try again later."),
         type: "error",
       });
     } finally {

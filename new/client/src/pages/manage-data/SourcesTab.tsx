@@ -176,7 +176,7 @@ const SourcesTab: React.FC<SourcesTabProps> = ({
           <option value="">{t("Select Type")}</option>
           {Object.entries(PROCESS_TYPES).map(([val, label]) => (
             <option key={val} value={val}>
-              {label}
+              {t(label)}
             </option>
           ))}
         </NativeSelect>
@@ -241,7 +241,7 @@ const SourcesTab: React.FC<SourcesTabProps> = ({
                 <td className="text-[color:var(--text-secondary)]! text-[length:0.85rem]!">
                   {s.equipment_id || "-"}
                 </td>
-                <td>{PROCESS_TYPES[s.type as keyof typeof PROCESS_TYPES] || s.type}</td>
+                <td>{t(String(PROCESS_TYPES[s.type as keyof typeof PROCESS_TYPES] || s.type))}</td>
                 <td>
                   {(() => {
                     const fac = facilities.find((f) => f.id === s.facility_id);

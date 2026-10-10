@@ -110,13 +110,13 @@ const Composition: React.FC<CompositionProps> = ({ data, onChange, c2 = false, r
 // ---- Tier 1: activity-factor tables ----
 const plural = (a?: string) => (a && !a.endsWith("s") ? `${a}s` : a);
 const PER_INPUT: Record<string, { label: (a?: string) => string; units?: string[]; extra?: { field: string; label: string; placeholder: string } }> = {
-  unit: { label: (a) => `Number (${a || "events"})` },
-  unit_day: { label: (a) => `Number of ${plural(a) || "units"}`, extra: { field: "activity_days", label: t("Days"), placeholder: t("whole month") } },
-  unit_hr: { label: (a) => `Number of ${plural(a) || "units"}`, extra: { field: "activity_hours", label: t("Hours"), placeholder: t("whole month") } },
-  mmscf: { label: () => "Gas throughput", units: GAS_UNITS },
-  mm_m3: { label: () => "Gas throughput", units: GAS_UNITS },
-  mgal: { label: () => "Liquid loaded", units: LIQ_UNITS },
-  bbl: { label: (a) => (a && a !== "bbl oil" ? `Volume (${a.replace("bbl ", "")})` : "Oil produced"), units: LIQ_UNITS },
+  unit: { label: (a) => t("Number ({{unit}})", { unit: a || t("events") }) },
+  unit_day: { label: (a) => t("Number of {{items}}", { items: plural(a) || t("units") }), extra: { field: "activity_days", label: t("Days"), placeholder: t("whole month") } },
+  unit_hr: { label: (a) => t("Number of {{items}}", { items: plural(a) || t("units") }), extra: { field: "activity_hours", label: t("Hours"), placeholder: t("whole month") } },
+  mmscf: { label: () => t("Gas throughput"), units: GAS_UNITS },
+  mm_m3: { label: () => t("Gas throughput"), units: GAS_UNITS },
+  mgal: { label: () => t("Liquid loaded"), units: LIQ_UNITS },
+  bbl: { label: (a) => (a && a !== "bbl oil" ? t("Volume ({{unit}})", { unit: a.replace("bbl ", "") }) : t("Oil produced")), units: LIQ_UNITS },
 };
 
 export interface ActivityFactorFormProps {
@@ -134,7 +134,7 @@ export const ActivityFactorForm: React.FC<ActivityFactorFormProps> = ({ processT
     api
       .get("/activity-factors", { params: { process: processType } })
       .then((r) => live && setRows(r.data?.factors || []))
-      .catch(() => live && setError("Could not load the factor list"));
+      .catch(() => live && setError(t("Could not load the factor list")));
     return () => {
       live = false;
     };
@@ -273,7 +273,7 @@ export const VentedGasForm: React.FC<VentedGasFormProps> = ({ data, onChange }) 
           <div className="input-group">
             <label>{t("Gas released")}</label>
             <Segmented
-              ariaLabel="Gas released"
+              ariaLabel={t("Gas released")}
               options={[
                 { value: "vented", label: t("Vented") },
                 { value: "flared", label: t("Flared") },
@@ -337,7 +337,7 @@ export const CombustionMethodForm: React.FC<CombustionMethodFormProps> = ({ data
             />
           </div>
           <Segmented
-            ariaLabel="Energy input"
+            ariaLabel={t("Energy input")}
             options={[
               { value: "fuel", label: t("Fuel burned") },
               { value: "engine", label: t("Engine hours") },
@@ -447,7 +447,7 @@ export const CombustionMethodForm: React.FC<CombustionMethodFormProps> = ({ data
       {m === "thermal_oxidizer" && (
         <>
           <Segmented
-            ariaLabel="Oxidizer feed"
+            ariaLabel={t("Oxidizer feed")}
             options={[
               { value: "loading", label: t("Loading losses") },
               { value: "toc", label: t("TOC mass") },
@@ -508,7 +508,7 @@ export const SectionMethodPanel: React.FC<SectionMethodPanelProps> = ({
     <div className="[display:grid] [grid-template-columns:1fr] [gap:16px]">
       {choices.length > 1 && (
         <Segmented
-          ariaLabel="Calculation method"
+          ariaLabel={t("Calculation method")}
           options={choices}
           value={selected}
           onChange={(v) => v !== selected && applyChoice(v, onChange, data)}

@@ -45,7 +45,7 @@ const SettingsFacilityLevelOGMPOverrides: React.FC<SettingsFacilityLevelOGMPOver
     <SettingsSection
       icon={Building2}
       title={t("Facility-Level OGMP Overrides")}
-      intro="Customize operator status (Operated vs Non-Operated), country, base year, and specific reconciliation variance thresholds for each facility."
+      intro={t("Customize operator status (Operated vs Non-Operated), country, base year, and specific reconciliation variance thresholds for each facility.")}
     >
       <div className="overflow-x-auto rounded-lg border border-border bg-surface">
         <table className="w-full min-w-[960px] border-collapse">
@@ -53,7 +53,7 @@ const SettingsFacilityLevelOGMPOverrides: React.FC<SettingsFacilityLevelOGMPOver
             <tr>
               {COLUMNS.map((c) => (
                 <th key={c} scope="col" className="whitespace-nowrap border-b border-border bg-ink-50 px-4 py-3 text-left text-xs font-bold uppercase tracking-wide text-text-secondary">
-                  {c}
+                  {t(c)}
                 </th>
               ))}
             </tr>
@@ -74,16 +74,16 @@ const SettingsFacilityLevelOGMPOverrides: React.FC<SettingsFacilityLevelOGMPOver
                   </td>
                   <td className="px-4 py-3 text-base text-text">{fac.segment || t("Upstream")}</td>
                   <td className="px-4 py-3">
-                    <NativeSelect aria-label={`Operator status for ${name}`} className={controlClass} value={opStatus} disabled={!isAdmin} onChange={change("operator_status")}>
+                    <NativeSelect aria-label={t("Operator status for {{name}}", { name })} className={controlClass} value={opStatus} disabled={!isAdmin} onChange={change("operator_status")}>
                       <option value="operated">{t("Operated (3-yr target)")}</option>
                       <option value="non_operated">{t("Non-Operated (5-yr target)")}</option>
                     </NativeSelect>
                   </td>
                   <td className="px-4 py-3">
-                    <Input aria-label={`Country for ${name}`} className="h-9 min-w-28" value={edit.country || "Algeria"} disabled={!isAdmin} onChange={change("country")} />
+                    <Input aria-label={t("Country for {{name}}", { name })} className="h-9 min-w-28" value={edit.country || "Algeria"} disabled={!isAdmin} onChange={change("country")} />
                   </td>
                   <td className="px-4 py-3">
-                    <NativeSelect aria-label={`Base year for ${name}`} className={controlClass} value={baseYear} disabled={!isAdmin} onChange={change("ogmp_membership_year")}>
+                    <NativeSelect aria-label={t("Base year for {{name}}", { name })} className={controlClass} value={baseYear} disabled={!isAdmin} onChange={change("ogmp_membership_year")}>
                       {YEARS.map((y) => (
                         <option key={y} value={y}>
                           {y}
@@ -97,7 +97,7 @@ const SettingsFacilityLevelOGMPOverrides: React.FC<SettingsFacilityLevelOGMPOver
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1 font-semibold text-text">
                       ±
-                      <Input type="number" min="1" max="100" aria-label={`Threshold for ${name}`} className="h-9 w-16 px-2 text-center" value={edit.reconciliation_threshold || 20.0} disabled={!isAdmin} onChange={change("reconciliation_threshold")} />%
+                      <Input type="number" min="1" max="100" aria-label={t("Threshold for {{name}}", { name })} className="h-9 w-16 px-2 text-center" value={edit.reconciliation_threshold || 20.0} disabled={!isAdmin} onChange={change("reconciliation_threshold")} />%
                     </div>
                   </td>
                   <td className="px-4 py-3">

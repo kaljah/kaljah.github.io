@@ -458,7 +458,7 @@ export const BarChart: React.FC<BarChartProps> = ({
       {thresholds && !hasMultipleBars && (
         // Color is not the only signal: the legend names each state and the values stay labeled on the bars.
         <ul className="m-0 mt-1 flex list-none flex-wrap justify-center gap-x-4 gap-y-1 p-0 text-xs text-ink-600">
-          {(thresholds.labels || ["Within target", "Near target", "Above target"]).map((label, i) => (
+          {(thresholds.labels || [t("Within target"), t("Near target"), t("Above target")]).map((label, i) => (
             <li key={label} className="inline-flex items-center gap-1.5">
               <span
                 aria-hidden="true"
@@ -475,7 +475,7 @@ export const BarChart: React.FC<BarChartProps> = ({
           {rows.map((r, i) => (
             <li key={i}>
               <button type="button" onClick={() => onSelect(r)}>
-                {selectLabel ? selectLabel(r) : `Open ${r[finalXKey]}`}
+                {selectLabel ? selectLabel(r) : t("Open {{name}}", { name: String(r[finalXKey]) })}
               </button>
             </li>
           ))}

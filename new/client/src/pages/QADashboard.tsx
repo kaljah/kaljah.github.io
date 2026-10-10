@@ -145,7 +145,7 @@ export default function QADashboard() {
                 return { id: parseInt(id, 10), scope: parseInt(scope, 10) };
             });
             const res = await api.post('/qaqc/bulk-resolve', { records, resolution });
-            toast.success(res.data.message || `Updated ${records.length} records to ${resolution}`);
+            toast.success(res.data.message || t("Updated {{count}} records to {{status}}", { count: records.length, status: t(resolution ?? "") }));
             setSelectedIds(new Set());
             // Optimistically update local flagged records
             setData((prev: any) => {
@@ -174,7 +174,7 @@ export default function QADashboard() {
         try {
             const records = [{ id: parseInt(String(id), 10), scope: parseInt(String(scope), 10) }];
             const res = await api.post('/qaqc/bulk-resolve', { records, resolution });
-            toast.success(res.data.message || `Record marked as ${resolution}`);
+            toast.success(res.data.message || t("Record marked as {{status}}", { status: t(resolution) }));
             setSelectedIds(prev => {
                 const next = new Set(prev);
                 next.delete(`${scope}-${id}`);
@@ -433,7 +433,7 @@ export default function QADashboard() {
                 onCancel={() => setResolveModal({ isOpen: false, resolution: null })}
                 onConfirm={confirmBulkResolve}
                 loading={resolving}
-                title={`Confirm Bulk ${resolveModal.resolution === 'Verified' ? 'Verification' : 'Rejection'}`}
+                title={resolveModal.resolution === 'Verified' ? t("Confirm Bulk Verification") : t("Confirm Bulk Rejection")}
                 message={<>{t("Are you sure you want to mark")}{" "}<strong>{selectedIds.size}</strong>{" "}{t("selected record(s) as")}{" "}<strong>{resolveModal.resolution}</strong>?</>}
                 confirmLabel={`Confirm ${resolveModal.resolution === 'Verified' ? 'Verification' : 'Rejection'}`}
                 confirmVariant={resolveModal.resolution === 'Verified' ? 'primary' : 'danger'}

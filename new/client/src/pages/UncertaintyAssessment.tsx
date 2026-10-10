@@ -295,7 +295,7 @@ const UncertaintyAssessment: React.FC = () => {
                 ["medium", "Medium Uncertainty (±10% to ±30%)", "band-medium"],
                 ["high", "High Uncertainty (> ±30%)", "band-high"]].map(([band, label, cls]) => (
                 <div key={band} className="[background:var(--bg-card,_rgba(255,_255,_255,_0.78))] [padding:20px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card,_0_1px_3px_rgba(0,_0,_0,_0.05))] [transition:transform_0.2s_ease,_box-shadow_0.2s_ease] hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated,_0_4px_12px_rgba(0,_0,_0,_0.1))]">
-                  <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))] [font-weight:600]">{label}</div>
+                  <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))] [font-weight:600]">{t(label)}</div>
                   <div className={`ua-tier-value ${cls}`}>{data.uncertainty_bands?.[band] ?? 0}%</div>
                   <div className="[width:100%] [height:4px] [background:var(--border-color,_var(--color-ink-100))] [border-radius:var(--radius-sm)] [overflow:hidden]">
                     <div className={`ua-tier-bar-fill ${cls}`} style={{ width: `${data.uncertainty_bands?.[band] ?? 0}%` }} />
@@ -342,7 +342,7 @@ const UncertaintyAssessment: React.FC = () => {
                   sortDesc
                   height={260}
                   referenceValue={30}
-                  referenceLabel="High (±30%)"
+                  referenceLabel={t("High (±30%)")}
                   exportName="uncertainty-by-category"
                   formatValue={(v) => `±${Number(v).toFixed(1)}%`}
                 />

@@ -30,8 +30,8 @@ const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({ open, onClo
 
   const submit = async (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (!current || !next) return setError("Enter your current and new password.");
-    if (next !== confirm) return setError("The new passwords do not match.");
+    if (!current || !next) return setError(t("Enter your current and new password."));
+    if (next !== confirm) return setError(t("The new passwords do not match."));
     setSaving(true);
     setError("");
     try {

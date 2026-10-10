@@ -301,7 +301,7 @@ export const Scope1Form: React.FC = () => {
         )
         .map((f) => ({
           value: f.id.toString(),
-          label: f.factor_name || f.name || `Custom Factor #${f.id}`,
+          label: f.factor_name || f.name || tr("Custom Factor #{{id}}", { id: f.id }),
           factor: f,
         }));
       setFuelOptions(options);
@@ -412,7 +412,7 @@ export const Scope1Form: React.FC = () => {
     if (preset.citation) {
       setDataSourceRef(hideApiCitation(preset.citation) || "");
     }
-    toast.success(`Preset applied: ${preset.shortLabel || preset.name}`);
+    toast.success(tr("Preset applied: {{name}}", { name: preset.shortLabel || preset.name }));
   };
 
   const handleFactorCreated = (newFactor: any) => {
@@ -887,7 +887,7 @@ export const Scope1Form: React.FC = () => {
             const fR = parseFloat(formData.comp_frac_recovered || formData.frac_recovered || 0);
             const sumP = Math.round((fV > 1 ? fV : fV * 100) + (fF > 1 ? fF : fF * 100) + (fR > 1 ? fR : fR * 100));
             if (sumP !== 100) {
-              toast.warning(`Custom split percentages must sum to 100% (currently ${sumP}%)`);
+              toast.warning(tr("Custom split percentages must sum to 100% (currently {{sum}}%)", { sum: sumP }));
               return;
             }
           }
@@ -1575,7 +1575,7 @@ export const Scope1Form: React.FC = () => {
       loadEntries();
     } catch (error: any) {
       console.error("Failed to add entry:", error);
-      const msg = error.response?.data?.error || "Failed to add entry";
+      const msg = error.response?.data?.error || tr("Failed to add entry");
       toast.error(msg);
     } finally {
       setSubmitting(false);
@@ -1636,7 +1636,7 @@ export const Scope1Form: React.FC = () => {
     const pLabel = (typeof pDef === "string" ? pDef : pDef?.label) || pType;
 
     setInspectRecord({
-      process_type: `Scope 1 - ${pLabel}`,
+      process_type: `Scope 1 - ${tr(pLabel)}`,
       fuel: fuelVal,
       amount: Number(qty),
       unit: unitVal,
@@ -1650,8 +1650,8 @@ export const Scope1Form: React.FC = () => {
         entry.calc_method ||
         entry.calculation_method ||
         (fSource.toLowerCase().includes("specific")
-          ? "Tier 3 (site-specific)"
-          : "Tier 1-2 (emission factor)"),
+          ? tr("Tier 3 (site-specific)")
+          : tr("Tier 1-2 (emission factor)")),
       emissions: {
         totalCo2e: co2eVal,
         co2: co2Val,
@@ -1796,7 +1796,7 @@ export const Scope1Form: React.FC = () => {
     const options: any[] = [];
     PROCESS_GROUPS.forEach((group: any) => {
       options.push({
-        label: group.label,
+        label: tr(group.label),
         value: `header-${group.label}`,
         isHeader: true,
       });
@@ -1806,7 +1806,7 @@ export const Scope1Form: React.FC = () => {
           const pLabel = typeof pDef === "string" ? pDef : pDef?.label || optKey;
           options.push({
             value: `${group.id}|${optKey}`,
-            label: pLabel,
+            label: tr(pLabel),
           });
         }
       });
@@ -1889,7 +1889,7 @@ export const Scope1Form: React.FC = () => {
     }
 
     setShowGasCalc(false);
-    toast.show("Factors updated from Gas Analysis", "success");
+    toast.show(tr("Factors updated from Gas Analysis"), "success");
   };
 
   return (

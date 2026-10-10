@@ -12,6 +12,7 @@ import {
 } from "recharts";
 import { ChartExport } from "./ChartExport";
 import "./ChartWrappers.css";
+import { t } from "../../i18n";
 
 export interface WaterfallStep {
   name: string;
@@ -111,7 +112,7 @@ export const WaterfallChart: React.FC<WaterfallChartProps> = ({
   const signed = (d: number) => (labelMode === "percent" && start > 0 ? pctSigned(d) : absSigned(d));
 
   return (
-    <div ref={wrapRef} className="chart-wrapper" role="figure" aria-label={`Emissions bridge from ${startLabel} to ${endLabel}`}>
+    <div ref={wrapRef} className="chart-wrapper" role="figure" aria-label={t("Emissions bridge from {{start}} to {{end}}", { start: startLabel, end: endLabel })}>
       {exportName && (
         <ChartExport
           className="h-7"
@@ -213,7 +214,7 @@ export const WaterfallChart: React.FC<WaterfallChartProps> = ({
           {steps.map((s) => (
             <li key={s.name}>
               <button type="button" onClick={() => onSelectStep(s)}>
-                {`Open ${s.name} records`}
+                {t("Open {{name}} records", { name: s.name })}
               </button>
             </li>
           ))}

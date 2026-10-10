@@ -72,8 +72,8 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
   fileExtras,
   mappingExtras,
   extraForm,
-  finalLabel = "Import",
-  overwriteLabel = "Overwrite records that already exist (same facility, month and source). Overwritten records go back to Pending review.",
+  finalLabel = t("Import"),
+  overwriteLabel = t("Overwrite records that already exist (same facility, month and source). Overwritten records go back to Pending review."),
   overwriteHint,
   reviewable = true,
   regionAccess = true,
@@ -91,7 +91,7 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
   const MAP = offset + 2;
   const RUN = offset + 3;
   const [step, setStep] = useState<number>(1);
-  const stepLabels = [...preSteps.map((p) => p.label), "Select file", "Map columns", finalLabel];
+  const stepLabels = [...preSteps.map((p) => p.label), t("Select file"), t("Map columns"), finalLabel];
   const [file, setFile] = useState<File | null>(null);
   const [dragging, setDragging] = useState<boolean>(false);
   const [parseError, setParseError] = useState<string>("");
@@ -163,14 +163,14 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
     (f: File | null | undefined) => {
       if (!f) return;
       if (!decimalMark) {
-        setParseError("Choose how decimals are written in the file first.");
+        setParseError(t("Choose how decimals are written in the file first."));
         return;
       }
       setParseError("");
       setCheck(EMPTY_CHECK);
       if (maxBytes && f.size > maxBytes) {
         // refused when picked, not after the upload
-        setParseError(`This file is ${(f.size / 1048576).toFixed(1)} MB; the upload limit is ${(maxBytes / 1048576).toFixed(0)} MB. Split it into smaller files.`);
+        setParseError(t("This file is {{size}} MB; the upload limit is {{limit}} MB. Split it into smaller files.", { size: (f.size / 1048576).toFixed(1), limit: (maxBytes / 1048576).toFixed(0) }));
         return;
       }
       if (f.name.toLowerCase().endsWith(".xlsx")) {
@@ -187,7 +187,7 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
         skipEmptyLines: true,
         complete: (results: ParseResult<Record<string, any>>) => {
           if (!results.meta.fields?.length) {
-            setParseError("Could not read column headers. Make sure the file has a header row.");
+            setParseError(t("Could not read column headers. Make sure the file has a header row."));
             return;
           }
           const hdrs = results.meta.fields;
@@ -198,7 +198,7 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
           setFile(f);
           setStep(MAP);
         },
-        error: () => setParseError("Failed to parse file. Please ensure it is a valid CSV."),
+        error: () => setParseError(t("Failed to parse file. Please ensure it is a valid CSV.")),
       });
     },
     [allFields, MAP, maxBytes, savedMappings, decimalMark],
@@ -290,7 +290,7 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
       const res = await api.post("/emissions/upload/mappings", { scope, name, headers, mapping });
       setSavedMappings((list) => [res.data, ...list.filter((x) => x.id !== res.data.id)]);
       setAppliedSaved(res.data);
-      toast.success(`Mapping "${name}" saved: it will be applied to files with these columns.`);
+      toast.success(t("Mapping \"{{name}}\" saved: it will be applied to files with these columns.", { name }));
       return true;
     } catch (err: any) {
       toast.error(err.response?.data?.error || t("The mapping could not be saved."));
@@ -309,18 +309,20 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
     } catch (err: any) {
       const msg =
         err.response?.data?.error ||
-        (err.response?.status === 413 ? "The file is larger than the server's upload limit; split it into smaller files." : err.message);
-      toast.error("Upload error: " + msg);
+        (err.response?.status === 413 ? t("The file is larger than the server's upload limit; split it into smaller files.") : err.message);
+      toast.error(t("Upload error: {{message}}", { message: msg }));
     } finally {
       setSubmitting(false);
     }
   };
   const preview = check.data?.preview;
   const startLabel = submitting
-    ? "Starting…"
+    ? t("Starting…")
     : preview
-      ? `Import ${preview.is_estimate ? "about " : ""}${preview.estimated_ok.toLocaleString("en-US")} rows`
-      : "Start import";
+      ? preview.is_estimate
+        ? t("Import about {{count}} rows", { count: preview.estimated_ok.toLocaleString("en-US") })
+        : t("Import {{count}} rows", { count: preview.estimated_ok.toLocaleString("en-US") })
+      : t("Start import");
 
   const preStep = step <= offset ? preSteps[step - 1] : null;
   const footer =

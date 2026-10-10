@@ -168,7 +168,7 @@ export interface HeatmapProps {
 }
 
 /** Facility x year grid coloured by intensity band. rows: [{ id, name, cells: [{ key, value, title }] }]. */
-export const Heatmap: React.FC<HeatmapProps> = ({ years, rows, empty = "No regional data available" }) => {
+export const Heatmap: React.FC<HeatmapProps> = ({ years, rows, empty = t("No regional data available") }) => {
   const cols = { gridTemplateColumns: `200px repeat(${years.length}, minmax(70px, 1fr))` };
   return (
     <div className="heatmap-container mt-6 overflow-x-auto rounded-md border border-border bg-ink-50 p-4">

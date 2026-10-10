@@ -227,7 +227,7 @@ export const AuditIntegrityCheck: React.FC = () => {
       setResult(res.data);
     } catch (err: any) {
       setResult(null);
-      setError(err.response?.data?.error || "The log could not be verified.");
+      setError(err.response?.data?.error || t("The log could not be verified."));
     } finally {
       setBusy(false);
     }
@@ -243,7 +243,7 @@ export const AuditIntegrityCheck: React.FC = () => {
       </div>
       {error && <Banner tone="danger">{error}</Banner>}
       {result && result.status === "verified" && (
-        <Banner tone="success" title={`Log intact: ${result.total_records.toLocaleString()} entries verified`}>
+        <Banner tone="success" title={t("Log intact: {{count}} entries verified", { count: result.total_records.toLocaleString() })}>
           {t("No entry was changed, removed or inserted. To detect a later removal of the newest entries, keep this checkpoint:")}{" "}
           <span className="break-all font-mono text-xs">
             {result.total_records}{" "}{t("entries · head")}{" "}{result.chain_head_hash}{" "}{t("· seal")}{" "}{result.checkpoint_hmac}
@@ -251,7 +251,7 @@ export const AuditIntegrityCheck: React.FC = () => {
         </Banner>
       )}
       {result && result.status === "tampered" && (
-        <Banner tone="danger" title={`Log altered: ${result.issue_count} problem${result.issue_count === 1 ? "" : "s"} in ${result.total_records.toLocaleString()} entries`}>
+        <Banner tone="danger" title={result.issue_count === 1 ? t("Log altered: 1 problem in {{total}} entries", { total: result.total_records.toLocaleString() }) : t("Log altered: {{count}} problems in {{total}} entries", { count: result.issue_count, total: result.total_records.toLocaleString() })}>
           <ul className="m-0 mt-1 list-disc pl-5">
             {result.issues.map((i) => (
               <li key={`${i.id}-${i.problem}`}>

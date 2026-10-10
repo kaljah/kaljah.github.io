@@ -207,7 +207,7 @@ const AuditTrail: React.FC = () => {
 
   // Handle Export (CSV or JSON)
   const handleExport = async (format: "csv" | "json") => {
-    toast.info(`Preparing ${format.toUpperCase()} compliance export...`);
+    toast.info(t("Preparing {{format}} compliance export...", { format: format.toUpperCase() }));
     try {
       const params: Record<string, any> = { format };
       if (filterUser !== "all") params.user = filterUser;
@@ -233,7 +233,7 @@ const AuditTrail: React.FC = () => {
       link.remove();
       window.URL.revokeObjectURL(url);
 
-      toast.success(`Exported audit logs successfully (${format.toUpperCase()})`);
+      toast.success(t("Exported audit logs successfully ({{format}})", { format: format.toUpperCase() }));
       fetchStats(); // Update stats as export is logged
     } catch (error) {
       console.error("Export failed:", error);
@@ -276,9 +276,9 @@ const AuditTrail: React.FC = () => {
 
   // Format relative timestamp safely
   const formatTimestamp = (timestamp?: string | number | Date) => {
-    if (!timestamp) return "Unknown time";
+    if (!timestamp) return t("Unknown time");
     const date = new Date(timestamp);
-    if (isNaN(date.getTime())) return "Invalid date";
+    if (isNaN(date.getTime())) return t("Invalid date");
 
     const now = new Date();
     const diff = now.getTime() - date.getTime();
@@ -286,10 +286,10 @@ const AuditTrail: React.FC = () => {
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
 
-    if (diff < 60000) return "Just now";
-    if (minutes < 60) return `${minutes}m ago`;
-    if (hours < 24) return `${hours}h ago`;
-    if (days < 7) return `${days}d ago`;
+    if (diff < 60000) return t("Just now");
+    if (minutes < 60) return t("{{n}}m ago", { n: minutes });
+    if (hours < 24) return t("{{n}}h ago", { n: hours });
+    if (days < 7) return t("{{n}}d ago", { n: days });
     return date.toLocaleDateString(undefined, {
       month: "short",
       day: "numeric",
@@ -332,7 +332,7 @@ const AuditTrail: React.FC = () => {
   const tableColumns: ColumnDef<AuditLog, any>[] = [
     {
       id: "time",
-      header: "Time",
+      header: t("Time"),
       accessorFn: (l: AuditLog) => l.timestamp,
       cell: (c) => (
         <span title={formatFullDateTime(c.getValue())} className="text-text-secondary">
@@ -340,22 +340,22 @@ const AuditTrail: React.FC = () => {
         </span>
       ),
     },
-    { id: "user", header: "User", accessorFn: (l: AuditLog) => l.user || "System" },
+    { id: "user", header: t("User"), accessorFn: (l: AuditLog) => l.user || t("System") },
     {
       id: "action",
-      header: "Action",
+      header: t("Action"),
       accessorFn: (l: AuditLog) => l.action,
       cell: (c) => <Badge tone={actionTone(c.getValue())}>{c.getValue()}</Badge>,
     },
-    { id: "entity", header: "Entity", accessorFn: (l: AuditLog) => l.entity || "-" },
+    { id: "entity", header: t("Entity"), accessorFn: (l: AuditLog) => l.entity || "-" },
     {
       id: "description",
-      header: "Description",
-      accessorFn: (l: AuditLog) => l.description || l.details || "No details recorded",
+      header: t("Description"),
+      accessorFn: (l: AuditLog) => l.description || l.details || t("No details recorded"),
       cell: (c) => <span className="block max-w-[32rem] truncate" title={c.getValue()}>{c.getValue()}</span>,
     },
-    { id: "ref", header: "Ref", accessorFn: (l: AuditLog) => l.entityId || l.recordId || "-" },
-    { id: "ip", header: "IP", accessorFn: (l: AuditLog) => l.ipAddress || "Local / System" },
+    { id: "ref", header: t("Ref"), accessorFn: (l: AuditLog) => l.entityId || l.recordId || "-" },
+    { id: "ip", header: t("IP"), accessorFn: (l: AuditLog) => l.ipAddress || t("Local / System") },
     {
       id: "details",
       header: "",

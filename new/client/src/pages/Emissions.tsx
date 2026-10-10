@@ -37,9 +37,9 @@ const SCOPE_CARDS: ScopeCardConfig[] = [
   {
     number: "01",
     title: t("Scope 1"),
-    tag: "Direct Emissions",
-    desc: "Combustion, flaring, fugitive & vented emissions from sources owned or controlled by your organisation.",
-    chips: ["Stationary Combustion", "Flaring", "Fugitive", "+ more"],
+    tag: t("Direct Emissions"),
+    desc: t("Combustion, flaring, fugitive & vented emissions from sources owned or controlled by your organisation."),
+    chips: [t("Stationary Combustion"), t("Flaring"), t("Fugitive"), t("+ more")],
     stage: STAGE_SCOPE1_SUB_SELECTION,
     rule: "border-t-brand-500",
     iconBox: "bg-brand-50 text-brand-700",
@@ -49,9 +49,9 @@ const SCOPE_CARDS: ScopeCardConfig[] = [
   {
     number: "02",
     title: t("Scope 2"),
-    tag: "Indirect Energy",
-    desc: "Indirect emissions from the generation of purchased electricity, steam, heat, or cooling consumed by your organisation.",
-    chips: ["Electricity", "Steam / Heat", "CHP"],
+    tag: t("Indirect Energy"),
+    desc: t("Indirect emissions from the generation of purchased electricity, steam, heat, or cooling consumed by your organisation."),
+    chips: [t("Electricity"), t("Steam / Heat"), t("CHP")],
     stage: STAGE_SCOPE2,
     rule: "border-t-blue-500",
     iconBox: "bg-info-bg text-info-fg",
@@ -61,9 +61,9 @@ const SCOPE_CARDS: ScopeCardConfig[] = [
   {
     number: "03",
     title: t("Scope 3"),
-    tag: "Value Chain",
-    desc: "All other indirect emissions in your value chain — upstream inputs, downstream product use, and logistics.",
-    chips: ["Upstream", "Downstream", "Logistics", "+ more"],
+    tag: t("Value Chain"),
+    desc: t("All other indirect emissions in your value chain — upstream inputs, downstream product use, and logistics."),
+    chips: [t("Upstream"), t("Downstream"), t("Logistics"), t("+ more")],
     stage: STAGE_SCOPE3,
     rule: "border-t-violet-500",
     iconBox: "bg-ink-100 text-violet-700",
@@ -80,10 +80,10 @@ const Emissions: React.FC = () => {
     stage === STAGE_SCOPE_SELECTION
       ? null
       : stage === STAGE_SCOPE1_SUB_SELECTION
-        ? "Scope 1 (Direct)"
+        ? t("Scope 1 (Direct)")
         : stage === STAGE_SCOPE2
-          ? "Scope 2 (Indirect)"
-          : "Scope 3 (Value Chain)",
+          ? t("Scope 2 (Indirect)")
+          : t("Scope 3 (Value Chain)"),
   );
 
   useEffect(() => {

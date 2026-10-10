@@ -121,7 +121,7 @@ const DetailedBreakdownSection: React.FC<DetailedBreakdownSectionProps> = ({
               <Row level={1} label={t("Flaring")} value={fmt(stats.flaring)} />
               {hasFlaringSplit &&
                 split.map(([name, part]) => (
-                  <Row key={name} tone="sub" level={2} label={`↳ ${name} (${part?.percentage ?? 0}%)`} value={fmt(part?.tco2e ?? 0)} />
+                  <Row key={name} tone="sub" level={2} label={`↳ ${t(name)} (${part?.percentage ?? 0}%)`} value={fmt(part?.tco2e ?? 0)} />
                 ))}
               <Row level={1} label={t("Venting")} value={fmt(stats.venting)} />
               <Row level={1} label={t("Equipment Leaks / Fugitives")} value={fmt(stats.fugitive)} />
@@ -149,7 +149,7 @@ const DetailedBreakdownSection: React.FC<DetailedBreakdownSectionProps> = ({
                     label={
                       <>
                         <Caret open={expandedActivities[act]} />
-                        {formatActivityName(act)}
+                        {t(formatActivityName(act))}
                       </>
                     }
                     value={fmt(actData.total)}
@@ -197,7 +197,7 @@ const DetailedBreakdownSection: React.FC<DetailedBreakdownSectionProps> = ({
           {LIBRARIES.map((lib) => (
             <li key={lib.name} className="flex items-center gap-2.5 text-base font-medium text-text">
               <span className={cn("size-2 rounded-full", lib.dot)} aria-hidden="true" />
-              <span className="flex-1">{lib.name}</span>
+              <span className="flex-1">{t(lib.name)}</span>
               <ChevronRight className="size-3.5 text-ink-400" aria-hidden="true" />
             </li>
           ))}

@@ -105,7 +105,7 @@ export const EditEmissionModal: React.FC<EditEmissionModalProps> = ({
     <Dialog
       open={isOpen}
       onOpenChange={(open) => !open && onClose()}
-      title={`Edit Emission Record #${emission.id}`}
+      title={t("Edit Emission Record #{{id}}", { id: String(emission.id) })}
       description={t("Update activity quantity, fuel/source, unit, or reporting period. Edited records will automatically return to Pending Review for verification.")}
       maxWidth="36rem"
       footer={

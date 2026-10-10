@@ -106,7 +106,7 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
                     {ACTIVITY_LABELS[a]}
                   </option>
                 )),
-                "Select Activity",
+                t("Select Activity"),
               )}
             </Field>
             <Field label={t("Division")}>
@@ -119,7 +119,7 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
                       {d}
                     </option>
                   )),
-                "Select Division",
+                t("Select Division"),
                 !facilityForm.activity,
               )}
             </Field>
@@ -150,7 +150,7 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
                     {opt}
                   </option>
                 )),
-                "Select Approach",
+                t("Select Approach"),
               )}
             </Field>
             <Field label={t("Boundary Details")}>
@@ -163,7 +163,7 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
                       {detail}
                     </option>
                   )),
-                "Select Details",
+                t("Select Details"),
                 !facilityForm.boundary_type,
               )}
             </Field>
@@ -187,10 +187,10 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
                 handleFacilityChange,
                 SEGMENTS.map((s) => (
                   <option key={s} value={s}>
-                    {s}
+                    {t(s)}
                   </option>
                 )),
-                "Select Segment",
+                t("Select Segment"),
               )}
             </Field>
             <Field label={t("Latitude")}>
@@ -229,8 +229,8 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
 
       <RecordTable
         title={t("Active Regions")}
-        head={["Region Name", "Activity", "Division", "Location", "Boundary", "Segment", "Coordinates", ...(canEdit ? ["Actions"] : [])]}
-        empty={filteredFacilities.length === 0 && "No regions found."}
+        head={[t("Region Name"), t("Activity"), t("Division"), t("Location"), t("Boundary"), t("Segment"), t("Coordinates"), ...(canEdit ? [t("Actions")] : [])]}
+        empty={filteredFacilities.length === 0 && t("No regions found.")}
         footer={<PaginationControls currentPage={currentPage} totalItems={filteredFacilities.length} itemsPerPage={ITEMS_PER_PAGE} onPageChange={setCurrentPage} />}
       >
         {rows.map((f) => (
@@ -242,7 +242,7 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
             <Td>{f.division}</Td>
             <Td>{f.location || "-"}</Td>
             <Td>{f.boundary_notes || (f.boundary_type ? `${f.boundary_type}${f.boundary_detail ? " - " + f.boundary_detail : ""}` : "-")}</Td>
-            <Td>{f.segment || "-"}</Td>
+            <Td>{f.segment ? t(f.segment) : "-"}</Td>
             <Td className="text-sm">{f.latitude ? `${f.latitude}, ${f.longitude}` : t("Not Set")}</Td>
             {canEdit && (
               <Td>

@@ -48,11 +48,11 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!formData.factor_name.trim()) {
-      setError("Please provide a factor name (e.g. 'Skikda Refinery Off-Gas 2026')");
+      setError(t("Please provide a factor name (e.g. 'Skikda Refinery Off-Gas 2026')"));
       return;
     }
     if (!formData.co2_factor && !formData.ch4_factor) {
-      setError("At least one emission factor (CO₂ or CH₄) is required.");
+      setError(t("At least one emission factor (CO₂ or CH₄) is required."));
       return;
     }
 

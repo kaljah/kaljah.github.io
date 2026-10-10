@@ -162,12 +162,12 @@ const SkippedRows: React.FC<SkippedRowsProps> = ({ skippedCount, skippedPreview,
             <div className="flex flex-wrap gap-2 border-b border-border bg-ink-50 px-5 py-4">
               {labels.map((label) => (
                 <Button key={label} size="sm" variant={filter === label ? "primary" : "secondary"} aria-pressed={filter === label} onClick={() => setFilter(label)}>
-                  {label === "all" ? `All (${skippedPreview.length})` : label}
+                  {label === "all" ? t("All ({{count}})", { count: skippedPreview.length }) : label}
                 </Button>
               ))}
             </div>
           )}
-          <Table head={["Row #", "Category", "Reason", "Year", "Month", "Facility", "Process", "Fuel", "Quantity"]}>
+          <Table head={[t("Row #"), t("Category"), t("Reason"), t("Year"), t("Month"), t("Facility"), t("Process"), t("Fuel"), t("Quantity")]}>
             {rows.map((row, i) => {
               const cat = categoryFromReason(row.reason);
               return (
@@ -220,7 +220,7 @@ const Anomalies: React.FC<AnomaliesProps> = ({ anomalies, count }) => {
           <p className="m-0 mb-3 text-base leading-snug text-warning-fg">
             {t("These rows were imported but differ strongly from the same source (equipment, else fuel) at this facility over the previous 12 months. Check them before approving.")}
           </p>
-          <Table head={["Row #", "Facility", "Value (tCO2e)", "Z-Score", "Expected Range", "Details"]}>
+          <Table head={[t("Row #"), t("Facility"), t("Value (tCO2e)"), t("Z-Score"), t("Expected Range"), t("Details")]}>
             {anomalies.map((a, i) => (
               <tr key={i} className="bg-surface/60">
                 <td className={cn(td, "w-[60px] font-mono")}>{a.row}</td>
@@ -366,7 +366,7 @@ const UploadProgress: React.FC<UploadProgressProps> = ({ jobId, onComplete, onCa
           {skippedCount > 0 && skipGroups.length > 0 && (
             <div className="mb-4 rounded-md border border-border bg-ink-50 p-4">
               <p className="m-0 mb-1 text-base font-semibold text-text">
-                {t(skippedCount === 1 ? "Why 1 row was skipped" : "Why {{count}} rows were skipped", { count: skippedCount.toLocaleString("en-US") })}
+                {skippedCount === 1 ? t("Why 1 row was skipped") : t("Why {{count}} rows were skipped", { count: skippedCount.toLocaleString("en-US") })}
               </p>
               <p className="m-0 mb-3 text-sm text-text-secondary">
                 {t("Fix these in your file and upload only the skipped rows again: the downloadable CSV holds them with their original columns (its first column, the reason, is ignored on upload).")}
@@ -380,7 +380,7 @@ const UploadProgress: React.FC<UploadProgressProps> = ({ jobId, onComplete, onCa
           {reviewable && processed - skippedCount > 0 && (
             <Banner tone="info" className="mb-2">
               <strong>{t("What happens next:")}</strong>{" "}
-              {t(processed - skippedCount === 1 ? "the imported record is" : "the {{count}} imported records are", { count: (processed - skippedCount).toLocaleString("en-US") })}{" "}
+              {processed - skippedCount === 1 ? t("the imported record is") : t("the {{count}} imported records are", { count: (processed - skippedCount).toLocaleString("en-US") })}{" "}
               <em>{t("Pending")}</em>.{" "}
               {isReviewer ? t("Review and approve them in Manage Data › Pending Review.") : t("An admin or superuser reviews and approves them.")}{" "}{t("Pending records do not count in dashboards and reports until they are approved.")}
             </Banner>

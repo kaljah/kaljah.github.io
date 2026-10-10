@@ -473,7 +473,7 @@ const MethaneIntensity: React.FC = () => {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-      toast.success(`OGMP 2.0 Excel Report for ${yr} downloaded successfully!`);
+      toast.success(t("OGMP 2.0 Excel Report for {{year}} downloaded successfully!", { year: yr }));
     } catch (err) {
       console.error("Export error:", err);
       toast.error(t("Failed to export OGMP Excel report"));
@@ -772,11 +772,11 @@ const MethaneIntensity: React.FC = () => {
                 horizontal
                 sortDesc
                 onSelect={openFacilityRecords}
-                selectLabel={(r) => `Open ${r.name} records`}
+                selectLabel={(r) => t("Open {{name}} records", { name: r.name })}
                 exportName="methane-loss-rate-by-facility"
-                thresholds={{ warnAt: upstreamTargetPct * 0.8, badAt: upstreamTargetPct, labels: ["Within target", "Within 20% of target", "Above target"] }}
+                thresholds={{ warnAt: upstreamTargetPct * 0.8, badAt: upstreamTargetPct, labels: [t("Within target"), t("Within 20% of target"), t("Above target")] }}
                 referenceValue={upstreamTargetPct}
-                referenceLabel={`Target ${upstreamTargetPct}%`}
+                referenceLabel={t("Target {{value}}%", { value: upstreamTargetPct })}
                 color="var(--color-blue-600)"
               />
             </div>
@@ -803,7 +803,7 @@ const MethaneIntensity: React.FC = () => {
                 horizontal
                 sortDesc
                 onSelect={openFacilityRecords}
-                selectLabel={(r) => `Open ${r.name} records`}
+                selectLabel={(r) => t("Open {{name}} records", { name: r.name })}
                 exportName="methane-intensity-by-facility"
                 color="var(--color-brand-500)"
               />
@@ -831,7 +831,7 @@ const MethaneIntensity: React.FC = () => {
                 horizontal
                 sortDesc
                 onSelect={openFacilityRecords}
-                selectLabel={(r) => `Open ${r.name} records`}
+                selectLabel={(r) => t("Open {{name}} records", { name: r.name })}
                 exportName="total-methane-emissions-by-facility"
                 color="var(--color-blue-500)"
               />
@@ -859,7 +859,7 @@ const MethaneIntensity: React.FC = () => {
                 horizontal
                 sortDesc
                 onSelect={openFacilityRecords}
-                selectLabel={(r) => `Open ${r.name} records`}
+                selectLabel={(r) => t("Open {{name}} records", { name: r.name })}
                 exportName="gas-flaring-volume-by-facility"
                 color="var(--color-legacy-ea580c)"
               />

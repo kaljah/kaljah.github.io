@@ -268,14 +268,13 @@ export const Scope2Form: React.FC = () => {
     const unitVal = isElectricity ? "kWh" : entry.source_type === "indirect_steam" ? "MMBtu" : "tCO₂e";
 
     setInspectRecord({
-      process_type: `Scope 2 - ${
+      process_type:
         entry.source_type === "electricity"
-          ? "Purchased Electricity"
+          ? t("Scope 2 - Purchased Electricity")
           : entry.source_type === "indirect_steam"
-          ? "Indirect Steam / Heat"
-          : "CHP / Cogen Allocation"
-      }`,
-      fuel: entry.grid_region || entry.source_type || "Grid Electricity",
+          ? t("Scope 2 - Indirect Steam / Heat")
+          : t("Scope 2 - CHP / Cogen Allocation"),
+      fuel: entry.grid_region || entry.source_type || t("Grid Electricity"),
       amount: amountVal,
       unit: unitVal,
       emissions: {
@@ -289,21 +288,21 @@ export const Scope2Form: React.FC = () => {
         ch4: 0,
         n2o: 0,
       },
-      method: entry.calculation_method || (isElectricity ? "Location-Based Grid EF" : "Energy Allocation"),
+      method: entry.calculation_method || (isElectricity ? t("Location-Based Grid EF") : t("Energy Allocation")),
       steps: [
         {
-          name: "Activity Normalization",
-          desc: `Input: ${formatNumber(amountVal, 2)} ${unitVal} (${entry.grid_region || "Facility Level"})`,
+          name: t("Activity Normalization"),
+          desc: t("Input: {{amount}} {{unit}} ({{source}})", { amount: formatNumber(amountVal, 2), unit: unitVal, source: entry.grid_region || t("Facility Level") }),
         },
         {
-          name: "Grid / Steam Emission Factor",
-          desc: `Applied Factor: ${entry.emission_factor || 0} kg CO₂e / ${unitVal}`,
+          name: t("Grid / Steam Emission Factor"),
+          desc: t("Applied Factor: {{factor}} kg CO₂e / {{unit}}", { factor: entry.emission_factor || 0, unit: unitVal }),
         },
         {
-          name: "Emissions Calculation",
+          name: t("Emissions Calculation"),
           desc: isElectricity
             ? `(${formatNumber(amountVal, 2)} kWh × ${entry.emission_factor}) ÷ 1,000 = ${formatNumber(entry.co2e, 3)} tCO₂e`
-            : `Total Calculated Emissions = ${formatNumber(entry.co2e, 3)} tCO₂e`,
+            : t("Total Calculated Emissions = {{value}} tCO₂e", { value: formatNumber(entry.co2e, 3) }),
         },
       ],
     });

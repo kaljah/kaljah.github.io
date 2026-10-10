@@ -90,7 +90,7 @@ export function sectionChoices(processType: string, sourceType: string): MethodC
     case "thermal_oxidizer":
       return [COMB.thermal_oxidizer];
     case "agr":
-      return t === "default" ? [ACTIVITY] : t === "specific" ? [LEGACY("Throughput & CO₂"), VENT.agr_balance] : null;
+      return t === "default" ? [ACTIVITY] : t === "specific" ? [LEGACY(tr("Throughput & CO₂")), VENT.agr_balance] : null;
     case "dehydrator":
       return t === "default" ? [ACTIVITY] : t === "specific" ? [{ ...VENT.volume, label: tr("Measured vent volume") }, VENT.reported_mass] : null;
     // Tier 1 pneumatics, loading and separators use the Compendium tables only (Tables 6-14 to 6-16,
@@ -100,23 +100,23 @@ export function sectionChoices(processType: string, sourceType: string): MethodC
     case "separation":
       return t === "default" ? [ACTIVITY] : null;
     case "venting":
-      return t === "default" ? [LEGACY("Gas volume factor"), ACTIVITY] : null;
+      return t === "default" ? [LEGACY(tr("Gas volume factor")), ACTIVITY] : null;
     case "tank":
     case "tank_flashing":
-      return t === "specific" ? [LEGACY("Flashing"), VENT.actual] : null;
+      return t === "specific" ? [LEGACY(tr("Flashing")), VENT.actual] : null;
     // Section 6.3.9.3: working / standing losses are not a flashing calculation
     case "tank_working":
     case "tank_breathing":
       return t === "specific" ? [VENT.thc_mass] : null;
     case "combustion":
-      return t === "specific" ? [LEGACY("Fuel analysis"), COMB.carbon_content, COMB.equipment] : null;
+      return t === "specific" ? [LEGACY(tr("Fuel analysis")), COMB.carbon_content, COMB.equipment] : null;
     case "mobile":
       return t === "specific" ? [COMB.vehicle_distance] : null;
     case "flaring":
     case "routine_flaring":
     case "non_routine_flaring":
     case "safety_flaring":
-      return t === "specific" ? [LEGACY("Metered volume"), COMB.flare_voc] : null;
+      return t === "specific" ? [LEGACY(tr("Metered volume")), COMB.flare_voc] : null;
     default:
       return null;
   }

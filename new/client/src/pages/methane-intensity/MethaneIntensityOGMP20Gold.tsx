@@ -130,16 +130,18 @@ const MethaneIntensityOGMP20Gold: React.FC<MethaneIntensityOGMP20GoldProps> = ({
                 : (highestLevel >= 5 && passThreshold);
 
             let statusBadgeClass = "ontrack";
-            let statusText = `On Track (${yearsLeft > 0 ? `${yearsLeft} yrs to Level 5` : "Target Year"})`;
+            let statusText = yearsLeft > 0
+              ? t("On Track ({{years}} yrs to Level 5)", { years: yearsLeft })
+              : t("On Track (Target Year)");
             if (isReconciled && highestLevel >= 5) {
               statusBadgeClass = "achieved";
-              statusText = "Gold Standard Achieved (Level 5)";
+              statusText = t("Gold Standard Achieved (Level 5)");
             } else if (yearsLeft < 0) {
               statusBadgeClass = "action";
-              statusText = "Action Plan Required (Overdue)";
+              statusText = t("Action Plan Required (Overdue)");
             } else if (yearsLeft === 0) {
               statusBadgeClass = "ontrack";
-              statusText = "Target Milestone Year (Level 5 Due)";
+              statusText = t("Target Milestone Year (Level 5 Due)");
             }
 
             return (
@@ -176,11 +178,11 @@ const MethaneIntensityOGMP20Gold: React.FC<MethaneIntensityOGMP20GoldProps> = ({
                     const isDone = highestLevel >= lvl;
                     const isCurrent = highestLevel === lvl;
                     const levelNames = [
-                      "L1: Venture",
-                      "L2: Segment",
-                      "L3: Generic",
-                      "L4: Specific",
-                      "L5: Reconciled",
+                      t("L1: Venture"),
+                      t("L2: Segment"),
+                      t("L3: Generic"),
+                      t("L4: Specific"),
+                      t("L5: Reconciled"),
                     ];
                     return (
                       <div

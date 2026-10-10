@@ -118,7 +118,7 @@ const ExplorerDossier: React.FC<ExplorerDossierProps> = ({
 
       {loadingSurveys && <p className="mb-2.5 text-sm font-extrabold uppercase tracking-wide text-text-secondary">{t("Loading recorded surveys…")}</p>}
       {surveys.length > 0 && (
-        <Banner tone="success" title={`Verified OGMP surveys in database (${surveys.length})`} className="mb-3.5">
+        <Banner tone="success" title={t("Verified OGMP surveys in database ({{count}})", { count: surveys.length })} className="mb-3.5">
           <ul className="m-0 mt-2 flex list-none flex-col gap-1.5 p-0">
             {surveys.slice(0, 3).map((s) => (
               <li key={s.id} className="flex flex-col gap-1 rounded-md border border-border bg-surface px-2.5 py-2">
@@ -151,7 +151,7 @@ const ExplorerDossier: React.FC<ExplorerDossierProps> = ({
             label={methane ? t("Reported methane (CH₄)") : t("Reported total GHG")}
             value={methane ? `${formatCompact(stats.total_ch4)} tCH₄` : `${formatCompact(stats.total_co2e)} tCO₂e`}
           />
-          <Stat label={t("Production")} value={formatCompact(stats.total_boe)} unit="BOE / year" />
+          <Stat label={t("Production")} value={formatCompact(stats.total_boe)} unit={t("BOE / year")} />
           <Stat
             label={methane ? t("Methane intensity") : t("Carbon intensity")}
             value={methane ? num(stats.ch4_intensity, 3) : num(stats.co2_intensity, 2)}
@@ -159,7 +159,7 @@ const ExplorerDossier: React.FC<ExplorerDossierProps> = ({
             tone="warning"
           />
           <Stat label={t("Flaring intensity")} value={num(stats.api_flaring_intensity, 2)} unit="kgCO₂e/boe" tone="danger" />
-          <Stat label={t("Asset code")} value={<span className="font-mono">{facility.code || "N/A"}</span>} unit="database ref" />
+          <Stat label={t("Asset code")} value={<span className="font-mono">{facility.code || "N/A"}</span>} unit={t("database ref")} />
         </div>
       </section>
 

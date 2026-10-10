@@ -146,7 +146,7 @@ const QADashboardZeroAnomaliesDetected: React.FC<QADashboardZeroAnomaliesDetecte
             className="py-16"
             description={
               /* BUG-084: say what is actually known, not "fully verified" */
-              `No statistical outliers or data quality flags detected matching your current filters.${(data.pending_review_count ?? 0) > 0 ? ` ${data.pending_review_count} record(s) are still awaiting reviewer approval.` : " All records in scope have been reviewed."}`
+              `${t("No statistical outliers or data quality flags detected matching your current filters.")} ${(data.pending_review_count ?? 0) > 0 ? t("{{count}} record(s) are still awaiting reviewer approval.", { count: data.pending_review_count ?? 0 }) : t("All records in scope have been reviewed.")}`
             }
           />
         ) : (
@@ -154,7 +154,7 @@ const QADashboardZeroAnomaliesDetected: React.FC<QADashboardZeroAnomaliesDetecte
             icon={Search}
             title={t("No Matching Records")}
             className="py-16"
-            description={`No flagged records match your current search query "${searchQuery}" or status filter "${statusFilter}".`}
+            description={t('No flagged records match your current search query "{{query}}" or status filter "{{status}}".', { query: searchQuery, status: statusFilter })}
             action={<Button variant="secondary" onClick={resetFilters}>{t("Clear Filters")}</Button>}
           />
         )
@@ -175,7 +175,7 @@ const QADashboardZeroAnomaliesDetected: React.FC<QADashboardZeroAnomaliesDetecte
                   </th>
                   {["Record ID", "Scope", "Period", "Process", "QA Flag", "Emissions (tCO₂e)", "Status", "Actions"].map((h) => (
                     <th key={h} scope="col" className={th}>
-                      {h}
+                      {t(h)}
                     </th>
                   ))}
                 </tr>
@@ -188,7 +188,7 @@ const QADashboardZeroAnomaliesDetected: React.FC<QADashboardZeroAnomaliesDetecte
                   return (
                     <tr key={key} className={cn("hover:bg-ink-50", isSelected && "selected bg-success-bg/40")}>
                       <td className={td}>
-                        <input type="checkbox" className="size-4 accent-brand-500" aria-label={`Select record ${record.id}`} checked={isSelected} onChange={() => toggleSelect(record.scope, record.id)} />
+                        <input type="checkbox" className="size-4 accent-brand-500" aria-label={t("Select record {{id}}", { id: record.id })} checked={isSelected} onChange={() => toggleSelect(record.scope, record.id)} />
                       </td>
                       <td className={cn(td, "font-mono font-semibold")}>{record.record_id || `REC-${record.id}`}</td>
                       <td className={td}>
@@ -229,8 +229,8 @@ const QADashboardZeroAnomaliesDetected: React.FC<QADashboardZeroAnomaliesDetecte
             <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border px-6 py-4">
               <span className="text-sm text-text-secondary">
                 {searchQuery || statusFilter !== "all"
-                  ? `Showing ${filteredRecords.length} filtered record${filteredRecords.length === 1 ? "" : "s"} on this page (${total_flagged_count} total in inventory)`
-                  : `Showing ${offset + 1}–${Math.min(offset + returned_count, total_flagged_count)} of ${total_flagged_count} flagged records`}
+                  ? (filteredRecords.length === 1 ? t("Showing 1 filtered record on this page ({{total}} total in inventory)", { total: total_flagged_count }) : t("Showing {{count}} filtered records on this page ({{total}} total in inventory)", { count: filteredRecords.length, total: total_flagged_count }))
+                  : t("Showing {{from}}–{{to}} of {{total}} flagged records", { from: offset + 1, to: Math.min(offset + returned_count, total_flagged_count), total: total_flagged_count })}
               </span>
               <div className="flex items-center gap-1.5">
                 <IconButton label={t("Previous page")} variant="secondary" className="size-8" onClick={() => setOffset(Math.max(0, offset - PAGE_SIZE))} disabled={offset === 0}>

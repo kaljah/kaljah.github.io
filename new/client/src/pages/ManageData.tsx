@@ -59,10 +59,10 @@ const ManageDataInner: React.FC = () => {
     ];
 
     const ACTIVITY_LABELS: Record<string, string> = {
-        'EP': 'Exploration & Production',
-        'LQS': 'Liquifaction and Separation',
-        'RPC': 'Refining and Petrochemicals',
-        'TRC': 'Transport (TRC)'
+        'EP': t('Exploration & Production'),
+        'LQS': t('Liquifaction and Separation'),
+        'RPC': t('Refining and Petrochemicals'),
+        'TRC': t('Transport (TRC)')
     };
 
     const toast = useToast();
@@ -176,9 +176,9 @@ const ManageDataInner: React.FC = () => {
     });
 
     const requestConfirm = ({
-        title = "Confirm Deletion",
-        message = "Are you sure you want to delete this item?",
-        confirmLabel = "Delete",
+        title = t("Confirm Deletion"),
+        message = t("Are you sure you want to delete this item?"),
+        confirmLabel = t("Delete"),
         confirmVariant = "danger" as "primary" | "danger",
         onConfirm,
     }: {
@@ -313,7 +313,7 @@ const ManageDataInner: React.FC = () => {
                 facility_id: r.facility_id,
                 created_by: r.created_by,
                 raw: r,
-                desc: `${r.category || 'Scope 3 Category'}`,
+                desc: r.category || t('Scope 3 Category'),
                 tco2e: Number(r.co2e_total || r.co2e || 0),
                 qa_flag: r.qa_flag
             });
@@ -489,8 +489,8 @@ const ManageDataInner: React.FC = () => {
         const count = (pendingMetrics as any)[`count${scopeNum}`];
         if (!count) return;
         requestConfirm({
-            title: `Approve Scope ${scopeNum} Records`,
-            message: `Are you sure you want to approve all ${count} pending Scope ${scopeNum} records?`,
+            title: t("Approve Scope {{scope}} Records", { scope: scopeNum }),
+            message: t("Are you sure you want to approve all {{count}} pending Scope {{scope}} records?", { count, scope: scopeNum }),
             confirmLabel: t("Approve All"),
             confirmVariant: "primary",
             onConfirm: async () => {
@@ -825,7 +825,7 @@ const ManageDataInner: React.FC = () => {
     const handleDeleteGoal = (year: number | string) => {
         requestConfirm({
             title: t("Delete Emission Goal"),
-            message: `Delete emission goal for year ${year}?`,
+            message: t("Delete emission goal for year {{year}}?", { year }),
             confirmLabel: t("Delete Goal"),
             confirmVariant: "danger",
             onConfirm: async () => {
@@ -1742,7 +1742,7 @@ const ManageDataInner: React.FC = () => {
             <Modal
                 isOpen={convertModal.isOpen}
                 onClose={() => setConvertModal(prev => ({ ...prev, isOpen: false }))}
-                title={`Convert Volume (${convertModal.type === 'gas' ? 'Gas: m³ → mscf' : 'Oil: m³ → bbl'})`}
+                title={convertModal.type === 'gas' ? t('Convert Volume (Gas: m³ → mscf)') : t('Convert Volume (Oil: m³ → bbl)')}
             >
                 <form onSubmit={handleApplyConversion} className="p-[8px_0]!">
                     <label className="block! mb-[8px]! text-[length:0.88rem]! font-semibold! text-[color:var(--text-secondary)]!">

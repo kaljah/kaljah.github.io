@@ -160,11 +160,11 @@ export interface ConfirmDialogProps {
 /** Yes/no confirmation. confirmVariant: danger | primary | warning (warning renders as primary). */
 export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   open,
-  title = "Confirm action",
-  message = "Are you sure you want to proceed?",
-  confirmLabel = "Confirm",
+  title = t("Confirm action"),
+  message = t("Are you sure you want to proceed?"),
+  confirmLabel = t("Confirm"),
   confirmVariant = "danger",
-  cancelLabel = "Cancel",
+  cancelLabel = t("Cancel"),
   onConfirm,
   onCancel,
   loading = false,

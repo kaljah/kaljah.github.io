@@ -118,7 +118,7 @@ const SbtiDashboard: React.FC = () => {
       }
     } catch (err) {
       console.error("Failed to load SBTi data:", err);
-      toast.show("Error loading SBTi progress data", "error");
+      toast.show(tr("Error loading SBTi progress data"), "error");
     } finally {
       setLoading(false);
       setIsUpdating(false);
@@ -160,30 +160,30 @@ const SbtiDashboard: React.FC = () => {
           base_year_emissions: res.data.suggested_base_year_emissions,
         }));
         toast.show(
-          `Baseline auto-filled with verified emissions for ${targetForm.base_year}: ${formatNumber(res.data.suggested_base_year_emissions, 1)} tCO2e`,
+          tr("Baseline auto-filled with verified emissions for {{year}}: {{value}} tCO2e", { year: targetForm.base_year, value: formatNumber(res.data.suggested_base_year_emissions, 1) }),
           "success"
         );
       }
     } catch {
-      toast.show("Could not fetch verified baseline emissions for this year", "warning");
+      toast.show(tr("Could not fetch verified baseline emissions for this year"), "warning");
     }
   };
 
   const handleSaveTarget = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user || user.role !== "admin") {
-      toast.show("Only administrators can update SBTi targets (they are organisation-wide).", "error");
+      toast.show(tr("Only administrators can update SBTi targets (they are organisation-wide)."), "error");
       return;
     }
 
     setSavingTarget(true);
     try {
       await api.post("/manage/sbti", targetForm);
-      toast.show("SBTi Net-Zero Target saved successfully", "success");
+      toast.show(tr("SBTi Net-Zero Target saved successfully"), "success");
       setShowConfig(false);
       await fetchData(scopeMode);
     } catch (err: any) {
-      toast.show(err.response?.data?.error || "Failed to save SBTi target", "error");
+      toast.show(err.response?.data?.error || tr("Failed to save SBTi target"), "error");
     } finally {
       setSavingTarget(false);
     }
@@ -191,7 +191,7 @@ const SbtiDashboard: React.FC = () => {
 
   const exportCsv = () => {
     if (!sbtiData || !sbtiData.trajectory || sbtiData.trajectory.length === 0) {
-      toast.show("No trajectory data to export", "warning");
+      toast.show(tr("No trajectory data to export"), "warning");
       return;
     }
 
@@ -239,7 +239,7 @@ const SbtiDashboard: React.FC = () => {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-    toast.show("SBTi Trajectory CSV exported successfully", "success");
+    toast.show(tr("SBTi Trajectory CSV exported successfully"), "success");
   };
 
   // Trajectory chart lines: Active Corporate Target + Actual + Reference Benchmarks + BAU
@@ -250,35 +250,37 @@ const SbtiDashboard: React.FC = () => {
     return [
       {
         dataKey: "bau_projection",
-        name: "Business As Usual (+1.5%/yr)",
+        name: tr("Business As Usual (+1.5%/yr)"),
         color: "var(--color-ink-400)",
         strokeWidth: 1.5,
         strokeDasharray: "5 5",
       },
       {
         dataKey: "sbti_wb2c",
-        name: "Well-Below 2°C (-2.5%/yr)",
+        name: tr("Well-Below 2°C (-2.5%/yr)"),
         color: "var(--color-blue-500)",
         strokeWidth: 2,
         strokeDasharray: "3 3",
       },
       {
         dataKey: "sbti_target",
-        name: `Corporate Target (${rate}%/yr${Number(rate) === 4.2 ? ", same as 1.5°C" : ""})`,
+        name: Number(rate) === 4.2
+          ? tr("Corporate Target ({{rate}}%/yr, same as 1.5°C)", { rate })
+          : tr("Corporate Target ({{rate}}%/yr)", { rate }),
         color: "var(--color-green-500)",
         strokeWidth: 4,
         strokeDasharray: "1 0",
       },
       {
         dataKey: "sbti_15c",
-        name: "1.5°C Benchmark (-4.2%/yr)",
+        name: tr("1.5°C Benchmark (-4.2%/yr)"),
         color: "var(--color-violet-500)",
         strokeWidth: 2,
         strokeDasharray: "4 4",
       },
       {
         dataKey: "actual",
-        name: `Actual Emissions (${scopeMode === "s1_s2" ? "Scope 1+2" : "Scope 1+2+3"})`,
+        name: tr("Actual Emissions ({{scope}})", { scope: scopeMode === "s1_s2" ? "Scope 1+2" : "Scope 1+2+3" }),
         color: "var(--color-brand-500)",
         strokeWidth: 3,
       },
@@ -287,9 +289,9 @@ const SbtiDashboard: React.FC = () => {
 
   // Scope breakdown bars
   const scopeBars = useMemo(() => [
-    { dataKey: "scope1", name: "Scope 1 (Direct)", color: "var(--color-brand-500)", stackId: "a" },
-    { dataKey: "scope2", name: "Scope 2 (Indirect)", color: "var(--color-blue-500)", stackId: "a" },
-    { dataKey: "scope3", name: "Scope 3 (Value Chain)", color: "var(--color-violet-500)", stackId: "a" },
+    { dataKey: "scope1", name: tr("Scope 1 (Direct)"), color: "var(--color-brand-500)", stackId: "a" },
+    { dataKey: "scope2", name: tr("Scope 2 (Indirect)"), color: "var(--color-blue-500)", stackId: "a" },
+    { dataKey: "scope3", name: tr("Scope 3 (Value Chain)"), color: "var(--color-violet-500)", stackId: "a" },
   ], []);
 
   if (loading && !sbtiData) {
@@ -505,7 +507,7 @@ const SbtiDashboard: React.FC = () => {
             {currentActual != null
               ? `Actual: ${formatNumber(currentActual, 0)} tCO2e (${currentYear})`
               : isYtd
-                ? `Year to date: ${formatNumber(sbtiData?.ytd_actual, 0)} tCO2e (${ytdYear}, partial year)`
+                ? tr("Year to date: {{value}} tCO2e ({{year}}, partial year)", { value: formatNumber(sbtiData?.ytd_actual, 0), year: String(ytdYear) })
                 : `Actual: — (${currentYear})`}
           </div>
         </div>
@@ -531,7 +533,7 @@ const SbtiDashboard: React.FC = () => {
               ? tr("Set corporate baseline & targets to track alignment")
               : noData
                 ? tr("No complete year of verified data in the target window")
-                : `Reduction: ${sbtiData?.reduction_achieved_pct}% vs ${sbtiData?.base_year} baseline (progress year ${sbtiData?.latest_actual_year})`}
+                : tr("Reduction: {{pct}}% vs {{base}} baseline (progress year {{year}})", { pct: String(sbtiData?.reduction_achieved_pct), base: String(sbtiData?.base_year), year: String(sbtiData?.latest_actual_year) })}
           </div>
         </div>
 
@@ -548,7 +550,7 @@ const SbtiDashboard: React.FC = () => {
           </div>
           <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))] [display:flex] [align-items:center] [gap:4px]">
             {isConfigured
-              ? `Residual Floor: ${formatNumber(sbtiData?.residual_floor || 0, 0)} tCO2e (10% Cap)`
+              ? tr("Residual Floor: {{value}} tCO2e (10% Cap)", { value: formatNumber(sbtiData?.residual_floor || 0, 0) })
               : tr("Linear Rate: 4.2% per year")}
           </div>
         </div>

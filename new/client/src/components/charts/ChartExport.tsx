@@ -1,6 +1,7 @@
 import React from "react";
 import { Download, Image as ImageIcon } from "lucide-react";
 import { downloadCsv, downloadPng } from "../../utils/chartExport";
+import { t } from "../../i18n";
 
 export interface ChartExportProps {
   /** File name without extension. */
@@ -20,7 +21,7 @@ export const ChartExport: React.FC<ChartExportProps> = ({ name, targetRef, heade
   const [busy, setBusy] = React.useState(false);
   return (
     <div className={`flex justify-end gap-1.5 ${className}`} data-html2canvas-ignore="true">
-      <button type="button" className={btn} onClick={() => downloadCsv(name, header, rows)} aria-label={`Download ${name} data as CSV`}>
+      <button type="button" className={btn} onClick={() => downloadCsv(name, header, rows)} aria-label={t("Download {{name}} data as CSV", { name })}>
         <Download className="size-3.5" aria-hidden="true" /> CSV
       </button>
       <button

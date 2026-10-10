@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import "./ui.css";
+import { t } from "../../i18n";
 
 export interface SectionProps {
   n: number | string;
@@ -42,7 +43,7 @@ export interface MoreOptionsProps {
 }
 
 export const MoreOptions: React.FC<MoreOptionsProps> = ({
-  label = "More options",
+  label = t("More options"),
   defaultOpen = false,
   children,
 }) => {
