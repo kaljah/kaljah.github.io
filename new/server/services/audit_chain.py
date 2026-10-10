@@ -5,8 +5,8 @@ Every ActivityLog row is sealed when it is written: ``entry_hash`` is the SHA-25
 before it. Changing a sealed row changes its hash; deleting or inserting a row breaks the link of the
 next one. ``verify_chain`` recomputes both and reports every break.
 
-Rows are sealed one writer at a time: on PostgreSQL a transaction-scoped advisory lock is taken before
-the last hash is read, so two workers never chain onto the same row (SQLite serialises writers anyway).
+Rows are sealed one writer at a time: before the last hash is read, PostgreSQL takes a transaction-scoped
+advisory lock and SQLite its write lock (a no-op write), so two writers never chain onto the same row.
 On PostgreSQL a trigger (migration d4e8a1b7c2f0) also refuses UPDATE and DELETE on the table, except the
 one change the application makes: user deletion clears ``user_id`` (the stored ``user_name`` stays, and
 the hash covers the name, not the id).
@@ -38,10 +38,7 @@ def compute_entry_hash(log, prev_hash):
     content = [
         prev_hash or GENESIS_HASH,
         _timestamp_text(log.timestamp),
-        log.action or "",
-        log.record_id or "",
-        log.user_name or "",
-        log.details or "",
+        log.action or "", log.record_id or "", log.user_name or "", log.details or "",
         log.old_values or "",
         log.new_values or "",
         log.ip_address or "",
@@ -68,6 +65,8 @@ def seal_new_entries(session, flush_context=None, instances=None):
     bind = session.get_bind()
     if bind.dialect.name == "postgresql":
         session.execute(text("SELECT pg_advisory_xact_lock(:k)"), {"k": _ADVISORY_LOCK_KEY})
+    elif bind.dialect.name == "sqlite":
+        session.execute(text("UPDATE activity_log SET id = id WHERE 0"))
     prev = _last_hash(session)
     for log in new_logs:  # session.new keeps insertion order, which is the id order of the INSERTs
         if log.timestamp is None:
