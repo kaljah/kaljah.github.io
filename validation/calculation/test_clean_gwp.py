@@ -54,12 +54,12 @@ class TestCleanGWPStandards:
         """IPCC Sixth Assessment Report (2021, WG1 Chapter 7) GWP values."""
         ref_100 = resolve_gwp("AR6", "100")
         assert GWP_AR6["CO2"] == ref_100["CO2"] == 1.0
-        assert GWP_AR6["CH4"] == ref_100["CH4"] == 27.9
+        assert GWP_AR6["CH4"] == ref_100["CH4"] == 29.8
         assert GWP_AR6["N2O"] == ref_100["N2O"] == 273.0
 
         ref_20 = resolve_gwp("AR6", "20")
-        # Table 7.15: CH4 27.9 (100-yr) pairs with 81.2 (20-yr); 82.5 is the fossil-CH4 pair
-        assert GWP_AR6["CH4_20"] == ref_20["CH4"] == 81.2
+        # Table 7.15 fossil CH4 (oil and gas): 29.8 over 100 years, 82.5 over 20
+        assert GWP_AR6["CH4_20"] == ref_20["CH4"] == 82.5
         assert GWP_AR6["N2O_20"] == ref_20["N2O"] == 273.0
 
 
@@ -81,10 +81,10 @@ class TestCleanGWPResolutionAndCalculation:
         co2e_ar5 = calculate_co2e(co2=co2_tonnes, ch4=ch4_tonnes, n2o=n2o_tonnes, gwp_dict=gwp_ar5)
         assert abs(co2e_ar5 - 595.0) < 1e-4
 
-        # AR6: 50*1 + 10*27.9 + 1*273 = 50 + 279 + 273 = 602.0
+        # AR6 (fossil CH4): 50*1 + 10*29.8 + 1*273 = 50 + 298 + 273 = 621.0
         gwp_ar6 = get_active_gwp("AR6", horizon="100")
         co2e_ar6 = calculate_co2e(co2=co2_tonnes, ch4=ch4_tonnes, n2o=n2o_tonnes, gwp_dict=gwp_ar6)
-        assert abs(co2e_ar6 - 602.0) < 1e-4
+        assert abs(co2e_ar6 - 621.0) < 1e-4
 
         # AR5 20-year horizon: 50*1 + 10*84 + 1*264 = 50 + 840 + 264 = 1154.0
         gwp_ar5_20 = get_active_gwp("AR5", horizon="20")
