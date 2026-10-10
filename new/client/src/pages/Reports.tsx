@@ -602,7 +602,7 @@ const Reports: React.FC = () => {
     ...(dialogMasterAvailable
       ? [{ value: "master", label: tr("🏆 2025 Master Analytical Report (Vertical A4, 15 Charts, 18 Tables)") }]
       : []),
-    { value: "iso", label: tr("📋 ISO 14064-1 Compliance Report") },
+    { value: "iso", label: tr("📋 ISO 14064-1 Report") },
   ];
   const years = availableFilters.years;
 
@@ -951,7 +951,7 @@ const Reports: React.FC = () => {
             </div>
           ) : (
             <>
-              <p className="m-0 text-sm text-text-secondary">{tr("To ensure 100% compliance with ISO 14064-1, please provide the following mandatory declarations before generating the report.")}</p>
+              <p className="m-0 text-sm text-text-secondary">{tr("Please provide the following declarations required by ISO 14064-1 before generating the report.")}</p>
               <Field label={tr("Exclusion Criteria (Significance)")} hint={tr("Document the criteria used to define which indirect emissions are significant and justify any exclusions.")}>
                 <Textarea rows={2} value={exclusionCriteria} onChange={(e) => setExclusionCriteria(e.target.value)} />
               </Field>

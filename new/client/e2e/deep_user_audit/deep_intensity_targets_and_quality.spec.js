@@ -383,8 +383,8 @@ test.describe.serial('Suite 10: Quantitative Intensity Analytics, Target Modelin
     console.log('[E2E INT] Generate Executive GHG Report configuration dialog opened.');
 
     // Switch format to ISO 14064-1
-    console.log('[E2E INT] Selecting "ISO 14064-1 Compliance Report" format...');
-    const isoOption = page.locator('button:has-text("ISO 14064-1 Compliance Report")').first();
+    console.log('[E2E INT] Selecting "ISO 14064-1 Report" format...');
+    const isoOption = page.locator('button:has-text("ISO 14064-1 Report")').first();
     await expect(isoOption).toBeVisible();
     await isoOption.click();
     await page.waitForTimeout(500);

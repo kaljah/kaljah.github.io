@@ -317,7 +317,7 @@ export const Scope1ImportWizard: React.FC<Scope1ImportWizardProps> = ({ onClose,
         <p className="m-0 text-sm font-medium text-text-secondary">{t("Don't have a file? Download a template made for")}{" "}{TIER_LABEL[tier]}:</p>
         {(tier === "3" || tier === "auto") && (
           <div className="flex flex-col gap-2">
-            <p className="m-0 text-xs text-text-secondary">{t("Add the Tier 3 input columns for")}{selectedProcesses.length ? "" : t(" every process")}:</p>
+            <p className="m-0 text-xs text-text-secondary">{selectedProcesses.length ? t("Add the Tier 3 input columns for:") : t("Add the Tier 3 input columns for every process:")}</p>
             <div className="grid gap-2 [grid-template-columns:repeat(auto-fill,minmax(170px,1fr))]">
               {PROCESS_CATALOGUE.map((p) => (
                 <ProcessTile key={p.key} process={p} selected={selectedProcesses.includes(p.key)} onToggle={() => toggleProcess(p.key)} />

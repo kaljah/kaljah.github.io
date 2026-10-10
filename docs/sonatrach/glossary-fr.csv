@@ -1,152 +1,152 @@
-﻿Domaine;Terme anglais;Proposition française;Statut;Remarque / correction HSE
-Sources d'émission;Venting;Évents;Validé (2026-10-10);Pas « ventage ». Toutes les expressions dérivées utilisent « évents ».
-Sources d'émission;Vented emissions;Émissions d'évents;À valider;
-Sources d'émission;Vented gas;Gaz rejeté aux évents;À valider;
-Sources d'émission;Associated gas venting;Évents de gaz associé;À valider;
-Sources d'émission;Routine venting;Évents de routine;À valider;
-Sources d'émission;Non-routine venting;Évents hors routine;À valider;
-Sources d'émission;Compressor venting;Évents de compresseurs;À valider;
-Sources d'émission;Venting duration;Durée des évents;À valider;
-Sources d'émission;Vent method;Méthode de calcul des évents;À valider;
-Sources d'émission;Flaring;Torchage;À valider;
-Sources d'émission;Flare;Torche;À valider;
-Sources d'émission;Routine flaring;Torchage de routine;À valider;Décret exécutif 21-330
-Sources d'émission;Non-routine flaring;Torchage hors routine;À valider;
-Sources d'émission;Safety flaring;Torchage de sécurité;À valider;
-Sources d'émission;Flared volume;Volume torché;À valider;
-Sources d'émission;Flare gas;Gaz torché;À valider;
-Sources d'émission;Enclosed ground flare;Torche au sol fermée;À valider;
-Sources d'émission;Combustion efficiency;Rendement de combustion;À valider;
-Sources d'émission;Destruction efficiency (DRE);Efficacité de destruction (DRE);À valider;
-Sources d'émission;Fugitive emissions;Émissions fugitives;À valider;
-Sources d'émission;Equipment leaks;Fuites des équipements;À valider;
-Sources d'émission;Component count;Comptage des composants;À valider;
-Sources d'émission;Leak detection and repair (LDAR);Détection et réparation des fuites (LDAR);À valider;
-Sources d'émission;Optical gas imaging (OGI);Imagerie optique des gaz (OGI);À valider;
-Sources d'émission;Stationary combustion;Combustion fixe;À valider;
-Sources d'émission;Mobile combustion;Combustion mobile;À valider;
-Sources d'émission;Fuel gas;Gaz combustible;À valider;
-Sources d'émission;Process emissions;Émissions de procédé;À valider;
-Sources d'émission;Acid gas removal;Élimination des gaz acides (décarbonatation);À valider;
-Sources d'émission;Glycol dehydrator;Déshydrateur au glycol;À valider;
-Sources d'émission;Desiccant dehydrator;Déshydrateur à dessiccant;À valider;
-Sources d'émission;Pneumatic device;Dispositif pneumatique;À valider;
-Sources d'émission;Pneumatic controller;Régulateur pneumatique;À valider;
-Sources d'émission;Compressor seal;Garniture de compresseur;À valider;
-Sources d'émission;Wet seal / dry seal;Garniture humide / garniture sèche;À valider;
-Sources d'émission;Blowdown;Dépressurisation (blowdown);À valider;
-Sources d'émission;Tank flashing;Vaporisation instantanée des bacs (flashing);À valider;
-Sources d'émission;Storage tank;Bac de stockage;À valider;
-Sources d'émission;Well completion;Complétion de puits;À valider;
-Sources d'émission;Completion flowback;Retour de complétion (flowback);À valider;
-Sources d'émission;Liquids unloading;Déchargement des liquides;À valider;
-Sources d'émission;Mud degassing;Dégazage des boues;À valider;
-Sources d'émission;Drilling;Forage;À valider;
-Sources d'émission;Wellhead;Tête de puits;À valider;
-Sources d'émission;Separator;Séparateur;À valider;
-Sources d'émission;Gas-oil ratio (GOR);Rapport gaz-huile (GOR);À valider;
-Sources d'émission;Associated gas;Gaz associé;À valider;
-Comptabilité GES;Greenhouse gas (GHG);Gaz à effet de serre (GES);À valider;
-Comptabilité GES;GHG inventory;Inventaire des GES;À valider;
-Comptabilité GES;Scope 1 (direct emissions);Scope 1 (émissions directes);À valider;"« Périmètre 1 » possible ; ISO 14064-1 parle de « catégorie 1 »"
-Comptabilité GES;Scope 2 (indirect, energy);Scope 2 (émissions indirectes liées à l'énergie);À valider;
-Comptabilité GES;Scope 3 (value chain);Scope 3 (chaîne de valeur);À valider;
-Comptabilité GES;Location-based;Méthode fondée sur la localisation;À valider;GHG Protocol, Scope 2
-Comptabilité GES;Market-based;Méthode fondée sur le marché;À valider;
-Comptabilité GES;Residual mix;Mix résiduel;À valider;
-Comptabilité GES;Emission factor;Facteur d'émission;À valider;
-Comptabilité GES;Custom emission factor;Facteur d'émission spécifique;À valider;
-Comptabilité GES;Default factor;Facteur par défaut;À valider;
-Comptabilité GES;Activity data;Données d'activité;À valider;
-Comptabilité GES;Global warming potential (GWP);Potentiel de réchauffement global (PRG);À valider;"Sigle français PRG ; garder GWP entre parenthèses ?"
-Comptabilité GES;100-year / 20-year horizon;Horizon 100 ans / 20 ans;À valider;
-Comptabilité GES;Fossil methane;Méthane fossile;À valider;AR6 : 29,8 (100 ans)
-Comptabilité GES;CO2 equivalent (CO2e);Équivalent CO2 (CO2e);À valider;
-Comptabilité GES;Tonnes of CO2e (tCO2e);Tonnes d'équivalent CO2 (tCO2e);À valider;
-Comptabilité GES;Gross emissions;Émissions brutes;À valider;
-Comptabilité GES;Gross less mitigation;Brut moins atténuation;À valider;Carte indicative du tableau de bord
-Comptabilité GES;Mitigation;Atténuation;À valider;
-Comptabilité GES;Carbon intensity;Intensité carbone;À valider;
-Comptabilité GES;Methane intensity;Intensité méthane;À valider;
-Comptabilité GES;Barrel of oil equivalent (BOE);Baril équivalent pétrole (bep);À valider;
-Comptabilité GES;Saleable production;Production commercialisable;À valider;
-Comptabilité GES;Base year;Année de référence;À valider;
-Comptabilité GES;Base-year recalculation;Recalcul de l'année de référence;À valider;
-Comptabilité GES;Reporting year;Année de déclaration;À valider;
-Comptabilité GES;Operational control;Contrôle opérationnel;À valider;
-Comptabilité GES;Equity share;Part du capital;À valider;
-Comptabilité GES;Organisational boundary;Périmètre organisationnel;À valider;
-Comptabilité GES;Joint venture (JV);Association / coentreprise;À valider;
-Comptabilité GES;Uncertainty;Incertitude;À valider;
-Comptabilité GES;Monte Carlo simulation;Simulation de Monte-Carlo;À valider;
-Comptabilité GES;Tier 1 / 2 / 3;Niveau 1 / 2 / 3;À valider;Approches de calcul GIEC
-Comptabilité GES;Engineering calculation;Calcul d'ingénierie;À valider;
-Comptabilité GES;Heating value (HHV / LHV);Pouvoir calorifique (PCS / PCI);À valider;
-Comptabilité GES;Gas composition;Composition du gaz;À valider;
-Comptabilité GES;Mole fraction;Fraction molaire;À valider;
-Comptabilité GES;Criteria air pollutants (CAP);Polluants atmosphériques réglementés;À valider;
-Comptabilité GES;Science Based Targets (SBTi);Objectifs fondés sur la science (SBTi);À valider;
-Comptabilité GES;Net zero;Zéro émission nette;À valider;
-OGMP 2.0;OGMP 2.0 level;Niveau OGMP 2.0;À valider;
-OGMP 2.0;Site-level measurement;Mesure à l'échelle du site;À valider;
-OGMP 2.0;Source-level;À l'échelle de la source;À valider;
-OGMP 2.0;Top-down survey;Campagne de mesure descendante (top-down);À valider;
-OGMP 2.0;Bottom-up inventory;Inventaire ascendant (bottom-up);À valider;
-OGMP 2.0;Reconciliation;Rapprochement;À valider;
-OGMP 2.0;Discrepancy flagged;Écart signalé;À valider;
-OGMP 2.0;Super-emitter;Super-émetteur;À valider;
-OGMP 2.0;Detection threshold;Seuil de détection;À valider;
-OGMP 2.0;Aerial survey;Campagne aérienne;À valider;
-OGMP 2.0;Satellite survey;Campagne satellitaire;À valider;
-OGMP 2.0;Operated / non-operated asset;Actif opéré / non opéré;À valider;
-Flux de travail;Draft;Brouillon;À valider;Statut d'un enregistrement
-Flux de travail;Pending (review);En attente de vérification;À valider;
-Flux de travail;Verified;Vérifié;À valider;
-Flux de travail;Rejected;Rejeté;À valider;
-Flux de travail;Approve / reject;Approuver / rejeter;À valider;
-Flux de travail;Maker-checker;Principe des quatre yeux;À valider;Saisie et validation par deux personnes
-Flux de travail;Review queue;File de vérification;À valider;
-Flux de travail;Batch review;Vérification groupée;À valider;
-Flux de travail;Bulk upload;Import en masse;À valider;
-Flux de travail;Import wizard;Assistant d'import;À valider;
-Flux de travail;Column mapping;Correspondance des colonnes;À valider;
-Flux de travail;Decimal mark (comma / point);Séparateur décimal (virgule / point);À valider;
-Flux de travail;Duplicate record;Enregistrement en double;À valider;
-Flux de travail;Audit trail;Piste d'audit;À valider;
-Flux de travail;Tamper-evident log;Journal infalsifiable;À valider;« Journal à preuve de falsification » plus exact ?
-Flux de travail;Verify integrity;Vérifier l'intégrité;À valider;
-Flux de travail;Data fingerprint;Empreinte des données;À valider;
-Organisation;Facility;Installation;À valider;« Site » possible
-Organisation;Region;Région;À valider;
-Organisation;Division;Division;À valider;
-Organisation;Field;Champ;À valider;
-Organisation;Upstream / midstream / downstream;Amont / intermédiaire / aval;À valider;
-Organisation;Gas processing plant;Usine de traitement de gaz;À valider;
-Organisation;Central processing facility (CPF);Centre de traitement (CPF);À valider;
-Organisation;Pipeline;Canalisation / gazoduc / oléoduc;À valider;
-Rôles;Compliance administrator;Administrateur conformité;À valider;Rôle admin
-Rôles;Superuser (operational lead);Responsable opérationnel;À valider;Rôle superuser
-Rôles;Operator (user);Opérateur;À valider;Rôle user
-Rôles;IT administrator;Administrateur informatique;À valider;
-Interface;Dashboard;Tableau de bord;À valider;
-Interface;Emissions map;Carte des émissions;À valider;
-Interface;Calculations;Calculs;À valider;
-Interface;Manage data;Gestion des données;À valider;
-Interface;Reference data;Données de référence;À valider;
-Interface;Reports;Rapports;À valider;
-Interface;QA/QC & diagnostics;Contrôle qualité et diagnostics;À valider;
-Interface;Settings;Paramètres;À valider;
-Interface;Sign in / sign out;Se connecter / se déconnecter;À valider;
-Interface;Forgot password;Mot de passe oublié;À valider;
-Interface;Export;Exporter;À valider;
-Interface;Template (CSV / Excel);Modèle (CSV / Excel);À valider;
-Unités;Standard cubic metre (Sm3);Mètre cube standard (Sm3);À valider;
-Unités;Thousand standard cubic feet (Mscf);Millier de pieds cubes standard (Mscf);À valider;
-Unités;Barrel (bbl);Baril (bbl);À valider;
-Unités;Million British thermal units (MMBtu);Million de BTU (MMBtu);À valider;
-Unités;Megawatt-hour (MWh);Mégawattheure (MWh);À valider;
-Référentiels;API Compendium 2021;Compendium API 2021;À valider;
-Référentiels;GHG Protocol Corporate Standard;Norme d'entreprise du GHG Protocol;À valider;
-Référentiels;ISO 14064-1;ISO 14064-1;À valider;
-Référentiels;IPCC Assessment Report (AR5 / AR6);Rapport d'évaluation du GIEC (AR5 / AR6);À valider;Sigle français GIEC
-Référentiels;Executive Decree 21-330;Décret exécutif n° 21-330;À valider;Torchage, Algérie
+﻿Domaine;Terme anglais;Terme français;Statut;Source / remarque
+Sources d'émission;Venting;Évents;Validé (2026-10-10);"Choix du propriétaire. Le règlement UE emploie « éventage » pour l'action de rejeter (définition 31) ; le GIEC (FR) « ventilation »."
+Sources d'émission;Vented emissions;Émissions d'évents;Terme usuel;Aucune source contradictoire trouvée
+Sources d'émission;Vented gas;Gaz rejeté aux évents;Terme usuel;Aucune source contradictoire trouvée
+Sources d'émission;Associated gas venting;Évents de gaz associé;Terme usuel;Aucune source contradictoire trouvée
+Sources d'émission;Routine venting;Évents de routine;Terme usuel;Aucune source contradictoire trouvée
+Sources d'émission;Non-routine venting;Évents hors routine;Terme usuel;Aucune source contradictoire trouvée
+Sources d'émission;Compressor venting;Évents de compresseurs;Terme usuel;Aucune source contradictoire trouvée
+Sources d'émission;Venting duration;Durée des évents;Terme usuel;Aucune source contradictoire trouvée
+Sources d'émission;Vent method;Méthode de calcul des évents;Terme usuel;Aucune source contradictoire trouvée
+Sources d'émission;Flaring;Torchage;Vérifié;"Règlement (UE) 2024/1787 sur le méthane, version française (déf. 32) ; Lignes directrices 2006 du GIEC, vol. 2 chap. 4 (version française)"
+Sources d'émission;Flare;Torchère;Vérifié;Règlement (UE) 2024/1787 sur le méthane, version française (déf. 34 : « torchère »)
+Sources d'émission;Routine flaring;Torchage de routine;Vérifié;"Initiative « Zéro torchage de routine » (Banque mondiale, Sonatrach) ; le règlement UE dit « torchage systématique »"
+Sources d'émission;Non-routine flaring;Torchage hors routine;Terme usuel;Aucune source contradictoire trouvée
+Sources d'émission;Safety flaring;Torchage de sécurité;Terme usuel;Aucune source contradictoire trouvée
+Sources d'émission;Flared volume;Volume torché;Terme usuel;Aucune source contradictoire trouvée
+Sources d'émission;Flare gas;Gaz torché;Terme usuel;Aucune source contradictoire trouvée
+Sources d'émission;Enclosed ground flare;Torche au sol fermée;Terme usuel;Aucune source contradictoire trouvée
+Sources d'émission;Combustion efficiency;Rendement de combustion;Terme usuel;Aucune source contradictoire trouvée
+Sources d'émission;Destruction efficiency (DRE);Efficacité de destruction et d'élimination (DRE);Vérifié;Règlement (UE) 2024/1787 sur le méthane, version française (déf. 37)
+Sources d'émission;Fugitive emissions;Émissions fugitives;Vérifié;"Lignes directrices 2006 du GIEC, vol. 2 chap. 4 (version française) ; Règlement canadien DORS/2018-66 (méthane, secteur pétrolier et gazier), fiche technique ECCC"
+Sources d'émission;Equipment leaks;Fuites des équipements;Terme usuel;Aucune source contradictoire trouvée
+Sources d'émission;Component count;Comptage des composants;Terme usuel;Aucune source contradictoire trouvée
+Sources d'émission;Leak detection and repair (LDAR);Détection et réparation des fuites (LDAR);Vérifié;"Règlement (UE) 2024/1787 sur le méthane, version française ; Règlement canadien DORS/2018-66 (méthane, secteur pétrolier et gazier), fiche technique ECCC"
+Sources d'émission;Optical gas imaging (OGI);Imagerie optique des gaz (OGI);Terme usuel;Aucune source contradictoire trouvée
+Sources d'émission;Stationary combustion;Combustion fixe;Terme usuel;Aucune source contradictoire trouvée
+Sources d'émission;Mobile combustion;Combustion mobile;Terme usuel;Aucune source contradictoire trouvée
+Sources d'émission;Fuel gas;Gaz combustible;Terme usuel;Aucune source contradictoire trouvée
+Sources d'émission;Process emissions;Émissions de procédé;Terme usuel;Aucune source contradictoire trouvée
+Sources d'émission;Acid gas removal;Élimination des gaz acides (décarbonatation);Terme usuel;Aucune source contradictoire trouvée
+Sources d'émission;Glycol dehydrator;Déshydrateur au glycol;Vérifié;Initiative mondiale sur le méthane / Canada (déshydrateurs de gaz naturel)
+Sources d'émission;Desiccant dehydrator;Déshydrateur à dessiccant;Terme usuel;Aucune source contradictoire trouvée
+Sources d'émission;Pneumatic device;Dispositif pneumatique;Vérifié;"Règlement canadien DORS/2018-66 (méthane, secteur pétrolier et gazier), fiche technique ECCC ; Règlement (UE) 2024/1787 sur le méthane, version française"
+Sources d'émission;Pneumatic controller;Régulateur pneumatique;Vérifié;Règlement canadien DORS/2018-66 (méthane, secteur pétrolier et gazier), fiche technique ECCC
+Sources d'émission;Compressor seal;Joint d'étanchéité de compresseur;Vérifié;Règlement canadien DORS/2018-66 (méthane, secteur pétrolier et gazier), fiche technique ECCC (« joints d'étanchéité », « garnitures de tiges » pour rod packing)
+Sources d'émission;Wet seal / dry seal;Joint humide / joint sec;Vérifié;"Initiative mondiale sur le méthane (« garnitures humides / sèches ») ; Canada « joints d'étanchéité »"
+Sources d'émission;Blowdown;Dépressurisation (purge);Vérifié;Lignes directrices 2006 du GIEC, vol. 2 chap. 4 (version française) (« événements de purge »)
+Sources d'émission;Tank flashing;Vaporisation instantanée des bacs (flashing);Vérifié;Lignes directrices 2006 du GIEC, vol. 2 chap. 4 (version française) (« pertes par vaporisation instantanée »)
+Sources d'émission;Storage tank;Bac de stockage;Terme usuel;Aucune source contradictoire trouvée
+Sources d'émission;Well completion;Complétion de puits;Vérifié;Règlement canadien DORS/2018-66 (méthane, secteur pétrolier et gazier), fiche technique ECCC
+Sources d'émission;Completion flowback;Gaz de reflux (flowback);Vérifié;Règlement canadien DORS/2018-66 (méthane, secteur pétrolier et gazier), fiche technique ECCC (« gaz de reflux »)
+Sources d'émission;Liquids unloading;Déchargement des liquides;Terme usuel;Aucune source contradictoire trouvée
+Sources d'émission;Mud degassing;Dégazage des boues;Terme usuel;Aucune source contradictoire trouvée
+Sources d'émission;Drilling;Forage;Vérifié;Lignes directrices 2006 du GIEC, vol. 2 chap. 4 (version française)
+Sources d'émission;Wellhead;Tête de puits;Vérifié;Lignes directrices 2006 du GIEC, vol. 2 chap. 4 (version française)
+Sources d'émission;Separator;Séparateur;Terme usuel;Aucune source contradictoire trouvée
+Sources d'émission;Gas-oil ratio (GOR);Rapport gaz/pétrole (RGP);Vérifié;Lignes directrices 2006 du GIEC, vol. 2 chap. 4 (version française)
+Sources d'émission;Associated gas;Gaz associé;Vérifié;Lignes directrices 2006 du GIEC, vol. 2 chap. 4 (version française)
+Comptabilité GES;Greenhouse gas (GHG);Gaz à effet de serre (GES);Terme usuel;Aucune source contradictoire trouvée
+Comptabilité GES;GHG inventory;Inventaire des GES;Terme usuel;Aucune source contradictoire trouvée
+Comptabilité GES;Scope 1 (direct emissions);Scope 1 (émissions directes);Vérifié;"ISO 14064-1:2018 ; usage ADEME / Bilan Carbone : « scope » reste l'usage courant ; ISO 14064-1 parle de catégorie 1"
+Comptabilité GES;Scope 2 (indirect, energy);Scope 2 (émissions indirectes liées à l'énergie);Terme usuel;Aucune source contradictoire trouvée
+Comptabilité GES;Scope 3 (value chain);Scope 3 (chaîne de valeur);Terme usuel;Aucune source contradictoire trouvée
+Comptabilité GES;Location-based;Méthode fondée sur la localisation;Terme usuel;GHG Protocol, Scope 2
+Comptabilité GES;Market-based;Méthode fondée sur le marché;Terme usuel;Aucune source contradictoire trouvée
+Comptabilité GES;Residual mix;Mix résiduel;Terme usuel;Aucune source contradictoire trouvée
+Comptabilité GES;Emission factor;Facteur d'émission;Vérifié;Règlement (UE) 2024/1787 sur le méthane, version française (déf. 16)
+Comptabilité GES;Custom emission factor;Facteur d'émission spécifique;Terme usuel;Aucune source contradictoire trouvée
+Comptabilité GES;Default factor;Facteur par défaut;Terme usuel;Aucune source contradictoire trouvée
+Comptabilité GES;Activity data;Données d'activité;Vérifié;Usage ADEME / Bilan Carbone (le GIEC FR écrit « données sur les activités »)
+Comptabilité GES;Global warming potential (GWP);Potentiel de réchauffement global (PRG);Vérifié;"Règlement (UE) 2024/1787 sur le méthane, version française ; GIEC"
+Comptabilité GES;100-year / 20-year horizon;Horizon 100 ans / 20 ans;Terme usuel;Aucune source contradictoire trouvée
+Comptabilité GES;Fossil methane;Méthane fossile;Vérifié;GIEC AR6 (29,8 sur 100 ans, 82,5 sur 20 ans)
+Comptabilité GES;CO2 equivalent (CO2e);Équivalent CO2 (CO2e);Terme usuel;Aucune source contradictoire trouvée
+Comptabilité GES;Tonnes of CO2e (tCO2e);Tonnes d'équivalent CO2 (tCO2e);Terme usuel;Aucune source contradictoire trouvée
+Comptabilité GES;Gross emissions;Émissions brutes;Terme usuel;Aucune source contradictoire trouvée
+Comptabilité GES;Gross less mitigation;Brut moins atténuation;Terme usuel;Carte indicative du tableau de bord
+Comptabilité GES;Mitigation;Atténuation;Terme usuel;Aucune source contradictoire trouvée
+Comptabilité GES;Carbon intensity;Intensité carbone;Terme usuel;Aucune source contradictoire trouvée
+Comptabilité GES;Methane intensity;Intensité méthane;Terme usuel;Aucune source contradictoire trouvée
+Comptabilité GES;Barrel of oil equivalent (BOE);Baril équivalent pétrole (bep);Terme usuel;Aucune source contradictoire trouvée
+Comptabilité GES;Saleable production;Production commercialisable;Terme usuel;Aucune source contradictoire trouvée
+Comptabilité GES;Base year;Année de référence;Terme usuel;Aucune source contradictoire trouvée
+Comptabilité GES;Base-year recalculation;Recalcul de l'année de référence;Terme usuel;Aucune source contradictoire trouvée
+Comptabilité GES;Reporting year;Année de déclaration;Terme usuel;Aucune source contradictoire trouvée
+Comptabilité GES;Operational control;Contrôle opérationnel;Terme usuel;Aucune source contradictoire trouvée
+Comptabilité GES;Equity share;Part du capital;Terme usuel;Aucune source contradictoire trouvée
+Comptabilité GES;Organisational boundary;Périmètre organisationnel;Terme usuel;Aucune source contradictoire trouvée
+Comptabilité GES;Joint venture (JV);Association / coentreprise;Terme usuel;Aucune source contradictoire trouvée
+Comptabilité GES;Uncertainty;Incertitude;Vérifié;Lignes directrices 2006 du GIEC, vol. 2 chap. 4 (version française)
+Comptabilité GES;Monte Carlo simulation;Simulation de Monte-Carlo;Terme usuel;Aucune source contradictoire trouvée
+Comptabilité GES;Tier 1 / 2 / 3;Niveau 1 / 2 / 3;Vérifié;Lignes directrices 2006 du GIEC, vol. 2 chap. 4 (version française)
+Comptabilité GES;Engineering calculation;Calcul d'ingénierie;Terme usuel;Aucune source contradictoire trouvée
+Comptabilité GES;Heating value (HHV / LHV);Pouvoir calorifique (PCS / PCI);Terme usuel;Aucune source contradictoire trouvée
+Comptabilité GES;Gas composition;Composition du gaz;Terme usuel;Aucune source contradictoire trouvée
+Comptabilité GES;Mole fraction;Fraction molaire;Terme usuel;Aucune source contradictoire trouvée
+Comptabilité GES;Criteria air pollutants (CAP);Polluants atmosphériques réglementés;Terme usuel;Aucune source contradictoire trouvée
+Comptabilité GES;Science Based Targets (SBTi);Objectifs fondés sur la science (SBTi);Terme usuel;Aucune source contradictoire trouvée
+Comptabilité GES;Net zero;Zéro émission nette;Terme usuel;Aucune source contradictoire trouvée
+OGMP 2.0;OGMP 2.0 level;Niveau OGMP 2.0;Terme usuel;Aucune source contradictoire trouvée
+OGMP 2.0;Site-level measurement;Mesure au niveau du site;Vérifié;Règlement (UE) 2024/1787 sur le méthane, version française (déf. 22)
+OGMP 2.0;Source-level;Au niveau de la source;Vérifié;Règlement (UE) 2024/1787 sur le méthane, version française
+OGMP 2.0;Top-down survey;Campagne de mesure descendante (top-down);Terme usuel;Aucune source contradictoire trouvée
+OGMP 2.0;Bottom-up inventory;Inventaire ascendant (bottom-up);Terme usuel;Aucune source contradictoire trouvée
+OGMP 2.0;Reconciliation;Rapprochement;Vérifié;Règlement (UE) 2024/1787 sur le méthane, version française (déf. 63 « processus de rapprochement »)
+OGMP 2.0;Discrepancy flagged;Écart signalé;Terme usuel;Aucune source contradictoire trouvée
+OGMP 2.0;Super-emitter;Événement super-émetteur;Vérifié;Règlement (UE) 2024/1787 sur le méthane, version française (déf. 62)
+OGMP 2.0;Detection threshold;Seuil de détection;Terme usuel;Aucune source contradictoire trouvée
+OGMP 2.0;Aerial survey;Campagne aérienne;Terme usuel;Aucune source contradictoire trouvée
+OGMP 2.0;Satellite survey;Campagne satellitaire;Terme usuel;Aucune source contradictoire trouvée
+OGMP 2.0;Operated / non-operated asset;Actif exploité / non exploité;Vérifié;Règlement (UE) 2024/1787 sur le méthane, version française (déf. 5 et 6)
+Flux de travail;Draft;Brouillon;Terme usuel;Statut d'un enregistrement
+Flux de travail;Pending (review);En attente de vérification;Terme usuel;Aucune source contradictoire trouvée
+Flux de travail;Verified;Vérifié;Terme usuel;Aucune source contradictoire trouvée
+Flux de travail;Rejected;Rejeté;Terme usuel;Aucune source contradictoire trouvée
+Flux de travail;Approve / reject;Approuver / rejeter;Terme usuel;Aucune source contradictoire trouvée
+Flux de travail;Maker-checker;Principe des quatre yeux;Proposé;Usage courant (banque, audit) : saisie et validation par deux personnes
+Flux de travail;Review queue;File de vérification;Terme usuel;Aucune source contradictoire trouvée
+Flux de travail;Batch review;Vérification groupée;Terme usuel;Aucune source contradictoire trouvée
+Flux de travail;Bulk upload;Import en masse;Terme usuel;Aucune source contradictoire trouvée
+Flux de travail;Import wizard;Assistant d'import;Terme usuel;Aucune source contradictoire trouvée
+Flux de travail;Column mapping;Correspondance des colonnes;Terme usuel;Aucune source contradictoire trouvée
+Flux de travail;Decimal mark (comma / point);Séparateur décimal (virgule / point);Terme usuel;Aucune source contradictoire trouvée
+Flux de travail;Duplicate record;Enregistrement en double;Terme usuel;Aucune source contradictoire trouvée
+Flux de travail;Audit trail;Piste d'audit;Terme usuel;Aucune source contradictoire trouvée
+Flux de travail;Tamper-evident log;Journal infalsifiable;Terme usuel;« Journal à preuve de falsification » plus exact ?
+Flux de travail;Verify integrity;Vérifier l'intégrité;Terme usuel;Aucune source contradictoire trouvée
+Flux de travail;Data fingerprint;Empreinte des données;Terme usuel;Aucune source contradictoire trouvée
+Organisation;Facility;Installation;Vérifié;Règlement (UE) 2024/1787 sur le méthane, version française (« installations », « site »)
+Organisation;Region;Région;Terme usuel;Aucune source contradictoire trouvée
+Organisation;Division;Division;Terme usuel;Aucune source contradictoire trouvée
+Organisation;Field;Champ;Terme usuel;Aucune source contradictoire trouvée
+Organisation;Upstream / midstream / downstream;Amont / intermédiaire / aval;Terme usuel;Aucune source contradictoire trouvée
+Organisation;Gas processing plant;Usine de traitement de gaz;Terme usuel;Aucune source contradictoire trouvée
+Organisation;Central processing facility (CPF);Centre de traitement (CPF);Terme usuel;Aucune source contradictoire trouvée
+Organisation;Pipeline;Canalisation / gazoduc / oléoduc;Terme usuel;Aucune source contradictoire trouvée
+Rôles;Compliance administrator;Administrateur conformité;Terme usuel;Rôle admin
+Rôles;Superuser (operational lead);Responsable opérationnel;Terme usuel;Rôle superuser
+Rôles;Operator (user);Opérateur;Terme usuel;Rôle user
+Rôles;IT administrator;Administrateur informatique;Terme usuel;Aucune source contradictoire trouvée
+Interface;Dashboard;Tableau de bord;Terme usuel;Aucune source contradictoire trouvée
+Interface;Emissions map;Carte des émissions;Terme usuel;Aucune source contradictoire trouvée
+Interface;Calculations;Calculs;Terme usuel;Aucune source contradictoire trouvée
+Interface;Manage data;Gestion des données;Terme usuel;Aucune source contradictoire trouvée
+Interface;Reference data;Données de référence;Terme usuel;Aucune source contradictoire trouvée
+Interface;Reports;Rapports;Terme usuel;Aucune source contradictoire trouvée
+Interface;QA/QC & diagnostics;Contrôle qualité et diagnostics;Terme usuel;Aucune source contradictoire trouvée
+Interface;Settings;Paramètres;Terme usuel;Aucune source contradictoire trouvée
+Interface;Sign in / sign out;Se connecter / se déconnecter;Terme usuel;Aucune source contradictoire trouvée
+Interface;Forgot password;Mot de passe oublié;Terme usuel;Aucune source contradictoire trouvée
+Interface;Export;Exporter;Terme usuel;Aucune source contradictoire trouvée
+Interface;Template (CSV / Excel);Modèle (CSV / Excel);Terme usuel;Aucune source contradictoire trouvée
+Unités;Standard cubic metre (Sm3);Mètre cube standard (Sm3);Terme usuel;Aucune source contradictoire trouvée
+Unités;Thousand standard cubic feet (Mscf);Millier de pieds cubes standard (Mscf);Terme usuel;Aucune source contradictoire trouvée
+Unités;Barrel (bbl);Baril (bbl);Terme usuel;Aucune source contradictoire trouvée
+Unités;Million British thermal units (MMBtu);Million de BTU (MMBtu);Terme usuel;Aucune source contradictoire trouvée
+Unités;Megawatt-hour (MWh);Mégawattheure (MWh);Terme usuel;Aucune source contradictoire trouvée
+Référentiels;API Compendium 2021;Compendium API 2021;Terme usuel;Aucune source contradictoire trouvée
+Référentiels;GHG Protocol Corporate Standard;Norme d'entreprise du GHG Protocol;Terme usuel;Aucune source contradictoire trouvée
+Référentiels;ISO 14064-1;ISO 14064-1;Terme usuel;Aucune source contradictoire trouvée
+Référentiels;IPCC Assessment Report (AR5 / AR6);Rapport d'évaluation du GIEC (AR5 / AR6);Terme usuel;Sigle français GIEC
+Référentiels;Executive Decree 21-330;Décret exécutif n° 21-330;Terme usuel;Torchage, Algérie
