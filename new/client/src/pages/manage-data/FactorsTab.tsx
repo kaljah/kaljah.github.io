@@ -217,7 +217,7 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
     {/* EF Uncertainty Workbench */}
     <div className="mt-[20px]! p-[20px]! bg-[color:rgba(30,_41,_59,_0.03)]! rounded-[12px]! [border:1px_solid_rgba(0,0,0,0.05)]!">
       <h4 className="m-[0_0_15px_0]! text-[length:1rem]! flex! items-center! gap-[8px]!">
-        <Database size={16} /> EF Uncertainty Workbench (ISO 14064-1 compliant)
+        <Database size={16} /> EF Uncertainty Workbench (ISO 14064-1 method)
       </h4>
       <div className="grid grid-cols-1 gap-[15px] md:grid-cols-3">
         <div className="input-group">

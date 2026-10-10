@@ -201,7 +201,7 @@ const UncertaintyAssessment: React.FC = () => {
           <h1 className="ua-title">Data Reliability Analysis</h1>
           <p className="[font-size:var(--text-lg)] [color:var(--text-secondary,_var(--color-ink-500))] [max-width:800px] [margin:0] [line-height:1.5]">
             Dynamic uncertainty quantification across the complete GHG
-            inventory, compliant with ISO 14064-1 §7.5 and IPCC 2006 GL Vol.1
+            inventory, following ISO 14064-1 §7.5 and IPCC 2006 GL Vol.1
             §3.3.
           </p>
           {data && (

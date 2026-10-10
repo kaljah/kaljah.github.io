@@ -92,8 +92,8 @@ test.describe('QFULL Auth and Navigation', () => {
     await expect(page.locator('text=Welcome Back')).toBeVisible({ timeout: 5000 });
     await expect(page.locator('text=Sign in to your GHG Reporting Platform')).toBeVisible({ timeout: 5000 });
 
-    // Verify compliance badges
-    await expect(page.locator('text=API Compliant')).toBeVisible({ timeout: 5000 });
+    // No certification badges: nothing certifies the platform (removed 2026-10-10)
+    await expect(page.locator('text=SOC2 Secured')).toHaveCount(0);
 
     console.log('[QFULL E2E] Login page elements verified ✓');
   });
