@@ -25,6 +25,7 @@ import ExplorerHud from "./explorer/ExplorerHud";
 import ExplorerDrawer from "./explorer/ExplorerDrawer";
 import ExplorerDossier from "./explorer/ExplorerDossier";
 import "./MethaneExplorer.css";
+import { t } from "../i18n";
 
 interface MapControllerProps {
   center: [number, number];
@@ -189,7 +190,7 @@ const EmissionsMap: React.FC = () => {
       }
     } catch (error) {
       console.error("Failed to load explorer data:", error);
-      toast.error("Failed to initialize facility data from server");
+      toast.error(t("Failed to initialize facility data from server"));
     } finally {
       setLoading(false);
       setIsUpdating(false);
@@ -495,9 +496,9 @@ const EmissionsMap: React.FC = () => {
           <div className="[position:absolute] [inset:0] [border-radius:50%] [border-top:3px_solid_var(--color-brand-500)] [animation:spin_1.2s_cubic-bezier(0.5,_0,_0.5,_1)_infinite]"></div>
           <MapIcon size={34} color="var(--color-brand-500)" />
         </div>
-        <div className="[font-size:var(--text-md)] [font-weight:800] [letter-spacing:0.08em] [color:var(--color-ink-900)]">LOADING METHANE EXPLORER</div>
+        <div className="[font-size:var(--text-md)] [font-weight:800] [letter-spacing:0.08em] [color:var(--color-ink-900)]">{t("LOADING METHANE EXPLORER")}</div>
         <div className="[font-size:var(--text-sm)] [color:var(--color-ink-500)] [max-width:420px] [text-align:center] [line-height:1.5]">
-          Fetching operational facilities and emission inventories...
+          {t("Fetching operational facilities and emission inventories...")}
         </div>
       </div>
     );
@@ -632,8 +633,8 @@ const EmissionsMap: React.FC = () => {
                         </span>
                       </div>
                       <div className="[font-size:var(--text-xs)] [color:var(--color-ink-500)]">
-                        {fac.region || "Region"} •{" "}
-                        {fac.activity || fac.division || "Facility"}
+                        {fac.region || t("Region")} •{" "}
+                        {fac.activity || fac.division || t("Facility")}
                       </div>
                       <div className="[display:flex] [align-items:center] [gap:5px] [font-size:var(--text-sm)] [font-weight:700] [color:var(--color-link)] [margin-top:2px]">
                         <Flame size={12} />
@@ -652,7 +653,7 @@ const EmissionsMap: React.FC = () => {
         </MapContainer>
         {mapTiles && !mapTiles.tile_url && (
           <p className="absolute bottom-7 left-1/2 z-500 m-0 -translate-x-1/2 whitespace-nowrap rounded-md border border-border bg-surface/90 px-2.5 py-1 text-xs text-text-secondary">
-            No basemap: facilities are shown at their coordinates
+            {t("No basemap: facilities are shown at their coordinates")}
           </p>
         )}
       </div>
@@ -668,8 +669,8 @@ const EmissionsMap: React.FC = () => {
           type="button"
           className="pointer-events-auto absolute -right-9 top-3.5 flex h-11 w-9 cursor-pointer items-center justify-center rounded-r-md border border-l-0 border-border bg-surface text-brand-700 shadow-md hover:bg-ink-50"
           onClick={() => setIsDrawerOpen(!isDrawerOpen)}
-          title={isDrawerOpen ? "Collapse drawer" : "Expand drawer"}
-          aria-label={isDrawerOpen ? "Collapse drawer" : "Expand drawer"}
+          title={isDrawerOpen ? t("Collapse drawer") : t("Expand drawer")}
+          aria-label={isDrawerOpen ? t("Collapse drawer") : t("Expand drawer")}
         >
           {isDrawerOpen ? <ChevronLeft className="size-4" aria-hidden="true" /> : <ChevronRight className="size-4" aria-hidden="true" />}
         </button>

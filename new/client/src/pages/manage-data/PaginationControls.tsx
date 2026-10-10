@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { Button } from "../../ui";
+import { t } from "../../i18n";
 
 export interface PaginationControlsProps {
   currentPage: number;
@@ -25,13 +26,13 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
   return (
     <div className="mt-4 flex items-center justify-between border-t border-border py-4">
       <Button variant="ghost" size="sm" disabled={currentPage <= 1} onClick={() => onPageChange(currentPage - 1)}>
-        Previous
+        {t("Previous")}
       </Button>
       <span className="text-sm text-text-secondary">
-        Page {currentPage} of {totalPages}
+        {t("Page")}{" "}{currentPage}{" "}{t("of")}{" "}{totalPages}
       </span>
       <Button variant="ghost" size="sm" disabled={currentPage >= totalPages} onClick={() => onPageChange(currentPage + 1)}>
-        Next
+        {t("Next")}
       </Button>
     </div>
   );

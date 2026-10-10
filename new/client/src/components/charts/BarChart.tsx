@@ -15,6 +15,7 @@ import {
 } from "recharts";
 import { ChartExport } from "./ChartExport";
 import "./ChartWrappers.css";
+import { t } from "../../i18n";
 
 const MODERN_BAR_PALETTE = [
   "var(--color-brand-500)",
@@ -157,7 +158,7 @@ export const BarChart: React.FC<BarChartProps> = ({
           <div className="tooltip-header">
             <span className="tooltip-label">{label}</span>
             <span className="tooltip-badge">
-              {payload.length} {payload.length === 1 ? "value" : "breakdowns"}
+              {payload.length} {payload.length === 1 ? t("value") : t("breakdowns")}
             </span>
           </div>
           <div className="tooltip-items-list">
@@ -244,7 +245,7 @@ export const BarChart: React.FC<BarChartProps> = ({
               <line x1="6" y1="20" x2="6" y2="16" />
             </svg>
           </div>
-          <span>No benchmark data available</span>
+          <span>{t("No benchmark data available")}</span>
         </div>
       </div>
     );

@@ -1,6 +1,7 @@
 import React from "react";
 import { Input, Field } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
+import { t } from "../../i18n";
 
 export interface Scope1SubFormProps {
   data: Record<string, any>;
@@ -14,7 +15,7 @@ export const BlowdownForm: React.FC<Scope1SubFormProps> = ({ data, onChange }) =
       <div className="form-grid-2">
         <div className="input-group">
           <label>
-            Physical Volume
+            {t("Physical Volume")}
             <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
           </label>
           <div className="flex! gap-[10px]!">
@@ -22,7 +23,7 @@ export const BlowdownForm: React.FC<Scope1SubFormProps> = ({ data, onChange }) =
               type="number"
               value={data.blowdown_volume || ""}
               onChange={(e) => onChange("blowdown_volume", e.target.value)}
-              placeholder="Vessel Vol"
+              placeholder={t("Vessel Vol")}
               required
             />
             <NativeSelect
@@ -31,8 +32,8 @@ export const BlowdownForm: React.FC<Scope1SubFormProps> = ({ data, onChange }) =
               onChange={(e) => onChange("blowdown_unit", e.target.value)}
             >
               <option value="m3">m³</option>
-              <option value="ft3">ft³</option>
-              <option value="bbl">bbl</option>
+              <option value="ft3">{t("ft³")}</option>
+              <option value="bbl">{t("bbl")}</option>
             </NativeSelect>
           </div>
         </div>
@@ -41,7 +42,7 @@ export const BlowdownForm: React.FC<Scope1SubFormProps> = ({ data, onChange }) =
           className="input-group"
           label={
             <>
-              Pressure (psig)
+              {t("Pressure (psig)")}
               <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
             </>
           }
@@ -50,7 +51,7 @@ export const BlowdownForm: React.FC<Scope1SubFormProps> = ({ data, onChange }) =
             type="number"
             value={data.blowdown_pressure || ""}
             onChange={(e) => onChange("blowdown_pressure", e.target.value)}
-            placeholder="Before blowdown (psig)"
+            placeholder={t("Before blowdown (psig)")}
             required
           />
         </Field>
@@ -59,7 +60,7 @@ export const BlowdownForm: React.FC<Scope1SubFormProps> = ({ data, onChange }) =
           className="input-group"
           label={
             <>
-              Number of Events
+              {t("Number of Events")}
               <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
             </>
           }
@@ -68,7 +69,7 @@ export const BlowdownForm: React.FC<Scope1SubFormProps> = ({ data, onChange }) =
             type="number"
             value={data.blowdown_events || ""}
             onChange={(e) => onChange("blowdown_events", e.target.value)}
-            placeholder="Count"
+            placeholder={t("Count")}
             required
           />
         </Field>
@@ -77,7 +78,7 @@ export const BlowdownForm: React.FC<Scope1SubFormProps> = ({ data, onChange }) =
           className="input-group"
           label={
             <>
-              CH₄ (%)
+              {t("CH₄ (%)")}
               <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
             </>
           }
@@ -91,7 +92,7 @@ export const BlowdownForm: React.FC<Scope1SubFormProps> = ({ data, onChange }) =
           />
         </Field>
 
-        <Field className="input-group" label="Gas CO2 Content (%)">
+        <Field className="input-group" label={t("Gas CO2 Content (%)")}>
           <Input
             type="number"
             value={data.co2_content || ""}
@@ -100,21 +101,21 @@ export const BlowdownForm: React.FC<Scope1SubFormProps> = ({ data, onChange }) =
           />
         </Field>
 
-        <Field className="input-group" label="Temperature (°F)">
+        <Field className="input-group" label={t("Temperature (°F)")}>
           <Input
             type="number"
             value={data.blowdown_temp !== undefined ? data.blowdown_temp : ""}
             onChange={(e) => onChange("blowdown_temp", e.target.value)}
-            placeholder="Default: 60°F"
+            placeholder={t("Default: 60°F")}
           />
         </Field>
 
-        <Field className="input-group" label={<>Flare Efficiency (%){" "}</>}>
+        <Field className="input-group" label={<>{t("Flare Efficiency (%)")}{" "}</>}>
           <Input
             type="number"
             value={data.control_efficiency || ""}
             onChange={(e) => onChange("control_efficiency", e.target.value)}
-            placeholder="0 = Vented, 98 = Flared"
+            placeholder={t("0 = Vented, 98 = Flared")}
           />
         </Field>
       </div>

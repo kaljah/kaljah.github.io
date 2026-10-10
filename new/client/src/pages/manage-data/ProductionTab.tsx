@@ -4,6 +4,7 @@ import { NativeSelect } from "../../ui/NativeSelect";
 import CustomDropdown from "../../components/CustomDropdown";
 import { Upload } from "lucide-react";
 import PaginationControls from "./PaginationControls";
+import { t } from "../../i18n";
 
 export interface ProductionRecord {
   id: string | number;
@@ -74,9 +75,9 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
   <div className="manage-card glass-panel">
     <div className="flex! justify-between! items-start! mb-[32px]!">
       <div>
-        <h2 className="mb-[8px]! font-bold!">Annual Production Records</h2>
+        <h2 className="mb-[8px]! font-bold!">{t("Annual Production Records")}</h2>
         <p className="text-[color:var(--text-secondary)]! m-[0px]!">
-          Manage annual production data for emission intensity reporting.
+          {t("Manage annual production data for emission intensity reporting.")}
         </p>
       </div>
       <button
@@ -84,7 +85,7 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
         onClick={() => setImportModal({ isOpen: true, type: "production" })}
        
       >
-        <Upload size={16} /> Bulk Import (CSV)
+        <Upload size={16} />{" "}{t("Bulk Import (CSV)")}
       </button>
     </div>
 
@@ -93,10 +94,10 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
         className="input-group"
         label={
           <>
-            Activity
+            {t("Activity")}
             {!isPrivileged && getAvailableActivities().length === 1 && (
               <span className="text-[length:0.65rem]! bg-[color:var(--color-legacy-dbeafe)]! text-[color:var(--color-blue-700)]! rounded-[4px]! p-[1px_5px]! font-semibold!">
-                Auto
+                {t("Auto")}
               </span>
             )}
           </>
@@ -110,7 +111,7 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
           className="component-select"
           disabled={!isPrivileged && getAvailableActivities().length === 1}
         >
-          <option value="">Select Activity</option>
+          <option value="">{t("Select Activity")}</option>
           {getAvailableActivities().map((a) => (
             <option key={a} value={a}>
               {ACTIVITY_LABELS[a] || a}
@@ -123,10 +124,10 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
         className="input-group"
         label={
           <>
-            Division
+            {t("Division")}
             {!isPrivileged && getAvailableDivisions(prodForm.activity).length === 1 && (
               <span className="text-[length:0.65rem]! bg-[color:var(--color-legacy-dbeafe)]! text-[color:var(--color-blue-700)]! rounded-[4px]! p-[1px_5px]! font-semibold!">
-                Auto
+                {t("Auto")}
               </span>
             )}
           </>
@@ -140,7 +141,7 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
           className="component-select"
           disabled={!prodForm.activity || (!isPrivileged && getAvailableDivisions(prodForm.activity).length === 1)}
         >
-          <option value="">Select Division</option>
+          <option value="">{t("Select Division")}</option>
           {getAvailableDivisions(prodForm.activity).map((d) => (
             <option key={d} value={d}>
               {d}
@@ -151,24 +152,24 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
 
       <div className="input-group">
         <label className="flex! items-center! gap-[6px]!">
-          Region
+          {t("Region")}
           {!isPrivileged &&
             facilities.filter((f) => f.activity === prodForm.activity && f.division === prodForm.division).length === 1 && (
               <span className="text-[length:0.65rem]! bg-[color:var(--color-legacy-dbeafe)]! text-[color:var(--color-blue-700)]! rounded-[4px]! p-[1px_5px]! font-semibold!">
-                Auto
+                {t("Auto")}
               </span>
             )}
         </label>
         <CustomDropdown
           options={[
-            { value: "", label: "Select Region" },
+            { value: "", label: t("Select Region") },
             ...facilities
               .filter((f) => f.activity === prodForm.activity && f.division === prodForm.division)
               .map((f) => ({ value: f.id.toString(), label: f.name, subLabel: f.field })),
           ]}
           value={prodForm.facility_id != null ? String(prodForm.facility_id) : ""}
           onChange={(val) => setProdForm({ ...prodForm, facility_id: val })}
-          placeholder="Select Region"
+          placeholder={t("Select Region")}
           disabled={
             !prodForm.division ||
             (!isPrivileged &&
@@ -177,7 +178,7 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
         />
       </div>
 
-      <Field className="input-group" label="Month">
+      <Field className="input-group" label={t("Month")}>
         <NativeSelect
           value={prodForm.month || 1}
           onChange={(e) => setProdForm({ ...prodForm, month: parseInt(e.target.value, 10) })}
@@ -191,7 +192,7 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
         </NativeSelect>
       </Field>
 
-      <Field className="input-group" label="Year">
+      <Field className="input-group" label={t("Year")}>
         <Input
           type="number"
           value={prodForm.year || ""}
@@ -203,14 +204,14 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
         {/* The converter button sits beside the label, not inside it (a label may only hold its own control). */}
         <div className="mb-2 flex items-center gap-2">
           <label htmlFor="prod-oil-amount" className="m-0!">
-            Oil ({prodForm.oil_unit || "bbl"})
+            {t("Oil (")}{prodForm.oil_unit || t("bbl")})
           </label>
           <button
             type="button"
             onClick={openOilConverter}
             className="cursor-pointer rounded-sm border-0 bg-brand-700 px-1.5 py-0.5 text-xs font-semibold text-white hover:bg-brand-800"
           >
-            Convert m³
+            {t("Convert m³")}
           </button>
         </div>
         <div className="flex! gap-[8px]!">
@@ -225,10 +226,10 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
           <NativeSelect
             value={prodForm.oil_unit || "bbl"}
             onChange={(e) => setProdForm({ ...prodForm, oil_unit: e.target.value })}
-            aria-label="Oil unit"
+            aria-label={t("Oil unit")}
             className="component-select w-[80px]!"
           >
-            <option value="bbl">bbl</option>
+            <option value="bbl">{t("bbl")}</option>
             <option value="m³">m³</option>
           </NativeSelect>
         </div>
@@ -238,14 +239,14 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
         {/* The converter button sits beside the label, not inside it (a label may only hold its own control). */}
         <div className="mb-2 flex items-center gap-2">
           <label htmlFor="prod-gas-amount" className="m-0!">
-            Gas ({prodForm.gas_unit || "mscf"})
+            {t("Gas (")}{prodForm.gas_unit || t("mscf")})
           </label>
           <button
             type="button"
             onClick={openGasConverter}
             className="cursor-pointer rounded-sm border-0 bg-brand-700 px-1.5 py-0.5 text-xs font-semibold text-white hover:bg-brand-800"
           >
-            Convert m³
+            {t("Convert m³")}
           </button>
         </div>
         <div className="flex! gap-[8px]!">
@@ -260,16 +261,16 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
           <NativeSelect
             value={prodForm.gas_unit || "mscf"}
             onChange={(e) => setProdForm({ ...prodForm, gas_unit: e.target.value })}
-            aria-label="Gas unit"
+            aria-label={t("Gas unit")}
             className="component-select w-[80px]!"
           >
-            <option value="mscf">mscf</option>
+            <option value="mscf">{t("mscf")}</option>
             <option value="m³">m³</option>
           </NativeSelect>
         </div>
       </div>
 
-      <Field className="input-group" label="Gross Gas (MMSm³)">
+      <Field className="input-group" label={t("Gross Gas (MMSm³)")}>
         <Input
           type="number"
           step="any"
@@ -279,7 +280,7 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
         />
       </Field>
 
-      <Field className="input-group" label="Gas w/o Injection (MMSm³)">
+      <Field className="input-group" label={t("Gas w/o Injection (MMSm³)")}>
         <Input
           type="number"
           step="any"
@@ -289,7 +290,7 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
         />
       </Field>
 
-      <Field className="input-group" label="Injected Gas (MMSm³)">
+      <Field className="input-group" label={t("Injected Gas (MMSm³)")}>
         <Input
           type="number"
           step="any"
@@ -299,7 +300,7 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
         />
       </Field>
 
-      <Field className="input-group" label="Crude Oil (MMBOE)">
+      <Field className="input-group" label={t("Crude Oil (MMBOE)")}>
         <Input
           type="number"
           step="any"
@@ -309,7 +310,7 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
         />
       </Field>
 
-      <Field className="input-group" label="Condensate (MMBOE)">
+      <Field className="input-group" label={t("Condensate (MMBOE)")}>
         <Input
           type="number"
           step="any"
@@ -319,7 +320,7 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
         />
       </Field>
 
-      <Field className="input-group" label="LPG (MMBOE)">
+      <Field className="input-group" label={t("LPG (MMBOE)")}>
         <Input
           type="number"
           step="any"
@@ -329,7 +330,7 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
         />
       </Field>
 
-      <Field className="input-group" label="Total Production (MMBOE)">
+      <Field className="input-group" label={t("Total Production (MMBOE)")}>
         <Input
           type="number"
           step="any"
@@ -339,7 +340,7 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
         />
       </Field>
 
-      <Field className="input-group" label="Total Saleable (MMBOE)">
+      <Field className="input-group" label={t("Total Saleable (MMBOE)")}>
         <Input
           type="number"
           step="any"
@@ -352,7 +353,7 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
 
     <div className="flex! gap-[12px]! mt-[20px]!">
       <button className="action-btn" onClick={handleSaveProduction}>
-        Save Record
+        {t("Save Record")}
       </button>
     </div>
     <div className="flex! gap-[12px]! mt-[10px]!">
@@ -360,25 +361,25 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
         className="action-btn bg-[color:var(--text-secondary)]!"
         onClick={() => exportToCSV(productionData, "production_data.csv")}
       >
-        Export CSV
+        {t("Export CSV")}
       </button>
     </div>
 
-    <div className="table-container mt-[40px]!" tabIndex={0} role="region" aria-label="Production records">
+    <div className="table-container mt-[40px]!" tabIndex={0} role="region" aria-label={t("Production records")}>
       <table className="data-table">
         <thead>
           <tr>
-            <th>Activity</th>
-            <th>Division</th>
-            <th>Region</th>
-            <th>Year</th>
-            <th>Month</th>
-            <th className="text-right!">Oil (bbl)</th>
-            <th className="text-right!">Gas (mcf)</th>
-            <th className="text-right!">Gross Gas (MMSm³)</th>
-            <th className="text-right!">Total (MMBOE)</th>
-            <th className="text-right!">Saleable (MMBOE)</th>
-            <th className="text-center!">Actions</th>
+            <th>{t("Activity")}</th>
+            <th>{t("Division")}</th>
+            <th>{t("Region")}</th>
+            <th>{t("Year")}</th>
+            <th>{t("Month")}</th>
+            <th className="text-right!">{t("Oil (bbl)")}</th>
+            <th className="text-right!">{t("Gas (mcf)")}</th>
+            <th className="text-right!">{t("Gross Gas (MMSm³)")}</th>
+            <th className="text-right!">{t("Total (MMBOE)")}</th>
+            <th className="text-right!">{t("Saleable (MMBOE)")}</th>
+            <th className="text-center!">{t("Actions")}</th>
           </tr>
         </thead>
         <tbody>
@@ -411,10 +412,10 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
                     : "-"}
                 </td>
                 <td className="text-right!">
-                  {(d.oil || 0).toLocaleString()} {d.oilUnit || "bbl"}
+                  {(d.oil || 0).toLocaleString()} {d.oilUnit || t("bbl")}
                 </td>
                 <td className="text-right!">
-                  {(d.gas || 0).toLocaleString()} {d.gasUnit || "mscf"}
+                  {(d.gas || 0).toLocaleString()} {d.gasUnit || t("mscf")}
                 </td>
                 <td className="text-right!">
                   {d.gross_gas_mmsm3 != null
@@ -436,7 +437,7 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
                     className="[background:var(--color-legacy-fee2e2)] [color:var(--color-red-700)] [border:1px_solid_var(--color-legacy-fecaca)] [&&]:[border-radius:var(--radius-md)] [cursor:pointer] [transition:all_0.2s] hover:[background:var(--color-red-700)] hover:[color:white] p-[6px_12px]! text-[length:0.8rem]!"
                     onClick={() => handleDeleteProduction(d.id)}
                   >
-                    Delete
+                    {t("Delete")}
                   </button>
                 </td>
               </tr>
@@ -444,7 +445,7 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
           {filteredProduction.length === 0 && (
             <tr>
               <td colSpan={11} className="text-center! p-[40px]! text-[color:var(--text-secondary)]!">
-                No production records found.
+                {t("No production records found.")}
               </td>
             </tr>
           )}

@@ -3,6 +3,7 @@ import { Briefcase, KeyRound, Shield, User, UserCheck, UserPlus } from "lucide-r
 import Drawer from "../../components/Drawer";
 import { NativeSelect } from "../../ui/NativeSelect";
 import type { ManagedUser } from "./UserManagementBlock";
+import { t } from "../../i18n";
 
 export interface UserFormData {
   fullName: string;
@@ -47,11 +48,11 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
   <Drawer
     isOpen={isModalOpen}
     onClose={() => setIsModalOpen(false)}
-    title={editingUser ? "Edit User Information" : "Register New User"}
+    title={editingUser ? t("Edit User Information") : t("Register New User")}
     subtitle={
       editingUser
         ? `Update profile details for ${editingUser.fullName || editingUser.email}`
-        : "Provision a new system identity and configure role access"
+        : t("Provision a new system identity and configure role access")
     }
     icon={editingUser ? UserCheck : UserPlus}
     iconColor={editingUser ? "var(--color-legacy-6366f1)" : "var(--color-brand-500)"}
@@ -65,13 +66,13 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
           <span style={S.sectionIconBadge("var(--color-legacy-6366f1)")}>
             <User size={14} />
           </span>
-          <span style={S.sectionTitle}>Profile & Identity</span>
+          <span style={S.sectionTitle}>{t("Profile & Identity")}</span>
         </div>
 
         <div className="flex! flex-col! gap-[14px]!">
           <div style={S.formGroup}>
             <label style={S.label}>
-              Full Name <span className="text-[color:var(--color-red-700)]!">*</span>
+              {t("Full Name")}{" "}<span className="text-[color:var(--color-red-700)]!">*</span>
             </label>
             <input
               id="um-modal-fullname"
@@ -82,13 +83,13 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
               }
               style={inputStyle("fullName")}
               {...focusProps("fullName")}
-              placeholder="e.g. Jane Smith"
+              placeholder={t("e.g. Jane Smith")}
             />
           </div>
 
           <div style={S.formGroup}>
             <label style={S.label}>
-              Email Address <span className="text-[color:var(--color-red-700)]!">*</span>
+              {t("Email Address")}{" "}<span className="text-[color:var(--color-red-700)]!">*</span>
             </label>
             <input
               id="um-modal-email"
@@ -99,7 +100,7 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
               }
               style={inputStyle("email")}
               {...focusProps("email")}
-              placeholder="e.g. jane.smith@company.com"
+              placeholder={t("e.g. jane.smith@company.com")}
             />
           </div>
         </div>
@@ -111,12 +112,12 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
           <span style={S.sectionIconBadge("var(--color-legacy-0ea5e9)")}>
             <Briefcase size={14} />
           </span>
-          <span style={S.sectionTitle}>Organization & Title</span>
+          <span style={S.sectionTitle}>{t("Organization & Title")}</span>
         </div>
 
         <div style={S.formRow}>
           <div style={S.formGroup}>
-            <label style={S.label}>Department</label>
+            <label style={S.label}>{t("Department")}</label>
             <input
               id="um-modal-department"
               type="text"
@@ -126,12 +127,12 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
               }
               style={inputStyle("department")}
               {...focusProps("department")}
-              placeholder="e.g. Engineering"
+              placeholder={t("e.g. Engineering")}
             />
           </div>
 
           <div style={S.formGroup}>
-            <label style={S.label}>Job Title</label>
+            <label style={S.label}>{t("Job Title")}</label>
             <input
               id="um-modal-jobtitle"
               type="text"
@@ -141,7 +142,7 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
               }
               style={inputStyle("jobTitle")}
               {...focusProps("jobTitle")}
-              placeholder="e.g. Lead Carbon Analyst"
+              placeholder={t("e.g. Lead Carbon Analyst")}
             />
           </div>
         </div>
@@ -154,13 +155,13 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
             <span style={S.sectionIconBadge("var(--color-amber-500)")}>
               <Shield size={14} />
             </span>
-            <span style={S.sectionTitle}>Access Governance & Scope</span>
+            <span style={S.sectionTitle}>{t("Access Governance & Scope")}</span>
           </div>
         </div>
 
         <div style={S.formRow}>
           <div style={S.formGroup}>
-            <label style={S.label}>System Role</label>
+            <label style={S.label}>{t("System Role")}</label>
             <NativeSelect
               id="um-modal-role"
               value={formData.role}
@@ -176,17 +177,17 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
               style={inputStyle("role")}
               {...focusProps("role")}
             >
-              <option value="user">Standard User</option>
-              <option value="superuser">Super User</option>
-              <option value="admin">Admin (All Data)</option>
-              <option value="it_manager">IT Manager</option>
+              <option value="user">{t("Standard User")}</option>
+              <option value="superuser">{t("Super User")}</option>
+              <option value="admin">{t("Admin (All Data)")}</option>
+              <option value="it_manager">{t("IT Manager")}</option>
               <option value="it">IT</option>
             </NativeSelect>
           </div>
 
           {(["user", "superuser"].includes(formData.role) || formData.location) && (
             <div style={S.formGroup}>
-              <label style={S.label}>Assigned Region</label>
+              <label style={S.label}>{t("Assigned Region")}</label>
               <NativeSelect
                 id="um-modal-region"
                 value={formData.location}
@@ -204,7 +205,7 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
                 }}
                 {...focusProps("location")}
               >
-                <option value="">— Select a Region —</option>
+                <option value="">{t("— Select a Region —")}</option>
                 {regions.map((r) => (
                   <option key={r} value={r}>
                     {r}
@@ -213,7 +214,7 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
               </NativeSelect>
               {!formData.location && (
                 <p className="text-[length:0.72rem]! text-[color:var(--color-red-700)]! mt-[4px]!">
-                  ↑ Required — choose an assigned region
+                  {t("↑ Required — choose an assigned region")}
                 </p>
               )}
             </div>
@@ -222,7 +223,7 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
 
         {editingUser && (
           <div style={{ ...S.formGroup, marginTop: "14px" }}>
-            <label style={S.label}>Account Status</label>
+            <label style={S.label}>{t("Account Status")}</label>
             <NativeSelect
               id="um-modal-status"
               value={formData.status || "active"}
@@ -232,8 +233,8 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
               style={inputStyle("status")}
               {...focusProps("status")}
             >
-              <option value="active">Active (Full Access Granted)</option>
-              <option value="disabled">Disabled (Account Suspended)</option>
+              <option value="active">{t("Active (Full Access Granted)")}</option>
+              <option value="disabled">{t("Disabled (Account Suspended)")}</option>
             </NativeSelect>
           </div>
         )}
@@ -246,12 +247,12 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
             <span style={S.sectionIconBadge("var(--color-green-500)")}>
               <KeyRound size={14} />
             </span>
-            <span style={S.sectionTitle}>Initial Credentials</span>
+            <span style={S.sectionTitle}>{t("Initial Credentials")}</span>
           </div>
 
           <div style={S.formGroup}>
             <label style={S.label}>
-              Temporary Password <span className="text-[color:var(--color-red-700)]!">*</span>
+              {t("Temporary Password")}{" "}<span className="text-[color:var(--color-red-700)]!">*</span>
             </label>
             <input
               id="um-modal-password"
@@ -270,11 +271,11 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
                     : "var(--border-color)",
               }}
               {...focusProps("password")}
-              placeholder="Minimum 10 characters"
+              placeholder={t("Minimum 10 characters")}
             />
             <div className="flex! justify-between! items-center! mt-[6px]!">
               <span className={`[font-size:0.74rem]! ${(formData.password?.length ?? 0) >= 10 ? "[color:var(--color-green-700)]!" : "[color:var(--color-ink-600)]!"}`}>
-                {(formData.password?.length ?? 0) >= 10 ? "✓ Meets minimum length requirement" : "Requires at least 10 characters"}
+                {(formData.password?.length ?? 0) >= 10 ? t("✓ Meets minimum length requirement") : t("Requires at least 10 characters")}
               </span>
               <span className={`[font-size:0.74rem]! [font-weight:600]! ${(formData.password?.length ?? 0) >= 10 ? "[color:var(--color-green-700)]!" : "[color:var(--color-red-700)]!"}`}>
                 {formData.password?.length || 0}/10 chars
@@ -300,7 +301,7 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
             (e.currentTarget.style.background = "transparent")
           }
         >
-          Cancel
+          {t("Cancel")}
         </button>
         <button
           id="um-modal-submit"
@@ -320,12 +321,12 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
           {editingUser ? (
             <span className="flex! items-center! gap-[6px]!">
               <UserCheck size={16} />
-              Save Changes
+              {t("Save Changes")}
             </span>
           ) : (
             <span className="flex! items-center! gap-[6px]!">
               <UserPlus size={16} />
-              Create User
+              {t("Create User")}
             </span>
           )}
         </button>

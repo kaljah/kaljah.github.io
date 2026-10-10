@@ -1,5 +1,6 @@
 import React from "react";
 import { Globe, Key as KeyIcon, Loader, Lock, MapPin as MapPinIcon, Search as SearchIcon, SquarePen as SquarePenIcon, Trash2 as Trash2Icon } from "lucide-react";
+import { t } from "../../i18n";
 
 export interface ManagedUser {
   id: number | string;
@@ -53,9 +54,9 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
   <div style={S.tableCard}>
     <div style={S.tableToolbar}>
       <div>
-        <p style={S.tableCardTitle}>Registered Users</p>
+        <p style={S.tableCardTitle}>{t("Registered Users")}</p>
         <p style={S.tableCardSub}>
-          {loading ? "Loading…" : `${filteredUsers.length} of ${totalUsers} users shown`}
+          {loading ? t("Loading…") : `${filteredUsers.length} of ${totalUsers} users shown`}
         </p>
       </div>
     </div>
@@ -85,7 +86,7 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
               <td colSpan={7} style={S.emptyCell}>
                 <div className="flex! flex-col! items-center! gap-[10px]!">
                   <Loader size={32} color="var(--color-brand-500)" style={{ animation: "spin 1s linear infinite" }} aria-hidden="true" />
-                  Loading users…
+                  {t("Loading users…")}
                 </div>
               </td>
             </tr>
@@ -96,7 +97,7 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
                   <span className="text-[color:var(--text-secondary)]!">
                     <SearchIcon size={32} strokeWidth={1.5} aria-hidden="true" />
                   </span>
-                  No users match the current filters.
+                  {t("No users match the current filters.")}
                 </div>
               </td>
             </tr>
@@ -166,7 +167,7 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
                       </div>
                     ) : (
                       <span className="text-[color:var(--text-secondary)]! [font-style:italic]! text-[length:0.8rem]!">
-                        Not set
+                        {t("Not set")}
                       </span>
                     )}
                   </td>
@@ -183,12 +184,12 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
                     {u.role === "admin" ? (
                       <span style={S.regionPill("var(--color-green-500)", "var(--color-green-50)", "rgba(16,185,129,.25)")}>
                         <Globe size={12} aria-hidden="true" />
-                        All Regions
+                        {t("All Regions")}
                       </span>
                     ) : u.role === "it_admin" || u.role === "it_manager" || u.role === "it" ? (
                       <span style={S.regionPill("var(--color-red-500)", "var(--color-red-50)", "rgba(239,68,68,.25)")}>
                         <Lock size={12} strokeWidth={2} aria-hidden="true" />
-                        No Data Access
+                        {t("No Data Access")}
                       </span>
                     ) : u.location ? (
                       <span style={S.regionPill("var(--color-brand-500)", "var(--color-brand-50)", "rgba(255,102,0,.25)")}>
@@ -197,7 +198,7 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
                       </span>
                     ) : (
                       <span className="text-[color:var(--text-secondary)]! [font-style:italic]! text-[length:0.8rem]!">
-                        None
+                        {t("None")}
                       </span>
                     )}
                   </td>
@@ -227,7 +228,7 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
                         id={`um-edit-btn-${u.id}`}
                         style={S.iconBtn("var(--color-legacy-6366f1)")}
                         onClick={() => handleOpenModal(u)}
-                        title="Edit User Information"
+                        title={t("Edit User Information")}
                         onMouseEnter={(e) =>
                           (e.currentTarget.style.background = "var(--color-legacy-eef2ff)")
                         }
@@ -242,7 +243,7 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
                       id={`um-reset-pwd-btn-${u.id}`}
                       style={S.iconBtn("var(--color-amber-500)")}
                       onClick={() => handleOpenResetPassword(u)}
-                      title="Modify / Reset Password"
+                      title={t("Modify / Reset Password")}
                       onMouseEnter={(e) =>
                         (e.currentTarget.style.background = "var(--color-amber-50)")
                       }
@@ -257,7 +258,7 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
                         id={`um-delete-btn-${u.id}`}
                         style={S.iconBtn("var(--color-red-500)")}
                         onClick={() => handleDelete(u.id)}
-                        title="Revoke Access"
+                        title={t("Revoke Access")}
                         onMouseEnter={(e) =>
                           (e.currentTarget.style.background = "var(--color-red-50)")
                         }

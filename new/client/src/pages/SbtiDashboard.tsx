@@ -20,6 +20,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import "./SbtiDashboard.css";
+import { t as tr } from "../i18n";
 
 interface TrajectoryRow {
   year: number | string;
@@ -292,7 +293,7 @@ const SbtiDashboard: React.FC = () => {
   ], []);
 
   if (loading && !sbtiData) {
-    return <LoadingSpinner fullScreen message="Loading SBTi Net-Zero Trajectory..." />;
+    return <LoadingSpinner fullScreen message={tr("Loading SBTi Net-Zero Trajectory...")} />;
   }
 
   const isConfigured = Boolean(sbtiData && sbtiData.has_target);
@@ -314,29 +315,29 @@ const SbtiDashboard: React.FC = () => {
       {/* Top Header */}
       <PageHeader
         className="mb-6"
-        title="SBTi & Net-Zero Trajectory"
-        description="Track corporate decarbonization against Science Based Targets initiative (SBTi) 1.5°C & Well-Below 2°C pathways per Corporate Net-Zero Standard v1.2."
+        title={tr("SBTi & Net-Zero Trajectory")}
+        description={tr("Track corporate decarbonization against Science Based Targets initiative (SBTi) 1.5°C & Well-Below 2°C pathways per Corporate Net-Zero Standard v1.2.")}
         actions={
           <>
             <SegmentedControl
-              label="Scope coverage"
+              label={tr("Scope coverage")}
               value={scopeMode}
               onChange={handleScopeModeChange}
               options={[
-                { value: "all", label: "All scopes (1+2+3)", title: "Track across all scopes (Scope 1, 2, and 3)" },
-                { value: "s1_s2", label: "Scope 1+2 (operational)", title: "Track operational emissions (Scope 1 and 2 only)" },
+                { value: "all", label: tr("All scopes (1+2+3)"), title: tr("Track across all scopes (Scope 1, 2, and 3)") },
+                { value: "s1_s2", label: tr("Scope 1+2 (operational)"), title: tr("Track operational emissions (Scope 1 and 2 only)") },
               ]}
             />
             {user?.role === "admin" && (
               <Button variant="secondary" onClick={() => setShowConfig(!showConfig)}>
                 <Sliders className="size-4" aria-hidden="true" />
-                {showConfig ? "Hide target settings" : "Configure target"}
+                {showConfig ? tr("Hide target settings") : tr("Configure target")}
               </Button>
             )}
             {isConfigured && (
               <Button variant="secondary" onClick={exportCsv}>
                 <Download className="size-4" aria-hidden="true" />
-                Export pathway CSV
+                {tr("Export pathway CSV")}
               </Button>
             )}
           </>
@@ -349,17 +350,17 @@ const SbtiDashboard: React.FC = () => {
           <div className="sbti-config-header">
             <h3>
               <Globe size={20} className="text-primary" />
-              SBTi Corporate Target Setup
+              {tr("SBTi Corporate Target Setup")}
             </h3>
             <span className="text-[length:0.85rem]! text-[color:var(--text-secondary)]!">
-              Per SBTi Corporate Net-Zero Standard v1.2 (Criteria C24 / NZ-C1)
+              {tr("Per SBTi Corporate Net-Zero Standard v1.2 (Criteria C24 / NZ-C1)")}
             </span>
           </div>
 
           <form onSubmit={handleSaveTarget}>
             <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))] [gap:16px] [align-items:flex-end]">
               <div className="sbti-form-group">
-                <label>Pathway Alignment</label>
+                <label>{tr("Pathway Alignment")}</label>
                 <div className="flex! gap-[8px]!">
                   <button
                     type="button"
@@ -373,7 +374,7 @@ const SbtiDashboard: React.FC = () => {
                       fontWeight: 600,
                     }}
                   >
-                    1.5°C (4.2% / yr)
+                    {tr("1.5°C (4.2% / yr)")}
                   </button>
                   <button
                     type="button"
@@ -387,13 +388,13 @@ const SbtiDashboard: React.FC = () => {
                       fontWeight: 600,
                     }}
                   >
-                    WB-2°C (2.5% / yr)
+                    {tr("WB-2°C (2.5% / yr)")}
                   </button>
                 </div>
               </div>
 
               <div className="sbti-form-group">
-                <label>Base Year</label>
+                <label>{tr("Base Year")}</label>
                 <input
                   type="number"
                   className="[padding:10px_14px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [background:var(--input-bg,_var(--color-ink-50))] [color:var(--text-main,_var(--color-ink-900))] [font-size:var(--text-md)] [transition:all_0.2s] focus:[outline:none] focus:[border-color:var(--primary,_var(--color-brand-500))] focus:[background:var(--card-bg,_var(--color-white))] focus:[box-shadow:0_0_0_3px_rgba(249,_115,_22,_0.1)]"
@@ -407,15 +408,15 @@ const SbtiDashboard: React.FC = () => {
 
               <div className="sbti-form-group">
                 <div className="flex! justify-between! items-center!">
-                  <label>Base Year Baseline (tCO2e)</label>
+                  <label>{tr("Base Year Baseline (tCO2e)")}</label>
                   <button
                     type="button"
                     className="[display:inline-flex] [align-items:center] [gap:5px] [padding:4px_10px] [font-size:var(--text-sm)] [font-weight:600] [border-radius:var(--radius-sm)] [background:rgba(37,_99,_235,_0.1)] [color:var(--color-blue-600)] [border:1px_solid_rgba(37,_99,_235,_0.2)] [cursor:pointer] [transition:all_0.2s] hover:[background:rgba(37,_99,_235,_0.2)] hover:[border-color:var(--color-blue-600)]"
                     onClick={handleAutoFillBaseline}
-                    title="Auto-fill with verified emissions for base year"
+                    title={tr("Auto-fill with verified emissions for base year")}
                   >
                     <Sparkles size={12} />
-                    Auto-Fill Verified
+                    {tr("Auto-Fill Verified")}
                   </button>
                 </div>
                 <input
@@ -430,7 +431,7 @@ const SbtiDashboard: React.FC = () => {
               </div>
 
               <div className="sbti-form-group">
-                <label>Net-Zero Target Year</label>
+                <label>{tr("Net-Zero Target Year")}</label>
                 <input
                   type="number"
                   className="[padding:10px_14px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [background:var(--input-bg,_var(--color-ink-50))] [color:var(--text-main,_var(--color-ink-900))] [font-size:var(--text-md)] [transition:all_0.2s] focus:[outline:none] focus:[border-color:var(--primary,_var(--color-brand-500))] focus:[background:var(--card-bg,_var(--color-white))] focus:[box-shadow:0_0_0_3px_rgba(249,_115,_22,_0.1)]"
@@ -443,7 +444,7 @@ const SbtiDashboard: React.FC = () => {
               </div>
 
               <div className="sbti-form-group">
-                <label>Annual Reduction Rate (%)</label>
+                <label>{tr("Annual Reduction Rate (%)")}</label>
                 <input
                   type="number"
                   step="0.1"
@@ -463,7 +464,7 @@ const SbtiDashboard: React.FC = () => {
                   disabled={savingTarget}
                 >
                   <Save size={16} />
-                  {savingTarget ? "Saving Target..." : "Save SBTi Target"}
+                  {savingTarget ? tr("Saving Target...") : tr("Save SBTi Target")}
                 </button>
               </div>
             </div>
@@ -475,7 +476,7 @@ const SbtiDashboard: React.FC = () => {
       <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(240px,_1fr))] [gap:18px]">
         <div className="[padding:22px_24px] [border-radius:var(--radius-lg)] [background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [display:flex] [flex-direction:column] [justify-content:space-between] [position:relative] [overflow:hidden] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated,_0_8px_24px_rgba(0,_0,_0,_0.08))] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:4px] before:[height:100%] before:[background:var(--primary,_var(--color-brand-500))] before:[border-radius:var(--radius-sm)_0_0_var(--radius-sm)] [&.success::before]:[background:var(--color-green-500)] [&&]:[&.warning::before]:[background:var(--color-amber-500)] [&&]:[&&]:[&.info::before]:[background:var(--color-blue-500)] [&&]:[&&]:[&&]:[&.neutral::before]:[background:var(--color-ink-400)]">
           <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
-            <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.05em]">Base Year Baseline</span>
+            <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.05em]">{tr("Base Year Baseline")}</span>
             <div className="[width:36px] [height:36px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [background:rgba(249,_115,_22,_0.1)] [color:var(--color-link)] [&.success]:[background:rgba(16,_185,_129,_0.1)] [&.success]:[color:var(--color-green-700)] [&&]:[&.warning]:[background:rgba(245,_158,_11,_0.1)] [&&]:[&.warning]:[color:var(--color-amber-700)] [&&]:[&&]:[&.info]:[background:rgba(59,_130,_246,_0.1)] [&&]:[&&]:[&.info]:[color:var(--color-blue-700)] [&&]:[&&]:[&&]:[&.neutral]:[background:rgba(148,_163,_184,_0.15)] [&&]:[&&]:[&&]:[&.neutral]:[color:var(--color-ink-500)]">
               <Calendar size={18} />
             </div>
@@ -485,13 +486,13 @@ const SbtiDashboard: React.FC = () => {
             <span className="[font-size:var(--text-base)] [font-weight:500] [color:var(--text-secondary,_var(--color-ink-500))] [margin-left:4px]">tCO2e</span>
           </div>
           <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))] [display:flex] [align-items:center] [gap:4px]">
-            Base Year: {sbtiData?.base_year || "Not Set"}
+            {tr("Base Year:")}{" "}{sbtiData?.base_year || tr("Not Set")}
           </div>
         </div>
 
         <div className="[padding:22px_24px] [border-radius:var(--radius-lg)] [background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [display:flex] [flex-direction:column] [justify-content:space-between] [position:relative] [overflow:hidden] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated,_0_8px_24px_rgba(0,_0,_0,_0.08))] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:4px] before:[height:100%] before:[background:var(--primary,_var(--color-brand-500))] before:[border-radius:var(--radius-sm)_0_0_var(--radius-sm)] [&.success::before]:[background:var(--color-green-500)] [&&]:[&.warning::before]:[background:var(--color-amber-500)] [&&]:[&&]:[&.info::before]:[background:var(--color-blue-500)] [&&]:[&&]:[&&]:[&.neutral::before]:[background:var(--color-ink-400)] info">
           <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
-            <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.05em]">Current Year Target</span>
+            <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.05em]">{tr("Current Year Target")}</span>
             <div className="[width:36px] [height:36px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [background:rgba(249,_115,_22,_0.1)] [color:var(--color-link)] [&.success]:[background:rgba(16,_185,_129,_0.1)] [&.success]:[color:var(--color-green-700)] [&&]:[&.warning]:[background:rgba(245,_158,_11,_0.1)] [&&]:[&.warning]:[color:var(--color-amber-700)] [&&]:[&&]:[&.info]:[background:rgba(59,_130,_246,_0.1)] [&&]:[&&]:[&.info]:[color:var(--color-blue-700)] [&&]:[&&]:[&&]:[&.neutral]:[background:rgba(148,_163,_184,_0.15)] [&&]:[&&]:[&&]:[&.neutral]:[color:var(--color-ink-500)] info">
               <Target size={18} />
             </div>
@@ -511,7 +512,7 @@ const SbtiDashboard: React.FC = () => {
 
         <div className={`[padding:22px_24px] [border-radius:var(--radius-lg)] [background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [display:flex] [flex-direction:column] [justify-content:space-between] [position:relative] [overflow:hidden] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated,_0_8px_24px_rgba(0,_0,_0,_0.08))] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:4px] before:[height:100%] before:[background:var(--primary,_var(--color-brand-500))] before:[border-radius:var(--radius-sm)_0_0_var(--radius-sm)] [&.success::before]:[background:var(--color-green-500)] [&&]:[&.warning::before]:[background:var(--color-amber-500)] [&&]:[&&]:[&.info::before]:[background:var(--color-blue-500)] [&&]:[&&]:[&&]:[&.neutral::before]:[background:var(--color-ink-400)] ${isConfigured && !noData ? (isOnTrack ? "success" : "warning") : "neutral"}`}>
           <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
-            <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.05em]">Pathway Status</span>
+            <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.05em]">{tr("Pathway Status")}</span>
             <div className={`[width:36px] [height:36px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [background:rgba(249,_115,_22,_0.1)] [color:var(--color-link)] [&.success]:[background:rgba(16,_185,_129,_0.1)] [&.success]:[color:var(--color-green-700)] [&&]:[&.warning]:[background:rgba(245,_158,_11,_0.1)] [&&]:[&.warning]:[color:var(--color-amber-700)] [&&]:[&&]:[&.info]:[background:rgba(59,_130,_246,_0.1)] [&&]:[&&]:[&.info]:[color:var(--color-blue-700)] [&&]:[&&]:[&&]:[&.neutral]:[background:rgba(148,_163,_184,_0.15)] [&&]:[&&]:[&&]:[&.neutral]:[color:var(--color-ink-500)] ${isConfigured && !noData ? (isOnTrack ? "success" : "warning") : "neutral"}`}>
               {isConfigured && !noData ? (
                 isOnTrack ? <CheckCircle size={18} /> : <AlertTriangle size={18} />
@@ -522,21 +523,21 @@ const SbtiDashboard: React.FC = () => {
           </div>
           <div className="[font-size:var(--text-2xl)] [font-weight:700] [color:var(--text-main,_var(--color-ink-900))] [margin-bottom:4px]">
             <span className={`status-pill ${isConfigured && !noData ? (isOnTrack ? "on-track" : "behind") : "not-set"}`}>
-              {!isConfigured ? "NOT CONFIGURED" : noData ? "NO DATA" : isOnTrack ? "ON TRACK" : "BEHIND TARGET"}
+              {!isConfigured ? tr("NOT CONFIGURED") : noData ? tr("NO DATA") : isOnTrack ? tr("ON TRACK") : tr("BEHIND TARGET")}
             </span>
           </div>
           <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))] [display:flex] [align-items:center] [gap:4px]">
             {!isConfigured
-              ? "Set corporate baseline & targets to track alignment"
+              ? tr("Set corporate baseline & targets to track alignment")
               : noData
-                ? "No complete year of verified data in the target window"
+                ? tr("No complete year of verified data in the target window")
                 : `Reduction: ${sbtiData?.reduction_achieved_pct}% vs ${sbtiData?.base_year} baseline (progress year ${sbtiData?.latest_actual_year})`}
           </div>
         </div>
 
         <div className="[padding:22px_24px] [border-radius:var(--radius-lg)] [background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [display:flex] [flex-direction:column] [justify-content:space-between] [position:relative] [overflow:hidden] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated,_0_8px_24px_rgba(0,_0,_0,_0.08))] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:4px] before:[height:100%] before:[background:var(--primary,_var(--color-brand-500))] before:[border-radius:var(--radius-sm)_0_0_var(--radius-sm)] [&.success::before]:[background:var(--color-green-500)] [&&]:[&.warning::before]:[background:var(--color-amber-500)] [&&]:[&&]:[&.info::before]:[background:var(--color-blue-500)] [&&]:[&&]:[&&]:[&.neutral::before]:[background:var(--color-ink-400)] success">
           <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
-            <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.05em]">Net-Zero Goal ({sbtiData?.target_year || 2050})</span>
+            <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.05em]">{tr("Net-Zero Goal (")}{sbtiData?.target_year || 2050})</span>
             <div className="[width:36px] [height:36px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [background:rgba(249,_115,_22,_0.1)] [color:var(--color-link)] [&.success]:[background:rgba(16,_185,_129,_0.1)] [&.success]:[color:var(--color-green-700)] [&&]:[&.warning]:[background:rgba(245,_158,_11,_0.1)] [&&]:[&.warning]:[color:var(--color-amber-700)] [&&]:[&&]:[&.info]:[background:rgba(59,_130,_246,_0.1)] [&&]:[&&]:[&.info]:[color:var(--color-blue-700)] [&&]:[&&]:[&&]:[&.neutral]:[background:rgba(148,_163,_184,_0.15)] [&&]:[&&]:[&&]:[&.neutral]:[color:var(--color-ink-500)] success">
               <TrendingDown size={18} />
             </div>
@@ -548,7 +549,7 @@ const SbtiDashboard: React.FC = () => {
           <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))] [display:flex] [align-items:center] [gap:4px]">
             {isConfigured
               ? `Residual Floor: ${formatNumber(sbtiData?.residual_floor || 0, 0)} tCO2e (10% Cap)`
-              : "Linear Rate: 4.2% per year"}
+              : tr("Linear Rate: 4.2% per year")}
           </div>
         </div>
       </div>
@@ -558,9 +559,9 @@ const SbtiDashboard: React.FC = () => {
         <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [&&]:[border-radius:var(--radius-lg)] [padding:24px] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[border-color:var(--border-color-hover,_rgba(255,_255,_255,_0.95))]">
           <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:18px]">
             <div>
-              <h3 className="[font-size:var(--text-lg)] [font-weight:700] [color:var(--text-main,_var(--color-ink-900))] [margin-bottom:2px]">{sbtiData?.pathway_label || "Decarbonization Pathway"}</h3>
+              <h3 className="[font-size:var(--text-lg)] [font-weight:700] [color:var(--text-main,_var(--color-ink-900))] [margin-bottom:2px]">{sbtiData?.pathway_label || tr("Decarbonization Pathway")}</h3>
               <p className="[font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-500))]">
-                Linear reduction trajectory from base year {sbtiData?.base_year || 2024} to target year {sbtiData?.target_year || 2050} (Residual emissions capped at 10% per NZ-C1)
+                {tr("Linear reduction trajectory from base year")}{" "}{sbtiData?.base_year || 2024}{" "}{tr("to target year")}{" "}{sbtiData?.target_year || 2050}{" "}{tr("(Residual emissions capped at 10% per NZ-C1)")}
               </p>
             </div>
           </div>
@@ -575,7 +576,7 @@ const SbtiDashboard: React.FC = () => {
               />
             ) : (
               <div className="flex! justify-center! items-center! h-full! text-[color:var(--color-ink-600)]!">
-                No trajectory configured. Click "Configure Target" to set baseline and targets.
+                {tr("No trajectory configured. Click \"Configure Target\" to set baseline and targets.")}
               </div>
             )}
           </div>
@@ -584,9 +585,9 @@ const SbtiDashboard: React.FC = () => {
         <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [&&]:[border-radius:var(--radius-lg)] [padding:24px] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[border-color:var(--border-color-hover,_rgba(255,_255,_255,_0.95))]">
           <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:18px]">
             <div>
-              <h3 className="[font-size:var(--text-lg)] [font-weight:700] [color:var(--text-main,_var(--color-ink-900))] [margin-bottom:2px]">Emissions Composition by Scope</h3>
+              <h3 className="[font-size:var(--text-lg)] [font-weight:700] [color:var(--text-main,_var(--color-ink-900))] [margin-bottom:2px]">{tr("Emissions Composition by Scope")}</h3>
               <p className="[font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-500))]">
-                Verified Scope 1, Scope 2, and Scope 3 breakdown
+                {tr("Verified Scope 1, Scope 2, and Scope 3 breakdown")}
               </p>
             </div>
           </div>
@@ -601,7 +602,7 @@ const SbtiDashboard: React.FC = () => {
               />
             ) : (
               <div className="flex! justify-center! items-center! h-full! text-[color:var(--color-ink-600)]!">
-                No verified emissions history available.
+                {tr("No verified emissions history available.")}
               </div>
             )}
           </div>
@@ -612,27 +613,27 @@ const SbtiDashboard: React.FC = () => {
       <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [&&]:[border-radius:var(--radius-lg)] [padding:24px] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[border-color:var(--border-color-hover,_rgba(255,_255,_255,_0.95))]">
         <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:18px]">
           <div>
-            <h3 className="[font-size:var(--text-lg)] [font-weight:700] [color:var(--text-main,_var(--color-ink-900))] [margin-bottom:2px]">Annual Pathway Milestones & Verification Data</h3>
+            <h3 className="[font-size:var(--text-lg)] [font-weight:700] [color:var(--text-main,_var(--color-ink-900))] [margin-bottom:2px]">{tr("Annual Pathway Milestones & Verification Data")}</h3>
             <p className="[font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-500))]">
-              Yearly comparison of targets, actual emissions, and progress towards net-zero alignment ({scopeMode === "s1_s2" ? "Scope 1+2 Operational View" : "All Scopes View"})
+              {tr("Yearly comparison of targets, actual emissions, and progress towards net-zero alignment (")}{scopeMode === "s1_s2" ? tr("Scope 1+2 Operational View") : tr("All Scopes View")})
             </p>
           </div>
         </div>
 
-        <div className="[overflow-x:auto] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [background:var(--bg-card,_rgba(255,_255,_255,_0.6))] [backdrop-filter:blur(8px)]" tabIndex={0} role="region" aria-label="Pathway table">
+        <div className="[overflow-x:auto] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [background:var(--bg-card,_rgba(255,_255,_255,_0.6))] [backdrop-filter:blur(8px)]" tabIndex={0} role="region" aria-label={tr("Pathway table")}>
           <table className="sbti-table">
             <thead>
               <tr>
-                <th>Year</th>
-                <th>SBTi Target</th>
-                <th>BAU Projection</th>
-                <th>Actual Emissions</th>
-                <th>Scope 1</th>
-                <th>Scope 2</th>
-                <th>Scope 3</th>
-                <th>Scope 1+2</th>
-                <th>Variance vs Target</th>
-                <th>Compliance Status</th>
+                <th>{tr("Year")}</th>
+                <th>{tr("SBTi Target")}</th>
+                <th>{tr("BAU Projection")}</th>
+                <th>{tr("Actual Emissions")}</th>
+                <th>{tr("Scope 1")}</th>
+                <th>{tr("Scope 2")}</th>
+                <th>{tr("Scope 3")}</th>
+                <th>{tr("Scope 1+2")}</th>
+                <th>{tr("Variance vs Target")}</th>
+                <th>{tr("Compliance Status")}</th>
               </tr>
             </thead>
             <tbody>
@@ -685,7 +686,7 @@ const SbtiDashboard: React.FC = () => {
               ) : (
                 <tr>
                   <td colSpan={10} className="text-center! p-[30px]! text-[color:var(--color-ink-600)]!">
-                    No trajectory milestone records found.
+                    {tr("No trajectory milestone records found.")}
                   </td>
                 </tr>
               )}

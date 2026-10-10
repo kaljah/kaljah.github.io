@@ -3,14 +3,15 @@ import { AlertCircle, RotateCcw, Search, Sliders, X } from "lucide-react";
 import { Badge, Button, Field, IconButton, Input, NativeSelect } from "../../ui";
 import { cn } from "../../ui/cn";
 import { activateOnKey } from "../../utils/a11yKeys";
+import { t } from "../../i18n";
 
 const selectClass = "h-9 w-full cursor-pointer rounded-md border border-border bg-surface px-2.5 text-sm text-text hover:border-ink-300 focus:border-brand-500";
 
 const SEVERITIES = [
-  { id: "all", label: "All" },
-  { id: "high", label: "Super-emitters", dot: "bg-red-500" },
-  { id: "medium", label: "Moderate", dot: "bg-amber-500" },
-  { id: "baseline", label: "Baseline", dot: "bg-green-500" },
+  { id: "all", label: t("All") },
+  { id: "high", label: t("Super-emitters"), dot: "bg-red-500" },
+  { id: "medium", label: t("Moderate"), dot: "bg-amber-500" },
+  { id: "baseline", label: t("Baseline"), dot: "bg-green-500" },
 ];
 
 const DOT: Record<string, string> = {
@@ -67,7 +68,7 @@ const FacilityCard: React.FC<FacilityCardProps> = ({ facility, selected, severit
         <div className="truncate text-sm font-bold text-text">{facility.name}</div>
         <div className="mt-0.5 flex items-center gap-1.5 text-xs text-text-secondary">
           {facility.region && <Badge className="px-1.5 py-0">{facility.region}</Badge>}
-          <span className="truncate">{facility.activity || facility.division || "Industrial asset"}</span>
+          <span className="truncate">{facility.activity || facility.division || t("Industrial asset")}</span>
         </div>
       </div>
     </div>
@@ -128,22 +129,22 @@ const ExplorerDrawer: React.FC<ExplorerDrawerProps> = ({
     <div className="pointer-events-auto flex size-full flex-col gap-3 overflow-hidden rounded-lg border border-border bg-surface/95 p-3.5 shadow-lg backdrop-blur-lg">
       <div className="flex items-center justify-between">
         <h2 className="m-0 flex items-center gap-2 text-md font-bold text-text">
-          <Sliders className="size-4 text-brand-500" aria-hidden="true" /> Assets
+          <Sliders className="size-4 text-brand-500" aria-hidden="true" />{" "}{t("Assets")}
         </h2>
-        <Badge tone="brand">{count} assets</Badge>
+        <Badge tone="brand">{count}{" "}{t("assets")}</Badge>
       </div>
 
-      <Field label="Search asset / field">
+      <Field label={t("Search asset / field")}>
         <div className="relative">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-secondary" aria-hidden="true" />
           <Input
             className="h-9 pl-9 pr-8 text-sm"
-            placeholder="Search name, region, division..."
+            placeholder={t("Search name, region, division...")}
             value={filters.search}
             onChange={(e) => set({ search: e.target.value })}
           />
           {filters.search && (
-            <IconButton label="Clear search" className="absolute right-1 top-1/2 size-7 -translate-y-1/2" onClick={() => set({ search: "" })}>
+            <IconButton label={t("Clear search")} className="absolute right-1 top-1/2 size-7 -translate-y-1/2" onClick={() => set({ search: "" })}>
               <X className="size-3.5" aria-hidden="true" />
             </IconButton>
           )}
@@ -151,9 +152,9 @@ const ExplorerDrawer: React.FC<ExplorerDrawerProps> = ({
       </Field>
 
       <div className="grid grid-cols-2 gap-2">
-        <Field label="Region / basin">
+        <Field label={t("Region / basin")}>
           <NativeSelect className={selectClass} value={filters.region} onChange={(e) => set({ region: e.target.value })}>
-            <option value="all">All regions</option>
+            <option value="all">{t("All regions")}</option>
             {regions.map((r) => (
               <option key={r} value={r}>
                 {r}
@@ -161,9 +162,9 @@ const ExplorerDrawer: React.FC<ExplorerDrawerProps> = ({
             ))}
           </NativeSelect>
         </Field>
-        <Field label="Accounting year">
+        <Field label={t("Accounting year")}>
           <NativeSelect className={selectClass} value={filters.year} onChange={(e) => set({ year: e.target.value })}>
-            <option value="all">All years</option>
+            <option value="all">{t("All years")}</option>
             {years.map((y) => (
               <option key={y} value={y}>
                 {y}
@@ -173,9 +174,9 @@ const ExplorerDrawer: React.FC<ExplorerDrawerProps> = ({
         </Field>
       </div>
 
-      <Field label="Activity type">
+      <Field label={t("Activity type")}>
         <NativeSelect className={selectClass} value={filters.activity} onChange={(e) => set({ activity: e.target.value })}>
-          <option value="all">All activities</option>
+          <option value="all">{t("All activities")}</option>
           {activities.map((a) => (
             <option key={a} value={a}>
               {a}
@@ -185,8 +186,8 @@ const ExplorerDrawer: React.FC<ExplorerDrawerProps> = ({
       </Field>
 
       <fieldset className="m-0 border-0 p-0">
-        <legend className="mb-1.5 p-0 text-sm font-medium text-text">Anomaly severity</legend>
-        <div role="radiogroup" aria-label="Anomaly severity" className="grid grid-cols-2 gap-1.5">
+        <legend className="mb-1.5 p-0 text-sm font-medium text-text">{t("Anomaly severity")}</legend>
+        <div role="radiogroup" aria-label={t("Anomaly severity")} className="grid grid-cols-2 gap-1.5">
           {SEVERITIES.map((s) => {
             const on = filters.severity === s.id;
             return (
@@ -209,28 +210,28 @@ const ExplorerDrawer: React.FC<ExplorerDrawerProps> = ({
         </div>
       </fieldset>
 
-      <section className="rounded-md border border-border bg-ink-50 p-3" aria-label="Map display">
+      <section className="rounded-md border border-border bg-ink-50 p-3" aria-label={t("Map display")}>
         <CheckRow
-          label="Severity rings"
+          label={t("Severity rings")}
           tone="text-ink-700"
-          title="Symbol size by emission severity; not a modelled plume"
+          title={t("Symbol size by emission severity; not a modelled plume")}
           checked={rings}
           onChange={(e) => onRings(e.target.checked)}
         />
       </section>
 
       <div className="flex items-baseline justify-between text-xs font-bold uppercase tracking-wide text-text-secondary">
-        <span>Facility inventory</span>
-        <span className="font-normal normal-case">Click to inspect</span>
+        <span>{t("Facility inventory")}</span>
+        <span className="font-normal normal-case">{t("Click to inspect")}</span>
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pr-0.5">
         {facilities.length === 0 ? (
           <div className="flex flex-col items-center gap-2.5 px-2.5 py-8 text-center text-sm text-text-secondary">
             <AlertCircle className="size-5 text-ink-400" aria-hidden="true" />
-            <span>No assets match current reconnaissance filters.</span>
+            <span>{t("No assets match current reconnaissance filters.")}</span>
             <Button variant="secondary" size="sm" onClick={onReset}>
-              <RotateCcw className="size-3" aria-hidden="true" /> Reset all filters
+              <RotateCcw className="size-3" aria-hidden="true" />{" "}{t("Reset all filters")}
             </Button>
           </div>
         ) : (

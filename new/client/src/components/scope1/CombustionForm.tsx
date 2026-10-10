@@ -3,19 +3,20 @@ import { Input, Field } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import CustomDropdown from "../CustomDropdown";
 import { API_FACTORS } from "../../utils/EmissionFactors";
+import { t } from "../../i18n";
 
 const ALL_UNITS = [
   { value: "m3", label: "m³" },
-  { value: "scf", label: "scf" },
-  { value: "Mcf", label: "Mcf" },
-  { value: "MMscf", label: "MMscf" },
-  { value: "gal", label: "gal" },
-  { value: "bbl", label: "bbl" },
+  { value: "scf", label: t("scf") },
+  { value: "Mcf", label: t("Mcf") },
+  { value: "MMscf", label: t("MMscf") },
+  { value: "gal", label: t("gal") },
+  { value: "bbl", label: t("bbl") },
   { value: "L", label: "L" },
-  { value: "kg", label: "kg" },
-  { value: "ton", label: "ton (short)" },
-  { value: "tonne", label: "tonne (metric)" },
-  { value: "events", label: "events" },
+  { value: "kg", label: t("kg") },
+  { value: "ton", label: t("ton (short)") },
+  { value: "tonne", label: t("tonne (metric)") },
+  { value: "events", label: t("events") },
 ];
 const UNIT_FAMILIES: Record<string, string[]> = {
   gas: ["m3", "scf", "Mcf", "MMscf"],
@@ -75,12 +76,12 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
           label={
             <>
               {isFlaring
-                ? "Gas Volume Flared"
+                ? t("Gas Volume Flared")
                 : data.process_type === "loading"
-                ? "Volume Loaded"
+                ? t("Volume Loaded")
                 : data.process_type === "separation"
-                ? "Volume treated"
-                : "Quantity"}
+                ? t("Volume treated")
+                : t("Quantity")}
             </>
           }
         >
@@ -93,7 +94,7 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
         </Field>
 
         <div className="input-group">
-          <label>Unit</label>
+          <label>{t("Unit")}</label>
           <CustomDropdown
             options={unitOptions}
             value={data.unit}
@@ -116,12 +117,12 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
                 type="number"
                 value={data.hhv || ""}
                 onChange={(e) => onChange("hhv", e.target.value)}
-                placeholder={isFlaring ? "e.g. 983 (natural gas)" : "e.g. 1020 (BTU/scf)"}
+                placeholder={isFlaring ? t("e.g. 983 (natural gas)") : t("e.g. 1020 (BTU/scf)")}
                 className={`${!data.hhv ? "[border-color:var(--color-legacy-fbbf24)]!" : "[border-color:var(--color-legacy-d1fae5)]!"}`}
               />
             </div>
             <div className="input-group mb-[0px]!">
-              <label className="text-[length:0.75rem]!">HHV Unit</label>
+              <label className="text-[length:0.75rem]!">{t("HHV Unit")}</label>
               <NativeSelect
                 className="component-select"
                 value={data.hhv_unit || "BTU/scf"}
@@ -142,7 +143,7 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
           {isCombustion && (
             <div className="input-group mt-[10px]! mb-[0px]!">
               <label className="text-[length:0.75rem]!">
-                Combustion efficiency
+                {t("Combustion efficiency")}
                 <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
               </label>
               <div className="flex! gap-[8px]! items-center!">
@@ -169,20 +170,20 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
           {isFlaring && (
             <div className="form-grid-2 gap-[10px]! mt-[10px]!">
               <div className="input-group mb-[0px]!">
-                <label className="text-[length:0.75rem]!">Flare Type</label>
+                <label className="text-[length:0.75rem]!">{t("Flare Type")}</label>
                 <NativeSelect
                   className="component-select"
                   value={data.flare_type || "elevated"}
                   onChange={(e) => onChange("flare_type", e.target.value)}
                 >
-                  <option value="elevated">Elevated (2 % CH₄ unburnt)</option>
-                  <option value="enclosed_ground">Enclosed ground (0.5 % CH₄ unburnt)</option>
-                  <option value="pit">Pit / open burn (2 % CH₄ unburnt)</option>
+                  <option value="elevated">{t("Elevated (2 % CH₄ unburnt)")}</option>
+                  <option value="enclosed_ground">{t("Enclosed ground (0.5 % CH₄ unburnt)")}</option>
+                  <option value="pit">{t("Pit / open burn (2 % CH₄ unburnt)")}</option>
                 </NativeSelect>
               </div>
               <div className="input-group mb-[0px]!">
                 <label className="text-[length:0.75rem]!">
-                  CH₄ (%)
+                  {t("CH₄ (%)")}
                   <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                 </label>
                 <Input
@@ -198,7 +199,7 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
               </div>
               {/* measured efficiencies; blank = API Compendium 2021 Eq 5-2 defaults for the flare type */}
               <div className="input-group mb-[0px]!">
-                <label className="text-[length:0.75rem]!">Combustion efficiency (% carbon to CO₂)</label>
+                <label className="text-[length:0.75rem]!">{t("Combustion efficiency (% carbon to CO₂)")}</label>
                 <Input
                   id="flare-combustion-efficiency-input"
                   type="number"
@@ -207,11 +208,11 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
                   step="0.1"
                   value={data.combustion_efficiency != null ? data.combustion_efficiency : ""}
                   onChange={(e) => onChange("combustion_efficiency", e.target.value)}
-                  placeholder="blank = 98"
+                  placeholder={t("blank = 98")}
                 />
               </div>
               <div className="input-group mb-[0px]!">
-                <label className="text-[length:0.75rem]!">Destruction efficiency (% CH₄ destroyed)</label>
+                <label className="text-[length:0.75rem]!">{t("Destruction efficiency (% CH₄ destroyed)")}</label>
                 <Input
                   id="flare-destruction-efficiency-input"
                   type="number"
@@ -220,7 +221,7 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
                   step="0.1"
                   value={data.destruction_efficiency != null ? data.destruction_efficiency : ""}
                   onChange={(e) => onChange("destruction_efficiency", e.target.value)}
-                  placeholder={(data.flare_type || "elevated") === "enclosed_ground" ? "blank = 99.5" : "blank = 98"}
+                  placeholder={(data.flare_type || "elevated") === "enclosed_ground" ? t("blank = 99.5") : t("blank = 98")}
                 />
               </div>
             </div>
@@ -230,7 +231,7 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
               converted to standard conditions (scf and Sm3 are already standard) */}
           <div className="form-grid-2 gap-[10px]! mt-[10px]!">
             <div className="input-group mb-[0px]!">
-              <label className="text-[length:0.75rem]!">Operating Temp (°F)</label>
+              <label className="text-[length:0.75rem]!">{t("Operating Temp (°F)")}</label>
               <Input
                 type="number"
                 value={data.operating_temperature !== undefined ? data.operating_temperature : ""}
@@ -238,11 +239,11 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
                   onChange("operating_temperature", e.target.value);
                   onChange("temp_unit", "F"); // the unit shown on the label
                 }}
-                placeholder="Def: 60°F"
+                placeholder={t("Def: 60°F")}
               />
             </div>
             <div className="input-group mb-[0px]!">
-              <label className="text-[length:0.75rem]!">Pressure (psia)</label>
+              <label className="text-[length:0.75rem]!">{t("Pressure (psia)")}</label>
               <Input
                 type="number"
                 value={data.operating_pressure !== undefined ? data.operating_pressure : ""}
@@ -250,7 +251,7 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
                   onChange("operating_pressure", e.target.value);
                   onChange("press_unit", "psia"); // the unit shown on the label
                 }}
-                placeholder="Def: 14.696"
+                placeholder={t("Def: 14.696")}
               />
             </div>
           </div>

@@ -1,6 +1,7 @@
 import React from "react";
 import { Input, Field } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
+import { t } from "../../i18n";
 
 export interface Scope1SubFormProps {
   data: Record<string, any>;
@@ -13,7 +14,7 @@ export const AGRForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceTy
     <div className="agr-form">
       <div className="input-group">
         <label>
-          Inlet (sour) gas throughput
+          {t("Inlet (sour) gas throughput")}
           <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
         </label>
         <div className="grid gap-[10px] [grid-template-columns:1fr_130px] max-[600px]:[grid-template-columns:1fr]">
@@ -21,13 +22,13 @@ export const AGRForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceTy
             type="number"
             value={data.agr_throughput || ""}
             onChange={(e) => onChange("agr_throughput", e.target.value)}
-            placeholder="Volume"
+            placeholder={t("Volume")}
             required
           />
           <CustomDropdown
             options={[
               { value: "MMscf/yr", label: "MMscf/yr" },
-              { value: "MMscf/day", label: "MMscfd" },
+              { value: "MMscf/day", label: t("MMscfd") },
               { value: "Mcf/day", label: "Mcf/day" },
               { value: "m3/yr", label: "m³/yr" },
             ]}
@@ -40,14 +41,14 @@ export const AGRForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceTy
       {sourceType === "specific" && (
         <>
           <div className="input-group">
-            <label>Solvent</label>
+            <label>{t("Solvent")}</label>
             <CustomDropdown
               options={[
-                { value: "MEA", label: "Monoethanolamine (MEA)" },
-                { value: "DEA", label: "Diethanolamine (DEA)" },
-                { value: "MDEA", label: "Methyldiethanolamine (MDEA)" },
-                { value: "DGA", label: "Diglycolamine (DGA)" },
-                { value: "Sulfinol", label: "Sulfinol" },
+                { value: "MEA", label: t("Monoethanolamine (MEA)") },
+                { value: "DEA", label: t("Diethanolamine (DEA)") },
+                { value: "MDEA", label: t("Methyldiethanolamine (MDEA)") },
+                { value: "DGA", label: t("Diglycolamine (DGA)") },
+                { value: "Sulfinol", label: t("Sulfinol") },
               ]}
               value={data.solvent_type || "MDEA"}
               onChange={(val) => onChange("solvent_type", val)}
@@ -58,7 +59,7 @@ export const AGRForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceTy
             className="input-group"
             label={
               <>
-                Inlet CO2 (%)
+                {t("Inlet CO2 (%)")}
                 <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
               </>
             }
@@ -76,7 +77,7 @@ export const AGRForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceTy
             className="input-group"
             label={
               <>
-                Outlet CO2 (%)
+                {t("Outlet CO2 (%)")}
                 <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
               </>
             }
@@ -90,7 +91,7 @@ export const AGRForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceTy
             />
           </Field>
 
-          <Field className="input-group" label="CH₄ (%)">
+          <Field className="input-group" label={t("CH₄ (%)")}>
             <Input
               type="number"
               value={data.ch4_mole_pct !== undefined && data.ch4_mole_pct !== null ? data.ch4_mole_pct : ""}
@@ -99,7 +100,7 @@ export const AGRForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceTy
             />
           </Field>
 
-          <Field className="input-group" label="CH₄ slip (fraction of inlet CH₄)">
+          <Field className="input-group" label={t("CH₄ slip (fraction of inlet CH₄)")}>
             <Input
               type="number"
               value={
@@ -108,7 +109,7 @@ export const AGRForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceTy
                   : ""
               }
               onChange={(e) => onChange("methane_slip_factor", e.target.value)}
-              placeholder="blank = Compendium factor"
+              placeholder={t("blank = Compendium factor")}
               step="any"
             />
           </Field>
@@ -116,14 +117,14 @@ export const AGRForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceTy
           {/* BUG-090: the old "flash gas recycled" / "routed to flare" checkboxes were read by no
               server code. Control is now sent as the keys the calculator uses. */}
           <div className="input-group">
-            <label>Offgas control</label>
+            <label>{t("Offgas control")}</label>
             <CustomDropdown
               options={[
-                { value: "vent", label: "Vented (uncontrolled)" },
-                { value: "flare", label: "Routed to flare" },
-                { value: "thermal_oxidizer", label: "Thermal oxidizer / incinerator" },
-                { value: "claus", label: "Claus sulfur recovery unit" },
-                { value: "agi", label: "Acid gas injection / CCS" },
+                { value: "vent", label: t("Vented (uncontrolled)") },
+                { value: "flare", label: t("Routed to flare") },
+                { value: "thermal_oxidizer", label: t("Thermal oxidizer / incinerator") },
+                { value: "claus", label: t("Claus sulfur recovery unit") },
+                { value: "agi", label: t("Acid gas injection / CCS") },
               ]}
               value={data.agr_control_type || "vent"}
               onChange={(val) => onChange("agr_control_type", val)}
@@ -134,7 +135,7 @@ export const AGRForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceTy
               className="input-group"
               label={
                 <>
-                  Control Efficiency (%)
+                  {t("Control Efficiency (%)")}
                   <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                 </>
               }

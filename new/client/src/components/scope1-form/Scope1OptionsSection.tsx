@@ -1,6 +1,7 @@
 import React from "react";
 import { Input } from "../../ui";
 import { MoreOptions, Section } from "../scope1/ui";
+import { t } from "../../i18n";
 
 export interface Scope1OptionsSectionProps {
   gcUncertaintyPct: string | number;
@@ -43,17 +44,17 @@ export const Scope1OptionsSection: React.FC<Scope1OptionsSectionProps> = ({
   uncertainty,
   userUncertainty,
 }) => (
-  <Section n={3} title="Activity Data">
+  <Section n={3} title={t("Activity Data")}>
     <div className="s1-inputs">{renderSpecificForm()}</div>
-    <MoreOptions label="Uncertainty">
+    <MoreOptions label={t("Uncertainty")}>
       <div className="form-grid-3">
         {sourceType === "specific" && (
           <div className="input-group [grid-column:span_3]! [margin-bottom:8px]!">
-            <label>Measurement Instrumentation Precision</label>
+            <label>{t("Measurement Instrumentation Precision")}</label>
             <div className="flex! gap-[8px]! flex-wrap!">
               <div className="flex-1! p-[8px_12px]! bg-[color:var(--color-legacy-f3f4f6)]! rounded-[6px]! [border:1px_solid_var(--color-legacy-e5e7eb)]! flex! justify-between! items-center!">
                 <span className="text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]!">
-                  Meter Calibration Tolerance
+                  {t("Meter Calibration Tolerance")}
                 </span>
                 <div className="flex! items-center!">
                   <span className="text-[length:0.85rem]! text-[color:var(--color-legacy-9ca3af)]! mr-[2px]!">±</span>
@@ -70,14 +71,14 @@ export const Scope1OptionsSection: React.FC<Scope1OptionsSectionProps> = ({
               </div>
               <div className="flex-1! p-[8px_12px]! bg-[color:var(--color-legacy-f3f4f6)]! rounded-[6px]! [border:1px_solid_var(--color-legacy-e5e7eb)]! flex! justify-between! items-center!">
                 <span className="text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]!">
-                  GC Analytical Precision
+                  {t("GC Analytical Precision")}
                 </span>
                 <div className="flex! items-center!">
                   <span className="text-[length:0.85rem]! text-[color:var(--color-legacy-9ca3af)]! mr-[2px]!">±</span>
                   <Input
                     type="number"
                     className="w-[55px]! p-[2px_4px]! text-[length:0.85rem]! text-right!"
-                    placeholder="Opt."
+                    placeholder={t("Opt.")}
                     value={gcUncertaintyPct}
                     onChange={(e) => setGcUncertaintyPct(e.target.value)}
                     step="0.1"
@@ -90,10 +91,10 @@ export const Scope1OptionsSection: React.FC<Scope1OptionsSectionProps> = ({
           </div>
         )}
         <div className="input-group [grid-column:span_3]!">
-          <label>Emission Factor / Direct Measurement Uncertainty Override (±%)</label>
+          <label>{t("Emission Factor / Direct Measurement Uncertainty Override (±%)")}</label>
           <div className="flex! gap-[8px]! flex-wrap!">
             <div className="flex-1! p-[8px_12px]! bg-[color:var(--color-legacy-f3f4f6)]! rounded-[6px]! [border:1px_solid_var(--color-legacy-e5e7eb)]! flex! justify-between! items-center!">
-              <span className="text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]!">CO₂</span>
+              <span className="text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]!">{t("CO₂")}</span>
               {sourceType === "specific" ? (
                 <div className="flex! items-center!">
                   <span className="text-[length:0.85rem]! text-[color:var(--color-legacy-9ca3af)]! mr-[2px]!">±</span>
@@ -120,7 +121,7 @@ export const Scope1OptionsSection: React.FC<Scope1OptionsSectionProps> = ({
               )}
             </div>
             <div className="flex-1! p-[8px_12px]! bg-[color:var(--color-legacy-f3f4f6)]! rounded-[6px]! [border:1px_solid_var(--color-legacy-e5e7eb)]! flex! justify-between! items-center!">
-              <span className="text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]!">CH₄</span>
+              <span className="text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]!">{t("CH₄")}</span>
               {sourceType === "specific" ? (
                 <div className="flex! items-center!">
                   <span className="text-[length:0.85rem]! text-[color:var(--color-legacy-9ca3af)]! mr-[2px]!">±</span>

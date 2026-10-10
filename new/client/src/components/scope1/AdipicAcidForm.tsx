@@ -1,11 +1,12 @@
 import React, { useEffect } from "react";
 import { Input } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
+import { t } from "../../i18n";
 
 const ADIPIC_ACID_OPTIONS = [
-  { value: "Adipic Acid - Thermal Abatement", label: "Thermal Abatement (13.0 kg N₂O/t)" },
-  { value: "Adipic Acid - Catalytic Abatement", label: "Catalytic Abatement (53.0 kg N₂O/t)" },
-  { value: "Adipic Acid - Uncontrolled", label: "Uncontrolled (300.0 kg N₂O/t)" },
+  { value: "Adipic Acid - Thermal Abatement", label: t("Thermal Abatement (13.0 kg N₂O/t)") },
+  { value: "Adipic Acid - Catalytic Abatement", label: t("Catalytic Abatement (53.0 kg N₂O/t)") },
+  { value: "Adipic Acid - Uncontrolled", label: t("Uncontrolled (300.0 kg N₂O/t)") },
 ];
 
 export interface Scope1SubFormProps {
@@ -26,20 +27,20 @@ export const AdipicAcidForm: React.FC<Scope1SubFormProps> = ({ data, onChange })
       <div className="form-grid-2">
         <div className="input-group">
           <label>
-            Abatement Technology
+            {t("Abatement Technology")}
             <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
           </label>
           <CustomDropdown
             options={ADIPIC_ACID_OPTIONS}
             value={data.fuel || "Adipic Acid - Thermal Abatement"}
             onChange={(val) => onChange("fuel", val)}
-            placeholder="Select Abatement..."
+            placeholder={t("Select Abatement...")}
           />
         </div>
 
         <div className="input-group">
           <label>
-            Production Quantity
+            {t("Production Quantity")}
             <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
           </label>
           <div className="grid gap-[10px] [grid-template-columns:1fr_120px] max-[600px]:[grid-template-columns:1fr]">
@@ -52,9 +53,9 @@ export const AdipicAcidForm: React.FC<Scope1SubFormProps> = ({ data, onChange })
             />
             <CustomDropdown
               options={[
-                { value: "tonne", label: "tonne Adipic Acid" },
-                { value: "ton", label: "short ton" },
-                { value: "kg", label: "kg" },
+                { value: "tonne", label: t("tonne Adipic Acid") },
+                { value: "ton", label: t("short ton") },
+                { value: "kg", label: t("kg") },
               ]}
               value={data.unit || "tonne"}
               onChange={(val) => onChange("unit", val)}

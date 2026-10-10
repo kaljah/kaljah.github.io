@@ -1,6 +1,7 @@
 import React from "react";
 import { AlertTriangle, CheckCircle, Compass, Flame, Wind } from "lucide-react";
 import { formatNumber } from "../../utils/formatters";
+import { t } from "../../i18n";
 
 export interface MethaneIntensityStats {
   ogmpGoldStatus?: string;
@@ -41,12 +42,12 @@ const MethaneIntensityMethaneIntensity: React.FC<MethaneIntensityMethaneIntensit
       <div className="flex! flex-wrap! items-center! gap-[16px]!">
         <h2 className="grid-title">
           <Wind size={24} color="var(--accent-secondary)" />
-          Methane Intensity & Loss Rate Analytics
+          {t("Methane Intensity & Loss Rate Analytics")}
         </h2>
         <div
           className="year-badge whitespace-nowrap [background:rgba(255,_102,_0,_0.1)] [padding:6px_16px] [border-radius:9999px] [font-size:var(--text-base)] [font-weight:600] [border:1px_solid_rgba(255,_102,_0,_0.2)] bg-[color:rgba(37,_99,_235,_0.1)]! text-[color:var(--color-blue-600)]! [&&]:[border-color:rgba(37,_99,_235,_0.2)]!"
         >
-          {selectedYear === "all" ? "All-Time" : selectedYear} Performance
+          {selectedYear === "all" ? t("All-Time") : selectedYear}{" "}{t("Performance")}
         </div>
       </div>
 
@@ -91,9 +92,9 @@ const MethaneIntensityMethaneIntensity: React.FC<MethaneIntensityMethaneIntensit
           <AlertTriangle size={16} />
         )}
         <span>
-          OGMP 2.0 Targets: {stats.ogmpGoldStatus}{" "}
+          {t("OGMP 2.0 Targets:")}{" "}{stats.ogmpGoldStatus}{" "}
           {stats.ogmpGoldStatus === "Pending Production"
-            ? "(Gas production figures required)"
+            ? t("(Gas production figures required)")
             : `(≤${upstreamTargetPct.toFixed(2)}% Upstream / ≤${midstreamTargetPct.toFixed(2)}% Midstream)`}
         </span>
       </div>
@@ -106,18 +107,18 @@ const MethaneIntensityMethaneIntensity: React.FC<MethaneIntensityMethaneIntensit
           <div className="kpi-icon ch4">
             <Wind size={20} />
           </div>
-          <span className="kpi-label">Methane Intensity (Avg)</span>
+          <span className="kpi-label">{t("Methane Intensity (Avg)")}</span>
         </div>
         <div className="[display:flex] [align-items:baseline] [gap:8px]">
           <span className="total-value ch4">
             {(stats.avgCh4Intensity ?? 0).toFixed(4)}
           </span>
-          <span className="kpi-unit">kg CH₄ / BOE</span>
+          <span className="kpi-unit">{t("kg CH₄ / BOE")}</span>
         </div>
         <div className="kpi-footer">
           <span>
-            Total CH₄:{" "}
-            <strong>{formatNumber(stats.totalCh4Emissions ?? 0)} tCH₄</strong>
+            {t("Total CH₄:")}{" "}
+            <strong>{formatNumber(stats.totalCh4Emissions ?? 0)}{" "}{t("tCH₄")}</strong>
           </span>
         </div>
       </div>
@@ -131,9 +132,9 @@ const MethaneIntensityMethaneIntensity: React.FC<MethaneIntensityMethaneIntensit
           </div>
           <span
             className="kpi-label"
-            title="CH4 volume emitted / gas produced (OGMP 2.0). Reports also give the NGSI intensity, a mass ratio (wt %), which reads lower."
+            title={t("CH4 volume emitted / gas produced (OGMP 2.0). Reports also give the NGSI intensity, a mass ratio (wt %), which reads lower.")}
           >
-            Methane Loss Rate (vol. %)
+            {t("Methane Loss Rate (vol. %)")}
           </span>
         </div>
         <div className="[display:flex] [align-items:baseline] [gap:8px]">
@@ -152,13 +153,13 @@ const MethaneIntensityMethaneIntensity: React.FC<MethaneIntensityMethaneIntensit
             }}
           >
             {stats.totalGasProductionM3 === 0 && (stats.totalCh4Emissions ?? 0) > 0
-              ? "Pending Prod."
+              ? t("Pending Prod.")
               : `${(stats.avgMethaneLossRatePct ?? 0).toFixed(3)}%`}
           </span>
           <span className="kpi-unit">
             {stats.totalGasProductionM3 === 0 && (stats.totalCh4Emissions ?? 0) > 0
-              ? "Gas prod. required"
-              : "Overall Avg"}
+              ? t("Gas prod. required")
+              : t("Overall Avg")}
           </span>
         </div>
 
@@ -170,7 +171,7 @@ const MethaneIntensityMethaneIntensity: React.FC<MethaneIntensityMethaneIntensit
             <div
               className="text-[length:0.7rem]! text-[color:var(--text-secondary)]! uppercase! [letter-spacing:0.5px]! font-semibold!"
             >
-              Upstream
+              {t("Upstream")}
             </div>
             <div
               style={{
@@ -185,13 +186,13 @@ const MethaneIntensityMethaneIntensity: React.FC<MethaneIntensityMethaneIntensit
               }}
             >
               {stats.upstreamGasM3 === 0 && (stats.upstreamCh4Tonnes ?? 0) > 0
-                ? "Pending Prod."
+                ? t("Pending Prod.")
                 : `${(stats.upstreamLossRatePct ?? 0).toFixed(3)}%`}
             </div>
             <div
               className="text-[length:0.68rem]! text-[color:var(--text-secondary)]!"
             >
-              Target &le; {upstreamTargetPct.toFixed(2)}%
+              {t("Target ≤")}{" "}{upstreamTargetPct.toFixed(2)}%
             </div>
           </div>
 
@@ -201,7 +202,7 @@ const MethaneIntensityMethaneIntensity: React.FC<MethaneIntensityMethaneIntensit
             <div
               className="text-[length:0.7rem]! text-[color:var(--text-secondary)]! uppercase! [letter-spacing:0.5px]! font-semibold!"
             >
-              Midstream
+              {t("Midstream")}
             </div>
             <div
               style={{
@@ -216,26 +217,26 @@ const MethaneIntensityMethaneIntensity: React.FC<MethaneIntensityMethaneIntensit
               }}
             >
               {stats.midstreamGasM3 === 0 && (stats.midstreamCh4Tonnes ?? 0) > 0
-                ? "Pending Prod."
+                ? t("Pending Prod.")
                 : `${(stats.midstreamLossRatePct ?? 0).toFixed(3)}%`}
             </div>
             <div
               className="text-[length:0.68rem]! text-[color:var(--text-secondary)]!"
             >
-              Target &le; {midstreamTargetPct.toFixed(2)}%
+              {t("Target ≤")}{" "}{midstreamTargetPct.toFixed(2)}%
             </div>
           </div>
         </div>
 
         <div className="kpi-footer">
           <span>
-            OGMP 2.0:{" "}
+            {t("OGMP 2.0:")}{" "}
             <strong>
-              &le;{upstreamTargetPct.toFixed(2)}% Up / &le;{midstreamTargetPct.toFixed(2)}% Mid
+              &le;{upstreamTargetPct.toFixed(2)}{t("% Up / ≤")}{midstreamTargetPct.toFixed(2)}{t("% Mid")}
             </strong>
           </span>
           <span>
-            Vol:{" "}
+            {t("Vol:")}{" "}
             <strong>{formatNumber(stats.totalCh4VolumeM3 ?? 0, 0)} m³</strong>
           </span>
         </div>
@@ -246,17 +247,17 @@ const MethaneIntensityMethaneIntensity: React.FC<MethaneIntensityMethaneIntensit
           <div className="kpi-icon flare">
             <Flame size={20} />
           </div>
-          <span className="kpi-label">Gas Flaring Rate</span>
+          <span className="kpi-label">{t("Gas Flaring Rate")}</span>
         </div>
         <div className="[display:flex] [align-items:baseline] [gap:8px]">
           <span className="total-value flare">
             {(stats.avgFlaringRatePct ?? 0).toFixed(3)}%
           </span>
-          <span className="kpi-unit">of Gas Volume</span>
+          <span className="kpi-unit">{t("of Gas Volume")}</span>
         </div>
         <div className="kpi-footer">
           <span>
-            Flared:{" "}
+            {t("Flared:")}{" "}
             <strong>
               {formatNumber(stats.totalFlaringVolume ?? 0, 0)} m³
             </strong>
@@ -268,18 +269,18 @@ const MethaneIntensityMethaneIntensity: React.FC<MethaneIntensityMethaneIntensit
     {/* Methane Mass Balance Bar */}
     <div className="scope-breakdown [display:grid] [grid-template-columns:repeat(4,_1fr)]! [gap:20px] [margin-top:32px] [background:var(--bg-hover)] [padding:24px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color)] [@media(max-width:1200px)]:[grid-template-columns:repeat(2,_1fr)]! [@media(max-width:768px)]:[grid-template-columns:1fr]!">
       <div className="scope-item">
-        <span className="label">Total Gas Produced</span>
+        <span className="label">{t("Total Gas Produced")}</span>
         <span className="val">
           {formatNumber(stats.totalGasProductionM3 ?? 0, 0)} m³{" "}
           <sub
             className="text-[length:0.7em]! text-[color:var(--text-secondary)]!"
           >
-            ({formatNumber(stats.totalGasProductionMscf ?? 0, 0)} mscf)
+            ({formatNumber(stats.totalGasProductionMscf ?? 0, 0)}{" "}{t("mscf)")}
           </sub>
         </span>
       </div>
       <div className="scope-item bordered">
-        <span className="label">Methane Loss Volume</span>
+        <span className="label">{t("Methane Loss Volume")}</span>
         <span
           className="val text-[color:var(--color-blue-600)]! font-bold!"
         >
@@ -287,13 +288,13 @@ const MethaneIntensityMethaneIntensity: React.FC<MethaneIntensityMethaneIntensit
         </span>
       </div>
       <div className="scope-item bordered">
-        <span className="label">Total Gas Flared</span>
+        <span className="label">{t("Total Gas Flared")}</span>
         <span className="val flare-val">
           {formatNumber(stats.totalFlaringVolume ?? 0, 0)} m³
         </span>
       </div>
       <div className="scope-item bordered">
-        <span className="label">Total Combined BOE</span>
+        <span className="label">{t("Total Combined BOE")}</span>
         <span className="val">{formatNumber(stats.totalBoe ?? 0, 0)} BOE</span>
       </div>
     </div>

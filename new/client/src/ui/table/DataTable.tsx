@@ -17,6 +17,7 @@ import { EmptyState } from "../EmptyState";
 import { Menu, MenuContent, MenuLabel, MenuTrigger } from "../Menu";
 import { Skeleton } from "../Skeleton";
 import { cn } from "../cn";
+import { t } from "../../i18n";
 
 const storageKey = (id: string) => `ct.table.${id}.hidden`;
 
@@ -114,11 +115,11 @@ export function DataTable<TData>({
             <MenuTrigger asChild>
               <Button variant="secondary" size="sm">
                 <Columns3 className="size-4" aria-hidden="true" />
-                Columns
+                {t("Columns")}
               </Button>
             </MenuTrigger>
             <MenuContent>
-              <MenuLabel>Show columns</MenuLabel>
+              <MenuLabel>{t("Show columns")}</MenuLabel>
               {hideable.map((col) => (
                 <DropdownMenu.CheckboxItem
                   key={col.id}
@@ -245,13 +246,13 @@ export function DataTable<TData>({
         </table>
         {!loading &&
           rows.length === 0 &&
-          (empty ?? <EmptyState title="No records" description="Nothing matches the current filters." />)}
+          (empty ?? <EmptyState title={t("No records")} description={t("Nothing matches the current filters.")} />)}
       </div>
 
       {showPagination && table.getPageCount() > 1 && (
         <div className="flex items-center justify-between gap-3 text-sm text-text-secondary">
           <span>
-            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()} ({tableData.length} rows)
+            {t("Page")}{" "}{table.getState().pagination.pageIndex + 1}{" "}{t("of")}{" "}{table.getPageCount()} ({tableData.length}{" "}{t("rows)")}
           </span>
           <div className="flex gap-2">
             <Button
@@ -260,10 +261,10 @@ export function DataTable<TData>({
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
             >
-              Previous
+              {t("Previous")}
             </Button>
             <Button variant="secondary" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-              Next
+              {t("Next")}
             </Button>
           </div>
         </div>

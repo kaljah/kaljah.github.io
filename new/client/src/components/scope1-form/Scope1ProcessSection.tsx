@@ -7,6 +7,7 @@ import { SECTION_PROCESSES, SECTION_TIERS, sectionMethodActive } from "../scope1
 import { Section } from "../scope1/ui";
 import { getPresetsForFuel } from "../../constants/officialFuelPresets";
 import { hideApiCitation } from "./shared";
+import { t } from "../../i18n";
 
 export interface Scope1ProcessSectionProps {
   activePresetId: string;
@@ -64,10 +65,10 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
   streamType,
   tier2Mode,
 }) => (
-  <Section n={2} title="Process & Source Details">
+  <Section n={2} title={t("Process & Source Details")}>
     <div className="[display:grid] [grid-template-columns:1fr] [gap:16px]">
       <div className="input-group">
-        <label>Process</label>
+        <label>{t("Process")}</label>
         <CustomDropdown
           options={getProcessOptions()}
           value={currentProcessValue}
@@ -81,7 +82,7 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
       ) && (
         <div className="input-group">
           <div className="[display:flex] [flex-direction:column] [align-items:flex-start] [gap:6px] [margin-bottom:12px]">
-            <label className="m-[0px]!">Method</label>
+            <label className="m-[0px]!">{t("Method")}</label>
             <div className="methodology-toggle [background:var(--color-legacy-f3f4f6)] [padding:3px] [border-radius:var(--radius-md)] [display:flex] [gap:4px] [border:1px_solid_var(--color-legacy-e5e7eb)] [@media(max-width:600px)]:[flex-wrap:wrap]">
               {(SECTION_TIERS[processType]
                 ? SECTION_TIERS[processType]
@@ -90,52 +91,52 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
                     {
                       key: "default",
                       tier: "Tier 1",
-                      label: "Standard",
+                      label: t("Standard"),
                       sub: "Catalog Defaults",
                     },
                     {
                       key: "custom",
                       tier: "Tier 2",
-                      label: "Custom Factor",
+                      label: t("Custom Factor"),
                       sub: "Saved Database Factors",
                     },
                     {
                       key: "tier2_plus",
                       tier: "Tier 2+",
-                      label: "Site Gas Composition",
+                      label: t("Site Gas Composition"),
                       sub: "Onshore EF + Site CH₄/CO₂",
                     },
                   ]
                 : processType === "completions"
                 ? [
-                    { key: "default", tier: "Tier 1", label: "Defaults", sub: "Per-event factor" },
-                    { key: "custom", tier: "Tier 2", label: "Operational Data", sub: "Rate, GOR or production" },
-                    { key: "specific", tier: "Tier 3", label: "Direct Measurement", sub: "Metered flowback" },
+                    { key: "default", tier: "Tier 1", label: t("Defaults"), sub: "Per-event factor" },
+                    { key: "custom", tier: "Tier 2", label: t("Operational Data"), sub: "Rate, GOR or production" },
+                    { key: "specific", tier: "Tier 3", label: t("Direct Measurement"), sub: "Metered flowback" },
                   ]
                 : processType === "unloading"
                 ? [
-                    { key: "default", tier: "Tier 1", label: "Per-Well", sub: "Per-well annual factor" },
-                    { key: "custom", tier: "Tier 2", label: "Event-Based", sub: "Per-event factor" },
-                    { key: "specific", tier: "Tier 3", label: "Engineering", sub: "Wellbore / plunger models" },
+                    { key: "default", tier: "Tier 1", label: t("Per-Well"), sub: "Per-well annual factor" },
+                    { key: "custom", tier: "Tier 2", label: t("Event-Based"), sub: "Per-event factor" },
+                    { key: "specific", tier: "Tier 3", label: t("Engineering"), sub: "Wellbore / plunger models" },
                   ]
                 : processType === "associated_gas_venting"
                 ? [
                     {
                       key: "default",
                       tier: "Tier 1",
-                      label: "Regional Default",
+                      label: t("Regional Default"),
                       sub: "Basin average factor",
                     },
                     {
                       key: "custom",
                       tier: "Tier 2",
-                      label: "GOR Balance",
+                      label: t("GOR Balance"),
                       sub: "Oil × GOR × duration",
                     },
                     {
                       key: "specific",
                       tier: "Tier 3",
-                      label: "Measurement",
+                      label: t("Measurement"),
                       sub: "Metered vent rate / volume",
                     },
                   ]
@@ -144,19 +145,19 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
                     {
                       key: "default",
                       tier: "Tier 1",
-                      label: "Facility-Level",
+                      label: t("Facility-Level"),
                       sub: "Facility average",
                     },
                     {
                       key: "custom",
                       tier: "Tier 2",
-                      label: "Equipment & Component",
+                      label: t("Equipment & Component"),
                       sub: "Equipment / component count",
                     },
                     {
                       key: "specific",
                       tier: "Tier 3",
-                      label: "Screening / OGI / Meas.",
+                      label: t("Screening / OGI / Meas."),
                       sub: "Method 21, OGI, Direct Rate",
                     },
                   ]
@@ -164,26 +165,26 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
                     {
                       key: "default",
                       tier: "Tier 1",
-                      label: "Standard",
+                      label: t("Standard"),
                       sub: "Catalog Defaults",
                     },
                     {
                       key: "custom",
                       tier: "Tier 2",
-                      label: "Regional / Lab",
+                      label: t("Regional / Lab"),
                       sub: "Ticket / Presets / Custom",
                     },
                     {
                       key: "specific",
                       tier: "Tier 3",
-                      label: "Measurement / GC",
+                      label: t("Measurement / GC"),
                       sub: "CEMS / Analysis",
                     },
                   ]
               )
                 // Library factors (the site factor database: calculated or equipment factors) are a
                 // separate choice from the API Compendium tiers
-                .concat([{ key: "library", tier: "", label: "Library factor", sub: "Site factor database" }])
+                .concat([{ key: "library", tier: "", label: t("Library factor"), sub: "Site factor database" }])
                 .filter((item) => {
                   const type = item.key;
                   if (SECTION_TIERS[processType]) return true;
@@ -250,7 +251,7 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
                 options={fuelOptions}
                 value={formData.fuel || ""}
                 onChange={(val) => handleFormChange("fuel", val)}
-                placeholder="Select factor"
+                placeholder={t("Select factor")}
                 renderOption={renderFactorOption}
               />
             )}
@@ -267,7 +268,7 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
                       {/* Base Fuel Dropdown */}
                       <div>
                         <label className="block! text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]! mb-[4px]!">
-                          Fuel
+                          {t("Fuel")}
                         </label>
                         <CustomDropdown
                           options={fuelOptions}
@@ -276,7 +277,7 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
                             handleFormChange("fuel", val);
                             setActivePresetId("");
                           }}
-                          placeholder="Select fuel"
+                          placeholder={t("Select fuel")}
                           renderOption={renderFactorOption}
                         />
                       </div>
@@ -286,7 +287,7 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
                         <div className="[display:flex] [align-items:center] [justify-content:space-between] [margin-bottom:8px]">
                           <span className="[display:flex] [align-items:center] [gap:6px] [font-size:var(--text-sm)] [font-weight:600] [color:var(--color-ink-700)]">
                             <BookOpen size={14} className="text-[color:var(--color-link)]!" />
-                            Presets
+                            {t("Presets")}
                           </span>
                         </div>
                         <div className="[display:flex] [flex-wrap:wrap] [gap:6px]">
@@ -344,13 +345,13 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
 
                         <div>
                           <label className="block! text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]! mb-[4px]!">
-                            Density (kg/m³)
+                            {t("Density (kg/m³)")}
                           </label>
                           <Input
                             type="number"
                             step="any"
                             className="w-full! p-[6px_8px]! text-[length:0.85rem]!"
-                            placeholder="e.g. 840.0 for Gasoil NA 8110"
+                            placeholder={t("e.g. 840.0 for Gasoil NA 8110")}
                             value={fuelDensity}
                             onChange={(e) => {
                               setFuelDensity(e.target.value);
@@ -363,12 +364,12 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
                       {/* Data Source / Audit Reference Field */}
                       <div>
                         <label className="block! text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]! mb-[4px]!">
-                          Ticket / lab ref
+                          {t("Ticket / lab ref")}
                         </label>
                         <Input
                           type="text"
                           className="w-full! p-[6px_8px]! text-[length:0.85rem]!"
-                          placeholder="e.g. Ticket #4902-B"
+                          placeholder={t("e.g. Ticket #4902-B")}
                           value={dataSourceRef}
                           onChange={(e) => setDataSourceRef(e.target.value)}
                         />
@@ -384,7 +385,7 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
                         options={fuelOptions}
                         value={formData.fuel || ""}
                         onChange={(val) => handleFormChange("fuel", val)}
-                        placeholder="Select saved factor"
+                        placeholder={t("Select saved factor")}
                       />
                     </div>
                     <button
@@ -393,7 +394,7 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
                       onClick={() => setIsQuickAddModalOpen(true)}
                     >
                       <PlusCircle size={15} />
-                      <span>New library factor</span>
+                      <span>{t("New library factor")}</span>
                     </button>
                   </div>
                 </div>
@@ -406,7 +407,7 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
                 options={fuelOptions}
                 value={formData.fuel || ""}
                 onChange={(val) => handleFormChange("fuel", val)}
-                placeholder="Base factor (optional)"
+                placeholder={t("Base factor (optional)")}
                 renderOption={renderFactorOption}
               />
               <div className="mt-[10px]! mb-[10px]!">
@@ -418,7 +419,7 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
                   }}
                 >
                   <Calculator size={16} aria-hidden="true" />
-                  Gas analysis
+                  {t("Gas analysis")}
                 </button>
               </div>
               <div className="grid gap-[10px] [grid-template-columns:1fr_1fr] max-[600px]:[grid-template-columns:1fr] mt-[10px]">
@@ -426,12 +427,12 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
                   .filter((gas) => (processType === "agr" ? gas !== "n2o" : true))
                   .map((gas) => (
                     <div key={gas} className="input-group mb-[0px]!">
-                      <label className="text-[length:0.75rem]!">{gas.toUpperCase()} Factor</label>
+                      <label className="text-[length:0.75rem]!">{gas.toUpperCase()}{" "}{t("Factor")}</label>
                       <div className="flex! gap-[5px]!">
                         <input
                           type="number"
                           className="mole-input flex-1!"
-                          placeholder="Value"
+                          placeholder={t("Value")}
                           value={specFactors[gas] || ""}
                           onChange={(e) =>
                             setSpecFactors((p) => ({

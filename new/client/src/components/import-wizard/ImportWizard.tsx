@@ -11,10 +11,11 @@ import { FieldGroup, FieldGroupData, FileDrop, InfoNote, RegionAccess } from "./
 import { fittingMappings, withSavedMapping, type SavedMapping } from "../../utils/savedMappings";
 import { EMPTY_CHECK, FileCheckPanel, type FileCheckState } from "./FileCheck";
 import { SavedMappingBar } from "./SavedMappingBar";
+import { t } from "../../i18n";
 
 const DECIMAL_MARKS: { value: "comma" | "point"; label: string; example: string }[] = [
-  { value: "comma", label: "Decimal comma", example: "1 234,5" },
-  { value: "point", label: "Decimal point", example: "1,234.5" },
+  { value: "comma", label: t("Decimal comma"), example: "1 234,5" },
+  { value: "point", label: t("Decimal point"), example: "1,234.5" },
 ];
 
 export interface ImportWizardMode {
@@ -292,7 +293,7 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
       toast.success(`Mapping "${name}" saved: it will be applied to files with these columns.`);
       return true;
     } catch (err: any) {
-      toast.error(err.response?.data?.error || "The mapping could not be saved.");
+      toast.error(err.response?.data?.error || t("The mapping could not be saved."));
       return false;
     }
   };
@@ -327,7 +328,7 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
       <div className="flex w-full items-center justify-between">
         <Button variant="secondary" onClick={step === 1 ? onClose : () => setStep((s) => s - 1)}>
           {step === 1 ? <X className="size-4" aria-hidden="true" /> : <ArrowLeft className="size-4" aria-hidden="true" />}
-          {step === 1 ? "Cancel" : "Back"}
+          {step === 1 ? t("Cancel") : t("Back")}
         </Button>
         {step === MAP ? (
           <Button
@@ -339,7 +340,7 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
           </Button>
         ) : (
           <Button onClick={() => setStep((s) => s + 1)} disabled={step === FILE ? !file : preStep?.canNext === false}>
-            Next <ChevronRight className="size-4" aria-hidden="true" />
+            {t("Next")}{" "}<ChevronRight className="size-4" aria-hidden="true" />
           </Button>
         )}
       </div>
@@ -355,7 +356,7 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
         {step === FILE && (
           <>
             {modes && (
-              <div role="radiogroup" aria-label="Import type" className="flex gap-2">
+              <div role="radiogroup" aria-label={t("Import type")} className="flex gap-2">
                 {modes.map((m) => (
                   <Button key={m.value} role="radio" aria-checked={mode === m.value} variant={mode === m.value ? "primary" : "secondary"} size="sm" onClick={() => setMode(m.value)}>
                     {m.label}
@@ -366,7 +367,7 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
             {restricted && allowedRegions && <RegionAccess regions={allowedRegions} />}
             <div className="flex flex-col gap-2">
               <p id="decimal-mark-label" className="m-0 text-sm font-semibold text-text">
-                How are decimals written in this file?
+                {t("How are decimals written in this file?")}
               </p>
               <div role="radiogroup" aria-labelledby="decimal-mark-label" className="flex flex-wrap gap-2">
                 {DECIMAL_MARKS.map((d) => (
@@ -386,11 +387,11 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
                 ))}
               </div>
               <p className="m-0 text-xs text-text-secondary">
-                Applies to CSV files and numbers typed as text in Excel. A number that does not match is reported, not guessed.
+                {t("Applies to CSV files and numbers typed as text in Excel. A number that does not match is reported, not guessed.")}
               </p>
             </div>
             <FileDrop inputRef={fileInputRef} dragging={dragging} onDragging={setDragging} onDrop={onDrop} onFileChange={onFileChange} error={parseError} />
-            {maxBytes && <p className="m-0 text-xs text-text-secondary">Up to {(maxBytes / 1048576).toFixed(0)} MB per file · no row limit</p>}
+            {maxBytes && <p className="m-0 text-xs text-text-secondary">{t("Up to")}{" "}{(maxBytes / 1048576).toFixed(0)}{" "}{t("MB per file · no row limit")}</p>}
             {fileExtras}
           </>
         )}
@@ -412,7 +413,7 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
                 </div>
                 {headers.length > 0 && (
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-success-bg px-2.5 py-1 text-xs font-semibold text-success-fg">
-                    <Wand2 className="size-3.5" aria-hidden="true" /> {headers.filter((h) => matchedColumns.has(h)).length} of {headers.length} columns matched
+                    <Wand2 className="size-3.5" aria-hidden="true" /> {headers.filter((h) => matchedColumns.has(h)).length}{" "}{t("of")}{" "}{headers.length}{" "}{t("columns matched")}
                   </span>
                 )}
               </div>
@@ -420,8 +421,8 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
             {headers.length === 0 && (
               <InfoNote>
                 {checkBeforeImport
-                  ? "Excel file: reading its columns with the check below. The column mapping appears when the check is done."
-                  : "Excel file — processed server-side. Type column names exactly as they appear in your file, or leave blank to skip that field."}
+                  ? t("Excel file: reading its columns with the check below. The column mapping appears when the check is done.")
+                  : t("Excel file — processed server-side. Type column names exactly as they appear in your file, or leave blank to skip that field.")}
               </InfoNote>
             )}
             {headers.length > 0 && (
@@ -437,7 +438,7 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
             {headers.length > 0 && missingRequired.length > 0 && (
               <Banner tone="warning">
                 <strong>
-                  {missingRequired.length} required field{missingRequired.length > 1 ? "s" : ""} not mapped:
+                  {missingRequired.length}{" "}{t("required field")}{missingRequired.length > 1 ? "s" : ""}{" "}{t("not mapped:")}
                 </strong>{" "}
                 {missingRequired.map((f) => f.label).join(", ")}
               </Banner>
@@ -446,14 +447,14 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
             <div className="relative">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-secondary" aria-hidden="true" />
               <Input
-                aria-label="Search fields"
+                aria-label={t("Search fields")}
                 className="pl-9 pr-9"
-                placeholder="Search fields by name, key, or description…"
+                placeholder={t("Search fields by name, key, or description…")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               {searchQuery && (
-                <IconButton label="Clear search" className="absolute right-1 top-1/2 size-7 -translate-y-1/2" onClick={() => setSearchQuery("")}>
+                <IconButton label={t("Clear search")} className="absolute right-1 top-1/2 size-7 -translate-y-1/2" onClick={() => setSearchQuery("")}>
                   <X className="size-3.5" aria-hidden="true" />
                 </IconButton>
               )}
@@ -478,9 +479,9 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
 
             {headers.length > 0 && (
               <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-text-secondary">
-                <span>{showAllFields ? "All fields are shown." : "Showing the fields matched to your file and any required field still missing."}</span>
+                <span>{showAllFields ? t("All fields are shown.") : t("Showing the fields matched to your file and any required field still missing.")}</span>
                 <Button variant="link" size="sm" className="h-auto px-0" onClick={() => setShowAllFields((v) => !v)}>
-                  {showAllFields ? "Show only my file's fields" : "Show all fields"}
+                  {showAllFields ? t("Show only my file's fields") : t("Show all fields")}
                 </Button>
               </div>
             )}

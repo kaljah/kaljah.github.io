@@ -2,6 +2,7 @@ import React from "react";
 import { RotateCcw, Search, X } from "lucide-react";
 import { Button, Card, Field, IconButton, Input, NativeSelect } from "../../ui";
 import { controlClass } from "../../components/import-wizard/mapping";
+import { t } from "../../i18n";
 
 const TIMEFRAMES = [
   ["all", "All Time"],
@@ -99,14 +100,14 @@ const AuditTrailFiltersBarCard: React.FC<AuditTrailFiltersBarCardProps> = ({
       <div className="relative">
         <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-secondary" aria-hidden="true" />
         <Input
-          aria-label="Search audit log"
+          aria-label={t("Search audit log")}
           className="px-10"
-          placeholder="Search by user, description, record ID, IP address, or entity..."
+          placeholder={t("Search by user, description, record ID, IP address, or entity...")}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
         {searchQuery && (
-          <IconButton label="Clear search" className="absolute right-1 top-1/2 size-7 -translate-y-1/2" onClick={() => setSearchQuery("")}>
+          <IconButton label={t("Clear search")} className="absolute right-1 top-1/2 size-7 -translate-y-1/2" onClick={() => setSearchQuery("")}>
             <X className="size-3.5" aria-hidden="true" />
           </IconButton>
         )}
@@ -116,7 +117,7 @@ const AuditTrailFiltersBarCard: React.FC<AuditTrailFiltersBarCardProps> = ({
         {select("User", filterUser, setFilterUser, "All Users", availableFilters.users)}
         {select("Action", filterAction, setFilterAction, "All Actions", availableFilters.actions)}
         {select("Entity", filterEntity, setFilterEntity, "All Entities", availableFilters.entities)}
-        <Field label="Timeframe" className="min-w-[150px] flex-1">
+        <Field label={t("Timeframe")} className="min-w-[150px] flex-1">
           <NativeSelect
             className={controlClass}
             value={timeframe}
@@ -136,19 +137,19 @@ const AuditTrailFiltersBarCard: React.FC<AuditTrailFiltersBarCardProps> = ({
         {timeframe === "custom" && (
           <div className="flex items-center gap-2 pb-1">
             {date("Start date", customStartDate, setCustomStartDate)}
-            <span className="text-sm text-text-secondary">to</span>
+            <span className="text-sm text-text-secondary">{t("to")}</span>
             {date("End date", customEndDate, setCustomEndDate)}
           </div>
         )}
 
         {hasActiveFilters && (
-          <Button variant="ghost" size="sm" onClick={resetFilters} title="Reset all filters">
-            <RotateCcw className="size-3.5" aria-hidden="true" /> Reset
+          <Button variant="ghost" size="sm" onClick={resetFilters} title={t("Reset all filters")}>
+            <RotateCcw className="size-3.5" aria-hidden="true" />{" "}{t("Reset")}
           </Button>
         )}
 
         <p className="m-0 ml-auto pb-2 text-sm text-text-secondary">
-          Showing <strong>{auditLogs.length}</strong> of <strong>{totalRecords}</strong> records
+          {t("Showing")}{" "}<strong>{auditLogs.length}</strong>{" "}{t("of")}{" "}<strong>{totalRecords}</strong>{" "}{t("records")}
         </p>
       </div>
     </Card>

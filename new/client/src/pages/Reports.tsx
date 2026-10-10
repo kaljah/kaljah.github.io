@@ -15,6 +15,7 @@ import { getActiveGwpFactors } from "../constants";
 import { apiError } from "../utils/apiError";
 import { useGwpStandard } from "../hooks/useGwpStandard";
 import type { ColumnDef } from "@tanstack/react-table";
+import { t as tr } from "../i18n";
 
 interface EmissionRecord {
   id: number | string;
@@ -64,7 +65,7 @@ const RECORD_COLUMNS: ColumnDef<EmissionRecord, any>[] = [
   { id: "date", header: "Date", accessorFn: (r) => r.year * 100 + r.month, cell: (c) => `${c.row.original.month}/${c.row.original.year}` },
   { accessorKey: "scope", header: "Scope", cell: (c) => {
     const tones: Record<string | number, BadgeTone> = { 1: "brand", 2: "info" };
-    return <Badge tone={tones[c.getValue()] || "neutral"}>Scope {c.getValue()}</Badge>;
+    return <Badge tone={tones[c.getValue()] || "neutral"}>{tr("Scope")}{" "}{c.getValue()}</Badge>;
   } },
   { accessorKey: "division", header: "Division", cell: (c) => NA(c.getValue()) },
   { accessorKey: "field", header: "Field", cell: (c) => NA(c.getValue()) },
@@ -127,7 +128,7 @@ const Reports: React.FC = () => {
             className="gap-1 px-2.5 py-1 text-xs"
           >
             <Pencil className="size-3" aria-hidden="true" />
-            Edit
+            {tr("Edit")}
           </Button>
         ),
       },
@@ -177,7 +178,7 @@ const Reports: React.FC = () => {
     setMethodFilter("all");
     setSearchTerm("");
     setPage(1);
-    toast.info("Filters reset to defaults.");
+    toast.info(tr("Filters reset to defaults."));
   };
 
   useEffect(() => {
@@ -222,7 +223,7 @@ const Reports: React.FC = () => {
         }
       } catch (err) {
         console.error("Error fetching initial data", err);
-        toast.error("Failed to load filter data");
+        toast.error(tr("Failed to load filter data"));
       }
     };
     loadInitialData();
@@ -328,7 +329,7 @@ const Reports: React.FC = () => {
       setTotalPages(res.data.pages || 1);
     } catch (err) {
       console.error("Error fetching emissions", err);
-      toast.error(apiError(err, "Failed to load emissions data"));
+      toast.error(apiError(err, tr("Failed to load emissions data")));
       setEmissions([]);
       setTotalRecords(0);
     } finally {
@@ -363,7 +364,7 @@ const Reports: React.FC = () => {
       }, 1000);
     } catch (err) {
       console.error("Export error", err);
-      toast.error("Export failed. Please try again.");
+      toast.error(tr("Export failed. Please try again."));
     }
   };
 
@@ -391,13 +392,13 @@ const Reports: React.FC = () => {
       }, 1000);
     } catch (error) {
       console.error("PDF export failed:", error);
-      toast.error("Failed to export PDF. Please try again.");
+      toast.error(tr("Failed to export PDF. Please try again."));
     }
   };
 
   const handleOGMPExport = async () => {
     try {
-      toast.info("Generating OGMP 2.0 Excel Workbook...");
+      toast.info(tr("Generating OGMP 2.0 Excel Workbook..."));
       // the table's filters first (the export used the "Create report" year and every facility)
       const yr =
         year !== "all" ? year : reportYear !== "all" ? reportYear
@@ -423,7 +424,7 @@ const Reports: React.FC = () => {
       toast.success(`OGMP 2.0 Excel report for ${yr} downloaded successfully!`);
     } catch (error) {
       console.error("OGMP Excel export failed:", error);
-      toast.error("Failed to export OGMP 2.0 Excel report.");
+      toast.error(tr("Failed to export OGMP 2.0 Excel report."));
     }
   };
 
@@ -458,7 +459,7 @@ const Reports: React.FC = () => {
       toast.success(`${reportTitle} downloaded successfully!`);
     } catch (error) {
       console.error("Master report download failed:", error);
-      toast.error("Failed to download Master Report.");
+      toast.error(tr("Failed to download Master Report."));
     } finally {
       setLoading(false);
     }
@@ -526,7 +527,7 @@ const Reports: React.FC = () => {
 
   const openConfigModal = () => {
     if (reportSelectedRegions.length === 0) {
-      toast.error("Please select at least one region/facility.");
+      toast.error(tr("Please select at least one region/facility."));
       return;
     }
     setShowConfigModal(true);
@@ -543,7 +544,7 @@ const Reports: React.FC = () => {
 
   const handleISOReportWrapper = async () => {
     setLoading(true);
-    toast.info("Generating ISO 14064-1 Report...");
+    toast.info(tr("Generating ISO 14064-1 Report..."));
     try {
       const { generateModernPDF } = await import("../utils/ModernReportGenerator");
 
@@ -562,10 +563,10 @@ const Reports: React.FC = () => {
       };
 
       await generateModernPDF(api, filters as any);
-      toast.success("Report generated successfully!");
+      toast.success(tr("Report generated successfully!"));
     } catch (err) {
       console.error("Report Generation Error", err);
-      toast.error("Failed to generate report.");
+      toast.error(tr("Failed to generate report."));
     } finally {
       setLoading(false);
     }
@@ -599,21 +600,21 @@ const Reports: React.FC = () => {
   };
   const FORMATS = [
     ...(dialogMasterAvailable
-      ? [{ value: "master", label: "🏆 2025 Master Analytical Report (Vertical A4, 15 Charts, 18 Tables)" }]
+      ? [{ value: "master", label: tr("🏆 2025 Master Analytical Report (Vertical A4, 15 Charts, 18 Tables)") }]
       : []),
-    { value: "iso", label: "📋 ISO 14064-1 Compliance Report" },
+    { value: "iso", label: tr("📋 ISO 14064-1 Compliance Report") },
   ];
   const years = availableFilters.years;
 
   return (
     <Page className="reports-page max-w-[1600px]">
       <PageHeader
-        title="Reports"
+        title={tr("Reports")}
         description={
           <>
-            Emission database and exports. Complete history of all recorded emissions and compliance data.{" "}
+            {tr("Emission database and exports. Complete history of all recorded emissions and compliance data.")}{" "}
             <span className="whitespace-nowrap font-semibold text-text">
-              Total records: {totalRecords} | Showing: {emissions.length}
+              {tr("Total records:")}{" "}{totalRecords}{" "}{tr("| Showing:")}{" "}{emissions.length}
             </span>
           </>
         }
@@ -621,29 +622,29 @@ const Reports: React.FC = () => {
           <>
             <Button variant="secondary" onClick={resetFilters}>
               <RotateCcw className="size-4" aria-hidden="true" />
-              Reset filters
+              {tr("Reset filters")}
             </Button>
             <Menu>
               <MenuTrigger asChild>
                 <Button>
                   <Download className="size-4" aria-hidden="true" />
-                  Export
+                  {tr("Export")}
                   <ChevronDown className="size-4" aria-hidden="true" />
                 </Button>
               </MenuTrigger>
               <MenuContent>
                 <MenuItem icon={FileSpreadsheet} onSelect={handleOGMPExport}>
-                  OGMP 2.0 (Excel)
+                  {tr("OGMP 2.0 (Excel)")}
                 </MenuItem>
                 <MenuItem icon={FileSpreadsheet} onSelect={handleExcelExport}>
-                  Excel export
+                  {tr("Excel export")}
                 </MenuItem>
                 <MenuItem icon={FileText} onSelect={handlePDFExport}>
-                  PDF report
+                  {tr("PDF report")}
                 </MenuItem>
                 {masterAvailableFor(regionId === "all" ? [] : [regionId]) && (
                   <MenuItem icon={FileText} onSelect={() => handleMasterReportDownload()}>
-                    2025 Master report (PDF)
+                    {tr("2025 Master report (PDF)")}
                   </MenuItem>
                 )}
               </MenuContent>
@@ -653,14 +654,14 @@ const Reports: React.FC = () => {
       />
 
       <Card>
-        <CardHeader title={<span className="flex items-center gap-3"><FilePlus className="size-6 text-brand-500" aria-hidden="true" /> Create New Report</span>} />
+        <CardHeader title={<span className="flex items-center gap-3"><FilePlus className="size-6 text-brand-500" aria-hidden="true" />{" "}{tr("Create New Report")}</span>} />
         <div className="grid items-end gap-5 [grid-template-columns:repeat(auto-fit,minmax(200px,1fr))]">
           {selectBase(
             "Reporting Year *",
             reportYear,
             (e) => setReportYear(e.target.value),
             <>
-              <option value="all">All Years</option>
+              <option value="all">{tr("All Years")}</option>
               {years.length > 0 ? (
                 years.map((y) => (
                   <option key={y} value={y}>
@@ -677,7 +678,7 @@ const Reports: React.FC = () => {
             comparisonYear,
             (e) => setComparisonYear(e.target.value),
             <>
-              <option value="none">None (Single Year)</option>
+              <option value="none">{tr("None (Single Year)")}</option>
               {years
                 .filter((y) => y.toString() !== reportYear)
                 .map((y) => (
@@ -685,21 +686,21 @@ const Reports: React.FC = () => {
                     {y}
                   </option>
                 ))}
-              {baseYear && <option value="baseline">Baseline ({baseYear})</option>}
+              {baseYear && <option value="baseline">{tr("Baseline (")}{baseYear})</option>}
             </>,
           )}
           {selectBase("GWP Metric Standard", reportGwpStandard, onGwp, gwpOptions(), { className: "sm:[grid-column:span_2]" })}
           <div className="flex w-full flex-col gap-1.5 [grid-column:span_2] max-[640px]:[grid-column:auto]">
             <span className="text-sm font-medium text-text">
-              Regions / Facilities <span className="text-danger-fg">*</span>
+              {tr("Regions / Facilities")}{" "}<span className="text-danger-fg">*</span>
             </span>
-            <React.Suspense fallback={<div>Loading...</div>}>
-              <MultiSelectDropdown options={regionOptions} selectedValues={reportSelectedRegions} onChange={setReportSelectedRegions} label="Select Regions..." />
+            <React.Suspense fallback={<div>{tr("Loading...")}</div>}>
+              <MultiSelectDropdown options={regionOptions} selectedValues={reportSelectedRegions} onChange={setReportSelectedRegions} label={tr("Select Regions...")} />
             </React.Suspense>
           </div>
           <Button size="lg" onClick={openConfigModal} loading={loading} disabled={loading}>
             <Plus className="size-[18px]" aria-hidden="true" />
-            {loading ? "Generating..." : "Create Report"}
+            {loading ? tr("Generating...") : tr("Create Report")}
           </Button>
         </div>
 
@@ -723,17 +724,17 @@ const Reports: React.FC = () => {
       </Card>
 
       <Card>
-        <CardHeader title={<span className="flex items-center gap-3"><Funnel className="size-6 text-brand-500" aria-hidden="true" /> Filter &amp; Group Data</span>} />
+        <CardHeader title={<span className="flex items-center gap-3"><Funnel className="size-6 text-brand-500" aria-hidden="true" />{" "}{tr("Filter & Group Data")}</span>} />
         <div className="grid items-end gap-5 [grid-template-columns:repeat(auto-fit,minmax(200px,1fr))]">
           {selectBase(
             "Inventory Scope",
             scope,
             (e) => setScope(e.target.value),
             <>
-              <option value="all">Total Inventory (Scope 1,2,3)</option>
-              <option value="1">Scope 1 (Direct)</option>
-              <option value="2">Scope 2 (Indirect)</option>
-              <option value="3">Scope 3 (Value Chain)</option>
+              <option value="all">{tr("Total Inventory (Scope 1,2,3)")}</option>
+              <option value="1">{tr("Scope 1 (Direct)")}</option>
+              <option value="2">{tr("Scope 2 (Indirect)")}</option>
+              <option value="3">{tr("Scope 3 (Value Chain)")}</option>
             </>,
           )}
           {selectBase(
@@ -741,7 +742,7 @@ const Reports: React.FC = () => {
             year,
             (e) => setYear(e.target.value),
             <>
-              <option value="all">All Years</option>
+              <option value="all">{tr("All Years")}</option>
               {years.map((y) => (
                 <option key={y} value={y}>
                   {y}
@@ -754,7 +755,7 @@ const Reports: React.FC = () => {
             month,
             (e) => setMonth(e.target.value),
             <>
-              <option value="all">All Months</option>
+              <option value="all">{tr("All Months")}</option>
               {MONTHS.map((m) => (
                 <option key={m.value} value={m.value}>
                   {m.label}
@@ -767,7 +768,7 @@ const Reports: React.FC = () => {
             regionId,
             (e) => setRegionId(e.target.value),
             <>
-              <option value="all">All Regions</option>
+              <option value="all">{tr("All Regions")}</option>
               {facilities.map((f) => (
                 <option key={f.id} value={f.id}>
                   {f.name} {f.field ? ` - ${f.field}` : ""}
@@ -781,14 +782,14 @@ const Reports: React.FC = () => {
               processType,
               (e) => setProcessType(e.target.value),
               <>
-                <option value="all">All Processes</option>
-                <option value="combustion">Stationary Combustion</option>
-                <option value="mobile">Mobile Combustion</option>
-                <option value="flaring">Flaring</option>
-                <option value="venting">Venting</option>
-                <option value="fugitive">Fugitive Emissions</option>
-                <option value="pneumatic">Pneumatic Devices</option>
-                <option value="tank">Storage Tank</option>
+                <option value="all">{tr("All Processes")}</option>
+                <option value="combustion">{tr("Stationary Combustion")}</option>
+                <option value="mobile">{tr("Mobile Combustion")}</option>
+                <option value="flaring">{tr("Flaring")}</option>
+                <option value="venting">{tr("Venting")}</option>
+                <option value="fugitive">{tr("Fugitive Emissions")}</option>
+                <option value="pneumatic">{tr("Pneumatic Devices")}</option>
+                <option value="tank">{tr("Storage Tank")}</option>
               </>,
             )}
           {selectBase(
@@ -796,7 +797,7 @@ const Reports: React.FC = () => {
             division,
             (e) => setDivision(e.target.value),
             <>
-              <option value="all">All Divisions</option>
+              <option value="all">{tr("All Divisions")}</option>
               {uniq("division").map((d) => (
                 <option key={String(d)} value={String(d)}>
                   {String(d)}
@@ -809,7 +810,7 @@ const Reports: React.FC = () => {
             field,
             (e) => setField(e.target.value),
             <>
-              <option value="all">All Fields</option>
+              <option value="all">{tr("All Fields")}</option>
               {uniq("field").map((f) => (
                 <option key={String(f)} value={String(f)}>
                   {String(f)}
@@ -822,10 +823,10 @@ const Reports: React.FC = () => {
             methodFilter,
             (e) => setMethodFilter(e.target.value),
             <>
-              <option value="all">All Methods</option>
-              <option value="custom">Custom Factor</option>
-              <option value="API">API Engine</option>
-              <option value="Location-based">Location-based</option>
+              <option value="all">{tr("All Methods")}</option>
+              <option value="custom">{tr("Custom Factor")}</option>
+              <option value="API">{tr("API Engine")}</option>
+              <option value="Location-based">{tr("Location-based")}</option>
             </>,
           )}
           {selectBase(
@@ -833,21 +834,21 @@ const Reports: React.FC = () => {
             groupBy,
             (e) => setGroupBy(e.target.value),
             <>
-              <option value="none">No Grouping</option>
-              <option value="facility">By Facility</option>
-              <option value="process">By Category/Process</option>
-              <option value="month">By Month</option>
-              <option value="scope">By Scope</option>
+              <option value="none">{tr("No Grouping")}</option>
+              <option value="facility">{tr("By Facility")}</option>
+              <option value="process">{tr("By Category/Process")}</option>
+              <option value="month">{tr("By Month")}</option>
+              <option value="scope">{tr("By Scope")}</option>
             </>,
           )}
         </div>
       </Card>
 
       <Card>
-        <Field label="Search">
+        <Field label={tr("Search")}>
           <div className="relative">
             <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-secondary" aria-hidden="true" />
-            <Input className="pl-9" placeholder="Search records..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+            <Input className="pl-9" placeholder={tr("Search records...")} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
           </div>
         </Field>
       </Card>
@@ -863,13 +864,12 @@ const Reports: React.FC = () => {
         <div
           className="text-center! p-[40px]! text-[color:var(--text-secondary)]!"
         >
-          No emission records found. Adjust your filters or add new
-          emissions.
+          {tr("No emission records found. Adjust your filters or add new emissions.")}
         </div>
       )}
 
       {!loading && emissions.length > 0 && (
-        <div className="flex flex-col gap-4" role="region" aria-label="Emission records">
+        <div className="flex flex-col gap-4" role="region" aria-label={tr("Emission records")}>
           {/* BUG-022: rendered through getGroupedData so Group By takes effect */}
           {((groupBy === "none" ? [[null, emissions]] : Object.entries(getGroupedData())) as [string | null, EmissionRecord[]][]).map(([groupKey, rows]) => (
             <section key={groupKey ?? "__all__"} className="flex flex-col gap-2">
@@ -878,17 +878,17 @@ const Reports: React.FC = () => {
                   <span>
                     {groupKey}{" "}
                     <span className="font-normal text-text-secondary">
-                      ({rows.length} record{rows.length === 1 ? "" : "s"} on this page)
+                      ({rows.length}{" "}{tr("record")}{rows.length === 1 ? "" : "s"}{" "}{tr("on this page)")}
                     </span>
                   </span>
-                  <span title="Subtotal of the records shown on this page">
-                    Subtotal {formatNumber(rows.reduce((sum: number, r: EmissionRecord) => sum + (Number(r.co2e_total) || 0), 0))} tCO₂e
+                  <span title={tr("Subtotal of the records shown on this page")}>
+                    {tr("Subtotal")}{" "}{formatNumber(rows.reduce((sum: number, r: EmissionRecord) => sum + (Number(r.co2e_total) || 0), 0))}{" "}{tr("tCO₂e")}
                   </span>
                 </h3>
               )}
               <DataTable
                 tableId="reports"
-                caption={groupKey ?? "Emission records"}
+                caption={groupKey ?? tr("Emission records")}
                 columns={columns}
                 data={rows}
                 getRowId={(r) => String(r.id)}
@@ -904,13 +904,13 @@ const Reports: React.FC = () => {
       {!loading && totalPages > 1 && (
         <div className="flex items-center justify-between gap-3 border-t border-border px-6 py-4">
           <Button variant="secondary" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
-            Previous
+            {tr("Previous")}
           </Button>
           <span className="text-sm text-text-secondary">
-            Page {page} of {totalPages} ({totalRecords} records)
+            {tr("Page")}{" "}{page}{" "}{tr("of")}{" "}{totalPages} ({totalRecords}{" "}{tr("records)")}
           </span>
           <Button variant="secondary" onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}>
-            Next
+            {tr("Next")}
           </Button>
         </div>
       )}
@@ -918,44 +918,44 @@ const Reports: React.FC = () => {
       <Dialog
         open={showConfigModal}
         onOpenChange={(o) => !o && setShowConfigModal(false)}
-        title="Generate Executive GHG Report"
+        title={tr("Generate Executive GHG Report")}
         maxWidth="35rem"
         footer={
           <>
             <Button variant="secondary" onClick={() => setShowConfigModal(false)}>
-              Cancel
+              {tr("Cancel")}
             </Button>
             <Button onClick={handleGenerateModalReport} loading={loading} disabled={loading}>
-              {loading ? "Generating..." : effectiveReportFormat === "master" ? "Download Master Report (PDF)" : "Generate ISO PDF"}
+              {loading ? tr("Generating...") : effectiveReportFormat === "master" ? tr("Download Master Report (PDF)") : tr("Generate ISO PDF")}
             </Button>
           </>
         }
       >
         <div className="flex flex-col gap-4">
-          <SegmentedControl label="Report format" value={effectiveReportFormat} onChange={setReportFormat} options={FORMATS} className="flex-col sm:flex-row" />
+          <SegmentedControl label={tr("Report format")} value={effectiveReportFormat} onChange={setReportFormat} options={FORMATS} className="flex-col sm:flex-row" />
 
           {effectiveReportFormat === "master" ? (
             <div className="rounded-md border border-border bg-ink-50 p-3.5">
-              <h4 className="m-0 mb-1.5 text-base font-semibold text-text">Authentic Groupement Berkine (HBNS &amp; El Merk) 2021–2025</h4>
+              <h4 className="m-0 mb-1.5 text-base font-semibold text-text">{tr("Authentic Groupement Berkine (HBNS & El Merk) 2021–2025")}</h4>
               <ul className="m-0 flex list-disc flex-col gap-1 pl-5 text-sm leading-normal text-text-secondary">
                 <li>
-                  <strong>Vertical A4 Portrait</strong> format (25 publication pages).
+                  <strong>{tr("Vertical A4 Portrait")}</strong>{" "}{tr("format (25 publication pages).")}
                 </li>
                 <li>
-                  <strong>15 High-Resolution Charts (300 DPI)</strong>: Scopes 1 &amp; 2, SANGEA modules, 2030 decarbonization target trajectory (-25%), methane abatement (-76.7%), routine flaring reduction and more.
+                  <strong>{tr("15 High-Resolution Charts (300 DPI)")}</strong>{tr(": Scopes 1 & 2, SANGEA modules, 2030 decarbonization target trajectory (-25%), methane abatement (-76.7%), routine flaring reduction and more.")}
                 </li>
                 <li>
-                  <strong>18 Multi-Year Appendix Tables</strong>: Complete raw tables A.1 through A.16 matching Groupement Berkine&apos;s corporate reporting standards.
+                  <strong>{tr("18 Multi-Year Appendix Tables")}</strong>{tr(": Complete raw tables A.1 through A.16 matching Groupement Berkine's corporate reporting standards.")}
                 </li>
               </ul>
             </div>
           ) : (
             <>
-              <p className="m-0 text-sm text-text-secondary">To ensure 100% compliance with ISO 14064-1, please provide the following mandatory declarations before generating the report.</p>
-              <Field label="Exclusion Criteria (Significance)" hint="Document the criteria used to define which indirect emissions are significant and justify any exclusions.">
+              <p className="m-0 text-sm text-text-secondary">{tr("To ensure 100% compliance with ISO 14064-1, please provide the following mandatory declarations before generating the report.")}</p>
+              <Field label={tr("Exclusion Criteria (Significance)")} hint={tr("Document the criteria used to define which indirect emissions are significant and justify any exclusions.")}>
                 <Textarea rows={2} value={exclusionCriteria} onChange={(e) => setExclusionCriteria(e.target.value)} />
               </Field>
-              <Field label="Verification Status" hint="State whether the report has been verified, the type of verification, and the level of assurance.">
+              <Field label={tr("Verification Status")} hint={tr("State whether the report has been verified, the type of verification, and the level of assurance.")}>
                 <Input value={verificationStatus} onChange={(e) => setVerificationStatus(e.target.value)} />
               </Field>
               {selectBase("GWP Metric Standard", reportGwpStandard, onGwp, gwpOptions(" — Default"))}

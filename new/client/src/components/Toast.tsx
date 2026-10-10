@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useCallback } from "react";
 import "./Toast.css";
 import { CircleCheckBig, CircleX, Info, TriangleAlert } from "lucide-react";
+import { t } from "../i18n";
 
 export type ToastType = "info" | "success" | "error" | "warning";
 
@@ -110,7 +111,7 @@ const ToastContainer: React.FC<{ toasts: ToastItem[]; onRemove: (id: number) => 
   onRemove,
 }) => {
   return (
-    <div className="toast-container" role="region" aria-label="Notifications" aria-live="polite">
+    <div className="toast-container" role="region" aria-label={t("Notifications")} aria-live="polite">
       {toasts.map((toast) => (
         <Toast key={toast.id} toast={toast} onRemove={onRemove} />
       ))}
@@ -140,7 +141,7 @@ const Toast: React.FC<{ toast: ToastItem; onRemove: (id: number) => void }> = ({
       <div className="[flex:1] [font-size:var(--text-base)] [color:var(--text-primary)] [line-height:1.4]">
         {toast.message}
       </div>
-      <button className="toast-close" onClick={() => onRemove(toast.id)} aria-label="Dismiss notification">
+      <button className="toast-close" onClick={() => onRemove(toast.id)} aria-label={t("Dismiss notification")}>
         ×
       </button>
     </div>

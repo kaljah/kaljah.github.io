@@ -55,6 +55,7 @@ import {
   convertActivityData,
 } from "../utils/emissionFactorsAPI";
 import { hhvToBtu } from "../utils/hhv";
+import { t as tr } from "../i18n";
 
 interface FacilityItem {
   id: string | number;
@@ -527,7 +528,7 @@ export const Scope1Form: React.FC = () => {
       }
     } catch (error) {
       console.error("Failed to load facilities:", error);
-      toast.error("Failed to load regions");
+      toast.error(tr("Failed to load regions"));
     }
   };
 
@@ -552,7 +553,7 @@ export const Scope1Form: React.FC = () => {
 
   const exportToCSV = (data: any[], filename: string) => {
     if (!data || data.length === 0) {
-      toast.error("No data to export");
+      toast.error(tr("No data to export"));
       return;
     }
     const headers = [
@@ -606,7 +607,7 @@ export const Scope1Form: React.FC = () => {
 
   const getEmissionSourceOptions = () => {
     const opts: Array<{ value: string; label: string; subLabel?: string }> = [
-      { value: "", label: "Select Emission Source..." },
+      { value: "", label: tr("Select Emission Source...") },
     ];
     // Filter sources by selected facility if one is chosen
     const filtered = facilityId
@@ -696,7 +697,7 @@ export const Scope1Form: React.FC = () => {
     // Validate identity fields
     if (!year || !month || !facilityId || !processType) {
       toast.warning(
-        "Please fill in all identity fields (Year, Month, Region, Process)",
+        tr("Please fill in all identity fields (Year, Month, Region, Process)"),
       );
       return;
     }
@@ -706,14 +707,14 @@ export const Scope1Form: React.FC = () => {
     const sectionActive =
       sourceType !== "library" && (sectionMethodActive(formData) || Boolean(SECTION_PROCESSES[processType]));
     if (sectionActive && currentChoice(formData) === "activity" && !formData.activity_key) {
-      toast.warning("Select a source");
+      toast.warning(tr("Select a source"));
       return;
     }
 
     // Library factor: activity x the selected site factor
     if (sourceType === "library") {
       if (!formData.fuel || isNaN(parseInt(formData.fuel))) {
-        toast.warning("Select a library factor");
+        toast.warning(tr("Select a library factor"));
         return;
       }
     }
@@ -725,7 +726,7 @@ export const Scope1Form: React.FC = () => {
       !["associated_gas_venting", "completions", "unloading", "fugitive"].includes(processType) &&
       !formData.fuel
     ) {
-      toast.warning("Please select a fuel or emission factor");
+      toast.warning(tr("Please select a fuel or emission factor"));
       return;
     }
     if (
@@ -756,7 +757,7 @@ export const Scope1Form: React.FC = () => {
     const needsAmount = !sectionActive || currentChoice(formData) === "activity";
     if (!isUpstreamEng && needsAmount && (!amount || parseFloat(amount) <= 0)) {
       toast.warning(
-        "Please enter a valid activity amount/quantity greater than 0",
+        tr("Please enter a valid activity amount/quantity greater than 0"),
       );
       return;
     }
@@ -768,7 +769,7 @@ export const Scope1Form: React.FC = () => {
       ) {
         if (!formData.hhv || parseFloat(formData.hhv) <= 0) {
           toast.warning(
-            "Higher Heating Value (HHV) is required and must be > 0 for specific factor mode",
+            tr("Higher Heating Value (HHV) is required and must be > 0 for specific factor mode"),
           );
           return;
         }
@@ -779,7 +780,7 @@ export const Scope1Form: React.FC = () => {
             formData.combustion_efficiency === "")
         ) {
           toast.warning(
-            "Combustion efficiency (%) is required for stationary combustion",
+            tr("Combustion efficiency (%) is required for stationary combustion"),
           );
           return;
         }
@@ -788,13 +789,13 @@ export const Scope1Form: React.FC = () => {
         if (tier === "tier1" || (sourceType as string) === "default") {
           const wells = parseFloat(formData.well_count || formData.wells || formData.amount || 0);
           if (wells <= 0) {
-            toast.warning("Number of wells must be greater than zero for Tier 1 liquids unloading");
+            toast.warning(tr("Number of wells must be greater than zero for Tier 1 liquids unloading"));
             return;
           }
         } else if (tier === "tier2" || (sourceType as string) === "custom") {
           const events = parseFloat(formData.events || formData.unload_events || formData.unload_freq || formData.amount || 0);
           if (events < 0 || isNaN(events)) {
-            toast.warning("Number of unloading events is required for Tier 2 liquids unloading");
+            toast.warning(tr("Number of unloading events is required for Tier 2 liquids unloading"));
             return;
           }
         } else {
@@ -802,7 +803,7 @@ export const Scope1Form: React.FC = () => {
           const method = String(formData.calc_method || formData.method || "api_equation_6_10").toLowerCase();
           if (method === "api_equation_6_11") {
             if (!formData.p_shut || !formData.p_line || !formData.p_sep || !formData.sfr_p || !formData.t_p) {
-              toast.warning("All automated plunger parameters (Pshut, Pline, Psep, SFRp, Tp) are required");
+              toast.warning(tr("All automated plunger parameters (Pshut, Pline, Psep, SFRp, Tp) are required"));
               return;
             }
           } else if (method === "api_equation_6_10") {
@@ -813,7 +814,7 @@ export const Scope1Form: React.FC = () => {
             const hasSfr = formData.sfr !== undefined && formData.sfr !== null && formData.sfr !== "";
             const hasHours = formData.hours_open !== undefined && formData.hours_open !== null && formData.hours_open !== "";
             if (!hasDepth || !hasDiam || !hasPress || !hasEvents || !hasSfr || !hasHours) {
-              toast.warning("Depth, diameter, pressure, events, SFR and venting hours are required");
+              toast.warning(tr("Depth, diameter, pressure, events, SFR and venting hours are required"));
               return;
             }
           } else {
@@ -822,7 +823,7 @@ export const Scope1Form: React.FC = () => {
             const hasPress = formData.unload_press || formData.pressure;
             const hasEvents = formData.unload_freq || formData.unload_events || formData.events || formData.amount;
             if (!hasDepth || !hasDiam || !hasPress || !hasEvents) {
-              toast.warning("Well unloading parameters (depth, diameter, pressure, events) are required");
+              toast.warning(tr("Well unloading parameters (depth, diameter, pressure, events) are required"));
               return;
             }
           }
@@ -831,7 +832,7 @@ export const Scope1Form: React.FC = () => {
             formData.ch4_content === null ||
             formData.ch4_content === ""
           ) {
-            toast.warning("Gas CH4 content (%) is required for well unloading");
+            toast.warning(tr("Gas CH4 content (%) is required for well unloading"));
             return;
           }
         }
@@ -840,43 +841,43 @@ export const Scope1Form: React.FC = () => {
         if (tier === "tier1" || (sourceType as string) === "default") {
           const events = parseFloat(formData.amount || formData.events || 0);
           if (events <= 0 || isNaN(events)) {
-            toast.warning("Number of completion events must be greater than zero for Tier 1 completions");
+            toast.warning(tr("Number of completion events must be greater than zero for Tier 1 completions"));
             return;
           }
         } else if (tier === "tier2" || (sourceType as string) === "custom") {
           const method = String(formData.calc_method || formData.comp_method || "rate_duration").toLowerCase();
           if (method === "gor") {
             if (!formData.comp_liquid_bbl || !formData.comp_gor) {
-              toast.warning("Liquid flowback volume (bbl) and GOR (scf/bbl) are required for GOR method");
+              toast.warning(tr("Liquid flowback volume (bbl) and GOR (scf/bbl) are required for GOR method"));
               return;
             }
           } else if (method === "api_equation_6_7" || method === "pressure_volume") {
             const hasRate = formData.comp_rate || formData.daily_production_rate || formData.comp_daily_prod_rate;
             const hasDur = formData.comp_duration || formData.vent_duration_hours;
             if (!hasRate || !hasDur) {
-              toast.warning("Initial production rate and vent duration are required");
+              toast.warning(tr("Initial production rate and vent duration are required"));
               return;
             }
           } else {
             // rate_duration
             if (!formData.comp_rate || !formData.comp_duration) {
-              toast.warning("Flowback rate and duration are required for Rate × Duration calculation");
+              toast.warning(tr("Flowback rate and duration are required for Rate × Duration calculation"));
               return;
             }
           }
           if (formData.comp_ch4_content === undefined && formData.ch4_content === undefined) {
-            toast.warning("Gas CH4 content (%) is required for Tier 2 completions");
+            toast.warning(tr("Gas CH4 content (%) is required for Tier 2 completions"));
             return;
           }
         } else {
           // Tier 3 Direct Measurement
           const hasVol = formData.comp_volume || formData.flowback_volume || (formData.unit !== "events" && formData.amount);
           if (!hasVol || parseFloat(hasVol) <= 0) {
-            toast.warning("Measured flowback gas volume must be greater than zero for Tier 3 completions");
+            toast.warning(tr("Measured flowback gas volume must be greater than zero for Tier 3 completions"));
             return;
           }
           if (formData.comp_ch4_content === undefined && formData.ch4_content === undefined) {
-            toast.warning("Gas CH4 content (%) is required for Tier 3 completions");
+            toast.warning(tr("Gas CH4 content (%) is required for Tier 3 completions"));
             return;
           }
           const disp = String(formData.comp_disposition || formData.disposition || "vented").toLowerCase();
@@ -898,7 +899,7 @@ export const Scope1Form: React.FC = () => {
           !formData.blowdown_events
         ) {
           toast.warning(
-            "Blowdown parameters (volume, pressure, events) are required",
+            tr("Blowdown parameters (volume, pressure, events) are required"),
           );
           return;
         }
@@ -907,7 +908,7 @@ export const Scope1Form: React.FC = () => {
           formData.ch4_content === null ||
           formData.ch4_content === ""
         ) {
-          toast.warning("Gas CH4 content (%) is required for blowdown");
+          toast.warning(tr("Gas CH4 content (%) is required for blowdown"));
           return;
         }
       } else if (processType === "pneumatic") {
@@ -917,7 +918,7 @@ export const Scope1Form: React.FC = () => {
           !formData.pneu_hours
         ) {
           toast.warning(
-            "Pneumatic device count, bleed rate, and operating hours are required",
+            tr("Pneumatic device count, bleed rate, and operating hours are required"),
           );
           return;
         }
@@ -927,7 +928,7 @@ export const Scope1Form: React.FC = () => {
           formData.pneu_ch4_content === ""
         ) {
           toast.warning(
-            "Gas CH4 content (%) is required for pneumatic devices",
+            tr("Gas CH4 content (%) is required for pneumatic devices"),
           );
           return;
         }
@@ -935,7 +936,7 @@ export const Scope1Form: React.FC = () => {
         ["tank", "tank_flashing", "storage_tanks"].includes(processType)
       ) {
         if (!formData.amount || !formData.tank_gor) {
-          toast.warning("Tank throughput and Gas-Oil Ratio (GOR) are required");
+          toast.warning(tr("Tank throughput and Gas-Oil Ratio (GOR) are required"));
           return;
         }
         if (
@@ -943,7 +944,7 @@ export const Scope1Form: React.FC = () => {
           formData.tank_ch4_content === null ||
           formData.tank_ch4_content === ""
         ) {
-          toast.warning("Gas CH4 content (%) is required for storage tanks");
+          toast.warning(tr("Gas CH4 content (%) is required for storage tanks"));
           return;
         }
       } else if (processType === "agr") {
@@ -955,7 +956,7 @@ export const Scope1Form: React.FC = () => {
           formData.agr_co2_out === ""
         ) {
           toast.warning(
-            "AGR throughput, inlet CO2 (%), and outlet CO2 (%) are required",
+            tr("AGR throughput, inlet CO2 (%), and outlet CO2 (%) are required"),
           );
           return;
         }
@@ -967,7 +968,7 @@ export const Scope1Form: React.FC = () => {
             !formData.dehy_hours
           ) {
             toast.warning(
-              "Dehydrator throughput, pump rate, and operating hours are required",
+              tr("Dehydrator throughput, pump rate, and operating hours are required"),
             );
             return;
           }
@@ -976,7 +977,7 @@ export const Scope1Form: React.FC = () => {
             formData.dehy_ch4_content === null ||
             formData.dehy_ch4_content === ""
           ) {
-            toast.warning("Gas CH4 content (%) is required for dehydrators");
+            toast.warning(tr("Gas CH4 content (%) is required for dehydrators"));
             return;
           }
         }
@@ -998,7 +999,7 @@ export const Scope1Form: React.FC = () => {
         const oil = parseFloat(formData.oil_production || formData.amount || 0);
         if (oil <= 0 || isNaN(oil)) {
           toast.warning(
-            "Crude oil production throughput must be greater than zero for Tier 1",
+            tr("Crude oil production throughput must be greater than zero for Tier 1"),
           );
           return;
         }
@@ -1006,7 +1007,7 @@ export const Scope1Form: React.FC = () => {
         const oil = parseFloat(formData.oil_production || formData.amount || 0);
         if (oil <= 0 || isNaN(oil)) {
           toast.warning(
-            "Crude oil production throughput must be greater than zero for Tier 2",
+            tr("Crude oil production throughput must be greater than zero for Tier 2"),
           );
           return;
         }
@@ -1017,7 +1018,7 @@ export const Scope1Form: React.FC = () => {
           isNaN(gor) ||
           gor < 0
         ) {
-          toast.warning("Gas-Oil Ratio (GOR) is required and cannot be negative");
+          toast.warning(tr("Gas-Oil Ratio (GOR) is required and cannot be negative"));
           return;
         }
         const dur = parseFloat(
@@ -1026,11 +1027,11 @@ export const Scope1Form: React.FC = () => {
             : new Date(Number(year), Number(month), 0).getDate() || 365,
         );
         if (dur < 0) {
-          toast.warning("Venting duration cannot be negative");
+          toast.warning(tr("Venting duration cannot be negative"));
           return;
         }
         if (dur > 366) {
-          toast.warning("Venting duration cannot exceed 366 days");
+          toast.warning(tr("Venting duration cannot exceed 366 days"));
           return;
         }
       } else {
@@ -1039,7 +1040,7 @@ export const Scope1Form: React.FC = () => {
         const vol = parseFloat(formData.vent_volume || formData.amount || 0);
         if (rate <= 0 && vol <= 0) {
           toast.warning(
-            "Measured vent flow rate or total measured vent volume is required for Tier 3",
+            tr("Measured vent flow rate or total measured vent volume is required for Tier 3"),
           );
           return;
         }
@@ -1049,7 +1050,7 @@ export const Scope1Form: React.FC = () => {
             parseFloat(formData.venting_duration) <= 0)
         ) {
           toast.warning(
-            "Venting duration is required when vent rate is specified for Tier 3",
+            tr("Venting duration is required when vent rate is specified for Tier 3"),
           );
           return;
         }
@@ -1065,17 +1066,17 @@ export const Scope1Form: React.FC = () => {
           ? parseFloat(formData.co2_content)
           : null;
       if (ch4 !== null && (ch4 < 0 || ch4 > 100)) {
-        toast.warning("Methane (CH4) content must be between 0% and 100%");
+        toast.warning(tr("Methane (CH4) content must be between 0% and 100%"));
         return;
       }
       if (co2 !== null && (co2 < 0 || co2 > 100)) {
         toast.warning(
-          "Carbon dioxide (CO2) content must be between 0% and 100%",
+          tr("Carbon dioxide (CO2) content must be between 0% and 100%"),
         );
         return;
       }
       if (ch4 !== null && co2 !== null && ch4 + co2 > 100.01) {
-        toast.warning("Sum of CH4 and CO2 content cannot exceed 100%");
+        toast.warning(tr("Sum of CH4 and CO2 content cannot exceed 100%"));
         return;
       }
     }
@@ -1451,13 +1452,13 @@ export const Scope1Form: React.FC = () => {
 
       // a blank count is never booked as 1 (wells, events, facilities, components ... were defaulted to 1)
       if (finalAmount !== undefined && Number.isNaN(finalAmount)) {
-        toast.warning("Please enter the activity amount (count, volume or quantity)");
+        toast.warning(tr("Please enter the activity amount (count, volume or quantity)"));
         setSubmitting(false);
         return;
       }
 
       if (!finalUnit && sourceType !== "specific" && !sectionActive) {
-        toast.warning("Please select a unit");
+        toast.warning(tr("Please select a unit"));
         setSubmitting(false);
         return;
       }
@@ -1545,8 +1546,8 @@ export const Scope1Form: React.FC = () => {
       await api.post("/emissions", finalPayload);
       toast.success(
         status === "Draft"
-          ? "Entry saved as draft"
-          : "Scope 1 entry added successfully",
+          ? tr("Entry saved as draft")
+          : tr("Scope 1 entry added successfully"),
       );
 
       // Reset Form (keep identity)
@@ -1680,11 +1681,11 @@ export const Scope1Form: React.FC = () => {
       // Strip prefix (e.g. "s1_17" -> "17")
       const realId = deleteConfirmId.toString().replace(/^[s]\d+_/, "");
       await api.delete(`/emissions/${realId}`);
-      toast.success("Entry deleted");
+      toast.success(tr("Entry deleted"));
       loadEntries();
     } catch (error) {
       console.error("Failed to delete:", error);
-      toast.error("Failed to delete entry");
+      toast.error(tr("Failed to delete entry"));
     } finally {
       setDeleteConfirmId(null);
     }
@@ -1741,7 +1742,7 @@ export const Scope1Form: React.FC = () => {
       case "associated_gas_venting":
         return <AssociatedGasVentingForm {...props} />;
       default:
-        return <div>Select a process type</div>;
+        return <div>{tr("Select a process type")}</div>;
     }
   };
 
@@ -1783,7 +1784,7 @@ export const Scope1Form: React.FC = () => {
   };
 
   const getFacilityOptions = () => [
-    { value: "", label: "Select Region..." },
+    { value: "", label: tr("Select Region...") },
     ...facilities.map((f) => ({
       value: f.id.toString(),
       label: f.name,
@@ -1894,27 +1895,27 @@ export const Scope1Form: React.FC = () => {
   return (
     <div className="scope-form">
       <div className="calc-panel s1-form">
-        <h2 className="[font-size:var(--text-md)] [font-weight:700] [color:var(--s1-ink)] [margin:0_0_18px]">New entry</h2>
+        <h2 className="[font-size:var(--text-md)] [font-weight:700] [color:var(--s1-ink)] [margin:0_0_18px]">{tr("New entry")}</h2>
 
-        <Section n={1} title="Identity & Location">
+        <Section n={1} title={tr("Identity & Location")}>
           <FieldGrid min={180}>
             <div className="input-group s1-span-2">
-              <label>Region</label>
+              <label>{tr("Region")}</label>
               <CustomDropdown
                 options={getFacilityOptions()}
                 value={facilityId || ""}
                 onChange={setFacilityId}
-                placeholder="Select region"
+                placeholder={tr("Select region")}
               />
             </div>
-            <Field className="input-group" label="Year">
+            <Field className="input-group" label={tr("Year")}>
               <Input
                 type="number"
                 value={year || ""}
                 onChange={(e) => setYear(e.target.value)}
               />
             </Field>
-            <Field className="input-group" label="Month">
+            <Field className="input-group" label={tr("Month")}>
               <NativeSelect
                 className="component-select"
                 value={month || 1}
@@ -1932,18 +1933,18 @@ export const Scope1Form: React.FC = () => {
             <div className="[margin-top:6px] [font-size:var(--text-sm)] [color:var(--s1-muted)]">{[activity, division, field].filter(Boolean).join(" · ")}</div>
           )}
           <div className="[margin-top:16px]">
-            <div className="[font-size:var(--text-sm)] [font-weight:600] [color:var(--s1-muted)] [text-transform:uppercase] [letter-spacing:0.04em] [margin-bottom:10px]">Source details</div>
+            <div className="[font-size:var(--text-sm)] [font-weight:600] [color:var(--s1-muted)] [text-transform:uppercase] [letter-spacing:0.04em] [margin-bottom:10px]">{tr("Source details")}</div>
             <FieldGrid>
               <div className="input-group">
-                <label>Emission source</label>
+                <label>{tr("Emission source")}</label>
                 <CustomDropdown
                   options={getEmissionSourceOptions()}
                   value={emissionSourceId}
                   onChange={setEmissionSourceId}
-                  placeholder="From inventory"
+                  placeholder={tr("From inventory")}
                 />
               </div>
-              <Field className="input-group" label="Equipment ID">
+              <Field className="input-group" label={tr("Equipment ID")}>
                 <Input
                   type="text"
                   value={equipmentId}
@@ -1951,12 +1952,12 @@ export const Scope1Form: React.FC = () => {
                   placeholder="e.g. T-101"
                 />
               </Field>
-              <Field className="input-group" label="Group">
+              <Field className="input-group" label={tr("Group")}>
                 <Input
                   type="text"
                   value={groupName}
                   onChange={(e) => setGroupName(e.target.value)}
-                  placeholder="e.g. West facility"
+                  placeholder={tr("e.g. West facility")}
                 />
               </Field>
             </FieldGrid>
@@ -2019,7 +2020,7 @@ export const Scope1Form: React.FC = () => {
               opacity: submitting ? 0.6 : 1,
             }}
           >
-            {submitting ? "Saving..." : "Save draft"}
+            {submitting ? tr("Saving...") : tr("Save draft")}
           </button>
           <button
             className="btn-add-activity flex-[1.5]"
@@ -2030,7 +2031,7 @@ export const Scope1Form: React.FC = () => {
               opacity: submitting ? 0.6 : 1,
             }}
           >
-            {submitting ? "Saving..." : "Submit"}
+            {submitting ? tr("Saving...") : tr("Submit")}
           </button>
         </div>
       </div>
@@ -2040,7 +2041,7 @@ export const Scope1Form: React.FC = () => {
           onClose={() => setImportModal({ ...importModal, isOpen: false })}
           onUploadSuccess={() => {
             loadEntries();
-            toast.success("Records imported and calculated successfully!");
+            toast.success(tr("Records imported and calculated successfully!"));
           }}
         />
       )}
@@ -2083,9 +2084,9 @@ export const Scope1Form: React.FC = () => {
 
       <ConfirmModal
         isOpen={Boolean(deleteConfirmId)}
-        title="Delete Scope 1 Emission"
-        message="Are you sure you want to delete this emission entry? This action cannot be undone."
-        confirmLabel="Delete"
+        title={tr("Delete Scope 1 Emission")}
+        message={tr("Are you sure you want to delete this emission entry? This action cannot be undone.")}
+        confirmLabel={tr("Delete")}
         confirmVariant="danger"
         onConfirm={confirmDelete}
         onCancel={() => setDeleteConfirmId(null)}

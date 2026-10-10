@@ -2,6 +2,7 @@ import React from "react";
 import { Building2, Save } from "lucide-react";
 import { Badge, Button, Input, NativeSelect, controlClass } from "../../ui";
 import { SettingsSection } from "./SettingsIPCCGlobalWarming";
+import { t } from "../../i18n";
 
 const YEARS = Array.from({ length: new Date().getFullYear() - 2020 }, (_, i) => 2021 + i);
 const COLUMNS = ["Facility Name", "Segment", "Operator Status", "Country", "Base Year", "Target Year", "Threshold (±%)", "Actions"];
@@ -43,7 +44,7 @@ const SettingsFacilityLevelOGMPOverrides: React.FC<SettingsFacilityLevelOGMPOver
   return (
     <SettingsSection
       icon={Building2}
-      title="Facility-Level OGMP Overrides"
+      title={t("Facility-Level OGMP Overrides")}
       intro="Customize operator status (Operated vs Non-Operated), country, base year, and specific reconciliation variance thresholds for each facility."
     >
       <div className="overflow-x-auto rounded-lg border border-border bg-surface">
@@ -71,11 +72,11 @@ const SettingsFacilityLevelOGMPOverrides: React.FC<SettingsFacilityLevelOGMPOver
                     <strong className="block text-base text-text">{name}</strong>
                     <span className="text-xs text-text-secondary">{fac.code || "FAC-" + fac.id}</span>
                   </td>
-                  <td className="px-4 py-3 text-base text-text">{fac.segment || "Upstream"}</td>
+                  <td className="px-4 py-3 text-base text-text">{fac.segment || t("Upstream")}</td>
                   <td className="px-4 py-3">
                     <NativeSelect aria-label={`Operator status for ${name}`} className={controlClass} value={opStatus} disabled={!isAdmin} onChange={change("operator_status")}>
-                      <option value="operated">Operated (3-yr target)</option>
-                      <option value="non_operated">Non-Operated (5-yr target)</option>
+                      <option value="operated">{t("Operated (3-yr target)")}</option>
+                      <option value="non_operated">{t("Non-Operated (5-yr target)")}</option>
                     </NativeSelect>
                   </td>
                   <td className="px-4 py-3">
@@ -100,8 +101,8 @@ const SettingsFacilityLevelOGMPOverrides: React.FC<SettingsFacilityLevelOGMPOver
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <Button variant="secondary" size="sm" onClick={() => handleSaveFacility(fac.id)} disabled={!canSave} title={canSave ? "Save Facility Settings" : "Administrator privileges required to update facility"}>
-                      <Save className="size-3.5" aria-hidden="true" /> Save
+                    <Button variant="secondary" size="sm" onClick={() => handleSaveFacility(fac.id)} disabled={!canSave} title={canSave ? t("Save Facility Settings") : t("Administrator privileges required to update facility")}>
+                      <Save className="size-3.5" aria-hidden="true" />{" "}{t("Save")}
                     </Button>
                   </td>
                 </tr>

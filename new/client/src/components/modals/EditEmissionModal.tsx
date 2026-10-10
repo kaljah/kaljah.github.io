@@ -5,6 +5,7 @@ import api from "../../api";
 import { useToast } from "../Toast";
 import { MARKET_INSTRUMENTS } from "../scope2-form/marketInstruments";
 import { apiError } from "../../utils/apiError";
+import { t } from "../../i18n";
 import { editRequest, editScope } from "./editEmissionRequest";
 
 export interface EditEmissionModalProps {
@@ -69,12 +70,12 @@ export const EditEmissionModal: React.FC<EditEmissionModalProps> = ({
     try {
       const { url, payload } = editRequest(emission, formData);
       await api.put(url, payload);
-      toast.success("Emission record updated successfully. Record returned to Pending review for verification.");
+      toast.success(t("Emission record updated successfully. Record returned to Pending review for verification."));
       if (onSuccess) onSuccess();
       onClose();
     } catch (err) {
       console.error("Error updating emission record:", err);
-      toast.error(apiError(err, "Failed to update emission record"));
+      toast.error(apiError(err, t("Failed to update emission record")));
     } finally {
       setLoading(false);
     }
@@ -83,18 +84,18 @@ export const EditEmissionModal: React.FC<EditEmissionModalProps> = ({
   if (!emission) return null;
 
   const MONTHS = [
-    { value: 1, label: "January" },
-    { value: 2, label: "February" },
-    { value: 3, label: "March" },
-    { value: 4, label: "April" },
-    { value: 5, label: "May" },
-    { value: 6, label: "June" },
-    { value: 7, label: "July" },
-    { value: 8, label: "August" },
-    { value: 9, label: "September" },
-    { value: 10, label: "October" },
-    { value: 11, label: "November" },
-    { value: 12, label: "December" },
+    { value: 1, label: t("January") },
+    { value: 2, label: t("February") },
+    { value: 3, label: t("March") },
+    { value: 4, label: t("April") },
+    { value: 5, label: t("May") },
+    { value: 6, label: t("June") },
+    { value: 7, label: t("July") },
+    { value: 8, label: t("August") },
+    { value: 9, label: t("September") },
+    { value: 10, label: t("October") },
+    { value: 11, label: t("November") },
+    { value: 12, label: t("December") },
   ];
 
   const currentYear = new Date().getFullYear();
@@ -105,22 +106,22 @@ export const EditEmissionModal: React.FC<EditEmissionModalProps> = ({
       open={isOpen}
       onOpenChange={(open) => !open && onClose()}
       title={`Edit Emission Record #${emission.id}`}
-      description="Update activity quantity, fuel/source, unit, or reporting period. Edited records will automatically return to Pending Review for verification."
+      description={t("Update activity quantity, fuel/source, unit, or reporting period. Edited records will automatically return to Pending Review for verification.")}
       maxWidth="36rem"
       footer={
         <>
           <Button variant="secondary" onClick={onClose} disabled={loading}>
-            Cancel
+            {t("Cancel")}
           </Button>
           <Button onClick={() => handleSubmit()} loading={loading} disabled={loading}>
-            Save Changes
+            {t("Save Changes")}
           </Button>
         </>
       }
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="grid grid-cols-2 gap-4">
-          <Field label="Reporting Year *">
+          <Field label={t("Reporting Year *")}>
             <NativeSelect
               value={formData.year}
               onChange={(e) => handleChange("year", e.target.value)}
@@ -133,7 +134,7 @@ export const EditEmissionModal: React.FC<EditEmissionModalProps> = ({
 
           {/* Scope 3 records are yearly */}
           {editScope(emission) !== 3 && (
-            <Field label="Month *">
+            <Field label={t("Month *")}>
               <NativeSelect
                 value={formData.month}
                 onChange={(e) => handleChange("month", e.target.value)}
@@ -147,12 +148,12 @@ export const EditEmissionModal: React.FC<EditEmissionModalProps> = ({
         </div>
 
         {facilities.length > 0 && (
-          <Field label="Facility / Region *">
+          <Field label={t("Facility / Region *")}>
             <NativeSelect
               value={formData.facility_id}
               onChange={(e) => handleChange("facility_id", e.target.value)}
             >
-              <option value="">Select Facility</option>
+              <option value="">{t("Select Facility")}</option>
               {facilities.map((f) => (
                 <option key={f.id} value={f.id}>{f.name} {f.field ? `(${f.field})` : ""}</option>
               ))}
@@ -161,25 +162,25 @@ export const EditEmissionModal: React.FC<EditEmissionModalProps> = ({
         )}
 
         <div className="grid grid-cols-2 gap-4">
-          <Field label="Category / Process">
+          <Field label={t("Category / Process")}>
             <Input
               value={formData.process_type}
               onChange={(e) => handleChange("process_type", e.target.value)}
-              placeholder="e.g. combustion, flaring"
+              placeholder={t("e.g. combustion, flaring")}
             />
           </Field>
 
-          <Field label="Fuel / Source">
+          <Field label={t("Fuel / Source")}>
             <Input
               value={formData.fuel}
               onChange={(e) => handleChange("fuel", e.target.value)}
-              placeholder="e.g. Natural Gas, Diesel"
+              placeholder={t("e.g. Natural Gas, Diesel")}
             />
           </Field>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <Field label="Activity Quantity *">
+          <Field label={t("Activity Quantity *")}>
             <Input
               type="number"
               step="any"
@@ -190,11 +191,11 @@ export const EditEmissionModal: React.FC<EditEmissionModalProps> = ({
             />
           </Field>
 
-          <Field label="Unit *">
+          <Field label={t("Unit *")}>
             <Input
               value={formData.unit}
               onChange={(e) => handleChange("unit", e.target.value)}
-              placeholder="e.g. scf, m3, gal, bbl, kWh"
+              placeholder={t("e.g. scf, m3, gal, bbl, kWh")}
               required
             />
           </Field>
@@ -202,9 +203,9 @@ export const EditEmissionModal: React.FC<EditEmissionModalProps> = ({
 
         {(editScope(emission) === 2 || formData.market_instrument_type) && (
           <div className="mt-2 flex flex-col gap-4 border-t border-border pt-4">
-            <h4 className="text-sm font-semibold text-text">Scope 2 Dual-Reporting Attributes</h4>
+            <h4 className="text-sm font-semibold text-text">{t("Scope 2 Dual-Reporting Attributes")}</h4>
             <div className="grid grid-cols-2 gap-4">
-              <Field label="Market Instrument Type">
+              <Field label={t("Market Instrument Type")}>
                 <NativeSelect
                   value={formData.market_instrument_type}
                   onChange={(e) => handleChange("market_instrument_type", e.target.value)}
@@ -215,13 +216,13 @@ export const EditEmissionModal: React.FC<EditEmissionModalProps> = ({
                 </NativeSelect>
               </Field>
 
-              <Field label="Market Emission Factor (kg CO2e/kWh)">
+              <Field label={t("Market Emission Factor (kg CO2e/kWh)")}>
                 <Input
                   type="number"
                   step="any"
                   value={formData.market_emission_factor}
                   onChange={(e) => handleChange("market_emission_factor", e.target.value)}
-                  placeholder="0.000 (0 for certified zero-carbon)"
+                  placeholder={t("0.000 (0 for certified zero-carbon)")}
                 />
               </Field>
             </div>

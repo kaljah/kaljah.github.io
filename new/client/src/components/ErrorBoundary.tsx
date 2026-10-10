@@ -1,6 +1,7 @@
 import React, { type ErrorInfo, type ReactNode } from "react";
 import { CircleAlert, RefreshCw } from "lucide-react";
 import "./ErrorBoundary.css";
+import { t } from "../i18n";
 
 export interface ErrorBoundaryProps {
   children?: ReactNode;
@@ -53,19 +54,18 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
               <CircleAlert size="64" strokeWidth="2" aria-hidden="true" />
             </div>
 
-            <h1 className="[font-size:var(--text-2xl)]! [font-weight:700]! [color:var(--text-primary)] [margin:0_0_16px_0] [@media(max-width:768px)]:[font-size:var(--text-xl)]!">Something went wrong</h1>
+            <h1 className="[font-size:var(--text-2xl)]! [font-weight:700]! [color:var(--text-primary)] [margin:0_0_16px_0] [@media(max-width:768px)]:[font-size:var(--text-xl)]!">{t("Something went wrong")}</h1>
             <p className="error-message">
-              We're sorry, but an unexpected error occurred. Please try
-              reloading the page or contact support if the problem persists.
+              {t("We're sorry, but an unexpected error occurred. Please try reloading the page or contact support if the problem persists.")}
             </p>
 
             {Boolean(import.meta.env?.DEV) &&
               this.state.error && (
                 <details className="[background:rgba(0,_0,_0,_0.3)] [border:1px_solid_rgba(255,_255,_255,_0.1)] [&&]:[border-radius:var(--radius-md)] [padding:16px] [margin-bottom:24px] [text-align:left] [&_summary]:[cursor:pointer] [&_summary]:[font-weight:600] [&_summary]:[color:var(--color-amber-700)] [&_summary]:[margin-bottom:12px] [&_summary]:[user-select:none] [&&]:[&_summary:hover]:[color:var(--color-legacy-fbbf24)]">
-                  <summary>Error Details (Development Only)</summary>
+                  <summary>{t("Error Details (Development Only)")}</summary>
                   <div className="[margin-top:12px] [font-size:var(--text-base)] [color:rgba(255,_255,_255,_0.7)] [&_strong]:[color:var(--color-red-700)] [&_pre]:[background:rgba(0,_0,_0,_0.4)] [&_pre]:[padding:12px] [&_pre]:[border-radius:var(--radius-sm)] [&_pre]:[overflow-x:auto] [&_pre]:[margin-top:8px] [&_pre]:[font-size:var(--text-sm)] [&_pre]:[line-height:1.5] [&_pre]:[white-space:pre-wrap] [&_pre]:[word-wrap:break-word]">
                     <p>
-                      <strong>Error:</strong> {this.state.error.toString()}
+                      <strong>{t("Error:")}</strong> {this.state.error.toString()}
                     </p>
                     {this.state.errorInfo && (
                       <pre>{this.state.errorInfo.componentStack}</pre>
@@ -77,20 +77,20 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
             <div className="[display:flex] [gap:12px] [justify-content:center] [margin-bottom:24px] [@media(max-width:768px)]:[flex-direction:column]">
               <button className="error-btn primary" onClick={this.handleReload}>
                 <RefreshCw size={16} aria-hidden="true" />
-                Reload Page
+                {t("Reload Page")}
               </button>
               <button
                 className="error-btn secondary"
                 onClick={this.handleReset}
               >
-                Try Again
+                {t("Try Again")}
               </button>
             </div>
 
             <div className="[padding-top:24px] [border-top:1px_solid_rgba(255,_255,_255,_0.1)] [font-size:var(--text-base)] [color:var(--text-secondary)] [&_a]:[color:var(--color-green-700)] [&_a]:[text-decoration:none] [&&]:[&_a:hover]:[text-decoration:underline]">
               <p>
-                Need help? Contact support at{" "}
-                <a href="mailto:support@example.com">support@example.com</a>
+                {t("Need help? Contact support at")}{" "}
+                <a href="mailto:support@example.com">{t("support@example.com")}</a>
               </p>
             </div>
           </div>

@@ -4,6 +4,7 @@ import { Copy, Eye, Trash2 } from "lucide-react";
 import LoadingSpinner from "../LoadingSpinner";
 import { UNCERTAINTY_COVERAGE_K } from "../../constants";
 import { formatEmission, formatNumber } from "../../utils/formatters";
+import { t } from "../../i18n";
 
 export interface Scope2Entry {
   id: number | string;
@@ -57,46 +58,46 @@ const Scope2FormCalculatorGridContainer: React.FC<Scope2FormCalculatorGridContai
   <div className="calculator-grid-container [background:white] [border-radius:var(--radius-md)] [overflow:hidden] [box-shadow:var(--shadow-xs)] mt-[30px]!">
     <div className="table-controls flex! justify-between! items-center! p-[15px]!">
       <strong className="text-[length:1rem]! text-[color:var(--color-legacy-374151)]!">
-        Recent Scope 2 (Electricity) Entries
+        {t("Recent Scope 2 (Electricity) Entries")}
       </strong>
       <button
         type="button"
         className="action-btn secondary flex! items-center! gap-[8px]! whitespace-nowrap!"
         onClick={() => setShowWizard(true)}
       >
-        ↑ Bulk Import (Wizard)
+        {t("↑ Bulk Import (Wizard)")}
       </button>
     </div>
     <div
       className={`table-scroll-container [max-height:600px]! [overflow-y:auto]!`}
       tabIndex={0}
       role="region"
-      aria-label="Entries table"
+      aria-label={t("Entries table")}
     >
       <table className="excel-table">
         <thead>
           <tr>
-            <th>Period</th>
-            <th>Facility</th>
-            <th>Source Type</th>
-            <th>Grid / Region</th>
-            <th>Division / Field</th>
-            <th>Consumption / Input</th>
+            <th>{t("Period")}</th>
+            <th>{t("Facility")}</th>
+            <th>{t("Source Type")}</th>
+            <th>{t("Grid / Region")}</th>
+            <th>{t("Division / Field")}</th>
+            <th>{t("Consumption / Input")}</th>
             <th>EF</th>
-            <th>Total (tCO₂e)</th>
+            <th>{t("Total (tCO₂e)")}</th>
             <th
-              title="Standard Combined Uncertainty (1σ)"
+              title={t("Standard Combined Uncertainty (1σ)")}
               className="[cursor:help]!"
             >
-              CO₂e 1σ (±%)
+              {t("CO₂e 1σ (±%)")}
             </th>
             <th
-              title="Expanded Uncertainty (95% Confidence Interval)"
+              title={t("Expanded Uncertainty (95% Confidence Interval)")}
               className="[cursor:help]!"
             >
-              CO₂e 95% CI (±%)
+              {t("CO₂e 95% CI (±%)")}
             </th>
-            <th className="text-center!">Actions</th>
+            <th className="text-center!">{t("Actions")}</th>
           </tr>
         </thead>
         <tbody>
@@ -109,9 +110,9 @@ const Scope2FormCalculatorGridContainer: React.FC<Scope2FormCalculatorGridContai
           ) : loadError ? (
             <tr>
               <td colSpan={11} className="text-center! p-[40px]! text-[color:var(--danger,_var(--color-red-600))]!">
-                Could not load the records.{" "}
+                {t("Could not load the records.")}{" "}
                 <Button type="button" variant="ghost" onClick={loadEntries}>
-                  Retry
+                  {t("Retry")}
                 </Button>
               </td>
             </tr>
@@ -121,7 +122,7 @@ const Scope2FormCalculatorGridContainer: React.FC<Scope2FormCalculatorGridContai
                 colSpan={11}
                 className="text-center! p-[40px]! text-[color:var(--color-legacy-9ca3af)]!"
               >
-                No entries found
+                {t("No entries found")}
               </td>
             </tr>
           ) : (
@@ -162,7 +163,7 @@ const Scope2FormCalculatorGridContainer: React.FC<Scope2FormCalculatorGridContai
                   </td>
                   <td className="font-medium!">
                     {facilities.find((f) => f.id === entry.facility_id)?.name ||
-                      "Unknown"}
+                      t("Unknown")}
                   </td>
                   <td
                     style={{
@@ -201,16 +202,16 @@ const Scope2FormCalculatorGridContainer: React.FC<Scope2FormCalculatorGridContai
                       : "—"}
                     {entry.status === "Draft" ? (
                       <span className="ml-[8px]! text-[length:0.65rem]! bg-[color:var(--color-legacy-fee2e2)]! text-[color:var(--color-red-700)]! p-[2px_6px]! rounded-[4px]! font-semibold!">
-                        Draft
+                        {t("Draft")}
                       </span>
                     ) : entry.status === "Pending Approval" ||
                       entry.status === "Pending" ? (
                       <span className="ml-[8px]! text-[length:0.65rem]! bg-[color:var(--color-legacy-fef3c7)]! text-[color:var(--color-amber-600)]! p-[2px_6px]! rounded-[4px]! font-semibold!">
-                        Pending
+                        {t("Pending")}
                       </span>
                     ) : (
                       <span className="ml-[8px]! text-[length:0.65rem]! bg-[color:var(--color-legacy-dcfce7)]! text-[color:var(--color-legacy-15803d)]! p-[2px_6px]! rounded-[4px]! font-semibold!">
-                        Verified
+                        {t("Verified")}
                       </span>
                     )}
                   </td>
@@ -220,7 +221,7 @@ const Scope2FormCalculatorGridContainer: React.FC<Scope2FormCalculatorGridContai
                         type="button"
                         className="icon-button text-[color:var(--color-blue-700)]!"
                         onClick={() => handleInspect(entry)}
-                        title="Inspect Calculation Details"
+                        title={t("Inspect Calculation Details")}
                       >
                         <Eye size={16} />
                       </button>
@@ -228,7 +229,7 @@ const Scope2FormCalculatorGridContainer: React.FC<Scope2FormCalculatorGridContai
                         type="button"
                         className="icon-button"
                         onClick={() => handleDuplicate(entry)}
-                        title="Duplicate"
+                        title={t("Duplicate")}
                       >
                         <Copy size={16} />
                       </button>
@@ -236,7 +237,7 @@ const Scope2FormCalculatorGridContainer: React.FC<Scope2FormCalculatorGridContai
                         type="button"
                         className="icon-button delete"
                         onClick={() => handleDelete(entry.id)}
-                        title="Delete"
+                        title={t("Delete")}
                       >
                         <Trash2 size={16} />
                       </button>
@@ -250,7 +251,7 @@ const Scope2FormCalculatorGridContainer: React.FC<Scope2FormCalculatorGridContai
         <tfoot>
           <tr className={`[background-color:var(--color-legacy-f9fafb)]! [font-weight:bold]!`}>
             <td colSpan={7} className="text-right! pr-[15px]!">
-              Total (Page):
+              {t("Total (Page):")}
             </td>
             <td className="text-[color:var(--color-blue-700)]!">
               {formatNumber(
@@ -270,10 +271,10 @@ const Scope2FormCalculatorGridContainer: React.FC<Scope2FormCalculatorGridContai
         onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
         disabled={currentPage === 1}
       >
-        Previous
+        {t("Previous")}
       </button>
       <span className="text-[length:0.9rem]! text-[color:var(--color-legacy-4b5563)]!">
-        Page {currentPage} of {totalPages}
+        {t("Page")}{" "}{currentPage}{" "}{t("of")}{" "}{totalPages}
       </span>
       <button
         type="button"
@@ -281,7 +282,7 @@ const Scope2FormCalculatorGridContainer: React.FC<Scope2FormCalculatorGridContai
         onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
         disabled={currentPage === totalPages}
       >
-        Next
+        {t("Next")}
       </button>
     </div>
   </div>

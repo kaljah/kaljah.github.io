@@ -6,6 +6,7 @@ import { IconButton } from "../../ui";
 import AccountMenu from "./AccountMenu";
 import Breadcrumbs from "./Breadcrumbs";
 import "../../components/layout/TopBar.css";
+import { t } from "../../i18n";
 
 const isMac = typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.platform);
 
@@ -19,7 +20,7 @@ const TopBar: React.FC<TopBarProps> = ({ onOpenPalette }) => {
   return (
     <header className="topbar sticky top-0 z-(--z-topbar) shrink-0 border-b border-border bg-surface/95 backdrop-blur">
       <div className="flex h-16 items-center gap-3 px-4 md:px-6">
-        <IconButton label="Open navigation menu" onClick={toggleMobileNav} className="md:hidden">
+        <IconButton label={t("Open navigation menu")} onClick={toggleMobileNav} className="md:hidden">
           <Menu className="size-5" aria-hidden="true" />
         </IconButton>
 
@@ -31,17 +32,17 @@ const TopBar: React.FC<TopBarProps> = ({ onOpenPalette }) => {
           <button
             type="button"
             onClick={onOpenPalette}
-            aria-label="Search pages and actions"
+            aria-label={t("Search pages and actions")}
             aria-keyshortcuts="Control+K Meta+K"
             className="hidden h-9 cursor-pointer items-center gap-2 rounded-md border border-border bg-surface px-3 text-sm text-text-secondary transition-colors hover:bg-ink-100 sm:flex"
           >
             <Search className="size-4" aria-hidden="true" />
-            <span>Search</span>
+            <span>{t("Search")}</span>
             <kbd className="rounded-sm border border-border bg-ink-50 px-1.5 font-[inherit] text-xs text-text-secondary">
-              {isMac ? "⌘K" : "Ctrl K"}
+              {isMac ? "⌘K" : t("Ctrl K")}
             </kbd>
           </button>
-          <IconButton label="Search" onClick={onOpenPalette} className="sm:hidden">
+          <IconButton label={t("Search")} onClick={onOpenPalette} className="sm:hidden">
             <Search className="size-5" aria-hidden="true" />
           </IconButton>
           <NotificationCenter />

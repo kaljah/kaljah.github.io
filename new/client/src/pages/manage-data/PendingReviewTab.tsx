@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import BatchReviewWizard from "../../components/BatchReviewWizard";
 import EditEmissionModal from "../../components/modals/EditEmissionModal";
+import { t } from "../../i18n";
 
 export interface PendingEmissionRecord {
   id: string | number;
@@ -146,10 +147,10 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
                   <h3 className="m-[0px]! text-[length:1.15rem]! font-bold!">
                     {rejectionModal.isBatch
                       ? `Reject ${rejectionModal.recordIds.length} Selected Record${rejectionModal.recordIds.length > 1 ? "s" : ""}`
-                      : "Reject Emission Record"}
+                      : t("Reject Emission Record")}
                   </h3>
                   <p className="m-[2px_0_0_0]! text-[length:0.8rem]! text-[color:var(--text-secondary)]!">
-                    Maker-Checker Audit Trail & Reason
+                    {t("Maker-Checker Audit Trail & Reason")}
                   </p>
                 </div>
               </div>
@@ -166,13 +167,13 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
             <div className="bg-[color:rgba(239,_68,_68,_0.06)]! [border:1px_solid_rgba(239,_68,_68,_0.2)]! rounded-[12px]! p-[12px_14px]! text-[length:0.84rem]! text-[color:var(--color-red-700)]! flex! gap-[10px]! items-start!">
               <AlertCircle size={16} className="shrink-0! mt-[2px]!" />
               <span>
-                The record will be marked Rejected and excluded from totals; it is kept for the audit trail. The submitter is notified with your reason.
+                {t("The record will be marked Rejected and excluded from totals; it is kept for the audit trail. The submitter is notified with your reason.")}
               </span>
             </div>
 
             <div>
               <label className="block! text-[length:0.78rem]! font-semibold! text-[color:var(--text-secondary)]! mb-[10px]! uppercase! [letter-spacing:0.05em]!">
-                Quick Rejection Reason Presets
+                {t("Quick Rejection Reason Presets")}
               </label>
               <div className="[display:flex] [flex-wrap:wrap] [gap:8px]">
                 {QUICK_REJECTION_REASONS.map((reason) => (
@@ -190,12 +191,12 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
 
             <div>
               <label className="block! text-[length:0.78rem]! font-semibold! text-[color:var(--text-secondary)]! mb-[8px]! uppercase! [letter-spacing:0.05em]!">
-                Audit Reason / Justification <span className="text-[color:var(--color-red-700)]!">*</span>
+                {t("Audit Reason / Justification")}{" "}<span className="text-[color:var(--color-red-700)]!">*</span>
               </label>
               <textarea
                 className="custom-input w-full! [resize:vertical]! text-[length:0.88rem]! p-[10px_12px]! rounded-[10px]!"
                 rows={3}
-                placeholder="Specify the detailed reason for rejection..."
+                placeholder={t("Specify the detailed reason for rejection...")}
                 value={rejectionModal.reason}
                 onChange={(e) => setRejectionModal((prev) => ({ ...prev, reason: e.target.value }))}
               />
@@ -209,7 +210,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
                 onClick={() => setRejectionModal((prev) => ({ ...prev, isOpen: false }))}
                 className="p-[8px_16px]! rounded-[8px]!"
               >
-                Cancel
+                {t("Cancel")}
               </Button>
               <button
                 type="button"
@@ -218,7 +219,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
                 onClick={handleConfirmReject}
               >
                 <X size={16} />
-                {isProcessingBatch ? "Rejecting..." : "Confirm Rejection"}
+                {isProcessingBatch ? t("Rejecting...") : t("Confirm Rejection")}
               </button>
             </div>
           </div>
@@ -229,15 +230,15 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
       <div className="manage-tab-header mb-[0px]!">
         <div>
           <div className="flex! items-center! gap-[12px]! mb-[6px]!">
-            <h2 className="m-[0px]! font-bold! [letter-spacing:-0.02em]!">Pending Review & Approvals</h2>
+            <h2 className="m-[0px]! font-bold! [letter-spacing:-0.02em]!">{t("Pending Review & Approvals")}</h2>
             {pendingMetrics.totalCount > 0 && (
               <span className="bg-[color:rgba(255,_102,_0,_0.1)]! text-[color:var(--color-link)]! [border:1px_solid_rgba(255,_102,_0,_0.25)]! text-[length:0.75rem]! font-bold! p-[3px_10px]! rounded-[12px]!">
-                {pendingMetrics.totalCount} Awaiting Review
+                {pendingMetrics.totalCount}{" "}{t("Awaiting Review")}
               </span>
             )}
           </div>
           <p className="m-[0px]! text-[color:var(--text-secondary)]! text-[length:0.9rem]!">
-            Maker-Checker Segregation: Audit and approve bulk-imported emissions data prior to greenhouse gas inventory inclusion.
+            {t("Maker-Checker Segregation: Audit and approve bulk-imported emissions data prior to greenhouse gas inventory inclusion.")}
           </p>
         </div>
         <div className="flex! gap-[10px]! items-center!">
@@ -249,7 +250,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
             disabled={isRefreshingPending}
           >
             <RefreshCw size={15} style={{ animation: isRefreshingPending ? "spin 1s linear infinite" : "none" }} />
-            {isRefreshingPending ? "Refreshing..." : "Refresh Queue"}
+            {isRefreshingPending ? t("Refreshing...") : t("Refresh Queue")}
           </Button>
           <Button
             type="submit"
@@ -257,7 +258,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
             onClick={() => setIsBatchWizardOpen(true)}
           >
             <Sparkles size={16} />
-            Launch Review Wizard
+            {t("Launch Review Wizard")}
           </Button>
         </div>
       </div>
@@ -269,7 +270,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
             <Clock size={22} />
           </div>
           <div className="[display:flex] [flex-direction:column] [gap:2px] [min-width:0]">
-            <span className="[font-size:var(--text-sm)] [font-weight:600] [text-transform:uppercase] [letter-spacing:0.05em] [color:var(--text-secondary)]">Pending Records</span>
+            <span className="[font-size:var(--text-sm)] [font-weight:600] [text-transform:uppercase] [letter-spacing:0.05em] [color:var(--text-secondary)]">{t("Pending Records")}</span>
             <span className="[font-size:var(--text-xl)] [font-weight:700] [color:var(--text-primary)] [line-height:1.2]">{pendingMetrics.totalCount}</span>
             <span className="[font-size:var(--text-sm)] [color:var(--text-muted)] [white-space:nowrap] [overflow:hidden] [text-overflow:ellipsis]">
               S1: {pendingMetrics.count1} · S2: {pendingMetrics.count2} · S3: {pendingMetrics.count3}
@@ -282,12 +283,12 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
             <Flame size={22} />
           </div>
           <div className="[display:flex] [flex-direction:column] [gap:2px] [min-width:0]">
-            <span className="[font-size:var(--text-sm)] [font-weight:600] [text-transform:uppercase] [letter-spacing:0.05em] [color:var(--text-secondary)]">Pending Impact</span>
+            <span className="[font-size:var(--text-sm)] [font-weight:600] [text-transform:uppercase] [letter-spacing:0.05em] [color:var(--text-secondary)]">{t("Pending Impact")}</span>
             <span className="[font-size:var(--text-xl)] [font-weight:700] [color:var(--text-primary)] [line-height:1.2]">
               {pendingMetrics.totalTco2e.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
-              <span className="text-[length:0.8rem]! font-medium! text-[color:var(--text-secondary)]! ml-[4px]!">tCO₂e</span>
+              <span className="text-[length:0.8rem]! font-medium! text-[color:var(--text-secondary)]! ml-[4px]!">{t("tCO₂e")}</span>
             </span>
-            <span className="[font-size:var(--text-sm)] [color:var(--text-muted)] [white-space:nowrap] [overflow:hidden] [text-overflow:ellipsis]">Awaiting inventory commit</span>
+            <span className="[font-size:var(--text-sm)] [color:var(--text-muted)] [white-space:nowrap] [overflow:hidden] [text-overflow:ellipsis]">{t("Awaiting inventory commit")}</span>
           </div>
         </div>
 
@@ -296,11 +297,11 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
             {pendingMetrics.flaggedCount > 0 ? <AlertTriangle size={22} /> : <CheckCircle size={22} />}
           </div>
           <div className="[display:flex] [flex-direction:column] [gap:2px] [min-width:0]">
-            <span className="[font-size:var(--text-sm)] [font-weight:600] [text-transform:uppercase] [letter-spacing:0.05em] [color:var(--text-secondary)]">Quality Audit</span>
+            <span className="[font-size:var(--text-sm)] [font-weight:600] [text-transform:uppercase] [letter-spacing:0.05em] [color:var(--text-secondary)]">{t("Quality Audit")}</span>
             <span className={`[font-size:var(--text-xl)] [font-weight:700] [line-height:1.2] ${pendingMetrics.flaggedCount > 0 ? "[color:var(--color-amber-600)]!" : "[color:inherit]!"}`}>
-              {pendingMetrics.flaggedCount} Flagged
+              {pendingMetrics.flaggedCount}{" "}{t("Flagged")}
             </span>
-            <span className="[font-size:var(--text-sm)] [color:var(--text-muted)] [white-space:nowrap] [overflow:hidden] [text-overflow:ellipsis]">{pendingMetrics.cleanCount} clean records verified</span>
+            <span className="[font-size:var(--text-sm)] [color:var(--text-muted)] [white-space:nowrap] [overflow:hidden] [text-overflow:ellipsis]">{pendingMetrics.cleanCount}{" "}{t("clean records verified")}</span>
           </div>
         </div>
 
@@ -309,13 +310,13 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
             <Shield size={22} />
           </div>
           <div className="[display:flex] [flex-direction:column] [gap:2px] [min-width:0]">
-            <span className="[font-size:var(--text-sm)] [font-weight:600] [text-transform:uppercase] [letter-spacing:0.05em] [color:var(--text-secondary)]">Scope Segregation</span>
+            <span className="[font-size:var(--text-sm)] [font-weight:600] [text-transform:uppercase] [letter-spacing:0.05em] [color:var(--text-secondary)]">{t("Scope Segregation")}</span>
             <span className="[font-weight:700] [color:var(--text-primary)] [line-height:1.2] text-[length:1.15rem]!">
               {pendingMetrics.totalCount > 0
                 ? `S1(${pendingMetrics.count1}) S2(${pendingMetrics.count2}) S3(${pendingMetrics.count3})`
-                : "Queue Clear"}
+                : t("Queue Clear")}
             </span>
-            <span className="[font-size:var(--text-sm)] [color:var(--text-muted)] [white-space:nowrap] [overflow:hidden] [text-overflow:ellipsis]">Maker-Checker active</span>
+            <span className="[font-size:var(--text-sm)] [color:var(--text-muted)] [white-space:nowrap] [overflow:hidden] [text-overflow:ellipsis]">{t("Maker-Checker active")}</span>
           </div>
         </div>
       </div>
@@ -327,7 +328,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
             className={`pending-tab-btn ${pendingScopeFilter === "all" ? "active" : ""}`}
             onClick={() => setPendingScopeFilter("all")}
           >
-            <span>All Scopes</span>
+            <span>{t("All Scopes")}</span>
             <span className="pending-count-chip [display:inline-flex] [align-items:center] [justify-content:center] [min-width:20px] [height:20px] [padding:0_6px] [border-radius:var(--radius-md)] [font-size:var(--text-xs)] [font-weight:600] [background:rgba(15,_23,_42,_0.08)] [color:var(--text-secondary)]">
               {pendingMetrics.totalCount}
             </span>
@@ -337,7 +338,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
             onClick={() => setPendingScopeFilter("1")}
           >
             <span className="scope-tag [background:rgba(255,_102,_0,_0.1)] [color:var(--color-brand-700)] [border:1px_solid_rgba(255,_102,_0,_0.25)]! p-[1px_6px]! text-[length:0.7rem]!">S1</span>
-            <span>Scope 1</span>
+            <span>{t("Scope 1")}</span>
             <span className="pending-count-chip [display:inline-flex] [align-items:center] [justify-content:center] [min-width:20px] [height:20px] [padding:0_6px] [border-radius:var(--radius-md)] [font-size:var(--text-xs)] [font-weight:600] [background:rgba(15,_23,_42,_0.08)] [color:var(--text-secondary)]">
               {pendingMetrics.count1}
             </span>
@@ -347,7 +348,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
             onClick={() => setPendingScopeFilter("2")}
           >
             <span className="scope-tag [background:rgba(59,_130,_246,_0.1)] [color:var(--color-blue-600)] [border:1px_solid_rgba(59,_130,_246,_0.25)]! p-[1px_6px]! text-[length:0.7rem]!">S2</span>
-            <span>Scope 2</span>
+            <span>{t("Scope 2")}</span>
             <span className="pending-count-chip [display:inline-flex] [align-items:center] [justify-content:center] [min-width:20px] [height:20px] [padding:0_6px] [border-radius:var(--radius-md)] [font-size:var(--text-xs)] [font-weight:600] [background:rgba(15,_23,_42,_0.08)] [color:var(--text-secondary)]">
               {pendingMetrics.count2}
             </span>
@@ -357,7 +358,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
             onClick={() => setPendingScopeFilter("3")}
           >
             <span className="scope-tag [background:rgba(147,_51,_234,_0.1)] [color:var(--color-legacy-7c3aed)] [border:1px_solid_rgba(147,_51,_234,_0.25)]! p-[1px_6px]! text-[length:0.7rem]!">S3</span>
-            <span>Scope 3</span>
+            <span>{t("Scope 3")}</span>
             <span className="pending-count-chip [display:inline-flex] [align-items:center] [justify-content:center] [min-width:20px] [height:20px] [padding:0_6px] [border-radius:var(--radius-md)] [font-size:var(--text-xs)] [font-weight:600] [background:rgba(15,_23,_42,_0.08)] [color:var(--text-secondary)]">
               {pendingMetrics.count3}
             </span>
@@ -371,21 +372,21 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
               className={`pending-tab-btn [padding:6px_12px]! [font-size:0.78rem]! ${pendingQaFilter === "all" ? "active" : ""}`}
               onClick={() => setPendingQaFilter("all")}
             >
-              All QA
+              {t("All QA")}
             </button>
             <button
               className={`pending-tab-btn ${pendingQaFilter === "clean" ? "active" : ""}`}
               style={{ padding: "6px 12px", fontSize: "0.78rem", color: pendingQaFilter === "clean" ? "var(--color-green-600)" : "inherit" }}
               onClick={() => setPendingQaFilter("clean")}
             >
-              Clean Only
+              {t("Clean Only")}
             </button>
             <button
               className={`pending-tab-btn ${pendingQaFilter === "flagged" ? "active" : ""}`}
               style={{ padding: "6px 12px", fontSize: "0.78rem", color: pendingQaFilter === "flagged" ? "var(--color-amber-600)" : "inherit" }}
               onClick={() => setPendingQaFilter("flagged")}
             >
-              Flagged Only
+              {t("Flagged Only")}
             </button>
           </div>
 
@@ -395,7 +396,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
             <input
               type="text"
               className="[border:none] [background:transparent] [font-size:var(--text-base)] [color:var(--text-primary)] [width:100%] [outline:none] placeholder:[color:var(--text-muted)]"
-              placeholder="Search by facility, fuel, category..."
+              placeholder={t("Search by facility, fuel, category...")}
               value={pendingSearch}
               onChange={(e) => setPendingSearch(e.target.value)}
             />
@@ -420,7 +421,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
               onClick={() => handleApproveAllInScope(pendingScopeFilter)}
             >
               <Check size={14} />
-              Approve All Scope {pendingScopeFilter} ({pendingMetrics[`count${pendingScopeFilter}`]})
+              {t("Approve All Scope")}{" "}{pendingScopeFilter} ({pendingMetrics[`count${pendingScopeFilter}`]})
             </Button>
           )}
         </div>
@@ -432,11 +433,11 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
           <div className="flex! items-center! gap-[14px]! flex-wrap!">
             <span className="font-bold! text-[length:0.94rem]! inline-flex! items-center! gap-[8px]!">
               <CheckSquare size={18} color="var(--color-legacy-38bdf8)" />
-              {selectedPendingKeys.size} record{selectedPendingKeys.size > 1 ? "s" : ""} selected
+              {selectedPendingKeys.size}{" "}{t("record")}{selectedPendingKeys.size > 1 ? "s" : ""}{" "}{t("selected")}
             </span>
             <span className="text-[color:rgba(255,255,255,0.3)]!">•</span>
             <span className="text-[length:0.84rem]! text-[color:var(--color-ink-300)]!">
-              Cumulative: <strong className="text-[color:var(--color-white)]!">{selectedPendingImpactTco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong> tCO₂e
+              {t("Cumulative:")}{" "}<strong className="text-[color:var(--color-white)]!">{selectedPendingImpactTco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>{" "}{t("tCO₂e")}
             </span>
           </div>
           <div className="[display:flex] [align-items:center] [gap:10px]">
@@ -446,7 +447,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
               onClick={handleBatchApproveSelected}
             >
               <Check size={16} />
-              Approve Selected
+              {t("Approve Selected")}
             </button>
             <button
               className="[display:inline-flex] [align-items:center] [gap:6px] [background:rgba(239,_68,_68,_0.15)] [color:var(--color-legacy-fca5a5)] [border:1px_solid_rgba(239,_68,_68,_0.4)] [padding:8px_18px] [&&]:[border-radius:var(--radius-md)] [font-size:var(--text-base)] [font-weight:600] [cursor:pointer] [transition:all_0.15s] hover:[background:var(--color-red-700)] hover:[color:var(--color-white)] hover:[border-color:var(--color-red-500)] hover:[transform:translateY(-1px)]"
@@ -454,13 +455,13 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
               onClick={handleOpenBatchRejectModal}
             >
               <X size={16} />
-              Reject Selected
+              {t("Reject Selected")}
             </button>
             <button
               className="[background:transparent] [border:1px_solid_rgba(255,_255,_255,_0.2)] [color:var(--color-ink-600)] [padding:7px_14px] [&&]:[border-radius:var(--radius-md)] [font-size:var(--text-sm)] [cursor:pointer] [transition:all_0.15s] hover:[color:var(--color-white)] hover:[border-color:rgba(255,_255,_255,_0.4)]"
               onClick={() => setSelectedPendingKeys(new Set())}
             >
-              Deselect
+              {t("Deselect")}
             </button>
           </div>
         </div>
@@ -474,10 +475,10 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
           </div>
           <div className="max-w-[440px]!">
             <h3 className="m-[0_0_8px_0]! text-[length:1.25rem]! font-bold! text-[color:var(--text-primary)]!">
-              All Caught Up & Verified!
+              {t("All Caught Up & Verified!")}
             </h3>
             <p className="m-[0px]! text-[color:var(--text-secondary)]! text-[length:0.9rem]! leading-[1.5]!">
-              There are currently no bulk import records awaiting Maker-Checker approval. Staged emissions records will appear here as soon as files are imported.
+              {t("There are currently no bulk import records awaiting Maker-Checker approval. Staged emissions records will appear here as soon as files are imported.")}
             </p>
           </div>
         </div>
@@ -488,10 +489,10 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
           </div>
           <div>
             <h3 className="m-[0_0_8px_0]! text-[length:1.15rem]! font-bold!">
-              No Matching Records Found
+              {t("No Matching Records Found")}
             </h3>
             <p className="m-[0_0_16px_0]! text-[color:var(--text-secondary)]! text-[length:0.88rem]!">
-              No pending records match your active search and filter settings.
+              {t("No pending records match your active search and filter settings.")}
             </p>
             <Button
               type="submit"
@@ -502,7 +503,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
                 setPendingSearch("");
               }}
             >
-              Clear Filters
+              {t("Clear Filters")}
             </Button>
           </div>
         </div>
@@ -512,15 +513,15 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
             <div className="flex! items-center! gap-[10px]!">
               <h3 className="m-[0px]! text-[length:1.02rem]! font-bold!">
                 {pendingScopeFilter === "all"
-                  ? "All Pending Import Records"
+                  ? t("All Pending Import Records")
                   : `Scope ${pendingScopeFilter} Pending Records`}
               </h3>
               <span className="bg-[color:rgba(15,_23,_42,_0.06)]! text-[color:var(--text-secondary)]! text-[length:0.78rem]! font-semibold! p-[2px_8px]! rounded-[8px]!">
-                Showing {filteredPendingRecords.length} of {pendingMetrics.totalCount}
+                {t("Showing")}{" "}{filteredPendingRecords.length}{" "}{t("of")}{" "}{pendingMetrics.totalCount}
               </span>
               {pendingMetrics.loadedCount < pendingMetrics.totalCount && (
                 <span className="text-[length:0.78rem]! text-[color:var(--color-amber-700)]! ml-[8px]!">
-                  The first {pendingMetrics.loadedCount} are listed (200 per scope); decide on them to load the next ones, or use the Review Wizard to approve all
+                  {t("The first")}{" "}{pendingMetrics.loadedCount}{" "}{t("are listed (200 per scope); decide on them to load the next ones, or use the Review Wizard to approve all")}
                 </span>
               )}
             </div>
@@ -535,12 +536,12 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
                 {filteredPendingRecords.every((r) => selectedPendingKeys.has(r.key)) ? (
                   <>
                     <CheckSquare size={14} color="var(--accent-color)" />
-                    Deselect All in View
+                    {t("Deselect All in View")}
                   </>
                 ) : (
                   <>
                     <Square size={14} />
-                    Select All in View
+                    {t("Select All in View")}
                   </>
                 )}
               </Button>
@@ -562,14 +563,14 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
                       onChange={handleSelectAllPendingToggle}
                     />
                   </th>
-                  <th className="w-[80px]!">Ref ID</th>
-                  <th className="w-[90px]!">Scope</th>
-                  <th className="w-[100px]!">Period</th>
-                  <th className="min-w-[150px]!">Facility</th>
-                  <th className="min-w-[220px]!">Activity & Fuel / Category</th>
-                  <th className="w-[120px]! text-right!">Emissions</th>
-                  <th className="w-[120px]!">QA Status</th>
-                  <th className="w-[110px]! text-center!">Review Action</th>
+                  <th className="w-[80px]!">{t("Ref ID")}</th>
+                  <th className="w-[90px]!">{t("Scope")}</th>
+                  <th className="w-[100px]!">{t("Period")}</th>
+                  <th className="min-w-[150px]!">{t("Facility")}</th>
+                  <th className="min-w-[220px]!">{t("Activity & Fuel / Category")}</th>
+                  <th className="w-[120px]! text-right!">{t("Emissions")}</th>
+                  <th className="w-[120px]!">{t("QA Status")}</th>
+                  <th className="w-[110px]! text-center!">{t("Review Action")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -594,7 +595,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
                       </td>
                       <td>
                         <span className={`scope-tag scope-tag-${item.scope}`}>
-                          Scope {item.scope}
+                          {t("Scope")}{" "}{item.scope}
                         </span>
                       </td>
                       <td>
@@ -618,7 +619,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
                           })}
                         </span>
                         <span className="text-[length:0.72rem]! text-[color:var(--text-secondary)]! ml-[4px]!">
-                          tCO₂e
+                          {t("tCO₂e")}
                         </span>
                       </td>
                       <td>
@@ -628,12 +629,12 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
                             title={item.qa_flag}
                           >
                             <AlertTriangle size={12} />
-                            Flagged
+                            {t("Flagged")}
                           </span>
                         ) : (
                           <span className="[display:inline-flex] [align-items:center] [gap:4px] [padding:3px_8px] [border-radius:var(--radius-sm)] [font-size:var(--text-sm)] [font-weight:600] [background:rgba(16,_185,_129,_0.1)] [color:var(--color-green-700)] [border:1px_solid_rgba(16,_185,_129,_0.25)]">
                             <Check size={12} />
-                            Clean
+                            {t("Clean")}
                           </span>
                         )}
                       </td>
@@ -642,15 +643,15 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
                           {item.created_by && String(item.created_by) === String(user?.id) ? (
                             <span
                               className="badge-maker text-[length:0.7rem]! p-[4px_8px]! rounded-[6px]! bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:var(--color-red-700)]! [border:1px_solid_rgba(239,_68,_68,_0.25)]! font-semibold! whitespace-nowrap!"
-                              title="Maker-Checker: You created this record and cannot self-approve."
+                              title={t("Maker-Checker: You created this record and cannot self-approve.")}
                             >
-                              Self-Submitted
+                              {t("Self-Submitted")}
                             </span>
                           ) : (
                             <button
                               type="button"
                               className="btn-review-action approve"
-                              title="Approve Record"
+                              title={t("Approve Record")}
                               onClick={() => handleApproveSingle(item.scope, item.id)}
                             >
                               <Check size={16} />
@@ -659,7 +660,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
                           <button
                             type="button"
                             className="btn-review-action reject"
-                            title="Reject Record (specify reason)"
+                            title={t("Reject Record (specify reason)")}
                             onClick={() => handleOpenRejectModal(item.scope, item.id)}
                           >
                             <X size={16} />
@@ -667,7 +668,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
                           <button
                             type="button"
                             className="btn-review-action edit"
-                            title="Edit Record"
+                            title={t("Edit Record")}
                             onClick={() => setEditingRecord(item)}
                           >
                             <Pencil size={16} />

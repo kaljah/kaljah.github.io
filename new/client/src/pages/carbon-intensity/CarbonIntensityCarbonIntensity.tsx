@@ -4,6 +4,7 @@ import { Badge, SegmentedControl } from "../../ui";
 import { formatNumber } from "../../utils/formatters";
 import { getActiveGwpFactors } from "../../constants";
 import { HeroPanel, KpiGrid, KpiTile, ProdBar, ProdItem } from "../intensity/IntensityParts";
+import { t } from "../../i18n";
 
 const fixed = (v?: number | null): string => (v ?? 0).toFixed(2);
 
@@ -56,17 +57,17 @@ const CarbonIntensityCarbonIntensity: React.FC<CarbonIntensityCarbonIntensityPro
   return (
     <HeroPanel
       icon={Activity}
-      title="Carbon Intensity & Product Embodiment"
+      title={t("Carbon Intensity & Product Embodiment")}
       badge={
         <Badge tone="brand" className="year-badge px-4 py-1.5 text-base">
-          {selectedYear === "all" ? "All-Time" : selectedYear} Performance
+          {selectedYear === "all" ? t("All-Time") : selectedYear}{" "}{t("Performance")}
         </Badge>
       }
       actions={
         <div className="flex items-center gap-2.5 rounded-md border border-border bg-ink-100 px-2 py-1">
-          <span className="text-sm font-semibold text-text-secondary">GWP Horizon:</span>
+          <span className="text-sm font-semibold text-text-secondary">{t("GWP Horizon:")}</span>
           <SegmentedControl
-            label="GWP horizon"
+            label={t("GWP horizon")}
             size="sm"
             value={gwpHorizon}
             onChange={setGwpHorizon}
@@ -82,15 +83,15 @@ const CarbonIntensityCarbonIntensity: React.FC<CarbonIntensityCarbonIntensityPro
         <KpiTile
           icon={Cloud}
           tone="co2"
-          label="GHG Intensity (Avg)"
+          label={t("GHG Intensity (Avg)")}
           pending={currentDisplayCo2Intensity === null}
           value={currentDisplayCo2Intensity === null ? "Pending Production" : fixed(currentDisplayCo2Intensity)}
           unit={unit}
           footer={
             <>
-              <span className="gwp-subtag text-sm font-semibold text-link">{gwpHorizon === "20" ? "GWP₂₀ Active" : "GWP₁₀₀ Standard"}</span>
+              <span className="gwp-subtag text-sm font-semibold text-link">{gwpHorizon === "20" ? t("GWP₂₀ Active") : t("GWP₁₀₀ Standard")}</span>
               <span>
-                Total: <strong>{formatNumber(currentDisplayTotalCo2e)} tCO₂e</strong>
+                {t("Total:")}{" "}<strong>{formatNumber(currentDisplayTotalCo2e)}{" "}{t("tCO₂e")}</strong>
               </span>
             </>
           }
@@ -99,17 +100,17 @@ const CarbonIntensityCarbonIntensity: React.FC<CarbonIntensityCarbonIntensityPro
         <KpiTile
           icon={Layers}
           tone="scope1"
-          label="Scope 1 Direct Intensity"
+          label={t("Scope 1 Direct Intensity")}
           pending={currentDisplayScope1Intensity === null}
           value={currentDisplayScope1Intensity === null ? "Pending Production" : fixed(currentDisplayScope1Intensity)}
           unit={unit}
           footer={
             <>
               <span>
-                Scope 2: <strong>{stats.avgScope2Intensity === null ? "Pending" : `${fixed(stats.avgScope2Intensity)} kg/BOE`}</strong>
+                {t("Scope 2:")}{" "}<strong>{stats.avgScope2Intensity === null ? t("Pending") : `${fixed(stats.avgScope2Intensity)} kg/BOE`}</strong>
               </span>
               <span>
-                Total S1: <strong>{formatNumber(currentDisplayTotalScope1)} t</strong>
+                {t("Total S1:")}{" "}<strong>{formatNumber(currentDisplayTotalScope1)} t</strong>
               </span>
             </>
           }
@@ -118,12 +119,12 @@ const CarbonIntensityCarbonIntensity: React.FC<CarbonIntensityCarbonIntensityPro
         <KpiTile
           icon={Flame}
           tone="flare"
-          label="Flaring Carbon Intensity"
+          label={t("Flaring Carbon Intensity")}
           value={fixed(stats.avgFlaringIntensity)}
           unit={unit}
           footer={
             <span>
-              Flared: <strong>{formatNumber(stats.totalFlaringEmissions)} tCO₂e</strong>
+              {t("Flared:")}{" "}<strong>{formatNumber(stats.totalFlaringEmissions)}{" "}{t("tCO₂e")}</strong>
             </span>
           }
           note={excludedNote(stats.totalFlaringEmissions ?? 0, stats.usedFlaring)}
@@ -131,12 +132,12 @@ const CarbonIntensityCarbonIntensity: React.FC<CarbonIntensityCarbonIntensityPro
         <KpiTile
           icon={ShieldCheck}
           tone="scope3"
-          label="Scope 3 Value Chain"
+          label={t("Scope 3 Value Chain")}
           value={fixed(stats.avgScope3Intensity)}
           unit={unit}
           footer={
             <span>
-              Total S3: <strong>{formatNumber(stats.totalScope3)} tCO₂e</strong>
+              {t("Total S3:")}{" "}<strong>{formatNumber(stats.totalScope3)}{" "}{t("tCO₂e")}</strong>
             </span>
           }
           note={excludedNote(stats.totalScope3 ?? 0, stats.usedScope3)}
@@ -144,10 +145,10 @@ const CarbonIntensityCarbonIntensity: React.FC<CarbonIntensityCarbonIntensityPro
       </KpiGrid>
 
       <ProdBar>
-        <ProdItem bordered={false} label="Total Oil Production" value={`${formatNumber(stats.totalOilProduction, 0)} bbl`} />
-        <ProdItem label="Total Gas Production" value={`${formatNumber(stats.totalGasProduction, 0)} mscf`} />
-        <ProdItem label="Combined Production (BOE)" value={`${formatNumber(stats.totalBoe, 0)} BOE`} accent="text-link" />
-        <ProdItem label="Total Gas Flared" value={`${formatNumber(stats.totalFlaringVolume, 0)} m³`} accent="text-brand-600" />
+        <ProdItem bordered={false} label={t("Total Oil Production")} value={`${formatNumber(stats.totalOilProduction, 0)} bbl`} />
+        <ProdItem label={t("Total Gas Production")} value={`${formatNumber(stats.totalGasProduction, 0)} mscf`} />
+        <ProdItem label={t("Combined Production (BOE)")} value={`${formatNumber(stats.totalBoe, 0)} BOE`} accent="text-link" />
+        <ProdItem label={t("Total Gas Flared")} value={`${formatNumber(stats.totalFlaringVolume, 0)} m³`} accent="text-brand-600" />
       </ProdBar>
     </HeroPanel>
   );

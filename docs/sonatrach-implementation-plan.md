@@ -26,7 +26,7 @@ Companion to `docs/sonatrach-readiness-plan.md` (the what and why). This file is
 | M4 Security hardening | Not started | |
 | M5 Single sign-on | Not started | |
 | M6 Organisation scope | T6.1 done (wildcards escaped, ported audit A-04) | |
-| M7 French | Not started | |
+| M7 French | In progress (2026-10-10): T7.1 done (i18next, switcher in the account menu and on the sign-in page, saved per user); T7.2 started: 2,600 interface strings wrapped, the 1,100 without technical terms translated, the rest wait for the HSE glossary (`docs/sonatrach/glossary-fr.csv`). Numbers stay 1,234.5 (owner decision), so T7.4 display formats are not needed. T7.3 and T7.5 not started. | |
 | M8 Framework reports and methodology changes | Not started | |
 | M9 Scale and quality | Not started | |
 | M10 Handover pack | Not started | |

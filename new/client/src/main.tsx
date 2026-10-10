@@ -1,3 +1,5 @@
+// Language first: module-level labels are translated when their modules load.
+import "./i18n";
 import { createRoot } from "react-dom/client";
 import "./styles/index.css";
 import App from "./App";

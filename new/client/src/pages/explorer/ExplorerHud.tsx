@@ -2,6 +2,7 @@ import React from "react";
 import { Flame, TrendingUp } from "lucide-react";
 import { SegmentedControl } from "../../ui";
 import { cn } from "../../ui/cn";
+import { t } from "../../i18n";
 
 interface MetricProps {
   label: string;
@@ -58,36 +59,36 @@ const ExplorerHud: React.FC<ExplorerHudProps> = ({
           </span>
           {/* The top bar already names the page on small screens; keep the heading for screen readers. */}
           <div className="sr-only md:not-sr-only">
-            <h1 className="m-0 whitespace-nowrap text-md font-bold text-text">Emissions Map</h1>
-            <p className="m-0 hidden whitespace-nowrap text-xs font-semibold uppercase tracking-wide text-info-fg xl:block">Reported inventory</p>
+            <h1 className="m-0 whitespace-nowrap text-md font-bold text-text">{t("Emissions Map")}</h1>
+            <p className="m-0 hidden whitespace-nowrap text-xs font-semibold uppercase tracking-wide text-info-fg xl:block">{t("Reported inventory")}</p>
           </div>
         </div>
       </div>
 
       {/* Hidden below lg: the strip does not fit beside the title and the metric toggle. */}
       <div className="hidden items-center rounded-md border border-border bg-ink-50 px-3 py-1.5 lg:flex">
-        <Metric label="Monitored assets">{metrics.activeAssets}</Metric>
-        <Metric label={viewMode === "methane" ? "Regional methane" : "Regional GHG"} tone="accent">
+        <Metric label={t("Monitored assets")}>{metrics.activeAssets}</Metric>
+        <Metric label={viewMode === "methane" ? t("Regional methane") : t("Regional GHG")} tone="accent">
           {formatCompact(regional)} t
         </Metric>
-        <Metric label="Mean loss intensity">
+        <Metric label={t("Mean loss intensity")}>
           {metrics.avgMethaneIntensity} <span className="text-xs font-semibold text-text-secondary">kg/boe</span>
         </Metric>
-        <Metric label="Super-emitters" tone={(metrics.superEmitters ?? 0) > 0 ? "alert" : undefined}>
+        <Metric label={t("Super-emitters")} tone={(metrics.superEmitters ?? 0) > 0 ? "alert" : undefined}>
           {metrics.superEmitters}
         </Metric>
       </div>
 
       <div className="flex items-center gap-2.5">
         <SegmentedControl
-          label="Map metric"
+          label={t("Map metric")}
           size="sm"
           className="[&_button]:whitespace-nowrap"
           value={viewMode}
           onChange={onViewMode}
           options={[
-            { value: "methane", label: labelWithIcon(Flame, "CH₄ Flux"), title: "Focus on Methane (CH4) emissions" },
-            { value: "total", label: labelWithIcon(TrendingUp, "Total GHG"), title: "Focus on Total GHG (CO2e) emissions" },
+            { value: "methane", label: labelWithIcon(Flame, "CH₄ Flux"), title: t("Focus on Methane (CH4) emissions") },
+            { value: "total", label: labelWithIcon(TrendingUp, "Total GHG"), title: t("Focus on Total GHG (CO2e) emissions") },
           ]}
         />
       </div>

@@ -3,6 +3,7 @@ import { Button, Input, Textarea, Field } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import { Database, Upload } from "lucide-react";
 import PaginationControls from "./PaginationControls";
+import { t } from "../../i18n";
 
 export interface CustomFactorRecord {
   id: string | number;
@@ -74,9 +75,9 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
   <div className="manage-card glass-panel">
     <div className="flex! flex-wrap! justify-between! items-start! gap-[12px]! mb-[32px]!">
       <div>
-        <h2 className="mb-[8px]! font-bold!">Custom Emission Factors</h2>
+        <h2 className="mb-[8px]! font-bold!">{t("Custom Emission Factors")}</h2>
         <p className="text-[color:var(--text-secondary)]! m-[0px]!">
-          Define custom factors for specialized equipment.
+          {t("Define custom factors for specialized equipment.")}
         </p>
       </div>
       <button
@@ -84,54 +85,54 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
         onClick={() => setImportModal({ isOpen: true, type: "custom_factors" })}
        
       >
-        <Upload size={16} /> Bulk Import (CSV)
+        <Upload size={16} />{" "}{t("Bulk Import (CSV)")}
       </button>
     </div>
 
     {/* Create/Edit Form */}
     <div className="grid-forms md:[grid-template-columns:repeat(3,1fr)]!">
-      <Field className="input-group" label="Factor Name">
+      <Field className="input-group" label={t("Factor Name")}>
         <Input
           type="text"
           name="factor_name"
           value={factorForm.factor_name || ""}
           onChange={handleFactorChange}
-          placeholder="e.g. Flare High Efficiency"
+          placeholder={t("e.g. Flare High Efficiency")}
         />
       </Field>
-      <Field className="input-group" label="Parent Fuel (Internal Reference)">
+      <Field className="input-group" label={t("Parent Fuel (Internal Reference)")}>
         <NativeSelect
           name="parent_fuel"
           value={factorForm.parent_fuel || ""}
           onChange={(e) => setFactorForm({ ...factorForm, parent_fuel: e.target.value })}
           className="component-select"
         >
-          <option value="">Searchable Reference...</option>
-          <option value="Natural Gas">Natural Gas (Standard)</option>
-          <option value="Diesel">Diesel (Generic)</option>
-          <option value="Gasoline">Gasoline (Generic)</option>
-          <option value="Propane">Propane (Generic)</option>
-          <option value="Crude Oil">Crude Oil (Heavy)</option>
-          <option value="Fuel Oil">Fuel Oil (No. 4/6)</option>
+          <option value="">{t("Searchable Reference...")}</option>
+          <option value="Natural Gas">{t("Natural Gas (Standard)")}</option>
+          <option value="Diesel">{t("Diesel (Generic)")}</option>
+          <option value="Gasoline">{t("Gasoline (Generic)")}</option>
+          <option value="Propane">{t("Propane (Generic)")}</option>
+          <option value="Crude Oil">{t("Crude Oil (Heavy)")}</option>
+          <option value="Fuel Oil">{t("Fuel Oil (No. 4/6)")}</option>
         </NativeSelect>
       </Field>
 
-      <Field className="input-group" label="Unit">
+      <Field className="input-group" label={t("Unit")}>
         <NativeSelect
           name="unit"
           value={factorForm.unit || "scf"}
           onChange={handleFactorChange}
           className="component-select"
         >
-          <option value="scf">scf</option>
+          <option value="scf">{t("scf")}</option>
           <option value="m³">m³</option>
-          <option value="gal">gal</option>
-          <option value="bbl">bbl</option>
-          <option value="kg">kg</option>
-          <option value="tonne">tonne</option>
+          <option value="gal">{t("gal")}</option>
+          <option value="bbl">{t("bbl")}</option>
+          <option value="kg">{t("kg")}</option>
+          <option value="tonne">{t("tonne")}</option>
         </NativeSelect>
       </Field>
-      <Field className="input-group" label="CO₂ Factor (kg/unit)">
+      <Field className="input-group" label={t("CO₂ Factor (kg/unit)")}>
         <Input
           type="number"
           name="co2_factor"
@@ -141,7 +142,7 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
           step="0.001"
         />
       </Field>
-      <Field className="input-group" label="CH₄ Factor (kg/unit)">
+      <Field className="input-group" label={t("CH₄ Factor (kg/unit)")}>
         <Input
           type="number"
           name="ch4_factor"
@@ -151,7 +152,7 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
           step="0.001"
         />
       </Field>
-      <Field className="input-group" label="N₂O Factor (kg/unit)">
+      <Field className="input-group" label={t("N₂O Factor (kg/unit)")}>
         <Input
           type="number"
           name="n2o_factor"
@@ -161,7 +162,7 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
           step="0.001"
         />
       </Field>
-      <Field className="input-group" label="CO₂ Uncertainty (±%)">
+      <Field className="input-group" label={t("CO₂ Uncertainty (±%)")}>
         <Input
           type="number"
           name="co2_uncertainty"
@@ -171,7 +172,7 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
           step="0.1"
         />
       </Field>
-      <Field className="input-group" label="CH₄ Uncertainty (±%)">
+      <Field className="input-group" label={t("CH₄ Uncertainty (±%)")}>
         <Input
           type="number"
           name="ch4_uncertainty"
@@ -181,7 +182,7 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
           step="0.1"
         />
       </Field>
-      <Field className="input-group" label="N₂O Uncertainty (±%)">
+      <Field className="input-group" label={t("N₂O Uncertainty (±%)")}>
         <Input
           type="number"
           name="n2o_uncertainty"
@@ -192,23 +193,23 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
         />
       </Field>
       <div className="input-group md:[grid-column:span_2]!">
-        <label>Lab Certification / Source Reference</label>
+        <label>{t("Lab Certification / Source Reference")}</label>
         <Input
           type="text"
           name="source"
           value={factorForm.source || ""}
           onChange={handleFactorChange}
-          placeholder="e.g. Lab GC Report #2026-ARZ-01 / ISO 17025 / EPD Ref"
+          placeholder={t("e.g. Lab GC Report #2026-ARZ-01 / ISO 17025 / EPD Ref")}
         />
       </div>
       <div className="input-group md:[grid-column:span_3]!">
-        <label>Description & Technical Justification</label>
+        <label>{t("Description & Technical Justification")}</label>
         <Textarea
           name="description"
           value={factorForm.description || ""}
           onChange={handleFactorChange}
           rows={2}
-          placeholder="Engineering justification, gas chromatography sampling conditions, or manufacturer test certificate details..."
+          placeholder={t("Engineering justification, gas chromatography sampling conditions, or manufacturer test certificate details...")}
           className="[resize:vertical]!"
         />
       </div>
@@ -217,11 +218,11 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
     {/* EF Uncertainty Workbench */}
     <div className="mt-[20px]! p-[20px]! bg-[color:rgba(30,_41,_59,_0.03)]! rounded-[12px]! [border:1px_solid_rgba(0,0,0,0.05)]!">
       <h4 className="m-[0_0_15px_0]! text-[length:1rem]! flex! items-center! gap-[8px]!">
-        <Database size={16} /> EF Uncertainty Workbench (ISO 14064-1 method)
+        <Database size={16} />{" "}{t("EF Uncertainty Workbench (ISO 14064-1 method)")}
       </h4>
       <div className="grid grid-cols-1 gap-[15px] md:grid-cols-3">
         <div className="input-group">
-          <label className="text-[length:0.8rem]!">Meter Precision (±%)</label>
+          <label className="text-[length:0.8rem]!">{t("Meter Precision (±%)")}</label>
           <Input
             type="number"
             step="0.1"
@@ -233,7 +234,7 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
           />
         </div>
         <div className="input-group">
-          <label className="text-[length:0.8rem]!">Lab Analysis (±%)</label>
+          <label className="text-[length:0.8rem]!">{t("Lab Analysis (±%)")}</label>
           <Input
             type="number"
             step="0.1"
@@ -245,7 +246,7 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
           />
         </div>
         <div className="input-group">
-          <label className="text-[length:0.8rem]!">GWP Standard Selection</label>
+          <label className="text-[length:0.8rem]!">{t("GWP Standard Selection")}</label>
           <NativeSelect
             className="component-select p-[8px]! text-[length:0.85rem]!"
             value={workbench.gwp_uncertainty}
@@ -253,9 +254,9 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
               setWorkbench({ ...workbench, gwp_uncertainty: parseFloat(e.target.value) || 0 })
             }
           >
-            <option value="20.0">IPCC AR4 (±20.0%)</option>
-            <option value="15.0">IPCC AR5 (±15.0%)</option>
-            <option value="11.0">IPCC AR6 (±11.0%)</option>
+            <option value="20.0">{t("IPCC AR4 (±20.0%)")}</option>
+            <option value="15.0">{t("IPCC AR5 (±15.0%)")}</option>
+            <option value="11.0">{t("IPCC AR6 (±11.0%)")}</option>
           </NativeSelect>
         </div>
       </div>
@@ -279,13 +280,13 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
           });
         }}
       >
-        Calculate Combined Uncertainty (SRSS)
+        {t("Calculate Combined Uncertainty (SRSS)")}
       </Button>
     </div>
 
     <div className="flex! gap-[10px]! mt-[20px]!">
       <button className="action-btn" onClick={handleSaveFactor}>
-        {editingFactorId ? "Update Factor" : "Save Factor"}
+        {editingFactorId ? t("Update Factor") : t("Save Factor")}
       </button>
       {editingFactorId && (
         <button
@@ -308,29 +309,29 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
             });
           }}
         >
-          Cancel Edit
+          {t("Cancel Edit")}
         </button>
       )}
     </div>
 
-    <div className="table-container mt-[40px]!" tabIndex={0} role="region" aria-label="Custom emission factors">
+    <div className="table-container mt-[40px]!" tabIndex={0} role="region" aria-label={t("Custom emission factors")}>
       <div className="flex! justify-between! items-center! mb-[16px]!">
-        <h3 className="m-[0px]!">Custom Factors</h3>
+        <h3 className="m-[0px]!">{t("Custom Factors")}</h3>
       </div>
       <table className="data-table">
         <thead>
           <tr>
-            <th>Factor Name</th>
-            <th>Unit</th>
+            <th>{t("Factor Name")}</th>
+            <th>{t("Unit")}</th>
             <th>CO2</th>
             <th>CH4</th>
             <th>N2O</th>
-            <th>Certification / Description</th>
-            <th>CO₂ Unc.</th>
-            <th>CH₄ Unc.</th>
-            <th>N₂O Unc.</th>
-            <th>Status</th>
-            <th>Actions</th>
+            <th>{t("Certification / Description")}</th>
+            <th>{t("CO₂ Unc.")}</th>
+            <th>{t("CH₄ Unc.")}</th>
+            <th>{t("N₂O Unc.")}</th>
+            <th>{t("Status")}</th>
+            <th>{t("Actions")}</th>
           </tr>
         </thead>
         <tbody>
@@ -375,15 +376,15 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
                 <td>
                   {f.status === "Pending" ? (
                     <span className="inline-block! text-[length:0.75rem]! bg-[color:var(--color-legacy-fef3c7)]! text-[color:var(--color-legacy-92400e)]! p-[2px_8px]! rounded-[4px]! font-semibold!">
-                      Pending
+                      {t("Pending")}
                     </span>
                   ) : f.status === "Rejected" ? (
                     <span className="inline-block! text-[length:0.75rem]! bg-[color:var(--color-legacy-fee2e2)]! text-[color:var(--color-red-700)]! p-[2px_8px]! rounded-[4px]! font-semibold!">
-                      Rejected
+                      {t("Rejected")}
                     </span>
                   ) : (
                     <span className="inline-block! text-[length:0.75rem]! bg-[color:var(--color-legacy-dcfce7)]! text-[color:var(--color-legacy-15803d)]! p-[2px_8px]! rounded-[4px]! font-semibold!">
-                      Approved
+                      {t("Approved")}
                     </span>
                   )}
                 </td>
@@ -392,26 +393,26 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
                     <button
                       onClick={() => handleApproveFactor && handleApproveFactor(f.id)}
                       className="text-[color:var(--color-legacy-15803d)]! font-semibold! mr-[6px]!"
-                      title="Approve custom factor"
+                      title={t("Approve custom factor")}
                     >
-                      Approve
+                      {t("Approve")}
                     </button>
                   )}
-                  <button onClick={() => handleEditFactor(f)}>Edit</button>
+                  <button onClick={() => handleEditFactor(f)}>{t("Edit")}</button>
                   <button
                     onClick={() => handleArchiveFactor(f.id)}
-                    title="Hide from new entries; records that use it keep it"
+                    title={t("Hide from new entries; records that use it keep it")}
                   >
-                    Archive
+                    {t("Archive")}
                   </button>
-                  <button onClick={() => handleDeleteFactor(f.id)}>Delete</button>
+                  <button onClick={() => handleDeleteFactor(f.id)}>{t("Delete")}</button>
                 </td>
               </tr>
             ))}
           {filteredFactors.length === 0 && (
             <tr>
               <td colSpan={11} className="text-center! p-[40px]! text-[color:var(--text-secondary)]!">
-                No custom emission factors found.
+                {t("No custom emission factors found.")}
               </td>
             </tr>
           )}

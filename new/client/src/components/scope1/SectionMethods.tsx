@@ -7,6 +7,7 @@ import api from "../../api";
 import CustomDropdown from "../CustomDropdown";
 import { FieldGrid, MoreOptions, Segmented } from "./ui";
 import { applyChoice, currentChoice, sectionChoices } from "./methodChoices";
+import { t } from "../../i18n";
 
 interface NumProps {
   label: React.ReactNode;
@@ -100,9 +101,9 @@ interface CompositionProps {
 
 const Composition: React.FC<CompositionProps> = ({ data, onChange, c2 = false, required = true }) => (
   <FieldGrid min={160}>
-    <Num label="CH₄ (mol %)" field="ch4_content" data={data} onChange={onChange} placeholder="e.g. 70" required={required} />
-    <Num label="CO₂ (mol %)" field="co2_content" data={data} onChange={onChange} placeholder="e.g. 9" />
-    {c2 && <Num label="C₂+ (mol %)" field="c2plus_content" data={data} onChange={onChange} placeholder="e.g. 4" />}
+    <Num label={t("CH₄ (mol %)")} field="ch4_content" data={data} onChange={onChange} placeholder="e.g. 70" required={required} />
+    <Num label={t("CO₂ (mol %)")} field="co2_content" data={data} onChange={onChange} placeholder="e.g. 9" />
+    {c2 && <Num label={t("C₂+ (mol %)")} field="c2plus_content" data={data} onChange={onChange} placeholder="e.g. 4" />}
   </FieldGrid>
 );
 
@@ -110,8 +111,8 @@ const Composition: React.FC<CompositionProps> = ({ data, onChange, c2 = false, r
 const plural = (a?: string) => (a && !a.endsWith("s") ? `${a}s` : a);
 const PER_INPUT: Record<string, { label: (a?: string) => string; units?: string[]; extra?: { field: string; label: string; placeholder: string } }> = {
   unit: { label: (a) => `Number (${a || "events"})` },
-  unit_day: { label: (a) => `Number of ${plural(a) || "units"}`, extra: { field: "activity_days", label: "Days", placeholder: "whole month" } },
-  unit_hr: { label: (a) => `Number of ${plural(a) || "units"}`, extra: { field: "activity_hours", label: "Hours", placeholder: "whole month" } },
+  unit_day: { label: (a) => `Number of ${plural(a) || "units"}`, extra: { field: "activity_days", label: t("Days"), placeholder: t("whole month") } },
+  unit_hr: { label: (a) => `Number of ${plural(a) || "units"}`, extra: { field: "activity_hours", label: t("Hours"), placeholder: t("whole month") } },
   mmscf: { label: () => "Gas throughput", units: GAS_UNITS },
   mm_m3: { label: () => "Gas throughput", units: GAS_UNITS },
   mgal: { label: () => "Liquid loaded", units: LIQ_UNITS },
@@ -153,13 +154,13 @@ export const ActivityFactorForm: React.FC<ActivityFactorFormProps> = ({ processT
     <div className="[display:grid] [grid-template-columns:1fr] [gap:16px]">
       <div className="input-group">
         <label>
-          Source<span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+          {t("Source")}<span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
         </label>
         <CustomDropdown
           options={rows.map((r) => ({ value: r.key, label: r.label }))}
           value={data.activity_key || ""}
           onChange={pick}
-          placeholder={error || "Select source"}
+          placeholder={error || t("Select source")}
         />
       </div>
       {spec && (
@@ -177,10 +178,10 @@ export const ActivityFactorForm: React.FC<ActivityFactorFormProps> = ({ processT
       {row &&
         (row.toc ? (
           <FieldGrid min={180}>
-            <Num label="CH₄ in vapour (wt %)" field="toc_ch4_wt" data={data} onChange={onChange} placeholder="15" />
+            <Num label={t("CH₄ in vapour (wt %)")} field="toc_ch4_wt" data={data} onChange={onChange} placeholder="15" />
           </FieldGrid>
         ) : (
-          <MoreOptions label="Site gas composition">
+          <MoreOptions label={t("Site gas composition")}>
             <Composition data={data} onChange={onChange} required={false} />
           </MoreOptions>
         ))}
@@ -204,84 +205,84 @@ export const VentedGasForm: React.FC<VentedGasFormProps> = ({ data, onChange }) 
     <div className="[display:grid] [grid-template-columns:1fr] [gap:16px]">
       {m === "volume" && (
         <FieldGrid>
-          <NumUnit label="Gas volume" field="gas_volume" unitField="gas_volume_unit" units={GAS_UNITS} data={data} onChange={onChange} required />
+          <NumUnit label={t("Gas volume")} field="gas_volume" unitField="gas_volume_unit" units={GAS_UNITS} data={data} onChange={onChange} required />
         </FieldGrid>
       )}
       {m === "gor" && (
         <FieldGrid min={160}>
-          <Num label="GOR (scf/bbl)" field="gor" data={data} onChange={onChange} required />
-          <Num label="Oil rate (bbl/day)" field="oil_rate" data={data} onChange={onChange} required />
-          <Num label="Vent duration (hours)" field="vent_hours" data={data} onChange={onChange} required />
+          <Num label={t("GOR (scf/bbl)")} field="gor" data={data} onChange={onChange} required />
+          <Num label={t("Oil rate (bbl/day)")} field="oil_rate" data={data} onChange={onChange} required />
+          <Num label={t("Vent duration (hours)")} field="vent_hours" data={data} onChange={onChange} required />
         </FieldGrid>
       )}
       {m === "rate_days" && (
         <FieldGrid min={180}>
-          <NumUnit label="Gas rate" field="gas_rate" unitField="gas_rate_unit" units={["scf/day", "Mcf/day", "MMscf/day", "m3/day"]} data={data} onChange={onChange} required />
-          <Num label="Days" field="days" data={data} onChange={onChange} required />
+          <NumUnit label={t("Gas rate")} field="gas_rate" unitField="gas_rate_unit" units={["scf/day", "Mcf/day", "MMscf/day", "m3/day"]} data={data} onChange={onChange} required />
+          <Num label={t("Days")} field="days" data={data} onChange={onChange} required />
         </FieldGrid>
       )}
       {m === "actual" && (
         <FieldGrid min={160}>
-          <NumUnit label="Actual gas volume" field="actual_volume" unitField="actual_unit" units={["ft3", "bbl", "gal", "m3"]} data={data} onChange={onChange} required />
-          <Num label="Temperature (°F)" field="gas_temp_f" data={data} onChange={onChange} placeholder="60" />
-          <Num label="Pressure (atm)" field="gas_pressure_atm" data={data} onChange={onChange} placeholder="1" />
+          <NumUnit label={t("Actual gas volume")} field="actual_volume" unitField="actual_unit" units={["ft3", "bbl", "gal", "m3"]} data={data} onChange={onChange} required />
+          <Num label={t("Temperature (°F)")} field="gas_temp_f" data={data} onChange={onChange} placeholder="60" />
+          <Num label={t("Pressure (atm)")} field="gas_pressure_atm" data={data} onChange={onChange} placeholder="1" />
         </FieldGrid>
       )}
       {m === "desiccant" && (
         <FieldGrid min={160}>
-          <Num label="Vessel height (ft)" field="vessel_height_ft" data={data} onChange={onChange} required />
-          <Num label="Vessel diameter (ft)" field="vessel_diameter_ft" data={data} onChange={onChange} required />
-          <Num label="Gas pressure (psig)" field="vessel_pressure_psig" data={data} onChange={onChange} required />
-          <Num label="Refills per year" field="refills" data={data} onChange={onChange} required />
-          <Num label="Gas-filled share (%)" field="gas_fraction" data={data} onChange={onChange} placeholder="45" />
+          <Num label={t("Vessel height (ft)")} field="vessel_height_ft" data={data} onChange={onChange} required />
+          <Num label={t("Vessel diameter (ft)")} field="vessel_diameter_ft" data={data} onChange={onChange} required />
+          <Num label={t("Gas pressure (psig)")} field="vessel_pressure_psig" data={data} onChange={onChange} required />
+          <Num label={t("Refills per year")} field="refills" data={data} onChange={onChange} required />
+          <Num label={t("Gas-filled share (%)")} field="gas_fraction" data={data} onChange={onChange} placeholder="45" />
         </FieldGrid>
       )}
       {m === "co2_mass" && (
         <FieldGrid min={160}>
-          <Num label="Volume released (m³)" field="physical_volume_m3" data={data} onChange={onChange} required />
-          <Num label="CO₂ density (kg/m³)" field="co2_density" data={data} onChange={onChange} required />
-          <Num label="CO₂ (wt %)" field="co2_wt_pct" data={data} onChange={onChange} placeholder="100" />
-          <Num label="Events" field="events" data={data} onChange={onChange} placeholder="1" />
+          <Num label={t("Volume released (m³)")} field="physical_volume_m3" data={data} onChange={onChange} required />
+          <Num label={t("CO₂ density (kg/m³)")} field="co2_density" data={data} onChange={onChange} required />
+          <Num label={t("CO₂ (wt %)")} field="co2_wt_pct" data={data} onChange={onChange} placeholder="100" />
+          <Num label={t("Events")} field="events" data={data} onChange={onChange} placeholder="1" />
         </FieldGrid>
       )}
       {m === "agr_balance" && (
         <FieldGrid min={160}>
-          <NumUnit label="Sour gas in" field="sour_gas_volume" unitField="gas_volume_unit" units={GAS_UNITS} data={data} onChange={onChange} required />
-          <Num label="Sour gas CO₂ (mol %)" field="sour_co2_content" data={data} onChange={onChange} required />
-          <Num label="Sweet gas out (same unit)" field="sweet_gas_volume" data={data} onChange={onChange} required />
-          <Num label="Sweet gas CO₂ (mol %)" field="sweet_co2_content" data={data} onChange={onChange} placeholder="0" />
+          <NumUnit label={t("Sour gas in")} field="sour_gas_volume" unitField="gas_volume_unit" units={GAS_UNITS} data={data} onChange={onChange} required />
+          <Num label={t("Sour gas CO₂ (mol %)")} field="sour_co2_content" data={data} onChange={onChange} required />
+          <Num label={t("Sweet gas out (same unit)")} field="sweet_gas_volume" data={data} onChange={onChange} required />
+          <Num label={t("Sweet gas CO₂ (mol %)")} field="sweet_co2_content" data={data} onChange={onChange} placeholder="0" />
         </FieldGrid>
       )}
       {m === "thc_mass" && (
         <FieldGrid min={170}>
-          <NumUnit label="Total hydrocarbon loss" field="thc_loss" unitField="thc_loss_unit" units={["t", "kg", "lb"]} data={data} onChange={onChange} required />
-          <Num label="CH₄ in vent (wt %)" field="ch4_wt_pct" data={data} onChange={onChange} required />
-          <Num label="CO₂ in vent (wt %)" field="co2_wt_pct" data={data} onChange={onChange} placeholder="0" />
+          <NumUnit label={t("Total hydrocarbon loss")} field="thc_loss" unitField="thc_loss_unit" units={["t", "kg", "lb"]} data={data} onChange={onChange} required />
+          <Num label={t("CH₄ in vent (wt %)")} field="ch4_wt_pct" data={data} onChange={onChange} required />
+          <Num label={t("CO₂ in vent (wt %)")} field="co2_wt_pct" data={data} onChange={onChange} placeholder="0" />
         </FieldGrid>
       )}
       {m === "reported_mass" && (
         <FieldGrid min={170}>
-          <NumUnit label="CH₄ before control" field="ch4_mass" unitField="mass_unit" units={["t", "kg", "lb"]} data={data} onChange={onChange} required />
-          <Num label="CO₂ before control (same unit)" field="co2_mass" data={data} onChange={onChange} placeholder="0" />
-          <Num label="Control efficiency (%)" field="control_efficiency" data={data} onChange={onChange} placeholder="0" />
+          <NumUnit label={t("CH₄ before control")} field="ch4_mass" unitField="mass_unit" units={["t", "kg", "lb"]} data={data} onChange={onChange} required />
+          <Num label={t("CO₂ before control (same unit)")} field="co2_mass" data={data} onChange={onChange} placeholder="0" />
+          <Num label={t("Control efficiency (%)")} field="control_efficiency" data={data} onChange={onChange} placeholder="0" />
         </FieldGrid>
       )}
       {!noComposition && <Composition data={data} onChange={onChange} c2={flared} />}
       {canFlare && (
         <FieldGrid min={180}>
           <div className="input-group">
-            <label>Gas released</label>
+            <label>{t("Gas released")}</label>
             <Segmented
               ariaLabel="Gas released"
               options={[
-                { value: "vented", label: "Vented" },
-                { value: "flared", label: "Flared" },
+                { value: "vented", label: t("Vented") },
+                { value: "flared", label: t("Flared") },
               ]}
               value={flared ? "flared" : "vented"}
               onChange={(v) => onChange("disposition", v)}
             />
           </div>
-          {flared && <Num label="Combustion efficiency (%)" field="combustion_efficiency" data={data} onChange={onChange} placeholder="98" />}
+          {flared && <Num label={t("Combustion efficiency (%)")} field="combustion_efficiency" data={data} onChange={onChange} placeholder="98" />}
         </FieldGrid>
       )}
     </div>
@@ -317,30 +318,30 @@ export const CombustionMethodForm: React.FC<CombustionMethodFormProps> = ({ data
     <div className="[display:grid] [grid-template-columns:1fr] [gap:16px]">
       {m === "carbon_content" && (
         <FieldGrid min={170}>
-          <NumUnit label="Fuel burned" field="fuel_volume" unitField="fuel_volume_unit" units={LIQ_UNITS.map((u) => u.toLowerCase())} data={data} onChange={onChange} required />
-          <NumUnit label="Fuel density" field="fuel_density" unitField="density_unit" units={["lb/gal", "kg/m3", "kg/L"]} data={data} onChange={onChange} required />
-          <Num label="Carbon (wt %)" field="carbon_wt_pct" data={data} onChange={onChange} required />
+          <NumUnit label={t("Fuel burned")} field="fuel_volume" unitField="fuel_volume_unit" units={LIQ_UNITS.map((u) => u.toLowerCase())} data={data} onChange={onChange} required />
+          <NumUnit label={t("Fuel density")} field="fuel_density" unitField="density_unit" units={["lb/gal", "kg/m3", "kg/L"]} data={data} onChange={onChange} required />
+          <Num label={t("Carbon (wt %)")} field="carbon_wt_pct" data={data} onChange={onChange} required />
         </FieldGrid>
       )}
       {m === "equipment" && (
         <>
           <div className="input-group">
             <label>
-              Equipment<span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+              {t("Equipment")}<span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
             </label>
             <CustomDropdown
               options={equip.map((e) => ({ value: e.key, label: e.label }))}
               value={data.equipment_type || ""}
               onChange={(v) => onChange("equipment_type", v)}
-              placeholder="Select equipment"
+              placeholder={t("Select equipment")}
             />
           </div>
           <Segmented
             ariaLabel="Energy input"
             options={[
-              { value: "fuel", label: "Fuel burned" },
-              { value: "engine", label: "Engine hours" },
-              { value: "energy", label: "Energy (MMBtu)" },
+              { value: "fuel", label: t("Fuel burned") },
+              { value: "engine", label: t("Engine hours") },
+              { value: "energy", label: t("Energy (MMBtu)") },
             ]}
             value={energyBy}
             onChange={(v) => {
@@ -352,7 +353,7 @@ export const CombustionMethodForm: React.FC<CombustionMethodFormProps> = ({ data
             {energyBy === "fuel" && (
               <>
                 <NumUnit
-                  label="Fuel burned"
+                  label={t("Fuel burned")}
                   field="fuel_volume"
                   unitField="fuel_volume_unit"
                   units={eqRow && eqRow.fuel !== "natural_gas" ? ["gal", "bbl", "m3", "l"] : ["scf", "Mcf", "MMscf", "m3"]}
@@ -361,25 +362,25 @@ export const CombustionMethodForm: React.FC<CombustionMethodFormProps> = ({ data
                   required
                 />
                 {!eqRow || eqRow.fuel === "natural_gas" ? (
-                  <Num label="HHV (Btu/scf)" field="hhv_btu_scf" data={data} onChange={onChange} placeholder="1026" />
+                  <Num label={t("HHV (Btu/scf)")} field="hhv_btu_scf" data={data} onChange={onChange} placeholder="1026" />
                 ) : (
-                  <Num label="HHV (MMBtu/gal)" field="hhv_mmbtu_gal" data={data} onChange={onChange} placeholder={eqRow.fuel === "diesel" ? "0.138" : "0.125"} />
+                  <Num label={t("HHV (MMBtu/gal)")} field="hhv_mmbtu_gal" data={data} onChange={onChange} placeholder={eqRow.fuel === "diesel" ? "0.138" : "0.125"} />
                 )}
               </>
             )}
             {energyBy === "engine" && (
               <>
-                <Num label="Rating (hp)" field="engine_hp" data={data} onChange={onChange} required />
-                <Num label="Load (%)" field="load_pct" data={data} onChange={onChange} placeholder="100" />
-                <Num label="Operating hours" field="operating_hours" data={data} onChange={onChange} required />
+                <Num label={t("Rating (hp)")} field="engine_hp" data={data} onChange={onChange} required />
+                <Num label={t("Load (%)")} field="load_pct" data={data} onChange={onChange} placeholder="100" />
+                <Num label={t("Operating hours")} field="operating_hours" data={data} onChange={onChange} required />
               </>
             )}
-            {energyBy === "energy" && <Num label="Energy input, HHV (MMBtu)" field="energy_mmbtu" data={data} onChange={onChange} required />}
+            {energyBy === "energy" && <Num label={t("Energy input, HHV (MMBtu)")} field="energy_mmbtu" data={data} onChange={onChange} required />}
           </FieldGrid>
           <MoreOptions>
             <FieldGrid min={170}>
-              <Num label="CO₂ factor (t/MMBtu)" field="co2_ef_t_mmbtu" data={data} onChange={onChange} placeholder="fuel default" />
-              {energyBy === "engine" && <Num label="Heat rate (Btu/hp-hr)" field="heat_rate_btu_hphr" data={data} onChange={onChange} placeholder="7000" />}
+              <Num label={t("CO₂ factor (t/MMBtu)")} field="co2_ef_t_mmbtu" data={data} onChange={onChange} placeholder={t("fuel default")} />
+              {energyBy === "engine" && <Num label={t("Heat rate (Btu/hp-hr)")} field="heat_rate_btu_hphr" data={data} onChange={onChange} placeholder="7000" />}
             </FieldGrid>
           </MoreOptions>
         </>
@@ -387,15 +388,15 @@ export const CombustionMethodForm: React.FC<CombustionMethodFormProps> = ({ data
       {m === "vehicle_distance" && (
         <>
           <FieldGrid min={170}>
-            <NumUnit label="Distance" field="distance" unitField="distance_unit" units={["mile", "km"]} data={data} onChange={onChange} required />
-            <Num label="Fuel economy (miles/gal)" field="fuel_economy_mpg" data={data} onChange={onChange} required />
+            <NumUnit label={t("Distance")} field="distance" unitField="distance_unit" units={["mile", "km"]} data={data} onChange={onChange} required />
+            <Num label={t("Fuel economy (miles/gal)")} field="fuel_economy_mpg" data={data} onChange={onChange} required />
             <div className="input-group">
-              <label>Vehicle</label>
+              <label>{t("Vehicle")}</label>
               <CustomDropdown
                 options={[
-                  { value: "hd_diesel_advanced", label: "Heavy-duty diesel, advanced control" },
-                  { value: "diesel", label: "Other diesel vehicle" },
-                  { value: "gasoline", label: "Gasoline vehicle" },
+                  { value: "hd_diesel_advanced", label: t("Heavy-duty diesel, advanced control") },
+                  { value: "diesel", label: t("Other diesel vehicle") },
+                  { value: "gasoline", label: t("Gasoline vehicle") },
                 ]}
                 value={data.vehicle_type || data.vehicle_fuel || ""}
                 onChange={(v) => {
@@ -407,16 +408,16 @@ export const CombustionMethodForm: React.FC<CombustionMethodFormProps> = ({ data
                     onChange("vehicle_fuel", v);
                   }
                 }}
-                placeholder="Select vehicle"
+                placeholder={t("Select vehicle")}
               />
             </div>
           </FieldGrid>
           <MoreOptions>
             <FieldGrid min={170}>
-              <Num label="CH₄ (t / 1,000 gal)" field="ch4_t_per_kgal" data={data} onChange={onChange} placeholder="default" />
-              <Num label="N₂O (t / 1,000 gal)" field="n2o_t_per_kgal" data={data} onChange={onChange} placeholder="default" />
-              <Num label="HHV (MMBtu/gal)" field="hhv_mmbtu_gal" data={data} onChange={onChange} placeholder="fuel default" />
-              <Num label="CO₂ factor (t/MMBtu)" field="co2_ef_t_mmbtu" data={data} onChange={onChange} placeholder="fuel default" />
+              <Num label={t("CH₄ (t / 1,000 gal)")} field="ch4_t_per_kgal" data={data} onChange={onChange} placeholder={t("default")} />
+              <Num label={t("N₂O (t / 1,000 gal)")} field="n2o_t_per_kgal" data={data} onChange={onChange} placeholder={t("default")} />
+              <Num label={t("HHV (MMBtu/gal)")} field="hhv_mmbtu_gal" data={data} onChange={onChange} placeholder={t("fuel default")} />
+              <Num label={t("CO₂ factor (t/MMBtu)")} field="co2_ef_t_mmbtu" data={data} onChange={onChange} placeholder={t("fuel default")} />
             </FieldGrid>
           </MoreOptions>
         </>
@@ -424,10 +425,10 @@ export const CombustionMethodForm: React.FC<CombustionMethodFormProps> = ({ data
       {m === "flare_voc" && (
         <>
           <FieldGrid min={170}>
-            <NumUnit label="VOC emitted" field="voc_mass" unitField="voc_mass_unit" units={["t", "kg", "lb", "short_ton"]} data={data} onChange={onChange} required />
-            <Num label="Combustion efficiency (%)" field="combustion_efficiency" data={data} onChange={onChange} placeholder="98" />
+            <NumUnit label={t("VOC emitted")} field="voc_mass" unitField="voc_mass_unit" units={["t", "kg", "lb", "short_ton"]} data={data} onChange={onChange} required />
+            <Num label={t("Combustion efficiency (%)")} field="combustion_efficiency" data={data} onChange={onChange} placeholder="98" />
           </FieldGrid>
-          <label className="s1-label">Flare gas analysis (wt %)</label>
+          <label className="s1-label">{t("Flare gas analysis (wt %)")}</label>
           <FieldGrid min={120}>
             {[
               ["wt_ch4", "CH₄"],
@@ -448,8 +449,8 @@ export const CombustionMethodForm: React.FC<CombustionMethodFormProps> = ({ data
           <Segmented
             ariaLabel="Oxidizer feed"
             options={[
-              { value: "loading", label: "Loading losses" },
-              { value: "toc", label: "TOC mass" },
+              { value: "loading", label: t("Loading losses") },
+              { value: "toc", label: t("TOC mass") },
             ]}
             value={data.oxidizer_feed || "loading"}
             onChange={(v) => {
@@ -460,16 +461,16 @@ export const CombustionMethodForm: React.FC<CombustionMethodFormProps> = ({ data
           <FieldGrid min={170}>
             {(data.oxidizer_feed || "loading") === "loading" ? (
               <>
-                <NumUnit label="Liquid loaded" field="liquid_loaded" unitField="liquid_unit" units={LIQ_UNITS} data={data} onChange={onChange} required />
-                <Num label="Loading loss (lb VOC / 1,000 gal)" field="loading_loss_lb_kgal" data={data} onChange={onChange} required />
-                <Num label="VOC share of TOC (%)" field="voc_fraction_of_toc" data={data} onChange={onChange} placeholder="85" />
+                <NumUnit label={t("Liquid loaded")} field="liquid_loaded" unitField="liquid_unit" units={LIQ_UNITS} data={data} onChange={onChange} required />
+                <Num label={t("Loading loss (lb VOC / 1,000 gal)")} field="loading_loss_lb_kgal" data={data} onChange={onChange} required />
+                <Num label={t("VOC share of TOC (%)")} field="voc_fraction_of_toc" data={data} onChange={onChange} placeholder="85" />
               </>
             ) : (
-              <NumUnit label="TOC to oxidizer" field="toc_mass" unitField="toc_mass_unit" units={["t", "kg", "lb"]} data={data} onChange={onChange} required />
+              <NumUnit label={t("TOC to oxidizer")} field="toc_mass" unitField="toc_mass_unit" units={["t", "kg", "lb"]} data={data} onChange={onChange} required />
             )}
-            <Num label="TOC carbon (wt %)" field="toc_carbon_wt_pct" data={data} onChange={onChange} required />
-            <Num label="CH₄ in TOC (wt %)" field="toc_ch4_wt_pct" data={data} onChange={onChange} required />
-            <Num label="Destruction efficiency (%)" field="destruction_efficiency" data={data} onChange={onChange} placeholder="98" />
+            <Num label={t("TOC carbon (wt %)")} field="toc_carbon_wt_pct" data={data} onChange={onChange} required />
+            <Num label={t("CH₄ in TOC (wt %)")} field="toc_ch4_wt_pct" data={data} onChange={onChange} required />
+            <Num label={t("Destruction efficiency (%)")} field="destruction_efficiency" data={data} onChange={onChange} placeholder="98" />
           </FieldGrid>
         </>
       )}

@@ -5,6 +5,7 @@ import { Eye, Trash2 } from "lucide-react";
 import api from "../../api";
 import { formatEmission, formatNumber } from "../../utils/formatters";
 import { PROCESS_TYPES, factorTypeLabel, processLabel } from "./shared";
+import { t } from "../../i18n";
 
 export interface Scope1HistoryEntry {
   id: string | number;
@@ -86,11 +87,11 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
   <div className="calculator-grid-container [background:white] [border-radius:var(--radius-md)] [overflow:hidden] [box-shadow:var(--shadow-xs)] mt-[30px]!">
     {/* Filter bar */}
     <div className="flex! gap-[10px]! flex-wrap! items-center! mb-[14px]!">
-      <strong className="text-[length:0.95rem]! mr-[4px]!">Recent Activity (Scope 1)</strong>
+      <strong className="text-[length:0.95rem]! mr-[4px]!">{t("Recent Activity (Scope 1)")}</strong>
       <div className="flex-1!" />
       <Input
         type="text"
-        placeholder="Search..."
+        placeholder={t("Search...")}
         value={filterSearch}
         onChange={(e) => {
           setFilterSearch(e.target.value);
@@ -99,7 +100,7 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
         className="w-[160px]! p-[6px_10px]! text-[length:0.82rem]!"
       />
       <NativeSelect
-        aria-label="Filter by year"
+        aria-label={t("Filter by year")}
         value={filterYear}
         onChange={(e) => {
           setFilterYear(e.target.value);
@@ -107,7 +108,7 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
         }}
         className="component-select w-[100px]! text-[length:0.82rem]!"
       >
-        <option value="">All Years</option>
+        <option value="">{t("All Years")}</option>
         {/* BUG-095: options come from the server facets, not from the 10 rows of the current page */}
         {facetYears.map((y) => (
           <option key={y} value={y}>
@@ -116,7 +117,7 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
         ))}
       </NativeSelect>
       <NativeSelect
-        aria-label="Filter by process"
+        aria-label={t("Filter by process")}
         value={filterProcess}
         onChange={(e) => {
           setFilterProcess(e.target.value);
@@ -124,7 +125,7 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
         }}
         className="component-select w-[140px]! text-[length:0.82rem]!"
       >
-        <option value="">All Processes</option>
+        <option value="">{t("All Processes")}</option>
         {Object.keys(PROCESS_TYPES).map((p) => {
           const pDef = (PROCESS_TYPES as Record<string, any>)[p];
           const pLabel = typeof pDef === "string" ? pDef : pDef?.label || p;
@@ -147,7 +148,7 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
           }}
           className="text-[length:0.8rem]! p-[5px_10px]! text-[color:var(--text-secondary)]!"
         >
-          Clear
+          {t("Clear")}
         </Button>
       )}
       <button
@@ -178,17 +179,17 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
             }
             exportToCSV(rows, "scope1_export.csv");
           } catch (err: any) {
-            toast.error(err.response?.data?.error || "Export failed");
+            toast.error(err.response?.data?.error || t("Export failed"));
           }
         }}
       >
-        ↓ Export CSV
+        {t("↓ Export CSV")}
       </button>
       <button
         className="action-btn bg-[color:var(--color-green-500)]! p-[6px_14px]! text-[length:0.82rem]! whitespace-nowrap!"
         onClick={() => setImportModal({ isOpen: true, type: "activity" })}
       >
-        ↑ Bulk Import (Wizard)
+        {t("↑ Bulk Import (Wizard)")}
       </button>
       <button
         type="button"
@@ -196,47 +197,47 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
         aria-pressed={showUncertainty}
         onClick={() => setShowUncertainty((v) => !v)}
       >
-        {showUncertainty ? "Hide" : "Show"} uncertainty columns
+        {showUncertainty ? t("Hide") : t("Show")}{" "}{t("uncertainty columns")}
       </button>
     </div>
-    <div className="table-scroll-container" tabIndex={0} role="region" aria-label="Entries table">
+    <div className="table-scroll-container" tabIndex={0} role="region" aria-label={t("Entries table")}>
       <table className={`excel-table${showUncertainty ? "" : " hide-uncertainty"}`}>
         <thead>
           <tr>
-            <th>Period</th>
-            <th>Activity</th>
-            <th>Region</th>
-            <th>Division</th>
-            <th>Field</th>
-            <th>Emission Source</th>
-            <th>Equipment ID</th>
-            <th>Process</th>
+            <th>{t("Period")}</th>
+            <th>{t("Activity")}</th>
+            <th>{t("Region")}</th>
+            <th>{t("Division")}</th>
+            <th>{t("Field")}</th>
+            <th>{t("Emission Source")}</th>
+            <th>{t("Equipment ID")}</th>
+            <th>{t("Process")}</th>
             <th>Activity/Fuel</th>
-            <th>Factor Type</th>
-            <th>Quantity</th>
-            <th>CO₂ (t)</th>
-            <th>CH₄ (t)</th>
+            <th>{t("Factor Type")}</th>
+            <th>{t("Quantity")}</th>
+            <th>{t("CO₂ (t)")}</th>
+            <th>{t("CH₄ (t)")}</th>
             <th>N₂O (t)</th>
-            <th>Total (tCO₂e)</th>
-            <th className="text-center!" title="Standard Combined Uncertainty (1σ)">
-              CO₂ 1σ (±%)
+            <th>{t("Total (tCO₂e)")}</th>
+            <th className="text-center!" title={t("Standard Combined Uncertainty (1σ)")}>
+              {t("CO₂ 1σ (±%)")}
             </th>
-            <th className="text-center!" title="Standard Combined Uncertainty (1σ)">
-              CH₄ 1σ (±%)
+            <th className="text-center!" title={t("Standard Combined Uncertainty (1σ)")}>
+              {t("CH₄ 1σ (±%)")}
             </th>
-            <th className="text-center!" title="Standard Combined Uncertainty (1σ)">
+            <th className="text-center!" title={t("Standard Combined Uncertainty (1σ)")}>
               N₂O 1σ (±%)
             </th>
-            <th className="text-center!" title="Expanded Uncertainty (95% Confidence Interval, k=2)">
-              CO₂ 95%CI (±%)
+            <th className="text-center!" title={t("Expanded Uncertainty (95% Confidence Interval, k=2)")}>
+              {t("CO₂ 95%CI (±%)")}
             </th>
-            <th className="text-center!" title="Expanded Uncertainty (95% Confidence Interval, k=2)">
-              CH₄ 95%CI (±%)
+            <th className="text-center!" title={t("Expanded Uncertainty (95% Confidence Interval, k=2)")}>
+              {t("CH₄ 95%CI (±%)")}
             </th>
-            <th className="text-center!" title="Expanded Uncertainty (95% Confidence Interval, k=2)">
-              N₂O 95%CI (±%)
+            <th className="text-center!" title={t("Expanded Uncertainty (95% Confidence Interval, k=2)")}>
+              {t("N₂O 95%CI (±%)")}
             </th>
-            <th className="text-center!">Actions</th>
+            <th className="text-center!">{t("Actions")}</th>
           </tr>
         </thead>
         <tbody>
@@ -260,9 +261,9 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
                   <td colSpan={22} className="text-center! text-[color:var(--text-secondary)]! p-[30px]!">
                     {entries.length === 0
                       ? loading
-                        ? "Loading…"
-                        : "No entries yet"
-                      : "No results match your filters"}
+                        ? t("Loading…")
+                        : t("No entries yet")
+                      : t("No results match your filters")}
                   </td>
                 </tr>
               );
@@ -319,7 +320,7 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
                   </td>
                   <td
                     className={`[text-align:center]! [font-size:0.82rem]! ${entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0 ? "[color:var(--color-green-700)]!" : "[color:var(--text-muted)]!"}`}
-                    title="Standard Combined Uncertainty (1σ)"
+                    title={t("Standard Combined Uncertainty (1σ)")}
                   >
                     {entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0
                       ? `±${(entry.uncertainty_co2 * 100).toFixed(0)}%`
@@ -327,7 +328,7 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
                   </td>
                   <td
                     className={`[text-align:center]! [font-size:0.82rem]! ${entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0 ? "[color:var(--color-blue-700)]!" : "[color:var(--text-muted)]!"}`}
-                    title="Standard Combined Uncertainty (1σ)"
+                    title={t("Standard Combined Uncertainty (1σ)")}
                   >
                     {entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0
                       ? `±${(entry.uncertainty_ch4 * 100).toFixed(0)}%`
@@ -335,7 +336,7 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
                   </td>
                   <td
                     className={`[text-align:center]! [font-size:0.82rem]! ${entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0 ? "[color:var(--color-violet-700)]!" : "[color:var(--text-muted)]!"}`}
-                    title="Standard Combined Uncertainty (1σ)"
+                    title={t("Standard Combined Uncertainty (1σ)")}
                   >
                     {entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0
                       ? `±${(entry.uncertainty_n2o * 100).toFixed(0)}%`
@@ -343,7 +344,7 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
                   </td>
                   <td
                     className={`[text-align:center]! [font-size:0.82rem]! ${entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0 ? "[color:var(--color-green-700)]!" : "[color:var(--text-muted)]!"}`}
-                    title="Expanded Uncertainty (95% Confidence Interval, k=2)"
+                    title={t("Expanded Uncertainty (95% Confidence Interval, k=2)")}
                   >
                     {entry.uncertainty_co2 != null && Number(entry.co2_emissions) > 0
                       ? `±${(entry.uncertainty_co2 * 200).toFixed(0)}%`
@@ -351,7 +352,7 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
                   </td>
                   <td
                     className={`[text-align:center]! [font-size:0.82rem]! ${entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0 ? "[color:var(--color-blue-700)]!" : "[color:var(--text-muted)]!"}`}
-                    title="Expanded Uncertainty (95% Confidence Interval, k=2)"
+                    title={t("Expanded Uncertainty (95% Confidence Interval, k=2)")}
                   >
                     {entry.uncertainty_ch4 != null && Number(entry.ch4_emissions) > 0
                       ? `±${(entry.uncertainty_ch4 * 200).toFixed(0)}%`
@@ -359,7 +360,7 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
                   </td>
                   <td
                     className={`[text-align:center]! [font-size:0.82rem]! ${entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0 ? "[color:var(--color-violet-700)]!" : "[color:var(--text-muted)]!"}`}
-                    title="Expanded Uncertainty (95% Confidence Interval, k=2)"
+                    title={t("Expanded Uncertainty (95% Confidence Interval, k=2)")}
                   >
                     {entry.uncertainty_n2o != null && Number(entry.n2o_emissions) > 0
                       ? `±${(entry.uncertainty_n2o * 200).toFixed(0)}%`
@@ -369,14 +370,14 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
                     <button
                       className="icon-button text-[color:var(--color-blue-700)]! mr-[6px]!"
                       onClick={() => handleInspect(entry)}
-                      title="Inspect Calculation Details"
+                      title={t("Inspect Calculation Details")}
                     >
                       <Eye size={16} />
                     </button>
                     <button
                       className="icon-button text-[color:var(--color-red-700)]!"
                       onClick={() => handleDelete(entry.id)}
-                      title="Delete"
+                      title={t("Delete")}
                     >
                       <Trash2 size={16} />
                     </button>
@@ -389,7 +390,7 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
         <tfoot>
           <tr className="[background-color:var(--color-legacy-f9fafb)]! [font-weight:bold]!">
             <td colSpan={14} className="text-right! pr-[15px]!">
-              Total ({filterYear || filterProcess || filterSearch ? "Filtered" : "Page"}):
+              {t("Total (")}{filterYear || filterProcess || filterSearch ? t("Filtered") : t("Page")}):
             </td>
             <td className="text-[color:var(--color-link)]!">
               {formatNumber(
@@ -424,17 +425,17 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
         onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
         disabled={currentPage === 1}
       >
-        Previous
+        {t("Previous")}
       </button>
       <span className="text-[color:var(--text-secondary)]!">
-        Page {currentPage} of {totalPages}
+        {t("Page")}{" "}{currentPage}{" "}{t("of")}{" "}{totalPages}
       </span>
       <button
         className="action-btn secondary"
         onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
         disabled={currentPage === totalPages}
       >
-        Next
+        {t("Next")}
       </button>
     </div>
   </div>

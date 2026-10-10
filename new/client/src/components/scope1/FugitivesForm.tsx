@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Input, Field } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
 import { FieldGrid, Segmented } from "./ui";
+import { t } from "../../i18n";
 
 // ============================================================================
 // API GHG COMPENDIUM (2021) CHAPTER 7 — ONSHORE REFERENCE TABLES & DATA
@@ -13,22 +14,22 @@ import { FieldGrid, Segmented } from "./ui";
 const TIER1_FACILITIES = [
   {
     id: "oil_production",
-    label: "Onshore Oil Production",
+    label: t("Onshore Oil Production"),
     sub: "0.5173 lb CH₄ per bbl oil produced",
     units: [
-      { value: "bbl", label: "bbl oil", t_per_unit: 2.346e-4 },
-      { value: "m3", label: "m³ oil", t_per_unit: 1.476e-3 },
+      { value: "bbl", label: t("bbl oil"), t_per_unit: 2.346e-4 },
+      { value: "m3", label: t("m³ oil"), t_per_unit: 1.476e-3 },
     ],
   },
   {
     id: "gas_production",
-    label: "Onshore Gas Production",
+    label: t("Onshore Gas Production"),
     sub: "57.33 lb CH₄ per 10⁶ scf gas produced",
     units: [
-      { value: "MMscf", label: "MMscf gas", t_per_unit: 2.601e-2 },
-      { value: "Mcf", label: "Mcf gas", t_per_unit: 2.601e-5 },
-      { value: "scf", label: "scf gas", t_per_unit: 2.601e-8 },
-      { value: "m3", label: "m³ gas", t_per_unit: 9.184e-7 },
+      { value: "MMscf", label: t("MMscf gas"), t_per_unit: 2.601e-2 },
+      { value: "Mcf", label: t("Mcf gas"), t_per_unit: 2.601e-5 },
+      { value: "scf", label: t("scf gas"), t_per_unit: 2.601e-8 },
+      { value: "m3", label: t("m³ gas"), t_per_unit: 9.184e-7 },
     ],
   },
 ];
@@ -38,57 +39,57 @@ const TIER1_FACILITIES = [
 // the server applies, so the preview and the saved record use the same factor. CH4 only.
 const TIER2A_EQUIPMENT_DATA: Record<string, { label: string; default_stream: { ch4: number; co2: number }; equipment: Array<{ id: string; label: string; fuel: string; factor: number; unit: string }> }> = {
   gas_production: {
-    label: "Onshore Natural Gas Production",
+    label: t("Onshore Natural Gas Production"),
     default_stream: { ch4: 78.8, co2: 0 },
     equipment: [
-      { id: "wellhead", label: "Gas Wellhead", fuel: "Wellhead - Gas", factor: 0.018, unit: "kg CH₄/hr/well" },
-      { id: "separator", label: "Separator", fuel: "Separator - Gas Production", factor: 0.0442, unit: "kg CH₄/hr/separator" },
-      { id: "heater", label: "Gas Heater", fuel: "Heater - Gas Production", factor: 0.046, unit: "kg CH₄/hr/heater" },
-      { id: "dehydrator", label: "Dehydrator", fuel: "Gas Dehydrator Unit - Fugitive Leaks", factor: 0.0713, unit: "kg CH₄/hr/dehydrator" },
-      { id: "meter", label: "Meter / Piping", fuel: "Meter / Piping Run - Gas Production", factor: 0.0352, unit: "kg CH₄/hr/meter" },
-      { id: "compressor_small", label: "Small Reciprocating Compressor", fuel: "Compressor - Gas Production Small Recip", factor: 0.212, unit: "kg CH₄/hr/compressor" },
-      { id: "compressor_large", label: "Large Reciprocating Compressor", fuel: "Compressor - Gas Production Large Recip", factor: 12.2, unit: "kg CH₄/hr/compressor" },
+      { id: "wellhead", label: t("Gas Wellhead"), fuel: "Wellhead - Gas", factor: 0.018, unit: "kg CH₄/hr/well" },
+      { id: "separator", label: t("Separator"), fuel: "Separator - Gas Production", factor: 0.0442, unit: "kg CH₄/hr/separator" },
+      { id: "heater", label: t("Gas Heater"), fuel: "Heater - Gas Production", factor: 0.046, unit: "kg CH₄/hr/heater" },
+      { id: "dehydrator", label: t("Dehydrator"), fuel: "Gas Dehydrator Unit - Fugitive Leaks", factor: 0.0713, unit: "kg CH₄/hr/dehydrator" },
+      { id: "meter", label: t("Meter / Piping"), fuel: "Meter / Piping Run - Gas Production", factor: 0.0352, unit: "kg CH₄/hr/meter" },
+      { id: "compressor_small", label: t("Small Reciprocating Compressor"), fuel: "Compressor - Gas Production Small Recip", factor: 0.212, unit: "kg CH₄/hr/compressor" },
+      { id: "compressor_large", label: t("Large Reciprocating Compressor"), fuel: "Compressor - Gas Production Large Recip", factor: 12.2, unit: "kg CH₄/hr/compressor" },
     ],
   },
   oil_production: {
-    label: "Onshore Crude Oil Production",
+    label: t("Onshore Crude Oil Production"),
     default_stream: { ch4: 78.8, co2: 0 },
     equipment: [
-      { id: "wellhead_light", label: "Wellhead - light crude", fuel: "Wellhead - Oil (Light Crude)", factor: 0.0156, unit: "kg CH₄/hr/well" },
-      { id: "wellhead_heavy", label: "Wellhead - heavy crude", fuel: "Wellhead - Oil (Heavy Crude)", factor: 0.000663, unit: "kg CH₄/hr/well" },
-      { id: "separator_light", label: "Separator - light crude", fuel: "Separator - Light Crude", factor: 0.041, unit: "kg CH₄/hr/separator" },
-      { id: "separator_heavy", label: "Separator - heavy crude", fuel: "Separator - Heavy Crude", factor: 0.000679, unit: "kg CH₄/hr/separator" },
-      { id: "heater_light", label: "Heater-treater - light crude", fuel: "Heater-Treater - Light Crude", factor: 0.0477, unit: "kg CH₄/hr/heater" },
-      { id: "header_light", label: "Header - light crude", fuel: "Header - Light Crude", factor: 0.162, unit: "kg CH₄/hr/header" },
-      { id: "header_heavy", label: "Header - heavy crude", fuel: "Header - Heavy Crude", factor: 0.000472, unit: "kg CH₄/hr/header" },
-      { id: "tank_light", label: "Tank - light crude", fuel: "Storage Tank Fugitive - Light Crude", factor: 0.0275, unit: "kg CH₄/hr/tank" },
-      { id: "compressor_small", label: "Small compressor - light crude", fuel: "Compressor - Small Reciprocating", factor: 0.0369, unit: "kg CH₄/hr/compressor" },
-      { id: "compressor_large", label: "Large compressor - light crude", fuel: "Compressor - Large Reciprocating", factor: 13.1, unit: "kg CH₄/hr/compressor" },
+      { id: "wellhead_light", label: t("Wellhead - light crude"), fuel: "Wellhead - Oil (Light Crude)", factor: 0.0156, unit: "kg CH₄/hr/well" },
+      { id: "wellhead_heavy", label: t("Wellhead - heavy crude"), fuel: "Wellhead - Oil (Heavy Crude)", factor: 0.000663, unit: "kg CH₄/hr/well" },
+      { id: "separator_light", label: t("Separator - light crude"), fuel: "Separator - Light Crude", factor: 0.041, unit: "kg CH₄/hr/separator" },
+      { id: "separator_heavy", label: t("Separator - heavy crude"), fuel: "Separator - Heavy Crude", factor: 0.000679, unit: "kg CH₄/hr/separator" },
+      { id: "heater_light", label: t("Heater-treater - light crude"), fuel: "Heater-Treater - Light Crude", factor: 0.0477, unit: "kg CH₄/hr/heater" },
+      { id: "header_light", label: t("Header - light crude"), fuel: "Header - Light Crude", factor: 0.162, unit: "kg CH₄/hr/header" },
+      { id: "header_heavy", label: t("Header - heavy crude"), fuel: "Header - Heavy Crude", factor: 0.000472, unit: "kg CH₄/hr/header" },
+      { id: "tank_light", label: t("Tank - light crude"), fuel: "Storage Tank Fugitive - Light Crude", factor: 0.0275, unit: "kg CH₄/hr/tank" },
+      { id: "compressor_small", label: t("Small compressor - light crude"), fuel: "Compressor - Small Reciprocating", factor: 0.0369, unit: "kg CH₄/hr/compressor" },
+      { id: "compressor_large", label: t("Large compressor - light crude"), fuel: "Compressor - Large Reciprocating", factor: 13.1, unit: "kg CH₄/hr/compressor" },
     ],
   },
 };
 
 // Tier 2B components / services of API Compendium Table 7-12 (factors on the server)
 const T2B_SERVICES = [
-  { value: "gas", label: "Gas" },
-  { value: "light_oil", label: "Light oil" },
-  { value: "heavy_oil", label: "Heavy oil" },
-  { value: "water_oil", label: "Water / oil" },
+  { value: "gas", label: t("Gas") },
+  { value: "light_oil", label: t("Light oil") },
+  { value: "heavy_oil", label: t("Heavy oil") },
+  { value: "water_oil", label: t("Water / oil") },
 ];
 const T2B_COMPONENTS = [
-  { value: "valve", label: "Valves" },
-  { value: "connector", label: "Connectors" },
-  { value: "flange", label: "Flanges" },
-  { value: "open_ended_line", label: "Open-ended lines" },
-  { value: "pump_seal", label: "Pump seals" },
-  { value: "other", label: "Other components" },
+  { value: "valve", label: t("Valves") },
+  { value: "connector", label: t("Connectors") },
+  { value: "flange", label: t("Flanges") },
+  { value: "open_ended_line", label: t("Open-ended lines") },
+  { value: "pump_seal", label: t("Pump seals") },
+  { value: "other", label: t("Other components") },
 ];
 
 const TIER3_METHODS = [
-  { id: "method21", label: "Screening Ranges" },
-  { id: "correlation", label: "Leak-Rate Correlation" },
-  { id: "ogi", label: "Leaker Survey (OGI)" },
-  { id: "measurement", label: "Direct Measurement" },
+  { id: "method21", label: t("Screening Ranges") },
+  { id: "correlation", label: t("Leak-Rate Correlation") },
+  { id: "ogi", label: t("Leaker Survey (OGI)") },
+  { id: "measurement", label: t("Direct Measurement") },
 ];
 // fields each Tier 3 method writes; switching method clears the others (Tier 3 test #20)
 const TIER3_FIELDS = [
@@ -98,38 +99,38 @@ const TIER3_FIELDS = [
   "measured_rate", "rate_unit", "ch4_content", "co2_content", "operating_hours", "amount", "unit",
 ];
 const M21_COMPONENTS = [
-  { value: "valve", label: "Valves" },
-  { value: "pump_seal", label: "Pump seals" },
-  { value: "connector", label: "Connectors" },
-  { value: "flange", label: "Flanges" },
-  { value: "open_ended_line", label: "Open-ended lines" },
-  { value: "other", label: "Other components" },
+  { value: "valve", label: t("Valves") },
+  { value: "pump_seal", label: t("Pump seals") },
+  { value: "connector", label: t("Connectors") },
+  { value: "flange", label: t("Flanges") },
+  { value: "open_ended_line", label: t("Open-ended lines") },
+  { value: "other", label: t("Other components") },
 ];
 const M21_SERVICES = [
-  { value: "gas", label: "Gas", ch4: "92.0" },
-  { value: "light_oil", label: "Light oil", ch4: "61.3" },
-  { value: "heavy_oil", label: "Heavy oil", ch4: "94.2" },
-  { value: "water_oil", label: "Water / oil", ch4: "" },
+  { value: "gas", label: t("Gas"), ch4: "92.0" },
+  { value: "light_oil", label: t("Light oil"), ch4: "61.3" },
+  { value: "heavy_oil", label: t("Heavy oil"), ch4: "94.2" },
+  { value: "water_oil", label: t("Water / oil"), ch4: "" },
 ];
 const OGI_COMPONENTS = [
-  { value: "valve", label: "Valves" },
-  { value: "flange", label: "Flanges" },
-  { value: "connector", label: "Connectors" },
-  { value: "open_ended_line", label: "Open-ended lines" },
-  { value: "prv", label: "Pressure relief valves" },
-  { value: "pump_seal", label: "Pump seals" },
-  { value: "other", label: "Other components" },
+  { value: "valve", label: t("Valves") },
+  { value: "flange", label: t("Flanges") },
+  { value: "connector", label: t("Connectors") },
+  { value: "open_ended_line", label: t("Open-ended lines") },
+  { value: "prv", label: t("Pressure relief valves") },
+  { value: "pump_seal", label: t("Pump seals") },
+  { value: "other", label: t("Other components") },
 ];
 const OGI_SERVICES = [
-  { value: "gas", label: "Gas" },
-  { value: "light_crude", label: "Light crude" },
-  { value: "heavy_crude", label: "Heavy crude" },
+  { value: "gas", label: t("Gas") },
+  { value: "light_crude", label: t("Light crude") },
+  { value: "heavy_crude", label: t("Heavy crude") },
 ];
 const RATE_UNITS = [
-  { value: "scf/hr", label: "scf/h (whole gas)" },
-  { value: "m3/hr", label: "m³/h (whole gas)" },
-  { value: "kg/hr", label: "kg CH₄/h" },
-  { value: "lb/hr", label: "lb CH₄/h" },
+  { value: "scf/hr", label: t("scf/h (whole gas)") },
+  { value: "m3/hr", label: t("m³/h (whole gas)") },
+  { value: "kg/hr", label: t("kg CH₄/h") },
+  { value: "lb/hr", label: t("lb CH₄/h") },
 ];
 
 interface NumProps {
@@ -168,7 +169,7 @@ const Pick: React.FC<PickProps> = ({ label, field, options, data, onChange }) =>
       options={options.map(({ value, label: l }) => ({ value, label: l }))}
       value={data[field] || ""}
       onChange={(v) => onChange(field, v)}
-      placeholder="Select"
+      placeholder={t("Select")}
     />
   </div>
 );
@@ -248,7 +249,7 @@ export const FugitivesForm: React.FC<FugitivesFormProps> = ({
         <div className="[margin-bottom:12px]">
           <div className="grid gap-[12px] [grid-template-columns:2fr_1fr_1.5fr] max-[600px]:[grid-template-columns:1fr]">
             <div className="input-group">
-              <label>Facility Type</label>
+              <label>{t("Facility Type")}</label>
               <CustomDropdown
                 options={TIER1_FACILITIES.map((f) => ({ value: f.id, label: f.label, subLabel: f.sub }))}
                 value={selectedFacilityId}
@@ -263,7 +264,7 @@ export const FugitivesForm: React.FC<FugitivesFormProps> = ({
               />
             </div>
 
-            <Field className="input-group" label="Production Volume">
+            <Field className="input-group" label={t("Production Volume")}>
               <Input
                 type="number"
                 min="0"
@@ -275,7 +276,7 @@ export const FugitivesForm: React.FC<FugitivesFormProps> = ({
             </Field>
 
             <div className="input-group">
-              <label>Production Unit</label>
+              <label>{t("Production Unit")}</label>
               <CustomDropdown
                 options={tier1Fac.units.map((u) => ({ value: u.value, label: u.label }))}
                 value={tier1Unit}
@@ -309,8 +310,8 @@ export const FugitivesForm: React.FC<FugitivesFormProps> = ({
                 onChange("fugitive_method", v);
               }}
               options={[
-                { value: "equipment", label: "Equipment count" },
-                { value: "component", label: "Component count" },
+                { value: "equipment", label: t("Equipment count") },
+                { value: "component", label: t("Component count") },
               ]}
             />
           </div>
@@ -319,7 +320,7 @@ export const FugitivesForm: React.FC<FugitivesFormProps> = ({
           {tier2SubMethod === "equipment" && (
             <div className="grid gap-[12px] [grid-template-columns:1.2fr_1.2fr_0.8fr_1.2fr] max-[600px]:[grid-template-columns:1fr]">
               <div className="input-group">
-                <label>Industry Segment / Table</label>
+                <label>{t("Industry Segment / Table")}</label>
                 <CustomDropdown
                   options={Object.keys(TIER2A_EQUIPMENT_DATA).map((k) => ({
                     value: k,
@@ -335,7 +336,7 @@ export const FugitivesForm: React.FC<FugitivesFormProps> = ({
               </div>
 
               <div className="input-group">
-                <label>Equipment Type</label>
+                <label>{t("Equipment Type")}</label>
                 <CustomDropdown
                   options={
                     TIER2A_EQUIPMENT_DATA[tier2aSegment]?.equipment.map((e) => ({
@@ -349,7 +350,7 @@ export const FugitivesForm: React.FC<FugitivesFormProps> = ({
               </div>
 
               <Num
-                label="Equipment count"
+                label={t("Equipment count")}
                 field="equipment_count"
                 data={data}
                 onChange={(k, v) => {
@@ -359,17 +360,17 @@ export const FugitivesForm: React.FC<FugitivesFormProps> = ({
                 }}
                 placeholder="e.g. 4"
               />
-              <Num label="Operating hours" field="operating_hours" data={data} onChange={onChange} placeholder="whole month" />
+              <Num label={t("Operating hours")} field="operating_hours" data={data} onChange={onChange} placeholder={t("whole month")} />
             </div>
           )}
 
           {/* Tier 2B: component count x Table 7-12 */}
           {tier2SubMethod === "component" && (
             <FieldGrid min={160}>
-              <Pick label="Component" field="component_type" options={T2B_COMPONENTS} data={data} onChange={onChange} />
-              <Pick label="Service" field="service_type" options={T2B_SERVICES} data={data} onChange={onChange} />
+              <Pick label={t("Component")} field="component_type" options={T2B_COMPONENTS} data={data} onChange={onChange} />
+              <Pick label={t("Service")} field="service_type" options={T2B_SERVICES} data={data} onChange={onChange} />
               <Num
-                label="Component count"
+                label={t("Component count")}
                 field="component_count"
                 data={data}
                 onChange={(k, v) => {
@@ -379,9 +380,9 @@ export const FugitivesForm: React.FC<FugitivesFormProps> = ({
                 }}
                 placeholder="e.g. 100"
               />
-              <Num label="Operating hours" field="operating_hours" data={data} onChange={onChange} placeholder="whole month" />
-              <Num label="CH₄ (mol %)" field="ch4_mole_pct" data={data} onChange={onChange} placeholder="81.6 (table basis)" />
-              <Num label="CO₂ (mol %)" field="co2_mole_pct" data={data} onChange={onChange} placeholder="0" />
+              <Num label={t("Operating hours")} field="operating_hours" data={data} onChange={onChange} placeholder={t("whole month")} />
+              <Num label={t("CH₄ (mol %)")} field="ch4_mole_pct" data={data} onChange={onChange} placeholder={t("81.6 (table basis)")} />
+              <Num label={t("CO₂ (mol %)")} field="co2_mole_pct" data={data} onChange={onChange} placeholder="0" />
             </FieldGrid>
           )}
         </div>
@@ -405,28 +406,28 @@ export const FugitivesForm: React.FC<FugitivesFormProps> = ({
 
           {tier3Method === "method21" && (
             <FieldGrid min={170}>
-              <Pick label="Component" field="m21_component" options={M21_COMPONENTS} data={data} onChange={onChange} />
-              <Pick label="Service" field="m21_service" options={M21_SERVICES} data={data} onChange={onChange} />
-              <Num label="Count < 10,000 ppmv" field="m21_below_count" data={data} onChange={onChange} placeholder="0" />
-              <Num label="Count ≥ 10,000 ppmv" field="m21_above_count" data={data} onChange={onChange} placeholder="0" />
+              <Pick label={t("Component")} field="m21_component" options={M21_COMPONENTS} data={data} onChange={onChange} />
+              <Pick label={t("Service")} field="m21_service" options={M21_SERVICES} data={data} onChange={onChange} />
+              <Num label={t("Count < 10,000 ppmv")} field="m21_below_count" data={data} onChange={onChange} placeholder="0" />
+              <Num label={t("Count ≥ 10,000 ppmv")} field="m21_above_count" data={data} onChange={onChange} placeholder="0" />
               <Num
-                label="CH₄ in TOC (wt %)"
+                label={t("CH₄ in TOC (wt %)")}
                 field="ch4_wt_fraction"
                 data={data}
                 onChange={onChange}
-                placeholder={(M21_SERVICES.find((x) => x.value === data.m21_service) || {}).ch4 || "required"}
+                placeholder={(M21_SERVICES.find((x) => x.value === data.m21_service) || {}).ch4 || t("required")}
               />
-              <Num label="Operating hours" field="operating_hours" data={data} onChange={onChange} placeholder="whole month" />
+              <Num label={t("Operating hours")} field="operating_hours" data={data} onChange={onChange} placeholder={t("whole month")} />
             </FieldGrid>
           )}
 
           {tier3Method === "correlation" && (
             <FieldGrid min={160}>
-              <Pick label="Component" field="correlation_type" options={M21_COMPONENTS} data={data} onChange={onChange} />
-              <Num label="Non-detect count" field="corr_zero_count" data={data} onChange={onChange} placeholder="0" />
-              <Num label="Screened count" field="corr_screened_count" data={data} onChange={onChange} placeholder="0" />
+              <Pick label={t("Component")} field="correlation_type" options={M21_COMPONENTS} data={data} onChange={onChange} />
+              <Num label={t("Non-detect count")} field="corr_zero_count" data={data} onChange={onChange} placeholder="0" />
+              <Num label={t("Screened count")} field="corr_screened_count" data={data} onChange={onChange} placeholder="0" />
               <Num
-                label="Screening value (ppmv)"
+                label={t("Screening value (ppmv)")}
                 field="screening_ppm"
                 data={data}
                 onChange={(k, v) => {
@@ -435,31 +436,31 @@ export const FugitivesForm: React.FC<FugitivesFormProps> = ({
                 }}
                 placeholder="e.g. 2500"
               />
-              <Num label="Pegged ≥ 10,000 ppmv" field="corr_pegged_10k_count" data={data} onChange={onChange} placeholder="0" />
-              <Num label="Pegged ≥ 100,000 ppmv" field="corr_pegged_100k_count" data={data} onChange={onChange} placeholder="0" />
-              <Num label="CH₄ in TOC (wt %)" field="ch4_wt_fraction" data={data} onChange={onChange} placeholder="56.4" />
-              <Num label="Operating hours" field="operating_hours" data={data} onChange={onChange} placeholder="whole month" />
+              <Num label={t("Pegged ≥ 10,000 ppmv")} field="corr_pegged_10k_count" data={data} onChange={onChange} placeholder="0" />
+              <Num label={t("Pegged ≥ 100,000 ppmv")} field="corr_pegged_100k_count" data={data} onChange={onChange} placeholder="0" />
+              <Num label={t("CH₄ in TOC (wt %)")} field="ch4_wt_fraction" data={data} onChange={onChange} placeholder="56.4" />
+              <Num label={t("Operating hours")} field="operating_hours" data={data} onChange={onChange} placeholder={t("whole month")} />
             </FieldGrid>
           )}
 
           {tier3Method === "ogi" && (
             <FieldGrid min={170}>
-              <Pick label="Component" field="ogi_component" options={OGI_COMPONENTS} data={data} onChange={onChange} />
-              <Pick label="Service" field="ogi_service" options={OGI_SERVICES} data={data} onChange={onChange} />
-              <Num label="Leakers found" field="leakers_count" data={data} onChange={onChange} placeholder="e.g. 2" />
-              <Num label="Operating hours" field="operating_hours" data={data} onChange={onChange} placeholder="whole month" />
-              <Num label="CH₄ (mol %)" field="ch4_content" data={data} onChange={onChange} placeholder="81.6" />
-              <Num label="CO₂ (mol %)" field="co2_content" data={data} onChange={onChange} placeholder="0" />
+              <Pick label={t("Component")} field="ogi_component" options={OGI_COMPONENTS} data={data} onChange={onChange} />
+              <Pick label={t("Service")} field="ogi_service" options={OGI_SERVICES} data={data} onChange={onChange} />
+              <Num label={t("Leakers found")} field="leakers_count" data={data} onChange={onChange} placeholder="e.g. 2" />
+              <Num label={t("Operating hours")} field="operating_hours" data={data} onChange={onChange} placeholder={t("whole month")} />
+              <Num label={t("CH₄ (mol %)")} field="ch4_content" data={data} onChange={onChange} placeholder="81.6" />
+              <Num label={t("CO₂ (mol %)")} field="co2_content" data={data} onChange={onChange} placeholder="0" />
             </FieldGrid>
           )}
 
           {tier3Method === "measurement" && (
             <FieldGrid min={170}>
-              <Num label="Measured leak rate" field="measured_rate" data={data} onChange={onChange} placeholder="e.g. 0.5" />
-              <Pick label="Rate unit" field="rate_unit" options={RATE_UNITS} data={data} onChange={onChange} />
-              <Num label="Operating hours" field="operating_hours" data={data} onChange={onChange} placeholder="whole month" />
-              <Num label="CH₄ (mol %)" field="ch4_content" data={data} onChange={onChange} placeholder="e.g. 78.8" />
-              <Num label="CO₂ (mol %)" field="co2_content" data={data} onChange={onChange} placeholder="0" />
+              <Num label={t("Measured leak rate")} field="measured_rate" data={data} onChange={onChange} placeholder="e.g. 0.5" />
+              <Pick label={t("Rate unit")} field="rate_unit" options={RATE_UNITS} data={data} onChange={onChange} />
+              <Num label={t("Operating hours")} field="operating_hours" data={data} onChange={onChange} placeholder={t("whole month")} />
+              <Num label={t("CH₄ (mol %)")} field="ch4_content" data={data} onChange={onChange} placeholder="e.g. 78.8" />
+              <Num label={t("CO₂ (mol %)")} field="co2_content" data={data} onChange={onChange} placeholder="0" />
             </FieldGrid>
           )}
         </div>

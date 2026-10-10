@@ -3,6 +3,7 @@ import { Button } from "../../ui";
 import { Eye, Trash2 } from "lucide-react";
 import { UNCERTAINTY_COVERAGE_K } from "../../constants";
 import { formatEmission, formatNumber } from "../../utils/formatters";
+import { t } from "../../i18n";
 
 export interface Scope3GridEntry {
   id: string | number;
@@ -51,47 +52,47 @@ export const Scope3FormCalculatorGridContainer: React.FC<Scope3FormCalculatorGri
 }) => (
   <div className="calculator-grid-container [background:white] [border-radius:var(--radius-md)] [overflow:hidden] [box-shadow:var(--shadow-xs)] mt-[30px]!">
     <div className="table-controls flex! justify-between! items-center! p-[15px]!">
-      <strong className="text-[length:1rem]! text-[color:var(--color-legacy-374151)]!">Documented Scope 3 Emissions</strong>
+      <strong className="text-[length:1rem]! text-[color:var(--color-legacy-374151)]!">{t("Documented Scope 3 Emissions")}</strong>
       <button
         className="action-btn secondary flex! items-center! gap-[8px]! whitespace-nowrap!"
         onClick={() => setShowWizard(true)}
       >
-        ↑ Bulk Import (Wizard)
+        {t("↑ Bulk Import (Wizard)")}
       </button>
     </div>
-    <div className="table-scroll-container" tabIndex={0} role="region" aria-label="Entries table">
+    <div className="table-scroll-container" tabIndex={0} role="region" aria-label={t("Entries table")}>
       <table className="excel-table">
         <thead>
           <tr>
-            <th>Period</th>
-            <th>Facility</th>
-            <th>Category</th>
+            <th>{t("Period")}</th>
+            <th>{t("Facility")}</th>
+            <th>{t("Category")}</th>
             <th>Activity/Product</th>
-            <th>Volume</th>
-            <th>EF (kg/unit)</th>
-            <th>Total (tCO₂e)</th>
+            <th>{t("Volume")}</th>
+            <th>{t("EF (kg/unit)")}</th>
+            <th>{t("Total (tCO₂e)")}</th>
             <th
-              title="Standard Combined Uncertainty (1σ)"
+              title={t("Standard Combined Uncertainty (1σ)")}
               className="[cursor:help]!"
             >
-              CO₂e 1σ (±%)
+              {t("CO₂e 1σ (±%)")}
             </th>
             <th
-              title="Expanded Uncertainty (95% Confidence Interval)"
+              title={t("Expanded Uncertainty (95% Confidence Interval)")}
               className="[cursor:help]!"
             >
-              CO₂e 95% CI (±%)
+              {t("CO₂e 95% CI (±%)")}
             </th>
-            <th className="text-center!">Actions</th>
+            <th className="text-center!">{t("Actions")}</th>
           </tr>
         </thead>
         <tbody>
           {loadError ? (
             <tr>
               <td colSpan={10} className="text-center! text-[color:var(--danger,_var(--color-red-600))]!">
-                Could not load the records.{" "}
+                {t("Could not load the records.")}{" "}
                 <Button type="button" variant="ghost" onClick={loadEntries}>
-                  Retry
+                  {t("Retry")}
                 </Button>
               </td>
             </tr>
@@ -101,7 +102,7 @@ export const Scope3FormCalculatorGridContainer: React.FC<Scope3FormCalculatorGri
                 colSpan={10}
                 className="text-center! text-[color:var(--text-secondary)]!"
               >
-                No entries yet
+                {t("No entries yet")}
               </td>
             </tr>
           ) : (
@@ -110,7 +111,7 @@ export const Scope3FormCalculatorGridContainer: React.FC<Scope3FormCalculatorGri
                 <td>{entry.month ? `${entry.year}-${String(entry.month).padStart(2, "0")}` : entry.year}</td>
                 <td>
                   {facilities.find((f) => f.id === entry.facility_id)
-                    ?.name || "Unknown"}
+                    ?.name || t("Unknown")}
                 </td>
                 <td>{entry.category}</td>
                 <td>{entry.sub_category || entry.product_type}</td>
@@ -138,7 +139,7 @@ export const Scope3FormCalculatorGridContainer: React.FC<Scope3FormCalculatorGri
                     <span
                       className="ml-[8px]! text-[length:0.65rem]! bg-[color:var(--color-legacy-fee2e2)]! text-[color:var(--color-red-700)]! p-[1px_5px]! rounded-[4px]!"
                     >
-                      Draft
+                      {t("Draft")}
                     </span>
                   )}
                 </td>
@@ -146,14 +147,14 @@ export const Scope3FormCalculatorGridContainer: React.FC<Scope3FormCalculatorGri
                   <button
                     className="icon-button text-[color:var(--color-blue-700)]! mr-[8px]!"
                     onClick={() => handleInspect(entry)}
-                    title="Inspect Calculation Details"
+                    title={t("Inspect Calculation Details")}
                   >
                     <Eye size={16} />
                   </button>
                   <button
                     className="icon-button text-[color:var(--color-red-700)]!"
                     onClick={() => handleDelete(entry.id)}
-                    title="Delete"
+                    title={t("Delete")}
                   >
                     <Trash2 size={16} />
                   </button>
@@ -168,7 +169,7 @@ export const Scope3FormCalculatorGridContainer: React.FC<Scope3FormCalculatorGri
               colSpan={6}
               className="text-right! pr-[15px]!"
             >
-              Total (Page):
+              {t("Total (Page):")}
             </td>
             <td className="text-[color:var(--color-violet-700)]!">
               {formatNumber(
@@ -192,17 +193,17 @@ export const Scope3FormCalculatorGridContainer: React.FC<Scope3FormCalculatorGri
         onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
         disabled={currentPage === 1}
       >
-        Previous
+        {t("Previous")}
       </button>
       <span className="text-[color:var(--text-secondary)]!">
-        Page {currentPage} of {totalPages}
+        {t("Page")}{" "}{currentPage}{" "}{t("of")}{" "}{totalPages}
       </span>
       <button
         className="action-btn secondary"
         onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
         disabled={currentPage === totalPages}
       >
-        Next
+        {t("Next")}
       </button>
     </div>
   </div>

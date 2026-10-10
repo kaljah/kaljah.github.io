@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Input, Field } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import CustomDropdown from "../CustomDropdown";
+import { t } from "../../i18n";
 
 /**
  * CompletionsForm — Complete Onshore Well Completion Emissions UI
@@ -159,7 +160,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
               className="input-group"
               label={
                 <>
-                  Well type
+                  {t("Well type")}
                   <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                 </>
               }
@@ -171,8 +172,8 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
                   onChange("well_type", e.target.value);
                 }}
               >
-                <option value="gas">Gas Well</option>
-                <option value="oil">Oil Well</option>
+                <option value="gas">{t("Gas Well")}</option>
+                <option value="oil">{t("Oil Well")}</option>
               </NativeSelect>
             </Field>
 
@@ -180,7 +181,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
               className="input-group"
               label={
                 <>
-                  Fracturing
+                  {t("Fracturing")}
                   <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                 </>
               }
@@ -197,8 +198,8 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
                   }
                 }}
               >
-                <option value="hf">With Hydraulic Fracturing</option>
-                <option value="no_hf">Without Hydraulic Fracturing</option>
+                <option value="hf">{t("With Hydraulic Fracturing")}</option>
+                <option value="no_hf">{t("Without Hydraulic Fracturing")}</option>
               </NativeSelect>
             </Field>
 
@@ -206,7 +207,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
               className="input-group"
               label={
                 <>
-                  Disposition
+                  {t("Disposition")}
                   <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                 </>
               }
@@ -224,14 +225,14 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
               >
                 {fracturing === "hf" ? (
                   <>
-                    <option value="uncontrolled">Uncontrolled Venting</option>
-                    <option value="rec">Reduced Emissions Completion (REC)</option>
-                    <option value="flared">Flared Completion</option>
+                    <option value="uncontrolled">{t("Uncontrolled Venting")}</option>
+                    <option value="rec">{t("Reduced Emissions Completion (REC)")}</option>
+                    <option value="flared">{t("Flared Completion")}</option>
                   </>
                 ) : (
                   <>
-                    <option value="vented">Vented (Uncontrolled)</option>
-                    <option value="flared">Flared Completion</option>
+                    <option value="vented">{t("Vented (Uncontrolled)")}</option>
+                    <option value="flared">{t("Flared Completion")}</option>
                   </>
                 )}
               </NativeSelect>
@@ -243,7 +244,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
               className="input-group"
               label={
                 <>
-                  Completions
+                  {t("Completions")}
                   <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                 </>
               }
@@ -262,7 +263,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
               />
             </Field>
 
-            <Field className="input-group" label="CH₄ (%)">
+            <Field className="input-group" label={t("CH₄ (%)")}>
               <Input
                 type="number"
                 min="0"
@@ -274,7 +275,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
               />
             </Field>
 
-            <Field className="input-group" label="CO₂ (%)">
+            <Field className="input-group" label={t("CO₂ (%)")}>
               <Input
                 type="number"
                 min="0"
@@ -294,22 +295,22 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
         <div>
           <div className="input-group mb-[16px]!">
             <label>
-              Model
+              {t("Model")}
               <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
             </label>
             <CustomDropdown
               options={[
                 {
                   value: "rate_duration",
-                  label: "Rate × duration",
+                  label: t("Rate × duration"),
                 },
                 {
                   value: "gor",
-                  label: "Liquid Flowback × GOR",
+                  label: t("Liquid Flowback × GOR"),
                 },
                 {
                   value: "api_equation_6_7",
-                  label: "Initial Production Rate × Vent Duration",
+                  label: t("Initial Production Rate × Vent Duration"),
                 },
               ]}
               value={activeMethod}
@@ -324,7 +325,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
                 className="input-group"
                 label={
                   <>
-                    Flowback rate
+                    {t("Flowback rate")}
                     <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                   </>
                 }
@@ -344,7 +345,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
                 className="input-group"
                 label={
                   <>
-                    Flowback Rate Unit
+                    {t("Flowback Rate Unit")}
                     <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                   </>
                 }
@@ -354,12 +355,12 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
                   value={data.comp_rate_unit || "Mcf/hr"}
                   onChange={(e) => onChange("comp_rate_unit", e.target.value)}
                 >
-                  <option value="Mcf/hr">Mcf / hr (thousand scf / hr)</option>
-                  <option value="Mcf/day">Mcf / day (thousand scf / day)</option>
-                  <option value="scf/hr">scf / hr</option>
-                  <option value="scf/day">scf / day</option>
-                  <option value="m3/day">m³ / day</option>
-                  <option value="m3/hr">m³ / hr</option>
+                  <option value="Mcf/hr">{t("Mcf / hr (thousand scf / hr)")}</option>
+                  <option value="Mcf/day">{t("Mcf / day (thousand scf / day)")}</option>
+                  <option value="scf/hr">{t("scf / hr")}</option>
+                  <option value="scf/day">{t("scf / day")}</option>
+                  <option value="m3/day">{t("m³ / day")}</option>
+                  <option value="m3/hr">{t("m³ / hr")}</option>
                 </NativeSelect>
               </Field>
 
@@ -367,7 +368,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
                 className="input-group"
                 label={
                   <>
-                    Duration (h)
+                    {t("Duration (h)")}
                     <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                   </>
                 }
@@ -392,7 +393,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
                 className="input-group"
                 label={
                   <>
-                    Total Liquid Flowback (bbl)
+                    {t("Total Liquid Flowback (bbl)")}
                     <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                   </>
                 }
@@ -412,7 +413,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
                 className="input-group"
                 label={
                   <>
-                    Flowback GOR (scf/bbl)
+                    {t("Flowback GOR (scf/bbl)")}
                     <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                   </>
                 }
@@ -428,7 +429,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
                 />
               </Field>
 
-              <Field className="input-group" label="Gas Produced to Sales (Mcf)">
+              <Field className="input-group" label={t("Gas Produced to Sales (Mcf)")}>
                 <Input
                   type="number"
                   min="0"
@@ -448,7 +449,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
                 className="input-group"
                 label={
                   <>
-                    Production / Well Test Rate (V_Pi)
+                    {t("Production / Well Test Rate (V_Pi)")}
                     <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                   </>
                 }
@@ -471,7 +472,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
                 className="input-group"
                 label={
                   <>
-                    Production Rate Unit
+                    {t("Production Rate Unit")}
                     <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                   </>
                 }
@@ -481,10 +482,10 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
                   value={data.comp_prod_rate_unit || "Mcf/day"}
                   onChange={(e) => onChange("comp_prod_rate_unit", e.target.value)}
                 >
-                  <option value="Mcf/day">Mcf / day (thousand scf / day)</option>
-                  <option value="Mcf/hr">Mcf / hr</option>
-                  <option value="m3/day">m³ / day</option>
-                  <option value="m3/hr">m³ / hr</option>
+                  <option value="Mcf/day">{t("Mcf / day (thousand scf / day)")}</option>
+                  <option value="Mcf/hr">{t("Mcf / hr")}</option>
+                  <option value="m3/day">{t("m³ / day")}</option>
+                  <option value="m3/hr">{t("m³ / hr")}</option>
                 </NativeSelect>
               </Field>
 
@@ -492,7 +493,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
                 className="input-group"
                 label={
                   <>
-                    Vent Duration Before Separation (hrs)
+                    {t("Vent Duration Before Separation (hrs)")}
                     <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                   </>
                 }
@@ -519,7 +520,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
               className="input-group"
               label={
                 <>
-                  CH₄ (%)
+                  {t("CH₄ (%)")}
                   <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                 </>
               }
@@ -536,7 +537,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
               />
             </Field>
 
-            <Field className="input-group" label="CO₂ (%)">
+            <Field className="input-group" label={t("CO₂ (%)")}>
               <Input
                 type="number"
                 min="0"
@@ -548,7 +549,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
               />
             </Field>
 
-            <Field className="input-group" label="Flowback Disposition">
+            <Field className="input-group" label={t("Flowback Disposition")}>
               <NativeSelect
                 className="mole-input"
                 value={data.comp_disposition || "vented"}
@@ -557,13 +558,13 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
                   onChange("disposition", e.target.value);
                 }}
               >
-                <option value="vented">Vented directly to atmosphere</option>
-                <option value="flared">Routed to Flare</option>
-                <option value="rec">Recovered / REC (Zero Venting)</option>
+                <option value="vented">{t("Vented directly to atmosphere")}</option>
+                <option value="flared">{t("Routed to Flare")}</option>
+                <option value="rec">{t("Recovered / REC (Zero Venting)")}</option>
               </NativeSelect>
             </Field>
 
-            <Field className="input-group" label="Flare efficiency (%)">
+            <Field className="input-group" label={t("Flare efficiency (%)")}>
               <Input
                 type="number"
                 min="0"
@@ -588,7 +589,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
               className="input-group"
               label={
                 <>
-                  Metered volume
+                  {t("Metered volume")}
                   <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                 </>
               }
@@ -612,7 +613,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
               className="input-group"
               label={
                 <>
-                  Volume Unit
+                  {t("Volume Unit")}
                   <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                 </>
               }
@@ -625,8 +626,8 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
                   onChange("unit", e.target.value);
                 }}
               >
-                <option value="Mcf">Mcf (thousand scf)</option>
-                <option value="scf">scf</option>
+                <option value="Mcf">{t("Mcf (thousand scf)")}</option>
+                <option value="scf">{t("scf")}</option>
                 <option value="m3">m³</option>
               </NativeSelect>
             </Field>
@@ -635,10 +636,10 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
               className="input-group"
               label={
                 <>
-                  Injected N₂
+                  {t("Injected N₂")}
                   <span
                     className="ml-[4px]! text-[length:0.7rem]! text-[color:var(--color-legacy-6b7280)]! [cursor:help]!"
-                    title="Non-combustible gases such as nitrogen are deducted from total flowback volume. Injected CO2 is NOT deducted per API §6.2.3.1."
+                    title={t("Non-combustible gases such as nitrogen are deducted from total flowback volume. Injected CO2 is NOT deducted per API §6.2.3.1.")}
                   >
                     ⓘ
                   </span>
@@ -655,14 +656,14 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
               />
             </Field>
 
-            <Field className="input-group" label="Injected N₂ Unit">
+            <Field className="input-group" label={t("Injected N₂ Unit")}>
               <NativeSelect
                 className="mole-input"
                 value={data.comp_injected_n2_unit || "scf"}
                 onChange={(e) => onChange("comp_injected_n2_unit", e.target.value)}
               >
-                <option value="scf">scf</option>
-                <option value="Mcf">Mcf</option>
+                <option value="scf">{t("scf")}</option>
+                <option value="Mcf">{t("Mcf")}</option>
                 <option value="m3">m³</option>
               </NativeSelect>
             </Field>
@@ -672,11 +673,11 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
           <div className="bg-[color:var(--color-legacy-f9fafb)]! [border:1px_solid_var(--color-legacy-e5e7eb)]! rounded-[6px]! p-[12px]! mb-[16px]!">
             <div className="flex! items-center! justify-between! mb-[8px]!">
               <label className="font-semibold! text-[length:0.85rem]! text-[color:var(--color-legacy-374151)]! m-[0px]!">
-                Unmetered flowback
+                {t("Unmetered flowback")}
               </label>
             </div>
             <div className="form-grid-2">
-              <Field className="input-group" label="Unmetered time (h)">
+              <Field className="input-group" label={t("Unmetered time (h)")}>
                 <Input
                   type="number"
                   min="0"
@@ -687,7 +688,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
                 />
               </Field>
 
-              <Field className="input-group" label="Metered time (h)">
+              <Field className="input-group" label={t("Metered time (h)")}>
                 <Input
                   type="number"
                   min="0"
@@ -706,7 +707,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
               className="input-group"
               label={
                 <>
-                  CH₄ (%)
+                  {t("CH₄ (%)")}
                   <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                 </>
               }
@@ -723,7 +724,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
               />
             </Field>
 
-            <Field className="input-group" label="CO₂ (%)">
+            <Field className="input-group" label={t("CO₂ (%)")}>
               <Input
                 type="number"
                 min="0"
@@ -751,15 +752,15 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
           {/* Section 4: Gas Disposition / Fate Split */}
           <div className="input-group mb-[16px]!">
             <label>
-              Gas disposition
+              {t("Gas disposition")}
               <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
             </label>
             <CustomDropdown
               options={[
-                { value: "vented", label: "100% Vented to Atmosphere" },
-                { value: "flared", label: "100% Routed to Flare" },
-                { value: "rec", label: "100% Recovered / Reduced Emissions Completion (REC)" },
-                { value: "split", label: "Custom Disposition Split (% Vented / % Flared / % REC)" },
+                { value: "vented", label: t("100% Vented to Atmosphere") },
+                { value: "flared", label: t("100% Routed to Flare") },
+                { value: "rec", label: t("100% Recovered / Reduced Emissions Completion (REC)") },
+                { value: "split", label: t("Custom Disposition Split (% Vented / % Flared / % REC)") },
               ]}
               value={tier3Disposition}
               onChange={(val) => {
@@ -773,7 +774,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
             <div className="bg-[color:var(--color-legacy-f0fdf4)]! [border:1px_solid_var(--color-legacy-bbf7d0)]! rounded-[6px]! p-[12px]! mb-[16px]!">
               <div className="flex! justify-between! mb-[8px]!">
                 <span className="font-semibold! text-[length:0.85rem]! text-[color:var(--color-legacy-166534)]!">
-                  Custom Split Allocation (must sum to 100%)
+                  {t("Custom Split Allocation (must sum to 100%)")}
                 </span>
                 {(() => {
                   const fV = parseFloat(data.comp_frac_vented || 0);
@@ -786,14 +787,14 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
                     <span
                       className={`[font-weight:700]! [font-size:0.85rem]! ${sumP === 100 ? "[color:var(--color-legacy-16a34a)]!" : "[color:var(--color-red-600)]!"}`}
                     >
-                      Total: {sumP}% {sumP === 100 ? "✓" : "⚠ (must equal 100%)"}
+                      {t("Total:")}{" "}{sumP}% {sumP === 100 ? "✓" : t("⚠ (must equal 100%)")}
                     </span>
                   );
                 })()}
               </div>
 
               <div className="form-grid-3">
-                <Field className="input-group" label="Vented (%)">
+                <Field className="input-group" label={t("Vented (%)")}>
                   <Input
                     type="number"
                     min="0"
@@ -808,7 +809,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
                   />
                 </Field>
 
-                <Field className="input-group" label="Flared (%)">
+                <Field className="input-group" label={t("Flared (%)")}>
                   <Input
                     type="number"
                     min="0"
@@ -823,7 +824,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
                   />
                 </Field>
 
-                <Field className="input-group" label="Recovered / REC (%)">
+                <Field className="input-group" label={t("Recovered / REC (%)")}>
                   <Input
                     type="number"
                     min="0"
@@ -844,7 +845,7 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
           {(tier3Disposition === "flared" ||
             (tier3Disposition === "split" && parseFloat(data.comp_frac_flared || 0) > 0)) && (
             <div className="form-grid-2 mb-[16px]!">
-              <Field className="input-group" label="Flare efficiency (%)">
+              <Field className="input-group" label={t("Flare efficiency (%)")}>
                 <Input
                   type="number"
                   min="0"

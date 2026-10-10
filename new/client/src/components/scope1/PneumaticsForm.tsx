@@ -1,6 +1,7 @@
 import React from "react";
 import { Input, Field } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
+import { t } from "../../i18n";
 
 export interface Scope1SubFormProps {
   data: Record<string, any>;
@@ -18,7 +19,7 @@ export const PneumaticsForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
         className="input-group"
         label={
           <>
-            Devices
+            {t("Devices")}
             <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
           </>
         }
@@ -27,7 +28,7 @@ export const PneumaticsForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
           type="number"
           value={data.amount || ""}
           onChange={(e) => onChange("amount", e.target.value)}
-          placeholder="Count"
+          placeholder={t("Count")}
           required
         />
       </Field>
@@ -37,7 +38,7 @@ export const PneumaticsForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
         <>
           <div className="input-group">
             <label>
-              Bleed rate
+              {t("Bleed rate")}
               <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
             </label>
             <div className="grid gap-[10px] [grid-template-columns:1fr_100px] max-[600px]:[grid-template-columns:1fr]">
@@ -63,7 +64,7 @@ export const PneumaticsForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
             className="input-group"
             label={
               <>
-                CH₄ (%)
+                {t("CH₄ (%)")}
                 <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
               </>
             }
@@ -81,7 +82,7 @@ export const PneumaticsForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
             className="input-group"
             label={
               <>
-                Hours per year
+                {t("Hours per year")}
                 <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
               </>
             }
@@ -90,7 +91,7 @@ export const PneumaticsForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
               type="number"
               value={data.pneu_hours || ""}
               onChange={(e) => onChange("pneu_hours", e.target.value)}
-              placeholder="whole month if blank"
+              placeholder={t("whole month if blank")}
               required
             />
           </Field>

@@ -29,6 +29,7 @@ import CbamTab, { type CbamRecord } from './manage-data/CbamTab';
 import OgmpTab, { type OgmpSurveyRecord } from './manage-data/OgmpTab';
 import './ManageData.css';
 import '../pages/Dashboard.css';
+import { t } from "../i18n";
 
 interface ConfirmDialogState {
     isOpen: boolean;
@@ -126,17 +127,17 @@ const ManageDataInner: React.FC = () => {
                 });
             }
         } catch (err: any) {
-            toast.error(apiError(err, 'Failed to load the SBTi target'));
+            toast.error(apiError(err, t("Failed to load the SBTi target")));
         }
     };
 
     const handleSaveSbti = async () => {
         try {
             await api.post('/manage/sbti', sbtiConfig);
-            toast.success('SBTi Target saved successfully');
+            toast.success(t("SBTi Target saved successfully"));
             setHasSbti(true);
         } catch (e: any) {
-            toast.error(apiError(e, 'Failed to save SBTi Target'));
+            toast.error(apiError(e, t("Failed to save SBTi Target")));
         }
     };
 
@@ -169,7 +170,7 @@ const ManageDataInner: React.FC = () => {
         isOpen: false,
         title: "",
         message: "",
-        confirmLabel: "Delete",
+        confirmLabel: t("Delete"),
         confirmVariant: "danger",
         onConfirm: null,
     });
@@ -379,7 +380,7 @@ const ManageDataInner: React.FC = () => {
     const handleApproveSingle = async (scope: number | string, id: number | string) => {
         try {
             await api.post(`/emissions/approve/${id}`, { scope: String(scope) });
-            toast.success('Record approved successfully');
+            toast.success(t("Record approved successfully"));
             setSelectedPendingKeys(prev => {
                 const next = new Set(prev);
                 next.delete(`${scope}-${id}`);
@@ -387,7 +388,7 @@ const ManageDataInner: React.FC = () => {
             });
             fetchPendingEmissions();
         } catch (e: any) {
-            toast.error(e.response?.data?.error || 'Failed to approve record');
+            toast.error(e.response?.data?.error || t("Failed to approve record"));
         }
     };
 
@@ -437,7 +438,7 @@ const ManageDataInner: React.FC = () => {
             setSelectedPendingKeys(new Set());
             fetchPendingEmissions();
         } catch (err: any) {
-            toast.error(err.response?.data?.error || 'Failed to approve selected records');
+            toast.error(err.response?.data?.error || t("Failed to approve selected records"));
         } finally {
             setIsProcessingBatch(false);
         }
@@ -445,7 +446,7 @@ const ManageDataInner: React.FC = () => {
 
     const handleConfirmReject = async () => {
         if (!rejectionModal.reason.trim()) {
-            toast.warning('Please specify or select a rejection reason');
+            toast.warning(t("Please specify or select a rejection reason"));
             return;
         }
         setIsProcessingBatch(true);
@@ -455,7 +456,7 @@ const ManageDataInner: React.FC = () => {
                     scope: rejectionModal.scope,
                     reason: rejectionModal.reason.trim()
                 });
-                toast.success('Record rejected');
+                toast.success(t("Record rejected"));
             } else {
                 const byScope: Record<string, number[]> = { '1': [], '2': [], '3': [] };
                 const ids: number[] = [];
@@ -478,7 +479,7 @@ const ManageDataInner: React.FC = () => {
             setSelectedPendingKeys(new Set());
             fetchPendingEmissions();
         } catch (err: any) {
-            toast.error(err.response?.data?.error || 'Failed to reject record(s)');
+            toast.error(err.response?.data?.error || t("Failed to reject record(s)"));
         } finally {
             setIsProcessingBatch(false);
         }
@@ -490,7 +491,7 @@ const ManageDataInner: React.FC = () => {
         requestConfirm({
             title: `Approve Scope ${scopeNum} Records`,
             message: `Are you sure you want to approve all ${count} pending Scope ${scopeNum} records?`,
-            confirmLabel: "Approve All",
+            confirmLabel: t("Approve All"),
             confirmVariant: "primary",
             onConfirm: async () => {
                 setIsProcessingBatch(true);
@@ -507,7 +508,7 @@ const ManageDataInner: React.FC = () => {
                     });
                     fetchPendingEmissions();
                 } catch (err: any) {
-                    toast.error(err.response?.data?.error || 'Failed to approve batch');
+                    toast.error(err.response?.data?.error || t("Failed to approve batch"));
                 } finally {
                     setIsProcessingBatch(false);
                 }
@@ -726,7 +727,7 @@ const ManageDataInner: React.FC = () => {
                 regions.unshift(userLoc);
             }
             setAvailableFilters(prev => ({ ...prev, regions }));
-        } catch (err: any) { console.error(err); toast.error(apiError(err, 'Failed to load facilities')); }
+        } catch (err: any) { console.error(err); toast.error(apiError(err, t("Failed to load facilities"))); }
     };
 
     const fetchCustomFactors = async () => {
@@ -734,7 +735,7 @@ const ManageDataInner: React.FC = () => {
             const res = await api.get('/custom-factors');
             const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
             setCustomFactors(data);
-        } catch (err: any) { console.error(err); toast.error(apiError(err, 'Failed to load custom factors')); }
+        } catch (err: any) { console.error(err); toast.error(apiError(err, t("Failed to load custom factors"))); }
     };
 
     const fetchProduction = async () => {
@@ -744,7 +745,7 @@ const ManageDataInner: React.FC = () => {
             setProductionData(data);
             const years = [...new Set(data.map((d: any) => d.year))].sort((a: any, b: any) => b - a) as (number | string)[];
             setAvailableFilters(prev => ({ ...prev, years }));
-        } catch (err: any) { console.error(err); toast.error(apiError(err, 'Failed to load production')); }
+        } catch (err: any) { console.error(err); toast.error(apiError(err, t("Failed to load production"))); }
     };
 
     const fetchSources = async () => {
@@ -752,7 +753,7 @@ const ManageDataInner: React.FC = () => {
             const res = await api.get('/sources');
             const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
             setSources(data);
-        } catch (err: any) { console.error(err); toast.error(apiError(err, 'Failed to load sources')); }
+        } catch (err: any) { console.error(err); toast.error(apiError(err, t("Failed to load sources"))); }
     };
 
     const fetchMitigations = async () => {
@@ -760,7 +761,7 @@ const ManageDataInner: React.FC = () => {
             const res = await api.get('/mitigation');
             const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
             setMitigations(data);
-        } catch (err: any) { console.error(err); toast.error(apiError(err, 'Failed to load mitigations')); }
+        } catch (err: any) { console.error(err); toast.error(apiError(err, t("Failed to load mitigations"))); }
     };
 
     const fetchCbamExports = async () => {
@@ -768,7 +769,7 @@ const ManageDataInner: React.FC = () => {
             const res = await api.get('/data/cbam-exports');
             setCbamExports(res.data || []);
         } catch (err: any) {
-            console.error(err); toast.error(apiError(err, 'Failed to load cbam exports'));
+            console.error(err); toast.error(apiError(err, t("Failed to load cbam exports")));
         }
     };
 
@@ -777,7 +778,7 @@ const ManageDataInner: React.FC = () => {
             const res = await api.get('/data/ogmp-surveys');
             const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
             setOgmpSurveys(data);
-        } catch (err: any) { console.error(err); toast.error(apiError(err, 'Failed to load ogmp surveys')); }
+        } catch (err: any) { console.error(err); toast.error(apiError(err, t("Failed to load ogmp surveys"))); }
     };
 
     const fetchGoals = async () => {
@@ -785,31 +786,31 @@ const ManageDataInner: React.FC = () => {
             const res = await api.get('/goals');
             const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
             setGoals(data);
-        } catch (err: any) { console.error('Failed to fetch goals:', err); toast.error(apiError(err, 'Failed to load emission goals')); }
+        } catch (err: any) { console.error('Failed to fetch goals:', err); toast.error(apiError(err, t("Failed to load emission goals"))); }
     };
 
     const fetchBaseYears = async () => {
         try {
             const res = await api.get('/base-years');
             setBaseYearsData(res.data || { active_year: undefined, active_record: null, history: [] });
-        } catch (err: any) { console.error('Failed to fetch base years:', err); toast.error(apiError(err, 'Failed to load base years')); }
+        } catch (err: any) { console.error('Failed to fetch base years:', err); toast.error(apiError(err, t("Failed to load base years"))); }
     };
 
     const handleSaveGoal = async () => {
         if (!goalForm.year || goalForm.target_amount === '') {
-            return toast.error('Year and target emission amount (tCO₂e) are required');
+            return toast.error(t("Year and target emission amount (tCO₂e) are required"));
         }
         try {
             await api.post('/goals', {
                 year: parseInt(String(goalForm.year), 10),
                 target_amount: parseFloat(String(goalForm.target_amount))
             });
-            toast.success(editingGoalYear ? 'Emission goal updated!' : 'Emission goal saved!');
+            toast.success(editingGoalYear ? t("Emission goal updated!") : t("Emission goal saved!"));
             setEditingGoalYear(null);
             setGoalForm({ year: new Date().getFullYear(), target_amount: '' });
             fetchGoals();
         } catch (err: any) {
-            toast.error(err.response?.data?.error || 'Failed to save emission goal');
+            toast.error(err.response?.data?.error || t("Failed to save emission goal"));
         }
     };
 
@@ -823,21 +824,21 @@ const ManageDataInner: React.FC = () => {
 
     const handleDeleteGoal = (year: number | string) => {
         requestConfirm({
-            title: "Delete Emission Goal",
+            title: t("Delete Emission Goal"),
             message: `Delete emission goal for year ${year}?`,
-            confirmLabel: "Delete Goal",
+            confirmLabel: t("Delete Goal"),
             confirmVariant: "danger",
             onConfirm: async () => {
                 try {
                     await api.delete(`/goals/${year}`);
-                    toast.success('Emission goal deleted');
+                    toast.success(t("Emission goal deleted"));
                     if (editingGoalYear === year) {
                         setEditingGoalYear(null);
                         setGoalForm({ year: new Date().getFullYear(), target_amount: '' });
                     }
                     fetchGoals();
                 } catch (err: any) {
-                    toast.error(err.response?.data?.error || 'Failed to delete goal');
+                    toast.error(err.response?.data?.error || t("Failed to delete goal"));
                 }
             }
         });
@@ -845,7 +846,7 @@ const ManageDataInner: React.FC = () => {
 
     const handleSaveBaseYear = async () => {
         if (!baseYearForm.year || !baseYearForm.reason.trim()) {
-            return toast.error('Base Year and Reason for change/recalculation are required');
+            return toast.error(t("Base Year and Reason for change/recalculation are required"));
         }
         try {
             await api.post('/base-years', {
@@ -854,7 +855,7 @@ const ManageDataInner: React.FC = () => {
                 previous_emissions: baseYearForm.previous_emissions !== '' ? parseFloat(baseYearForm.previous_emissions) : null,
                 adjusted_emissions: baseYearForm.adjusted_emissions !== '' ? parseFloat(baseYearForm.adjusted_emissions) : null
             });
-            toast.success('Base year recalculation recorded successfully!');
+            toast.success(t("Base year recalculation recorded successfully!"));
             setBaseYearForm({
                 year: new Date().getFullYear(),
                 reason: '',
@@ -863,23 +864,23 @@ const ManageDataInner: React.FC = () => {
             });
             fetchBaseYears();
         } catch (err: any) {
-            toast.error(err.response?.data?.error || 'Failed to record base year');
+            toast.error(err.response?.data?.error || t("Failed to record base year"));
         }
     };
 
     const handleDeleteBaseYearRecalc = (id: string | number) => {
         requestConfirm({
-            title: "Delete Base Year Recalculation",
-            message: 'Delete this base year recalculation entry?',
-            confirmLabel: "Delete Record",
+            title: t("Delete Base Year Recalculation"),
+            message: t("Delete this base year recalculation entry?"),
+            confirmLabel: t("Delete Record"),
             confirmVariant: "danger",
             onConfirm: async () => {
                 try {
                     await api.delete(`/base-years/${id}`);
-                    toast.success('Base year record deleted');
+                    toast.success(t("Base year record deleted"));
                     fetchBaseYears();
                 } catch (err: any) {
-                    toast.error(err.response?.data?.error || 'Failed to delete base year record');
+                    toast.error(err.response?.data?.error || t("Failed to delete base year record"));
                 }
             }
         });
@@ -896,7 +897,7 @@ const ManageDataInner: React.FC = () => {
 
     const handleAddFacility = async () => {
         if (!facilityForm.name || !facilityForm.activity || !facilityForm.division) {
-            return toast.error('Name, Activity, and Division are required');
+            return toast.error(t("Name, Activity, and Division are required"));
         }
         try {
             // Construct combined boundary_notes
@@ -910,44 +911,44 @@ const ManageDataInner: React.FC = () => {
                 if (body[k] === '' || body[k] === null || body[k] === undefined) delete body[k];
             });
             await api.post('/facilities', body);
-            toast.success('Region added!');
+            toast.success(t("Region added!"));
             setFacilityForm({
                 name: '', activity: '', division: '', field: '', location: '',
                 boundary_type: '', boundary_detail: '', equity_share_pct: '',
                 segment: '', latitude: '', longitude: ''
             });
             fetchFacilities();
-        } catch (err: any) { toast.error(apiError(err, 'Failed to add region')); }
+        } catch (err: any) { toast.error(apiError(err, t("Failed to add region"))); }
     };
 
     const handleSaveFactor = async () => {
-        if (!factorForm.factor_name) return toast.error('Name required');
+        if (!factorForm.factor_name) return toast.error(t("Name required"));
         try {
             if (editingFactorId) {
                 await api.put(`/custom-factors/${editingFactorId}`, factorForm);
-                toast.success('Factor updated!');
+                toast.success(t("Factor updated!"));
             } else {
                 await api.post('/custom-factors', factorForm);
-                toast.success('Factor added!');
+                toast.success(t("Factor added!"));
             }
             setFactorForm({ factor_name: '', parent_fuel: '', unit: 'scf', co2_factor: '', ch4_factor: '', n2o_factor: '', co_factor: '', co2_uncertainty: '', ch4_uncertainty: '', n2o_uncertainty: '', source: '', description: '' });
             setEditingFactorId(null);
             fetchCustomFactors();
-        } catch (err: any) { toast.error(apiError(err, 'Failed to save factor')); }
+        } catch (err: any) { toast.error(apiError(err, t("Failed to save factor"))); }
     };
 
     const handleDeleteFactor = (id: string | number) => {
         requestConfirm({
-            title: "Delete Custom Factor",
-            message: 'Delete this factor?',
-            confirmLabel: "Delete Factor",
+            title: t("Delete Custom Factor"),
+            message: t("Delete this factor?"),
+            confirmLabel: t("Delete Factor"),
             confirmVariant: "danger",
             onConfirm: async () => {
                 try {
                     await api.delete(`/custom-factors/${id}`);
-                    toast.success('Factor deleted!');
+                    toast.success(t("Factor deleted!"));
                     fetchCustomFactors();
-                } catch (err: any) { toast.error(apiError(err, 'Failed to delete factor')); }
+                } catch (err: any) { toast.error(apiError(err, t("Failed to delete factor"))); }
             }
         });
     };
@@ -956,19 +957,19 @@ const ManageDataInner: React.FC = () => {
     const handleArchiveFactor = async (id: string | number) => {
         try {
             await api.post(`/custom-factors/${id}/archive`, {});
-            toast.success('Factor archived');
+            toast.success(t("Factor archived"));
             fetchCustomFactors();
-        } catch (err: any) { toast.error(apiError(err, 'Failed to archive factor')); }
+        } catch (err: any) { toast.error(apiError(err, t("Failed to archive factor"))); }
     };
 
     const handleApproveFactor = async (id: string | number) => {
         try {
             await api.post(`/custom-factors/${id}/approve`, {});
-            toast.success('Factor approved successfully');
+            toast.success(t("Factor approved successfully"));
             fetchCustomFactors();
         } catch (err: any) {
             console.error(err);
-            toast.error(apiError(err, 'Failed to approve factor'));
+            toast.error(apiError(err, t("Failed to approve factor")));
         }
     };
 
@@ -992,7 +993,7 @@ const ManageDataInner: React.FC = () => {
 
     const handleSaveProduction = async () => {
         if (!prodForm.facility_id || !prodForm.year || !prodForm.month) {
-            return toast.error('Region, Year and Month are required');
+            return toast.error(t("Region, Year and Month are required"));
         }
         try {
             await api.post('/data/production', {
@@ -1008,7 +1009,7 @@ const ManageDataInner: React.FC = () => {
                 total_production_mmboe: parseFloat(prodForm.total_production_mmboe) || 0,
                 saleable_production_mmboe: parseFloat(prodForm.saleable_production_mmboe) || 0,
             });
-            toast.success('Production record saved!');
+            toast.success(t("Production record saved!"));
             fetchProduction();
             setProdForm(prev => ({
                 ...prev,
@@ -1017,32 +1018,32 @@ const ManageDataInner: React.FC = () => {
                 crude_oil_mmboe: '', condensate_mmboe: '', lpg_mmboe: '',
                 total_production_mmboe: '', saleable_production_mmboe: ''
             }));
-        } catch (err: any) { toast.error(apiError(err, 'Failed to save production')); }
+        } catch (err: any) { toast.error(apiError(err, t("Failed to save production"))); }
     };
 
     const handleSaveSource = async () => {
-        if (!sourceForm.facility_id || !sourceForm.name) return toast.error('Name and Region required');
+        if (!sourceForm.facility_id || !sourceForm.name) return toast.error(t("Name and Region required"));
         try {
             await api.post('/sources', sourceForm);
-            toast.success('Source added!');
+            toast.success(t("Source added!"));
             fetchSources();
             setSourceForm({ ...sourceForm, name: '', equipment_id: '', fuel_type: '', design_capacity: '', description: '' });
-        } catch (err: any) { toast.error(apiError(err, 'Failed to add source')); }
+        } catch (err: any) { toast.error(apiError(err, t("Failed to add source"))); }
     };
 
     const handleSaveMitigation = async () => {
-        if (!mitigationForm.quantity_tco2e) return toast.error('Quantity required');
+        if (!mitigationForm.quantity_tco2e) return toast.error(t("Quantity required"));
         try {
             await api.post('/mitigation', mitigationForm);
-            toast.success('Mitigation record saved!');
+            toast.success(t("Mitigation record saved!"));
             fetchMitigations();
             setMitigationForm({ ...mitigationForm, quantity_tco2e: '', notes: '', reference_id: '', name: '' });
-        } catch (err: any) { toast.error(apiError(err, 'Failed to save mitigation')); }
+        } catch (err: any) { toast.error(apiError(err, t("Failed to save mitigation"))); }
     };
 
     const handleSaveCbamExport = async () => {
         if (!cbamForm.facility_id || !cbamForm.product_name || !cbamForm.quantity_tonnes) {
-            return toast.error('Facility, Product Name, and Export Quantity are required');
+            return toast.error(t("Facility, Product Name, and Export Quantity are required"));
         }
         try {
             await api.post('/data/cbam-exports', {
@@ -1058,7 +1059,7 @@ const ManageDataInner: React.FC = () => {
                 specific_embedded_indirect: cbamForm.specific_embedded_indirect ? parseFloat(cbamForm.specific_embedded_indirect) : 0.0,
                 notes: cbamForm.notes
             });
-            toast.success(editingCbamId ? 'CBAM export record updated!' : 'CBAM export record saved!');
+            toast.success(editingCbamId ? t("CBAM export record updated!") : t("CBAM export record saved!"));
             setEditingCbamId(null);
             setCbamForm({
                 id: null, activity: cbamForm.activity, division: cbamForm.division, facility_id: cbamForm.facility_id,
@@ -1069,23 +1070,23 @@ const ManageDataInner: React.FC = () => {
             });
             fetchCbamExports();
         } catch (err: any) {
-            toast.error(err?.response?.data?.error || 'Failed to save CBAM record');
+            toast.error(err?.response?.data?.error || t("Failed to save CBAM record"));
         }
     };
 
     const handleDeleteCbamExport = (id: string | number) => {
         requestConfirm({
-            title: "Delete CBAM Export",
-            message: 'Delete this CBAM export record?',
-            confirmLabel: "Delete Record",
+            title: t("Delete CBAM Export"),
+            message: t("Delete this CBAM export record?"),
+            confirmLabel: t("Delete Record"),
             confirmVariant: "danger",
             onConfirm: async () => {
                 try {
                     await api.delete('/data/cbam-exports/' + id);
-                    toast.success('CBAM export record deleted');
+                    toast.success(t("CBAM export record deleted"));
                     fetchCbamExports();
                 } catch (err: any) {
-                    toast.error(apiError(err, 'Failed to delete CBAM record'));
+                    toast.error(apiError(err, t("Failed to delete CBAM record")));
                 }
             }
         });
@@ -1093,7 +1094,7 @@ const ManageDataInner: React.FC = () => {
 
     const handleSaveOgmpSurvey = async () => {
         if (!ogmpForm.facility_id || !ogmpForm.survey_date || ogmpForm.measured_rate_kg_hr === '') {
-            return toast.error('Facility, Survey Date, and Measured Rate are required');
+            return toast.error(t("Facility, Survey Date, and Measured Rate are required"));
         }
         try {
             await api.post('/data/ogmp-surveys', {
@@ -1107,7 +1108,7 @@ const ManageDataInner: React.FC = () => {
                 reconciliation_override_reason: ogmpForm.operator_notes || 'Operational field survey observation',
                 operator_notes: ogmpForm.operator_notes
             });
-            toast.success(editingOgmpId ? 'OGMP survey record updated!' : 'OGMP survey record saved!');
+            toast.success(editingOgmpId ? t("OGMP survey record updated!") : t("OGMP survey record saved!"));
             setEditingOgmpId(null);
             setOgmpForm({
                 id: null, activity: ogmpForm.activity, division: ogmpForm.division, facility_id: ogmpForm.facility_id,
@@ -1118,23 +1119,23 @@ const ManageDataInner: React.FC = () => {
             });
             fetchOgmpSurveys();
         } catch (err: any) {
-            toast.error(err.response?.data?.error || 'Failed to save OGMP survey');
+            toast.error(err.response?.data?.error || t("Failed to save OGMP survey"));
         }
     };
 
     const handleDeleteOgmpSurvey = (id: string | number) => {
         requestConfirm({
-            title: "Delete OGMP Survey",
-            message: 'Delete this OGMP survey record?',
-            confirmLabel: "Delete Survey",
+            title: t("Delete OGMP Survey"),
+            message: t("Delete this OGMP survey record?"),
+            confirmLabel: t("Delete Survey"),
             confirmVariant: "danger",
             onConfirm: async () => {
                 try {
                     await api.delete(`/data/ogmp-surveys/${id}`);
-                    toast.success('OGMP survey record deleted');
+                    toast.success(t("OGMP survey record deleted"));
                     fetchOgmpSurveys();
                 } catch (err: any) {
-                    toast.error(apiError(err, 'Failed to delete OGMP survey'));
+                    toast.error(apiError(err, t("Failed to delete OGMP survey")));
                 }
             }
         });
@@ -1142,17 +1143,17 @@ const ManageDataInner: React.FC = () => {
 
     const handleDeleteFacility = (id: string | number) => {
         requestConfirm({
-            title: "Delete Region",
-            message: 'Are you sure you want to delete this region/facility? Associated records may be affected.',
-            confirmLabel: "Delete Region",
+            title: t("Delete Region"),
+            message: t("Are you sure you want to delete this region/facility? Associated records may be affected."),
+            confirmLabel: t("Delete Region"),
             confirmVariant: "danger",
             onConfirm: async () => {
                 try {
                     await api.delete(`/facilities/${id}`);
-                    toast.success('Region deleted');
+                    toast.success(t("Region deleted"));
                     fetchFacilities();
                 } catch (err: any) {
-                    toast.error(err?.response?.data?.error || 'Failed to delete region');
+                    toast.error(err?.response?.data?.error || t("Failed to delete region"));
                 }
             }
         });
@@ -1160,17 +1161,17 @@ const ManageDataInner: React.FC = () => {
 
     const handleDeleteProduction = (id: string | number) => {
         requestConfirm({
-            title: "Delete Production Record",
-            message: 'Delete this production record?',
-            confirmLabel: "Delete Record",
+            title: t("Delete Production Record"),
+            message: t("Delete this production record?"),
+            confirmLabel: t("Delete Record"),
             confirmVariant: "danger",
             onConfirm: async () => {
                 try {
                     await api.delete(`/data/production/${id}`);
-                    toast.success('Production record deleted');
+                    toast.success(t("Production record deleted"));
                     fetchProduction();
                 } catch (err: any) {
-                    toast.error(err?.response?.data?.error || 'Failed to delete production record');
+                    toast.error(err?.response?.data?.error || t("Failed to delete production record"));
                 }
             }
         });
@@ -1178,17 +1179,17 @@ const ManageDataInner: React.FC = () => {
 
     const handleDeleteSource = (id: string | number) => {
         requestConfirm({
-            title: "Delete Emission Source",
-            message: 'Delete this emission source?',
-            confirmLabel: "Delete Source",
+            title: t("Delete Emission Source"),
+            message: t("Delete this emission source?"),
+            confirmLabel: t("Delete Source"),
             confirmVariant: "danger",
             onConfirm: async () => {
                 try {
                     await api.delete(`/sources/${id}`);
-                    toast.success('Emission source deleted');
+                    toast.success(t("Emission source deleted"));
                     fetchSources();
                 } catch (err: any) {
-                    toast.error(err?.response?.data?.error || 'Failed to delete emission source');
+                    toast.error(err?.response?.data?.error || t("Failed to delete emission source"));
                 }
             }
         });
@@ -1196,17 +1197,17 @@ const ManageDataInner: React.FC = () => {
 
     const handleDeleteMitigation = (id: string | number) => {
         requestConfirm({
-            title: "Delete Mitigation Project",
-            message: 'Delete this mitigation project?',
-            confirmLabel: "Delete Project",
+            title: t("Delete Mitigation Project"),
+            message: t("Delete this mitigation project?"),
+            confirmLabel: t("Delete Project"),
             confirmVariant: "danger",
             onConfirm: async () => {
                 try {
                     await api.delete(`/mitigation/${id}`);
-                    toast.success('Mitigation project deleted');
+                    toast.success(t("Mitigation project deleted"));
                     fetchMitigations();
                 } catch (err: any) {
-                    toast.error(err?.response?.data?.error || 'Failed to delete mitigation project');
+                    toast.error(err?.response?.data?.error || t("Failed to delete mitigation project"));
                 }
             }
         });
@@ -1227,7 +1228,7 @@ const ManageDataInner: React.FC = () => {
         if (e) e.preventDefault();
         const val = parseFloat(convertModal.value);
         if (isNaN(val) || val <= 0) {
-            toast.error("Please enter a valid positive number");
+            toast.error(t("Please enter a valid positive number"));
             return;
         }
         if (convertModal.type === 'gas') {
@@ -1244,7 +1245,7 @@ const ManageDataInner: React.FC = () => {
 
     // CSV Logic with RFC 4180 Escaping and Blob Download
     const exportToCSV = (data: any[], filename: string) => {
-        if (!data || data.length === 0) return toast.info('No data to export');
+        if (!data || data.length === 0) return toast.info(t("No data to export"));
         const keys = Object.keys(data[0]);
         // shared CSV writer: RFC 4180 quoting, and cells a spreadsheet would run as a formula are neutralised
         const csvContent = "\uFEFF" + toCsv(keys, data.map(obj => keys.map(k => obj[k])));
@@ -1413,15 +1414,15 @@ const ManageDataInner: React.FC = () => {
 
     const isAdminLike = Boolean(user?.role && ['admin', 'superuser'].includes(user.role));
     const NAV = [
-        { id: 'pending', label: 'Pending Review', icon: Clock, show: isAdminLike, count: pendingMetrics.totalCount },
-        { id: 'factors', label: 'Emission Factors', show: true },
-        { id: 'facilities', label: 'Regions', show: isAdminLike },
-        { id: 'production', label: 'Production Data', show: true },
-        { id: 'sources', label: 'Emission Sources', show: true },
-        { id: 'goals', label: 'Emission Goals & Base Years', show: true },
-        { id: 'mitigation', label: 'Mitigation Projects', show: true },
-        { id: 'ogmp', label: 'OGMP 2.0 Surveys', show: true },
-        { id: 'cbam', label: 'CBAM Products', show: true },
+        { id: 'pending', label: t("Pending Review"), icon: Clock, show: isAdminLike, count: pendingMetrics.totalCount },
+        { id: 'factors', label: t("Emission Factors"), show: true },
+        { id: 'facilities', label: t("Regions"), show: isAdminLike },
+        { id: 'production', label: t("Production Data"), show: true },
+        { id: 'sources', label: t("Emission Sources"), show: true },
+        { id: 'goals', label: t("Emission Goals & Base Years"), show: true },
+        { id: 'mitigation', label: t("Mitigation Projects"), show: true },
+        { id: 'ogmp', label: t("OGMP 2.0 Surveys"), show: true },
+        { id: 'cbam', label: t("CBAM Products"), show: true },
     ].filter((n) => n.show);
     const hasFilters = filterActivity || filterDivision || filterRegion || filterYear;
     const filterSelect = "w-auto " + controlClass;
@@ -1432,8 +1433,8 @@ const ManageDataInner: React.FC = () => {
                 <div className="manage-layout mx-auto grid w-full max-w-[1600px] items-start gap-6 p-4 md:grid-cols-[240px_1fr] md:p-6">
                     {/* Sidebar Navigation */}
                     <Card as="aside" className="min-w-0 p-4 md:sticky md:top-6">
-                        <h3 className="m-0 mb-4 ml-3 text-sm font-semibold uppercase tracking-widest text-text-secondary">Management</h3>
-                        <nav aria-label="Manage data sections" className="flex flex-col gap-1 max-md:flex-row max-md:overflow-x-auto max-md:pb-1">
+                        <h3 className="m-0 mb-4 ml-3 text-sm font-semibold uppercase tracking-widest text-text-secondary">{t("Management")}</h3>
+                        <nav aria-label={t("Manage data sections")} className="flex flex-col gap-1 max-md:flex-row max-md:overflow-x-auto max-md:pb-1">
                             {NAV.map((n) => (
                                 <button
                                     key={n.id}
@@ -1462,8 +1463,8 @@ const ManageDataInner: React.FC = () => {
                                 <Search className="pointer-events-none absolute left-3 top-1/2 size-[18px] -translate-y-1/2 text-text-secondary" aria-hidden="true" />
                                 <Input
                                     type="text"
-                                    aria-label="Search records"
-                                    placeholder={activeTab === 'goals' ? "Search goals or base years..." : `Search ${activeTab}...`}
+                                    aria-label={t("Search records")}
+                                    placeholder={activeTab === 'goals' ? t("Search goals or base years...") : `Search ${activeTab}...`}
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                     className="pl-10"
@@ -1472,31 +1473,31 @@ const ManageDataInner: React.FC = () => {
 
                             {activeTab !== 'factors' && activeTab !== 'goals' && (
                                 <>
-                                    <NativeSelect aria-label="Activity" value={filterActivity} onChange={(e) => { setFilterActivity(e.target.value); setFilterDivision(''); }} className={filterSelect}>
-                                        <option value="">All Activities</option>
+                                    <NativeSelect aria-label={t("Activity")} value={filterActivity} onChange={(e) => { setFilterActivity(e.target.value); setFilterDivision(''); }} className={filterSelect}>
+                                        <option value="">{t("All Activities")}</option>
                                         {activityFilterOptions.map(a => <option key={a.value} value={a.value}>{a.label}</option>)}
                                     </NativeSelect>
 
-                                    <NativeSelect aria-label="Division" value={filterDivision} onChange={(e) => setFilterDivision(e.target.value)} className={filterSelect} disabled={!filterActivity}>
-                                        <option value="">All Divisions</option>
+                                    <NativeSelect aria-label={t("Division")} value={filterDivision} onChange={(e) => setFilterDivision(e.target.value)} className={filterSelect} disabled={!filterActivity}>
+                                        <option value="">{t("All Divisions")}</option>
                                         {divisionFilterOptions.map(d => <option key={d} value={d}>{d}</option>)}
                                     </NativeSelect>
 
-                                    <NativeSelect aria-label="Region" value={filterRegion} onChange={(e) => setFilterRegion(e.target.value)} className={filterSelect}>
-                                        <option value="">All Regions</option>
+                                    <NativeSelect aria-label={t("Region")} value={filterRegion} onChange={(e) => setFilterRegion(e.target.value)} className={filterSelect}>
+                                        <option value="">{t("All Regions")}</option>
                                         {availableFilters.regions?.map(r => <option key={r} value={r}>{r}</option>)}
                                     </NativeSelect>
 
                                     {(activeTab === 'production' || activeTab === 'mitigation') && (
-                                        <NativeSelect aria-label="Year" value={filterYear} onChange={(e) => setFilterYear(e.target.value)} className={filterSelect}>
-                                            <option value="">All Years</option>
+                                        <NativeSelect aria-label={t("Year")} value={filterYear} onChange={(e) => setFilterYear(e.target.value)} className={filterSelect}>
+                                            <option value="">{t("All Years")}</option>
                                             {availableFilters.years?.map(y => <option key={y} value={y}>{y}</option>)}
                                         </NativeSelect>
                                     )}
 
                                     {hasFilters && (
                                         <Button variant="ghost" onClick={() => { setFilterActivity(''); setFilterDivision(''); setFilterRegion(''); setFilterYear(''); }}>
-                                            Clear Filters
+                                            {t("Clear Filters")}
                                         </Button>
                                     )}
                                 </>
@@ -1732,7 +1733,7 @@ const ManageDataInner: React.FC = () => {
                         if (importModal.type === 'facilities') fetchFacilities();
                         if (importModal.type === 'activity') {
                             fetchProduction();
-                            toast.success('Activity data imported and emissions calculated!');
+                            toast.success(t("Activity data imported and emissions calculated!"));
                         }
                     }}
                 />
@@ -1745,7 +1746,7 @@ const ManageDataInner: React.FC = () => {
             >
                 <form onSubmit={handleApplyConversion} className="p-[8px_0]!">
                     <label className="block! mb-[8px]! text-[length:0.88rem]! font-semibold! text-[color:var(--text-secondary)]!">
-                        Enter volume in cubic meters (m³):
+                        {t("Enter volume in cubic meters (m³):")}
                     </label>
                     <Input
                         type="number"
@@ -1758,8 +1759,8 @@ const ManageDataInner: React.FC = () => {
                     />
                     <div className="text-[length:0.8rem]! text-[color:var(--text-secondary)]! mb-[20px]!">
                         {convertModal.type === 'gas' 
-                            ? 'Conversion Factor: m³ × 0.0353147 = mcf (mscf)'
-                            : 'Conversion Factor: m³ × 6.28981 = barrels (bbl)'}
+                            ? t("Conversion Factor: m³ × 0.0353147 = mcf (mscf)")
+                            : t("Conversion Factor: m³ × 6.28981 = barrels (bbl)")}
                     </div>
                     <div className="flex! justify-end! gap-[10px]!">
                         <Button
@@ -1767,10 +1768,10 @@ const ManageDataInner: React.FC = () => {
                             variant="ghost"
                             onClick={() => setConvertModal(prev => ({ ...prev, isOpen: false }))}
                         >
-                            Cancel
+                            {t("Cancel")}
                         </Button>
                         <Button type="submit">
-                            Convert & Apply
+                            {t("Convert & Apply")}
                         </Button>
                     </div>
                 </form>

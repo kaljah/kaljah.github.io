@@ -2,6 +2,7 @@ import React from "react";
 import { AlertCircle, Check, CheckCircle2, Eye, EyeOff, KeyRound } from "lucide-react";
 import Drawer from "../../components/Drawer";
 import type { ManagedUser, RoleMeta } from "./UserManagementBlock";
+import { t } from "../../i18n";
 
 export interface UserManagementBlock1503Props {
   S: Record<string, any>;
@@ -40,7 +41,7 @@ const UserManagementBlock1503: React.FC<UserManagementBlock1503Props> = ({
   <Drawer
     isOpen={!!resetTarget}
     onClose={() => setResetTarget(null)}
-    title="Reset User Password"
+    title={t("Reset User Password")}
     subtitle={resetTarget ? `Administrative credential overwrite for ${resetTarget.email}` : ""}
     icon={KeyRound}
     iconColor="var(--color-amber-500)"
@@ -89,13 +90,13 @@ const UserManagementBlock1503: React.FC<UserManagementBlock1503Props> = ({
         >
           <AlertCircle size={17} className="shrink-0! mt-[2px]!" />
           <div>
-            <strong>Security Impact:</strong> This will overwrite the user's password immediately. Active sessions will be terminated and the user must sign in with the new credentials.
+            <strong>{t("Security Impact:")}</strong>{" "}{t("This will overwrite the user's password immediately. Active sessions will be terminated and the user must sign in with the new credentials.")}
           </div>
         </div>
 
         {/* New Password input */}
         <div style={{ ...S.formGroup, marginBottom: "20px" }}>
-          <label style={S.label}>New Password</label>
+          <label style={S.label}>{t("New Password")}</label>
           <div className="relative!">
             <input
               id="um-reset-pwd-input"
@@ -118,14 +119,14 @@ const UserManagementBlock1503: React.FC<UserManagementBlock1503Props> = ({
               }}
               onFocus={() => setFocusedField("resetPwd")}
               onBlur={() => setFocusedField(null)}
-              placeholder="Min 10 chars · Aa1!..."
+              placeholder={t("Min 10 chars · Aa1!...")}
               autoComplete="new-password"
             />
             <button
               type="button"
               onClick={() => setResetPwdShow((s) => !s)}
               className="[position:absolute]! [right:12px]! [top:50%]! [transform:translateY(-50%)]! [background:none]! [border:none]! [cursor:pointer]! [color:var(--text-secondary)]! [display:flex]! [align-items:center]! [justify-content:center]! [padding:4px]!"
-              title={resetPwdShow ? "Hide password" : "Show password"}
+              title={resetPwdShow ? t("Hide password") : t("Show password")}
             >
               {resetPwdShow ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
@@ -158,11 +159,11 @@ const UserManagementBlock1503: React.FC<UserManagementBlock1503Props> = ({
               {/* Requirements breakdown tags */}
               <div className="flex! flex-wrap! gap-[6px]!">
                 {[
-                  { label: "10+ Chars", ok: resetPwd.length >= 10 },
-                  { label: "Uppercase (A-Z)", ok: /[A-Z]/.test(resetPwd) },
-                  { label: "Lowercase (a-z)", ok: /[a-z]/.test(resetPwd) },
-                  { label: "Number (0-9)", ok: /[0-9]/.test(resetPwd) },
-                  { label: "Special symbol", ok: /[!@#$%^&*(),.?":{}<>\-_+=[\]\\/~`]/.test(resetPwd) },
+                  { label: t("10+ Chars"), ok: resetPwd.length >= 10 },
+                  { label: t("Uppercase (A-Z)"), ok: /[A-Z]/.test(resetPwd) },
+                  { label: t("Lowercase (a-z)"), ok: /[a-z]/.test(resetPwd) },
+                  { label: t("Number (0-9)"), ok: /[0-9]/.test(resetPwd) },
+                  { label: t("Special symbol"), ok: /[!@#$%^&*(),.?":{}<>\-_+=[\]\\/~`]/.test(resetPwd) },
                 ].map((req, idx) => (
                   <span
                     key={idx}
@@ -188,7 +189,7 @@ const UserManagementBlock1503: React.FC<UserManagementBlock1503Props> = ({
 
         {/* Confirm Password input */}
         <div style={S.formGroup}>
-          <label style={S.label}>Confirm New Password</label>
+          <label style={S.label}>{t("Confirm New Password")}</label>
           <input
             id="um-reset-pwd-confirm"
             type={resetPwdShow ? "text" : "password"}
@@ -207,17 +208,17 @@ const UserManagementBlock1503: React.FC<UserManagementBlock1503Props> = ({
             }}
             onFocus={() => setFocusedField("resetPwdConfirm")}
             onBlur={() => setFocusedField(null)}
-            placeholder="Re-enter the new password"
+            placeholder={t("Re-enter the new password")}
             autoComplete="new-password"
           />
           {resetPwdConfirm && resetPwdConfirm !== resetPwd && (
             <p className="text-[length:0.75rem]! text-[color:var(--color-red-700)]! mt-[6px]! flex! items-center! gap-[4px]!">
-              <AlertCircle size={13} /> Passwords do not match
+              <AlertCircle size={13} />{" "}{t("Passwords do not match")}
             </p>
           )}
           {resetPwdConfirm && resetPwdConfirm === resetPwd && resetPwd.length >= 10 && (
             <p className="text-[length:0.75rem]! text-[color:var(--color-green-700)]! mt-[6px]! flex! items-center! gap-[4px]!">
-              <CheckCircle2 size={13} /> Passwords match
+              <CheckCircle2 size={13} />{" "}{t("Passwords match")}
             </p>
           )}
         </div>
@@ -238,7 +239,7 @@ const UserManagementBlock1503: React.FC<UserManagementBlock1503Props> = ({
               (e.currentTarget.style.background = "transparent")
             }
           >
-            Cancel
+            {t("Cancel")}
           </button>
           <button
             id="um-reset-pwd-submit"
@@ -259,11 +260,11 @@ const UserManagementBlock1503: React.FC<UserManagementBlock1503Props> = ({
             }}
           >
             {resetLoading ? (
-              "Resetting…"
+              t("Resetting…")
             ) : (
               <span className="flex! items-center! gap-[6px]!">
                 <KeyRound size={16} />
-                Reset Password
+                {t("Reset Password")}
               </span>
             )}
           </button>

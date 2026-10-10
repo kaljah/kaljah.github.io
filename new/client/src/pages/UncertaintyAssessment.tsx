@@ -11,6 +11,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import CustomDropdown from "../components/CustomDropdown";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
 import "./UncertaintyAssessment.css";
+import { t } from "../i18n";
 
 interface Contributor {
   name: string;
@@ -110,7 +111,7 @@ const UncertaintyAssessment: React.FC = () => {
         setData(res.data);
       } catch (error) {
         console.error("Failed to load uncertainty data:", error);
-        toast.error("Failed to load uncertainty data");
+        toast.error(t("Failed to load uncertainty data"));
       } finally {
         setLoading(false);
       }
@@ -139,10 +140,10 @@ const UncertaintyAssessment: React.FC = () => {
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
-      toast.success("Uncertainty assessment exported successfully");
+      toast.success(t("Uncertainty assessment exported successfully"));
     } catch (err) {
       console.error("Export failed:", err);
-      toast.error("Export failed");
+      toast.error(t("Export failed"));
     } finally {
       setExporting(false);
     }
@@ -166,19 +167,19 @@ const UncertaintyAssessment: React.FC = () => {
 
   // Build dropdown options
   const yearOptions = [
-    { value: "all", label: "Select Year" },
+    { value: "all", label: t("Select Year") },
     ...availableYears.map((y) => ({ value: y.toString(), label: y.toString() })),
   ];
 
   const scopeOptions = [
-    { value: "all", label: "All Scopes" },
-    { value: "1", label: "Scope 1" },
-    { value: "2", label: "Scope 2" },
-    { value: "3", label: "Scope 3" },
+    { value: "all", label: t("All Scopes") },
+    { value: "1", label: t("Scope 1") },
+    { value: "2", label: t("Scope 2") },
+    { value: "3", label: t("Scope 3") },
   ];
 
   const facilityOptions = [
-    { value: "all", label: "All Facilities" },
+    { value: "all", label: t("All Facilities") },
     ...facilities.map((f) => ({
       value: (f.id || f.facility_id || "").toString(),
       label: f.name || f.facility_name || `Facility ${f.id}`,
@@ -188,7 +189,7 @@ const UncertaintyAssessment: React.FC = () => {
   if (loading) {
     return (
       <div className="[padding:24px_32px_48px] [max-width:1600px] [margin:0_auto] [color:var(--text-primary,_var(--color-ink-900))]">
-        <LoadingSpinner message="Quantifying Inventory Uncertainty..." />
+        <LoadingSpinner message={t("Quantifying Inventory Uncertainty...")} />
       </div>
     );
   }
@@ -198,15 +199,13 @@ const UncertaintyAssessment: React.FC = () => {
       {/* ── Page Header ── */}
       <div className="[margin-bottom:40px] [display:flex] [justify-content:space-between] [align-items:flex-end]! [gap:24px] [flex-wrap:wrap]! [@media(max-width:900px)]:[flex-direction:column]! [@media(max-width:900px)]:[align-items:flex-start]!">
         <div>
-          <h1 className="ua-title">Data Reliability Analysis</h1>
+          <h1 className="ua-title">{t("Data Reliability Analysis")}</h1>
           <p className="[font-size:var(--text-lg)] [color:var(--text-secondary,_var(--color-ink-500))] [max-width:800px] [margin:0] [line-height:1.5]">
-            Dynamic uncertainty quantification across the complete GHG
-            inventory, following ISO 14064-1 §7.5 and IPCC 2006 GL Vol.1
-            §3.3.
+            {t("Dynamic uncertainty quantification across the complete GHG inventory, following ISO 14064-1 §7.5 and IPCC 2006 GL Vol.1 §3.3.")}
           </p>
           {data && (
             <div className="[display:inline-flex] [align-items:center] [gap:16px] [background:var(--bg-card,_rgba(255,_255,_255,_0.78))] [padding:14px_20px] [border-radius:var(--radius-lg)] [border:1px_solid_var(--border-color,_rgba(0,_0,_0,_0.05))] [margin-top:16px]">
-              <div className="[font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-500))] [margin-bottom:4px]">Inventory Uncertainty</div>
+              <div className="[font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-500))] [margin-bottom:4px]">{t("Inventory Uncertainty")}</div>
               <div
                 className={`ua-inventory-value ${getUncertaintyLevel(data.inventory_uncertainty_decimal)}`}
               >
@@ -214,7 +213,7 @@ const UncertaintyAssessment: React.FC = () => {
               </div>
               {data.confidence_level_pct && (
                 <div className="[display:inline-flex] [align-items:center] [gap:6px] [margin-top:8px] [padding:4px_10px] [border-radius:var(--radius-md)] [font-size:var(--text-xs)] [font-weight:700] [letter-spacing:0.03em] [background:rgba(59,_130,_246,_0.08)] [color:var(--color-blue-600)] [border:1px_solid_rgba(59,_130,_246,_0.15)]">
-                  {data.confidence_level_pct}% CI (k={data.coverage_factor})
+                  {data.confidence_level_pct}{t("% CI (k=")}{data.coverage_factor})
                 </div>
               )}
             </div>
@@ -227,7 +226,7 @@ const UncertaintyAssessment: React.FC = () => {
               options={yearOptions}
               value={selectedYear}
               onChange={setSelectedYear}
-              placeholder="Year"
+              placeholder={t("Year")}
             />
           </div>
           <div className="[display:flex] [flex-direction:column] [gap:8px] w-[150px]!">
@@ -235,7 +234,7 @@ const UncertaintyAssessment: React.FC = () => {
               options={scopeOptions}
               value={selectedScope}
               onChange={setSelectedScope}
-              placeholder="Scope"
+              placeholder={t("Scope")}
             />
           </div>
           <div className="[display:flex] [flex-direction:column] [gap:8px] w-[200px]!">
@@ -243,7 +242,7 @@ const UncertaintyAssessment: React.FC = () => {
               options={facilityOptions}
               value={selectedFacility}
               onChange={setSelectedFacility}
-              placeholder="Facility"
+              placeholder={t("Facility")}
             />
           </div>
 
@@ -251,10 +250,10 @@ const UncertaintyAssessment: React.FC = () => {
             className="[display:inline-flex] [align-items:center] [gap:8px] [padding:10px_20px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [background:var(--bg-card,_var(--color-white))] [color:var(--text-primary,_var(--color-ink-800))] [font-size:var(--text-base)] [font-weight:600] [cursor:pointer] [transition:all_0.2s_ease] hover:[background:var(--color-primary)] hover:[color:var(--color-white)] hover:[border-color:var(--accent-color,_var(--color-brand-500))] hover:[transform:translateY(-1px)] hover:[box-shadow:var(--shadow-card)]"
             onClick={handleExport}
             disabled={exporting || !data}
-            title="Export uncertainty assessment as CSV"
+            title={t("Export uncertainty assessment as CSV")}
           >
             <Download size={16} />
-            {exporting ? "Exporting..." : "Export CSV"}
+            {exporting ? t("Exporting...") : t("Export CSV")}
           </button>
         </div>
       </div>
@@ -263,11 +262,9 @@ const UncertaintyAssessment: React.FC = () => {
         <div className="ua-methodology-box mt-[24px]!">
           <Info size={24} className="ua-methodology-icon" />
           <div>
-            <h4>No Uncertainty Data Available</h4>
+            <h4>{t("No Uncertainty Data Available")}</h4>
             <p>
-              No verified emission records found for the selected filters.
-              Ensure emissions have been submitted and verified before running
-              the uncertainty assessment.
+              {t("No verified emission records found for the selected filters. Ensure emissions have been submitted and verified before running the uncertainty assessment.")}
             </p>
           </div>
         </div>
@@ -277,7 +274,7 @@ const UncertaintyAssessment: React.FC = () => {
           <div className="[display:grid] [grid-template-columns:repeat(3,_1fr)]! [gap:20px] [margin-bottom:40px] [@media(max-width:900px)]:[grid-template-columns:1fr]!">
             {Object.entries(data.tier_breakdown || {}).map(([tier, pct]) => (
               <div key={tier} className="[background:var(--bg-card,_rgba(255,_255,_255,_0.78))] [padding:20px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card,_0_1px_3px_rgba(0,_0,_0,_0.05))] [transition:transform_0.2s_ease,_box-shadow_0.2s_ease] hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated,_0_4px_12px_rgba(0,_0,_0,_0.1))]">
-                <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))] [font-weight:600]">{tier} (share of Scope 1)</div>
+                <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))] [font-weight:600]">{tier}{" "}{t("(share of Scope 1)")}</div>
                 <div className={`ua-tier-value ${getTierColorClass(tier)}`}>
                   {pct}%
                 </div>
@@ -312,15 +309,15 @@ const UncertaintyAssessment: React.FC = () => {
           <div className="[display:flex] [gap:24px] [margin-bottom:32px] [flex-wrap:wrap] [background:var(--bg-card,_rgba(255,_255,_255,_0.4))] [padding:16px_24px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]">
             <div className="[display:flex] [align-items:center] [gap:10px] [font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-600))] [font-weight:600]">
               <div className="[width:12px] [height:12px] [border-radius:50%] [flex-shrink:0] bg-[color:var(--color-unc-low)]!" />
-              Low Uncertainty (≤ ±10%)
+              {t("Low Uncertainty (≤ ±10%)")}
             </div>
             <div className="[display:flex] [align-items:center] [gap:10px] [font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-600))] [font-weight:600]">
               <div className="[width:12px] [height:12px] [border-radius:50%] [flex-shrink:0] bg-[color:var(--color-unc-medium)]!" />
-              Medium Uncertainty (±10% to ±30%)
+              {t("Medium Uncertainty (±10% to ±30%)")}
             </div>
             <div className="[display:flex] [align-items:center] [gap:10px] [font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-600))] [font-weight:600]">
               <div className="[width:12px] [height:12px] [border-radius:50%] [flex-shrink:0] bg-[color:var(--color-unc-high)]!" />
-              High Uncertainty (&gt; ±30%)
+              {t("High Uncertainty (> ±30%)")}
             </div>
           </div>
 
@@ -328,7 +325,7 @@ const UncertaintyAssessment: React.FC = () => {
           {data.categories.length > 0 && (
             <div className="category-section [margin-bottom:24px]">
               <div className="category-header">
-                <h3 className="category-title">Uncertainty by Category (±%)</h3>
+                <h3 className="category-title">{t("Uncertainty by Category (±%)")}</h3>
               </div>
               <div className="h-[260px] w-full min-w-0">
                 <BarChart
@@ -357,7 +354,7 @@ const UncertaintyAssessment: React.FC = () => {
           {data.categories.length > 0 && (
             <div className="category-section [margin-bottom:24px]">
               <div className="category-header">
-                <h3 className="category-title">Emissions by Category with 95% Range (tCO₂e)</h3>
+                <h3 className="category-title">{t("Emissions by Category with 95% Range (tCO₂e)")}</h3>
               </div>
               <div className="h-[260px] w-full min-w-0">
                 <BarChart
@@ -376,7 +373,7 @@ const UncertaintyAssessment: React.FC = () => {
                   exportName="emissions-by-category-with-95-range"
                 />
               </div>
-              <p className="mb-0 mt-2 text-xs text-ink-500">Bars show the category total; the whiskers show its 95% range (± the uncertainty above).</p>
+              <p className="mb-0 mt-2 text-xs text-ink-500">{t("Bars show the category total; the whiskers show its 95% range (± the uncertainty above).")}</p>
             </div>
           )}
 
@@ -399,7 +396,7 @@ const UncertaintyAssessment: React.FC = () => {
                       <div className="[display:flex] [justify-content:space-between] [align-items:flex-start] [margin-bottom:15px]">
                         <div>
                           <div className="factor-name">{factor.name}</div>
-                          <div className="[font-size:var(--text-sm)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.04em]">Primary Contributor</div>
+                          <div className="[font-size:var(--text-sm)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.04em]">{t("Primary Contributor")}</div>
                         </div>
                         <div className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [padding:4px_8px] [background:var(--border-color,_var(--color-ink-100))] [border-radius:var(--radius-sm)] [white-space:nowrap]">
                           {factor.uncertainty}
@@ -408,7 +405,7 @@ const UncertaintyAssessment: React.FC = () => {
                       <div className="[display:flex] [align-items:center] [gap:15px]">
                         <div className="[flex:1]">
                           <div className="[display:flex] [justify-content:space-between] [font-size:var(--text-sm)] [margin-bottom:4px] [color:var(--text-secondary,_var(--color-ink-500))]">
-                            <span>Impact on Category</span>
+                            <span>{t("Impact on Category")}</span>
                             <span className="[font-weight:700] [color:var(--text-primary,_var(--color-ink-900))]">
                               {factor.contribution}%
                             </span>
@@ -434,15 +431,9 @@ const UncertaintyAssessment: React.FC = () => {
       <div className="ua-methodology-box">
         <Info size={24} className="ua-methodology-icon" />
         <div>
-          <h4>Calculation Methodology</h4>
+          <h4>{t("Calculation Methodology")}</h4>
           <p>
-            Uncertainty is quantified using the Square Root of Sum of Squares
-            (SRSS) propagation method per IPCC 2006 GL Vol.1 §3.3 Eq. 3.3.
-            Individual emission factor uncertainties are derived from the
-            calculation tiers (IPCC/API). The coverage factor k=2 is applied
-            per GUM §6.2 to derive the expanded uncertainty at the 95%
-            confidence interval. Activity data uncertainties are tier-specific
-            per IPCC GL Vol.1 Table 3.1.
+            {t("Uncertainty is quantified using the Square Root of Sum of Squares (SRSS) propagation method per IPCC 2006 GL Vol.1 §3.3 Eq. 3.3. Individual emission factor uncertainties are derived from the calculation tiers (IPCC/API). The coverage factor k=2 is applied per GUM §6.2 to derive the expanded uncertainty at the 95% confidence interval. Activity data uncertainties are tier-specific per IPCC GL Vol.1 Table 3.1.")}
           </p>
         </div>
       </div>

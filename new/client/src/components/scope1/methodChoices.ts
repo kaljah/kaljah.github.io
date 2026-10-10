@@ -1,3 +1,4 @@
+import { t as tr } from "../../i18n";
 // Calculation-method selection for the Scope 1 form: which API Compendium methods each process
 // offers per tier, and the formData keys the server routes on (activity_key, vent_method,
 // combustion_method). Components live in SectionMethods.jsx.
@@ -10,24 +11,24 @@ export interface MethodChoice {
 }
 
 // ---- which methods each process offers, per tier ----
-const ACTIVITY: MethodChoice = { value: "activity", label: "Compendium factor" };
+const ACTIVITY: MethodChoice = { value: "activity", label: tr("Compendium factor") };
 const VENT: Record<string, MethodChoice> = {
-  volume: { value: "vent:volume", label: "Measured volume" },
-  gor: { value: "vent:gor", label: "GOR × oil rate" },
-  rate_days: { value: "vent:rate_days", label: "Rate × days" },
-  actual: { value: "vent:actual", label: "Actual volume (T, P)" },
-  desiccant: { value: "vent:desiccant", label: "Vessel volume" },
-  co2_mass: { value: "vent:co2_mass", label: "Blowdown volume" },
-  agr_balance: { value: "vent:agr_balance", label: "Sour / sweet balance" },
-  thc_mass: { value: "vent:thc_mass", label: "Hydrocarbon loss (AP-42 / simulation)" },
-  reported_mass: { value: "vent:reported_mass", label: "Simulation / measured result" },
+  volume: { value: "vent:volume", label: tr("Measured volume") },
+  gor: { value: "vent:gor", label: tr("GOR × oil rate") },
+  rate_days: { value: "vent:rate_days", label: tr("Rate × days") },
+  actual: { value: "vent:actual", label: tr("Actual volume (T, P)") },
+  desiccant: { value: "vent:desiccant", label: tr("Vessel volume") },
+  co2_mass: { value: "vent:co2_mass", label: tr("Blowdown volume") },
+  agr_balance: { value: "vent:agr_balance", label: tr("Sour / sweet balance") },
+  thc_mass: { value: "vent:thc_mass", label: tr("Hydrocarbon loss (AP-42 / simulation)") },
+  reported_mass: { value: "vent:reported_mass", label: tr("Simulation / measured result") },
 };
 const COMB: Record<string, MethodChoice> = {
-  carbon_content: { value: "comb:carbon_content", label: "Carbon content" },
-  equipment: { value: "comb:equipment", label: "Equipment basis" },
-  vehicle_distance: { value: "comb:vehicle_distance", label: "Distance travelled" },
-  flare_voc: { value: "comb:flare_voc", label: "From VOC emitted" },
-  thermal_oxidizer: { value: "comb:thermal_oxidizer", label: "Thermal oxidizer" },
+  carbon_content: { value: "comb:carbon_content", label: tr("Carbon content") },
+  equipment: { value: "comb:equipment", label: tr("Equipment basis") },
+  vehicle_distance: { value: "comb:vehicle_distance", label: tr("Distance travelled") },
+  flare_voc: { value: "comb:flare_voc", label: tr("From VOC emitted") },
+  thermal_oxidizer: { value: "comb:thermal_oxidizer", label: tr("Thermal oxidizer") },
 };
 const LEGACY = (label: string): MethodChoice => ({ value: "legacy", label });
 const MEASURED: MethodChoice[] = [VENT.volume, VENT.gor, VENT.rate_days, VENT.actual];
@@ -53,8 +54,8 @@ export interface SectionTierOption {
 }
 
 const TIER: Record<string, SectionTierOption> = {
-  default: { key: "default", tier: "Tier 1", label: "Compendium Factor", sub: "Count or throughput" },
-  specific: { key: "specific", tier: "Tier 3", label: "Measured / Engineered", sub: "Gas volume and composition" },
+  default: { key: "default", tier: "Tier 1", label: tr("Compendium Factor"), sub: "Count or throughput" },
+  specific: { key: "specific", tier: "Tier 3", label: tr("Measured / Engineered"), sub: "Gas volume and composition" },
 };
 // tier buttons for processes whose tiers are these methods (library is appended by the form)
 export const SECTION_TIERS: Record<string, SectionTierOption[]> = {
@@ -67,8 +68,8 @@ export const SECTION_TIERS: Record<string, SectionTierOption[]> = {
   desiccant_dehydrator: [TIER.specific],
   co2_eor: [TIER.specific],
   thermal_oxidizer: [TIER.specific],
-  agr: [TIER.default, { ...TIER.specific, label: "Engineering", sub: "Throughput, CO₂ in / out" }],
-  dehydrator: [TIER.default, { ...TIER.specific, label: "Simulation / Measured", sub: "GLYCalc or vent measurement" }],
+  agr: [TIER.default, { ...TIER.specific, label: tr("Engineering"), sub: "Throughput, CO₂ in / out" }],
+  dehydrator: [TIER.default, { ...TIER.specific, label: tr("Simulation / Measured"), sub: "GLYCalc or vent measurement" }],
 };
 
 export function sectionChoices(processType: string, sourceType: string): MethodChoice[] | null {
@@ -91,7 +92,7 @@ export function sectionChoices(processType: string, sourceType: string): MethodC
     case "agr":
       return t === "default" ? [ACTIVITY] : t === "specific" ? [LEGACY("Throughput & CO₂"), VENT.agr_balance] : null;
     case "dehydrator":
-      return t === "default" ? [ACTIVITY] : t === "specific" ? [{ ...VENT.volume, label: "Measured vent volume" }, VENT.reported_mass] : null;
+      return t === "default" ? [ACTIVITY] : t === "specific" ? [{ ...VENT.volume, label: tr("Measured vent volume") }, VENT.reported_mass] : null;
     // Tier 1 pneumatics, loading and separators use the Compendium tables only (Tables 6-14 to 6-16,
     // 6-29, 6-34, 6-42, 6-47, 6-25 to 6-27); the old catalog rows were mislabelled or had no source
     case "pneumatic":

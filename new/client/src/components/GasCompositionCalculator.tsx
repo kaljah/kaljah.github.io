@@ -4,6 +4,7 @@ import api from "../api";
 import { useToast } from "./Toast";
 import Modal from "./Modal";
 import "./GasCompositionCalculator.css";
+import { t } from "../i18n";
 
 interface ComponentInfo {
   mw: number;
@@ -272,7 +273,7 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
 
   const handleSave = async () => {
     if (!results || !saveName.trim()) {
-      toast.warning("Please calculate results and enter a name");
+      toast.warning(t("Please calculate results and enter a name"));
       return;
     }
 
@@ -288,11 +289,11 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
         source: "Gas Analysis Tool",
         usage: activeProcessType, // Use actual process type
       });
-      toast.success("Saved to Managed Data!");
+      toast.success(t("Saved to Managed Data!"));
       setSaveName("");
     } catch (error) {
       console.error("Failed to save factor:", error);
-      toast.error("Failed to save factor");
+      toast.error(t("Failed to save factor"));
     } finally {
       setIsSaving(false);
     }
@@ -302,7 +303,7 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Gas Composition Calculator"
+      title={t("Gas Composition Calculator")}
       maxWidth="1400px"
     >
       <div className="[color:var(--text-primary)]">
@@ -310,28 +311,28 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
           {/* Left: Inputs */}
           <div className="comp-inputs">
             <div className="calculation-mode-selector">
-              <label>Calculation Mode:</label>
+              <label>{t("Calculation Mode:")}</label>
               <div className="mode-tabs">
                 <button
                   type="button"
                   className={activeProcessType === "combustion" ? "active" : ""}
                   onClick={() => handleModeChange("combustion")}
                 >
-                  Combustion
+                  {t("Combustion")}
                 </button>
                 <button
                   type="button"
                   className={activeProcessType === "flaring" ? "active" : ""}
                   onClick={() => handleModeChange("flaring")}
                 >
-                  Flaring
+                  {t("Flaring")}
                 </button>
               </div>
             </div>
 
             <div className="[background:rgba(255,_255,_255,_0.03)] [border:1px_solid_var(--border-color)] [&&]:[border-radius:var(--radius-md)] [padding:15px_20px] [display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:25px]">
               <div className="total-info">
-                <span className="label">Total Composition:</span>
+                <span className="label">{t("Total Composition:")}</span>
                 <span
                   className={`value ${Math.abs(totalMolePct - 100) < 0.5 ? "valid" : "invalid"}`}
                 >
@@ -358,10 +359,10 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
             </div>
 
             <div className="params-section">
-              <h4>Operating Parameters</h4>
+              <h4>{t("Operating Parameters")}</h4>
               <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(180px,_1fr))] [gap:20px]">
                 <div className="input-group">
-                  <label>Molar Volume (L/mol)</label>
+                  <label>{t("Molar Volume (L/mol)")}</label>
                   <input
                     type="number"
                     name="molarVolume"
@@ -371,7 +372,7 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
                   />
                 </div>
                 <div className="input-group">
-                  <label>Oxidation Factor</label>
+                  <label>{t("Oxidation Factor")}</label>
                   <input
                     type="number"
                     name="oxidationFactor"
@@ -391,7 +392,7 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
               onClick={calculate}
               disabled={totalMolePct === 0}
             >
-              Calculate Results
+              {t("Calculate Results")}
             </button>
           </div>
 
@@ -401,42 +402,42 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
               <div className="results-wrapper">
                 <div className="result-card main">
                   <h4>
-                    Emission Factors -{" "}
+                    {t("Emission Factors -")}{" "}
                     {activeProcessType.charAt(0).toUpperCase() +
                       activeProcessType.slice(1)}
                   </h4>
                   <div className="result-row">
-                    <span>CO₂ (Mass):</span>
+                    <span>{t("CO₂ (Mass):")}</span>
                     <strong>
                       {results.efCO2Mass.toFixed(6)} <small>kg/kg</small>
                     </strong>
                   </div>
                   <div className="result-row">
-                    <span>CO₂ (Volume):</span>
+                    <span>{t("CO₂ (Volume):")}</span>
                     <strong>
                       {results.efCO2Vol.toFixed(6)} <small>kg/m³</small>
                     </strong>
                   </div>
                   <div className="result-row">
-                    <span>CH₄ (Mass):</span>
+                    <span>{t("CH₄ (Mass):")}</span>
                     <strong>
                       {results.efCH4Mass.toFixed(6)} <small>kg/kg</small>
                     </strong>
                   </div>
                   <div className="result-row">
-                    <span>CH₄ (Volume):</span>
+                    <span>{t("CH₄ (Volume):")}</span>
                     <strong>
                       {results.efCH4Vol.toFixed(6)} <small>kg/m³</small>
                     </strong>
                   </div>
                   <div className="result-row">
-                    <span>N₂O (Mass):</span>
+                    <span>{t("N₂O (Mass):")}</span>
                     <strong>
                       {results.efN2OMass.toFixed(6)} <small>kg/kg</small>
                     </strong>
                   </div>
                   <div className="result-row">
-                    <span>N₂O (Volume):</span>
+                    <span>{t("N₂O (Volume):")}</span>
                     <strong>
                       {results.efN2OVol.toFixed(6)} <small>kg/m³</small>
                     </strong>
@@ -444,51 +445,51 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
                 </div>
 
                 <div className="result-card secondary">
-                  <h4>Physical Properties</h4>
+                  <h4>{t("Physical Properties")}</h4>
                   <div className="result-row">
-                    <span>Mol Weight:</span>
+                    <span>{t("Mol Weight:")}</span>
                     <span>{results.mw.toFixed(2)} g/mol</span>
                   </div>
                   <div className="result-row">
-                    <span>Carbon %:</span>
-                    <span>{results.carbonPct.toFixed(2)} wt%</span>
+                    <span>{t("Carbon %:")}</span>
+                    <span>{results.carbonPct.toFixed(2)}{" "}{t("wt%")}</span>
                   </div>
                   <div className="result-row">
-                    <span>CH₄ %:</span>
-                    <span>{results.ch4Pct.toFixed(2)} wt%</span>
+                    <span>{t("CH₄ %:")}</span>
+                    <span>{results.ch4Pct.toFixed(2)}{" "}{t("wt%")}</span>
                   </div>
                   <div className="result-row">
-                    <span>Density:</span>
+                    <span>{t("Density:")}</span>
                     <span>{results.density.toFixed(4)} kg/m³</span>
                   </div>
                   <div className="result-row">
-                    <span>HHV:</span>
+                    <span>{t("HHV:")}</span>
                     <span>{results.hhv.toFixed(2)} MJ/kg</span>
                   </div>
                 </div>
 
                 <div className="apply-actions">
-                  <h4>Apply to Form</h4>
+                  <h4>{t("Apply to Form")}</h4>
                   <div className="apply-buttons">
                     <button type="button" onClick={() => handleApply("kg/m3")}>
-                      Apply as kg/m³
+                      {t("Apply as kg/m³")}
                     </button>
                     <button type="button" onClick={() => handleApply("kg/scf")}>
-                      Apply as kg/scf
+                      {t("Apply as kg/scf")}
                     </button>
                     <button type="button" onClick={() => handleApply("kg/kg")}>
-                      Apply as kg/kg
+                      {t("Apply as kg/kg")}
                     </button>
                   </div>
                 </div>
 
                 <div className="result-card save-section">
-                  <h4>Save to Manage Data</h4>
+                  <h4>{t("Save to Manage Data")}</h4>
                   <div className="save-input-group">
                     <Input
                       type="text"
                      
-                      placeholder="Factor Name (e.g. Field A Gas)"
+                      placeholder={t("Factor Name (e.g. Field A Gas)")}
                       value={saveName}
                       onChange={(e) => setSaveName(e.target.value)}
                     />
@@ -499,7 +500,7 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
                       disabled={isSaving || !saveName}
                      
                     >
-                      {isSaving ? "Saving..." : "Save Factor"}
+                      {isSaving ? t("Saving...") : t("Save Factor")}
                     </button>
                   </div>
                 </div>
@@ -507,7 +508,7 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
             ) : (
               <div className="[height:100%] [display:flex] [flex-direction:column] [justify-content:center] [align-items:center] [text-align:center] [color:var(--text-secondary)] [opacity:0.5] [&_.icon]:[font-size:var(--text-3xl)]! [&_.icon]:[margin-bottom:15px]!">
                 <span className="icon">📊</span>
-                <p>Enter composition to view results</p>
+                <p>{t("Enter composition to view results")}</p>
               </div>
             )}
           </div>

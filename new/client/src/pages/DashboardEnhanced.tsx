@@ -18,6 +18,7 @@ import { getUserOperationalDefaults } from "../utils/userDefaults";
 import "./Dashboard.css";
 import "./TopBarFilters.css";
 import { useGwpStandard } from "../hooks/useGwpStandard";
+import { t as tr } from "../i18n";
 
 interface HistoricalDataPoint {
   year: number;
@@ -605,7 +606,7 @@ const DashboardEnhanced: React.FC = () => {
       );
     } catch (error) {
       console.error("Dashboard load error:", error);
-      toast.error("Failed to load dashboard data");
+      toast.error(tr("Failed to load dashboard data"));
     } finally {
       setLoading(false);
       setIsUpdating(false);
@@ -616,7 +617,7 @@ const DashboardEnhanced: React.FC = () => {
   const getSegmentOptions = () => {
     const segments = availableFilters.segments || [];
     return [
-      { value: "all", label: "All Supply Chains" },
+      { value: "all", label: tr("All Supply Chains") },
       ...segments.map((s) => ({ value: s, label: s })),
     ];
   };
@@ -627,7 +628,7 @@ const DashboardEnhanced: React.FC = () => {
     );
     const activities = new Set(filtered.map((f) => f.activity).filter(Boolean));
     return [
-      { value: "all", label: "All Activities" },
+      { value: "all", label: tr("All Activities") },
       ...Array.from(activities)
         .sort()
         .map((a) => ({ value: a as string, label: formatActivityName(a as string) })),
@@ -645,7 +646,7 @@ const DashboardEnhanced: React.FC = () => {
       if (f.division) divisionsSet.add(f.division);
     });
     return [
-      { value: "all", label: "All Divisions" },
+      { value: "all", label: tr("All Divisions") },
       ...Array.from(divisionsSet)
         .sort()
         .map((d) => ({ value: d, label: d })),
@@ -660,7 +661,7 @@ const DashboardEnhanced: React.FC = () => {
         (currentDivision === "all" || f.division === currentDivision),
     );
     return [
-      { value: "all", label: "All Regions" },
+      { value: "all", label: tr("All Regions") },
       ...filtered.map((f) => ({
         value: f.id.toString(),
         label: f.name,
@@ -671,7 +672,7 @@ const DashboardEnhanced: React.FC = () => {
 
   const getYearOptions = () => {
     return [
-      { value: "all", label: "All Years" },
+      { value: "all", label: tr("All Years") },
       ...availableFilters.years
         .sort((a, b) => b - a)
         .map((y) => ({ value: y.toString(), label: y.toString() })),
@@ -758,7 +759,7 @@ const DashboardEnhanced: React.FC = () => {
             options={getYearOptions()}
             value={currentYear}
             onChange={(val: any) => setCurrentYear(val)}
-            placeholder="Year"
+            placeholder={tr("Year")}
           />
         </div>
         <div className="filter-wrapper">
@@ -766,7 +767,7 @@ const DashboardEnhanced: React.FC = () => {
             options={getSegmentOptions()}
             value={currentSegment}
             onChange={handleSegmentChange}
-            placeholder="Supply Chain"
+            placeholder={tr("Supply Chain")}
           />
         </div>
         <div className="filter-wrapper">
@@ -774,7 +775,7 @@ const DashboardEnhanced: React.FC = () => {
             options={getActivityOptions()}
             value={currentActivity}
             onChange={handleActivityChange}
-            placeholder="Activity"
+            placeholder={tr("Activity")}
           />
         </div>
         <div className="filter-wrapper">
@@ -782,7 +783,7 @@ const DashboardEnhanced: React.FC = () => {
             options={getDivisionOptions()}
             value={currentDivision}
             onChange={handleDivisionChange}
-            placeholder="Division"
+            placeholder={tr("Division")}
           />
         </div>
         <div className="filter-wrapper">
@@ -790,7 +791,7 @@ const DashboardEnhanced: React.FC = () => {
             options={getRegionOptions()}
             value={currentRegion}
             onChange={(val: any) => setCurrentRegion(val)}
-            placeholder="Region"
+            placeholder={tr("Region")}
           />
         </div>
       </div>,
@@ -800,7 +801,7 @@ const DashboardEnhanced: React.FC = () => {
       <div className="flex! items-center! gap-[10px]!">
         {/* GWP horizon */}
         <SegmentedControl
-          label="GWP horizon"
+          label={tr("GWP horizon")}
           size="sm"
           value={gwpHorizon}
           onChange={(val: any) => setGwpHorizon(val)}
@@ -825,23 +826,23 @@ const DashboardEnhanced: React.FC = () => {
         {goal ? (
           <div className="[display:flex] [align-items:center] [gap:8px] [background:rgba(255,_255,_255,_0.8)] [padding:4px_10px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [font-size:var(--text-sm)]">
             <span className="text-[length:0.8rem]! text-[color:var(--text-secondary)]!">
-              Target {goal.year}: <strong className="text-[color:var(--text-primary)]!">{Number(goal.target_amount).toLocaleString()} tCO₂e</strong>
+              {tr("Target")}{" "}{goal.year}: <strong className="text-[color:var(--text-primary)]!">{Number(goal.target_amount).toLocaleString()}{" "}{tr("tCO₂e")}</strong>
             </span>
             <button
               className="btn-target-action [padding:6px_14px] [font-size:var(--text-sm)] [font-weight:600] [border-radius:var(--radius-md)] [background:rgba(255,_255,_255,_0.9)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [color:var(--text-primary)] [cursor:pointer] [transition:all_0.2s_ease] [white-space:nowrap] hover:[border-color:var(--accent-color,_var(--color-brand-500))] hover:[color:var(--color-link)]"
               onClick={() => navigate("/manage-data", { state: { tab: "goals" } })}
-              title="Manage emission goals and base years in Manage Data"
+              title={tr("Manage emission goals and base years in Manage Data")}
             >
-              Edit Target
+              {tr("Edit Target")}
             </button>
           </div>
         ) : (
           <button
             className="btn-target-action [padding:6px_14px] [font-size:var(--text-sm)] [font-weight:600] [border-radius:var(--radius-md)] [background:rgba(255,_255,_255,_0.9)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [color:var(--text-primary)] [cursor:pointer] [transition:all_0.2s_ease] [white-space:nowrap] hover:[border-color:var(--accent-color,_var(--color-brand-500))] hover:[color:var(--color-link)]"
             onClick={() => navigate("/manage-data", { state: { tab: "goals" } })}
-            title="Set emission targets in Manage Data"
+            title={tr("Set emission targets in Manage Data")}
           >
-            + Set Target
+            {tr("+ Set Target")}
           </button>
         )}
       </div>,
@@ -893,17 +894,17 @@ const DashboardEnhanced: React.FC = () => {
   const handleExportPDF = async () => {
     try {
       setExportingPDF(true);
-      toast.info("Generating executive brief PDF...");
+      toast.info(tr("Generating executive brief PDF..."));
       const { generateModernPDF } = await import("../utils/ModernReportGenerator");
       await generateModernPDF(api, {
         year: currentYear, // BUG-077: pass "all" explicitly so the brief is labelled correctly
         regionId: currentRegion !== "all" ? currentRegion : undefined,
         scope: "all",
       });
-      toast.success("Executive brief PDF generated successfully!");
+      toast.success(tr("Executive brief PDF generated successfully!"));
     } catch (err) {
       console.error("PDF generation failed:", err);
-      toast.error("Failed to generate PDF report. Opening print dialog.");
+      toast.error(tr("Failed to generate PDF report. Opening print dialog."));
       window.print();
     } finally {
       setExportingPDF(false);
@@ -911,7 +912,7 @@ const DashboardEnhanced: React.FC = () => {
   };
 
   if (loading) {
-    return <LoadingSpinner message="Loading Dashboard Data..." fullScreen />;
+    return <LoadingSpinner message={tr("Loading Dashboard Data...")} fullScreen />;
   }
 
   // every facility of any year when comparing, otherwise the headline series that have data
@@ -958,10 +959,10 @@ const DashboardEnhanced: React.FC = () => {
     >
       <div className="dashboard-grid [display:flex] [flex-direction:column] [gap:24px] [max-width:1600px] [margin:0_auto] [&>*]:[opacity:0] [&>*]:[animation:dashboardFadeIn_0.5s_cubic-bezier(0.16,_1,_0.3,_1)_forwards] [&&]:[&>*:nth-child(1)]:[animation-delay:0.05s] [&&]:[&&]:[&>*:nth-child(2)]:[animation-delay:0.12s] [&&]:[&&]:[&&]:[&>*:nth-child(3)]:[animation-delay:0.18s] [&&]:[&&]:[&&]:[&&]:[&>*:nth-child(4)]:[animation-delay:0.24s] [&&]:[&&]:[&&]:[&&]:[&&]:[&>*:nth-child(5)]:[animation-delay:0.30s]">
         <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-          <h1 className="grid-title m-0 text-xl font-bold text-text">GHG Emissions Dashboard</h1>
+          <h1 className="grid-title m-0 text-xl font-bold text-text">{tr("GHG Emissions Dashboard")}</h1>
           <Badge className="live-badge gap-2 bg-surface/80 px-3.5 py-1.5 text-sm text-text-secondary">
             <span className={cn("size-2 rounded-full bg-green-500", isUpdating && "animate-pulse")} aria-hidden="true" />
-            {isUpdating ? "Syncing filters..." : `Live content • Updated ${lastUpdated}`}
+            {isUpdating ? tr("Syncing filters...") : `Live content • Updated ${lastUpdated}`}
           </Badge>
         </div>
 
@@ -1000,8 +1001,8 @@ const DashboardEnhanced: React.FC = () => {
         <div className="charts-section grid gap-6 [grid-template-columns:2fr_1fr] max-[1200px]:grid-cols-1">
           <TrendCard data={trendData} lines={trendLines} compare={isCompareMode} onCompare={() => setIsCompareMode(!isCompareMode)} />
           <div className="flex min-w-0 flex-col gap-6">
-            <DonutCard title="Emissions by Activity" data={activityChartData} noun="activity" />
-            <DonutCard title="Emissions by Source" data={sourceChartData} noun="source" />
+            <DonutCard title={tr("Emissions by Activity")} data={activityChartData} noun="activity" />
+            <DonutCard title={tr("Emissions by Source")} data={sourceChartData} noun="source" />
           </div>
         </div>
 

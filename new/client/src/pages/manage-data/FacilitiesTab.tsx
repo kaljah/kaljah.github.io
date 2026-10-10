@@ -5,6 +5,7 @@ import { NativeSelect } from "../../ui/NativeSelect";
 import { BOUNDARY_OPTIONS } from "../../constants";
 import PaginationControls from "./PaginationControls";
 import { FormActions, FormGrid, RecordTable, TabCard, Td, Tr } from "./MdParts";
+import { t } from "../../i18n";
 
 const SEGMENTS = ["Upstream", "Midstream", "Downstream", "Heavy Industry", "Utilities", "Other"];
 
@@ -83,20 +84,20 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
   const rows = filteredFacilities.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   return (
-    <TabCard title="Active Regions" description="Manage operational regions and their boundaries.">
+    <TabCard title={t("Active Regions")} description={t("Manage operational regions and their boundaries.")}>
       {canEdit && (
         <>
           <FormGrid>
-            <Field label="Region Name">
+            <Field label={t("Region Name")}>
               <Input
                 type="text"
                 name="name"
                 value={facilityForm.name || ""}
                 onChange={handleFacilityChange}
-                placeholder="e.g. Hassi R'Mel"
+                placeholder={t("e.g. Hassi R'Mel")}
               />
             </Field>
-            <Field label="Activity">
+            <Field label={t("Activity")}>
               {select(
                 "activity",
                 (e) => patch({ activity: e.target.value, division: "" }),
@@ -108,7 +109,7 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
                 "Select Activity",
               )}
             </Field>
-            <Field label="Division">
+            <Field label={t("Division")}>
               {select(
                 "division",
                 handleFacilityChange,
@@ -122,25 +123,25 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
                 !facilityForm.activity,
               )}
             </Field>
-            <Field label="Field / Block">
+            <Field label={t("Field / Block")}>
               <Input
                 type="text"
                 name="field"
                 value={facilityForm.field || ""}
                 onChange={handleFacilityChange}
-                placeholder="Optional"
+                placeholder={t("Optional")}
               />
             </Field>
-            <Field label="Location (Wilaya)">
+            <Field label={t("Location (Wilaya)")}>
               <Input
                 type="text"
                 name="location"
                 value={facilityForm.location || ""}
                 onChange={handleFacilityChange}
-                placeholder="e.g. Laghouat"
+                placeholder={t("e.g. Laghouat")}
               />
             </Field>
-            <Field label="Consolidation Approach">
+            <Field label={t("Consolidation Approach")}>
               {select(
                 "boundary_type",
                 (e) => patch({ boundary_type: e.target.value, boundary_detail: "" }),
@@ -152,7 +153,7 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
                 "Select Approach",
               )}
             </Field>
-            <Field label="Boundary Details">
+            <Field label={t("Boundary Details")}>
               {select(
                 "boundary_detail",
                 (e) => patch({ boundary_detail: e.target.value }),
@@ -167,7 +168,7 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
               )}
             </Field>
             {facilityForm.boundary_type === "Equity Share" && (
-              <Field label="Equity Share Percentage (%)">
+              <Field label={t("Equity Share Percentage (%)")}>
                 <Input
                   type="number"
                   step="0.01"
@@ -180,7 +181,7 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
                 />
               </Field>
             )}
-            <Field label="Supply Chain Segment">
+            <Field label={t("Supply Chain Segment")}>
               {select(
                 "segment",
                 handleFacilityChange,
@@ -192,7 +193,7 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
                 "Select Segment",
               )}
             </Field>
-            <Field label="Latitude">
+            <Field label={t("Latitude")}>
               <Input
                 type="number"
                 step="any"
@@ -202,7 +203,7 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
                 placeholder="e.g. 33.8"
               />
             </Field>
-            <Field label="Longitude">
+            <Field label={t("Longitude")}>
               <Input
                 type="number"
                 step="any"
@@ -215,19 +216,19 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
           </FormGrid>
 
           <FormActions>
-            <Button onClick={handleAddFacility}>Add Region</Button>
+            <Button onClick={handleAddFacility}>{t("Add Region")}</Button>
             <Button variant="secondary" onClick={() => setImportModal({ isOpen: true, type: "facilities" })}>
-              <Upload className="size-4" aria-hidden="true" /> Bulk Import (CSV)
+              <Upload className="size-4" aria-hidden="true" />{" "}{t("Bulk Import (CSV)")}
             </Button>
             <Button variant="secondary" onClick={() => exportToCSV(facilities, "regions_export.csv")}>
-              Export CSV
+              {t("Export CSV")}
             </Button>
           </FormActions>
         </>
       )}
 
       <RecordTable
-        title="Active Regions"
+        title={t("Active Regions")}
         head={["Region Name", "Activity", "Division", "Location", "Boundary", "Segment", "Coordinates", ...(canEdit ? ["Actions"] : [])]}
         empty={filteredFacilities.length === 0 && "No regions found."}
         footer={<PaginationControls currentPage={currentPage} totalItems={filteredFacilities.length} itemsPerPage={ITEMS_PER_PAGE} onPageChange={setCurrentPage} />}
@@ -242,11 +243,11 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
             <Td>{f.location || "-"}</Td>
             <Td>{f.boundary_notes || (f.boundary_type ? `${f.boundary_type}${f.boundary_detail ? " - " + f.boundary_detail : ""}` : "-")}</Td>
             <Td>{f.segment || "-"}</Td>
-            <Td className="text-sm">{f.latitude ? `${f.latitude}, ${f.longitude}` : "Not Set"}</Td>
+            <Td className="text-sm">{f.latitude ? `${f.latitude}, ${f.longitude}` : t("Not Set")}</Td>
             {canEdit && (
               <Td>
                 <Button variant="danger" size="sm" onClick={() => handleDeleteFacility(f.id)}>
-                  Delete
+                  {t("Delete")}
                 </Button>
               </Td>
             )}

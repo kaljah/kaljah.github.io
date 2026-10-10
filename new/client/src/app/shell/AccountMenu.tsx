@@ -1,10 +1,23 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { History, KeyRound, LogOut, Settings } from "lucide-react";
+import { Check, History, KeyRound, Languages, LogOut, Settings } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
-import { Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger } from "../../ui";
+import api from "../../api";
+import { Menu, MenuContent, MenuItem, MenuLabel, MenuSeparator, MenuTrigger } from "../../ui";
 import { ACCESS } from "../access";
 import ChangePasswordDialog from "./ChangePasswordDialog";
+import { LANGUAGES, currentLanguage, setLanguage, t, type Language } from "../../i18n";
+
+/** Keep the choice on the account too, so it follows the user to another browser. */
+async function chooseLanguage(language: Language) {
+  if (language === currentLanguage()) return;
+  try {
+    await api.put("/auth/settings", { language });
+  } catch {
+    /* the browser still remembers it */
+  }
+  setLanguage(language);
+}
 
 const AccountMenu: React.FC = () => {
   const { user, logout } = useAuth();
@@ -19,7 +32,7 @@ const AccountMenu: React.FC = () => {
       <MenuTrigger asChild>
         <button
           type="button"
-          aria-label={`Account menu for ${name}`}
+          aria-label={t("Account menu for {{name}}", { name })}
           className="flex cursor-pointer items-center gap-2 rounded-full border-0 bg-transparent py-1 pl-1 pr-3 transition-colors hover:bg-ink-100"
         >
           <span className="flex size-8 items-center justify-center rounded-full bg-primary text-sm font-bold text-on-primary">
@@ -37,20 +50,37 @@ const AccountMenu: React.FC = () => {
         <MenuSeparator />
         {ACCESS.nonIT(user) && (
           <MenuItem icon={Settings} onSelect={() => navigate("/settings")}>
-            Settings &amp; Standards
+            {t("Settings & Standards")}
           </MenuItem>
         )}
         {ACCESS.audit(user) && (
           <MenuItem icon={History} onSelect={() => navigate("/audit-trail")}>
-            Audit Trail
+            {t("Audit Trail")}
           </MenuItem>
         )}
         <MenuItem icon={KeyRound} onSelect={() => setPasswordOpen(true)}>
-          Change password
+          {t("Change password")}
         </MenuItem>
         <MenuSeparator />
+        <MenuLabel className="flex items-center gap-1.5">
+          <Languages className="size-3.5" aria-hidden="true" /> {t("Language")}
+        </MenuLabel>
+        {LANGUAGES.map((l) => (
+          <MenuItem
+            key={l.value}
+            lang={l.value}
+            onSelect={() => void chooseLanguage(l.value)}
+            aria-current={l.value === currentLanguage() ? "true" : undefined}
+          >
+            <span className="flex w-full items-center justify-between">
+              {l.label}
+              {l.value === currentLanguage() && <Check className="size-4 text-brand-700" aria-hidden="true" />}
+            </span>
+          </MenuItem>
+        ))}
+        <MenuSeparator />
         <MenuItem icon={LogOut} danger onSelect={() => logout()}>
-          Sign out
+          {t("Sign out")}
         </MenuItem>
       </MenuContent>
     </Menu>

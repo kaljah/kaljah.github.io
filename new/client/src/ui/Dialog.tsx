@@ -3,6 +3,7 @@ import * as RadixDialog from "@radix-ui/react-dialog";
 import { X, type LucideIcon } from "lucide-react";
 import { Button } from "./Button";
 import { cn } from "./cn";
+import { t } from "../i18n";
 
 // Legacy dropdown/listbox portals live outside the dialog; clicking them must not count as an outside click.
 const isForeignPortal = (target: unknown): boolean =>
@@ -133,7 +134,7 @@ export const Sheet: React.FC<SheetProps> = ({
               )}
             </div>
           </div>
-          <CloseButton label="Close panel" />
+          <CloseButton label={t("Close panel")} />
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">{children}</div>
         {footer && <div className="flex items-center justify-end gap-2 border-t border-border px-5 py-3">{footer}</div>}
@@ -179,7 +180,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
           {cancelLabel}
         </Button>
         <Button variant={confirmVariant === "danger" ? "danger" : "primary"} onClick={onConfirm} loading={loading}>
-          {loading ? "Processing..." : confirmLabel}
+          {loading ? t("Processing...") : confirmLabel}
         </Button>
       </>
     }

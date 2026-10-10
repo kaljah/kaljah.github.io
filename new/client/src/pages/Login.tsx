@@ -1,11 +1,12 @@
 import { CircleAlert, Eye, EyeOff, Lock, Mail } from "lucide-react";
-import { Banner } from "../ui";
+import { Banner, SegmentedControl } from "../ui";
 import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import api from "../api";
 import "./Login.css";
+import { LANGUAGES, currentLanguage, setLanguage, t, type Language } from "../i18n";
 
 const GhgCloud: React.FC = () => {
   const cloud1Ref = useRef<HTMLDivElement>(null);
@@ -141,15 +142,15 @@ const Login: React.FC = () => {
       >
         {/* Welcome Text */}
         <div className="[text-align:center] [margin-bottom:32px] [&_h2]:[font-size:var(--text-2xl)] [&_h2]:[font-weight:800] [&_h2]:[color:var(--text-main)] [&_h2]:[margin-bottom:8px] [&_h2]:[letter-spacing:-0.5px] [&&]:[&_p]:[color:var(--text-muted)] [&&]:[&&]:[&_p]:[font-size:var(--text-md)]">
-          <img src={`${import.meta.env.BASE_URL}carbon_tech.svg`} alt="Neocarbon" className="[display:block] [width:48px] [height:48px] [margin:0_auto_12px]" />
-          <h2>Welcome Back</h2>
-          <p>Sign in to your GHG Reporting Platform</p>
+          <img src={`${import.meta.env.BASE_URL}carbon_tech.svg`} alt={t("Neocarbon")} className="[display:block] [width:48px] [height:48px] [margin:0_auto_12px]" />
+          <h2>{t("Welcome Back")}</h2>
+          <p>{t("Sign in to your GHG Reporting Platform")}</p>
         </div>
 
         {/* Inactivity Session Expiration Banner */}
         {sessionExpired && (
           <Banner tone="warning" className="mb-4">
-            Your session timed out after 10 minutes of inactivity. Please sign in again to resume your work.
+            {t("Your session timed out after 10 minutes of inactivity. Please sign in again to resume your work.")}
           </Banner>
         )}
 
@@ -190,8 +191,8 @@ const Login: React.FC = () => {
                 type="text"
                 className="[width:100%] [padding:14px_16px_14px_48px] [border:1px_solid_var(--border-light)] [&&]:[border-radius:var(--radius-md)] [font-size:var(--text-md)] [color:var(--text-main)]! [transition:all_0.2s] [background:var(--color-legacy-fafafa)] placeholder:[color:var(--color-ink-400)]! focus:[outline:none] focus:[border-color:var(--primary)] focus:[background:var(--color-white)] focus:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.1)] [&:focus+.input-icon]:[color:var(--primary)]!"
                 required
-                placeholder="Email Address"
-                aria-label="Email address"
+                placeholder={t("Email Address")}
+                aria-label={t("Email address")}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="username"
@@ -214,8 +215,8 @@ const Login: React.FC = () => {
                 type={showPassword ? "text" : "password"}
                 className="[width:100%] [padding:14px_16px_14px_48px] [border:1px_solid_var(--border-light)] [&&]:[border-radius:var(--radius-md)] [font-size:var(--text-md)] [color:var(--text-main)]! [transition:all_0.2s] [background:var(--color-legacy-fafafa)] placeholder:[color:var(--color-ink-400)]! focus:[outline:none] focus:[border-color:var(--primary)] focus:[background:var(--color-white)] focus:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.1)] [&:focus+.input-icon]:[color:var(--primary)]!"
                 required
-                placeholder="Password"
-                aria-label="Password"
+                placeholder={t("Password")}
+                aria-label={t("Password")}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
@@ -224,7 +225,7 @@ const Login: React.FC = () => {
                 type="button"
                 className="[position:absolute] [top:50%] [right:12px] [transform:translateY(-50%)] [display:inline-flex] [padding:6px] [border:0] [&&]:[border-radius:var(--radius-md)] [background:transparent] [color:var(--color-ink-500)] [cursor:pointer] hover:[background:var(--color-ink-100)] hover:[color:var(--color-ink-900)]"
                 onClick={() => setShowPassword((v) => !v)}
-                aria-label={showPassword ? "Hide password" : "Show password"}
+                aria-label={showPassword ? t("Hide password") : t("Show password")}
                 aria-pressed={showPassword}
               >
                 {showPassword ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
@@ -242,7 +243,7 @@ const Login: React.FC = () => {
                 setShowForgotModal(true);
               }}
             >
-              Forgot password?
+              {t("Forgot password?")}
             </button>
           </div>
 
@@ -256,13 +257,21 @@ const Login: React.FC = () => {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            Sign In
+            {t("Sign In")}
           </motion.button>
         </motion.form>
 
-        {/* Footer / Compliance */}
+        {/* Footer */}
         <div className="[margin-top:40px] [text-align:center] [border-top:1px_solid_var(--border-light)] [padding-top:24px] [&_p]:[color:var(--text-muted)] [&_p]:[font-size:var(--text-sm)]">
-          <p>© {new Date().getFullYear()} Neocarbon. All rights reserved.</p>
+          <SegmentedControl
+            label={t("Language")}
+            size="sm"
+            className="mx-auto mb-4"
+            value={currentLanguage()}
+            onChange={(v) => setLanguage(v as Language)}
+            options={LANGUAGES.map((l) => ({ value: l.value, label: <span lang={l.value}>{l.label}</span> }))}
+          />
+          <p>© {new Date().getFullYear()}{" "}{t("Neocarbon. All rights reserved.")}</p>
         </div>
       </motion.div>
 
@@ -279,9 +288,9 @@ const Login: React.FC = () => {
               transition={{ duration: 0.2 }}
             >
               <div className="[margin-bottom:20px] [text-align:left] [&_h3]:[font-size:var(--text-xl)] [&_h3]:[font-weight:700] [&_h3]:[color:var(--text-main)] [&_h3]:[margin-bottom:6px] [&&]:[&&]:[&_p]:[font-size:var(--text-base)] [&&]:[&_p]:[color:var(--text-muted)] [&_p]:[line-height:1.4]">
-                <h3>Reset Your Password</h3>
+                <h3>{t("Reset Your Password")}</h3>
                 <p>
-                  Enter your account email. A notification will be dispatched to your IT Administrator to reset your credentials.
+                  {t("Enter your account email. A notification will be dispatched to your IT Administrator to reset your credentials.")}
                 </p>
               </div>
 
@@ -301,7 +310,7 @@ const Login: React.FC = () => {
                       type="email"
                       className="[width:100%] [padding:14px_16px_14px_48px] [border:1px_solid_var(--border-light)] [&&]:[border-radius:var(--radius-md)] [font-size:var(--text-md)] [color:var(--text-main)]! [transition:all_0.2s] [background:var(--color-legacy-fafafa)] placeholder:[color:var(--color-ink-400)]! focus:[outline:none] focus:[border-color:var(--primary)] focus:[background:var(--color-white)] focus:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.1)] [&:focus+.input-icon]:[color:var(--primary)]!"
                       required
-                      placeholder="Enter registered email"
+                      placeholder={t("Enter registered email")}
                       value={forgotEmail}
                       onChange={(e) => setForgotEmail(e.target.value)}
                       autoFocus
@@ -315,7 +324,7 @@ const Login: React.FC = () => {
                     className="btn-secondary"
                     onClick={() => setShowForgotModal(false)}
                   >
-                    Cancel
+                    {t("Cancel")}
                   </button>
                   <button
                     type="submit"
@@ -323,7 +332,7 @@ const Login: React.FC = () => {
                    
                     disabled={forgotLoading}
                   >
-                    {forgotLoading ? "Sending..." : "Notify IT Admin"}
+                    {forgotLoading ? t("Sending...") : t("Notify IT Admin")}
                   </button>
                 </div>
               </form>

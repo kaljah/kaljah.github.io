@@ -2,6 +2,7 @@ import React from "react";
 import { ChevronDown, ChevronUp, Radio } from "lucide-react";
 import { activateOnKey } from "../../utils/a11yKeys";
 import { formatNumber } from "../../utils/formatters";
+import { t } from "../../i18n";
 
 export interface MethaneIntensityOGMP20LevelProps {
   globalThreshold?: number;
@@ -30,18 +31,17 @@ const MethaneIntensityOGMP20Level: React.FC<MethaneIntensityOGMP20LevelProps> = 
       <div>
         <h3 className="flex! items-center! gap-[8px]!">
           <Radio size={20} color="var(--accent-secondary)" />
-          OGMP 2.0 Level 4/5 Top-Down Survey & Bottom-Up Reconciliation
+          {t("OGMP 2.0 Level 4/5 Top-Down Survey & Bottom-Up Reconciliation")}
         </h3>
         <p className="text-[color:var(--text-secondary)]! text-[length:0.875rem]! m-[4px_0_0_0]!">
-          Site-level measurement (Satellite, OGI, Drone, Aircraft)
-          reconciled with source-level bottom-up inventory
+          {t("Site-level measurement (Satellite, OGI, Drone, Aircraft) reconciled with source-level bottom-up inventory")}
         </p>
       </div>
       <div className="flex! items-center! gap-[12px]!">
         <div
           className="ogmp-level-badge bg-[color:rgba(37,_99,_235,_0.1)]! text-[color:var(--color-blue-600)]! p-[6px_14px]! rounded-[8px]! text-[length:0.85rem]! font-semibold!"
         >
-          Gold Standard Pathway: Level 5 Reconciled
+          {t("Gold Standard Pathway: Level 5 Reconciled")}
         </div>
         {ogmpCollapsed ? (
           <ChevronDown size={18} color="var(--text-secondary)" />
@@ -56,19 +56,19 @@ const MethaneIntensityOGMP20Level: React.FC<MethaneIntensityOGMP20LevelProps> = 
     >
       {ogmpSurveys.length > 0 ? (
         // Scrolls sideways when the table is wider than the card; focusable so keyboard users can scroll it.
-        <div className="table-responsive" tabIndex={0} role="region" aria-label="OGMP 2.0 site-level surveys">
+        <div className="table-responsive" tabIndex={0} role="region" aria-label={t("OGMP 2.0 site-level surveys")}>
           <table className="custom-table">
             <thead>
               <tr>
-                <th>Facility</th>
-                <th>Survey Date</th>
-                <th>Technology / Method</th>
-                <th>Measured Rate (kg CH₄/hr)</th>
-                <th>Annualized Rate (tCH₄/yr)</th>
-                <th>Bottom-Up Annual (tCH₄)</th>
-                <th>Variance (%)</th>
-                <th>Reconciliation Status</th>
-                <th>Operator Notes</th>
+                <th>{t("Facility")}</th>
+                <th>{t("Survey Date")}</th>
+                <th>{t("Technology / Method")}</th>
+                <th>{t("Measured Rate (kg CH₄/hr)")}</th>
+                <th>{t("Annualized Rate (tCH₄/yr)")}</th>
+                <th>{t("Bottom-Up Annual (tCH₄)")}</th>
+                <th>{t("Variance (%)")}</th>
+                <th>{t("Reconciliation Status")}</th>
+                <th>{t("Operator Notes")}</th>
               </tr>
             </thead>
             <tbody>
@@ -173,9 +173,8 @@ const MethaneIntensityOGMP20Level: React.FC<MethaneIntensityOGMP20LevelProps> = 
       ) : (
         <div className="[padding:32px] [text-align:center] [background:var(--bg-app)] [border-radius:var(--radius-md)] [border:1px_dashed_var(--border-color)] [color:var(--text-secondary)] [font-size:var(--text-base)] [margin-top:16px]">
           <p>
-            No OGMP 2.0 top-down surveys registered for the selected
-            filters. Record survey campaigns via{" "}
-            <strong>Manage Data &gt; OGMP Surveys</strong>.
+            {t("No OGMP 2.0 top-down surveys registered for the selected filters. Record survey campaigns via")}{" "}
+            <strong>{t("Manage Data > OGMP Surveys")}</strong>.
           </p>
         </div>
       )}

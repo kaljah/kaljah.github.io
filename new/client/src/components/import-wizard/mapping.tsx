@@ -3,6 +3,7 @@ import { Check, ChevronDown, CloudUpload, TriangleAlert } from "lucide-react";
 import { Badge, Banner } from "../../ui";
 import { cn } from "../../ui/cn";
 import { activateOnKey } from "../../utils/a11yKeys";
+import { t } from "../../i18n";
 
 export const controlClass =
   "h-9 w-full rounded-md border bg-surface px-2.5 text-sm text-text transition-colors hover:border-ink-300 focus:border-brand-500";
@@ -35,7 +36,7 @@ export const MappingRow: React.FC<MappingRowProps> = ({ field, headers, value, o
       <div className="flex min-w-0 flex-col gap-0.5">
         <span className="flex items-center gap-1 text-sm font-semibold text-text">
           {field.label}
-          {field.required && <span className="size-1.5 shrink-0 rounded-full bg-red-500" role="img" aria-label="required" />}
+          {field.required && <span className="size-1.5 shrink-0 rounded-full bg-red-500" role="img" aria-label={t("required")} />}
         </span>
         {field.hint && <span className="text-xs leading-snug text-text-secondary">{field.hint}</span>}
       </div>
@@ -46,7 +47,7 @@ export const MappingRow: React.FC<MappingRowProps> = ({ field, headers, value, o
           value={value}
           onChange={(e) => onChange(e.target.value)}
         >
-          <option value="">— Not mapped —</option>
+          <option value="">{t("— Not mapped —")}</option>
           {headers.map((h) => (
             <option key={h} value={h}>
               {h}
@@ -57,7 +58,7 @@ export const MappingRow: React.FC<MappingRowProps> = ({ field, headers, value, o
         <input
           aria-label={`File column for ${field.label}`}
           className={cn(controlClass, mapped ? "border-green-500" : "border-border")}
-          placeholder="Column name in your file"
+          placeholder={t("Column name in your file")}
           value={value}
           onChange={(e) => onChange(e.target.value)}
         />
@@ -66,7 +67,7 @@ export const MappingRow: React.FC<MappingRowProps> = ({ field, headers, value, o
         {mapped ? (
           <span className="flex size-5.5 items-center justify-center rounded-full bg-green-500 text-white">
             <Check className="size-3.5" strokeWidth={3} aria-hidden="true" />
-            <span className="sr-only">Mapped</span>
+            <span className="sr-only">{t("Mapped")}</span>
           </span>
         ) : (
           <span className="size-5.5 rounded-full border-2 border-ink-200" aria-hidden="true" />
@@ -118,16 +119,16 @@ export const FieldGroup: React.FC<FieldGroupProps> = ({ group, headers, mapping,
           {group.badge && <Badge tone="success">{group.badge}</Badge>}
         </span>
         <span className="flex items-center gap-2.5 text-sm font-semibold text-text-secondary">
-          {mappedCount}/{visible.length} mapped
+          {mappedCount}/{visible.length}{" "}{t("mapped")}
           <ChevronDown className={cn("size-4 transition-transform", open && "rotate-180")} aria-hidden="true" />
         </span>
       </button>
       {open && (
         <div className="border-t border-border">
           <div className="grid gap-3 border-b border-border bg-ink-50 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-text-secondary [grid-template-columns:minmax(0,1.2fr)_minmax(0,1fr)_40px]">
-            <span>Field</span>
-            <span>Your file column</span>
-            <span className="text-center">Status</span>
+            <span>{t("Field")}</span>
+            <span>{t("Your file column")}</span>
+            <span className="text-center">{t("Status")}</span>
           </div>
           {visible.map((field) => (
             <MappingRow
@@ -176,9 +177,9 @@ export const FileDrop: React.FC<FileDropProps> = ({ inputRef, dragging, onDraggi
       <CloudUpload className="size-7" strokeWidth={1.75} aria-hidden="true" />
     </span>
     <p className="m-0 text-base font-semibold text-text">
-      Drag & drop your file here, or <span className="text-brand-700 underline">click to browse</span>
+      {t("Drag & drop your file here, or")}{" "}<span className="text-brand-700 underline">{t("click to browse")}</span>
     </p>
-    <p className="m-0 text-sm text-text-secondary">Supports .xlsx and .csv</p>
+    <p className="m-0 text-sm text-text-secondary">{t("Supports .xlsx and .csv")}</p>
     {error && (
       <p role="alert" className="m-0 flex items-center gap-1.5 text-sm font-medium text-danger-fg">
         <TriangleAlert className="size-3.5" aria-hidden="true" /> {error}
@@ -196,15 +197,15 @@ export interface RegionAccessProps {
 export const RegionAccess: React.FC<RegionAccessProps> = ({ regions, compact = false }) => {
   if (!regions.length) {
     return (
-      <Banner tone="danger" title={compact ? "No accessible regions" : undefined}>
+      <Banner tone="danger" title={compact ? t("No accessible regions") : undefined}>
         {compact
-          ? "Your account has no assigned regions. All rows will be rejected. Contact an administrator."
-          : "Your account has no assigned regions. Contact an administrator before uploading."}
+          ? t("Your account has no assigned regions. All rows will be rejected. Contact an administrator.")
+          : t("Your account has no assigned regions. Contact an administrator before uploading.")}
       </Banner>
     );
   }
   return (
-    <Banner tone="warning" title={compact ? "Allowed regions" : "Your upload is restricted to the following regions"}>
+    <Banner tone="warning" title={compact ? t("Allowed regions") : t("Your upload is restricted to the following regions")}>
       <div className="mt-1.5 flex flex-wrap gap-1.5">
         {regions.map((r) => (
           <Badge key={r} tone="brand">

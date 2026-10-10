@@ -3,6 +3,7 @@ import { Input, Field } from "../../ui";
 import { CircleAlert } from "lucide-react";
 import { NativeSelect } from "../../ui/NativeSelect";
 import PaginationControls from "./PaginationControls";
+import { t } from "../../i18n";
 
 export interface OgmpSurveyRecord {
   id: string | number;
@@ -72,9 +73,9 @@ const OgmpTab: React.FC<OgmpTabProps> = ({
 }) => (
   <div className="tab-pane active">
     <div className="section-header mb-[24px]!">
-      <h2>OGMP 2.0 Level 4 & 5 Top-Down / Bottom-Up Surveys</h2>
+      <h2>{t("OGMP 2.0 Level 4 & 5 Top-Down / Bottom-Up Surveys")}</h2>
       <p className="text-[color:var(--text-secondary)]! mt-[4px]!">
-        Log site-level top-down measurements (satellite, aerial LiDAR, drone, ground OGI) to reconcile against inventory estimates under Oil and Gas Methane Partnership (OGMP 2.0) Level 4/5 standards.
+        {t("Log site-level top-down measurements (satellite, aerial LiDAR, drone, ground OGI) to reconcile against inventory estimates under Oil and Gas Methane Partnership (OGMP 2.0) Level 4/5 standards.")}
       </p>
     </div>
 
@@ -82,15 +83,15 @@ const OgmpTab: React.FC<OgmpTabProps> = ({
     <div className="flex! items-center! gap-[10px]! bg-[color:var(--color-blue-50)]! [border:1px_solid_var(--color-legacy-bfdbfe)]! rounded-[10px]! p-[12px_16px]! mb-[24px]!">
       <CircleAlert size={18} strokeWidth={2} className="shrink-0!" aria-hidden="true" />
       <div>
-        <strong className="text-[color:var(--color-blue-700)]! text-[length:0.85rem]!">Oil & Gas Scope Only</strong>
+        <strong className="text-[color:var(--color-blue-700)]! text-[length:0.85rem]!">{t("Oil & Gas Scope Only")}</strong>
         <span className="text-[color:var(--color-blue-700)]! text-[length:0.83rem]! ml-[8px]!">
-          OGMP 2.0 applies exclusively to Oil & Gas operations (Upstream, Midstream, LNG). Heavy industry facilities (Steel, Cement, Chemicals) are not in scope.
+          {t("OGMP 2.0 applies exclusively to Oil & Gas operations (Upstream, Midstream, LNG). Heavy industry facilities (Steel, Cement, Chemicals) are not in scope.")}
         </span>
       </div>
     </div>
 
     <div className="form-grid-3">
-      <Field className="input-group" label="Activity">
+      <Field className="input-group" label={t("Activity")}>
         <NativeSelect
           value={ogmpForm.activity || ""}
           onChange={(e) => {
@@ -105,7 +106,7 @@ const OgmpTab: React.FC<OgmpTabProps> = ({
           }}
           className="component-select"
         >
-          <option value="">-- Select Activity (Oil &amp; Gas) --</option>
+          <option value="">{t("-- Select Activity (Oil & Gas) --")}</option>
           {getAvailableActivities()
             .filter((a) => !NON_OG_ACTIVITIES.includes(a))
             .map((a) => (
@@ -116,7 +117,7 @@ const OgmpTab: React.FC<OgmpTabProps> = ({
         </NativeSelect>
       </Field>
 
-      <Field className="input-group" label="Division">
+      <Field className="input-group" label={t("Division")}>
         <NativeSelect
           value={ogmpForm.division || ""}
           onChange={(e) => {
@@ -130,7 +131,7 @@ const OgmpTab: React.FC<OgmpTabProps> = ({
           className="component-select"
           disabled={!ogmpForm.activity}
         >
-          <option value="">-- Select Division --</option>
+          <option value="">{t("-- Select Division --")}</option>
           {getAvailableDivisions(ogmpForm.activity).map((d) => (
             <option key={d} value={d}>
               {d}
@@ -139,13 +140,13 @@ const OgmpTab: React.FC<OgmpTabProps> = ({
         </NativeSelect>
       </Field>
 
-      <Field className="input-group" label="Facility / Region *">
+      <Field className="input-group" label={t("Facility / Region *")}>
         <NativeSelect
           value={ogmpForm.facility_id || ""}
           onChange={(e) => setOgmpForm({ ...ogmpForm, facility_id: e.target.value })}
           className="component-select"
         >
-          <option value="">-- Select O&amp; Gas Facility --</option>
+          <option value="">{t("-- Select O& Gas Facility --")}</option>
           {facilities
             .filter(
               (f) =>
@@ -155,13 +156,13 @@ const OgmpTab: React.FC<OgmpTabProps> = ({
             )
             .map((f) => (
               <option key={f.id} value={f.id}>
-                {f.name} ({f.location || f.field || "General"})
+                {f.name} ({f.location || f.field || t("General")})
               </option>
             ))}
         </NativeSelect>
       </Field>
 
-      <Field className="input-group" label="Survey Date *">
+      <Field className="input-group" label={t("Survey Date *")}>
         <Input
           type="date"
           value={ogmpForm.survey_date || ""}
@@ -173,22 +174,22 @@ const OgmpTab: React.FC<OgmpTabProps> = ({
         />
       </Field>
 
-      <Field className="input-group" label="Measurement Technology (Level 4/5) *">
+      <Field className="input-group" label={t("Measurement Technology (Level 4/5) *")}>
         <NativeSelect
           value={ogmpForm.survey_type || "Satellite (Sentinel-5P/MethaneSAT)"}
           onChange={(e) => setOgmpForm({ ...ogmpForm, survey_type: e.target.value })}
           className="component-select"
         >
-          <option value="Satellite (Sentinel-5P/MethaneSAT)">Satellite (Sentinel-5P / MethaneSAT / GHGSat)</option>
-          <option value="Aircraft OGI / Hyperspectral">Aircraft Hyperspectral / LiDAR Aerial</option>
-          <option value="Drone / UAV LiDAR Scanning">Drone / UAV Tunable Diode Laser (TDLAS)</option>
-          <option value="Ground Mobile / OGI FLIR Camera">Ground Mobile / Optical Gas Imaging (OGI FLIR)</option>
-          <option value="Fixed Continuous Sensor Array">Fixed Continuous Point Sensor Array</option>
-          <option value="Bottom-Up Source Component Measurement">Bottom-Up High-Flow Component Sampling</option>
+          <option value="Satellite (Sentinel-5P/MethaneSAT)">{t("Satellite (Sentinel-5P / MethaneSAT / GHGSat)")}</option>
+          <option value="Aircraft OGI / Hyperspectral">{t("Aircraft Hyperspectral / LiDAR Aerial")}</option>
+          <option value="Drone / UAV LiDAR Scanning">{t("Drone / UAV Tunable Diode Laser (TDLAS)")}</option>
+          <option value="Ground Mobile / OGI FLIR Camera">{t("Ground Mobile / Optical Gas Imaging (OGI FLIR)")}</option>
+          <option value="Fixed Continuous Sensor Array">{t("Fixed Continuous Point Sensor Array")}</option>
+          <option value="Bottom-Up Source Component Measurement">{t("Bottom-Up High-Flow Component Sampling")}</option>
         </NativeSelect>
       </Field>
 
-      <Field className="input-group" label="Measured Emission Rate (kg CH₄ / hr) *">
+      <Field className="input-group" label={t("Measured Emission Rate (kg CH₄ / hr) *")}>
         <Input
           type="number"
           step="0.1"
@@ -198,33 +199,33 @@ const OgmpTab: React.FC<OgmpTabProps> = ({
         />
       </Field>
 
-      <Field className="input-group" label="Reconciliation Status">
+      <Field className="input-group" label={t("Reconciliation Status")}>
         <NativeSelect
           value={ogmpForm.reconciliation_status || "Reconciled"}
           onChange={(e) => setOgmpForm({ ...ogmpForm, reconciliation_status: e.target.value })}
           className="component-select"
         >
-          <option value="Reconciled">Reconciled (Within Uncertainty Margin)</option>
-          <option value="Discrepancy Detected">Discrepancy Detected (Bottom-Up Underestimated)</option>
-          <option value="Investigation Pending">Investigation Pending / Root Cause Analysis</option>
-          <option value="Under Review">Under Review by Operations</option>
+          <option value="Reconciled">{t("Reconciled (Within Uncertainty Margin)")}</option>
+          <option value="Discrepancy Detected">{t("Discrepancy Detected (Bottom-Up Underestimated)")}</option>
+          <option value="Investigation Pending">{t("Investigation Pending / Root Cause Analysis")}</option>
+          <option value="Under Review">{t("Under Review by Operations")}</option>
         </NativeSelect>
       </Field>
 
       <div className="input-group [grid-column:span_2]!">
-        <label>Operator Notes & Campaign Metadata</label>
+        <label>{t("Operator Notes & Campaign Metadata")}</label>
         <Input
           type="text"
           value={ogmpForm.operator_notes || ""}
           onChange={(e) => setOgmpForm({ ...ogmpForm, operator_notes: e.target.value })}
-          placeholder="Wind speed, flight altitude, pass number, observation conditions"
+          placeholder={t("Wind speed, flight altitude, pass number, observation conditions")}
         />
       </div>
     </div>
 
     <div className="flex! gap-[12px]! mt-[20px]!">
       <button className="action-btn" onClick={handleSaveOgmpSurvey}>
-        {editingOgmpId ? "Update Survey Record" : "Save OGMP Survey"}
+        {editingOgmpId ? t("Update Survey Record") : t("Save OGMP Survey")}
       </button>
       {editingOgmpId && (
         <button
@@ -245,29 +246,29 @@ const OgmpTab: React.FC<OgmpTabProps> = ({
             });
           }}
         >
-          Cancel Edit
+          {t("Cancel Edit")}
         </button>
       )}
     </div>
 
-    <div className="table-container mt-[40px]!" tabIndex={0} role="region" aria-label="OGMP 2.0 survey records">
+    <div className="table-container mt-[40px]!" tabIndex={0} role="region" aria-label={t("OGMP 2.0 survey records")}>
       <div className="flex! justify-between! items-center! mb-[16px]!">
-        <h3>OGMP 2.0 Survey Records</h3>
+        <h3>{t("OGMP 2.0 Survey Records")}</h3>
         <span className="text-[length:0.85rem]! text-[color:var(--text-secondary)]!">
-          Total Surveys: {filteredOgmp.length}
+          {t("Total Surveys:")}{" "}{filteredOgmp.length}
         </span>
       </div>
       <table className="data-table">
         <thead>
           <tr>
-            <th>Facility</th>
-            <th>Survey Date</th>
-            <th>Measurement Method</th>
-            <th className="text-right!">Measured Rate (kg CH₄/hr)</th>
-            <th className="text-right!">Annualized (tCH₄/yr)</th>
-            <th>Reconciliation Status</th>
-            <th>Campaign Notes</th>
-            <th className="text-center!">Actions</th>
+            <th>{t("Facility")}</th>
+            <th>{t("Survey Date")}</th>
+            <th>{t("Measurement Method")}</th>
+            <th className="text-right!">{t("Measured Rate (kg CH₄/hr)")}</th>
+            <th className="text-right!">{t("Annualized (tCH₄/yr)")}</th>
+            <th>{t("Reconciliation Status")}</th>
+            <th>{t("Campaign Notes")}</th>
+            <th className="text-center!">{t("Actions")}</th>
           </tr>
         </thead>
         <tbody>
@@ -337,13 +338,13 @@ const OgmpTab: React.FC<OgmpTabProps> = ({
                           window.scrollTo({ top: 0, behavior: "smooth" });
                         }}
                       >
-                        Edit
+                        {t("Edit")}
                       </button>
                       <button
                         className="[background:var(--color-legacy-fee2e2)] [color:var(--color-red-700)] [border:1px_solid_var(--color-legacy-fecaca)] [&&]:[border-radius:var(--radius-md)] [cursor:pointer] [transition:all_0.2s] hover:[background:var(--color-red-700)] hover:[color:white] p-[4px_8px]! text-[length:0.75rem]!"
                         onClick={() => handleDeleteOgmpSurvey(o.id)}
                       >
-                        Delete
+                        {t("Delete")}
                       </button>
                     </div>
                   </td>
@@ -353,7 +354,7 @@ const OgmpTab: React.FC<OgmpTabProps> = ({
           {filteredOgmp.length === 0 && (
             <tr>
               <td colSpan={8} className="text-center! p-[40px]! text-[color:var(--text-secondary)]!">
-                No OGMP survey records found.
+                {t("No OGMP survey records found.")}
               </td>
             </tr>
           )}

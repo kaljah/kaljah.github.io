@@ -4,6 +4,7 @@ import { Button, Card } from "../../ui";
 import { cn } from "../../ui/cn";
 import { activateOnKey } from "../../utils/a11yKeys";
 import { formatCompactNumber as fmt } from "../../utils/formatters";
+import { t } from "../../i18n";
 
 const INDENT = { 0: "pl-4", 1: "pl-7", 2: "pl-9", 3: "pl-11" } as const;
 
@@ -102,7 +103,7 @@ const DetailedBreakdownSection: React.FC<DetailedBreakdownSectionProps> = ({
           onClick={() => setDetailedBreakdownCollapsed(!detailedBreakdownCollapsed)}
           className="table-header-row clickable-card-header mb-5 flex w-full cursor-pointer items-center justify-between border-0 bg-transparent p-0 text-left hover:opacity-85"
         >
-          <span className="text-lg font-semibold text-text">Detailed breakdown</span>
+          <span className="text-lg font-semibold text-text">{t("Detailed breakdown")}</span>
           {detailedBreakdownCollapsed ? <ChevronDown className="size-[18px] text-ink-500" aria-hidden="true" /> : <ChevronUp className="size-[18px] text-ink-500" aria-hidden="true" />}
         </button>
 
@@ -110,30 +111,30 @@ const DetailedBreakdownSection: React.FC<DetailedBreakdownSectionProps> = ({
           <table className="data-table w-full border-collapse">
             <thead>
               <tr className="bg-ink-50 text-left text-sm font-semibold text-text-secondary">
-                <th scope="col" className="py-2.5 pl-4 pr-4">Category / Source</th>
-                <th scope="col" className="py-2.5 pr-4 text-right">Results (tCO₂e)</th>
+                <th scope="col" className="py-2.5 pl-4 pr-4">{t("Category / Source")}</th>
+                <th scope="col" className="py-2.5 pr-4 text-right">{t("Results (tCO₂e)")}</th>
               </tr>
             </thead>
             <tbody>
-              <Row tone="summary" label="Scope 1 (Direct)" value={fmt(stats.scope1)} />
-              <Row level={1} label="Combustion (stationary & mobile)" value={fmt(stats.combustion)} />
-              <Row level={1} label="Flaring" value={fmt(stats.flaring)} />
+              <Row tone="summary" label={t("Scope 1 (Direct)")} value={fmt(stats.scope1)} />
+              <Row level={1} label={t("Combustion (stationary & mobile)")} value={fmt(stats.combustion)} />
+              <Row level={1} label={t("Flaring")} value={fmt(stats.flaring)} />
               {hasFlaringSplit &&
                 split.map(([name, part]) => (
                   <Row key={name} tone="sub" level={2} label={`↳ ${name} (${part?.percentage ?? 0}%)`} value={fmt(part?.tco2e ?? 0)} />
                 ))}
-              <Row level={1} label="Venting" value={fmt(stats.venting)} />
-              <Row level={1} label="Equipment Leaks / Fugitives" value={fmt(stats.fugitive)} />
-              <Row level={1} label="Other Sources" value={fmt(stats.other)} />
-              <Row tone="summary" label="Scope 2 (Indirect - Energy), location-based" value={fmt(stats.scope2)} />
-              <Row level={1} label="Scope 2 market-based (contractual instruments; not added to the total)" value={fmt(stats.scope2Market ?? stats.scope2)} />
-              <Row tone="summary" label="Scope 3 (Supply Chain)" value={fmt(stats.scope3)} />
-              <Row tone="total" label="Total Footprint (Scopes 1+2+3)" value={fmt(total)} />
-              <Row tone="net" label="Net Footprint" value={fmt(total - (stats.mitigation || 0))} />
+              <Row level={1} label={t("Venting")} value={fmt(stats.venting)} />
+              <Row level={1} label={t("Equipment Leaks / Fugitives")} value={fmt(stats.fugitive)} />
+              <Row level={1} label={t("Other Sources")} value={fmt(stats.other)} />
+              <Row tone="summary" label={t("Scope 2 (Indirect - Energy), location-based")} value={fmt(stats.scope2)} />
+              <Row level={1} label={t("Scope 2 market-based (contractual instruments; not added to the total)")} value={fmt(stats.scope2Market ?? stats.scope2)} />
+              <Row tone="summary" label={t("Scope 3 (Supply Chain)")} value={fmt(stats.scope3)} />
+              <Row tone="total" label={t("Total Footprint (Scopes 1+2+3)")} value={fmt(total)} />
+              <Row tone="net" label={t("Net Footprint")} value={fmt(total - (stats.mitigation || 0))} />
 
               <tr>
                 <td colSpan={2} className="px-4 pb-1.5 pt-5 text-xs font-bold uppercase tracking-wide text-text-secondary">
-                  Organizational breakdown
+                  {t("Organizational breakdown")}
                 </td>
               </tr>
               {Object.entries(getHierarchicalData).map(([act, actData]) => (
@@ -189,7 +190,7 @@ const DetailedBreakdownSection: React.FC<DetailedBreakdownSectionProps> = ({
 
       <Card className="flex flex-col gap-4 self-start p-6">
         <div className="flex items-center justify-between">
-          <h3 className="m-0 text-lg font-semibold text-text">Reference libraries</h3>
+          <h3 className="m-0 text-lg font-semibold text-text">{t("Reference libraries")}</h3>
           <BookOpen className="size-5 text-ink-300" aria-hidden="true" />
         </div>
         <ul className="m-0 flex list-none flex-col gap-3 p-0">
@@ -202,7 +203,7 @@ const DetailedBreakdownSection: React.FC<DetailedBreakdownSectionProps> = ({
           ))}
         </ul>
         <Button variant="secondary" className="manage-factors-btn w-full border-dashed" onClick={() => navigate("/manage-data", { state: { tab: "factors" } })}>
-          <Plus className="size-4" aria-hidden="true" /> Manage Custom Factors
+          <Plus className="size-4" aria-hidden="true" />{" "}{t("Manage Custom Factors")}
         </Button>
       </Card>
     </div>

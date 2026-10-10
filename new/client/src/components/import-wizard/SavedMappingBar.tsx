@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Wand2 } from "lucide-react";
 import { Button, Input, NativeSelect } from "../../ui";
 import type { SavedMapping } from "../../utils/savedMappings";
+import { t } from "../../i18n";
 
 export interface SavedMappingBarProps {
   applied: SavedMapping | null;
@@ -24,16 +25,16 @@ export const SavedMappingBar: React.FC<SavedMappingBarProps> = ({ applied, fitti
       <Wand2 className="size-4 shrink-0 text-brand-700" aria-hidden="true" />
       {applied ? (
         <span>
-          Using your saved mapping <strong className="text-text">{applied.name}</strong>.{" "}
+          {t("Using your saved mapping")}{" "}<strong className="text-text">{applied.name}</strong>.{" "}
           <Button variant="link" size="sm" className="h-auto px-0" onClick={() => onApply(null)}>
-            Don't use it
+            {t("Don't use it")}
           </Button>
         </span>
       ) : fitting.length > 0 ? (
         <label className="flex items-center gap-2">
-          Saved mapping for these columns:
-          <NativeSelect aria-label="Saved mapping" value="" onChange={(e) => onApply(fitting.find((m) => String(m.id) === e.target.value) || null)}>
-            <option value="">Choose…</option>
+          {t("Saved mapping for these columns:")}
+          <NativeSelect aria-label={t("Saved mapping")} value="" onChange={(e) => onApply(fitting.find((m) => String(m.id) === e.target.value) || null)}>
+            <option value="">{t("Choose…")}</option>
             {fitting.map((m) => (
               <option key={m.id} value={m.id}>
                 {m.name}
@@ -42,21 +43,21 @@ export const SavedMappingBar: React.FC<SavedMappingBarProps> = ({ applied, fitti
           </NativeSelect>
         </label>
       ) : (
-        <span>Columns matched automatically. Save the mapping to reuse it for the next file with these columns.</span>
+        <span>{t("Columns matched automatically. Save the mapping to reuse it for the next file with these columns.")}</span>
       )}
       <span className="ml-auto flex items-center gap-2">
         {name === null ? (
           <Button variant="link" size="sm" className="h-auto px-0" disabled={!canSave} onClick={() => setName(applied?.name || defaultName)}>
-            {applied ? "Update saved mapping" : "Save this mapping"}
+            {applied ? t("Update saved mapping") : t("Save this mapping")}
           </Button>
         ) : (
           <>
-            <Input aria-label="Mapping name" maxLength={80} value={name} autoFocus className="h-8 w-48" onChange={(e) => setName(e.target.value)} onKeyDown={(e) => e.key === "Enter" && save()} />
+            <Input aria-label={t("Mapping name")} maxLength={80} value={name} autoFocus className="h-8 w-48" onChange={(e) => setName(e.target.value)} onKeyDown={(e) => e.key === "Enter" && save()} />
             <Button size="sm" onClick={save} disabled={!name.trim()}>
-              Save
+              {t("Save")}
             </Button>
             <Button variant="link" size="sm" className="h-auto px-0" onClick={() => setName(null)}>
-              Cancel
+              {t("Cancel")}
             </Button>
           </>
         )}
