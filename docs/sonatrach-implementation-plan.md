@@ -46,7 +46,7 @@ Material for people to answer; Claude can write all of it from the code.
 | T0.1 | Questionnaire for Sonatrach IT: OS, container runtime (Docker/Podman/Kubernetes), PostgreSQL provided or bundled, outbound internet, certificates, monitoring, backup storage, sign-in standard and directory groups, SMTP relay. | `docs/sonatrach/questions-it.md` | You can send it unedited |
 | T0.2 | Questionnaire for Sonatrach security: test scope, timeline, acceptance criteria, required documents. | `docs/sonatrach/questions-security.md` | Same |
 | T0.3 | HSE answer sheets for HR-01 to HR-10: for each, what the code does today (file and line), the options, a recommendation, and a blank for HSE's answer and signature. Plus the group-size, JV-boundary, base-year and regulator-template questions. | `docs/sonatrach/hse-answer-sheets.md` | Every HR item cites code; you review |
-| T0.4 | Glossary seed for French: about 150 domain terms (torchage, ventage, émissions fugitives, facteur d'émission, ...) for HSE to correct before translation starts. | `docs/sonatrach/glossary-fr.csv` | HSE returns it |
+| T0.4 | Glossary seed for French: about 150 domain terms (torchage, évents, émissions fugitives, facteur d'émission, ...) for HSE to correct before translation starts. | `docs/sonatrach/glossary-fr.csv` | HSE returns it. Started 2026-10-10: 151 terms; venting = « évents » confirmed by the owner (not « ventage »). |
 
 ## M1 - Deployment package
 | # | Task | Files | Verify |
