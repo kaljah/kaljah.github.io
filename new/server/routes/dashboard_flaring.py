@@ -25,6 +25,13 @@ def get_flaring_summary():
                                             source_category, statuses)
 
     user = get_current_user()
+    if is_it_role(user):
+        return (
+            jsonify(
+                {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
+            ),
+            403,
+        )
     allowed_fids = get_allowed_facility_ids(user)
     year = request.args.get("year")
     all_years = not year or year == "all"

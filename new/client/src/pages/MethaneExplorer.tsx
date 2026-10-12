@@ -7,6 +7,7 @@ import {
   Tooltip,
   useMap,
   ZoomControl,
+  GeoJSON,
 } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -24,6 +25,13 @@ import { cn } from "../ui";
 import ExplorerHud from "./explorer/ExplorerHud";
 import ExplorerDrawer from "./explorer/ExplorerDrawer";
 import ExplorerDossier from "./explorer/ExplorerDossier";
+import {
+  ALGERIA_MASK_GEOJSON,
+  ALGERIA_BORDER_GEOJSON,
+  ALGERIA_CENTER,
+  ALGERIA_DEFAULT_ZOOM,
+  ALGERIA_BOUNDS,
+} from "../data/algeriaBoundary";
 import "./MethaneExplorer.css";
 import { t } from "../i18n";
 
@@ -57,9 +65,11 @@ const MapController: React.FC<MapControllerProps> = ({ center, zoom }) => {
   return null;
 };
 
-// Light-themed basemap options (no dark theme)
-// Basemap tiles come from the server (MAP_TILE_URL): none on an offline install, never a public tile
-// server by default (pilot check 2026-10-09, F5: the map used Google's tile server without an API key).
+// Basemap tile configuration: OpenStreetMap (International)
+const OSM_FR_URL = "https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png";
+const OSM_FR_ATTRIBUTION =
+  '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors';
+
 interface MapTiles {
   tile_url: string | null;
   attribution: string | null;
@@ -111,8 +121,8 @@ const EmissionsMap: React.FC = () => {
   const [stats, setStats] = useState<FacilityIntensityStats[]>([]);
   const [filteredFacilities, setFilteredFacilities] = useState<FacilityRecord[]>([]);
   const [selectedFacility, setSelectedFacility] = useState<FacilityRecord | null>(null);
-  const [mapCenter, setMapCenter] = useState<[number, number]>([31.68, 6.07]); // Default centered on Algerian basin
-  const [mapZoom, setMapZoom] = useState<number>(6);
+  const [mapCenter, setMapCenter] = useState<[number, number]>(ALGERIA_CENTER);
+  const [mapZoom, setMapZoom] = useState<number>(ALGERIA_DEFAULT_ZOOM);
   const [availableYears, setAvailableYears] = useState<(number | string)[]>([]);
   const [availableRegions, setAvailableRegions] = useState<string[]>([]);
   const [availableActivities, setAvailableActivities] = useState<string[]>([]);
@@ -130,6 +140,7 @@ const EmissionsMap: React.FC = () => {
   });
   const [viewMode, setViewMode] = useState<string>("methane"); // 'methane' (CH4 default) or 'total' (CO2e)
   const [mapTiles, setMapTiles] = useState<MapTiles | null>(null);
+  const [tileOffline, setTileOffline] = useState<boolean>(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(true);
   const [showPlumeRings, setShowPlumeRings] = useState<boolean>(true);
   const [copiedCoords, setCopiedCoords] = useState<boolean>(false);
@@ -519,22 +530,59 @@ const EmissionsMap: React.FC = () => {
         formatCompact={formatCompact}
       />
 
+      {tileOffline && (
+        <div className="absolute top-[80px] left-6 z-[1000] flex items-center gap-2 rounded-lg border border-amber-300 bg-amber-50/95 px-3 py-1.5 text-xs font-semibold text-amber-800 shadow-md backdrop-blur-sm">
+          <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+          <span>{t("Basemap tiles offline — operating in vector boundary mode")}</span>
+        </div>
+      )}
+
       {/* 3. LEAFLET INTERACTIVE GEOSPATIAL MAP CANVAS */}
       <div className="[position:absolute] [inset:0] [width:100%] [height:100%] [z-index:1]">
         <MapContainer
           center={mapCenter}
           zoom={mapZoom}
+          minZoom={5}
+          maxZoom={14}
+          maxBounds={ALGERIA_BOUNDS}
+          maxBoundsViscosity={1.0}
           zoomControl={false}
-          // without a basemap the map shows a light neutral ground, not Leaflet's grey (contrast of the panels on top)
-          className={cn("h-full! w-full!", mapTiles && !mapTiles.tile_url && "bg-ink-50!")}
+          className="h-full! w-full! bg-ink-100!"
         >
-          {mapTiles?.tile_url && (
-            <TileLayer
-              url={mapTiles.tile_url}
-              attribution={mapTiles.attribution || ""}
-              subdomains={mapTiles.subdomains || "abc"}
-            />
-          )}
+          <TileLayer
+            key="osm-fr-basemap"
+            url={mapTiles?.tile_url || OSM_FR_URL}
+            attribution={mapTiles?.attribution || OSM_FR_ATTRIBUTION}
+            subdomains={mapTiles?.subdomains || "abc"}
+            eventHandlers={{
+              tileerror: () => setTileOffline(true),
+            }}
+          />
+
+          {/* Mask layer that obscures every country outside Algeria */}
+          <GeoJSON
+            key="algeria-mask-overlay"
+            data={ALGERIA_MASK_GEOJSON}
+            style={{
+              fillColor: "var(--color-ink-100)",
+              fillOpacity: 1,
+              stroke: false,
+            }}
+            interactive={false}
+          />
+
+          {/* Algeria sovereign national border outline */}
+          <GeoJSON
+            key="algeria-border-outline"
+            data={ALGERIA_BORDER_GEOJSON}
+            style={{
+              color: "var(--color-brand-600)",
+              weight: 2,
+              opacity: 0.85,
+              fill: false,
+            }}
+            interactive={false}
+          />
 
           <MapController center={mapCenter} zoom={mapZoom} />
           <ZoomControl position="bottomright" />
@@ -651,11 +699,6 @@ const EmissionsMap: React.FC = () => {
             );
           })}
         </MapContainer>
-        {mapTiles && !mapTiles.tile_url && (
-          <p className="absolute bottom-7 left-1/2 z-500 m-0 -translate-x-1/2 whitespace-nowrap rounded-md border border-border bg-surface/90 px-2.5 py-1 text-xs text-text-secondary">
-            {t("No basemap: facilities are shown at their coordinates")}
-          </p>
-        )}
       </div>
 
       {/* 4. COLLAPSIBLE LEFT INTELLIGENCE & RECON DRAWER (WHITE LIGHT THEME) */}

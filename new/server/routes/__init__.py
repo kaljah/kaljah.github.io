@@ -11,4 +11,5 @@ scope3_bp = Blueprint("scope3", __name__)
 managedata_bp = Blueprint("managedata", __name__)
 dashboard_bp = Blueprint("dashboard", __name__)
 factors_bp = Blueprint("factors", __name__)  # New: API 2021 emission factors endpoints
+ldar_bp = Blueprint("ldar", __name__)
 

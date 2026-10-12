@@ -2,6 +2,7 @@ import UserManagementBlock, { type ManagedUser, type RoleMeta } from "./user-man
 import { Globe, Plus, Shield as ShieldIcon, User as UserIcon, Users as UsersIcon, Wrench as WrenchIcon, Lock } from "lucide-react";
 import UserManagementBlock1205, { type UserFormData } from "./user-management/UserManagementBlock1205";
 import UserManagementBlock1503 from "./user-management/UserManagementBlock1503";
+import { UserManagementSessionTab } from "./user-management/UserManagementSessionTab";
 import React, { useState, useEffect } from "react";
 import { NativeSelect } from "../ui/NativeSelect";
 import api from "../api";
@@ -73,6 +74,12 @@ const ROLE_META: Record<string, RoleMeta> = {
     color: "var(--color-blue-700)",
     bg: "var(--color-blue-50)",
     border: "rgba(59,130,246,.25)",
+  },
+  auditor: {
+    label: t("Auditor"),
+    color: "var(--color-sky-700)",
+    bg: "var(--color-sky-50)",
+    border: "rgba(14,165,233,.25)",
   },
 };
 const getRoleMeta = (role?: string): RoleMeta =>
@@ -220,7 +227,7 @@ const S: Record<string, any> = {
   },
 
   tableWrap: { overflowX: "auto" },
-  table: { width: "100%", borderCollapse: "collapse", minWidth: "820px" },
+  table: { width: "100%", borderCollapse: "collapse", minWidth: "980px" },
   th: {
     textAlign: "left",
     padding: "11px 16px",
@@ -424,6 +431,14 @@ const UserManagement: React.FC = () => {
   const [filterRegion, setFilterRegion] = useState<string>("");
   const [filterRole, setFilterRole] = useState<string>("");
   const [hoveredRow, setHoveredRow] = useState<number | string | null>(null);
+  const [activeTab, setActiveTab] = useState<"users" | "sessions">("users");
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("tab") === "sessions" || params.get("tab") === "security") {
+      setActiveTab("sessions");
+    }
+  }, []);
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [editingUser, setEditingUser] = useState<ManagedUser | null>(null);
@@ -493,6 +508,14 @@ const UserManagement: React.FC = () => {
 
   const handleOpenModal = (userToEdit: ManagedUser | null = null) => {
     if (user?.role === "it") return;
+    if (
+      userToEdit &&
+      ["it_admin", "it"].includes(user?.role || "") &&
+      ["admin", "superuser", "it_manager"].includes(userToEdit.role || "")
+    ) {
+      toast.error(t("Protected account: Client IT staff cannot modify Compliance Admin or Superuser accounts."));
+      return;
+    }
     if (userToEdit) {
       setEditingUser(userToEdit);
       setFormData({
@@ -592,8 +615,25 @@ const UserManagement: React.FC = () => {
           toast.error(t("A valid Email address is required."));
           return;
         }
-        if (!formData.password || formData.password.length < 10) {
+        const pwd = formData.password || "";
+        if (!pwd || pwd.length < 10) {
           toast.error(t("Password must be at least 10 characters."));
+          return;
+        }
+        if (!/[A-Z]/.test(pwd)) {
+          toast.error(t("Password needs an uppercase letter."));
+          return;
+        }
+        if (!/[a-z]/.test(pwd)) {
+          toast.error(t("Password needs a lowercase letter."));
+          return;
+        }
+        if (!/[0-9]/.test(pwd)) {
+          toast.error(t("Password needs a digit."));
+          return;
+        }
+        if (!/[!@#$%^&*(),.?":{}|<>\-_+=[\]\\/~`]/.test(pwd)) {
+          toast.error(t("Password needs a special character."));
           return;
         }
         if (
@@ -647,12 +687,20 @@ const UserManagement: React.FC = () => {
       toast.error(t("IT role cannot delete users."));
       return;
     }
+    const found = typeof target === "object" && target !== null ? target : users.find((u) => u.id === target);
+    if (
+      found &&
+      ["it_admin", "it"].includes(user?.role || "") &&
+      ["admin", "superuser", "it_manager"].includes(found.role || "")
+    ) {
+      toast.error(t("Protected account: Client IT staff cannot delete Compliance Admin or Superuser accounts."));
+      return;
+    }
     // Accepts either user object or user id
     if (typeof target === "object" && target !== null) {
       setDeleteTargetUser(target);
     } else {
-      const found = users.find((u) => u.id === target) || { id: target, email: "" };
-      setDeleteTargetUser(found);
+      setDeleteTargetUser(found || { id: target, email: "" });
     }
   };
 
@@ -679,6 +727,13 @@ const UserManagement: React.FC = () => {
   };
 
   const handleOpenResetPassword = (u: ManagedUser) => {
+    if (
+      ["it_admin", "it"].includes(user?.role || "") &&
+      ["admin", "superuser", "it_manager"].includes(u.role || "")
+    ) {
+      toast.error(t("Protected account: Client IT staff cannot reset credentials for Compliance Admin or Superuser accounts."));
+      return;
+    }
     setResetTarget({
       id: u.id,
       fullName: u.fullName || "",
@@ -742,9 +797,9 @@ const UserManagement: React.FC = () => {
 
   /* derived stats */
   const totalUsers = users.length;
-  const adminCount = users.filter((u) => u.role === "admin").length;
-  const itAdminCount = users.filter((u) => ["it_admin", "it_manager"].includes(u.role || "")).length;
-  const standardCount = users.filter((u) => u.role === "user").length;
+  const adminCount = users.filter((u) => ["admin", "superuser"].includes(u.role || "")).length;
+  const itAdminCount = users.filter((u) => ["it_admin", "it_manager", "it"].includes(u.role || "")).length;
+  const standardCount = users.filter((u) => ["user", "auditor"].includes(u.role || "")).length;
 
   const filteredUsers = users.filter((u) => {
     const byRegion =
@@ -844,82 +899,119 @@ const UserManagement: React.FC = () => {
         </div>
       </div>
 
-      {/* ── Stats Row ── */}
-      <div style={S.statsRow}>
-        {[
-          {
-            label: t("Total Users"),
-            value: totalUsers,
-            icon: <UsersIcon size={20} strokeWidth={2} aria-hidden="true" />,
-            color: "var(--color-legacy-6366f1)",
-            bg: "var(--color-legacy-eef2ff)",
-          },
-          {
-            label: t("Standard Users"),
-            value: standardCount,
-            icon: <UserIcon size={20} strokeWidth={2} aria-hidden="true" />,
-            color: "var(--color-blue-500)",
-            bg: "var(--color-blue-50)",
-          },
-          {
-            label: t("Admins"),
-            value: adminCount,
-            icon: <ShieldIcon size={20} strokeWidth={2} aria-hidden="true" />,
-            color: "var(--color-green-500)",
-            bg: "var(--color-green-50)",
-          },
-          {
-            label: t("IT Admins"),
-            value: itAdminCount,
-            icon: <WrenchIcon size={20} strokeWidth={2} aria-hidden="true" />,
-            color: "var(--color-amber-500)",
-            bg: "var(--color-amber-50)",
-          },
-          {
-            label: t("Regions"),
-            value: regions.length,
-            icon: <Globe size={20} aria-hidden="true" />,
-            color: "var(--color-brand-500)",
-            bg: "var(--color-brand-50)",
-          },
-        ].map((stat) => (
-          <div
-            key={stat.label}
-            style={S.statCard}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-3px)";
-              e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,.08)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "none";
-              e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,.04)";
-            }}
-          >
-            <div
-              style={{ ...S.statIcon, background: stat.bg, color: stat.color }}
-            >
-              {stat.icon}
-            </div>
-            <div style={S.statValue}>{loading ? "—" : stat.value}</div>
-            <div style={S.statLabel}>{stat.label}</div>
-          </div>
-        ))}
+      {/* ── Tab Navigation ── */}
+      <div className="flex gap-2 border-b border-border mb-5">
+        <button
+          id="um-tab-users"
+          type="button"
+          onClick={() => setActiveTab("users")}
+          className={`px-4 py-2.5 text-sm font-semibold border-b-2 cursor-pointer inline-flex items-center gap-2 transition-all ${
+            activeTab === "users"
+              ? "border-brand-500 text-brand-600"
+              : "border-transparent text-text-secondary hover:text-text"
+          }`}
+        >
+          <UsersIcon className="size-4" />
+          {t("Identities & Provisioning")}
+        </button>
+        <button
+          id="um-tab-sessions"
+          type="button"
+          onClick={() => setActiveTab("sessions")}
+          className={`px-4 py-2.5 text-sm font-semibold border-b-2 cursor-pointer inline-flex items-center gap-2 transition-all ${
+            activeTab === "sessions"
+              ? "border-brand-500 text-brand-600"
+              : "border-transparent text-text-secondary hover:text-text"
+          }`}
+        >
+          <ShieldIcon className="size-4" />
+          {t("Session Governance & Policy")}
+        </button>
       </div>
 
-      {/* ── Users Table ── */}
-      <UserManagementBlock
-        S={S}
-        filteredUsers={filteredUsers}
-        getRoleMeta={getRoleMeta}
-        handleDelete={handleDelete}
-        handleOpenModal={handleOpenModal}
-        handleOpenResetPassword={handleOpenResetPassword}
-        hoveredRow={hoveredRow}
-        isITOnly={isITOnly}
-        loading={loading}
-        setHoveredRow={setHoveredRow}
-        totalUsers={totalUsers}
-      />
+      {activeTab === "sessions" ? (
+        <UserManagementSessionTab currentUserRole={user?.role} />
+      ) : (
+        <>
+          {/* ── Stats Row ── */}
+          <div style={S.statsRow}>
+            {[
+              {
+                label: t("Total Users"),
+                value: totalUsers,
+                icon: <UsersIcon size={20} strokeWidth={2} aria-hidden="true" />,
+                color: "var(--color-legacy-6366f1)",
+                bg: "var(--color-legacy-eef2ff)",
+              },
+              {
+                label: t("Standard & Audit"),
+                value: standardCount,
+                icon: <UserIcon size={20} strokeWidth={2} aria-hidden="true" />,
+                color: "var(--color-blue-500)",
+                bg: "var(--color-blue-50)",
+              },
+              {
+                label: t("Administrators"),
+                value: adminCount,
+                icon: <ShieldIcon size={20} strokeWidth={2} aria-hidden="true" />,
+                color: "var(--color-green-500)",
+                bg: "var(--color-green-50)",
+              },
+              {
+                label: t("IT Personnel"),
+                value: itAdminCount,
+                icon: <WrenchIcon size={20} strokeWidth={2} aria-hidden="true" />,
+                color: "var(--color-amber-500)",
+                bg: "var(--color-amber-50)",
+              },
+              {
+                label: t("Regions"),
+                value: regions.length,
+                icon: <Globe size={20} aria-hidden="true" />,
+                color: "var(--color-brand-500)",
+                bg: "var(--color-brand-50)",
+              },
+            ].map((stat) => (
+              <div
+                key={stat.label}
+                style={S.statCard}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-3px)";
+                  e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,.08)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "none";
+                  e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,.04)";
+                }}
+              >
+                <div
+                  style={{ ...S.statIcon, background: stat.bg, color: stat.color }}
+                >
+                  {stat.icon}
+                </div>
+                <div style={S.statValue}>{loading ? "—" : stat.value}</div>
+                <div style={S.statLabel}>{stat.label}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* ── Users Table ── */}
+          <UserManagementBlock
+            S={S}
+            filteredUsers={filteredUsers}
+            getRoleMeta={getRoleMeta}
+            handleDelete={handleDelete}
+            handleOpenModal={handleOpenModal}
+            handleOpenResetPassword={handleOpenResetPassword}
+            hoveredRow={hoveredRow}
+            isITOnly={isITOnly}
+            loading={loading}
+            setHoveredRow={setHoveredRow}
+            totalUsers={totalUsers}
+            currentUserRole={user?.role}
+          />
+        </>
+      )}
 
       {/* ── Slide-Over Drawer: Add / Edit User ── */}
       <UserManagementBlock1205
@@ -934,6 +1026,7 @@ const UserManagement: React.FC = () => {
         regions={regions}
         setFormData={setFormData}
         setIsModalOpen={setIsModalOpen}
+        currentUserRole={user?.role}
       />
 
       {/* ── Slide-Over Drawer: Reset Password ── */}

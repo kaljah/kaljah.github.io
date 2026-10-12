@@ -702,6 +702,12 @@ export const Scope1Form: React.FC = () => {
       return;
     }
 
+    const yrNum = parseInt(String(year), 10);
+    if (isNaN(yrNum) || yrNum < 1990 || yrNum > 2100) {
+      toast.warning(tr("Year must be between 1990 and 2100"));
+      return;
+    }
+
     // API Compendium activity tables, gas-volume and combustion methods: the server validates
     // their inputs (SectionMethods); only the activity-table choice is checked here
     const sectionActive =
@@ -1911,6 +1917,8 @@ export const Scope1Form: React.FC = () => {
             <Field className="input-group" label={tr("Year")}>
               <Input
                 type="number"
+                min={1990}
+                max={2100}
                 value={year || ""}
                 onChange={(e) => setYear(e.target.value)}
               />
@@ -2006,24 +2014,8 @@ export const Scope1Form: React.FC = () => {
 
         <div className="s1-actions">
           <button
-            className="btn-add-draft flex-1"
-            disabled={submitting}
-            onClick={() => handleAddEntry("Draft")}
-            style={{
-              background: "rgba(255, 255, 255, 0.9)",
-              border: "1px solid var(--border-color)",
-              color: "var(--text-primary)",
-              fontWeight: 600,
-              padding: "0 16px",
-              borderRadius: "10px",
-              cursor: submitting ? "not-allowed" : "pointer",
-              opacity: submitting ? 0.6 : 1,
-            }}
-          >
-            {submitting ? tr("Saving...") : tr("Save draft")}
-          </button>
-          <button
-            className="btn-add-activity flex-[1.5]"
+            type="button"
+            className="btn-add-activity w-full"
             disabled={submitting}
             onClick={() => handleAddEntry("Verified")}
             style={{
@@ -2031,7 +2023,7 @@ export const Scope1Form: React.FC = () => {
               opacity: submitting ? 0.6 : 1,
             }}
           >
-            {submitting ? tr("Saving...") : tr("Submit")}
+            {submitting ? tr("Processing...") : tr("+ Calculate & Submit for Review")}
           </button>
         </div>
       </div>

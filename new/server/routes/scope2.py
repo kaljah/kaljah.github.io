@@ -318,6 +318,10 @@ def create_scope2_emission():
     if allowed_fids is not None and facility_id_int not in allowed_fids:
         return jsonify({"error": "Unauthorized for this facility"}), 403
 
+    facility = db.session.get(Facility, facility_id_int)
+    if facility is None:
+        return jsonify({"error": "Facility not found", "field": "facility_id"}), 404
+
     user_id = user.id
     source_type = data.get("source_type", "electricity")
     if source_type not in ("electricity", "indirect_steam", "cogen_allocation"):
@@ -369,8 +373,9 @@ def create_scope2_emission():
             market_ef = location_ef
 
         co2e_market = (electricity_kwh * market_ef) / 1000.0
-        co2e = co2e_location
-        emission_factor = location_ef
+        has_market_instrument = bool(market_instrument_type) or (raw_mkt_ef not in (None, ""))
+        co2e = co2e_market if has_market_instrument else co2e_location
+        emission_factor = market_ef if has_market_instrument else location_ef
 
     elif source_type == "indirect_steam":
         try:
@@ -498,6 +503,10 @@ def create_scope2_emission():
                 "message": "Scope 2 emission created",
                 "id": emission_id_val,
                 "co2e": co2e,
+                "co2e_location": co2e_location,
+                "co2e_location_based": co2e_location,
+                "co2e_market": co2e_market,
+                "co2e_market_based": co2e_market,
                 "status": initial_status,
                 "emissions": {
                     "totalCo2e": co2e,
@@ -642,7 +651,8 @@ def update_scope2_emission(emission_id):
             if emission.market_instrument_type and emission.market_instrument_type.lower() in ("rec", "ppa_zero", "go_zero", "renewable_ppa", "green_tariff_zero"):
                 m_ef = 0.0
             emission.co2e_market_based = round((emission.electricity_kwh * m_ef) / 1000.0, 4)
-            emission.co2e = emission.co2e_location_based
+            has_market_instrument = bool(emission.market_instrument_type) or (emission.market_emission_factor is not None)
+            emission.co2e = emission.co2e_market_based if has_market_instrument else emission.co2e_location_based
         elif st in ["steam", "indirect_steam"] or "steam" in st:
             emission.co2e, emission.heat_mmbtu = _recalc_indirect_steam(
                 emission, data, factor, old_heat, old_co2e, old_ef, old_tons)
@@ -661,6 +671,14 @@ def update_scope2_emission(emission_id):
         emission.uncertainty = parse_number(data["uncertainty"], "uncertainty", required=False, min_value=0, max_value=2)
     if "location" in data:
         emission.location = data["location"]
+    if "activity" in data:
+        emission.activity = data["activity"]
+    if "division" in data:
+        emission.division = data["division"]
+    if "region" in data:
+        emission.region = data["region"]
+    if "field" in data:
+        emission.field = data["field"]
     require_plausible_co2e(emission.co2e, emission.co2e_location_based, emission.co2e_market_based)
     try:
         from utils import log_activity_and_notify
@@ -745,8 +763,8 @@ def bulk_import_scope2():
     user = get_current_user()
     if not user:
         return jsonify({"error": "Not authenticated"}), 401
-    if user.role in ["it_admin", "it_manager", "it"]:
-        return jsonify({"error": "IT personnel do not have access to upload emission data"}), 403
+    if user.role in ["auditor", "it_admin", "it_manager", "it"]:
+        return jsonify({"error": "Read-only auditor and IT personnel do not have access to upload emission data"}), 403
 
     allowed_fids = get_allowed_facility_ids(user)
     data = request.get_json() or {}
@@ -849,6 +867,8 @@ def bulk_import_scope2():
             final_uncertainty = u_res["relative_uncertainty"]
 
             require_plausible_co2e(co2e_val, co2e_mkt_val)
+            has_mkt_inst = bool(mkt_inst) or (mkt_ef is not None)
+            co2e_primary = co2e_mkt_val if has_mkt_inst else co2e_val
             emission = Scope2Emission(
                 facility_id=facility.id,
                 year=row_year,
@@ -856,7 +876,7 @@ def bulk_import_scope2():
                 source_type="electricity",
                 electricity_kwh=kwh,
                 emission_factor=ef,
-                co2e=co2e_val,
+                co2e=co2e_primary,
                 co2e_location_based=co2e_val,
                 co2e_market_based=co2e_mkt_val,
                 market_instrument_type=mkt_inst,

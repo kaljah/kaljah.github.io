@@ -266,10 +266,7 @@ def bulk_import_production():
 
     from routes.dashboard import clear_dashboard_cache
     clear_dashboard_cache()
-    return jsonify({'message': f'{imported_count} production records imported', 'errors': row_errors}), 201
-
-
-
+    return jsonify({'message': f'{imported_count} production records imported', 'imported_count': imported_count, 'errors': row_errors, 'row_errors': row_errors}), 201
 
 
 # ==========================================
@@ -377,8 +374,8 @@ def _live_reconciliation(d):
 @login_required
 def save_ogmp_survey():
     user = get_current_user()
-    if is_it_role(user):
-        return jsonify({'error': 'IT administrators are not authorized to modify operational OGMP data.'}), 403
+    if is_it_role(user) or (user and user.role == "auditor"):
+        return jsonify({'error': 'Read-only auditor and IT roles cannot modify operational OGMP data.'}), 403
     data = request.get_json() or {}
     from input_validation import parse_number, parse_year
     from services.ogmp import facility_bottom_up_tch4, reconcile
@@ -535,8 +532,8 @@ def delete_ogmp_survey(record_id):
 @login_required
 def log_level_upgrade():
     user = get_current_user()
-    if is_it_role(user):
-        return jsonify({'error': 'IT administrators are not authorized to modify operational OGMP data.'}), 403
+    if is_it_role(user) or (user and user.role == "auditor"):
+        return jsonify({'error': 'Read-only auditor and IT roles cannot modify operational OGMP data.'}), 403
     data = request.get_json() or {}
     facility_id = data.get('facility_id')
     source_type_code = data.get('source_type_code', 'ALL')
@@ -667,14 +664,28 @@ def get_cbam_exports():
         'facility_id': r.facility_id,
         'year': r.year,
         'month': r.month,
+        'quarter': r.quarter or f"Q{(r.month - 1) // 3 + 1 if r.month else 1}",
         'product_name': r.product_name,
         'cn_code': r.cn_code,
         'quantity_tonnes': r.quantity_tonnes,
         'export_destination': r.export_destination,
         'specific_embedded_direct': r.specific_embedded_direct,
         'specific_embedded_indirect': r.specific_embedded_indirect,
+        'captured_co2_tonnes': r.captured_co2_tonnes or 0.0,
+        'ccs_certificate_id': r.ccs_certificate_id or '',
+        'carbon_price_paid_eur': r.carbon_price_paid_eur or 0.0,
+        'carbon_price_legal_ref': r.carbon_price_legal_ref or '',
+        'is_complex_good': bool(r.is_complex_good),
+        'precursor_name': r.precursor_name or '',
+        'precursor_cn_code': r.precursor_cn_code or '',
+        'precursor_ratio': r.precursor_ratio or 0.0,
+        'precursor_see_dir': r.precursor_see_dir or 0.0,
+        'precursor_see_indir': r.precursor_see_indir or 0.0,
         'total_embedded_emissions': round(
-            (r.quantity_tonnes or 0.0) * ((r.specific_embedded_direct or 0.0) + (r.specific_embedded_indirect or 0.0)),
+            (r.quantity_tonnes or 0.0) * (
+                (r.specific_embedded_direct or 0.0) + (r.specific_embedded_indirect or 0.0) +
+                ((r.precursor_ratio or 0.0) * ((r.precursor_see_dir or 0.0) + (r.precursor_see_indir or 0.0)) if r.is_complex_good else 0.0)
+            ),
             2
         ),
         'notes': r.notes,
@@ -686,8 +697,8 @@ def get_cbam_exports():
 @login_required
 def save_cbam_export():
     user = get_current_user()
-    if is_it_role(user):
-        return jsonify({'error': 'IT administrators are not authorized to modify operational CBAM data.'}), 403
+    if is_it_role(user) or (user and user.role == 'auditor'):
+        return jsonify({'error': 'Read-only or IT administrative role cannot modify operational CBAM data.'}), 403
     try:
         data = request.get_json() or {}
         record_id = data.get('id')
@@ -695,12 +706,62 @@ def save_cbam_export():
         from input_validation import parse_year, parse_month, parse_number
         year = parse_year(data.get('year', 2026), required=False) or 2026
         month = parse_month(data.get('month', 1), required=False) or 1
+        quarter = (data.get('quarter') or '').strip().upper()
+        if quarter not in ['Q1', 'Q2', 'Q3', 'Q4']:
+            quarter = f"Q{(month - 1) // 3 + 1}"
         product_name = (data.get('product_name') or data.get('productName') or '').strip()
         cn_code = (data.get('cn_code') or data.get('cnCode') or '').strip()
         quantity_tonnes = parse_number(data.get('quantity_tonnes') or data.get('quantityTonnes'), 'quantity_tonnes', required=False, min_value=0, default=0.0)
         export_destination = (data.get('export_destination') or data.get('exportDestination') or 'EU').strip()
         specific_embedded_direct = parse_number(data.get('specific_embedded_direct') or data.get('specificEmbeddedDirect'), 'specific_embedded_direct', required=False, min_value=0, default=0.0)
         specific_embedded_indirect = parse_number(data.get('specific_embedded_indirect') or data.get('specificEmbeddedIndirect'), 'specific_embedded_indirect', required=False, min_value=0, default=0.0)
+        
+        # CCS (Carbon Capture & Geological Storage)
+        captured_co2_tonnes = parse_number(
+            data.get('captured_co2_tonnes') or data.get('capturedCo2Tonnes'),
+            'captured_co2_tonnes',
+            required=False,
+            min_value=0,
+            default=0.0
+        )
+        ccs_certificate_id = (data.get('ccs_certificate_id') or data.get('ccsCertificateId') or '').strip()
+        
+        # Article 9 Origin Carbon Price / Flaring Tax
+        carbon_price_paid_eur = parse_number(
+            data.get('carbon_price_paid_eur') or data.get('carbonPricePaidEur'),
+            'carbon_price_paid_eur',
+            required=False,
+            min_value=0,
+            default=0.0
+        )
+        carbon_price_legal_ref = (data.get('carbon_price_legal_ref') or data.get('carbonPriceLegalRef') or '').strip()
+        
+        # Article 7 Complex Precursor Attribution
+        is_complex_good = bool(data.get('is_complex_good') or data.get('isComplexGood'))
+        precursor_name = (data.get('precursor_name') or data.get('precursorName') or '').strip() if is_complex_good else ''
+        precursor_cn_code = (data.get('precursor_cn_code') or data.get('precursorCnCode') or '').strip() if is_complex_good else ''
+        precursor_ratio = parse_number(
+            data.get('precursor_ratio') or data.get('precursorRatio'),
+            'precursor_ratio',
+            required=False,
+            min_value=0,
+            default=0.0
+        ) if is_complex_good else 0.0
+        precursor_see_dir = parse_number(
+            data.get('precursor_see_dir') or data.get('precursorSeeDir'),
+            'precursor_see_dir',
+            required=False,
+            min_value=0,
+            default=0.0
+        ) if is_complex_good else 0.0
+        precursor_see_indir = parse_number(
+            data.get('precursor_see_indir') or data.get('precursorSeeIndir'),
+            'precursor_see_indir',
+            required=False,
+            min_value=0,
+            default=0.0
+        ) if is_complex_good else 0.0
+
         notes = (data.get('notes') or '').strip()
 
         if not facility_id or not product_name or not cn_code or quantity_tonnes <= 0:
@@ -712,6 +773,13 @@ def save_cbam_export():
 
         if not require_facility_access(user, facility_id):
             return jsonify({'error': 'Access to this facility is denied'}), 403
+
+        fac = db.session.get(Facility, facility_id)
+        if not fac:
+            return jsonify({'error': 'Facility not found', 'field': 'facility_id'}), 404
+
+        if quantity_tonnes > 100_000_000:
+            return jsonify({'error': 'quantity_tonnes exceeds maximum plausibility threshold (100,000,000 tonnes)', 'field': 'quantity_tonnes'}), 400
 
         total_direct_tco2e = db.session.query(func.coalesce(func.sum(Emission.co2e_total), 0.0)).filter(
             Emission.facility_id == facility_id,
@@ -729,12 +797,13 @@ def save_cbam_export():
         if specific_embedded_direct > 0:
             se_dir = specific_embedded_direct
         else:
-            se_dir = round(total_direct_tco2e / quantity_tonnes, 4) if quantity_tonnes > 0 else 0.0
+            net_direct_tco2e = max(0.0, float(total_direct_tco2e) - float(captured_co2_tonnes))
+            se_dir = round(net_direct_tco2e / quantity_tonnes, 4) if quantity_tonnes > 0 else 0.0
 
         if specific_embedded_indirect > 0:
             se_ind = specific_embedded_indirect
         else:
-            se_ind = round(total_indirect_tco2e / quantity_tonnes, 4) if quantity_tonnes > 0 else 0.0
+            se_ind = round(float(total_indirect_tco2e) / quantity_tonnes, 4) if quantity_tonnes > 0 else 0.0
 
         if record_id:
             record = db.session.get(CbamProductExport, record_id)
@@ -745,12 +814,23 @@ def save_cbam_export():
             record.facility_id = facility_id
             record.year = year
             record.month = month
+            record.quarter = quarter
             record.product_name = product_name
             record.cn_code = cn_code
             record.quantity_tonnes = quantity_tonnes
             record.export_destination = export_destination
             record.specific_embedded_direct = se_dir
             record.specific_embedded_indirect = se_ind
+            record.captured_co2_tonnes = captured_co2_tonnes
+            record.ccs_certificate_id = ccs_certificate_id
+            record.carbon_price_paid_eur = carbon_price_paid_eur
+            record.carbon_price_legal_ref = carbon_price_legal_ref
+            record.is_complex_good = is_complex_good
+            record.precursor_name = precursor_name
+            record.precursor_cn_code = precursor_cn_code
+            record.precursor_ratio = precursor_ratio
+            record.precursor_see_dir = precursor_see_dir
+            record.precursor_see_indir = precursor_see_indir
             record.notes = notes
             action = 'UPDATE'
         else:
@@ -759,12 +839,23 @@ def save_cbam_export():
                 facility_id=facility_id,
                 year=year,
                 month=month,
+                quarter=quarter,
                 product_name=product_name,
                 cn_code=cn_code,
                 quantity_tonnes=quantity_tonnes,
                 export_destination=export_destination,
                 specific_embedded_direct=se_dir,
                 specific_embedded_indirect=se_ind,
+                captured_co2_tonnes=captured_co2_tonnes,
+                ccs_certificate_id=ccs_certificate_id,
+                carbon_price_paid_eur=carbon_price_paid_eur,
+                carbon_price_legal_ref=carbon_price_legal_ref,
+                is_complex_good=is_complex_good,
+                precursor_name=precursor_name,
+                precursor_cn_code=precursor_cn_code,
+                precursor_ratio=precursor_ratio,
+                precursor_see_dir=precursor_see_dir,
+                precursor_see_indir=precursor_see_indir,
                 notes=notes,
                 created_by=user_id
             )
@@ -798,8 +889,8 @@ def save_cbam_export():
 @login_required
 def delete_cbam_export(record_id):
     user = get_current_user()
-    if is_it_role(user):
-        return jsonify({'error': 'IT administrators are not authorized to modify operational CBAM data.'}), 403
+    if is_it_role(user) or (user and user.role == 'auditor'):
+        return jsonify({'error': 'Read-only or IT administrative role cannot modify operational CBAM data.'}), 403
     try:
         record = db.session.get(CbamProductExport, record_id)
         if not record:

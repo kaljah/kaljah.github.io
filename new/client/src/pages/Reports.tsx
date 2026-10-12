@@ -1,6 +1,6 @@
-import { ChevronDown, Download, FilePlus, FileSpreadsheet, FileText, Funnel, Pencil, Plus, RotateCcw, Search } from "lucide-react";
+import { ChevronDown, Download, FilePlus, FileSpreadsheet, FileText, FileCode, Funnel, Pencil, Plus, RotateCcw, Search, ShieldCheck, Sparkles, SlidersHorizontal, Table } from "lucide-react";
 import { NativeSelect } from "../ui/NativeSelect";
-import { Badge, Button, Card, CardHeader, DataTable, Dialog, Field, Input, Menu, MenuContent, MenuItem, MenuTrigger, Page, PageHeader, SegmentedControl, StatusPill, Textarea, type BadgeTone } from "../ui";
+import { Badge, Button, Card, CardHeader, DataTable, Dialog, Field, Input, Menu, MenuContent, MenuItem, MenuTrigger, Page, PageHeader, SegmentedControl, StatusPill, Textarea, cn, type BadgeTone } from "../ui";
 import { controlClass } from "../components/import-wizard/mapping";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -166,17 +166,23 @@ const Reports: React.FC = () => {
   const [totalRecords, setTotalRecords] = useState<number>(0);
 
   const [scope, setScope] = useState<string>(deepLink.scope || "all");
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState<boolean>(false);
 
   const resetFilters = () => {
     setYear("all");
+    setReportYear("all");
     setMonth("all");
     setRegionId("all");
+    setReportSelectedRegions([]);
     setProcessType("all");
     setScope("all");
     setDivision("all");
     setField("all");
     setMethodFilter("all");
+    setGroupBy("none");
+    setComparisonYear("none");
     setSearchTerm("");
+    setReportGwpStandard("AR6");
     setPage(1);
     toast.info(tr("Filters reset to defaults."));
   };
@@ -212,8 +218,10 @@ const Reports: React.FC = () => {
         } else if (filterRes.data.years?.length > 0) {
           const mostRecentYear = filterRes.data.years[0].toString();
           setYear(mostRecentYear);
+          setReportYear(mostRecentYear);
         } else {
           setYear("all");
+          setReportYear("all");
         }
 
         const opDefaults = getUserOperationalDefaults(user, facilitiesData);
@@ -428,6 +436,68 @@ const Reports: React.FC = () => {
     }
   };
 
+  const handleCBAMExport = async (format: "excel" | "xml") => {
+    try {
+      const isXml = format === "xml";
+      toast.info(isXml ? tr("Generating EU CBAM XML Declaration...") : tr("Generating EU CBAM Excel Communication Template..."));
+      const yr =
+        year !== "all" ? year : reportYear !== "all" ? reportYear
+          : String(availableFilters.years[0] || new Date().getFullYear());
+      const response = await api.get("/reports/cbam-export", {
+        params: { year: yr, format, ...(regionId !== "all" && { facility_id: regionId }) },
+        responseType: "blob",
+      });
+      const mime = isXml ? "application/xml" : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+      const ext = isXml ? "xml" : "xlsx";
+      const prefix = isXml ? "CBAM_Transitional_Declaration" : "EU_CBAM_Communication_Template";
+      const url = window.URL.createObjectURL(new Blob([response.data], { type: mime }));
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${prefix}_${yr}.${ext}`;
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        link.remove();
+        window.URL.revokeObjectURL(url);
+      }, 1000);
+      toast.success(isXml ? tr("EU CBAM XML Declaration for {{year}} downloaded successfully!", { year: yr }) : tr("EU CBAM Template for {{year}} downloaded successfully!", { year: yr }));
+    } catch (error) {
+      console.error("CBAM export failed:", error);
+      toast.error(tr("Failed to export EU CBAM document."));
+    }
+  };
+
+  const handleNationalInventoryExport = async () => {
+    try {
+      toast.info(tr("Generating Décret 21-330 / ISO 14064-1 Official Excel Template..."));
+      const yr =
+        year !== "all" ? year : reportYear !== "all" ? reportYear
+          : String(availableFilters.years[0] || new Date().getFullYear());
+      const response = await api.get("/reports/national-inventory-export", {
+        params: { year: yr, ...(regionId !== "all" && { facility_id: regionId }) },
+        responseType: "blob",
+      });
+      const url = window.URL.createObjectURL(
+        new Blob([response.data], {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        }),
+      );
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `Inventaire_National_Decret_21-330_ISO_14064-1_${yr}.xlsx`;
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        link.remove();
+        window.URL.revokeObjectURL(url);
+      }, 1000);
+      toast.success(tr("Décret 21-330 Excel report for {{year}} downloaded successfully!", { year: yr }));
+    } catch (error) {
+      console.error("National inventory export failed:", error);
+      toast.error(tr("Failed to export Décret 21-330 inventory report."));
+    }
+  };
+
   const handleMasterReportDownload = async (targetFacilityId: string | number | null = null) => {
     try {
       setLoading(true);
@@ -504,6 +574,31 @@ const Reports: React.FC = () => {
   }, [activeGwpStandard]);
   const [reportSelectedRegions, setReportSelectedRegions] = useState<any[]>([]); // Multiselect
 
+  const hasActiveFilters = Boolean(
+    scope !== "all" ||
+    year !== "all" ||
+    month !== "all" ||
+    regionId !== "all" ||
+    processType !== "all" ||
+    division !== "all" ||
+    field !== "all" ||
+    methodFilter !== "all" ||
+    groupBy !== "none" ||
+    comparisonYear !== "none" ||
+    searchTerm.trim() !== "" ||
+    reportGwpStandard !== "AR6"
+  );
+
+  const activeSecondaryCount = [
+    processType !== "all",
+    division !== "all",
+    field !== "all",
+    methodFilter !== "all",
+    groupBy !== "none",
+    comparisonYear !== "none",
+    reportGwpStandard !== "AR6",
+  ].filter(Boolean).length;
+
   // Derived options
   const regionOptions = facilities.map((f) => ({
     value: f.id.toString(),
@@ -513,6 +608,32 @@ const Reports: React.FC = () => {
 
   const [showConfigModal, setShowConfigModal] = useState<boolean>(false);
   const [reportFormat, setReportFormat] = useState<string>("iso");
+
+  const isTableFilteredDifferently = Boolean(
+    (year !== "all" && year !== reportYear) ||
+    (regionId !== "all" && (reportSelectedRegions.length !== 1 || String(reportSelectedRegions[0]) !== String(regionId))) ||
+    (regionId === "all" && reportSelectedRegions.length > 0)
+  );
+
+  const tableFacilityName = facilities.find((f) => f.id.toString() === regionId.toString())?.name;
+
+  const tableFilterSummary = [
+    regionId !== "all" ? tableFacilityName || regionId : null,
+    scope !== "all" ? `Scope ${scope}` : null,
+    year !== "all" ? year : null,
+  ].filter(Boolean).join(" • ");
+
+  const handleSyncFromTable = () => {
+    if (year !== "all") {
+      setReportYear(year);
+    }
+    if (regionId !== "all") {
+      setReportSelectedRegions([regionId]);
+    } else {
+      setReportSelectedRegions([]);
+    }
+    toast.success(tr("Report boundary synchronized with active table filters!"));
+  };
   // A master report exists only for El Merk (facility 170) and, for organisation-wide accounts, the
   // consolidated entity (server MASTER_REPORTS); it used to be offered (and fail) for every facility.
   const masterAvailableFor = (ids: any[]): boolean => {
@@ -526,10 +647,6 @@ const Reports: React.FC = () => {
   const [verificationStatus, setVerificationStatus] = useState<string>("Not externally verified");
 
   const openConfigModal = () => {
-    if (reportSelectedRegions.length === 0) {
-      toast.error(tr("Please select at least one region/facility."));
-      return;
-    }
     setShowConfigModal(true);
   };
 
@@ -548,14 +665,15 @@ const Reports: React.FC = () => {
     try {
       const { generateModernPDF } = await import("../utils/ModernReportGenerator");
 
-      const isAllRegions = reportSelectedRegions.length === facilities.length;
+      const activeYear = year !== "all" ? year : reportYear;
+      const activeFacility = regionId !== "all" ? regionId : (reportSelectedRegions.length > 0 ? reportSelectedRegions : "all");
 
       const filters = {
-        year: reportYear,
+        year: activeYear,
         comparisonYear: comparisonYear !== "none" ? comparisonYear : undefined,
-        scope: "all",
-        regionId: isAllRegions ? "all" : reportSelectedRegions,
-        processType: "all",
+        scope: scope,
+        regionId: activeFacility,
+        processType: processType,
         exclusionCriteria: exclusionCriteria,
         verificationStatus: verificationStatus,
         gwpStandard: reportGwpStandard,
@@ -633,8 +751,17 @@ const Reports: React.FC = () => {
                 </Button>
               </MenuTrigger>
               <MenuContent>
+                <MenuItem icon={FileSpreadsheet} onSelect={handleNationalInventoryExport}>
+                  {tr("Décret 21-330 / ISO 14064-1 (Excel)")}
+                </MenuItem>
                 <MenuItem icon={FileSpreadsheet} onSelect={handleOGMPExport}>
                   {tr("OGMP 2.0 (Excel)")}
+                </MenuItem>
+                <MenuItem icon={FileSpreadsheet} onSelect={() => handleCBAMExport("excel")}>
+                  {tr("EU CBAM Template (Excel)")}
+                </MenuItem>
+                <MenuItem icon={FileCode} onSelect={() => handleCBAMExport("xml")}>
+                  {tr("EU CBAM Declaration (XML)")}
                 </MenuItem>
                 <MenuItem icon={FileSpreadsheet} onSelect={handleExcelExport}>
                   {tr("Excel export")}
@@ -653,9 +780,152 @@ const Reports: React.FC = () => {
         }
       />
 
-      <Card>
-        <CardHeader title={<span className="flex items-center gap-3"><FilePlus className="size-6 text-brand-500" aria-hidden="true" />{" "}{tr("Create New Report")}</span>} />
-        <div className="grid items-end gap-5 [grid-template-columns:repeat(auto-fit,minmax(200px,1fr))]">
+      {/* 1-Click Regulatory Compliance Presets Hub */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {/* ISO 14064-1 Card */}
+        <Card className="flex flex-col justify-between border-t-2 border-t-brand-500 p-5 shadow-xs transition-shadow hover:shadow-md">
+          <div className="flex flex-col gap-2.5">
+            <div className="flex items-center justify-between">
+              <span className="flex size-9 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
+                <FileText className="size-5" aria-hidden="true" />
+              </span>
+              <Badge tone="brand">{tr("ISO 14064-1")}</Badge>
+            </div>
+            <div>
+              <h3 className="m-0 text-base font-bold text-text">{tr("Corporate Inventory")}</h3>
+              <p className="m-0 mt-1 text-xs text-text-secondary leading-relaxed">
+                {tr("Comprehensive inventory across Scope 1, 2, and 3 compliant with ISO verification requirements.")}
+              </p>
+            </div>
+          </div>
+          <div className="mt-4 pt-3 border-t border-border flex flex-col gap-2">
+            <Button size="sm" variant="secondary" className="w-full justify-center gap-1.5" onClick={handleNationalInventoryExport}>
+              <Download className="size-3.5" aria-hidden="true" />
+              {tr("Export Décret 21-330 Excel")}
+            </Button>
+            <Button size="sm" variant="ghost" className="w-full justify-center gap-1.5" onClick={openConfigModal}>
+              <Plus className="size-3.5" aria-hidden="true" />
+              {tr("Configure ISO Report")}
+            </Button>
+          </div>
+        </Card>
+
+        {/* OGMP 2.0 Card */}
+        <Card className="flex flex-col justify-between border-t-2 border-t-blue-500 p-5 shadow-xs transition-shadow hover:shadow-md">
+          <div className="flex flex-col gap-2.5">
+            <div className="flex items-center justify-between">
+              <span className="flex size-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+                <FileSpreadsheet className="size-5" aria-hidden="true" />
+              </span>
+              <Badge tone="info">{tr("UNEP / IMEO")}</Badge>
+            </div>
+            <div>
+              <h3 className="m-0 text-base font-bold text-text">{tr("OGMP 2.0 Workbook")}</h3>
+              <p className="m-0 mt-1 text-xs text-text-secondary leading-relaxed">
+                {tr("Methane emissions workbook formatted for Gold Standard compliance and level 4/5 reporting.")}
+              </p>
+            </div>
+          </div>
+          <div className="mt-4 pt-3 border-t border-border">
+            <Button size="sm" variant="secondary" className="w-full justify-center gap-1.5" onClick={handleOGMPExport}>
+              <Download className="size-3.5" aria-hidden="true" />
+              {tr("Export OGMP Excel")}
+            </Button>
+          </div>
+        </Card>
+
+        {/* Executive Master Brief Card */}
+        <Card className="flex flex-col justify-between border-t-2 border-t-amber-500 p-5 shadow-xs transition-shadow hover:shadow-md">
+          <div className="flex flex-col gap-2.5">
+            <div className="flex items-center justify-between">
+              <span className="flex size-9 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
+                <Sparkles className="size-5" aria-hidden="true" />
+              </span>
+              <Badge tone="warning">{tr("Executive A4")}</Badge>
+            </div>
+            <div>
+              <h3 className="m-0 text-base font-bold text-text">{tr("Executive Master Brief")}</h3>
+              <p className="m-0 mt-1 text-xs text-text-secondary leading-relaxed">
+                {tr("Full synthesis document with 15 analytical charts and 18 operational compliance tables.")}
+              </p>
+            </div>
+          </div>
+          <div className="mt-4 pt-3 border-t border-border">
+            <Button size="sm" variant="secondary" className="w-full justify-center gap-1.5" onClick={() => handleMasterReportDownload()}>
+              <FileText className="size-3.5" aria-hidden="true" />
+              {tr("Download Master PDF")}
+            </Button>
+          </div>
+        </Card>
+
+        {/* Raw Activity Ledger Card */}
+        <Card className="flex flex-col justify-between border-t-2 border-t-emerald-500 p-5 shadow-xs transition-shadow hover:shadow-md">
+          <div className="flex flex-col gap-2.5">
+            <div className="flex items-center justify-between">
+              <span className="flex size-9 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+                <Table className="size-5" aria-hidden="true" />
+              </span>
+              <Badge tone="success">{tr("Full Ledger")}</Badge>
+            </div>
+            <div>
+              <h3 className="m-0 text-base font-bold text-text">{tr("Activity Data Ledger")}</h3>
+              <p className="m-0 mt-1 text-xs text-text-secondary leading-relaxed">
+                {tr("Complete granular ledger export for third-party auditing, verification, and data science teams.")}
+              </p>
+            </div>
+          </div>
+          <div className="mt-4 pt-3 border-t border-border">
+            <Button size="sm" variant="secondary" className="w-full justify-center gap-1.5" onClick={handleExcelExport}>
+              <Download className="size-3.5" aria-hidden="true" />
+              {tr("Export Full Ledger")}
+            </Button>
+          </div>
+        </Card>
+      </div>
+
+      {/* Separate Card 1: Report Generation Workbench */}
+      <Card className="flex flex-col gap-4 p-5 shadow-card">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-4">
+          <div className="flex items-center gap-3">
+            <span className="flex size-10 items-center justify-center rounded-lg bg-brand-50 text-brand-600 shadow-xs">
+              <SlidersHorizontal className="size-5 text-brand-500" aria-hidden="true" />
+            </span>
+            <div>
+              <h2 className="m-0 text-base font-bold text-text">
+                {tr("Report Generation Workbench")}
+              </h2>
+              <p className="m-0 mt-0.5 text-xs text-text-secondary">
+                {tr("Configure organizational boundaries, reporting scope, comparison periods, and GWP standards to generate official compliance reports.")}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 flex-wrap">
+            {isTableFilteredDifferently && (
+              <Button
+                variant="secondary"
+                size="md"
+                onClick={handleSyncFromTable}
+                className="gap-1.5 border-brand-200 bg-brand-50/70 text-brand-700 hover:bg-brand-100 hover:border-brand-300 text-xs font-semibold shadow-2xs transition-colors"
+              >
+                <RotateCcw className="size-3.5 text-brand-600" aria-hidden="true" />
+                <span>{tr("Sync from Table Filters")}</span>
+                {tableFilterSummary && (
+                  <span className="hidden md:inline font-normal text-brand-700/80">
+                    ({tableFilterSummary})
+                  </span>
+                )}
+              </Button>
+            )}
+            <Button onClick={openConfigModal} loading={loading} disabled={loading} className="gap-1.5 shadow-sm">
+              <Plus className="size-4" aria-hidden="true" />
+              {loading ? tr("Generating...") : tr("Create Report")}
+            </Button>
+          </div>
+        </div>
+
+        {/* Workbench Parameters Grid */}
+        <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(200px,1fr))] items-end">
           {selectBase(
             tr("Reporting Year *"),
             reportYear,
@@ -673,6 +943,19 @@ const Reports: React.FC = () => {
               )}
             </>,
           )}
+
+          {selectBase(
+            tr("Target Scope"),
+            scope,
+            (e) => setScope(e.target.value),
+            <>
+              <option value="all">{tr("Total Inventory (Scope 1, 2, 3)")}</option>
+              <option value="1">{tr("Scope 1 (Direct)")}</option>
+              <option value="2">{tr("Scope 2 (Indirect)")}</option>
+              <option value="3">{tr("Scope 3 (Value Chain)")}</option>
+            </>,
+          )}
+
           {selectBase(
             tr("Compare With"),
             comparisonYear,
@@ -689,237 +972,455 @@ const Reports: React.FC = () => {
               {baseYear && <option value="baseline">{tr("Baseline (")}{baseYear})</option>}
             </>,
           )}
-          {selectBase(tr("GWP Metric Standard"), reportGwpStandard, onGwp, gwpOptions(), { className: "sm:[grid-column:span_2]" })}
+
+          {selectBase(tr("GWP Metric Standard"), reportGwpStandard, onGwp, gwpOptions())}
+
           <div className="flex w-full flex-col gap-1.5 [grid-column:span_2] max-[640px]:[grid-column:auto]">
-            <span className="text-sm font-medium text-text">
-              {tr("Regions / Facilities")}{" "}<span className="text-danger-fg">*</span>
+            <span className="text-xs font-semibold text-text-secondary">
+              {tr("Target Facilities / Operating Units")}
             </span>
-            <React.Suspense fallback={<div>{tr("Loading...")}</div>}>
-              <MultiSelectDropdown options={regionOptions} selectedValues={reportSelectedRegions} onChange={setReportSelectedRegions} label={tr("Select Regions...")} />
+            <React.Suspense fallback={<div className="text-xs text-text-secondary">{tr("Loading facilities...")}</div>}>
+              <MultiSelectDropdown
+                options={regionOptions}
+                selectedValues={reportSelectedRegions}
+                onChange={setReportSelectedRegions}
+                label={tr("Select facilities (empty for consolidated all)...")}
+              />
             </React.Suspense>
           </div>
-          <Button size="lg" onClick={openConfigModal} loading={loading} disabled={loading}>
-            <Plus className="size-[18px]" aria-hidden="true" />
-            {loading ? tr("Generating...") : tr("Create Report")}
-          </Button>
         </div>
 
         {reportSelectedRegions.length > 0 && (
-          <ul className="m-0 mt-4 flex list-none flex-wrap gap-2 p-0">
+          <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-border/60">
+            <span className="text-xs font-semibold text-text-secondary mr-1">{tr("Selected Facilities:")}</span>
             {reportSelectedRegions.map((rId) => {
               const rName = facilities.find((f) => f.id.toString() === rId)?.name || rId;
               return (
-                <li key={rId}>
-                  <Badge tone="brand" className="gap-1.5 px-2.5 py-1 text-sm">
-                    {rName}
-                    <button type="button" aria-label={`Remove ${rName}`} onClick={() => removeRegion(rId)} className="cursor-pointer border-0 bg-transparent p-0 text-inherit">
-                      ×
-                    </button>
-                  </Badge>
-                </li>
+                <Badge key={rId} tone="brand" className="gap-1 text-xs py-0.5">
+                  {rName}
+                  <button
+                    type="button"
+                    aria-label={`Remove ${rName}`}
+                    onClick={() => removeRegion(rId)}
+                    className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0"
+                  >
+                    ×
+                  </button>
+                </Badge>
               );
             })}
-          </ul>
+            <button
+              type="button"
+              onClick={() => setReportSelectedRegions([])}
+              className="text-xs text-brand-600 hover:text-brand-700 hover:underline font-semibold ml-2 cursor-pointer border-0 bg-transparent p-0"
+            >
+              {tr("Clear selection")}
+            </button>
+          </div>
         )}
       </Card>
 
-      <Card>
-        <CardHeader title={<span className="flex items-center gap-3"><Funnel className="size-6 text-brand-500" aria-hidden="true" />{" "}{tr("Filter & Group Data")}</span>} />
-        <div className="grid items-end gap-5 [grid-template-columns:repeat(auto-fit,minmax(200px,1fr))]">
-          {selectBase(
-            tr("Inventory Scope"),
-            scope,
-            (e) => setScope(e.target.value),
-            <>
-              <option value="all">{tr("Total Inventory (Scope 1,2,3)")}</option>
-              <option value="1">{tr("Scope 1 (Direct)")}</option>
-              <option value="2">{tr("Scope 2 (Indirect)")}</option>
-              <option value="3">{tr("Scope 3 (Value Chain)")}</option>
-            </>,
-          )}
-          {selectBase(
-            tr("Reporting Year"),
-            year,
-            (e) => setYear(e.target.value),
-            <>
-              <option value="all">{tr("All Years")}</option>
-              {years.map((y) => (
-                <option key={y} value={y}>
-                  {y}
-                </option>
-              ))}
-            </>,
-          )}
-          {selectBase(
-            tr("Month"),
-            month,
-            (e) => setMonth(e.target.value),
-            <>
-              <option value="all">{tr("All Months")}</option>
-              {MONTHS.map((m) => (
-                <option key={m.value} value={m.value}>
-                  {m.label}
-                </option>
-              ))}
-            </>,
-          )}
-          {selectBase(
-            tr("Region (Grid)"),
-            regionId,
-            (e) => setRegionId(e.target.value),
-            <>
-              <option value="all">{tr("All Regions")}</option>
-              {facilities.map((f) => (
-                <option key={f.id} value={f.id}>
-                  {f.name} {f.field ? ` - ${f.field}` : ""}
-                </option>
-              ))}
-            </>,
-          )}
-          {scope === "1" &&
-            selectBase(
-              tr("Process Type"),
-              processType,
-              (e) => setProcessType(e.target.value),
+      {/* Separate Card 2: Emissions Activity Ledger & Data Filters */}
+      <Card className="flex flex-col gap-4 p-5 shadow-card">
+        {/* Table Header */}
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-4">
+          <div className="flex items-center gap-3">
+            <span className="flex size-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 shadow-xs">
+              <Table className="size-5 text-emerald-600" aria-hidden="true" />
+            </span>
+            <div>
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <h2 className="m-0 text-base font-bold text-text">
+                  {tr("Emissions Activity Ledger")}
+                </h2>
+                <Badge tone="neutral" className="text-xs font-semibold">
+                  {tr("{{count}} total records", { count: totalRecords })}
+                </Badge>
+                {emissions.length > 0 && emissions.length !== totalRecords && (
+                  <Badge tone="brand" className="text-xs font-medium">
+                    {tr("{{count}} filtered", { count: emissions.length })}
+                  </Badge>
+                )}
+              </div>
+              <p className="m-0 mt-0.5 text-xs text-text-secondary">
+                {tr("Filter and inspect granular activity records across facilities, emission sources, and calculation methods.")}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 flex-wrap">
+            <Button variant="secondary" onClick={handleExcelExport} className="gap-1.5">
+              <Download className="size-4" aria-hidden="true" />
+              {tr("Export Excel")}
+            </Button>
+            {hasActiveFilters && (
+              <Button variant="ghost" onClick={resetFilters} className="gap-1.5 text-text-secondary hover:text-text">
+                <RotateCcw className="size-4" aria-hidden="true" />
+                {tr("Reset Filters")}
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {/* Integrated Filter Controls */}
+        <div className="flex flex-col gap-3">
+          {/* Primary Toolbar: Search + Core Reporting Boundaries */}
+          <div className="grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(180px,1fr))] items-end">
+            <div className="relative min-w-[200px]">
+              <label className="mb-1 block text-xs font-semibold text-text-secondary">{tr("Search Records")}</label>
+              <div className="relative">
+                <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-secondary" aria-hidden="true" />
+                <Input
+                  className="h-9 pl-9 pr-7"
+                  placeholder={tr("Keyword, fuel, facility, equipment...")}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                {searchTerm && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchTerm("")}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-text-secondary hover:text-text cursor-pointer p-0.5 border-0 bg-transparent"
+                    aria-label={tr("Clear search")}
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {selectBase(
+              tr("Inventory Scope"),
+              scope,
+              (e) => setScope(e.target.value),
               <>
-                <option value="all">{tr("All Processes")}</option>
-                <option value="combustion">{tr("Stationary Combustion")}</option>
-                <option value="mobile">{tr("Mobile Combustion")}</option>
-                <option value="flaring">{tr("Flaring")}</option>
-                <option value="venting">{tr("Venting")}</option>
-                <option value="fugitive">{tr("Fugitive Emissions")}</option>
-                <option value="pneumatic">{tr("Pneumatic Devices")}</option>
-                <option value="tank">{tr("Storage Tank")}</option>
+                <option value="all">{tr("Total Inventory (Scope 1, 2, 3)")}</option>
+                <option value="1">{tr("Scope 1 (Direct)")}</option>
+                <option value="2">{tr("Scope 2 (Indirect)")}</option>
+                <option value="3">{tr("Scope 3 (Value Chain)")}</option>
               </>,
             )}
-          {selectBase(
-            tr("Division"),
-            division,
-            (e) => setDivision(e.target.value),
-            <>
-              <option value="all">{tr("All Divisions")}</option>
-              {uniq("division").map((d) => (
-                <option key={String(d)} value={String(d)}>
-                  {String(d)}
-                </option>
-              ))}
-            </>,
-          )}
-          {selectBase(
-            tr("Field"),
-            field,
-            (e) => setField(e.target.value),
-            <>
-              <option value="all">{tr("All Fields")}</option>
-              {uniq("field").map((f) => (
-                <option key={String(f)} value={String(f)}>
-                  {String(f)}
-                </option>
-              ))}
-            </>,
-          )}
-          {selectBase(
-            tr("Calc Method"),
-            methodFilter,
-            (e) => setMethodFilter(e.target.value),
-            <>
-              <option value="all">{tr("All Methods")}</option>
-              <option value="custom">{tr("Custom Factor")}</option>
-              <option value="API">{tr("API Engine")}</option>
-              <option value="Location-based">{tr("Location-based")}</option>
-            </>,
-          )}
-          {selectBase(
-            tr("Group By"),
-            groupBy,
-            (e) => setGroupBy(e.target.value),
-            <>
-              <option value="none">{tr("No Grouping")}</option>
-              <option value="facility">{tr("By Facility")}</option>
-              <option value="process">{tr("By Category/Process")}</option>
-              <option value="month">{tr("By Month")}</option>
-              <option value="scope">{tr("By Scope")}</option>
-            </>,
-          )}
-        </div>
-      </Card>
 
-      <Card>
-        <Field label={tr("Search")}>
-          <div className="relative">
-            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-secondary" aria-hidden="true" />
-            <Input className="pl-9" placeholder={tr("Search records...")} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+            {selectBase(
+              tr("Reporting Year *"),
+              year,
+              (e) => setYear(e.target.value),
+              <>
+                <option value="all">{tr("All Years")}</option>
+                {years.map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))}
+              </>,
+            )}
+
+            {selectBase(
+              tr("Month"),
+              month,
+              (e) => setMonth(e.target.value),
+              <>
+                <option value="all">{tr("All Months")}</option>
+                {MONTHS.map((m) => (
+                  <option key={m.value} value={m.value}>
+                    {m.label}
+                  </option>
+                ))}
+              </>,
+            )}
+
+            {selectBase(
+              tr("Region / Facility"),
+              regionId,
+              (e) => setRegionId(e.target.value),
+              <>
+                <option value="all">{tr("All Regions & Facilities")}</option>
+                {facilities.map((f) => (
+                  <option key={f.id} value={f.id}>
+                    {f.name} {f.field ? ` - ${f.field}` : ""}
+                  </option>
+                ))}
+              </>,
+            )}
+
+            <div className="flex items-end">
+              <Button
+                variant={showAdvancedFilters || activeSecondaryCount > 0 ? "secondary" : "ghost"}
+                size="md"
+                className="h-9 w-full justify-between gap-2 border border-border"
+                onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+              >
+                <span className="flex items-center gap-1.5">
+                  <SlidersHorizontal className="size-3.5 text-brand-500" aria-hidden="true" />
+                  {tr("More Filters")}
+                  {activeSecondaryCount > 0 && (
+                    <Badge tone="brand" className="px-1.5 py-0 text-[10px]">
+                      {activeSecondaryCount}
+                    </Badge>
+                  )}
+                </span>
+                <ChevronDown
+                  className={cn("size-3.5 text-text-secondary transition-transform", showAdvancedFilters && "rotate-180")}
+                  aria-hidden="true"
+                />
+              </Button>
+            </div>
           </div>
-        </Field>
-      </Card>
 
-      {/* Data Grid */}
-      {loading && (
-        <div className="min-h-[300px]!">
-          <LoadingSpinner />
-        </div>
-      )}
+          {/* Secondary Drill-Down Filter Panel (Collapsible) */}
+          {showAdvancedFilters && (
+            <div className="grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(180px,1fr))] rounded-lg border border-border bg-ink-50/60 p-3.5">
+              {(scope === "all" || scope === "1") &&
+                selectBase(
+                  tr("Process / Category"),
+                  processType,
+                  (e) => setProcessType(e.target.value),
+                  <>
+                    <option value="all">{tr("All Processes")}</option>
+                    <option value="combustion">{tr("Stationary Combustion")}</option>
+                    <option value="mobile">{tr("Mobile Combustion")}</option>
+                    <option value="flaring">{tr("Flaring")}</option>
+                    <option value="venting">{tr("Venting")}</option>
+                    <option value="fugitive">{tr("Fugitive Emissions")}</option>
+                    <option value="pneumatic">{tr("Pneumatic Devices")}</option>
+                    <option value="tank">{tr("Storage Tank")}</option>
+                  </>,
+                )}
 
-      {!loading && emissions.length === 0 && (
-        <div
-          className="text-center! p-[40px]! text-[color:var(--text-secondary)]!"
-        >
-          {tr("No emission records found. Adjust your filters or add new emissions.")}
-        </div>
-      )}
-
-      {!loading && emissions.length > 0 && (
-        <div className="flex flex-col gap-4" role="region" aria-label={tr("Emission records")}>
-          {/* BUG-022: rendered through getGroupedData so Group By takes effect */}
-          {((groupBy === "none" ? [[null, emissions]] : Object.entries(getGroupedData())) as [string | null, EmissionRecord[]][]).map(([groupKey, rows]) => (
-            <section key={groupKey ?? "__all__"} className="flex flex-col gap-2">
-              {groupKey !== null && (
-                <h3 className="m-0 flex flex-wrap items-baseline justify-between gap-2 rounded-md bg-ink-100 px-3 py-2 text-base font-semibold text-text">
-                  <span>
-                    {groupKey}{" "}
-                    <span className="font-normal text-text-secondary">
-                      ({rows.length}{" "}{tr("record")}{rows.length === 1 ? "" : "s"}{" "}{tr("on this page)")}
-                    </span>
-                  </span>
-                  <span title={tr("Subtotal of the records shown on this page")}>
-                    {tr("Subtotal")}{" "}{formatNumber(rows.reduce((sum: number, r: EmissionRecord) => sum + (Number(r.co2e_total) || 0), 0))}{" "}{tr("tCO₂e")}
-                  </span>
-                </h3>
+              {selectBase(
+                tr("Division"),
+                division,
+                (e) => setDivision(e.target.value),
+                <>
+                  <option value="all">{tr("All Divisions")}</option>
+                  {uniq("division").map((d) => (
+                    <option key={String(d)} value={String(d)}>
+                      {String(d)}
+                    </option>
+                  ))}
+                </>,
               )}
-              <DataTable
-                tableId="reports"
-                caption={groupKey ?? tr("Emission records")}
-                columns={columns}
-                data={rows}
-                getRowId={(r) => String(r.id)}
-                pageSize={Math.max(rows.length, 1)}
-                showPagination={false}
-                showColumnMenu={groupKey === null}
-              />
-            </section>
-          ))}
-        </div>
-      )}
 
-      {!loading && totalPages > 1 && (
-        <div className="flex items-center justify-between gap-3 border-t border-border px-6 py-4">
-          <Button variant="secondary" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
-            {tr("Previous")}
-          </Button>
-          <span className="text-sm text-text-secondary">
-            {tr("Page")}{" "}{page}{" "}{tr("of")}{" "}{totalPages} ({totalRecords}{" "}{tr("records)")}
-          </span>
-          <Button variant="secondary" onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}>
-            {tr("Next")}
-          </Button>
+              {selectBase(
+                tr("Field"),
+                field,
+                (e) => setField(e.target.value),
+                <>
+                  <option value="all">{tr("All Fields")}</option>
+                  {uniq("field").map((f) => (
+                    <option key={String(f)} value={String(f)}>
+                      {String(f)}
+                    </option>
+                  ))}
+                </>,
+              )}
+
+              {selectBase(
+                tr("Calc Method"),
+                methodFilter,
+                (e) => setMethodFilter(e.target.value),
+                <>
+                  <option value="all">{tr("All Methods")}</option>
+                  <option value="custom">{tr("Custom Factor")}</option>
+                  <option value="API">{tr("API Engine")}</option>
+                  <option value="Location-based">{tr("Location-based")}</option>
+                </>,
+              )}
+
+              {selectBase(
+                tr("Group By"),
+                groupBy,
+                (e) => setGroupBy(e.target.value),
+                <>
+                  <option value="none">{tr("No Grouping")}</option>
+                  <option value="facility">{tr("By Facility")}</option>
+                  <option value="process">{tr("By Category/Process")}</option>
+                  <option value="month">{tr("By Month")}</option>
+                  <option value="scope">{tr("By Scope")}</option>
+                </>,
+              )}
+
+              {selectBase(
+                tr("Compare With"),
+                comparisonYear,
+                (e) => setComparisonYear(e.target.value),
+                <>
+                  <option value="none">{tr("None (Single Year)")}</option>
+                  {years
+                    .filter((y) => y.toString() !== year)
+                    .map((y) => (
+                      <option key={y} value={y}>
+                        {y}
+                      </option>
+                    ))}
+                  {baseYear && <option value="baseline">{tr("Baseline (")}{baseYear})</option>}
+                </>,
+              )}
+
+              {selectBase(tr("GWP Metric Standard"), reportGwpStandard, onGwp, gwpOptions())}
+            </div>
+          )}
+
+          {/* Active Filter Chips Strip */}
+          {hasActiveFilters && (
+            <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-border/60">
+              <span className="text-xs font-semibold text-text-secondary mr-1">{tr("Active Filters:")}</span>
+              {scope !== "all" && (
+                <Badge tone="brand" className="gap-1 text-xs py-0.5">
+                  {tr("Scope {{scope}}", { scope })}
+                  <button type="button" onClick={() => setScope("all")} className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
+                </Badge>
+              )}
+              {year !== "all" && (
+                <Badge tone="brand" className="gap-1 text-xs py-0.5">
+                  {tr("Year: {{year}}", { year })}
+                  <button type="button" onClick={() => { setYear("all"); setReportYear("all"); }} className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
+                </Badge>
+              )}
+              {month !== "all" && (
+                <Badge tone="neutral" className="gap-1 text-xs py-0.5">
+                  {MONTHS.find(m => m.value.toString() === month.toString())?.label || month}
+                  <button type="button" onClick={() => setMonth("all")} className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
+                </Badge>
+              )}
+              {regionId !== "all" && (
+                <Badge tone="info" className="gap-1 text-xs py-0.5">
+                  {facilities.find(f => f.id.toString() === regionId.toString())?.name || regionId}
+                  <button type="button" onClick={() => { setRegionId("all"); setReportSelectedRegions([]); }} className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
+                </Badge>
+              )}
+              {processType !== "all" && (
+                <Badge tone="neutral" className="gap-1 text-xs py-0.5">
+                  {processType}
+                  <button type="button" onClick={() => setProcessType("all")} className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
+                </Badge>
+              )}
+              {division !== "all" && (
+                <Badge tone="neutral" className="gap-1 text-xs py-0.5">
+                  {tr("Division: {{division}}", { division })}
+                  <button type="button" onClick={() => setDivision("all")} className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
+                </Badge>
+              )}
+              {field !== "all" && (
+                <Badge tone="neutral" className="gap-1 text-xs py-0.5">
+                  {tr("Field: {{field}}", { field })}
+                  <button type="button" onClick={() => setField("all")} className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
+                </Badge>
+              )}
+              {methodFilter !== "all" && (
+                <Badge tone="neutral" className="gap-1 text-xs py-0.5">
+                  {tr("Method: {{method}}", { method: methodFilter })}
+                  <button type="button" onClick={() => setMethodFilter("all")} className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
+                </Badge>
+              )}
+              {groupBy !== "none" && (
+                <Badge tone="neutral" className="gap-1 text-xs py-0.5">
+                  {tr("Group: {{group}}", { group: groupBy })}
+                  <button type="button" onClick={() => setGroupBy("none")} className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
+                </Badge>
+              )}
+              {comparisonYear !== "none" && (
+                <Badge tone="neutral" className="gap-1 text-xs py-0.5">
+                  {tr("Compare: {{comp}}", { comp: comparisonYear })}
+                  <button type="button" onClick={() => setComparisonYear("none")} className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
+                </Badge>
+              )}
+              {searchTerm.trim() !== "" && (
+                <Badge tone="neutral" className="gap-1 text-xs py-0.5">
+                  {tr('Search: "{{term}}"', { term: searchTerm })}
+                  <button type="button" onClick={() => setSearchTerm("")} className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
+                </Badge>
+              )}
+              {reportGwpStandard !== "AR6" && (
+                <Badge tone="warning" className="gap-1 text-xs py-0.5">
+                  {reportGwpStandard}
+                  <button type="button" onClick={() => setReportGwpStandard("AR6")} className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
+                </Badge>
+              )}
+              <button
+                type="button"
+                onClick={resetFilters}
+                className="text-xs text-brand-600 hover:text-brand-700 hover:underline font-semibold ml-2 cursor-pointer border-0 bg-transparent p-0"
+              >
+                {tr("Clear all")}
+              </button>
+            </div>
+          )}
         </div>
-      )}
+
+        {/* Data Grid Section directly inside Card */}
+        {loading && (
+          <div className="py-12 flex justify-center items-center">
+            <LoadingSpinner />
+          </div>
+        )}
+
+        {!loading && emissions.length === 0 && (
+          <div className="rounded-lg border border-dashed border-border p-8 text-center text-text-secondary flex flex-col items-center gap-2">
+            <p className="m-0 text-sm font-medium text-text">{tr("No emission records found matching the active filters.")}</p>
+            <p className="m-0 text-xs text-text-secondary">{tr("Try adjusting your scope, facility, or reporting year boundary.")}</p>
+            {hasActiveFilters && (
+              <Button size="sm" variant="secondary" onClick={resetFilters} className="mt-2 gap-1.5">
+                <RotateCcw className="size-3.5" aria-hidden="true" />
+                {tr("Reset Filters")}
+              </Button>
+            )}
+          </div>
+        )}
+
+        {!loading && emissions.length > 0 && (
+          <div className="flex flex-col gap-4" role="region" aria-label={tr("Emission records")}>
+            {((groupBy === "none" ? [[null, emissions]] : Object.entries(getGroupedData())) as [string | null, EmissionRecord[]][]).map(([groupKey, rows]) => (
+              <section key={groupKey ?? "__all__"} className="flex flex-col gap-2">
+                {groupKey !== null && (
+                  <h3 className="m-0 flex flex-wrap items-baseline justify-between gap-2 rounded-md bg-ink-100 px-3 py-2 text-sm font-semibold text-text">
+                    <span>
+                      {groupKey}{" "}
+                      <span className="font-normal text-text-secondary">
+                        ({rows.length} {rows.length === 1 ? tr("record") : tr("records")})
+                      </span>
+                    </span>
+                    <span title={tr("Subtotal of the records shown on this page")}>
+                      {tr("Subtotal")}{" "}{formatNumber(rows.reduce((sum: number, r: EmissionRecord) => sum + (Number(r.co2e_total) || 0), 0))}{" "}{tr("tCO₂e")}
+                    </span>
+                  </h3>
+                )}
+                <DataTable
+                  tableId="reports"
+                  caption={groupKey ?? tr("Emission records")}
+                  columns={columns}
+                  data={rows}
+                  getRowId={(r) => String(r.id)}
+                  pageSize={Math.max(rows.length, 1)}
+                  showPagination={false}
+                  showColumnMenu={groupKey === null}
+                />
+              </section>
+            ))}
+          </div>
+        )}
+
+        {/* Integrated Pagination Footer */}
+        {!loading && totalPages > 1 && (
+          <div className="flex items-center justify-between gap-3 border-t border-border pt-4 mt-1">
+            <Button variant="secondary" size="sm" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
+              {tr("Previous")}
+            </Button>
+            <span className="text-xs text-text-secondary">
+              {tr("Page {{page}} of {{totalPages}} ({{total}} records)", { page, totalPages, total: totalRecords })}
+            </span>
+            <Button variant="secondary" size="sm" onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}>
+              {tr("Next")}
+            </Button>
+          </div>
+        )}
+      </Card>
 
       <Dialog
         open={showConfigModal}
         onOpenChange={(o) => !o && setShowConfigModal(false)}
         title={tr("Generate Executive GHG Report")}
-        maxWidth="35rem"
+        maxWidth="48rem"
         footer={
           <>
             <Button variant="secondary" onClick={() => setShowConfigModal(false)}>
@@ -932,35 +1433,125 @@ const Reports: React.FC = () => {
         }
       >
         <div className="flex flex-col gap-4">
+          {/* Active Configuration Summary Badge Strip */}
+          <div className="rounded-lg border border-border bg-ink-50 p-3 text-xs text-text-secondary flex flex-wrap gap-2 items-center">
+            <span className="font-semibold text-text uppercase tracking-wider">{tr("Active Scope & Boundaries:")}</span>
+            <Badge tone="brand">{reportYear === "all" ? tr("All Years") : `${tr("Year:")} ${reportYear}`}</Badge>
+            <Badge tone={scope === "all" ? "neutral" : "brand"}>{scope === "all" ? tr("All Scopes") : `${tr("Scope")} ${scope}`}</Badge>
+            <Badge tone="info">
+              {reportSelectedRegions.length === 0
+                ? tr("All Facilities (Consolidated)")
+                : reportSelectedRegions.map((id) => facilities.find((f) => f.id.toString() === id.toString())?.name || id).join(", ")}
+            </Badge>
+            <Badge tone="warning">{reportGwpStandard}</Badge>
+          </div>
+
           <SegmentedControl label={tr("Report format")} value={effectiveReportFormat} onChange={setReportFormat} options={FORMATS} className="flex-col sm:flex-row" />
 
-          {effectiveReportFormat === "master" ? (
-            <div className="rounded-md border border-border bg-ink-50 p-3.5">
-              <h4 className="m-0 mb-1.5 text-base font-semibold text-text">{tr("Authentic Groupement Berkine (HBNS & El Merk) 2021–2025")}</h4>
-              <ul className="m-0 flex list-disc flex-col gap-1 pl-5 text-sm leading-normal text-text-secondary">
-                <li>
-                  <strong>{tr("Vertical A4 Portrait")}</strong>{" "}{tr("format (25 publication pages).")}
-                </li>
-                <li>
-                  <strong>{tr("15 High-Resolution Charts (300 DPI)")}</strong>{tr(": Scopes 1 & 2, SANGEA modules, 2030 decarbonization target trajectory (-25%), methane abatement (-76.7%), routine flaring reduction and more.")}
-                </li>
-                <li>
-                  <strong>{tr("18 Multi-Year Appendix Tables")}</strong>{tr(": Complete raw tables A.1 through A.16 matching Groupement Berkine's corporate reporting standards.")}
-                </li>
-              </ul>
+          {/* 2-Column Split: Controls on Left, Document Preview on Right */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-start pt-1">
+            {/* Left Column: Configuration Forms (7 cols) */}
+            <div className="md:col-span-7 flex flex-col gap-3.5">
+              {effectiveReportFormat === "master" ? (
+                <div className="rounded-md border border-border bg-ink-50 p-3.5">
+                  <h4 className="m-0 mb-1.5 text-sm font-semibold text-text">{tr("Authentic Groupement Berkine (HBNS & El Merk) 2021–2025")}</h4>
+                  <p className="m-0 text-xs text-text-secondary leading-relaxed mb-2.5">
+                    {tr("Executive annual publication with certified SANGEA GHG quantification and 2030 decarbonization trajectory.")}
+                  </p>
+                  <ul className="m-0 flex list-disc flex-col gap-1 pl-4 text-xs leading-normal text-text-secondary">
+                    <li><strong>{tr("Vertical A4 Portrait")}</strong> {tr("format (25 publication pages).")}</li>
+                    <li><strong>{tr("15 High-Resolution Charts (300 DPI)")}</strong>{tr(": Scopes 1 & 2, methane abatement (-76.7%), flaring reduction.")}</li>
+                    <li><strong>{tr("18 Multi-Year Appendix Tables")}</strong>{tr(": Raw tables A.1 through A.16.")}</li>
+                  </ul>
+                </div>
+              ) : (
+                <>
+                  <p className="m-0 text-xs text-text-secondary leading-relaxed">
+                    {tr("Please provide the declarations required by ISO 14064-1:2018 before compiling the verified document.")}
+                  </p>
+                  <Field label={tr("Exclusion Criteria (Significance)")} hint={tr("Criteria used to define significant indirect emissions.")}>
+                    <Textarea rows={2} value={exclusionCriteria} onChange={(e) => setExclusionCriteria(e.target.value)} />
+                  </Field>
+                  <Field label={tr("Verification Status")} hint={tr("Verification type and assurance level.")}>
+                    <Input value={verificationStatus} onChange={(e) => setVerificationStatus(e.target.value)} />
+                  </Field>
+                  {selectBase(tr("GWP Metric Standard"), reportGwpStandard, onGwp, gwpOptions(tr(" — Default")))}
+                </>
+              )}
             </div>
-          ) : (
-            <>
-              <p className="m-0 text-sm text-text-secondary">{tr("Please provide the following declarations required by ISO 14064-1 before generating the report.")}</p>
-              <Field label={tr("Exclusion Criteria (Significance)")} hint={tr("Document the criteria used to define which indirect emissions are significant and justify any exclusions.")}>
-                <Textarea rows={2} value={exclusionCriteria} onChange={(e) => setExclusionCriteria(e.target.value)} />
-              </Field>
-              <Field label={tr("Verification Status")} hint={tr("State whether the report has been verified, the type of verification, and the level of assurance.")}>
-                <Input value={verificationStatus} onChange={(e) => setVerificationStatus(e.target.value)} />
-              </Field>
-              {selectBase(tr("GWP Metric Standard"), reportGwpStandard, onGwp, gwpOptions(tr(" — Default")))}
-            </>
-          )}
+
+            {/* Right Column: Live Document Preview Thumbnail (5 cols) */}
+            <div className="md:col-span-5 flex flex-col gap-2.5">
+              <div className="rounded-lg border border-border bg-ink-50/70 p-3 flex flex-col items-center">
+                <div className="w-full flex items-center justify-between mb-2">
+                  <span className="text-[11px] font-semibold tracking-wider text-text-secondary uppercase">
+                    {tr("Document Preview")}
+                  </span>
+                  <Badge tone="brand" className="text-[10px] px-1.5 py-0">
+                    {effectiveReportFormat === "master" ? tr("25 Pages") : tr("~12 Pages")}
+                  </Badge>
+                </div>
+
+                {/* Miniature Realistic A4 Sheet Representation */}
+                <div className="w-[170px] h-[225px] rounded-sm border border-border/80 bg-surface shadow-md p-2.5 flex flex-col justify-between relative overflow-hidden select-none">
+                  {/* Top accent bar */}
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-brand-500" />
+
+                  {/* Document Header */}
+                  <div className="flex flex-col gap-0.5 mt-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[8px] font-black tracking-widest text-brand-600 uppercase">NEOCARBON</span>
+                      <span className="text-[7px] text-text-secondary font-mono">{effectiveReportFormat === "master" ? "E&P" : "ISO 14064"}</span>
+                    </div>
+                    <div className="h-px w-full bg-border/60 my-0.5" />
+                    <div className="text-[8.5px] font-bold leading-tight text-text line-clamp-2">
+                      {effectiveReportFormat === "master" ? tr("Groupement Berkine Master Report") : tr("GHG Inventory Statement")}
+                    </div>
+                    <div className="text-[7px] text-text-secondary font-medium truncate">
+                      {effectiveReportFormat === "master"
+                        ? "HBNS & El Merk Operating Units"
+                        : (reportSelectedRegions.length === 1
+                            ? facilities.find((f) => f.id.toString() === reportSelectedRegions[0]?.toString())?.name || "Facility Report"
+                            : tr("Consolidated Corporate Boundary"))}
+                    </div>
+                    <div className="text-[7px] text-brand-600 font-semibold">
+                      {tr("Period:")} {reportYear}
+                    </div>
+                  </div>
+
+                  {/* Mini Wireframe Elements (Charts & Tables) */}
+                  <div className="flex flex-col gap-1.5 my-auto py-1">
+                    <div className="flex items-end gap-1 h-6 border-b border-border/60 pb-0.5 px-1">
+                      <div className="w-2.5 bg-brand-500/70 rounded-xs h-5" />
+                      <div className="w-2.5 bg-brand-400/60 rounded-xs h-3.5" />
+                      <div className="w-2.5 bg-brand-600/80 rounded-xs h-4.5" />
+                      <div className="w-2.5 bg-ink-300 rounded-xs h-3" />
+                      <div className="w-2.5 bg-ink-400 rounded-xs h-4" />
+                      <div className="w-2.5 bg-brand-500 rounded-xs h-3.5" />
+                    </div>
+                    <div className="flex flex-col gap-0.5 px-0.5">
+                      <div className="h-1 bg-ink-200/80 rounded-xs w-full" />
+                      <div className="h-1 bg-ink-200/60 rounded-xs w-4/5" />
+                      <div className="h-1 bg-ink-200/40 rounded-xs w-3/5" />
+                    </div>
+                  </div>
+
+                  {/* Document Footer Miniature */}
+                  <div className="border-t border-border/60 pt-1 flex items-center justify-between text-[6.5px] text-text-secondary">
+                    <span>Sonatrach E&P</span>
+                    <span className="font-mono">P. 1 / {effectiveReportFormat === "master" ? "25" : "12"}</span>
+                  </div>
+                </div>
+
+                {/* Document Specs Badges */}
+                <div className="flex flex-wrap gap-1 mt-2.5 justify-center text-[10px]">
+                  <Badge tone="neutral" className="text-[9.5px] py-0 px-1">{tr("A4 Portrait")}</Badge>
+                  <Badge tone="neutral" className="text-[9.5px] py-0 px-1">{tr("300 DPI")}</Badge>
+                  <Badge tone="neutral" className="text-[9.5px] py-0 px-1">{tr("PDF/A")}</Badge>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </Dialog>
 

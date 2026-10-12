@@ -87,6 +87,7 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
         >
           <Input
             type="number"
+            min="0"
             value={data.amount || ""}
             onChange={(e) => onChange("amount", e.target.value)}
             placeholder="0.00"
@@ -115,6 +116,7 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
               <Input
                 id="hhv-input"
                 type="number"
+                min="0"
                 value={data.hhv || ""}
                 onChange={(e) => onChange("hhv", e.target.value)}
                 placeholder={isFlaring ? t("e.g. 983 (natural gas)") : t("e.g. 1020 (BTU/scf)")}

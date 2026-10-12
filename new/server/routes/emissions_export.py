@@ -4,9 +4,11 @@ Split out of routes/emissions.py unchanged (hardening plan, task 5.3). The route
 registered on the same ``emissions_bp`` blueprint, so URLs and endpoint names are the same.
 """
 import datetime
+import hashlib
 from flask import jsonify, request
 from models import Emission, Facility, Scope2Emission, Scope3Emission
 from routes.auth import login_required
+from services.audit_chain import record_report_fingerprint
 from services.labels import process_label, scope2_source_label
 from services.scope2_activity import scope2_activity
 from services.scope2_gases import gas_split
@@ -17,9 +19,18 @@ from routes.emissions import _escape_like
 
 
 def _safe_excel_value(val):
-    """Prevent formula injection (DDE/CSV injection) in Excel cells."""
-    if isinstance(val, str) and val and val[0] in ("=", "-", "+", "@", "\t", "\r"):
-        return "'" + val
+    """Prevent formula injection (DDE/CSV injection) in Excel cells including leading whitespace bypasses."""
+    if val is None:
+        return ""
+    if isinstance(val, str) and val:
+        if val.startswith(("=", "-", "+", "@", "\t", "\r", "%")):
+            return "'" + val
+        stripped = val.lstrip()
+        if stripped and stripped.startswith(("=", "-", "+", "@", "%")):
+            return "'" + val
+        spaces_stripped = val.lstrip(" ")
+        if spaces_stripped and spaces_stripped.startswith(("\t", "\r")):
+            return "'" + val
     return val
 
 
@@ -234,7 +245,7 @@ def export_emissions():
             )
 
     # Return Excel workbook if requested
-    if export_format == "excel":
+    if export_format in ("excel", "xlsx"):
         wb = openpyxl.Workbook()
         wb.remove(wb.active)  # Remove initial blank sheet
 
@@ -440,15 +451,34 @@ def export_emissions():
         buf = io.BytesIO()
         wb.save(buf)
         buf.seek(0)
+        file_sha256 = hashlib.sha256(buf.getvalue()).hexdigest()
 
         year_lbl = year_arg if year_arg and year_arg != "all" else "all"
         month_lbl = month_arg if month_arg and month_arg != "all" else "all"
         fname = f"emissions_{year_lbl}_{month_lbl}.xlsx"
-        return send_file(
+        resp = send_file(
             buf,
             mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             as_attachment=True,
             download_name=fname,
+        )
+        resp.headers["X-Audit-Timestamp"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+        resp.headers["Access-Control-Expose-Headers"] = (
+            "X-Audit-SHA256, X-Audit-Timestamp, Content-Disposition, X-Request-ID"
+        )
+        filters_dict = {
+            "scope": scope,
+            "year": year_arg,
+            "month": month_arg,
+            "facility_id": facility_arg,
+            "process": process_arg,
+            "division": division_arg,
+            "field": field_arg,
+            "method": method_arg,
+            "search": search_arg,
+        }
+        return record_report_fingerprint(
+            resp, user, "Excel emissions ledger", filters_dict, len(export_data), file_sha256
         )
 
     return jsonify({"data": export_data, "count": len(export_data)})

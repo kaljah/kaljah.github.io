@@ -290,7 +290,7 @@ class RefiningCatalystRegenCalculator(BaseCalculator):
         ch4_res, co2_res, n2o_res = _propagate_results(
             total_ch4, total_co2, total_n2o, uncertainties, factor_source, "refining_catalyst"
         )
-        co2e = calculate_co2e(total_ch4, total_co2, total_n2o, gwp_dict=gwp_dict)
+        co2e = calculate_co2e(co2=total_co2, ch4=total_ch4, n2o=total_n2o, gwp_dict=gwp_dict)
 
         return self.format_result(
             co2=co2_res or total_co2,
@@ -415,7 +415,7 @@ class RefiningCokerCalculator(BaseCalculator):
         ch4_res, co2_res, _ = _propagate_results(
             total_ch4, total_co2, 0.0, uncertainties, factor_source, "refining_coker"
         )
-        co2e = calculate_co2e(total_ch4, total_co2, 0.0, gwp_dict=gwp_dict)
+        co2e = calculate_co2e(co2=total_co2, ch4=total_ch4, n2o=0.0, gwp_dict=gwp_dict)
 
         return self.format_result(
             co2=co2_res or total_co2,
@@ -597,7 +597,7 @@ class AsphaltBlowingCalculator(BaseCalculator):
         ch4_res, co2_res, _ = _propagate_results(
             total_ch4, total_co2, 0.0, uncertainties, factor_source, "asphalt_blowing"
         )
-        co2e = calculate_co2e(total_ch4, total_co2, 0.0, gwp_dict=gwp_dict)
+        co2e = calculate_co2e(co2=total_co2, ch4=total_ch4, n2o=0.0, gwp_dict=gwp_dict)
 
         return self.format_result(
             co2=co2_res or total_co2,
@@ -708,7 +708,7 @@ class SulfurRecoveryTailGasCalculator(BaseCalculator):
         ch4_res, co2_res, _ = _propagate_results(
             total_ch4, total_co2, 0.0, uncertainties, factor_source, "refining_other_vents"
         )
-        co2e = calculate_co2e(total_ch4, total_co2, 0.0, gwp_dict=gwp_dict)
+        co2e = calculate_co2e(co2=total_co2, ch4=total_ch4, n2o=0.0, gwp_dict=gwp_dict)
 
         return self.format_result(
             co2=co2_res or total_co2,
@@ -791,7 +791,7 @@ class PetrochemicalManufacturingCalculator(BaseCalculator):
         ch4_res, co2_res, n2o_res = _propagate_results(
             total_ch4, total_co2, total_n2o, uncertainties, factor_source, "petrochemical"
         )
-        co2e = calculate_co2e(total_ch4, total_co2, total_n2o, gwp_dict=gwp_dict)
+        co2e = calculate_co2e(co2=total_co2, ch4=total_ch4, n2o=total_n2o, gwp_dict=gwp_dict)
 
         return self.format_result(
             co2=co2_res or total_co2,

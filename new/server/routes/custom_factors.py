@@ -566,3 +566,40 @@ def approve_custom_factor(factor_id):
         db.session.rollback()
         return jsonify({"error": f"Failed to approve custom factor: {e}"}), 500
     return jsonify({"message": f"Custom factor '{factor.name}' approved successfully", "id": factor.id}), 200
+
+
+@custom_factors_bp.route("/<int:factor_id>/reject", methods=["POST"])
+@login_required
+def reject_custom_factor(factor_id):
+    """Reject a pending custom emission factor (Admin only)."""
+    user = get_current_user()
+    if not user or user.role != "admin":
+        return jsonify({"error": "Only Compliance Administrators can reject custom emission factors"}), 403
+
+    factor = db.session.get(CustomFactor, factor_id)
+    if not factor or factor.is_archived:
+        return jsonify({"error": "Custom factor not found"}), 404
+
+    data = request.get_json() or {}
+    reason = str(data.get("reason") or "Rejected by compliance administrator").strip()
+
+    try:
+        factor.status = "Rejected"
+        factor.approved_by = user.id
+        factor.approved_at = datetime.datetime.now(datetime.timezone.utc)
+
+        log_activity_and_notify(
+            action="REJECT",
+            record_id=str(factor.id),
+            user=user,
+            request=request,
+            entity="CustomFactor",
+            entity_id=str(factor.id),
+            details=f"Rejected custom emission factor '{factor.name}' (ID: {factor.id}). Reason: {reason}",
+        )
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to reject custom factor: {e}"}), 500
+    return jsonify({"message": f"Custom factor '{factor.name}' rejected successfully", "id": factor.id}), 200
+

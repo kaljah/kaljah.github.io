@@ -16,7 +16,7 @@ class BaseCalculator:
     def validate_inputs(self, inputs, required_keys):
         """Validates that all required inputs are present, finite, and non-negative."""
         for key in required_keys:
-            if key not in inputs:
+            if key not in inputs or inputs[key] is None or inputs[key] == "":
                 raise ValueError(f"Missing required input: {key}")
             val = inputs[key]
             if isinstance(val, (int, float)):

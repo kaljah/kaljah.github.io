@@ -233,34 +233,81 @@ export const AuditIntegrityCheck: React.FC = () => {
     }
   };
 
+  React.useEffect(() => {
+    verify();
+  }, []);
+
   return (
-    <div className="mb-6 flex flex-col gap-3">
-      <div className="flex flex-wrap items-center gap-3">
-        <Button variant="secondary" onClick={verify} disabled={busy}>
-          <Shield className="size-4" aria-hidden="true" /> {busy ? t("Verifying...") : t("Verify integrity")}
-        </Button>
-        <span className="text-sm text-text-secondary">{t("Checks every entry against the hash sealed when it was written.")}</span>
-      </div>
-      {error && <Banner tone="danger">{error}</Banner>}
-      {result && result.status === "verified" && (
-        <Banner tone="success" title={t("Log intact: {{count}} entries verified", { count: result.total_records.toLocaleString() })}>
-          {t("No entry was changed, removed or inserted. To detect a later removal of the newest entries, keep this checkpoint:")}{" "}
-          <span className="break-all font-mono text-xs">
-            {result.total_records}{" "}{t("entries · head")}{" "}{result.chain_head_hash}{" "}{t("· seal")}{" "}{result.checkpoint_hmac}
+    <Card className="mb-6 border-l-4 border-l-brand-500 bg-surface/80 p-5 shadow-xs">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-3.5">
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+            <Shield className="size-5" aria-hidden="true" />
           </span>
-        </Banner>
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <h3 className="m-0 text-base font-bold text-text">{t("Cryptographic Hash Chain Integrity")}</h3>
+              {result?.status === "verified" && (
+                <Badge tone="success" className="gap-1 px-2 py-0.5 text-xs font-semibold">
+                  <CheckCircle2 className="size-3" aria-hidden="true" />
+                  {t("Chain Intact")}
+                </Badge>
+              )}
+              {result?.status === "tampered" && (
+                <Badge tone="danger" className="gap-1 px-2 py-0.5 text-xs font-semibold">
+                  <ShieldAlert className="size-3" aria-hidden="true" />
+                  {t("Tampering Detected")}
+                </Badge>
+              )}
+            </div>
+            <p className="m-0 text-xs text-text-secondary leading-normal">
+              {t("Every audit record is sealed with a SHA-256 hash linked to the previous block, ensuring tamper-evident non-repudiation.")}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3">
+          {result?.chain_head_hash && (
+            <div className="hidden sm:flex items-center gap-1.5 rounded-lg border border-border bg-ink-50 px-2.5 py-1 text-xs">
+              <span className="text-text-secondary">{t("Head:")}</span>
+              <span className="font-mono font-semibold text-text" title={result.chain_head_hash}>
+                {result.chain_head_hash.slice(0, 10)}…{result.chain_head_hash.slice(-6)}
+              </span>
+            </div>
+          )}
+          <Button variant="secondary" size="sm" onClick={verify} disabled={busy} className="gap-1.5">
+            <RefreshCw className={cn("size-3.5", busy && "animate-spin")} aria-hidden="true" />
+            {busy ? t("Verifying...") : t("Verify Chain")}
+          </Button>
+        </div>
+      </div>
+
+      {error && <Banner tone="danger" className="mt-3">{error}</Banner>}
+
+      {result && result.status === "verified" && (
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-3 text-xs text-text-secondary">
+          <span>
+            {t("Validated")} <strong className="text-text">{result.total_records.toLocaleString()}</strong> {t("sequential cryptographic blocks.")}
+          </span>
+          <span className="font-mono text-[11px] text-text-secondary">
+            {t("Seal HMAC:")} {result.checkpoint_hmac ? `${result.checkpoint_hmac.slice(0, 12)}…` : "Verified"}
+          </span>
+        </div>
       )}
+
       {result && result.status === "tampered" && (
-        <Banner tone="danger" title={result.issue_count === 1 ? t("Log altered: 1 problem in {{total}} entries", { total: result.total_records.toLocaleString() }) : t("Log altered: {{count}} problems in {{total}} entries", { count: result.issue_count, total: result.total_records.toLocaleString() })}>
-          <ul className="m-0 mt-1 list-disc pl-5">
-            {result.issues.map((i) => (
-              <li key={`${i.id}-${i.problem}`}>
-                {t("Entry #")}{i.id}: {i.detail}
-              </li>
-            ))}
-          </ul>
-        </Banner>
+        <div className="mt-3 border-t border-border pt-3">
+          <Banner tone="danger" title={t("Tampering Alert: {{count}} issues detected", { count: result.issue_count })}>
+            <ul className="m-0 mt-1 list-disc pl-5">
+              {result.issues.map((i) => (
+                <li key={`${i.id}-${i.problem}`}>
+                  {t("Block #")}{i.id}: {i.detail}
+                </li>
+              ))}
+            </ul>
+          </Banner>
+        </div>
       )}
-    </div>
+    </Card>
   );
 };

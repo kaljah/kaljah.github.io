@@ -135,6 +135,20 @@ class CogenAllocationCalculator(BaseCalculator):
             ["total_emissions", "heat_output", "power_output"],
         )
 
+        h_unit = str(heat_unit or "mmbtu").lower().strip()
+        if h_unit in ["gj", "gigajoules"]:
+            heat_mmbtu = heat_output * 0.94781712
+        elif h_unit in ["mwh", "megawatt_hours"]:
+            heat_mmbtu = heat_output * 3.412142
+        elif h_unit in ["kwh", "kilowatt_hours"]:
+            heat_mmbtu = heat_output * 0.003412142
+        elif h_unit in ["therm", "therms"]:
+            heat_mmbtu = heat_output * 0.1
+        elif h_unit in ["btu"]:
+            heat_mmbtu = heat_output / 1_000_000.0
+        else:
+            heat_mmbtu = heat_output
+
         p_unit = str(power_unit or "mmbtu").lower().strip()
         if p_unit in ["mwh", "megawatt_hours", "kwh"]:
             mult = 3.412142 if p_unit != "kwh" else 0.003412142
@@ -156,13 +170,13 @@ class CogenAllocationCalculator(BaseCalculator):
                 return v
             e_h = _eff(heat_efficiency, 0.80, "Heat")
             e_p = _eff(power_efficiency, 0.35, "Power")
-            denominator = (heat_output / e_h) + (power_mmbtu / e_p)
-            allocated_heat = ((heat_output / e_h) / denominator) * total_emissions if denominator > 0 else 0.0
+            denominator = (heat_mmbtu / e_h) + (power_mmbtu / e_p)
+            allocated_heat = ((heat_mmbtu / e_h) / denominator) * total_emissions if denominator > 0 else 0.0
             allocated_power = ((power_mmbtu / e_p) / denominator) * total_emissions if denominator > 0 else 0.0
         else:
             # Energy content allocation
-            denominator = heat_output + power_mmbtu
-            allocated_heat = (heat_output / denominator) * total_emissions if denominator > 0 else 0.0
+            denominator = heat_mmbtu + power_mmbtu
+            allocated_heat = (heat_mmbtu / denominator) * total_emissions if denominator > 0 else 0.0
             allocated_power = (power_mmbtu / denominator) * total_emissions if denominator > 0 else 0.0
 
         _unc_dict = uncertainties or {}

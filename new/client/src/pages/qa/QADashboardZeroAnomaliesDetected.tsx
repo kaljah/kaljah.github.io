@@ -13,6 +13,25 @@ const STATUS_FILTERS = [
 
 const SCOPE_TONE: Record<string | number, BadgeTone> = { 1: "brand", 2: "info", 3: "neutral" };
 
+const getFlagSeverity = (flag?: string): { tone: BadgeTone; label: string } => {
+  const f = String(flag || "").toLowerCase();
+  if (f.includes("outlier") || f.includes("negative") || f.includes("mismatch") || f.includes("critical")) {
+    return { tone: "danger", label: "High" };
+  }
+  if (f.includes("missing") || f.includes("high") || f.includes("threshold") || f.includes("gap")) {
+    return { tone: "warning", label: "Medium" };
+  }
+  return { tone: "info", label: "Notice" };
+};
+
+const formatRecordId = (id?: string | number, fallbackId?: string | number): { display: string; full: string } => {
+  const full = String(id || `REC-${fallbackId}`);
+  if (full.length > 14) {
+    return { display: `${full.slice(0, 8)}…${full.slice(-4)}`, full };
+  }
+  return { display: full, full };
+};
+
 const th = "whitespace-nowrap border-b border-border px-4 py-3.5 text-left text-xs font-bold uppercase tracking-wide text-text-secondary";
 const td = "border-b border-ink-100 px-4 py-3.5 align-middle text-base text-ink-700";
 
@@ -190,7 +209,19 @@ const QADashboardZeroAnomaliesDetected: React.FC<QADashboardZeroAnomaliesDetecte
                       <td className={td}>
                         <input type="checkbox" className="size-4 accent-brand-500" aria-label={t("Select record {{id}}", { id: record.id })} checked={isSelected} onChange={() => toggleSelect(record.scope, record.id)} />
                       </td>
-                      <td className={cn(td, "font-mono font-semibold")}>{record.record_id || `REC-${record.id}`}</td>
+                      <td className={cn(td, "font-mono font-semibold")}>
+                        {(() => {
+                          const idInfo = formatRecordId(record.record_id, record.id);
+                          return (
+                            <span
+                              className="inline-block cursor-help rounded-md bg-surface px-2 py-0.5 border border-border text-xs font-semibold shadow-2xs hover:border-brand-400"
+                              title={idInfo.full}
+                            >
+                              {idInfo.display}
+                            </span>
+                          );
+                        })()}
+                      </td>
                       <td className={td}>
                         <Badge tone={SCOPE_TONE[record.scope] || "neutral"}>{t("Scope")}{" "}{record.scope}</Badge>
                       </td>
@@ -199,10 +230,20 @@ const QADashboardZeroAnomaliesDetected: React.FC<QADashboardZeroAnomaliesDetecte
                       </td>
                       <td className={cn(td, "font-medium")}>{record.process_type || "—"}</td>
                       <td className={td}>
-                        <Badge tone="warning" className="gap-1.5">
-                          <AlertTriangle className="size-3.5" aria-hidden="true" />
-                          {record.qa_flag}
-                        </Badge>
+                        {(() => {
+                          const sev = getFlagSeverity(record.qa_flag);
+                          return (
+                            <div className="flex flex-col gap-0.5">
+                              <Badge tone={sev.tone} className="gap-1 px-2 py-0.5 text-xs font-medium w-fit">
+                                <AlertTriangle className="size-3" aria-hidden="true" />
+                                {record.qa_flag || t("Flagged")}
+                              </Badge>
+                              <span className="text-[10px] font-bold uppercase tracking-wider text-text-secondary pl-0.5">
+                                {sev.label} {t("Priority")}
+                              </span>
+                            </div>
+                          );
+                        })()}
                       </td>
                       <td className={cn(td, "font-mono font-bold")}>{record.co2e != null ? Number(record.co2e).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "0.00"}</td>
                       <td className={td}>

@@ -123,6 +123,10 @@ def create_scope3_emission():
     if allowed_fids is not None and facility_id_int not in allowed_fids:
         return jsonify({"error": "Unauthorized for this facility"}), 403
 
+    facility = db.session.get(Facility, facility_id_int)
+    if facility is None:
+        return jsonify({"error": "Facility not found", "field": "facility_id"}), 404
+
     initial_status = initial_record_status(user, data.get("status"))
 
     # BUG-073 / BUG-089 / BUG-083: validate period, category and numbers before anything is stored.
@@ -290,6 +294,9 @@ def update_scope3_emission(emission_id):
         emission.facility_id = int(data["facility_id"])
     if "year" in data:
         emission.year = parse_year(data["year"])
+    if "month" in data:
+        from input_validation import parse_month
+        emission.month = parse_month(data["month"], required=False)
     if "category" in data:
         emission.category = normalize_scope3_category(data["category"])
     if "sub_category" in data:
@@ -413,8 +420,8 @@ def bulk_import_scope3():
     user = get_current_user()
     if not user:
         return jsonify({"error": "Not authenticated"}), 401
-    if user.role in ["it_admin", "it_manager", "it"]:
-        return jsonify({"error": "IT personnel do not have access to upload emission data"}), 403
+    if user.role in ["auditor", "it_admin", "it_manager", "it"]:
+        return jsonify({"error": "Read-only auditor and IT personnel do not have access to upload emission data"}), 403
 
     data = request.get_json() or {}
     records = data.get("records", [])
@@ -520,6 +527,12 @@ def bulk_import_scope3():
 @login_required
 def calculate_eeio():
     """Calculate Scope 3 Category 1 emissions based on spend and NAICS code"""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not authenticated"}), 401
+    if user.role in ["it_admin", "it_manager", "it"]:
+        return jsonify({"error": "IT administrators are not authorized to execute operational emission calculation models."}), 403
+
     data = request.get_json()
     if not data:
         return jsonify({"error": "No data provided"}), 400
@@ -558,5 +571,11 @@ def calculate_eeio():
 @login_required
 def search_eeio():
     """Six-digit NAICS codes of the EPA supply chain factor dataset matching ?q= (code prefix or title)."""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Not authenticated"}), 401
+    if user.role in ["it_admin", "it_manager", "it"]:
+        return jsonify({"error": "IT administrators are not authorized to access emission factor libraries."}), 403
+
     from emission_factors.eeio_factors import search_eeio_factors
     return jsonify(search_eeio_factors(request.args.get("q", ""), limit=25))

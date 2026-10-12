@@ -66,7 +66,7 @@ def _blank():
 
 
 def intensity_cells(years=None, facility_id=None, activity=None, division=None, allowed_fids=None, segment=None,
-                    include_pending=False):
+                    include_pending=False, scope2_method="location"):
     """{(facility_id, year): cell} for the requested years (None = all years)."""
     scope = dict(allowed_fids=allowed_fids, facility_id=facility_id, activity=activity, division=division,
                  segment=segment)
@@ -111,11 +111,19 @@ def intensity_cells(years=None, facility_id=None, activity=None, division=None, 
                 c["flaring_m3"] += vol
         c["records"].append(e)
 
-    for model, key in ((Scope2Emission, "s2"), (Scope3Emission, "s3")):
-        q = db.session.query(model.facility_id, model.year, func.sum(model.co2e))
-        q = yfilter(apply_scope(q, model, **scope), model).filter(model.status.in_(st))
-        for fid, yr, val in q.group_by(model.facility_id, model.year).all():
-            cells[(fid, yr)][key] += float(val or 0)
+    # Scope 2 dual reporting (location-based vs market-based per GHG Protocol)
+    s2_col = Scope2Emission.co2e_market_based if str(scope2_method).lower() == "market" else Scope2Emission.co2e_location_based
+    s2_val_expr = func.coalesce(s2_col, Scope2Emission.co2e)
+    q2 = db.session.query(Scope2Emission.facility_id, Scope2Emission.year, func.sum(s2_val_expr))
+    q2 = yfilter(apply_scope(q2, Scope2Emission, **scope), Scope2Emission).filter(Scope2Emission.status.in_(st))
+    for fid, yr, val in q2.group_by(Scope2Emission.facility_id, Scope2Emission.year).all():
+        cells[(fid, yr)]["s2"] += float(val or 0)
+
+    # Scope 3
+    q3 = db.session.query(Scope3Emission.facility_id, Scope3Emission.year, func.sum(Scope3Emission.co2e))
+    q3 = yfilter(apply_scope(q3, Scope3Emission, **scope), Scope3Emission).filter(Scope3Emission.status.in_(st))
+    for fid, yr, val in q3.group_by(Scope3Emission.facility_id, Scope3Emission.year).all():
+        cells[(fid, yr)]["s3"] += float(val or 0)
 
     # OGMP top-down: mean of the surveys of each facility-year (each is an annual estimate, D-02)
     q = db.session.query(OgmpSurvey.facility_id, OgmpSurvey.year, func.avg(OgmpSurvey.estimated_annual_tch4))
@@ -330,10 +338,10 @@ def _bottom_up_level(records):
     return materiality_level(records) if records else None
 
 
-def intensity_rows(year=None, include_pending=False, gwp_horizon="100", **scope):
+def intensity_rows(year=None, include_pending=False, gwp_horizon="100", scope2_method="location", **scope):
     """Per-facility rows for one year or all years (year None / 'all')."""
     years = None if year in (None, "", "all") else [int(year)]
-    cells = intensity_cells(years=years, include_pending=include_pending, **scope)
+    cells = intensity_cells(years=years, include_pending=include_pending, scope2_method=scope2_method, **scope)
     by_fac = defaultdict(list)
     for (fid, yr), c in cells.items():
         by_fac[fid].append((yr, c))
@@ -341,9 +349,9 @@ def intensity_rows(year=None, include_pending=False, gwp_horizon="100", **scope)
     return [facility_row(fid, lst, facs.get(fid), year, gwp_horizon) for fid, lst in by_fac.items()]
 
 
-def intensity_trend(years, include_pending=False, gwp_horizon="100", **scope):
+def intensity_trend(years, include_pending=False, gwp_horizon="100", scope2_method="location", **scope):
     """[{year, data: [facility rows]}] computed from one bulk read."""
-    cells = intensity_cells(years=list(years), include_pending=include_pending, **scope)
+    cells = intensity_cells(years=list(years), include_pending=include_pending, scope2_method=scope2_method, **scope)
     facs = {f.id: f for f in Facility.query.filter(Facility.id.in_({fid for fid, _ in cells} or {-1})).all()}
     out = []
     for y in years:

@@ -1,5 +1,5 @@
 import React from "react";
-import { Briefcase, KeyRound, Shield, User, UserCheck, UserPlus } from "lucide-react";
+import { Briefcase, Check, KeyRound, Shield, User, UserCheck, UserPlus } from "lucide-react";
 import Drawer from "../../components/Drawer";
 import { NativeSelect } from "../../ui/NativeSelect";
 import type { ManagedUser } from "./UserManagementBlock";
@@ -29,6 +29,7 @@ export interface UserManagementBlock1205Props {
   regions: string[];
   setFormData: React.Dispatch<React.SetStateAction<any>>;
   setIsModalOpen: (open: boolean) => void;
+  currentUserRole?: string;
 }
 
 // Extracted from UserManagement.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
@@ -44,7 +45,45 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
   regions,
   setFormData,
   setIsModalOpen,
-}) => (
+  currentUserRole,
+}) => {
+  const pwd = formData.password || "";
+  const pwdChecks = [
+    { label: t("10+ Chars"), ok: pwd.length >= 10 },
+    { label: t("Uppercase (A-Z)"), ok: /[A-Z]/.test(pwd) },
+    { label: t("Lowercase (a-z)"), ok: /[a-z]/.test(pwd) },
+    { label: t("Number (0-9)"), ok: /[0-9]/.test(pwd) },
+    { label: t("Special symbol"), ok: /[!@#$%^&*(),.?":{}|<>\-_+=[\]\\/~`]/.test(pwd) },
+  ];
+  const allPwdChecksPassed = pwdChecks.every((c) => c.ok);
+
+  const isClientIt = currentUserRole === "it_admin" || currentUserRole === "it";
+  const roleOptions: { value: string; label: string; disabled?: boolean }[] = isClientIt
+    ? [
+        { value: "user", label: t("Standard User") },
+        { value: "auditor", label: t("Assurance Auditor") },
+        { value: "it", label: t("IT Support") },
+        { value: "it_admin", label: t("IT Administrator") },
+      ]
+    : [
+        { value: "user", label: t("Standard User") },
+        { value: "auditor", label: t("Assurance Auditor") },
+        { value: "superuser", label: t("Super User") },
+        { value: "admin", label: t("Admin (All Data)") },
+        { value: "it", label: t("IT Support") },
+        { value: "it_admin", label: t("IT Administrator") },
+        { value: "it_manager", label: t("IT Manager") },
+      ];
+
+  if (editingUser && formData.role && !roleOptions.some((r) => r.value === formData.role)) {
+    roleOptions.unshift({
+      value: formData.role,
+      label: `${formData.role.charAt(0).toUpperCase() + formData.role.slice(1)} (Protected)`,
+      disabled: true,
+    });
+  }
+
+  return (
   <Drawer
     isOpen={isModalOpen}
     onClose={() => setIsModalOpen(false)}
@@ -177,11 +216,11 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
               style={inputStyle("role")}
               {...focusProps("role")}
             >
-              <option value="user">{t("Standard User")}</option>
-              <option value="superuser">{t("Super User")}</option>
-              <option value="admin">{t("Admin (All Data)")}</option>
-              <option value="it_manager">{t("IT Manager")}</option>
-              <option value="it">IT</option>
+              {roleOptions.map((opt) => (
+                <option key={opt.value} value={opt.value} disabled={opt.disabled}>
+                  {opt.label}
+                </option>
+              ))}
             </NativeSelect>
           </div>
 
@@ -264,20 +303,73 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
               style={{
                 ...inputStyle("password"),
                 borderColor:
-                  formData.password && formData.password.length < 10
+                  formData.password && !allPwdChecksPassed
                     ? "var(--color-red-500)"
                     : focusedField === "password"
                     ? "var(--color-brand-500)"
                     : "var(--border-color)",
               }}
               {...focusProps("password")}
-              placeholder={t("Minimum 10 characters")}
+              placeholder={t("Min 10 chars · Aa1!...")}
             />
+
+            {/* Password strength visual meter */}
+            {formData.password ? (
+              <div className="mt-[10px]!" data-testid="password-strength-meter">
+                <div className="flex! gap-[4px]! mb-[8px]!">
+                  {pwdChecks.map((req, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        flex: 1,
+                        height: "4px",
+                        borderRadius: "2px",
+                        background: req.ok ? "var(--color-green-500)" : "var(--border-color)",
+                        transition: "background .2s",
+                      }}
+                    />
+                  ))}
+                </div>
+
+                {/* Requirements breakdown tags */}
+                <div className="flex! flex-wrap! gap-[6px]!">
+                  {pwdChecks.map((req, idx) => (
+                    <span
+                      key={idx}
+                      data-testid={`um-pwd-req-${idx}`}
+                      style={{
+                        fontSize: "0.7rem",
+                        padding: "2px 8px",
+                        borderRadius: "4px",
+                        background: req.ok ? "rgba(16, 185, 129, 0.1)" : "rgba(100, 116, 139, 0.08)",
+                        color: req.ok ? "var(--color-green-700)" : "var(--text-secondary)",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "3px",
+                        fontWeight: req.ok ? 600 : 400,
+                      }}
+                    >
+                      {req.ok ? <Check size={11} /> : <span style={{ opacity: 0.5 }}>•</span>}
+                      {req.label}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
             <div className="flex! justify-between! items-center! mt-[6px]!">
-              <span className={`[font-size:0.74rem]! ${(formData.password?.length ?? 0) >= 10 ? "[color:var(--color-green-700)]!" : "[color:var(--color-ink-600)]!"}`}>
-                {(formData.password?.length ?? 0) >= 10 ? t("✓ Meets minimum length requirement") : t("Requires at least 10 characters")}
+              <span
+                id="um-pwd-status-msg"
+                className={`[font-size:0.74rem]! ${allPwdChecksPassed ? "[color:var(--color-green-700)]!" : "[color:var(--color-ink-600)]!"}`}
+              >
+                {allPwdChecksPassed
+                  ? t("✓ Meets all password security requirements")
+                  : t("Requires 10+ characters with uppercase, lowercase, number & symbol")}
               </span>
-              <span className={`[font-size:0.74rem]! [font-weight:600]! ${(formData.password?.length ?? 0) >= 10 ? "[color:var(--color-green-700)]!" : "[color:var(--color-red-700)]!"}`}>
+              <span
+                id="um-pwd-char-counter"
+                className={`[font-size:0.74rem]! [font-weight:600]! ${allPwdChecksPassed ? "[color:var(--color-green-700)]!" : "[color:var(--color-red-700)]!"}`}
+              >
                 {formData.password?.length || 0}/10 chars
               </span>
             </div>
@@ -333,6 +425,7 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
       </div>
     </form>
   </Drawer>
-);
+  );
+};
 
 export default UserManagementBlock1205;

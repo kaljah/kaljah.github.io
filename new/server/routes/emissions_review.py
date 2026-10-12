@@ -138,6 +138,18 @@ def get_pending_emissions():
         except (ValueError, TypeError):
             limit_val = 200
 
+    def _format_s1_ef(e):
+        parts = []
+        if getattr(e, "ef_used_co2", None) is not None:
+            parts.append(f"CO2: {e.ef_used_co2:.4g}")
+        if getattr(e, "ef_used_ch4", None) is not None and e.ef_used_ch4 > 0:
+            parts.append(f"CH4: {e.ef_used_ch4:.4g}")
+        if getattr(e, "ef_used_n2o", None) is not None and e.ef_used_n2o > 0:
+            parts.append(f"N2O: {e.ef_used_n2o:.4g}")
+        if parts:
+            return ", ".join(parts)
+        return getattr(e, "calc_method", None) or "Default"
+
     def q_scope1():
         q = Emission.query.filter(Emission.status.in_(pending_statuses))
         if allowed_fids is not None:
@@ -153,7 +165,7 @@ def get_pending_emissions():
                 "fuel_type": e.fuel_type, "quantity": e.quantity, "unit": e.unit,
                 "co2e_total": e.co2e_total, "status": e.status, 
                 "qa_flag": getattr(e, "qa_flag", None),
-                "emission_factor": getattr(e, "emission_factor", None),
+                "emission_factor": _format_s1_ef(e),
                 "created_by": getattr(e, "created_by", None),
                 "created_at": e.timestamp.isoformat() if e.timestamp else None,
             }

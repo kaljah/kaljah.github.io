@@ -279,6 +279,7 @@ def get_emissions():
             Emission.uncertainty.label("uncertainty_co2"),
             Emission.uncertainty_ch4.label("uncertainty_ch4"),
             Emission.uncertainty_n2o.label("uncertainty_n2o"),
+            Emission.data_source_ref.label("data_source_ref"),
         )
         current_app.logger.info(f"[Emissions] Scope 1 count: {sel1.count()}")
         queries.append(sel1)
@@ -320,6 +321,7 @@ def get_emissions():
             cast(literal(None), Float).label("uncertainty_co2"),
             cast(literal(None), Float).label("uncertainty_ch4"),
             cast(literal(None), Float).label("uncertainty_n2o"),
+            cast(literal(None), String).label("data_source_ref"),
         )
         current_app.logger.info(f"[Emissions] Scope 2 count: {sel2.count()}")
         queries.append(sel2)
@@ -360,6 +362,7 @@ def get_emissions():
             cast(literal(None), Float).label("uncertainty_co2"),
             cast(literal(None), Float).label("uncertainty_ch4"),
             cast(literal(None), Float).label("uncertainty_n2o"),
+            cast(literal(None), String).label("data_source_ref"),
         )
         print(f"[Emissions] Scope 3 count: {sel3.count()}")
         queries.append(sel3)
@@ -429,6 +432,7 @@ def get_emissions():
             "uncertainty_co2": getattr(r, "uncertainty_co2", None),
             "uncertainty_ch4": getattr(r, "uncertainty_ch4", None),
             "uncertainty_n2o": getattr(r, "uncertainty_n2o", None),
+            "data_source_ref": getattr(r, "data_source_ref", None),
         }
         if (
             r.scope == 1
@@ -634,12 +638,12 @@ def add_emission():
     gwp_std = resolve_gwp_standard(user)
     try:
         em_result, method = compute_emissions(data, factor_data, gwp_dict=gwp_dict)
-    except ValueError as e:
+    except (ValueError, TypeError, KeyError) as e:
         # Extract missing field name from error message
         import re
 
         match = re.search(r"Missing required field: (\w+)", str(e))
-        field = match.group(1) if match else "unknown"
+        field = match.group(1) if match else "calculation"
         return jsonify({"error": str(e), "field": field, "detail": str(e)}), 422
 
     # Fallback: Calculate totalCo2e if it's missing or zero
@@ -996,7 +1000,7 @@ def update_emission(id):
             gwp_dict = resolve_gwp_dict(user)
             gwp_std = resolve_gwp_standard(user)
             calculated_em, method = compute_emissions(calc_payload, factor_data, gwp_dict=gwp_dict)
-        except ValueError as err:  # ValidationError, MissingFactorError, calculator input errors
+        except (ValueError, TypeError, KeyError) as err:  # ValidationError, MissingFactorError, calculator input errors
             db.session.rollback()
             return jsonify({"error": getattr(err, "message", None) or str(err),
                             "field": getattr(err, "field", None)}), 422
@@ -1019,6 +1023,24 @@ def update_emission(id):
         if "unit" in data:
             record.unit = data["unit"]
 
+    if "group_name" in data:
+        record.group_name = data["group_name"]
+    if "equipment_id" in data:
+        record.equipment_id = data["equipment_id"]
+    if "data_source_ref" in data:
+        record.data_source_ref = data["data_source_ref"]
+    if "metadata" in data or "calculation_metadata" in data:
+        incoming_meta = data.get("calculation_metadata") or data.get("metadata")
+        if isinstance(incoming_meta, dict):
+            curr_stored = {}
+            if record.source_payload:
+                try:
+                    curr_stored = json.loads(record.source_payload)
+                except Exception:
+                    curr_stored = {}
+            curr_stored.update(incoming_meta)
+            record.source_payload = json.dumps(curr_stored)
+
     record.updated_by = user.id
     record.updated_at = datetime.datetime.now(datetime.timezone.utc)
 
@@ -1037,6 +1059,9 @@ def update_emission(id):
                 "fuel_type",
                 "quantity",
                 "unit",
+                "group_name",
+                "equipment_id",
+                "data_source_ref",
             ]:
                 changes.append(key)
 

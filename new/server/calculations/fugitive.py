@@ -140,6 +140,9 @@ class CompressorSealCalculator(BaseCalculator):
                   segment="production", measured_kg_hr=None):
         uncertainties = uncertainties or {}
         self.validate_inputs({"count": compressor_count}, ["count"])
+        comp_count = float(compressor_count)
+        if comp_count < 0:
+            raise ValueError(f"compressor_count cannot be negative: {comp_count}")
         seg = str(segment or "production").lower()
         seg = ("processing" if "process" in seg else "transmission" if ("transmission" in seg or "storage" in seg)
                else "production")
@@ -156,7 +159,9 @@ class CompressorSealCalculator(BaseCalculator):
             factor_source = "default"  # a Compendium default is Tier 1 whatever the record's source
 
         op_hours = float(hours if hours is not None else 8760)
-        total_ch4_kg_hr = compressor_count * ef
+        if op_hours < 0 or op_hours > 8784:
+            raise ValueError(f"hours must be between 0 and 8784: {op_hours}")
+        total_ch4_kg_hr = comp_count * ef
         total_ch4_tonnes_year = (total_ch4_kg_hr * op_hours) / 1000.0
 
         _tier = resolve_tier(factor_source)

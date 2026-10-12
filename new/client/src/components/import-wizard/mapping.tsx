@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { Check, ChevronDown, CloudUpload, TriangleAlert } from "lucide-react";
-import { Badge, Banner } from "../../ui";
+import { Badge, Banner, NativeSelect } from "../../ui";
 import { cn } from "../../ui/cn";
 import { activateOnKey } from "../../utils/a11yKeys";
 import { t } from "../../i18n";
@@ -41,9 +41,9 @@ export const MappingRow: React.FC<MappingRowProps> = ({ field, headers, value, o
         {field.hint && <span className="text-xs leading-snug text-text-secondary">{field.hint}</span>}
       </div>
       {headers.length > 0 ? (
-        <select
+        <NativeSelect
           aria-label={t("File column for {{field}}", { field: field.label })}
-          className={cn(controlClass, mapped ? "border-green-500" : "border-border")}
+          className={cn(controlClass, mapped ? "!border-green-500" : "!border-border")}
           value={value}
           onChange={(e) => onChange(e.target.value)}
         >
@@ -53,7 +53,7 @@ export const MappingRow: React.FC<MappingRowProps> = ({ field, headers, value, o
               {h}
             </option>
           ))}
-        </select>
+        </NativeSelect>
       ) : (
         <input
           aria-label={t("File column for {{field}}", { field: field.label })}

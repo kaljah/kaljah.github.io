@@ -227,7 +227,7 @@ def superuser_required(f):
     return decorated_function
 
 
-ROLE_RANK = {"user": 0, "it": 1, "superuser": 2, "admin": 3, "it_admin": 4, "it_manager": 4}
+ROLE_RANK = {"user": 0, "auditor": 0, "it": 1, "superuser": 2, "admin": 3, "it_admin": 4, "it_manager": 4}
 BUSINESS_ROLES = ("admin", "superuser")
 BUSINESS_ROLE_GRANTORS = ("admin", "it_manager")  # separation of duties (update_user and register)
 CLIENT_IT_ROLES = ("it", "it_admin")  # client IT staff manage ordinary accounts only:

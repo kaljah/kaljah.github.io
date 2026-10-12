@@ -81,21 +81,31 @@
 
 .btn-add-activity {
   width: 100%;
-  background-color: var(--color-green-700);
-  /* Green */
+  background-color: var(--color-primary, #ff6600);
   color: white;
   border: none;
   padding: 14px;
   font-size: var(--text-md);
   font-weight: 600;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md, 8px);
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
   margin-top: 20px;
+  box-shadow: 0 2px 4px rgba(255, 102, 0, 0.2);
 }
 
-.btn-add-activity:hover {
-  background-color: var(--color-green-600);
+.btn-add-activity:hover:not(:disabled) {
+  background-color: var(--color-primary-hover, #e65c00);
+  box-shadow: 0 4px 10px rgba(255, 102, 0, 0.3);
+}
+
+.btn-add-activity:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.btn-add-activity:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .checkbox-label {

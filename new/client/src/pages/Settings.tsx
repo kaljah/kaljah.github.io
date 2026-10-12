@@ -216,6 +216,42 @@ const Settings: React.FC = () => {
           )}
         </div>
 
+        {/* Active Policy Status Strip */}
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 rounded-xl border border-border bg-ink-50/60 p-3.5">
+          <div className="flex flex-col">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-text-secondary">
+              {t("Active GWP Standard")}
+            </span>
+            <span className="text-sm font-bold text-text mt-0.5">
+              IPCC {gwpStandard} (100-yr)
+            </span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-text-secondary">
+              {t("Default Base Year")}
+            </span>
+            <span className="text-sm font-bold text-text mt-0.5">
+              {defaultBaseYear}
+            </span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-text-secondary">
+              {t("Methane Intensity Target")}
+            </span>
+            <span className="text-sm font-bold text-text mt-0.5">
+              {upstreamTarget}% {t("(Upstream)")}
+            </span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-text-secondary">
+              {t("Reconciliation Tolerance")}
+            </span>
+            <span className="text-sm font-bold text-text mt-0.5">
+              ±{globalThreshold}%
+            </span>
+          </div>
+        </div>
+
         <TabsList aria-label={t("Settings sections")} className="border-b-0">
           {TABS.map(({ value, icon: Icon, label }) => (
             <TabsTrigger key={value} value={value}>

@@ -241,16 +241,31 @@ class ActivityFactorCalculator(BaseCalculator):
             raise ValueError(f"Unsupported factor basis '{per}'")
 
         basis = row["basis"]
+        def _parse_num(val):
+            if val in (None, ""):
+                return None
+            s = str(val).replace("%", "").strip()
+            try:
+                return float(s)
+            except (ValueError, TypeError):
+                return None
+
+        ch4_num = _parse_num(ch4_content)
+        co2_num = _parse_num(co2_content)
+
         x_ch4 = _frac(ch4_content)
-        if x_ch4 is not None and ch4_content not in (None, "") and float(ch4_content) <= 1.0:
+        if x_ch4 is not None and ch4_num is not None and ch4_num <= 1.0:
             # a CH4 content of 0.85 is the fraction 85 %, not 0.85 % (it made CH4 100x low); vented
             # gas under 1 % CH4 does not occur for these factors
-            x_ch4 = float(ch4_content)
+            x_ch4 = ch4_num
+
         x_co2 = _frac(co2_content) or 0.0
-        if x_co2 > 0 and co2_content not in (None, ""):
-            # Consistent basis: if CH4 is entered as a fraction (<= 1.0) and CO2 <= 1.0, retain as fraction
-            if float(ch4_content or 0) <= 1.0 and float(co2_content) <= 1.0:
-                x_co2 = float(co2_content)
+        if x_co2 > 0 and co2_num is not None:
+            # Consistent basis: if CH4 is entered as percentage (> 1.0) and CO2 <= 1.0 without '%', treat CO2 as percentage
+            if ch4_num is not None and ch4_num > 1.0 and "%" not in str(co2_content) and co2_num <= 1.0:
+                x_co2 = co2_num / 100.0
+            elif ch4_num is not None and ch4_num <= 1.0 and co2_num <= 1.0:
+                x_co2 = co2_num
 
         gas = row["gas_scf"]
         if row["toc"]:

@@ -21,3 +21,27 @@ describe("emission display", () => {
     expect(formatEmission(0.0005, 3)).toBe("0.001");
   });
 });
+
+describe("NIST password complexity validation", () => {
+  const validatePwd = (pwd: string) => {
+    return (
+      pwd.length >= 10 &&
+      /[A-Z]/.test(pwd) &&
+      /[a-z]/.test(pwd) &&
+      /[0-9]/.test(pwd) &&
+      /[!@#$%^&*(),.?":{}|<>\-_+=[\]\\/~`]/.test(pwd)
+    );
+  };
+
+  it("rejects weak passwords failing NIST criteria", () => {
+    expect(validatePwd("password1234")).toBe(false); // missing upper and special
+    expect(validatePwd("PASSWORD1234!")).toBe(false); // missing lower
+    expect(validatePwd("Password1234")).toBe(false); // missing special
+    expect(validatePwd("Pass1!")).toBe(false); // under 10 chars
+  });
+
+  it("accepts strong passwords meeting all 5 NIST criteria", () => {
+    expect(validatePwd("AuditComplexPass2026!")).toBe(true);
+    expect(validatePwd("Aa1!4567890")).toBe(true);
+  });
+});

@@ -376,6 +376,8 @@ def calc_cogen_allocation(self, calculator, flat_inputs, uncertainties):
         total_emissions=tot_em,
         heat_output=heat_out,
         power_output=power_out,
+        heat_unit=flat_inputs.get("heat_unit", "mmbtu"),
+        power_unit=flat_inputs.get("power_unit", "mmbtu"),
         method=c_method,
         uncertainties=uncertainties,
         heat_efficiency=flat_inputs.get("heat_efficiency"),

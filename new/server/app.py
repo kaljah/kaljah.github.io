@@ -296,6 +296,8 @@ def after_request(response):
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
 
     # Disable caching for API endpoints to prevent stale browser reads.
     if request.path.startswith("/api"):
@@ -407,6 +409,7 @@ from routes.audit import audit_bp
 from routes.qaqc import qaqc_bp
 from routes.cap_routes import cap_bp
 from routes.equity_routes import equity_bp
+from routes.ldar import ldar_bp
 
 app.register_blueprint(auth_bp, url_prefix="/api/auth")
 app.register_blueprint(emissions_bp, url_prefix="/api/emissions")
@@ -424,6 +427,7 @@ app.register_blueprint(audit_bp, url_prefix="/api/audit")
 app.register_blueprint(qaqc_bp, url_prefix="/api/qaqc")
 app.register_blueprint(cap_bp, url_prefix="/api/cap")
 app.register_blueprint(equity_bp, url_prefix="/api/equity")
+app.register_blueprint(ldar_bp, url_prefix="/api/ldar")
 
 # Swagger UI Configuration (SEC-05 & INFO-01: Disabled in production unless explicitly enabled)
 if (

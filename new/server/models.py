@@ -602,8 +602,22 @@ class CbamProductExport(db.Model):
     cn_code = db.Column(db.String(50), nullable=False, index=True) # e.g. '2814 10 00', '2804 10 00', '2710'
     quantity_tonnes = db.Column(db.Float, nullable=False, default=0.0)
     export_destination = db.Column(db.String(100), default='EU')
-    specific_embedded_direct = db.Column(db.Float, default=0.0)   # tCO2e / t product
+    quarter = db.Column(db.String(10), default='Q1')              # 'Q1', 'Q2', 'Q3', 'Q4'
+    specific_embedded_direct = db.Column(db.Float, default=0.0)   # tCO2e / t product (gross or net)
     specific_embedded_indirect = db.Column(db.Float, default=0.0) # tCO2e / t product
+    # Carbon Capture & Geological Storage (CCS) for Blue H2 / Ammonia
+    captured_co2_tonnes = db.Column(db.Float, default=0.0)        # tCO2 permanently sequestered
+    ccs_certificate_id = db.Column(db.String(100))                # e.g. 'DZ-CCS-2026-004'
+    # Article 9 Carbon Price / Flaring Tax Paid in Country of Origin
+    carbon_price_paid_eur = db.Column(db.Float, default=0.0)      # EUR/tonne product
+    carbon_price_legal_ref = db.Column(db.String(200))            # e.g. 'Law 19-13 Art 42 / Decree 21-330'
+    # Article 7 Complex Goods & Upstream Precursors (e.g. Ammonia into Urea/UAN)
+    is_complex_good = db.Column(db.Boolean, default=False)
+    precursor_name = db.Column(db.String(120))                    # e.g. 'Anhydrous Ammonia'
+    precursor_cn_code = db.Column(db.String(50))                  # e.g. '2814 10 00'
+    precursor_ratio = db.Column(db.Float, default=0.0)            # t precursor / t product (e.g. 0.567)
+    precursor_see_dir = db.Column(db.Float, default=0.0)          # tCO2e / t precursor direct
+    precursor_see_indir = db.Column(db.Float, default=0.0)        # tCO2e / t precursor indirect
     notes = db.Column(db.Text)
     created_by = db.Column(db.Integer, db.ForeignKey('users.id'))
     created_at = db.Column(db.DateTime, default=utc_now)

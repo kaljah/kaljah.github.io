@@ -1,7 +1,6 @@
 import React from "react";
 import { Input, Field } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
-import { NativeSelect } from "../../ui/NativeSelect";
 import { MARKET_INSTRUMENTS } from "./marketInstruments";
 import { t } from "../../i18n";
 
@@ -145,23 +144,24 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
         <Field className="input-group" label={t("Year")}>
           <Input
             type="number"
+            min={1990}
+            max={2100}
             value={year || ""}
             onChange={(e) => setYear(e.target.value)}
           />
         </Field>
-        <Field className="input-group" label={t("Month")}>
-          <NativeSelect
-            className="component-select"
-            value={month || 1}
-            onChange={(e) => setMonth(e.target.value)}
-          >
-            {[...Array(12)].map((_, i) => (
-              <option key={i + 1} value={i + 1}>
-                {String(i + 1).padStart(2, "0")}
-              </option>
-            ))}
-          </NativeSelect>
-        </Field>
+        <div className="input-group">
+          <label>{t("Month")}</label>
+          <CustomDropdown
+            options={[...Array(12)].map((_, i) => ({
+              value: i + 1,
+              label: new Date(0, i).toLocaleString("default", { month: "long" }),
+            }))}
+            value={Number(month) || 1}
+            onChange={(val) => setMonth(Number(val))}
+            placeholder={t("Select Month...")}
+          />
+        </div>
       </div>
     </div>
 
@@ -201,13 +201,15 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
         {sourceType === "electricity" && (
           // market-based Scope 2 (dual reporting): contract instrument and its factor; blank = location-based
           <div className={`form-grid-2 [grid-column:span_2]!`}>
-            <Field className="input-group" label={t("Market instrument (market-based)")}>
-              <NativeSelect value={marketInstrument} onChange={(e) => setMarketInstrument(e.target.value)}>
-                {MARKET_INSTRUMENTS.map((m) => (
-                  <option key={m.value} value={m.value}>{m.label}</option>
-                ))}
-              </NativeSelect>
-            </Field>
+            <div className="input-group">
+              <label>{t("Market instrument (market-based)")}</label>
+              <CustomDropdown
+                options={MARKET_INSTRUMENTS}
+                value={marketInstrument || ""}
+                onChange={(val) => setMarketInstrument(String(val))}
+                placeholder={t("None (location-based fallback)")}
+              />
+            </div>
             <Field className="input-group" label={t("Contract emission factor (kg CO2e/kWh)")}>
               <Input
                 type="number"
@@ -255,16 +257,17 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
                 onChange={(e) => setPowerOutput(e.target.value)}
               />
             </Field>
-            <Field className="input-group" label={t("Method")}>
-              <NativeSelect
-                className="component-select"
+            <div className="input-group">
+              <label>{t("Method")}</label>
+              <CustomDropdown
+                options={[
+                  { value: "wri_efficiency", label: t("WRI Efficiency") },
+                  { value: "energy_content", label: t("Energy Content") },
+                ]}
                 value={allocationMethod}
-                onChange={(e) => setAllocationMethod(e.target.value)}
-              >
-                <option value="wri_efficiency">{t("WRI Efficiency")}</option>
-                <option value="energy_content">{t("Energy Content")}</option>
-              </NativeSelect>
-            </Field>
+                onChange={(val) => setAllocationMethod(String(val))}
+              />
+            </div>
             {allocationMethod === "wri_efficiency" && (
               <>
                 <Field className="input-group" label={t("Heat Efficiency (%)")}>
@@ -308,6 +311,7 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
         >
           <Input
             type="number"
+            min="0"
             value={amount || ""}
             onChange={(e) => setAmount(e.target.value)}
             placeholder="0.00"
@@ -324,18 +328,10 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
       </div>
     </div>
 
-    <div className="flex! gap-[12px]! mt-[24px]! justify-end!">
+    <div className="mt-[24px]!">
       <button
         type="button"
-        className={`action-btn secondary [padding:10px_20px]! ${submitting ? "[cursor:not-allowed]!" : "[cursor:pointer]!"} ${submitting ? "[opacity:0.6]!" : "[opacity:1]!"}`}
-        disabled={submitting}
-        onClick={() => handleAddEntry("Draft")}
-      >
-        {submitting ? t("Saving...") : t("Save as Draft (Maker Mode)")}
-      </button>
-      <button
-        type="button"
-        className={`btn-add-activity [padding:10px_24px]! ${submitting ? "[cursor:not-allowed]!" : "[cursor:pointer]!"} ${submitting ? "[opacity:0.6]!" : "[opacity:1]!"}`}
+        className={`btn-add-activity w-full ${submitting ? "[cursor:not-allowed]! [opacity:0.6]!" : "[cursor:pointer]! [opacity:1]!"}`}
         disabled={submitting}
         onClick={() => handleAddEntry("Verified")}
       >

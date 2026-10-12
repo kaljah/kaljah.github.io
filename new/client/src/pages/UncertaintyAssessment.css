@@ -1,109 +1,203 @@
 /* ============================================================
-   UncertaintyAssessment — Design System Compliant
+   UncertaintyAssessment — Executive & Auditor Design System
    All colors reference CSS custom properties from the global
-   design system. No hardcoded hex colors.
+   design system. Zero hardcoded hex colors.
    ============================================================ */
 
 /* ── Page Header ── */
-
 .ua-title {
   font-size: var(--text-3xl);
   font-weight: 800;
   color: var(--text-primary, var(--color-ink-900));
-  margin: 0 0 10px 0;
-  line-height: 1.1;
+  margin: 0 0 8px 0;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
 }
 
-/* ── Controls & Filters ── */
-
-.ua-filter-label {
-  display: block;
-  font-size: var(--text-sm);
-  font-weight: 600;
-  color: var(--text-secondary, var(--color-ink-400));
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+/* ── Hero Compliance Banner (Zone 1) ── */
+.ua-hero-card {
+  background: var(--bg-card, rgba(255, 255, 255, 0.78));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border-color, rgba(226, 232, 240, 0.8));
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  box-shadow: var(--shadow-card, 0 1px 3px rgba(0, 0, 0, 0.05));
+  margin-bottom: 32px;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 32px;
+  position: relative;
+  overflow: hidden;
 }
 
-/* ── Inventory Summary Badge ── */
-
-.ua-inventory-value {
-  font-size: var(--text-2xl);
-  font-weight: 800;
-  line-height: 1.2;
+.ua-hero-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.ua-inventory-value.level-low {
-  color: var(--color-green-700);
+.ua-hero-col:not(:last-child) {
+  border-right: 1px solid var(--border-color, rgba(226, 232, 240, 0.7));
+  padding-right: 28px;
 }
 
-.ua-inventory-value.level-medium {
-  color: var(--color-amber-700);
-}
-
-.ua-inventory-value.level-high {
-  color: var(--color-red-700);
-}
-
-/* ── Confidence Badge ── */
-
-/* ── Tier Cards ── */
-
-.ua-tier-value {
-  font-size: var(--text-xl);
+.ua-hero-label {
+  font-size: var(--text-xs);
   font-weight: 700;
-  margin: 8px 0;
+  color: var(--text-secondary, var(--color-ink-500));
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.ua-tier-value.tier-3-color {
-  color: var(--color-ink-900);
+.ua-hero-kpi-row {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
-.ua-tier-value.tier-2-color {
-  color: var(--color-ink-900);
+.ua-hero-big-value {
+  font-size: clamp(2.2rem, 3.5vw, 3rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.03em;
 }
 
-.ua-tier-value.tier-1-color {
-  color: var(--color-ink-900);
+.ua-hero-big-value.level-low {
+  color: var(--color-green-600);
 }
 
-.ua-tier-bar-fill {
-  height: 100%;
+.ua-hero-big-value.level-medium {
+  color: var(--color-amber-600);
+}
+
+.ua-hero-big-value.level-high {
+  color: var(--color-red-600);
+}
+
+.ua-hero-confidence-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-md);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  background: rgba(59, 130, 246, 0.08);
+  color: var(--color-blue-600);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.ua-hero-subtext {
+  font-size: var(--text-sm);
+  color: var(--text-secondary, var(--color-ink-600));
+  margin-top: 10px;
+  line-height: 1.4;
+}
+
+/* ── Stacked Bar & Meter Components ── */
+.ua-stacked-bar-container {
+  margin-top: 8px;
+}
+
+.ua-stacked-bar {
+  display: flex;
+  height: 12px;
+  width: 100%;
   border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--color-ink-100);
+  margin-bottom: 14px;
+}
+
+.ua-stacked-segment {
+  height: 100%;
   transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.ua-tier-bar-fill.tier-3-color {
-  background: var(--color-green-500);
-}
-
-.ua-tier-bar-fill.tier-2-color {
-  background: var(--color-blue-500);
-}
-
-.ua-tier-bar-fill.tier-1-color {
+.ua-stacked-segment.tier-1 {
   background: var(--color-amber-500);
 }
 
-/* ── Export Button ── */
-
-/* ── Legend Bar ── */
-
-/* ── Category Sections ── */
-
-.category-grid {
-  /* container for category sections */
+.ua-stacked-segment.tier-2 {
+  background: var(--color-blue-500);
 }
 
-.category-section {
-  margin-bottom: 48px;
+.ua-stacked-segment.tier-3 {
+  background: var(--color-green-500);
 }
 
-.category-header {
+.ua-stacked-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ua-stacked-legend-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--text-xs);
+  color: var(--text-secondary, var(--color-ink-600));
+}
+
+.ua-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.ua-legend-dot.tier-1,
+.ua-legend-dot.band-medium {
+  background: var(--color-amber-500);
+}
+
+.ua-legend-dot.tier-2 {
+  background: var(--color-blue-500);
+}
+
+.ua-legend-dot.tier-3,
+.ua-legend-dot.band-low {
+  background: var(--color-green-500);
+}
+
+.ua-legend-dot.band-high {
+  background: var(--color-red-500);
+}
+
+/* ── Chart & Analytics Card (Zone 2) ── */
+.ua-chart-card {
+  background: var(--bg-card, rgba(255, 255, 255, 0.78));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border-color, rgba(226, 232, 240, 0.8));
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  box-shadow: var(--shadow-card, 0 1px 3px rgba(0, 0, 0, 0.05));
+  margin-bottom: 32px;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.ua-chart-card:hover {
+  box-shadow: var(--shadow-card-elevated, 0 4px 12px rgba(0, 0, 0, 0.08));
+  border-color: rgba(255, 255, 255, 0.95);
+}
+
+.ua-chart-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .category-title {
@@ -120,13 +214,167 @@
   content: "";
   width: 6px;
   height: 24px;
-  background: var(--color-green-500);
+  background: var(--color-brand-500);
   border-radius: var(--radius-sm);
   flex-shrink: 0;
 }
 
-/* ── Uncertainty Badges ── */
+/* Segmented Control Pill Switcher */
+.ua-segmented-control {
+  display: inline-flex;
+  align-items: center;
+  background: var(--color-ink-100);
+  padding: 4px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color, rgba(226, 232, 240, 0.9));
+  gap: 4px;
+}
 
+.ua-segmented-btn {
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--text-secondary, var(--color-ink-600));
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ua-segmented-btn:hover {
+  color: var(--color-ink-900);
+}
+
+.ua-segmented-btn.active {
+  background: var(--color-white);
+  color: var(--color-brand-700);
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* ── Interactive Master-Detail Table (Zone 3) ── */
+.ua-table-card {
+  background: var(--bg-card, rgba(255, 255, 255, 0.78));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border-color, rgba(226, 232, 240, 0.8));
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  box-shadow: var(--shadow-card, 0 1px 3px rgba(0, 0, 0, 0.05));
+  margin-bottom: 32px;
+}
+
+.ua-table-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.ua-filter-chips {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ua-chip {
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  border: 1px solid var(--border-color, var(--color-ink-200));
+  background: var(--color-white);
+  color: var(--color-ink-600);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.ua-chip:hover {
+  background: var(--color-ink-50);
+  color: var(--color-ink-900);
+}
+
+.ua-chip.active {
+  background: var(--color-brand-50);
+  color: var(--color-brand-700);
+  border-color: var(--color-brand-500);
+  font-weight: 700;
+}
+
+.ua-search-input-wrap {
+  position: relative;
+  width: 260px;
+}
+
+.ua-search-input {
+  width: 100%;
+  padding: 7px 12px 7px 32px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color, var(--color-ink-200));
+  font-size: var(--text-xs);
+  background: var(--color-white);
+  color: var(--color-ink-800);
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.ua-search-input:focus {
+  border-color: var(--color-brand-500);
+}
+
+.ua-table-wrapper {
+  overflow-x: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color, rgba(226, 232, 240, 0.9));
+}
+
+.ua-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: var(--text-sm);
+}
+
+.ua-table th {
+  background: var(--color-ink-50);
+  color: var(--text-secondary, var(--color-ink-600));
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color, var(--color-ink-200));
+  white-space: nowrap;
+}
+
+.ua-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-color, rgba(226, 232, 240, 0.6));
+  color: var(--text-primary, var(--color-ink-800));
+  vertical-align: middle;
+}
+
+.ua-table tbody tr.ua-row-clickable {
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.ua-table tbody tr.ua-row-clickable:hover {
+  background: var(--color-ink-50);
+}
+
+.ua-table tbody tr.ua-row-expanded {
+  background: rgba(255, 102, 0, 0.02);
+}
+
+/* ── Badges ── */
 .uncertainty-low {
   background: rgba(16, 185, 129, 0.12);
   color: var(--color-green-700);
@@ -145,26 +393,71 @@
   border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
-/* ── Factor Cards (Uncertainty Grid) ── */
-
-.uncertainty-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 20px;
+.ua-risk-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
-.factor-name {
+/* ── Expanded Contributor Row ── */
+.ua-detail-expanded-cell {
+  background: var(--color-ink-50);
+  padding: 20px 24px !important;
+  border-bottom: 2px solid var(--border-color, var(--color-ink-200));
+}
+
+.ua-detail-panel {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.ua-contributor-card {
+  background: var(--color-white);
+  border: 1px solid var(--border-color, rgba(226, 232, 240, 0.9));
+  border-radius: var(--radius-md);
+  padding: 16px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.ua-contributor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.ua-contributor-title {
+  font-size: var(--text-sm);
   font-weight: 700;
-  font-size: var(--text-lg);
-  color: var(--text-primary, var(--color-ink-900));
-  margin-bottom: 4px;
+  color: var(--color-ink-900);
+}
+
+.ua-contributor-bar-bg {
+  width: 100%;
+  height: 6px;
+  background: var(--color-ink-100);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.ua-contributor-bar-fill {
+  height: 100%;
+  background: var(--color-brand-500);
+  border-radius: var(--radius-sm);
+  transition: width 0.4s ease;
 }
 
 /* ── Methodology Box ── */
-
 .ua-methodology-box {
-  margin-top: 60px;
-  padding: 30px;
+  margin-top: 40px;
+  padding: 24px 28px;
   background: var(--bg-card, rgba(255, 255, 255, 0.78));
   border-radius: var(--radius-lg);
   border: 1px dashed var(--border-color, var(--color-ink-300));
@@ -176,50 +469,33 @@
 .ua-methodology-icon {
   color: var(--text-secondary, var(--color-ink-500));
   flex-shrink: 0;
+  margin-top: 2px;
 }
 
 .ua-methodology-box h4 {
-  margin: 0 0 8px 0;
+  margin: 0 0 6px 0;
   color: var(--text-primary, var(--color-ink-800));
-  font-size: var(--text-lg);
+  font-size: var(--text-base);
   font-weight: 700;
 }
 
 .ua-methodology-box p {
   margin: 0;
   color: var(--text-secondary, var(--color-ink-500));
-  font-size: var(--text-md);
+  font-size: var(--text-sm);
   line-height: 1.6;
 }
 
 /* ── Responsive ── */
-
-@media (max-width: 900px) {
-
-  .uncertainty-grid {
+@media (max-width: 1024px) {
+  .ua-hero-card {
     grid-template-columns: 1fr;
+    gap: 24px;
   }
-
-  .ua-title {
-    font-size: var(--text-2xl);
+  .ua-hero-col:not(:last-child) {
+    border-right: none;
+    border-bottom: 1px solid var(--border-color, rgba(226, 232, 240, 0.7));
+    padding-right: 0;
+    padding-bottom: 24px;
   }
-}
-
-/* Uncertainty bands share the same low/medium/high colors as the legend */
-.ua-tier-value.band-low,
-.ua-tier-value.band-medium,
-.ua-tier-value.band-high {
-  color: var(--color-ink-900);
-}
-
-.ua-tier-bar-fill.band-low {
-  background: var(--color-unc-low);
-}
-
-.ua-tier-bar-fill.band-medium {
-  background: var(--color-unc-medium);
-}
-
-.ua-tier-bar-fill.band-high {
-  background: var(--color-unc-high);
 }

@@ -72,6 +72,7 @@ const MethaneIntensity: React.FC = () => {
   const [availableSegments, setAvailableSegments] = useState<string[]>([]);
 
   // View states
+  const [activeMetricTab, setActiveMetricTab] = useState<"loss_rate" | "intensity" | "total_ch4" | "flaring">("loss_rate");
   const [trendView, setTrendView] = useState<"chart" | "heatmap">("chart");
   const [exporting, setExporting] = useState<boolean>(false);
   const [ogmpCollapsed, setOgmpCollapsed] = useState<boolean>(true);
@@ -747,21 +748,72 @@ const MethaneIntensity: React.FC = () => {
           setOgmpCollapsed={setOgmpCollapsed}
         />
 
-        {/* Regional Bar Charts */}
-        <div className="chart-grid [display:grid] [grid-template-columns:repeat(auto-fit,_minmax(450px,_1fr))]! [gap:24px] [@media(max-width:768px)]:[grid-template-columns:1fr]!">
-          <div className="card">
-            <div className="chart-header">
-              <div className="[display:flex] [flex-direction:column] [gap:8px]">
-                <h3>{t("Methane Loss Rate by Facility (% of Gas Produced)")}</h3>
-                <div
-                  className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:var(--color-blue-600)]!"
-                ></div>
-              </div>
+        {/* Unified Multi-Metric Facility Benchmark Hub */}
+        <div className="card [padding:24px] [border-radius:var(--radius-lg)] [background:var(--bg-card)] [border:1px_solid_var(--border-color)]">
+          <div className="[display:flex] [flex-wrap:wrap] [align-items:center] [justify-content:space-between] [gap:16px] [margin-bottom:20px] [padding-bottom:16px] [border-bottom:1px_solid_var(--border-color)]">
+            <div className="[display:flex] [flex-direction:column] [gap:4px]">
+              <h3 className="[font-size:var(--text-lg)] [font-weight:700] [color:var(--text-primary)]">
+                {t("Methane Performance & Loss Benchmark by Facility")}
+              </h3>
+              <p className="[font-size:var(--text-sm)] [color:var(--text-secondary)]">
+                {t("Compare loss rates, unit intensity, absolute methane tonnage, and flaring across operational assets.")}
+              </p>
             </div>
-            <div className="h-[300px]!">
+
+            {/* Metric Switcher Pills */}
+            <div className="[display:inline-flex] [padding:4px] [background:var(--color-ink-100)] [border-radius:var(--radius-full)] [border:1px_solid_var(--border-color)] [gap:4px]">
+              <button
+                type="button"
+                onClick={() => setActiveMetricTab("loss_rate")}
+                className={`[padding:6px_14px] [border-radius:var(--radius-full)] [font-size:var(--text-sm)] [font-weight:600] [border:none] [cursor:pointer] [transition:all_0.15s_ease] ${
+                  activeMetricTab === "loss_rate"
+                    ? "[background:var(--color-primary)] [color:var(--color-white)] [box-shadow:0_2px_6px_rgba(255,102,0,0.3)]"
+                    : "[background:transparent] [color:var(--text-secondary)] [&:hover]:[color:var(--text-primary)]"
+                }`}
+              >
+                {t("Loss Rate (%)")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveMetricTab("intensity")}
+                className={`[padding:6px_14px] [border-radius:var(--radius-full)] [font-size:var(--text-sm)] [font-weight:600] [border:none] [cursor:pointer] [transition:all_0.15s_ease] ${
+                  activeMetricTab === "intensity"
+                    ? "[background:var(--color-primary)] [color:var(--color-white)] [box-shadow:0_2px_6px_rgba(255,102,0,0.3)]"
+                    : "[background:transparent] [color:var(--text-secondary)] [&:hover]:[color:var(--text-primary)]"
+                }`}
+              >
+                {t("Intensity (kg CH₄/BOE)")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveMetricTab("total_ch4")}
+                className={`[padding:6px_14px] [border-radius:var(--radius-full)] [font-size:var(--text-sm)] [font-weight:600] [border:none] [cursor:pointer] [transition:all_0.15s_ease] ${
+                  activeMetricTab === "total_ch4"
+                    ? "[background:var(--color-primary)] [color:var(--color-white)] [box-shadow:0_2px_6px_rgba(255,102,0,0.3)]"
+                    : "[background:transparent] [color:var(--text-secondary)] [&:hover]:[color:var(--text-primary)]"
+                }`}
+              >
+                {t("Total CH₄ (t)")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveMetricTab("flaring")}
+                className={`[padding:6px_14px] [border-radius:var(--radius-full)] [font-size:var(--text-sm)] [font-weight:600] [border:none] [cursor:pointer] [transition:all_0.15s_ease] ${
+                  activeMetricTab === "flaring"
+                    ? "[background:var(--color-primary)] [color:var(--color-white)] [box-shadow:0_2px_6px_rgba(255,102,0,0.3)]"
+                    : "[background:transparent] [color:var(--text-secondary)] [&:hover]:[color:var(--text-primary)]"
+                }`}
+              >
+                {t("Flaring (m³)")}
+              </button>
+            </div>
+          </div>
+
+          <div className="h-[400px]!">
+            {activeMetricTab === "loss_rate" && (
               <BarChart
                 data={regionalData
-                  .filter((d) => d.methane_loss_rate_pct != null) /* BUG-088: no gas production = no rate */
+                  .filter((d) => d.methane_loss_rate_pct != null)
                   .map((d) => ({
                     id: d.facility_id,
                     name: d.facility_name,
@@ -774,28 +826,21 @@ const MethaneIntensity: React.FC = () => {
                 onSelect={openFacilityRecords}
                 selectLabel={(r) => t("Open {{name}} records", { name: r.name })}
                 exportName="methane-loss-rate-by-facility"
-                thresholds={{ warnAt: upstreamTargetPct * 0.8, badAt: upstreamTargetPct, labels: [t("Within target"), t("Within 20% of target"), t("Above target")] }}
+                thresholds={{
+                  warnAt: upstreamTargetPct * 0.8,
+                  badAt: upstreamTargetPct,
+                  labels: [t("Within target"), t("Within 20% of target"), t("Above target")],
+                }}
                 referenceValue={upstreamTargetPct}
                 referenceLabel={t("Target {{value}}%", { value: upstreamTargetPct })}
                 color="var(--color-blue-600)"
               />
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="chart-header">
-              <div className="[display:flex] [flex-direction:column] [gap:8px]">
-                <h3>{t("Methane Intensity by Facility (kg CH₄ / BOE)")}</h3>
-                <div
-                  className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:var(--color-brand-500)]!"
-                ></div>
-              </div>
-            </div>
-            <div className="h-[300px]!">
+            )}
+            {activeMetricTab === "intensity" && (
               <BarChart
                 data={regionalData.map((d) => ({
                   id: d.facility_id,
-                    name: d.facility_name,
+                  name: d.facility_name,
                   value: d.ch4_intensity || 0,
                 }))}
                 dataKey="value"
@@ -805,25 +850,14 @@ const MethaneIntensity: React.FC = () => {
                 onSelect={openFacilityRecords}
                 selectLabel={(r) => t("Open {{name}} records", { name: r.name })}
                 exportName="methane-intensity-by-facility"
-                color="var(--color-brand-500)"
+                color="var(--color-primary)"
               />
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="chart-header">
-              <div className="[display:flex] [flex-direction:column] [gap:8px]">
-                <h3>{t("Total Methane Emissions (tCH₄)")}</h3>
-                <div
-                  className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:var(--color-blue-500)]!"
-                ></div>
-              </div>
-            </div>
-            <div className="h-[300px]!">
+            )}
+            {activeMetricTab === "total_ch4" && (
               <BarChart
                 data={regionalData.map((d) => ({
                   id: d.facility_id,
-                    name: d.facility_name,
+                  name: d.facility_name,
                   value: d.total_ch4 || 0,
                 }))}
                 dataKey="value"
@@ -833,25 +867,14 @@ const MethaneIntensity: React.FC = () => {
                 onSelect={openFacilityRecords}
                 selectLabel={(r) => t("Open {{name}} records", { name: r.name })}
                 exportName="total-methane-emissions-by-facility"
-                color="var(--color-blue-500)"
+                color="var(--color-teal-600, #0d9488)"
               />
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="chart-header">
-              <div className="[display:flex] [flex-direction:column] [gap:8px]">
-                <h3>{t("Gas Flaring Volume by Facility (m³)")}</h3>
-                <div
-                  className="[width:32px] [height:4px] [border-radius:var(--radius-sm)] bg-[color:var(--color-legacy-ea580c)]!"
-                ></div>
-              </div>
-            </div>
-            <div className="h-[300px]!">
+            )}
+            {activeMetricTab === "flaring" && (
               <BarChart
                 data={regionalData.map((d) => ({
                   id: d.facility_id,
-                    name: d.facility_name,
+                  name: d.facility_name,
                   value: d.flaring_volume || 0,
                 }))}
                 dataKey="value"
@@ -861,9 +884,9 @@ const MethaneIntensity: React.FC = () => {
                 onSelect={openFacilityRecords}
                 selectLabel={(r) => t("Open {{name}} records", { name: r.name })}
                 exportName="gas-flaring-volume-by-facility"
-                color="var(--color-legacy-ea580c)"
+                color="var(--color-legacy-ea580c, #ea580c)"
               />
-            </div>
+            )}
           </div>
         </div>
 

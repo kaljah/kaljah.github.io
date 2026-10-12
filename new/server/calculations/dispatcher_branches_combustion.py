@@ -98,6 +98,7 @@ def calc_flaring(self, calculator, emission_factors, flat_inputs, gwp_dict, unce
     )
     flare_type = flat_inputs.get("flare_type", "elevated")
     hhv_val = flat_inputs.get("hhv") or emission_factors.get("hhv")
+    flare_hhv, _ = user_hhv(hhv_val, flat_inputs.get("hhv_unit"))
 
     comps = self._composition(flat_inputs, c1_keys=("c1", "ch4_content", "flare_ch4_content"))
     if not comps.get("c1"):
@@ -131,7 +132,7 @@ def calc_flaring(self, calculator, emission_factors, flat_inputs, gwp_dict, unce
         ch4_fraction=ch4_content,
         flare_type=flare_type,
         uncertainties=uncertainties,
-        hhv=float(hhv_val) if hhv_val else None,
+        hhv=float(flare_hhv) if flare_hhv else None,
         ef_unit=flat_inputs.get(
             "ef_unit", emission_factors.get("unit", "kg/unit")
         ) if n2o_given else None,

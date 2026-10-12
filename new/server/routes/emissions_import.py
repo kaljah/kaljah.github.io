@@ -202,10 +202,10 @@ def import_emissions():
     user = get_current_user()
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
-    if user.role in ["it_admin", "it_manager", "it"]:
+    if user.role in ["auditor", "it_admin", "it_manager", "it"]:
         return (
             jsonify(
-                {"error": "Forbidden: IT personnel cannot access operational emission data"}
+                {"error": "Forbidden: Auditor and IT personnel cannot import operational emission data"}
             ),
             403,
         )

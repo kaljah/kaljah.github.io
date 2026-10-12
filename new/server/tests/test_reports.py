@@ -184,6 +184,7 @@ def test_reports_unauthenticated(client):
     assert client.get("/api/reports/export").status_code == 401
     assert client.post("/api/reports/generate", json={}).status_code == 401
     assert client.get("/api/reports/ogmp-export").status_code == 401
+    assert client.get("/api/reports/cbam-export").status_code == 401
     assert client.get("/api/emissions/export?format=excel").status_code == 401
 
 
@@ -198,6 +199,7 @@ def test_reports_it_admin_forbidden(client, test_setup):
     assert client.get("/api/reports/export").status_code == 403
     assert client.post("/api/reports/generate", json={}).status_code == 403
     assert client.get("/api/reports/ogmp-export").status_code == 403
+    assert client.get("/api/reports/cbam-export").status_code == 403
     assert client.get("/api/emissions/export?format=excel").status_code == 403
 
 
@@ -323,3 +325,66 @@ def test_reports_ogmp_excel_export(client, test_setup):
     assert "3. Top-Down Surveys" in wb.sheetnames
     assert "4. Reconciliation Matrix" in wb.sheetnames
     assert "5. Gold Standard Roadmap" in wb.sheetnames
+
+
+def test_reports_cbam_excel_and_xml_export(client, test_setup):
+    """Ensure GET /api/reports/cbam-export produces compliant DG TAXUD Excel and XML documents."""
+    import xml.etree.ElementTree as ET
+
+    client.post(
+        "/api/auth/login",
+        json={"email": test_setup["admin_email"], "password": "password123"},
+    )
+    # 1. Test Excel export
+    res_xl = client.get("/api/reports/cbam-export?year=2026&format=excel")
+    assert res_xl.status_code == 200
+    assert "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" in res_xl.content_type
+    assert "EU_CBAM_Communication_Template" in res_xl.headers.get("Content-Disposition", "")
+    assert res_xl.headers.get("X-Audit-SHA256") is not None
+
+    wb = openpyxl.load_workbook(io.BytesIO(res_xl.data))
+    for expected_sheet in ["A_InstData", "B_Processes", "C_Emissions", "D_Electricity", "E_Precursors", "F_Summary", "Audit_Assurance"]:
+        assert expected_sheet in wb.sheetnames, f"Missing sheet {expected_sheet}"
+
+    # 2. Test XML export
+    res_xml = client.get("/api/reports/cbam-export?year=2026&format=xml")
+    assert res_xml.status_code == 200
+    assert "application/xml" in res_xml.content_type
+    assert "CBAM_Transitional_Declaration" in res_xml.headers.get("Content-Disposition", "")
+    assert res_xml.headers.get("X-Audit-SHA256") is not None
+
+    root = ET.fromstring(res_xml.data)
+    assert "CBAMReport" in root.tag or "CBAMDeclaration" in root.tag
+    assert root.find(".//{*}Declarant") is not None
+    assert root.find(".//{*}Installations") is not None
+    assert root.find(".//{*}GoodsExported") is not None
+    assert root.find(".//{*}AuditAssurance") is not None
+
+
+def test_reports_national_inventory_export(client, test_setup):
+    """Ensure GET /api/reports/national-inventory-export produces compliant 8-sheet Decree 21-330 & ISO 14064-1 workbook."""
+    client.post(
+        "/api/auth/login",
+        json={"email": test_setup["admin_email"], "password": "password123"},
+    )
+    res = client.get("/api/reports/national-inventory-export?year=2026")
+    assert res.status_code == 200
+    assert "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" in res.content_type
+    assert "Inventaire_National_Decret_21-330_ISO_14064-1" in res.headers.get("Content-Disposition", "")
+    assert res.headers.get("X-Audit-SHA256") is not None
+
+    wb = openpyxl.load_workbook(io.BytesIO(res.data))
+    expected_sheets = [
+        "0. Déclaration Décret 21-330",
+        "Executive Summary",
+        "Emissions Inventory",
+        "Scope 1 - Combustion & Torchage",
+        "Scope 1 - Évents & Fugitives",
+        "Scope 2 - Énergie & Sonelgaz",
+        "Scope 3 - Chaîne de Valeur",
+        "Incertitude & Assurance Audit",
+    ]
+    for s in expected_sheets:
+        assert s in wb.sheetnames, f"Missing sheet {s} in national inventory workbook"
+
+

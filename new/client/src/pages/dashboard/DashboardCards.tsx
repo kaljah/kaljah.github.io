@@ -28,45 +28,58 @@ export const PendingBanner: React.FC<PendingBannerProps> = ({
   canReview,
   onReview,
 }) => (
-  <Banner
-    tone="warning"
-    className={cn("pending-banner-card items-center bg-surface", includePending && "active-preview")}
-    title={includePending ? t("Previewing pending & verified emissions") : t("Pending records awaiting review")}
-    actions={
-      <>
-        <Switch
-          className="pending-switch"
-          label={
-            <span className="flex items-center gap-1.5 text-sm font-semibold text-text-secondary">
-              {includePending ? <Eye className="size-4" aria-hidden="true" /> : <EyeOff className="size-4" aria-hidden="true" />}
-              {t("Preview pending data")}
-            </span>
-          }
-          checked={includePending}
-          onChange={(e) => onIncludePending(e.target.checked)}
-        />
-        {canReview && (
-          <Button size="sm" onClick={onReview} title={t("Go to Manage Data to review pending records")}>
-            {t("Review now")}{" "}<ArrowRight className="size-3.5" aria-hidden="true" />
-          </Button>
-        )}
-      </>
-    }
+  <div
+    role="region"
+    aria-label={t("Pending records notification")}
+    className={cn(
+      "flex flex-wrap items-center justify-between gap-3 rounded-xl border px-4 py-2.5 shadow-xs transition-all duration-200",
+      includePending
+        ? "border-amber-400 bg-amber-50/70 dark:bg-amber-950/20 shadow-amber-500/5 ring-1 ring-amber-400/30"
+        : "border-ink-200 bg-surface/90 hover:border-amber-300"
+    )}
   >
-    <div className="flex flex-wrap items-center gap-2">
-      <Badge tone="warning">
-        <Clock className="size-3" aria-hidden="true" /> {includePending ? t("Live preview active") : t("Pending approval")}
+    <div className="flex flex-wrap items-center gap-2.5">
+      <Badge tone="warning" className="gap-1.5 px-2.5 py-1 text-xs font-semibold">
+        <Clock className="size-3.5" aria-hidden="true" />
+        {includePending ? t("Draft Preview Active") : t("Pending Review")}
       </Badge>
-      <span className="text-sm text-text-secondary">
-        {t("There are")}{" "}<strong>{count.toLocaleString()}</strong>{" "}{t("emission records")}
-        {co2e > 0 && <strong className="mx-1 tabular-nums text-warning-fg">{co2e.toLocaleString()}{" "}{t("tCO₂e")}</strong>}
-        {t("pending approval.")}{" "}
-        {includePending
-          ? t("Dashboard metrics now combine pending drafts and verified records.")
-          : t("Official metrics currently display verified records only.")}
-      </span>
+      <div className="flex flex-wrap items-center gap-1.5 text-sm text-text">
+        <span className="font-semibold text-text">
+          {count.toLocaleString()} {t("records")}
+        </span>
+        {co2e > 0 && (
+          <span className="rounded bg-amber-100 px-1.5 py-0.5 font-mono text-xs font-bold text-amber-800">
+            {co2e.toLocaleString()} tCO₂e
+          </span>
+        )}
+        <span className="hidden sm:inline text-xs text-text-secondary">
+          {includePending
+            ? t("• Combined draft + verified metrics displayed")
+            : t("• Awaiting verification in data intake")}
+        </span>
+      </div>
     </div>
-  </Banner>
+
+    <div className="flex items-center gap-3">
+      <Switch
+        className="pending-switch"
+        label={
+          <span className="flex items-center gap-1.5 text-xs font-semibold text-text-secondary">
+            {includePending ? <Eye className="size-3.5 text-amber-600" aria-hidden="true" /> : <EyeOff className="size-3.5" aria-hidden="true" />}
+            {t("Preview Drafts")}
+          </span>
+        }
+        checked={includePending}
+        onChange={(e) => onIncludePending(e.target.checked)}
+      />
+      {canReview && (
+        <Button size="sm" variant="secondary" onClick={onReview} title={t("Go to Manage Data to review pending records")} className="h-8 gap-1.5 text-xs font-semibold">
+          {t("Review Queue")}
+          <ArrowRight className="size-3" aria-hidden="true" />
+        </Button>
+      )}
+    </div>
+  </div>
 );
 
 export interface TrendCardProps {

@@ -187,11 +187,12 @@ class DehydratorCalculator(BaseCalculator):
         uncertainties = uncertainties or {}
 
         # 1. Check if Tier 1 (Default Emission Factor based on throughput alone)
-        if (pump_rate is None or float(pump_rate or 0) <= 0) and throughput is not None:
+        tp = throughput if throughput is not None else kwargs.get("gas_throughput")
+        if (pump_rate is None or float(pump_rate or 0) <= 0) and tp is not None:
             # API Compendium 2021 Table 6-17 (production segment, uncontrolled glycol dehydration, excludes
             # gas-assisted pump emissions): 0.0052859 t CH4 / 10^6 scf processed at 78.8 mol % CH4;
             # scaled by the site CH4 content (Exhibit 6-13). The former 0.266 t/MMscf had no source.
-            tp_mmscf = float(throughput)
+            tp_mmscf = float(tp)
             eff = normalize_efficiency(control_eff, default=0.0)
             c = float(ch4_content if ch4_content is not None else 0.788)
             c = c / 100.0 if c > 1.0 else c

@@ -197,6 +197,21 @@ def inventory_uncertainty(year, allowed_fids=None, facility_id=None, scope="all"
     results.sort(key=lambda r: r["total_emissions"], reverse=True)
     u95_inv = u_inv_1s * K95 if u_inv_1s is not None else None
     s1_total = sum(tier_s1.values())
+
+    # Approach 2: Monte Carlo simulation & distribution histogram
+    mc_result = None
+    if results:
+        try:
+            from calculations.uncertainty import monte_carlo_simulation
+            mc_sources = [
+                {"value": float(r["total_emissions"]), "relative_uncertainty": float(r.get("uncertainty_1sigma") or 0.05)}
+                for r in results if r.get("total_emissions", 0) > 0
+            ]
+            if mc_sources:
+                mc_result = monte_carlo_simulation(mc_sources, iterations=2500, seed=42)
+        except Exception:
+            mc_result = None
+
     return {
         "year": year,
         "inventory_uncertainty_pct": f"±{round(u95_inv * 100, 2)}%" if u95_inv is not None else None,
@@ -210,6 +225,7 @@ def inventory_uncertainty(year, allowed_fids=None, facility_id=None, scope="all"
         "uncertainty_bands": {b: round(band_e.get(b, 0) / total * 100, 1) if total > 0 else 0
                               for b in ("low", "medium", "high")},
         "categories": results,
+        "monte_carlo": mc_result,
         "confidence_level_pct": 95,
         "coverage_factor": K95,
         "method": "IPCC Approach 1, EF fully correlated within a factor, AD independent",

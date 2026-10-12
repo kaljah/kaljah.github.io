@@ -38,10 +38,10 @@ def audit_access_required(f):
         user = get_current_user()
         if not user:
             return jsonify({"error": "Authentication required"}), 401
-        if user.role not in ["admin", "superuser", "it_admin", "it_manager"]:
+        if user.role not in ["admin", "superuser", "it_admin", "it_manager", "auditor"]:
             return (
                 jsonify(
-                    {"error": "Administrative privileges required to access audit logs"}
+                    {"error": "Administrative or auditor privileges required to access audit logs"}
                 ),
                 403,
             )
@@ -60,11 +60,14 @@ def _scoped_base(user):
     - BUG-038: region-restricted business users see entries for facilities in their scope
       and their own actions; entries without a facility (other regions' users, legacy rows)
       stay hidden from them.
+    - Auditor: certified auditors have read access to all audit records.
     """
     query = ActivityLog.query
     if user and is_it_role(user):
         lifecycle = db.and_(ActivityLog.entity == "User", ActivityLog.action.in_(["UPDATE", "DELETE_USER"]))
         return query.filter(db.or_(ActivityLog.action.in_(SECURITY_ACTIONS), lifecycle))
+    if user and user.role == "auditor":
+        return query
     allowed = get_allowed_facility_ids(user)
     if allowed is not None:
         user_id = user.id if user else -1
@@ -401,7 +404,7 @@ def verify_audit_chain():
     (chain_head_hash, total_records, checkpoint_hmac) through /verify-checkpoint.
     """
     user = get_current_user()
-    if get_allowed_facility_ids(user) is not None and not is_it_role(user):
+    if user.role != "auditor" and get_allowed_facility_ids(user) is not None and not is_it_role(user):
         return jsonify({"error": "Chain verification requires organisation-wide audit access"}), 403
     from services.audit_chain import GENESIS_HASH, verify_chain
 

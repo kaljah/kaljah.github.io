@@ -73,7 +73,10 @@ def get_qaqc_dashboard():
                 return q.filter(model.status.ilike("%verified%"))
             elif status_arg == "pending":
                 return q.filter(or_(model.status.ilike("%pending%"), model.status.is_(None)))
-            elif status_arg in ["all", "active"]:
+            elif status_arg == "active":
+                # Active anomalies queue strictly excludes both Verified and Rejected records
+                return q.filter(or_(model.status.is_(None), and_(~model.status.ilike("%rejected%"), ~model.status.ilike("%verified%"))))
+            elif status_arg == "all":
                 # In QA/QC, "all statuses" excludes rejected records so users only see actionable/verified records.
                 # Rejected records only appear in the dedicated Rejected tab.
                 return q.filter(or_(model.status.is_(None), ~model.status.ilike("%rejected%")))
@@ -659,7 +662,9 @@ def export_qaqc_report():
                 return q.filter(model.status.ilike("%verified%"))
             elif status_arg == "pending":
                 return q.filter(or_(model.status.ilike("%pending%"), model.status.is_(None)))
-            elif status_arg in ["all", "active"]:
+            elif status_arg == "active":
+                return q.filter(or_(model.status.is_(None), and_(~model.status.ilike("%rejected%"), ~model.status.ilike("%verified%"))))
+            elif status_arg in ["all", ""]:
                 return q.filter(or_(model.status.is_(None), ~model.status.ilike("%rejected%")))
             return q
 
@@ -780,9 +785,10 @@ def resolve_flagged_record(record_id):
         if allowed_fids is not None and record.facility_id not in allowed_fids:
             return jsonify({"error": "Access denied to this record"}), 403
 
-        # Maker-Checker segregation of duties: user cannot verify records they created
-        if resolution == "Verified" and getattr(record, "created_by", None) and record.created_by == user.id:
-            return jsonify({"error": "Maker-checker violation: users cannot verify records they created"}), 403
+        # Maker-Checker segregation of duties: user cannot verify records they created or updated
+        if resolution == "Verified":
+            if (getattr(record, "created_by", None) and record.created_by == user.id) or (getattr(record, "updated_by", None) and record.updated_by == user.id):
+                return jsonify({"error": "Maker-checker violation: users cannot verify records they created or updated"}), 403
 
         # Update status and tag QA flag for audit preservation
         record.status = resolution
@@ -869,9 +875,10 @@ def bulk_resolve():
                 continue
 
             # Maker-Checker segregation of duties
-            if resolution == "Verified" and getattr(record, "created_by", None) and record.created_by == user.id:
-                skipped.append({"id": rid, "reason": "maker_checker_violation"})
-                continue
+            if resolution == "Verified":
+                if (getattr(record, "created_by", None) and record.created_by == user.id) or (getattr(record, "updated_by", None) and record.updated_by == user.id):
+                    skipped.append({"id": rid, "reason": "maker_checker_violation"})
+                    continue
 
             record.status = resolution
             if record.qa_flag and not record.qa_flag.startswith(f"[{resolution}]"):

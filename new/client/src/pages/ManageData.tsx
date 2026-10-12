@@ -592,12 +592,23 @@ const ManageDataInner: React.FC = () => {
         facility_id: "",
         year: new Date().getFullYear(),
         month: 1,
+        quarter: "Q1",
         product_name: "Crude Petroleum Oil",
         cn_code: "2709 00",
         quantity_tonnes: "",
         export_destination: "EU",
         specific_embedded_direct: "",
         specific_embedded_indirect: "",
+        captured_co2_tonnes: "",
+        ccs_certificate_id: "",
+        carbon_price_paid_eur: "",
+        carbon_price_legal_ref: "",
+        is_complex_good: false,
+        precursor_name: "",
+        precursor_cn_code: "",
+        precursor_ratio: "",
+        precursor_see_dir: "",
+        precursor_see_indir: "",
         notes: "",
     });
     const [editingCbamId, setEditingCbamId] = useState<string | number | null>(null);
@@ -1051,22 +1062,52 @@ const ManageDataInner: React.FC = () => {
                 facility_id: parseInt(cbamForm.facility_id, 10),
                 year: parseInt(cbamForm.year, 10),
                 month: parseInt(cbamForm.month, 10),
+                quarter: cbamForm.quarter || "Q1",
                 product_name: cbamForm.product_name,
                 cn_code: cbamForm.cn_code,
                 quantity_tonnes: parseFloat(cbamForm.quantity_tonnes),
                 export_destination: cbamForm.export_destination,
                 specific_embedded_direct: cbamForm.specific_embedded_direct ? parseFloat(cbamForm.specific_embedded_direct) : 0.0,
                 specific_embedded_indirect: cbamForm.specific_embedded_indirect ? parseFloat(cbamForm.specific_embedded_indirect) : 0.0,
+                captured_co2_tonnes: cbamForm.captured_co2_tonnes ? parseFloat(cbamForm.captured_co2_tonnes) : 0.0,
+                ccs_certificate_id: cbamForm.ccs_certificate_id || "",
+                carbon_price_paid_eur: cbamForm.carbon_price_paid_eur ? parseFloat(cbamForm.carbon_price_paid_eur) : 0.0,
+                carbon_price_legal_ref: cbamForm.carbon_price_legal_ref || "",
+                is_complex_good: Boolean(cbamForm.is_complex_good),
+                precursor_name: cbamForm.precursor_name || "",
+                precursor_cn_code: cbamForm.precursor_cn_code || "",
+                precursor_ratio: cbamForm.precursor_ratio ? parseFloat(cbamForm.precursor_ratio) : 0.0,
+                precursor_see_dir: cbamForm.precursor_see_dir ? parseFloat(cbamForm.precursor_see_dir) : 0.0,
+                precursor_see_indir: cbamForm.precursor_see_indir ? parseFloat(cbamForm.precursor_see_indir) : 0.0,
                 notes: cbamForm.notes
             });
             toast.success(editingCbamId ? t("CBAM export record updated!") : t("CBAM export record saved!"));
             setEditingCbamId(null);
             setCbamForm({
-                id: null, activity: cbamForm.activity, division: cbamForm.division, facility_id: cbamForm.facility_id,
-                year: new Date().getFullYear(), month: 1,
-                product_name: 'Crude Petroleum Oil', cn_code: '2709 00',
-                quantity_tonnes: '', export_destination: 'EU',
-                specific_embedded_direct: '', specific_embedded_indirect: '', notes: ''
+                id: null,
+                activity: cbamForm.activity,
+                division: cbamForm.division,
+                facility_id: cbamForm.facility_id,
+                year: new Date().getFullYear(),
+                month: 1,
+                quarter: "Q1",
+                product_name: 'Crude Petroleum Oil',
+                cn_code: '2709 00',
+                quantity_tonnes: '',
+                export_destination: 'EU',
+                specific_embedded_direct: '',
+                specific_embedded_indirect: '',
+                captured_co2_tonnes: '',
+                ccs_certificate_id: '',
+                carbon_price_paid_eur: '',
+                carbon_price_legal_ref: '',
+                is_complex_good: false,
+                precursor_name: '',
+                precursor_cn_code: '',
+                precursor_ratio: '',
+                precursor_see_dir: '',
+                precursor_see_indir: '',
+                notes: ''
             });
             fetchCbamExports();
         } catch (err: any) {
@@ -1425,7 +1466,7 @@ const ManageDataInner: React.FC = () => {
         { id: 'cbam', label: t("CBAM Products"), show: true },
     ].filter((n) => n.show);
     const hasFilters = filterActivity || filterDivision || filterRegion || filterYear;
-    const filterSelect = "w-auto " + controlClass;
+    const filterSelect = "h-9 w-auto min-w-[140px] shrink-0 rounded-md border border-border bg-surface px-2.5 text-sm text-text transition-colors hover:border-ink-300 focus:border-brand-500";
 
     return (
         <div className="manage-data-page">
@@ -1458,51 +1499,53 @@ const ManageDataInner: React.FC = () => {
 
                     {/* Content Area */}
                     <section className="min-w-0 flex-1">
-                        <div className="mb-6 flex flex-wrap items-center gap-3">
-                            <div className="relative min-w-[250px] flex-1">
-                                <Search className="pointer-events-none absolute left-3 top-1/2 size-[18px] -translate-y-1/2 text-text-secondary" aria-hidden="true" />
-                                <Input
-                                    type="text"
-                                    aria-label={t("Search records")}
-                                    placeholder={activeTab === 'goals' ? t("Search goals or base years...") : `Search ${activeTab}...`}
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="pl-10"
-                                />
-                            </div>
+                        {activeTab !== 'pending' && (
+                            <div className="mb-6 flex flex-wrap items-center gap-3">
+                                <div className="relative min-w-[250px] flex-1">
+                                    <Search className="pointer-events-none absolute left-3 top-1/2 size-[18px] -translate-y-1/2 text-text-secondary" aria-hidden="true" />
+                                    <Input
+                                        type="text"
+                                        aria-label={t("Search records")}
+                                        placeholder={activeTab === 'goals' ? t("Search goals or base years...") : `Search ${activeTab}...`}
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        className="pl-10"
+                                    />
+                                </div>
 
-                            {activeTab !== 'factors' && activeTab !== 'goals' && (
-                                <>
-                                    <NativeSelect aria-label={t("Activity")} value={filterActivity} onChange={(e) => { setFilterActivity(e.target.value); setFilterDivision(''); }} className={filterSelect}>
-                                        <option value="">{t("All Activities")}</option>
-                                        {activityFilterOptions.map(a => <option key={a.value} value={a.value}>{a.label}</option>)}
-                                    </NativeSelect>
-
-                                    <NativeSelect aria-label={t("Division")} value={filterDivision} onChange={(e) => setFilterDivision(e.target.value)} className={filterSelect} disabled={!filterActivity}>
-                                        <option value="">{t("All Divisions")}</option>
-                                        {divisionFilterOptions.map(d => <option key={d} value={d}>{d}</option>)}
-                                    </NativeSelect>
-
-                                    <NativeSelect aria-label={t("Region")} value={filterRegion} onChange={(e) => setFilterRegion(e.target.value)} className={filterSelect}>
-                                        <option value="">{t("All Regions")}</option>
-                                        {availableFilters.regions?.map(r => <option key={r} value={r}>{r}</option>)}
-                                    </NativeSelect>
-
-                                    {(activeTab === 'production' || activeTab === 'mitigation') && (
-                                        <NativeSelect aria-label={t("Year")} value={filterYear} onChange={(e) => setFilterYear(e.target.value)} className={filterSelect}>
-                                            <option value="">{t("All Years")}</option>
-                                            {availableFilters.years?.map(y => <option key={y} value={y}>{y}</option>)}
+                                {activeTab !== 'factors' && activeTab !== 'goals' && (
+                                    <>
+                                        <NativeSelect aria-label={t("Activity")} value={filterActivity} onChange={(e) => { setFilterActivity(e.target.value); setFilterDivision(''); }} className={filterSelect}>
+                                            <option value="">{t("All Activities")}</option>
+                                            {activityFilterOptions.map(a => <option key={a.value} value={a.value}>{a.label}</option>)}
                                         </NativeSelect>
-                                    )}
 
-                                    {hasFilters && (
-                                        <Button variant="ghost" onClick={() => { setFilterActivity(''); setFilterDivision(''); setFilterRegion(''); setFilterYear(''); }}>
-                                            {t("Clear Filters")}
-                                        </Button>
-                                    )}
-                                </>
-                            )}
-                        </div>
+                                        <NativeSelect aria-label={t("Division")} value={filterDivision} onChange={(e) => setFilterDivision(e.target.value)} className={filterSelect} disabled={!filterActivity}>
+                                            <option value="">{t("All Divisions")}</option>
+                                            {divisionFilterOptions.map(d => <option key={d} value={d}>{d}</option>)}
+                                        </NativeSelect>
+
+                                        <NativeSelect aria-label={t("Region")} value={filterRegion} onChange={(e) => setFilterRegion(e.target.value)} className={filterSelect}>
+                                            <option value="">{t("All Regions")}</option>
+                                            {availableFilters.regions?.map(r => <option key={r} value={r}>{r}</option>)}
+                                        </NativeSelect>
+
+                                        {(activeTab === 'production' || activeTab === 'mitigation') && (
+                                            <NativeSelect aria-label={t("Year")} value={filterYear} onChange={(e) => setFilterYear(e.target.value)} className={filterSelect}>
+                                                <option value="">{t("All Years")}</option>
+                                                {availableFilters.years?.map(y => <option key={y} value={y}>{y}</option>)}
+                                            </NativeSelect>
+                                        )}
+
+                                        {hasFilters && (
+                                            <Button variant="ghost" onClick={() => { setFilterActivity(''); setFilterDivision(''); setFilterRegion(''); setFilterYear(''); }}>
+                                                {t("Clear Filters")}
+                                            </Button>
+                                        )}
+                                    </>
+                                )}
+                            </div>
+                        )}
 
                         {/* Pending Review Tab */}
                         {activeTab === 'pending' && isPrivileged && (

@@ -185,6 +185,7 @@ def get_batch_dashboard_data():
     allowed_fids = get_allowed_facility_ids(user)
     include_pending = request.args.get("includePending", "false").lower() == "true"
     gwp_horizon = request.args.get("gwp_horizon", "100")
+    scope2_method = request.args.get("scope2_method", "location")
 
     cache_key = (
         "batch_all",
@@ -196,6 +197,7 @@ def get_batch_dashboard_data():
         group_by,
         include_pending,
         gwp_horizon,
+        scope2_method,
         user.id if user else 0,
     )
     # Honour invalidations made by other workers before trusting this worker's cache
@@ -232,6 +234,7 @@ def get_batch_dashboard_data():
                 segment=segment,
                 include_pending=include_pending,
                 gwp_horizon=gwp_horizon,
+                scope2_method=scope2_method,
             )
             f_mitigation = executor.submit(
                 _run_in_app_ctx,
@@ -268,6 +271,7 @@ def get_batch_dashboard_data():
                 segment=segment,
                 gwp_horizon=gwp_horizon,
                 include_pending=include_pending,
+                scope2_method=scope2_method,
             )
             f_intensity = executor.submit(
                 _run_in_app_ctx,
@@ -281,6 +285,7 @@ def get_batch_dashboard_data():
                 segment=segment,
                 include_pending=include_pending,
                 gwp_horizon=gwp_horizon,
+                scope2_method=scope2_method,
             )
             f_intensity_py = None
             if year and year != "all" and str(year).isdigit():
@@ -296,6 +301,7 @@ def get_batch_dashboard_data():
                     segment=segment,
                     include_pending=include_pending,
                     gwp_horizon=gwp_horizon,
+                    scope2_method=scope2_method,
                 )
             # same population as the other panels (the block used to ignore every filter)
             unc_fids = _filtered_facility_ids(allowed_fids, activity, division, segment)
@@ -444,6 +450,7 @@ def get_intensity_trend():
         segment=segment,
         include_pending=request.args.get("includePending", "false").lower() == "true",
         gwp_horizon=request.args.get("gwp_horizon", "100"),
+        scope2_method=request.args.get("scope2_method", "location"),
     )
     return jsonify(bulk)
 
@@ -459,6 +466,7 @@ def _query_summary(
     segment=None,
     include_pending=False,
     gwp_horizon="100",
+    scope2_method="location",
 ):
     """Scope 1 / Scope 2 totals per year (optionally per facility) with the source split.
 
@@ -493,8 +501,8 @@ def _query_summary(
     def blank(yr, fid):
         return {"year": yr, "facility_id": fid, "scope1_total": 0.0, "scope1_total_gwp100": 0.0,
                 "scope1_total_gwp20": 0.0, "gwp_horizon": 20 if is_20 else 100, "co2_total": 0.0,
-                "ch4_total": 0.0, "n2o_total": 0.0, "scope2_total": 0.0, "scope2_market_total": 0.0,
-                "scope2_energy": 0.0,
+                "ch4_total": 0.0, "n2o_total": 0.0, "scope2_total": 0.0, "scope2_location_total": 0.0,
+                "scope2_market_total": 0.0, "scope2_energy": 0.0, "scope2_method": scope2_method,
                 "combustion": 0.0, "flaring": 0.0, "venting": 0.0, "fugitive": 0.0, "process": 0.0, "other": 0.0}
 
     yearly = {}
@@ -519,8 +527,10 @@ def _query_summary(
     s2_q = s2_q.filter(Scope2Emission.status.in_(statuses(include_pending)), Scope2Emission.year.isnot(None))
     for (yr, fid), t in yearly_totals(s2_q, by_fac, horizon).items():
         d = yearly.setdefault((yr, fid), blank(yr, fid))
-        d["scope2_total"] += t["location"]  # location-based (GHG Protocol default); market-based beside it
+        d["scope2_location_total"] += t["location"]
         d["scope2_market_total"] += t["market"]
+        # Dual reporting: use chosen method
+        d["scope2_total"] += t["market"] if str(scope2_method).lower() == "market" else t["location"]
         d["scope2_energy"] += t["energy"]
 
     for d in yearly.values():
@@ -622,6 +632,7 @@ def _query_categorical_breakdown(
     segment=None,
     gwp_horizon="100",
     include_pending=False,
+    scope2_method="location",
 ):
     """Emissions per facility with its organisational labels.
 
@@ -642,7 +653,8 @@ def _query_categorical_breakdown(
 
     s1 = grouped(Emission, func.sum(Emission.co2e_total), func.sum(Emission.ch4_emissions),
                  func.sum(Emission.n2o_emissions))
-    s2 = grouped(Scope2Emission, func.sum(Scope2Emission.co2e))
+    s2_col = func.coalesce(Scope2Emission.co2e_market_based, Scope2Emission.co2e) if str(scope2_method).lower() == "market" else func.coalesce(Scope2Emission.co2e_location_based, Scope2Emission.co2e)
+    s2 = grouped(Scope2Emission, func.sum(s2_col))
     s3 = grouped(Scope3Emission, func.sum(Scope3Emission.co2e))
 
     out = {}
@@ -800,6 +812,14 @@ def get_scope3_summary():
 @login_required
 def get_goal(year):
     """Get goal for specific year"""
+    user = get_current_user()
+    if is_it_role(user):
+        return (
+            jsonify(
+                {"error": "Forbidden: IT Administrators cannot access corporate goal data"}
+            ),
+            403,
+        )
     try:
         goal = Goal.query.filter_by(year=year).first()
         if not goal:
@@ -821,6 +841,14 @@ def get_goal(year):
 @login_required
 def get_base_year():
     """Get most recent base year recalculation or baseline"""
+    user = get_current_user()
+    if is_it_role(user):
+        return (
+            jsonify(
+                {"error": "Forbidden: IT Administrators cannot access corporate baseline data"}
+            ),
+            403,
+        )
     base_year = BaseYearRecalculation.query.order_by(
         BaseYearRecalculation.recalc_date.desc()
     ).first()
@@ -874,6 +902,7 @@ def get_categorical_breakdown():
             segment=request.args.get("segment"),
             gwp_horizon=request.args.get("gwp_horizon", "100"),
             include_pending=request.args.get("includePending", "false").lower() == "true",
+            scope2_method=request.args.get("scope2_method", "location"),
         )
     )
 
@@ -883,8 +912,8 @@ def get_categorical_breakdown():
 def create_base_year_recalculation():
     """Create a new base year recalculation entry"""
     user = get_current_user()
-    if not user or user.role not in ["admin", "superuser"]:
-        return jsonify({"error": "Admin or Superuser privileges required"}), 403
+    if not user or user.role not in ["admin", "superuser"] or get_allowed_facility_ids(user) is not None:
+        return jsonify({"error": "Corporate-wide admin or superuser privileges required"}), 403
     if is_it_role(user):
         return jsonify({"error": "IT Admins do not have access to emission calculations"}), 403
 
@@ -975,6 +1004,7 @@ def get_intensity_stats():
             segment=request.args.get("segment"),
             include_pending=request.args.get("includePending", "false").lower() == "true",
             gwp_horizon=request.args.get("gwp_horizon", "100"),
+            scope2_method=request.args.get("scope2_method", "location"),
         )
     )
 
@@ -998,11 +1028,13 @@ def _query_intensity_trend_bulk(
     segment=None,
     include_pending=False,
     gwp_horizon="100",
+    scope2_method="location",
 ):
     """Intensity per year for the trend chart (RC-9: same computation as /intensity-stats)."""
     from services.intensity import intensity_trend
 
     return intensity_trend(years or [], include_pending=include_pending, gwp_horizon=gwp_horizon,
+                           scope2_method=scope2_method,
                            facility_id=facility_id, activity=activity, division=division,
                            allowed_fids=allowed_fids, segment=segment)
 
@@ -1018,11 +1050,13 @@ def _query_intensity_stats(
     segment=None,
     include_pending=False,
     gwp_horizon="100",
+    scope2_method="location",
 ):
     """Per-facility intensity metrics (kg/BOE, loss rates, OGMP) - see services/intensity.py."""
     from services.intensity import intensity_rows
 
     return intensity_rows(year=year, include_pending=include_pending, gwp_horizon=gwp_horizon,
+                          scope2_method=scope2_method,
                           facility_id=facility_id, activity=activity, division=division,
                           allowed_fids=allowed_fids, segment=segment)
 

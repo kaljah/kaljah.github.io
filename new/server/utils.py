@@ -18,6 +18,11 @@ def is_unrestricted_location(loc):
     return str(loc).strip().lower() in {"all", "global", ""}
 
 
+def is_it_role(user):
+    """Check if user belongs to an IT administration role."""
+    return bool(user and getattr(user, "role", None) in ["it_admin", "it_manager", "it"])
+
+
 def get_allowed_facility_ids(user):
     """
     Returns None if user is admin (only admin has unrestricted global access).
@@ -31,8 +36,12 @@ def get_allowed_facility_ids(user):
     if user.role in ["it_admin", "it_manager", "it"]:
         return []
 
-    # Admin is the ONLY role with unrestricted global access to all facilities.
+    # Admin has unrestricted global access to all facilities.
     if user.role == "admin":
+        return None
+
+    # Auditor with unrestricted location ("All", "global", None, "") has unrestricted audit read access.
+    if user.role == "auditor" and is_unrestricted_location(user.location):
         return None
 
     # Superuser and regular users are strictly scoped to their assigned facility/region.
@@ -42,12 +51,14 @@ def get_allowed_facility_ids(user):
 
     # Audit 2026-10-01 (A-04): user.location is a value, not a LIKE pattern ("West_Field" matched
     # "WestXField"; "%" matched every facility), so the wildcards are escaped.
+    # DEFECT-A2-001 FIX: Wrap escaped pattern in '%' to match facility name/region containing the location
     pattern = user_region.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+    like_pattern = f"%{pattern}%"
     facilities = Facility.query.filter(
         db.or_(
-            Facility.region.ilike(pattern, escape="\\"),
-            Facility.location.ilike(pattern, escape="\\"),
-            Facility.name.ilike(pattern, escape="\\"),
+            Facility.region.ilike(like_pattern, escape="\\"),
+            Facility.location.ilike(like_pattern, escape="\\"),
+            Facility.name.ilike(like_pattern, escape="\\"),
         )
     ).all()
 

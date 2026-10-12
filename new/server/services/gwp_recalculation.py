@@ -21,7 +21,7 @@ def recalculate_all_emissions_gwp(standard, previous=None, user=None):
     DEC-3: Verified records are recalculated too (from their stored gas masses, so a round trip is
     lossless); one GWP_RECALCULATION audit entry records the totals before and after.
     """
-    from models import Emission, Scope2Emission
+    from models import Emission, Scope2Emission, Scope3Emission
     from calculations.constants import GWP_STANDARDS, GWP_AR5, invalidate_gwp_cache
     from sqlalchemy import func
 
@@ -35,7 +35,14 @@ def recalculate_all_emissions_gwp(standard, previous=None, user=None):
     def _totals():
         s1 = db.session.query(func.count(Emission.id), func.coalesce(func.sum(Emission.co2e_total), 0.0)).one()
         s2 = db.session.query(func.coalesce(func.sum(Scope2Emission.co2e), 0.0)).scalar()
-        return {"scope1_records": s1[0], "scope1_tco2e": round(float(s1[1]), 4), "scope2_tco2e": round(float(s2), 4)}
+        s3 = db.session.query(func.count(Scope3Emission.id), func.coalesce(func.sum(Scope3Emission.co2e), 0.0)).one()
+        return {
+            "scope1_records": s1[0],
+            "scope1_tco2e": round(float(s1[1]), 4),
+            "scope2_tco2e": round(float(s2), 4),
+            "scope3_records": s3[0],
+            "scope3_tco2e": round(float(s3[1]), 4),
+        }
 
     before = _totals()
     db.session.query(Emission).update(
@@ -47,6 +54,12 @@ def recalculate_all_emissions_gwp(standard, previous=None, user=None):
             ),
             Emission.gwp_version: standard,
             Emission.updated_at: datetime.datetime.now(datetime.timezone.utc),
+        },
+        synchronize_session=False,
+    )
+    db.session.query(Scope3Emission).update(
+        {
+            Scope3Emission.updated_at: datetime.datetime.now(datetime.timezone.utc),
         },
         synchronize_session=False,
     )
@@ -86,7 +99,8 @@ def recalculate_all_emissions_gwp(standard, previous=None, user=None):
         action="GWP_RECALCULATION", record_id=str(standard), user=user, request=None, entity="SystemSetting",
         details=(f"GWP standard {previous or '?'} -> {standard}: {after['scope1_records']} Scope 1 records recalculated "
                  f"(Verified included); Scope 1 {before['scope1_tco2e']:,.2f} -> {after['scope1_tco2e']:,.2f} tCO2e, "
-                 f"Scope 2 {before['scope2_tco2e']:,.2f} -> {after['scope2_tco2e']:,.2f} tCO2e"),
+                 f"Scope 2 {before['scope2_tco2e']:,.2f} -> {after['scope2_tco2e']:,.2f} tCO2e, "
+                 f"Scope 3 {before['scope3_tco2e']:,.2f} -> {after['scope3_tco2e']:,.2f} tCO2e"),
         old_values=json.dumps(dict(before, gwp_standard=previous)), new_values=json.dumps(dict(after, gwp_standard=standard)),
     )
     try:
@@ -98,8 +112,9 @@ def recalculate_all_emissions_gwp(standard, previous=None, user=None):
 
     # Clear dashboard cache
     try:
-        from routes.dashboard import DASHBOARD_CACHE
+        from routes.dashboard import DASHBOARD_CACHE, clear_dashboard_cache
 
         DASHBOARD_CACHE.clear()
+        clear_dashboard_cache()
     except Exception:
         pass

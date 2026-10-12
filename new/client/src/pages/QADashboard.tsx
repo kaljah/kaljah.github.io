@@ -145,7 +145,7 @@ export default function QADashboard() {
                 return { id: parseInt(id, 10), scope: parseInt(scope, 10) };
             });
             const res = await api.post('/qaqc/bulk-resolve', { records, resolution });
-            toast.success(res.data.message || t("Updated {{count}} records to {{status}}", { count: records.length, status: t(resolution ?? "") }));
+            toast.success(res.data.message || t("Updated {{count}} records to {{status}}", { count: records.length, status: resolution ? t(resolution) : "" }));
             setSelectedIds(new Set());
             // Optimistically update local flagged records
             setData((prev: any) => {

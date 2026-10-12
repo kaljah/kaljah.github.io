@@ -2,7 +2,6 @@ import React from "react";
 import { Input, Field } from "../../ui";
 import ColumnMappingWizard from "../ColumnMappingWizard";
 import CustomDropdown from "../CustomDropdown";
-import { NativeSelect } from "../../ui/NativeSelect";
 import { activateOnKey } from "../../utils/a11yKeys";
 import { t } from "../../i18n";
 
@@ -134,6 +133,7 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
             <label>{t("Spend Amount (USD)")}</label>
             <Input
               type="number"
+              min="0"
               placeholder="0.00"
               value={eeioSpend}
               onChange={(e) => setEeioSpend(e.target.value)}
@@ -177,23 +177,24 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
       <Field className="input-group" label={t("Year")}>
         <Input
           type="number"
+          min={1990}
+          max={2100}
           value={year || ""}
           onChange={(e) => setYear(e.target.value)}
         />
       </Field>
-      <Field className="input-group" label={t("Month")}>
-        <NativeSelect
-          className="component-select"
-          value={month || 1}
-          onChange={(e) => setMonth(e.target.value)}
-        >
-          {[...Array(12)].map((_, i) => (
-            <option key={i + 1} value={i + 1}>
-              {new Date(0, i).toLocaleString("default", { month: "long" })}
-            </option>
-          ))}
-        </NativeSelect>
-      </Field>
+      <div className="input-group">
+        <label>{t("Month")}</label>
+        <CustomDropdown
+          options={[...Array(12)].map((_, i) => ({
+            value: i + 1,
+            label: new Date(0, i).toLocaleString("default", { month: "long" }),
+          }))}
+          value={Number(month) || 1}
+          onChange={(val) => setMonth(Number(val))}
+          placeholder={t("Select Month...")}
+        />
+      </div>
       <div className="input-group">
         <label>{t("Facility")}</label>
         <CustomDropdown
@@ -226,6 +227,7 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
       <Field className="input-group" label={t("Amount")}>
         <Input
           type="number"
+          min="0"
           value={amount || ""}
           onChange={(e) => setAmount(e.target.value)}
           placeholder="0.00"
@@ -235,17 +237,14 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
       <div className="input-group">
         <label>{t("Unit")}</label>
         {UNIT_MULTIPLIERS[baseUnit] ? (
-          <NativeSelect
-            className="component-select"
+          <CustomDropdown
+            options={Object.keys(UNIT_MULTIPLIERS[baseUnit]).map((u) => ({
+              value: u,
+              label: u,
+            }))}
             value={unit}
-            onChange={(e) => handleUnitChange(e.target.value)}
-          >
-            {Object.keys(UNIT_MULTIPLIERS[baseUnit]).map((u) => (
-              <option key={u} value={u}>
-                {u}
-              </option>
-            ))}
-          </NativeSelect>
+            onChange={(val) => handleUnitChange(String(val))}
+          />
         ) : (
           <Input
             type="text"
@@ -265,24 +264,12 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
       </Field>
     </div>
 
-    <div className="flex! gap-[12px]! mt-[30px]! justify-end!">
+    <div className="mt-[24px]!">
       <button
-        className={`action-btn secondary [padding:12px_20px]! ${submitting ? "[cursor:not-allowed]!" : "[cursor:pointer]!"} ${submitting ? "[opacity:0.6]!" : "[opacity:1]!"}`}
-        disabled={submitting}
-        onClick={() => handleAddEntry("Draft")}
-      >
-        {submitting ? t("Saving...") : t("Save as Draft (Maker Mode)")}
-      </button>
-      <button
-        className="btn-add-activity"
+        type="button"
+        className={`btn-add-activity w-full ${submitting ? "[cursor:not-allowed]! [opacity:0.6]!" : "[cursor:pointer]! [opacity:1]!"}`}
         disabled={submitting}
         onClick={() => handleAddEntry("Verified")}
-        style={{
-          flex: 1.5,
-          padding: "12px",
-          cursor: submitting ? "not-allowed" : "pointer",
-          opacity: submitting ? 0.6 : 1,
-        }}
       >
         {submitting ? t("Processing...") : t("+ Calculate & Submit for Review")}
       </button>

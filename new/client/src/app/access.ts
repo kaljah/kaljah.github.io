@@ -14,7 +14,7 @@ export const ACCESS: Record<AccessRule, (user?: User | null) => boolean> = {
   nonIT: (user) => Boolean(user) && !isIT(user),
   it: (user) => isIT(user),
   superuser: (user) => Boolean(user?.role && ["admin", "superuser"].includes(user.role)),
-  audit: (user) => Boolean(user?.role && ["admin", "superuser", "it_admin", "it_manager"].includes(user.role)),
+  audit: (user) => Boolean(user?.role && ["admin", "superuser", "it_admin", "it_manager", "auditor"].includes(user.role)),
 };
 
 /** Where a signed-in user is sent when the rule denies them. */

@@ -232,6 +232,11 @@ def scope3_category_number(value):
     for number, name in SCOPE3_CATEGORY_NAMES.items():
         if key == name or key.replace("-", " ") == name.replace("-", " "):
             return number
+    clean_key = re.sub(r"\s+", " ", key.replace("-", " ")).strip()
+    for number, name in SCOPE3_CATEGORY_NAMES.items():
+        clean_name = re.sub(r"\s+", " ", name.replace("-", " ")).strip()
+        if clean_key == clean_name or clean_key in clean_name or clean_name.startswith(clean_key):
+            return number
     return None
 
 

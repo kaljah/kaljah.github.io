@@ -274,9 +274,12 @@ def test_10_ogmp_export_loss_rate_and_reconciliation(client, admin, app):
     x = client.get("/api/reports/ogmp-export?year=2031")
     assert x.status_code == 200, x.data[:300]
     wb = openpyxl.load_workbook(io.BytesIO(x.data), data_only=True)
-    summary = [r for r in wb.worksheets[0].iter_rows(values_only=True) if r and r[0] == fname][0]
+    summary_ws = wb["1. Executive Summary"] if "1. Executive Summary" in wb.sheetnames else wb.worksheets[0]
+    summary = [r for r in summary_ws.iter_rows(values_only=True) if r and r[0] == fname][0]
     # 1e6 m3 of CH4 (677.22 t at 0.67722 kg/m3) over 1e9 m3 gross gas = 0.1 %
-    assert summary[8] == pytest.approx(1e9) and summary[11] == pytest.approx(0.1, rel=1e-3)
+    gas_val = summary[9] if summary[8] == "Level 3" or isinstance(summary[8], str) else summary[8]
+    loss_val = summary[12] if summary[8] == "Level 3" or isinstance(summary[8], str) else summary[11]
+    assert gas_val == pytest.approx(1e9) and loss_val == pytest.approx(0.1, rel=1e-3)
     rec = [r for r in wb["4. Reconciliation Matrix"].iter_rows(values_only=True) if r and r[0] == fname][0]
     assert rec[7] == "NOT ASSESSED"
 

@@ -147,9 +147,12 @@ const Sidebar: React.FC = () => {
             className="fixed inset-y-0 left-0 z-(--z-modal) flex w-72 max-w-[85vw] flex-col bg-surface shadow-overlay"
           >
             <RadixDialog.Title className="sr-only">{t("Navigation")}</RadixDialog.Title>
-            <div className="flex items-center justify-between pr-3">
+            <div className="flex h-16 items-center justify-between border-b border-border/50 px-4">
               <Brand showLabel />
-              <RadixDialog.Close aria-label={t("Close navigation")} className="inline-flex size-9 cursor-pointer border-0 bg-transparent items-center justify-center rounded-md text-text-secondary hover:bg-ink-100">
+              <RadixDialog.Close
+                aria-label={t("Close navigation")}
+                className="inline-flex size-10 cursor-pointer items-center justify-center rounded-full border-0 bg-ink-100 text-text-secondary transition-colors hover:bg-ink-200 hover:text-text focus:outline-none focus:ring-2 focus:ring-brand-500"
+              >
                 <X className="size-5" aria-hidden="true" />
               </RadixDialog.Close>
             </div>

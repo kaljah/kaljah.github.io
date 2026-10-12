@@ -183,6 +183,7 @@ def add_facility():
         ),
         latitude=lat,
         longitude=lon,
+        description=data.get("description"),
     )
 
     try:
@@ -367,7 +368,7 @@ def update_facility(facility_id):
     return jsonify({"message": "Facility updated"})
 
 
-@facilities_bp.route("/<int:facility_id>", methods=["DELETE"])
+@facilities_bp.route("/<facility_id>", methods=["DELETE"])
 @login_required
 def delete_facility(facility_id):
     user_id = session.get("user_id")
@@ -376,7 +377,15 @@ def delete_facility(facility_id):
         return jsonify({"error": "Unauthorized"}), 401
     if user.role not in ["admin", "superuser"]:
         return jsonify({"error": "Forbidden: Only Administrators can delete facilities"}), 403
-    facility = db.session.get(Facility, facility_id)  # API-02 FIX: replaced deprecated query.get
+
+    try:
+        fid = int(facility_id)
+        if fid <= 0 or fid > 2147483647:
+            return jsonify({"error": "Facility not found"}), 404
+    except (ValueError, OverflowError, TypeError):
+        return jsonify({"error": "Facility not found"}), 404
+
+    facility = db.session.get(Facility, fid)  # API-02 FIX: replaced deprecated query.get
     if not facility:
         return jsonify({"error": "Facility not found"}), 404
 

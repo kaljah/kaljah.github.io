@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Dialog, Button, Field, Input } from "../../ui";
-import { NativeSelect } from "../../ui/NativeSelect";
+import CustomDropdown from "../CustomDropdown";
 import api from "../../api";
 import { useToast } from "../Toast";
 import { MARKET_INSTRUMENTS } from "../scope2-form/marketInstruments";
@@ -99,7 +99,18 @@ export const EditEmissionModal: React.FC<EditEmissionModalProps> = ({
   ];
 
   const currentYear = new Date().getFullYear();
-  const yearOptions = Array.from({ length: 15 }, (_, i) => currentYear - 10 + i);
+  const yearOptions = Array.from({ length: 15 }, (_, i) => {
+    const y = currentYear - 10 + i;
+    return { value: y, label: String(y) };
+  });
+
+  const facilityOptions = [
+    { value: "", label: t("Select Facility") },
+    ...facilities.map((f) => ({
+      value: String(f.id),
+      label: `${f.name}${f.field ? ` (${f.field})` : ""}`,
+    })),
+  ];
 
   return (
     <Dialog
@@ -122,42 +133,33 @@ export const EditEmissionModal: React.FC<EditEmissionModalProps> = ({
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="grid grid-cols-2 gap-4">
           <Field label={t("Reporting Year *")}>
-            <NativeSelect
-              value={formData.year}
-              onChange={(e) => handleChange("year", e.target.value)}
-            >
-              {yearOptions.map((y) => (
-                <option key={y} value={y}>{y}</option>
-              ))}
-            </NativeSelect>
+            <CustomDropdown
+              options={yearOptions}
+              value={Number(formData.year)}
+              onChange={(val) => handleChange("year", Number(val))}
+            />
           </Field>
 
           {/* Scope 3 records are yearly */}
           {editScope(emission) !== 3 && (
             <Field label={t("Month *")}>
-              <NativeSelect
-                value={formData.month}
-                onChange={(e) => handleChange("month", e.target.value)}
-              >
-                {MONTHS.map((m) => (
-                  <option key={m.value} value={m.value}>{m.label}</option>
-                ))}
-              </NativeSelect>
+              <CustomDropdown
+                options={MONTHS}
+                value={Number(formData.month)}
+                onChange={(val) => handleChange("month", Number(val))}
+              />
             </Field>
           )}
         </div>
 
         {facilities.length > 0 && (
           <Field label={t("Facility / Region *")}>
-            <NativeSelect
-              value={formData.facility_id}
-              onChange={(e) => handleChange("facility_id", e.target.value)}
-            >
-              <option value="">{t("Select Facility")}</option>
-              {facilities.map((f) => (
-                <option key={f.id} value={f.id}>{f.name} {f.field ? `(${f.field})` : ""}</option>
-              ))}
-            </NativeSelect>
+            <CustomDropdown
+              options={facilityOptions}
+              value={formData.facility_id ? String(formData.facility_id) : ""}
+              onChange={(val) => handleChange("facility_id", String(val))}
+              placeholder={t("Select Facility")}
+            />
           </Field>
         )}
 
@@ -184,6 +186,7 @@ export const EditEmissionModal: React.FC<EditEmissionModalProps> = ({
             <Input
               type="number"
               step="any"
+              min="0"
               value={formData.amount}
               onChange={(e) => handleChange("amount", e.target.value)}
               placeholder="0.00"
@@ -206,14 +209,12 @@ export const EditEmissionModal: React.FC<EditEmissionModalProps> = ({
             <h4 className="text-sm font-semibold text-text">{t("Scope 2 Dual-Reporting Attributes")}</h4>
             <div className="grid grid-cols-2 gap-4">
               <Field label={t("Market Instrument Type")}>
-                <NativeSelect
+                <CustomDropdown
+                  options={MARKET_INSTRUMENTS}
                   value={formData.market_instrument_type}
-                  onChange={(e) => handleChange("market_instrument_type", e.target.value)}
-                >
-                  {MARKET_INSTRUMENTS.map((m) => (
-                    <option key={m.value} value={m.value}>{m.label}</option>
-                  ))}
-                </NativeSelect>
+                  onChange={(val) => handleChange("market_instrument_type", String(val))}
+                  placeholder={t("None (location-based fallback)")}
+                />
               </Field>
 
               <Field label={t("Market Emission Factor (kg CO2e/kWh)")}>

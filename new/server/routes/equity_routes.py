@@ -283,12 +283,36 @@ def get_equity_allocation():
                 "partner_id": p.id,
                 "partner_name": p.name,
                 "partner_code": p.code,
-                "equity_pct": pct,
+                "equity_pct": round(pct, 4),
                 "allocated_co2e": round(allocated_co2e, 2),
                 "allocated_scope1": round(allocated_s1, 2),
                 "allocated_scope2": round(allocated_s2, 2),
                 "allocated_ch4": round(allocated_ch4, 2),
             })
+
+        # DEFECT-AG1-06: GHG Protocol Chapter 3 - Unallocated working interest identification
+        allocated_pct_sum = round(sum(p["equity_pct"] for p in partner_allocations), 4)
+        unallocated_pct = round(max(0.0, 100.0 - allocated_pct_sum), 4)
+        is_fully_allocated = bool(unallocated_pct <= 0.001)
+
+        unallocated_s1 = round(total_s1 * (unallocated_pct / 100.0), 2)
+        unallocated_s2 = round(total_s2 * (unallocated_pct / 100.0), 2)
+        unallocated_co2e = round(total_co2e * (unallocated_pct / 100.0), 2)
+        unallocated_ch4 = round(total_ch4 * (unallocated_pct / 100.0), 2)
+
+        unallocated_share = None
+        if not is_fully_allocated:
+            unallocated_share = {
+                "partner_id": None,
+                "partner_name": "Unallocated Third-Party Interest",
+                "partner_code": "THIRD_PARTY",
+                "equity_pct": round(unallocated_pct, 2),
+                "allocated_co2e": unallocated_co2e,
+                "allocated_scope1": unallocated_s1,
+                "allocated_scope2": unallocated_s2,
+                "allocated_ch4": unallocated_ch4,
+                "standards_reference": "GHG Protocol Corporate Standard Chapter 3 (Unallocated Working Interest)",
+            }
 
         allocation_by_facility.append({
             "facility_id": fac.id,
@@ -298,6 +322,16 @@ def get_equity_allocation():
             "total_scope1": round(total_s1, 2),
             "total_scope2": round(total_s2, 2),
             "total_ch4": round(total_ch4, 2),
+            "total_allocated_equity_pct": round(allocated_pct_sum, 2),
+            "unallocated_equity_pct": round(unallocated_pct, 2),
+            "unallocated_co2e": unallocated_co2e,
+            "unallocated_scope1": unallocated_s1,
+            "unallocated_scope2": unallocated_s2,
+            "unallocated_ch4": unallocated_ch4,
+            "is_fully_allocated": is_fully_allocated,
+            "allocation_status": "Fully Allocated" if is_fully_allocated else f"Partial ({unallocated_pct:.2f}% unallocated third-party interest)",
+            "ghg_protocol_boundary_note": "Consolidated joint venture interest fully allocated (100.0%)." if is_fully_allocated else f"Pursuant to GHG Protocol Chapter 3, unallocated equity ({unallocated_pct:.2f}%) represents external third-party or non-reporting operating partner interest.",
+            "unallocated_share": unallocated_share,
             "partners": partner_allocations,
         })
 

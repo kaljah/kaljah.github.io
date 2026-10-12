@@ -163,8 +163,8 @@ def test_uncertainty_95ci_correctness(client, admin_user):
     assert res.status_code == 200
     data = res.get_json()
 
-    u_95 = data.get("inventory_uncertainty_decimal", 0)
-    u_1s = data.get("inventory_uncertainty_1sigma", 0)
+    u_95 = data.get("inventory_uncertainty_decimal") or 0
+    u_1s = data.get("inventory_uncertainty_1sigma") or 0
 
     if u_1s > 0:
         # 95% CI should be exactly 2× the 1-sigma value
@@ -181,8 +181,8 @@ def test_uncertainty_category_95ci(client, admin_user):
     data = res.get_json()
 
     for cat in data.get("categories", []):
-        u_95 = cat.get("uncertainty_decimal", 0)
-        u_1s = cat.get("uncertainty_1sigma", 0)
+        u_95 = cat.get("uncertainty_decimal") or 0
+        u_1s = cat.get("uncertainty_1sigma") or 0
         if u_1s > 0:
             assert abs(u_95 - 2.0 * u_1s) < 1e-10, (
                 f"Category '{cat['category']}': 95% CI ({u_95}) should be 2 × 1σ ({u_1s})"

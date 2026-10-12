@@ -551,6 +551,10 @@ def compute_scope3_co2e(
     else:
         num, den = unit_str, ""
 
+    if den in ("ton", "tons"):
+        from input_validation import ValidationError
+        raise ValidationError(f"Emission factor unit '{ef_unit}': 'ton' is ambiguous - use tonne (metric) or short ton", "factor_unit")
+
     # 2. A per-1,000 denominator ("kg CO2e/$1000", "t CO2e/1,000 km") scales the activity; it is
     # read from the unit only. The method name says nothing about the factor's basis: an EEIO
     # record stores its factor per USD (audit 2026-09-30: an "EEIO" method read a per-USD factor

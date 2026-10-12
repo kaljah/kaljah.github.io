@@ -68,8 +68,8 @@ def get_sources():
 @login_required
 def add_source():
     user = get_current_user()
-    if user and user.role in ["it_admin", "it_manager", "it"]:
-        return jsonify({"error": "IT administrators are not authorized to modify operational emission sources."}), 403
+    if user and user.role in ["auditor", "it_admin", "it_manager", "it"]:
+        return jsonify({"error": "Read-only auditor and IT roles cannot modify operational emission sources."}), 403
     data = request.get_json() or {}
     fid = data.get("facility_id")
     if not fid:
@@ -119,8 +119,8 @@ def add_source():
 @login_required
 def delete_source(source_id):
     user = get_current_user()
-    if user and user.role in ["it_admin", "it_manager", "it"]:
-        return jsonify({"error": "IT administrators are not authorized to modify operational emission sources."}), 403
+    if user and user.role in ["auditor", "it_admin", "it_manager", "it"]:
+        return jsonify({"error": "Read-only auditor and IT roles cannot modify operational emission sources."}), 403
     source = db.session.get(EmissionSource, source_id)
     if not source:
         return jsonify({"error": "Source not found"}), 404
@@ -151,8 +151,8 @@ def delete_source(source_id):
 @login_required
 def bulk_import_sources():
     user = get_current_user()
-    if user and user.role in ["it_admin", "it_manager", "it"]:
-        return jsonify({"error": "IT administrators are not authorized to modify operational emission sources."}), 403
+    if user and user.role in ["auditor", "it_admin", "it_manager", "it"]:
+        return jsonify({"error": "IT administrators and auditors are not authorized to modify operational emission sources."}), 403
     data = request.get_json() or {}
     records = data.get("records", [])
     if not records:
@@ -257,8 +257,8 @@ def get_mitigations():
 @login_required
 def add_mitigation():
     user = get_current_user()
-    if user and user.role in ["it_admin", "it_manager", "it"]:
-        return jsonify({"error": "IT administrators are not authorized to modify operational mitigation data."}), 403
+    if user and user.role in ["auditor", "it_admin", "it_manager", "it"]:
+        return jsonify({"error": "Read-only auditor and IT roles cannot modify mitigation data."}), 403
     data = request.get_json() or {}
     from input_validation import parse_number  # SU-7: year "abc" and -5000 t were stored as given
     data["year"] = parse_year(data.get("year"), required=False)
@@ -348,8 +348,8 @@ def add_mitigation():
 @login_required
 def delete_mitigation(mitigation_id):
     user = get_current_user()
-    if user and user.role in ["it_admin", "it_manager", "it"]:
-        return jsonify({"error": "IT administrators are not authorized to modify operational mitigation data."}), 403
+    if user and user.role in ["auditor", "it_admin", "it_manager", "it"]:
+        return jsonify({"error": "Read-only auditor and IT roles cannot modify mitigation data."}), 403
     # Determine type from ID prefix
     if mitigation_id.startswith("proj_"):
         try:
@@ -604,8 +604,8 @@ def get_available_filters():
 @login_required
 def bulk_import_mitigation():
     user = get_current_user()
-    if user and user.role in ["it_admin", "it_manager", "it"]:
-        return jsonify({"error": "IT administrators are not authorized to modify operational mitigation data."}), 403
+    if user and user.role in ["auditor", "it_admin", "it_manager", "it"]:
+        return jsonify({"error": "Read-only auditor and IT roles cannot modify mitigation data."}), 403
     data = request.get_json() or {}
     records = data.get("records", [])
     if not records:
@@ -1033,13 +1033,4 @@ def _verified_totals_by_scope(year, allowed_fids):
         "scope2": total(Scope2Emission.co2e, Scope2Emission),
         "scope3": total(Scope3Emission.co2e, Scope3Emission),
     }
-
-
-# --- Audit Stats Alias (/api/audit/stats) ---
-@managedata_bp.route("/audit/stats", methods=["GET"])
-@managedata_bp.route("/audit/stats/", methods=["GET"])
-@login_required
-def managedata_audit_stats():
-    from routes.audit import get_audit_stats
-    return get_audit_stats()
 

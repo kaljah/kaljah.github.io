@@ -22,13 +22,13 @@ from routes.emissions import _lookup_api_factor, resolve_gwp_dict, resolve_gwp_s
 @limiter.limit("20 per minute")
 @login_required
 def add_bulk_upload():
-    from datetime import datetime
+    from datetime import datetime, timezone
 
     user = get_current_user()
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
-    if user.role in ["it_admin", "it_manager", "it"]:
-        return jsonify({"error": "IT personnel do not have access to upload emission data"}), 403
+    if user.role in ["auditor", "it_admin", "it_manager", "it"]:
+        return jsonify({"error": "Read-only auditor and IT personnel do not have access to upload emission data"}), 403
 
     data = request.get_json()
     records = data.get("records", [])
@@ -388,6 +388,20 @@ def add_bulk_upload():
                 co2_val, ch4_val, n2o_val, gwp_dict=gwp_dict
             )
 
+        from calculations.anomaly import plausibility_check
+
+        total_co2e_calc = em_result.get("totalCo2e", 0)
+        verdict, qa_msg = plausibility_check(total_co2e_calc)
+        if verdict == "reject":
+            errors.append(
+                {
+                    "row": row_num,
+                    "reasons": [qa_msg],
+                    "original": row,
+                }
+            )
+            continue
+
         # Uncertainty
         api_res = em_result.get("_full_api_res")
         if api_res:
@@ -453,8 +467,9 @@ def add_bulk_upload():
                 else (uncertainty or None)
             ),
             status=bulk_status,
+            qa_flag=qa_msg[:255] if verdict == "flag" else None,
             approved_by=user.id if bulk_status == "Verified" else None,
-            approved_at=datetime.datetime.now(datetime.timezone.utc) if bulk_status == "Verified" else None,
+            approved_at=datetime.now(timezone.utc) if bulk_status == "Verified" else None,
             factor_source=calc_data.get("factor_source", "default"),
         )
         emission_obj.ogmp_level = ogmp_level_for(emission_obj)

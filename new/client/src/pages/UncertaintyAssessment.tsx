@@ -1,8 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { BarChart } from "../components/charts";
 import {
   Info,
   Download,
+  ChevronDown,
+  ChevronRight,
+  Search,
+  ShieldCheck,
+  BarChart2,
+  Layers,
+  AlertTriangle,
+  CheckCircle2,
+  Activity,
 } from "lucide-react";
 import api from "../api";
 import { useAuth } from "../context/AuthContext";
@@ -15,7 +24,7 @@ import { t } from "../i18n";
 
 interface Contributor {
   name: string;
-  uncertainty: string;
+  uncertainty?: string;
   contribution: number;
 }
 
@@ -23,9 +32,32 @@ interface CategorySection {
   category: string;
   total_emissions?: number;
   uncertainty_decimal?: number;
-  level: string;
+  level: "low" | "medium" | "high" | string;
   uncertainty_pct: string;
   top_contributors: Contributor[];
+}
+
+export interface MonteCarloHistogramBin {
+  bin: string;
+  bin_range: string;
+  midpoint: number;
+  emissions_tco2e: number;
+  count: number;
+  frequency: number;
+}
+
+export interface MonteCarloData {
+  mean: number;
+  median: number;
+  std: number;
+  ci_lower: number;
+  ci_upper: number;
+  p5: number;
+  p95: number;
+  relative_uncertainty_95pct: number;
+  iterations: number;
+  histogram: MonteCarloHistogramBin[];
+  percentiles: Record<string, number>;
 }
 
 interface UncertaintyData {
@@ -33,9 +65,11 @@ interface UncertaintyData {
   inventory_uncertainty_pct?: string;
   confidence_level_pct?: number;
   coverage_factor?: number;
+  total_inventory_emissions?: number;
   tier_breakdown?: Record<string, number>;
   uncertainty_bands?: Record<string, number>;
   categories: CategorySection[];
+  monte_carlo?: MonteCarloData;
   [key: string]: any;
 }
 
@@ -59,6 +93,12 @@ const UncertaintyAssessment: React.FC = () => {
   const [availableYears, setAvailableYears] = useState<(string | number)[]>([]);
   const [facilities, setFacilities] = useState<Facility[]>([]);
   const [exporting, setExporting] = useState<boolean>(false);
+
+  // New UX state
+  const [analyticsView, setAnalyticsView] = useState<"relative" | "absolute" | "monte_carlo">("relative");
+  const [riskFilter, setRiskFilter] = useState<"all" | "high" | "medium" | "low">("all");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
 
   // Load filter options on mount
   useEffect(() => {
@@ -149,20 +189,32 @@ const UncertaintyAssessment: React.FC = () => {
     }
   };
 
-  // Tier color utility
-  const getTierColorClass = (tierName: string) => {
-    if (tierName === "Tier 3") return "tier-3-color";
-    if (tierName === "Tier 2") return "tier-2-color";
-    return "tier-1-color";
-  };
-
   // Inventory uncertainty level
-  // BUG-062: same thresholds as the legend and the backend `level` (<=10 % low, <=30 % medium, 95 % CI)
   const getUncertaintyLevel = (decimal?: number | null) => {
     if (decimal == null) return "";
     if (decimal <= 0.1) return "level-low";
     if (decimal <= 0.3) return "level-medium";
     return "level-high";
+  };
+
+  const getUncertaintyLabel = (decimal?: number | null) => {
+    if (decimal == null) return "";
+    if (decimal <= 0.1) return t("Low Uncertainty (ISO 14064-1 Compliant)");
+    if (decimal <= 0.3) return t("Moderate Uncertainty (Monitoring Recommended)");
+    return t("High Uncertainty (Priority Action Required)");
+  };
+
+  // Toggle category row expand
+  const toggleCategoryExpand = (categoryName: string) => {
+    setExpandedCategories((prev) => {
+      const next = new Set(prev);
+      if (next.has(categoryName)) {
+        next.delete(categoryName);
+      } else {
+        next.add(categoryName);
+      }
+      return next;
+    });
   };
 
   // Build dropdown options
@@ -186,6 +238,35 @@ const UncertaintyAssessment: React.FC = () => {
     })),
   ];
 
+  // Filtered categories for the table
+  const filteredCategories = useMemo(() => {
+    if (!data?.categories) return [];
+    return data.categories.filter((cat) => {
+      // Risk level filter
+      if (riskFilter !== "all" && cat.level !== riskFilter) {
+        return false;
+      }
+      // Search query filter
+      if (searchQuery.trim() !== "") {
+        const q = searchQuery.toLowerCase();
+        const matchesCategory = cat.category.toLowerCase().includes(q);
+        const matchesContributor = cat.top_contributors?.some((c) =>
+          c.name.toLowerCase().includes(q)
+        );
+        if (!matchesCategory && !matchesContributor) {
+          return false;
+        }
+      }
+      return true;
+    });
+  }, [data?.categories, riskFilter, searchQuery]);
+
+  // Dynamic height for chart
+  const chartDynamicHeight = useMemo(() => {
+    const count = data?.categories?.length || 0;
+    return Math.max(340, count * 38 + 70);
+  }, [data?.categories?.length]);
+
   if (loading) {
     return (
       <div className="[padding:24px_32px_48px] [max-width:1600px] [margin:0_auto] [color:var(--text-primary,_var(--color-ink-900))]">
@@ -194,34 +275,26 @@ const UncertaintyAssessment: React.FC = () => {
     );
   }
 
+  const totalEmissions = data?.total_inventory_emissions || 1;
+  const highRiskCount = data?.categories.filter((c) => c.level === "high").length || 0;
+  const mediumRiskCount = data?.categories.filter((c) => c.level === "medium").length || 0;
+  const lowRiskCount = data?.categories.filter((c) => c.level === "low").length || 0;
+
   return (
     <div className="[padding:24px_32px_48px] [max-width:1600px] [margin:0_auto] [color:var(--text-primary,_var(--color-ink-900))]">
       {/* ── Page Header ── */}
-      <div className="[margin-bottom:40px] [display:flex] [justify-content:space-between] [align-items:flex-end]! [gap:24px] [flex-wrap:wrap]! [@media(max-width:900px)]:[flex-direction:column]! [@media(max-width:900px)]:[align-items:flex-start]!">
+      <div className="[margin-bottom:28px] [display:flex] [justify-content:space-between] [align-items:flex-end]! [gap:24px] [flex-wrap:wrap]! [@media(max-width:900px)]:[flex-direction:column]! [@media(max-width:900px)]:[align-items:flex-start]!">
         <div>
           <h1 className="ua-title">{t("Data Reliability Analysis")}</h1>
-          <p className="[font-size:var(--text-lg)] [color:var(--text-secondary,_var(--color-ink-500))] [max-width:800px] [margin:0] [line-height:1.5]">
-            {t("Dynamic uncertainty quantification across the complete GHG inventory, following ISO 14064-1 §7.5 and IPCC 2006 GL Vol.1 §3.3.")}
+          <p className="[font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-500))] [max-width:850px] [margin:0] [line-height:1.5]">
+            {t(
+              "Dynamic quantification of GHG inventory uncertainty according to ISO 14064-1 §7.5 and IPCC 2006 Guidelines Vol.1 §3.3."
+            )}
           </p>
-          {data && (
-            <div className="[display:inline-flex] [align-items:center] [gap:16px] [background:var(--bg-card,_rgba(255,_255,_255,_0.78))] [padding:14px_20px] [border-radius:var(--radius-lg)] [border:1px_solid_var(--border-color,_rgba(0,_0,_0,_0.05))] [margin-top:16px]">
-              <div className="[font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-500))] [margin-bottom:4px]">{t("Inventory Uncertainty")}</div>
-              <div
-                className={`ua-inventory-value ${getUncertaintyLevel(data.inventory_uncertainty_decimal)}`}
-              >
-                {data.inventory_uncertainty_pct}
-              </div>
-              {data.confidence_level_pct && (
-                <div className="[display:inline-flex] [align-items:center] [gap:6px] [margin-top:8px] [padding:4px_10px] [border-radius:var(--radius-md)] [font-size:var(--text-xs)] [font-weight:700] [letter-spacing:0.03em] [background:rgba(59,_130,_246,_0.08)] [color:var(--color-blue-600)] [border:1px_solid_rgba(59,_130,_246,_0.15)]">
-                  {data.confidence_level_pct}{t("% CI (k=")}{data.coverage_factor})
-                </div>
-              )}
-            </div>
-          )}
         </div>
 
-        <div className="[display:flex] [gap:20px] [align-items:flex-end] [flex-wrap:wrap]! [@media(max-width:900px)]:[flex-direction:column]! [@media(max-width:900px)]:[width:100%]">
-          <div className="[display:flex] [flex-direction:column] [gap:8px] w-[130px]!">
+        <div className="[display:flex] [gap:14px] [align-items:flex-end] [flex-wrap:wrap]! [@media(max-width:900px)]:[width:100%]">
+          <div className="[display:flex] [flex-direction:column] [gap:6px] w-[130px]!">
             <CustomDropdown
               options={yearOptions}
               value={selectedYear}
@@ -229,7 +302,7 @@ const UncertaintyAssessment: React.FC = () => {
               placeholder={t("Year")}
             />
           </div>
-          <div className="[display:flex] [flex-direction:column] [gap:8px] w-[150px]!">
+          <div className="[display:flex] [flex-direction:column] [gap:6px] w-[150px]!">
             <CustomDropdown
               options={scopeOptions}
               value={selectedScope}
@@ -237,7 +310,7 @@ const UncertaintyAssessment: React.FC = () => {
               placeholder={t("Scope")}
             />
           </div>
-          <div className="[display:flex] [flex-direction:column] [gap:8px] w-[200px]!">
+          <div className="[display:flex] [flex-direction:column] [gap:6px] w-[200px]!">
             <CustomDropdown
               options={facilityOptions}
               value={selectedFacility}
@@ -247,12 +320,12 @@ const UncertaintyAssessment: React.FC = () => {
           </div>
 
           <button
-            className="[display:inline-flex] [align-items:center] [gap:8px] [padding:10px_20px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [background:var(--bg-card,_var(--color-white))] [color:var(--text-primary,_var(--color-ink-800))] [font-size:var(--text-base)] [font-weight:600] [cursor:pointer] [transition:all_0.2s_ease] hover:[background:var(--color-primary)] hover:[color:var(--color-white)] hover:[border-color:var(--accent-color,_var(--color-brand-500))] hover:[transform:translateY(-1px)] hover:[box-shadow:var(--shadow-card)]"
+            className="[display:inline-flex] [align-items:center] [gap:8px] [padding:9px_18px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [background:var(--bg-card,_var(--color-white))] [color:var(--text-primary,_var(--color-ink-800))] [font-size:var(--text-sm)] [font-weight:600] [cursor:pointer] [transition:all_0.2s_ease] hover:[background:var(--color-primary)] hover:[color:var(--color-white)] hover:[border-color:var(--accent-color,_var(--color-brand-500))] hover:[box-shadow:var(--shadow-card)]"
             onClick={handleExport}
             disabled={exporting || !data}
             title={t("Export uncertainty assessment as CSV")}
           >
-            <Download size={16} />
+            <Download size={15} />
             {exporting ? t("Exporting...") : t("Export CSV")}
           </button>
         </div>
@@ -264,179 +337,529 @@ const UncertaintyAssessment: React.FC = () => {
           <div>
             <h4>{t("No Uncertainty Data Available")}</h4>
             <p>
-              {t("No verified emission records found for the selected filters. Ensure emissions have been submitted and verified before running the uncertainty assessment.")}
+              {t(
+                "No verified emission records found for the selected filters. Ensure emissions have been submitted and verified before running the uncertainty assessment."
+              )}
             </p>
           </div>
         </div>
       ) : (
         <>
-          {/* ── Tier Breakdown Cards ── */}
-          <div className="[display:grid] [grid-template-columns:repeat(3,_1fr)]! [gap:20px] [margin-bottom:40px] [@media(max-width:900px)]:[grid-template-columns:1fr]!">
-            {Object.entries(data.tier_breakdown || {}).map(([tier, pct]) => (
-              <div key={tier} className="[background:var(--bg-card,_rgba(255,_255,_255,_0.78))] [padding:20px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card,_0_1px_3px_rgba(0,_0,_0,_0.05))] [transition:transform_0.2s_ease,_box-shadow_0.2s_ease] hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated,_0_4px_12px_rgba(0,_0,_0,_0.1))]">
-                <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))] [font-weight:600]">{tier}{" "}{t("(share of Scope 1)")}</div>
-                <div className={`ua-tier-value ${getTierColorClass(tier)}`}>
-                  {pct}%
+          {/* ── ZONE 1: Executive Compliance & Data Maturity Hero Banner ── */}
+          <div className="ua-hero-card">
+            {/* Column A: Global Uncertainty KPI */}
+            <div className="ua-hero-col">
+              <div>
+                <div className="ua-hero-label">
+                  <ShieldCheck size={14} className="text-brand-500!" />
+                  {t("Global Inventory Uncertainty")}
                 </div>
-                <div className="[width:100%] [height:4px] [background:var(--border-color,_var(--color-ink-100))] [border-radius:var(--radius-sm)] [overflow:hidden]">
-                  <div
-                    className={`ua-tier-bar-fill ${getTierColorClass(tier)}`}
-                    style={{ width: `${pct}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* ── Uncertainty bands (whole inventory) ── */}
-          {data.uncertainty_bands && (
-            <div className="[display:grid] [grid-template-columns:repeat(3,_1fr)]! [gap:20px] [margin-bottom:40px] [@media(max-width:900px)]:[grid-template-columns:1fr]!">
-              {[["low", "Low Uncertainty (≤ ±10%)", "band-low"],
-                ["medium", "Medium Uncertainty (±10% to ±30%)", "band-medium"],
-                ["high", "High Uncertainty (> ±30%)", "band-high"]].map(([band, label, cls]) => (
-                <div key={band} className="[background:var(--bg-card,_rgba(255,_255,_255,_0.78))] [padding:20px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card,_0_1px_3px_rgba(0,_0,_0,_0.05))] [transition:transform_0.2s_ease,_box-shadow_0.2s_ease] hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated,_0_4px_12px_rgba(0,_0,_0,_0.1))]">
-                  <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))] [font-weight:600]">{t(label)}</div>
-                  <div className={`ua-tier-value ${cls}`}>{data.uncertainty_bands?.[band] ?? 0}%</div>
-                  <div className="[width:100%] [height:4px] [background:var(--border-color,_var(--color-ink-100))] [border-radius:var(--radius-sm)] [overflow:hidden]">
-                    <div className={`ua-tier-bar-fill ${cls}`} style={{ width: `${data.uncertainty_bands?.[band] ?? 0}%` }} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* ── Legend ── */}
-          <div className="[display:flex] [gap:24px] [margin-bottom:32px] [flex-wrap:wrap] [background:var(--bg-card,_rgba(255,_255,_255,_0.4))] [padding:16px_24px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))]">
-            <div className="[display:flex] [align-items:center] [gap:10px] [font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-600))] [font-weight:600]">
-              <div className="[width:12px] [height:12px] [border-radius:50%] [flex-shrink:0] bg-[color:var(--color-unc-low)]!" />
-              {t("Low Uncertainty (≤ ±10%)")}
-            </div>
-            <div className="[display:flex] [align-items:center] [gap:10px] [font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-600))] [font-weight:600]">
-              <div className="[width:12px] [height:12px] [border-radius:50%] [flex-shrink:0] bg-[color:var(--color-unc-medium)]!" />
-              {t("Medium Uncertainty (±10% to ±30%)")}
-            </div>
-            <div className="[display:flex] [align-items:center] [gap:10px] [font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-600))] [font-weight:600]">
-              <div className="[width:12px] [height:12px] [border-radius:50%] [flex-shrink:0] bg-[color:var(--color-unc-high)]!" />
-              {t("High Uncertainty (> ±30%)")}
-            </div>
-          </div>
-
-          {/* ── Uncertainty by category, ranked, against the high-uncertainty threshold ── */}
-          {data.categories.length > 0 && (
-            <div className="category-section [margin-bottom:24px]">
-              <div className="category-header">
-                <h3 className="category-title">{t("Uncertainty by Category (±%)")}</h3>
-              </div>
-              <div className="h-[260px] w-full min-w-0">
-                <BarChart
-                  data={data.categories.map((c) => {
-                    const value = Math.abs(parseFloat(String(c.uncertainty_pct).replace(/[^0-9.\-]/g, ""))) || 0;
-                    // Same bands as the legend above: low <= 10, medium <= 30, high > 30.
-                    const color = value <= 10 ? "var(--color-unc-low)" : value <= 30 ? "var(--color-unc-medium)" : "var(--color-unc-high)";
-                    return { name: c.category, value, color };
-                  })}
-                  dataKey="value"
-                  xKey="name"
-                  color="var(--color-unc-high)"
-                  horizontal
-                  sortDesc
-                  height={260}
-                  referenceValue={30}
-                  referenceLabel={t("High (±30%)")}
-                  exportName="uncertainty-by-category"
-                  formatValue={(v) => `±${Number(v).toFixed(1)}%`}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* ── Emissions per category with the 95 % range ── */}
-          {data.categories.length > 0 && (
-            <div className="category-section [margin-bottom:24px]">
-              <div className="category-header">
-                <h3 className="category-title">{t("Emissions by Category with 95% Range (tCO₂e)")}</h3>
-              </div>
-              <div className="h-[260px] w-full min-w-0">
-                <BarChart
-                  data={data.categories.map((c: any) => {
-                    const u = Number(c.uncertainty_decimal) || 0;
-                    const value = Number(c.total_emissions) || 0;
-                    const color = u <= 0.1 ? "var(--color-unc-low)" : u <= 0.3 ? "var(--color-unc-medium)" : "var(--color-unc-high)";
-                    return { name: c.category, value, range: value * u, color };
-                  })}
-                  dataKey="value"
-                  xKey="name"
-                  horizontal
-                  sortDesc
-                  height={260}
-                  errorKey="range"
-                  exportName="emissions-by-category-with-95-range"
-                />
-              </div>
-              <p className="mb-0 mt-2 text-xs text-ink-500">{t("Bars show the category total; the whiskers show its 95% range (± the uncertainty above).")}</p>
-            </div>
-          )}
-
-          {/* ── Category Sections ── */}
-          <div className="category-grid">
-            {data.categories.map((section, idx) => (
-              <div key={idx} className="category-section">
-                <div className="category-header">
-                  <h3 className="category-title">{section.category}</h3>
-                  <div
-                    className={`[display:inline-flex] [align-items:center] [gap:6px] [padding:4px_12px] [border-radius:999px] [font-size:var(--text-sm)] [font-weight:700] [letter-spacing:0.02em] [text-transform:uppercase] uncertainty-${section.level}`}
+                <div className="ua-hero-kpi-row">
+                  <span
+                    className={`ua-hero-big-value ${getUncertaintyLevel(
+                      data.inventory_uncertainty_decimal
+                    )}`}
                   >
-                    {section.uncertainty_pct}
+                    {data.inventory_uncertainty_pct || "±0.0%"}
+                  </span>
+                  {data.confidence_level_pct && (
+                    <span className="ua-hero-confidence-badge">
+                      {data.confidence_level_pct}% IC (k={data.coverage_factor})
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="ua-hero-subtext">
+                <div className="[font-weight:700] [color:var(--color-ink-800)]">
+                  {getUncertaintyLabel(data.inventory_uncertainty_decimal)}
+                </div>
+                <div>
+                  {t("Total assessed inventory:")}{" "}
+                  <strong className="text-ink-900!">
+                    {(totalEmissions / 1_000_000).toFixed(2)} M tCO₂e
+                  </strong>
+                </div>
+              </div>
+            </div>
+
+            {/* Column B: Scope 1 Tier Maturity */}
+            <div className="ua-hero-col">
+              <div>
+                <div className="ua-hero-label">
+                  <Layers size={14} className="text-blue-500!" />
+                  {t("Factor Maturity (Scope 1)")}
+                </div>
+                <div className="ua-stacked-bar-container">
+                  <div className="ua-stacked-bar">
+                    <div
+                      className="ua-stacked-segment tier-3"
+                      style={{ width: `${data.tier_breakdown?.["Tier 3"] ?? 0}%` }}
+                      title={`Tier 3: ${data.tier_breakdown?.["Tier 3"] ?? 0}%`}
+                    />
+                    <div
+                      className="ua-stacked-segment tier-2"
+                      style={{ width: `${data.tier_breakdown?.["Tier 2"] ?? 0}%` }}
+                      title={`Tier 2: ${data.tier_breakdown?.["Tier 2"] ?? 0}%`}
+                    />
+                    <div
+                      className="ua-stacked-segment tier-1"
+                      style={{ width: `${data.tier_breakdown?.["Tier 1"] ?? 0}%` }}
+                      title={`Tier 1: ${data.tier_breakdown?.["Tier 1"] ?? 0}%`}
+                    />
+                  </div>
+                  <div className="ua-stacked-legend">
+                    <div className="ua-stacked-legend-row">
+                      <span>
+                        <span className="ua-legend-dot tier-3" />
+                        {t("Tier 3 (Direct Measurement / CEMS)")}
+                      </span>
+                      <strong className="text-ink-900!">
+                        {data.tier_breakdown?.["Tier 3"] ?? 0}%
+                      </strong>
+                    </div>
+                    <div className="ua-stacked-legend-row">
+                      <span>
+                        <span className="ua-legend-dot tier-2" />
+                        {t("Tier 2 (Sonatrach Site-Specific Factors)")}
+                      </span>
+                      <strong className="text-ink-900!">
+                        {data.tier_breakdown?.["Tier 2"] ?? 0}%
+                      </strong>
+                    </div>
+                    <div className="ua-stacked-legend-row">
+                      <span>
+                        <span className="ua-legend-dot tier-1" />
+                        {t("Tier 1 (IPCC Default Factors)")}
+                      </span>
+                      <strong className="text-ink-900!">
+                        {data.tier_breakdown?.["Tier 1"] ?? 0}%
+                      </strong>
+                    </div>
                   </div>
                 </div>
+              </div>
+            </div>
 
-                <div className="uncertainty-grid">
-                  {section.top_contributors.map((factor, fIdx) => (
-                    <div key={fIdx} className="[background:var(--bg-card,_rgba(255,_255,_255,_0.78))] [backdrop-filter:blur(14px)] [-webkit-backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [&&]:[border-radius:var(--radius-lg)] [padding:24px] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] [box-shadow:var(--shadow-card,_0_4px_6px_-1px_rgba(0,_0,_0,_0.1))] hover:[transform:translateY(-3px)] hover:[box-shadow:var(--shadow-card-elevated,_0_10px_25px_-5px_rgba(0,_0,_0,_0.12))] hover:[border-color:rgba(255,_255,_255,_0.95)]">
-                      <div className="[display:flex] [justify-content:space-between] [align-items:flex-start] [margin-bottom:15px]">
-                        <div>
-                          <div className="factor-name">{factor.name}</div>
-                          <div className="[font-size:var(--text-sm)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.04em]">{t("Primary Contributor")}</div>
-                        </div>
-                        <div className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [padding:4px_8px] [background:var(--border-color,_var(--color-ink-100))] [border-radius:var(--radius-sm)] [white-space:nowrap]">
-                          {factor.uncertainty}
-                        </div>
+            {/* Column C: Risk Bands Exposure */}
+            <div className="ua-hero-col">
+              <div>
+                <div className="ua-hero-label">
+                  <AlertTriangle size={14} className="text-amber-500!" />
+                  {t("Uncertainty Risk Exposure")}
+                </div>
+                <div className="ua-stacked-bar-container">
+                  <div className="ua-stacked-bar">
+                    <div
+                      className="ua-stacked-segment band-low"
+                      style={{ width: `${data.uncertainty_bands?.["low"] ?? 0}%` }}
+                      title={`Faible: ${data.uncertainty_bands?.["low"] ?? 0}%`}
+                    />
+                    <div
+                      className="ua-stacked-segment band-medium"
+                      style={{ width: `${data.uncertainty_bands?.["medium"] ?? 0}%` }}
+                      title={`Moyen: ${data.uncertainty_bands?.["medium"] ?? 0}%`}
+                    />
+                    <div
+                      className="ua-stacked-segment band-high"
+                      style={{ width: `${data.uncertainty_bands?.["high"] ?? 0}%` }}
+                      title={`Élevé: ${data.uncertainty_bands?.["high"] ?? 0}%`}
+                    />
+                  </div>
+                  <div className="ua-stacked-legend">
+                    <div className="ua-stacked-legend-row">
+                      <span>
+                        <span className="ua-legend-dot band-high" />
+                        {t("High (> ±30%)")}
+                      </span>
+                      <strong className="text-red-700!">
+                        {data.uncertainty_bands?.["high"] ?? 0}%
+                      </strong>
+                    </div>
+                    <div className="ua-stacked-legend-row">
+                      <span>
+                        <span className="ua-legend-dot band-medium" />
+                        {t("Moderate (±10% to ±30%)")}
+                      </span>
+                      <strong className="text-amber-700!">
+                        {data.uncertainty_bands?.["medium"] ?? 0}%
+                      </strong>
+                    </div>
+                    <div className="ua-stacked-legend-row">
+                      <span>
+                        <span className="ua-legend-dot band-low" />
+                        {t("Low (≤ ±10%)")}
+                      </span>
+                      <strong className="text-green-700!">
+                        {data.uncertainty_bands?.["low"] ?? 0}%
+                      </strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ── ZONE 2: Analytics Hub with Segmented Switcher ── */}
+          {data.categories.length > 0 && (
+            <div className="ua-chart-card">
+              <div className="ua-chart-header">
+                <div>
+                  <h3 className="category-title">
+                    {analyticsView === "relative"
+                      ? t("Relative Uncertainty by Category (±%)")
+                      : analyticsView === "absolute"
+                      ? t("Verified Emissions & 95% Margin by Category (tCO₂e)")
+                      : t("Empirical Monte Carlo Distribution — Probability Histogram (IPCC Approach 2)")}
+                  </h3>
+                  <p className="[font-size:var(--text-xs)] [color:var(--text-secondary,_var(--color-ink-500))] [margin:4px_0_0_18px]">
+                    {analyticsView === "relative"
+                      ? t(
+                          "Ranking of categories according to their statistical dispersion relative to the critical threshold of ±30%."
+                        )
+                      : analyticsView === "absolute"
+                      ? t(
+                          "Weighting of total emissions by category and absolute uncertainty whiskers."
+                        )
+                      : t(
+                          "Log-normal stochastic simulation (2,500 iterations) illustrating the probability density function and P5/P95 percentiles."
+                        )}
+                  </p>
+                </div>
+
+                {/* Segmented Control Pill Switcher */}
+                <div className="ua-segmented-control">
+                  <button
+                    type="button"
+                    id="ua-switch-relative"
+                    className={`ua-segmented-btn ${analyticsView === "relative" ? "active" : ""}`}
+                    onClick={() => setAnalyticsView("relative")}
+                  >
+                    <BarChart2 size={13} />
+                    {t("Relative Uncertainty (±%)")}
+                  </button>
+                  <button
+                    type="button"
+                    id="ua-switch-absolute"
+                    className={`ua-segmented-btn ${analyticsView === "absolute" ? "active" : ""}`}
+                    onClick={() => setAnalyticsView("absolute")}
+                  >
+                    <Layers size={13} />
+                    {t("Volumetric Impact (tCO₂e)")}
+                  </button>
+                  <button
+                    type="button"
+                    id="ua-switch-monte-carlo"
+                    className={`ua-segmented-btn ${analyticsView === "monte_carlo" ? "active" : ""}`}
+                    onClick={() => setAnalyticsView("monte_carlo")}
+                  >
+                    <Activity size={13} />
+                    {t("Monte Carlo Histogram")}
+                  </button>
+                </div>
+              </div>
+
+              {analyticsView === "monte_carlo" ? (
+                <div className="flex flex-col gap-4 w-full" id="ua-monte-carlo-view">
+                  {data.monte_carlo && (
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3.5 rounded-xl bg-ink-50/70 border border-border">
+                      <div className="flex flex-col">
+                        <span className="text-[11px] font-semibold uppercase text-text-secondary">{t("Simulated Mean")}</span>
+                        <span className="text-sm font-bold text-text mt-0.5">{Number(data.monte_carlo.mean).toLocaleString()} tCO₂e</span>
                       </div>
-                      <div className="[display:flex] [align-items:center] [gap:15px]">
-                        <div className="[flex:1]">
-                          <div className="[display:flex] [justify-content:space-between] [font-size:var(--text-sm)] [margin-bottom:4px] [color:var(--text-secondary,_var(--color-ink-500))]">
-                            <span>{t("Impact on Category")}</span>
-                            <span className="[font-weight:700] [color:var(--text-primary,_var(--color-ink-900))]">
-                              {factor.contribution}%
-                            </span>
-                          </div>
-                          <div className="[width:100%] [height:6px] [background:var(--border-color,_var(--color-ink-100))] [border-radius:var(--radius-sm)] [overflow:hidden]">
-                            <div
-                              className="[height:100%] [background:var(--color-blue-500)] [border-radius:var(--radius-sm)] [transition:width_0.5s_cubic-bezier(0.16,_1,_0.3,_1)]"
-                              style={{ width: `${factor.contribution}%` }}
-                            />
-                          </div>
-                        </div>
+                      <div className="flex flex-col">
+                        <span className="text-[11px] font-semibold uppercase text-text-secondary">{t("Median (P50)")}</span>
+                        <span className="text-sm font-bold text-text mt-0.5">{Number(data.monte_carlo.median).toLocaleString()} tCO₂e</span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-[11px] font-semibold uppercase text-text-secondary">{t("95% Interval (P5 - P95)")}</span>
+                        <span className="text-sm font-bold text-emerald-700 mt-0.5">
+                          [{Number(data.monte_carlo.ci_lower).toLocaleString()} - {Number(data.monte_carlo.ci_upper).toLocaleString()}]
+                        </span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-[11px] font-semibold uppercase text-text-secondary">{t("95% Uncertainty")}</span>
+                        <span className="text-sm font-bold text-brand-600 mt-0.5">±{data.monte_carlo.relative_uncertainty_95pct}% ({data.monte_carlo.iterations} runs)</span>
                       </div>
                     </div>
-                  ))}
+                  )}
+
+                  <div style={{ height: `${chartDynamicHeight}px` }} className="w-full min-w-0" id="ua-monte-carlo-histogram">
+                    <BarChart
+                      data={
+                        data.monte_carlo?.histogram?.map((b) => ({
+                          name: `${b.emissions_tco2e}`,
+                          count: b.count,
+                          range: b.bin_range,
+                        })) || []
+                      }
+                      dataKey="count"
+                      xKey="name"
+                      color="var(--color-brand-500)"
+                      height={chartDynamicHeight}
+                      exportName="monte-carlo-histogram"
+                      formatValue={(v) => `${v} runs`}
+                    />
+                  </div>
+                </div>
+              ) : analyticsView === "relative" ? (
+                <div style={{ height: `${chartDynamicHeight}px` }} className="w-full min-w-0">
+                  <BarChart
+                    data={data.categories.map((c) => {
+                      const value =
+                        Math.abs(
+                          parseFloat(String(c.uncertainty_pct).replace(/[^0-9.\-]/g, ""))
+                        ) || 0;
+                      const color =
+                        value <= 10
+                          ? "var(--color-unc-low)"
+                          : value <= 30
+                          ? "var(--color-unc-medium)"
+                          : "var(--color-unc-high)";
+                      return { name: c.category, value, color };
+                    })}
+                    dataKey="value"
+                    xKey="name"
+                    color="var(--color-unc-high)"
+                    horizontal
+                    sortDesc
+                    height={chartDynamicHeight}
+                    referenceValue={30}
+                    referenceLabel={t("Critical threshold (±30%)")}
+                    exportName="uncertainty-by-category"
+                    formatValue={(v) => `±${Number(v).toFixed(1)}%`}
+                  />
+                </div>
+              ) : (
+                <div style={{ height: `${chartDynamicHeight}px` }} className="w-full min-w-0">
+                  <BarChart
+                    data={data.categories.map((c: any) => {
+                      const u = Number(c.uncertainty_decimal) || 0;
+                      const value = Number(c.total_emissions) || 0;
+                      const color =
+                        u <= 0.1
+                          ? "var(--color-unc-low)"
+                          : u <= 0.3
+                          ? "var(--color-unc-medium)"
+                          : "var(--color-unc-high)";
+                      return { name: c.category, value, range: value * u, color };
+                    })}
+                    dataKey="value"
+                    xKey="name"
+                    horizontal
+                    sortDesc
+                    height={chartDynamicHeight}
+                    errorKey="range"
+                    exportName="emissions-by-category-with-95-range"
+                  />
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ── ZONE 3: Interactive Materiality & Reliability Master-Detail Table ── */}
+          <div className="ua-table-card">
+            <div className="ua-table-toolbar">
+              <div className="[display:flex] [align-items:center] [gap:16px] [flex-wrap:wrap]">
+                <h3 className="category-title">
+                  {t("Reliability Directory & Contributors")}
+                </h3>
+                {/* Risk filter chips */}
+                <div className="ua-filter-chips">
+                  <button
+                    type="button"
+                    className={`ua-chip ${riskFilter === "all" ? "active" : ""}`}
+                    onClick={() => setRiskFilter("all")}
+                  >
+                    {t("Tous")} ({data.categories.length})
+                  </button>
+                  <button
+                    type="button"
+                    className={`ua-chip ${riskFilter === "high" ? "active" : ""}`}
+                    onClick={() => setRiskFilter("high")}
+                  >
+                    {t("High Risk (> ±30%)")} ({highRiskCount})
+                  </button>
+                  <button
+                    type="button"
+                    className={`ua-chip ${riskFilter === "medium" ? "active" : ""}`}
+                    onClick={() => setRiskFilter("medium")}
+                  >
+                    {t("Moderate (±10% - ±30%)")} ({mediumRiskCount})
+                  </button>
+                  <button
+                    type="button"
+                    className={`ua-chip ${riskFilter === "low" ? "active" : ""}`}
+                    onClick={() => setRiskFilter("low")}
+                  >
+                    {t("Low (≤ ±10%)")} ({lowRiskCount})
+                  </button>
                 </div>
               </div>
-            ))}
+
+              {/* Quick Search */}
+              <div className="ua-search-input-wrap">
+                <Search
+                  size={14}
+                  className="[position:absolute] [left:10px] [top:50%] [transform:translateY(-50%)] [color:var(--color-ink-400)]"
+                />
+                <input
+                  type="text"
+                  className="ua-search-input"
+                  placeholder={t("Search category...")}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* Table */}
+            <div className="ua-table-wrapper">
+              <table className="ua-table">
+                <thead>
+                  <tr>
+                    <th style={{ width: 44 }}></th>
+                    <th>{t("Emission Category")}</th>
+                    <th>{t("Verified Emissions (tCO₂e)")}</th>
+                    <th>{t("Share of inventory")}</th>
+                    <th>{t("Uncertainty (±%)")}</th>
+                    <th>{t("Risk Level")}</th>
+                    <th>{t("Principal Variance Contributor")}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredCategories.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="[text-align:center] [padding:32px] [color:var(--color-ink-500)]">
+                        {t("No category matches the applied filters.")}
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredCategories.map((cat) => {
+                      const isExpanded = expandedCategories.has(cat.category);
+                      const sharePct = ((Number(cat.total_emissions) || 0) / totalEmissions) * 100;
+                      const topContrib = cat.top_contributors?.[0];
+
+                      return (
+                        <React.Fragment key={cat.category}>
+                          <tr
+                            className={`ua-row-clickable ${isExpanded ? "ua-row-expanded" : ""}`}
+                            onClick={() => toggleCategoryExpand(cat.category)}
+                          >
+                            <td className="[text-align:center]">
+                              {isExpanded ? (
+                                <ChevronDown size={16} className="text-brand-500!" />
+                              ) : (
+                                <ChevronRight size={16} className="text-ink-400!" />
+                              )}
+                            </td>
+                            <td>
+                              <span className="[font-weight:700] [color:var(--color-ink-900)]">
+                                {cat.category}
+                              </span>
+                            </td>
+                            <td>
+                              <span className="[font-family:var(--font-mono)] [font-weight:600]">
+                                {Number(cat.total_emissions || 0).toLocaleString("fr-FR", {
+                                  maximumFractionDigits: 1,
+                                })}
+                              </span>
+                            </td>
+                            <td>
+                              <span className="[font-family:var(--font-mono)] [color:var(--color-ink-600)]">
+                                {sharePct.toFixed(1)}%
+                              </span>
+                            </td>
+                            <td>
+                              <span
+                                className={`[display:inline-block] [padding:2px_8px] [border-radius:var(--radius-sm)] [font-weight:700] [font-family:var(--font-mono)] uncertainty-${cat.level}`}
+                              >
+                                {cat.uncertainty_pct}
+                              </span>
+                            </td>
+                            <td>
+                              <span
+                                className={`ua-risk-pill uncertainty-${cat.level}`}
+                              >
+                                {cat.level === "high"
+                                  ? t("High (>30%)")
+                                  : cat.level === "medium"
+                                  ? t("Moderate (10-30%)")
+                                  : t("Low (≤10%)")}
+                              </span>
+                            </td>
+                            <td>
+                              {topContrib ? (
+                                <span className="[font-size:var(--text-xs)] [color:var(--color-ink-700)]">
+                                  <strong>{topContrib.name}</strong>{" "}
+                                  <span className="[color:var(--color-ink-500)]">
+                                    ({topContrib.contribution}%)
+                                  </span>
+                                </span>
+                              ) : (
+                                <span className="[color:var(--color-ink-400)]">—</span>
+                              )}
+                            </td>
+                          </tr>
+
+                          {/* Expanded Detail Panel */}
+                          {isExpanded && (
+                            <tr>
+                              <td colSpan={7} className="ua-detail-expanded-cell">
+                                <div className="[font-size:var(--text-xs)] [font-weight:700] [text-transform:uppercase] [color:var(--color-ink-500)] [margin-bottom:12px] [letter-spacing:0.04em]">
+                                  {t("Key uncertainty drivers for")} : {cat.category}
+                                </div>
+                                <div className="ua-detail-panel">
+                                  {cat.top_contributors?.map((contrib, cIdx) => (
+                                    <div key={cIdx} className="ua-contributor-card">
+                                      <div className="ua-contributor-header">
+                                        <span className="ua-contributor-title">
+                                          {contrib.name}
+                                        </span>
+                                        {contrib.uncertainty && (
+                                          <span className="[font-size:var(--text-xs)] [font-weight:700] [padding:2px_6px] [background:var(--color-ink-100)] [border-radius:var(--radius-sm)]">
+                                            {contrib.uncertainty}
+                                          </span>
+                                        )}
+                                      </div>
+                                      <div className="[display:flex] [justify-content:space-between] [font-size:var(--text-xs)] [color:var(--color-ink-600)]">
+                                        <span>{t("Category Weight")}</span>
+                                        <strong>{contrib.contribution}%</strong>
+                                      </div>
+                                      <div className="ua-contributor-bar-bg">
+                                        <div
+                                          className="ua-contributor-bar-fill"
+                                          style={{ width: `${contrib.contribution}%` }}
+                                        />
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                        </React.Fragment>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* ── ZONE 4: Methodology Footer ── */}
+          <div className="ua-methodology-box">
+            <Info size={24} className="ua-methodology-icon" />
+            <div>
+              <h4>{t("Calculation Methodology & ISO 14064-1 Compliance")}</h4>
+              <p>
+                {t(
+                  "Uncertainty is quantified using the quadratic error propagation method (SRSS / Approach 1) per IPCC 2006 Guidelines Vol. 1, Ch. 3 (Eq. 3.3). Expansion factor k=2 is applied in accordance with GUM §6.2 to obtain expanded uncertainty at 95% confidence level. Emission factor uncertainties account for intra-sector correlations (Audit RC-10)."
+                )}
+              </p>
+            </div>
           </div>
         </>
       )}
-
-      {/* ── Methodology Footer ── */}
-      <div className="ua-methodology-box">
-        <Info size={24} className="ua-methodology-icon" />
-        <div>
-          <h4>{t("Calculation Methodology")}</h4>
-          <p>
-            {t("Uncertainty is quantified using the Square Root of Sum of Squares (SRSS) propagation method per IPCC 2006 GL Vol.1 §3.3 Eq. 3.3. Individual emission factor uncertainties are derived from the calculation tiers (IPCC/API). The coverage factor k=2 is applied per GUM §6.2 to derive the expanded uncertainty at the 95% confidence interval. Activity data uncertainties are tier-specific per IPCC GL Vol.1 Table 3.1.")}
-          </p>
-        </div>
-      </div>
     </div>
   );
 };

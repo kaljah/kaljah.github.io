@@ -11,6 +11,7 @@ import { useLayout } from "../context/LayoutContext";
 import CustomDropdown from "../components/CustomDropdown";
 import { formatNumber } from "../utils/formatters";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
+import { FileText, Activity } from "lucide-react";
 import "./TopBarFilters.css";
 import { t } from "../i18n";
 
@@ -73,6 +74,7 @@ const CarbonIntensity: React.FC = () => {
   const [activeGwpStandard, setActiveGwpStandard] = useState<string>("AR5");
 
   // View states
+  const [intensityTab, setIntensityTab] = useState<"operational" | "cbam">("operational");
   const [trendView, setTrendView] = useState<"chart" | "heatmap">("chart");
 
   // Data states
@@ -559,17 +561,64 @@ const CarbonIntensity: React.FC = () => {
           setGwpHorizon={setGwpHorizon}
           stats={stats}
         />
-        <CbamSection products={cbamProducts} facilities={facilities} />
-        <RegionalCharts data={regionalData} gwpHorizon={gwpHorizon} year={selectedYear} />
-        <TrendSection
-          view={trendView}
-          onView={(v: any) => setTrendView(v)}
-          trendChartData={trendChartData}
-          rawTrendData={rawTrendData}
-          regionalData={regionalData}
-          gwpHorizon={gwpHorizon}
-          activeGwpStandard={activeGwpStandard}
-        />
+        {/* View Switcher: Operational Intensity vs CBAM */}
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-2">
+          <div className="inline-flex p-1 bg-ink-100 rounded-full border border-border gap-1">
+            <button
+              type="button"
+              onClick={() => setIntensityTab("operational")}
+              className={cn(
+                "flex items-center gap-2 px-4 py-1.5 rounded-full font-semibold text-sm transition-all border-none cursor-pointer",
+                intensityTab === "operational"
+                  ? "bg-primary text-white shadow-sm"
+                  : "bg-transparent text-text-secondary hover:text-text"
+              )}
+            >
+              <Activity className="size-4" />
+              {t("Operational Intensity by Asset")}
+            </button>
+            <button
+              type="button"
+              onClick={() => setIntensityTab("cbam")}
+              className={cn(
+                "flex items-center gap-2 px-4 py-1.5 rounded-full font-semibold text-sm transition-all border-none cursor-pointer",
+                intensityTab === "cbam"
+                  ? "bg-primary text-white shadow-sm"
+                  : "bg-transparent text-text-secondary hover:text-text"
+              )}
+            >
+              <FileText className="size-4" />
+              {t("EU CBAM Compliance")}
+              {cbamProducts.length > 0 && (
+                <span className="rounded-full bg-primary/20 text-primary px-2 py-0.5 text-xs font-bold">
+                  {cbamProducts.length}
+                </span>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {intensityTab === "operational" ? (
+          <>
+            <RegionalCharts data={regionalData} gwpHorizon={gwpHorizon} year={selectedYear} />
+            <TrendSection
+              view={trendView}
+              onView={(v: any) => setTrendView(v)}
+              trendChartData={trendChartData}
+              rawTrendData={rawTrendData}
+              regionalData={regionalData}
+              gwpHorizon={gwpHorizon}
+              activeGwpStandard={activeGwpStandard}
+            />
+          </>
+        ) : (
+          <CbamSection
+            products={cbamProducts}
+            facilities={facilities}
+            selectedYear={selectedYear}
+            selectedFacility={currentRegion}
+          />
+        )}
       </div>
     </div>
   );

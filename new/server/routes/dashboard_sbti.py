@@ -173,6 +173,15 @@ def get_sbti_trajectory():
         reduction = (baseline - current_actual) / baseline * 100.0
         on_track = current_actual <= current_target
 
+    # Cumulative carbon budget remaining between current progress year and target year (BUG-A4-005)
+    start_eval_year = progress_year or current_year
+    cumulative_budget = 0.0
+    for yr in range(start_eval_year, target_year + 1):
+        t_val = line(rate, yr - base_year)
+        if t_val is not None:
+            cumulative_budget += t_val
+    budget_years = max(0, target_year - start_eval_year + 1)
+
     def r2(v):
         return round(v, 2) if v is not None else None
 
@@ -202,6 +211,8 @@ def get_sbti_trajectory():
         "reduction_achieved_pct": r2(reduction),
         "on_track": on_track,
         "residual_floor": r2(residual_floor),
+        "cumulative_budget_remaining": r2(cumulative_budget) if baseline else None,
+        "budget_years_remaining": budget_years,
         "scope": scope,
         "trajectory": trajectory,
     })

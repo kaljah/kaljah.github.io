@@ -140,7 +140,7 @@ export const BarChart: React.FC<BarChartProps> = ({
   const manyCategories = (data?.length || 0) > 4;
   const shortLabel = (v: any): string => {
     const s = String(v ?? "");
-    const max = horizontal ? (narrow ? 13 : 24) : 16;
+    const max = horizontal ? (narrow ? 13 : 28) : 16;
     return s.length > max ? `${s.slice(0, max - 1)}…` : s;
   };
 
@@ -334,7 +334,7 @@ export const BarChart: React.FC<BarChartProps> = ({
               <YAxis
                 type="category"
                 dataKey={finalXKey}
-                width={narrow ? 92 : 150}
+                width={narrow ? 92 : 180}
                 stroke="var(--color-ink-300)"
                 tick={{ fill: "var(--color-ink-700)", fontSize: 12, fontWeight: 600 }}
                 axisLine={false}
@@ -433,7 +433,7 @@ export const BarChart: React.FC<BarChartProps> = ({
                   strokeWidth={1.5}
                 />
               )}
-              {!errorKey && rows.length <= (horizontal ? 12 : 8) && (
+              {!errorKey && rows.length <= (horizontal ? 25 : 8) && (
                 <LabelList
                   dataKey={finalDataKey}
                   position={horizontal ? "right" : "top"}

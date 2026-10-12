@@ -241,7 +241,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
             {t("Maker-Checker Segregation: Audit and approve bulk-imported emissions data prior to greenhouse gas inventory inclusion.")}
           </p>
         </div>
-        <div className="flex! gap-[10px]! items-center!">
+        <div className="flex! gap-[10px]! items-center! mt-[14px]!">
           <Button
             variant="ghost"
             type="submit"

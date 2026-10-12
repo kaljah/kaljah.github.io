@@ -57,6 +57,8 @@ interface SbtiData {
   reduction_achieved_pct?: number;
   target_emissions_final?: number;
   residual_floor?: number;
+  cumulative_budget_remaining?: number | null;
+  budget_years_remaining?: number | null;
   [key: string]: any;
 }
 
@@ -71,6 +73,7 @@ const SbtiDashboard: React.FC = () => {
   const [showConfig, setShowConfig] = useState<boolean>(false);
   const [savingTarget, setSavingTarget] = useState<boolean>(false);
   const [scopeMode, setScopeMode] = useState<string>("all"); // 'all' (Scopes 1+2+3) or 's1_s2' (Scopes 1+2)
+  const [milestoneZoom, setMilestoneZoom] = useState<"near_term" | "full">("near_term");
 
   // Editable Target Form State
   const [targetForm, setTargetForm] = useState({
@@ -293,6 +296,40 @@ const SbtiDashboard: React.FC = () => {
     { dataKey: "scope2", name: tr("Scope 2 (Indirect)"), color: "var(--color-blue-500)", stackId: "a" },
     { dataKey: "scope3", name: tr("Scope 3 (Value Chain)"), color: "var(--color-violet-500)", stackId: "a" },
   ], []);
+
+  const displayTrajectory = useMemo(() => {
+    if (!sbtiData?.trajectory) return [];
+    if (milestoneZoom === "near_term") {
+      return sbtiData.trajectory.filter((r) => Number(r.year) <= 2030);
+    }
+    return sbtiData.trajectory;
+  }, [sbtiData?.trajectory, milestoneZoom]);
+
+  const computedCumulativeBudget = useMemo(() => {
+    if (sbtiData?.cumulative_budget_remaining != null) {
+      return sbtiData.cumulative_budget_remaining;
+    }
+    if (!sbtiData?.trajectory || !sbtiData?.has_target) return null;
+    const startYr = Number(sbtiData.current_year || sbtiData.latest_actual_year || new Date().getFullYear());
+    const targetYr = Number(sbtiData.target_year || 2050);
+    let sum = 0;
+    for (const row of sbtiData.trajectory) {
+      const y = Number(row.year);
+      if (y >= startYr && y <= targetYr && row.sbti_target != null) {
+        sum += Number(row.sbti_target);
+      }
+    }
+    return sum > 0 ? sum : null;
+  }, [sbtiData]);
+
+  const computedBudgetYears = useMemo(() => {
+    if (sbtiData?.budget_years_remaining != null) {
+      return sbtiData.budget_years_remaining;
+    }
+    const startYr = Number(sbtiData?.current_year || sbtiData?.latest_actual_year || new Date().getFullYear());
+    const targetYr = Number(sbtiData?.target_year || 2050);
+    return Math.max(0, targetYr - startYr);
+  }, [sbtiData]);
 
   if (loading && !sbtiData) {
     return <LoadingSpinner fullScreen message={tr("Loading SBTi Net-Zero Trajectory...")} />;
@@ -537,6 +574,24 @@ const SbtiDashboard: React.FC = () => {
           </div>
         </div>
 
+        <div className="[padding:22px_24px] [border-radius:var(--radius-lg)] [background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [display:flex] [flex-direction:column] [justify-content:space-between] [position:relative] [overflow:hidden] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated,_0_8px_24px_rgba(0,_0,_0,_0.08))] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:4px] before:[height:100%] before:[background:var(--color-blue-500,_#3b82f6)] before:[border-radius:var(--radius-sm)_0_0_var(--radius-sm)]" id="sbti-kpi-carbon-budget">
+          <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
+            <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.05em]">{tr("Cumulative Carbon Budget")}</span>
+            <div className="[width:36px] [height:36px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [background:rgba(59,_130,_246,_0.1)] [color:var(--color-blue-600,_#2563eb)]">
+              <Sparkles size={18} />
+            </div>
+          </div>
+          <div className="[font-size:var(--text-2xl)] [font-weight:700] [color:var(--text-main,_var(--color-ink-900))] [margin-bottom:4px]">
+            {computedCumulativeBudget != null ? formatNumber(computedCumulativeBudget, 0) : "—"}
+            <span className="[font-size:var(--text-base)] [font-weight:500] [color:var(--text-secondary,_var(--color-ink-500))] [margin-left:4px]">tCO2e</span>
+          </div>
+          <div className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))] [display:flex] [align-items:center] [gap:4px]">
+            {isConfigured && computedCumulativeBudget != null
+              ? tr("Remaining to Net-Zero ({{years}} yrs to {{target}})", { years: String(computedBudgetYears), target: String(sbtiData?.target_year || 2050) })
+              : tr("Net-Zero 2050 Carbon Budget")}
+          </div>
+        </div>
+
         <div className="[padding:22px_24px] [border-radius:var(--radius-lg)] [background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [display:flex] [flex-direction:column] [justify-content:space-between] [position:relative] [overflow:hidden] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated,_0_8px_24px_rgba(0,_0,_0,_0.08))] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:4px] before:[height:100%] before:[background:var(--primary,_var(--color-brand-500))] before:[border-radius:var(--radius-sm)_0_0_var(--radius-sm)] [&.success::before]:[background:var(--color-green-500)] [&&]:[&.warning::before]:[background:var(--color-amber-500)] [&&]:[&&]:[&.info::before]:[background:var(--color-blue-500)] [&&]:[&&]:[&&]:[&.neutral::before]:[background:var(--color-ink-400)] success">
           <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
             <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.05em]">{tr("Net-Zero Goal (")}{sbtiData?.target_year || 2050})</span>
@@ -559,26 +614,54 @@ const SbtiDashboard: React.FC = () => {
       {/* Main Trajectory Charts Grid */}
       <div className="[display:grid] [grid-template-columns:2fr_1fr]! [gap:24px] [@media(max-width:1100px)]:[grid-template-columns:1fr]!">
         <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [&&]:[border-radius:var(--radius-lg)] [padding:24px] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[border-color:var(--border-color-hover,_rgba(255,_255,_255,_0.95))]">
-          <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:18px]">
+          <div className="[display:flex] [flex-wrap:wrap] [justify-content:space-between] [align-items:center] [gap:12px] [margin-bottom:18px]">
             <div>
               <h3 className="[font-size:var(--text-lg)] [font-weight:700] [color:var(--text-main,_var(--color-ink-900))] [margin-bottom:2px]">{sbtiData?.pathway_label || tr("Decarbonization Pathway")}</h3>
-              <p className="[font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-500))]">
-                {tr("Linear reduction trajectory from base year")}{" "}{sbtiData?.base_year || 2024}{" "}{tr("to target year")}{" "}{sbtiData?.target_year || 2050}{" "}{tr("(Residual emissions capped at 10% per NZ-C1)")}
+              <p className="[font-size:var(--text-sm)] [color:var(--text-secondary,_var(--color-ink-500))]">
+                {milestoneZoom === "near_term"
+                  ? tr("Near-Term Operational Trajectory (2024–2030)")
+                  : tr("Full Trajectory to Net-Zero 2050 (Residual Ceiling ≤ 10%)")}
               </p>
+            </div>
+
+            {/* Milestone Zoom Switcher */}
+            <div className="[display:inline-flex] [padding:3px] [background:var(--color-ink-100)] [border-radius:var(--radius-full)] [border:1px_solid_var(--border-color)] [gap:3px]">
+              <button
+                type="button"
+                onClick={() => setMilestoneZoom("near_term")}
+                className={`[padding:5px_12px] [border-radius:var(--radius-full)] [font-size:var(--text-xs)] [font-weight:600] [border:none] [cursor:pointer] [transition:all_0.15s_ease] ${
+                  milestoneZoom === "near_term"
+                    ? "[background:var(--color-primary)] [color:var(--color-white)] [box-shadow:0_1px_4px_rgba(255,102,0,0.3)]"
+                    : "[background:transparent] [color:var(--text-secondary)] [&:hover]:[color:var(--text-primary)]"
+                }`}
+              >
+                {tr("Near-term (2024–2030)")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setMilestoneZoom("full")}
+                className={`[padding:5px_12px] [border-radius:var(--radius-full)] [font-size:var(--text-xs)] [font-weight:600] [border:none] [cursor:pointer] [transition:all_0.15s_ease] ${
+                  milestoneZoom === "full"
+                    ? "[background:var(--color-primary)] [color:var(--color-white)] [box-shadow:0_1px_4px_rgba(255,102,0,0.3)]"
+                    : "[background:transparent] [color:var(--text-secondary)] [&:hover]:[color:var(--text-primary)]"
+                }`}
+              >
+                {tr("2050 Trajectory")}
+              </button>
             </div>
           </div>
 
           <div className="h-[360px]! w-full!">
             {sbtiData?.trajectory && sbtiData.trajectory.length > 0 ? (
               <LineChart
-                data={sbtiData.trajectory}
+                data={displayTrajectory}
                 xAxisKey="year"
                 lines={trajectoryLines}
                 height={350}
               />
             ) : (
               <div className="flex! justify-center! items-center! h-full! text-[color:var(--color-ink-600)]!">
-                {tr("No trajectory configured. Click \"Configure Target\" to set baseline and targets.")}
+                {tr('No trajectory configured. Click "Configure Target" to set baseline and targets.')}
               </div>
             )}
           </div>

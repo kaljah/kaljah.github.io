@@ -241,7 +241,16 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
             <Td>{ACTIVITY_LABELS[f.activity || ""] || f.activity}</Td>
             <Td>{f.division}</Td>
             <Td>{f.location || "-"}</Td>
-            <Td>{f.boundary_notes || (f.boundary_type ? `${f.boundary_type}${f.boundary_detail ? " - " + f.boundary_detail : ""}` : "-")}</Td>
+            <Td>
+              <div>
+                <span>{f.boundary_notes || (f.boundary_type ? `${f.boundary_type}${f.boundary_detail ? " - " + f.boundary_detail : ""}` : "-")}</span>
+                {f.boundary_type === "Equity Share" && f.equity_share_pct !== undefined && f.equity_share_pct !== null && Number(f.equity_share_pct) < 100 && (
+                  <div className="text-xs text-amber-600 dark:text-amber-400 font-medium mt-0.5" data-testid="unallocated-equity-flag">
+                    {t("{{unallocated}}% unallocated 3rd-party interest (GHG Protocol Ch. 3)", { unallocated: (100 - Number(f.equity_share_pct)).toFixed(1) })}
+                  </div>
+                )}
+              </div>
+            </Td>
             <Td>{f.segment ? t(f.segment) : "-"}</Td>
             <Td className="text-sm">{f.latitude ? `${f.latitude}, ${f.longitude}` : t("Not Set")}</Td>
             {canEdit && (

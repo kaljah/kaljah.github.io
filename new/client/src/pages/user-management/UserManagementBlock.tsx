@@ -35,6 +35,7 @@ export interface UserManagementBlockProps {
   loading: boolean;
   setHoveredRow: (id: number | string | null) => void;
   totalUsers: number;
+  currentUserRole?: string;
 }
 
 // Extracted from UserManagement.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
@@ -50,6 +51,7 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
   loading,
   setHoveredRow,
   totalUsers,
+  currentUserRole,
 }) => (
   <div style={S.tableCard}>
     <div style={S.tableToolbar}>
@@ -70,11 +72,12 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
               "Email",
               "Department / Job Title",
               "Role",
+              "Status",
               "Region Access",
               "Joined",
               "Actions",
             ].map((h) => (
-              <th key={h} style={S.th}>
+              <th key={h} style={h === "Actions" ? { ...S.th, minWidth: "130px", textAlign: "right" } : S.th}>
                 {t(h)}
               </th>
             ))}
@@ -83,7 +86,7 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
         <tbody>
           {loading ? (
             <tr>
-              <td colSpan={7} style={S.emptyCell}>
+              <td colSpan={8} style={S.emptyCell}>
                 <div className="flex! flex-col! items-center! gap-[10px]!">
                   <Loader size={32} color="var(--color-brand-500)" style={{ animation: "spin 1s linear infinite" }} aria-hidden="true" />
                   {t("Loading users…")}
@@ -92,7 +95,7 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
             </tr>
           ) : filteredUsers.length === 0 ? (
             <tr>
-              <td colSpan={7} style={S.emptyCell}>
+              <td colSpan={8} style={S.emptyCell}>
                 <div className="flex! flex-col! items-center! gap-[8px]!">
                   <span className="text-[color:var(--text-secondary)]!">
                     <SearchIcon size={32} strokeWidth={1.5} aria-hidden="true" />
@@ -111,6 +114,9 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
                 .slice(0, 2)
                 .toUpperCase();
               const isHovered = hoveredRow === u.id;
+              const isProtected =
+                Boolean(currentUserRole && ["it_admin", "it"].includes(currentUserRole)) &&
+                Boolean(u.role && ["admin", "superuser", "it_manager"].includes(u.role));
 
               return (
                 <tr
@@ -179,6 +185,27 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
                     </span>
                   </td>
 
+                  {/* Status */}
+                  <td style={S.td}>
+                    {u.status === "disabled" || u.status === "suspended" || u.status === "inactive" ? (
+                      <span
+                        style={S.regionPill("var(--color-red-700)", "var(--color-red-50)", "rgba(239,68,68,.25)")}
+                        data-testid={`user-status-${u.id}`}
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full bg-red-500 mr-1.5 inline-block" />
+                        {t("Disabled")}
+                      </span>
+                    ) : (
+                      <span
+                        style={S.regionPill("var(--color-green-700)", "var(--color-green-50)", "rgba(16,185,129,.25)")}
+                        data-testid={`user-status-${u.id}`}
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-500 mr-1.5 inline-block" />
+                        {t("Active")}
+                      </span>
+                    )}
+                  </td>
+
                   {/* Region Access */}
                   <td style={S.td}>
                     {u.role === "admin" ? (
@@ -222,49 +249,85 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
                   </td>
 
                   {/* Actions */}
-                  <td style={{ ...S.td, whiteSpace: "nowrap" }}>
+                  <td style={{ ...S.td, whiteSpace: "nowrap", minWidth: "130px", textAlign: "right" }}>
                     {!isITOnly && (
                       <button
                         id={`um-edit-btn-${u.id}`}
-                        style={S.iconBtn("var(--color-legacy-6366f1)")}
-                        onClick={() => handleOpenModal(u)}
-                        title={t("Edit User Information")}
-                        onMouseEnter={(e) =>
-                          (e.currentTarget.style.background = "var(--color-legacy-eef2ff)")
+                        disabled={isProtected}
+                        data-protected={isProtected ? "true" : undefined}
+                        style={{
+                          ...S.iconBtn("var(--color-legacy-6366f1)"),
+                          ...(isProtected
+                            ? { opacity: 0.35, cursor: "not-allowed", pointerEvents: "none" }
+                            : {}),
+                        }}
+                        onClick={() => !isProtected && handleOpenModal(u)}
+                        title={
+                          isProtected
+                            ? t("Protected account — requires platform manager authority")
+                            : t("Edit User Information")
                         }
-                        onMouseLeave={(e) =>
-                          (e.currentTarget.style.background = "none")
-                        }
+                        onMouseEnter={(e) => {
+                          if (!isProtected)
+                            e.currentTarget.style.background = "var(--color-legacy-eef2ff)";
+                        }}
+                        onMouseLeave={(e) => {
+                          if (!isProtected) e.currentTarget.style.background = "none";
+                        }}
                       >
                         <SquarePenIcon size={15} strokeWidth={2} aria-hidden="true" />
                       </button>
                     )}
                     <button
                       id={`um-reset-pwd-btn-${u.id}`}
-                      style={S.iconBtn("var(--color-amber-500)")}
-                      onClick={() => handleOpenResetPassword(u)}
-                      title={t("Modify / Reset Password")}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.background = "var(--color-amber-50)")
+                      disabled={isProtected}
+                      data-protected={isProtected ? "true" : undefined}
+                      style={{
+                        ...S.iconBtn("var(--color-amber-500)"),
+                        ...(isProtected
+                          ? { opacity: 0.35, cursor: "not-allowed", pointerEvents: "none" }
+                          : {}),
+                      }}
+                      onClick={() => !isProtected && handleOpenResetPassword(u)}
+                      title={
+                        isProtected
+                          ? t("Protected account — client IT staff cannot reset credentials")
+                          : t("Modify / Reset Password")
                       }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.background = "none")
-                      }
+                      onMouseEnter={(e) => {
+                        if (!isProtected)
+                          e.currentTarget.style.background = "var(--color-amber-50)";
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isProtected) e.currentTarget.style.background = "none";
+                      }}
                     >
                       <KeyIcon size={15} strokeWidth={2} aria-hidden="true" />
                     </button>
                     {!isITOnly && (
                       <button
                         id={`um-delete-btn-${u.id}`}
-                        style={S.iconBtn("var(--color-red-500)")}
-                        onClick={() => handleDelete(u.id)}
-                        title={t("Revoke Access")}
-                        onMouseEnter={(e) =>
-                          (e.currentTarget.style.background = "var(--color-red-50)")
+                        disabled={isProtected}
+                        data-protected={isProtected ? "true" : undefined}
+                        style={{
+                          ...S.iconBtn("var(--color-red-500)"),
+                          ...(isProtected
+                            ? { opacity: 0.35, cursor: "not-allowed", pointerEvents: "none" }
+                            : {}),
+                        }}
+                        onClick={() => !isProtected && handleDelete(u.id)}
+                        title={
+                          isProtected
+                            ? t("Protected account — client IT staff cannot delete compliance accounts")
+                            : t("Revoke Access")
                         }
-                        onMouseLeave={(e) =>
-                          (e.currentTarget.style.background = "none")
-                        }
+                        onMouseEnter={(e) => {
+                          if (!isProtected)
+                            e.currentTarget.style.background = "var(--color-red-50)";
+                        }}
+                        onMouseLeave={(e) => {
+                          if (!isProtected) e.currentTarget.style.background = "none";
+                        }}
                       >
                         <Trash2Icon size={15} strokeWidth={2} aria-hidden="true" />
                       </button>

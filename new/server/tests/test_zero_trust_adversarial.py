@@ -152,7 +152,7 @@ def test_base_year_singleton_fallback(client):
     with client.application.app_context():
         admin = User.query.filter_by(role="admin").first()
         if not admin:
-            admin = User(email="admin_by@test.com", fullName="Admin BY", orgName="Sonatrach", role="admin")
+            admin = User(email="admin_by@test.com", fullName="Admin BY", orgName="Sonatrach", role="admin", sector="Oil & Gas")
             admin.set_password("pass")
             db.session.add(admin)
             db.session.commit()
@@ -203,12 +203,13 @@ def test_notification_broadcast_handling(client):
             db.session.commit()
         admin_id = admin.id
 
-        operator = User.query.filter_by(role="user").first()
+        operator = User.query.filter_by(email="user_notif@test.com").first()
         if not operator:
             operator = User(email="user_notif@test.com", fullName="User Notif", orgName="Sonatrach", sector="Energy", location="Algiers", role="user")
             operator.set_password("pass")
             db.session.add(operator)
-            db.session.commit()
+        operator.status = "active"
+        db.session.commit()
         operator_id = operator.id
 
         # Create a broadcast notification

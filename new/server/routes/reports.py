@@ -604,4 +604,6 @@ def get_master_annual_report():
 
 
 # Route modules split out of this file; imported last because they use the helpers above.
-from routes import reports_export, reports_fingerprint, reports_ogmp  # noqa: E402,F401
+from routes import reports_export, reports_fingerprint, reports_ogmp, reports_cbam, reports_national  # noqa: E402,F401
+
+

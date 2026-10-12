@@ -458,14 +458,51 @@ def monte_carlo_simulation(
     half_width = (ci_upper - ci_lower) / 2.0
     u_95_pct = (half_width / abs(mean_res)) * 100.0 if abs(mean_res) > 0 else 0.0
 
+    # Generate 15-20 empirical probability density histogram bins
+    min_val = totals[0]
+    max_val = totals[-1]
+    bin_count = 18
+    bin_width = (max_val - min_val) / bin_count if max_val > min_val else 1.0
+    bins = []
+    import bisect
+    for i in range(bin_count):
+        b_start = min_val + i * bin_width
+        b_end = b_start + bin_width
+        mid = (b_start + b_end) / 2.0
+        idx_start = bisect.bisect_left(totals, b_start)
+        idx_end = bisect.bisect_right(totals, b_end) if i == bin_count - 1 else bisect.bisect_left(totals, b_end)
+        count = max(0, idx_end - idx_start)
+        bins.append({
+            "bin": f"{round(mid, 1)}",
+            "bin_range": f"{round(b_start, 1)} - {round(b_end, 1)}",
+            "midpoint": round(mid, 1),
+            "emissions_tco2e": round(mid, 1),
+            "count": count,
+            "frequency": round(count / n, 4),
+        })
+
+    percentiles = {
+        "p5": round(ci_lower, 2),
+        "p10": round(totals[int(0.10 * n)], 2),
+        "p25": round(totals[int(0.25 * n)], 2),
+        "p50": round(median_res, 2),
+        "p75": round(totals[int(0.75 * n)], 2),
+        "p90": round(totals[int(0.90 * n)], 2),
+        "p95": round(ci_upper, 2),
+    }
+
     return {
         "mean": round(mean_res, 4),
         "median": round(median_res, 4),
         "std": round(std_res, 4),
         "ci_lower": round(ci_lower, 4),
         "ci_upper": round(ci_upper, 4),
+        "p5": round(ci_lower, 4),
+        "p95": round(ci_upper, 4),
         "relative_uncertainty_95pct": round(u_95_pct, 2),
         "iterations": iterations,
+        "histogram": bins,
+        "percentiles": percentiles,
     }
 
 

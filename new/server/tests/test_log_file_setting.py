@@ -34,7 +34,7 @@ def test_log_file_path_is_used(tmp_path):
     target = tmp_path / "neocarbon.log"
     p = _import_app(tmp_path, str(target))
     assert p.returncode == 0, p.stderr[-2000:]
-    assert f"FILES=['{target}']" in p.stdout
+    assert f"FILES={repr([str(target)])}" in p.stdout
 
 
 def test_empty_log_file_means_console_only(tmp_path):

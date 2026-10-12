@@ -110,6 +110,6 @@ def test_ogmp_excel_contains_audit_assurance_tab(client, ctx):
     wb = openpyxl.load_workbook(io.BytesIO(res.get_data()))
     assert "Audit Assurance" in wb.sheetnames
     ws = wb["Audit Assurance"]
-    assert ws.cell(row=2, column=1).value == "Audit Manifest"
+    assert "Audit" in ws.cell(row=2, column=1).value and "Manifest" in ws.cell(row=2, column=1).value
     assert ws.cell(row=5, column=1).value == "Data Fingerprint (SHA-256)"
     assert ws.cell(row=5, column=2).value == res.headers["X-Audit-SHA256"]

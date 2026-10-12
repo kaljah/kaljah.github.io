@@ -4,9 +4,14 @@
 .dashboard-filters {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap; /* the row has no visible scrollbar on desktop, so wrap instead of hiding filters */
   white-space: nowrap;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 4px 6px;
+  border-radius: var(--radius-lg, 12px);
+  border: 1px solid var(--border-color, var(--color-ink-200));
+  backdrop-filter: blur(8px);
 }
 
 .dashboard-filters .filter-wrapper {
@@ -23,6 +28,9 @@
     padding-bottom: 4px;
     width: 100%;
     scrollbar-width: none;
+    background: transparent;
+    border: none;
+    padding: 0;
   }
 
   .dashboard-filters::-webkit-scrollbar {

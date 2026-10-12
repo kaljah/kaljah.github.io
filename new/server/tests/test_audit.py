@@ -120,7 +120,7 @@ def test_audit_rbac_regular_user_forbidden(client, regular_user):
     )
     res = client.get("/api/audit/")
     assert res.status_code == 403
-    assert "Administrative privileges required" in res.get_json()["error"]
+    assert "privileges required" in res.get_json()["error"]
 
 
 def test_audit_admin_and_it_admin_authorized(client, admin_user, it_admin_user):

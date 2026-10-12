@@ -5,7 +5,7 @@ calculations.vented_production re-exports every class, so existing imports keep 
 """
 import math
 from .base import BaseCalculator
-from .units import CONVERSIONS, STD_PRESSURE_PSIA, STD_TEMP_K, calculate_co2e, convert, normalize_efficiency, to_kelvin, to_psia
+from .units import CONVERSIONS, STD_PRESSURE_PSIA, STD_TEMP_K, calculate_co2e, convert, normalize_efficiency, to_kelvin, to_psia, _pressure_unit
 from calculations.vented_production import LB_PER_TONNE, MOLAR_VOL_SI, MOLAR_VOL_US, MW_CH4, MW_CO2, SCF_TO_M3, _propagate_results, _split_vent_flare
 
 
@@ -561,6 +561,8 @@ class BlowdownCalculator(BaseCalculator):
             act = activity_type or "vessel"
             info = self.TABLE_6_32.get(act, self.TABLE_6_32["vessel"])
             n_eq = float(equipment_count if equipment_count is not None else events)
+            if n_eq < 0:
+                raise ValueError(f"Equipment count / events cannot be negative: {n_eq}")
             total_gas_scf = n_eq * info["scf_gas_yr"]
             total_v_std_m3 = convert(total_gas_scf, "scf", "m3")
             gross_ch4_tonnes = n_eq * info["ef_ch4_tonnes"] * (c_ch4 / 0.788)
@@ -575,6 +577,8 @@ class BlowdownCalculator(BaseCalculator):
                 },
                 ["pressure", "events"],
             )
+            if float(events) < 0:
+                raise ValueError(f"Blowdown events cannot be negative: {events}")
 
             # Resolve physical volume
             v_phys_m3 = 0.0
@@ -589,9 +593,16 @@ class BlowdownCalculator(BaseCalculator):
             else:
                 self.validate_inputs({"blowdown_volume": blowdown_volume}, ["blowdown_volume"])
                 v_phys_m3 = float(blowdown_volume)
+            if v_phys_m3 < 0:
+                raise ValueError(f"Blowdown physical volume cannot be negative: {v_phys_m3}")
 
             # Thermodynamic correction
-            p_initial_psia = to_psia(pressure, press_unit)
+            per, gauge = _pressure_unit(press_unit, "psig")
+            p_val = float(pressure)
+            raw_psia = p_val * per + (STD_PRESSURE_PSIA if gauge else 0.0)
+            if raw_psia < 0:
+                raise ValueError(f"Initial pressure is below absolute vacuum ({raw_psia:.2f} psia)")
+            p_initial_psia = raw_psia
             t_abs_k = to_kelvin(operating_temperature, temp_unit)
             t_factor = STD_TEMP_K / max(1.0, t_abs_k)
             z = float(z_factor) if z_factor and float(z_factor) > 0 else 1.0
@@ -604,7 +615,12 @@ class BlowdownCalculator(BaseCalculator):
             # p_factor = p_initial_psia / STD_PRESSURE_PSIA is used when blowdown_mode != "differential"
             # and if blowdown_mode == "differential", differential (p_initial - p_final) is used.
             if bmode == "differential":
-                p_final_psia = to_psia(final_pressure, press_unit)
+                pf_per, pf_gauge = _pressure_unit(press_unit, "psig")
+                pf_val = float(final_pressure)
+                raw_pf_psia = pf_val * pf_per + (STD_PRESSURE_PSIA if pf_gauge else 0.0)
+                if raw_pf_psia < 0:
+                    raise ValueError(f"Final pressure is below absolute vacuum ({raw_pf_psia:.2f} psia)")
+                p_final_psia = raw_pf_psia
                 p_factor = max(0.0, p_initial_psia - p_final_psia) / STD_PRESSURE_PSIA
             else:
                 p_factor = p_initial_psia / STD_PRESSURE_PSIA

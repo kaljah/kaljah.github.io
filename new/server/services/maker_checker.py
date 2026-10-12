@@ -18,7 +18,11 @@ from extensions import db
 from models import CapEmission, Emission, Notification, Scope2Emission, Scope3Emission
 from utils import get_allowed_facility_ids, log_activity_and_notify, user_label
 
-REVIEWABLE_STATUSES = ("Pending", "Pending Approval", "Draft")
+REVIEWABLE_STATUSES = (
+    "Pending", "Pending Approval", "Pending Review", "Draft",
+    "pending", "pending approval", "pending review", "draft",
+    "submitted", "Submitted", "flagged", "Flagged"
+)
 APPROVER_ROLES = ("admin", "superuser")
 
 RECORD_TYPES = {

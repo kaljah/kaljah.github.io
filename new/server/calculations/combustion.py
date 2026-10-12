@@ -223,14 +223,14 @@ class CombustionCalculator(BaseCalculator):
     def calculate(
         self,
         fuel_quantity,
-        ef_co2,
-        ef_ch4,
-        ef_n2o,
-        uncertainties,
-        hhv,
-        ef_unit,
-        fuel_unit,
-        fuel_type,
+        ef_co2=0.0,
+        ef_ch4=0.0,
+        ef_n2o=0.0,
+        uncertainties=None,
+        hhv=None,
+        ef_unit=None,
+        fuel_unit="m3",
+        fuel_type="natural_gas",
         combustion_efficiency=0.995,
         operating_temperature=None,
         temp_unit="C",
@@ -303,13 +303,23 @@ class CombustionCalculator(BaseCalculator):
         # when no analysis was given), and a zero-carbon balance replaced the factor CO2 with 0
         def _pos(v):
             try:
-                return float(v) > 0
+                return float(str(v).replace("%", "").strip()) > 0
             except (TypeError, ValueError):
                 return False
 
-        if any(_pos(comps.get(f"c{i}")) for i in range(1, 11)):
-            raw_c = {f"c{i}": float(comps.get(f"c{i}") or 0.0) for i in range(1, 11)}
-            raw_co2 = float(comps.get("co2_comp") or comps.get("co2_mol") or 0.0)
+        def _parse_c(val, default=0.0):
+            if val in (None, "", "-"):
+                return default
+            try:
+                return float(str(val).replace("%", "").strip())
+            except (ValueError, TypeError):
+                return default
+
+        has_hc = any(_pos(comps.get(f"c{i}")) for i in range(1, 11))
+        has_native_co2 = _pos(comps.get("co2_comp")) or _pos(comps.get("co2_mol"))
+        if has_hc or has_native_co2:
+            raw_c = {f"c{i}": _parse_c(comps.get(f"c{i}"), 0.0) for i in range(1, 11)}
+            raw_co2 = _parse_c(comps.get("co2_comp") or comps.get("co2_mol"), 0.0)
             total_raw = sum(raw_c.values()) + raw_co2
 
             if total_raw > 1.5:  # Entered as percentages (> 1.0)
@@ -510,8 +520,16 @@ class FlaringCalculator(BaseCalculator):
             )
 
         # Parse C1-C10 from kwargs, falling back to ch4_fraction for C1 if not provided
-        raw_c = {f"c{i}": float(comps.get(f"c{i}") if comps.get(f"c{i}") is not None else (ch4_fraction if i == 1 else 0.0)) for i in range(1, 11)}
-        raw_co2 = float(comps.get("co2_comp") or comps.get("co2_mol") or 0.0)
+        def _parse_c(val, default=0.0):
+            if val in (None, "", "-"):
+                return default
+            try:
+                return float(str(val).replace("%", "").strip())
+            except (ValueError, TypeError):
+                return default
+
+        raw_c = {f"c{i}": _parse_c(comps.get(f"c{i}"), (ch4_fraction if i == 1 else 0.0)) for i in range(1, 11)}
+        raw_co2 = _parse_c(comps.get("co2_comp") or comps.get("co2_mol"), 0.0)
         total_raw = sum(raw_c.values()) + raw_co2
 
         if total_raw > 1.5:  # Percentage format (> 1.0)

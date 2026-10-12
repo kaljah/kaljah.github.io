@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Input } from "../ui";
-import { NativeSelect } from "../ui/NativeSelect";
+import CustomDropdown from "./CustomDropdown";
 import { X, PlusCircle, CheckCircle2, AlertCircle } from "lucide-react";
 import api from "../api";
 import { useToast } from "./Toast";
@@ -178,20 +178,19 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
                 >
                   {t("Factor Unit")}{" "}<span className="text-[color:var(--color-red-700)]!">*</span>
                 </label>
-                <NativeSelect
-                  className="mole-input w-full! p-[8px_10px]! text-[length:0.85rem]!"
-                 
+                <CustomDropdown
+                  options={[
+                    { value: "kg/MMBtu", label: t("kg / MMBtu (Energy basis)") },
+                    { value: "kg/m3", label: t("kg / m³ (Volumetric gas)") },
+                    { value: "kg/scf", label: t("kg / scf (Volumetric gas)") },
+                    { value: "kg/liter", label: t("kg / Liter (Liquid fuel)") },
+                    { value: "kg/gal", label: t("kg / Gallon (Liquid fuel)") },
+                    { value: "kg/kg", label: t("kg / kg (Mass basis)") },
+                    { value: "tonne/tonne", label: t("tonne / tonne (Mass basis)") },
+                  ]}
                   value={formData.unit}
-                  onChange={(e) => handleChange("unit", e.target.value)}
-                >
-                  <option value="kg/MMBtu">{t("kg / MMBtu (Energy basis)")}</option>
-                  <option value="kg/m3">{t("kg / m³ (Volumetric gas)")}</option>
-                  <option value="kg/scf">{t("kg / scf (Volumetric gas)")}</option>
-                  <option value="kg/liter">{t("kg / Liter (Liquid fuel)")}</option>
-                  <option value="kg/gal">{t("kg / Gallon (Liquid fuel)")}</option>
-                  <option value="kg/kg">{t("kg / kg (Mass basis)")}</option>
-                  <option value="tonne/tonne">{t("tonne / tonne (Mass basis)")}</option>
-                </NativeSelect>
+                  onChange={(val) => handleChange("unit", String(val))}
+                />
               </div>
 
               <div>

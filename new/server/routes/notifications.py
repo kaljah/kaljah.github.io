@@ -73,9 +73,9 @@ def mark_read(id):
             read_by.append(user.id)
             meta["read_by"] = read_by
             n.metadata_json = json.dumps(meta)
-        if user.role in ["admin", "superuser"]:
+        if user.role in ["admin", "superuser", "it_manager"]:
             n.is_read = True
-    elif n.user_id != user.id and user.role not in ["admin", "superuser"]:
+    elif n.user_id != user.id and user.role not in ["admin", "superuser", "it_manager"]:
         return jsonify({"error": "Unauthorized"}), 403
     else:
         n.is_read = True
@@ -95,7 +95,7 @@ def dismiss_all():
     if not user:
         return jsonify({"error": "Not authenticated"}), 401
 
-    if user.role in ["admin", "superuser"]:
+    if user.role in ["admin", "superuser", "it_manager"]:
         Notification.query.filter(
             ((Notification.user_id == user.id) | (Notification.user_id == None)),
             Notification.is_read == False,
@@ -135,9 +135,9 @@ def delete_notification(id):
 
     n = Notification.query.get_or_404(id)
     if n.user_id is None:
-        if user.role not in ["admin", "superuser"]:
+        if user.role not in ["admin", "superuser", "it_manager"]:
             return jsonify({"error": "Only administrators can delete system notifications"}), 403
-    elif n.user_id != user.id and user.role not in ["admin", "superuser"]:
+    elif n.user_id != user.id and user.role not in ["admin", "superuser", "it_manager"]:
         return jsonify({"error": "Unauthorized"}), 403
 
     try:

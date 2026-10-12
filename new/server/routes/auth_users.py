@@ -250,3 +250,130 @@ def admin_reset_password(id):
         current_app.logger.error(f"Error logging admin password reset: {e}")
 
     return jsonify({"message": f"Password for {user.fullName} ({user.email}) has been successfully reset."}), 200
+
+
+# --- IT Session Governance & Operational Security ---
+
+@auth_bp.route("/sessions/policy", methods=["GET"])
+@it_access_required
+def get_session_policy():
+    """Retrieve operational session governance policies and statistics."""
+    from models import SystemSetting
+    import json
+    row = db.session.get(SystemSetting, "session_timeout_minutes")
+    timeout = 30
+    if row and row.value:
+        try:
+            val = json.loads(row.value) if isinstance(row.value, str) and (row.value.startswith('"') or row.value.isdigit()) else row.value
+            timeout = int(val)
+        except Exception:
+            timeout = 30
+
+    active_count = User.query.filter_by(status="active").count()
+    total_count = User.query.count()
+
+    return jsonify({
+        "idle_timeout_minutes": timeout,
+        "max_failed_logins": 5,
+        "nist_password_policy": "NIST SP 800-63B Enforced (min 10 chars, uppercase, lowercase, digits, symbols)",
+        "session_invalidation": "Cryptographic Session Versioning (sv)",
+        "total_users": total_count,
+        "active_users": active_count,
+    })
+
+
+@auth_bp.route("/sessions/policy", methods=["PUT"])
+@it_admin_required
+def update_session_policy():
+    """Update idle session timeout configuration."""
+    from models import SystemSetting
+    import json
+    data = request.get_json(silent=True) or {}
+    timeout = data.get("idle_timeout_minutes")
+    if timeout is not None:
+        try:
+            timeout = int(timeout)
+            if timeout not in [15, 30, 60, 120, 240, 480]:
+                return jsonify({"error": "Invalid session timeout duration"}), 400
+            row = db.session.get(SystemSetting, "session_timeout_minutes")
+            if not row:
+                row = SystemSetting(key="session_timeout_minutes", value=json.dumps(timeout))
+                db.session.add(row)
+            else:
+                row.value = json.dumps(timeout)
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"error": f"Failed to update session policy: {e}"}), 500
+
+    return jsonify({"success": True, "idle_timeout_minutes": timeout})
+
+
+@auth_bp.route("/sessions/revoke-all", methods=["POST"])
+@it_admin_required
+def revoke_all_sessions():
+    """Invalidate all active sessions across the platform by bumping session_version."""
+    current_admin_id = session.get("user_id")
+    current_admin = db.session.get(User, current_admin_id) if current_admin_id else None
+
+    if current_admin and current_admin.role == "it_admin":
+        users = User.query.filter(User.role.notin_(CLIENT_IT_PROTECTED_ROLES)).all()
+    else:
+        users = User.query.all()
+
+    revoked_count = 0
+    for u in users:
+        u.session_version = int(u.session_version or 0) + 1
+        revoked_count += 1
+
+    if current_admin:
+        session["sv"] = int(current_admin.session_version)
+
+    try:
+        log_activity_and_notify(
+            action="UPDATE",
+            record_id="global-session-revoke",
+            user=current_admin,
+            request=request,
+            entity="SessionGovernance",
+            details=f"Global session invalidation executed by {current_admin.email if current_admin else 'IT'}. Revoked {revoked_count} accounts.",
+        )
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Failed to revoke sessions"}), 500
+
+    return jsonify({"success": True, "revoked_count": revoked_count})
+
+
+@auth_bp.route("/users/<int:id>/revoke-sessions", methods=["POST"])
+@it_admin_required
+def revoke_user_sessions(id):
+    """Revoke all active sessions for a specific user."""
+    user = db.session.get(User, id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    current_admin_id = session.get("user_id")
+    current_admin = db.session.get(User, current_admin_id) if current_admin_id else None
+
+    if current_admin and current_admin.role in CLIENT_IT_ROLES and user.role in CLIENT_IT_PROTECTED_ROLES:
+        return jsonify({"error": "Forbidden: Client IT staff cannot revoke sessions for Compliance Admin or Superuser accounts"}), 403
+
+    user.session_version = int(user.session_version or 0) + 1
+    try:
+        log_activity_and_notify(
+            action="UPDATE",
+            record_id=str(user.id),
+            user=current_admin or user,
+            request=request,
+            entity="User",
+            details=f"Active sessions revoked for {user.email} by IT Admin {current_admin.email if current_admin else 'system'}",
+        )
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Failed to revoke session"}), 500
+
+    return jsonify({"success": True, "message": f"All active sessions for {user.email} have been revoked."})
+

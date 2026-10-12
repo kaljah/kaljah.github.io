@@ -98,17 +98,30 @@ GRID_FACTORS = {
 GRID_ALIASES = {
     "UK National Grid": "United Kingdom (grid average)",
     "US-ERCOT": "US-ERCT (ERCOT All)",
+    "algeria": "Algerian National Grid",
+    "algerie": "Algerian National Grid",
+    "dz": "Algerian National Grid",
+    "algerian grid": "Algerian National Grid",
+    "us": "US Average",
+    "usa": "US Average",
+    "united states": "US Average",
+    "united kingdom": "United Kingdom (grid average)",
+    "uk": "United Kingdom (grid average)",
 }
 
 
 def grid_entry(name):
     """(canonical name, entry) of a grid region, case-insensitive, aliases resolved; (name, None) if unknown."""
-    n = str(name or "").strip()
-    n = GRID_ALIASES.get(n, n)
+    raw = str(name or "").strip()
+    norm = raw.lower()
+    canonical = GRID_ALIASES.get(norm, GRID_ALIASES.get(raw, raw))
     for k, v in GRID_FACTORS.items():
-        if k.lower() == n.lower():
+        if k.lower() == canonical.lower():
             return k, v
-    return n, None
+    for k, v in GRID_FACTORS.items():
+        if k.lower().startswith(norm + " (") or k.lower().split(" (")[0] == norm:
+            return k, v
+    return raw, None
 
 
 def grid_factor_kg_co2e_per_kwh(entry, gwp=None):

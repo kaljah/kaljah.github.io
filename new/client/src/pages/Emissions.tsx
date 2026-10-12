@@ -121,7 +121,7 @@ const Emissions: React.FC = () => {
           key={c.title}
           type="button"
           onClick={() => goToStage(c.stage)}
-          className={`group flex cursor-pointer flex-col gap-4 rounded-lg border border-t-4 border-border bg-surface p-6 text-left shadow-card transition-shadow hover:shadow-raised ${c.rule}`}
+          className={`group flex cursor-pointer flex-col gap-4 rounded-lg border border-t-4 border-border bg-surface p-6 text-left shadow-card transition-all hover:shadow-raised hover:-translate-y-0.5 ${c.rule}`}
         >
           <span className="flex items-center justify-between">
             <span className={`inline-flex size-12 items-center justify-center rounded-md ${c.iconBox}`}>
@@ -138,14 +138,14 @@ const Emissions: React.FC = () => {
           </span>
           <span className="flex flex-wrap gap-1.5">
             {c.chips.map((chip) => (
-              <span key={chip} className="rounded-full border border-border bg-ink-50 px-2 py-0.5 text-xs text-text-secondary">
+              <span key={chip} className="rounded-full border border-border bg-ink-50 px-2 py-0.5 text-xs text-text-secondary font-medium">
                 {chip}
               </span>
             ))}
           </span>
-          <span className="mt-auto inline-flex items-center gap-1 text-base font-semibold text-link">
-            {t("Open calculator")}
-            <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+          <span className="mt-auto pt-3 border-t border-border inline-flex items-center justify-between text-base font-semibold text-primary">
+            <span>{t("Open calculator")}</span>
+            <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
           </span>
         </button>
       ))}

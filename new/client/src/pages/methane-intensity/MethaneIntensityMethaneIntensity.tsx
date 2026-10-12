@@ -92,7 +92,7 @@ const MethaneIntensityMethaneIntensity: React.FC<MethaneIntensityMethaneIntensit
           <AlertTriangle size={16} />
         )}
         <span>
-          {t("OGMP 2.0 Targets:")}{" "}{t(stats.ogmpGoldStatus ?? "")}{" "}
+          {t("OGMP 2.0 Targets:")}{" "}{stats.ogmpGoldStatus ? t(stats.ogmpGoldStatus) : ""}{" "}
           {stats.ogmpGoldStatus === "Pending Production"
             ? t("(Gas production figures required)")
             : t("(≤{{up}}% Upstream / ≤{{mid}}% Midstream)", { up: upstreamTargetPct.toFixed(2), mid: midstreamTargetPct.toFixed(2) })}

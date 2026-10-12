@@ -105,7 +105,7 @@ describe("Scope1Form Associated Gas Venting Integration", () => {
     fireEvent.change(oilInput!, { target: { value: "10000" } });
 
     // Submit the entry
-    const submitBtn = screen.getByRole("button", { name: "Submit" });
+    const submitBtn = screen.getByRole("button", { name: /\+ Calculate & Submit for Review|Submit/ });
     fireEvent.click(submitBtn);
 
     await waitFor(() => {
@@ -151,7 +151,7 @@ describe("Scope1Form Associated Gas Venting Integration", () => {
     fireEvent.change(oilInput!, { target: { value: "1200" } });
 
     // Submit
-    const submitBtn = screen.getByRole("button", { name: "Submit" });
+    const submitBtn = screen.getByRole("button", { name: /\+ Calculate & Submit for Review|Submit/ });
     fireEvent.click(submitBtn);
 
     await waitFor(() => {

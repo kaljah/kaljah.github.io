@@ -99,6 +99,8 @@ class MudDegassingCalculator(BaseCalculator):
                 else (drilling_days if drilling_days is not None else (mud_volume if mud_volume is not None else 1.0))
             )
             self.validate_inputs({"wells": w}, ["wells"])
+            if w < 0:
+                raise ValueError(f"wells cannot be negative: {w}")
             ef = (
                 float(ef_ch4)
                 if (ef_ch4 is not None and float(ef_ch4) > 0)
@@ -122,6 +124,8 @@ class MudDegassingCalculator(BaseCalculator):
                 else (mud_volume if mud_volume is not None else (wells if wells is not None else 0.0))
             )
             self.validate_inputs({"drilling_days": dd}, ["drilling_days"])
+            if dd < 0:
+                raise ValueError(f"drilling_days cannot be negative: {dd}")
 
             raw_type = str(mud_type or "water_based").lower().strip()
             norm_type = (
@@ -159,6 +163,8 @@ class MudDegassingCalculator(BaseCalculator):
                 else (mud_volume if mud_volume is not None else (wells if wells is not None else 0.0))
             )
             self.validate_inputs({"drilling_days": dd}, ["drilling_days"])
+            if dd < 0:
+                raise ValueError(f"drilling_days cannot be negative: {dd}")
 
             raw_type = str(mud_type or "water_based").lower().strip()
             norm_type = (
@@ -184,12 +190,18 @@ class MudDegassingCalculator(BaseCalculator):
             )
             if x_ch4 > 1.0:
                 x_ch4 = x_ch4 / 100.0
+            if x_ch4 < 0:
+                raise ValueError(f"ch4_concentration cannot be negative: {x_ch4}")
 
             x_co2 = float(
                 co2_concentration if co2_concentration is not None else 0.0
             )
             if x_co2 > 1.0:
                 x_co2 = x_co2 / 100.0
+            if x_co2 < 0:
+                raise ValueError(f"co2_concentration cannot be negative: {x_co2}")
+            if (x_ch4 + x_co2) > 1.0001:
+                raise ValueError(f"Sum of gas concentrations cannot exceed 100%: {(x_ch4 + x_co2)*100:.1f}%")
 
             ch4_tonnes = dd * ef * (x_ch4 / self.DEFAULT_CH4_CONCENTRATION)
             if x_co2 > 0:

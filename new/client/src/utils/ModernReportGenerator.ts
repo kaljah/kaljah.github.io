@@ -1313,6 +1313,12 @@ Email: ${personResponsible.email || "N/A"}`;
         partnerAgg[k].co2e += Number(pa.allocated_co2e || 0);
         partnerAgg[k].ch4 += Number(pa.allocated_ch4 || 0);
       });
+      if (fac.unallocated_share && (Number(fac.unallocated_share.allocated_co2e) > 0 || Number(fac.unallocated_share.allocated_ch4) > 0)) {
+        const k = "unallocated_third_party";
+        if (!partnerAgg[k]) partnerAgg[k] = { name: "Unallocated Third-Party Share (GHG Protocol Ch. 3)", code: "3RD_PARTY", co2e: 0, ch4: 0 };
+        partnerAgg[k].co2e += Number(fac.unallocated_share.allocated_co2e || 0);
+        partnerAgg[k].ch4 += Number(fac.unallocated_share.allocated_ch4 || 0);
+      }
     });
     const partnerList = Object.values(partnerAgg).filter((pa: any) => pa.co2e > 0 || pa.ch4 > 0);
     const jvRows = partnerList.length === 0
