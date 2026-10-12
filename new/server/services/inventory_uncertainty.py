@@ -73,7 +73,7 @@ def _method_tier(factor_source):
     return {"custom": "Tier 2", "specific": "Tier 3"}.get(src, "Tier 1")
 
 
-def inventory_uncertainty(year, allowed_fids=None, facility_id=None, scope="all", statuses=("Verified",), include_gwp_uncertainty=False):
+def inventory_uncertainty(year, allowed_fids=None, facility_id=None, scope="all", statuses=("Verified",), include_gwp_uncertainty=False, scope2_method="location"):
     from calculations.constants import get_active_gwp
     from calculations.uncertainty import GWP_UNCERTAINTY_1SIGMA
 
@@ -146,7 +146,12 @@ def inventory_uncertainty(year, allowed_fids=None, facility_id=None, scope="all"
     ):
         if scope not in ("all", sc):
             continue
-        rows = restrict(model.query, model).with_entities(label_col, model.co2e, model.uncertainty,
+        co2e_col = (
+            func.coalesce(Scope2Emission.co2e_market_based, Scope2Emission.co2e)
+            if sc == "2" and str(scope2_method).lower() == "market"
+            else model.co2e
+        )
+        rows = restrict(model.query, model).with_entities(label_col, co2e_col, model.uncertainty,
                                                           model.emission_factor).all()
         for lbl, co2e, u, ef in rows:
             e = float(co2e or 0)

@@ -9,6 +9,7 @@ import React, {
 import { createPortal } from "react-dom";
 import "./CustomDropdown.css";
 import { ChevronDown } from "lucide-react";
+import { t } from "../i18n";
 
 export interface CustomDropdownOption {
   value: string | number;
@@ -42,7 +43,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
   options = [],
   value,
   onChange,
-  placeholder = "Select...",
+  placeholder = t("Select..."),
   renderOption,
   id,
   disabled = false,

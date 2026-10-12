@@ -27,6 +27,7 @@ import GoalsTab, { type GoalRecord, type BaseYearRecord, type BaseYearsData, typ
 import MitigationTab, { type MitigationRecord } from './manage-data/MitigationTab';
 import CbamTab, { type CbamRecord } from './manage-data/CbamTab';
 import OgmpTab, { type OgmpSurveyRecord } from './manage-data/OgmpTab';
+import LdarTab from './manage-data/LdarTab';
 import './ManageData.css';
 import '../pages/Dashboard.css';
 import { t } from "../i18n";
@@ -1463,6 +1464,7 @@ const ManageDataInner: React.FC = () => {
         { id: 'goals', label: t("Emission Goals & Base Years"), show: true },
         { id: 'mitigation', label: t("Mitigation Projects"), show: true },
         { id: 'ogmp', label: t("OGMP 2.0 Surveys"), show: true },
+        { id: 'ldar', label: t("LDAR & Fugitives"), show: true },
         { id: 'cbam', label: t("CBAM Products"), show: true },
     ].filter((n) => n.show);
     const hasFilters = filterActivity || filterDivision || filterRegion || filterYear;
@@ -1506,7 +1508,7 @@ const ManageDataInner: React.FC = () => {
                                     <Input
                                         type="text"
                                         aria-label={t("Search records")}
-                                        placeholder={activeTab === 'goals' ? t("Search goals or base years...") : `Search ${activeTab}...`}
+                                        placeholder={activeTab === 'goals' ? t("Search goals or base years...") : t("Search records...")}
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                         className="pl-10"
@@ -1758,6 +1760,13 @@ const ManageDataInner: React.FC = () => {
                                 setCurrentPage={setCurrentPage}
                                 setEditingOgmpId={setEditingOgmpId}
                                 setOgmpForm={setOgmpForm}
+                            />
+                        )}
+
+                        {activeTab === 'ldar' && (
+                            <LdarTab
+                                facilities={facilities}
+                                isPrivileged={isPrivileged}
                             />
                         )}
                     </section>

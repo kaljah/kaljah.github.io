@@ -32,6 +32,25 @@ const formatRecordId = (id?: string | number, fallbackId?: string | number): { d
   return { display: full, full };
 };
 
+const formatQaFlag = (flag?: string): string => {
+  if (!flag) return t("Flagged");
+  const stdMatch = flag.match(/Value\s+([\d.]+)\s+is\s+([\d.eE+-]+)\s+standard deviations/i);
+  if (stdMatch) {
+    const val = parseFloat(stdMatch[1]);
+    const dev = parseFloat(stdMatch[2]);
+    const formattedDev = dev > 1000 ? dev.toExponential(2) : dev.toFixed(1);
+    const formattedVal = Number.isFinite(val) ? val.toFixed(2) : stdMatch[1];
+    return t("Value {{val}} is {{dev}}σ from average", { val: formattedVal, dev: formattedDev });
+  }
+  const iqrMatch = flag.match(/Value\s+([\d.]+)\s+is an IQR outlier/i);
+  if (iqrMatch) {
+    const val = parseFloat(iqrMatch[1]);
+    const formattedVal = Number.isFinite(val) ? val.toFixed(2) : iqrMatch[1];
+    return t("Value {{val}} is an IQR outlier", { val: formattedVal });
+  }
+  return t(flag);
+};
+
 const th = "whitespace-nowrap border-b border-border px-4 py-3.5 text-left text-xs font-bold uppercase tracking-wide text-text-secondary";
 const td = "border-b border-ink-100 px-4 py-3.5 align-middle text-base text-ink-700";
 
@@ -234,9 +253,9 @@ const QADashboardZeroAnomaliesDetected: React.FC<QADashboardZeroAnomaliesDetecte
                           const sev = getFlagSeverity(record.qa_flag);
                           return (
                             <div className="flex flex-col gap-0.5">
-                              <Badge tone={sev.tone} className="gap-1 px-2 py-0.5 text-xs font-medium w-fit">
+                              <Badge tone={sev.tone} className="gap-1 px-2 py-0.5 text-xs font-medium w-fit" title={record.qa_flag}>
                                 <AlertTriangle className="size-3" aria-hidden="true" />
-                                {record.qa_flag || t("Flagged")}
+                                {formatQaFlag(record.qa_flag)}
                               </Badge>
                               <span className="text-[10px] font-bold uppercase tracking-wider text-text-secondary pl-0.5">
                                 {sev.label} {t("Priority")}

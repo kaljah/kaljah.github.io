@@ -340,7 +340,7 @@ def create_survey():
         measured_emission_rate=data.get("measured_emission_rate"),
         measurement_unit=data.get("measurement_unit", "kg/hr"),
         repair_date=data.get("repair_date"),
-        leaking_hours=float(data.get("leaking_hours", 8760.0)),
+        leaking_hours=float(data["leaking_hours"]) if data.get("leaking_hours") is not None else 8760.0,
         surveyor_name=data.get("surveyor_name", user.fullName),
         notes=data.get("notes"),
         created_by=user.id,
@@ -382,6 +382,57 @@ def get_survey(survey_id):
         return jsonify({"error": "Unauthorized"}), 403
 
     return jsonify({"survey": _serialize_survey(survey)})
+
+
+@ldar_bp.route("/surveys/<int:survey_id>", methods=["PUT", "PATCH"])
+@login_required
+def update_survey(survey_id):
+    """Update a fugitive survey record (e.g. record leak repairs, post-repair PPM)."""
+    user = get_current_user()
+    if is_it_role(user) or user.role in ["auditor", "viewer"]:
+        return jsonify({"error": "Forbidden: Read-only and IT roles cannot modify LDAR surveys"}), 403
+
+    survey = db.session.get(FugitiveSurvey, survey_id)
+    if not survey:
+        return jsonify({"error": "Survey not found"}), 404
+
+    allowed_fids = get_allowed_facility_ids(user)
+    if allowed_fids is not None and survey.facility_id not in allowed_fids:
+        return jsonify({"error": "Unauthorized"}), 403
+
+    data = request.get_json() or {}
+    updatable_fields = [
+        "survey_method", "survey_date", "detection_threshold_ppm",
+        "screening_value_ppm", "leak_status", "measured_emission_rate",
+        "measurement_unit", "repair_date", "leaking_hours",
+        "surveyor_name", "notes"
+    ]
+    for f in updatable_fields:
+        if f in data:
+            val = data[f]
+            if f == "leaking_hours" and val is not None:
+                try:
+                    val = float(val)
+                except (ValueError, TypeError):
+                    val = survey.leaking_hours
+            setattr(survey, f, val)
+
+    try:
+        db.session.commit()
+        log_activity_and_notify(
+            action="UPDATE",
+            record_id=str(survey.id),
+            user=user,
+            request=request,
+            entity="FugitiveSurvey",
+            entity_id=str(survey.id),
+            details=f"Updated LDAR survey for facility {survey.facility.name if survey.facility else survey.facility_id}",
+        )
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to update survey: {e}"}), 500
+
+    return jsonify({"message": "Survey updated successfully", "survey": _serialize_survey(survey)}), 200
 
 
 @ldar_bp.route("/surveys/<int:survey_id>", methods=["DELETE"])

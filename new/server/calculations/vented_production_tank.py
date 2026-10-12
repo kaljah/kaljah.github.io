@@ -411,8 +411,12 @@ class TankFlashingCalculator(BaseCalculator):
 
             ef_tonnes_per_1000bbl = self.TABLE_6_26_SALT_WATER.get((key_p, s_key), 0.0142)
             gross_ch4_tonnes = (q_bbl / 1000.0) * ef_tonnes_per_1000bbl
-            gross_co2_tonnes = 0.0
-            total_gas_scf = (gross_ch4_tonnes * LB_PER_TONNE * MOLAR_VOL_US) / (0.80 * MW_CH4)
+            denom_ch4 = c_ch4 if c_ch4 > 0 else 0.80
+            total_gas_scf = (gross_ch4_tonnes * LB_PER_TONNE * MOLAR_VOL_US) / (denom_ch4 * MW_CH4)
+            if c_co2 > 0:
+                gross_co2_tonnes = (total_gas_scf * c_co2 * MW_CO2) / (LB_PER_TONNE * MOLAR_VOL_US)
+            else:
+                gross_co2_tonnes = 0.0
 
         # ----------------------------------------------------------------------
         # Method 8: Working / Breathing Loss Direct Factor

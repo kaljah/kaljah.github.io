@@ -31,7 +31,7 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
   options = [],
   selectedValues = [],
   onChange,
-  label = "Select...",
+  label = t("Select..."),
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [position, setPosition] = useState<DropdownPosition | null>(null);

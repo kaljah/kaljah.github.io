@@ -91,6 +91,7 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
       <div className="flex-1!" />
       <Input
         type="text"
+        aria-label={t("Search records")}
         placeholder={t("Search...")}
         value={filterSearch}
         onChange={(e) => {

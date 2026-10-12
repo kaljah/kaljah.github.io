@@ -67,7 +67,7 @@ export const Scope3FormCalculatorGridContainer: React.FC<Scope3FormCalculatorGri
             <th>{t("Period")}</th>
             <th>{t("Facility")}</th>
             <th>{t("Category")}</th>
-            <th>Activity/Product</th>
+            <th>{t("Activity/Product")}</th>
             <th>{t("Volume")}</th>
             <th>{t("EF (kg/unit)")}</th>
             <th>{t("Total (tCO₂e)")}</th>

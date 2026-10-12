@@ -150,6 +150,7 @@ def export_emissions():
                     "n2o": float(r.n2o_emissions or 0),
                     "co2e_total": float(r.co2e_total or 0),
                     "status": r.status or "Verified",
+                    "data_source_ref": r.data_source_ref or "",
                 }
             )
 
@@ -197,6 +198,7 @@ def export_emissions():
                     "co2e_total": float(r.co2e or 0),
                     "co2e_market_based": float(r.co2e_market_based if r.co2e_market_based is not None else (r.co2e or 0)),
                     "status": r.status or "Verified",
+                    "data_source_ref": getattr(r, "data_source_ref", "") or "",
                 }
             )
 
@@ -241,6 +243,7 @@ def export_emissions():
                     "n2o": 0.0,
                     "co2e_total": float(r.co2e or 0),
                     "status": r.status or "Verified",
+                    "data_source_ref": getattr(r, "data_source_ref", "") or "",
                 }
             )
 
@@ -300,6 +303,7 @@ def export_emissions():
             "N₂O (t)",
             "Total CO₂e (t)",
             "Status",
+            "Source Reference",
         ]
 
         for col_idx, h in enumerate(headers, 1):
@@ -353,6 +357,7 @@ def export_emissions():
             c_tot.font = bold_font
 
             ws1.cell(row=row_num, column=17, value=_safe_excel_value(item["status"]))
+            ws1.cell(row=row_num, column=18, value=_safe_excel_value(item.get("data_source_ref") or ""))
 
             for c in range(1, len(headers) + 1):
                 ws1.cell(row=row_num, column=c).border = thin_border

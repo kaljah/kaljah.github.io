@@ -67,7 +67,8 @@ def get_production():
         'fuel_gas_export_mmsm3': d.fuel_gas_export_mmsm3 or 0.0,
         'activity': d.activity,
         'division': d.division,
-        'field': d.field
+        'field': d.field,
+        'region': d.region,
     } for d in data])
 
 @data_bp.route('/production', methods=['POST'])
@@ -111,6 +112,7 @@ def add_production():
     activity = data.get('activity')
     division = data.get('division')
     field = data.get('field')
+    region = data.get('region')
 
     saved_rec_id = None
 
@@ -136,6 +138,7 @@ def add_production():
             existing.activity = activity
             existing.division = division
             existing.field = field
+            existing.region = region
             rec_id = existing.id
             saved_rec_id = rec_id
             action = 'UPDATE'
@@ -152,7 +155,8 @@ def add_production():
                 **mm,
                 activity=activity,
                 division=division,
-                field=field
+                field=field,
+                region=region
             )
             db.session.add(prod)
             db.session.flush()
@@ -788,7 +792,10 @@ def save_cbam_export():
         ).scalar()
         
         from models import Scope2Emission
-        total_indirect_tco2e = db.session.query(func.coalesce(func.sum(Scope2Emission.co2e), 0.0)).filter(
+        scope2_method = request.args.get("scope2_method", data.get("scope2_method", "location")).lower()
+        s2_col = Scope2Emission.co2e_market_based if scope2_method == "market" else Scope2Emission.co2e_location_based
+        s2_expr = func.coalesce(s2_col, Scope2Emission.co2e, 0.0)
+        total_indirect_tco2e = db.session.query(func.coalesce(func.sum(s2_expr), 0.0)).filter(
             Scope2Emission.facility_id == facility_id,
             Scope2Emission.year == year,
             Scope2Emission.status == 'Verified'

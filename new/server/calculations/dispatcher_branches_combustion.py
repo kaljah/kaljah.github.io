@@ -98,7 +98,9 @@ def calc_flaring(self, calculator, emission_factors, flat_inputs, gwp_dict, unce
     )
     flare_type = flat_inputs.get("flare_type", "elevated")
     hhv_val = flat_inputs.get("hhv") or emission_factors.get("hhv")
-    flare_hhv, _ = user_hhv(hhv_val, flat_inputs.get("hhv_unit"))
+    flare_hhv, hhv_u = user_hhv(hhv_val, flat_inputs.get("hhv_unit"))
+    if flare_hhv and hhv_u and str(hhv_u).lower().endswith("/m3"):
+        flare_hhv = float(flare_hhv) / 35.314666721
 
     comps = self._composition(flat_inputs, c1_keys=("c1", "ch4_content", "flare_ch4_content"))
     if not comps.get("c1"):

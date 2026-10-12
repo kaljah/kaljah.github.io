@@ -1094,12 +1094,14 @@ def get_uncertainty_analysis():
         return jsonify({"error": "Forbidden: You do not have access to this facility"}), 403
 
     include_gwp = request.args.get("gwp_uncertainty", "").strip().lower() in ("true", "1", "yes")
+    scope2_method = request.args.get("scope2_method", "location").strip().lower()
     result = _query_uncertainty(
         year=year,
         allowed_fids=allowed_fids,
         facility_id=facility_id,
         scope=scope,
         include_gwp_uncertainty=include_gwp,
+        scope2_method=scope2_method,
     )
 
     # CSV export
@@ -1161,7 +1163,7 @@ def _filtered_facility_ids(allowed_fids, activity=None, division=None, segment=N
 @cached(
     cache=DASHBOARD_CACHE, key=make_cache_key("_query_uncertainty"), lock=CACHE_LOCK
 )
-def _query_uncertainty(year=None, allowed_fids=None, facility_id=None, scope="all", include_gwp_uncertainty=False):
+def _query_uncertainty(year=None, allowed_fids=None, facility_id=None, scope="all", include_gwp_uncertainty=False, scope2_method="location"):
     """Inventory uncertainty (95 %, k = 2) - see services/inventory_uncertainty.py (RC-10)."""
     from services.inventory_uncertainty import inventory_uncertainty
 
@@ -1176,6 +1178,7 @@ def _query_uncertainty(year=None, allowed_fids=None, facility_id=None, scope="al
         facility_id=facility_id,
         scope=scope,
         include_gwp_uncertainty=include_gwp_uncertainty,
+        scope2_method=scope2_method,
     )
 
 

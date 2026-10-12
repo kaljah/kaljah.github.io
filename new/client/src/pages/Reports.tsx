@@ -146,6 +146,7 @@ const Reports: React.FC = () => {
   });
   const [emissions, setEmissions] = useState<EmissionRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [isGeneratingMasterPdf, setIsGeneratingMasterPdf] = useState<boolean>(false);
 
   // Filters
   const [year, setYear] = useState<string>(deepLink.year || "all");
@@ -499,7 +500,9 @@ const Reports: React.FC = () => {
   };
 
   const handleMasterReportDownload = async (targetFacilityId: string | number | null = null) => {
+    if (isGeneratingMasterPdf) return;
     try {
+      setIsGeneratingMasterPdf(true);
       setLoading(true);
       // BUG-002: only accept a real id; never a click event or other object.
       const explicitId =
@@ -531,6 +534,7 @@ const Reports: React.FC = () => {
       console.error("Master report download failed:", error);
       toast.error(tr("Failed to download Master Report."));
     } finally {
+      setIsGeneratingMasterPdf(false);
       setLoading(false);
     }
   };
@@ -851,9 +855,24 @@ const Reports: React.FC = () => {
             </div>
           </div>
           <div className="mt-4 pt-3 border-t border-border">
-            <Button size="sm" variant="secondary" className="w-full justify-center gap-1.5" onClick={() => handleMasterReportDownload()}>
-              <FileText className="size-3.5" aria-hidden="true" />
-              {tr("Download Master PDF")}
+            <Button
+              size="sm"
+              variant="secondary"
+              className="w-full justify-center gap-1.5"
+              disabled={isGeneratingMasterPdf}
+              onClick={() => handleMasterReportDownload()}
+            >
+              {isGeneratingMasterPdf ? (
+                <>
+                  <span className="inline-block size-3.5 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" />
+                  {tr("Generating Master PDF, please wait...")}
+                </>
+              ) : (
+                <>
+                  <FileText className="size-3.5" aria-hidden="true" />
+                  {tr("Download Master PDF")}
+                </>
+              )}
             </Button>
           </div>
         </Card>

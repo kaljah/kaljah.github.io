@@ -2,7 +2,7 @@ import React from "react";
 import { Input, Field } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
 import { MARKET_INSTRUMENTS } from "./marketInstruments";
-import { t } from "../../i18n";
+import { currentLanguage, t } from "../../i18n";
 
 export interface Scope2FormNewElectricityEntryProps {
   activity: string;
@@ -155,7 +155,7 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
           <CustomDropdown
             options={[...Array(12)].map((_, i) => ({
               value: i + 1,
-              label: new Date(0, i).toLocaleString("default", { month: "long" }),
+              label: new Date(2025, i, 1).toLocaleString(currentLanguage() === "fr" ? "fr-FR" : "en-US", { month: "long" }),
             }))}
             value={Number(month) || 1}
             onChange={(val) => setMonth(Number(val))}

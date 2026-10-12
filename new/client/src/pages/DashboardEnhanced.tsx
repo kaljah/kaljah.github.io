@@ -840,8 +840,8 @@ const DashboardEnhanced: React.FC = () => {
         ) : (
           <button
             className="btn-target-action [padding:6px_14px] [font-size:var(--text-sm)] [font-weight:600] [border-radius:var(--radius-md)] [background:rgba(255,_255,_255,_0.9)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [color:var(--text-primary)] [cursor:pointer] [transition:all_0.2s_ease] [white-space:nowrap] hover:[border-color:var(--accent-color,_var(--color-brand-500))] hover:[color:var(--color-link)]"
-            onClick={() => navigate("/manage-data", { state: { tab: "goals" } })}
-            title={tr("Set emission targets in Manage Data")}
+            onClick={() => navigate("/sbti")}
+            title={tr("Set emission targets in SBTi Workbench")}
           >
             {tr("+ Set Target")}
           </button>

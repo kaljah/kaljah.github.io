@@ -2263,6 +2263,29 @@ def _process_row_production(row, user_id, fac_name_map, fac_id_map, batch_prod_m
     activity = row.get("activity") or facility.activity
     division = row.get("division") or facility.division
     field = row.get("field") or facility.field
+    region = row.get("region") or getattr(facility, "region", None)
+
+    def _parse_float(keys, default=0.0):
+        for k in keys:
+            v = row.get(k)
+            if v not in (None, "", "-"):
+                try:
+                    return float(v)
+                except (ValueError, TypeError):
+                    pass
+        return default
+
+    gross_gas = _parse_float(["gross_gas_mmsm3", "gross_gas", "gross_gas_volume"])
+    injected_gas = _parse_float(["injected_gas_mmsm3", "reinjected_gas_mmsm3", "injected_gas"])
+    gas_without_injected = _parse_float(["gas_without_injected_mmsm3", "gas_net_mmsm3", "net_gas_mmsm3"])
+    crude_oil_mmboe = _parse_float(["crude_oil_mmboe", "oil_mmboe"])
+    condensate_mmboe = _parse_float(["condensate_mmboe", "condensate_production_mmboe"])
+    lpg_mmboe = _parse_float(["lpg_mmboe", "lpg_production_mmboe"])
+    ngl_mmboe = _parse_float(["ngl_mmboe"])
+    total_production_mmboe = _parse_float(["total_production_mmboe", "total_mmboe"])
+    total_production_no_injected_mmboe = _parse_float(["total_production_no_injected_mmboe", "total_net_mmboe"])
+    saleable_production_mmboe = _parse_float(["saleable_production_mmboe", "saleable_mmboe"])
+    fuel_gas_export = _parse_float(["fuel_gas_export_mmsm3", "fuel_gas_mmsm3", "fuel_gas"])
 
     # Upsert: respect the (facility_id, month, year) UniqueConstraint
     # In-batch duplicate tracking prevents bulk_save_objects collision
@@ -2290,6 +2313,30 @@ def _process_row_production(row, user_id, fac_name_map, fac_id_map, batch_prod_m
             existing.division = division
         if field:
             existing.field = field
+        if region:
+            existing.region = region
+        if gross_gas:
+            existing.gross_gas_mmsm3 = gross_gas
+        if injected_gas:
+            existing.injected_gas_mmsm3 = injected_gas
+        if gas_without_injected:
+            existing.gas_without_injected_mmsm3 = gas_without_injected
+        if crude_oil_mmboe:
+            existing.crude_oil_mmboe = crude_oil_mmboe
+        if condensate_mmboe:
+            existing.condensate_mmboe = condensate_mmboe
+        if lpg_mmboe:
+            existing.lpg_mmboe = lpg_mmboe
+        if ngl_mmboe:
+            existing.ngl_mmboe = ngl_mmboe
+        if total_production_mmboe:
+            existing.total_production_mmboe = total_production_mmboe
+        if total_production_no_injected_mmboe:
+            existing.total_production_no_injected_mmboe = total_production_no_injected_mmboe
+        if saleable_production_mmboe:
+            existing.saleable_production_mmboe = saleable_production_mmboe
+        if fuel_gas_export:
+            existing.fuel_gas_export_mmsm3 = fuel_gas_export
         # Return None — session already tracks existing; no need to bulk_save_objects it
         return None, errors
 
@@ -2304,6 +2351,18 @@ def _process_row_production(row, user_id, fac_name_map, fac_id_map, batch_prod_m
         activity=activity,
         division=division,
         field=field,
+        region=region,
+        gross_gas_mmsm3=gross_gas,
+        injected_gas_mmsm3=injected_gas,
+        gas_without_injected_mmsm3=gas_without_injected,
+        crude_oil_mmboe=crude_oil_mmboe,
+        condensate_mmboe=condensate_mmboe,
+        lpg_mmboe=lpg_mmboe,
+        ngl_mmboe=ngl_mmboe,
+        total_production_mmboe=total_production_mmboe,
+        total_production_no_injected_mmboe=total_production_no_injected_mmboe,
+        saleable_production_mmboe=saleable_production_mmboe,
+        fuel_gas_export_mmsm3=fuel_gas_export,
         created_by=user_id,
     )
     if batch_prod_map is not None:

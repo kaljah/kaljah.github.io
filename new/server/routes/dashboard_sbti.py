@@ -74,10 +74,16 @@ def get_sbti_trajectory():
             actuals[yr] = actuals.get(yr, 0) + v
             scope1_actuals[yr] = scope1_actuals.get(yr, 0) + v
 
+    scope2_method = request.args.get("scope2_method", "location").lower()
+    s2_col = (
+        func.coalesce(Scope2Emission.co2e_market_based, Scope2Emission.co2e, 0)
+        if scope2_method == "market"
+        else func.coalesce(Scope2Emission.co2e_location_based, Scope2Emission.co2e, 0)
+    )
     s2_rows = (
         q_s2.with_entities(
             Scope2Emission.year,
-            func.sum(func.coalesce(Scope2Emission.co2e, 0)),
+            func.sum(s2_col),
         )
         .group_by(Scope2Emission.year)
         .all()

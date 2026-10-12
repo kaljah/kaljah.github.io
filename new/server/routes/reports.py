@@ -560,6 +560,8 @@ MASTER_REPORTS = {
     None: ("Groupement_Berkine_2025_Annual_GHG_Report.pdf", "generate_berkine_master_report", "build_master_pdf", None),
 }
 
+_active_master_pdf_builds = set()
+
 
 @reports_bp.route("/master-annual-report", methods=["GET"])
 @login_required
@@ -588,6 +590,13 @@ def get_master_annual_report():
     elif not all(require_facility_access(user, fid) for fid in facility_ids):
         return jsonify({"error": "Forbidden: outside your facility scope"}), 403
 
+    user_build_key = (user.id, key)
+    if user_build_key in _active_master_pdf_builds:
+        resp = jsonify({"error": "Master PDF generation is already in progress. Please wait."})
+        resp.headers["Retry-After"] = "5"
+        return resp, 429
+
+    _active_master_pdf_builds.add(user_build_key)
     builder = getattr(importlib.import_module(module_name), builder_name)
     fd, path = tempfile.mkstemp(suffix=".pdf")
     os.close(fd)
@@ -596,6 +605,7 @@ def get_master_annual_report():
         with open(path, "rb") as fh:
             data = BytesIO(fh.read())
     finally:
+        _active_master_pdf_builds.discard(user_build_key)
         try:
             os.remove(path)
         except OSError:

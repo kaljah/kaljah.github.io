@@ -3,7 +3,7 @@ import { Input, Field } from "../../ui";
 import ColumnMappingWizard from "../ColumnMappingWizard";
 import CustomDropdown from "../CustomDropdown";
 import { activateOnKey } from "../../utils/a11yKeys";
-import { t } from "../../i18n";
+import { currentLanguage, t } from "../../i18n";
 
 export interface Scope3FormNewScope3Props {
   UNIT_MULTIPLIERS: Record<string, Record<string, number>>;
@@ -188,7 +188,7 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
         <CustomDropdown
           options={[...Array(12)].map((_, i) => ({
             value: i + 1,
-            label: new Date(0, i).toLocaleString("default", { month: "long" }),
+            label: new Date(2025, i, 1).toLocaleString(currentLanguage() === "fr" ? "fr-FR" : "en-US", { month: "long" }),
           }))}
           value={Number(month) || 1}
           onChange={(val) => setMonth(Number(val))}

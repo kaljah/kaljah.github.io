@@ -70,7 +70,10 @@ class AnomalyDetector:
                 }
             return {"flagged": False, "z_score": 0, "expected_range": [mean, mean]}
 
-        z = (value - mean) / std
+        if std < 1e-6:
+            z = 0.0 if abs(value - mean) < 1e-6 else (999.0 if value > mean else -999.0)
+        else:
+            z = (value - mean) / std
 
         # IQR fence as secondary check (requires at least 4 observations for quartiles)
         sorted_h = sorted(historical)

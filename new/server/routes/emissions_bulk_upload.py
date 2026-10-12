@@ -428,6 +428,7 @@ def add_bulk_upload():
         # Prepare Record — all bulk upload paths queue as Pending per Decision D-04
         rec_id = str(uuid.uuid4())
         bulk_status = initial_record_status(user, channel="bulk")
+        source_ref = str(row.get("data_source_ref") or row.get("source_reference") or row.get("reference") or "").strip() or None
         emission_obj = Emission(
             record_id=rec_id,
             year=year,
@@ -442,6 +443,7 @@ def add_bulk_upload():
             quantity=amount,
             unit=unit,
             equipment_id=row.get("equipment", ""),
+            data_source_ref=source_ref,
             co2_emissions=em_result["co2"],
             ch4_emissions=em_result["ch4"],
             n2o_emissions=em_result["n2o"],

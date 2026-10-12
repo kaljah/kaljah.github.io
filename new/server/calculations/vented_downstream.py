@@ -77,7 +77,7 @@ FIRE_AGENT_GWPS = {
 }
 
 
-def _split_vent_flare(total_gas_m3, ch4_tonnes, co2_tonnes, ctrl_eff=0.0, hhv=1020.0, ef_n2o=None):
+def _split_vent_flare(total_gas_m3, ch4_tonnes, co2_tonnes, ctrl_eff=0.0, hhv=1020.0, ef_n2o=None, destruction_eff=None):
     ctrl = normalize_efficiency(ctrl_eff, default=0.0)
     vented_frac = 1.0 - ctrl
 
@@ -92,9 +92,10 @@ def _split_vent_flare(total_gas_m3, ch4_tonnes, co2_tonnes, ctrl_eff=0.0, hhv=10
         flared_ch4_mass = ch4_tonnes * ctrl
         flared_native_co2 = co2_tonnes * ctrl
 
-        flared_ch4_combusted = flared_ch4_mass * 0.98
+        de = normalize_efficiency(destruction_eff, default=0.98) if destruction_eff is not None else 0.98
+        flared_ch4_combusted = flared_ch4_mass * de
         flared_co2 = (flared_ch4_combusted * (MW_CO2 / MW_CH4)) + flared_native_co2
-        flared_unburnt_ch4 = flared_ch4_mass * 0.02
+        flared_unburnt_ch4 = flared_ch4_mass * max(0.0, 1.0 - de)
 
         flared_m3 = total_gas_m3 * ctrl
         flared_scf = convert(flared_m3, "m3", "scf")
