@@ -19,8 +19,9 @@ Companion to `docs/sonatrach-readiness-plan.md` (the what and why). This file is
 | Milestone | State | PRs |
 |-----------|-------|-----|
 | Recovery of unmerged branches | Done 2026-10-08 | Audit 2026-10-01 (security fixes and owner decisions) and the Scope 1 100k import audit (S1K-F1..F37) ported from `ccr-669f6fbd-pew7ww` and `ccr-b93733a1-u3m8s8`; the other branches' work was already on main or superseded. Reports in `docs/validation/FULL_AUDIT_2026-10-01.md` and `SCOPE1_100K_BULK_AUDIT_2026-10-01.md`. |
-| M0 Kick-off pack | Not started | |
-| M1 Deployment package | Done 2026-10-10 (T1.1-T1.4; T1.5 moot, the Pages deployment is gone): `deploy/`, `docs/deployment.md`, CI `package.yml`. Also covers T2.4 (offline bundle, `deploy/release.sh`) and a native install (`deploy/native/`). | |
+| T8.1 HR-06 custom factors | Done locally 2026-10-08 (branch `task/hr06-custom-factors` merged into `main`) | Source required, out-of-range needs justification, second approver, form field; backend and client tests pass |
+| M0 Kick-off pack | Written 2026-10-08, waiting for Sonatrach/HSE answers | `docs/sonatrach/questions-it.md`, `questions-security.md`, `hse-answer-sheets.md`, `glossary-fr.csv`. |
+| M1 Deployment package | Done 2026-10-10 (T1.1-T1.4; T1.5 moot, Pages deployment gone): `deploy/`, `docs/deployment.md`, CI `package.yml`. Also covers T2.4 (offline bundle, `deploy/release.sh`) and native install (`deploy/native/`). | |
 | M2 Offline operation | Not started | |
 | M3 Backups, releases, upgrades | Not started | |
 | M4 Security hardening | Not started | |
@@ -155,7 +156,22 @@ Ordered so nothing waits on answers that have not come back yet.
 
 About 60 pull requests in total. The critical path is not the code: it is the HSE answers (M8) and the Sonatrach security test (T4.8). Sending M0 in week 1 is what keeps the 24-week timeline possible.
 
-## Decisions Claude will ask for when it reaches them
+## Decisions made (2026-10-08, by the project owner)
+| Topic | Decision | Effect on tasks |
+|-------|----------|-----------------|
+| Sign-in | Entra ID via OpenID Connect | M5 builds OIDC (T5.1-T5.2); T5.3 not needed unless IT says otherwise |
+| Public demo | Will be made private later by the owner | T1.5: production build must contain no `github.io`/`onrender` strings; the demo is the owner's concern |
+| Data scope approval | An admin must approve scopes assigned by IT (maker-checker) | T6.3 on by default |
+| GWP sets | AR4, AR5 and AR6 all needed; per-report choice; default AR5, changeable in settings | Reports state the set used (T8.3-T8.5) |
+| Superuser scope | Stays one facility | T6.4 dropped |
+| JV consolidation | Both views: operational control and equity share, user switches | T6.5 builds both |
+| Base year | Admin chooses: first full year, or hand-entered totals | T8.6 supports both |
+| Custom factors | Out-of-range values (CO2 > 500, CH4 > 100, N2O > 10 kg/MMBtu, or < 0) are blocked unless a written justification is given and an admin approves; source reference required; an admin's own factors need a second admin | HR-06 fix (T8.1) |
+| GWP uncertainty | Off by default, with a toggle | HR-05: no code change, documented |
+| Load test size | 500 facilities, 5 million records | T9.1-T9.2 defaults |
+| Still open | HR-01 value check, HR-02, HR-03, HR-04, regulator/OGMP templates | Waiting for HSE |
+
+## Decisions Claude will ask for when it reaches them (superseded by the table above except where marked open)
 1. Keep the public GitHub Pages demo online? (T1.5)
 2. Sonatrach sign-in standard. (M5; OIDC built by default)
 3. Maker-checker on data scope. (T6.3; on by default)

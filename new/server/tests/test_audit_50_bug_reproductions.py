@@ -131,6 +131,7 @@ class TestAuditBugReproduction:
                     "ch4_factor": 0.001,
                     "n2o_factor": 0.0001,
                     "unit": "kg/m3",
+                    "source": "Lab report 2026-01",
                 }
             ]
         }
@@ -139,8 +140,9 @@ class TestAuditBugReproduction:
         with app.app_context():
             cf = CustomFactor.query.filter_by(name="Audit Test Imported Fuel").first()
             assert cf is not None
-            assert cf.status == "Approved"
-            assert cf.approved_by is not None
+            # HR-06: even an admin's own import waits for a second administrator.
+            assert cf.status == "Pending"
+            assert cf.approved_by is None
 
     def test_calculate_eeio_handles_malformed_spend(self, client, admin_token):
         """Verifies that calculate_eeio returns 400/422 on invalid spend instead of crashing with 500."""

@@ -178,7 +178,7 @@ def test_bug114_admin_password_reset_ends_existing_sessions(client, ctx, app):
 # ── Custom factor integrity (BUG-056 / 065 / 112) ─────────────────────────────────
 
 def _cf(client, **kw):
-    body = {"name": uniq("CF"), "co2_factor": 1.0, "unit": "kg/scf"}
+    body = {"name": uniq("CF"), "co2_factor": 1.0, "unit": "kg/scf", "source": "Test source"}
     body.update(kw)
     return client.post("/api/custom-factors", json=body)
 

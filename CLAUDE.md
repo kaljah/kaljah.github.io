@@ -64,6 +64,8 @@ CI: `deploy-pages.yml` runs the backend gate groups above plus frontend `lint`, 
 
 Deployment (`deploy/`, guide `docs/deployment.md`): one multi-stage `deploy/Dockerfile` (targets `app` = gunicorn API on `python:3.11-slim`, non-root, PostgreSQL 16 client tools; `web` = nginx with the built SPA), `deploy/compose.yml` (db, redis, app, web; secrets from `deploy/.env`, see `.env.example`), `deploy/nginx/neocarbon.conf.template` (SPA and `/api` on one address, TLS, CSP; also used by the native install), `deploy/native/` (systemd units, `install.sh` for installs without containers), `deploy/release.sh <version>` (offline bundle: saved images, wheels, built SPA; `SKIP_BUILD=1`, `REGISTRY=...`), `deploy/smoke-test.sh` (checks a running stack through nginx; CI `.github/workflows/package.yml` builds the images and runs it). The API container's entrypoint runs `flask db upgrade` then gunicorn; `docker compose run --rm app seed-admin|backup|restore`. `LOG_FILE` sets the warning log (empty = console only; an unwritable path warns). nginx forwards `Host $http_host` so the HTTPS CSRF Referer check also works on a non-standard port.
 
+On-premise install (no containers, no internet): `deploy/native/build-bundle.sh` builds an offline bundle (web build, server code, Linux wheels, checksums); `install.sh` / `upgrade.sh` in it set up `/opt/ghg` + systemd `ghg.service` (gunicorn) + nginx on one origin, with settings in `/etc/ghg/ghg.env` (`ghg.env.example`) and data in `/var/lib/ghg`. Guide: `docs/sonatrach/install-linux.md`. Run `build-bundle.sh` in WSL/Linux; never `npm ci` while a dev server is using `new/client/node_modules`.
+
 Other: `new/setup.bat` / `new/start_all.bat` (Windows native launch scripts for Flask backend + Vite frontend).
 
 ## Backend architecture
@@ -120,6 +122,7 @@ Other: `new/setup.bat` / `new/start_all.bat` (Windows native launch scripts for 
 - **Maker-Checker Workflow.**
   - Custom emission factors created by non-admins are assigned `Pending` status.
   - Only compliance `admin` accounts can approve custom factors via `POST /api/custom-factors/<id>/approve`.
+  - HR-06 governance (`services/custom_factor_policy.py`): a `source` is required; a value above the bounds (CO2 500, CH4 100, N2O 10 kg/MMBtu) is refused with 422 unless `justification` (10+ characters) is sent, and is then saved `Pending` with the reason appended to `description`; an admin cannot approve a factor they created (set `CUSTOM_FACTOR_SECOND_APPROVER=false` for a one-admin install); factors used by records cannot change values (audit O-04).
 - **Constants.**
   - Units: `calculations/units.py` `CONVERSIONS`.
   - GWPs: `calculations/constants.py` (AR4, AR5 default, AR6, 20-year values; `get_active_gwp()` resolves active set). Keep in sync with `new/client/src/constants.ts`.

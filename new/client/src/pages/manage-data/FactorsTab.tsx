@@ -213,6 +213,17 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
           className="[resize:vertical]!"
         />
       </div>
+      <div className="input-group md:[grid-column:span_3]!">
+        <label>Out-of-range justification (only needed if a factor is above 500 CO₂, 100 CH₄ or 10 N₂O kg/MMBtu)</label>
+        <Textarea
+          name="justification"
+          value={factorForm.justification || ""}
+          onChange={handleFactorChange}
+          rows={2}
+          placeholder="Why this value is correct (at least 10 characters). The factor then waits for a different administrator to approve it."
+          className="[resize:vertical]!"
+        />
+      </div>
     </div>
 
     {/* EF Uncertainty Workbench */}
@@ -306,6 +317,7 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
               n2o_uncertainty: "",
               source: "",
               description: "",
+              justification: "",
             });
           }}
         >

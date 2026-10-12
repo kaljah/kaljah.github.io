@@ -942,7 +942,7 @@ const ManageDataInner: React.FC = () => {
                 await api.post('/custom-factors', factorForm);
                 toast.success(t("Factor added!"));
             }
-            setFactorForm({ factor_name: '', parent_fuel: '', unit: 'scf', co2_factor: '', ch4_factor: '', n2o_factor: '', co_factor: '', co2_uncertainty: '', ch4_uncertainty: '', n2o_uncertainty: '', source: '', description: '' });
+            setFactorForm({ factor_name: '', parent_fuel: '', unit: 'scf', co2_factor: '', ch4_factor: '', n2o_factor: '', co_factor: '', co2_uncertainty: '', ch4_uncertainty: '', n2o_uncertainty: '', source: '', description: '', justification: '' });
             setEditingFactorId(null);
             fetchCustomFactors();
         } catch (err: any) { toast.error(apiError(err, t("Failed to save factor"))); }
