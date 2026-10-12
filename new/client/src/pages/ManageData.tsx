@@ -28,6 +28,7 @@ import MitigationTab, { type MitigationRecord } from './manage-data/MitigationTa
 import CbamTab, { type CbamRecord } from './manage-data/CbamTab';
 import OgmpTab, { type OgmpSurveyRecord } from './manage-data/OgmpTab';
 import LdarTab from './manage-data/LdarTab';
+import CapTab from './manage-data/CapTab';
 import './ManageData.css';
 import '../pages/Dashboard.css';
 import { t } from "../i18n";
@@ -1466,6 +1467,7 @@ const ManageDataInner: React.FC = () => {
         { id: 'ogmp', label: t("OGMP 2.0 Surveys"), show: true },
         { id: 'ldar', label: t("LDAR & Fugitives"), show: true },
         { id: 'cbam', label: t("CBAM Products"), show: true },
+        { id: 'cap', label: t("Criteria Air Pollutants (CAP)"), show: true },
     ].filter((n) => n.show);
     const hasFilters = filterActivity || filterDivision || filterRegion || filterYear;
     const filterSelect = "h-9 w-auto min-w-[140px] shrink-0 rounded-md border border-border bg-surface px-2.5 text-sm text-text transition-colors hover:border-ink-300 focus:border-brand-500";
@@ -1768,6 +1770,12 @@ const ManageDataInner: React.FC = () => {
                             <LdarTab
                                 facilities={facilities}
                                 isPrivileged={isPrivileged}
+                            />
+                        )}
+
+                        {activeTab === 'cap' && (
+                            <CapTab
+                                facilities={facilities}
                             />
                         )}
                     </section>

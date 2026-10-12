@@ -202,7 +202,10 @@ app.json = FiniteJSONProvider(app)
 @app.errorhandler(ValidationError)
 def handle_validation_error(e):
     db.session.rollback()  # a route may have changed a record before a later field was refused
-    return jsonify({"error": e.message, "field": e.field, "code": 400}), 400
+    payload = {"error": e.message, "field": e.field, "code": 400}
+    if getattr(e, "extra", None):
+        payload.update(e.extra)
+    return jsonify(payload), 400
 
 
 @app.before_request

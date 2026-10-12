@@ -42,11 +42,11 @@ def _before_insert(mapper, connection, target):
 
 
 def install():
-    from models import CustomFactor, Emission, ProductionData, Scope2Emission, Scope3Emission
+    from models import CustomFactor, Emission, ProductionData, Scope2Emission, Scope3Emission, Facility
 
     for model, entity in ((Emission, "Emission"), (Scope2Emission, "Scope2Emission"),
                           (Scope3Emission, "Scope3Emission"), (CustomFactor, "CustomFactor"),
-                          (ProductionData, "ProductionData")):
+                          (ProductionData, "ProductionData"), (Facility, "Facility")):
         if model not in _GUARDED:
             _GUARDED[model] = entity
             event.listen(model, "before_insert", _before_insert)

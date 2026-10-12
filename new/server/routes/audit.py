@@ -411,7 +411,10 @@ def verify_audit_chain():
     query = ActivityLog.query.order_by(ActivityLog.id.asc()).yield_per(1000)
     total_records, head_hash, issues, issue_count = verify_chain(query)
 
-    hmac_key = (current_app.config.get("SECRET_KEY") or "sonatrach-audit-secure-key").encode("utf-8")
+    raw_key = current_app.config.get("AUDIT_HMAC_KEY") or current_app.config.get("SECRET_KEY")
+    if not raw_key:
+        return jsonify({"error": "Cryptographic audit signing key is not configured"}), 500
+    hmac_key = str(raw_key).encode("utf-8")
     checkpoint_payload = f"{head_hash}:{total_records}"
     checkpoint_hmac = hmac.new(hmac_key, checkpoint_payload.encode("utf-8"), hashlib.sha256).hexdigest()
     ok = issue_count == 0
@@ -447,7 +450,10 @@ def verify_audit_checkpoint():
     if not chain_head_hash or total_records is None or not provided_hmac:
         return jsonify({"error": "Missing required fields: chain_head_hash, total_records, checkpoint_hmac"}), 400
 
-    hmac_key = (current_app.config.get("SECRET_KEY") or "sonatrach-audit-secure-key").encode("utf-8")
+    raw_key = current_app.config.get("AUDIT_HMAC_KEY") or current_app.config.get("SECRET_KEY")
+    if not raw_key:
+        return jsonify({"error": "Cryptographic audit signing key is not configured"}), 500
+    hmac_key = str(raw_key).encode("utf-8")
     checkpoint_payload = f"{chain_head_hash}:{total_records}"
     expected_hmac = hmac.new(hmac_key, checkpoint_payload.encode("utf-8"), hashlib.sha256).hexdigest()
 

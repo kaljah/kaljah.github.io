@@ -17,10 +17,11 @@ YEAR_MIN = 1900
 
 
 class ValidationError(ValueError):
-    def __init__(self, message, field=None):
+    def __init__(self, message, field=None, extra=None):
         super().__init__(message)
         self.message = message
         self.field = field
+        self.extra = extra or {}
 
 
 def _is_non_finite_value(value):

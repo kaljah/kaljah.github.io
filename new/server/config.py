@@ -53,6 +53,9 @@ class Config:
                 "This is only acceptable for local development and testing."
             )
 
+    # Dedicated HMAC key for cryptographic audit checkpoint verification (distinct from SECRET_KEY)
+    AUDIT_HMAC_KEY = os.environ.get("AUDIT_HMAC_KEY") or SECRET_KEY
+
     _default_origins = (
         "http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:3000,"
         "http://127.0.0.1:5173,http://127.0.0.1:5174,http://127.0.0.1:5175,http://127.0.0.1:3000"
@@ -122,8 +125,12 @@ class Config:
     # Lax: the app and the API share one address (pilot check 2026-10-09, F14). "None" was needed only
     # for the former GitHub Pages frontend on another domain; set SESSION_COOKIE_SAMESITE=None for that.
     SESSION_COOKIE_SAMESITE = os.environ.get("SESSION_COOKIE_SAMESITE", "Lax")
-    # Only set Secure in production to allow localhost testing
-    SESSION_COOKIE_SECURE = _is_production
+    # Session cookie secure flag: respects explicit env override, otherwise enabled in production
+    SESSION_COOKIE_SECURE = (
+        os.environ.get("SESSION_COOKIE_SECURE", "").strip().lower() in ("true", "1")
+        if "SESSION_COOKIE_SECURE" in os.environ
+        else _is_production
+    )
     PERMANENT_SESSION_LIFETIME = timedelta(hours=8)
     SESSION_REFRESH_EACH_REQUEST = True
 

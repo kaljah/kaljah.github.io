@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, { createContext, useContext, useState, useCallback, useMemo } from "react";
 import "./Toast.css";
 import { CircleCheckBig, CircleX, Info, TriangleAlert } from "lucide-react";
 import { t } from "../i18n";
@@ -96,10 +96,13 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
     [success, error, warning, info],
   );
 
+  const contextValue = useMemo(
+    () => ({ success, error, warning, info, show, removeToast, addToast }),
+    [success, error, warning, info, show, removeToast, addToast],
+  );
+
   return (
-    <ToastContext.Provider
-      value={{ success, error, warning, info, show, removeToast, addToast }}
-    >
+    <ToastContext.Provider value={contextValue}>
       {children}
       <ToastContainer toasts={toasts} onRemove={removeToast} />
     </ToastContext.Provider>

@@ -186,8 +186,8 @@ export const Scope2Form: React.FC = () => {
     try {
       setSubmitting(true);
       const val = parseFloat(amount);
-      if (val <= 0 && sourceType !== "cogen_allocation") {
-        toast.warning(t("Please enter a valid usage amount"));
+      if ((isNaN(val) || val <= 0) && sourceType !== "cogen_allocation") {
+        toast.warning(t("Please enter a valid positive usage amount"));
         return;
       }
 

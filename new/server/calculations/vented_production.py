@@ -54,11 +54,15 @@ R_GAS_US = 10.7316  # psi * ft³ / (lb-mole * °R)
 R_GAS_SI = 8.31446  # kPa * m³ / (kg-mole * K)
 
 
-def _split_vent_flare(total_gas_m3, ch4_tonnes, co2_tonnes, ctrl_eff=0.0, hhv=1020.0, ef_n2o=None, destruction_eff=None):
+def _split_vent_flare(total_gas_m3, ch4_tonnes, co2_tonnes, ctrl_eff=0.0, hhv=1020.0, ef_n2o=None, destruction_eff=None, control_type="flare"):
     """
-    Decision D-01: Partitions gross gas into vented and flared fractions.
-    Flared gas: defaults to 98% CH4 combustion efficiency, native CO2 pass-through,
-    unburnt CH4 slip, and N2O from flared MMBtu. Supports custom destruction efficiency (e.g. 99.5% for refinery flares).
+    Decision D-01: Partitions gross gas into vented and controlled fractions.
+    If control_type in ("vru", "recovery"):
+        Mechanical vapor recovery unit (VRU) captures gas back to process/sales line.
+        Zero combustion slip, zero combustion CO2, zero N2O.
+    Else (flare / thermal):
+        Flared gas: defaults to 98% CH4 combustion efficiency, native CO2 pass-through,
+        unburnt CH4 slip, and N2O from flared MMBtu. Supports custom destruction efficiency (e.g. 99.5% for refinery flares).
     """
     ctrl = normalize_efficiency(ctrl_eff, default=0.0)
     vented_frac = 1.0 - ctrl
@@ -70,7 +74,10 @@ def _split_vent_flare(total_gas_m3, ch4_tonnes, co2_tonnes, ctrl_eff=0.0, hhv=10
     flared_unburnt_ch4 = 0.0
     flared_n2o = 0.0
 
-    if ctrl > 0:
+    c_type = str(control_type or "flare").lower().strip()
+    is_vru = c_type in ("vru", "recovery", "vapor_recovery", "vapor_recovery_unit")
+
+    if ctrl > 0 and not is_vru:
         flared_ch4_mass = ch4_tonnes * ctrl
         flared_native_co2 = co2_tonnes * ctrl
 
@@ -98,6 +105,8 @@ def _split_vent_flare(total_gas_m3, ch4_tonnes, co2_tonnes, ctrl_eff=0.0, hhv=10
         "flared_n2o": flared_n2o,
         "total_ch4": total_ch4,
         "total_co2": total_co2,
+        "recovered_ch4": (ch4_tonnes * ctrl) if is_vru else 0.0,
+        "recovered_co2": (co2_tonnes * ctrl) if is_vru else 0.0,
     }
 
 

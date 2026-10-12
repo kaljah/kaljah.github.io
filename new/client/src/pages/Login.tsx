@@ -162,7 +162,7 @@ const Login: React.FC = () => {
 
         {/* Error Message */}
         {error && (
-          <div className="error-message">
+          <div className="error-message" role="alert" aria-live="assertive">
             <CircleAlert size={18} strokeWidth={2} aria-hidden="true" />
             {error}
           </div>
@@ -194,7 +194,7 @@ const Login: React.FC = () => {
                 <Mail size={18} aria-hidden="true" />
               </span>
               <input
-                type="text"
+                type="email"
                 className="[width:100%] [padding:14px_16px_14px_48px] [border:1px_solid_var(--border-light)] [&&]:[border-radius:var(--radius-md)] [font-size:var(--text-md)] [color:var(--text-main)]! [transition:all_0.2s] [background:var(--color-legacy-fafafa)] placeholder:[color:var(--color-ink-400)]! focus:[outline:none] focus:[border-color:var(--primary)] focus:[background:var(--color-white)] focus:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.1)] [&:focus+.input-icon]:[color:var(--primary)]!"
                 required
                 placeholder={t("Email Address")}

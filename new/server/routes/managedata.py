@@ -21,6 +21,7 @@ from sqlalchemy import func, distinct, or_
 from routes.auth import login_required
 from utils import facility_access_error, internal_error
 from input_validation import parse_year
+from process_categories import NON_OG_ACTIVITIES
 
 managedata_bp = Blueprint("managedata", __name__)
 

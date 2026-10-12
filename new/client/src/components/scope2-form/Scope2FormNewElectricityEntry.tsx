@@ -228,6 +228,9 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
             <Field className="input-group" label={t("Boiler Efficiency (0.0 - 1.0)")}>
               <Input
                 type="number"
+                min="0"
+                max="1"
+                step="any"
                 value={boilerEff}
                 onChange={(e) => setBoilerEff(e.target.value)}
               />
@@ -235,6 +238,9 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
             <Field className="input-group" label={t("Transmission Loss (0.0 - 1.0)")}>
               <Input
                 type="number"
+                min="0"
+                max="1"
+                step="any"
                 value={transLoss}
                 onChange={(e) => setTransLoss(e.target.value)}
               />
@@ -246,6 +252,8 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
             <Field className="input-group" label={t("Heat Output (MMBtu)")}>
               <Input
                 type="number"
+                min="0"
+                step="any"
                 value={heatOutput}
                 onChange={(e) => setHeatOutput(e.target.value)}
               />
@@ -253,6 +261,8 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
             <Field className="input-group" label={t("Power Output (MWh)")}>
               <Input
                 type="number"
+                min="0"
+                step="any"
                 value={powerOutput}
                 onChange={(e) => setPowerOutput(e.target.value)}
               />

@@ -40,6 +40,7 @@ def resolve_electricity_factor(grid_region, supplied_ef):
         raise ValidationError(
             f"Unknown grid region '{name}'. Select a known grid or provide a supplier emission factor (kg CO2e/kWh).",
             "grid_region",
+            extra={"valid_regions": sorted(list(GRID_FACTORS.keys()))},
         )
     return ef, name or None
 
@@ -162,7 +163,7 @@ def _recalc_indirect_steam(emission, data, factor, old_heat, old_co2e, old_ef, o
         # same steam as before: the record's own MMBtu per ton (its unit is not stored)
         heat = tons * float(old_heat) / float(old_tons)
     elif tons > 0:
-        unit = str(data.get("unit") or "ton").lower().replace(" ", "")
+        unit = str(data.get("unit") or getattr(emission, "unit", None) or "tonne").lower().replace(" ", "")
         _, heat, _ = _calc_indirect_steam({"amount": tons, "unit": unit, "boiler_efficiency": 1.0,
                                            "calc_inputs": {"indirect_steam": ci}})
     else:

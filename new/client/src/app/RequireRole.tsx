@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../components/Toast";
@@ -15,14 +15,19 @@ export interface RequireRoleProps {
 const RequireRole: React.FC<RequireRoleProps> = ({ rule, children }) => {
   const { user, loading } = useAuth();
   const toast = useToast();
+  const warnedRef = useRef(false);
 
   const isDenied = Boolean(user && rule && !ACCESS[rule](user));
 
   useEffect(() => {
-    if (isDenied) {
+    if (isDenied && !warnedRef.current) {
+      warnedRef.current = true;
       toast.warning(t("Access Denied: You do not have permission to view this page."));
     }
-  }, [isDenied, toast]);
+    if (!isDenied) {
+      warnedRef.current = false;
+    }
+  }, [isDenied]);
 
   if (loading) return <LoadingSpinner fullScreen />;
   if (!user) return <Navigate to="/login" replace />;

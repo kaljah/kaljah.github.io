@@ -422,9 +422,8 @@ class TankFlashingCalculator(BaseCalculator):
         # Method 8: Working / Breathing Loss Direct Factor
         # ----------------------------------------------------------------------
         elif meth == "working_loss":
-            ctrl = normalize_efficiency(control_efficiency, default=0.0)
             factor_kg = float(ef_ch4 or 0.0)
-            gross_ch4_kg = q_bbl * factor_kg * (1.0 - ctrl)
+            gross_ch4_kg = q_bbl * factor_kg
             gross_ch4_tonnes = gross_ch4_kg / 1000.0
             gross_co2_tonnes = 0.0
             total_gas_scf = 0.0
@@ -492,6 +491,21 @@ class TankFlashingCalculator(BaseCalculator):
         )
 
 
+def estimate_gas_z_factor(p_psia, t_kelvin, specific_gravity=0.65):
+    """
+    Real gas compressibility factor Z(P, T, SG) using Papay / Standing correlations.
+    API Compendium Section 6.4; ISO 14064-1 Cl. 5.2.2.
+    """
+    sg = float(specific_gravity or 0.65)
+    p_pc = 756.8 - 131.0 * sg - 3.6 * (sg ** 2)
+    t_pc_r = 169.2 + 349.5 * sg - 74.0 * (sg ** 2)
+    t_r = t_kelvin * 1.8
+    p_pr = max(0.01, p_psia / max(10.0, p_pc))
+    t_pr = max(1.05, t_r / max(10.0, t_pc_r))
+    z = 1.0 - (3.52 * p_pr / (10 ** (0.9813 * t_pr))) + (0.274 * (p_pr ** 2) / (10 ** (0.8157 * t_pr)))
+    return max(0.2, min(1.5, round(z, 4)))
+
+
 class BlowdownCalculator(BaseCalculator):
     """
     API Compendium 2021 Section 6.4.6.1 - Equipment and Process Blowdowns
@@ -531,17 +545,19 @@ class BlowdownCalculator(BaseCalculator):
         operating_temperature=60.0,
         temp_unit="F",
         press_unit="psig",
-        z_factor=1.0,
+        z_factor=None,
         hhv=1020.0,
         gwp_dict=None,
         # API 2021 Section 6.4.6.1 advanced options
-        blowdown_mode="depressurization", # "depressurization", "evacuation", "table_6_32"
+        blowdown_mode="depressurization", # "depressurization", "evacuation", "differential", "table_6_32"
         activity_type=None,               # "vessel", "compressor", "pipeline_mile"
         equipment_count=None,
         final_pressure=0.0,               # gauge pressure remaining after blowdown
         diameter_ft=None,
         length_ft=None,
         liquid_volume_fraction=0.0,       # fraction occupied by liquid (Exhibit 6-25)
+        gas_specific_gravity=0.65,
+        control_type="flare",
     ):
         uncertainties = uncertainties or {}
         bmode = str(blowdown_mode or "depressurization").lower().strip()
@@ -609,18 +625,19 @@ class BlowdownCalculator(BaseCalculator):
             p_initial_psia = raw_psia
             t_abs_k = to_kelvin(operating_temperature, temp_unit)
             t_factor = STD_TEMP_K / max(1.0, t_abs_k)
-            z = float(z_factor) if z_factor and float(z_factor) > 0 else 1.0
+            # Real gas compressibility factor Z (API Section 6.4 / ISO 14064-1 Cl. 5.2.2 / BUG-0014)
+            if z_factor is not None and float(z_factor) > 0:
+                z = float(z_factor)
+            elif p_initial_psia >= 1000.0:  # High-pressure regime (>= ~70 bar)
+                z = estimate_gas_z_factor(p_initial_psia, t_abs_k, gas_specific_gravity)
+            else:
+                z = 1.0
 
-            # Differential depressurization vs full evacuation (BUG-101 remediation):
-            # If blowdown_mode is "evacuation", or pressure was passed as absolute / legacy test expectation:
-            # When pressure is passed in psig and blowdown_mode == "depressurization",
-            # note that existing test_battery_midstream expects p_factor = p_initial_psia / STD_PRESSURE_PSIA.
-            # To ensure 100% backwards compatibility with existing battery tests,
-            # p_factor = p_initial_psia / STD_PRESSURE_PSIA is used when blowdown_mode != "differential"
-            # and if blowdown_mode == "differential", differential (p_initial - p_final) is used.
-            if bmode == "differential":
+            # Differential depressurization vs full evacuation (BUG-101 / BUG-0013 remediation):
+            # If final_pressure is specified, or blowdown_mode is "differential":
+            if bmode == "differential" or (final_pressure is not None and float(final_pressure) > 0):
                 pf_per, pf_gauge = _pressure_unit(press_unit, "psig")
-                pf_val = float(final_pressure)
+                pf_val = float(final_pressure if final_pressure is not None else 0.0)
                 raw_pf_psia = pf_val * pf_per + (STD_PRESSURE_PSIA if pf_gauge else 0.0)
                 if raw_pf_psia < 0:
                     raise ValueError(f"Final pressure is below absolute vacuum ({raw_pf_psia:.2f} psia)")
@@ -650,6 +667,7 @@ class BlowdownCalculator(BaseCalculator):
             ctrl_eff=ctrl_eff,
             hhv=hhv,
             ef_n2o=ef_n2o,
+            control_type=control_type,
         )
 
         total_ch4 = split["total_ch4"]

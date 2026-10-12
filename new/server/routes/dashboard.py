@@ -910,71 +910,9 @@ def get_categorical_breakdown():
 @dashboard_bp.route("/base-year-recalculation", methods=["POST"])
 @login_required
 def create_base_year_recalculation():
-    """Create a new base year recalculation entry"""
-    user = get_current_user()
-    if not user or user.role not in ["admin", "superuser"] or get_allowed_facility_ids(user) is not None:
-        return jsonify({"error": "Corporate-wide admin or superuser privileges required"}), 403
-    if is_it_role(user):
-        return jsonify({"error": "IT Admins do not have access to emission calculations"}), 403
-
-    data = request.get_json()
-
-    # BUG-20 FIX: Validate required fields before DB operation
-    if not data or not data.get("year") or not data.get("reason"):
-        return jsonify({"error": "year and reason are required"}), 400
-
-    try:
-        year_val = int(data["year"])
-    except (ValueError, TypeError):
-        return jsonify({"error": "year must be an integer"}), 400
-
-    from input_validation import parse_number, ValidationError
-    try:
-        prev_em = parse_number(
-            data.get("previous_emissions"), "previous_emissions", required=False, min_value=0
-        )
-        adj_em = parse_number(
-            data.get("adjusted_emissions"), "adjusted_emissions", required=False, min_value=0
-        )
-
-        recalc = BaseYearRecalculation(
-            year=year_val,
-            reason=str(data["reason"]).strip(),
-            previous_emissions=prev_em,
-            adjusted_emissions=adj_em,
-            created_by=user.id,
-        )
-
-        db.session.add(recalc)
-
-        # Keep BaseYear singleton synchronized (atomic upsert)
-        base_year_singleton = db.session.get(BaseYear, 1)
-        if base_year_singleton:
-            base_year_singleton.year = year_val
-        else:
-            base_year_singleton = BaseYear(id=1, year=year_val, locked=1)
-            db.session.merge(base_year_singleton)
-        db.session.flush()
-
-        log_activity_and_notify(
-            action="CREATE",
-            record_id=str(recalc.id),
-            user=user,
-            request=request,
-            entity="BaseYearRecalculation",
-            details=f"Base year recalculated to {year_val} by {user.fullName}",
-        )
-        db.session.commit()
-
-        clear_dashboard_cache()
-
-        return jsonify({"message": "Base year recalculation recorded", "id": recalc.id}), 201
-    except ValidationError:
-        db.session.rollback()
-        raise
-    except Exception as e:
-        db.session.rollback()
-        return internal_error(e)
+    """Create a new base year recalculation entry (delegates to canonical managedata route)."""
+    from routes.managedata import add_base_year_recalculation
+    return add_base_year_recalculation()
 
 
 

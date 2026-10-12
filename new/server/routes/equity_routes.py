@@ -273,9 +273,10 @@ def get_equity_allocation():
         shares = FacilityEquityShare.query.filter_by(facility_id=fac.id).all()
         partner_allocations = []
         for p in partners:
-            pct = effective_share_pct([s for s in shares if s.partner_id == p.id], yr)
+            p_shares = [s for s in shares if s.partner_id == p.id]
+            pct = effective_share_pct(p_shares, yr)
             if pct is None:
-                pct = (fac.equity_share_pct or 0.0) if p.is_operator and not shares else 0.0
+                pct = (fac.equity_share_pct or 0.0) if (p.is_operator and not p_shares) else 0.0
             allocated_s1 = total_s1 * (pct / 100.0)
             allocated_s2 = total_s2 * (pct / 100.0)
             allocated_co2e = allocated_s1 + allocated_s2

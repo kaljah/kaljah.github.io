@@ -12,12 +12,7 @@ from extensions import db
 from utils import internal_error
 from input_validation import ValidationError, parse_year, parse_month, parse_number
 
-# Activities that are NOT oil & gas — excluded from OGMP 2.0 scope
-NON_OG_ACTIVITIES = [
-    'Steel & Iron (Acier DRI)',
-    'Chemicals & Fertilizers',
-    'Cement & Clinker',
-]
+from process_categories import NON_OG_ACTIVITIES
 
 def is_it_role(user):
     return bool(user and getattr(user, 'role', None) in ['it_admin', 'it_manager', 'it'])

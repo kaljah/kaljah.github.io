@@ -8,9 +8,9 @@ notifications_bp = Blueprint("notifications", __name__)
 
 
 def _is_read_for_user(n, uid):
-    if n.is_read:
-        return True
-    if n.user_id is None and n.metadata_json:
+    if n.user_id is not None:
+        return bool(n.is_read)
+    if n.metadata_json:
         try:
             meta = json.loads(n.metadata_json)
             if uid in meta.get("read_by", []):
@@ -55,7 +55,7 @@ def get_notifications():
 from utils import get_current_user
 
 
-@notifications_bp.route("/<int:id>/read", methods=["PUT"])
+@notifications_bp.route("/<int:id>/read", methods=["PUT", "PATCH"])
 @login_required
 def mark_read(id):
     user = get_current_user()
@@ -73,8 +73,6 @@ def mark_read(id):
             read_by.append(user.id)
             meta["read_by"] = read_by
             n.metadata_json = json.dumps(meta)
-        if user.role in ["admin", "superuser", "it_manager"]:
-            n.is_read = True
     elif n.user_id != user.id and user.role not in ["admin", "superuser", "it_manager"]:
         return jsonify({"error": "Unauthorized"}), 403
     else:
@@ -95,28 +93,22 @@ def dismiss_all():
     if not user:
         return jsonify({"error": "Not authenticated"}), 401
 
-    if user.role in ["admin", "superuser", "it_manager"]:
-        Notification.query.filter(
-            ((Notification.user_id == user.id) | (Notification.user_id == None)),
-            Notification.is_read == False,
-        ).update({"is_read": True}, synchronize_session="fetch")
-    else:
-        Notification.query.filter_by(user_id=user.id, is_read=False).update(
-            {"is_read": True}
-        )
-        broadcasts = Notification.query.filter(
-            Notification.user_id.is_(None), Notification.is_read == False
-        ).all()
-        for b in broadcasts:
-            try:
-                meta = json.loads(b.metadata_json) if b.metadata_json else {}
-            except Exception:
-                meta = {}
-            read_by = meta.get("read_by", [])
-            if user.id not in read_by:
-                read_by.append(user.id)
-                meta["read_by"] = read_by
-                b.metadata_json = json.dumps(meta)
+    Notification.query.filter_by(user_id=user.id, is_read=False).update(
+        {"is_read": True}
+    )
+    broadcasts = Notification.query.filter(
+        Notification.user_id.is_(None)
+    ).all()
+    for b in broadcasts:
+        try:
+            meta = json.loads(b.metadata_json) if b.metadata_json else {}
+        except Exception:
+            meta = {}
+        read_by = meta.get("read_by", [])
+        if user.id not in read_by:
+            read_by.append(user.id)
+            meta["read_by"] = read_by
+            b.metadata_json = json.dumps(meta)
     try:
         db.session.commit()
     except Exception as e:

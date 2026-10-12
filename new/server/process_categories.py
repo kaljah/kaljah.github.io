@@ -6,6 +6,18 @@ This module defines the relationship between industry segments and applicable pr
 When a user selects a segment, only relevant process types are shown.
 """
 
+# Activities that are NOT oil & gas — excluded from OGMP 2.0 scope
+NON_OG_ACTIVITIES = (
+    "Steel & Iron (Acier DRI)",
+    "Chemicals & Fertilizers",
+    "Cement & Clinker",
+    "Steel",
+    "Cement",
+    "Chemical",
+    "Mining",
+    "Power Generation",
+)
+
 # Industry Segments
 SEGMENTS = {
     "upstream": {
