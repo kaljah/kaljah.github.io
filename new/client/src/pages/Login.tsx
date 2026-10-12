@@ -87,8 +87,14 @@ const Login: React.FC = () => {
   const [forgotLoading, setForgotLoading] = useState<boolean>(false);
   const [forgotMsg, setForgotMsg] = useState<{ text: string; type: string }>({ text: "", type: "" });
 
-  const { login, sessionExpired, setSessionExpired } = useAuth();
+  const { user, login, sessionExpired, setSessionExpired } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      navigate("/", { replace: true });
+    }
+  }, [user, navigate]);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

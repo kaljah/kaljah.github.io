@@ -279,6 +279,7 @@ def get_scope2_emissions():
                     "grid_region": e.grid_region,
                     "activity": e.activity,
                     "division": e.division,
+                    "region": e.region,
                     "field": e.field,
                     # stored with the record; the table showed "—" without it (browser test)
                     "uncertainty": getattr(e, "uncertainty", None),
@@ -453,6 +454,7 @@ def create_scope2_emission():
         grid_region=data.get("grid_region") or data.get("location"),
         activity=data.get("activity"),
         division=data.get("division"),
+        region=data.get("region"),
         field=data.get("field"),
         created_by=user_id,
         status=initial_status,
@@ -886,6 +888,7 @@ def bulk_import_scope2():
                 location=grid_region,
                 activity=rec.get("activity") or facility.activity,
                 division=rec.get("division") or facility.division,
+                region=rec.get("region") or facility.region,
                 field=rec.get("field") or facility.field,
                 created_by=user.id,
                 status=bulk_status,

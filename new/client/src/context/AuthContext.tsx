@@ -243,7 +243,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // The account's language wins; an account without one takes this browser's choice.
         const saved = settingsRes.data.language;
         if (saved === "en" || saved === "fr") {
-          if (saved !== currentLanguage()) setLanguage(saved);
+          if (saved !== currentLanguage()) setLanguage(saved, { reload: false });
         } else if (currentLanguage() !== "en") {
           api.put("/auth/settings", { language: currentLanguage() }).catch(() => {});
         }

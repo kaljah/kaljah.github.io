@@ -91,6 +91,10 @@ def add_production():
     if not require_facility_access(user, fid):
         return jsonify({'error': 'Access to this facility is denied'}), 403
 
+    facility = db.session.get(Facility, fid)
+    if not facility:
+        return jsonify({'error': f'Facility with ID {fid} does not exist'}), 404
+
     from input_validation import parse_month, parse_number, parse_year
     year = parse_year(data.get('year'))
     month = parse_month(data.get('month'), required=True)
@@ -188,7 +192,7 @@ def add_production():
             perform_upsert()
         except Exception as retry_err:
             db.session.rollback()
-            return jsonify({'error': f'Concurrency conflict: {str(retry_err)}'}), 409
+            return jsonify({'error': 'Concurrency conflict: record was modified concurrently. Please refresh and try again.'}), 409
     except Exception as e:
         db.session.rollback()
         import traceback

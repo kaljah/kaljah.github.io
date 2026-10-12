@@ -1482,6 +1482,7 @@ const ManageDataInner: React.FC = () => {
                                 <button
                                     key={n.id}
                                     type="button"
+                                    data-testid={`manage-nav-${n.id}`}
                                     aria-current={activeTab === n.id ? 'page' : undefined}
                                     onClick={() => handleTabChange(n.id)}
                                     className={cn(

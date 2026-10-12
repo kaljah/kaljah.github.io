@@ -129,7 +129,7 @@ export const LdarTab: React.FC<LdarTabProps> = ({ facilities, isPrivileged }) =>
       setSurveys(surveysRes.data?.surveys || []);
       setComponents(compRes.data?.components || []);
     } catch (err) {
-      toast.show(apiError(err), "danger");
+      toast.show(apiError(err), "error");
     } finally {
       setLoading(false);
     }
@@ -164,7 +164,7 @@ export const LdarTab: React.FC<LdarTabProps> = ({ facilities, isPrivileged }) =>
       setRepairModal((prev) => ({ ...prev, isOpen: false, survey: null }));
       fetchData();
     } catch (err) {
-      toast.show(apiError(err), "danger");
+      toast.show(apiError(err), "error");
     }
   };
 
@@ -191,7 +191,7 @@ export const LdarTab: React.FC<LdarTabProps> = ({ facilities, isPrivileged }) =>
       setSurveyModal((prev) => ({ ...prev, isOpen: false }));
       fetchData();
     } catch (err) {
-      toast.show(apiError(err), "danger");
+      toast.show(apiError(err), "error");
     }
   };
 
@@ -214,7 +214,7 @@ export const LdarTab: React.FC<LdarTabProps> = ({ facilities, isPrivileged }) =>
       setCompModal((prev) => ({ ...prev, isOpen: false }));
       fetchData();
     } catch (err) {
-      toast.show(apiError(err), "danger");
+      toast.show(apiError(err), "error");
     }
   };
 
@@ -337,7 +337,7 @@ export const LdarTab: React.FC<LdarTabProps> = ({ facilities, isPrivileged }) =>
               <Td>
                 {s.leak_status === "Leaking" && (
                   <Button
-                    variant="outline"
+                    variant="secondary"
                     size="sm"
                     onClick={() => handleOpenRepairModal(s)}
                     className="inline-flex items-center gap-1 text-xs text-brand-600 hover:text-brand-700"
@@ -430,7 +430,7 @@ export const LdarTab: React.FC<LdarTabProps> = ({ facilities, isPrivileged }) =>
             </Field>
             <div className="mt-6 flex justify-end gap-3">
               <Button
-                variant="outline"
+                variant="secondary"
                 onClick={() => setRepairModal((prev) => ({ ...prev, isOpen: false, survey: null }))}
               >
                 {t("Cancel")}
@@ -529,7 +529,7 @@ export const LdarTab: React.FC<LdarTabProps> = ({ facilities, isPrivileged }) =>
             </Field>
             <div className="mt-6 flex justify-end gap-3">
               <Button
-                variant="outline"
+                variant="secondary"
                 onClick={() => setSurveyModal((prev) => ({ ...prev, isOpen: false }))}
               >
                 {t("Cancel")}
@@ -629,7 +629,7 @@ export const LdarTab: React.FC<LdarTabProps> = ({ facilities, isPrivileged }) =>
             </Field>
             <div className="mt-6 flex justify-end gap-3">
               <Button
-                variant="outline"
+                variant="secondary"
                 onClick={() => setCompModal((prev) => ({ ...prev, isOpen: false }))}
               >
                 {t("Cancel")}

@@ -767,6 +767,8 @@ def resolve_flagged_record(record_id):
     except (ValueError, TypeError):
         scope = 1
     resolution = data.get("resolution", "Verified")  # "Verified" or "Rejected"
+    if resolution not in ["Verified", "Rejected"]:
+        return jsonify({"error": "Invalid resolution. Must be 'Verified' or 'Rejected'"}), 400
 
     try:
         allowed_fids = get_allowed_facility_ids(user)

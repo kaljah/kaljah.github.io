@@ -136,6 +136,8 @@ def create_component():
 
     try:
         operating_hours = float(data.get("operating_hours", 8760.0))
+        if operating_hours < 0 or operating_hours > 8760.0:
+            return jsonify({"error": "operating_hours must be between 0 and 8760"}), 400
     except (ValueError, TypeError):
         operating_hours = 8760.0
 
@@ -219,14 +221,20 @@ def update_component(comp_id):
 
     if "quantity" in data:
         try:
-            comp.quantity = int(data["quantity"])
+            qty = int(data["quantity"])
+            if qty < 0:
+                return jsonify({"error": "quantity cannot be negative"}), 400
+            comp.quantity = qty
         except (ValueError, TypeError):
-            pass
+            return jsonify({"error": "quantity must be an integer"}), 400
     if "operating_hours" in data:
         try:
-            comp.operating_hours = float(data["operating_hours"])
+            hrs = float(data["operating_hours"])
+            if hrs < 0 or hrs > 8760.0:
+                return jsonify({"error": "operating_hours must be between 0 and 8760"}), 400
+            comp.operating_hours = hrs
         except (ValueError, TypeError):
-            pass
+            return jsonify({"error": "operating_hours must be a number"}), 400
 
     comp.updated_at = datetime.datetime.now(datetime.timezone.utc)
     try:

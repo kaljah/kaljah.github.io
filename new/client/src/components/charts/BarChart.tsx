@@ -1,4 +1,4 @@
-import React, { useId, useState } from "react";
+import React, { useId, useState, useMemo } from "react";
 import {
   BarChart as RechartsBar,
   Bar,
@@ -272,6 +272,26 @@ export const BarChart: React.FC<BarChartProps> = ({
           ? STATUS_COLORS.warn
           : STATUS_COLORS.good;
   const chartHeight = typeof height === "number" ? height : parseInt(String(height), 10) || 300;
+
+  const computedDomain: [number, number] | undefined = useMemo(() => {
+    if (referenceValue == null) return undefined;
+    let maxVal = 0;
+    if (bars && bars.length > 0) {
+      for (const r of rows) {
+        for (const b of bars) {
+          const v = Number(r[b.dataKey]);
+          if (!isNaN(v) && v > maxVal) maxVal = v;
+        }
+      }
+    } else {
+      for (const r of rows) {
+        const v = Number(r[finalDataKey]);
+        if (!isNaN(v) && v > maxVal) maxVal = v;
+      }
+    }
+    return [0, Math.max(maxVal, referenceValue * 1.15)];
+  }, [referenceValue, rows, bars, finalDataKey]);
+
   return (
     <div
       ref={wrapRef}
@@ -324,7 +344,7 @@ export const BarChart: React.FC<BarChartProps> = ({
               <XAxis
                 type="number"
                 tickCount={4}
-                domain={referenceValue != null ? [0, (max: number) => Math.max(max, referenceValue * 1.15)] : undefined}
+                domain={computedDomain}
                 stroke="var(--color-ink-300)"
                 tick={{ fill: "var(--color-ink-500)", fontSize: 11, fontWeight: 600 }}
                 axisLine={false}
@@ -360,7 +380,7 @@ export const BarChart: React.FC<BarChartProps> = ({
           />
 
               <YAxis
-            domain={referenceValue != null ? [0, (max: number) => Math.max(max, referenceValue * 1.15)] : undefined}
+            domain={computedDomain}
             stroke="var(--color-ink-300)"
             tick={{ fill: "var(--color-ink-500)", fontSize: 11, fontWeight: 600 }}
             axisLine={false}

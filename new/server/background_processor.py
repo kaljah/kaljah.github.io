@@ -2205,6 +2205,7 @@ def _process_row_sources(row, user_id, fac_name_map, fac_id_map, batch=None):
         activity=row.get("activity") or facility.activity,
         division=row.get("division") or facility.division,
         field=row.get("field") or facility.field,
+        region=row.get("region") or facility.region,
         created_by=user_id,
     )
     return source, errors

@@ -162,6 +162,8 @@ def save_equity_share():
 
     if not require_facility_access(user, facility_id):
         return jsonify({"error": "Forbidden: You do not have access to this facility"}), 403
+    if db.session.get(Facility, facility_id) is None:
+        return jsonify({"error": f"Facility with ID {facility_id} does not exist"}), 404
     if db.session.get(JvPartner, partner_id) is None:
         return jsonify({"error": "Unknown partner"}), 400
 

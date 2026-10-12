@@ -142,7 +142,7 @@
   --color-selected-fg: var(--color-brand-700);
 
   --color-text: var(--color-ink-900);
-  --color-text-secondary: var(--color-ink-500);
+  --color-text-secondary: var(--color-ink-600);
   --color-text-disabled: var(--color-ink-400);
   --color-border: var(--color-ink-200);
   --color-surface: var(--color-white);

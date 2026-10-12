@@ -1,10 +1,14 @@
-import React from "react";
-import { Upload } from "lucide-react";
-import { Button, Field, Input, controlClass } from "../../ui";
+import React, { useState, useEffect } from "react";
+import { Upload, Users, Trash2, Plus } from "lucide-react";
+import { Badge, Button, Field, Input, controlClass } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import { BOUNDARY_OPTIONS } from "../../constants";
 import PaginationControls from "./PaginationControls";
 import { FormActions, FormGrid, RecordTable, TabCard, Td, Tr } from "./MdParts";
+import Modal from "../../components/Modal";
+import api from "../../api";
+import { useToast } from "../../components/Toast";
+import { apiError } from "../../utils/apiError";
 import { t } from "../../i18n";
 
 const SEGMENTS = ["Upstream", "Midstream", "Downstream", "Heavy Industry", "Utilities", "Other"];
@@ -62,6 +66,67 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
   user,
 }) => {
   const canEdit = ["admin", "superuser"].includes(user?.role || "");
+  const [selectedFacilityForEquity, setSelectedFacilityForEquity] = useState<FacilityRecord | null>(null);
+  const [partners, setPartners] = useState<Array<{ id: number; name: string; code: string; country: string }>>([]);
+  const [shares, setShares] = useState<Array<any>>([]);
+  const [loadingShares, setLoadingShares] = useState(false);
+  const [partnerForm, setPartnerForm] = useState({ partner_id: "", equity_share_pct: "", agreement_reference: "", effective_start_date: "2021-01-01" });
+  const toast = useToast();
+
+  useEffect(() => {
+    if (selectedFacilityForEquity) {
+      loadEquityData(selectedFacilityForEquity.id);
+    }
+  }, [selectedFacilityForEquity]);
+
+  const loadEquityData = async (facilityId: string | number) => {
+    setLoadingShares(true);
+    try {
+      const [pRes, sRes] = await Promise.all([
+        api.get("/equity/partners"),
+        api.get(`/equity/shares?facility_id=${facilityId}`),
+      ]);
+      setPartners(pRes.data || []);
+      setShares(sRes.data || []);
+    } catch (err) {
+      toast.show(apiError(err), "error");
+    } finally {
+      setLoadingShares(false);
+    }
+  };
+
+  const handleSaveShare = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedFacilityForEquity || !partnerForm.partner_id || !partnerForm.equity_share_pct) {
+      toast.show(t("Partner and equity share percentage are required"), "warning");
+      return;
+    }
+    try {
+      await api.post("/equity/shares", {
+        facility_id: Number(selectedFacilityForEquity.id),
+        partner_id: Number(partnerForm.partner_id),
+        equity_share_pct: parseFloat(partnerForm.equity_share_pct),
+        effective_start_date: partnerForm.effective_start_date || "2021-01-01",
+        agreement_reference: partnerForm.agreement_reference || undefined,
+      });
+      toast.show(t("Equity share updated successfully"), "success");
+      setPartnerForm({ partner_id: "", equity_share_pct: "", agreement_reference: "", effective_start_date: "2021-01-01" });
+      loadEquityData(selectedFacilityForEquity.id);
+    } catch (err) {
+      toast.show(apiError(err), "error");
+    }
+  };
+
+  const handleDeleteShare = async (shareId: number) => {
+    try {
+      await api.delete(`/equity/shares/${shareId}`);
+      toast.show(t("Equity share removed"), "success");
+      if (selectedFacilityForEquity) loadEquityData(selectedFacilityForEquity.id);
+    } catch (err) {
+      toast.show(apiError(err), "error");
+    }
+  };
+
   const patch = (fields: Record<string, any>) => setFacilityForm({ ...facilityForm, ...fields });
   const select = (
     name: string,
@@ -255,14 +320,135 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
             <Td className="text-sm">{f.latitude ? `${f.latitude}, ${f.longitude}` : t("Not Set")}</Td>
             {canEdit && (
               <Td>
-                <Button variant="danger" size="sm" onClick={() => handleDeleteFacility(f.id)}>
-                  {t("Delete")}
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button variant="secondary" size="sm" data-testid={`facility-jv-shares-${f.id}`} onClick={() => setSelectedFacilityForEquity(f)} title={t("Joint Venture Equity Partners")}>
+                    <Users className="size-3.5 mr-1" />
+                    {t("JV Partners")}
+                  </Button>
+                  <Button variant="danger" size="sm" onClick={() => handleDeleteFacility(f.id)}>
+                    {t("Delete")}
+                  </Button>
+                </div>
               </Td>
             )}
           </Tr>
         ))}
       </RecordTable>
+
+      {selectedFacilityForEquity && (
+        <Modal
+          title={t("Joint Venture Equity Partners: {{name}}", { name: selectedFacilityForEquity.name })}
+          onClose={() => setSelectedFacilityForEquity(null)}
+          maxWidth="640px"
+        >
+          <div className="space-y-4 p-2 w-full">
+            <div className="flex items-center justify-between text-sm pb-2 border-b border-border">
+              <span className="text-text-secondary">{t("Operational Boundary: {{boundary}}", { boundary: selectedFacilityForEquity.boundary_type || "Equity Share" })}</span>
+              <Badge tone={shares.reduce((sum, s) => sum + Number(s.equity_share_pct || 0), 0) === 100 ? "success" : "warning"}>
+                {t("Total Allocated: {{pct}}%", { pct: shares.reduce((sum, s) => sum + Number(s.equity_share_pct || 0), 0).toFixed(1) })}
+              </Badge>
+            </div>
+
+            {loadingShares ? (
+              <p className="text-sm text-text-secondary py-4">{t("Loading equity shares...")}</p>
+            ) : shares.length === 0 ? (
+              <p className="text-sm text-text-secondary py-4">{t("No partner equity shares assigned to this facility yet.")}</p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm border-collapse">
+                  <thead>
+                    <tr className="border-b border-border text-xs text-text-secondary">
+                      <th className="py-2">{t("Partner")}</th>
+                      <th className="py-2">{t("Code")}</th>
+                      <th className="py-2">{t("Equity Share")}</th>
+                      <th className="py-2">{t("Agreement Ref")}</th>
+                      <th className="py-2">{t("Effective Date")}</th>
+                      {canEdit && <th className="py-2 text-right">{t("Action")}</th>}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {shares.map((s) => (
+                      <tr key={s.id} className="border-b border-border/50">
+                        <td className="py-2 font-medium">{s.partner_name}</td>
+                        <td className="py-2 font-mono text-xs">{s.partner_code}</td>
+                        <td className="py-2 font-mono font-semibold">{s.equity_share_pct}%</td>
+                        <td className="py-2 text-xs text-text-secondary">{s.agreement_reference || "-"}</td>
+                        <td className="py-2 text-xs">{s.effective_start_date}</td>
+                        {canEdit && (
+                          <td className="py-2 text-right">
+                            <Button variant="danger" size="sm" onClick={() => handleDeleteShare(s.id)}>
+                              <Trash2 className="size-3.5" />
+                            </Button>
+                          </td>
+                        )}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {canEdit && (
+              <form onSubmit={handleSaveShare} className="pt-3 border-t border-border space-y-3">
+                <h4 className="text-xs font-semibold text-text uppercase tracking-wide">{t("Assign Partner Share")}</h4>
+                <div className="grid grid-cols-2 gap-3">
+                  <Field label={t("Partner")}>
+                    <NativeSelect
+                      value={partnerForm.partner_id}
+                      onChange={(e) => setPartnerForm((prev) => ({ ...prev, partner_id: e.target.value }))}
+                      className={controlClass}
+                    >
+                      <option value="">{t("Select Partner...")}</option>
+                      {partners.map((p) => (
+                        <option key={p.id} value={p.id}>
+                          {p.name} ({p.code})
+                        </option>
+                      ))}
+                    </NativeSelect>
+                  </Field>
+                  <Field label={t("Equity Share (%)")}>
+                    <Input
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="0.01"
+                      placeholder="e.g. 51.0"
+                      value={partnerForm.equity_share_pct}
+                      onChange={(e) => setPartnerForm((prev) => ({ ...prev, equity_share_pct: e.target.value }))}
+                    />
+                  </Field>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <Field label={t("Agreement Reference")}>
+                    <Input
+                      type="text"
+                      placeholder="e.g. Production Sharing Contract §4"
+                      value={partnerForm.agreement_reference}
+                      onChange={(e) => setPartnerForm((prev) => ({ ...prev, agreement_reference: e.target.value }))}
+                    />
+                  </Field>
+                  <Field label={t("Effective Start Date")}>
+                    <Input
+                      type="date"
+                      value={partnerForm.effective_start_date}
+                      onChange={(e) => setPartnerForm((prev) => ({ ...prev, effective_start_date: e.target.value }))}
+                    />
+                  </Field>
+                </div>
+                <div className="flex justify-end gap-2 pt-2">
+                  <Button variant="secondary" onClick={() => setSelectedFacilityForEquity(null)}>
+                    {t("Close")}
+                  </Button>
+                  <Button variant="primary" type="submit">
+                    <Plus className="size-3.5 mr-1" />
+                    {t("Save Partner Share")}
+                  </Button>
+                </div>
+              </form>
+            )}
+          </div>
+        </Modal>
+      )}
     </TabCard>
   );
 };

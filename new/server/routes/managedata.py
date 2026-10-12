@@ -95,6 +95,7 @@ def add_source():
         activity=data.get("activity"),
         division=data.get("division"),
         field=data.get("field"),
+        region=data.get("region"),
     )
     try:
         db.session.add(source)
@@ -803,6 +804,9 @@ def add_base_year_recalculation():
             return jsonify({"error": "Year and reason for change are required"}), 400
 
         year = int(data["year"])
+        if not (1990 <= year <= 2100):
+            return jsonify({"error": "Base year must be between 1990 and 2100"}), 400
+
         reason = str(data["reason"]).strip()
         prev_em = (
             float(data["previous_emissions"])
@@ -814,6 +818,8 @@ def add_base_year_recalculation():
             if data.get("adjusted_emissions") not in (None, "")
             else None
         )
+        if (prev_em is not None and prev_em < 0) or (adj_em is not None and adj_em < 0):
+            return jsonify({"error": "Emissions values cannot be negative"}), 400
 
         user_id = user.id if user else None
 
