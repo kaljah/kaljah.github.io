@@ -50,7 +50,7 @@ def get_flaring_summary():
     horizon = request.args.get("gwp_horizon", "100")
 
     def streams_for(year_value):
-        fd_q = apply_scope(FlaringDetail.query, FlaringDetail, **scope)
+        fd_q = apply_scope(FlaringDetail.query, FlaringDetail, **scope).filter(FlaringDetail.status.in_(statuses(include_pending)))
         fd_q = fd_q if year_value is None else fd_q.filter(FlaringDetail.year == year_value)
         fd = fd_q.all()
         em_q = apply_scope(Emission.query, Emission, **scope).filter(Emission.status.in_(statuses(include_pending)))

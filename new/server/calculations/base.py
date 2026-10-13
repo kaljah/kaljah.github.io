@@ -24,6 +24,18 @@ class BaseCalculator:
                     raise ValueError(f"Input {key} cannot be NaN or Infinite: {val}")
                 if val < 0:
                     raise ValueError(f"Input {key} cannot be negative: {val}")
+            elif isinstance(val, str):
+                try:
+                    num_val = float(val.strip())
+                    if math.isnan(num_val) or math.isinf(num_val):
+                        raise ValueError(f"Input {key} cannot be NaN or Infinite: {val}")
+                    if num_val < 0:
+                        raise ValueError(f"Input {key} cannot be negative: {val}")
+                except ValueError as e:
+                    if "negative" in str(e) or "NaN" in str(e) or "Infinite" in str(e):
+                        raise
+                    # Non-numeric string descriptor (e.g. unit, fuel name), allowed
+                    pass
         return True
 
     def calculate_uncertainty(self, value, relative_uncertainty, coverage_factor=2.0):

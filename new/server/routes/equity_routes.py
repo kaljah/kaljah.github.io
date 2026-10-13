@@ -172,9 +172,13 @@ def save_equity_share():
     if end is not None and end < start:
         return jsonify({"error": "effective_end_date must not be before effective_start_date"}), 400
 
-    share = FacilityEquityShare.query.filter_by(
-        facility_id=facility_id, partner_id=partner_id, effective_start_date=start.isoformat()
-    ).first()
+    share_id = data.get("id")
+    if share_id:
+        share = FacilityEquityShare.query.filter_by(id=int(share_id), facility_id=facility_id).first()
+    else:
+        share = FacilityEquityShare.query.filter_by(
+            facility_id=facility_id, partner_id=partner_id, effective_start_date=start.isoformat()
+        ).first()
 
     # Shares of all partners that overlap this period must not exceed 100 %
     import datetime as _dt
@@ -199,18 +203,44 @@ def save_equity_share():
     if not share:
         share = FacilityEquityShare(facility_id=facility_id, partner_id=partner_id, effective_start_date=start.isoformat())
         db.session.add(share)
+    else:
+        share.effective_start_date = start.isoformat()
 
     share.equity_share_pct = equity_pct
     share.effective_end_date = end.isoformat() if end else None
     share.agreement_reference = data.get("agreement_reference")
 
-    from utils import log_activity_and_notify
+    from utils import log_activity_and_notify, clear_dashboard_cache
 
     log_activity_and_notify(action="UPDATE", record_id=f"equity-{facility_id}-{partner_id}", user=user, request=request,
                             entity="FacilityEquityShare", facility_id=facility_id,
                             details=f"Equity share {equity_pct}% for partner {partner_id} from {start} to {end or 'open'}")
     db.session.commit()
+    clear_dashboard_cache()
     return jsonify({"success": True, "id": share.id, "message": "Equity share saved successfully"})
+
+
+@equity_bp.route("/shares/<int:share_id>", methods=["DELETE"])
+@login_required
+def delete_equity_share(share_id):
+    user = get_current_user()
+    if not user or user.role not in ("admin", "superuser"):
+        return jsonify({"error": "Forbidden: only administrators and super users can delete equity shares"}), 403
+    share = db.session.get(FacilityEquityShare, share_id)
+    if not share:
+        return jsonify({"error": "Equity share not found"}), 404
+    if not require_facility_access(user, share.facility_id):
+        return jsonify({"error": "Forbidden: You do not have access to this facility"}), 403
+    fac_id = share.facility_id
+    partner_id = share.partner_id
+    db.session.delete(share)
+    from utils import log_activity_and_notify, clear_dashboard_cache
+    log_activity_and_notify(action="DELETE", record_id=f"equity-{fac_id}-{partner_id}-{share_id}", user=user, request=request,
+                            entity="FacilityEquityShare", facility_id=fac_id,
+                            details=f"Deleted equity share ID {share_id} for partner {partner_id}")
+    db.session.commit()
+    clear_dashboard_cache()
+    return jsonify({"success": True, "message": "Equity share deleted successfully"})
 
 
 @equity_bp.route("/allocation", methods=["GET"])
@@ -276,7 +306,7 @@ def get_equity_allocation():
             p_shares = [s for s in shares if s.partner_id == p.id]
             pct = effective_share_pct(p_shares, yr)
             if pct is None:
-                pct = (fac.equity_share_pct or 0.0) if (p.is_operator and not p_shares) else 0.0
+                pct = (fac.equity_share_pct or 0.0) if p.is_operator else 0.0
             allocated_s1 = total_s1 * (pct / 100.0)
             allocated_s2 = total_s2 * (pct / 100.0)
             allocated_co2e = allocated_s1 + allocated_s2

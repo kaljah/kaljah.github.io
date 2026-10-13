@@ -230,6 +230,7 @@ class TankFlashingCalculator(BaseCalculator):
         # Produced water inputs (Table 6-26)
         salt_content="average",  # "2%", "10%", "20%", "average"
         separator_pressure_psi=250.0,
+        control_type="flare",
     ):
         uncertainties = uncertainties or {}
         self.validate_inputs({"throughput": throughput}, ["throughput"])
@@ -351,14 +352,11 @@ class TankFlashingCalculator(BaseCalculator):
         elif meth in ["table_6_22", "table_6_24", "default_ef"]:
             ctrl = normalize_efficiency(control_efficiency, default=0.0)
             if liquid_type == "condensate" or meth == "table_6_24":
-                key = "large_vru" if ctrl > 0 else "large_uncontrolled"
+                key = "large_uncontrolled"
                 info = self.TABLE_6_24_CONDENSATE[key]
             else:
                 sz = str(tank_size or "large").lower().strip()
-                if sz == "small":
-                    key = "small_flared" if ctrl > 0 else "small_uncontrolled"
-                else:
-                    key = "large_flared" if ctrl > 0 else "large_uncontrolled"
+                key = "small_uncontrolled" if sz == "small" else "large_uncontrolled"
                 info = self.TABLE_6_22_CRUDE[key]
 
             base_kg_per_bbl = info["kg_ch4_per_bbl"]
@@ -448,6 +446,7 @@ class TankFlashingCalculator(BaseCalculator):
             ctrl_eff=ctrl_eff,
             hhv=hhv,
             ef_n2o=ef_n2o,
+            control_type=control_type,
         )
 
         total_ch4 = split["total_ch4"]
@@ -481,6 +480,7 @@ class TankFlashingCalculator(BaseCalculator):
                 "type": process_type,
                 "method": meth,
                 "control_efficiency": control_efficiency,
+                "control_type": control_type,
                 "total_gas_scf": total_gas_scf,
                 "total_gas_m3": total_gas_m3,
             },
@@ -552,7 +552,7 @@ class BlowdownCalculator(BaseCalculator):
         blowdown_mode="depressurization", # "depressurization", "evacuation", "differential", "table_6_32"
         activity_type=None,               # "vessel", "compressor", "pipeline_mile"
         equipment_count=None,
-        final_pressure=0.0,               # gauge pressure remaining after blowdown
+        final_pressure=None,              # gauge pressure remaining after blowdown
         diameter_ft=None,
         length_ft=None,
         liquid_volume_fraction=0.0,       # fraction occupied by liquid (Exhibit 6-25)
@@ -633,9 +633,9 @@ class BlowdownCalculator(BaseCalculator):
             else:
                 z = 1.0
 
-            # Differential depressurization vs full evacuation (BUG-101 / BUG-0013 remediation):
-            # If final_pressure is specified, or blowdown_mode is "differential":
-            if bmode == "differential" or (final_pressure is not None and float(final_pressure) > 0):
+            # Differential depressurization vs full evacuation (BUG-101 / BUG-0015 remediation):
+            # If final_pressure is specified (including 0.0 psig = atmospheric vent), or blowdown_mode is "differential":
+            if bmode == "differential" or final_pressure is not None:
                 pf_per, pf_gauge = _pressure_unit(press_unit, "psig")
                 pf_val = float(final_pressure if final_pressure is not None else 0.0)
                 raw_pf_psia = pf_val * pf_per + (STD_PRESSURE_PSIA if pf_gauge else 0.0)

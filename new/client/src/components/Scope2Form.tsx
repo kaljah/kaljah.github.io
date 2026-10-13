@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import api from "../api";
 import { useToast } from "./Toast";
 import { useAuth } from "../context/AuthContext";
@@ -20,6 +20,7 @@ export const Scope2Form: React.FC = () => {
   const toast = useToast();
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const isSubmittingRef = useRef<boolean>(false);
   const [showWizard, setShowWizard] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<string | number | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -173,22 +174,57 @@ export const Scope2Form: React.FC = () => {
   };
 
   const handleAddEntry = async (status = "Verified") => {
-    if (!year || !month || !facilityId || (sourceType === "electricity" && !gridRegion) || !amount) {
-      toast.warning(t("Please fill in all required fields"));
-      return;
-    }
-
-    if (!unitOptions.some((o) => o.value === unit)) {
-      toast.warning(t("Please select a unit"));
-      return;
-    }
+    if (isSubmittingRef.current) return;
+    isSubmittingRef.current = true;
+    setSubmitting(true);
 
     try {
-      setSubmitting(true);
+      if (!year || !month || !facilityId || (sourceType === "electricity" && !gridRegion) || !amount) {
+        toast.warning(t("Please fill in all required fields"));
+        return;
+      }
+
+      if (!unitOptions.some((o) => o.value === unit)) {
+        toast.warning(t("Please select a unit"));
+        return;
+      }
+
       const val = parseFloat(amount);
       if ((isNaN(val) || val <= 0) && sourceType !== "cogen_allocation") {
         toast.warning(t("Please enter a valid positive usage amount"));
         return;
+      }
+
+      if (sourceType === "indirect_steam") {
+        const be = parseFloat(String(boilerEff));
+        const tl = parseFloat(String(transLoss));
+        if (isNaN(be) || be < 0 || be > 1) {
+          toast.warning(t("Boiler efficiency must be between 0 and 1"));
+          return;
+        }
+        if (isNaN(tl) || tl < 0 || tl > 1) {
+          toast.warning(t("Transmission loss must be between 0 and 1"));
+          return;
+        }
+      } else if (sourceType === "cogen_allocation") {
+        const ho = parseFloat(heatOutput);
+        const po = parseFloat(powerOutput);
+        if (isNaN(val) || val < 0) {
+          toast.warning(t("Facility emissions cannot be negative"));
+          return;
+        }
+        if (isNaN(ho) || ho < 0 || isNaN(po) || po < 0) {
+          toast.warning(t("Heat and power output must be non-negative"));
+          return;
+        }
+      }
+
+      if (marketInstrument && marketFactor !== "") {
+        const mf = parseFloat(marketFactor);
+        if (isNaN(mf) || mf < 0) {
+          toast.warning(t("Market emission factor cannot be negative"));
+          return;
+        }
       }
 
       let payload: Record<string, any> = {
@@ -258,6 +294,7 @@ export const Scope2Form: React.FC = () => {
       console.error("Failed to add entry:", error);
       toast.error(t("Failed to add Scope 2 entry"));
     } finally {
+      isSubmittingRef.current = false;
       setSubmitting(false);
     }
   };

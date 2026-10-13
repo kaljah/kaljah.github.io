@@ -81,6 +81,7 @@ export const Scope1Form: React.FC = () => {
   // BUG-082: the inspector label reflects the org's active GWP standard
   const [loading, setLoading] = useState<boolean>(false);
   const [submitting, setSubmitting] = useState<boolean>(false);
+  const isSubmittingRef = useRef<boolean>(false);
 
   // Core Identity State
   const [year, setYear] = useState<string | number>(new Date().getFullYear());
@@ -694,13 +695,18 @@ export const Scope1Form: React.FC = () => {
   }, [processType, sourceType, sectionChoice]);
 
   const handleAddEntry = async (status: "Draft" | "Verified" = "Verified") => {
-    // Validate identity fields
-    if (!year || !month || !facilityId || !processType) {
-      toast.warning(
-        tr("Please fill in all identity fields (Year, Month, Region, Process)"),
-      );
-      return;
-    }
+    if (isSubmittingRef.current) return;
+    isSubmittingRef.current = true;
+    setSubmitting(true);
+
+    try {
+      // Validate identity fields
+      if (!year || !month || !facilityId || !processType) {
+        toast.warning(
+          tr("Please fill in all identity fields (Year, Month, Region, Process)"),
+        );
+        return;
+      }
 
     const yrNum = parseInt(String(year), 10);
     if (isNaN(yrNum) || yrNum < 1990 || yrNum > 2100) {
@@ -1087,8 +1093,6 @@ export const Scope1Form: React.FC = () => {
       }
     }
 
-    try {
-      setSubmitting(true);
       // Construct calc_inputs based on process type
       // This wraps all process-specific parameters as backend expects
       const processInputs: Record<string, any> = {};
@@ -1584,6 +1588,7 @@ export const Scope1Form: React.FC = () => {
       const msg = error.response?.data?.error || tr("Failed to add entry");
       toast.error(msg);
     } finally {
+      isSubmittingRef.current = false;
       setSubmitting(false);
     }
   };

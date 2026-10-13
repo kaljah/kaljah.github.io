@@ -23,7 +23,7 @@ def batch_targets(data, all_flag):
         return picked
     if scope == "all":
         if all_flag:
-            return {"1": None, "2": None, "3": None}
+            return {"1": None, "2": None, "3": None, "cap": None}
         return None  # ids without by_scope would hit the same ids in every table
     if scope in ("1", "2", "3", "cap"):
         return {scope: None if all_flag else list(data.get("ids") or [])}

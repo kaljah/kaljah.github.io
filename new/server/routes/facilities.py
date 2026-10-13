@@ -223,6 +223,12 @@ def add_facility():
         db.session.rollback()
         raise e
 
+    try:
+        from routes.dashboard import clear_dashboard_cache
+        clear_dashboard_cache()
+    except Exception:
+        pass
+
     return jsonify({"message": "Facility added", "id": fac.id}), 201
 
 
@@ -395,9 +401,9 @@ def delete_facility(facility_id):
     # Deleting the facility cascades to its records: the maker-checker rule for single records
     # (only an administrator deletes Verified records) applies to the cascade as well.
     if user.role != "admin":
-        from models import Emission, Scope2Emission, Scope3Emission
+        from models import Emission, Scope2Emission, Scope3Emission, CapEmission
         if any(m.query.filter_by(facility_id=facility.id, status="Verified").first()
-               for m in (Emission, Scope2Emission, Scope3Emission)):
+               for m in (Emission, Scope2Emission, Scope3Emission, CapEmission)):
             return jsonify({"error": "Forbidden: this facility has approved (Verified) records; "
                                      "only an administrator can delete it"}), 403
 
@@ -423,6 +429,12 @@ def delete_facility(facility_id):
         db.session.rollback()
         current_app.logger.exception("Failed to delete facility %s", facility_id)
         return jsonify({"error": "Failed to delete facility"}), 500
+
+    try:
+        from routes.dashboard import clear_dashboard_cache
+        clear_dashboard_cache()
+    except Exception:
+        pass
 
     return jsonify({"message": "Facility deleted"})
 
@@ -498,5 +510,11 @@ def import_facilities():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Failed to import facilities"}), 500
+
+    try:
+        from routes.dashboard import clear_dashboard_cache
+        clear_dashboard_cache()
+    except Exception:
+        pass
 
     return jsonify({"message": f"{imported_count} facilities imported"})

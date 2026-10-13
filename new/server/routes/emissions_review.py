@@ -5,7 +5,7 @@ registered on the same ``emissions_bp`` blueprint, so URLs and endpoint names ar
 """
 from extensions import db
 from flask import jsonify, request
-from models import Emission, Scope2Emission, Scope3Emission
+from models import Emission, Scope2Emission, Scope3Emission, CapEmission
 from routes.auth import login_required
 from utils import get_allowed_facility_ids, get_current_user, internal_error
 from . import emissions_bp
@@ -218,13 +218,40 @@ def get_pending_emissions():
             for e in q.all()
         ]
 
+    def q_cap():
+        q = CapEmission.query.filter(CapEmission.status.in_(pending_statuses))
+        if allowed_fids is not None:
+            q = q.filter(CapEmission.facility_id.in_(allowed_fids))
+        q = q.order_by(CapEmission.created_at.desc())
+        if limit_val:
+            q = q.limit(limit_val)
+        return [
+            {
+                "id": e.id, "scope": "cap", "facility_id": e.facility_id,
+                "facility_name": e.facility.name if getattr(e, "facility", None) else None,
+                "year": e.year, "month": e.month, "source_module": e.source_module,
+                "pollutant": e.pollutant, "mass_tonnes": e.mass_tonnes,
+                "concentration_mg_nm3": e.concentration_mg_nm3,
+                "status": e.status,
+                "notes": getattr(e, "notes", None),
+                "created_by": getattr(e, "created_by", None),
+                "created_at": e.created_at.isoformat() if e.created_at else None,
+            }
+            for e in q.all()
+        ]
+
     def count_pending(model):
         q = model.query.filter(model.status.in_(pending_statuses))
         if allowed_fids is not None:
             q = q.filter(model.facility_id.in_(allowed_fids))
         return q.count()
 
-    counts = {"1": count_pending(Emission), "2": count_pending(Scope2Emission), "3": count_pending(Scope3Emission)}
+    counts = {
+        "1": count_pending(Emission),
+        "2": count_pending(Scope2Emission),
+        "3": count_pending(Scope3Emission),
+        "cap": count_pending(CapEmission),
+    }
 
     def sum_pending(model, col):
         q = db.session.query(db.func.coalesce(db.func.sum(col), 0.0)).filter(model.status.in_(pending_statuses))
@@ -238,6 +265,7 @@ def get_pending_emissions():
         "scope1": q_scope1(),
         "scope2": q_scope2(),
         "scope3": q_scope3(),
+        "cap": q_cap(),
         # the lists hold at most `limit` rows per scope; the counts are the whole queue
         "pending_counts": counts,
         "pending_co2e": pending_co2e,

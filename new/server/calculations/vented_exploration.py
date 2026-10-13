@@ -39,13 +39,13 @@ MW_C = 12.011
 LB_PER_TONNE = 2204.6226218487757
 
 
-def _split_vent_flare(total_gas_m3, ch4_tonnes, co2_tonnes, ctrl_eff=0.0, hhv=1020.0, ef_n2o=None):
+def _split_vent_flare(total_gas_m3, ch4_tonnes, co2_tonnes, ctrl_eff=0.0, hhv=1020.0, ef_n2o=None, destruction_eff=None, control_type="flare"):
     """
     Partitions gross gas into vented and flared fractions (Decision D-01).
     Flared gas follows 98% CH4 combustion efficiency, native CO2 pass-through,
-    2% unburnt CH4 slip, and N2O from flared MMBtu.
+    unburnt CH4 slip, and N2O from flared MMBtu. Supports VRU recovery.
     """
-    ctrl = max(0.0, min(1.0, float(ctrl_eff or 0.0)))
+    ctrl = normalize_efficiency(ctrl_eff, default=0.0)
     vented_frac = 1.0 - ctrl
 
     vented_ch4 = ch4_tonnes * vented_frac
@@ -55,14 +55,18 @@ def _split_vent_flare(total_gas_m3, ch4_tonnes, co2_tonnes, ctrl_eff=0.0, hhv=10
     flared_unburnt_ch4 = 0.0
     flared_n2o = 0.0
 
-    if ctrl > 0:
+    c_type = str(control_type or "flare").lower().strip()
+    is_vru = c_type in ("vru", "recovery", "vapor_recovery", "vapor_recovery_unit")
+
+    if ctrl > 0 and not is_vru:
         flared_ch4_mass = ch4_tonnes * ctrl
         flared_native_co2 = co2_tonnes * ctrl
 
-        # 98% combustion of CH4 to CO2: CH4 + 2O2 -> CO2 + 2H2O
-        flared_ch4_combusted = flared_ch4_mass * 0.98
+        de = normalize_efficiency(destruction_eff, default=0.98) if destruction_eff is not None else 0.98
+        slip = max(0.0, 1.0 - de)
+        flared_ch4_combusted = flared_ch4_mass * de
         flared_co2 = (flared_ch4_combusted * (MW_CO2 / MW_CH4)) + flared_native_co2
-        flared_unburnt_ch4 = flared_ch4_mass * 0.02
+        flared_unburnt_ch4 = flared_ch4_mass * slip
 
         # Flared N2O from energy content
         flared_m3 = total_gas_m3 * ctrl

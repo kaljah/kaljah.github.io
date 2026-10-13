@@ -187,6 +187,18 @@ def create_scope3_emission():
     emission.notes = data.get("notes")
     emission.created_by = user.id
 
+    from calculations.anomaly import AnomalyDetector
+    try:
+        z = AnomalyDetector().check_scope3(int(emission.facility_id), emission.category, emission.co2e,
+                                           emission.year, emission.month)
+        if z.get("flagged") and z.get("message"):
+            emission.qa_flag = z["message"][:255]
+            if emission.status == "Verified":
+                emission.status = "Pending"
+                emission.approved_by = emission.approved_at = None
+    except Exception:
+        pass
+
     try:
         db.session.add(emission)
         db.session.flush()
@@ -338,6 +350,17 @@ def update_scope3_emission(emission_id):
         emission.notes = data["notes"]
 
     require_plausible_co2e(emission.co2e)
+    from calculations.anomaly import AnomalyDetector
+    try:
+        z = AnomalyDetector().check_scope3(int(emission.facility_id), emission.category, emission.co2e,
+                                           emission.year, emission.month)
+        if z.get("flagged") and z.get("message"):
+            emission.qa_flag = z["message"][:255]
+            if emission.status == "Verified":
+                emission.status = "Pending"
+                emission.approved_by = emission.approved_at = None
+    except Exception:
+        pass
     try:
         from utils import log_activity_and_notify
         log_activity_and_notify(

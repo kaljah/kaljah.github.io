@@ -37,7 +37,7 @@ MW_N2O = 44.013
 LB_PER_TONNE = 2204.6226218487757
 
 
-def _split_vent_flare(total_gas_m3, ch4_tonnes, co2_tonnes, ctrl_eff=0.0, hhv=1020.0, ef_n2o=None):
+def _split_vent_flare(total_gas_m3, ch4_tonnes, co2_tonnes, ctrl_eff=0.0, hhv=1020.0, ef_n2o=None, destruction_eff=None, control_type="flare"):
     ctrl = normalize_efficiency(ctrl_eff, default=0.0)
     vented_frac = 1.0 - ctrl
 
@@ -48,13 +48,18 @@ def _split_vent_flare(total_gas_m3, ch4_tonnes, co2_tonnes, ctrl_eff=0.0, hhv=10
     flared_unburnt_ch4 = 0.0
     flared_n2o = 0.0
 
-    if ctrl > 0:
+    c_type = str(control_type or "flare").lower().strip()
+    is_vru = c_type in ("vru", "recovery", "vapor_recovery", "vapor_recovery_unit")
+
+    if ctrl > 0 and not is_vru:
         flared_ch4_mass = ch4_tonnes * ctrl
         flared_native_co2 = co2_tonnes * ctrl
 
-        flared_ch4_combusted = flared_ch4_mass * 0.98
+        de = normalize_efficiency(destruction_eff, default=0.98) if destruction_eff is not None else 0.98
+        slip = max(0.0, 1.0 - de)
+        flared_ch4_combusted = flared_ch4_mass * de
         flared_co2 = (flared_ch4_combusted * (MW_CO2 / MW_CH4)) + flared_native_co2
-        flared_unburnt_ch4 = flared_ch4_mass * 0.02
+        flared_unburnt_ch4 = flared_ch4_mass * slip
 
         flared_m3 = total_gas_m3 * ctrl
         flared_scf = convert(flared_m3, "m3", "scf")

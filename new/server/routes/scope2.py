@@ -326,7 +326,7 @@ def create_scope2_emission():
 
     user_id = user.id
     source_type = data.get("source_type", "electricity")
-    if source_type not in ("electricity", "indirect_steam", "cogen_allocation"):
+    if source_type not in ("electricity", "indirect_steam", "cogen_allocation", "cooling"):
         return jsonify({"error": f"Unsupported source_type '{source_type}'"}), 400
 
     # BUG-073: year/month are required and range-checked (a NULL year broke every dashboard).
@@ -405,6 +405,14 @@ def create_scope2_emission():
             current_app.logger.warning(f"CHP allocation calculation failed: {exc}")
             return jsonify({"error": "CHP allocation calculation failed: check the inputs"}), 422
 
+    elif source_type in ("cooling", "purchased_cooling") or "cool" in source_type.lower():
+        cooling_ton_val = parse_number(data.get("cooling_ton") or data.get("amount"), "cooling_ton", required=False, min_value=0, default=0.0)
+        ef_val = parse_number(data.get("emission_factor") or data.get("ef"), "emission_factor", required=False, min_value=0, default=150.0)
+        co2e = round((cooling_ton_val * ef_val) / 1000.0, 4)
+        co2e_location = co2e
+        co2e_market = co2e
+        emission_factor = ef_val
+
     if co2e < 0:
         return jsonify({"error": "Calculated emissions cannot be negative"}), 400
 
@@ -462,6 +470,18 @@ def create_scope2_emission():
         approved_by=user.id if initial_status == "Verified" and user else None,
         approved_at=datetime.datetime.now(datetime.timezone.utc) if initial_status == "Verified" else None,
     )
+
+    from calculations.anomaly import AnomalyDetector
+    try:
+        z = AnomalyDetector().check_scope2(int(emission.facility_id), emission.source_type, emission.co2e,
+                                           emission.year, emission.month)
+        if z.get("flagged") and z.get("message"):
+            emission.qa_flag = z["message"][:255]
+            if emission.status == "Verified":
+                emission.status = "Pending"
+                emission.approved_by = emission.approved_at = None
+    except Exception:
+        pass
 
     try:
         db.session.add(emission)
@@ -683,6 +703,17 @@ def update_scope2_emission(emission_id):
     if "field" in data:
         emission.field = data["field"]
     require_plausible_co2e(emission.co2e, emission.co2e_location_based, emission.co2e_market_based)
+    from calculations.anomaly import AnomalyDetector
+    try:
+        z = AnomalyDetector().check_scope2(int(emission.facility_id), emission.source_type, emission.co2e,
+                                           emission.year, emission.month)
+        if z.get("flagged") and z.get("message"):
+            emission.qa_flag = z["message"][:255]
+            if emission.status == "Verified":
+                emission.status = "Pending"
+                emission.approved_by = emission.approved_at = None
+    except Exception:
+        pass
     try:
         from utils import log_activity_and_notify
         log_activity_and_notify(

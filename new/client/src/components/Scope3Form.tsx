@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { CATEGORY_ACTIVITIES } from "../utils/scope3Factors";
 import api from "../api";
 import { useToast } from "./Toast";
@@ -31,6 +31,7 @@ export const Scope3Form: React.FC = () => {
   const { user } = useAuth();
   const toast = useToast();
   const [submitting, setSubmitting] = useState<boolean>(false);
+  const isSubmittingRef = useRef<boolean>(false);
   const [showWizard, setShowWizard] = useState<boolean>(false);
   const [deleteTargetId, setDeleteTargetId] = useState<string | number | null>(null);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
@@ -223,23 +224,34 @@ export const Scope3Form: React.FC = () => {
   };
 
   const handleAddEntry = async (status: "Draft" | "Verified" = "Verified") => {
-    if (
-      !year ||
-      !month ||
-      !facilityId ||
-      !category ||
-      !activityType ||
-      !amount ||
-      !emissionFactor
-    ) {
-      toast.warning(t("Please fill in all required fields"));
-      return;
-    }
+    if (isSubmittingRef.current) return;
+    isSubmittingRef.current = true;
+    setSubmitting(true);
 
     try {
-      setSubmitting(true);
+      if (
+        !year ||
+        !month ||
+        !facilityId ||
+        !category ||
+        !activityType ||
+        !amount ||
+        !emissionFactor
+      ) {
+        toast.warning(t("Please fill in all required fields"));
+        return;
+      }
+
       const amt = parseFloat(amount);
       const ef = parseFloat(emissionFactor);
+      if (isNaN(amt) || amt < 0) {
+        toast.warning(t("Activity amount must be non-negative"));
+        return;
+      }
+      if (isNaN(ef) || ef < 0) {
+        toast.warning(t("Emission factor must be non-negative"));
+        return;
+      }
       const totalEmissions = (amt * ef) / 1000;
 
       const payload = {
@@ -269,6 +281,7 @@ export const Scope3Form: React.FC = () => {
       console.error("Failed to add entry:", error);
       toast.error(t("Failed to add entry"));
     } finally {
+      isSubmittingRef.current = false;
       setSubmitting(false);
     }
   };

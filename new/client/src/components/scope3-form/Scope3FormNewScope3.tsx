@@ -257,6 +257,7 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
       <Field className="input-group" label={t("EF (kg CO₂e/unit)")}>
         <Input
           type="number"
+          min="0"
           value={emissionFactor || ""}
           onChange={(e) => setEmissionFactor(e.target.value)}
           step="0.01"

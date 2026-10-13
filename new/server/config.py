@@ -54,7 +54,17 @@ class Config:
             )
 
     # Dedicated HMAC key for cryptographic audit checkpoint verification (distinct from SECRET_KEY)
-    AUDIT_HMAC_KEY = os.environ.get("AUDIT_HMAC_KEY") or SECRET_KEY
+    _audit_key_env = os.environ.get("AUDIT_HMAC_KEY")
+    if _audit_key_env:
+        AUDIT_HMAC_KEY = _audit_key_env
+    else:
+        import hashlib
+        import hmac
+        AUDIT_HMAC_KEY = hmac.new(
+            (SECRET_KEY or "dev-secret-key").encode("utf-8"),
+            b"neocarbon-audit-checkpoint-v1",
+            hashlib.sha256,
+        ).hexdigest()
 
     _default_origins = (
         "http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:3000,"
@@ -127,9 +137,8 @@ class Config:
     SESSION_COOKIE_SAMESITE = os.environ.get("SESSION_COOKIE_SAMESITE", "Lax")
     # Session cookie secure flag: respects explicit env override, otherwise enabled in production
     SESSION_COOKIE_SECURE = (
-        os.environ.get("SESSION_COOKIE_SECURE", "").strip().lower() in ("true", "1")
-        if "SESSION_COOKIE_SECURE" in os.environ
-        else _is_production
+        _is_production
+        or os.environ.get("SESSION_COOKIE_SECURE", "").strip().lower() in ("true", "1", "yes")
     )
     PERMANENT_SESSION_LIFETIME = timedelta(hours=8)
     SESSION_REFRESH_EACH_REQUEST = True

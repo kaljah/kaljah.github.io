@@ -315,6 +315,7 @@ def get_batch_dashboard_data():
                 year=uncertainty_year,
                 allowed_fids=unc_fids,
                 facility_id=unc_fid,
+                scope2_method=scope2_method,
             )
             f_years = executor.submit(_run_in_app_ctx, app, _query_available_years)
 
@@ -723,6 +724,7 @@ def get_dashboard_summary():
             403,
         )
     allowed_fids = get_allowed_facility_ids(user)
+    scope2_method = request.args.get("scope2_method") or request.args.get("scope2Method") or "location"
     return jsonify(
         _query_summary(
             facility_id=request.args.get("facilityId"),
@@ -734,6 +736,7 @@ def get_dashboard_summary():
             segment=request.args.get("segment"),
             include_pending=request.args.get("includePending", "false").lower() == "true",
             gwp_horizon=request.args.get("gwp_horizon", "100"),
+            scope2_method=scope2_method,
         )
     )
 

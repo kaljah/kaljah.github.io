@@ -86,6 +86,7 @@ def _persist_job(job_id, force=False):
         if job is None:
             return
         snap = _snapshot(job)
+    tmp = None
     try:
         os.makedirs(UPLOAD_JOB_DIR, exist_ok=True)
         tmp = f"{path}.{os.getpid()}.{threading.get_ident()}.tmp"
@@ -95,6 +96,12 @@ def _persist_job(job_id, force=False):
         _last_persist[job_id] = now
     except OSError:
         pass  # the in-memory job still answers for this worker
+    finally:
+        if tmp and os.path.exists(tmp):
+            try:
+                os.unlink(tmp)
+            except OSError:
+                pass
 
 
 def _load_job(job_id):
@@ -332,7 +339,9 @@ def _prune_old_jobs(max_age_seconds=86400):
     try:
         for name in os.listdir(UPLOAD_JOB_DIR):
             path = os.path.join(UPLOAD_JOB_DIR, name)
-            if name.endswith(".json") and now - os.path.getmtime(path) > max_age_seconds:
+            if name.endswith(".tmp") and (now - os.path.getmtime(path) > 300):
+                to_delete.append((None, path))
+            elif name.endswith(".json") and now - os.path.getmtime(path) > max_age_seconds:
                 try:
                     with open(path, encoding="utf-8") as fh:
                         to_delete.append((None, json.load(fh).get("error_csv_path")))
@@ -1659,13 +1668,15 @@ def _process_row_scope2(
         source_type = "indirect_steam"
     elif raw_source in ["cogen_allocation", "cogen", "chp", "cogeneration"]:
         source_type = "cogen_allocation"
+    elif raw_source in ["cooling", "purchased_cooling", "district_cooling", "chilled_water"]:
+        source_type = "cooling"
     elif raw_source in ["electricity", "purchased_electricity", "power", "grid_electricity", "grid", "market",
                         "location", "location_based", "market_based"]:
         source_type = "electricity"
     else:
         # an unknown source type used to be booked as electricity
         return None, [f"Row {row_idx}: unknown source type '{row.get('source_type') or row.get('factor_type')}': "
-                      "use electricity, indirect_steam or cogen_allocation"]
+                      "use electricity, indirect_steam, cogen_allocation or cooling"]
 
     grid_region = str(row.get("grid_region") or "").strip()
     ef = None
@@ -1703,6 +1714,7 @@ def _process_row_scope2(
     kwh = 0.0
     heat_mmbtu = 0.0
     steam_ton = 0.0
+    cooling_ton = 0.0
 
     if source_type == "indirect_steam":
         # same calculation as the manual form (routes.scope2._calc_indirect_steam), including the
@@ -1770,6 +1782,12 @@ def _process_row_scope2(
         co2e = _calc_cogen_allocation({k: v for k, v in cogen_in.items() if v not in (None, "")})
         heat_mmbtu = _clean_float(cogen_in["heat_output_mmbtu"], default=0.0)
         ef = None
+    elif source_type in ["cooling", "purchased_cooling"]:
+        source_type = "cooling"
+        cooling_ton = val
+        supplied_ef = row.get("factor") if row.get("factor") not in (None, "") else row.get("emission_factor")
+        ef = _clean_float(supplied_ef, default=150.0)
+        co2e = (cooling_ton * ef) / 1000.0
     else:
         source_type = "electricity"
         u = unit.lower().replace(" ", "")
@@ -1817,6 +1835,7 @@ def _process_row_scope2(
 
     values = {
         "source_type": source_type, "electricity_kwh": kwh, "heat_mmbtu": heat_mmbtu, "steam_ton": steam_ton,
+        "cooling_ton": cooling_ton,
         "emission_factor": ef, "co2e": co2e, "co2e_location_based": co2e, "co2e_market_based": co2e_mkt,
         "market_instrument_type": mkt_inst, "market_emission_factor": mkt_ef_val,
         "uncertainty": unc, "grid_region": grid_region or None,
@@ -1839,6 +1858,7 @@ def _process_row_scope2(
         electricity_kwh=kwh,
         heat_mmbtu=heat_mmbtu,
         steam_ton=steam_ton,
+        cooling_ton=cooling_ton,
         emission_factor=ef,
         co2e=co2e,
         co2e_location_based=co2e,
