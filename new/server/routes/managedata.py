@@ -809,16 +809,19 @@ def add_base_year_recalculation():
             return jsonify({"error": "Base year must be between 1990 and 2100"}), 400
 
         reason = str(data["reason"]).strip()
-        prev_em = (
-            float(data["previous_emissions"])
-            if data.get("previous_emissions") not in (None, "")
-            else None
-        )
-        adj_em = (
-            float(data["adjusted_emissions"])
-            if data.get("adjusted_emissions") not in (None, "")
-            else None
-        )
+        try:
+            prev_em = (
+                float(data["previous_emissions"])
+                if data.get("previous_emissions") not in (None, "")
+                else None
+            )
+            adj_em = (
+                float(data["adjusted_emissions"])
+                if data.get("adjusted_emissions") not in (None, "")
+                else None
+            )
+        except (ValueError, TypeError):
+            return jsonify({"error": "Emissions values must be valid numbers"}), 400
         if (prev_em is not None and prev_em < 0) or (adj_em is not None and adj_em < 0):
             return jsonify({"error": "Emissions values cannot be negative"}), 400
 

@@ -410,7 +410,6 @@ from routes.emission_factors_routes import factors_bp
 from routes.notifications import notifications_bp
 from routes.audit import audit_bp
 from routes.qaqc import qaqc_bp
-from routes.cap_routes import cap_bp
 from routes.equity_routes import equity_bp
 from routes.ldar import ldar_bp
 
@@ -428,7 +427,6 @@ app.register_blueprint(factors_bp)
 app.register_blueprint(notifications_bp, url_prefix="/api/notifications")
 app.register_blueprint(audit_bp, url_prefix="/api/audit")
 app.register_blueprint(qaqc_bp, url_prefix="/api/qaqc")
-app.register_blueprint(cap_bp, url_prefix="/api/cap")
 app.register_blueprint(equity_bp, url_prefix="/api/equity")
 app.register_blueprint(ldar_bp, url_prefix="/api/ldar")
 

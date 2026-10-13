@@ -107,6 +107,7 @@ const Reports: React.FC = () => {
     facility: searchParams.get("facility"),
     scope: searchParams.get("scope"),
     process: searchParams.get("process"),
+    search: searchParams.get("search") || searchParams.get("q") || searchParams.get("equipment"),
   }));
   const { user } = useAuth();
   const toast = useToast();
@@ -156,9 +157,9 @@ const Reports: React.FC = () => {
   const [methodFilter, setMethodFilter] = useState<string>("all");
   const [regionId, setRegionId] = useState<string>(deepLink.facility || "all");
   const [processType, setProcessType] = useState<string>(deepLink.process || "all");
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>(deepLink.search || "");
   // BUG-021: debounce the search box so we issue one request per pause, not per keystroke
-  const [debouncedSearch, setDebouncedSearch] = useState<string>("");
+  const [debouncedSearch, setDebouncedSearch] = useState<string>(deepLink.search || "");
   const [groupBy, setGroupBy] = useState<string>("none"); // none, facility, process, month
 
   // Pagination
@@ -544,7 +545,7 @@ const Reports: React.FC = () => {
     const grouped: Record<string, EmissionRecord[]> = {};
     emissions.forEach((em) => {
       let key = "Unknown";
-      if (groupBy === "facility") key = em.facility_name || "Unknown";
+      if (groupBy === "facility") key = em.region || em.facility_name || "Unknown";
       else if (groupBy === "process") key = em.process_type || "Unknown";
       else if (groupBy === "month")
         key = `${em.year}-${String(em.month).padStart(2, "0")}`;
@@ -1252,7 +1253,7 @@ const Reports: React.FC = () => {
                 (e) => setGroupBy(e.target.value),
                 <>
                   <option value="none">{tr("No Grouping")}</option>
-                  <option value="facility">{tr("By Facility")}</option>
+                  <option value="facility">{tr("By Region")}</option>
                   <option value="process">{tr("By Category/Process")}</option>
                   <option value="month">{tr("By Month")}</option>
                   <option value="scope">{tr("By Scope")}</option>

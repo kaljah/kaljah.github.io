@@ -356,7 +356,30 @@ export const BarChart: React.FC<BarChartProps> = ({
                 dataKey={finalXKey}
                 width={narrow ? 92 : 180}
                 stroke="var(--color-ink-300)"
-                tick={{ fill: "var(--color-ink-700)", fontSize: 12, fontWeight: 600 }}
+                tick={
+                  onSelect
+                    ? (tickProps: any) => {
+                        const { x, y, payload } = tickProps;
+                        const label = shortLabel(payload?.value);
+                        const row = rows.find((r) => r[finalXKey] === payload?.value);
+                        return (
+                          <text
+                            x={x}
+                            y={y}
+                            dy={4}
+                            textAnchor="end"
+                            fill="var(--color-ink-700)"
+                            fontSize={12}
+                            fontWeight={600}
+                            style={{ cursor: "pointer" }}
+                            onClick={() => row && onSelect(row)}
+                          >
+                            {label}
+                          </text>
+                        );
+                      }
+                    : { fill: "var(--color-ink-700)", fontSize: 12, fontWeight: 600 }
+                }
                 axisLine={false}
                 tickLine={false}
                 interval={0}
@@ -442,6 +465,8 @@ export const BarChart: React.FC<BarChartProps> = ({
                   key={`cell-${index}`}
                   fill={entry.color || entry.fill || statusFill(Number(entry[finalDataKey]) || 0) || `url(#${gradientId})`}
                   opacity={hoverIndex !== null && hoverIndex !== index ? 0.45 : 1}
+                  style={onSelect ? { cursor: "pointer" } : undefined}
+                  onClick={onSelect ? () => onSelect(rows[index]) : undefined}
                 />
               ))}
               {errorKey && (

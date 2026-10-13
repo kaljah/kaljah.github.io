@@ -1,6 +1,6 @@
 import pytest
 from app import app
-from models import db, User, Facility, CapEmission, CapRegulatoryLimit, FlaringDetail, JvPartner, FacilityEquityShare, ProductionData
+from models import db, User, Facility, FlaringDetail, JvPartner, FacilityEquityShare, ProductionData
 
 @pytest.fixture
 def auth_client(client):
@@ -23,18 +23,6 @@ def auth_client(client):
     with client.session_transaction() as sess:
         sess["user_id"] = user_id
     return client
-
-def test_cap_regulatory_limits_seeded():
-    with app.app_context():
-        limits = CapRegulatoryLimit.query.all()
-        # Should have Decree 06-138 limits if seeded
-        assert isinstance(limits, list)
-
-def test_cap_compliance_endpoint(auth_client):
-    resp = auth_client.get("/api/cap/compliance?year=2025")
-    assert resp.status_code == 200
-    data = resp.get_json()
-    assert isinstance(data, (dict, list))
 
 def test_dashboard_flaring_summary_endpoint(auth_client):
     resp = auth_client.get("/api/dashboard/flaring-summary?year=2025")

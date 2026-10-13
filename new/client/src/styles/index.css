@@ -8,6 +8,8 @@
 @import "./base.css";
 @import "./legacy.css";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @source "../ui";
 @source "../app";
 @source "../filters";

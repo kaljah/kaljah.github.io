@@ -189,7 +189,6 @@ revision lands.
 | OGMP 2.0 | `OgmpSurvey`, `LevelUpgradeLog` |
 | Targets / mitigation | `SbtiTarget`, `Goal`, `BaseYear`, `BaseYearRecalculation`, `MitigationRecord`, `MitigationProject` |
 | Reporting | `ReportingMetadata`, `CbamProductExport` |
-| CAP / regulatory | `CapEmission`, `CapRegulatoryLimit` |
 | Audit / system | `ActivityLog`, `Notification`, `SystemSetting` |
 
 Key facts: emission amounts (`co2e_total`, `co2e_location_based`, `co2e_market_based`, ...) are
@@ -216,7 +215,6 @@ them in application code.
 | `notifications_bp` | `/api/notifications` | polling notifications |
 | `audit_bp` | `/api/audit` | audit trail + chain verification |
 | `qaqc_bp` | `/api/qaqc` | QA/QC diagnostics |
-| `cap_bp` | `/api/cap` | CAP / regulatory limits |
 | `equity_bp` | `/api/equity` | equity shares / JV partners |
 
 Swagger UI is registered at `/api/docs` **only** when not in production (or `ENABLE_PUBLIC_SWAGGER=true`).

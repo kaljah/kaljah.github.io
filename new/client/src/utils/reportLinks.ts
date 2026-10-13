@@ -7,6 +7,7 @@ export interface RecordsLinkOptions {
   month?: string | number | null;
   scope?: "1" | "2" | "3" | null;
   process?: string | null;
+  search?: string | null;
 }
 
 export const recordsLink = (o: RecordsLinkOptions): string => {
@@ -20,6 +21,7 @@ export const recordsLink = (o: RecordsLinkOptions): string => {
   add("month", o.month);
   add("scope", o.scope);
   add("process", o.process);
+  add("search", o.search);
   const q = p.toString();
   return q ? `/reports?${q}` : "/reports";
 };

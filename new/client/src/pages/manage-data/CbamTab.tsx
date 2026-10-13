@@ -78,6 +78,30 @@ export interface CbamTabProps {
   setEditingCbamId: (id: string | number | null) => void;
 }
 
+export const CN_OPTIONS = [
+  { code: "2804 10 00", label: "2804 10 00 - Clean & Low-Carbon Hydrogen", name: "Clean & Low-Carbon Hydrogen", isComplex: false },
+  { code: "2814 10 00", label: "2814 10 00 - Anhydrous Ammonia", name: "Anhydrous Ammonia", isComplex: false },
+  { code: "2808 00 00", label: "2808 00 00 - Nitric Acid", name: "Nitric Acid (Concentrated)", isComplex: true, precName: "Anhydrous Ammonia", precCn: "2814 10 00", precRatio: "0.290" },
+  { code: "3102 10 00", label: "3102 10 00 - Urea (Fertilizer)", name: "Technical Grade Urea", isComplex: true, precName: "Anhydrous Ammonia", precCn: "2814 10 00", precRatio: "0.567" },
+  { code: "3102 80 00", label: "3102 80 00 - Mixtures of Urea & Ammonium Nitrate (UAN)", name: "Liquid Nitrogen Fertilizers (UAN 32%)", isComplex: true, precName: "Anhydrous Ammonia", precCn: "2814 10 00", precRatio: "0.450" },
+  { code: "2709 00 00", label: "2709 00 00 - Crude Petroleum Oil", name: "Crude Petroleum Oil", isComplex: false },
+  { code: "2711 11 00", label: "2711 11 00 - Liquefied Natural Gas (LNG)", name: "Liquefied Natural Gas (LNG)", isComplex: false },
+  { code: "2711 21 00", label: "2711 21 00 - Pipeline Natural Gas", name: "Pipeline Natural Gas", isComplex: false },
+  { code: "2710 12 11", label: "2710 12 11 - Light Naphtha & Refining Cuts", name: "Light Naphtha & Refining Cuts", isComplex: false },
+  { code: "2710 19 43", label: "2710 19 43 - Heavy Gas Oil / Diesel", name: "Heavy Gas Oil / Diesel", isComplex: false },
+  { code: "2902 20 00", label: "2902 20 00 - Pure Benzene (Petrochemical)", name: "Pure Benzene (Petrochemical)", isComplex: false },
+  { code: "2902 43 00", label: "2902 43 00 - Paraxylene (Petrochemical)", name: "Paraxylene (Petrochemical)", isComplex: false },
+];
+
+const STANDARD_PRODUCT_NAMES = new Set(CN_OPTIONS.map((c) => c.name));
+
+const formatMetric = (val: number | string | undefined | null, maxDecimals = 2): string => {
+  const num = parseFloat(String(val ?? 0));
+  if (!Number.isFinite(num)) return "—";
+  if (Math.abs(num) >= 1e9) return num.toExponential(3);
+  return num.toLocaleString(undefined, { maximumFractionDigits: maxDecimals });
+};
+
 const CbamTab: React.FC<CbamTabProps> = ({
   ACTIVITY_LABELS,
   ITEMS_PER_PAGE,
@@ -96,6 +120,7 @@ const CbamTab: React.FC<CbamTabProps> = ({
 }) => {
   const toast = useToast();
   const [exporting, setExporting] = useState<boolean>(false);
+  const [isCustomCn, setIsCustomCn] = useState<boolean>(false);
 
   const handleExportCbamExcel = async () => {
     try {
@@ -125,40 +150,77 @@ const CbamTab: React.FC<CbamTabProps> = ({
   };
 
   const handleCnCodeChange = (newCode: string) => {
-    let extra: Record<string, any> = { cn_code: newCode };
-    if (newCode === "3102 10 00") {
-      extra.is_complex_good = true;
-      extra.product_name = cbamForm.product_name || "Technical Grade Urea";
-      extra.precursor_name = "Anhydrous Ammonia";
-      extra.precursor_cn_code = "2814 10 00";
-      extra.precursor_ratio = "0.567";
-    } else if (newCode === "3102 80 00") {
-      extra.is_complex_good = true;
-      extra.product_name = cbamForm.product_name || "Liquid Nitrogen Fertilizers (UAN 32%)";
-      extra.precursor_name = "Anhydrous Ammonia";
-      extra.precursor_cn_code = "2814 10 00";
-      extra.precursor_ratio = "0.450";
-    } else if (newCode === "2808 00 00") {
-      extra.is_complex_good = true;
-      extra.product_name = cbamForm.product_name || "Nitric Acid (Concentrated)";
-      extra.precursor_name = "Anhydrous Ammonia";
-      extra.precursor_cn_code = "2814 10 00";
-      extra.precursor_ratio = "0.290";
-    } else if (newCode === "2804 10 00") {
-      extra.product_name = cbamForm.product_name || "Clean & Low-Carbon Hydrogen";
-    } else if (newCode === "2814 10 00") {
-      extra.product_name = cbamForm.product_name || "Anhydrous Ammonia";
+    if (newCode === "Custom") {
+      setIsCustomCn(true);
+      setCbamForm({ ...cbamForm, cn_code: "" });
+      return;
     }
+    setIsCustomCn(false);
+
+    const matched = CN_OPTIONS.find((c) => c.code === newCode);
+    const extra: Record<string, any> = { cn_code: newCode };
+
+    // Auto-update product name if blank or set to a standard preset
+    const currentName = cbamForm.product_name || "";
+    if (!currentName || STANDARD_PRODUCT_NAMES.has(currentName)) {
+      if (matched?.name) {
+        extra.product_name = matched.name;
+      }
+    }
+
+    if (matched?.isComplex) {
+      extra.is_complex_good = true;
+      extra.precursor_name = cbamForm.precursor_name || matched.precName || "Anhydrous Ammonia";
+      extra.precursor_cn_code = cbamForm.precursor_cn_code || matched.precCn || "2814 10 00";
+      extra.precursor_ratio = cbamForm.precursor_ratio || matched.precRatio || "0.567";
+      extra.precursor_see_dir = cbamForm.precursor_see_dir || "1.7850";
+      extra.precursor_see_indir = cbamForm.precursor_see_indir || "0.1420";
+    } else if (matched) {
+      extra.is_complex_good = false;
+    }
+
     setCbamForm({ ...cbamForm, ...extra });
+  };
+
+  const handlePrecursorToggle = (checked: boolean) => {
+    if (checked) {
+      setCbamForm({
+        ...cbamForm,
+        is_complex_good: true,
+        precursor_name: cbamForm.precursor_name || "Anhydrous Ammonia",
+        precursor_cn_code: cbamForm.precursor_cn_code || "2814 10 00",
+        precursor_ratio: cbamForm.precursor_ratio || "0.567",
+        precursor_see_dir: cbamForm.precursor_see_dir || "1.7850",
+        precursor_see_indir: cbamForm.precursor_see_indir || "0.1420",
+      });
+    } else {
+      setCbamForm({
+        ...cbamForm,
+        is_complex_good: false,
+      });
+    }
   };
 
   const rows = filteredCbam.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
-  // Computed helper for complex precursor contribution
+  // Precursor contribution
   const pRatio = parseFloat(String(cbamForm.precursor_ratio || 0));
   const pDir = parseFloat(String(cbamForm.precursor_see_dir || 0));
   const pIndir = parseFloat(String(cbamForm.precursor_see_indir || 0));
   const pContrib = cbamForm.is_complex_good ? pRatio * (pDir + pIndir) : 0;
+
+  // Live Summary metrics
+  const quantityVal = parseFloat(String(cbamForm.quantity_tonnes || 0));
+  const dirSeeVal = parseFloat(String(cbamForm.specific_embedded_direct || 0));
+  const indirSeeVal = parseFloat(String(cbamForm.specific_embedded_indirect || 0));
+  const totalSeeVal = dirSeeVal + indirSeeVal + pContrib;
+  const totalEmbeddedVal = quantityVal * totalSeeVal;
+  const carbonTaxVal = parseFloat(String(cbamForm.carbon_price_paid_eur || 0));
+
+  // Determine current CN code for selector (normalizing 6-digit legacy codes)
+  const rawCn = cbamForm.cn_code || "";
+  const currentCnCode = rawCn === "2709 00" ? "2709 00 00" : rawCn || "2804 10 00";
+  const isKnownCn = CN_OPTIONS.some((o) => o.code === currentCnCode);
 
   return (
     <TabCard
@@ -218,7 +280,16 @@ const CbamTab: React.FC<CbamTabProps> = ({
         <Field label={t("Facility / Production Site *")}>
           <NativeSelect
             value={cbamForm.facility_id || ""}
-            onChange={(e) => setCbamForm({ ...cbamForm, facility_id: e.target.value })}
+            onChange={(e) => {
+              const fid = e.target.value;
+              const fac = facilities.find((f) => String(f.id) === String(fid));
+              setCbamForm({
+                ...cbamForm,
+                facility_id: fid,
+                activity: fac?.activity || cbamForm.activity,
+                division: fac?.division || cbamForm.division,
+              });
+            }}
             className="component-select"
           >
             <option value="">{t("-- Select Facility --")}</option>
@@ -238,25 +309,32 @@ const CbamTab: React.FC<CbamTabProps> = ({
 
         <Field label={t("EU CN Code (Oil & Gas Scope) *")}>
           <NativeSelect
-            value={cbamForm.cn_code || "2804 10 00"}
+            value={isCustomCn ? "Custom" : currentCnCode}
             onChange={(e) => handleCnCodeChange(e.target.value)}
             className="component-select"
           >
-            <option value="2804 10 00">{t("2804 10 00 - Clean & Low-Carbon Hydrogen")}</option>
-            <option value="2814 10 00">{t("2814 10 00 - Anhydrous Ammonia")}</option>
-            <option value="2808 00 00">{t("2808 00 00 - Nitric Acid")}</option>
-            <option value="3102 10 00">{t("3102 10 00 - Urea (Fertilizer)")}</option>
-            <option value="3102 80 00">{t("3102 80 00 - Mixtures of Urea & Ammonium Nitrate (UAN)")}</option>
-            <option value="2709 00 00">{t("2709 00 00 - Crude Petroleum Oil")}</option>
-            <option value="2711 11 00">{t("2711 11 00 - Liquefied Natural Gas (LNG)")}</option>
-            <option value="2711 21 00">{t("2711 21 00 - Pipeline Natural Gas")}</option>
-            <option value="2710 12 11">{t("2710 12 11 - Light Naphtha & Refining Cuts")}</option>
-            <option value="2710 19 43">{t("2710 19 43 - Heavy Gas Oil / Diesel")}</option>
-            <option value="2902 20 00">{t("2902 20 00 - Pure Benzene (Petrochemical)")}</option>
-            <option value="2902 43 00">{t("2902 43 00 - Paraxylene (Petrochemical)")}</option>
+            {CN_OPTIONS.map((opt) => (
+              <option key={opt.code} value={opt.code}>
+                {t(opt.label)}
+              </option>
+            ))}
+            {!isKnownCn && currentCnCode && currentCnCode !== "Custom" && (
+              <option value={currentCnCode}>{currentCnCode} ({t("Custom / Other")})</option>
+            )}
             <option value="Custom">{t("Custom / Other CN Code")}</option>
           </NativeSelect>
         </Field>
+
+        {isCustomCn && (
+          <Field label={t("Enter Custom EU CN Code *")}>
+            <Input
+              type="text"
+              value={cbamForm.cn_code || ""}
+              onChange={(e) => setCbamForm({ ...cbamForm, cn_code: e.target.value })}
+              placeholder={t("e.g. 2710 19 99")}
+            />
+          </Field>
+        )}
 
         <Field label={t("Commercial Product Name *")}>
           <Input
@@ -292,7 +370,11 @@ const CbamTab: React.FC<CbamTabProps> = ({
         <Field label={t("Reporting Quarter (DG TAXUD)")}>
           <NativeSelect
             value={cbamForm.quarter || "Q1"}
-            onChange={(e) => setCbamForm({ ...cbamForm, quarter: e.target.value })}
+            onChange={(e) => {
+              const q = e.target.value;
+              const qMonthMap: Record<string, number> = { Q1: 1, Q2: 4, Q3: 7, Q4: 10 };
+              setCbamForm({ ...cbamForm, quarter: q, month: qMonthMap[q] || 1 });
+            }}
             className="component-select"
           >
             <option value="Q1">{t("Q1 (Jan 01 - Mar 31)")}</option>
@@ -351,10 +433,10 @@ const CbamTab: React.FC<CbamTabProps> = ({
       </FormGrid>
 
       {/* Carbon Capture & Geological Storage (CCS) Section */}
-      <div className="mt-6 rounded-lg border border-border bg-ink-50/50 p-4 dark:bg-ink-900/30">
-        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="size-5 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
+      <div className="mt-6 rounded-xl border border-emerald-200/80 bg-emerald-50/40 p-5 shadow-xs transition-colors">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2 border-b border-emerald-100 pb-3">
+          <div className="flex items-center gap-2.5">
+            <ShieldCheck className="size-5 text-emerald-600" aria-hidden="true" />
             <h4 className="text-sm font-semibold text-text">
               {t("Carbon Capture & Permanent Storage (CCS)")}
             </h4>
@@ -385,10 +467,10 @@ const CbamTab: React.FC<CbamTabProps> = ({
       </div>
 
       {/* Origin Carbon Price / Flaring Tax Section */}
-      <div className="mt-4 rounded-lg border border-border bg-ink-50/50 p-4 dark:bg-ink-900/30">
-        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <Coins className="size-5 text-amber-600 dark:text-amber-400" aria-hidden="true" />
+      <div className="mt-5 rounded-xl border border-amber-200/80 bg-amber-50/40 p-5 shadow-xs transition-colors">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2 border-b border-amber-100 pb-3">
+          <div className="flex items-center gap-2.5">
+            <Coins className="size-5 text-amber-600" aria-hidden="true" />
             <h4 className="text-sm font-semibold text-text">
               {t("Carbon Price & Flaring Fiscality Paid in Country of Origin")}
             </h4>
@@ -419,27 +501,27 @@ const CbamTab: React.FC<CbamTabProps> = ({
       </div>
 
       {/* Complex Downstream Goods Precursor Attribution Section */}
-      <div className="mt-4 rounded-lg border border-border bg-ink-50/50 p-4 dark:bg-ink-900/30">
-        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <Layers className="size-5 text-blue-600 dark:text-blue-400" aria-hidden="true" />
+      <div className="mt-5 rounded-xl border border-blue-200/80 bg-blue-50/40 p-5 shadow-xs transition-colors">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2 border-b border-blue-100 pb-3">
+          <div className="flex items-center gap-2.5">
+            <Layers className="size-5 text-blue-600" aria-hidden="true" />
             <h4 className="text-sm font-semibold text-text">
               {t("Complex Downstream Goods & Upstream Precursors (Ammonia / Urea / UAN)")}
             </h4>
           </div>
-          <label className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-text">
+          <label className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-text select-none">
             <input
               type="checkbox"
               checked={Boolean(cbamForm.is_complex_good)}
-              onChange={(e) => setCbamForm({ ...cbamForm, is_complex_good: e.target.checked })}
-              className="size-4 rounded border-border text-brand-600 focus:ring-brand-500"
+              onChange={(e) => handlePrecursorToggle(e.target.checked)}
+              className="size-4 rounded border-border text-brand-600 focus:ring-brand-500 cursor-pointer"
             />
             <span>{t("Declare Upstream Precursor Attribution")}</span>
           </label>
         </div>
 
         {cbamForm.is_complex_good && (
-          <div className="mt-3 space-y-4">
+          <div className="space-y-4 pt-1">
             <div className="grid gap-4 md:grid-cols-3">
               <Field label={t("Relevant Precursor Name")}>
                 <Input
@@ -463,11 +545,11 @@ const CbamTab: React.FC<CbamTabProps> = ({
                   step="0.001"
                   value={cbamForm.precursor_ratio || ""}
                   onChange={(e) => setCbamForm({ ...cbamForm, precursor_ratio: e.target.value })}
-                  placeholder="0.567 (Stoichiometric default)"
+                  placeholder="0.567"
                 />
               </Field>
             </div>
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-3 items-start">
               <Field label={t("Precursor Direct SEE (tCO₂e / t precursor)")}>
                 <Input
                   type="number"
@@ -486,23 +568,23 @@ const CbamTab: React.FC<CbamTabProps> = ({
                   placeholder="0.1420"
                 />
               </Field>
-              <div className="flex flex-col justify-end">
-                <div className="rounded-md border border-border bg-ink-100 p-2.5 text-xs text-text-secondary dark:bg-ink-800">
-                  <span className="font-semibold text-text">{t("Precursor Contribution:")} </span>
-                  <span className="font-mono font-bold text-brand-600 dark:text-brand-400">
+              <Field label={t("Precursor SEE Contribution (tCO₂e / t)")}>
+                <div className="flex min-h-[38px] items-center justify-between rounded-md border border-brand-200 bg-brand-50/90 px-3.5 py-1.5 shadow-xs">
+                  <span className="text-xs font-semibold text-brand-900">{t("Total Precursor SEE:")}</span>
+                  <span className="font-mono text-sm font-bold text-brand-700">
                     +{pContrib.toFixed(4)} tCO₂e / t
                   </span>
-                  <p className="mt-0.5 text-[11px] leading-tight">
-                    {t("Included in total specific embedded emissions.")}
-                  </p>
                 </div>
-              </div>
+              </Field>
             </div>
+            <p className="text-xs text-text-secondary mt-1">
+              {t("Stoichiometric precursor embedded emissions are automatically added to the product's total declaration.")}
+            </p>
           </div>
         )}
       </div>
 
-      <div className="mt-4">
+      <div className="mt-5">
         <Field label={t("Notes & Accredited Verification References")}>
           <Input
             type="text"
@@ -513,7 +595,55 @@ const CbamTab: React.FC<CbamTabProps> = ({
         </Field>
       </div>
 
-      <FormActions>
+      {/* Live Calculated Declaration Summary Strip */}
+      <div className="mt-6 rounded-xl border border-border bg-ink-50/80 p-4 shadow-xs">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex flex-wrap items-center gap-6">
+            <div>
+              <span className="block text-xs font-semibold uppercase tracking-wider text-text-secondary">
+                {t("Export Quantity")}
+              </span>
+              <span className="font-mono text-base font-bold text-text">
+                {quantityVal > 0 ? quantityVal.toLocaleString() : "0.00"} t
+              </span>
+            </div>
+            <div className="hidden h-8 w-px bg-border sm:block" />
+            <div>
+              <span className="block text-xs font-semibold uppercase tracking-wider text-text-secondary">
+                {t("Direct SEE")}
+              </span>
+              <span className="font-mono text-base font-bold text-text">
+                {dirSeeVal.toFixed(4)} <span className="text-xs font-normal text-text-secondary">tCO₂e/t</span>
+              </span>
+            </div>
+            <div className="hidden h-8 w-px bg-border sm:block" />
+            <div>
+              <span className="block text-xs font-semibold uppercase tracking-wider text-text-secondary">
+                {t("Total Specific SEE")}
+              </span>
+              <span className="font-mono text-base font-bold text-text">
+                {totalSeeVal.toFixed(4)} <span className="text-xs font-normal text-text-secondary">tCO₂e/t</span>
+              </span>
+            </div>
+            <div className="hidden h-8 w-px bg-border sm:block" />
+            <div>
+              <span className="block text-xs font-semibold uppercase tracking-wider text-text-secondary">
+                {t("Total Embedded Emissions")}
+              </span>
+              <span className="font-mono text-base font-extrabold text-brand-600">
+                {totalEmbeddedVal.toLocaleString(undefined, { maximumFractionDigits: 1 })} <span className="text-xs font-normal text-text-secondary">tCO₂e</span>
+              </span>
+            </div>
+          </div>
+          {carbonTaxVal > 0 && quantityVal > 0 && (
+            <Badge tone="warning" className="text-xs font-medium">
+              {t("Origin Tax Credit:")} €{(carbonTaxVal * quantityVal).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+            </Badge>
+          )}
+        </div>
+      </div>
+
+      <FormActions className="mt-6">
         <Button className="action-btn" onClick={handleSaveCbamExport}>
           {editingCbamId ? t("Update CBAM Record") : t("Save CBAM Record")}
         </Button>
@@ -522,6 +652,7 @@ const CbamTab: React.FC<CbamTabProps> = ({
             variant="secondary"
             onClick={() => {
               setEditingCbamId(null);
+              setIsCustomCn(false);
               setCbamForm({
                 id: null,
                 activity: "",
@@ -604,10 +735,11 @@ const CbamTab: React.FC<CbamTabProps> = ({
       >
         {rows.map((c) => {
           const fid = c.facility_id || c.facilityId;
-          const fac = facilities.find((f) => f.id === fid);
-          const fName = c.facility_name || c.facilityName || fac?.name || `Facility #${fid}`;
+          const fac = facilities.find((f) => String(f.id) === String(fid));
+          const fName = c.facility_name || c.facilityName || fac?.name || (fid ? `Facility #${fid}` : "—");
           const pName = c.product_name || c.productName || "Product";
-          const cnCode = c.cn_code || c.cnCode || "-";
+          const rawRowCn = c.cn_code || c.cnCode || "-";
+          const cnCode = rawRowCn === "2709 00" ? "2709 00 00" : rawRowCn;
           const dest = c.export_destination || c.exportDestination || "EU";
           const qTonnes = parseFloat(String(c.quantity_tonnes ?? c.quantityTonnes ?? 0));
           const direct = parseFloat(String(c.specific_embedded_direct ?? c.specificEmbeddedDirect ?? 0));
@@ -625,48 +757,50 @@ const CbamTab: React.FC<CbamTabProps> = ({
 
           return (
             <Tr key={c.id}>
-              <Td>
+              <Td className="max-w-[180px] truncate" title={fName}>
                 <strong className="font-semibold text-text">{fName}</strong>
               </Td>
-              <Td className="font-medium text-text">{pName}</Td>
-              <Td>
+              <Td className="max-w-[200px] truncate font-medium text-text" title={pName}>
+                {pName}
+              </Td>
+              <Td className="whitespace-nowrap">
                 <code className="rounded bg-ink-100 px-1.5 py-0.5 font-mono text-xs text-text">
                   {cnCode}
                 </code>
               </Td>
-              <Td className="whitespace-nowrap text-text-secondary">
+              <Td className="whitespace-nowrap text-text-secondary text-xs">
                 {c.year} - {qtr} (M{c.month || "1"})
               </Td>
-              <Td>
+              <Td className="whitespace-nowrap">
                 <Badge tone="brand" className="text-xs">
                   {dest}
                 </Badge>
               </Td>
-              <Td className="text-right font-semibold text-text">
-                {qTonnes.toLocaleString()}
+              <Td className="text-right font-semibold text-text whitespace-nowrap">
+                {formatMetric(qTonnes)}
               </Td>
-              <Td className="text-right">
+              <Td className="text-right whitespace-nowrap">
                 {ccsCaptured > 0 ? (
                   <Badge tone="success" className="text-xs font-mono">
-                    -{ccsCaptured.toLocaleString()} t
+                    -{formatMetric(ccsCaptured)} t
                   </Badge>
                 ) : (
                   <span className="text-text-secondary">—</span>
                 )}
               </Td>
-              <Td className="text-right font-mono text-text-secondary">
+              <Td className="text-right font-mono text-xs text-text-secondary whitespace-nowrap">
                 {direct.toFixed(4)}
               </Td>
-              <Td className="text-right font-mono text-text-secondary">
+              <Td className="text-right font-mono text-xs text-text-secondary whitespace-nowrap">
                 {indirect.toFixed(4)}
               </Td>
-              <Td className="text-right font-mono text-text-secondary">
+              <Td className="text-right font-mono text-xs text-text-secondary whitespace-nowrap">
                 {precContrib > 0 ? `+${precContrib.toFixed(4)}` : "—"}
               </Td>
-              <Td className="text-right font-bold text-link font-mono">
-                {totalEmbedded.toLocaleString(undefined, { maximumFractionDigits: 1 })}
+              <Td className="text-right font-bold text-brand-700 font-mono whitespace-nowrap">
+                {formatMetric(totalEmbedded, 1)}
               </Td>
-              <Td className="text-right font-mono">
+              <Td className="text-right font-mono whitespace-nowrap">
                 {originTax > 0 ? (
                   <Badge tone="warning" className="text-xs">
                     €{originTax.toFixed(2)}
@@ -675,13 +809,14 @@ const CbamTab: React.FC<CbamTabProps> = ({
                   <span className="text-text-secondary">—</span>
                 )}
               </Td>
-              <Td className="text-center">
+              <Td className="text-center whitespace-nowrap">
                 <div className="flex items-center justify-center gap-2">
                   <Button
                     size="sm"
                     variant="secondary"
                     onClick={() => {
                       setEditingCbamId(c.id);
+                      setIsCustomCn(!CN_OPTIONS.some((o) => o.code === cnCode));
                       setCbamForm({
                         id: c.id,
                         activity: fac?.activity || "",

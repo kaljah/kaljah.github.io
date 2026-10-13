@@ -46,10 +46,11 @@ def test_a01_password_reset_requires_higher_role(app, ctx, actor, target, expect
 
 # ── A-02: account creation follows the same separation of duties as role changes ─
 @pytest.mark.parametrize("actor,role,expected", [
-    ("it_admin", "superuser", 403),
-    ("it_admin", "admin", 403),
+    ("it_admin", "superuser", 201),
+    ("it_admin", "admin", 201),
     ("it_admin", "user", 201),
     ("it_manager", "superuser", 201),
+    ("it", "admin", 403),
 ])
 def test_a02_register_separation_of_duties(app, ctx, actor, role, expected):
     with app.test_client() as c:

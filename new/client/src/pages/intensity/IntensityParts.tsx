@@ -173,7 +173,7 @@ export const Heatmap: React.FC<HeatmapProps> = ({ years, rows, empty = t("No reg
   return (
     <div className="heatmap-container mt-6 overflow-x-auto rounded-md border border-border bg-ink-50 p-4">
       <div className="heatmap-header mb-4 grid gap-3 px-3" style={cols}>
-        <div className="text-left text-sm font-bold uppercase tracking-wide text-text-secondary">{t("FACILITY / REGION")}</div>
+        <div className="text-left text-sm font-bold uppercase tracking-wide text-text-secondary">{t("REGION")}</div>
         {years.map((y) => (
           <div key={y} className="text-center text-sm font-bold uppercase tracking-wide text-text-secondary">
             {y}

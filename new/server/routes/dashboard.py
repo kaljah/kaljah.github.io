@@ -12,6 +12,7 @@ from models import (
     BaseYearRecalculation,
     ProductionData,
     OgmpSurvey,
+    EmissionSource,
 )
 from extensions import db
 from utils import get_current_user, get_allowed_facility_ids, log_activity_and_notify
@@ -1154,6 +1155,100 @@ def get_report_exclusions():
             for e in exclusions
         ]
     )
+
+
+@dashboard_bp.route("/equipment-emissions", methods=["GET"])
+@login_required
+def get_equipment_emissions():
+    """Returns top equipment emissions breakdown for a given process/source category."""
+    from services.dashboard_filters import apply_scope, apply_year, source_category, statuses
+
+    user = get_current_user()
+    if is_it_role(user):
+        return jsonify({"error": "Forbidden: IT personnel cannot access operational dashboard data"}), 403
+
+    allowed_fids = get_allowed_facility_ids(user)
+    source_cat = str(request.args.get("source") or request.args.get("process") or "").strip().lower()
+    year = request.args.get("year")
+    fac_id = request.args.get("facilityId") or request.args.get("facility_id")
+    activity = request.args.get("activity")
+    division = request.args.get("division")
+    segment = request.args.get("segment")
+    include_pending = request.args.get("includePending") == "true"
+    limit = int(request.args.get("limit", 8))
+
+    scope = dict(allowed_fids=allowed_fids, facility_id=fac_id, activity=activity, division=division, segment=segment)
+    query = Emission.query.filter(Emission.status.in_(statuses(include_pending)))
+    query = apply_year(apply_scope(query, Emission, **scope), Emission, year)
+
+    emissions = query.all()
+
+    eq_tags = set(e.equipment_id.strip() for e in emissions if e.equipment_id and str(e.equipment_id).strip())
+    source_names = {}
+    if eq_tags:
+        sources = EmissionSource.query.filter(EmissionSource.equipment_id.in_(list(eq_tags))).all()
+        for s in sources:
+            if s.equipment_id and s.name:
+                source_names[s.equipment_id.strip()] = s.name
+
+    total_source_emissions = 0.0
+    unassigned_emissions = 0.0
+    unassigned_count = 0
+    equipment_totals = {}
+
+    for e in emissions:
+        cat = source_category(e.process_type)
+        cat_norm = "vented" if source_cat == "venting" else ("fugitive" if source_cat in ("fugitive", "equipment leaks") else source_cat)
+
+        if source_cat and source_cat != "all":
+            if cat != cat_norm and str(e.process_type or "").strip().lower() != source_cat:
+                continue
+
+        val = float(e.co2e_total or 0.0)
+        total_source_emissions += val
+
+        eq_id = (e.equipment_id or "").strip()
+        if not eq_id or eq_id.lower() in ("unassigned", "n/a", "none", "-"):
+            unassigned_emissions += val
+            unassigned_count += 1
+        else:
+            if eq_id not in equipment_totals:
+                equipment_totals[eq_id] = {
+                    "equipment_id": eq_id,
+                    "name": source_names.get(eq_id) or eq_id,
+                    "facility_id": e.facility_id,
+                    "emissions": 0.0,
+                    "ch4_emissions": 0.0,
+                    "record_count": 0,
+                    "process_type": e.process_type,
+                }
+            equipment_totals[eq_id]["emissions"] += val
+            equipment_totals[eq_id]["ch4_emissions"] += float(e.ch4_emissions or 0.0)
+            equipment_totals[eq_id]["record_count"] += 1
+
+    sorted_eq = sorted(equipment_totals.values(), key=lambda x: x["emissions"], reverse=True)
+    top_items = sorted_eq[:limit]
+    other_items = sorted_eq[limit:]
+
+    other_emissions = sum(x["emissions"] for x in other_items)
+    other_count = len(other_items)
+
+    for item in top_items:
+        item["share_pct"] = round((item["emissions"] / total_source_emissions * 100), 2) if total_source_emissions > 0 else 0.0
+        item["emissions"] = round(item["emissions"], 2)
+
+    return jsonify({
+        "source": source_cat,
+        "total_emissions": round(total_source_emissions, 2),
+        "total_equipment_count": len(sorted_eq),
+        "equipment": top_items,
+        "other_emissions": round(other_emissions, 2),
+        "other_count": other_count,
+        "other_share_pct": round((other_emissions / total_source_emissions * 100), 2) if total_source_emissions > 0 else 0.0,
+        "unassigned_emissions": round(unassigned_emissions, 2),
+        "unassigned_count": unassigned_count,
+        "unassigned_share_pct": round((unassigned_emissions / total_source_emissions * 100), 2) if total_source_emissions > 0 else 0.0,
+    })
 
 
 # Route modules split out of this file; imported last because they use the helpers above.

@@ -510,10 +510,10 @@ const UserManagement: React.FC = () => {
     if (user?.role === "it") return;
     if (
       userToEdit &&
-      ["it_admin", "it"].includes(user?.role || "") &&
-      ["admin", "superuser", "it_manager"].includes(userToEdit.role || "")
+      user?.role === "it_admin" &&
+      userToEdit.role === "it_manager"
     ) {
-      toast.error(t("Protected account: Client IT staff cannot modify Compliance Admin or Superuser accounts."));
+      toast.error(t("Protected account: IT Administrator cannot modify platform operator accounts."));
       return;
     }
     if (userToEdit) {
@@ -690,10 +690,18 @@ const UserManagement: React.FC = () => {
     const found = typeof target === "object" && target !== null ? target : users.find((u) => u.id === target);
     if (
       found &&
-      ["it_admin", "it"].includes(user?.role || "") &&
+      user?.role === "it" &&
       ["admin", "superuser", "it_manager"].includes(found.role || "")
     ) {
-      toast.error(t("Protected account: Client IT staff cannot delete Compliance Admin or Superuser accounts."));
+      toast.error(t("Protected account: IT support cannot delete Compliance Admin or Superuser accounts."));
+      return;
+    }
+    if (
+      found &&
+      user?.role === "it_admin" &&
+      found.role === "it_manager"
+    ) {
+      toast.error(t("Protected account: IT Administrator cannot delete platform operator accounts."));
       return;
     }
     // Accepts either user object or user id
@@ -728,10 +736,17 @@ const UserManagement: React.FC = () => {
 
   const handleOpenResetPassword = (u: ManagedUser) => {
     if (
-      ["it_admin", "it"].includes(user?.role || "") &&
+      user?.role === "it" &&
       ["admin", "superuser", "it_manager"].includes(u.role || "")
     ) {
-      toast.error(t("Protected account: Client IT staff cannot reset credentials for Compliance Admin or Superuser accounts."));
+      toast.error(t("Protected account: IT support cannot reset credentials for Compliance Admin or Superuser accounts."));
+      return;
+    }
+    if (
+      user?.role === "it_admin" &&
+      u.role === "it_manager"
+    ) {
+      toast.error(t("Protected account: IT Administrator cannot reset credentials for platform operator accounts."));
       return;
     }
     setResetTarget({

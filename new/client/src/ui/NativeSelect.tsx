@@ -2,7 +2,9 @@ import React from "react";
 import { useFieldContext } from "./Field";
 import { cn } from "./cn";
 
-export interface NativeSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {}
+export interface NativeSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
+  wrapperClassName?: string;
+}
 
 /**
  * Native select with Field wiring. Props pass straight through, so existing call sites keep their
@@ -13,23 +15,31 @@ export const NativeSelect = React.forwardRef<HTMLSelectElement, NativeSelectProp
   props,
   ref,
 ) {
+  const { wrapperClassName, className, ...rest } = props;
   const field = useFieldContext();
+  const isAuto = className?.includes("w-auto") || className?.includes("w-fit");
+
   return (
-    <div className="relative w-full">
+    <div
+      className={cn(
+        "relative",
+        wrapperClassName ? wrapperClassName : isAuto ? "w-auto shrink-0 inline-block" : "w-full"
+      )}
+    >
       <select
         ref={ref}
         id={props.id ?? field?.id}
         aria-invalid={props["aria-invalid"] ?? (field?.invalid || undefined)}
         aria-describedby={props["aria-describedby"] ?? field?.describedBy}
         required={props.required ?? field?.required}
-        {...props}
+        {...rest}
         style={{ backgroundImage: "none", ...props.style }}
         className={cn(
-          "w-full appearance-none bg-[var(--bg-card,#ffffff)] text-[var(--text-primary,#0f172a)] border border-[var(--border-color,#e2e8f0)] rounded-[var(--radius-md,8px)] px-3.5 py-2.5 text-sm font-normal min-h-[42px] transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-[var(--accent-color,#0284c7)] focus:border-transparent cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 pr-10",
-          props.className
+          "w-full appearance-none bg-[var(--bg-card,#ffffff)] text-[var(--text-primary,#0f172a)] border border-[var(--border-color,#e2e8f0)] rounded-[var(--radius-md,8px)] px-3.5 py-2 text-sm font-normal min-h-[36px] transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-[var(--accent-color,#0284c7)] focus:border-transparent cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 pr-9",
+          className
         )}
       />
-      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-[var(--text-secondary,#64748b)]">
+      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5 text-[var(--text-secondary,#64748b)]">
         <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
         </svg>

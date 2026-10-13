@@ -28,7 +28,6 @@ import MitigationTab, { type MitigationRecord } from './manage-data/MitigationTa
 import CbamTab, { type CbamRecord } from './manage-data/CbamTab';
 import OgmpTab, { type OgmpSurveyRecord } from './manage-data/OgmpTab';
 import LdarTab from './manage-data/LdarTab';
-import CapTab from './manage-data/CapTab';
 import './ManageData.css';
 import '../pages/Dashboard.css';
 import { t } from "../i18n";
@@ -595,8 +594,8 @@ const ManageDataInner: React.FC = () => {
         year: new Date().getFullYear(),
         month: 1,
         quarter: "Q1",
-        product_name: "Crude Petroleum Oil",
-        cn_code: "2709 00",
+        product_name: "Clean & Low-Carbon Hydrogen",
+        cn_code: "2804 10 00",
         quantity_tonnes: "",
         export_destination: "EU",
         specific_embedded_direct: "",
@@ -1058,17 +1057,20 @@ const ManageDataInner: React.FC = () => {
         if (!cbamForm.facility_id || !cbamForm.product_name || !cbamForm.quantity_tonnes) {
             return toast.error(t("Facility, Product Name, and Export Quantity are required"));
         }
+        if (parseFloat(cbamForm.quantity_tonnes) <= 0) {
+            return toast.error(t("Export quantity must be greater than zero"));
+        }
         try {
             await api.post('/data/cbam-exports', {
                 id: editingCbamId || undefined,
                 facility_id: parseInt(cbamForm.facility_id, 10),
-                year: parseInt(cbamForm.year, 10),
-                month: parseInt(cbamForm.month, 10),
+                year: parseInt(cbamForm.year || new Date().getFullYear(), 10),
+                month: parseInt(cbamForm.month || 1, 10),
                 quarter: cbamForm.quarter || "Q1",
                 product_name: cbamForm.product_name,
-                cn_code: cbamForm.cn_code,
+                cn_code: cbamForm.cn_code || "2804 10 00",
                 quantity_tonnes: parseFloat(cbamForm.quantity_tonnes),
-                export_destination: cbamForm.export_destination,
+                export_destination: cbamForm.export_destination || "EU",
                 specific_embedded_direct: cbamForm.specific_embedded_direct ? parseFloat(cbamForm.specific_embedded_direct) : 0.0,
                 specific_embedded_indirect: cbamForm.specific_embedded_indirect ? parseFloat(cbamForm.specific_embedded_indirect) : 0.0,
                 captured_co2_tonnes: cbamForm.captured_co2_tonnes ? parseFloat(cbamForm.captured_co2_tonnes) : 0.0,
@@ -1093,23 +1095,23 @@ const ManageDataInner: React.FC = () => {
                 year: new Date().getFullYear(),
                 month: 1,
                 quarter: "Q1",
-                product_name: 'Crude Petroleum Oil',
-                cn_code: '2709 00',
-                quantity_tonnes: '',
-                export_destination: 'EU',
-                specific_embedded_direct: '',
-                specific_embedded_indirect: '',
-                captured_co2_tonnes: '',
-                ccs_certificate_id: '',
-                carbon_price_paid_eur: '',
-                carbon_price_legal_ref: '',
+                product_name: "Clean & Low-Carbon Hydrogen",
+                cn_code: "2804 10 00",
+                quantity_tonnes: "",
+                export_destination: "EU",
+                specific_embedded_direct: "",
+                specific_embedded_indirect: "",
+                captured_co2_tonnes: "",
+                ccs_certificate_id: "",
+                carbon_price_paid_eur: "",
+                carbon_price_legal_ref: "",
                 is_complex_good: false,
-                precursor_name: '',
-                precursor_cn_code: '',
-                precursor_ratio: '',
-                precursor_see_dir: '',
-                precursor_see_indir: '',
-                notes: ''
+                precursor_name: "",
+                precursor_cn_code: "",
+                precursor_ratio: "",
+                precursor_see_dir: "",
+                precursor_see_indir: "",
+                notes: ""
             });
             fetchCbamExports();
         } catch (err: any) {
@@ -1436,12 +1438,18 @@ const ManageDataInner: React.FC = () => {
     const getFilteredCbam = () => cbamExports.filter(item => {
         if (!item) return false;
         const sTerm = (searchTerm || '').toLowerCase();
-        const fac = facilities.find(f => f && f.id === item.facility_id);
+        const fac = facilities.find(f => f && String(f.id) === String(item.facility_id));
         if (filterActivity && (!fac || !matchesActivity(fac.activity, filterActivity))) return false;
         if (filterDivision && (!fac || fac.division !== filterDivision)) return false;
         if (filterRegion && filterRegion !== 'all' && !matchesRegionCheck(fac, filterRegion)) return false;
         if (filterYear && filterYear !== 'all' && item.year?.toString() !== filterYear.toString()) return false;
-        if (searchTerm && !String(item.product_name || '').toLowerCase().includes(sTerm)) return false;
+        if (searchTerm) {
+            const matchesProd = String(item.product_name || '').toLowerCase().includes(sTerm);
+            const matchesCn = String(item.cn_code || '').toLowerCase().includes(sTerm);
+            const matchesFac = String(fac?.name || '').toLowerCase().includes(sTerm);
+            const matchesDest = String(item.export_destination || '').toLowerCase().includes(sTerm);
+            if (!matchesProd && !matchesCn && !matchesFac && !matchesDest) return false;
+        }
         return true;
     });
 
@@ -1467,7 +1475,6 @@ const ManageDataInner: React.FC = () => {
         { id: 'ogmp', label: t("OGMP 2.0 Surveys"), show: true },
         { id: 'ldar', label: t("LDAR & Fugitives"), show: true },
         { id: 'cbam', label: t("CBAM Products"), show: true },
-        { id: 'cap', label: t("Criteria Air Pollutants (CAP)"), show: true },
     ].filter((n) => n.show);
     const hasFilters = filterActivity || filterDivision || filterRegion || filterYear;
     const filterSelect = "h-9 w-auto min-w-[140px] shrink-0 rounded-md border border-border bg-surface px-2.5 text-sm text-text transition-colors hover:border-ink-300 focus:border-brand-500";
@@ -1506,7 +1513,7 @@ const ManageDataInner: React.FC = () => {
                     <section className="min-w-0 flex-1">
                         {activeTab !== 'pending' && (
                             <div className="mb-6 flex flex-wrap items-center gap-3">
-                                <div className="relative min-w-[250px] flex-1">
+                                <div className="relative min-w-[240px] flex-1">
                                     <Search className="pointer-events-none absolute left-3 top-1/2 size-[18px] -translate-y-1/2 text-text-secondary" aria-hidden="true" />
                                     <Input
                                         type="text"
@@ -1514,7 +1521,7 @@ const ManageDataInner: React.FC = () => {
                                         placeholder={activeTab === 'goals' ? t("Search goals or base years...") : t("Search records...")}
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
-                                        className="pl-10"
+                                        className="pl-10 h-9"
                                     />
                                 </div>
 
@@ -1543,7 +1550,12 @@ const ManageDataInner: React.FC = () => {
                                         )}
 
                                         {hasFilters && (
-                                            <Button variant="ghost" onClick={() => { setFilterActivity(''); setFilterDivision(''); setFilterRegion(''); setFilterYear(''); }}>
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => { setFilterActivity(''); setFilterDivision(''); setFilterRegion(''); setFilterYear(''); }}
+                                                className="h-9 px-3 text-xs font-semibold text-text-secondary hover:text-text"
+                                            >
                                                 {t("Clear Filters")}
                                             </Button>
                                         )}
@@ -1770,12 +1782,10 @@ const ManageDataInner: React.FC = () => {
                             <LdarTab
                                 facilities={facilities}
                                 isPrivileged={isPrivileged}
-                            />
-                        )}
-
-                        {activeTab === 'cap' && (
-                            <CapTab
-                                facilities={facilities}
+                                searchTerm={searchTerm}
+                                filterActivity={filterActivity}
+                                filterDivision={filterDivision}
+                                filterRegion={filterRegion}
                             />
                         )}
                     </section>

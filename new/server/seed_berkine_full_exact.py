@@ -17,8 +17,6 @@ from models import (
     FlaringDetail,
     JvPartner,
     FacilityEquityShare,
-    CapEmission,
-    CapRegulatoryLimit,
 )
 
 def seed_full_exact_berkine():
@@ -409,101 +407,6 @@ def seed_full_exact_berkine():
                     division=fac.division,
                     region=fac.region,
                 ))
-
-        db.session.commit()
-
-        # 6. Seed CAP Emissions (Exact from Pages 38, 39, 40, 41)
-        CapEmission.query.filter(CapEmission.facility_id.in_([hbns.id, elm.id])).delete(synchronize_session=False)
-
-        # HBNS CAP (p. 38, 39)
-        hbns_cap_raw = [
-            # 2021
-            (2021, "Stationary Combustion", 1574.03, 468.64, 8.29, 36.86, 24.47),
-            (2021, "Flare", 141.17, 581.29, 0.88, 249.12, 528.06),
-            (2021, "Equipment Leaks", 0.0, 0.0, 0.0, 0.0, 364.02),
-            (2021, "O&G Venting", 0.0, 0.0, 0.0, 0.0, 293.41),
-            # 2022
-            (2022, "Stationary Combustion", 1480.29, 467.74, 4.09, 33.48, 20.13),
-            (2022, "Flare", 121.02, 498.32, 0.76, 213.57, 455.40),
-            (2022, "Equipment Leaks", 0.0, 0.0, 0.0, 0.0, 802.10),
-            (2022, "O&G Venting", 0.0, 0.0, 0.0, 0.0, 318.65),
-            # 2023
-            (2023, "Stationary Combustion", 1550.16, 484.61, 8.67, 39.12, 26.51),
-            (2023, "Flare", 87.44, 360.03, 0.56, 154.30, 303.44),
-            (2023, "Equipment Leaks", 0.0, 0.0, 0.0, 0.0, 717.06),
-            (2023, "O&G Venting", 0.0, 0.0, 0.0, 0.0, 285.27),
-            # 2024
-            (2024, "Stationary Combustion", 1373.13, 381.16, 6.78, 28.50, 18.25),
-            (2024, "Flare", 101.32, 417.18, 0.64, 178.78, 56.40),
-            (2024, "Equipment Leaks", 0.0, 0.0, 0.0, 0.0, 36.80),
-            (2024, "O&G Venting", 0.0, 0.0, 0.0, 0.0, 294.67),
-            # 2025
-            (2025, "Stationary Combustion", 1340.53, 363.13, 5.87, 26.01, 15.85),
-            (2025, "Flare", 74.18, 305.44, 0.47, 130.90, 19.63),
-            (2025, "Equipment Leaks", 0.0, 0.0, 0.0, 0.0, 86.87),
-            (2025, "O&G Venting", 0.0, 0.0, 0.0, 0.0, 284.03),
-        ]
-
-        # ELM CAP (p. 40, 41)
-        elm_cap_raw = [
-            # 2021
-            (2021, "Stationary Combustion", 1306.03, 396.94, 10.18, 34.29, 24.63),
-            (2021, "Flare", 138.70, 571.12, 0.93, 244.76, 364.07),
-            (2021, "Equipment Leaks", 0.0, 0.0, 0.0, 0.0, 373.48),
-            (2021, "O&G Venting", 0.0, 0.0, 0.0, 0.0, 53.46),
-            # 2022
-            (2022, "Stationary Combustion", 1424.84, 418.04, 10.69, 35.35, 25.02),
-            (2022, "Flare", 168.75, 694.87, 1.18, 297.80, 292.32),
-            (2022, "Equipment Leaks", 0.0, 0.0, 0.0, 0.0, 307.23),
-            (2022, "O&G Venting", 0.0, 0.0, 0.0, 0.0, 47.71),
-            # 2023
-            (2023, "Stationary Combustion", 1727.01, 510.26, 11.62, 41.71, 28.69),
-            (2023, "Flare", 96.74, 398.33, 0.69, 170.71, 134.90),
-            (2023, "Equipment Leaks", 0.0, 0.0, 0.0, 0.0, 491.14),
-            (2023, "O&G Venting", 0.0, 0.0, 0.0, 0.0, 82.13),
-            # 2024
-            (2024, "Stationary Combustion", 1675.25, 495.80, 12.80, 41.80, 29.50),
-            (2024, "Flare", 82.40, 339.30, 0.58, 145.40, 18.20),
-            (2024, "Equipment Leaks", 0.0, 0.0, 0.0, 0.0, 17.50),
-            (2024, "O&G Venting", 0.0, 0.0, 0.0, 0.0, 71.20),
-            # 2025
-            (2025, "Stationary Combustion", 1669.62, 500.29, 13.43, 43.39, 31.28),
-            (2025, "Flare", 91.16, 375.36, 0.65, 160.87, 11.11),
-            (2025, "Equipment Leaks", 0.0, 0.0, 0.0, 0.0, 19.03),
-            (2025, "O&G Venting", 0.0, 0.0, 0.0, 0.0, 69.03),
-        ]
-
-        pollutants = ["NO2", "CO", "SO2", "PM", "VOC"]
-        limits = {"NO2": 200.0, "CO": 150.0, "SO2": 800.0, "PM": 30.0, "VOC": 150.0}
-
-        for fac, records in [(hbns, hbns_cap_raw), (elm, elm_cap_raw)]:
-            for (yr, mod, no2, co, so2, pm, voc) in records:
-                vals = [no2, co, so2, pm, voc]
-                for p_name, t_val in zip(pollutants, vals):
-                    # Compute realistic stack concentration in mg/Nm3
-                    # (Derived from flue gas flow rate matching Decree 06-138 limits)
-                    if p_name == "NO2":
-                        conc = 788.0 if fac.code == "HBNS" else 980.77
-                    elif p_name == "CO":
-                        conc = 105.0 if fac.code == "HBNS" else 118.4
-                    elif p_name == "SO2":
-                        conc = 12.0 if fac.code == "HBNS" else 15.3
-                    elif p_name == "PM":
-                        conc = 8.5 if fac.code == "HBNS" else 11.2
-                    else:
-                        conc = 42.0 if fac.code == "HBNS" else 51.6
-
-                    db.session.add(CapEmission(
-                        facility_id=fac.id,
-                        year=yr,
-                        month=12,
-                        pollutant=p_name,
-                        source_module=mod,
-                        mass_tonnes=round(t_val, 2),
-                        concentration_mg_nm3=conc,
-                        calc_method="CEMS / Periodic Flue Gas Analysis" if mod == "Stationary Combustion" else "API Calculation",
-                        status="Verified",
-                    ))
 
         db.session.commit()
         print("Successfully seeded all 2021-2025 Groupement Berkine records into app.db!")

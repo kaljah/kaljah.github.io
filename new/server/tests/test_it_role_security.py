@@ -337,47 +337,63 @@ def test_it_user_cannot_reset_admin_or_superuser_password(client, test_accounts)
     assert res_super2.status_code == 403
 
 
-def test_it_admin_cannot_create_admin_or_superuser(client, test_accounts):
-    """IT Admin cannot create business admin or superuser accounts (403 Forbidden)."""
+def test_it_admin_can_create_admin_and_superuser(client, test_accounts):
+    """IT Admin can create business admin and superuser accounts (201 Created)."""
     with client.session_transaction() as sess:
         sess["user_id"] = test_accounts["it_admin_id"]
 
     res_admin = client.post(
         "/api/auth/register",
         json={
-            "fullName": "Disallowed Admin",
-            "email": "disallowed_admin@domain.com",
+            "fullName": "Allowed Admin",
+            "email": "allowed_admin@domain.com",
             "orgName": "Energy Corp",
             "sector": "Energy",
             "password": "Password123!@#",
             "role": "admin",
         },
     )
-    assert res_admin.status_code == 403
+    assert res_admin.status_code == 201
 
     res_super = client.post(
         "/api/auth/register",
         json={
-            "fullName": "Disallowed Superuser",
-            "email": "disallowed_super@domain.com",
+            "fullName": "Allowed Superuser",
+            "email": "allowed_super@domain.com",
             "orgName": "Energy Corp",
             "sector": "Energy",
             "password": "Password123!@#",
             "role": "superuser",
+            "location": "Hassi Messaoud",
         },
     )
-    assert res_super.status_code == 403
+    assert res_super.status_code == 201
+
+    # Verify IT Support role is still blocked
+    with client.session_transaction() as sess:
+        sess["user_id"] = test_accounts["it_id"]
+
+    res_it_block = client.post(
+        "/api/auth/register",
+        json={
+            "fullName": "Blocked Admin",
+            "email": "blocked_admin@domain.com",
+            "orgName": "Energy Corp",
+            "sector": "Energy",
+            "password": "Password123!@#",
+            "role": "admin",
+        },
+    )
+    assert res_it_block.status_code == 403
 
 
-def test_it_user_cannot_access_equity_or_cap_data(client, test_accounts):
-    """IT roles cannot access Joint Venture partners, equity shares, CAP emissions or CAP compliance."""
+def test_it_user_cannot_access_equity_data(client, test_accounts):
+    """IT roles cannot access Joint Venture partners or equity shares."""
     with client.session_transaction() as sess:
         sess["user_id"] = test_accounts["it_id"]
 
     assert client.get("/api/equity/partners").status_code == 403
     assert client.get("/api/equity/shares").status_code == 403
-    assert client.get("/api/cap/emissions").status_code == 403
-    assert client.get("/api/cap/compliance").status_code == 403
 
 
 def test_non_numeric_facility_id_returns_422(client, test_accounts):
@@ -388,6 +404,7 @@ def test_non_numeric_facility_id_returns_422(client, test_accounts):
 
     with client.session_transaction() as sess:
         sess["user_id"] = admin_id
+        sess["sv"] = int(admin_u.session_version or 0)
 
     # Scope 2
     res_s2 = client.post(
@@ -402,10 +419,6 @@ def test_non_numeric_facility_id_returns_422(client, test_accounts):
         json={"facility_id": "bad_fid", "year": 2024, "category": "Category 1", "amount": 100, "emission_factor": 1.5},
     )
     assert res_s3.status_code == 422
-
-    # CAP
-    res_cap = client.get("/api/cap/emissions?facility_id=non_int")
-    assert res_cap.status_code == 422
 
 
 
@@ -423,20 +436,20 @@ def _protected_account(email, role):
 
 
 def test_it_admin_cannot_promote_to_it_manager(client, test_accounts):
-    """it_admin and it_manager share a rank; promoting to it_manager would let IT create admins."""
+    """it_admin cannot promote to vendor role it_manager, but can assign admin and superuser."""
     with app.app_context():
         db.session.get(User, test_accounts["target_id"]).role = "user"
         db.session.commit()
     with client.session_transaction() as sess:
         sess["user_id"] = test_accounts["it_admin_id"]
-    for role in ("it_manager", " IT_MANAGER ", "admin", "superuser"):
+    for role in ("it_manager", " IT_MANAGER "):
         res = client.put(f"/api/auth/users/{test_accounts['target_id']}", json={"role": role})
         assert res.status_code == 403, role
-    with app.app_context():
-        assert db.session.get(User, test_accounts["target_id"]).role == "user"
+    res_adm = client.put(f"/api/auth/users/{test_accounts['target_id']}", json={"role": "admin"})
+    assert res_adm.status_code == 200
 
 
-@pytest.mark.parametrize("role", ["admin", "superuser", "it_manager"])
+@pytest.mark.parametrize("role", ["it_manager"])
 def test_it_admin_cannot_modify_or_delete_protected_accounts(client, test_accounts, role):
     with app.app_context():
         target_id = _protected_account(f"it_protected_{role}@domain.com", role)
@@ -449,6 +462,18 @@ def test_it_admin_cannot_modify_or_delete_protected_accounts(client, test_accoun
     with app.app_context():
         user = db.session.get(User, target_id)
         assert (user.role, user.status, user.location) == (role, "active", "Hassi Messaoud")
+
+
+@pytest.mark.parametrize("role", ["admin", "superuser", "it_manager"])
+def test_it_support_cannot_modify_or_delete_protected_accounts(client, test_accounts, role):
+    with app.app_context():
+        target_id = _protected_account(f"it_supp_protected_{role}@domain.com", role)
+    with client.session_transaction() as sess:
+        sess["user_id"] = test_accounts["it_id"]
+    for payload in ({"status": "inactive"}, {"location": "Oran"}, {"email": "taken@domain.com"},
+                    {"fullName": "Renamed"}, {"role": "user"}):
+        assert client.put(f"/api/auth/users/{target_id}", json=payload).status_code == 403, payload
+    assert client.delete(f"/api/auth/users/{target_id}").status_code == 403
 
 
 def test_it_admin_account_edits_appear_in_it_audit_view(client, test_accounts):

@@ -5,7 +5,7 @@ registered on the same ``emissions_bp`` blueprint, so URLs and endpoint names ar
 """
 from extensions import db
 from flask import jsonify, request
-from models import Emission, Scope2Emission, Scope3Emission, CapEmission
+from models import Emission, Scope2Emission, Scope3Emission
 from routes.auth import login_required
 from utils import get_allowed_facility_ids, get_current_user, internal_error
 from . import emissions_bp
@@ -14,7 +14,7 @@ from . import emissions_bp
 @emissions_bp.route("/approve/<int:emission_id>", methods=["POST"])
 @login_required
 def approve_emission(emission_id):
-    """Approve a single record awaiting review (Scope 1, 2, 3 or CAP) — RC-2 state machine."""
+    """Approve a single record awaiting review (Scope 1, 2 or 3) — RC-2 state machine."""
     from services.maker_checker import DecisionError, decide_single
 
     req_data = request.get_json(silent=True) or {}
@@ -218,28 +218,6 @@ def get_pending_emissions():
             for e in q.all()
         ]
 
-    def q_cap():
-        q = CapEmission.query.filter(CapEmission.status.in_(pending_statuses))
-        if allowed_fids is not None:
-            q = q.filter(CapEmission.facility_id.in_(allowed_fids))
-        q = q.order_by(CapEmission.created_at.desc())
-        if limit_val:
-            q = q.limit(limit_val)
-        return [
-            {
-                "id": e.id, "scope": "cap", "facility_id": e.facility_id,
-                "facility_name": e.facility.name if getattr(e, "facility", None) else None,
-                "year": e.year, "month": e.month, "source_module": e.source_module,
-                "pollutant": e.pollutant, "mass_tonnes": e.mass_tonnes,
-                "concentration_mg_nm3": e.concentration_mg_nm3,
-                "status": e.status,
-                "notes": getattr(e, "notes", None),
-                "created_by": getattr(e, "created_by", None),
-                "created_at": e.created_at.isoformat() if e.created_at else None,
-            }
-            for e in q.all()
-        ]
-
     def count_pending(model):
         q = model.query.filter(model.status.in_(pending_statuses))
         if allowed_fids is not None:
@@ -250,7 +228,6 @@ def get_pending_emissions():
         "1": count_pending(Emission),
         "2": count_pending(Scope2Emission),
         "3": count_pending(Scope3Emission),
-        "cap": count_pending(CapEmission),
     }
 
     def sum_pending(model, col):
@@ -265,7 +242,6 @@ def get_pending_emissions():
         "scope1": q_scope1(),
         "scope2": q_scope2(),
         "scope3": q_scope3(),
-        "cap": q_cap(),
         # the lists hold at most `limit` rows per scope; the counts are the whole queue
         "pending_counts": counts,
         "pending_co2e": pending_co2e,

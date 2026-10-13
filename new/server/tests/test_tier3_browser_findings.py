@@ -243,17 +243,3 @@ def test_tier2b_component_count_uses_table_7_12(app):
     assert em["ch4"] == pytest.approx(100 * 2.94e-6 * 8760 * 70 / 81.6, rel=1e-6)
     fails(app, "component type", "fugitive", source="custom", top={"amount": 100, "unit": "components"},
           fugitive_tier="tier2", fugitive_method="component", amount=100)
-
-
-def test_cap_compliance_not_measured_is_not_compliant(app, client, api):
-    from models import CapEmission
-    from extensions import db
-
-    with app.app_context():
-        db.session.add(CapEmission(facility_id=api.id, year=2032, source_module="Flare", pollutant="NO2",
-                                   mass_tonnes=5.0, status="Verified"))
-        db.session.commit()
-    rows = client.get(f"/api/cap/compliance?year=2032&facility_id={api.id}").get_json()
-    no2 = [p for r in rows for p in r["pollutants"] if p["pollutant"] == "NO2"][0]
-    assert no2["status"] == "NOT MEASURED" and no2["is_compliant"] is None and no2["total_tonnes"] == 5.0
-    assert rows[0]["overall_status"] == "NOT ASSESSED"

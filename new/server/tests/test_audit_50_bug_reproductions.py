@@ -258,21 +258,6 @@ class TestAuditBugReproduction:
         res = client.put(f"/api/facilities/{fac_id}", json=payload)
         assert res.status_code == 400
 
-    def test_cap_emission_handles_invalid_id(self, client):
-        """Verifies that create_or_update_cap_emission rejects non-integer id gracefully."""
-        client.post("/api/auth/login", json={"email": "audit_repro_admin@example.com", "password": "AuditPassword123!"})
-        payload = {
-            "id": "not_an_id",
-            "facility_id": 1,
-            "year": 2026,
-            "month": 1,
-            "source_module": "Combustion",
-            "pollutant": "NO2",
-            "mass_tonnes": 5.0
-        }
-        res = client.post("/api/cap/emissions", json=payload)
-        assert res.status_code == 400
-
     def test_base_year_recalculation_validates_emissions(self, client):
         """Verifies that create_base_year_recalculation validates numeric emissions inputs."""
         client.post("/api/auth/login", json={"email": "audit_repro_admin@example.com", "password": "AuditPassword123!"})

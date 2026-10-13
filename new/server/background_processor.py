@@ -1668,7 +1668,7 @@ def _process_row_scope2(
         source_type = "indirect_steam"
     elif raw_source in ["cogen_allocation", "cogen", "chp", "cogeneration"]:
         source_type = "cogen_allocation"
-    elif raw_source in ["cooling", "purchased_cooling", "district_cooling", "chilled_water"]:
+    elif raw_source in ["cooling", "purchased_cooling", "chilled_water"]:
         source_type = "cooling"
     elif raw_source in ["electricity", "purchased_electricity", "power", "grid_electricity", "grid", "market",
                         "location", "location_based", "market_based"]:

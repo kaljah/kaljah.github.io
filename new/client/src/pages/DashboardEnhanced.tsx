@@ -6,6 +6,7 @@ import DetailedBreakdownSection from "./dashboard/DetailedBreakdownSection";
 import { useAnalyticsFilter } from "../filters/useAnalyticsFilter";
 import { SegmentedControl, Badge, cn } from "../ui";
 import { PendingBanner, TrendCard, DonutCard, SbtiCard, CategoricalCard, BridgeCard } from "./dashboard/DashboardCards";
+import SourceEquipmentCard from "./dashboard/SourceEquipmentCard";
 import { useAuth } from "../context/AuthContext";
 import api from "../api";
 import { useToast } from "../components/Toast";
@@ -389,10 +390,10 @@ const DashboardEnhanced: React.FC = () => {
       };
 
       const yearlyTrend: Record<string | number, Record<string, any>> = {};
-      const facilityNames: Record<string | number, string> = {};
+      const regionNames: Record<string | number, string> = {};
       if (isCompareMode) {
         facilities.forEach((f) => {
-          facilityNames[f.id] = f.name;
+          regionNames[f.id] = f.region || f.name;
         });
       }
 
@@ -426,7 +427,7 @@ const DashboardEnhanced: React.FC = () => {
         }
 
         if (isCompareMode && fid !== "total") {
-          const name = facilityNames[fid] || `Facility ${fid}`;
+          const name = regionNames[fid] || `Region ${fid}`;
           yearlyTrend[year][name] = Number(
             ((yearlyTrend[year][name] || 0) + total).toFixed(2),
           );
@@ -916,7 +917,7 @@ const DashboardEnhanced: React.FC = () => {
     return <LoadingSpinner message={tr("Loading Dashboard Data...")} fullScreen />;
   }
 
-  // every facility of any year when comparing, otherwise the headline series that have data
+  // every region of any year when comparing, otherwise the headline series that have data
   const trendLines = isCompareMode
     ? [...new Set(trendData.flatMap((p) => Object.keys(p)))]
         .filter((k) => k !== "year" && k !== "trajectory" && k !== "forecast")
@@ -1003,7 +1004,16 @@ const DashboardEnhanced: React.FC = () => {
           <TrendCard data={trendData} lines={trendLines} compare={isCompareMode} onCompare={() => setIsCompareMode(!isCompareMode)} />
           <div className="flex min-w-0 flex-col gap-6">
             <DonutCard title={tr("Emissions by Activity")} data={activityChartData} noun={tr("activity")} />
-            <DonutCard title={tr("Emissions by Source")} data={sourceChartData} noun={tr("source")} />
+            <SourceEquipmentCard
+              title={tr("Emissions by Source")}
+              data={sourceChartData}
+              year={currentYear}
+              facilityId={currentRegion}
+              activity={currentActivity}
+              division={currentDivision}
+              segment={currentSegment}
+              includePending={includePending}
+            />
           </div>
         </div>
 

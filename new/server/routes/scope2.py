@@ -376,8 +376,8 @@ def create_scope2_emission():
 
         co2e_market = (electricity_kwh * market_ef) / 1000.0
         has_market_instrument = bool(market_instrument_type) or (raw_mkt_ef not in (None, ""))
-        co2e = co2e_market if has_market_instrument else co2e_location
-        emission_factor = market_ef if has_market_instrument else location_ef
+        co2e = co2e_location
+        emission_factor = location_ef
 
     elif source_type == "indirect_steam":
         try:
@@ -675,7 +675,7 @@ def update_scope2_emission(emission_id):
                 m_ef = 0.0
             emission.co2e_market_based = round((emission.electricity_kwh * m_ef) / 1000.0, 4)
             has_market_instrument = bool(emission.market_instrument_type) or (emission.market_emission_factor is not None)
-            emission.co2e = emission.co2e_market_based if has_market_instrument else emission.co2e_location_based
+            emission.co2e = emission.co2e_location_based
         elif st in ["steam", "indirect_steam"] or "steam" in st:
             emission.co2e, emission.heat_mmbtu = _recalc_indirect_steam(
                 emission, data, factor, old_heat, old_co2e, old_ef, old_tons)

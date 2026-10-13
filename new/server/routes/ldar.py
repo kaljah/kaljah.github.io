@@ -6,10 +6,17 @@ along with Component Inventory management (BUG-0030 / BUG-ARCH-002).
 import datetime
 from flask import jsonify, request
 from extensions import db
-from models import ComponentInventory, FugitiveSurvey, Facility, User
+from models import ComponentInventory, FugitiveSurvey, Facility, User, Notification
 from routes.auth import login_required
 from utils import get_allowed_facility_ids, get_current_user, is_it_role, log_activity_and_notify
 from . import ldar_bp
+
+
+def is_broken_status(status: str) -> bool:
+    """Return True if status indicates a broken, damaged, or leaking component."""
+    if not status:
+        return False
+    return str(status).strip().lower() in ("broken", "leaking", "damaged", "faulty", "needs repair")
 
 
 def _serialize_component(comp):
@@ -161,6 +168,25 @@ def create_component():
 
     try:
         db.session.add(comp)
+        db.session.flush()
+
+        if is_broken_status(comp.status):
+            Notification.create(
+                title="LDAR Alert: Broken Component Added",
+                message=f"A broken component ({comp.component_type} - {comp.equipment_type}) was recorded at {facility.name} (Status: {comp.status}).",
+                type="warning",
+                user_id=None,
+                metadata={
+                    "facility_id": comp.facility_id,
+                    "facility_name": facility.name,
+                    "component_id": comp.id,
+                    "component_type": comp.component_type,
+                    "equipment_type": comp.equipment_type,
+                    "status": comp.status,
+                    "created_by": user.fullName or user.email,
+                },
+            )
+
         db.session.commit()
         log_activity_and_notify(
             action="CREATE",
@@ -214,6 +240,7 @@ def update_component(comp_id):
         return jsonify({"error": "Unauthorized"}), 403
 
     data = request.get_json() or {}
+    old_status = comp.status
     for key in ("equipment_type", "component_type", "service_type", "methodology", "factor_id",
                 "factor_value", "factor_unit", "api_reference", "status", "description"):
         if key in data:
@@ -237,6 +264,24 @@ def update_component(comp_id):
             return jsonify({"error": "operating_hours must be a number"}), 400
 
     comp.updated_at = datetime.datetime.now(datetime.timezone.utc)
+    if is_broken_status(comp.status) and not is_broken_status(old_status):
+        facility_name = comp.facility.name if comp.facility else f"Facility #{comp.facility_id}"
+        Notification.create(
+            title="LDAR Alert: Component Marked Broken",
+            message=f"Component #{comp.id} ({comp.component_type} - {comp.equipment_type}) was marked as '{comp.status}' at {facility_name}.",
+            type="warning",
+            user_id=None,
+            metadata={
+                "facility_id": comp.facility_id,
+                "facility_name": facility_name,
+                "component_id": comp.id,
+                "component_type": comp.component_type,
+                "equipment_type": comp.equipment_type,
+                "status": comp.status,
+                "updated_by": user.fullName or user.email,
+            },
+        )
+
     try:
         db.session.commit()
     except Exception as e:
@@ -270,6 +315,150 @@ def delete_component(comp_id):
         return jsonify({"error": f"Failed to delete component: {e}"}), 500
 
     return jsonify({"message": "Component deleted successfully"})
+
+
+@ldar_bp.route("/components/bulk-update", methods=["POST"])
+@login_required
+def bulk_update_components():
+    """Bulk update status, operating hours, or other attributes of components."""
+    user = get_current_user()
+    if is_it_role(user) or user.role == "auditor":
+        return jsonify({"error": "Forbidden: Auditor and IT roles cannot modify LDAR components"}), 403
+
+    data = request.get_json() or {}
+    ids = data.get("ids", [])
+    if not isinstance(ids, list) or not ids:
+        return jsonify({"error": "ids list is required and cannot be empty"}), 400
+
+    try:
+        int_ids = [int(i) for i in ids]
+    except (ValueError, TypeError):
+        return jsonify({"error": "Invalid component IDs"}), 400
+
+    allowed_fids = get_allowed_facility_ids(user)
+    query = ComponentInventory.query.filter(ComponentInventory.id.in_(int_ids))
+    if allowed_fids is not None:
+        query = query.filter(ComponentInventory.facility_id.in_(allowed_fids))
+
+    components = query.all()
+    if not components:
+        return jsonify({"error": "No matching components found or unauthorized"}), 404
+
+    new_status = data.get("status")
+    new_service_type = data.get("service_type")
+    new_equipment_type = data.get("equipment_type")
+    new_operating_hours = data.get("operating_hours")
+
+    if new_operating_hours is not None:
+        try:
+            new_operating_hours = float(new_operating_hours)
+            if new_operating_hours < 0 or new_operating_hours > 8760.0:
+                return jsonify({"error": "operating_hours must be between 0 and 8760"}), 400
+        except (ValueError, TypeError):
+            return jsonify({"error": "operating_hours must be a valid number"}), 400
+
+    broken_components_marked = []
+    now = datetime.datetime.now(datetime.timezone.utc)
+
+    for comp in components:
+        old_status = comp.status
+        if new_status is not None and str(new_status).strip():
+            comp.status = str(new_status).strip()
+            if is_broken_status(comp.status) and not is_broken_status(old_status):
+                broken_components_marked.append(comp)
+        if new_service_type is not None and str(new_service_type).strip():
+            comp.service_type = str(new_service_type).strip()
+        if new_equipment_type is not None and str(new_equipment_type).strip():
+            comp.equipment_type = str(new_equipment_type).strip()
+        if new_operating_hours is not None:
+            comp.operating_hours = new_operating_hours
+        comp.updated_at = now
+
+    if broken_components_marked:
+        Notification.create(
+            title="LDAR Alert: Components Marked Broken",
+            message=f"{len(broken_components_marked)} component(s) were marked as broken/leaking via bulk update.",
+            type="warning",
+            user_id=None,
+            metadata={
+                "component_ids": [c.id for c in broken_components_marked],
+                "status": new_status,
+                "updated_by": user.fullName or user.email,
+            },
+        )
+
+    try:
+        db.session.commit()
+        log_activity_and_notify(
+            action="BULK_UPDATE",
+            record_id=str(len(components)),
+            user=user,
+            request=request,
+            entity="ComponentInventory",
+            entity_id="bulk",
+            details=f"Bulk updated {len(components)} LDAR component(s)",
+        )
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to bulk update components: {e}"}), 500
+
+    return jsonify({
+        "message": f"Successfully updated {len(components)} component(s)",
+        "updated_count": len(components),
+        "updated_ids": [c.id for c in components],
+    }), 200
+
+
+@ldar_bp.route("/components/bulk-delete", methods=["POST"])
+@login_required
+def bulk_delete_components():
+    """Bulk delete component inventory records."""
+    user = get_current_user()
+    if user.role not in ["admin", "superuser"]:
+        return jsonify({"error": "Forbidden: Only Administrators can delete LDAR components"}), 403
+
+    data = request.get_json() or {}
+    ids = data.get("ids", [])
+    if not isinstance(ids, list) or not ids:
+        return jsonify({"error": "ids list is required and cannot be empty"}), 400
+
+    try:
+        int_ids = [int(i) for i in ids]
+    except (ValueError, TypeError):
+        return jsonify({"error": "Invalid component IDs"}), 400
+
+    allowed_fids = get_allowed_facility_ids(user)
+    query = ComponentInventory.query.filter(ComponentInventory.id.in_(int_ids))
+    if allowed_fids is not None:
+        query = query.filter(ComponentInventory.facility_id.in_(allowed_fids))
+
+    components = query.all()
+    if not components:
+        return jsonify({"error": "No matching components found or unauthorized"}), 404
+
+    deleted_count = len(components)
+    for comp in components:
+        db.session.delete(comp)
+
+    try:
+        db.session.commit()
+        log_activity_and_notify(
+            action="BULK_DELETE",
+            record_id=str(deleted_count),
+            user=user,
+            request=request,
+            entity="ComponentInventory",
+            entity_id="bulk",
+            details=f"Bulk deleted {deleted_count} LDAR component(s)",
+        )
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to bulk delete components: {e}"}), 500
+
+    return jsonify({
+        "message": f"Successfully deleted {deleted_count} component(s)",
+        "deleted_count": deleted_count,
+    }), 200
 
 
 # ==============================================================================
@@ -356,6 +545,25 @@ def create_survey():
 
     try:
         db.session.add(survey)
+        db.session.flush()
+
+        if survey.leak_status == "Leaking":
+            Notification.create(
+                title="LDAR Alert: Leak Detected in Survey",
+                message=f"A leak was detected during {survey.survey_method} survey at {facility.name} (Screening: {survey.screening_value_ppm or 0} ppm).",
+                type="warning",
+                user_id=None,
+                metadata={
+                    "facility_id": survey.facility_id,
+                    "facility_name": facility.name,
+                    "survey_id": survey.id,
+                    "component_inventory_id": survey.component_inventory_id,
+                    "screening_value_ppm": survey.screening_value_ppm,
+                    "survey_method": survey.survey_method,
+                    "surveyor_name": survey.surveyor_name,
+                },
+            )
+
         db.session.commit()
         log_activity_and_notify(
             action="CREATE",
@@ -409,6 +617,7 @@ def update_survey(survey_id):
         return jsonify({"error": "Unauthorized"}), 403
 
     data = request.get_json() or {}
+    old_leak_status = survey.leak_status
     updatable_fields = [
         "survey_method", "survey_date", "detection_threshold_ppm",
         "screening_value_ppm", "leak_status", "measured_emission_rate",
@@ -424,6 +633,22 @@ def update_survey(survey_id):
                 except (ValueError, TypeError):
                     val = survey.leaking_hours
             setattr(survey, f, val)
+
+    if survey.leak_status == "Leaking" and old_leak_status != "Leaking":
+        fac_name = survey.facility.name if survey.facility else f"Facility #{survey.facility_id}"
+        Notification.create(
+            title="LDAR Alert: Survey Marked Leaking",
+            message=f"Survey #{survey.id} was marked as Leaking at {fac_name}.",
+            type="warning",
+            user_id=None,
+            metadata={
+                "facility_id": survey.facility_id,
+                "facility_name": fac_name,
+                "survey_id": survey.id,
+                "screening_value_ppm": survey.screening_value_ppm,
+                "updated_by": user.fullName or user.email,
+            },
+        )
 
     try:
         db.session.commit()
@@ -467,3 +692,143 @@ def delete_survey(survey_id):
         return jsonify({"error": f"Failed to delete survey: {e}"}), 500
 
     return jsonify({"message": "Survey deleted successfully"})
+
+
+@ldar_bp.route("/surveys/bulk-update", methods=["POST"])
+@login_required
+def bulk_update_surveys():
+    """Bulk update leak status, repair date, or notes on fugitive surveys."""
+    user = get_current_user()
+    if is_it_role(user) or user.role in ["auditor", "viewer"]:
+        return jsonify({"error": "Forbidden: Read-only and IT roles cannot modify LDAR surveys"}), 403
+
+    data = request.get_json() or {}
+    ids = data.get("ids", [])
+    if not isinstance(ids, list) or not ids:
+        return jsonify({"error": "ids list is required and cannot be empty"}), 400
+
+    try:
+        int_ids = [int(i) for i in ids]
+    except (ValueError, TypeError):
+        return jsonify({"error": "Invalid survey IDs"}), 400
+
+    allowed_fids = get_allowed_facility_ids(user)
+    query = FugitiveSurvey.query.filter(FugitiveSurvey.id.in_(int_ids))
+    if allowed_fids is not None:
+        query = query.filter(FugitiveSurvey.facility_id.in_(allowed_fids))
+
+    surveys = query.all()
+    if not surveys:
+        return jsonify({"error": "No matching surveys found or unauthorized"}), 404
+
+    new_leak_status = data.get("leak_status")
+    repair_date = data.get("repair_date")
+    notes = data.get("notes")
+    survey_method = data.get("survey_method")
+    post_repair_ppm = data.get("screening_value_ppm")
+
+    leaks_marked = []
+    for s in surveys:
+        old_leak_status = s.leak_status
+        if new_leak_status is not None and str(new_leak_status).strip():
+            s.leak_status = str(new_leak_status).strip()
+            if s.leak_status == "Leaking" and old_leak_status != "Leaking":
+                leaks_marked.append(s)
+        if repair_date is not None:
+            s.repair_date = str(repair_date).strip() if repair_date else None
+        if post_repair_ppm is not None:
+            try:
+                s.screening_value_ppm = float(post_repair_ppm)
+            except (ValueError, TypeError):
+                pass
+        if notes:
+            note_str = str(notes).strip()
+            if note_str:
+                s.notes = f"{s.notes} | {note_str}" if s.notes else note_str
+        if survey_method is not None and str(survey_method).strip():
+            s.survey_method = str(survey_method).strip()
+
+    if leaks_marked:
+        Notification.create(
+            title="LDAR Alert: Surveys Marked Leaking",
+            message=f"{len(leaks_marked)} survey(s) were updated to Leaking status.",
+            type="warning",
+            user_id=None,
+            metadata={
+                "survey_ids": [s.id for s in leaks_marked],
+                "updated_by": user.fullName or user.email,
+            },
+        )
+
+    try:
+        db.session.commit()
+        log_activity_and_notify(
+            action="BULK_UPDATE",
+            record_id=str(len(surveys)),
+            user=user,
+            request=request,
+            entity="FugitiveSurvey",
+            entity_id="bulk",
+            details=f"Bulk updated {len(surveys)} LDAR survey(s)",
+        )
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to bulk update surveys: {e}"}), 500
+
+    return jsonify({
+        "message": f"Successfully updated {len(surveys)} survey(s)",
+        "updated_count": len(surveys),
+        "updated_ids": [s.id for s in surveys],
+    }), 200
+
+
+@ldar_bp.route("/surveys/bulk-delete", methods=["POST"])
+@login_required
+def bulk_delete_surveys():
+    """Bulk delete fugitive survey records."""
+    user = get_current_user()
+    if user.role not in ["admin", "superuser"]:
+        return jsonify({"error": "Forbidden: Only Administrators can delete LDAR surveys"}), 403
+
+    data = request.get_json() or {}
+    ids = data.get("ids", [])
+    if not isinstance(ids, list) or not ids:
+        return jsonify({"error": "ids list is required and cannot be empty"}), 400
+
+    try:
+        int_ids = [int(i) for i in ids]
+    except (ValueError, TypeError):
+        return jsonify({"error": "Invalid survey IDs"}), 400
+
+    allowed_fids = get_allowed_facility_ids(user)
+    query = FugitiveSurvey.query.filter(FugitiveSurvey.id.in_(int_ids))
+    if allowed_fids is not None:
+        query = query.filter(FugitiveSurvey.facility_id.in_(allowed_fids))
+
+    surveys = query.all()
+    if not surveys:
+        return jsonify({"error": "No matching surveys found or unauthorized"}), 404
+
+    deleted_count = len(surveys)
+    for s in surveys:
+        db.session.delete(s)
+
+    try:
+        db.session.commit()
+        log_activity_and_notify(
+            action="BULK_DELETE",
+            record_id=str(deleted_count),
+            user=user,
+            request=request,
+            entity="FugitiveSurvey",
+            entity_id="bulk",
+            details=f"Bulk deleted {deleted_count} LDAR survey(s)",
+        )
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to bulk delete surveys: {e}"}), 500
+
+    return jsonify({
+        "message": f"Successfully deleted {deleted_count} survey(s)",
+        "deleted_count": deleted_count,
+    }), 200

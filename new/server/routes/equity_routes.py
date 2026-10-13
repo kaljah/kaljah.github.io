@@ -210,7 +210,8 @@ def save_equity_share():
     share.effective_end_date = end.isoformat() if end else None
     share.agreement_reference = data.get("agreement_reference")
 
-    from utils import log_activity_and_notify, clear_dashboard_cache
+    from utils import log_activity_and_notify
+    from routes.dashboard import clear_dashboard_cache
 
     log_activity_and_notify(action="UPDATE", record_id=f"equity-{facility_id}-{partner_id}", user=user, request=request,
                             entity="FacilityEquityShare", facility_id=facility_id,
@@ -234,7 +235,8 @@ def delete_equity_share(share_id):
     fac_id = share.facility_id
     partner_id = share.partner_id
     db.session.delete(share)
-    from utils import log_activity_and_notify, clear_dashboard_cache
+    from utils import log_activity_and_notify
+    from routes.dashboard import clear_dashboard_cache
     log_activity_and_notify(action="DELETE", record_id=f"equity-{fac_id}-{partner_id}-{share_id}", user=user, request=request,
                             entity="FacilityEquityShare", facility_id=fac_id,
                             details=f"Deleted equity share ID {share_id} for partner {partner_id}")

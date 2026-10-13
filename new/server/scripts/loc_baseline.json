@@ -38,7 +38,6 @@
   "routes/auth.py": 741,
   "routes/auth_settings.py": 340,
   "routes/auth_users.py": 266,
-  "routes/cap_routes.py": 303,
   "routes/custom_factors.py": 568,
   "routes/dashboard.py": 1188,
   "routes/dashboard_bridge.py": 100,

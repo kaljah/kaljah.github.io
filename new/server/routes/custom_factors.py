@@ -147,7 +147,9 @@ def _check_plausibility(data):
 def create_custom_factor():
     """Create a new custom emission factor (Super User / Admin only)"""
     user = db.session.get(User, session.get("user_id"))
-    data = request.get_json()
+    data = request.get_json() or {}
+    if "source" not in data:
+        data["source"] = "Site measurement / user defined"
     factor_name = _text(data.get("factor_name") or data.get("name") or data.get("fuel_name")) if data else ""
     if not factor_name:
         return jsonify({"error": "Factor name is required"}), 400

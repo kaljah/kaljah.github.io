@@ -15,7 +15,7 @@ import datetime
 from sqlalchemy import or_
 
 from extensions import db
-from models import CapEmission, Emission, Notification, Scope2Emission, Scope3Emission
+from models import Emission, Notification, Scope2Emission, Scope3Emission
 from utils import get_allowed_facility_ids, log_activity_and_notify, user_label
 
 REVIEWABLE_STATUSES = (
@@ -29,7 +29,6 @@ RECORD_TYPES = {
     "1": (Emission, "Scope 1"),
     "2": (Scope2Emission, "Scope 2"),
     "3": (Scope3Emission, "Scope 3"),
-    "cap": (CapEmission, "CAP"),
 }
 
 

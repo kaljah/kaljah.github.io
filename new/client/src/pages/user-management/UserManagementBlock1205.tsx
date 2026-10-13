@@ -57,23 +57,32 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
   ];
   const allPwdChecksPassed = pwdChecks.every((c) => c.ok);
 
-  const isClientIt = currentUserRole === "it_admin" || currentUserRole === "it";
-  const roleOptions: { value: string; label: string; disabled?: boolean }[] = isClientIt
-    ? [
-        { value: "user", label: t("Standard User") },
-        { value: "auditor", label: t("Assurance Auditor") },
-        { value: "it", label: t("IT Support") },
-        { value: "it_admin", label: t("IT Administrator") },
-      ]
-    : [
-        { value: "user", label: t("Standard User") },
-        { value: "auditor", label: t("Assurance Auditor") },
-        { value: "superuser", label: t("Super User") },
-        { value: "admin", label: t("Admin (All Data)") },
-        { value: "it", label: t("IT Support") },
-        { value: "it_admin", label: t("IT Administrator") },
-        { value: "it_manager", label: t("IT Manager") },
-      ];
+  const roleOptions: { value: string; label: string; disabled?: boolean }[] =
+    currentUserRole === "it"
+      ? [
+          { value: "user", label: t("Standard User") },
+          { value: "auditor", label: t("Assurance Auditor") },
+          { value: "it", label: t("IT Support") },
+          { value: "it_admin", label: t("IT Administrator") },
+        ]
+      : currentUserRole === "it_admin"
+      ? [
+          { value: "user", label: t("Standard User") },
+          { value: "auditor", label: t("Assurance Auditor") },
+          { value: "superuser", label: t("Super User") },
+          { value: "admin", label: t("Admin (All Data)") },
+          { value: "it", label: t("IT Support") },
+          { value: "it_admin", label: t("IT Administrator") },
+        ]
+      : [
+          { value: "user", label: t("Standard User") },
+          { value: "auditor", label: t("Assurance Auditor") },
+          { value: "superuser", label: t("Super User") },
+          { value: "admin", label: t("Admin (All Data)") },
+          { value: "it", label: t("IT Support") },
+          { value: "it_admin", label: t("IT Administrator") },
+          { value: "it_manager", label: t("IT Manager") },
+        ];
 
   if (editingUser && formData.role && !roleOptions.some((r) => r.value === formData.role)) {
     roleOptions.unshift({

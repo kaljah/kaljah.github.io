@@ -135,8 +135,6 @@ export async function generateModernPDF(api: any, filters: any): Promise<void> {
       profileImg,
       flaringRes,
       granularIntensitiesRes,
-      capComplianceRes,
-      capEmissionsRes,
       equityAllocRes,
       allProdRes,
     ] = await Promise.all([
@@ -188,22 +186,6 @@ export async function generateModernPDF(api: any, filters: any): Promise<void> {
         })
         .catch(() => ({ data: null })),
       api
-        .get("/cap/compliance", {
-          params: {
-            year: subFetchYear,
-            ...(targetFacilityId && { facility_id: targetFacilityId }),
-          },
-        })
-        .catch(() => ({ data: [] })),
-      api
-        .get("/cap/emissions", {
-          params: {
-            year: subFetchYear,
-            ...(targetFacilityId && { facility_id: targetFacilityId }),
-          },
-        })
-        .catch(() => ({ data: [] })),
-      api
         .get("/equity/allocation", {
           params: {
             year: subFetchYear,
@@ -216,8 +198,6 @@ export async function generateModernPDF(api: any, filters: any): Promise<void> {
 
     const flaringSummary = flaringRes?.data || null;
     const granularIntensities = granularIntensitiesRes?.data || null;
-    const capCompliance = Array.isArray(capComplianceRes?.data) ? capComplianceRes.data : [];
-    const capEmissions = Array.isArray(capEmissionsRes?.data) ? capEmissionsRes.data : [];
     const equityAllocations = Array.isArray(equityAllocRes?.data) ? equityAllocRes.data : [];
     // the production tables cover the facilities the report covers (they printed company-wide
     // production beside one facility's emissions)
@@ -1160,91 +1140,10 @@ Email: ${personResponsible.email || "N/A"}`;
 
     /**
      * =========================================================
-     * CHAPTER 7: CRITERIA AIR POLLUTANTS & DECREE 06-138
+     * CHAPTER 7: MULTI-METRIC INTENSITIES MATRIX
      * =========================================================
      */
-    curY = addSectionHeader(7, "CRITERIA AIR POLLUTANTS & DECREE 06-138", null, true);
-
-    curY = addTextBlock(
-      "Criteria Air Pollutants (CAP) are estimated under a dual methodology combining API Compendium 2021 Section 4/5 stoichiometric emission factors for mass emissions with isokinetic stack sampling in accordance with Algerian Executive Decree No. 06-138. Decree 06-138 establishes atmospheric emission limit values (ELVs) in mg/Nm3 for classified industrial facilities.",
-      curY
-    );
-    curY += 4;
-
-    // Chapter 7 is built from the site CAP records (verified only), never from sample numbers
-    const CAP_LABELS: Record<string, string> = {
-      NO2: "Nitrogen Oxides (NO2)", CO: "Carbon Monoxide (CO)", SO2: "Sulfur Dioxide (SO2)",
-      PM: "Particulate Matter (PM)", VOC: "Volatile Organic Compounds (VOC)",
-    };
-    const CAP_MODULES = [["Stationary Combustion", "combustion"], ["Flare", "flaring"], ["Equipment Leaks", "leaks"], ["O&G Venting", "venting"]];
-    const tfmt = (v: any) => (v ? Number(v).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "—");
-    const verifiedCap: any[] = (capEmissions as any[]).filter((r: any) => r.status === "Verified");
-    const capMassRows = Object.keys(CAP_LABELS).map((pol) => {
-      const recs = verifiedCap.filter((r: any) => r.pollutant === pol);
-      const byMod = CAP_MODULES.map(([mod]) => recs.filter((r: any) => r.source_module === mod).reduce((t: number, r: any) => t + (Number(r.mass_tonnes) || 0), 0));
-      const moduleSum = byMod.reduce((t: number, v: number) => t + v, 0);
-      // a record kept only as a "Total" counts in the total, never on top of module records
-      const totalOnly = recs.filter((r: any) => r.source_module === "Total").reduce((t: number, r: any) => t + (Number(r.mass_tonnes) || 0), 0);
-      return [CAP_LABELS[pol], ...byMod.map(tfmt), tfmt(moduleSum || totalOnly)];
-    });
-    const hasCapMass = verifiedCap.length > 0;
-    if (!hasCapMass) {
-      curY = addTextBlock("No verified criteria air pollutant records exist for this reporting year.", curY);
-      curY += 4;
-    }
-
-    autoTable(doc, {
-      startY: curY,
-      head: [["Pollutant", "Combustion (t)", "Flaring (t)", "Leaks (t)", "Venting (t)", "Total Mass (t)"]],
-      body: capMassRows,
-      ...cleanTableTheme,
-      styles: { fontSize: 8, cellPadding: 2 },
-      headStyles: { ...cleanTableTheme.headStyles, fontSize: 8.5 },
-      margin: { left: margin, right: margin },
-    });
-    curY = doc.lastAutoTable.finalY + 8;
-
-    curY = checkPageBreak(curY, 60);
-    doc.setFontSize(11);
-    doc.setTextColor(...THEME.accent);
-    doc.setFont("helvetica", "bold");
-    doc.text("Executive Decree 06-138 Compliance Scorecard", margin, curY);
-    curY += 5;
-
-    const capCompRows: any[] = [];
-    (capCompliance as any[]).forEach((fac: any) => {
-      (fac.pollutants || []).forEach((p: any) => {
-        capCompRows.push([
-          `${fac.facility_name} · ${CAP_LABELS[p.pollutant] || p.pollutant}`,
-          tfmt(p.total_tonnes),
-          p.measured_concentration_mg_nm3 ? Number(p.measured_concentration_mg_nm3).toFixed(2) : "not measured",
-          Number(p.statutory_limit_mg_nm3).toFixed(1),
-          p.status,
-        ]);
-      });
-    });
-    if (capCompRows.length === 0) {
-      capCompRows.push(["No facility in scope", "—", "—", "—", "NOT ASSESSED"]);
-    }
-
-    autoTable(doc, {
-      startY: curY,
-      head: [["Pollutant", "Annual Mass (t)", "Measured Conc. (mg/Nm3)", "Decree 06-138 Limit", "Compliance Verdict"]],
-      body: capCompRows,
-      ...cleanTableTheme,
-      styles: { fontSize: 8, cellPadding: 2 },
-      headStyles: { ...cleanTableTheme.headStyles, fontSize: 8.5 },
-      margin: { left: margin, right: margin },
-    });
-    curY = doc.lastAutoTable.finalY + 10;
-    drawFooter();
-
-    /**
-     * =========================================================
-     * CHAPTER 8: MULTI-METRIC INTENSITIES MATRIX
-     * =========================================================
-     */
-    curY = addSectionHeader(8, "MULTI-METRIC INTENSITIES MATRIX", null, true);
+    curY = addSectionHeader(7, "MULTI-METRIC INTENSITIES MATRIX", null, true);
 
     curY = addTextBlock(
       "Greenhouse gas and methane intensities provide normalized operational benchmarks. Carbon intensity is quantified across both Total Production (including reinjected gas) and Saleable Commercial Products. Methane intensity is evaluated per the Natural Gas Sustainability Initiative (NGSI) mass-balance protocol.",
@@ -1288,10 +1187,10 @@ Email: ${personResponsible.email || "N/A"}`;
 
     /**
      * =========================================================
-     * CHAPTER 9: JV PARTNER EQUITY SHARE ALLOCATIONS
+     * CHAPTER 8: JV PARTNER EQUITY SHARE ALLOCATIONS
      * =========================================================
      */
-    curY = addSectionHeader(9, "JV PARTNER EQUITY SHARE ALLOCATIONS", null, true);
+    curY = addSectionHeader(8, "JV PARTNER EQUITY SHARE ALLOCATIONS", null, true);
 
     curY = addTextBlock(
       "Under ISO 14064-1 equity share accounting and the Block 404a / Block 208 Association Contracts, operational GHG and methane emissions are allocated proportional to the participating interest of each joint venture partner.",
@@ -1356,10 +1255,10 @@ Email: ${personResponsible.email || "N/A"}`;
 
     /**
      * =========================================================
-     * CHAPTER 10: GHG REDUCTION INITIATIVES
+     * CHAPTER 9: GHG REDUCTION INITIATIVES
      * =========================================================
      */
-    curY = addSectionHeader(10, "GHG REDUCTION INITIATIVES", null, true);
+    curY = addSectionHeader(9, "GHG REDUCTION INITIATIVES", null, true);
 
     if (mitigationData.length > 0) {
       curY = addTextBlock(
@@ -1394,10 +1293,10 @@ Email: ${personResponsible.email || "N/A"}`;
 
     /**
      * =========================================================
-     * CHAPTER 11: QUALITY ASSURANCE & QUALITY CONTROL (QA/QC)
+     * CHAPTER 10: QUALITY ASSURANCE & QUALITY CONTROL (QA/QC)
      * =========================================================
      */
-    curY = addSectionHeader(11, "QUALITY ASSURANCE & QUALITY CONTROL", null, true);
+    curY = addSectionHeader(10, "QUALITY ASSURANCE & QUALITY CONTROL", null, true);
 
     curY = addTextBlock(
       "To ensure the integrity of this inventory, a comprehensive Quality Assurance (QA) and Quality Control (QC) process is implemented in accordance with ISO 14064-1.",
@@ -1427,10 +1326,10 @@ Email: ${personResponsible.email || "N/A"}`;
 
     /**
      * =========================================================
-     * CHAPTER 12: REGULATORY FRAMEWORK & REFERENCES
+     * CHAPTER 11: REGULATORY FRAMEWORK & REFERENCES
      * =========================================================
      */
-    curY = addSectionHeader(12, "REGULATORY FRAMEWORK & REFERENCES", null, true);
+    curY = addSectionHeader(11, "REGULATORY FRAMEWORK & REFERENCES", null, true);
 
     curY = addTextBlock(
       "This greenhouse gas inventory was compiled in compliance with Algerian national environmental legislation and international climate reporting standards. Primary statutory references include:",
@@ -1439,7 +1338,6 @@ Email: ${personResponsible.email || "N/A"}`;
     curY += 4;
 
     const refBody = [
-      ["Executive Decree 06-138", "Regulates atmospheric emissions and sets statutory limit values (mg/Nm3) for industrial installations."],
       ["Executive Decree 21-330 Art. 9", "Establishes a mandatory limit on gas flaring not to exceed 1.00% of gross gas production."],
       ["National Hydrocarbon Law 19-13", "Governs hydrocarbon exploration, exploitation, and environmental protection in Algeria."],
       ["ISO 14064-1:2018", "Specification with guidance at the organization level for quantification and reporting of GHG emissions."],

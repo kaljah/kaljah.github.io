@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { recordsLink } from "../../utils/reportLinks";
 import { BarChart2, FileText, Grid, FileSpreadsheet, FileCode } from "lucide-react";
@@ -192,36 +192,106 @@ export interface RegionalChartsProps {
   year?: string;
 }
 
-/** Four per-facility bar charts: intensity, scope 1 vs 2, oil BOE and gas BOE. */
+/** Four per-region bar charts: intensity, scope 1 vs 2, oil BOE and gas BOE. */
 export const RegionalCharts: React.FC<RegionalChartsProps> = ({ data, gwpHorizon, year }) => {
   const g20 = gwpHorizon === "20";
   const navigate = useNavigate();
   const openRecords = (r: any) => navigate(recordsLink({ facilityId: r.id, year }));
-  const named = (fn: (d: any) => any) => data.map((d) => ({ id: d.facility_id, name: d.facility_name, ...fn(d) }));
+
+  const regionalAggregated = useMemo(() => {
+    const map = new Map<string, any>();
+    data.forEach((d) => {
+      const regName = d.region || d.facility_name;
+      if (!map.has(regName)) {
+        map.set(regName, {
+          id: d.facility_id,
+          name: regName,
+          total_oil: 0,
+          total_gas: 0,
+          total_boe: 0,
+          total_scope1: 0,
+          total_scope1_gwp20: 0,
+          total_scope2: 0,
+          total_co2e: 0,
+          total_co2e_gwp20: 0,
+        });
+      }
+      const item = map.get(regName);
+      item.total_oil += d.total_oil || 0;
+      item.total_gas += d.total_gas || 0;
+      item.total_boe += d.total_boe || 0;
+      item.total_scope1 += d.total_scope1 || 0;
+      item.total_scope1_gwp20 += d.total_scope1_gwp20 ?? d.total_scope1 ?? 0;
+      item.total_scope2 += d.total_scope2 || 0;
+      item.total_co2e += d.total_co2e || 0;
+      item.total_co2e_gwp20 += d.total_co2e_gwp20 ?? d.total_co2e ?? 0;
+    });
+
+    return Array.from(map.values()).map((r) => {
+      const boe = r.total_boe > 0 ? r.total_boe : 0;
+      return {
+        id: r.id,
+        name: r.name,
+        value: boe > 0 ? (g20 ? (r.total_co2e_gwp20 * 1000.0) / boe : (r.total_co2e * 1000.0) / boe) : 0,
+        scope1: boe > 0 ? Number((((g20 ? r.total_scope1_gwp20 : r.total_scope1) * 1000.0) / boe).toFixed(2)) : 0,
+        scope2: boe > 0 ? Number(((r.total_scope2 * 1000.0) / boe).toFixed(2)) : 0,
+        oil_value: r.total_oil || 0,
+        gas_value: (r.total_gas || 0) * GAS_TO_BOE,
+      };
+    });
+  }, [data, g20]);
+
   return (
     <div className="chart-grid grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(100%,450px),1fr))]">
-      <ChartCard className="card" title={t("GHG Intensity by Facility (kg CO₂e / BOE)")} rule="var(--color-brand-500)">
-        <BarChart data={named((d) => ({ value: g20 ? d.co2_intensity_gwp20 || d.co2_intensity : d.co2_intensity }))} dataKey="value" xKey="name" horizontal sortDesc onSelect={openRecords} selectLabel={(r) => t("Open {{name}} records", { name: r.name })} exportName="ghg-intensity-by-facility" color="var(--color-brand-500)" />
-      </ChartCard>
-      <ChartCard className="card" title={t("Scope 1 Direct vs Scope 2 Intensity")} rule="var(--color-blue-600)">
+      <ChartCard className="card" title={t("GHG Intensity by Region (kg CO₂e / BOE)")} rule="var(--color-brand-500)">
         <BarChart
-            data={named((d) => ({
-              scope1: Number(((g20 ? d.scope1_intensity_gwp20 || d.scope1_intensity : d.scope1_intensity) || 0).toFixed(2)),
-              scope2: Number((d.scope2_intensity || 0).toFixed(2)),
-            }))}
-            bars={[
-              { dataKey: "scope1", name: g20 ? t("Scope 1 (GWP₂₀ Direct)") : t("Scope 1 (Direct)"), color: "var(--color-blue-600)" },
-              { dataKey: "scope2", name: t("Scope 2 (Indirect)"), color: "var(--color-legacy-0ea5e9)" },
-            ]}
-            xKey="name"
-            exportName="scope1-vs-scope2-intensity-by-facility"
-          />
+          data={regionalAggregated.map((d) => ({ id: d.id, name: d.name, value: d.value }))}
+          dataKey="value"
+          xKey="name"
+          horizontal
+          sortDesc
+          onSelect={openRecords}
+          selectLabel={(r) => t("Open {{name}} records", { name: r.name })}
+          exportName="ghg-intensity-by-region"
+          color="var(--color-brand-500)"
+        />
       </ChartCard>
-      <ChartCard className="card" title={t("Oil BOE Contribution by Facility")} rule="var(--color-legacy-ea580c)">
-        <BarChart data={named((d) => ({ value: d.total_oil || 0 }))} dataKey="value" xKey="name" horizontal sortDesc onSelect={openRecords} selectLabel={(r) => t("Open {{name}} records", { name: r.name })} exportName="oil-boe-by-facility" color="var(--color-legacy-ea580c)" />
+      <ChartCard className="card" title={t("Scope 1 Direct vs Scope 2 Intensity by Region")} rule="var(--color-blue-600)">
+        <BarChart
+          data={regionalAggregated.map((d) => ({ id: d.id, name: d.name, scope1: d.scope1, scope2: d.scope2 }))}
+          bars={[
+            { dataKey: "scope1", name: g20 ? t("Scope 1 (GWP₂₀ Direct)") : t("Scope 1 (Direct)"), color: "var(--color-blue-600)" },
+            { dataKey: "scope2", name: t("Scope 2 (Indirect)"), color: "var(--color-legacy-0ea5e9)" },
+          ]}
+          xKey="name"
+          exportName="scope1-vs-scope2-intensity-by-region"
+        />
       </ChartCard>
-      <ChartCard className="card" title={t("Gas BOE Contribution by Facility")} rule="var(--color-violet-500)">
-        <BarChart data={named((d) => ({ value: (d.total_gas || 0) * GAS_TO_BOE }))} dataKey="value" xKey="name" horizontal sortDesc onSelect={openRecords} selectLabel={(r) => t("Open {{name}} records", { name: r.name })} exportName="gas-boe-by-facility" color="var(--color-violet-500)" />
+      <ChartCard className="card" title={t("Oil BOE Contribution by Region")} rule="var(--color-legacy-ea580c)">
+        <BarChart
+          data={regionalAggregated.map((d) => ({ id: d.id, name: d.name, value: d.oil_value }))}
+          dataKey="value"
+          xKey="name"
+          horizontal
+          sortDesc
+          onSelect={openRecords}
+          selectLabel={(r) => t("Open {{name}} records", { name: r.name })}
+          exportName="oil-boe-by-region"
+          color="var(--color-legacy-ea580c)"
+        />
+      </ChartCard>
+      <ChartCard className="card" title={t("Gas BOE Contribution by Region")} rule="var(--color-violet-500)">
+        <BarChart
+          data={regionalAggregated.map((d) => ({ id: d.id, name: d.name, value: d.gas_value }))}
+          dataKey="value"
+          xKey="name"
+          horizontal
+          sortDesc
+          onSelect={openRecords}
+          selectLabel={(r) => t("Open {{name}} records", { name: r.name })}
+          exportName="gas-boe-by-region"
+          color="var(--color-violet-500)"
+        />
       </ChartCard>
     </div>
   );
@@ -237,19 +307,43 @@ export interface TrendSectionProps {
   activeGwpStandard: string;
 }
 
-/** Five-year intensity trend as a line chart or a facility x year heatmap. */
+/** Five-year intensity trend as a line chart or a region x year heatmap. */
 export const TrendSection: React.FC<TrendSectionProps> = ({ view, onView, trendChartData, rawTrendData, regionalData, gwpHorizon, activeGwpStandard }) => {
   const g20 = gwpHorizon === "20";
-  const rows: HeatmapRow[] = regionalData.map((fac) => ({
-    id: fac.facility_id,
-    name: fac.facility_name,
-    cells: rawTrendData.map((y) => {
-      const record = y.data.find((r: any) => r.facility_id === fac.facility_id);
-      const raw = record ? (g20 ? record.co2_intensity_gwp20 || record.co2_intensity : record.co2_intensity) : 0;
-      const value = Number.isFinite(Number(raw)) ? Number(raw) : 0;
-      return { key: y.year, value, title: `${y.year} Intensity: ${value.toFixed(3)} kg CO2e/BOE` };
-    }),
-  }));
+  const rows: HeatmapRow[] = useMemo(() => {
+    const regionMap = new Map<string, { id: any; name: string; facIds: any[] }>();
+    regionalData.forEach((fac) => {
+      const regName = fac.region || fac.facility_name;
+      if (!regionMap.has(regName)) {
+        regionMap.set(regName, { id: fac.facility_id, name: regName, facIds: [] });
+      }
+      regionMap.get(regName)!.facIds.push(fac.facility_id);
+    });
+
+    return Array.from(regionMap.values()).map((reg) => ({
+      id: reg.id,
+      name: reg.name,
+      cells: rawTrendData.map((y) => {
+        const records = y.data.filter((r: any) => reg.facIds.includes(r.facility_id));
+        let totalEmissions = 0;
+        let totalBoe = 0;
+        records.forEach((record: any) => {
+          const boe = record.total_boe || 0;
+          const intVal = g20 ? record.co2_intensity_gwp20 || record.co2_intensity : record.co2_intensity;
+          if (boe > 0 && intVal != null) {
+            totalEmissions += intVal * boe;
+            totalBoe += boe;
+          } else if (intVal != null && records.length === 1) {
+            totalEmissions = intVal;
+            totalBoe = 1;
+          }
+        });
+        const raw = totalBoe > 0 ? totalEmissions / totalBoe : 0;
+        const value = Number.isFinite(Number(raw)) ? Number(raw) : 0;
+        return { key: y.year, value, title: `${y.year} Intensity: ${value.toFixed(3)} kg CO2e/BOE` };
+      }),
+    }));
+  }, [regionalData, rawTrendData, g20]);
   return (
     <ChartCard
       className="trend-section"

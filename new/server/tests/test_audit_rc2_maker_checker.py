@@ -4,7 +4,7 @@ import threading
 import pytest
 
 from extensions import db
-from models import CapEmission, Emission, Notification, Scope2Emission
+from models import Emission, Notification, Scope2Emission
 from tests.audit_helpers import login, make_facility, make_user
 
 
@@ -134,38 +134,3 @@ def test_bug060_superuser_scope2_manual_entry_is_pending(client, ctx):
                                          "electricity_kwh": 1000, "grid_region": "Algerian National Grid"})
     assert r.status_code in (200, 201), r.get_data(as_text=True)
     assert r.get_json()["status"] == "Pending"
-
-
-# ── BUG-053: CAP records go through maker-checker and validation ─────────────────
-
-def test_bug053_cap_status_not_client_controlled(client, ctx):
-    fac = make_facility(region="West")
-    login(client, make_user("user", "West"))
-    r = client.post("/api/cap/emissions", json={"facility_id": fac.id, "year": 2024, "source_module": "Flare",
-                                                "pollutant": "NO2", "mass_tonnes": 1.5, "status": "Verified"})
-    assert r.status_code == 200, r.get_data(as_text=True)
-    assert db.session.get(CapEmission, r.get_json()["id"]).status == "Pending"
-
-
-@pytest.mark.parametrize("bad", [{"mass_tonnes": -1}, {"mass_tonnes": "abc"}, {"concentration_mg_nm3": -5, "flue_gas_volume_nm3": 1}])
-def test_bug053_cap_rejects_invalid_numbers(client, ctx, bad):
-    fac = make_facility(region="West")
-    login(client, make_user("admin", "Global"))
-    body = {"facility_id": fac.id, "year": 2024, "source_module": "Flare", "pollutant": "NO2"}
-    body.update(bad)
-    assert client.post("/api/cap/emissions", json=body).status_code == 400
-
-
-def test_bug053_cap_compliance_uses_verified_only(client, ctx):
-    fac = make_facility(region="West")
-    db.session.add(CapEmission(facility_id=fac.id, year=2031, source_module="Flare", pollutant="NO2",
-                               mass_tonnes=99.0, concentration_mg_nm3=9999.0, status="Pending"))
-    db.session.commit()
-    login(client, make_user("admin", "Global"))
-    rows = client.get(f"/api/cap/compliance?year=2031&facility_id={fac.id}").get_json()
-    no2 = [p for r in rows for p in r["pollutants"] if p["pollutant"] == "NO2"]
-    assert no2, rows
-    # the Pending exceedance is not counted; with no verified measurement the pollutant is "not
-    # measured" (is_compliant None), never stated as compliant or non-compliant
-    assert all(p["total_tonnes"] == 0 and p["measured_concentration_mg_nm3"] == 0 and p["is_compliant"] is None
-               and p["status"] == "NOT MEASURED" for p in no2)

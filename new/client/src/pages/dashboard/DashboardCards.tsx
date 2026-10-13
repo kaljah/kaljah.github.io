@@ -89,7 +89,7 @@ export interface TrendCardProps {
   onCompare: () => void;
 }
 
-/** Emissions trend with the five-year forecast; the compare toggle switches to one line per facility. */
+/** Emissions trend with the five-year forecast; the compare toggle switches to one line per region. */
 export const TrendCard: React.FC<TrendCardProps> = ({ data, lines, compare, onCompare }) => (
   <Card className="min-w-0">
     <CardHeader

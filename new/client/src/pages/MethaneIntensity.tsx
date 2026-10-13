@@ -2,6 +2,7 @@ import MethaneIntensityMethaneIntensity, { type MethaneIntensityStats } from "./
 import MethaneIntensityOGMP20Gold from "./methane-intensity/MethaneIntensityOGMP20Gold";
 import MethaneIntensityOGMP20Level from "./methane-intensity/MethaneIntensityOGMP20Level";
 import MethaneIntensityHistoricalMethaneTrends from "./methane-intensity/MethaneIntensityHistoricalMethaneTrends";
+import MethaneIntensityLdarCard from "./methane-intensity/MethaneIntensityLdarCard";
 import { useAnalyticsFilter } from "../filters/useAnalyticsFilter";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
@@ -701,6 +702,44 @@ const MethaneIntensity: React.FC = () => {
     return "heat-crit";
   };
 
+  const methaneByRegion = useMemo(() => {
+    const map = new Map<string, any>();
+    regionalData.forEach((d) => {
+      const regName = d.region || d.facility_name;
+      if (!map.has(regName)) {
+        map.set(regName, {
+          id: d.facility_id,
+          name: regName,
+          total_ch4: 0,
+          total_boe: 0,
+          gas_m3: 0,
+          ch4_gas_m3: 0,
+          flaring_volume: 0,
+          hasLossRate: false,
+        });
+      }
+      const item = map.get(regName);
+      item.total_ch4 += d.total_ch4 || 0;
+      item.total_boe += d.total_boe || 0;
+      item.flaring_volume += d.flaring_volume || 0;
+      const gm3 = d.total_gas_m3 || (d.total_gas || 0) * 28.3168;
+      if (d.methane_loss_rate_pct != null) {
+        item.hasLossRate = true;
+        item.gas_m3 += gm3;
+        item.ch4_gas_m3 += (d.methane_loss_rate_pct / 100.0) * gm3;
+      }
+    });
+
+    return Array.from(map.values()).map((r) => ({
+      id: r.id,
+      name: r.name,
+      methane_loss_rate_pct: r.hasLossRate && r.gas_m3 > 0 ? Number(((r.ch4_gas_m3 / r.gas_m3) * 100).toFixed(4)) : null,
+      ch4_intensity: r.total_boe > 0 ? Number(((r.total_ch4 * 1000.0) / r.total_boe).toFixed(4)) : 0,
+      total_ch4: Number(r.total_ch4.toFixed(2)),
+      flaring_volume: Number(r.flaring_volume.toFixed(2)),
+    }));
+  }, [regionalData]);
+
   if (loading && regionalData.length === 0)
     return (
       <LoadingSpinner
@@ -726,6 +765,23 @@ const MethaneIntensity: React.FC = () => {
           upstreamTargetPct={upstreamTargetPct}
         />
 
+        {/* COMPACT LDAR SUMMARY CARD */}
+        <MethaneIntensityLdarCard
+          selectedYear={selectedYear}
+          selectedFacilityId={currentRegion}
+          facilities={facilities}
+          currentActivity={currentActivity}
+          currentDivision={currentDivision}
+          onNavigateToLdar={() => {
+            navigate("/manage-data?tab=ldar", {
+              state: {
+                tab: "ldar",
+                facilityId: currentRegion !== "all" ? currentRegion : undefined,
+              },
+            });
+          }}
+        />
+
         {/* OGMP 2.0 GOLD STANDARD PATHWAY & ROADMAP */}
         <MethaneIntensityOGMP20Gold
           facilities={facilities}
@@ -748,15 +804,15 @@ const MethaneIntensity: React.FC = () => {
           setOgmpCollapsed={setOgmpCollapsed}
         />
 
-        {/* Unified Multi-Metric Facility Benchmark Hub */}
+        {/* Unified Multi-Metric Regional Benchmark Hub */}
         <div className="card [padding:24px] [border-radius:var(--radius-lg)] [background:var(--bg-card)] [border:1px_solid_var(--border-color)]">
           <div className="[display:flex] [flex-wrap:wrap] [align-items:center] [justify-content:space-between] [gap:16px] [margin-bottom:20px] [padding-bottom:16px] [border-bottom:1px_solid_var(--border-color)]">
             <div className="[display:flex] [flex-direction:column] [gap:4px]">
               <h3 className="[font-size:var(--text-lg)] [font-weight:700] [color:var(--text-primary)]">
-                {t("Methane Performance & Loss Benchmark by Facility")}
+                {t("Methane Performance & Loss Benchmark by Region")}
               </h3>
               <p className="[font-size:var(--text-sm)] [color:var(--text-secondary)]">
-                {t("Compare loss rates, unit intensity, absolute methane tonnage, and flaring across operational assets.")}
+                {t("Compare loss rates, unit intensity, absolute methane tonnage, and flaring across operational regions.")}
               </p>
             </div>
 
@@ -812,11 +868,11 @@ const MethaneIntensity: React.FC = () => {
           <div className="h-[400px]!">
             {activeMetricTab === "loss_rate" && (
               <BarChart
-                data={regionalData
+                data={methaneByRegion
                   .filter((d) => d.methane_loss_rate_pct != null)
                   .map((d) => ({
-                    id: d.facility_id,
-                    name: d.facility_name,
+                    id: d.id,
+                    name: d.name,
                     value: d.methane_loss_rate_pct || 0,
                   }))}
                 dataKey="value"
@@ -825,7 +881,7 @@ const MethaneIntensity: React.FC = () => {
                 sortDesc
                 onSelect={openFacilityRecords}
                 selectLabel={(r) => t("Open {{name}} records", { name: r.name })}
-                exportName="methane-loss-rate-by-facility"
+                exportName="methane-loss-rate-by-region"
                 thresholds={{
                   warnAt: upstreamTargetPct * 0.8,
                   badAt: upstreamTargetPct,
@@ -838,9 +894,9 @@ const MethaneIntensity: React.FC = () => {
             )}
             {activeMetricTab === "intensity" && (
               <BarChart
-                data={regionalData.map((d) => ({
-                  id: d.facility_id,
-                  name: d.facility_name,
+                data={methaneByRegion.map((d) => ({
+                  id: d.id,
+                  name: d.name,
                   value: d.ch4_intensity || 0,
                 }))}
                 dataKey="value"
@@ -849,15 +905,15 @@ const MethaneIntensity: React.FC = () => {
                 sortDesc
                 onSelect={openFacilityRecords}
                 selectLabel={(r) => t("Open {{name}} records", { name: r.name })}
-                exportName="methane-intensity-by-facility"
+                exportName="methane-intensity-by-region"
                 color="var(--color-primary)"
               />
             )}
             {activeMetricTab === "total_ch4" && (
               <BarChart
-                data={regionalData.map((d) => ({
-                  id: d.facility_id,
-                  name: d.facility_name,
+                data={methaneByRegion.map((d) => ({
+                  id: d.id,
+                  name: d.name,
                   value: d.total_ch4 || 0,
                 }))}
                 dataKey="value"
@@ -866,15 +922,15 @@ const MethaneIntensity: React.FC = () => {
                 sortDesc
                 onSelect={openFacilityRecords}
                 selectLabel={(r) => t("Open {{name}} records", { name: r.name })}
-                exportName="total-methane-emissions-by-facility"
+                exportName="total-methane-emissions-by-region"
                 color="var(--color-teal-600, #0d9488)"
               />
             )}
             {activeMetricTab === "flaring" && (
               <BarChart
-                data={regionalData.map((d) => ({
-                  id: d.facility_id,
-                  name: d.facility_name,
+                data={methaneByRegion.map((d) => ({
+                  id: d.id,
+                  name: d.name,
                   value: d.flaring_volume || 0,
                 }))}
                 dataKey="value"
@@ -883,7 +939,7 @@ const MethaneIntensity: React.FC = () => {
                 sortDesc
                 onSelect={openFacilityRecords}
                 selectLabel={(r) => t("Open {{name}} records", { name: r.name })}
-                exportName="gas-flaring-volume-by-facility"
+                exportName="gas-flaring-volume-by-region"
                 color="var(--color-legacy-ea580c, #ea580c)"
               />
             )}

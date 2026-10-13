@@ -21,8 +21,6 @@ from models import (
     Scope2Emission,
     Scope3Emission,
     CbamProductExport,
-    CapEmission,
-    CapRegulatoryLimit,
     OgmpSurvey,
     ActivityLog,
 )
@@ -172,105 +170,6 @@ class TestCbamEmbeddedEmissionsAccounting:
 
         res_post = client.post("/api/data/cbam-exports", json={"year": 2026})
         assert res_post.status_code == 403
-
-
-# ==============================================================================
-# 2. ALGERIAN EXECUTIVE DECREE 06-138 CRITERIA AIR POLLUTANTS (CAP)
-# ==============================================================================
-
-class TestCriteriaAirPollutantsCompliance:
-    """Audits atmospheric emission statutory limits under Executive Decree 06-138."""
-
-    def test_cap_mass_calculation_from_concentration_and_flue_gas(self, client, advanced_audit_env):
-        """
-        Statutory formula:
-        Mass (tonnes) = Concentration (mg/Nm3) * Flue_Gas_Volume (Nm3) * 1e-9
-        """
-        admin = advanced_audit_env["admin"]
-        fac = advanced_audit_env["fac2"]
-        login(client, admin)
-
-        concentration = 180.0  # mg/Nm3 of NO2
-        flue_gas_vol = 5_000_000.0  # Nm3
-        expected_mass_tonnes = concentration * flue_gas_vol * 1e-9  # 0.900 tonnes
-
-        res = client.post("/api/cap/emissions", json={
-            "facility_id": fac.id,
-            "year": 2025,
-            "month": 4,
-            "source_module": "Gas Turbine",
-            "pollutant": "NO2",
-            "concentration_mg_nm3": concentration,
-            "flue_gas_volume_nm3": flue_gas_vol,
-        })
-        assert res.status_code == 200
-        rec_id = res.get_json()["id"]
-
-        with app.app_context():
-            cap_rec = db.session.get(CapEmission, rec_id)
-            assert cap_rec is not None
-            assert pytest.approx(cap_rec.mass_tonnes, rel=1e-5) == expected_mass_tonnes
-            assert cap_rec.status == "Verified"  # Admin-created records are auto-verified
-
-    def test_cap_compliance_statutory_threshold_evaluation(self, client, advanced_audit_env):
-        """
-        Evaluates statutory compliance:
-        NO2 statutory limit: 200.0 mg/Nm3
-        CO statutory limit:  150.0 mg/Nm3
-        SO2 statutory limit: 800.0 mg/Nm3
-        PM statutory limit:   30.0 mg/Nm3
-        VOC statutory limit: 150.0 mg/Nm3
-        """
-        admin = advanced_audit_env["admin"]
-        fac = advanced_audit_env["fac2"]
-        login(client, admin)
-
-        # 1. Post a compliant NO2 record (120 mg/Nm3 < 200 mg/Nm3)
-        client.post("/api/cap/emissions", json={
-            "facility_id": fac.id,
-            "year": 2024,
-            "month": 5,
-            "source_module": "Boiler B-1",
-            "pollutant": "NO2",
-            "concentration_mg_nm3": 120.0,
-            "flue_gas_volume_nm3": 1_000_000.0,
-        })
-
-        # 2. Post a NON-COMPLIANT PM record (45 mg/Nm3 > 30 mg/Nm3 limit)
-        client.post("/api/cap/emissions", json={
-            "facility_id": fac.id,
-            "year": 2024,
-            "month": 5,
-            "source_module": "Boiler B-1",
-            "pollutant": "PM",
-            "concentration_mg_nm3": 45.0,
-            "flue_gas_volume_nm3": 1_000_000.0,
-        })
-
-        # 3. Query compliance evaluation endpoint
-        res_comp = client.get(f"/api/cap/compliance?year=2024&facility_id={fac.id}")
-        assert res_comp.status_code == 200
-        comp_data = res_comp.get_json()
-        fac_comp = next((f for f in comp_data if f["facility_id"] == fac.id), None)
-        assert fac_comp is not None
-
-        # Overall facility status must reflect non-compliance due to PM exceedance
-        assert fac_comp["overall_status"] == "NON-COMPLIANT"
-
-        p_no2 = next(p for p in fac_comp["pollutants"] if p["pollutant"] == "NO2")
-        assert p_no2["is_compliant"] is True
-        assert p_no2["status"] == "COMPLIANT"
-        assert p_no2["measured_concentration_mg_nm3"] == 120.0
-
-        p_pm = next(p for p in fac_comp["pollutants"] if p["pollutant"] == "PM")
-        assert p_pm["is_compliant"] is False
-        assert p_pm["status"] == "NON-COMPLIANT (Exceeded)"
-        assert p_pm["measured_concentration_mg_nm3"] == 45.0
-
-        # Pollutant with no verified measurement must state NOT MEASURED, not false COMPLIANT
-        p_so2 = next(p for p in fac_comp["pollutants"] if p["pollutant"] == "SO2")
-        assert p_so2["is_compliant"] is None
-        assert p_so2["status"] == "NOT MEASURED"
 
 
 # ==============================================================================

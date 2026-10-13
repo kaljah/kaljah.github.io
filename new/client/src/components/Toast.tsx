@@ -22,14 +22,21 @@ export interface ToastContextType {
   addToast: (message: React.ReactNode, type?: ToastType, duration?: number) => number;
 }
 
+const noopToast: ToastContextType = {
+  success: () => 0,
+  error: () => 0,
+  warning: () => 0,
+  info: () => 0,
+  show: () => 0,
+  removeToast: () => {},
+  addToast: () => 0,
+};
+
 const ToastContext = createContext<ToastContextType | null>(null);
 
 export const useToast = (): ToastContextType => {
   const context = useContext(ToastContext);
-  if (!context) {
-    throw new Error("useToast must be used within ToastProvider");
-  }
-  return context;
+  return context || noopToast;
 };
 
 export interface ToastProviderProps {

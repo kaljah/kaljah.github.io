@@ -236,7 +236,7 @@ def can_approve(user, record):
 _FACILITY_ENTITIES = {
     "Emission": "Emission", "Scope1": "Emission", "Scope2": "Scope2Emission", "Scope2Emission": "Scope2Emission",
     "Scope3": "Scope3Emission", "Scope3Emission": "Scope3Emission", "ProductionData": "ProductionData",
-    "Production": "ProductionData", "CapEmission": "CapEmission", "OgmpSurvey": "OgmpSurvey",
+    "Production": "ProductionData", "OgmpSurvey": "OgmpSurvey",
     "MitigationProject": "MitigationProject", "EmissionSource": "EmissionSource",
 }
 
@@ -365,3 +365,12 @@ def iso_utc(dt):
     if dt.tzinfo is None:
         dt = dt.replace(tzinfo=timezone.utc)
     return dt.astimezone(timezone.utc).isoformat()
+
+
+def clear_dashboard_cache():
+    try:
+        from routes.dashboard import clear_dashboard_cache as _cdc
+        _cdc()
+    except Exception:
+        pass
+

@@ -7,7 +7,6 @@ Populates:
 4. Granular Production Data (2021-2025)
 5. Flaring Stream Details & VISR camera measured DRE (2021-2025)
 6. Scope 1 & Scope 2 Emissions records (combustion, routine/non-routine/safety flaring, venting, fugitives)
-7. Criteria Air Pollutants (CAP) emissions and stack concentrations under Decree 06-138
 """
 
 import sys
@@ -27,8 +26,6 @@ from models import (
     FlaringDetail,
     JvPartner,
     FacilityEquityShare,
-    CapEmission,
-    CapRegulatoryLimit,
 )
 
 
@@ -409,94 +406,6 @@ def seed_berkine():
                     activity=fac.activity,
                     division=fac.division,
                     region=fac.region,
-                ))
-
-        db.session.commit()
-
-        # 7. Seed Criteria Air Pollutants (CAP) Records (2021-2025)
-        CapEmission.query.filter(CapEmission.facility_id.in_([hbns.id, elm.id])).delete(synchronize_session=False)
-
-        # Pre-seed Decree 06-138 Regulatory Limits
-        limits_def = [
-            ("NO2", 200.0, "mg/Nm3", "Decree 06-138: Nitrogen Dioxide limit"),
-            ("CO", 150.0, "mg/Nm3", "Decree 06-138: Carbon Monoxide limit"),
-            ("SO2", 800.0, "mg/Nm3", "Decree 06-138: Sulfur Dioxide limit"),
-            ("PM", 30.0, "mg/Nm3", "Decree 06-138: Particulate Matter limit"),
-            ("VOC", 150.0, "mg/Nm3", "Decree 06-138: Volatile Organic Compounds limit"),
-        ]
-        for pol, lim, u, notes in limits_def:
-            l_obj = CapRegulatoryLimit.query.filter_by(standard_name="Executive Decree 06-138", pollutant=pol).first()
-            if not l_obj:
-                l_obj = CapRegulatoryLimit(
-                    standard_name="Executive Decree 06-138",
-                    pollutant=pol,
-                    limit_mg_nm3=lim,
-                    unit=u,
-                    notes=notes,
-                )
-                db.session.add(l_obj)
-        db.session.commit()
-
-        # HBNS CAP data
-        hbns_cap = {
-            2021: {"NO2": 1715.19, "CO": 1049.93, "SO2": 9.17, "PM": 285.98, "VOC": 1669.18},
-            2022: {"NO2": 1601.31, "CO": 966.06, "SO2": 4.84, "PM": 247.05, "VOC": 1596.27},
-            2023: {"NO2": 1637.60, "CO": 844.64, "SO2": 9.22, "PM": 193.42, "VOC": 1332.28},
-            2024: {"NO2": 1418.91, "CO": 781.55, "SO2": 6.61, "PM": 203.14, "VOC": 696.62},
-            2025: {"NO2": 1414.70, "CO": 668.58, "SO2": 6.35, "PM": 156.91, "VOC": 406.37},
-        }
-        hbns_concentrations_2025 = {
-            "NO2": 788.0,
-            "CO": 7.50,
-            "SO2": 0.0,
-            "PM": 0.0,
-            "VOC": 11.13,
-        }
-
-        # ELM CAP data
-        elm_cap = {
-            2021: {"NO2": 1444.73, "CO": 968.06, "SO2": 11.11, "PM": 279.06, "VOC": 815.64},
-            2022: {"NO2": 1593.60, "CO": 1112.90, "SO2": 11.87, "PM": 333.15, "VOC": 672.28},
-            2023: {"NO2": 1823.75, "CO": 908.59, "SO2": 12.31, "PM": 212.42, "VOC": 736.86},
-            2024: {"NO2": 1749.53, "CO": 830.40, "SO2": 12.18, "PM": 184.66, "VOC": 257.19},
-            2025: {"NO2": 1760.78, "CO": 875.66, "SO2": 14.08, "PM": 204.26, "VOC": 130.45},
-        }
-        elm_concentrations_2025 = {
-            "NO2": 980.77,
-            "CO": 9.84,
-            "SO2": 0.0,
-            "PM": 0.0,
-            "VOC": 3.41,
-        }
-
-        for yr, p_dict in hbns_cap.items():
-            for pol, mass in p_dict.items():
-                conc = hbns_concentrations_2025.get(pol) if yr == 2025 else None
-                db.session.add(CapEmission(
-                    facility_id=hbns.id,
-                    year=yr,
-                    source_module="Stationary Combustion",
-                    pollutant=pol,
-                    mass_tonnes=mass,
-                    concentration_mg_nm3=conc,
-                    flue_gas_volume_nm3=1800000.0 if conc else None,
-                    calc_method="API Compendium & Stack Sampling",
-                    status="Verified",
-                ))
-
-        for yr, p_dict in elm_cap.items():
-            for pol, mass in p_dict.items():
-                conc = elm_concentrations_2025.get(pol) if yr == 2025 else None
-                db.session.add(CapEmission(
-                    facility_id=elm.id,
-                    year=yr,
-                    source_module="Stationary Combustion",
-                    pollutant=pol,
-                    mass_tonnes=mass,
-                    concentration_mg_nm3=conc,
-                    flue_gas_volume_nm3=1800000.0 if conc else None,
-                    calc_method="API Compendium & Stack Sampling",
-                    status="Verified",
                 ))
 
         db.session.commit()

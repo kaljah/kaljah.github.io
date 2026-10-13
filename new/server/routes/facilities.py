@@ -401,9 +401,9 @@ def delete_facility(facility_id):
     # Deleting the facility cascades to its records: the maker-checker rule for single records
     # (only an administrator deletes Verified records) applies to the cascade as well.
     if user.role != "admin":
-        from models import Emission, Scope2Emission, Scope3Emission, CapEmission
+        from models import Emission, Scope2Emission, Scope3Emission
         if any(m.query.filter_by(facility_id=facility.id, status="Verified").first()
-               for m in (Emission, Scope2Emission, Scope3Emission, CapEmission)):
+               for m in (Emission, Scope2Emission, Scope3Emission)):
             return jsonify({"error": "Forbidden: this facility has approved (Verified) records; "
                                      "only an administrator can delete it"}), 403
 

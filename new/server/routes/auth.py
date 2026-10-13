@@ -229,9 +229,10 @@ def superuser_required(f):
 
 ROLE_RANK = {"user": 0, "auditor": 0, "it": 1, "superuser": 2, "admin": 3, "it_admin": 4, "it_manager": 4}
 BUSINESS_ROLES = ("admin", "superuser")
-BUSINESS_ROLE_GRANTORS = ("admin", "it_manager")  # separation of duties (update_user and register)
-CLIENT_IT_ROLES = ("it", "it_admin")  # client IT staff manage ordinary accounts only:
-CLIENT_IT_PROTECTED_ROLES = ("admin", "superuser", "it_manager")  # they may not grant, edit or delete these
+BUSINESS_ROLE_GRANTORS = ("admin", "it_manager", "it_admin")  # IT Admin can assign compliance admin & superuser roles
+CLIENT_IT_ROLES = ("it",)  # client IT support manage ordinary accounts only
+CLIENT_IT_PROTECTED_ROLES = ("admin", "superuser", "it_manager")  # protected from IT support role
+VENDOR_PROTECTED_ROLES = ("it_manager",)  # protected from it_admin
 SUPERUSER_REGION_ERROR = ("A superuser is limited to one facility or region: set a specific location "
                           "(organisation-wide access is the admin role)")
 
@@ -265,7 +266,9 @@ def register():
     creator = db.session.get(User, creator_id) if creator_id else None
     if creator and creator.role in CLIENT_IT_ROLES and role_requested in CLIENT_IT_PROTECTED_ROLES:
         return jsonify({"error": "Forbidden: Client IT staff cannot create Compliance Admin or Superuser accounts"}), 403
-    # Audit 2026-10-01 (A-02): the same separation of duties as update_user
+    if creator and creator.role == "it_admin" and role_requested in VENDOR_PROTECTED_ROLES:
+        return jsonify({"error": "Forbidden: IT Administrator cannot create platform operator accounts"}), 403
+    # Separation of duties: only authorized grantors may assign business roles
     if role_requested in BUSINESS_ROLES and (not creator or creator.role not in BUSINESS_ROLE_GRANTORS):
         return jsonify({"error": "Forbidden: IT Administrators cannot assign business compliance roles (admin, superuser)"}), 403
     if creator and ROLE_RANK.get(role_requested, 0) > ROLE_RANK.get(creator.role, 0):

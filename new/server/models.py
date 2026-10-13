@@ -711,57 +711,6 @@ class SystemSetting(db.Model):
     updated_at = db.Column(db.DateTime, default=utc_now, onupdate=utc_now)
 
 
-class CapEmission(db.Model):
-    """
-    Criteria Air Pollutants (CAP) - Mass and stack concentration tracking.
-    Complies with Algerian Executive Decree 06-138 and API Compendium 2021.
-    """
-    __tablename__ = "cap_emissions"
-    id = db.Column(db.Integer, primary_key=True)
-    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), index=True, nullable=False)
-    facility = db.relationship("Facility", backref=db.backref("cap_emissions", cascade="all, delete-orphan"))
-    year = db.Column(db.Integer, index=True, nullable=False)
-    month = db.Column(db.Integer, nullable=True)  # NULL for annual totals
-    source_module = db.Column(db.String(100), index=True, nullable=False)  # Stationary Combustion, Flare, Equipment Leaks, O&G Venting, Total
-    pollutant = db.Column(db.String(20), index=True, nullable=False)  # NO2, CO, SO2, PM, VOC
-    mass_tonnes = db.Column(db.Float, default=0.0, nullable=False)
-    concentration_mg_nm3 = db.Column(db.Float, nullable=True)
-    flue_gas_volume_nm3 = db.Column(db.Float, nullable=True)
-    calc_method = db.Column(db.String(100), default="API Compendium")
-    notes = db.Column(db.String(255), nullable=True)
-    status = db.Column(db.String(20), default="Pending", index=True)  # BUG-053: maker-checker
-    created_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
-    created_at = db.Column(db.DateTime, default=utc_now)
-    updated_at = db.Column(db.DateTime, onupdate=utc_now)
-    updated_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
-    approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
-    approved_at = db.Column(db.DateTime, nullable=True)
-    created_by_name = db.Column(db.String(255), nullable=True)
-    approved_by_name = db.Column(db.String(255), nullable=True)
-
-    __table_args__ = (
-        db.Index("ix_cap_fac_yr_mod_pol", "facility_id", "year", "source_module", "pollutant"),
-    )
-
-
-class CapRegulatoryLimit(db.Model):
-    """
-    Regulatory limit values for Criteria Air Pollutants in mg/Nm3.
-    Default standard: Algerian Executive Decree No. 06-138.
-    """
-    __tablename__ = "cap_regulatory_limits"
-    id = db.Column(db.Integer, primary_key=True)
-    standard_name = db.Column(db.String(100), default="Executive Decree 06-138", nullable=False)
-    pollutant = db.Column(db.String(20), nullable=False)  # NO2, CO, SO2, PM, VOC
-    limit_mg_nm3 = db.Column(db.Float, nullable=False)
-    unit = db.Column(db.String(20), default="mg/Nm3")
-    notes = db.Column(db.String(255), nullable=True)
-
-    __table_args__ = (
-        db.UniqueConstraint("standard_name", "pollutant", name="_cap_standard_pollutant_uc"),
-    )
-
-
 class FlaringDetail(db.Model):
     """
     Detailed operational flaring streams (Routine, Non-Routine, Safety)
