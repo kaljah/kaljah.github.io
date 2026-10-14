@@ -16,11 +16,134 @@ import re
 from openpyxl.utils import get_column_letter
 
 from extensions import db
-from models import Facility, CbamProductExport, Emission, ProductionData
+from models import Facility, CbamProductExport, Emission, ProductionData, Scope2Emission
 from routes.auth import login_required
 from services.audit_chain import data_fingerprint, record_report_fingerprint
 from utils import get_allowed_facility_ids, get_current_user
 from routes.reports import _safe_excel_value, reports_bp
+
+
+COUNTRY_GRID_FACTORS = {
+    "Algeria": 0.5820,
+    "DZ": 0.5820,
+    "Egypt": 0.4720,
+    "EG": 0.4720,
+    "Nigeria": 0.3950,
+    "NG": 0.3950,
+    "Saudi Arabia": 0.6200,
+    "SA": 0.6200,
+    "United Arab Emirates": 0.4850,
+    "AE": 0.4850,
+    "United States": 0.3700,
+    "US": 0.3700,
+    "United Kingdom": 0.2100,
+    "GB": 0.2100,
+    "European Union": 0.2300,
+    "EU": 0.2300,
+    "France": 0.0580,
+    "FR": 0.0580,
+    "Germany": 0.3800,
+    "DE": 0.3800,
+    "Norway": 0.0150,
+    "NO": 0.0150,
+}
+DEFAULT_GLOBAL_GRID_FACTOR = 0.4500
+
+
+def _get_facility_scope1_split(facility_id, year=None):
+    """
+    Computes genuine combustion, process, and flaring/venting splits
+    from the Emission table for the given facility and year.
+    Returns (comb_pct, proc_pct, flare_pct, has_real_data).
+    """
+    q = Emission.query.filter_by(facility_id=facility_id)
+    if year:
+        q = q.filter_by(year=year)
+    records = q.all()
+    if not records:
+        # Honest fallback: 100% direct process emission, 0% combustion, 0% flaring
+        return (0.0, 1.0, 0.0, False)
+
+    comb_sum = sum(
+        float(e.co2e_total or 0.0)
+        for e in records
+        if str(e.process_type or "").lower()
+        in ("combustion", "fuel_combustion", "boiler", "turbine", "engine", "heater")
+    )
+    proc_sum = sum(
+        float(e.co2e_total or 0.0)
+        for e in records
+        if str(e.process_type or "").lower()
+        in ("process", "chemical_reaction", "reforming", "catalytic", "calcination")
+    )
+    flare_sum = sum(
+        float(e.co2e_total or 0.0)
+        for e in records
+        if str(e.process_type or "").lower()
+        in ("flare", "flaring", "vent", "venting", "fugitive")
+    )
+    total = comb_sum + proc_sum + flare_sum
+
+    if total <= 0:
+        total_co2e = sum(float(e.co2e_total or 0.0) for e in records)
+        if total_co2e > 0:
+            return (0.0, 1.0, 0.0, True)
+        return (0.0, 1.0, 0.0, False)
+
+    return (comb_sum / total, proc_sum / total, flare_sum / total, True)
+
+
+def _get_facility_production_tonnes(facility_id, year=None, declared_export_qty=0.0):
+    """
+    Fetches genuine annual facility production from ProductionData.
+    Returns (total_production_tonnes, is_from_db).
+    """
+    q = ProductionData.query.filter_by(facility_id=facility_id)
+    if year:
+        q = q.filter_by(year=year)
+    prods = q.all()
+    if prods:
+        total_oil = sum(float(p.oil_amount or 0.0) for p in prods)
+        total_gas = sum(float(p.gas_amount or 0.0) for p in prods)
+        # Approximate conversion: 1 bbl crude ~ 0.1364 metric tonnes, 1 mscf gas ~ 0.0210 metric tonnes
+        total_tonnes = (total_oil * 0.1364) + (total_gas * 0.0210)
+        if total_tonnes > 0:
+            return (max(total_tonnes, float(declared_export_qty or 0.0)), True)
+    # Honest fallback: Production equals declared export quantity (100% export share)
+    return (float(declared_export_qty or 0.0), False)
+
+
+def _get_facility_scope2_metrics(facility_id, year=None, country="Algeria"):
+    """
+    Queries Scope2Emission for actual electricity consumption and grid emission factor.
+    Returns (total_mwh, grid_ef, supplier_label, has_real_data).
+    """
+    q = Scope2Emission.query.filter_by(facility_id=facility_id)
+    if year:
+        q = q.filter_by(year=year)
+    s2_records = q.all()
+    if s2_records:
+        elec_kwh = sum(
+            float(s.electricity_kwh or 0.0)
+            for s in s2_records
+            if str(s.source_type or "").lower() in ("electricity", "power", "grid")
+        )
+        weighted_ef_sum = sum(
+            float(s.electricity_kwh or 0.0) * float(s.emission_factor or 0.0)
+            for s in s2_records
+            if (s.electricity_kwh and s.emission_factor)
+        )
+        grid_ef = (weighted_ef_sum / elec_kwh) if elec_kwh > 0 else None
+        grid_reg = next((s.grid_region for s in s2_records if s.grid_region), None)
+        supplier = grid_reg or f"{country} National Grid / Utility"
+        if elec_kwh > 0 and grid_ef and grid_ef > 0:
+            return (elec_kwh / 1000.0, grid_ef, supplier, True)
+
+    default_ef = COUNTRY_GRID_FACTORS.get(
+        country, COUNTRY_GRID_FACTORS.get("Algeria", DEFAULT_GLOBAL_GRID_FACTOR)
+    )
+    return (0.0, default_ef, f"{country} National Grid Operator", False)
+
 
 
 def _clean_xml_text(val):
@@ -130,11 +253,17 @@ def export_cbam_report():
         now_utc = datetime.now(timezone.utc)
         rep_year_str = str(year_filter) if year_filter else "2024-2026"
 
+        first_fac = next(iter(facilities.values()), None) if facilities else None
+        op_country = getattr(first_fac, "country", None) or getattr(user, "location", None) or "Algeria"
+        op_iso = "DZ" if "algeria" in op_country.lower() else (op_country[:2].upper() if len(op_country) >= 2 else "DZ")
+        clean_org = re.sub(r"[^A-Za-z0-9]", "", company_name).upper()[:10] or "OPERATOR"
+        op_id = f"{op_iso}-{clean_org}-001"
+
         # -------------------------------------------------------------
         # BRANCH: XML FORMAT (Transitional Registry XML Submission)
         # -------------------------------------------------------------
         if export_format == "xml":
-            root = ET.Element("CBAMReport", {
+            root = ET.Element("CBAMDeclaration", {
                 "xmlns": "urn:eu:taxud:cbam:v1",
                 "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
                 "version": "1.0",
@@ -142,7 +271,7 @@ def export_cbam_report():
 
             # Header
             header = ET.SubElement(root, "Header")
-            ET.SubElement(header, "MessageId").text = f"CBAM-DZA-{rep_year_str}-{now_utc.strftime('%Y%m%d%H%M%S')}"
+            ET.SubElement(header, "MessageId").text = f"CBAM-{op_iso}-{rep_year_str}-{now_utc.strftime('%Y%m%d%H%M%S')}"
             ET.SubElement(header, "CreationTimestamp").text = now_utc.strftime("%Y-%m-%dT%H:%M:%SZ")
             ET.SubElement(header, "LegalReference").text = "Regulation (EU) 2023/956 & Implementing Regulation (EU) 2023/1773"
             
@@ -154,10 +283,10 @@ def export_cbam_report():
 
             # Declarant / Operator
             declarant = ET.SubElement(root, "Declarant")
-            ET.SubElement(declarant, "EORINumber").text = "DZA-SONATRACH-001"
+            ET.SubElement(declarant, "EORINumber").text = _clean_xml_text(op_id)
             ET.SubElement(declarant, "OperatorName").text = _clean_xml_text(company_name)
             ET.SubElement(declarant, "Role").text = "Operator of Non-EU Installation"
-            ET.SubElement(declarant, "Country").text = "DZ"
+            ET.SubElement(declarant, "Country").text = _clean_xml_text(op_iso)
             ET.SubElement(declarant, "ContactEmail").text = _clean_xml_text(assessor_email)
 
             # Installations
@@ -168,13 +297,14 @@ def export_cbam_report():
                 if not fac:
                     continue
                 inst_el = ET.SubElement(installations_el, "Installation")
-                ET.SubElement(inst_el, "InstallationId").text = _clean_xml_text(fac.code or f"DZ-FAC-{fac.id:03d}")
+                fac_code = fac.code or f"{op_iso}-FAC-{fac.id:03d}"
+                ET.SubElement(inst_el, "InstallationId").text = _clean_xml_text(fac_code)
                 ET.SubElement(inst_el, "Name").text = _clean_xml_text(fac.name)
-                ET.SubElement(inst_el, "Country").text = _clean_xml_text(fac.country or "DZ")
+                ET.SubElement(inst_el, "Country").text = _clean_xml_text(fac.country or op_iso)
                 ET.SubElement(inst_el, "EconomicActivity").text = _clean_xml_text(fac.activity or "Petrochemical & Refining")
                 coords = ET.SubElement(inst_el, "Coordinates")
-                ET.SubElement(coords, "Latitude").text = f"{fac.latitude:.6f}" if fac.latitude is not None else "35.850000"
-                ET.SubElement(coords, "Longitude").text = f"{fac.longitude:.6f}" if fac.longitude is not None else "-0.310000"
+                ET.SubElement(coords, "Latitude").text = f"{fac.latitude:.6f}" if fac.latitude is not None else "0.000000"
+                ET.SubElement(coords, "Longitude").text = f"{fac.longitude:.6f}" if fac.longitude is not None else "0.000000"
 
             # Goods Exported
             goods_el = ET.SubElement(root, "GoodsExported")
@@ -183,7 +313,8 @@ def export_cbam_report():
             for r in cbam_records:
                 fac = facilities.get(r.facility_id)
                 fac_name = fac.name if fac else f"Facility {r.facility_id}"
-                fac_code = fac.code if fac and fac.code else f"DZ-FAC-{r.facility_id:03d}"
+                fac_country = getattr(fac, "country", None) or op_country
+                fac_code = fac.code if fac and fac.code else f"{op_iso}-FAC-{r.facility_id:03d}"
                 cat = get_cbam_aggregated_category(r.cn_code, r.product_name)
                 direct_see = float(r.specific_embedded_direct or 0.0)
                 indirect_see = float(r.specific_embedded_indirect or 0.0)
@@ -210,7 +341,8 @@ def export_cbam_report():
                 if (r.captured_co2_tonnes or 0.0) > 0:
                     ccs_el = ET.SubElement(good_el, "CarbonCaptureAndStorage")
                     ET.SubElement(ccs_el, "CapturedCO2Tonnes", {"unit": "tCO2"}).text = f"{float(r.captured_co2_tonnes):.2f}"
-                    ET.SubElement(ccs_el, "StorageCertificateId").text = _clean_xml_text(r.ccs_certificate_id or "DZ-CCS-PERMANENT")
+                    storage_cert = _clean_xml_text(r.ccs_certificate_id or "Self-Declared / Pending Storage Certificate")
+                    ET.SubElement(ccs_el, "StorageCertificateId").text = storage_cert
                     ET.SubElement(ccs_el, "PermanentStorageStandard").text = "Directive 2009/31/EC & ISO 27914 Geological Sequestration"
 
                 # Embedded emissions breakdown
@@ -241,7 +373,8 @@ def export_cbam_report():
                 ET.SubElement(carbon_price, "Currency").text = "EUR"
                 ET.SubElement(carbon_price, "AmountPerTonne", {"unit": "EUR/t"}).text = f"{float(r.carbon_price_paid_eur or 0.0):.2f}"
                 ET.SubElement(carbon_price, "TotalAmountPaidEUR").text = f"{(float(r.carbon_price_paid_eur or 0.0) * qty):.2f}"
-                ET.SubElement(carbon_price, "LegalBasis").text = _clean_xml_text(r.carbon_price_legal_ref or "Hydrocarbon Law 19-13 / National Environmental Fiscality")
+                legal_ref = r.carbon_price_legal_ref or (f"{fac_country} Environmental / Carbon Fiscality" if (r.carbon_price_paid_eur or 0) > 0 else "None")
+                ET.SubElement(carbon_price, "LegalBasis").text = _clean_xml_text(legal_ref)
                 ET.SubElement(carbon_price, "RebateOrCompensation").text = "None"
 
                 fingerprint_data.append({
@@ -352,9 +485,9 @@ def export_cbam_report():
             ("Reporting Period (End Date)", f"{rep_year_str}-12-31"),
             ("Reporting Year", rep_year_str),
             ("Name of the Operator", company_name),
-            ("Unique Operator Identifier", "DZA-SONATRACH-001"),
-            ("Country of Operator", "Algeria (DZ)"),
-            ("Country Code (ISO 3166-1 alpha-2)", "DZ"),
+            ("Unique Operator Identifier", op_id),
+            ("Country of Operator", f"{op_country} ({op_iso})"),
+            ("Country Code (ISO 3166-1 alpha-2)", op_iso),
             ("Primary Contact Person", f"{assessor_name} ({assessor_email})"),
             ("Role of Declarant", "Non-EU Installation Operator / Direct Exporter"),
             ("EU ETS Benchmark Reference", "Commission Implementing Regulation (EU) 2021/447"),
@@ -387,15 +520,16 @@ def export_cbam_report():
             ws_a.cell(row=sub_row + 1, column=col_idx).alignment = Alignment(horizontal="center", vertical="center")
 
         for idx, f in enumerate(facilities.values(), start=sub_row + 2):
+            fac_country = f.country or op_country
             ws_a.cell(row=idx, column=1, value=f.id).font = font_regular
             ws_a.cell(row=idx, column=2, value=_safe_excel_value(f.name)).font = font_bold
-            ws_a.cell(row=idx, column=3, value=_safe_excel_value(f.code or f"DZ-FAC-{f.id:03d}")).font = font_mono
+            ws_a.cell(row=idx, column=3, value=_safe_excel_value(f.code or f"{op_iso}-FAC-{f.id:03d}")).font = font_mono
             ws_a.cell(row=idx, column=4, value=_safe_excel_value(f.segment or "Downstream")).font = font_regular
             ws_a.cell(row=idx, column=5, value=_safe_excel_value(f"{f.division or ''} / {f.region or ''}")).font = font_regular
-            ws_a.cell(row=idx, column=6, value=_safe_excel_value(f.country or "Algeria")).font = font_regular
-            ws_a.cell(row=idx, column=7, value=f.latitude if f.latitude is not None else 35.8500).font = font_mono
-            ws_a.cell(row=idx, column=8, value=f.longitude if f.longitude is not None else -0.3100).font = font_mono
-            ws_a.cell(row=idx, column=9, value="Active Operational Control").font = font_regular
+            ws_a.cell(row=idx, column=6, value=_safe_excel_value(fac_country)).font = font_regular
+            ws_a.cell(row=idx, column=7, value=f.latitude if f.latitude is not None else "N/A").font = font_mono
+            ws_a.cell(row=idx, column=8, value=f.longitude if f.longitude is not None else "N/A").font = font_mono
+            ws_a.cell(row=idx, column=9, value=f.operator_status or "Active Operational Control").font = font_regular
 
             for c in range(1, 10):
                 ws_a.cell(row=idx, column=c).border = thin_border
@@ -425,12 +559,14 @@ def export_cbam_report():
         for idx, r in enumerate(cbam_records, start=5):
             fac = facilities.get(r.facility_id)
             fac_name = fac.name if fac else f"Facility {r.facility_id}"
-            fac_code = fac.code if fac and fac.code else f"DZ-FAC-{r.facility_id:03d}"
+            fac_code = fac.code if fac and fac.code else f"{op_iso}-FAC-{r.facility_id:03d}"
             cat = get_cbam_aggregated_category(r.cn_code, r.product_name)
             p_route = get_cbam_production_route(r.cn_code, r.product_name)
             qty = float(r.quantity_tonnes or 0.0)
-            est_prod = qty * 1.25  # realistic installation production buffer
-            share_pct = (qty / est_prod * 100.0) if est_prod > 0 else 0.0
+            total_prod, is_from_prod = _get_facility_production_tonnes(r.facility_id, r.year, qty)
+            share_pct = (qty / total_prod * 100.0) if total_prod > 0 else 100.0
+            if share_pct > 100.0:
+                share_pct = 100.0
 
             ws_b.cell(row=idx, column=1, value=f"PROC-{r.id:04d}").font = font_mono
             ws_b.cell(row=idx, column=2, value=_safe_excel_value(fac_name)).font = font_bold
@@ -440,10 +576,7 @@ def export_cbam_report():
             ws_b.cell(row=idx, column=6, value=_safe_excel_value(r.product_name)).font = font_regular
             ws_b.cell(row=idx, column=7, value=p_route).font = font_regular
             ws_b.cell(row=idx, column=8, value="Gate-to-gate installation boundary including combustion, reaction, flare, and on-site electricity").font = font_regular
-            ws_b.cell(row=idx, column=9, value=round(est_prod, 1)).number_format = "#,##0.0"
-            ws_b.cell(row=idx, column=10, value=round(qty, 1)).number_format = "#,##0.0"
-            ws_b.cell(row=idx, column=11, value=round(share_pct, 1)).number_format = "0.0%"
-
+            ws_b.cell(row=idx, column=9, value=round(total_prod, 1)).number_format = "#,##0.0"
             for c in range(1, 12):
                 ws_b.cell(row=idx, column=c).border = thin_border
                 if idx % 2 == 0:
@@ -474,10 +607,12 @@ def export_cbam_report():
             qty = float(r.quantity_tonnes or 0.0)
             direct_see = float(r.specific_embedded_direct or 0.0)
             attr_direct = qty * direct_see
-            combustion_em = attr_direct * 0.65
-            process_em = attr_direct * 0.28
-            flare_em = attr_direct * 0.07
-            heat_gj = qty * 2.85
+            
+            comb_pct, proc_pct, flare_pct, has_split = _get_facility_scope1_split(r.facility_id, r.year)
+            combustion_em = attr_direct * comb_pct
+            process_em = attr_direct * proc_pct
+            flare_em = attr_direct * flare_pct
+            heat_gj = 0.0
             heat_ef = 0.0561
             ets_bench = 1.30 if "ammonia" in r.product_name.lower() else (0.28 if "diesel" in r.product_name.lower() else 0.85)
             alignment = "Compliant (Within Expected Envelope)" if direct_see <= ets_bench * 1.5 else "Higher Than Benchmark"
@@ -525,22 +660,27 @@ def export_cbam_report():
         for idx, r in enumerate(cbam_records, start=5):
             qty = float(r.quantity_tonnes or 0.0)
             indirect_see = float(r.specific_embedded_indirect or 0.0)
-            grid_ef = 0.5820  # Algeria national grid factor (tCO2/MWh)
+            fac = facilities.get(r.facility_id)
+            fac_country = getattr(fac, "country", None) or op_country
+
+            s2_mwh, real_grid_ef, grid_supplier, has_s2 = _get_facility_scope2_metrics(r.facility_id, r.year, fac_country)
+            grid_ef = real_grid_ef
             spec_mwh = (indirect_see / grid_ef) if grid_ef > 0 else 0.0
             tot_mwh = qty * spec_mwh
             attr_indirect = qty * indirect_see
+            accounting_basis = "Verified Scope 2 Invoiced Metering + Grid EF" if has_s2 else f"Official {fac_country} National Grid Factor (Annex III Reg 2023/1773)"
 
             ws_d.cell(row=idx, column=1, value=r.id).font = font_mono
             ws_d.cell(row=idx, column=2, value=r.product_name).font = font_bold
             ws_d.cell(row=idx, column=3, value=str(r.cn_code)).font = font_mono
             ws_d.cell(row=idx, column=4, value=round(qty, 1)).number_format = "#,##0.0"
-            ws_d.cell(row=idx, column=5, value="Algerian National Grid (Sonelgaz) + Captive Cogeneration").font = font_regular
+            ws_d.cell(row=idx, column=5, value=grid_supplier).font = font_regular
             ws_d.cell(row=idx, column=6, value=round(tot_mwh, 1)).number_format = "#,##0.0"
             ws_d.cell(row=idx, column=7, value=round(spec_mwh, 4)).number_format = "0.0000"
             ws_d.cell(row=idx, column=8, value=grid_ef).number_format = "0.0000"
             ws_d.cell(row=idx, column=9, value=round(attr_indirect, 1)).number_format = "#,##0.0"
             ws_d.cell(row=idx, column=10, value=round(indirect_see, 4)).number_format = "0.0000"
-            ws_d.cell(row=idx, column=11, value="Actual Invoiced Metering + Official National Grid Factor").font = font_regular
+            ws_d.cell(row=idx, column=11, value=accounting_basis).font = font_regular
 
             for col in range(1, 12):
                 ws_d.cell(row=idx, column=col).border = thin_border
@@ -568,7 +708,7 @@ def export_cbam_report():
             ws_e.cell(row=4, column=col_idx, value=h)
         style_header_row(ws_e, 4, fill=fill_eu_header)
 
-        # Collect dynamic precursor rows from recorded exports
+        # Collect dynamic precursor rows from recorded exports only
         precursor_rows = []
         for r in cbam_records:
             if r.is_complex_good and r.precursor_name:
@@ -577,12 +717,14 @@ def export_cbam_report():
                 p_indir = float(r.precursor_see_indir or 0.0)
                 p_tot = p_dir + p_indir
                 p_contrib = ratio * p_tot
+                fac = facilities.get(r.facility_id)
+                fac_country = getattr(fac, "country", None) or op_country
                 precursor_rows.append((
                     r.product_name,
                     r.cn_code,
                     r.precursor_name,
                     r.precursor_cn_code or "2814 10 00",
-                    "Algeria (In-House Production)",
+                    f"{fac_country} (In-House / Attributed)",
                     ratio,
                     p_dir,
                     p_indir,
@@ -590,33 +732,27 @@ def export_cbam_report():
                     p_contrib
                 ))
 
-        if len(precursor_rows) < 4:
-            benchmarks = [
-                ("Liquid Nitrogen Fertilizers (UAN 32%)", "3102 80 00", "Anhydrous Ammonia (High Purity)", "2814 10 00", "Algeria (In-House)", 0.4500, 1.7850, 0.1420, 1.9270, 0.8672),
-                ("Low-Carbon Clean Hydrogen", "2804 10 00", "De-mineralized Water & Reforming Natural Gas", "2711 11 00", "Algeria (Internal Field)", 1.2500, 2.1000, 0.1800, 2.2800, 2.8500),
-                ("Ultra-Low Sulfur Diesel (ULSD 10 ppm)", "2710 19 43", "Atmospheric Heavy Gasoil & Hydrogen", "2710 19 31", "Algeria (Skikda Refinery)", 0.9850, 0.1850, 0.0350, 0.2200, 0.2167),
-                ("Aromatics: Pure Benzene & Paraxylene", "2902 20 00", "Reformate Stream / Hydrotreated Naphtha", "2710 12 11", "Algeria (In-House)", 1.0500, 0.4200, 0.0800, 0.5000, 0.5250),
-            ]
-            for b in benchmarks:
-                if not any(pr[0] == b[0] for pr in precursor_rows):
-                    precursor_rows.append(b)
-
-        for idx, p in enumerate(precursor_rows, start=5):
-            ws_e.cell(row=idx, column=1, value=p[0]).font = font_bold
-            ws_e.cell(row=idx, column=2, value=p[1]).font = font_mono
-            ws_e.cell(row=idx, column=3, value=p[2]).font = font_regular
-            ws_e.cell(row=idx, column=4, value=p[3]).font = font_mono
-            ws_e.cell(row=idx, column=5, value=p[4]).font = font_regular
-            ws_e.cell(row=idx, column=6, value=p[5]).number_format = "0.0000"
-            ws_e.cell(row=idx, column=7, value=p[6]).number_format = "0.0000"
-            ws_e.cell(row=idx, column=8, value=p[7]).number_format = "0.0000"
-            ws_e.cell(row=idx, column=9, value=p[8]).number_format = "0.0000"
-            ws_e.cell(row=idx, column=10, value=p[9]).number_format = "0.0000"
-
+        if not precursor_rows:
+            ws_e.cell(row=5, column=1, value="No complex goods with upstream precursors declared for this reporting period under Article 7").font = font_subtitle
             for col in range(1, 11):
-                ws_e.cell(row=idx, column=col).border = thin_border
-                if idx % 2 == 0:
-                    ws_e.cell(row=idx, column=col).fill = PatternFill(start_color=c_light_zebra, end_color=c_light_zebra, fill_type="solid")
+                ws_e.cell(row=5, column=col).border = thin_border
+        else:
+            for idx, p in enumerate(precursor_rows, start=5):
+                ws_e.cell(row=idx, column=1, value=p[0]).font = font_bold
+                ws_e.cell(row=idx, column=2, value=p[1]).font = font_mono
+                ws_e.cell(row=idx, column=3, value=p[2]).font = font_regular
+                ws_e.cell(row=idx, column=4, value=p[3]).font = font_mono
+                ws_e.cell(row=idx, column=5, value=p[4]).font = font_regular
+                ws_e.cell(row=idx, column=6, value=p[5]).number_format = "0.0000"
+                ws_e.cell(row=idx, column=7, value=p[6]).number_format = "0.0000"
+                ws_e.cell(row=idx, column=8, value=p[7]).number_format = "0.0000"
+                ws_e.cell(row=idx, column=9, value=p[8]).number_format = "0.0000"
+                ws_e.cell(row=idx, column=10, value=p[9]).number_format = "0.0000"
+
+                for col in range(1, 11):
+                    ws_e.cell(row=idx, column=col).border = thin_border
+                    if idx % 2 == 0:
+                        ws_e.cell(row=idx, column=col).fill = PatternFill(start_color=c_light_zebra, end_color=c_light_zebra, fill_type="solid")
 
         autofit_columns(ws_e)
 
@@ -645,7 +781,8 @@ def export_cbam_report():
         for idx, r in enumerate(cbam_records, start=5):
             fac = facilities.get(r.facility_id)
             fac_name = fac.name if fac else f"Facility {r.facility_id}"
-            fac_code = fac.code if fac and fac.code else f"DZ-FAC-{r.facility_id:03d}"
+            fac_country = getattr(fac, "country", None) or op_country
+            fac_code = fac.code if fac and fac.code else f"{op_iso}-FAC-{r.facility_id:03d}"
             cat = get_cbam_aggregated_category(r.cn_code, r.product_name)
             qty = float(r.quantity_tonnes or 0.0)
             direct_see = float(r.specific_embedded_direct or 0.0)
@@ -659,7 +796,7 @@ def export_cbam_report():
 
             ws_f.cell(row=idx, column=1, value=_safe_excel_value(fac_name)).font = font_bold
             ws_f.cell(row=idx, column=2, value=_safe_excel_value(fac_code)).font = font_mono
-            ws_f.cell(row=idx, column=3, value="Algeria (DZ)").font = font_regular
+            ws_f.cell(row=idx, column=3, value=f"{fac_country} ({op_iso})").font = font_regular
             ws_f.cell(row=idx, column=4, value=_safe_excel_value(r.product_name)).font = font_bold
             ws_f.cell(row=idx, column=5, value=str(r.cn_code)).font = font_mono
             ws_f.cell(row=idx, column=6, value=_safe_excel_value(cat)).font = font_bold
@@ -717,7 +854,7 @@ def export_cbam_report():
         ws_h.views.sheetView[0].showGridLines = True
 
         ws_h.cell(row=1, column=1, value="EU CBAM — ARTICLE 9 CARBON PRICE & FLARING FISCALITY PAID IN COUNTRY OF ORIGIN").font = font_title
-        ws_h.cell(row=2, column=1, value="Details of carbon price and flaring penalties effectively paid in Algeria under Article 9 of Regulation (EU) 2023/956").font = font_subtitle
+        ws_h.cell(row=2, column=1, value="Details of carbon price and flaring penalties effectively paid under Article 9 of Regulation (EU) 2023/956").font = font_subtitle
 
         h_headers = [
             "Record ID", "Installation Name", "Facility Code", "Commercial Product Name",
@@ -732,12 +869,22 @@ def export_cbam_report():
         for idx, r in enumerate(cbam_records, start=5):
             fac = facilities.get(r.facility_id)
             fac_name = fac.name if fac else f"Facility {r.facility_id}"
-            fac_code = fac.code if fac and fac.code else f"DZ-FAC-{r.facility_id:03d}"
+            fac_country = getattr(fac, "country", None) or op_country
+            fac_code = fac.code if fac and fac.code else f"{op_iso}-FAC-{r.facility_id:03d}"
             qty = float(r.quantity_tonnes or 0.0)
             rate = float(r.carbon_price_paid_eur or 0.0)
             tot_paid = qty * rate
-            legal_ref = r.carbon_price_legal_ref or "Hydrocarbon Law 19-13 Art 42 / Decree 21-330"
+            legal_ref = r.carbon_price_legal_ref or (f"{fac_country} Environmental / Carbon Fiscality" if rate > 0 else "N/A - No origin price claimed")
             status = "Eligible for Full Article 9 Deduction" if rate > 0 else "No Origin Price Claimed"
+
+            if rate > 0:
+                notes_val = str(r.notes or "").strip()
+                if notes_val and any(term in notes_val.lower() for term in ("receipt", "tax", "cert", "ref", "doc")):
+                    receipt_id = notes_val
+                else:
+                    receipt_id = "Self-Declared / Pending Fiscal Proof"
+            else:
+                receipt_id = "N/A"
 
             ws_h.cell(row=idx, column=1, value=r.id).font = font_mono
             ws_h.cell(row=idx, column=2, value=_safe_excel_value(fac_name)).font = font_bold
@@ -749,7 +896,7 @@ def export_cbam_report():
             ws_h.cell(row=idx, column=8, value=rate).number_format = "€#,##0.00"
             ws_h.cell(row=idx, column=9, value=round(tot_paid, 2)).number_format = "€#,##0.00"
             ws_h.cell(row=idx, column=10, value=status).font = font_bold
-            ws_h.cell(row=idx, column=11, value=f"DZ-TAX-{r.year}-{r.id:04d}").font = font_mono
+            ws_h.cell(row=idx, column=11, value=_safe_excel_value(receipt_id)).font = font_mono
 
             for col in range(1, 12):
                 ws_h.cell(row=idx, column=col).border = thin_border

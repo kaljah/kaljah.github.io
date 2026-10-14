@@ -418,7 +418,7 @@ ALL_DIMENSION_MAPS = [
 def convert(value, from_unit, to_unit):
     """Simple unit conversion wrapper supporting direct keys, dimensional base units, temperatures, and pressures."""
     if value is None:
-        return 0.0
+        raise ValueError("Cannot convert None value: input value is required")
     val = float(value)
     u_from = str(from_unit).strip().lower()
     u_to = str(to_unit).strip().lower()
@@ -471,10 +471,11 @@ def calculate_co2e(
     )
 
 
-def normalize_efficiency(eff_val, default=0.0):
+def normalize_efficiency(eff_val, default=0.0, unit=None):
     """
     Defensively normalizes efficiency inputs provided as either fractional ratios (0.0 - 1.0)
     or percentages (1.0 - 100.0) into a bounded 0.0 - 1.0 float.
+    unit: Explicit unit mode ("pct" / "percent" vs "fraction" / "ratio").
     Traps negative numbers and percentages > 1.0 to prevent negative emission inversions.
     """
     if eff_val in [None, "", "-"]:
@@ -486,8 +487,12 @@ def normalize_efficiency(eff_val, default=0.0):
         return default
     if val < 0.0:
         return 0.0
-    if is_pct or val > 1.0:
-        # an explicit "%" is always a percentage ("1%" is 0.01, not a fraction of 1.0)
+    u = str(unit or "").strip().lower()
+    if u in ["pct", "percent", "%"]:
+        val /= 100.0
+    elif u in ["fraction", "ratio", "dec", "decimal"]:
+        pass
+    elif is_pct or val > 1.0:
         val /= 100.0
     return max(0.0, min(1.0, val))
 

@@ -22,19 +22,27 @@ class ComponentFugitiveCalculator(BaseCalculator):
         # Example factors (kg CH4 / hr / component) - simplified from Table 7-1
         # In real implementation, these would come from emission_factors.py
 
+        DEFAULT_EFS = {
+            "valve": 0.0045, "valves": 0.0045, "gas_valve": 0.0045, "light_liquid_valve": 0.0025,
+            "connector": 0.0002, "connectors": 0.0002, "flange": 0.00039, "flanges": 0.00039,
+            "open_ended_line": 0.002, "open_ended_lines": 0.002, "pump_seal": 0.013, "pump_seals": 0.013,
+            "relief_valve": 0.0088, "relief_valves": 0.0088, "other": 0.0088, "others": 0.0088,
+        }
         total_ch4_kg_hr = 0
         for comp_type, data in component_counts.items():
+            k_norm = str(comp_type or "").strip().lower().replace("-", "_").replace(" ", "_")
             if isinstance(data, dict):
                 count = data.get("count", 0)
                 ef_unit = str(data.get("unit") or data.get("ef_unit") or "kg TOC/hr/component")
-                # BUG-048: numerator mass (t/kg) and gas (CH4 incl. "CH₄") come from the unit
+                raw_ef = data.get("ef")
+                if raw_ef is None or (raw_ef == 0 and "ef" not in data):
+                    raw_ef = DEFAULT_EFS.get(k_norm, 0.0045)
                 from .units import per_source_hour_kg
-
-                ef, unit_is_ch4 = per_source_hour_kg(data.get("ef", 0), ef_unit)
+                ef, unit_is_ch4 = per_source_hour_kg(raw_ef, ef_unit)
                 is_methane = bool(data.get("is_methane")) or unit_is_ch4
             else:
                 count = float(data or 0)
-                ef = 0.0
+                ef = DEFAULT_EFS.get(k_norm, 0.0045)
                 is_methane = False
             c_ch4 = float(ch4_content if ch4_content is not None else 0.85)
             if c_ch4 > 1.0:

@@ -24,6 +24,23 @@ UPLOAD_JOB_DIR = os.environ.get("UPLOAD_JOB_DIR") or os.path.join(
 os.makedirs(UPLOAD_JOB_DIR, exist_ok=True)
 STALE_JOB_SECONDS = 600  # a job whose worker stopped writing for this long was interrupted
 _last_persist = {}
+_redis_client = None
+
+
+def _get_redis():
+    global _redis_client
+    if _redis_client is None:
+        redis_url = os.environ.get("REDIS_URL")
+        if redis_url:
+            try:
+                import redis
+
+                _redis_client = redis.from_url(redis_url, socket_timeout=2)
+            except Exception:
+                _redis_client = False
+        else:
+            _redis_client = False
+    return _redis_client if _redis_client else None
 
 
 def _job_file(job_id):
@@ -78,14 +95,20 @@ def _persist_job(job_id, force=False):
     now = time.time()
     if not force and now - _last_persist.get(job_id, 0) < 1.0:
         return
-    path = _job_file(job_id)
-    if not path:
-        return
     with upload_jobs_lock:
         job = upload_jobs.get(job_id)
         if job is None:
             return
         snap = _snapshot(job)
+    r = _get_redis()
+    if r:
+        try:
+            r.setex(f"upload_job:{job_id}", 86400, json.dumps(snap, default=str))
+        except Exception:
+            pass
+    path = _job_file(job_id)
+    if not path:
+        return
     tmp = None
     try:
         os.makedirs(UPLOAD_JOB_DIR, exist_ok=True)
@@ -107,6 +130,15 @@ def _persist_job(job_id, force=False):
 def _load_job(job_id):
     import json
 
+    r = _get_redis()
+    if r:
+        try:
+            raw = r.get(f"upload_job:{job_id}")
+            if raw:
+                snap = json.loads(raw if isinstance(raw, str) else raw.decode("utf-8"))
+                return snap
+        except Exception:
+            pass
     path = _job_file(job_id)
     if not path or not os.path.exists(path):
         return None
@@ -841,46 +873,46 @@ def _process_file_thread(
 
                 total_rows = max(0, (ws.max_row or 0) - header_row_no)
             else:
-                # Read file bytes with multi-encoding fallback (UTF-8-BOM, UTF-8, Windows-1252, ISO-8859-1)
-                with open(file_path, "rb") as raw_f:
-                    raw_bytes = raw_f.read()
-                decoded_text = None
+                # Delimiter detection and streaming CSV parser (no full-file in-memory buffering)
+                enc_used = "utf-8"
+                with open(file_path, "rb") as probe_f:
+                    head_sample = probe_f.read(65536)
                 for enc in ["utf-8-sig", "utf-8", "windows-1252", "iso-8859-1"]:
                     try:
-                        decoded_text = raw_bytes.decode(enc)
+                        head_sample.decode(enc)
+                        enc_used = enc
                         break
                     except (UnicodeDecodeError, LookupError):
                         continue
-                if decoded_text is None:
-                    decoded_text = raw_bytes.decode("utf-8", errors="replace")
 
-                # Universal newline normalization (CRLF, legacy CR -> \n)
-                decoded_text = decoded_text.replace("\r\n", "\n").replace("\r", "\n")
-
-                import io
-                # Delimiter (comma, semicolon, tab, pipe) from the header line only: data rows and
-                # the template's description row contain free text ("a | b", "1,5")
-                first_line = decoded_text.lstrip("\n").split("\n", 1)[0]
+                first_line = ""
+                with open(file_path, "r", encoding=enc_used, errors="replace") as f_del:
+                    for line in f_del:
+                        if line.strip():
+                            first_line = line
+                            break
                 counts = {d: first_line.count(d) for d in (",", ";", "\t", "|")}
                 delimiter = max(counts, key=counts.get) if max(counts.values()) > 0 else ","
-                # Excel writes ";"-separated CSV where "," is the decimal separator: there "1,500"
-                # is 1.5, not 1500 (audit 2026-09-30). An explicit choice in the wizard wins.
                 if decimal_mark is None and delimiter == ";":
                     decimal_mark = "comma"
 
-                f = io.StringIO(decoded_text)
+                total_rows = 0
+                with open(file_path, "r", encoding=enc_used, errors="replace", newline="") as f_cnt:
+                    cnt_reader = csv.reader(f_cnt, delimiter=delimiter)
+                    try:
+                        next(cnt_reader)
+                        for _ in cnt_reader:
+                            total_rows += 1
+                    except Exception:
+                        pass
+
+                f = open(file_path, "r", encoding=enc_used, errors="replace", newline="")
                 reader = csv.reader(f, delimiter=delimiter)
-                headers = next(reader, [])
-                headers = [h.strip() for h in headers]
+                headers = [h.strip() for h in next(reader, [])]
                 header_row_no = 1
                 rows_iterator = reader
                 csv_source = True
-                total_rows = max(0, sum(1 for ln in decoded_text.split("\n") if ln.strip()) - 1)
 
-            if csv_source:
-                # rows counted with the CSV reader (quoted cells may span lines) for the progress bar.
-                # There is no row limit: the whole file is still saved in one transaction (all or nothing).
-                total_rows = sum(1 for _ in csv.reader(io.StringIO(decoded_text), delimiter=delimiter)) - 1
             _update_job(job_id, total=total_rows)
 
             # Resolve mapping: the automatic mapping, overridden by the columns the user chose in

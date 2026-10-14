@@ -14,15 +14,25 @@ class IndependentFugitiveModel:
         if c1 > 1.0:
             c1 /= 100.0
 
+        DEFAULT_EFS = {
+            "valve": 0.0045, "valves": 0.0045, "gas_valve": 0.0045, "light_liquid_valve": 0.0025,
+            "connector": 0.0002, "connectors": 0.0002, "flange": 0.00039, "flanges": 0.00039,
+            "open_ended_line": 0.002, "open_ended_lines": 0.002, "pump_seal": 0.013, "pump_seals": 0.013,
+            "relief_valve": 0.0088, "relief_valves": 0.0088, "other": 0.0088, "others": 0.0088,
+        }
         total_ch4_kg_hr = 0.0
         for comp, data in component_counts.items():
+            k_norm = str(comp or "").strip().lower().replace("-", "_").replace(" ", "_")
             if isinstance(data, dict):
                 cnt = float(data.get("count", 0) or 0)
-                ef = float(data.get("ef", 0) or 0)
+                raw_ef = data.get("ef")
+                if raw_ef is None or (raw_ef == 0 and "ef" not in data):
+                    raw_ef = DEFAULT_EFS.get(k_norm, 0.0045)
+                ef = float(raw_ef or 0)
                 is_m = bool(data.get("is_methane")) or any(x in str(data.get("unit", "")).lower() for x in ["ch4", "methane"])
             else:
                 cnt = float(data or 0)
-                ef = 0.0
+                ef = DEFAULT_EFS.get(k_norm, 0.0045)
                 is_m = False
             scaling = 1.0 if is_m else c1
             total_ch4_kg_hr += cnt * ef * scaling

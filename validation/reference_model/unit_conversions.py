@@ -255,7 +255,7 @@ class IndependentUnitConverter:
     @staticmethod
     def convert(value, from_unit, to_unit):
         if value is None:
-            return 0.0
+            raise ValueError("Cannot convert None value: input value is required")
         val = float(value)
         u_from = str(from_unit).strip().lower()
         u_to = str(to_unit).strip().lower()

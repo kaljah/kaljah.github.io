@@ -37,23 +37,14 @@ from .units import (UnitError, factor_to_kg_per_activity, norm_unit, parse_facto
                     unit_dimension)
 
 
-def _normalize_efficiency(eff_val, default=0.0):
+def _normalize_efficiency(eff_val, default=0.0, unit=None):
     """
     Defensively normalizes efficiency inputs provided as either fractional ratios (0.0 - 1.0)
     or percentages (1.0 - 100.0) into a bounded 0.0 - 1.0 float.
-    Traps negative numbers and percentages > 1.0 to prevent negative emission inversions.
+    unit: Explicit unit mode ('pct' vs 'fraction').
     """
-    if eff_val in [None, "", "-"]:
-        return default
-    try:
-        val = float(str(eff_val).replace("%", "").strip())
-    except (ValueError, TypeError):
-        return default
-    if val < 0.0:
-        return 0.0
-    if val > 1.0:
-        val /= 100.0
-    return max(0.0, min(1.0, val))
+    from .units import normalize_efficiency
+    return normalize_efficiency(eff_val, default=default, unit=unit)
 
 
 BTU_TO_MJ = 0.00105505585262
@@ -385,9 +376,15 @@ class CombustionCalculator(BaseCalculator):
         # Tier 3 fuel analysis of a liquid / solid fuel: carbon mass balance, Eq 4-5 (Exhibit 4.5). The
         # carbon content was ignored and the catalog CO2 factor stored instead (Exhibit 4.5: 45,060 t, not 50,966 t)
         if carbon_wt not in (None, "", "-") and not any(_pos(comps.get(f"c{i}")) for i in range(1, 11)):
-            cw = float(carbon_wt)
-            cw = cw / 100.0 if cw > 1.0 else cw
-            if not 0.0 < cw <= 1.0:
+            cw = float(str(carbon_wt).replace("%", "").strip())
+            cw_u = str(comps.get("carbon_wt_unit") or comps.get("cw_unit") or "").strip().lower()
+            if cw_u in ("pct", "percent", "%") or "%" in str(carbon_wt):
+                cw = cw / 100.0
+            elif cw_u in ("fraction", "ratio", "dec", "decimal"):
+                pass
+            elif cw > 1.0:
+                cw = cw / 100.0
+            if not 0.0 <= cw <= 1.0:
                 raise ValueError("Fuel carbon content must be between 0 and 100 wt %")
             dim, to_base = unit_dimension(fuel_unit)
             if dim == "mass":
@@ -400,7 +397,8 @@ class CombustionCalculator(BaseCalculator):
             else:
                 raise UnitError("The fuel carbon content (wt %) needs the fuel quantity as a mass or a liquid volume; "
                                 "gas fuels use the gas analysis (mol %)")
-            eta_c = _normalize_efficiency(combustion_efficiency, default=1.0)
+            eff_u = str(comps.get("efficiency_unit") or comps.get("eff_unit") or "").strip().lower()
+            eta_c = _normalize_efficiency(combustion_efficiency, default=1.0, unit=eff_u or None)
             co2_val = fuel_kg * cw * eta_c * (44.01 / 12.011) / 1000.0
 
         # Resolve tier from factor_source (passed via uncertainties dict sidecar or defaults)

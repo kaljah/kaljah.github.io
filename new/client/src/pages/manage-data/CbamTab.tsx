@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { FileSpreadsheet, ShieldCheck, Layers, Coins, Landmark } from "lucide-react";
-import { Badge, Button, Field, Input } from "../../ui";
+import { FileSpreadsheet, ShieldCheck, Layers, Coins } from "lucide-react";
+import { Badge, Button, Field, Input, controlClass, cn } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import PaginationControls from "./PaginationControls";
 import { FormActions, FormGrid, RecordTable, TabCard, Td, Tr } from "./MdParts";
@@ -87,6 +87,7 @@ export const CN_OPTIONS = [
   { code: "2709 00 00", label: "2709 00 00 - Crude Petroleum Oil", name: "Crude Petroleum Oil", isComplex: false },
   { code: "2711 11 00", label: "2711 11 00 - Liquefied Natural Gas (LNG)", name: "Liquefied Natural Gas (LNG)", isComplex: false },
   { code: "2711 21 00", label: "2711 21 00 - Pipeline Natural Gas", name: "Pipeline Natural Gas", isComplex: false },
+  { code: "2710 12", label: "2710 12 - Light Oils & Preparations (Naphtha)", name: "Light Naphtha & Refining Cuts", isComplex: false },
   { code: "2710 12 11", label: "2710 12 11 - Light Naphtha & Refining Cuts", name: "Light Naphtha & Refining Cuts", isComplex: false },
   { code: "2710 19 43", label: "2710 19 43 - Heavy Gas Oil / Diesel", name: "Heavy Gas Oil / Diesel", isComplex: false },
   { code: "2902 20 00", label: "2902 20 00 - Pure Benzene (Petrochemical)", name: "Pure Benzene (Petrochemical)", isComplex: false },
@@ -228,6 +229,18 @@ const CbamTab: React.FC<CbamTabProps> = ({
       description={t(
         "Record product exports subject to EU Carbon Border Adjustment Mechanism tailored to Oil & Gas operations, including Clean Hydrogen, Ammonia, Fertilizers, Refinery streams, Carbon Capture & Storage (CCS), and Origin Carbon Taxes.",
       )}
+      actions={
+        <Button
+          size="sm"
+          variant="secondary"
+          onClick={handleExportCbamExcel}
+          disabled={exporting}
+          className="inline-flex items-center gap-1.5"
+        >
+          <FileSpreadsheet className="size-4 text-text-secondary" aria-hidden="true" />
+          {exporting ? t("Exporting...") : t("Export Official CBAM Template")}
+        </Button>
+      }
     >
       <FormGrid className="form-grid-3" cols="md:grid-cols-3">
         <Field label={t("Activity")}>
@@ -243,7 +256,7 @@ const CbamTab: React.FC<CbamTabProps> = ({
               const autoFac = facs.length === 1 ? facs[0].id.toString() : "";
               setCbamForm({ ...cbamForm, activity: act, division: autoDiv, facility_id: autoFac });
             }}
-            className="component-select"
+            className={cn(controlClass, "component-select")}
           >
             <option value="">{t("-- Select Activity --")}</option>
             {getAvailableActivities().map((a) => (
@@ -265,7 +278,7 @@ const CbamTab: React.FC<CbamTabProps> = ({
               const autoFac = facs.length === 1 ? facs[0].id.toString() : "";
               setCbamForm({ ...cbamForm, division: div, facility_id: autoFac });
             }}
-            className="component-select"
+            className={cn(controlClass, "component-select")}
             disabled={!cbamForm.activity}
           >
             <option value="">{t("-- Select Division --")}</option>
@@ -277,7 +290,7 @@ const CbamTab: React.FC<CbamTabProps> = ({
           </NativeSelect>
         </Field>
 
-        <Field label={t("Facility / Production Site *")}>
+        <Field label={t("Facility / Production Site")} required>
           <NativeSelect
             value={cbamForm.facility_id || ""}
             onChange={(e) => {
@@ -290,7 +303,7 @@ const CbamTab: React.FC<CbamTabProps> = ({
                 division: fac?.division || cbamForm.division,
               });
             }}
-            className="component-select"
+            className={cn(controlClass, "component-select")}
           >
             <option value="">{t("-- Select Facility --")}</option>
             {facilities
@@ -307,11 +320,11 @@ const CbamTab: React.FC<CbamTabProps> = ({
           </NativeSelect>
         </Field>
 
-        <Field label={t("EU CN Code (Oil & Gas Scope) *")}>
+        <Field label={t("EU CN Code (Oil & Gas Scope)")} required>
           <NativeSelect
             value={isCustomCn ? "Custom" : currentCnCode}
             onChange={(e) => handleCnCodeChange(e.target.value)}
-            className="component-select"
+            className={cn(controlClass, "component-select")}
           >
             {CN_OPTIONS.map((opt) => (
               <option key={opt.code} value={opt.code}>
@@ -326,7 +339,7 @@ const CbamTab: React.FC<CbamTabProps> = ({
         </Field>
 
         {isCustomCn && (
-          <Field label={t("Enter Custom EU CN Code *")}>
+          <Field label={t("Enter Custom EU CN Code")} required>
             <Input
               type="text"
               value={cbamForm.cn_code || ""}
@@ -336,12 +349,12 @@ const CbamTab: React.FC<CbamTabProps> = ({
           </Field>
         )}
 
-        <Field label={t("Commercial Product Name *")}>
+        <Field label={t("Commercial Product Name")} required>
           <Input
             type="text"
             value={cbamForm.product_name || ""}
             onChange={(e) => setCbamForm({ ...cbamForm, product_name: e.target.value })}
-            placeholder={t("e.g. Clean Blue Hydrogen / Low-Carbon Ammonia")}
+            placeholder={t("e.g. Export Blend Crude Oil")}
           />
         </Field>
 
@@ -349,38 +362,13 @@ const CbamTab: React.FC<CbamTabProps> = ({
           <NativeSelect
             value={cbamForm.export_destination || "EU"}
             onChange={(e) => setCbamForm({ ...cbamForm, export_destination: e.target.value })}
-            className="component-select"
+            className={cn(controlClass, "component-select")}
           >
             <option value="EU">{t("European Union (EU-27)")}</option>
             <option value="UK">{t("United Kingdom (UK CBAM)")}</option>
             <option value="US">{t("United States")}</option>
             <option value="APAC">{t("Asia-Pacific")}</option>
             <option value="Non-EU">{t("Other Non-EU")}</option>
-          </NativeSelect>
-        </Field>
-
-        <Field label={t("Reporting Year")}>
-          <Input
-            type="number"
-            value={cbamForm.year || ""}
-            onChange={(e) => setCbamForm({ ...cbamForm, year: e.target.value })}
-          />
-        </Field>
-
-        <Field label={t("Reporting Quarter (DG TAXUD)")}>
-          <NativeSelect
-            value={cbamForm.quarter || "Q1"}
-            onChange={(e) => {
-              const q = e.target.value;
-              const qMonthMap: Record<string, number> = { Q1: 1, Q2: 4, Q3: 7, Q4: 10 };
-              setCbamForm({ ...cbamForm, quarter: q, month: qMonthMap[q] || 1 });
-            }}
-            className="component-select"
-          >
-            <option value="Q1">{t("Q1 (Jan 01 - Mar 31)")}</option>
-            <option value="Q2">{t("Q2 (Apr 01 - Jun 30)")}</option>
-            <option value="Q3">{t("Q3 (Jul 01 - Sep 30)")}</option>
-            <option value="Q4">{t("Q4 (Oct 01 - Dec 31)")}</option>
           </NativeSelect>
         </Field>
 
@@ -392,7 +380,7 @@ const CbamTab: React.FC<CbamTabProps> = ({
               const q = `Q${Math.floor((m - 1) / 3) + 1}`;
               setCbamForm({ ...cbamForm, month: m, quarter: q });
             }}
-            className="component-select"
+            className={cn(controlClass, "component-select")}
           >
             {Array.from({ length: 12 }, (_, i) => (
               <option key={i + 1} value={i + 1}>
@@ -402,7 +390,32 @@ const CbamTab: React.FC<CbamTabProps> = ({
           </NativeSelect>
         </Field>
 
-        <Field label={t("Export Quantity (Metric Tonnes) *")}>
+        <Field label={t("Reporting Quarter (DG TAXUD)")}>
+          <NativeSelect
+            value={cbamForm.quarter || "Q1"}
+            onChange={(e) => {
+              const q = e.target.value;
+              const qMonthMap: Record<string, number> = { Q1: 1, Q2: 4, Q3: 7, Q4: 10 };
+              setCbamForm({ ...cbamForm, quarter: q, month: qMonthMap[q] || 1 });
+            }}
+            className={cn(controlClass, "component-select")}
+          >
+            <option value="Q1">{t("Q1 (Jan 01 - Mar 31)")}</option>
+            <option value="Q2">{t("Q2 (Apr 01 - Jun 30)")}</option>
+            <option value="Q3">{t("Q3 (Jul 01 - Sep 30)")}</option>
+            <option value="Q4">{t("Q4 (Oct 01 - Dec 31)")}</option>
+          </NativeSelect>
+        </Field>
+
+        <Field label={t("Reporting Year")}>
+          <Input
+            type="number"
+            value={cbamForm.year || ""}
+            onChange={(e) => setCbamForm({ ...cbamForm, year: e.target.value })}
+          />
+        </Field>
+
+        <Field label={t("Export Quantity (Metric Tonnes)")} required>
           <Input
             type="number"
             value={cbamForm.quantity_tonnes || ""}
@@ -411,32 +424,38 @@ const CbamTab: React.FC<CbamTabProps> = ({
           />
         </Field>
 
-        <Field label={t("Direct Specific Embedded (SEE_dir) (tCO₂e / t)")}>
+        <Field
+          label={t("Direct Specific Embedded (SEE_dir) (tCO₂e / t)")}
+          hint={t("Auto-calculated from site if 0")}
+        >
           <Input
             type="number"
             step="0.0001"
             value={cbamForm.specific_embedded_direct || ""}
             onChange={(e) => setCbamForm({ ...cbamForm, specific_embedded_direct: e.target.value })}
-            placeholder={t("Auto-calculated from site if 0")}
+            placeholder="0.000"
           />
         </Field>
 
-        <Field label={t("Indirect Specific Embedded (SEE_indir) (tCO₂e / t)")}>
+        <Field
+          label={t("Indirect Specific Embedded (SEE_indir) (tCO₂e / t)")}
+          hint={t("Auto-calculated from Scope 2 if 0")}
+        >
           <Input
             type="number"
             step="0.0001"
             value={cbamForm.specific_embedded_indirect || ""}
             onChange={(e) => setCbamForm({ ...cbamForm, specific_embedded_indirect: e.target.value })}
-            placeholder={t("Auto-calculated from Scope 2 if 0")}
+            placeholder="0.000"
           />
         </Field>
       </FormGrid>
 
       {/* Carbon Capture & Geological Storage (CCS) Section */}
-      <div className="mt-6 rounded-xl border border-emerald-200/80 bg-emerald-50/40 p-5 shadow-xs transition-colors">
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-2 border-b border-emerald-100 pb-3">
+      <div className="mt-6 rounded-lg border border-border bg-surface p-5 shadow-xs transition-colors">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2 border-b border-border pb-3">
           <div className="flex items-center gap-2.5">
-            <ShieldCheck className="size-5 text-emerald-600" aria-hidden="true" />
+            <ShieldCheck className="size-5 text-success-fg" aria-hidden="true" />
             <h4 className="text-sm font-semibold text-text">
               {t("Carbon Capture & Permanent Storage (CCS)")}
             </h4>
@@ -467,10 +486,10 @@ const CbamTab: React.FC<CbamTabProps> = ({
       </div>
 
       {/* Origin Carbon Price / Flaring Tax Section */}
-      <div className="mt-5 rounded-xl border border-amber-200/80 bg-amber-50/40 p-5 shadow-xs transition-colors">
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-2 border-b border-amber-100 pb-3">
+      <div className="mt-5 rounded-lg border border-border bg-surface p-5 shadow-xs transition-colors">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2 border-b border-border pb-3">
           <div className="flex items-center gap-2.5">
-            <Coins className="size-5 text-amber-600" aria-hidden="true" />
+            <Coins className="size-5 text-warning-fg" aria-hidden="true" />
             <h4 className="text-sm font-semibold text-text">
               {t("Carbon Price & Flaring Fiscality Paid in Country of Origin")}
             </h4>
@@ -501,10 +520,10 @@ const CbamTab: React.FC<CbamTabProps> = ({
       </div>
 
       {/* Complex Downstream Goods Precursor Attribution Section */}
-      <div className="mt-5 rounded-xl border border-blue-200/80 bg-blue-50/40 p-5 shadow-xs transition-colors">
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-2 border-b border-blue-100 pb-3">
+      <div className="mt-5 rounded-lg border border-border bg-surface p-5 shadow-xs transition-colors">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2 border-b border-border pb-3">
           <div className="flex items-center gap-2.5">
-            <Layers className="size-5 text-blue-600" aria-hidden="true" />
+            <Layers className="size-5 text-info-fg" aria-hidden="true" />
             <h4 className="text-sm font-semibold text-text">
               {t("Complex Downstream Goods & Upstream Precursors (Ammonia / Urea / UAN)")}
             </h4>
@@ -514,7 +533,7 @@ const CbamTab: React.FC<CbamTabProps> = ({
               type="checkbox"
               checked={Boolean(cbamForm.is_complex_good)}
               onChange={(e) => handlePrecursorToggle(e.target.checked)}
-              className="size-4 rounded border-border text-brand-600 focus:ring-brand-500 cursor-pointer"
+              className="size-4 rounded border-border text-primary accent-brand-500 cursor-pointer"
             />
             <span>{t("Declare Upstream Precursor Attribution")}</span>
           </label>
@@ -569,8 +588,8 @@ const CbamTab: React.FC<CbamTabProps> = ({
                 />
               </Field>
               <Field label={t("Precursor SEE Contribution (tCO₂e / t)")}>
-                <div className="flex min-h-[38px] items-center justify-between rounded-md border border-brand-200 bg-brand-50/90 px-3.5 py-1.5 shadow-xs">
-                  <span className="text-xs font-semibold text-brand-900">{t("Total Precursor SEE:")}</span>
+                <div className="flex h-10 items-center justify-between rounded-md border border-border bg-ink-50 px-3.5 shadow-xs">
+                  <span className="text-xs font-semibold text-text-secondary">{t("Total Precursor SEE:")}</span>
                   <span className="font-mono text-sm font-bold text-brand-700">
                     +{pContrib.toFixed(4)} tCO₂e / t
                   </span>
@@ -590,13 +609,13 @@ const CbamTab: React.FC<CbamTabProps> = ({
             type="text"
             value={cbamForm.notes || ""}
             onChange={(e) => setCbamForm({ ...cbamForm, notes: e.target.value })}
-            placeholder={t("Accredited Verifier / ISO 14065 Certificate / Customs Documentation")}
+            placeholder={t("Accredited Verifier / Certificate ID")}
           />
         </Field>
       </div>
 
       {/* Live Calculated Declaration Summary Strip */}
-      <div className="mt-6 rounded-xl border border-border bg-ink-50/80 p-4 shadow-xs">
+      <div className="mt-6 rounded-lg border border-border bg-ink-50 p-4 shadow-xs">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-6">
             <div>
@@ -630,7 +649,7 @@ const CbamTab: React.FC<CbamTabProps> = ({
               <span className="block text-xs font-semibold uppercase tracking-wider text-text-secondary">
                 {t("Total Embedded Emissions")}
               </span>
-              <span className="font-mono text-base font-extrabold text-brand-600">
+              <span className="font-mono text-base font-bold text-brand-700">
                 {totalEmbeddedVal.toLocaleString(undefined, { maximumFractionDigits: 1 })} <span className="text-xs font-normal text-text-secondary">tCO₂e</span>
               </span>
             </div>
@@ -644,7 +663,10 @@ const CbamTab: React.FC<CbamTabProps> = ({
       </div>
 
       <FormActions className="mt-6">
-        <Button className="action-btn" onClick={handleSaveCbamExport}>
+        <Button
+          className="action-btn !h-10 !px-4 !py-0 !text-base !font-semibold !rounded-md !transform-none"
+          onClick={handleSaveCbamExport}
+        >
           {editingCbamId ? t("Update CBAM Record") : t("Save CBAM Record")}
         </Button>
         {editingCbamId && (
@@ -684,29 +706,25 @@ const CbamTab: React.FC<CbamTabProps> = ({
             {t("Cancel Edit")}
           </Button>
         )}
+        <Button
+          variant="secondary"
+          onClick={handleExportCbamExcel}
+          disabled={exporting}
+          className="inline-flex items-center gap-1.5"
+        >
+          <FileSpreadsheet className="size-4 text-text-secondary" aria-hidden="true" />
+          {exporting ? t("Exporting...") : t("Export Official CBAM Template")}
+        </Button>
       </FormActions>
 
       <RecordTable
         title={
-          <span className="flex flex-wrap items-center justify-between gap-3">
-            <span className="flex items-center gap-2">
-              <Landmark className="size-5 text-brand-600" aria-hidden="true" />
-              <span>{t("CBAM Product Export Records (Oil & Gas Scope)")}</span>
-              <span className="text-sm font-normal text-text-secondary">
-                ({t("Total Records:")} {filteredCbam.length})
-              </span>
+          <div className="flex items-center justify-between">
+            <span>{t("CBAM Product Export Records (Oil & Gas Scope)")}</span>
+            <span className="text-sm font-normal text-text-secondary">
+              ({t("Total Records:")} {filteredCbam.length})
             </span>
-            <Button
-              size="sm"
-              variant="secondary"
-              onClick={handleExportCbamExcel}
-              disabled={exporting}
-              className="inline-flex items-center gap-1.5"
-            >
-              <FileSpreadsheet className="size-4 text-emerald-600" aria-hidden="true" />
-              {exporting ? t("Exporting...") : t("Export Official CBAM Template")}
-            </Button>
-          </span>
+          </div>
         }
         head={[
           t("Facility"),
