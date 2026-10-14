@@ -47,7 +47,7 @@ export const AsphaltBlowingForm: React.FC<Scope1SubFormProps> = ({ data, onChang
             <CustomDropdown
               options={[
                 { value: "tonne", label: t("tonne") },
-                { value: "ton", label: t("short ton") },
+                { value: "short_ton", label: t("short ton") },
                 { value: "kg", label: t("kg") },
               ]}
               value={data.unit || "tonne"}

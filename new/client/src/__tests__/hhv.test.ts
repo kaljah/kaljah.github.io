@@ -13,12 +13,12 @@ describe("hhvToBtu", () => {
   it("converts MJ/kg to Btu/lb, never to a per-gallon basis", () => {
     const r = hhvToBtu(45.6, "MJ/kg");
     expect(r.hhvUnit).toBe("BTU/lb");
-    expect(r.hhv).toBeCloseTo((45.6 * 947.817) / 2.20462, 6);
+    expect(r.hhv).toBeCloseTo((45.6 * 947.8171203133172) / 2.2046226218487757, 9);
   });
 
   it("converts gas volume units to Btu/scf", () => {
     expect(hhvToBtu(38, "MJ/m3").hhvUnit).toBe("BTU/scf");
-    expect(hhvToBtu(38, "MJ/m3").hhv).toBeCloseTo((38 * 947.817) / 35.3147, 6);
-    expect(hhvToBtu(9000, "kcal/m3").hhv).toBeCloseTo((9000 * 3.96567) / 35.3147, 6);
+    expect(hhvToBtu(38, "MJ/m3").hhv).toBeCloseTo((38 * 947.8171203133172) / 35.314666721, 9);
+    expect(hhvToBtu(9000, "kcal/m3").hhv).toBeCloseTo((9000 * (4184 / 1055.05585262)) / 35.314666721, 9);
   });
 });

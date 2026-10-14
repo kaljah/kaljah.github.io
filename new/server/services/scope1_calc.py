@@ -230,6 +230,10 @@ def validate_activity(payload, require_unit):
     # booked "1 Mt" as 1 tonne. Refused as ambiguous, like a bare "ton" in files.
     if str(payload.get("unit") or "").strip().lower().replace(".", "") in ("mt", "mts"):
         raise ValidationError(f"'{payload.get('unit')}' is ambiguous (megatonne or metric ton): write 'tonne' (1,000 kg)", "unit")
+    # a bare "ton" is the short ton on the forms and was refused in files: one rule everywhere
+    if str(payload.get("unit") or "").strip().lower() in ("ton", "tons"):
+        raise ValidationError(f"'{payload.get('unit')}' is ambiguous (short ton or metric tonne): write 'short_ton' "
+                              "(2,000 lb) or 'tonne' (1,000 kg)", "unit")
     # one activity representation: calc_inputs must not contradict the top-level activity
     ci = (payload.get("calc_inputs") or {}).get(payload.get("process_type") or "") or {}
     tier12 = str(payload.get("factor_source") or "default").lower() in ("default", "custom")

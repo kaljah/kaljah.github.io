@@ -155,6 +155,7 @@ Other: `new/setup.bat` / `new/start_all.bat` (Windows native launch scripts for 
 ## Repo conventions
 
 - `AUDIT_MEMORY.md` (root) is the living audit log, if present (currently deleted in the working tree; see git history). Read it before fixing an audit item and update it afterwards.
+- `docs/CALCULATION_PIPELINE_MEMORY.md`: which route/function calculates and stores each input path (single, file, JSON, legacy; Scope 1/2/3), the intentional differences between them, and the bulk-vs-single parity tests that guard them. Read it before touching an import or calculation path.
 - Calculation methodology and validation: `docs/calculation-specification.md`, `docs/validation-report.md`.
 - A graphify knowledge graph lives in `graphify-out/` when generated (currently absent; `.agents/rules/graphify.md`). Use `graphify query "<q>"`, `graphify path "<A>" "<B>"` or `graphify explain "<concept>"` for architecture questions. Run `graphify update .` after modifying code.
 

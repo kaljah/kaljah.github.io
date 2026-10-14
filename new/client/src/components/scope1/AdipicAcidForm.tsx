@@ -54,7 +54,7 @@ export const AdipicAcidForm: React.FC<Scope1SubFormProps> = ({ data, onChange })
             <CustomDropdown
               options={[
                 { value: "tonne", label: t("tonne Adipic Acid") },
-                { value: "ton", label: t("short ton") },
+                { value: "short_ton", label: t("short ton") },
                 { value: "kg", label: t("kg") },
               ]}
               value={data.unit || "tonne"}

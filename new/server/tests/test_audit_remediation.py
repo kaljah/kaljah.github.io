@@ -401,7 +401,7 @@ def test_scope2_case_insensitive_recalc_and_steam_amount(client, test_users):
         # 20,000 kWh * 0.6 kgCO2/kWh / 1000 = 12.0 tCO2e
         assert abs(rec_el.co2e - 12.0) < 1e-4
 
-    # 2. Create indirect steam entry with amount and unit="ton"
+    # 2. Create indirect steam entry with amount and unit="short_ton"
     res_steam = client.post(
         "/api/scope2",
         json={
@@ -410,7 +410,7 @@ def test_scope2_case_insensitive_recalc_and_steam_amount(client, test_users):
             "month": 8,
             "source_type": "indirect_steam",
             "amount": 250.0,
-            "unit": "ton",
+            "unit": "short_ton",
         },
     )
     assert res_steam.status_code == 201

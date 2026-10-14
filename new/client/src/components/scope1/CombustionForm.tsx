@@ -14,14 +14,14 @@ const ALL_UNITS = [
   { value: "bbl", label: t("bbl") },
   { value: "L", label: "L" },
   { value: "kg", label: t("kg") },
-  { value: "ton", label: t("ton (short)") },
+  { value: "short_ton", label: t("ton (short)") },
   { value: "tonne", label: t("tonne (metric)") },
   { value: "events", label: t("events") },
 ];
 const UNIT_FAMILIES: Record<string, string[]> = {
   gas: ["m3", "scf", "Mcf", "MMscf"],
   liquid: ["m3", "gal", "bbl", "L"],
-  solid: ["kg", "ton", "tonne"],
+  solid: ["kg", "short_ton", "tonne"],
   event: ["events"],
 };
 

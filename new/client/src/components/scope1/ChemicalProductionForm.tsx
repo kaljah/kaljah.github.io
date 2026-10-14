@@ -61,7 +61,7 @@ export const ChemicalProductionForm: React.FC<Scope1SubFormProps> = ({ data, onC
             <CustomDropdown
               options={[
                 { value: "tonne", label: t("tonne (metric)") },
-                { value: "ton", label: t("ton (short)") },
+                { value: "short_ton", label: t("ton (short)") },
                 { value: "kg", label: t("kg") },
               ]}
               value={data.unit || "tonne"}

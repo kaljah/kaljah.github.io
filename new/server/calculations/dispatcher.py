@@ -329,11 +329,12 @@ class CalculationDispatcher:
 
         key_lower = str(key_name).lower()
         is_pct_key = "pct" in key_lower or "percent" in key_lower
-        if is_percent or has_percent_sign or is_pct_key:
-            return max(0.0, num / 100.0)
-        if num > 1.0:
-            return max(0.0, num / 100.0)
-        return max(0.0, num)
+        ratio = num / 100.0 if (is_percent or has_percent_sign or is_pct_key or num > 1.0) else num
+        # a share is 0-100 %: 150 % or -5 % was clamped or passed on (a 150 % capture rate booked
+        # negative emissions)
+        if ratio < 0.0 or ratio > 1.0 + 1e-9:
+            raise ValueError(f"'{key_name or 'value'}' must be between 0 and 100 % (got {val})")
+        return ratio
 
     def _require_fraction(self, flat_inputs, keys, desc, is_percent=False):
         """Extracts a percentage or fraction strictly and normalizes to 0.0 - 1.0."""
@@ -411,11 +412,11 @@ class CalculationDispatcher:
         if comp and feed_scf is not None:
             res = calc.calculate(method="feedstock_balance", feedstock_volume_scf_yr=feed_scf, feedstock_comp=comp,
                                  uncertainties=uncertainties, gwp_dict=gwp_dict)
-            return self._apply_capture(res, flat_inputs)
+            return res
         if comp and num("h2_produced_scf") is not None:
             res = calc.calculate(method="h2_stoichiometry", h2_production_scf_yr=num("h2_produced_scf"),
                                  feedstock_comp=comp, uncertainties=uncertainties, gwp_dict=gwp_dict)
-            return self._apply_capture(res, flat_inputs)
+            return res
         feed_t = num("feedstock_rate_tonnes", "feedstock_tonnes")
         cf = num("feedstock_carbon_fraction")
         if feed_t is not None and cf is not None:
@@ -434,7 +435,7 @@ class CalculationDispatcher:
                 h2_scf = h2_t * 2204.62 / 2.016 * 379.3
             res = calc.calculate(method="simple_factor", simple_basis="h2_scf", simple_volume=h2_scf,
                                  uncertainties=uncertainties, gwp_dict=gwp_dict)
-        return self._apply_capture(res, flat_inputs)
+        return res
 
     def _facility_fugitive(self, flat_inputs, uncertainties, gwp_dict):
         """BUG-110 / RC-17: facility-level onshore fugitives, API 2021 Table 7-8 (per unit of production)."""
@@ -454,16 +455,20 @@ class CalculationDispatcher:
         )
 
     def _apply_capture(self, res, flat_inputs):
+        """CCS: the captured share of the process CO2 is not emitted (CH4 and N2O are unchanged)."""
         capture = self._optional_fraction(flat_inputs, ["ccs_capture_rate", "capture_rate"], 0.0)
         if capture:
-            keep = 1.0 - capture
-            co2 = res["results"]["co2"]
+            co2 = res["results"].get("co2")
+            co2_before = float(co2.get("value") or 0.0) if isinstance(co2, dict) else float(co2 or 0.0)
             if isinstance(co2, dict):
                 for k in ("value", "absolute_uncertainty", "lower_bound", "upper_bound", "lower_bound_95",
                           "upper_bound_95", "ci_95_abs"):
                     if isinstance(co2.get(k), (int, float)):
-                        co2[k] = co2[k] * keep
-            res["total_co2e"] = float(res.get("total_co2e") or 0.0) * keep
+                        co2[k] = co2[k] * (1.0 - capture)
+            captured = co2_before * capture  # CO2 has a GWP of 1
+            res["total_co2e"] = float(res.get("total_co2e") or 0.0) - captured
+            if "total_co2e" in res["results"]:
+                res["results"]["total_co2e"] = res["total_co2e"]
             res.setdefault("inputs", {})["ccs_capture_rate"] = capture
         return res
 
@@ -533,6 +538,7 @@ class CalculationDispatcher:
             return res
         calc_inputs = (inputs.get("calc_inputs") or {}).get(process_type, {}) if isinstance(inputs, dict) else {}
         flat = {**(inputs or {}), **(calc_inputs or {})}
+        res = self._apply_capture(res, flat)
 
         def pct(key):
             v = flat.get(key)

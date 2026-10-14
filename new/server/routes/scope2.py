@@ -56,6 +56,8 @@ def _calc_indirect_steam(data):
     """Calculate tCO2e for indirect steam / heat entry."""
     amount = float(data.get("amount") or data.get("heat_mmbtu") or 0)
     unit = (data.get("unit") or "mmbtu").lower().replace(" ", "")
+    if unit in ("ton", "tons"):
+        raise ValidationError("'ton' is ambiguous (short ton or metric tonne): write 'short_ton' or 'tonne'", "unit")
     ci = data.get("calc_inputs", {}).get("indirect_steam", {})
     raw_be = data.get("boiler_efficiency") or ci.get("boiler_eff") or 0.80
     boiler_eff = float(str(raw_be).replace("%", "").strip())
@@ -901,8 +903,6 @@ def bulk_import_scope2():
             final_uncertainty = u_res["relative_uncertainty"]
 
             require_plausible_co2e(co2e_val, co2e_mkt_val)
-            has_mkt_inst = bool(mkt_inst) or (mkt_ef is not None)
-            co2e_primary = co2e_mkt_val if has_mkt_inst else co2e_val
             emission = Scope2Emission(
                 facility_id=facility.id,
                 year=row_year,
@@ -910,7 +910,7 @@ def bulk_import_scope2():
                 source_type="electricity",
                 electricity_kwh=kwh,
                 emission_factor=ef,
-                co2e=co2e_primary,
+                co2e=co2e_val,  # location-based, as the form and the file store it
                 co2e_location_based=co2e_val,
                 co2e_market_based=co2e_mkt_val,
                 market_instrument_type=mkt_inst,

@@ -2173,6 +2173,7 @@ def _process_row_scope3(
         emission_factor=ef,
         co2e=co2e,
         uncertainty=unc,
+        calculation_method=calc_method or f"Scope 3 - {cat_str}",  # as the manual form labels it
         notes=row.get("notes", "Bulk Imported"),
         created_by=user_id,
         **_bulk_status(user_id),  # Maker-Checker: awaits reviewer approval (admins: Verified)
