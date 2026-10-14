@@ -147,12 +147,12 @@
   cursor: pointer;
   transition: all 0.2s ease;
   margin-top: 20px;
-  box-shadow: 0 2px 4px rgba(255, 102, 0, 0.2);
+  box-shadow: 0 2px 8px rgba(255, 102, 0, 0.2);
 }
 
 .btn-add-activity:hover:not(:disabled) {
   background-color: var(--color-primary-hover);
-  box-shadow: 0 4px 10px rgba(255, 102, 0, 0.3);
+  box-shadow: 0 4px 14px rgba(255, 102, 0, 0.25);
 }
 
 .btn-add-activity:active:not(:disabled) {
