@@ -1,7 +1,7 @@
 name: E2E Browser Testing Matrix (Playwright)
 
 # Tier 1 (smoke, ~21 tests) runs on every push to main and every pull request. It seeds its own
-# data in CI: scripts/seed_e2e_user.py creates the "a"/"a" test sign-in (refuses to run in production)
+# data in CI: scripts/seed_e2e_user.py creates the "a@example.test"/"a" test sign-in (refuses to run in production)
 # and seed_showcase_data.py loads sample data, then generate_storage_state.js saves the login.
 # Tier 2 (the 139-test matrix) is manual only: its specs also need the itadmin/operator accounts and
 # local seed scripts that CI does not create yet. See docs/hardening-plan.md.

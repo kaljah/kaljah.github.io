@@ -32,7 +32,7 @@ async function setupDashboard(page) {
   // Fill credentials if on login page
   const emailInput = page.locator('input[placeholder="Email Address"]');
   if (await emailInput.isVisible({ timeout: 2000 }).catch(() => false)) {
-    await emailInput.fill('a');
+    await emailInput.fill('a@example.test');
     await page.locator('input[type="password"]').fill('a');
     await page.locator('button[type="submit"]:has-text("Sign In")').click();
     await page.waitForURL(url => !url.toString().includes('/login'), { timeout: 12000 }).catch(() => {});
@@ -50,7 +50,7 @@ test.describe('Dashboard Page Deep Audit', () => {
     const csrfResp = await request.get(`${BACKEND}/api/csrf-token`);
     const preCsrf = (await csrfResp.json()).csrf_token;
     await request.post(`${BACKEND}/api/auth/login`, {
-      data: { email: 'a', password: 'a' },
+      data: { email: 'a@example.test', password: 'a' },
       headers: { 'X-CSRFToken': preCsrf, 'Content-Type': 'application/json' }
     });
     const batchResp = await request.get(`${BACKEND}/api/dashboard/batch-all?facilityId=all&activity=all&division=all`);

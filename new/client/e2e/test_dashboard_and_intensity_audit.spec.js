@@ -37,7 +37,7 @@ async function loginAndSetup(page, targetUrl = '/') {
   // Fallback if somehow on login page
   const emailInput = page.locator('input[placeholder="Email Address"]');
   if (await emailInput.isVisible({ timeout: 1000 }).catch(() => false)) {
-    await emailInput.fill('a');
+    await emailInput.fill('a@example.test');
     await page.locator('input[type="password"]').fill('a');
     await page.locator('button[type="submit"]:has-text("Sign In")').click();
     await page.waitForURL(url => !url.toString().includes('/login'), { timeout: 12000 }).catch(() => {});
@@ -56,7 +56,7 @@ test.describe('Baseline UX/UI Audit: Dashboard & Intensity Pages', () => {
     const csrfResp = await request.get(`${BACKEND}/api/csrf-token`);
     const csrf = (await csrfResp.json()).csrf_token;
     await request.post(`${BACKEND}/api/auth/login`, {
-      data: { email: 'a', password: 'a' },
+      data: { email: 'a@example.test', password: 'a' },
       headers: { 'X-CSRFToken': csrf, 'Content-Type': 'application/json' }
     });
 

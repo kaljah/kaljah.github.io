@@ -27,7 +27,7 @@ async function ensureAuthenticatedPage(page, targetUrl = '/') {
   const emailInput = page.locator('input[placeholder="Email Address"]');
   if (await emailInput.isVisible({ timeout: 2000 }).catch(() => false)) {
     console.log('[DEEP TEST] Performing fallback login...');
-    await emailInput.fill('a');
+    await emailInput.fill('a@example.test');
     await page.locator('input[type="password"]').fill('a');
     await page.locator('button[type="submit"]:has-text("Sign In")').click();
     await page.waitForURL((u) => !u.toString().includes('/login'), { timeout: 15000 }).catch(() => {});
@@ -97,7 +97,7 @@ test.describe.serial('Deep User Journey & End-to-End Exploration', () => {
 
     // Valid Login
     console.log('[DEEP TEST] Submitting valid admin credentials...');
-    await page.locator('input[placeholder="Email Address"]').fill('a');
+    await page.locator('input[placeholder="Email Address"]').fill('a@example.test');
     await page.locator('input[type="password"], input[type="text"]').last().fill('a');
     await page.locator('button[type="submit"]:has-text("Sign In")').click();
     await page.waitForURL((u) => !u.toString().includes('/login'), { timeout: 15000 });

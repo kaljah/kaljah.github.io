@@ -121,7 +121,7 @@ async function loginAndSetup(page, targetUrl = '/') {
   // Fallback if on login page
   const emailInput = page.locator('input[placeholder="Email Address"]');
   if (await emailInput.isVisible({ timeout: 1000 }).catch(() => false)) {
-    await emailInput.fill('a');
+    await emailInput.fill('a@example.test');
     await page.locator('input[type="password"]').fill('a');
     await page.locator('button[type="submit"]:has-text("Sign In")').click();
     await page.waitForURL(url => !url.toString().includes('/login'), { timeout: 12000 }).catch(() => {});

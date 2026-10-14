@@ -63,7 +63,7 @@ export class DashboardPage {
     // 2. Handle Login fallback if session cookie expired
     const emailInput = this.page.locator('input[placeholder="Email Address"]');
     if (await emailInput.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await emailInput.fill('a');
+      await emailInput.fill('a@example.test');
       await this.page.locator('input[type="password"]').fill('a');
       await this.page.locator('button[type="submit"]:has-text("Sign In")').click();
       await this.page.waitForURL((u) => !u.toString().includes('/login'), { timeout: 15000 }).catch(() => {});

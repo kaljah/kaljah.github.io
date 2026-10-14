@@ -29,7 +29,7 @@ async function globalAuth() {
 
   const emailInput = page.locator('input[placeholder="Email Address"]');
   if (await emailInput.isVisible().catch(() => false)) {
-    await emailInput.fill('a');
+    await emailInput.fill('a@example.test');
     await page.locator('input[type="password"]').fill('a');
     await page.locator('button[type="submit"]:has-text("Sign In")').click();
     await page.waitForURL(url => !url.toString().includes('/login'), { timeout: 15000 });

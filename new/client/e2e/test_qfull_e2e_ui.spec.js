@@ -44,7 +44,7 @@ const FRONTEND = process.env.E2E_BASE_URL || 'http://127.0.0.1:5173';
 // =====================================================================
 // SHARED: Login helper
 // =====================================================================
-async function loginUI(page, email = 'a', password = 'a') {
+async function loginUI(page, email = 'a@example.test', password = 'a') {
   await page.goto(FRONTEND, { waitUntil: 'domcontentloaded', timeout: 15000 });
   await page.waitForTimeout(1500);   // wait for intro video / animation
 
@@ -164,7 +164,7 @@ test.describe('QFULL API Pipeline (via Browser Request)', () => {
 
     // 2. Authenticate
     const loginResp = await request.post(`${BACKEND}/api/auth/login`, {
-      data: { email: 'a', password: 'a' },
+      data: { email: 'a@example.test', password: 'a' },
       headers: { 'X-CSRFToken': preToken, 'Content-Type': 'application/json' }
     });
     expect(loginResp.ok()).toBeTruthy();

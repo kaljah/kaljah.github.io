@@ -109,7 +109,7 @@ async function ensureAuthenticated(page, targetUrl = '/') {
   if (page.url().includes('/login')) {
     const emailInput = page.locator('input[placeholder="Email Address"], input[name="username"], input[type="text"]').first();
     await expect(emailInput).toBeVisible({ timeout: 10000 });
-    await emailInput.fill('a');
+    await emailInput.fill('a@example.test');
     await page.locator('input[type="password"]').fill('a');
     await page.locator('button[type="submit"]:has-text("Sign In"), button:has-text("Sign In"), button[type="submit"]').first().click();
     await page.waitForURL(url => !url.toString().includes('/login'), { timeout: 15000 });

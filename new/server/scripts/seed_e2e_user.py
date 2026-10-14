@@ -1,4 +1,4 @@
-"""Create the throwaway sign-in the Playwright e2e specs use (email "a", password "a").
+"""Create the throwaway sign-in the Playwright e2e specs use (email "a@example.test", password "a").
 
 For CI and local test databases only: it refuses to run when the configuration is production.
 Usage (from new/server):  python scripts/seed_e2e_user.py
@@ -14,7 +14,7 @@ from models import User  # noqa: E402
 
 # (email, password, role, full name). Throwaway sign-ins for CI and local test databases only.
 E2E_USERS = [
-    ("a", "a", "admin", "E2E Test User"),
+    ("a@example.test", "a", "admin", "E2E Test User"),
     ("itadmin@sonatrach.dz", "itadmin123", "it_admin", "E2E IT Admin"),
     ("operator@sonatrach.dz", "operator123", "user", "E2E Operator"),
 ]

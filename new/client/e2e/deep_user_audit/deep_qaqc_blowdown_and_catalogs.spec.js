@@ -30,7 +30,7 @@ async function ensureAuthenticatedPage(page, targetUrl) {
   const emailInput = page.locator('input[placeholder="Email Address"]').first();
   if (await emailInput.isVisible().catch(() => false)) {
     console.log('[E2E QBC] Performing authentication login as Admin...');
-    await emailInput.fill('a');
+    await emailInput.fill('a@example.test');
     const pwdInput = page.locator('input[type="password"]').first();
     await pwdInput.fill('a');
     await page.locator('button[type="submit"]:has-text("Sign In")').click();
