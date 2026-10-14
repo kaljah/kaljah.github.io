@@ -358,7 +358,7 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
                         fontWeight: req.ok ? 600 : 400,
                       }}
                     >
-                      {req.ok ? <Check size={11} /> : <span style={{ opacity: 0.5 }}>•</span>}
+                      {req.ok ? <Check size={11} /> : <span className="opacity-50!">•</span>}
                       {req.label}
                     </span>
                   ))}

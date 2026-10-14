@@ -4,12 +4,12 @@
   "hexColorsInJs": 0,
   "importantDeclarations": 17,
   "inlineSvgs": 3,
-  "nativeSelects": 2,
+  "nativeSelects": 1,
   "clickableDivsWithoutRole": 0,
   "cssFiles": 28,
-  "cssLines": 4753,
+  "cssLines": 5041,
   "distinctFontSizes": 17,
   "distinctBorderRadii": 12,
-  "distinctBoxShadows": 37,
-  "duplicateClassDefinitions": 25
+  "distinctBoxShadows": 41,
+  "duplicateClassDefinitions": 21
 }

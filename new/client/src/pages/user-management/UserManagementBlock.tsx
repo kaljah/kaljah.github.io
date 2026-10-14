@@ -88,7 +88,7 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
             <tr>
               <td colSpan={8} style={S.emptyCell}>
                 <div className="flex! flex-col! items-center! gap-[10px]!">
-                  <Loader size={32} color="var(--color-brand-500)" style={{ animation: "spin 1s linear infinite" }} aria-hidden="true" />
+                  <Loader size={32} color="var(--color-brand-500)" className="animate-spin!" aria-hidden="true" />
                   {t("Loading users…")}
                 </div>
               </td>

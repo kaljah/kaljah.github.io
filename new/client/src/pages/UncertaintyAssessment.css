@@ -22,7 +22,7 @@
   border: 1px solid var(--border-color, rgba(226, 232, 240, 0.8));
   border-radius: var(--radius-lg);
   padding: 28px;
-  box-shadow: var(--shadow-card, 0 1px 3px rgba(0, 0, 0, 0.05));
+  box-shadow: var(--shadow-card);
   margin-bottom: 32px;
   display: grid;
   grid-template-columns: 1.2fr 1fr 1fr;
@@ -181,13 +181,13 @@
   border: 1px solid var(--border-color, rgba(226, 232, 240, 0.8));
   border-radius: var(--radius-lg);
   padding: 28px;
-  box-shadow: var(--shadow-card, 0 1px 3px rgba(0, 0, 0, 0.05));
+  box-shadow: var(--shadow-card);
   margin-bottom: 32px;
   transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .ua-chart-card:hover {
-  box-shadow: var(--shadow-card-elevated, 0 4px 12px rgba(0, 0, 0, 0.08));
+  box-shadow: var(--shadow-card-elevated);
   border-color: rgba(255, 255, 255, 0.95);
 }
 
@@ -264,7 +264,7 @@
   border: 1px solid var(--border-color, rgba(226, 232, 240, 0.8));
   border-radius: var(--radius-lg);
   padding: 28px;
-  box-shadow: var(--shadow-card, 0 1px 3px rgba(0, 0, 0, 0.05));
+  box-shadow: var(--shadow-card);
   margin-bottom: 32px;
 }
 
@@ -407,8 +407,12 @@
 /* ── Expanded Contributor Row ── */
 .ua-detail-expanded-cell {
   background: var(--color-ink-50);
-  padding: 20px 24px !important;
   border-bottom: 2px solid var(--border-color, var(--color-ink-200));
+}
+
+/* more specific than ".ua-table td" (padding 14px 16px), so no !important is needed */
+.ua-table td.ua-detail-expanded-cell {
+  padding: 20px 24px;
 }
 
 .ua-detail-panel {

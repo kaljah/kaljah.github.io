@@ -717,7 +717,7 @@ const UncertaintyAssessment: React.FC = () => {
               <table className="ua-table">
                 <thead>
                   <tr>
-                    <th style={{ width: 44 }}></th>
+                    <th className="w-11!"></th>
                     <th>{t("Emission Category")}</th>
                     <th>{t("Verified Emissions (tCO₂e)")}</th>
                     <th>{t("Share of inventory")}</th>
@@ -743,7 +743,15 @@ const UncertaintyAssessment: React.FC = () => {
                         <React.Fragment key={cat.category}>
                           <tr
                             className={`ua-row-clickable ${isExpanded ? "ua-row-expanded" : ""}`}
+                            role="row"
+                            tabIndex={0}
                             onClick={() => toggleCategoryExpand(cat.category)}
+                            onKeyDown={(e) => {
+                              if (e.target === e.currentTarget && (e.key === "Enter" || e.key === " ")) {
+                                e.preventDefault();
+                                toggleCategoryExpand(cat.category);
+                              }
+                            }}
                           >
                             <td className="[text-align:center]">
                               {isExpanded ? (

@@ -9,7 +9,7 @@
   white-space: nowrap;
   background: rgba(255, 255, 255, 0.7);
   padding: 4px 6px;
-  border-radius: var(--radius-lg, 12px);
+  border-radius: var(--radius-lg);
   border: 1px solid var(--border-color, var(--color-ink-200));
   backdrop-filter: blur(8px);
 }

@@ -179,3 +179,12 @@ textarea:focus-visible {
     opacity: 1;
   }
 }
+
+/* Chevron of NativeSelect: the path M19 9l-7 7-7-7 (24 box, stroke 2, round) as a mask filled with the text colour. */
+.ui-select-chevron {
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  background-color: currentcolor;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 9l-7 7-7-7'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+}

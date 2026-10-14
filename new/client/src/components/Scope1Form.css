@@ -81,13 +81,13 @@
 
 .btn-add-activity {
   width: 100%;
-  background-color: var(--color-primary, #ff6600);
+  background-color: var(--color-primary);
   color: white;
   border: none;
   padding: 14px;
   font-size: var(--text-md);
   font-weight: 600;
-  border-radius: var(--radius-md, 8px);
+  border-radius: var(--radius-md);
   cursor: pointer;
   transition: all 0.2s ease;
   margin-top: 20px;
@@ -95,7 +95,7 @@
 }
 
 .btn-add-activity:hover:not(:disabled) {
-  background-color: var(--color-primary-hover, #e65c00);
+  background-color: var(--color-primary-hover);
   box-shadow: 0 4px 10px rgba(255, 102, 0, 0.3);
 }
 
