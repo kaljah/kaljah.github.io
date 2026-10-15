@@ -55,13 +55,20 @@ def test_hydrogen_table_6_51_and_tonnes_basis():
     assert _val(_h2(h2_produced_tonnes=3), "co2") == pytest.approx(3 * H2_SCF_PER_T * H2_CO2_PER_SCF, rel=1e-9)
 
 
-@pytest.mark.parametrize("cap", [0.9, 90, "90%", "0.9"])
+@pytest.mark.parametrize("cap", [90, "90%", "90"])
 def test_capture_removes_the_captured_share_of_co2(cap):
     base = _val(_h2(h2_produced_tonnes=1), "co2")
     res = _h2(h2_produced_tonnes=1, ccs_capture_rate=cap)
     assert _val(res, "co2") == pytest.approx(base * 0.1, rel=1e-9)
     assert res["total_co2e"] == pytest.approx(base * 0.1, rel=1e-9)
     assert _val(res, "ch4") == 0 and _val(res, "n2o") == 0
+
+
+@pytest.mark.parametrize("cap,kept", [(1, 0.99), (0.9, 0.991), ("1", 0.99)])
+def test_capture_rate_is_always_a_percentage(cap, kept):
+    """Audit 2026-10-14 BUG-0020: the rate is 0-100 %, so 1 is 1 % (it was read as 100 %)."""
+    base = _val(_h2(h2_produced_tonnes=1), "co2")
+    assert _val(_h2(h2_produced_tonnes=1, ccs_capture_rate=cap), "co2") == pytest.approx(base * kept, rel=1e-9)
 
 
 def test_capture_zero_and_full():
@@ -203,7 +210,7 @@ def _matrix_payload(pid, meta):
 def test_capture_applies_to_every_process_type(pid):
     payload, factor = _matrix_payload(pid, PROCESS_TYPES[pid])
     base = dispatcher.dispatch(pid, dict(payload), factor, {})
-    cap = dispatcher.dispatch(pid, {**payload, "ccs_capture_rate": 0.4}, factor, {})
+    cap = dispatcher.dispatch(pid, {**payload, "ccs_capture_rate": 40}, factor, {})
     b_co2, c_co2 = _val(base, "co2"), _val(cap, "co2")
     assert c_co2 == pytest.approx(b_co2 * 0.6, rel=1e-9, abs=1e-15)
     assert _val(cap, "ch4") == pytest.approx(_val(base, "ch4"), rel=1e-12, abs=1e-15)
@@ -211,7 +218,7 @@ def test_capture_applies_to_every_process_type(pid):
     assert cap["total_co2e"] == pytest.approx(base["total_co2e"] - b_co2 * 0.4, rel=1e-9, abs=1e-12)
 
 
-@pytest.mark.parametrize("rate", [0.9, "90%", 90])
+@pytest.mark.parametrize("rate", ["90%", 90])
 def test_capture_in_compute_emissions_dispatcher_and_factor_paths(rate):
     f = {"co2": 53.06, "ch4": 0.001, "n2o": 0.0001, "unit": "kg/MMBtu", "hhv": 1020}
     p = {"process_type": "stationary_combustion", "amount": 100, "unit": "MMBtu", "fuel": "Natural Gas",

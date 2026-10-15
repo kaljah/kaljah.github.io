@@ -5,10 +5,11 @@ registered on the same ``emissions_bp`` blueprint, so URLs and endpoint names ar
 """
 import os
 import tempfile
+import threading
 import uuid
 from background_processor import active_job_count, get_job_status, start_background_upload
 from calculations import compute_emissions
-from extensions import db
+from extensions import db, limiter
 from flask import current_app, jsonify, request, send_file
 from input_validation import decimal_mark_from, xlsx_signature_error
 from models import Emission, Facility, Notification, User
@@ -128,11 +129,34 @@ def upload_start():
     return jsonify({"job_id": job_id})
 
 
+# Audit 2026-10-14 BUG-0019: the check runs inside the request (a large workbook held a worker for about
+# a minute), so each user runs one at a time, a few per minute.
+_active_checks = set()
+_active_checks_lock = threading.Lock()
+
+
 @emissions_bp.route("/upload/check", methods=["POST"])
 @login_required
+@limiter.limit(lambda: os.environ.get("UPLOAD_CHECK_RATE_LIMIT", "10 per minute"))
 def upload_check():
     """Check a file before importing it: the first `sample_rows` rows are calculated exactly as the import
     would, every row is counted (period, facilities, processes), and nothing is saved."""
+    user = get_current_user()
+    with _active_checks_lock:
+        if user is not None and user.id in _active_checks:
+            resp = jsonify({"error": "A file check is already running for your account; wait for it to finish."})
+            resp.headers["Retry-After"] = "10"
+            return resp, 429
+        if user is not None:
+            _active_checks.add(user.id)
+    try:
+        return _upload_check()
+    finally:
+        with _active_checks_lock:
+            _active_checks.discard(getattr(user, "id", None))
+
+
+def _upload_check():
     req, err = _read_upload_request()
     if err:
         return err

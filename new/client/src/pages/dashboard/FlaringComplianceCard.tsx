@@ -58,6 +58,7 @@ export interface FlaringData {
   non_routine_flaring?: FlaringStreamData;
   safety_flaring?: FlaringStreamData;
   unclassified_flaring?: FlaringStreamData;
+  stream_tco2e_allocated?: boolean;
   [key: string]: any;
 }
 
@@ -70,6 +71,9 @@ const FlaringComplianceCard: React.FC<FlaringComplianceCardProps> = ({ flaringDa
   const compliant = flaringData.is_compliant;
   const yoy = flaringData.yoy_change_pct;
   const showIntensity = (flaringData.gas_production_m3 ?? 0) > 0 && flaringData.flaring_intensity_pct != null;
+  // flaring that is in no stream is shown, by volume or by emissions (BUG-0027: its tCO2e were hidden)
+  const showUnclassified =
+    (flaringData.unclassified_flaring?.volume_knm3 ?? 0) > 0 || (flaringData.unclassified_flaring?.tco2e ?? 0) > 0;
 
   return (
     <Card as="section" className="flaring-kpi-banner flex flex-col gap-5" aria-label={t("Operational flaring and regulatory compliance")}>
@@ -110,7 +114,7 @@ const FlaringComplianceCard: React.FC<FlaringComplianceCardProps> = ({ flaringDa
         </div>
       </div>
 
-      <div className={`grid gap-4 sm:grid-cols-2 ${(flaringData.unclassified_flaring?.volume_knm3 ?? 0) > 0 ? "lg:grid-cols-5" : "lg:grid-cols-4"}`}>
+      <div className={`grid gap-4 sm:grid-cols-2 ${showUnclassified ? "lg:grid-cols-5" : "lg:grid-cols-4"}`}>
         <StreamTile
           testId="flaring-total"
           label={t("Total Flared Volume")}
@@ -139,7 +143,7 @@ const FlaringComplianceCard: React.FC<FlaringComplianceCardProps> = ({ flaringDa
           rule="border-l-blue-500"
           tone="info"
         />
-        {(flaringData.unclassified_flaring?.volume_knm3 ?? 0) > 0 && (
+        {showUnclassified && (
           <StreamTile
             testId="flaring-unclassified"
             label={t("Unclassified Flaring")}
@@ -149,6 +153,11 @@ const FlaringComplianceCard: React.FC<FlaringComplianceCardProps> = ({ flaringDa
           />
         )}
       </div>
+      {flaringData.stream_tco2e_allocated && (
+        <p className="m-0 text-xs text-text-secondary">
+          {t("Stream emissions are split by the reported stream volumes: the flaring records are not classified by stream.")}
+        </p>
+      )}
 
       {showIntensity && (
         <div className="flex flex-col gap-2 rounded-md border border-border bg-ink-50 p-4">

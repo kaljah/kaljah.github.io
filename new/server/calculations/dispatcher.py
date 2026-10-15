@@ -50,6 +50,36 @@ ACTIVITY_PROCESS_ALIASES = {
 }
 # default gas-volume method for the processes that are VentedGasCalculator-only
 VENT_DEFAULT_METHOD = {"desiccant_dehydrator": "desiccant", "co2_eor": "co2_mass", "vented_gas": "volume"}
+
+# Fields documented as percentages (import template, forms, API): always read as percent, never guessed
+# from the size of the number, so 1 is 1 % and 0.9 is 0.9 % (audit 2026-10-14 BUG-0020 / 0021 / 0022)
+PERCENT_FIELDS = frozenset({
+    "ch4_content", "co2_content", "c2plus_content", "tank_ch4_content", "pneu_ch4_content", "pneu_co2_content",
+    "dehy_ch4_content", "comp_ch4_content", "comp_co2_content", "comp_c2plus_content", "unload_ch4_content",
+    "agr_co2_in", "agr_co2_out", "co2_in", "co2_out", "agr_ch4_in",
+})  # keys named "..._pct" / "...percent" are read as percent by _parse_fraction_value already
+# the CH4 / CO2 contents of a c1..c10 gas analysis are read with the analysis (its own basis decision)
+_ANALYSIS_GROUP = ("ch4_content", "co2_content", "c2plus_content")
+
+
+def percent_to_fraction(value, name):
+    """A value entered in percent (0-100, "%" allowed) as a 0-1 fraction."""
+    try:
+        x = float(str(value).replace("%", "").strip())
+    except (TypeError, ValueError):
+        raise ValueError(f"'{name}' must be a percentage (got {value})")
+    if not math.isfinite(x) or x < 0.0 or x > 100.0:
+        raise ValueError(f"'{name}' must be between 0 and 100 % (got {value})")
+    return x / 100.0
+
+
+def capture_fraction(inputs):
+    """CCS capture rate of the raw inputs: always a percentage (BUG-0020: 1 was read as 100 %)."""
+    for key in ("ccs_capture_rate", "capture_rate"):
+        v = (inputs or {}).get(key)
+        if v not in (None, "", "-"):
+            return percent_to_fraction(v, key)
+    return 0.0
 COMBUSTION_METHOD_PROCESSES = {
     "stationary_combustion", "combustion", "mobile_combustion", "mobile", "flaring", "routine_flaring",
     "non_routine_flaring", "safety_flaring", "flare", "thermal_oxidizer",
@@ -456,7 +486,7 @@ class CalculationDispatcher:
 
     def _apply_capture(self, res, flat_inputs):
         """CCS: the captured share of the process CO2 is not emitted (CH4 and N2O are unchanged)."""
-        capture = self._optional_fraction(flat_inputs, ["ccs_capture_rate", "capture_rate"], 0.0)
+        capture = capture_fraction(flat_inputs)
         if capture:
             co2 = res["results"].get("co2")
             co2_before = float(co2.get("value") or 0.0) if isinstance(co2, dict) else float(co2 or 0.0)
@@ -699,28 +729,18 @@ class CalculationDispatcher:
         if routed is not None:
             return routed
 
-        # One percent / fraction decision per gas analysis (Tier 3 browser test #14: CH4 85 with CO2 1
-        # read CO2 as the fraction 1.0 = 100 %). When any member of a group is above 1 the whole group
-        # is in percent and is converted to fractions here.
-        for group in (("ch4_content", "co2_content", "c2plus_content"),
-                      ("comp_ch4_content", "comp_co2_content", "comp_c2plus_content"),
-                      ("pneu_ch4_content", "pneu_co2_content")):
-            vals = {}
-            for k in group:
-                v = flat_inputs.get(k)
-                if v in (None, "", "-"):
-                    continue
-                try:
-                    vals[k] = float(v)
-                except (TypeError, ValueError):
-                    vals = {}
-                    break
-            # a single member cannot be decided jointly, and a c1..c10 analysis makes its own
-            # whole-analysis decision (BUG-023, Exhibit 5.1)
-            if any(flat_inputs.get(f"c{i}") not in (None, "", "-") for i in range(1, 11)):
-                continue
-            if len(vals) >= 2 and any(v > 1.0 for v in vals.values()):
-                flat_inputs = {**flat_inputs, **{k: v / 100.0 for k, v in vals.items()}}
+        # Audit 2026-10-14 BUG-0020/0021/0022: fields documented as percent (template, forms, API) are read
+        # as percent, always, and converted to fractions once, here: 0.9 is 0.9 %, not 90 %. The basis used
+        # to be guessed from the size of the numbers. A c1..c10 analysis keeps its own whole-analysis
+        # decision for the CH4 / CO2 contents next to it (BUG-023, Exhibit 5.1).
+        has_analysis = any(flat_inputs.get(f"c{i}") not in (None, "", "-") for i in range(1, 11))
+        converted = {
+            k: percent_to_fraction(flat_inputs[k], k)
+            for k in PERCENT_FIELDS
+            if flat_inputs.get(k) not in (None, "", "-") and not (has_analysis and k in _ANALYSIS_GROUP)
+        }
+        if converted:
+            flat_inputs = {**flat_inputs, **converted}
 
         # Validate required gas composition for specific factor sources
         if process_type in [

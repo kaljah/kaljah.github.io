@@ -541,9 +541,12 @@ def add_emission():
             return jsonify({"error": f"Invalid {str_field}: exceeds maximum length of 200 characters"}), 422
 
     try:
+        if isinstance(data.get("facility_id"), bool):  # BUG-0016: true is not facility 1
+            raise TypeError
         fac_id = int(data["facility_id"])
     except (ValueError, TypeError):
         return jsonify({"error": "Invalid facility_id: must be an integer"}), 422
+    data["facility_id"] = fac_id  # the validated id is what is stored and logged
 
     allowed_ids = get_allowed_facility_ids(user)
     if allowed_ids is not None and fac_id not in allowed_ids:
@@ -1129,35 +1132,46 @@ def bulk_delete_emissions():
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
 
-    data = request.get_json()
-    ids = data.get("ids", [])
+    data = request.get_json(silent=True)
+    ids = data.get("ids", []) if isinstance(data, dict) else None
 
-    if not ids:
-        return jsonify({"error": "No IDs provided"}), 400
+    # BUG-0035: ids are positive integers (a malformed list was a 500 and `true` deleted record 1)
+    if not isinstance(ids, list) or not ids:
+        return jsonify({"error": "Give 'ids': a list of record ids", "field": "ids"}), 400
+    if any(isinstance(i, bool) or not isinstance(i, (int, str)) or not str(i).strip().isdigit()
+           or not 0 < int(i) < 2**31 for i in ids):
+        return jsonify({"error": "Every id must be a positive integer", "field": "ids"}), 400
+    ids = sorted({int(i) for i in ids})
 
     # BUG-067 (alternative endpoint): the same per-record rules as DELETE /api/emissions/<id>
     from services.maker_checker import delete_denied_reason
 
-    deleted_count, denied = 0, []
+    deleted, denied = [], []
     for rec in Emission.query.filter(Emission.id.in_(ids)).all():
         reason = delete_denied_reason(user, rec)
         if reason:
             denied.append({"id": rec.id, "error": reason})
             continue
+        deleted.append((rec.id, rec.facility_id,
+                        f"Deleted {rec.process_type} record: {rec.quantity} {rec.unit} of {rec.fuel_type} "
+                        f"({rec.month}/{rec.year}, {rec.co2e_total} tCO2e, {rec.status}) in a bulk delete"))
         db.session.delete(rec)
-        deleted_count += 1
+    deleted_count = len(deleted)
     db.session.flush()
 
-    # --- Audit Log ---
+    # --- Audit Log: one entry per record, as the single DELETE writes (BUG-0013) ---
     try:
-        log_activity_and_notify(
-            action="DELETE",
-            record_id="BULK",
-            user=user,
-            request=request,
-            entity="Emission",
-            details=f"Bulk deleted {deleted_count} emission records",
-        )
+        for rec_id, fac_id, details in deleted:
+            log_activity_and_notify(
+                action="DELETE",
+                record_id=str(rec_id),
+                user=user,
+                request=request,
+                entity="Emission",
+                entity_id=str(rec_id),
+                details=details,
+                facility_id=fac_id,
+            )
         db.session.commit()
         from routes.dashboard import clear_dashboard_cache
 

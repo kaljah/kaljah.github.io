@@ -309,6 +309,11 @@ def add_mitigation():
         clear_dashboard_cache()
         return jsonify({"message": "Mitigation Project added", "id": f"proj_{project.id}"}), 201
     else:
+        # Audit 2026-10-14 BUG-0018: a record without a facility is organisation-wide and counts toward
+        # the corporate net figure, so only the compliance admin creates one; others name a facility
+        if not user or user.role != "admin":
+            return jsonify({"error": "Choose a facility: only an administrator records organisation-wide "
+                                     "mitigation", "field": "facility_id"}), 403
         # Create generic MitigationRecord
         mitigation = MitigationRecord(
             year=data.get("year"),
@@ -379,9 +384,9 @@ def delete_mitigation(mitigation_id):
         allowed_fids = get_allowed_facility_ids(user)
         if allowed_fids is not None and item.facility_id not in allowed_fids:
             return jsonify({"error": "Access to this facility is denied"}), 403
-    elif isinstance(item, MitigationRecord):
-        if not user or user.role not in ["admin", "superuser"]:
-            return jsonify({"error": "Admin or Superuser privileges required to delete corporate mitigation records"}), 403
+    elif not user or user.role != "admin":
+        # organisation-wide items (records, projects without a facility): admin only (BUG-0018)
+        return jsonify({"error": "Only an administrator can delete organisation-wide mitigation"}), 403
 
     try:
         db.session.delete(item)

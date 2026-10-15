@@ -100,7 +100,7 @@ def test_bug011_completion_rate_default_is_mcf_per_hr():
     from calculations.legacy_engine import compute_emissions
 
     em, _ = compute_emissions({"process_type": "completions", "factor_source": "specific", "comp_method": "rate_duration",
-                               "comp_rate": 10, "comp_duration": 5, "amount": 1, "unit": "count", "ch4_content": 0.85}, {})
+                               "comp_rate": 10, "comp_duration": 5, "amount": 1, "unit": "count", "ch4_content": 85}, {})
     assert em["ch4"] == pytest.approx(50000 * SCF_M3 * 0.85 * (16.04 / 23.685) / 1000, rel=1e-6)
 
 

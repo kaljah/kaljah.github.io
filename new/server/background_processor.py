@@ -651,10 +651,16 @@ def _bulk_overwrite(obj, values, user_id, label):
     from models import User
     from utils import log_activity_and_notify
 
+    was_saved = getattr(obj, "id", None) is not None and not getattr(obj, "_bulk_in_file", False)
+    uploader = db.session.get(User, user_id) if user_id else None
+    if (was_saved and uploader is not None and uploader.role == "user"
+            and getattr(obj, "created_by", None) not in (None, user_id)):
+        # BUG-0015: the PUT edit rule applies to an overwrite too (a user changes only their own records)
+        return (f"{label} record #{obj.id} was created by another user: you may only overwrite records "
+                "you created. Give this row its own Equipment ID / source reference, or ask a reviewer.")
     old = {k: getattr(obj, k, None) for k in values}
     for k, v in values.items():
         setattr(obj, k, v)
-    was_saved = getattr(obj, "id", None) is not None and not getattr(obj, "_bulk_in_file", False)
     for k, v in _bulk_status(user_id).items():  # Pending, or Verified for an admin's import
         setattr(obj, k, v)
     if hasattr(obj, "approved_by_name"):
@@ -1954,8 +1960,8 @@ def _process_row_scope2(
     if action == "update":
         obj = _resolve_existing(Scope2Emission, existing)
         if obj is not None:
-            _bulk_overwrite(obj, values, user_id, "Scope 2")
-            return None, []
+            denied = _bulk_overwrite(obj, values, user_id, "Scope 2")
+            return None, ([denied] if denied else [])
 
     emission = Scope2Emission(
         facility_id=facility.id,
@@ -2085,8 +2091,8 @@ def _process_row_scope3_eeio(
     if action == "update":
         obj = _resolve_existing(Scope3Emission, existing)
         if obj is not None:
-            _bulk_overwrite(obj, values, user_id, "Scope 3")
-            return None, []
+            denied = _bulk_overwrite(obj, values, user_id, "Scope 3")
+            return None, ([denied] if denied else [])
 
     emission = Scope3Emission(
         facility_id=facility.id,
@@ -2234,8 +2240,8 @@ def _process_row_scope3(
     if action == "update":
         obj = _resolve_existing(Scope3Emission, existing)
         if obj is not None:
-            _bulk_overwrite(obj, values, user_id, "Scope 3")
-            return None, []
+            denied = _bulk_overwrite(obj, values, user_id, "Scope 3")
+            return None, ([denied] if denied else [])
 
     emission = Scope3Emission(
         facility_id=facility.id,
@@ -3045,8 +3051,8 @@ def _process_row(
     if action == "update":
         obj = _resolve_existing(Emission, existing)
         if obj is not None:
-            _bulk_overwrite(obj, {f: getattr(record, f) for f in _S1_RESULT_FIELDS}, user_id, "Scope 1")
-            return None, []
+            denied = _bulk_overwrite(obj, {f: getattr(record, f) for f in _S1_RESULT_FIELDS}, user_id, "Scope 1")
+            return None, ([denied] if denied else [])
 
     uploader = db.session.get(User, user_id)
     record.record_id = str(uuid.uuid4())

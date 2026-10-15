@@ -118,7 +118,7 @@ def test_bug104_hydrogen_table_6_51():
                                                     "h2_produced_tonnes": 50}, {})
     assert r["results"]["co2"]["value"] == pytest.approx(gross, rel=1e-6)
     r = dispatcher.dispatch("hydrogen_production", {"factor_source": "default", "h2_produced_tonnes": 50,
-                                                    "ccs_capture_rate": 0.85}, {})
+                                                    "ccs_capture_rate": 85}, {})  # percent (BUG-0020)
     assert r["total_co2e"] == pytest.approx(gross * 0.15, rel=1e-6)
 
 

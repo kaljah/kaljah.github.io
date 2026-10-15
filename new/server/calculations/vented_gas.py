@@ -43,7 +43,7 @@ for _u, _f in list(GAS_UNITS.items()):
         RATE_UNITS.setdefault(_u + _sfx, _f)
 
 
-def _frac(v, name, required=False):
+def _frac(v, name, required=False, percent=False):
     if v in (None, ""):
         if required:
             raise ValueError(f"Missing required field: {name}")
@@ -54,21 +54,19 @@ def _frac(v, name, required=False):
         raise ValueError(f"'{name}' must be a non-negative number")
     if x > 100.0:
         raise ValueError(f"'{name}' cannot exceed 100 %")
-    if "%" in str(v) or x > 1.0:
+    if percent or "%" in str(v) or x > 1.0:
         return x / 100.0
     return x
 
 
 def _parse_fractions(inputs_dict, field_names):
     """
-    Parses a set of related gas stream composition fields handling both percentage (0-100%)
-    and fractional (0-1.0) inputs consistently.
-    If any field is > 1.0, has a '%' sign, or the sum of raw numbers > 1.0001,
-    all fields in the stream are treated as percentages and divided by 100.0.
-    If all fields are <= 1.0 and sum <= 1.0001, they are treated as fractional fractions.
+    Parses a set of related gas stream composition fields. Every field is documented as a
+    percentage (mol % or wt %, 0-100), so it is always read as one: 0.9 is 0.9 %, not 90 %
+    (audit 2026-10-14 BUG-0021; the basis used to be guessed from the size of the numbers).
     """
     parsed = {}
-    is_percentage = False
+    is_percentage = True
     raw_nums = {}
     for name in field_names:
         v = inputs_dict.get(name)
@@ -198,7 +196,7 @@ class VentedGasCalculator(BaseCalculator):
         elif str(method).lower() == "co2_mass":
             v = _num(i.get("physical_volume_m3"), "physical volume (m3)")
             rho = _num(i.get("co2_density"), "CO2 density at release conditions (kg/m3)")
-            w = _frac(_or(i.get("co2_wt_pct"), 100), "CO2 weight %")
+            w = _frac(_or(i.get("co2_wt_pct"), 100), "CO2 weight %", percent=True)
             n = _num(i.get("events"), "blowdown events", default=1.0)
             co2 = n * v * rho * w / 1000.0
             ch4 = 0.0

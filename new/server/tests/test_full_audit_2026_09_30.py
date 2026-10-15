@@ -46,7 +46,7 @@ def _facility(name, segment="Upstream", division="Production"):
 
 # -- 1. Activity-factor CH4 content --------------------------------------------------------------
 
-@pytest.mark.parametrize("ch4", [85, 0.85, "85"])
+@pytest.mark.parametrize("ch4", [85, "85", "85%"])  # always percent (audit 2026-10-14 BUG-0021)
 def test_activity_factor_ch4_percent_or_fraction(ch4):
     d = CalculationDispatcher()
     r = d.dispatch("casing_gas", dict(process_type="casing_gas", factor_source="default", activity_key="cg_primary_heavy",

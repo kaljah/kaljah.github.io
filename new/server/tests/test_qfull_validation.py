@@ -389,7 +389,7 @@ class TestCompletions:
             'quantity': 1000.0,
             'unit': 'm3',
             'factor_source': 'specific',
-            'ch4_content': 0.85,
+            'ch4_content': 85,
             'comp_method': 'metered_volume'
         }
         ch4_vol = 1000.0 * 0.85
@@ -404,7 +404,7 @@ class TestCompletions:
             'quantity': 0.0,
             'unit': 'm3',
             'factor_source': 'specific',
-            'ch4_content': 0.85,
+            'ch4_content': 85,
             'comp_method': 'rate_duration',
             'comp_rate': 10.0,
             'comp_rate_unit': 'mscf/day',  # audit BUG-011: default unit is now the form's Mcf/hr
@@ -444,7 +444,7 @@ class TestLiquidsUnloading:
             'unload_diam': 2.5,
             'unload_press': 500.0,
             'unload_temp': 60.0, # Default 60F
-            'ch4_content': 0.85,
+            'ch4_content': 85,
             'unload_freq': 12
         }
         d_m = 2.5 * 0.0254
@@ -472,7 +472,7 @@ class TestLiquidsUnloading:
             'unload_diam': 2.0,
             'unload_press': 200.0,
             'unload_temp': 60.0,
-            'ch4_content': 0.90,
+            'ch4_content': 90,
             'unload_freq': 1
         }
         d_m = 2.0 * 0.0254
@@ -498,7 +498,7 @@ class TestTankFlashing:
             'unit': 'bbl',
             'factor_source': 'specific',
             'tank_gor': 100.0,
-            'tank_ch4_content': 0.85,
+            'tank_ch4_content': 85,
             'tank_control_eff': 0.0
         }
         total_gas_scf = 1000.0 * 100.0
@@ -538,7 +538,7 @@ class TestTankFlashing:
             'unit': 'bbl',
             'factor_source': 'specific',
             'tank_gor': 100.0,
-            'tank_ch4_content': 0.85,
+            'tank_ch4_content': 85,
             'tank_control_eff': ctrl_eff
         }
         em, method = compute_emissions(payload, {}, GWP_AR5)
@@ -554,7 +554,7 @@ class TestPneumatics:
             'pneu_count': 10.0,
             'pneu_hours': 8760.0,
             'pneu_bleed_rate': 5.0,
-            'pneu_ch4_content': 0.85
+            'pneu_ch4_content': 85
         }
         bleed_m3_hr = 5.0 * SCF_TO_M3
         total_ch4_vol = 10.0 * 8760.0 * bleed_m3_hr * 0.85
@@ -572,7 +572,7 @@ class TestPneumatics:
             'pneu_count': 10.0,
             'pneu_hours': 0.0,
             'pneu_bleed_rate': 5.0,
-            'pneu_ch4_content': 0.85
+            'pneu_ch4_content': 85
         }
         em, method = compute_emissions(payload, {}, GWP_AR5)
         assert em['ch4'] == 0.0
@@ -639,7 +639,7 @@ class TestBlowdown:
             'blowdown_pressure': 500.0,
             'blowdown_temp': 60.0,
             'blowdown_events': 10,
-            'ch4_content': 0.85
+            'ch4_content': 85
         }
         p_abs = 500.0 + STD_PRESS_PSIA
         p_factor = p_abs / STD_PRESS_PSIA
@@ -663,7 +663,7 @@ class TestBlowdown:
             'blowdown_pressure': 100.0,
             'blowdown_temp': 60.0,
             'blowdown_events': 1,
-            'ch4_content': 0.90
+            'ch4_content': 90
         }
         p_abs = 100.0 + STD_PRESS_PSIA
         p_factor = p_abs / STD_PRESS_PSIA
@@ -791,11 +791,11 @@ class TestSensitivityOAT:
             'unit': 'bbl',
             'factor_source': 'specific',
             'tank_gor': 100.0,
-            'tank_ch4_content': 0.50,
+            'tank_ch4_content': 50,
             'tank_control_eff': 0.0
         }
         em1, _ = compute_emissions(payload, {}, GWP_AR5)
-        payload['tank_ch4_content'] = 1.0
+        payload['tank_ch4_content'] = 100  # percent (audit 2026-10-14 BUG-0021)
         em2, _ = compute_emissions(payload, {}, GWP_AR5)
         assert em2['ch4'] == pytest.approx(em1['ch4'] * 2, rel=1e-4)
 
@@ -826,7 +826,7 @@ class TestSensitivityOAT:
             'blowdown_pressure': 100.0,
             'blowdown_temp': 60.0,
             'blowdown_events': 1,
-            'ch4_content': 1.0
+            'ch4_content': 100
         }
         em1, _ = compute_emissions(payload, {}, GWP_AR5)
         payload['blowdown_pressure'] = 200.0 + STD_PRESS_PSIA - STD_PRESS_PSIA # essentially doubling absolute approx?

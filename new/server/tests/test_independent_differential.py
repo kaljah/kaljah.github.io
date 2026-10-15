@@ -164,7 +164,7 @@ class TestDifferentialScope1:
             "unload_diam": 2.875,
             "unload_press": 200.0,
             "unload_events": 10,
-            "unload_ch4_content": 0.82,
+            "unload_ch4_content": 82,
             "depth_unit": "ft",
             "diameter_unit": "in",
             "press_unit": "psig",
@@ -193,7 +193,7 @@ class TestDifferentialScope1:
             "blowdown_volume": 150.0,
             "pressure": 350.0,
             "events": 4,
-            "ch4_content": 0.85,
+            "ch4_content": 85,
             "temp_unit": "F",
             "press_unit": "psig",
             "blowdown_temp": 75.0,
@@ -221,7 +221,7 @@ class TestDifferentialScope1:
             "amount": 15_000.0,
             "tank_unit": "bbl",
             "tank_gor": 45.0,
-            "tank_ch4_content": 0.78,
+            "tank_ch4_content": 78,
             "factor_source": "specific",
         }
 
@@ -244,7 +244,7 @@ class TestDifferentialScope1:
             "pneu_hours": 8760,
             "pneu_bleed_rate": 18.5,
             "pneu_bleed_unit": "scf",
-            "pneu_ch4_content": 0.85,
+            "pneu_ch4_content": 85,
             "factor_source": "specific",
         }
 

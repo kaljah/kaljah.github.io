@@ -648,7 +648,7 @@ class TestCompletionsPipeline:
             "quantity": flowback_m3,
             "unit": "m3",
             "factor_source": "specific",
-            "ch4_content": ch4_frac,
+            "ch4_content": ch4_frac * 100,
             "comp_method": "metered_volume",
         }
         em, method = compute_emissions(payload, {})
@@ -687,7 +687,7 @@ class TestCompletionsPipeline:
             "quantity": 0.0,
             "unit": "m3",
             "factor_source": "specific",
-            "ch4_content": ch4_frac,
+            "ch4_content": ch4_frac * 100,
             "comp_method": "rate_duration",
             "comp_rate": rate_mscf_day,
             # audit BUG-011: the form's default rate unit is Mcf/hr, so a per-day rate is explicit
@@ -743,7 +743,7 @@ class TestPneumaticsPipeline:
             "pneu_hours": hours,
             "pneu_bleed_rate": bleed_rate_scf_hr,
             "pneu_bleed_unit": "scf",
-            "pneu_ch4_content": ch4_frac,
+            "pneu_ch4_content": ch4_frac * 100,
         }
         em, method = compute_emissions(payload, {})
 
@@ -768,7 +768,7 @@ class TestPneumaticsPipeline:
             "pneu_hours": 8760.0,
             "pneu_bleed_rate": 5.0,
             "pneu_bleed_unit": "scf",
-            "pneu_ch4_content": 0.85,
+            "pneu_ch4_content": 85,
         }
         double = {**base, "pneu_count": 20.0, "quantity": 20.0}
 
@@ -896,7 +896,7 @@ class TestBlowdownPipeline:
             "blowdown_volume": vessel_vol_m3,
             "blowdown_pressure": pressure_psig,
             "blowdown_events": events,
-            "ch4_content": ch4_frac,
+            "ch4_content": ch4_frac * 100,
         }
         em, method = compute_emissions(payload, {})
 
@@ -1108,7 +1108,7 @@ class TestTankFlashingPipeline:
             "unit": "bbl",
             "factor_source": "specific",
             "tank_gor": gor,
-            "tank_ch4_content": ch4_frac,
+            "tank_ch4_content": ch4_frac * 100,
             "tank_control_eff": 0.0,
         }
         em, method = compute_emissions(payload, {})
@@ -1178,7 +1178,7 @@ class TestLiquidsUnloadingPipeline:
             "unload_depth": depth_ft,
             "unload_diam": diameter_in,
             "unload_press": pressure_psig,
-            "ch4_content": ch4_frac,
+            "ch4_content": ch4_frac * 100,
             "unload_freq": events,
         }
         em, method = compute_emissions(payload, {})

@@ -457,9 +457,9 @@ def compute_emissions(payload, factor_data=None, gwp_dict=None, gwp_standard=Non
     em, method = _compute_emissions_impl(payload, factor_data, gwp_dict=gwp_dict, gwp_standard=gwp_standard)
     if "_full_api_res" not in em:
         # factor-math fallback: the dispatcher applies CCS capture itself, so apply it here too
-        from .dispatcher import dispatcher
+        from .dispatcher import capture_fraction
 
-        capture = dispatcher._optional_fraction(payload, ["ccs_capture_rate", "capture_rate"], 0.0)
+        capture = capture_fraction(payload)
         if capture:
             em["totalCo2e"] -= em["co2"] * capture
             em["co2"] *= 1.0 - capture

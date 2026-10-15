@@ -241,7 +241,26 @@ def test_unreferenced_custom_factor_edit_logs_old_and_new_values(app, ctx):
         login(c, make_user("admin"))
         assert c.put(f"/api/custom-factors/{cf.id}", json={"co2_factor": 0.06}).status_code == 200
     log = ActivityLog.query.filter_by(entity="CustomFactor", record_id=str(cf.id), action="UPDATE").one()
-    assert json.loads(log.old_values) == {"co2_factor": 0.05} and json.loads(log.new_values) == {"co2_factor": 0.06}
+    # the value change also sends the approved factor back for a second approval (audit 2026-10-14 BUG-0017)
+    assert json.loads(log.old_values) == {"co2_factor": 0.05, "status": "Approved"}
+    assert json.loads(log.new_values) == {"co2_factor": 0.06, "status": "Pending"}
+
+
+def test_bug0017_admin_value_edit_needs_a_second_approval_again(app, ctx, monkeypatch):
+    cf = CustomFactor(name="o4-second", unit="scf", co2_factor=0.05, status="Approved")
+    db.session.add(cf)
+    db.session.commit()
+    with app.test_client() as c:
+        login(c, make_user("admin"))
+        assert c.put(f"/api/custom-factors/{cf.id}", json={"co2_factor": 0.09}).status_code == 200
+        db.session.expire_all()
+        assert db.session.get(CustomFactor, cf.id).status == "Pending"
+        monkeypatch.setenv("CUSTOM_FACTOR_SECOND_APPROVER", "false")  # one-admin install: stays approved
+        cf.status = "Approved"
+        db.session.commit()
+        assert c.put(f"/api/custom-factors/{cf.id}", json={"co2_factor": 0.07}).status_code == 200
+    db.session.expire_all()
+    assert db.session.get(CustomFactor, cf.id).status == "Approved"
 
 
 def test_superuser_value_edit_sends_approved_factor_back_to_pending(app, ctx):

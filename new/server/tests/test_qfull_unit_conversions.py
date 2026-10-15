@@ -137,7 +137,7 @@ class TestBlowdownVolumeUnits:
             "blowdown_volume": vol,
             "blowdown_pressure": self.PRESSURE_PSIG,
             "blowdown_events": self.EVENTS,
-            "ch4_content": self.CH4_FRAC,
+            "ch4_content": self.CH4_FRAC * 100,
         }, {})[0]
 
     def test_blowdown_m3_reference(self):
@@ -195,7 +195,7 @@ class TestCompletionsVolumeUnits:
             "quantity": qty,
             "unit": unit,
             "factor_source": "specific",
-            "ch4_content": self.CH4_FRAC,
+            "ch4_content": self.CH4_FRAC * 100,
             "comp_method": "metered_volume",
         }, {})[0]
 
@@ -267,7 +267,7 @@ class TestTankThroughputUnits:
             "unit": unit,
             "factor_source": "specific",
             "tank_gor": self.GOR,
-            "tank_ch4_content": self.CH4_FRAC,
+            "tank_ch4_content": self.CH4_FRAC * 100,
             "tank_control_eff": 0.0,
         }, {})[0]
 
@@ -494,7 +494,7 @@ class TestPneumaticBleedRateUnits:
             "pneu_hours": self.HOURS,
             "pneu_bleed_rate": self.BLEED_RATE_SCF,
             "pneu_bleed_unit": "scf",
-            "pneu_ch4_content": self.CH4_FRAC,
+            "pneu_ch4_content": self.CH4_FRAC * 100,
         }
         em, _ = compute_emissions(payload, {})
         assert em["ch4"] == pytest.approx(self.EXPECTED_CH4, rel=1e-3), (
@@ -515,7 +515,7 @@ class TestPneumaticBleedRateUnits:
                 "pneu_count": self.COUNT, "pneu_hours": hours,
                 "pneu_bleed_rate": self.BLEED_RATE_SCF,
                 "pneu_bleed_unit": "scf",
-                "pneu_ch4_content": self.CH4_FRAC,
+                "pneu_ch4_content": self.CH4_FRAC * 100,
             }, {})[0]
 
         em_full = run_pneumatic(8760.0)

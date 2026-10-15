@@ -91,7 +91,7 @@
     },
     "units": "events",
     "emission_factor": {
-      "ch4_content": 0.85
+      "ch4_content": 85.0
     },
     "factor_source": "default",
     "factor_version": "2021",
@@ -124,7 +124,7 @@
     "units": "bbl",
     "emission_factor": {
       "gor": 50.0,
-      "ch4_content": 0.8
+      "ch4_content": 80.0
     },
     "factor_source": "default",
     "factor_version": "2021",
@@ -337,7 +337,7 @@
     "methodology": "API Compendium 2021 \u00a77.2",
     "activity_data": {
       "equipment_count": 17.385,
-      "ch4_content": 0.8432
+      "ch4_content": 84.32
     },
     "units": "count",
     "emission_factor": {
@@ -450,8 +450,8 @@
     "activity_data": {
       "count": 10,
       "bleed_rate": 15.0,
-      "pneu_ch4_content": 0.85,
-      "ch4_content": 0.85
+      "pneu_ch4_content": 85.0,
+      "ch4_content": 85.0
     },
     "units": "count",
     "emission_factor": {

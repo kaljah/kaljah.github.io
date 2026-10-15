@@ -63,6 +63,9 @@ def get_flaring_summary():
         detail_fids = {r.facility_id for r in fd
                        if (r.routine_knm3 or 0) or (r.non_routine_knm3 or 0) or (r.safety_knm3 or 0)}
         unconverted = 0
+        # BUG-0027: generic "flaring" records of a facility that reports stream volumes are split over
+        # those streams by volume (they used to sit in a hidden bucket while every stream showed 0 t)
+        unsplit_by_fac = {}
         for e in em_q.all():
             if source_category(e.process_type) != "flaring":
                 continue
@@ -75,17 +78,33 @@ def get_flaring_summary():
                     unconverted += 1
                 else:
                     out[key]["m3"] += vol
-            out[key]["tco2e"] += float(e.co2e_total or 0) + horizon_delta(e.ch4_emissions, e.n2o_emissions, horizon)
+            t = float(e.co2e_total or 0) + horizon_delta(e.ch4_emissions, e.n2o_emissions, horizon)
+            if key == "unclassified" and e.facility_id in detail_fids:
+                unsplit_by_fac[e.facility_id] = unsplit_by_fac.get(e.facility_id, 0.0) + t
+            else:
+                out[key]["tco2e"] += t
         detail_used = bool(detail_fids)
+        fac_streams = {}
         for r in fd:
             if r.facility_id in detail_fids:
-                out["routine"]["m3"] += float(r.routine_knm3 or 0) * 1000.0
-                out["non_routine"]["m3"] += float(r.non_routine_knm3 or 0) * 1000.0
-                out["safety"]["m3"] += float(r.safety_knm3 or 0) * 1000.0
+                vols = fac_streams.setdefault(r.facility_id, {"routine": 0.0, "non_routine": 0.0, "safety": 0.0})
+                for k, v in (("routine", r.routine_knm3), ("non_routine", r.non_routine_knm3), ("safety", r.safety_knm3)):
+                    vols[k] += float(v or 0) * 1000.0
+                    out[k]["m3"] += float(v or 0) * 1000.0
+        allocated = False
+        for fid, t in unsplit_by_fac.items():
+            vols = fac_streams.get(fid) or {}
+            total = sum(vols.values())
+            if total > 0:
+                for k, v in vols.items():
+                    out[k]["tco2e"] += t * v / total
+                allocated = True
+            else:
+                out["unclassified"]["tco2e"] += t
         dres = [float(r.measured_dre_pct) for r in fd if r.measured_dre_pct is not None]
-        return out, unconverted, detail_used, dres
+        return out, unconverted, detail_used, dres, allocated
 
-    streams, unconverted, detail_used, dres = streams_for(yr)
+    streams, unconverted, detail_used, dres, allocated = streams_for(yr)
     total_m3 = sum(v["m3"] for v in streams.values())
     total_tco2e = sum(v["tco2e"] for v in streams.values())
 
@@ -115,7 +134,7 @@ def get_flaring_summary():
 
     yoy = None
     if not all_years:
-        prev, prev_unconverted, _, _ = streams_for(yr - 1)
+        prev, prev_unconverted, _, _, _ = streams_for(yr - 1)
         prev_m3 = sum(v["m3"] for v in prev.values())
         if prev_m3 > 0 and not unconverted and not prev_unconverted:
             yoy = (total_m3 - prev_m3) / prev_m3 * 100.0
@@ -147,6 +166,8 @@ def get_flaring_summary():
         },
         "stream_volume_source": ("FlaringDetail (operator-reported)" if detail_used and not streams["unclassified"]["m3"]
                                  else "FlaringDetail and emission records" if detail_used else "Emission records"),
+        # True when stream tCO2e were split by the operator-reported stream volumes (records not split by stream)
+        "stream_tco2e_allocated": allocated,
         "records_with_unknown_volume_unit": unconverted,
         "production_rows_with_unknown_gas_unit": prod_unconverted,
         "gas_production_m3": round(gas_m3, 2),

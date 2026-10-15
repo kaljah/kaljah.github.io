@@ -327,8 +327,9 @@ def update_custom_factor(factor_id):
                 "references": refs,
                 "fields": value_changes,
             }), 409
-        if user.role != "admin" and factor.status == "Approved":
-            # maker-checker: new values from a non-admin need approval again
+        if factor.status == "Approved" and (user.role != "admin" or second_approver_required()):
+            # maker-checker: new values need approval again; an admin's own change too, unless the
+            # one-admin mode is on (audit 2026-10-14 BUG-0017: the values changed under B's approval)
             changes["status"] = (factor.status, "Pending")
             factor.status = "Pending"
             factor.approved_by = None

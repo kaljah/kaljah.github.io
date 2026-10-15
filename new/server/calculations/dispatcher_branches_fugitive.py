@@ -306,17 +306,13 @@ def calc_agr(self, calculator, flat_inputs, gwp_dict, uncertainties, unit):
         flat_inputs, ["agr_co2_in", "co2_in", "co2_content"], "inlet CO2 mole %"
     )
     raw_co2_out_val = flat_inputs.get("agr_co2_out") or flat_inputs.get("co2_out")
-    raw_co2_out = float(raw_co2_out_val) if raw_co2_out_val not in [None, "", "-"] else 0.001
+    raw_co2_out = float(raw_co2_out_val) if raw_co2_out_val not in [None, "", "-"] else 0.0
 
-    if flat_inputs.get("agr_co2_in") not in (None, ""):
-        # the form's fields are labelled "%": always percentages (0.9 % is not 90 %)
-        co2_in, co2_out = raw_co2_in / 100.0, (raw_co2_out / 100.0 if raw_co2_out_val not in [None, "", "-"] else 0.0)
-    elif raw_co2_in > 1.0 or raw_co2_out > 1.0:
-        co2_in = raw_co2_in / 100.0 if raw_co2_in > 1.0 else raw_co2_in
-        co2_out = (raw_co2_out / 100.0) if raw_co2_in > 1.0 else (raw_co2_out / 100.0 if raw_co2_out > 1.0 else raw_co2_out)
-    else:
-        co2_in = raw_co2_in
-        co2_out = raw_co2_out
+    # Audit 2026-10-14 BUG-0022: inlet and outlet CO2 are mol % whatever the key; the dispatcher has
+    # already converted them to fractions (PERCENT_FIELDS), so 0.9 % arrives as 0.009. A co2_content
+    # next to a c1..c10 analysis keeps the analysis basis. A blank outlet is 0 % for every key.
+    co2_in = raw_co2_in / 100.0 if raw_co2_in > 1.0 else raw_co2_in
+    co2_out = raw_co2_out / 100.0 if raw_co2_out > 1.0 else raw_co2_out
 
     if co2_out > co2_in:
         raise ValueError("Outlet CO2 cannot exceed inlet CO2")

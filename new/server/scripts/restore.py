@@ -13,31 +13,43 @@ import gzip
 import shutil
 import sqlite3
 import subprocess
+import tempfile
 from dotenv import load_dotenv
 
 load_dotenv()
 
 
-def verify_sqlite_backup(backup_file, sandbox_file="sandbox_restore.db"):
+def _unpacked(backup_file, workdir):
+    """The backup as a plain SQLite file (a .gz is decompressed into workdir)."""
+    if not backup_file.endswith(".gz"):
+        return backup_file
+    path = os.path.join(workdir, "unpacked.db")
+    print(f"[INFO] Decompressing {backup_file}...")
+    with gzip.open(backup_file, "rb") as f_in, open(path, "wb") as f_out:
+        shutil.copyfileobj(f_in, f_out)
+    return path
+
+
+def verify_sqlite_backup(backup_file, workdir=None):
+    """Restore the backup into a scratch database and check it. Returns (ok, alembic_revision).
+
+    Audit 2026-10-14 BUG-0031: a failed integrity check counts as a failure (it was printed and
+    ignored), a missing or unreadable file is reported instead of a traceback, and the connections are
+    closed whatever happens (the scratch file is in a temporary directory, not the current one)."""
     if not os.path.exists(backup_file):
         print(f"[ERROR] Backup file does not exist: {backup_file}")
-        return False
+        return False, None
 
-    temp_unpacked = None
-    target_file = backup_file
-    if backup_file.endswith(".gz"):
-        temp_unpacked = sandbox_file + ".tmp.db"
-        print(f"[INFO] Decompressing {backup_file}...")
-        with gzip.open(backup_file, "rb") as f_in, open(temp_unpacked, "wb") as f_out:
-            shutil.copyfileobj(f_in, f_out)
-        target_file = temp_unpacked
-
+    own_dir = workdir is None
+    workdir = workdir or tempfile.mkdtemp(prefix="ghg_restore_")
+    src = dst = None
     try:
-        print(f"[INFO] Restoring {target_file} into {sandbox_file}...")
-        src = sqlite3.connect(target_file)
+        source = _unpacked(backup_file, workdir)
+        sandbox_file = os.path.join(workdir, "sandbox_restore.db")
+        print(f"[INFO] Restoring {source} into a scratch database...")
+        src = sqlite3.connect(source)
         dst = sqlite3.connect(sandbox_file)
         src.backup(dst)
-        src.close()
 
         cur = dst.cursor()
         tables = [t[0] for t in cur.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()]
@@ -45,22 +57,59 @@ def verify_sqlite_backup(backup_file, sandbox_file="sandbox_restore.db"):
 
         integrity = cur.execute("PRAGMA integrity_check;").fetchall()
         print(f"[INFO] PRAGMA integrity_check: {integrity}")
+        if integrity != [("ok",)]:
+            print("[ERROR] The backup failed the SQLite integrity check.")
+            return False, None
 
         alembic_head = None
         if "alembic_version" in tables:
-            cur.execute("SELECT version_num FROM alembic_version")
-            row = cur.fetchone()
+            row = cur.execute("SELECT version_num FROM alembic_version").fetchone()
             if row:
                 alembic_head = row[0]
                 print(f"[INFO] Restored Alembic revision: {alembic_head}")
-
-        dst.close()
         return True, alembic_head
+    except sqlite3.DatabaseError as exc:
+        print(f"[ERROR] The backup is not a readable SQLite database: {exc}")
+        return False, None
     finally:
-        if temp_unpacked and os.path.exists(temp_unpacked):
-            os.remove(temp_unpacked)
-        if os.path.exists(sandbox_file):
-            os.remove(sandbox_file)
+        for conn in (src, dst):
+            if conn is not None:
+                conn.close()
+        if own_dir:
+            shutil.rmtree(workdir, ignore_errors=True)
+
+
+def sqlite_target():
+    """The live SQLite file: DATABASE_URL when it names one, else ghg_app.db next to the server."""
+    url = os.environ.get("DATABASE_URL", "")
+    if url.startswith("sqlite:///"):
+        return url[len("sqlite:///"):]
+    return os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "ghg_app.db")
+
+
+def restore_sqlite(backup_file, target_db):
+    """Copy the backup into the live database with the SQLite backup API. A plain file copy left the live
+    -wal file in place, and SQLite then replayed it over the restored data (BUG-0031). The copy runs
+    through a connection to the target, so its WAL is part of the restore, then it is checkpointed."""
+    workdir = tempfile.mkdtemp(prefix="ghg_restore_")
+    src = dst = None
+    try:
+        src = sqlite3.connect(_unpacked(backup_file, workdir))
+        dst = sqlite3.connect(target_db, timeout=5)
+        src.backup(dst)
+        dst.execute("PRAGMA wal_checkpoint(TRUNCATE)")
+        if dst.execute("PRAGMA integrity_check").fetchall() != [("ok",)]:
+            print("[ERROR] The restored database failed the integrity check.")
+            return False
+        return True
+    except sqlite3.OperationalError as exc:
+        print(f"[ERROR] Could not write {target_db} ({exc}). Stop the application server and try again.")
+        return False
+    finally:
+        for conn in (src, dst):
+            if conn is not None:
+                conn.close()
+        shutil.rmtree(workdir, ignore_errors=True)
 
 
 def restore_postgres(backup_file, database_url):
@@ -122,14 +171,10 @@ def main():
         if success:
             print(f"[SUCCESS] Sandbox integrity check PASSED (Revision: {head}).")
             if apply_restore:
-                base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-                target_db = os.path.join(base_dir, "ghg_app.db")
+                target_db = sqlite_target()
                 print(f"[INFO] Applying verified backup to {target_db}...")
-                if backup_file.endswith(".gz"):
-                    with gzip.open(backup_file, "rb") as f_in, open(target_db, "wb") as f_out:
-                        shutil.copyfileobj(f_in, f_out)
-                else:
-                    shutil.copyfile(backup_file, target_db)
+                if not restore_sqlite(backup_file, target_db):
+                    sys.exit(1)
                 print(f"[SUCCESS] Live database replaced with {backup_file}.")
         else:
             print("[ERROR] Sandbox integrity check FAILED.")

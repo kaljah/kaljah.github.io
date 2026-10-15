@@ -33,6 +33,16 @@ def _timestamp_text(ts):
     return ts.replace(tzinfo=None).isoformat(timespec="microseconds")
 
 
+def _id_text(value):
+    """facility_id as the database returns it: a JSON true sent as an id was hashed as "True" but
+    read back as 1, so the entry failed verification for good (audit 2026-10-14 BUG-0016)."""
+    if value is None:
+        return ""
+    if isinstance(value, bool) or (isinstance(value, float) and value.is_integer()):
+        return str(int(value))
+    return str(value)
+
+
 def compute_entry_hash(log, prev_hash):
     """Hash of one entry's content chained to the previous entry's hash."""
     content = [
@@ -44,7 +54,7 @@ def compute_entry_hash(log, prev_hash):
         log.ip_address or "",
         log.entity or "",
         log.entity_id or "",
-        "" if log.facility_id is None else str(log.facility_id),
+        _id_text(log.facility_id),
         log.metadata_json or "",
     ]
     return hashlib.sha256(json.dumps(content, ensure_ascii=False, separators=(",", ":")).encode("utf-8")).hexdigest()
