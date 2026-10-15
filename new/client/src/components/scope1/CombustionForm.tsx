@@ -199,7 +199,8 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
                   placeholder="e.g. 85.0"
                 />
               </div>
-              {/* measured efficiencies; blank = API Compendium 2021 Eq 5-2 defaults for the flare type */}
+              {/* measured efficiencies; blank = API Compendium 2021 defaults as corrected in December 2025
+                  (96.5 % to CO2; CH4 98 %, 99.5 % at facilities registered as Downstream) */}
               <div className="input-group mb-[0px]!">
                 <label className="text-[length:0.75rem]!">{t("Combustion efficiency (% carbon to CO₂)")}</label>
                 <Input
@@ -210,7 +211,7 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
                   step="0.1"
                   value={data.combustion_efficiency != null ? data.combustion_efficiency : ""}
                   onChange={(e) => onChange("combustion_efficiency", e.target.value)}
-                  placeholder={t("blank = 98")}
+                  placeholder={t("blank = 96.5")}
                 />
               </div>
               <div className="input-group mb-[0px]!">
@@ -223,7 +224,7 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
                   step="0.1"
                   value={data.destruction_efficiency != null ? data.destruction_efficiency : ""}
                   onChange={(e) => onChange("destruction_efficiency", e.target.value)}
-                  placeholder={(data.flare_type || "elevated") === "enclosed_ground" ? t("blank = 99.5") : t("blank = 98")}
+                  placeholder={t("blank = 98 (99.5 at Downstream facilities)")}
                 />
               </div>
             </div>

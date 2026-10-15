@@ -39,6 +39,34 @@ def test_entered_efficiency_wins_over_segment(app):
     assert em["ch4"] == pytest.approx(10000 * 0.04 * CONVERSIONS["density_ch4"] / 1000, rel=1e-6)
 
 
+def test_segment_read_from_facility_record(app):
+    """The default follows the facility's registered segment, so facilities added or re-classified later
+    as Downstream get the refinery value too, for every flare process type."""
+    import uuid
+
+    from models import Facility, db
+
+    with app.app_context():
+        fac = Facility(name=f"Future refinery {uuid.uuid4().hex[:8]}", segment="Midstream")
+        db.session.add(fac)
+        db.session.commit()
+        try:
+            def ch4(process):
+                p = {"process_type": process, "factor_source": "specific", "amount": 10000, "unit": "m3",
+                     "c1": 1.0, "facility_id": fac.id}
+                return compute_emissions(p, {}, gwp_dict=GWP)[0]["ch4"]
+
+            production = 10000 * 0.02 * CONVERSIONS["density_ch4"] / 1000
+            assert ch4("flaring") == pytest.approx(production, rel=1e-6)
+            fac.segment = "Downstream"
+            db.session.commit()
+            for process in ("flaring", "routine_flaring", "non_routine_flaring", "safety_flaring"):
+                assert ch4(process) == pytest.approx(production * 0.25, rel=1e-6), process
+        finally:
+            db.session.delete(fac)
+            db.session.commit()
+
+
 def test_catalog_factor_by_segment(app):
     with app.app_context():
         up, down = _catalog("Upstream"), _catalog("Downstream")
