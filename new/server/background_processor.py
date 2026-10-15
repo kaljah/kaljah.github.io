@@ -18,6 +18,31 @@ from calculations.anomaly import plausibility_check
 upload_jobs = {}
 upload_jobs_lock = threading.Lock()
 
+# Audit 2026-10-14 BUG-0003: two imports of one scope that overlapped in time each read the existing
+# natural keys before either had committed, so both inserted the same rows. Imports of a scope are
+# now serialised from that snapshot to their commit: a lock per scope in this process, plus a
+# PostgreSQL advisory transaction lock across workers (released by the commit or rollback).
+_import_locks = {}
+_import_locks_guard = threading.Lock()
+_IMPORT_ADVISORY_BASE = 0x4748_0000
+
+
+def _hold_import_lock(session, scope):
+    key = "3" if str(scope) == "3_eeio" else str(scope)
+    with _import_locks_guard:
+        lock = _import_locks.setdefault(key, threading.Lock())
+    lock.acquire()
+    try:
+        if session.get_bind().dialect.name == "postgresql":
+            from sqlalchemy import text
+
+            n = sum(ord(c) for c in key)  # stable across processes (hash() is salted per process)
+            session.execute(text("SELECT pg_advisory_xact_lock(:k)"), {"k": _IMPORT_ADVISORY_BASE + n})
+    except Exception:
+        lock.release()
+        raise
+    return lock
+
 UPLOAD_JOB_DIR = os.environ.get("UPLOAD_JOB_DIR") or os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "upload_jobs"
 )
@@ -812,6 +837,7 @@ def _process_file_thread(
     statistics (rows, period, facilities, processes) and save nothing (the "Check file" step)."""
     wb = None
     f = None
+    import_lock = None
     with app.app_context():
         try:
             is_excel = str(original_filename or "").lower().endswith(".xlsx")
@@ -984,6 +1010,9 @@ def _process_file_thread(
             batch_scope3_map = {}
 
             from models import Emission, Scope2Emission, Scope3Emission
+
+            if not dry_run:
+                import_lock = _hold_import_lock(db.session, scope)  # BUG-0003: held until the commit
 
             # BUG-081: natural keys include the sub-identifiers real inventories need, and
             # Rejected / Draft rows are not treated as existing records.
@@ -1373,6 +1402,8 @@ def _process_file_thread(
                 _db.session.remove()  # the import thread's session ends with the thread
             except Exception:
                 pass
+            if import_lock is not None:
+                import_lock.release()
             if wb:
                 wb.close()
             if f:
