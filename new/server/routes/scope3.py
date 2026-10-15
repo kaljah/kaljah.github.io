@@ -144,7 +144,8 @@ def create_scope3_emission():
     if activity_data > 0 and emission_factor > 0:
         factor_unit = str(data.get("factor_unit") or data.get("emission_factor_unit") or "")
         calc_method = str(data.get("calculation_method") or "")
-        co2e_val = compute_scope3_co2e(activity_data, emission_factor, factor_unit, calc_method)
+        co2e_val = compute_scope3_co2e(activity_data, emission_factor, factor_unit, calc_method,
+                                       activity_unit=data.get("unit") or "")
     elif co2e_input not in [None, ""] and user.role in ["admin", "superuser"]:
         # Supplier-specific total reported directly (approver roles only)
         co2e_val = parse_number(co2e_input, "co2e", min_value=0)
@@ -340,7 +341,9 @@ def update_scope3_emission(emission_id):
         factor_unit = str(data.get("factor_unit") or data.get("emission_factor_unit") or getattr(emission, "factor_unit", "") or "")
         calc_method = str(data.get("calculation_method") or getattr(emission, "calculation_method", "") or "")
         if act > 0 and ef > 0:
-            emission.co2e = compute_scope3_co2e(act, ef, factor_unit, calc_method)
+            # a factor edited with its own unit is matched to the record's activity unit
+            emission.co2e = compute_scope3_co2e(act, ef, factor_unit, calc_method,
+                                                activity_unit=emission.unit if factor_unit else "")
             from calculations.units import scope3_ef_kg_per_unit
             emission.emission_factor = scope3_ef_kg_per_unit(act, emission.co2e, ef)
         elif not ef and "emission_factor" not in data and emission.co2e:

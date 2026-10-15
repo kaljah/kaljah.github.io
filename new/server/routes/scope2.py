@@ -412,9 +412,10 @@ def create_scope2_emission():
 
     elif source_type in ("cooling", "purchased_cooling") or "cool" in source_type.lower():
         cooling_ton_val = parse_number(data.get("cooling_ton") or data.get("amount"), "cooling_ton", required=False, min_value=0, default=0.0)
-        # BUG-0007: an explicit factor of 0 is a factor, not "missing" (`or` replaced it with 150)
+        # BUG-0007: an explicit factor of 0 is a factor, not "missing". A missing factor is refused: it
+        # was 150 kg CO2e per ton-hour, a value with no source (bug hunt 2026-10-15 #13)
         raw_ef = data.get("emission_factor") if data.get("emission_factor") not in (None, "") else data.get("ef")
-        ef_val = parse_number(raw_ef, "emission_factor", required=False, min_value=0, default=150.0)
+        ef_val = parse_number(raw_ef, "emission_factor", min_value=0)
         co2e = (cooling_ton_val * ef_val) / 1000.0
         co2e_location = co2e
         co2e_market = co2e

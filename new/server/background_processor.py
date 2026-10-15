@@ -196,6 +196,11 @@ def _append_job_list(job_id, list_key, item):
     _persist_job(job_id)
 
 
+# ton-hours of refrigeration (12,000 Btu removed per hour, for one hour)
+COOLING_UNITS = {"ton_hour", "ton_hours", "tonhour", "ton_hr", "tonhr", "rt_h", "rth", "trh", "cooling_ton",
+                 "ton_cooling", "ton_hour_cooling", "refrigeration_ton_hour"}
+
+
 def _clean_float(val, default=0.0):
     """
     Robustly parses numbers with currency signs, trailing engineering units,
@@ -1822,7 +1827,7 @@ def _process_row_scope2(
     unit = str(
         row.get("unit")
         or row.get("heat_unit")
-        or ("mmbtu" if source_type == "indirect_steam" else "kWh")
+        or ("mmbtu" if source_type == "indirect_steam" else "ton_hour" if "cool" in source_type else "kWh")
     ).strip()
 
     if _is_bare_ton(unit):
@@ -1901,9 +1906,17 @@ def _process_row_scope2(
         ef = None
     elif source_type in ["cooling", "purchased_cooling"]:
         source_type = "cooling"
+        # bug hunt 2026-10-15 #13 / #29: cooling is in ton-hours of refrigeration (any other unit,
+        # kWh included, was read as ton-hours) and needs its factor: an unreadable or missing one
+        # became 150 kg CO2e per ton-hour, a value with no source
+        if unit.lower().replace(" ", "").replace("-", "_") not in COOLING_UNITS:
+            return None, [f"Row {row_idx}: cooling is entered in ton-hours of refrigeration (unit 'ton_hour'), not '{unit}'"]
         cooling_ton = val
         supplied_ef = row.get("factor") if row.get("factor") not in (None, "") else row.get("emission_factor")
-        ef = _clean_float(supplied_ef, default=150.0)
+        ef = _clean_float(supplied_ef, default=None)
+        if ef is None or ef < 0:
+            return None, [f"Row {row_idx}: cooling needs its emission factor in kg CO2e per ton-hour "
+                          f"(factor column; got '{supplied_ef if supplied_ef is not None else ''}')"]
         co2e = (cooling_ton * ef) / 1000.0
     else:
         source_type = "electricity"
@@ -2204,7 +2217,7 @@ def _process_row_scope3(
         ef, ef_unit = ef_found, "kg"
     if amt > 0 and ef > 0:
         try:
-            co2e = compute_scope3_co2e(amt, ef, ef_unit, calc_method)
+            co2e = compute_scope3_co2e(amt, ef, ef_unit, calc_method, activity_unit=row.get("unit") or "")
         except ValidationError as err:
             return None, [err.message]
     elif supplier_total:

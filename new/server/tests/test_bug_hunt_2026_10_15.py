@@ -238,3 +238,41 @@ def test_28_blowdown_temperature_without_a_unit_is_celsius(ctx):
     c = _em(dict(b, blowdown_temp=30))["ch4"]
     assert c == pytest.approx(_em(dict(b, blowdown_temp=86, blowdown_temp_unit="F"))["ch4"], rel=1e-6)
     assert _em(b)["ch4"] == pytest.approx(_em(dict(b, blowdown_temp=60, blowdown_temp_unit="F"))["ch4"], rel=1e-5)
+
+
+# ── Batch 4: Scope 2 cooling and Scope 3 units ─────────────────────────────────────
+
+from audit_helpers import login, make_facility, make_user, uniq  # noqa: E402
+
+
+def test_13_cooling_without_a_factor_is_refused(ctx):
+    fac = make_facility(name=uniq("CoolFac"), region=uniq("R"))
+    admin = make_user("admin", "Global")
+    with app.test_client() as c:
+        login(c, admin)
+        r = c.post("/api/scope2", json={"facility_id": fac.id, "year": 2024, "month": 3, "source_type": "cooling",
+                                        "cooling_ton": 1000})
+        assert r.status_code == 400, r.get_json()  # was booked at 150 kg CO2e per ton-hour
+        r = c.post("/api/scope2", json={"facility_id": fac.id, "year": 2024, "month": 3, "source_type": "cooling",
+                                        "cooling_ton": 1000, "emission_factor": 0.5})
+        assert r.status_code in (200, 201), r.get_json()
+
+
+def test_29_cooling_import_checks_the_factor_and_the_unit():
+    from background_processor import COOLING_UNITS, _clean_float
+
+    assert "ton_hour" in COOLING_UNITS and "kwh" not in COOLING_UNITS
+    assert _clean_float("abc", default=None) is None
+
+
+def test_30_scope3_activity_unit_is_converted_to_the_factor_denominator():
+    from calculations.units import compute_scope3_co2e
+    from input_validation import ValidationError
+
+    assert compute_scope3_co2e(1000, 2.5, "kg CO2e/tonne", activity_unit="kg") == pytest.approx(0.0025)  # was 2.5
+    assert compute_scope3_co2e(1, 2.5, "kg CO2e/tonne", activity_unit="tonne") == pytest.approx(0.0025)
+    assert compute_scope3_co2e(1000, 1, "kg/1000 km", activity_unit="mile") == pytest.approx(0.001609344)
+    assert compute_scope3_co2e(100, 1, "kg/$1000", activity_unit="USD") == pytest.approx(0.0001)
+    assert compute_scope3_co2e(10, 1, "kg/unit", activity_unit="bbl") == pytest.approx(0.01)
+    with pytest.raises(ValidationError):
+        compute_scope3_co2e(10, 1, "kg/kg", activity_unit="kWh")

@@ -91,7 +91,7 @@ export const Scope3Form: React.FC = () => {
   };
 
   const UNIT_MULTIPLIERS: Record<string, Record<string, number>> = {
-    kg: { kg: 1, tonne: 1000, ton: 907.185, lb: 0.453592 },
+    kg: { kg: 1, tonne: 1000, "short ton": 907.185, lb: 0.453592 },
     bbl: { bbl: 1, gal: 1 / 42, m3: 6.2898, L: 0.0062898 },
     gal: { gal: 1, bbl: 42, L: 0.264172, m3: 264.172 },
     mcf: { mcf: 1, scf: 0.001, m3: 0.0353147 },

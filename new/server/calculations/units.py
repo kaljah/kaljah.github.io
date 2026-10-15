@@ -517,8 +517,49 @@ _SCOPE3_MASS_TONNES = {
 }
 
 
+_SCOPE3_UNIT_ALIASES = {"$": "usd", "us$": "usd", "dollar": "usd", "dollars": "usd", "usd": "usd",
+                        "pkm": "passenger-km", "passenger_km": "passenger-km", "tkm": "tonne-km", "t-km": "tonne-km",
+                        "tonne_km": "tonne-km", "litre": "l", "litres": "l", "liter": "l", "liters": "l"}
+
+
+def _scope3_activity_in_factor_unit(activity_unit, den):
+    """Activity units per factor denominator unit (1000 for kg against a per-tonne factor). Equal or
+    absent units give 1. Units that are both physical convert; anything else that differs is
+    refused: an amount in kg against a per-tonne factor was booked 1000x high (bug hunt #30)."""
+    def norm(u):
+        u = _re.sub(r"\s+", " ", str(u or "").strip().lower())
+        return _SCOPE3_UNIT_ALIASES.get(u, u)
+
+    a, d = norm(activity_unit), norm(den)
+    if not a or not d or a == d or a in ("unit", "units") or d in ("unit", "units", "item", "items"):
+        return 1.0
+
+    def dim(u):
+        parts = u.split("-")
+        out = []
+        for p in parts:
+            dm, f = unit_dimension(p)
+            out.append((dm, f))
+        return out
+
+    try:
+        da, dd = dim(a), dim(d)
+    except UnitError as err:
+        from input_validation import ValidationError
+        raise ValidationError(f"Activity unit '{activity_unit}' cannot be matched to the factor's unit "
+                              f"'per {den}': {err}", "unit")
+    if len(da) != len(dd) or any(x[0] != y[0] for x, y in zip(da, dd)):
+        from input_validation import ValidationError
+        raise ValidationError(f"Activity unit '{activity_unit}' cannot be converted to the factor's unit 'per {den}'",
+                              "unit")
+    scale = 1.0
+    for (_, fa), (_, fd) in zip(da, dd):
+        scale *= fa / fd
+    return scale
+
+
 def compute_scope3_co2e(
-    amt: float, ef: float, ef_unit: str = "", calc_method: str = ""
+    amt: float, ef: float, ef_unit: str = "", calc_method: str = "", activity_unit: str = ""
 ) -> float:
     """
     Authoritatively calculates Scope 3 CO2e in metric tonnes from activity amount and emission factor.
@@ -529,6 +570,8 @@ def compute_scope3_co2e(
     - Tonnes numerator ('tCO2e/unit', 'tonne CO2e/bbl', 't/bbl'): co2e = amt * ef.
     - kg numerator ('kg CO2e/liter', 'kg/unit'): co2e = amt * ef / 1000.
     `calc_method` is accepted for backward compatibility and does not change the result.
+    `activity_unit`, when given with a factor denominator, converts the amount into it (kg against a
+    per-tonne factor) or is refused when the two cannot be converted.
     """
     try:
         amt_val = float(amt or 0.0)
@@ -557,8 +600,12 @@ def compute_scope3_co2e(
     # read from the unit only. The method name says nothing about the factor's basis: an EEIO
     # record stores its factor per USD (audit 2026-09-30: an "EEIO" method read a per-USD factor
     # as per $1,000, 1000x low).
-    per_thousand = bool(_re.match(r"^(?:\$|usd)?\s*(?:1,?000(?![0-9])|1k(?![0-9a-z])|thousand\b|k\s*(?:\$|usd(?![a-z])))", den))
-    scale = 0.001 if per_thousand else 1.0
+    m_thousand = _re.match(r"^(?:\$|usd)?\s*(?:1,?000(?![0-9])|1k(?![0-9a-z])|thousand\b|k\s*(?:\$|usd(?![a-z])))", den)
+    scale = 0.001 if m_thousand else 1.0
+    den_unit = den[m_thousand.end():].strip() if m_thousand else den
+    if m_thousand and not den_unit:
+        den_unit = "usd" if ("$" in den or "usd" in den) else ""
+    scale *= _scope3_activity_in_factor_unit(activity_unit, den_unit)
 
     # 3. Numerator mass in tonnes per unit, by exact token after the gas name is cut off
     # ("kgCO2e" -> "kg", "MT CO2e" -> "mt"). "MT" / "metric ton(s)" / "short ton" used to fall
