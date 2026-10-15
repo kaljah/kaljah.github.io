@@ -118,17 +118,21 @@ def _overlap_days(start, end, lo, hi):
     return max(0, (e - s).days + 1)
 
 
-def effective_share_pct(slices, year):
-    """BUG-046: time-weighted equity % of one partner over a calendar year.
+def effective_share_pct(slices, year, month=None):
+    """BUG-046: time-weighted equity % of one partner over a calendar year (or one month of it).
 
     `slices` are FacilityEquityShare rows for one facility/partner. Each slice counts for the
-    days of `year` it covers; days no slice covers contribute nothing. Returns None when no
-    slice overlaps the year (caller decides the fallback).
+    days of the period it covers; days no slice covers contribute nothing. Returns None when no
+    slice overlaps the period (caller decides the fallback).
     """
+    import calendar
     import datetime as _dt
 
-    lo, hi = _dt.date(year, 1, 1), _dt.date(year, 12, 31)
-    days_in_year = (hi - lo).days + 1
+    if month:
+        lo, hi = _dt.date(year, month, 1), _dt.date(year, month, calendar.monthrange(year, month)[1])
+    else:
+        lo, hi = _dt.date(year, 1, 1), _dt.date(year, 12, 31)
+    days_in_period = (hi - lo).days + 1
     total, covered = 0.0, 0
     for sl in slices:
         try:
@@ -142,7 +146,23 @@ def effective_share_pct(slices, year):
             covered += d
     if not covered:
         return None
-    return total / days_in_year
+    return total / days_in_period
+
+
+def _partner_pcts(fac, partners, slices_by_partner, year, month=None):
+    """Equity % of every partner for the period. Audit 2026-10-14 BUG-0004: an operator without its
+    own share row holds what the explicit partner shares leave (at most the facility's equity %),
+    not 100 % on top of them."""
+    explicit = {p.id: effective_share_pct(slices_by_partner[p.id], year, month) for p in partners}
+    explicit_sum = sum(v for v in explicit.values() if v is not None)
+    out = {}
+    for p in partners:
+        pct = explicit[p.id]
+        if pct is None:
+            pct = (min(float(fac.equity_share_pct or 0.0), max(0.0, 100.0 - explicit_sum))
+                   if p.is_operator else 0.0)
+        out[p.id] = pct
+    return out
 
 
 @equity_bp.route("/shares", methods=["POST"])
@@ -281,44 +301,52 @@ def get_equity_allocation():
     allocation_by_facility = []
 
     for fac in facilities:
-        # Sum verified emissions for this facility and year
-        em_q = db.session.query(
-            db.func.sum(Emission.co2e_total),
-            db.func.sum(Emission.ch4_emissions)
-        ).filter(
-            Emission.facility_id == fac.id,
-            Emission.year == yr,
-            Emission.status == "Verified"
-        )
-        total_s1, total_ch4 = em_q.first()
-        total_s1 = float(total_s1 or 0.0)
-        total_ch4 = float(total_ch4 or 0.0)
+        # Audit 2026-10-14 BUG-0023: allocate month by month, so a share that changes mid-year
+        # applies to the emissions of the months it covers (records without a month use the
+        # year's time-weighted share)
+        from models import Scope2Emission
+
+        periods = {}  # month (or None) -> [scope 1 tCO2e, scope 2 tCO2e, tCH4]
+        # verified emissions of this facility and year, per month
+        for m, co2e, ch4 in db.session.query(
+                Emission.month, db.func.sum(Emission.co2e_total), db.func.sum(Emission.ch4_emissions)
+        ).filter(Emission.facility_id == fac.id, Emission.year == yr, Emission.status == "Verified"
+                 ).group_by(Emission.month).all():
+            row = periods.setdefault(m if m in range(1, 13) else None, [0.0, 0.0, 0.0])
+            row[0] += float(co2e or 0.0)
+            row[2] += float(ch4 or 0.0)
         # GHG Protocol equity-share approach: the partners take their share of the operation's
         # Scope 1 and Scope 2 (purchased energy); Scope 2 used to be left out
-        from models import Scope2Emission
-        total_s2 = float(db.session.query(db.func.sum(Scope2Emission.co2e)).filter(
-            Scope2Emission.facility_id == fac.id, Scope2Emission.year == yr,
-            Scope2Emission.status == "Verified").scalar() or 0.0)
+        for m, co2e in db.session.query(Scope2Emission.month, db.func.sum(Scope2Emission.co2e)).filter(
+                Scope2Emission.facility_id == fac.id, Scope2Emission.year == yr,
+                Scope2Emission.status == "Verified").group_by(Scope2Emission.month).all():
+            periods.setdefault(m if m in range(1, 13) else None, [0.0, 0.0, 0.0])[1] += float(co2e or 0.0)
+        total_s1 = sum(v[0] for v in periods.values())
+        total_s2 = sum(v[1] for v in periods.values())
+        total_ch4 = sum(v[2] for v in periods.values())
         total_co2e = total_s1 + total_s2
 
         # BUG-046: time-weighted share of every slice that is effective during year yr
         shares = FacilityEquityShare.query.filter_by(facility_id=fac.id).all()
+        by_partner = {p.id: [s for s in shares if s.partner_id == p.id] for p in partners}
+        annual = _partner_pcts(fac, partners, by_partner, yr)
+        alloc = {p.id: [0.0, 0.0, 0.0] for p in partners}
+        for m, amounts in periods.items():
+            pcts = annual if m is None else _partner_pcts(fac, partners, by_partner, yr, m)
+            for pid, pct in pcts.items():
+                for i in range(3):
+                    alloc[pid][i] += amounts[i] * pct / 100.0
+
         partner_allocations = []
         for p in partners:
-            p_shares = [s for s in shares if s.partner_id == p.id]
-            pct = effective_share_pct(p_shares, yr)
-            if pct is None:
-                pct = (fac.equity_share_pct or 0.0) if p.is_operator else 0.0
-            allocated_s1 = total_s1 * (pct / 100.0)
-            allocated_s2 = total_s2 * (pct / 100.0)
+            allocated_s1, allocated_s2, allocated_ch4 = alloc[p.id]
             allocated_co2e = allocated_s1 + allocated_s2
-            allocated_ch4 = total_ch4 * (pct / 100.0)
 
             partner_allocations.append({
                 "partner_id": p.id,
                 "partner_name": p.name,
                 "partner_code": p.code,
-                "equity_pct": round(pct, 4),
+                "equity_pct": round(annual[p.id], 4),
                 "allocated_co2e": round(allocated_co2e, 2),
                 "allocated_scope1": round(allocated_s1, 2),
                 "allocated_scope2": round(allocated_s2, 2),
@@ -330,10 +358,10 @@ def get_equity_allocation():
         unallocated_pct = round(max(0.0, 100.0 - allocated_pct_sum), 4)
         is_fully_allocated = bool(unallocated_pct <= 0.001)
 
-        unallocated_s1 = round(total_s1 * (unallocated_pct / 100.0), 2)
-        unallocated_s2 = round(total_s2 * (unallocated_pct / 100.0), 2)
-        unallocated_co2e = round(total_co2e * (unallocated_pct / 100.0), 2)
-        unallocated_ch4 = round(total_ch4 * (unallocated_pct / 100.0), 2)
+        unallocated_s1 = round(max(0.0, total_s1 - sum(v[0] for v in alloc.values())), 2)
+        unallocated_s2 = round(max(0.0, total_s2 - sum(v[1] for v in alloc.values())), 2)
+        unallocated_co2e = round(unallocated_s1 + unallocated_s2, 2)
+        unallocated_ch4 = round(max(0.0, total_ch4 - sum(v[2] for v in alloc.values())), 2)
 
         unallocated_share = None
         if not is_fully_allocated:
