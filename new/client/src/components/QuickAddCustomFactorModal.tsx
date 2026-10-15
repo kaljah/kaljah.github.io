@@ -75,10 +75,17 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
       };
 
       const res = await api.post("/custom-factors", payload);
-      toast.success(t("Tier 2 custom factor registered successfully"));
+      const status = res.data?.status || "Approved";
+      if (status === "Approved") {
+        toast.success(t("Tier 2 custom factor registered successfully"));
+      } else {
+        // a new factor calculates once a superuser or administrator approves it (Manage Data > Factors)
+        toast.success(t("Custom factor saved. It can be used once a superuser or administrator approves it."));
+      }
       const createdFactor = res.data?.factor || {
         id: res.data?.id,
         factor_name: formData.factor_name.trim(),
+        status,
         ...payload,
       };
 

@@ -273,6 +273,10 @@ def enforce_session_version():
     user = db.session.get(User, uid)
     if user is None or int(flask_session.get("sv", 0)) != int(user.session_version or 0):
         flask_session.clear()
+        return None
+    from services.session_policy import check_idle
+
+    check_idle(flask_session, request)  # review 2026-10-15: the configured idle timeout
     return None
 
 

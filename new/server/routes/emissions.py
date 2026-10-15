@@ -1023,7 +1023,8 @@ def update_emission(id):
                 calc_payload.pop("custom_factor_id", None)
         try:
             validate_activity(calc_payload, require_unit=str(calc_payload.get("factor_source") or "default").lower() in ("default", "custom"))
-            factor_data = resolve_factor(calc_payload, stored_payload=stored, allow_archived=True)
+            factor_data = resolve_factor(calc_payload, stored_payload=stored, allow_archived=True,
+                                         kept_factor_id=base["custom_factor_id"])
             if factor_data.get("hhv") and "hhv" not in data:
                 calc_payload["hhv"] = factor_data["hhv"]
             gwp_dict = resolve_gwp_dict(user)

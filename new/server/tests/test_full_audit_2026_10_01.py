@@ -269,7 +269,9 @@ def test_superuser_value_edit_sends_approved_factor_back_to_pending(app, ctx):
     db.session.commit()
     with app.test_client() as c:
         login(c, make_user("superuser", location="West"))
-        assert c.put(f"/api/custom-factors/{cf.id}", json={"co2_factor": 0.09}).status_code == 200
+        # review 2026-10-15: an approved (organisation-wide) factor is edited by an administrator only, as it is
+        # archived or deleted; a superuser creates a new factor instead (it used to be sent back to Pending)
+        assert c.put(f"/api/custom-factors/{cf.id}", json={"co2_factor": 0.09}).status_code == 403
     db.session.expire_all()
     row = db.session.get(CustomFactor, cf.id)
-    assert row.co2_factor == 0.09 and row.status == "Pending" and row.approved_by is None
+    assert row.co2_factor == 0.05 and row.status == "Approved"

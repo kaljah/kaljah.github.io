@@ -72,7 +72,8 @@ def recalculate(record, gwp_dict):
 
     payload, stored, notes = stored_payload(record)
     validate_activity(payload, require_unit=payload["factor_source"] in ("default", "custom"))
-    factor_data = resolve_factor(payload, stored_payload=stored, allow_archived=True) or {}
+    factor_data = resolve_factor(payload, stored_payload=stored, allow_archived=True,
+                                 kept_factor_id=record.custom_factor_id or stored.get("custom_factor_id")) or {}
     if factor_data.get("hhv") and not payload.get("hhv"):
         payload["hhv"] = factor_data["hhv"]
     em, method = compute_emissions(payload, factor_data, gwp_dict=gwp_dict)

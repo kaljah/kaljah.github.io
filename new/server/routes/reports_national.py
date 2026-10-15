@@ -341,7 +341,7 @@ def export_national_inventory_report():
             ws_inv.cell(row=curr_row, column=6, value=_safe_excel_value(fac.division if fac else ""))
             ws_inv.cell(row=curr_row, column=7, value=_safe_excel_value(fac.field if fac else ""))
             ws_inv.cell(row=curr_row, column=8, value="")
-            ws_inv.cell(row=curr_row, column=9, value=scope2_source_label(r.source_type))
+            ws_inv.cell(row=curr_row, column=9, value=_safe_excel_value(scope2_source_label(r.source_type)))
             ws_inv.cell(row=curr_row, column=10, value=_safe_excel_value(s2_label or r.grid_region or ""))
             ws_inv.cell(row=curr_row, column=11, value=round(float(s2_amount or 0.0), 2)).number_format = "#,##0.00"
             ws_inv.cell(row=curr_row, column=12, value=_safe_excel_value(s2_unit or ""))
@@ -503,7 +503,7 @@ def export_national_inventory_report():
             # bug hunt 2026-10-15 #32: the record's source, factor and instrument (a fixed 0.5820 grid
             # factor, "Sonelgaz" and an "HT supply contract" were printed on every row, steam included)
             ws_s2.cell(row=s2_row, column=1, value=_safe_excel_value(fac_name)).font = font_bold
-            ws_s2.cell(row=s2_row, column=2, value=scope2_source_label(r.source_type)).font = font_regular
+            ws_s2.cell(row=s2_row, column=2, value=_safe_excel_value(scope2_source_label(r.source_type))).font = font_regular
             ws_s2.cell(row=s2_row, column=3, value=_safe_excel_value(r.grid_region or r.location or "")).font = font_bold
             ws_s2.cell(row=s2_row, column=4, value=f"{r.year}-{int(r.month or 1):02d}").font = font_regular
             ws_s2.cell(row=s2_row, column=5, value=round(float(s2_amount or 0.0), 2)).number_format = "#,##0.00"

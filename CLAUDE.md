@@ -97,7 +97,7 @@ Other: `new/setup.bat` / `new/start_all.bat` (Windows native launch scripts for 
     - `admin`: Client compliance administrator — the **only** role with unrestricted global access to all facilities, system configuration, and approval rights.
     - `superuser`: Operational lead — strictly scoped to **1 assigned facility/region** (no global bypass).
     - `user`: Standard operator — strictly scoped to assigned facility/region.
-    - `it` / `it_admin`: Client IT account lifecycle only. Strictly isolated from operational data (zero access to emissions, equity partner, or CAP data). Cannot create, assign, modify, disable, delete or reset passwords for `admin` or `superuser` accounts (only `admin` and `it_manager` grant those roles; nobody can change their own role).
+    - `it` / `it_admin`: Client IT account lifecycle only. Strictly isolated from operational data (zero access to emissions, equity partner, or CAP data). Cannot create, assign, modify, disable, delete or reset passwords for `admin`, `superuser` or `auditor` accounts (only `admin` and `it_manager` grant those roles; an auditor with an unrestricted location reads every facility; nobody can change their own role).
     - `it_manager`: SaaS Vendor / Platform Operator team.
   - Facility scoping goes through `utils.get_allowed_facility_ids` (where only `admin` receives global `None`) and `utils.require_facility_access`.
   - All facility ID query parameters are strictly validated (`422 Unprocessable Entity` on non-numeric input).
@@ -122,8 +122,8 @@ Other: `new/setup.bat` / `new/start_all.bat` (Windows native launch scripts for 
   - Dashboard endpoint `/api/dashboard/uncertainty` accepts `?gwp_uncertainty=true` to toggle scientific GWP uncertainty inclusion.
 - **Maker-Checker Workflow.**
   - Custom emission factors created by non-admins are assigned `Pending` status.
-  - Only compliance `admin` accounts can approve custom factors via `POST /api/custom-factors/<id>/approve`.
-  - HR-06 governance (`services/custom_factor_policy.py`): a `source` is required; a value above the bounds (CO2 500, CH4 100, N2O 10 kg/MMBtu) is refused with 422 unless `justification` (10+ characters) is sent, and is then saved `Pending` with the reason appended to `description`; an admin cannot approve a factor they created (set `CUSTOM_FACTOR_SECOND_APPROVER=false` for a one-admin install); factors used by records cannot change values (audit O-04).
+  - A `superuser` or `admin` approves or rejects custom factors (`POST /api/custom-factors/<id>/approve` / `reject`), never a factor they created; only a Pending factor can be rejected (archive an approved one). Only an Approved factor calculates (`services.scope1_calc.resolve_factor`, every Scope 1 path); an edited record keeps the factor it was saved with.
+  - HR-06 governance (`services/custom_factor_policy.py`): a `source` is required; a value above the bounds (CO2 500, CH4 100, N2O 10 kg/MMBtu) is refused with 422 unless `justification` (10+ characters) is sent, and is then saved `Pending` with the reason appended to `description`; nobody approves a factor they created (an admin may when `CUSTOM_FACTOR_SECOND_APPROVER=false`, for a one-admin install); a superuser edits, archives or deletes only their own unapproved factors; factors used by records cannot change values (audit O-04).
 - **Constants.**
   - Units: `calculations/units.py` `CONVERSIONS`.
   - GWPs: `calculations/constants.py` (AR4, AR5 default, AR6, 20-year values; `get_active_gwp()` resolves active set). Keep in sync with `new/client/src/constants.ts`.
@@ -146,6 +146,10 @@ Other: `new/setup.bat` / `new/start_all.bat` (Windows native launch scripts for 
   - `background_processor._clean_float` returns None for unreadable or ambiguous text ("1,000"); `default` is for empty cells only.
   - The national inventory and CBAM exports take `?status=` (default Verified; `Verified,Pending` or `all`), refuse a malformed year / facility (400), and print the records' own values (no invented IDs, suppliers, GWP or uncertainty figures). `services/report_params.py` holds the shared parsing.
   - The dashboard sends `scope2_method` (Location / Market toggle); GWP-20 re-weights Scope 2 everywhere via `services.scope2_gases.record_totals`; year lists are scoped to the user's facilities; segments are stored as Upstream / Midstream / Downstream (`services.labels.normalize_segment`).
+- **Review 2026-10-15 behaviour** (regression tests: `tests/test_review_2026_10_15.py`).
+  - QA/QC resolve (`/api/qaqc/resolve`, `/bulk-resolve`) goes through `services.maker_checker`: only records awaiting review, never your own, one audit entry per record; skipped records are listed with a reason.
+  - Idle timeout (`services/session_policy.py`): the server ends a session idle longer than the IT setting `session_timeout_minutes` (default 30); `/api/auth/me` and sign-in return `idle_timeout_minutes` for the client timers; the notification poll is not activity, `GET /api/auth/keepalive` is (the client sends it at most once a minute while the user is active).
+  - Deleting the last active admin is refused (409); the email-uniqueness check on edit ignores case; batch endpoints refuse list items that are not objects (400).
 - **No satellite integration.** The Copernicus / Sentinel-5P connection was removed (2026-10-09): no `/api/satellite` routes, no credentials settings (`routes/auth_settings.RETIRED_SETTING_KEYS` are never loaded, stored or returned), no map overlay. OGMP 2.0 site-level surveys of type "Satellite" remain (operators record them).
 - **Map tiles.** The Emissions Map basemap comes from `MAP_TILE_URL` (`MAP_TILE_ATTRIBUTION`, `MAP_TILE_SUBDOMAINS`) via `GET /api/map-config`; unset (offline installs) the map shows the facilities without a basemap.
 

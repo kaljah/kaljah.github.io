@@ -500,6 +500,8 @@ def import_facilities():
 
     if not facilities_data:
         return jsonify({"error": "No facilities provided"}), 400
+    if not isinstance(facilities_data, list) or any(not isinstance(f, dict) for f in facilities_data):
+        return jsonify({"error": "facilities must be a list of objects", "field": "facilities"}), 400
 
     seen_names = set()
     for i, fac_data in enumerate(facilities_data):

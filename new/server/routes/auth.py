@@ -1,7 +1,7 @@
 import json
 import os
 import datetime
-import socket
+import time
 import ipaddress
 from urllib.parse import urlparse
 from functools import wraps
@@ -10,6 +10,7 @@ from . import auth_bp
 from models import User, Notification, Facility
 from extensions import db, limiter
 from utils import get_allowed_facility_ids, is_unrestricted_location, log_activity_and_notify
+from services.session_policy import idle_timeout_minutes
 from services.login_guard import (ACCOUNT_LOCKED, failed_sign_in, get_login_account_limit, get_login_rate_limit,  # noqa: F401
                                   login_account_key, record_failed_sign_in, validate_password_complexity)
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -65,11 +66,9 @@ def get_user_operational_defaults(user):
 
 def is_safe_image_url(url_str: str) -> tuple[bool, str]:
     """
-    SEC-02: Protects against Server-Side Request Forgery (SSRF).
-    - Requires https scheme
-    - Resolves DNS and blocks RFC 1918 private subnets, loopback (127.0.0.0/8, ::1),
-      link-local (169.254.0.0/16), and cloud metadata endpoints.
-    - Validates image extension or known trusted image hosts.
+    SEC-02: an avatar URL must be https and may not name a loopback, private, link-local or reserved
+    address (cloud metadata included). The server never fetches it (browsers do, under the web server's
+    CSP), so the host is not resolved: the DNS lookup only sent user input to the resolver (review 2026-10-15).
     """
     if not url_str or not isinstance(url_str, str):
         return False, "Avatar URL is required"
@@ -78,32 +77,20 @@ def is_safe_image_url(url_str: str) -> tuple[bool, str]:
     if parsed.scheme.lower() != "https":
         return False, "Avatar URL must use secure HTTPS protocol"
 
-    hostname = parsed.hostname
+    try:
+        hostname = parsed.hostname
+    except ValueError:
+        hostname = None
     if not hostname:
         return False, "Invalid URL hostname"
-
-    # Block direct IP access to private/link-local ranges or resolve hostname
+    if hostname == "localhost" or hostname.endswith(".localhost"):
+        return False, "Avatar URL cannot target internal addresses"
     try:
-        addr_infos = socket.getaddrinfo(hostname, None)
-        for family, socktype, proto, canonname, sockaddr in addr_infos:
-            ip_str = sockaddr[0]
-            ip_obj = ipaddress.ip_address(ip_str)
-            if (
-                ip_obj.is_private
-                or ip_obj.is_loopback
-                or ip_obj.is_link_local
-                or ip_obj.is_reserved
-                or ip_obj.is_multicast
-            ):
-                return (
-                    False,
-                    f"Avatar URL cannot target private or internal IP addresses ({ip_str})",
-                )
-    except socket.gaierror:
-        return False, "Could not resolve avatar URL domain"
-    except Exception as e:
-        return False, f"URL validation error: {str(e)}"
-
+        ip_obj = ipaddress.ip_address(hostname)
+    except ValueError:
+        return True, ""  # a host name
+    if ip_obj.is_private or ip_obj.is_loopback or ip_obj.is_link_local or ip_obj.is_reserved or ip_obj.is_multicast:
+        return False, f"Avatar URL cannot target private or internal IP addresses ({hostname})"
     return True, ""
 
 
@@ -223,14 +210,16 @@ def superuser_required(f):
 
 
 ROLE_RANK = {"user": 0, "auditor": 0, "it": 1, "superuser": 2, "admin": 3, "it_admin": 4, "it_manager": 4}
-BUSINESS_ROLES = ("admin", "superuser")
+# review 2026-10-15: an auditor with an unrestricted location reads every facility's data, so client IT
+# (no data access) may not grant the role or take over, change or delete an auditor account either.
+BUSINESS_ROLES = ("admin", "superuser", "auditor")
 # Audit 2026-10-14 BUG-0001: client IT (it, it_admin) manages account lifecycle only and may not
 # assign, or act on, the compliance roles; the platform operator (it_manager) and admin may.
 BUSINESS_ROLE_GRANTORS = ("admin", "it_manager")
 CLIENT_IT_ROLES = ("it",)  # client IT support manage ordinary accounts only
-CLIENT_IT_PROTECTED_ROLES = ("admin", "superuser", "it_manager")  # protected from IT support role
+CLIENT_IT_PROTECTED_ROLES = ("admin", "superuser", "auditor", "it_manager")  # protected from IT support role
 VENDOR_PROTECTED_ROLES = ("it_manager",)  # protected from it_admin
-IT_ADMIN_PROTECTED_ROLES = ("admin", "superuser", "it_manager")  # it_admin may not modify, disable or delete these
+IT_ADMIN_PROTECTED_ROLES = ("admin", "superuser", "auditor", "it_manager")  # it_admin may not modify, disable or delete these
 SUPERUSER_REGION_ERROR = ("A superuser is limited to one facility or region: set a specific location "
                           "(organisation-wide access is the admin role)")
 
@@ -263,12 +252,12 @@ def register():
     creator_id = session.get("user_id")
     creator = db.session.get(User, creator_id) if creator_id else None
     if creator and creator.role in CLIENT_IT_ROLES and role_requested in CLIENT_IT_PROTECTED_ROLES:
-        return jsonify({"error": "Forbidden: Client IT staff cannot create Compliance Admin or Superuser accounts"}), 403
+        return jsonify({"error": "Forbidden: Client IT staff cannot create Compliance Admin, Superuser or Auditor accounts"}), 403
     if creator and creator.role == "it_admin" and role_requested in VENDOR_PROTECTED_ROLES:
         return jsonify({"error": "Forbidden: IT Administrator cannot create platform operator accounts"}), 403
     # Separation of duties: only authorized grantors may assign business roles
     if role_requested in BUSINESS_ROLES and (not creator or creator.role not in BUSINESS_ROLE_GRANTORS):
-        return jsonify({"error": "Forbidden: IT Administrators cannot assign business compliance roles (admin, superuser)"}), 403
+        return jsonify({"error": "Forbidden: IT Administrators cannot assign business compliance roles (admin, superuser, auditor)"}), 403
     if creator and ROLE_RANK.get(role_requested, 0) > ROLE_RANK.get(creator.role, 0):
         return jsonify({"error": "Cannot assign a role higher than your own"}), 403
     if role_requested == "superuser" and is_unrestricted_location(data.get("location")):
@@ -353,6 +342,7 @@ def login():
         session.permanent = True
         session["user_id"] = user.id
         session["sv"] = int(user.session_version or 0)  # BUG-114
+        session["last_seen"] = time.time()  # idle timeout (services.session_policy)
         current_app.logger.debug(f"Session set for user_id={user.id}")
 
         # Compute operational defaults before setting last_login to prevent premature query autoflush
@@ -376,6 +366,7 @@ def login():
             "default_activity": user_defaults["activity"],
             "default_facility_id": user_defaults["facility_id"],
             "default_facility_name": user_defaults["facility_name"],
+            "idle_timeout_minutes": idle_timeout_minutes(),
         }
 
         # Audit
@@ -477,13 +468,6 @@ def forgot_password():
     }), 200
 
 
-# Audit Login (Success)
-# (Done inside login block above if successful? No, let's add it before return)
-# Actually, inside the `if user and check_password` block is best.
-# But I can't easily target inside the block with replace_file_content without context.
-# I'll rely on the fact that I can match the return block.
-
-
 @auth_bp.route("/logout", methods=["POST"])
 @limiter.limit("60 per minute")
 def logout():
@@ -555,8 +539,17 @@ def me():
             "default_activity": user_defaults["activity"],
             "default_facility_id": user_defaults["facility_id"],
             "default_facility_name": user_defaults["facility_name"],
+            "idle_timeout_minutes": idle_timeout_minutes(),
         }
     )
+
+
+@auth_bp.route("/keepalive", methods=["GET"])
+@login_required
+def keepalive():
+    """The browser calls this while the user is active without sending requests (reading a page), so the
+    server's idle timeout follows the same activity as the browser's timers (review 2026-10-15)."""
+    return jsonify({"idle_timeout_minutes": idle_timeout_minutes()})
 
 
 @auth_bp.route("/profile", methods=["PUT"])
@@ -655,6 +648,7 @@ def change_password():
     session.permanent = True
     session["user_id"] = user.id
     session["sv"] = int(user.session_version)
+    session["last_seen"] = time.time()
 
     return jsonify({"message": "Password changed successfully"})
 

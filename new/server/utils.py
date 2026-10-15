@@ -233,7 +233,7 @@ def can_approve(user, record):
 
 
 _FACILITY_ENTITIES = {
-    "Emission": "Emission", "Scope1": "Emission", "Scope2": "Scope2Emission", "Scope2Emission": "Scope2Emission",
+    "Emission": "Emission", "Scope1": "Emission", "Scope1Emission": "Emission", "Scope2": "Scope2Emission", "Scope2Emission": "Scope2Emission",
     "Scope3": "Scope3Emission", "Scope3Emission": "Scope3Emission", "ProductionData": "ProductionData",
     "Production": "ProductionData", "OgmpSurvey": "OgmpSurvey",
     "MitigationProject": "MitigationProject", "EmissionSource": "EmissionSource",

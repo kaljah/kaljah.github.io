@@ -11,9 +11,17 @@ declare global {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-// 10-minute idle session timeout, 9-minute warning
-const IDLE_TIMEOUT_MS = 10 * 60 * 1000;
-const IDLE_WARNING_MS = 9 * 60 * 1000;
+// Idle session timeout: the minutes IT sets in User Management (sent as idle_timeout_minutes by /auth/me
+// and sign-in), with a warning one minute before. The server applies the same timeout; while the user is
+// active without sending requests (reading a page) a keep-alive tells it so, at most once a minute.
+const DEFAULT_IDLE_TIMEOUT_MINUTES = 30;
+const IDLE_WARNING_LEAD_MS = 60 * 1000;
+const KEEPALIVE_INTERVAL_MS = 60 * 1000;
+
+const idleTimeoutMs = (user: User | null): number => {
+  const minutes = Number(user?.idle_timeout_minutes);
+  return (Number.isFinite(minutes) && minutes > 0 ? minutes : DEFAULT_IDLE_TIMEOUT_MINUTES) * 60 * 1000;
+};
 
 export interface AuthProviderProps {
   children: React.ReactNode;
@@ -131,7 +139,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } catch { /* best effort: failure changes nothing for the user */ }
   }, []);
 
-  // ── 10-Minute Idle Session Timeout & 9-Minute Warning ─────────────────────
+  // ── Idle Session Timeout & Warning ──────────────────────────────────────────
   useEffect(() => {
     if (!user) {
       if (idleTimerRef.current) {
@@ -146,6 +154,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       return;
     }
 
+    const timeoutMs = idleTimeoutMs(user);
+    const warningMs = Math.max(0, timeoutMs - IDLE_WARNING_LEAD_MS);
+    let lastKeepalive = Date.now();
+
     const startIdleTimers = () => {
       if (idleTimerRef.current) {
         clearTimeout(idleTimerRef.current);
@@ -155,11 +167,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
       idleWarningRef.current = setTimeout(() => {
         setSessionWarning(true);
-      }, IDLE_WARNING_MS);
+      }, warningMs);
       idleTimerRef.current = setTimeout(() => {
-        console.warn("[Auth] 10-minute idle session timeout reached. Logging out.");
+        console.warn("[Auth] Idle session timeout reached. Logging out.");
         logout(true);
-      }, IDLE_TIMEOUT_MS);
+      }, timeoutMs);
     };
     restartIdleTimersRef.current = startIdleTimers;
 
@@ -172,6 +184,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         } catch { /* best effort: failure changes nothing for the user */ }
       }
       startIdleTimers();
+      if (Date.now() - lastKeepalive >= KEEPALIVE_INTERVAL_MS) {
+        lastKeepalive = Date.now();
+        api.get("/auth/keepalive").catch(() => { /* a 401 signs out through the api client */ });
+      }
     };
 
     // Throttle user activity events (only reset once per 5 seconds on continuous mouse movements)

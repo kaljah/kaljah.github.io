@@ -755,173 +755,153 @@ def export_qaqc_report():
         return internal_error(e, status_text="error", message="Internal server error")
 
 
+_RESOLUTIONS = {"Verified": "approve", "Rejected": "reject"}
+_DEFAULT_REJECT_REASON = "Rejected in QA/QC review"
+
+
+def _scope_of(value):
+    """"1", "2" or "3"; None for anything else (an unknown scope used to be read as Scope 3)."""
+    s = str(value if value is not None else 1).strip()
+    return s if s in ("1", "2", "3") else None
+
+
+def _tag_qa_flags(model, flags, resolution, reason):
+    """Keep each decided record's QA flag text, marked with the decision (`flags`: id -> flag before)."""
+    for rid, flag in flags.items():
+        rec = db.session.get(model, rid)
+        if rec is None:
+            continue
+        flag = flag or "Manually reviewed"
+        rec.qa_flag = (f"[Verified] {flag}" if resolution == "Verified" else f"Rejected: {reason} ({flag})")[:255]
+
+
+def _skip_reason(model, rid, user, allowed):
+    from services.maker_checker import REVIEWABLE_STATUSES
+
+    rec = db.session.get(model, rid)
+    if rec is None:
+        return "not_found"
+    if allowed is not None and rec.facility_id not in allowed:
+        return "access_denied"
+    if rec.status not in REVIEWABLE_STATUSES:
+        return "not_awaiting_review"
+    return "maker_checker_violation"
+
+
 @qaqc_bp.route("/resolve/<int:record_id>", methods=["POST"])
 @login_required
 def resolve_flagged_record(record_id):
-    """
-    Marks a flagged record as reviewed by updating status to 'Verified' or 'Rejected'.
-    """
+    """Approve ("Verified") or reject ("Rejected") one flagged record under the review queue's rules
+    (services.maker_checker): only records awaiting review, never your own, decided atomically. This route
+    used to set the status directly: it verified drafts and flipped decided records (review 2026-10-15)."""
+    from services.maker_checker import RECORD_TYPES, DecisionError, decide_single
+
     user = get_current_user()
     if not _is_admin_or_superuser(user):
         return jsonify({"error": "Admin or Superuser privileges required"}), 403
 
     data = request.get_json() or {}
-    try:
-        scope = int(data.get("scope", 1))
-    except (ValueError, TypeError):
-        scope = 1
-    resolution = data.get("resolution", "Verified")  # "Verified" or "Rejected"
-    if resolution not in ["Verified", "Rejected"]:
+    resolution = data.get("resolution", "Verified")
+    if resolution not in _RESOLUTIONS:
         return jsonify({"error": "Invalid resolution. Must be 'Verified' or 'Rejected'"}), 400
+    scope = _scope_of(data.get("scope", 1))
+    if scope is None:
+        return jsonify({"error": "Invalid scope. Must be 1, 2 or 3", "field": "scope"}), 400
+    reason = str(data.get("reason") or _DEFAULT_REJECT_REASON).strip()
+    model = RECORD_TYPES[scope][0]
+
+    record = db.session.get(model, record_id)
+    allowed = get_allowed_facility_ids(user)
+    if (record is not None and resolution == "Verified" and (allowed is None or record.facility_id in allowed)
+            and user.id in {record.created_by, getattr(record, "updated_by", None)}):
+        return jsonify({"error": "Maker-checker violation: users cannot verify records they created or updated"}), 403
+    flag = record.qa_flag if record is not None else None
 
     try:
-        allowed_fids = get_allowed_facility_ids(user)
-
-        if scope == 1:
-            record = db.session.get(Emission, record_id)
-        elif scope == 2:
-            record = db.session.get(Scope2Emission, record_id)
-        else:
-            record = db.session.get(Scope3Emission, record_id)
-
-        if not record:
-            return jsonify({"error": "Record not found"}), 404
-
-        # RBAC: verify this record belongs to an allowed facility
-        if allowed_fids is not None and record.facility_id not in allowed_fids:
-            return jsonify({"error": "Access denied to this record"}), 403
-
-        # Maker-Checker segregation of duties: user cannot verify records they created or updated
-        if resolution == "Verified":
-            if (getattr(record, "created_by", None) and record.created_by == user.id) or (getattr(record, "updated_by", None) and record.updated_by == user.id):
-                return jsonify({"error": "Maker-checker violation: users cannot verify records they created or updated"}), 403
-
-        # Update status and tag QA flag for audit preservation
-        record.status = resolution
-        if record.qa_flag and not record.qa_flag.startswith(f"[{resolution}]"):
-            record.qa_flag = f"[{resolution}] {record.qa_flag}"[:255]
-        elif not record.qa_flag:
-            record.qa_flag = f"[{resolution}] Manually reviewed"
-
-        if hasattr(record, "approved_by"):
-            record.approved_by = user.id
-        if hasattr(record, "approved_at"):
-            record.approved_at = datetime.now(timezone.utc)
-
-        from utils import log_activity_and_notify
-        log_activity_and_notify(
-            action="UPDATE",
-            record_id=str(record_id),
-            user=user,
-            request=request,
-            entity=f"Scope{scope}Emission",
-            details=f"QA flag resolved by {user.fullName}. Resolution: {resolution}",
-        )
+        decide_single(user, scope, record_id, _RESOLUTIONS[resolution], reason, request)
+        db.session.expire_all()  # the decision is a bulk UPDATE: reload before tagging the flag
+        _tag_qa_flags(model, {record_id: flag}, resolution, reason)
         db.session.commit()
-
-        try:
-            from routes.dashboard import clear_dashboard_cache
-            clear_dashboard_cache()
-        except Exception:
-            pass
-
-        return jsonify({"message": f"Record {record_id} resolved as '{resolution}'."})
-
+    except DecisionError as err:
+        db.session.rollback()
+        return jsonify({"error": err.message}), err.status
     except Exception as e:
         db.session.rollback()
         return internal_error(e, status_text="error", message="Internal server error")
+
+    try:
+        from routes.dashboard import clear_dashboard_cache
+        clear_dashboard_cache()
+    except Exception:
+        pass
+    return jsonify({"message": f"Record {record_id} resolved as '{resolution}'."})
 
 
 @qaqc_bp.route("/bulk-resolve", methods=["POST"])
 @login_required
 def bulk_resolve():
     """
-    Bulk approve or reject a list of flagged records.
-    Payload: { "records": [{"id": 1, "scope": 1}, ...], "resolution": "Verified" | "Rejected" }
+    Bulk approve or reject a list of flagged records, under the same rules as /resolve.
+    Payload: { "records": [{"id": 1, "scope": 1}, ...], "resolution": "Verified" | "Rejected", "reason": "..." }
+    Records that cannot be decided are listed in "skipped" with the reason.
     """
+    from services.maker_checker import RECORD_TYPES, DecisionError, decide
+
     user = get_current_user()
     if not _is_admin_or_superuser(user):
         return jsonify({"error": "Admin or Superuser privileges required"}), 403
 
     data = request.get_json() or {}
-    records_to_resolve = data.get("records", [])
+    items = data.get("records", [])
     resolution = data.get("resolution", "Verified")
-
-    if resolution not in ["Verified", "Rejected"]:
+    if resolution not in _RESOLUTIONS:
         return jsonify({"error": "Invalid resolution. Use 'Verified' or 'Rejected'."}), 400
-
-    if not records_to_resolve:
+    if not isinstance(items, list) or not items:
         return jsonify({"error": "No records provided."}), 400
 
-    allowed_fids = get_allowed_facility_ids(user)
+    by_scope = {}
+    for i, item in enumerate(items):
+        if not isinstance(item, dict):
+            return jsonify({"error": f"records[{i}] must be an object with id and scope", "field": "records"}), 400
+        scope = _scope_of(item.get("scope", 1))
+        try:
+            rid = int(item.get("id"))
+        except (TypeError, ValueError):
+            rid = None
+        if scope is None or rid is None:
+            return jsonify({"error": f"records[{i}] needs a numeric id and a scope of 1, 2 or 3",
+                            "field": "records"}), 400
+        by_scope.setdefault(scope, []).append(rid)
+
+    reason = str(data.get("reason") or _DEFAULT_REJECT_REASON).strip()
+    allowed = get_allowed_facility_ids(user)
     resolved_count = 0
     skipped = []
-
     try:
-        for item in records_to_resolve:
-            rid = item.get("id")
-            try:
-                scope = int(item.get("scope", 1))
-            except (ValueError, TypeError):
-                scope = 1
-
-            if scope == 1:
-                record = db.session.get(Emission, rid)
-            elif scope == 2:
-                record = db.session.get(Scope2Emission, rid)
-            else:
-                record = db.session.get(Scope3Emission, rid)
-
-            if not record:
-                skipped.append({"id": rid, "reason": "not_found"})
-                continue
-
-            if allowed_fids is not None and record.facility_id not in allowed_fids:
-                skipped.append({"id": rid, "reason": "access_denied"})
-                continue
-
-            # Maker-Checker segregation of duties
-            if resolution == "Verified":
-                if (getattr(record, "created_by", None) and record.created_by == user.id) or (getattr(record, "updated_by", None) and record.updated_by == user.id):
-                    skipped.append({"id": rid, "reason": "maker_checker_violation"})
-                    continue
-
-            record.status = resolution
-            if record.qa_flag and not record.qa_flag.startswith(f"[{resolution}]"):
-                record.qa_flag = f"[{resolution}] {record.qa_flag}"[:255]
-            elif not record.qa_flag:
-                record.qa_flag = f"[{resolution}] Manually reviewed"
-
-            if hasattr(record, "approved_by"):
-                record.approved_by = user.id
-            if hasattr(record, "approved_at"):
-                record.approved_at = datetime.now(timezone.utc)
-
-            resolved_count += 1
-
-        from utils import log_activity_and_notify
-        log_activity_and_notify(
-            action="UPDATE",
-            record_id="bulk",
-            user=user,
-            request=request,
-            entity="QABulkResolve",
-            details=f"Bulk resolved {resolved_count} records as '{resolution}' by {user.fullName}.",
-        )
+        for scope, ids in by_scope.items():
+            model = RECORD_TYPES[scope][0]
+            flags = dict(model.query.filter(model.id.in_(ids)).with_entities(model.id, model.qa_flag).all())
+            done = set(decide(user, scope, ids, _RESOLUTIONS[resolution], reason, request))
+            db.session.expire_all()
+            _tag_qa_flags(model, {rid: flags.get(rid) for rid in done}, resolution, reason)
+            resolved_count += len(done)
+            skipped += [{"id": rid, "scope": int(scope), "reason": _skip_reason(model, rid, user, allowed)}
+                        for rid in dict.fromkeys(ids) if rid not in done]
         db.session.commit()
-
-        try:
-            from routes.dashboard import clear_dashboard_cache
-            clear_dashboard_cache()
-        except Exception:
-            pass
-
-        return jsonify({
-            "message": f"Resolved {resolved_count} records.",
-            "resolved_count": resolved_count,
-            "skipped": skipped,
-        })
-
+    except DecisionError as err:
+        db.session.rollback()
+        return jsonify({"error": err.message}), err.status
     except Exception as e:
         db.session.rollback()
         return internal_error(e, status_text="error", message="Internal server error")
+
+    try:
+        from routes.dashboard import clear_dashboard_cache
+        clear_dashboard_cache()
+    except Exception:
+        pass
+
+    message = f"Resolved {resolved_count} records."
+    if skipped:
+        message += f" {len(skipped)} could not be decided (not awaiting review, outside your scope or your own)."
+    return jsonify({"message": message, "resolved_count": resolved_count, "skipped": skipped})

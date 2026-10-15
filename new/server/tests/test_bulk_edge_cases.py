@@ -72,6 +72,12 @@ def test_custom_factor_in_batch_matches_single(app, client, env):  # noqa: F811
     assert r.status_code in (200, 201), r.get_data(as_text=True)[:300]
     body = r.get_json()
     cfid = body.get("id") or (body.get("factor") or {}).get("id")
+    with app.app_context():  # a new factor calculates once another superuser / admin approves it
+        from extensions import db
+        from models import CustomFactor
+
+        db.session.get(CustomFactor, cfid).status = "Approved"
+        db.session.commit()
     r = client.post("/api/emissions/", json={"year": 2025, "month": 1, "facility_id": fid, "process_type": "combustion",
                                              "fuel": "Site Fuel X", "amount": 800, "unit": "MMBtu",
                                              "factor_source": "custom", "custom_factor_id": cfid})

@@ -15,6 +15,7 @@ export interface User {
   preferences?: Record<string, any> | string | null;
   created_at?: string;
   last_login?: string | null;
+  idle_timeout_minutes?: number;
   [key: string]: unknown;
 }
 

@@ -258,8 +258,9 @@ ENGINEERING_TIER2 = {
 }
 
 
-def resolve_factor(payload, stored_payload=None, allow_archived=False):
-    """Factor data for a calculation. Raises ValidationError when a required factor is missing."""
+def resolve_factor(payload, stored_payload=None, allow_archived=False, kept_factor_id=None):
+    """Factor data for a calculation. Raises ValidationError when a required factor is missing.
+    kept_factor_id: the custom factor an edited record was saved with (usable even if not approved)."""
     from extensions import db
     from models import CustomFactor
     from routes.emissions import _lookup_api_factor
@@ -284,6 +285,11 @@ def resolve_factor(payload, stored_payload=None, allow_archived=False):
             cf = None
         if cf is None or (cf.is_archived and not allow_archived):
             raise ValidationError(f"Custom factor {cf_id} does not exist or is archived", "custom_factor_id")
+        # review 2026-10-15: a factor calculates only once a superuser or admin approved it (Pending and
+        # Rejected factors were used at once). A record keeps the factor it was saved with when edited.
+        if (cf.status or "Approved") != "Approved" and str(cf.id) != str(kept_factor_id or ""):
+            raise ValidationError(f"Custom factor '{cf.name}' is {cf.status}: it can be used once a superuser or "
+                                  "administrator approves it", "custom_factor_id")
         payload["custom_factor_id"] = cf.id
         payload["factor_source"] = "custom"
         return custom_factor_data(cf)

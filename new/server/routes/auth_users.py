@@ -8,7 +8,8 @@ import json
 from extensions import db
 from flask import current_app, jsonify, request, session
 from models import Notification, User
-from utils import is_unrestricted_location, log_activity_and_notify
+from services.session_policy import forget_cached_timeout
+from utils import internal_error, is_unrestricted_location, log_activity_and_notify
 from . import auth_bp
 from routes.auth import (
     BUSINESS_ROLE_GRANTORS,
@@ -72,7 +73,7 @@ def update_user(id):
     if requester_is_client_it and user.role in CLIENT_IT_PROTECTED_ROLES:
         return jsonify({"error": "Forbidden: Client IT staff cannot modify Compliance Admin, Superuser or platform operator accounts"}), 403
     if it_admin and it_admin.role == "it_admin" and user.role in IT_ADMIN_PROTECTED_ROLES:
-        return jsonify({"error": "Forbidden: IT Administrator cannot modify Compliance Admin, Superuser or platform operator accounts"}), 403
+        return jsonify({"error": "Forbidden: IT Administrator cannot modify Compliance Admin, Superuser, Auditor or platform operator accounts"}), 403
 
     VALID_ROLES = set(ROLE_RANK.keys())
     requester_rank = ROLE_RANK.get(it_admin.role if it_admin else "user", 0)
@@ -103,7 +104,7 @@ def update_user(id):
     if "email" in data and data["email"]:
         new_email = str(data["email"]).strip().lower()
         if new_email and new_email != (user.email or "").lower():
-            existing = User.query.filter(User.email == new_email, User.id != user.id).first()
+            existing = User.query.filter(db.func.lower(User.email) == new_email, User.id != user.id).first()
             if existing:
                 return jsonify({"error": "Email is already in use by another account"}), 400
             user.email = new_email
@@ -165,7 +166,11 @@ def delete_user(id):
     if it_admin and it_admin.role in CLIENT_IT_ROLES and user.role in CLIENT_IT_PROTECTED_ROLES:
         return jsonify({"error": "Forbidden: Client IT staff cannot delete Compliance Admin, Superuser or platform operator accounts"}), 403
     if it_admin and it_admin.role == "it_admin" and user.role in IT_ADMIN_PROTECTED_ROLES:
-        return jsonify({"error": "Forbidden: IT Administrator cannot delete Compliance Admin, Superuser or platform operator accounts"}), 403
+        return jsonify({"error": "Forbidden: IT Administrator cannot delete Compliance Admin, Superuser, Auditor or platform operator accounts"}), 403
+    # review 2026-10-15: the same guard as disabling (BUG-0038); deleting skipped it
+    if (user.role == "admin" and user.status == "active"
+            and User.query.filter_by(role="admin", status="active").count() <= 1):
+        return jsonify({"error": "This is the last active administrator account"}), 409
 
     # BUG-010 / BUG-069: derive every reference to users.id from the schema instead of a
     # hand-maintained list, and keep the maker-checker identity on the records.
@@ -278,6 +283,14 @@ def admin_reset_password(id):
 
 # --- IT Session Governance & Operational Security ---
 
+def _limit_count(limit):
+    """The count of a rate-limit string ("10 per 15 minutes", "10/15minutes")."""
+    import re
+
+    m = re.match(r"\s*(\d+)", str(limit or ""))
+    return int(m.group(1)) if m else None
+
+
 @auth_bp.route("/sessions/policy", methods=["GET"])
 @it_access_required
 def get_session_policy():
@@ -293,12 +306,15 @@ def get_session_policy():
         except Exception:
             timeout = 30
 
+    from services.login_guard import get_login_account_limit
+
     active_count = User.query.filter_by(status="active").count()
     total_count = User.query.count()
 
     return jsonify({
         "idle_timeout_minutes": timeout,
-        "max_failed_logins": 5,
+        # the per-account lockout really applied (LOGIN_ACCOUNT_LIMIT, "10 per 15 minutes"); it said 5
+        "max_failed_logins": _limit_count(get_login_account_limit()),
         "nist_password_policy": "NIST SP 800-63B Enforced (min 10 chars, uppercase, lowercase, digits, symbols)",
         "session_invalidation": "Cryptographic Session Versioning (sv)",
         "total_users": total_count,
@@ -326,9 +342,10 @@ def update_session_policy():
             else:
                 row.value = json.dumps(timeout)
             db.session.commit()
+            forget_cached_timeout()
         except Exception as e:
             db.session.rollback()
-            return jsonify({"error": f"Failed to update session policy: {e}"}), 500
+            return internal_error(e, "Failed to update session policy")
 
     return jsonify({"success": True, "idle_timeout_minutes": timeout})
 
@@ -381,8 +398,6 @@ def revoke_user_sessions(id):
     current_admin_id = session.get("user_id")
     current_admin = db.session.get(User, current_admin_id) if current_admin_id else None
 
-    if current_admin and current_admin.role in CLIENT_IT_ROLES and user.role in CLIENT_IT_PROTECTED_ROLES:
-        return jsonify({"error": "Forbidden: Client IT staff cannot revoke sessions for Compliance Admin or Superuser accounts"}), 403
     if current_admin and current_admin.role == "it_admin" and user.role in VENDOR_PROTECTED_ROLES:
         return jsonify({"error": "Forbidden: IT Administrator cannot revoke sessions for platform operator accounts"}), 403
 

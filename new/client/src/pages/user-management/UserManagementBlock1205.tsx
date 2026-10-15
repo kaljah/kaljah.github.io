@@ -61,15 +61,14 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
     currentUserRole === "it"
       ? [
           { value: "user", label: t("Standard User") },
-          { value: "auditor", label: t("Assurance Auditor") },
           { value: "it", label: t("IT Support") },
           { value: "it_admin", label: t("IT Administrator") },
         ]
       : currentUserRole === "it_admin"
       ? [
-          // Client IT cannot assign the compliance roles (admin, superuser): audit 2026-10-14 BUG-0001
+          // Client IT cannot assign the compliance roles (admin, superuser, auditor): audit 2026-10-14
+          // BUG-0001; an auditor reads every facility's data (review 2026-10-15)
           { value: "user", label: t("Standard User") },
-          { value: "auditor", label: t("Assurance Auditor") },
           { value: "it", label: t("IT Support") },
           { value: "it_admin", label: t("IT Administrator") },
         ]

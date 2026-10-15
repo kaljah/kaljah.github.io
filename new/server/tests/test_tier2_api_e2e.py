@@ -190,6 +190,9 @@ def test_tier2_quick_add_custom_factor_and_submit(client, test_admin, test_facil
     )
     assert cf_res.status_code in [200, 201]
     cf_id = cf_res.get_json().get("id") or cf_res.get_json().get("factor", {}).get("id")
+    with app.app_context():  # a new factor calculates once another superuser / admin approves it
+        db.session.get(CustomFactor, cf_id).status = "Approved"
+        db.session.commit()
 
     # 2. Submit emission using custom factor
     payload = {

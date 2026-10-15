@@ -32,7 +32,7 @@ describe("AuthContext cross-tab session (audit 2026-10-14 BUG-0014 / BUG-0039)",
     FakeChannel.all = [];
     vi.stubGlobal("BroadcastChannel", FakeChannel);
     vi.mocked(api.get).mockImplementation((url: string) =>
-      Promise.resolve({ data: url === "/auth/me" ? { id: 7, role: "admin", email: "a@x" } : {} }),
+      Promise.resolve({ data: url === "/auth/me" ? { id: 7, role: "admin", email: "a@x", idle_timeout_minutes: 10 } : {} }),
     );
     vi.mocked(api.post).mockResolvedValue({ data: {} });
   });
@@ -58,6 +58,19 @@ describe("AuthContext cross-tab session (audit 2026-10-14 BUG-0014 / BUG-0039)",
     render(<AuthProvider><div /></AuthProvider>);
     await act(async () => { await vi.advanceTimersByTimeAsync(10); });
     await act(async () => { await vi.advanceTimersByTimeAsync(10 * 60 * 1000 + 10); });
+    expect(api.post).toHaveBeenCalledWith("/auth/logout");
+  });
+
+  // review 2026-10-15: the timeout is the one IT configured (it was a fixed 10 minutes in the browser)
+  it("uses the idle timeout the server sends", async () => {
+    vi.mocked(api.get).mockImplementation((url: string) =>
+      Promise.resolve({ data: url === "/auth/me" ? { id: 7, role: "admin", email: "a@x", idle_timeout_minutes: 15 } : {} }),
+    );
+    render(<AuthProvider><div /></AuthProvider>);
+    await act(async () => { await vi.advanceTimersByTimeAsync(10); });
+    await act(async () => { await vi.advanceTimersByTimeAsync(14 * 60 * 1000); });
+    expect(api.post).not.toHaveBeenCalledWith("/auth/logout");
+    await act(async () => { await vi.advanceTimersByTimeAsync(60 * 1000 + 10); });
     expect(api.post).toHaveBeenCalledWith("/auth/logout");
   });
 

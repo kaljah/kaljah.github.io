@@ -401,7 +401,10 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
                   )}
                 </td>
                 <td>
-                  {user?.role === "admin" && f.status === "Pending" && (
+                  {/* a superuser or admin accepts a factor, never one they created (server enforces it too) */}
+                  {(user?.role === "admin" || user?.role === "superuser") &&
+                    f.status === "Pending" &&
+                    (f.created_by == null || String(f.created_by) !== String(user?.id)) && (
                     <button
                       onClick={() => handleApproveFactor && handleApproveFactor(f.id)}
                       className="text-[color:var(--color-legacy-15803d)]! font-semibold! mr-[6px]!"

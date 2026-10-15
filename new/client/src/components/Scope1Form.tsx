@@ -291,7 +291,9 @@ export const Scope1Form: React.FC = () => {
         }));
       setFuelOptions(options);
     } else {
+      // only approved factors calculate (a superuser or admin accepts them in Manage Data)
       const options = customFactors
+        .filter((f) => (f.status || "Approved") === "Approved")
         .filter(
           (f) =>
             !f.usage ||
@@ -423,7 +425,7 @@ export const Scope1Form: React.FC = () => {
 
   const handleFactorCreated = (newFactor: any) => {
     loadCustomFactors();
-    if (newFactor?.id) {
+    if (newFactor?.id && (newFactor.status || "Approved") === "Approved") {
       setSourceType("library");
       setFormData((prev) => ({ ...prev, fuel: newFactor.id.toString() }));
     }

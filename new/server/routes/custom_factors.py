@@ -3,7 +3,7 @@ from flask import Blueprint, request, jsonify, session, current_app
 from models import CustomFactor, User
 from extensions import db
 from routes.auth import superuser_required, login_required
-from utils import log_activity_and_notify, get_current_user
+from utils import get_current_user, internal_error, log_activity_and_notify
 from services.custom_factor_policy import (
     PLAUSIBILITY_BOUNDS, check_update, factor_references, governance, second_approver_required, with_justification,
 )
@@ -47,6 +47,7 @@ def get_custom_factors():
                 "n2o_uncertainty": float(f.n2o_uncertainty or 0),
                 "status": getattr(f, "status", None) or "Approved",
                 "approved_by": getattr(f, "approved_by", None),
+                "created_by": f.created_by,
                 "approved_at": f.approved_at.isoformat() if getattr(f, "approved_at", None) else None,
                 "is_archived": bool(f.is_archived),
             }
@@ -115,6 +116,8 @@ def _require_some_factor(co2, ch4, n2o):
     if not any((v or 0) > 0 for v in (co2, ch4, n2o)):
         raise ValueError("At least one of co2_factor, ch4_factor or n2o_factor must be greater than 0")
 
+
+FACTOR_APPROVER_ROLES = ("admin", "superuser")  # decision 2026-10-15: a superuser may accept factors too
 
 # fields that change the numbers calculated with a factor (refused while records use it)
 VALUE_FIELDS = (
@@ -225,7 +228,7 @@ def create_custom_factor():
         return jsonify({"error": "Failed to create custom factor"}), 500
 
     warnings = _check_plausibility(data)
-    resp_data = {"message": "Custom factor created", "id": factor.id}
+    resp_data = {"message": "Custom factor created", "id": factor.id, "status": factor.status}
     if warnings:
         resp_data["warnings"] = warnings
     return jsonify(resp_data), 201
@@ -242,6 +245,11 @@ def update_custom_factor(factor_id):
     factor = db.session.get(CustomFactor, factor_id)
     if not factor:
         return jsonify({"error": "Factor not found"}), 404
+    # review 2026-10-15: the same rule as delete / archive (a regional superuser renamed and re-sourced
+    # another account's approved factor, which stayed Approved)
+    denied = _org_factor_denied(user, factor, "edit")
+    if denied:
+        return denied
 
     data = request.get_json()
     if not data:
@@ -460,6 +468,8 @@ def import_custom_factors():
 
     if not factors_data:
         return jsonify({"error": "No factors provided"}), 400
+    if not isinstance(factors_data, list) or any(not isinstance(f, dict) for f in factors_data):
+        return jsonify({"error": "factors must be a list of objects", "field": "factors"}), 400
 
     imported_count = 0
     skipped = []
@@ -548,10 +558,10 @@ def import_custom_factors():
 @custom_factors_bp.route("/<int:factor_id>/approve", methods=["POST"])
 @login_required
 def approve_custom_factor(factor_id):
-    """Approve a pending custom emission factor (Admin only)."""
+    """Approve a pending custom emission factor (superuser or admin, never the factor's creator)."""
     user = get_current_user()
-    if not user or user.role != "admin":
-        return jsonify({"error": "Only Compliance Administrators can approve custom emission factors"}), 403
+    if not user or user.role not in FACTOR_APPROVER_ROLES:
+        return jsonify({"error": "Only superusers and administrators can approve custom emission factors"}), 403
 
     factor = db.session.get(CustomFactor, factor_id)
     if not factor or factor.is_archived:
@@ -560,8 +570,9 @@ def approve_custom_factor(factor_id):
     if getattr(factor, "status", None) == "Approved":
         return jsonify({"message": "Factor is already approved", "id": factor.id}), 200
 
-    if second_approver_required() and factor.created_by == user.id:
-        return jsonify({"error": "A different administrator must approve a factor you created"}), 403
+    # an admin may approve their own factor only in one-admin mode (CUSTOM_FACTOR_SECOND_APPROVER=false)
+    if factor.created_by == user.id and (user.role != "admin" or second_approver_required()):
+        return jsonify({"error": "A different superuser or administrator must approve a factor you created"}), 403
 
     try:
         factor.status = "Approved"
@@ -580,21 +591,25 @@ def approve_custom_factor(factor_id):
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": f"Failed to approve custom factor: {e}"}), 500
+        return internal_error(e, "Failed to approve custom factor")
     return jsonify({"message": f"Custom factor '{factor.name}' approved successfully", "id": factor.id}), 200
 
 
 @custom_factors_bp.route("/<int:factor_id>/reject", methods=["POST"])
 @login_required
 def reject_custom_factor(factor_id):
-    """Reject a pending custom emission factor (Admin only)."""
+    """Reject a pending custom emission factor (superuser or admin)."""
     user = get_current_user()
-    if not user or user.role != "admin":
-        return jsonify({"error": "Only Compliance Administrators can reject custom emission factors"}), 403
+    if not user or user.role not in FACTOR_APPROVER_ROLES:
+        return jsonify({"error": "Only superusers and administrators can reject custom emission factors"}), 403
 
     factor = db.session.get(CustomFactor, factor_id)
     if not factor or factor.is_archived:
         return jsonify({"error": "Custom factor not found"}), 404
+    # review 2026-10-15: an approved factor (possibly used by records) is retired by archiving it, not rejected
+    if (factor.status or "Approved") != "Pending":
+        return jsonify({"error": f"Only a Pending factor can be rejected; this one is {factor.status or 'Approved'}. "
+                                 "Archive an approved factor to stop new entries using it."}), 409
 
     data = request.get_json() or {}
     reason = str(data.get("reason") or "Rejected by compliance administrator").strip()
@@ -616,6 +631,6 @@ def reject_custom_factor(factor_id):
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": f"Failed to reject custom factor: {e}"}), 500
+        return internal_error(e, "Failed to reject custom factor")
     return jsonify({"message": f"Custom factor '{factor.name}' rejected successfully", "id": factor.id}), 200
 

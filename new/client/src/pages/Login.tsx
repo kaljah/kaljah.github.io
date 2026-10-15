@@ -156,7 +156,7 @@ const Login: React.FC = () => {
         {/* Inactivity Session Expiration Banner */}
         {sessionExpired && (
           <Banner tone="warning" className="mb-4">
-            {t("Your session timed out after 10 minutes of inactivity. Please sign in again to resume your work.")}
+            {t("Your session timed out after a period of inactivity. Please sign in again to resume your work.")}
           </Banner>
         )}
 
