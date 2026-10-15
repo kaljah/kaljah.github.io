@@ -4,6 +4,7 @@ BUG-0001 and BUG-0002 are covered in tests/test_it_role_security.py and
 tests/test_audit_rc1_authz_reports.py.
 """
 import io
+import os
 import time
 
 import pytest
@@ -537,3 +538,132 @@ def test_bug0031_sqlite_restore_wins_over_the_live_wal(tmp_path, monkeypatch):
     assert check.execute("select count(*) from t").fetchone()[0] == 2000
     check.close()
     assert restore.verify_sqlite_backup(str(tmp_path / "missing.db")) == (False, None)
+
+
+# ── Batch 3: filters, users, notifications, factors, JSON, config, calculation details ──
+
+def test_bug0034_pdf_export_refuses_malformed_filters(ctx):
+    with app.test_client() as c:
+        login(c, make_user("admin", "Global"))
+        for q in ("year=abc", "month=13", "facility_id=x"):
+            assert c.get(f"/api/reports/export?{q}").status_code in (400, 422), q
+
+
+def test_bug0038_user_status_is_validated(ctx):
+    from models import User
+
+    manager = make_user("it_manager", "Global")
+    target = make_user("user", "West")
+    with app.test_client() as c:
+        login(c, manager)
+        assert c.put(f"/api/auth/users/{target.id}", json={"status": "banana"}).status_code == 400
+        assert c.put(f"/api/auth/users/{target.id}", json={"status": "Disabled"}).status_code == 200
+    db.session.expire_all()
+    assert db.session.get(User, target.id).status == "disabled"
+
+
+def test_bug0043_notifications_of_others_cannot_be_changed(ctx):
+    from models import Notification
+
+    owner = make_user("admin", "Global")
+    n = Notification.create(title="t", message="m", user_id=owner.id)
+    db.session.commit()
+    with app.test_client() as c:
+        login(c, make_user("superuser", "West"))
+        assert c.put(f"/api/notifications/{n.id}/read").status_code == 403
+        assert c.delete(f"/api/notifications/{n.id}").status_code == 403
+
+
+def test_bug0042_facility_alerts_reach_only_accounts_in_scope(ctx):
+    from models import Notification
+
+    fac = make_facility(region=uniq("R"))
+    title = uniq("LDAR leak")
+    Notification.create(title=title, message="leak", user_id=None, metadata={"facility_id": fac.id})
+    db.session.commit()
+
+    def titles(user):
+        with app.test_client() as c:
+            login(c, user)
+            return [n["title"] for n in c.get("/api/notifications/").get_json()]
+
+    assert title in titles(make_user("user", fac.region))
+    assert title not in titles(make_user("user", uniq("Other")))
+    assert title not in titles(make_user("it_admin", "Global"))
+
+
+def test_bug0044_superuser_cannot_archive_an_approved_factor(ctx):
+    from models import CustomFactor
+
+    cf = CustomFactor(name=uniq("cf"), unit="scf", co2_factor=0.05, status="Approved")
+    db.session.add(cf)
+    db.session.commit()
+    with app.test_client() as c:
+        login(c, make_user("superuser", "West"))
+        assert c.post(f"/api/custom-factors/{cf.id}/archive", json={}).status_code == 403
+        assert c.delete(f"/api/custom-factors/{cf.id}").status_code == 403
+
+
+def test_bug0045_bug0062_bad_json_shapes_are_400s(ctx):
+    with app.test_client() as c:
+        login(c, make_user("admin", "Global"))
+        deep = "[" * 3000 + "]" * 3000
+        assert c.post("/api/emissions/", data=deep, content_type="application/json").status_code == 400
+        for ep in ("/api/emissions/bulk-delete", "/api/emissions/import", "/api/custom-factors"):
+            assert c.post(ep, data="null", content_type="application/json").status_code == 400, ep
+        r = c.post("/api/custom-factors", json={"name": uniq("cf"), "unit": "scf", "co2_factor": 1, "source": ["x"]})
+        assert r.status_code in (400, 422)
+
+
+def test_bug0046_no_published_development_key():
+    import subprocess
+    import sys
+
+    env = {k: v for k, v in os.environ.items() if k not in ("SECRET_KEY", "FLASK_ENV", "APP_ENV", "ENVIRONMENT")}
+    out = subprocess.run([sys.executable, "-c", "import config; print(config.Config.SECRET_KEY)"],
+                         cwd=os.path.join(os.path.dirname(__file__), ".."), env=env, capture_output=True, text=True)
+    assert out.returncode == 0, out.stderr[-400:]
+    assert "dev-secret-key-change-in-prod-please" not in out.stdout and len(out.stdout.strip()) >= 32
+
+
+def test_bug0049_fractional_event_counts_are_refused():
+    from calculations.dispatcher import dispatcher
+
+    base = {"factor_source": "specific", "quantity": 5.0, "unit": "m3", "blowdown_volume": 5.0,
+            "blowdown_pressure": 500.0, "blowdown_temp": 60.0, "ch4_content": 85}
+    with pytest.raises(ValueError):
+        dispatcher.dispatch("blowdown", {**base, "blowdown_events": 2.7}, {}, {})
+    dispatcher.dispatch("blowdown", {**base, "blowdown_events": 3}, {}, {})
+
+
+def test_bug0050_unknown_gwp_standard_is_refused():
+    from calculations.constants import get_active_gwp
+
+    with pytest.raises(ValueError):
+        get_active_gwp(standard="AR9")
+    assert get_active_gwp(standard="ar6")["CH4"] > 0
+
+
+def test_bug0064_null_spellings_mean_not_set(ctx):
+    with app.test_client() as c:
+        login(c, make_user("admin", "Global"))
+        for v in ("null", "None", "undefined", "%20"):
+            r = c.get(f"/api/dashboard/summary?year={v}&facility_id={v}")
+            assert r.status_code < 500, (v, r.status_code)
+
+
+def test_bug0066_qaqc_ignores_an_out_of_range_year(ctx):
+    with app.test_client() as c:
+        login(c, make_user("admin", "Global"))
+        assert c.get("/api/qaqc/dashboard?year=99999999999999999999").status_code == 200
+
+
+def test_bug0071_readiness_probe_discloses_no_wal_size(ctx):
+    with app.test_client() as c:
+        d = c.get("/api/health/ready").get_json()
+    assert "wal_size_mb" not in d and d["status"] == "ready"
+
+
+def test_bug0074_templates_need_a_sign_in(ctx):
+    with app.test_client() as c:
+        assert c.get("/api/emissions/template/csv").status_code == 401

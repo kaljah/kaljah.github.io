@@ -14,7 +14,8 @@ const save = (blob: Blob, filename: string): void => {
 const cell = (v: unknown): string => {
   const s = v === null || v === undefined ? "" : String(v);
   // Quote fields with separators/quotes/newlines, and neutralise spreadsheet formulas.
-  const safe = /^[=+\-@]/.test(s) && Number.isNaN(Number(s)) ? `'${s}` : s;
+  // a lone "-" (an empty value) is not a formula: escaping it made exports unreadable on re-import (BUG-0054)
+  const safe = s.length > 1 && /^[=+\-@]/.test(s) && Number.isNaN(Number(s)) ? `'${s}` : s;
   return /[",\r\n]/.test(safe) ? `"${safe.replace(/"/g, '""')}"` : safe;
 };
 

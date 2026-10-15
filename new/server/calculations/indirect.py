@@ -153,6 +153,8 @@ class CogenAllocationCalculator(BaseCalculator):
         if p_unit in ["mwh", "megawatt_hours", "kwh"]:
             mult = 3.412142 if p_unit != "kwh" else 0.003412142
             power_mmbtu = power_output * mult
+        elif p_unit in ["gj", "gigajoules"]:  # BUG-0051: GJ was read as MMBtu
+            power_mmbtu = power_output * 0.94781712
         else:
             power_mmbtu = power_output
 

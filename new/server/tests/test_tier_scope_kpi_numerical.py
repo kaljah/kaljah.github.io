@@ -402,16 +402,16 @@ class TestKPIsAndIntensities:
 
     def test_boe_production_normalization_exactness(self):
         """BOE Normalization Equation:
-        BOE = Oil (bbl) + Gas (Mscf) × 0.178.
+        BOE = Oil (bbl) + Gas (Mscf) × 0.17586.
         Composite production: 5,000 bbl oil + 10 MMscf gas:
         Gas in Mscf = 10 * 1,000 = 10,000 Mscf.
-        BOE = 5,000 + 10,000 * 0.178 = 5,000 + 1,780 = 6,780 BOE.
+        BOE = 5,000 + 10,000 * 1.02 / 5.8 = 5,000 + 1,758.6 = 6,758.6 BOE.
         """
         oil_bbl = 5000.0
         gas_mmscf = 10.0
         gas_mscf = gas_mmscf * 1000.0
-        total_boe = oil_bbl + (gas_mscf * 0.178)
-        assert abs(total_boe - 6780.0) < 1e-5
+        total_boe = oil_bbl + (gas_mscf * (1.02 / 5.8))
+        assert abs(total_boe - (5_000 + 10_000 * 1.02 / 5.8)) < 1e-5
 
     def test_carbon_intensity_metric_equations(self):
         """Carbon Intensity:

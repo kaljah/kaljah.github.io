@@ -466,10 +466,12 @@ def calc_indirect_steam(self, calculator, emission_factors, flat_inputs, gwp_dic
     heat = self._require_float(
         flat_inputs, ["quantity", "amount", "heat_energy"], "heat energy"
     )
-    boiler_eff = self._require_float(
+    # audit 2026-10-14 BUG-0051: an efficiency of 80 is 80 % (it was used as 80x), and the record's
+    # unit is the heat unit (the amount was read as Btu whatever its unit)
+    boiler_eff = self._require_fraction(
         flat_inputs,
         ["boiler_eff", "boiler_efficiency"],
-        "boiler efficiency fraction (e.g. 0.80)",
+        "boiler efficiency (e.g. 80 % or 0.80)",
     )
     trans_loss = self._optional_fraction(
         flat_inputs, ["trans_loss", "transmission_loss"], 0.0
@@ -481,7 +483,7 @@ def calc_indirect_steam(self, calculator, emission_factors, flat_inputs, gwp_dic
         boiler_efficiency=boiler_eff,
         transmission_loss=trans_loss,
         uncertainties=uncertainties,
-        heat_unit=flat_inputs.get("heat_unit", "btu"),
+        heat_unit=flat_inputs.get("heat_unit") or flat_inputs.get("unit") or "btu",
         ef_ch4=emission_factors.get("ch4", 0) or 0,
         ef_n2o=emission_factors.get("n2o", 0) or 0,
         gwp_dict=gwp_dict,

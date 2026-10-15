@@ -581,6 +581,7 @@ export const Scope1Form: React.FC = () => {
       "Total (tCO2e)",
       "Status",
     ];
+    const clean = (v: unknown) => (typeof v === "number" ? Number(v.toPrecision(12)) : Number(v) || 0);
     const rows = data.map((e) => [
       `${e.year}-${String(e.month).padStart(2, "0")}`,
       e.activity || "",
@@ -591,13 +592,15 @@ export const Scope1Form: React.FC = () => {
       e.equipment_id || "",
       processLabel(e),
       e.fuel || e.fuel_type || e.activity_data_label || "",
-      factorTypeLabel(e),
+      // the import's vocabulary (default / custom / specific); blank when unknown (BUG-0054)
+      factorTypeLabel(e) === "-" ? "" : factorTypeLabel(e),
       e.amount || e.quantity || "",
       e.unit || "",
-      e.co2_emissions || 0,
-      e.ch4_emissions || 0,
-      e.n2o_emissions || 0,
-      e.co2e_total || 0,
+      // 12 significant digits: no float noise such as 0.00033120000000000003
+      clean(e.co2_emissions),
+      clean(e.ch4_emissions),
+      clean(e.n2o_emissions),
+      clean(e.co2e_total),
       e.status || "",
     ]);
     // shared CSV writer: also neutralises cells that a spreadsheet would run as a formula (=, +, -, @)

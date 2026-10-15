@@ -60,6 +60,12 @@ const fmt = (num: any) =>
     ? "0.00"
     : parseFloat(num).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 3 });
 
+const FACTOR_TYPE_LABELS: Record<string, string> = {
+  default: tr("Default"),
+  custom: tr("Custom"),
+  specific: tr("Specific"),
+};
+
 const RECORD_COLUMNS: ColumnDef<EmissionRecord, any>[] = [
   { accessorKey: "id", header: tr("ID"), cell: (c) => <span className="text-xs text-text-secondary">{c.getValue()}</span> },
   { id: "date", header: tr("Date"), accessorFn: (r) => r.year * 100 + r.month, cell: (c) => `${c.row.original.month}/${c.row.original.year}` },
@@ -74,7 +80,12 @@ const RECORD_COLUMNS: ColumnDef<EmissionRecord, any>[] = [
   { accessorKey: "equipment_id", header: tr("Equipment"), cell: (c) => NA(c.getValue()) },
   { accessorKey: "process_type", header: tr("Category/Process"), cell: (c) => <span className="font-medium">{c.getValue()}</span> },
   { accessorKey: "fuel", header: tr("Fuel/Source"), cell: (c) => NA(c.getValue()) },
-  { accessorKey: "factor_type", header: tr("Factor Type"), cell: (c) => <span className="text-sm">{NA(c.getValue())}</span> },
+  {
+    accessorKey: "factor_type",
+    header: tr("Factor Type"),
+    // Scope 1 sends its factor source (BUG-0058: the calculation method was shown)
+    cell: (c) => <span className="text-sm">{NA(FACTOR_TYPE_LABELS[String(c.getValue() ?? "")] ?? c.getValue())}</span>,
+  },
   {
     accessorKey: "amount",
     header: tr("Qty"),

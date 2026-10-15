@@ -35,6 +35,9 @@ def _needs_justification_message(out):
 
 def governance(user, data, co2, ch4, n2o):
     """Rules for a new factor. Returns (error_message, status, justification)."""
+    # BUG-0045: a list / number / boolean is not a text reference (.strip() on it was a 500)
+    if not isinstance(data.get("source") or "", str) or not isinstance(data.get("justification") or "", str):
+        return "'source' and 'justification' must be text", None, None
     if not (data.get("source") or "").strip():
         return "A source or method reference is required for a custom factor", None, None
     out = out_of_range_fields(co2, ch4, n2o)

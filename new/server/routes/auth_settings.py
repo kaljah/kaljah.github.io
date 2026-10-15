@@ -148,6 +148,9 @@ def update_settings():
     gwp_changed = False
     if is_admin:
         previous_gwp = _app_settings.get("gwp_standard") or "AR5"
+        if "gwp_standard" in data and data["gwp_standard"] not in ["AR4", "AR5", "AR6"]:
+            # BUG-0050: an unknown standard was ignored without a word
+            return jsonify({"error": "gwp_standard must be AR4, AR5 or AR6", "field": "gwp_standard"}), 400
         if "gwp_standard" in data and data["gwp_standard"] in ["AR4", "AR5", "AR6"]:
             new_gwp = data["gwp_standard"]
             if _app_settings.get("gwp_standard") != new_gwp:

@@ -415,7 +415,7 @@ class TestDifferentialUncertaintyAndCompliance:
         total_co2e = 1200.0
 
         boe = IndependentIntensityModel.calculate_boe(oil_bbl, gas_mscf)
-        assert pytest.approx(boe, rel=1e-6) == oil_bbl + (gas_mscf * 0.178)
+        assert pytest.approx(boe, rel=1e-6) == oil_bbl + (gas_mscf * (1.02 / 5.8))
 
         ci = IndependentIntensityModel.calculate_carbon_intensity(total_co2e, boe)
         assert pytest.approx(ci, rel=1e-6) == (total_co2e * 1000.0) / boe

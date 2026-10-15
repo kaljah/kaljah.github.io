@@ -39,6 +39,10 @@ def get_qaqc_dashboard():
 
         # Optional filter params
         year_arg = request.args.get("year")
+        # audit 2026-10-14 BUG-0066: an out-of-range year is ignored like any malformed one (the documented
+        # QA/QC rule); a huge number overflowed the database integer and answered 500
+        if year_arg and not (year_arg.strip().isdigit() and 1900 <= int(year_arg.strip()) <= 2100):
+            year_arg = None
         scope_arg = request.args.get("scope")  # "1", "2", "3", or "all"
         try:
             limit = max(1, min(int(request.args.get("limit", 100)), _MAX_FLAGGED_RECORDS))

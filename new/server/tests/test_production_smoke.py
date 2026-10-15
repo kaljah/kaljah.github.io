@@ -51,7 +51,7 @@ def test_smoke_02_readiness_probe(smoke_client):
     assert resp.status_code == 200
     data = resp.get_json()
     assert data.get("database") == "connected"
-    assert "wal_size_mb" in data
+    assert "wal_size_mb" not in data  # not disclosed by the public probe (audit 2026-10-14 BUG-0071)
 
 
 def test_smoke_03_root_endpoint(smoke_client):

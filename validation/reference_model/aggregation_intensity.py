@@ -5,7 +5,7 @@ Zero production dependencies.
 """
 from .unit_conversions import DENSITY_CH4_STD
 
-GAS_TO_BOE_FACTOR = 0.178  # 1 Mscf (1,000 scf) ~ 0.178 BOE (approx. 5,618 scf/BOE)
+GAS_TO_BOE_FACTOR = 1.020 / 5.8  # API Compendium: 5.8 MMBtu/BOE at 1,020 Btu/scf = 0.17586 BOE per Mscf
 
 
 class IndependentIntensityModel:

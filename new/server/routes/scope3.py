@@ -17,7 +17,8 @@ scope3_bp = Blueprint("scope3", __name__)
 
 
 def default_scope3_uncertainty(co2e):
-    """Default Scope 3 uncertainty (20 % factor, 10 % activity -> ~22.4 % combined), 1-sigma fraction.
+    """Default Scope 3 uncertainty, stored as a 1-sigma fraction: 20 % factor and 10 % activity data, both 95 %
+    half-widths, give 22.4 % at 95 % = 11.2 % at 1 sigma (BUG-0052: the 22.4 % figure is the 95 % value).
     Used by the form and the bulk imports alike (bulk records used to store none)."""
     return propagate_uncertainty(
         co2e, ef_uncertainty=0.20, activity_uncertainty=0.10, tier=Tier.T1, process_category="scope3", gas="co2",
@@ -197,7 +198,14 @@ def create_scope3_emission():
                 emission.status = "Pending"
                 emission.approved_by = emission.approved_at = None
     except Exception:
-        pass
+        # audit 2026-10-14 BUG-0041: a failed statistical check is logged and the record
+        # goes to a reviewer (it stayed Verified without the check)
+        current_app.logger.exception("Anomaly check failed")
+        if not emission.qa_flag:
+            emission.qa_flag = "Anomaly check could not run: review the value"
+        if emission.status == "Verified":
+            emission.status = "Pending"
+            emission.approved_by = emission.approved_at = None
 
     try:
         db.session.add(emission)
@@ -368,7 +376,14 @@ def update_scope3_emission(emission_id):
                 emission.status = "Pending"
                 emission.approved_by = emission.approved_at = None
     except Exception:
-        pass
+        # audit 2026-10-14 BUG-0041: a failed statistical check is logged and the record
+        # goes to a reviewer (it stayed Verified without the check)
+        current_app.logger.exception("Anomaly check failed")
+        if not emission.qa_flag:
+            emission.qa_flag = "Anomaly check could not run: review the value"
+        if emission.status == "Verified":
+            emission.status = "Pending"
+            emission.approved_by = emission.approved_at = None
     try:
         from utils import log_activity_and_notify
         log_activity_and_notify(

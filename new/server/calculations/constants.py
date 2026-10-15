@@ -33,6 +33,13 @@ def invalidate_gwp_cache():
     global _CACHED_GWP_STANDARD, _CACHED_GWP_STANDARD_TIME
     _CACHED_GWP_STANDARD = None
     _CACHED_GWP_STANDARD_TIME = 0.0
+    try:
+        from flask import g, has_request_context
+
+        if has_request_context():
+            g.pop("_gwp_standard", None)
+    except ImportError:  # pragma: no cover
+        pass
 
 
 def get_active_gwp(standard=None, gwp_dict=None, horizon="100"):
@@ -54,10 +61,22 @@ def get_active_gwp(standard=None, gwp_dict=None, horizon="100"):
             }
 
     std_key = str(standard or "").upper().strip()
+    if std_key and std_key not in GWP_STANDARDS:
+        # audit 2026-10-14 BUG-0050: an unknown standard was computed with AR5 without a word
+        raise ValueError(f"Unknown GWP standard '{standard}': use one of {', '.join(sorted(GWP_STANDARDS))}")
     if not std_key:
         now = time.time()
         global _CACHED_GWP_STANDARD, _CACHED_GWP_STANDARD_TIME
-        if _CACHED_GWP_STANDARD and (now - _CACHED_GWP_STANDARD_TIME < 30.0):
+        try:
+            from flask import g, has_request_context
+        except ImportError:  # pragma: no cover
+            has_request_context = lambda: False  # noqa: E731
+        # BUG-0053: within a request the setting is read from the database (once per request), so a
+        # change made through another worker applies at once; the 30 s cache is for background jobs.
+        in_request = has_request_context()
+        if in_request and getattr(g, "_gwp_standard", None):
+            std_key = g._gwp_standard
+        elif not in_request and _CACHED_GWP_STANDARD and (now - _CACHED_GWP_STANDARD_TIME < 30.0):
             std_key = _CACHED_GWP_STANDARD
         else:
             try:
@@ -69,10 +88,17 @@ def get_active_gwp(standard=None, gwp_dict=None, horizon="100"):
                 std_key = str(_app_settings.get("gwp_standard") or "AR5").upper().strip()
             except Exception:
                 std_key = "AR5"
+            if std_key not in GWP_STANDARDS:  # a stored setting is validated when saved; never guess silently
+                import logging
+
+                logging.getLogger(__name__).warning("Stored GWP standard %r is unknown; using AR5", std_key)
+                std_key = "AR5"
             _CACHED_GWP_STANDARD = std_key
             _CACHED_GWP_STANDARD_TIME = now
+            if in_request:
+                g._gwp_standard = std_key
 
-    std_profile = GWP_STANDARDS.get(std_key, GWP_AR5)
+    std_profile = GWP_STANDARDS[std_key]
 
     if str(horizon) == "20":
         return {

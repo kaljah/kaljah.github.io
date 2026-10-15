@@ -36,6 +36,11 @@ def get_notifications():
         .all()
     )
 
+    from utils import get_allowed_facility_ids, get_current_user as _current
+
+    viewer = _current()
+    allowed = get_allowed_facility_ids(viewer) if viewer else []
+    is_it = bool(viewer and viewer.role in ("it", "it_admin", "it_manager"))
     result = []
     for n in notifs:
         if n.user_id is None and n.metadata_json:
@@ -43,6 +48,11 @@ def get_notifications():
                 meta = json.loads(n.metadata_json)
                 dismissed = meta.get("dismissed_by", []) or meta.get("deleted_by", [])
                 if user_id in dismissed:
+                    continue
+                # audit 2026-10-14 BUG-0042: a broadcast about a facility (LDAR alerts) is operational data:
+                # only accounts with that facility in scope see it, never the IT roles
+                fid = meta.get("facility_id")
+                if fid is not None and (is_it or (allowed is not None and int(fid) not in allowed)):
                     continue
             except Exception:
                 pass
@@ -81,7 +91,7 @@ def mark_read(id):
             read_by.append(user.id)
             meta["read_by"] = read_by
             n.metadata_json = json.dumps(meta)
-    elif n.user_id != user.id and user.role not in ["admin", "superuser", "it_manager"]:
+    elif n.user_id != user.id:  # BUG-0043: another account's notification is not yours to change
         return jsonify({"error": "Unauthorized"}), 403
     else:
         n.is_read = True
@@ -116,9 +126,7 @@ def dismiss_all():
         if user.id not in read_by:
             read_by.append(user.id)
             meta["read_by"] = read_by
-        if user.role in ["admin", "superuser", "it_manager"]:
-            b.is_read = True
-        b.metadata_json = json.dumps(meta)
+        b.metadata_json = json.dumps(meta)  # read for this account only (BUG-0043)
     try:
         db.session.commit()
     except Exception as e:
@@ -140,9 +148,14 @@ def delete_notification(id):
         # Check if an explicit global purge is requested by a privileged administrator
         is_global = request.args.get("global", "").lower() in ("true", "1")
         if is_global:
-            if user.role not in ["admin", "superuser"]:
+            if user.role != "admin":  # BUG-0043: a scoped superuser removed it for everyone
                 return jsonify({"error": "Only global administrators can delete system notifications globally"}), 403
             try:
+                from utils import log_activity_and_notify
+
+                log_activity_and_notify(action="DELETE", record_id=str(n.id), user=user, request=request,
+                                        entity="Notification", entity_id=str(n.id),
+                                        details=f"Deleted system notification for everyone: {n.title}")
                 db.session.delete(n)
                 db.session.commit()
             except Exception as e:
@@ -167,7 +180,7 @@ def delete_notification(id):
             return jsonify({"error": "Failed to dismiss notification"}), 500
         return jsonify({"success": True})
 
-    elif n.user_id != user.id and user.role not in ["admin", "superuser", "it_manager"]:
+    elif n.user_id != user.id:  # BUG-0043
         return jsonify({"error": "Unauthorized"}), 403
 
     try:

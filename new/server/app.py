@@ -211,11 +211,14 @@ def handle_validation_error(e):
 @app.before_request
 def reject_non_finite_json():
     if request.method in ("POST", "PUT", "PATCH") and request.is_json:
-        payload = request.get_json(silent=True)
-        bad = find_non_finite(payload) if payload is not None else None
+        try:
+            payload = request.get_json(silent=True)
+            bad = find_non_finite(payload) if payload is not None else None
+            nul = find_nul(payload) if payload is not None else None
+        except RecursionError:  # BUG-0045
+            return jsonify({"error": "JSON body is nested too deeply", "code": 400}), 400
         if bad:
             return jsonify({"error": f"'{bad}' must be a finite number", "field": bad, "code": 400}), 400
-        nul = find_nul(payload) if payload is not None else None
         if nul:
             return jsonify({"error": f"'{nul}' contains an invalid character", "field": nul, "code": 400}), 400
 
@@ -231,6 +234,16 @@ def reject_malformed_query_parameters():
     production reads, is a 400 (422 for a facility id), not a 500 inside the route."""
     if not request.path.startswith("/api"):
         return None
+    # audit 2026-10-14 BUG-0064: the null spellings the UI may send for a numeric filter ("null", "None",
+    # "undefined", blank) mean "not set". Routes read int(...) of them and answered 500.
+    from werkzeug.datastructures import ImmutableMultiDict
+    from input_validation import NUMERIC_FILTERS
+
+    items = list(request.args.items(multi=True))
+    kept = [(k, v) for k, v in items
+            if not (k in NUMERIC_FILTERS and v.strip().lower() in ("", "null", "none", "undefined"))]
+    if len(kept) != len(items):
+        request.args = ImmutableMultiDict(kept)
     bad = invalid_query_parameter(request.args, numbers=request.path.startswith(_STRICT_FILTER_PREFIXES))
     if bad:
         status = 422 if bad[0] in ("facility_id", "facilityId") else 400  # documented 422 for facility ids
@@ -275,8 +288,13 @@ def before_request():
     # V1: every write route treats the JSON body as a dict (data.get(...)).
     # Reject arrays/scalars up front so they return 400 instead of a 500.
     if request.method in ("POST", "PUT", "PATCH") and request.is_json and request.get_data(cache=True):
-        body = request.get_json(silent=True)
-        if body is not None and not isinstance(body, dict):
+        try:
+            body = request.get_json(silent=True)
+        except RecursionError:  # audit 2026-10-14 BUG-0045: a ~3000-deep object was a 500
+            return jsonify({"error": "JSON body is nested too deeply", "code": 400, "request_id": req_id}), 400
+        # BUG-0062: a literal `null` body is not an object either (routes called .get() on None: 500)
+        is_null = body is None and request.get_data(cache=True).strip() == b"null"
+        if is_null or (body is not None and not isinstance(body, dict)):
             return jsonify({
                 "error": "JSON body must be an object",
                 "code": 400,
@@ -661,13 +679,15 @@ def health_readiness():
     try:
         from sqlalchemy import text
         db.session.execute(text("SELECT 1"))
-        wal_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ghg_app.db-wal")
-        wal_mb = round(os.path.getsize(wal_path) / (1024 * 1024), 2) if os.path.exists(wal_path) else 0.0
+        # audit 2026-10-14 BUG-0071: this probe is public, so it no longer discloses the WAL size (and the
+        # size is of the configured database file, not a fixed ghg_app.db); a large WAL is logged instead
+        db_file = db.engine.url.database if db.engine.url.get_backend_name() == "sqlite" else None
+        wal_path = f"{db_file}-wal" if db_file else None
+        if wal_path and os.path.exists(wal_path) and os.path.getsize(wal_path) > 100 * 1024 * 1024:
+            app.logger.warning("SQLite WAL file %s is larger than 100 MB", wal_path)
         return jsonify({
             "status": "ready",
             "database": "connected",
-            "wal_size_mb": wal_mb,
-            "wal_warning": wal_mb > 100.0,
             "version": app.config.get("APP_VERSION", "1.0.0")
         }), 200
     except Exception as e:

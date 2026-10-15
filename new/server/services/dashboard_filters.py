@@ -22,7 +22,7 @@ def statuses(include_pending=False):
 
 
 def _set(v):
-    return v not in (None, "", "all")
+    return v is not None and str(v).strip().lower() not in ("", "all", "null", "none", "undefined")
 
 
 def apply_scope(query, model, allowed_fids=None, facility_id=None, activity=None, division=None, segment=None,
@@ -140,9 +140,12 @@ def gas_volume_m3(quantity, unit, year=None, month=None):
 
 
 # ── BOE (BUG-044): one definition for every endpoint ─────────────────────────────
-# The platform's intensity KPIs use 0.178 BOE per Mcf (= 5,618 scf/BOE, i.e. 5.8 MMBtu/BOE at
-# ~1,032 Btu/scf); /granular-intensities used 5.8 Mcf/BOE. One constant is used everywhere now.
-GAS_BOE_PER_MSCF = 0.178
+# API Compendium 2021 BOE conversion: 5.8 MMBtu per BOE and the heat content of the gas. With the platform's
+# natural gas HHV (1,020 Btu/scf, emission_factors.py) that is 1.020 / 5.8 = 0.17586 BOE per Mcf (5,686 scf/BOE).
+# Audit 2026-10-14 BUG-0072: the constant was 0.178, i.e. ~1,032 Btu/scf, inconsistent with the catalog HHV.
+NG_HHV_BTU_PER_SCF = 1020.0
+MMBTU_PER_BOE = 5.8
+GAS_BOE_PER_MSCF = NG_HHV_BTU_PER_SCF / 1000.0 / MMBTU_PER_BOE
 SCF_PER_BOE = 1000.0 / GAS_BOE_PER_MSCF
 
 

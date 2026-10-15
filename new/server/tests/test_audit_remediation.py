@@ -777,8 +777,8 @@ def test_dashboard_intensity_mmscf_scaling(client, test_users):
         fac_stat = stats[0]
         # 10 MMscf = 283,168.0 m3
         assert abs(fac_stat["total_gas_m3"] - 283168.0) < 1.0
-        # 10 MMscf = 10,000 Mscf -> BOE = 100 + (10,000 * 0.178) = 1,880 BOE
-        assert abs(fac_stat["total_boe"] - 1880.0) < 1.0
+        # 10 MMscf = 10,000 Mscf -> BOE = 100 + (10,000 * 1.02 / 5.8) = 1,858.6 BOE
+        assert abs(fac_stat["total_boe"] - (100 + 10_000 * 1.02 / 5.8)) < 1.0
         # 1 MMscf flaring = 28,316.8 m3
         assert abs(fac_stat["flaring_volume"] - 28316.8) < 1.0
         # Flaring rate % = 28,316.8 / 283,168.0 * 100 = 10.0%

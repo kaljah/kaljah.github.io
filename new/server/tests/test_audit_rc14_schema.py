@@ -67,7 +67,8 @@ def test_flask_db_upgrade_brings_existing_snapshot_to_head(tmp_path):
 
 def test_production_refuses_to_start_when_schema_not_at_head(tmp_path):
     db = str(tmp_path / "prod.db")
-    env = _env(db, FLASK_ENV="production", SECRET_KEY=PROD_SECRET)
+    # SQLite in production only through the explicit switch (PYTEST_CURRENT_TEST no longer counts: BUG-0070)
+    env = _env(db, FLASK_ENV="production", SECRET_KEY=PROD_SECRET, ALLOW_SQLITE_IN_PRODUCTION="true")
     p = _run(["-c", "import app"], env)
     assert p.returncode != 0
     assert "flask db upgrade" in p.stderr

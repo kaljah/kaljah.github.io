@@ -273,7 +273,7 @@ def get_emissions():
             Emission.division.label("division"),
             Emission.field.label("field"),
             Emission.equipment_id.label("equipment_id"),
-            Emission.calc_method.label("factor_type"),
+            Emission.factor_source.label("factor_type"),  # default / custom / specific (BUG-0058: was the method)
             Facility.region.label("region"),
             Emission.source_payload.label("source_payload"),
             Emission.uncertainty.label("uncertainty_co2"),
@@ -556,6 +556,8 @@ def add_emission():
     if facility is None:  # the save failed on the foreign key (500) for an admin
         return jsonify({"error": "Facility not found", "field": "facility_id"}), 404
     # Process-specific input validation for associated_gas_venting
+    if not isinstance(data.get("process_type") or "", str):  # BUG-0045: an int / bool was a 500
+        return jsonify({"error": "'process_type' must be text", "field": "process_type"}), 422
     p_type = (data.get("process_type") or "").lower().strip()
     if p_type in ["associated_gas_venting", "associated_venting", "associated_gas"]:
         ch4_in = data.get("ch4_content")
@@ -565,9 +567,7 @@ def add_emission():
 
         if ch4_in not in [None, "", "-"]:
             try:
-                c_ch4_val = float(str(ch4_in).replace("%", "").strip())
-                if c_ch4_val > 1.0:
-                    c_ch4_val /= 100.0
+                c_ch4_val = float(str(ch4_in).replace("%", "").strip()) / 100.0  # mol %, always (BUG-0021)
                 if c_ch4_val < 0.0 or c_ch4_val > 1.0:
                     return jsonify({"error": f"Invalid CH4 content: must be between 0% and 100% (got {c_ch4_val*100:.1f}%)", "field": "ch4_content"}), 422
             except (ValueError, TypeError):
@@ -575,9 +575,7 @@ def add_emission():
 
         if co2_in not in [None, "", "-"]:
             try:
-                c_co2_val = float(str(co2_in).replace("%", "").strip())
-                if c_co2_val > 1.0:
-                    c_co2_val /= 100.0
+                c_co2_val = float(str(co2_in).replace("%", "").strip()) / 100.0  # mol %, always (BUG-0021)
                 if c_co2_val < 0.0 or c_co2_val > 1.0:
                     return jsonify({"error": f"Invalid CO2 content: must be between 0% and 100% (got {c_co2_val*100:.1f}%)", "field": "co2_content"}), 422
             except (ValueError, TypeError):
@@ -718,7 +716,14 @@ def add_emission():
                     record.status = "Pending"
                     record.approved_by = record.approved_by_name = record.approved_at = None
         except Exception:
-            pass
+            # audit 2026-10-14 BUG-0041: a failed statistical check is logged and the record
+            # goes to a reviewer (it stayed Verified without the check)
+            current_app.logger.exception("Anomaly check failed")
+            if not record.qa_flag:
+                record.qa_flag = "Anomaly check could not run: review the value"
+            if record.status == "Verified":
+                record.status = "Pending"
+                record.approved_by = record.approved_at = None
 
     # Audit 2026-10-14 BUG-0028: the bulk import's natural-key duplicate rule. A genuine repeat can be
     # saved on purpose (allow_duplicate) and is then flagged, so a reviewer sees it.
@@ -1041,11 +1046,7 @@ def update_emission(id):
             if record.status == "Verified":
                 record.status, record.approved_by, record.approved_at = "Pending", None, None
                 record.approved_by_name = None
-    else:
-        if "process_type" in data:
-            record.process_type = data["process_type"]
-        if "unit" in data:
-            record.unit = data["unit"]
+    # (process_type and unit are recalculation keys: they never reach here without a recalculation, BUG-0067)
 
     if "group_name" in data:
         record.group_name = data["group_name"]

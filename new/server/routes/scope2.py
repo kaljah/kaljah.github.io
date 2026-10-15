@@ -48,7 +48,8 @@ def resolve_electricity_factor(grid_region, supplied_ef):
 
 
 def default_scope2_uncertainty(co2e):
-    """Default Scope 2 uncertainty (5 % factor, 2 % activity -> ~5.4 % combined), 1-sigma fraction."""
+    """Default Scope 2 uncertainty, stored as a 1-sigma fraction: 5 % factor and 2 % activity data, both 95 %
+    half-widths, give 5.39 % at 95 % = 2.69 % at 1 sigma (BUG-0052: the 5.4 % figure is the 95 % value)."""
     return propagate_uncertainty(
         co2e, ef_uncertainty=0.05, activity_uncertainty=0.02, tier=Tier.T2, process_category="scope2", gas="co2",
     )["relative_uncertainty"]
@@ -280,6 +281,11 @@ def get_scope2_emissions():
                     "co2e_market_based": float(e.co2e_market_based if e.co2e_market_based is not None else (e.co2e or 0)),
                     "market_instrument_type": e.market_instrument_type,
                     "market_emission_factor": float(e.market_emission_factor) if e.market_emission_factor is not None else None,
+                    # audit 2026-10-14 BUG-0073: without a contractual instrument the market-based method uses
+                    # the grid average (no residual mix is available); say so instead of leaving it implicit
+                    "market_basis": ("contractual" if e.market_emission_factor is not None
+                                     else "grid average (no residual mix)")
+                    if "electric" in str(e.source_type or "electricity").lower() else None,
                     "location": e.location,
                     "grid_region": e.grid_region,
                     "activity": e.activity,
@@ -482,7 +488,14 @@ def create_scope2_emission():
                 emission.status = "Pending"
                 emission.approved_by = emission.approved_at = None
     except Exception:
-        pass
+        # audit 2026-10-14 BUG-0041: a failed statistical check is logged and the record
+        # goes to a reviewer (it stayed Verified without the check)
+        current_app.logger.exception("Anomaly check failed")
+        if not emission.qa_flag:
+            emission.qa_flag = "Anomaly check could not run: review the value"
+        if emission.status == "Verified":
+            emission.status = "Pending"
+            emission.approved_by = emission.approved_at = None
 
     try:
         db.session.add(emission)
@@ -729,7 +742,14 @@ def update_scope2_emission(emission_id):
                 emission.status = "Pending"
                 emission.approved_by = emission.approved_at = None
     except Exception:
-        pass
+        # audit 2026-10-14 BUG-0041: a failed statistical check is logged and the record
+        # goes to a reviewer (it stayed Verified without the check)
+        current_app.logger.exception("Anomaly check failed")
+        if not emission.qa_flag:
+            emission.qa_flag = "Anomaly check could not run: review the value"
+        if emission.status == "Verified":
+            emission.status = "Pending"
+            emission.approved_by = emission.approved_at = None
     try:
         from utils import log_activity_and_notify
         log_activity_and_notify(

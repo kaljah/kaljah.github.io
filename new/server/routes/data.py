@@ -188,6 +188,9 @@ def add_production():
         except Exception as retry_err:
             db.session.rollback()
             return jsonify({'error': 'Concurrency conflict: record was modified concurrently. Please refresh and try again.'}), 409
+    except ValidationError:
+        db.session.rollback()
+        raise  # audit 2026-10-14 BUG-0065: a 400 naming the field (the generic handler turned it into a 500)
     except Exception as e:
         db.session.rollback()
         import traceback

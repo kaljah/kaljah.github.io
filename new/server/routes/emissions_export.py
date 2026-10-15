@@ -333,25 +333,27 @@ def export_emissions():
             ws1.cell(row=row_num, column=9, value=_safe_excel_value(item["process"]))
             ws1.cell(row=row_num, column=10, value=_safe_excel_value(item["fuel"]))
 
-            c_qty = ws1.cell(row=row_num, column=11, value=round(item["quantity"], 2))
+            # audit 2026-10-14 BUG-0063: the cells hold the stored values (rounded only by number_format);
+            # small CH4 / N2O masses exported as 0 and a re-import changed the totals
+            c_qty = ws1.cell(row=row_num, column=11, value=item["quantity"])
             c_qty.number_format = "#,##0.00"
             c_qty.alignment = Alignment(horizontal="right")
 
             ws1.cell(row=row_num, column=12, value=_safe_excel_value(item["unit"]))
 
-            c_co2 = ws1.cell(row=row_num, column=13, value=round(item["co2"], 2))
+            c_co2 = ws1.cell(row=row_num, column=13, value=item["co2"])
             c_co2.number_format = "#,##0.00"
             c_co2.alignment = Alignment(horizontal="right")
 
-            c_ch4 = ws1.cell(row=row_num, column=14, value=round(item["ch4"], 2))
-            c_ch4.number_format = "#,##0.00"
+            c_ch4 = ws1.cell(row=row_num, column=14, value=item["ch4"])
+            c_ch4.number_format = "#,##0.000000"
             c_ch4.alignment = Alignment(horizontal="right")
 
-            c_n2o = ws1.cell(row=row_num, column=15, value=round(item["n2o"], 2))
-            c_n2o.number_format = "#,##0.00"
+            c_n2o = ws1.cell(row=row_num, column=15, value=item["n2o"])
+            c_n2o.number_format = "#,##0.000000"
             c_n2o.alignment = Alignment(horizontal="right")
 
-            c_tot = ws1.cell(row=row_num, column=16, value=round(item["co2e_total"], 2))
+            c_tot = ws1.cell(row=row_num, column=16, value=item["co2e_total"])
             c_tot.number_format = "#,##0.00"
             c_tot.alignment = Alignment(horizontal="right")
             c_tot.font = bold_font

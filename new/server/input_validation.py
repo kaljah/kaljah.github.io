@@ -85,6 +85,7 @@ def find_nul(payload, path=""):
 _PASS_THROUGH = {"", "all", "null", "none", "undefined", "baseline"}
 _QUERY_INT_RANGES = {"year": (1900, 2100), "month": (1, 12), "facility_id": (1, 2**31 - 1),
                      "facilityId": (1, 2**31 - 1)}
+NUMERIC_FILTERS = frozenset(_QUERY_INT_RANGES)
 
 
 def invalid_query_parameter(args, numbers=True):

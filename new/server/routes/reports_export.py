@@ -59,27 +59,22 @@ def export_emissions():
 
         emissions_data = []
 
-        # Scope filters for SQL
-        y_int = None
-        if year and year != "all":
-            try:
-                y_int = int(year)
-            except:
-                pass
+        # Scope filters for SQL. Audit 2026-10-14 BUG-0034: a malformed filter is refused (it was ignored
+        # and the PDF silently covered every year / facility).
+        def _filter(value, name, low, high):
+            if not value or value == "all":
+                return None
+            text = str(value).strip()
+            if not text.isdigit() or not low <= int(text) <= high:
+                raise ValueError(f"Invalid {name} filter: '{value}'")
+            return int(text)
 
-        m_int = None
-        if month and month != "all":
-            try:
-                m_int = int(month)
-            except:
-                pass
-
-        f_int = None
-        if facility_id and facility_id != "all":
-            try:
-                f_int = int(facility_id)
-            except:
-                pass
+        try:
+            y_int = _filter(year, "year", 1900, 2200)
+            m_int = _filter(month, "month", 1, 12)
+            f_int = _filter(facility_id, "facility_id", 1, 2**31 - 1)
+        except ValueError as err:
+            return jsonify({"error": str(err)}), 400
 
         if f_int is not None and allowed_fids is not None and f_int not in allowed_fids:
             return jsonify({"error": "Unauthorized facility"}), 403

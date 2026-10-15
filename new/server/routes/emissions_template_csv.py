@@ -5,6 +5,7 @@ Registered on the same ``emissions_bp`` blueprint, so URLs and endpoint names ar
 from flask import Response, request
 
 from . import emissions_bp
+from routes.auth import login_required
 from utils import get_allowed_facility_ids, get_current_user
 
 
@@ -27,6 +28,7 @@ def _template_args():
 
 
 @emissions_bp.route("/template/csv", methods=["GET"])
+@login_required  # audit 2026-10-14 BUG-0074: built per request (~1 s CPU); the wizard is signed in
 def get_csv_template():
     """Scope 1 CSV template built from services.scope1_template: column names are the import names,
     one short help row, example rows dated EXAMPLE (skipped on import). Only the columns of the chosen

@@ -26,6 +26,9 @@ from routes.auth import (
 )
 
 
+USER_STATUSES = ("active", "inactive", "disabled")
+
+
 def _user_json(u):
     return {k: getattr(u, k) for k in ("id", "fullName", "email", "orgName", "role", "location", "department",
                                        "jobTitle", "status")}
@@ -117,6 +120,17 @@ def update_user(id):
         db.session.rollback()
         return jsonify({"error": SUPERUSER_REGION_ERROR, "field": "location"}), 400
     if "status" in data:
+        # audit 2026-10-14 BUG-0038: a known status only, and the last active admin stays active
+        new_status = str(data["status"] or "").strip().lower()
+        if new_status not in USER_STATUSES:
+            db.session.rollback()
+            return jsonify({"error": f"Invalid status. Must be one of: {', '.join(USER_STATUSES)}",
+                            "field": "status"}), 400
+        if (user.role == "admin" and user.status == "active" and new_status != "active"
+                and User.query.filter_by(role="admin", status="active").count() <= 1):
+            db.session.rollback()
+            return jsonify({"error": "This is the last active administrator account"}), 409
+        data["status"] = new_status
         if data["status"] != user.status:
             user.session_version = int(user.session_version or 0) + 1  # BUG-114
         user.status = data["status"]

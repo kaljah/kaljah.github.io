@@ -311,3 +311,26 @@ $$\text{WEC Fee (USD)} = \text{Excess CH}_4 \times \text{Rate}_{\text{year}}$$
 - **Level 4:** Source-level direct measurements or engineering calculation.
 - **Level 5:** Reconciled site-level top-down survey with bottom-up inventory within $\le 20\%$ variance:
   $$\text{Variance (\%)} = \frac{\text{Top Down} - \text{Bottom Up}}{\text{Bottom Up}} \times 100$$
+
+## Methodology review against the API Compendium (audit 2026-10-14)
+
+Checked against the API Compendium 2021 and its December 2025 list of technical corrections
+(api.org, "251201 API GHG Compendium Corrections").
+
+| Item | Value used | Source / status |
+|---|---|---|
+| Flare CO2 combustion efficiency | 96.5 % | Compendium section 5.1.2 as corrected December 2025 (100 % allowed for conservatism). Already in `calculations/combustion.py`. |
+| Flare CH4 destruction efficiency | 98 % production flares, 99.5 % refinery flares | Same correction; refinery value set by segment in `calculations/flare_defaults.py`. |
+| Flare N2O default (Eq 5-6) | 1.0E-04 kg/MMBtu natural gas, 6.0E-04 kg/MMBtu fuel gas | Corrected values; the fuel-gas default is now applied when the flared fuel is a (refinery) fuel gas. |
+| BOE conversion | 5.8 MMBtu/BOE at the gas heat content: 1,020 Btu/scf / 5.8 = 0.17586 BOE per Mscf | Compendium BOE basis. The previous 0.178 implied ~1,032 Btu/scf, inconsistent with the catalog HHV. `services/dashboard_filters.GAS_BOE_PER_MSCF`. |
+| Natural gas HHV | 1,020 Btu/scf (catalog) | Not changed. 40 CFR 98 Table C-1 uses 1.026E-03 MMBtu/scf; the Compendium examples use site values. A site HHV entered on the record takes precedence. |
+| Gas analyses summing to 98-99.999 % | renormalised to 100 % | Unchanged (analysis rounding). |
+
+Percent inputs: fields documented as percentages (CH4 / CO2 contents, AGR inlet / outlet CO2, CCS capture
+rate) are always read as percent and converted to fractions once in the dispatcher
+(`PERCENT_FIELDS`); a value of 1 is 1 %, not 100 %.
+
+Scope 2 market-based method: a record without a contractual instrument (REC, GO, PPA, supplier factor)
+uses the grid-average (location) factor, because no residual-mix factors are available. The Scope 2 list
+marks such records `market_basis: "grid average (no residual mix)"` so reports can disclose it (GHG
+Protocol Scope 2 Guidance, section 6.11).

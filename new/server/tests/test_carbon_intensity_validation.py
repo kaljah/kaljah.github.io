@@ -18,7 +18,7 @@ from models import Facility, Emission, ProductionData, Scope2Emission, Scope3Emi
 from routes.dashboard import _query_intensity_stats, _query_intensity_trend_bulk, clear_dashboard_cache
 from calculations.constants import get_active_gwp
 
-GAS_TO_BOE = 0.178
+GAS_TO_BOE = (1.02 / 5.8)
 DENSITY_CH4 = (16.04 / 23.685)  # kg/m3
 
 
@@ -231,7 +231,7 @@ def test_boe_conversion_gas_units():
     vol_m3 = 1000.0
     expected_mscf = vol_m3 * 0.0353147
     expected_boe = expected_mscf * GAS_TO_BOE
-    assert abs(expected_boe - (1000.0 * 0.0353147 * 0.178)) < 1e-6
+    assert abs(expected_boe - (1000.0 * 0.0353147 * (1.02 / 5.8))) < 1e-6
 
     # 1 scf gas = 0.001 mscf
     vol_scf = 1000000.0

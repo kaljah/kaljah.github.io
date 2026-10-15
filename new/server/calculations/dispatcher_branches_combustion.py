@@ -394,7 +394,7 @@ def calc_liquids_unloading(self, calculator, emission_factors, flat_inputs, gwp_
         p_sep = self._require_float(flat_inputs, ["p_sep", "separator_pressure"], "separator pressure (Psep)")
         sfr_p = self._require_float(flat_inputs, ["sfr_p", "sfr", "production_rate"], "daily gas production rate (SFRp)")
         t_p = self._require_float(flat_inputs, ["t_p", "hours_open", "venting_time"], "hours vented per event (Tp)")
-        events = int(self._require_float(flat_inputs, ["unload_freq", "unload_events", "events", "amount"], "annual unloading events"))
+        events = self._whole(self._require_float(flat_inputs, ["unload_freq", "unload_events", "events", "amount"], "annual unloading events"), "annual unloading events")
         # the gas CH4 content is a site input, as for Eq 6-3 / 6-10 (it defaulted to an invented 85 %)
         ch4_content = self._require_fraction(flat_inputs, ["ch4_content", "c1", "unload_ch4_content"], "gas CH4 content %")
         co2_content = self._optional_fraction(flat_inputs, ["co2_content", "co2_mol"], 0.0)
@@ -427,7 +427,7 @@ def calc_liquids_unloading(self, calculator, emission_factors, flat_inputs, gwp_
         depth = self._require_float(flat_inputs, ["unload_depth", "well_depth"], "well depth (ft)")
         diam = self._require_float(flat_inputs, ["unload_diam", "diameter"], "casing diameter (in)")
         press = self._require_float(flat_inputs, ["unload_press", "pressure"], "shut-in surface pressure (psig)")
-        events = int(self._require_float(flat_inputs, ["unload_freq", "unload_events", "events", "amount"], "annual unloading events"))
+        events = self._whole(self._require_float(flat_inputs, ["unload_freq", "unload_events", "events", "amount"], "annual unloading events"), "annual unloading events")
         sfr = self._require_float(flat_inputs, ["sfr", "subpart_w_sfr"], "sales flow rate (SFR)")
         hours_open = self._require_float(flat_inputs, ["hours_open", "hrs_open", "venting_hours"], "hours venting during unloading (HR)")
         ch4_content = self._require_fraction(flat_inputs, ["ch4_content", "c1", "unload_ch4_content"], "gas CH4 content %")
@@ -477,7 +477,7 @@ def calc_liquids_unloading(self, calculator, emission_factors, flat_inputs, gwp_
             ["unload_press", "pressure"],
             "shut-in surface pressure (psig)",
         )
-        events = int(
+        events = self._whole(
             self._require_float(
                 flat_inputs,
                 ["unload_freq", "unload_events", "events", "amount"],

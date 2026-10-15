@@ -184,7 +184,7 @@ export const CbamSection: React.FC<CbamSectionProps> = ({
 );
 };
 
-const GAS_TO_BOE = 0.178;
+const GAS_TO_BOE = (1.02 / 5.8);
 
 export interface RegionalChartsProps {
   data: any[];

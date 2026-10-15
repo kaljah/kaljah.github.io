@@ -245,8 +245,12 @@ def test_notification_broadcast_handling(client):
     assert res_dismiss.status_code == 200
     assert res_dismiss.get_json()["success"] is True
 
-    # Verify notification is marked read
+    # Verify the broadcast is read for the admin, and only for the admin (audit 2026-10-14 BUG-0043: an
+    # account's "dismiss all" used to mark broadcasts read for everyone)
+    import json as _json
+
     with client.application.app_context():
         updated_notif = db.session.get(Notification, notif_id)
-        assert updated_notif.is_read is True
+        assert admin_id in _json.loads(updated_notif.metadata_json)["read_by"]
+        assert updated_notif.is_read is False
 

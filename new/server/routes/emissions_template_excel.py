@@ -5,10 +5,12 @@ Registered on the same ``emissions_bp`` blueprint, so URLs and endpoint names ar
 from flask import send_file
 
 from . import emissions_bp
+from routes.auth import login_required
 from .emissions_template_csv import _template_args
 
 
 @emissions_bp.route("/template/excel", methods=["GET"])
+@login_required  # audit 2026-10-14 BUG-0074: built per request (~1 s CPU); the wizard is signed in
 def get_excel_template():
     """Scope 1 Excel template from the same column spec: Data Entry with dropdowns (the fuel and unit
     lists follow the row's process), Examples, Reference and a hidden Lists sheet."""

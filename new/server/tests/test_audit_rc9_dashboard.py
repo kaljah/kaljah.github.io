@@ -1,6 +1,6 @@
 """RC-9 / RC-12 dashboard regressions on a controlled dataset.
 
-Hand values: AR5 GWP-100 CH4 28 / N2O 265 (stored co2e); BOE = oil bbl + gas Mcf x 0.178.
+Hand values: AR5 GWP-100 CH4 28 / N2O 265 (stored co2e); BOE = oil bbl + gas Mcf x 0.17586.
 """
 import pytest
 
@@ -106,7 +106,7 @@ def test_bug041_no_goal_badge_in_all_years_or_filtered_view(world):
 def test_bug017_all_years_intensity_pairs_emissions_with_production(world):
     rows = world["client"].get(f"/api/dashboard/intensity-stats?year=all&facilityId={world['f1'].id}").get_json()
     r = rows[0]
-    boe = 1000 + 10000 * 0.178
+    boe = 1000 + 10000 * (1.02 / 5.8)
     assert r["total_boe"] == pytest.approx(boe)
     assert r["intensity_years"] == [2031]
     assert r["co2_intensity"] == pytest.approx((178 + 10) * 1000 / boe)  # 2032's 1000 t excluded

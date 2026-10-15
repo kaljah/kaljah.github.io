@@ -38,8 +38,7 @@ class Config:
         allow_sqlite = (
             os.environ.get("ALLOW_SQLITE_IN_PRODUCTION", "").lower() in ("1", "true")
             or os.environ.get("ALLOW_SQLITE_IN_PROD", "").lower() in ("1", "true")
-            or bool(os.environ.get("PYTEST_CURRENT_TEST"))
-        )
+        )  # BUG-0070: PYTEST_CURRENT_TEST in the environment no longer lifts the prohibition
         if not allow_sqlite and ("sqlite" in prod_db_url.lower() or os.environ.get("DB_TYPE", "").lower() == "sqlite"):
             raise ValueError(
                 "FATAL: SQLite is prohibited in production. A production deployment requires PostgreSQL with a valid postgresql:// DATABASE_URL."
@@ -47,10 +46,15 @@ class Config:
     else:
         SECRET_KEY = os.environ.get("SECRET_KEY")
         if not SECRET_KEY:
-            SECRET_KEY = "dev-secret-key-change-in-prod-please"
+            # audit 2026-10-14 BUG-0046: the fallback was a key published in the source, so anyone could
+            # sign an admin session when both FLASK_ENV and SECRET_KEY were unset. A random key per
+            # process cannot be forged (sign-ins end when the server restarts).
+            import secrets
+
+            SECRET_KEY = secrets.token_hex(32)
             logging.getLogger(__name__).warning(
-                "SECRET_KEY is not set; using the built-in development key. "
-                "This is only acceptable for local development and testing."
+                "SECRET_KEY is not set; using a random key for this process (sign-ins end when the "
+                "server restarts). Set SECRET_KEY outside local development and testing."
             )
 
     # Dedicated HMAC key for cryptographic audit checkpoint verification (distinct from SECRET_KEY)
@@ -61,7 +65,8 @@ class Config:
         import hashlib
         import hmac
         AUDIT_HMAC_KEY = hmac.new(
-            (SECRET_KEY or "dev-secret-key").encode("utf-8"),
+            # a random development SECRET_KEY would change the checkpoint key at every restart
+            (os.environ.get("SECRET_KEY") or "dev-secret-key").encode("utf-8"),
             b"neocarbon-audit-checkpoint-v1",
             hashlib.sha256,
         ).hexdigest()

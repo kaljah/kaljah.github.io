@@ -167,7 +167,7 @@ def test_monthly_production_rate_is_not_annualised():
         oil_amount, oil_unit, total_production_mmboe, gross_gas_mmsm3 = 0, "bbl", 0, 0
 
     assert production_gas_m3(Row()) == pytest.approx(310 * 28316.846592)
-    assert production_boe(Row()) == pytest.approx(310e6 / (1000.0 / 0.178))
+    assert production_boe(Row()) == pytest.approx(310e6 / (1000.0 / (1.02 / 5.8)))
 
 
 # -- Factor-name matching, custom factor and equity percentages ---------------------------------

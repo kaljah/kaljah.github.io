@@ -23,7 +23,7 @@ def calc_venting(self, calculator, emission_factors, flat_inputs, gwp_dict, unce
         ["blowdown_pressure", "pressure"],
         "vessel pressure before blowdown (psig)",
     )
-    events = int(
+    events = self._whole(
         self._require_float(
             flat_inputs,
             ["blowdown_events", "events"],

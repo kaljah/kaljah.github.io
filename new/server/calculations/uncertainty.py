@@ -532,9 +532,11 @@ def propagate_uncertainty(
 
     Args:
         value (float): Calculated emission in tonnes.
-        ef_uncertainty (float): Relative EF uncertainty (1σ, e.g. 0.10 = ±10%).
-                                Pass 0.0 if the EF is exact (Tier 3 mass balance).
-        activity_uncertainty (float|None): Override activity data uncertainty.
+        ef_uncertainty (float): Relative EF uncertainty as a 95 % half-width (U95, e.g. 0.10 = ±10 % at
+                                95 %), as the IPCC / API tables publish it; it is halved (k = 2) to a 1σ
+                                standard uncertainty below. Pass 0.0 if the EF is exact (Tier 3 mass
+                                balance). (Audit 2026-10-14 BUG-0052: this said 1σ.)
+        activity_uncertainty (float|None): Override activity data uncertainty, also a 95 % half-width.
                                            If None, derived from tier.
         tier (int): Tier.T1 / Tier.T2 / Tier.T3
         process_category (str): Source category for default lookup.

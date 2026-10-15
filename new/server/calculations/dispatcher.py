@@ -540,6 +540,14 @@ class CalculationDispatcher:
                              "(use kg/m3, kg/L, g/cm3, lb/gal or lb/ft3)")
         return d * self._DENSITY_TO_KG_M3[u]
 
+    @staticmethod
+    def _whole(value, desc="event count"):
+        """An event count: a whole number. 2.7 events were truncated to 2 and 0.5 to 0 without a
+        word (audit 2026-10-14 BUG-0049)."""
+        if value is None or float(value) != int(float(value)):
+            raise ValueError(f"'{desc}' must be a whole number (got {value})")
+        return int(float(value))
+
     def _optional_fraction(self, flat_inputs, keys, default=0.0, is_percent=False):
         """Extracts an optional percentage or fraction normalized to 0.0 - 1.0."""
         if isinstance(keys, str):

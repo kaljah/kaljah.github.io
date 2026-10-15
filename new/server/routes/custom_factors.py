@@ -361,6 +361,18 @@ def update_custom_factor(factor_id):
     return jsonify({"message": "Custom factor updated"})
 
 
+def _org_factor_denied(user, factor, action):
+    """Audit 2026-10-14 BUG-0044: custom factors are organisation-wide. An approved factor, or one another
+    account created, is archived or deleted by an administrator only (a regional superuser could remove
+    factors other regions use)."""
+    if user is not None and user.role == "admin":
+        return None
+    if factor.status == "Approved" or factor.created_by != getattr(user, "id", None):
+        return jsonify({"error": f"Only an administrator can {action} an approved factor or another "
+                                 "account's factor"}), 403
+    return None
+
+
 @custom_factors_bp.route("/<int:factor_id>", methods=["DELETE"])
 @superuser_required
 def delete_custom_factor(factor_id):
@@ -372,6 +384,9 @@ def delete_custom_factor(factor_id):
     if not factor:
         return jsonify({"error": "Factor not found"}), 404
 
+    denied = _org_factor_denied(user, factor, "delete")
+    if denied:
+        return denied
     refs = factor_references(factor)
     if refs > 0:
         # BUG-056: a factor used by emission records cannot be deleted (its id must never be
@@ -409,6 +424,9 @@ def archive_custom_factor(factor_id):
     factor = db.session.get(CustomFactor, factor_id)
     if not factor:
         return jsonify({"error": "Factor not found"}), 404
+    denied = _org_factor_denied(user, factor, "archive or restore")
+    if denied:
+        return denied
     restore = bool((request.get_json(silent=True) or {}).get("restore"))
     if restore and _name_taken(factor.name, exclude_id=factor.id):
         return jsonify({"error": f"An active custom factor named '{factor.name}' already exists"}), 409
@@ -425,7 +443,8 @@ def archive_custom_factor(factor_id):
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": f"Failed to {'restore' if restore else 'archive'} factor: {e}"}), 500
+        current_app.logger.error(f"Error archiving custom factor: {e}")
+        return jsonify({"error": f"Failed to {'restore' if restore else 'archive'} the factor"}), 500
     return jsonify({"message": f"Custom factor {'restored' if restore else 'archived'}", "archived": factor.is_archived})
 
 

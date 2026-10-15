@@ -602,7 +602,10 @@ class FlaringCalculator(BaseCalculator):
         )
 
         # N2O from flaring (energy or volume basis aware)
-        _ef_n2o = float(ef_n2o) if ef_n2o is not None else 0.0001  # API Compendium 2021 Table 5-3
+        # API Compendium 2021 Eq 5-6 default as corrected in December 2025: 1.0E-04 kg/MMBtu for natural gas,
+        # 6.0E-04 kg/MMBtu for (refinery) fuel gas (audit 2026-10-14 BUG-0072 review)
+        _is_fuel_gas = "fuel gas" in str(fuel_type or "").lower() or "refinery" in str(fuel_type or "").lower()
+        _ef_n2o = float(ef_n2o) if ef_n2o is not None else (0.0006 if _is_fuel_gas else 0.0001)
         if _ef_n2o > 0:
             ef_u = str(ef_unit or "kg/mmbtu").lower()
             if "mmbtu" in ef_u or ef_unit is None:
