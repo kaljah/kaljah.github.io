@@ -1,6 +1,6 @@
 import math
 
-from .units import UnitError
+from .units import UnitError, parse_amount
 from .uncertainty import COVERAGE_FACTOR_95
 import math
 from .combustion import CombustionCalculator, FlaringCalculator, factor_hhv_unit, user_hhv
@@ -523,6 +523,19 @@ class CalculationDispatcher:
     _DENSITY_TO_KG_M3 = {"kg/m3": 1.0, "kg/l": 1000.0, "g/ml": 1000.0, "g/cm3": 1000.0, "t/m3": 1000.0,
                          "lb/gal": 119.826427, "lb/usgal": 119.826427, "lb/ft3": 16.0184634, "lb/bbl": 119.826427 / 42.0}
 
+    @staticmethod
+    def _catalog_fuel(inputs, emission_factors):
+        """The named catalog fuel (its tabulated HHV, basis and type) when neither the inputs nor
+        the factor row carry an HHV; {} otherwise."""
+        if inputs.get("hhv") or emission_factors.get("hhv"):
+            return {}
+        try:
+            from routes.emissions import _lookup_api_factor
+
+            return _lookup_api_factor(inputs.get("fuel") or inputs.get("fuel_type")) or {}
+        except Exception:
+            return {}
+
     def _fuel_density(self, flat_inputs):
         """Fuel density in kg/m3 (density / fuel_density, unit density_unit). The form enters kg/m3; a
         bulk density_unit was ignored (8.3 lb/gal read as 8.3 kg/m3)."""
@@ -778,12 +791,7 @@ class CalculationDispatcher:
                     )
 
         raw_qty = flat_inputs.get("amount") if flat_inputs.get("amount") not in [None, ""] else flat_inputs.get("quantity")
-        if isinstance(raw_qty, str):
-            s = raw_qty.strip()
-            if "," in s and "." not in s:
-                raw_qty = s.replace(",", ".")
-            else:
-                raw_qty = s.replace(",", "")
+        raw_qty = parse_amount(raw_qty)
         try:
             quantity = float(raw_qty or 0)
         except (ValueError, TypeError):
@@ -930,7 +938,8 @@ class CalculationDispatcher:
                 "mobile_combustion",
                 "mobile",
             ]:
-                hhv_val = flat_inputs.get("hhv") or emission_factors.get("hhv")
+                catalog = self._catalog_fuel(flat_inputs, emission_factors)
+                hhv_val = flat_inputs.get("hhv") or emission_factors.get("hhv") or catalog.get("hhv")
                 density_val = self._fuel_density(flat_inputs)
                 # S1K-F11: a site HHV carries its own unit (MJ/m3, kcal/m3, Btu/gal ...)
                 user_hu = None
@@ -943,15 +952,16 @@ class CalculationDispatcher:
                         ef_ch4=emission_factors.get("ch4", 0),
                         ef_n2o=emission_factors.get("n2o", 0),
                         uncertainties=uncertainties,
-                        hhv=float(hhv_val) if hhv_val else 1020.0,
+                        # no HHV is an error for an energy factor, never the natural-gas 1020 Btu/scf
+                        hhv=float(hhv_val) if hhv_val else None,
                         ef_unit=flat_inputs.get(
                             "ef_unit", emission_factors.get("unit", "kg/unit")
                         ),
                         fuel_unit=unit,
                         # BUG-027: the HHV basis comes from the factor's catalog type / hhv_unit
-                        fuel_type=emission_factors.get("type") or flat_inputs.get("fuel_type")
+                        fuel_type=emission_factors.get("type") or catalog.get("type") or flat_inputs.get("fuel_type")
                         or emission_factors.get("fuel_type", "unknown"),
-                        hhv_unit=user_hu or factor_hhv_unit(emission_factors),
+                        hhv_unit=user_hu or factor_hhv_unit(emission_factors) or factor_hhv_unit(catalog),
                         combustion_efficiency=float(
                             flat_inputs.get("combustion_efficiency") or 0.995
                         ),
@@ -1110,12 +1120,7 @@ class CalculationDispatcher:
         gwp_dict=None,
     ):
         raw_q = inputs.get("amount") if inputs.get("amount") not in [None, ""] else inputs.get("quantity")
-        if isinstance(raw_q, str):
-            s = raw_q.strip()
-            if "," in s and "." not in s:
-                raw_q = s.replace(",", ".")
-            else:
-                raw_q = s.replace(",", "")
+        raw_q = parse_amount(raw_q)
         quantity = float(raw_q or 0)
         if not math.isfinite(quantity) or quantity < 0:
             raise ValueError("Activity amount must be a finite, non-negative number")  # BUG-050
@@ -1139,14 +1144,7 @@ class CalculationDispatcher:
 
         hours = operating_hours(inputs)
         # a named catalog fuel supplies its own tabulated HHV / basis when the factor row lacks them
-        catalog = {}
-        if not (inputs.get("hhv") or emission_factors.get("hhv")):
-            try:
-                from routes.emissions import _lookup_api_factor
-
-                catalog = _lookup_api_factor(inputs.get("fuel") or inputs.get("fuel_type")) or {}
-            except Exception:
-                catalog = {}
+        catalog = self._catalog_fuel(inputs, emission_factors)
         conv = dict(
             hhv=inputs.get("hhv") or emission_factors.get("hhv") or catalog.get("hhv"),
             fuel_type=emission_factors.get("type") or catalog.get("type") or inputs.get("fuel_type") or inputs.get("fuel"),

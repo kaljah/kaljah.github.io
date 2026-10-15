@@ -312,7 +312,7 @@ TIER1_FUEL_ADDITIONS = {
     "Lubricants": _fuel("Lube", 144000, "gal", 74.27, _PETROLEUM_CH4, _PETROLEUM_N2O, "Table 4-5 / 4-6"),
     "Waste Oil": _fuel("WasteOil", 138000, "gal", 74.00, _PETROLEUM_CH4, _PETROLEUM_N2O, "Table 4-5 used oil / Table 4-6"),
     # solids: HHV in kBtu per short ton
-    "Tires": _fuel("Tires", 28000, "ton", 85.97, 0.032, 0.0042,
+    "Tires": _fuel("Tires", 28000, "short_ton", 85.97, 0.032, 0.0042,
                    "Table 4-5; CH4 / N2O 40 CFR 98 Table C-2 other solid fuels", unc=(0.03, 0.3, 0.4)),
     # gases (per scf)
     "Acetylene": _fuel("Acetylene", 1470, "scf", 71.59, _PETROLEUM_CH4, _PETROLEUM_N2O,

@@ -70,7 +70,7 @@ VEHICLE_FACTORS = {
 LIQ_TO_GAL = {"gal": 1.0, "bbl": 42.0, "m3": 264.172052, "l": 0.264172052}
 GAS_TO_SCF = {"scf": 1.0, "mcf": 1e3, "mscf": 1e3, "mmscf": 1e6, "m3": 1 / SCF_TO_M3, "sm3": 1 / SCF_TO_M3}
 MASS_TO_T = {"t": 1.0, "tonne": 1.0, "tonnes": 1.0, "kg": 1e-3, "lb": 1 / 2204.62,
-             "short_ton": 0.90718474, "ton": 0.90718474, "tons": 0.90718474}
+             "short_ton": 0.90718474}  # a bare "ton" is ambiguous and refused
 DENSITY_TO_LB_GAL = {"lb/gal": 1.0, "kg/m3": 1 / 119.826427, "kg/l": 8.34540445, "g/ml": 8.34540445}
 DIST_TO_MILE = {"mile": 1.0, "mi": 1.0, "miles": 1.0, "km": 0.621371192}
 

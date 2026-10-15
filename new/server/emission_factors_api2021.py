@@ -971,11 +971,11 @@ VENTED_FACTORS = {
         "type": "equipment",
         # API Compendium 2021 Table 6-52 (per short ton blown): CH4 3.07E-03 t, CO2 5.61E-03 t
         # (Exhibit 6-45). Corrected from 0.02268 / 10.43 kg/ton, which the table does not support.
-        "ch4": 3.07,  # kg CH4/ton
-        "co2": 5.61,  # kg CO2/ton
+        "ch4": 3.07,  # kg CH4/short ton
+        "co2": 5.61,  # kg CO2/short ton
         "n2o": 0,
         "uncertainty": {"co2": 0.30, "ch4": 0.30, "n2o": 0},
-        "unit": "kg/ton",
+        "unit": "kg/short_ton",
         "segment": "Downstream",
         "process_category": "asphalt_blowing",
         "source": "API Compendium 2021 Section 6, Table 6-52",

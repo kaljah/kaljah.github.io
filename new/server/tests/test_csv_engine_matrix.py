@@ -126,7 +126,7 @@ class TestFieldCoercionAndSanitization:
             ("-85,25", -85.25),
             # Thousands separators (comma)
             ("1,000,000.50", 1000000.50),
-            ("12,345", 12345.0),
+            ("12,345", None),  # ambiguous (12345 or 12.345): never guessed (bug hunt 2026-10-15 #31)
             # Thousands separators (dot) with European comma
             ("1.000.000,50", 1000000.50),
             ("12.345,67", 12345.67),
@@ -181,8 +181,9 @@ class TestFieldCoercionAndSanitization:
         assert _clean_float(float("nan"), default=0.0) == 0.0
         assert _clean_float(float("inf"), default=0.0) == 0.0
         assert _clean_float(float("-inf"), default=0.0) == 0.0
-        assert _clean_float("Infinity", default=0.0) == 0.0
-        assert _clean_float("-Infinity", default=0.0) == 0.0
+        # text that is not a usable number is unreadable (None), never the default
+        assert _clean_float("Infinity", default=0.0) is None
+        assert _clean_float("-Infinity", default=0.0) is None
 
 
 # ==============================================================================

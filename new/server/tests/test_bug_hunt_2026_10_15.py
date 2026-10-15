@@ -1,0 +1,159 @@
+"""Regression tests for the 2026-10-15 source-only bug hunt (findings #1-#37)."""
+import pytest
+
+from app import app
+from calculations import compute_emissions
+from calculations import legacy_engine
+from calculations.combustion import convert_factor_to_kg_per_unit
+
+
+@pytest.fixture
+def ctx():
+    with app.app_context():
+        yield
+
+
+def _em(payload, factor=None):
+    return compute_emissions(dict(payload), factor or {})[0]
+
+
+# ── Batch 1: combustion and flaring ─────────────────────────────────────────────────
+
+DIESEL_NO_HHV = {"unit": "kg/MMBtu", "co2": 73.96, "ch4": 0.003, "n2o": 0.0006}
+DIESEL = dict(process_type="combustion", fuel="Diesel", amount=1000, unit="gal",
+              factor_source="default", date="2025-01-15")
+
+
+def test_1_density_does_not_replace_the_fuel_hhv_with_1020(ctx):
+    plain = _em(DIESEL, DIESEL_NO_HHV)["co2"]
+    with_density = _em(dict(DIESEL, density=840), DIESEL_NO_HHV)["co2"]
+    assert plain == pytest.approx(10.2065, rel=1e-3)
+    assert with_density == pytest.approx(plain, rel=1e-9)  # was 0.076 t (135x low)
+
+
+def test_1_energy_factor_without_any_hhv_is_refused(ctx):
+    with pytest.raises(ValueError, match="HHV"):
+        _em(dict(DIESEL, fuel="Not a catalog fuel", density=840), DIESEL_NO_HHV)
+
+
+FLARE = dict(process_type="flaring", amount=1, unit="MMscf", factor_source="specific",
+             ch4_content=90, date="2025-01-15", year=2025, month=1)
+
+
+def test_2_standard_flare_volume_is_not_corrected_for_temperature_and_pressure_twice(ctx):
+    plain = _em(FLARE)["co2"]
+    assert plain == pytest.approx(45.70, rel=1e-3)
+    assert _em(dict(FLARE, operating_temperature=40, operating_pressure=50))["co2"] == pytest.approx(plain)  # was 188 t
+    # an actual volume is still corrected
+    actual = _em(dict(FLARE, amount=28316.85, unit="m3", operating_temperature=40, operating_pressure=50))["co2"]
+    assert actual > 3 * plain
+
+
+@pytest.mark.parametrize("hhv,unit", [(1020, "Btu/scf"), (38.0, "MJ/Sm3"), (38.0, "MJ/m3"), (40.1, "MJ/Nm3")])
+def test_6_flare_hhv_per_standard_volume_is_rescaled_to_scf(ctx, hhv, unit):
+    n2o = _em(dict(FLARE, hhv=hhv, hhv_unit=unit))["n2o"]
+    assert n2o == pytest.approx(1.02e-4, rel=0.06)  # MJ/Sm3 was read as Btu/scf: 35x high
+
+
+def test_6_flare_hhv_per_mass_is_refused(ctx):
+    with pytest.raises(ValueError, match="gas volume"):
+        _em(dict(FLARE, hhv=50, hhv_unit="MJ/kg"))
+
+
+def test_9_flare_n2o_factor_in_g_per_mmbtu_is_not_read_as_kg(ctx):
+    kg = _em(dict(FLARE, ef_n2o=0.0001, ef_unit="kg/MMBtu"))["n2o"]
+    g = _em(dict(FLARE, ef_n2o=0.1, ef_unit="g/MMBtu"))["n2o"]
+    assert g == pytest.approx(kg)  # was 1000x high
+
+
+def test_3_gas_density_is_not_taken_for_a_liquid_in_kg_per_litre():
+    # 2.7 kg CO2 per kg of gas, 0.75 kg/m3: 2.025 kg per m3 (was 2025)
+    assert convert_factor_to_kg_per_unit(2.7, "kg/kg", "m3", fuel_type="Natural Gas", density=0.75) == pytest.approx(2.025)
+    assert convert_factor_to_kg_per_unit(2.7, "kg/kg", "scf", fuel_type="custom", density=0.75) == pytest.approx(2.025 * 0.0283168, rel=1e-4)
+    # a liquid in kg/L is still read as such
+    assert convert_factor_to_kg_per_unit(3.2, "kg/kg", "gal", fuel_type="Diesel", density=0.84) == pytest.approx(
+        convert_factor_to_kg_per_unit(3.2, "kg/kg", "gal", fuel_type="Diesel", density=840))
+
+
+def test_10_legacy_hhv_basis_comes_from_its_unit_not_its_size():
+    # 38 MJ/m3 gas: 1000 m3 -> 38 GJ; 50 kg/GJ -> 1900 kg per 1000 m3
+    kg = legacy_engine._convert_factor_to_kg(50, "kg/GJ", "m3", hhv=38 / 0.001055056, hhv_unit="btu/m3",
+                                             fuel_type="gases")
+    assert kg * 1000 == pytest.approx(1900, rel=1e-6)
+
+
+def test_11_legacy_same_unit_factor_is_kg_per_unit_even_for_tonnes():
+    kg = legacy_engine._calculate_default_kg(10, "tonnes", {"co2": 2.5, "unit": "tonnes"}, "co2")
+    assert kg == pytest.approx(25.0)  # was 25000
+
+
+def test_11_legacy_unreadable_factor_unit_is_refused():
+    with pytest.raises(ValueError):
+        legacy_engine._calculate_default_kg(10, "gal", {"co2": 2.5, "unit": "kg/furlong"}, "co2")
+
+
+# ── Batch 2: units and number parsing ───────────────────────────────────────────────
+
+from calculations.units import (UnitError, composition_fractions, convert_temperature,  # noqa: E402
+                                factor_to_kg_per_activity, parse_amount, parse_factor_unit, unit_dimension)
+
+
+@pytest.mark.parametrize("unit,scf_per_den", [
+    ("kg/1000 scf", 1000), ("kg/1,000 scf", 1000), ("kg/10^3 scf", 1000), ("kg/10³ scf", 1000),
+    ("tonne CH4/10⁶ scf", 1e6), ("kg/1e6 scf", 1e6), ("kg/thousand scf", 1000), ("kg/scf", 1),
+])
+def test_4_numeric_denominator_scales(unit, scf_per_den):
+    (dim, f, tok), = parse_factor_unit(unit)["denominators"]
+    assert tok == "scf" and f == pytest.approx(0.028316846592 * scf_per_den)
+
+
+def test_4_per_100_gal_is_not_per_gal():
+    assert factor_to_kg_per_activity(10, "kg/100 gal", "gal") == pytest.approx(0.1)  # was 10
+
+
+def test_5_amount_text_with_a_comma_is_refused(ctx):
+    with pytest.raises(ValueError, match="comma"):
+        parse_amount("1,000")
+    assert parse_amount("1000.5") == 1000.5 and parse_amount(None) == 0.0
+    with pytest.raises(ValueError):
+        _em(dict(DIESEL, amount="1,000"), DIESEL_NO_HHV)  # was booked as 1 gal
+
+
+def test_7_unknown_target_temperature_unit_is_refused():
+    assert convert_temperature(100, "C", "F") == pytest.approx(212)
+    with pytest.raises(UnitError):
+        convert_temperature(100, "C", "degrees")  # returned Kelvin
+
+
+@pytest.mark.parametrize("unit", ["ton", "tons", "kg/ton", "kg CO2/tons"])
+def test_8_bare_ton_is_refused(unit):
+    with pytest.raises(UnitError, match="ambiguous"):
+        parse_factor_unit(unit) if "/" in unit else unit_dimension(unit)
+
+
+def test_8_explicit_short_ton_and_tonne_still_work():
+    assert unit_dimension("short_ton")[1] == pytest.approx(907.18474)
+    assert unit_dimension("tonne")[1] == 1000.0
+
+
+def test_12_partial_percent_analysis_with_small_values_is_not_read_as_fractions():
+    with pytest.raises(ValueError, match="composition_basis"):
+        composition_fractions({"co2": 0.3, "n2": 0.4})  # read as 30 % / 40 %
+    with pytest.raises(ValueError, match="composition_basis"):
+        composition_fractions({"c1": 0.2, "co2": 0.1})
+    fr, _ = composition_fractions({"co2": 0.3, "n2": 0.4}, basis="percent")
+    assert fr["co2"] == pytest.approx(0.003)
+    # a single fraction and a complete fractional analysis are still read as fractions
+    assert composition_fractions({"c1": 0.9})[0]["c1"] == pytest.approx(0.9)
+    assert composition_fractions({"c1": 0.9, "c2": 0.1})[0]["c2"] == pytest.approx(0.1)
+
+
+def test_31_clean_float_never_turns_unreadable_text_into_the_default():
+    from background_processor import _clean_float
+
+    assert _clean_float("", default=150.0) == 150.0
+    assert _clean_float("n/a", default=150.0) == 150.0
+    assert _clean_float("abc", default=150.0) is None  # was 150
+    assert _clean_float("12 [ambiguous: decimal or thousands separator?]", default=0.0) is None  # was 0
+    assert _clean_float("1,000", default=0.0) is None  # was 1000 (1 in French)
+    assert _clean_float("1,234.5") == 1234.5 and _clean_float("1234,5") == 1234.5

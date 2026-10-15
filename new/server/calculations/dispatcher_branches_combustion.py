@@ -4,6 +4,7 @@ Split out of calculations/dispatcher.py unchanged (hardening plan, task 5.5). Ea
 branch of the process-type chain; ``self`` is the dispatcher. dispatcher.py imports them last.
 """
 from .combustion import factor_hhv_unit, user_hhv
+from .units import VOLUME_UNITS_TO_M3, is_actual_volume_unit, unit_dimension
 
 
 def calc_stationary_combustion(self, calculator, emission_factors, flat_inputs, gwp_dict, quantity, uncertainties, unit):
@@ -99,8 +100,14 @@ def calc_flaring(self, calculator, emission_factors, flat_inputs, gwp_dict, unce
     flare_type = flat_inputs.get("flare_type", "elevated")
     hhv_val = flat_inputs.get("hhv") or emission_factors.get("hhv")
     flare_hhv, hhv_u = user_hhv(hhv_val, flat_inputs.get("hhv_unit"))
-    if flare_hhv and hhv_u and str(hhv_u).lower().endswith("/m3"):
-        flare_hhv = float(flare_hhv) / 35.314666721
+    if flare_hhv and hhv_u:
+        # the flare N2O uses Btu per scf: a heating value per m3, Sm3, Nm3, Mscf ... is rescaled
+        # (only "/m3" was, so MJ/Sm3 was read as Btu/scf, 35x high)
+        den = str(hhv_u).split("/", 1)[1]
+        dim, den_m3 = unit_dimension(den)
+        if dim != "volume":
+            raise ValueError(f"A flare gas heating value is per gas volume (e.g. MJ/Sm3, Btu/scf), not '{flat_inputs.get('hhv_unit')}'")
+        flare_hhv = float(flare_hhv) * VOLUME_UNITS_TO_M3["scf"] / den_m3
 
     comps = self._composition(flat_inputs, c1_keys=("c1", "ch4_content", "flare_ch4_content"))
     if not comps.get("c1"):
@@ -138,7 +145,9 @@ def calc_flaring(self, calculator, emission_factors, flat_inputs, gwp_dict, unce
         ef_unit=flat_inputs.get(
             "ef_unit", emission_factors.get("unit", "kg/unit")
         ) if n2o_given else None,
-        fuel_unit="m3",
+        # vol_m3 keeps the entered basis: a standard volume (scf, Sm3, MMscf/d) is not corrected
+        # for temperature and pressure a second time
+        fuel_unit="m3" if is_actual_volume_unit(str(unit or "m3").split("/")[0].strip()) else "sm3",
         fuel_type=flat_inputs.get("fuel_type"),
         ef_n2o=float(ef_n2o_val) if n2o_given else None,
         combustion_efficiency=comb_eff,

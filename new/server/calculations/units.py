@@ -239,8 +239,6 @@ MASS_UNITS_TO_KG = {
     "lbs": 0.45359237,
     "pound": 0.45359237,
     "pounds": 0.45359237,
-    "ton": 907.18474,
-    "tons": 907.18474,
     "short_ton": 907.18474,
     "short_tons": 907.18474,
     "us_ton": 907.18474,
@@ -292,16 +290,11 @@ def from_psia(psia_val, to_unit="psia", atmospheric_psia=STD_PRESSURE_PSIA):
 def convert_temperature(val, from_unit, to_unit):
     """Converts temperature value across C, F, K, R."""
     k = to_kelvin(val, from_unit)
-    u_to = str(to_unit).strip().lower()
-    if u_to in ["k", "kelvin"]:
-        return k
-    elif u_to in ["c", "celsius", "degc", "°c"]:
-        return k - 273.15
-    elif u_to in ["f", "fahrenheit", "degf", "°f"]:
-        return (k - 273.15) * 9.0 / 5.0 + 32.0
-    elif u_to in ["r", "rankine", "degr", "°r"]:
-        return k * 9.0 / 5.0
-    return k
+    # an unknown target unit is an error (it used to return Kelvin)
+    kind = _temp_kind(to_unit, "c") if to_unit not in (None, "") else None
+    if kind is None:
+        raise UnitError("A target temperature unit is required (C, F, K or R)")
+    return {"k": k, "c": k - 273.15, "f": (k - 273.15) * 9.0 / 5.0 + 32.0, "r": k * 9.0 / 5.0}[kind]
 
 
 def convert_pressure(val, from_unit, to_unit, atmospheric_psia=STD_PRESSURE_PSIA):
@@ -619,7 +612,9 @@ class UnitError(ValueError):
 
 def norm_unit(unit):
     """Lower-case, ASCII digits for sub/superscripts, single spaces, aliases applied."""
-    u = str(unit or "").translate(_SUBSUP).strip().lower()
+    # "10⁶" is 10^6, not 106 (the superscript is translated to an ASCII digit below)
+    u = _re.sub("10([⁰¹²³⁴⁵⁶⁷⁸⁹]+)", r"10^\1", str(unit or ""))
+    u = u.translate(_SUBSUP).strip().lower()
     u = u.replace("per ", "/").replace(" / ", "/").replace(" /", "/").replace("/ ", "/")
     u = _re.sub(r"\s+", " ", u)
     return _VOLUME_ALIASES.get(u, u)
@@ -639,9 +634,14 @@ def gas_volume_m3(quantity, unit):
     return float(quantity) * VOLUME_UNITS_TO_M3[u]
 
 
+AMBIGUOUS_TON = ("'ton' is ambiguous: write 'tonne' (metric, 1,000 kg) or 'short_ton' (2,000 lb)")
+
+
 def unit_dimension(unit):
     """(dimension, factor_to_base) for a plain unit token; bases: m3, kg, MJ, h, count."""
     u = norm_unit(unit).replace(" ", "_")
+    if u in ("ton", "tons"):
+        raise UnitError(AMBIGUOUS_TON)  # bug hunt 2026-10-15 #8: it was the short ton here, refused elsewhere
     for dim, table in (("volume", VOLUME_UNITS_TO_M3), ("mass", MASS_UNITS_TO_KG),
                        ("energy", ENERGY_UNITS_TO_MJ), ("time", TIME_UNITS_TO_HOURS),
                        ("distance", DISTANCE_UNITS_TO_M)):
@@ -718,7 +718,9 @@ def period_volume_m3(value, unit, year=None, month=None):
     return vol * (per_year / 365.0) * days  # per day (365) or per hour (8760) over `days`
 
 
-_SCALE = _re.compile(r"^(?:10\^?(\d+)|1e(\d+)|(thousand|million|billion))\s*")
+# a denominator scale: 10^6, 1e6, a plain multiplier (1000, 1,000, 100) or a word. "10\^?" read
+# "1000 scf" as 10^00 = 1 and "100 gal" as 10^0 (bug hunt 2026-10-15 #4: 1000x / 100x high)
+_SCALE = _re.compile(r"^(?:10\^(\d+)|1e(\d+)|(thousand|million|billion)|(\d{1,3}(?:,\d{3})+|\d+(?:\.\d+)?)(?=\s|[a-z]))\s*")
 _SCALE_WORDS = {"thousand": 1e3, "million": 1e6, "billion": 1e9}
 
 
@@ -747,6 +749,8 @@ def parse_factor_unit(unit):
             if mass_tok.endswith(g) and mass_tok[: -len(g)] in MASS_UNITS_TO_KG:
                 mass_tok, gas = mass_tok[: -len(g)], _GASES[g]
                 break
+    if mass_tok in ("ton", "tons"):
+        raise UnitError(f"Factor unit '{unit}': {AMBIGUOUS_TON}")
     if mass_tok not in MASS_UNITS_TO_KG:
         raise UnitError(f"Factor unit '{unit}': numerator '{mass_tok}' is not a mass unit")
     dens = []
@@ -756,8 +760,12 @@ def parse_factor_unit(unit):
         if m:
             if m.group(1) or m.group(2):
                 scale = 10.0 ** int(m.group(1) or m.group(2))
-            else:
+            elif m.group(3):
                 scale = _SCALE_WORDS[m.group(3)]
+            else:
+                scale = float(m.group(4).replace(",", ""))
+                if scale <= 0:
+                    raise UnitError(f"Factor unit '{unit}' has a zero denominator")
             p = p[m.end():]
         toks = p.split()
         if not toks:
@@ -860,6 +868,12 @@ def composition_fractions(raw, basis=None):
     total = sum(vals.values())
     if basis is None:
         basis = "percent" if (max(vals.values()) > 1.0 or total > 1.5) else "fraction"
+        if basis == "fraction" and len(vals) > 1 and (total < 0.5 or "c1" not in vals):
+            # every value <= 1 and no methane or under 50 % in all: as fractions it is mostly
+            # missing, as percent it is a partial analysis of minor components (CO2 0.3, N2 0.4).
+            # It was read as fractions, 100x high when it was percent (bug hunt 2026-10-15 #12).
+            raise ValueError("The gas composition is ambiguous (every value is 1 or less): set "
+                             "composition_basis to 'percent' (mol %) or 'fraction'")
     scale = 0.01 if basis == "percent" else 1.0
     fr = {k: v * scale for k, v in vals.items()}
     tot = sum(fr.values())
@@ -869,3 +883,20 @@ def composition_fractions(raw, basis=None):
     if renorm:
         fr = {k: v / tot for k, v in fr.items()}
     return fr, {"basis": basis, "total": tot, "renormalised": renorm}
+
+
+def parse_amount(raw):
+    """An activity amount: a number, or text of a plain number ("1234.5"). Text with a comma is
+    refused: "1,000" was read as 1.0 and "1,5" as 1.5 (bug hunt 2026-10-15 #5); the importers
+    resolve the decimal mark before the calculation."""
+    if raw in (None, ""):
+        return 0.0
+    if isinstance(raw, str):
+        s = raw.strip()
+        if "," in s:
+            raise ValueError(f"Activity amount '{s}' contains a comma: send a plain number such as 1234.5")
+        raw = s or 0
+    try:
+        return float(raw)
+    except (TypeError, ValueError):
+        raise ValueError(f"Invalid numeric quantity/amount: {raw}")

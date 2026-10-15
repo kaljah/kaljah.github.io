@@ -474,7 +474,7 @@ export const API_FACTORS: Record<string, ApiFactorItem> = {
     uncertainty: { co2: 0.03, ch4: 0.3, n2o: 0.4 },
     unit: "kg/MMBtu",
     usage: ["combustion"],
-    baseUnit: "ton",
+    baseUnit: "short_ton",
   },
   "Bituminous Coal": {
     code: "CoalBit",
@@ -485,7 +485,7 @@ export const API_FACTORS: Record<string, ApiFactorItem> = {
     uncertainty: { co2: 0.03, ch4: 0.3, n2o: 0.4 },
     unit: "kg/MMBtu",
     usage: ["combustion"],
-    baseUnit: "ton",
+    baseUnit: "short_ton",
   },
   "Sub-Bituminous Coal": {
     code: "CoalSub",
@@ -496,7 +496,7 @@ export const API_FACTORS: Record<string, ApiFactorItem> = {
     uncertainty: { co2: 0.03, ch4: 0.3, n2o: 0.4 },
     unit: "kg/MMBtu",
     usage: ["combustion"],
-    baseUnit: "ton",
+    baseUnit: "short_ton",
   },
   "Lignite Coal": {
     code: "CoalLig",
@@ -507,7 +507,7 @@ export const API_FACTORS: Record<string, ApiFactorItem> = {
     uncertainty: { co2: 0.03, ch4: 0.3, n2o: 0.4 },
     unit: "kg/MMBtu",
     usage: ["combustion"],
-    baseUnit: "ton",
+    baseUnit: "short_ton",
   },
   "Petroleum Coke": {
     code: "PetCoke",
@@ -518,7 +518,7 @@ export const API_FACTORS: Record<string, ApiFactorItem> = {
     uncertainty: { co2: 0.03, ch4: 0.3, n2o: 0.4 },
     unit: "kg/MMBtu",
     usage: ["combustion"],
-    baseUnit: "ton",
+    baseUnit: "short_ton",
   },
   // Table 4-5; 40 CFR 98 Table C-2, kBtu per short ton
   Tires: {
@@ -530,7 +530,7 @@ export const API_FACTORS: Record<string, ApiFactorItem> = {
     unit: "kg/MMBtu",
     usage: ["combustion"],
     uncertainty: { co2: 0.03, ch4: 0.3, n2o: 0.4 },
-    baseUnit: "ton",
+    baseUnit: "short_ton",
   },
 
   // --- EQUIPMENT / SOURCE SPECIFIC (Added from Legacy) ---
@@ -922,7 +922,7 @@ export const API_FACTORS: Record<string, ApiFactorItem> = {
     co2: 5.61, // Table 6-52: 5.61E-03 t CO2/ton
     ch4: 3.07, // Table 6-52: 3.07E-03 t CH4/ton
     n2o: 0,
-    unit: "kg/ton",
+    unit: "kg/short_ton",
     usage: ["asphalt_blowing"],
     description: "Asphalt blowing process emissions",
     uncertainty: { co2: 0.30, ch4: 0.30 },

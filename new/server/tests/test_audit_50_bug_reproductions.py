@@ -104,15 +104,15 @@ class TestAuditBugReproduction:
             calc.calculate(heat_energy=10_000_000.0, ef_co2=50.0, boiler_efficiency=0.0, transmission_loss=0.0, uncertainties={})
 
     def test_reproduce_bug_026_legacy_engine_unit_error_swallowed(self):
-        """BUG-026 & BUG-028: Unit errors in legacy engine fall back to un-converted denominator."""
-        res = legacy_engine._calculate_default_kg(
-            amount=100.0,
-            unit="incompatible_unknown_unit",
-            hhv=0,
-            factor_data={"factor": 2.5, "unit": "kg/gal"},
-            gas="co2"
-        )
-        assert res == 250.0
+        """BUG-026 & BUG-028: a factor unit that cannot be applied to the activity is an error
+        (bug hunt 2026-10-15 #11: it used to be applied 1:1)."""
+        with pytest.raises(ValueError):
+            legacy_engine._calculate_default_kg(
+                amount=100.0,
+                unit="incompatible_unknown_unit",
+                factor_data={"factor": 2.5, "unit": "kg/gal"},
+                gas="co2"
+            )
 
     def test_reproduce_bug_020_emission_table_lacks_unique_natural_key_constraint(self):
         """BUG-020: Emission table lacks database-level unique constraint on natural keys."""

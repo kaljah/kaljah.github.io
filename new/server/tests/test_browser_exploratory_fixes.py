@@ -79,7 +79,7 @@ def test_f1_liquid_factor_rejects_gas_volume(app):
 
 
 def test_f1_solids_and_gases(app):
-    em = calc(app, tier1("combustion", "Tires", 10, "ton"))          # 28.00 MMBtu / short ton
+    em = calc(app, tier1("combustion", "Tires", 10, "short_ton"))          # 28.00 MMBtu / short ton
     assert em["co2"] == pytest.approx(10 * 28.0 * 85.97 / 1000, rel=1e-3)
     # acetylene, Table 3-8: 0.0686 lb/ft3, 92.3 wt % C -> carbon balance at 100 % oxidation
     em = calc(app, tier1("combustion", "Acetylene", 1000, "scf"))

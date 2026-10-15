@@ -150,7 +150,7 @@ case("6-44", "Hydrogen plant, simple factor (Table 6-51)",
 
 # 6-45: asphalt 100,000 tons x Table 6-52 (5.61E-3 t CO2/ton, 3.07E-3 t CH4/ton) -> 561 / 307
 case("6-45", "Asphalt blowing 100,000 tons (Table 6-52)",
-     ci("asphalt_blowing", "default", 100000, "ton", fuel="Asphalt"),
+     ci("asphalt_blowing", "default", 100000, "short_ton", fuel="Asphalt"),
      {"co2": 561, "ch4": 307})
 
 # 7-4: onshore gas equipment (Table 7-10), 8,760 h: 15 wellheads -> 2.36; 4 separators -> 1.55; 1 heater -> 0.40
@@ -196,7 +196,7 @@ def test_exhibit(app, payload, expect, tol):
 FT3_PER_M3, L_PER_GAL, KG_PER_TON = 35.3146667, 3.785411784, 907.18474
 GAS = {"m3": 1000.0, "scf": 1000.0 * FT3_PER_M3, "Mcf": 1000.0 * FT3_PER_M3 / 1e3, "MMscf": 1000.0 * FT3_PER_M3 / 1e6}
 LIQ = {"gal": 1000.0, "bbl": 1000.0 / 42.0, "L": 1000.0 * L_PER_GAL, "m3": 1000.0 * L_PER_GAL / 1000.0}
-MASS = {"kg": 1000.0, "tonne": 1.0, "ton": 1000.0 / KG_PER_TON}
+MASS = {"kg": 1000.0, "tonne": 1.0, "short_ton": 1000.0 / KG_PER_TON}
 
 
 @pytest.mark.parametrize("process,fuel,units,gas,expected", [

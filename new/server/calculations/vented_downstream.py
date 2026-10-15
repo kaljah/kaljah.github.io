@@ -566,7 +566,7 @@ class AsphaltBlowingCalculator(BaseCalculator):
     TABLE_6_52 = {
         "bbl": {"ch4": 5.55e-4, "co2": 1.01e-3},
         "m3": {"ch4": 3.49e-3, "co2": 6.38e-3},
-        "ton": {"ch4": 3.07e-3, "co2": 5.61e-3},
+        "short_ton": {"ch4": 3.07e-3, "co2": 5.61e-3},
         "tonne": {"ch4": 3.38e-3, "co2": 6.19e-3},
     }
 
@@ -576,7 +576,7 @@ class AsphaltBlowingCalculator(BaseCalculator):
     def calculate(
         self,
         throughput=0.0,
-        unit="ton",                      # "bbl", "m3", "ton", "tonne"
+        unit="short_ton",                # "bbl", "m3", "short_ton", "tonne"
         controlled=False,
         destruction_efficiency=0.98,     # DE default 98%
         uncertainties=None,
@@ -585,8 +585,13 @@ class AsphaltBlowingCalculator(BaseCalculator):
         **kwargs,
     ):
         q = float(throughput or 0.0)
-        u = str(unit).lower()
-        efs = self.TABLE_6_52.get(u, self.TABLE_6_52["ton"])
+        u = str(unit).strip().lower().replace(" ", "_")
+        u = {"short_tons": "short_ton", "us_ton": "short_ton", "tonnes": "tonne", "t": "tonne", "metric_ton": "tonne",
+             "barrel": "bbl", "barrels": "bbl"}.get(u, u)
+        if u not in self.TABLE_6_52:
+            # an unknown unit (and a bare "ton") used to take the short-ton factors
+            raise ValueError(f"Asphalt blowing throughput unit '{unit}' must be bbl, m3, short_ton or tonne")
+        efs = self.TABLE_6_52[u]
         ef_ch4 = efs["ch4"]
         ef_co2 = efs["co2"]
 

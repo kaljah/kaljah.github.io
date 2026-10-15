@@ -15,7 +15,6 @@ _MASS_KG = {
     "pounds": CONVERSIONS["lb_to_kg"],
     "tonne": CONVERSIONS["tonne_to_kg"], "tonnes": CONVERSIONS["tonne_to_kg"], "metric_ton": CONVERSIONS["tonne_to_kg"],
     "metric_tons": CONVERSIONS["tonne_to_kg"], "mt": CONVERSIONS["tonne_to_kg"], "t": CONVERSIONS["tonne_to_kg"],
-    "ton": CONVERSIONS["short_ton_to_kg"], "tons": CONVERSIONS["short_ton_to_kg"],
     "short_ton": CONVERSIONS["short_ton_to_kg"], "short_tons": CONVERSIONS["short_ton_to_kg"],
     "us_ton": CONVERSIONS["short_ton_to_kg"],
     "long_ton": CONVERSIONS["long_ton_to_kg"], "long_tons": CONVERSIONS["long_ton_to_kg"],

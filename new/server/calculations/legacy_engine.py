@@ -41,29 +41,32 @@ from .units import (
     factor_to_kg_per_activity,
     parse_factor_unit,
     convert,
+    norm_unit,
+    parse_amount,
     UnitError,
 )
 
 
-def _convert_factor_to_kg(val, factor_unit, activity_unit, hhv=0, hours=None):
-    """Canonical unit conversion using calculations.units.factor_to_kg_per_activity."""
+def _convert_factor_to_kg(val, factor_unit, activity_unit, hours=None, **conv):
+    """kg per activity unit through the canonical converter (combustion.convert_factor_to_kg_per_unit):
+    the HHV basis comes from its unit or the fuel type, never from the size of the number (an HHV
+    above 500 used to be taken for Btu whatever it was per)."""
+    from .combustion import convert_factor_to_kg_per_unit
+
     if val is None:
         return 0.0
-    if not factor_unit or factor_unit == activity_unit:
-        return float(val)
-    val_float = float(val)
-
-    hhv_mj = None
-    if hhv and float(hhv or 0) > 0:
-        hhv_mj = float(hhv) * 0.001055056 if float(hhv) > 500 else float(hhv)
-
-    return factor_to_kg_per_activity(
-        val_float, factor_unit, activity_unit, hours=hours, hhv_mj_per_unit=hhv_mj
-    )
+    if not factor_unit or norm_unit(factor_unit) == norm_unit(activity_unit):
+        return float(val)  # Manage Data convention: kg per activity unit
+    try:
+        return convert_factor_to_kg_per_unit(float(val), factor_unit, activity_unit, hours=hours, **conv)
+    except UnitError as err:
+        raise ValueError(str(err))
 
 
-def _calculate_default_kg(amount, unit, hhv, factor_data, gas, hours=None):
-    """Calculates kg of gas using factor_data and canonical unit conversion."""
+def _calculate_default_kg(amount, unit, factor_data, gas, hours=None, **conv):
+    """kg of gas from factor_data. A factor whose unit equals the activity unit is kg per that unit
+    (it was multiplied by 1000 when the unit was "tonnes"); a unit that cannot be applied to the
+    activity is an error, never applied 1:1."""
     if not factor_data:
         return 0.0
 
@@ -80,27 +83,16 @@ def _calculate_default_kg(amount, unit, hhv, factor_data, gas, hours=None):
         return 0.0
     if val <= 0:
         return 0.0
-
     raw_unit = str(factor_data.get("unit") or "").strip()
-    if not raw_unit or raw_unit.lower() == str(unit).lower():
-        if "tonnes" in raw_unit.lower():
-            val *= 1000.0
-        return float(amount) * val
+    return float(amount) * _convert_factor_to_kg(val, raw_unit, unit, hours=hours, **conv)
 
-    hhv_mj = None
-    if hhv and float(hhv or 0) > 0:
-        hhv_mj = float(hhv) * 0.001055056 if float(hhv) > 500 else float(hhv)
 
-    try:
-        kg_per_activity = factor_to_kg_per_activity(
-            val, raw_unit, unit, hours=hours, hhv_mj_per_unit=hhv_mj
-        )
-        return float(amount) * kg_per_activity
-    except UnitError:
-        if "tonne" in raw_unit.lower():
-            val *= 1000.0
-        return float(amount) * val
 
+def _payload_density(payload):
+    """The fuel density in kg/m3, with its density_unit, as the dispatcher reads it."""
+    from .dispatcher import CalculationDispatcher
+
+    return CalculationDispatcher._fuel_density(CalculationDispatcher, payload)
 
 
 def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standard=None):
@@ -131,12 +123,7 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
     elif process in ["associated gas venting", "associated venting", "associated gas"]:
         process = "associated_gas_venting"
     raw_amt = payload.get("amount") if payload.get("amount") not in [None, ""] else payload.get("quantity")
-    if isinstance(raw_amt, str):
-        s = raw_amt.strip()
-        if "," in s and "." not in s:
-            raw_amt = s.replace(",", ".")
-        else:
-            raw_amt = s.replace(",", "")
+    raw_amt = parse_amount(raw_amt)
     amount = float(raw_amt or 0)
     unit = payload.get("unit") or "m3"
 
@@ -152,6 +139,16 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
 
     if hhv and not payload.get("hhv"):
         payload["hhv"] = hhv
+    from .combustion import factor_hhv_unit, user_hhv
+
+    conv_hhv, conv_hu = user_hhv(hhv or None, payload.get("hhv_unit") if payload.get("hhv") not in (None, "") else None)
+    conv = dict(
+        hhv=conv_hhv,
+        hhv_unit=conv_hu or factor_hhv_unit(factor_data),
+        fuel_type=factor_data.get("type") if factor_data.get("type") not in (None, "", "custom") else (
+            payload.get("fuel_type") or payload.get("fuel")),
+        density=_payload_density(payload) or factor_data.get("density"),
+    )
 
     calc_inputs = payload.get("calc_inputs") or {}
     inputs = calc_inputs.get(process) or {}  # Extract specific inputs
@@ -277,7 +274,7 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
                 if not target_unit or target_unit == unit:
                     return raw_val
                 return _convert_factor_to_kg(
-                    raw_val, target_unit, unit, hhv=hhv, hours=payload.get("hours")
+                    raw_val, target_unit, unit, hours=payload.get("hours"), **conv
                 )
 
             # Otherwise use the direct value — but STILL convert from its declared unit
@@ -289,7 +286,7 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
                     raise ValueError(f"Specific factor '{gas}' has invalid value: {val}")
                 if gas_unit and gas_unit != unit:
                     return _convert_factor_to_kg(
-                        raw_val, gas_unit, unit, hhv=hhv, hours=payload.get("hours")
+                        raw_val, gas_unit, unit, hours=payload.get("hours"), **conv
                     )
                 return raw_val
             return None
@@ -302,23 +299,19 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
         em["co2"] = (
             (amount * f_co2)
             if f_co2 is not None
-            else _calculate_default_kg(amount, unit, hhv, factor_data, "co2")
+            else _calculate_default_kg(amount, unit, factor_data, "co2", **conv)
         )
 
         if process in ["combustion", "flaring", "venting"]:
             em["ch4"] = (
                 (amount * f_ch4)
                 if f_ch4 is not None
-                else _calculate_default_kg(
-                    amount, unit, hhv, factor_data, "ch4"
-                )
+                else _calculate_default_kg(amount, unit, factor_data, "ch4", **conv)
             )
             em["n2o"] = (
                 (amount * f_n2o)
                 if f_n2o is not None
-                else _calculate_default_kg(
-                    amount, unit, hhv, factor_data, "n2o"
-                )
+                else _calculate_default_kg(amount, unit, factor_data, "n2o", **conv)
             )
             em["co"] = (
                 (amount * f_co) if (f_co is not None and process != "combustion") else 0
@@ -342,9 +335,9 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
 
     if factor_data and factor_data.get("type"):
         # Use individual gas factors directly (correct for custom factors which carry co2/ch4/n2o fields).
-        co2_kg = _calculate_default_kg(amount, unit, hhv, factor_data, "co2")
-        ch4_kg = _calculate_default_kg(amount, unit, hhv, factor_data, "ch4")
-        n2o_kg = _calculate_default_kg(amount, unit, hhv, factor_data, "n2o")
+        co2_kg = _calculate_default_kg(amount, unit, factor_data, "co2", **conv)
+        ch4_kg = _calculate_default_kg(amount, unit, factor_data, "ch4", **conv)
+        n2o_kg = _calculate_default_kg(amount, unit, factor_data, "n2o", **conv)
 
         em["co2"] = co2_kg / 1000.0
         em["ch4"] = ch4_kg / 1000.0
@@ -361,9 +354,9 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
     # Apply process-specific gas calculation rules per API Compendium 2021
 
     # Calculate base emissions from factors
-    co2_kg = _calculate_default_kg(amount, unit, hhv, factor_data, "co2")
-    ch4_kg = _calculate_default_kg(amount, unit, hhv, factor_data, "ch4")
-    n2o_kg = _calculate_default_kg(amount, unit, hhv, factor_data, "n2o")
+    co2_kg = _calculate_default_kg(amount, unit, factor_data, "co2", **conv)
+    ch4_kg = _calculate_default_kg(amount, unit, factor_data, "ch4", **conv)
+    n2o_kg = _calculate_default_kg(amount, unit, factor_data, "n2o", **conv)
 
     # Process-specific gas emission matrix (API 2021)
     # Determine which gases to calculate based on process type

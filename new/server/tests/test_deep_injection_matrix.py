@@ -142,7 +142,7 @@ class TestUnitConversionInvarianceMatrix:
         base_tonnes = 10.0
         mass_units = [
             "tonne", "tonnes", "metric_ton", "mt", "t",
-            "kg", "lb", "lbs", "pound", "ton", "short_ton", "g"
+            "kg", "lb", "lbs", "pound", "short_ton", "g"
         ]
         # Base: 10 tonnes * 0.85 carbon * (44.01 / 12.011) = 31.144 tonnes CO2
         base_res = dispatcher.dispatch(
@@ -266,7 +266,7 @@ class TestUnitConversionInvarianceMatrix:
     def test_all_dimensional_combinatorial_roundtrips(self):
         """Exhaustively verifies roundtrip convert(val, u1, u2) -> convert(converted, u2, u1) == val for ALL pairs."""
         volume_units = ["m3", "scf", "cf", "ft3", "mscf", "mcf", "mmscf", "bbl", "barrel", "gal", "gallon", "liter", "l"]
-        mass_units = ["tonne", "metric_ton", "mt", "t", "kg", "lb", "pound", "short_ton", "ton", "long_ton", "g"]
+        mass_units = ["tonne", "metric_ton", "mt", "t", "kg", "lb", "pound", "short_ton", "long_ton", "g"]
         energy_units = ["mmbtu", "btu", "gj", "mj", "kwh", "mwh", "therm"]
         distance_units = ["km", "m", "mile", "ft", "yd", "nmi"]
         freight_units = ["tonne-km", "ton-mile"]

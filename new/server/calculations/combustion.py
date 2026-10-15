@@ -121,6 +121,23 @@ def fuel_basis(fuel_type, hhv_unit=None):
     return _HHV_BASIS["gases"]
 
 
+def _density_state(fuel_type, *units):
+    """"volume_liquid" or "gas": the phase a fuel density belongs to, from the units (a gal / bbl
+    or scf / Sm3 amount) and else the fuel type. A gas density (0.75 kg/m3) was always taken
+    for a liquid one in kg/L and multiplied by 1000."""
+    toks = {norm_unit(u).replace(" ", "_") for u in units if u}
+    if toks & _LIQUID_VOL:
+        return "volume_liquid"
+    if toks & _GAS_VOL:
+        return "gas"
+    t = str(fuel_type or "").strip().lower()
+    if t in ("liquids", "liquid", "solids", "solid") or any(w in t for w in _LIQUID_WORDS + _SOLID_WORDS):
+        return "volume_liquid"
+    if t in ("gases", "gas") or "gas" in t:
+        return "gas"
+    return "volume_liquid"
+
+
 def _density_kg_m3(density, basis_dim):
     if density in (None, "", 0):
         return None
@@ -151,8 +168,7 @@ def hhv_mj_per_unit(hhv, activity_unit, fuel_type=None, density=None, hhv_unit=N
             raise UnitError(f"'{activity_unit}' is a liquid volume but this fuel's heating value is per {basis_unit} of gas")
     if a_dim == b_dim:
         return mj_per_basis * a_f / b_f
-    liquid = basis_unit in ("gal", "bbl", "l", "liter")
-    rho = _density_kg_m3(density, "volume_liquid" if (liquid or a_dim == "volume") and fuel_type not in ("gases", "gas") else "gas")
+    rho = _density_kg_m3(density, _density_state(fuel_type, basis_unit, activity_unit))
     if rho is None:
         raise UnitError(f"Activity unit '{activity_unit}' needs the fuel density to use a heating value tabulated per {basis_unit}")
     if a_dim == "mass" and b_dim == "volume":      # kg -> m3 -> basis
@@ -195,7 +211,7 @@ def convert_factor_to_kg_per_unit(
     den_dim = spec["denominators"][0][0]
     a_dim, _ = unit_dimension(a_unit)
     if den_dim != a_dim and {den_dim, a_dim} == {"volume", "mass"}:
-        rho = _density_kg_m3(density, "volume_liquid")
+        rho = _density_kg_m3(density, _density_state(fuel_type, a_unit, spec["denominators"][0][2]))
         if rho is None:
             raise UnitError(f"Factor per {spec['denominators'][0][2]} applied to '{activity_unit}' needs the fuel density")
         # express the activity unit in the factor's dimension, then convert
@@ -607,12 +623,16 @@ class FlaringCalculator(BaseCalculator):
         _is_fuel_gas = "fuel gas" in str(fuel_type or "").lower() or "refinery" in str(fuel_type or "").lower()
         _ef_n2o = float(ef_n2o) if ef_n2o is not None else (0.0006 if _is_fuel_gas else 0.0001)
         if _ef_n2o > 0:
-            ef_u = str(ef_unit or "kg/mmbtu").lower()
-            if "mmbtu" in ef_u or ef_unit is None:
+            f_unit = norm_unit(ef_unit or "kg/mmbtu")
+            if "/" not in f_unit:
+                f_unit = f"kg/{f_unit}"
+            if any(d[0] == "energy" for d in parse_factor_unit(f_unit)["denominators"]):
+                # an energy factor (kg/MMBtu, g/MMBtu, kg/GJ ...) on the flared energy; "mmbtu" in
+                # the unit used to mean kg/MMBtu whatever the numerator (g/MMBtu 1000x high)
                 hhv_val = float(hhv or 1020.0)
                 vol_scf = vol_std * CONVERSIONS.get("m3_to_scf", 35.3147)
                 flared_mmbtu = (vol_scf * hhv_val) / 1_000_000.0
-                n2o_tonnes = (flared_mmbtu * _ef_n2o) / 1000.0
+                n2o_tonnes = flared_mmbtu * factor_to_kg_per_activity(_ef_n2o, f_unit, "mmbtu") / 1000.0
             else:
                 n2o_kg = vol_std * convert_factor_to_kg_per_unit(_ef_n2o, ef_unit, "m3", hhv=hhv, fuel_type="gases")
                 n2o_tonnes = n2o_kg / 1000.0

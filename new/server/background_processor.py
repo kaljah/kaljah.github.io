@@ -202,6 +202,10 @@ def _clean_float(val, default=0.0):
     thousands separators, European comma decimals, scientific notation,
     zero-width spaces, or adversarial nulls/NaNs.
     Guarantees no NaN or Infinite values leak to calculation engines.
+
+    `default` is for an empty / null cell only. A cell with text that is not a number (including
+    one normalize_number_cell flagged, and an ambiguous "1,000") returns None, never `default`:
+    an unreadable cooling factor used to become 150 and a flagged cell 0 (bug hunt 2026-10-15 #31).
     """
     import math
     import re
@@ -246,9 +250,10 @@ def _clean_float(val, default=0.0):
             # e.g. 1.250,50 -> 1250.50
             s = s.replace(".", "").replace(",", ".")
     elif "," in s and "." not in s:
-        # Check if comma is thousands separator (e.g. 1,000 or 1,234,567)
-        if re.match(r"^-?\d{1,3}(,\d{3})+$", s):
-            s = s.replace(",", "")
+        # "1,000" is 1000 in English and 1 in French: never guessed (the decimal format chosen for
+        # the file resolves it in normalize_number_cell before this point)
+        if re.match(r"^[-+]?\d{1,3}(,\d{3})+$", s):
+            return None
         else:
             # European decimal format: 1234,56 -> 1234.56
             s = s.replace(",", ".")
@@ -256,10 +261,10 @@ def _clean_float(val, default=0.0):
     try:
         res = float(s)
         if math.isnan(res) or math.isinf(res):
-            return default
+            return None
         return res
     except (ValueError, TypeError):
-        return default
+        return None
 
 
 from process_categories import NON_COMBUSTION_PROCESSES
@@ -2059,7 +2064,7 @@ def _process_row_scope3_eeio(
     if naics.endswith(".0") and naics[:-2].isdigit():
         naics = naics[:-2]  # an Excel number cell (331110.0)
     spend_usd = _clean_float(row.get("spend_usd"), default=-1.0)
-    if spend_usd <= 0:
+    if spend_usd is None or spend_usd <= 0:
         return None, [f"Spend amount must be a number greater than zero (got '{row.get('spend_usd') or ''}')"]
 
     # 4. Calculate (EPA supply chain factors; an unknown code is a row error, not a default factor)
@@ -2212,7 +2217,7 @@ def _process_row_scope3(
         if uploader is None or uploader.role not in ("admin", "superuser"):
             return None, ["Only admins and superusers may import a supplier-reported co2e total; give the activity and factor"]
         co2e = _clean_float(row.get("co2e"), default=-1.0)
-        if co2e < 0:
+        if co2e is None or co2e < 0:
             return None, ["co2e must be a non-negative number"]
     else:
         # never book a missing calculation as 0 tCO2e

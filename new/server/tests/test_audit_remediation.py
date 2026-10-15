@@ -114,7 +114,7 @@ def test_dispatcher_fraction_boundary():
 def test_stoichiometry_short_ton():
     """Verify short ton conversion to kg (907.185 kg)."""
     calc = StoichiometricCalculator()
-    res_short = calc.calculate(1.0, 1.0, {}, mass_unit="ton")
+    res_short = calc.calculate(1.0, 1.0, {}, mass_unit="short_ton")
     expected_short_co2 = 907.185 * (44.01 / 12.011) / 1000.0
     assert abs(res_short["results"]["co2"]["value"] - expected_short_co2) < 0.01
 

@@ -206,7 +206,7 @@ class TestAsphaltBlowingCompendium:
         """
         res = self.calc.calculate(
             throughput=100000.0,
-            unit="ton",
+            unit="short_ton",
             controlled=False,
         )
         assert pytest.approx(_val(res["results"]["co2"]), rel=1e-2) == 561.0
@@ -216,7 +216,7 @@ class TestAsphaltBlowingCompendium:
         """Equations 6-51 & 6-52: 98% destruction efficiency incineration."""
         res = self.calc.calculate(
             throughput=100000.0,
-            unit="ton",
+            unit="short_ton",
             controlled=True,
             destruction_efficiency=0.98,
         )
