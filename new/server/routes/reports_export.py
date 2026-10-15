@@ -30,7 +30,7 @@ def export_emissions():
 
     try:
         from models import Scope2Emission, Scope3Emission
-        from sqlalchemy import or_
+        from sqlalchemy import func, or_
 
         allowed_fids = get_allowed_facility_ids(user)
 
@@ -78,6 +78,8 @@ def export_emissions():
 
         if f_int is not None and allowed_fids is not None and f_int not in allowed_fids:
             return jsonify({"error": "Unauthorized facility"}), 403
+        division_f = division.strip().lower() if division and division.strip().lower() != "all" else None
+        field_f = field.strip().lower() if field and field.strip().lower() != "all" else None
 
         # Batch facility lookup to prevent N+1 queries
         fac_map = {f.id: f.name for f in Facility.query.all()}
@@ -95,10 +97,11 @@ def export_emissions():
                 q1 = q1.filter(Emission.facility_id.in_(allowed_fids))
             if process_type and process_type != "all":
                 q1 = q1.filter_by(process_type=process_type)
-            if division and division != "all":
-                q1 = q1.filter(Emission.division.ilike(f"%{division.strip()}%"))
-            if field and field != "all":
-                q1 = q1.filter(Emission.field.ilike(f"%{field.strip()}%"))
+            # bug hunt 2026-10-15 #37: division / field match exactly (case-insensitive); "Sud" matched "Sud-Est"
+            if division_f:
+                q1 = q1.filter(func.lower(Emission.division) == division_f)
+            if field_f:
+                q1 = q1.filter(func.lower(Emission.field) == field_f)
             if method and method != "all":
                 q1 = q1.filter(Emission.calc_method.ilike(f"%{method.strip()}%"))
             if search:
@@ -131,7 +134,9 @@ def export_emissions():
                 )
 
         # 2. SCOPE 2
-        if scope in ["all", "2", "scope2"]:
+        # a process or calculation-method filter selects Scope 1 records: Scope 2 / 3 have neither (#37)
+        scope1_only = bool((process_type and process_type != "all") or (method and method != "all"))
+        if scope in ["all", "2", "scope2"] and not scope1_only:
             q2 = Scope2Emission.query
             if y_int:
                 q2 = q2.filter_by(year=y_int)
@@ -141,10 +146,10 @@ def export_emissions():
                 q2 = q2.filter_by(facility_id=f_int)
             elif allowed_fids is not None:
                 q2 = q2.filter(Scope2Emission.facility_id.in_(allowed_fids))
-            if division and division != "all":
-                q2 = q2.filter(Scope2Emission.division.ilike(f"%{division.strip()}%"))
-            if field and field != "all":
-                q2 = q2.filter(Scope2Emission.field.ilike(f"%{field.strip()}%"))
+            if division_f:
+                q2 = q2.filter(func.lower(Scope2Emission.division) == division_f)
+            if field_f:
+                q2 = q2.filter(func.lower(Scope2Emission.field) == field_f)
             if search:
                 s_term = search.strip()
                 q2 = q2.filter(
@@ -177,8 +182,16 @@ def export_emissions():
                 )
 
         # 3. SCOPE 3
-        if scope in ["all", "3", "scope3"]:
+        if scope in ["all", "3", "scope3"] and not scope1_only:
             q3 = Scope3Emission.query
+            # Scope 3 records carry no division / field: those of their facility (they were ignored)
+            if division_f or field_f:
+                fq = Facility.query
+                if division_f:
+                    fq = fq.filter(func.lower(Facility.division) == division_f)
+                if field_f:
+                    fq = fq.filter(func.lower(Facility.field) == field_f)
+                q3 = q3.filter(Scope3Emission.facility_id.in_([f.id for f in fq.all()] or [-1]))
             if y_int:
                 q3 = q3.filter_by(year=y_int)
             if m_int:

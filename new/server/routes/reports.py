@@ -382,31 +382,17 @@ def generate_report():
 
         allowed_fids = get_allowed_facility_ids(user)
 
-        # Determine years/months/facilities
-        try:
-            year = (
-                int(filters["year"])
-                if filters.get("year") and filters["year"] != "all"
-                else None
-            )
-        except (ValueError, TypeError):
-            year = None
+        # Determine years/months/facilities. Bug hunt 2026-10-15 #36: a malformed filter is refused, as
+        # on GET /export (it silently meant every year / month / facility)
+        from input_validation import ValidationError
+        from services.report_params import optional_int, report_facility, report_year
 
         try:
-            month = (
-                int(filters["month"])
-                if filters.get("month") and filters["month"] != "all"
-                else None
-            )
-        except (ValueError, TypeError):
-            month = None
-
-        facility_id = None
-        if filters.get("facility_id") and filters["facility_id"] != "all":
-            try:
-                facility_id = int(filters["facility_id"])
-            except (ValueError, TypeError):
-                facility_id = None
+            year = report_year(filters.get("year"))
+            month = optional_int(filters.get("month"), "month", 1, 12)
+            facility_id = report_facility(filters.get("facility_id"))
+        except ValidationError as err:
+            return jsonify({"error": err.message, "field": err.field}), 400
 
         if (
             facility_id is not None
@@ -460,7 +446,8 @@ def generate_report():
                 )
 
         # 2. SCOPE 2
-        if scope in ["all", "2"]:
+        # a process filter selects Scope 1 processes: Scope 2 / 3 rows have none and were all included (#37)
+        if scope in ["all", "2"] and not process_type:
             q2 = Scope2Emission.query
             if year:
                 q2 = q2.filter_by(year=year)
@@ -494,7 +481,7 @@ def generate_report():
                 )
 
         # 3. SCOPE 3
-        if scope in ["all", "3"]:
+        if scope in ["all", "3"] and not process_type:
             q3 = Scope3Emission.query
             if year:
                 q3 = q3.filter_by(year=year)

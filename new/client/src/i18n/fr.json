@@ -3582,5 +3582,10 @@
   "the {{count}} imported records were saved as Verified (administrator import) and already count in dashboards and reports.": "les {{count}} enregistrements importés ont été enregistrés comme vérifiés (import par un administrateur) et comptent déjà dans les tableaux de bord et les rapports.",
   "Emission record updated successfully. It stays Verified (administrator edit).": "Enregistrement d'émission mis à jour. Il reste vérifié (modification par un administrateur).",
   "Update activity quantity, fuel/source, unit, or reporting period. Records edited by a non-administrator return to Pending Review for verification; an administrator's edit keeps them Verified.": "Modifiez la quantité d'activité, le combustible/la source, l'unité ou la période de déclaration. Les enregistrements modifiés par un non-administrateur reviennent en attente de vérification ; une modification par un administrateur les laisse vérifiés.",
-  "A matching record already exists (#{{id}}: same region, month, process, fuel, equipment and source reference). Save this one anyway?": "Un enregistrement identique existe déjà (n° {{id}} : même région, mois, procédé, combustible, équipement et référence de source). L'enregistrer quand même ?"
+  "A matching record already exists (#{{id}}: same region, month, process, fuel, equipment and source reference). Save this one anyway?": "Un enregistrement identique existe déjà (n° {{id}} : même région, mois, procédé, combustible, équipement et référence de source). L'enregistrer quand même ?",
+  "Records included in regulatory exports": "Enregistrements inclus dans les exports réglementaires",
+  "Records included in the Décret 21-330 and CBAM exports": "Enregistrements inclus dans les exports Décret 21-330 et CBAM",
+  "Verified records only": "Enregistrements vérifiés uniquement",
+  "Verified and pending records": "Enregistrements vérifiés et en attente",
+  "All records (any status)": "Tous les enregistrements (tout statut)"
 }

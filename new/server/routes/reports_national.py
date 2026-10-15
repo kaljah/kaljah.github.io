@@ -5,8 +5,6 @@ Hydrocarbon Law 19-13, Executive Decree 06-138, and International Standard ISO 1
 """
 
 import io
-import json
-import hashlib
 from datetime import datetime, timezone
 from flask import Blueprint, request, send_file, jsonify, current_app
 import openpyxl
@@ -18,8 +16,42 @@ from models import Facility, Emission, Scope2Emission, Scope3Emission, Productio
 from routes.auth import login_required
 from services.audit_chain import data_fingerprint, record_report_fingerprint
 from services.labels import process_label, scope2_source_label
+from services.report_params import report_facility, report_statuses, report_year
+from services.scope2_activity import scope2_activity
 from utils import get_allowed_facility_ids, get_current_user
 from routes.reports import _safe_excel_value, reports_bp
+
+
+COMBUSTION_AND_FLARING = {
+    "combustion", "stationary_combustion", "mobile_combustion", "mobile",
+    "flaring", "routine_flaring", "non_routine_flaring", "safety_flaring",
+}
+
+
+def _ch4_gwp(gwp_version):
+    """The CH4 GWP of the standard the record was calculated with (blank when not recorded)."""
+    if not gwp_version:
+        return ""
+    from calculations.constants import get_active_gwp
+
+    try:
+        return get_active_gwp(standard=gwp_version)["CH4"]
+    except Exception:
+        return str(gwp_version)
+
+
+def _uncertainty_rows(year, facility_ids, statuses):
+    """95 % uncertainty per scope from the records' own uncertainties (services.inventory_uncertainty)."""
+    if year is None:
+        msg = "Choisir une année pour calculer l'incertitude"
+        return {k: msg for k in ("1", "2", "3", "all")}
+    from services.inventory_uncertainty import inventory_uncertainty
+
+    out = {}
+    for scope in ("1", "2", "3", "all"):
+        res = inventory_uncertainty(year, allowed_fids=facility_ids, scope=scope, statuses=statuses)
+        out[scope] = res.get("inventory_uncertainty_pct") or "Aucune donnée"
+    return out
 
 
 @reports_bp.route("/national-inventory-export", methods=["GET"])
@@ -36,13 +68,15 @@ def export_national_inventory_report():
     if user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "Forbidden: IT personnel cannot access operational compliance reports"}), 403
 
+    # bug hunt 2026-10-15 #22: the records of the chosen statuses only (default Verified: Pending, Rejected
+    # and Draft rows were in the official totals); a malformed year or facility is refused (it meant "all")
+    year = request.args.get("year", "all")
+    year_filter = report_year(year)
+    facility_filter = report_facility(request.args.get("facility_id") or request.args.get("facilityId"))
+    statuses = report_statuses(request.args.get("status"))
+
     try:
         allowed_fids = get_allowed_facility_ids(user)
-
-        year = request.args.get("year", "all")
-        year_filter = int(year) if year and year.isdigit() and year != "all" else None
-        facility_id = request.args.get("facility_id") or request.args.get("facilityId")
-        facility_filter = int(facility_id) if facility_id and facility_id.isdigit() and facility_id != "all" else None
 
         if facility_filter is not None and allowed_fids is not None and facility_filter not in allowed_fids:
             return jsonify({"error": "Unauthorized facility"}), 403
@@ -57,26 +91,27 @@ def export_national_inventory_report():
         allowed_ids_list = list(facilities.keys())
 
         # Query Scope 1 records
-        s1_q = Emission.query.filter(Emission.facility_id.in_(allowed_ids_list))
+        s1_q = Emission.query.filter(Emission.facility_id.in_(allowed_ids_list), Emission.status.in_(statuses))
         if year_filter:
             s1_q = s1_q.filter_by(year=year_filter)
         scope1_records = s1_q.order_by(Emission.year.desc(), Emission.month.desc(), Emission.id.asc()).all()
 
         # Query Scope 2 records
-        s2_q = Scope2Emission.query.filter(Scope2Emission.facility_id.in_(allowed_ids_list))
+        s2_q = Scope2Emission.query.filter(Scope2Emission.facility_id.in_(allowed_ids_list), Scope2Emission.status.in_(statuses))
         if year_filter:
             s2_q = s2_q.filter_by(year=year_filter)
         scope2_records = s2_q.order_by(Scope2Emission.year.desc(), Scope2Emission.month.desc(), Scope2Emission.id.asc()).all()
 
         # Query Scope 3 records
-        s3_q = Scope3Emission.query.filter(Scope3Emission.facility_id.in_(allowed_ids_list))
+        s3_q = Scope3Emission.query.filter(Scope3Emission.facility_id.in_(allowed_ids_list), Scope3Emission.status.in_(statuses))
         if year_filter:
             s3_q = s3_q.filter_by(year=year_filter)
         scope3_records = s3_q.order_by(Scope3Emission.year.desc(), Scope3Emission.month.desc(), Scope3Emission.id.asc()).all()
 
-        company_name = getattr(user, "orgName", None) or "Entreprise Nationale Sonatrach"
-        assessor_name = getattr(user, "fullName", None) or "Directeur Central HSE & Développement Durable"
-        assessor_email = getattr(user, "email", None) or "hse.central@sonatrach.dz"
+        # the signing account as it is: no invented organisation, name or address
+        company_name = getattr(user, "orgName", None) or ""
+        assessor_name = getattr(user, "fullName", None) or ""
+        assessor_email = getattr(user, "email", None) or ""
         now_utc = datetime.now(timezone.utc)
         rep_year_str = str(year_filter) if year_filter else "Consolidated"
 
@@ -186,13 +221,19 @@ def export_national_inventory_report():
         ws_sum.cell(row=1, column=1, value="SYNTHÈSE NATIONALE DE L'INVENTAIRE DES GES (DÉCRET 21-330 / ISO 14064-1)").font = font_title
         ws_sum.cell(row=2, column=1, value=f"Répartition par Scope, Catégorie et Installation pour l'année {rep_year_str}").font = font_subtitle
 
+        def _s2(r, attr):
+            """A Scope 2 method total, or the record's co2e when it predates dual reporting (#34)."""
+            v = getattr(r, attr)
+            return float(v if v is not None else (r.co2e or 0.0))
+
         tot_s1 = sum(float(r.co2e_total or 0.0) for r in scope1_records)
-        tot_s2_loc = sum(float(r.co2e_location_based or 0.0) for r in scope2_records)
-        tot_s2_mkt = sum(float(r.co2e_market_based or 0.0) for r in scope2_records)
+        tot_s2_loc = sum(_s2(r, "co2e_location_based") for r in scope2_records)
+        tot_s2_mkt = sum(_s2(r, "co2e_market_based") for r in scope2_records)
         tot_s3 = sum(float(r.co2e or 0.0) for r in scope3_records)
         grand_total = tot_s1 + tot_s2_loc + tot_s3
 
-        tot_co2 = sum(float(r.co2_emissions or 0.0) for r in scope1_records) + sum(float(r.co2e_location_based or r.co2e or 0.0) for r in scope2_records)
+        # gas masses are the Scope 1 masses: a Scope 2 CO2e is not a CO2 mass (it was added in)
+        tot_co2 = sum(float(r.co2_emissions or 0.0) for r in scope1_records)
         tot_ch4 = sum(float(r.ch4_emissions or 0.0) for r in scope1_records)
         tot_n2o = sum(float(r.n2o_emissions or 0.0) for r in scope1_records)
 
@@ -202,9 +243,10 @@ def export_national_inventory_report():
             ("Scope 2 — Émissions selon méthode contractuelle de marché (market-based)", tot_s2_mkt, "tCO₂e"),
             ("Scope 3 — Autres émissions indirectes de la chaîne de valeur (transport, carburants)", tot_s3, "tCO₂e"),
             ("Grand Total de l'Empreinte Carbone Nationale", grand_total, "tCO₂e"),
-            ("Masse Brute de Gaz Carbonique (CO₂)", tot_co2, "tonnes CO₂"),
-            ("Masse Brute de Méthane Émis (CH₄)", tot_ch4, "tonnes CH₄"),
-            ("Masse Brute de Protoxyde d'Azote (N₂O)", tot_n2o, "tonnes N₂O"),
+            ("Masse Brute de Gaz Carbonique (CO₂) — Scope 1", tot_co2, "tonnes CO₂"),
+            ("Masse Brute de Méthane Émis (CH₄) — Scope 1", tot_ch4, "tonnes CH₄"),
+            ("Masse Brute de Protoxyde d'Azote (N₂O) — Scope 1", tot_n2o, "tonnes N₂O"),
+            ("Statuts des enregistrements inclus", ", ".join(statuses), ""),
             ("Nombre Total d'Enregistrements d'Émissions Traités", len(scope1_records) + len(scope2_records) + len(scope3_records), "enregistrements"),
         ]
 
@@ -276,7 +318,7 @@ def export_national_inventory_report():
             ws_inv.cell(row=curr_row, column=14, value=round(ch4, 2)).number_format = "#,##0.00"
             ws_inv.cell(row=curr_row, column=15, value=round(n2o, 2)).number_format = "#,##0.00"
             ws_inv.cell(row=curr_row, column=16, value=round(tot, 2)).number_format = "#,##0.00"
-            ws_inv.cell(row=curr_row, column=17, value="Verified").font = font_regular
+            ws_inv.cell(row=curr_row, column=17, value=_safe_excel_value(r.status or "")).font = font_regular
 
             for c in range(1, 18):
                 ws_inv.cell(row=curr_row, column=c).border = thin_border
@@ -288,9 +330,8 @@ def export_national_inventory_report():
         for r in scope2_records:
             fac = facilities.get(r.facility_id)
             fac_name = fac.name if fac else f"Facility {r.facility_id}"
-            mwh = float(r.electricity_kwh or 0.0) / 1000.0
-            tot = float(r.co2e_location_based or r.co2e or 0.0)
-            co2 = tot
+            s2_amount, s2_unit, s2_label = scope2_activity(r)
+            tot = _s2(r, "co2e_location_based")
 
             ws_inv.cell(row=curr_row, column=1, value=f"S2-{r.id}").font = font_mono
             ws_inv.cell(row=curr_row, column=2, value="Scope 2").font = font_bold
@@ -299,16 +340,13 @@ def export_national_inventory_report():
             ws_inv.cell(row=curr_row, column=5, value=_safe_excel_value(fac_name)).font = font_bold
             ws_inv.cell(row=curr_row, column=6, value=_safe_excel_value(fac.division if fac else ""))
             ws_inv.cell(row=curr_row, column=7, value=_safe_excel_value(fac.field if fac else ""))
-            ws_inv.cell(row=curr_row, column=8, value="Purchased Electricity")
-            ws_inv.cell(row=curr_row, column=9, value=scope2_source_label(r.source_type or "grid"))
-            ws_inv.cell(row=curr_row, column=10, value="Réseau National Interconnecté (Sonelgaz)")
-            ws_inv.cell(row=curr_row, column=11, value=round(mwh, 2)).number_format = "#,##0.00"
-            ws_inv.cell(row=curr_row, column=12, value="MWh")
-            ws_inv.cell(row=curr_row, column=13, value=round(co2, 2)).number_format = "#,##0.00"
-            ws_inv.cell(row=curr_row, column=14, value=0.0).number_format = "#,##0.00"
-            ws_inv.cell(row=curr_row, column=15, value=0.0).number_format = "#,##0.00"
+            ws_inv.cell(row=curr_row, column=8, value="")
+            ws_inv.cell(row=curr_row, column=9, value=scope2_source_label(r.source_type))
+            ws_inv.cell(row=curr_row, column=10, value=_safe_excel_value(s2_label or r.grid_region or ""))
+            ws_inv.cell(row=curr_row, column=11, value=round(float(s2_amount or 0.0), 2)).number_format = "#,##0.00"
+            ws_inv.cell(row=curr_row, column=12, value=_safe_excel_value(s2_unit or ""))
             ws_inv.cell(row=curr_row, column=16, value=round(tot, 2)).number_format = "#,##0.00"
-            ws_inv.cell(row=curr_row, column=17, value="Verified").font = font_regular
+            ws_inv.cell(row=curr_row, column=17, value=_safe_excel_value(r.status or "")).font = font_regular
 
             for c in range(1, 18):
                 ws_inv.cell(row=curr_row, column=c).border = thin_border
@@ -330,16 +368,13 @@ def export_national_inventory_report():
             ws_inv.cell(row=curr_row, column=5, value=_safe_excel_value(fac_name)).font = font_bold
             ws_inv.cell(row=curr_row, column=6, value=_safe_excel_value(fac.division if fac else ""))
             ws_inv.cell(row=curr_row, column=7, value=_safe_excel_value(fac.field if fac else ""))
-            ws_inv.cell(row=curr_row, column=8, value="Value Chain")
-            ws_inv.cell(row=curr_row, column=9, value=_safe_excel_value(r.category or "Value Chain Category"))
+            ws_inv.cell(row=curr_row, column=8, value="")
+            ws_inv.cell(row=curr_row, column=9, value=_safe_excel_value(r.category or ""))
             ws_inv.cell(row=curr_row, column=10, value=_safe_excel_value(r.sub_category or ""))
             ws_inv.cell(row=curr_row, column=11, value=round(qty, 2)).number_format = "#,##0.00"
             ws_inv.cell(row=curr_row, column=12, value=_safe_excel_value(r.unit or ""))
-            ws_inv.cell(row=curr_row, column=13, value=round(tot, 2)).number_format = "#,##0.00"
-            ws_inv.cell(row=curr_row, column=14, value=0.0).number_format = "#,##0.00"
-            ws_inv.cell(row=curr_row, column=15, value=0.0).number_format = "#,##0.00"
             ws_inv.cell(row=curr_row, column=16, value=round(tot, 2)).number_format = "#,##0.00"
-            ws_inv.cell(row=curr_row, column=17, value="Verified").font = font_regular
+            ws_inv.cell(row=curr_row, column=17, value=_safe_excel_value(r.status or "")).font = font_regular
 
             for c in range(1, 18):
                 ws_inv.cell(row=curr_row, column=c).border = thin_border
@@ -360,26 +395,29 @@ def export_national_inventory_report():
 
         comb_headers = [
             "Facility", "Equipment ID", "Process Stream", "Fuel Type", "Fuel Volume", "Unit",
-            "CO₂ Factor (kg/unit)", "CH₄ Factor (kg/unit)", "N₂O Factor (kg/unit)", "Total Direct (tCO₂e)", "Flaring DRE (%)"
+            "CO₂ Factor (kg/unit)", "CH₄ Factor (kg/unit)", "N₂O Factor (kg/unit)", "Total Direct (tCO₂e)", "Combustion efficiency (recorded)"
         ]
         for c_idx, h in enumerate(comb_headers, start=1):
             ws_comb.cell(row=4, column=c_idx, value=h)
         style_hdr(ws_comb, 4, fill=fill_national_hdr)
 
         c_row = 5
-        comb_records = [r for r in scope1_records if r.process_type in ["combustion", "flaring"]]
+        # bug hunt 2026-10-15 #33: every Scope 1 record is on one of the two sheets (routine / non-routine /
+        # safety flaring and mobile combustion were on neither; tanks, pneumatics ... missed the venting one)
+        comb_records = [r for r in scope1_records if str(r.process_type or "").lower() in COMBUSTION_AND_FLARING]
         for r in comb_records:
             fac = facilities.get(r.facility_id)
             fac_name = fac.name if fac else f"Facility {r.facility_id}"
-            is_flare = r.process_type == "flaring"
-            dre_str = "98.0% (Norme Sonatrach / API)" if is_flare else "N/A (Combustion complète)"
+            # the recorded efficiency, else blank (a fixed "98.0 %" was printed on every flare row)
+            ce = r.combustion_efficiency
+            dre_str = f"{(ce * 100 if ce <= 1 else ce):.1f}%" if ce not in (None, 0) else ""
 
             ws_comb.cell(row=c_row, column=1, value=_safe_excel_value(fac_name)).font = font_bold
-            ws_comb.cell(row=c_row, column=2, value=_safe_excel_value(r.equipment_id or "GEN-01")).font = font_mono
+            ws_comb.cell(row=c_row, column=2, value=_safe_excel_value(r.equipment_id or "")).font = font_mono
             ws_comb.cell(row=c_row, column=3, value=process_label(r.process_type)).font = font_bold
-            ws_comb.cell(row=c_row, column=4, value=_safe_excel_value(r.fuel_type or "Natural Gas")).font = font_regular
+            ws_comb.cell(row=c_row, column=4, value=_safe_excel_value(r.fuel_type or "")).font = font_regular
             ws_comb.cell(row=c_row, column=5, value=round(float(r.quantity or 0.0), 2)).number_format = "#,##0.00"
-            ws_comb.cell(row=c_row, column=6, value=_safe_excel_value(r.unit or "m3"))
+            ws_comb.cell(row=c_row, column=6, value=_safe_excel_value(r.unit or ""))
             ws_comb.cell(row=c_row, column=7, value=round(float(r.ef_used_co2 or 0.0), 4)).number_format = "0.0000"
             ws_comb.cell(row=c_row, column=8, value=round(float(r.ef_used_ch4 or 0.0), 5)).number_format = "0.00000"
             ws_comb.cell(row=c_row, column=9, value=round(float(r.ef_used_n2o or 0.0), 6)).number_format = "0.000000"
@@ -405,29 +443,31 @@ def export_national_inventory_report():
 
         vent_headers = [
             "Facility", "Equipment / Source", "Process Type", "Throughput / Devices", "Unit",
-            "Methane Mass (tCH₄)", "GWP AR6 (CH₄)", "CO₂e Total (tCO₂e)", "Measurement / Tier Methodology", "LDAR Survey Reference"
+            "Methane Mass (tCH₄)", "GWP (CH₄) used", "CO₂e Total (tCO₂e)", "Measurement / Tier Methodology", "Data source reference"
         ]
         for c_idx, h in enumerate(vent_headers, start=1):
             ws_vent.cell(row=4, column=c_idx, value=h)
         style_hdr(ws_vent, 4, fill=fill_sub_hdr)
 
         v_row = 5
-        vent_records = [r for r in scope1_records if r.process_type in ["venting", "fugitive", "process"]]
+        vent_records = [r for r in scope1_records if str(r.process_type or "").lower() not in COMBUSTION_AND_FLARING]
         for r in vent_records:
             fac = facilities.get(r.facility_id)
             fac_name = fac.name if fac else f"Facility {r.facility_id}"
             ch4_t = float(r.ch4_emissions or 0.0)
 
             ws_vent.cell(row=v_row, column=1, value=_safe_excel_value(fac_name)).font = font_bold
-            ws_vent.cell(row=v_row, column=2, value=_safe_excel_value(r.equipment_id or "COMP-SEAL-01")).font = font_mono
+            # bug hunt 2026-10-15 #32: the record's own values; blank when not recorded (an invented
+            # "COMP-SEAL-01", "AR6 29.8" and "Campagne OGI" were printed on every row)
+            ws_vent.cell(row=v_row, column=2, value=_safe_excel_value(r.equipment_id or "")).font = font_mono
             ws_vent.cell(row=v_row, column=3, value=process_label(r.process_type)).font = font_bold
             ws_vent.cell(row=v_row, column=4, value=round(float(r.quantity or 0.0), 2)).number_format = "#,##0.00"
-            ws_vent.cell(row=v_row, column=5, value=_safe_excel_value(r.unit or "devices"))
+            ws_vent.cell(row=v_row, column=5, value=_safe_excel_value(r.unit or ""))
             ws_vent.cell(row=v_row, column=6, value=round(ch4_t, 3)).number_format = "#,##0.000"
-            ws_vent.cell(row=v_row, column=7, value=29.8).number_format = "0.0"
+            ws_vent.cell(row=v_row, column=7, value=_ch4_gwp(r.gwp_version))
             ws_vent.cell(row=v_row, column=8, value=round(float(r.co2e_total or 0.0), 2)).number_format = "#,##0.00"
-            ws_vent.cell(row=v_row, column=9, value=_safe_excel_value(r.factor_source or "API Compendium 2021 Tier 2")).font = font_regular
-            ws_vent.cell(row=v_row, column=10, value="Campagne OGI / Caméra Infrarouge Certifiée").font = font_regular
+            ws_vent.cell(row=v_row, column=9, value=_safe_excel_value(r.factor_source or "")).font = font_regular
+            ws_vent.cell(row=v_row, column=10, value=_safe_excel_value(r.data_source_ref or "")).font = font_regular
 
             for col in range(1, 11):
                 ws_vent.cell(row=v_row, column=col).border = thin_border
@@ -444,11 +484,11 @@ def export_national_inventory_report():
         ws_s2.views.sheetView[0].showGridLines = True
 
         ws_s2.cell(row=1, column=1, value="DÉCRET 21-330 — ÉMISSIONS INDIRECTES LIÉES À L'ÉNERGIE (SCOPE 2)").font = font_title
-        ws_s2.cell(row=2, column=1, value="Consommation d'électricité du Réseau National Interconnecté (Sonelgaz) et de vapeur").font = font_subtitle
+        ws_s2.cell(row=2, column=1, value="Électricité, vapeur, chaleur et froid achetés (valeurs enregistrées)").font = font_subtitle
 
         s2_headers = [
-            "Facility", "Energy Vector", "Supply Source", "Period", "Electricity Consumed (MWh)",
-            "National Grid EF (tCO₂/MWh)", "Scope 2 Location-Based (tCO₂e)", "Scope 2 Market-Based (tCO₂e)", "Contractual Instruments"
+            "Facility", "Energy Vector", "Supply Source / Grid", "Period", "Activity", "Unit",
+            "Emission Factor (as recorded)", "Scope 2 Location-Based (tCO₂e)", "Scope 2 Market-Based (tCO₂e)", "Contractual Instruments"
         ]
         for c_idx, h in enumerate(s2_headers, start=1):
             ws_s2.cell(row=4, column=c_idx, value=h)
@@ -458,20 +498,22 @@ def export_national_inventory_report():
         for r in scope2_records:
             fac = facilities.get(r.facility_id)
             fac_name = fac.name if fac else f"Facility {r.facility_id}"
-            mwh = float(r.electricity_kwh or 0.0) / 1000.0
-            ef_grid = 0.5820
+            s2_amount, s2_unit, _lbl = scope2_activity(r)
 
+            # bug hunt 2026-10-15 #32: the record's source, factor and instrument (a fixed 0.5820 grid
+            # factor, "Sonelgaz" and an "HT supply contract" were printed on every row, steam included)
             ws_s2.cell(row=s2_row, column=1, value=_safe_excel_value(fac_name)).font = font_bold
-            ws_s2.cell(row=s2_row, column=2, value="Électricité Réseau").font = font_regular
-            ws_s2.cell(row=s2_row, column=3, value="Sonelgaz (Réseau National Interconnecté)").font = font_bold
+            ws_s2.cell(row=s2_row, column=2, value=scope2_source_label(r.source_type)).font = font_regular
+            ws_s2.cell(row=s2_row, column=3, value=_safe_excel_value(r.grid_region or r.location or "")).font = font_bold
             ws_s2.cell(row=s2_row, column=4, value=f"{r.year}-{int(r.month or 1):02d}").font = font_regular
-            ws_s2.cell(row=s2_row, column=5, value=round(mwh, 2)).number_format = "#,##0.00"
-            ws_s2.cell(row=s2_row, column=6, value=ef_grid).number_format = "0.0000"
-            ws_s2.cell(row=s2_row, column=7, value=round(float(r.co2e_location_based or r.co2e or 0.0), 2)).number_format = "#,##0.00"
-            ws_s2.cell(row=s2_row, column=8, value=round(float(r.co2e_market_based or r.co2e or 0.0), 2)).number_format = "#,##0.00"
-            ws_s2.cell(row=s2_row, column=9, value="Contrat de Fourniture Haute Tension Sonelgaz").font = font_regular
+            ws_s2.cell(row=s2_row, column=5, value=round(float(s2_amount or 0.0), 2)).number_format = "#,##0.00"
+            ws_s2.cell(row=s2_row, column=6, value=_safe_excel_value(s2_unit or ""))
+            ws_s2.cell(row=s2_row, column=7, value=r.emission_factor)
+            ws_s2.cell(row=s2_row, column=8, value=round(_s2(r, "co2e_location_based"), 2)).number_format = "#,##0.00"
+            ws_s2.cell(row=s2_row, column=9, value=round(_s2(r, "co2e_market_based"), 2)).number_format = "#,##0.00"
+            ws_s2.cell(row=s2_row, column=10, value=_safe_excel_value(r.market_instrument_type or "")).font = font_regular
 
-            for col in range(1, 10):
+            for col in range(1, 11):
                 ws_s2.cell(row=s2_row, column=col).border = thin_border
                 if s2_row % 2 == 0:
                     ws_s2.cell(row=s2_row, column=col).fill = PatternFill(start_color=c_zebra, end_color=c_zebra, fill_type="solid")
@@ -489,8 +531,8 @@ def export_national_inventory_report():
         ws_s3.cell(row=2, column=1, value="Catégories 3, 4 et 5 ISO 14064-1 : Transport de pétrole/gaz, intrants chimiques, combustion des produits vendus").font = font_subtitle
 
         s3_headers = [
-            "Facility", "ISO 14064-1 Category", "Value Chain Process", "Sub-Category", "Activity Data",
-            "Unit", "Emission Factor Source", "Total Scope 3 (tCO₂e)", "Accounting Boundary"
+            "Facility", "Category", "Sub-Category", "Calculation Method", "Activity Data",
+            "Unit", "Emission Factor (kg CO₂e/unit)", "Total Scope 3 (tCO₂e)", "Data Quality"
         ]
         for c_idx, h in enumerate(s3_headers, start=1):
             ws_s3.cell(row=4, column=c_idx, value=h)
@@ -502,14 +544,14 @@ def export_national_inventory_report():
             fac_name = fac.name if fac else f"Facility {r.facility_id}"
 
             ws_s3.cell(row=s3_row, column=1, value=_safe_excel_value(fac_name)).font = font_bold
-            ws_s3.cell(row=s3_row, column=2, value=_safe_excel_value(r.category or "Cat 3 - Transport indirect")).font = font_bold
-            ws_s3.cell(row=s3_row, column=3, value=_safe_excel_value(r.sub_category or "Transport par pipeline / maritime")).font = font_regular
-            ws_s3.cell(row=s3_row, column=4, value="Transport amont/aval").font = font_regular
+            ws_s3.cell(row=s3_row, column=2, value=_safe_excel_value(r.category or "")).font = font_bold
+            ws_s3.cell(row=s3_row, column=3, value=_safe_excel_value(r.sub_category or "")).font = font_regular
+            ws_s3.cell(row=s3_row, column=4, value=_safe_excel_value(r.calculation_method or "")).font = font_regular
             ws_s3.cell(row=s3_row, column=5, value=round(float(r.activity_data or 0.0), 2)).number_format = "#,##0.00"
-            ws_s3.cell(row=s3_row, column=6, value=_safe_excel_value(r.unit or "t-km"))
-            ws_s3.cell(row=s3_row, column=7, value="Base Empreinte ADEME / IEA 2024").font = font_regular
+            ws_s3.cell(row=s3_row, column=6, value=_safe_excel_value(r.unit or ""))
+            ws_s3.cell(row=s3_row, column=7, value=r.emission_factor)
             ws_s3.cell(row=s3_row, column=8, value=round(float(r.co2e or 0.0), 2)).number_format = "#,##0.00"
-            ws_s3.cell(row=s3_row, column=9, value="Périmètre Étendu de la Chaîne de Valeur").font = font_regular
+            ws_s3.cell(row=s3_row, column=9, value=_safe_excel_value(r.data_quality or "")).font = font_regular
 
             for col in range(1, 10):
                 ws_s3.cell(row=s3_row, column=col).border = thin_border
@@ -525,18 +567,14 @@ def export_national_inventory_report():
         ws_audit = wb.create_sheet(title="Incertitude & Assurance Audit")
         ws_audit.views.sheetView[0].showGridLines = True
 
-        fingerprint_dataset = {
-            "org": company_name,
-            "year": rep_year_str,
-            "s1_count": len(scope1_records),
-            "s2_count": len(scope2_records),
-            "s3_count": len(scope3_records),
-            "tot_s1": tot_s1,
-            "tot_s2": tot_s2_loc,
-            "tot_s3": tot_s3,
-            "grand_total": grand_total,
-        }
-        wb_sha256 = hashlib.sha256(json.dumps(fingerprint_dataset, sort_keys=True).encode("utf-8")).hexdigest()
+        # the data fingerprint of the records themselves (ids, values, statuses) and the filters
+        wb_sha256 = data_fingerprint({
+            "filters": {"year": year_filter, "facility_id": facility_filter, "status": list(statuses)},
+            "s1": [(r.id, r.co2e_total, r.status) for r in scope1_records],
+            "s2": [(r.id, r.co2e_location_based, r.co2e_market_based, r.co2e, r.status) for r in scope2_records],
+            "s3": [(r.id, r.co2e, r.status) for r in scope3_records],
+        })
+        unc = _uncertainty_rows(year_filter, allowed_ids_list, statuses)
 
         ws_audit.cell(row=1, column=1, value="DÉCRET 21-330 & ISO 14064-1 — ASSURANCE ET QUANTIFICATION DE L'INCERTITUDE").font = font_title
         ws_audit.cell(row=2, column=1, value="Quantification de l'incertitude globale (Approche 1 GIEC) et scellement cryptographique non-répudiable").font = font_subtitle
@@ -544,14 +582,16 @@ def export_national_inventory_report():
         audit_table = [
             ("Cadre Réglementaire", "Décret exécutif n° 21-330 / Arrêté ministériel du 25 septembre 2021"),
             ("Norme Internationale de Vérification", "ISO 14064-3 / ISAE 3410 (Niveau d'assurance raisonnable)"),
-            ("Incertitude Scope 1 (Propagation Gaussienne)", "± 6.4% (Intervalle de confiance à 95%)"),
-            ("Incertitude Scope 2 (Facteur Réseau Sonelgaz)", "± 4.2% (Intervalle de confiance à 95%)"),
-            ("Incertitude Scope 3 (Données de Transport / Intrants)", "± 18.5% (Intervalle de confiance à 95%)"),
-            ("Incertitude Globale Consolidée de l'Inventaire", "± 7.2% (Méthode de la somme quadratique SRSS GIEC Eq. 3.3)"),
-            ("Empreinte Cryptographique SHA-256", wb_sha256),
-            ("Statut du Sceau d'Audit", "SCIELLÉ & VÉRIFIÉ contre la Chaîne d'Audit Immuable de la Plateforme"),
-            ("Horodatage de Certification (UTC)", now_utc.strftime("%Y-%m-%d %H:%M:%S UTC")),
-            ("Auditeur Responsable Certifié", f"{assessor_name} ({assessor_email}) - Rôle: {user.role}"),
+            # bug hunt 2026-10-15: computed from the records (fixed ±6.4 / 4.2 / 18.5 / 7.2 % were printed)
+            ("Incertitude Scope 1 (95 %, GIEC Approche 1)", unc["1"]),
+            ("Incertitude Scope 2 (95 %, GIEC Approche 1)", unc["2"]),
+            ("Incertitude Scope 3 (95 %, GIEC Approche 1)", unc["3"]),
+            ("Incertitude Globale de l'Inventaire (95 %)", unc["all"]),
+            ("Statuts des enregistrements inclus", ", ".join(statuses)),
+            ("Empreinte des données SHA-256", wb_sha256),
+            ("Journal d'audit", "Empreinte enregistrée dans le journal d'audit (entrée REPORT)"),
+            ("Horodatage de génération (UTC)", now_utc.strftime("%Y-%m-%d %H:%M:%S UTC")),
+            ("Établi par", f"{assessor_name} ({assessor_email}) - Rôle: {user.role}"),
             ("Déclaration sur l'Honneur", "Je soussigné, Responsable Environnemental désigné, certifie sur l'honneur que le présent inventaire d'émissions de gaz à effet de serre a été élaboré en conformité stricte avec les dispositions du Décret Exécutif n° 21-330 et les prescriptions méthodologiques de la norme ISO 14064-1:2018, et reflète fidèlement la réalité de l'activité opérationnelle."),
         ]
 
@@ -581,7 +621,9 @@ def export_national_inventory_report():
             as_attachment=True,
             download_name=filename,
         )
-        record_report_fingerprint(resp, user, "National Inventory Decree 21-330 & ISO 14064-1 Excel", {"year": year}, len(scope1_records), wb_sha256)
+        record_report_fingerprint(resp, user, "National Inventory Decree 21-330 & ISO 14064-1 Excel",
+                                  {"year": year_filter, "facility_id": facility_filter, "status": list(statuses)},
+                                  len(scope1_records) + len(scope2_records) + len(scope3_records), wb_sha256)
         resp.headers["X-Audit-Timestamp"] = now_utc.isoformat()
         resp.headers["X-Audit-SHA256"] = wb_sha256
         return resp

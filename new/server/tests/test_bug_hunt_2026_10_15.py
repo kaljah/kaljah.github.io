@@ -276,3 +276,112 @@ def test_30_scope3_activity_unit_is_converted_to_the_factor_denominator():
     assert compute_scope3_co2e(10, 1, "kg/unit", activity_unit="bbl") == pytest.approx(0.01)
     with pytest.raises(ValidationError):
         compute_scope3_co2e(10, 1, "kg/kg", activity_unit="kWh")
+
+
+# ── Batch 5: reports ────────────────────────────────────────────────────────────────
+
+import io as _io  # noqa: E402
+
+import openpyxl  # noqa: E402
+
+from extensions import db  # noqa: E402
+from models import Emission, ProductionData, Scope2Emission  # noqa: E402
+
+
+def _report_setup():
+    fac = make_facility(name=uniq("RepFac"), region=uniq("R"))
+    rows = [
+        Emission(facility_id=fac.id, year=2011, month=1, process_type="routine_flaring", quantity=1, unit="MMscf",
+                 co2_emissions=10, ch4_emissions=0.1, n2o_emissions=0, co2e_total=12.5, status="Verified",
+                 gwp_version="AR6"),
+        Emission(facility_id=fac.id, year=2011, month=2, process_type="tank", quantity=1, unit="bbl",
+                 co2_emissions=0, ch4_emissions=1, n2o_emissions=0, co2e_total=28, status="Pending",
+                 gwp_version="AR5"),
+        Scope2Emission(facility_id=fac.id, year=2011, month=1, source_type="electricity", electricity_kwh=1000,
+                       emission_factor=0.5, co2e=0.5, co2e_location_based=None, co2e_market_based=None,
+                       status="Verified"),
+    ]
+    db.session.add_all(rows)
+    db.session.commit()
+    return fac
+
+
+def _sheet_values(ws):
+    return [[c.value for c in row] for row in ws.iter_rows()]
+
+
+def test_22_32_33_34_national_report_status_filter_and_record_values(ctx):
+    fac = _report_setup()
+    admin = make_user("admin", "Global")
+    with app.test_client() as c:
+        login(c, admin)
+        r = c.get(f"/api/reports/national-inventory-export?year=2011&facility_id={fac.id}")
+        assert r.status_code == 200, r.get_data(as_text=True)[:300]
+        wb = openpyxl.load_workbook(_io.BytesIO(r.data))
+        inv = _sheet_values(wb["Emissions Inventory"])
+        statuses = [row[16] for row in inv[4:] if row[1]]
+        assert statuses == ["Verified", "Verified"]  # the Pending tank is left out; S2 row is Verified
+        # routine flaring is on the combustion sheet (it was on neither sheet); nothing invented
+        comb = _sheet_values(wb["Scope 1 - Combustion & Torchage"])[4:]
+        assert [row[2] for row in comb if row[0]] and comb[0][1] in (None, "")
+        flat = str([_sheet_values(ws) for ws in wb.worksheets])
+        for invented in ("COMP-SEAL-01", "GEN-01", "Campagne OGI", "0.582", "Sonelgaz (Réseau", "± 6.4%"):
+            assert invented not in flat, invented
+        # Scope 2 location total falls back to co2e on a record without dual reporting
+        summary = _sheet_values(wb["Executive Summary"])
+        s2 = next(row for row in summary if row[0] and str(row[0]).startswith("Scope 2 — Émissions indirectes"))
+        assert s2[1] == pytest.approx(0.5)
+        # Verified + Pending on request
+        r = c.get(f"/api/reports/national-inventory-export?year=2011&facility_id={fac.id}&status=Verified,Pending")
+        wb = openpyxl.load_workbook(_io.BytesIO(r.data))
+        vent = _sheet_values(wb["Scope 1 - Évents & Fugitives"])[4:]
+        tank = next(row for row in vent if row[0])
+        assert tank[6] == 28  # the record's own GWP (AR5), not a fixed AR6 29.8
+        for bad in ("year=20x1", "facility_id=abc", "status=Approved"):
+            assert c.get(f"/api/reports/national-inventory-export?{bad}").status_code == 400, bad
+
+
+def test_35_cbam_production_follows_its_units_and_split_covers_every_process(ctx):
+    from routes.reports_cbam import _cbam_family, _get_facility_production_tonnes
+
+    fac = make_facility(name=uniq("CbamFac"), region=uniq("R"))
+    db.session.add(ProductionData(facility_id=fac.id, year=2012, month=1, oil_amount=0, gas_amount=28316.846592,
+                                  oil_unit="bbl", gas_unit="m3"))
+    db.session.commit()
+    tonnes, from_db = _get_facility_production_tonnes(fac.id, 2012)
+    assert from_db and tonnes == pytest.approx(21.0, rel=1e-6)  # 1,000 Mscf; was read as 28,317 Mscf (594.7 t)
+    assert _cbam_family("routine_flaring") == "flaring_venting"
+    assert _cbam_family("stationary_combustion") == "combustion"
+    assert _cbam_family("tank") == "flaring_venting"
+    assert _cbam_family("nitric_acid_production") == "process"
+
+
+def test_36_generate_refuses_malformed_filters(ctx):
+    admin = make_user("admin", "Global")
+    with app.test_client() as c:
+        login(c, admin)
+        for f in ({"year": "20x4"}, {"facility_id": "abc"}, {"month": "13"}):
+            r = c.post("/api/reports/generate", json={"filters": f})
+            assert r.status_code == 400, (f, r.status_code)
+
+
+def test_37_process_filter_leaves_out_scope2_and_3(ctx, monkeypatch):
+    import routes.reports as rep
+
+    seen = {}
+
+    def fake_pdf(data, filters):
+        seen["scopes"] = {d["scope"] for d in data}
+        buf = _io.BytesIO(b"%PDF-1.4")
+        buf.report_hash = "0" * 64
+        return buf
+
+    monkeypatch.setattr(rep, "create_pdf_report", fake_pdf)
+    fac = _report_setup()
+    admin = make_user("admin", "Global")
+    with app.test_client() as c:
+        login(c, admin)
+        r = c.post("/api/reports/generate", json={"filters": {"year": 2011, "facility_id": fac.id,
+                                                              "process_type": "routine_flaring"}})
+        assert r.status_code == 200, r.get_data(as_text=True)[:300]
+        assert seen["scopes"] == {1}

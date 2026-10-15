@@ -19,6 +19,7 @@ from extensions import db
 from models import Facility, CbamProductExport, Emission, ProductionData, Scope2Emission
 from routes.auth import login_required
 from services.audit_chain import data_fingerprint, record_report_fingerprint
+from services.report_params import report_facility, report_statuses, report_year
 from utils import get_allowed_facility_ids, get_current_user
 from routes.reports import _safe_excel_value, reports_bp
 
@@ -50,52 +51,72 @@ COUNTRY_GRID_FACTORS = {
 DEFAULT_GLOBAL_GRID_FACTOR = 0.4500
 
 
-def _get_facility_scope1_split(facility_id, year=None):
+def _cbam_family(process_type):
+    """combustion / process / flaring_venting family of a Scope 1 process type (calculations'
+    PROCESS_CATEGORY). Exact-name lists missed most types, and a facility with none of them was
+    reported as 100 % process emissions (bug hunt 2026-10-15 #35)."""
+    from calculations.uncertainty import PROCESS_CATEGORY
+
+    pt = str(process_type or "").strip().lower()
+    cat = PROCESS_CATEGORY.get(pt)
+    if cat == "combustion":
+        return "combustion"
+    if cat in ("flaring", "vented", "fugitive") or "flar" in pt or "vent" in pt or "fugitive" in pt:
+        return "flaring_venting"
+    return "process"  # stoichiometric, acid gas removal, dehydration and other process sources
+
+
+def _get_facility_scope1_split(facility_id, year=None, statuses=("Verified",)):
     """
     Computes genuine combustion, process, and flaring/venting splits
-    from the Emission table for the given facility and year.
+    from the Emission table for the given facility and year (records of the report's statuses).
     Returns (comb_pct, proc_pct, flare_pct, has_real_data).
     """
-    q = Emission.query.filter_by(facility_id=facility_id)
+    q = Emission.query.filter(Emission.facility_id == facility_id, Emission.status.in_(statuses))
     if year:
         q = q.filter_by(year=year)
     records = q.all()
-    if not records:
-        # Honest fallback: 100% direct process emission, 0% combustion, 0% flaring
-        return (0.0, 1.0, 0.0, False)
-
-    comb_sum = sum(
-        float(e.co2e_total or 0.0)
-        for e in records
-        if str(e.process_type or "").lower()
-        in ("combustion", "fuel_combustion", "boiler", "turbine", "engine", "heater")
-    )
-    proc_sum = sum(
-        float(e.co2e_total or 0.0)
-        for e in records
-        if str(e.process_type or "").lower()
-        in ("process", "chemical_reaction", "reforming", "catalytic", "calcination")
-    )
-    flare_sum = sum(
-        float(e.co2e_total or 0.0)
-        for e in records
-        if str(e.process_type or "").lower()
-        in ("flare", "flaring", "vent", "venting", "fugitive")
-    )
-    total = comb_sum + proc_sum + flare_sum
-
+    sums = {"combustion": 0.0, "process": 0.0, "flaring_venting": 0.0}
+    for e in records:
+        sums[_cbam_family(e.process_type)] += float(e.co2e_total or 0.0)
+    total = sum(sums.values())
     if total <= 0:
-        total_co2e = sum(float(e.co2e_total or 0.0) for e in records)
-        if total_co2e > 0:
-            return (0.0, 1.0, 0.0, True)
+        # no emissions recorded: no split to report (has_real_data False)
         return (0.0, 1.0, 0.0, False)
+    return (sums["combustion"] / total, sums["process"] / total, sums["flaring_venting"] / total, True)
 
-    return (comb_sum / total, proc_sum / total, flare_sum / total, True)
+
+_OIL_T_PER_BBL = 0.1364   # crude, ~33 API
+_GAS_T_PER_MSCF = 0.0210  # natural gas, ~0.74 kg/Sm3
+
+
+def _production_tonnes(amount, unit, kind):
+    """Tonnes of one production amount in its own unit (oil: bbl, m3, Mbbl ... or a mass; gas: Mscf,
+    MMscf, Sm3, MMSm3 ... or a mass). None when the unit cannot be read."""
+    from calculations.units import UnitError, unit_dimension
+
+    if not amount:
+        return 0.0
+    u = str(unit or ("bbl" if kind == "oil" else "mscf")).strip().lower().replace(" ", "")
+    u = {"mcf": "mscf", "mmcf": "mmscf"}.get(u, u)
+    try:
+        dim, f = unit_dimension(u)
+    except UnitError:
+        return None
+    if dim == "mass":
+        return float(amount) * f / 1000.0
+    if dim != "volume":
+        return None
+    m3 = float(amount) * f
+    if kind == "oil":
+        return m3 / 0.158987294928 * _OIL_T_PER_BBL
+    return m3 / 28.316846592 * _GAS_T_PER_MSCF
 
 
 def _get_facility_production_tonnes(facility_id, year=None, declared_export_qty=0.0):
     """
-    Fetches genuine annual facility production from ProductionData.
+    Fetches genuine annual facility production from ProductionData, each amount in its own unit
+    (oil_unit / gas_unit: gas in m3 was read as Mscf, 35x high; oil in tonnes as bbl).
     Returns (total_production_tonnes, is_from_db).
     """
     q = ProductionData.query.filter_by(facility_id=facility_id)
@@ -103,22 +124,24 @@ def _get_facility_production_tonnes(facility_id, year=None, declared_export_qty=
         q = q.filter_by(year=year)
     prods = q.all()
     if prods:
-        total_oil = sum(float(p.oil_amount or 0.0) for p in prods)
-        total_gas = sum(float(p.gas_amount or 0.0) for p in prods)
-        # Approximate conversion: 1 bbl crude ~ 0.1364 metric tonnes, 1 mscf gas ~ 0.0210 metric tonnes
-        total_tonnes = (total_oil * 0.1364) + (total_gas * 0.0210)
-        if total_tonnes > 0:
+        parts = []
+        for p in prods:
+            parts.append(_production_tonnes(p.oil_amount, p.oil_unit, "oil"))
+            parts.append(_production_tonnes(p.gas_amount, p.gas_unit, "gas"))
+        total_tonnes = None if any(t is None for t in parts) else sum(parts)
+        if total_tonnes and total_tonnes > 0:
             return (max(total_tonnes, float(declared_export_qty or 0.0)), True)
-    # Honest fallback: Production equals declared export quantity (100% export share)
+    # Honest fallback (also for a production unit that cannot be read): production equals the
+    # declared export quantity (100 % export share), reported as not from the production data
     return (float(declared_export_qty or 0.0), False)
 
 
-def _get_facility_scope2_metrics(facility_id, year=None, country="Algeria"):
+def _get_facility_scope2_metrics(facility_id, year=None, country="Algeria", statuses=("Verified",)):
     """
     Queries Scope2Emission for actual electricity consumption and grid emission factor.
     Returns (total_mwh, grid_ef, supplier_label, has_real_data).
     """
-    q = Scope2Emission.query.filter_by(facility_id=facility_id)
+    q = Scope2Emission.query.filter(Scope2Emission.facility_id == facility_id, Scope2Emission.status.in_(statuses))
     if year:
         q = q.filter_by(year=year)
     s2_records = q.all()
@@ -213,17 +236,19 @@ def export_cbam_report():
     if user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "Forbidden: IT personnel cannot access operational compliance reports"}), 403
 
+    # bug hunt 2026-10-15 #35: emissions of the chosen statuses only (default Verified); a malformed
+    # year or facility is refused (it meant "all")
+    year = request.args.get("year", "all")
+    year_filter = report_year(year)
+    facility_filter = report_facility(request.args.get("facility_id") or request.args.get("facilityId"))
+    statuses = report_statuses(request.args.get("status"))
+
     try:
         allowed_fids = get_allowed_facility_ids(user)
 
         export_format = request.args.get("format", "excel").lower()
         if export_format not in ("excel", "xml", "xlsx"):
             return jsonify({"error": f"Unsupported export format '{export_format}'. Supported formats: 'excel', 'xml'"}), 400
-
-        year = request.args.get("year", "all")
-        year_filter = int(year) if year and year.isdigit() and year != "all" else None
-        facility_id = request.args.get("facility_id") or request.args.get("facilityId")
-        facility_filter = int(facility_id) if facility_id and facility_id.isdigit() and facility_id != "all" else None
 
         if facility_filter is not None and allowed_fids is not None and facility_filter not in allowed_fids:
             return jsonify({"error": "Unauthorized facility"}), 403
@@ -247,9 +272,10 @@ def export_cbam_report():
         
         cbam_records = cbam_q.order_by(CbamProductExport.year.desc(), CbamProductExport.month.desc(), CbamProductExport.id.asc()).all()
 
-        company_name = getattr(user, "orgName", None) or "Enterprise Sonatrach"
-        assessor_name = getattr(user, "fullName", None) or "Lead Compliance Assessor"
-        assessor_email = getattr(user, "email", None) or "cbam.compliance@sonatrach.dz"
+        # the declaring account as it is: no invented organisation, name or address
+        company_name = getattr(user, "orgName", None) or ""
+        assessor_name = getattr(user, "fullName", None) or ""
+        assessor_email = getattr(user, "email", None) or ""
         now_utc = datetime.now(timezone.utc)
         rep_year_str = str(year_filter) if year_filter else "2024-2026"
 
@@ -608,7 +634,7 @@ def export_cbam_report():
             direct_see = float(r.specific_embedded_direct or 0.0)
             attr_direct = qty * direct_see
             
-            comb_pct, proc_pct, flare_pct, has_split = _get_facility_scope1_split(r.facility_id, r.year)
+            comb_pct, proc_pct, flare_pct, has_split = _get_facility_scope1_split(r.facility_id, r.year, statuses)
             combustion_em = attr_direct * comb_pct
             process_em = attr_direct * proc_pct
             flare_em = attr_direct * flare_pct
@@ -663,7 +689,7 @@ def export_cbam_report():
             fac = facilities.get(r.facility_id)
             fac_country = getattr(fac, "country", None) or op_country
 
-            s2_mwh, real_grid_ef, grid_supplier, has_s2 = _get_facility_scope2_metrics(r.facility_id, r.year, fac_country)
+            s2_mwh, real_grid_ef, grid_supplier, has_s2 = _get_facility_scope2_metrics(r.facility_id, r.year, fac_country, statuses)
             grid_ef = real_grid_ef
             spec_mwh = (indirect_see / grid_ef) if grid_ef > 0 else 0.0
             tot_mwh = qty * spec_mwh

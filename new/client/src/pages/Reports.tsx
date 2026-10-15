@@ -178,6 +178,8 @@ const Reports: React.FC = () => {
   const [totalRecords, setTotalRecords] = useState<number>(0);
 
   const [scope, setScope] = useState<string>(deepLink.scope || "all");
+  // record statuses the regulatory exports (Décret 21-330, CBAM) cover; Verified only by default
+  const [exportStatus, setExportStatus] = useState<string>("Verified");
   const [showAdvancedFilters, setShowAdvancedFilters] = useState<boolean>(false);
 
   const resetFilters = () => {
@@ -456,7 +458,7 @@ const Reports: React.FC = () => {
         year !== "all" ? year : reportYear !== "all" ? reportYear
           : String(availableFilters.years[0] || new Date().getFullYear());
       const response = await api.get("/reports/cbam-export", {
-        params: { year: yr, format, ...(regionId !== "all" && { facility_id: regionId }) },
+        params: { year: yr, format, status: exportStatus, ...(regionId !== "all" && { facility_id: regionId }) },
         responseType: "blob",
       });
       const mime = isXml ? "application/xml" : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
@@ -486,7 +488,7 @@ const Reports: React.FC = () => {
         year !== "all" ? year : reportYear !== "all" ? reportYear
           : String(availableFilters.years[0] || new Date().getFullYear());
       const response = await api.get("/reports/national-inventory-export", {
-        params: { year: yr, ...(regionId !== "all" && { facility_id: regionId }) },
+        params: { year: yr, status: exportStatus, ...(regionId !== "all" && { facility_id: regionId }) },
         responseType: "blob",
       });
       const url = window.URL.createObjectURL(
@@ -697,6 +699,17 @@ const Reports: React.FC = () => {
               <RotateCcw className="size-4" aria-hidden="true" />
               {tr("Reset filters")}
             </Button>
+            <NativeSelect
+              className={controlClass}
+              aria-label={tr("Records included in regulatory exports")}
+              title={tr("Records included in the Décret 21-330 and CBAM exports")}
+              value={exportStatus}
+              onChange={(e) => setExportStatus(e.target.value)}
+            >
+              <option value="Verified">{tr("Verified records only")}</option>
+              <option value="Verified,Pending">{tr("Verified and pending records")}</option>
+              <option value="all">{tr("All records (any status)")}</option>
+            </NativeSelect>
             <Menu>
               <MenuTrigger asChild>
                 <Button>
