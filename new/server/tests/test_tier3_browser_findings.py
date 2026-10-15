@@ -158,7 +158,7 @@ def test_13_14_unloading(app):
     assert em["ch4"] == pytest.approx(20.39, rel=0.01) and em["co2"] == pytest.approx(2.10, rel=0.01)
     v = 12 * 0.37e-3 * 2.5 ** 2 * 5000 * 150
     em = run(app, "unloading", calc_method="well_decompression", unload_freq=12, unload_diam=2.5,
-             unload_depth=5000, unload_press=150, ch4_content=85, co2_content=1, unload_temp=60)
+             unload_depth=5000, unload_press=150, ch4_content=85, co2_content=1, unload_temp=60, unload_temp_unit="F")
     assert em["ch4"] == pytest.approx(gas(v, .85, 16.04), rel=0.01)
     assert em["co2"] == pytest.approx(gas(v, .01, 44.01), rel=0.01)
 
@@ -166,7 +166,7 @@ def test_13_14_unloading(app):
 # 15 — blowdown volume in the unit shown (Exhibit 6-25)
 def test_15_blowdown_unit(app):
     em = run(app, "venting", top={"amount": 83.8, "unit": "ft3"}, blowdown_volume=83.8, blowdown_unit="ft3",
-             blowdown_pressure=100, blowdown_events=1, ch4_content=90, co2_content=0, blowdown_temp=80)
+             blowdown_pressure=100, blowdown_events=1, ch4_content=90, co2_content=0, blowdown_temp=80, blowdown_temp_unit="F")
     assert em["ch4"] == pytest.approx(0.011, rel=0.02)
 
 

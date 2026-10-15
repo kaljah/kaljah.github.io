@@ -254,6 +254,17 @@ class TankFlashingCalculator(BaseCalculator):
 
         meth = str(meth).lower().strip()
 
+        # a correlation chosen without its separator data is refused: the Exhibit 6-18a sample values
+        # (API 48.8, 28.6 psig, 112 F) were used in their place (bug hunt 2026-10-15 #25)
+        needed = {"vbe": ("api_gravity", "separator_pressure_psig", "separator_temp_f"),
+                  "standing": ("api_gravity", "separator_pressure_psig", "separator_temp_f"),
+                  "eub": ("separator_pressure_psig",)}.get(meth, ())
+        given = {"api_gravity": api_gravity, "separator_pressure_psig": separator_pressure_psig,
+                 "separator_temp_f": separator_temp_f}
+        missing = [k for k in needed if given[k] is None]
+        if missing:
+            raise ValueError(f"Tank method '{meth}' needs {', '.join(missing)} (separator data)")
+
         # Resolve compositions
         # Default tank-vent CH4 content when the flash gas is not analysed (Section 6.3.9.1): crude 27.4 vol %
         # (Exhibits 6-18a and 6-19, chart / GOR approach included), condensate 36.3 vol %. The chart / GOR
@@ -384,8 +395,10 @@ class TankFlashingCalculator(BaseCalculator):
                 # Equation 6-25: E_dump = CF * E_tank * (T / 8760)
                 t_hours = float(dump_valve_hours)
                 cf = info["cf"]
-                # Baseline tank emissions
-                base_ef = self.TABLE_6_22_CRUDE["large_uncontrolled"]["kg_ch4_per_bbl"]
+                # Baseline tank emissions of the same liquid (Table 6-22 crude, Table 6-24 condensate);
+                # condensate used the crude factor (bug hunt 2026-10-15 #23)
+                table = self.TABLE_6_24_CONDENSATE if ltype == "condensate" else self.TABLE_6_22_CRUDE
+                base_ef = table["large_uncontrolled"]["kg_ch4_per_bbl"]
                 base_tank_kg = q_bbl * base_ef
                 gross_ch4_kg = cf * base_tank_kg * (t_hours / 8760.0)
             else:

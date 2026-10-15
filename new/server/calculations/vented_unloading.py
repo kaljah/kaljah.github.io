@@ -1050,7 +1050,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
             ef_co2=ef_co2,
             ef_ch4=ef_ch4,
             ef_n2o=ef_n2o,
-            operating_temperature=operating_temperature or kwargs.get("unload_temp", 60.0),
+            operating_temperature=operating_temperature if operating_temperature is not None else kwargs.get("unload_temp", 60.0),
             temp_unit=temp_unit,
             depth_unit=depth_unit,
             diameter_unit=diameter_unit,

@@ -157,3 +157,84 @@ def test_31_clean_float_never_turns_unreadable_text_into_the_default():
     assert _clean_float("12 [ambiguous: decimal or thousands separator?]", default=0.0) is None  # was 0
     assert _clean_float("1,000", default=0.0) is None  # was 1000 (1 in French)
     assert _clean_float("1,234.5") == 1234.5 and _clean_float("1234,5") == 1234.5
+
+
+# ── Batch 3: venting and tanks ──────────────────────────────────────────────────────
+
+AGV = dict(process_type="associated_gas_venting", amount=10000, unit="bbl", gor=500, ch4_content=80,
+           factor_source="specific", tier="tier2", date="2025-01-15", year=2025, month=1)
+
+
+def test_20_vent_hours_and_the_record_period_share_one_unit(ctx):
+    ten_hours = _em(dict(AGV, venting_duration=10))["ch4"]
+    # 5e6 scf over 744 h, 10 h vented, 80 % CH4: 1.03 t (the 31-day month was read as 31 h: 21.7 t)
+    assert ten_hours == pytest.approx(1.0314, rel=1e-3)
+    assert _em(dict(AGV, hours=10))["ch4"] == pytest.approx(ten_hours)
+    ten_days = _em(dict(AGV, venting_duration=240))["ch4"]  # was refused as longer than the period
+    assert ten_days == pytest.approx(_em(dict(AGV, days=10))["ch4"])
+    assert ten_days == pytest.approx(ten_hours * 24, rel=1e-6)
+
+
+def test_20_an_hours_column_is_not_read_in_days_at_tier_2_default(ctx):
+    b = {k: v for k, v in AGV.items() if k != "tier"}
+    b["factor_source"] = "default"
+    assert _em(dict(b, hours=240))["ch4"] == pytest.approx(_em(dict(b, days=10))["ch4"])
+
+
+TANK = dict(process_type="tank", amount=10000, unit="bbl", factor_source="specific", gor=50,
+            tank_ch4_content=60, date="2025-01-15", year=2025, month=1)
+
+
+def test_21_tank_co2_content_is_percent_like_co2_content(ctx):
+    a = _em(dict(TANK, tank_co2_content=0.5))["co2"]
+    assert a == pytest.approx(_em(dict(TANK, co2_content=0.5))["co2"])  # was 100x apart
+    assert a == pytest.approx(0.1315, rel=1e-3)
+
+
+def test_23_condensate_dump_valve_uses_the_condensate_tank_factor():
+    from calculations.vented_production_tank import TankFlashingCalculator as T
+
+    r = T().calculate(1000, method="dump_valve", liquid_type="condensate", dump_valve_hours=8760)
+    assert r["results"]["ch4"]["value"] == pytest.approx(4.37 * 1000 * 0.146 / 1000, rel=1e-6)
+
+
+def test_24_working_loss_factor_is_converted_by_its_unit(ctx):
+    per_tonne = _em(dict(TANK, gor=None, tank_method="working_loss"), {"ch4": 0.001, "unit": "tonne/bbl"})["ch4"]
+    per_kg = _em(dict(TANK, gor=None, tank_method="working_loss"), {"ch4": 1.0, "unit": "kg/bbl"})["ch4"]
+    assert per_tonne == pytest.approx(per_kg)
+    with pytest.raises(ValueError, match="per bbl"):
+        _em(dict(TANK, gor=None, tank_method="working_loss"), {"ch4": 0.1, "unit": "tonne CH4/unit/hr"})
+
+
+def test_25_vbe_without_separator_data_is_refused(ctx):
+    with pytest.raises(ValueError, match="separator"):
+        _em(dict(TANK, gor=None, tank_method="vbe"))
+
+
+def test_26_dehydrator_tier3_needs_the_gas_ch4_content(ctx):
+    b = dict(process_type="dehydrator", amount=100, unit="MMscf", factor_source="specific",
+             date="2025-01-15", year=2025, month=1)
+    with pytest.raises(ValueError, match="CH4"):
+        _em(b)
+    assert _em(dict(b, dehy_ch4_content=78.8))["ch4"] == pytest.approx(0.52859, rel=1e-4)
+
+
+def test_26_agr_slip_needs_the_inlet_ch4(ctx):
+    b = dict(process_type="acid_gas_removal", amount=100, unit="MMscf", factor_source="specific",
+             agr_co2_in=5, agr_co2_out=1, agr_ch4_slip=0.001, date="2025-01-15", year=2025, month=1)
+    with pytest.raises(ValueError, match="inlet CH4"):
+        _em(b)
+
+
+def test_27_an_entered_zero_is_not_the_default(ctx):
+    b = dict(process_type="compressor_seal", amount=2, unit="compressors", factor_source="specific",
+             seal_type="reciprocating", date="2025-01-15", year=2025, month=1)
+    assert _em(dict(b, hours=0))["ch4"] == 0.0  # was the whole month
+
+
+def test_28_blowdown_temperature_without_a_unit_is_celsius(ctx):
+    b = dict(process_type="blowdown", amount=1000, unit="m3", factor_source="specific", ch4_content=90,
+             blowdown_pressure=100, blowdown_events=1, date="2025-01-15", year=2025, month=1)
+    c = _em(dict(b, blowdown_temp=30))["ch4"]
+    assert c == pytest.approx(_em(dict(b, blowdown_temp=86, blowdown_temp_unit="F"))["ch4"], rel=1e-6)
+    assert _em(b)["ch4"] == pytest.approx(_em(dict(b, blowdown_temp=60, blowdown_temp_unit="F"))["ch4"], rel=1e-5)

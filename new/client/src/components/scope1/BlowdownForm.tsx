@@ -105,7 +105,10 @@ export const BlowdownForm: React.FC<Scope1SubFormProps> = ({ data, onChange }) =
           <Input
             type="number"
             value={data.blowdown_temp !== undefined ? data.blowdown_temp : ""}
-            onChange={(e) => onChange("blowdown_temp", e.target.value)}
+            onChange={(e) => {
+              onChange("blowdown_temp", e.target.value);
+              onChange("blowdown_temp_unit", "F"); // the unit shown on the label (the server default is C)
+            }}
             placeholder={t("Default: 60°F")}
           />
         </Field>

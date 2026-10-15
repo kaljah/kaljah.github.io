@@ -150,7 +150,10 @@ export const DehydratorForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
             <Input
               type="number"
               value={data.dehy_temp !== undefined ? data.dehy_temp : ""}
-              onChange={(e) => onChange("dehy_temp", e.target.value)}
+              onChange={(e) => {
+                onChange("dehy_temp", e.target.value);
+                onChange("dehy_temp_unit", "F"); // the unit shown on the label (the server default is C)
+              }}
               placeholder="e.g. 100"
               required
             />

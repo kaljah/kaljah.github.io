@@ -57,9 +57,11 @@ PERCENT_FIELDS = frozenset({
     "ch4_content", "co2_content", "c2plus_content", "tank_ch4_content", "pneu_ch4_content", "pneu_co2_content",
     "dehy_ch4_content", "comp_ch4_content", "comp_co2_content", "comp_c2plus_content", "unload_ch4_content",
     "agr_co2_in", "agr_co2_out", "co2_in", "co2_out", "agr_ch4_in",
+    # bug hunt 2026-10-15 #21: still guessed, so the same 0.5 was 50 % here and 0.5 % next door
+    "tank_co2_content", "co2_mol",
 })  # keys named "..._pct" / "...percent" are read as percent by _parse_fraction_value already
 # the CH4 / CO2 contents of a c1..c10 gas analysis are read with the analysis (its own basis decision)
-_ANALYSIS_GROUP = ("ch4_content", "co2_content", "c2plus_content")
+_ANALYSIS_GROUP = ("ch4_content", "co2_content", "c2plus_content", "co2_mol")
 
 
 def percent_to_fraction(value, name):
@@ -331,6 +333,12 @@ class CalculationDispatcher:
         raise ValueError(
             f"Missing required parameter for Tier 3 specific calculation: '{keys[0]}' ({desc})"
         )
+
+    @staticmethod
+    def _given(flat_inputs, *keys):
+        """The first entered value of `keys` (0 included), else None. `a or b` skipped an entered 0:
+        0 hours became the whole period and 0 degrees the default temperature (bug hunt #27)."""
+        return next((flat_inputs.get(k) for k in keys if flat_inputs.get(k) not in (None, "", "-")), None)
 
     def _optional_float(self, flat_inputs, keys, default=None):
         """Extracts an optional float parameter from flat_inputs, returning default if missing."""
@@ -965,11 +973,9 @@ class CalculationDispatcher:
                         combustion_efficiency=float(
                             flat_inputs.get("combustion_efficiency") or 0.995
                         ),
-                        operating_temperature=flat_inputs.get("operating_temperature")
-                        or flat_inputs.get("temperature"),
-                        temp_unit=flat_inputs.get("temp_unit", "C"),
-                        operating_pressure=flat_inputs.get("operating_pressure")
-                        or flat_inputs.get("pressure"),
+                        operating_temperature=self._given(flat_inputs, "operating_temperature", "temperature"),
+                        temp_unit=flat_inputs.get("temp_unit") or "C",
+                        operating_pressure=self._given(flat_inputs, "operating_pressure", "pressure"),
                         press_unit=flat_inputs.get("press_unit", "psig"),
                         z_factor=flat_inputs.get("z_factor", 1.0),
                         gwp_dict=gwp_dict,

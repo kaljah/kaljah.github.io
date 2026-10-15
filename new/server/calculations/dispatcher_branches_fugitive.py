@@ -276,7 +276,8 @@ def calc_compressor_seal(self, calculator, flat_inputs, gwp_dict, uncertainties)
     else:
         seal_type = "reciprocating"
 
-    raw_hours = float(flat_inputs.get("hours") or flat_inputs.get("operating_hours") or record_period(flat_inputs)[0])
+    given_hours = self._given(flat_inputs, "hours", "operating_hours")  # an entered 0 is 0 hours (#27)
+    raw_hours = float(given_hours) if given_hours is not None else record_period(flat_inputs)[0]
     return calculator.calculate(
         compressor_count=count,
         seal_type=seal_type,
@@ -317,14 +318,14 @@ def calc_agr(self, calculator, flat_inputs, gwp_dict, uncertainties, unit):
     if co2_out > co2_in:
         raise ValueError("Outlet CO2 cannot exceed inlet CO2")
 
-    ch4_in = self._optional_fraction(
-        flat_inputs, ["agr_ch4_in", "ch4_in", "c1", "ch4_mole_pct"], 0.85
-    )
     ch4_slip = self._optional_fraction(
         flat_inputs,
         ["agr_ch4_slip_pct", "ch4_slip_pct", "agr_ch4_slip", "ch4_slip_fraction", "methane_slip_factor", "ch4_slip"],
         None,
     )
+    # a measured slip is a share of the inlet CH4, which is then required (it was taken as 85 %)
+    ch4_in = (self._require_fraction(flat_inputs, ["agr_ch4_in", "ch4_in", "c1", "ch4_mole_pct"], "inlet CH4 mole %")
+              if ch4_slip is not None else None)
     ctrl_eff = self._optional_fraction(
         flat_inputs, ["agr_control_eff", "control_efficiency", "removal_efficiency"], 0.0
     )
@@ -441,11 +442,8 @@ def calc_stoichiometry(self, calculator, flat_inputs, gwp_dict, uncertainties, u
         ["quantity", "amount", "fuel_mass", "production_amount"],
         "mass / production amount",
     )
-    carbon_content = self._optional_fraction(
-        flat_inputs,
-        ["carbon_content", "c_content"],
-        0.85,
-    )
+    # the fuel / feed carbon content is the method's input: it was taken as 85 % when missing
+    carbon_content = self._require_fraction(flat_inputs, ["carbon_content", "c_content"], "carbon content %")
     oxidation_factor = self._optional_fraction(
         flat_inputs,
         ["oxidation_factor", "ox_factor"],

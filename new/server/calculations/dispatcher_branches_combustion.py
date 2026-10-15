@@ -73,11 +73,9 @@ def calc_stationary_combustion(self, calculator, emission_factors, flat_inputs, 
         density=self._fuel_density(flat_inputs),
         carbon_wt=carbon_wt,
         combustion_efficiency=comb_eff_frac,
-        operating_temperature=flat_inputs.get("operating_temperature")
-        or flat_inputs.get("temperature"),
-        temp_unit=flat_inputs.get("temp_unit", "C"),
-        operating_pressure=flat_inputs.get("operating_pressure")
-        or flat_inputs.get("pressure"),
+        operating_temperature=self._given(flat_inputs, "operating_temperature", "temperature"),
+        temp_unit=flat_inputs.get("temp_unit") or "C",
+        operating_pressure=self._given(flat_inputs, "operating_pressure", "pressure"),
         press_unit=flat_inputs.get("press_unit", "psig"),
         z_factor=flat_inputs.get("z_factor", 1.0),
         gwp_dict=gwp_dict,
@@ -152,11 +150,9 @@ def calc_flaring(self, calculator, emission_factors, flat_inputs, gwp_dict, unce
         ef_n2o=float(ef_n2o_val) if n2o_given else None,
         combustion_efficiency=comb_eff,
         destruction_efficiency=dest_eff,
-        operating_temperature=flat_inputs.get("operating_temperature")
-        or flat_inputs.get("temperature"),
-        temp_unit=flat_inputs.get("temp_unit", "C"),
-        operating_pressure=flat_inputs.get("operating_pressure")
-        or flat_inputs.get("pressure"),
+        operating_temperature=self._given(flat_inputs, "operating_temperature", "temperature"),
+        temp_unit=flat_inputs.get("temp_unit") or "C",
+        operating_pressure=self._given(flat_inputs, "operating_pressure", "pressure"),
         press_unit=flat_inputs.get("press_unit", "psig"),
         z_factor=flat_inputs.get("z_factor", 1.0),
         gwp_dict=gwp_dict,
@@ -534,9 +530,9 @@ def calc_liquids_unloading(self, calculator, emission_factors, flat_inputs, gwp_
             ef_co2=ef_co2,
             ef_ch4=ef_ch4,
             ef_n2o=ef_n2o,
-            operating_temperature=flat_inputs.get("unload_temp")
-            or flat_inputs.get("operating_temperature", 60.0),
-            temp_unit=flat_inputs.get("temp_unit", "F"),
+            # blank = standard conditions; a temperature without a unit is C, as everywhere (#27, #28)
+            operating_temperature=self._given(flat_inputs, "unload_temp", "operating_temperature"),
+            temp_unit=flat_inputs.get("unload_temp_unit") or flat_inputs.get("temp_unit") or "C",
             depth_unit=depth_unit,
             diameter_unit=diam_unit,
             press_unit=press_unit,

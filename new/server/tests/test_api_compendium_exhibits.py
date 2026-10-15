@@ -139,7 +139,7 @@ case("6-21", "Produced water tank (Table 6-26)",
 case("6-25", "Equipment blowdown, gas law (Eq 6-32)",
      {"process_type": "blowdown", "factor_source": "specific", "amount": 83.8, "unit": "scf",
       "calc_inputs": {"blowdown": {"blowdown_volume": 83.8, "blowdown_unit": "scf", "blowdown_pressure": 100,
-                                   "blowdown_events": 1, "ch4_content": 90, "blowdown_temp": 80, "z_factor": 0.9864}}},
+                                   "blowdown_events": 1, "ch4_content": 90, "blowdown_temp": 80, "blowdown_temp_unit": "F", "z_factor": 0.9864}}},
      {"ch4": 0.011}, tol=0.03)
 
 # 6-44: hydrogen 13,000e6 scf H2 x 13.41 t/1e6 scf

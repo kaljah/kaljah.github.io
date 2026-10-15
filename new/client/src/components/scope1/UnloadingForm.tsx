@@ -852,7 +852,10 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                     type="number"
                     step="0.1"
                     value={data.unload_temp ?? ""}
-                    onChange={(e) => onChange("unload_temp", e.target.value)}
+                    onChange={(e) => {
+                      onChange("unload_temp", e.target.value);
+                      onChange("unload_temp_unit", "F"); // the unit shown on the label (the server default is C)
+                    }}
                     placeholder="60"
                   />
                 </Field>

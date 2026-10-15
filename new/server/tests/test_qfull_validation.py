@@ -443,7 +443,7 @@ class TestLiquidsUnloading:
             'unload_depth': 5000.0,
             'unload_diam': 2.5,
             'unload_press': 500.0,
-            'unload_temp': 60.0, # Default 60F
+            'unload_temp': 60.0, 'unload_temp_unit': 'F',  # Default 60F
             'ch4_content': 85,
             'unload_freq': 12
         }
@@ -472,6 +472,7 @@ class TestLiquidsUnloading:
             'unload_diam': 2.0,
             'unload_press': 200.0,
             'unload_temp': 60.0,
+            'unload_temp_unit': 'F',
             'ch4_content': 90,
             'unload_freq': 1
         }
@@ -638,6 +639,7 @@ class TestBlowdown:
             'blowdown_volume': 5.0,
             'blowdown_pressure': 500.0,
             'blowdown_temp': 60.0,
+            'blowdown_temp_unit': 'F',
             'blowdown_events': 10,
             'ch4_content': 85
         }
@@ -662,6 +664,7 @@ class TestBlowdown:
             'blowdown_volume': 10.0,
             'blowdown_pressure': 100.0,
             'blowdown_temp': 60.0,
+            'blowdown_temp_unit': 'F',
             'blowdown_events': 1,
             'ch4_content': 90
         }
@@ -825,6 +828,7 @@ class TestSensitivityOAT:
             'blowdown_volume': 1.0,
             'blowdown_pressure': 100.0,
             'blowdown_temp': 60.0,
+            'blowdown_temp_unit': 'F',
             'blowdown_events': 1,
             'ch4_content': 100
         }

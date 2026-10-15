@@ -55,10 +55,10 @@ def calc_venting(self, calculator, emission_factors, flat_inputs, gwp_dict, unce
         ef_co2=ef_co2,
         ef_ch4=ef_ch4,
         ef_n2o=ef_n2o,
-        operating_temperature=flat_inputs.get("blowdown_temp")
-        or flat_inputs.get("operating_temperature", 60.0),
-        temp_unit=flat_inputs.get("temp_unit")
-        or flat_inputs.get("blowdown_temp_unit", "F"),
+        # blank = standard conditions (60 F); a temperature without a unit is C, as on every other
+        # process (it was F here only), and 0 is 0 (`or` skipped it) (bug hunt 2026-10-15 #27, #28)
+        operating_temperature=self._given(flat_inputs, "blowdown_temp", "operating_temperature"),
+        temp_unit=flat_inputs.get("blowdown_temp_unit") or flat_inputs.get("temp_unit") or "C",
         press_unit=flat_inputs.get("press_unit")
         or flat_inputs.get("blowdown_press_unit", "psig"),
         z_factor=flat_inputs.get("z_factor", 1.0),
@@ -99,23 +99,24 @@ def calc_associated_gas_venting(self, calculator, emission_factors, flat_inputs,
     )
     gor_unit = flat_inputs.get("gor_unit") or "scf/bbl"
 
-    venting_duration = self._optional_float(
-        flat_inputs,
-        ["venting_duration", "duration", "hours", "days", "vent_duration"],
-        None,
-    )
+    # the venting time and the record period are passed in ONE unit (duration_unit): the period
+    # was the month in days read as hours (a 10 h vent counted as 32 % of the month, 24x high)
+    # and an "hours" column was read in days (bug hunt 2026-10-15 #20)
+    dur_key = next((k for k in ("venting_duration", "duration", "vent_duration", "hours", "days")
+                    if flat_inputs.get(k) not in (None, "", "-")), None)
+    venting_duration = self._optional_float(flat_inputs, [dur_key], None) if dur_key else None
     # S1K-F20: the Tier 3 venting time is in hours (form "Venting time (h)", calculator
     # default); a file without duration_unit was read in days (24x high)
-    is_t3 = str(tier_val or "").strip().lower() in ("tier3", "tier_3", "3", "t3") or \
-        str(factor_src or "").strip().lower() == "specific"
-    duration_unit = flat_inputs.get("duration_unit") or ("hours" if is_t3 else "days")
-    period_duration = self._optional_float(
-        flat_inputs,
-        ["period_duration", "total_period", "period_days", "operating_days"],
-        None,
-    )
-    if period_duration is None and str(flat_inputs.get("duration_unit") or "days").lower().startswith("d"):
-        period_duration = record_period(flat_inputs)[1]  # the record's month, not a year
+    is_t3 = str(tier_val or "").strip().lower() in ("tier3", "tier_3", "3", "t3") or         str(factor_src or "").strip().lower() == "specific"
+    duration_unit = flat_inputs.get("duration_unit") or {"hours": "hours", "days": "days"}.get(
+        dur_key, "hours" if is_t3 else "days")
+    per_day = 1.0 if str(duration_unit).strip().lower() in ("day", "days", "d") else 24.0
+    period_duration = self._optional_float(flat_inputs, ["period_duration", "total_period"], None)
+    if period_duration is None:
+        period_days = self._optional_float(flat_inputs, ["period_days", "operating_days"], None)
+        if period_days is None:
+            period_days = record_period(flat_inputs)[1]  # the record's month, not a year
+        period_duration = period_days * per_day
 
     rec_gas = self._optional_float(
         flat_inputs,
@@ -216,6 +217,20 @@ def calc_tank(self, calculator, emission_factors, flat_inputs, gwp_dict, process
     liquid = str(_opt(["tank_liquid_type", "liquid_type"]) or "crude").lower()
     if liquid not in ("crude", "condensate", "produced_water"):
         raise ValueError("tank liquid type must be crude, condensate or produced_water")
+    # a catalog CH4 factor (working-loss method) in kg per bbl of throughput, by its own unit: it was
+    # applied as kg/bbl whatever it was ("Gathering - Tank" is tonne CH4/unit/hr) (bug hunt #24)
+    method = _opt(["tank_method", "flashing_method"])
+    ef_ch4_kg_bbl = 0.0
+    if emission_factors.get("ch4") not in (None, "", "-", 0, 0.0):
+        from .combustion import convert_factor_to_kg_per_unit
+        from .units import UnitError
+
+        try:
+            ef_ch4_kg_bbl = convert_factor_to_kg_per_unit(emission_factors.get("ch4"), emission_factors.get("unit"), "bbl")
+        except UnitError as err:
+            if str(method or "").lower() == "working_loss" or process_type == "working_loss":
+                raise ValueError(f"Working-loss factor cannot be applied per bbl of throughput: {err}")
+            ef_ch4_kg_bbl = 0.0  # not a per-bbl factor: the tank methods below apply instead
     api_g = _opt(["api_gravity", "tank_api_gravity"])
     sep_p = _opt(["separator_pressure_psig", "sep_pressure"])
     sep_t = _opt(["separator_temp_f", "sep_temp"])
@@ -227,11 +242,11 @@ def calc_tank(self, calculator, emission_factors, flat_inputs, gwp_dict, process
         control_efficiency=tank_eff,
         uncertainties=uncertainties,
         process_type=process_type,
-        ef_ch4=emission_factors.get("ch4", 0),
+        ef_ch4=ef_ch4_kg_bbl,
         co2_content=co2_content,
         hhv=float(flat_inputs.get("hhv") or emission_factors.get("hhv") or 1020.0),
         gwp_dict=gwp_dict,
-        method=_opt(["tank_method", "flashing_method"]),
+        method=method,
         liquid_type=liquid,
         tank_size=str(_opt(["tank_size"]) or "large").lower(),
         api_gravity=float(api_g) if api_g is not None else None,
@@ -326,31 +341,24 @@ def calc_dehydrator(self, calculator, flat_inputs, gwp_dict, uncertainties):
         or flat_inputs.get("teg_pump_unit")
         or "gph"
     )
-    hours = float(
-        flat_inputs.get("dehy_hours")
-        or flat_inputs.get("hours_operating")
-        or flat_inputs.get("annual_hours")
-        or record_period(flat_inputs)[0]
-    )
-    ch4_content = self._optional_fraction(
-        flat_inputs, ["dehy_ch4_content", "ch4_content", "c1", "gas_ch4_mole_pct"], 0.85
+    # an entered 0 hours is 0, not the whole period (`or` skipped it) (bug hunt 2026-10-15 #27)
+    hours = self._optional_float(flat_inputs, ["dehy_hours", "hours_operating", "annual_hours"], None)
+    if hours is None:
+        hours = record_period(flat_inputs)[0]
+    # Tier 3: the site gas analysis is required (it was taken as 85 % CH4) (#26)
+    ch4_content = self._require_fraction(
+        flat_inputs, ["dehy_ch4_content", "ch4_content", "c1", "gas_ch4_mole_pct"], "dehydrator gas CH4 content %"
     )
     control_eff = self._optional_fraction(
         flat_inputs, ["dehy_eff", "control_efficiency"], 0.0
     )
-    contactor_press = float(
-        flat_inputs.get("dehy_press")
-        or flat_inputs.get("dehy_pressure")  # BUG-090: key the form used to send
-        or flat_inputs.get("contactor_pressure")
-        or 800.0
+    # contactor conditions as entered; never an invented 800 psig / 100 F (#26)
+    contactor_press = self._optional_float(
+        flat_inputs, ["dehy_press", "dehy_pressure", "contactor_pressure"], None  # BUG-090: dehy_pressure
     )
     press_u = flat_inputs.get("dehy_press_unit", "psig")
-    contactor_t = float(
-        flat_inputs.get("dehy_temp")
-        or flat_inputs.get("contactor_temperature")
-        or 100.0
-    )
-    temp_u = flat_inputs.get("dehy_temp_unit", "F")
+    contactor_t = self._optional_float(flat_inputs, ["dehy_temp", "contactor_temperature"], None)
+    temp_u = flat_inputs.get("dehy_temp_unit") or "C"  # without a unit: C, as everywhere (#28)
     has_flash = flat_inputs.get("dehy_has_flash", True)
     if isinstance(has_flash, str):
         has_flash = has_flash.lower() in ["true", "1", "yes"]

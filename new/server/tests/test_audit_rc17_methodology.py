@@ -82,7 +82,7 @@ def test_bug103_offshore_gas_completion_table_6_7():
 
 # ---------------- BUG-101 blowdown ----------------
 BD = {"factor_source": "specific", "blowdown_volume": 83.8, "blowdown_unit": "scf", "blowdown_pressure": 100,
-      "blowdown_events": 1, "ch4_content": 90, "blowdown_temp": 80, "z_factor": 0.9864}
+      "blowdown_events": 1, "ch4_content": 90, "blowdown_temp": 80, "blowdown_temp_unit": "F", "z_factor": 0.9864}
 
 
 def test_bug101_exhibit_6_25_absolute_pressure():

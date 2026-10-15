@@ -150,8 +150,8 @@ TIER3 = (
     + _with(_p("venting"), [
         Col("blowdown_pressure", "Vessel pressure before the blowdown."),
         Col("blowdown_press_unit", "Unit of blowdown_pressure. Blank = psig.", choices=("psig", "psia", "kPa", "barg", "bara")),
-        Col("blowdown_temp", "Gas temperature before the blowdown. Blank = 60 F."),
-        Col("blowdown_temp_unit", "Unit of blowdown_temp. Blank = F.", choices=("F", "C", "K")),
+        Col("blowdown_temp", "Gas temperature before the blowdown. Blank = standard conditions (60 F)."),
+        Col("blowdown_temp_unit", "Unit of blowdown_temp. Blank = C.", choices=("C", "F", "K")),
         Col("blowdown_events", "Number of blowdowns in the month (quantity = volume of one blowdown)."),
         Col("z_factor", "Gas compressibility. Blank = 1."),
     ])
