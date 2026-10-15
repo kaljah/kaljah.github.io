@@ -1,6 +1,6 @@
-import { ChevronDown, Download, FilePlus, FileSpreadsheet, FileText, FileCode, Funnel, Pencil, Plus, RotateCcw, Search, ShieldCheck, Sparkles, SlidersHorizontal, Table } from "lucide-react";
+import { ChevronDown, Download, FilePlus, FileSpreadsheet, FileText, FileCode, Funnel, Pencil, Plus, RotateCcw, Search, ShieldCheck, SlidersHorizontal, Table } from "lucide-react";
 import { NativeSelect } from "../ui/NativeSelect";
-import { Badge, Button, Card, CardHeader, DataTable, Dialog, Field, Input, Menu, MenuContent, MenuItem, MenuTrigger, Page, PageHeader, SegmentedControl, StatusPill, Textarea, cn, type BadgeTone } from "../ui";
+import { Badge, Button, Card, CardHeader, DataTable, Dialog, Field, Input, Menu, MenuContent, MenuItem, MenuTrigger, Page, PageHeader, StatusPill, Textarea, cn, type BadgeTone } from "../ui";
 import { controlClass } from "../components/import-wizard/mapping";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -147,7 +147,6 @@ const Reports: React.FC = () => {
   });
   const [emissions, setEmissions] = useState<EmissionRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [isGeneratingMasterPdf, setIsGeneratingMasterPdf] = useState<boolean>(false);
 
   // Filters
   const [year, setYear] = useState<string>(deepLink.year || "all");
@@ -500,46 +499,6 @@ const Reports: React.FC = () => {
     }
   };
 
-  const handleMasterReportDownload = async (targetFacilityId: string | number | null = null) => {
-    if (isGeneratingMasterPdf) return;
-    try {
-      setIsGeneratingMasterPdf(true);
-      setLoading(true);
-      // BUG-002: only accept a real id; never a click event or other object.
-      const explicitId =
-        typeof targetFacilityId === "string" || typeof targetFacilityId === "number"
-          ? targetFacilityId
-          : null;
-      const selectedId = explicitId || (reportSelectedRegions.length === 1 ? reportSelectedRegions[0] : (regionId !== "all" ? regionId : null));
-      const isElMerk = selectedId === "170" || selectedId === 170;
-      const reportTitle = isElMerk ? tr("El Merk (Block 208) Master Report") : tr("Groupement Berkine Master Report");
-      const downloadFilename = isElMerk ? "El_Merk_2025_Annual_GHG_Report.pdf" : "Groupement_Berkine_2025_Annual_GHG_Report.pdf";
-
-      toast.info(tr("Downloading {{title}} (PDF)...", { title: reportTitle }));
-      const endpoint = selectedId ? `/reports/master-annual-report?facility_id=${encodeURIComponent(selectedId)}` : "/reports/master-annual-report";
-      const response = await api.get(endpoint, {
-        responseType: "blob",
-      });
-      const url = window.URL.createObjectURL(new Blob([response.data], { type: "application/pdf" }));
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = downloadFilename;
-      document.body.appendChild(link);
-      link.click();
-      setTimeout(() => {
-        link.remove();
-        window.URL.revokeObjectURL(url);
-      }, 1000);
-      toast.success(tr("{{title}} downloaded successfully!", { title: reportTitle }));
-    } catch (error) {
-      console.error("Master report download failed:", error);
-      toast.error(tr("Failed to download Master Report."));
-    } finally {
-      setIsGeneratingMasterPdf(false);
-      setLoading(false);
-    }
-  };
-
   const getGroupedData = (): Record<string, EmissionRecord[]> => {
     if (groupBy === "none") return { all: emissions };
     const grouped: Record<string, EmissionRecord[]> = {};
@@ -612,7 +571,6 @@ const Reports: React.FC = () => {
   }));
 
   const [showConfigModal, setShowConfigModal] = useState<boolean>(false);
-  const [reportFormat, setReportFormat] = useState<string>("iso");
 
   const isTableFilteredDifferently = Boolean(
     (year !== "all" && year !== reportYear) ||
@@ -639,15 +597,6 @@ const Reports: React.FC = () => {
     }
     toast.success(tr("Report boundary synchronized with active table filters!"));
   };
-  // A master report exists only for El Merk (facility 170) and, for organisation-wide accounts, the
-  // consolidated entity (server MASTER_REPORTS); it used to be offered (and fail) for every facility.
-  const masterAvailableFor = (ids: any[]): boolean => {
-    const sel = ids.map(String).filter((v) => v && v !== "all");
-    if (sel.length === 1) return sel[0] === "170";
-    return (sel.length === 0 || sel.length === facilities.length) && user?.role === "admin";
-  };
-  const dialogMasterAvailable = masterAvailableFor(reportSelectedRegions);
-  const effectiveReportFormat = reportFormat === "master" && !dialogMasterAvailable ? "iso" : reportFormat;
   const [exclusionCriteria, setExclusionCriteria] = useState<string>("Sources contributing less than 1% of the total footprint are excluded.");
   const [verificationStatus, setVerificationStatus] = useState<string>("Not externally verified");
 
@@ -657,10 +606,6 @@ const Reports: React.FC = () => {
 
   const handleGenerateModalReport = async () => {
     setShowConfigModal(false);
-    if (effectiveReportFormat === "master") {
-      await handleMasterReportDownload();
-      return;
-    }
     await handleISOReportWrapper();
   };
 
@@ -721,12 +666,6 @@ const Reports: React.FC = () => {
     gwpTouched.current = true;
     setReportGwpStandard(e.target.value);
   };
-  const FORMATS = [
-    ...(dialogMasterAvailable
-      ? [{ value: "master", label: tr("🏆 2025 Master Analytical Report (Vertical A4, 15 Charts, 18 Tables)") }]
-      : []),
-    { value: "iso", label: tr("📋 ISO 14064-1 Report") },
-  ];
   const years = availableFilters.years;
 
   return (
@@ -774,11 +713,6 @@ const Reports: React.FC = () => {
                 <MenuItem icon={FileText} onSelect={handlePDFExport}>
                   {tr("PDF report")}
                 </MenuItem>
-                {masterAvailableFor(regionId === "all" ? [] : [regionId]) && (
-                  <MenuItem icon={FileText} onSelect={() => handleMasterReportDownload()}>
-                    {tr("2025 Master report (PDF)")}
-                  </MenuItem>
-                )}
               </MenuContent>
             </Menu>
           </>
@@ -835,45 +769,6 @@ const Reports: React.FC = () => {
             <Button size="sm" variant="secondary" className="w-full justify-center gap-1.5" onClick={handleOGMPExport}>
               <Download className="size-3.5" aria-hidden="true" />
               {tr("Export OGMP Excel")}
-            </Button>
-          </div>
-        </Card>
-
-        {/* Executive Master Brief Card */}
-        <Card className="flex flex-col justify-between border-t-2 border-t-amber-500 p-5 shadow-xs transition-shadow hover:shadow-md">
-          <div className="flex flex-col gap-2.5">
-            <div className="flex items-center justify-between">
-              <span className="flex size-9 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
-                <Sparkles className="size-5" aria-hidden="true" />
-              </span>
-              <Badge tone="warning">{tr("Executive A4")}</Badge>
-            </div>
-            <div>
-              <h3 className="m-0 text-base font-bold text-text">{tr("Executive Master Brief")}</h3>
-              <p className="m-0 mt-1 text-xs text-text-secondary leading-relaxed">
-                {tr("Full synthesis document with 15 analytical charts and 18 operational compliance tables.")}
-              </p>
-            </div>
-          </div>
-          <div className="mt-4 pt-3 border-t border-border">
-            <Button
-              size="sm"
-              variant="secondary"
-              className="w-full justify-center gap-1.5"
-              disabled={isGeneratingMasterPdf}
-              onClick={() => handleMasterReportDownload()}
-            >
-              {isGeneratingMasterPdf ? (
-                <>
-                  <span className="inline-block size-3.5 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" />
-                  {tr("Generating Master PDF, please wait...")}
-                </>
-              ) : (
-                <>
-                  <FileText className="size-3.5" aria-hidden="true" />
-                  {tr("Download Master PDF")}
-                </>
-              )}
             </Button>
           </div>
         </Card>
@@ -1447,7 +1342,7 @@ const Reports: React.FC = () => {
               {tr("Cancel")}
             </Button>
             <Button onClick={handleGenerateModalReport} loading={loading} disabled={loading}>
-              {loading ? tr("Generating...") : effectiveReportFormat === "master" ? tr("Download Master Report (PDF)") : tr("Generate ISO PDF")}
+              {loading ? tr("Generating...") : tr("Generate ISO PDF")}
             </Button>
           </>
         }
@@ -1466,38 +1361,20 @@ const Reports: React.FC = () => {
             <Badge tone="warning">{reportGwpStandard}</Badge>
           </div>
 
-          <SegmentedControl label={tr("Report format")} value={effectiveReportFormat} onChange={setReportFormat} options={FORMATS} className="flex-col sm:flex-row" />
-
           {/* 2-Column Split: Controls on Left, Document Preview on Right */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-start pt-1">
             {/* Left Column: Configuration Forms (7 cols) */}
             <div className="md:col-span-7 flex flex-col gap-3.5">
-              {effectiveReportFormat === "master" ? (
-                <div className="rounded-md border border-border bg-ink-50 p-3.5">
-                  <h4 className="m-0 mb-1.5 text-sm font-semibold text-text">{tr("Authentic Groupement Berkine (HBNS & El Merk) 2021–2025")}</h4>
-                  <p className="m-0 text-xs text-text-secondary leading-relaxed mb-2.5">
-                    {tr("Executive annual publication with certified SANGEA GHG quantification and 2030 decarbonization trajectory.")}
-                  </p>
-                  <ul className="m-0 flex list-disc flex-col gap-1 pl-4 text-xs leading-normal text-text-secondary">
-                    <li><strong>{tr("Vertical A4 Portrait")}</strong> {tr("format (25 publication pages).")}</li>
-                    <li><strong>{tr("15 High-Resolution Charts (300 DPI)")}</strong>{tr(": Scopes 1 & 2, methane abatement (-76.7%), flaring reduction.")}</li>
-                    <li><strong>{tr("18 Multi-Year Appendix Tables")}</strong>{tr(": Raw tables A.1 through A.16.")}</li>
-                  </ul>
-                </div>
-              ) : (
-                <>
-                  <p className="m-0 text-xs text-text-secondary leading-relaxed">
-                    {tr("Please provide the declarations required by ISO 14064-1:2018 before compiling the verified document.")}
-                  </p>
-                  <Field label={tr("Exclusion Criteria (Significance)")} hint={tr("Criteria used to define significant indirect emissions.")}>
-                    <Textarea rows={2} value={exclusionCriteria} onChange={(e) => setExclusionCriteria(e.target.value)} />
-                  </Field>
-                  <Field label={tr("Verification Status")} hint={tr("Verification type and assurance level.")}>
-                    <Input value={verificationStatus} onChange={(e) => setVerificationStatus(e.target.value)} />
-                  </Field>
-                  {selectBase(tr("GWP Metric Standard"), reportGwpStandard, onGwp, gwpOptions(tr(" — Default")))}
-                </>
-              )}
+              <p className="m-0 text-xs text-text-secondary leading-relaxed">
+                {tr("Please provide the declarations required by ISO 14064-1:2018 before compiling the verified document.")}
+              </p>
+              <Field label={tr("Exclusion Criteria (Significance)")} hint={tr("Criteria used to define significant indirect emissions.")}>
+                <Textarea rows={2} value={exclusionCriteria} onChange={(e) => setExclusionCriteria(e.target.value)} />
+              </Field>
+              <Field label={tr("Verification Status")} hint={tr("Verification type and assurance level.")}>
+                <Input value={verificationStatus} onChange={(e) => setVerificationStatus(e.target.value)} />
+              </Field>
+              {selectBase(tr("GWP Metric Standard"), reportGwpStandard, onGwp, gwpOptions(tr(" — Default")))}
             </div>
 
             {/* Right Column: Live Document Preview Thumbnail (5 cols) */}
@@ -1508,7 +1385,7 @@ const Reports: React.FC = () => {
                     {tr("Document Preview")}
                   </span>
                   <Badge tone="brand" className="text-[10px] px-1.5 py-0">
-                    {effectiveReportFormat === "master" ? tr("25 Pages") : tr("~12 Pages")}
+                    {tr("~12 Pages")}
                   </Badge>
                 </div>
 
@@ -1521,18 +1398,16 @@ const Reports: React.FC = () => {
                   <div className="flex flex-col gap-0.5 mt-1">
                     <div className="flex items-center justify-between">
                       <span className="text-[8px] font-black tracking-widest text-brand-600 uppercase">NEOCARBON</span>
-                      <span className="text-[7px] text-text-secondary font-mono">{effectiveReportFormat === "master" ? "E&P" : "ISO 14064"}</span>
+                      <span className="text-[7px] text-text-secondary font-mono">ISO 14064</span>
                     </div>
                     <div className="h-px w-full bg-border/60 my-0.5" />
                     <div className="text-[8.5px] font-bold leading-tight text-text line-clamp-2">
-                      {effectiveReportFormat === "master" ? tr("Groupement Berkine Master Report") : tr("GHG Inventory Statement")}
+                      {tr("GHG Inventory Statement")}
                     </div>
                     <div className="text-[7px] text-text-secondary font-medium truncate">
-                      {effectiveReportFormat === "master"
-                        ? "HBNS & El Merk Operating Units"
-                        : (reportSelectedRegions.length === 1
-                            ? facilities.find((f) => f.id.toString() === reportSelectedRegions[0]?.toString())?.name || "Facility Report"
-                            : tr("Consolidated Corporate Boundary"))}
+                      {reportSelectedRegions.length === 1
+                        ? facilities.find((f) => f.id.toString() === reportSelectedRegions[0]?.toString())?.name || "Facility Report"
+                        : tr("Consolidated Corporate Boundary")}
                     </div>
                     <div className="text-[7px] text-brand-600 font-semibold">
                       {tr("Period:")} {reportYear}
@@ -1559,7 +1434,7 @@ const Reports: React.FC = () => {
                   {/* Document Footer Miniature */}
                   <div className="border-t border-border/60 pt-1 flex items-center justify-between text-[6.5px] text-text-secondary">
                     <span>Sonatrach E&P</span>
-                    <span className="font-mono">P. 1 / {effectiveReportFormat === "master" ? "25" : "12"}</span>
+                    <span className="font-mono">P. 1 / 12</span>
                   </div>
                 </div>
 

@@ -553,64 +553,14 @@ def generate_report():
         )
 
 
-# BUG-020: the master reports are generated per request from the current database and
-# are only served to business roles with access to the facilities they cover.
-MASTER_REPORTS = {
-    "170": ("El_Merk_2025_Annual_GHG_Report.pdf", "generate_elm_master_report", "build_elm_master_pdf", [170]),
-    None: ("Groupement_Berkine_2025_Annual_GHG_Report.pdf", "generate_berkine_master_report", "build_master_pdf", None),
-}
-
-_active_master_pdf_builds = set()
-
-
+# Audit 2026-10-14 BUG-0002: the "master" annual reports (Groupement Berkine, El Merk) were static
+# documents with hard-coded figures labelled OFFICIAL VERIFIED, not built from the database. The
+# download is withdrawn; generate_*_master_report.py remain as standalone demo-sample scripts.
 @reports_bp.route("/master-annual-report", methods=["GET"])
 @login_required
 def get_master_annual_report():
-    """Download the master annual GHG & CAP report for a supported facility or the consolidated entity."""
-    import importlib
-    import os
-    import tempfile
-
-    from utils import require_facility_access
-
-    user = get_current_user()
-    if not user or user.role in ["it_admin", "it_manager", "it"]:
-        return jsonify({"error": "Forbidden: IT personnel cannot access operational emission reports"}), 403
-
-    raw = (request.args.get("facility_id") or "").strip().lower()
-    key = "170" if raw in ("170", "elm") else (None if raw in ("", "all", "consolidated") else raw)
-    if key not in MASTER_REPORTS:
-        return jsonify({"error": "No master report is available for this facility"}), 404
-    filename, module_name, builder_name, facility_ids = MASTER_REPORTS[key]
-
-    if facility_ids is None:
-        # consolidated report covers every facility: unrestricted users only
-        if get_allowed_facility_ids(user) is not None:
-            return jsonify({"error": "Forbidden: the consolidated report requires organisation-wide access"}), 403
-    elif not all(require_facility_access(user, fid) for fid in facility_ids):
-        return jsonify({"error": "Forbidden: outside your facility scope"}), 403
-
-    user_build_key = (user.id, key)
-    if user_build_key in _active_master_pdf_builds:
-        resp = jsonify({"error": "Master PDF generation is already in progress. Please wait."})
-        resp.headers["Retry-After"] = "5"
-        return resp, 429
-
-    _active_master_pdf_builds.add(user_build_key)
-    builder = getattr(importlib.import_module(module_name), builder_name)
-    fd, path = tempfile.mkstemp(suffix=".pdf")
-    os.close(fd)
-    try:
-        builder(path)
-        with open(path, "rb") as fh:
-            data = BytesIO(fh.read())
-    finally:
-        _active_master_pdf_builds.discard(user_build_key)
-        try:
-            os.remove(path)
-        except OSError:
-            pass
-    return send_file(data, mimetype="application/pdf", as_attachment=True, download_name=filename)
+    return jsonify({"error": "The master annual report has been withdrawn: it did not use your data. "
+                             "Use the ISO 14064-1 PDF report instead."}), 410
 
 
 # Route modules split out of this file; imported last because they use the helpers above.

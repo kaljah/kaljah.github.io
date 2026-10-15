@@ -11,23 +11,19 @@ def ctx(app):
         yield
 
 
-# ── BUG-020: master annual report ────────────────────────────────────────────────
+# ── BUG-020 / audit 2026-10-14 BUG-0002: master annual report withdrawn ──────────────
 
-@pytest.mark.parametrize("role,location,fid,expected", [
-    ("it_admin", "Global", "170", 403),
-    ("user", "West", "170", 403),       # 170 is not in West
-    ("user", "West", "", 403),          # consolidated report needs org-wide access
-    ("admin", "Global", "999999", 404),  # unsupported facility
+@pytest.mark.parametrize("role,location,fid", [
+    ("admin", "Global", ""),
+    ("admin", "Global", "170"),
+    ("user", "West", "170"),
 ])
-def test_bug020_master_report_authorization(client, ctx, role, location, fid, expected):
+def test_bug0002_master_report_is_withdrawn(client, ctx, role, location, fid):
+    """The static, hard-coded 'OFFICIAL VERIFIED' master PDFs are no longer served."""
     login(client, make_user(role, location))
     r = client.get(f"/api/reports/master-annual-report?facility_id={fid}")
-    assert r.status_code == expected
-
-
-def test_bug020_object_object_param_is_not_a_facility(client, ctx):
-    login(client, make_user("admin", "Global"))
-    assert client.get("/api/reports/master-annual-report?facility_id=[object%20Object]").status_code == 404
+    assert r.status_code == 410
+    assert r.mimetype == "application/json"
 
 
 # ── BUG-032: SBTi baseline suggestion is region-scoped ────────────────────────────

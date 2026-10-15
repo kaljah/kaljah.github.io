@@ -71,7 +71,7 @@ class NumberedCanvas(canvas.Canvas):
         if self._pageNumber == 1:
             self.setFont("Helvetica", 7.5)
             self.setFillColor(COLOR_MUTED)
-            self.drawString(MARGIN, 24, "OFFICIAL VERIFIED REPORT // CLASSIFICATION: COMMERCIAL IN CONFIDENCE")
+            self.drawString(MARGIN, 24, "DEMO SAMPLE // ILLUSTRATIVE FIGURES, NOT GENERATED FROM YOUR DATA")
             self.drawRightString(PAGE_WIDTH - MARGIN, 24, f"Page 1 of {page_count}")
             self.setFillColor(COLOR_ORANGE)
             self.rect(0, PAGE_HEIGHT - 6, PAGE_WIDTH, 6, fill=1, stroke=0)
