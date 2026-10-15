@@ -72,8 +72,7 @@ h2/
 | `__pycache__/`, `.pytest_cache/`, `node_modules/` | `deploy/`, `docs/`, `specs/` |
 | `new/client/src/i18n/fr.json` (partly, via `scripts/i18n-wrap.mjs`) | `deploy/.env` (local secrets, untracked) |
 
-**Not in the working tree** (present only in git history — do not assume they exist):
-`archive/`, `graphify-out/`, `AUDIT_MEMORY.md`, a root `package.json`.
+**Not in the repository** (do not assume they exist): `archive/` (git-ignored, local only), `graphify-out/` (generated), `AUDIT_MEMORY.md` and a root `package.json` (purged from history on 2026-10-15; kept only in the offline backup bundle), `AUDIT_ARTIFACTS_*/` and `test_artifacts/` (git-ignored outputs).
 
 ---
 

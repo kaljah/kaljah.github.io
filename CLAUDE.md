@@ -8,7 +8,7 @@ GHG (greenhouse-gas) accounting platform. The real application lives in `new/`:
 - `new/server` — Flask 3 API (SQLAlchemy, Flask-WTF CSRF, Flask-Limiter, Redis)
 - `new/client` — React 19 + Vite 7 SPA
 
-Loose root scripts and scratch files were archived into `archive/` (not present in the current working tree; recover via git history). A root `package.json` (Express/Electron), where present in history, is unrelated to the Flask app (absent in the working tree now).
+Loose root scripts and scratch files live in the git-ignored `archive/` (local only, never committed). Git history was purged on 2026-10-15 of every file no longer in the tree (repo cleanup): deleted files, old audit artifacts and `AUDIT_MEMORY.md` are not recoverable from git; the full pre-purge history is in the offline bundle `h2-backup-2026-10-15.bundle` (outside the repo).
 
 Other root dirs: `docs/` (`calculation-specification.md`, `validation-report.md`, `ui-modernization-plan.md`), `validation/` (extra calculation tests collected by the root `pytest.ini`), `.agents/` (tooling rules/workflows, not app code).
 
@@ -154,7 +154,7 @@ Other: `new/setup.bat` / `new/start_all.bat` (Windows native launch scripts for 
 
 ## Repo conventions
 
-- `AUDIT_MEMORY.md` (root) is the living audit log, if present (currently deleted in the working tree; see git history). Read it before fixing an audit item and update it afterwards.
+- `AUDIT_MEMORY.md` was the living audit log. It is no longer in the tree or in git history (purged 2026-10-15); a local copy of its last version is in `archive/from-history/AUDIT_MEMORY.md`. Read it before fixing an audit item. Audit runs are written to `AUDIT_ARTIFACTS_*/`, which is git-ignored.
 - `docs/CALCULATION_PIPELINE_MEMORY.md`: which route/function calculates and stores each input path (single, file, JSON, legacy; Scope 1/2/3), the intentional differences between them, and the bulk-vs-single parity tests that guard them. Read it before touching an import or calculation path.
 - Calculation methodology and validation: `docs/calculation-specification.md`, `docs/validation-report.md`.
 - A graphify knowledge graph lives in `graphify-out/` when generated (currently absent; `.agents/rules/graphify.md`). Use `graphify query "<q>"`, `graphify path "<A>" "<B>"` or `graphify explain "<concept>"` for architecture questions. Run `graphify update .` after modifying code.
