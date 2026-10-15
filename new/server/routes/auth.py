@@ -229,10 +229,13 @@ def superuser_required(f):
 
 ROLE_RANK = {"user": 0, "auditor": 0, "it": 1, "superuser": 2, "admin": 3, "it_admin": 4, "it_manager": 4}
 BUSINESS_ROLES = ("admin", "superuser")
-BUSINESS_ROLE_GRANTORS = ("admin", "it_manager", "it_admin")  # IT Admin can assign compliance admin & superuser roles
+# Audit 2026-10-14 BUG-0001: client IT (it, it_admin) manages account lifecycle only and may not
+# assign, or act on, the compliance roles; the platform operator (it_manager) and admin may.
+BUSINESS_ROLE_GRANTORS = ("admin", "it_manager")
 CLIENT_IT_ROLES = ("it",)  # client IT support manage ordinary accounts only
 CLIENT_IT_PROTECTED_ROLES = ("admin", "superuser", "it_manager")  # protected from IT support role
 VENDOR_PROTECTED_ROLES = ("it_manager",)  # protected from it_admin
+IT_ADMIN_PROTECTED_ROLES = ("admin", "superuser", "it_manager")  # it_admin may not modify, disable or delete these
 SUPERUSER_REGION_ERROR = ("A superuser is limited to one facility or region: set a specific location "
                           "(organisation-wide access is the admin role)")
 

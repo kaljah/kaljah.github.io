@@ -15,6 +15,7 @@ from routes.auth import (
     BUSINESS_ROLES,
     CLIENT_IT_PROTECTED_ROLES,
     CLIENT_IT_ROLES,
+    IT_ADMIN_PROTECTED_ROLES,
     ROLE_RANK,
     SUPERUSER_REGION_ERROR,
     VENDOR_PROTECTED_ROLES,
@@ -67,8 +68,8 @@ def update_user(id):
     requester_is_client_it = bool(it_admin and it_admin.role in CLIENT_IT_ROLES)
     if requester_is_client_it and user.role in CLIENT_IT_PROTECTED_ROLES:
         return jsonify({"error": "Forbidden: Client IT staff cannot modify Compliance Admin, Superuser or platform operator accounts"}), 403
-    if it_admin and it_admin.role == "it_admin" and user.role in VENDOR_PROTECTED_ROLES:
-        return jsonify({"error": "Forbidden: IT Administrator cannot modify platform operator accounts"}), 403
+    if it_admin and it_admin.role == "it_admin" and user.role in IT_ADMIN_PROTECTED_ROLES:
+        return jsonify({"error": "Forbidden: IT Administrator cannot modify Compliance Admin, Superuser or platform operator accounts"}), 403
 
     VALID_ROLES = set(ROLE_RANK.keys())
     requester_rank = ROLE_RANK.get(it_admin.role if it_admin else "user", 0)
@@ -77,6 +78,8 @@ def update_user(id):
         new_role = str(data["role"]).strip().lower()
         if new_role not in VALID_ROLES:
             return jsonify({"error": f"Invalid role. Must be one of: {', '.join(sorted(VALID_ROLES))}"}), 400
+        if it_admin and user.id == it_admin.id and new_role != user.role:
+            return jsonify({"error": "You cannot change your own role"}), 403
         # Separation of Duties: Only authorized grantors may assign business roles
         if new_role in BUSINESS_ROLES and it_admin.role not in BUSINESS_ROLE_GRANTORS:
             return jsonify({"error": "Forbidden: IT Administrators cannot assign business compliance roles (admin, superuser)"}), 403
@@ -147,8 +150,8 @@ def delete_user(id):
     it_admin = db.session.get(User, it_admin_id)
     if it_admin and it_admin.role in CLIENT_IT_ROLES and user.role in CLIENT_IT_PROTECTED_ROLES:
         return jsonify({"error": "Forbidden: Client IT staff cannot delete Compliance Admin, Superuser or platform operator accounts"}), 403
-    if it_admin and it_admin.role == "it_admin" and user.role in VENDOR_PROTECTED_ROLES:
-        return jsonify({"error": "Forbidden: IT Administrator cannot delete platform operator accounts"}), 403
+    if it_admin and it_admin.role == "it_admin" and user.role in IT_ADMIN_PROTECTED_ROLES:
+        return jsonify({"error": "Forbidden: IT Administrator cannot delete Compliance Admin, Superuser or platform operator accounts"}), 403
 
     # BUG-010 / BUG-069: derive every reference to users.id from the schema instead of a
     # hand-maintained list, and keep the maker-checker identity on the records.

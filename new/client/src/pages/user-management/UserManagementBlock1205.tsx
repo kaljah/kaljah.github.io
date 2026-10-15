@@ -67,10 +67,9 @@ const UserManagementBlock1205: React.FC<UserManagementBlock1205Props> = ({
         ]
       : currentUserRole === "it_admin"
       ? [
+          // Client IT cannot assign the compliance roles (admin, superuser): audit 2026-10-14 BUG-0001
           { value: "user", label: t("Standard User") },
           { value: "auditor", label: t("Assurance Auditor") },
-          { value: "superuser", label: t("Super User") },
-          { value: "admin", label: t("Admin (All Data)") },
           { value: "it", label: t("IT Support") },
           { value: "it_admin", label: t("IT Administrator") },
         ]

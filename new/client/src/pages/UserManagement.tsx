@@ -699,9 +699,9 @@ const UserManagement: React.FC = () => {
     if (
       found &&
       user?.role === "it_admin" &&
-      found.role === "it_manager"
+      ["admin", "superuser", "it_manager"].includes(found.role || "")
     ) {
-      toast.error(t("Protected account: IT Administrator cannot delete platform operator accounts."));
+      toast.error(t("Protected account: IT Administrator cannot delete Compliance Admin, Superuser or platform operator accounts."));
       return;
     }
     // Accepts either user object or user id

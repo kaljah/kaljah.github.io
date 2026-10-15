@@ -3344,6 +3344,7 @@
   "Protected account: Client IT staff cannot delete Compliance Admin or Superuser accounts.": "Compte protégé : le personnel informatique client ne peut pas supprimer les comptes Administrateur de conformité ou Super-utilisateur.",
   "Protected account: Client IT staff cannot modify Compliance Admin or Superuser accounts.": "Compte protégé : le personnel informatique client ne peut pas modifier les comptes Administrateur de conformité ou Super-utilisateur.",
   "Protected account: Client IT staff cannot reset credentials for Compliance Admin or Superuser accounts.": "Compte protégé : le personnel informatique client ne peut pas réinitialiser les identifiants des comptes Administrateur de conformité ou Super-utilisateur.",
+  "Protected account: IT Administrator cannot delete Compliance Admin, Superuser or platform operator accounts.": "Compte protégé : l'administrateur informatique ne peut pas supprimer les comptes Administrateur de conformité, Super-utilisateur ou opérateur de plateforme.",
   "Protected account — client IT staff cannot delete compliance accounts": "Compte protégé — le personnel informatique client ne peut pas supprimer les comptes de conformité",
   "Protected account — client IT staff cannot reset credentials": "Compte protégé — le personnel informatique client ne peut pas réinitialiser les identifiants",
   "Protected account — requires platform manager authority": "Compte protégé — requiert l'autorité du gestionnaire de plateforme",

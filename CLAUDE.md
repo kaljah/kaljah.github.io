@@ -97,7 +97,7 @@ Other: `new/setup.bat` / `new/start_all.bat` (Windows native launch scripts for 
     - `admin`: Client compliance administrator — the **only** role with unrestricted global access to all facilities, system configuration, and approval rights.
     - `superuser`: Operational lead — strictly scoped to **1 assigned facility/region** (no global bypass).
     - `user`: Standard operator — strictly scoped to assigned facility/region.
-    - `it` / `it_admin`: Client IT account lifecycle only. Strictly isolated from operational data (zero access to emissions, equity partner, or CAP data). Cannot reset passwords for or create `admin` or `superuser` accounts.
+    - `it` / `it_admin`: Client IT account lifecycle only. Strictly isolated from operational data (zero access to emissions, equity partner, or CAP data). Cannot create, assign, modify, disable, delete or reset passwords for `admin` or `superuser` accounts (only `admin` and `it_manager` grant those roles; nobody can change their own role).
     - `it_manager`: SaaS Vendor / Platform Operator team.
   - Facility scoping goes through `utils.get_allowed_facility_ids` (where only `admin` receives global `None`) and `utils.require_facility_access`.
   - All facility ID query parameters are strictly validated (`422 Unprocessable Entity` on non-numeric input).
