@@ -23,3 +23,16 @@ def process_label(process_type, default="Other Scope 1"):
 def scope2_source_label(source_type):
     s = str(source_type or "").strip()
     return SCOPE2_SOURCE_LABELS.get(s.lower(), s.replace("_", " ").capitalize() if s else "Grid Electricity")
+
+
+SEGMENTS = ("Upstream", "Midstream", "Downstream")
+
+
+def normalize_segment(value):
+    """A facility segment in its one listed form ("upstream ", "UPSTREAM" -> "Upstream"); other text is
+    kept as entered (trimmed). The filters listed "Upstream" but matched the stored text exactly, so a
+    facility saved as "upstream" was never in its own segment (bug hunt 2026-10-15 #14)."""
+    if value is None:
+        return None
+    text = str(value).strip()
+    return next((s for s in SEGMENTS if s.lower() == text.lower()), text) or None

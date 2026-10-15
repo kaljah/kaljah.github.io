@@ -59,7 +59,7 @@ def segment_category(segment):
 
 
 def _blank():
-    return {"s1": 0.0, "co2": 0.0, "ch4": 0.0, "n2o": 0.0, "s2": 0.0, "s3": 0.0,
+    return {"s1": 0.0, "co2": 0.0, "ch4": 0.0, "n2o": 0.0, "s2": 0.0, "s2_20": 0.0, "s3": 0.0,
             "flaring_t": 0.0, "flaring_m3": 0.0, "ch4_split": defaultdict(float), "records": [],
             "boe": 0.0, "gas_m3": 0.0, "oil_bbl": 0.0, "gas_mscf": 0.0, "has_prod": False,
             "prod_unknown_units": 0, "top_down": None}
@@ -111,13 +111,19 @@ def intensity_cells(years=None, facility_id=None, activity=None, division=None, 
                 c["flaring_m3"] += vol
         c["records"].append(e)
 
-    # Scope 2 dual reporting (location-based vs market-based per GHG Protocol)
-    s2_col = Scope2Emission.co2e_market_based if str(scope2_method).lower() == "market" else Scope2Emission.co2e_location_based
-    s2_val_expr = func.coalesce(s2_col, Scope2Emission.co2e)
-    q2 = db.session.query(Scope2Emission.facility_id, Scope2Emission.year, func.sum(s2_val_expr))
-    q2 = yfilter(apply_scope(q2, Scope2Emission, **scope), Scope2Emission).filter(Scope2Emission.status.in_(st))
-    for fid, yr, val in q2.group_by(Scope2Emission.facility_id, Scope2Emission.year).all():
-        cells[(fid, yr)]["s2"] += float(val or 0)
+    # Scope 2 dual reporting (location-based vs market-based per GHG Protocol), per record at both GWP
+    # horizons: the GWP-20 intensity added Scope 2 at GWP-100 (bug hunt 2026-10-15 #18)
+    from services.scope2_gases import record_totals
+
+    market = str(scope2_method).lower() == "market"
+    q2 = yfilter(apply_scope(Scope2Emission.query, Scope2Emission, **scope), Scope2Emission).filter(
+        Scope2Emission.status.in_(st))
+    for e in q2.all():
+        c = cells[(e.facility_id, e.year)]
+        loc, mkt = record_totals(e, "100")
+        loc20, mkt20 = record_totals(e, "20")
+        c["s2"] += mkt if market else loc
+        c["s2_20"] += mkt20 if market else loc20
 
     # Scope 3
     q3 = db.session.query(Scope3Emission.facility_id, Scope3Emission.year, func.sum(Scope3Emission.co2e))
@@ -143,7 +149,7 @@ def facility_row(fid, cell_list, fac, year_value, gwp_horizon="100"):
     years_used, top_down_years = [], []
     for yr, c in cell_list:
         for tgt in ([total, matched] if c["has_prod"] else [total]):
-            for k in ("s1", "co2", "ch4", "n2o", "s2", "s3", "flaring_t", "flaring_m3", "boe", "gas_m3",
+            for k in ("s1", "co2", "ch4", "n2o", "s2", "s2_20", "s3", "flaring_t", "flaring_m3", "boe", "gas_m3",
                       "oil_bbl", "gas_mscf"):
                 tgt[k] += c[k]
             for k, v in c["ch4_split"].items():
@@ -284,7 +290,7 @@ def facility_row(fid, cell_list, fac, year_value, gwp_horizon="100"):
         # intensities (kg per BOE) over facility-years with production only
         "intensity_years": sorted(years_used),
         "co2_intensity": per_boe(matched["s1"] + matched["s2"]),
-        "co2_intensity_gwp20": per_boe(m_s1_20 + matched["s2"]),
+        "co2_intensity_gwp20": per_boe(m_s1_20 + matched["s2_20"]),
         "scope1_intensity": per_boe(matched["s1"]),
         "scope1_intensity_gwp20": per_boe(m_s1_20),
         "scope2_intensity": per_boe(matched["s2"]),
@@ -317,7 +323,7 @@ def facility_row(fid, cell_list, fac, year_value, gwp_horizon="100"):
         "flaring_emissions": total["flaring_t"],
         # totals over every requested year (display); intensities use the matched subset
         "total_co2e": total["s1"] + total["s2"],
-        "total_co2e_gwp20": s1_20 + total["s2"],
+        "total_co2e_gwp20": s1_20 + total["s2_20"],
         "total_scope1": total["s1"],
         "total_scope1_gwp20": s1_20,
         "total_scope2": total["s2"],

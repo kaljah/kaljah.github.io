@@ -541,13 +541,15 @@ def get_available_filters():
         return jsonify({"error": "IT administrators are not authorized to view operational filters."}), 403
     allowed_fids = get_allowed_facility_ids(user)
 
-    year_queries = [
-        db.session.query(distinct(Emission.year)),
-        db.session.query(distinct(ProductionData.year)),
-        db.session.query(distinct(MitigationRecord.year)),
-        db.session.query(distinct(Scope2Emission.year)),
-        db.session.query(distinct(Scope3Emission.year)),
-    ]
+    # years of the facilities in the user's scope (bug hunt 2026-10-15 #15: every facility's years);
+    # mitigation records are organisation-wide (no facility) and count for everyone
+    def _years(model):
+        q = db.session.query(distinct(model.year))
+        if allowed_fids is not None and hasattr(model, "facility_id"):
+            q = q.filter(model.facility_id.in_(allowed_fids or [-1]))
+        return q
+
+    year_queries = [_years(m) for m in (Emission, ProductionData, MitigationRecord, Scope2Emission, Scope3Emission)]
 
     available_years = set()
     for query in year_queries:

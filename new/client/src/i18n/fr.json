@@ -3587,5 +3587,9 @@
   "Records included in the Décret 21-330 and CBAM exports": "Enregistrements inclus dans les exports Décret 21-330 et CBAM",
   "Verified records only": "Enregistrements vérifiés uniquement",
   "Verified and pending records": "Enregistrements vérifiés et en attente",
-  "All records (any status)": "Tous les enregistrements (tout statut)"
+  "All records (any status)": "Tous les enregistrements (tout statut)",
+  "Scope 2 method": "Méthode Scope 2",
+  "Market": "Marché",
+  "Scope 2 location-based (grid average factors)": "Scope 2 basé sur la localisation (facteurs moyens du réseau)",
+  "Scope 2 market-based (contractual instruments)": "Scope 2 basé sur le marché (instruments contractuels)"
 }

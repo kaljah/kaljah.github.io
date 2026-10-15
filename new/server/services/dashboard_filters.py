@@ -10,6 +10,8 @@ disagree:
 - Source categories come from one classifier (BUG-061), also used for the methane split.
 - Gas volumes are converted with the canonical unit parser (BUG-033/035).
 """
+from sqlalchemy import func
+
 from extensions import db
 from models import Facility
 
@@ -40,7 +42,8 @@ def apply_scope(query, model, allowed_fids=None, facility_id=None, activity=None
     if _set(division):
         query = query.filter(Facility.division == division)
     if _set(segment):
-        query = query.filter(Facility.segment == segment)
+        # segments are listed in one form (Upstream ...): match whatever case / spacing was stored (#14)
+        query = query.filter(func.lower(func.trim(Facility.segment)) == str(segment).strip().lower())
     return query
 
 

@@ -34,12 +34,22 @@ def yearly_totals(query, by_fac, horizon="100"):
     out = defaultdict(lambda: {"location": 0.0, "market": 0.0, "energy": 0.0})
     for e in query.all():
         d = out[(int(e.year), e.facility_id if by_fac else "total")]
-        delta = 0.0
-        if str(horizon) == "20":
-            g = gas_split(e)
-            delta = horizon_delta(g["ch4"], g["n2o"], "20")
-        d["location"] += float(e.co2e or 0) + delta
-        market = e.co2e_market_based if e.co2e_market_based is not None else e.co2e
-        d["market"] += float(market or 0) + (delta if e.co2e_market_based is None else 0.0)
+        loc, mkt = record_totals(e, horizon)
+        d["location"] += loc
+        d["market"] += mkt
         d["energy"] += float(e.electricity_kwh or 0)
     return out
+
+
+def record_totals(e, horizon="100"):
+    """(location, market) tCO2e of one Scope 2 record at the GWP horizon (GWP-20 adds the CH4 / N2O
+    share x (GWP20 - GWP100); a market total entered by the user is kept as given)."""
+    from services.dashboard_filters import horizon_delta
+
+    delta = 0.0
+    if str(horizon) == "20":
+        g = gas_split(e)
+        delta = horizon_delta(g["ch4"], g["n2o"], "20")
+    location = float(e.co2e or 0) + delta
+    market = e.co2e_market_based if e.co2e_market_based is not None else e.co2e
+    return location, float(market or 0) + (delta if e.co2e_market_based is None else 0.0)

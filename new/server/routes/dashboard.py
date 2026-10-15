@@ -322,7 +322,7 @@ def get_batch_dashboard_data():
                 facility_id=unc_fid,
                 scope2_method=scope2_method,
             )
-            f_years = executor.submit(_run_in_app_ctx, app, _query_available_years)
+            f_years = executor.submit(_run_in_app_ctx, app, _query_available_years, allowed_fids)
 
         # Static / cheap lookups (sequential is fine — they're single-row queries)
         # BUG-041: a single-year organisation goal is only comparable with a single-year,
@@ -659,8 +659,19 @@ def _query_categorical_breakdown(
 
     s1 = grouped(Emission, func.sum(Emission.co2e_total), func.sum(Emission.ch4_emissions),
                  func.sum(Emission.n2o_emissions))
-    s2_col = func.coalesce(Scope2Emission.co2e_market_based, Scope2Emission.co2e) if str(scope2_method).lower() == "market" else func.coalesce(Scope2Emission.co2e_location_based, Scope2Emission.co2e)
-    s2 = grouped(Scope2Emission, func.sum(s2_col))
+    # Scope 2 per record, as in the summary: the method chosen and the GWP horizon (GWP-20 re-weighted
+    # Scope 2 in the summary but not here, so the breakdown did not add up to it; bug hunt 2026-10-15 #18)
+    from collections import defaultdict
+
+    from services.scope2_gases import record_totals
+
+    s2_q = apply_year(apply_scope(db.session.query(Scope2Emission), Scope2Emission, **scope), Scope2Emission, year)
+    s2_by_fac = defaultdict(float)
+    for e in s2_q.filter(Scope2Emission.status.in_(st)).all():
+        loc, mkt = record_totals(e, "20" if str(gwp_horizon).lower() in ("20", "gwp20", "20yr") else "100")
+        s2_by_fac[e.facility_id] += mkt if str(scope2_method).lower() == "market" else loc
+    s2_labels = {f[0]: f for f in db.session.query(*labels).filter(Facility.id.in_(list(s2_by_fac) or [-1])).all()}
+    s2 = [(*s2_labels[fid], total) for fid, total in s2_by_fac.items() if fid in s2_labels]
     s3 = grouped(Scope3Emission, func.sum(Scope3Emission.co2e))
 
     out = {}
@@ -683,27 +694,21 @@ def _query_categorical_breakdown(
 
 
 
-def _query_available_years():
-    """Pure query logic for /years — returns a plain Python list."""
-    years1 = (
-        db.session.query(Emission.year)
-        .filter(Emission.status == "Verified")
-        .distinct()
-        .all()
-    )
-    years2 = (
-        db.session.query(Scope2Emission.year)
-        .filter(Scope2Emission.status == "Verified")
-        .distinct()
-        .all()
-    )
-    years3 = (
-        db.session.query(Scope3Emission.year)
-        .filter(Scope3Emission.status == "Verified")
-        .distinct()
-        .all()
-    )
-    years4 = db.session.query(ProductionData.year).distinct().all()
+def _query_available_years(allowed_fids=None):
+    """Pure query logic for /years — returns a plain Python list. Years of the facilities in the
+    user's scope only (bug hunt 2026-10-15 #15: every facility's years were offered)."""
+    def scoped(model, verified=True):
+        q = db.session.query(model.year)
+        if verified:
+            q = q.filter(model.status == "Verified")
+        if allowed_fids is not None:
+            q = q.filter(model.facility_id.in_(allowed_fids or [-1]))
+        return q.distinct().all()
+
+    years1 = scoped(Emission)
+    years2 = scoped(Scope2Emission)
+    years3 = scoped(Scope3Emission)
+    years4 = scoped(ProductionData, verified=False)
     valid_years = {
         int(y[0])
         for y in years1 + years2 + years3 + years4
@@ -758,7 +763,7 @@ def get_available_years():
             ),
             403,
         )
-    return jsonify(_query_available_years())
+    return jsonify(_query_available_years(get_allowed_facility_ids(user)))
 
 
 @dashboard_bp.route("/mitigation", methods=["GET"])

@@ -5,7 +5,9 @@ import { FILTER_KEYS, getFilters, setFilters, subscribe, type FilterKey } from "
 
 /**
  * Keeps the shared filters and the URL query in sync on routes flagged with filters: true.
- * URL to store on arrival (deep links win); store to URL on every change.
+ * URL to store on arrival (a deep link is the whole filter state: a key it does not name is "all", it
+ * was merged with the stored filters, so a link to one year showed another page's facility filter);
+ * store to URL on every change.
  * The store subscription outlives route changes, so it always reads the latest location and navigate
  * from refs (a stale setSearchParams would navigate back to the route it was created on).
  */
@@ -41,8 +43,12 @@ const AnalyticsFiltersSync: React.FC = () => {
       const v = params.get(k);
       if (v) fromUrl[k] = v;
     }
-    if (Object.keys(fromUrl).length) setFilters(fromUrl);
-    else writeUrl();
+    if (Object.keys(fromUrl).length) {
+      const whole: Record<FilterKey, string> = Object.fromEntries(FILTER_KEYS.map((k) => [k, fromUrl[k] ?? "all"])) as Record<FilterKey, string>;
+      setFilters(whole);
+    }
+    // the URL always shows the filters in force (setFilters notifies only on a change)
+    writeUrl();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled, location.pathname]);
 

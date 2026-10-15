@@ -7,6 +7,7 @@ import re
 import traceback
 from openpyxl import load_workbook
 
+from services.labels import normalize_segment
 from services.scope1_template import DATE_HELP, is_example_value
 from calculations.anomaly import plausibility_check
 
@@ -2765,7 +2766,7 @@ def _process_row_facilities(row, user_id, overwrite_duplicates, batch=None):
         ]
         for fld in facility_fields:
             if fld in row and row[fld] is not None and str(row[fld]).strip() != "":
-                setattr(existing, fld, row[fld])
+                setattr(existing, fld, normalize_segment(row[fld]) if fld == "segment" else row[fld])
 
         if equity is not None:
             existing.equity_share_pct = equity
@@ -2799,7 +2800,7 @@ def _process_row_facilities(row, user_id, overwrite_duplicates, batch=None):
             field=row.get("field"),
             code=row.get("code"),
             external_id=row.get("external_id"),
-            segment=row.get("segment"),
+            segment=normalize_segment(row.get("segment")),
             latitude=lat,
             longitude=lon,
             equity_share_pct=100.0 if equity is None else equity,

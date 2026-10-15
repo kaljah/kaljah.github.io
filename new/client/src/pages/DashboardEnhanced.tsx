@@ -221,6 +221,26 @@ const DashboardEnhanced: React.FC = () => {
   const [detailedBreakdownCollapsed, setDetailedBreakdownCollapsed] = useState<boolean>(false);
   const [exportingPDF, setExportingPDF] = useState<boolean>(false);
   const [gwpHorizon, setGwpHorizon] = useState<string>("100"); // "100" (Standard 100-yr) or "20" (Near-term 20-yr)
+  // Scope 2 method shown (GHG Protocol dual reporting); remembered per user in this browser. The dashboard
+  // never sent it, so it was always location-based (bug hunt 2026-10-15 #17)
+  const s2Key = `neocarbon.scope2Method.${user?.id ?? "anon"}`;
+  const [scope2Method, setScope2Method] = useState<string>("location");
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem(s2Key);
+      setScope2Method(saved === "market" ? "market" : "location");
+    } catch {
+      setScope2Method("location");
+    }
+  }, [s2Key]);
+  const changeScope2Method = (val: string) => {
+    setScope2Method(val);
+    try {
+      window.localStorage.setItem(s2Key, val);
+    } catch {
+      /* storage unavailable: the choice lasts for this page */
+    }
+  };
   // BUG-013: tooltip values come from the active standard in constants.js
   const { standard: activeGwpStandard, gwp: activeGwp } = useGwpStandard();
 
@@ -286,6 +306,7 @@ const DashboardEnhanced: React.FC = () => {
     isCompareMode,
     includePending,
     gwpHorizon,
+    scope2Method,
   ]);
 
   // BUG-0040: only the latest filter selection may update the dashboard (responses can arrive out of order)
@@ -321,6 +342,7 @@ const DashboardEnhanced: React.FC = () => {
       if (gwpHorizon && gwpHorizon !== "100") {
         filterParams.append("gwp_horizon", gwpHorizon);
       }
+      filterParams.append("scope2_method", scope2Method);
 
       // Part 3: Optimized Batch Dashboard API Call
       const batchRes = await api.get(`/dashboard/batch-all?${filterParams.toString()}`);
@@ -353,7 +375,7 @@ const DashboardEnhanced: React.FC = () => {
 
       // Fetch SBTi Trajectory Data
       try {
-        const sbtiRes = await api.get("/dashboard/sbti-trajectory");
+        const sbtiRes = await api.get("/dashboard/sbti-trajectory", { params: { scope2_method: scope2Method } });
         if (stale()) return;
         if (sbtiRes.data && sbtiRes.data.has_target) {
           setSbtiData(sbtiRes.data);
@@ -544,13 +566,19 @@ const DashboardEnhanced: React.FC = () => {
         (a: any, b: any) => a.year - b.year,
       );
 
-      if (gObj && bYearObj && !isCompareMode) {
-        const baseEmissions =
-          yearlyTrend[bYearObj.year]?.emissions ||
-          trendArray[0]?.emissions ||
-          0;
+      // the base year's own emissions (in view, else the configured value); without them, or with a goal
+      // year that is not after the base year, there is no trajectory to draw. The first year in view was
+      // used instead, and a goal year equal to the base year divided by zero (bug hunt 2026-10-15 #16).
+      const baseFromTrend = bYearObj ? yearlyTrend[bYearObj.year]?.emissions : undefined;
+      const baseEmissions: number | undefined =
+        typeof baseFromTrend === "number" ? baseFromTrend
+          : typeof bYearObj?.value === "number" ? bYearObj.value
+            : undefined;
+      const goalEndYear = gObj ? (typeof gObj.year === "string" ? parseInt(gObj.year, 10) : gObj.year) : NaN;
+      if (gObj && bYearObj && !isCompareMode && baseEmissions !== undefined
+          && Number.isFinite(goalEndYear) && goalEndYear > bYearObj.year) {
         const startYear = bYearObj.year;
-        const endYear = typeof gObj.year === "string" ? parseInt(gObj.year, 10) : gObj.year;
+        const endYear = goalEndYear;
         const targetVal = gObj.target_amount;
 
         // Pad trendArray with future years up to endYear if needed
@@ -813,6 +841,17 @@ const DashboardEnhanced: React.FC = () => {
 
     setTopBarRight(
       <div className="flex! items-center! gap-[10px]!">
+        {/* Scope 2 method (location / market) */}
+        <SegmentedControl
+          label={tr("Scope 2 method")}
+          size="sm"
+          value={scope2Method}
+          onChange={(val: any) => changeScope2Method(val)}
+          options={[
+            { value: "location", label: tr("Location"), title: tr("Scope 2 location-based (grid average factors)") },
+            { value: "market", label: tr("Market"), title: tr("Scope 2 market-based (contractual instruments)") },
+          ]}
+        />
         {/* GWP horizon */}
         <SegmentedControl
           label={tr("GWP horizon")}
@@ -878,6 +917,7 @@ const DashboardEnhanced: React.FC = () => {
     setTopBarLeft,
     setTopBarRight,
     gwpHorizon,
+    scope2Method,
     activeGwp,
     activeGwpStandard,
   ]);
@@ -1039,6 +1079,7 @@ const DashboardEnhanced: React.FC = () => {
               ...(currentYear !== "all" ? { year: currentYear } : {}),
               ...(includePending ? { includePending: "true" } : {}),
               ...(gwpHorizon && gwpHorizon !== "100" ? { gwp_horizon: gwpHorizon } : {}),
+              scope2_method: scope2Method,
             })
           }
         />

@@ -1,6 +1,7 @@
 from flask import request, jsonify, session, current_app
 import json
 from . import facilities_bp
+from services.labels import normalize_segment
 from utils import get_allowed_facility_ids, log_activity_and_notify, facility_in_user_scope, facility_change_allowed
 from input_validation import parse_number, require_text, parse_year
 from models import Facility, User
@@ -186,7 +187,7 @@ def add_facility():
         boundary_type=data.get("boundary_type", "Operational Control"),
         boundary_detail=data.get("boundary_detail"),
         equity_share_pct=parse_number(data.get("equity_share_pct"), "equity_share_pct", required=False, min_value=0, max_value=100, default=100.0),
-        segment=data.get("segment"),
+        segment=normalize_segment(data.get("segment")),
         operator_status=data.get("operator_status", "operated"),
         country=data.get("country", "Algeria"),
         ogmp_membership_year=parse_year(data.get("ogmp_membership_year"), required=False) or 2023,
@@ -314,7 +315,7 @@ def update_facility(facility_id):
     if "external_id" in data:
         facility.external_id = data["external_id"]
     if "segment" in data:
-        facility.segment = data["segment"]
+        facility.segment = normalize_segment(data["segment"])
     if "operator_status" in data:
         facility.operator_status = data["operator_status"]
     if "country" in data:
@@ -533,7 +534,7 @@ def import_facilities():
             field=fac_data.get("field"),
             code=fac_data.get("code"),
             external_id=fac_data.get("external_id"),
-            segment=fac_data.get("segment"),
+            segment=normalize_segment(fac_data.get("segment")),
             created_by=user_id,
         )
         db.session.add(facility)

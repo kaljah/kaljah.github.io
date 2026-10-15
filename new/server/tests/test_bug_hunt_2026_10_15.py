@@ -385,3 +385,58 @@ def test_37_process_filter_leaves_out_scope2_and_3(ctx, monkeypatch):
                                                               "process_type": "routine_flaring"}})
         assert r.status_code == 200, r.get_data(as_text=True)[:300]
         assert seen["scopes"] == {1}
+
+
+# ── Batch 6: dashboard and filters ──────────────────────────────────────────────────
+
+def test_14_segment_is_stored_in_its_listed_form_and_filtered_whatever_its_case(ctx):
+    from services.dashboard_filters import apply_scope
+    from services.labels import normalize_segment
+
+    assert normalize_segment(" upstream ") == "Upstream" and normalize_segment("DOWNSTREAM") == "Downstream"
+    assert normalize_segment("Petrochemicals") == "Petrochemicals"
+    fac = make_facility(name=uniq("SegFac"), region=uniq("R"))
+    fac.segment = "upstream "  # stored before the fix
+    db.session.add(Emission(facility_id=fac.id, year=2013, month=1, process_type="combustion", co2e_total=1,
+                            status="Verified"))
+    db.session.commit()
+    q = apply_scope(Emission.query, Emission, segment="Upstream").filter(Emission.facility_id == fac.id)
+    assert q.count() == 1  # the listed "Upstream" did not match "upstream "
+    admin = make_user("admin", "Global")
+    with app.test_client() as c:
+        login(c, admin)
+        r = c.post("/api/facilities", json={"name": uniq("SegNew"), "region": uniq("R"), "segment": "midstream"})
+        assert r.status_code in (200, 201), r.get_json()
+
+
+def test_15_year_lists_cover_the_users_facilities_only(ctx):
+    from routes.dashboard import _query_available_years
+
+    mine = make_facility(name=uniq("YrMine"), region=uniq("R"))
+    other = make_facility(name=uniq("YrOther"), region=uniq("R"))
+    db.session.add_all([
+        Emission(facility_id=mine.id, year=2014, month=1, process_type="combustion", co2e_total=1, status="Verified"),
+        Emission(facility_id=other.id, year=1987, month=1, process_type="combustion", co2e_total=1, status="Verified"),
+    ])
+    db.session.commit()
+    years = _query_available_years([mine.id])
+    assert 2014 in years and 1987 not in years
+    user = make_user("user", mine.region)
+    with app.test_client() as c:
+        login(c, user)
+        assert 1987 not in c.get("/api/filters/available").get_json()["years"]
+
+
+def test_18_gwp20_breakdown_reweights_scope2_like_the_summary(ctx):
+    from routes.dashboard import _query_categorical_breakdown, clear_dashboard_cache
+    from services.scope2_gases import record_totals
+
+    fac = make_facility(name=uniq("G20Fac"), region=uniq("R"))
+    e = Scope2Emission(facility_id=fac.id, year=2015, month=1, source_type="electricity", electricity_kwh=100000,
+                       emission_factor=0.5, co2e=50.0, co2e_location_based=50.0, status="Verified")
+    db.session.add(e)
+    db.session.commit()
+    loc20, _ = record_totals(e, "20")
+    clear_dashboard_cache()
+    rows = _query_categorical_breakdown(year=2015, facility_id=fac.id, gwp_horizon="20")
+    assert rows[0]["total_emissions"] == pytest.approx(loc20)
