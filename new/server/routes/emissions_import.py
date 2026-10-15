@@ -223,6 +223,8 @@ def import_emissions():
 
     # Cache for facility lookups to avoid redundant queries
     facility_cache = {}
+    batch_keys = set()  # BUG-0012: in-request duplicates
+    status_counts = {}
 
     for i, rec_data in enumerate(records_data):
         try:
@@ -236,9 +238,13 @@ def import_emissions():
                 if f_name_clean.lower() in facility_cache:
                     facility = facility_cache[f_name_clean.lower()]
                 else:
-                    facility = Facility.query.filter(
-                        func.lower(Facility.name) == f_name_clean.lower()
-                    ).first()
+                    matches = Facility.query.filter(
+                        func.lower(func.trim(Facility.name)) == f_name_clean.lower()
+                    ).limit(2).all()
+                    if len(matches) > 1:  # BUG-0011: never guess between two facilities of one name
+                        errors.append(f"Row {i}: more than one facility is named '{f_name_clean}'; give its id")
+                        continue
+                    facility = matches[0] if matches else None
                     facility_cache[f_name_clean.lower()] = facility
             else:
                 # Provided value is potentially an ID
@@ -330,6 +336,21 @@ def import_emissions():
             )
             apply_result(record, rec_data, em_result, method, factor_data, gwp_std)
             record.ogmp_level = ogmp_level_for(record)
+            record.data_source_ref = (str(rec_data.get("data_source_ref") or "")[:120] or None)
+            # BUG-0012: the same duplicate rule as the file import, and flagged values wait for a reviewer
+            from background_processor import _scope1_key, find_scope1_duplicate, needs_review
+
+            key = _scope1_key(record.facility_id, record.year, record.month, record.process_type,
+                              record.fuel_type, record.equipment_id, record.data_source_ref)
+            dup = find_scope1_duplicate(record)
+            if dup is not None or key in batch_keys:
+                where = f"record #{dup}" if dup is not None else "an earlier row of this import"
+                errors.append(f"Row {i}: duplicate of {where} (same facility, month, process, fuel, "
+                              "equipment and source reference)")
+                continue
+            batch_keys.add(key)
+            needs_review(record)
+            status_counts[record.status] = status_counts.get(record.status, 0) + 1
             db.session.add(record)
             imported_count += 1
         except Exception:
@@ -351,17 +372,19 @@ def import_emissions():
             user=user,
             request=request,
             entity="Emission",
-            details=f"Bulk imported {imported_count} emission records (status: Pending)",
+            details=f"Bulk imported {imported_count} emission records ("
+                    + ", ".join(f"{n} {s}" for s, n in sorted(status_counts.items())) + ")",
         )
-        for admin in User.query.filter_by(role="admin", status="active").all():
+        n_pending = sum(n for s, n in status_counts.items() if s != "Verified")
+        for admin in (User.query.filter_by(role="admin", status="active").all() if n_pending else []):
             if admin.id == user.id:
                 continue
             Notification.create(
                 user_id=admin.id,
                 type="warning",
                 title="Bulk Emission Records Awaiting Approval",
-                message=f"{user.fullName or user.email} imported {imported_count} emission records that require verification.",
-                metadata={"imported_count": imported_count, "uploader_id": user.id},
+                message=f"{user.fullName or user.email} imported {n_pending} emission records that require verification.",
+                metadata={"imported_count": n_pending, "uploader_id": user.id},
             )
     db.session.commit()
     from routes.dashboard import clear_dashboard_cache
@@ -372,7 +395,9 @@ def import_emissions():
         {
             "message": f"{imported_count} records imported",
             "imported": imported_count,
-            "status": "Pending",
+            # BUG-0012: the status the records were saved with (it said "Pending" for an admin's Verified)
+            "status": next(iter(status_counts)) if len(status_counts) == 1 else ("mixed" if status_counts else None),
+            "status_counts": status_counts,
             "errors": errors,
         }
     )

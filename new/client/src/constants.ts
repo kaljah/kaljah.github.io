@@ -66,6 +66,11 @@ export const getActiveGwpFactors = (standard: string = "AR5", horizon: string | 
 // (expanded uncertainty U = k·u, k = 2 per GHG Protocol / IPCC GPG).
 export const UNCERTAINTY_COVERAGE_K: number = 2;
 
+// Reporting years of activity data: the server rule (input_validation.parse_year), 1990 to next year
+// (audit 2026-10-14 BUG-0057). Targets (Goals) keep their own longer range.
+export const ACTIVITY_YEAR_MIN: number = 1990;
+export const activityYearMax = (): number => new Date().getFullYear() + 1;
+
 export const BOUNDARY_OPTIONS: Record<string, string[]> = {
   "Operational Control": [
     "Wholly Owned",

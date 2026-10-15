@@ -210,6 +210,7 @@ def test_scope3_server_side_calculation(client, test_users):
         json={
             "facility_id": test_users["facility_id"],
             "year": 2026,
+            "month": 1,
             "category": "Category 11",
             "activity_data": 1000.0,
             "emission_factor": 50.0,
@@ -616,6 +617,7 @@ def test_scope3_tonne_factor_handling(client, test_users):
         json={
             "facility_id": test_users["facility_id"],
             "year": 2026,
+            "month": 1,
             "category": "Category 1",
             "activity_data": 50.0,
             "emission_factor": 2.0,

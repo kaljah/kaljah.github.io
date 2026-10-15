@@ -46,8 +46,8 @@ def test_a01_password_reset_requires_higher_role(app, ctx, actor, target, expect
 
 # ── A-02: account creation follows the same separation of duties as role changes ─
 @pytest.mark.parametrize("actor,role,expected", [
-    ("it_admin", "superuser", 201),
-    ("it_admin", "admin", 201),
+    ("it_admin", "superuser", 403),  # audit 2026-10-14 BUG-0001: client IT cannot grant compliance roles
+    ("it_admin", "admin", 403),
     ("it_admin", "user", 201),
     ("it_manager", "superuser", 201),
     ("it", "admin", 403),

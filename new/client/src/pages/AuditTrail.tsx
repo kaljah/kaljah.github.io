@@ -7,6 +7,8 @@ import api from "../api";
 import { useToast } from "../components/Toast";
 import type { ColumnDef } from "@tanstack/react-table";
 import { t } from "../i18n";
+import { useAuth } from "../context/AuthContext";
+import { canVerifyAuditChain } from "../app/access";
 
 export interface AuditLog {
   id: string | number;
@@ -26,6 +28,7 @@ export interface AuditLog {
 
 const AuditTrail: React.FC = () => {
   const toast = useToast();
+  const { user } = useAuth();
 
   // Core Data States
   const [loading, setLoading] = useState<boolean>(true);
@@ -385,7 +388,7 @@ const AuditTrail: React.FC = () => {
     <div>
       <div className="mx-auto max-w-[1400px] px-4 py-5 md:px-7 md:py-6">
         <AuditHeader view={view} onView={setView} refreshing={isRefreshing} onRefresh={refreshAll} onExport={handleExport} />
-        <AuditIntegrityCheck />
+        {canVerifyAuditChain(user) && <AuditIntegrityCheck />}
         <AuditStats stats={stats} />
 
         <AuditTrailFiltersBarCard

@@ -2,7 +2,7 @@
 
 Rules (one place, used by the single and batch approve/reject endpoints):
 - Only admin / superuser may decide, and only on records inside their facility scope.
-- Only records awaiting review (Pending / legacy "Pending Approval" / Draft) can be decided;
+- Only records awaiting review (Pending / legacy "Pending Approval"; not Draft) can be decided;
   an already Verified or Rejected record cannot be flipped (BUG-070).
 - An approver may not approve a record they created or last modified (BUG-067).
 - The decision is an atomic conditional UPDATE ... WHERE status IN (...) so concurrent
@@ -18,9 +18,12 @@ from extensions import db
 from models import Emission, Notification, Scope2Emission, Scope3Emission
 from utils import get_allowed_facility_ids, log_activity_and_notify, user_label
 
+# Audit 2026-10-14 BUG-0005: Draft is the maker's unsubmitted work, not in the review queue, so it
+# cannot be decided either (approve-all used to verify drafts no reviewer had seen). The review
+# queue (GET /api/emissions/pending) lists exactly these statuses.
 REVIEWABLE_STATUSES = (
-    "Pending", "Pending Approval", "Pending Review", "Draft",
-    "pending", "pending approval", "pending review", "draft",
+    "Pending", "Pending Approval", "Pending Review",
+    "pending", "pending approval", "pending review",
     "submitted", "Submitted", "flagged", "Flagged"
 )
 APPROVER_ROLES = ("admin", "superuser")
@@ -173,6 +176,16 @@ def decide_single(user, scope, record_id, decision, reason=None, request=None):
 
 
 # ── Edit / delete rules (BUG-067) ───────────────────────────────────────────────
+
+# keys an edit may send that are never applied (status and totals are server-side)
+_IGNORED_EDIT_KEYS = {"status", "approved_by", "approved_at", "co2e", "co2e_total", "co2_emissions",
+                      "ch4_emissions", "n2o_emissions", "id", "scope"}
+
+
+def edit_fields(data):
+    """The fields an edit request would change; empty for an empty or null body (BUG-0032)."""
+    return set(data or {}) - _IGNORED_EDIT_KEYS if isinstance(data, dict) else set()
+
 
 def on_edit(record, user):
     """Call on every accepted edit. Records the last modifier and sends decided records back

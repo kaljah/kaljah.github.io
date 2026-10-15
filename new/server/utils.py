@@ -49,16 +49,15 @@ def get_allowed_facility_ids(user):
     if not user_region or is_unrestricted_location(user_region):
         return []  # No specific facility/region assigned, no access for scoped role
 
-    # Audit 2026-10-01 (A-04): user.location is a value, not a LIKE pattern ("West_Field" matched
-    # "WestXField"; "%" matched every facility), so the wildcards are escaped.
-    # DEFECT-A2-001 FIX: Wrap escaped pattern in '%' to match facility name/region containing the location
-    pattern = user_region.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
-    like_pattern = f"%{pattern}%"
+    # Audit 2026-10-14 BUG-0010: the assigned location is one facility, region or location, matched
+    # exactly (case and surrounding spaces ignored). It used to be a substring: "a" matched every
+    # facility whose name contained an "a". (A-04: it is a value, never a LIKE pattern.)
+    wanted = user_region.lower()
     facilities = Facility.query.filter(
         db.or_(
-            Facility.region.ilike(like_pattern, escape="\\"),
-            Facility.location.ilike(like_pattern, escape="\\"),
-            Facility.name.ilike(like_pattern, escape="\\"),
+            db.func.lower(db.func.trim(Facility.region)) == wanted,
+            db.func.lower(db.func.trim(Facility.location)) == wanted,
+            db.func.lower(db.func.trim(Facility.name)) == wanted,
         )
     ).all()
 

@@ -223,6 +223,7 @@ class TestBoundaryResilienceAPI:
                 json={
                     "year": 2024,
                     "month": 7,
+                    "allow_duplicate": True,  # the same record on purpose (BUG-0028)
                     "facility_id": fac_id,
                     "process_type": "combustion",
                     "fuel": "Natural Gas",
@@ -273,6 +274,7 @@ class TestBoundaryResilienceAPI:
                 json={
                     "year": 2024,
                     "month": 8,
+                    "allow_duplicate": True,  # the same record on purpose (BUG-0028)
                     "facility_id": fac_id,
                     "process_type": "combustion",
                     "fuel": "Natural Gas",

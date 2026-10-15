@@ -107,6 +107,7 @@ def _snapshot(job):
         "error_csv_path": job.get("error_csv_path"),
         "anomaly_count": len(anomalies),
         "anomalies": list(anomalies[:50]),
+        "status_counts": dict(job.get("status_counts") or {}),
         "owner_id": job.get("owner_id"),
         "created_at": job.get("created_at"),
         "heartbeat": time.time(),
@@ -691,6 +692,37 @@ def _scope1_key(facility_id, year, month, process_type, fuel, equipment_id, sour
             (source_ref or "").strip().lower())
 
 
+LIVE_STATUSES = ("Pending", "Verified", "Pending Approval")
+
+
+def find_scope1_duplicate(record, exclude_id=None, statuses=LIVE_STATUSES):
+    """Id of a stored Scope 1 record with the natural key of `record` (the bulk import's duplicate
+    rule), or None. Used by manual entry and the JSON import (audit 2026-10-14 BUG-0012, BUG-0028)."""
+    from models import Emission
+
+    key = _scope1_key(record.facility_id, record.year, record.month, record.process_type, record.fuel_type,
+                      record.equipment_id, record.data_source_ref)
+    q = Emission.query.filter(Emission.facility_id == record.facility_id, Emission.year == record.year,
+                              Emission.month == record.month, Emission.status.in_(statuses))
+    if exclude_id is not None:
+        q = q.filter(Emission.id != exclude_id)
+    for e in q.with_entities(Emission.id, Emission.process_type, Emission.fuel_type, Emission.equipment_id,
+                             Emission.data_source_ref).all():
+        if _scope1_key(record.facility_id, record.year, record.month, e.process_type, e.fuel_type,
+                       e.equipment_id, e.data_source_ref) == key:
+            return e.id
+    return None
+
+
+def needs_review(record):
+    """A flagged value always waits for a reviewer, an admin's included (the manual form's rule)."""
+    if record.qa_flag and record.status == "Verified":
+        record.status = "Pending"
+        record.approved_by = record.approved_at = None
+        if hasattr(record, "approved_by_name"):
+            record.approved_by_name = None
+
+
 
 def active_job_count(user_id):
     """Jobs of this user still processing in this worker (audit A-09: per-user upload cap)."""
@@ -816,6 +848,7 @@ def get_job_status(job_id):
         "started_at": job.get("started_at") or job.get("created_at"),
         "dry_run": bool(job.get("dry_run")),
         "preview": job.get("preview"),
+        "status_counts": job.get("status_counts") or {},  # BUG-0025: e.g. {"Verified": 4} for an admin import
     }
 
 
@@ -1006,6 +1039,8 @@ def _process_file_thread(
             batch_facilities = {}  # in-file facility names / codes
             batch_sources = set()  # in-file emission sources
             batch_scope1_map = {}
+            rejected_scope1_keys = set()  # BUG-0026: an import matching a Rejected record is a resubmission
+            status_counts = {}  # BUG-0025: the saved status of the new records, shown by the result banner
             batch_scope2_map = {}
             batch_scope3_map = {}
 
@@ -1016,14 +1051,17 @@ def _process_file_thread(
 
             # BUG-081: natural keys include the sub-identifiers real inventories need, and
             # Rejected / Draft rows are not treated as existing records.
-            live = ("Pending", "Verified", "Pending Approval")
+            live = LIVE_STATUSES
             if str(scope) == "1":
-                for e in Emission.query.filter(Emission.status.in_(live)).with_entities(
+                for e in Emission.query.filter(Emission.status.in_(live + ("Rejected",))).with_entities(
                     Emission.id, Emission.facility_id, Emission.year, Emission.month, Emission.process_type,
-                    Emission.fuel_type, Emission.equipment_id, Emission.data_source_ref,
+                    Emission.fuel_type, Emission.equipment_id, Emission.data_source_ref, Emission.status,
                 ).all():
                     k = _scope1_key(e.facility_id, e.year, e.month, e.process_type, e.fuel_type, e.equipment_id, e.data_source_ref)
-                    batch_scope1_map[k] = e.id
+                    if e.status == "Rejected":
+                        rejected_scope1_keys.add(k)
+                    else:
+                        batch_scope1_map[k] = e.id
 
             elif str(scope) == "2":
                 for e in Scope2Emission.query.filter(Scope2Emission.status.in_(live)).with_entities(
@@ -1204,6 +1242,7 @@ def _process_file_thread(
                         row_idx=line_no,
                         batch_keys=batch_scope1_map,
                         overwrite_duplicates=overwrite_duplicates,
+                        rejected_keys=rejected_scope1_keys,
                     )
                 else:
                     emission_obj = None
@@ -1230,6 +1269,9 @@ def _process_file_thread(
                     skipped_rows.append(skipped_list)
                 elif emission_obj:
                     chunk.append(emission_obj)
+                    saved_status = getattr(emission_obj, "status", None)
+                    if saved_status:
+                        status_counts[saved_status] = status_counts.get(saved_status, 0) + 1
                     # --- Anomaly Detection ---
                     if str(scope) in ["1", "2", "3"]:
                         try:
@@ -1376,6 +1418,7 @@ def _process_file_thread(
                 progress=100,
                 status="completed",
                 anomalies=anomaly_rows,
+                status_counts=status_counts,
             )
 
         except Exception as e:
@@ -1886,15 +1929,16 @@ def _process_row_scope2(
     if action == "error":
         return None, [existing]
     mkt_inst = str(row.get("market_instrument_type") or row.get("market_instrument") or "").strip() or None
-    mkt_ef_val = None
+    from input_validation import ValidationError
+    from services.scope2_market import market_factor
+
     raw_mkt_ef = row.get("market_emission_factor") or row.get("supplier_emission_factor") or row.get("supplier_factor")
-    if raw_mkt_ef not in (None, ""):
-        mkt_ef_val = _clean_float(raw_mkt_ef, default=None)
-    elif mkt_inst and mkt_inst.lower() in ("rec", "ppa_zero", "go_zero", "renewable_ppa", "green_tariff_zero"):
-        mkt_ef_val = 0.0
-    else:
-        mkt_ef_val = ef
-    co2e_mkt = (kwh * mkt_ef_val) / 1000.0 if source_type == "electricity" else co2e
+    try:
+        used_mkt_ef, mkt_ef_val = market_factor(
+            ef, mkt_inst, _clean_float(raw_mkt_ef, default=None) if raw_mkt_ef not in (None, "") else None)
+    except ValidationError as exc:
+        return None, [f"Row {row_idx}: {exc}"]
+    co2e_mkt = (kwh * used_mkt_ef) / 1000.0 if source_type == "electricity" else co2e
 
     values = {
         "source_type": source_type, "electricity_kwh": kwh, "heat_mmbtu": heat_mmbtu, "steam_ton": steam_ton,
@@ -2787,6 +2831,7 @@ def _process_row(
     row_idx=None,
     batch_keys=None,
     overwrite_duplicates=False,
+    rejected_keys=None,
 ):
     """Validates one Scope 1 row and calculates and stores it exactly as the manual form does
     (services.scope1_calc: same validation, factor resolution, calculation and stored fields).
@@ -2976,6 +3021,9 @@ def _process_row(
     if verdict == "reject":
         return None, [qa_msg]
 
+    if str(_first(row, "status") or "").strip().lower() == "rejected":
+        # BUG-0026: a re-imported export carries its Status column; a rejected row stays rejected
+        return None, ["Status is Rejected in the file: a rejected record is not re-imported"]
     source_ref = str(_first(row, "source_ref", "meter_id", "data_source_ref") or "").strip()
     equipment_id = str(_first(row, "equipment_id", "equipment") or "").strip()
     record = Emission(factor_source=factor_source, qa_flag=qa_msg[:255] if qa_msg else None)
@@ -3017,6 +3065,10 @@ def _process_row(
     record.equipment_id = equipment_id or None
     for k, v in _bulk_status(user_id).items():  # Pending (admins: Verified)
         setattr(record, k, v)
+    if rejected_keys and key in rejected_keys and not record.qa_flag:
+        # BUG-0026: the activity was rejected by a reviewer; it comes back for review, not Verified
+        record.qa_flag = "Resubmission of a rejected record: needs a reviewer"
+    needs_review(record)  # BUG-0012: flagged values wait for a reviewer, an admin's included
     record.data_source_ref = source_ref or None
     if batch_keys is not None:
         batch_keys[key] = record  # BUG-057: later in-file repeats update this row

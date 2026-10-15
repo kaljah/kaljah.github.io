@@ -3,6 +3,7 @@ import { Input, Field } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
 import { MARKET_INSTRUMENTS } from "./marketInstruments";
 import { currentLanguage, t } from "../../i18n";
+import { ACTIVITY_YEAR_MIN, activityYearMax } from "../../constants";
 
 export interface Scope2FormNewElectricityEntryProps {
   activity: string;
@@ -144,8 +145,8 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
         <Field className="input-group" label={t("Year")}>
           <Input
             type="number"
-            min={1990}
-            max={2100}
+            min={ACTIVITY_YEAR_MIN}
+            max={activityYearMax()}
             value={year || ""}
             onChange={(e) => setYear(e.target.value)}
           />

@@ -129,6 +129,18 @@ def _parse_coordinates(data, current=(None, None)):
     return lat, lon
 
 
+def _taken(column, value, exclude_id=None):
+    """Audit 2026-10-14 BUG-0011 / BUG-0033: facility names and codes are unique (case and surrounding
+    spaces ignored), so a name-based import resolves to one facility and a duplicate code is a 409."""
+    text = str(value or "").strip().lower()
+    if not text:
+        return False
+    q = Facility.query.filter(db.func.lower(db.func.trim(column)) == text)
+    if exclude_id is not None:
+        q = q.filter(Facility.id != exclude_id)
+    return db.session.query(q.exists()).scalar()
+
+
 @facilities_bp.route("", methods=["POST"])
 @facilities_bp.route("/", methods=["POST"])
 @login_required
@@ -157,10 +169,10 @@ def add_facility():
         )
 
     code = data.get("code")
-    if code:
-        existing = Facility.query.filter_by(code=str(code).strip()).first()
-        if existing:
-            return jsonify({"error": f"Facility code '{code}' is already in use"}), 409
+    if code and _taken(Facility.code, code):
+        return jsonify({"error": f"Facility code '{code}' is already in use", "field": "code"}), 409
+    if _taken(Facility.name, data["name"]):
+        return jsonify({"error": f"A facility named '{data['name']}' already exists", "field": "name"}), 409
 
     fac = Facility(
         name=data.get("name"),
@@ -269,6 +281,10 @@ def update_facility(facility_id):
     new_name = data.get("name", facility.name)
     if not facility_change_allowed(user, facility, new_region, new_location, new_name):
         return jsonify({"error": f"Update would move the facility outside your region: {user.location}"}), 403
+    if "name" in data and _taken(Facility.name, data["name"], exclude_id=facility.id):
+        return jsonify({"error": f"A facility named '{data['name']}' already exists", "field": "name"}), 409
+    if data.get("code") and _taken(Facility.code, data["code"], exclude_id=facility.id):
+        return jsonify({"error": f"Facility code '{data['code']}' is already in use", "field": "code"}), 409
     old_values = {"name": facility.name, "region": facility.region, "location": facility.location}
 
     if "name" in data:
@@ -315,7 +331,11 @@ def update_facility(facility_id):
     import datetime
 
     facility.updated_at = datetime.datetime.now(datetime.timezone.utc)
-    db.session.flush()
+    try:
+        db.session.flush()
+    except IntegrityError:  # a concurrent update took the code first (BUG-0033: was a 500)
+        db.session.rollback()
+        return jsonify({"error": "Facility code is already in use", "field": "code"}), 409
 
     # Audit
     try:
@@ -400,12 +420,30 @@ def delete_facility(facility_id):
         return jsonify({"error": "Unauthorized: Outside your region"}), 403
     # Deleting the facility cascades to its records: the maker-checker rule for single records
     # (only an administrator deletes Verified records) applies to the cascade as well.
+    from models import Emission, Scope2Emission, Scope3Emission
     if user.role != "admin":
-        from models import Emission, Scope2Emission, Scope3Emission
         if any(m.query.filter_by(facility_id=facility.id, status="Verified").first()
                for m in (Emission, Scope2Emission, Scope3Emission)):
             return jsonify({"error": "Forbidden: this facility has approved (Verified) records; "
                                      "only an administrator can delete it"}), 403
+    # Audit 2026-10-14 BUG-0068: the cascade deletes every record of the facility, Verified ones
+    # included, so it needs an explicit confirmation and the audit entry records what went.
+    counts = {
+        label: m.query.filter_by(facility_id=facility.id).count()
+        for label, m in (("scope1", Emission), ("scope2", Scope2Emission), ("scope3", Scope3Emission))
+    }
+    counts["verified"] = sum(m.query.filter_by(facility_id=facility.id, status="Verified").count()
+                             for m in (Emission, Scope2Emission, Scope3Emission))
+    n_records = counts["scope1"] + counts["scope2"] + counts["scope3"]
+    confirmed = str(request.args.get("confirm", "")).lower() == "true" or \
+        (request.get_json(silent=True) or {}).get("confirm") is True
+    if n_records and not confirmed:
+        return jsonify({
+            "error": f"This facility has {n_records} emission records ({counts['verified']} Verified) that would be "
+                     "permanently deleted with it. Send confirm=true to delete them all.",
+            "requires_confirmation": True,
+            "record_counts": counts,
+        }), 409
 
     try:
         db.session.delete(facility)
@@ -413,7 +451,9 @@ def delete_facility(facility_id):
 
         # Audit
         user = db.session.get(User, user_id) if user_id else None  # API-02 FIX
-        log_details = f"Deleted facility: {facility.name} (Code: {facility.code})"
+        log_details = (f"Deleted facility: {facility.name} (Code: {facility.code}) with {n_records} emission records "
+                       f"(Scope 1: {counts['scope1']}, Scope 2: {counts['scope2']}, Scope 3: {counts['scope3']}; "
+                       f"{counts['verified']} Verified)")
 
         log_activity_and_notify(
             action="DELETE",
@@ -422,7 +462,8 @@ def delete_facility(facility_id):
             request=request,
             entity="Facility",
             details=log_details,
-            metadata_json=json.dumps({"name": facility.name, "code": facility.code, "location": facility.location}),
+            metadata_json=json.dumps({"name": facility.name, "code": facility.code, "location": facility.location,
+                                      "deleted_records": counts}),
         )
         db.session.commit()
     except Exception as e:
@@ -459,8 +500,14 @@ def import_facilities():
     if not facilities_data:
         return jsonify({"error": "No facilities provided"}), 400
 
+    seen_names = set()
     for i, fac_data in enumerate(facilities_data):
         fac_data["name"] = require_text(fac_data.get("name"), f"facilities[{i}].name")  # BUG-029
+        key = fac_data["name"].strip().lower()
+        if key in seen_names or _taken(Facility.name, key):  # BUG-0011
+            return jsonify({"error": f"facilities[{i}]: a facility named '{fac_data['name']}' already exists",
+                            "field": f"facilities[{i}].name"}), 409
+        seen_names.add(key)
         if not facility_change_allowed(user, None, fac_data.get("region"), fac_data.get("location"), fac_data.get("name")):
             return (
                 jsonify(

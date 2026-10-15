@@ -7,9 +7,9 @@ import { cn } from "./cn";
 
 const VALUE_TONES: Record<StatCardTone, string> = {
   default: "text-text",
-  brand: "text-brand-500",
+  brand: "text-brand-700", // AA text contrast on white (BUG-0060: brand-500 was 2.94:1)
   success: "text-green-600",
-  warning: "text-amber-500",
+  warning: "text-amber-700", // amber-500 was 2.15:1
   danger: "text-red-500",
   info: "text-blue-600",
   purple: "text-violet-500",

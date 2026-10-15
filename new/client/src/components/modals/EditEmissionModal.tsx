@@ -69,8 +69,13 @@ export const EditEmissionModal: React.FC<EditEmissionModalProps> = ({
     setLoading(true);
     try {
       const { url, payload } = editRequest(emission, formData);
-      await api.put(url, payload);
-      toast.success(t("Emission record updated successfully. Record returned to Pending review for verification."));
+      const res = await api.put(url, payload);
+      // BUG-0025: say what happened to the record (an administrator's edit keeps it Verified)
+      toast.success(
+        res?.data?.status === "Verified"
+          ? t("Emission record updated successfully. It stays Verified (administrator edit).")
+          : t("Emission record updated successfully. Record returned to Pending review for verification."),
+      );
       if (onSuccess) onSuccess();
       onClose();
     } catch (err) {
@@ -117,7 +122,7 @@ export const EditEmissionModal: React.FC<EditEmissionModalProps> = ({
       open={isOpen}
       onOpenChange={(open) => !open && onClose()}
       title={t("Edit Emission Record #{{id}}", { id: String(emission.id) })}
-      description={t("Update activity quantity, fuel/source, unit, or reporting period. Edited records will automatically return to Pending Review for verification.")}
+      description={t("Update activity quantity, fuel/source, unit, or reporting period. Records edited by a non-administrator return to Pending Review for verification; an administrator's edit keeps them Verified.")}
       maxWidth="36rem"
       footer={
         <>

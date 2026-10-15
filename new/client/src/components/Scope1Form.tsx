@@ -56,6 +56,8 @@ import {
 } from "../utils/emissionFactorsAPI";
 import { hhvToBtu } from "../utils/hhv";
 import { t as tr } from "../i18n";
+import { ACTIVITY_YEAR_MIN, activityYearMax } from "../constants";
+import { useUnsavedChangesWarning } from "../hooks/useUnsavedChangesWarning";
 
 interface FacilityItem {
   id: string | number;
@@ -99,6 +101,9 @@ export const Scope1Form: React.FC = () => {
 
   // Dynamic Form Data State
   const [formData, setFormData] = useState<Record<string, any>>({});
+  // typed but not saved: leaving the page asks first (BUG-0056)
+  const [formDirty, setFormDirty] = useState<boolean>(false);
+  useUnsavedChangesWarning(formDirty);
 
   // Hoisted State for Factor Selection
   const [sourceType, setSourceType] = useState<string>("default"); // 'default', 'custom', 'specific'
@@ -709,8 +714,8 @@ export const Scope1Form: React.FC = () => {
       }
 
     const yrNum = parseInt(String(year), 10);
-    if (isNaN(yrNum) || yrNum < 1990 || yrNum > 2100) {
-      toast.warning(tr("Year must be between 1990 and 2100"));
+    if (isNaN(yrNum) || yrNum < ACTIVITY_YEAR_MIN || yrNum > activityYearMax()) {
+      toast.warning(tr("Year must be between {{min}} and {{max}}", { min: ACTIVITY_YEAR_MIN, max: activityYearMax() }));
       return;
     }
 
@@ -1553,7 +1558,18 @@ export const Scope1Form: React.FC = () => {
         status: status,
       };
 
-      await api.post("/emissions", finalPayload);
+      try {
+        await api.post("/emissions", finalPayload);
+      } catch (postErr: any) {
+        const body = postErr?.response?.data;
+        if (!(postErr?.response?.status === 409 && body?.requires_confirmation)) throw postErr;
+        // BUG-0028: the bulk import's duplicate rule; a genuine repeat can still be saved (and is flagged)
+        const ok = window.confirm(
+          tr("A matching record already exists (#{{id}}: same region, month, process, fuel, equipment and source reference). Save this one anyway?", { id: body.duplicate_of }),
+        );
+        if (!ok) return;
+        await api.post("/emissions", { ...finalPayload, allow_duplicate: true });
+      }
       toast.success(
         status === "Draft"
           ? tr("Entry saved as draft")
@@ -1561,6 +1577,7 @@ export const Scope1Form: React.FC = () => {
       );
 
       // Reset Form (keep identity)
+      setFormDirty(false);
       setFormData({});
       setGroupName("");
       setEquipmentId("");
@@ -1905,7 +1922,7 @@ export const Scope1Form: React.FC = () => {
 
   return (
     <div className="scope-form">
-      <div className="calc-panel s1-form">
+      <div className="calc-panel s1-form" onInput={() => setFormDirty(true)}>
         <h2 className="[font-size:var(--text-md)] [font-weight:700] [color:var(--s1-ink)] [margin:0_0_18px]">{tr("New entry")}</h2>
 
         <Section n={1} title={tr("Identity & Location")}>
@@ -1922,8 +1939,8 @@ export const Scope1Form: React.FC = () => {
             <Field className="input-group" label={tr("Year")}>
               <Input
                 type="number"
-                min={1990}
-                max={2100}
+                min={ACTIVITY_YEAR_MIN}
+                max={activityYearMax()}
                 value={year || ""}
                 onChange={(e) => setYear(e.target.value)}
               />

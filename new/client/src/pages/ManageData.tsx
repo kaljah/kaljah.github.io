@@ -1198,7 +1198,31 @@ const ManageDataInner: React.FC = () => {
                     toast.success(t("Region deleted"));
                     fetchFacilities();
                 } catch (err: any) {
-                    toast.error(err?.response?.data?.error || t("Failed to delete region"));
+                    const body = err?.response?.data;
+                    if (err?.response?.status === 409 && body?.requires_confirmation) {
+                        // the facility still has records: they are deleted with it only after a second, explicit yes (BUG-0068)
+                        const c = body.record_counts || {};
+                        requestConfirm({
+                            title: t("Delete Region and its records"),
+                            message: t("This region has {{total}} emission records ({{verified}} Verified). They will be permanently deleted with it. Delete everything?", {
+                                total: (c.scope1 || 0) + (c.scope2 || 0) + (c.scope3 || 0),
+                                verified: c.verified || 0,
+                            }),
+                            confirmLabel: t("Delete region and records"),
+                            confirmVariant: "danger",
+                            onConfirm: async () => {
+                                try {
+                                    await api.delete(`/facilities/${id}?confirm=true`);
+                                    toast.success(t("Region deleted"));
+                                    fetchFacilities();
+                                } catch (e2: any) {
+                                    toast.error(e2?.response?.data?.error || t("Failed to delete region"));
+                                }
+                            },
+                        });
+                        return;
+                    }
+                    toast.error(body?.error || t("Failed to delete region"));
                 }
             }
         });

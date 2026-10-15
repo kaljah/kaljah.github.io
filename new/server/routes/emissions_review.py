@@ -128,7 +128,9 @@ def get_pending_emissions():
 
     allowed_fids = get_allowed_facility_ids(user)
     # drafts are the maker's unsubmitted work: they enter review only when submitted (browser test)
-    pending_statuses = ["Pending", "Pending Approval", "Pending Review"]
+    from services.maker_checker import REVIEWABLE_STATUSES
+
+    pending_statuses = list(REVIEWABLE_STATUSES)  # what the queue shows is what can be decided
     fetch_all = request.args.get("all", "").lower() == "true"
     if fetch_all:
         limit_val = None

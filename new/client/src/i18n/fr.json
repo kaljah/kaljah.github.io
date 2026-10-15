@@ -3205,7 +3205,8 @@
   "2050 Trajectory": "Trajectoire 2050",
   "Operational Intensity by Asset": "Intensité opérationnelle par actif",
   "EU CBAM Compliance": "Conformité MACF UE",
-  "Year must be between 1990 and 2100": "L'année doit être comprise entre 1990 et 2100",
+  "Year must be between {{min}} and {{max}}": "L'année doit être comprise entre {{min}} et {{max}}",
+  "You have unsaved changes. Leave this page and discard them?": "Vous avez des modifications non enregistrées. Quitter cette page et les abandonner ?",
   "Basemap tiles offline — operating in vector boundary mode": "Tuiles cartographiques hors ligne — affichage en mode vecteur frontalier",
   "Low Uncertainty (ISO 14064-1 Compliant)": "Incertitude faible (Conforme ISO 14064-1)",
   "Moderate Uncertainty (Monitoring Recommended)": "Incertitude modérée (Surveillance recommandée)",
@@ -3572,5 +3573,14 @@
   "Save Partner Share": "Enregistrer la part",
   "Partner and equity share percentage are required": "Le partenaire et le pourcentage de participation sont obligatoires",
   "Equity share updated successfully": "Part de participation mise à jour",
-  "Equity share removed": "Part de participation supprimée"
+  "Equity share removed": "Part de participation supprimée",
+  "Delete Region and its records": "Supprimer la région et ses enregistrements",
+  "This region has {{total}} emission records ({{verified}} Verified). They will be permanently deleted with it. Delete everything?": "Cette région compte {{total}} enregistrements d'émissions ({{verified}} vérifiés). Ils seront définitivement supprimés avec elle. Tout supprimer ?",
+  "Delete region and records": "Supprimer la région et les enregistrements",
+  "Saved as Verified:": "Enregistrés comme vérifiés :",
+  "the imported record was saved as Verified (administrator import) and already counts in dashboards and reports.": "l'enregistrement importé a été enregistré comme vérifié (import par un administrateur) et compte déjà dans les tableaux de bord et les rapports.",
+  "the {{count}} imported records were saved as Verified (administrator import) and already count in dashboards and reports.": "les {{count}} enregistrements importés ont été enregistrés comme vérifiés (import par un administrateur) et comptent déjà dans les tableaux de bord et les rapports.",
+  "Emission record updated successfully. It stays Verified (administrator edit).": "Enregistrement d'émission mis à jour. Il reste vérifié (modification par un administrateur).",
+  "Update activity quantity, fuel/source, unit, or reporting period. Records edited by a non-administrator return to Pending Review for verification; an administrator's edit keeps them Verified.": "Modifiez la quantité d'activité, le combustible/la source, l'unité ou la période de déclaration. Les enregistrements modifiés par un non-administrateur reviennent en attente de vérification ; une modification par un administrateur les laisse vérifiés.",
+  "A matching record already exists (#{{id}}: same region, month, process, fuel, equipment and source reference). Save this one anyway?": "Un enregistrement identique existe déjà (n° {{id}} : même région, mois, procédé, combustible, équipement et référence de source). L'enregistrer quand même ?"
 }

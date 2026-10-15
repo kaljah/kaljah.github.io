@@ -717,6 +717,24 @@ def add_emission():
         except Exception:
             pass
 
+    # Audit 2026-10-14 BUG-0028: the bulk import's natural-key duplicate rule. A genuine repeat can be
+    # saved on purpose (allow_duplicate) and is then flagged, so a reviewer sees it.
+    from background_processor import find_scope1_duplicate, needs_review
+
+    dup = find_scope1_duplicate(record) if record.status != "Draft" else None
+    if dup is not None:
+        if data.get("allow_duplicate") is not True:
+            return jsonify({
+                "error": f"A matching record already exists (#{dup}: same facility, month, process, fuel, "
+                         "equipment and source reference). Give an equipment ID or source reference to keep "
+                         "both, or confirm to save it anyway.",
+                "duplicate_of": dup,
+                "requires_confirmation": True,
+            }), 409
+        if not record.qa_flag:
+            record.qa_flag = f"Possible duplicate of record #{dup} (saved on purpose)"
+        needs_review(record)
+
     db.session.add(record)
     try:
         db.session.flush()
@@ -947,7 +965,10 @@ def update_emission(id):
 
     # Update fields (validated: BUG-073 / BUG-083 on the edit path too)
     from input_validation import parse_year, parse_month
-    from services.maker_checker import on_edit
+    from services.maker_checker import edit_fields, on_edit
+
+    if not edit_fields(data):  # BUG-0032: an empty edit changes nothing (it used to demote Verified)
+        return jsonify({"message": "No changes", "status": record.status})
 
     if "year" in data:
         record.year = parse_year(data["year"])
@@ -1098,7 +1119,7 @@ def update_emission(id):
         db.session.rollback()
         raise e
 
-    return jsonify({"message": "Record updated"})
+    return jsonify({"message": "Record updated", "status": record.status})  # BUG-0025: the toast says what happened
 
 
 @emissions_bp.route("/bulk-delete", methods=["POST"])

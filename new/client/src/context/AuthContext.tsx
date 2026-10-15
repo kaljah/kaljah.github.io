@@ -28,6 +28,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const idleWarningRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastActivityRef = useRef<number>(Date.now());
+  // restarts this tab's idle timers without broadcasting (set while signed in)
+  const restartIdleTimersRef = useRef<(() => void) | null>(null);
+  const userIdRef = useRef<number | string | null>(null);
+  userIdRef.current = user?.id ?? null;
 
   // BroadcastChannel for cross-tab auth synchronization
   const authChannelRef = useRef<BroadcastChannel | null>(null);
@@ -52,8 +56,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               setSessionExpired(true);
             }
           } else if (msg?.type === "ACTIVITY") {
+            // activity in another tab keeps this one signed in too (audit 2026-10-14 BUG-0014)
             lastActivityRef.current = msg.timestamp || Date.now();
             setSessionWarning(false);
+            restartIdleTimersRef.current?.();
+          } else if (msg?.type === "LOGIN" && msg.userId !== userIdRef.current) {
+            // the shared session cookie now belongs to another account: reload so this tab
+            // shows that account, not the previous one's data and role (BUG-0039)
+            window.location.assign("/");
           }
         };
       } catch (err) {
@@ -136,14 +146,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       return;
     }
 
-    const resetIdleTimer = () => {
-      lastActivityRef.current = Date.now();
-      setSessionWarning(false);
-      if (authChannelRef.current) {
-        try {
-          authChannelRef.current.postMessage({ type: "ACTIVITY", timestamp: Date.now() });
-        } catch { /* best effort: failure changes nothing for the user */ }
-      }
+    const startIdleTimers = () => {
       if (idleTimerRef.current) {
         clearTimeout(idleTimerRef.current);
       }
@@ -157,6 +160,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         console.warn("[Auth] 10-minute idle session timeout reached. Logging out.");
         logout(true);
       }, IDLE_TIMEOUT_MS);
+    };
+    restartIdleTimersRef.current = startIdleTimers;
+
+    const resetIdleTimer = () => {
+      lastActivityRef.current = Date.now();
+      setSessionWarning(false);
+      if (authChannelRef.current) {
+        try {
+          authChannelRef.current.postMessage({ type: "ACTIVITY", timestamp: Date.now() });
+        } catch { /* best effort: failure changes nothing for the user */ }
+      }
+      startIdleTimers();
     };
 
     // Throttle user activity events (only reset once per 5 seconds on continuous mouse movements)
@@ -179,6 +194,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     resetIdleTimer();
 
     return () => {
+      restartIdleTimersRef.current = null;
       if (idleTimerRef.current) {
         clearTimeout(idleTimerRef.current);
       }
@@ -230,6 +246,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setSessionWarning(false);
     const { data } = await api.post("/auth/login", { email, password });
     setUser(data.user);
+    userIdRef.current = data.user?.id ?? null;
+    try {
+      authChannelRef.current?.postMessage({ type: "LOGIN", userId: data.user?.id ?? null });
+    } catch { /* best effort: failure changes nothing for the user */ }
 
     // Refresh CSRF token after login to sync session
     await fetchCsrfToken();

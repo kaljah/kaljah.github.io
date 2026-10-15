@@ -9,7 +9,7 @@ from flask import request, jsonify, session, current_app
 from . import auth_bp
 from models import User, Notification, Facility
 from extensions import db, limiter
-from utils import log_activity_and_notify, is_unrestricted_location
+from utils import get_allowed_facility_ids, is_unrestricted_location, log_activity_and_notify
 from services.login_guard import (ACCOUNT_LOCKED, failed_sign_in, get_login_account_limit, get_login_rate_limit,  # noqa: F401
                                   login_account_key, record_failed_sign_in, validate_password_complexity)
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -45,13 +45,8 @@ def get_user_operational_defaults(user):
                         Facility.division,
                         Facility.activity,
                     )
-                    .filter(
-                        db.or_(
-                            Facility.region.ilike(f"%{user_loc}%"),
-                            Facility.location.ilike(f"%{user_loc}%"),
-                            Facility.name.ilike(f"%{user_loc}%"),
-                        )
-                    )
+                    # the user's own facility scope (BUG-0010: exact match, not a substring)
+                    .filter(Facility.id.in_(get_allowed_facility_ids(user) or [-1]))
                     .order_by(Facility.division.isnot(None).desc(), Facility.id.desc())
                     .first()
                 )

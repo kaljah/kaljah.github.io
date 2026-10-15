@@ -200,6 +200,10 @@ def get_batch_dashboard_data():
         gwp_horizon,
         scope2_method,
         user.id if user else 0,
+        # BUG-0009: the facility scope is part of the key, so a role or location change made by
+        # IT is honoured at once instead of serving the previous scope's totals for 5 minutes
+        user.role if user else None,
+        tuple(sorted(allowed_fids)) if allowed_fids is not None else None,
     )
     # Honour invalidations made by other workers before trusting this worker's cache
     # (at most one database read per second; a no-op on SQLite).

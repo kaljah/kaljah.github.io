@@ -131,7 +131,7 @@ def create_scope3_emission():
 
     # BUG-073 / BUG-089 / BUG-083: validate period, category and numbers before anything is stored.
     year_val = parse_year(data.get("year"))
-    month_val = parse_month(data.get("month"))
+    month_val = parse_month(data.get("month"), required=True)  # BUG-0037
     category_val = normalize_scope3_category(data.get("category", "Category 11"))
     activity_data = parse_number(
         data.get("activity_data") if data.get("activity_data") not in (None, "") else data.get("amount"),
@@ -286,12 +286,14 @@ def update_scope3_emission(emission_id):
     if user.role == "user" and emission.created_by is not None and emission.created_by != user.id:
         return jsonify({"error": "Unauthorized: You may only modify records you created"}), 403
 
+    data = request.get_json(silent=True) or {}
+
     # BUG-067/RC-2: record the last maker; non-admin edits of decided records go back to review.
-    from services.maker_checker import on_edit
+    from services.maker_checker import edit_fields, on_edit
 
+    if not edit_fields(data):  # BUG-0032: an empty edit changes nothing (it used to demote Verified)
+        return jsonify({"message": "No changes", "status": emission.status})
     on_edit(emission, user)
-
-    data = request.get_json() or {}
 
     # Strip status and co2e from direct client overwrite (H2, L9)
     data.pop("status", None)
@@ -307,8 +309,7 @@ def update_scope3_emission(emission_id):
     if "year" in data:
         emission.year = parse_year(data["year"])
     if "month" in data:
-        from input_validation import parse_month
-        emission.month = parse_month(data["month"], required=False)
+        emission.month = parse_month(data["month"], required=True)  # BUG-0037: never cleared
     if "category" in data:
         emission.category = normalize_scope3_category(data["category"])
     if "sub_category" in data:
@@ -330,10 +331,17 @@ def update_scope3_emission(emission_id):
         act = emission.activity_data or 0.0
         factor_unit = str(data.get("factor_unit") or data.get("emission_factor_unit") or getattr(emission, "factor_unit", "") or "")
         calc_method = str(data.get("calculation_method") or getattr(emission, "calculation_method", "") or "")
-        emission.co2e = round(compute_scope3_co2e(act, ef, factor_unit, calc_method), 4)
         if act > 0 and ef > 0:
+            emission.co2e = compute_scope3_co2e(act, ef, factor_unit, calc_method)
             from calculations.units import scope3_ef_kg_per_unit
             emission.emission_factor = scope3_ef_kg_per_unit(act, emission.co2e, ef)
+        elif not ef and "emission_factor" not in data and emission.co2e:
+            pass  # BUG-0008: a supplier-reported total stays; its activity amount is informational
+        else:
+            # as on create: a missing calculation is never booked as 0 tCO2e (BUG-0008)
+            db.session.rollback()
+            return jsonify({"error": "Give the activity amount and emission factor (or keep the "
+                                     "supplier-reported co2e)", "field": "emission_factor"}), 422
 
         if emission.status == "Verified" and user.role != "admin":
             emission.status = "Pending"
@@ -383,7 +391,7 @@ def update_scope3_emission(emission_id):
 
     clear_dashboard_cache()
 
-    return jsonify({"message": "Scope 3 emission updated"})
+    return jsonify({"message": "Scope 3 emission updated", "status": emission.status})
 
 
 @scope3_bp.route("/<int:emission_id>", methods=["DELETE"])

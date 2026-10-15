@@ -168,7 +168,8 @@ def test_superuser_cannot_delete_facility_with_verified_records(client, ctx):
     empty = make_facility(region=west)
     assert client.delete(f"/api/facilities/{empty.id}").status_code == 200
     login(client, make_user("admin", "Global"))
-    assert client.delete(f"/api/facilities/{f.id}").status_code == 200
+    assert client.delete(f"/api/facilities/{f.id}").status_code == 409  # records: needs confirm (BUG-0068)
+    assert client.delete(f"/api/facilities/{f.id}?confirm=true").status_code == 200
 
 
 # ── SU-6 / OP-3: production data (the intensity denominator) ──

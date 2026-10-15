@@ -17,6 +17,11 @@ export const ACCESS: Record<AccessRule, (user?: User | null) => boolean> = {
   audit: (user) => Boolean(user?.role && ["admin", "superuser", "it_admin", "it_manager", "auditor"].includes(user.role)),
 };
 
+/** GET /api/audit/verify-chain needs organisation-wide audit access (the server rule in routes/audit.py):
+ * the admin, the auditor and the IT roles; a facility-scoped superuser or user may not (BUG-0061). */
+export const canVerifyAuditChain = (user?: User | null): boolean =>
+  Boolean(user?.role && ["admin", "auditor", ...IT_ROLES].includes(user.role));
+
 /** Where a signed-in user is sent when the rule denies them. */
 export const deniedRedirect = (user?: User | null, rule?: AccessRule): string =>
   rule === "nonIT" && isIT(user) ? "/user-management" : "/";

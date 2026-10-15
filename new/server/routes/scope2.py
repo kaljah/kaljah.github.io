@@ -8,6 +8,7 @@ from calculations.uncertainty import propagate_uncertainty, Tier
 from utils import facility_access_error, get_current_user, get_allowed_facility_ids, require_facility_access, initial_record_status, log_activity_and_notify
 from input_validation import ValidationError, parse_number, parse_year, parse_month, require_plausible_co2e
 from services.scope2_gases import gas_split
+from services.scope2_market import is_zero_emission_instrument, market_factor
 import datetime
 
 scope2_bp = Blueprint("scope2", __name__)
@@ -18,6 +19,7 @@ _DEFAULT_BOILER_EF_KG_PER_MMBTU = 53.06
 MMBTU_PER_MWH = 3.412142
 # Upper bound for a supplier-specific grid factor; the most carbon-intensive grids are ~1.2 kg CO2e/kWh.
 MAX_GRID_EF_KG_PER_KWH = 2.0
+SCOPE2_SOURCE_TYPES = ("electricity", "indirect_steam", "cogen_allocation", "cooling")
 
 
 def resolve_electricity_factor(grid_region, supplied_ef):
@@ -174,12 +176,12 @@ def _recalc_indirect_steam(emission, data, factor, old_heat, old_co2e, old_ef, o
         or any(k in ci for k in ("boiler_eff", "trans_loss"))
     if not given and old_heat and old_co2e and float(old_heat) > 0 and float(old_co2e) > 0:
         net_eff = float(old_heat) * _steam_fuel_factor_kg_per_mmbtu(old_ef) / (float(old_co2e) * 1000.0)
-        return round(heat / net_eff * _steam_fuel_factor_kg_per_mmbtu(factor) / 1000.0, 4), heat
+        return heat / net_eff * _steam_fuel_factor_kg_per_mmbtu(factor) / 1000.0, heat
     ci.setdefault("boiler_eff", float(data.get("boiler_eff") or data.get("boiler_efficiency") or 0.80))
     ci.setdefault("trans_loss", float(data.get("trans_loss") or 0.0))
     ci["ef_co2"] = factor or _DEFAULT_BOILER_EF_KG_PER_MMBTU
     co2e, _, _ = _calc_indirect_steam({"amount": heat, "unit": "mmbtu", "calc_inputs": {"indirect_steam": ci}})
-    return round(co2e, 4), heat
+    return co2e, heat
 
 
 def _calc_cogen_allocation(data):
@@ -328,12 +330,12 @@ def create_scope2_emission():
 
     user_id = user.id
     source_type = data.get("source_type", "electricity")
-    if source_type not in ("electricity", "indirect_steam", "cogen_allocation", "cooling"):
+    if source_type not in SCOPE2_SOURCE_TYPES:
         return jsonify({"error": f"Unsupported source_type '{source_type}'"}), 400
 
     # BUG-073: year/month are required and range-checked (a NULL year broke every dashboard).
     year_val = parse_year(data.get("year"))
-    month_val = parse_month(data.get("month"))
+    month_val = parse_month(data.get("month"), required=True)  # BUG-0037
 
     # BUG-099: CO2e is always computed server-side; a client-supplied co2e is ignored.
     co2e = 0.0
@@ -365,18 +367,14 @@ def create_scope2_emission():
         location_ef, _ = resolve_electricity_factor(grid_region, data.get("emission_factor"))
         co2e_location = (electricity_kwh * location_ef) / 1000.0
 
-        # Market-based calculation (GHG Protocol Scope 2 Guidance)
+        # Market-based calculation (GHG Protocol Scope 2 Guidance, services/scope2_market.py)
         raw_mkt_ef = data.get("market_emission_factor")
+        supplier_ef = None
         if raw_mkt_ef not in (None, ""):
-            market_ef = parse_number(raw_mkt_ef, "market_emission_factor", required=False, min_value=0, max_value=MAX_GRID_EF_KG_PER_KWH)
-        elif market_instrument_type and market_instrument_type.lower() in ("rec", "ppa_zero", "go_zero", "renewable_ppa", "green_tariff_zero"):
-            market_ef = 0.0
-        elif data.get("emission_factor") is not None and market_instrument_type:
-            market_ef = parse_number(data.get("emission_factor"), "emission_factor", required=False, min_value=0, max_value=MAX_GRID_EF_KG_PER_KWH)
-        else:
-            market_ef = location_ef
+            supplier_ef = parse_number(raw_mkt_ef, "market_emission_factor", required=False, min_value=0, max_value=MAX_GRID_EF_KG_PER_KWH)
+        used_market_ef, market_ef = market_factor(location_ef, market_instrument_type, supplier_ef)
 
-        co2e_market = (electricity_kwh * market_ef) / 1000.0
+        co2e_market = (electricity_kwh * used_market_ef) / 1000.0
         has_market_instrument = bool(market_instrument_type) or (raw_mkt_ef not in (None, ""))
         co2e = co2e_location
         emission_factor = location_ef
@@ -385,8 +383,7 @@ def create_scope2_emission():
         try:
             co2e, heat_mmbtu, emission_factor = _calc_indirect_steam(data)
             co2e_location = co2e
-            co2e_market = co2e
-            market_ef = emission_factor
+            co2e_market = co2e  # no contractual factor: market_emission_factor stays None (BUG-0006)
         except ValidationError:
             raise
         except Exception as exc:
@@ -409,8 +406,10 @@ def create_scope2_emission():
 
     elif source_type in ("cooling", "purchased_cooling") or "cool" in source_type.lower():
         cooling_ton_val = parse_number(data.get("cooling_ton") or data.get("amount"), "cooling_ton", required=False, min_value=0, default=0.0)
-        ef_val = parse_number(data.get("emission_factor") or data.get("ef"), "emission_factor", required=False, min_value=0, default=150.0)
-        co2e = round((cooling_ton_val * ef_val) / 1000.0, 4)
+        # BUG-0007: an explicit factor of 0 is a factor, not "missing" (`or` replaced it with 150)
+        raw_ef = data.get("emission_factor") if data.get("emission_factor") not in (None, "") else data.get("ef")
+        ef_val = parse_number(raw_ef, "emission_factor", required=False, min_value=0, default=150.0)
+        co2e = (cooling_ton_val * ef_val) / 1000.0
         co2e_location = co2e
         co2e_market = co2e
         emission_factor = ef_val
@@ -586,11 +585,13 @@ def update_scope2_emission(emission_id):
     if user.role == "user" and emission.created_by is not None and emission.created_by != user.id:
         return jsonify({"error": "Unauthorized: You may only modify records you created"}), 403
 
-    data = request.get_json() or {}
+    data = request.get_json(silent=True) or {}
 
     # BUG-067/RC-2: record the last maker; non-admin edits of decided records go back to review.
-    from services.maker_checker import on_edit
+    from services.maker_checker import edit_fields, on_edit
 
+    if not edit_fields(data):  # BUG-0032: an empty edit changes nothing (it used to demote Verified)
+        return jsonify({"message": "No changes", "status": emission.status})
     on_edit(emission, user)
 
     # Strip status and co2e from direct client overwrite
@@ -607,9 +608,17 @@ def update_scope2_emission(emission_id):
     if "year" in data:
         emission.year = parse_year(data["year"])
     if "month" in data:
-        emission.month = parse_month(data["month"])
+        emission.month = parse_month(data["month"], required=True)  # BUG-0037: never cleared
+    source_changed = False
     if "source_type" in data:
-        emission.source_type = data["source_type"]
+        # BUG-0036: the same source types as on create, and a change recalculates the record
+        new_source = str(data["source_type"] or "").strip()
+        if new_source != (emission.source_type or ""):
+            if new_source not in SCOPE2_SOURCE_TYPES:
+                db.session.rollback()
+                return jsonify({"error": f"Unsupported source_type '{new_source}'", "field": "source_type"}), 400
+            emission.source_type = new_source
+            source_changed = True
 
     old_heat, old_co2e, old_ef, old_tons = emission.heat_mmbtu, emission.co2e, emission.emission_factor, emission.steam_ton
 
@@ -623,7 +632,7 @@ def update_scope2_emission(emission_id):
             "cooling_ton",
             "emission_factor",
         ]
-    )
+    ) or source_changed
     for fld in ("electricity_kwh", "steam_ton", "heat_mmbtu", "cooling_ton"):
         if fld in data:
             setattr(emission, fld, parse_number(data[fld], fld, required=False, min_value=0, default=0.0))
@@ -653,12 +662,16 @@ def update_scope2_emission(emission_id):
             db.session.rollback()
             return jsonify({"error": "A CHP allocation is recalculated from the facility total emissions (or fuel "
                                      "consumed), heat output and power output: give all three"}), 422
-        emission.co2e = round(_calc_cogen_allocation(data), 4)
+        emission.co2e = _calc_cogen_allocation(data)
         emission.co2e_location_based = emission.co2e
         emission.co2e_market_based = emission.co2e
         emission.heat_mmbtu = parse_number(heat_in, "heat_output", min_value=0)
         activity_changed = False
 
+    if (emission.market_emission_factor is not None and not emission.market_instrument_type
+            and emission.market_emission_factor == old_ef):
+        # records saved before BUG-0006 stored the grid fallback as if it were a contractual factor
+        emission.market_emission_factor = None
     if "market_instrument_type" in data:
         emission.market_instrument_type = str(data["market_instrument_type"] or "").strip() or None
         activity_changed = True
@@ -671,11 +684,12 @@ def update_scope2_emission(emission_id):
         factor = emission.emission_factor or 0.0
         st = (emission.source_type or "").strip().lower()
         if st in ["electricity"] or "electric" in st:
-            emission.co2e_location_based = round((emission.electricity_kwh * factor) / 1000.0, 4)
-            m_ef = emission.market_emission_factor if emission.market_emission_factor is not None else factor
-            if emission.market_instrument_type and emission.market_instrument_type.lower() in ("rec", "ppa_zero", "go_zero", "renewable_ppa", "green_tariff_zero"):
-                m_ef = 0.0
-            emission.co2e_market_based = round((emission.electricity_kwh * m_ef) / 1000.0, 4)
+            emission.co2e_location_based = (emission.electricity_kwh * factor) / 1000.0
+            supplier_ef = emission.market_emission_factor
+            if is_zero_emission_instrument(emission.market_instrument_type) and "market_emission_factor" not in data:
+                supplier_ef = None  # the stored 0 of the instrument, or a factor kept from before it was chosen
+            m_ef, emission.market_emission_factor = market_factor(factor, emission.market_instrument_type, supplier_ef)
+            emission.co2e_market_based = (emission.electricity_kwh * m_ef) / 1000.0
             has_market_instrument = bool(emission.market_instrument_type) or (emission.market_emission_factor is not None)
             emission.co2e = emission.co2e_location_based
         elif st in ["steam", "indirect_steam"] or "steam" in st:
@@ -684,11 +698,11 @@ def update_scope2_emission(emission_id):
             emission.co2e_location_based = emission.co2e
             emission.co2e_market_based = emission.co2e
         elif st in ["heat"] or "heat" in st:
-            emission.co2e = round((emission.heat_mmbtu * factor) / 1000.0, 4)
+            emission.co2e = (emission.heat_mmbtu * factor) / 1000.0
             emission.co2e_location_based = emission.co2e
             emission.co2e_market_based = emission.co2e
         elif st in ["cooling"] or "cool" in st:
-            emission.co2e = round((emission.cooling_ton * factor) / 1000.0, 4)
+            emission.co2e = (emission.cooling_ton * factor) / 1000.0
             emission.co2e_location_based = emission.co2e
             emission.co2e_market_based = emission.co2e
 
@@ -738,7 +752,7 @@ def update_scope2_emission(emission_id):
 
     clear_dashboard_cache()
 
-    return jsonify({"message": "Scope 2 emission updated"})
+    return jsonify({"message": "Scope 2 emission updated", "status": emission.status})
 
 
 @scope2_bp.route("/<int:emission_id>", methods=["DELETE"])
@@ -883,13 +897,11 @@ def bulk_import_scope2():
             # Market-based calculation for bulk import
             mkt_inst = (rec.get("market_instrument_type") or "").strip() or None
             mkt_ef_raw = rec.get("market_emission_factor")
+            supplier_ef = None
             if mkt_ef_raw not in (None, ""):
-                mkt_ef = parse_number(mkt_ef_raw, "market_emission_factor", required=False, min_value=0, max_value=MAX_GRID_EF_KG_PER_KWH)
-            elif mkt_inst and mkt_inst.lower() in ("rec", "ppa_zero", "go_zero", "renewable_ppa", "green_tariff_zero"):
-                mkt_ef = 0.0
-            else:
-                mkt_ef = ef
-            co2e_mkt_val = (kwh * mkt_ef) / 1000.0
+                supplier_ef = parse_number(mkt_ef_raw, "market_emission_factor", required=False, min_value=0, max_value=MAX_GRID_EF_KG_PER_KWH)
+            used_mkt_ef, mkt_ef = market_factor(ef, mkt_inst, supplier_ef)
+            co2e_mkt_val = (kwh * used_mkt_ef) / 1000.0
 
             # Default Scope 2 uncertainty
             u_res = propagate_uncertainty(

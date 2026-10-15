@@ -96,6 +96,7 @@ class TestConcurrencyAndLockResilience:
                         "amount": 1000 + task_id * 10,
                         "unit": "m3",
                         "status": "Verified",
+                        "equipment_id": f"METER-{task_id}",  # one meter per task: no duplicate keys (BUG-0028)
                         "calc_inputs": {
                             "combustion": {
                                 "fuel_gas_volume": 1000 + task_id * 10,

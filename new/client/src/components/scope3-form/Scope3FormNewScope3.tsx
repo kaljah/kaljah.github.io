@@ -4,6 +4,7 @@ import ColumnMappingWizard from "../ColumnMappingWizard";
 import CustomDropdown from "../CustomDropdown";
 import { activateOnKey } from "../../utils/a11yKeys";
 import { currentLanguage, t } from "../../i18n";
+import { ACTIVITY_YEAR_MIN, activityYearMax } from "../../constants";
 
 export interface Scope3FormNewScope3Props {
   UNIT_MULTIPLIERS: Record<string, Record<string, number>>;
@@ -177,8 +178,8 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
       <Field className="input-group" label={t("Year")}>
         <Input
           type="number"
-          min={1990}
-          max={2100}
+          min={ACTIVITY_YEAR_MIN}
+          max={activityYearMax()}
           value={year || ""}
           onChange={(e) => setYear(e.target.value)}
         />

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Button } from "../../ui";
+import React, { useRef, useState } from "react";
+import { Button, Dialog } from "../../ui";
 import {
   AlertCircle,
   AlertTriangle,
@@ -64,7 +64,7 @@ export interface PendingReviewTabProps {
   fetchPendingEmissions: (force?: boolean) => void;
   filteredPendingRecords: PendingEmissionRecord[];
   handleApproveAllInScope: (scope: string) => void;
-  handleApproveSingle: (scope: number | string, id: number | string) => void;
+  handleApproveSingle: (scope: number | string, id: number | string) => void | Promise<void>;
   handleBatchApproveSelected: () => void;
   handleConfirmReject: () => void;
   handleOpenBatchRejectModal: () => void;
@@ -89,6 +89,10 @@ export interface PendingReviewTabProps {
   setSelectedPendingKeys: React.Dispatch<React.SetStateAction<Set<string>>>;
   user?: { id?: string | number; role?: string; [key: string]: any } | null;
 }
+
+// The review actions stay in view while the wide text columns scroll (audit 2026-10-14 BUG-0059).
+const STICKY_ACTIONS =
+  "[position:sticky]! [right:0]! [z-index:1]! [background:var(--bg-card)]! [border-left:1px_solid_var(--border-color)]!";
 
 // Extracted from ManageData.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
@@ -123,108 +127,98 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
   user,
 }) => {
   const [editingRecord, setEditingRecord] = useState<PendingEmissionRecord | null>(null);
+  // BUG-0055: one approval request per record at a time (a double click sent two, the second 409)
+  const approvingRef = useRef<Set<string>>(new Set());
+  const [approving, setApproving] = useState<Set<string>>(new Set());
+  const approveOnce = async (item: PendingEmissionRecord) => {
+    if (approvingRef.current.has(item.key)) return;
+    approvingRef.current.add(item.key);
+    setApproving(new Set(approvingRef.current));
+    try {
+      await handleApproveSingle(item.scope, item.id);
+    } finally {
+      approvingRef.current.delete(item.key);
+      setApproving(new Set(approvingRef.current));
+    }
+  };
 
   return (
     <div className="manage-tab-content [display:flex] [flex-direction:column] [gap:24px] [width:100%]">
-      {/* Rejection Modal */}
-      {rejectionModal.isOpen && (
-        <div
-          role="presentation"
-          className="[position:fixed] [inset:0] [background:rgba(15,_23,_42,_0.5)] [backdrop-filter:blur(6px)] [display:flex] [align-items:center] [justify-content:center] [z-index:1000] [animation:fadeIn_0.2s_ease-out]"
-          onClick={() => !isProcessingBatch && setRejectionModal((prev) => ({ ...prev, isOpen: false }))}
-        >
-          <div
-            role="presentation"
-            className="[background:var(--bg-card-elevated)] [border:1px_solid_var(--border-color)] [&&]:[border-radius:var(--radius-lg)] [width:90%] [max-width:520px] [padding:28px] [box-shadow:var(--shadow-card-elevated)] [display:flex] [flex-direction:column] [gap:20px] [animation:scaleUp_0.25s_cubic-bezier(0.16,_1,_0.3,_1)]"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex! justify-between! items-center!">
-              <div className="flex! items-center! gap-[12px]!">
-                <div className="w-[42px]! h-[42px]! rounded-[12px]! bg-[color:rgba(239,_68,_68,_0.12)]! flex! items-center! justify-center! text-[color:var(--color-red-600)]!">
-                  <AlertTriangle size={22} />
-                </div>
-                <div>
-                  <h3 className="m-[0px]! text-[length:1.15rem]! font-bold!">
-                    {rejectionModal.isBatch
-                      ? (rejectionModal.recordIds.length > 1 ? t("Reject {{count}} Selected Records", { count: rejectionModal.recordIds.length }) : t("Reject 1 Selected Record"))
-                      : t("Reject Emission Record")}
-                  </h3>
-                  <p className="m-[2px_0_0_0]! text-[length:0.8rem]! text-[color:var(--text-secondary)]!">
-                    {t("Maker-Checker Audit Trail & Reason")}
-                  </p>
-                </div>
-              </div>
-              <Button
-                variant="ghost"
-                type="submit"
-                className="p-[6px]! rounded-[8px]!"
-                onClick={() => !isProcessingBatch && setRejectionModal((prev) => ({ ...prev, isOpen: false }))}
-              >
-                <X size={18} />
-              </Button>
-            </div>
+      {/* Rejection Modal: the shared Dialog (role=dialog, focus trapped and returned, Escape closes; BUG-0029) */}
+      <Dialog
+        open={rejectionModal.isOpen}
+        onOpenChange={(open) => !open && !isProcessingBatch && setRejectionModal((prev) => ({ ...prev, isOpen: false }))}
+        title={
+          rejectionModal.isBatch
+            ? (rejectionModal.recordIds.length > 1 ? t("Reject {{count}} Selected Records", { count: rejectionModal.recordIds.length }) : t("Reject 1 Selected Record"))
+            : t("Reject Emission Record")
+        }
+        description={t("Maker-Checker Audit Trail & Reason")}
+        maxWidth="520px"
+        footer={
+          <>
+            <Button
+              type="button"
+              variant="ghost"
+              disabled={isProcessingBatch}
+              onClick={() => setRejectionModal((prev) => ({ ...prev, isOpen: false }))}
+              className="p-[8px_16px]! rounded-[8px]!"
+            >
+              {t("Cancel")}
+            </Button>
+            <button
+              type="button"
+              className="[background:var(--color-legacy-fee2e2)] [color:var(--color-red-700)] [border:1px_solid_var(--color-legacy-fecaca)] [cursor:pointer] [font-size:var(--text-base)] [transition:all_0.2s] hover:[background:var(--color-red-700)] hover:[color:white] inline-flex! items-center! gap-[8px]! p-[8px_18px]! rounded-[8px]!"
+              disabled={isProcessingBatch || !rejectionModal.reason.trim()}
+              onClick={handleConfirmReject}
+            >
+              <X size={16} />
+              {isProcessingBatch ? t("Rejecting...") : t("Confirm Rejection")}
+            </button>
+          </>
+        }
+      >
+        <div className="[display:flex] [flex-direction:column] [gap:20px]">
+          <div className="bg-[color:rgba(239,_68,_68,_0.06)]! [border:1px_solid_rgba(239,_68,_68,_0.2)]! rounded-[12px]! p-[12px_14px]! text-[length:0.84rem]! text-[color:var(--color-red-700)]! flex! gap-[10px]! items-start!">
+            <AlertCircle size={16} className="shrink-0! mt-[2px]!" />
+            <span>
+              {t("The record will be marked Rejected and excluded from totals; it is kept for the audit trail. The submitter is notified with your reason.")}
+            </span>
+          </div>
 
-            <div className="bg-[color:rgba(239,_68,_68,_0.06)]! [border:1px_solid_rgba(239,_68,_68,_0.2)]! rounded-[12px]! p-[12px_14px]! text-[length:0.84rem]! text-[color:var(--color-red-700)]! flex! gap-[10px]! items-start!">
-              <AlertCircle size={16} className="shrink-0! mt-[2px]!" />
-              <span>
-                {t("The record will be marked Rejected and excluded from totals; it is kept for the audit trail. The submitter is notified with your reason.")}
-              </span>
-            </div>
-
-            <div>
-              <label className="block! text-[length:0.78rem]! font-semibold! text-[color:var(--text-secondary)]! mb-[10px]! uppercase! [letter-spacing:0.05em]!">
-                {t("Quick Rejection Reason Presets")}
-              </label>
-              <div className="[display:flex] [flex-wrap:wrap] [gap:8px]">
-                {QUICK_REJECTION_REASONS.map((reason) => (
-                  <button
-                    key={reason}
-                    type="button"
-                    className={`rejection-chip ${rejectionModal.reason === reason ? "selected" : ""}`}
-                    onClick={() => setRejectionModal((prev) => ({ ...prev, reason }))}
-                  >
-                    {t(reason)}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <label className="block! text-[length:0.78rem]! font-semibold! text-[color:var(--text-secondary)]! mb-[8px]! uppercase! [letter-spacing:0.05em]!">
-                {t("Audit Reason / Justification")}{" "}<span className="text-[color:var(--color-red-700)]!">*</span>
-              </label>
-              <textarea
-                className="custom-input w-full! [resize:vertical]! text-[length:0.88rem]! p-[10px_12px]! rounded-[10px]!"
-                rows={3}
-                placeholder={t("Specify the detailed reason for rejection...")}
-                value={rejectionModal.reason}
-                onChange={(e) => setRejectionModal((prev) => ({ ...prev, reason: e.target.value }))}
-              />
-            </div>
-
-            <div className="flex! justify-end! gap-[12px]! mt-[4px]!">
-              <Button
-                type="button"
-                variant="ghost"
-                disabled={isProcessingBatch}
-                onClick={() => setRejectionModal((prev) => ({ ...prev, isOpen: false }))}
-                className="p-[8px_16px]! rounded-[8px]!"
-              >
-                {t("Cancel")}
-              </Button>
-              <button
-                type="button"
-                className="[background:var(--color-legacy-fee2e2)] [color:var(--color-red-700)] [border:1px_solid_var(--color-legacy-fecaca)] [cursor:pointer] [font-size:var(--text-base)] [transition:all_0.2s] hover:[background:var(--color-red-700)] hover:[color:white] inline-flex! items-center! gap-[8px]! p-[8px_18px]! rounded-[8px]!"
-                disabled={isProcessingBatch || !rejectionModal.reason.trim()}
-                onClick={handleConfirmReject}
-              >
-                <X size={16} />
-                {isProcessingBatch ? t("Rejecting...") : t("Confirm Rejection")}
-              </button>
+          <div>
+            <label className="block! text-[length:0.78rem]! font-semibold! text-[color:var(--text-secondary)]! mb-[10px]! uppercase! [letter-spacing:0.05em]!">
+              {t("Quick Rejection Reason Presets")}
+            </label>
+            <div className="[display:flex] [flex-wrap:wrap] [gap:8px]">
+              {QUICK_REJECTION_REASONS.map((reason) => (
+                <button
+                  key={reason}
+                  type="button"
+                  className={`rejection-chip ${rejectionModal.reason === reason ? "selected" : ""}`}
+                  onClick={() => setRejectionModal((prev) => ({ ...prev, reason }))}
+                >
+                  {t(reason)}
+                </button>
+              ))}
             </div>
           </div>
+
+          <div>
+            <label htmlFor="rejection-reason" className="block! text-[length:0.78rem]! font-semibold! text-[color:var(--text-secondary)]! mb-[8px]! uppercase! [letter-spacing:0.05em]!">
+              {t("Audit Reason / Justification")}{" "}<span className="text-[color:var(--color-red-700)]!">*</span>
+            </label>
+            <textarea
+              id="rejection-reason"
+              className="custom-input w-full! [resize:vertical]! text-[length:0.88rem]! p-[10px_12px]! rounded-[10px]!"
+              rows={3}
+              placeholder={t("Specify the detailed reason for rejection...")}
+              value={rejectionModal.reason}
+              onChange={(e) => setRejectionModal((prev) => ({ ...prev, reason: e.target.value }))}
+            />
+          </div>
         </div>
-      )}
+      </Dialog>
 
       {/* Top Header */}
       <div className="manage-tab-header mb-[0px]!">
@@ -570,7 +564,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
                   <th className="min-w-[220px]!">{t("Activity & Fuel / Category")}</th>
                   <th className="w-[120px]! text-right!">{t("Emissions")}</th>
                   <th className="w-[120px]!">{t("QA Status")}</th>
-                  <th className="w-[110px]! text-center!">{t("Review Action")}</th>
+                  <th className={`w-[110px]! text-center! ${STICKY_ACTIONS}`}>{t("Review Action")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -638,7 +632,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
                           </span>
                         )}
                       </td>
-                      <td className="text-center!">
+                      <td className={`text-center! ${STICKY_ACTIONS}`}>
                         <div className="[display:flex] [align-items:center] [gap:8px] justify-center!">
                           {item.created_by && String(item.created_by) === String(user?.id) ? (
                             <span
@@ -652,7 +646,10 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
                               type="button"
                               className="btn-review-action approve"
                               title={t("Approve Record")}
-                              onClick={() => handleApproveSingle(item.scope, item.id)}
+                              aria-label={t("Approve Record")}
+                              disabled={approving.has(item.key)}
+                              aria-busy={approving.has(item.key)}
+                              onClick={() => approveOnce(item)}
                             >
                               <Check size={16} />
                             </button>
@@ -661,6 +658,8 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
                             type="button"
                             className="btn-review-action reject"
                             title={t("Reject Record (specify reason)")}
+                            aria-label={t("Reject Record (specify reason)")}
+                            disabled={approving.has(item.key)}
                             onClick={() => handleOpenRejectModal(item.scope, item.id)}
                           >
                             <X size={16} />
@@ -669,6 +668,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
                             type="button"
                             className="btn-review-action edit"
                             title={t("Edit Record")}
+                            aria-label={t("Edit Record")}
                             onClick={() => setEditingRecord(item)}
                           >
                             <Pencil size={16} />

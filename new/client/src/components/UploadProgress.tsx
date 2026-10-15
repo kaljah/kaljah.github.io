@@ -256,6 +256,11 @@ const UploadProgress: React.FC<UploadProgressProps> = ({ jobId, onComplete, onCa
   const [anomalyCount, setAnomalyCount] = useState<number>(0);
   const [anomalies, setAnomalies] = useState<AnomalyItem[]>([]);
   const [skipGroups, setSkipGroups] = useState<SkipGroup[]>([]);
+  // the status the new records were saved with (BUG-0025: an admin's import is Verified, not Pending)
+  const [statusCounts, setStatusCounts] = useState<Record<string, number> | null>(null);
+  const importedCount = processed - skippedCount;
+  const verifiedCount = statusCounts ? Math.min(importedCount, statusCounts.Verified || 0) : 0;
+  const pendingCount = importedCount - verifiedCount;
   // rate measured from the first progress sample this screen saw (the job may have started earlier)
   const rateStart = useRef<{ t: number; n: number } | null>(null);
   const [eta, setEta] = useState<number | null>(null);
@@ -277,6 +282,7 @@ const UploadProgress: React.FC<UploadProgressProps> = ({ jobId, onComplete, onCa
           anomaly_count?: number;
           anomalies?: AnomalyItem[];
           skipped_groups?: SkipGroup[];
+          status_counts?: Record<string, number>;
         }>(`/emissions/upload/status/${jobId}`);
         const data = res.data;
         setStatus(data.status);
@@ -290,6 +296,7 @@ const UploadProgress: React.FC<UploadProgressProps> = ({ jobId, onComplete, onCa
         setAnomalyCount(data.anomaly_count || 0);
         setAnomalies(data.anomalies || []);
         setSkipGroups(data.skipped_groups || []);
+        setStatusCounts(data.status_counts && Object.keys(data.status_counts).length ? data.status_counts : null);
         const now = Date.now();
         if (!rateStart.current) rateStart.current = { t: now, n: data.processed || 0 };
         const doneRows = (data.processed || 0) - rateStart.current.n;
@@ -377,10 +384,18 @@ const UploadProgress: React.FC<UploadProgressProps> = ({ jobId, onComplete, onCa
           {skippedCount > 0 && <SkippedRows skippedCount={skippedCount} skippedPreview={skippedPreview} hasErrorCsv={hasErrorCsv} onDownload={downloadErrors} />}
           {anomalyCount > 0 && <Anomalies anomalies={anomalies} count={anomalyCount} />}
 
-          {reviewable && processed - skippedCount > 0 && (
+          {reviewable && verifiedCount > 0 && (
+            <Banner tone="success" className="mb-2">
+              <strong>{t("Saved as Verified:")}</strong>{" "}
+              {verifiedCount === 1
+                ? t("the imported record was saved as Verified (administrator import) and already counts in dashboards and reports.")
+                : t("the {{count}} imported records were saved as Verified (administrator import) and already count in dashboards and reports.", { count: verifiedCount.toLocaleString("en-US") })}
+            </Banner>
+          )}
+          {reviewable && pendingCount > 0 && (
             <Banner tone="info" className="mb-2">
               <strong>{t("What happens next:")}</strong>{" "}
-              {processed - skippedCount === 1 ? t("the imported record is") : t("the {{count}} imported records are", { count: (processed - skippedCount).toLocaleString("en-US") })}{" "}
+              {pendingCount === 1 ? t("the imported record is") : t("the {{count}} imported records are", { count: pendingCount.toLocaleString("en-US") })}{" "}
               <em>{t("Pending")}</em>.{" "}
               {isReviewer ? t("Review and approve them in Manage Data › Pending Review.") : t("An admin or superuser reviews and approves them.")}{" "}{t("Pending records do not count in dashboards and reports until they are approved.")}
             </Banner>
@@ -392,7 +407,7 @@ const UploadProgress: React.FC<UploadProgressProps> = ({ jobId, onComplete, onCa
                 <Button variant="secondary" onClick={done}>
                   {t("Close")}
                 </Button>
-                {reviewable && (
+                {reviewable && pendingCount > 0 && (
                   <Button
                     onClick={() => {
                       done();

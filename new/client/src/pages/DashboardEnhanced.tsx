@@ -288,7 +288,11 @@ const DashboardEnhanced: React.FC = () => {
     gwpHorizon,
   ]);
 
+  // BUG-0040: only the latest filter selection may update the dashboard (responses can arrive out of order)
+  const loadSeqRef = useRef<number>(0);
   const loadDashboardData = async () => {
+    const seq = ++loadSeqRef.current;
+    const stale = () => seq !== loadSeqRef.current;
     try {
       if (isFirstLoadRef.current) {
         setLoading(true);
@@ -320,6 +324,7 @@ const DashboardEnhanced: React.FC = () => {
 
       // Part 3: Optimized Batch Dashboard API Call
       const batchRes = await api.get(`/dashboard/batch-all?${filterParams.toString()}`);
+      if (stale()) return;
       const batch = batchRes.data;
 
       if (batch.pending_stats) {
@@ -328,6 +333,7 @@ const DashboardEnhanced: React.FC = () => {
       } else if (user?.role && ["admin", "superuser"].includes(user.role)) {
         try {
           const pRes = await api.get("/emissions/pending");
+          if (stale()) return;
           setPendingCount(pRes.data.total_pending || 0);
         } catch (e) {
           console.error(e);
@@ -348,6 +354,7 @@ const DashboardEnhanced: React.FC = () => {
       // Fetch SBTi Trajectory Data
       try {
         const sbtiRes = await api.get("/dashboard/sbti-trajectory");
+        if (stale()) return;
         if (sbtiRes.data && sbtiRes.data.has_target) {
           setSbtiData(sbtiRes.data);
         } else {
@@ -360,11 +367,13 @@ const DashboardEnhanced: React.FC = () => {
       // Fetch Flaring Summary (Executive Decree 21-330 breakdown)
       try {
         const flareRes = await api.get(`/dashboard/flaring-summary?${filterParams.toString()}`);
+        if (stale()) return;
         setFlaringData(flareRes.data);
       } catch (err) {
         console.error("Failed to load flaring summary", err);
-        setFlaringData(null);
+        if (!stale()) setFlaringData(null);
       }
+      if (stale()) return;
 
       const totals: DashboardStats = {
         totalEmissions: 0,
@@ -606,12 +615,15 @@ const DashboardEnhanced: React.FC = () => {
         }),
       );
     } catch (error) {
+      if (stale()) return;
       console.error("Dashboard load error:", error);
       toast.error(tr("Failed to load dashboard data"));
     } finally {
-      setLoading(false);
-      setIsUpdating(false);
-      isFirstLoadRef.current = false;
+      if (!stale()) {
+        setLoading(false);
+        setIsUpdating(false);
+        isFirstLoadRef.current = false;
+      }
     }
   };
 

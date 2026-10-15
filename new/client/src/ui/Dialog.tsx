@@ -13,6 +13,24 @@ const guardOutside = (e: { target: unknown; preventDefault: () => void }): void 
   if (isForeignPortal(e.target)) e.preventDefault();
 };
 
+// Focus goes back to the control that opened the dialog (Radix returns it to <body> when the dialog
+// has no Radix Trigger): audit 2026-10-14 BUG-0029.
+const useReturnFocus = (open: boolean) => {
+  const opener = React.useRef<HTMLElement | null>(null);
+  React.useEffect(() => {
+    if (open && typeof document !== "undefined" && document.activeElement instanceof HTMLElement) {
+      opener.current = document.activeElement;
+    }
+  }, [open]);
+  return (e: Event) => {
+    const el = opener.current;
+    if (el && el.isConnected) {
+      e.preventDefault();
+      el.focus();
+    }
+  };
+};
+
 const overlayClass =
   "fixed inset-0 z-(--z-overlay) bg-ink-900/45 backdrop-blur-[2px] data-[state=open]:animate-[ui-fade-in_var(--duration-base)_ease-out]";
 
@@ -48,41 +66,46 @@ export const Dialog: React.FC<DialogProps> = ({
   maxWidth = "32rem",
   className,
   dismissible = true,
-}) => (
-  <RadixDialog.Root open={open} onOpenChange={onOpenChange}>
-    <RadixDialog.Portal>
-      <RadixDialog.Overlay className={overlayClass} />
-      <RadixDialog.Content
-        style={{ maxWidth }} // eslint-disable-line no-restricted-syntax -- dynamic width
-        onPointerDownOutside={(e) => (dismissible ? guardOutside(e) : e.preventDefault())}
-        onInteractOutside={guardOutside}
-        onFocusOutside={guardOutside}
-        onEscapeKeyDown={(e) => !dismissible && e.preventDefault()}
-        className={cn(
-          "fixed left-1/2 top-1/2 z-(--z-modal) flex max-h-[90dvh] w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col",
-          "rounded-lg border border-border bg-surface shadow-overlay",
-          className,
-        )}
-      >
-        <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
-          <div className="min-w-0">
-            <RadixDialog.Title className="text-lg font-semibold text-text">{title}</RadixDialog.Title>
-            {description ? (
-              <RadixDialog.Description className="mt-0.5 text-sm text-text-secondary">
-                {description}
-              </RadixDialog.Description>
-            ) : (
-              <RadixDialog.Description className="sr-only">{title}</RadixDialog.Description>
-            )}
+}) => {
+  const returnFocus = useReturnFocus(open);
+  return (
+    <RadixDialog.Root open={open} onOpenChange={onOpenChange}>
+      <RadixDialog.Portal>
+        <RadixDialog.Overlay className={overlayClass} />
+        <RadixDialog.Content
+          aria-modal="true"
+          onCloseAutoFocus={returnFocus}
+          style={{ maxWidth }} // eslint-disable-line no-restricted-syntax -- dynamic width
+          onPointerDownOutside={(e) => (dismissible ? guardOutside(e) : e.preventDefault())}
+          onInteractOutside={guardOutside}
+          onFocusOutside={guardOutside}
+          onEscapeKeyDown={(e) => !dismissible && e.preventDefault()}
+          className={cn(
+            "fixed left-1/2 top-1/2 z-(--z-modal) flex max-h-[90dvh] w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col",
+            "rounded-lg border border-border bg-surface shadow-overlay",
+            className,
+          )}
+        >
+          <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
+            <div className="min-w-0">
+              <RadixDialog.Title className="text-lg font-semibold text-text">{title}</RadixDialog.Title>
+              {description ? (
+                <RadixDialog.Description className="mt-0.5 text-sm text-text-secondary">
+                  {description}
+                </RadixDialog.Description>
+              ) : (
+                <RadixDialog.Description className="sr-only">{title}</RadixDialog.Description>
+              )}
+            </div>
+            <CloseButton />
           </div>
-          <CloseButton />
-        </div>
-        <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">{children}</div>
-        {footer && <div className="flex items-center justify-end gap-2 border-t border-border px-5 py-3">{footer}</div>}
-      </RadixDialog.Content>
-    </RadixDialog.Portal>
-  </RadixDialog.Root>
-);
+          <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">{children}</div>
+          {footer && <div className="flex items-center justify-end gap-2 border-t border-border px-5 py-3">{footer}</div>}
+        </RadixDialog.Content>
+      </RadixDialog.Portal>
+    </RadixDialog.Root>
+  );
+};
 
 export interface SheetProps {
   open: boolean;
@@ -105,43 +128,48 @@ export const Sheet: React.FC<SheetProps> = ({
   footer,
   width = "34rem",
   icon: Icon,
-}) => (
-  <RadixDialog.Root open={open} onOpenChange={onOpenChange}>
-    <RadixDialog.Portal>
-      <RadixDialog.Overlay className={overlayClass} />
-      <RadixDialog.Content
-        style={{ width }} // eslint-disable-line no-restricted-syntax -- dynamic width
-        onPointerDownOutside={guardOutside}
-        onInteractOutside={guardOutside}
-        onFocusOutside={guardOutside}
-        className="fixed inset-y-0 right-0 z-(--z-modal) flex max-w-full flex-col border-l border-border bg-surface shadow-overlay"
-      >
-        <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
-          <div className="flex min-w-0 items-start gap-3">
-            {Icon && (
-              <span className="mt-0.5 inline-flex size-9 shrink-0 items-center justify-center rounded-md bg-brand-50 text-brand-700">
-                <Icon className="size-5" aria-hidden="true" />
-              </span>
-            )}
-            <div className="min-w-0">
-              <RadixDialog.Title className="text-lg font-semibold text-text">{title}</RadixDialog.Title>
-              {description ? (
-                <RadixDialog.Description className="mt-0.5 text-sm text-text-secondary">
-                  {description}
-                </RadixDialog.Description>
-              ) : (
-                <RadixDialog.Description className="sr-only">{title}</RadixDialog.Description>
+}) => {
+  const returnFocus = useReturnFocus(open);
+  return (
+    <RadixDialog.Root open={open} onOpenChange={onOpenChange}>
+      <RadixDialog.Portal>
+        <RadixDialog.Overlay className={overlayClass} />
+        <RadixDialog.Content
+          aria-modal="true"
+          onCloseAutoFocus={returnFocus}
+          style={{ width }} // eslint-disable-line no-restricted-syntax -- dynamic width
+          onPointerDownOutside={guardOutside}
+          onInteractOutside={guardOutside}
+          onFocusOutside={guardOutside}
+          className="fixed inset-y-0 right-0 z-(--z-modal) flex max-w-full flex-col border-l border-border bg-surface shadow-overlay"
+        >
+          <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
+            <div className="flex min-w-0 items-start gap-3">
+              {Icon && (
+                <span className="mt-0.5 inline-flex size-9 shrink-0 items-center justify-center rounded-md bg-brand-50 text-brand-700">
+                  <Icon className="size-5" aria-hidden="true" />
+                </span>
               )}
+              <div className="min-w-0">
+                <RadixDialog.Title className="text-lg font-semibold text-text">{title}</RadixDialog.Title>
+                {description ? (
+                  <RadixDialog.Description className="mt-0.5 text-sm text-text-secondary">
+                    {description}
+                  </RadixDialog.Description>
+                ) : (
+                  <RadixDialog.Description className="sr-only">{title}</RadixDialog.Description>
+                )}
+              </div>
             </div>
+            <CloseButton label={t("Close panel")} />
           </div>
-          <CloseButton label={t("Close panel")} />
-        </div>
-        <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">{children}</div>
-        {footer && <div className="flex items-center justify-end gap-2 border-t border-border px-5 py-3">{footer}</div>}
-      </RadixDialog.Content>
-    </RadixDialog.Portal>
-  </RadixDialog.Root>
-);
+          <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">{children}</div>
+          {footer && <div className="flex items-center justify-end gap-2 border-t border-border px-5 py-3">{footer}</div>}
+        </RadixDialog.Content>
+      </RadixDialog.Portal>
+    </RadixDialog.Root>
+  );
+};
 
 export type ConfirmVariant = "danger" | "primary" | "warning";
 

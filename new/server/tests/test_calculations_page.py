@@ -161,7 +161,8 @@ def test_scope1_calculation_and_maker_checker(client, admin_user, regular_user, 
 
     # 3. Admin user submits -> status should be "Verified"
     client.post("/api/auth/login", json={"email": "admin_calc@test.com", "password": "password"})
-    res_admin = client.post("/api/emissions", json=submit_payload)
+    # a different meter than the user's record: the same key would be a duplicate (audit 2026-10-14 BUG-0028)
+    res_admin = client.post("/api/emissions", json={**submit_payload, "equipment_id": "ADMIN-METER"})
     assert res_admin.status_code in [200, 201]
     with app.app_context():
         rec_admin = db.session.get(Emission, res_admin.get_json()["id"])
