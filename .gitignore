@@ -116,6 +116,10 @@ playwright-report/
 # Archive directory for deprecated scratch scripts
 archive/
 
+# Audit runs and e2e screenshot output (kept locally, never committed)
+AUDIT_ARTIFACTS_*/
+test_artifacts/
+
 # Antigravity IDE state (machine-local, never commit)
 /brain/
 /annotations/
