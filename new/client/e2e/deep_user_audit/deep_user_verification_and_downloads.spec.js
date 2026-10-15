@@ -262,10 +262,9 @@ test.describe.serial('Maker-Checker Verification & Real File Downloads Audit', (
   });
 
   // -------------------------------------------------------------------------
-  // EXPORT 2: 2025 Master Annual Report (PDF) Download Verification
+  // EXPORT 2: the static 2025 Master Annual Report was withdrawn (audit 2026-10-14 BUG-0002)
   // -------------------------------------------------------------------------
-  test('EX-2: 2025 Master Annual Report (PDF) Comprehensive Export', async ({ page }) => {
-    console.log('[USER EXPORT] Requesting 2025 Master Annual Report (PDF)...');
+  test('EX-2: Hard-coded Master Annual Report is no longer offered', async ({ page }) => {
     await ensureAuthenticatedPage(page, '/reports');
     await page.waitForTimeout(1000);
 
@@ -274,31 +273,9 @@ test.describe.serial('Maker-Checker Verification & Real File Downloads Audit', (
     await exportBtn.click();
     await page.waitForTimeout(500);
 
-    const downloadPromise = page.waitForEvent('download', { timeout: 60000 });
-
-    const masterItem = page.locator('[role="menuitem"]:has-text("2025 Master report")').first();
-    await expect(masterItem).toBeVisible({ timeout: 5000 });
-    await masterItem.click();
-
-    console.log('[USER EXPORT] Awaiting 2025 Master Report download...');
-    const download = await downloadPromise;
-    const downloadPath = await download.path();
-    const downloadName = download.suggestedFilename();
-    console.log(`[USER EXPORT] Master Report downloaded: ${downloadName}`);
-
-    expect(downloadName).toContain('Annual_GHG_Report');
-    expect(downloadName.endsWith('.pdf')).toBe(true);
-
-    const fileBytes = fs.readFileSync(downloadPath);
-    console.log(`[USER EXPORT] Master Report size: ${fileBytes.length} bytes`);
-    expect(fileBytes.length).toBeGreaterThan(50000);
-
-    const header = fileBytes.subarray(0, 5).toString('ascii');
-    expect(header).toBe('%PDF-');
-
-    const shot1 = 'vf05_master_pdf_downloaded.png';
-    await page.screenshot({ path: path.join(SCREENSHOT_DIR, shot1) });
-    copyArtifact(shot1);
+    await expect(page.locator('[role="menuitem"]:has-text("PDF report")').first()).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[role="menuitem"]:has-text("Master report")')).toHaveCount(0);
+    await expect(page.locator('button:has-text("Download Master PDF")')).toHaveCount(0);
   });
 
   // -------------------------------------------------------------------------
