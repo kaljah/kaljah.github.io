@@ -453,9 +453,7 @@ Playwright smoke tier (21 tests) on push/PR; the full 124-test matrix is manual-
 
 ### 8.4 Ratchets (these fail CI when exceeded)
 
-- `python scripts/loc_ratchet.py --check` — a file in `routes/`, `calculations/` or `services/`
-  may not grow past `scripts/loc_baseline.json`; a new file may not exceed 800 lines. After
-  shrinking a file, lock it in with `--write`.
+- `python scripts/loc_ratchet.py --check` — a function in `routes/`, `calculations/`, `services/` or `background_processor.py` may have at most 150 lines and a file at most 800; the ones already longer are recorded in `scripts/loc_baseline.json` and may only shrink (files under 800 lines may grow). After shrinking one, lock it in with `--write`.
 - `npm run ui:metrics -- --check` — UI metrics against `ui-metrics.baseline.json`.
 
 ---

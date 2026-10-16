@@ -36,7 +36,7 @@ python -m pytest tests/test_combustion.py::<test_name> -q     # single test
 python -m pytest -x --timeout=300                            # CI test run
 ```
 - `new/server/pytest.ini` also collects `test_*.py` in the server dir itself (ignoring `test_runner.py`). The root `pytest.ini` runs from the repo root and additionally collects `validation/`.
-- `python scripts/loc_ratchet.py --check` (CI gate) fails if a file in `routes/`, `calculations/` or `services/` grows past `scripts/loc_baseline.json`, or a new one exceeds 800 lines. After shrinking a file, lock it in with `--write`.
+- `python scripts/loc_ratchet.py --check` (CI gate, reworked 2026-10-16): a function in `routes/`, `calculations/`, `services/` or `background_processor.py` may have at most 150 lines and a file at most 800; the ones already longer are recorded in `scripts/loc_baseline.json` and may only shrink (files under 800 lines may grow). After shrinking one, lock it in with `--write`.
 - `tests/conftest.py` sets `FLASK_ENV=testing`, uses a temporary `tests/test_app.db`, sets `SEED_ADMIN=false`, turns off CSRF and turns off the rate limiter.
 - `new/server/requirements.txt` includes `pytest`, `pytest-timeout`, `hypothesis`, `pytest-benchmark`, and `redis`.
 - CI (`.github/workflows/deploy-pages.yml`) also runs these gate groups separately:
