@@ -126,6 +126,17 @@ def _get_facility_scope2_metrics(facility_id, year=None, country="Algeria", stat
 
 
 
+
+def catalog_grid_factor(country):
+    """(catalog name, t CO2e / MWh at the active GWP set, source) of a country's grid in the Scope 2 factor
+    catalog (electricity_factors), or None when the catalog has no factor for it."""
+    from electricity_factors import grid_entry, grid_factor_kg_co2e_per_kwh
+
+    name, entry = grid_entry(country)
+    if not entry:
+        return None
+    return name, grid_factor_kg_co2e_per_kwh(entry), entry.get("source") or ""
+
 def _clean_xml_text(val):
     if val is None:
         return ""

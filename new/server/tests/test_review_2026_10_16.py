@@ -64,15 +64,32 @@ def _cbam_record(fac, **kw):
     return rec
 
 
-def test_cbam_without_scope2_data_has_no_invented_grid_factor(ctx):
-    fac = make_facility(name=uniq("CbamFac"), region=uniq("R"), country="Algeria")
+def _electricity_row(country):
+    fac = make_facility(name=uniq("CbamFac"), region=uniq("R"), country=country)
     _cbam_record(fac)
     with app.test_client() as c:
         login(c, make_user("admin", "Global"))
         r = c.get(f"/api/reports/cbam-export?format=excel&year=2014&facility_id={fac.id}")
         assert r.status_code == 200
-    elec = [c.value for c in _cells(r.data)["D_Electricity"]]
-    assert 0.582 not in elec and "No verified Scope 2 electricity data for this facility and year" in elec
+    wb = openpyxl.load_workbook(io.BytesIO(r.data))
+    return [cell.value for cell in wb["D_Electricity"][5]]
+
+
+def test_cbam_without_scope2_data_uses_the_sourced_catalog_grid_factor(ctx):
+    from electricity_factors import grid_entry, grid_factor_kg_co2e_per_kwh
+
+    row = _electricity_row("Algeria")
+    factor = grid_factor_kg_co2e_per_kwh(grid_entry("Algeria")[1])
+    assert row[7] == pytest.approx(factor) and row[7] != 0.582  # the unsourced national table is gone
+    assert row[6] == pytest.approx(0.2 / factor, abs=1e-4)  # MWh/t = SEE_indir / grid factor
+    assert "Algerian National Grid" in row[10] and "Bilan Energetique National 2024" in row[10]
+
+
+def test_cbam_without_scope2_data_or_catalog_factor_shows_na(ctx):
+    row = _electricity_row("Egypt")  # not in the grid factor catalog
+    assert row[5] == row[6] == row[7] == "N/A"
+    assert row[10] == "No verified Scope 2 electricity data and no catalog grid factor for Egypt"
+    assert row[8] == pytest.approx(20.0)  # indirect emissions come from the record (100 t x 0.2)
 
 
 def test_cbam_cells_are_never_formulas_and_no_invented_claims(ctx):

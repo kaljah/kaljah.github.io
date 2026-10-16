@@ -11,7 +11,8 @@ from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 
 from services.cbam_data import (RecordFigures, _get_facility_production_tonnes, _get_facility_scope1_split,
-                                _get_facility_scope2_metrics, fingerprint_row, get_cbam_aggregated_category,
+                                _get_facility_scope2_metrics, catalog_grid_factor, fingerprint_row,
+                                get_cbam_aggregated_category,
                                 get_cbam_production_route, quarter_of)
 
 # Official European Commission CBAM palette
@@ -25,7 +26,7 @@ DIRECT_BOUNDARY = "Gate-to-gate installation boundary including combustion, reac
 CERTIFICATION = (
     "To be signed by the declarant: the specific embedded direct and indirect emissions reported in this file were "
     "determined with the monitoring methodology of Implementing Regulation (EU) 2023/1773.")
-NO_SCOPE2 = "No verified Scope 2 electricity data for this facility and year"
+
 
 
 def _solid(color):
@@ -213,9 +214,12 @@ def sheet_electricity(wb, ctx):
         indirect_see = float(r.specific_embedded_indirect or 0.0)
         country = ctx.fac_country(r)
         _mwh, grid_ef, supplier, has_s2 = _get_facility_scope2_metrics(r.facility_id, r.year, country, ctx.statuses)
-        # without verified Scope 2 data there is no grid factor, so no electricity quantity to derive
+        basis = _electricity_basis(has_s2, country)
+        if not has_s2:
+            catalog = catalog_grid_factor(country)
+            if catalog:
+                grid_ef = catalog[1]
         spec_mwh = (indirect_see / grid_ef) if grid_ef else None
-        basis = "Verified Scope 2 Invoiced Metering + Grid EF" if has_s2 else NO_SCOPE2
         _cell(ws, idx, 1, r.id, Styles.mono)
         _cell(ws, idx, 2, ctx.safe(r.product_name), Styles.bold)
         _cell(ws, idx, 3, ctx.safe(str(r.cn_code)), Styles.mono)
@@ -229,6 +233,19 @@ def sheet_electricity(wb, ctx):
         _cell(ws, idx, 11, basis, Styles.regular)
         _finish_row(ws, idx, 11)
     autofit_columns(ws)
+
+
+def _electricity_basis(has_s2, country):
+    """Where the electricity figures come from: metered Scope 2 records, the sourced catalog factor of the
+    country's grid (electricity_factors), or nothing - then the electricity columns are N/A (review 2026-10-16:
+    a fixed, unsourced national table was used)."""
+    if has_s2:
+        return "Verified Scope 2 Invoiced Metering + Grid EF"
+    catalog = catalog_grid_factor(country)
+    if not catalog:
+        return f"No verified Scope 2 electricity data and no catalog grid factor for {country}"
+    name, factor, source = catalog
+    return f"No metered Scope 2 data: {name} catalog factor {factor:.4f} t CO2e/MWh ({source})"
 
 
 def sheet_precursors(wb, ctx):
