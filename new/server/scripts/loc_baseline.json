@@ -1,6 +1,6 @@
 {
   "files": {
-    "background_processor.py": 3138,
+    "background_processor.py": 3097,
     "calculations/dispatcher.py": 1219,
     "calculations/units.py": 949,
     "calculations/vented_downstream.py": 878,
@@ -11,13 +11,9 @@
     "routes/emissions.py": 1193,
     "routes/ldar.py": 834,
     "routes/managedata.py": 1053,
-    "routes/qaqc.py": 907,
-    "routes/reports_cbam.py": 1000,
-    "routes/reports_ogmp.py": 803,
     "routes/scope2.py": 1012
   },
   "functions": {
-    "background_processor.py::_process_file_thread": 607,
     "background_processor.py::_process_row": 257,
     "background_processor.py::_process_row_production": 158,
     "background_processor.py::_process_row_scope2": 269,
@@ -50,13 +46,10 @@
     "routes/emissions.py::update_emission": 207,
     "routes/emissions_export.py::export_emissions": 453,
     "routes/emissions_import.py::import_emissions": 203,
-    "routes/qaqc.py::get_qaqc_dashboard": 606,
     "routes/reports.py::create_pdf_report": 277,
     "routes/reports.py::generate_report": 178,
-    "routes/reports_cbam.py::export_cbam_report": 774,
     "routes/reports_export.py::export_emissions": 233,
     "routes/reports_national.py::export_national_inventory_report": 574,
-    "routes/reports_ogmp.py::export_ogmp_excel": 770,
     "routes/scope2.py::bulk_import_scope2": 161,
     "routes/scope2.py::create_scope2_emission": 266,
     "routes/scope2.py::update_scope2_emission": 194,

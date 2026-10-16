@@ -869,6 +869,498 @@ def get_job_status(job_id):
     }
 
 
+class _ImportFiles:
+    """The workbook or CSV file an import reads, closed when the import ends."""
+
+    def __init__(self):
+        self.wb = None
+        self.f = None
+
+
+def _read_tier3_sheets(wb, scope, decimal_mark):
+    """Tier 3 / gas composition sheets: parameters per equipment ID (and month), with the same header mapping as
+    the data sheet so the values reach the calculators. {(equipment id, year, month): {field: value}}."""
+    tier3_data_map = {}
+    for sheet_name in wb.sheetnames:
+        if not (_clean_sheet_name(sheet_name) in ("gas composition", "tier 3 calculations") or sheet_name.startswith("⚙")):
+            continue
+        t3_iter = _xl_values(wb[sheet_name])
+        t3_headers = []
+        for row in t3_iter:
+            str_row = [str(c).strip() if c is not None else "" for c in row]
+            if "equipment id" in [c.lower() for c in str_row]:
+                t3_headers = str_row
+                break
+        if not t3_headers:
+            continue
+        t3_map = _build_mapping(t3_headers, scope=scope)
+        skip = ("equipment", "equipment_id", "date", "process")
+        for t3_row in t3_iter:
+            if not any(c not in (None, "") for c in t3_row):
+                continue
+            raw = dict(zip(t3_headers, t3_row))
+            eq_id = str(next((v for k, v in raw.items() if k.lower() == "equipment id"), "") or "").strip()
+            if not eq_id:
+                continue
+            params = {}
+            raw = {h: (normalize_number_cell(v, decimal_mark) if isinstance(v, str)
+                       and not _TEXT_COLUMN.search(_canonical_header(h) or str(h).lower()) else v)
+                   for h, v in raw.items()}
+            for h, val in raw.items():  # unmapped columns by their field name
+                ck = _canonical_header(h)
+                if ck and ck not in skip and h not in t3_map.values() and val not in (None, "", "-"):
+                    params[ck] = val
+            for sys_key, header_name in t3_map.items():
+                val = raw.get(header_name)
+                if sys_key not in skip and val not in (None, "", "-"):
+                    params[sys_key] = val
+            y, m, _ = _parse_row_period({"date": raw.get(t3_map.get("date"))}) if t3_map.get("date") else (None, None, None)
+            tier3_data_map.setdefault((eq_id, y, m), {}).update(params)
+    return tier3_data_map
+
+
+def _open_excel(files, file_path, scope, decimal_mark):
+    """(headers, row iterator, header row number, row count, Tier 3 parameters) of an Excel workbook."""
+    files.wb = load_workbook(file_path, read_only=True, data_only=True)
+    tier3 = _read_tier3_sheets(files.wb, scope, decimal_mark)
+    ws = _data_sheet(files.wb)
+    rows = _xl_values(ws)
+    headers_tuple, header_row_no = _find_header_row(rows)
+    headers = [str(h).strip() if h is not None else "" for h in headers_tuple]
+    return headers, rows, header_row_no, max(0, (ws.max_row or 0) - header_row_no), tier3
+
+
+def _open_csv(files, file_path, decimal_mark):
+    """(headers, row reader, header row number, row count, decimal mark) of a CSV file: the encoding and the
+    delimiter are detected, and the rows are streamed (the file is not read into memory)."""
+    enc_used = "utf-8"
+    with open(file_path, "rb") as probe_f:
+        head_sample = probe_f.read(65536)
+    for enc in ["utf-8-sig", "utf-8", "windows-1252", "iso-8859-1"]:
+        try:
+            head_sample.decode(enc)
+            enc_used = enc
+            break
+        except (UnicodeDecodeError, LookupError):
+            continue
+    first_line = ""
+    with open(file_path, "r", encoding=enc_used, errors="replace") as f_del:
+        for line in f_del:
+            if line.strip():
+                first_line = line
+                break
+    counts = {d: first_line.count(d) for d in (",", ";", "\t", "|")}
+    delimiter = max(counts, key=counts.get) if max(counts.values()) > 0 else ","
+    if decimal_mark is None and delimiter == ";":
+        decimal_mark = "comma"
+    total_rows = 0
+    with open(file_path, "r", encoding=enc_used, errors="replace", newline="") as f_cnt:
+        cnt_reader = csv.reader(f_cnt, delimiter=delimiter)
+        try:
+            next(cnt_reader)
+            for _ in cnt_reader:
+                total_rows += 1
+        except Exception:
+            pass
+    files.f = open(file_path, "r", encoding=enc_used, errors="replace", newline="")
+    reader = csv.reader(files.f, delimiter=delimiter)
+    headers = [h.strip() for h in next(reader, [])]
+    return headers, reader, 1, total_rows, decimal_mark
+
+
+def _org_gwp():
+    """(standard, GWP values): the organisation-wide GWP set (Decision D-09; a user preference is display only)."""
+    from calculations.constants import get_active_gwp
+
+    try:
+        from routes.auth import _app_settings, load_settings_from_db
+
+        load_settings_from_db()
+        gwp_std = str(_app_settings.get("gwp_standard") or "AR5").upper().strip()
+    except Exception:
+        gwp_std = "AR5"
+    if gwp_std not in ["AR4", "AR5", "AR6"]:
+        gwp_std = "AR5"
+    return gwp_std, get_active_gwp(standard=gwp_std)
+
+
+class _ImportRun:
+    """One file import, or a "Check file" dry run: the state the steps of _process_file_thread share."""
+
+    def __init__(self, job_id, original_filename, user_id, global_factor_type, scope, overwrite_duplicates,
+                 dry_run, sample_rows, decimal_mark):
+        self.job_id = job_id
+        self.original_filename = original_filename
+        self.user_id = user_id
+        self.global_factor_type = global_factor_type
+        self.scope = scope
+        self.overwrite_duplicates = overwrite_duplicates
+        self.dry_run = dry_run
+        self.sample_rows = sample_rows
+        # not chosen: unambiguous numbers only (see normalize_number_cell)
+        self.decimal_mark = decimal_mark if decimal_mark in DECIMAL_MARKS else None
+        self.files = _ImportFiles()
+        self.import_lock = None
+        self.tier3 = {}
+        self.csv_source = False  # CSV cells are positional by delimiter: an extra one shifts the row
+        self.processed = 0
+        self.chunk = []
+        self.skipped_rows = []  # raw row data for the error CSV
+        self.anomaly_rows = []  # anomaly-flagged rows for the reviewer warning
+        self.batch_prod_map = {}  # in-batch duplicate tracking for production upserts
+        self.batch_cf_names = set()  # BUG-065: in-file duplicate custom factor names
+        self.batch_facilities = {}  # in-file facility names / codes
+        self.batch_sources = set()  # in-file emission sources
+        self.batch_scope1_map = {}
+        self.rejected_scope1_keys = set()  # BUG-0026: an import matching a Rejected record is a resubmission
+        self.status_counts = {}  # BUG-0025: the saved status of the new records, shown by the result banner
+        self.batch_scope2_map = {}
+        self.batch_scope3_map = {}
+
+    def open(self, file_path, provided_mapping):
+        """Open the file, read its headers and resolve the column mapping: the automatic one, overridden by the
+        columns the user chose in the wizard (it lists only some fields; the others still map automatically)."""
+        if str(self.original_filename or "").lower().endswith(".xlsx"):
+            self.headers, self.rows, self.header_row_no, self.total_rows, self.tier3 = _open_excel(
+                self.files, file_path, self.scope, self.decimal_mark)
+        else:
+            self.headers, self.rows, self.header_row_no, self.total_rows, self.decimal_mark = _open_csv(
+                self.files, file_path, self.decimal_mark)
+            self.csv_source = True
+        _update_job(self.job_id, total=self.total_rows)
+        self.mapping = _build_mapping(self.headers, scope=self.scope)
+        if isinstance(provided_mapping, dict):
+            self.mapping.update({str(k): v for k, v in provided_mapping.items()
+                                 if isinstance(v, str) and v in self.headers})
+
+    def load_context(self):
+        """The importing user, the GWP set, the facilities in the user's scope, the custom factors and the
+        calculators."""
+        from calculations import compute_emissions
+        from electricity_factors import GRID_FACTORS
+        from emission_factors import API_FACTORS
+        from extensions import db
+        from models import CustomFactor, Facility, User
+        from utils import build_name_map, get_allowed_facility_ids
+
+        self.compute_emissions, self.api_factors, self.grid_factors = compute_emissions, API_FACTORS, GRID_FACTORS
+        self.user_obj = db.session.get(User, self.user_id)
+        self.gwp_std, self.gwp_dict = _org_gwp()
+        allowed_fac_ids = get_allowed_facility_ids(self.user_obj)
+        if allowed_fac_ids is None:
+            self.all_facilities = Facility.query.all()
+        else:
+            self.all_facilities = Facility.query.filter(Facility.id.in_(allowed_fac_ids)).all()
+        self.fac_name_map = build_name_map(self.all_facilities)
+        for fac in self.all_facilities:
+            # region names are a convenience alias only when no facility carries that name
+            self.fac_name_map.add(fac.region, fac, overwrite=False)
+        self.fac_id_map = {str(fac.id): fac for fac in self.all_facilities}
+        self.cf_name_map = build_name_map(CustomFactor.query.filter(CustomFactor.is_archived.is_(False)).all())
+
+    def load_existing_records(self):
+        """Take the import lock (BUG-0003: held until the commit), then key the existing records the rows may
+        duplicate. BUG-081: natural keys include the sub-identifiers real inventories need, and Rejected /
+        Draft rows are not treated as existing records."""
+        from extensions import db
+        from models import Emission, Scope2Emission, Scope3Emission
+
+        if not self.dry_run:
+            self.import_lock = _hold_import_lock(db.session, self.scope)
+        live = LIVE_STATUSES
+        if str(self.scope) == "1":
+            for e in Emission.query.filter(Emission.status.in_(live + ("Rejected",))).with_entities(
+                Emission.id, Emission.facility_id, Emission.year, Emission.month, Emission.process_type,
+                Emission.fuel_type, Emission.equipment_id, Emission.data_source_ref, Emission.status,
+            ).all():
+                k = _scope1_key(e.facility_id, e.year, e.month, e.process_type, e.fuel_type, e.equipment_id, e.data_source_ref)
+                if e.status == "Rejected":
+                    self.rejected_scope1_keys.add(k)
+                else:
+                    self.batch_scope1_map[k] = e.id
+        elif str(self.scope) == "2":
+            for e in Scope2Emission.query.filter(Scope2Emission.status.in_(live)).with_entities(
+                Scope2Emission.id, Scope2Emission.facility_id, Scope2Emission.year, Scope2Emission.month,
+                Scope2Emission.source_type, Scope2Emission.grid_region, Scope2Emission.location,
+            ).all():
+                meter = e.location if (e.location or "") != (e.grid_region or "") else ""
+                self.batch_scope2_map[_scope2_key(e.facility_id, e.year, e.month, e.source_type, e.grid_region, meter)] = e.id
+        elif str(self.scope) in ["3", "3_eeio"]:
+            from input_validation import scope3_category_number
+
+            for e in Scope3Emission.query.filter(Scope3Emission.status.in_(live)).with_entities(
+                Scope3Emission.id, Scope3Emission.facility_id, Scope3Emission.year, Scope3Emission.month,
+                Scope3Emission.category, Scope3Emission.sub_category, Scope3Emission.unit,
+            ).all():
+                n = scope3_category_number(e.category)
+                cat = f"Category {n}" if n else (e.category or "")
+                self.batch_scope3_map[_scope3_key(e.facility_id, e.year, e.month, cat, e.sub_category, e.unit)] = e.id
+
+    def _row_dict(self, raw_row):
+        """Header -> cell value; the templates write "-" for a blank cell."""
+        row_dict = {}
+        for i, h in enumerate(self.headers):
+            v = raw_row[i] if i < len(raw_row) else None
+            if isinstance(v, str) and v.strip() in ("", "-", "--"):
+                v = None
+            elif isinstance(v, str) and i not in self.text_columns:
+                v = normalize_number_cell(v, self.decimal_mark)
+            row_dict[h] = v
+        return row_dict
+
+    def _mapped_data(self, row_dict):
+        """The row keyed by field names (raw entries kept as case / spacing-insensitive fallbacks), with the
+        Tier 3 / gas composition parameters of its equipment (by equipment ID and month; a Tier 3 row without a
+        date applies to every month)."""
+        mapped_data = {str(k).lower().replace("_", "").replace(" ", ""): v for k, v in row_dict.items() if k is not None}
+        mapped_data.update(row_dict)
+        # the header's field name ("[T3-Tank] tank_gor" -> tank_gor, "Unit\n(bbl)" -> unit)
+        for h, v in row_dict.items():
+            ck = _canonical_header(h)
+            if ck and v is not None and mapped_data.get(ck) in (None, ""):
+                mapped_data[ck] = v
+        for sys_key, header_name in self.mapping.items():
+            if header_name:
+                val = row_dict.get(header_name)
+                if val is not None and str(val).strip() != "":
+                    mapped_data[sys_key] = val
+        if self.tier3:
+            y, m, _ = _parse_row_period(mapped_data)
+            for eq in {str(mapped_data.get(k) or "").strip() for k in ("equipment_id", "equipment")} - {""}:
+                params = self.tier3.get((eq, y, m)) or self.tier3.get((eq, None, None))
+                if params:
+                    for k, v in params.items():
+                        if mapped_data.get(k) in (None, ""):
+                            mapped_data[k] = v
+                    break
+        return mapped_data
+
+    def _process(self, mapped_data, raw_row, line_no):
+        """(record or None, errors) of one row, by import type."""
+        scope, uid, names, ids = str(self.scope), self.user_id, self.fac_name_map, self.fac_id_map
+        # a CSV row with more values than the header (an extra delimiter) is shifted: every value after the
+        # extra one sits under the wrong column. It was read silently (deep-dive audit).
+        if self.csv_source and any(c is not None and str(c).strip() for c in raw_row[len(self.headers):]):
+            return None, [f"Row {line_no} has {len(raw_row)} values but the header has {len(self.headers)} "
+                          "columns: check for an extra comma / delimiter (values would shift columns)"]
+        if is_example_value(mapped_data.get("date")):  # a template example row left in the file
+            return None, ["Example row from the template (dated EXAMPLE): not imported"]
+        if scope == "2":
+            return _process_row_scope2(mapped_data, uid, names, ids, self.grid_factors, self.job_id, line_no,
+                                       batch_keys=self.batch_scope2_map, overwrite_duplicates=self.overwrite_duplicates)
+        if scope == "3_eeio":
+            return _process_row_scope3_eeio(mapped_data, uid, names, ids, self.job_id, line_no,
+                                            batch_keys=self.batch_scope3_map,
+                                            overwrite_duplicates=self.overwrite_duplicates)
+        if scope == "3":
+            return _process_row_scope3(mapped_data, uid, names, ids, self.job_id, line_no,
+                                       batch_keys=self.batch_scope3_map, overwrite_duplicates=self.overwrite_duplicates)
+        if scope == "sources":
+            return _process_row_sources(mapped_data, uid, names, ids, self.batch_sources)
+        if scope == "production":
+            return _process_row_production(mapped_data, uid, names, ids, self.batch_prod_map)
+        if scope == "mitigation":
+            return _process_row_mitigation(mapped_data, uid, names, ids)
+        if scope == "custom_factors":
+            return _process_row_custom_factors(mapped_data, uid, self.batch_cf_names)
+        if scope == "facilities":
+            return _process_row_facilities(mapped_data, uid, self.overwrite_duplicates, self.batch_facilities)
+        if scope == "1":
+            return _process_row(mapped_data, uid, names, ids, self.cf_name_map, self.compute_emissions,
+                                self.api_factors, self.global_factor_type, gwp_dict=self.gwp_dict,
+                                gwp_std=self.gwp_std, job_id=self.job_id, row_idx=line_no,
+                                batch_keys=self.batch_scope1_map, overwrite_duplicates=self.overwrite_duplicates,
+                                rejected_keys=self.rejected_scope1_keys)
+        return None, [f"Unknown scope identifier: '{self.scope}'. Cannot process row."]
+
+    def _skip(self, line_no, row_errors, mapped_data, row_dict):
+        _append_job_list(self.job_id, "skipped", {
+            "row": line_no,  # line of the file (header and description rows included)
+            "reason": "; ".join(row_errors),
+            "date": mapped_data.get("date", ""),
+            "year": str(mapped_data.get("year") or ""),
+            "month": str(mapped_data.get("month") or ""),
+            "facility": mapped_data.get("facility_name", ""),
+            "process": mapped_data.get("process", ""),
+            "fuel": mapped_data.get("fuel", ""),
+            "quantity": mapped_data.get("quantity", ""),
+        })
+        # the flat list for the error CSV
+        self.skipped_rows.append(["; ".join(row_errors)]
+                                 + ["" if row_dict.get(h) is None else str(row_dict.get(h)) for h in self.headers])
+
+    def _flag_anomaly(self, obj, line_no):
+        """Statistical anomaly check of a Scope 1/2/3 record; a flagged record carries the message as its QA flag.
+        Never lets the check stop the upload."""
+        try:
+            fac_id = getattr(obj, 'facility_id', None)
+            yr = getattr(obj, 'year', 0)
+            mo = getattr(obj, 'month', 0)
+            if self.scope == "1":
+                co2e_val = getattr(obj, 'co2e_total', 0) or 0
+                anomaly = self.anomaly_detector.check_scope1(
+                    fac_id, getattr(obj, 'process_type', ''), co2e_val, yr, mo,
+                    source=self.scope1_source(getattr(obj, 'equipment_id', None), getattr(obj, 'fuel_type', None)))
+            elif self.scope == "2":
+                co2e_val = getattr(obj, 'co2e', 0) or 0
+                anomaly = self.anomaly_detector.check_scope2(fac_id, getattr(obj, 'source_type', ''), co2e_val, yr, mo)
+            else:  # scope 3
+                co2e_val = getattr(obj, 'co2e', 0) or 0
+                anomaly = self.anomaly_detector.check_scope3(fac_id, getattr(obj, 'category', ''), co2e_val, yr, mo)
+            if anomaly.get('flagged'):
+                flag_msg = anomaly.get('message') or f"Statistical Anomaly: Z-score {anomaly.get('z_score', 0):.2f}"
+                if len(flag_msg) > 255:
+                    flag_msg = flag_msg[:252] + "..."
+                obj.qa_flag = flag_msg
+                self.anomaly_rows.append({
+                    "row": line_no, "facility_id": fac_id, "value": co2e_val, "z_score": anomaly.get('z_score'),
+                    "expected_range": anomaly.get('expected_range'), "message": anomaly.get('message'),
+                })
+        except Exception:
+            pass
+
+    def _accept(self, obj, line_no, flush_enabled):
+        from extensions import db
+
+        self.chunk.append(obj)
+        saved_status = getattr(obj, "status", None)
+        if saved_status:
+            self.status_counts[saved_status] = self.status_counts.get(saved_status, 0) + 1
+        if str(self.scope) in ["1", "2", "3"]:
+            self._flag_anomaly(obj, line_no)
+        # after the anomaly flag is set on the row: flush and release a full batch
+        if str(self.scope) in ("1", "2", "3", "3_eeio") and len(self.chunk) >= FLUSH_EVERY and flush_enabled:
+            _flush_pending(db.session, self.chunk, (self.batch_scope1_map, self.batch_scope2_map, self.batch_scope3_map))
+
+    def _progress(self):
+        """Every 100 rows: yield the GIL (the main thread answers the /status polls) and publish the progress."""
+        import time
+
+        time.sleep(0)
+        total = self.total_rows
+        _update_job(self.job_id, processed=self.processed,
+                    progress=min(99, int((self.processed / total) * 100)) if total > 0
+                    else min(95, int(100 * (1.0 - (0.98 ** (self.processed / 100.0))))))
+
+    def read_rows(self):
+        """Process every row. All or nothing: the rows are saved in one commit at the end of the file, so a fatal
+        error or a server restart never leaves half an import behind; queries during the import must not flush
+        the staged rows (that would open the write transaction early). A dry run computes whole-file statistics
+        and calculates a sample spread over the whole file."""
+        import math as _math
+
+        from calculations.anomaly import BatchAnomalyDetector, scope1_source
+        from extensions import db
+
+        flush_enabled = _flush_enabled(db.session) and not self.dry_run
+        self.pv = {"dates": {}, "bad_dates": 0, "facilities": {}, "processes": {}, "checked": 0}
+        sample_step = (max(1, _math.ceil((self.total_rows or 0) / self.sample_rows))
+                       if (self.dry_run and self.sample_rows) else 1)
+        self.anomaly_detector = BatchAnomalyDetector()  # history read once per series
+        self.scope1_source = scope1_source
+        db.session.autoflush = False
+        self.text_columns = {i for i, h in enumerate(self.headers)
+                             if _TEXT_COLUMN.search(_canonical_header(h) or str(h).lower())}
+        for line_no, raw_row in enumerate(self.rows, start=self.header_row_no + 1):
+            # empty rows (Excel read-only trailing rows, whitespace-only CSV rows)
+            if not any(str(c).strip() for c in raw_row if c is not None):
+                continue
+            row_dict = self._row_dict(raw_row)
+            if _is_template_note_row(row_dict):
+                continue  # the template's description / instruction row
+            self.processed += 1
+            if self.dry_run:
+                _preview_count(self.pv, row_dict, self.mapping)
+                # the sample is spread over the whole file (every k-th row): files are often sorted by process or
+                # source, and the first rows alone misjudged a 100k file (47 % vs 16 % skipped)
+                if self.sample_rows and sample_step > 1 and (self.processed - 1) % sample_step:
+                    continue  # not in the sample: statistics only
+                self.pv["checked"] += 1
+            mapped_data = self._mapped_data(row_dict)
+            obj, row_errors = self._process(mapped_data, raw_row, line_no)
+            if row_errors:
+                self._skip(line_no, row_errors, mapped_data, row_dict)
+            elif obj:
+                self._accept(obj, line_no, flush_enabled)
+            if self.processed % 100 == 0:
+                self._progress()
+
+    def _skipped_count(self):
+        with upload_jobs_lock:
+            return len(upload_jobs.get(self.job_id, {}).get("skipped", []))
+
+    def finish_dry_run(self):
+        """Nothing of a check is saved."""
+        from extensions import db
+
+        db.session.rollback()
+        n_skip = self._skipped_count()
+        _update_job(self.job_id, processed=self.processed, progress=100, status="completed", dry_run=True,
+                    preview=_preview_summary(self.pv, self.processed, n_skip, self.headers, self.mapping,
+                                             self.fac_name_map, self.fac_id_map))
+
+    def commit(self):
+        """One commit for the whole file, with one IMPORT summary entry (BUG-058). add_all (not
+        bulk_save_objects): pending objects stay tracked, so an in-file duplicate can update them (BUG-057; rows
+        already flushed are reloaded by id), and the dashboard-cache hook sees the new rows (BUG-071)."""
+        from extensions import db
+        from utils import log_activity_and_notify as _log
+
+        if self.chunk:
+            db.session.add_all(self.chunk)
+        _log(action="IMPORT", record_id=self.job_id,
+             details=f"Bulk import ({self.scope}) of '{self.original_filename}': {self.processed} rows read, "
+                     f"{self._skipped_count()} skipped",
+             user=self.user_obj, entity=f"bulk_scope_{self.scope}", entity_id=self.job_id)
+        db.session.commit()
+        try:
+            from routes.dashboard import clear_dashboard_cache
+
+            clear_dashboard_cache()  # BUG-071
+        except Exception:
+            pass
+
+    def notify_reviewers(self):
+        """Maker-checker: every active admin hears of an emission import that saved records."""
+        from extensions import db
+
+        skipped_count = self._skipped_count()
+        if str(self.scope) not in ["1", "2", "3", "3_eeio"] or self.processed - skipped_count <= 0:
+            return
+        try:
+            from models import Notification, User
+
+            success_count = self.processed - skipped_count
+            scope_label = "Scope 3" if str(self.scope) == "3_eeio" else f"Scope {self.scope}"
+            who = self.user_obj.fullName if self.user_obj else 'a user'
+            for reviewer in User.query.filter_by(role="admin", status="active").all():
+                Notification.create(
+                    user_id=reviewer.id, type="audit", title=f"{scope_label} Bulk Upload Pending Review",
+                    message=(f"{success_count:,} {scope_label} emission records were imported or updated by {who} "
+                             "and are awaiting your approval."))
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+            traceback.print_exc()
+
+    def write_error_csv(self, file_path):
+        """The skipped rows with their reasons, as a download (the cells echo the uploaded file, which an admin
+        may open in Excel). The import itself is committed; only the download is missing when this fails."""
+        if not self.skipped_rows:
+            return
+        error_file = file_path + "_errors.csv"
+        try:
+            from routes.audit import sanitize_csv_cell
+
+            with open(error_file, "w", newline="", encoding="utf-8") as ef:
+                writer = csv.writer(ef)
+                writer.writerow(["Error Reason"] + self.headers)
+                writer.writerows([[sanitize_csv_cell(c) for c in row] for row in self.skipped_rows])
+            _update_job(self.job_id, error_csv_path=error_file)
+        except OSError:
+            traceback.print_exc()
+
+
 def _process_file_thread(
     app,
     job_id,
@@ -884,561 +1376,28 @@ def _process_file_thread(
     decimal_mark=None,
 ):
     """Import a file. dry_run: calculate the first `sample_rows` rows, read every row for the file
-    statistics (rows, period, facilities, processes) and save nothing (the "Check file" step)."""
-    wb = None
-    f = None
-    import_lock = None
+    statistics (rows, period, facilities, processes) and save nothing (the "Check file" step).
+    The steps are the methods of _ImportRun."""
+    run = _ImportRun(job_id, original_filename, user_id, global_factor_type, scope, overwrite_duplicates,
+                     dry_run, sample_rows, decimal_mark)
     with app.app_context():
         try:
-            is_excel = str(original_filename or "").lower().endswith(".xlsx")
-
-            headers = []
-            rows_iterator = None
-            csv_source = False  # CSV cells are positional by delimiter: an extra one shifts the row
-            if decimal_mark not in DECIMAL_MARKS:
-                decimal_mark = None  # not chosen: unambiguous numbers only (see normalize_number_cell)
-
-            # 1. Open File & Extract Headers
-            tier3_data_map = {}
-            if is_excel:
-                wb = load_workbook(file_path, read_only=True, data_only=True)
-
-                # Tier 3 / gas composition sheets: parameters per equipment ID (and month), with
-                # the same header mapping as the data sheet so the values reach the calculators
-                for sheet_name in wb.sheetnames:
-                    if _clean_sheet_name(sheet_name) in ("gas composition", "tier 3 calculations") or sheet_name.startswith("⚙"):
-                        t3_iter = _xl_values(wb[sheet_name])
-                        t3_headers = []
-                        for row in t3_iter:
-                            str_row = [str(c).strip() if c is not None else "" for c in row]
-                            if "equipment id" in [c.lower() for c in str_row]:
-                                t3_headers = str_row
-                                break
-                        if not t3_headers:
-                            continue
-                        t3_map = _build_mapping(t3_headers, scope=scope)
-                        for t3_row in t3_iter:
-                            if not any(c not in (None, "") for c in t3_row):
-                                continue
-                            raw = dict(zip(t3_headers, t3_row))
-                            eq_id = str(next((v for k, v in raw.items() if k.lower() == "equipment id"), "") or "").strip()
-                            if not eq_id:
-                                continue
-                            params = {}
-                            skip = ("equipment", "equipment_id", "date", "process")
-                            raw = {h: (normalize_number_cell(v, decimal_mark) if isinstance(v, str)
-                                       and not _TEXT_COLUMN.search(_canonical_header(h) or str(h).lower()) else v)
-                                   for h, v in raw.items()}
-                            for h, val in raw.items():  # unmapped columns by their field name
-                                ck = _canonical_header(h)
-                                if ck and ck not in skip and h not in t3_map.values() and val not in (None, "", "-"):
-                                    params[ck] = val
-                            for sys_key, header_name in t3_map.items():
-                                val = raw.get(header_name)
-                                if sys_key not in skip and val not in (None, "", "-"):
-                                    params[sys_key] = val
-                            y, m, _ = _parse_row_period({"date": raw.get(t3_map.get("date"))}) if t3_map.get("date") else (None, None, None)
-                            tier3_data_map.setdefault((eq_id, y, m), {}).update(params)
-
-                ws = _data_sheet(wb)
-                rows_iterator = _xl_values(ws)
-                headers_tuple, header_row_no = _find_header_row(rows_iterator)
-                headers = [
-                    str(h).strip() if h is not None else "" for h in headers_tuple
-                ]
-
-                total_rows = max(0, (ws.max_row or 0) - header_row_no)
-            else:
-                # Delimiter detection and streaming CSV parser (no full-file in-memory buffering)
-                enc_used = "utf-8"
-                with open(file_path, "rb") as probe_f:
-                    head_sample = probe_f.read(65536)
-                for enc in ["utf-8-sig", "utf-8", "windows-1252", "iso-8859-1"]:
-                    try:
-                        head_sample.decode(enc)
-                        enc_used = enc
-                        break
-                    except (UnicodeDecodeError, LookupError):
-                        continue
-
-                first_line = ""
-                with open(file_path, "r", encoding=enc_used, errors="replace") as f_del:
-                    for line in f_del:
-                        if line.strip():
-                            first_line = line
-                            break
-                counts = {d: first_line.count(d) for d in (",", ";", "\t", "|")}
-                delimiter = max(counts, key=counts.get) if max(counts.values()) > 0 else ","
-                if decimal_mark is None and delimiter == ";":
-                    decimal_mark = "comma"
-
-                total_rows = 0
-                with open(file_path, "r", encoding=enc_used, errors="replace", newline="") as f_cnt:
-                    cnt_reader = csv.reader(f_cnt, delimiter=delimiter)
-                    try:
-                        next(cnt_reader)
-                        for _ in cnt_reader:
-                            total_rows += 1
-                    except Exception:
-                        pass
-
-                f = open(file_path, "r", encoding=enc_used, errors="replace", newline="")
-                reader = csv.reader(f, delimiter=delimiter)
-                headers = [h.strip() for h in next(reader, [])]
-                header_row_no = 1
-                rows_iterator = reader
-                csv_source = True
-
-            _update_job(job_id, total=total_rows)
-
-            # Resolve mapping: the automatic mapping, overridden by the columns the user chose in
-            # the wizard (the wizard lists only some fields; the others still map automatically)
-            mapping = _build_mapping(headers, scope=scope)
-            if isinstance(provided_mapping, dict):
-                mapping.update({str(k): v for k, v in provided_mapping.items() if isinstance(v, str) and v in headers})
-
-            # 3. Setup context variables for calculation
-            from models import (
-                Facility,
-                CustomFactor,
-                User,
-            )
-            from extensions import db
-            from calculations import compute_emissions
-            from calculations.constants import get_active_gwp
-            from emission_factors import API_FACTORS
-            from electricity_factors import GRID_FACTORS
-            import json
-
-            user_obj = db.session.get(User, user_id)
-            # Invariant Zero (Decision D-09): Active GWP is strictly org-wide; user preference is display-only
-            try:
-                from routes.auth import _app_settings, load_settings_from_db
-
-                load_settings_from_db()
-                gwp_std = str(
-                    _app_settings.get("gwp_standard") or "AR5"
-                ).upper().strip()
-            except Exception:
-                gwp_std = "AR5"
-
-            if gwp_std not in ["AR4", "AR5", "AR6"]:
-                gwp_std = "AR5"
-            gwp_dict = get_active_gwp(standard=gwp_std)
-            from utils import get_allowed_facility_ids
-
-            allowed_fac_ids = get_allowed_facility_ids(user_obj)
-
-            if allowed_fac_ids is None:
-                all_facilities = Facility.query.all()
-            else:
-                all_facilities = Facility.query.filter(
-                    Facility.id.in_(allowed_fac_ids)
-                ).all()
-
-            from utils import build_name_map
-
-            fac_name_map = build_name_map(all_facilities)
-            for fac in all_facilities:
-                # region names are a convenience alias only when no facility carries that name
-                fac_name_map.add(fac.region, fac, overwrite=False)
-            fac_id_map = {str(fac.id): fac for fac in all_facilities}
-
-            custom_factors = CustomFactor.query.filter(CustomFactor.is_archived.is_(False)).all()
-            cf_name_map = build_name_map(custom_factors)
-
-            processed = 0
-            chunk = []
-            skipped_rows = []  # Store raw row data for error CSV
-            anomaly_rows = []  # Store anomaly-flagged rows for reviewer warning
-            batch_prod_map = {}  # In-batch duplicate tracking for production upserts
-            batch_cf_names = set()  # BUG-065: in-file duplicate custom factor names
-            batch_facilities = {}  # in-file facility names / codes
-            batch_sources = set()  # in-file emission sources
-            batch_scope1_map = {}
-            rejected_scope1_keys = set()  # BUG-0026: an import matching a Rejected record is a resubmission
-            status_counts = {}  # BUG-0025: the saved status of the new records, shown by the result banner
-            batch_scope2_map = {}
-            batch_scope3_map = {}
-
-            from models import Emission, Scope2Emission, Scope3Emission
-
-            if not dry_run:
-                import_lock = _hold_import_lock(db.session, scope)  # BUG-0003: held until the commit
-
-            # BUG-081: natural keys include the sub-identifiers real inventories need, and
-            # Rejected / Draft rows are not treated as existing records.
-            live = LIVE_STATUSES
-            if str(scope) == "1":
-                for e in Emission.query.filter(Emission.status.in_(live + ("Rejected",))).with_entities(
-                    Emission.id, Emission.facility_id, Emission.year, Emission.month, Emission.process_type,
-                    Emission.fuel_type, Emission.equipment_id, Emission.data_source_ref, Emission.status,
-                ).all():
-                    k = _scope1_key(e.facility_id, e.year, e.month, e.process_type, e.fuel_type, e.equipment_id, e.data_source_ref)
-                    if e.status == "Rejected":
-                        rejected_scope1_keys.add(k)
-                    else:
-                        batch_scope1_map[k] = e.id
-
-            elif str(scope) == "2":
-                for e in Scope2Emission.query.filter(Scope2Emission.status.in_(live)).with_entities(
-                    Scope2Emission.id, Scope2Emission.facility_id, Scope2Emission.year, Scope2Emission.month,
-                    Scope2Emission.source_type, Scope2Emission.grid_region, Scope2Emission.location,
-                ).all():
-                    meter = e.location if (e.location or "") != (e.grid_region or "") else ""
-                    batch_scope2_map[_scope2_key(e.facility_id, e.year, e.month, e.source_type, e.grid_region, meter)] = e.id
-
-            elif str(scope) in ["3", "3_eeio"]:
-                from input_validation import scope3_category_number
-
-                for e in Scope3Emission.query.filter(Scope3Emission.status.in_(live)).with_entities(
-                    Scope3Emission.id, Scope3Emission.facility_id, Scope3Emission.year, Scope3Emission.month,
-                    Scope3Emission.category, Scope3Emission.sub_category, Scope3Emission.unit,
-                ).all():
-                    n = scope3_category_number(e.category)
-                    cat = f"Category {n}" if n else (e.category or "")
-                    batch_scope3_map[_scope3_key(e.facility_id, e.year, e.month, cat, e.sub_category, e.unit)] = e.id
-
-            flush_enabled = _flush_enabled(db.session) and not dry_run
-            # dry run: whole-file statistics (cheap) next to the calculated sample
-            pv = {"dates": {}, "bad_dates": 0, "facilities": {}, "processes": {}, "checked": 0}
-            import math as _math
-
-            sample_step = max(1, _math.ceil((total_rows or 0) / sample_rows)) if (dry_run and sample_rows) else 1
-
-            # Initialize anomaly detector
-            from calculations.anomaly import BatchAnomalyDetector, scope1_source
-            anomaly_detector = BatchAnomalyDetector()  # history read once per series
-
-            # Headers for error CSV
-            error_headers = ["Error Reason"] + headers
-
-            # All or nothing: the rows are saved in one commit at the end of the file, so a fatal
-            # error or a server restart never leaves half an import behind. Queries during the
-            # import must not flush the staged rows (that would open the write transaction early).
-            db.session.autoflush = False
-
-            text_columns = {i for i, h in enumerate(headers) if _TEXT_COLUMN.search(_canonical_header(h) or str(h).lower())}
-            for line_no, raw_row in enumerate(rows_iterator, start=header_row_no + 1):
-                # Stop if empty row (Excel read_only sometimes yields empty trailing rows, or CSV whitespace-only rows)
-                if not any(str(c).strip() for c in raw_row if c is not None):
-                    continue
-
-                # Zip headers with row values safely; the templates write "-" for a blank cell
-                row_dict = {}
-                for i, h in enumerate(headers):
-                    v = raw_row[i] if i < len(raw_row) else None
-                    if isinstance(v, str) and v.strip() in ("", "-", "--"):
-                        v = None
-                    elif isinstance(v, str) and i not in text_columns:
-                        v = normalize_number_cell(v, decimal_mark)
-                    row_dict[h] = v
-
-                if _is_template_note_row(row_dict):
-                    continue  # the template's description / instruction row
-                processed += 1
-                if dry_run:
-                    _preview_count(pv, row_dict, mapping)
-                    # the sample is spread over the whole file (every k-th row): files are often sorted by
-                    # process or source, and the first rows alone misjudged a 100k file (47 % vs 16 % skipped)
-                    if sample_rows and sample_step > 1 and (processed - 1) % sample_step:
-                        continue  # not in the sample: statistics only
-                    pv["checked"] += 1
-
-                # Extract mapped values, preserving raw entries as case/spacing-insensitive fallbacks
-                mapped_data = {
-                    str(k).lower().replace("_", "").replace(" ", ""): v
-                    for k, v in row_dict.items()
-                    if k is not None
-                }
-                mapped_data.update(row_dict)
-                # the header's field name ("[T3-Tank] tank_gor" -> tank_gor, "Unit\n(bbl)" -> unit)
-                for h, v in row_dict.items():
-                    ck = _canonical_header(h)
-                    if ck and v is not None and mapped_data.get(ck) in (None, ""):
-                        mapped_data[ck] = v
-                for sys_key, header_name in mapping.items():
-                    if header_name:
-                        val = row_dict.get(header_name)
-                        if val is not None and str(val).strip() != "":
-                            mapped_data[sys_key] = val
-
-
-                # Merge Tier 3 / Gas Composition if present
-                # (keyed by equipment ID and month; a Tier 3 row without a date applies to every month)
-                if tier3_data_map:
-                    y, m, _ = _parse_row_period(mapped_data)
-                    for eq in {str(mapped_data.get(k) or "").strip() for k in ("equipment_id", "equipment")} - {""}:
-                        params = tier3_data_map.get((eq, y, m)) or tier3_data_map.get((eq, None, None))
-                        if params:
-                            for k, v in params.items():
-                                if mapped_data.get(k) in (None, ""):
-                                    mapped_data[k] = v
-                            break
-
-                # a CSV row with more values than the header (an extra delimiter) is shifted: every value
-                # after the extra one sits under the wrong column. It was read silently (deep-dive audit).
-                overflow = csv_source and any(
-                    c is not None and str(c).strip() for c in raw_row[len(headers):])
-
-                # Process Row based on scope
-                if overflow:
-                    emission_obj = None
-                    row_errors = [f"Row {line_no} has {len(raw_row)} values but the header has {len(headers)} "
-                                  "columns: check for an extra comma / delimiter (values would shift columns)"]
-                elif is_example_value(mapped_data.get("date")):
-                    # a template example row left in the file: never a record
-                    emission_obj = None
-                    row_errors = ["Example row from the template (dated EXAMPLE): not imported"]
-                elif str(scope) == "2":
-                    emission_obj, row_errors = _process_row_scope2(
-                        mapped_data,
-                        user_id,
-                        fac_name_map,
-                        fac_id_map,
-                        GRID_FACTORS,
-                        job_id,
-                        line_no,
-                        batch_keys=batch_scope2_map,
-                        overwrite_duplicates=overwrite_duplicates,
-                    )
-                elif str(scope) == "3_eeio":
-                    emission_obj, row_errors = _process_row_scope3_eeio(
-                        mapped_data,
-                        user_id,
-                        fac_name_map,
-                        fac_id_map,
-                        job_id,
-                        line_no,
-                        batch_keys=batch_scope3_map,
-                        overwrite_duplicates=overwrite_duplicates,
-                    )
-                elif str(scope) == "3":
-                    emission_obj, row_errors = _process_row_scope3(
-                        mapped_data,
-                        user_id,
-                        fac_name_map,
-                        fac_id_map,
-                        job_id,
-                        line_no,
-                        batch_keys=batch_scope3_map,
-                        overwrite_duplicates=overwrite_duplicates,
-                    )
-                elif str(scope) == "sources":
-                    emission_obj, row_errors = _process_row_sources(
-                        mapped_data, user_id, fac_name_map, fac_id_map, batch_sources
-                    )
-                elif str(scope) == "production":
-                    emission_obj, row_errors = _process_row_production(
-                        mapped_data, user_id, fac_name_map, fac_id_map, batch_prod_map
-                    )
-                elif str(scope) == "mitigation":
-                    emission_obj, row_errors = _process_row_mitigation(
-                        mapped_data, user_id, fac_name_map, fac_id_map
-                    )
-                elif str(scope) == "custom_factors":
-                    emission_obj, row_errors = _process_row_custom_factors(
-                        mapped_data, user_id, batch_cf_names)
-                elif str(scope) == "facilities":
-                    emission_obj, row_errors = _process_row_facilities(
-                        mapped_data, user_id, overwrite_duplicates, batch_facilities
-                    )
-                elif str(scope) == "1":
-                    emission_obj, row_errors = _process_row(
-                        mapped_data,
-                        user_id,
-                        fac_name_map,
-                        fac_id_map,
-                        cf_name_map,
-                        compute_emissions,
-                        API_FACTORS,
-                        global_factor_type,
-                        gwp_dict=gwp_dict,
-                        gwp_std=gwp_std,
-                        job_id=job_id,
-                        row_idx=line_no,
-                        batch_keys=batch_scope1_map,
-                        overwrite_duplicates=overwrite_duplicates,
-                        rejected_keys=rejected_scope1_keys,
-                    )
-                else:
-                    emission_obj = None
-                    row_errors = [
-                        f"Unknown scope identifier: '{scope}'. Cannot process row."
-                    ]
-
-                if row_errors:
-                    skip_entry = {
-                        "row": line_no,  # line of the file (header and description rows included)
-                        "reason": "; ".join(row_errors),
-                        "date": mapped_data.get("date", ""),
-                        "year": str(mapped_data.get("year") or ""),
-                        "month": str(mapped_data.get("month") or ""),
-                        "facility": mapped_data.get("facility_name", ""),
-                        "process": mapped_data.get("process", ""),
-                        "fuel": mapped_data.get("fuel", ""),
-                        "quantity": mapped_data.get("quantity", ""),
-                    }
-                    _append_job_list(job_id, "skipped", skip_entry)
-                    # Also keep flat list for CSV
-                    skipped_list = ["; ".join(row_errors)]
-                    skipped_list.extend(["" if row_dict.get(h) is None else str(row_dict.get(h)) for h in headers])
-                    skipped_rows.append(skipped_list)
-                elif emission_obj:
-                    chunk.append(emission_obj)
-                    saved_status = getattr(emission_obj, "status", None)
-                    if saved_status:
-                        status_counts[saved_status] = status_counts.get(saved_status, 0) + 1
-                    # --- Anomaly Detection ---
-                    if str(scope) in ["1", "2", "3"]:
-                        try:
-                            fac_id = getattr(emission_obj, 'facility_id', None)
-                            yr = getattr(emission_obj, 'year', 0)
-                            mo = getattr(emission_obj, 'month', 0)
-                            if scope == "1":
-                                co2e_val = getattr(emission_obj, 'co2e_total', 0) or 0
-                                anomaly = anomaly_detector.check_scope1(
-                                    fac_id, getattr(emission_obj, 'process_type', ''), co2e_val, yr, mo,
-                                    source=scope1_source(getattr(emission_obj, 'equipment_id', None),
-                                                         getattr(emission_obj, 'fuel_type', None)))
-                            elif scope == "2":
-                                co2e_val = getattr(emission_obj, 'co2e', 0) or 0
-                                anomaly = anomaly_detector.check_scope2(fac_id, getattr(emission_obj, 'source_type', ''), co2e_val, yr, mo)
-                            else:  # scope 3
-                                co2e_val = getattr(emission_obj, 'co2e', 0) or 0
-                                anomaly = anomaly_detector.check_scope3(fac_id, getattr(emission_obj, 'category', ''), co2e_val, yr, mo)
-
-                            if anomaly.get('flagged'):
-                                flag_msg = anomaly.get('message') or f"Statistical Anomaly: Z-score {anomaly.get('z_score', 0):.2f}"
-                                if len(flag_msg) > 255:
-                                    flag_msg = flag_msg[:252] + "..."
-                                emission_obj.qa_flag = flag_msg
-                                anomaly_rows.append({
-                                    "row": line_no,
-                                    "facility_id": fac_id,
-                                    "value": co2e_val,
-                                    "z_score": anomaly.get('z_score'),
-                                    "expected_range": anomaly.get('expected_range'),
-                                    "message": anomaly.get('message'),
-                                })
-                        except Exception:
-                            pass  # Never let anomaly detection crash the upload
-                    # after the anomaly flag is set on the row: flush and release a full batch
-                    if str(scope) in ("1", "2", "3", "3_eeio") and len(chunk) >= FLUSH_EVERY and flush_enabled:
-                        _flush_pending(db.session, chunk, (batch_scope1_map, batch_scope2_map, batch_scope3_map))
-
-
-                # Update progress every 100 rows
-                if processed % 100 == 0:
-                    import time
-                    time.sleep(0)  # Yield the GIL so the main Flask thread can handle /status polling API calls
-                    _update_job(
-                        job_id,
-                        processed=processed,
-                        progress=min(99, int((processed / total_rows) * 100)) if total_rows > 0 else min(95, int(100 * (1.0 - (0.98 ** (processed / 100.0))))),
-                    )
-
+            run.open(file_path, provided_mapping)
+            run.load_context()
+            run.load_existing_records()
+            run.read_rows()
             if dry_run:
-                db.session.rollback()  # nothing of a check is saved
-                with upload_jobs_lock:
-                    n_skip = len(upload_jobs.get(job_id, {}).get("skipped", []))
-                _update_job(job_id, processed=processed, progress=100, status="completed", dry_run=True,
-                            preview=_preview_summary(pv, processed, n_skip, headers, mapping, fac_name_map, fac_id_map))
+                run.finish_dry_run()
                 return
-
-            # One commit for the whole file. add_all (not bulk_save_objects): pending objects stay tracked, so
-            # an in-file duplicate can update them (BUG-057; rows already flushed are reloaded by id), and the
-            # dashboard-cache hook sees the new rows (BUG-071)
-            if chunk:
-                db.session.add_all(chunk)
-            # BUG-058: one IMPORT summary entry per job, committed with the data
-            from utils import log_activity_and_notify as _log
-
-            with upload_jobs_lock:
-                _skipped_n = len(upload_jobs.get(job_id, {}).get("skipped", []))
-            _log(
-                action="IMPORT",
-                record_id=job_id,
-                details=f"Bulk import ({scope}) of '{original_filename}': {processed} rows read, {_skipped_n} skipped",
-                user=user_obj,
-                entity=f"bulk_scope_{scope}",
-                entity_id=job_id,
-            )
-            db.session.commit()
-            try:
-                from routes.dashboard import clear_dashboard_cache
-
-                clear_dashboard_cache()  # BUG-071
-            except Exception:
-                pass
-
-            # --- Maker-Checker: Notify reviewers for bulk Scope 1/2/3 uploads ---
-            with upload_jobs_lock:
-                _n_skipped = len(upload_jobs.get(job_id, {}).get("skipped", []))
-            if str(scope) in ["1", "2", "3", "3_eeio"] and processed - _n_skipped > 0:
-                try:
-                    from models import User, Notification, Facility
-                    uploaded_regions = set()
-                    for fac in all_facilities:
-                        if fac.region:
-                            uploaded_regions.add(fac.region)
-                        if fac.location:
-                            uploaded_regions.add(fac.location)
-
-                    # Build reviewer list: all active admins (Maker-Checker: only admin approves)
-                    reviewers = User.query.filter_by(
-                        role="admin",
-                        status="active"
-                    ).all()
-
-                    with upload_jobs_lock:
-                        skipped_count = len(upload_jobs.get(job_id, {}).get("skipped", []))
-                    success_count = processed - skipped_count
-                    scope_label = "Scope 3" if str(scope) == "3_eeio" else f"Scope {scope}"
-
-                    for reviewer in reviewers:
-                        Notification.create(
-                            user_id=reviewer.id,
-                            type="audit",
-                            title=f"{scope_label} Bulk Upload Pending Review",
-                            message=(
-                                f"{success_count:,} {scope_label} emission records were imported or updated "
-                                f"by {user_obj.fullName if user_obj else 'a user'} and are "
-                                f"awaiting your approval."
-                            ),
-                        )
-                    db.session.commit()
-                except Exception as notif_err:
-                    db.session.rollback()
-                    import traceback as _tb
-                    _tb.print_exc()
-
-            # Generate Error CSV if needed
-            if skipped_rows:
-                error_file = file_path + "_errors.csv"
-                try:
-                    with open(error_file, "w", newline="", encoding="utf-8") as ef:
-                        writer = csv.writer(ef)
-                        writer.writerow(error_headers)
-                        # the cells echo the uploaded file, which an admin may open in Excel
-                        from routes.audit import sanitize_csv_cell
-                        writer.writerows([[sanitize_csv_cell(c) for c in row] for row in skipped_rows])
-                    _update_job(job_id, error_csv_path=error_file)
-                except OSError:
-                    traceback.print_exc()  # the import itself is committed; only the download is missing
-
+            run.commit()
+            run.notify_reviewers()
+            run.write_error_csv(file_path)
             # completed only once the error file and the reviewer notices exist: a client polling the
             # status used to see "completed" and get a 404 for the error file it was about to write
-            _update_job(
-                job_id,
-                processed=processed,
-                progress=100,
-                status="completed",
-                anomalies=anomaly_rows,
-                status_counts=status_counts,
-            )
+            _update_job(job_id, processed=run.processed, progress=100, status="completed",
+                        anomalies=run.anomaly_rows, status_counts=run.status_counts)
 
-        except Exception as e:
+        except Exception:
             traceback.print_exc()
             try:
                 from extensions import db
@@ -1462,19 +1421,19 @@ def _process_file_thread(
                 _db.session.remove()  # the import thread's session ends with the thread
             except Exception:
                 pass
-            if import_lock is not None:
-                import_lock.release()
-            if wb:
-                wb.close()
-            if f:
-                f.close()
+            if run.import_lock is not None:
+                run.import_lock.release()
+            if run.files.wb:
+                run.files.wb.close()
+            if run.files.f:
+                run.files.f.close()
             # Clean up the original uploaded file
             try:
                 import os
 
                 if os.path.exists(file_path):
                     os.remove(file_path)
-            except:
+            except Exception:
                 pass
 
 
