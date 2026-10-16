@@ -21,11 +21,11 @@ BORDER = "CBD5E1"
 ZEBRA = "F8FAFC"       # alternating rows
 
 DIRECT_BOUNDARY = "Gate-to-gate installation boundary including combustion, reaction, flare, and on-site electricity"
+# the declarant's statement, to be signed by them (the export certified it "under penalty of perjury" itself)
 CERTIFICATION = (
-    "I hereby certify under penalty of perjury under Regulation (EU) 2023/956 that the specific embedded direct and "
-    "indirect emissions reported herein have been determined in accordance with the monitoring methodology specified "
-    "in Implementing Regulation (EU) 2023/1773 and represent an accurate, non-misleading account of the installation "
-    "production activity.")
+    "To be signed by the declarant: the specific embedded direct and indirect emissions reported in this file were "
+    "determined with the monitoring methodology of Implementing Regulation (EU) 2023/1773.")
+NO_SCOPE2 = "No verified Scope 2 electricity data for this facility and year"
 
 
 def _solid(color):
@@ -139,7 +139,7 @@ def sheet_installations(wb, ctx):
         _cell(ws, idx, 6, ctx.safe(f.country or ctx.op_country), Styles.regular)
         _cell(ws, idx, 7, f.latitude if f.latitude is not None else "N/A", Styles.mono)
         _cell(ws, idx, 8, f.longitude if f.longitude is not None else "N/A", Styles.mono)
-        _cell(ws, idx, 9, f.operator_status or "Active Operational Control", Styles.regular)
+        _cell(ws, idx, 9, ctx.safe(f.operator_status or "Active Operational Control"), Styles.regular)
         _finish_row(ws, idx, 9)
     autofit_columns(ws)
 
@@ -213,17 +213,17 @@ def sheet_electricity(wb, ctx):
         indirect_see = float(r.specific_embedded_indirect or 0.0)
         country = ctx.fac_country(r)
         _mwh, grid_ef, supplier, has_s2 = _get_facility_scope2_metrics(r.facility_id, r.year, country, ctx.statuses)
-        spec_mwh = (indirect_see / grid_ef) if grid_ef > 0 else 0.0
-        basis = ("Verified Scope 2 Invoiced Metering + Grid EF" if has_s2
-                 else f"Official {country} National Grid Factor (Annex III Reg 2023/1773)")
+        # without verified Scope 2 data there is no grid factor, so no electricity quantity to derive
+        spec_mwh = (indirect_see / grid_ef) if grid_ef else None
+        basis = "Verified Scope 2 Invoiced Metering + Grid EF" if has_s2 else NO_SCOPE2
         _cell(ws, idx, 1, r.id, Styles.mono)
-        _cell(ws, idx, 2, r.product_name, Styles.bold)
-        _cell(ws, idx, 3, str(r.cn_code), Styles.mono)
+        _cell(ws, idx, 2, ctx.safe(r.product_name), Styles.bold)
+        _cell(ws, idx, 3, ctx.safe(str(r.cn_code)), Styles.mono)
         _cell(ws, idx, 4, round(qty, 1), number_format="#,##0.0")
-        _cell(ws, idx, 5, supplier, Styles.regular)
-        _cell(ws, idx, 6, round(qty * spec_mwh, 1), number_format="#,##0.0")
-        _cell(ws, idx, 7, round(spec_mwh, 4), number_format="0.0000")
-        _cell(ws, idx, 8, grid_ef, number_format="0.0000")
+        _cell(ws, idx, 5, ctx.safe(supplier), Styles.regular)
+        _cell(ws, idx, 6, round(qty * spec_mwh, 1) if spec_mwh is not None else "N/A", number_format="#,##0.0")
+        _cell(ws, idx, 7, round(spec_mwh, 4) if spec_mwh is not None else "N/A", number_format="0.0000")
+        _cell(ws, idx, 8, grid_ef if grid_ef else "N/A", number_format="0.0000")
         _cell(ws, idx, 9, round(qty * indirect_see, 1), number_format="#,##0.0")
         _cell(ws, idx, 10, round(indirect_see, 4), number_format="0.0000")
         _cell(ws, idx, 11, basis, Styles.regular)
@@ -245,8 +245,10 @@ def sheet_precursors(wb, ctx):
             ratio, p_dir, p_indir = (float(r.precursor_ratio or 0.0), float(r.precursor_see_dir or 0.0),
                                      float(r.precursor_see_indir or 0.0))
             p_tot = p_dir + p_indir
-            rows.append((r.product_name, r.cn_code, r.precursor_name, r.precursor_cn_code or "2814 10 00",
-                         f"{ctx.fac_country(r)} (In-House / Attributed)", ratio, p_dir, p_indir, p_tot, ratio * p_tot))
+            rows.append((ctx.safe(r.product_name), ctx.safe(r.cn_code), ctx.safe(r.precursor_name),
+                         ctx.safe(r.precursor_cn_code or "2814 10 00"),
+                         ctx.safe(f"{ctx.fac_country(r)} (In-House / Attributed)"), ratio, p_dir, p_indir, p_tot,
+                         ratio * p_tot))
     if not rows:
         _cell(ws, 5, 1, "No complex goods with upstream precursors declared for this reporting period under Article 7",
               Styles.subtitle_font)
@@ -289,11 +291,11 @@ def sheet_summary(wb, ctx):
         fig = RecordFigures(r)
         _cell(ws, idx, 1, ctx.safe(ctx.fac_name(r)), Styles.bold)
         _cell(ws, idx, 2, ctx.safe(ctx.fac_code(r)), Styles.mono)
-        _cell(ws, idx, 3, f"{ctx.fac_country(r)} ({ctx.op_iso})", Styles.regular)
+        _cell(ws, idx, 3, ctx.safe(f"{ctx.fac_country(r)} ({ctx.op_iso})"), Styles.regular)
         _cell(ws, idx, 4, ctx.safe(r.product_name), Styles.bold)
-        _cell(ws, idx, 5, str(r.cn_code), Styles.mono)
+        _cell(ws, idx, 5, ctx.safe(str(r.cn_code)), Styles.mono)
         _cell(ws, idx, 6, ctx.safe(get_cbam_aggregated_category(r.cn_code, r.product_name)), Styles.bold)
-        _cell(ws, idx, 7, f"{r.year} - {quarter_of(r)}", Styles.regular)
+        _cell(ws, idx, 7, ctx.safe(f"{r.year} - {quarter_of(r)}"), Styles.regular)
         _cell(ws, idx, 8, round(fig.qty, 1), number_format="#,##0.0")
         _cell(ws, idx, 9, round(float(r.captured_co2_tonnes or 0.0), 1), number_format="#,##0.0")
         _cell(ws, idx, 10, round(fig.direct, 4), number_format="0.0000")
@@ -336,7 +338,7 @@ def sheet_carbon_price(wb, ctx):
         _cell(ws, idx, 2, ctx.safe(ctx.fac_name(r)), Styles.bold)
         _cell(ws, idx, 3, ctx.safe(ctx.fac_code(r)), Styles.mono)
         _cell(ws, idx, 4, ctx.safe(r.product_name), Styles.regular)
-        _cell(ws, idx, 5, str(r.cn_code), Styles.mono)
+        _cell(ws, idx, 5, ctx.safe(str(r.cn_code)), Styles.mono)
         _cell(ws, idx, 6, round(qty, 1), number_format="#,##0.0")
         _cell(ws, idx, 7, ctx.safe(legal_ref), Styles.regular)
         _cell(ws, idx, 8, rate, number_format="€#,##0.00")
@@ -355,9 +357,9 @@ def sheet_assurance(wb, ctx, sha256):
     rows = [
         ("Assurance Standard", "ISO 14064-3 / Commission Implementing Regulation (EU) 2023/1773 Article 18"),
         ("Cryptographic Data Fingerprint (SHA-256)", sha256),
-        ("Digital Audit Seal Status", "SEALED & VERIFIED against Platform Immutable Audit Chain"),
+        ("Audit Log Record", "The fingerprint is recorded in the platform audit log (REPORT entry) when exported"),
         ("Export Timestamp (UTC)", ctx.now_utc.strftime("%Y-%m-%d %H:%M:%S UTC")),
-        ("Exporting Organization", ctx.company_name),
+        ("Exporting Organization", ctx.safe(ctx.company_name)),
         ("Lead Environmental Assessor", f"{ctx.assessor_name} ({ctx.assessor_email}) - Role: {ctx.user.role}"),
         ("Declared Installation Sites", len(ctx.facilities)),
         ("Declared CBAM Export Records", len(ctx.records)),
@@ -369,7 +371,7 @@ def sheet_assurance(wb, ctx, sha256):
     for idx, (prop, val) in enumerate(rows, start=5):
         _cell(ws, idx, 1, prop, Styles.bold).border = Styles.thin_border
         ws.cell(row=idx, column=1).fill = Styles.label_fill
-        mono = "SHA-256" in prop or "Status" in prop
+        mono = "SHA-256" in prop
         _cell(ws, idx, 2, str(val), Styles.mono if mono else Styles.regular).border = Styles.thin_border
     autofit_columns(ws)
 

@@ -9,33 +9,6 @@ from datetime import datetime, timezone
 from models import Emission, ProductionData, Scope2Emission
 
 
-COUNTRY_GRID_FACTORS = {
-    "Algeria": 0.5820,
-    "DZ": 0.5820,
-    "Egypt": 0.4720,
-    "EG": 0.4720,
-    "Nigeria": 0.3950,
-    "NG": 0.3950,
-    "Saudi Arabia": 0.6200,
-    "SA": 0.6200,
-    "United Arab Emirates": 0.4850,
-    "AE": 0.4850,
-    "United States": 0.3700,
-    "US": 0.3700,
-    "United Kingdom": 0.2100,
-    "GB": 0.2100,
-    "European Union": 0.2300,
-    "EU": 0.2300,
-    "France": 0.0580,
-    "FR": 0.0580,
-    "Germany": 0.3800,
-    "DE": 0.3800,
-    "Norway": 0.0150,
-    "NO": 0.0150,
-}
-DEFAULT_GLOBAL_GRID_FACTOR = 0.4500
-
-
 def _cbam_family(process_type):
     """combustion / process / flaring_venting family of a Scope 1 process type (calculations'
     PROCESS_CATEGORY). Exact-name lists missed most types, and a facility with none of them was
@@ -124,7 +97,7 @@ def _get_facility_production_tonnes(facility_id, year=None, declared_export_qty=
 def _get_facility_scope2_metrics(facility_id, year=None, country="Algeria", statuses=("Verified",)):
     """
     Queries Scope2Emission for actual electricity consumption and grid emission factor.
-    Returns (total_mwh, grid_ef, supplier_label, has_real_data).
+    Returns (total_mwh, grid_ef or None, supplier_label, has_real_data).
     """
     q = Scope2Emission.query.filter(Scope2Emission.facility_id == facility_id, Scope2Emission.status.in_(statuses))
     if year:
@@ -147,10 +120,9 @@ def _get_facility_scope2_metrics(facility_id, year=None, country="Algeria", stat
         if elec_kwh > 0 and grid_ef and grid_ef > 0:
             return (elec_kwh / 1000.0, grid_ef, supplier, True)
 
-    default_ef = COUNTRY_GRID_FACTORS.get(
-        country, COUNTRY_GRID_FACTORS.get("Algeria", DEFAULT_GLOBAL_GRID_FACTOR)
-    )
-    return (0.0, default_ef, f"{country} National Grid Operator", False)
+    # no verified Scope 2 electricity: no grid factor either (a fixed national table, Algeria 0.5820, was used
+    # in its place; review 2026-10-16, as for the national report in the 2026-10-15 bug hunt)
+    return (0.0, None, f"{country} National Grid Operator", False)
 
 
 

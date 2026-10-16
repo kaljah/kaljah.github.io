@@ -13,7 +13,7 @@ from models import Facility, CbamProductExport
 from routes.auth import login_required
 from services.audit_chain import record_report_fingerprint
 from services.cbam_data import (  # noqa: F401  (re-exported: tests and older callers import them from here)
-    COUNTRY_GRID_FACTORS, DEFAULT_GLOBAL_GRID_FACTOR, CbamContext, _cbam_family, _clean_xml_text,
+    CbamContext, _cbam_family, _clean_xml_text,
     _get_facility_production_tonnes, _get_facility_scope1_split, _get_facility_scope2_metrics, _production_tonnes,
     get_cbam_aggregated_category, get_cbam_production_route)
 from services.report_params import report_facility, report_statuses, report_year

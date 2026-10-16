@@ -74,9 +74,10 @@ class Context:
         self.allowed_fids = allowed_fids
         self.facilities = facilities
         self.safe = safe  # routes.reports._safe_excel_value
-        self.company_name = getattr(user, "orgName", None) or "Sonatrach"
-        self.assessor_name = getattr(user, "fullName", None) or "Lead Assessor"
-        self.assessor_email = getattr(user, "email", None) or "hse.ogmp@sonatrach.dz"
+        # the declaring account as it is: no invented organisation, name or address (review 2026-10-16)
+        self.company_name = getattr(user, "orgName", None) or ""
+        self.assessor_name = getattr(user, "fullName", None) or ""
+        self.assessor_email = getattr(user, "email", None) or ""
         self._ch4 = {}
         self._td = {}
 
@@ -164,8 +165,9 @@ def sheet_profile(wb, ctx):
         ws.cell(row=5, column=col).font = Styles.header_font
     rows = [
         ("Reporting Member Company", ctx.company_name, "Registered UNEP OGMP 2.0 Signatory Entity"),
-        ("UNEP Member Identifier", "UNEP-OGMP-DZA-001", "Official Member Tracking Code"),
-        ("Lead Reporting Officer", f"{ctx.assessor_name} ({ctx.assessor_email})", "Designated Company Focal Point"),
+        ("UNEP Member Identifier", "", "Official Member Tracking Code (to be completed by the member)"),
+        ("Lead Reporting Officer", f"{ctx.assessor_name} ({ctx.assessor_email})" if ctx.assessor_email
+         else ctx.assessor_name, "Designated Company Focal Point"),
         ("Reporting Period (Year)", str(ctx.year if ctx.year != "all" else datetime.now().year), "Annual Measurement & Reporting Cycle"),
         ("Date of Disclosure", datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC"), "Filing Generation Timestamp"),
         ("Reporting Framework Standard", "OGMP 2.0 Technical Guidance Document (TGD)", "Level 1 to Level 5 Measurement & Reconciliation"),
@@ -408,7 +410,7 @@ def sheet_level4(wb, ctx, level4):
 def sheet_joint_ventures(wb, ctx):
     ws = _sheet(wb, "7. Non-Operated Assets (JV)", "OGMP 2.0 NON-OPERATED ASSETS & JOINT VENTURE DISCLOSURES",
                 "Working interest equity stakes & non-operated partner reporting under UNEP IMEO rules")
-    _headers(ws, 4, ["Asset Name", "Country", "Basin / Field", "Segment", "Operating Partner", "Sonatrach Equity (%)",
+    _headers(ws, 4, ["Asset Name", "Country", "Basin / Field", "Segment", "Operating Partner", "Equity Share (%)",
                      "Base Year", "Target Gold Year (5-Yr)", "Equity Share CH₄ (t)", "Reporting Source"], Styles.sub_fill)
     jvs = [f for f in ctx.facilities
            if (f.operator_status or "operated") == "non_operated" or float(f.equity_share_pct or 100.0) < 100.0]
@@ -417,11 +419,13 @@ def sheet_joint_ventures(wb, ctx):
         ws.cell(row=5, column=10, value="All assets currently declared under 100% operational control.").font = Styles.sub_title_font
     for row, f in enumerate(jvs, start=5):
         b_yr = f.ogmp_membership_year or 2023
-        eq_pct = float(f.equity_share_pct or 50.0)
+        # an unrecorded equity share is said so (it was shown as 50 %); review 2026-10-16
+        eq_pct = float(f.equity_share_pct) if f.equity_share_pct is not None else None
         _data_row(ws, row, [
-            ctx.safe(f.name), ctx.safe(f.country or "Algeria"), ctx.safe(f.region or f.field or "Berkine"),
-            ctx.safe(f.segment or "Upstream"), ctx.safe(f.boundary_detail or "Partner Joint Venture"), f"{eq_pct:.1f}%",
-            b_yr, b_yr + 5, round(ctx.bottom_up_ch4(f) * (eq_pct / 100.0), 3),
+            ctx.safe(f.name), ctx.safe(f.country or "Algeria"), ctx.safe(f.region or f.field or ""),
+            ctx.safe(f.segment or "Upstream"), ctx.safe(f.boundary_detail or "Partner Joint Venture"),
+            f"{eq_pct:.1f}%" if eq_pct is not None else "Equity share not recorded", b_yr, b_yr + 5,
+            round(ctx.bottom_up_ch4(f) * (eq_pct / 100.0), 3) if eq_pct is not None else "N/A",
             "Partner Operator Data Exchange / Equity Model"])
     autofit_columns(ws)
 
@@ -429,7 +433,8 @@ def sheet_joint_ventures(wb, ctx):
 def sheet_audit(wb, ctx, sha256):
     ws = wb.create_sheet(title="Audit Assurance")
     ws.views.sheetView[0].showGridLines = True
-    ws.cell(row=1, column=1, value=f"{ctx.company_name.upper()} ENTERPRISE CARBON ACCOUNTING PLATFORM").font = Font(
+    title = f"{ctx.company_name.upper()} ENTERPRISE CARBON ACCOUNTING PLATFORM".strip()
+    ws.cell(row=1, column=1, value=ctx.safe(title)).font = Font(
         name="Calibri", size=14, bold=True, color=UNEP_NAVY)
     ws.cell(row=2, column=1, value="Cryptographic Audit Assurance Manifest & Integrity Seal").font = Font(
         name="Calibri", size=12, bold=True, color="334155")
@@ -438,19 +443,18 @@ def sheet_audit(wb, ctx, sha256):
         ("Covers", "Every cell of all official sheets of this UNEP OGMP 2.0 filing workbook"),
         ("Check", "Matches the REPORT entry of the immutable audit log written when exported"),
         ("Export Timestamp (UTC)", datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")),
-        ("Exporting Organization", ctx.company_name),
+        ("Exporting Organization", ctx.safe(ctx.company_name)),
         ("Exporting User & Role", f"{ctx.assessor_name} ({getattr(ctx.user, 'email', '')}) - Role: {ctx.user.role}"),
         ("Facilities Covered", len(ctx.facilities)),
         ("UNEP IMEO Template Spec", "OGMP 2.0 Member Submission Format (TGD 2024/2025)"),
-        ("Digital Seal HMAC", "Verified & Sealed against Platform Cryptographic Ledger"),
-    ]
+    ]  # no "digital seal" row: the platform has no HMAC or ledger seal, only the fingerprint in the audit log
     for col, label in enumerate(("Assurance Property", "Audit Manifest Value"), start=1):
         ws.cell(row=4, column=col, value=label).fill = Styles.header_fill
         ws.cell(row=4, column=col).font = Styles.header_font
     for idx, (prop, val) in enumerate(rows, start=5):
         ws.cell(row=idx, column=1, value=prop).font = Styles.bold_font
         ws.cell(row=idx, column=1).border = Styles.thin_border
-        mono = "SHA-256" in prop or "HMAC" in prop
+        mono = "SHA-256" in prop
         ws.cell(row=idx, column=2, value=str(val)).font = Styles.mono_font if mono else Styles.regular_font
         ws.cell(row=idx, column=2).border = Styles.thin_border
     autofit_columns(ws)
