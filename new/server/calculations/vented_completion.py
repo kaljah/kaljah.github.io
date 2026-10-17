@@ -5,7 +5,7 @@ re-exports the class, so existing imports keep working.
 """
 from .base import BaseCalculator
 from .uncertainty import Tier
-from .units import CONVERSIONS, calculate_co2e, convert
+from .units import CONVERSIONS, NM3_TO_SM3, calculate_co2e, convert
 from calculations.vented import _propagate_vented_results
 
 
@@ -67,15 +67,32 @@ class CompletionFlowbackCalculator(BaseCalculator):
     def _normalize_fraction(self, val, name, default=0.0):
         if val is None or val == "":
             return default
-        num = float(val)
+        try:
+            s = str(val).strip()
+            num = float(s.replace("%", "").strip())
+        except (ValueError, TypeError):
+            raise ValueError(f"Invalid numeric value for {name}: {val}")
         if num < 0:
             raise ValueError(f"{name} cannot be negative (received {val})")
-        if num > 1.0:
+        if "%" in s or num > 1.0:
             if num <= 100.0:
                 num = num / 100.0
             else:
                 raise ValueError(f"{name} must be between 0 and 1 (or 0% to 100%, received {val})")
         return num
+
+    def _normalize_c2(self, c2plus_content):
+        c2_raw = str(c2plus_content or "0.0").strip()
+        try:
+            c2 = float(c2_raw.replace("%", "").strip())
+        except (ValueError, TypeError):
+            raise ValueError(f"Invalid c2plus_content: {c2plus_content}")
+        if c2 < 0:
+            raise ValueError(f"c2plus_content cannot be negative: {c2plus_content}")
+        c2 = c2 / 100.0 if ("%" in c2_raw or c2 > 1.0) else c2
+        if c2 > 1.0:
+            raise ValueError(f"c2plus_content cannot exceed 100%: {c2plus_content}")
+        return c2
 
     def calculate(
         self,
@@ -373,8 +390,8 @@ class CompletionFlowbackCalculator(BaseCalculator):
             raw_vol = float(flowback_volume or 0.0)
             u_norm = str(volume_unit or "m3").lower().strip()
 
-            if u_norm in ["m3", "sm3", "cubic_meters"]:
-                vol_scf_raw = convert(raw_vol, "m3", "scf")
+            if u_norm in ["m3", "sm3", "cubic_meters", "nm3"]:  # normal m3 (0 C) -> standard m3 (60 F) first
+                vol_scf_raw = convert(raw_vol * (NM3_TO_SM3 if u_norm == "nm3" else 1.0), "m3", "scf")
             elif u_norm in ["mcf", "mscf"]:
                 vol_scf_raw = raw_vol * 1000.0
             elif u_norm in ["mmscf"]:
@@ -417,31 +434,8 @@ class CompletionFlowbackCalculator(BaseCalculator):
         # Disposition options: 'vented', 'flared', 'rec' / 'recovered', 'split'
         disp = str(disposition or "").lower().strip()
         combustion_eff = 0.98
-        if not disp:
-            # Fallback to control_efficiency if disposition unstated (treated as flared routing fraction per D-01)
-            if control_efficiency is not None and float(control_efficiency) > 0:
-                f_flared = flare_eff
-                f_vented = 1.0 - f_flared
-                f_rec = 0.0
-                combustion_eff = 0.98
-            else:
-                f_vented = 1.0
-                f_flared = 0.0
-                f_rec = 0.0
-        elif disp in ["rec", "recovered", "green", "green_completion"]:
-            f_vented = 0.0
-            f_flared = 0.0
-            f_rec = 1.0
-        elif disp in ["flared", "flare"]:
-            f_vented = 0.0
-            f_flared = 1.0
-            f_rec = 0.0
-            combustion_eff = flare_eff if control_efficiency is not None else 0.98
-        elif disp in ["vented", "vent"]:
-            f_vented = 1.0
-            f_flared = 0.0
-            f_rec = 0.0
-        elif disp in ["split", "custom"]:
+        has_split = any(x is not None for x in (frac_vented, frac_flared, frac_recovered))
+        if disp in ["split", "custom"] or (not disp and has_split):
             f_v = self._normalize_fraction(frac_vented, "Vented fraction", default=0.0)
             f_f = self._normalize_fraction(frac_flared, "Flared fraction", default=0.0)
             f_r = self._normalize_fraction(frac_recovered, "Recovered fraction", default=0.0)
@@ -450,14 +444,21 @@ class CompletionFlowbackCalculator(BaseCalculator):
                 raise ValueError(
                     f"Disposition fractions (vented={f_v*100:.1f}%, flared={f_f*100:.1f}%, recovered={f_r*100:.1f}%) must sum to 100% (sum is {split_sum*100:.1f}%)"
                 )
-            f_vented = f_v
-            f_flared = f_f
-            f_rec = f_r
+            f_vented, f_flared, f_rec = f_v, f_f, f_r
+            combustion_eff = flare_eff if control_efficiency is not None else 0.98
+        elif not disp:
+            # Fallback to control_efficiency if disposition unstated (treated as flared routing fraction per D-01)
+            if control_efficiency is not None and flare_eff > 0:
+                f_flared, f_vented, f_rec, combustion_eff = flare_eff, 1.0 - flare_eff, 0.0, 0.98
+            else:
+                f_vented, f_flared, f_rec = 1.0, 0.0, 0.0
+        elif disp in ["rec", "recovered", "green", "green_completion"]:
+            f_vented, f_flared, f_rec = 0.0, 0.0, 1.0
+        elif disp in ["flared", "flare"]:
+            f_vented, f_flared, f_rec = 0.0, 1.0, 0.0
             combustion_eff = flare_eff if control_efficiency is not None else 0.98
         else:
-            f_vented = 1.0
-            f_flared = 0.0
-            f_rec = 0.0
+            f_vented, f_flared, f_rec = 1.0, 0.0, 0.0
 
         # Initial flowback is 100% vented to atmosphere (API Compendium §6.2.3.1)
         vented_scf = initial_scf + (total_net_scf * f_vented)
@@ -492,8 +493,7 @@ class CompletionFlowbackCalculator(BaseCalculator):
         flared_combustion_co2 = flared_gross_ch4_tonnes * combustion_eff * (44.01 / 16.04)
         # heavier hydrocarbons in the flowback gas also burn to CO2 (Exhibit 6-3 treats the non-CH4
         # hydrocarbons as ethane: 2 mol C per mol); counted as ethane-equivalent when given
-        c2 = float(c2plus_content or 0.0)
-        c2 = c2 / 100.0 if c2 > 1.0 else c2
+        c2 = self._normalize_c2(c2plus_content)
         if c2 > 0:
             flared_combustion_co2 += (flared_m3 * c2 * 2.0 * CONVERSIONS["density_co2"] / 1000.0) * combustion_eff
         flared_total_co2 = flared_native_co2_tonnes + flared_combustion_co2

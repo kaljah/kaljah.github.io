@@ -65,7 +65,7 @@ def test_bug058_overwrite_resets_approval_and_logs_old_values(client, ctx):
     db.session.expire_all()
     row = db.session.get(Emission, e.id)
     assert row.quantity == 77 and row.status == "Verified" and row.approved_by == second.id
-    log = ActivityLog.query.filter_by(action="BULK_OVERWRITE", record_id=str(e.id)).first()
+    log = ActivityLog.query.filter_by(action="BULK_OVERWRITE", record_id=str(e.id)).order_by(ActivityLog.id).first()   # the first overwrite (PostgreSQL has no implied order)
     assert log is not None and '"quantity": 10' in (log.old_values or "")
     assert ActivityLog.query.filter_by(action="IMPORT").count() >= 1
 

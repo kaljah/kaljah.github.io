@@ -251,6 +251,8 @@ def completeness(h):
         return {"facility": 100.0, "fuel_source": 100.0, "activity_amount": 100.0, "calculation": 100.0}, 100.0
 
     def pct(missing, of):
+        if of <= 0:
+            return 100.0
         return round(max(0.0, (of - missing) / of * 100), 1)
 
     dims = {

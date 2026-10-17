@@ -52,8 +52,14 @@ def get_notifications():
                 # audit 2026-10-14 BUG-0042: a broadcast about a facility (LDAR alerts) is operational data:
                 # only accounts with that facility in scope see it, never the IT roles
                 fid = meta.get("facility_id")
-                if fid is not None and (is_it or (allowed is not None and int(fid) not in allowed)):
-                    continue
+                if fid is not None:
+                    if is_it:
+                        continue
+                    try:
+                        if allowed is not None and int(fid) not in allowed:
+                            continue
+                    except (ValueError, TypeError):
+                        continue
             except Exception:
                 pass
         result.append(

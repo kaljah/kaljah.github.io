@@ -60,7 +60,7 @@ def test_activity_factor_ch4_percent_or_fraction(ch4):
 def test_desiccant_refills_are_prorated_to_the_month():
     d = CalculationDispatcher()
     base = dict(process_type="desiccant_dehydrator", factor_source="specific", vent_method="desiccant",
-                vessel_height_ft=10, vessel_diameter_ft=3, vessel_pressure_psig=500, refills=12, ch4_content=85)
+                vessel_height_ft=10, vessel_diameter_ft=3, vessel_pressure_psig=500, refills=12, gas_fraction=45, ch4_content=85)
     year = d.dispatch("desiccant_dehydrator", base, {}, {})["results"]["ch4"]["value"]
     march = d.dispatch("desiccant_dehydrator", dict(base, year=2025, month=3), {}, {})["results"]["ch4"]["value"]
     assert march == pytest.approx(year * 31 / 365, rel=1e-9)  # was equal to the year

@@ -60,7 +60,8 @@ def _get(rid):
 @pytest.mark.parametrize("extra", [
     dict(amount=5000, unit="MMBtu", boiler_efficiency=0.8),
     dict(amount=5000, unit="MMBtu", boiler_efficiency=0.85),
-    dict(amount=1000, unit="tonne", boiler_efficiency=0.8),
+    dict(amount=1000, unit="tonne", boiler_efficiency=0.8,
+         calc_inputs={"indirect_steam": {"steam_enthalpy_btu_lb": 1000}}),
 ])
 def test_steam_edit_keeps_value_and_scales(admin, facility, extra):
     rid = _steam(admin, facility, **extra)

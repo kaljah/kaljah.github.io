@@ -234,7 +234,7 @@ def import_emissions():
             403,
         )
 
-    data = request.get_json()
+    data = request.get_json() or {}
     records_data = data.get("records", [])
 
     if not records_data:

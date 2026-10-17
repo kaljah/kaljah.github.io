@@ -39,6 +39,7 @@ const FIELD_GROUPS: FieldGroupData[] = [
     fields: [
       { key: "boiler_eff",        label: t("Boiler Efficiency"), required: false, hint: t("Steam: % (85) or fraction (0.85). Default 80 %") },
       { key: "trans_loss",        label: t("Transmission Loss"), required: false, hint: t("Steam: percentage, e.g. 5 = 5 %, 0.9 = 0.9 %. Default 0") },
+      { key: "steam_enthalpy_btu_lb", label: t("Steam Enthalpy"), required: false, hint: t("Steam bought by mass (lb, klb, kg, short_ton, tonne): Btu/lb above water at 212 °F, from steam tables. Required for a mass") },
       { key: "total_emissions",   label: t("CHP Total Emissions"), required: false, hint: t("CHP: plant emissions, t CO2e") },
       { key: "heat_output_mmbtu", label: t("CHP Heat Output"), required: false, hint: t("CHP: heat bought, MMBtu") },
       { key: "power_output_mwh",  label: t("CHP Power Output"), required: false, hint: t("CHP: power bought, MWh") },

@@ -132,6 +132,7 @@ class TestCalculationMutations:
             boiler_eff=0.80,
             trans_loss=0.10,
             ef_co2=53.06,
+            steam_enthalpy_btu_lb=1000.0,
         )
         mutant_res = IndependentScope2Model.calculate_indirect_steam(
             amount=100.0,
@@ -139,6 +140,7 @@ class TestCalculationMutations:
             boiler_eff=0.80,
             trans_loss=0.00,  # Omitted transmission loss
             ef_co2=53.06,
+            steam_enthalpy_btu_lb=1000.0,
         )
 
         with pytest.raises(AssertionError):

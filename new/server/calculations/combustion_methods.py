@@ -90,7 +90,7 @@ def _num(v, name, default=None, positive=False):
             raise ValueError(f"Missing required field: {name}")
         return float(default)
     try:
-        x = float(v)
+        x = float(str(v).replace("%", "").strip())
     except (TypeError, ValueError):
         raise ValueError(f"'{name}' must be a number")
     if not math.isfinite(x) or x < 0 or (positive and x == 0):

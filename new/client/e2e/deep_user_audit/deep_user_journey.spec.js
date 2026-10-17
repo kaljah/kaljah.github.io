@@ -31,6 +31,8 @@ async function ensureAuthenticatedPage(page, targetUrl = '/') {
     await page.locator('input[type="password"]').fill('a');
     await page.locator('button[type="submit"]:has-text("Sign In")').click();
     await page.waitForURL((u) => !u.toString().includes('/login'), { timeout: 15000 }).catch(() => {});
+    // return to the requested page: sign-in lands on the dashboard
+    await page.goto(targetUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await page.waitForTimeout(1500);
     if (targetUrl && targetUrl !== '/') {
       await page.goto(targetUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });

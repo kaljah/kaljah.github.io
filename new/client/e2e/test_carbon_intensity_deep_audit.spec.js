@@ -13,7 +13,8 @@
 import { test, expect } from '@playwright/test';
 
 const FRONTEND = process.env.E2E_BASE_URL || 'http://127.0.0.1:5173';
-const BACKEND = 'http://127.0.0.1:5000';
+// the dev server proxies /api; never a hard-coded backend (a run must not reach someone's dev server)
+const BACKEND = process.env.E2E_API_URL || process.env.E2E_BASE_URL || 'http://127.0.0.1:5173';
 
 async function setupCarbonIntensity(page) {
   await page.goto(FRONTEND, { waitUntil: 'domcontentloaded', timeout: 15000 });

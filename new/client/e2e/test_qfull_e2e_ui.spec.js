@@ -38,7 +38,8 @@ function refCO2e(co2 = 0, ch4 = 0, n2o = 0) {
   return co2 * 1.0 + ch4 * GWP_CH4_AR5 + n2o * GWP_N2O_AR5;
 }
 
-const BACKEND = 'http://127.0.0.1:5000';
+// the dev server proxies /api; never a hard-coded backend (a run must not reach someone's dev server)
+const BACKEND = process.env.E2E_API_URL || process.env.E2E_BASE_URL || 'http://127.0.0.1:5173';
 const FRONTEND = process.env.E2E_BASE_URL || 'http://127.0.0.1:5173';
 
 // =====================================================================

@@ -2,7 +2,7 @@ import math
 
 from .units import UnitError, parse_amount
 from .uncertainty import COVERAGE_FACTOR_95
-import math
+from input_validation import parse_number
 from .combustion import CombustionCalculator, FlaringCalculator, factor_hhv_unit, user_hhv
 from .vented import (
     PneumaticDeviceCalculator,
@@ -59,6 +59,8 @@ PERCENT_FIELDS = frozenset({
     "agr_co2_in", "agr_co2_out", "co2_in", "co2_out", "agr_ch4_in",
     # bug hunt 2026-10-15 #21: still guessed, so the same 0.5 was 50 % here and 0.5 % next door
     "tank_co2_content", "co2_mol",
+    # hydrogen plant feed gas analysis (mol %): 0.5 % butane was read as 50 %
+    "feed_ch4", "feed_c2h6", "feed_c3h8", "feed_c4h10", "feed_c5h12", "feed_co2", "feed_n2",
 })  # keys named "..._pct" / "...percent" are read as percent by _parse_fraction_value already
 # the CH4 / CO2 contents of a c1..c10 gas analysis are read with the analysis (its own basis decision)
 _ANALYSIS_GROUP = ("ch4_content", "co2_content", "c2plus_content", "co2_mol")
@@ -445,7 +447,7 @@ class CalculationDispatcher:
                         ("feed_c4h10", "C4H10"), ("feed_c5h12", "C5H12"), ("feed_co2", "CO2"), ("feed_n2", "N2")):
             v = num(key)
             if v is not None:
-                comp[sp] = v / 100.0 if v > 1.0 else v
+                comp[sp] = v  # PERCENT_FIELDS: already a fraction
         feed_scf = num("feedstock_scf", "feedstock_volume_scf")
         if comp and feed_scf is not None:
             res = calc.calculate(method="feedstock_balance", feedstock_volume_scf_yr=feed_scf, feedstock_comp=comp,
@@ -550,8 +552,8 @@ class CalculationDispatcher:
         raw = flat_inputs.get("density") if flat_inputs.get("density") not in (None, "", "-") else flat_inputs.get("fuel_density")
         if raw in (None, "", "-"):
             return None
-        d = float(raw)
-        if not math.isfinite(d) or d <= 0:
+        d = parse_number(raw, "fuel density")  # a number, finite ("heavy" was a raw float() error)
+        if d <= 0:
             raise ValueError("Fuel density must be a positive number")
         u = str(flat_inputs.get("density_unit") or "").strip().lower().replace(" ", "").replace("³", "3")
         if not u:
@@ -603,7 +605,7 @@ class CalculationDispatcher:
             v = flat.get(key)
             if v in (None, "", "-"):
                 return None
-            x = float(v)
+            x = float(str(v).replace("%", "").strip())
             if not math.isfinite(x) or x < 0 or x > 200:
                 raise ValueError(f"'{key}' must be a percentage between 0 and 200")
             return x / 100.0  # entered as a 95 % half-width, like catalog uncertainties
@@ -703,7 +705,7 @@ class CalculationDispatcher:
         calc_inputs = inputs.get("calc_inputs", {}).get(process_type, {})
         flat_inputs = {**inputs, **calc_inputs}
 
-        factor_source = flat_inputs.get("factor_source", "default")
+        factor_source = flat_inputs.get("factor_source") or "default"   # a stored null is Tier 1, not Tier 3
 
         # Library factor (site factor database) is activity x the selected factor for every
         # process — separate from the API Compendium tier methods
@@ -895,13 +897,10 @@ class CalculationDispatcher:
                     is_tier1 = not is_tier2
 
                 if is_tier2:
-                    ev = (
-                        flat_inputs.get("events")
-                        or flat_inputs.get("unload_events")
-                        or flat_inputs.get("unload_freq")
-                        or quantity
-                    )
-                    wc = float(flat_inputs.get("well_count") or flat_inputs.get("wells") or 1)
+                    # an entered 0 is a value (0 events took the record quantity, 0 wells counted as 1)
+                    ev = self._given(flat_inputs, "events", "unload_events", "unload_freq")
+                    ev = quantity if ev is None else ev
+                    wc = self._given(flat_inputs, "well_count", "wells")
                     ch4_c = self._optional_fraction(flat_inputs, ["ch4_content", "c1", "unload_ch4_content"], None)
                     co2_c = self._optional_fraction(flat_inputs, ["co2_content", "co2_mol"], 0.0)
                     flare_e = self._optional_fraction(flat_inputs, ["unload_flare_eff", "control_efficiency"], 0.0)
@@ -920,11 +919,8 @@ class CalculationDispatcher:
                         gwp_dict=gwp_dict,
                     )
                 elif is_tier1:
-                    wc = (
-                        flat_inputs.get("well_count")
-                        or flat_inputs.get("wells")
-                        or quantity
-                    )
+                    wc = self._given(flat_inputs, "well_count", "wells")
+                    wc = quantity if wc is None else wc
                     ch4_c = self._optional_fraction(flat_inputs, ["ch4_content", "c1", "unload_ch4_content"], None)
                     co2_c = self._optional_fraction(flat_inputs, ["co2_content", "co2_mol"], 0.0)
                     flare_e = self._optional_fraction(flat_inputs, ["unload_flare_eff", "control_efficiency"], 0.0)
@@ -1038,7 +1034,7 @@ class CalculationDispatcher:
             ]:
                 return calc_tank(self, calculator, emission_factors, flat_inputs, gwp_dict, process_type, uncertainties, unit)
 
-            elif process_type in ["pneumatic_devices", "pneumatic_device", "pneumatic"]:
+            elif process_type in ["pneumatic_devices", "pneumatic_device", "pneumatic", "pneumatics"]:
                 return calc_pneumatic_devices(self, calculator, flat_inputs, gwp_dict, uncertainties)
 
             elif process_type in [

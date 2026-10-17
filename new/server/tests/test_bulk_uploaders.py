@@ -49,7 +49,7 @@ def upload(client, scope, content, filename="rows.csv", mapping=None, **form):
     if res.status_code != 200:
         return res
     job = res.get_json()["job_id"]
-    for _ in range(400):
+    for _ in range(2400):  # 2 min: coverage tracing slows the worker several times
         st = client.get(f"/api/emissions/upload/status/{job}").get_json()
         if st["status"] != "processing":
             return st
@@ -432,8 +432,8 @@ TIER3_METHODS = [
     dict(process_type="vented_gas", vent_method="actual", actual_volume=1000, actual_unit="ft3", gas_temp_f=100,
          gas_pressure_atm=3, ch4_content=85),
     dict(process_type="desiccant_dehydrator", vent_method="desiccant", vessel_height_ft=10, vessel_diameter_ft=3,
-         vessel_pressure_psig=500, refills=4, ch4_content=85),
-    dict(process_type="co2_eor", vent_method="co2_mass", physical_volume_m3=50, co2_density=1.8, events=2),
+         vessel_pressure_psig=500, refills=4, gas_fraction=45, ch4_content=85),
+    dict(process_type="co2_eor", vent_method="co2_mass", physical_volume_m3=50, co2_density=1.8, co2_wt_pct=100, events=2),
     dict(process_type="combustion", combustion_method="carbon_content", fuel_volume=1000, fuel_volume_unit="gal",
          fuel_density=7.1, density_unit="lb/gal", carbon_wt_pct=85),
     dict(process_type="mobile", combustion_method="vehicle_distance", distance=1000, distance_unit="km",

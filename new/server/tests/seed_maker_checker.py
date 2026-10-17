@@ -4,7 +4,16 @@ import datetime
 import argparse
 
 def get_connection():
-    return sqlite3.connect('new/server/ghg_app.db')
+    # 2026-10-16: this wrote into new/server/ghg_app.db (the developer's own database) whatever the e2e stack
+    # used, and deleted every Scope 2 row of 95,000 / 12,000 kWh. The database is now named explicitly.
+    import os
+    path = os.environ.get("E2E_DB_PATH")
+    if not path:
+        raise SystemExit("Set E2E_DB_PATH to the e2e stack's SQLite database: this script never guesses one.")
+    return sqlite3.connect(path)
+
+
+SEED_TAG = "E2E-SEED"   # grid_region of the Scope 2 rows this script creates: the only ones it deletes
 
 def seed1():
     conn = get_connection()
@@ -26,13 +35,13 @@ def seed2():
     conn = get_connection()
     c = conn.cursor()
     now = datetime.datetime.now(datetime.timezone.utc).isoformat()
-    c.execute("DELETE FROM scope2_emissions WHERE electricity_kwh = 95000.0")
+    c.execute("DELETE FROM scope2_emissions WHERE electricity_kwh = 95000.0 AND grid_region = ?", (SEED_TAG,))
     c.execute('''
         INSERT INTO scope2_emissions (
             facility_id, year, month, source_type, electricity_kwh,
-            emission_factor, co2e, qa_flag, created_by, status, created_at
-        ) VALUES (2, 2025, 7, 'Purchased Electricity', 95000.0, 0.54, 51.3, 'Missing Utility Invoice', 2, 'Pending', ?)
-    ''', (now,))
+            emission_factor, co2e, qa_flag, created_by, status, created_at, grid_region
+        ) VALUES (2, 2025, 7, 'Purchased Electricity', 95000.0, 0.54, 51.3, 'Missing Utility Invoice', 2, 'Pending', ?, ?)
+    ''', (now, SEED_TAG))
     conn.commit()
     conn.close()
     print("SEED2_OK")
@@ -42,7 +51,7 @@ def seed_wizard():
     c = conn.cursor()
     now = datetime.datetime.now(datetime.timezone.utc).isoformat()
     c.execute("DELETE FROM emissions WHERE record_id = 'E2E-WIZARD-001'")
-    c.execute("DELETE FROM scope2_emissions WHERE electricity_kwh = 12000.0")
+    c.execute("DELETE FROM scope2_emissions WHERE electricity_kwh = 12000.0 AND grid_region = ?", (SEED_TAG,))
     c.execute('''
         INSERT INTO emissions (
             record_id, year, month, facility_id, process_type, fuel_type,
@@ -52,9 +61,9 @@ def seed_wizard():
     c.execute('''
         INSERT INTO scope2_emissions (
             facility_id, year, month, source_type, electricity_kwh,
-            emission_factor, co2e, created_by, status, created_at
-        ) VALUES (1, 2025, 8, 'Imported Heat', 12000.0, 0.45, 5.4, 2, 'Pending', ?)
-    ''', (now,))
+            emission_factor, co2e, created_by, status, created_at, grid_region
+        ) VALUES (1, 2025, 8, 'Imported Heat', 12000.0, 0.45, 5.4, 2, 'Pending', ?, ?)
+    ''', (now, SEED_TAG))
     conn.commit()
     conn.close()
     print("SEED_WIZARD_OK")
@@ -72,7 +81,8 @@ def check_s1():
 def check_s2():
     conn = get_connection()
     c = conn.cursor()
-    row = c.execute("SELECT status FROM scope2_emissions WHERE electricity_kwh = 95000.0").fetchone()
+    row = c.execute("SELECT status FROM scope2_emissions WHERE electricity_kwh = 95000.0 AND grid_region = ?",
+                    (SEED_TAG,)).fetchone()
     conn.close()
     if row:
         print(f"{row[0]}")
@@ -83,7 +93,7 @@ def clean():
     conn = get_connection()
     c = conn.cursor()
     c.execute("DELETE FROM emissions WHERE record_id IN ('E2E-MC-S1-001', 'E2E-WIZARD-001')")
-    c.execute("DELETE FROM scope2_emissions WHERE electricity_kwh IN (95000.0, 12000.0)")
+    c.execute("DELETE FROM scope2_emissions WHERE grid_region = ?", (SEED_TAG,))
     conn.commit()
     conn.close()
     print("CLEAN_OK")

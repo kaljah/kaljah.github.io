@@ -8,6 +8,24 @@ from .uncertainty import Tier, propagate_uncertainty, resolve_ef_uncertainty
 from .units import calculate_co2e
 
 
+def _parse_conc(v, default):
+    if v in (None, ""):
+        return default
+    s = str(v).strip()
+    val = float(s.replace("%", "").strip())
+    if val < 0:
+        raise ValueError(f"Gas concentration cannot be negative: {v}")
+    return (val / 100.0) if ("%" in s or val > 1.0) else val
+
+
+def _resolve_ef(ef_ch4, default_ef):
+    if ef_ch4 is not None:
+        if float(ef_ch4) < 0:
+            raise ValueError(f"ef_ch4 cannot be negative: {ef_ch4}")
+        return float(ef_ch4)
+    return default_ef
+
+
 class MudDegassingCalculator(BaseCalculator):
     def __init__(self):
         super().__init__("Drilling Mud Degassing", "Section 6.2 & 6.3")
@@ -65,10 +83,21 @@ class MudDegassingCalculator(BaseCalculator):
             uncertainties = mud_type_or_wells
 
         uncertainties = uncertainties or {}
+        if wells is None and drilling_days is None and mud_volume is None:  # it took 1 well / 0 days
+            raise ValueError("Drilling needs the number of wells (Tier 1) or of drilling days (Table 6-2)")
+        mud_key = str(mud_type or "water_based").lower().strip().replace(" ", "_").replace("-", "_")
+        mud_key = {"water": "water_based", "oil": "oil_based", "synthetic_based": "synthetic"}.get(mud_key, mud_key)
+        if mud_key not in self.TABLE_6_2_ONSHORE:  # an unknown mud took the water-based factor
+            raise ValueError(f"Unknown mud type '{mud_type}': water_based, oil_based or synthetic")
+        loc = str(location or "onshore").lower().strip()
+        if loc not in ("onshore", "offshore"):  # an unknown location took the onshore factors
+            raise ValueError(f"Unknown well location '{location}': onshore or offshore")
 
         # Determine calculation tier mode
+        raw_tier = str(tier or "").lower().strip()
         raw_source = str(uncertainties.get("_factor_source") or "").lower().strip()
-        raw_tier = str(tier or "tier1").lower().strip()
+        parsed_ch4 = _parse_conc(ch4_concentration, self.DEFAULT_CH4_CONCENTRATION)
+        parsed_co2 = _parse_conc(co2_concentration, 0.0)
 
         if (
             raw_tier in ["tier2_plus", "tier_2_plus", "tier2+", "tier_2+"]
@@ -76,8 +105,8 @@ class MudDegassingCalculator(BaseCalculator):
             or (
                 ch4_concentration is not None
                 and (
-                    float(ch4_concentration) != self.DEFAULT_CH4_CONCENTRATION
-                    or (co2_concentration is not None and float(co2_concentration) > 0)
+                    parsed_ch4 != self.DEFAULT_CH4_CONCENTRATION
+                    or parsed_co2 > 0
                 )
             )
         ):
@@ -101,11 +130,7 @@ class MudDegassingCalculator(BaseCalculator):
             self.validate_inputs({"wells": w}, ["wells"])
             if w < 0:
                 raise ValueError(f"wells cannot be negative: {w}")
-            ef = (
-                float(ef_ch4)
-                if (ef_ch4 is not None and float(ef_ch4) > 0)
-                else self.TIER1_WELL_EF
-            )
+            ef = _resolve_ef(ef_ch4, self.TIER1_WELL_EF)
             ch4_tonnes = w * ef
             co2_tonnes = 0.0
             resolved_tier_val = Tier.T1
@@ -127,22 +152,10 @@ class MudDegassingCalculator(BaseCalculator):
             if dd < 0:
                 raise ValueError(f"drilling_days cannot be negative: {dd}")
 
-            raw_type = str(mud_type or "water_based").lower().strip()
-            norm_type = (
-                "oil_based"
-                if ("oil" in raw_type or "synth" in raw_type)
-                else "water_based"
-            )
-
-            is_offshore = str(location or "onshore").lower().strip() == "offshore"
+            norm_type = "oil_based" if mud_key in ("oil_based", "synthetic") else "water_based"
+            is_offshore = loc == "offshore"
             mud_table = self.TABLE_6_2_OFFSHORE if is_offshore else self.TABLE_6_2_ONSHORE
-            default_mud_ef = 0.2605 if is_offshore else 0.0458
-
-            ef = (
-                float(ef_ch4)
-                if (ef_ch4 is not None and float(ef_ch4) > 0)
-                else mud_table.get(norm_type, default_mud_ef)
-            )
+            ef = _resolve_ef(ef_ch4, mud_table[norm_type])
             ch4_tonnes = dd * ef
             co2_tonnes = 0.0
             resolved_tier_val = Tier.T2
@@ -166,38 +179,16 @@ class MudDegassingCalculator(BaseCalculator):
             if dd < 0:
                 raise ValueError(f"drilling_days cannot be negative: {dd}")
 
-            raw_type = str(mud_type or "water_based").lower().strip()
-            norm_type = (
-                "oil_based"
-                if ("oil" in raw_type or "synth" in raw_type)
-                else "water_based"
-            )
-
-            is_offshore = str(location or "onshore").lower().strip() == "offshore"
+            norm_type = "oil_based" if mud_key in ("oil_based", "synthetic") else "water_based"
+            is_offshore = loc == "offshore"
             mud_table = self.TABLE_6_2_OFFSHORE if is_offshore else self.TABLE_6_2_ONSHORE
-            default_mud_ef = 0.2605 if is_offshore else 0.0458
+            ef = _resolve_ef(ef_ch4, mud_table[norm_type])
 
-            ef = (
-                float(ef_ch4)
-                if (ef_ch4 is not None and float(ef_ch4) > 0)
-                else mud_table.get(norm_type, default_mud_ef)
-            )
-
-            x_ch4 = float(
-                ch4_concentration
-                if ch4_concentration is not None
-                else self.DEFAULT_CH4_CONCENTRATION
-            )
-            if x_ch4 > 1.0:
-                x_ch4 = x_ch4 / 100.0
+            x_ch4 = parsed_ch4
             if x_ch4 < 0:
                 raise ValueError(f"ch4_concentration cannot be negative: {x_ch4}")
 
-            x_co2 = float(
-                co2_concentration if co2_concentration is not None else 0.0
-            )
-            if x_co2 > 1.0:
-                x_co2 = x_co2 / 100.0
+            x_co2 = parsed_co2
             if x_co2 < 0:
                 raise ValueError(f"co2_concentration cannot be negative: {x_co2}")
             if (x_ch4 + x_co2) > 1.0001:

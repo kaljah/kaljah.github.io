@@ -69,7 +69,7 @@ def get_equity_shares():
     if allowed_fids is not None:
         query = query.filter(FacilityEquityShare.facility_id.in_(allowed_fids))
 
-    facility_id = request.args.get("facility_id")
+    facility_id = request.args.get("facility_id") or request.args.get("facilityId")
     if facility_id and facility_id != "all":
         try:
             fid = int(facility_id)
@@ -281,7 +281,7 @@ def get_equity_allocation():
     year = (request.args.get("year") or "").strip()
     yr = int(year) if year.isdigit() and 1900 <= int(year) <= 2100 else 2025  # malformed or out of range (F13): 2025
 
-    facility_id = request.args.get("facility_id")
+    facility_id = request.args.get("facility_id") or request.args.get("facilityId")
     fac_q = Facility.query
     if allowed_fids is not None:
         fac_q = fac_q.filter(Facility.id.in_(allowed_fids))

@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe('GHG Platform E2E Workflows', () => {
   test('API health check probe is reachable and returns status ok', async ({ request }) => {
     // Verifies backend health check endpoint
-    const response = await request.get('http://127.0.0.1:5000/api/health');
+    const response = await request.get((process.env.E2E_BASE_URL || 'http://127.0.0.1:5173') + '/api/health');
     if (response.ok()) {
       const data = await response.json();
       expect(data.status).toBe('ok');
@@ -11,7 +11,7 @@ test.describe('GHG Platform E2E Workflows', () => {
   });
 
   test('CSRF token endpoint responds with valid token and cookie', async ({ request }) => {
-    const response = await request.get('http://127.0.0.1:5000/api/csrf-token');
+    const response = await request.get((process.env.E2E_BASE_URL || 'http://127.0.0.1:5173') + '/api/csrf-token');
     if (response.ok()) {
       const data = await response.json();
       expect(data).toHaveProperty('csrf_token');

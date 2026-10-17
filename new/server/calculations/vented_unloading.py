@@ -19,6 +19,25 @@ def _sfr_scf_per_hr(unit):
         raise ValueError(f"Flow-line rate unit: {err} (use scf/hr, Mcf/day or m3/day)")
 
 
+def _first(*values, default=None):
+    """The first entered value (0 included; `a or b` skipped an entered 0)."""
+    return next((v for v in values if v not in (None, "")), default)
+
+
+def _wells(value):
+    """An entered well count (0 included; 0 was counted as 1), 1 when none was entered."""
+    wc = float(_first(value, default=1))
+    if wc <= 0:
+        raise ValueError("Number of wells must be greater than zero.")
+    return wc
+
+
+def _required_ch4(value):
+    if value in (None, "", "-"):  # the engineering methods had an invented 85 % default
+        raise ValueError("Missing required input: gas CH4 content")
+    return value
+
+
 class LiquidsUnloadingCalculator(BaseCalculator):
     """
     API Compendium 2021 - Section 6.3.4: Well Venting from Liquids Unloading.
@@ -124,15 +143,21 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         s = str(raw_type or "").lower().strip().replace(" ", "_").replace("-", "_")
         if "non" in s or "without" in s:
             return "non_plunger"
-        if "plunger" in s:
+        if "plunger" in s or s == "":
             return "plunger"
-        return "plunger"
+        # an unknown lift type ("gas_lift") was counted as plunger lift
+        raise ValueError(f"Unknown unloading type '{raw_type}': plunger or non_plunger")
+
+    def _zero_result(self, inputs):
+        zero = {"value": 0.0, "uncertainty": 0.0}
+        return self.format_result(ch4=dict(zero), co2=dict(zero), n2o=dict(zero), total_co2e=0.0, inputs=inputs)
+
 
     def _validate_fraction(self, val, default=0.0, name="fraction"):
         if val is None or val == "" or val == "-":
             return default
         try:
-            f = float(val)
+            f = float(str(val).replace("%", "").strip())
         except (ValueError, TypeError):
             raise ValueError(f"Invalid numeric value for {name}: {val}")
         if f < 0.0:
@@ -182,27 +207,11 @@ class LiquidsUnloadingCalculator(BaseCalculator):
             raise ValueError(f"Combined CH4 ({c_ch4*100:.1f}%) and CO2 ({c_co2*100:.1f}%) content cannot exceed 100%.")
 
         if wells == 0:
-            return self.format_result(
-                ch4=None,
-                co2=None,
-                n2o=None,
-                total_co2e=0.0,
-                inputs={
-                    "tier": "Tier 1",
-                    "method": "api_table_6_11",
-                    "calculation_level": "Tier 1 (API Table 6-11)",
-                    "unloading_type": u_type,
-                    "well_count": 0,
-                    "amount": 0,
-                    "unit": "wells",
-                    "whole_gas_scf": 0.0,
-                    "whole_gas_m3": 0.0,
-                    "ch4_content": c_ch4,
-                    "co2_content": c_co2,
-                    "control_efficiency": 0.0,
-                    "api_reference": "API Compendium 2021 Section 6.3.4, Table 6-11",
-                },
-            )
+            return self.format_result(ch4=None, co2=None, n2o=None, total_co2e=0.0, inputs={
+                "tier": "Tier 1", "method": "api_table_6_11", "calculation_level": "Tier 1 (API Table 6-11)",
+                "unloading_type": u_type, "well_count": 0, "amount": 0, "unit": "wells", "whole_gas_scf": 0.0,
+                "whole_gas_m3": 0.0, "ch4_content": c_ch4, "co2_content": c_co2, "control_efficiency": 0.0,
+                "api_reference": "API Compendium 2021 Section 6.3.4, Table 6-11"})
 
         total_gas_scf = wells * t1_data["whole_gas_scf_per_well_yr"]
         total_gas_m3 = total_gas_scf * CONVERSIONS["scf_to_m3"]
@@ -298,33 +307,24 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         if ev < 0:
             raise ValueError("Number of unloading events cannot be negative.")
 
-        wc = float(well_count or 1)
-        if wc <= 0:
-            raise ValueError("Number of wells must be greater than zero.")
+        wc = _wells(well_count)
 
         u_type = self._normalize_unloading_type(unloading_type)
+        reg_key = str(region or "").lower().strip().replace(" ", "_").replace("-", "_")
+        if reg_key not in self.TABLE_6_10_REGIONAL and reg_key not in ("", "average", "us_average", "national"):
+            raise ValueError(f"Unknown Table 6-10 region '{region}': {sorted(self.TABLE_6_10_REGIONAL)} or average")
+        if frequency_category not in (None, "") and frequency_category not in self.TABLE_6_10_AVERAGE:
+            raise ValueError(f"Unknown Table 6-10 frequency class '{frequency_category}': {sorted(self.TABLE_6_10_AVERAGE)}")
 
         # Invariant: zero events results in zero emissions
         if ev == 0:
-            return self.format_result(
-                ch4={"value": 0.0, "uncertainty": 0.0},
-                co2={"value": 0.0, "uncertainty": 0.0},
-                n2o={"value": 0.0, "uncertainty": 0.0},
-                total_co2e=0.0,
-                inputs={
-                    "tier": "Tier 2",
-                    "method": "api_table_6_10",
-                    "unloading_type": u_type,
-                    "events": 0,
-                    "well_count": wc,
-                },
-            )
+            return self._zero_result({"tier": "Tier 2", "method": "api_table_6_10", "unloading_type": u_type, "events": 0,
+                                      "well_count": wc})
 
         total_events = ev * wc
         ev_per_well = ev  # per well-year basis for threshold
 
         # Resolve Table 6-10 factor
-        reg_key = str(region or "").lower().strip().replace(" ", "_").replace("-", "_")
         selected_factor = None
         unc_val = 0.50
 
@@ -341,7 +341,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
             # Average factors
             if u_type == "plunger":
                 cat = frequency_category or ("plunger_le100" if ev_per_well <= 100 else "plunger_gt100")
-                selected_factor = self.TABLE_6_10_AVERAGE.get(cat, self.TABLE_6_10_AVERAGE["plunger_le100"])
+                selected_factor = self.TABLE_6_10_AVERAGE[cat]
             else:
                 if frequency_category:
                     cat = frequency_category
@@ -351,7 +351,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
                     cat = "non_plunger_10_to_50"
                 else:
                     cat = "non_plunger_gt50"
-                selected_factor = self.TABLE_6_10_AVERAGE.get(cat, self.TABLE_6_10_AVERAGE["non_plunger_le10"])
+                selected_factor = self.TABLE_6_10_AVERAGE[cat]
 
         unc_val = selected_factor.get("uncertainty", {}).get("ch4", 0.50)
         wgf = selected_factor.get("scf_gas_event") or selected_factor.get("scf_gas")
@@ -438,7 +438,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         hours_open=0.0,
         unloading_type="non_plunger",
         well_count=1,
-        ch4_content=0.85,
+        ch4_content=None,
         co2_content=0.0,
         control_efficiency=0.0,
         depth_unit="ft",
@@ -465,49 +465,33 @@ class LiquidsUnloadingCalculator(BaseCalculator):
             raise ValueError("Number of unloading events cannot be negative.")
 
         ev = float(events)
-        wc = float(well_count or 1)
-        if wc <= 0:
-            raise ValueError("Number of wells must be greater than zero.")
+        wc = _wells(well_count)
+        _required_ch4(ch4_content)
 
         u_type = self._normalize_unloading_type(unloading_type)
 
-        # Invariant: zero events and zero flow-line time results in zero emissions
-        sfr_val = max(0.0, float(sfr or 0.0))
-        hr_val = max(0.0, float(hours_open or 0.0))
+        sfr_val = float(sfr or 0.0)
+        hr_val = float(hours_open or 0.0)
+        if sfr_val < 0 or hr_val < 0:
+            raise ValueError("Flow-line rate (SFR) and hours open cannot be negative")
         if ev == 0 and (sfr_val == 0 or hr_val == 0):
-            return self.format_result(
-                ch4={"value": 0.0, "uncertainty": 0.0},
-                co2={"value": 0.0, "uncertainty": 0.0},
-                n2o={"value": 0.0, "uncertainty": 0.0},
-                total_co2e=0.0,
-                inputs={"tier": "Tier 3", "method": "api_equation_6_10", "events": 0},
-            )
+            return self._zero_result({"tier": "Tier 3", "method": "api_equation_6_10", "events": 0})
 
         # Diameter conversion to inches (D)
-        d_val = float(diameter)
-        du = str(diameter_unit or "in").lower().strip()
-        if du in ["mm", "millimeter", "millimeters"]:
-            d_in = d_val / 25.4
-        elif du in ["cm", "centimeter", "centimeters"]:
-            d_in = d_val / 2.54
-        elif du in ["m", "meter", "meters"]:
-            d_in = d_val / 0.0254
-        elif du in ["ft", "feet"]:
-            d_in = d_val * 12.0
-        else:  # 'in', 'inch', 'inches'
-            d_in = d_val
+        d_val, du = float(diameter), str(diameter_unit or "in").lower().strip()
+        _d_factors = {"mm": 1 / 25.4, "millimeter": 1 / 25.4, "millimeters": 1 / 25.4, "cm": 1 / 2.54, "centimeter": 1 / 2.54, "centimeters": 1 / 2.54, "m": 1 / 0.0254, "meter": 1 / 0.0254, "meters": 1 / 0.0254, "ft": 12.0, "feet": 12.0, "in": 1.0, "inch": 1.0, "inches": 1.0}
+        if du not in _d_factors:
+            raise ValueError(f"Unknown diameter unit '{diameter_unit}': in, ft, mm, cm or m")
+        d_in = d_val * _d_factors[du]
         if d_in <= 0 or d_in > 60:
             raise ValueError(f"Unrealistic well diameter: {d_in:.2f} inches.")
 
         # Depth conversion to feet (Depth)
-        dep_val = float(well_depth)
-        dep_u = str(depth_unit or "ft").lower().strip()
-        if dep_u in ["m", "meter", "meters"]:
-            depth_ft = dep_val / 0.3048
-        elif dep_u in ["km", "kilometer"]:
-            depth_ft = (dep_val * 1000.0) / 0.3048
-        else:  # 'ft', 'feet'
-            depth_ft = dep_val
+        dep_val, dep_u = float(well_depth), str(depth_unit or "ft").lower().strip()
+        _dep_factors = {"m": 1 / 0.3048, "meter": 1 / 0.3048, "meters": 1 / 0.3048, "km": 1000.0 / 0.3048, "kilometer": 1000.0 / 0.3048, "ft": 1.0, "feet": 1.0}
+        if dep_u not in _dep_factors:
+            raise ValueError(f"Unknown depth unit '{depth_unit}': ft, m or km")
+        depth_ft = dep_val * _dep_factors[dep_u]
         if depth_ft <= 0 or depth_ft > 50000:
             raise ValueError(f"Unrealistic well depth: {depth_ft:.1f} feet.")
 
@@ -536,7 +520,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         total_gas_scf = wc * vr_per_well_scf
         total_gas_m3 = total_gas_scf * CONVERSIONS["scf_to_m3"]
 
-        c_ch4 = self._validate_fraction(ch4_content, default=0.85, name="Gas CH4 content")
+        c_ch4 = self._validate_fraction(_required_ch4(ch4_content), name="Gas CH4 content")
         c_co2 = self._validate_fraction(co2_content, default=0.0, name="Gas CO2 content")
         if c_ch4 + c_co2 > 1.0001:
             raise ValueError(f"Combined CH4 ({c_ch4*100:.1f}%) and CO2 ({c_co2*100:.1f}%) content cannot exceed 100%.")
@@ -614,7 +598,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         events=1,
         well_count=1,
         p_atm=14.696,
-        ch4_content=0.85,
+        ch4_content=None,
         co2_content=0.0,
         control_efficiency=0.0,
         press_unit="psia",
@@ -637,11 +621,9 @@ class LiquidsUnloadingCalculator(BaseCalculator):
             raise ValueError("Venting time Tp is required for Equation 6-11.")
 
         ev = float(events if events is not None else 1)
-        wc = float(well_count or 1)
+        wc = _wells(well_count)
         if ev < 0:
             raise ValueError("Number of unloading events cannot be negative.")
-        if wc <= 0:
-            raise ValueError("Number of wells must be greater than zero.")
 
         # Normalize pressures to psia
         p_shut_abs = to_psia(p_shut, press_unit)
@@ -654,18 +636,11 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         if p_line_abs <= p_sep_abs:
             raise ValueError(f"Line pressure ({p_line_abs:.2f} psia) must be strictly greater than separator pressure ({p_sep_abs:.2f} psia) for Equation 6-11.")
 
-        sfr_val = max(0.0, float(sfr_p))
-        tp_val = max(0.0, float(t_p))
-
-        # Invariant: 0 events or 0 time/rate yields 0 emissions
+        sfr_val, tp_val = float(sfr_p), float(t_p)
+        if sfr_val < 0 or tp_val < 0:
+            raise ValueError("Production rate SFRp and venting time Tp cannot be negative")
         if ev == 0 or sfr_val == 0 or tp_val == 0:
-            return self.format_result(
-                ch4={"value": 0.0, "uncertainty": 0.0},
-                co2={"value": 0.0, "uncertainty": 0.0},
-                n2o={"value": 0.0, "uncertainty": 0.0},
-                total_co2e=0.0,
-                inputs={"tier": "Tier 3", "method": "api_equation_6_11", "events": 0},
-            )
+            return self._zero_result({"tier": "Tier 3", "method": "api_equation_6_11", "events": 0})
 
         # Normalize SFRp to scf/hr
         sfr_rate = sfr_val * _sfr_scf_per_hr(sfr_unit)
@@ -677,7 +652,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         total_gas_scf = vr_scf * ev * wc
         total_gas_m3 = total_gas_scf * CONVERSIONS["scf_to_m3"]
 
-        c_ch4 = self._validate_fraction(ch4_content, default=0.85, name="Gas CH4 content")
+        c_ch4 = self._validate_fraction(_required_ch4(ch4_content), name="Gas CH4 content")
         c_co2 = self._validate_fraction(co2_content, default=0.0, name="Gas CO2 content")
         if c_ch4 + c_co2 > 1.0001:
             raise ValueError(f"Combined CH4 ({c_ch4*100:.1f}%) and CO2 ({c_co2*100:.1f}%) content cannot exceed 100%.")
@@ -800,8 +775,8 @@ class LiquidsUnloadingCalculator(BaseCalculator):
             d_m = d_val
         elif du in ["ft", "feet"]:
             d_m = d_val * 0.3048
-        else:
-            d_m = d_val * 0.0254
+        else:  # an unknown unit was read as inches
+            raise ValueError(f"Unknown diameter unit '{diameter_unit}': in, ft, mm, cm or m")
 
         depth_val = float(well_depth)
         if depth_val <= 0:
@@ -811,8 +786,10 @@ class LiquidsUnloadingCalculator(BaseCalculator):
             depth_m = depth_val
         elif dep_u in ["km", "kilometer"]:
             depth_m = depth_val * 1000.0
-        else:  # 'ft', 'feet'
+        elif dep_u in ["ft", "feet"]:
             depth_m = depth_val * 0.3048
+        else:  # an unknown unit was read as feet
+            raise ValueError(f"Unknown depth unit '{depth_unit}': ft, m or km")
 
         # Volume at tubing conditions (m3)
         v_tubing = (math.pi / 4.0) * (d_m ** 2) * depth_m
@@ -826,17 +803,13 @@ class LiquidsUnloadingCalculator(BaseCalculator):
 
         z = float(z_factor) if z_factor and float(z_factor) > 0 else 1.0
 
-        ev = float(events)
-        if ev < 0:
-            raise ValueError("Number of unloading events cannot be negative.")
-        wc = float(well_count or 1)
-        if wc <= 0:
-            raise ValueError("Number of wells must be greater than zero.")
+        ev = float(events)  # validate_inputs refused a negative count
+        wc = _wells(well_count)
 
         v_std = v_tubing * p_factor * t_factor * (1.0 / z)
         total_v_std = v_std * ev * wc
 
-        c_ch4 = self._validate_fraction(ch4_content, default=0.85, name="Gas CH4 content")
+        c_ch4 = self._validate_fraction(_required_ch4(ch4_content), name="Gas CH4 content")
         c_co2 = self._validate_fraction(co2_content, default=0.0, name="Gas CO2 content")
         if c_ch4 + c_co2 > 1.0001:
             raise ValueError(f"Combined CH4 ({c_ch4*100:.1f}%) and CO2 ({c_co2*100:.1f}%) content cannot exceed 100%.")
@@ -849,7 +822,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         co2_mass_kg = co2_vol * CONVERSIONS["density_co2"]
         co2_tonnes = co2_mass_kg / 1000.0
 
-        ctrl_eff = float(control_efficiency or 0.0)
+        ctrl_eff = normalize_efficiency(control_efficiency, default=0.0)
         split = _split_vented_and_flared(
             total_gas_m3=total_v_std,
             ch4_tonnes=ch4_tonnes,
@@ -954,8 +927,8 @@ class LiquidsUnloadingCalculator(BaseCalculator):
                 p_sep=p_sep,
                 sfr_p=sfr_p or sfr,
                 t_p=t_p or hours_open,
-                events=events or 1,
-                well_count=well_count or 1,
+                events=_first(events, default=1),
+                well_count=well_count,
                 p_atm=kwargs.get("p_atm", 14.696),
                 ch4_content=ch4_content,
                 co2_content=co2_content,
@@ -970,14 +943,14 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         # Check for Equation 6-10
         if m in ["api_equation_6_10", "equation_6_10", "eq_6_10"] or (sfr is not None and hours_open is not None):
             return self.calculate_tier3_equation_6_10(
-                events=events or kwargs.get("unload_events") or kwargs.get("unload_freq") or 1,
+                events=_first(events, kwargs.get("unload_events"), kwargs.get("unload_freq"), default=1),
                 well_depth=well_depth or kwargs.get("unload_depth"),
                 diameter=diameter or kwargs.get("unload_diam"),
                 pressure=pressure or kwargs.get("unload_press"),
                 sfr=sfr,
                 hours_open=hours_open,
                 unloading_type=unloading_type or kwargs.get("unload_type", "non_plunger"),
-                well_count=well_count or kwargs.get("wells", 1),
+                well_count=_first(well_count, kwargs.get("wells")),
                 ch4_content=ch4_content,
                 co2_content=co2_content,
                 control_efficiency=control_efficiency,
@@ -998,7 +971,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
             or (factor_src == "default" and well_count is not None and well_depth is None)
         )
         if is_tier1:
-            wc = well_count or kwargs.get("wells") or kwargs.get("amount") or kwargs.get("quantity") or 1
+            wc = _first(well_count, kwargs.get("wells"), kwargs.get("amount"), kwargs.get("quantity"), default=1)
             return self.calculate_tier1(
                 well_count=wc,
                 unloading_type=unloading_type or kwargs.get("unload_type", "plunger"),
@@ -1023,7 +996,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
             return self.calculate_tier2(
                 events=ev,
                 unloading_type=unloading_type or kwargs.get("unload_type", "plunger"),
-                well_count=well_count or kwargs.get("wells", 1),
+                well_count=_first(well_count, kwargs.get("wells")),
                 frequency_category=frequency_category or kwargs.get("freq_category"),
                 region=region,
                 ch4_content=ch4_content,

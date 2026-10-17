@@ -1638,22 +1638,14 @@ export const Scope1Form: React.FC = () => {
     const n2oVal = Number(entry.n2o_emissions || 0);
     const co2eVal = Number(entry.co2e_total || 0);
 
+    // The panel labels factors "kg/<record unit>". The stored ef_used_* are in the factor's own unit
+    // (natural gas 53.06 kg/MMBtu for a record in scf), so show the factor applied: stored tonnes per
+    // record quantity.
     const numQty = Number(qty) || 0;
-    const efCo2 =
-      entry.ef_used_co2 ??
-      payload.ef_used_co2 ??
-      payload.factor_co2 ??
-      (numQty > 0 ? (co2Val * 1000) / numQty : null);
-    const efCh4 =
-      entry.ef_used_ch4 ??
-      payload.ef_used_ch4 ??
-      payload.factor_ch4 ??
-      (numQty > 0 ? (ch4Val * 1000) / numQty : null);
-    const efN2o =
-      entry.ef_used_n2o ??
-      payload.ef_used_n2o ??
-      payload.factor_n2o ??
-      (numQty > 0 ? (n2oVal * 1000) / numQty : null);
+    const applied = (t: number) => (numQty > 0 ? (t * 1000) / numQty : null);
+    const efCo2 = applied(co2Val);
+    const efCh4 = applied(ch4Val);
+    const efN2o = applied(n2oVal);
 
     const fSource =
       entry.factor_source ||

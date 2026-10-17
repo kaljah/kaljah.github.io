@@ -54,7 +54,7 @@ def get_sbti_trajectory():
             q_s2 = q_s2.filter_by(facility_id=fid)
             q_s3 = q_s3.filter_by(facility_id=fid)
         except ValueError:
-            pass
+            return jsonify({"error": "Invalid facility_id"}), 400
     elif allowed_fids is not None:
         q_s1 = q_s1.filter(Emission.facility_id.in_(allowed_fids))
         q_s2 = q_s2.filter(Scope2Emission.facility_id.in_(allowed_fids))

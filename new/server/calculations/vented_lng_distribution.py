@@ -20,15 +20,8 @@ API Compendium of Greenhouse Gas Emissions Methodologies for the Oil and Natural
       - Distribution pressure relief valves (PRVs)
 """
 
-import math
 from .base import BaseCalculator
-from .units import (
-    CONVERSIONS,
-    STD_PRESSURE_PSIA,
-    convert,
-    calculate_co2e,
-    normalize_efficiency,
-)
+from .units import convert, calculate_co2e, normalize_efficiency
 from .uncertainty import (
     propagate_uncertainty,
     resolve_tier,
@@ -124,6 +117,34 @@ def _propagate_results(total_ch4, total_co2, flared_n2o, uncertainties, factor_s
 # ==============================================================================
 # §6.7 LNG Operations
 # ==============================================================================
+from calculations.vented_midstream import _count, _pick, _route  # noqa: E402
+
+
+def _parse_content(ch4, co2, default_ch4=0.95):
+    def _extract(v, d):
+        if v in (None, "", "-"):
+            return d, False, False
+        s = str(v).strip()
+        has_pct = "%" in s
+        val = float(s.replace("%", "").strip())
+        return val, has_pct, True
+
+    v_ch4, pct_ch4, has_ch4 = _extract(ch4, default_ch4)
+    v_co2, pct_co2, has_co2 = _extract(co2, 0.0)
+
+    in_pct = (has_ch4 and not pct_ch4 and v_ch4 > 1.0) or (has_co2 and not pct_co2 and v_co2 > 1.0)
+    c_ch4 = (v_ch4 / 100.0) if (pct_ch4 or (in_pct and has_ch4 and v_ch4 > 0)) else v_ch4
+    c_co2 = (v_co2 / 100.0) if (pct_co2 or (in_pct and has_co2 and v_co2 > 0)) else v_co2
+
+    if c_ch4 < 0:
+        raise ValueError(f"ch4_content cannot be negative: {c_ch4}")
+    if c_co2 < 0:
+        raise ValueError(f"co2_content cannot be negative: {c_co2}")
+    if (c_ch4 + c_co2) > 1.0001:
+        raise ValueError(f"Sum of CH4 ({c_ch4*100:.1f}%) and CO2 ({c_co2*100:.1f}%) cannot exceed 100%")
+    return c_ch4, c_co2
+
+
 class LNGVentingCalculator(BaseCalculator):
     """
     API Compendium 2021 Section 6.7 - LNG Operations
@@ -156,24 +177,20 @@ class LNGVentingCalculator(BaseCalculator):
         # Direct volume inputs
         vented_gas_scf=None,
         vented_gas_m3=None,
-        # Gas composition (LNG is predominantly methane, ~95-99%)
-        ch4_content=0.98,
-        co2_content=0.001,
-        control_efficiency=0.0,
+        # Gas composition: section 6.7 converts LNG losses at 95 mol % CH4 (the 98 % / 0.1 % CO2 defaults had no source)
+        ch4_content=None,
+        co2_content=None,
+        control_efficiency=None,
         disposition="vented",
         uncertainties=None,
         gwp_dict=None,
     ):
         uncertainties = uncertainties or {}
         act = str(activity or "loading_transfer").lower().strip()
+        if act not in ("loading_transfer", "direct_bog_vent", "peak_shaving_blowdown"):
+            raise ValueError(f"Unknown LNG activity '{activity}': loading_transfer, direct_bog_vent or peak_shaving_blowdown")
 
-        c_ch4 = float(ch4_content if ch4_content is not None else 0.98)
-        if c_ch4 > 1.0:
-            c_ch4 /= 100.0
-
-        c_co2 = float(0.001 if co2_content is None else co2_content)
-        if c_co2 > 1.0:
-            c_co2 /= 100.0
+        c_ch4, c_co2 = _parse_content(ch4_content, co2_content, default_ch4=0.95)
 
         total_gas_scf = 0.0
 
@@ -184,14 +201,15 @@ class LNGVentingCalculator(BaseCalculator):
                 v_lng_m3 = float(transfer_volume_bbl) * 0.1589873
             else:
                 raise ValueError("transfer_volume_m3 or transfer_volume_bbl must be provided")
+            if v_lng_m3 < 0:
+                raise ValueError(f"transfer_volume cannot be negative: {v_lng_m3}")
 
-            itype = str(insulation_type or "foam").lower().strip()
-            loss_rate_per_km = self.TABLE_6_44_LOSS_RATE.get(itype, self.TABLE_6_44_LOSS_RATE["foam"])
-            l_km = max(0.01, float(pipe_length_km or 1.0))
+            _, loss_rate_per_km = _pick(self.TABLE_6_44_LOSS_RATE, insulation_type or "foam", "pipe insulation")
+            l_km = _count(pipe_length_km)  # 0 km is 0 (it was 1 km; any length took at least 10 m)
 
             # Liquid LNG loss volume (m3)
             lng_lost_m3 = v_lng_m3 * loss_rate_per_km * l_km
-            # Expansion ratio of LNG liquid to gas is ~600:1 at STP
+            # liquid to gas: section 6.7 describes LNG as "more than 600" times smaller than the gas
             gas_lost_m3 = lng_lost_m3 * 600.0
             total_gas_scf = convert(gas_lost_m3, "m3", "scf")
 
@@ -202,23 +220,19 @@ class LNGVentingCalculator(BaseCalculator):
                 total_gas_scf = convert(float(vented_gas_m3), "m3", "scf")
             else:
                 raise ValueError("vented_gas_scf or vented_gas_m3 must be provided")
+            if total_gas_scf < 0:
+                raise ValueError(f"vented_gas cannot be negative: {total_gas_scf}")
 
         total_gas_m3 = convert(total_gas_scf, "scf", "m3")
 
         gross_ch4_tonnes = total_gas_scf * c_ch4 * (MW_CH4 / MOLAR_VOL_US) / LB_PER_TONNE
         gross_co2_tonnes = total_gas_scf * c_co2 * (MW_CO2 / MOLAR_VOL_US) / LB_PER_TONNE
 
-        disp = str(disposition or "vented").lower().strip()
-        eff = 0.0
-        if disp == "recovered":
-            gross_ch4_tonnes = 0.0
-            gross_co2_tonnes = 0.0
-        elif disp == "flared":
-            eff = 1.0
-        else:
-            eff = float(control_efficiency or 0.0)
+        # a flare keeps its entered efficiency (it was 100 %, every entry ignored), else 98 %
+        disp, eff, de, gross_ch4_tonnes, gross_co2_tonnes = _route(disposition, control_efficiency, gross_ch4_tonnes,
+                                                               gross_co2_tonnes)
 
-        split = _split_vent_flare(total_gas_m3, gross_ch4_tonnes, gross_co2_tonnes, ctrl_eff=eff)
+        split = _split_vent_flare(total_gas_m3, gross_ch4_tonnes, gross_co2_tonnes, ctrl_eff=eff, destruction_eff=de)
         total_ch4 = split["total_ch4"]
         total_co2 = split["total_co2"]
 
@@ -276,17 +290,11 @@ class DistributionPneumaticsCalculator(BaseCalculator):
         gwp_dict=None,
     ):
         uncertainties = uncertainties or {}
-        n = max(0.0, float(controller_count or 1.0))
-        ctype = str(controller_type or "average").lower().strip()
-        factor_info = self.TABLE_6_45.get(ctype, self.TABLE_6_45["average"])
+        n = _count(controller_count)  # 0 controllers is 0 (it was 1)
+        ctype, factor_info = _pick(self.TABLE_6_45, "average" if str(controller_type or "").lower().strip() in ("", "unknown")
+                                   else controller_type, "distribution controller type")
 
-        c_ch4 = factor_info["baseline_ch4_mol"] if ch4_content is None else float(ch4_content)
-        if c_ch4 > 1.0:
-            c_ch4 /= 100.0
-
-        c_co2 = float(co2_content or 0.0)
-        if c_co2 > 1.0:
-            c_co2 /= 100.0
+        c_ch4, c_co2 = _parse_content(ch4_content, co2_content, default_ch4=factor_info["baseline_ch4_mol"])
 
         gross_ch4_tonnes = n * factor_info["ef_tonnes_ch4"] * (c_ch4 / factor_info["baseline_ch4_mol"])
         total_gas_scf = n * factor_info["scf_gas_hr"] * 8760.0
@@ -342,23 +350,16 @@ class DistributionNonRoutineCalculator(BaseCalculator):
         count_or_miles=1.0,
         ch4_content=None,
         co2_content=0.0,
-        control_efficiency=0.0,
+        control_efficiency=None,
         disposition="vented",
         uncertainties=None,
         gwp_dict=None,
     ):
         uncertainties = uncertainties or {}
-        act = str(activity or "mr_station_blowdown").lower().strip()
-        factor_info = self.TABLE_6_46.get(act, self.TABLE_6_46["mr_station_blowdown"])
-        n = max(0.0, float(count_or_miles or 1.0))
+        act, factor_info = _pick(self.TABLE_6_46, activity or "mr_station_blowdown", "Table 6-46 activity")
+        n = _count(count_or_miles)  # 0 stations / miles is 0 (it was 1)
 
-        c_ch4 = factor_info["baseline_ch4_mol"] if ch4_content is None else float(ch4_content)
-        if c_ch4 > 1.0:
-            c_ch4 /= 100.0
-
-        c_co2 = float(co2_content or 0.0)
-        if c_co2 > 1.0:
-            c_co2 /= 100.0
+        c_ch4, c_co2 = _parse_content(ch4_content, co2_content, default_ch4=factor_info["baseline_ch4_mol"])
 
         # Exhibit 6-34 multiplies directly by count/miles
         gross_ch4_tonnes = n * factor_info["ef_tonnes_ch4"] * (c_ch4 / factor_info["baseline_ch4_mol"])
@@ -366,18 +367,10 @@ class DistributionNonRoutineCalculator(BaseCalculator):
         gross_co2_tonnes = total_gas_scf * c_co2 * (MW_CO2 / MOLAR_VOL_US) / LB_PER_TONNE
         total_gas_m3 = convert(total_gas_scf, "scf", "m3")
 
-        disp = str(disposition or "vented").lower().strip()
-        eff = 0.0
-        if disp == "recovered":
-            gross_ch4_tonnes = 0.0
-            gross_co2_tonnes = 0.0
-        elif disp == "flared":
-            eff = float(control_efficiency if control_efficiency is not None else 0.98)
-            eff = max(0.95, eff)
-        else:
-            eff = float(control_efficiency or 0.0)
+        disp, eff, de, gross_ch4_tonnes, gross_co2_tonnes = _route(disposition, control_efficiency, gross_ch4_tonnes,
+                                                               gross_co2_tonnes)
 
-        split = _split_vent_flare(total_gas_m3, gross_ch4_tonnes, gross_co2_tonnes, ctrl_eff=eff)
+        split = _split_vent_flare(total_gas_m3, gross_ch4_tonnes, gross_co2_tonnes, ctrl_eff=eff, destruction_eff=de)
         total_ch4 = split["total_ch4"]
         total_co2 = split["total_co2"]
 

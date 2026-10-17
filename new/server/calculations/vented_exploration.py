@@ -22,6 +22,7 @@ from .units import (
     to_psia,
     to_kelvin,
     calculate_co2e,
+    normalize_efficiency,   # was missing: every well-testing calculation raised NameError
 )
 from .uncertainty import (
     propagate_uncertainty,
@@ -88,6 +89,30 @@ def _split_vent_flare(total_gas_m3, ch4_tonnes, co2_tonnes, ctrl_eff=0.0, hhv=10
         "total_ch4": total_ch4,
         "total_co2": total_co2,
     }
+
+
+def _parse_testing_composition(ch4_content, co2_content):
+    c_ch4 = 0.816
+    if ch4_content is not None:
+        s_ch4 = str(ch4_content).strip()
+        c_ch4 = float(s_ch4.replace("%", "").strip())
+        if "%" in s_ch4 or c_ch4 > 1.0:
+            c_ch4 /= 100.0
+        if c_ch4 < 0.0 or c_ch4 > 1.0:
+            raise ValueError(f"ch4_content must be between 0 and 1 (or 0% to 100%): {ch4_content}")
+
+    c_co2 = 0.0
+    if co2_content is not None:
+        s_co2 = str(co2_content).strip()
+        c_co2 = float(s_co2.replace("%", "").strip())
+        if "%" in s_co2 or c_co2 > 1.0:
+            c_co2 /= 100.0
+        if c_co2 < 0.0 or c_co2 > 1.0:
+            raise ValueError(f"co2_content must be between 0 and 1 (or 0% to 100%): {co2_content}")
+
+    if (c_ch4 + c_co2) > 1.0001:
+        raise ValueError(f"Sum of CH4 ({c_ch4*100:.1f}%) and CO2 ({c_co2*100:.1f}%) cannot exceed 100%")
+    return c_ch4, c_co2
 
 
 class WellTestingCalculator(BaseCalculator):
@@ -172,25 +197,12 @@ class WellTestingCalculator(BaseCalculator):
         elif test_duration_hours is not None and float(test_duration_hours) > 0:
             duration_days = float(test_duration_hours) / 24.0
 
-        num_events = max(0.0, float(1.0 if events is None else events))
+        if events is not None and float(events) < 0:
+            raise ValueError(f"Number of events cannot be negative: {events}")
+        num_events = float(1.0 if events is None else events)
 
         # Gas composition parsing
-        c_ch4 = 0.816
-        if ch4_content is not None:
-            c_ch4 = float(ch4_content)
-            if c_ch4 > 1.0:
-                c_ch4 /= 100.0
-        c_ch4 = max(0.0, min(1.0, c_ch4))
-
-        c_co2 = 0.0
-        if co2_content is not None:
-            c_co2 = float(co2_content)
-            if c_co2 > 1.0:
-                c_co2 /= 100.0
-        c_co2 = max(0.0, min(1.0, c_co2))
-
-        if (c_ch4 + c_co2) > 1.0001:
-            raise ValueError(f"Sum of CH4 ({c_ch4*100:.1f}%) and CO2 ({c_co2*100:.1f}%) cannot exceed 100%")
+        c_ch4, c_co2 = _parse_testing_composition(ch4_content, co2_content)
 
         # Determine calculation tier
         raw_tier = str(tier or kwargs.get("calculation_tier") or "").lower().strip()
@@ -232,19 +244,12 @@ class WellTestingCalculator(BaseCalculator):
                 if duration_days <= 0:
                     raise ValueError("Gas well testing Tier 2 requires positive duration (days or hours)")
                 g_rate = float(gas_production_rate)
-                u_rate = str(rate_unit or "scf/day").lower().strip()
-                if u_rate in ["m3/day", "sm3/day"]:
-                    g_rate_scf_day = convert(g_rate, "m3", "scf")
-                elif u_rate in ["mscf/day", "mcf/day"]:
-                    g_rate_scf_day = g_rate * 1000.0
-                elif u_rate in ["mmscf/day"]:
-                    g_rate_scf_day = g_rate * 1_000_000.0
-                elif u_rate in ["scf/hr", "scf/hour"]:
-                    g_rate_scf_day = g_rate * 24.0
-                elif u_rate in ["m3/hr", "sm3/hr"]:
-                    g_rate_scf_day = convert(g_rate * 24.0, "m3", "scf")
-                else:
-                    g_rate_scf_day = g_rate
+                u_r = str(rate_unit or "scf/day").lower().strip()
+                u_mult = {"m3/day": lambda r: convert(r, "m3", "scf"), "sm3/day": lambda r: convert(r, "m3", "scf"),
+                          "mscf/day": lambda r: r * 1000.0, "mcf/day": lambda r: r * 1000.0, "mmscf/day": lambda r: r * 1e6,
+                          "scf/hr": lambda r: r * 24.0, "scf/hour": lambda r: r * 24.0,
+                          "m3/hr": lambda r: convert(r * 24.0, "m3", "scf"), "sm3/hr": lambda r: convert(r * 24.0, "m3", "scf")}
+                g_rate_scf_day = u_mult.get(u_r, lambda r: r)(g_rate)
                 total_gas_scf = g_rate_scf_day * duration_days * num_events
                 calculation_equation = "Equation 6-1 (Gas Well Testing: V_WT = V_P * T)"
             else:
@@ -291,21 +296,20 @@ class WellTestingCalculator(BaseCalculator):
         ctrl_eff = 0.0
         disp = str(disposition or "").lower().strip()
         if frac_vented is not None or frac_flared is not None or frac_recovered is not None:
-            f_vent = float(frac_vented or 0.0)
-            f_flare = float(frac_flared or 0.0)
-            f_rec = float(frac_recovered or 0.0)
+            f_vent, f_flare, f_rec = float(frac_vented or 0.0), float(frac_flared or 0.0), float(frac_recovered or 0.0)
             tot_f = f_vent + f_flare + f_rec
             if tot_f > 1.0001:
                 raise ValueError(f"Sum of disposition fractions ({tot_f:.3f}) cannot exceed 1.0")
-            ctrl_eff = f_flare
-            gross_ch4_tonnes *= (f_vent + f_flare)
-            gross_co2_tonnes *= (f_vent + f_flare)
+            unrec_f = f_vent + f_flare
+            ctrl_eff = (f_flare / unrec_f) if unrec_f > 0 else 0.0
+            gross_ch4_tonnes *= unrec_f
+            gross_co2_tonnes *= unrec_f
+            total_gas_m3 *= unrec_f
         elif disp == "flared":
             ctrl_eff = 1.0
         elif disp in ["recovered", "rec", "sales"]:
             ctrl_eff = 0.0
-            gross_ch4_tonnes = 0.0
-            gross_co2_tonnes = 0.0
+            gross_ch4_tonnes = gross_co2_tonnes = total_gas_m3 = 0.0
         else:
             ctrl_eff = float(control_efficiency or 0.0)
 
@@ -385,12 +389,28 @@ class CoalSeamDrillingCalculator(BaseCalculator):
         uncertainties = uncertainties or {}
         gwp_dict = gwp_dict or get_active_gwp()
 
-        c_ch4 = float(ch4_content if ch4_content is not None else 0.887)
-        if c_ch4 > 1.0:
-            c_ch4 /= 100.0
-        c_co2 = float(co2_content if co2_content is not None else 0.109)
-        if c_co2 > 1.0:
-            c_co2 /= 100.0
+        def _parse_cs_frac(v, default, name):
+            if v in (None, ""):
+                return default
+            s = str(v).strip()
+            f = float(s.replace("%", "").strip())
+            if f < 0:
+                raise ValueError(f"{name} cannot be negative: {v}")
+            if "%" in s or f > 1.0:
+                f /= 100.0
+            if f > 1.0:
+                raise ValueError(f"{name} cannot exceed 100%: {v}")
+            return f
+
+        c_ch4 = _parse_cs_frac(ch4_content, 0.887, "ch4_content")
+        c_co2 = _parse_cs_frac(co2_content, 0.109, "co2_content")
+        if (c_ch4 + c_co2) > 1.0001:
+            raise ValueError(f"Sum of gas concentrations cannot exceed 100%: {(c_ch4 + c_co2)*100:.1f}%")
+
+        if drilling_gas_vented_scf is not None and float(drilling_gas_vented_scf) < 0:
+            raise ValueError(f"drilling_gas_vented_scf cannot be negative: {drilling_gas_vented_scf}")
+        if well_testing_gas_flared_scf is not None and float(well_testing_gas_flared_scf) < 0:
+            raise ValueError(f"well_testing_gas_flared_scf cannot be negative: {well_testing_gas_flared_scf}")
 
         total_drilling_scf = 0.0
         if drilling_gas_vented_scf is not None and float(drilling_gas_vented_scf) >= 0:

@@ -28,19 +28,24 @@ def ogmp_level_for(emission) -> int:
         except (ValueError, TypeError):
             pass
 
+    from calculations.uncertainty import resolve_tier
+
     factor_source = (getattr(emission, "factor_source", None) or "").strip().lower()
     calc_method = (getattr(emission, "calc_method", None) or "").strip().lower()
+    tier = resolve_tier(factor_source)  # also the aliases a form stores, e.g. drilling "tier2_plus"
 
     # Level 4: Specific / direct measurement / engineering
     if (
-        factor_source in ("specific", "site_specific", "site-specific", "engineering", "cems", "direct_measurement")
+        tier == 3
+        or factor_source in ("specific", "site_specific", "site-specific", "engineering", "cems", "direct_measurement")
         or calc_method in ("direct_measurement", "tier3", "engineering", "specific", "cems", "site_specific")
     ):
         return 4
 
     # Level 3: Custom / component-count / equipment-specific factors
     if (
-        factor_source in ("custom", "api_table", "basin_specific", "component", "table")
+        tier == 2
+        or factor_source in ("custom", "api_table", "basin_specific", "component", "table")
         or calc_method in ("tier2", "component_count", "hi_flow", "custom_factor")
     ):
         return 3
@@ -119,8 +124,13 @@ def compute_facility_ogmp_level(
                 records = q.all()
                 if records:
                     bottom_up_level = materiality_level(records)
-        except Exception:
-            pass
+        except Exception as e:
+            try:
+                from flask import current_app, has_app_context
+                if has_app_context():
+                    current_app.logger.warning(f"Failed to derive bottom_up_level: {e}")
+            except Exception:
+                pass
 
     if td > 0 and bu > 0:
         variance_pct = abs((td - bu) / bu * 100.0)

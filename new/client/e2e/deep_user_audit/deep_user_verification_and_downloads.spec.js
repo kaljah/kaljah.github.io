@@ -23,8 +23,10 @@ function copyArtifact(filename) {
 }
 
 function runSeed(action) {
+  // the seed writes straight into a database: only ever the e2e stack's own (E2E_DB_PATH), never a default
+  if (!process.env.E2E_DB_PATH) throw new Error('Set E2E_DB_PATH to the e2e backend database to run this suite');
   const cmd = `python new/server/tests/seed_maker_checker.py --action ${action}`;
-  return execSync(cmd, { cwd: PROJECT_ROOT }).toString().trim();
+  return execSync(cmd, { cwd: PROJECT_ROOT, env: { ...process.env } }).toString().trim();
 }
 
 async function ensureAuthenticatedPage(page, targetUrl = '/') {
@@ -46,6 +48,8 @@ async function ensureAuthenticatedPage(page, targetUrl = '/') {
     await page.locator('input[type="password"]').fill('a');
     await page.locator('button[type="submit"]:has-text("Sign In")').click();
     await page.waitForURL((u) => !u.toString().includes('/login'), { timeout: 15000 });
+    // return to the requested page: sign-in lands on the dashboard
+    await page.goto(targetUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await page.waitForTimeout(1000);
   }
 
@@ -145,7 +149,7 @@ test.describe.serial('Maker-Checker Verification & Real File Downloads Audit', (
     await page.waitForTimeout(600);
 
     // Verify Rejection Modal opens
-    const modalHeading = page.locator('h3:has-text("Reject")');
+    const modalHeading = page.getByRole('dialog').getByRole('heading', { name: /Reject/ });   // shared Dialog (h2)
     await expect(modalHeading).toBeVisible({ timeout: 5000 });
 
     // Select Quick Rejection Reason preset
@@ -156,7 +160,7 @@ test.describe.serial('Maker-Checker Verification & Real File Downloads Audit', (
     }
 
     // Append audit detail in textarea
-    const reasonTextarea = page.locator('textarea[placeholder*="detailed reason" i]');
+    const reasonTextarea = page.getByRole('textbox', { name: /Justification/ });
     await expect(reasonTextarea).toBeVisible();
     await reasonTextarea.fill('Monthly utility meter calibration certificate and Sonelgaz invoice are missing for Q3.');
     await page.waitForTimeout(300);
@@ -225,7 +229,7 @@ test.describe.serial('Maker-Checker Verification & Real File Downloads Audit', (
     await page.waitForTimeout(1000);
 
     // Find Export dropdown menu
-    const exportBtn = page.locator('button:has-text("Export")');
+    const exportBtn = page.getByRole('button', { name: 'Export', exact: true });   // the menu, not the other Export buttons
     await expect(exportBtn).toBeVisible({ timeout: 10000 });
     await exportBtn.click();
     await page.waitForTimeout(500);
@@ -268,7 +272,7 @@ test.describe.serial('Maker-Checker Verification & Real File Downloads Audit', (
     await ensureAuthenticatedPage(page, '/reports');
     await page.waitForTimeout(1000);
 
-    const exportBtn = page.locator('button:has-text("Export")');
+    const exportBtn = page.getByRole('button', { name: 'Export', exact: true });   // the menu, not the other Export buttons
     await expect(exportBtn).toBeVisible({ timeout: 10000 });
     await exportBtn.click();
     await page.waitForTimeout(500);
@@ -286,7 +290,7 @@ test.describe.serial('Maker-Checker Verification & Real File Downloads Audit', (
     await ensureAuthenticatedPage(page, '/reports');
     await page.waitForTimeout(1000);
 
-    const exportBtn = page.locator('button:has-text("Export")');
+    const exportBtn = page.getByRole('button', { name: 'Export', exact: true });   // the menu, not the other Export buttons
     await expect(exportBtn).toBeVisible({ timeout: 10000 });
     await exportBtn.click();
     await page.waitForTimeout(500);
@@ -355,10 +359,13 @@ test.describe.serial('Maker-Checker Verification & Real File Downloads Audit', (
     await expect(dialogTitle.first()).toBeVisible({ timeout: 5000 });
 
     // Switch to ISO 14064-1 format
+    // the report is the ISO 14064-1 statement; older builds offered a standard picker
     const isoOption = page.locator('button[role="radio"]:has-text("ISO 14064-1")');
-    await expect(isoOption).toBeVisible();
-    await isoOption.click();
-    await page.waitForTimeout(500);
+    if (await isoOption.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await isoOption.click();
+      await page.waitForTimeout(500);
+    }
+    await expect(page.getByText(/ISO 14064-1:2018/).first()).toBeVisible();
 
     // Verify ISO mandatory fields
     const exclusionField = page.locator('textarea');

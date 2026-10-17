@@ -121,10 +121,11 @@ class AssociatedGasVentingCalculator(BaseCalculator):
         if val in [None, "", "-"]:
             return default
         try:
-            f = float(str(val).replace("%", "").strip())
+            s = str(val).strip()
+            f = float(s.replace("%", "").strip())
         except (ValueError, TypeError):
-            return default
-        if f > 1.0:
+            raise ValueError(f"Invalid fraction: {val}")
+        if "%" in s or f > 1.0:
             f /= 100.0
         return f
 
@@ -167,42 +168,29 @@ class AssociatedGasVentingCalculator(BaseCalculator):
         resolved_tier = None
         if tier is not None:
             t_str = str(tier).strip().lower()
-            if "3" in t_str:
-                resolved_tier = Tier.T3
-            elif "2" in t_str:
-                resolved_tier = Tier.T2
-            elif "1" in t_str:
-                resolved_tier = Tier.T1
+            resolved_tier = Tier.T3 if "3" in t_str else (Tier.T2 if "2" in t_str else (Tier.T1 if "1" in t_str else None))
 
         if resolved_tier is None and factor_source is not None:
             fs_str = str(factor_source).strip().lower()
-            if fs_str in ["specific", "site_specific", "direct", "measurement", "cems", "tier3", "tier_3", "t3"]:
-                resolved_tier = Tier.T3
-            elif fs_str in ["engineering", "custom", "gor", "tier2", "tier_2", "t2"]:
-                resolved_tier = Tier.T2
-            elif fs_str in ["default", "tier1", "tier_1", "t1"]:
-                resolved_tier = Tier.T1
+            resolved_tier = Tier.T3 if fs_str in ["specific", "site_specific", "direct", "measurement", "cems", "tier3", "tier_3", "t3"] else (
+                Tier.T2 if fs_str in ["engineering", "custom", "gor", "tier2", "tier_2", "t2"] else (
+                    Tier.T1 if fs_str in ["default", "tier1", "tier_1", "t1"] else None))
 
-        if resolved_tier is None:
-            # Auto-detect from provided arguments
-            if vent_rate is not None or vent_volume is not None:
-                resolved_tier = Tier.T3
-            elif gor is not None:
-                resolved_tier = Tier.T2
-            else:
-                resolved_tier = Tier.T1
+        if resolved_tier is None and tier is None and factor_source is None:
+            resolved_tier = Tier.T3 if (vent_rate is not None or vent_volume is not None) else (
+                Tier.T2 if gor is not None else Tier.T1
+            )
 
         # 2. Validate Gas Composition (applies across all tiers when provided)
         c_ch4 = None
         c_co2 = None
         if ch4_content is not None:
             c_ch4 = self._normalize_fraction(ch4_content)
-            if c_ch4 < 0.0 or c_ch4 > 1.0:
+            if not (0.0 <= c_ch4 <= 1.0):
                 raise ValueError(f"CH4 molar fraction must be between 0.0 and 1.0 (got {c_ch4}).")
-
         if co2_content is not None:
             c_co2 = self._normalize_fraction(co2_content)
-            if c_co2 < 0.0 or c_co2 > 1.0:
+            if not (0.0 <= c_co2 <= 1.0):
                 raise ValueError(f"CO2 molar fraction must be between 0.0 and 1.0 (got {c_co2}).")
 
         if c_ch4 is not None and c_co2 is not None:
@@ -211,6 +199,10 @@ class AssociatedGasVentingCalculator(BaseCalculator):
                     f"Gas composition error: Sum of CH4 ({c_ch4*100:.1f}%) and CO2 ({c_co2*100:.1f}%) "
                     f"exceeds 100% ({((c_ch4 + c_co2)*100):.1f}%)."
                 )
+
+        ctrl_eff = self._normalize_fraction(control_efficiency, default=0.0)
+        if ctrl_eff < 0.0 or ctrl_eff > 1.0:
+            raise ValueError(f"Control efficiency must be between 0.0 and 1.0 (got {ctrl_eff}).")
 
         qa_flags = []
 
@@ -236,7 +228,9 @@ class AssociatedGasVentingCalculator(BaseCalculator):
 
             # Basin Factor Lookup
             basin_info = self.resolve_basin_factor(basin or kwargs.get("region") or kwargs.get("fuel"))
-            tbl_ef_ch4 = float(ef_ch4) if (ef_ch4 is not None and float(ef_ch4) > 0) else basin_info["ef_ch4_kg_bbl"]
+            if ef_ch4 is not None and float(ef_ch4) < 0:
+                raise ValueError(f"CH4 emission factor cannot be negative: {ef_ch4}")
+            tbl_ef_ch4 = float(ef_ch4) if ef_ch4 is not None else basin_info["ef_ch4_kg_bbl"]
             whole_gas_ef = float(basin_info.get("whole_gas_scf_bbl", 89.0))
             ch4_mol_basis = float(basin_info.get("ch4_mol_basis", 0.816))
 
@@ -249,7 +243,7 @@ class AssociatedGasVentingCalculator(BaseCalculator):
                 c_ch4 = ch4_mol_basis
 
             ch4_kg = oil_bbl * tbl_ef_ch4 * adj_ratio
-            ch4_tonnes = ch4_kg / 1000.0
+            ch4_tonnes = (ch4_kg / 1000.0) * (1.0 - ctrl_eff)
 
             # CO2 adjustment per Table 6-8 footnote b:
             # Adjusted based on the relative concentrations of CH4 and CO2
@@ -305,17 +299,13 @@ class AssociatedGasVentingCalculator(BaseCalculator):
         # TIER 2: ENGINEERING GOR MASS BALANCE (API Eq. 6-8 & 6-9)
         # =====================================================================
         elif resolved_tier == Tier.T2:
-            self.validate_inputs(
-                {"oil_production": oil_production, "gor": gor},
-                ["oil_production", "gor"],
-            )
+            self.validate_inputs({"oil_production": oil_production, "gor": gor}, ["oil_production", "gor"])
             oil_val = float(oil_production)
-            gor_val = float(gor)
-
             if oil_val < 0.0:
                 raise ValueError(f"Oil production cannot be negative: {oil_val}")
+            gor_val = float(gor)
             if gor_val < 0.0:
-                raise ValueError(f"Gas-to-Oil Ratio (GOR) cannot be negative: {gor_val}")
+                raise ValueError(f"GOR cannot be negative: {gor_val}")
 
             # Physical plausibility check on GOR
             if gor_val > 100_000.0:
@@ -366,9 +356,7 @@ class AssociatedGasVentingCalculator(BaseCalculator):
                 p_days = p_dur if u_dur in ["day", "days", "d"] else p_dur / 24.0
 
             if dur_days is not None and p_days is not None and dur_days > p_days * 1.0001:
-                raise ValueError(
-                    f"Venting duration ({dur_days:.1f} days) cannot exceed total period duration ({p_days:.1f} days)."
-                )
+                raise ValueError(f"Venting duration ({dur_days:.1f} days) cannot exceed total period duration ({p_days:.1f} days).")
 
             # Max duration check: annual max 366 days
             if dur_days is not None and dur_days > 366.0:
@@ -406,13 +394,10 @@ class AssociatedGasVentingCalculator(BaseCalculator):
 
             # Mass balance violation check (Recovered + Flared > Total Produced)
             if (rec_scf + flared_scf) > (total_produced_gas_scf * 1.0001):
-                raise ValueError(
-                    f"Mass balance violation: Recovered gas ({rec_scf:.1f} scf) + Flared gas ({flared_scf:.1f} scf) "
-                    f"exceeds total produced associated gas ({total_produced_gas_scf:.1f} scf)."
-                )
+                raise ValueError(f"Mass balance violation: Recovered gas ({rec_scf:.1f} scf) + Flared gas ({flared_scf:.1f} scf) exceeds total produced associated gas ({total_produced_gas_scf:.1f} scf).")
 
             # Net vented gas volume
-            net_vented_gas_scf = max(0.0, total_produced_gas_scf - rec_scf - flared_scf)
+            net_vented_gas_scf = max(0.0, total_produced_gas_scf - rec_scf - flared_scf) * (1.0 - ctrl_eff)
 
             # Gas composition: 70 % CH4 / 10 % CO2 are Exhibit 6-5's sample inputs, not defaults; an
             # unanalysed associated gas was silently given them
@@ -491,6 +476,8 @@ class AssociatedGasVentingCalculator(BaseCalculator):
                     raise ValueError(f"Measured vent volume cannot be negative: {v_val}")
                 u_vol = str(vent_volume_unit or "scf").strip().lower()
                 net_vented_gas_scf = convert(v_val, u_vol, "scf")
+                if venting_duration is not None and float(venting_duration) < 0:
+                    raise ValueError(f"Venting duration cannot be negative: {venting_duration}")
                 dur_hours = float(venting_duration) if (venting_duration and float(venting_duration) > 0) else None
             elif vent_rate is not None and str(vent_rate).strip() != "":
                 r_val = float(vent_rate)
@@ -515,6 +502,7 @@ class AssociatedGasVentingCalculator(BaseCalculator):
                 net_vented_gas_scf = rate_scfh * dur_hours
             else:
                 raise ValueError("Tier 3 requires either measured vent rate + duration or total measured vent volume.")
+            net_vented_gas_scf *= (1.0 - ctrl_eff)
 
             # Gas composition: required (an unanalysed gas was silently taken as 85 % CH4)
             if c_ch4 is None:
@@ -569,4 +557,4 @@ class AssociatedGasVentingCalculator(BaseCalculator):
                 },
             )
 
-        raise ValueError(f"Unknown tier for Associated Gas Venting: {resolved_tier}")
+        raise ValueError(f"Unknown tier for Associated Gas Venting: {resolved_tier or tier or factor_source}")

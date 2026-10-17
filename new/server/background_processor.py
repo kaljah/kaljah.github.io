@@ -1711,15 +1711,8 @@ def _build_mapping(headers, scope=1):
 
 
 def _process_row_scope2(
-    row,
-    user_id,
-    fac_name_map,
-    fac_id_map,
-    GRID_FACTORS,
-    job_id,
-    row_idx,
-    batch_keys=None,
-    overwrite_duplicates=False,
+    row, user_id, fac_name_map, fac_id_map, GRID_FACTORS,
+    job_id, row_idx, batch_keys=None, overwrite_duplicates=False,
 ):
     from models import Scope2Emission
 
@@ -1836,6 +1829,12 @@ def _process_row_scope2(
             if ef_val is None or ef_val <= 0:
                 return None, [f"Row {row_idx}: boiler emission factor must be a positive number (kg CO2 / MMBtu)"]
             ci["ef_co2"] = ef_val
+        for key in ("steam_enthalpy_btu_lb", "steam_enthalpy"):  # a steam mass needs it (Equation 8-1)
+            raw_h = _first(row, key)
+            if raw_h not in (None, ""):
+                ci[key] = _clean_float(raw_h, default=None)
+                if ci[key] is None or ci[key] <= 0:
+                    return None, [f"Row {row_idx}: {key} '{raw_h}' must be a positive number"]
         try:
             co2e, heat_mmbtu, ef = _calc_indirect_steam(
                 {"amount": val, "unit": u, "boiler_efficiency": boiler_eff, "calc_inputs": {"indirect_steam": ci}})

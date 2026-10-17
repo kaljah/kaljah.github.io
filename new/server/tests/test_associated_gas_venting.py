@@ -472,3 +472,77 @@ def test_api_add_emission_associated_gas_venting():
             dash_data = resp_dash.get_json()
             # Historical endpoint or breakdown should categorize venting
             assert dash_data is not None
+
+
+def test_associated_gas_exhaustive_branches(calc):
+    """Test all remaining edge-cases and error paths in AssociatedGasVentingCalculator."""
+    # 1. Basin factor with None
+    assert calc.resolve_basin_factor(None)["name"] == "Associated Gas Venting – US Average"
+
+    # 2. _normalize_fraction
+    assert calc._normalize_fraction(None, 0.5) == 0.5
+    assert calc._normalize_fraction("-", 0.5) == 0.5
+    assert calc._normalize_fraction("invalid", 0.5) == 0.5
+    assert calc._normalize_fraction("75%", 0.0) == 0.75
+
+    # 3. Factor source resolution
+    res_fs3 = calc.calculate(factor_source="specific", vent_volume=1000, ch4_content=0.8)
+    assert res_fs3["inputs"]["tier"] == "Tier 3"
+    res_fs2 = calc.calculate(factor_source="engineering", oil_production=100, gor=500, ch4_content=0.8)
+    assert res_fs2["inputs"]["tier"] == "Tier 2"
+    res_fs1 = calc.calculate(factor_source="default", oil_production=100)
+    assert res_fs1["inputs"]["tier"] == "Tier 1"
+
+    # 4. Auto-tier resolution
+    res_auto3 = calc.calculate(vent_volume=1000, ch4_content=0.8)
+    assert res_auto3["inputs"]["tier"] == "Tier 3"
+    res_auto2 = calc.calculate(oil_production=100, gor=500, ch4_content=0.8)
+    assert res_auto2["inputs"]["tier"] == "Tier 2"
+    res_auto1 = calc.calculate(oil_production=100)
+    assert res_auto1["inputs"]["tier"] == "Tier 1"
+
+    # 5. Invalid composition fractions
+    with pytest.raises(ValueError, match="CH4 molar fraction must be between 0.0 and 1.0"):
+        calc.calculate(oil_production=100, ch4_content=-0.1)
+    with pytest.raises(ValueError, match="CO2 molar fraction must be between 0.0 and 1.0"):
+        calc.calculate(oil_production=100, co2_content=-0.1)
+
+    # 6. Tier 1 missing or NaN oil, unknown unit
+    with pytest.raises(ValueError, match="Oil production is required"):
+        calc.calculate(tier="Tier 1", oil_production=None)
+    with pytest.raises(ValueError, match="Oil production cannot be NaN"):
+        calc.calculate(tier="Tier 1", oil_production=float("nan"))
+    with pytest.raises(ValueError, match="Unknown oil production unit"):
+        calc.calculate(tier="Tier 1", oil_production=100, oil_unit="lightyears")
+
+    # 7. Tier 2 error paths
+    with pytest.raises(ValueError, match="Unknown oil production unit"):
+        calc.calculate(tier="Tier 2", oil_production=100, oil_unit="lightyears", gor=500, ch4_content=0.8)
+    with pytest.raises(ValueError, match="Unknown GOR unit"):
+        calc.calculate(tier="Tier 2", oil_production=100, gor=500, gor_unit="kg/m3", ch4_content=0.8)
+    with pytest.raises(ValueError, match="Period duration must be positive"):
+        calc.calculate(tier="Tier 2", oil_production=100, gor=500, period_duration=-1, ch4_content=0.8)
+    with pytest.raises(ValueError, match="Recovered gas volume cannot be negative"):
+        calc.calculate(tier="Tier 2", oil_production=100, gor=500, recovered_gas_volume=-10, ch4_content=0.8)
+    with pytest.raises(ValueError, match="Flared gas volume cannot be negative"):
+        calc.calculate(tier="Tier 2", oil_production=100, gor=500, flared_gas_volume=-10, ch4_content=0.8)
+    with pytest.raises(ValueError, match="Missing required field: CH4 content"):
+        calc.calculate(tier="Tier 2", oil_production=100, gor=500)
+
+    # Tier 2 period duration scaling (without oil rate)
+    res_scaled = calc.calculate(tier="Tier 2", oil_production=1000, gor=500, venting_duration=10, period_duration=30, ch4_content=0.8)
+    assert res_scaled["results"]["ch4"]["value"] > 0
+
+    # 8. Tier 3 error paths
+    with pytest.raises(ValueError, match="Venting duration is required"):
+        calc.calculate(tier="Tier 3", vent_rate=100, venting_duration=None, ch4_content=0.8)
+    with pytest.raises(ValueError, match="Unknown venting duration unit"):
+        calc.calculate(tier="Tier 3", vent_rate=100, venting_duration=10, duration_unit="centuries", ch4_content=0.8)
+    with pytest.raises(ValueError, match="Vent rate unit"):
+        calc.calculate(tier="Tier 3", vent_rate=100, venting_duration=10, vent_rate_unit="furlongs/fortnight", ch4_content=0.8)
+    with pytest.raises(ValueError, match="Tier 3 requires either measured vent rate"):
+        calc.calculate(tier="Tier 3", ch4_content=0.8)
+    with pytest.raises(ValueError, match="Missing required field: CH4 content"):
+        calc.calculate(tier="Tier 3", vent_volume=1000)
+
+

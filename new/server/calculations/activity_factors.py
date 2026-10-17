@@ -159,9 +159,8 @@ LIQ_TO_BBL = {"bbl": 1.0, "gal": 1 / 42.0, "m3": 6.28981077, "l": 6.28981077e-3}
 
 # S1K-F16: every gas volume spelling the rest of the platform accepts (Nm3, ksm3, MMcf, kscf, cf ...)
 from .units import GAS_VOLUME_UNITS as _GV, VOLUME_UNITS_TO_M3 as _V2M3, _VOLUME_ALIASES as _VA
-for _u in _GV:
-    if _u in _V2M3:
-        GAS_SCALE.setdefault(_u, _V2M3[_u] / SCF_TO_M3)
+for _u in set(_GV) & set(_V2M3):
+    GAS_SCALE.setdefault(_u, _V2M3[_u] / SCF_TO_M3)
 for _a, _b in _VA.items():
     if _b in GAS_SCALE:
         GAS_SCALE.setdefault(_a, GAS_SCALE[_b])
@@ -218,9 +217,15 @@ class ActivityFactorCalculator(BaseCalculator):
                     raise ValueError("The period must be a fraction of a year between 0 and 1")
                 n = amount * yf
         elif per == "unit_day":
-            n = amount * float(days if days not in (None, "") else 365)
+            d = float(days if days not in (None, "") else 365)
+            if d < 0:
+                raise ValueError("Days cannot be negative")
+            n = amount * d
         elif per == "unit_hr":
-            n = amount * float(hours if hours not in (None, "") else 8760)
+            h = float(hours if hours not in (None, "") else 8760)
+            if h < 0:
+                raise ValueError("Hours cannot be negative")
+            n = amount * h
         elif per == "mmscf":
             if u not in GAS_SCALE:
                 raise ValueError("Gas throughput unit must be scf, Mcf, MMscf or m3")
@@ -233,30 +238,18 @@ class ActivityFactorCalculator(BaseCalculator):
             if u not in LIQ_TO_GAL:
                 raise ValueError("Liquid volume unit must be gal, bbl, L or m3")
             n = amount * LIQ_TO_GAL[u] / 1e6
-        elif per == "bbl":
+        else:  # "bbl" (tests/test_activity_factors_complete.py checks every row's basis)
             if u not in LIQ_TO_BBL:
                 raise ValueError("Oil volume unit must be bbl, gal, L or m3")
             n = amount * LIQ_TO_BBL[u]
-        else:
-            raise ValueError(f"Unsupported factor basis '{per}'")
 
         basis = row["basis"]
-        def _parse_num(val):
-            if val in (None, ""):
-                return None
-            s = str(val).replace("%", "").strip()
-            try:
-                return float(s)
-            except (ValueError, TypeError):
-                return None
-
-        ch4_num = _parse_num(ch4_content)
-        co2_num = _parse_num(co2_content)
-
         # Audit 2026-10-14 BUG-0021: CH4 and CO2 contents are mol %, always (0.85 is 0.85 %, not 85 %)
-        _frac(ch4_content), _frac(co2_content)  # range and number checks
-        x_ch4 = ch4_num / 100.0 if ch4_num is not None else None
-        x_co2 = co2_num / 100.0 if co2_num is not None else 0.0
+        _frac(ch4_content), _frac(co2_content)  # number and range checks
+        x_ch4 = None if ch4_content in (None, "") else float(str(ch4_content).replace("%", "")) / 100.0
+        x_co2 = 0.0 if co2_content in (None, "") else float(str(co2_content).replace("%", "")) / 100.0
+        if ((x_ch4 or 0.0) + x_co2) > 1.0001:
+            raise ValueError(f"Sum of CH4 ({(x_ch4 or 0.0)*100:.1f}%) and CO2 ({x_co2*100:.1f}%) cannot exceed 100%")
 
         gas = row["gas_scf"]
         if row["toc"]:

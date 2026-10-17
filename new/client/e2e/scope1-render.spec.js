@@ -3,6 +3,7 @@ import { test, expect } from "@playwright/test";
 // Guards the Scope1Form split: selecting every process type must render without runtime errors
 // (a missing prop surfaces as a ReferenceError when the section mounts).
 test("Scope 1 form renders every process type and the history table", async ({ page }) => {
+  test.setTimeout(180000);   // ~50 process types at ~1 s each: the default 60 s ran out before the end
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("/emissions?scope=scope1");
@@ -17,7 +18,9 @@ test("Scope 1 form renders every process type and the history table", async ({ p
 
   for (let i = 0; i < count; i++) {
     await trigger.click();
-    await page.locator("[data-testid=select-option]").nth(i).click();
+    const option = page.locator("[data-testid=select-option]").nth(i);
+    await option.scrollIntoViewIfNeeded();   // the list scrolls; later options are below the fold
+    await option.click();
     await page.waitForTimeout(250);
   }
   // history interactions: toggle uncertainty columns, open the details dialog if a row exists

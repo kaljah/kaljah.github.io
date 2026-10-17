@@ -18,8 +18,9 @@ import fs from 'fs';
 import { execFileSync } from 'child_process';
 
 const FRONTEND = process.env.E2E_BASE_URL || 'http://127.0.0.1:5173';
-const BACKEND = 'http://127.0.0.1:5000';
-const DB_PATH = 'c:/Users/samsung/Desktop/H2/new/server/ghg_app.db';
+// the dev server proxies /api; never a hard-coded backend (a run must not reach someone's dev server)
+const BACKEND = process.env.E2E_API_URL || process.env.E2E_BASE_URL || 'http://127.0.0.1:5173';
+const DB_PATH = process.env.E2E_DB_PATH;   // the e2e backend's database; never a developer's own
 const SCREENSHOT_DIR = 'C:/Users/samsung/Desktop/H2/test_results/screenshots';
 const TIER1_CSV_PATH = 'c:/Users/samsung/Desktop/H2/new/server/bulk_tier1_all_fuels.csv';
 const TIER3_CSV_PATH = 'c:/Users/samsung/Desktop/H2/new/server/bulk_tier3_360_per_region.csv';
@@ -29,6 +30,7 @@ if (!fs.existsSync(SCREENSHOT_DIR)) {
 }
 
 function queryDb(sql, params = []) {
+  if (!DB_PATH) return null;   // no database named: no direct reads
   try {
     const pyScript = `
 import sys, sqlite3, json

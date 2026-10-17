@@ -73,11 +73,23 @@ class AcidGasRemovalCalculator(BaseCalculator):
             gross_ch4_tonnes = mmscf * self.TABLE_6_19["throughput"]["ef_ch4_tonnes_per_mmscf"]
             total_gas_scf = mmscf * self.TABLE_6_19["throughput"]["scf_ch4_per_mmscf"]
 
-        # 2. CO2 emissions from Equation 6-18 material balance if CO2 contents provided
         if sour_co2_content is not None and v_sour_scf > 0:
-            c_sour_co2 = float(sour_co2_content)
-            if c_sour_co2 > 1.0:
-                c_sour_co2 /= 100.0
+            s_sour = str(sour_co2_content).replace("%", "").strip()
+            pct_sour = "%" in str(sour_co2_content)
+            v_sour_val = float(s_sour)
+
+            s_sweet = str(sweet_co2_content if sweet_co2_content is not None else 0.0).replace("%", "").strip()
+            pct_sweet = "%" in str(sweet_co2_content)
+            v_sweet_val = float(s_sweet)
+
+            in_pct = (not pct_sour and v_sour_val > 1.0) or (not pct_sweet and v_sweet_val > 1.0)
+            c_sour_co2 = (v_sour_val / 100.0) if (pct_sour or in_pct) else v_sour_val
+            c_sweet_co2 = (v_sweet_val / 100.0) if (pct_sweet or in_pct) else v_sweet_val
+
+            if c_sour_co2 < 0 or c_sour_co2 > 1.0:
+                raise ValueError(f"sour_co2_content must be between 0 and 1 (or 0% to 100%): {sour_co2_content}")
+            if c_sweet_co2 < 0 or c_sweet_co2 > 1.0:
+                raise ValueError(f"sweet_co2_content must be between 0 and 1 (or 0% to 100%): {sweet_co2_content}")
 
             v_sweet_scf = 0.0
             if sweet_gas_mmscf_yr is not None:
@@ -86,10 +98,6 @@ class AcidGasRemovalCalculator(BaseCalculator):
                 v_sweet_scf = float(sweet_gas_scf_yr)
             else:
                 v_sweet_scf = v_sour_scf * (1.0 - c_sour_co2)
-
-            c_sweet_co2 = float(sweet_co2_content or 0.0)
-            if c_sweet_co2 > 1.0:
-                c_sweet_co2 /= 100.0
 
             # Equation 6-18: E_CO2 = [V_sour * y_sour - V_sweet * y_sweet] * (44 / 379.3) / 2204.62
             co2_scf_removed = max(0.0, (v_sour_scf * c_sour_co2) - (v_sweet_scf * c_sweet_co2))
@@ -104,10 +112,10 @@ class AcidGasRemovalCalculator(BaseCalculator):
             gross_ch4_tonnes = 0.0
             gross_co2_tonnes = 0.0
         elif disp == "flared":
-            eff = float(control_efficiency if control_efficiency is not None else 0.98)
+            eff = normalize_efficiency(control_efficiency, default=0.98)
             eff = max(0.95, eff)
         else:
-            eff = float(control_efficiency or 0.0)
+            eff = normalize_efficiency(control_efficiency, default=0.0)
 
         split = _split_vent_flare(
             total_gas_m3=total_gas_m3,
@@ -235,6 +243,8 @@ class TankFlashingCalculator(BaseCalculator):
         uncertainties = uncertainties or {}
         self.validate_inputs({"throughput": throughput}, ["throughput"])
         q_bbl = float(throughput)
+        if q_bbl < 0:
+            raise ValueError(f"throughput cannot be negative: {q_bbl}")
         days = max(1.0, float(operating_days or 365.0))
 
         # Resolve calculation method
@@ -247,7 +257,6 @@ class TankFlashingCalculator(BaseCalculator):
             elif api_gravity is not None and separator_pressure_psig is not None and separator_temp_f is not None:
                 meth = "vbe"
             elif gas_oil_ratio is not None and float(gas_oil_ratio) >= 0:
-                # a measured GOR of 0 (stabilised liquid, no flash gas) is 0, not the Table 6-22 default
                 meth = "gor"
             else:
                 meth = "table_6_22" if liquid_type == "crude" else "table_6_24"
@@ -266,47 +275,31 @@ class TankFlashingCalculator(BaseCalculator):
             raise ValueError(f"Tank method '{meth}' needs {', '.join(missing)} (separator data)")
 
         # Resolve compositions
-        # Default tank-vent CH4 content when the flash gas is not analysed (Section 6.3.9.1): crude 27.4 vol %
-        # (Exhibits 6-18a and 6-19, chart / GOR approach included), condensate 36.3 vol %. The chart / GOR
-        # method used 85 % (Exhibit 6-19: 126 t instead of 40.6 t) and condensate correlations 85 % too.
-        if meth in ["vbe", "standing", "eub", "gor"] and liquid_type in ("crude", "condensate"):
-            default_ch4 = 0.274 if liquid_type == "crude" else 0.363
-        else:
-            default_ch4 = 0.85
-        c_ch4 = default_ch4 if ch4_content is None else float(ch4_content)
-        if c_ch4 > 1.0:
-            c_ch4 /= 100.0
-        c_ch4 = max(0.0, min(1.0, c_ch4))
-
-        c_co2 = float(co2_content or 0.0)
-        if c_co2 > 1.0:
-            c_co2 /= 100.0
-        c_co2 = max(0.0, min(1.0, c_co2))
-
-        gross_ch4_tonnes = 0.0
-        gross_co2_tonnes = 0.0
-        total_gas_scf = 0.0
+        default_ch4 = (0.274 if liquid_type == "crude" else 0.363) if (
+            meth in ["vbe", "standing", "eub", "gor"] and liquid_type in ("crude", "condensate")) else 0.85
+        c_ch4 = _parse_frac(ch4_content, default_ch4, "ch4_content")
+        c_co2 = _parse_frac(co2_content, 0.0, "co2_content")
+        if (c_ch4 + c_co2) > 1.0001:
+            raise ValueError(f"Sum of CH4 ({c_ch4*100:.1f}%) and CO2 ({c_co2*100:.1f}%) cannot exceed 100%")
+        gross_ch4_tonnes = gross_co2_tonnes = total_gas_scf = 0.0
 
         # ----------------------------------------------------------------------
         # Method 1: Vasquez-Beggs Equation (VBE) (Eq 6-20 & 6-21, Exhibit 6-18a)
         # ----------------------------------------------------------------------
         if meth == "vbe":
-            api = float(api_gravity if api_gravity is not None else 48.8)
-            p_sep = float(separator_pressure_psig if separator_pressure_psig is not None else 28.6)
+            api = max(0.0, float(api_gravity if api_gravity is not None else 48.8))
+            p_sep = max(0.0, float(separator_pressure_psig if separator_pressure_psig is not None else 28.6))
             t_sep = float(separator_temp_f if separator_temp_f is not None else 112.0)
-            sg_i = float(gas_specific_gravity or 0.90)
+            sg_i = max(0.01, float(gas_specific_gravity or 0.90))
 
             # Equation 6-20: SG_X = SG_i * [1.0 + 0.00005912 * API * T_i * log10((P_i + 14.7) / 114.7)]
             p_term = max(0.001, (p_sep + 14.7) / 114.7)
-            sg_x = sg_i * (1.0 + 0.00005912 * api * t_sep * math.log10(p_term))
+            sg_x = max(0.01, sg_i * (1.0 + 0.00005912 * api * t_sep * math.log10(p_term)))
 
             # Equation 6-21: Coefficients
-            if api <= 30.0:
-                c1, c2, c3 = 0.0362, 1.0937, 25.724
-            else:
-                c1, c2, c3 = 0.0178, 1.187, 23.931
+            c1, c2, c3 = (0.0362, 1.0937, 25.724) if api <= 30.0 else (0.0178, 1.187, 23.931)
 
-            rs = c1 * sg_x * ((p_sep + 14.7) ** c2) * math.exp((c3 * api) / (t_sep + 460.0))
+            rs = max(0.0, c1 * sg_x * ((p_sep + 14.7) ** c2) * math.exp(min(700.0, max(-700.0, (c3 * api) / max(1.0, t_sep + 460.0)))))
             total_gas_scf = q_bbl * rs
             gross_ch4_tonnes = total_gas_scf * SCF_TO_M3 * c_ch4 * CONVERSIONS["density_ch4"] / 1000.0  # engine density convention
             gross_co2_tonnes = total_gas_scf * SCF_TO_M3 * c_co2 * CONVERSIONS["density_co2"] / 1000.0
@@ -315,21 +308,21 @@ class TankFlashingCalculator(BaseCalculator):
         # Method 2: Standing Correlation (Eq 6-22 & 6-23, Exhibit 6-18b)
         # ----------------------------------------------------------------------
         elif meth == "standing":
-            api = float(api_gravity if api_gravity is not None else 48.8)
-            p_sep_psig = float(separator_pressure_psig if separator_pressure_psig is not None else 28.6)
+            api = max(0.0, float(api_gravity if api_gravity is not None else 48.8))
+            p_sep_psig = max(0.0, float(separator_pressure_psig if separator_pressure_psig is not None else 28.6))
             t_sep_f = float(separator_temp_f if separator_temp_f is not None else 112.0)
             t_tank_f = float(tank_temp_f if tank_temp_f is not None else 80.0)
-            sg_gas = float(gas_specific_gravity or 0.90)
+            sg_gas = max(0.01, float(gas_specific_gravity or 0.90))
 
             # Convert to metric: kPa and Kelvin
             p_sep_kpa = (p_sep_psig + 14.7) * 6.894757
             p_tank_kpa = 101.325
-            t_sep_k = (t_sep_f - 32.0) * (5.0 / 9.0) + 273.15
-            t_tank_k = (t_tank_f - 32.0) * (5.0 / 9.0) + 273.15
+            t_sep_k = max(1.0, (t_sep_f - 32.0) * (5.0 / 9.0) + 273.15)
+            t_tank_k = max(1.0, (t_tank_f - 32.0) * (5.0 / 9.0) + 273.15)
 
-            sg_oil = 141.5 / (131.5 + api)
-            yg_sep = 1.225 + (0.00164 * t_sep_k) - (1.769 / sg_oil)
-            yg_tank = 1.225 + (0.00164 * t_tank_k) - (1.769 / sg_oil)
+            sg_oil = 141.5 / max(1.0, 131.5 + api)
+            yg_sep = min(20.0, max(-20.0, 1.225 + (0.00164 * t_sep_k) - (1.769 / max(0.001, sg_oil))))
+            yg_tank = min(20.0, max(-20.0, 1.225 + (0.00164 * t_tank_k) - (1.769 / max(0.001, sg_oil))))
 
             term_sep = (p_sep_kpa / (519.7 * (10.0 ** yg_sep))) ** 1.204
             term_tank = (p_tank_kpa / (519.7 * (10.0 ** yg_tank))) ** 1.204
@@ -433,11 +426,12 @@ class TankFlashingCalculator(BaseCalculator):
         # Method 8: Working / Breathing Loss Direct Factor
         # ----------------------------------------------------------------------
         elif meth == "working_loss":
-            factor_kg = float(ef_ch4 or 0.0)
-            gross_ch4_kg = q_bbl * factor_kg
-            gross_ch4_tonnes = gross_ch4_kg / 1000.0
-            gross_co2_tonnes = 0.0
-            total_gas_scf = 0.0
+            gross_ch4_tonnes = (q_bbl * float(ef_ch4 or 0.0)) / 1000.0
+            if gross_ch4_tonnes > 0 and c_ch4 > 0:
+                total_gas_scf = gross_ch4_tonnes / (SCF_TO_M3 * c_ch4 * CONVERSIONS["density_ch4"] / 1000.0)
+                gross_co2_tonnes = total_gas_scf * SCF_TO_M3 * c_co2 * CONVERSIONS["density_co2"] / 1000.0
+            else:
+                total_gas_scf = gross_co2_tonnes = 0.0
 
         # ----------------------------------------------------------------------
         # Method 9: Standard GOR Approach (Backwards Compatible)
@@ -451,7 +445,7 @@ class TankFlashingCalculator(BaseCalculator):
         total_gas_m3 = convert(total_gas_scf, "scf", "m3")
 
         # Disposition & control partitioning
-        ctrl_eff = float(control_efficiency or 0.0)
+        ctrl_eff = normalize_efficiency(control_efficiency, default=0.0)
         split = _split_vent_flare(
             total_gas_m3=total_gas_m3,
             ch4_tonnes=gross_ch4_tonnes,
@@ -492,7 +486,7 @@ class TankFlashingCalculator(BaseCalculator):
                 "gor": gas_oil_ratio,
                 "type": process_type,
                 "method": meth,
-                "control_efficiency": control_efficiency,
+                "control_efficiency": ctrl_eff,
                 "control_type": control_type,
                 "total_gas_scf": total_gas_scf,
                 "total_gas_m3": total_gas_m3,
@@ -502,6 +496,16 @@ class TankFlashingCalculator(BaseCalculator):
                 "tables": "Table 6-20 to 6-27, Eq 6-20 to 6-25",
             },
         )
+
+
+def _parse_frac(v, default, name):
+    raw = default if v in (None, "", "-") else v
+    x = float(str(raw).replace("%", "").strip())
+    if "%" in str(raw) or x > 1.0:
+        x /= 100.0
+    if x < 0.0 or x > 1.0:
+        raise ValueError(f"{name} must be between 0 and 1 (or 0% to 100%): {v}")
+    return x
 
 
 def estimate_gas_z_factor(p_psia, t_kelvin, specific_gravity=0.65):
@@ -575,15 +579,10 @@ class BlowdownCalculator(BaseCalculator):
         uncertainties = uncertainties or {}
         bmode = str(blowdown_mode or "depressurization").lower().strip()
 
-        c_ch4 = float(ch4_content if ch4_content is not None else 0.85)
-        if c_ch4 > 1.0:
-            c_ch4 /= 100.0
-        c_ch4 = max(0.0, min(1.0, c_ch4))
-
-        c_co2 = float(co2_content or 0.0)
-        if c_co2 > 1.0:
-            c_co2 /= 100.0
-        c_co2 = max(0.0, min(1.0, c_co2))
+        c_ch4 = _parse_frac(ch4_content, 0.85, "ch4_content")
+        c_co2 = _parse_frac(co2_content, 0.0, "co2_content")
+        if (c_ch4 + c_co2) > 1.0001:
+            raise ValueError(f"Sum of CH4 ({c_ch4*100:.1f}%) and CO2 ({c_co2*100:.1f}%) cannot exceed 100%")
 
         total_v_std_m3 = 0.0
         total_gas_scf = 0.0
@@ -672,7 +671,7 @@ class BlowdownCalculator(BaseCalculator):
             gross_co2_tonnes = co2_mass_kg / 1000.0
 
         # Split vented and flared
-        ctrl_eff = float(control_efficiency or 0.0)
+        ctrl_eff = normalize_efficiency(control_efficiency, default=0.0)
         split = _split_vent_flare(
             total_gas_m3=total_v_std_m3,
             ch4_tonnes=gross_ch4_tonnes,
@@ -709,7 +708,7 @@ class BlowdownCalculator(BaseCalculator):
                 "events": events,
                 "ch4_content": c_ch4,
                 "co2_content": c_co2,
-                "control_efficiency": control_efficiency,
+                "control_efficiency": ctrl_eff,
                 "operating_temperature": operating_temperature,
                 "mode": bmode,
                 "total_v_std_m3": total_v_std_m3,

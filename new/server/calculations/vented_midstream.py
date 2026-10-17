@@ -23,19 +23,9 @@ API Compendium of Greenhouse Gas Emissions Methodologies for the Oil and Natural
     * §6.6.4 Non-Routine Releases & Pipeline Blowdowns (Table 6-43, Exhibit 6-33)
 """
 
-import math
 from .base import BaseCalculator
-from .units import (
-    CONVERSIONS,
-    STD_PRESSURE_PSIA,
-    STD_TEMP_K,
-    STD_TEMP_R,
-    convert,
-    to_psia,
-    to_kelvin,
-    calculate_co2e,
-    normalize_efficiency,
-)
+from .units import convert, calculate_co2e, normalize_efficiency
+from .vented_production_wells import _route  # noqa: F401  (also used by vented_lng_distribution)
 from .uncertainty import (
     propagate_uncertainty,
     resolve_tier,
@@ -92,6 +82,39 @@ def _split_vent_flare(total_gas_m3, ch4_tonnes, co2_tonnes, ctrl_eff=0.0, hhv=10
         "total_ch4": total_ch4,
         "total_co2": total_co2,
     }
+
+
+def _pick(table, key, what):
+    k = str(key or "").lower().strip()
+    if k not in table:  # an unknown key took the first row's factors
+        raise ValueError(f"Unknown {what} '{key}': {sorted(table)}")
+    return k, table[k]
+
+
+def _count(value, default=1.0):
+    """An entered count (0 included); the default only when nothing was entered (0 was counted as 1)."""
+    n = float(default if value in (None, "") else value)
+    if n < 0:
+        raise ValueError("Counts, miles and days cannot be negative")
+    return n
+
+
+def _parse_gas_comp(ch4_content, co2_content=None, default_ch4=0.85):
+    def _to_f(v, d):
+        if v in (None, "", "-"):
+            return d
+        s = str(v).strip()
+        val = float(s.replace("%", "").strip())
+        return (val / 100.0) if ("%" in s or val > 1.0) else val
+    c_ch4 = _to_f(ch4_content, default_ch4)
+    c_co2 = _to_f(co2_content, 0.0)
+    if c_ch4 < 0:
+        raise ValueError(f"ch4_content cannot be negative: {c_ch4}")
+    if c_co2 < 0:
+        raise ValueError(f"co2_content cannot be negative: {c_co2}")
+    if (c_ch4 + c_co2) > 1.0001:
+        raise ValueError(f"Sum of CH4 ({c_ch4*100:.1f}%) and CO2 ({c_co2*100:.1f}%) exceeds 100%")
+    return c_ch4, c_co2
 
 
 def _propagate_results(total_ch4, total_co2, flared_n2o, uncertainties, factor_source="default", category="vented"):
@@ -158,7 +181,7 @@ class GatheringCompressorVentingCalculator(BaseCalculator):
         source_standard="us_ghgrp",  # "us_ghgrp", "us_zimmerle", "canada_alberta"
         ch4_content=None,
         co2_content=None,
-        control_efficiency=0.0,
+        control_efficiency=None,
         disposition="vented",
         hhv=1020.0,
         ef_n2o=None,
@@ -170,18 +193,9 @@ class GatheringCompressorVentingCalculator(BaseCalculator):
         n_comp = float(compressor_count)
         hrs = max(0.0, float(8760.0 if pressurized_hours is None else pressurized_hours))
 
-        std = str(source_standard or "us_ghgrp").lower().strip()
-        factor_info = self.TABLE_6_30.get(std, self.TABLE_6_30["us_ghgrp"])
+        std, factor_info = _pick(self.TABLE_6_30, source_standard or "us_ghgrp", "Table 6-30 source")
 
-        c_ch4 = factor_info["baseline_ch4_mol"] if ch4_content is None else float(ch4_content)
-        if c_ch4 > 1.0:
-            c_ch4 /= 100.0
-        c_ch4 = max(0.0, min(1.0, c_ch4))
-
-        c_co2 = 0.0 if co2_content is None else float(co2_content)
-        if c_co2 > 1.0:
-            c_co2 /= 100.0
-        c_co2 = max(0.0, min(1.0, c_co2))
+        c_ch4, c_co2 = _parse_gas_comp(ch4_content, co2_content, factor_info["baseline_ch4_mol"])
 
         # Equation 6-29 & Exhibit 6-24:
         # E_CH4 = n * EF_CH4 * T_press * (y_CH4 / y_base)
@@ -197,23 +211,14 @@ class GatheringCompressorVentingCalculator(BaseCalculator):
 
         total_gas_m3 = convert(total_gas_scf, "scf", "m3")
 
-        # Disposition
-        disp = str(disposition or "vented").lower().strip()
-        eff = 0.0
-        if disp == "recovered":
-            gross_ch4_tonnes = 0.0
-            gross_co2_tonnes = 0.0
-        elif disp == "flared":
-            eff = float(control_efficiency if control_efficiency is not None else 0.98)
-            eff = max(0.95, eff)
-        else:
-            eff = float(control_efficiency or 0.0)
+        disp, eff, de, gross_ch4_tonnes, gross_co2_tonnes = _route(disposition, control_efficiency, gross_ch4_tonnes,
+                                                               gross_co2_tonnes)
 
         split = _split_vent_flare(
             total_gas_m3=total_gas_m3,
             ch4_tonnes=gross_ch4_tonnes,
             co2_tonnes=gross_co2_tonnes,
-            ctrl_eff=eff,
+            ctrl_eff=eff, destruction_eff=de,
             hhv=hhv,
             ef_n2o=ef_n2o,
         )
@@ -281,25 +286,18 @@ class GatheringStorageTankCalculator(BaseCalculator):
         component_type="average_tank",  # "average_tank", "single_unit_vent", "thief_hatch"
         ch4_content=None,
         co2_content=0.0,
-        control_efficiency=0.0,
+        control_efficiency=None,
         disposition="vented",
         uncertainties=None,
         gwp_dict=None,
     ):
         uncertainties = uncertainties or {}
-        n_tanks = max(1.0, float(tank_count or 1.0))
+        n_tanks = _count(tank_count)
         hrs = max(0.0, float(8760.0 if hours is None else hours))
 
-        ctype = str(component_type or "average_tank").lower().strip()
-        factor_info = self.TABLE_6_31.get(ctype, self.TABLE_6_31["average_tank"])
+        ctype, factor_info = _pick(self.TABLE_6_31, component_type or "average_tank", "Table 6-31 component")
 
-        c_ch4 = factor_info["baseline_ch4_mol"] if ch4_content is None else float(ch4_content)
-        if c_ch4 > 1.0:
-            c_ch4 /= 100.0
-
-        c_co2 = float(co2_content or 0.0)
-        if c_co2 > 1.0:
-            c_co2 /= 100.0
+        c_ch4, c_co2 = _parse_gas_comp(ch4_content, co2_content, factor_info["baseline_ch4_mol"])
 
         total_gas_scf = n_tanks * factor_info["scf_gas_hr"] * hrs
         total_gas_m3 = convert(total_gas_scf, "scf", "m3")
@@ -307,18 +305,10 @@ class GatheringStorageTankCalculator(BaseCalculator):
         gross_ch4_tonnes = total_gas_scf * c_ch4 * (MW_CH4 / MOLAR_VOL_US) / LB_PER_TONNE
         gross_co2_tonnes = total_gas_scf * c_co2 * (MW_CO2 / MOLAR_VOL_US) / LB_PER_TONNE
 
-        disp = str(disposition or "vented").lower().strip()
-        eff = 0.0
-        if disp == "recovered":
-            gross_ch4_tonnes = 0.0
-            gross_co2_tonnes = 0.0
-        elif disp == "flared":
-            eff = float(control_efficiency if control_efficiency is not None else 0.98)
-            eff = max(0.95, eff)
-        else:
-            eff = float(control_efficiency or 0.0)
+        disp, eff, de, gross_ch4_tonnes, gross_co2_tonnes = _route(disposition, control_efficiency, gross_ch4_tonnes,
+                                                               gross_co2_tonnes)
 
-        split = _split_vent_flare(total_gas_m3, gross_ch4_tonnes, gross_co2_tonnes, ctrl_eff=eff)
+        split = _split_vent_flare(total_gas_m3, gross_ch4_tonnes, gross_co2_tonnes, ctrl_eff=eff, destruction_eff=de)
         total_ch4 = split["total_ch4"]
         total_co2 = split["total_co2"]
 
@@ -370,23 +360,16 @@ class GatheringNonRoutineVentingCalculator(BaseCalculator):
         events_or_count=1.0,
         ch4_content=None,
         co2_content=0.0,
-        control_efficiency=0.0,
+        control_efficiency=None,
         disposition="vented",
         uncertainties=None,
         gwp_dict=None,
     ):
         uncertainties = uncertainties or {}
-        act = str(activity or "prv_releases").lower().strip()
-        factor_info = self.TABLE_6_33.get(act, self.TABLE_6_33["prv_releases"])
+        act, factor_info = _pick(self.TABLE_6_33, activity or "prv_releases", "Table 6-33 activity")
         n = max(0.0, float(1.0 if events_or_count is None else events_or_count))
 
-        c_ch4 = factor_info["baseline_ch4_mol"] if ch4_content is None else float(ch4_content)
-        if c_ch4 > 1.0:
-            c_ch4 /= 100.0
-
-        c_co2 = float(co2_content or 0.0)
-        if c_co2 > 1.0:
-            c_co2 /= 100.0
+        c_ch4, c_co2 = _parse_gas_comp(ch4_content, co2_content, factor_info["baseline_ch4_mol"])
 
         total_gas_scf = n * factor_info["scf_gas"]
         total_gas_m3 = convert(total_gas_scf, "scf", "m3")
@@ -394,18 +377,10 @@ class GatheringNonRoutineVentingCalculator(BaseCalculator):
         gross_ch4_tonnes = total_gas_scf * c_ch4 * (MW_CH4 / MOLAR_VOL_US) / LB_PER_TONNE
         gross_co2_tonnes = total_gas_scf * c_co2 * (MW_CO2 / MOLAR_VOL_US) / LB_PER_TONNE
 
-        disp = str(disposition or "vented").lower().strip()
-        eff = 0.0
-        if disp == "recovered":
-            gross_ch4_tonnes = 0.0
-            gross_co2_tonnes = 0.0
-        elif disp == "flared":
-            eff = float(control_efficiency if control_efficiency is not None else 0.98)
-            eff = max(0.95, eff)
-        else:
-            eff = float(control_efficiency or 0.0)
+        disp, eff, de, gross_ch4_tonnes, gross_co2_tonnes = _route(disposition, control_efficiency, gross_ch4_tonnes,
+                                                               gross_co2_tonnes)
 
-        split = _split_vent_flare(total_gas_m3, gross_ch4_tonnes, gross_co2_tonnes, ctrl_eff=eff)
+        split = _split_vent_flare(total_gas_m3, gross_ch4_tonnes, gross_co2_tonnes, ctrl_eff=eff, destruction_eff=de)
         total_ch4 = split["total_ch4"]
         total_co2 = split["total_co2"]
 
@@ -459,7 +434,7 @@ class ProcessingDehydrationCalculator(BaseCalculator):
         has_gas_assisted_pump=False,
         ch4_content=None,
         co2_content=None,
-        control_efficiency=0.0,
+        control_efficiency=None,
         disposition="vented",
         hhv=1020.0,
         ef_n2o=None,
@@ -467,7 +442,7 @@ class ProcessingDehydrationCalculator(BaseCalculator):
         gwp_dict=None,
     ):
         uncertainties = uncertainties or {}
-        days = max(1.0, float(operating_days or 365.0))
+        days = _count(operating_days, 365.0)
         if gas_throughput_mmscfd is not None:
             annual_mmscf = float(gas_throughput_mmscfd) * days
         elif gas_throughput_mmscf_yr is not None:
@@ -475,13 +450,7 @@ class ProcessingDehydrationCalculator(BaseCalculator):
         else:
             raise ValueError("gas_throughput_mmscfd or gas_throughput_mmscf_yr must be provided")
 
-        c_ch4 = 0.868 if ch4_content is None else float(ch4_content)
-        if c_ch4 > 1.0:
-            c_ch4 /= 100.0
-
-        c_co2 = 0.0 if co2_content is None else float(co2_content)
-        if c_co2 > 1.0:
-            c_co2 /= 100.0
+        c_ch4, c_co2 = _parse_gas_comp(ch4_content, co2_content, 0.868)
 
         # Exhibit 6-28:
         # Dehydrator CH4: annual_mmscf * 0.0023315 * (c_ch4 / 0.868)
@@ -501,18 +470,10 @@ class ProcessingDehydrationCalculator(BaseCalculator):
         total_gas_scf = (gross_ch4_tonnes * LB_PER_TONNE * MOLAR_VOL_US) / (max(0.001, c_ch4) * MW_CH4)
         total_gas_m3 = convert(total_gas_scf, "scf", "m3")
 
-        disp = str(disposition or "vented").lower().strip()
-        eff = 0.0
-        if disp == "recovered":
-            gross_ch4_tonnes = 0.0
-            gross_co2_tonnes = 0.0
-        elif disp == "flared":
-            eff = float(control_efficiency if control_efficiency is not None else 0.98)
-            eff = max(0.95, eff)
-        else:
-            eff = float(control_efficiency or 0.0)
+        disp, eff, de, gross_ch4_tonnes, gross_co2_tonnes = _route(disposition, control_efficiency, gross_ch4_tonnes,
+                                                               gross_co2_tonnes)
 
-        split = _split_vent_flare(total_gas_m3, gross_ch4_tonnes, gross_co2_tonnes, ctrl_eff=eff, hhv=hhv, ef_n2o=ef_n2o)
+        split = _split_vent_flare(total_gas_m3, gross_ch4_tonnes, gross_co2_tonnes, ctrl_eff=eff, destruction_eff=de, hhv=hhv, ef_n2o=ef_n2o)
         total_ch4 = split["total_ch4"]
         total_co2 = split["total_co2"]
 
@@ -558,10 +519,10 @@ class ProcessingBlanketedTankCalculator(BaseCalculator):
         self,
         liquid_displacement_bbl=None,
         liquid_displacement_m3=None,
-        vapor_temperature_f=75.0,
-        ch4_content=0.82,
-        co2_content=0.01,
-        control_efficiency=0.0,
+        vapor_temperature_f=None,    # Exhibit 6-29 used 75 F; no default
+        ch4_content=None,            # Exhibit 6-29 used 82 %; no default
+        co2_content=0.0,
+        control_efficiency=None,
         disposition="vented",
         uncertainties=None,
         gwp_dict=None,
@@ -576,35 +537,24 @@ class ProcessingBlanketedTankCalculator(BaseCalculator):
         else:
             raise ValueError("liquid_displacement_bbl or liquid_displacement_m3 must be provided")
 
-        t_f = float(vapor_temperature_f or 75.0)
+        self.validate_inputs({"ch4_content": ch4_content}, ["ch4_content"])
+        if vapor_temperature_f in (None, ""):
+            raise ValueError("Missing required input: vapor_temperature_f")
+        t_f = float(vapor_temperature_f)  # 0 F is 0 F (it was 75 F)
         t_r = t_f + 459.67
         # Convert acf to scf at 60°F (519.67 °R)
         v_scf = v_acf * (519.67 / t_r)
         total_gas_m3 = convert(v_scf, "scf", "m3")
 
-        c_ch4 = float(ch4_content if ch4_content is not None else 0.82)
-        if c_ch4 > 1.0:
-            c_ch4 /= 100.0
-
-        c_co2 = float(co2_content if co2_content is not None else 0.01)
-        if c_co2 > 1.0:
-            c_co2 /= 100.0
+        c_ch4, c_co2 = _parse_gas_comp(ch4_content, co2_content, 0.82)
 
         gross_ch4_tonnes = v_scf * c_ch4 * (MW_CH4 / MOLAR_VOL_US) / LB_PER_TONNE
         gross_co2_tonnes = v_scf * c_co2 * (MW_CO2 / MOLAR_VOL_US) / LB_PER_TONNE
 
-        disp = str(disposition or "vented").lower().strip()
-        eff = 0.0
-        if disp == "recovered":
-            gross_ch4_tonnes = 0.0
-            gross_co2_tonnes = 0.0
-        elif disp == "flared":
-            eff = float(control_efficiency if control_efficiency is not None else 0.98)
-            eff = max(0.95, eff)
-        else:
-            eff = float(control_efficiency or 0.0)
+        disp, eff, de, gross_ch4_tonnes, gross_co2_tonnes = _route(disposition, control_efficiency, gross_ch4_tonnes,
+                                                               gross_co2_tonnes)
 
-        split = _split_vent_flare(total_gas_m3, gross_ch4_tonnes, gross_co2_tonnes, ctrl_eff=eff)
+        split = _split_vent_flare(total_gas_m3, gross_ch4_tonnes, gross_co2_tonnes, ctrl_eff=eff, destruction_eff=de)
         total_ch4 = split["total_ch4"]
         total_co2 = split["total_co2"]
 
@@ -649,13 +599,13 @@ class ProcessingNonRoutineCalculator(BaseCalculator):
         operating_days=365.0,
         ch4_content=None,
         co2_content=0.0,
-        control_efficiency=0.0,
+        control_efficiency=None,
         disposition="vented",
         uncertainties=None,
         gwp_dict=None,
     ):
         uncertainties = uncertainties or {}
-        days = max(1.0, float(operating_days or 365.0))
+        days = _count(operating_days, 365.0)
 
         if gas_throughput_m3_day is not None:
             m3_yr = float(gas_throughput_m3_day) * days
@@ -671,17 +621,10 @@ class ProcessingNonRoutineCalculator(BaseCalculator):
         total_gas_scf = (gross_ch4_tonnes * LB_PER_TONNE * MOLAR_VOL_US) / (0.868 * MW_CH4)
         total_gas_m3 = convert(total_gas_scf, "scf", "m3")
 
-        disp = str(disposition or "vented").lower().strip()
-        eff = 0.0
-        if disp == "recovered":
-            gross_ch4_tonnes = 0.0
-        elif disp == "flared":
-            eff = float(control_efficiency if control_efficiency is not None else 0.98)
-            eff = max(0.95, eff)
-        else:
-            eff = float(control_efficiency or 0.0)
+        disp, eff, de, gross_ch4_tonnes, gross_co2_tonnes = _route(disposition, control_efficiency, gross_ch4_tonnes,
+                                                               gross_co2_tonnes)
 
-        split = _split_vent_flare(total_gas_m3, gross_ch4_tonnes, gross_co2_tonnes, ctrl_eff=eff)
+        split = _split_vent_flare(total_gas_m3, gross_ch4_tonnes, gross_co2_tonnes, ctrl_eff=eff, destruction_eff=de)
         total_ch4 = split["total_ch4"]
         total_co2 = split["total_co2"]
 
@@ -741,30 +684,26 @@ class TransmissionCompressorCalculator(BaseCalculator):
         compressor_type="reciprocating",  # "reciprocating", "centrifugal"
         compressor_count=1.0,
         # Reciprocating operating hours (Exhibit 6-31)
-        operating_hours=7970.0,
-        standby_pressurized_hours=630.0,
+        operating_hours=None,          # Exhibit 6-31 used 7,970 h; no default
+        standby_pressurized_hours=0.0,
         # Centrifugal seal inputs (Exhibit 6-32)
         wet_seal_count=None,
         dry_seal_count=None,
         use_annual_average_factor=True,
-        # Gas composition
-        ch4_content=0.90,
+        # Gas composition (Tables 6-40 / 6-41 basis 93.4 mol %; Exhibit 6-31 used a site 90 %)
+        ch4_content=None,
         co2_content=0.0,
-        control_efficiency=0.0,
+        control_efficiency=None,
         disposition="vented",
         uncertainties=None,
         gwp_dict=None,
     ):
         uncertainties = uncertainties or {}
         ctype = str(compressor_type or "reciprocating").lower().strip()
+        if ctype not in ("reciprocating", "centrifugal"):
+            raise ValueError(f"Unknown compressor type '{compressor_type}': reciprocating or centrifugal")
 
-        c_ch4 = float(ch4_content if ch4_content is not None else 0.90)
-        if c_ch4 > 1.0:
-            c_ch4 /= 100.0
-
-        c_co2 = float(co2_content or 0.0)
-        if c_co2 > 1.0:
-            c_co2 /= 100.0
+        c_ch4, c_co2 = _parse_gas_comp(ch4_content, co2_content, 0.934)
 
         gross_ch4_tonnes = 0.0
         gross_co2_tonnes = 0.0
@@ -772,8 +711,10 @@ class TransmissionCompressorCalculator(BaseCalculator):
 
         if ctype == "centrifugal":
             # Exhibit 6-32: Centrifugal compressors with wet and dry seals
-            n_wet = float(wet_seal_count if wet_seal_count is not None else compressor_count)
-            n_dry = float(dry_seal_count or 0.0)
+            if wet_seal_count in (None, "") and dry_seal_count in (None, ""):  # all were taken as wet seals
+                raise ValueError("Centrifugal compressors need the number with wet seals and / or with dry seals")
+            n_wet = _count(wet_seal_count, 0.0)
+            n_dry = _count(dry_seal_count, 0.0)
 
             # Table 6-41 Zimmerle 2015 average factor scaled by site CH4 mole fraction:
             # 163.7 tonnes CH4/compressor-yr for wet seal, 51.1 for dry seal (at 95% CH4)
@@ -787,8 +728,10 @@ class TransmissionCompressorCalculator(BaseCalculator):
 
         else:
             # Exhibit 6-31: Reciprocating compressor rod packing
-            n_comp = float(compressor_count or 1.0)
-            hrs_op = float(operating_hours or 0.0)
+            n_comp = _count(compressor_count)
+            if operating_hours in (None, ""):
+                raise ValueError("Missing required input: operating_hours (rod packing, Equation 6-29)")
+            hrs_op = float(operating_hours)
             hrs_stby = float(standby_pressurized_hours or 0.0)
 
             scf_op = n_comp * self.TABLE_6_40_RECIP["operating"] * hrs_op
@@ -800,18 +743,10 @@ class TransmissionCompressorCalculator(BaseCalculator):
 
         total_gas_m3 = convert(total_gas_scf, "scf", "m3")
 
-        disp = str(disposition or "vented").lower().strip()
-        eff = 0.0
-        if disp == "recovered":
-            gross_ch4_tonnes = 0.0
-            gross_co2_tonnes = 0.0
-        elif disp == "flared":
-            eff = float(control_efficiency if control_efficiency is not None else 0.98)
-            eff = max(0.95, eff)
-        else:
-            eff = float(control_efficiency or 0.0)
+        disp, eff, de, gross_ch4_tonnes, gross_co2_tonnes = _route(disposition, control_efficiency, gross_ch4_tonnes,
+                                                               gross_co2_tonnes)
 
-        split = _split_vent_flare(total_gas_m3, gross_ch4_tonnes, gross_co2_tonnes, ctrl_eff=eff)
+        split = _split_vent_flare(total_gas_m3, gross_ch4_tonnes, gross_co2_tonnes, ctrl_eff=eff, destruction_eff=de)
         total_ch4 = split["total_ch4"]
         total_co2 = split["total_co2"]
 
@@ -856,6 +791,7 @@ class TransmissionNonRoutineCalculator(BaseCalculator):
         "pipeline_blowdown": {"ef_tonnes_ch4": 0.6135, "scf_gas": 34200.0, "baseline_ch4_mol": 0.934},
         "compressor_blowdowns": {"ef_tonnes_ch4": 47.14, "scf_gas": 2631000.0, "baseline_ch4_mol": 0.934},
         "prv_lifts": {"ef_tonnes_ch4": 3.68, "scf_gas": 206000.0, "baseline_ch4_mol": 0.934},
+        "engine_starts": {"ef_tonnes_ch4": 29.06, "scf_gas": 1622000.0, "baseline_ch4_mol": 0.934},
         "esd_activation": {"ef_tonnes_ch4": 7.97, "scf_gas": 444000.0, "baseline_ch4_mol": 0.934},
         "mr_station": {"ef_tonnes_ch4": 13.75, "scf_gas": 756000.0, "baseline_ch4_mol": 0.934},
     }
@@ -869,23 +805,16 @@ class TransmissionNonRoutineCalculator(BaseCalculator):
         count_or_miles=1.0,
         ch4_content=None,
         co2_content=0.0,
-        control_efficiency=0.0,
+        control_efficiency=None,
         disposition="vented",
         uncertainties=None,
         gwp_dict=None,
     ):
         uncertainties = uncertainties or {}
-        act = str(activity or "transmission_station").lower().strip()
-        factor_info = self.TABLE_6_43.get(act, self.TABLE_6_43["transmission_station"])
-        n = max(0.0, float(count_or_miles or 1.0))
+        act, factor_info = _pick(self.TABLE_6_43, activity or "transmission_station", "Table 6-43 activity")
+        n = _count(count_or_miles)
 
-        c_ch4 = factor_info["baseline_ch4_mol"] if ch4_content is None else float(ch4_content)
-        if c_ch4 > 1.0:
-            c_ch4 /= 100.0
-
-        c_co2 = float(co2_content or 0.0)
-        if c_co2 > 1.0:
-            c_co2 /= 100.0
+        c_ch4, c_co2 = _parse_gas_comp(ch4_content, co2_content, factor_info["baseline_ch4_mol"])
 
         # Exhibit 6-33 uses factor uncorrected if composition is typical
         gross_ch4_tonnes = n * factor_info["ef_tonnes_ch4"] * (c_ch4 / factor_info["baseline_ch4_mol"])
@@ -893,18 +822,10 @@ class TransmissionNonRoutineCalculator(BaseCalculator):
         gross_co2_tonnes = total_gas_scf * c_co2 * (MW_CO2 / MOLAR_VOL_US) / LB_PER_TONNE
         total_gas_m3 = convert(total_gas_scf, "scf", "m3")
 
-        disp = str(disposition or "vented").lower().strip()
-        eff = 0.0
-        if disp == "recovered":
-            gross_ch4_tonnes = 0.0
-            gross_co2_tonnes = 0.0
-        elif disp == "flared":
-            eff = float(control_efficiency if control_efficiency is not None else 0.98)
-            eff = max(0.95, eff)
-        else:
-            eff = float(control_efficiency or 0.0)
+        disp, eff, de, gross_ch4_tonnes, gross_co2_tonnes = _route(disposition, control_efficiency, gross_ch4_tonnes,
+                                                               gross_co2_tonnes)
 
-        split = _split_vent_flare(total_gas_m3, gross_ch4_tonnes, gross_co2_tonnes, ctrl_eff=eff)
+        split = _split_vent_flare(total_gas_m3, gross_ch4_tonnes, gross_co2_tonnes, ctrl_eff=eff, destruction_eff=de)
         total_ch4 = split["total_ch4"]
         total_co2 = split["total_co2"]
 

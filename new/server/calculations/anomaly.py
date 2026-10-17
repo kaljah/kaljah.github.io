@@ -53,7 +53,7 @@ class AnomalyDetector:
         n = len(historical)
         mean = sum(historical) / n
         # Use Bessel's correction (sample variance n-1) for small sample sizes
-        variance = sum((x - mean) ** 2 for x in historical) / max(1, n - 1 if n > 1 else 1)
+        variance = sum((x - mean) ** 2 for x in historical) / (n - 1)
         std = math.sqrt(variance) if variance > 0 else 0
 
         if std == 0:
@@ -64,7 +64,7 @@ class AnomalyDetector:
                     "z_score": None,
                     "mean": mean,
                     "std": 0,
-                    "expected_range": [mean * 0.5, mean * 1.5] if abs(mean) > 0 else [0.0, 0.0],
+                    "expected_range": [min(mean * 0.5, mean * 1.5), max(mean * 0.5, mean * 1.5)] if abs(mean) > 0 else [0.0, 0.0],
                     "reason": "constant_history_deviation",
                     "message": f"Historical values are constant ({mean:.1f}) but new value is {value:.1f}."
                 }
@@ -81,14 +81,10 @@ class AnomalyDetector:
         lower_fence = 0.0
         upper_fence = 0.0
         if len(sorted_h) >= 4:
-            def _quantile(sorted_vals, p):
-                n = len(sorted_vals)
-                pos = p * (n - 1)
+            def _quantile(sorted_vals, p):  # linear interpolation; p < 1, so idx + 1 is always in range
+                pos = p * (len(sorted_vals) - 1)
                 idx = int(pos)
-                frac = pos - idx
-                if idx + 1 < n:
-                    return sorted_vals[idx] + frac * (sorted_vals[idx + 1] - sorted_vals[idx])
-                return sorted_vals[idx]
+                return sorted_vals[idx] + (pos - idx) * (sorted_vals[idx + 1] - sorted_vals[idx])
 
             q1 = _quantile(sorted_h, 0.25)
             q3 = _quantile(sorted_h, 0.75)
@@ -240,13 +236,15 @@ PLAUSIBILITY_FLAG_TCO2E = 1e6
 def plausibility_check(co2e_tonnes, z_flag=None):
     """Return (verdict, message): verdict is "reject", "flag" or None."""
     try:
-        v = float(co2e_tonnes or 0)
+        v = float(co2e_tonnes if co2e_tonnes is not None else 0)
     except (TypeError, ValueError):
         return "reject", "Calculated emissions are not a number"
-    if v > PLAUSIBILITY_REJECT_TCO2E:
+    if math.isnan(v) or math.isinf(v):
+        return "reject", "Calculated emissions are not a valid finite number"
+    if abs(v) > PLAUSIBILITY_REJECT_TCO2E:
         return "reject", (f"Implausible value: {v:,.0f} tCO2e in one record exceeds {PLAUSIBILITY_REJECT_TCO2E:,.0f} t; "
                           "check the quantity and unit")
-    if v > PLAUSIBILITY_FLAG_TCO2E:
+    if abs(v) > PLAUSIBILITY_FLAG_TCO2E:
         return "flag", f"Plausibility review: {v:,.0f} tCO2e in one record exceeds {PLAUSIBILITY_FLAG_TCO2E:,.0f} t"
     if z_flag:
         return "flag", z_flag

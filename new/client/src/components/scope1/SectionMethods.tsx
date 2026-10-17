@@ -224,8 +224,8 @@ export const VentedGasForm: React.FC<VentedGasFormProps> = ({ data, onChange }) 
       {m === "actual" && (
         <FieldGrid min={160}>
           <NumUnit label={t("Actual gas volume")} field="actual_volume" unitField="actual_unit" units={["ft3", "bbl", "gal", "m3"]} data={data} onChange={onChange} required />
-          <Num label={t("Temperature (°F)")} field="gas_temp_f" data={data} onChange={onChange} placeholder="60" />
-          <Num label={t("Pressure (atm)")} field="gas_pressure_atm" data={data} onChange={onChange} placeholder="1" />
+          <Num label={t("Temperature (°F)")} field="gas_temp_f" data={data} onChange={onChange} placeholder={t("required")} />
+          <Num label={t("Pressure (atm)")} field="gas_pressure_atm" data={data} onChange={onChange} placeholder={t("required")} />
         </FieldGrid>
       )}
       {m === "desiccant" && (
@@ -234,14 +234,14 @@ export const VentedGasForm: React.FC<VentedGasFormProps> = ({ data, onChange }) 
           <Num label={t("Vessel diameter (ft)")} field="vessel_diameter_ft" data={data} onChange={onChange} required />
           <Num label={t("Gas pressure (psig)")} field="vessel_pressure_psig" data={data} onChange={onChange} required />
           <Num label={t("Refills per year")} field="refills" data={data} onChange={onChange} required />
-          <Num label={t("Gas-filled share (%)")} field="gas_fraction" data={data} onChange={onChange} placeholder="45" />
+          <Num label={t("Gas-filled share (%)")} field="gas_fraction" data={data} onChange={onChange} placeholder={t("required")} />
         </FieldGrid>
       )}
       {m === "co2_mass" && (
         <FieldGrid min={160}>
           <Num label={t("Volume released (m³)")} field="physical_volume_m3" data={data} onChange={onChange} required />
           <Num label={t("CO₂ density (kg/m³)")} field="co2_density" data={data} onChange={onChange} required />
-          <Num label={t("CO₂ (wt %)")} field="co2_wt_pct" data={data} onChange={onChange} placeholder="100" />
+          <Num label={t("CO₂ (wt %)")} field="co2_wt_pct" data={data} onChange={onChange} placeholder={t("required")} />
           <Num label={t("Events")} field="events" data={data} onChange={onChange} placeholder="1" />
         </FieldGrid>
       )}

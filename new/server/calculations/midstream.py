@@ -1,19 +1,11 @@
 """
 API Compendium 2021 - Section 6: Midstream & Process Emissions
 Implementation of Acid Gas Removal (AGR / Amine Units) with Table 6-5 Methane Slip,
-and Glycol Dehydrators using API §6.6 / GRI-GLYCalc Parametric Solubility Models.
+and glycol dehydrators by API Compendium Table 6-17.
 """
 
-import math
 from .base import BaseCalculator
-from .units import (
-    CONVERSIONS,
-    calculate_co2e,
-    convert,
-    to_psia,
-    to_fahrenheit,
-    normalize_efficiency,
-)
+from .units import CONVERSIONS, calculate_co2e, convert, normalize_efficiency
 from .uncertainty import propagate_uncertainty, resolve_tier, resolve_ef_uncertainty
 
 
@@ -53,14 +45,24 @@ class AGRCalculator(BaseCalculator):
         )
 
         # Throughput in scf
-        throughput_scf = float(throughput) * 1_000_000.0
+        tp = float(throughput)
+        if tp < 0:
+            raise ValueError("Throughput cannot be negative")
+        throughput_scf = tp * 1_000_000.0
 
         # 1. CO2 Mass Balance Venting with Contactor Shrinkage Correction (API Compendium 2021 Eq. 6-7)
-        cin = float(co2_in or 0.0)
-        cout = float(co2_out or 0.0)
-        if cin > 1.0 or cout > 1.0:
+        s_cin = str(co2_in or 0.0).replace("%", "").strip()
+        s_cout = str(co2_out or 0.0).replace("%", "").strip()
+        cin = float(s_cin)
+        cout = float(s_cout)
+        if cin < 0.0 or cout < 0.0:
+            raise ValueError("CO2 concentrations cannot be negative")
+        in_pct = ("%" in str(co2_in) or "%" in str(co2_out) or cin > 1.0 or cout > 1.0)
+        if in_pct:
             cin /= 100.0
             cout /= 100.0
+        if cin > 1.0 or cout > 1.0:
+            raise ValueError("CO2 concentration cannot exceed 100 %")
         diff_co2 = max(0.0, cin - cout)
         if cout >= 1.0:
             raise ValueError("Outlet CO2 must be below 100 %")
@@ -75,10 +77,14 @@ class AGRCalculator(BaseCalculator):
         # Table 6-19 AGR vent factor, 0.0185 tonne CH4 per 10^6 scf treated (Exhibit 6-17). The former
         # 0.1 % default had no source.
         if ch4_slip_fraction is not None:
-            slip_rate = max(0.0, float(ch4_slip_fraction))
-            if slip_rate > 1.0:
+            s_slip = str(ch4_slip_fraction).strip()
+            is_pct = "%" in s_slip
+            slip_rate = float(s_slip.replace("%", "").strip())
+            if is_pct:
+                slip_rate /= 100.0
+            if not (0.0 <= slip_rate <= 1.0):
                 raise ValueError("CH4 slip is a fraction of the inlet CH4 (0-1)")
-            c_ch4 = max(0.0, float(ch4_in if ch4_in is not None else 0.85))
+            c_ch4 = max(0.0, float(str(ch4_in if ch4_in is not None else 0.85).replace("%", "").strip()))
             if c_ch4 > 1.0:
                 c_ch4 /= 100.0
             ch4_slipped_m3 = convert(throughput_scf * c_ch4 * slip_rate, "scf", "m3")
@@ -135,8 +141,8 @@ class AGRCalculator(BaseCalculator):
             total_co2e=total_co2e,
             inputs={
                 "throughput_mmscf": throughput,
-                "co2_in_pct": float(co2_in) * 100.0,
-                "co2_out_pct": float(co2_out or 0.0) * 100.0,
+                "co2_in_pct": cin * 100.0,
+                "co2_out_pct": cout * 100.0,
                 "ch4_slip_pct": slip_rate * 100.0 if slip_rate is not None else None,
                 "control_eff_pct": ctrl_eff * 100.0,
             },
@@ -149,53 +155,32 @@ class AGRCalculator(BaseCalculator):
 
 class DehydratorCalculator(BaseCalculator):
     def __init__(self):
-        super().__init__("Glycol Dehydrator", "Section 6.6")
+        super().__init__("Glycol Dehydrator", "Section 6.3.8.1")
 
-    def calculate(
-        self,
-        throughput=None,
-        pump_rate=None,
-        pump_unit="gph",
-        hours=8760,
-        ch4_content=0.85,
-        control_eff=0.0,
-        uncertainties=None,
-        contactor_pressure=800.0,
-        press_unit="psig",
-        contactor_temperature=100.0,
-        temp_unit="F",
-        has_flash_tank=True,
-        flash_control_eff=0.0,
-        still_control_type="none",
-        flash_control_type="none",
-        stripping_gas_rate=0.0,
-        stripping_gas_unit="scf/hr",
-        stripping_gas_scf=None,
-        gwp_dict=None,
-        **kwargs,
-    ):
-        """
-        API Compendium 2021 §6.6 & GRI-GLYCalc Parametric Solubility Model (CALC-02 Remediation).
-
-        Methane solubility in Triethylene Glycol (TEG) is calculated as a function of
-        contactor operating pressure, contactor operating temperature, and gas composition:
-
-        S_CH4 (scf/gal) = 0.0032 * (P_psia)^0.96 * exp(-0.0022 * (T_F - 60)) * X_CH4
-
-        Emissions are partitioned between Flash Tank separator and Regenerator Still Column Vent.
-        """
+    def calculate(self, throughput=None, pump_rate=None, ch4_content=None, control_eff=0.0, uncertainties=None,
+                  gwp_dict=None, **kwargs):
+        """API Compendium 2021 Table 6-17: uncontrolled glycol dehydration, 0.0052859 t CH4 per 10^6 scf
+        processed at 78.8 mol % CH4, scaled to the site CH4 content (Exhibit 6-13)."""
         uncertainties = uncertainties or {}
 
         # 1. Check if Tier 1 (Default Emission Factor based on throughput alone)
         tp = throughput if throughput is not None else kwargs.get("gas_throughput")
-        if (pump_rate is None or float(pump_rate or 0) <= 0) and tp is not None:
+        if (pump_rate is None or float(pump_rate or 0) <= 0) and tp is not None:  # Tier 1
             # API Compendium 2021 Table 6-17 (production segment, uncontrolled glycol dehydration, excludes
             # gas-assisted pump emissions): 0.0052859 t CH4 / 10^6 scf processed at 78.8 mol % CH4;
             # scaled by the site CH4 content (Exhibit 6-13). The former 0.266 t/MMscf had no source.
             tp_mmscf = float(tp)
+            if tp_mmscf < 0:
+                raise ValueError("Throughput cannot be negative")
             eff = normalize_efficiency(control_eff, default=0.0)
-            c = float(ch4_content if ch4_content is not None else 0.788)
-            c = c / 100.0 if c > 1.0 else c
+            s_c = str(ch4_content if ch4_content is not None else 0.788).replace("%", "").strip()
+            c = float(s_c)
+            if c < 0:
+                raise ValueError("CH4 content cannot be negative")
+            if (ch4_content is not None and "%" in str(ch4_content)) or c > 1.0:
+                c /= 100.0
+            if c > 1.0:
+                raise ValueError("CH4 content cannot exceed 100 %")
             default_ef = 0.0052859 * (c / 0.788) * (1.0 - eff)
             ch4_tonnes = tp_mmscf * default_ef
 
@@ -223,158 +208,8 @@ class DehydratorCalculator(BaseCalculator):
                 },
             )
 
-        # 2. Tier 3 Parametric Engineering Calculation
-        self.validate_inputs(
-            {"pump_rate": pump_rate, "hours": hours}, ["pump_rate", "hours"]
-        )
-
-        # Convert pump rate to US gallons per hour (gal/hr)
-        rate_val = float(pump_rate)
-        rate_gph = rate_val
-        pu = str(pump_unit).strip().lower()
-        if pu in ["lph", "l/h", "liter/hr", "liters/hr"]:
-            rate_gph = convert(rate_val, "l", "gal")
-        elif pu in ["m3h", "m3/h", "m3_hr"]:
-            rate_gph = convert(rate_val, "m3", "gal")
-        elif pu in ["gpm", "gal/min"]:
-            rate_gph = rate_val * 60.0
-
-        op_hours = float(hours)
-        ch4_frac = max(
-            0.0, min(1.0, float(ch4_content if ch4_content is not None else 0.85))
-        )
-
-        # Contactor conditions and Henry's Law Solubility Model
-        if contactor_pressure is not None and float(contactor_pressure) > 0:
-            p_psia = to_psia(contactor_pressure, press_unit)
-            t_f = to_fahrenheit(contactor_temperature, temp_unit)
-
-            # NOT an API Compendium method: a parametric solubility estimate with no published source
-            # (the Compendium gives Tables 6-17 / 6-18 / 6-35 / 6-36 factors, or GRI-GLYCalc). The dispatcher
-            # refuses glycol circulation inputs, so records never reach this branch.
-            # S_CH4 = 0.0032 * (P_psia)^0.96 * exp(-0.0022 * (T_F - 60)) * X_CH4
-            p_term = math.pow(max(14.7, p_psia), 0.96)
-            t_term = math.exp(-0.0022 * (t_f - 60.0))
-            solubility_scf_per_gal = 0.0032 * p_term * t_term * ch4_frac
-        else:
-            # rule of thumb with no Compendium source (Table 6-5 is well completions): 3.0 scf CH4 / gal TEG
-            p_psia = 800.0
-            t_f = 100.0
-            solubility_scf_per_gal = 3.0 * ch4_frac
-
-        # Total dissolved methane across annual operating hours
-        total_ch4_scf = rate_gph * solubility_scf_per_gal * op_hours
-
-        # Stripping gas calculation (API Compendium §6.6 / GRI-GLYCalc / EPA Subpart W §98.233(e))
-        # Stripping gas (fuel gas or methane) is injected into the regenerator reboiler/stripping column
-        # and exits overhead with the still vent gas stream.
-        total_stripping_scf = 0.0
-        if stripping_gas_scf is not None and float(stripping_gas_scf or 0) > 0:
-            total_stripping_scf = float(stripping_gas_scf)
-        elif stripping_gas_rate is not None and float(stripping_gas_rate or 0) > 0:
-            s_rate = float(stripping_gas_rate)
-            s_unit = str(stripping_gas_unit or "scf/hr").strip().lower()
-            if s_unit in ["m3/hr", "m3h", "m3_hr", "m3"]:
-                s_rate = convert(s_rate, "m3", "scf")
-            elif s_unit in ["scf/gal", "scf/gallon"]:
-                s_rate = s_rate * rate_gph
-            total_stripping_scf = s_rate * op_hours
-        stripping_scf = total_stripping_scf * ch4_frac
-
-        # Stream Partitioning & Control Systems:
-        # If Flash Tank is present: ~80% flashes off in flash tank, ~20% goes to regenerator still vent.
-        # Injected stripping gas joins the regenerator still vent stream.
-        # If no Flash Tank: 100% of dissolved gas plus stripping gas goes directly to regenerator still vent.
-        still_eff = normalize_efficiency(control_eff, default=0.0)
-        flash_eff = normalize_efficiency(flash_control_eff, default=0.0)
-
-        # Auto-detect still control efficiency from device type if not explicitly overridden
-        s_type = str(still_control_type).strip().lower()
-        if still_eff == 0.0:
-            if s_type == "flare" or s_type == "combustor":
-                still_eff = 0.98
-            elif s_type == "thermal_oxidizer":
-                still_eff = 0.99
-            elif s_type == "condenser":
-                still_eff = 0.0  # Condensers do not condense methane (boiling point -161.5 C / API Compendium 6.6)
-            elif s_type == "vru":
-                still_eff = 0.95
-
-        still_is_combustion = s_type in ("flare", "combustor", "thermal_oxidizer", "incinerator")
-        f_type = str(flash_control_type or "").strip().lower()
-        flash_is_combustion = f_type in ("flare", "combustor", "thermal_oxidizer", "incinerator")
-
-        if has_flash_tank:
-            flash_gas_scf = total_ch4_scf * 0.80
-            still_gas_scf = (total_ch4_scf * 0.20) + stripping_scf
-            ch4_emitted_scf = (flash_gas_scf * (1.0 - flash_eff)) + (
-                still_gas_scf * (1.0 - still_eff)
-            )
-            ch4_combusted_scf = (
-                (still_gas_scf * still_eff if still_is_combustion else 0.0)
-                + (flash_gas_scf * flash_eff if flash_is_combustion else 0.0)
-            )
-        else:
-            still_gas_scf = total_ch4_scf + stripping_scf
-            ch4_emitted_scf = still_gas_scf * (1.0 - still_eff)
-            ch4_combusted_scf = (still_gas_scf * still_eff) if still_is_combustion else 0.0
-
-        # Convert scf to metric tonnes
-        density_ch4 = CONVERSIONS["density_ch4"]
-        ch4_vol_m3 = convert(ch4_emitted_scf, "scf", "m3")
-        ch4_mass_kg = ch4_vol_m3 * density_ch4
-        ch4_tonnes = ch4_mass_kg / 1000.0
-
-        # Stoichiometric combustion of CH4 to CO2: CH4 + 2 O2 -> CO2 + 2 H2O (44.01 / 16.04)
-        if ch4_combusted_scf > 0:
-            ch4_comb_vol_m3 = convert(ch4_combusted_scf, "scf", "m3")
-            ch4_comb_tonnes = (ch4_comb_vol_m3 * density_ch4) / 1000.0
-            co2_combusted_tonnes = ch4_comb_tonnes * (44.01 / 16.04)
-        else:
-            co2_combusted_tonnes = 0.0
-
-        _tier = resolve_tier(uncertainties.get("_factor_source", "specific"))
-        ch4_res = propagate_uncertainty(
-            ch4_tonnes,
-            resolve_ef_uncertainty("midstream", "ch4", _tier, uncertainties.get("ch4")),
-            tier=_tier,
-            process_category="midstream",
-            gas="ch4",
-        )
-        co2_res = (
-            propagate_uncertainty(
-                co2_combusted_tonnes,
-                resolve_ef_uncertainty("midstream", "co2", _tier, uncertainties.get("co2")),
-                tier=_tier,
-                process_category="midstream",
-                gas="co2",
-            )
-            if co2_combusted_tonnes > 0
-            else None
-        )
-        total_co2e = calculate_co2e(
-            co2=co2_combusted_tonnes, ch4=ch4_tonnes, gwp_dict=gwp_dict
-        )
-
-        return self.format_result(
-            co2=co2_res,
-            ch4=ch4_res,
-            total_co2e=total_co2e,
-            inputs={
-                "pump_rate_gph": rate_gph,
-                "hours": op_hours,
-                "contactor_pressure_psia": p_psia,
-                "contactor_temperature_F": t_f,
-                "solubility_scf_gal": round(solubility_scf_per_gal, 3),
-                "has_flash_tank": has_flash_tank,
-                "stripping_gas_scf": round(total_stripping_scf, 2),
-                "stripping_ch4_scf": round(stripping_scf, 2),
-                "still_control_eff": still_eff,
-                "flash_control_eff": flash_eff,
-                "combusted_co2_tonnes": round(co2_combusted_tonnes, 4),
-            },
-            metadata={
-                "method": "API Compendium §6.6 Parametric GRI-GLYCalc Model",
-                "solubility_model": "Vasquez-Beggs / TEG Henry's Law Correlation",
-            },
-        )
+        # A glycol circulation rate has no API Compendium method (section 6.3.8.1: Tables 6-17 / 6-18, a
+        # GRI-GLYCalc simulation or a measured vent). The parametric solubility model that was here
+        # (0.0032 x P^0.96 x ...) has no published source; the dispatcher already refused its inputs.
+        raise ValueError("Glycol dehydrator: enter the gas throughput (Table 6-17), or the measured vent volume or "
+                         "GLYCalc result; a glycol circulation rate has no API Compendium method")

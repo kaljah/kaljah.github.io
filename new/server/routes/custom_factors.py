@@ -463,7 +463,7 @@ def import_custom_factors():
     user_id = session.get("user_id")
     user = db.session.get(User, user_id)
 
-    data = request.get_json()
+    data = request.get_json() or {}
     factors_data = data.get("factors", [])
 
     if not factors_data:

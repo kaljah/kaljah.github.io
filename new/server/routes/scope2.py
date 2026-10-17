@@ -4,6 +4,7 @@ from extensions import db
 from sqlalchemy import func
 from electricity_factors import GRID_FACTORS, grid_entry, grid_factor_kg_co2e_per_kwh
 from routes.auth import login_required
+from calculations.indirect import heat_to_mmbtu
 from calculations.uncertainty import propagate_uncertainty, Tier
 from utils import facility_access_error, get_current_user, get_allowed_facility_ids, require_facility_access, initial_record_status, log_activity_and_notify
 from input_validation import ValidationError, parse_number, parse_year, parse_month, require_plausible_co2e
@@ -59,8 +60,6 @@ def _calc_indirect_steam(data):
     """Calculate tCO2e for indirect steam / heat entry."""
     amount = float(data.get("amount") or data.get("heat_mmbtu") or 0)
     unit = (data.get("unit") or "mmbtu").lower().replace(" ", "")
-    if unit in ("ton", "tons"):
-        raise ValidationError("'ton' is ambiguous (short ton or metric tonne): write 'short_ton' or 'tonne'", "unit")
     ci = data.get("calc_inputs", {}).get("indirect_steam", {})
     raw_be = data.get("boiler_efficiency") or ci.get("boiler_eff") or 0.80
     boiler_eff = float(str(raw_be).replace("%", "").strip())
@@ -78,44 +77,10 @@ def _calc_indirect_steam(data):
     if 0 < ef_co2 < 1.0:
         ef_co2 = ef_co2 * 1000.0
 
-    # Normalise input to MMBtu
-    # Conversion factors:
-    #   1 BTU  = 1/1,000,000 MMBtu
-    #   1 MJ   = 947.817 BTU  → 0.000947817 MMBtu
-    #   1 GJ   = 1,000 MJ     → 0.947817 MMBtu  (= 1/1.05505585)
-    #   1 kWh  = 3,412.142 BTU → 0.003412142 MMBtu
-    #   1 MWh  = 3,412,142 BTU → 3.412142 MMBtu
-    if unit in ["btu"]:
-        energy_mmbtu = amount / 1_000_000.0
-    elif unit in ["mj", "megajoule", "mega_joule"]:
-        energy_mmbtu = amount * 0.000947817  # 1 MJ = 0.000947817 MMBtu
-    elif unit in ["gj", "gigajoule"]:
-        energy_mmbtu = amount * 0.947817  # 1 GJ = 0.947817 MMBtu
-    elif unit in ["kwh", "kw-hr", "kilowatthour"]:
-        energy_mmbtu = amount * 0.003412142
-    elif unit in ["mwh", "mw-hr"]:
-        energy_mmbtu = amount * 3.412142
-    elif unit in ["ton", "us_ton", "short_ton"]:
-        # Saturated steam: 1 US ton (~2000 lb) = 2.0 MMBtu (or specific enthalpy)
-        enthalpy = float(ci.get("steam_enthalpy") or 2.0)
-        energy_mmbtu = amount * enthalpy
-    elif unit in ["tonne", "metric_ton", "mt"]:
-        # 1 metric tonne = 2.20462 MMBtu (or specific enthalpy)
-        enthalpy = float(ci.get("steam_enthalpy") or 2.20462)
-        energy_mmbtu = amount * enthalpy
-    elif unit in ["mlb", "klb", "thousand_lbs"]:
-        # 1,000 lbs steam = 1.0 MMBtu
-        energy_mmbtu = amount * 1.0
-    elif unit in ["lb", "lbs", "pound", "pounds"]:
-        energy_mmbtu = amount * 0.001
-    elif unit in ["kg", "kilogram"]:
-        energy_mmbtu = amount * 0.00220462
-    elif unit in ["mmbtu", "mm_btu", "mmbtus"]:
-        energy_mmbtu = amount
-    else:
-        # an unknown unit was booked as MMBtu (the file upload refuses it)
-        raise ValidationError(f"Unknown unit '{data.get('unit')}' for indirect steam (MMBtu, GJ, MJ, kWh, MWh, "
-                              "short_ton, tonne, klb, lb or kg)", "unit")
+    try:
+        energy_mmbtu = heat_to_mmbtu(amount, unit, ci.get("steam_enthalpy"), ci.get("steam_enthalpy_btu_lb"))
+    except ValueError as exc:
+        raise ValidationError(str(exc), "unit") from None
 
     net_eff = boiler_eff * (1.0 - trans_loss)
     if net_eff <= 0:
@@ -162,9 +127,10 @@ def _recalc_indirect_steam(emission, data, factor, old_heat, old_co2e, old_ef, o
     tons = parse_number(data.get("steam_ton"), "steam_ton", required=False, min_value=0, default=0.0) \
         if "steam_ton" in data else 0.0
     ci = dict((data.get("calc_inputs") or {}).get("indirect_steam") or {})
-    if data.get("steam_enthalpy") not in (None, ""):
-        ci["steam_enthalpy"] = data["steam_enthalpy"]
-    if tons > 0 and not data.get("unit") and not ci.get("steam_enthalpy") and old_tons and old_heat:
+    for k in ("steam_enthalpy", "steam_enthalpy_btu_lb"):
+        if data.get(k) not in (None, ""):
+            ci[k] = data[k]
+    if tons > 0 and not data.get("unit") and not (ci.get("steam_enthalpy") or ci.get("steam_enthalpy_btu_lb"))             and old_tons and old_heat:
         # same steam as before: the record's own MMBtu per ton (its unit is not stored)
         heat = tons * float(old_heat) / float(old_tons)
     elif tons > 0:

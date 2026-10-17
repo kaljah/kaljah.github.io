@@ -345,9 +345,7 @@ def login():
         session["last_seen"] = time.time()  # idle timeout (services.session_policy)
         current_app.logger.debug(f"Session set for user_id={user.id}")
 
-        # Compute operational defaults before setting last_login to prevent premature query autoflush
         user_defaults = get_user_operational_defaults(user)
-        user.last_login = datetime.datetime.now(datetime.timezone.utc)
 
         user_info = {
             "id": user.id,
@@ -382,6 +380,10 @@ def login():
         except Exception as e:
             current_app.logger.error(f"Audit Log Error on login: {e}")
 
+        # Set last as the commit's only row update: the queries above autoflushed it before the LOGIN audit
+        # row existed, so two sign-ins of one account took the user row and the audit-chain lock in opposite
+        # orders and PostgreSQL aborted one of them (deadlock, found 2026-10-16 by the concurrency test).
+        user.last_login = datetime.datetime.now(datetime.timezone.utc)
         try:
             db.session.commit()
         except Exception as e:
@@ -563,7 +565,7 @@ def update_profile():
     if not user:
         return jsonify({"error": "User not found"}), 404
 
-    data = request.get_json()
+    data = request.get_json() or {}
 
     # Update allowed fields (location is immutable via /profile to prevent RBAC bypass; managed via /users/<id>)
     if "fullName" in data:

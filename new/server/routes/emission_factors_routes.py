@@ -70,14 +70,16 @@ def get_factors_for_segment(segment):
     """
     # Normalize segment input
     segment_normalized = segment.lower().capitalize()
+    valid_segments = [s.lower() for s in SEGMENTS]
 
-    if segment_normalized not in SEGMENTS:
+    if segment.lower() not in valid_segments and segment_normalized not in SEGMENTS:
         return (
             jsonify(
                 {"error": f'Invalid segment. Must be one of: {", ".join(SEGMENTS)}'}
             ),
             400,
         )
+
 
     factors = get_factor_by_segment(segment_normalized)
 
@@ -205,14 +207,16 @@ def get_factors_by_seg_and_proc():
 
     # Normalize segment
     segment_normalized = segment.lower().capitalize()
+    valid_segments = [s.lower() for s in SEGMENTS]
 
-    if segment_normalized not in SEGMENTS:
+    if segment.lower() not in valid_segments and segment_normalized not in SEGMENTS:
         return (
             jsonify(
                 {"error": f'Invalid segment. Must be one of: {", ".join(SEGMENTS)}'}
             ),
             400,
         )
+
 
     factors = get_factors_by_segment_and_category(segment_normalized, process_category)
 

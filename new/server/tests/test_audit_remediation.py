@@ -412,6 +412,7 @@ def test_scope2_case_insensitive_recalc_and_steam_amount(client, test_users):
             "source_type": "indirect_steam",
             "amount": 250.0,
             "unit": "short_ton",
+            "calc_inputs": {"indirect_steam": {"steam_enthalpy_btu_lb": 1000}},
         },
     )
     assert res_steam.status_code == 201
@@ -710,28 +711,11 @@ def test_unit_conversions_mscf_mcf_bidirectional():
 
 
 def test_dehydrator_stoichiometric_co2_combustion():
-    """Verify DehydratorCalculator accurately generates stoichiometric CO2 when gas is flared."""
+    """A glycol circulation rate has no API Compendium method: the unsourced solubility model is refused."""
     from calculations.midstream import DehydratorCalculator
 
-    calc = DehydratorCalculator()
-    res = calc.calculate(
-        pump_rate=100.0,
-        pump_unit="gph",
-        hours=8760,
-        ch4_content=0.90,
-        has_flash_tank=False,
-        still_control_type="flare",
-        control_eff=0.98,
-    )
-    # 98% CH4 converted to CO2 stoichiometrically (44.01 / 16.04 = ~2.7438)
-    assert res["results"]["ch4"]["value"] > 0
-    assert res["results"]["co2"]["value"] > 0
-    assert res["inputs"]["combusted_co2_tonnes"] > 0
-    # CO2 mass should exceed the destroyed CH4 mass by roughly 2.74x
-    destroyed_ch4 = (res["results"]["ch4"]["value"] / 0.02) * 0.98
-    expected_co2 = destroyed_ch4 * (44.01 / 16.04)
-    assert abs(res["results"]["co2"]["value"] - expected_co2) < 0.01
-
+    with pytest.raises(ValueError, match="no API Compendium method"):
+        DehydratorCalculator().calculate(pump_rate=100.0, pump_unit="gph", hours=8760, ch4_content=0.90)
 
 def test_dashboard_intensity_mmscf_scaling(client, test_users):
     """Verify _query_intensity_stats properly normalizes MMscf gas and flaring volumes."""
@@ -1248,7 +1232,7 @@ def test_qaqc_fuel_completeness_non_combustion(client, test_users):
                 record_id=f"qaqc-test-nc-{test_uid}-{i}",
                 year=2099,
                 month=i + 1,
-                facility_id=1,
+                facility_id=test_users["facility_id"],
                 process_type="pneumatics",
                 fuel_type=None,
                 quantity=100.0,
@@ -1282,7 +1266,7 @@ def test_scope2_authoritative_calculation_overrides_injected_co2e(client, test_u
     payload = {
         "year": 2024,
         "month": 5,
-        "facility_id": 1,
+        "facility_id": test_users["facility_id"],
         "source_type": "electricity",
         "electricity_kwh": 2000.0,
         "emission_factor": 0.5,  # 2000 kWh * 0.5 kg/kWh / 1000 = 1.0 tCO2e
@@ -1604,59 +1588,11 @@ def test_custom_factor_description_and_source_roundtrip(client, test_users):
 
 
 def test_dehydrator_stripping_gas_calculation():
-    """Verify Dehydrator stripping gas calculation adds methane volume to still vent before control."""
+    """A glycol circulation rate has no API Compendium method: the unsourced solubility model is refused."""
     from calculations.midstream import DehydratorCalculator
-    from calculations.units import convert
 
-    calc = DehydratorCalculator()
-    # Baseline without stripping gas
-    base_res = calc.calculate(
-        pump_rate=100.0,
-        pump_unit="gph",
-        hours=1000,
-        ch4_content=0.90,
-        has_flash_tank=False,
-        still_control_type="none",
-        control_eff=0.0,
-        stripping_gas_rate=0.0,
-    )
-
-    # With stripping gas (50 scf/hr = 50,000 scf over 1000 hrs)
-    strip_res = calc.calculate(
-        pump_rate=100.0,
-        pump_unit="gph",
-        hours=1000,
-        ch4_content=0.90,
-        has_flash_tank=False,
-        still_control_type="none",
-        control_eff=0.0,
-        stripping_gas_rate=50.0,
-        stripping_gas_unit="scf/hr",
-    )
-
-    # 50,000 scf * 0.90 CH4 = 45,000 scf CH4
-    expected_strip_ch4_tonnes = convert(45000.0, "scf", "m3") * (16.04 / 23.685) / 1000.0
-    diff_ch4 = strip_res["results"]["ch4"]["value"] - base_res["results"]["ch4"]["value"]
-    assert abs(diff_ch4 - expected_strip_ch4_tonnes) < 1e-4
-    assert strip_res["inputs"]["stripping_gas_scf"] == 50000.0
-
-    # With 98% flare control efficiency, stripping gas is abated and converted to CO2 stoichiometrically
-    flared_strip_res = calc.calculate(
-        pump_rate=100.0,
-        pump_unit="gph",
-        hours=1000,
-        ch4_content=0.90,
-        has_flash_tank=False,
-        still_control_type="flare",
-        control_eff=0.98,
-        stripping_gas_rate=50.0,
-        stripping_gas_unit="scf/hr",
-    )
-    # Remaining uncombusted CH4 must be 2%
-    assert abs(flared_strip_res["results"]["ch4"]["value"] - (strip_res["results"]["ch4"]["value"] * 0.02)) < 1e-4
-    # Stoichiometric CO2 must be generated from destroyed CH4
-    assert flared_strip_res["results"]["co2"]["value"] > 0.0
-
+    with pytest.raises(ValueError, match="no API Compendium method"):
+        DehydratorCalculator().calculate(pump_rate=100.0, pump_unit="gph", hours=8760, ch4_content=0.90)
 
 def test_dehydrator_stripping_gas_dispatcher():
     """Verify dispatcher passes stripping gas parameters correctly."""

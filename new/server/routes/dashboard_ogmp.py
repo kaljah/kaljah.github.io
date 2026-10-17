@@ -35,7 +35,7 @@ def get_ogmp_metrics():
     default_threshold = _app_settings.get("reconciliation_threshold", 20.0)
     allowed_fids = get_allowed_facility_ids(user)
 
-    fac_id = request.args.get("facilityId")
+    fac_id = request.args.get("facilityId") or request.args.get("facility_id")
     year = request.args.get("year")
     current_year = (
         int(year)
@@ -80,6 +80,8 @@ def get_ogmp_metrics():
     ).filter(Emission.status == "Verified")
     if allowed_fids is not None:
         ch4_query = ch4_query.filter(Emission.facility_id.in_(allowed_fids or [-1]))
+    if fac_id and fac_id != "all" and str(fac_id).isdigit():
+        ch4_query = ch4_query.filter(Emission.facility_id == int(fac_id))
     if single_year:
         ch4_query = ch4_query.filter(Emission.year == int(year))
     ch4_years = {}
@@ -158,11 +160,7 @@ def get_ogmp_metrics():
                 "reconciliation_variance_pct": variance_pct,
                 "variance_flag": variance_flag,
                 "reconciliation_status": rec_status,
-                "status": (
-                    "Gold Pathway Active"
-                    if is_compliant
-                    else "Target Milestone Overdue"
-                ),
+                "status": "Gold Pathway Active" if is_compliant else "Target Milestone Overdue",
             }
         )
 
@@ -177,12 +175,8 @@ def get_ogmp_metrics():
                 "current_reporting_year": current_year,
                 "global_default_base_year": default_base_year,
                 "global_threshold": default_threshold,
-                "upstream_target_pct": _app_settings.get(
-                    "ogmp_upstream_target_pct", 0.20
-                ),
-                "midstream_target_pct": _app_settings.get(
-                    "ogmp_midstream_target_pct", 0.05
-                ),
+                "upstream_target_pct": _app_settings.get("ogmp_upstream_target_pct", 0.20),
+                "midstream_target_pct": _app_settings.get("ogmp_midstream_target_pct", 0.05),
             },
         }
     )

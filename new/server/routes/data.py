@@ -28,7 +28,8 @@ def get_production():
     allowed_fids = get_allowed_facility_ids(user)
     if allowed_fids is not None:
         query = query.filter(ProductionData.facility_id.in_(allowed_fids))
-    if (fid_arg := request.args.get('facilityId') or request.args.get('facility_id')):
+    fid_arg = request.args.get('facilityId') or request.args.get('facility_id')
+    if fid_arg and fid_arg != 'all':
         try:
             fid = int(fid_arg)
             if not require_facility_access(user, fid):
@@ -36,8 +37,8 @@ def get_production():
             query = query.filter_by(facility_id=fid)
         except (ValueError, TypeError):
             return jsonify({'error': 'Invalid facilityId'}), 400
-    if request.args.get('year'):
-        query = query.filter_by(year=request.args.get('year'))
+    if (yr := request.args.get('year')) and yr != 'all' and str(yr).isdigit():
+        query = query.filter_by(year=int(yr))
         
     data = query.all()
     return jsonify([{
@@ -305,9 +306,10 @@ def get_ogmp_surveys():
     allowed_fids = get_allowed_facility_ids(user)
     if allowed_fids is not None:
         query = query.filter(OgmpSurvey.facility_id.in_(allowed_fids))
-    if request.args.get('facilityId') and request.args.get('facilityId') != 'all':
+    fac_arg = request.args.get('facilityId') or request.args.get('facility_id')
+    if fac_arg and fac_arg != 'all':
         try:
-            fid = int(request.args.get('facilityId'))
+            fid = int(fac_arg)
             if allowed_fids is not None and fid not in allowed_fids:
                 return jsonify({'error': 'Access to requested facility is denied'}), 403
             query = query.filter_by(facility_id=fid)
@@ -601,10 +603,10 @@ def get_level_logs():
     allowed_fids = get_allowed_facility_ids(user)
     if allowed_fids is not None:
         query = query.filter(LevelUpgradeLog.facility_id.in_(allowed_fids))
-    facility_id = request.args.get('facility_id')
-    if facility_id:
+    fac_id = request.args.get('facility_id') or request.args.get('facilityId')
+    if fac_id and fac_id != 'all':
         try:
-            fid = int(facility_id)
+            fid = int(fac_id)
             if allowed_fids is not None and fid not in allowed_fids:
                 return jsonify({'error': 'Access to requested facility is denied'}), 403
             query = query.filter_by(facility_id=fid)
@@ -638,19 +640,17 @@ def get_cbam_exports():
     allowed_fids = get_allowed_facility_ids(user)
     if allowed_fids is not None:
         query = query.filter(CbamProductExport.facility_id.in_(allowed_fids))
-    if request.args.get('facilityId') and request.args.get('facilityId') != 'all':
+    fac_arg = request.args.get('facilityId') or request.args.get('facility_id')
+    if fac_arg and fac_arg != 'all':
         try:
-            fid = int(request.args.get('facilityId'))
+            fid = int(fac_arg)
             if allowed_fids is not None and fid not in allowed_fids:
                 return jsonify({'error': 'Access to requested facility is denied'}), 403
             query = query.filter_by(facility_id=fid)
         except (ValueError, TypeError):
             return jsonify({'error': 'Invalid facilityId'}), 400
-    if request.args.get('year') and request.args.get('year') != 'all':
-        try:
-            query = query.filter_by(year=int(request.args.get('year')))
-        except (ValueError, TypeError):
-            pass
+    if (yr := request.args.get('year')) and yr != 'all' and str(yr).isdigit():
+        query = query.filter_by(year=int(yr))
 
     activity = request.args.get('activity')
     division = request.args.get('division')

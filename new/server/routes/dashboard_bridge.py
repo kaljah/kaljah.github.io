@@ -76,8 +76,9 @@ def get_yoy_bridge():
     include_scope3 = request.args.get("includeScope3", "false").lower() == "true"
     allowed_fids = get_allowed_facility_ids(user)
     scope2_method = request.args.get("scope2_method") or request.args.get("scope2Method") or "location"
+    facility_id = request.args.get("facility_id") or request.args.get("facilityId")
     rows = _query_summary(
-        facility_id=request.args.get("facilityId"),
+        facility_id=facility_id,
         year=None,
         activity=request.args.get("activity"),
         division=request.args.get("division"),
@@ -89,7 +90,7 @@ def get_yoy_bridge():
     )
     if include_scope3:
         s3 = _query_scope3_summary(
-            facility_id=request.args.get("facilityId"),
+            facility_id=facility_id,
             year=None,
             activity=request.args.get("activity"),
             division=request.args.get("division"),

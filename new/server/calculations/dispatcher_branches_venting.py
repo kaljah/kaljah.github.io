@@ -328,80 +328,15 @@ def calc_dehydrator(self, calculator, flat_inputs, gwp_dict, uncertainties):
         )
     throughput = (
         flat_inputs.get("dehy_throughput")
+        or flat_inputs.get("throughput")
+        or flat_inputs.get("gas_throughput")
         or flat_inputs.get("amount")
         or flat_inputs.get("quantity")
     )
-    pump_rate = (
-        flat_inputs.get("dehy_pump_rate")
-        or flat_inputs.get("teg_pump_rate")
-        or flat_inputs.get("pump_rate")
-    )
-    pump_unit = (
-        flat_inputs.get("dehy_pump_unit")
-        or flat_inputs.get("teg_pump_unit")
-        or "gph"
-    )
-    # an entered 0 hours is 0, not the whole period (`or` skipped it) (bug hunt 2026-10-15 #27)
-    hours = self._optional_float(flat_inputs, ["dehy_hours", "hours_operating", "annual_hours"], None)
-    if hours is None:
-        hours = record_period(flat_inputs)[0]
-    # Tier 3: the site gas analysis is required (it was taken as 85 % CH4) (#26)
+    # Table 6-17 scaled to the site gas: the analysis is required at Tier 3 (it was taken as 85 % CH4) (#26)
     ch4_content = self._require_fraction(
         flat_inputs, ["dehy_ch4_content", "ch4_content", "c1", "gas_ch4_mole_pct"], "dehydrator gas CH4 content %"
     )
-    control_eff = self._optional_fraction(
-        flat_inputs, ["dehy_eff", "control_efficiency"], 0.0
-    )
-    # contactor conditions as entered; never an invented 800 psig / 100 F (#26)
-    contactor_press = self._optional_float(
-        flat_inputs, ["dehy_press", "dehy_pressure", "contactor_pressure"], None  # BUG-090: dehy_pressure
-    )
-    press_u = flat_inputs.get("dehy_press_unit", "psig")
-    contactor_t = self._optional_float(flat_inputs, ["dehy_temp", "contactor_temperature"], None)
-    temp_u = flat_inputs.get("dehy_temp_unit") or "C"  # without a unit: C, as everywhere (#28)
-    has_flash = flat_inputs.get("dehy_has_flash", True)
-    if isinstance(has_flash, str):
-        has_flash = has_flash.lower() in ["true", "1", "yes"]
-    flash_eff = self._optional_fraction(
-        flat_inputs, ["dehy_flash_eff", "flash_control_eff"], 0.0
-    )
-    still_type = flat_inputs.get("dehy_still_type") or flat_inputs.get("still_vent_control") or "none"
-    flash_type = flat_inputs.get("dehy_flash_type", "none")
-    stripping_rate = (
-        flat_inputs.get("dehy_stripping_rate")
-        or flat_inputs.get("stripping_rate")
-        or flat_inputs.get("stripping_gas_rate")
-    )
-    stripping_unit = (
-        flat_inputs.get("dehy_stripping_unit")
-        or flat_inputs.get("stripping_unit")
-        or flat_inputs.get("stripping_gas_unit")
-        or "scf/hr"
-    )
-    stripping_scf = (
-        flat_inputs.get("dehy_stripping_scf")
-        or flat_inputs.get("stripping_scf")
-        or flat_inputs.get("stripping_gas_scf")
-    )
-
-    return calculator.calculate(
-        throughput=throughput,
-        pump_rate=pump_rate,
-        pump_unit=pump_unit,
-        hours=hours,
-        ch4_content=ch4_content,
-        control_eff=control_eff,
-        uncertainties=uncertainties,
-        contactor_pressure=contactor_press,
-        press_unit=press_u,
-        contactor_temperature=contactor_t,
-        temp_unit=temp_u,
-        has_flash_tank=has_flash,
-        flash_control_eff=flash_eff,
-        still_control_type=still_type,
-        flash_control_type=flash_type,
-        stripping_gas_rate=float(stripping_rate) if stripping_rate not in [None, "", "-"] else 0.0,
-        stripping_gas_unit=stripping_unit,
-        stripping_gas_scf=float(stripping_scf) if stripping_scf not in [None, "", "-"] else None,
-        gwp_dict=gwp_dict,
-    )
+    control_eff = self._optional_fraction(flat_inputs, ["dehy_eff", "control_efficiency"], 0.0)
+    return calculator.calculate(throughput=throughput, ch4_content=ch4_content, control_eff=control_eff,
+                                uncertainties=uncertainties, gwp_dict=gwp_dict)

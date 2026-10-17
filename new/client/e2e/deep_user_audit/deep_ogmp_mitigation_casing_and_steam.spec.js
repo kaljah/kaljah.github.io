@@ -36,6 +36,8 @@ async function ensureAuthenticatedPage(page, targetUrl) {
     await page.locator('button[type="submit"]:has-text("Sign In")').click();
     await page.waitForTimeout(1000);
     await page.waitForURL((u) => !u.toString().includes('/login'), { timeout: 15000 });
+    // return to the requested page: sign-in lands on the dashboard
+    await page.goto(targetUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await page.waitForTimeout(1000);
   }
 
@@ -203,7 +205,7 @@ test.describe('Suite 19: OGMP Surveys, Mitigation, Casing Gas & Steam Cogenerati
     await page.waitForTimeout(800);
 
     // Save entry as Draft
-    const draftBtn = page.locator('button.btn-add-draft').first();
+    const draftBtn = page.locator('button.btn-add-draft, button:has-text("Calculate & Submit")').first();
     await draftBtn.click();
     await page.waitForTimeout(1500);
     console.log('[OMS-3] Saved Casing Gas Venting calculation as Draft.');
@@ -245,7 +247,7 @@ test.describe('Suite 19: OGMP Surveys, Mitigation, Casing Gas & Steam Cogenerati
     await page.waitForTimeout(800);
 
     // Save entry as Draft
-    const draftBtn = page.locator('button.btn-add-draft').first();
+    const draftBtn = page.locator('button.btn-add-draft, button:has-text("Calculate & Submit")').first();
     await draftBtn.click();
     await page.waitForTimeout(1500);
     console.log('[OMS-4] Saved Well Testing entry as Draft.');

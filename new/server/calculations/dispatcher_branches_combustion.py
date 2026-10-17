@@ -293,15 +293,12 @@ def calc_completions(self, calculator, emission_factors, flat_inputs, gwp_dict, 
         comp_method = "rate_duration"  # BUG-012: the method the form shows by default
     unit = flat_inputs.get("unit") or "m3"
 
-    # Events determination
-    events_val = float(
-        flat_inputs.get("events")
-        or flat_inputs.get("num_events")
-        or (flat_inputs.get("amount") if str(unit).lower() in ["count", "event", "events", "completions", "wells"] else (
-            flat_inputs.get("amount") if comp_tier == "tier1" else 1.0
-        ))
-        or 1.0
-    )
+    # Events determination: an entered count, 0 included, is the count (0 events used to become 1, so a month
+    # with no completions stored the catalog factor of one completion, hundreds of tonnes)
+    counted = str(unit).lower() in ["count", "event", "events", "completions", "wells"] or comp_tier == "tier1"
+    events_raw = next((v for v in (flat_inputs.get("events"), flat_inputs.get("num_events"),
+                                   flat_inputs.get("amount") if counted else None) if v not in (None, "")), None)
+    events_val = float(1.0 if events_raw is None else events_raw)
 
     gas_sales_mcf = float(flat_inputs.get("comp_gas_produced_mcf") or flat_inputs.get("gas_produced_sales_mcf") or 0.0)
     gas_sales_scf = gas_sales_mcf * 1000.0 if gas_sales_mcf else float(flat_inputs.get("gas_produced_sales_scf") or 0.0)
@@ -320,7 +317,7 @@ def calc_completions(self, calculator, emission_factors, flat_inputs, gwp_dict, 
             explicit = flat_inputs.get("volume_unit") or flat_inputs.get("comp_volume_unit")
             if explicit:
                 vol_unit_val = str(explicit).lower().strip()
-            if vol_unit_val not in ["scf", "m3", "sm3", "mcf", "mscf", "mmscf"]:
+            if vol_unit_val not in ["scf", "m3", "sm3", "nm3", "mcf", "mscf", "mmscf"]:
                 raise ValueError("Tier 3 completions need the flowback volume unit (scf, Mcf, MMscf or m3)")
 
     ch4_content = self._optional_fraction(
@@ -413,7 +410,7 @@ def calc_liquids_unloading(self, calculator, emission_factors, flat_inputs, gwp_
             sfr_p=sfr_p,
             t_p=t_p,
             events=events,
-            well_count=float(flat_inputs.get("well_count") or flat_inputs.get("wells") or 1),
+            well_count=self._given(flat_inputs, "well_count", "wells"),
             ch4_content=ch4_content,
             co2_content=co2_content,
             control_efficiency=flare_eff,
@@ -456,7 +453,7 @@ def calc_liquids_unloading(self, calculator, emission_factors, flat_inputs, gwp_
             sfr=sfr,
             hours_open=hours_open,
             unloading_type=lift,
-            well_count=float(flat_inputs.get("well_count") or flat_inputs.get("wells") or 1),
+            well_count=self._given(flat_inputs, "well_count", "wells"),
             ch4_content=ch4_content,
             co2_content=co2_content,
             control_efficiency=flare_eff,
@@ -537,7 +534,7 @@ def calc_liquids_unloading(self, calculator, emission_factors, flat_inputs, gwp_
             diameter_unit=diam_unit,
             press_unit=press_unit,
             hhv=float(flat_inputs.get("hhv") or emission_factors.get("hhv") or 1020.0),
-            well_count=float(flat_inputs.get("well_count") or flat_inputs.get("wells") or 1),
+            well_count=self._given(flat_inputs, "well_count", "wells"),
             unloading_type=flat_inputs.get("unloading_type") or flat_inputs.get("unload_type", "plunger"),
             gwp_dict=gwp_dict,
         )

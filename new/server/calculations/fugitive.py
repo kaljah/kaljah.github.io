@@ -17,7 +17,7 @@ class ComponentFugitiveCalculator(BaseCalculator):
         Average Factor Method - counts * EF
         component_counts: dict of {type: count}
         """
-        self.validate_inputs({"counts": component_counts}, ["counts"])
+        self.validate_inputs({"counts": component_counts, "ch4_content": ch4_content}, ["counts", "ch4_content"])
 
         # Example factors (kg CH4 / hr / component) - simplified from Table 7-1
         # In real implementation, these would come from emission_factors.py
@@ -31,23 +31,34 @@ class ComponentFugitiveCalculator(BaseCalculator):
         total_ch4_kg_hr = 0
         for comp_type, data in component_counts.items():
             k_norm = str(comp_type or "").strip().lower().replace("-", "_").replace(" ", "_")
+            explicit_ef = isinstance(data, dict) and data.get("ef") not in (None, "")
+            if k_norm not in DEFAULT_EFS and not explicit_ef:  # an unknown component took the gas-valve factor
+                raise ValueError(f"Unknown component type '{comp_type}': {sorted(DEFAULT_EFS)} or give its factor")
             if isinstance(data, dict):
                 count = data.get("count", 0)
                 ef_unit = str(data.get("unit") or data.get("ef_unit") or "kg TOC/hr/component")
                 raw_ef = data.get("ef")
                 if raw_ef is None or (raw_ef == 0 and "ef" not in data):
-                    raw_ef = DEFAULT_EFS.get(k_norm, 0.0045)
+                    raw_ef = DEFAULT_EFS[k_norm]
                 from .units import per_source_hour_kg
                 ef, unit_is_ch4 = per_source_hour_kg(raw_ef, ef_unit)
                 is_methane = bool(data.get("is_methane")) or unit_is_ch4
             else:
                 count = float(data or 0)
-                ef = DEFAULT_EFS.get(k_norm, 0.0045)
+                ef = DEFAULT_EFS[k_norm]
                 is_methane = False
-            c_ch4 = float(ch4_content if ch4_content is not None else 0.85)
-            if c_ch4 > 1.0:
-                c_ch4 /= 100.0
-            c_ch4 = max(0.0, min(1.0, c_ch4))
+            count = float(count or 0)
+            if count < 0:
+                raise ValueError(f"Component count for '{comp_type}' cannot be negative")
+            s_ch4 = str(ch4_content).replace("%", "").strip()
+            c_ch4 = float(s_ch4)
+            if c_ch4 < 0:
+                raise ValueError("ch4_content cannot be negative")
+            if "%" in str(ch4_content) or c_ch4 > 1.0:
+                if c_ch4 <= 100.0:
+                    c_ch4 /= 100.0
+                else:
+                    raise ValueError(f"ch4_content cannot exceed 100%: {ch4_content}")
             ch4_scaling = 1.0 if is_methane else c_ch4
             total_ch4_kg_hr += count * ef * ch4_scaling
 
@@ -78,24 +89,36 @@ class EquipmentFugitiveCalculator(BaseCalculator):
         super().__init__("Equipment-Level Fugitive", "Section 7.2.2")
 
     def calculate(
-        self, equipment_count, ef, ch4_content=0.85, uncertainties=None, ef_unit="kg/hr", gwp_dict=None
+        self, equipment_count, ef, ch4_content=None, uncertainties=None, ef_unit="kg/hr", gwp_dict=None
     ):
         """
         Average Factor Method for equipment - count * EF
         """
         uncertainties = uncertainties or {}
-        self.validate_inputs({"count": equipment_count, "ef": ef}, ["count", "ef"])
+        self.validate_inputs({"count": equipment_count, "ef": ef, "ch4_content": ch4_content},
+                             ["count", "ef", "ch4_content"])  # no invented 85 % CH4
+
+        eq_cnt = float(equipment_count)
+        if eq_cnt < 0:
+            raise ValueError(f"equipment_count cannot be negative: {equipment_count}")
 
         # BUG-048: parse the unit (subscript CH4, tonne vs kg, hourly vs annual)
         from .units import per_source_hour_kg
 
         kg_per_hr, is_methane = per_source_hour_kg(ef, ef_unit or "kg CH4/hr/source")
-        c_ch4 = float(ch4_content if ch4_content is not None else 0.85)
-        if c_ch4 > 1.0:
-            c_ch4 /= 100.0
-        c_ch4 = max(0.0, min(1.0, c_ch4))
+        if kg_per_hr < 0:
+            raise ValueError(f"Emission factor cannot be negative: {ef}")
+        s_ch4 = str(ch4_content).replace("%", "").strip()
+        c_ch4 = float(s_ch4)
+        if c_ch4 < 0:
+            raise ValueError("ch4_content cannot be negative")
+        if "%" in str(ch4_content) or c_ch4 > 1.0:
+            if c_ch4 <= 100.0:
+                c_ch4 /= 100.0
+            else:
+                raise ValueError(f"ch4_content cannot exceed 100%: {ch4_content}")
         scaling = 1.0 if is_methane else c_ch4
-        total_ch4_tonnes_year = equipment_count * kg_per_hr * scaling * 8760.0 / 1000.0
+        total_ch4_tonnes_year = eq_cnt * kg_per_hr * scaling * 8760.0 / 1000.0
 
         _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
         ch4_res = propagate_uncertainty(
@@ -129,7 +152,7 @@ class CompressorSealCalculator(BaseCalculator):
 
     SEAL_FACTORS_KG_HR = {
         # production / gathering & boosting
-        ("production", "centrifugal_wet"): (26.0, "Section 6.4.3, GHGRP wet seal degassing 0.026 t/compressor-hr"),
+        ("production", "centrifugal_wet"): (26.0, "Section 6.5.4.2, GHGRP wet seal degassing for production and G&B, 0.026 t/compressor-hr"),
         ("production", "reciprocating"): (0.443, "Table 6-30, rod packing (US) 4.43E-04 t/compressor-hr"),
         # processing
         ("processing", "centrifugal_wet"): (86426.0 / 8760.0, "Table 6-38, wet seal 86,426 kg/compressor-yr"),
@@ -150,13 +173,15 @@ class CompressorSealCalculator(BaseCalculator):
         self.validate_inputs({"count": compressor_count}, ["count"])
         comp_count = float(compressor_count)
         if comp_count < 0:
-            raise ValueError(f"compressor_count cannot be negative: {comp_count}")
+            raise ValueError(f"compressor_count cannot be negative: {compressor_count}")
         seg = str(segment or "production").lower()
         seg = ("processing" if "process" in seg else "transmission" if ("transmission" in seg or "storage" in seg)
                else "production")
 
         if measured_kg_hr not in (None, ""):
             ef, source = float(measured_kg_hr), "measured leak rate"
+            if ef < 0:
+                raise ValueError("measured_kg_hr cannot be negative")
             factor_source = uncertainties.get("_factor_source", "specific")
         else:
             entry = self.SEAL_FACTORS_KG_HR.get((seg, seal_type))

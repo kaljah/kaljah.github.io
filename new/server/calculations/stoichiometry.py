@@ -24,12 +24,15 @@ _MASS_KG = {
 def mass_to_kg(amount, unit):
     """Mass in kg. "short ton", "Short-Ton" and "short_ton" are the same unit; an unknown unit is an
     error (it used to be read as kg, so 100 short tons became 100 kg)."""
+    val = float(amount)
+    if val < 0:
+        raise ValueError(f"Input mass cannot be negative: {amount}")
     key = "_".join(str(unit or "").strip().lower().replace("-", " ").replace(".", "").split())
     if key in _MASS_KG:
-        return float(amount) * _MASS_KG[key]
+        return val * _MASS_KG[key]
     from .units import convert
     try:
-        return convert(float(amount), unit, "kg")
+        return convert(val, unit, "kg")
     except Exception:
         raise ValueError(f"Unknown mass unit '{unit}' (use kg, tonne, short ton, long ton, lb or g)") from None
 
@@ -51,21 +54,28 @@ class StoichiometricCalculator(BaseCalculator):
 
         # Normalize to kg
         norm_mass = mass_to_kg(fuel_mass, mass_unit)
+        if norm_mass < 0:
+            raise ValueError(f"fuel_mass cannot be negative: {fuel_mass}")
 
         # stoichiometric ratio CO2/C
         ratio = 44.01 / 12.011
 
-        # carbon_content normalized to fraction (e.g. 0.85 or 85.0 -> 0.85)
-        c = float(carbon_content)
-        if c > 1.0:
+        # carbon_content normalized to fraction (e.g. 0.85, '85%', or 85.0 -> 0.85)
+        c_str = str(carbon_content).replace("%", "").strip()
+        c = float(c_str)
+        if "%" in str(carbon_content) or c > 1.0:
             c /= 100.0
-        c = max(0.0, min(1.0, c))
+        if c < 0 or c > 1.0:
+            raise ValueError(f"carbon_content must be between 0 and 1 (or 0% to 100%): {carbon_content}")
 
         # oxidation factor (default 1.0, e.g. 0.99 for solid fuels)
-        ox = float(oxidation_factor if oxidation_factor is not None else 1.0)
-        if ox > 1.0:
+        raw_ox = 1.0 if oxidation_factor is None else oxidation_factor
+        ox_str = str(raw_ox).replace("%", "").strip()
+        ox = float(ox_str)
+        if "%" in str(raw_ox) or ox > 1.0:
             ox /= 100.0
-        ox = max(0.0, min(1.0, ox))
+        if ox < 0 or ox > 1.0:
+            raise ValueError(f"oxidation_factor must be between 0 and 1 (or 0% to 100%): {oxidation_factor}")
 
         co2_kg = norm_mass * c * ox * ratio
         co2_tonnes = co2_kg / 1000.0
@@ -105,7 +115,7 @@ class NitricAcidCalculator(BaseCalculator):
         process_type="nitric_acid_production",
     ):
         """
-        API Compendium 2021 Section 6, pg 407 / IPCC 2006 Vol 3 Ch 3:
+        API Compendium 2021 Table 6-53 / IPCC 2006 Vol 3 Ch 3:
         N2O emissions from catalytic oxidation of ammonia (nitric acid) or cyclohexanone oxidation (adipic acid).
         N2O (kg) = Production (tonnes) * EF_N2O (kg/tonne) * (1 - Abatement_Efficiency)
         """
@@ -114,23 +124,32 @@ class NitricAcidCalculator(BaseCalculator):
             ["production_amount"],
         )
 
-        norm_tonnes = mass_to_kg(float(production_amount), mass_unit) / 1000.0
+        p_val = float(production_amount)
+        if p_val < 0:
+            raise ValueError(f"production_amount cannot be negative: {production_amount}")
+        norm_tonnes = mass_to_kg(p_val, mass_unit) / 1000.0
 
         # Emission factor EF_N2O in kg N2O / tonne product
-        if ef_n2o is not None and float(ef_n2o) > 0:
+        if ef_n2o not in (None, ""):  # an entered 0 is a value
             ef = float(ef_n2o)
+            if ef < 0:
+                raise ValueError("N2O emission factor cannot be negative")
         else:
-            # Default factors per API Compendium 2021 Section 6, pg 407
+            # API Compendium 2021 Table 6-53, without abatement (an abatement efficiency is applied below)
             if "adipic" in str(process_type).lower():
                 ef = 300.0  # uncontrolled adipic acid default kg N2O/t
             else:
                 ef = 9.0    # uncontrolled nitric acid default kg N2O/t
 
         # Abatement efficiency
-        abatement_eff = float(abatement_efficiency or 0.0)
-        if abatement_eff > 1.0:
+        ab_str = str(abatement_efficiency if abatement_efficiency is not None else 0.0).replace("%", "").strip()
+        abatement_eff = float(ab_str)
+        if "%" in str(abatement_efficiency) or abatement_eff > 1.0:
             abatement_eff /= 100.0
-        abatement_eff = max(0.0, min(1.0, abatement_eff))
+        if abatement_eff < 0:
+            raise ValueError("Abatement efficiency cannot be negative")
+        if abatement_eff > 1.0:
+            raise ValueError("Abatement efficiency cannot exceed 100 %")
 
         n2o_kg = norm_tonnes * ef * (1.0 - abatement_eff)
         n2o_tonnes = n2o_kg / 1000.0

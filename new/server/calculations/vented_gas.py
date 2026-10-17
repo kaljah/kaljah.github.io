@@ -15,7 +15,8 @@ Gas volume methods ("method"):
   thc_mass    total hydrocarbon loss (AP-42 Ch. 7 / simulation) x vent CH4 and CO2 wt %  (Section 6.3.9.3)
 
 Vented gas:  CH4 = V x y_CH4 ; CO2 = V x y_CO2
-Flared gas:  CH4 = V x y_CH4 x (1 - eff) ; CO2 = V x y_CO2 + V x (y_CH4 + 2 y_C2+) x eff   (C2+ as ethane)
+Flared gas:  CH4 = V x y_CH4 x (1 - DE) ; CO2 = V x y_CO2 + V x (y_CH4 + 2 y_C2+) x CE   (C2+ as ethane);
+             DE 98 % and CE 96.5 % (Compendium corrections, Dec 2025) unless an efficiency is entered
 """
 import math
 
@@ -32,9 +33,8 @@ ACTUAL_UNITS = {"ft3": 1.0, "acf": 1.0, "bbl": FT3_PER_BBL, "gal": FT3_PER_GAL, 
 
 # S1K-F16: every gas volume spelling the rest of the platform accepts (Nm3, ksm3, MMcf, kscf, cf ...)
 from .units import GAS_VOLUME_UNITS as _GV, VOLUME_UNITS_TO_M3 as _V2M3, _VOLUME_ALIASES as _VA
-for _u in _GV:
-    if _u in _V2M3:
-        GAS_UNITS.setdefault(_u, _V2M3[_u] / SCF_TO_M3)
+for _u in _GV:  # every gas volume unit has an m3 conversion
+    GAS_UNITS.setdefault(_u, _V2M3[_u] / SCF_TO_M3)
 for _a, _b in _VA.items():
     if _b in GAS_UNITS:
         GAS_UNITS.setdefault(_a, GAS_UNITS[_b])
@@ -65,44 +65,16 @@ def _parse_fractions(inputs_dict, field_names):
     percentage (mol % or wt %, 0-100), so it is always read as one: 0.9 is 0.9 %, not 90 %
     (audit 2026-10-14 BUG-0021; the basis used to be guessed from the size of the numbers).
     """
-    parsed = {}
-    is_percentage = True
-    raw_nums = {}
-    for name in field_names:
-        v = inputs_dict.get(name)
-        if v not in (None, ""):
-            s = str(v).replace("%", "").strip()
-            x = float(s)
-            if not math.isfinite(x) or x < 0:
-                raise ValueError(f"'{name}' must be a non-negative number")
-            if x > 100.0:
-                raise ValueError(f"'{name}' cannot exceed 100 %")
-            raw_nums[name] = x
-            if "%" in str(v) or x > 1.0:
-                is_percentage = True
-
-    if not is_percentage and sum(raw_nums.values()) > 1.0001:
-        is_percentage = True
-
-    for name in field_names:
-        if name in raw_nums:
-            parsed[name] = raw_nums[name] / 100.0 if is_percentage else raw_nums[name]
-        else:
-            parsed[name] = 0.0
-    return parsed
+    return {name: _frac(inputs_dict.get(name), name, percent=True) for name in field_names}
 
 
-def _or(v, default):
-    return default if v in (None, "") else v
-
-
-def _num(v, name, required=True, default=None):
+def _num(v, name, required=True, default=None, allow_negative=False):
     if v in (None, ""):
         if required and default is None:
             raise ValueError(f"Missing required field: {name}")
         return default
     x = float(v)
-    if not math.isfinite(x) or x < 0:
+    if not math.isfinite(x) or (not allow_negative and x < 0):
         raise ValueError(f"'{name}' must be a non-negative number")
     return x
 
@@ -131,14 +103,16 @@ class VentedGasCalculator(BaseCalculator):
             if u not in ACTUAL_UNITS:
                 raise ValueError("Actual volume unit must be ft3, bbl, gal or m3")
             v_ft3 = _num(i.get("actual_volume"), "actual volume") * ACTUAL_UNITS[u]
-            t_f = _num(i.get("gas_temp_f"), "gas temperature (F)", default=60.0)
-            p_atm = _num(i.get("gas_pressure_atm"), "gas pressure (atm)", default=1.0)
+            t_f = _num(i.get("gas_temp_f"), "gas temperature (F)", allow_negative=True)
+            if t_f <= -459.67:
+                raise ValueError("Gas temperature must be above absolute zero (-459.67 °F)")
+            p_atm = _num(i.get("gas_pressure_atm"), "gas pressure (atm)")
             return v_ft3 * p_atm * (60.0 + 459.67) / (t_f + 459.67)
         if m == "desiccant":
             h = _num(i.get("vessel_height_ft"), "vessel height (ft)")
             d = _num(i.get("vessel_diameter_ft"), "vessel diameter (ft)")
             p_psig = _num(i.get("vessel_pressure_psig"), "vessel pressure (psig)")
-            g = _frac(_or(i.get("gas_fraction"), 45), "gas fraction of packed vessel")
+            g = _frac(i.get("gas_fraction"), "gas fraction of packed vessel", required=True)
             n = _num(i.get("refills"), "refills per year")
             # refills are per year; a monthly record carries its month's share (a full year of refills
             # was booked in every monthly record)
@@ -196,7 +170,7 @@ class VentedGasCalculator(BaseCalculator):
         elif str(method).lower() == "co2_mass":
             v = _num(i.get("physical_volume_m3"), "physical volume (m3)")
             rho = _num(i.get("co2_density"), "CO2 density at release conditions (kg/m3)")
-            w = _frac(_or(i.get("co2_wt_pct"), 100), "CO2 weight %", percent=True)
+            w = _frac(i.get("co2_wt_pct"), "CO2 weight %", required=True, percent=True)
             n = _num(i.get("events"), "blowdown events", default=1.0)
             co2 = n * v * rho * w / 1000.0
             ch4 = 0.0
@@ -213,9 +187,11 @@ class VentedGasCalculator(BaseCalculator):
             v_m3 = v_scf * SCF_TO_M3
             rho_ch4, rho_co2 = CONVERSIONS["density_ch4"], CONVERSIONS["density_co2"]
             if str(i.get("disposition") or "vented").lower() == "flared":
-                eff = _frac(_or(i.get("combustion_efficiency"), 98), "combustion efficiency")
-                ch4 = v_m3 * y_ch4 * (1 - eff) * rho_ch4 / 1000.0
-                co2 = (v_m3 * y_co2 + v_m3 * (y_ch4 + 2 * y_c2) * eff) * rho_co2 / 1000.0
+                given = i.get("combustion_efficiency") not in (None, "")
+                de = _frac(i.get("combustion_efficiency"), "combustion efficiency") if given else 0.98
+                ce = de if given else 0.965
+                ch4 = v_m3 * y_ch4 * (1 - de) * rho_ch4 / 1000.0
+                co2 = (v_m3 * y_co2 + v_m3 * (y_ch4 + 2 * y_c2) * ce) * rho_co2 / 1000.0
             else:
                 ch4 = v_m3 * y_ch4 * rho_ch4 / 1000.0
                 co2 = v_m3 * y_co2 * rho_co2 / 1000.0

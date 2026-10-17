@@ -90,7 +90,7 @@ case("6-28b", "Kimray pump, processing, Table 6-36",
      act("dehydrator", "dh_kimray_processing", 25e6 * 365, "scf", ch4_content=90, co2_content=5), {"ch4": 32.26, "co2": 4.93})
 case("6-29", "Natural gas blanketed tank, actual -> standard volume",
      pl("tank", "specific", vent_method="actual", actual_volume=32000, actual_unit="bbl", gas_temp_f=75,
-        ch4_content=82, co2_content=1),
+        gas_pressure_atm=1, ch4_content=82, co2_content=1),
      {"ch4": 2.74, "co2": 0.09}, tol=0.03)
 case("6-30", "Processing non-routine, per 10^6 m3", act("non_routine_venting", "proc_non_routine_m3", 20e6 * 365, "m3"),
      {"ch4": 908})

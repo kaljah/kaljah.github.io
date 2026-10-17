@@ -1,4 +1,4 @@
-"""Batch approve / reject of records awaiting review (Scope 1, 2, 3 and CAP).
+"""Batch approve / reject of records awaiting review (Scope 1, 2 and 3).
 
 Parses the batch body, validates the record ids, applies the decisions through services.maker_checker
 and explains every requested record it did not decide (pilot check 2026-10-09, F7: the batch answered
@@ -6,8 +6,12 @@ and explains every requested record it did not decide (pilot check 2026-10-09, F
 a 500).
 """
 from extensions import db
-from services.maker_checker import REVIEWABLE_STATUSES, DecisionError, _model, decide
+from services.maker_checker import RECORD_TYPES, REVIEWABLE_STATUSES, DecisionError, _model, decide
 from utils import get_allowed_facility_ids
+
+# the scopes the maker-checker decides (CAP records were removed from it, but "approve all" still asked
+# for them and every approve-all / reject-all call answered 400 "Invalid scope: cap")
+SCOPES = tuple(RECORD_TYPES)
 
 
 def batch_targets(data, all_flag):
@@ -15,7 +19,7 @@ def batch_targets(data, all_flag):
     scope = str(data.get("scope", "1"))
     by_scope = data.get("by_scope") if isinstance(data.get("by_scope"), dict) else {}
     picked = {}
-    for k in ("1", "2", "3", "cap"):
+    for k in SCOPES:
         ids = by_scope.get(k) or (by_scope.get(int(k)) if k.isdigit() else None)
         if ids:
             picked[k] = list(ids)
@@ -23,10 +27,13 @@ def batch_targets(data, all_flag):
         return picked
     if scope == "all":
         if all_flag:
-            return {"1": None, "2": None, "3": None, "cap": None}
+            return {k: None for k in SCOPES}
         return None  # ids without by_scope would hit the same ids in every table
-    if scope in ("1", "2", "3", "cap"):
-        return {scope: None if all_flag else list(data.get("ids") or [])}
+    if scope in SCOPES:
+        if all_flag:
+            return {scope: None}
+        ids = data.get("ids")
+        return {scope: ids} if ids else None   # a body that names no records is refused, not a silent "success"
     return None
 
 

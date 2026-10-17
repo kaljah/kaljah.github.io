@@ -515,4 +515,7 @@ def test_no_early_write_lock_on_sqlite():
     from extensions import db
 
     with flask_app.app_context():
+        if db.session.get_bind().dialect.name != "sqlite":   # PostgreSQL flushes import batches on purpose
+            assert bp._flush_enabled(db.session) is True
+            return
         assert bp._flush_enabled(db.session) is False      # SQLite: rows staged until the single commit

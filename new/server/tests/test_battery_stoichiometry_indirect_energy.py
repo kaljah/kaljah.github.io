@@ -76,7 +76,7 @@ class TestIndirectSteamHeatBattery:
         (105.5, "gj"),
         (105505.6, "mj"),
         (1000.0, "therm"),
-        (50.0, "ton"),
+        (50.0, "short_ton"),
         (45.359, "tonne"),
         (100.0, "klb"),
         (100000.0, "lb"),
@@ -94,10 +94,12 @@ class TestIndirectSteamHeatBattery:
             transmission_loss=t_loss,
             uncertainties={},
             heat_unit=unit,
+            steam_enthalpy_btu_lb=1170.0,   # Exhibit 8.3 steam: 1350 - 180 Btu/lb (ignored for energy units)
         )
         ref = IndependentScope2Model.calculate_indirect_steam(
             amount=energy_val,
             unit=unit,
+            steam_enthalpy_btu_lb=1170.0,
             boiler_eff=b_eff,
             trans_loss=t_loss,
             ef_co2=ef_co2,

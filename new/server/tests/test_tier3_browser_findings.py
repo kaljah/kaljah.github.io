@@ -243,3 +243,18 @@ def test_tier2b_component_count_uses_table_7_12(app):
     assert em["ch4"] == pytest.approx(100 * 2.94e-6 * 8760 * 70 / 81.6, rel=1e-6)
     fails(app, "component type", "fugitive", source="custom", top={"amount": 100, "unit": "components"},
           fugitive_tier="tier2", fugitive_method="component", amount=100)
+
+
+# 12 — entered Tier 3 factors win over the catalog when the form also sends the fuel (it always does).
+# The API 2021 dispatcher answered first with the catalog factor and the entered values were ignored.
+@pytest.mark.parametrize("process,fuel", [("combustion", "Natural Gas"), ("flaring", "Natural Gas (Flaring)"),
+                                          ("venting", "Natural Gas (Venting/Blowdown)")])
+def test_12_entered_factors_with_catalog_fuel(app, process, fuel):
+    p = {"process_type": process, "factor_source": "specific", "fuel": fuel, "amount": 1234.5, "unit": "m3",
+         "hhv": 1020, "combustion_efficiency": 0.995,
+         "specific_factors": {"co2": 1.9, "co2Unit": "kg/m3", "ch4": 0.01, "ch4Unit": "kg/m3"}}
+    with app.app_context():
+        em, method = compute_emissions(p, resolve_factor(dict(p)) or {}, gwp_dict=get_active_gwp(standard="AR5"))
+    assert method == "server_specific"
+    assert em["co2"] == pytest.approx(1234.5 * 1.9 / 1000)
+    assert em["ch4"] == pytest.approx(1234.5 * 0.01 / 1000)

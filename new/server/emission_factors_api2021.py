@@ -1976,10 +1976,11 @@ def get_factor_by_segment(segment):
     Returns:
         dict: Filtered emission factors dictionary
     """
+    seg_lower = str(segment or "").strip().lower()
     return {
         factor_name: factor_data
         for factor_name, factor_data in ALL_EMISSION_FACTORS.items()
-        if factor_data.get("segment") == segment
+        if str(factor_data.get("segment") or "").strip().lower() == seg_lower
     }
 
 
@@ -2011,11 +2012,13 @@ def get_factors_by_segment_and_category(segment, process_category):
     Returns:
         dict: Filtered emission factors dictionary
     """
+    seg_lower = str(segment or "").strip().lower()
     return {
         factor_name: factor_data
         for factor_name, factor_data in ALL_EMISSION_FACTORS.items()
         if (
-            factor_data.get("segment") == segment
+            str(factor_data.get("segment") or "").strip().lower() == seg_lower
             and factor_data.get("process_category") == process_category
         )
     }
+

@@ -207,6 +207,44 @@ def canonicalize(payload, delta=None):
     return out
 
 
+# Numeric inputs of the Scope 1 methods (2026-10-16 input sweep: a negative HHV or operating hours stored
+# negative emissions, other negatives were accepted, and text reached the calculators as a raw Python error).
+_SIGNED_INPUTS = {"blowdown_temp", "operating_temperature", "temperature", "tank_api_gravity", "operating_pressure"}
+_POSITIVE_INPUTS = {"hhv", "density", "fuel_density", "z_factor"}
+_PERCENT_INPUTS = {
+    "ch4_content", "co2_content", "c2plus_content", "tank_ch4_content", "tank_co2_content", "pneu_ch4_content",
+    "pneu_co2_content", "dehy_ch4_content", "comp_ch4_content", "comp_co2_content", "comp_c2plus_content",
+    "unload_ch4_content", "agr_co2_in", "agr_co2_out", "agr_ch4_in", "co2_mol", "n2_mol",
+    "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10",
+    "combustion_efficiency", "destruction_efficiency", "flare_efficiency", "control_efficiency", "comp_flare_eff",
+    "unload_flare_eff", "tank_control_eff", "agr_control_eff", "dehy_flash_eff", "dehy_eff",
+}
+_NON_NEGATIVE_INPUTS = {
+    "operating_hours", "hours", "activity_hours", "activity_days", "blowdown_pressure", "blowdown_events",
+    "vent_volume", "vent_rate", "venting_duration", "oil_production", "gor", "recovered_gas_volume",
+    "flared_gas_volume", "comp_rate", "comp_duration", "comp_liquid_bbl", "comp_gor", "unload_depth", "unload_diam",
+    "unload_press", "unload_freq", "tank_gor", "pneu_count", "pneu_bleed_rate", "pneu_hours", "dehy_pump_rate",
+    "dehy_hours", "m21_below_count", "m21_above_count", "leakers_count", "measured_rate", "carbon_content",
+    "agr_ch4_slip", "meter_uncertainty_pct", "gc_uncertainty_pct", "user_unc_co2", "user_unc_ch4", "user_unc_n2o",
+}
+
+
+def _check_numeric_inputs(values):
+    """Refuse a method input that is not a finite number, or outside its physical range."""
+    for key, raw in values.items():
+        if key in _PERCENT_INPUTS:
+            text = raw.strip().rstrip("%").strip() if isinstance(raw, str) else raw
+            if text not in (None, "", "-"):
+                parse_number(text, key, min_value=0, max_value=100)
+        elif key in _POSITIVE_INPUTS and raw not in (None, "", "-"):
+            if parse_number(raw, key) <= 0:
+                raise ValidationError(f"'{key}' must be greater than 0", key)
+        elif key in _NON_NEGATIVE_INPUTS and raw not in (None, "", "-"):
+            parse_number(raw, key, min_value=0)
+        elif key in _SIGNED_INPUTS and raw not in (None, "", "-"):
+            parse_number(raw, key)
+
+
 def validate_activity(payload, require_unit):
     """BUG-050 / BUG-068 / BUG-109: validate before any calculator runs."""
     ptype = str(payload.get("process_type") or "").strip().lower()
@@ -215,6 +253,10 @@ def validate_activity(payload, require_unit):
                               "record it on the Scope 2 page", "process_type")
     if any(isinstance(payload.get(k), (dict, list)) for k in ("fuel", "fuel_type", "unit", "process_type")):
         raise ValidationError("fuel, unit and process type must be text", "fuel_type")
+    _check_numeric_inputs(payload)
+    for nested in (payload.get("calc_inputs") or {}).values() if isinstance(payload.get("calc_inputs"), dict) else ():
+        if isinstance(nested, dict):
+            _check_numeric_inputs(nested)
     amount = None
     if payload.get("amount") not in (None, ""):
         amount = parse_number(payload.get("amount"), "amount", min_value=0)

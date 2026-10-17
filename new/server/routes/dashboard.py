@@ -166,7 +166,7 @@ def _finite_or_none(value):
 @login_required
 def get_batch_dashboard_data():
     """Consolidated dashboard API — all sub-queries run in parallel threads."""
-    facility_id = request.args.get("facilityId")
+    facility_id = request.args.get("facilityId") or request.args.get("facility_id")
     year = request.args.get("year")
     request.args.get("month")
     activity = request.args.get("activity")
@@ -433,7 +433,7 @@ def get_intensity_trend():
             ),
             403,
         )
-    facility_id = request.args.get("facilityId")
+    facility_id = request.args.get("facilityId") or request.args.get("facility_id")
     activity = request.args.get("activity")
     division = request.args.get("division")
     segment = request.args.get("segment")
@@ -737,7 +737,7 @@ def get_dashboard_summary():
     scope2_method = request.args.get("scope2_method") or request.args.get("scope2Method") or "location"
     return jsonify(
         _query_summary(
-            facility_id=request.args.get("facilityId"),
+            facility_id=request.args.get("facilityId") or request.args.get("facility_id"),
             year=request.args.get("year"),
             activity=request.args.get("activity"),
             division=request.args.get("division"),
@@ -783,7 +783,7 @@ def get_mitigation():
     allowed_fids = get_allowed_facility_ids(user)
     return jsonify(
         _query_mitigation(
-            facility_id=request.args.get("facilityId"),
+            facility_id=request.args.get("facilityId") or request.args.get("facility_id"),
             year=request.args.get("year"),
             allowed_fids=allowed_fids,
             segment=request.args.get("segment"),
@@ -810,7 +810,7 @@ def get_scope3_summary():
     allowed_fids = get_allowed_facility_ids(user)
     return jsonify(
         _query_scope3_summary(
-            facility_id=request.args.get("facilityId"),
+            facility_id=request.args.get("facilityId") or request.args.get("facility_id"),
             year=request.args.get("year"),
             activity=request.args.get("activity"),
             division=request.args.get("division"),
@@ -907,7 +907,7 @@ def get_categorical_breakdown():
     allowed_fids = get_allowed_facility_ids(user)
     return jsonify(
         _query_categorical_breakdown(
-            facility_id=request.args.get("facilityId"),
+            facility_id=request.args.get("facilityId") or request.args.get("facility_id"),
             year=request.args.get("year"),
             activity=request.args.get("activity"),
             division=request.args.get("division"),
@@ -947,7 +947,7 @@ def get_intensity_stats():
     allowed_fids = get_allowed_facility_ids(user)
     return jsonify(
         _query_intensity_stats(
-            facility_id=request.args.get("facilityId"),
+            facility_id=request.args.get("facilityId") or request.args.get("facility_id"),
             year=request.args.get("year"),
             activity=request.args.get("activity"),
             division=request.args.get("division"),
@@ -1184,8 +1184,8 @@ def get_equipment_emissions():
     division = request.args.get("division")
     segment = request.args.get("segment")
     include_pending = request.args.get("includePending") == "true"
-    limit = int(request.args.get("limit", 8))
-
+    raw_lim = request.args.get("limit", 8)
+    limit = max(1, min(100, int(raw_lim))) if str(raw_lim).isdigit() else 8
     scope = dict(allowed_fids=allowed_fids, facility_id=fac_id, activity=activity, division=division, segment=segment)
     query = Emission.query.filter(Emission.status.in_(statuses(include_pending)))
     query = apply_year(apply_scope(query, Emission, **scope), Emission, year)

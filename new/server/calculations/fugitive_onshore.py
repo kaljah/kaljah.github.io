@@ -70,6 +70,19 @@ def _rate_tables_extend():
 _rate_tables_extend()
 
 
+def _normalize_mol_frac(val, name="CH4"):
+    if val in (None, ""):
+        return None
+    v = float(val)
+    if v < 0:
+        raise ValueError(f"{name} mole fraction cannot be negative")
+    if v > 1.0:
+        v /= 100.0
+    if not (0.0 <= v <= 1.0):
+        raise ValueError(f"{name} mole fraction must be between 0 and 100 %")
+    return v
+
+
 def convert_fugitive_flow_to_kg_hr(value: float, unit: str, ch4_mol: float = None, co2_mol: float = None) -> dict:
     """Measured leak rate -> kg/hr of CH4 and CO2.
 
@@ -78,24 +91,30 @@ def convert_fugitive_flow_to_kg_hr(value: float, unit: str, ch4_mol: float = Non
     """
     u = str(unit or "").strip().lower().replace(" ch4", "").replace("ch4", "").strip()
     val = float(value)
-    y_co2 = float(co2_mol or 0.0)
+    if val < 0:
+        raise ValueError("Measured flow rate cannot be negative")
+    y_ch4 = _normalize_mol_frac(ch4_mol, "CH4")
+    y_co2 = _normalize_mol_frac(co2_mol, "CO2") or 0.0
+    if y_ch4 is not None and (y_ch4 + y_co2) > 1.0001:
+        raise ValueError("Sum of CH4 and CO2 mole fractions cannot exceed 100 %")
+
     if u in _VOL_M3_PER_HR:
-        if ch4_mol in (None, ""):
+        if y_ch4 is None:
             raise ValueError("A volumetric leak rate needs the gas CH4 content (mol %)")
         m3_hr = val * _VOL_M3_PER_HR[u]
-        return {"ch4_kg_hr": m3_hr * float(ch4_mol) * DENSITY_CH4, "co2_kg_hr": m3_hr * y_co2 * DENSITY_CO2}
+        return {"ch4_kg_hr": m3_hr * y_ch4 * DENSITY_CH4, "co2_kg_hr": m3_hr * y_co2 * DENSITY_CO2}
     if u in _MASS_KG_PER_HR:
         ch4_kg = val * _MASS_KG_PER_HR[u]
-        co2_kg = ch4_kg * (y_co2 / float(ch4_mol)) * (MW_CO2 / MW_CH4) if (y_co2 and ch4_mol) else 0.0
+        co2_kg = ch4_kg * (y_co2 / y_ch4) * (MW_CO2 / MW_CH4) if (y_co2 and y_ch4) else 0.0
         return {"ch4_kg_hr": ch4_kg, "co2_kg_hr": co2_kg}
     from .units import UnitError, volume_rate_m3_per_hour
     try:   # any other volume-rate spelling ("Mcf/day", "Nm3/h", "scfm") through the shared parser
         m3_hr = val * volume_rate_m3_per_hour(u)
     except UnitError:
         raise ValueError(f"Unknown leak rate unit '{unit}'")
-    if ch4_mol in (None, ""):
+    if y_ch4 is None:
         raise ValueError("A volumetric leak rate needs the gas CH4 content (mol %)")
-    return {"ch4_kg_hr": m3_hr * float(ch4_mol) * DENSITY_CH4, "co2_kg_hr": m3_hr * y_co2 * DENSITY_CO2}
+    return {"ch4_kg_hr": m3_hr * y_ch4 * DENSITY_CH4, "co2_kg_hr": m3_hr * y_co2 * DENSITY_CO2}
 
 
 # API Compendium 2021 Table 7-8 - facility-level average equipment leak factors for onshore
@@ -618,8 +637,10 @@ class OnshoreScreeningMeasurementCalculator(BaseCalculator):
         hours = float(operating_hours)
         if hours < 0:
             raise ValueError("Operating hours cannot be negative")
-        y_ch4 = meta["ch4_basis"] if ch4_mol in (None, "") else float(ch4_mol)
-        y_co2 = float(co2_mol or 0.0)
+        y_ch4 = meta["ch4_basis"] if ch4_mol in (None, "") else _normalize_mol_frac(ch4_mol, "CH4")
+        y_co2 = 0.0 if co2_mol in (None, "") else _normalize_mol_frac(co2_mol, "CO2")
+        if (y_ch4 + y_co2) > 1.0001:
+            raise ValueError(f"Sum of CH4 ({y_ch4*100:.1f}%) and CO2 ({y_co2*100:.1f}%) cannot exceed 100 %")
         gas_m3 = leakers * meta["whole_gas_scf_hr"] * hours * CONVERSIONS["scf_to_m3"]
         ch4_t = gas_m3 * y_ch4 * DENSITY_CH4 / 1000.0
         co2_t = gas_m3 * y_co2 * DENSITY_CO2 / 1000.0

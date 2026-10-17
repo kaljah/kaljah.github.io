@@ -16,7 +16,7 @@ class IndependentScope2Model:
 
     @staticmethod
     def calculate_indirect_steam(amount, unit="mmbtu", boiler_eff=0.80, trans_loss=0.0, ef_co2=53.06,
-                                 ef_ch4=0.0, ef_n2o=0.0, gwp_ch4=28.0, gwp_n2o=265.0):
+                                 ef_ch4=0.0, ef_n2o=0.0, gwp_ch4=28.0, gwp_n2o=265.0, steam_enthalpy_btu_lb=None):
         amt = float(amount or 0.0)
         u = str(unit or "mmbtu").strip().lower().replace(" ", "")
 
@@ -33,18 +33,18 @@ class IndependentScope2Model:
             energy_mmbtu = amt * 3.412141633
         elif u in ["therm", "therms"]:
             energy_mmbtu = amt * 0.1
-        elif u in ["ton", "us_ton", "short_ton"]:
-            energy_mmbtu = amt * 2.0  # standard saturated steam enthalpy (2.0 MMBtu / ton)
-        elif u in ["tonne", "metric_ton", "mt"]:
-            energy_mmbtu = amt * 2.20462  # 2.20462 MMBtu / tonne steam
-        elif u in ["mlb", "klb", "thousand_lbs"]:
-            energy_mmbtu = amt * 1.0  # 1,000 lbs steam = 1.0 MMBtu
-        elif u in ["lb", "lbs"]:
-            energy_mmbtu = amt * 0.001
-        elif u in ["kg"]:
-            energy_mmbtu = amt * 0.00220462
-        else:
+        elif u in ["us_ton", "short_ton", "tonne", "metric_ton", "mt", "mlb", "klb", "thousand_lbs", "lb", "lbs", "kg"]:
+            # steam mass: mass (lb) x enthalpy above saturated water at 212 F (API Compendium Equation 8-1)
+            if steam_enthalpy_btu_lb is None:
+                raise ValueError("a steam mass needs its enthalpy")
+            lb = {"us_ton": 2000.0, "short_ton": 2000.0, "tonne": 2204.62262, "metric_ton": 2204.62262,
+                  "mt": 2204.62262, "mlb": 1000.0, "klb": 1000.0, "thousand_lbs": 1000.0, "lb": 1.0, "lbs": 1.0,
+                  "kg": 2.20462262}[u]
+            energy_mmbtu = amt * lb * float(steam_enthalpy_btu_lb) / 1e6
+        elif u in ["mmbtu", "mm_btu"]:
             energy_mmbtu = amt
+        else:
+            raise ValueError(f"unknown unit {unit}")
 
         b_eff = float(boiler_eff or 0.80)
         if b_eff > 1.0:

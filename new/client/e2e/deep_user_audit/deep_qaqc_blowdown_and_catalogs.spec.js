@@ -36,6 +36,8 @@ async function ensureAuthenticatedPage(page, targetUrl) {
     await page.locator('button[type="submit"]:has-text("Sign In")').click();
     await page.waitForTimeout(1000);
     await page.waitForURL((u) => !u.toString().includes('/login'), { timeout: 15000 });
+    // return to the requested page: sign-in lands on the dashboard
+    await page.goto(targetUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await page.waitForTimeout(1000);
   }
 
@@ -266,7 +268,7 @@ test.describe('Suite 18: QA/QC Diagnostics, Blowdown & Catalogs Deep Audit', () 
     console.log('[QBC-4] Filled Compressor Blowdown stoichiometric inputs.');
 
     // Save entry as Draft
-    const draftBtn = page.locator('button.btn-add-draft').first();
+    const draftBtn = page.locator('button.btn-add-draft, button:has-text("Calculate & Submit")').first();
     await draftBtn.click();
     await page.waitForTimeout(1500);
     console.log('[QBC-4] Draft submission completed.');

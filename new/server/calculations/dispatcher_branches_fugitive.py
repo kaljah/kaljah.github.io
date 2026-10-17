@@ -414,12 +414,8 @@ def calc_nitric_acid_production(self, calculator, emission_factors, flat_inputs,
             ["production_amount", "amount", "quantity", "fuel_mass"],
             "production amount",
         )
-        ef_n2o = (
-            emission_factors.get("n2o")
-            or emission_factors.get("ef_n2o")
-            or flat_inputs.get("ef_n2o")
-            or flat_inputs.get("n2o")
-        )
+        ef_n2o = next((v for v in (emission_factors.get("n2o"), emission_factors.get("ef_n2o"), flat_inputs.get("ef_n2o"),
+                                   flat_inputs.get("n2o")) if v not in (None, "")), None)  # an entered 0 is a value
         abatement_eff = self._optional_fraction(
             flat_inputs,
             ["abatement_efficiency", "abatement_eff", "control_efficiency", "eta_abatement"],
@@ -485,4 +481,6 @@ def calc_indirect_steam(self, calculator, emission_factors, flat_inputs, gwp_dic
         ef_ch4=emission_factors.get("ch4", 0) or 0,
         ef_n2o=emission_factors.get("n2o", 0) or 0,
         gwp_dict=gwp_dict,
+        steam_enthalpy=flat_inputs.get("steam_enthalpy"),
+        steam_enthalpy_btu_lb=flat_inputs.get("steam_enthalpy_btu_lb"),
     )

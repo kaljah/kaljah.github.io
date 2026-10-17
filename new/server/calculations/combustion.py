@@ -87,6 +87,8 @@ def user_hhv(hhv, hhv_unit):
     (value in Btu, "btu/<basis>"). No unit, or the form's already-converted "BTU/unit", keeps the
     catalog basis: (hhv, None). An unreadable unit raises UnitError (S1K-F11: a bulk "MJ/m3" was
     read as Btu/scf, 27x low)."""
+    if hhv not in (None, "") and float(hhv) < 0:
+        raise ValueError(f"Heating value (HHV) cannot be negative: {hhv}")
     if hhv in (None, "") or hhv_unit in (None, "") or str(hhv_unit).strip().lower() in ("btu/unit", "-"):
         return hhv, None
     hu = norm_unit(hhv_unit).replace(" ", "")
@@ -256,8 +258,9 @@ class CombustionCalculator(BaseCalculator):
         Eq 4-5 (fuel mass x carbon x 44/12, Exhibit 4.5); CH4 and N2O stay on the fuel factors.
         Emissions = Quantity * EF * (HHV if energy-based)
         """
-        # Validate inputs
         self.validate_inputs({"quantity": fuel_quantity}, ["quantity"])
+        if float(fuel_quantity) < 0:
+            raise ValueError(f"Fuel quantity cannot be negative: {fuel_quantity}")
 
         is_gas_fuel = fuel_type in [
             "gases",
@@ -295,41 +298,37 @@ class CombustionCalculator(BaseCalculator):
             ef_n2o, ef_unit, fuel_unit, hhv=hhv, fuel_type=fuel_type, density=density, hhv_unit=hhv_unit
         )
 
-        co2_kg = raw_quantity * kg_per_unit_co2
-        ch4_kg = raw_quantity * kg_per_unit_ch4
-        n2o_kg = raw_quantity * kg_per_unit_n2o
-
-        # Convert kg to tonnes
-        co2_val = co2_kg / 1000.0
-        ch4_val = ch4_kg / 1000.0
-        n2o_val = n2o_kg / 1000.0
+        # Convert to tonnes
+        co2_val = (raw_quantity * kg_per_unit_co2) / 1000.0
+        ch4_val = (raw_quantity * kg_per_unit_ch4) / 1000.0
+        n2o_val = (raw_quantity * kg_per_unit_n2o) / 1000.0
 
         # Tier 3 Gas Composition Override (Carbon Mass Balance)
         heavy_hc_warning = False
-        # only a composition that carries hydrocarbons: the dispatcher always passes c1..c10 (0.0
-        # when no analysis was given), and a zero-carbon balance replaced the factor CO2 with 0
         def _pos(v):
             try:
-                return float(str(v).replace("%", "").strip()) > 0
+                return float(str(v).replace("%", "").strip()) != 0
             except (TypeError, ValueError):
                 return False
 
         def _parse_c(val, default=0.0):
-            if val in (None, "", "-"):
-                return default
+            target = default if val in (None, "", "-") else val
             try:
-                return float(str(val).replace("%", "").strip())
+                return float(str(target).replace("%", "").strip())
             except (ValueError, TypeError):
-                return default
+                return 0.0
 
         has_hc = any(_pos(comps.get(f"c{i}")) for i in range(1, 11))
         has_native_co2 = _pos(comps.get("co2_comp")) or _pos(comps.get("co2_mol"))
         if has_hc or has_native_co2:
             raw_c = {f"c{i}": _parse_c(comps.get(f"c{i}"), 0.0) for i in range(1, 11)}
             raw_co2 = _parse_c(comps.get("co2_comp") or comps.get("co2_mol"), 0.0)
+            if any(v < 0 for v in raw_c.values()) or raw_co2 < 0:
+                raise ValueError("Gas component concentration cannot be negative")
             total_raw = sum(raw_c.values()) + raw_co2
+            is_pct = any("%" in str(comps.get(f"c{i}", "")) for i in range(1, 11)) or "%" in str(comps.get("co2_comp", "")) or "%" in str(comps.get("co2_mol", "")) or total_raw > 1.0
 
-            if total_raw > 1.5:  # Entered as percentages (> 1.0)
+            if is_pct:  # Entered as percentages or has %
                 c_fractions = {k: v / 100.0 for k, v in raw_c.items()}
                 co2_native_fraction = raw_co2 / 100.0
                 total_sum = total_raw / 100.0
@@ -506,13 +505,13 @@ class FlaringCalculator(BaseCalculator):
             {"volume": gas_volume, "ch4_fraction": ch4_fraction},
             ["volume", "ch4_fraction"],
         )
+        if float(gas_volume) < 0:
+            raise ValueError(f"Gas volume cannot be negative: {gas_volume}")
+        if float(str(ch4_fraction).replace("%", "").strip()) < 0:
+            raise ValueError(f"CH4 fraction cannot be negative: {ch4_fraction}")
 
-        # Determine efficiencies based on flare type or custom parameter overrides
-        # API Compendium 2021 Section 5.1.2 as corrected in December 2025: 96.5 % of the flare gas carbon
-        # to CO2 (Eq 5-2) and 98 % CH4 destruction for production flares (Eq 5-4). Refinery flares
-        # (99.5 %) are set by facility segment in calculations/flare_defaults.py, not by flare type.
-        default_eta_c = 0.965
-        default_eta_d = 0.98
+        # API Compendium 2021 Section 5.1.2 defaults: 96.5% carbon to CO2, 98% CH4 destruction
+        default_eta_c, default_eta_d = 0.965, 0.98
 
         eta_c = _normalize_efficiency(combustion_efficiency, default=default_eta_c)
         eta_d = _normalize_efficiency(destruction_efficiency, default=default_eta_d)
@@ -535,18 +534,18 @@ class FlaringCalculator(BaseCalculator):
 
         # Parse C1-C10 from kwargs, falling back to ch4_fraction for C1 if not provided
         def _parse_c(val, default=0.0):
-            if val in (None, "", "-"):
-                return default
+            target = default if val in (None, "", "-") else val
             try:
-                return float(str(val).replace("%", "").strip())
+                return float(str(target).replace("%", "").strip())
             except (ValueError, TypeError):
-                return default
+                return 0.0
 
         raw_c = {f"c{i}": _parse_c(comps.get(f"c{i}"), (ch4_fraction if i == 1 else 0.0)) for i in range(1, 11)}
         raw_co2 = _parse_c(comps.get("co2_comp") or comps.get("co2_mol"), 0.0)
         total_raw = sum(raw_c.values()) + raw_co2
+        is_pct = "%" in str(ch4_fraction) or any("%" in str(comps.get(f"c{i}", "")) for i in range(1, 11)) or "%" in str(comps.get("co2_comp", "")) or "%" in str(comps.get("co2_mol", "")) or total_raw > 1.0
 
-        if total_raw > 1.5:  # Percentage format (> 1.0)
+        if is_pct:  # Percentage format or has %
             c_fractions = {k: v / 100.0 for k, v in raw_c.items()}
             co2_native_fraction = raw_co2 / 100.0
             total_sum = total_raw / 100.0
@@ -564,10 +563,7 @@ class FlaringCalculator(BaseCalculator):
         actual_ch4_fraction = c_fractions["c1"]
 
         # CH4 Emissions (Undestroyed native methane)
-        density_ch4 = CONVERSIONS["density_ch4"]
-        ch4_undestroyed_vol = vol_std * actual_ch4_fraction * (1 - eta_d)
-        ch4_mass_kg = ch4_undestroyed_vol * density_ch4
-        ch4_tonnes = ch4_mass_kg / 1000.0
+        ch4_tonnes = (vol_std * actual_ch4_fraction * (1 - eta_d) * CONVERSIONS["density_ch4"]) / 1000.0
 
         # CO2 from Combustion of Hydrocarbons (C1-C10)
         total_carbon_moles_per_mole_gas = (

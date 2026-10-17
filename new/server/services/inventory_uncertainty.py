@@ -42,13 +42,15 @@ def default_rel_1sigma(scope, process_type="", calc_method="", factor_source="")
         return 0.05  # grid factor +/-10 % at 95 %
     if scope == 3:
         return 0.15  # value-chain average data +/-30 % at 95 %
+    from calculations.uncertainty import resolve_tier
+
     p = (process_type or "").lower()
     m = (calc_method or "").lower()
-    src = (factor_source or "").lower()
+    tier = resolve_tier(factor_source)  # also the aliases a form stores, e.g. drilling "tier2_plus"
     diffuse = any(x in p for x in ("fugitive", "vent", "pneumatic", "blowdown", "completion", "tank"))
-    if src == "specific" or any(x in m for x in ("tier 3", "tier3", "measurement", "cems", "composition")):
+    if tier == 3 or any(x in m for x in ("tier 3", "tier3", "measurement", "cems", "composition")):
         return 0.075 if diffuse else 0.025
-    if src == "custom" or any(x in m for x in ("tier 2", "tier2", "custom")):
+    if tier == 2 or any(x in m for x in ("tier 2", "tier2", "custom")):
         return 0.125 if diffuse else 0.05
     return 0.20 if diffuse else 0.10
 
@@ -69,8 +71,9 @@ def _method_tier(factor_source):
     """Scope 1 calculation tier from the factor source: catalog / library factors are Tier 1, custom
     (regional / lab) factors Tier 2, site-specific engineering or measured inputs Tier 3. The page used
     to label the uncertainty bands as tiers (a 5 % catalog record showed as "Tier 3")."""
-    src = (factor_source or "default").strip().lower()
-    return {"custom": "Tier 2", "specific": "Tier 3"}.get(src, "Tier 1")
+    from calculations.uncertainty import resolve_tier
+
+    return f"Tier {resolve_tier(factor_source)}"
 
 
 def inventory_uncertainty(year, allowed_fids=None, facility_id=None, scope="all", statuses=("Verified",), include_gwp_uncertainty=False, scope2_method="location"):

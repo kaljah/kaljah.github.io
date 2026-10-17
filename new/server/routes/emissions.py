@@ -7,6 +7,7 @@ from models import CustomFactor, Emission, Facility, Goal, Notification, Scope2E
 from extensions import db, limiter
 from services.labels import process_label, scope2_source_label
 from services.scope2_activity import scope2_activity
+from services.scope2_gases import list_row_gases
 from calculations import calculate_co2e, compute_emissions
 from emission_factors import API_FACTORS, ALL_EMISSION_FACTORS
 from routes.auth import login_required
@@ -130,7 +131,6 @@ def get_emissions():
     status_arg = request.args.get("status")  # BUG-077: inventory consumers request Verified only
 
     results = []
-
     # helper to apply common filters
     def apply_filters(q, model, filter_model=None):
         fm = filter_model or model
@@ -167,7 +167,7 @@ def get_emissions():
                 pass
         if status_arg and status_arg != "all" and hasattr(model, "status"):
             q = q.filter(model.status.in_([x.strip() for x in status_arg.split(",") if x.strip()]))
-        if facility_id and facility_id != "all":  # malformed ids are refused (422) before the route
+        if facility_id and facility_id != "all" and str(facility_id).isdigit():
             q = q.filter(model.facility_id == int(facility_id))
         # NEW-07 FIX: escape LIKE wildcards before filtering
         if division_arg and division_arg != "all":
@@ -434,19 +434,15 @@ def get_emissions():
             "uncertainty_n2o": getattr(r, "uncertainty_n2o", None),
             "data_source_ref": getattr(r, "data_source_ref", None),
         }
-        if (
-            r.scope == 1
-            and hasattr(r, "source_payload")
-            and getattr(r, "source_payload", None)
-        ):
-            import json
-
+        if r.scope == 2:
+            d.update(list_row_gases(r))
+        if r.scope == 1 and getattr(r, "source_payload", None):
             try:
                 payload = json.loads(r.source_payload)
                 d["factor_source"] = payload.get("factor_source")
                 if payload.get("custom_factor_id") not in (None, ""):
                     d["custom_factor_id"] = payload.get("custom_factor_id")
-            except Exception:
+            except (json.JSONDecodeError, TypeError, ValueError):
                 pass
         paginated_results.append(d)
 

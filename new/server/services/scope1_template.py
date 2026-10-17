@@ -52,7 +52,7 @@ PROCESS_UNITS = {
     "mobile": _u(_LIQ, _ENERGY),
     "flaring": _GAS,
     "venting": _GAS,
-    "associated_gas_venting": _u("bbl", "m3", _GAS, "bbl/day", "m3/day"),
+    "associated_gas_venting": _u("bbl", "m3", _GAS),   # rates go in oil_production / oil_unit
     "vented_gas": _GAS,
     "well_testing": _u("units", _GAS),
     "workovers": _u("units", _GAS),
@@ -69,9 +69,10 @@ PROCESS_UNITS = {
     "completions": _u("events", _GAS),
     "unloading": ("events", "wells"),
     "agr": _u("MMscf", "Mscf", "scf", "m3", "units"),
-    "dehydrator": _u("MMscf", "Mscf", "scf", "m3", "units"),
+    "dehydrator": ("MMscf", "Mscf", "scf", "m3"),
     "fugitive": ("components", "devices", "wells", "units", "MMscf", "bbl"),
-    "stoichiometry": _u(_MASS, _GAS, _LIQ),
+    "stoichiometry": _MASS,   # the carbon balance takes a mass of fuel
+    # (every unit offered here is accepted by at least one factor or method: test_scope1_coverage_gaps)
     "chemical_production": ("tonne", "kg", "short_ton"),
     "nitric_acid_production": ("tonne", "kg", "short_ton"),
     "adipic_acid_production": ("tonne", "kg", "short_ton"),

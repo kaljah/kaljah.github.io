@@ -331,11 +331,11 @@ class TestLiquidsUnloadingUnitConversions:
 
     def test_depth_conversions(self, calc):
         """Depth: 1524 m == 5000 ft."""
-        res_ft = calc.calculate_tier3_equation_6_10(
+        res_ft = calc.calculate_tier3_equation_6_10(ch4_content=0.85, 
             events=10, well_depth=5000.0, diameter=2.5, pressure=200.0,
             sfr=10000.0, hours_open=1.0, depth_unit="ft",
         )
-        res_m = calc.calculate_tier3_equation_6_10(
+        res_m = calc.calculate_tier3_equation_6_10(ch4_content=0.85, 
             events=10, well_depth=1524.0, diameter=2.5, pressure=200.0,
             sfr=10000.0, hours_open=1.0, depth_unit="m",
         )
@@ -343,11 +343,11 @@ class TestLiquidsUnloadingUnitConversions:
 
     def test_diameter_conversions(self, calc):
         """Diameter: 63.5 mm == 2.5 in."""
-        res_in = calc.calculate_tier3_equation_6_10(
+        res_in = calc.calculate_tier3_equation_6_10(ch4_content=0.85, 
             events=10, well_depth=5000.0, diameter=2.5, pressure=200.0,
             sfr=10000.0, hours_open=1.0, diameter_unit="in",
         )
-        res_mm = calc.calculate_tier3_equation_6_10(
+        res_mm = calc.calculate_tier3_equation_6_10(ch4_content=0.85, 
             events=10, well_depth=5000.0, diameter=63.5, pressure=200.0,
             sfr=10000.0, hours_open=1.0, diameter_unit="mm",
         )
@@ -355,11 +355,11 @@ class TestLiquidsUnloadingUnitConversions:
 
     def test_pressure_conversions(self, calc):
         """Pressure: 13.7895 bar == 200 psig."""
-        res_psig = calc.calculate_tier3_equation_6_10(
+        res_psig = calc.calculate_tier3_equation_6_10(ch4_content=0.85, 
             events=10, well_depth=5000.0, diameter=2.5, pressure=200.0,
             sfr=10000.0, hours_open=1.0, press_unit="psig",
         )
-        res_bar = calc.calculate_tier3_equation_6_10(
+        res_bar = calc.calculate_tier3_equation_6_10(ch4_content=0.85, 
             events=10, well_depth=5000.0, diameter=2.5, pressure=13.7895,
             sfr=10000.0, hours_open=1.0, press_unit="barg",
         )
@@ -378,7 +378,7 @@ class TestLiquidsUnloadingValidation:
         assert res_t2["results"]["ch4"]["value"] == 0.0
         assert res_t2["total_co2e"] == 0.0
 
-        res_t3 = calc.calculate_tier3_equation_6_10(events=0, well_depth=1000, diameter=2, pressure=100, sfr=0, hours_open=0)
+        res_t3 = calc.calculate_tier3_equation_6_10(ch4_content=0.85, events=0, well_depth=1000, diameter=2, pressure=100, sfr=0, hours_open=0)
         assert res_t3["results"]["ch4"]["value"] == 0.0
         assert res_t3["total_co2e"] == 0.0
 
@@ -390,7 +390,7 @@ class TestLiquidsUnloadingValidation:
             calc.calculate_tier1(well_count=-2)
 
         with pytest.raises(ValueError, match="greater than zero"):
-            calc.calculate_tier3_equation_6_10(events=5, well_depth=-1000, diameter=2, pressure=100)
+            calc.calculate_tier3_equation_6_10(ch4_content=0.85, events=5, well_depth=-1000, diameter=2, pressure=100)
 
     def test_combined_gas_fractions_over_100_rejected(self, calc):
         with pytest.raises(ValueError, match="cannot exceed 100%"):
@@ -399,11 +399,11 @@ class TestLiquidsUnloadingValidation:
     def test_equation_6_11_impossible_pressures_rejected(self, calc):
         # Pshut < Patm
         with pytest.raises(ValueError, match="Shut-in pressure"):
-            calc.calculate_tier3_equation_6_11(p_shut=10.0, p_line=100.0, p_sep=50.0, sfr_p=1000, t_p=1, p_atm=14.696)
+            calc.calculate_tier3_equation_6_11(ch4_content=0.85, p_shut=10.0, p_line=100.0, p_sep=50.0, sfr_p=1000, t_p=1, p_atm=14.696)
 
         # Pline <= Psep
         with pytest.raises(ValueError, match="Line pressure.*strictly greater than separator pressure"):
-            calc.calculate_tier3_equation_6_11(p_shut=150.0, p_line=50.0, p_sep=60.0, sfr_p=1000, t_p=1)
+            calc.calculate_tier3_equation_6_11(ch4_content=0.85, p_shut=150.0, p_line=50.0, p_sep=60.0, sfr_p=1000, t_p=1)
 
 
 # ==============================================================================

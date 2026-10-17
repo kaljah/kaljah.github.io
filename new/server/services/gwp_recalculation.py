@@ -85,7 +85,7 @@ def recalculate_all_emissions_gwp(standard, previous=None, user=None):
                     e.co2e_market_based = e.co2e
                 elif getattr(e, "market_emission_factor", None) is not None:
                     e.co2e_market_based = e.electricity_kwh * float(e.market_emission_factor) / 1000.0
-        elif "steam" in st and old_std and e.co2e and e.emission_factor == _NG_BOILER:
+        elif "steam" in st and old_std and e.co2e and abs(float(e.emission_factor or 0) - _NG_BOILER) < 1e-4:
             ratio = _steam_k(new_gwp) / _steam_k(old_std)
             e.co2e = e.co2e * ratio
             if getattr(e, "co2e_location_based", None) is not None:
@@ -116,5 +116,5 @@ def recalculate_all_emissions_gwp(standard, previous=None, user=None):
 
         DASHBOARD_CACHE.clear()
         clear_dashboard_cache()
-    except Exception:
-        pass
+    except Exception as e:
+        current_app.logger.warning(f"Failed to clear dashboard cache: {e}")

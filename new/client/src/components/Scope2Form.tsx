@@ -301,8 +301,19 @@ export const Scope2Form: React.FC = () => {
 
   const handleInspect = (entry: Scope2GridEntry) => {
     const isElectricity = entry.source_type === "electricity";
-    const amountVal = isElectricity ? entry.electricity_kwh : entry.heat_mmbtu || entry.co2e || 0;
-    const unitVal = isElectricity ? "kWh" : entry.source_type === "indirect_steam" ? "MMBtu" : "tCO₂e";
+    const isCooling = String(entry.source_type || "").toLowerCase().includes("cool");
+    // the activity in its own unit (cooling showed the CO2e itself as the amount, in tCO2e)
+    const amountVal = Number(
+      (isElectricity ? entry.electricity_kwh : isCooling ? entry.cooling_ton : entry.heat_mmbtu) || 0,
+    );
+    const unitVal = isElectricity ? "kWh" : isCooling ? t("ton-hours") : "MMBtu";
+    // the stored factor is per kWh (grid) or per ton-hour (cooling); for steam it is kg CO2 per MMBtu of
+    // boiler fuel, and CHP stores none, so the factor applied per MMBtu of heat comes from the stored total
+    const co2eVal = Number(entry.co2e || 0);
+    const appliedEf =
+      isElectricity || isCooling
+        ? Number(entry.emission_factor || 0)
+        : amountVal > 0 ? (co2eVal * 1000) / amountVal : 0;
 
     setInspectRecord({
       process_type:
@@ -310,18 +321,21 @@ export const Scope2Form: React.FC = () => {
           ? t("Scope 2 - Purchased Electricity")
           : entry.source_type === "indirect_steam"
           ? t("Scope 2 - Indirect Steam / Heat")
+          : isCooling
+          ? t("Scope 2 - Purchased Cooling")
           : t("Scope 2 - CHP / Cogen Allocation"),
       fuel: entry.grid_region || entry.source_type || t("Grid Electricity"),
       amount: amountVal,
       unit: unitVal,
       emissions: {
-        totalCo2e: entry.co2e || 0,
-        co2: entry.co2e || 0,
-        ch4: 0,
-        n2o: 0,
+        totalCo2e: co2eVal,
+        // the API splits grid electricity into its gases; other sources report the CO2e as CO2
+        co2: Number(entry.co2 ?? co2eVal),
+        ch4: Number(entry.ch4 || 0),
+        n2o: Number(entry.n2o || 0),
       },
       factors: {
-        co2: entry.emission_factor || 0,
+        co2: appliedEf,
         ch4: 0,
         n2o: 0,
       },
@@ -333,13 +347,13 @@ export const Scope2Form: React.FC = () => {
         },
         {
           name: t("Grid / Steam Emission Factor"),
-          desc: t("Applied Factor: {{factor}} kg CO₂e / {{unit}}", { factor: entry.emission_factor || 0, unit: unitVal }),
+          desc: t("Applied Factor: {{factor}} kg CO₂e / {{unit}}", { factor: formatNumber(appliedEf, 4), unit: unitVal }),
         },
         {
           name: t("Emissions Calculation"),
           desc: isElectricity
-            ? `(${formatNumber(amountVal, 2)} kWh × ${entry.emission_factor}) ÷ 1,000 = ${formatNumber(entry.co2e, 3)} tCO₂e`
-            : t("Total Calculated Emissions = {{value}} tCO₂e", { value: formatNumber(entry.co2e, 3) }),
+            ? `(${formatNumber(amountVal, 2)} kWh × ${appliedEf}) ÷ 1,000 = ${formatNumber(co2eVal, 3)} tCO₂e`
+            : t("Total Calculated Emissions = {{value}} tCO₂e", { value: formatNumber(co2eVal, 3) }),
         },
       ],
     });

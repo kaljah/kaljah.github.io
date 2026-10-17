@@ -136,7 +136,11 @@ export const MethaneIntensityLdarCard: React.FC<MethaneIntensityLdarCardProps> =
 
   // Aggregate metrics
   const totalComponents = useMemo(() => {
-    return filteredComponents.reduce((acc, c) => acc + (Number(c.quantity) || 1), 0);
+    // a component row without a quantity is one component (the server default); 0 stays 0
+    return filteredComponents.reduce((acc, c) => {
+      const q = Number(c.quantity ?? 1);
+      return acc + (Number.isFinite(q) ? q : 0);
+    }, 0);
   }, [filteredComponents]);
 
   const openLeaksCount = useMemo(() => {
@@ -147,7 +151,8 @@ export const MethaneIntensityLdarCard: React.FC<MethaneIntensityLdarCardProps> =
     // Fallback to component inventory broken status if no surveys are logged for period
     return filteredComponents.filter((c) => {
       const st = String(c.status || "").toLowerCase();
-      return st === "broken" || st === "leaking" || st === "damaged" || st === "faulty";
+      // the server's routes.ldar.is_broken_status
+      return ["broken", "leaking", "damaged", "faulty", "needs repair"].includes(st.trim());
     }).length;
   }, [filteredSurveys, filteredComponents]);
 
@@ -194,7 +199,8 @@ export const MethaneIntensityLdarCard: React.FC<MethaneIntensityLdarCardProps> =
       filteredComponents
         .filter((c) => {
           const st = String(c.status || "").toLowerCase();
-          return st === "broken" || st === "leaking" || st === "damaged" || st === "faulty";
+          // the server's routes.ldar.is_broken_status
+      return ["broken", "leaking", "damaged", "faulty", "needs repair"].includes(st.trim());
         })
         .forEach((c) => {
           const eq = c.equipment_type || "Component";

@@ -27,7 +27,7 @@ os.environ.setdefault("SEED_ADMIN", "false")
 
 RESULT_FIELDS = ("co2_emissions", "ch4_emissions", "n2o_emissions", "co2e_total", "calc_method", "fuel_type",
                  "quantity", "unit", "factor_source", "uncertainty", "uncertainty_ch4", "uncertainty_n2o", "ef_key")
-TIERS = ("default", "custom", "specific")
+TIERS = ("default", "custom", "specific", "tier2_plus")  # tier2_plus: drilling Tier 2+ (site gas composition)
 
 
 def stored_payload(record):

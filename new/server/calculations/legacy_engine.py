@@ -37,14 +37,7 @@ MW = {
 GWP = {"CH4": DEFAULT_GWP["CH4"], "N2O": DEFAULT_GWP["N2O"]}
 
 
-from .units import (
-    factor_to_kg_per_activity,
-    parse_factor_unit,
-    convert,
-    norm_unit,
-    parse_amount,
-    UnitError,
-)
+from .units import norm_unit, parse_amount, UnitError
 
 
 def _convert_factor_to_kg(val, factor_unit, activity_unit, hours=None, **conv):
@@ -79,13 +72,18 @@ def _calculate_default_kg(amount, unit, factor_data, gas, hours=None, **conv):
     )
     try:
         val = float(raw_val or 0.0)
-    except (ValueError, TypeError):
-        return 0.0
+    except (ValueError, TypeError):  # an unreadable factor was taken as 0 (no emissions booked)
+        raise ValueError(f"Emission factor '{gas}' is not a number: {raw_val}")
     if val <= 0:
         return 0.0
     raw_unit = str(factor_data.get("unit") or "").strip()
     return float(amount) * _convert_factor_to_kg(val, raw_unit, unit, hours=hours, **conv)
 
+
+
+_CH4_ONLY = frozenset({"fugitive", "pneumatic", "dehydrator"})
+_NO_N2O = frozenset({"venting", "loading", "separation", "associated_gas_venting", "tank", "agr", "drilling",
+                     "completions", "unloading"})
 
 
 def _payload_density(payload):
@@ -134,8 +132,8 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
     else:
         try:
             hhv = float(hhv_val)
-        except (ValueError, TypeError):
-            hhv = 0
+        except (ValueError, TypeError):  # an unreadable HHV was taken as "none given"
+            raise ValueError(f"Heating value (HHV) is not a number: {hhv_val}")
 
     if hhv and not payload.get("hhv"):
         payload["hhv"] = hhv
@@ -173,30 +171,31 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
     inputs = {**payload, **inputs}
     # the record-level activity, kept for the unit-consistency check (S1K-F9: a form sends the converted
     # top-level amount and the method's own amount + unit; both are the same activity)
-    inputs["_top_amount"], inputs["_top_unit"] = payload.get("amount"), payload.get("unit")
-    if hhv and not inputs.get("hhv"):
-        inputs["hhv"] = hhv
+    inputs["_top_amount"], inputs["_top_unit"] = payload.get("amount"), payload.get("unit")  # (hhv: set on payload above)
 
     density_val = payload.get("density") or payload.get("fuel_density") or factor_data.get("density")
     if density_val not in [None, "", "-"]:
         try:
             inputs["density"] = float(density_val)
-        except (ValueError, TypeError):
-            pass
+        except (ValueError, TypeError):  # an unreadable density was ignored
+            raise ValueError(f"Fuel density is not a number: {density_val}")
 
     is_specific = payload.get("factor_source") == "specific" or payload.get(
         "isSpecific"
     )
     spec = payload.get("specificFactors") or payload.get("specific_factors")
-    factor_source = payload.get("factor_source")
 
     em = {"co2": 0, "ch4": 0, "n2o": 0, "totalCo2e": 0, "co": 0, "ce": 0}
     calc_method = "server_default"
 
-    # --- API 2021 CALCULATION DISPATCHER ---
-    # Try to use the new API 2021 compliant calculators first
+    # --- API 2021 CALCULATION DISPATCHER --- first, except for entered Tier 3 factors (legacy path below):
+    # with the catalog fuel the form always sends, it returned the catalog factor and ignored them
+    _spec = payload.get("specific_factors") or payload.get("specificFactors") or {}
+    _has_spec = isinstance(_spec, dict) and any(
+        str(v).strip() not in ("", "0", "0.0", "None") for k, v in _spec.items() if not str(k).endswith("Unit")
+    )
     uncertainties = factor_data.get("uncertainty", {})
-    api_res = api2021_dispatcher.dispatch(
+    api_res = None if (is_specific and _has_spec) else api2021_dispatcher.dispatch(
         process, inputs, factor_data, uncertainties, gwp_dict=gwp_dict
     )
 
@@ -211,17 +210,12 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
 
     # A Tier 3 engineering result of zero is a real outcome (e.g. 0 operating hours); it must not fall
     # through to the legacy factor path and its misleading "request not understood" error
-    # (entered specific factors are applied by the legacy path below, so they keep that route)
-    _spec = payload.get("specific_factors") or payload.get("specificFactors") or {}
-    _has_spec = isinstance(_spec, dict) and any(
-        str(v).strip() not in ("", "0", "0.0", "None") for k, v in _spec.items() if not str(k).endswith("Unit")
-    )
     _tier3_zero = (str(payload.get("factor_source") or "").lower() == "specific" and not _has_spec
                    and api_res and "results" in api_res)
     if (
         api_res
         and "results" in api_res
-        and (any(get_val(api_res["results"].get(g)) for g in ["co2", "ch4", "n2o"]) or _tier3_zero)
+        and (any(get_val(api_res["results"].get(g)) for g in ["co2", "ch4", "n2o"]) or _tier3_zero or amount == 0)  # 0 is 0
     ):
         # If the dispatcher handled it, return the rich result structure
         # We extract the 'value' for backward compatibility with the legacy database record creation
@@ -358,61 +352,11 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
     ch4_kg = _calculate_default_kg(amount, unit, factor_data, "ch4", **conv)
     n2o_kg = _calculate_default_kg(amount, unit, factor_data, "n2o", **conv)
 
-    # Process-specific gas emission matrix (API 2021)
-    # Determine which gases to calculate based on process type
-    if process in ["combustion", "mobile"]:
-        # All gases from fuel combustion
-        em["co2"] = co2_kg / 1000.0
-        em["ch4"] = ch4_kg / 1000.0
-        em["n2o"] = n2o_kg / 1000.0
-
-    elif process == "flaring":
-        # CO2 from combustion + CH4 slip + N2O
-        em["co2"] = co2_kg / 1000.0
-        em["ch4"] = ch4_kg / 1000.0
-        em["n2o"] = n2o_kg / 1000.0
-
-    elif process in ["venting", "loading", "separation", "associated_gas_venting"]:
-        # Primarily CH4 release, minor CO2
-        em["ch4"] = ch4_kg / 1000.0
-        em["co2"] = co2_kg / 1000.0 if co2_kg > 0 else 0
-        em["n2o"] = 0
-
-    elif process in ["fugitive", "pneumatic", "dehydrator"]:
-        # CH4 only (leaks/vents)
-        em["ch4"] = ch4_kg / 1000.0
-        em["co2"] = 0
-        em["n2o"] = 0
-
-    elif process == "tank":
-        # CH4 dominant, minor CO2 from flash gas
-        em["ch4"] = ch4_kg / 1000.0
-        em["co2"] = co2_kg / 1000.0 if co2_kg > 0 else 0
-        em["n2o"] = 0
-
-    elif process == "agr":
-        # CO2 removal/venting, minor CH4
-        em["co2"] = co2_kg / 1000.0
-        em["ch4"] = ch4_kg / 1000.0 if ch4_kg > 0 else 0
-        em["n2o"] = 0
-
-    elif process in ["drilling"]:
-        # Fuel combustion (CO2/CH4) + mud losses
-        em["co2"] = co2_kg / 1000.0
-        em["ch4"] = ch4_kg / 1000.0
-        em["n2o"] = 0
-
-    elif process in ["completions", "unloading"]:
-        # Primarily CH4 from gas release, minor CO2 if flared
-        em["ch4"] = ch4_kg / 1000.0
-        em["co2"] = co2_kg / 1000.0 if co2_kg > 0 else 0
-        em["n2o"] = 0
-
-    else:
-        # Default: Calculate all gases if factors exist
-        em["co2"] = co2_kg / 1000.0
-        em["ch4"] = ch4_kg / 1000.0
-        em["n2o"] = n2o_kg / 1000.0
+    # Gases each process emits (API 2021): leaks and vents of fugitive / pneumatic / dehydrator gas are CH4
+    # only; vented, tank, AGR, drilling and well processes have no N2O; combustion and the rest all three
+    em["co2"] = 0 if process in _CH4_ONLY else co2_kg / 1000.0
+    em["ch4"] = ch4_kg / 1000.0
+    em["n2o"] = 0 if process in _CH4_ONLY or process in _NO_N2O else n2o_kg / 1000.0
 
     # Calculate total CO2e
     em["totalCo2e"] = (
@@ -431,13 +375,8 @@ class MissingFactorError(ValueError):
 def _has_factor_values(factor_data):
     if not factor_data:
         return False
-    for key in ("co2", "ch4", "n2o"):
-        try:
-            if float(factor_data.get(key) or 0) > 0:
-                return True
-        except (TypeError, ValueError):
-            continue
-    return False
+    # the factors were read as numbers by the calculation (an unreadable one is refused there)
+    return any(float(factor_data.get(key) or 0) > 0 for key in ("co2", "ch4", "n2o"))
 
 
 def compute_emissions(payload, factor_data=None, gwp_dict=None, gwp_standard=None):
@@ -459,10 +398,7 @@ def compute_emissions(payload, factor_data=None, gwp_dict=None, gwp_standard=Non
     if any(float(em.get(g) or 0) for g in ("co2", "ch4", "n2o")):
         return em, method
     raw = payload.get("amount") if payload.get("amount") not in (None, "") else payload.get("quantity")
-    try:
-        amount = float(str(raw).replace(",", "")) if raw not in (None, "") else 0.0
-    except (TypeError, ValueError):
-        amount = 0.0
+    amount = float(str(raw).replace(",", "")) if raw not in (None, "") else 0.0  # parsed by the calculation
     source = str(payload.get("factor_source") or "default").lower()
     if amount > 0 and source in ("default", "custom", "") and not _has_factor_values(factor_data):
         name = payload.get("fuel") or payload.get("fuel_type") or payload.get("custom_factor_id") or "(none)"

@@ -96,26 +96,11 @@ class TestConservationLaws:
         assert pytest.approx(co2_tonnes, rel=1e-4) == expected_combusted_co2
 
     def test_dehydrator_stoichiometric_carbon_balance(self):
-        """API §6.6: Controlled dehydrator must oxidize destroyed methane to stoichiometric CO2."""
-        calc = DehydratorCalculator()
-        res = calc.calculate(
-            pump_rate=100.0,
-            pump_unit="gph",
-            hours=8760,
-            ch4_content=0.85,
-            has_flash_tank=False,
-            still_control_type="flare",
-            control_eff=0.98,
-        )
-        unburnt_ch4 = res["results"]["ch4"]["value"]
-        combusted_co2 = res["results"]["co2"]["value"]
+        """A glycol circulation rate has no API Compendium method: the unsourced solubility model is refused."""
+        from calculations.midstream import DehydratorCalculator
 
-        assert unburnt_ch4 > 0
-        assert combusted_co2 > 0
-        # Destroyed CH4 was 98%, unburnt is 2%. Ratio = 0.98 / 0.02 = 49x
-        destroyed_ch4 = (unburnt_ch4 / 0.02) * 0.98
-        expected_co2 = destroyed_ch4 * (44.01 / 16.04)
-        assert pytest.approx(combusted_co2, rel=1e-4) == expected_co2
+        with pytest.raises(ValueError, match="no API Compendium method"):
+            DehydratorCalculator().calculate(pump_rate=100.0, pump_unit="gph", hours=8760, ch4_content=0.90)
 
     def test_cogen_allocation_energy_conservation(self):
         """API §8.3: Cogen heat + power emissions must exactly equal total emissions."""
@@ -400,25 +385,11 @@ class TestNormativeGoldenBenchmarks:
         assert pytest.approx(res["total_co2e"], rel=1e-3) == ch4_t * 28.0
 
     def test_api_example_6_6_teg_dehydration_gri_glycalc(self):
-        """API Compendium 2021 §6.6: TEG dehydration GRI-GLYCalc parametric methane solubility."""
-        calc = DehydratorCalculator()
-        res = calc.calculate(
-            pump_rate=600.0,  # 10 gpm = 600 gph
-            pump_unit="gph",
-            hours=8760,
-            ch4_content=0.90,
-            contactor_pressure=800.0,
-            press_unit="psia",
-            contactor_temperature=100.0,
-            temp_unit="F",
-            has_flash_tank=False,
-            still_control_type="none",
-            gwp_dict={"CO2": 1.0, "CH4": 28.0, "N2O": 265.0},
-        )
-        # S_CH4 = 0.0032 * 800^0.96 * exp(-0.0022 * 40) * 0.90 = 1.6148 scf/gal
-        # Total CH4 = 5,256,000 gal * 1.6148 scf/gal * 0.0283168 m3/scf * 0.67722 / 1000 = 163.08 tonnes
-        assert pytest.approx(res["results"]["ch4"]["value"], rel=1e-2) == 163.08
-        assert pytest.approx(res["total_co2e"], rel=1e-2) == 4566.14
+        """A glycol circulation rate has no API Compendium method: the unsourced solubility model is refused."""
+        from calculations.midstream import DehydratorCalculator
+
+        with pytest.raises(ValueError, match="no API Compendium method"):
+            DehydratorCalculator().calculate(pump_rate=100.0, pump_unit="gph", hours=8760, ch4_content=0.90)
 
     def test_api_table_7_3_compressor_seals(self):
         """API Compendium 2021 Table 6-30: reciprocating rod packing, production (4.43E-04 t CH4/compressor-hr)."""

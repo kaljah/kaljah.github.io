@@ -287,19 +287,24 @@ export const Scope3Form: React.FC = () => {
   };
 
   const handleInspect = (entry: Scope3GridEntry) => {
+    const activity = Number(entry.activity_data || entry.volume || 0);
+    const co2eVal = Number(entry.co2e || entry.emissions_tco2e || 0);
+    // the stored factor is per the factor's own unit (the server converts the activity to it), so the
+    // factor applied per recorded unit comes from the stored total
+    const appliedEf = activity > 0 ? (co2eVal * 1000) / activity : Number(entry.emission_factor || 0);
     setInspectRecord({
       process_type: t("Scope 3 - Category {{category}}", { category: entry.category ?? "" }),
       fuel: entry.sub_category ? t(entry.sub_category) : entry.product_type || t("N/A"),
-      amount: Number(entry.activity_data || entry.volume || 0),
+      amount: activity,
       unit: entry.unit || "unit",
       emissions: {
-        totalCo2e: Number(entry.co2e || entry.emissions_tco2e || 0),
-        co2: Number(entry.co2e || entry.emissions_tco2e || 0),
+        totalCo2e: co2eVal,
+        co2: co2eVal,
         ch4: 0,
         n2o: 0,
       },
       factors: {
-        co2: Number(entry.emission_factor || 0),
+        co2: appliedEf,
         ch4: 0,
         n2o: 0,
       },
@@ -311,11 +316,11 @@ export const Scope3Form: React.FC = () => {
         },
         {
           name: t("Emission Factor Application"),
-          desc: t("Applied factor: {{factor}} kg CO₂e / {{unit}}", { factor: entry.emission_factor ?? "", unit: entry.unit ?? "" }),
+          desc: t("Applied factor: {{factor}} kg CO₂e / {{unit}}", { factor: formatNumber(appliedEf, 4), unit: entry.unit ?? "" }),
         },
         {
           name: t("CO₂e Calculation"),
-          desc: `(${entry.activity_data || entry.volume || 0} × ${entry.emission_factor}) ÷ 1,000 = ${formatNumber(entry.co2e || entry.emissions_tco2e, 3)} tCO₂e`,
+          desc: `(${activity} × ${formatNumber(appliedEf, 4)}) ÷ 1,000 = ${formatNumber(co2eVal, 3)} tCO₂e`,
         },
       ],
     });

@@ -73,9 +73,7 @@ CONVERSIONS = {
     "gwp_ch4": DEFAULT_GWP["CH4"],
     "gwp_n2o": DEFAULT_GWP["N2O"],
     # Global Warming Potentials (Comparison Reference)
-    "GWP_AR4": {"ch4": 25, "n2o": 298},
-    "GWP_AR5": DEFAULT_GWP,
-    "GWP_AR6": {"ch4": 29.8, "n2o": 273},
+    "GWP_AR4": {"ch4": 25, "n2o": 298}, "GWP_AR5": DEFAULT_GWP, "GWP_AR6": {"ch4": 29.8, "n2o": 273},
 }
 
 
@@ -92,12 +90,9 @@ for _k, _names in (("c", ("c", "celsius", "degc", "°c", "ºc", "deg_c", "centig
 _PRESSURE_UNITS = {
     "psig": (1.0, True), "psi_g": (1.0, True), "psia": (1.0, False), "psi_a": (1.0, False), "psi": (1.0, False),
     "barg": (14.5038, True), "bar_g": (14.5038, True), "bar": (14.5038, False), "bara": (14.5038, False),
-    "mbarg": (0.0145038, True), "mbar_g": (0.0145038, True), "mbar": (0.0145038, False), "mbara": (0.0145038, False),
-    "kpag": (0.145038, True), "kpa_g": (0.145038, True), "kpa": (0.145038, False), "kpaa": (0.145038, False),
-    "mpag": (145.0377, True), "mpa_g": (145.0377, True), "mpa": (145.0377, False), "mpaa": (145.0377, False),
-    "pag": (0.000145038, True), "pa_g": (0.000145038, True), "pa": (0.000145038, False), "paa": (0.000145038, False),
-    "atm": (STD_PRESSURE_PSIA, False), "mmhg": (0.0193367747, False), "torr": (0.0193367747, False),
-    "inhg": (0.4911541, False),
+    "mbarg": (0.0145038, True), "mbar_g": (0.0145038, True), "mbar": (0.0145038, False), "mbara": (0.0145038, False), "kpag": (0.145038, True), "kpa_g": (0.145038, True), "kpa": (0.145038, False), "kpaa": (0.145038, False),
+    "mpag": (145.0377, True), "mpa_g": (145.0377, True), "mpa": (145.0377, False), "mpaa": (145.0377, False), "pag": (0.000145038, True), "pa_g": (0.000145038, True), "pa": (0.000145038, False), "paa": (0.000145038, False),
+    "atm": (STD_PRESSURE_PSIA, False), "mmhg": (0.0193367747, False), "torr": (0.0193367747, False), "inhg": (0.4911541, False),
 }
 
 
@@ -120,15 +115,15 @@ def to_kelvin(val, unit="c"):
     if val is None:
         return STD_TEMP_K
     v = float(val)
-    kind = _temp_kind(unit, "c")
-    return {"c": v + 273.15, "f": (v - 32.0) * 5.0 / 9.0 + 273.15, "r": v * 5.0 / 9.0, "k": v}[kind]
+    k = {"c": v + 273.15, "f": (v - 32.0) * 5.0 / 9.0 + 273.15, "r": v * 5.0 / 9.0, "k": v}[_temp_kind(unit, "c")]
+    if k < 0.0:
+        raise ValueError(f"Temperature cannot be below absolute zero (0 K): got {k:.2f} K")
+    return k
 
 
 def to_fahrenheit(val, unit="c"):
     """Converts temperature value to Fahrenheit."""
-    if val is None:
-        return STD_TEMP_F
-    return (to_kelvin(val, unit) - 273.15) * 9.0 / 5.0 + 32.0
+    return (to_kelvin(val, unit) - 273.15) * 9.0 / 5.0 + 32.0 if val is not None else STD_TEMP_F
 
 
 def to_psia(val, unit="psig", atmospheric_psia=STD_PRESSURE_PSIA):
@@ -136,7 +131,10 @@ def to_psia(val, unit="psig", atmospheric_psia=STD_PRESSURE_PSIA):
     if val is None:
         return STD_PRESSURE_PSIA
     per, gauge = _pressure_unit(unit, "psig")
-    return max(0.0, float(val) * per + (atmospheric_psia if gauge else 0.0))
+    p = float(val) * per + (atmospheric_psia if gauge else 0.0)
+    if p < 0.0:
+        raise ValueError(f"Pressure cannot be below absolute vacuum (0 psia): got {p:.2f} psia")
+    return p
 
 
 # Volume units that can be read at operating conditions. scf / Mscf / Sm3 / Nm3 are standard by
@@ -939,11 +937,13 @@ def parse_amount(raw):
     if raw in (None, ""):
         return 0.0
     if isinstance(raw, str):
-        s = raw.strip()
-        if "," in s:
-            raise ValueError(f"Activity amount '{s}' contains a comma: send a plain number such as 1234.5")
-        raw = s or 0
+        raw = raw.strip()
+        if "," in raw:
+            raise ValueError(f"Activity amount '{raw}' contains a comma: send a plain number such as 1234.5")
     try:
-        return float(raw)
+        val = float(raw)
     except (TypeError, ValueError):
         raise ValueError(f"Invalid numeric quantity/amount: {raw}")
+    if math.isnan(val) or math.isinf(val):
+        raise ValueError(f"Activity amount cannot be NaN or Infinite: {raw}")
+    return val

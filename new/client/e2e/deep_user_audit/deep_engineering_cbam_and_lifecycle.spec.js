@@ -4,7 +4,8 @@ import fs from 'fs';
 import path from 'path';
 
 const FRONTEND = process.env.E2E_BASE_URL || 'http://127.0.0.1:5173';
-const BACKEND = 'http://127.0.0.1:5000';
+// the dev server proxies /api; never a hard-coded backend (a run must not reach someone's dev server)
+const BACKEND = process.env.E2E_API_URL || process.env.E2E_BASE_URL || 'http://127.0.0.1:5173';
 const SCREENSHOT_DIR = path.resolve('e2e/deep_user_audit/screenshots');
 const ARTIFACT_DIR = 'C:/Users/samsung/.gemini/antigravity/brain/145e1f58-77e7-4f5b-8573-5a1c4dc13171';
 
@@ -39,6 +40,8 @@ async function ensureAuthenticatedPage(page, targetUrl = '/') {
     await page.locator('input[type="password"]').fill('a');
     await page.locator('button[type="submit"]:has-text("Sign In")').click();
     await page.waitForURL((u) => !u.toString().includes('/login'), { timeout: 15000 });
+    // return to the requested page: sign-in lands on the dashboard
+    await page.goto(targetUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await page.waitForTimeout(1000);
     await page.goto(targetUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await page.waitForTimeout(1000);

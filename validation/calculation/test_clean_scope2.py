@@ -71,6 +71,7 @@ class TestCleanScope2SteamAndHeat:
             transmission_loss=t_loss,
             uncertainties={},
             heat_unit="tonne",
+            steam_enthalpy_btu_lb=1000.0,   # Equation 8-1: Btu/lb above saturated water at 212 F
         )
 
         expected_co2 = ((tonnes * 2.20462) / (b_eff * (1.0 - t_loss)) * ef_co2_kg_mmbtu) / 1000.0

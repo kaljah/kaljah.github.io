@@ -447,12 +447,13 @@ def delete_facility(facility_id):
         }), 409
 
     try:
+        fac_name, fac_code, fac_loc = facility.name, facility.code, facility.location
         db.session.delete(facility)
         db.session.flush()
 
         # Audit
         user = db.session.get(User, user_id) if user_id else None  # API-02 FIX
-        log_details = (f"Deleted facility: {facility.name} (Code: {facility.code}) with {n_records} emission records "
+        log_details = (f"Deleted facility: {fac_name} (Code: {fac_code}) with {n_records} emission records "
                        f"(Scope 1: {counts['scope1']}, Scope 2: {counts['scope2']}, Scope 3: {counts['scope3']}; "
                        f"{counts['verified']} Verified)")
 
@@ -463,7 +464,7 @@ def delete_facility(facility_id):
             request=request,
             entity="Facility",
             details=log_details,
-            metadata_json=json.dumps({"name": facility.name, "code": facility.code, "location": facility.location,
+            metadata_json=json.dumps({"name": fac_name, "code": fac_code, "location": fac_loc,
                                       "deleted_records": counts}),
         )
         db.session.commit()

@@ -597,11 +597,13 @@ def propagate_uncertainty(
     u_act_1sigma = act_float / COVERAGE_FACTOR_95
     u_components = [u_ef_1sigma, u_act_1sigma]
 
+    u_comp_1sigma = 0.0
     if composition_uncertainty is not None:
         try:
             comp_float = float(composition_uncertainty)
             if comp_float > 0:
-                u_components.append(comp_float / COVERAGE_FACTOR_95)
+                u_comp_1sigma = comp_float / COVERAGE_FACTOR_95
+                u_components.append(u_comp_1sigma)
         except (ValueError, TypeError):
             pass
 
@@ -627,9 +629,7 @@ def propagate_uncertainty(
         # Component uncertainties (1σ, relative)
         "ef_uncertainty_1sigma": u_ef_1sigma,
         "ad_uncertainty_1sigma": u_act_1sigma,
-        "comp_uncertainty_1sigma": (
-            (float(composition_uncertainty) / COVERAGE_FACTOR_95) if composition_uncertainty else 0.0
-        ),
+        "comp_uncertainty_1sigma": u_comp_1sigma,
         # Combined standard uncertainty (1σ)
         "relative_uncertainty_1sigma": u_combined_1sigma,
         "relative_uncertainty": u_combined_1sigma,

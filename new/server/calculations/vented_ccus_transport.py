@@ -15,15 +15,8 @@ API Compendium of Greenhouse Gas Emissions Methodologies for the Oil and Natural
     * §6.10.3 Marine Transit Loss Emissions (Table 6-49, Exhibit 6-37)
 """
 
-import math
 from .base import BaseCalculator
-from .units import (
-    CONVERSIONS,
-    STD_PRESSURE_PSIA,
-    convert,
-    calculate_co2e,
-    normalize_efficiency,
-)
+from .units import calculate_co2e, normalize_efficiency
 from .uncertainty import (
     propagate_uncertainty,
     resolve_tier,
@@ -35,51 +28,6 @@ MW_CH4 = 16.04
 MW_CO2 = 44.01
 MW_N2O = 44.013
 LB_PER_TONNE = 2204.6226218487757
-
-
-def _split_vent_flare(total_gas_m3, ch4_tonnes, co2_tonnes, ctrl_eff=0.0, hhv=1020.0, ef_n2o=None, destruction_eff=None, control_type="flare"):
-    ctrl = normalize_efficiency(ctrl_eff, default=0.0)
-    vented_frac = 1.0 - ctrl
-
-    vented_ch4 = ch4_tonnes * vented_frac
-    vented_co2 = co2_tonnes * vented_frac
-
-    flared_co2 = 0.0
-    flared_unburnt_ch4 = 0.0
-    flared_n2o = 0.0
-
-    c_type = str(control_type or "flare").lower().strip()
-    is_vru = c_type in ("vru", "recovery", "vapor_recovery", "vapor_recovery_unit")
-
-    if ctrl > 0 and not is_vru:
-        flared_ch4_mass = ch4_tonnes * ctrl
-        flared_native_co2 = co2_tonnes * ctrl
-
-        de = normalize_efficiency(destruction_eff, default=0.98) if destruction_eff is not None else 0.98
-        slip = max(0.0, 1.0 - de)
-        flared_ch4_combusted = flared_ch4_mass * de
-        flared_co2 = (flared_ch4_combusted * (MW_CO2 / MW_CH4)) + flared_native_co2
-        flared_unburnt_ch4 = flared_ch4_mass * slip
-
-        flared_m3 = total_gas_m3 * ctrl
-        flared_scf = convert(flared_m3, "m3", "scf")
-        hhv_val = float(hhv or 1020.0)
-        flared_mmbtu = (flared_scf * hhv_val) / 1_000_000.0
-        n2o_ef_kg = float(ef_n2o if ef_n2o is not None else 0.0001)
-        flared_n2o = (flared_mmbtu * n2o_ef_kg) / 1000.0
-
-    total_ch4 = vented_ch4 + flared_unburnt_ch4
-    total_co2 = vented_co2 + flared_co2
-
-    return {
-        "vented_ch4": vented_ch4,
-        "vented_co2": vented_co2,
-        "flared_co2": flared_co2,
-        "flared_unburnt_ch4": flared_unburnt_ch4,
-        "flared_n2o": flared_n2o,
-        "total_ch4": total_ch4,
-        "total_co2": total_co2,
-    }
 
 
 def _propagate_results(total_ch4, total_co2, flared_n2o, uncertainties, factor_source="default", category="vented"):
@@ -138,13 +86,13 @@ class CCUSVentingCalculator(BaseCalculator):
         activity="stripper_vent",  # "stripper_vent", "wellhead_blowdown", "monitoring_vent"
         # Stripper off-gas inputs
         inlet_co2_tonnes=None,
-        capture_efficiency=0.90,       # capture rate, e.g. 90% (10% vented)
+        capture_efficiency=None,       # capture rate (mass balance, section 6.9.2: no default)
         ch4_slip_tonnes=0.0,
         # Wellhead blowdown inputs (Equation 6-27)
         events=1.0,
         physical_volume_m3=None,
-        co2_density_kg_m3=650.0,
-        co2_weight_fraction=0.985,
+        co2_density_kg_m3=None,        # Eq 6-27 R_C at injection conditions (no default)
+        co2_weight_fraction=None,      # Eq 6-27 GHG_CO2 mass fraction (no default)
         # Direct measured vent volume
         vented_co2_tonnes=None,
         vented_ch4_tonnes=0.0,
@@ -153,6 +101,8 @@ class CCUSVentingCalculator(BaseCalculator):
     ):
         uncertainties = uncertainties or {}
         act = str(activity or "stripper_vent").lower().strip()
+        if act not in ("stripper_vent", "wellhead_blowdown", "monitoring_vent"):
+            raise ValueError(f"Unknown CCUS activity '{activity}': stripper_vent, wellhead_blowdown or monitoring_vent")
 
         gross_co2_tonnes = 0.0
         gross_ch4_tonnes = 0.0
@@ -163,28 +113,48 @@ class CCUSVentingCalculator(BaseCalculator):
                 gross_ch4_tonnes = float(vented_ch4_tonnes or 0.0)
             elif inlet_co2_tonnes is not None:
                 inlet = float(inlet_co2_tonnes)
-                eff = normalize_efficiency(capture_efficiency, default=0.90)
+                if inlet < 0:
+                    raise ValueError("inlet_co2_tonnes cannot be negative")
+                if capture_efficiency in (None, ""):
+                    raise ValueError("The stripper vent mass balance needs the capture efficiency")
+                eff = normalize_efficiency(capture_efficiency, default=0.0)
                 # Uncaptured CO2 vented through stripper/absorber stack
                 gross_co2_tonnes = inlet * (1.0 - eff)
                 gross_ch4_tonnes = float(ch4_slip_tonnes or 0.0)
             else:
                 raise ValueError("inlet_co2_tonnes or vented_co2_tonnes must be provided for stripper_vent")
+            if gross_co2_tonnes < 0 or gross_ch4_tonnes < 0:
+                raise ValueError("Vented emissions cannot be negative")
 
         elif act == "wellhead_blowdown":
-            self.validate_inputs({"physical_volume_m3": physical_volume_m3}, ["physical_volume_m3"])
-            n = max(0.0, float(1.0 if events is None else events))
+            self.validate_inputs({"physical_volume_m3": physical_volume_m3, "co2_density_kg_m3": co2_density_kg_m3,
+                                  "co2_weight_fraction": co2_weight_fraction},
+                                 ["physical_volume_m3", "co2_density_kg_m3", "co2_weight_fraction"])
+            if events is not None and float(events) < 0:
+                raise ValueError("events cannot be negative")
+            n = float(1.0 if events is None else events)
             v_m3 = float(physical_volume_m3)
-            rho = float(co2_density_kg_m3 if co2_density_kg_m3 is not None else 650.0)
-            wt_frac = float(co2_weight_fraction if co2_weight_fraction is not None else 0.985)
-            if wt_frac > 1.0:
-                wt_frac /= 100.0
+            rho = float(co2_density_kg_m3)
+            if v_m3 < 0 or rho < 0:
+                raise ValueError("physical_volume_m3 and co2_density_kg_m3 cannot be negative")
+            s_wt = str(co2_weight_fraction).replace("%", "").strip()
+            wt_frac = float(s_wt)
+            if wt_frac < 0:
+                raise ValueError("co2_weight_fraction cannot be negative")
+            if "%" in str(co2_weight_fraction) or wt_frac > 1.0:
+                if wt_frac <= 100.0:
+                    wt_frac /= 100.0
+                else:
+                    raise ValueError(f"co2_weight_fraction cannot exceed 100%: {co2_weight_fraction}")
 
             gross_co2_tonnes = n * v_m3 * rho * wt_frac * 0.001
             gross_ch4_tonnes = 0.0
 
-        else:
+        else:  # monitoring_vent: measured vent quantities
             gross_co2_tonnes = float(vented_co2_tonnes or 0.0)
             gross_ch4_tonnes = float(vented_ch4_tonnes or 0.0)
+            if gross_co2_tonnes < 0 or gross_ch4_tonnes < 0:
+                raise ValueError("Vented emissions cannot be negative")
 
         ch4_res, co2_res, n2o_res = _propagate_results(
             total_ch4=gross_ch4_tonnes,
@@ -259,14 +229,14 @@ class CrudeTransportLossesCalculator(BaseCalculator):
         loading_service="splash_dedicated",  # from TABLE_6_47_LOADING keys
         volume_loaded_bbl=None,
         volume_loaded_gal=None,
-        ch4_weight_pct=12.0,  # wt% of TOC that is CH4 (default 12% in Exhibit 6-35, or 15% AP-42)
+        ch4_weight_pct=None,  # wt % CH4 in the TOC; 15 % without site data (Tables 6-47 to 6-49, footnotes)
         # Ballasting inputs (Exhibit 6-36)
         ballast_condition="typical",  # "fully_loaded", "lightered", "typical"
         ballast_water_bbl=None,
         ballast_water_gal=None,
         # Transit inputs (Exhibit 6-37)
         volume_transported_bbl=None,
-        trip_duration_days=10.0,
+        trip_duration_days=None,
         trips_per_year=1.0,
         # Control & routing
         control_efficiency=0.0,
@@ -275,13 +245,18 @@ class CrudeTransportLossesCalculator(BaseCalculator):
     ):
         uncertainties = uncertainties or {}
         act = str(activity or "loading").lower().strip()
+        if act not in ("loading", "ballasting", "transit"):
+            raise ValueError(f"Unknown crude transport activity '{activity}': loading, ballasting or transit")
 
         gross_ch4_tonnes = 0.0
         total_toc_tonnes = 0.0
 
-        wt_ch4 = float(ch4_weight_pct if ch4_weight_pct is not None else 15.0)
+        raw_wt = str(ch4_weight_pct if ch4_weight_pct not in (None, "") else 15.0).replace("%", "").strip()
+        wt_ch4 = float(raw_wt) / 100.0
+        if wt_ch4 < 0:
+            raise ValueError(f"ch4_weight_pct cannot be negative: {ch4_weight_pct}")
         if wt_ch4 > 1.0:
-            wt_ch4 /= 100.0
+            raise ValueError(f"ch4_weight_pct must be between 0 and 100: {ch4_weight_pct}")
 
         # ----------------------------------------------------------------------
         # Case 1: Loading Losses (Exhibit 6-35)
@@ -293,9 +268,13 @@ class CrudeTransportLossesCalculator(BaseCalculator):
                 gal = float(volume_loaded_bbl) * 42.0
             else:
                 raise ValueError("volume_loaded_bbl or volume_loaded_gal must be provided")
+            if gal < 0:
+                raise ValueError(f"volume_loaded cannot be negative: {gal}")
 
             ltype = str(loading_service or "splash_dedicated").lower().strip()
-            factor_info = self.TABLE_6_47_LOADING.get(ltype, self.TABLE_6_47_LOADING["splash_dedicated"])
+            if ltype not in self.TABLE_6_47_LOADING:  # was the splash-loading factor
+                raise ValueError(f"Unknown loading service '{loading_service}': {sorted(self.TABLE_6_47_LOADING)}")
+            factor_info = self.TABLE_6_47_LOADING[ltype]
 
             # E_TOC = (gal / 1e6) * EF_tonne_toc
             total_toc_tonnes = (gal / 1_000_000.0) * factor_info["tonne_toc_per_mmgal"]
@@ -311,9 +290,13 @@ class CrudeTransportLossesCalculator(BaseCalculator):
                 gal = float(ballast_water_bbl) * 42.0
             else:
                 raise ValueError("ballast_water_bbl or ballast_water_gal must be provided")
+            if gal < 0:
+                raise ValueError(f"ballast_water cannot be negative: {gal}")
 
             bcond = str(ballast_condition or "typical").lower().strip()
-            factor_info = self.TABLE_6_48_BALLASTING.get(bcond, self.TABLE_6_48_BALLASTING["typical"])
+            if bcond not in self.TABLE_6_48_BALLASTING:  # was the typical-ballasting factor
+                raise ValueError(f"Unknown ballast condition '{ballast_condition}': {sorted(self.TABLE_6_48_BALLASTING)}")
+            factor_info = self.TABLE_6_48_BALLASTING[bcond]
 
             # Exhibit 6-36 uses Table 6-48: 0.488 tonne TOC / 10^6 gal
             total_toc_tonnes = (gal / 1_000_000.0) * factor_info["tonne_toc_per_mmgal"]
@@ -322,11 +305,16 @@ class CrudeTransportLossesCalculator(BaseCalculator):
         # ----------------------------------------------------------------------
         # Case 3: Marine Transit Losses (Exhibit 6-37)
         # ----------------------------------------------------------------------
-        elif act == "transit":
-            self.validate_inputs({"volume_transported_bbl": volume_transported_bbl}, ["volume_transported_bbl"])
+        else:  # transit (activities checked above)
+            self.validate_inputs({"volume_transported_bbl": volume_transported_bbl, "trip_duration_days": trip_duration_days},
+                                 ["volume_transported_bbl", "trip_duration_days"])
             gal = float(volume_transported_bbl) * 42.0
-            d_days = float(trip_duration_days or 7.0)
-            n_trips = max(1.0, float(trips_per_year or 1.0))
+            d_days = float(trip_duration_days)
+            if gal < 0 or d_days < 0:
+                raise ValueError("volume_transported_bbl and trip_duration_days cannot be negative")
+            if trips_per_year is not None and float(trips_per_year) < 0:
+                raise ValueError("trips_per_year cannot be negative")
+            n_trips = float(1.0 if trips_per_year in (None, "") else trips_per_year)
             weeks_per_trip = d_days / 7.0
 
             # Exhibit 6-37: 0.57 tonnes TOC / (week * 10^6 gal) * (gal / 1e6) * (days / 7) * trips * wt_ch4

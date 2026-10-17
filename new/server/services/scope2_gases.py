@@ -26,6 +26,22 @@ def gas_split(e):
     return {g: kwh * float(entry.get(g) or 0) / 1000.0 for g in ("co2", "ch4", "n2o")}
 
 
+def list_row_gases(row):
+    """Gas masses of a GET /api/emissions/ Scope 2 row (fuel = grid region, amount = kWh), so a report on
+    another GWP set re-weights a grid record's CH4 / N2O as it does Scope 1 (the list gave 0 for every gas).
+    The split is used only when it gives back the stored CO2e; otherwise the CO2e is reported as CO2."""
+    from types import SimpleNamespace
+
+    from calculations.constants import get_active_gwp
+
+    co2e = float(row.co2e_total or 0)
+    g = gas_split(SimpleNamespace(source_type="electricity", grid_region=row.fuel, electricity_kwh=row.amount, co2e=co2e))
+    gwp = get_active_gwp()
+    if abs(g["co2"] + g["ch4"] * gwp["CH4"] + g["n2o"] * gwp["N2O"] - co2e) > 1e-3 * max(abs(co2e), 1e-9):
+        g = {"co2": co2e, "ch4": 0.0, "n2o": 0.0}
+    return {"co2_emissions": g["co2"], "ch4_emissions": g["ch4"], "n2o_emissions": g["n2o"]}
+
+
 def yearly_totals(query, by_fac, horizon="100"):
     """{(year, facility_id | "total"): {"location", "market", "energy"}} over a filtered Scope 2 query.
     The location total follows the GWP horizon (GWP-20 adds CH4 / N2O x (GWP20 - GWP100))."""
