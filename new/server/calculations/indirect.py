@@ -189,11 +189,16 @@ class CogenAllocationCalculator(BaseCalculator):
                 return val
             e_h = _eff(heat_efficiency, 0.80, "Heat")
             e_p = _eff(power_efficiency, 0.35, "Power")
-            denominator = (heat_mmbtu / e_h) + (power_mmbtu / e_p)
+            # Each output's "virtual fuel input" = its energy output / reference efficiency (Eq 8-5).
+            # The denominator must be the sum of these efficiency-weighted shares, not the raw MMBtu
+            # outputs (bug: the shared line below used to overwrite this with raw shares, making the
+            # efficiency weighting have no effect on the allocation ratio).
             heat_share, power_share = heat_mmbtu / e_h, power_mmbtu / e_p
+            denominator = heat_share + power_share
         else:
-            heat_share, power_share = heat_mmbtu, power_mmbtu  # energy content allocation
-        denominator = heat_share + power_share
+            # Energy-content allocation: shares are the raw energy outputs in MMBtu.
+            heat_share, power_share = heat_mmbtu, power_mmbtu
+            denominator = heat_share + power_share
         allocated_heat = heat_share / denominator * total_emissions if denominator > 0 else 0.0  # no heat bought
         allocated_power = power_share / denominator * total_emissions if denominator > 0 else 0.0
 

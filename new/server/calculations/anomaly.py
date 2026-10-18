@@ -182,7 +182,7 @@ class AnomalyDetector:
         historical = [float(r[2]) for r in win if r[3] == "Verified"]
         if len(historical) < 3:
             fb = [float(r[2]) for r in win if r[4] is None]
-            if len(fb) >= len(historical):
+            if len(fb) > len(historical):  # only prefer unflagged if strictly more records available
                 historical = fb
         return historical
 

@@ -256,6 +256,9 @@ class CombustionCalculator(BaseCalculator):
         Standard fuel-based combustion calculation with API §4.2.1 thermodynamic normalization.
         carbon_wt: fuel carbon content (wt %, Tier 3 fuel analysis of a liquid or solid fuel): CO2 by
         Eq 4-5 (fuel mass x carbon x 44/12, Exhibit 4.5); CH4 and N2O stay on the fuel factors.
+        Per API Compendium 2021 Eq 4-5 / Exhibit 4.5, the carbon mass balance replaces CO2 ONLY.
+        CH4 and N2O for liquid/solid fuels come from separate fuel-specific EFs (e.g. Table 4-6)
+        and are correctly retained from the factor path — this is intentional, not a bug.
         Emissions = Quantity * EF * (HHV if energy-based)
         """
         self.validate_inputs({"quantity": fuel_quantity}, ["quantity"])
