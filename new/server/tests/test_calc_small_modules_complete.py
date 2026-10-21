@@ -217,3 +217,39 @@ def test_component_dict_without_factor_and_fraction_ch4():
     assert res["results"]["ch4"]["value"] == pytest.approx(4 * 0.0045 * 0.5 * 8760 / 1000)       # catalog gas valve
     eq = EquipmentFugitiveCalculator().calculate(2, 0.1, ch4_content=0.5, ef_unit="kg TOC/hr/source")
     assert eq["results"]["ch4"]["value"] == pytest.approx(2 * 0.1 * 0.5 * 8760 / 1000)
+
+
+# ---------------------------------------------------------------- combustion.py entered efficiencies
+@pytest.mark.parametrize("value,match", [("high", "is not a number"), ("-5%", "cannot be negative"), (-1, "cannot be negative")])
+def test_entered_efficiency_must_be_a_number(value, match):
+    from calculations.combustion import CombustionCalculator, FlaringCalculator
+
+    with pytest.raises(ValueError, match=f"Combustion efficiency {match}"):
+        CombustionCalculator().calculate(100, ef_co2=50, combustion_efficiency=value)
+    with pytest.raises(ValueError, match=f"Destruction efficiency {match}"):
+        FlaringCalculator().calculate(1000, 0.9, "elevated", {}, destruction_efficiency=value)
+    with pytest.raises(ValueError, match="CH4 fraction cannot be negative"):
+        FlaringCalculator().calculate(1000, "-5%", "elevated", {})
+
+
+def test_stoichiometric_carbon_content_above_100_percent_refused():
+    from calculations.stoichiometry import StoichiometricCalculator
+
+    with pytest.raises(ValueError, match="carbon_content must be between 0 and 1"):
+        StoichiometricCalculator().calculate(1000, 150)
+
+
+@pytest.mark.parametrize("call,match", [
+    (lambda: __import__("calculations.stoichiometry", fromlist=["x"]).mass_to_kg(-1, "kg"), "mass cannot be negative"),
+    (lambda: __import__("calculations.stoichiometry", fromlist=["x"]).StoichiometricCalculator().calculate(
+        10, 85, oxidation_factor="150%"), "oxidation_factor must be between 0 and 1"),
+    (lambda: __import__("calculations.stoichiometry", fromlist=["x"]).NitricAcidCalculator().calculate(
+        10, ef_n2o=-1), "N2O emission factor cannot be negative"),
+    (lambda: __import__("calculations.stoichiometry", fromlist=["x"]).NitricAcidCalculator().calculate(
+        10, abatement_efficiency=-5), "Abatement efficiency cannot be negative"),
+    (lambda: __import__("calculations.stoichiometry", fromlist=["x"]).NitricAcidCalculator().calculate(
+        10, abatement_efficiency="150%"), "cannot exceed 100"),
+])
+def test_stoichiometry_range_refusals(call, match):
+    with pytest.raises(ValueError, match=match):
+        call()

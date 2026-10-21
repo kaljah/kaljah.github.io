@@ -21,6 +21,7 @@ from datetime import datetime, timezone
 from cachetools import TTLCache, cached, keys
 from calculations.constants import get_active_gwp
 from services.ogmp import compute_facility_ogmp_level, ogmp_level_for
+from services.dashboard_filters import _parse_facility_ids
 import threading
 import concurrent.futures
 import math
@@ -188,9 +189,11 @@ def get_batch_dashboard_data():
     gwp_horizon = request.args.get("gwp_horizon", "100")
     scope2_method = request.args.get("scope2_method", "location")
 
+    parsed_facility_ids = _parse_facility_ids(facility_id)
+    cache_facility = tuple(sorted(parsed_facility_ids)) if parsed_facility_ids is not None else facility_id
     cache_key = (
         "batch_all",
-        facility_id,
+        cache_facility,
         year,
         activity,
         division,
@@ -310,16 +313,19 @@ def get_batch_dashboard_data():
                 )
             # same population as the other panels (the block used to ignore every filter)
             unc_fids = _filtered_facility_ids(allowed_fids, activity, division, segment)
-            unc_fid = int(facility_id) if str(facility_id or "").isdigit() else None
-            if unc_fid is not None and unc_fids is not None and unc_fid not in unc_fids:
-                unc_fid = -1  # outside the user's scope or the other filters: no records
+            if parsed_facility_ids is not None:
+                if unc_fids is not None:
+                    matched = [fid for fid in parsed_facility_ids if fid in unc_fids]
+                    unc_fids = tuple(sorted(matched)) if matched else (-1,)
+                else:
+                    unc_fids = tuple(sorted(parsed_facility_ids))
             f_uncertainty = executor.submit(
                 _run_in_app_ctx,
                 app,
                 _query_uncertainty,
                 year=uncertainty_year,
                 allowed_fids=unc_fids,
-                facility_id=unc_fid,
+                facility_id=None,
                 scope2_method=scope2_method,
             )
             f_years = executor.submit(_run_in_app_ctx, app, _query_available_years, allowed_fids)
@@ -1035,21 +1041,23 @@ def get_uncertainty_analysis():
             403,
         )
     year = request.args.get("year", type=int)
-    facility_id = request.args.get("facility_id", type=int) or request.args.get("facilityId", type=int)
+    raw_facility_id = request.args.get("facility_id") or request.args.get("facilityId")
+    parsed_facility_ids = _parse_facility_ids(raw_facility_id)
     scope = (request.args.get("scope") or "all").strip().lower()
     export_fmt = (request.args.get("export") or "").strip().lower()
     allowed_fids = get_allowed_facility_ids(user)
 
     # RBAC: if facility_id requested, verify it's within the user's allowed set
-    if facility_id and allowed_fids is not None and facility_id not in allowed_fids:
-        return jsonify({"error": "Forbidden: You do not have access to this facility"}), 403
+    if parsed_facility_ids and allowed_fids is not None:
+        if not set(parsed_facility_ids).issubset(set(allowed_fids)):
+            return jsonify({"error": "Forbidden: You do not have access to this facility"}), 403
 
     include_gwp = request.args.get("gwp_uncertainty", "").strip().lower() in ("true", "1", "yes")
     scope2_method = request.args.get("scope2_method", "location").strip().lower()
     result = _query_uncertainty(
         year=year,
         allowed_fids=allowed_fids,
-        facility_id=facility_id,
+        facility_id=tuple(sorted(parsed_facility_ids)) if parsed_facility_ids is not None else None,
         scope=scope,
         include_gwp_uncertainty=include_gwp,
         scope2_method=scope2_method,

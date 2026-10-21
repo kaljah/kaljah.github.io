@@ -552,14 +552,14 @@ def test_vented_mud_and_exploration_advanced():
     res_wt_scf_hr = wt.calculate(
         well_type="gas_well", tier="tier2",
         gas_production_rate=50000.0, rate_unit="scf/hr",
-        test_duration_hours=24.0,
+        test_duration_hours=24.0, ch4_content=81.6,
     )
     assert res_wt_scf_hr["results"]["ch4"]["value"] > 0
 
     res_wt_m3_hr = wt.calculate(
         well_type="gas_well", tier="tier2",
         gas_production_rate=1000.0, rate_unit="m3/hr",
-        test_duration_hours=48.0,
+        test_duration_hours=48.0, ch4_content=81.6,
     )
     assert res_wt_m3_hr["results"]["ch4"]["value"] > 0
 
@@ -567,7 +567,7 @@ def test_vented_mud_and_exploration_advanced():
     res_wt_oil_m3 = wt.calculate(
         well_type="oil_well", tier="tier2",
         gor=100.0, gor_unit="m3/m3",  # 100 m3/m3 ~ 561.46 scf/bbl
-        oil_production_total=5000.0,
+        oil_production_total=5000.0, ch4_content=81.6,
     )
     assert res_wt_oil_m3["results"]["ch4"]["value"] > 0
 

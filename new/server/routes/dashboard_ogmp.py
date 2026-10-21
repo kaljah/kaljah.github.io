@@ -9,6 +9,7 @@ from flask import jsonify, request
 from models import Emission, Facility, OgmpSurvey
 from routes.auth import login_required
 from services.ogmp import compute_facility_ogmp_level
+from services.dashboard_filters import _parse_facility_ids
 from sqlalchemy import func
 from utils import get_allowed_facility_ids, get_current_user
 from routes.dashboard import dashboard_bp, is_it_role
@@ -43,11 +44,12 @@ def get_ogmp_metrics():
         else datetime.now(timezone.utc).year
     )
 
+    fac_fids = _parse_facility_ids(fac_id)
     query = Facility.query
     if allowed_fids is not None:
         query = query.filter(Facility.id.in_(allowed_fids))
-    if fac_id and fac_id != "all" and str(fac_id).isdigit():
-        query = query.filter(Facility.id == int(fac_id))
+    if fac_fids is not None:
+        query = query.filter(Facility.id.in_(fac_fids))
     if request.args.get("segment") and request.args.get("segment") != "all":
         query = query.filter(Facility.segment == request.args.get("segment"))
     if request.args.get("activity") and request.args.get("activity") != "all":
@@ -66,8 +68,8 @@ def get_ogmp_metrics():
     )
     if allowed_fids is not None:
         survey_query = survey_query.filter(OgmpSurvey.facility_id.in_(allowed_fids or [-1]))
-    if fac_id and fac_id != "all" and str(fac_id).isdigit():
-        survey_query = survey_query.filter(OgmpSurvey.facility_id == int(fac_id))
+    if fac_fids is not None:
+        survey_query = survey_query.filter(OgmpSurvey.facility_id.in_(fac_fids))
     if single_year:
         survey_query = survey_query.filter(OgmpSurvey.year == int(year))
     survey_years = {}

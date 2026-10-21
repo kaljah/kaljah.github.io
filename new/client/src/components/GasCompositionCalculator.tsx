@@ -26,6 +26,7 @@ const COMPONENT_DATA: Record<string, ComponentInfo> = {
   CO2: { mw: 44.01, c: 1, hhv: 0, lhv: 0, name: t("Carbon Dioxide (CO2)") },
   N2O: { mw: 44.013, c: 0, hhv: 0, lhv: 0, name: t("Nitrous Oxide (N2O)") },
   N2: { mw: 28.01, c: 0, hhv: 0, lhv: 0, name: t("Nitrogen (N2)") },
+  H2S: { mw: 34.08, c: 0, hhv: 0, lhv: 0, name: t("Hydrogen Sulfide (H2S)") },
 };
 
 export interface GasCompositionCalculatorProps {
@@ -37,6 +38,7 @@ export interface GasCompositionCalculatorProps {
     n2o: string;
     unit: string;
     raw_composition: Record<string, string>;
+    gas_composition?: Record<string, number>;
   }) => void;
   processType?: string;
 }
@@ -75,6 +77,7 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
     CO2: "",
     N2O: "",
     N2: "",
+    H2S: "",
   });
 
   useEffect(() => {
@@ -268,6 +271,19 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
       n2o: n2oValue.toFixed(6),
       unit: unit,
       raw_composition: composition,
+      gas_composition: {
+        ch4_mol_pct: parseFloat(composition.CH4) || 0,
+        c2h6_mol_pct: parseFloat(composition.C2H6) || 0,
+        c3h8_mol_pct: parseFloat(composition.C3H8) || 0,
+        ic4_mol_pct: parseFloat(composition.iC4H10) || 0,
+        nc4_mol_pct: parseFloat(composition.nC4H10) || 0,
+        ic5_mol_pct: parseFloat(composition.iC5H12) || 0,
+        nc5_mol_pct: parseFloat(composition.nC5H12) || 0,
+        c6_plus_mol_pct: parseFloat(composition.C6H14) || 0,
+        co2_mol_pct: parseFloat(composition.CO2) || 0,
+        n2_mol_pct: parseFloat(composition.N2) || 0,
+        h2s_ppm: parseFloat(composition.H2S) || 0,
+      },
     });
   };
 
@@ -287,7 +303,23 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
         unit: "kg/m3",
         parent_fuel: "Natural Gas (Analysis)",
         source: "Gas Analysis Tool",
-        usage: activeProcessType, // Use actual process type
+        usage: activeProcessType,
+        gas_composition: {
+          ch4_mol_pct: parseFloat(composition.CH4) || 0,
+          c2h6_mol_pct: parseFloat(composition.C2H6) || 0,
+          c3h8_mol_pct: parseFloat(composition.C3H8) || 0,
+          co2_mol_pct: parseFloat(composition.CO2) || 0,
+          n2_mol_pct: parseFloat(composition.N2) || 0,
+          h2s_ppm: parseFloat(composition.H2S) || 0,
+          ic4_mol_pct: parseFloat(composition.iC4H10) || 0,
+          nc4_mol_pct: parseFloat(composition.nC4H10) || 0,
+          ic5_mol_pct: parseFloat(composition.iC5H12) || 0,
+          nc5_mol_pct: parseFloat(composition.nC5H12) || 0,
+          c6_plus_mol_pct: parseFloat(composition.C6H14) || 0,
+          mw: results.mw,
+          density: results.density,
+          hhv: results.hhv,
+        },
       });
       toast.success(t("Saved to Managed Data!"));
       setSaveName("");

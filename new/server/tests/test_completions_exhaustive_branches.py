@@ -101,7 +101,7 @@ def test_completion_tier2_production_rate_units_and_durations(calc):
         ch4_content=0.85,
     )
     # 2 MMscf/day * 3 days = 6 MMscf
-    assert res_mmscf["inputs"]["net_flowback_scf"] == 6_000_000.0
+    assert res_mmscf["inputs"]["net_flowback_scf"] == pytest.approx(6_000_000.0)
 
     # m3/day
     res_m3 = calc.calculate(
@@ -179,16 +179,10 @@ def test_completion_disposition_fallbacks_and_c2plus(calc):
     assert res_disp_ctrl["inputs"]["frac_vented"] == pytest.approx(0.05)
     assert res_disp_ctrl["results"]["co2"]["value"] > 0
 
-    # Unknown disposition string falls back to 100% vented
-    res_disp_unk = calc.calculate(
-        tier="tier3",
-        flowback_volume=100000.0,
-        volume_unit="scf",
-        disposition="other_pipeline",
-        ch4_content=0.80,
-    )
-    assert res_disp_unk["inputs"]["frac_vented"] == 1.0
-    assert res_disp_unk["inputs"]["frac_flared"] == 0.0
+    # An unknown disposition is refused (it was booked as 100 % vented)
+    with pytest.raises(ValueError, match="Unknown disposition 'other_pipeline'"):
+        calc.calculate(tier="tier3", flowback_volume=100000.0, volume_unit="scf", disposition="other_pipeline",
+                       ch4_content=0.80)
 
     # Missing CH4 content when flowback volume > 0 raises ValueError
     with pytest.raises(ValueError, match="Missing required field: CH4 content"):

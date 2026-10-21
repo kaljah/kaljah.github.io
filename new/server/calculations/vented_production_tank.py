@@ -5,7 +5,7 @@ calculations.vented_production re-exports every class, so existing imports keep 
 """
 import math
 from .base import BaseCalculator
-from .units import CONVERSIONS, STD_PRESSURE_PSIA, STD_TEMP_K, calculate_co2e, convert, normalize_efficiency, to_kelvin, to_psia, _pressure_unit
+from .units import CONVERSIONS, STD_PRESSURE_PSIA, STD_TEMP_K, calculate_co2e, convert, normalize_efficiency, to_kelvin, _pressure_unit
 from calculations.vented_production import LB_PER_TONNE, MOLAR_VOL_SI, MOLAR_VOL_US, MW_CH4, MW_CO2, SCF_TO_M3, _propagate_results, _split_vent_flare
 
 
@@ -43,15 +43,18 @@ class AcidGasRemovalCalculator(BaseCalculator):
         sour_co2_content=None,  # mole fraction or % (e.g. 0.03 or 3%)
         sweet_co2_content=0.0,  # mole fraction or % (e.g. 0.02 or 2%)
         # Control & routing
-        control_efficiency=0.0,
+        control_efficiency=None,  # not entered: flare defaults (0.0 read as a 0 % efficiency)
         disposition="vented",
         uncertainties=None,
         gwp_dict=None,
     ):
         uncertainties = uncertainties or {}
         meth = str(method or "throughput").lower().strip()
-        days = max(1.0, float(operating_days or 365.0))
-        n_units = max(1.0, float(unit_count or 1.0))
+        # an entered 0 days / units is 0 (they became 365 days / 1 unit)
+        days = 365.0 if operating_days in (None, "") else float(operating_days)
+        n_units = 1.0 if unit_count in (None, "") else float(unit_count)
+        if days < 0 or n_units < 0:
+            raise ValueError("operating_days and unit_count cannot be negative")
 
         gross_ch4_tonnes = 0.0
         gross_co2_tonnes = 0.0
@@ -65,7 +68,7 @@ class AcidGasRemovalCalculator(BaseCalculator):
             v_sour_scf = float(sour_gas_scf_yr)
 
         # 1. CH4 emissions
-        if meth == "unit_count" or (v_sour_scf <= 0 and n_units > 0):
+        if meth == "unit_count" or v_sour_scf <= 0:
             gross_ch4_tonnes = n_units * self.TABLE_6_19["unit"]["ef_ch4_tonnes_per_day"] * days
             total_gas_scf = n_units * self.TABLE_6_19["unit"]["scfd_ch4_per_unit"] * days
         else:
@@ -106,22 +109,16 @@ class AcidGasRemovalCalculator(BaseCalculator):
         total_gas_m3 = convert(total_gas_scf, "scf", "m3")
 
         # Disposition
-        disp = str(disposition or "vented").lower().strip()
-        eff = 0.0
-        if disp == "recovered":
-            gross_ch4_tonnes = 0.0
-            gross_co2_tonnes = 0.0
-        elif disp == "flared":
-            eff = normalize_efficiency(control_efficiency, default=0.98)
-            eff = max(0.95, eff)
-        else:
-            eff = normalize_efficiency(control_efficiency, default=0.0)
+        from .vented_production_wells import _route  # one disposition rule (an unknown one was vented)
 
+        disp, eff, de, gross_ch4_tonnes, gross_co2_tonnes = _route(disposition, control_efficiency, gross_ch4_tonnes,
+                                                                   gross_co2_tonnes)
         split = _split_vent_flare(
             total_gas_m3=total_gas_m3,
             ch4_tonnes=gross_ch4_tonnes,
             co2_tonnes=gross_co2_tonnes,
             ctrl_eff=eff,
+            destruction_eff=de,
         )
 
         total_ch4 = split["total_ch4"]
@@ -213,7 +210,7 @@ class TankFlashingCalculator(BaseCalculator):
         throughput,
         gas_oil_ratio=None,
         ch4_content=None,
-        control_efficiency=0.0,
+        control_efficiency=0.0, destruction_efficiency=None,
         uncertainties=None,
         process_type="tank_flashing",
         ef_ch4=0.0,
@@ -241,11 +238,8 @@ class TankFlashingCalculator(BaseCalculator):
         control_type="flare",
     ):
         uncertainties = uncertainties or {}
-        self.validate_inputs({"throughput": throughput}, ["throughput"])
+        self.validate_inputs({"throughput": throughput}, ["throughput"])  # >= 0
         q_bbl = float(throughput)
-        if q_bbl < 0:
-            raise ValueError(f"throughput cannot be negative: {q_bbl}")
-        days = max(1.0, float(operating_days or 365.0))
 
         # Resolve calculation method
         meth = method
@@ -354,7 +348,6 @@ class TankFlashingCalculator(BaseCalculator):
         # Method 4 & 5: Default Flashing Factors (Table 6-22 & 6-24, Exhibit 6-20)
         # ----------------------------------------------------------------------
         elif meth in ["table_6_22", "table_6_24", "default_ef"]:
-            ctrl = normalize_efficiency(control_efficiency, default=0.0)
             if liquid_type == "condensate" or meth == "table_6_24":
                 key = "large_uncontrolled"
                 info = self.TABLE_6_24_CONDENSATE[key]
@@ -453,7 +446,7 @@ class TankFlashingCalculator(BaseCalculator):
             ctrl_eff=ctrl_eff,
             hhv=hhv,
             ef_n2o=ef_n2o,
-            control_type=control_type,
+            control_type=control_type, destruction_eff=destruction_efficiency,
         )
 
         total_ch4 = split["total_ch4"]
@@ -555,7 +548,7 @@ class BlowdownCalculator(BaseCalculator):
         ch4_content=0.85,
         uncertainties=None,
         co2_content=0.0,
-        control_efficiency=0.0,
+        control_efficiency=0.0, destruction_efficiency=None,
         ef_co2=None,
         ef_ch4=None,
         ef_n2o=None,
@@ -608,33 +601,29 @@ class BlowdownCalculator(BaseCalculator):
                     "events": events,
                 },
                 ["pressure", "events"],
-            )
-            if float(events) < 0:
-                raise ValueError(f"Blowdown events cannot be negative: {events}")
+            )  # both >= 0
 
             # Resolve physical volume
             v_phys_m3 = 0.0
             if diameter_ft is not None and length_ft is not None:
                 # Cylindrical volume (Exhibit 6-25)
+                self.validate_inputs({"diameter_ft": diameter_ft, "length_ft": length_ft}, ["diameter_ft", "length_ft"])
                 r_ft = float(diameter_ft) / 2.0
                 l_ft = float(length_ft)
                 v_cyl_ft3 = math.pi * (r_ft ** 2) * l_ft
                 liq_frac = float(liquid_volume_fraction or 0.0)
+                if not 0.0 <= liq_frac <= 1.0:
+                    raise ValueError(f"liquid_volume_fraction must be between 0 and 1: {liquid_volume_fraction}")
                 v_gas_ft3 = v_cyl_ft3 * (1.0 - liq_frac)
                 v_phys_m3 = convert(v_gas_ft3, "scf", "m3")
             else:
                 self.validate_inputs({"blowdown_volume": blowdown_volume}, ["blowdown_volume"])
                 v_phys_m3 = float(blowdown_volume)
-            if v_phys_m3 < 0:
-                raise ValueError(f"Blowdown physical volume cannot be negative: {v_phys_m3}")
 
             # Thermodynamic correction
             per, gauge = _pressure_unit(press_unit, "psig")
             p_val = float(pressure)
-            raw_psia = p_val * per + (STD_PRESSURE_PSIA if gauge else 0.0)
-            if raw_psia < 0:
-                raise ValueError(f"Initial pressure is below absolute vacuum ({raw_psia:.2f} psia)")
-            p_initial_psia = raw_psia
+            p_initial_psia = p_val * per + (STD_PRESSURE_PSIA if gauge else 0.0)  # pressure >= 0 (validated)
             t_abs_k = to_kelvin(operating_temperature, temp_unit)
             t_factor = STD_TEMP_K / max(1.0, t_abs_k)
             # Real gas compressibility factor Z (API Section 6.4 / ISO 14064-1 Cl. 5.2.2 / BUG-0014)
@@ -679,7 +668,7 @@ class BlowdownCalculator(BaseCalculator):
             ctrl_eff=ctrl_eff,
             hhv=hhv,
             ef_n2o=ef_n2o,
-            control_type=control_type,
+            control_type=control_type, destruction_eff=destruction_efficiency,
         )
 
         total_ch4 = split["total_ch4"]

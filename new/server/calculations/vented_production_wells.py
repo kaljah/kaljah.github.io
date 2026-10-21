@@ -10,7 +10,8 @@ from calculations.vented_production import LB_PER_TONNE, MOLAR_VOL_US, MW_CH4, M
 
 def _route(disposition, control_efficiency, ch4_t, co2_t):
     """(disposition, share routed to control, destruction efficiency, CH4 t, CO2 t). Flared: all the gas goes to
-    the flare and an entered control efficiency is its destruction efficiency (98 % without one; an entry below
+    the flare and an entered control efficiency is its efficiency (None without one: _split_vent_flare then
+    applies 98 % CH4 destruction and 96.5 % carbon to CO2; an entry below
     95 % was raised to 95 % and also counted as the share flared). Vented: an entered control efficiency is the
     share routed to a 98 % flare. An unknown disposition was treated as vented."""
     disp = str(disposition or "vented").lower().strip()
@@ -20,7 +21,7 @@ def _route(disposition, control_efficiency, ch4_t, co2_t):
     if disp == "recovered":
         return disp, 0.0, None, 0.0, 0.0
     if disp == "flared":
-        return disp, 1.0, normalize_efficiency(control_efficiency, default=0.98) if given else 0.98, ch4_t, co2_t
+        return disp, 1.0, normalize_efficiency(control_efficiency, default=0.98) if given else None, ch4_t, co2_t
     return disp, normalize_efficiency(control_efficiency, default=0.0) if given else 0.0, None, ch4_t, co2_t
 
 
@@ -108,8 +109,6 @@ class WorkoverWithoutFracturingCalculator(BaseCalculator):
 
         wtype, factor_info = _pick(self.FACTORS, well_type or "gas_well", "well type")
 
-        if float(workovers) < 0:
-            raise ValueError(f"workovers cannot be negative: {workovers}")
         events = float(workovers)
         scf_per_event = factor_info["scf_gas_per_event"]
         total_scf = events * scf_per_event
@@ -284,8 +283,6 @@ class CasingGasVentCalculator(BaseCalculator):
                 raise ValueError(f"Unknown throughput unit '{throughput_unit}': bbl/yr or bbl/day")
 
             tp_val = throughput_rate if throughput_rate is not None else throughput
-            if float(tp_val) < 0:
-                raise ValueError(f"Throughput cannot be negative: {tp_val}")
             annual_bbl = float(tp_val) * (days if (throughput_rate is not None or throughput_unit == "bbl/day") else 1.0)
 
             # Check venting adjustment if custom actual_vent_fraction provided
@@ -304,8 +301,6 @@ class CasingGasVentCalculator(BaseCalculator):
 
         elif meth in ("well_count", "migration"):
             self.validate_inputs({"well_count": well_count}, ["well_count"])
-            if float(well_count) < 0:
-                raise ValueError(f"well_count cannot be negative: {well_count}")
             if meth == "well_count":
                 _, factor_info = _pick(self.TABLE_6_13_WELL_BASIS, well_status or "active_wells", "well status")
                 scf_per_day = factor_info["scf_gas_per_well_day"]
@@ -317,8 +312,6 @@ class CasingGasVentCalculator(BaseCalculator):
         else:  # direct_measurement
             self.validate_inputs({"measured_gas_volume": measured_gas_volume}, ["measured_gas_volume"])
             vol = float(measured_gas_volume)
-            if vol < 0:
-                raise ValueError(f"measured_gas_volume cannot be negative: {vol}")
             if volume_unit not in ("scf", "m3"):
                 raise ValueError(f"Unknown volume unit '{volume_unit}': scf or m3")
             total_gas_scf = convert(vol, "m3", "scf") if volume_unit == "m3" else vol
@@ -416,8 +409,6 @@ class CO2EORVentingCalculator(BaseCalculator):
         if act == "pump_blowdown":
             self.validate_inputs({"events": events}, ["events"])
             n_events = float(events)
-            if n_events < 0:
-                raise ValueError(f"events cannot be negative: {n_events}")
 
             if physical_volume_m3 is not None:
                 v_m3 = float(physical_volume_m3)
@@ -431,13 +422,9 @@ class CO2EORVentingCalculator(BaseCalculator):
             self.validate_inputs({"co2_density_kg_m3": co2_density_kg_m3, "co2_weight_fraction": co2_weight_fraction},
                                  ["co2_density_kg_m3", "co2_weight_fraction"])
             rho = float(co2_density_kg_m3)
-            if rho < 0:
-                raise ValueError(f"co2_density cannot be negative: {rho}")
             wt_frac = float(co2_weight_fraction)
             if wt_frac > 1.0:
                 wt_frac /= 100.0
-            if wt_frac < 0:
-                raise ValueError(f"co2_weight_fraction cannot be negative: {wt_frac}")
 
             # Equation 6-27: E_CO2 = N * V_v * R_c * GHG_CO2 * 0.001 (tonnes)
             gross_co2_tonnes = n_events * v_m3 * rho * wt_frac * 0.001
@@ -453,10 +440,6 @@ class CO2EORVentingCalculator(BaseCalculator):
             )
             v_h1 = float(oil_production_bbl)
             s_h1 = float(co2_retained_tonnes_per_bbl)
-            if v_h1 < 0:
-                raise ValueError(f"oil_production_bbl cannot be negative: {v_h1}")
-            if s_h1 < 0:
-                raise ValueError(f"co2_retained_tonnes_per_bbl cannot be negative: {s_h1}")
             gross_co2_tonnes = s_h1 * v_h1
 
         ch4_res, co2_res, n2o_res = _propagate_results(
@@ -555,10 +538,6 @@ class ProductionNonRoutineVentingCalculator(BaseCalculator):
             )
             vr = float(vent_rate_scfm)
             tv = float(duration_minutes)
-            if vr < 0:
-                raise ValueError(f"vent_rate_scfm cannot be negative: {vr}")
-            if tv < 0:
-                raise ValueError(f"duration_minutes cannot be negative: {tv}")
             n = float(1.0 if events is None else events)
             if n < 0:
                 raise ValueError(f"events cannot be negative: {n}")

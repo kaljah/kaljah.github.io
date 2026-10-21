@@ -99,13 +99,13 @@ def test_vented_exploration_auto_tier_and_unit_conversions():
 
     # Tier 2 gas well with other rate units: mmscf/day, scf/hr, m3/hr
     res_t2_mmscf = wt.calculate(
-        well_type="gas", gas_production_rate=0.5, test_duration_days=1.0, rate_unit="mmscf/day", tier="tier2"
+        well_type="gas", gas_production_rate=0.5, test_duration_days=1.0, rate_unit="mmscf/day", tier="tier2", ch4_content=81.6
     )
     res_t2_scf_hr = wt.calculate(
-        well_type="gas", gas_production_rate=1000.0, test_duration_days=1.0, rate_unit="scf/hr", tier="tier2"
+        well_type="gas", gas_production_rate=1000.0, test_duration_days=1.0, rate_unit="scf/hr", tier="tier2", ch4_content=81.6
     )
     res_t2_m3_hr = wt.calculate(
-        well_type="gas", gas_production_rate=50.0, test_duration_days=1.0, rate_unit="m3/hr", tier="tier2"
+        well_type="gas", gas_production_rate=50.0, test_duration_days=1.0, rate_unit="m3/hr", tier="tier2", ch4_content=81.6
     )
     assert res_t2_mmscf["total_co2e"] > 0
     assert res_t2_scf_hr["total_co2e"] > 0
@@ -113,7 +113,8 @@ def test_vented_exploration_auto_tier_and_unit_conversions():
 
     # Tier auto-detection: Tier 2 oil well from GOR and oil production
     res_t2_oil = wt.calculate(
-        well_type="oil", gor=50.0, gor_unit="m3/m3", oil_production_rate=100.0, oil_rate_unit="m3/day", test_duration_days=2.0
+        well_type="oil", gor=50.0, gor_unit="m3/m3", oil_production_rate=100.0, oil_rate_unit="m3/day", test_duration_days=2.0,
+        ch4_content=81.6
     )
     assert "Equation 6-3" in res_t2_oil["metadata"]["equation"]
 

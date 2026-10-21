@@ -125,7 +125,7 @@ class TestCalculationMutations:
             assert pytest.approx(clean_ch4_kg, rel=1e-4) == mutant_ch4_kg
 
     def test_mutant_8_omitted_transmission_losses(self):
-        """Mutant: Steam calculation omits transmission loss: eta_net = eta_boiler instead of eta_boiler * (1 - trans_loss)."""
+        """Mutant: Steam calculation omits transmission loss: eta_net = eta_boiler instead of eta_boiler - trans_loss (Exhibit 8.3)."""
         clean_res = IndependentScope2Model.calculate_indirect_steam(
             amount=100.0,
             unit="tonne",

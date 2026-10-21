@@ -77,7 +77,7 @@ def test_dehydration_per_year_without_pump_and_zero_days():
 def test_blanketed_tank_in_m3_and_required_inputs():
     b = ProcessingBlanketedTankCalculator()
     bbl = b.calculate(liquid_displacement_bbl=32_000, vapor_temperature_f=75, ch4_content=0.82, co2_content=0.01)
-    m3 = b.calculate(liquid_displacement_m3=32_000 * 0.158987, vapor_temperature_f=75, ch4_content=82, co2_content=1)
+    m3 = b.calculate(liquid_displacement_m3=32_000 * 0.158987, vapor_temperature_f=75, ch4_content=82, co2_content="1%")
     assert val(m3, "ch4") == pytest.approx(val(bbl, "ch4"), rel=1e-4)
     cold = b.calculate(liquid_displacement_bbl=1000, vapor_temperature_f=0, ch4_content=0.82)
     acf = 1000 * 42 / 7.48052

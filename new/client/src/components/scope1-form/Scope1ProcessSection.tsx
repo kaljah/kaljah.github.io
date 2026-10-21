@@ -70,6 +70,8 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
       <div className="input-group">
         <label>{t("Process")}</label>
         <CustomDropdown
+          id="process-dropdown"
+          aria-label={t("Process")}
           options={getProcessOptions()}
           value={currentProcessValue}
           onChange={handleProcessChange}

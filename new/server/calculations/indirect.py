@@ -71,8 +71,8 @@ class IndirectSteamCalculator(BaseCalculator):
     ):
         """
         API Compendium 2021 section 8.1.5: steam / heat emissions = energy / net efficiency x boiler fuel EF,
-        net efficiency = boiler efficiency x (1 - transmission loss) (docs/calculation-specification.md 5.2;
-        Exhibit 8.3 subtracts the loss from the efficiency instead, 1 % more emissions at 92 % / 10 %)
+        net efficiency = boiler efficiency - transmission loss (Exhibit 8.3: 0.92 - 0.10; it was 0.92 x (1 - 0.10),
+        1 % too low)
 
         heat_unit: an energy unit, or a steam mass unit with its enthalpy (see heat_to_mmbtu)
         """
@@ -91,7 +91,7 @@ class IndirectSteamCalculator(BaseCalculator):
         t_loss = _parse_e(transmission_loss, 0.0)
         if not (0 <= b_eff <= 1 and 0 <= t_loss <= 1):
             raise ValueError(f"Boiler efficiency ({b_eff}) and transmission loss ({t_loss}) are fractions between 0 and 1")
-        net_efficiency = b_eff * (1.0 - t_loss)
+        net_efficiency = b_eff - t_loss  # Exhibit 8.3
         if net_efficiency <= 0:
             raise ValueError(
                 f"Net efficiency must be greater than 0 (got {net_efficiency:.4f}). "
@@ -165,9 +165,6 @@ class CogenAllocationCalculator(BaseCalculator):
             },
             ["total_emissions", "heat_output", "power_output"],
         )
-
-        if float(total_emissions) < 0:
-            raise ValueError(f"Total emissions cannot be negative: {total_emissions}")
 
         heat_mmbtu = heat_to_mmbtu(heat_output, heat_unit or "mmbtu")
         power_mmbtu = heat_to_mmbtu(power_output, power_unit or "mmbtu")

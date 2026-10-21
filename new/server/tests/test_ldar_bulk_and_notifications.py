@@ -250,6 +250,7 @@ def test_surveys_bulk_update_and_delete(client, test_setup):
                 "survey_method": "OGI",
                 "screening_value_ppm": 1200,
                 "leak_status": "Leaking",
+                "survey_date": "2026-10-01",   # before the repair date below
                 "notes": f"Initial leak {i}",
             },
         )

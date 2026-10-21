@@ -174,10 +174,10 @@ def test_indirect_steam_calculator_physics():
     calc = IndirectSteamCalculator()
 
     # 1000 MMBtu delivered heat, 80% boiler efficiency, 5% transmission loss
-    # Net efficiency = 0.80 * (1 - 0.05) = 0.76
-    # Fuel consumed = 1000 / 0.76 = 1315.789 MMBtu
+    # Net efficiency = 0.80 - 0.05 = 0.75 (Exhibit 8.3)
+    # Fuel consumed = 1000 / 0.75 = 1333.333 MMBtu
     # EF_CO2 = 53.06 kg CO2/MMBtu
-    # CO2 = 1315.789 * 53.06 / 1000 = 69.8158 tCO2
+    # CO2 = 1333.333 * 53.06 / 1000 = 70.7467 tCO2
     res = calc.calculate(
         heat_energy=1000.0,
         ef_co2=53.06,
@@ -188,7 +188,7 @@ def test_indirect_steam_calculator_physics():
         ef_ch4=0.001,
         ef_n2o=0.0001,
     )
-    expected_fuel = 1000.0 / 0.76
+    expected_fuel = 1000.0 / 0.75
     expected_co2 = expected_fuel * 53.06 / 1000.0
     expected_ch4 = expected_fuel * 0.001 / 1000.0
     expected_n2o = expected_fuel * 0.0001 / 1000.0

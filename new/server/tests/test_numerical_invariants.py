@@ -355,12 +355,12 @@ class TestNormativeGoldenBenchmarks:
             ctrl_eff=1.0,  # 100% routed to flare (internal combustion efficiency 98%)
             hhv=1020.0,
         )
-        # Combusted CO2: 0.61065 * 0.98 * (44.01/16.04) + 0.09305 = 1.73503 tCO2
-        assert pytest.approx(split["total_co2"], rel=1e-3) == 1.73503
+        # Combusted CO2 at 96.5 % (Compendium corrections, Dec 2025): 0.61065 * 0.965 * (44.01/16.04) + 0.09305
+        assert pytest.approx(split["total_co2"], rel=1e-3) == 0.61065 * 0.965 * (44.01 / 16.04) + 0.09305
         # Unburnt CH4: 0.61065 * 0.02 = 0.012213 tCH4
         assert pytest.approx(split["total_ch4"], rel=1e-3) == 0.012213
         co2e = split["total_co2"] + (split["total_ch4"] * 28.0)
-        assert pytest.approx(co2e, rel=1e-3) == 2.0770
+        assert pytest.approx(co2e, rel=1e-3) == 0.61065 * 0.965 * (44.01 / 16.04) + 0.09305 + 0.012213 * 28.0
 
     def test_api_example_6_5_vessel_blowdown_compressibility(self):
         """API Compendium 2021 §6.5 Eq. 6-12: Vessel blowdown real-gas compressibility."""
@@ -419,9 +419,9 @@ class TestNormativeGoldenBenchmarks:
             heat_unit="mmbtu",
             uncertainties={},
         )
-        # Net eff = 0.80 * (1 - 0.05) = 0.76 -> 5000 / 0.76 * 53.06 / 1000 = 349.079 tonnes CO2
-        assert pytest.approx(res["results"]["co2"]["value"], rel=1e-3) == 349.079
-        assert pytest.approx(res["total_co2e"], rel=1e-3) == 349.079
+        # Net eff = 0.80 - 0.05 = 0.75 (Exhibit 8.3) -> 5000 / 0.75 * 53.06 / 1000 = 353.733 tonnes CO2
+        assert pytest.approx(res["results"]["co2"]["value"], rel=1e-3) == 353.733
+        assert pytest.approx(res["total_co2e"], rel=1e-3) == 353.733
 
     def test_scope3_materials_and_spend_eeio(self):
         """GHG Protocol Scope 3: Purchased materials (tonne) vs spend-based EEIO ($1000)."""

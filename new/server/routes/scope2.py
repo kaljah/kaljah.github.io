@@ -61,7 +61,7 @@ def _calc_indirect_steam(data):
     amount = float(data.get("amount") or data.get("heat_mmbtu") or 0)
     unit = (data.get("unit") or "mmbtu").lower().replace(" ", "")
     ci = data.get("calc_inputs", {}).get("indirect_steam", {})
-    raw_be = data.get("boiler_efficiency") or ci.get("boiler_eff") or 0.80
+    raw_be = data.get("boiler_efficiency") if data.get("boiler_efficiency") not in (None, "") else (ci.get("boiler_eff") or 0.80)
     boiler_eff = float(str(raw_be).replace("%", "").strip())
     if boiler_eff > 1.0 or "%" in str(raw_be):
         # 85 is 85 %, as in the file upload (no boiler runs at 1 %); it was used as 85 x, so the
@@ -82,11 +82,11 @@ def _calc_indirect_steam(data):
     except ValueError as exc:
         raise ValidationError(str(exc), "unit") from None
 
-    net_eff = boiler_eff * (1.0 - trans_loss)
+    net_eff = boiler_eff - trans_loss  # API Compendium Exhibit 8.3: 0.92 - 0.10 (it was 0.92 x (1 - 0.10))
     if net_eff <= 0:
-        raise ValueError(
+        raise ValidationError(
             f"Net efficiency must be greater than 0 (got {net_eff:.4f}). "
-            f"Check boiler efficiency ({boiler_eff}) and transmission loss ({trans_loss})."
+            f"Check boiler efficiency ({boiler_eff}) and transmission loss ({trans_loss}).", "trans_loss"
         )
     fuel_mmbtu = energy_mmbtu / net_eff
     co2_kg = fuel_mmbtu * ef_co2

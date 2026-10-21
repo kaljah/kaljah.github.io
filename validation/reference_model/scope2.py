@@ -53,7 +53,7 @@ class IndependentScope2Model:
         if t_loss > 1.0:
             t_loss /= 100.0
 
-        net_eff = b_eff * (1.0 - t_loss)
+        net_eff = b_eff - t_loss  # API Compendium Exhibit 8.3
         if net_eff <= 0:
             raise ValueError(f"Net efficiency must be > 0 (got {net_eff})")
 

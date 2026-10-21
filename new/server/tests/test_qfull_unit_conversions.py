@@ -323,15 +323,15 @@ class TestEnergyUnitsIndirectSteam:
 
     Reference:
       energy_btu = 100 * 1,000,000 = 100,000,000 BTU
-      net_eff = 0.80 * (1 - 0.05) = 0.76
-      co2_kg = (energy_btu / 1e6) * 56.1 / 0.76 = 7381.58 kg
-      expected_co2 = 7.38158 t
+      net_eff = 0.80 - 0.05 = 0.75 (Exhibit 8.3)
+      co2_kg = (energy_btu / 1e6) * 56.1 / 0.75 = 7480 kg
+      expected_co2 = 7.48 t
     """
 
     BOILER_EFF = 0.80
     TRANS_LOSS = 0.05
     EF_CO2_KG_MMBTU = 56.1  # kg/MMBtu (natural gas boiler)
-    NET_EFF = BOILER_EFF * (1 - TRANS_LOSS)
+    NET_EFF = BOILER_EFF - TRANS_LOSS
 
     BASE_MMBTU = 100.0
     EXPECTED_CO2 = (BASE_MMBTU * EF_CO2_KG_MMBTU / NET_EFF) / 1000.0

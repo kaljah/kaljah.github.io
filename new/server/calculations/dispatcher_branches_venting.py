@@ -36,9 +36,7 @@ def calc_venting(self, calculator, emission_factors, flat_inputs, gwp_dict, unce
     co2_content = self._optional_fraction(
         flat_inputs, ["co2_content", "co2_mol"], 0.0
     )
-    flare_eff = self._optional_fraction(
-        flat_inputs, ["control_efficiency"], 0.0
-    )
+    flare_eff, flare_de = self._controlled_share(flat_inputs, ["control_efficiency"])
 
     ef_co2 = emission_factors.get("co2")
     ef_ch4 = emission_factors.get("ch4")
@@ -52,6 +50,7 @@ def calc_venting(self, calculator, emission_factors, flat_inputs, gwp_dict, unce
         uncertainties=uncertainties,
         co2_content=co2_content,
         control_efficiency=flare_eff,
+        destruction_efficiency=flare_de,
         ef_co2=ef_co2,
         ef_ch4=ef_ch4,
         ef_n2o=ef_n2o,
@@ -208,9 +207,7 @@ def calc_tank(self, calculator, emission_factors, flat_inputs, gwp_dict, process
 
     gor = _opt(["tank_gor", "gor"])
     ch4_raw = _opt(["tank_ch4_content", "ch4_content", "c1"])
-    tank_eff = self._optional_fraction(
-        flat_inputs, ["tank_control_eff", "control_efficiency"], 0.0
-    )
+    tank_eff, tank_de = self._controlled_share(flat_inputs, ["tank_control_eff", "control_efficiency"])
     co2_content = self._optional_fraction(
         flat_inputs, ["tank_co2_content", "co2_content", "co2_mol"], 0.0
     )
@@ -240,6 +237,7 @@ def calc_tank(self, calculator, emission_factors, flat_inputs, gwp_dict, process
         gas_oil_ratio=float(gor) if gor is not None else None,
         ch4_content=self._parse_fraction_value(ch4_raw, key_name="ch4_content") if ch4_raw is not None else None,
         control_efficiency=tank_eff,
+        destruction_efficiency=tank_de,
         uncertainties=uncertainties,
         process_type=process_type,
         ef_ch4=ef_ch4_kg_bbl,
@@ -337,6 +335,8 @@ def calc_dehydrator(self, calculator, flat_inputs, gwp_dict, uncertainties):
     ch4_content = self._require_fraction(
         flat_inputs, ["dehy_ch4_content", "ch4_content", "c1", "gas_ch4_mole_pct"], "dehydrator gas CH4 content %"
     )
-    control_eff = self._optional_fraction(flat_inputs, ["dehy_eff", "control_efficiency"], 0.0)
+    # Table 6-17 CH4 cut by the share controlled x the device's efficiency (98 % for a flare without one)
+    share, eff = self._controlled_share(flat_inputs, ["dehy_eff", "control_efficiency"])
+    control_eff = share * (0.98 if eff is None else eff)
     return calculator.calculate(throughput=throughput, ch4_content=ch4_content, control_eff=control_eff,
                                 uncertainties=uncertainties, gwp_dict=gwp_dict)

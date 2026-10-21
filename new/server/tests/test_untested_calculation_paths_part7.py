@@ -104,8 +104,8 @@ def test_indirect_steam_percentage_strings_and_normalization():
         heat_unit="mmbtu",
     )
     assert res["total_co2e"] > 0
-    # Net efficiency: 0.80 * (1 - 0.05) = 0.76
-    expected_co2 = (1000.0 / 0.76) * 53.06 / 1000.0
+    # Net efficiency: 0.80 - 0.05 = 0.75 (Exhibit 8.3)
+    expected_co2 = (1000.0 / 0.75) * 53.06 / 1000.0
     assert abs(res["results"]["co2"]["value"] - expected_co2) < 1e-2
 
 

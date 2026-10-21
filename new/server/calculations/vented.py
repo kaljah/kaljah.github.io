@@ -24,73 +24,10 @@ from .uncertainty import (
 import math
 
 
-def _split_vented_and_flared(
-    total_gas_m3: float,
-    ch4_tonnes: float,
-    co2_tonnes: float,
-    ctrl_eff: float,
-    hhv: float = 1020.0,
-    ef_n2o: float = None,
-    destruction_eff: float = None,
-    control_type: str = "flare",
-):
-    """
-    D-01 / API Compendium 2021 stoichiometric flaring partition helper.
-    Partitions total gas into vented (1 - ctrl_eff) and flared/recovered (ctrl_eff).
-    If control_type in ("vru", "recovery", "vapor_recovery", "vapor_recovery_unit"):
-      Mechanical VRU captures vapor back to process/pipeline (0 flare CO2, 0 N2O, 0 combustion slip).
-    Else (flaring / thermal oxidizer):
-      - Combusts CH4 at destruction efficiency (default 98%): CH4 * de * (44.01 / 16.04)
-      - Native CO2 passes through unreacted
-      - Slip unburnt CH4 emitted
-      - N2O emitted from flared MMBtu
-    """
-    ctrl = normalize_efficiency(ctrl_eff, default=0.0)
-    vented_frac = 1.0 - ctrl
-
-    vented_ch4 = ch4_tonnes * vented_frac
-    vented_co2 = co2_tonnes * vented_frac
-
-    flared_co2 = 0.0
-    flared_unburnt_ch4 = 0.0
-    flared_n2o = 0.0
-
-    c_type = str(control_type or "flare").lower().strip()
-    is_vru = c_type in ("vru", "recovery", "vapor_recovery", "vapor_recovery_unit")
-
-    if ctrl > 0 and not is_vru:
-        flared_ch4_mass = ch4_tonnes * ctrl
-        flared_native_co2 = co2_tonnes * ctrl
-
-        de = normalize_efficiency(destruction_eff, default=0.98) if destruction_eff is not None else 0.98
-        slip = max(0.0, 1.0 - de)
-        flared_ch4_combusted = flared_ch4_mass * de
-        flared_co2 = (flared_ch4_combusted * (44.01 / 16.04)) + flared_native_co2
-        flared_unburnt_ch4 = flared_ch4_mass * slip
-
-        # N2O from energy of flared gas
-        flared_m3 = total_gas_m3 * ctrl
-        flared_scf = convert(flared_m3, "m3", "scf")
-        hhv_val = float(hhv or 1020.0)
-        flared_mmbtu = (flared_scf * hhv_val) / 1_000_000.0
-        n2o_ef_kg = float(ef_n2o if ef_n2o is not None else 0.0001)
-        flared_n2o = (flared_mmbtu * n2o_ef_kg) / 1000.0
-
-    total_ch4 = vented_ch4 + flared_unburnt_ch4
-    total_co2 = vented_co2 + flared_co2
-
-    return {
-        "vented_ch4": vented_ch4,
-        "vented_co2": vented_co2,
-        "flared_co2": flared_co2,
-        "flared_unburnt_ch4": flared_unburnt_ch4,
-        "flared_n2o": flared_n2o,
-        "total_ch4": total_ch4,
-        "total_co2": total_co2,
-    }
 
 
-_split_vent_flare = _split_vented_and_flared
+from .vented_production import _split_vent_flare  # noqa: E402  (one flare split)
+_split_vented_and_flared = _split_vent_flare
 
 
 def _propagate_vented_results(

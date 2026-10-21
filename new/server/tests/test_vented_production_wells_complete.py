@@ -139,7 +139,7 @@ def test_table_6_28_and_co2_from_the_ratio():
     with_co2 = n.calculate(source_type="prv", equipment_count=10, ch4_content=0.80, co2_content=0.05)
     ch4_t = 10 * 0.00065 * 0.80 / 0.788
     assert val(with_co2, "ch4") == pytest.approx(ch4_t)
-    assert val(with_co2, "co2") == pytest.approx(ch4_t / 16.04 / 0.80 * 0.05 * 44.01)
+    assert val(with_co2, "co2") == pytest.approx(10 * 43.0 * 0.05 * 44.01 / 379.3 / 2204.62262)  # Table 6-28 scf/yr
     assert val(n.calculate(source_type="prv", equipment_count=0), "ch4") == 0          # 0 PRVs (was 1)
 
 

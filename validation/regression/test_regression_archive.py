@@ -34,7 +34,7 @@ class TestRegressionArchive:
         Description: Flared branch used raw flared_volume_m3 * ef_co2 / 1000 with kg/MMBtu factors (~28x overestimate).
         Original Failure: Direct volume multiplication by energy factor resulted in massive overcounting.
         Expected Behavior: Stoichiometric flaring partitions gas into vented (1 - ctrl_eff) and flared (ctrl_eff)
-                           with 98% CH4 combustion (44.01 / 16.04), 2% unburnt slip, and N2O from energy.
+                           with 96.5 % carbon to CO2 (44.01 / 16.04), 2 % unburnt CH4, and N2O from energy.
         """
         split = IndependentVentedPartition.partition(
             total_gas_m3=1000.0,
@@ -46,8 +46,8 @@ class TestRegressionArchive:
         )
         # Flared unburnt CH4 should be 2% of flared CH4 (0.50 * 0.98 * 0.02 = 0.0098)
         assert pytest.approx(split["flared_unburnt_ch4"], rel=1e-4) == 0.50 * 0.98 * 0.02
-        # Flared combusted CO2: (0.50 * 0.98 * 0.98 * (44.01/16.04)) + native CO2
-        expected_flared_co2 = (0.50 * 0.98 * 0.98 * (44.01 / 16.04)) + (0.05 * 0.98)
+        # Flared combusted CO2 at 96.5 % carbon conversion (API Compendium 2021 corrections, December 2025)
+        expected_flared_co2 = (0.50 * 0.98 * 0.965 * (44.01 / 16.04)) + (0.05 * 0.98)
         assert pytest.approx(split["flared_co2"], rel=1e-4) == expected_flared_co2
         assert split["flared_n2o"] > 0.0
 

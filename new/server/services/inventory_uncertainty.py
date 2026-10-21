@@ -79,10 +79,19 @@ def _method_tier(factor_source):
 def inventory_uncertainty(year, allowed_fids=None, facility_id=None, scope="all", statuses=("Verified",), include_gwp_uncertainty=False, scope2_method="location"):
     from calculations.constants import get_active_gwp
     from calculations.uncertainty import GWP_UNCERTAINTY_1SIGMA
+    from services.dashboard_filters import _parse_facility_ids
 
     g = get_active_gwp(horizon="100")
     gwp = {"co2": 1.0, "ch4": float(g["CH4"]), "n2o": float(g["N2O"])}
-    fids = [facility_id] if facility_id else allowed_fids
+    parsed = _parse_facility_ids(facility_id)
+    if parsed is not None:
+        if allowed_fids is not None:
+            allowed_set = set(allowed_fids)
+            fids = [fid for fid in parsed if fid in allowed_set] or [-1]
+        else:
+            fids = parsed
+    else:
+        fids = allowed_fids
 
     # group key -> accumulators
     ef_lin = defaultdict(lambda: defaultdict(float))  # key -> gas -> sum(u_ef * E_gas)

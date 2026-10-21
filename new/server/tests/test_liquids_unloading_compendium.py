@@ -154,7 +154,7 @@ class TestLiquidsUnloadingTier1:
         )
         base_ch4 = 1.774
         expected_ch4 = base_ch4 * (0.02 + 0.98 * 0.02)
-        expected_co2 = base_ch4 * 0.98 * 0.98 * (44.01 / 16.04)
+        expected_co2 = base_ch4 * 0.98 * 0.965 * (44.01 / 16.04)  # 96.5 % carbon to CO2 (Dec 2025 corrections)
         assert res["results"]["ch4"]["value"] == pytest.approx(expected_ch4, rel=1e-3)
         assert res["results"]["co2"]["value"] == pytest.approx(expected_co2, rel=1e-3)
 

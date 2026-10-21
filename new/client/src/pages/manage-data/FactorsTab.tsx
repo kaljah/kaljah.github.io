@@ -52,6 +52,20 @@ export interface FactorsTabProps {
 }
 
 // Extracted from ManageData.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
+const PVT_COMPONENTS = [
+  { key: "ch4_mol_pct", label: "CH₄", shortName: "Methane", unit: "mol %", placeholder: "78.40" },
+  { key: "c2h6_mol_pct", label: "C₂H₆", shortName: "Ethane", unit: "mol %", placeholder: "12.10" },
+  { key: "c3h8_mol_pct", label: "C₃H₈", shortName: "Propane", unit: "mol %", placeholder: "5.20" },
+  { key: "co2_mol_pct", label: "CO₂", shortName: "Carbon Dioxide", unit: "mol %", placeholder: "2.10" },
+  { key: "ic4_mol_pct", label: "i-C₄H₁₀", shortName: "i-Butane", unit: "mol %", placeholder: "0.80" },
+  { key: "nc4_mol_pct", label: "n-C₄H₁₀", shortName: "n-Butane", unit: "mol %", placeholder: "1.20" },
+  { key: "ic5_mol_pct", label: "i-C₅H₁₂", shortName: "i-Pentane", unit: "mol %", placeholder: "0.40" },
+  { key: "nc5_mol_pct", label: "n-C₅H₁₂", shortName: "n-Pentane", unit: "mol %", placeholder: "0.50" },
+  { key: "c6_plus_mol_pct", label: "C₆+", shortName: "Hexanes+", unit: "mol %", placeholder: "0.30" },
+  { key: "n2_mol_pct", label: "N₂", shortName: "Nitrogen", unit: "mol %", placeholder: "2.20" },
+  { key: "h2s_ppm", label: "H₂S", shortName: "Hydrogen Sulfide", unit: "ppm", placeholder: "0.0" },
+];
+
 const FactorsTab: React.FC<FactorsTabProps> = ({
   ITEMS_PER_PAGE,
   currentPage,
@@ -192,8 +206,10 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
           step="0.1"
         />
       </Field>
-      <div className="input-group md:[grid-column:span_2]!">
-        <label>{t("Lab Certification / Source Reference")}</label>
+      <div className="[grid-column:1/-1]! mb-1">
+        <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+          {t("Lab Certification / Source Reference")}
+        </label>
         <Input
           type="text"
           name="source"
@@ -202,8 +218,10 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
           placeholder={t("e.g. Lab GC Report #2026-ARZ-01 / ISO 17025 / EPD Ref")}
         />
       </div>
-      <div className="input-group md:[grid-column:span_3]!">
-        <label>{t("Description & Technical Justification")}</label>
+      <div className="[grid-column:1/-1]! mb-1">
+        <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+          {t("Description & Technical Justification")}
+        </label>
         <Textarea
           name="description"
           value={factorForm.description || ""}
@@ -213,27 +231,166 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
           className="[resize:vertical]!"
         />
       </div>
-      <div className="input-group md:[grid-column:span_3]!">
-        <label>Out-of-range justification (only needed if a factor is above 500 CO₂, 100 CH₄ or 10 N₂O kg/MMBtu)</label>
+      <div className="[grid-column:1/-1]! mb-1">
+        <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+          {t("Out-of-range justification")} <span className="font-normal lowercase text-slate-400">({t("only needed if a factor is above 500 CO₂, 100 CH₄ or 10 N₂O kg/MMBtu")})</span>
+        </label>
         <Textarea
           name="justification"
           value={factorForm.justification || ""}
           onChange={handleFactorChange}
           rows={2}
-          placeholder="Why this value is correct (at least 10 characters). The factor then waits for a different administrator to approve it."
+          placeholder={t("Why this value is correct (at least 10 characters). The factor then waits for a different administrator to approve it.")}
           className="[resize:vertical]!"
         />
       </div>
+
+      {/* Gas Stream Composition Trigger & Inputs */}
+      {(() => {
+        const gc = factorForm.gas_composition;
+        const molSum = gc ? (
+          (Number(gc.ch4_mol_pct) || 0) +
+          (Number(gc.c2h6_mol_pct) || 0) +
+          (Number(gc.c3h8_mol_pct) || 0) +
+          (Number(gc.ic4_mol_pct) || 0) +
+          (Number(gc.nc4_mol_pct) || 0) +
+          (Number(gc.ic5_mol_pct) || 0) +
+          (Number(gc.nc5_mol_pct) || 0) +
+          (Number(gc.c6_plus_mol_pct) || 0) +
+          (Number(gc.co2_mol_pct) || 0) +
+          (Number(gc.n2_mol_pct) || 0)
+        ) : 0;
+
+        const handleNormalize = () => {
+          if (!gc || molSum <= 0) return;
+          const factor = 100.0 / molSum;
+          const round3 = (v: any) => Number(((Number(v) || 0) * factor).toFixed(3));
+          setFactorForm((prev: any) => ({
+            ...prev,
+            gas_composition: {
+              ...prev.gas_composition,
+              ch4_mol_pct: round3(prev.gas_composition?.ch4_mol_pct),
+              c2h6_mol_pct: round3(prev.gas_composition?.c2h6_mol_pct),
+              c3h8_mol_pct: round3(prev.gas_composition?.c3h8_mol_pct),
+              ic4_mol_pct: round3(prev.gas_composition?.ic4_mol_pct),
+              nc4_mol_pct: round3(prev.gas_composition?.nc4_mol_pct),
+              ic5_mol_pct: round3(prev.gas_composition?.ic5_mol_pct),
+              nc5_mol_pct: round3(prev.gas_composition?.nc5_mol_pct),
+              c6_plus_mol_pct: round3(prev.gas_composition?.c6_plus_mol_pct),
+              co2_mol_pct: round3(prev.gas_composition?.co2_mol_pct),
+              n2_mol_pct: round3(prev.gas_composition?.n2_mol_pct),
+            }
+          }));
+        };
+
+        return (
+          <div className="[grid-column:1/-1]! p-4 bg-orange-50/50 dark:bg-orange-950/20 rounded-xl border border-orange-200/90 dark:border-orange-800/50 shadow-xs">
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-sm text-orange-700 dark:text-orange-400 uppercase tracking-wide">
+                  {t("Gas Stream Composition (PVT / Chromatography)")}
+                </span>
+                {gc && (
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-mono font-semibold ${
+                    molSum >= 99.5 && molSum <= 100.5
+                      ? "bg-green-100 text-green-800 border border-green-300"
+                      : molSum === 0
+                      ? "bg-slate-100 text-slate-600 border border-slate-300"
+                      : "bg-amber-100 text-amber-800 border border-amber-300"
+                  }`}>
+                    {molSum >= 99.5 && molSum <= 100.5 ? `✓ ${molSum.toFixed(2)} mol%` : `Σ = ${molSum.toFixed(2)} mol%`}
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                {gc && molSum > 0 && Math.abs(molSum - 100) > 0.05 && (
+                  <button
+                    type="button"
+                    onClick={handleNormalize}
+                    className="text-xs px-2.5 py-1 bg-orange-600 hover:bg-orange-700 text-white rounded font-medium cursor-pointer transition-colors shadow-xs"
+                    title={t("Scale all component percentages proportionally to 100.00%")}
+                  >
+                    {t("Normalize to 100%")}
+                  </button>
+                )}
+                <button
+                  type="button"
+                  className="text-xs font-semibold text-orange-600 hover:text-orange-700 underline cursor-pointer"
+                  onClick={() => {
+                    const current = factorForm.gas_composition;
+                    setFactorForm((prev: any) => ({
+                      ...prev,
+                      gas_composition: current ? null : {
+                        ch4_mol_pct: 0, c2h6_mol_pct: 0, c3h8_mol_pct: 0,
+                        ic4_mol_pct: 0, nc4_mol_pct: 0, ic5_mol_pct: 0,
+                        nc5_mol_pct: 0, c6_plus_mol_pct: 0, co2_mol_pct: 0,
+                        n2_mol_pct: 0, h2s_ppm: 0
+                      }
+                    }));
+                  }}
+                >
+                  {factorForm.gas_composition ? t("Remove Gas Composition") : t("+ Add Gas Composition")}
+                </button>
+              </div>
+            </div>
+
+            {factorForm.gas_composition && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mt-3">
+                {PVT_COMPONENTS.map((c) => (
+                  <div
+                    key={c.key}
+                    className="bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700 shadow-xs flex flex-col justify-between hover:border-orange-400 transition-colors"
+                  >
+                    <div className="flex items-baseline justify-between gap-1 mb-1.5">
+                      <div className="flex items-baseline gap-1.5 overflow-hidden">
+                        <span className="font-bold text-sm text-slate-900 dark:text-slate-100">{c.label}</span>
+                        <span className="text-[11px] text-slate-500 font-normal truncate">{c.shortName}</span>
+                      </div>
+                      <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded shrink-0">
+                        {c.unit}
+                      </span>
+                    </div>
+                    <input
+                      type="number"
+                      step="any"
+                      min="0"
+                      value={factorForm.gas_composition[c.key] ?? ""}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setFactorForm((prev: any) => ({
+                          ...prev,
+                          gas_composition: {
+                            ...prev.gas_composition,
+                            [c.key]: val === "" ? "" : parseFloat(val)
+                          }
+                        }));
+                      }}
+                      placeholder={c.placeholder}
+                      className="w-full px-3 py-1.5 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-md text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 font-mono"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })()}
     </div>
 
     {/* EF Uncertainty Workbench */}
-    <div className="mt-[20px]! p-[20px]! bg-[color:rgba(30,_41,_59,_0.03)]! rounded-[12px]! [border:1px_solid_rgba(0,0,0,0.05)]!">
-      <h4 className="m-[0_0_15px_0]! text-[length:1rem]! flex! items-center! gap-[8px]!">
-        <Database size={16} />{" "}{t("EF Uncertainty Workbench (ISO 14064-1 method)")}
-      </h4>
-      <div className="grid grid-cols-1 gap-[15px] md:grid-cols-3">
-        <div className="input-group">
-          <label className="text-[length:0.8rem]!">{t("Meter Precision (±%)")}</label>
+    <div className="mt-6 p-5 bg-slate-50/80 dark:bg-slate-800/40 rounded-xl border border-slate-200/80 dark:border-slate-700/60 shadow-xs">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+        <h4 className="m-0 text-sm font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+          <Database size={16} className="text-blue-600" />
+          {t("EF Uncertainty Workbench (ISO 14064-1 method)")}
+        </h4>
+        <span className="text-xs text-slate-500">Root Sum of Squares (SRSS) Combination</span>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+        <div>
+          <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+            {t("Meter Precision (±%)")}
+          </label>
           <Input
             type="number"
             step="0.1"
@@ -241,11 +398,12 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
             onChange={(e) =>
               setWorkbench({ ...workbench, meter_precision: parseFloat(e.target.value) || 0 })
             }
-            className="p-[8px]!"
           />
         </div>
-        <div className="input-group">
-          <label className="text-[length:0.8rem]!">{t("Lab Analysis (±%)")}</label>
+        <div>
+          <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+            {t("Lab Analysis (±%)")}
+          </label>
           <Input
             type="number"
             step="0.1"
@@ -253,13 +411,14 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
             onChange={(e) =>
               setWorkbench({ ...workbench, lab_precision: parseFloat(e.target.value) || 0 })
             }
-            className="p-[8px]!"
           />
         </div>
-        <div className="input-group">
-          <label className="text-[length:0.8rem]!">{t("GWP Standard Selection")}</label>
+        <div>
+          <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+            {t("GWP Standard Selection")}
+          </label>
           <NativeSelect
-            className="component-select p-[8px]! text-[length:0.85rem]!"
+            className="component-select"
             value={workbench.gwp_uncertainty}
             onChange={(e) =>
               setWorkbench({ ...workbench, gwp_uncertainty: parseFloat(e.target.value) || 0 })
@@ -273,8 +432,8 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
       </div>
       <Button
         variant="ghost"
-        type="submit"
-        className="mt-[15px]! text-[color:var(--color-blue-700)]! font-semibold! text-[length:0.85rem]!"
+        type="button"
+        className="mt-3 text-blue-600 hover:text-blue-700 font-semibold text-xs flex items-center gap-1.5 cursor-pointer"
         onClick={() => {
           const co2_u = Math.sqrt(
             Math.pow(workbench.meter_precision, 2) + Math.pow(workbench.lab_precision, 2),
@@ -291,7 +450,7 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
           });
         }}
       >
-        {t("Calculate Combined Uncertainty (SRSS)")}
+        ⚡ {t("Calculate Combined Uncertainty (SRSS)")}
       </Button>
     </div>
 
@@ -353,6 +512,11 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
               <tr key={f.id}>
                 <td>
                   <strong>{f.factor_name || f.name}</strong>
+                  {f.gas_composition && (
+                    <div className="text-[10px] text-orange-600 font-mono mt-0.5">
+                      GC: {f.gas_composition.ch4_mol_pct}% CH₄, {f.gas_composition.co2_mol_pct}% CO₂
+                    </div>
+                  )}
                 </td>
                 <td>{f.unit}</td>
                 <td>{f.co2_factor}</td>

@@ -165,7 +165,7 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
             { value: "", label: t("Select Region") },
             ...facilities
               .filter((f) => f.activity === prodForm.activity && f.division === prodForm.division)
-              .map((f) => ({ value: f.id.toString(), label: f.name, subLabel: f.field })),
+              .map((f) => ({ value: f.id.toString(), label: f.name, subLabel: f.region || f.field })),
           ]}
           value={prodForm.facility_id != null ? String(prodForm.facility_id) : ""}
           onChange={(val) => setProdForm({ ...prodForm, facility_id: val })}

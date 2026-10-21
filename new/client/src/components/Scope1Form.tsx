@@ -1813,7 +1813,7 @@ export const Scope1Form: React.FC = () => {
     ...facilities.map((f) => ({
       value: f.id.toString(),
       label: f.name,
-      subLabel: f.field,
+      subLabel: f.region || f.field,
     })),
   ];
 
@@ -1911,6 +1911,14 @@ export const Scope1Form: React.FC = () => {
       set("n2", pct("N2"));
       set("ch4_content", pct("CH4"));
       set("co2_content", pct("CO2"));
+      handleFormChange("gas_composition", res.gas_composition || {
+        ch4_mol_pct: pct("CH4"),
+        c2h6_mol_pct: pct("C2H6"),
+        c3h8_mol_pct: pct("C3H8"),
+        co2_mol_pct: pct("CO2"),
+        n2_mol_pct: pct("N2"),
+        h2s_ppm: parseFloat(rc.H2S || 0) || 0,
+      });
     }
 
     setShowGasCalc(false);

@@ -178,7 +178,7 @@ const EmissionsMap: React.FC = () => {
 
       // Derive distinct regions and activities directly from the database facilities
       const regions = [
-        ...new Set(fetchedFacilities.flatMap((f) => [f.region_identifier, f.location]).filter(Boolean) as string[]),
+        ...new Set(fetchedFacilities.flatMap((f) => [f.region, f.region_identifier, f.location]).filter(Boolean) as string[]),
       ].sort();
       const userLoc = (user?.location || "").trim();
       if (userLoc && !isUnrestrictedLocation(userLoc) && !regions.includes(userLoc)) {

@@ -75,6 +75,7 @@ def test_source_key_and_filter():
 
 def test_plausibility_bounds():
     assert plausibility_check("abc")[0] == "reject"
+    assert plausibility_check(float("nan"))[0] == "reject" and plausibility_check(float("-inf"))[0] == "reject"
     assert plausibility_check(2e8)[0] == "reject"
     assert plausibility_check(2e6)[0] == "flag"
     assert plausibility_check(10, z_flag="z outlier") == ("flag", "z outlier")
@@ -103,8 +104,8 @@ def series(app):
         fac = Facility(name="Anomaly series T", code="ANOM-T")
         db.session.add(fac)
         db.session.flush()
-        rows = [Emission(facility_id=fac.id, year=2025, month=m, process_type="combustion", fuel_type="Diesel",
-                         equipment_id="G-1" if m % 2 else None, quantity=1, co2e_total=100.0 + m, status="Verified")
+        rows = [Emission(facility_id=fac.id, year=2025, month=m, process_type="combustion",
+                         fuel_type="Diesel" if m < 6 else None, equipment_id="G-1" if m % 2 else None, quantity=1, co2e_total=100.0 + m, status="Verified")
                 for m in range(1, 7)]
         rows += [Scope2Emission(facility_id=fac.id, year=2025, month=m, source_type="electricity", co2e=50.0 + m,
                                 status="Verified") for m in range(1, 5)]
@@ -145,7 +146,7 @@ def test_batch_detector_reads_each_series_once(app, series):
                                 co2e_total=9e5, status="Verified"))                               # after the start
         db.session.flush()
         assert b.check_scope1(series, "combustion", 5000.0, 2025, 8)["history_n"] == 6
-        assert b.check_scope1(series, "combustion", 104.0, 2025, 8, source=("fuel", "Diesel"))["history_n"] == 6
+        assert b.check_scope1(series, "combustion", 104.0, 2025, 8, source=("fuel", "Diesel"))["history_n"] == 5
         assert b.check_scope1(series, "combustion", 104.0, 2025, 8, source=("equipment", "G-1"))["history_n"] == 3
         assert b.check_scope1(series, "combustion", 104.0, 2025, 8, source=("equipment", ""))["history_n"] == 6
         assert len(b._cache) == 1

@@ -96,6 +96,18 @@ def invalid_query_parameter(args, numbers=True):
         bounds = _QUERY_INT_RANGES.get(name) if numbers else None
         if bounds is None or value.strip().lower() in _PASS_THROUGH:
             continue
+        if name in ("facility_id", "facilityId") and "," in value:
+            parts = [p.strip() for p in value.split(",")]
+            for p in parts:
+                if not p or p.lower() in _PASS_THROUGH:
+                    continue
+                try:
+                    num = int(p)
+                except ValueError:
+                    return name, f"'{name}' must be a whole number"
+                if not bounds[0] <= num <= bounds[1]:
+                    return name, f"'{name}' must be between {bounds[0]} and {bounds[1]}"
+            continue
         try:
             number = int(value.strip())
         except ValueError:

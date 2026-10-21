@@ -117,9 +117,9 @@ def test_steam_transmission_loss_is_a_percentage(app, client, env):
     assert st["skipped_count"] == 2, st["skipped_preview"]
     with app.app_context():
         rows = {r.month: r.co2e for r in Scope2Emission.query.filter_by(facility_id=env["fid"], year=2019)}
-    assert rows[1] == pytest.approx(1000 / (0.80 * (1 - 0.009)) * NG / 1000, rel=1e-6)
-    assert rows[2] == pytest.approx(1000 / (0.80 * (1 - 0.01)) * NG / 1000, rel=1e-6)
-    assert rows[3] == pytest.approx(1000 / (0.85 * (1 - 0.05)) * NG / 1000, rel=1e-6)
+    assert rows[1] == pytest.approx(1000 / (0.80 - 0.009) * NG / 1000, rel=1e-6)
+    assert rows[2] == pytest.approx(1000 / (0.80 - 0.01) * NG / 1000, rel=1e-6)
+    assert rows[3] == pytest.approx(1000 / (0.85 - 0.05) * NG / 1000, rel=1e-6)
     assert set(rows) == {1, 2, 3}
 
 

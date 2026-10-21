@@ -13,7 +13,7 @@ export interface EditEmissionModalProps {
   onClose: () => void;
   emission: any;
   onSuccess?: () => void;
-  facilities?: Array<{ id: number | string; name: string; field?: string }>;
+  facilities?: Array<{ id: number | string; name: string; field?: string; region?: string | null }>;
 }
 
 export const EditEmissionModal: React.FC<EditEmissionModalProps> = ({
@@ -113,7 +113,7 @@ export const EditEmissionModal: React.FC<EditEmissionModalProps> = ({
     { value: "", label: t("Select Facility") },
     ...facilities.map((f) => ({
       value: String(f.id),
-      label: `${f.name}${f.field ? ` (${f.field})` : ""}`,
+      label: `${f.name}${f.region ? ` (${f.region})` : f.field ? ` (${f.field})` : ""}`,
     })),
   ];
 

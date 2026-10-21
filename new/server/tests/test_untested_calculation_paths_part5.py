@@ -79,10 +79,10 @@ def test_indirect_steam_and_cogen_allocation_comprehensive():
         transmission_loss=0.05,
         uncertainties={},
     )
-    # Net efficiency = 0.85 * (1 - 0.05) = 0.8075
-    # Fuel MMBtu = 500 / 0.8075 = 619.195 MMBtu
-    # CO2 = 619.195 * 53.06 / 1000 = 32.854 t
-    expected_co2 = (500.0 / (0.85 * 0.95)) * 53.06 / 1000.0
+    # Net efficiency = 0.85 - 0.05 = 0.80 (Exhibit 8.3)
+    # Fuel MMBtu = 500 / 0.80 = 625 MMBtu
+    # CO2 = 625 * 53.06 / 1000 = 33.1625 t
+    expected_co2 = (500.0 / (0.85 - 0.05)) * 53.06 / 1000.0
     assert res_steam["results"]["co2"]["value"] == pytest.approx(expected_co2, rel=1e-3)
     assert res_steam["results"]["ch4"]["value"] > 0
     assert res_steam["results"]["n2o"]["value"] > 0

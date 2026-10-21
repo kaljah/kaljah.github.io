@@ -145,7 +145,7 @@ const SourcesTab: React.FC<SourcesTabProps> = ({
             { value: "", label: t("Select Region") },
             ...facilities
               .filter((f) => f.activity === sourceForm.activity && f.division === sourceForm.division)
-              .map((f) => ({ value: f.id.toString(), label: f.name, subLabel: f.field })),
+              .map((f) => ({ value: f.id.toString(), label: f.name, subLabel: f.region || f.field })),
           ]}
           value={sourceForm.facility_id != null ? String(sourceForm.facility_id) : ""}
           onChange={(val) => setSourceForm({ ...sourceForm, facility_id: val })}

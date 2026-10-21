@@ -203,8 +203,9 @@ class TestBoundaryConditions:
 
     def test_full_control_efficiency_tank_vs_no_control(self):
         """
-        BOUNDARY: control_eff=1.0 (fully controlled) vs 0.0 (fully vented).
-        Fully controlled → essentially all CH4 routed to flare (with 2% unburnt slip).
+        BOUNDARY: control_eff=1.0 (a flare burning at 100 %) vs 0.0 (fully vented).
+        The entered efficiency is the flare's (2026-10-22): 100 % leaves no CH4; a flared row
+        without an efficiency burns at the default 98 % (2 % slip).
         Fully vented → all CH4 emitted.
         Result: ctrl=1.0 gives LESS ch4 than ctrl=0.0.
         """
@@ -223,11 +224,11 @@ class TestBoundaryConditions:
             f"Full control should reduce CH4: no_ctrl={em_no_ctrl['ch4']:.4f}, "
             f"full_ctrl={em_full_ctrl['ch4']:.4f}"
         )
-        # With ctrl=1.0: all routed to flare, only 2% unburnt
-        # Expected CH4 ≈ total_ch4 * 0.02 (2% of what would be flared)
-        total_raw_ch4 = em_no_ctrl["ch4"]
-        expected_ctrl_ch4 = total_raw_ch4 * 0.02   # flared_unburnt = 2%
-        assert em_full_ctrl["ch4"] == pytest.approx(expected_ctrl_ch4, rel=1e-3)
+        assert em_full_ctrl["ch4"] == 0.0
+        em_flared = compute_emissions({
+            "process_type": "tank", "quantity": 1000.0, "unit": "bbl", "factor_source": "specific",
+            "tank_gor": 100.0, "tank_ch4_content": 0.85, "disposition": "flared"}, {})[0]
+        assert em_flared["ch4"] == pytest.approx(em_no_ctrl["ch4"] * 0.02, rel=1e-3)   # default 98 %
 
     def test_combustion_efficiency_one_minimizes_ch4_slip(self):
         """

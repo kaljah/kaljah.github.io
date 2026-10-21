@@ -2,9 +2,9 @@ import math
 from .constants import DEFAULT_GWP, get_active_gwp
 
 # Standard Thermodynamic Conditions (API Compendium 2021 §4.2.1, ISO 13443)
-# T_std = 60°F = 15.56°C = 288.71 K = 519.67 °R
+# T_std = 60°F = 15.56°C = 288.705555... K = 519.67 °R
 # P_std = 14.696 psia = 101.325 kPa = 1.01325 bar = 1.0 atm
-STD_TEMP_K = 288.706
+STD_TEMP_K = (60.0 - 32.0) * 5.0 / 9.0 + 273.15
 STD_TEMP_R = 519.67
 STD_TEMP_C = 15.556
 STD_TEMP_F = 60.0
@@ -139,7 +139,7 @@ def to_psia(val, unit="psig", atmospheric_psia=STD_PRESSURE_PSIA):
 
 # Volume units that can be read at operating conditions. scf / Mscf / Sm3 / Nm3 are standard by
 # definition, and energy or mass quantities have no volume to correct.
-ACTUAL_VOLUME_UNITS = {"m3", "m³", "cubic_meters", "cubic_meter", "cf", "ft3", "ft³", "acf", "am3", "actual_m3"}
+ACTUAL_VOLUME_UNITS = {"m3", "m³", "cubic_meters", "cubic_meter", "cf", "ft3", "ft³", "acf", "am3", "actual_m3", "actualm3"}
 
 
 def is_actual_volume_unit(unit):
@@ -177,8 +177,15 @@ def normalize_gas_volume_to_standard(
         p_factor = p_meas_psia / STD_PRESSURE_PSIA
     else:
         p_factor = 1.0
-
-    z = float(z_factor) if z_factor and float(z_factor) > 0 else 1.0
+    if z_factor not in (None, "", "-"):
+        try:
+            z = float(z_factor)
+        except (ValueError, TypeError):
+            raise ValueError(f"Compressibility factor Z is not a number: {z_factor}")
+        if z <= 0.0 or not math.isfinite(z):
+            raise ValueError(f"Compressibility factor Z must be strictly positive and finite, got {z_factor}")
+    else:
+        z = 1.0
 
     return vol * p_factor * t_factor * (1.0 / z)
 
@@ -187,36 +194,17 @@ def normalize_gas_volume_to_standard(
 NM3_TO_SM3 = STD_TEMP_K / 273.15
 
 VOLUME_UNITS_TO_M3 = {
-    "m3": 1.0,
-    "m³": 1.0,
-    "sm3": 1.0,
-    "sm³": 1.0,
-    "nm3": NM3_TO_SM3,
-    "nm³": NM3_TO_SM3,
-    "ksm3": 1000.0,
-    "mmsm3": 1_000_000.0,
-    "cubic_meter": 1.0,
-    "cubic_meters": 1.0,
-    "scf": 0.028316846592,
-    "cf": 0.028316846592,
-    "ft3": 0.028316846592,
-    "mscf": 28.316846592,
-    "mcf": 28.316846592,
-    "mmscf": 28316.846592,
-    "bbl": 0.158987295,
-    "barrel": 0.158987295,
-    "barrels": 0.158987295,
-    "kbbl": 158.987295,
-    "mbbl": 158.987295,
-    "mmbbl": 158987.295,
-    "gal": 0.003785411784,
-    "gallon": 0.003785411784,
-    "gallons": 0.003785411784,
-    "l": 0.001,
-    "liter": 0.001,
-    "liters": 0.001,
-    "litre": 0.001,
-    "litres": 0.001,
+    "m3": 1.0, "m³": 1.0, "sm3": 1.0, "sm³": 1.0,
+    "nm3": NM3_TO_SM3, "nm³": NM3_TO_SM3,
+    "ksm3": 1000.0, "mmsm3": 1_000_000.0,
+    "cubic_meter": 1.0, "cubic_meters": 1.0,
+    "actual_m3": 1.0, "actualm3": 1.0, "am3": 1.0, "acf": 0.028316846592,
+    "scf": 0.028316846592, "cf": 0.028316846592, "ft3": 0.028316846592,
+    "mscf": 28.316846592, "mcf": 28.316846592, "mmscf": 28316.846592,
+    "bbl": 0.158987295, "barrel": 0.158987295, "barrels": 0.158987295,
+    "kbbl": 158.987295, "mbbl": 158.987295, "mmbbl": 158987.295,
+    "gal": 0.003785411784, "gallon": 0.003785411784, "gallons": 0.003785411784,
+    "l": 0.001, "liter": 0.001, "liters": 0.001, "litre": 0.001, "litres": 0.001,
 }
 
 MASS_UNITS_TO_KG = {
@@ -639,7 +627,7 @@ _RATE_SUFFIX = {"/d": 365.0, "/day": 365.0, "d": 365.0, "pd": 365.0, "/yr": 1.0,
 _VOLUME_ALIASES = {"mmcf": "mmscf", "kscf": "mscf", "mcfd": "mcf/d", "mmscfd": "mmscf/d", "mscfd": "mscf/d",
                    "m^3": "m3", "cubic metre": "m3", "cubic metres": "m3", "knm3": "ksm3", "kncm": "ksm3",
                    "thousand m3": "ksm3", "million m3": "mmsm3", "mmm3": "mmsm3", "bpd": "bbl/d", "bopd": "bbl/d",
-                   "m³": "m3", "sm³": "sm3", "nm³": "nm3"}
+                   "m³": "m3", "sm³": "sm3", "nm³": "nm3", "actualm3": "actual_m3", "actual_m³": "actual_m3"}
 _GASES = {"ch4": "ch4", "methane": "ch4", "co2": "co2", "n2o": "n2o", "co2e": "co2e", "voc": "voc", "gas": "gas",
           "toc": "toc", "thc": "toc"}
 _COUNT_WORDS = {"count", "unit", "units", "source", "sources", "device", "devices", "well", "wells", "separator",
@@ -666,6 +654,7 @@ def norm_unit(unit):
 
 
 GAS_VOLUME_UNITS = {"m3", "m³", "sm3", "sm³", "nm3", "nm³", "ksm3", "mmsm3", "cubic_meter", "cubic_meters",
+                    "actual_m3", "actualm3", "am3", "acf",
                     "scf", "cf", "ft3", "mscf", "mcf", "mmscf"}
 
 

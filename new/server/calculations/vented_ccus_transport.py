@@ -135,8 +135,6 @@ class CCUSVentingCalculator(BaseCalculator):
             n = float(1.0 if events is None else events)
             v_m3 = float(physical_volume_m3)
             rho = float(co2_density_kg_m3)
-            if v_m3 < 0 or rho < 0:
-                raise ValueError("physical_volume_m3 and co2_density_kg_m3 cannot be negative")
             s_wt = str(co2_weight_fraction).replace("%", "").strip()
             wt_frac = float(s_wt)
             if wt_frac < 0:
@@ -310,8 +308,6 @@ class CrudeTransportLossesCalculator(BaseCalculator):
                                  ["volume_transported_bbl", "trip_duration_days"])
             gal = float(volume_transported_bbl) * 42.0
             d_days = float(trip_duration_days)
-            if gal < 0 or d_days < 0:
-                raise ValueError("volume_transported_bbl and trip_duration_days cannot be negative")
             if trips_per_year is not None and float(trips_per_year) < 0:
                 raise ValueError("trips_per_year cannot be negative")
             n_trips = float(1.0 if trips_per_year in (None, "") else trips_per_year)

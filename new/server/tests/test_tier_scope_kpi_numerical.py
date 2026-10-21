@@ -251,10 +251,10 @@ class TestScope2Methods:
     def test_scope2_indirect_steam_thermodynamic_equation(self):
         """Scope 2 Indirect Steam & Heat:
         Formula: CO2 (t) = (Energy MMBtu × EF_boiler) / [net_eff × 1000]
-        where net_eff = boiler_eff × (1 - trans_loss).
+        where net_eff = boiler_eff - trans_loss (API Compendium Exhibit 8.3).
         Test: 500 MMBtu steam, boiler_eff = 80% (0.80), trans_loss = 5% (0.05), EF = 53.06 kg/MMBtu.
-        net_eff = 0.80 * (1 - 0.05) = 0.76.
-        CO2 (kg) = (500 * 53.06) / 0.76 = 34,907.89 kg = 34.9079 tCO2.
+        net_eff = 0.80 - 0.05 = 0.75.
+        CO2 (kg) = (500 * 53.06) / 0.75 = 35,373.33 kg = 35.3733 tCO2.
         """
         data = {
             "amount": 500.0,
@@ -269,7 +269,7 @@ class TestScope2Methods:
         }
         co2_tonnes, energy_mmbtu, ef = _calc_indirect_steam(data)
         # CO2 plus the natural-gas CH4 / N2O of Table 4-6 (= EPA Hub Table 7) at AR5
-        fuel = 500.0 / (0.80 * 0.95)
+        fuel = 500.0 / (0.80 - 0.05)
         expected = fuel * (53.06 + 0.001 * 28 + 0.0001 * 265) / 1000.0
         assert abs(co2_tonnes - expected) < 1e-4
         assert energy_mmbtu == 500.0

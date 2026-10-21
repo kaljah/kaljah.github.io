@@ -74,13 +74,13 @@ class TestCleanScope2SteamAndHeat:
             steam_enthalpy_btu_lb=1000.0,   # Equation 8-1: Btu/lb above saturated water at 212 F
         )
 
-        expected_co2 = ((tonnes * 2.20462) / (b_eff * (1.0 - t_loss)) * ef_co2_kg_mmbtu) / 1000.0
+        expected_co2 = ((tonnes * 2.20462) / (b_eff - t_loss) * ef_co2_kg_mmbtu) / 1000.0
         assert abs(res["results"]["co2"]["value"] - expected_co2) < 1e-2
         assert abs(res["total_co2e"] - expected_co2) < 1e-2
 
     def test_steam_invalid_efficiency_rejected(self):
         calc = IndirectSteamCalculator()
-        # 100% transmission loss leads to net_efficiency = 0.0 <= 0, which must raise ValueError
+        # a loss at or above the boiler efficiency leaves no net efficiency (Exhibit 8.3: boiler - loss)
         with pytest.raises(ValueError):
             calc.calculate(
                 heat_energy=100.0,

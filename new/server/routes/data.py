@@ -11,6 +11,7 @@ from models import (
 from extensions import db
 from utils import internal_error
 from input_validation import ValidationError, parse_year, parse_month, parse_number
+from services.dashboard_filters import _parse_facility_ids
 
 from process_categories import NON_OG_ACTIVITIES
 
@@ -29,14 +30,11 @@ def get_production():
     if allowed_fids is not None:
         query = query.filter(ProductionData.facility_id.in_(allowed_fids))
     fid_arg = request.args.get('facilityId') or request.args.get('facility_id')
-    if fid_arg and fid_arg != 'all':
-        try:
-            fid = int(fid_arg)
-            if not require_facility_access(user, fid):
-                return jsonify({'error': 'Access to requested facility is denied'}), 403
-            query = query.filter_by(facility_id=fid)
-        except (ValueError, TypeError):
-            return jsonify({'error': 'Invalid facilityId'}), 400
+    parsed_fids = _parse_facility_ids(fid_arg)
+    if parsed_fids is not None:
+        if allowed_fids is not None and not set(parsed_fids).issubset(set(allowed_fids)):
+            return jsonify({'error': 'Access to requested facility is denied'}), 403
+        query = query.filter(ProductionData.facility_id.in_(parsed_fids))
     if (yr := request.args.get('year')) and yr != 'all' and str(yr).isdigit():
         query = query.filter_by(year=int(yr))
         
@@ -307,14 +305,11 @@ def get_ogmp_surveys():
     if allowed_fids is not None:
         query = query.filter(OgmpSurvey.facility_id.in_(allowed_fids))
     fac_arg = request.args.get('facilityId') or request.args.get('facility_id')
-    if fac_arg and fac_arg != 'all':
-        try:
-            fid = int(fac_arg)
-            if allowed_fids is not None and fid not in allowed_fids:
-                return jsonify({'error': 'Access to requested facility is denied'}), 403
-            query = query.filter_by(facility_id=fid)
-        except (ValueError, TypeError):
-            return jsonify({'error': 'Invalid facilityId'}), 400
+    parsed_fids = _parse_facility_ids(fac_arg)
+    if parsed_fids is not None:
+        if allowed_fids is not None and not set(parsed_fids).issubset(set(allowed_fids)):
+            return jsonify({'error': 'Access to requested facility is denied'}), 403
+        query = query.filter(OgmpSurvey.facility_id.in_(parsed_fids))
     # Single join to Facility — needed for O&G scope filter and optional segment filter
     query = query.join(Facility, OgmpSurvey.facility_id == Facility.id)
     # Restrict to Oil & Gas facilities only (OGMP 2.0 scope)
@@ -641,14 +636,11 @@ def get_cbam_exports():
     if allowed_fids is not None:
         query = query.filter(CbamProductExport.facility_id.in_(allowed_fids))
     fac_arg = request.args.get('facilityId') or request.args.get('facility_id')
-    if fac_arg and fac_arg != 'all':
-        try:
-            fid = int(fac_arg)
-            if allowed_fids is not None and fid not in allowed_fids:
-                return jsonify({'error': 'Access to requested facility is denied'}), 403
-            query = query.filter_by(facility_id=fid)
-        except (ValueError, TypeError):
-            return jsonify({'error': 'Invalid facilityId'}), 400
+    parsed_fids = _parse_facility_ids(fac_arg)
+    if parsed_fids is not None:
+        if allowed_fids is not None and not set(parsed_fids).issubset(set(allowed_fids)):
+            return jsonify({'error': 'Access to requested facility is denied'}), 403
+        query = query.filter(CbamProductExport.facility_id.in_(parsed_fids))
     if (yr := request.args.get('year')) and yr != 'all' and str(yr).isdigit():
         query = query.filter_by(year=int(yr))
 

@@ -14,6 +14,7 @@ from input_validation import ValidationError, parse_number
 from models import ComponentInventory, FugitiveSurvey, Facility, Notification
 from routes.auth import login_required
 from utils import get_allowed_facility_ids, get_current_user, internal_error, is_it_role, log_activity_and_notify
+from services.dashboard_filters import _parse_facility_ids
 from . import ldar_bp
 
 HOURS_PER_YEAR = 8760.0
@@ -88,13 +89,14 @@ def _scoped_list(model, user):
     allowed = get_allowed_facility_ids(user)
     query = model.query if allowed is None else model.query.filter(model.facility_id.in_(allowed))
     fac = request.args.get("facility_id") or request.args.get("facilityId")
-    if fac:
-        if not str(fac).strip().isdigit():
-            return None, (jsonify({"error": "Invalid facility_id: must be a positive integer", "field": "facility_id"}), 422)
-        fid = int(fac)
-        if allowed is not None and fid not in allowed:
+    parts = [p.strip() for p in str(fac or "").split(",") if p.strip() and p.strip().lower() != "all"]
+    if any(not p.isdigit() for p in parts):  # an unreadable ID is refused, never dropped (it widened the list)
+        return None, (jsonify({"error": "Invalid facility_id: must be positive integers", "field": "facility_id"}), 422)
+    parsed_fids = _parse_facility_ids(",".join(parts)) if parts else None
+    if parsed_fids is not None:
+        if allowed is not None and not set(parsed_fids).issubset(set(allowed)):
             return None, (jsonify({"error": "Unauthorized: Outside your assigned facilities"}), 403)
-        query = query.filter(model.facility_id == fid)
+        query = query.filter(model.facility_id.in_(parsed_fids))
     return query, None
 
 
@@ -405,6 +407,8 @@ def create_survey():
     values.setdefault("surveyor_name", user.fullName)
     if values.get("leaking_hours") is None:
         values["leaking_hours"] = HOURS_PER_YEAR
+    if values.get("repair_date") and values.get("survey_date") and values["repair_date"] < values["survey_date"]:
+        raise ValidationError("repair_date cannot precede survey_date", "repair_date")
     survey = FugitiveSurvey(facility_id=facility.id, created_by=user.id,
                             component_inventory_id=_check_component_link(facility.id, data.get("component_inventory_id")),
                             **values)
@@ -453,6 +457,8 @@ def update_survey(survey_id):
             if value is None and f in ("survey_date", "leaking_hours"):
                 raise ValidationError(f"'{f}' cannot be empty", f)
             setattr(survey, f, value)
+    if survey.repair_date and survey.survey_date and survey.repair_date < survey.survey_date:  # either date edited
+        raise ValidationError("repair_date cannot precede survey_date", "repair_date")
     if survey.leak_status == "Leaking" and before["leak_status"] != "Leaking":
         fac_name = survey.facility.name if survey.facility else f"Facility #{survey.facility_id}"
         _notify("LDAR Alert: Survey Marked Leaking", f"Survey #{survey.id} was marked as Leaking at {fac_name}.",
@@ -504,6 +510,8 @@ def bulk_update_surveys():
                 marked.append(s)
             s.leak_status = new_status
         if repair_date is not False:
+            if repair_date and s.survey_date and repair_date < s.survey_date:
+                raise ValidationError(f"repair_date cannot precede survey #{s.id}'s survey_date", "repair_date")
             s.repair_date = repair_date
         if ppm is not None:
             s.screening_value_ppm = ppm

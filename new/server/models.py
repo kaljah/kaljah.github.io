@@ -26,9 +26,7 @@ class User(db.Model):
     status = db.Column(db.String(20), default="active")
     password_updated_at = db.Column(db.DateTime, default=utc_now)
     last_login = db.Column(db.DateTime)
-    preferences = db.Column(
-        db.Text
-    )  # JSON string for user settings (theme, language, etc.)
+    preferences = db.Column(db.Text)  # JSON string for user settings (theme, language, etc.)
     created_at = db.Column(db.DateTime, default=utc_now)
     # BUG-114: bumped on logout / password change / deactivation; sessions carrying an
     # older value are rejected, so a copied cookie stops working after logout.
@@ -57,15 +55,11 @@ class Facility(db.Model):
     code = db.Column(db.String(50), unique=True)
     external_id = db.Column(db.String(50))
     segment = db.Column(db.String(20))  # Upstream, Midstream, Downstream
-    operator_status = db.Column(
-        db.String(20), default="operated"
-    )  # operated, non_operated
+    operator_status = db.Column(db.String(20), default="operated")  # operated, non_operated
     country = db.Column(db.String(100), default="Algeria")
     equity_share_pct = db.Column(db.Float, default=100.0)
     ogmp_membership_year = db.Column(db.Integer, default=2023)
-    reconciliation_threshold = db.Column(
-        db.Float, default=20.0
-    )  # % threshold for variance flagging
+    reconciliation_threshold = db.Column(db.Float, default=20.0)  # % threshold for variance flagging
     latitude = db.Column(db.Float)
     longitude = db.Column(db.Float)
     created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
@@ -191,6 +185,29 @@ class Emission(db.Model):
     # Maker-Checker Approval
     approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     approved_at = db.Column(db.DateTime, nullable=True)
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), nullable=True, index=True)
+    region = db.Column(db.String(100), nullable=True, index=True)
+    gas_composition_json = db.Column("gas_composition", db.Text, nullable=True)
+
+    @property
+    def gas_composition(self):
+        if not self.gas_composition_json:
+            return None
+        import json
+        try:
+            return json.loads(self.gas_composition_json)
+        except Exception:
+            return None
+
+    @gas_composition.setter
+    def gas_composition(self, val):
+        import json
+        if val is None:
+            self.gas_composition_json = None
+        elif isinstance(val, str):
+            self.gas_composition_json = val
+        else:
+            self.gas_composition_json = json.dumps(val)
     # BUG-069: identity snapshots survive user deletion
     created_by_name = db.Column(db.String(255), nullable=True)
     approved_by_name = db.Column(db.String(255), nullable=True)
@@ -208,9 +225,7 @@ class Emission(db.Model):
 class ProductionData(db.Model):
     __tablename__ = "production_data"
     id = db.Column(db.Integer, primary_key=True)
-    facility_id = db.Column(
-        db.Integer, db.ForeignKey("facilities.id"), nullable=False, index=True
-    )
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), nullable=False, index=True)
     month = db.Column(db.Integer, nullable=False)
     year = db.Column(db.Integer, nullable=False, index=True)
     oil_amount = db.Column(db.Float, default=0)
@@ -242,9 +257,7 @@ class ProductionData(db.Model):
     created_at = db.Column(db.DateTime, default=utc_now)
 
     __table_args__ = (
-        db.UniqueConstraint(
-            "facility_id", "month", "year", name="_facility_month_year_uc"
-        ),
+        db.UniqueConstraint("facility_id", "month", "year", name="_facility_month_year_uc"),
         db.Index("ix_prod_yr_fac_units", "year", "facility_id", "oil_unit", "gas_unit"),
     )
 
@@ -279,7 +292,7 @@ class ComponentInventory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), index=True, nullable=False)
     emission_source_id = db.Column(db.Integer, db.ForeignKey("emission_sources.id"), nullable=True)
-    facility = db.relationship("Facility", foreign_keys=[facility_id])
+    facility = db.relationship("Facility", foreign_keys=[facility_id], backref=db.backref("component_inventories", cascade="all, delete-orphan"))
     emission_source = db.relationship("EmissionSource", foreign_keys=[emission_source_id])
 
     equipment_type = db.Column(db.String(100), nullable=False)
@@ -305,8 +318,8 @@ class FugitiveSurvey(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), index=True, nullable=False)
     component_inventory_id = db.Column(db.Integer, db.ForeignKey("component_inventories.id"), nullable=True)
-    facility = db.relationship("Facility", foreign_keys=[facility_id])
-    component_inventory = db.relationship("ComponentInventory", foreign_keys=[component_inventory_id])
+    facility = db.relationship("Facility", foreign_keys=[facility_id], backref=db.backref("fugitive_surveys", cascade="all, delete-orphan"))
+    component_inventory = db.relationship("ComponentInventory", foreign_keys=[component_inventory_id], backref=db.backref("surveys", cascade="all, delete-orphan"))
 
     survey_method = db.Column(db.String(50), nullable=False)  # Method 21, OGI, Measurement
     survey_date = db.Column(db.String(20), nullable=False)
@@ -353,6 +366,29 @@ class CustomFactor(db.Model):
     status = db.Column(db.String(20), default="Approved", server_default="Approved", nullable=False, index=True)
     approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     approved_at = db.Column(db.DateTime, nullable=True)
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), nullable=True, index=True)
+    region = db.Column(db.String(100), nullable=True, index=True)
+    gas_composition_json = db.Column("gas_composition", db.Text, nullable=True)
+
+    @property
+    def gas_composition(self):
+        if not self.gas_composition_json:
+            return None
+        import json
+        try:
+            return json.loads(self.gas_composition_json)
+        except Exception:
+            return None
+
+    @gas_composition.setter
+    def gas_composition(self, val):
+        import json
+        if val is None:
+            self.gas_composition_json = None
+        elif isinstance(val, str):
+            self.gas_composition_json = val
+        else:
+            self.gas_composition_json = json.dumps(val)
 
 
 class ActivityLog(db.Model):
@@ -464,6 +500,29 @@ class Scope2Emission(db.Model):
     # Maker-Checker Approval
     approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     approved_at = db.Column(db.DateTime, nullable=True)
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), nullable=True, index=True)
+    region = db.Column(db.String(100), nullable=True, index=True)
+    gas_composition_json = db.Column("gas_composition", db.Text, nullable=True)
+
+    @property
+    def gas_composition(self):
+        if not self.gas_composition_json:
+            return None
+        import json
+        try:
+            return json.loads(self.gas_composition_json)
+        except Exception:
+            return None
+
+    @gas_composition.setter
+    def gas_composition(self, val):
+        import json
+        if val is None:
+            self.gas_composition_json = None
+        elif isinstance(val, str):
+            self.gas_composition_json = val
+        else:
+            self.gas_composition_json = json.dumps(val)
     updated_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     updated_at = db.Column(db.DateTime, onupdate=utc_now)
     created_by_name = db.Column(db.String(255), nullable=True)
@@ -500,6 +559,29 @@ class Scope3Emission(db.Model):
     # Maker-Checker Approval
     approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     approved_at = db.Column(db.DateTime, nullable=True)
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), nullable=True, index=True)
+    region = db.Column(db.String(100), nullable=True, index=True)
+    gas_composition_json = db.Column("gas_composition", db.Text, nullable=True)
+
+    @property
+    def gas_composition(self):
+        if not self.gas_composition_json:
+            return None
+        import json
+        try:
+            return json.loads(self.gas_composition_json)
+        except Exception:
+            return None
+
+    @gas_composition.setter
+    def gas_composition(self, val):
+        import json
+        if val is None:
+            self.gas_composition_json = None
+        elif isinstance(val, str):
+            self.gas_composition_json = val
+        else:
+            self.gas_composition_json = json.dumps(val)
     updated_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     updated_at = db.Column(db.DateTime, onupdate=utc_now)
     created_by_name = db.Column(db.String(255), nullable=True)
@@ -671,9 +753,7 @@ class MethaneSourceType(db.Model):
 class LevelUpgradeLog(db.Model):
     __tablename__ = "level_upgrade_logs"
     id = db.Column(db.Integer, primary_key=True)
-    facility_id = db.Column(
-        db.Integer, db.ForeignKey("facilities.id"), nullable=False, index=True
-    )
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), nullable=False, index=True)
     # BUG-009: deleted with its facility (was the only facility child without a cascade)
     facility = db.relationship("Facility", backref=db.backref("level_upgrade_logs", cascade="all, delete-orphan"))
     source_type_code = db.Column(db.String(50))

@@ -482,7 +482,8 @@ def test_associated_gas_exhaustive_branches(calc):
     # 2. _normalize_fraction
     assert calc._normalize_fraction(None, 0.5) == 0.5
     assert calc._normalize_fraction("-", 0.5) == 0.5
-    assert calc._normalize_fraction("invalid", 0.5) == 0.5
+    with pytest.raises(ValueError, match="Invalid fraction"):   # unreadable text is refused, never the default
+        calc._normalize_fraction("invalid", 0.5)
     assert calc._normalize_fraction("75%", 0.0) == 0.75
 
     # 3. Factor source resolution

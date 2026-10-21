@@ -115,6 +115,9 @@ def unloading_row_selection(code):
     return out
 
 
+_FLARED_DISPOSITIONS, _VENTED_DISPOSITIONS = ("flared", "flare"), ("vented", "vent")
+
+
 def record_period(inputs):
     """(hours, days, fraction of the year) of the period a record covers.
 
@@ -147,8 +150,9 @@ def operating_hours(inputs):
             if not math.isfinite(h) or h < 0 or h > 8784:
                 raise ValueError(f"'{key}' must be between 0 and 8784 hours")
             return h
-    d = inputs.get("operating_days") or inputs.get("duration_days")
-    if d not in (None, "", "-"):
+    d = next((inputs.get(k) for k in ("operating_days", "duration_days") if inputs.get(k) not in (None, "", "-")),
+             None)  # an entered 0 days is 0 (it took the record's period)
+    if d is not None:
         days = float(d)
         if not math.isfinite(days) or days < 0 or days > 366:
             raise ValueError("'operating_days' must be between 0 and 366")
@@ -243,16 +247,6 @@ class CalculationDispatcher:
     def _require(self, key, inputs, description):
         val = inputs.get(key)
         if val in [None, "", "-"]:
-            from flask import current_app, has_app_context
-
-            if has_app_context():
-                current_app.logger.warning(
-                    f"Missing required field: {key} ({description})"
-                )
-            else:
-                import logging
-
-                logging.warning(f"Missing required field: {key} ({description})")
             raise ValueError(f"Missing required field: {key} ({description})")
         return float(val)
 
@@ -343,16 +337,14 @@ class CalculationDispatcher:
         return next((flat_inputs.get(k) for k in keys if flat_inputs.get(k) not in (None, "", "-")), None)
 
     def _optional_float(self, flat_inputs, keys, default=None):
-        """Extracts an optional float parameter from flat_inputs, returning default if missing."""
-        if isinstance(keys, str):
-            keys = [keys]
-        for k in keys:
+        """The first given key as a float, else default; unreadable text is refused (it took the default)."""
+        for k in ([keys] if isinstance(keys, str) else keys):
             val = flat_inputs.get(k)
             if val not in [None, "", "-"]:
                 try:
                     return float(val)
                 except (ValueError, TypeError):
-                    pass
+                    raise ValueError(f"'{k}' is not a number: {val}") from None
         return default
 
     def _parse_fraction_value(self, val, key_name="", is_percent=False):
@@ -571,16 +563,31 @@ class CalculationDispatcher:
             raise ValueError(f"'{desc}' must be a whole number (got {value})")
         return int(float(value))
 
+    def _controlled_share(self, flat_inputs, keys):
+        """(share sent to the flare, flare efficiency or None for the defaults) on unloading, blowdown, tank and
+        dehydrator rows. An entered efficiency is the flare's efficiency, as on every other process: the gas goes
+        to a flare that burns at it (it was the share sent to a 98 % flare, so 98 % left 2 % + 98 % x 2 % of the
+        CH4); 0 or blank without a disposition is vented. Flared without an efficiency: the defaults. Vented with
+        an efficiency: that share goes to a flare with the defaults (as `_route`)."""
+        eff = self._optional_fraction(flat_inputs, keys, None)
+        disp = str(flat_inputs.get("disposition") or "").lower().strip()
+        if disp in _FLARED_DISPOSITIONS:
+            return 1.0, eff
+        if disp in _VENTED_DISPOSITIONS:
+            return eff or 0.0, None
+        if disp:
+            raise ValueError(f"Disposition '{disp}' is not available for this process: vented or flared")
+        return (1.0, eff) if eff else (0.0, None)
+
     def _optional_fraction(self, flat_inputs, keys, default=0.0, is_percent=False):
-        """Extracts an optional percentage or fraction normalized to 0.0 - 1.0."""
-        if isinstance(keys, str):
-            keys = [keys]
-        for k in keys:
+        """The first given key as a 0-1 share, else default; unreadable text is refused (it took the default)."""
+        for k in ([keys] if isinstance(keys, str) else keys):
             val = flat_inputs.get(k)
             if val not in [None, "", "-"]:
                 res = self._parse_fraction_value(val, key_name=k, is_percent=is_percent)
-                if res is not None:
-                    return res
+                if res is None:
+                    raise ValueError(f"'{k}' is not a number or percentage: {val}")
+                return res
         return default
 
     def dispatch(self, process_type, inputs, emission_factors, uncertainties=None, gwp_dict=None, gwp_standard=None):
@@ -753,8 +760,8 @@ class CalculationDispatcher:
                 if user_unc.get(g) not in [None, "", "-"]:
                     try:
                         uncertainties[g] = float(user_unc[g]) / 100.0
-                    except ValueError:
-                        pass
+                    except (TypeError, ValueError):  # it was ignored (the default uncertainty was used)
+                        raise ValueError(f"Uncertainty for {g} is not a number: {user_unc[g]}") from None
 
         routed = self._route_section_methods(process_type, flat_inputs, uncertainties, gwp_dict)
         if routed is not None:
@@ -896,14 +903,15 @@ class CalculationDispatcher:
                     )
                     is_tier1 = not is_tier2
 
+                _zero_act = quantity == 0.0 and (flat_inputs.get("amount") not in (None, "") or flat_inputs.get("quantity") not in (None, ""))
                 if is_tier2:
                     # an entered 0 is a value (0 events took the record quantity, 0 wells counted as 1)
                     ev = self._given(flat_inputs, "events", "unload_events", "unload_freq")
-                    ev = quantity if ev is None else ev
-                    wc = self._given(flat_inputs, "well_count", "wells")
+                    ev = 0.0 if _zero_act else (quantity if ev is None else ev)
+                    wc = 0.0 if _zero_act else self._given(flat_inputs, "well_count", "wells")
                     ch4_c = self._optional_fraction(flat_inputs, ["ch4_content", "c1", "unload_ch4_content"], None)
                     co2_c = self._optional_fraction(flat_inputs, ["co2_content", "co2_mol"], 0.0)
-                    flare_e = self._optional_fraction(flat_inputs, ["unload_flare_eff", "control_efficiency"], 0.0)
+                    flare_e, flare_de = self._controlled_share(flat_inputs, ["unload_flare_eff", "control_efficiency"])
                     return calculator.calculate_tier2(
                         events=ev,
                         unloading_type=u_type,
@@ -914,16 +922,16 @@ class CalculationDispatcher:
                         ch4_content=ch4_c,
                         co2_content=co2_c,
                         control_efficiency=flare_e,
+                        destruction_efficiency=flare_de,
                         uncertainties=uncertainties,
                         hhv=float(flat_inputs.get("hhv") or emission_factors.get("hhv") or 1020.0),
                         gwp_dict=gwp_dict,
                     )
                 elif is_tier1:
-                    wc = self._given(flat_inputs, "well_count", "wells")
-                    wc = quantity if wc is None else wc
+                    wc = 0.0 if _zero_act else (quantity if self._given(flat_inputs, "well_count", "wells") is None else self._given(flat_inputs, "well_count", "wells"))
                     ch4_c = self._optional_fraction(flat_inputs, ["ch4_content", "c1", "unload_ch4_content"], None)
                     co2_c = self._optional_fraction(flat_inputs, ["co2_content", "co2_mol"], 0.0)
-                    flare_e = self._optional_fraction(flat_inputs, ["unload_flare_eff", "control_efficiency"], 0.0)
+                    flare_e, flare_de = self._controlled_share(flat_inputs, ["unload_flare_eff", "control_efficiency"])
                     # Table 6-11 is per well-YEAR: a record covers its own period (a month is its share of a year)
                     return calculator.calculate_tier1(
                         well_count=float(wc) * record_period(flat_inputs)[2] if wc not in (None, "") else wc,
@@ -931,6 +939,7 @@ class CalculationDispatcher:
                         ch4_content=ch4_c,
                         co2_content=co2_c,
                         control_efficiency=flare_e,
+                        destruction_efficiency=flare_de,
                         uncertainties=uncertainties,
                         hhv=float(flat_inputs.get("hhv") or emission_factors.get("hhv") or 1020.0),
                         gwp_dict=gwp_dict,
@@ -1097,20 +1106,10 @@ class CalculationDispatcher:
                 )
 
         except Exception as e:
-            from flask import current_app, has_app_context
+            import logging
 
-            if has_app_context():
-                current_app.logger.error(
-                    f"[Dispatcher] Calculation failed for process_type='{process_type}': {e}",
-                    exc_info=True,
-                )
-            else:
-                import logging
-
-                logging.error(
-                    f"[Dispatcher] Calculation failed for process_type='{process_type}': {e}",
-                    exc_info=True,
-                )
+            logging.getLogger(__name__).error("[Dispatcher] Calculation failed for process_type='%s': %s",
+                                              process_type, e, exc_info=True)
             raise ValueError(f"Calculation error for '{process_type}': {str(e)}") from e
 
     def _generic_calculation(

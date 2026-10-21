@@ -174,6 +174,8 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
               <div className="input-group mb-[0px]!">
                 <label className="text-[length:0.75rem]!">{t("Flare Type")}</label>
                 <NativeSelect
+                  id="flare-type-select"
+                  aria-label={t("Flare Type")}
                   className="component-select"
                   value={data.flare_type || "elevated"}
                   onChange={(e) => onChange("flare_type", e.target.value)}

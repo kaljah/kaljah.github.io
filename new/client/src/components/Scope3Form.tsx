@@ -383,7 +383,7 @@ export const Scope3Form: React.FC = () => {
     ...facilities.map((f) => ({
       value: f.id.toString(),
       label: f.name,
-      subLabel: f.field,
+      subLabel: f.region || f.field,
     })),
   ];
 

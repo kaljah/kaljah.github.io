@@ -61,7 +61,7 @@ def _split_vent_flare(total_gas_m3, ch4_tonnes, co2_tonnes, ctrl_eff=0.0, hhv=10
         Mechanical vapor recovery unit (VRU) captures gas back to process/sales line.
         Zero combustion slip, zero combustion CO2, zero N2O.
     Else (flare / thermal):
-        Flared gas: defaults to 98% CH4 combustion efficiency, native CO2 pass-through,
+        Flared gas: 98 % CH4 destruction and 96.5 % carbon to CO2 by default, native CO2 pass-through,
         unburnt CH4 slip, and N2O from flared MMBtu. Supports custom destruction efficiency (e.g. 99.5% for refinery flares).
     """
     ctrl = normalize_efficiency(ctrl_eff, default=0.0)
@@ -81,10 +81,13 @@ def _split_vent_flare(total_gas_m3, ch4_tonnes, co2_tonnes, ctrl_eff=0.0, hhv=10
         flared_ch4_mass = ch4_tonnes * ctrl
         flared_native_co2 = co2_tonnes * ctrl
 
-        de = normalize_efficiency(destruction_eff, default=0.98) if destruction_eff is not None else 0.98
+        # API Compendium 2021 corrections (December 2025, section 5.1.2): without an entered efficiency the flare
+        # destroys 98 % of the CH4 and converts 96.5 % of the carbon to CO2 (both were 98 %)
+        given = destruction_eff is not None
+        de = normalize_efficiency(destruction_eff, default=0.98) if given else 0.98
+        ce = de if given else 0.965
         slip = max(0.0, 1.0 - de)
-        flared_ch4_combusted = flared_ch4_mass * de
-        flared_co2 = (flared_ch4_combusted * (MW_CO2 / MW_CH4)) + flared_native_co2
+        flared_co2 = (flared_ch4_mass * ce * (MW_CO2 / MW_CH4)) + flared_native_co2
         flared_unburnt_ch4 = flared_ch4_mass * slip
 
         flared_m3 = total_gas_m3 * ctrl

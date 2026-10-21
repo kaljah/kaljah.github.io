@@ -733,7 +733,7 @@ const ManageDataInner: React.FC = () => {
             const res = await api.get('/facilities');
             const data: FacilityRecord[] = Array.isArray(res.data) ? res.data : (res.data?.data || []);
             setFacilities(data);
-            const regions = [...new Set(data.flatMap(f => [f.region_identifier, f.location]).filter(Boolean) as string[])].sort();
+            const regions = [...new Set(data.flatMap(f => [f.region, f.region_identifier, f.location]).filter(Boolean) as string[])].sort();
             const userLoc = (user?.location || '').trim();
             if (userLoc && !isUnrestrictedLocation(userLoc) && !regions.includes(userLoc)) {
                 regions.unshift(userLoc);
@@ -908,8 +908,10 @@ const ManageDataInner: React.FC = () => {
     };
 
     const handleAddFacility = async () => {
-        if (!facilityForm.name || !facilityForm.activity || !facilityForm.division) {
-            return toast.error(t("Name, Activity, and Division are required"));
+        const regionName = (facilityForm.name || '').trim();
+        const fieldName = (facilityForm.field || '').trim();
+        if (!regionName || !fieldName || !facilityForm.activity || !facilityForm.division) {
+            return toast.error(t("Region Name, Field / Block, Activity, and Division are required"));
         }
         try {
             // Construct combined boundary_notes
@@ -918,7 +920,14 @@ const ManageDataInner: React.FC = () => {
                 : facilityForm.boundary_type;
 
             // BUG-045: optional numeric fields are omitted when empty (the server used to 500 on "")
-            const body: Record<string, any> = { ...facilityForm, boundary_notes: fullBoundary };
+            const body: Record<string, any> = {
+                ...facilityForm,
+                name: fieldName,
+                region: regionName,
+                field: fieldName,
+                location: (facilityForm.location || regionName).trim(),
+                boundary_notes: fullBoundary
+            };
             ['latitude', 'longitude', 'equity_share_pct'].forEach((k) => {
                 if (body[k] === '' || body[k] === null || body[k] === undefined) delete body[k];
             });
@@ -943,7 +952,7 @@ const ManageDataInner: React.FC = () => {
                 await api.post('/custom-factors', factorForm);
                 toast.success(t("Factor added!"));
             }
-            setFactorForm({ factor_name: '', parent_fuel: '', unit: 'scf', co2_factor: '', ch4_factor: '', n2o_factor: '', co_factor: '', co2_uncertainty: '', ch4_uncertainty: '', n2o_uncertainty: '', source: '', description: '', justification: '' });
+            setFactorForm({ factor_name: '', parent_fuel: '', unit: 'scf', co2_factor: '', ch4_factor: '', n2o_factor: '', co_factor: '', co2_uncertainty: '', ch4_uncertainty: '', n2o_uncertainty: '', source: '', description: '', justification: '', gas_composition: null });
             setEditingFactorId(null);
             fetchCustomFactors();
         } catch (err: any) { toast.error(apiError(err, t("Failed to save factor"))); }
@@ -998,7 +1007,8 @@ const ManageDataInner: React.FC = () => {
             ch4_uncertainty: factor.ch4_uncertainty || '',
             n2o_uncertainty: factor.n2o_uncertainty || '',
             source: factor.source || '',
-            description: factor.description || ''
+            description: factor.description || '',
+            gas_composition: factor.gas_composition || null
         });
         setEditingFactorId(factor.id);
     };

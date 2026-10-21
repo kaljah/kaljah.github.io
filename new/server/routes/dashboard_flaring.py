@@ -6,6 +6,7 @@ registered on the same ``dashboard_bp`` blueprint, so URLs and endpoint names ar
 from flask import jsonify, request
 from models import Emission, ProductionData
 from routes.auth import login_required
+from services.dashboard_filters import _parse_facility_ids
 from utils import get_allowed_facility_ids, get_current_user
 from routes.dashboard import dashboard_bp, is_it_role
 
@@ -22,7 +23,7 @@ def get_flaring_summary():
     """
     from models import FlaringDetail
     from services.dashboard_filters import (apply_scope, gas_volume_m3, horizon_delta, production_gas_m3,
-                                            source_category, statuses)
+                                            source_category, statuses, _parse_facility_ids)
 
     user = get_current_user()
     if is_it_role(user):
@@ -41,8 +42,8 @@ def get_flaring_summary():
         return jsonify({"error": "Invalid year"}), 400
 
     facility_id = request.args.get("facility_id") or request.args.get("facilityId")
-    fac_filter = int(facility_id) if facility_id and facility_id != "all" else None
-    if fac_filter and allowed_fids is not None and fac_filter not in allowed_fids:
+    fac_filter = _parse_facility_ids(facility_id)
+    if fac_filter and allowed_fids is not None and not set(fac_filter).issubset(set(allowed_fids)):
         return jsonify({"error": "Unauthorized facility"}), 403
     scope = dict(allowed_fids=allowed_fids, facility_id=fac_filter, activity=request.args.get("activity"),
                  division=request.args.get("division"), segment=request.args.get("segment"))
@@ -206,8 +207,8 @@ def get_granular_intensities():
     except ValueError:
         return jsonify({"error": "Invalid year"}), 400
     facility_id = request.args.get("facility_id") or request.args.get("facilityId")
-    fac_filter = int(facility_id) if facility_id and facility_id != "all" else None
-    if fac_filter and allowed_fids is not None and fac_filter not in allowed_fids:
+    fac_filter = _parse_facility_ids(facility_id)
+    if fac_filter and allowed_fids is not None and not set(fac_filter).issubset(set(allowed_fids)):
         return jsonify({"error": "Unauthorized facility"}), 403
 
     cells = intensity_cells(years=years, facility_id=fac_filter, allowed_fids=allowed_fids,

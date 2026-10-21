@@ -1203,10 +1203,10 @@ class TestIndirectSteamPipeline:
         INDIRECT STEAM:
         heat=100 MMBtu, EF_co2=56.1 kg/MMBtu, boiler_eff=0.80, trans_loss=0.05
 
-        net_eff = 0.80 * (1 - 0.05) = 0.80 * 0.95 = 0.76
+        net_eff = 0.80 - 0.05 = 0.75 (Exhibit 8.3)
         energy_mmbtu = 100 (already in MMBtu)
-        co2_kg = 100 * 56.1 / 0.76 = 7381.57... kg
-        expected_co2 = 7.38157... t
+        co2_kg = 100 * 56.1 / 0.75 = 7480 kg
+        expected_co2 = 7.48 t
         """
         from calculations.legacy_engine import compute_emissions
 
@@ -1216,7 +1216,7 @@ class TestIndirectSteamPipeline:
         trans_loss = 0.05
 
         # INDEPENDENT REFERENCE
-        net_eff = boiler_eff * (1.0 - trans_loss)
+        net_eff = boiler_eff - trans_loss
         co2_kg = heat_mmbtu * ef_co2 / net_eff
         expected_co2 = co2_kg / 1000.0
 

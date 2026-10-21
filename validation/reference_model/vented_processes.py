@@ -40,9 +40,9 @@ class IndependentVentedPartition:
             flared_ch4_mass = ch4_tonnes * ctrl
             flared_native_co2 = co2_tonnes * ctrl
 
-            # 98% stoichiometric conversion of CH4 to CO2: CH4 + 2 O2 -> CO2 + 2 H2O (44.01 / 16.04)
-            flared_ch4_combusted = flared_ch4_mass * 0.98
-            flared_co2 = (flared_ch4_combusted * (44.01 / 16.04)) + flared_native_co2
+            # API Compendium 2021 corrections (December 2025, section 5.1.2): 96.5 % of the carbon to CO2,
+            # 98 % CH4 destruction (CH4 + 2 O2 -> CO2 + 2 H2O, 44.01 / 16.04)
+            flared_co2 = (flared_ch4_mass * 0.965 * (44.01 / 16.04)) + flared_native_co2
             flared_unburnt_ch4 = flared_ch4_mass * 0.02
 
             # Flared N2O from energy of flared gas

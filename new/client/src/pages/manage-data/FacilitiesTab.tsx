@@ -188,13 +188,14 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
                 !facilityForm.activity,
               )}
             </Field>
-            <Field label={t("Field / Block")}>
+            <Field label={`${t("Field / Block")} *`}>
               <Input
                 type="text"
                 name="field"
                 value={facilityForm.field || ""}
                 onChange={handleFacilityChange}
-                placeholder={t("Optional")}
+                placeholder={t("e.g. Hassi Messaoud South")}
+                required
               />
             </Field>
             <Field label={t("Location (Wilaya)")}>
@@ -294,12 +295,15 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
 
       <RecordTable
         title={t("Active Regions")}
-        head={[t("Region Name"), t("Activity"), t("Division"), t("Location"), t("Boundary"), t("Segment"), t("Coordinates"), ...(canEdit ? [t("Actions")] : [])]}
+        head={[t("Region"), t("Field / Facility"), t("Activity"), t("Division"), t("Location"), t("Boundary"), t("Segment"), t("Coordinates"), ...(canEdit ? [t("Actions")] : [])]}
         empty={filteredFacilities.length === 0 && t("No regions found.")}
         footer={<PaginationControls currentPage={currentPage} totalItems={filteredFacilities.length} itemsPerPage={ITEMS_PER_PAGE} onPageChange={setCurrentPage} />}
       >
         {rows.map((f) => (
           <Tr key={f.id}>
+            <Td>
+              <strong>{f.region || f.location || "-"}</strong>
+            </Td>
             <Td>
               <strong>{f.name}</strong>
             </Td>

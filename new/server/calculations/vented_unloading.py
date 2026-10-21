@@ -175,7 +175,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         unloading_type="plunger",
         ch4_content=None,
         co2_content=0.0,
-        control_efficiency=0.0,
+        control_efficiency=0.0, destruction_efficiency=None,
         factor_key=None,
         uncertainties=None,
         hhv=1020.0,
@@ -232,7 +232,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
             co2_tonnes=co2_tonnes,
             ctrl_eff=ctrl_eff,
             hhv=hhv,
-            ef_n2o=ef_n2o,
+            ef_n2o=ef_n2o, destruction_eff=destruction_efficiency,
         )
 
         unc = dict(uncertainties or {})
@@ -287,7 +287,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         region=None,
         ch4_content=None,
         co2_content=0.0,
-        control_efficiency=0.0,
+        control_efficiency=0.0, destruction_efficiency=None,
         factor_key=None,
         uncertainties=None,
         hhv=1020.0,
@@ -307,19 +307,17 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         if ev < 0:
             raise ValueError("Number of unloading events cannot be negative.")
 
-        wc = _wells(well_count)
-
         u_type = self._normalize_unloading_type(unloading_type)
+        if ev == 0:
+            return self._zero_result({"tier": "Tier 2", "method": "api_table_6_10", "unloading_type": u_type, "events": 0,
+                                      "well_count": 0 if str(well_count) == "0" else (well_count or 1)})
+
+        wc = _wells(well_count)
         reg_key = str(region or "").lower().strip().replace(" ", "_").replace("-", "_")
         if reg_key not in self.TABLE_6_10_REGIONAL and reg_key not in ("", "average", "us_average", "national"):
             raise ValueError(f"Unknown Table 6-10 region '{region}': {sorted(self.TABLE_6_10_REGIONAL)} or average")
         if frequency_category not in (None, "") and frequency_category not in self.TABLE_6_10_AVERAGE:
             raise ValueError(f"Unknown Table 6-10 frequency class '{frequency_category}': {sorted(self.TABLE_6_10_AVERAGE)}")
-
-        # Invariant: zero events results in zero emissions
-        if ev == 0:
-            return self._zero_result({"tier": "Tier 2", "method": "api_table_6_10", "unloading_type": u_type, "events": 0,
-                                      "well_count": wc})
 
         total_events = ev * wc
         ev_per_well = ev  # per well-year basis for threshold
@@ -381,7 +379,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
             co2_tonnes=co2_tonnes,
             ctrl_eff=ctrl_eff,
             hhv=hhv,
-            ef_n2o=ef_n2o,
+            ef_n2o=ef_n2o, destruction_eff=destruction_efficiency,
         )
 
         unc = dict(uncertainties or {})
@@ -440,7 +438,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         well_count=1,
         ch4_content=None,
         co2_content=0.0,
-        control_efficiency=0.0,
+        control_efficiency=0.0, destruction_efficiency=None,
         depth_unit="ft",
         diameter_unit="in",
         press_unit="psig",
@@ -535,7 +533,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
             co2_tonnes=co2_tonnes,
             ctrl_eff=ctrl_eff,
             hhv=hhv,
-            ef_n2o=ef_n2o,
+            ef_n2o=ef_n2o, destruction_eff=destruction_efficiency,
         )
 
         unc = dict(uncertainties or {})
@@ -600,7 +598,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         p_atm=14.696,
         ch4_content=None,
         co2_content=0.0,
-        control_efficiency=0.0,
+        control_efficiency=0.0, destruction_efficiency=None,
         press_unit="psia",
         sfr_unit="scf/hr",
         uncertainties=None,
@@ -667,7 +665,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
             co2_tonnes=co2_tonnes,
             ctrl_eff=ctrl_eff,
             hhv=hhv,
-            ef_n2o=ef_n2o,
+            ef_n2o=ef_n2o, destruction_eff=destruction_efficiency,
         )
 
         unc = dict(uncertainties or {})
@@ -729,7 +727,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         events,
         uncertainties=None,
         co2_content=0.0,
-        control_efficiency=0.0,
+        control_efficiency=0.0, destruction_efficiency=None,
         ef_co2=None,
         ef_ch4=None,
         ef_n2o=None,
@@ -829,7 +827,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
             co2_tonnes=co2_tonnes,
             ctrl_eff=ctrl_eff,
             hhv=hhv,
-            ef_n2o=ef_n2o,
+            ef_n2o=ef_n2o, destruction_eff=destruction_efficiency,
         )
         total_ch4 = split["total_ch4"]
         total_co2 = split["total_co2"]
@@ -884,7 +882,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         events=None,
         uncertainties=None,
         co2_content=0.0,
-        control_efficiency=0.0,
+        control_efficiency=0.0, destruction_efficiency=None,
         ef_co2=None,
         ef_ch4=None,
         ef_n2o=None,
@@ -932,7 +930,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
                 p_atm=kwargs.get("p_atm", 14.696),
                 ch4_content=ch4_content,
                 co2_content=co2_content,
-                control_efficiency=control_efficiency,
+                control_efficiency=control_efficiency, destruction_efficiency=destruction_efficiency,
                 press_unit=press_unit,
                 uncertainties=uncertainties,
                 hhv=hhv,
@@ -953,7 +951,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
                 well_count=_first(well_count, kwargs.get("wells")),
                 ch4_content=ch4_content,
                 co2_content=co2_content,
-                control_efficiency=control_efficiency,
+                control_efficiency=control_efficiency, destruction_efficiency=destruction_efficiency,
                 depth_unit=depth_unit,
                 diameter_unit=diameter_unit,
                 press_unit=press_unit,
@@ -977,7 +975,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
                 unloading_type=unloading_type or kwargs.get("unload_type", "plunger"),
                 ch4_content=ch4_content,
                 co2_content=co2_content,
-                control_efficiency=control_efficiency,
+                control_efficiency=control_efficiency, destruction_efficiency=destruction_efficiency,
                 factor_key=kwargs.get("fuel") or kwargs.get("factor_key"),
                 uncertainties=uncertainties,
                 hhv=hhv,
@@ -1001,7 +999,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
                 region=region,
                 ch4_content=ch4_content,
                 co2_content=co2_content,
-                control_efficiency=control_efficiency,
+                control_efficiency=control_efficiency, destruction_efficiency=destruction_efficiency,
                 factor_key=kwargs.get("fuel") or kwargs.get("factor_key"),
                 uncertainties=uncertainties,
                 hhv=hhv,
@@ -1019,7 +1017,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
             events=ev,
             uncertainties=uncertainties,
             co2_content=co2_content,
-            control_efficiency=control_efficiency,
+            control_efficiency=control_efficiency, destruction_efficiency=destruction_efficiency,
             ef_co2=ef_co2,
             ef_ch4=ef_ch4,
             ef_n2o=ef_n2o,

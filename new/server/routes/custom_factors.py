@@ -50,6 +50,9 @@ def get_custom_factors():
                 "created_by": f.created_by,
                 "approved_at": f.approved_at.isoformat() if getattr(f, "approved_at", None) else None,
                 "is_archived": bool(f.is_archived),
+                "facility_id": getattr(f, "facility_id", None),
+                "region": getattr(f, "region", None),
+                "gas_composition": f.gas_composition,
             }
             for f in factors
         ]
@@ -208,6 +211,9 @@ def create_custom_factor():
         status=initial_factor_status,
         approved_by=user.id if initial_factor_status == "Approved" else None,
         approved_at=datetime.datetime.now(datetime.timezone.utc) if initial_factor_status == "Approved" else None,
+        facility_id=data.get("facility_id"),
+        region=data.get("region"),
+        gas_composition=data.get("gas_composition"),
     )
 
     try:
@@ -318,6 +324,12 @@ def update_custom_factor(factor_id):
         factor.description = data["description"]
     if "version" in data:
         factor.version = data["version"]
+    if "gas_composition" in data:
+        factor.gas_composition = data["gas_composition"]
+    if "facility_id" in data:
+        factor.facility_id = data["facility_id"]
+    if "region" in data:
+        factor.region = data["region"]
 
     changes = {f: (before[f], getattr(factor, f)) for f in tracked if before[f] != getattr(factor, f)}
     value_changes = [f for f in changes if f in VALUE_FIELDS]

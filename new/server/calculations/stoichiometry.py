@@ -53,9 +53,7 @@ class StoichiometricCalculator(BaseCalculator):
         )
 
         # Normalize to kg
-        norm_mass = mass_to_kg(fuel_mass, mass_unit)
-        if norm_mass < 0:
-            raise ValueError(f"fuel_mass cannot be negative: {fuel_mass}")
+        norm_mass = mass_to_kg(fuel_mass, mass_unit)  # fuel_mass >= 0 (validate_inputs)
 
         # stoichiometric ratio CO2/C
         ratio = 44.01 / 12.011
@@ -124,9 +122,7 @@ class NitricAcidCalculator(BaseCalculator):
             ["production_amount"],
         )
 
-        p_val = float(production_amount)
-        if p_val < 0:
-            raise ValueError(f"production_amount cannot be negative: {production_amount}")
+        p_val = float(production_amount)  # >= 0 (validate_inputs)
         norm_tonnes = mass_to_kg(p_val, mass_unit) / 1000.0
 
         # Emission factor EF_N2O in kg N2O / tonne product

@@ -416,8 +416,8 @@ class TestScope2ProcessMatrix:
             "transmission_loss": 0.05,
         }
         res = dispatcher.dispatch("indirect_steam", payload, {"co2": 53.06}, {})
-        # 1000 / (0.80 * 0.95) * 53.06 / 1000 = 69.8158 tonnes CO2
-        assert pytest.approx(res["results"]["co2"]["value"], 1e-3) == 69.816
+        # Exhibit 8.3: 1000 / (0.80 - 0.05) * 53.06 / 1000 = 70.7467 tonnes CO2
+        assert pytest.approx(res["results"]["co2"]["value"], 1e-3) == 70.7467
 
 
 # ==============================================================================

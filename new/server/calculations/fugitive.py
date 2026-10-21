@@ -99,15 +99,11 @@ class EquipmentFugitiveCalculator(BaseCalculator):
                              ["count", "ef", "ch4_content"])  # no invented 85 % CH4
 
         eq_cnt = float(equipment_count)
-        if eq_cnt < 0:
-            raise ValueError(f"equipment_count cannot be negative: {equipment_count}")
 
         # BUG-048: parse the unit (subscript CH4, tonne vs kg, hourly vs annual)
         from .units import per_source_hour_kg
 
         kg_per_hr, is_methane = per_source_hour_kg(ef, ef_unit or "kg CH4/hr/source")
-        if kg_per_hr < 0:
-            raise ValueError(f"Emission factor cannot be negative: {ef}")
         s_ch4 = str(ch4_content).replace("%", "").strip()
         c_ch4 = float(s_ch4)
         if c_ch4 < 0:
@@ -172,8 +168,6 @@ class CompressorSealCalculator(BaseCalculator):
         uncertainties = uncertainties or {}
         self.validate_inputs({"count": compressor_count}, ["count"])
         comp_count = float(compressor_count)
-        if comp_count < 0:
-            raise ValueError(f"compressor_count cannot be negative: {compressor_count}")
         seg = str(segment or "production").lower()
         seg = ("processing" if "process" in seg else "transmission" if ("transmission" in seg or "storage" in seg)
                else "production")

@@ -237,7 +237,7 @@ class TestCleanDifferential:
             ef = float(inputs.get("ef_kg_per_tonne") or 180.0)
             eta = float(inputs.get("boiler_efficiency") or 0.80)
             loss = float(inputs.get("loss_factor") or 0.0)
-            net_eff = eta * (1.0 - loss) if (1.0 - loss) > 0 else eta
+            net_eff = eta - loss  # API Compendium Exhibit 8.3
             prod_co2e = (tonnes * ef) / (net_eff * 1000.0) if net_eff > 0 else 0.0
 
         elif calc_type == "scope2_cooling":

@@ -4,7 +4,6 @@ Split out of calculations/vented.py unchanged (hardening plan, task 5.5). calcul
 re-exports the class, so existing imports keep working.
 """
 from .base import BaseCalculator
-from .uncertainty import Tier
 from .units import CONVERSIONS, NM3_TO_SM3, calculate_co2e, convert
 from calculations.vented import _propagate_vented_results
 
@@ -47,6 +46,12 @@ class CompletionFlowbackCalculator(BaseCalculator):
     }
 
     DEFAULT_CH4_MOL_PCT = 0.816  # 81.6 mole % per API Footnote c
+    # API Compendium 2021 corrections (December 2025, section 5.1.2): a flare without an entered efficiency
+    # destroys 98 % of the CH4 and converts 96.5 % of the carbon to CO2; an entered efficiency is used for both
+    FLARE_DE, FLARE_CE = 0.98, 0.965
+    _VOLUME_SCF = {"scf": 1.0, "mcf": 1000.0, "mscf": 1000.0, "mmscf": 1e6, "m3": None, "sm3": None,
+                   "cubic_meters": None, "nm3": None}
+    _HF_YES, _HF_NO = {"true", "1", "yes", "hf", "with_hf"}, {"false", "0", "no", "none", "nohf", "no_hf", "without_hf"}
 
     def __init__(self):
         super().__init__("Well Completion Flowback", "Section 6.2.3")
@@ -80,6 +85,14 @@ class CompletionFlowbackCalculator(BaseCalculator):
             else:
                 raise ValueError(f"{name} must be between 0 and 1 (or 0% to 100%, received {val})")
         return num
+
+    def _to_scf(self, value, unit, name):
+        u = str(unit or "").lower().strip()
+        if u not in self._VOLUME_SCF:
+            raise ValueError(f"Unknown {name} unit '{unit}' (scf, Mcf, MMscf, m3 or Nm3)")
+        if self._VOLUME_SCF[u] is None:  # normal m3 (0 C) -> standard m3 (60 F) first
+            return convert(float(value) * (NM3_TO_SM3 if u == "nm3" else 1.0), "m3", "scf")
+        return float(value) * self._VOLUME_SCF[u]
 
     def _normalize_c2(self, c2plus_content):
         c2_raw = str(c2plus_content or "0.0").strip()
@@ -169,22 +182,30 @@ class CompletionFlowbackCalculator(BaseCalculator):
             )
 
         flare_eff = self._normalize_fraction(
-            control_efficiency, "Flare control efficiency", default=0.98
+            control_efficiency, "Flare control efficiency", default=self.FLARE_DE
         )
+        entered_eff = control_efficiency not in (None, "")
+        flare_de, flare_ce = (flare_eff, flare_eff) if entered_eff else (self.FLARE_DE, self.FLARE_CE)
 
         # 3. Determine tier mode
         raw_tier = str(tier or "").lower().strip()
         raw_method = str(calculation_method or "").lower().strip()
         well_type_norm = str(well_type or "gas").lower().strip()
         if well_type_norm not in ["gas", "oil"]:
-            well_type_norm = "oil" if "oil" in well_type_norm else "gas"
+            kinds = [k for k in ("oil", "gas") if k in well_type_norm]
+            if len(kinds) != 1:  # it was read as a gas well
+                raise ValueError(f"Unknown well type '{well_type}' (gas or oil)")
+            well_type_norm = kinds[0]
 
         is_hf = True
-        if fracturing is not None:
+        if fracturing is not None and fracturing != "":
             if isinstance(fracturing, bool):
                 is_hf = fracturing
             else:
-                is_hf = str(fracturing).lower().strip() in ["true", "1", "yes", "hf", "with_hf"]
+                f_txt = str(fracturing).lower().strip()
+                if f_txt not in self._HF_YES | self._HF_NO:  # it was read as "no fracturing"
+                    raise ValueError(f"Unknown fracturing value '{fracturing}' (yes / no)")
+                is_hf = f_txt in self._HF_YES
         elif factor_code and "NoHF" in str(factor_code):
             is_hf = False
 
@@ -232,8 +253,10 @@ class CompletionFlowbackCalculator(BaseCalculator):
         # =====================================================================
         if resolved_tier == "tier1":
             ctrl = str(control_type or disposition or "uncontrolled").lower().strip()
-            is_rec = "rec" in ctrl
+            is_rec = "rec" in ctrl or "green" in ctrl
             is_flared = "flare" in ctrl
+            if not (is_rec or is_flared or ctrl in ("uncontrolled", "vented", "vent")):
+                raise ValueError(f"Unknown completion control '{ctrl}' (uncontrolled, rec or flared)")
 
             is_offshore = str(location or "onshore").lower().strip() == "offshore"
             if is_offshore:
@@ -245,21 +268,20 @@ class CompletionFlowbackCalculator(BaseCalculator):
                 standard_ref = entry["standard"]
             elif is_hf:
                 table_key = (well_type_norm, "rec" if is_rec else "uncontrolled")
-                entry = self.TABLE_6_5.get(table_key, self.TABLE_6_5[("gas", "uncontrolled")])
+                entry = self.TABLE_6_5[table_key]
                 standard_ref = entry["standard"]
             else:
                 table_key = (well_type_norm, "uncontrolled")
-                entry = self.TABLE_6_6.get(table_key, self.TABLE_6_6[("gas", "uncontrolled")])
+                entry = self.TABLE_6_6[table_key]
                 standard_ref = entry["standard"]
 
-            base_ch4_per_event = float(ef_ch4) if (ef_ch4 is not None and float(ef_ch4) > 0) else entry["ch4"]
+            base_ch4_per_event = entry["ch4"] if ef_ch4 in (None, "") else float(ef_ch4)  # an entered 0 is a value
             base_ch4_tonnes = base_ch4_per_event * num_events
 
             # Footnote c adjustments
             actual_ch4_mol = y_ch4 if y_ch4 is not None else self.DEFAULT_CH4_MOL_PCT
             ch4_adjusted = base_ch4_tonnes * (actual_ch4_mol / self.DEFAULT_CH4_MOL_PCT)
 
-            co2_native = 0.0
             if y_co2 > 0 and actual_ch4_mol > 0:
                 co2_adjusted = ch4_adjusted * (y_co2 / actual_ch4_mol) * (44.01 / 16.04)
             else:
@@ -267,8 +289,8 @@ class CompletionFlowbackCalculator(BaseCalculator):
 
             flared_n2o = 0.0
             if is_flared:
-                unburnt_ch4 = ch4_adjusted * (1.0 - flare_eff)
-                combusted_co2 = ch4_adjusted * flare_eff * (44.01 / 16.04)
+                unburnt_ch4 = ch4_adjusted * (1.0 - flare_de)
+                combusted_co2 = ch4_adjusted * flare_ce * (44.01 / 16.04)
                 total_co2 = co2_adjusted + combusted_co2
                 total_ch4 = unburnt_ch4
 
@@ -330,23 +352,21 @@ class CompletionFlowbackCalculator(BaseCalculator):
             if method in ["production_rate_duration", "eq_6_7"] or (daily_production_rate is not None):
                 # API Equation 6-7: V_CC = V_Pi * T (completions without HF)
                 self.validate_inputs({"daily_production_rate": daily_production_rate}, ["daily_production_rate"])
-                rate_val = float(daily_production_rate)
-                unit_norm = str(prod_rate_unit or "mcf/day").lower().strip()
-                if "mmscf" in unit_norm:
-                    rate_scf_day = rate_val * 1_000_000.0
-                elif "mcf" in unit_norm or "mscf" in unit_norm:
-                    rate_scf_day = rate_val * 1000.0
-                elif "m3" in unit_norm or "sm3" in unit_norm:
-                    rate_scf_day = convert(rate_val, "m3", "scf")
-                else:
-                    rate_scf_day = rate_val
+                from .units import parse_volume_rate
 
-                if vent_duration_days is not None:
+                m3_per_unit, per_year = parse_volume_rate(prod_rate_unit or "mcf/day")
+                if per_year is None:  # an unknown unit was read as scf/day
+                    raise ValueError(f"Production rate unit '{prod_rate_unit}' must be a gas rate (e.g. Mcf/day)")
+                rate_scf_day = float(daily_production_rate) * m3_per_unit * CONVERSIONS["m3_to_scf"] * per_year / 365.0
+
+                if vent_duration_days not in (None, ""):
                     duration_days = float(vent_duration_days)
-                elif vent_duration_hours is not None:
+                elif vent_duration_hours not in (None, ""):
                     duration_days = float(vent_duration_hours) / 24.0
-                else:
-                    duration_days = float(24.0 if flowback_duration_hours in (None, "") else flowback_duration_hours) / 24.0
+                elif flowback_duration_hours not in (None, ""):
+                    duration_days = float(flowback_duration_hours) / 24.0
+                else:  # one day was assumed
+                    raise ValueError("Missing required field: vent duration (Equation 6-7: V_CC = V_P x T)")
 
                 total_net_scf = rate_scf_day * duration_days * num_events
                 standard_ref = "API Compendium 2021 §6.2.3.2, Equation 6-7"
@@ -390,29 +410,13 @@ class CompletionFlowbackCalculator(BaseCalculator):
             raw_vol = float(flowback_volume or 0.0)
             u_norm = str(volume_unit or "m3").lower().strip()
 
-            if u_norm in ["m3", "sm3", "cubic_meters", "nm3"]:  # normal m3 (0 C) -> standard m3 (60 F) first
-                vol_scf_raw = convert(raw_vol * (NM3_TO_SM3 if u_norm == "nm3" else 1.0), "m3", "scf")
-            elif u_norm in ["mcf", "mscf"]:
-                vol_scf_raw = raw_vol * 1000.0
-            elif u_norm in ["mmscf"]:
-                vol_scf_raw = raw_vol * 1_000_000.0
-            else:
-                vol_scf_raw = raw_vol
+            vol_scf_raw = self._to_scf(raw_vol, u_norm, "flowback volume")
 
             # API Eq. 6-4: Net gas V_gas = V_t - EnF (injected N2 deduction)
             injected_n2_scf = 0.0
             gas_type_norm = str(injected_gas_type or "n2").lower().strip()
             if gas_type_norm != "co2" and injected_n2_volume:
-                n2_val = float(injected_n2_volume)
-                n2_u = str(injected_n2_unit or "scf").lower().strip()
-                if n2_u in ["m3", "sm3"]:
-                    injected_n2_scf = convert(n2_val, "m3", "scf")
-                elif n2_u in ["mcf", "mscf"]:
-                    injected_n2_scf = n2_val * 1000.0
-                elif n2_u in ["mmscf"]:
-                    injected_n2_scf = n2_val * 1_000_000.0
-                else:
-                    injected_n2_scf = n2_val
+                injected_n2_scf = self._to_scf(injected_n2_volume, injected_n2_unit or "scf", "injected N2")
 
             net_scf_single = max(0.0, vol_scf_raw - injected_n2_scf)
             total_net_scf = net_scf_single * num_events
@@ -433,7 +437,10 @@ class CompletionFlowbackCalculator(BaseCalculator):
         # =====================================================================
         # Disposition options: 'vented', 'flared', 'rec' / 'recovered', 'split'
         disp = str(disposition or "").lower().strip()
-        combustion_eff = 0.98
+        if disp not in ("", "split", "custom", "rec", "recovered", "green", "green_completion", "flared", "flare",
+                        "vented", "vent", "uncontrolled"):  # it was read as vented
+            raise ValueError(f"Unknown disposition '{disposition}' (vented, flared, recovered or split)")
+        flare_ce_used, flare_de_used = self.FLARE_CE, self.FLARE_DE
         has_split = any(x is not None for x in (frac_vented, frac_flared, frac_recovered))
         if disp in ["split", "custom"] or (not disp and has_split):
             f_v = self._normalize_fraction(frac_vented, "Vented fraction", default=0.0)
@@ -445,25 +452,24 @@ class CompletionFlowbackCalculator(BaseCalculator):
                     f"Disposition fractions (vented={f_v*100:.1f}%, flared={f_f*100:.1f}%, recovered={f_r*100:.1f}%) must sum to 100% (sum is {split_sum*100:.1f}%)"
                 )
             f_vented, f_flared, f_rec = f_v, f_f, f_r
-            combustion_eff = flare_eff if control_efficiency is not None else 0.98
+            flare_ce_used, flare_de_used = flare_ce, flare_de
         elif not disp:
             # Fallback to control_efficiency if disposition unstated (treated as flared routing fraction per D-01)
-            if control_efficiency is not None and flare_eff > 0:
-                f_flared, f_vented, f_rec, combustion_eff = flare_eff, 1.0 - flare_eff, 0.0, 0.98
+            if entered_eff and flare_eff > 0:  # the controlled share goes to a flare with the default efficiencies
+                f_flared, f_vented, f_rec = flare_eff, 1.0 - flare_eff, 0.0
             else:
                 f_vented, f_flared, f_rec = 1.0, 0.0, 0.0
         elif disp in ["rec", "recovered", "green", "green_completion"]:
             f_vented, f_flared, f_rec = 0.0, 0.0, 1.0
         elif disp in ["flared", "flare"]:
             f_vented, f_flared, f_rec = 0.0, 1.0, 0.0
-            combustion_eff = flare_eff if control_efficiency is not None else 0.98
+            flare_ce_used, flare_de_used = flare_ce, flare_de
         else:
             f_vented, f_flared, f_rec = 1.0, 0.0, 0.0
 
         # Initial flowback is 100% vented to atmosphere (API Compendium §6.2.3.1)
         vented_scf = initial_scf + (total_net_scf * f_vented)
         flared_scf = total_net_scf * f_flared
-        recovered_scf = total_net_scf * f_rec
 
         # Tier 2 / 3 gas volumes need the flowback gas analysis: an unanalysed gas was silently taken as
         # 85 % CH4 (a zero volume stays a clean zero)
@@ -489,13 +495,13 @@ class CompletionFlowbackCalculator(BaseCalculator):
         flared_gross_ch4_tonnes = (flared_m3 * actual_ch4_mol * CONVERSIONS["density_ch4"]) / 1000.0
         flared_native_co2_tonnes = (flared_m3 * actual_co2_mol * CONVERSIONS["density_co2"]) / 1000.0
 
-        flared_unburnt_ch4 = flared_gross_ch4_tonnes * (1.0 - combustion_eff)
-        flared_combustion_co2 = flared_gross_ch4_tonnes * combustion_eff * (44.01 / 16.04)
+        flared_unburnt_ch4 = flared_gross_ch4_tonnes * (1.0 - flare_de_used)
+        flared_combustion_co2 = flared_gross_ch4_tonnes * flare_ce_used * (44.01 / 16.04)
         # heavier hydrocarbons in the flowback gas also burn to CO2 (Exhibit 6-3 treats the non-CH4
         # hydrocarbons as ethane: 2 mol C per mol); counted as ethane-equivalent when given
         c2 = self._normalize_c2(c2plus_content)
         if c2 > 0:
-            flared_combustion_co2 += (flared_m3 * c2 * 2.0 * CONVERSIONS["density_co2"] / 1000.0) * combustion_eff
+            flared_combustion_co2 += (flared_m3 * c2 * 2.0 * CONVERSIONS["density_co2"] / 1000.0) * flare_ce_used
         flared_total_co2 = flared_native_co2_tonnes + flared_combustion_co2
 
         flared_mmbtu = (flared_scf * hhv_val) / 1_000_000.0
@@ -506,7 +512,6 @@ class CompletionFlowbackCalculator(BaseCalculator):
         total_co2 = vented_co2_tonnes + flared_total_co2
         total_n2o = flared_n2o
 
-        resolved_tier_enum = Tier.T3 if resolved_tier == "tier3" else (Tier.T2 if resolved_tier == "tier2" else Tier.T1)
         ch4_res, co2_res, n2o_res = _propagate_vented_results(
             total_ch4=total_ch4,
             total_co2=total_co2,

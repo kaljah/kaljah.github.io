@@ -512,14 +512,8 @@ class TestTankFlashing:
 
     def test_tank_flashing_with_control(self):
         """
-        Tank flashing with 95% control.
-        _split_vented_and_flared logic (from vented.py):
-          - vented fraction = 1 - ctrl_eff = 0.05
-          - vented_ch4 = ch4_tonnes * 0.05
-          - flared_ch4_mass = ch4_tonnes * 0.95
-          - flared_ch4_combusted = flared_ch4_mass * 0.98 (98% combustion)
-          - flared_unburnt_ch4 = flared_ch4_mass * 0.02
-          - total_ch4 = vented_ch4 + flared_unburnt_ch4
+        Tank flashing with a 95 % efficient flare (2026-10-22: the entered efficiency is the flare's;
+        it was the share sent to a 98 % flare): all the gas goes to the flare and 5 % of the CH4 is unburnt.
         """
         ctrl_eff = 0.95
         total_gas_scf = 1000.0 * 100.0           # 100,000 scf
@@ -527,11 +521,7 @@ class TestTankFlashing:
         ch4_m3 = ch4_scf * SCF_TO_M3
         ch4_tonnes_raw = ch4_m3 * DENSITY_CH4 / 1000  # total uncontrolled CH4
 
-        # Apply _split_vented_and_flared model
-        vented_ch4 = ch4_tonnes_raw * (1 - ctrl_eff)           # 5%
-        flared_ch4_mass = ch4_tonnes_raw * ctrl_eff             # 95%
-        flared_unburnt_ch4 = flared_ch4_mass * 0.02             # 2% of flared is unburnt
-        expected_ch4 = vented_ch4 + flared_unburnt_ch4
+        expected_ch4 = ch4_tonnes_raw * (1 - ctrl_eff)          # 5 % unburnt
 
         payload = {
             'process_type': 'tank',
@@ -695,7 +685,7 @@ class TestIndirectSteam:
         }
         factor_data = {'co2': 56.1, 'ch4': 0.001, 'n2o': 0.0001, 'unit': 'kg/mmbtu'}
         energy_btu = 100.0 * 1_000_000
-        net_eff = 0.80 * (1 - 0.05)
+        net_eff = 0.80 - 0.05  # Exhibit 8.3
         co2_kg = (energy_btu / 1_000_000) * 56.1 / net_eff
         co2_tonnes = co2_kg / 1000
         

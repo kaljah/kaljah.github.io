@@ -45,9 +45,8 @@ def ref_calculate_scope2_steam(
     loss = max(0.0, min(0.5, _frac(loss_factor, 0.05)))
     eta = max(0.1, min(1.0, float(boiler_efficiency or 0.80)))
 
-    # Steam energy delivered including thermal distribution losses and boiler efficiency
-    adj_tonnes = tonnes / (1.0 - loss)
-    co2e_kg = (adj_tonnes * ef) / eta
+    # API Compendium Exhibit 8.3: the transport loss is taken off the boiler efficiency (0.92 - 0.10)
+    co2e_kg = tonnes * ef / (eta - loss)
     return {"co2e": co2e_kg / 1000.0}
 
 

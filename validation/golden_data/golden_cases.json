@@ -610,7 +610,7 @@
     },
     "independent_intermediate_values": {},
     "independent_expected_result": {
-      "co2e": 284.2105263157894
+      "co2e": 288.0
     },
     "tolerance": 0.001,
     "source": "Supplier Steam Delivery Invoices",

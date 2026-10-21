@@ -5,7 +5,7 @@ import pytest
 
 from extensions import db
 from models import Emission, SbtiTarget, Scope3Emission
-from tests.audit_helpers import login, make_facility, make_user
+from tests.audit_helpers import login, make_facility, make_user, uniq
 
 CY = datetime.date.today().year
 
@@ -17,7 +17,7 @@ def setup(client, app):
         Emission.query.filter(Emission.year.in_([2020, 2023, CY])).delete(synchronize_session=False)
         Scope3Emission.query.filter(Scope3Emission.year.in_([2020, 2023])).delete(synchronize_session=False)
         db.session.commit()
-        f = make_facility(region="West")
+        f = make_facility(region=uniq("West"))  # own region: other tests leave records in "West"
         db.session.add(SbtiTarget(base_year=2020, base_year_emissions=1000.0, target_year=2030,
                                   reduction_rate_pct=4.2, pathway_type="1.5C", scope_coverage="S1S2S3"))
         db.session.commit()
@@ -83,7 +83,7 @@ def test_bug019_region_restricted_user_uses_region_baseline(setup, app):
     ])
     db.session.commit()
     with app.test_client() as west:
-        login(west, make_user("user", "West"))
+        login(west, make_user("user", f.region))
         d = traj(west)
     # West baseline 500 (not the corporate 1000): target 437, reduction 10 %, behind
     assert d["base_year_emissions"] == pytest.approx(500)

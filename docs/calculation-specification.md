@@ -32,6 +32,12 @@ All standard volume calculations across the platform are normalized to the API C
 - $\rho_{C3H8} = 1.8820\ \text{kg/m}^3\ (0.117490\ \text{lb/ft}^3)$
 - $\rho_{C4H10} = 2.5190\ \text{kg/m}^3\ (0.157256\ \text{lb/ft}^3)$
 
+> [!NOTE]
+> **Density Calculation Basis (API Compendium 2021 Eq. 5-1 / 6-1 vs Table 4-1):**
+> In platform implementation, gas densities at standard conditions are evaluated according to the standard molar volume conversion factor defined in API Compendium 2021 Section 3.4 ($379.3\ \text{scf/lb-mole} = 23.685\ \text{m}^3/\text{kg-mole}$):
+> $$\rho_{\text{gas}} = \frac{MW_{\text{gas}}}{23.685\ \text{m}^3/\text{kg-mole}}$$
+> For $\text{CO}_2$ ($MW = 44.01$), this evaluates to $1.85814\ \text{kg/m}^3$. For $\text{CH}_4$ ($MW = 16.04$), this evaluates to $0.67722\ \text{kg/m}^3$ ($0.6785\ \text{kg/m}^3$ at 15 °C). The codebase consistently applies $\rho_{CO2} = 44.01 / 23.685 = 1.85814\ \text{kg/m}^3$ across all mass-balance stoichiometric calculations to eliminate divergence against scf-based factors.
+
 ---
 
 ## 2. Core Unit Conversions Specification
@@ -234,9 +240,10 @@ $$\text{CO}_2\text{e} = (\text{Mass}_{\text{CO}_2} \times \text{GWP}_{\text{CO}_
 
 ### 5.2 Indirect Purchased Steam / Heat
 - **Calculation Name:** Net Efficiency Steam/Heat Accounting
-- **Applicable Methodology:** API Compendium 2021 §8.1 (Equation 8-2).
+- **Applicable Methodology:** API Compendium 2021 §8.1.5 (Exhibit 8.3; a steam mass is converted with Equation 8-1).
 - **Formula:**
-  $$\text{Net Efficiency} = \text{Boiler Efficiency} \times (1 - \text{Transmission Loss})$$
+  $$\text{Net Efficiency} = \text{Boiler Efficiency} - \text{Transmission Loss}$$
+  (Exhibit 8.3: 0.92 − 0.10; a loss at or above the boiler efficiency is refused)
   $$\text{CO}_2 (\text{tonnes}) = \frac{\text{Energy}_{\text{MMBtu}} \times \text{EF}_{\text{boiler}}}{1000 \times \text{Net Efficiency}}$$
 
 ### 5.3 Combined Heat and Power (CHP) Cogeneration Allocation

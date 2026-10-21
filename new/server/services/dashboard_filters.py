@@ -27,6 +27,36 @@ def _set(v):
     return v is not None and str(v).strip().lower() not in ("", "all", "null", "none", "undefined")
 
 
+def _parse_facility_ids(facility_id):
+    """Parses facility_id into a list of ints, or [-1] for 'none', or None if unrestricted ('all'/empty)."""
+    if facility_id is None:
+        return None
+    if isinstance(facility_id, (list, tuple, set)):
+        res = []
+        for x in facility_id:
+            try:
+                res.append(int(x))
+            except (ValueError, TypeError):
+                pass
+        return res if res else None
+    s = str(facility_id).strip()
+    if s.lower() in ("", "all", "null", "undefined"):
+        return None
+    if s.lower() == "none":
+        return [-1]
+    res = []
+    for part in s.split(","):
+        p = part.strip()
+        if p.lower() == "none":
+            return [-1]
+        if p and p.lower() not in ("all", "null", "undefined"):
+            try:
+                res.append(int(p))
+            except (ValueError, TypeError):
+                pass
+    return res if res else ([-1] if s.lower() == "none" else None)
+
+
 def apply_scope(query, model, allowed_fids=None, facility_id=None, activity=None, division=None, segment=None,
                 joined=False):
     """Facility-level scoping and filters for any model with a facility_id column."""
@@ -35,8 +65,12 @@ def apply_scope(query, model, allowed_fids=None, facility_id=None, activity=None
         query = query.join(Facility, Facility.id == model.facility_id)
     if allowed_fids is not None:
         query = query.filter(model.facility_id.in_(allowed_fids or [-1]))
-    if _set(facility_id):
-        query = query.filter(model.facility_id == int(facility_id))
+    fids = _parse_facility_ids(facility_id)
+    if fids is not None:
+        if len(fids) == 1:
+            query = query.filter(model.facility_id == fids[0])
+        else:
+            query = query.filter(model.facility_id.in_(fids))
     if _set(activity):
         query = query.filter(Facility.activity == activity)
     if _set(division):

@@ -174,7 +174,7 @@ const FIELD_GROUPS: FieldGroupData[] = [
       { key: "unload_diam",       label: t("Casing Diameter (in)"), required: false, hint: t("Liquids unloading") },
       { key: "unload_press",      label: t("Shut-in Pressure (psig)"), required: false, hint: t("Liquids unloading") },
       { key: "unload_freq",       label: t("Unloading Events"),   required: false, hint: t("Events in the month") },
-      { key: "unload_flare_eff",  label: t("Unloading Flare %"),  required: false, hint: t("% of unloading gas flared") },
+      { key: "unload_flare_eff",  label: t("Unloading Flare %"),  required: false, hint: t("Flare efficiency % (blank or 0 = vented)") },
     ],
   },
   {

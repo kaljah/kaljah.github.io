@@ -14,6 +14,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import { BarChart } from "../components/charts";
 import { useLayout } from "../context/LayoutContext";
 import CustomDropdown from "../components/CustomDropdown";
+import MultiSelectDropdown from "../components/MultiSelectDropdown";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
 import { CH4_DENSITY_KG_M3 } from "../constants";
 import { Download } from "lucide-react";
@@ -537,21 +538,38 @@ const MethaneIntensity: React.FC = () => {
     return divisions;
   };
 
-  const getRegionOptions = () => {
+  const regionOptions = useMemo(() => {
     const filtered = facilities.filter(
       (f) =>
         (currentSegment === "all" || f.segment === currentSegment) &&
         (currentActivity === "all" || f.activity === currentActivity) &&
         (currentDivision === "all" || f.division === currentDivision),
     );
-    return [
-      { value: "all", label: t("All Regions") },
-      ...filtered.map((f) => ({
-        value: f.id.toString(),
-        label: f.name,
-        subLabel: f.field,
-      })),
-    ];
+    return filtered.map((f) => ({
+      value: f.id.toString(),
+      label: f.name,
+      subLabel: f.region || f.field,
+    }));
+  }, [facilities, currentSegment, currentActivity, currentDivision]);
+
+  const selectedRegionValues = useMemo(() => {
+    if (currentRegion === "all") {
+      return regionOptions.map((o) => o.value);
+    }
+    if (currentRegion === "none" || !currentRegion) {
+      return [];
+    }
+    return currentRegion.split(",").map((s) => s.trim()).filter(Boolean);
+  }, [currentRegion, regionOptions]);
+
+  const handleRegionChange = (newSelected: (string | number)[]) => {
+    if (newSelected.length === 0) {
+      setCurrentRegion("none");
+    } else if (newSelected.length === regionOptions.length) {
+      setCurrentRegion("all");
+    } else {
+      setCurrentRegion(newSelected.map(String).join(","));
+    }
   };
 
   // TopBar layout integration
@@ -597,11 +615,12 @@ const MethaneIntensity: React.FC = () => {
           />
         </div>
         <div className="filter-wrapper">
-          <CustomDropdown
-            options={getRegionOptions()}
-            value={currentRegion}
-            onChange={setCurrentRegion}
-            placeholder={t("Region")}
+          <MultiSelectDropdown
+            options={regionOptions}
+            selectedValues={selectedRegionValues}
+            onChange={handleRegionChange}
+            placeholder={t("Region / Facility")}
+            allSelectedLabel={t("All Regions & Facilities")}
           />
         </div>
       </div>,
@@ -639,8 +658,13 @@ const MethaneIntensity: React.FC = () => {
     return rawTrendData.map((item) => {
       let yearData = item.data || [];
       if (currentRegion !== "all") {
-        yearData = yearData.filter(
-          (d) => d.facility_id.toString() === currentRegion,
+        const selectedIds = new Set(
+          currentRegion === "none"
+            ? []
+            : currentRegion.split(",").map((s) => s.trim()).filter(Boolean),
+        );
+        yearData = yearData.filter((d) =>
+          selectedIds.has(d.facility_id.toString()),
         );
       }
 

@@ -10,41 +10,21 @@ from calculations.dispatcher import record_period
 
 def calc_fugitive(self, emission_factors, flat_inputs, gwp_dict, process_type, uncertainties):
     # 1. Duration / Time Basis Handling with proper unit conversion
-    _t = next((flat_inputs.get(k) for k in ("hours", "operating_hours", "hours_operating")
+    _t = next((flat_inputs.get(k) for k in ("hours", "operating_hours", "hours_operating", "operating_time")
                if flat_inputs.get(k) not in (None, "")), None)
-    raw_time = float(_t) if _t is not None else 0.0
-    _time_given = _t is not None  # an entered 0 h is 0, not a full year
-    time_unit = str(
-        flat_inputs.get("time_unit")
-        or flat_inputs.get("duration_unit")
-        or "hours"
-    ).lower()
-
-    if not _time_given:
-        raw_days = float(
-            flat_inputs.get("operating_days")
-            or flat_inputs.get("days")
-            or 0.0
-        )
-        if raw_days > 0:
-            op_days = raw_days
-            op_hours = raw_days * 24.0
-        else:
-            op_hours = record_period(flat_inputs)[0]  # the record's month
-            op_days = op_hours / 24.0
+    time_unit = str(flat_inputs.get("time_unit") or flat_inputs.get("duration_unit") or "hours").lower().strip()
+    if _t is not None:  # an entered 0 h is 0, not a full year
+        per = (24.0 if "day" in time_unit else 730.0 if "month" in time_unit
+               else 8760.0 if ("yr" in time_unit or "year" in time_unit)
+               else 1.0 if time_unit in ("hours", "hour", "hrs", "hr", "h") else None)
+        if per is None:  # it was read as hours
+            raise ValueError(f"Unknown time unit '{time_unit}' (hours, days, months or years)")
+        op_hours = float(_t) * per
     else:
-        if "day" in time_unit:
-            op_days = raw_time
-            op_hours = raw_time * 24.0
-        elif "month" in time_unit:
-            op_days = raw_time * (365.25 / 12.0)
-            op_hours = op_days * 24.0
-        elif "yr" in time_unit or "year" in time_unit:
-            op_days = raw_time * 365.25
-            op_hours = raw_time * 8760.0
-        else:
-            op_hours = raw_time
-            op_days = raw_time / 24.0
+        _d = next((flat_inputs.get(k) for k in ("operating_days", "days") if flat_inputs.get(k) not in (None, "")),
+                  None)
+        # an entered 0 days is 0 (it took the record's month); without one, the record's period
+        op_hours = float(_d) * 24.0 if _d is not None else record_period(flat_inputs)[0]
 
     # 2. Methodology & Sub-Type Detection
     fug_tier = str(flat_inputs.get("fugitive_tier") or "").lower()
@@ -132,8 +112,8 @@ def calc_fugitive(self, emission_factors, flat_inputs, gwp_dict, process_type, u
                 for k in ("corr_zero_count", "corr_pegged_10k_count", "corr_pegged_100k_count")
             ):
                 ppm = self._require_float(flat_inputs, ["fugitive_ppm", "ppm", "screening_ppm"], "screening ppm")
-                count = int(float(flat_inputs.get("amount") or flat_inputs.get("quantity") or 1))
-                ppm_vals = [ppm] * count
+                count = self._require_float(flat_inputs, ["amount", "quantity"], "number of components screened")
+                ppm_vals = [ppm] * int(count)  # one component was assumed
             # CH4 weight fraction of TOC (not the gas mole %); default 0.564 (Table C-1)
             return calc.calculate_correlation_equation(
                 component_type=flat_inputs.get("correlation_type") or comp_type,

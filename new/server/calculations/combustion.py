@@ -225,6 +225,19 @@ def convert_factor_to_kg_per_unit(
     return factor_to_kg_per_activity(val, f_unit, a_unit, hours=hours, year_hours=year_hours)
 
 
+def _check_efficiency(name, val):
+    """An entered efficiency must be a non-negative number ("98", "98%" or 0.98); an unreadable one was let
+    through to the default."""
+    if val is None or str(val).strip() in ("", "-"):
+        return
+    try:
+        x = float(str(val).replace("%", "").strip())
+    except (TypeError, ValueError):
+        raise ValueError(f"{name} is not a number: {val}") from None
+    if x < 0:
+        raise ValueError(f"{name} cannot be negative: {val}")
+
+
 class CombustionCalculator(BaseCalculator):
     def __init__(self):
         super().__init__("Stationary Combustion", "Section 5.1")
@@ -261,9 +274,8 @@ class CombustionCalculator(BaseCalculator):
         and are correctly retained from the factor path — this is intentional, not a bug.
         Emissions = Quantity * EF * (HHV if energy-based)
         """
-        self.validate_inputs({"quantity": fuel_quantity}, ["quantity"])
-        if float(fuel_quantity) < 0:
-            raise ValueError(f"Fuel quantity cannot be negative: {fuel_quantity}")
+        self.validate_inputs({"quantity": fuel_quantity}, ["quantity"])  # >= 0
+        _check_efficiency("Combustion efficiency", combustion_efficiency)
 
         is_gas_fuel = fuel_type in [
             "gases",
@@ -424,33 +436,13 @@ class CombustionCalculator(BaseCalculator):
         _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
         _cat = "combustion"
         # Propagate uncertainty — tier-aware, 95% CI, non-negative bounds
-        co2_res = propagate_uncertainty(
-            co2_val,
-            ef_uncertainty=resolve_ef_uncertainty(
-                _cat, "co2", _tier, uncertainties.get("co2")
-            ),
-            tier=_tier,
-            process_category=_cat,
-            gas="co2",
-        )
-        ch4_res = propagate_uncertainty(
-            ch4_val,
-            ef_uncertainty=resolve_ef_uncertainty(
-                _cat, "ch4", _tier, uncertainties.get("ch4")
-            ),
-            tier=_tier,
-            process_category=_cat,
-            gas="ch4",
-        )
-        n2o_res = propagate_uncertainty(
-            n2o_val,
-            ef_uncertainty=resolve_ef_uncertainty(
-                _cat, "n2o", _tier, uncertainties.get("n2o")
-            ),
-            tier=_tier,
-            process_category=_cat,
-            gas="n2o",
-        )
+        def _prop(val, gas):
+            return propagate_uncertainty(
+                val,
+                ef_uncertainty=resolve_ef_uncertainty(_cat, gas, _tier, uncertainties.get(gas)),
+                tier=_tier, process_category=_cat, gas=gas,
+            )
+        co2_res, ch4_res, n2o_res = _prop(co2_val, "co2"), _prop(ch4_val, "ch4"), _prop(n2o_val, "n2o")
 
         total_co2e = calculate_co2e(co2_val, ch4_val, n2o_val, gwp_dict=gwp_dict)
 
@@ -508,10 +500,10 @@ class FlaringCalculator(BaseCalculator):
             {"volume": gas_volume, "ch4_fraction": ch4_fraction},
             ["volume", "ch4_fraction"],
         )
-        if float(gas_volume) < 0:
-            raise ValueError(f"Gas volume cannot be negative: {gas_volume}")
-        if float(str(ch4_fraction).replace("%", "").strip()) < 0:
+        if float(str(ch4_fraction).replace("%", "").strip()) < 0:  # "-5%" passes validate_inputs as text
             raise ValueError(f"CH4 fraction cannot be negative: {ch4_fraction}")
+        _check_efficiency("Combustion efficiency", combustion_efficiency)
+        _check_efficiency("Destruction efficiency", destruction_efficiency)
 
         # API Compendium 2021 Section 5.1.2 defaults: 96.5% carbon to CO2, 98% CH4 destruction
         default_eta_c, default_eta_d = 0.965, 0.98
@@ -597,24 +589,13 @@ class FlaringCalculator(BaseCalculator):
         uncertainties = uncertainties or {}
         _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
         _cat = "flaring"
-        co2_res = propagate_uncertainty(
-            co2_tonnes,
-            ef_uncertainty=resolve_ef_uncertainty(
-                _cat, "co2", _tier, uncertainties.get("co2")
-            ),
-            tier=_tier,
-            process_category=_cat,
-            gas="co2",
-        )
-        ch4_res = propagate_uncertainty(
-            ch4_tonnes,
-            ef_uncertainty=resolve_ef_uncertainty(
-                _cat, "ch4", _tier, uncertainties.get("ch4")
-            ),
-            tier=_tier,
-            process_category=_cat,
-            gas="ch4",
-        )
+        def _prop(val, gas):
+            return propagate_uncertainty(
+                val,
+                ef_uncertainty=resolve_ef_uncertainty(_cat, gas, _tier, uncertainties.get(gas)),
+                tier=_tier, process_category=_cat, gas=gas,
+            )
+        co2_res, ch4_res = _prop(co2_tonnes, "co2"), _prop(ch4_tonnes, "ch4")
 
         # N2O from flaring (energy or volume basis aware)
         # API Compendium 2021 Eq 5-6 default as corrected in December 2025: 1.0E-04 kg/MMBtu for natural gas,
@@ -638,15 +619,7 @@ class FlaringCalculator(BaseCalculator):
         else:
             n2o_tonnes = 0.0
 
-        n2o_res = propagate_uncertainty(
-            n2o_tonnes,
-            ef_uncertainty=resolve_ef_uncertainty(
-                _cat, "n2o", _tier, uncertainties.get("n2o")
-            ),
-            tier=_tier,
-            process_category=_cat,
-            gas="n2o",
-        )
+        n2o_res = _prop(n2o_tonnes, "n2o")
 
         total_co2e = calculate_co2e(
             co2_tonnes, ch4_tonnes, n2o_tonnes, gwp_dict=gwp_dict

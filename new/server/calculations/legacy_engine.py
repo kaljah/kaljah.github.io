@@ -386,6 +386,15 @@ def compute_emissions(payload, factor_data=None, gwp_dict=None, gwp_standard=Non
     emissions because no factor was resolved is an error, never a silent 0 tCO2e record.
     Tier 3 ("specific") engineering results are exempt: zero can be a real engineering outcome.
     """
+    from .flare_defaults import (FLARE_PROCESSES, PRODUCTION_DESTRUCTION, REFINERY_DESTRUCTION,
+                                 facility_segment, _efficiency_given)
+    raw_proc = str(payload.get("process_type") or payload.get("process") or "").strip().lower()
+    if raw_proc in FLARE_PROCESSES and not _efficiency_given(payload) and facility_segment(payload) == "downstream":
+        payload = {**payload, "destruction_efficiency": REFINERY_DESTRUCTION}
+        if factor_data and factor_data.get("combustion_efficiency_ch4") == PRODUCTION_DESTRUCTION and factor_data.get("ch4") not in (None, ""):
+            residual = (1 - REFINERY_DESTRUCTION) / (1 - PRODUCTION_DESTRUCTION)
+            factor_data = {**factor_data, "ch4": float(factor_data["ch4"]) * residual, "combustion_efficiency_ch4": REFINERY_DESTRUCTION}
+
     em, method = _compute_emissions_impl(payload, factor_data, gwp_dict=gwp_dict, gwp_standard=gwp_standard)
     if "_full_api_res" not in em:
         # factor-math fallback: the dispatcher applies CCS capture itself, so apply it here too

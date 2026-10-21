@@ -128,8 +128,6 @@ class MudDegassingCalculator(BaseCalculator):
                 else (drilling_days if drilling_days is not None else (mud_volume if mud_volume is not None else 1.0))
             )
             self.validate_inputs({"wells": w}, ["wells"])
-            if w < 0:
-                raise ValueError(f"wells cannot be negative: {w}")
             ef = _resolve_ef(ef_ch4, self.TIER1_WELL_EF)
             ch4_tonnes = w * ef
             co2_tonnes = 0.0
@@ -149,8 +147,6 @@ class MudDegassingCalculator(BaseCalculator):
                 else (mud_volume if mud_volume is not None else (wells if wells is not None else 0.0))
             )
             self.validate_inputs({"drilling_days": dd}, ["drilling_days"])
-            if dd < 0:
-                raise ValueError(f"drilling_days cannot be negative: {dd}")
 
             norm_type = "oil_based" if mud_key in ("oil_based", "synthetic") else "water_based"
             is_offshore = loc == "offshore"
@@ -176,8 +172,6 @@ class MudDegassingCalculator(BaseCalculator):
                 else (mud_volume if mud_volume is not None else (wells if wells is not None else 0.0))
             )
             self.validate_inputs({"drilling_days": dd}, ["drilling_days"])
-            if dd < 0:
-                raise ValueError(f"drilling_days cannot be negative: {dd}")
 
             norm_type = "oil_based" if mud_key in ("oil_based", "synthetic") else "water_based"
             is_offshore = loc == "offshore"
@@ -185,12 +179,8 @@ class MudDegassingCalculator(BaseCalculator):
             ef = _resolve_ef(ef_ch4, mud_table[norm_type])
 
             x_ch4 = parsed_ch4
-            if x_ch4 < 0:
-                raise ValueError(f"ch4_concentration cannot be negative: {x_ch4}")
 
             x_co2 = parsed_co2
-            if x_co2 < 0:
-                raise ValueError(f"co2_concentration cannot be negative: {x_co2}")
             if (x_ch4 + x_co2) > 1.0001:
                 raise ValueError(f"Sum of gas concentrations cannot exceed 100%: {(x_ch4 + x_co2)*100:.1f}%")
 

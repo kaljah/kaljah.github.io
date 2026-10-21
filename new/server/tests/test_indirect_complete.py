@@ -37,7 +37,7 @@ def test_heat_unit_refusals(unit, kw, match):
 def test_steam_calculator():
     calc = IndirectSteamCalculator()
     res = calc.calculate(17_550, 59.0, 0.92, 0.10, {}, heat_unit="mmbtu", ef_ch4=1.1e-3, ef_n2o=3e-4)
-    fuel = 17_550 / (0.92 * 0.9)
+    fuel = 17_550 / (0.92 - 0.10)                                                 # Exhibit 8.3
     assert res["results"]["co2"]["value"] == pytest.approx(fuel * 0.059)
     assert (res["results"]["ch4"]["value"], res["results"]["n2o"]["value"]) == pytest.approx((fuel * 1.1e-6, fuel * 3e-7))
     mass = calc.calculate(15e6, 59.0, 0.92, None, {}, heat_unit="lb", steam_enthalpy_btu_lb=1170)
@@ -56,7 +56,7 @@ def test_dispatcher_passes_the_steam_enthalpy():
     res = CalculationDispatcher().dispatch("indirect_steam", {
         "amount": 15e6, "unit": "lb", "boiler_eff": 92, "trans_loss": 10, "steam_enthalpy_btu_lb": 1170,
         "factor_source": "specific"}, {"co2": 59.0}, {})
-    assert res["results"]["co2"]["value"] == pytest.approx(17_550 / (0.92 * 0.9) * 0.059)
+    assert res["results"]["co2"]["value"] == pytest.approx(17_550 / (0.92 - 0.10) * 0.059)
 
 
 def test_cogen_allocation():
@@ -141,3 +141,25 @@ def test_scope2_import_reads_the_enthalpy_column(steam_admin, app):
         assert errors == [] and obj.heat_mmbtu == pytest.approx(17_550)
         obj, errors = _process_row_scope2(row={**row, "steam_enthalpy_btu_lb": "hot"}, user_id=user_id, **maps)
         assert obj is None and "must be a positive number" in errors[0]
+
+
+def test_negative_inputs_refused():
+    calc = IndirectSteamCalculator()
+    with pytest.raises(ValueError, match="cannot be negative"):
+        heat_to_mmbtu(-1, "mmbtu")
+    with pytest.raises(ValueError, match="enthalpy cannot be negative"):
+        heat_to_mmbtu(1, "lb", steam_enthalpy_btu_lb=-5)
+    with pytest.raises(ValueError, match="enthalpy cannot be negative"):
+        heat_to_mmbtu(1, "lb", steam_enthalpy=-5)
+    for kw, gas in ((dict(ef_co2=-1), "CO2"), (dict(ef_co2=1, ef_ch4=-1), "CH4"), (dict(ef_co2=1, ef_n2o=-1), "N2O")):
+        with pytest.raises(ValueError, match=f"{gas} emission factor cannot be negative"):
+            calc.calculate(100, boiler_efficiency=0.8, transmission_loss=0, uncertainties={}, heat_unit="mmbtu", **kw)
+    with pytest.raises(ValueError, match="total_emissions cannot be negative"):
+        CogenAllocationCalculator().calculate("-5", 1, 1)
+
+
+def test_percent_strings_for_steam_efficiencies():
+    res = IndirectSteamCalculator().calculate(100, 50.0, "80%", "5 %", {}, heat_unit="mmbtu")
+    assert res["results"]["co2"]["value"] == pytest.approx(100 / (0.8 - 0.05) * 0.05)
+    assert IndirectSteamCalculator().calculate(100, 50.0, "-", "", {}, heat_unit="mmbtu")["results"]["co2"]["value"] \
+        == pytest.approx(100 / 0.8 * 0.05)

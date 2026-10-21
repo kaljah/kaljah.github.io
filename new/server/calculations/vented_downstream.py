@@ -489,8 +489,6 @@ class RefiningHydrogenPlantCalculator(BaseCalculator):
             if vol < 0:
                 raise ValueError("Hydrogen production or feedstock volume cannot be negative")
             total_co2 = vol * ef
-        if total_co2 < 0:
-            raise ValueError("Calculated CO2 emissions cannot be negative")
         _, co2_res, _ = _propagate_results(
             0.0, total_co2, 0.0, uncertainties, factor_source, "refining_h2_plant"
         )

@@ -45,9 +45,7 @@ class AGRCalculator(BaseCalculator):
         )
 
         # Throughput in scf
-        tp = float(throughput)
-        if tp < 0:
-            raise ValueError("Throughput cannot be negative")
+        tp = float(throughput)  # >= 0 (validate_inputs)
         throughput_scf = tp * 1_000_000.0
 
         # 1. CO2 Mass Balance Venting with Contactor Shrinkage Correction (API Compendium 2021 Eq. 6-7)

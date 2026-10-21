@@ -2,7 +2,6 @@ import React from "react";
 import { Input, Field } from "../../ui";
 import ColumnMappingWizard from "../ColumnMappingWizard";
 import CustomDropdown from "../CustomDropdown";
-import { activateOnKey } from "../../utils/a11yKeys";
 import { currentLanguage, t } from "../../i18n";
 import { ACTIVITY_YEAR_MIN, activityYearMax } from "../../constants";
 
@@ -12,40 +11,40 @@ export interface Scope3FormNewScope3Props {
   amount: string | number;
   baseUnit: string;
   category: string;
-  eeioNaics: string;
-  eeioResult: {
+  eeioNaics?: string;
+  eeioResult?: {
     industry_name?: string;
     emission_factor?: number | string;
     ef_unit?: string;
     co2e: number;
     [key: string]: any;
   } | null;
-  eeioSpend: string | number;
+  eeioSpend?: string | number;
   emissionFactor: string | number;
   facilityId: string | number;
   getActivityOptions: () => Array<{ value: string; label: string }>;
   getCategoryOptions: () => Array<{ value: string; label: string }>;
   getFacilityOptions: () => Array<{ value: string; label: string }>;
   handleAddEntry: (status: "Draft" | "Verified") => void;
-  handleCalculateEeio: () => void;
+  handleCalculateEeio?: () => void;
   handleImportSuccess: () => void;
   handleUnitChange: (newUnit: string) => void;
   importModal: { isOpen: boolean; type?: string };
   month: string | number;
-  naicsOptions: Array<{ naics: string; name: string; kg_co2e_per_usd: number | string }>;
-  searchNaics: (query: string) => void;
+  naicsOptions?: Array<{ naics: string; name: string; kg_co2e_per_usd: number | string }>;
+  searchNaics?: (query: string) => void;
   setActivityType: (val: string) => void;
   setAmount: (val: string) => void;
   setCategory: (val: string) => void;
-  setEeioNaics: (val: string) => void;
-  setEeioSpend: (val: string) => void;
+  setEeioNaics?: (val: string) => void;
+  setEeioSpend?: (val: string) => void;
   setEmissionFactor: (val: string) => void;
   setFacilityId: (val: string) => void;
   setImportModal: React.Dispatch<React.SetStateAction<{ isOpen: boolean; type?: string }>>;
   setMonth: (val: string | number) => void;
-  setShowEeioCalc: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowEeioCalc?: React.Dispatch<React.SetStateAction<boolean>>;
   setYear: (val: string | number) => void;
-  showEeioCalc: boolean;
+  showEeioCalc?: boolean;
   submitting: boolean;
   unit: string;
   year: string | number;
@@ -58,111 +57,29 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
   amount,
   baseUnit,
   category,
-  eeioNaics,
-  eeioResult,
-  eeioSpend,
   emissionFactor,
   facilityId,
   getActivityOptions,
   getCategoryOptions,
   getFacilityOptions,
   handleAddEntry,
-  handleCalculateEeio,
   handleImportSuccess,
   handleUnitChange,
   importModal,
   month,
-  naicsOptions,
-  searchNaics,
   setActivityType,
   setAmount,
   setCategory,
-  setEeioNaics,
-  setEeioSpend,
   setEmissionFactor,
   setFacilityId,
   setImportModal,
   setMonth,
-  setShowEeioCalc,
   setYear,
-  showEeioCalc,
   submitting,
   unit,
   year,
 }) => (
   <div className="calc-panel">
-    {/* EEIO Quick Spend Calculator */}
-    <div className="mt-[20px]! mb-[10px]! p-[16px]! bg-[color:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-200)]! rounded-[8px]!">
-      <div
-        role="button"
-        tabIndex={0}
-        onKeyDown={activateOnKey}
-        className="flex! justify-between! items-center! cursor-pointer!"
-        onClick={() => setShowEeioCalc(!showEeioCalc)}
-      >
-        <div className="flex! items-center! gap-[8px]!">
-          <span className="text-[length:1.2rem]!">💰</span>
-          <strong className="text-[color:var(--color-ink-700)]!">{t("EEIO Quick Spend Calculator")}</strong>
-          <span className="text-[length:0.8rem]! text-[color:var(--color-ink-500)]! ml-[10px]!">
-            {t("Convert financial spend to CO₂e using NAICS factors")}
-          </span>
-        </div>
-        <span>{showEeioCalc ? "▲" : "▼"}</span>
-      </div>
-
-      {showEeioCalc && (
-        <div className="mt-[16px]! flex! gap-[16px]! items-end!">
-          <div className="input-group flex-1!">
-            <label>{t("NAICS Code (6 digits)")}</label>
-            <Input
-              type="text"
-              placeholder={t("e.g. 331110 or steel")}
-              value={eeioNaics}
-              list="eeio-naics-options"
-              onChange={(e) => {
-                setEeioNaics(e.target.value);
-                searchNaics(e.target.value);
-              }}
-            />
-            <datalist id="eeio-naics-options">
-              {naicsOptions.map((o) => (
-                <option key={o.naics} value={o.naics}>{`${o.name} (${o.kg_co2e_per_usd} kg CO2e/USD)`}</option>
-              ))}
-            </datalist>
-          </div>
-          <div className="input-group flex-1!">
-            <label>{t("Spend Amount (USD)")}</label>
-            <Input
-              type="number"
-              min="0"
-              placeholder="0.00"
-              value={eeioSpend}
-              onChange={(e) => setEeioSpend(e.target.value)}
-            />
-          </div>
-          <button
-            className="action-btn h-[38px]! p-[0_16px]! bg-[color:var(--color-blue-500)]! text-[color:white]!"
-            onClick={handleCalculateEeio}
-          >
-            {t("Calculate & Auto-fill")}
-          </button>
-        </div>
-      )}
-      {eeioResult && showEeioCalc && (
-        <div className="mt-[12px]! p-[12px]! bg-[color:var(--color-blue-50)]! [border:1px_solid_var(--color-legacy-bfdbfe)]! rounded-[6px]!">
-          <div className="text-[length:0.85rem]! text-[color:var(--color-legacy-1e3a8a)]!">
-            <strong>{t("Industry:")}</strong> {eeioResult.industry_name} <br />
-            <strong>{t("Factor:")}</strong> {eeioResult.emission_factor} {eeioResult.ef_unit} <br />
-            <strong>{t("Estimated Emissions:")}</strong>{" "}
-            <span className="text-[length:1.1rem]! [font-weight:bold]!">
-              {eeioResult.co2e.toLocaleString(undefined, { maximumFractionDigits: 2 })}
-            </span>{" "}
-            {t("tCO₂e")}
-          </div>
-        </div>
-      )}
-    </div>
-
     <div className="flex! justify-between! items-center! mb-[20px]!">
       <h3 className="m-[0px]!">{t("New Scope 3 Entry")}</h3>
       <div className="text-right!">

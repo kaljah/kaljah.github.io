@@ -157,6 +157,12 @@ def add_facility():
         )
 
     data = request.get_json() or {}
+    # Support Region Name & Field / Block mapping from Manage Data UI:
+    if data.get("region_name") and not data.get("region"):
+        data["region"] = data["region_name"]
+    if data.get("field") and (not data.get("name") or data.get("name") == data.get("region")):
+        data["name"] = data["field"]
+
     # BUG-029: a facility must have a non-empty name (NULL names crash the UI and bulk import).
     data["name"] = require_text(data.get("name"), "name")
     lat, lon = _parse_coordinates(data)

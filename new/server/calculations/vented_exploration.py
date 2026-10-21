@@ -11,25 +11,14 @@ API Compendium of Greenhouse Gas Emissions Methodologies for the Oil and Natural
 - §6.2.4 Coal Seam Exploratory Drilling and Well Testing (Exhibit 6-5)
 """
 
-import math
 from .base import BaseCalculator
-from .units import (
-    CONVERSIONS,
-    STD_PRESSURE_PSIA,
-    STD_TEMP_K,
-    STD_TEMP_R,
-    convert,
-    to_psia,
-    to_kelvin,
-    calculate_co2e,
-    normalize_efficiency,   # was missing: every well-testing calculation raised NameError
-)
+from .vented_production import _split_vent_flare  # noqa: F401  (one flare split)
+from .units import convert, calculate_co2e
 from .uncertainty import (
     propagate_uncertainty,
     resolve_tier,
-    resolve_ef_uncertainty,
 )
-from .constants import DEFAULT_GWP, get_active_gwp
+from .constants import get_active_gwp
 
 # Standard molar volume conversions
 MOLAR_VOL_US = 379.3  # scf / lb-mole at 60°F, 14.696 psia
@@ -38,57 +27,21 @@ MW_CH4 = 16.04
 MW_CO2 = 44.01
 MW_C = 12.011
 LB_PER_TONNE = 2204.6226218487757
+_M3_SCF, _M3_BBL = convert(1.0, "m3", "scf"), convert(1.0, "m3", "bbl")
+_GAS_SCF = {"scf": 1.0, "mscf": 1e3, "mcf": 1e3, "mmscf": 1e6, "m3": _M3_SCF, "sm3": _M3_SCF}
+_RATE_SCF_DAY = {"scf/day": 1.0, "scf/d": 1.0, "scfd": 1.0, "mscf/day": 1e3, "mcf/day": 1e3, "mmscf/day": 1e6,
+                 "scf/hr": 24.0, "scf/hour": 24.0, "m3/day": _M3_SCF, "sm3/day": _M3_SCF, "m3/hr": 24 * _M3_SCF,
+                 "sm3/hr": 24 * _M3_SCF}
+_GOR_SCF_BBL = {"scf/bbl": 1.0, "m3/m3": _M3_SCF / _M3_BBL, "sm3/m3": _M3_SCF / _M3_BBL}
+_OIL_BBL_DAY = {"bbl/day": 1.0, "m3/day": _M3_BBL, "sm3/day": _M3_BBL}
 
 
-def _split_vent_flare(total_gas_m3, ch4_tonnes, co2_tonnes, ctrl_eff=0.0, hhv=1020.0, ef_n2o=None, destruction_eff=None, control_type="flare"):
-    """
-    Partitions gross gas into vented and flared fractions (Decision D-01).
-    Flared gas follows 98% CH4 combustion efficiency, native CO2 pass-through,
-    unburnt CH4 slip, and N2O from flared MMBtu. Supports VRU recovery.
-    """
-    ctrl = normalize_efficiency(ctrl_eff, default=0.0)
-    vented_frac = 1.0 - ctrl
-
-    vented_ch4 = ch4_tonnes * vented_frac
-    vented_co2 = co2_tonnes * vented_frac
-
-    flared_co2 = 0.0
-    flared_unburnt_ch4 = 0.0
-    flared_n2o = 0.0
-
-    c_type = str(control_type or "flare").lower().strip()
-    is_vru = c_type in ("vru", "recovery", "vapor_recovery", "vapor_recovery_unit")
-
-    if ctrl > 0 and not is_vru:
-        flared_ch4_mass = ch4_tonnes * ctrl
-        flared_native_co2 = co2_tonnes * ctrl
-
-        de = normalize_efficiency(destruction_eff, default=0.98) if destruction_eff is not None else 0.98
-        slip = max(0.0, 1.0 - de)
-        flared_ch4_combusted = flared_ch4_mass * de
-        flared_co2 = (flared_ch4_combusted * (MW_CO2 / MW_CH4)) + flared_native_co2
-        flared_unburnt_ch4 = flared_ch4_mass * slip
-
-        # Flared N2O from energy content
-        flared_m3 = total_gas_m3 * ctrl
-        flared_scf = convert(flared_m3, "m3", "scf")
-        hhv_val = float(hhv or 1020.0)
-        flared_mmbtu = (flared_scf * hhv_val) / 1_000_000.0
-        n2o_ef_kg = float(ef_n2o if ef_n2o is not None else 0.0001)
-        flared_n2o = (flared_mmbtu * n2o_ef_kg) / 1000.0
-
-    total_ch4 = vented_ch4 + flared_unburnt_ch4
-    total_co2 = vented_co2 + flared_co2
-
-    return {
-        "vented_ch4": vented_ch4,
-        "vented_co2": vented_co2,
-        "flared_co2": flared_co2,
-        "flared_unburnt_ch4": flared_unburnt_ch4,
-        "flared_n2o": flared_n2o,
-        "total_ch4": total_ch4,
-        "total_co2": total_co2,
-    }
+def _per(table, unit, default, what):
+    """Factor of a unit in its table; an unknown unit was read as the default unit."""
+    u = str(unit or default).lower().strip()
+    if u not in table:
+        raise ValueError(f"Unknown {what} unit '{unit}' ({', '.join(table)})")
+    return table[u]
 
 
 def _parse_testing_composition(ch4_content, co2_content):
@@ -187,6 +140,8 @@ class WellTestingCalculator(BaseCalculator):
 
         # Parse well type
         wt = str(well_type or "oil_well").lower().strip()
+        if ("gas" in wt) == ("oil" in wt):  # it was read as an oil well
+            raise ValueError(f"Unknown well type '{well_type}' (gas_well or oil_well)")
         is_gas_well = "gas" in wt
         well_key = "gas_well" if is_gas_well else "oil_well"
 
@@ -223,16 +178,7 @@ class WellTestingCalculator(BaseCalculator):
         if raw_tier in ["tier3", "tier_3", "direct_measurement", "measurement"]:
             if measured_gas_volume is None or float(measured_gas_volume) < 0:
                 raise ValueError("Tier 3 well testing requires non-negative measured_gas_volume")
-            v_meas = float(measured_gas_volume)
-            u_vol = str(volume_unit or "scf").lower().strip()
-            if u_vol in ["m3", "sm3"]:
-                total_gas_scf = convert(v_meas, "m3", "scf")
-            elif u_vol in ["mscf", "mcf"]:
-                total_gas_scf = v_meas * 1000.0
-            elif u_vol in ["mmscf"]:
-                total_gas_scf = v_meas * 1_000_000.0
-            else:
-                total_gas_scf = v_meas
+            total_gas_scf = float(measured_gas_volume) * _per(_GAS_SCF, volume_unit, "scf", "gas volume")
             calculation_equation = "Equation 6-2 (Direct Metered Volume)"
 
         # --- TIER 2: ENGINEERING CALCULATION ---
@@ -243,35 +189,20 @@ class WellTestingCalculator(BaseCalculator):
                     raise ValueError("Gas well testing Tier 2 requires non-negative gas_production_rate")
                 if duration_days <= 0:
                     raise ValueError("Gas well testing Tier 2 requires positive duration (days or hours)")
-                g_rate = float(gas_production_rate)
-                u_r = str(rate_unit or "scf/day").lower().strip()
-                u_mult = {"m3/day": lambda r: convert(r, "m3", "scf"), "sm3/day": lambda r: convert(r, "m3", "scf"),
-                          "mscf/day": lambda r: r * 1000.0, "mcf/day": lambda r: r * 1000.0, "mmscf/day": lambda r: r * 1e6,
-                          "scf/hr": lambda r: r * 24.0, "scf/hour": lambda r: r * 24.0,
-                          "m3/hr": lambda r: convert(r * 24.0, "m3", "scf"), "sm3/hr": lambda r: convert(r * 24.0, "m3", "scf")}
-                g_rate_scf_day = u_mult.get(u_r, lambda r: r)(g_rate)
+                g_rate_scf_day = float(gas_production_rate) * _per(_RATE_SCF_DAY, rate_unit, "scf/day", "gas rate")
                 total_gas_scf = g_rate_scf_day * duration_days * num_events
                 calculation_equation = "Equation 6-1 (Gas Well Testing: V_WT = V_P * T)"
             else:
                 # API Equation 6-3: V_WT = GOR * PR * T (or GOR * total_oil)
                 if gor is None or float(gor) < 0:
                     raise ValueError("Oil well testing Tier 2 requires non-negative GOR")
-                gor_val = float(gor)
-                u_gor = str(gor_unit or "scf/bbl").lower().strip()
-                if u_gor in ["m3/m3", "sm3/m3"]:
-                    gor_scf_bbl = gor_val * (convert(1.0, "m3", "scf") / convert(1.0, "m3", "bbl"))
-                else:
-                    gor_scf_bbl = gor_val
-
+                gor_scf_bbl = float(gor) * _per(_GOR_SCF_BBL, gor_unit, "scf/bbl", "GOR")
                 if oil_production_total is not None and float(oil_production_total) > 0:
                     total_oil_bbl = float(oil_production_total)
                 elif oil_production_rate is not None and float(oil_production_rate) > 0:
                     if duration_days <= 0:
                         raise ValueError("Oil well testing requires positive duration when using production rate")
-                    pr_val = float(oil_production_rate)
-                    u_oil = str(oil_rate_unit or "bbl/day").lower().strip()
-                    if u_oil in ["m3/day", "sm3/day"]:
-                        pr_val = convert(pr_val, "m3", "bbl")
+                    pr_val = float(oil_production_rate) * _per(_OIL_BBL_DAY, oil_rate_unit, "bbl/day", "oil rate")
                     total_oil_bbl = pr_val * duration_days
                 else:
                     raise ValueError("Oil well testing Tier 2 requires oil_production_rate or oil_production_total")
@@ -310,9 +241,14 @@ class WellTestingCalculator(BaseCalculator):
         elif disp in ["recovered", "rec", "sales"]:
             ctrl_eff = 0.0
             gross_ch4_tonnes = gross_co2_tonnes = total_gas_m3 = 0.0
-        else:
+        elif disp in ("", "vented", "vent"):
             ctrl_eff = float(control_efficiency or 0.0)
+        else:  # it was read as vented
+            raise ValueError(f"Unknown disposition '{disposition}' (vented, flared or recovered)")
 
+        if ch4_content in (None, "") and total_gas_m3 > 0 and not calculation_equation.startswith("Table 6-4"):
+            # Tier 2 / 3 gas released or flared is the well's own: the Table 6-4 basis (81.6 %) was assumed
+            raise ValueError("Missing required field: CH4 content of the test gas (mol %)")
         split = _split_vent_flare(
             total_gas_m3=total_gas_m3,
             ch4_tonnes=gross_ch4_tonnes,

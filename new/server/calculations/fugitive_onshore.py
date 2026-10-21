@@ -175,9 +175,7 @@ class OnshoreFacilityFugitiveCalculator(BaseCalculator):
                 f"Unknown facility type '{facility_type}' for facility-level fugitives; use oil_production "
                 f"or gas_production (API Compendium 2021 Table 7-8, per unit of production)"
             )
-        self.validate_inputs({"production": production}, ["production"])
-        if float(production) < 0:
-            raise ValueError("Production cannot be negative")
+        self.validate_inputs({"production": production}, ["production"])  # >= 0
         uncertainties = uncertainties or {}
         row = TABLE_7_8[ftype]
         qty, tunit = self._production_in_table_unit(ftype, production, production_unit)
@@ -237,9 +235,7 @@ class OnshoreEquipmentFugitiveCalculator(BaseCalculator):
         self.validate_inputs(
             {"count": equipment_count, "hours": operating_hours},
             ["count", "hours"],
-        )
-        if equipment_count < 0:
-            raise ValueError("Equipment count cannot be negative")
+        )  # both >= 0
         if operating_hours < 0 or operating_hours > 8784:
             raise ValueError(f"Operating hours ({operating_hours}) must be between 0 and 8,784 hours/year")
 

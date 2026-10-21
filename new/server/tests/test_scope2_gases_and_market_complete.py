@@ -313,8 +313,8 @@ def test_steam_fuel_factor_kg_per_mmbtu():
 
 def test_calc_indirect_steam_mmbtu():
     # 1,000 MMBtu delivered heat, 80% boiler efficiency, 5% transmission loss
-    # Net efficiency = 0.80 * (1 - 0.05) = 0.76
-    # Fuel consumed = 1,000 / 0.76 = 1315.789 MMBtu
+    # Net efficiency = 0.80 - 0.05 = 0.75 (Exhibit 8.3)
+    # Fuel consumed = 1,000 / 0.75 = 1333.333 MMBtu
     data = {
         "amount": 1000.0,
         "unit": "mmbtu",
@@ -331,7 +331,7 @@ def test_calc_indirect_steam_mmbtu():
     assert ef == 53.06
 
     expected_ef = _steam_fuel_factor_kg_per_mmbtu(53.06)
-    expected_co2e = (1000.0 / 0.76) * expected_ef / 1000.0
+    expected_co2e = (1000.0 / 0.75) * expected_ef / 1000.0
     assert co2e_t == pytest.approx(expected_co2e, rel=1e-5)
 
 

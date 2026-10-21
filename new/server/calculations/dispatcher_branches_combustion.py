@@ -127,6 +127,10 @@ def calc_flaring(self, calculator, emission_factors, flat_inputs, gwp_dict, unce
     if single_eff is not None:
         comb_eff = single_eff if comb_eff is None else comb_eff
         dest_eff = single_eff if dest_eff is None else dest_eff
+    if dest_eff is None:
+        from .flare_defaults import facility_segment, REFINERY_DESTRUCTION
+        if facility_segment(flat_inputs) == "downstream":
+            dest_eff = REFINERY_DESTRUCTION
     ef_n2o_val = emission_factors.get("n2o") if emission_factors.get("n2o") not in [None, "", "-"] else (
         emission_factors.get("ef_n2o") if emission_factors.get("ef_n2o") not in [None, "", "-"] else flat_inputs.get("ef_n2o")
     )
@@ -177,9 +181,9 @@ def calc_drilling(self, calculator, emission_factors, flat_inputs, gwp_dict, unc
     # in kg per unit (Manage Data convention) and the calculator works in tonnes.
     if str(emission_factors.get("type") or "").lower() == "custom":
         _cf = emission_factors.get("ch4")
-        drill_ef = float(_cf) / 1000.0 if _cf not in (None, "", "-") else 0
+        drill_ef = float(_cf) / 1000.0 if _cf not in (None, "", "-") else None
     else:
-        drill_ef = 0
+        drill_ef = None
 
     # Check gas concentrations for Tier 2+
     ch4_conc = (
@@ -326,9 +330,8 @@ def calc_completions(self, calculator, emission_factors, flat_inputs, gwp_dict, 
     co2_content = self._optional_fraction(
         flat_inputs, ["co2_content", "co2_mol", "comp_co2_content"], 0.0
     )
-    default_eff = 0.98 if str(flat_inputs.get("disposition") or flat_inputs.get("comp_disposition") or "").lower() == "flared" else 0.0
-    flare_eff = self._optional_fraction(
-        flat_inputs, ["comp_flare_eff", "control_efficiency", "flare_efficiency"], default_eff
+    flare_eff = self._optional_fraction(  # None: not entered (flare CE 96.5 % / DE 98 % in the calculator)
+        flat_inputs, ["comp_flare_eff", "control_efficiency", "flare_efficiency"], None
     )
 
     # Rate unit: UI default is Mcf/hr
@@ -400,7 +403,7 @@ def calc_liquids_unloading(self, calculator, emission_factors, flat_inputs, gwp_
         # the gas CH4 content is a site input, as for Eq 6-3 / 6-10 (it defaulted to an invented 85 %)
         ch4_content = self._require_fraction(flat_inputs, ["ch4_content", "c1", "unload_ch4_content"], "gas CH4 content %")
         co2_content = self._optional_fraction(flat_inputs, ["co2_content", "co2_mol"], 0.0)
-        flare_eff = self._optional_fraction(flat_inputs, ["unload_flare_eff", "control_efficiency"], 0.0)
+        flare_eff, flare_de = self._controlled_share(flat_inputs, ["unload_flare_eff", "control_efficiency"])
         press_unit = flat_inputs.get("unload_press_unit") or flat_inputs.get("press_unit", "psia")
 
         return calculator.calculate_tier3_equation_6_11(
@@ -413,7 +416,7 @@ def calc_liquids_unloading(self, calculator, emission_factors, flat_inputs, gwp_
             well_count=self._given(flat_inputs, "well_count", "wells"),
             ch4_content=ch4_content,
             co2_content=co2_content,
-            control_efficiency=flare_eff,
+            control_efficiency=flare_eff, destruction_efficiency=flare_de,
             press_unit=press_unit,
             sfr_unit=flat_inputs.get("sfr_unit", "scf/hr"),
             uncertainties=uncertainties,
@@ -434,7 +437,7 @@ def calc_liquids_unloading(self, calculator, emission_factors, flat_inputs, gwp_
         hours_open = self._require_float(flat_inputs, ["hours_open", "hrs_open", "venting_hours"], "hours venting during unloading (HR)")
         ch4_content = self._require_fraction(flat_inputs, ["ch4_content", "c1", "unload_ch4_content"], "gas CH4 content %")
         co2_content = self._optional_fraction(flat_inputs, ["co2_content", "co2_mol"], 0.0)
-        flare_eff = self._optional_fraction(flat_inputs, ["unload_flare_eff", "control_efficiency"], 0.0)
+        flare_eff, flare_de = self._controlled_share(flat_inputs, ["unload_flare_eff", "control_efficiency"])
         depth_unit = flat_inputs.get("unload_depth_unit") or flat_inputs.get("depth_unit", "ft")
         diam_unit = flat_inputs.get("unload_diam_unit") or flat_inputs.get("diameter_unit", "in")
         press_unit = flat_inputs.get("unload_press_unit") or flat_inputs.get("press_unit", "psig")
@@ -456,7 +459,7 @@ def calc_liquids_unloading(self, calculator, emission_factors, flat_inputs, gwp_
             well_count=self._given(flat_inputs, "well_count", "wells"),
             ch4_content=ch4_content,
             co2_content=co2_content,
-            control_efficiency=flare_eff,
+            control_efficiency=flare_eff, destruction_efficiency=flare_de,
             depth_unit=depth_unit,
             diameter_unit=diam_unit,
             press_unit=press_unit,
@@ -479,7 +482,7 @@ def calc_liquids_unloading(self, calculator, emission_factors, flat_inputs, gwp_
             ["unload_press", "pressure"],
             "shut-in surface pressure (psig)",
         )
-        events = self._whole(
+        events = 0 if (flat_inputs.get("amount") == 0.0 or flat_inputs.get("quantity") == 0.0) else self._whole(
             self._require_float(
                 flat_inputs,
                 ["unload_freq", "unload_events", "events", "amount"],
@@ -494,9 +497,7 @@ def calc_liquids_unloading(self, calculator, emission_factors, flat_inputs, gwp_
         co2_content = self._optional_fraction(
             flat_inputs, ["co2_content", "co2_mol"], 0.0
         )
-        flare_eff = self._optional_fraction(
-            flat_inputs, ["unload_flare_eff", "control_efficiency"], 0.0
-        )
+        flare_eff, flare_de = self._controlled_share(flat_inputs, ["unload_flare_eff", "control_efficiency"])
 
         ef_co2 = emission_factors.get("co2")
         ef_ch4 = emission_factors.get("ch4")
@@ -523,7 +524,7 @@ def calc_liquids_unloading(self, calculator, emission_factors, flat_inputs, gwp_
             events=events,
             uncertainties=uncertainties,
             co2_content=co2_content,
-            control_efficiency=flare_eff,
+            control_efficiency=flare_eff, destruction_efficiency=flare_de,
             ef_co2=ef_co2,
             ef_ch4=ef_ch4,
             ef_n2o=ef_n2o,

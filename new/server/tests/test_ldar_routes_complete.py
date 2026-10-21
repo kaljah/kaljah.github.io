@@ -127,7 +127,7 @@ def test_every_change_is_audited_with_the_change(app, client, lw):
     _as(client, lw, "superuser")
     cid = _component(client, lw, quantity=3).get_json()["component"]["id"]
     assert client.put(f"/api/ldar/components/{cid}", json={"quantity": 5, "status": "Leaking"}).status_code == 200
-    sid = _survey(client, lw, leak_status="Leaking", screening_value_ppm=500).get_json()["survey"]["id"]
+    sid = _survey(client, lw, leak_status="Leaking", screening_value_ppm=500, survey_date="2026-03-01").get_json()["survey"]["id"]
     assert client.patch(f"/api/ldar/surveys/{sid}", json={"leak_status": "Repaired", "repair_date": "2026-04-01"}).status_code == 200
     assert client.post("/api/ldar/components/bulk-update", json={"ids": [cid], "operating_hours": 100}).status_code == 200
     assert client.post("/api/ldar/surveys/bulk-update", json={"ids": [sid], "notes": "checked"}).status_code == 200
@@ -289,7 +289,7 @@ def test_bulk_updates(app, client, lw):
     with app.app_context():
         for c in db.session.query(ComponentInventory).filter(ComponentInventory.id.in_(cids)):
             assert (c.status, c.service_type, c.equipment_type, c.operating_hours) == ("Faulty", "Light Liquid", "Pump", 4380.0)
-    sids = [_survey(client, lw, notes="first").get_json()["survey"]["id"] for _ in range(2)]
+    sids = [_survey(client, lw, notes="first", survey_date="2026-03-01").get_json()["survey"]["id"] for _ in range(2)]
     res = client.post("/api/ldar/surveys/bulk-update", json={"ids": sids, "screening_value_ppm": "much"})
     assert res.status_code == 400 and res.get_json()["field"] == "screening_value_ppm"
     res = client.post("/api/ldar/surveys/bulk-update", json={"ids": sids, "repair_date": "2026-13-40"})
@@ -347,3 +347,26 @@ def test_every_write_fails_closed(app, client, lw, monkeypatch, method, path, bo
     monkeypatch.undo()
     assert res.status_code == 500 and "secret" not in res.get_data(as_text=True)
     assert len(_audit(app, "ComponentInventory")) + len(_audit(app, "FugitiveSurvey")) == logs
+
+
+def test_repair_never_precedes_the_survey(client, lw):
+    _as(client, lw, "admin")
+    bad = _survey(client, lw, survey_date="2026-03-10", repair_date="2026-03-01", leak_status="Repaired")
+    assert bad.status_code == 400 and bad.get_json()["field"] == "repair_date"
+    sid = _survey(client, lw, survey_date="2026-03-10", leak_status="Leaking").get_json()["survey"]["id"]
+    res = client.put(f"/api/ldar/surveys/{sid}", json={"repair_date": "2026-03-01"})              # one date edited
+    assert res.status_code == 400 and res.get_json()["field"] == "repair_date"
+    res = client.post("/api/ldar/surveys/bulk-update", json={"ids": [sid], "repair_date": "2026-03-01"})
+    assert res.status_code == 400 and res.get_json()["field"] == "repair_date"
+    assert client.put(f"/api/ldar/surveys/{sid}", json={"repair_date": "2026-03-12"}).status_code == 200
+    assert client.post("/api/ldar/surveys/bulk-update", json={"ids": [sid], "leak_status": "Repaired"}).status_code == 200
+
+
+def test_list_filter_takes_several_facilities(client, lw):
+    _as(client, lw, "admin")
+    a = _component(client, lw).get_json()["component"]["id"]
+    b = _component(client, lw, facility_id=lw["other"]).get_json()["component"]["id"]
+    rows = client.get(f"/api/ldar/components?facility_id={lw['fid']},{lw['other']}").get_json()["components"]
+    assert {a, b} <= {r["id"] for r in rows}
+    assert client.get(f"/api/ldar/components?facility_id={lw['fid']},x").status_code == 422
+    assert client.get("/api/ldar/components?facility_id=all").status_code == 200

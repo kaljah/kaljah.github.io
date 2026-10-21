@@ -1,4 +1,4 @@
-import { ChevronDown, Download, FilePlus, FileSpreadsheet, FileText, FileCode, Funnel, Pencil, Plus, RotateCcw, Search, ShieldCheck, SlidersHorizontal, Table } from "lucide-react";
+import { ChevronDown, Download, FilePlus, FileSpreadsheet, FileText, FileCode, Funnel, Pencil, Plus, RotateCcw, Search, ShieldCheck, SlidersHorizontal, Table, Sparkles, Globe, Building2 } from "lucide-react";
 import { NativeSelect } from "../ui/NativeSelect";
 import { Badge, Button, Card, CardHeader, DataTable, Dialog, Field, Input, Menu, MenuContent, MenuItem, MenuTrigger, Page, PageHeader, StatusPill, Textarea, cn, type BadgeTone } from "../ui";
 import { controlClass } from "../components/import-wizard/mapping";
@@ -551,6 +551,41 @@ const Reports: React.FC = () => {
   }, [activeGwpStandard]);
   const [reportSelectedRegions, setReportSelectedRegions] = useState<any[]>([]); // Multiselect
 
+  // Executive Master Report & Intelligence Studio State
+  const [masterMode, setMasterMode] = useState<"regional" | "national" | "comparison">("regional");
+  const [masterRegion, setMasterRegion] = useState<string>("hmd");
+  const [masterStartYear, setMasterStartYear] = useState<string>("2023");
+  const [masterEndYear, setMasterEndYear] = useState<string>("2025");
+  const [masterGwp, setMasterGwp] = useState<string>("AR5");
+  const [masterLanguage, setMasterLanguage] = useState<"en" | "fr">("en");
+  const [masterLoading, setMasterLoading] = useState<boolean>(false);
+  const [masterExcelLoading, setMasterExcelLoading] = useState<boolean>(false);
+  const [availableRegions, setAvailableRegions] = useState<any[]>([
+    { key: "berkine", name: "Groupement Berkine (HBNS / El Merk)", segment: "Upstream", facility_count: 2 },
+    { key: "hmd", name: "Hassi Messaoud Oil Complex (HMD)", segment: "Upstream", facility_count: 2 },
+    { key: "hrm", name: "Hassi R'Mel Gas Supergiant (HRM)", segment: "Upstream", facility_count: 3 },
+    { key: "rns", name: "Rhourde Nouss Gas Processing (RNS)", segment: "Upstream", facility_count: 2 },
+    { key: "tft", name: "Tin Fouye Tabankort Gathering (TFT)", segment: "Upstream", facility_count: 1 },
+    { key: "skikda", name: "Skikda Refining & LNG Corridors", segment: "Downstream", facility_count: 1 },
+    { key: "arzew", name: "Arzew Liquefaction & Ammonia Hub", segment: "Downstream", facility_count: 1 },
+  ]);
+
+  useEffect(() => {
+    api.get("/reports/master-report/regions")
+      .then((res: any) => {
+        if (res.data?.regions && Array.isArray(res.data.regions)) {
+          const present = res.data.regions.filter((r: any) => r.key !== "national" && (r.facility_count > 0 || r.facility_count === undefined));
+          if (present.length > 0) {
+            setAvailableRegions(present);
+            if (!present.some((r: any) => r.key === masterRegion)) {
+              setMasterRegion(present[0].key);
+            }
+          }
+        }
+      })
+      .catch((err: any) => console.warn("Regions loader warning, using defaults:", err));
+  }, []);
+
   const hasActiveFilters = Boolean(
     scope !== "all" ||
     year !== "all" ||
@@ -580,7 +615,7 @@ const Reports: React.FC = () => {
   const regionOptions = facilities.map((f) => ({
     value: f.id.toString(),
     label: f.name,
-    subLabel: f.field,
+    subLabel: f.region || f.field,
   }));
 
   const [showConfigModal, setShowConfigModal] = useState<boolean>(false);
@@ -650,6 +685,127 @@ const Reports: React.FC = () => {
       toast.error(tr("Failed to generate report."));
     } finally {
       setLoading(false);
+    }
+  };
+
+  const REGION_INTEL: Record<string, { basin: string; operator: string; highlights: string }> = {
+    hmd: {
+      basin: "Triassic / Hassi Messaoud-Berkine Basin",
+      operator: "Sonatrach E&P (100% Operated)",
+      highlights: "Zone Ra/R2 Cambro-Ordovician sandstone, 14 gathering centers, FGR recovery loops.",
+    },
+    hrm: {
+      basin: "Triassic / Tilrhemt Dome (Laghouat)",
+      operator: "Sonatrach E&P / Gas Division",
+      highlights: "World-class TAGI sandstone gas-condensate field, Boosting Phase III Stage II compression.",
+    },
+    rns: {
+      basin: "Illizi Basin (Paleozoic Ordovician/Devonian)",
+      operator: "Sonatrach E&P",
+      highlights: "Sour gas sweetening, DEA amine absorption, Claus sulfur recovery, ZRF flaring minimization.",
+    },
+    in_amenas: {
+      basin: "Illizi Basin (Tiguentourine, Hassi Farida)",
+      operator: "Groupement In Amenas (Sonatrach / Eni / Equinor)",
+      highlights: "Wet gas condensate recovery, LDAR OGI optical imaging, Decree 21-330 compliance.",
+    },
+    in_salah: {
+      basin: "Ahnet-Gourara & Krechba Basins",
+      operator: "In Salah Gas (Sonatrach / Eni)",
+      highlights: "Pioneering Krechba industrial CCUS deep saline aquifer CO2 storage (850 ktCO2e/yr).",
+    },
+    tft: {
+      basin: "Illizi Basin (Tin Fouye Tabankort)",
+      operator: "Groupement TFT (Sonatrach / TotalEnergies / Repsol)",
+      highlights: "Devonian/Ordovician gas-oil CPF, low-pressure boosting, flare gas recovery compressors.",
+    },
+    berkine: {
+      basin: "Ghadames / Berkine Basin (Block 404 & 208)",
+      operator: "Groupement Berkine (Sonatrach / Oxy / Eni / Total)",
+      highlights: "HBNS CPF, El Merk mega-facility, multi-stage vapor recovery, high deliverability TAGI.",
+    },
+    skikda: {
+      basin: "Mediterranean Coastal Petrochemical Hub",
+      operator: "Sonatrach Refining & Petrochemicals",
+      highlights: "RA1K refinery (16.5 MT/yr), GL1K LNG liquefaction complex, EU CBAM carbon readiness.",
+    },
+    arzew: {
+      basin: "Mediterranean Coastal Refining & LNG Hub",
+      operator: "Sonatrach Downstream & Fertilizer JVs",
+      highlights: "GL1Z / GL2Z LNG complexes, RA1Z refinery, Sorfert / Fertial ammonia synthesis, BOG recovery.",
+    },
+  };
+
+  const handleDownloadMasterReport = async () => {
+    setMasterLoading(true);
+    try {
+      const resp = await api.post(
+        "/reports/master-report",
+        {
+          mode: masterMode,
+          region: masterRegion,
+          start_year: parseInt(masterStartYear, 10),
+          end_year: parseInt(masterEndYear, 10),
+          gwp_standard: masterGwp === "20yr" ? "AR5" : masterGwp,
+          language: masterLanguage,
+        },
+        { responseType: "blob" }
+      );
+      const blob = new Blob([resp.data], { type: "application/pdf" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      const cleanName = (masterMode === "national" ? "National" : masterRegion).replace(/[^a-zA-Z0-9]/g, "_");
+      const langSuffix = `_${masterLanguage.toUpperCase()}`;
+      link.setAttribute(
+        "download",
+        `Sonatrach_${masterMode}_${cleanName}_Master_Report_${masterStartYear}_${masterEndYear}${langSuffix}.pdf`
+      );
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      toast.success(tr("Executive Master Publication PDF generated & downloaded successfully!"));
+    } catch (err: any) {
+      console.error("Master report error", err);
+      toast.error(apiError(err, tr("Failed to generate Master Publication Report.")));
+    } finally {
+      setMasterLoading(false);
+    }
+  };
+
+  const handleDownloadBenchmarkExcel = async () => {
+    setMasterExcelLoading(true);
+    try {
+      const resp = await api.post(
+        "/reports/master-report/benchmark-excel",
+        {
+          start_year: parseInt(masterStartYear, 10),
+          end_year: parseInt(masterEndYear, 10),
+          gwp_standard: masterGwp === "20yr" ? "AR5" : masterGwp,
+        },
+        { responseType: "blob" }
+      );
+      const blob = new Blob([resp.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute(
+        "download",
+        `Sonatrach_Cross_Basin_Benchmark_${masterStartYear}_${masterEndYear}.xlsx`
+      );
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      toast.success(tr("Cross-Basin Benchmark Excel exported successfully!"));
+    } catch (err: any) {
+      console.error("Benchmark Excel error", err);
+      toast.error(apiError(err, tr("Failed to export benchmark Excel.")));
+    } finally {
+      setMasterExcelLoading(false);
     }
   };
 
@@ -822,141 +978,273 @@ const Reports: React.FC = () => {
         </Card>
       </div>
 
-      {/* Separate Card 1: Report Generation Workbench */}
-      <Card className="flex flex-col gap-4 p-5 shadow-card">
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-4">
-          <div className="flex items-center gap-3">
-            <span className="flex size-10 items-center justify-center rounded-lg bg-brand-50 text-brand-600 shadow-xs">
-              <SlidersHorizontal className="size-5 text-brand-500" aria-hidden="true" />
+      {/* Executive Master Report & Intelligence Studio */}
+      <Card className="flex flex-col gap-5 p-6 shadow-card border border-brand-200/60 dark:border-slate-800 bg-gradient-to-b from-surface via-surface to-brand-50/20">
+        {/* Studio Header */}
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border/80 pb-4">
+          <div className="flex items-center gap-3.5">
+            <span className="flex size-11 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-amber-600 text-white shadow-sm ring-2 ring-brand-200/50">
+              <Sparkles className="size-5" aria-hidden="true" />
             </span>
             <div>
-              <h2 className="m-0 text-base font-bold text-text">
-                {tr("Report Generation Workbench")}
-              </h2>
-              <p className="m-0 mt-0.5 text-xs text-text-secondary">
-                {tr("Configure organizational boundaries, reporting scope, comparison periods, and GWP standards to generate official compliance reports.")}
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <h2 className="m-0 text-lg font-bold text-text tracking-tight">
+                  {tr("Executive Master Report & Intelligence Studio")}
+                </h2>
+                <Badge tone="brand" className="text-2xs font-semibold px-2 py-0.5">
+                  {tr("300 DPI // Vector Publication Grade")}
+                </Badge>
+                <Badge tone="success" className="text-2xs font-semibold px-2 py-0.5">
+                  {tr("ISO 14064-1 & Décret 21-330")}
+                </Badge>
+              </div>
+              <p className="m-0 mt-1 text-xs text-text-secondary max-w-3xl leading-relaxed">
+                {tr("Synthesizes multi-year greenhouse gas inventories, production statistics, and criteria air pollutants into audit-certified executive publication reports and cross-basin benchmark league tables.")}
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
-            {isTableFilteredDifferently && (
-              <Button
-                variant="secondary"
-                size="md"
-                onClick={handleSyncFromTable}
-                className="gap-1.5 border-brand-200 bg-brand-50/70 text-brand-700 hover:bg-brand-100 hover:border-brand-300 text-xs font-semibold shadow-2xs transition-colors"
-              >
-                <RotateCcw className="size-3.5 text-brand-600" aria-hidden="true" />
-                <span>{tr("Sync from Table Filters")}</span>
-                {tableFilterSummary && (
-                  <span className="hidden md:inline font-normal text-brand-700/80">
-                    ({tableFilterSummary})
-                  </span>
-                )}
-              </Button>
-            )}
-            <Button onClick={openConfigModal} loading={loading} disabled={loading} className="gap-1.5 shadow-sm">
-              <Plus className="size-4" aria-hidden="true" />
-              {loading ? tr("Generating...") : tr("Create Report")}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={openConfigModal}
+              className="gap-1.5 text-xs text-text-secondary hover:text-text"
+            >
+              <SlidersHorizontal className="size-3.5" aria-hidden="true" />
+              <span>{tr("Custom Scope Parameters")}</span>
             </Button>
           </div>
         </div>
 
-        {/* Workbench Parameters Grid */}
-        <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(200px,1fr))] items-end">
-          {selectBase(
-            tr("Reporting Year *"),
-            reportYear,
-            (e) => setReportYear(e.target.value),
-            <>
-              <option value="all">{tr("All Years")}</option>
-              {years.length > 0 ? (
-                years.map((y) => (
-                  <option key={y} value={y}>
-                    {y}
-                  </option>
-                ))
-              ) : (
-                <option value={new Date().getFullYear()}>{new Date().getFullYear()}</option>
+        {/* Mode Selector Segmented Tabs */}
+        <div className="flex flex-col gap-2">
+          <label className="text-xs font-semibold text-text-secondary uppercase tracking-wider">
+            {tr("Select Publication Scope & Architecture:")}
+          </label>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 p-1 bg-slate-100/80 dark:bg-slate-900/60 rounded-xl border border-border/60">
+            <button
+              type="button"
+              onClick={() => setMasterMode("regional")}
+              className={cn(
+                "flex items-center justify-center gap-2.5 py-2.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer border-0",
+                masterMode === "regional"
+                  ? "bg-brand-600 text-white shadow-sm ring-1 ring-brand-600"
+                  : "bg-transparent text-text-secondary hover:text-text hover:bg-surface/60"
               )}
-            </>,
-          )}
-
-          {selectBase(
-            tr("Target Scope"),
-            scope,
-            (e) => setScope(e.target.value),
-            <>
-              <option value="all">{tr("Total Inventory (Scope 1, 2, 3)")}</option>
-              <option value="1">{tr("Scope 1 (Direct)")}</option>
-              <option value="2">{tr("Scope 2 (Indirect)")}</option>
-              <option value="3">{tr("Scope 3 (Value Chain)")}</option>
-            </>,
-          )}
-
-          {selectBase(
-            tr("Compare With"),
-            comparisonYear,
-            (e) => setComparisonYear(e.target.value),
-            <>
-              <option value="none">{tr("None (Single Year)")}</option>
-              {years
-                .filter((y) => y.toString() !== reportYear)
-                .map((y) => (
-                  <option key={y} value={y}>
-                    {y}
-                  </option>
-                ))}
-              {baseYear && <option value="baseline">{tr("Baseline (")}{baseYear})</option>}
-            </>,
-          )}
-
-          {selectBase(tr("GWP Metric Standard"), reportGwpStandard, onGwp, gwpOptions())}
-
-          <div className="flex w-full flex-col gap-1.5 [grid-column:span_2] max-[640px]:[grid-column:auto]">
-            <span className="text-xs font-semibold text-text-secondary">
-              {tr("Target Facilities / Operating Units")}
-            </span>
-            <React.Suspense fallback={<div className="text-xs text-text-secondary">{tr("Loading facilities...")}</div>}>
-              <MultiSelectDropdown
-                options={regionOptions}
-                selectedValues={reportSelectedRegions}
-                onChange={setReportSelectedRegions}
-                label={tr("Select facilities (empty for consolidated all)...")}
-              />
-            </React.Suspense>
+            >
+              <Building2 className="size-4" />
+              <span>{tr("Regional Asset Master Report")}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setMasterMode("national")}
+              className={cn(
+                "flex items-center justify-center gap-2.5 py-2.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer border-0",
+                masterMode === "national"
+                  ? "bg-brand-600 text-white shadow-sm ring-1 ring-brand-600"
+                  : "bg-transparent text-text-secondary hover:text-text hover:bg-surface/60"
+              )}
+            >
+              <Globe className="size-4" />
+              <span>{tr("Consolidated Sonatrach Group")}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setMasterMode("comparison")}
+              className={cn(
+                "flex items-center justify-center gap-2.5 py-2.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer border-0",
+                masterMode === "comparison"
+                  ? "bg-brand-600 text-white shadow-sm ring-1 ring-brand-600"
+                  : "bg-transparent text-text-secondary hover:text-text hover:bg-surface/60"
+              )}
+            >
+              <Table className="size-4" />
+              <span>{tr("Cross-Basin Benchmark League")}</span>
+            </button>
           </div>
         </div>
 
-        {reportSelectedRegions.length > 0 && (
-          <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-border/60">
-            <span className="text-xs font-semibold text-text-secondary mr-1">{tr("Selected Facilities:")}</span>
-            {reportSelectedRegions.map((rId) => {
-              const rName = facilities.find((f) => f.id.toString() === rId)?.name || rId;
-              return (
-                <Badge key={rId} tone="brand" className="gap-1 text-xs py-0.5">
-                  {rName}
-                  <button
-                    type="button"
-                    aria-label={`Remove ${rName}`}
-                    onClick={() => removeRegion(rId)}
-                    className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0"
-                  >
-                    ×
-                  </button>
-                </Badge>
-              );
-            })}
-            <button
-              type="button"
-              onClick={() => setReportSelectedRegions([])}
-              className="text-xs text-brand-600 hover:text-brand-700 hover:underline font-semibold ml-2 cursor-pointer border-0 bg-transparent p-0"
-            >
-              {tr("Clear selection")}
-            </button>
+        {/* Studio Parameters Configuration Grid */}
+        <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(200px,1fr))] items-end">
+          {/* Target Asset or Basin */}
+          <div className="flex flex-col gap-1.5 [grid-column:span_2] max-[640px]:[grid-column:auto]">
+            <label className="text-xs font-semibold text-text-secondary">
+              {masterMode === "regional"
+                ? tr("Target Regional Asset / Basin *")
+                : masterMode === "national"
+                ? tr("Corporate Entity Scope")
+                : tr("Benchmarked Basins")}
+            </label>
+            {masterMode === "regional" ? (
+              <NativeSelect
+                className={controlClass}
+                value={masterRegion}
+                onChange={(e) => setMasterRegion(e.target.value)}
+              >
+                {availableRegions.map((r: any) => (
+                  <option key={r.key} value={r.key}>
+                    {r.name} ({r.segment || "Upstream"} • {r.facility_count || 1} {tr("facilities")})
+                  </option>
+                ))}
+              </NativeSelect>
+            ) : masterMode === "national" ? (
+              <div className="h-9 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-800/80 border border-border text-xs font-medium text-text flex items-center gap-2">
+                <Globe className="size-3.5 text-brand-600" />
+                <span>{tr("National Hydrocarbon Estate (All 26 Production & Refining Facilities)")}</span>
+              </div>
+            ) : (
+              <div className="h-9 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-800/80 border border-border text-xs font-medium text-text flex items-center gap-2">
+                <Table className="size-3.5 text-brand-600" />
+                <span>{tr("All 9 Hydrocarbon Basins & Coastal Corridors (Side-by-Side Comparison)")}</span>
+              </div>
+            )}
           </div>
-        )}
+
+          {/* Timeline: Start Year */}
+          {selectBase(
+            tr("Start Year *"),
+            masterStartYear,
+            (e) => setMasterStartYear(e.target.value),
+            <>
+              {years.map((y) => (
+                <option key={`start-${y}`} value={y}>{y}</option>
+              ))}
+            </>
+          )}
+
+          {/* Timeline: End Year */}
+          {selectBase(
+            tr("End Year *"),
+            masterEndYear,
+            (e) => setMasterEndYear(e.target.value),
+            <>
+              {years.map((y) => (
+                <option key={`end-${y}`} value={y}>{y}</option>
+              ))}
+            </>
+          )}
+
+          {/* GWP Metric Standard */}
+          {selectBase(
+            tr("GWP Metric Standard"),
+            masterGwp,
+            (e) => setMasterGwp(e.target.value),
+            gwpOptions()
+          )}
+
+          {/* Publication Language */}
+          {selectBase(
+            tr("Language"),
+            masterLanguage,
+            (e) => setMasterLanguage(e.target.value as "en" | "fr"),
+            <>
+              <option value="en">{tr("English (Executive)")}</option>
+              <option value="fr">{tr("Français (Réglementaire)")}</option>
+            </>
+          )}
+        </div>
+
+        {/* Live Operational & Geological Intelligence Snapshot */}
+        <div className="rounded-xl border border-brand-200/80 dark:border-slate-800 bg-brand-50/40 dark:bg-slate-900/40 p-4 transition-all">
+          <div className="flex items-center gap-2 mb-2 text-xs font-bold text-brand-700 dark:text-brand-400">
+            <ShieldCheck className="size-4" />
+            <span>{tr("Authentic Regional Profile & Statutory Alignment Snapshot:")}</span>
+          </div>
+
+          {masterMode === "regional" ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div className="flex flex-col gap-0.5">
+                <span className="text-2xs font-bold uppercase tracking-wider text-text-secondary">{tr("Sedimentary Basin:")}</span>
+                <span className="font-semibold text-text">{REGION_INTEL[masterRegion]?.basin || tr("Algerian Saharan Basin")}</span>
+              </div>
+              <div className="flex flex-col gap-0.5">
+                <span className="text-2xs font-bold uppercase tracking-wider text-text-secondary">{tr("Operating Unit:")}</span>
+                <span className="font-semibold text-text">{REGION_INTEL[masterRegion]?.operator || tr("Société Nationale Sonatrach")}</span>
+              </div>
+              <div className="flex flex-col gap-0.5">
+                <span className="text-2xs font-bold uppercase tracking-wider text-text-secondary">{tr("Decree 21-330 Flaring Cap:")}</span>
+                <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                  {tr("Mandated Threshold <= 1.00% (Article 9)")}
+                </span>
+              </div>
+              <div className="md:col-span-3 pt-1 text-2xs text-text-secondary border-t border-brand-200/40">
+                <span className="font-semibold text-text">{tr("Geological & Technical Architecture:")} </span>
+                {REGION_INTEL[masterRegion]?.highlights || tr("Cambro-Ordovician and Triassic reservoir formations connected via multi-facility gathering.")}
+              </div>
+            </div>
+          ) : masterMode === "national" ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div className="flex flex-col gap-0.5">
+                <span className="text-2xs font-bold uppercase tracking-wider text-text-secondary">{tr("National Estate:")}</span>
+                <span className="font-semibold text-text">{tr("Over 20,000 km pipelines, 5 CPFs, 6 gas complexes, 4 LNG hubs")}</span>
+              </div>
+              <div className="flex flex-col gap-0.5">
+                <span className="text-2xs font-bold uppercase tracking-wider text-text-secondary">{tr("Mandate & Standard:")}</span>
+                <span className="font-semibold text-text">{tr("ISO 14064-1:2018 / Décret 21-330 / Décret 06-138 / OGMP 2.0")}</span>
+              </div>
+              <div className="flex flex-col gap-0.5">
+                <span className="text-2xs font-bold uppercase tracking-wider text-text-secondary">{tr("Climate Roadmap:")}</span>
+                <span className="font-semibold text-emerald-600 dark:text-emerald-400">{tr("World Bank Zero Routine Flaring by 2030")}</span>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div className="flex flex-col gap-0.5">
+                <span className="text-2xs font-bold uppercase tracking-wider text-text-secondary">{tr("League Scope:")}</span>
+                <span className="font-semibold text-text">{tr("Cross-basin comparative ranking across 9 producing and coastal corridors")}</span>
+              </div>
+              <div className="flex flex-col gap-0.5">
+                <span className="text-2xs font-bold uppercase tracking-wider text-text-secondary">{tr("Key Performance Indicators:")}</span>
+                <span className="font-semibold text-text">{tr("kg CO2e/BOE, Flaring % vs Decree 21-330, and NGSI Methane wt.%")}</span>
+              </div>
+              <div className="flex flex-col gap-0.5">
+                <span className="text-2xs font-bold uppercase tracking-wider text-text-secondary">{tr("Deliverables:")}</span>
+                <span className="font-semibold text-brand-600 dark:text-brand-400">{tr("300 DPI Vector League Charts + Multi-Tab Audit Matrix")}</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Action Controls Footer */}
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-border/80">
+          <div className="flex items-center gap-2 text-2xs text-text-secondary">
+            <span className="inline-block size-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>{tr("Synchronous streaming with cryptographic SHA-256 tamper-evident fingerprint.")}</span>
+          </div>
+
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <Button
+              variant="secondary"
+              onClick={handleDownloadBenchmarkExcel}
+              loading={masterExcelLoading}
+              disabled={masterExcelLoading || masterLoading}
+              className="gap-2 shadow-2xs font-semibold"
+            >
+              <FileSpreadsheet className="size-4 text-emerald-600" aria-hidden="true" />
+              <span>{masterExcelLoading ? tr("Exporting Excel...") : tr("Export Benchmark (Excel)")}</span>
+            </Button>
+
+            <Button
+              variant="primary"
+              onClick={handleDownloadMasterReport}
+              loading={masterLoading}
+              disabled={masterLoading || masterExcelLoading}
+              className="gap-2 shadow-sm font-bold bg-brand-600 hover:bg-brand-700 text-white"
+            >
+              <Download className="size-4" aria-hidden="true" />
+              <span>
+                {masterLoading
+                  ? tr("Compiling 300 DPI Publication...")
+                  : masterMode === "regional"
+                  ? tr("Download Regional Master (PDF)")
+                  : masterMode === "national"
+                  ? tr("Download Consolidated Master (PDF)")
+                  : tr("Download Cross-Basin Benchmark (PDF)")}
+              </span>
+            </Button>
+          </div>
+        </div>
       </Card>
 
       {/* Separate Card 2: Emissions Activity Ledger & Data Filters */}
@@ -1076,7 +1364,7 @@ const Reports: React.FC = () => {
                 <option value="all">{tr("All Regions & Facilities")}</option>
                 {facilities.map((f) => (
                   <option key={f.id} value={f.id}>
-                    {f.name} {f.field ? ` - ${f.field}` : ""}
+                    {f.name} {f.region ? ` (${f.region})` : f.field ? ` - ${f.field}` : ""}
                   </option>
                 ))}
               </>,

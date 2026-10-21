@@ -299,13 +299,9 @@ class AssociatedGasVentingCalculator(BaseCalculator):
         # TIER 2: ENGINEERING GOR MASS BALANCE (API Eq. 6-8 & 6-9)
         # =====================================================================
         elif resolved_tier == Tier.T2:
-            self.validate_inputs({"oil_production": oil_production, "gor": gor}, ["oil_production", "gor"])
+            self.validate_inputs({"oil_production": oil_production, "gor": gor}, ["oil_production", "gor"])  # >= 0
             oil_val = float(oil_production)
-            if oil_val < 0.0:
-                raise ValueError(f"Oil production cannot be negative: {oil_val}")
             gor_val = float(gor)
-            if gor_val < 0.0:
-                raise ValueError(f"GOR cannot be negative: {gor_val}")
 
             # Physical plausibility check on GOR
             if gor_val > 100_000.0:

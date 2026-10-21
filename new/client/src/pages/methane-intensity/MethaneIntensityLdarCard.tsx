@@ -88,7 +88,9 @@ export const MethaneIntensityLdarCard: React.FC<MethaneIntensityLdarCardProps> =
   // Filter facilities based on current top bar selections
   const matchingFacilityIds = useMemo(() => {
     if (selectedFacilityId && selectedFacilityId !== "all") {
-      return new Set([String(selectedFacilityId)]);
+      if (selectedFacilityId === "none") return new Set<string>();
+      const ids = String(selectedFacilityId).split(",").map((s) => s.trim()).filter(Boolean);
+      return new Set(ids);
     }
     let facs = facilities;
     if (currentActivity && currentActivity !== "all") {
@@ -103,8 +105,13 @@ export const MethaneIntensityLdarCard: React.FC<MethaneIntensityLdarCardProps> =
   // Selected facility name for display
   const facilityDisplayName = useMemo(() => {
     if (selectedFacilityId && selectedFacilityId !== "all") {
-      const match = facilities.find((f) => String(f.id) === String(selectedFacilityId));
-      return match?.name || t("Selected Facility");
+      if (selectedFacilityId === "none") return t("No Facility Selected");
+      const ids = String(selectedFacilityId).split(",").map((s) => s.trim()).filter(Boolean);
+      if (ids.length === 1) {
+        const match = facilities.find((f) => String(f.id) === ids[0]);
+        return match?.name || t("Selected Facility");
+      }
+      return `${ids.length} ${t("Facilities Selected")}`;
     }
     return t("Enterprise Scope");
   }, [facilities, selectedFacilityId]);
@@ -112,16 +119,18 @@ export const MethaneIntensityLdarCard: React.FC<MethaneIntensityLdarCardProps> =
   // Filtered components
   const filteredComponents = useMemo(() => {
     return components.filter((c) => {
+      if (selectedFacilityId === "none") return false;
       if (matchingFacilityIds.size > 0 && !matchingFacilityIds.has(String(c.facility_id))) {
         return false;
       }
       return true;
     });
-  }, [components, matchingFacilityIds]);
+  }, [components, matchingFacilityIds, selectedFacilityId]);
 
   // Filtered surveys (by facility and year)
   const filteredSurveys = useMemo(() => {
     return surveys.filter((s) => {
+      if (selectedFacilityId === "none") return false;
       if (matchingFacilityIds.size > 0 && !matchingFacilityIds.has(String(s.facility_id))) {
         return false;
       }
@@ -132,7 +141,7 @@ export const MethaneIntensityLdarCard: React.FC<MethaneIntensityLdarCardProps> =
       }
       return true;
     });
-  }, [surveys, matchingFacilityIds, selectedYear]);
+  }, [surveys, matchingFacilityIds, selectedYear, selectedFacilityId]);
 
   // Aggregate metrics
   const totalComponents = useMemo(() => {

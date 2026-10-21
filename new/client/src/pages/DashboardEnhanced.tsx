@@ -12,6 +12,7 @@ import api from "../api";
 import { useToast } from "../components/Toast";
 import LoadingSpinner from "../components/LoadingSpinner";
 import CustomDropdown from "../components/CustomDropdown";
+import MultiSelectDropdown from "../components/MultiSelectDropdown";
 import { calculateTrend } from "../utils/formatters";
 import { useLayout } from "../context/LayoutContext";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
@@ -694,21 +695,38 @@ const DashboardEnhanced: React.FC = () => {
     ];
   };
 
-  const getRegionOptions = () => {
+  const regionOptions = useMemo(() => {
     const filtered = facilities.filter(
       (f) =>
         (currentSegment === "all" || f.segment === currentSegment) &&
         (currentActivity === "all" || f.activity === currentActivity) &&
         (currentDivision === "all" || f.division === currentDivision),
     );
-    return [
-      { value: "all", label: tr("All Regions") },
-      ...filtered.map((f) => ({
-        value: f.id.toString(),
-        label: f.name,
-        subLabel: f.field,
-      })),
-    ];
+    return filtered.map((f) => ({
+      value: f.id.toString(),
+      label: f.name,
+      subLabel: f.region || f.field,
+    }));
+  }, [facilities, currentSegment, currentActivity, currentDivision]);
+
+  const selectedRegionValues = useMemo(() => {
+    if (currentRegion === "all") {
+      return regionOptions.map((o) => o.value);
+    }
+    if (currentRegion === "none" || !currentRegion) {
+      return [];
+    }
+    return currentRegion.split(",").map((s) => s.trim()).filter(Boolean);
+  }, [currentRegion, regionOptions]);
+
+  const handleRegionChange = (newSelected: (string | number)[]) => {
+    if (newSelected.length === 0) {
+      setCurrentRegion("none");
+    } else if (newSelected.length === regionOptions.length) {
+      setCurrentRegion("all");
+    } else {
+      setCurrentRegion(newSelected.map(String).join(","));
+    }
   };
 
   const getYearOptions = () => {
@@ -829,11 +847,12 @@ const DashboardEnhanced: React.FC = () => {
           />
         </div>
         <div className="filter-wrapper">
-          <CustomDropdown
-            options={getRegionOptions()}
-            value={currentRegion}
-            onChange={(val: any) => setCurrentRegion(val)}
-            placeholder={tr("Region")}
+          <MultiSelectDropdown
+            options={regionOptions}
+            selectedValues={selectedRegionValues}
+            onChange={handleRegionChange}
+            placeholder={tr("Region / Facility")}
+            allSelectedLabel={tr("All Regions & Facilities")}
           />
         </div>
       </div>,

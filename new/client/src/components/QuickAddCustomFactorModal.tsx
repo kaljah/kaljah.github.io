@@ -25,6 +25,21 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [includeGasComp, setIncludeGasComp] = useState<boolean>(false);
+  const [gasComp, setGasComp] = useState({
+    ch4_mol_pct: "",
+    c2h6_mol_pct: "",
+    c3h8_mol_pct: "",
+    ic4_mol_pct: "",
+    nc4_mol_pct: "",
+    ic5_mol_pct: "",
+    nc5_mol_pct: "",
+    c6_plus_mol_pct: "",
+    co2_mol_pct: "",
+    n2_mol_pct: "",
+    h2s_ppm: "",
+  });
+
   const [formData, setFormData] = useState({
     factor_name: "",
     unit: "kg/MMBtu",
@@ -72,6 +87,19 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
         parent_fuel: formData.parent_fuel || undefined,
         source: formData.source.trim() || "Facility Laboratory GC / Delivery Analysis",
         description: formData.description.trim() || undefined,
+        gas_composition: includeGasComp ? {
+          ch4_mol_pct: parseFloat(gasComp.ch4_mol_pct) || 0,
+          c2h6_mol_pct: parseFloat(gasComp.c2h6_mol_pct) || 0,
+          c3h8_mol_pct: parseFloat(gasComp.c3h8_mol_pct) || 0,
+          ic4_mol_pct: parseFloat(gasComp.ic4_mol_pct) || 0,
+          nc4_mol_pct: parseFloat(gasComp.nc4_mol_pct) || 0,
+          ic5_mol_pct: parseFloat(gasComp.ic5_mol_pct) || 0,
+          nc5_mol_pct: parseFloat(gasComp.nc5_mol_pct) || 0,
+          c6_plus_mol_pct: parseFloat(gasComp.c6_plus_mol_pct) || 0,
+          co2_mol_pct: parseFloat(gasComp.co2_mol_pct) || 0,
+          n2_mol_pct: parseFloat(gasComp.n2_mol_pct) || 0,
+          h2s_ppm: parseFloat(gasComp.h2s_ppm) || 0,
+        } : undefined,
       };
 
       const res = await api.post("/custom-factors", payload);
@@ -141,7 +169,8 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
             type="button"
             onClick={onClose}
             disabled={loading}
-            className="[border:none]! bg-[color:transparent]! text-[color:var(--color-legacy-9ca3af)]! cursor-pointer! p-[4px]! rounded-[4px]!"
+            aria-label="Close"
+            className="close-btn [border:none]! bg-[color:transparent]! text-[color:var(--color-legacy-9ca3af)]! cursor-pointer! p-[4px]! rounded-[4px]!"
           >
             <X size={20} />
           </button>
@@ -321,6 +350,117 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
                 </div>
               </div>
             </div>
+
+            {/* Gas Stream Composition Trigger & Inputs */}
+            {(() => {
+              const molSum = (
+                (Number(gasComp.ch4_mol_pct) || 0) +
+                (Number(gasComp.c2h6_mol_pct) || 0) +
+                (Number(gasComp.c3h8_mol_pct) || 0) +
+                (Number(gasComp.ic4_mol_pct) || 0) +
+                (Number(gasComp.nc4_mol_pct) || 0) +
+                (Number(gasComp.ic5_mol_pct) || 0) +
+                (Number(gasComp.nc5_mol_pct) || 0) +
+                (Number(gasComp.c6_plus_mol_pct) || 0) +
+                (Number(gasComp.co2_mol_pct) || 0) +
+                (Number(gasComp.n2_mol_pct) || 0)
+              );
+
+              const handleNormalizeModal = () => {
+                if (molSum <= 0) return;
+                const factor = 100.0 / molSum;
+                const round3 = (v: any) => (Number(v) || 0) > 0 ? ((Number(v) || 0) * factor).toFixed(3) : "";
+                setGasComp({
+                  ch4_mol_pct: round3(gasComp.ch4_mol_pct),
+                  c2h6_mol_pct: round3(gasComp.c2h6_mol_pct),
+                  c3h8_mol_pct: round3(gasComp.c3h8_mol_pct),
+                  ic4_mol_pct: round3(gasComp.ic4_mol_pct),
+                  nc4_mol_pct: round3(gasComp.nc4_mol_pct),
+                  ic5_mol_pct: round3(gasComp.ic5_mol_pct),
+                  nc5_mol_pct: round3(gasComp.nc5_mol_pct),
+                  c6_plus_mol_pct: round3(gasComp.c6_plus_mol_pct),
+                  co2_mol_pct: round3(gasComp.co2_mol_pct),
+                  n2_mol_pct: round3(gasComp.n2_mol_pct),
+                  h2s_ppm: gasComp.h2s_ppm,
+                });
+              };
+
+              const MODAL_PVT_FIELDS = [
+                { key: "ch4_mol_pct" as const, label: "CH₄", name: "Methane", unit: "mol %", placeholder: "78.4" },
+                { key: "c2h6_mol_pct" as const, label: "C₂H₆", name: "Ethane", unit: "mol %", placeholder: "12.1" },
+                { key: "c3h8_mol_pct" as const, label: "C₃H₈", name: "Propane", unit: "mol %", placeholder: "5.2" },
+                { key: "ic4_mol_pct" as const, label: "i-C₄H₁₀", name: "i-Butane", unit: "mol %", placeholder: "0.8" },
+                { key: "nc4_mol_pct" as const, label: "n-C₄H₁₀", name: "n-Butane", unit: "mol %", placeholder: "1.2" },
+                { key: "ic5_mol_pct" as const, label: "i-C₅H₁₂", name: "i-Pentane", unit: "mol %", placeholder: "0.4" },
+                { key: "nc5_mol_pct" as const, label: "n-C₅H₁₂", name: "n-Pentane", unit: "mol %", placeholder: "0.5" },
+                { key: "c6_plus_mol_pct" as const, label: "C₆+", name: "Hexanes+", unit: "mol %", placeholder: "0.3" },
+                { key: "co2_mol_pct" as const, label: "CO₂", name: "Carbon Dioxide", unit: "mol %", placeholder: "2.1" },
+                { key: "n2_mol_pct" as const, label: "N₂", name: "Nitrogen", unit: "mol %", placeholder: "2.2" },
+                { key: "h2s_ppm" as const, label: "H₂S", name: "Hydrogen Sulfide", unit: "ppm", placeholder: "0.0" },
+              ];
+
+              return (
+                <div className="bg-[color:var(--color-legacy-f9fafb)]! [border:1px_solid_var(--color-legacy-e5e7eb)]! rounded-[8px]! p-[12px]!">
+                  <div className="flex! items-center! justify-between! mb-[6px]!">
+                    <div className="flex items-center gap-2">
+                      <label className="text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-4b5563)]! uppercase! [letter-spacing:0.025em]!">
+                        {t("PVT & Chromatography Stream Composition")}
+                      </label>
+                      {includeGasComp && (
+                        <span className={`text-[10px] px-1.5 py-0.2 rounded font-mono font-semibold ${
+                          molSum >= 99.5 && molSum <= 100.5
+                            ? "bg-green-100 text-green-800"
+                            : molSum === 0
+                            ? "bg-slate-100 text-slate-600"
+                            : "bg-amber-100 text-amber-800"
+                        }`}>
+                          {molSum >= 99.5 && molSum <= 100.5 ? `✓ ${molSum.toFixed(2)}%` : `Σ = ${molSum.toFixed(2)}%`}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {includeGasComp && molSum > 0 && Math.abs(molSum - 100) > 0.05 && (
+                        <button
+                          type="button"
+                          onClick={handleNormalizeModal}
+                          className="text-[11px] px-2 py-0.5 bg-orange-600 text-white rounded font-medium hover:bg-orange-700"
+                        >
+                          Normalize
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => setIncludeGasComp(!includeGasComp)}
+                        className="text-[length:0.75rem]! text-orange-600 font-semibold hover:underline flex! items-center! gap-[4px]!"
+                      >
+                        <PlusCircle size={13} />
+                        {includeGasComp ? t("Remove Composition") : t("Include Gas Composition")}
+                      </button>
+                    </div>
+                  </div>
+                  {includeGasComp && (
+                    <div className="[display:grid]! [grid-template-columns:repeat(3,1fr)]! sm:[grid-template-columns:repeat(4,1fr)]! [gap:6px]! mt-[8px]!">
+                      {MODAL_PVT_FIELDS.map((fld) => (
+                        <div key={fld.key} className="bg-white p-1.5 rounded border border-slate-200">
+                          <div className="flex justify-between items-center mb-0.5">
+                            <span className="text-[10px] font-bold text-slate-700">{fld.label}</span>
+                            <span className="text-[9px] text-slate-400">{fld.unit}</span>
+                          </div>
+                          <Input
+                            type="number"
+                            step="any"
+                            className="w-full! p-[3px_6px]! text-[length:0.75rem]! font-mono"
+                            placeholder={fld.placeholder}
+                            value={gasComp[fld.key]}
+                            onChange={(e) => setGasComp({ ...gasComp, [fld.key]: e.target.value })}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
 
             {/* Audit Reference / Source */}
             <div>

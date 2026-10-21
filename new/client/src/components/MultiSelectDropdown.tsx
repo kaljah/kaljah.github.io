@@ -17,6 +17,9 @@ export interface MultiSelectDropdownProps {
   selectedValues?: (string | number)[];
   onChange?: (values: any[]) => void;
   label?: string;
+  placeholder?: string;
+  allSelectedLabel?: string;
+  disabled?: boolean;
 }
 
 interface DropdownPosition {
@@ -32,6 +35,9 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
   selectedValues = [],
   onChange,
   label = t("Select..."),
+  placeholder,
+  allSelectedLabel,
+  disabled = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [position, setPosition] = useState<DropdownPosition | null>(null);
@@ -65,6 +71,7 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
   }, []);
 
   const handleToggle = () => {
+    if (disabled) return;
     if (!isOpen) {
       updatePosition();
       setIsOpen(true);
@@ -110,9 +117,13 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
     };
   }, [isOpen, updatePosition]);
 
+  const isSelected = (value: string | number) =>
+    selectedValues.some((v) => String(v) === String(value));
+
   const toggleOption = (value: string | number) => {
-    const newSelected = selectedValues.includes(value)
-      ? selectedValues.filter((v) => v !== value)
+    const stringVal = String(value);
+    const newSelected = isSelected(value)
+      ? selectedValues.filter((v) => String(v) !== stringVal)
       : [...selectedValues, value];
     onChange?.(newSelected);
   };
@@ -125,19 +136,33 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
     }
   };
 
+  const getDisplayText = () => {
+    if (selectedValues.length === 0) {
+      return placeholder || label || t("Select...");
+    }
+    if (options.length > 0 && selectedValues.length === options.length) {
+      return allSelectedLabel || label || t("All Selected");
+    }
+    if (selectedValues.length === 1) {
+      const single = options.find((o) => String(o.value) === String(selectedValues[0]));
+      return single ? single.label : `1 ${t("Selected")}`;
+    }
+    return `${selectedValues.length} ${t("Selected")}`;
+  };
+
   return (
     <div
-      className={`custom-dropdown [position:relative]! [width:100%]! ${isOpen ? "open" : ""}`}
+      className={`custom-dropdown ${isOpen ? "open" : ""}`}
       ref={dropdownRef}
     >
-      <div
-        className="dropdown-selected p-[10px_12px]! [border:1px_solid_var(--border-color)]! rounded-[6px]! bg-[color:var(--bg-card)]! text-[color:var(--text-primary)]! cursor-pointer! flex! justify-between! items-center! min-h-[42px]!"
+      <button
+        type="button"
+        disabled={disabled}
+        className="dropdown-selected"
         onClick={handleToggle}
-        role="button"
-        tabIndex={0}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
-        aria-label={label}
+        aria-label={placeholder || label}
         onKeyDown={(e) => {
           // BUG-107: keyboard access to the multi-select trigger
           if (e.key === "Enter" || e.key === " ") {
@@ -149,15 +174,11 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
           }
         }}
       >
-        <span className="whitespace-nowrap! overflow-hidden! [text-overflow:ellipsis]!">
-          {selectedValues.length === 0
-            ? label
-            : selectedValues.length === options.length
-              ? t("All Selected")
-              : `${selectedValues.length} Selected`}
+        <span className="[display:flex] [align-items:center] [overflow:hidden] [text-overflow:ellipsis] [white-space:nowrap]">
+          {getDisplayText()}
         </span>
         <ChevronDown size={14} aria-hidden="true" />
-      </div>
+      </button>
 
       {isOpen &&
         position &&
@@ -190,42 +211,42 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
                 ? t("Deselect All")
                 : t("Select All")}
             </div>
-            {options.map((opt) => (
-              <div
-                role="button"
-                tabIndex={0}
-                onKeyDown={activateOnKey}
-                key={String(opt.value)}
-                className="dropdown-option"
-                onClick={() => toggleOption(opt.value)}
-                style={{
-                  padding: "8px 12px",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  background: selectedValues.includes(opt.value)
-                    ? "var(--bg-hover)"
-                    : "transparent",
-                }}
-              >
-                <input
-                  type="checkbox"
-                  checked={selectedValues.includes(opt.value)}
-                  readOnly
-                  className="cursor-pointer!"
-                />
-                <span>
-                  {opt.label}
-                  {opt.subLabel && (
-                    <span className="text-[length:0.72rem]! text-[color:var(--color-ink-600)]! ml-[4px]! font-medium!">
-                      {" "}
-                      - {opt.subLabel}
-                    </span>
-                  )}
-                </span>
-              </div>
-            ))}
+            {options.map((opt) => {
+              const checked = isSelected(opt.value);
+              return (
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={activateOnKey}
+                  key={String(opt.value)}
+                  className="dropdown-option"
+                  onClick={() => toggleOption(opt.value)}
+                  style={{
+                    padding: "8px 12px",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    background: checked ? "var(--bg-hover)" : "transparent",
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    readOnly
+                    className="cursor-pointer!"
+                  />
+                  <span className="[display:flex] [align-items:center] [gap:4px] [min-width:0] [overflow:hidden] [text-overflow:ellipsis] [white-space:nowrap]">
+                    <span className="font-medium!">{opt.label}</span>
+                    {opt.subLabel && (
+                      <span className="text-[length:0.75rem]! text-[color:var(--color-ink-600)]! opacity-80">
+                        ({opt.subLabel})
+                      </span>
+                    )}
+                  </span>
+                </div>
+              );
+            })}
           </div>,
           document.body,
         )}

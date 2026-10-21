@@ -3,6 +3,7 @@ from sqlalchemy import func
 from . import emissions_bp
 from utils import facility_access_error, get_allowed_facility_ids, get_current_user, internal_error, log_activity_and_notify
 from input_validation import choice
+from services.dashboard_filters import _parse_facility_ids
 from models import CustomFactor, Emission, Facility, Goal, Notification, Scope2Emission, Scope3Emission, User
 from extensions import db, limiter
 from services.labels import process_label, scope2_source_label
@@ -167,8 +168,12 @@ def get_emissions():
                 pass
         if status_arg and status_arg != "all" and hasattr(model, "status"):
             q = q.filter(model.status.in_([x.strip() for x in status_arg.split(",") if x.strip()]))
-        if facility_id and facility_id != "all" and str(facility_id).isdigit():
-            q = q.filter(model.facility_id == int(facility_id))
+        parsed_fids = _parse_facility_ids(facility_id)
+        if parsed_fids is not None:
+            if hasattr(model, "facility_id"):
+                q = q.filter(model.facility_id.in_(parsed_fids))
+            elif model == Facility:
+                q = q.filter(Facility.id.in_(parsed_fids))
         # NEW-07 FIX: escape LIKE wildcards before filtering
         if division_arg and division_arg != "all":
             q = q.filter(

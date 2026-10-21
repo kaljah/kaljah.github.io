@@ -136,7 +136,8 @@ class CombustionMethodCalculator(BaseCalculator):
         unit = str(i.get("fuel_volume_unit") or i.get("unit") or "").strip().lower()
         if fuel == "natural_gas":
             scf = vol * _unit(unit, GAS_TO_SCF, "Fuel gas volume")
-            hhv_btu_scf = _num(i.get("hhv_btu_scf") or i.get("hhv"), "HHV (Btu/scf)", FUEL_BASIS["natural_gas"]["hhv"] * 1e6)
+            hhv_in = i.get("hhv_btu_scf") if i.get("hhv_btu_scf") not in (None, "") else i.get("hhv")
+            hhv_btu_scf = _num(hhv_in, "HHV (Btu/scf)", FUEL_BASIS["natural_gas"]["hhv"] * 1e6, positive=True)
             return scf * hhv_btu_scf / 1e6
         gal = vol * _unit(unit, LIQ_TO_GAL, "Fuel volume")
         return gal * _num(i.get("hhv_mmbtu_gal"), "HHV (MMBtu/gal)", FUEL_BASIS[fuel]["hhv"], positive=True)

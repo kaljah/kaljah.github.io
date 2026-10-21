@@ -7,6 +7,7 @@ from flask import jsonify, request
 from routes.auth import login_required
 from sqlalchemy import func
 from utils import get_allowed_facility_ids, get_current_user
+from services.dashboard_filters import _parse_facility_ids
 from routes.dashboard import dashboard_bp, is_it_role
 
 
@@ -45,16 +46,13 @@ def get_sbti_trajectory():
     q_s2 = Scope2Emission.query.filter_by(status="Verified")
     q_s3 = Scope3Emission.query.filter_by(status="Verified")
     
-    if facility_id and facility_id != "all":
-        try:
-            fid = int(facility_id)
-            if allowed_fids is not None and fid not in allowed_fids:
-                return jsonify({"error": "Unauthorized facility"}), 403
-            q_s1 = q_s1.filter_by(facility_id=fid)
-            q_s2 = q_s2.filter_by(facility_id=fid)
-            q_s3 = q_s3.filter_by(facility_id=fid)
-        except ValueError:
-            return jsonify({"error": "Invalid facility_id"}), 400
+    parsed_fids = _parse_facility_ids(facility_id)
+    if parsed_fids is not None:
+        if allowed_fids is not None and not set(parsed_fids).issubset(set(allowed_fids)):
+            return jsonify({"error": "Unauthorized facility"}), 403
+        q_s1 = q_s1.filter(Emission.facility_id.in_(parsed_fids))
+        q_s2 = q_s2.filter(Scope2Emission.facility_id.in_(parsed_fids))
+        q_s3 = q_s3.filter(Scope3Emission.facility_id.in_(parsed_fids))
     elif allowed_fids is not None:
         q_s1 = q_s1.filter(Emission.facility_id.in_(allowed_fids))
         q_s2 = q_s2.filter(Scope2Emission.facility_id.in_(allowed_fids))
@@ -127,7 +125,7 @@ def get_sbti_trajectory():
             return scope3_actuals.get(yr) if yr in scope3_actuals else None
         return actuals.get(yr) if yr in actuals else None
 
-    restricted = allowed_fids is not None or bool(facility_id and facility_id != "all")
+    restricted = allowed_fids is not None or bool(parsed_fids)
     if view == coverage and not restricted:
         baseline = float(target.base_year_emissions)
         baseline_source = "target"
