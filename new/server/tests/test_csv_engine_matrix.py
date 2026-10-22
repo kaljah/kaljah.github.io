@@ -427,25 +427,26 @@ class TestMetrologyAndEngineeringPrecision:
             z_factor=0.0,  # Singularity injection
             press_unit="psig",
         )
-        assert res["total_co2e"] > 0
-        assert not math.isnan(res["total_co2e"])
-        assert not math.isinf(res["total_co2e"])
+        # Z = 0 is read as 1 (ideal gas): 100 m3 x (150 + 14.696) psia / 14.696 x 5 events = 5,603.4 m3 at standard
+        # conditions (the 60 F default is the standard temperature), x 85 % CH4 x 16.04 / 23.685 kg/m3 = 3.226 t
+        v_std = 100.0 * (150.0 + 14.696) / 14.696 * 5
+        assert res["inputs"]["total_v_std_m3"] == pytest.approx(v_std, rel=1e-4)
+        assert res["results"]["ch4"]["value"] == pytest.approx(v_std * 0.85 * 16.04 / 23.685 / 1000.0, rel=2e-3)
+        assert res["total_co2e"] == pytest.approx(28.0 * res["results"]["ch4"]["value"], rel=1e-6)
 
     def test_liquids_unloading_absolute_zero_temperature_defense(self):
-        """Verifies that near-absolute zero temperatures do not produce division-by-zero."""
+        """A gas at absolute zero (-459.67 F) does not exist: the calculation is refused. It used to clamp the
+        temperature to 1 K and report 289 times the emission of the same well at 60 F (10.9 t instead of 0.038 t)."""
         lu_calc = LiquidsUnloadingCalculator()
-        res = lu_calc.calculate(
-            well_depth=5000,
-            diameter=2.5,
-            pressure=100,
-            ch4_content=0.85,
-            events=2,
-            uncertainties={},
-            operating_temperature=-459.67,  # Absolute zero in Fahrenheit
-            temp_unit="F",
-        )
-        assert res["total_co2e"] > 0
-        assert not math.isnan(res["total_co2e"])
+        common = dict(well_depth=5000, diameter=2.5, pressure=100, ch4_content=0.85, events=2, uncertainties={},
+                      temp_unit="F")
+        with pytest.raises(ValueError, match="absolute zero"):
+            lu_calc.calculate(operating_temperature=-459.67, **common)  # absolute zero in Fahrenheit
+        # the same well at the 60 F standard temperature: pi/4 x (2.5/12 ft)^2 x 5,000 ft = 170.4 ft3, vented from
+        # 100 psig: x 100/14.696 scf per event; 2 events; 85 % CH4 -> 0.0378 t
+        res = lu_calc.calculate(operating_temperature=60, **common)
+        scf = math.pi / 4.0 * (2.5 / 12.0) ** 2 * 5000.0 * 100.0 / 14.696 * 2
+        assert res["results"]["ch4"]["value"] == pytest.approx(scf * 0.85 / 379.3 * 16.04 / 2204.62, rel=2e-3)
 
     def test_flaring_dual_efficiency_stoichiometric_mass_balance(self):
         """

@@ -39,8 +39,11 @@ class PneumaticDeviceCalculator(BaseCalculator):
     """
 
     TABLE_6_14_CONTINUOUS = {
-        "high_bleed": {"api_scf_hr": 16.4, "subpart_w_scf_hr": 37.3, "baseline_ch4_mol": 0.816},
-        "low_bleed": {"api_scf_hr": 2.6, "subpart_w_scf_hr": 1.39, "baseline_ch4_mol": 0.816},
+        # Table 6-14 prints a whole-gas and a CH4 factor (scf CH4/hr at 81.6 mol %); Exhibit 6-11 scales the CH4 one
+        "high_bleed": {"api_scf_hr": 16.4, "subpart_w_scf_hr": 37.3, "baseline_ch4_mol": 0.816,
+                       "api_ch4_scf_hr": 13.4, "subpart_w_ch4_scf_hr": 30.4},
+        "low_bleed": {"api_scf_hr": 2.6, "subpart_w_scf_hr": 1.39, "baseline_ch4_mol": 0.816,
+                      "api_ch4_scf_hr": 2.1, "subpart_w_ch4_scf_hr": 1.13},
     }
 
     TABLE_6_15_INTERMITTENT = {
@@ -103,6 +106,7 @@ class PneumaticDeviceCalculator(BaseCalculator):
 
         hrs = max(0.0, float(8760 if hours is None else hours))  # 0 h is zero, not a full year
         total_gas_scf = 0.0
+        ch4_basis_scf = None  # scf of pure CH4 when a table's CH4-basis factor applies (Exhibit 6-11)
         calc_mode = "legacy"
 
         # Case 1: Equation 6-14 Monitoring and Repair Survey Approach (Exhibit 6-12)
@@ -151,6 +155,11 @@ class PneumaticDeviceCalculator(BaseCalculator):
             self.validate_inputs({"count": count}, ["count"])
             n_dev = float(count)
             total_gas_scf = n_dev * self._table_rate(controller_type, source_standard) * hrs
+            row = self.TABLE_6_14_CONTINUOUS.get(str(controller_type).lower().strip())
+            if row:
+                std = "subpart_w" if str(source_standard or "api").lower().strip() == "subpart_w" else "api"
+                # Exhibit 6-11: scf CH4/hr of Table 6-14 x site CH4 mol % / 81.6 mol %; CO2 stays on the whole-gas factor
+                ch4_basis_scf = n_dev * row[f"{std}_ch4_scf_hr"] * hrs * c_ch4 / row["baseline_ch4_mol"]
 
         # Case 4: Backwards compatible intermittent actuation or continuous bleed
         elif actuations is not None and float(actuations) > 0:
@@ -175,7 +184,8 @@ class PneumaticDeviceCalculator(BaseCalculator):
         total_gas_m3 = convert(total_gas_scf, "scf", "m3")
 
         # Mass via ideal gas law at standard conditions
-        total_ch4 = total_gas_scf * SCF_TO_M3 * c_ch4 * CONVERSIONS["density_ch4"] / 1000.0  # engine density convention
+        ch4_scf = total_gas_scf * c_ch4 if ch4_basis_scf is None else ch4_basis_scf
+        total_ch4 = ch4_scf * SCF_TO_M3 * CONVERSIONS["density_ch4"] / 1000.0  # engine density convention
         total_co2 = total_gas_scf * SCF_TO_M3 * c_co2 * CONVERSIONS["density_co2"] / 1000.0
 
         ch4_res, co2_res, n2o_res = _propagate_results(

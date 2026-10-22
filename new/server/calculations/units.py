@@ -110,13 +110,13 @@ def _pressure_unit(unit, default):
     return _PRESSURE_UNITS[u]
 
 
-def to_kelvin(val, unit="c"):
-    """Converts temperature value to Kelvin."""
+def to_kelvin(val, unit="c", above_zero=False):
+    """Converts temperature value to Kelvin; above_zero refuses 0 K too (a gas volume at 0 K does not exist)."""
     if val is None:
         return STD_TEMP_K
     v = float(val)
     k = {"c": v + 273.15, "f": (v - 32.0) * 5.0 / 9.0 + 273.15, "r": v * 5.0 / 9.0, "k": v}[_temp_kind(unit, "c")]
-    if k < 0.0:
+    if k < 0.0 or (above_zero and k < 1e-9):
         raise ValueError(f"Temperature cannot be below absolute zero (0 K): got {k:.2f} K")
     return k
 
@@ -166,8 +166,8 @@ def normalize_gas_volume_to_standard(
 
     # Temperature factor
     if operating_temp is not None and str(operating_temp).strip() != "":
-        t_meas_k = to_kelvin(operating_temp, temp_unit)
-        t_factor = STD_TEMP_K / max(1.0, t_meas_k)
+        t_meas_k = to_kelvin(operating_temp, temp_unit, above_zero=True)
+        t_factor = STD_TEMP_K / t_meas_k
     else:
         t_factor = 1.0
 

@@ -102,15 +102,17 @@ COMBUSTION_FACTORS = {
         "code": "MDO",
         "hhv": 138000,  # marine diesel = distillate No. 2, Table 4-5: 0.138 MMBtu/gal
         "co2": 73.96,  # Table 4-5 distillate No. 2
-        "ch4": 0.003,
-        "n2o": 0.0006,
+        # Table 4-16 "Diesel Ships": 2.5E-04 t CH4/m3 and 7.2E-05 t N2O/m3 (Exhibit 4.13), per MMBtu of
+        # 0.138 MMBtu/gal x 264.172 gal/m3 = 36.456 MMBtu/m3
+        "ch4": 0.25 / (0.138 * 264.172052),
+        "n2o": 0.072 / (0.138 * 264.172052),
         "uncertainty": {"co2": 0.02, "ch4": 0.25, "n2o": 0.30},
         "unit": "kg/MMBtu",
         "usage": ["combustion", "mobile"],
         "segment": "Downstream",
         "process_category": "stationary_combustion",
         "type": "liquids",
-        "source": "API Compendium 2021 Table 4-5 / 4-6 (distillate fuel oil No. 2)",
+        "source": "API Compendium 2021 Table 4-5 (CO2) / Table 4-16 diesel ships (CH4, N2O)",
     },
     "Diesel (No. 2 Fuel Oil)": {
         "code": "DSL",

@@ -796,8 +796,8 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         p_abs = to_psia(pressure, press_unit)
         p_factor = max(0.0, p_abs - STD_PRESSURE_PSIA) / STD_PRESSURE_PSIA
 
-        t_abs_k = to_kelvin(operating_temperature, temp_unit)
-        t_factor = STD_TEMP_K / max(1.0, t_abs_k)
+        t_abs_k = to_kelvin(operating_temperature, temp_unit, above_zero=True)
+        t_factor = STD_TEMP_K / t_abs_k
 
         z = float(z_factor) if z_factor and float(z_factor) > 0 else 1.0
 

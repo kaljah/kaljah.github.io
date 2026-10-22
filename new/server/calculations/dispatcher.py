@@ -1,7 +1,6 @@
 import math
 
-from .units import UnitError, parse_amount
-from .uncertainty import COVERAGE_FACTOR_95
+from .units import CONVERSIONS, UnitError, calculate_co2e, parse_amount
 from input_validation import parse_number
 from .combustion import CombustionCalculator, FlaringCalculator, factor_hhv_unit, user_hhv
 from .vented import (
@@ -32,14 +31,14 @@ from .stoichiometry import StoichiometricCalculator, NitricAcidCalculator
 from .activity_factors import ACTIVITY_FACTORS, ActivityFactorCalculator
 from .vented_gas import VentedGasCalculator
 from .combustion_methods import CombustionMethodCalculator
-from .units import CONVERSIONS, calculate_co2e
+from .fugitive_other import OTHER_FUGITIVE_PROCESSES, dispatch_other_fugitive
 from .uncertainty import (
+    COVERAGE_FACTOR_95,
     propagate_uncertainty,
     resolve_tier,
     resolve_ef_uncertainty,
     PROCESS_CATEGORY,
 )
-
 
 # process-type aliases -> the `processes` names used by ACTIVITY_FACTORS rows
 ACTIVITY_PROCESS_ALIASES = {
@@ -242,6 +241,7 @@ class CalculationDispatcher:
             "desiccant_dehydrator": VentedGasCalculator(),
             "co2_eor": VentedGasCalculator(),
             "thermal_oxidizer": CombustionMethodCalculator(),
+            **OTHER_FUGITIVE_PROCESSES,  # section 7.5 wastewater and 7.6 HFC / SF6
         }
 
     def _require(self, key, inputs, description):
@@ -600,8 +600,8 @@ class CalculationDispatcher:
         """
         if uncertainties is None:
             uncertainties = {}
-        res = self._dispatch_impl(process_type, inputs, emission_factors, uncertainties,
-                                  gwp_dict=gwp_dict, gwp_standard=gwp_standard)
+        impl = dispatch_other_fugitive if process_type in OTHER_FUGITIVE_PROCESSES else self._dispatch_impl
+        res = impl(process_type, inputs, emission_factors, uncertainties, gwp_dict=gwp_dict, gwp_standard=gwp_standard)
         if not isinstance(res, dict) or "results" not in res:
             return res
         calc_inputs = (inputs.get("calc_inputs") or {}).get(process_type, {}) if isinstance(inputs, dict) else {}

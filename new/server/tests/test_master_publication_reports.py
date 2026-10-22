@@ -47,18 +47,39 @@ def auth_headers(client):
 
 
 def test_get_master_report_regions(client, auth_headers):
-    """Verifies that available regions are returned with facility counts."""
-    res = client.get("/api/reports/master-report/regions")
-    assert res.status_code == 200
-    data = res.get_json()
-    assert data["status"] == "success"
-    regions = data["regions"]
-    keys = [r["key"] for r in regions]
-    assert "national" in keys
-    assert "hmd" in keys
-    assert "hrm" in keys
-    assert "berkine" in keys
-    assert all("facility_count" in r for r in regions)
+    """Only regions that have facilities in the database are listed (plus "national"), each with its facility count.
+
+    The test creates its own HMD / HRM / Berkine facilities: it used to assume those regions were already present and
+    failed whenever an earlier test had left other facilities in the shared test database."""
+    codes = ("REGTEST-HMD", "REGTEST-HRM-A", "REGTEST-HRM-B", "REGTEST-BERKINE")
+    with app.app_context():
+        Facility.query.filter(Facility.code.in_(codes)).delete(synchronize_session=False)
+        db.session.add_all([
+            Facility(name="Hassi Messaoud Test Field", code="REGTEST-HMD", region="Hassi Messaoud", segment="Upstream"),
+            Facility(name="Hassi R'mel Test Plant A", code="REGTEST-HRM-A", region="Hassi R'mel", segment="Upstream"),
+            Facility(name="Hassi R'mel Test Plant B", code="REGTEST-HRM-B", region="Hassi R'mel", segment="Upstream"),
+            Facility(name="Berkine Test Field", code="REGTEST-BERKINE", region="Berkine", segment="Upstream"),
+        ])
+        db.session.commit()
+    try:
+        res = client.get("/api/reports/master-report/regions")
+        assert res.status_code == 200
+        data = res.get_json()
+        assert data["status"] == "success"
+        by_key = {r["key"]: r for r in data["regions"]}
+        assert {"national", "hmd", "hrm", "berkine"} <= set(by_key)
+        assert all("facility_count" in r for r in data["regions"])
+        # the counts include the facilities created here (other tests may have left more that also match)
+        assert by_key["hmd"]["facility_count"] >= 1 and "Hassi Messaoud Test Field" in by_key["hmd"]["facility_names"]
+        assert by_key["hrm"]["facility_count"] >= 2
+        assert {"Hassi R'mel Test Plant A", "Hassi R'mel Test Plant B"} <= set(by_key["hrm"]["facility_names"])
+        assert "Berkine Test Field" in by_key["berkine"]["facility_names"]
+        # every facility sits in the national roll-up
+        assert by_key["national"]["facility_count"] >= 4
+    finally:
+        with app.app_context():
+            Facility.query.filter(Facility.code.in_(codes)).delete(synchronize_session=False)
+            db.session.commit()
 
 
 def test_post_master_report_national(client, auth_headers):

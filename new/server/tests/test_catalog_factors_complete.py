@@ -67,11 +67,14 @@ C2 = {
                          "Natural Gas - Heater/Boiler")},
     **{k: _PET for k in ("Propylene", "Butane", "Isobutane", "Naphtha", "Lubricants", "Waste Oil", "Propane (Gas)",
                           "Propane (Liquid)", "Propane (Liquid/LPG)", "Ethane", "Ethane (Gas)", "Diesel (No. 2 Fuel Oil)",
-                          "Marine Diesel Oil", "Residual Fuel Oil (No. 6)", "Kerosene", "Jet Fuel", "Motor Gasoline",
+                          "Residual Fuel Oil (No. 6)", "Kerosene", "Jet Fuel", "Motor Gasoline",
                           "Crude Oil", "Refinery Fuel Gas", "Acetylene")},
     **{k: _COAL for k in ("Anthracite Coal", "Bituminous Coal", "Sub-Bituminous Coal", "Lignite Coal")},
     **{k: _SOLID for k in ("Tires", "Petroleum Coke")},   # EPA EF Hub: 32 g CH4, 4.2 g N2O per MMBtu
     "Blast Furnace Gas": (2.2e-5, 1.0e-4), "Coke Oven Gas": (4.8e-4, 1.0e-4),
+    # Table 4-16 "Diesel Ships" (Exhibit 4.13): 2.5E-04 t CH4 and 7.2E-05 t N2O per m3 of fuel,
+    # divided by 0.138 MMBtu/gal x 264.172 gal/m3 = 36.456 MMBtu/m3
+    "Marine Diesel Oil": (0.25 / (0.138 * 264.172052), 0.072 / (0.138 * 264.172052)),
 }
 
 
@@ -228,7 +231,6 @@ ALIASES = [
     ("Component - Pressure Regulator", "Component - Pressure Regulator (Gathering)"),
     ("Component - Compressor Seal", "Component - Compressor Seal (Gathering)"),
     ("Natural Gas (Flaring)", "Natural Gas (Flaring - Elevated)", "Natural Gas (Flaring - Enclosed)"),
-    ("Diesel (No. 2 Fuel Oil)", "Marine Diesel Oil"),
     ("Drilling - Mud Degassing (Oil Based)", "Drilling - Mud Degassing (Synthetic)"),
 ]
 for group in ALIASES:

@@ -624,8 +624,8 @@ class BlowdownCalculator(BaseCalculator):
             per, gauge = _pressure_unit(press_unit, "psig")
             p_val = float(pressure)
             p_initial_psia = p_val * per + (STD_PRESSURE_PSIA if gauge else 0.0)  # pressure >= 0 (validated)
-            t_abs_k = to_kelvin(operating_temperature, temp_unit)
-            t_factor = STD_TEMP_K / max(1.0, t_abs_k)
+            t_abs_k = to_kelvin(operating_temperature, temp_unit, above_zero=True)
+            t_factor = STD_TEMP_K / t_abs_k
             # Real gas compressibility factor Z (API Section 6.4 / ISO 14064-1 Cl. 5.2.2 / BUG-0014)
             if z_factor is not None and float(z_factor) > 0:
                 z = float(z_factor)

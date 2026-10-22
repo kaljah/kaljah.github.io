@@ -215,7 +215,7 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
     if (
         api_res
         and "results" in api_res
-        and (any(get_val(api_res["results"].get(g)) for g in ["co2", "ch4", "n2o"]) or _tier3_zero or amount == 0)  # 0 is 0
+        and (any(get_val(api_res["results"].get(g)) for g in ["co2", "ch4", "n2o", "f_gas"]) or _tier3_zero or amount == 0)  # 0 is 0
     ):
         # If the dispatcher handled it, return the rich result structure
         # We extract the 'value' for backward compatibility with the legacy database record creation
@@ -237,10 +237,10 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
             (em["co2"] * float(gwp_dict.get("CO2", 1.0)))
             + (em["ch4"] * float(gwp_dict.get("CH4", 28.0)))
             + (em["n2o"] * float(gwp_dict.get("N2O", 265.0)))
+            + float((results.get("f_gas") or {}).get("co2e") or 0)  # HFC / SF6 (sections 7.6)
         )
 
-        # We also attach the full rich result to the emission dict so the route can access it
-        em["_full_api_res"] = api_res
+        em["_full_api_res"] = api_res  # the full rich result, for the route
         return em, api_res.get("method", "api2021_generic")
 
     # The legacy engineering blocks (completions, fugitive screening, pneumatics, dehydrators, tanks,
