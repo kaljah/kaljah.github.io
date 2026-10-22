@@ -24,7 +24,7 @@ Setting `SEED_ADMIN=true` also seeds the admin and IT-admin accounts on startup 
 
 Database Management & Migrations (run from `new/server`):
 ```bash
-flask db upgrade                   # run Alembic migrations up to head (d4e8a1b7c2f0)
+flask db upgrade                   # run Alembic migrations up to head (6a8475783b53)
 python scripts/backup.py [--output-dir DIR]              # PostgreSQL (pg_dump --clean) or SQLite; default dir $BACKUP_DIR or ./backups, keeps the newest $BACKUP_RETAIN_COUNT (14)
 python scripts/restore.py <path/to/backup.sql> --apply   # without --apply: dry run; PostgreSQL restores in one transaction and stops at the first error (nothing changes on failure)
 ```
@@ -71,7 +71,7 @@ Other: `new/setup.bat` / `new/start_all.bat` (Windows native launch scripts for 
 ## Backend architecture
 
 - **`app.py` creates a module-level `app`, not a factory.** Tests use `from app import app`. Importing it has side effects: it runs `init_schema()`, creates indexes and optionally seeds admins. `init_schema()` upgrades the database to the Alembic head outside production (or with `AUTO_MIGRATE=true`) and refuses to start in production if the database is behind head (`AUTO_MIGRATE=false` disables the auto-upgrade). It does not call `db.create_all()`; only `seed_admin.py` and `build_csv_guide.py` do, and `schema_sync.py`'s docstring is out of date on this point.
-- **Schema changes.** Alembic migrations (`migrations/`) manage schema evolution up to head revision `d4e8a1b7c2f0` (audit log hash chain: `activity_log.prev_hash` / `entry_hash`, existing rows sealed, append-only trigger on PostgreSQL), after `c3f9a2d18e47` (`import_mappings`, saved import column mappings), after `b7e2d4c91a05` (`emissions.fuel_type` widened to 255) and `a6274c2ef1f5` (audit hardening and foreign keys). The earlier `b2d5f8e31a42` introduced Scope 2 dual-reporting columns, custom factor approval metadata, and composite indexes.
+- **Schema changes.** Alembic migrations (`migrations/`) manage schema evolution up to head revision `6a8475783b53` (optional `gas_composition` text on Scope 1/2/3 records and custom factors, `region` on Scope 3 records and custom factors, `facility_id` on custom factors; columns are added only when missing), after `d4e8a1b7c2f0` (audit log hash chain: `activity_log.prev_hash` / `entry_hash`, existing rows sealed, append-only trigger on PostgreSQL), after `c3f9a2d18e47` (`import_mappings`, saved import column mappings), after `b7e2d4c91a05` (`emissions.fuel_type` widened to 255) and `a6274c2ef1f5` (audit hardening and foreign keys). The earlier `b2d5f8e31a42` introduced Scope 2 dual-reporting columns, custom factor approval metadata, and composite indexes.
 - **SQLite connect hook.** It enables WAL mode, foreign keys and `busy_timeout`, and runs periodic WAL checkpoints in development.
 - **Config (`config.py`).**
   - SQLite `ghg_app.db` is permitted only in local development.

@@ -440,10 +440,6 @@ select option:disabled {
   font-weight: 600;
 }
 
-/* Queue Clear / Empty State */
-
-/* Sidebar Count Pill */
-
 /* ============================================================
    RESPONSIVE DESIGN (TABLET & MOBILE)
    ============================================================ */
@@ -505,8 +501,6 @@ select option:disabled {
     width: 100%;
   }
 }
-
-
 
 /* Tabs are real buttons now (keyboard operable): neutralize default button chrome */
 button.manage-nav-item {
