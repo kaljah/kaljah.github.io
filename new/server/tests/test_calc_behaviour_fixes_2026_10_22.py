@@ -129,3 +129,29 @@ def test_wellbore_volume_method_is_not_labelled_as_a_compendium_equation():
     assert res["inputs"]["method"] == "api_equation_6_3"            # the stored key does not change
     assert "Equation 6-3" not in res["inputs"]["api_reference"] and "Eq. 6-3" not in res["inputs"]["calculation_level"]
     assert "platform method" in res["inputs"]["api_reference"].lower()
+
+
+# ---- the CH4 + CO2 content short form is not an analysis ---------------------------------------------------------
+
+def test_ch4_and_co2_content_short_form_is_not_checked_for_100(d):
+    """A flare with ch4_content 80 and co2_content 5 (the import wizard's short form) keeps working: the rest of the gas
+    is not described. 1,000 m3 = 42.22 kmol: 80 % CH4 burned at 96.5 % plus the 5 % CO2 already in the gas."""
+    res = d.dispatch("flaring", {"factor_source": "specific", "amount": 1000, "unit": "m3", "ch4_content": 80,
+                                 "co2_content": 5}, {}, {}, gwp_dict=AR5)
+    kmol = 1000.0 / 23.685
+    assert _gas(res, "co2") == pytest.approx(kmol * (0.80 * 0.965 + 0.05) * 44.01 / 1000.0, rel=1e-6)
+    assert _gas(res, "ch4") == pytest.approx(kmol * 0.80 * 0.02 * 16.04 / 1000.0, rel=1e-6)
+
+
+def test_the_same_numbers_as_an_analysis_are_checked(d):
+    """c1 / co2_mol are analysis keys: 80 + 5 = 85 % is refused."""
+    with pytest.raises(ValueError, match="must total 100 %"):
+        d.dispatch("flaring", {"factor_source": "specific", "amount": 1000, "unit": "m3", "c1": 80, "co2_mol": 5}, {}, {})
+
+
+def test_a_row_short_of_100_is_named_in_the_file_check():
+    from services.import_feedback import classify
+    title, _t, column, fix = classify("Calculation error for 'flaring': Gas composition sums to 85.00 %: it must total "
+                                      "100 % (0.5 % rounding; enter the remainder as N2, CO2 or H2S)")
+    assert title == "Gas analysis does not total 100 %" and column == "n2_mol"
+    assert "n2_mol" in fix and "ch4_content" in fix

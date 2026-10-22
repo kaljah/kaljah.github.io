@@ -524,3 +524,17 @@ def test_no_early_write_lock_on_sqlite():
             assert bp._flush_enabled(db.session) is True
             return
         assert bp._flush_enabled(db.session) is False      # SQLite: rows staged until the single commit
+
+
+# --- gas analysis total (2026-10-22): a row whose c1..c10 / co2_mol / n2_mol do not total 100 % is skipped with the reason;
+# the short form (ch4_content, co2_content) is accepted -------------------------------------------------------------
+def test_row_with_an_analysis_short_of_100_is_skipped_with_the_reason(user_id):
+    t, err = _one(user_id, dict(COMP, quantity="1000", unit="Mscf", n2_mol="2"))   # c1 90 + c2 5 + n2 2 = 97 %
+    assert t is None and "must total 100 %" in err
+
+
+def test_row_with_ch4_and_co2_content_only_is_calculated(user_id):
+    t, err = _one(user_id, dict(process_type="flaring", quantity="1000", unit="m3", factor_type="specific",
+                                ch4_content="80", co2_content="5"))
+    assert t is not None, err
+    assert t["co2"] == pytest.approx(1000 / 23.685 * (0.80 * 0.965 + 0.05) * 44.01 / 1000, rel=5e-3)

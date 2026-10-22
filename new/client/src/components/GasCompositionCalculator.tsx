@@ -117,6 +117,7 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
 
   const handleCompChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    setResults(null); // results belong to the composition they were calculated from; Calculate again after an edit
     setComposition((prev) => ({ ...prev, [name]: value }));
   };
 

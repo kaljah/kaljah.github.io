@@ -11,6 +11,7 @@ import { FieldGroup, FieldGroupData, FileDrop, InfoNote, RegionAccess } from "./
 import { fittingMappings, withSavedMapping, type SavedMapping } from "../../utils/savedMappings";
 import { EMPTY_CHECK, FileCheckPanel, type FileCheckState } from "./FileCheck";
 import { SavedMappingBar } from "./SavedMappingBar";
+import { addRow, emptyCompositionCheck, mapsAnAnalysis, type CompositionCheck } from "../../utils/compositionTotals";
 import { t } from "../../i18n";
 
 const DECIMAL_MARKS: { value: "comma" | "point"; label: string; example: string }[] = [
@@ -253,6 +254,34 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [file, scope, overwrite, decimalMark, mapping, headers.length, allFields, savedMappings, extraForm]);
 
+  // Gas analysis totals of a CSV (the server refuses a row whose analysis does not total 100 %): the whole file is read in
+  // the browser while the mapping is chosen. Excel files are checked by the server's file check below.
+  const [compCheck, setCompCheck] = useState<CompositionCheck | null>(null);
+  useEffect(() => {
+    setCompCheck(null);
+    if (!file || step !== MAP || !decimalMark || file.name.toLowerCase().endsWith(".xlsx") || !mapsAnAnalysis(mapping)) return;
+    let cancelled = false;
+    const running = emptyCompositionCheck();
+    let index = 0;
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      step: (r: ParseResult<Record<string, any>>) => {
+        index += 1;
+        addRow(running, (r.data as unknown as Record<string, any>) || {}, index, mapping, decimalMark);
+      },
+      complete: () => {
+        if (!cancelled) setCompCheck({ ...running });
+      },
+      error: () => {
+        if (!cancelled) setCompCheck(null);
+      },
+    } as any);
+    return () => {
+      cancelled = true;
+    };
+  }, [file, step, MAP, mapping, decimalMark]);
+
   // first check when the mapping step opens; later changes only mark the result out of date
   const checkedFileRef = useRef<File | null>(null);
   useEffect(() => {
@@ -443,6 +472,20 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
                   {missingRequired.length}{" "}{t("required field")}{missingRequired.length > 1 ? "s" : ""}{" "}{t("not mapped:")}
                 </strong>{" "}
                 {missingRequired.map((f) => f.label).join(", ")}
+              </Banner>
+            )}
+
+            {compCheck && compCheck.offRows > 0 && (
+              <Banner tone="warning">
+                <strong>
+                  {t("{{off}} of {{total}} rows have a gas analysis that does not total 100 % and will be skipped.", {
+                    off: compCheck.offRows.toLocaleString("en-US"),
+                    total: compCheck.analysisRows.toLocaleString("en-US"),
+                  })}
+                </strong>{" "}
+                {t("Put the remainder in the N₂ column, or give only the CH4 content. First rows (file line, total): {{rows}}.", {
+                  rows: compCheck.examples.map((e) => `${e.line} (${e.total.toFixed(2)} %)`).join(", "),
+                })}
               </Banner>
             )}
 

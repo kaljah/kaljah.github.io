@@ -79,6 +79,10 @@ _RULES = [
      "Tick 'Replace existing records' to overwrite, or give each source its own Equipment ID."),
     (r"Missing required (field|parameter)[^:]*: ([^(;]+)",
      "Required input missing", None, "Fill in the input named in the message."),
+    (r"Gas composition sums to",
+     "Gas analysis does not total 100 %", "n2_mol",
+     "The c1..c10, co2_mol and n2_mol columns of a row must add up to 100 % (99.5 to 100.5): put the remainder in "
+     "n2_mol, or give only ch4_content (and co2_content) when the full analysis is not known."),
     (r"CH4 content|gas analysis|gas composition",
      "Gas composition missing", "ch4_content",
      "Add the gas CH4 content (mol %) or the composition columns c1..c10."),

@@ -878,7 +878,7 @@ def per_source_hour_kg(value, unit):
 COMPOSITION_KEYS = ("c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "co2", "n2", "h2s", "other")
 
 
-def composition_fractions(raw, basis=None):
+def composition_fractions(raw, basis=None, check_total=True):
     """Convert one gas analysis to mole fractions, deciding percent vs fraction ONCE.
 
     `raw` maps component -> value as entered. The basis is "percent" when requested, or when
@@ -910,9 +910,9 @@ def composition_fractions(raw, basis=None):
     scale = 0.01 if basis == "percent" else 1.0
     fr = {k: v * scale for k, v in vals.items()}
     tot = sum(fr.values())
-    if tot > 1.005 or (tot < 0.995 and len(vals) > 1):  # a lone CH4 content is a content, not an analysis
+    if tot > 1.005 or (tot < 0.995 and len(vals) > 1 and check_total):  # a lone CH4 content is a content, not an analysis
         raise ValueError(f"Gas composition sums to {tot * 100:.2f} %: it must total 100 % (0.5 % rounding; enter the remainder as N2, CO2 or H2S)")
-    renorm = (0.995 <= tot < 0.99999 and len(vals) > 1) or 1.00001 < tot
+    renorm = (0.995 <= tot < 0.99999 and len(vals) > 1 and check_total) or 1.00001 < tot
     if renorm:
         fr = {k: v / tot for k, v in fr.items()}
     return fr, {"basis": basis, "total": tot, "renormalised": renorm}

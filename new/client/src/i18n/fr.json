@@ -409,7 +409,6 @@
   "CH4 mole % in the feed": "% molaire de CH4 dans l'alimentation",
   "CH4 mole % of the flash gas": "% molaire de CH4 du gaz de vaporisation",
   "CH4 mole % of the supply gas": "% molaire de CH4 du gaz d'alimentation",
-  "CH4 mole % when the full composition is not given": "% molaire de CH4 lorsque la composition complète n'est pas fournie",
   "CH4 volume emitted / gas produced (OGMP 2.0). Reports also give the NGSI intensity, a mass ratio (wt %), which reads lower.": "Volume de CH4 émis / gaz produit (OGMP 2.0). Les rapports donnent aussi l'intensité NGSI, un rapport massique (% massique), plus faible.",
   "CHP": "Cogénération",
   "CHP / Cogen Allocation": "Allocation de cogénération",
@@ -1754,7 +1753,6 @@
   "Next page": "Page suivante",
   "Nitric Acid Production (Process N₂O)": "Production d'acide nitrique (N₂O de procédé)",
   "Nitrogen (N2)": "Azote (N2)",
-  "Nitrogen mole %": "Azote % mol.",
   "Nitrous Oxide (N2O)": "Protoxyde d'azote (N2O)",
   "Nitrous Oxide (N₂O)": "Protoxyde d'azote (N₂O)",
   "Nitrous Oxide (N₂O) - 100 Year": "Protoxyde d'azote (N₂O) - 100 ans",
@@ -3594,5 +3592,9 @@
   "Scope 2 location-based (grid average factors)": "Scope 2 basé sur la localisation (facteurs moyens du réseau)",
   "Scope 2 market-based (contractual instruments)": "Scope 2 basé sur le marché (instruments contractuels)",
   "The analysis must total 100 % (99.5 to 100.5): enter the remainder as N2, CO2 or another component.": "L'analyse doit totaliser 100 % (99,5 à 100,5) : saisissez le reste en N2, CO2 ou un autre composant.",
-  "The analysis must total 100 %": "L'analyse doit totaliser 100 %"
+  "The analysis must total 100 %": "L'analyse doit totaliser 100 %",
+  "{{off}} of {{total}} rows have a gas analysis that does not total 100 % and will be skipped.": "{{off}} lignes sur {{total}} ont une analyse de gaz qui ne totalise pas 100 % et seront ignorées.",
+  "Put the remainder in the N₂ column, or give only the CH4 content. First rows (file line, total): {{rows}}.": "Mettez le reste dans la colonne N₂, ou ne donnez que la teneur en CH4. Premières lignes (ligne du fichier, total) : {{rows}}.",
+  "Nitrogen mole %; the C1–C10, CO₂ and N₂ columns of a row must total 100 % (put the remainder here)": "% molaire d'azote ; les colonnes C1–C10, CO₂ et N₂ d'une ligne doivent totaliser 100 % (mettez le reste ici)",
+  "CH4 mole % when the full composition is not given (the total is not checked)": "% molaire de CH4 quand la composition complète n'est pas donnée (le total n'est pas vérifié)"
 }

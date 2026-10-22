@@ -384,33 +384,10 @@ class CalculationDispatcher:
         )
 
     def _composition(self, flat_inputs, c1_keys=("c1",)):
-        """BUG-023: one percent/fraction decision for the whole analysis (calculations.units)."""
-        from .units import composition_fractions
+        """BUG-023: one percent/fraction decision for the whole analysis (calculations.gas_analysis)."""
+        from .gas_analysis import composition
 
-        raw = {}
-        for k in c1_keys:
-            if flat_inputs.get(k) not in (None, "", "-"):
-                raw["c1"] = flat_inputs.get(k)
-                break
-        for i in range(2, 11):
-            if flat_inputs.get(f"c{i}") not in (None, "", "-"):
-                raw[f"c{i}"] = flat_inputs.get(f"c{i}")
-        # N2 / H2S under any of their keys: a dropped inert made a 98.4 % analysis renormalise to 100 %
-        # and inflated the hydrocarbons by 1.6 % (Exhibit 4.4a)
-        for key, names in (("co2", ("co2_mol", "co2_content", "co2_comp")),
-                           ("n2", ("n2", "n2_mol", "n2_comp", "n2_content", "n2_mole_pct")),
-                           ("h2s", ("h2s", "h2s_mol", "h2s_content"))):
-            for n in names:
-                if flat_inputs.get(n) not in (None, "", "-"):
-                    raw[key] = flat_inputs.get(n)
-                    break
-        basis = str(flat_inputs.get("composition_basis") or "").lower() or None
-        fr, _info = composition_fractions(raw, basis={"mol%": "percent", "percent": "percent",
-                                                      "fraction": "fraction"}.get(basis) if basis else None)
-        comps = {f"c{i}": fr.get(f"c{i}", 0.0) for i in range(1, 11)}
-        comps["co2_comp"] = fr.get("co2", 0.0)
-        comps["n2_comp"] = fr.get("n2", 0.0)
-        return comps
+        return composition(flat_inputs, c1_keys)
 
     def _hydrogen_plant(self, flat_inputs, uncertainties, gwp_dict):
         """API Compendium 2021 section 6.11.3 via RefiningHydrogenPlantCalculator.

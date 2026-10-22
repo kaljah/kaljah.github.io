@@ -66,4 +66,22 @@ describe("ImportWizard decimal format", () => {
     expect(url).toBe("/emissions/upload/check");
     expect((form as FormData).get("decimal_mark")).toBe("comma");
   });
+
+  // 2026-10-22: the server skips a row whose gas analysis (two or more components) does not total 100 %; the wizard says so
+  // while the mapping is chosen, from the whole CSV
+  it("warns about CSV rows whose gas analysis does not total 100 %", async () => {
+    const groups = [{ id: "gas", label: "Gas", icon: (() => null) as any, fields: [
+      { key: "c1", label: "C1", required: false }, { key: "c2", label: "C2", required: false },
+      { key: "n2_mol", label: "N2", required: false } ] }];
+    render(
+      <ImportWizard title="Import" fieldGroupsFor={() => groups as any} scopeFor={() => "1"} regionAccess={false}
+        checkBeforeImport onClose={() => {}} />,
+    );
+    fireEvent.click(screen.getByRole("radio", { name: /Decimal point/ }));
+    const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+    const csv = ["c1,c2,n2_mol", "90,5,5", "90,5,", "80,,", "70,10,10", ""].join("\n");
+    fireEvent.change(input, { target: { files: [new File([csv], "gas.csv", { type: "text/csv" })] } });
+    expect(await screen.findByText(/2 of 3 rows have a gas analysis that does not total 100 %/)).toBeTruthy();
+    expect(screen.getByText(/First rows \(file line, total\): 3 \(95.00 %\), 5 \(90.00 %\)/)).toBeTruthy();
+  });
 });

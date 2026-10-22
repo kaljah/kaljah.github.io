@@ -45,4 +45,16 @@ describe("GasCompositionCalculator total", () => {
     expect(calculate().disabled).toBe(false);
     expect(screen.queryByRole("alert")).toBeNull();
   });
+
+  it("clears the calculated results when the composition is edited, so a stale analysis cannot be applied", () => {
+    const { type, calculate, onApply } = setup();
+    type("CH4", "90");
+    type("N2", "10");
+    fireEvent.click(calculate());
+    expect(screen.getByRole("button", { name: /apply as kg\/m³/i })).toBeTruthy();
+    type("N2", "4"); // 94 %: the results were for 100 %
+    expect(screen.queryByRole("button", { name: /apply as kg\/m³/i })).toBeNull();
+    expect(calculate().disabled).toBe(true);
+    expect(onApply).not.toHaveBeenCalled();
+  });
 });
