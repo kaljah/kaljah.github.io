@@ -122,14 +122,15 @@ def test_completions_tier3_without_volume(d):
 def test_specific_facility_fugitive(d):
     res = d.dispatch("fugitive", {"factor_source": "specific", "fugitive_method": "facility",
                                   "facility_type": "oil_production", "amount": 1000, "unit": "bbl"}, {}, {})
-    assert res["results"]["ch4"]["value"] > 0
+    assert res["results"]["ch4"]["value"] == pytest.approx(1000 * 2.346e-4, rel=1e-9)    # Table 7-8, 1,000 bbl
 
 
 def test_correlation_with_zero_screened_count(d):
     res = d.dispatch("fugitive", {"factor_source": "specific", "fugitive_method": "correlation",
                                   "correlation_type": "valve", "service_type": "gas", "corr_screened_count": "0",
                                   "corr_zero_count": 10, "operating_hours": 100, "ch4_wt_fraction": 0.6}, {}, {})
-    assert res["results"]["ch4"]["value"] >= 0
+    # only the default-zero valves count (Table 7-41: 7.8e-6 kg TOC/h each): 10 x 7.8e-6 x 100 h x 0.6 wt CH4
+    assert res["results"]["ch4"]["value"] == pytest.approx(10 * 7.8e-6 * 100 / 1000 * 0.6, rel=1e-9)
 
 
 def test_associated_gas_period_days(d):

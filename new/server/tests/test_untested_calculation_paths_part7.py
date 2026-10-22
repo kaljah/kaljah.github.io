@@ -128,6 +128,7 @@ def test_cogen_allocation_percentage_strings():
 
 def test_production_wells_route_percentage_normalization():
     """Verify Bug 25 fix: Well site calculators accept percentage strings in disposition and route."""
+    rho_co2, rho_ch4 = 44.01 / 23.685, 16.04 / 23.685
     calc_wo = WorkoverWithoutFracturingCalculator()
     res_wo = calc_wo.calculate(
         workovers=5.0,
@@ -137,8 +138,11 @@ def test_production_wells_route_percentage_normalization():
         control_efficiency="98%",
         disposition="flared",
     )
-    assert res_wo["total_co2e"] > 0
-    assert res_wo["results"]["co2"]["value"] > 0
+    # 5 workovers x 3,114 scf (Table 6-9) at 80 % CH4 and 5 % CO2, flared at 98 % (CH4 destruction and carbon conversion);
+    # the gas CO2 passes through
+    v = 5 * 3114 * 0.028316846592
+    assert res_wo["results"]["ch4"]["value"] == pytest.approx(v * 0.80 * rho_ch4 / 1000 * 0.02, rel=1e-3)
+    assert res_wo["results"]["co2"]["value"] == pytest.approx(v * (0.80 * 0.98 + 0.05) * rho_co2 / 1000, rel=1e-3)
 
     calc_nr = ProductionNonRoutineVentingCalculator()
     res_nr = calc_nr.calculate(
@@ -149,7 +153,11 @@ def test_production_wells_route_percentage_normalization():
         control_efficiency="95%",
         disposition="flared",
     )
-    assert res_nr["total_co2e"] > 0
+    # 10 PRVs x 43 scf of whole gas, flared at 95 %
+    v_nr = 10 * 43 * 0.028316846592
+    assert res_nr["results"]["ch4"]["value"] == pytest.approx(v_nr * 0.85 * rho_ch4 / 1000 * 0.05, rel=1e-3)
+    assert res_nr["results"]["co2"]["value"] == pytest.approx(
+        v_nr * (0.85 * 0.95 + 0.03) * rho_co2 / 1000, rel=1e-3)
 
 
 def test_vented_unloading_validate_fraction_percentage_strings():
@@ -183,7 +191,8 @@ def test_combustion_methods_num_and_frac_percentage_strings():
             "oxidation_pct": "99%",
         },
     )
-    assert res_cc["total_co2e"] > 0
+    # 10,000 gal x 7.0 lb/gal = 31.75 t of fuel x 86 wt % carbon x 99 % oxidised x 44.01 / 12.011
+    assert res_cc["total_co2e"] == pytest.approx(10000 * 7.0 / 2204.62 * 0.86 * 0.99 * 44.01 / 12.011, rel=1e-9)
 
     # Equipment method with percentage load
     res_eq = calc.calculate(
@@ -195,7 +204,13 @@ def test_combustion_methods_num_and_frac_percentage_strings():
             "operating_hours": 8000.0,
         },
     )
-    assert res_eq["total_co2e"] > 0
+    # 1,000 hp x 75 % x 8,000 h x 7,000 Btu/hp-hr = 42,000 MMBtu: CO2 0.05306 t/MMBtu, CH4 0.537 t/10^12 J (Table 4-11),
+    # N2O 1.0e-7 t/MMBtu (natural gas fuel factor)
+    mmbtu = 1000.0 * 0.75 * 8000.0 * 7000.0 / 1e6
+    co2, ch4, n2o = mmbtu * 0.05306, mmbtu * 0.537 * 1.055056e-3, mmbtu * 1.0e-7
+    assert res_eq["results"]["co2"]["value"] == pytest.approx(co2, rel=1e-9)
+    assert res_eq["results"]["ch4"]["value"] == pytest.approx(ch4, rel=1e-9)
+    assert res_eq["total_co2e"] == pytest.approx(co2 + 28.0 * ch4 + 265.0 * n2o, rel=1e-9)
 
 
 def test_ccus_venting_non_negative_guards():

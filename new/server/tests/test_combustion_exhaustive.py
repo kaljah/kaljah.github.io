@@ -201,10 +201,12 @@ def test_combustion_standard_fuel_factor(combustion):
         ef_unit="kg/MMBtu",
         hhv=1020.0,
     )
-    assert res_ng["results"]["co2"]["value"] > 0
-    assert res_ng["results"]["ch4"]["value"] > 0
-    assert res_ng["results"]["n2o"]["value"] > 0
-    assert res_ng["total_co2e"] > 0
+    # 10,000 scf x 1,020 Btu/scf = 10.2 MMBtu; factors in kg/MMBtu; AR5 GWPs 28 (CH4) and 265 (N2O)
+    mmbtu = 10000 * 1020 / 1e6
+    assert res_ng["results"]["co2"]["value"] == pytest.approx(mmbtu * 53.06 / 1000, rel=1e-9)
+    assert res_ng["results"]["ch4"]["value"] == pytest.approx(mmbtu * 0.001 / 1000, rel=1e-9)
+    assert res_ng["results"]["n2o"]["value"] == pytest.approx(mmbtu * 0.0001 / 1000, rel=1e-9)
+    assert res_ng["total_co2e"] == pytest.approx(mmbtu / 1000 * (53.06 + 0.001 * 28 + 0.0001 * 265), rel=1e-9)
 
 
 def test_combustion_thermodynamic_normalization(combustion):
@@ -222,7 +224,9 @@ def test_combustion_thermodynamic_normalization(combustion):
         press_unit="psig",
     )
     assert res_actual["metadata"]["thermodynamic_normalized"] is True
-    assert res_actual["results"]["co2"]["value"] > 0
+    # V_std = V x (P_abs / 14.696) x (288.706 K / T_abs): 50 psig = 64.696 psia, 100 F = 310.928 K -> 4,087.66 m3
+    v_std = 1000.0 * (50 + 14.696) / 14.696 * 288.706 / ((100 - 32) / 1.8 + 273.15)
+    assert res_actual["results"]["co2"]["value"] == pytest.approx(v_std * 1.9 / 1000, rel=1e-5)
 
 
 def test_combustion_tier3_gas_composition(combustion):
@@ -241,8 +245,10 @@ def test_combustion_tier3_gas_composition(combustion):
         co2_comp=4.0,
     )
     assert res_comp["metadata"]["heavy_hydrocarbon_warning"] is True
-    assert res_comp["results"]["co2"]["value"] > 0
-    assert res_comp["results"]["ch4"]["value"] > 0  # Uncombusted methane slip
+    # carbon per mole of gas 0.75 + 2 x 0.12 + 3 x 0.05 + 4 x 0.03 + 5 x 0.01 = 1.31 at 99 % combustion, plus 4 % native CO2
+    rho_co2, rho_ch4 = 44.01 / 23.685, 16.04 / 23.685
+    assert res_comp["results"]["co2"]["value"] == pytest.approx(1000 * (1.31 * 0.99 + 0.04) * rho_co2 / 1000, rel=1e-9)
+    assert res_comp["results"]["ch4"]["value"] == pytest.approx(1000 * 0.75 * 0.01 * rho_ch4 / 1000, rel=1e-9)  # slip
 
     # Fractional composition <= 1.0 without heavy warning
     res_frac = combustion.calculate(
@@ -255,7 +261,9 @@ def test_combustion_tier3_gas_composition(combustion):
         co2_comp=0.01,
     )
     assert res_frac["metadata"]["heavy_hydrocarbon_warning"] is False
-    assert res_frac["results"]["co2"]["value"] > 0
+    # fractions: carbon 0.95 + 2 x 0.02 = 0.99 mol C/mol at 99.5 % combustion, plus 1 % native CO2, 500 m3
+    assert res_frac["results"]["co2"]["value"] == pytest.approx(500 * (0.99 * 0.995 + 0.01) * rho_co2 / 1000, rel=1e-9)
+    assert res_frac["results"]["ch4"]["value"] == pytest.approx(500 * 0.95 * 0.005 * rho_ch4 / 1000, rel=1e-9)
 
 
 def test_combustion_tier3_liquid_solid_carbon(combustion):
@@ -366,8 +374,11 @@ def test_flaring_c1_c10_compositions(flaring):
         co2_comp=3.0,
         uncertainties={},
     )
-    assert res_pct["results"]["co2"]["value"] > 0
-    assert res_pct["results"]["ch4"]["value"] > 0
+    # carbon 0.80 + 2 x 0.10 + 3 x 0.04 + 4 x 0.02 = 1.20 at the 96.5 % ground-flare carbon conversion, plus 3 % CO2
+    rho_co2, rho_ch4 = 44.01 / 23.685, 16.04 / 23.685
+    carbon_pct = 0.80 + 2 * 0.10 + 3 * 0.04 + 4 * 0.02
+    assert res_pct["results"]["co2"]["value"] == pytest.approx(1000 * (carbon_pct * 0.965 + 0.03) * rho_co2 / 1000, rel=1e-9)
+    assert res_pct["results"]["ch4"]["value"] == pytest.approx(1000 * 0.80 * 0.02 * rho_ch4 / 1000, rel=1e-9)
 
     # Fractional format <= 1.0
     res_frac = flaring.calculate(
@@ -381,7 +392,8 @@ def test_flaring_c1_c10_compositions(flaring):
         co2_mol=0.02,
         uncertainties={},
     )
-    assert res_frac["results"]["co2"]["value"] > 0
+    carbon_frac = 0.85 + 2 * 0.08 + 3 * 0.04   # 1.13 mol C per mol gas, plus 2 % native CO2
+    assert res_frac["results"]["co2"]["value"] == pytest.approx(1000 * (carbon_frac * 0.965 + 0.02) * rho_co2 / 1000, rel=1e-9)
 
 
 def test_flaring_n2o_energy_and_volume_factors(flaring):

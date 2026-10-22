@@ -83,17 +83,19 @@ class TestExtremeMagnitudesAndThermodynamicBoundaries:
         payload = {"quantity": qty, "unit": "m3", "fuel_type": "natural_gas", "hhv": 1020.0}
         ef = {"co2": 53.06, "ch4": 0.001, "n2o": 0.0001, "unit": "kg/MMBtu"}
         res = dispatcher.dispatch("stationary_combustion", payload, ef, {}, gwp_dict=GWP_AR5)
-        assert res["total_co2e"] >= 0.0
-        assert not math.isnan(res["total_co2e"])
-        assert not math.isinf(res["total_co2e"])
+        # 1e-12 m3 x 35.3147 scf/m3 x 1,020 Btu/scf = 3.6e-8 MMBtu; the result scales exactly (no rounding to zero or noise)
+        mmbtu = qty * 35.3146667 * 1020.0 / 1e6
+        assert res["total_co2e"] == pytest.approx(mmbtu * (53.06 + 0.001 * 28 + 0.0001 * 265) / 1000, rel=1e-6)
+        assert res["total_co2e"] > 0.0
 
     def test_ultra_large_quantity(self, dispatcher):
         qty = 1e9
         payload = {"quantity": qty, "unit": "m3", "fuel_type": "natural_gas", "hhv": 1020.0}
         ef = {"co2": 53.06, "ch4": 0.001, "n2o": 0.0001, "unit": "kg/MMBtu"}
         res = dispatcher.dispatch("stationary_combustion", payload, ef, {}, gwp_dict=GWP_AR5)
-        assert res["total_co2e"] > 0.0
-        assert not math.isinf(res["total_co2e"])
+        # 1e9 m3 = 3.53e10 scf x 1,020 Btu/scf = 3.60e7 MMBtu -> about 1.9 million tonnes CO2e, with no overflow or rounding
+        mmbtu = qty * 35.3146667 * 1020.0 / 1e6
+        assert res["total_co2e"] == pytest.approx(mmbtu * (53.06 + 0.001 * 28 + 0.0001 * 265) / 1000, rel=1e-6)
 
     def test_high_pressure_normalization(self):
         norm = normalize_gas_volume_to_standard(
@@ -104,6 +106,7 @@ class TestExtremeMagnitudesAndThermodynamicBoundaries:
             press_unit="psig",
             z_factor=1.05,
         )
+        # V_std = V x (P_abs / 14.696) x (T_std / T) / Z: 5,000 psig = 5,014.696 psia, 25 C = 298.15 K, std 288.706 K, Z = 1.05
+        expected = 1000.0 * (5000.0 + 14.696) / 14.696 * 288.706 / 298.15 / 1.05
+        assert norm == pytest.approx(expected, rel=1e-5)   # (standard temperature 288.7056 K in the engine)
         assert norm > 1000.0
-        assert not math.isnan(norm)
-        assert not math.isinf(norm)

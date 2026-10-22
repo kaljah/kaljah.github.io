@@ -112,10 +112,17 @@ def test_propagate_co2e_uncertainty_dict_inputs():
     n2o_d = propagate_uncertainty(0.1, ef_uncertainty=0.20)
 
     res = propagate_co2e_uncertainty(co2_d, e_ch4=ch4_d, e_n2o=n2o_d)
-    assert res["total_co2e"] > 100.0
-    assert res["sigma_co2e"] > 0.0
-    assert "gas_breakdown" in res
-    assert "ch4" in res["gas_breakdown"]
+    # CO2e at AR5 GWPs: 100 + 2 x 28 + 0.1 x 265 = 182.5 t
+    assert res["total_co2e"] == pytest.approx(182.5, rel=1e-12)
+    # 1-sigma by hand: each gas combines its own relative uncertainty (EF 0.05 / 2 = 0.025 and activity 0.05 in quadrature)
+    # with the GWP uncertainty (CH4 30 %, N2O 20 %); the gases are independent
+    u_co2 = math.sqrt(0.025 ** 2 + 0.05 ** 2)
+    u_ch4 = math.sqrt(0.075 ** 2 + 0.05 ** 2 + 0.30 ** 2)
+    u_n2o = math.sqrt(0.10 ** 2 + 0.05 ** 2 + 0.20 ** 2)
+    sigma = math.sqrt((100.0 * u_co2) ** 2 + (56.0 * u_ch4) ** 2 + (26.5 * u_n2o) ** 2)
+    assert res["sigma_co2e"] == pytest.approx(sigma, rel=1e-3)
+    assert res["gas_breakdown"]["ch4"]["co2e"] == pytest.approx(56.0)
+    assert res["gas_breakdown"]["n2o"]["co2e"] == pytest.approx(26.5)
 
 
 def test_inventory_uncertainty_gwp_propagation(client):

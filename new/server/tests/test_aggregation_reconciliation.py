@@ -52,14 +52,43 @@ class TestRollupAndGasReconciliation:
 
         assert pytest.approx(individual_co2e_sum, rel=1e-8) == aggregate_co2e
 
-    def test_scope_inventory_aggregation(self):
-        """Total GHG = Scope 1 + Scope 2 + Scope 3."""
-        scope1 = 12500.50
-        scope2_location = 1840.20
-        scope3 = 45000.00
+    def test_scope_inventory_aggregation(self, client, app):
+        """Total GHG = Scope 1 + Scope 2 (location-based) + Scope 3, as the national inventory export totals them (the
+        Executive Summary sheet). The test used to add three numbers in the test and compare them to a literal."""
+        import io
 
-        total_ghg = scope1 + scope2_location + scope3
-        assert total_ghg == 59340.70
+        import openpyxl
+
+        from extensions import db
+        from models import Emission, Scope2Emission, Scope3Emission
+        from tests.audit_helpers import login, make_facility, make_user, uniq
+
+        with app.app_context():
+            fac = make_facility(region=uniq("AggSite"))
+            login(client, make_user("admin", "Global"))
+            db.session.add_all([
+                Emission(facility_id=fac.id, year=2024, month=3, process_type="combustion", quantity=1.0, unit="m3",
+                         co2_emissions=12500.50, ch4_emissions=0.0, n2o_emissions=0.0, co2e_total=12500.50,
+                         status="Verified"),
+                Scope2Emission(facility_id=fac.id, year=2024, month=3, source_type="electricity",
+                               grid_region="Algerian National Grid", electricity_kwh=1.0, co2e=1840.20,
+                               co2e_location_based=1840.20, co2e_market_based=100.0, status="Verified"),
+                Scope3Emission(facility_id=fac.id, year=2024, month=3, category=1, sub_category="purchased_goods",
+                               co2e=45000.00, status="Verified"),
+            ])
+            db.session.commit()
+            res = client.get(f"/api/reports/national-inventory-export?year=2024&facility_id={fac.id}&status=Verified")
+            assert res.status_code == 200
+            ws = openpyxl.load_workbook(io.BytesIO(res.data))["Executive Summary"]
+            rows = {str(r[0]): r[1] for r in ws.iter_rows(values_only=True) if r and r[0] is not None}
+            grand = next(v for k, v in rows.items() if k.startswith("Grand Total"))
+            scope1 = next(v for k, v in rows.items() if k.startswith("Scope 1"))
+            scope2_loc = next(v for k, v in rows.items() if k.startswith("Scope 2") and "marché" not in k)
+            scope3 = next(v for k, v in rows.items() if k.startswith("Scope 3"))
+            assert scope1 == pytest.approx(12500.50)
+            assert scope2_loc == pytest.approx(1840.20)
+            assert scope3 == pytest.approx(45000.00)
+            assert grand == pytest.approx(12500.50 + 1840.20 + 45000.00)      # 59,340.70; the market-based 100 is not added
 
 
 class TestOGMPSurveyReconciliation:

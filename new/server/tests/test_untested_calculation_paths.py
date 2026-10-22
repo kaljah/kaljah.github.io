@@ -127,9 +127,10 @@ def test_exploration_drilling_percentage_inputs():
     dc = CoalSeamDrillingCalculator()
     # ch4_content and co2_content passed as percentages > 1.0 (e.g. 85.0% and 10.0%)
     res = dc.calculate(drilling_gas_vented_scf=100_000.0, ch4_content=85.0, co2_content=10.0)
-    assert res["total_co2e"] > 0
-    assert res["results"]["ch4"]["value"] > 0
-    assert res["results"]["co2"]["value"] > 0
+    # 100,000 scf vented: lbmoles = scf / 379.3; CH4 85 mol % x 16.04, CO2 10 mol % x 44.01, 2,204.62 lb/tonne
+    assert res["results"]["ch4"]["value"] == pytest.approx(100_000 / 379.3 * 0.85 * 16.04 / 2204.62, rel=1e-5)
+    assert res["results"]["co2"]["value"] == pytest.approx(100_000 / 379.3 * 0.10 * 44.01 / 2204.62, rel=1e-5)
+    assert res["total_co2e"] == pytest.approx(res["results"]["co2"]["value"] + 28.0 * res["results"]["ch4"]["value"], rel=1e-6)
 
 
 # =========================================================================
@@ -181,8 +182,10 @@ def test_vented_completion_scf_day_unit():
         vent_duration_days=2.0,
         ch4_content=0.85,
     )
-    assert res["total_co2e"] > 0
-    assert res["results"]["ch4"]["value"] > 0
+    # 50,000 scf/day x 2 days = 100,000 scf vented, 85 % CH4 (60 F, 23.685 m3/kmol)
+    assert res["inputs"]["net_flowback_scf"] == pytest.approx(100_000.0, rel=1e-6)
+    assert res["results"]["ch4"]["value"] == pytest.approx(100_000 * 0.028316846592 * 0.85 * (16.04 / 23.685) / 1000, rel=1e-9)
+    assert res["total_co2e"] == pytest.approx(28.0 * res["results"]["ch4"]["value"], rel=1e-9)
     assert "Eq. 6-7" in res["metadata"]["calculation_method"]
 
 

@@ -307,7 +307,8 @@ class TestLiquidsUnloadingTier3Engineering:
         assert res["results"]["ch4"]["value"] == pytest.approx(expected_ch4, rel=1e-3)
 
     def test_tier3_equation_6_3_volume_based_geometry(self, calc):
-        """API Eq. 6-3 with temperature and pressure correction."""
+        """Wellbore volume method: V per event = (pi/4) x (D/12)^2 x depth x (P_gauge / 14.696) scf (only the gas above
+        atmospheric pressure leaves the well), 60 F so no temperature correction; 12 events at 85 % CH4."""
         res = calc.calculate_volume_based(
             well_depth=5000.0,
             diameter=2.5,
@@ -318,8 +319,10 @@ class TestLiquidsUnloadingTier3Engineering:
             temp_unit="F",
             press_unit="psig",
         )
-        assert res["results"]["ch4"]["value"] > 0
-        assert res["total_co2e"] > 0
+        scf = 12 * math.pi / 4 * (2.5 / 12) ** 2 * 5000.0 * (500.0 / 14.696)
+        ch4 = scf * 0.85 / 379.3 * 16.04 / 2204.62
+        assert res["results"]["ch4"]["value"] == pytest.approx(ch4, rel=5e-3)
+        assert res["total_co2e"] == pytest.approx(28.0 * res["results"]["ch4"]["value"], rel=1e-9)
 
 
 # ==============================================================================
@@ -468,7 +471,10 @@ class TestLiquidsUnloadingDispatcherPipeline:
             "ch4_content": 85.0,
         }
         res = dispatcher.dispatch("liquids_unloading", payload, {}, {})
-        assert res["results"]["ch4"]["value"] > 0
+        # Eq 6-11: VR = sqrt(Pshut - Patm) / sqrt(Pline - Psep) x SFRp x Tp = 1.6450 x 10,000 x 0.5 = 8,225 scf/event, 10 events
+        scf = 10 * math.sqrt(150.0 - 14.696) / math.sqrt(100.0 - 50.0) * 10000.0 * 0.5
+        assert res["inputs"]["whole_gas_scf"] == pytest.approx(scf, rel=1e-4)
+        assert res["results"]["ch4"]["value"] == pytest.approx(scf * 0.85 / 379.3 * 16.04 / 2204.62, rel=5e-3)
 
     def test_legacy_engine_compute_emissions_tier1(self):
         payload = {

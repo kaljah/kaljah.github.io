@@ -166,8 +166,11 @@ class TestGasChromatographyAndCompositionBoundaries:
         # CO2 mass should dominate CH4 mass
         co2_mass = res["results"]["co2"]["value"]
         ch4_mass = res["results"]["ch4"]["value"]
-        assert co2_mass > ch4_mass * 10.0
-        assert res["total_co2e"] > 0.0
+        # 50,000 m3 of vented gas at 95 % CO2 / 5 % CH4 (mole %), densities at 60 F: CO2 44.01 and CH4 16.04 kg/kmol over
+        # 23.685 m3/kmol -> 47,500 m3 CO2 = 88.26 t and 2,500 m3 CH4 = 1.693 t
+        assert co2_mass == pytest.approx(50_000 * 0.95 * 44.01 / 23.685 / 1000.0, rel=5e-3)
+        assert ch4_mass == pytest.approx(50_000 * 0.05 * 16.04 / 23.685 / 1000.0, rel=5e-3)
+        assert res["total_co2e"] == pytest.approx(co2_mass + 28.0 * ch4_mass, rel=1e-9)
 
     def test_extended_hydrocarbon_splits_c6plus(self):
         """Exhibit 5.2 / Exhibit 5.3: Extended C1 through C6+ hydrocarbon weighting."""
@@ -186,24 +189,34 @@ class TestGasChromatographyAndCompositionBoundaries:
         }
         res = calc.calculate("flare_voc", inputs)
         inter = res["intermediate"]
-        # Hydrocarbon average molecular weight and heating value must be calculated
-        assert inter["hc_mw"] > 16.04  # Higher than pure methane due to heavy ends
-        assert inter["hc_hhv_btu_scf"] > 1010.0
-        assert res["results"]["co2"]["value"] > 0.0
-        assert res["results"]["ch4"]["value"] > 0.0
+        # by hand: VOC (C3+) = 4 + 3 + 2 + 1 = 10 wt %, hydrocarbon = 80 + 8 + 10 = 98 wt %: 10 t VOC carries 98 t hydrocarbon
+        wt = {"ch4": 80.0, "c2h6": 8.0, "c3h8": 4.0, "c4h10": 3.0, "c5h12": 2.0, "c6h14": 1.0}
+        mw = {"ch4": 16.043, "c2h6": 30.069, "c3h8": 44.096, "c4h10": 58.122, "c5h12": 72.149, "c6h14": 86.175}
+        nc = {"ch4": 1, "c2h6": 2, "c3h8": 3, "c4h10": 4, "c5h12": 5, "c6h14": 6}
+        hhv = {"ch4": 1010.0, "c2h6": 1769.7, "c3h8": 2516.1, "c4h10": 3262.4, "c5h12": 4008.9, "c6h14": 4755.9}
+        w_hc = sum(wt.values())
+        mol = {k: wt[k] / mw[k] for k in wt}
+        assert inter["hc_emitted_t"] == pytest.approx(98.0, rel=1e-9)
+        assert inter["hc_mw"] == pytest.approx(w_hc / sum(mol.values()), rel=2e-3)          # 17.9, above pure methane
+        assert inter["hc_hhv_btu_scf"] == pytest.approx(sum(mol[k] * hhv[k] for k in wt) / sum(mol.values()), rel=2e-3)
+        c_mix = sum(wt[k] * 12.011 * nc[k] / mw[k] for k in wt) / w_hc
+        assert res["results"]["co2"]["value"] == pytest.approx(
+            98.0 * c_mix * 0.98 / 0.02 * 44.01 / 12.011 + 10.0 * 2.0 / 10.0, rel=2e-3)
+        assert res["results"]["ch4"]["value"] == pytest.approx(98.0 * 80.0 / w_hc, rel=1e-9)
 
     def test_microscopic_and_astronomical_quantities(self):
-        """Engine stability under microscopic (1e-9) and astronomical (1e12) quantities."""
+        """Engine stability under microscopic (1e-9) and astronomical (1e12) quantities: exact scaling, no overflow."""
         calc = CombustionCalculator()
+        per_m3 = 35.3146667 * 1020.0 / 1e6 * (53.06 + 0.001 * 28 + 0.0001 * 265) / 1000     # t CO2e per m3 of gas
 
         # Microscopic: should compute tiny positive float without underflow exception
         r_micro = calc.calculate(1e-9, ef_co2=53.06, ef_ch4=0.001, ef_n2o=0.0001, ef_unit="kg/MMBtu", fuel_unit="m3", fuel_type="natural_gas", hhv=1020.0)
-        assert r_micro["total_co2e"] > 0.0
+        assert r_micro["total_co2e"] == pytest.approx(1e-9 * per_m3, rel=1e-6)
         assert math.isfinite(r_micro["total_co2e"])
 
         # Astronomical: should compute large float without overflow exception or NaN
         r_astro = calc.calculate(1e12, ef_co2=53.06, ef_ch4=0.001, ef_n2o=0.0001, ef_unit="kg/MMBtu", fuel_unit="m3", fuel_type="natural_gas", hhv=1020.0)
-        assert r_astro["total_co2e"] > 1e6
+        assert r_astro["total_co2e"] == pytest.approx(1e12 * per_m3, rel=1e-6)
         assert math.isfinite(r_astro["total_co2e"])
 
 
@@ -347,12 +360,16 @@ class TestPropertyBasedFuzzing:
         }
         res = dispatcher.dispatch("stationary_combustion", params, ef, {}, gwp_dict=GWP_AR5)
 
-        # Invariants:
-        assert res["total_co2e"] > 0.0
+        # Closed form for every random input: energy = m3 / 0.028316846592 m3/scf x HHV (Btu/scf) / 1e6 = MMBtu, and
+        # each gas is energy x its factor (kg/MMBtu) / 1000 (the combustion efficiency does not enter a kg/MMBtu factor)
+        mmbtu = qty / 0.028316846592 * hhv / 1e6
+        assert res["results"]["co2"]["value"] == pytest.approx(mmbtu * 53.06 / 1000.0, rel=1e-9)
+        assert res["results"]["ch4"]["value"] == pytest.approx(mmbtu * 0.001 / 1000.0, rel=1e-9)
+        assert res["results"]["n2o"]["value"] == pytest.approx(mmbtu * 0.0001 / 1000.0, rel=1e-9)
+        assert res["total_co2e"] == pytest.approx(
+            res["results"]["co2"]["value"] + 28.0 * res["results"]["ch4"]["value"]
+            + 265.0 * res["results"]["n2o"]["value"], rel=1e-9)
         assert math.isfinite(res["total_co2e"])
-        assert not math.isnan(res["total_co2e"])
-        assert res["results"]["co2"]["value"] >= 0.0
-        assert res["results"]["ch4"]["value"] >= 0.0
 
     @settings(max_examples=50, deadline=None)
     @given(
@@ -371,6 +388,7 @@ class TestPropertyBasedFuzzing:
             press_unit="psig",
             z_factor=z_fact,
         )
-        assert v_std > 0.0
+        # V_std = V x (P gauge + 14.696) / 14.696 x T_std / T x 1 / Z, with T_std = 288.706 K (60 F)
+        expected = vol_actual * (press_psig + 14.696) / 14.696 * 288.706 / (temp_c + 273.15) / z_fact
+        assert v_std == pytest.approx(expected, rel=1e-4)
         assert math.isfinite(v_std)
-        assert not math.isnan(v_std)

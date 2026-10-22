@@ -19,6 +19,7 @@ Validates:
 7. `services/qaqc_dashboard.py`:
    - `completeness` calculation handles zero denominator without ZeroDivisionError.
 """
+import math
 import pytest
 from extensions import db
 from models import Emission, LevelUpgradeLog, OgmpSurvey, ProductionData
@@ -188,8 +189,8 @@ def test_tank_flashing_empirical_extreme_inputs():
         separator_temp_f=-500.0,  # Temperature below absolute zero bounded
         ch4_content=0.85,
     )
-    assert res_vbe["results"]["ch4"]["value"] >= 0.0
-    assert res_vbe["total_co2e"] >= 0.0
+    assert math.isfinite(res_vbe["results"]["ch4"]["value"]) and res_vbe["results"]["ch4"]["value"] >= 0.0
+    assert res_vbe["total_co2e"] == pytest.approx(28.0 * res_vbe["results"]["ch4"]["value"], rel=1e-6)  # AR5 CH4 only
 
     # Standing extreme inputs: extreme temp, negative API, extreme pressure
     res_st = calc.calculate(
@@ -201,8 +202,8 @@ def test_tank_flashing_empirical_extreme_inputs():
         tank_temp_f=-500.0,
         ch4_content=0.85,
     )
-    assert res_st["results"]["ch4"]["value"] >= 0.0
-    assert res_st["total_co2e"] >= 0.0
+    assert math.isfinite(res_st["results"]["ch4"]["value"]) and res_st["results"]["ch4"]["value"] >= 0.0
+    assert res_st["total_co2e"] == pytest.approx(28.0 * res_st["results"]["ch4"]["value"], rel=1e-6)
 
 
 def test_qaqc_dashboard_completeness_zero_denominator():
@@ -440,9 +441,10 @@ def test_tank_flashing_vbe_negative_log_singularity():
         ch4_content=0.80,
         co2_content=0.05,
     )
-    assert res["results"]["ch4"]["value"] >= 0.0
-    assert res["results"]["co2"]["value"] >= 0.0
-    assert res["total_co2e"] >= 0.0
+    assert math.isfinite(res["results"]["ch4"]["value"]) and res["results"]["ch4"]["value"] >= 0.0
+    assert math.isfinite(res["results"]["co2"]["value"]) and res["results"]["co2"]["value"] >= 0.0
+    assert res["total_co2e"] == pytest.approx(
+        res["results"]["co2"]["value"] + 28.0 * res["results"]["ch4"]["value"], rel=1e-6)
 
 
 def test_tank_flashing_working_loss_gas_volume_and_co2():
@@ -457,11 +459,13 @@ def test_tank_flashing_working_loss_gas_volume_and_co2():
         ch4_content=0.75,
         co2_content=0.10,
     )
-    assert res["results"]["ch4"]["value"] > 0.0
-    # Gas volume should be calculated and positive
-    assert res["inputs"]["total_gas_scf"] > 0.0
-    # Native CO2 in the breathing vapor should be accounted for
-    assert res["results"]["co2"]["value"] > 0.0
+    # 1,000 bbl x 1.5 kg CH4/bbl = 1.5 t CH4, which is 75 % of the vapour
+    assert res["results"]["ch4"]["value"] == pytest.approx(1.5, rel=1e-9)
+    # 1,500 kg CH4 / 16.04 = 93.5 kmol = 206.2 lbmol x 379.3 scf = 78,200 scf CH4; whole gas = that / 0.75
+    gas_scf = 1500.0 / 0.45359237 / 16.04 * 379.3 / 0.75
+    assert res["inputs"]["total_gas_scf"] == pytest.approx(gas_scf, rel=1e-3)       # 104,262 scf
+    # native CO2 of the vapour: 10 % of the whole gas x 44.01 / 379.3 lb/scf
+    assert res["results"]["co2"]["value"] == pytest.approx(gas_scf * 0.10 / 379.3 * 44.01 / 2204.62, rel=1e-3)  # 0.549 t
 
 
 def test_ccus_crude_transport_negative_volume_guard():

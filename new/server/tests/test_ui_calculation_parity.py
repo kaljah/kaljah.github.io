@@ -221,10 +221,11 @@ class TestScope1UINumericalParity:
         data = res.get_json()
         em = data["emissions"]
 
-        # Flaring produces substantial CO2 and uncombusted CH4 slip
-        assert em["co2"] > 0
-        assert em["ch4"] > 0
-        assert em["totalCo2e"] > 0
+        # 25,000 m3 at 85 % CH4 and 3 % CO2; default flare: 96.5 % of the carbon to CO2, 98 % of the CH4 destroyed
+        rho_co2, rho_ch4 = 44.01 / 23.685, 16.04 / 23.685
+        assert em["co2"] == pytest.approx(25000 * (0.85 * 0.965 + 0.03) * rho_co2 / 1000, rel=1e-6)
+        assert em["ch4"] == pytest.approx(25000 * 0.85 * 0.02 * rho_ch4 / 1000, rel=1e-6)
+        assert em["totalCo2e"] == pytest.approx(em["co2"] + 28.0 * em["ch4"] + 265.0 * (em.get("n2o") or 0.0), rel=1e-6)
 
         ui_co2 = ui_format_number(em["co2"], 3)
         ui_ch4 = ui_format_number(em["ch4"], 5)
@@ -256,7 +257,9 @@ class TestScope1UINumericalParity:
         assert res.status_code in [200, 201]
         data = res.get_json()
         em = data["emissions"]
-        assert em["totalCo2e"] > 0
+        # 50 t H2 x 5.563 t CO2/t H2 (Table 6-51: 13.41 t per 10^6 scf H2); ccs_capture_rate is a PERCENT, so 0.85 removes 0.85 %
+        h2_scf = 50 * 2204.62 / 2.016 * 379.3
+        assert em["totalCo2e"] == pytest.approx(h2_scf / 1e6 * 13.41 * (1 - 0.0085), rel=1e-3)
 
         # UI display renders without NaN or truncation
         ui_co2e = ui_format_number(em["totalCo2e"], 3)
@@ -284,9 +287,11 @@ class TestScope1UINumericalParity:
         res = client.post("/api/emissions", json=payload)
         assert res.status_code in [200, 201]
         em = res.get_json()["emissions"]
-        assert em["co2"] > 0
-        assert em["ch4"] > 0
-        assert em["totalCo2e"] > 0
+        # carbon balance on 15,000 m3: 0.85 + 2 x 0.08 + 3 x 0.04 = 1.13 mol C/mol at 99.5 % combustion, plus 3 % CO2; slip 0.5 %
+        rho_co2, rho_ch4 = 44.01 / 23.685, 16.04 / 23.685
+        assert em["co2"] == pytest.approx(15000 * (1.13 * 0.995 + 0.03) * rho_co2 / 1000, rel=1e-6)
+        assert em["ch4"] == pytest.approx(15000 * 0.85 * 0.005 * rho_ch4 / 1000, rel=1e-6)
+        assert em["totalCo2e"] == pytest.approx(em["co2"] + 28.0 * em["ch4"] + 265.0 * (em.get("n2o") or 0.0), rel=1e-6)
 
         # UI Formatter must render exact stoichiometric results
         assert float(ui_format_number(em["co2"], 3).replace(",", "")) > 0
@@ -310,8 +315,9 @@ class TestScope1UINumericalParity:
         res = client.post("/api/emissions", json=payload)
         assert res.status_code in [200, 201]
         em = res.get_json()["emissions"]
-        assert em["ch4"] > 0
-        assert em["totalCo2e"] > 0
+        # a May record runs 744 h (the calendar month, not the year): 150 valves x 0.0268 kg TOC/h x 744 h, 92 wt % CH4 (Table C-1)
+        assert em["ch4"] == pytest.approx(150 * 0.0268 * 744 / 1000 * 0.920, rel=1e-6)
+        assert em["totalCo2e"] == pytest.approx(28.0 * em["ch4"], rel=1e-6)
 
         # Scope 1 Table renders CH4 with 5 decimal places
         ui_ch4_str = ui_format_number(em["ch4"], 5)

@@ -80,6 +80,7 @@ class TestBoundaryResilienceEngine:
         """Quantities of 10^18 and 10^24 must compute without float overflow or crash."""
         factor = API_FACTORS.get("Natural Gas", {})
         magnitudes = [1e18, 1e20, 1e24]
+        per_m3 = None
         for mag in magnitudes:
             payload = {
                 "process_type": "combustion",
@@ -89,15 +90,19 @@ class TestBoundaryResilienceEngine:
             }
             res, method = compute_emissions(payload, factor_data=factor)
             assert math.isfinite(res["totalCo2e"]), f"Non-finite result for mag {mag}"
-            assert res["totalCo2e"] > 0
             assert math.isfinite(res["co2"])
             assert math.isfinite(res["ch4"])
             assert math.isfinite(res["n2o"])
+            # no loss of scale: the emission per m3 is the same at every magnitude (and non-zero)
+            ratio = (res["totalCo2e"] / mag, res["co2"] / mag, res["ch4"] / mag, res["n2o"] / mag)
+            assert ratio[0] > 0 and ratio[1] > 0
+            if per_m3 is None:
+                per_m3 = ratio
+            assert ratio == pytest.approx(per_m3, rel=1e-9), f"Not linear at {mag}"
 
-        # Test calculate_co2e with astronomical numbers
-        co2e = calculate_co2e(co2=1e18, ch4=1e16, n2o=1e14)
-        assert math.isfinite(co2e)
-        assert co2e > 1e18
+        # Test calculate_co2e with astronomical numbers: 1e18 + 28 x 1e16 + 265 x 1e14 (AR5)
+        co2e = calculate_co2e(co2=1e18, ch4=1e16, n2o=1e14, gwp_dict={"CO2": 1.0, "CH4": 28.0, "N2O": 265.0})
+        assert co2e == pytest.approx(1.3065e18, rel=1e-12)
 
     def test_microscopic_quantities_resilience(self):
         """Quantities of 10^-15 and 10^-20 must compute without underflow errors or ZeroDivision."""

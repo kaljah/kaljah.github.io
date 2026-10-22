@@ -79,24 +79,24 @@ def test_convert_fugitive_flow_unknown_unit_raises():
 def test_tier1_facility_calculator_oil_and_gas():
     calc = OnshoreFacilityFugitiveCalculator()
 
-    # Gas processing facility: throughput in MMscf
+    # Gas production facility: 50 MMscf x 2.601e-2 t CH4 / 10^6 scf (Table 7-8, 78.8 mol % basis)
     res_gas = calc.calculate(
         production=50.0,
         production_unit="mmscf",
         facility_type="gas_production",
     )
-    assert res_gas["results"]["ch4"]["value"] > 0
-    assert res_gas["total_co2e"] > 0
+    assert res_gas["results"]["ch4"]["value"] == pytest.approx(50.0 * 2.601e-2, rel=1e-9)
+    assert res_gas["total_co2e"] == pytest.approx(50.0 * 2.601e-2 * 28.0, rel=1e-9)   # AR5 GWP of CH4
     assert "Tier 1" in res_gas["intermediate"]["methodology"]
 
-    # Onshore oil production facility
+    # Onshore oil production facility: 10,000 bbl x 2.346e-4 t CH4/bbl (Table 7-8)
     res_oil = calc.calculate(
         production=10_000.0,
         production_unit="bbl",
         facility_type="oil_production",
     )
-    assert res_oil["results"]["ch4"]["value"] > 0
-    assert res_oil["total_co2e"] > 0
+    assert res_oil["results"]["ch4"]["value"] == pytest.approx(10_000.0 * 2.346e-4, rel=1e-9)
+    assert res_oil["total_co2e"] == pytest.approx(10_000.0 * 2.346e-4 * 28.0, rel=1e-9)
 
 
 def test_tier1_facility_validation():
@@ -160,9 +160,17 @@ def test_tier2b_component_calculator():
         ch4_content=85.0,
         co2_content=3.0,
     )
-    assert res["results"]["ch4"]["value"] > 0
-    assert res["results"]["co2"]["value"] > 0
-    assert res["total_co2e"] >= res["results"]["ch4"]["value"] * DEFAULT_GWP["CH4"]
+    # Table 7-12, gas service, tonne CH4/hr/component at 81.6 mol % CH4: valves 2.94E-06, flanges 2.54E-07,
+    # connectors 1.30E-07, open-ended lines 1.30E-06, pump seals 1.57E-06; scaled to the site's 85 mol % CH4
+    per_hr = 250 * 2.94e-6 + 600 * 2.54e-7 + 450 * 1.30e-7 + 30 * 1.30e-6 + 8 * 1.57e-6
+    ch4 = per_hr * 8760 * 0.85 / 0.816
+    assert res["results"]["ch4"]["value"] == pytest.approx(ch4, rel=1e-3)  # 9.10 t
+    # CO2 from the whole-gas factors (scf gas/hr/component: 0.188, 1.63E-02, 8.36E-03, 8.36E-02, 0.100) x 3 mol % CO2
+    gas_scf_hr = 250 * 0.188 + 600 * 1.63e-2 + 450 * 8.36e-3 + 30 * 8.36e-2 + 8 * 0.100
+    co2 = gas_scf_hr * 8760 * 0.03 / 379.3 * 44.01 / 2204.62
+    assert res["results"]["co2"]["value"] == pytest.approx(co2, rel=2e-3)  # 0.883 t
+    assert res["total_co2e"] == pytest.approx(28.0 * res["results"]["ch4"]["value"] + res["results"]["co2"]["value"],
+                                              rel=1e-9)
 
 
 # ---------------------------------------------------------------------------
@@ -180,8 +188,10 @@ def test_tier3a_method21_screening_ranges():
         operating_hours=8760,
         ch4_content=85.0,
     )
-    assert res["results"]["ch4"]["value"] > 0
-    assert res["total_co2e"] > 0
+    # Table 7-26, gas valves: 2.5e-5 kg TOC/h below 10,000 ppmv, 9.8e-2 kg TOC/h at or above; CH4 share 0.85
+    toc_kg_hr = 95 * 2.5e-5 + 5 * 9.8e-2
+    assert res["results"]["ch4"]["value"] == pytest.approx(toc_kg_hr * 8760 / 1000 * 0.85, rel=1e-9)
+    assert res["total_co2e"] == pytest.approx(toc_kg_hr * 8760 / 1000 * 0.85 * 28.0, rel=1e-9)
     assert "Tier 3A" in res["intermediate"]["methodology"]
 
 
@@ -196,8 +206,10 @@ def test_tier3b_correlation_equations():
         operating_hours=8760,
         ch4_content=85.0,
     )
-    assert res["results"]["ch4"]["value"] > 0
-    assert res["total_co2e"] > 0
+    # Tables 7-40 to 7-42, valves: leak rate 2.29e-6 x SV^0.746 kg TOC/h; default zero 7.8e-6 kg/h; 10,000 ppm pegged 0.064 kg/h
+    toc_kg_hr = 10 * 7.8e-6 + 2.29e-6 * (500 ** 0.746 + 25000 ** 0.746) + 2 * 0.064
+    assert res["results"]["ch4"]["value"] == pytest.approx(toc_kg_hr * 8760 / 1000 * 0.85, rel=1e-9)
+    assert res["total_co2e"] == pytest.approx(toc_kg_hr * 8760 / 1000 * 0.85 * 28.0, rel=1e-9)
     assert "Tier 3B" in res["intermediate"]["methodology"]
 
 
@@ -212,8 +224,10 @@ def test_tier3c_ogi_leaker_survey():
         operating_hours=2190,  # 1 quarter
         ch4_mol=0.90,
     )
-    assert res["results"]["ch4"]["value"] > 0
-    assert res["total_co2e"] > 0
+    # Table 7-23: gas valve leaker 4.9 scf whole gas/h; 4 leakers x 2,190 h at 90 mol % CH4 (60 F, 23.685 m3/kmol)
+    ch4_t = 4 * 4.9 * 2190 * 0.028316846592 * 0.90 * (16.04 / 23.685) / 1000
+    assert res["results"]["ch4"]["value"] == pytest.approx(ch4_t, rel=1e-9)
+    assert res["total_co2e"] == pytest.approx(ch4_t * 28.0, rel=1e-9)
     assert "Tier 3C" in res["intermediate"]["methodology"]
 
 
@@ -228,9 +242,12 @@ def test_tier3d_direct_measurement():
         ch4_mol=0.85,
         co2_mol=0.02,
     )
-    assert res_vol["results"]["ch4"]["value"] > 0
-    assert res_vol["results"]["co2"]["value"] > 0
-    assert res_vol["total_co2e"] > 0
+    # 2.5 m3/h of whole gas for 720 h at 85 mol % CH4 and 2 % CO2 (60 F, 23.685 m3/kmol)
+    ch4_t = 2.5 * 720 * 0.85 * (16.04 / 23.685) / 1000
+    co2_t = 2.5 * 720 * 0.02 * (44.01 / 23.685) / 1000
+    assert res_vol["results"]["ch4"]["value"] == pytest.approx(ch4_t, rel=1e-9)
+    assert res_vol["results"]["co2"]["value"] == pytest.approx(co2_t, rel=1e-9)
+    assert res_vol["total_co2e"] == pytest.approx(ch4_t * 28.0 + co2_t, rel=1e-9)
     assert "Tier 3D" in res_vol["intermediate"]["methodology"]
 
     # Direct measurement in kg/hr
@@ -241,5 +258,8 @@ def test_tier3d_direct_measurement():
         ch4_mol=0.85,
         co2_mol=0.02,
     )
-    assert res_mass["results"]["ch4"]["value"] > 0
-    assert res_mass["total_co2e"] > 0
+    # 1.2 kg/h is CH4 mass: 720 h -> 0.864 t; the CO2 follows from the 2 : 85 mole ratio
+    assert res_mass["results"]["ch4"]["value"] == pytest.approx(1.2 * 720 / 1000, rel=1e-9)
+    co2_t = 1.2 * 720 / 1000 * (0.02 / 0.85) * (44.01 / 16.04)
+    assert res_mass["results"]["co2"]["value"] == pytest.approx(co2_t, rel=1e-9)
+    assert res_mass["total_co2e"] == pytest.approx(1.2 * 720 / 1000 * 28.0 + co2_t, rel=1e-9)

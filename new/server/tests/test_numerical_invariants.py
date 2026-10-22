@@ -181,16 +181,14 @@ class TestBoundaryConditions:
         assert AGRCalculator().calculate(0.0, 0.04, 0.001, {})["total_co2e"] == 0.0
 
     def test_extreme_orders_of_magnitude(self):
-        """Calculations must remain stable with micro and macro inputs (1e-9 to 1e10)."""
+        """Calculations must remain stable with micro and macro inputs (1e-9 to 1e10): CO2 = mass x 0.85 x 44.01/12.011."""
         calc = StoichiometricCalculator()
+        ratio = 44.01 / 12.011
         micro = calc.calculate(1e-9, 0.85, {}, mass_unit="kg")
-        assert not math.isnan(micro["total_co2e"])
-        assert not math.isinf(micro["total_co2e"])
-        assert micro["total_co2e"] > 0
+        assert micro["total_co2e"] == pytest.approx(1e-9 * 0.85 * ratio / 1000.0, rel=1e-9)
 
         macro = calc.calculate(1e10, 0.85, {}, mass_unit="kg")
-        assert not math.isnan(macro["total_co2e"])
-        assert not math.isinf(macro["total_co2e"])
+        assert macro["total_co2e"] == pytest.approx(1e10 * 0.85 * ratio / 1000.0, rel=1e-9)
         assert macro["total_co2e"] > 1e6
 
 
@@ -227,6 +225,14 @@ class TestDimensionalInvariants:
             roundtrip = convert(converted, u2, u1)
             err = abs(roundtrip - test_val) / test_val
             assert err < 1e-6, f"Round-trip failed for {u1} <-> {u2}: original={test_val}, roundtrip={roundtrip}, err={err}"
+        # and the forward direction is the defined factor (not merely self-consistent)
+        assert convert(1.0, "scf", "m3") == pytest.approx(0.028316846592, rel=1e-9)
+        assert convert(1.0, "bbl", "m3") == pytest.approx(0.158987294928, rel=1e-9)
+        assert convert(1.0, "gal", "m3") == pytest.approx(0.003785411784, rel=1e-9)
+        assert convert(1.0, "lb", "kg") == pytest.approx(0.45359237, rel=1e-9)
+        assert convert(1.0, "short_ton", "kg") == pytest.approx(907.18474, rel=1e-9)
+        assert convert(1.0, "long_ton", "kg") == pytest.approx(1016.0469088, rel=1e-9)
+        assert convert(1.0, "kwh", "mj") == pytest.approx(3.6, rel=1e-9)
 
     def test_thermodynamic_ideal_gas_normalization(self):
         """API §4.2.1: PV/T normalization: colder gas -> more mass; higher pressure -> more mass."""
@@ -278,7 +284,11 @@ class TestUncertaintyQuantification:
         res = srss_inventory(sources)
         sigma_srss_abs = res["total_value"] * res["relative_uncertainty_1sigma"]
         linear_sum_abs = sum(s["value"] * s["relative_uncertainty"] for s in sources)
-        assert sigma_srss_abs <= linear_sum_abs
+        # Eq 3.3: sqrt((100 x .10)^2 + (200 x .15)^2 + (300 x .05)^2) = sqrt(100 + 900 + 225) = 35 against 10 + 30 + 15 = 55
+        assert res["total_value"] == pytest.approx(600.0)
+        assert sigma_srss_abs == pytest.approx(35.0)
+        assert linear_sum_abs == pytest.approx(55.0)
+        assert sigma_srss_abs < linear_sum_abs
 
     def test_confidence_interval_bounds_ordering(self):
         """ISO 14064-1 §7.5: 0 <= lower_bound <= value <= upper_bound must hold strictly."""

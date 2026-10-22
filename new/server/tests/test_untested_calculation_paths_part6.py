@@ -144,9 +144,15 @@ def test_acid_gas_removal_control_efficiency_string_normalization():
         disposition="flared",
         control_efficiency="98%",
     )
-    assert res["total_co2e"] > 0
-    assert res["results"]["co2"]["value"] > 0
-    assert res["results"]["ch4"]["value"] >= 0
+    # Table 6-19 throughput factor 0.0185 t CH4/MMscf -> 1.85 t, flared at 98 %: 0.037 t escapes, 1.813 t burns to CO2.
+    # Eq 6-18: CO2 = (V_sour x 8 % - V_sweet x 1 %) x 44.01 / 379.3 / 2,204.62 with V_sweet = V_sour x (1 - 8 %) (the
+    # engine takes the sweet gas as the sour gas less its CO2 fraction).
+    co2_vented = 100e6 * (0.08 - 0.92 * 0.01) * (44.01 / 379.3) / 2204.62
+    assert res["results"]["ch4"]["value"] == pytest.approx(1.85 * 0.02, rel=1e-9)
+    assert res["results"]["co2"]["value"] == pytest.approx(co2_vented + 1.85 * 0.98 * (44.01 / 16.04), rel=1e-5)
+    assert res["total_co2e"] == pytest.approx(
+        res["results"]["co2"]["value"] + 28.0 * res["results"]["ch4"]["value"] + 265.0 * res["results"]["n2o"]["value"],
+        rel=1e-9)
 
 
 def test_blowdown_control_efficiency_string_and_differential_mode():
@@ -165,9 +171,14 @@ def test_blowdown_control_efficiency_string_and_differential_mode():
         blowdown_mode="differential",
         final_pressure=50.0,
     )
-    assert res["total_co2e"] > 0
-    assert res["results"]["ch4"]["value"] > 0
-    assert res["results"]["co2"]["value"] > 0
+    # differential blowdown 500 -> 50 psig: gas released per event = V x (P1 - P2) / 14.696 = 100 x 450 / 14.696 standard m3, 5 events
+    v_std = 5 * 100.0 * ((500.0 + 14.696) - (50.0 + 14.696)) / 14.696
+    rho_co2, rho_ch4 = 44.01 / 23.685, 16.04 / 23.685
+    assert res["inputs"]["total_v_std_m3"] == pytest.approx(v_std, rel=1e-9)
+    # 90 % of the gas to a flare (98 % destruction, 96.5 % carbon conversion), 10 % vented; the 5 % CO2 is vented / passes through
+    assert res["results"]["ch4"]["value"] == pytest.approx(v_std * 0.85 * rho_ch4 / 1000 * (0.10 + 0.90 * 0.02), rel=1e-9)
+    assert res["results"]["co2"]["value"] == pytest.approx(
+        v_std * 0.85 * rho_co2 / 1000 * 0.90 * 0.965 + v_std * 0.05 * rho_co2 / 1000, rel=1e-9)
 
 
 def test_gas_dehydration_count_non_negative_guard():
@@ -244,7 +255,12 @@ def test_dispatcher_pct_string_handling():
     factors = {"co2": 0.0, "ch4": 0.0, "n2o": 0.0, "unit": "kg/m3"}
 
     res = disp.dispatch("stationary_combustion", payload, factors)
-    assert res["total_co2e"] > 0
+    # carbon balance: 0.90 CH4 x 1 mol C at 99.5 % combustion + 2 % native CO2; slip 0.5 % of the CH4 (60 F, 23.685 m3/kmol)
+    co2 = 1000.0 * (0.90 * 0.995 + 0.02) * (44.01 / 23.685) / 1000
+    ch4 = 1000.0 * 0.90 * 0.005 * (16.04 / 23.685) / 1000
+    assert res["results"]["co2"]["value"] == pytest.approx(co2, rel=1e-9)
+    assert res["results"]["ch4"]["value"] == pytest.approx(ch4, rel=1e-9)
+    assert res["total_co2e"] == pytest.approx(co2 + 28.0 * ch4, rel=1e-9)
     assert "uncertainty_components" in res
 
 

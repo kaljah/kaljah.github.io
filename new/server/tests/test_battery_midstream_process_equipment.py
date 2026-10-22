@@ -300,10 +300,16 @@ class TestBlowdownBattery:
             hhv=1020.0,
             gwp_dict=GWP_AR5,
         )
-        # 98% controlled should result in both CO2 and unburnt CH4 emissions
-        assert _val(res["results"]["co2"]) > 0
-        assert _val(res["results"]["ch4"]) > 0
-        assert _val(res["results"]["n2o"]) > 0
+        # 98 % controlled = 98 % of the gas to a flare (default 98 % CH4 destruction, 96.5 % carbon conversion), 2 % vented.
+        # Gas: 2 events x 50 m3 x (500 + 14.696)/14.696 = 3,502.2 standard m3 at 85 % CH4 (60 F, 23.685 m3/kmol).
+        v_ch4 = 2 * 50.0 * (500.0 + 14.696) / 14.696 * 0.85
+        rho_co2, rho_ch4 = 44.01 / 23.685, 16.04 / 23.685
+        assert res["inputs"]["total_v_std_m3"] == pytest.approx(2 * 50.0 * (500.0 + 14.696) / 14.696, rel=1e-6)
+        assert _val(res["results"]["ch4"]) == pytest.approx(v_ch4 * rho_ch4 / 1000 * (0.02 + 0.98 * 0.02), rel=1e-6)
+        assert _val(res["results"]["co2"]) == pytest.approx(v_ch4 * rho_co2 / 1000 * 0.98 * 0.965, rel=1e-6)
+        # N2O of the flared share: gas x 1,020 Btu/scf x 1.0e-7 t/MMBtu
+        flared_mmbtu = 0.98 * (v_ch4 / 0.85) * 35.3146667 * 1020.0 / 1e6
+        assert _val(res["results"]["n2o"]) == pytest.approx(flared_mmbtu * 1.0e-7, rel=1e-3)
 
 
 class TestTankFlashingBattery:

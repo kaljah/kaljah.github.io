@@ -2,14 +2,15 @@
 POST /api/emissions (resolve_factor + compute_emissions). Inputs are the exhibits' stated inputs,
 expected values their printed results (tonnes), read from scratch/2021-API-GHG-Compendium.pdf.
 
-Tolerance is 2 % unless the printed answer is rounded to one or two significant figures.
-The engine converts scf -> m3 -> mass with its gas densities (0.67722 / 1.85814 kg/m3, 60 F); the
-exhibits use 379.3 scf/lbmol, which differs by about 0.4 %.
+Tolerance: the rounding of the printed answer (half a unit of its last digit) plus 0.5 % for the engine's gas
+densities (0.67722 / 1.85814 kg/m3 at 60 F, where the exhibits use 379.3 scf/lbmol and rounded molecular weights,
+about 0.4 % apart). Every case's measured gap is inside that; a flat 2-6 % used to hide real errors.
 """
 import json
 
 import pytest
 
+from compendium_exhibits_support import REL_ENGINE, assert_printed
 from calculations.constants import get_active_gwp
 from calculations.legacy_engine import compute_emissions
 from services.scope1_calc import resolve_factor
@@ -17,8 +18,9 @@ from services.scope1_calc import resolve_factor
 CASES = []
 
 
-def case(ex, title, payload, expect, tol=0.02):
-    CASES.append(pytest.param(payload, expect, tol, id=f"{ex} {title}"))
+def case(ex, title, payload, expect):
+    """``expect`` holds the exhibit's printed results (tonnes); the tolerance is the printed rounding plus REL_ENGINE."""
+    CASES.append(pytest.param(payload, expect, id=f"{ex} {title}"))
 
 
 def pl(process, source="default", **inputs):
@@ -48,7 +50,7 @@ case("6-5b", "Coal seam well test gas flared, 3 x 6.76e6 scf, C2+ as ethane",
      {"co2": 1050, "ch4": 6.9})
 # ---- 6.3 production ----
 case("6-7", "Gas well workovers without HF, Table 6-9",
-     act("workovers", "wo_gas", 10, ch4_content=70, co2_content=9), {"ch4": 0.42, "co2": 0.15}, tol=0.03)
+     act("workovers", "wo_gas", 10, ch4_content=70, co2_content=9), {"ch4": 0.42, "co2": 0.15})
 case("6-9", "Primary heavy oil casing gas, Table 6-12",
      act("casing_gas", "cg_primary_heavy", 100 * 365, "bbl", ch4_content=70, co2_content=9), {"ch4": 102.7, "co2": 36.3})
 case("6-10", "Low-pressure casing gas migration, 3 wells",
@@ -58,7 +60,7 @@ case("6-14", "Kimray pump, production, Table 6-18",
 case("6-15", "Desiccant dehydrator, Eq 6-16",
      pl("desiccant_dehydrator", "specific", vessel_height_ft=6.40, vessel_diameter_ft=1.60, vessel_pressure_psig=450,
         gas_fraction=45, refills=52, ch4_content=90, co2_content=5),
-     {"ch4": 0.16, "co2": 0.025}, tol=0.03)
+     {"ch4": 0.16, "co2": 0.025})
 case("6-16", "AGR vent per unit, Table 6-19",
      act("agr", "agr_unit", 1, activity_days=365), {"ch4": 236.6})
 case("6-17", "AGR sour / sweet material balance, Eq 6-18",
@@ -66,7 +68,7 @@ case("6-17", "AGR sour / sweet material balance, Eq 6-18",
         gas_volume_unit="MMscf", sour_co2_content=3.0, sweet_co2_content=2.0),
      {"co2": 80506, "ch4": 2775})
 case("6-22", "CO2 EOR injection pump blowdown, Eq 6-20",
-     pl("co2_eor", "specific", physical_volume_m3=36.4, co2_density=650, co2_wt_pct=98.5), {"co2": 23}, tol=0.02)
+     pl("co2_eor", "specific", physical_volume_m3=36.4, co2_density=650, co2_wt_pct=98.5), {"co2": 23})
 # ---- 6.4 gathering & boosting ----
 case("6-23", "G&B pneumatic controllers, type unknown, Table 6-29",
      act("pneumatic", "gb_pc_avg", 80, ch4_content=70, co2_content=9), {"ch4": 85.7, "co2": 30.3})
@@ -74,11 +76,11 @@ case("6-24", "G&B reciprocating rod packing, GHGRP factor",
      act("compressor_venting", "gb_rp_ghgrp", 4, activity_hours=8470, ch4_content=70, co2_content=9),
      {"ch4": 0.62, "co2": 0.22})
 case("6-26a", "Vessel blowdowns", act("non_routine_venting", "gb_bd_vessel", 5, ch4_content=70, co2_content=8),
-     {"ch4": 0.007, "co2": 0.002}, tol=0.06)
+     {"ch4": 0.007, "co2": 0.002})
 case("6-26b", "Compressor blowdowns", act("non_routine_venting", "gb_bd_compressor", 1, ch4_content=70, co2_content=8),
-     {"ch4": 0.064, "co2": 0.020}, tol=0.03)
+     {"ch4": 0.064, "co2": 0.020})
 case("6-26c", "Gathering pipeline blowdowns", act("non_routine_venting", "gb_bd_pipeline", 5, ch4_content=70, co2_content=8),
-     {"ch4": 0.026, "co2": 0.008}, tol=0.06)
+     {"ch4": 0.026, "co2": 0.008})
 case("6-27a", "PRV releases", act("non_routine_venting", "gb_prv", 6), {"ch4": 0.0039})
 case("6-27b", "Pipeline dig-ins", act("non_routine_venting", "gb_digins", 6), {"ch4": 0.077})
 case("6-27c", "Compressor starts", act("non_routine_venting", "gb_compressor_starts", 1), {"ch4": 0.16})
@@ -91,7 +93,7 @@ case("6-28b", "Kimray pump, processing, Table 6-36",
 case("6-29", "Natural gas blanketed tank, actual -> standard volume",
      pl("tank", "specific", vent_method="actual", actual_volume=32000, actual_unit="bbl", gas_temp_f=75,
         gas_pressure_atm=1, ch4_content=82, co2_content=1),
-     {"ch4": 2.74, "co2": 0.09}, tol=0.03)
+     {"ch4": 2.74, "co2": 0.09})
 case("6-30", "Processing non-routine, per 10^6 m3", act("non_routine_venting", "proc_non_routine_m3", 20e6 * 365, "m3"),
      {"ch4": 908})
 # ---- 6.6 transmission & storage ----
@@ -110,7 +112,7 @@ case("6-34a", "M&R station blowdowns", act("non_routine_venting", "dist_mr", 3),
 case("6-34b", "Odorizer and sampling vents", act("non_routine_venting", "dist_odorizer", 3), {"ch4": 0.068})
 case("6-34c", "Distribution pipeline blowdowns", act("non_routine_venting", "dist_pipeline_bd", 20), {"ch4": 0.64})
 case("6-34d", "Distribution dig-ins", act("non_routine_venting", "dist_digins", 20), {"ch4": 0.61})
-case("6-34e", "Distribution PRVs", act("non_routine_venting", "dist_prv", 20), {"ch4": 0.02}, tol=0.05)
+case("6-34e", "Distribution PRVs", act("non_routine_venting", "dist_prv", 20), {"ch4": 0.02})
 # ---- 6.10 loading ----
 case("6-35", "Rail splash loading, dedicated, 12 wt % CH4",
      act("loading", "load_splash_dedicated", 50000, "bbl", toc_ch4_wt=12), {"ch4": 0.554})
@@ -148,13 +150,13 @@ case("5.3", "Thermal oxidizer on crude loading",
      {"co2": 338.9, "ch4": 0.085})
 
 
-@pytest.mark.parametrize("payload,expect,tol", CASES)
-def test_onshore_exhibit(app, payload, expect, tol):
+@pytest.mark.parametrize("payload,expect", CASES)
+def test_onshore_exhibit(app, payload, expect):
     with app.app_context():
         p = json.loads(json.dumps(payload))
         em, _ = compute_emissions(p, resolve_factor(p) or {}, gwp_dict=get_active_gwp(standard="AR5"))
         for gas, exp in expect.items():
-            assert float(em.get(gas) or 0) == pytest.approx(exp, rel=tol), gas
+            assert_printed(float(em.get(gas) or 0), f"{exp:g}", rel=REL_ENGINE, what=gas)
 
 
 @pytest.mark.parametrize("payload,msg", [
@@ -229,7 +231,7 @@ def test_post_activity_factor_record(client, api_ctx):
     r = _post(client, api_ctx, "workovers", "default", activity_key="wo_gas", amount=10, unit="count",
               ch4_content=70, co2_content=9)
     assert r.status_code == 201, r.get_json()
-    assert r.get_json()["emissions"]["ch4"] == pytest.approx(0.42, rel=0.03)
+    assert_printed(r.get_json()["emissions"]["ch4"], "0.42", rel=0.0002, what="CH4")
 
 
 def test_post_engineered_record_without_amount(client, api_ctx):
@@ -238,9 +240,10 @@ def test_post_engineered_record_without_amount(client, api_ctx):
               vessel_diameter_ft=1.6, vessel_pressure_psig=450, gas_fraction=45, refills=52, ch4_content=90,
               co2_content=5)
     assert r.status_code == 201, r.get_json()
-    # the exhibit is annual (52 refills / year); a March record carries 31 / 365 of it
-    # (0.16 t is the exhibit's rounded annual value, 0.1646 unrounded)
-    assert r.get_json()["emissions"]["ch4"] == pytest.approx(0.16 * 31 / 365, rel=0.04)
+    # the exhibit is annual (52 refills / year); a March record carries 31 / 365 of it. The exhibit's own arithmetic:
+    # 9,519 scf/yr x 90 % CH4 / 379.3 scf/lbmol x 16 lb/lbmol / 2,204.62 lb/t = 0.1640 t/yr (printed 0.16)
+    annual_exhibit = 9519 * 0.90 / 379.3 * 16 / 2204.62
+    assert r.get_json()["emissions"]["ch4"] == pytest.approx(annual_exhibit * 31 / 365, rel=REL_ENGINE + 0.0025)
 
 
 def test_post_combustion_method_record(client, api_ctx):
@@ -249,7 +252,7 @@ def test_post_combustion_method_record(client, api_ctx):
               liquid_loaded=4_122_487, liquid_unit="bbl", loading_loss_lb_kgal=1.23, voc_fraction_of_toc=85,
               toc_carbon_wt_pct=82.15, toc_ch4_wt_pct=7.5, destruction_efficiency=99)
     assert r.status_code == 201, r.get_json()
-    assert r.get_json()["emissions"]["co2"] == pytest.approx(338.9, rel=0.02)
+    assert_printed(r.get_json()["emissions"]["co2"], "338.9", rel=1e-3, what="CO2")
 
 
 def test_post_activity_process_without_method_is_rejected(client, api_ctx):

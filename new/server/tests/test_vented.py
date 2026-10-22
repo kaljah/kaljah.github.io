@@ -1,3 +1,4 @@
+import pytest
 from calculations.vented import (
     TankFlashingCalculator,
     PneumaticDeviceCalculator,
@@ -15,10 +16,14 @@ def test_tanks_calculator():
         "uncertainties": {},
     }
     res = calc.calculate(**data)
-    assert res["results"]["ch4"]["value"] > 0
+    # 10,000 bbl x 50 scf/bbl = 500,000 scf of flash gas at 80 % CH4. On this calculator control_efficiency is the SHARE of the
+    # gas sent to a flare (95 %); the flare burns at the default 98 % CH4 destruction / 96.5 % carbon conversion and the other
+    # 5 % is vented. (60 F molar volume 23.685 m3/kmol.)
+    v_ch4 = 10000 * 50 * 0.028316846592 * 0.80
+    rho_co2, rho_ch4 = 44.01 / 23.685, 16.04 / 23.685
+    assert res["results"]["ch4"]["value"] == pytest.approx(v_ch4 * rho_ch4 / 1000 * (0.05 + 0.95 * 0.02), rel=1e-9)
     # Remediation check: Flared combustion produces CO2
-    assert res["results"]["co2"] is not None
-    assert res["results"]["co2"]["value"] > 0
+    assert res["results"]["co2"]["value"] == pytest.approx(v_ch4 * rho_co2 / 1000 * 0.95 * 0.965, rel=1e-9)
 
 
 def test_pneumatics_calculator():
@@ -68,7 +73,10 @@ def test_liquids_unloading_units():
         press_unit="psig",
     )
     assert res is not None
-    assert res["results"]["ch4"]["value"] > 0
+    # Eq 6-10 with the depth in metres (1,000 m = 3,280.84 ft): 5 events x 0.37e-3 x 4 in squared x depth x 150 psig of
+    # whole gas, 85 % CH4 (the engine gas densities sit 0.3 % from the 379.3 scf/lbmole of the equation)
+    scf = 5 * 0.37e-3 * 4 ** 2 * (1000 / 0.3048) * 150
+    assert res["results"]["ch4"]["value"] == pytest.approx(scf * 0.85 / 379.3 * 16.04 / 2204.62, rel=5e-3)
 
 
 def test_blowdown_calculator():

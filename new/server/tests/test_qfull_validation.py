@@ -420,6 +420,8 @@ class TestCompletions:
         assert em['ch4'] == pytest.approx(ch4_tonnes, rel=1e-4)
 
     def test_completions_missing_content(self):
+        """A metered completion volume without the flowback gas CH4 content is refused: the platform no longer
+        assumes a composition (it used to be an empty test that always passed)."""
         payload = {
             'process_type': 'completions',
             'quantity': 1000.0,
@@ -427,11 +429,8 @@ class TestCompletions:
             'factor_source': 'specific',
             'comp_method': 'metered_volume'
         }
-        ch4_vol = 1000.0 * 1.0 # default to 1.0 if missing or handled depending on impl
-        ch4_tonnes = ch4_vol * DENSITY_CH4 / 1000
-        # If it throws or defaults, just test expected behavior, assuming default 0 or 1
-        # Will assume standard fallback or 0.
-        pass # Optional robust test
+        with pytest.raises(ValueError, match="CH4 content of the flowback gas"):
+            compute_emissions(payload, {}, GWP_AR5)
 
 class TestLiquidsUnloading:
     def test_liquids_unloading_standard(self):

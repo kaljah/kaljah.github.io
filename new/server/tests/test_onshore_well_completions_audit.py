@@ -441,9 +441,12 @@ class TestOnshoreCompletionsEndToEndPipeline:
             "control_efficiency": 98.0,
         }
         res, method = compute_emissions(payload, {}, gwp_dict=GWP_AR5)
-        assert res["ch4"] > 0
-        assert res["co2"] > 0
-        assert res["totalCo2e"] > 0
+        # 5,000 m3 flowback at 85 % CH4, flared; an entered 98 % is the flare's efficiency for the CH4 destruction and the
+        # carbon conversion alike (60 F molar volume 23.685 m3/kmol)
+        v_ch4 = 5000.0 * 0.85
+        assert res["ch4"] == pytest.approx(v_ch4 * (16.04 / 23.685) / 1000 * 0.02, rel=1e-9)
+        assert res["co2"] == pytest.approx(v_ch4 * (44.01 / 23.685) / 1000 * 0.98, rel=1e-9)
+        assert res["totalCo2e"] == pytest.approx(res["co2"] + 28.0 * res["ch4"] + 265.0 * (res.get("n2o") or 0.0), rel=1e-6)
         assert "_full_api_res" in res
 
 

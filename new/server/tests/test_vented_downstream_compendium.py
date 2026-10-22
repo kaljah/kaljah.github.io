@@ -69,7 +69,7 @@ class TestCatalystRegenerationCompendium:
             co_pct=9.0,
             operating_hours=8760.0,
         )
-        assert pytest.approx(res["inputs"]["coke_burn_co2"], rel=1e-2) == 419859.0
+        assert pytest.approx(res["inputs"]["coke_burn_co2"], rel=2e-3) == 419859.0
 
     def test_exhibit_6_39_continuous_catalyst_regen(self):
         """
@@ -104,7 +104,7 @@ class TestCatalystRegenerationCompendium:
             fc_spent=0.07,
             fc_regen=0.0,
         )
-        assert pytest.approx(_val(res["results"]["co2"]), rel=1e-2) == 513.0
+        assert pytest.approx(_val(res["results"]["co2"]), rel=1e-3) == 513.0
 
 
 class TestCokerCompendium:
@@ -159,7 +159,8 @@ class TestHydrogenPlantCompendium:
             feedstock_volume_scf_yr=5_000_000_000.0,
             feedstock_comp=comp,
         )
-        assert pytest.approx(_val(res["results"]["co2"]), rel=1e-2) == 297100.0
+        # the exhibit rounds the mixture MW (18.86) and carbon (71.85 %); engine uses exact molecular weights
+        assert pytest.approx(_val(res["results"]["co2"]), rel=3e-3) == 297100.0
 
     def test_exhibit_6_43_h2_stoichiometry(self):
         """
@@ -173,7 +174,8 @@ class TestHydrogenPlantCompendium:
             h2_production_scf_yr=13_000_000_000.0,
             co2_to_h2_molar_ratio=0.26,
         )
-        assert pytest.approx(_val(res["results"]["co2"]), rel=1e-2) == 177800.0
+        # exhibit ratio 1.13/4.35 rounded to 0.26
+        assert pytest.approx(_val(res["results"]["co2"]), rel=1e-3) == 177800.0
 
     def test_exhibit_6_44_simple_approach(self):
         """
@@ -187,7 +189,7 @@ class TestHydrogenPlantCompendium:
             simple_basis="h2_scf",
             h2_production_scf_yr=13_000_000_000.0,
         )
-        assert pytest.approx(_val(res["results"]["co2"]), rel=1e-2) == 174300.0
+        assert pytest.approx(_val(res["results"]["co2"]), rel=5e-4) == 174300.0
 
 
 class TestAsphaltBlowingCompendium:
@@ -209,8 +211,8 @@ class TestAsphaltBlowingCompendium:
             unit="short_ton",
             controlled=False,
         )
-        assert pytest.approx(_val(res["results"]["co2"]), rel=1e-2) == 561.0
-        assert pytest.approx(_val(res["results"]["ch4"]), rel=1e-2) == 307.0
+        assert pytest.approx(_val(res["results"]["co2"]), rel=1e-3) == 561.0
+        assert pytest.approx(_val(res["results"]["ch4"]), rel=1e-3) == 307.0
 
     def test_controlled_incineration(self):
         """Equations 6-51 & 6-52: 98% destruction efficiency incineration."""
@@ -221,7 +223,7 @@ class TestAsphaltBlowingCompendium:
             destruction_efficiency=0.98,
         )
         # Residual CH4 = 307 * 0.02 = 6.14 tonnes
-        assert pytest.approx(_val(res["results"]["ch4"]), rel=1e-2) == 307.0 * 0.02
+        assert pytest.approx(_val(res["results"]["ch4"]), rel=1e-3) == 307.0 * 0.02
         assert _val(res["results"]["co2"]) > 561.0
 
 

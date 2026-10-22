@@ -188,6 +188,9 @@ def test_process_row_scope3_eeio_excel_float_code(eeio_world):
     assert not errors
     assert record is not None
     assert "331110" in record.sub_category
+    # the Excel code "331110.0" resolves to the same factor as "331110": 10,000 USD at the NAICS factor per 1,000 USD
+    factor = get_eeio_factor("331110")["kg_co2e_per_1000_usd"]
+    assert record.co2e == pytest.approx(10.0 * factor / 1000.0)
 
 
 def test_process_row_scope3_eeio_validation_refusals(eeio_world):

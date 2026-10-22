@@ -2,6 +2,12 @@
 Comprehensive Golden Test Suite for API GHG Compendium 2021 Section 6.3
 Oil & Natural Gas Production Vented & Process Emissions
 
+NOTE (2026-10-22): the worked examples of this section (Exhibits 6-7, 6-9 to 6-18, 6-21) are now asserted against the
+numbers the exhibits print, to their printed precision, in test_compendium_exhibits_ch6_exploration_production.py; the
+loose copies that used to be here (e.g. +/-0.5 t on 24.2 t, a CO2 check that passed on either of two values, a CH4
+check that only required > 0) were removed so one stricter test per exhibit remains. What is left here are the
+non-exhibit equations and factor-table checks, plus Exhibits 6-22 and 6-25.
+
 Verifies:
 - §6.3.2 Workovers without Hydraulic Fracturing (Exhibit 6-7)
 - §6.3.5 Casing Gas Vents: Heavy Oil Throughput (Exhibit 6-9) & Migration (Exhibit 6-10)
@@ -16,6 +22,7 @@ Verifies:
 """
 
 import pytest
+from compendium_exhibits_support import REL_ENGINE, assert_printed
 from calculations.vented_production import (
     WorkoverWithoutFracturingCalculator,
     CasingGasVentCalculator,
@@ -42,23 +49,6 @@ def _val(res_item):
 # §6.3.2 Workovers without Hydraulic Fracturing (Exhibit 6-7)
 # ==============================================================================
 class TestWorkoverWithoutFracturing:
-    def test_exhibit_6_7_gas_well_workovers(self):
-        """
-        API Exhibit 6-7:
-        10 gas well workovers without HF, 70% CH4, 9% CO2, vented.
-        Expected: ECH4 = 0.42 tonnes CH4/yr, ECO2 = 0.15 tonnes CO2/yr.
-        """
-        calc = WorkoverWithoutFracturingCalculator()
-        res = calc.calculate(
-            workovers=10,
-            well_type="gas_well",
-            ch4_content=0.70,
-            co2_content=0.09,
-            disposition="vented",
-        )
-        assert _val(res["results"]["ch4"]) == pytest.approx(0.4173, abs=0.01)
-        assert _val(res["results"]["co2"]) == pytest.approx(0.1477, abs=0.01)
-        assert res["total_co2e"] > 0
 
     def test_oil_well_workover(self):
         """Oil well workovers use Table 6-9 factor (122 scf gas/event, 96 scf CH4)."""
@@ -67,107 +57,35 @@ class TestWorkoverWithoutFracturing:
         assert _val(res["results"]["ch4"]) == pytest.approx(5 * 0.0018, abs=0.001)
 
     def test_flared_workover_disposition(self):
-        """Flaring converts 98% of CH4 to CO2 and generates N2O."""
+        """Flaring converts 98% of CH4 to CO2 and generates N2O. 10 gas well workovers x 3,114 scf (Table 6-9) at 80 % CH4;
+        an entered efficiency of 0.98 is the flare's efficiency for both the CH4 destruction and the carbon conversion."""
         calc = WorkoverWithoutFracturingCalculator()
         res = calc.calculate(workovers=10, well_type="gas_well", ch4_content=0.80, disposition="flared", control_efficiency=0.98)
-        assert _val(res["results"]["ch4"]) > 0  # 2% unburnt
-        assert _val(res["results"]["co2"]) > 0  # 98% combusted
-        assert _val(res["results"]["n2o"]) > 0
+        v_ch4 = 10 * 3114 * 0.028316846592 * 0.80
+        assert _val(res["results"]["ch4"]) == pytest.approx(v_ch4 * (16.04 / 23.685) / 1000 * 0.02, rel=1e-3)  # 2% unburnt
+        assert _val(res["results"]["co2"]) == pytest.approx(v_ch4 * (44.01 / 23.685) / 1000 * 0.98, rel=1e-3)  # 98% combusted
+        # N2O: 31,140 scf x 1,020 Btu/scf = 31.76 MMBtu x 1.0e-7 t N2O/MMBtu
+        assert _val(res["results"]["n2o"]) == pytest.approx(31140 * 1020 / 1e6 * 1.0e-7, rel=1e-6)
 
 
 # ==============================================================================
 # §6.3.5 Casing Gas Vents (Exhibits 6-9 & 6-10)
 # ==============================================================================
 class TestCasingGasVents:
-    def test_exhibit_6_9_heavy_oil_casing_gas(self):
-        """
-        API Exhibit 6-9:
-        100 bbl/day primary heavy crude, 365 days/yr, 70% CH4, 9% CO2.
-        Table 6-12 factor: 210 scf gas / bbl crude.
-        Expected: ECH4 = 102.7 tonnes CH4/yr, ECO2 = 36.3 tonnes CO2/yr.
-        """
-        calc = CasingGasVentCalculator()
-        res = calc.calculate(
-            method="throughput",
-            oil_type="primary_heavy_oil",
-            throughput_rate=100.0,
-            operating_days=365.0,
-            ch4_content=0.70,
-            co2_content=0.09,
-        )
-        assert _val(res["results"]["ch4"]) == pytest.approx(102.7, abs=0.5)
-        assert _val(res["results"]["co2"]) == pytest.approx(36.3, abs=0.5)
 
-    def test_exhibit_6_10_low_pressure_migration(self):
-        """
-        API Exhibit 6-10:
-        3 low pressure wells, 365 days, 70% CH4, 9% CO2.
-        Factor: 0.00213 tonnes CH4/well-day at 81.6% CH4 default.
-        Expected: ECH4 = 2.00 tonnes CH4/yr, ECO2 = 0.71 tonnes CO2/yr.
-        """
-        calc = CasingGasVentCalculator()
-        res = calc.calculate(
-            method="migration",
-            well_count=3,
-            operating_days=365.0,
-            ch4_content=0.70,
-            co2_content=0.09,
-        )
-        assert _val(res["results"]["ch4"]) == pytest.approx(2.00, abs=0.05)
-        assert _val(res["results"]["co2"]) == pytest.approx(0.71, abs=0.05)
 
     def test_table_6_13_well_basis(self):
-        """Active well basis from Table 6-13 (1,310 scf gas/well-day)."""
+        """Active well basis from Table 6-13 (1,310 scf gas/well-day) at the 81.6 mol % default CH4: 5 wells x 100 days."""
         calc = CasingGasVentCalculator()
         res = calc.calculate(method="well_count", well_status="active_wells", well_count=5, operating_days=100)
-        assert _val(res["results"]["ch4"]) > 0
+        assert _val(res["results"]["ch4"]) == pytest.approx(5 * 100 * 1310 * 0.816 / 379.3 * 16.04 / 2204.62, rel=1e-4)
 
 
 # ==============================================================================
 # §6.3.6 Natural Gas-Driven Pneumatic Controllers (Exhibits 6-11 & 6-12)
 # ==============================================================================
 class TestPneumaticControllers:
-    def test_exhibit_6_11_continuous_low_bleed(self):
-        """
-        API Exhibit 6-11:
-        80 low-bleed controllers, 8760 hrs, 70% CH4, 9% CO2.
-        Table 6-14 factor: 2.1 scf CH4 / hr-controller at 81.6% basis (2.6 scf gas/hr).
-        Expected: ECH4 = 24.2 tonnes CH4/yr, ECO2 = 7.0 tonnes CO2/yr.
-        """
-        calc = PneumaticDeviceCalculator()
-        res = calc.calculate(
-            count=80,
-            hours=8760,
-            controller_type="low_bleed",
-            source_standard="api",
-            ch4_content=0.70,
-            co2_content=0.09,
-        )
-        assert _val(res["results"]["ch4"]) == pytest.approx(24.2, abs=0.5)
-        # Exhibit 6-11 used 2.1 scf/hr as whole gas basis (7.0 t CO2) or 2.6 scf/hr whole gas factor (8.63 t CO2)
-        assert _val(res["results"]["co2"]) == pytest.approx(8.63, abs=0.5) or _val(res["results"]["co2"]) == pytest.approx(7.0, abs=0.5)
 
-    def test_exhibit_6_12_intermittent_monitoring_survey(self):
-        """
-        API Exhibit 6-12:
-        80 intermittent controllers with monitoring survey:
-        76 normally operating (1.0 yr fraction), 4 malfunctioning repaired March 31 (0.75 normal, 0.25 mf).
-        70% CH4, 9% CO2.
-        Expected: ECH4 = 5.41 tonnes CH4/yr, ECO2 = 1.91 tonnes CO2/yr.
-        """
-        calc = PneumaticDeviceCalculator()
-        res = calc.calculate(
-            monitoring_program=True,
-            normal_count=76,
-            normal_fraction_year=1.0,
-            malfunctioning_count=4,
-            malfunctioning_fraction_year=0.25,
-            hours=8760,
-            ch4_content=0.70,
-            co2_content=0.09,
-        )
-        assert _val(res["results"]["ch4"]) == pytest.approx(5.41, abs=0.2)
-        assert _val(res["results"]["co2"]) == pytest.approx(1.91, abs=0.1)
 
     def test_backwards_compatibility_continuous(self):
         """Existing test_vented.py signature: count=5, hours=8760, bleed_rate=10, ch4=0.80 -> ~6.727 tonnes."""
@@ -206,185 +124,24 @@ class TestPneumaticPumps:
             pump_inefficiency=0.30,
             ch4_content=0.85,
         )
-        assert _val(res["results"]["ch4"]) > 0
-
-
-# ==============================================================================
-# §6.3.8 Gas Dehydration & AGR (Exhibits 6-13, 6-14, 6-15, 6-16, 6-17)
-# ==============================================================================
-class TestGasTreatment:
-    def test_exhibit_6_13_glycol_dehydration(self):
-        """
-        API Exhibit 6-13:
-        25 MMscf/day, 365 days, 82% CH4, 5% CO2. Electric pump (no gas-assisted pump).
-        Table 6-17 factor: 0.0052859 tonnes CH4/MMscf.
-        Expected: ECH4 = 50.2 tonnes CH4/yr, ECO2 = 0.
-        """
-        calc = GasDehydrationCalculator()
-        res = calc.calculate(
-            dehydrator_type="glycol",
-            gas_throughput_mmscfd=25.0,
-            operating_days=365.0,
-            has_gas_assisted_pump=False,
-            ch4_content=0.82,
-            co2_content=0.05,
-        )
-        assert _val(res["results"]["ch4"]) == pytest.approx(50.2, abs=0.5)
-        assert _val(res["results"]["co2"]) == 0.0
-
-    def test_exhibit_6_14_dehydration_kimray_pump(self):
-        """
-        API Exhibit 6-14:
-        25 MMscf/day, 365 days, 82% CH4, 5% CO2. Kimray gas-assisted pump.
-        Table 6-18 factor: 0.01903 tonnes CH4/MMscf.
-        Expected: ECH4 = 180.7 tonnes CH4/yr, ECO2 = 30.3 tonnes CO2/yr (from pump only).
-        """
-        calc = GasDehydrationCalculator()
-        # Isolating Kimray pump emissions
-        annual_mmscf = 25.0 * 365.0
-        pump_ef = 0.01903
-        expected_ch4 = annual_mmscf * pump_ef * (0.82 / 0.788)
-        assert expected_ch4 == pytest.approx(180.7, abs=0.5)
-
-        res = calc.calculate(
-            dehydrator_type="glycol",
-            gas_throughput_mmscfd=25.0,
-            operating_days=365.0,
-            has_gas_assisted_pump=True,
-            ch4_content=0.82,
-            co2_content=0.05,
-        )
-        # Total includes both dehydrator (50.2) + pump (180.7) = 230.9 tonnes CH4/yr
-        assert _val(res["results"]["ch4"]) == pytest.approx(50.2 + 180.7, abs=1.0)
-        assert _val(res["results"]["co2"]) == pytest.approx(30.3, abs=0.5)
-
-    def test_exhibit_6_15_desiccant_dehydration(self):
-        """
-        API Exhibit 6-15:
-        H = 6.40 ft, D = 1.60 ft, P = 450 psig, 52 changeouts, 45% packed (G = 0.45).
-        90% CH4, 5% CO2.
-        Expected: ECH4 = 0.16 tonnes CH4/yr, ECO2 = 0.025 tonnes CO2/yr.
-        """
-        calc = GasDehydrationCalculator()
-        res = calc.calculate(
-            dehydrator_type="desiccant",
-            vessel_height_ft=6.40,
-            vessel_diameter_ft=1.60,
-            vessel_pressure_psig=450.0,
-            gas_void_fraction=0.45,
-            changeouts_per_year=52,
-            ch4_content=0.90,
-            co2_content=0.05,
-        )
-        assert _val(res["results"]["ch4"]) == pytest.approx(0.16, abs=0.02)
-        assert _val(res["results"]["co2"]) == pytest.approx(0.025, abs=0.005)
-
-    def test_exhibit_6_16_agr_vent_unit_count(self):
-        """
-        API Exhibit 6-16:
-        1 amine AGR unit, 365 days.
-        Table 6-19 factor: 0.6482 tonnes CH4/day-unit.
-        Expected: ECH4 = 236.6 tonnes CH4/yr.
-        """
-        calc = AcidGasRemovalCalculator()
-        res = calc.calculate(method="unit_count", unit_count=1, operating_days=365.0)
-        assert _val(res["results"]["ch4"]) == pytest.approx(236.6, abs=0.5)
-
-    def test_exhibit_6_17_agr_co2_material_balance(self):
-        """
-        API Exhibit 6-17:
-        Inlet: 150,000 MMscf/yr at 3.0% CO2.
-        Outlet: 148,500 MMscf/yr at 2.0% CO2.
-        Expected: ECO2 = 80,506 tonnes CO2/yr, ECH4 = 2,775 tonnes CH4/yr.
-        """
-        calc = AcidGasRemovalCalculator()
-        res = calc.calculate(
-            sour_gas_mmscf_yr=150000.0,
-            sweet_gas_mmscf_yr=148500.0,
-            sour_co2_content=0.030,
-            sweet_co2_content=0.020,
-        )
-        assert _val(res["results"]["co2"]) == pytest.approx(80506.0, rel=1e-3)
-        assert _val(res["results"]["ch4"]) == pytest.approx(2775.0, abs=5.0)
+        # Eq 6-15: V_G = (P_O + 14.7)/14.7 x T_A/(459.7 + T_G) x V_L x (1 + I), T_A = 520 R: 7,287 scf/yr
+        v_g = (150.0 + 14.7) / 14.7 * 520.0 / (459.7 + 60.0) * 500.0 * 1.30
+        # (the engine converts F to R with 459.67, the Compendium prints 459.7: 6e-5 apart)
+        assert res["inputs"]["total_gas_scf"] == pytest.approx(v_g, rel=1e-4)
+        assert _val(res["results"]["ch4"]) == pytest.approx(v_g * 0.028316846592 * 0.85 * (16.04 / 23.685) / 1000, rel=5e-4)
 
 
 # ==============================================================================
 # §6.3.9 Storage Tanks (Exhibits 6-18a, 6-18b, 6-18c, 6-21)
 # ==============================================================================
 class TestStorageTanks:
-    def test_exhibit_6_18a_vbe_flashing(self):
-        """
-        API Exhibit 6-18(a):
-        451 bbl/day crude (48.8° API), Psep = 28.6 psig, Tsep = 112°F, default SGi = 0.90, default 27.4% CH4.
-        Expected: ECH4 = 8.04 tonnes CH4/yr.
-        """
-        calc = TankFlashingCalculator()
-        annual_bbl = 451.0 * 365.0
-        res = calc.calculate(
-            throughput=annual_bbl,
-            method="vbe",
-            api_gravity=48.8,
-            separator_pressure_psig=28.6,
-            separator_temp_f=112.0,
-            liquid_type="crude",
-            ch4_content=0.274,
-        )
-        assert _val(res["results"]["ch4"]) == pytest.approx(8.04, abs=0.2)
 
-    def test_exhibit_6_18b_standing_flashing(self):
-        """
-        API Exhibit 6-18(b):
-        Same facility with Standing correlation: GOR = 1.329 m3/m3, 27.4% CH4.
-        Expected: ECH4 = 6.44 tonnes CH4/yr.
-        """
-        calc = TankFlashingCalculator()
-        annual_bbl = 451.0 * 365.0
-        res = calc.calculate(
-            throughput=annual_bbl,
-            method="standing",
-            api_gravity=48.8,
-            separator_pressure_psig=28.6,
-            separator_temp_f=112.0,
-            tank_temp_f=80.0,
-            liquid_type="crude",
-            ch4_content=0.274,
-        )
-        assert _val(res["results"]["ch4"]) == pytest.approx(6.44, abs=0.2)
 
-    def test_exhibit_6_18c_eub_flashing(self):
-        """API Exhibit 6-18(c): EUB Rule-of-thumb correlation."""
-        calc = TankFlashingCalculator()
-        annual_bbl = 451.0 * 365.0
-        res = calc.calculate(
-            throughput=annual_bbl,
-            method="eub",
-            separator_pressure_psig=28.6,
-            liquid_type="crude",
-            ch4_content=0.274,
-            co2_content=0.045,
-        )
-        assert _val(res["results"]["ch4"]) > 0
-        assert _val(res["results"]["co2"]) > 0
 
-    def test_exhibit_6_21_produced_salt_water(self):
-        """
-        API Exhibit 6-21:
-        50 bbl/day water, 365 days, 200 psig (mapped to 250 psi average salt factor 0.0142 tonnes/1000 bbl).
-        Expected: ECH4 = 0.26 tonnes CH4/yr.
-        """
-        calc = TankFlashingCalculator()
-        annual_bbl = 50.0 * 365.0
-        res = calc.calculate(
-            throughput=annual_bbl,
-            method="produced_water",
-            liquid_type="produced_water",
-            separator_pressure_psi=200.0,
-            salt_content="average",
-        )
-        assert _val(res["results"]["ch4"]) == pytest.approx(0.26, abs=0.02)
 
     def test_dump_valve_malfunction_eq_6_25(self):
-        """Separator dump valve stuck open (Equation 6-25)."""
+        """Separator dump valve stuck open (Equation 6-25): E = CF x E_tank x T / 8,760, CF = 2.87 for crude service. The tank
+        emission is Table 6-22's 0.193 kg CH4/bbl (large tanks, uncontrolled): 10,000 bbl -> 1.93 t/yr, 500 h stuck open."""
         calc = TankFlashingCalculator()
         res = calc.calculate(
             throughput=10000.0,
@@ -392,14 +149,16 @@ class TestStorageTanks:
             liquid_type="crude",
             dump_valve_hours=500.0,
         )
-        assert _val(res["results"]["ch4"]) > 0
+        assert _val(res["results"]["ch4"]) == pytest.approx(2.87 * (10000.0 * 0.193e-3) * 500.0 / 8760.0, rel=1e-6)
 
     def test_backwards_compatibility_gor(self):
-        """Existing test_vented.py signature: throughput=10000, GOR=50, control_efficiency=0.95."""
+        """Existing test_vented.py signature: throughput=10000, GOR=50, control_efficiency=0.95. The efficiency is the SHARE of the
+        gas sent to a flare (default flare 98 % destruction / 96.5 % carbon conversion); the other 5 % is vented."""
         calc = TankFlashingCalculator()
         res = calc.calculate(throughput=10000, gas_oil_ratio=50, control_efficiency=0.95, ch4_content=0.80)
-        assert _val(res["results"]["ch4"]) > 0
-        assert _val(res["results"]["co2"]) > 0
+        v_ch4 = 10000 * 50 * 0.028316846592 * 0.80
+        assert _val(res["results"]["ch4"]) == pytest.approx(v_ch4 * (16.04 / 23.685) / 1000 * (0.05 + 0.95 * 0.02), rel=1e-9)
+        assert _val(res["results"]["co2"]) == pytest.approx(v_ch4 * (44.01 / 23.685) / 1000 * 0.95 * 0.965, rel=1e-9)
 
 
 # ==============================================================================
@@ -420,7 +179,8 @@ class TestCO2EOROperations:
             co2_density_kg_m3=650.0,
             co2_weight_fraction=0.985,
         )
-        assert _val(res["results"]["co2"]) == pytest.approx(23.28, abs=0.5)
+        # exhibit: 36.4 m3 x 650 kg/m3 x 0.985 x 0.001 = 23.3, printed "23"
+        assert_printed(_val(res["results"]["co2"]), "23", rel=0.0002, what="CO2")
 
     def test_dissolved_co2_retention_eq_6_26(self):
         calc = CO2EORVentingCalculator()
@@ -469,7 +229,7 @@ class TestBlowdowns:
             ch4_content=0.90,
             events=1,
         )
-        assert _val(res["results"]["ch4"]) == pytest.approx(0.011, abs=0.002)
+        assert_printed(_val(res["results"]["ch4"]), "0.011", gas="ch4", rel=0.0002, what="CH4")
 
     def test_table_6_32_gathering_blowdowns(self):
         calc = BlowdownCalculator()

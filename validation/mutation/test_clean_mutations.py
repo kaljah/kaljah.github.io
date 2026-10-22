@@ -49,108 +49,75 @@ class TestCleanMutations:
     """Mutation testing to verify that intentional calculation flaws are killed."""
 
     def test_kill_operator_mutation_combustion(self):
-        """Mutant: Activity * EF is mutated to Activity + EF or Activity / EF.
-        Suite must detect discrepancy against first-principles reference."""
+        """Mutant: Activity * EF is mutated to Activity + EF or Activity / EF. The platform result must equal the
+        first-principles reference and not either mutant."""
         activity = 1500.0  # m3
         ef_co2 = 1.93  # kg/m3
-
-        # Legitimate calculation (returns tonnes)
         valid_res = ref_calculate_combustion(activity, ef_co2=ef_co2)
         valid_co2_kg = valid_res["co2"] * 1000.0
-
-        # Mutants (in kg)
-        mutant_plus = activity + ef_co2
-        mutant_div = activity / ef_co2
-
-        # Validation check kills both mutants
-        tolerance = 1e-4
-        assert abs(mutant_plus - valid_co2_kg) > tolerance, "Mutant (Activity + EF) survived!"
-        assert abs(mutant_div - valid_co2_kg) > tolerance, "Mutant (Activity / EF) survived!"
+        engine = CombustionCalculator().calculate(
+            fuel_quantity=activity, fuel_unit="m3", ef_co2=ef_co2, ef_ch4=0.0, ef_n2o=0.0, ef_unit="kg/m3",
+            fuel_type="gases", uncertainties={}, hhv=None)
+        engine_kg = engine["results"]["co2"]["value"] * 1000.0
+        assert engine_kg == pytest.approx(valid_co2_kg, rel=1e-9)
+        assert abs(engine_kg - (activity + ef_co2)) > 1e-4, "Mutant (Activity + EF) survived!"
+        assert abs(engine_kg - (activity / ef_co2)) > 1e-4, "Mutant (Activity / EF) survived!"
 
     def test_kill_gwp_omission_mutation(self):
-        """Mutant: CH4 GWP multiplier omitted (treating 1 kg CH4 = 1 kg CO2e).
-        Suite must catch and kill this critical climate undercount."""
-        ch4_mass_kg = 50.0  # 50 kg CH4
+        """Mutant: CH4 GWP multiplier omitted (treating 1 kg CH4 = 1 kg CO2e). The platform must apply the AR5 GWP of 28."""
+        from calculations.constants import GWP_AR5
+        ch4_mass_kg = 50.0
         true_gwp_ar5 = resolve_gwp("AR5", "100")["CH4"]  # 28.0
-
-        legitimate_co2e = ch4_mass_kg * true_gwp_ar5  # 1400 kg CO2e
-
-        # Mutant: GWP omitted (factor = 1.0)
-        mutant_co2e = ch4_mass_kg * 1.0  # 50 kg CO2e
-
-        # Assertion detects mutant with massive deviation
-        discrepancy = abs(legitimate_co2e - mutant_co2e)
-        assert discrepancy == 1350.0
-        assert abs(mutant_co2e - legitimate_co2e) / legitimate_co2e > 0.50, "GWP omission mutant survived!"
+        engine_co2e_kg = calculate_co2e(0.0, ch4_mass_kg / 1000.0, 0.0, gwp_dict=GWP_AR5) * 1000.0
+        assert engine_co2e_kg == pytest.approx(ch4_mass_kg * true_gwp_ar5, rel=1e-12)      # 1,400 kg
+        assert abs(engine_co2e_kg - ch4_mass_kg * 1.0) / engine_co2e_kg > 0.50, "GWP omission mutant survived!"
 
     def test_kill_carbon_atomic_weight_mutation(self):
-        """Mutant: Carbon atomic weight mutated to 14.0 (Nitrogen) instead of 12.011.
-        Suite must catch mass balance violation in Tier 3 stoichiometry."""
-        mutant_mw_c = 14.00
-        legit_mw_c = MW_C  # 12.011
-
-        # Stoichiometry for Methane: CH4 + 2 O2 -> CO2 + 2 H2O
+        """Mutant: Carbon atomic weight mutated to 14.0 (Nitrogen) instead of 12.011. The platform stoichiometric balance must
+        give the CO2/C mass ratio of the true atomic weights."""
+        from calculations.stoichiometry import StoichiometricCalculator
         legit_stoich = ref_calculate_hydrocarbon_stoichiometry(1, 4)
         assert legit_stoich["mass_balance_error"] < 1e-9
-
-        # In mutant stoichiometry, CO2 molar mass is corrupted (14 + 31.998 = 45.998 vs 44.009)
-        mw_co2_mutant = mutant_mw_c + 2 * MW_O
-        mw_co2_legit = legit_mw_c + 2 * MW_O
-
-        assert abs(mw_co2_mutant - mw_co2_legit) > 1.9, "Carbon atomic weight mutant survived!"
+        res = StoichiometricCalculator().calculate(fuel_mass=1000.0, carbon_content=1.0, mass_unit="kg", uncertainties={})
+        co2_per_c = res["results"]["co2"]["value"] * 1000.0 / 1000.0          # tonnes CO2 per tonne of carbon
+        assert co2_per_c == pytest.approx((MW_C + 2 * MW_O) / MW_C, rel=1e-3)
+        mutant_ratio = (14.00 + 2 * MW_O) / 14.00
+        assert abs(co2_per_c - mutant_ratio) > 0.3, "Carbon atomic weight mutant survived!"
 
     def test_kill_thermodynamic_standard_condition_mutation(self):
-        """Mutant: Confusing Normal condition (0°C, 22.414 L/mol) with Standard ISO 13443 (15°C, 23.685 L/mol).
-        Suite must catch ~5.5% thermodynamic volume/density error."""
-        # Ideal gas molar volume at 15.56 C (288.706 K) vs 0 C (273.15 K)
+        """Mutant: Confusing Normal condition (0 C, 22.414 L/mol) with the 60 F standard (23.685 L/mol): a ~5.4 % error in every
+        gas mass. The platform gas densities must follow 23.685."""
+        from calculations.units import CONVERSIONS
         v_std_iso_15c = (8.314462618 * STD_TEMP_K) / (STD_PRESSURE_KPA * 1000.0) * 1000.0  # ~23.685 L/mol
-        v_normal_0c = 22.414  # L/mol at 0 C, 101.325 kPa
-
-        deviation_pct = abs(v_std_iso_15c - v_normal_0c) / v_std_iso_15c * 100.0
-
-        # Deviation is approximately 5.36%
-        assert deviation_pct > 5.0, "Thermodynamic standard condition mutant survived!"
+        assert 16.04 / CONVERSIONS["density_ch4"] == pytest.approx(v_std_iso_15c, rel=1e-3)
+        assert 44.01 / CONVERSIONS["density_co2"] == pytest.approx(v_std_iso_15c, rel=1e-3)
+        assert abs(16.04 / CONVERSIONS["density_ch4"] - 22.414) / v_std_iso_15c * 100.0 > 5.0
 
     def test_kill_flaring_methane_slip_omission_mutation(self):
-        """Mutant: Assuming 100% flare destruction efficiency (omitting methane slip).
-        Suite must detect unburned methane underestimation."""
+        """Mutant: Assuming 100% flare destruction efficiency (omitting methane slip). The platform must report the 2 % slip of
+        a 98 % flare, equal to the reference model's."""
+        from calculations.dispatcher import CalculationDispatcher
         flare_volume_m3 = 10000.0
-        ch4_vol_frac = 0.85
-        destruction_eff = 0.98  # 2% slip
-
-        legit_flare = ref_calculate_flaring(
-            gas_volume=flare_volume_m3,
-            ch4_fraction=ch4_vol_frac,
-            combustion_eff=0.98,
-            destruction_eff=destruction_eff,
-        )
-
-        # Mutant: 100% destruction, 0 slip
-        mutant_slip_ch4_kg = 0.0
-        legit_slip_ch4_kg = legit_flare["ch4"] * 1000.0
-
-        assert legit_slip_ch4_kg > 0.0
-        assert abs(legit_slip_ch4_kg - mutant_slip_ch4_kg) > 50.0, "Flaring slip mutant survived!"
+        legit_flare = ref_calculate_flaring(gas_volume=flare_volume_m3, ch4_fraction=0.85, combustion_eff=0.98,
+                                            destruction_eff=0.98)
+        res = CalculationDispatcher().dispatch(
+            "flaring", {"factor_source": "specific", "amount": flare_volume_m3, "unit": "m3", "c1": 85.0,
+                        "combustion_efficiency": 98.0, "destruction_efficiency": 98.0}, {}, {})
+        engine_ch4_kg = res["results"]["ch4"]["value"] * 1000.0
+        assert engine_ch4_kg == pytest.approx(legit_flare["ch4"] * 1000.0, rel=1e-9)
+        assert abs(engine_ch4_kg - 0.0) > 50.0, "Flaring slip mutant survived!"
 
     def test_kill_agr_methane_coabsorption_omission_mutation(self):
-        """Mutant: Acid Gas Removal drops API Table 6-5 0.1% methane slip.
-        Suite must detect missing CH4 fugitive in gas processing."""
-        feed_gas_m3 = 500000.0
-        co2_mole_frac = 0.04
-        ch4_mole_frac = 0.90
-
-        legit_agr = ref_calculate_agr(
-            feed_gas_volume=feed_gas_m3,
-            co2_inlet_fraction=co2_mole_frac,
-            ch4_inlet_fraction=ch4_mole_frac,
-            ch4_slip_fraction=0.001,  # API standard
-        )
-
-        mutant_agr_ch4 = 0.0  # Missing co-absorption
-        legit_agr_ch4_kg = legit_agr["ch4"] * 1000.0
-
-        assert legit_agr_ch4_kg > 0.0
-        assert abs(legit_agr_ch4_kg - mutant_agr_ch4) > 10.0, "AGR slip mutant survived!"
+        """Mutant: Acid Gas Removal drops the 0.1 % methane slip. The platform must report it, equal to the reference model."""
+        from calculations.dispatcher import CalculationDispatcher
+        legit_agr = ref_calculate_agr(feed_gas_volume=500000.0, co2_inlet_fraction=0.04, ch4_inlet_fraction=0.90,
+                                      ch4_slip_fraction=0.001)
+        res = CalculationDispatcher().dispatch(
+            "agr", {"factor_source": "specific", "amount": 500000.0, "unit": "m3", "agr_co2_in": 4.0,
+                    "agr_co2_out": 0.0, "agr_ch4_in": 90.0, "agr_ch4_slip": 0.001, "agr_control_eff": 0.0}, {}, {})
+        engine_ch4_kg = res["results"]["ch4"]["value"] * 1000.0
+        assert engine_ch4_kg == pytest.approx(legit_agr["ch4"] * 1000.0, rel=1e-6)
+        assert abs(engine_ch4_kg - 0.0) > 10.0, "AGR slip mutant survived!"
 
     def test_kill_steam_boiler_efficiency_multiplication_mutation(self):
         """Mutant: Steam emissions formula calculates (Fuel = Steam * Efficiency) instead of (Steam / Efficiency).

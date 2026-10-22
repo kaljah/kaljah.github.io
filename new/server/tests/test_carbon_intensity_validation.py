@@ -225,40 +225,42 @@ def auth_client(ci_setup):
 # 1. BOE CONVERSION INVARIANTS
 # =========================================================================
 
+def _prod_row(**kw):
+    """A ProductionData-shaped row for the platform BOE function."""
+    from types import SimpleNamespace
+    base = dict(oil_amount=0, oil_unit="bbl", gas_amount=0, gas_unit="mscf", year=2026, month=1,
+                total_production_mmboe=None)
+    base.update(kw)
+    return SimpleNamespace(**base)
+
+
 def test_boe_conversion_gas_units():
-    """Verify gas conversion across all supported units to MSCF and BOE."""
-    # 1 m3 gas = 0.0353147 mscf
-    vol_m3 = 1000.0
-    expected_mscf = vol_m3 * 0.0353147
-    expected_boe = expected_mscf * GAS_TO_BOE
-    assert abs(expected_boe - (1000.0 * 0.0353147 * (1.02 / 5.8))) < 1e-6
-
-    # 1 scf gas = 0.001 mscf
-    vol_scf = 1000000.0
-    expected_mscf_scf = vol_scf * 0.001
-    assert expected_mscf_scf == 1000.0
-
-    # 1 mmscf gas = 1000 mscf
-    vol_mmscf = 10.0
-    assert vol_mmscf * 1000.0 == 10000.0
+    """BOE of gas in every supported unit, through services.dashboard_filters.production_boe: 5.8 MMBtu per BOE at
+    1,020 Btu/scf -> 1 Mscf = 1.02 / 5.8 = 0.175862 BOE (5,686 scf/BOE)."""
+    from services.dashboard_filters import production_boe
+    boe_per_scf = 1.02 / 5.8 / 1000.0
+    assert production_boe(_prod_row(gas_amount=1.0, gas_unit="mscf")) == pytest.approx(1.02 / 5.8, rel=1e-6)
+    assert production_boe(_prod_row(gas_amount=1_000_000.0, gas_unit="scf")) == pytest.approx(1e6 * boe_per_scf, rel=1e-6)
+    assert production_boe(_prod_row(gas_amount=10.0, gas_unit="mmscf")) == pytest.approx(10e6 * boe_per_scf, rel=1e-6)
+    # 1 m3 = 35.3147 scf (Table 3-4)
+    assert production_boe(_prod_row(gas_amount=1000.0, gas_unit="m3")) == pytest.approx(
+        1000.0 * 35.3146667 * boe_per_scf, rel=1e-6)
+    # oil and gas add
+    assert production_boe(_prod_row(oil_amount=5000.0, gas_amount=10_000.0, gas_unit="mscf")) == pytest.approx(
+        5000.0 + 10_000.0 * 1.02 / 5.8, rel=1e-6)
 
 
 def test_boe_conversion_oil_units():
-    """Verify oil conversion across units to BBL."""
-    # 1 m3 oil = 6.28981077 bbl
-    vol_m3 = 100.0
-    assert abs(vol_m3 * 6.28981077 - 628.981077) < 1e-4
+    """BOE of oil in every supported unit through production_boe: 1 m3 = 6.28981 bbl, 42 gal = 1 bbl, and a tonne of
+    crude is 7.33 bbl (the platform convention)."""
+    from services.dashboard_filters import production_boe
+    assert production_boe(_prod_row(oil_amount=100.0, oil_unit="m3")) == pytest.approx(100.0 * 6.28981077, rel=1e-6)
+    assert production_boe(_prod_row(oil_amount=42.0, oil_unit="gal")) == pytest.approx(1.0, rel=1e-6)
+    assert production_boe(_prod_row(oil_amount=10.0, oil_unit="tonne")) == pytest.approx(73.3, rel=1e-6)
+    assert production_boe(_prod_row(oil_amount=7.0, oil_unit="bbl")) == pytest.approx(7.0, rel=1e-12)
+    # a recorded total in MMBOE wins over the parts
+    assert production_boe(_prod_row(oil_amount=5.0, total_production_mmboe=2.5)) == pytest.approx(2.5e6, rel=1e-12)
 
-    # 42 gallons = 1 bbl
-    assert 42.0 / 42.0 == 1.0
-
-    # 1 metric ton crude ~ 7.33 bbl
-    assert 10.0 * 7.33 == 73.3
-
-
-# =========================================================================
-# 2. GWP-100 VS GWP-20 CARBON INTENSITY PARITY
-# =========================================================================
 
 def test_gwp_horizon_intensity_scaling(ci_setup):
     """Verify that 20-year GWP intensity strictly exceeds 100-year GWP intensity when CH4 > 0."""
@@ -322,12 +324,92 @@ def test_wec_not_charged_for_this_facility_year(ci_setup):
             assert stats[0]["wec_status"].startswith("Not Applicable")
 
 
-def test_wec_rate_schedule():
-    """Verify WEC fee rates: $900 in 2024, $1200 in 2025, $1500 in 2026+."""
-    rates = {2024: 900.0, 2025: 1200.0, 2026: 1500.0, 2027: 1500.0}
-    for yr, expected_rate in rates.items():
-        rate = 900.0 if yr == 2024 else (1200.0 if yr == 2025 else 1500.0)
-        assert rate == expected_rate
+def test_wec_constants_follow_public_law_119_21():
+    """The charge starts with 2034 emissions at 1,500 USD per tonne (P.L. 119-21); the old 2024 / 2025 / 2026 schedule of
+    900 / 1,200 / 1,500 USD this test used to assert (on a local dict, never calling the platform) no longer applies."""
+    from services import intensity
+    assert intensity.WEC_FIRST_YEAR == 2034
+    assert intensity.WEC_RATE_USD_PER_T == 1500.0
+    assert intensity.WEC_CH4_DENSITY_T_PER_MSCF == 0.0192          # 40 CFR 99.20 Eq B-1
+
+
+def _us_facility(name, year, ch4_tonnes, gas_mscf, oil_bbl=0.0, record_id=None):
+    """A US upstream facility with one verified methane record and one production record."""
+    admin = User.query.filter_by(email="ci_admin@test.com").first()
+    fac = Facility(name=name, segment="Upstream", activity="Upstream Gas", division="E&P",
+                   region="Permian", country="United States", operator_status="operated")
+    db.session.add(fac)
+    db.session.commit()
+    db.session.add(Emission(record_id=record_id or f"EM-{name}", facility_id=fac.id, year=year, month=1,
+                            process_type="venting", status="Verified", activity=fac.activity, division=fac.division,
+                            co2_emissions=0.0, ch4_emissions=ch4_tonnes, n2o_emissions=0.0,
+                            co2e_total=ch4_tonnes * 28.0, quantity=1.0, unit="m3", created_by=admin.id))
+    db.session.add(ProductionData(facility_id=fac.id, year=year, month=1, oil_amount=oil_bbl, gas_amount=gas_mscf,
+                                  unit="bbl", oil_unit="bbl", gas_unit="mscf", activity=fac.activity,
+                                  division=fac.division, region=fac.region, created_by=admin.id))
+    db.session.commit()
+    clear_dashboard_cache()
+    return fac
+
+
+def test_wec_charge_on_a_us_facility_from_2034(ci_setup):
+    """40 CFR 99.20 Eq B-1 worked by hand: 50e6 m3 sold = 1,765,733.3 Mscf; threshold 0.20 % x 0.0192 t CH4/Mscf =
+    67.804 t allowed; 85 t emitted -> 17.196 t excess x 1,500 USD = 25,793.76 USD (status Taxable Liability)."""
+    with flask_app.app_context():
+        gas_mscf = 50_000_000.0 * 35.3146667 / 1000.0
+        fac = _us_facility("CI US WEC 2034", 2034, 85.0, gas_mscf)
+        row = _query_intensity_stats(year="2034", facility_id=str(fac.id))[0]
+        allowed = gas_mscf * 0.0020 * 0.0192
+        assert allowed == pytest.approx(67.80416, abs=1e-4)
+        assert row["excess_ch4_tonnes"] == pytest.approx(85.0 - allowed, abs=1e-6)
+        assert row["wec_rate_usd_per_t"] == 1500.0
+        assert row["wec_fee_usd"] == pytest.approx(round((85.0 - allowed) * 1500.0, 2), abs=0.01)
+        assert row["wec_status"] == "Taxable Liability"
+
+
+def test_wec_not_charged_before_2034_even_for_a_us_facility(ci_setup):
+    with flask_app.app_context():
+        fac = _us_facility("CI US WEC 2026", 2026, 85.0, 50_000_000.0 * 35.3146667 / 1000.0)
+        row = _query_intensity_stats(year="2026", facility_id=str(fac.id))[0]
+        assert row["wec_fee_usd"] is None
+        assert row["wec_status"].startswith("Not Applicable (charge starts with 2034")
+
+
+def test_wec_oil_only_us_asset_allowance(ci_setup):
+    """40 CFR 99.20(a)(2): an upstream asset with no gas sales is allowed 10 t CH4 per million bbl of oil: 500,000 bbl
+    -> 5.0 t allowed; 8 t emitted -> 3 t excess."""
+    with flask_app.app_context():
+        fac = _us_facility("CI US WEC oil 2035", 2035, 8.0, 0.0, oil_bbl=500_000.0)
+        row = _query_intensity_stats(year="2035", facility_id=str(fac.id))[0]
+        assert row["excess_ch4_tonnes"] == pytest.approx(8.0 - 500_000.0 / 1e6 * 10.0, abs=1e-9)
+
+
+def test_methane_loss_rate_and_segment_targets():
+    """OGMP loss rate through the platform function: 10 t CH4 over 10e6 m3 of sold gas = 10,000 / 0.67722 m3 = 0.1477 %;
+    the upstream target is 0.20 % (compliant), the midstream 0.05 % (not)."""
+    from services.ogmp_workbook import _loss_rate
+    rate, target, status = _loss_rate(10.0, 10_000_000.0, "Upstream", DENSITY_CH4)
+    assert rate == pytest.approx(10.0 * 1000.0 / DENSITY_CH4 / 10_000_000.0 * 100.0, rel=1e-12)
+    assert rate == pytest.approx(0.1477, abs=1e-4)
+    assert (target, status) == (0.20, "Compliant")
+    rate_m, target_m, status_m = _loss_rate(10.0, 10_000_000.0, "Midstream", DENSITY_CH4)
+    assert rate_m == pytest.approx(rate, rel=1e-12)
+    assert (target_m, status_m) == (0.05, "Non-Compliant")
+    assert _loss_rate(5.0, 0.0, "Upstream", DENSITY_CH4)[2] == "Non-Compliant (Missing Production Data)"
+    assert _loss_rate(0.0, 0.0, "Upstream", DENSITY_CH4)[2] == "N/A (No Activity)"
+
+
+def test_flaring_rate_and_intensity_from_the_records(ci_setup):
+    """Flaring rate % = flared m3 / produced gas m3 x 100 (fac2: 50,000 m3 flared of 500,000 Mscf = 14,158,423 m3), and the
+    Scope 1 intensity = tCO2e x 1,000 / BOE (fac1: 1,545 t over 10,000 bbl + 50,000 Mscf x 1.02/5.8 BOE)."""
+    with flask_app.app_context():
+        fac2 = _query_intensity_stats(year="2026", facility_id=str(ci_setup["fac2"].id))[0]
+        gas_m3 = 500_000.0 * 1000.0 * 0.028316846592
+        assert fac2["flaring_rate_pct"] == pytest.approx(round(50_000.0 / gas_m3 * 100.0, 4), abs=1e-4)
+        fac1 = _query_intensity_stats(year="2026", facility_id=str(ci_setup["fac1"].id))[0]
+        boe = 10_000.0 + 50_000.0 * 1.02 / 5.8
+        assert fac1["total_boe"] == pytest.approx(boe, rel=1e-6)
+        assert fac1["scope1_intensity"] == pytest.approx(1545.0 * 1000.0 / boe, rel=1e-6)
 
 
 # =========================================================================

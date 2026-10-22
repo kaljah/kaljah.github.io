@@ -294,7 +294,8 @@ def test_resolve_electricity_factor_out_of_bounds():
 
 def test_default_scope2_uncertainty():
     unc = default_scope2_uncertainty(100.0)
-    assert 0.02 < unc < 0.04  # ~2.69% at 1-sigma
+    # 5 % factor and 2 % activity data, both 95 % half-widths: sqrt(0.05^2 + 0.02^2) = 5.385 % at 95 % = 2.69 % at 1 sigma
+    assert unc == pytest.approx((0.05 ** 2 + 0.02 ** 2) ** 0.5 / 2.0, rel=1e-9)
 
 
 def test_steam_fuel_factor_kg_per_mmbtu():

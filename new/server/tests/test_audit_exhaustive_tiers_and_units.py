@@ -77,6 +77,23 @@ def _get_base_unit(process_id, category):
 # SECTION 1: EXHAUSTIVE TIER 1 MATRIX ACROSS ALL 29 PROCESS TYPES
 # ==============================================================================
 
+def _gases(res):
+    return tuple(float(res["results"][g]["value"] if isinstance(res["results"].get(g), dict) else res["results"].get(g) or 0.0)
+                 for g in ("co2", "ch4", "n2o"))
+
+
+# Hand-worked Tier 1 results in tonnes for 1,000 units (combustion factors 53.06 / 0.05 / 0.001 kg per unit, the others
+# CO2 1.5 kg). The processes with their own Compendium table do not multiply the generic factor:
+#   drilling: 1,000 days x 0.0458 t CH4/day (Table 6-2); liquids_unloading: 1,000 wells x 1.774 t (Table 6-11, plunger);
+#   completions: 1,000 m3 x 85 % CH4 x 16.04 / 23.685 kg/m3; associated gas: 1,000 m3 = 6,289.81 bbl x 0.05 kg CH4/bbl.
+_TIER1_SPECIAL = {
+    "associated_gas_venting": (0.0, 6289.81077 * 0.05 / 1000.0, 0.0),
+    "drilling": (0.0, 1000 * 0.0458, 0.0),
+    "completions": (0.0, 1000 * 0.85 * 16.04 / 23.685 / 1000.0, 0.0),
+    "liquids_unloading": (0.0, 1000 * 1.774, 0.0),
+}
+
+
 class TestAllProcessTypesTier1Exhaustive:
     """Verifies that all 29 process types calculate deterministically with Tier 1 catalog factors."""
 
@@ -89,7 +106,7 @@ class TestAllProcessTypesTier1Exhaustive:
             "factor_source": "default",
             "amount": 1000.0,
             "quantity": 1000.0,
-            "unit": unit,
+            "unit": "wells" if process_id == "liquids_unloading" else unit,
             "fuel_type": "Natural Gas" if meta["category"] == "combustion" else None,
             "hhv": 1020.0,
             **_gas_analysis(process_id),
@@ -103,9 +120,11 @@ class TestAllProcessTypesTier1Exhaustive:
         }
         res = dispatcher.dispatch(process_id, payload, factor_data, {}, gwp_dict=GWP_AR5)
         assert res is not None, f"Tier 1 dispatch failed for {process_id}"
-        assert res["total_co2e"] > 0, f"Expected total_co2e > 0 for {process_id}"
-        assert not math.isnan(res["total_co2e"])
-        assert not math.isinf(res["total_co2e"])
+        co2, ch4, n2o = _TIER1_SPECIAL.get(process_id) or ((53.06, 0.05, 0.001) if meta["category"] == "combustion"
+                                                           else (1.5, 0.05, 0.001))
+        got = _gases(res)
+        assert got == pytest.approx((co2, ch4, n2o), rel=2e-3, abs=1e-12), process_id
+        assert res["total_co2e"] == pytest.approx(co2 + 28.0 * ch4 + 265.0 * n2o, rel=2e-3), process_id
 
     @pytest.mark.parametrize("process_id", list(PROCESS_TYPES.keys()))
     def test_tier1_zero_activity_conservation(self, dispatcher, process_id):
@@ -155,7 +174,12 @@ class TestAllProcessTypesTier2Exhaustive:
 
     @pytest.mark.parametrize("process_id", [p for p in PROCESS_TYPES.keys() if p != "associated_gas_venting"])
     def test_tier2_custom_factor_override(self, dispatcher, process_id):
-        """Proves that custom Tier 2 factors override default factors."""
+        """A custom Tier 2 factor replaces the catalog factor: 750 units x 62.45 / 0.082 / 0.0035 kg per unit.
+
+        Three processes do NOT use it, because their method works from a table or the gas analysis, not from a
+        factor per unit: drilling takes the factor's CH4 only (CO2 / N2O are not drilling gases); completions
+        (750 m3 x 85 % CH4 x 16.04 / 23.685 kg/m3) and liquids unloading (750 wells x 1.774 t, Table 6-11) ignore
+        the custom factor entirely - a software behaviour worth knowing, not one the Compendium requires."""
         meta = PROCESS_TYPES[process_id]
         unit = _get_base_unit(process_id, meta["category"])
         # Custom factor with distinct values (e.g. from local gas analysis)
@@ -178,11 +202,16 @@ class TestAllProcessTypesTier2Exhaustive:
         }
         res = dispatcher.dispatch(process_id, payload, custom_ef, {}, gwp_dict=GWP_AR5)
         assert res is not None
-        assert res["total_co2e"] > 0
-        assert not math.isnan(res["total_co2e"])
+        expected = {
+            "drilling": (0.0, 750 * 0.082 / 1000.0, 0.0),
+            "completions": (0.0, 750 * 0.85 * 16.04 / 23.685 / 1000.0, 0.0),
+            "liquids_unloading": (0.0, 750 * 1.774, 0.0),
+        }.get(process_id, (750 * 62.45 / 1000.0, 750 * 0.082 / 1000.0, 750 * 0.0035 / 1000.0))
+        assert _gases(res) == pytest.approx(expected, rel=2e-3, abs=1e-12), process_id
+        assert res["total_co2e"] == pytest.approx(expected[0] + 28.0 * expected[1] + 265.0 * expected[2], rel=2e-3)
 
     def test_tier2_associated_gas_venting_gor_balance(self, dispatcher):
-        """API Compendium 2021 Exhibit 6-6: GOR mass balance."""
+        """API Compendium 2021 Exhibit 6-6 method: GOR balance. 5,200 bbl/day x 450 scf/bbl for a year, 85 % CH4 and 2 % CO2."""
         payload = {
             "process_type": "associated_gas_venting",
             "factor_source": "tier2",
@@ -190,17 +219,19 @@ class TestAllProcessTypesTier2Exhaustive:
             "oil_production": 5200.0,
             "oil_unit": "bbl/day",
             "gor": 450.0,
-            "gas_to_vent_fraction": 0.15,
             # the gas analysis is required (70 % CH4 / 10 % CO2 used to be assumed; S1K-F28)
             "ch4_content": 85.0,
             "co2_content": 2.0,
         }
         res = dispatcher.dispatch("associated_gas_venting", payload, {}, {}, gwp_dict=GWP_AR5)
-        assert res["results"]["ch4"]["value"] > 0
-        assert res["results"]["co2"]["value"] > 0
+        # no venting period given: all of the year (365 d). A "gas_to_vent_fraction" input does not exist (it was ignored).
+        gas_m3 = 5200.0 * 450.0 * 365.0 * 0.028316846592
+        assert res["results"]["ch4"]["value"] == pytest.approx(gas_m3 * 0.85 * (16.04 / 23.685) / 1000, rel=5e-3)
+        assert res["results"]["co2"]["value"] == pytest.approx(gas_m3 * 0.02 * (44.01 / 23.685) / 1000, rel=5e-3)
 
     def test_tier2_liquids_unloading_event_based(self, dispatcher):
-        """API Compendium Table 6-10: Event-based liquids unloading."""
+        """API Compendium Table 6-10: event-based liquids unloading. Plunger lift, fewer than 100 events/year: 11,308 scf of
+        whole gas per event (at 85.3 mol % CH4); 24 events on each of 2 wells at 88 % CH4."""
         payload = {
             "process_type": "liquids_unloading",
             "factor_source": "default",
@@ -208,13 +239,15 @@ class TestAllProcessTypesTier2Exhaustive:
             "events": 24,
             "unloading_type": "plunger",
             "well_count": 2,
-            "ch4_content": 0.88,
+            "ch4_content": 88,   # percent: 0.88 would be read as 0.88 %
         }
         res = dispatcher.dispatch("liquids_unloading", payload, {}, {}, gwp_dict=GWP_AR5)
-        assert res["results"]["ch4"]["value"] > 0
+        assert res["results"]["ch4"]["value"] == pytest.approx(
+            24 * 2 * 11308 * 0.88 / 379.3 * 16.04 / 2204.62, rel=5e-3)
 
     def test_tier2_fugitive_component_service_streams(self, dispatcher):
-        """API Compendium Table 7-11: Component-level count with service speciation."""
+        """API Compendium Table 7-11: component-level count with service speciation. 45 valves x 0.0268 kg TOC/h x 8,760 h;
+        gas-service TOC is 92.0 wt % CH4 (Table C-1)."""
         payload = {
             "process_type": "fugitive_component",
             "factor_source": "tier2",
@@ -223,14 +256,15 @@ class TestAllProcessTypesTier2Exhaustive:
             "service": "gas",
             "count": 45,
             "hours": 8760,
-            "ch4_content": 0.90,
+            "ch4_content": 90,
         }
         factors = {"ch4": 0.0268, "unit": "kg/hr"}
         res = dispatcher.dispatch("fugitive_component", payload, factors, {}, gwp_dict=GWP_AR5)
-        assert res["results"]["ch4"]["value"] > 0
+        assert res["results"]["ch4"]["value"] == pytest.approx(45 * 0.0268 * 8760 / 1000 * 0.920, rel=1e-9)
 
     def test_tier2_drilling_mud_degassing_measured(self, dispatcher):
-        """API Compendium Exhibit 6-1: Mud degassing with measured gas fractions."""
+        """API Compendium Exhibit 6-1 method with measured gas fractions: 45 days of onshore water-based mud (0.0458 t CH4/day at
+        83.85 mol %), gas 75 % CH4 and 8 % CO2."""
         payload = {
             "process_type": "drilling",
             "factor_source": "tier2",
@@ -243,7 +277,9 @@ class TestAllProcessTypesTier2Exhaustive:
         }
         factors = {"ch4": 0.0458}
         res = dispatcher.dispatch("drilling", payload, factors, {}, gwp_dict=GWP_AR5)
-        assert res["results"]["ch4"]["value"] > 0
+        ch4 = 45 * 0.0458 * 0.75 / 0.8385
+        assert res["results"]["ch4"]["value"] == pytest.approx(ch4, rel=1e-9)
+        assert res["results"]["co2"]["value"] == pytest.approx(ch4 * (0.08 / 0.75) * 44.01 / 16.04, rel=1e-9)
 
 
 # ==============================================================================
@@ -274,14 +310,15 @@ class TestAllProcessTypesTier3Exhaustive:
             "n2_mol": 1.0,
         }
         res = dispatcher.dispatch("stationary_combustion", payload, {}, {}, gwp_dict=GWP_AR5)
-        assert res["results"]["co2"]["value"] > 0
-        assert res["results"]["ch4"]["value"] > 0
-        assert res["results"]["n2o"]["value"] >= 0
+        carbon = 0.85 * 1 + 0.08 * 2 + 0.04 * 3                 # 1.13 mol C per mol gas
+        rho_co2, rho_ch4 = 44.01 / 23.685, 16.04 / 23.685
+        assert res["results"]["co2"]["value"] == pytest.approx(10_000 * (carbon * 0.995 + 0.02) * rho_co2 / 1000, rel=1e-9)
+        assert res["results"]["ch4"]["value"] == pytest.approx(10_000 * 0.85 * 0.005 * rho_ch4 / 1000, rel=1e-9)  # slip
 
     @pytest.mark.parametrize("flare_proc", ["flaring", "routine_flaring", "non_routine_flaring", "safety_flaring"])
     def test_tier3_flaring_dual_efficiency_mass_balance(self, dispatcher, flare_proc):
         """
-        API Compendium §5.2 dual efficiency flaring:
+        API Compendium 5.2 dual efficiency flaring:
         Combustion converts oxidized hydrocarbons to CO2; unburned hydrocarbons slip as CH4.
         """
         payload = {
@@ -298,12 +335,19 @@ class TestAllProcessTypesTier3Exhaustive:
             "destruction_efficiency": 98.0,
         }
         res = dispatcher.dispatch(flare_proc, payload, {}, {}, gwp_dict=GWP_AR5)
-        assert res["results"]["co2"]["value"] > 0
-        assert res["results"]["ch4"]["value"] > 0
-        assert res["total_co2e"] > 0
+        rho_co2, rho_ch4 = 44.01 / 23.685, 16.04 / 23.685
+        carbon = 0.88 * 1 + 0.06 * 2          # 1.00 mol C per mol gas
+        co2 = 25_000 * (carbon * 0.98 + 0.04) * rho_co2 / 1000
+        ch4 = 25_000 * 0.88 * 0.02 * rho_ch4 / 1000
+        assert res["results"]["co2"]["value"] == pytest.approx(co2, rel=1e-9)
+        assert res["results"]["ch4"]["value"] == pytest.approx(ch4, rel=1e-9)
+        n2o = res["results"]["n2o"]["value"] if isinstance(res["results"]["n2o"], dict) else res["results"]["n2o"]
+        assert res["total_co2e"] == pytest.approx(co2 + 28.0 * ch4 + 265.0 * n2o, rel=1e-9)
 
     def test_tier3_acid_gas_removal_mass_balance(self, dispatcher):
-        """Mass conservation of CO2 removed from raw acid gas stream."""
+        """Mass conservation of CO2 removed from raw acid gas stream: 200 MMscf in at 5 % CO2, out at 0.05 %; the sweet gas
+        volume is the inlet less the CO2 removed, so the CO2 vented = V x (c_in - c_out) / (1 - c_out). CH4 slip 0.02 (2 %) of
+        the 85 % CH4 in."""
         payload = {
             "process_type": "acid_gas_removal",
             "factor_source": "specific",
@@ -315,9 +359,10 @@ class TestAllProcessTypesTier3Exhaustive:
             "ch4_slip": 0.02,
         }
         res = dispatcher.dispatch("acid_gas_removal", payload, {}, {}, gwp_dict=GWP_AR5)
-        # Stripped CO2 must be positive and proportional to (co2_in - co2_out)
-        assert res["results"]["co2"]["value"] > 0
-        assert res["results"]["ch4"]["value"] > 0
+        v_in = 200e6 * 0.028316846592
+        assert res["results"]["co2"]["value"] == pytest.approx(
+            v_in * (0.05 - 0.0005) / (1 - 0.0005) * (44.01 / 23.685) / 1000, rel=1e-9)
+        assert res["results"]["ch4"]["value"] == pytest.approx(v_in * 0.85 * 0.02 * (16.04 / 23.685) / 1000, rel=1e-9)
 
     def test_tier3_blowdown_ideal_gas_volume(self, dispatcher):
         """Vessel depressurization: V_std = V_vessel * (P/P_std) * (T_std/T) * (1/Z)."""
@@ -334,10 +379,13 @@ class TestAllProcessTypesTier3Exhaustive:
             "z_factor": 0.94,
         }
         res = dispatcher.dispatch("blowdown", payload, {}, {}, gwp_dict=GWP_AR5)
-        assert res["results"]["ch4"]["value"] > 0
+        # 120 m3 at 850 psig (864.696 psia) and 75 F (297.04 K), Z = 0.94, 3 events, 92 % CH4
+        v_std = 120.0 * (850.0 + 14.696) / 14.696 * 288.706 / ((75.0 - 32.0) / 1.8 + 273.15) / 0.94
+        assert res["results"]["ch4"]["value"] == pytest.approx(3 * v_std * 0.92 * (16.04 / 23.685) / 1000, rel=1e-5)
 
     def test_tier3_liquids_unloading_thermodynamics(self, dispatcher):
-        """Wellbore column evacuation: V = depth * (pi * (d/2)^2) * (P/P_std)."""
+        """Wellbore column evacuation, Eq 6-10 (0.37e-3 x D^2 x depth x pressure per event) corrected from 60 F to the 110 F
+        wellbore temperature: V = V_eq6-10 x (288.706 K / 316.48 K)."""
         payload = {
             "process_type": "liquids_unloading",
             "factor_source": "specific",
@@ -351,7 +399,10 @@ class TestAllProcessTypesTier3Exhaustive:
             "temp_unit": "F",
         }
         res = dispatcher.dispatch("liquids_unloading", payload, {}, {}, gwp_dict=GWP_AR5)
-        assert res["results"]["ch4"]["value"] > 0
+        scf = 6 * 0.37e-3 * 2.875 ** 2 * 7500 * 280
+        t_factor = 288.706 / ((110.0 - 32.0) / 1.8 + 273.15)
+        assert res["results"]["ch4"]["value"] == pytest.approx(
+            scf * t_factor * 0.87 / 379.3 * 16.04 / 2204.62, rel=5e-3)
 
     def test_tier3_chemical_stoichiometry(self, dispatcher):
         """C + O2 -> CO2 mass ratio = 44.01 / 12.011."""
@@ -377,9 +428,20 @@ class TestExhaustiveUnitConversionsAllMatrices:
     # 4A. Volume Units
     @pytest.mark.parametrize("u1", list(VOLUME_UNITS_TO_M3.keys()))
     def test_all_volume_units_to_m3_positive(self, u1):
-        factor = VOLUME_UNITS_TO_M3[u1]
-        assert factor > 0
-        assert not math.isnan(factor)
+        """Every volume unit is pinned to its defined size (exact definitions: 1 ft = 0.3048 m, 1 US gal = 3.785411784 L,
+        1 bbl = 42 gal; Compendium Table 3-4). A unit added to the table must be added here."""
+        ft3, gal, bbl = 0.3048 ** 3, 3.785411784e-3, 42 * 3.785411784e-3
+        groups = {
+            1.0: ("m3", "m³", "sm3", "sm³", "cubic_meter", "cubic_meters", "actual_m3", "actualm3", "am3"),
+            (273.15 + 15.5556) / 273.15: ("nm3", "nm³"),     # normal m3 (0 C) in standard m3 (60 F)
+            1e3: ("ksm3",), 1e6: ("mmsm3",),
+            ft3: ("acf", "scf", "cf", "ft3"), ft3 * 1e3: ("mscf", "mcf"), ft3 * 1e6: ("mmscf",),
+            bbl: ("bbl", "barrel", "barrels"), bbl * 1e3: ("kbbl", "mbbl"), bbl * 1e6: ("mmbbl",),
+            gal: ("gal", "gallon", "gallons"), 1e-3: ("l", "liter", "liters", "litre", "litres"),
+        }
+        expected = {u: v for v, names in groups.items() for u in names}
+        assert u1 in expected, f"volume unit {u1!r} has no pinned value"
+        assert VOLUME_UNITS_TO_M3[u1] == pytest.approx(expected[u1], rel=1e-5)
 
     @pytest.mark.parametrize("u1", ["m3", "scf", "mcf", "mmscf", "bbl", "gal", "liter"])
     @pytest.mark.parametrize("u2", ["m3", "scf", "mcf", "mmscf", "bbl", "gal", "liter"])
@@ -395,9 +457,18 @@ class TestExhaustiveUnitConversionsAllMatrices:
     # 4B. Mass Units
     @pytest.mark.parametrize("m1", list(MASS_UNITS_TO_KG.keys()))
     def test_all_mass_units_to_kg_positive(self, m1):
-        factor = MASS_UNITS_TO_KG[m1]
-        assert factor > 0
-        assert not math.isnan(factor)
+        """Every mass unit is pinned to its defined size (1 lb = 0.45359237 kg exactly; short ton = 2,000 lb, long ton =
+        2,240 lb; Compendium Table 3-4)."""
+        lb = 0.45359237
+        groups = {
+            1.0: ("kg", "kgs", "kilogram", "kilograms"), 1e-3: ("g", "gram", "grams"),
+            1e3: ("tonne", "tonnes", "metric_ton", "metric_tons", "mt", "t"),
+            lb: ("lb", "lbs", "pound", "pounds"), 2000 * lb: ("short_ton", "short_tons", "us_ton"),
+            2240 * lb: ("long_ton", "long_tons"),
+        }
+        expected = {u: v for v, names in groups.items() for u in names}
+        assert m1 in expected, f"mass unit {m1!r} has no pinned value"
+        assert MASS_UNITS_TO_KG[m1] == pytest.approx(expected[m1], rel=1e-9)
 
     @pytest.mark.parametrize("m1", ["kg", "g", "tonne", "mt", "lb", "short_ton", "long_ton"])
     @pytest.mark.parametrize("m2", ["kg", "g", "tonne", "mt", "lb", "short_ton", "long_ton"])
@@ -412,9 +483,19 @@ class TestExhaustiveUnitConversionsAllMatrices:
     # 4C. Energy Units
     @pytest.mark.parametrize("e1", list(ENERGY_UNITS_TO_MJ.keys()))
     def test_all_energy_units_to_mj_positive(self, e1):
-        factor = ENERGY_UNITS_TO_MJ[e1]
-        assert factor > 0
-        assert not math.isnan(factor)
+        """Every energy unit is pinned to its defined size (1 Btu = 1,055.05585 J (IT), 1 kWh = 3.6 MJ, 1 therm = 10^5 Btu;
+        the Compendium prints 1,055.056 J/Btu in Table 3-4 and Exhibit 4.3)."""
+        btu = 1055.05585262e-6   # MJ
+        groups = {
+            1.0: ("mj", "megajoule", "megajoules"), 1e-3: ("kj", "kilojoule", "kilojoules"),
+            1e3: ("gj", "gigajoule", "gigajoules"), 1e6: ("tj", "terajoule"),
+            btu: ("btu", "btus"), btu * 1e3: ("kbtu",), btu * 1e6: ("mmbtu", "mm_btu"), btu * 1e5: ("therm", "therms"),
+            3.6: ("kwh", "kilowatt_hour"), 3600.0: ("mwh", "megawatt_hour"),
+        }
+        expected = {u: v for v, names in groups.items() for u in names}
+        assert e1 in expected, f"energy unit {e1!r} has no pinned value"
+        assert ENERGY_UNITS_TO_MJ[e1] == pytest.approx(expected[e1], rel=1e-6)
+        assert 1055.056e-6 == pytest.approx(btu, rel=1e-6)   # as printed in the Compendium
 
     @pytest.mark.parametrize("e1", ["mj", "kj", "gj", "tj", "btu", "mmbtu", "kwh", "mwh", "therm"])
     @pytest.mark.parametrize("e2", ["mj", "kj", "gj", "tj", "btu", "mmbtu", "kwh", "mwh", "therm"])

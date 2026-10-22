@@ -33,8 +33,39 @@ def dispatcher():
 # 1. TIER 1 MATRIX: EVERY PROCESS TYPE WITH CATALOG/DEFAULT EMISSION FACTORS
 # ==============================================================================
 
+# Hand-worked Tier 1 results of the generic rows below (100 units, factors CO2 1.0 / CH4 0.5 / N2O 0.01 kg per unit,
+# combustion CO2 50 kg per m3), in tonnes. The processes with their own Compendium table ignore (or reinterpret) the
+# generic factor, so their values come from that table:
+#   drilling: 100 drilling days x 0.0458 t CH4/day (Table 6-2, water-based mud, onshore);
+#   completions: 100 m3 of metered flowback x 80 % CH4 x 16.04 kg/kmol / 23.685 m3/kmol = 54.18 kg CH4 (Eq 6-4);
+#   liquids_unloading: 100 wells x 1.774 t CH4/well-year (Table 6-11, plunger lift);
+#   associated_gas_venting: 100 m3 = 628.981 bbl of oil x 0.5 kg CH4/bbl (the dispatcher reads a Tier 1 CH4 factor of
+#   this process as kg per bbl).
+_COMBUSTION_TIER1 = (5.0, 0.05, 0.001)
+_GENERIC_TIER1 = (0.1, 0.05, 0.001)
+_SPECIAL_TIER1 = {
+    "associated_gas_venting": (0.0, 628.981077 * 0.5 / 1000.0, 0.0),
+    "drilling": (0.0, 100 * 0.0458, 0.0),
+    "completions": (0.0, 100 * 0.80 * 16.04 / 23.685 / 1000.0, 0.0),
+    "liquids_unloading": (0.0, 100 * 1.774, 0.0),
+}
+_AR5 = {"CO2": 1.0, "CH4": 28.0, "N2O": 265.0}
+
+
+def _gas(res, gas):
+    r = res["results"].get(gas)
+    return float(r["value"] if isinstance(r, dict) else (r or 0.0))
+
+
+def _expected_tier1(process_id, category):
+    if process_id in _SPECIAL_TIER1:
+        return _SPECIAL_TIER1[process_id]
+    return _COMBUSTION_TIER1 if category == "combustion" else _GENERIC_TIER1
+
+
 class TestAllProcessTypesTier1:
-    """Every single process type in PROCESS_TYPES must calculate successfully in Tier 1."""
+    """Every process type in PROCESS_TYPES dispatches with catalog-style factors and returns the hand-worked gases and
+    CO2e (AR5: 1 / 28 / 265)."""
 
     @pytest.mark.parametrize("process_id", list(PROCESS_TYPES.keys()))
     def test_tier1_every_canonical_process_type(self, dispatcher, process_id):
@@ -44,7 +75,7 @@ class TestAllProcessTypesTier1:
             "factor_source": "default",
             "amount": 100.0,
             "quantity": 100.0,
-            "unit": _activity_unit(process_id, meta["category"]),
+            "unit": "wells" if process_id == "liquids_unloading" else _activity_unit(process_id, meta["category"]),
             "fuel_type": "Natural Gas" if meta["category"] == "combustion" else None,
         }
         if process_id == "completions":
@@ -57,17 +88,17 @@ class TestAllProcessTypesTier1:
             "unit": "kg/m3" if meta["category"] in ["combustion", "vented"] else "kg/unit",
             "hhv": 1020.0,
         }
-        res = dispatcher.dispatch(process_id, payload, factor_data, {})
-        assert res is not None, f"Dispatcher returned None for process_type={process_id}"
-        assert "results" in res, f"Missing 'results' for process_type={process_id}"
-        assert res["total_co2e"] > 0, f"Expected total_co2e > 0 for process_type={process_id}"
-        assert not math.isnan(res["total_co2e"])
-        assert not math.isinf(res["total_co2e"])
+        res = dispatcher.dispatch(process_id, payload, factor_data, {}, gwp_dict=_AR5)
+        co2, ch4, n2o = _expected_tier1(process_id, meta["category"])
+        assert _gas(res, "co2") == pytest.approx(co2, rel=2e-3, abs=1e-12), process_id
+        assert _gas(res, "ch4") == pytest.approx(ch4, rel=2e-3, abs=1e-12), process_id
+        assert _gas(res, "n2o") == pytest.approx(n2o, rel=2e-3, abs=1e-12), process_id
+        assert res["total_co2e"] == pytest.approx(co2 + 28.0 * ch4 + 265.0 * n2o, rel=2e-3), process_id
 
     def test_tier1_utilities_and_aliases(self, dispatcher):
-        """Verify additional process types not in PROCESS_TYPES table (indirect steam, cogen, fccu, stoichiometry)."""
-        extras = ["indirect_steam", "cogen_allocation", "stoichiometry", "fccu"]
-        for p in extras:
+        """Process types outside PROCESS_TYPES (indirect steam, cogen, fccu, stoichiometry) take the generic factor
+        rows: 250 mmbtu x 53.06 kg CO2 / 0.001 kg CH4 / 0.0001 kg N2O per mmbtu = 13.265 / 0.00025 / 0.000025 t."""
+        for p in ["indirect_steam", "cogen_allocation", "stoichiometry", "fccu"]:
             payload = {
                 "process_type": p,
                 "factor_source": "default",
@@ -77,9 +108,11 @@ class TestAllProcessTypesTier1:
                 "unit": "mmbtu",
             }
             factors = {"co2": 53.06, "ch4": 0.001, "n2o": 0.0001, "unit": "kg/mmbtu"}
-            res = dispatcher.dispatch(p, payload, factors, {})
-            assert res is not None
-            assert res["total_co2e"] > 0
+            res = dispatcher.dispatch(p, payload, factors, {}, gwp_dict=_AR5)
+            assert _gas(res, "co2") == pytest.approx(250 * 53.06 / 1000.0, rel=1e-9), p
+            assert _gas(res, "ch4") == pytest.approx(250 * 0.001 / 1000.0, rel=1e-9), p
+            assert _gas(res, "n2o") == pytest.approx(250 * 0.0001 / 1000.0, rel=1e-9), p
+            assert res["total_co2e"] == pytest.approx(13.265 + 28 * 0.00025 + 265 * 0.000025, rel=1e-9), p
 
 
 # ==============================================================================
@@ -103,9 +136,14 @@ class TestAllProcessTypesTier3:
             "co2_mol": 2.0,
         }
         res = dispatcher.dispatch("stationary_combustion", payload, {}, {})
-        assert res["results"]["co2"]["value"] > 0
-        assert res["results"]["ch4"]["value"] > 0
-        assert res["total_co2e"] > 0
+        # carbon balance on 1,000 m3: 0.85 CH4 + 2 x 0.10 C2H6 = 1.05 mol C/mol at 99.5 % combustion, plus 2 % CO2;
+        # slip = 0.5 % of the CH4. 60 F molar volume 23.685 m3/kmol; AR5 GWP of CH4 28.
+        rho_co2, rho_ch4 = 44.01 / 23.685, 16.04 / 23.685
+        co2 = 1000 * (1.05 * 0.995 + 0.02) * rho_co2 / 1000
+        ch4 = 1000 * 0.85 * 0.005 * rho_ch4 / 1000
+        assert res["results"]["co2"]["value"] == pytest.approx(co2, rel=1e-9)
+        assert res["results"]["ch4"]["value"] == pytest.approx(ch4, rel=1e-9)
+        assert res["total_co2e"] == pytest.approx(co2 + 28.0 * ch4, rel=1e-9)
 
     def test_mobile_combustion_tier3(self, dispatcher):
         payload = {
@@ -120,7 +158,10 @@ class TestAllProcessTypesTier3:
         }
         factors = {"co2": 73.96, "ch4": 0.003, "n2o": 0.0006, "unit": "kg/mmbtu"}
         res = dispatcher.dispatch("mobile_combustion", payload, factors, {})
-        assert res["total_co2e"] > 0
+        # 500 L = 132.086 gal x 138,000 Btu/gal = 18.228 MMBtu; kg/MMBtu factors; AR5 GWP 28 (CH4) and 265 (N2O)
+        mmbtu = 500 * 0.264172052 * 138000 / 1e6
+        assert res["results"]["co2"]["value"] == pytest.approx(mmbtu * 73.96 / 1000, rel=1e-6)
+        assert res["total_co2e"] == pytest.approx(mmbtu * (73.96 + 0.003 * 28 + 0.0006 * 265) / 1000, rel=1e-6)
 
     def test_flaring_tier3(self, dispatcher):
         payload = {
@@ -133,8 +174,10 @@ class TestAllProcessTypesTier3:
             "flare_type": "steam_assisted",
         }
         res = dispatcher.dispatch("flaring", payload, {}, {})
-        assert res["results"]["co2"]["value"] > 0
-        assert res["results"]["ch4"]["value"] > 0
+        # 5,000 m3 at 85 % CH4 and 3 % CO2; default flare: 96.5 % of the carbon to CO2, 98 % of the CH4 destroyed
+        rho_co2, rho_ch4 = 44.01 / 23.685, 16.04 / 23.685
+        assert res["results"]["co2"]["value"] == pytest.approx(5000 * (0.85 * 0.965 + 0.03) * rho_co2 / 1000, rel=1e-9)
+        assert res["results"]["ch4"]["value"] == pytest.approx(5000 * 0.85 * 0.02 * rho_ch4 / 1000, rel=1e-9)
 
     def test_drilling_mud_degassing_tier3(self, dispatcher):
         payload = {
@@ -146,7 +189,8 @@ class TestAllProcessTypesTier3:
         }
         factors = {"ch4": 0.05}
         res = dispatcher.dispatch("drilling", payload, factors, {})
-        assert res["results"]["ch4"]["value"] > 0
+        # Table 6-2 onshore water-based mud: 0.0458 t CH4 per drilling day (the factor passed in is not used)
+        assert res["results"]["ch4"]["value"] == pytest.approx(30 * 0.0458, rel=1e-9)
 
     def test_well_completions_tier3(self, dispatcher):
         payload = {
@@ -158,8 +202,12 @@ class TestAllProcessTypesTier3:
             "control_efficiency": 0.95,
         }
         res = dispatcher.dispatch("completions", payload, {}, {})
-        assert res["results"]["ch4"]["value"] > 0
-        assert res["results"]["co2"]["value"] > 0
+        # 15,000 m3 flowback at 80 % CH4; control_efficiency 0.95 = 95 % of the gas to a flare at the default 98 %
+        # CH4 destruction / 96.5 % carbon conversion, the other 5 % vented
+        v_ch4 = 15000 * 0.80
+        rho_co2, rho_ch4 = 44.01 / 23.685, 16.04 / 23.685
+        assert res["results"]["ch4"]["value"] == pytest.approx(v_ch4 * rho_ch4 / 1000 * (0.05 + 0.95 * 0.02), rel=1e-6)
+        assert res["results"]["co2"]["value"] == pytest.approx(v_ch4 * rho_co2 / 1000 * 0.95 * 0.965, rel=1e-6)
 
     def test_liquids_unloading_tier3(self, dispatcher):
         payload = {
@@ -173,7 +221,10 @@ class TestAllProcessTypesTier3:
             "control_efficiency": 0.0,
         }
         res = dispatcher.dispatch("liquids_unloading", payload, {}, {})
-        assert res["results"]["ch4"]["value"] > 0
+        # Eq 6-10 without a flow-line term: 4 events x 0.37e-3 x D^2 (2.5 in) x depth (3,000 ft) x 350 psig = 9,712.5 scf
+        # of whole gas, 85 % CH4, uncontrolled
+        scf = 4 * 0.37e-3 * 2.5 ** 2 * 3000 * 350
+        assert res["results"]["ch4"]["value"] == pytest.approx(scf / 379.3 * 0.85 * 16.04 / 2204.62, rel=5e-3)
 
     def test_blowdown_events_tier3(self, dispatcher):
         payload = {
@@ -186,7 +237,9 @@ class TestAllProcessTypesTier3:
             "blowdown_temp": 60.0,
         }
         res = dispatcher.dispatch("blowdown", payload, {}, {})
-        assert res["results"]["ch4"]["value"] > 0
+        # 50 m3 at 600 psig and 60 (C, the default unit), 2 events, 90 % CH4: V_std = V x P_abs/14.696 x 288.706 K/T, Z = 1
+        v_std = 50 * (600 + 14.696) / 14.696 * 288.706 / (60 + 273.15)
+        assert res["results"]["ch4"]["value"] == pytest.approx(2 * v_std * 0.90 * (16.04 / 23.685) / 1000, rel=1e-5)
 
     def test_storage_tanks_tier3(self, dispatcher):
         payload = {
@@ -199,8 +252,12 @@ class TestAllProcessTypesTier3:
             "control_efficiency": 0.98,
         }
         res = dispatcher.dispatch("storage_tanks", payload, {}, {})
-        assert res["results"]["ch4"]["value"] > 0
-        assert res["results"]["co2"]["value"] > 0
+        # flash gas = 50,000 bbl x 300 scf/bbl = 15e6 scf, 80 % CH4. An entered efficiency of 0.98 is the efficiency of the
+        # flare: 98 % of the CH4 destroyed and 98 % of the carbon converted to CO2 (the same figure for both)
+        v_ch4 = 50000 * 300 * 0.028316846592 * 0.80
+        rho_co2, rho_ch4 = 44.01 / 23.685, 16.04 / 23.685
+        assert res["results"]["ch4"]["value"] == pytest.approx(v_ch4 * rho_ch4 / 1000 * 0.02, rel=1e-6)
+        assert res["results"]["co2"]["value"] == pytest.approx(v_ch4 * rho_co2 / 1000 * 0.98, rel=1e-6)
 
     def test_pneumatic_devices_tier3(self, dispatcher):
         payload = {
@@ -212,7 +269,9 @@ class TestAllProcessTypesTier3:
             "ch4_content": 90.0,
         }
         res = dispatcher.dispatch("pneumatic_devices", payload, {}, {})
-        assert res["results"]["ch4"]["value"] > 0
+        # 10 devices x 8,760 h x 12.5 scf/h = 1,095,000 scf of gas at 90 % CH4
+        assert res["results"]["ch4"]["value"] == pytest.approx(
+            10 * 8760 * 12.5 * 0.028316846592 * 0.90 * (16.04 / 23.685) / 1000, rel=1e-9)
 
     def test_fugitive_component_tier3(self, dispatcher):
         payload = {
@@ -225,7 +284,8 @@ class TestAllProcessTypesTier3:
             "ch4_content": 85.0,
         }
         res = dispatcher.dispatch("fugitive_component", payload, {}, {})
-        assert res["results"]["ch4"]["value"] > 0
+        # 150 valves x 0.0268 kg TOC/h x 8,760 h = 35.2 t TOC; gas-service TOC is 92.0 wt % CH4 (Compendium Table C-1)
+        assert res["results"]["ch4"]["value"] == pytest.approx(150 * 0.0268 * 8760 / 1000 * 0.920, rel=1e-9)
 
     @pytest.mark.parametrize("fugitive_type", [
         "wellhead_fugitive",
@@ -247,8 +307,9 @@ class TestAllProcessTypesTier3:
             "ch4_content": 85.0,
         }
         res = dispatcher.dispatch(fugitive_type, payload, {}, {})
-        assert res["results"]["ch4"]["value"] > 0
-        assert res["total_co2e"] > 0
+        # 25 sources x 0.45 kg/h x 8,760 h = 98.55 t of gas; the equipment route takes ch4_content (85 %) as the CH4 share
+        assert res["results"]["ch4"]["value"] == pytest.approx(25 * 0.45 * 8760 / 1000 * 0.85, rel=1e-9)
+        assert res["total_co2e"] == pytest.approx(28.0 * res["results"]["ch4"]["value"], rel=1e-9)
 
     def test_compressor_fugitive_tier3(self, dispatcher):
         payload = {
@@ -258,7 +319,8 @@ class TestAllProcessTypesTier3:
             "seal_type": "centrifugal_wet",
         }
         res = dispatcher.dispatch("compressor_fugitive", payload, {}, {})
-        assert res["results"]["ch4"]["value"] > 0
+        # production wet-seal degassing 0.026 t CH4/compressor-hour (Compendium 6.4.2) x 3 compressors x 8,760 h
+        assert res["results"]["ch4"]["value"] == pytest.approx(3 * 0.026 * 8760, rel=1e-9)
 
     def test_acid_gas_removal_tier3(self, dispatcher):
         payload = {
@@ -273,8 +335,12 @@ class TestAllProcessTypesTier3:
             "control_efficiency": 0.0,
         }
         res = dispatcher.dispatch("acid_gas_removal", payload, {}, {})
-        assert res["results"]["co2"]["value"] > 0
-        assert res["results"]["ch4"]["value"] > 0
+        # 150 MMscf in: CO2 removed = V x (4.5 % - 0.02 %) / (1 - 0.02 %) vented; CH4 slip = V x 85 % x 0.05 (a FRACTION of the
+        # inlet CH4: 5 %). 60 F molar volume 23.685 m3/kmol.
+        v_in = 150e6 * 0.028316846592
+        assert res["results"]["co2"]["value"] == pytest.approx(
+            v_in * (0.045 - 0.0002) / (1 - 0.0002) * (44.01 / 23.685) / 1000, rel=1e-9)
+        assert res["results"]["ch4"]["value"] == pytest.approx(v_in * 0.85 * 0.05 * (16.04 / 23.685) / 1000, rel=1e-9)
 
     def test_glycol_dehydrator_tier3(self, dispatcher):
         # Tier 3 = process simulation (GRI-GLYCalc) or measured result (API Compendium 6.3.8.1); the former
@@ -300,7 +366,8 @@ class TestAllProcessTypesTier3:
         }
         factors = {"co2": 53.06}
         res = dispatcher.dispatch("indirect_steam", payload, factors, {})
-        assert res["results"]["co2"]["value"] > 0
+        # Exhibit 8.3 method: net efficiency = boiler 0.82 - transmission loss 0.03 = 0.79; 2,500 MMBtu / 0.79 x 53.06 kg/MMBtu
+        assert res["results"]["co2"]["value"] == pytest.approx(2500 / 0.79 * 53.06 / 1000, rel=1e-9)
 
     def test_cogen_allocation_tier3(self, dispatcher):
         payload = {
@@ -312,8 +379,9 @@ class TestAllProcessTypesTier3:
             "cogen_method": "wri_efficiency",
         }
         res = dispatcher.dispatch("cogen_allocation", payload, {}, {})
-        assert res["results"]["co2"]["value"] > 0
-        assert res["results"]["co2"]["value"] < 1000.0
+        # Eq 8-5, default reference efficiencies 80 % (heat) and 35 % (power): the share of the heat is
+        # (4,000 / 0.80) / (4,000 / 0.80 + 2,000 / 0.35) of the 1,000 t
+        assert res["results"]["co2"]["value"] == pytest.approx(1000.0 * (4000 / 0.80) / (4000 / 0.80 + 2000 / 0.35), rel=1e-9)
 
     @pytest.mark.parametrize("chem_type", [
         "chemical_production",
@@ -330,8 +398,10 @@ class TestAllProcessTypesTier3:
             "unit": "kg",
         }
         res = dispatcher.dispatch(chem_type, payload, {}, {})
-        assert res["results"]["co2"]["value"] > 0
-        assert res["total_co2e"] > 0
+        # a carbon content selects the stoichiometric balance on every one of these process types:
+        # 10,000 kg x 0.82 x 44.01 / 12.011 = 30.05 t CO2
+        assert res["results"]["co2"]["value"] == pytest.approx(10000 * 0.82 * 44.01 / 12.011 / 1000, rel=1e-9)
+        assert res["total_co2e"] == pytest.approx(res["results"]["co2"]["value"], rel=1e-9)
 
 
 # ==============================================================================
@@ -339,30 +409,45 @@ class TestAllProcessTypesTier3:
 # ==============================================================================
 
 class TestComputeEmissionsIntegration:
-    """Verify compute_emissions pipeline routes and handles all canonical process types."""
+    """compute_emissions routes every canonical process type and returns the hand-worked gases (200 units, factors
+    CO2 1.0 or 53.06 / CH4 0.05 / N2O 0.001 kg per unit; the special rows use their Compendium tables as in the Tier 1
+    matrix above, with 200 units: 200 drilling days x 0.0458, 200 wells x 1.774 t, 1,257.962 bbl x 0.05 kg CH4/bbl,
+    200 m3 x 80 % CH4 x 16.04 / 23.685 kg)."""
+
+    _SPECIAL = {
+        "associated_gas_venting": (0.0, 1257.962154 * 0.05 / 1000.0, 0.0),
+        "drilling": (0.0, 200 * 0.0458, 0.0),
+        "completions": (0.0, 200 * 0.80 * 16.04 / 23.685 / 1000.0, 0.0),
+        "liquids_unloading": (0.0, 200 * 1.774, 0.0),
+    }
 
     @pytest.mark.parametrize("process_id", list(PROCESS_TYPES.keys()))
     def test_compute_emissions_for_all_processes(self, process_id):
+        category = PROCESS_TYPES[process_id]["category"]
         payload = {
             "process_type": process_id,
             "process": process_id,
             "amount": 200.0,
-            "unit": _activity_unit(process_id, PROCESS_TYPES[process_id]["category"]),
-            "fuel_type": "Natural Gas" if PROCESS_TYPES[process_id]["category"] == "combustion" else None,
+            "unit": "wells" if process_id == "liquids_unloading" else _activity_unit(process_id, category),
+            "fuel_type": "Natural Gas" if category == "combustion" else None,
         }
         if process_id == "completions":
             payload["ch4_content"] = 80  # a measured flowback volume needs the gas analysis
         factors = {
-            "co2": 53.06 if PROCESS_TYPES[process_id]["category"] == "combustion" else 1.0,
+            "co2": 53.06 if category == "combustion" else 1.0,
             "ch4": 0.05,
             "n2o": 0.001,
-            "unit": "kg/m3" if PROCESS_TYPES[process_id]["category"] in ["combustion", "vented"] else "kg/unit",
+            "unit": "kg/m3" if category in ["combustion", "vented"] else "kg/unit",
             "hhv": 1020.0,
         }
-        em_res, method = compute_emissions(payload, factors)
-        assert em_res is not None
-        assert em_res["totalCo2e"] > 0
-        assert method is not None
+        em_res, method = compute_emissions(payload, factors, gwp_dict=_AR5)
+        co2, ch4, n2o = self._SPECIAL.get(process_id) or ((10.612, 0.01, 0.0002) if category == "combustion"
+                                                          else (0.2, 0.01, 0.0002))
+        assert em_res["co2"] == pytest.approx(co2, rel=2e-3, abs=1e-12), process_id
+        assert em_res["ch4"] == pytest.approx(ch4, rel=2e-3, abs=1e-12), process_id
+        assert em_res["n2o"] == pytest.approx(n2o, rel=2e-3, abs=1e-12), process_id
+        assert em_res["totalCo2e"] == pytest.approx(co2 + 28.0 * ch4 + 265.0 * n2o, rel=2e-3), process_id
+        assert method
 
 
 # ==============================================================================
@@ -395,16 +480,20 @@ class TestScope2ProcessMatrix:
     """Verify all Scope 2 utility types: Grid Electricity (Location/Market) and Purchased Steam."""
 
     def test_scope2_location_based_electricity(self):
+        from routes.scope2 import resolve_electricity_factor
         kwh = 10000.0
-        grid_ef = 0.450  # kg CO2e / kWh
-        co2e = (kwh * grid_ef) / 1000.0
-        assert pytest.approx(co2e, 1e-4) == 4.50
+        grid_ef, region = resolve_electricity_factor(None, 0.450)   # a supplier factor, kg CO2e / kWh, through the platform
+        assert region is None
+        assert pytest.approx(kwh * grid_ef / 1000.0, 1e-9) == 4.50
+        # a known grid region uses the catalog factor (US-RMPA: 0.564 t CO2 + 5.31e-5 t CH4 x 28 + 7.71e-6 t N2O x 265 per MWh)
+        rmpa, name = resolve_electricity_factor("US-RMPA (WECC Rockies)", None)
+        assert rmpa == pytest.approx(0.564 + 5.31e-5 * 28 + 7.71e-6 * 265, rel=1e-6)
 
     def test_scope2_market_based_electricity_zero_carbon(self):
+        from routes.scope2 import resolve_electricity_factor
         kwh = 50000.0
-        ppa_ef = 0.0  # 100% solar PPA
-        co2e = (kwh * ppa_ef) / 1000.0
-        assert co2e == 0.0
+        ppa_ef, _ = resolve_electricity_factor(None, 0.0)   # 100 % solar PPA: a zero supplier factor is accepted
+        assert kwh * ppa_ef / 1000.0 == 0.0
 
     def test_scope2_purchased_steam_indirect(self, dispatcher):
         payload = {
@@ -453,9 +542,9 @@ class TestScope3AllCategoriesMatrix:
         from calculations.units import compute_scope3_co2e
         activity_amt = 1000.0
         co2e = compute_scope3_co2e(activity_amt, ef_val, ef_unit)
-        assert co2e > 0
-        assert not math.isnan(co2e)
-        assert not math.isinf(co2e)
+        # tonnes CO2e = amount x factor (kg per unit) / 1,000; a "per $1000" factor applies to each 1,000 $ of spend
+        per = 1000.0 if "$1000" in ef_unit else 1.0
+        assert co2e == pytest.approx(activity_amt / per * ef_val / 1000.0, rel=1e-9)
 
 
 # ==============================================================================

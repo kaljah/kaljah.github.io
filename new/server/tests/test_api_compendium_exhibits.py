@@ -1,15 +1,17 @@
 """API Compendium 2021 worked examples (Exhibits) run through the engine — the same path as
 POST /api/emissions (resolve_factor + compute_emissions). Expected values are the exhibits'
-printed results; inputs as the exhibits state them. Exhibit answers were read from
-scratch/2021-API-GHG-Compendium.pdf (pdftotext). Exhibit 6-11 is excluded: its text says CO2
-comes from the whole-gas factor (2.6 scf/h) but its arithmetic uses 2.1 (the CH4-basis value);
-the engine follows the stated method.
+printed results; inputs as the exhibits state them (answers read from the PDF with pdftotext).
+Tolerance: the printed rounding plus 0.5 % for the engine's gas densities (see compendium_exhibits_support).
+Exhibit 6-11 is checked in test_compendium_exhibits_ch6_exploration_production (an expected failure there: the
+engine is 1.07 % above the exhibit). Cases marked DERIVED are exhibits that print the inputs and an energy or
+carbon figure but not the emission total: the expected value is the exhibit's own arithmetic, not a printed number.
 """
 import json
 import math
 
 import pytest
 
+from compendium_exhibits_support import REL_ENGINE, assert_printed
 from calculations.constants import get_active_gwp
 from calculations.legacy_engine import compute_emissions
 from services.scope1_calc import resolve_factor
@@ -17,8 +19,9 @@ from services.scope1_calc import resolve_factor
 CASES = []
 
 
-def case(ex, title, payload, expect, tol=0.02, note=""):
-    CASES.append(pytest.param(payload, expect, tol, id=f"{ex} {title}"))
+def case(ex, title, payload, expect, note=""):
+    """``expect``: the exhibit's printed results in tonnes (tolerance: printed rounding + REL_ENGINE)."""
+    CASES.append(pytest.param(payload, expect, id=f"{ex} {title}"))
 
 
 def ci(process, tier_src, amount, unit, fuel=None, **inputs):
@@ -35,13 +38,13 @@ def ci(process, tier_src, amount, unit, fuel=None, **inputs):
 
 # 4.2 / 4.4 natural gas: 800e6 scf at HHV 1020 Btu/scf = 8.16e11 Btu (Exhibit 4.2); fuel-basis CO2 with
 # Table 4-3 NG factor 53.06 kg/MMBtu -> 816,000 MMBtu x 0.05306 = 43,297 t (derived from 4.2's energy)
-case("4.2", "Natural gas 800e6 scf, default HHV (Tier 1)",
+case("4.2", "DERIVED Natural gas 800e6 scf, default HHV (Tier 1)",
      ci("combustion", "default", 800e6, "scf", fuel="Natural Gas"),
      {"co2": 816000 * 0.05306}, note="energy input per Exhibit 4.2; CO2 = energy x Table 4-3 factor (derived)")
 
 # 4.4(a): composition known, 100 % oxidation (Eq 4-11). Answer not extractable from the PDF text ->
 # derived: 800e6/379.3 lbmol x 1.014 lbmol C/lbmol (CO2 0.8, CH4 95.3, C2 1.7, C3 0.5, C4 0.1) x 44 / 2204.62
-case("4.4a", "Natural gas 800e6 scf, known composition (Tier 3)",
+case("4.4a", "DERIVED Natural gas 800e6 scf, known composition (Tier 3)",
      ci("combustion", "specific", 800e6, "scf", fuel="Natural Gas", hhv=1020, combustion_efficiency=100,
         c1=95.3, c2=1.7, c3=0.5, c4=0.1, co2_content=0.8, n2_content=1.6),
      {"co2": 800e6 / 379.3 * 1.014 * 44 / 2204.62}, note="expected derived with Eq 4-11 (exhibit answer not in extracted text)")
@@ -140,13 +143,13 @@ case("6-25", "Equipment blowdown, gas law (Eq 6-32)",
      {"process_type": "blowdown", "factor_source": "specific", "amount": 83.8, "unit": "scf",
       "calc_inputs": {"blowdown": {"blowdown_volume": 83.8, "blowdown_unit": "scf", "blowdown_pressure": 100,
                                    "blowdown_events": 1, "ch4_content": 90, "blowdown_temp": 80, "blowdown_temp_unit": "F", "z_factor": 0.9864}}},
-     {"ch4": 0.011}, tol=0.03)
+     {"ch4": 0.011})
 
 # 6-44: hydrogen 13,000e6 scf H2 x 13.41 t/1e6 scf
 case("6-44", "Hydrogen plant, simple factor (Table 6-51)",
      {"process_type": "hydrogen_production", "factor_source": "default", "amount": 13000e6, "unit": "scf",
       "calc_inputs": {"hydrogen_production": {"h2_produced_scf": 13000e6}}},
-     {"co2": 174300}, tol=0.005)
+     {"co2": 174300})
 
 # 6-45: asphalt 100,000 tons x Table 6-52 (5.61E-3 t CO2/ton, 3.07E-3 t CH4/ton) -> 561 / 307
 case("6-45", "Asphalt blowing 100,000 tons (Table 6-52)",
@@ -173,23 +176,23 @@ case("7-4", "Onshore gas equipment: 4 separators, form unit 'equipment'",
 case("6-42", "Hydrogen plant, feedstock carbon balance (Eq 6-49)",
      {"process_type": "hydrogen_production", "factor_source": "default", "amount": 5e9, "unit": "scf",
       "calc_inputs": {"hydrogen_production": {"feedstock_scf": 5e9, "feed_ch4": 85, "feed_c2h6": 8, "feed_c4h10": 3, "feed_n2": 4}}},
-     {"co2": 297100}, tol=0.01)
+     {"co2": 297100})
 case("6-43", "Hydrogen plant, H2 stoichiometry (Eq 6-50)",
      {"process_type": "hydrogen_production", "factor_source": "default", "amount": 13e9, "unit": "scf",
       "calc_inputs": {"hydrogen_production": {"h2_produced_scf": 13e9, "feed_ch4": 85, "feed_c2h6": 8, "feed_c4h10": 3, "feed_n2": 4}}},
-     {"co2": 177800}, tol=0.01)
+     {"co2": 177800})
 
 
 CASES = [c for c in CASES if not c.id.startswith("6-11 ")]
 
 
-@pytest.mark.parametrize("payload,expect,tol", CASES)
-def test_exhibit(app, payload, expect, tol):
+@pytest.mark.parametrize("payload,expect", CASES)
+def test_exhibit(app, payload, expect):
     with app.app_context():
         p = json.loads(json.dumps(payload))
         em, _ = compute_emissions(p, resolve_factor(p) or {}, gwp_dict=get_active_gwp(standard="AR5"))
         for gas, exp in expect.items():
-            assert float(em.get(gas) or 0) == pytest.approx(exp, rel=tol), gas
+            assert_printed(float(em.get(gas) or 0), f"{exp:g}", rel=REL_ENGINE, what=gas)
 
 
 # every catalog factor gives the same result for equivalent quantities in different units

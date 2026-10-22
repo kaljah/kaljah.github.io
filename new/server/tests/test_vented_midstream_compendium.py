@@ -15,6 +15,7 @@ Verifies:
 """
 
 import pytest
+from compendium_exhibits_support import REL_ENGINE, assert_printed
 from calculations.vented_midstream import (
     GatheringCompressorVentingCalculator,
     GatheringStorageTankCalculator,
@@ -51,29 +52,32 @@ class TestGatheringAndBoosting:
             ch4_content=0.70,
             co2_content=0.09,
         )
-        assert _val(res["results"]["ch4"]) == pytest.approx(0.62, abs=0.05)
-        assert _val(res["results"]["co2"]) == pytest.approx(0.22, abs=0.05)
+        assert_printed(_val(res["results"]["ch4"]), "0.62", gas="ch4", rel=0.0002, what="CH4")
+        assert_printed(_val(res["results"]["co2"]), "0.22", gas="co2", rel=0.0002, what="CO2")
 
     def test_gathering_storage_tank_table_6_31(self):
+        """Table 6-31, average storage tank in gathering and boosting: 33.6 scf CH4 per tank-hour."""
         calc = GatheringStorageTankCalculator()
         res = calc.calculate(tank_count=3, hours=8760, component_type="average_tank")
-        assert _val(res["results"]["ch4"]) > 0
+        assert _val(res["results"]["ch4"]) == pytest.approx(
+            3 * 8760 * 33.6 * 0.028316846592 * (16.04 / 23.685) / 1000, rel=1e-3)
 
     def test_exhibit_6_27_gathering_non_routine(self):
         """
-        API Exhibit 6-27:
+        API Exhibit 6-27 (PDF line 15829):
         6 PRVs, 1 compressor start, 6 miles dig-in.
         Site gas has 79 mole % CH4 and no CO2.
+        Printed: PRVs 0.0039, compressor start 0.16, dig-ins 0.077 tonnes CH4.
         """
         calc = GatheringNonRoutineVentingCalculator()
         res_prv = calc.calculate(activity="prv_releases", events_or_count=6, ch4_content=0.79)
-        assert _val(res_prv["results"]["ch4"]) == pytest.approx(6 * 0.00065, abs=0.001)
+        assert_printed(_val(res_prv["results"]["ch4"]), "0.0039", gas="ch4", rel=0.0002, what="PRV CH4")
 
         res_start = calc.calculate(activity="compressor_starts", events_or_count=1, ch4_content=0.79)
-        assert _val(res_start["results"]["ch4"]) == pytest.approx(0.16, abs=0.02)
+        assert_printed(_val(res_start["results"]["ch4"]), "0.16", gas="ch4", rel=0.0002, what="compressor start CH4")
 
         res_dig = calc.calculate(activity="pipeline_dig_in", events_or_count=6, ch4_content=0.79)
-        assert _val(res_dig["results"]["ch4"]) == pytest.approx(6 * 0.0128, abs=0.01)
+        assert_printed(_val(res_dig["results"]["ch4"]), "0.077", gas="ch4", rel=0.0002, what="dig-in CH4")
 
 
 class TestGasProcessing:
@@ -94,15 +98,17 @@ class TestGasProcessing:
             ch4_content=0.90,
             co2_content=0.05,
         )
-        assert _val(res["results"]["ch4"]) == pytest.approx(22.06 + 32.26, abs=0.5)
-        assert _val(res["results"]["co2"]) == pytest.approx(4.93, abs=0.3)
+        # the exhibit prints the dehydrator (22.06) and the pump (32.26) separately: two values each good to 0.005
+        assert_printed(_val(res["results"]["ch4"]), "54.32", slack=2.0, rel=0.0002, what="CH4 (22.06 + 32.26)")
+        assert_printed(_val(res["results"]["co2"]), "4.93", rel=REL_ENGINE, what="pump CO2")
 
     def test_exhibit_6_29_blanketed_tank(self):
         """
         API Exhibit 6-29:
         32,000 bbl/yr liquid displacement, vapor temp = 75°F.
         Gas has 82% CH4, 1% CO2.
-        Expected: ECH4 = 2.68 tonnes CH4/yr, ECO2 = 0.09 tonnes CO2/yr.
+        Printed (PDF line 16278): ECH4 = 2.74 tonnes CH4/yr, ECO2 = 0.09 tonnes CO2/yr (32,000 bbl -> 179,667 acf ->
+        174,627 scf at 60 F). This docstring used to say 2.68 with a +/-0.1 tolerance.
         """
         calc = ProcessingBlanketedTankCalculator()
         res = calc.calculate(
@@ -111,8 +117,8 @@ class TestGasProcessing:
             ch4_content=0.82,
             co2_content=0.01,
         )
-        assert _val(res["results"]["ch4"]) == pytest.approx(2.68, abs=0.1)
-        assert _val(res["results"]["co2"]) == pytest.approx(0.09, abs=0.02)
+        assert_printed(_val(res["results"]["ch4"]), "2.74", gas="ch4", rel=0.0002, what="CH4")
+        assert_printed(_val(res["results"]["co2"]), "0.09", rel=0.0002, what="CO2")
 
     def test_exhibit_6_30_processing_blowdowns(self):
         """
@@ -123,7 +129,7 @@ class TestGasProcessing:
         """
         calc = ProcessingNonRoutineCalculator()
         res = calc.calculate(gas_throughput_m3_day=20_000_000.0, operating_days=365.0)
-        assert _val(res["results"]["ch4"]) == pytest.approx(908.0, abs=2.0)
+        assert_printed(_val(res["results"]["ch4"]), "908", sig=3, rel=0.0002, what="CH4")
 
 
 class TestTransmissionAndStorage:
@@ -143,7 +149,7 @@ class TestTransmissionAndStorage:
             standby_pressurized_hours=630.0,
             ch4_content=0.90,
         )
-        assert _val(res["results"]["ch4"]) == pytest.approx(201.4, abs=1.0)
+        assert_printed(_val(res["results"]["ch4"]), "201.4", slack=2.0, gas="ch4", rel=0.0002, what="CH4 (180.5 operating + 20.9 standby)")
 
     def test_exhibit_6_32_transmission_centrifugal_seals(self):
         """
@@ -159,7 +165,7 @@ class TestTransmissionAndStorage:
             dry_seal_count=2,
             ch4_content=0.95,
         )
-        assert _val(res["results"]["ch4"]) == pytest.approx(593.3, abs=2.0)
+        assert_printed(_val(res["results"]["ch4"]), "593.3", slack=2.0, rel=0.0002, what="CH4 (491.1 wet + 102.2 dry)")
 
     def test_exhibit_6_33_transmission_non_routine(self):
         """
@@ -169,7 +175,7 @@ class TestTransmissionAndStorage:
         """
         calc = TransmissionNonRoutineCalculator()
         res_sta = calc.calculate(activity="transmission_station", count_or_miles=2)
-        assert _val(res_sta["results"]["ch4"]) == pytest.approx(108.0, abs=0.5)
+        assert_printed(_val(res_sta["results"]["ch4"]), "108", rel=0.0002, what="station CH4")
 
         res_pipe = calc.calculate(activity="pipeline_blowdown", count_or_miles=50)
-        assert _val(res_pipe["results"]["ch4"]) == pytest.approx(30.675, abs=0.5)
+        assert_printed(_val(res_pipe["results"]["ch4"]), "31", rel=0.0002, what="pipeline CH4 (0.6135 t/mile x 50 = 30.675, printed 31)")

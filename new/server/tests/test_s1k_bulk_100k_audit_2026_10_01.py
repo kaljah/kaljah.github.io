@@ -102,14 +102,17 @@ def test_f1_tier3_hhv_without_composition_keeps_factor_co2(user_id):
              hhv="1020", combustion_efficiency="99.5"),
         dict(process_type="combustion", fuel="Natural Gas", quantity="1000", unit="Mscf", factor_type="default"))
     assert t is not None, err
-    assert t["co2"] > 50 and _close(t["co2"], r["co2"])        # 1,020 MMBtu x 53.06 kg = 54.1 t
+    # 1,000 Mscf x 1,020 Btu/scf = 1,020 MMBtu x 53.06 kg CO2/MMBtu = 54.12 t, the same as the default row
+    assert t["co2"] == pytest.approx(1020 * 53.06 / 1000, rel=1e-3) and _close(t["co2"], r["co2"])
 
 
 def test_f1_composition_still_drives_carbon_balance(user_id):
     t, err = _one(user_id, dict(process_type="combustion", fuel="Natural Gas", quantity="1000", unit="Mscf",
                                 factor_type="specific", hhv="1020", combustion_efficiency="99.5", c1="95", c2="3"))
     assert t is not None, err
-    assert t["co2"] > 50
+    # 1,000 Mscf = 28,316.85 m3 = 1,195.5 kmol. The analysis (95 % C1 + 3 % C2 = 98 %) is normalised to 100 %, so
+    # carbon per kmol = (0.95 + 2 x 0.03) / 0.98 = 1.0306; 99.5 % burned: 1,195.5 x 1.0306 x 0.995 x 44.01 kg
+    assert t["co2"] == pytest.approx(28316.85 / 23.685 * (0.95 + 0.06) / 0.98 * 0.995 * 44.01 / 1000, rel=5e-3)  # 53.96 t
 
 
 # --- F2: Coke Oven Gas at Tier 3 ------------------------------------------------------------------
@@ -117,7 +120,9 @@ def test_f2_coke_oven_gas_tier3_uses_gas_basis(user_id):
     t, err = _one(user_id, dict(process_type="combustion", fuel="Coke Oven Gas", quantity="1000", unit="Mscf",
                                 factor_type="specific", hhv="599", combustion_efficiency="99", c1="28", c2="3"))
     assert t is not None, err
-    assert t["co2"] > 0
+    # 1,195.5 kmol x (0.28 C1 + 2 x 0.03 C2 = 0.34 kmol C/kmol; an analysis totalling under 50 % is not normalised)
+    # x 99 % burned x 44.01 kg/kmol
+    assert t["co2"] == pytest.approx(28316.85 / 23.685 * 0.34 * 0.99 * 44.01 / 1000, rel=5e-3)  # 17.71 t
 
 
 # --- F3: tank throughput units ----------------------------------------------------------------------

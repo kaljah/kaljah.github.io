@@ -232,21 +232,17 @@ class TestScope2Methods:
         assert GRID_FACTORS["Algerian National Grid"]["co2"] == pytest.approx(co2, rel=1e-3)
 
     def test_scope2_market_based_contractual_instruments(self):
-        """Scope 2 Market-Based Method:
-        Verified Green PPA / Renewable Energy Certificates (RECs) with 0.0 EF:
-        Emissions = 1,000,000 kWh * 0.0 kg/kWh = 0.0 tCO2e.
-        Supplier-specific contract factor: 0.120 kg/kWh:
-        Emissions = 1,000,000 * 0.120 / 1000 = 120.0 tCO2e.
-        """
-        # 100% Green Tariff
-        green_kwh = 500_000.0
-        green_ef = 0.0
-        assert (green_kwh * green_ef) / 1000.0 == 0.0
-
-        # Contractual Supplier Factor
-        supplier_kwh = 500_000.0
-        supplier_ef = 0.120
-        assert abs((supplier_kwh * supplier_ef) / 1000.0 - 60.0) < 1e-5
+        """Scope 2 market-based method through the platform factor policy: a verified green tariff / REC at 0 kg/kWh
+        gives 0 t; a supplier-specific contract factor of 0.120 kg/kWh on 500,000 kWh gives 60 t CO2e."""
+        from routes.scope2 import resolve_electricity_factor
+        green_ef, _ = resolve_electricity_factor(None, 0.0)
+        assert (500_000.0 * green_ef) / 1000.0 == 0.0
+        supplier_ef, region = resolve_electricity_factor(None, 0.120)
+        assert region is None
+        assert (500_000.0 * supplier_ef) / 1000.0 == pytest.approx(60.0, abs=1e-5)
+        # a negative factor is refused, not booked
+        with pytest.raises(Exception):
+            resolve_electricity_factor(None, -1.0)
 
     def test_scope2_indirect_steam_thermodynamic_equation(self):
         """Scope 2 Indirect Steam & Heat:
@@ -347,15 +343,9 @@ class TestScope3Tiers:
         assert u["upper_bound"] > emissions_tco2e
 
     def test_scope3_tier2_average_data_transport(self):
-        """Tier 2 Average-Data: Category 4 Freight Transportation.
-        Activity: 250,000 tonne-km by diesel heavy truck.
-        Secondary Emission Factor: 0.085 kg CO2e / tonne-km.
-        Emissions = 250,000 * 0.085 / 1000 = 21.25 tCO2e.
-        """
-        activity_tonne_km = 250_000.0
-        ef_kg_per_tonne_km = 0.085
-        emissions_tco2e = (activity_tonne_km * ef_kg_per_tonne_km) / 1000.0
-        assert abs(emissions_tco2e - 21.25) < 1e-5
+        """Tier 2 average-data, category 4 freight: 250,000 tonne-km at 0.085 kg CO2e/tonne-km = 21.25 t CO2e."""
+        from calculations.units import compute_scope3_co2e
+        assert compute_scope3_co2e(250_000.0, 0.085, "kg CO2e / tonne-km") == pytest.approx(21.25, abs=1e-5)
 
     def test_scope3_tier3_supplier_specific_pcf(self):
         """Tier 3 Supplier-Specific: Category 1 Product Carbon Footprint (EPD/LCA).
@@ -374,23 +364,11 @@ class TestScope3Tiers:
         assert abs(u["relative_uncertainty_95pct"] - math.sqrt(0.05**2 + 0.02**2)) < 1e-4
 
     def test_scope3_category11_use_of_sold_products_oil_and_gas(self):
-        """Category 11 (Use of Sold Products): The dominant Scope 3 emission source for O&G.
-        1. Crude Oil: 1,000,000 bbl sold.
-           IPCC default factor: 0.43 tCO2e / bbl crude oil.
-           Emissions = 1,000,000 * 0.43 = 430,000 tCO2e.
-        2. Natural Gas: 50,000,000 m3 sold.
-           IPCC factor: 1.884 kg CO2e / m3 gas.
-           Emissions = 50,000,000 * 1.884 / 1000 = 94,200 tCO2e.
-        """
-        oil_bbl = 1_000_000.0
-        oil_ef = 0.430
-        oil_emissions = oil_bbl * oil_ef
-        assert oil_emissions == 430_000.0
-
-        gas_m3 = 50_000_000.0
-        gas_ef = 1.884  # kg/m3
-        gas_emissions = (gas_m3 * gas_ef) / 1000.0
-        assert abs(gas_emissions - 94_200.0) < 1e-4
+        """Category 11, use of sold products: 1,000,000 bbl of crude at 430 kg CO2e/bbl = 430,000 t;
+        50,000,000 m3 of gas at 1.884 kg CO2e/m3 = 94,200 t."""
+        from calculations.units import compute_scope3_co2e
+        assert compute_scope3_co2e(1_000_000.0, 430.0, "kg CO2e / bbl") == pytest.approx(430_000.0, rel=1e-9)
+        assert compute_scope3_co2e(50_000_000.0, 1.884, "kg CO2e / m3") == pytest.approx(94_200.0, abs=1e-4)
 
 
 # ===========================================================================
@@ -401,64 +379,53 @@ class TestKPIsAndIntensities:
     """Verifies all Dashboard and Executive KPI mathematical equations."""
 
     def test_boe_production_normalization_exactness(self):
-        """BOE Normalization Equation:
-        BOE = Oil (bbl) + Gas (Mscf) × 0.17586.
-        Composite production: 5,000 bbl oil + 10 MMscf gas:
-        Gas in Mscf = 10 * 1,000 = 10,000 Mscf.
-        BOE = 5,000 + 10,000 * 1.02 / 5.8 = 5,000 + 1,758.6 = 6,758.6 BOE.
-        """
-        oil_bbl = 5000.0
-        gas_mmscf = 10.0
-        gas_mscf = gas_mmscf * 1000.0
-        total_boe = oil_bbl + (gas_mscf * (1.02 / 5.8))
-        assert abs(total_boe - (5_000 + 10_000 * 1.02 / 5.8)) < 1e-5
+        """BOE = oil (bbl) + gas (Mscf) x 1.02 / 5.8 through the platform function: 5,000 bbl + 10 MMscf (10,000 Mscf)
+        = 5,000 + 1,758.6 = 6,758.6 BOE."""
+        from types import SimpleNamespace
+        from services.dashboard_filters import production_boe
+        row = SimpleNamespace(oil_amount=5000.0, oil_unit="bbl", gas_amount=10.0, gas_unit="mmscf", year=2026, month=1,
+                              total_production_mmboe=None)
+        assert production_boe(row) == pytest.approx(5000.0 + 10_000.0 * 1.02 / 5.8, rel=1e-6)
 
     def test_carbon_intensity_metric_equations(self):
-        """Carbon Intensity:
-        Carbon Intensity (kg CO2e / BOE) = (Emissions tCO2e × 1,000) / Production (BOE).
-        Emissions: 150.0 tCO2e (Scope 1: 120.0, Scope 2: 30.0).
-        Production: 6,780 BOE.
-        Scope 1 Intensity = (120.0 * 1000) / 6780 = 17.699 kg CO2e / BOE.
-        Scope 2 Intensity = (30.0 * 1000) / 6780 = 4.425 kg CO2e / BOE.
-        Combined Scope 1+2 = (150.0 * 1000) / 6780 = 22.124 kg CO2e / BOE.
-        """
-        boe = 6780.0
-        s1 = 120.0
-        s2 = 30.0
-        s1_int = (s1 * 1000.0) / boe
-        s2_int = (s2 * 1000.0) / boe
-        comb_int = ((s1 + s2) * 1000.0) / boe
-
-        assert abs(s1_int - 17.6991) < 1e-3
-        assert abs(s2_int - 4.4248) < 1e-3
-        assert abs(comb_int - 22.1239) < 1e-3
-        # Additivity invariant
-        assert abs((s1_int + s2_int) - comb_int) < 1e-9
+        """Carbon intensity (kg CO2e / BOE) = tCO2e x 1,000 / BOE, through the platform for a facility with 120 t Scope 1 and
+        6,780 BOE (oil only): 17.699 kg CO2e/BOE. Scope 1 + 2 checks on fixtures with Scope 2 records live in
+        test_carbon_intensity_validation.py."""
+        from routes.dashboard import _query_intensity_stats, clear_dashboard_cache
+        with app.app_context():
+            admin = User.query.filter_by(email="kpi_ci_admin@test.com").first()
+            if admin is None:
+                admin = User(email="kpi_ci_admin@test.com", fullName="KPI CI", orgName="T", sector="Energy",
+                             role="admin", status="active")
+                admin.set_password("KpiCi123!")
+                db.session.add(admin)
+                db.session.commit()
+            fac = Facility(name="KPI CI Oil Facility", segment="Upstream", activity="Upstream Oil", division="E&P",
+                           region="Hassi", operator_status="operated")
+            db.session.add(fac)
+            db.session.commit()
+            db.session.add(Emission(record_id="EM-KPI-CI-1", facility_id=fac.id, year=2027, month=1,
+                                    process_type="combustion", status="Verified", activity=fac.activity,
+                                    division=fac.division, co2_emissions=120.0, ch4_emissions=0.0, n2o_emissions=0.0,
+                                    co2e_total=120.0, quantity=1.0, unit="m3", created_by=admin.id))
+            db.session.add(ProductionData(facility_id=fac.id, year=2027, month=1, oil_amount=6780.0, gas_amount=0.0,
+                                          unit="bbl", oil_unit="bbl", gas_unit="mscf", activity=fac.activity,
+                                          division=fac.division, region=fac.region, created_by=admin.id))
+            db.session.commit()
+            clear_dashboard_cache()
+            row = _query_intensity_stats(year="2027", facility_id=str(fac.id))[0]
+            assert row["total_boe"] == pytest.approx(6780.0, rel=1e-9)
+            assert row["scope1_intensity"] == pytest.approx(120.0 * 1000.0 / 6780.0, rel=1e-6)   # 17.699
 
     def test_methane_loss_rate_ogmp_equation(self):
-        """OGMP 2.0 Methane Loss Rate (%):
-        Formula: Loss Rate (%) = [V_CH4_emitted (m3) / V_marketable_gas (m3)] × 100%.
-        V_CH4_emitted (m3) = (CH4_tonnes × 1,000) / 0.67722.
-        Scenario:
-          Marketable Gas: 10,000,000 m3.
-          CH4 emitted: 10.0 tonnes.
-          V_CH4 = (10.0 * 1000) / 0.67722 = 14,766.2 m3.
-          Loss Rate (%) = (14,766.2 / 10,000,000) * 100% = 0.1477%.
-        Compliance Evaluation:
-          Upstream target: 0.20% -> 0.1477% <= 0.20% -> Compliant.
-          Midstream target: 0.05% -> 0.1477% > 0.05% -> Non-Compliant.
-        """
-        gas_m3 = 10_000_000.0
-        ch4_tonnes = 10.0
-        v_ch4 = (ch4_tonnes * 1000.0) / (16.04 / 23.685)
-        loss_rate_pct = round((v_ch4 / gas_m3) * 100.0, 4)
-        assert abs(loss_rate_pct - 0.1477) < 1e-4
-
-        # Upstream vs Midstream compliance logic check
-        up_target = 0.20
-        mid_target = 0.05
-        assert loss_rate_pct <= up_target  # Upstream is compliant
-        assert loss_rate_pct > mid_target  # Midstream is non-compliant
+        """OGMP 2.0 methane loss rate through the platform function: 10 t CH4 over 10,000,000 m3 sold gas =
+        10,000 / 0.67722 m3 -> 0.1477 %; upstream target 0.20 % (compliant), midstream 0.05 % (non-compliant)."""
+        from services.ogmp_workbook import _loss_rate
+        rate, target, status = _loss_rate(10.0, 10_000_000.0, "Upstream", 16.04 / 23.685)
+        assert rate == pytest.approx(0.1477, abs=1e-4)
+        assert (target, status) == (0.20, "Compliant")
+        rate_m, target_m, status_m = _loss_rate(10.0, 10_000_000.0, "Midstream", 16.04 / 23.685)
+        assert (target_m, status_m) == (0.05, "Non-Compliant")
 
     def test_ogmp_facility_level_5_requires_level_4_bottom_up(self):
         """OGMP 2.0 Gold Standard Requirement:
@@ -504,52 +471,46 @@ class TestKPIsAndIntensities:
         assert lvl_unrec == 4
 
     def test_flaring_rate_percentage_equation(self):
-        """Flaring Rate (%):
-        Flaring Rate (%) = [Flared Gas Volume (m3) / Produced Gas Volume (m3)] × 100%.
-        Produced Gas: 20,000,000 m3.
-        Flared Gas: 250,000 m3.
-        Flaring Rate = (250,000 / 20,000,000) * 100% = 1.25%.
-        """
-        prod_gas_m3 = 20_000_000.0
-        flared_gas_m3 = 250_000.0
-        flaring_rate_pct = round((flared_gas_m3 / prod_gas_m3) * 100.0, 4)
-        assert flaring_rate_pct == 1.25
+        """Flaring rate (%) = flared m3 / produced gas m3 x 100: 250,000 m3 flared of 20,000,000 m3 = 1.25 %, through the
+        platform for a facility with a flaring record and production."""
+        from routes.dashboard import _query_intensity_stats, clear_dashboard_cache
+        with app.app_context():
+            admin = User.query.filter_by(email="kpi_ci_admin@test.com").first()
+            if admin is None:
+                admin = User(email="kpi_ci_admin@test.com", fullName="KPI CI", orgName="T", sector="Energy",
+                             role="admin", status="active")
+                admin.set_password("KpiCi123!")
+                db.session.add(admin)
+                db.session.commit()
+            fac = Facility(name="KPI Flare Facility", segment="Upstream", activity="Upstream Gas", division="E&P",
+                           region="Hassi", operator_status="operated")
+            db.session.add(fac)
+            db.session.commit()
+            db.session.add(Emission(record_id="EM-KPI-FL-1", facility_id=fac.id, year=2028, month=1,
+                                    process_type="flaring", status="Verified", activity=fac.activity,
+                                    division=fac.division, co2_emissions=10.0, ch4_emissions=0.1, n2o_emissions=0.0,
+                                    co2e_total=10.0 + 0.1 * 28.0, quantity=250_000.0, unit="m3",
+                                    created_by=admin.id))
+            db.session.add(ProductionData(facility_id=fac.id, year=2028, month=1, oil_amount=0.0,
+                                          gas_amount=20_000_000.0 * 35.3146667 / 1000.0, unit="bbl", oil_unit="bbl",
+                                          gas_unit="mscf", activity=fac.activity, division=fac.division,
+                                          region=fac.region, created_by=admin.id))
+            db.session.commit()
+            clear_dashboard_cache()
+            row = _query_intensity_stats(year="2028", facility_id=str(fac.id))[0]
+            assert row["flaring_rate_pct"] == pytest.approx(1.25, abs=1e-3)
 
     def test_epa_wec_part99_fee_schedules_and_thresholds(self):
-        """EPA Waste Emissions Charge (40 CFR Part 99 / IRA §136):
-        1. Upstream Gas Production Threshold: 0.20% (0.0020).
-           Marketable Gas: 50,000,000 m3 = 1,765,733.3 Mscf.
-           Allowed CH4 (40 CFR 99.20 Eq B-1, rho_CH4 = 0.0192 mt/Mscf) = 1,765,733.3 * 0.0020 * 0.0192
-             = 67.804 tonnes.
-           Emitted CH4: 85.0 tonnes.
-           Excess CH4 = 85.0 - 67.804 = 17.196 tonnes.
-           Fees: 2024 $900/t, 2025 $1,200/t, 2026+ $1,500/t.
-        2. Upstream Oil-Only Asset (No gas sales per 40 CFR 99.20(a)(2)):
-           Allowed CH4 = 10.0 tonnes / 1,000,000 bbl oil.
-           Oil: 500,000 bbl.
-           Allowed CH4 = (500,000 / 1,000,000) * 10.0 = 5.0 tonnes.
-        """
-        # Gas producing asset
-        gas_m3 = 50_000_000.0
-        wec_threshold_pct = 0.0020
-        allowed_ch4 = gas_m3 * 35.3146667 / 1000.0 * wec_threshold_pct * 0.0192
-        assert abs(allowed_ch4 - 67.80416) < 1e-4
-
-        actual_ch4 = 85.0
-        excess_ch4 = max(0.0, actual_ch4 - allowed_ch4)
-        assert abs(excess_ch4 - 17.19584) < 1e-4
-
-        fee_2024 = round(excess_ch4 * 900.0, 2)
-        fee_2025 = round(excess_ch4 * 1200.0, 2)
-        fee_2026 = round(excess_ch4 * 1500.0, 2)
-        assert fee_2024 == pytest.approx(17.19584 * 900.0, abs=0.01)
-        assert fee_2025 == pytest.approx(17.19584 * 1200.0, abs=0.01)
-        assert fee_2026 == pytest.approx(17.19584 * 1500.0, abs=0.01)
-
-        # Oil-only asset
-        oil_bbl = 500_000.0
-        allowed_oil_ch4 = (oil_bbl / 1_000_000.0) * 10.0
-        assert allowed_oil_ch4 == 5.0
+        """EPA waste emissions charge (40 CFR 99.20, as amended by P.L. 119-21): the platform constants, and the allowance of
+        a gas-selling asset (1,765,733.3 Mscf x 0.20 % x 0.0192 t/Mscf = 67.804 t). The per-facility fee calculation, with
+        a US facility, is tested in test_carbon_intensity_validation.py."""
+        from services import intensity
+        assert intensity.WEC_RATE_USD_PER_T == 1500.0
+        assert intensity.WEC_FIRST_YEAR == 2034
+        gas_mscf = 50_000_000.0 * 35.3146667 / 1000.0
+        assert gas_mscf * 0.0020 * intensity.WEC_CH4_DENSITY_T_PER_MSCF == pytest.approx(67.80416, abs=1e-4)
+        assert intensity.wec_applies_to_country("United States") is True
+        assert intensity.wec_applies_to_country("Algeria") is False
 
 
 # ===========================================================================

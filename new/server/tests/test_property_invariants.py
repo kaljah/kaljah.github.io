@@ -83,7 +83,9 @@ class TestPropertyInvariantsHypothesis:
         r_small = dispatcher.dispatch("stationary_combustion", p_small, ef, {}, gwp_dict=GWP_AR5)
         r_large = dispatcher.dispatch("stationary_combustion", p_large, ef, {}, gwp_dict=GWP_AR5)
 
+        # strictly increasing, and exactly proportional to the activity (the factors are per MMBtu)
         assert r_large["total_co2e"] > r_small["total_co2e"]
+        assert r_large["total_co2e"] / r_small["total_co2e"] == pytest.approx((q1 + delta) / q1, rel=1e-9)
 
     @settings(max_examples=30, deadline=None)
     @given(
@@ -100,6 +102,9 @@ class TestPropertyInvariantsHypothesis:
         assert r["results"]["ch4"]["value"] >= 0.0
         assert r["results"]["n2o"]["value"] >= 0.0
         assert r["total_co2e"] >= 0.0
+        # closed form: m3 -> scf -> MMBtu at 1,020 Btu/scf; kg per MMBtu -> tonnes; AR5 GWPs 1 / 28 / 265
+        mmbtu = qty / 0.028316846592 * 1020.0 / 1e6
+        assert r["total_co2e"] == pytest.approx(mmbtu * (53.06 + 28.0 * 0.001 + 265.0 * 0.0001) / 1000.0, rel=1e-9)
 
     def test_zero_activity_yields_zero_emissions(self, dispatcher):
         """E(0) == 0."""
@@ -123,4 +128,7 @@ class TestPropertyInvariantsHypothesis:
         co2e_ar5 = calculate_co2e(0.0, ch4_t, 0.0, gwp_dict=GWP_AR5)
         co2e_ar6 = calculate_co2e(0.0, ch4_t, 0.0, gwp_dict=GWP_AR6)
 
+        assert co2e_ar4 == pytest.approx(25.0 * ch4_t)      # AR4 CH4 25
+        assert co2e_ar5 == pytest.approx(28.0 * ch4_t)      # AR5 CH4 28
+        assert co2e_ar6 == pytest.approx(29.8 * ch4_t)      # AR6 fossil CH4 29.8
         assert co2e_ar6 > co2e_ar5 > co2e_ar4

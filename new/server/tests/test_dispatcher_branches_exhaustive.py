@@ -89,7 +89,9 @@ def test_dispatcher_hydrogen_plant(dispatcher):
         {},
         {},
     )
-    assert res_feed["results"]["co2"]["value"] > 0
+    # Eq 6-49: 100,000 scf of feed at 90 % CH4 + 5 % CO2 carries 0.95 lbmole C per lbmole feed; 379.3 scf/lbmole,
+    # 44 lb CO2 per lbmole C, 2,204.62 lb/tonne (the engine uses exact molecular weights: 0.1 % higher)
+    assert res_feed["results"]["co2"]["value"] == pytest.approx(100000 / 379.3 * 0.95 * 44 / 2204.62, rel=2e-3)
 
     # 2. H2 stoichiometry
     res_stoich = dispatcher.dispatch(
@@ -103,7 +105,8 @@ def test_dispatcher_hydrogen_plant(dispatcher):
         {},
         {},
     )
-    assert res_stoich["results"]["co2"]["value"] > 0
+    # Eq 6-50: pure CH4 feed gives 1 CO2 per 4 H2 (CH4 + 2 H2O = CO2 + 4 H2): 50,000 scf H2 -> 12,500 scf CO2
+    assert res_stoich["results"]["co2"]["value"] == pytest.approx(50000 / 379.3 * 0.25 * 44 / 2204.62, rel=1e-3)
 
     # 3. Simple factor from H2 tonnes
     res_simple = dispatcher.dispatch(
@@ -115,7 +118,9 @@ def test_dispatcher_hydrogen_plant(dispatcher):
         {},
         {},
     )
-    assert res_simple["results"]["co2"]["value"] > 0
+    # Table 6-51: 13.41 t CO2 per 10^6 scf H2; 10 tonnes H2 = 10 x 2,204.62 lb / 2.016 lb/lbmole x 379.3 scf
+    h2_scf = 10 * 2204.62 / 2.016 * 379.3
+    assert res_simple["results"]["co2"]["value"] == pytest.approx(h2_scf / 1e6 * 13.41, rel=1e-3)
 
 
 def test_dispatcher_cogen_and_indirect_steam(dispatcher):
@@ -132,7 +137,9 @@ def test_dispatcher_cogen_and_indirect_steam(dispatcher):
         {},
         {},
     )
-    assert res_cogen["results"]["co2"]["value"] > 0
+    # Eq 8-5, default reference efficiencies 80 % (heat) and 35 % (power): shares 500/0.80 and 100/0.35
+    assert res_cogen["results"]["co2"]["value"] == pytest.approx(
+        50.0 * (500 / 0.80) / (500 / 0.80 + 100 / 0.35), rel=1e-9)   # emissions allocated to the heat
 
     # Indirect steam
     res_steam = dispatcher.dispatch(
@@ -146,7 +153,8 @@ def test_dispatcher_cogen_and_indirect_steam(dispatcher):
         {"co2": 53.06},
         {},
     )
-    assert res_steam["results"]["co2"]["value"] > 0
+    # 500 MMBtu of steam / 0.82 boiler efficiency (no transmission loss) = 609.76 MMBtu of fuel x 53.06 kg/MMBtu
+    assert res_steam["results"]["co2"]["value"] == pytest.approx(500 / 0.82 * 53.06 / 1000, rel=1e-9)
 
 
 # =============================================================================
@@ -159,21 +167,23 @@ def test_dispatcher_chemical_and_stoichiometry(dispatcher):
     res_nitric = dispatcher.dispatch(
         "nitric_acid_production",
         {
+            "factor_source": "specific",   # without a factor source the dispatcher returns exact zeros
             "amount": 1000.0,
             "unit": "tonne",
             "process_type": "nitric_acid_production",
-            "technology": "dual_pressure",
-            "abatement": "nsdr",
+            "abatement_efficiency": 80,
         },
         {},
         {},
     )
-    assert res_nitric["results"]["n2o"]["value"] >= 0
+    # Table 6-53 without NSCR: 9 kg N2O/tonne HNO3 (0.009 t/t); 80 % abatement leaves 20 %
+    assert res_nitric["results"]["n2o"]["value"] == pytest.approx(1000 * 9.0 * 0.20 / 1000, rel=1e-9)
 
     # Stoichiometry / Chemical production
     res_chem = dispatcher.dispatch(
         "chemical_production",
         {
+            "factor_source": "specific",   # without it the result is a silent zero
             "amount": 500.0,
             "unit": "tonne",
             "carbon_content": 0.75,
@@ -182,7 +192,8 @@ def test_dispatcher_chemical_and_stoichiometry(dispatcher):
         {},
         {},
     )
-    assert res_chem is not None
+    # Eq 4-3: CO2 = mass x carbon fraction x 44.01 / 12.011
+    assert res_chem["results"]["co2"]["value"] == pytest.approx(500 * 0.75 * 44.01 / 12.011, rel=1e-9)
 
 
 def test_dispatcher_drilling_mud_degassing(dispatcher):
@@ -190,15 +201,17 @@ def test_dispatcher_drilling_mud_degassing(dispatcher):
     res_drill = dispatcher.dispatch(
         "drilling",
         {
+            "factor_source": "specific",
             "drilling_days": 15.0,
             "mud_type": "water_based",
             "well_depth": 5000.0,
-            "ch4_content": 0.85,
+            "ch4_fraction": 0.85,   # the drilling branch reads ch4_fraction / ch4_concentration (ch4_content is ignored)
         },
         {},
         {},
     )
-    assert res_drill["results"]["ch4"]["value"] > 0
+    # Table 6-2 onshore water-based mud 0.0458 t CH4/drilling day at the 83.85 mol % basis, scaled to 85 %
+    assert res_drill["results"]["ch4"]["value"] == pytest.approx(15 * 0.0458 * 0.85 / 0.8385, rel=1e-6)
 
 
 # =============================================================================
@@ -214,12 +227,13 @@ def test_dispatcher_fugitive_branches(dispatcher):
             "facility_type": "gas_production",
             "production_volume": 100000.0,
             "production_unit": "mcf",
-            "ch4_content": 0.80,
+            "ch4_content": 80,   # percent: the dispatcher reads 0.80 as 0.8 %
         },
         {},
         {},
     )
-    assert res_fac["results"]["ch4"]["value"] > 0
+    # Table 7-8 gas production 2.601e-2 t CH4 per 10^6 scf at 78.8 mol %: 100,000 Mcf = 100 MMscf, scaled to 80 %
+    assert res_fac["results"]["ch4"]["value"] == pytest.approx(100 * 2.601e-2 * 0.80 / 0.788, rel=1e-9)
 
     # Compressor seal fugitives
     res_comp = dispatcher.dispatch(
@@ -229,12 +243,14 @@ def test_dispatcher_fugitive_branches(dispatcher):
             "compressor_type": "centrifugal_wet_seal",
             "compressor_count": 2,
             "operating_hours": 2000.0,
-            "ch4_content": 0.85,
+            "ch4_content": 85,
         },
         {},
         {},
     )
-    assert res_comp["results"]["ch4"]["value"] > 0
+    # production wet-seal degassing 0.026 t CH4/compressor-hour (GHGRP, Compendium 6.4.2): 2 x 2,000 h x 26 kg/h.
+    # The factor is on a 78.8 mol % basis; this route applies it without the site CH4 content.
+    assert res_comp["results"]["ch4"]["value"] == pytest.approx(2 * 2000 * 0.026, rel=1e-9)
 
     # OGI / Method 21 screening
     res_ogi = dispatcher.dispatch(
@@ -245,12 +261,14 @@ def test_dispatcher_fugitive_branches(dispatcher):
             "leakers_count": 5,
             "surveyed_count": 100,
             "operating_hours": 1000.0,
-            "ch4_content": 0.85,
+            "ch4_content": 85,
         },
         {},
         {},
     )
-    assert res_ogi["results"]["ch4"]["value"] > 0
+    # Table 7-23: 4.9 scf whole gas/hour per detected leaker; 5 leakers x 1,000 h at 85 % CH4 (60 F, 23.685 m3/kmol)
+    assert res_ogi["results"]["ch4"]["value"] == pytest.approx(
+        5 * 4.9 * 1000 * 0.028316846592 * 0.85 * (16.04 / 23.685) / 1000, rel=1e-9)
 
 
 # =============================================================================
@@ -266,12 +284,14 @@ def test_dispatcher_activity_factors_and_vented_gas(dispatcher):
             "activity_key": "wt_gas",
             "amount": 2.0,
             "unit": "test",
-            "ch4_content": 0.80,
+            "ch4_content": 80,
         },
         {},
         {},
     )
-    assert res_act["results"]["ch4"]["value"] > 0
+    # Table 6-4 gas well test vented: 46,625 scf whole gas per test (at 81.6 mol % CH4), 2 tests, 80 % CH4
+    assert res_act["results"]["ch4"]["value"] == pytest.approx(
+        2 * 46625 * 0.80 / 379.3 * 16.04 / 2204.62, rel=3e-3)
 
     # Vented gas volume method
     res_vent = dispatcher.dispatch(
@@ -281,13 +301,16 @@ def test_dispatcher_activity_factors_and_vented_gas(dispatcher):
             "gas_volume": 50000.0,
             "gas_volume_unit": "scf",
             "unit": "scf",
-            "ch4_content": 0.85,
-            "co2_content": 0.05,
+            "ch4_content": 85,
+            "co2_content": 5,
         },
         {},
         {},
     )
-    assert res_vent["results"]["ch4"]["value"] > 0
+    # 50,000 scf = 1,415.8 m3 at 85 % CH4 and 5 % CO2 (60 F, 23.685 m3/kmol)
+    v_m3 = 50000 * 0.028316846592
+    assert res_vent["results"]["ch4"]["value"] == pytest.approx(v_m3 * 0.85 * (16.04 / 23.685) / 1000, rel=1e-9)
+    assert res_vent["results"]["co2"]["value"] == pytest.approx(v_m3 * 0.05 * (44.01 / 23.685) / 1000, rel=1e-9)
 
     # Thermal oxidizer via dispatcher
     res_to = dispatcher.dispatch(
@@ -303,7 +326,8 @@ def test_dispatcher_activity_factors_and_vented_gas(dispatcher):
         {},
         {},
     )
-    assert res_to["results"]["co2"]["value"] > 0
+    assert res_to["results"]["co2"]["value"] == pytest.approx(2.0 * 0.80 * 44.01 / 12.011 * 0.98, rel=1e-9)
+    assert res_to["results"]["ch4"]["value"] == pytest.approx(2.0 * 0.05 * 0.02, rel=1e-9)
 
 
 # =============================================================================
