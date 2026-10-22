@@ -469,7 +469,7 @@ def calc_liquids_unloading(self, calculator, emission_factors, flat_inputs, gwp_
             gwp_dict=gwp_dict,
         )
 
-    # Default Tier 3: API Equation 6-3 (Volume-based wellbore decompression geometry)
+    # Default Tier 3: volume-based wellbore decompression (platform method)
     else:
         depth = self._require_float(
             flat_inputs, ["unload_depth", "well_depth"], "well depth (ft)"

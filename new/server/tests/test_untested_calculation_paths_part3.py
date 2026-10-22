@@ -533,6 +533,7 @@ def test_dispatcher_branches_combustion_and_venting():
         "hhv": 1020.0,
         "comb_eff": 0.985,
         "co2_comp": 2.0,
+        "n2_mol": 8.0,  # an analysis must total 100 %
         "c1": 90.0,
     }, {"co2": 1.9, "ch4": 0.05, "unit": "kg/m3", "type": "gases"}, {})
     assert res_eff_frac["results"]["co2"]["value"] > 0

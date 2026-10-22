@@ -13,7 +13,7 @@ import { t } from "../../i18n";
  *   - Tier 3: Engineering Models:
  *       * API Eq. 6-10 (EPA Subpart W W-8 / W-9 Integrated Formula)
  *       * API Eq. 6-11 (Automated Plunger Lift Vent Rate Formula)
- *       * API Eq. 6-3 (Volume-Based Wellbore Decompression Geometry)
+ *       * Wellbore volume decompression (platform method, not a Compendium equation)
  */
 
 export interface UnloadingFormProps {

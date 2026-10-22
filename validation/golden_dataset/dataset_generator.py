@@ -106,7 +106,7 @@ def generate_golden_dataset():
         volume_unit="m3",
         ch4_fraction=0.88,
         flare_type="elevated",
-        composition={"c1": 0.88, "c2": 0.05, "co2_mol": 0.02},
+        composition={"c1": 0.88, "c2": 0.05, "co2_mol": 0.02, "n2_mol": 0.05},
         ef_n2o=0.0001,
     )
     cases.append(build_case(

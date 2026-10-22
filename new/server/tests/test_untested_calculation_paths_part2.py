@@ -206,7 +206,9 @@ def test_units_additional_untested_conversions():
     with pytest.raises(ValueError, match="sums to"):
         composition_fractions({"c1": 80.0, "co2": 30.0})
 
-    fr_norm, meta_norm = composition_fractions({"c1": 99.0, "co2": 0.0})
+    with pytest.raises(ValueError, match="must total 100 %"):
+        composition_fractions({"c1": 99.0, "co2": 0.0})  # 1 % short: refused (99.5 to 100.5 is rounding)
+    fr_norm, meta_norm = composition_fractions({"c1": 99.6, "co2": 0.0})
     assert meta_norm["renormalised"] is True
     assert pytest.approx(fr_norm["c1"], rel=1e-4) == 1.0
 

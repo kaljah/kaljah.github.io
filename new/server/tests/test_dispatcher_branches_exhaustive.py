@@ -343,6 +343,7 @@ def test_dispatcher_ccs_capture_and_uncertainty(dispatcher):
         "unit": "m3",
         "c1": 85.0,
         "co2_mol": 5.0,
+        "n2_mol": 10.0,  # an analysis must total 100 %
     }
     payload_ccs = {
         **payload_no_ccs,
@@ -401,6 +402,7 @@ def test_dispatcher_combustion_tier3_and_validation(dispatcher):
             "c2": 5.0,
             "c3": 2.0,
             "co2_comp": 1.0,
+            "n2_mol": 7.0,  # an analysis must total 100 %
             "operating_temperature": 25.0,
             "operating_pressure": 14.7,
         },

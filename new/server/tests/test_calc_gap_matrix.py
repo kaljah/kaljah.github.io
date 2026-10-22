@@ -196,7 +196,8 @@ from process_categories import PROCESS_TYPES  # noqa: E402
 
 
 def _matrix_payload(pid, meta):
-    unit = "days" if pid in ("drilling", "mud_degassing") else ("m3" if meta["category"] in ("combustion", "vented") else "devices")
+    unit = ("days" if pid in ("drilling", "mud_degassing") else "wells" if pid == "liquids_unloading"
+            else "m3" if meta["category"] in ("combustion", "vented") else "devices")
     payload = {"process_type": pid, "factor_source": "default", "amount": 100.0, "quantity": 100.0, "unit": unit,
                "fuel_type": "Natural Gas" if meta["category"] == "combustion" else None}
     if pid == "completions":

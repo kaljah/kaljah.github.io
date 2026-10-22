@@ -255,6 +255,7 @@ class TestFlaringTier3:
             'c1': c1,
             'c2': c2,
             'co2_content': co2_native,
+            'n2_mol': 0.03,  # the analysis totals 100 %
             'flare_type': 'elevated',
             'hhv': 1020.0
         }

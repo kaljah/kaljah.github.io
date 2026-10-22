@@ -153,6 +153,15 @@ def calc_associated_gas_venting(self, calculator, emission_factors, flat_inputs,
 
     ef_co2 = emission_factors.get("co2")
     ef_ch4 = emission_factors.get("ch4")
+    if ef_ch4 not in (None, "", "-", 0, 0.0) and emission_factors.get("unit"):
+        # Table 6-8 is kg CH4 per bbl of oil: a factor in another unit is converted, never read as kg/bbl
+        from .combustion import convert_factor_to_kg_per_unit
+        from .units import UnitError
+
+        try:
+            ef_ch4 = convert_factor_to_kg_per_unit(ef_ch4, emission_factors.get("unit"), "bbl")
+        except UnitError as err:
+            raise ValueError(f"The associated-gas CH4 factor must be kg CH4 per bbl of oil (Table 6-8): {err}")
 
     return calculator.calculate(
         tier=tier_val,

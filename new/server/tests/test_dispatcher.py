@@ -12,6 +12,7 @@ def test_dispatcher_flaring_routing():
         "c1": 80,
         "c2": 10,
         "co2_mol": 2,
+        "n2_mol": 8,  # an analysis must total 100 %
     }
     res = dispatcher.dispatch("flaring", payload, {}, {})
     assert res is not None
@@ -32,6 +33,7 @@ def test_dispatcher_unit_normalization():
         "unit": "m3",
         "c1": 80,
         "co2_mol": 2,
+        "n2_mol": 18,  # an analysis must total 100 %
     }
     payload_scf = {
         "process_type": "flaring",
@@ -40,6 +42,7 @@ def test_dispatcher_unit_normalization():
         "unit": "scf",
         "c1": 80,
         "co2_mol": 2,
+        "n2_mol": 18,
     }
     res_m3 = dispatcher.dispatch("flaring", payload_m3, {}, {})
     res_scf = dispatcher.dispatch("flaring", payload_scf, {}, {})

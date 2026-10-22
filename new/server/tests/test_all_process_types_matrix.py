@@ -20,6 +20,8 @@ def _activity_unit(process_id, category):
     """Activity unit of a generic test row; mud degassing (Table 6-2) is per drilling day."""
     if process_id in ("drilling", "mud_degassing"):
         return "days"
+    if process_id == "liquids_unloading":
+        return "wells"  # Tables 6-10 / 6-11 are per event or per well; m3 is refused
     return "m3" if category in ["combustion", "vented"] else "devices"
 
 
@@ -39,12 +41,11 @@ def dispatcher():
 #   drilling: 100 drilling days x 0.0458 t CH4/day (Table 6-2, water-based mud, onshore);
 #   completions: 100 m3 of metered flowback x 80 % CH4 x 16.04 kg/kmol / 23.685 m3/kmol = 54.18 kg CH4 (Eq 6-4);
 #   liquids_unloading: 100 wells x 1.774 t CH4/well-year (Table 6-11, plunger lift);
-#   associated_gas_venting: 100 m3 = 628.981 bbl of oil x 0.5 kg CH4/bbl (the dispatcher reads a Tier 1 CH4 factor of
-#   this process as kg per bbl).
+#   associated_gas_venting: 100 m3 of oil x 0.5 kg CH4 per m3 (the factor's own unit, converted to kg per bbl: 0.0795).
 _COMBUSTION_TIER1 = (5.0, 0.05, 0.001)
 _GENERIC_TIER1 = (0.1, 0.05, 0.001)
 _SPECIAL_TIER1 = {
-    "associated_gas_venting": (0.0, 628.981077 * 0.5 / 1000.0, 0.0),
+    "associated_gas_venting": (0.0, 100 * 0.5 / 1000.0, 0.0),
     "drilling": (0.0, 100 * 0.0458, 0.0),
     "completions": (0.0, 100 * 0.80 * 16.04 / 23.685 / 1000.0, 0.0),
     "liquids_unloading": (0.0, 100 * 1.774, 0.0),
@@ -134,6 +135,7 @@ class TestAllProcessTypesTier3:
             "c1": 85.0,
             "c2": 10.0,
             "co2_mol": 2.0,
+            "n2_mol": 3.0,  # an analysis must total 100 %
         }
         res = dispatcher.dispatch("stationary_combustion", payload, {}, {})
         # carbon balance on 1,000 m3: 0.85 CH4 + 2 x 0.10 C2H6 = 1.05 mol C/mol at 99.5 % combustion, plus 2 % CO2;
@@ -171,6 +173,7 @@ class TestAllProcessTypesTier3:
             "unit": "m3",
             "c1": 85.0,
             "co2_mol": 3.0,
+            "n2_mol": 12.0,  # an analysis must total 100 %
             "flare_type": "steam_assisted",
         }
         res = dispatcher.dispatch("flaring", payload, {}, {})
@@ -411,11 +414,11 @@ class TestAllProcessTypesTier3:
 class TestComputeEmissionsIntegration:
     """compute_emissions routes every canonical process type and returns the hand-worked gases (200 units, factors
     CO2 1.0 or 53.06 / CH4 0.05 / N2O 0.001 kg per unit; the special rows use their Compendium tables as in the Tier 1
-    matrix above, with 200 units: 200 drilling days x 0.0458, 200 wells x 1.774 t, 1,257.962 bbl x 0.05 kg CH4/bbl,
+    matrix above, with 200 units: 200 drilling days x 0.0458, 200 wells x 1.774 t, 200 m3 of oil x 0.05 kg CH4/m3,
     200 m3 x 80 % CH4 x 16.04 / 23.685 kg)."""
 
     _SPECIAL = {
-        "associated_gas_venting": (0.0, 1257.962154 * 0.05 / 1000.0, 0.0),
+        "associated_gas_venting": (0.0, 200 * 0.05 / 1000.0, 0.0),
         "drilling": (0.0, 200 * 0.0458, 0.0),
         "completions": (0.0, 200 * 0.80 * 16.04 / 23.685 / 1000.0, 0.0),
         "liquids_unloading": (0.0, 200 * 1.774, 0.0),

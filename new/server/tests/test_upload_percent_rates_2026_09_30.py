@@ -125,10 +125,10 @@ def test_percent_text_conversion():
 
 
 def test_typed_percent_tier3_row_equals_plain_numbers(user_id):
-    head = ("Facility,Date,Process,Fuel,Quantity,Unit,Factor_Type,[T3] c1,[T3] c2,[T3] co2_mol,"
+    head = ("Facility,Date,Process,Fuel,Quantity,Unit,Factor_Type,[T3] c1,[T3] c2,[T3] co2_mol,[T3] n2_mol,"
             "[T3-Flare] control_efficiency,[Unc] meter_uncertainty_pct\n")
-    text = head + (f"{FACILITY},2021-06,flaring,,50000,m3,specific,85%,7%,2%,98%,2.5%\n"
-                   f"{FACILITY},2021-07,flaring,,50000,m3,specific,85,7,2,98,2.5\n")
+    text = head + (f"{FACILITY},2021-06,flaring,,50000,m3,specific,85%,7%,2%,6%,98%,2.5%\n"
+                   f"{FACILITY},2021-07,flaring,,50000,m3,specific,85,7,2,6,98,2.5\n")
     st = _upload_csv(text, user_id, 1)
     assert st["status"] == "completed" and st["skipped_count"] == 0, st
     with flask_app.app_context():

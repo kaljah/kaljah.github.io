@@ -213,6 +213,7 @@ class TestScope1UINumericalParity:
             "factor_source": "specific",
             "c1": 85.0,
             "co2_mol": 3.0,
+            "n2_mol": 12.0,  # an analysis must total 100 %
             "flare_type": "steam_assisted",
             "status": "Verified",
         }

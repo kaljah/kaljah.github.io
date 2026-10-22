@@ -831,6 +831,10 @@ class CalculationDispatcher:
         # controllers by type (Tables 6-14 / 6-15) and tank flashing without a catalog factor
         # (Tables 6-22 / 6-24)
         _has_catalog_ef = any(emission_factors.get(k) not in (None, "", "-", 0, 0.0) for k in ("co2", "ch4", "n2o"))
+        if factor_source == "custom" and _has_catalog_ef and process_type in (
+                "completions", "completion_flowback", "liquids_unloading", "unloading"):
+            # an entered Tier 2 factor is activity x factor like every other process (it was silently ignored here)
+            return self._generic_calculation(flat_inputs, emission_factors, uncertainties, process_type, gwp_dict=gwp_dict)
         table_calculator = (
             (process_type in ("pneumatic_devices", "pneumatic_device", "pneumatic")
              and flat_inputs.get("pneu_controller_type") not in (None, ""))
@@ -862,18 +866,12 @@ class CalculationDispatcher:
                 # S1K-F10: the activity unit must match the factor basis; "wells" with a per-event factor
                 # (or "events" with a per-well-year factor, or "devices" / "components") used to switch
                 # silently to another factor
-                u_cnt = str(unit or "").strip().lower()
+                u_cnt = str(flat_inputs.get("unit") or "").strip().lower()  # no unit given: wells, as before
                 fac_u = str(emission_factors.get("unit") or "").lower()
                 fac_name = emission_factors.get("name") or flat_inputs.get("fuel") or "This factor"
-                if u_cnt and u_cnt not in ("events", "event", "wells", "well"):
-                    from .units import UnitError, unit_dimension
-                    try:
-                        is_count = unit_dimension(u_cnt)[0] == "count"
-                    except UnitError:
-                        is_count = False
-                    if is_count:
-                        raise ValueError(f"Liquids unloading is counted in events (per-event factors) or wells "
-                                         f"(per well-year factors), not '{unit}'")
+                if u_cnt and u_cnt not in ("events", "event", "wells", "well"):  # "m3" used to be read as a number of wells
+                    raise ValueError(f"Liquids unloading is counted in events (per-event factors) or wells "
+                                     f"(per well-year factors), not '{flat_inputs.get('unit')}'")
                 if "/event" in fac_u and u_cnt in ("wells", "well"):
                     raise ValueError(f"'{fac_name}' is a per-event factor: give the number of unloading events "
                                      f"(unit 'events'), not wells")

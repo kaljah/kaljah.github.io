@@ -104,7 +104,8 @@ def test_tier2_refusals(u, kwargs, match):
 # ---------------------------------------------------------------- Equation 6-10
 def eq_6_10(ev, d_in, depth_ft, p_psig, sfr, hr, x):
     z = 1.0 if hr >= 1 else 0.0
-    return ev * 0.37e-3 * d_in ** 2 * depth_ft * p_psig + ev * sfr * max(0.0, hr - x) * z
+    # Equation 6-10 as the Compendium prints it: events multiply the wellbore term only; the flow-line term is once
+    return ev * 0.37e-3 * d_in ** 2 * depth_ft * p_psig + sfr * max(0.0, hr - x) * z
 
 
 @pytest.mark.parametrize("utype,x", [("plunger", 0.5), ("non_plunger", 1.0)])

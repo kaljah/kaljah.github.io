@@ -455,6 +455,7 @@ class TestFlaringTier3Pipeline:
             "factor_source": "specific",
             "c1": c1,
             "co2_mol": co2_native,
+            "n2_mol": 0.15,  # the analysis totals 100 %
             "flare_type": "elevated",
             "hhv": 1020.0,
         }

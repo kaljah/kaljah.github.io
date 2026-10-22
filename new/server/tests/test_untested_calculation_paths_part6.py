@@ -249,6 +249,7 @@ def test_dispatcher_pct_string_handling():
         "combustion_efficiency": 99.5,
         "c1": 0.90,
         "co2_comp": 0.02,
+        "n2_mol": 0.08,  # an analysis must total 100 %
         "meter_uncertainty_pct": "5.0%",
         "gc_uncertainty_pct": "2.5%",
     }
@@ -279,6 +280,7 @@ def test_dispatcher_ccs_capture_rate_percentage_string():
         "combustion_efficiency": 99.5,
         "c1": 0.95,
         "co2_comp": 0.02,
+        "n2_mol": 0.03,
         "ccs_capture_rate": "90%",
     }
     factors = {"co2": 0.0, "ch4": 0.0, "n2o": 0.0, "unit": "kg/m3"}

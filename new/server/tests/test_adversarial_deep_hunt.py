@@ -651,7 +651,7 @@ class TestLiquidsUnloadingAdversarial:
         assert r_t2["total_co2e"] == pytest.approx(28.0 * 4.625, rel=1e-9)
 
     def test_liquids_unloading_tier3_decompression_eq6_3(self):
-        """API Eq 6-3 volume-based wellbore decompression geometry."""
+        """Volume-based wellbore decompression geometry (platform method, not a Compendium equation)."""
         calc = LiquidsUnloadingCalculator()
         res_eq6_3 = calc.calculate_volume_based(
             well_depth=6000.0,
@@ -685,10 +685,10 @@ class TestLiquidsUnloadingAdversarial:
             sfr_unit="mcf/hr",
             gwp_dict=GWP_AR5,
         )
-        # Eq 6-10 per event: 0.37e-3 x D^2 x Depth x P + SFR x (HR - X) x Z with X = 0.5 (plunger), Z = 1 (HR >= 1):
-        # 0.37e-3 x 2.375^2 x 5,000 x 200 + 25,000 scf/hr x (3.5 - 0.5); 8 events (Subpart W sums every event)
-        scf = 8 * (0.37e-3 * 2.375 ** 2 * 5000.0 * 200.0 + 25000.0 * (3.5 - 0.5))
-        assert res_eq6_10["results"]["ch4"]["value"] == pytest.approx(ch4_t(scf * 0.88), rel=1e-3)  # 10.41 t
+        # Eq 6-10 as the Compendium prints it: events x 0.37e-3 x D^2 x Depth x P + SFR x (HR - X) x Z (once), with
+        # X = 0.5 (plunger), Z = 1 (HR >= 1): 8 x 0.37e-3 x 2.375^2 x 5,000 x 200 + 25,000 scf/hr x (3.5 - 0.5)
+        scf = 8 * 0.37e-3 * 2.375 ** 2 * 5000.0 * 200.0 + 25000.0 * (3.5 - 0.5)
+        assert res_eq6_10["results"]["ch4"]["value"] == pytest.approx(ch4_t(scf * 0.88), rel=1e-3)  # 1.80 t
 
     def test_liquids_unloading_tier3_automated_plunger_eq6_11(self):
         """API Eq 6-11 automated plunger lift vent rate."""

@@ -486,11 +486,12 @@ class TestBulkCSVIngestionAllTiersAndScopes:
     def test_scope1_tier3_bulk_csv_upload_engineering_parameters(self, app, test_user, test_facility, db_session):
         """Tier 3 Bulk CSV: Engineering mode with physical parameters (c1, c2, hhv, GOR, depth, diameter)."""
         csv_data = (
-            "Facility,Date,Process,Fuel,Quantity,Unit,FactorSource,HHV,CombustionEff,C1,C2,CO2Mol,UnloadDepth,UnloadDiam,UnloadPress,UnloadEvents,CH4 Content\n"
-            f"{test_facility.name},2024-07,Combustion,Natural Gas,15000,m3,specific,1020,99.5,88.5,8.2,1.5,,,,,\n"
-            f"{test_facility.name},2024-08,Flaring,Natural Gas,8000,m3,specific,1020,98.0,85.0,10.0,2.0,,,,,\n"
-            # (one value per column; the gas CH4 content is a required Tier 3 input, not a default)
-            f"{test_facility.name},2024-09,Liquids Unloading,,4,events,specific,,,,,,3500,2.875,400,4,87\n"
+            "Facility,Date,Process,Fuel,Quantity,Unit,FactorSource,HHV,CombustionEff,C1,C2,CO2Mol,N2Mol,UnloadDepth,UnloadDiam,UnloadPress,UnloadEvents,CH4 Content\n"
+            f"{test_facility.name},2024-07,Combustion,Natural Gas,15000,m3,specific,1020,99.5,88.5,8.2,1.5,1.8,,,,,\n"
+            f"{test_facility.name},2024-08,Flaring,Natural Gas,8000,m3,specific,1020,98.0,85.0,10.0,2.0,3.0,,,,,\n"
+            # (an analysis must total 100 %: the remainder is N2 Mol; one value per column; the gas CH4 content is a
+            # required Tier 3 input, not a default)
+            f"{test_facility.name},2024-09,Liquids Unloading,,4,events,specific,,,,,,,3500,2.875,400,4,87\n"
         )
         status = self._run_upload(app, csv_data, "scope1_tier3.csv", test_user.id, scope=1)
         assert status["status"] == "completed"

@@ -884,9 +884,8 @@ def composition_fractions(raw, basis=None):
     `raw` maps component -> value as entered. The basis is "percent" when requested, or when
     any component exceeds 1 or the analysis sums above 1.5; otherwise "fraction". Every
     component (including CO2, N2, H2S) is scaled the same way, so a 1.0 mol% butane can no
-    longer become 100 %. A total above 100 % (+0.5 % rounding) is rejected; an analysis within
-    98-102 % is renormalised to 100 %; an incomplete analysis is used as given (the rest is
-    unspecified, not redistributed).
+    longer become 100 %. An analysis of two or more components must total 100 %: above 100.5 % or below 99.5 %
+    is rejected (enter the remainder as N2 / CO2 / H2S); within that rounding it is renormalised to 100 %.
     Returns (fractions, info) with info = {"basis", "total", "renormalised"}.
     """
     vals = {}
@@ -911,9 +910,9 @@ def composition_fractions(raw, basis=None):
     scale = 0.01 if basis == "percent" else 1.0
     fr = {k: v * scale for k, v in vals.items()}
     tot = sum(fr.values())
-    if tot > 1.005:
-        raise ValueError(f"Gas composition sums to {tot * 100:.2f} % (> 100 %)")
-    renorm = 0.98 <= tot < 0.99999 or 1.00001 < tot <= 1.005
+    if tot > 1.005 or (tot < 0.995 and len(vals) > 1):  # a lone CH4 content is a content, not an analysis
+        raise ValueError(f"Gas composition sums to {tot * 100:.2f} %: it must total 100 % (0.5 % rounding; enter the remainder as N2, CO2 or H2S)")
+    renorm = (0.995 <= tot < 0.99999 and len(vals) > 1) or 1.00001 < tot
     if renorm:
         fr = {k: v / tot for k, v in fr.items()}
     return fr, {"basis": basis, "total": tot, "renormalised": renorm}

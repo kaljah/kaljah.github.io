@@ -141,8 +141,8 @@ def test_12_partial_percent_analysis_with_small_values_is_not_read_as_fractions(
         composition_fractions({"co2": 0.3, "n2": 0.4})  # read as 30 % / 40 %
     with pytest.raises(ValueError, match="composition_basis"):
         composition_fractions({"c1": 0.2, "co2": 0.1})
-    fr, _ = composition_fractions({"co2": 0.3, "n2": 0.4}, basis="percent")
-    assert fr["co2"] == pytest.approx(0.003)
+    fr, _ = composition_fractions({"c1": 99.3, "co2": 0.3, "n2": 0.4}, basis="percent")
+    assert fr["co2"] == pytest.approx(0.003) and fr["n2"] == pytest.approx(0.004)
     # a single fraction and a complete fractional analysis are still read as fractions
     assert composition_fractions({"c1": 0.9})[0]["c1"] == pytest.approx(0.9)
     assert composition_fractions({"c1": 0.9, "c2": 0.1})[0]["c2"] == pytest.approx(0.1)

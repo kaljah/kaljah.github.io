@@ -50,7 +50,7 @@ def test_unloading_per_well_year_on_a_monthly_record(app, fuel, per_well_year):
 
 
 # ---------------------------------------------------------------- 5, 7 gas volumes
-GAS = {"c1": 87.5, "c2": 5.2, "c3": 2.1, "c4": 1.0, "c5": 0.5, "co2_mol": 1.8, "hhv": 1010, "combustion_efficiency": 99.5}
+GAS = {"c1": 87.5, "c2": 5.2, "c3": 2.1, "c4": 1.0, "c5": 0.5, "co2_mol": 1.8, "n2_mol": 1.9, "hhv": 1010, "combustion_efficiency": 99.5}
 
 
 def t3(app, q, unit):

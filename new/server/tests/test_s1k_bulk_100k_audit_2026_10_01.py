@@ -108,19 +108,19 @@ def test_f1_tier3_hhv_without_composition_keeps_factor_co2(user_id):
 
 def test_f1_composition_still_drives_carbon_balance(user_id):
     t, err = _one(user_id, dict(process_type="combustion", fuel="Natural Gas", quantity="1000", unit="Mscf",
-                                factor_type="specific", hhv="1020", combustion_efficiency="99.5", c1="95", c2="3"))
+                                factor_type="specific", hhv="1020", combustion_efficiency="99.5", c1="95", c2="3", n2_mol="2"))
     assert t is not None, err
-    # 1,000 Mscf = 28,316.85 m3 = 1,195.5 kmol. The analysis (95 % C1 + 3 % C2 = 98 %) is normalised to 100 %, so
-    # carbon per kmol = (0.95 + 2 x 0.03) / 0.98 = 1.0306; 99.5 % burned: 1,195.5 x 1.0306 x 0.995 x 44.01 kg
-    assert t["co2"] == pytest.approx(28316.85 / 23.685 * (0.95 + 0.06) / 0.98 * 0.995 * 44.01 / 1000, rel=5e-3)  # 53.96 t
+    # 1,000 Mscf = 28,316.85 m3 = 1,195.5 kmol. The analysis (95 % C1 + 3 % C2 + 2 % N2 = 100 %): carbon per kmol =
+    # 0.95 + 2 x 0.03 = 1.01; 99.5 % burned: 1,195.5 x 1.01 x 0.995 x 44.01 kg
+    assert t["co2"] == pytest.approx(28316.85 / 23.685 * 1.01 * 0.995 * 44.01 / 1000, rel=5e-3)  # 52.88 t
 
 
 # --- F2: Coke Oven Gas at Tier 3 ------------------------------------------------------------------
 def test_f2_coke_oven_gas_tier3_uses_gas_basis(user_id):
     t, err = _one(user_id, dict(process_type="combustion", fuel="Coke Oven Gas", quantity="1000", unit="Mscf",
-                                factor_type="specific", hhv="599", combustion_efficiency="99", c1="28", c2="3"))
+                                factor_type="specific", hhv="599", combustion_efficiency="99", c1="28", c2="3", n2_mol="69"))
     assert t is not None, err
-    # 1,195.5 kmol x (0.28 C1 + 2 x 0.03 C2 = 0.34 kmol C/kmol; an analysis totalling under 50 % is not normalised)
+    # 1,195.5 kmol x (0.28 C1 + 2 x 0.03 C2 = 0.34 kmol C/kmol; the rest is N2)
     # x 99 % burned x 44.01 kg/kmol
     assert t["co2"] == pytest.approx(28316.85 / 23.685 * 0.34 * 0.99 * 44.01 / 1000, rel=5e-3)  # 17.71 t
 
@@ -196,7 +196,7 @@ def test_f6_mt_refused(user_id, u):
 
 # --- F7: unknown temperature / pressure units -----------------------------------------------------------
 COMP = dict(process_type="combustion", fuel="Natural Gas", quantity="1000", unit="m3", factor_type="specific",
-            hhv="1020", combustion_efficiency="99.5", c1="90", c2="5")
+            hhv="1020", combustion_efficiency="99.5", c1="90", c2="5", n2_mol="5")
 
 
 def test_f7_unknown_pressure_unit_refused(user_id):

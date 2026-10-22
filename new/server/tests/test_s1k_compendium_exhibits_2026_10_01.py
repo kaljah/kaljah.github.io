@@ -141,7 +141,7 @@ def test_f25_unknown_density_unit_refused(user_id):
                                                     density_unit="stone/pint"))
 
 
-# --- F27: liquids unloading Eq 6-10 flow-line term per event; SFR rate units ----------------------
+# --- F27: liquids unloading Eq 6-10 flow-line term once per well-year (as the Compendium prints it); SFR rate units ----------------------
 _UNLOAD = dict(process_type="unloading", factor_type="specific", quantity="12", unit="events",
                unloading_type="non_plunger", unload_depth="12000", unload_diam="10", unload_press="250",
                unload_freq="12", ch4_content="80", co2_content="3", unload_flare_eff="0")
@@ -152,10 +152,11 @@ def test_f27_unloading_exhibit_6_8(user_id):
     assert got["ch4"] == pytest.approx(20.39, rel=5e-3)
 
 
-def test_f27_flowline_term_counted_per_event(user_id):
+def test_f27_flowline_term_counted_once_per_well_year(user_id):
     base = _ok(user_id, dict(_UNLOAD, sfr="35000", hours_open="1"))
     longer = _ok(user_id, dict(_UNLOAD, sfr="35000", hours_open="3"))
-    extra_scf = 12 * 35000 * (3 - 1)                             # was 35,000 x 2 (once per well-year)
+    # Equation 6-10 as printed: events multiply the wellbore term only; the flow-line term SFR x (HR - X) is added once
+    extra_scf = 35000 * (3 - 1)                                  # (Subpart W would sum it per event: 12 x 35,000 x 2)
     assert longer["ch4"] - base["ch4"] == pytest.approx(extra_scf * 0.80 / 379.3 * 16.04 / 2204.62, rel=5e-3)
 
 

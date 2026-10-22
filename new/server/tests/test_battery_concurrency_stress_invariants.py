@@ -90,6 +90,7 @@ class TestBitDeterminismBattery:
             "c2": 0.05,
             "c3": 0.03,
             "co2_mol": 0.02,
+            "n2_mol": 0.05,  # an analysis must total 100 %
             "combustion_efficiency": 0.985,
             "destruction_efficiency": 0.98,
             "operating_temperature": 25.0,

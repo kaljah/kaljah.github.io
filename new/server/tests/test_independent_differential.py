@@ -93,7 +93,7 @@ class TestDifferentialScope1:
         """Diff Test: Tier 3 Gas chromatographic carbon mass balance."""
         qty = 10_000.0
         unit = "m3"
-        comps = {"c1": 0.85, "c2": 0.07, "c3": 0.03, "co2_mol": 0.02}
+        comps = {"c1": 0.85, "c2": 0.07, "c3": 0.03, "co2_mol": 0.02, "n2_mol": 0.03}  # totals 100 %
         payload = {
             "quantity": qty,
             "unit": unit,
@@ -139,6 +139,7 @@ class TestDifferentialScope1:
             "flare_type": "elevated",
             "ef_unit": "kg/m3",
             "co2_mol": 0.015,
+            "n2_mol": 0.105,  # the analysis totals 100 %
         }
 
         res_prod = prod_dispatcher.dispatch("flaring", payload, {"n2o": 0.0001}, {}, gwp_dict=GWP_AR5)

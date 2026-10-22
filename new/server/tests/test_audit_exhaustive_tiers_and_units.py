@@ -68,6 +68,8 @@ def _gas_analysis(process_id):
 def _get_base_unit(process_id, category):
     if process_id in ("drilling", "mud_degassing"):
         return "days"
+    if process_id == "liquids_unloading":
+        return "wells"  # Tables 6-10 / 6-11 are per event or per well; m3 is refused
     if category in ["combustion", "vented"]:
         return "m3"
     return "devices"
@@ -85,9 +87,9 @@ def _gases(res):
 # Hand-worked Tier 1 results in tonnes for 1,000 units (combustion factors 53.06 / 0.05 / 0.001 kg per unit, the others
 # CO2 1.5 kg). The processes with their own Compendium table do not multiply the generic factor:
 #   drilling: 1,000 days x 0.0458 t CH4/day (Table 6-2); liquids_unloading: 1,000 wells x 1.774 t (Table 6-11, plunger);
-#   completions: 1,000 m3 x 85 % CH4 x 16.04 / 23.685 kg/m3; associated gas: 1,000 m3 = 6,289.81 bbl x 0.05 kg CH4/bbl.
+#   completions: 1,000 m3 x 85 % CH4 x 16.04 / 23.685 kg/m3; associated gas: 1,000 m3 of oil x 0.05 kg CH4/m3.
 _TIER1_SPECIAL = {
-    "associated_gas_venting": (0.0, 6289.81077 * 0.05 / 1000.0, 0.0),
+    "associated_gas_venting": (0.0, 1000 * 0.05 / 1000.0, 0.0),
     "drilling": (0.0, 1000 * 0.0458, 0.0),
     "completions": (0.0, 1000 * 0.85 * 16.04 / 23.685 / 1000.0, 0.0),
     "liquids_unloading": (0.0, 1000 * 1.774, 0.0),
@@ -176,10 +178,8 @@ class TestAllProcessTypesTier2Exhaustive:
     def test_tier2_custom_factor_override(self, dispatcher, process_id):
         """A custom Tier 2 factor replaces the catalog factor: 750 units x 62.45 / 0.082 / 0.0035 kg per unit.
 
-        Three processes do NOT use it, because their method works from a table or the gas analysis, not from a
-        factor per unit: drilling takes the factor's CH4 only (CO2 / N2O are not drilling gases); completions
-        (750 m3 x 85 % CH4 x 16.04 / 23.685 kg/m3) and liquids unloading (750 wells x 1.774 t, Table 6-11) ignore
-        the custom factor entirely - a software behaviour worth knowing, not one the Compendium requires."""
+        That holds for every process, completions and liquids unloading included (they used to ignore it); drilling
+        takes the factor's CH4 only (CO2 / N2O are not drilling gases)."""
         meta = PROCESS_TYPES[process_id]
         unit = _get_base_unit(process_id, meta["category"])
         # Custom factor with distinct values (e.g. from local gas analysis)
@@ -204,8 +204,6 @@ class TestAllProcessTypesTier2Exhaustive:
         assert res is not None
         expected = {
             "drilling": (0.0, 750 * 0.082 / 1000.0, 0.0),
-            "completions": (0.0, 750 * 0.85 * 16.04 / 23.685 / 1000.0, 0.0),
-            "liquids_unloading": (0.0, 750 * 1.774, 0.0),
         }.get(process_id, (750 * 62.45 / 1000.0, 750 * 0.082 / 1000.0, 750 * 0.0035 / 1000.0))
         assert _gases(res) == pytest.approx(expected, rel=2e-3, abs=1e-12), process_id
         assert res["total_co2e"] == pytest.approx(expected[0] + 28.0 * expected[1] + 265.0 * expected[2], rel=2e-3)
@@ -603,6 +601,7 @@ class TestCSVUploaderExhaustiveParity:
                 "combustion_efficiency": "99.5",
                 "c1": "85.0",
                 "co2_mol": "2.0",
+                "n2_mol": "13.0",  # an analysis must total 100 %
             }
             emission_obj, row_errors = _process_row(
                 row=row,

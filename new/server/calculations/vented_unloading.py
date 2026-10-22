@@ -47,7 +47,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
       - Tier 3: Engineering and measured data:
           * API Eq. 6-10 (EPA Subpart W integrated W-8/W-9)
           * API Eq. 6-11 (Automated plunger lift vent rate)
-          * API Eq. 6-3 (Volume-based wellbore decompression geometry)
+          * Wellbore volume decompression (platform method, not Compendium Equation 6-3; key "api_equation_6_3" kept)
     """
 
     # --- API TABLE 6-11: TIER 1 PER-WELL VENTED EMISSION FACTORS ---
@@ -509,10 +509,10 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         z_param = 1.0 if hr_val >= 1.0 else 0.0
 
         wellbore_vol_scf = ev * (0.37e-3) * (d_in ** 2) * depth_ft * p_psig
-        # HR is the time one unloading event is left open: the flow-line term is per event, summed over the
-        # events like the wellbore term (40 CFR 98.233 Eq W-8). It was counted once per well-year
-        # (12 events open 3 h at 35,000 scf/h: 70,000 scf instead of 840,000 scf)
-        flowline_vol_scf = ev * sfr_scf_hr * max(0.0, hr_val - x_param) * z_param
+        # Equation 6-10 as the Compendium prints it: only the wellbore term is multiplied by the number of events;
+        # the flow-line term SFR x (HR - X) x Z is counted once per well-year (EPA Subpart W W-8 sums it per event:
+        # 12 events open 3 h at 35,000 scf/h give 70,000 scf here, 840,000 scf in Subpart W)
+        flowline_vol_scf = sfr_scf_hr * max(0.0, hr_val - x_param) * z_param
         vr_per_well_scf = wellbore_vol_scf + flowline_vol_scf
 
         total_gas_scf = wc * vr_per_well_scf
@@ -792,7 +792,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         # Volume at tubing conditions (m3)
         v_tubing = (math.pi / 4.0) * (d_m ** 2) * depth_m
 
-        # Pressure, temperature, and compressibility correction (API Eq. 6-3 & §4.2.1)
+        # Pressure, temperature, and compressibility correction (API §4.2.1)
         p_abs = to_psia(pressure, press_unit)
         p_factor = max(0.0, p_abs - STD_PRESSURE_PSIA) / STD_PRESSURE_PSIA
 
@@ -859,7 +859,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
             inputs={
                 "tier": "Tier 3",
                 "method": "api_equation_6_3",
-                "calculation_level": "Tier 3 Engineering (API Eq. 6-3)",
+                "calculation_level": "Tier 3 Engineering (wellbore volume decompression, platform method)",
                 "well_depth": well_depth,
                 "diameter": diameter,
                 "pressure": pressure,
@@ -869,7 +869,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
                 "co2_content": c_co2,
                 "control_efficiency": control_efficiency,
                 "operating_temperature": operating_temperature,
-                "api_reference": "API Compendium 2021 Section 6.3.4, Equation 6-3",
+                "api_reference": "Platform method: wellbore volume decompression (API Compendium 2021 Section 6.3.4 gives no equation for it)",
             },
         )
 
@@ -1007,7 +1007,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
                 gwp_dict=gwp_dict,
             )
 
-        # Default to Volume-based wellbore decompression (API Eq. 6-3)
+        # Default to volume-based wellbore decompression (platform method)
         ev = events if events is not None else (kwargs.get("unload_events") if kwargs.get("unload_events") is not None else kwargs.get("unload_freq"))
         return self.calculate_volume_based(
             well_depth=well_depth or kwargs.get("unload_depth"),

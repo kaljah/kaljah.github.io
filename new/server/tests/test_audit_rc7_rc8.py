@@ -43,11 +43,19 @@ def test_bug023_fraction_basis():
     assert info["basis"] == "fraction" and fr["c1"] == pytest.approx(0.9)
 
 
-def test_bug024_inerts_counted_incomplete_not_renormalised():
-    fr, info = composition_fractions({"c1": 70, "co2": 5})  # 75 %: rest unspecified
-    assert fr["c1"] == pytest.approx(0.70) and not info["renormalised"]
-    fr, _ = composition_fractions({"c1": 90, "n2": 10})
-    assert fr["c1"] == pytest.approx(0.90)
+def test_bug024_inerts_counted_incomplete_refused_not_renormalised():
+    # an analysis of two or more components must total 100 % (99.5 to 100.5): 75 % is refused, never rescaled
+    with pytest.raises(ValueError, match="sums to 75.00 %"):
+        composition_fractions({"c1": 70, "co2": 5})
+    with pytest.raises(ValueError, match="must total 100 %"):
+        composition_fractions({"c1": 90, "n2": 8})
+    fr, info = composition_fractions({"c1": 90, "n2": 10})
+    assert fr["c1"] == pytest.approx(0.90) and not info["renormalised"]
+    # rounding of the printed analysis (100.3 %) is renormalised to 100 %
+    fr, info = composition_fractions({"c1": 90.3, "c2": 5, "n2": 5})
+    assert info["renormalised"] and sum(fr.values()) == pytest.approx(1.0) and fr["c1"] == pytest.approx(0.903 / 1.003)
+    # a lone CH4 content is a content, not an analysis: it is not subject to the 100 % rule
+    assert composition_fractions({"c1": 80})[0]["c1"] == pytest.approx(0.80)
 
 
 def test_composition_over_100_rejected():

@@ -128,7 +128,7 @@ class TestCalculationMutations:
         )
         mutant_co2 = clean_res["co2"] - (100_000.0 * 0.05 * (44.01 / 23.685) / 1000.0)
         engine = _engine("flaring", {"factor_source": "specific", "amount": 100_000.0, "unit": "m3", "c1": 85.0,
-                                     "co2_mol": 5.0, "combustion_efficiency": 98.0, "destruction_efficiency": 98.0})
+                                     "co2_mol": 5.0, "n2_mol": 10.0, "combustion_efficiency": 98.0, "destruction_efficiency": 98.0})
         assert pytest.approx(engine["co2"], rel=1e-6) == clean_res["co2"]
         assert engine["co2"] != pytest.approx(mutant_co2, rel=1e-2)
 

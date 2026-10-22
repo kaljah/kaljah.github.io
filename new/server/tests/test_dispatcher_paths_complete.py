@@ -107,7 +107,7 @@ def test_failures_are_logged_and_wrapped(d, caplog):
 # ---------------------------------------------------------------- dispatcher_branches_* remaining paths
 def test_flaring_branch_composition_and_refinery_default(d):
     base = {"factor_source": "specific", "amount": 1000, "unit": "m3"}
-    res = d.dispatch("flaring", {**base, "c1": 0, "c2": 90}, {}, {})                             # an analysis with 0 C1
+    res = d.dispatch("flaring", {**base, "c1": 0, "c2": 90, "n2_mol": 10}, {}, {})               # an analysis with 0 C1
     assert res["results"]["ch4"]["value"] == 0
     up = d.dispatch("flaring", {**base, "c1": 90}, {}, {})["results"]["ch4"]["value"]
     down = d.dispatch("flaring", {**base, "c1": 90, "facility_segment": "Downstream"}, {}, {})["results"]["ch4"]["value"]
