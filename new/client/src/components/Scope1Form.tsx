@@ -1908,7 +1908,8 @@ export const Scope1Form: React.FC = () => {
       set("c4", pct("iC4H10", "nC4H10"));
       set("c5", pct("iC5H12", "nC5H12"));
       set("c6", pct("C6H14"));
-      set("n2", pct("N2"));
+      set("n2", pct("N2", "N2O")); // N2O is an inert in this analysis; the server reads n2 / co2 / h2s
+      set("h2s_mol", pct("H2S"));  // H2S is part of the 100 % total (mol %), it used to be dropped
       set("ch4_content", pct("CH4"));
       set("co2_content", pct("CO2"));
       handleFormChange("gas_composition", res.gas_composition || {

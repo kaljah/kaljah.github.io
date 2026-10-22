@@ -112,6 +112,9 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
     0,
   );
 
+  // The server refuses an analysis that does not total 100 % (99.5 to 100.5 is rounding)
+  const totalOk = totalMolePct >= 99.5 && totalMolePct <= 100.5;
+
   const handleCompChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setComposition((prev) => ({ ...prev, [name]: value }));
@@ -233,9 +236,9 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
   };
 
   const getStatusText = () => {
-    if (totalMolePct > 100.1) return t("⚠️ Over 100%");
+    if (totalMolePct > 100.5) return t("⚠️ Over 100%");
     if (Math.abs(totalMolePct - 100) < 0.1) return t("✓ Perfect 100%");
-    if (totalMolePct >= 99.5 && totalMolePct <= 100.5) return t("✓ Valid (~100%)");
+    if (totalOk) return t("✓ Valid (~100%)");
     return t("Need {{pct}}%", { pct: (100 - totalMolePct).toFixed(2) });
   };
 
@@ -366,13 +369,18 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
               <div className="total-info">
                 <span className="label">{t("Total Composition:")}</span>
                 <span
-                  className={`value ${Math.abs(totalMolePct - 100) < 0.5 ? "valid" : "invalid"}`}
+                  className={`value ${totalOk ? "valid" : "invalid"}`}
                 >
                   {totalMolePct.toFixed(2)}%
                 </span>
               </div>
               <span className="status-badge">{getStatusText()}</span>
             </div>
+            {!totalOk && totalMolePct > 0 && (
+              <p role="alert" className="[color:var(--color-danger,#c0392b)] [margin:-15px_0_20px] [font-size:13px]">
+                {t("The analysis must total 100 % (99.5 to 100.5): enter the remainder as N2, CO2 or another component.")}
+              </p>
+            )}
 
             <div className="[display:grid] [grid-template-columns:repeat(auto-fill,_minmax(140px,_1fr))] [gap:15px] [margin-bottom:30px]">
               {Object.entries(COMPONENT_DATA).map(([key, data]) => (
@@ -422,7 +430,8 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
               type="button"
               className="[width:100%] [padding:14px] [background:var(--color-primary)] [color:white] [border:none] [&&]:[border-radius:var(--radius-md)] [font-weight:700] [cursor:pointer] [transition:all_0.2s] disabled:[opacity:0.5] disabled:[cursor:not-allowed] [&:hover:not(:disabled)]:[transform:translateY(-2px)] [&:hover:not(:disabled)]:[box-shadow:0_5px_15px_rgba(255,_102,_0,_0.3)]"
               onClick={calculate}
-              disabled={totalMolePct === 0}
+              disabled={!totalOk}
+              title={totalOk ? undefined : t("The analysis must total 100 %")}
             >
               {t("Calculate Results")}
             </button>

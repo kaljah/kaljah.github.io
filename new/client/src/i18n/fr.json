@@ -3592,5 +3592,7 @@
   "Scope 2 method": "Méthode Scope 2",
   "Market": "Marché",
   "Scope 2 location-based (grid average factors)": "Scope 2 basé sur la localisation (facteurs moyens du réseau)",
-  "Scope 2 market-based (contractual instruments)": "Scope 2 basé sur le marché (instruments contractuels)"
+  "Scope 2 market-based (contractual instruments)": "Scope 2 basé sur le marché (instruments contractuels)",
+  "The analysis must total 100 % (99.5 to 100.5): enter the remainder as N2, CO2 or another component.": "L'analyse doit totaliser 100 % (99,5 à 100,5) : saisissez le reste en N2, CO2 ou un autre composant.",
+  "The analysis must total 100 %": "L'analyse doit totaliser 100 %"
 }
