@@ -417,5 +417,7 @@ NON_COMBUSTION_PROCESSES = {
     "chemical_production", "nitric_acid_production", "adipic_acid_production",
     "asphalt_blowing", "asphalt",
     "indirect_steam", "cogen_allocation", "stoichiometry",
+    "wastewater", "wastewater_treatment", "refrigerant", "refrigerants", "hfc", "air_conditioning", "refrigeration",
+    "electrical_equipment", "sf6", "electrical_transmission",
 }
 

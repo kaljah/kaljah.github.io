@@ -230,3 +230,29 @@ def test_a_blend_with_an_entered_gwp_follows_a_change_of_standard(ctx):
         assert blend.co2e_total == pytest.approx(0.075 * 2088.0, rel=1e-9) and blend.gwp_version == "AR4"
     finally:
         c.put("/api/auth/settings", json={"gwp_standard": "AR5"})
+
+
+# ---- low-severity notes of the same stress test -----------------------------------------------------------------------
+
+def test_equation_7_24_by_name_does_not_add_the_equation_7_25_term():
+    """eq_7_24 is recharge minus recovery only; a nameplate capacity belongs to eq_7_25 (or the combined 'recharge')."""
+    from calculations.fugitive_other import ElectricalEquipmentCalculator
+
+    inputs = {"mass_unit": "kg", "recharge": 100.0, "recovered": 20.0, "nameplate_capacity": 5000.0,
+              "equipment_type": "closed_pressure_us"}
+    with pytest.raises(ValueError, match="eq_7_25"):
+        ElectricalEquipmentCalculator().calculate("eq_7_24", inputs, gwp_dict={"CH4": 28.0})
+    plain = ElectricalEquipmentCalculator().calculate("eq_7_24", {k: v for k, v in inputs.items()
+                                                                    if k not in ("nameplate_capacity", "equipment_type")},
+                                                      gwp_dict={"CH4": 28.0})
+    assert plain["results"]["f_gas"]["value"] == pytest.approx(0.080, rel=1e-12)
+    combined = ElectricalEquipmentCalculator().calculate("recharge", inputs, gwp_dict={"CH4": 28.0})
+    assert combined["results"]["f_gas"]["value"] == pytest.approx((80.0 + 5000.0 * 0.14) / 1000.0, rel=1e-12)
+
+
+@pytest.mark.parametrize("proc", ["wastewater", "wastewater_treatment", "refrigerant", "hfc", "air_conditioning",
+                                  "electrical_equipment", "sf6", "electrical_transmission"])
+def test_factorless_processes_are_not_combustion_sources(proc):
+    from process_categories import NON_COMBUSTION_PROCESSES
+
+    assert proc in NON_COMBUSTION_PROCESSES

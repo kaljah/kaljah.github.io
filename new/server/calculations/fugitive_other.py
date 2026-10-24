@@ -273,6 +273,8 @@ class ElectricalEquipmentCalculator(BaseCalculator):
                 raise ValueError("SF6 recovered cannot exceed the SF6 used to recharge")
             kg = recharged - recovered  # Eq 7-24
             capacity = _num(inputs, "nameplate_capacity", required=False)
+            if m == "eq_7_24" and capacity is not None:
+                raise ValueError("Equation 7-24 has no nameplate term: use eq_7_25 (or 'recharge' for both) to add it")
             if m in ("eq_7_25", "usage_factor") or capacity is not None:
                 if capacity is None:
                     raise ValueError("Equation 7-25 needs the nameplate capacity of the equipment installed")
