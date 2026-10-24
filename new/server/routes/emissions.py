@@ -991,9 +991,9 @@ def update_emission(id):
     # BUG-067: every edit records the last maker; non-admin edits of decided records go back to review
     on_edit(record, user)
     # Recalculate whenever physical activity or factor inputs are modified (L9)
-    recalc_keys = {"quantity", "amount", "fuel", "fuel_type", "unit", "custom_factor_id", "calc_method",
-                   "process_type", "factor_source", "calc_inputs", "hhv", "user_uncertainty"}
-    should_recalc = data.get("recalculate") or any(k in data for k in recalc_keys)
+    from services.scope1_calc import edit_needs_recalculation
+
+    should_recalc = edit_needs_recalculation(data, record)
 
     if should_recalc:
         # RC-6: rebuild the calculation from the stored payload + record + this edit, with aliases

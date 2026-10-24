@@ -9,6 +9,40 @@ from extensions import db
 from utils import log_activity_and_notify
 
 
+def _fgas_processes():
+    """Process types whose CO2e is an F-gas result (HFC, SF6): it lives only in co2e_total, so the gas columns
+    cannot re-weight it (changing the GWP standard used to set every such record to 0)."""
+    from calculations.fugitive_other import OTHER_FUGITIVE_PROCESSES, WastewaterCalculator
+
+    return frozenset(k for k, calc in OTHER_FUGITIVE_PROCESSES.items() if not isinstance(calc, WastewaterCalculator))
+
+
+def _recalculate_fgas(record, gwp_dict, standard):
+    """Re-run an HFC / SF6 record from its saved inputs under the new GWP. False (record left as it was) when it
+    cannot be re-run, e.g. a Table 7-84 blend, which is printed for AR5 only, under AR4 or AR6."""
+    from calculations import compute_emissions
+    from services.scope1_calc import canonicalize
+
+    try:
+        stored = json.loads(record.source_payload or "{}")
+    except ValueError:
+        return False
+    if not isinstance(stored, dict) or not stored:
+        return False
+    base = {"process_type": record.process_type, "process": record.process_type, "fuel_type": record.fuel_type,
+            "fuel": record.fuel_type, "unit": record.unit, "quantity": record.quantity, "amount": record.quantity,
+            "factor_source": record.factor_source}
+    payload = canonicalize({**base, **{k: v for k, v in stored.items() if v is not None}})
+    payload["year"], payload["month"], payload["facility_id"] = record.year, record.month, record.facility_id
+    try:
+        result, _method = compute_emissions(payload, {}, gwp_dict=gwp_dict)
+    except (ValueError, TypeError, KeyError):
+        return False
+    record.co2e_total = result["totalCo2e"]
+    record.gwp_version = standard
+    return True
+
+
 def recalculate_all_emissions_gwp(standard, previous=None, user=None):
     """
     Recalculates co2e_total for all stored Emission records in the database
@@ -45,7 +79,8 @@ def recalculate_all_emissions_gwp(standard, previous=None, user=None):
         }
 
     before = _totals()
-    db.session.query(Emission).update(
+    fgas = _fgas_processes()
+    db.session.query(Emission).filter(~func.lower(func.coalesce(Emission.process_type, "")).in_(fgas)).update(
         {
             Emission.co2e_total: (
                 func.coalesce(Emission.co2_emissions, 0.0) * co2_factor
@@ -57,6 +92,16 @@ def recalculate_all_emissions_gwp(standard, previous=None, user=None):
         },
         synchronize_session=False,
     )
+    from calculations.constants import get_active_gwp
+
+    new_dict = get_active_gwp(standard=standard)
+    fgas_kept = 0
+    for rec in Emission.query.filter(func.lower(func.coalesce(Emission.process_type, "")).in_(fgas)).all():
+        if not _recalculate_fgas(rec, new_dict, standard):
+            fgas_kept += 1
+    if fgas_kept:
+        current_app.logger.warning(f"GWP standard {standard}: {fgas_kept} HFC / SF6 records kept their previous CO2e "
+                                   "(blend GWP not printed for this report, or no saved inputs)")
     db.session.query(Scope3Emission).update(
         {
             Scope3Emission.updated_at: datetime.datetime.now(datetime.timezone.utc),
@@ -100,7 +145,9 @@ def recalculate_all_emissions_gwp(standard, previous=None, user=None):
         details=(f"GWP standard {previous or '?'} -> {standard}: {after['scope1_records']} Scope 1 records recalculated "
                  f"(Verified included); Scope 1 {before['scope1_tco2e']:,.2f} -> {after['scope1_tco2e']:,.2f} tCO2e, "
                  f"Scope 2 {before['scope2_tco2e']:,.2f} -> {after['scope2_tco2e']:,.2f} tCO2e, "
-                 f"Scope 3 {before['scope3_tco2e']:,.2f} -> {after['scope3_tco2e']:,.2f} tCO2e"),
+                 f"Scope 3 {before['scope3_tco2e']:,.2f} -> {after['scope3_tco2e']:,.2f} tCO2e"
+                 + (f"; {fgas_kept} HFC / SF6 records kept their previous CO2e and GWP standard (a Table 7-84 blend is "
+                    "printed for AR5 only: enter its GWP on the record)" if fgas_kept else "")),
         old_values=json.dumps(dict(before, gwp_standard=previous)), new_values=json.dumps(dict(after, gwp_standard=standard)),
     )
     try:

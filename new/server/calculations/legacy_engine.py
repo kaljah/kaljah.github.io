@@ -1,6 +1,9 @@
 import logging
 
 from .dispatcher import dispatcher as api2021_dispatcher
+# wastewater, HFC and SF6 (Compendium 7.5 / 7.6) are calculated from method inputs and use no emission factor: a zero
+# (an aerobic plant has MCF 0) is a result, and an HFC / SF6 amount is not a factor lookup
+from .fugitive_other import OTHER_FUGITIVE_PROCESSES
 from .constants import DEFAULT_GWP, get_active_gwp
 
 log = logging.getLogger(__name__)
@@ -215,7 +218,7 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
     if (
         api_res
         and "results" in api_res
-        and (any(get_val(api_res["results"].get(g)) for g in ["co2", "ch4", "n2o", "f_gas"]) or _tier3_zero or amount == 0)  # 0 is 0
+        and (any(get_val(api_res["results"].get(g)) for g in ["co2", "ch4", "n2o", "f_gas"]) or _tier3_zero or process in OTHER_FUGITIVE_PROCESSES or amount == 0)  # 0 is 0
     ):
         # If the dispatcher handled it, return the rich result structure
         # We extract the 'value' for backward compatibility with the legacy database record creation
@@ -404,7 +407,7 @@ def compute_emissions(payload, factor_data=None, gwp_dict=None, gwp_standard=Non
         if capture:
             em["totalCo2e"] -= em["co2"] * capture
             em["co2"] *= 1.0 - capture
-    if any(float(em.get(g) or 0) for g in ("co2", "ch4", "n2o")):
+    if any(float(em.get(g) or 0) for g in ("co2", "ch4", "n2o")) or (raw_proc in OTHER_FUGITIVE_PROCESSES and "_full_api_res" in em):
         return em, method
     raw = payload.get("amount") if payload.get("amount") not in (None, "") else payload.get("quantity")
     amount = float(str(raw).replace(",", "")) if raw not in (None, "") else 0.0  # parsed by the calculation

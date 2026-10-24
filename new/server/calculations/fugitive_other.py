@@ -84,8 +84,10 @@ def _num(inputs, key, what=None, required=True, minimum=0.0):
         if required:
             raise ValueError(f"{what or key} is required")
         return None
+    if isinstance(v, str) and "," in v:  # "1,5" was read as 15 and "1,000" as 1000: the decimal mark is not guessed
+        raise ValueError(f"{what or key} contains a comma ({v!r}): send a plain number such as 1234.5")
     try:
-        x = float(str(v).replace(",", "").strip())
+        x = float(str(v).strip())
     except (TypeError, ValueError):
         raise ValueError(f"{what or key} must be a number (got {v!r})") from None
     if not math.isfinite(x) or (minimum is not None and x < minimum):
@@ -98,8 +100,11 @@ def fgas_gwp(gas, gwp_dict=None, override=None):
 
     ``override`` (a GWP entered by the site) always wins. Refuses a gas without a printed value instead of guessing."""
     if override not in (None, ""):
-        g = float(override)
-        if not math.isfinite(g) or g <= 0:
+        try:
+            g = _num({"gwp": override}, "gwp", "The entered GWP", minimum=None)
+        except ValueError as err:
+            raise ValueError(f"The entered GWP must be a positive number ({err})") from None
+        if g <= 0:
             raise ValueError("The entered GWP must be a positive number")
         return g
     key = str(gas or "").strip().upper().replace(" ", "")

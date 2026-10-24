@@ -171,6 +171,42 @@ def _set_alias(payload, keys, value):
         payload[k] = value
 
 
+# Saved-payload keys that describe a record rather than feed its calculation: editing them never recalculates.
+_NOT_INPUTS = frozenset({
+    "equipment_id", "group_name", "data_source_ref", "source_ref", "metadata", "calculation_metadata", "status",
+    "approved_by", "approved_at", "year", "month", "facility_id", "record_id", "id", "timestamp", "created_by",
+    "updated_by", "qa_flag", "source_type", "notes", "comment", "comments", "region", "field", "activity", "division",
+    "company_name", "recalculate", "allow_duplicate", "user_uncertainty",
+})
+
+
+def edit_names_a_saved_input(data, source_payload, process_type):
+    """True when an edit carries an input the record was saved with, at the top level of its payload or in
+    calc_inputs[process]: such an edit must recalculate (a PUT of {"charge_kg": 0.93} used to answer 'Record
+    updated' and change nothing; stress test 2026-10-23, P5)."""
+    try:
+        stored = json.loads(source_payload or "{}")
+    except ValueError:
+        return False
+    if not isinstance(stored, dict):
+        return False
+    names = set(stored)
+    nested = (stored.get("calc_inputs") or {}).get(process_type) if isinstance(stored.get("calc_inputs"), dict) else None
+    if isinstance(nested, dict):
+        names |= set(nested)
+    return any(k in names and k not in _NOT_INPUTS for k in data)
+
+
+_RECALC_KEYS = frozenset({"quantity", "amount", "fuel", "fuel_type", "unit", "custom_factor_id", "calc_method",
+                          "process_type", "factor_source", "calc_inputs", "hhv", "user_uncertainty"})
+
+
+def edit_needs_recalculation(data, record):
+    """An edit recalculates when it asks to, changes the activity or factor, or names an input the record was saved with."""
+    return bool(data.get("recalculate") or any(k in data for k in _RECALC_KEYS)
+                or edit_names_a_saved_input(data, record.source_payload, record.process_type))
+
+
 def canonicalize(payload, delta=None):
     """Return a copy of `payload` with aliases synchronised. `delta` (for edits) wins over the stored
     payload: when it carries any alias, every alias takes the new value (BUG-003: a PUT of quantity
@@ -195,6 +231,12 @@ def canonicalize(payload, delta=None):
             ci = out["calc_inputs"].get(ptype)
             if isinstance(ci, dict):
                 ci_copy = dict(ci)
+                # a flat key of the edit that the saved method inputs also carry replaces it (it was ignored: the
+                # nested value won), unless the edit names that input in calc_inputs itself
+                named = ((delta.get("calc_inputs") or {}).get(ptype) or {}) if isinstance(delta.get("calc_inputs"), dict) else {}
+                for k, v in delta.items():
+                    if k != "calc_inputs" and k in ci_copy and k not in named and v not in (None, ""):
+                        ci_copy[k] = v
                 if "amount" in out:
                     ci_copy["amount"] = out["amount"]
                 if "unit" in out:
@@ -312,6 +354,17 @@ def resolve_factor(payload, stored_payload=None, allow_archived=False, kept_fact
     # separate choice from the API Compendium tiers; it always needs the selected library factor
     library = str(payload.get("factor_mode") or "").lower() == "library"
     process = str(payload.get("process_type") or payload.get("process") or "").lower()
+    from calculations.fugitive_other import OTHER_FUGITIVE_PROCESSES
+
+    if process in OTHER_FUGITIVE_PROCESSES and (source == "custom" or library
+                                                or payload.get("custom_factor_id") not in (None, "")):
+        # Compendium 7.5 / 7.6 (wastewater, HFC, SF6) are calculated from their method inputs: no emission factor, so
+        # a custom factor would be saved as used without changing the result (stress test 2026-10-23, P6)
+        raise ValidationError(
+            f"'{process}' is calculated from its method inputs (Compendium 7.5 / 7.6) and uses no emission factor: "
+            "a custom factor cannot be applied. Use the default or the specific (engineering) tier.",
+            "custom_factor_id",
+        )
     cf_id = payload.get("custom_factor_id")
     if cf_id in (None, "") and stored_payload:
         cf_id = stored_payload.get("custom_factor_id")
