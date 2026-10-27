@@ -1,6 +1,6 @@
 {
   "files": {
-    "background_processor.py": 3096,
+    "background_processor.py": 3094,
     "calculations/dispatcher.py": 1189,
     "calculations/units.py": 937,
     "calculations/vented_downstream.py": 838,
@@ -15,7 +15,7 @@
   "functions": {
     "background_processor.py::_process_row": 257,
     "background_processor.py::_process_row_production": 158,
-    "background_processor.py::_process_row_scope2": 268,
+    "background_processor.py::_process_row_scope2": 267,
     "calculations/combustion.py::CombustionCalculator.calculate": 223,
     "calculations/combustion.py::FlaringCalculator.calculate": 175,
     "calculations/dispatcher.py::CalculationDispatcher._dispatch_impl": 426,
@@ -48,7 +48,7 @@
     "routes/scope2.py::bulk_import_scope2": 161,
     "routes/scope2.py::create_scope2_emission": 266,
     "routes/scope2.py::update_scope2_emission": 194,
-    "routes/scope3.py::create_scope3_emission": 169,
+    "routes/scope3.py::create_scope3_emission": 167,
     "services/intensity.py::facility_row": 196,
     "services/inventory_uncertainty.py::inventory_uncertainty": 176,
     "services/scope1_template.py::build_xlsx": 186

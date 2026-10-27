@@ -171,15 +171,13 @@ def create_scope3_emission():
         year=year_val,
         month=month_val,
         category=category_val,
-        sub_category=data.get("sub_category")
-        or data.get("activity_type"),  # Fallback to activity_type
-        activity_data=activity_data,
-        unit=data.get("unit"),
-        emission_factor=emission_factor,
-        co2e=co2e_val,
+        sub_category=data.get("sub_category") or data.get("activity_type"),
+        activity_data=activity_data, unit=data.get("unit"),
+        emission_factor=emission_factor, co2e=co2e_val,
         status=initial_status,
         approved_by=user.id if initial_status == "Verified" else None,
         approved_at=datetime.datetime.now(datetime.timezone.utc) if initial_status == "Verified" else None,
+        region=data.get("region") or facility.region or facility.name,
     )
 
     # Calculate uncertainty
@@ -374,6 +372,8 @@ def update_scope3_emission(emission_id):
         emission.data_quality = data["data_quality"]
     if "notes" in data:
         emission.notes = data["notes"]
+    if "region" in data:
+        emission.region = data["region"]
 
     require_plausible_co2e(emission.co2e)
     from calculations.anomaly import AnomalyDetector
