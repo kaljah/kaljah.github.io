@@ -82,8 +82,8 @@ def get_ogmp_metrics():
     ).filter(Emission.status == "Verified")
     if allowed_fids is not None:
         ch4_query = ch4_query.filter(Emission.facility_id.in_(allowed_fids or [-1]))
-    if fac_id and fac_id != "all" and str(fac_id).isdigit():
-        ch4_query = ch4_query.filter(Emission.facility_id == int(fac_id))
+    if fac_fids is not None:
+        ch4_query = ch4_query.filter(Emission.facility_id.in_(fac_fids))
     if single_year:
         ch4_query = ch4_query.filter(Emission.year == int(year))
     ch4_years = {}
