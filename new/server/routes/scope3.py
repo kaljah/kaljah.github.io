@@ -54,14 +54,18 @@ def get_scope3_emissions():
     fac_arg = request.args.get("facilityId") or request.args.get("facility_id")
     if year_arg and year_arg != "all":
         try:
-            query = query.filter(Scope3Emission.year == int(year_arg))
-        except ValueError:
-            pass
+            parsed_year = parse_year(year_arg, "year", required=True)
+            query = query.filter(Scope3Emission.year == parsed_year)
+        except ValidationError as ve:
+            return jsonify({"error": str(ve)}), 400
     if fac_arg and fac_arg != "all":
         try:
-            query = query.filter(Scope3Emission.facility_id == int(fac_arg))
-        except ValueError:
-            pass
+            fid = int(fac_arg)
+            if not (1 <= fid <= 2147483647):
+                raise ValueError()
+            query = query.filter(Scope3Emission.facility_id == fid)
+        except (ValueError, TypeError):
+            return jsonify({"error": "Invalid facilityId parameter. Must be a positive integer or 'all'."}), 400
 
     # optional server-side paging (limit / offset): the tables used to download every record on
     # every page change (4 MB at 10,000 records) to show 10 rows

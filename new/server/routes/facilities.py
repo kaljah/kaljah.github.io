@@ -245,8 +245,8 @@ def add_facility():
     try:
         from routes.dashboard import clear_dashboard_cache
         clear_dashboard_cache()
-    except Exception:
-        pass
+    except Exception as err:
+        current_app.logger.warning("Failed to clear dashboard cache: %s", err)
 
     return jsonify({"message": "Facility added", "id": fac.id}), 201
 
@@ -395,8 +395,8 @@ def update_facility(facility_id):
         from routes.dashboard import clear_dashboard_cache
 
         clear_dashboard_cache()
-    except Exception:
-        pass
+    except Exception as err:
+        current_app.logger.warning("Failed to clear dashboard cache: %s", err)
 
     return jsonify({"message": "Facility updated"})
 
@@ -482,8 +482,8 @@ def delete_facility(facility_id):
     try:
         from routes.dashboard import clear_dashboard_cache
         clear_dashboard_cache()
-    except Exception:
-        pass
+    except Exception as err:
+        current_app.logger.warning("Failed to clear dashboard cache: %s", err)
 
     return jsonify({"message": "Facility deleted"})
 
@@ -571,7 +571,7 @@ def import_facilities():
     try:
         from routes.dashboard import clear_dashboard_cache
         clear_dashboard_cache()
-    except Exception:
-        pass
+    except Exception as err:
+        current_app.logger.warning("Failed to clear dashboard cache: %s", err)
 
     return jsonify({"message": f"{imported_count} facilities imported"})

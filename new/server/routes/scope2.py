@@ -22,7 +22,6 @@ MMBTU_PER_MWH = 3.412142
 MAX_GRID_EF_KG_PER_KWH = 2.0
 SCOPE2_SOURCE_TYPES = ("electricity", "indirect_steam", "cogen_allocation", "cooling")
 
-
 def resolve_electricity_factor(grid_region, supplied_ef):
     """One Scope 2 electricity factor policy for manual, JSON-import and file-bulk paths (BUG-099).
 
@@ -31,7 +30,6 @@ def resolve_electricity_factor(grid_region, supplied_ef):
       renewable PPA at 0) within [0, MAX_GRID_EF_KG_PER_KWH] kg CO2e/kWh.
     Returns (factor_kg_per_kwh, resolved_grid_region). Raises ValidationError otherwise.
     """
-    from input_validation import ValidationError, parse_number
 
     name = str(grid_region or "").strip()
     canonical, entry = grid_entry(name) if name else (name, None)
@@ -47,14 +45,12 @@ def resolve_electricity_factor(grid_region, supplied_ef):
         )
     return ef, name or None
 
-
 def default_scope2_uncertainty(co2e):
     """Default Scope 2 uncertainty, stored as a 1-sigma fraction: 5 % factor and 2 % activity data, both 95 %
     half-widths, give 5.39 % at 95 % = 2.69 % at 1 sigma (BUG-0052: the 5.4 % figure is the 95 % value)."""
     return propagate_uncertainty(
         co2e, ef_uncertainty=0.05, activity_uncertainty=0.02, tier=Tier.T2, process_category="scope2", gas="co2",
     )["relative_uncertainty"]
-
 
 def _calc_indirect_steam(data):
     """Calculate tCO2e for indirect steam / heat entry."""
@@ -98,10 +94,8 @@ def _calc_indirect_steam(data):
         co2_kg += fuel_mmbtu * (0.001 * float(gwp["CH4"]) + 0.0001 * float(gwp["N2O"]))
     return co2_kg / 1000.0, energy_mmbtu, ef_co2
 
-
 _STEAM_MASS_UNITS = {"ton", "tons", "tonne", "tonnes", "mt", "metric_ton", "us_ton", "short_ton", "mlb", "klb",
                      "thousand_lbs", "lb", "lbs", "pound", "pounds", "kg", "kilogram"}
-
 
 def _steam_fuel_factor_kg_per_mmbtu(ef_co2):
     """kg CO2e per MMBtu of boiler fuel as _calc_indirect_steam applies it (CO2, plus the Table 4-6
@@ -114,7 +108,6 @@ def _steam_fuel_factor_kg_per_mmbtu(ef_co2):
         gwp = get_active_gwp()
         ef += 0.001 * float(gwp["CH4"]) + 0.0001 * float(gwp["N2O"])
     return ef
-
 
 def _recalc_indirect_steam(emission, data, factor, old_heat, old_co2e, old_ef, old_tons=None):
     """(co2e t, delivered heat MMBtu) of an edited steam record.
@@ -150,7 +143,6 @@ def _recalc_indirect_steam(emission, data, factor, old_heat, old_co2e, old_ef, o
     co2e, _, _ = _calc_indirect_steam({"amount": heat, "unit": "mmbtu", "calc_inputs": {"indirect_steam": ci}})
     return co2e, heat
 
-
 def _calc_cogen_allocation(data):
     """Calculate heat-allocated tCO2e for CHP / cogeneration entry."""
     val = float(data.get("amount", 0) or data.get("co2e", 0) or data.get("total_emissions", 0))
@@ -176,7 +168,6 @@ def _calc_cogen_allocation(data):
         power_efficiency=data.get("power_efficiency") or ci.get("power_efficiency"),
     )
     return res["metadata"]["allocated_heat_tonnes"]
-
 
 
 def _page_args():
@@ -211,14 +202,17 @@ def get_scope2_emissions():
         facility_arg = request.args.get("facilityId") or request.args.get("facility_id")
         if year_arg and year_arg != "all":
             try:
-                query = query.filter(Scope2Emission.year == int(year_arg))
-            except ValueError:
-                pass
+                query = query.filter(Scope2Emission.year == parse_year(year_arg, "year", required=True))
+            except ValidationError as ve:
+                return jsonify({"error": str(ve)}), 400
         if facility_arg and facility_arg != "all":
             try:
-                query = query.filter(Scope2Emission.facility_id == int(facility_arg))
-            except ValueError:
-                pass
+                fid = int(facility_arg)
+                if not (1 <= fid <= 2147483647):
+                    raise ValueError()
+                query = query.filter(Scope2Emission.facility_id == fid)
+            except (ValueError, TypeError):
+                return jsonify({"error": "Invalid facilityId parameter. Must be a positive integer or 'all'."}), 400
 
         # optional server-side paging (limit / offset): the tables used to download every record on
         # every page change (4 MB at 10,000 records) to show 10 rows
@@ -272,7 +266,6 @@ def get_scope2_emissions():
     except Exception as e:
         current_app.logger.exception(f"Failed to list Scope 2 emissions: {e}")
         return jsonify({"error": "Failed to load Scope 2 emissions"}), 500
-
 
 @scope2_bp.route("", methods=["POST"])
 @login_required
@@ -543,7 +536,6 @@ def create_scope2_emission():
         201,
     )
 
-
 @scope2_bp.route("/<int:emission_id>", methods=["PUT"])
 @login_required
 def update_scope2_emission(emission_id):
@@ -741,7 +733,6 @@ def update_scope2_emission(emission_id):
 
     return jsonify({"message": "Scope 2 emission updated", "status": emission.status})
 
-
 @scope2_bp.route("/<int:emission_id>", methods=["DELETE"])
 @login_required
 def delete_scope2_emission(emission_id):
@@ -791,7 +782,6 @@ def delete_scope2_emission(emission_id):
     clear_dashboard_cache()
 
     return jsonify({"message": "Scope 2 emission deleted"})
-
 
 @scope2_bp.route("/bulk-import", methods=["POST"])
 @login_required
@@ -957,7 +947,6 @@ def bulk_import_scope2():
         {"message": f"Successfully imported {imported_count} records", "errors": errors}
     ), (200 if not errors else 207)
 
-
 @scope2_bp.route("/emission-factors", methods=["GET"])
 @login_required
 def get_emission_factors():
@@ -976,3 +965,4 @@ def get_emission_factors():
         )
 
     return jsonify(factors)
+

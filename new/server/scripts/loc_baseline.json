@@ -10,7 +10,7 @@
     "routes/data.py": 921,
     "routes/emissions.py": 1194,
     "routes/managedata.py": 1053,
-    "routes/scope2.py": 978
+    "routes/scope2.py": 968
   },
   "functions": {
     "background_processor.py::_process_row": 257,

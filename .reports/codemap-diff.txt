@@ -1,0 +1,59 @@
+================================================================================
+CODEMAP ANALYSIS REPORT
+Generated: 2026-10-27
+================================================================================
+
+1. SCAN SUMMARY
+--------------------------------------------------------------------------------
+- Project Type: Full-Stack Monorepo (Flask 3.1 REST API + React 19 / Vite SPA)
+- Total Core Files Scanned: 637
+    * Server Files: 375 Python source modules (~115,252 lines)
+    * Client Files: 262 TypeScript/TSX/CSS modules (~61,165 lines)
+- Total Lines of Code: ~176,417 lines
+- Codemaps Generated:
+    * docs/CODEMAPS/architecture.md
+    * docs/CODEMAPS/backend.md
+    * docs/CODEMAPS/frontend.md
+    * docs/CODEMAPS/data.md
+    * docs/CODEMAPS/dependencies.md
+
+2. BASELINE INITIALIZATION
+--------------------------------------------------------------------------------
+- Previous codemaps did not exist in docs/CODEMAPS/. Initial baseline established.
+- Initial Diff: 100% new baseline. All 5 codemaps generated.
+
+3. ARCHITECTURE SUMMARY
+--------------------------------------------------------------------------------
+- Backend Architecture:
+    * Entrypoint: new/server/app.py
+    * Blueprints: 16 modular blueprints registered (auth, emissions, facilities,
+      dashboard, reports, scope2, scope3, custom-factors, audit, qaqc, equity,
+      ldar, managedata, factors, notifications, swagger)
+    * Calculation Engines: 36 calculation modules in new/server/calculations/
+      handling Combustion, Venting, Fugitives, Gas Analysis, and Uncertainty.
+    * Models: 29 SQLAlchemy declarative tables in new/server/models.py.
+    * Background Processing: Chunked worker in new/server/background_processor.py
+      supporting Redis & thread pools.
+
+- Frontend Architecture:
+    * Entrypoint: new/client/src/main.tsx & new/client/src/App.tsx
+    * Routes: 14 primary routes configured across 4 functional navigation groups:
+      (Overview, Data, Assurance & Reporting, Administration).
+    * Access Control: RequireRole route guard enforcing nonIT, superuser,
+      audit, and IT permissions.
+    * State Management: Modular Context hierarchy (AuthContext, LayoutContext,
+      ToastContext) wrapped in ErrorBoundary.
+
+4. DEPENDENCIES & TOOLING
+--------------------------------------------------------------------------------
+- Backend: Flask 3.1.3, SQLAlchemy 3.1.1, Flask-WTF, Flask-Limiter, ReportLab,
+  Matplotlib, OpenPyXL, Redis, Psycopg2, Pytest, Hypothesis.
+- Frontend: React 19.2.0, Vite 7.2.4, Tailwind CSS 4.3.3, Lucide-React, Recharts,
+  Leaflet, TanStack Table, PapaParse, jsPDF, Playwright, Vitest.
+
+5. STALENESS & HEALTH CHECKS
+--------------------------------------------------------------------------------
+- Documentation Freshness: 100% fresh (Baseline created 2026-10-27).
+- Staleness Warnings (>90 days): None.
+- Recommended Next Run: After major feature additions, schema migrations, or refactoring.
+================================================================================
