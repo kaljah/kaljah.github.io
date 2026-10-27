@@ -182,23 +182,14 @@ class AssociatedGasVentingCalculator(BaseCalculator):
             )
 
         # 2. Validate Gas Composition (applies across all tiers when provided)
-        c_ch4 = None
-        c_co2 = None
-        if ch4_content is not None:
-            c_ch4 = self._normalize_fraction(ch4_content)
-            if not (0.0 <= c_ch4 <= 1.0):
-                raise ValueError(f"CH4 molar fraction must be between 0.0 and 1.0 (got {c_ch4}).")
-        if co2_content is not None:
-            c_co2 = self._normalize_fraction(co2_content)
-            if not (0.0 <= c_co2 <= 1.0):
-                raise ValueError(f"CO2 molar fraction must be between 0.0 and 1.0 (got {c_co2}).")
-
-        if c_ch4 is not None and c_co2 is not None:
-            if (c_ch4 + c_co2) > 1.0001:
-                raise ValueError(
-                    f"Gas composition error: Sum of CH4 ({c_ch4*100:.1f}%) and CO2 ({c_co2*100:.1f}%) "
-                    f"exceeds 100% ({((c_ch4 + c_co2)*100):.1f}%)."
-                )
+        c_ch4 = self._normalize_fraction(ch4_content) if ch4_content is not None else None
+        if c_ch4 is not None and not (0.0 <= c_ch4 <= 1.0):
+            raise ValueError(f"CH4 molar fraction must be between 0.0 and 1.0 (got {c_ch4}).")
+        c_co2 = self._normalize_fraction(co2_content) if co2_content is not None else None
+        if c_co2 is not None and not (0.0 <= c_co2 <= 1.0):
+            raise ValueError(f"CO2 molar fraction must be between 0.0 and 1.0 (got {c_co2}).")
+        if c_ch4 is not None and c_co2 is not None and (c_ch4 + c_co2) > 1.0001:
+            raise ValueError(f"Gas composition error: Sum of CH4 ({c_ch4*100:.1f}%) and CO2 ({c_co2*100:.1f}%) exceeds 100% ({((c_ch4 + c_co2)*100):.1f}%).")
 
         ctrl_eff = self._normalize_fraction(control_efficiency, default=0.0)
         if ctrl_eff < 0.0 or ctrl_eff > 1.0:
@@ -389,11 +380,18 @@ class AssociatedGasVentingCalculator(BaseCalculator):
                 raise ValueError(f"Flared gas volume cannot be negative: {flared_scf}")
 
             # Mass balance violation check (Recovered + Flared > Total Produced)
-            if (rec_scf + flared_scf) > (total_produced_gas_scf * 1.0001):
-                raise ValueError(f"Mass balance violation: Recovered gas ({rec_scf:.1f} scf) + Flared gas ({flared_scf:.1f} scf) exceeds total produced associated gas ({total_produced_gas_scf:.1f} scf).")
+            basis_gas = total_period_gas_scf if oil_rate_bbl_day is None else total_produced_gas_scf
+            if (rec_scf + flared_scf) > (basis_gas * 1.0001):
+                raise ValueError(f"Mass balance violation: Recovered gas ({rec_scf:.1f} scf) + Flared gas ({flared_scf:.1f} scf) exceeds total produced associated gas ({basis_gas:.1f} scf).")
 
             # Net vented gas volume
-            net_vented_gas_scf = max(0.0, total_produced_gas_scf - rec_scf - flared_scf) * (1.0 - ctrl_eff)
+            if oil_rate_bbl_day is None and (rec_scf > 0 or flared_scf > 0):
+                rem_gas = max(0.0, total_period_gas_scf - rec_scf - flared_scf)
+                vf = min(1.0, dur_days / p_days) if (dur_days is not None and p_days is not None) else (
+                    min(1.0, dur_days / 365.0) if (dur_days is not None and dur_days < 365.0) else 1.0)
+                net_vented_gas_scf = rem_gas * vf * (1.0 - ctrl_eff)
+            else:
+                net_vented_gas_scf = max(0.0, total_produced_gas_scf - rec_scf - flared_scf) * (1.0 - ctrl_eff)
 
             # Gas composition: 70 % CH4 / 10 % CO2 are Exhibit 6-5's sample inputs, not defaults; an
             # unanalysed associated gas was silently given them

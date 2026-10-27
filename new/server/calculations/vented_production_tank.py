@@ -100,7 +100,7 @@ class AcidGasRemovalCalculator(BaseCalculator):
             elif sweet_gas_scf_yr is not None:
                 v_sweet_scf = float(sweet_gas_scf_yr)
             else:
-                v_sweet_scf = v_sour_scf * (1.0 - c_sour_co2)
+                v_sweet_scf = v_sour_scf * (1.0 - c_sour_co2) / max(0.0001, 1.0 - c_sweet_co2)
 
             # Equation 6-18: E_CO2 = [V_sour * y_sour - V_sweet * y_sweet] * (44 / 379.3) / 2204.62
             co2_scf_removed = max(0.0, (v_sour_scf * c_sour_co2) - (v_sweet_scf * c_sweet_co2))

@@ -232,6 +232,11 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
 
     (rawPending.scope2 || []).forEach(r => {
       const anomaly = detectAnomalies(r, facilities);
+      const isElec = !r.source_type || r.source_type === "electricity";
+      const isCool = String(r.source_type || "").toLowerCase().includes("cool");
+      const isSteam = String(r.source_type || "").toLowerCase().includes("steam");
+      const amt = isElec ? r.electricity_kwh : isCool ? r.cooling_ton : isSteam ? (r.steam_ton || r.amount) : (r.heat_mmbtu || r.amount);
+      const unit = isElec ? "kWh" : isCool ? t("ton-hours") : isSteam ? t("tonnes") : "MMBtu";
       list.push({
         key: `2-${r.id}`,
         id: r.id,
@@ -241,7 +246,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
         date: `${r.year}-${String(r.month || 1).padStart(2, '0')}`,
         facility_id: r.facility_id,
         created_by: r.created_by,
-        desc: `${r.source_type || t("Electricity")} (${Number(r.electricity_kwh || 0).toLocaleString()} kWh)`,
+        desc: `${r.source_type || t("Electricity")} (${Number(amt || 0).toLocaleString()} ${unit})`,
         tco2e: Number(r.co2e || 0),
         qa_flag: r.qa_flag,
         ...anomaly

@@ -185,8 +185,6 @@ class Emission(db.Model):
     # Maker-Checker Approval
     approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     approved_at = db.Column(db.DateTime, nullable=True)
-    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), nullable=True, index=True)
-    region = db.Column(db.String(100), nullable=True, index=True)
     gas_composition_json = db.Column("gas_composition", db.Text, nullable=True)
 
     @property
@@ -500,8 +498,6 @@ class Scope2Emission(db.Model):
     # Maker-Checker Approval
     approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     approved_at = db.Column(db.DateTime, nullable=True)
-    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), nullable=True, index=True)
-    region = db.Column(db.String(100), nullable=True, index=True)
     gas_composition_json = db.Column("gas_composition", db.Text, nullable=True)
 
     @property
@@ -559,7 +555,6 @@ class Scope3Emission(db.Model):
     # Maker-Checker Approval
     approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     approved_at = db.Column(db.DateTime, nullable=True)
-    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), nullable=True, index=True)
     region = db.Column(db.String(100), nullable=True, index=True)
     gas_composition_json = db.Column("gas_composition", db.Text, nullable=True)
 

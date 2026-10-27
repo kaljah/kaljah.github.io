@@ -22,7 +22,7 @@
     "calculations/dispatcher_branches_combustion.py::calc_liquids_unloading": 159,
     "calculations/dispatcher_branches_fugitive.py::calc_fugitive": 227,
     "calculations/legacy_engine.py::_compute_emissions_impl": 272,
-    "calculations/vented_associated_gas.py::AssociatedGasVentingCalculator.calculate": 425,
+    "calculations/vented_associated_gas.py::AssociatedGasVentingCalculator.calculate": 423,
     "calculations/vented_completion.py::CompletionFlowbackCalculator.calculate": 445,
     "calculations/vented_exploration.py::WellTestingCalculator.calculate": 189,
     "calculations/vented_mud.py::MudDegassingCalculator.calculate": 187,

@@ -9,6 +9,7 @@ from utils import facility_access_error, get_current_user, get_allowed_facility_
     require_facility_access, initial_record_status, internal_error
 from input_validation import ValidationError, parse_number, parse_year, parse_month, normalize_scope3_category, \
     require_plausible_co2e
+from services.dashboard_filters import _parse_facility_ids
 import datetime
 
 scope3_bp = Blueprint("scope3", __name__)
@@ -50,22 +51,24 @@ def get_scope3_emissions():
         query = query.filter(Scope3Emission.facility_id.in_(allowed_fids))
 
     # Optional query filters
-    year_arg = request.args.get("year")
-    fac_arg = request.args.get("facilityId") or request.args.get("facility_id")
+    year_arg, fac_arg = request.args.get("year"), request.args.get("facilityId") or request.args.get("facility_id")
+    status_arg = request.args.get("status")
+    if year_arg == "baseline":
+        from models import BaseYear, BaseYearRecalculation
+        rec = BaseYearRecalculation.query.order_by(BaseYearRecalculation.recalc_date.desc()).first()
+        base = rec or BaseYear.query.first()
+        year_arg = str(base.year) if base else "-1"
     if year_arg and year_arg != "all":
         try:
             parsed_year = parse_year(year_arg, "year", required=True)
             query = query.filter(Scope3Emission.year == parsed_year)
         except ValidationError as ve:
             return jsonify({"error": str(ve)}), 400
-    if fac_arg and fac_arg != "all":
-        try:
-            fid = int(fac_arg)
-            if not (1 <= fid <= 2147483647):
-                raise ValueError()
-            query = query.filter(Scope3Emission.facility_id == fid)
-        except (ValueError, TypeError):
-            return jsonify({"error": "Invalid facilityId parameter. Must be a positive integer or 'all'."}), 400
+    parsed_fids = _parse_facility_ids(fac_arg)
+    if parsed_fids is not None:
+        query = query.filter(Scope3Emission.facility_id.in_(parsed_fids))
+    if status_arg and status_arg != "all":
+        query = query.filter(Scope3Emission.status.in_([x.strip() for x in status_arg.split(",") if x.strip()]))
 
     # optional server-side paging (limit / offset): the tables used to download every record on
     # every page change (4 MB at 10,000 records) to show 10 rows

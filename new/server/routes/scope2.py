@@ -9,13 +9,12 @@ from calculations.uncertainty import propagate_uncertainty, Tier
 from utils import facility_access_error, get_current_user, get_allowed_facility_ids, require_facility_access, initial_record_status, log_activity_and_notify
 from input_validation import ValidationError, parse_number, parse_year, parse_month, require_plausible_co2e
 from services.scope2_gases import gas_split
+from services.dashboard_filters import _parse_facility_ids
 from services.scope2_market import is_zero_emission_instrument, market_factor
 import datetime
 
 scope2_bp = Blueprint("scope2", __name__)
-
-# Default emission factor for natural-gas-fired boilers (indirect steam)
-# Per EPA AP-42 / API Compendium: ~53.06 kg CO2/MMBtu for natural gas
+# Default emission factor for natural-gas boilers: ~53.06 kg CO2/MMBtu (EPA AP-42 / API Compendium)
 _DEFAULT_BOILER_EF_KG_PER_MMBTU = 53.06
 MMBTU_PER_MWH = 3.412142
 # Upper bound for a supplier-specific grid factor; the most carbon-intensive grids are ~1.2 kg CO2e/kWh.
@@ -30,7 +29,6 @@ def resolve_electricity_factor(grid_region, supplied_ef):
       renewable PPA at 0) within [0, MAX_GRID_EF_KG_PER_KWH] kg CO2e/kWh.
     Returns (factor_kg_per_kwh, resolved_grid_region). Raises ValidationError otherwise.
     """
-
     name = str(grid_region or "").strip()
     canonical, entry = grid_entry(name) if name else (name, None)
     if entry is not None:
@@ -198,21 +196,23 @@ def get_scope2_emissions():
             query = query.filter(Scope2Emission.facility_id.in_(allowed_fids))
 
         # Optional query-string filters
-        year_arg = request.args.get("year")
-        facility_arg = request.args.get("facilityId") or request.args.get("facility_id")
+        year_arg, fac_arg = request.args.get("year"), request.args.get("facilityId") or request.args.get("facility_id")
+        status_arg = request.args.get("status")
+        if year_arg == "baseline":
+            from models import BaseYear, BaseYearRecalculation
+            rec = BaseYearRecalculation.query.order_by(BaseYearRecalculation.recalc_date.desc()).first()
+            base = rec or BaseYear.query.first()
+            year_arg = str(base.year) if base else "-1"
         if year_arg and year_arg != "all":
             try:
                 query = query.filter(Scope2Emission.year == parse_year(year_arg, "year", required=True))
             except ValidationError as ve:
                 return jsonify({"error": str(ve)}), 400
-        if facility_arg and facility_arg != "all":
-            try:
-                fid = int(facility_arg)
-                if not (1 <= fid <= 2147483647):
-                    raise ValueError()
-                query = query.filter(Scope2Emission.facility_id == fid)
-            except (ValueError, TypeError):
-                return jsonify({"error": "Invalid facilityId parameter. Must be a positive integer or 'all'."}), 400
+        parsed_fids = _parse_facility_ids(fac_arg)
+        if parsed_fids is not None:
+            query = query.filter(Scope2Emission.facility_id.in_(parsed_fids))
+        if status_arg and status_arg != "all":
+            query = query.filter(Scope2Emission.status.in_([x.strip() for x in status_arg.split(",") if x.strip()]))
 
         # optional server-side paging (limit / offset): the tables used to download every record on
         # every page change (4 MB at 10,000 records) to show 10 rows

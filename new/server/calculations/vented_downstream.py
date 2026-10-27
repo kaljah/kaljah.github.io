@@ -448,7 +448,7 @@ class RefiningHydrogenPlantCalculator(BaseCalculator):
             if fr_tonnes is None or cf is None:
                 raise ValueError("Feedstock balance (Eq 6-49) needs the feedstock rate (tonnes, scf or m3) and its "
                                  "carbon fraction or composition")
-            total_co2 = float(fr_tonnes) * float(cf) * (44.0 / 12.0)
+            total_co2 = float(fr_tonnes) * float(cf) * (44.01 / 12.011)
 
         elif method == "h2_stoichiometry":
             ratio = co2_to_h2_molar_ratio
@@ -470,13 +470,13 @@ class RefiningHydrogenPlantCalculator(BaseCalculator):
                 if float(h2_production_scf_yr) < 0:
                     raise ValueError("H2 production volume cannot be negative")
                 lbmoles_h2 = float(h2_production_scf_yr) / MOLAR_VOL_US
-                lb_co2 = lbmoles_h2 * ratio_val * 44.0
+                lb_co2 = lbmoles_h2 * ratio_val * 44.01
                 total_co2 = lb_co2 / LB_PER_TONNE
             elif h2_production_m3_yr is not None:
                 if float(h2_production_m3_yr) < 0:
                     raise ValueError("H2 production volume cannot be negative")
                 kgmoles_h2 = float(h2_production_m3_yr) / MOLAR_VOL_METRIC
-                kg_co2 = kgmoles_h2 * ratio_val * 44.0
+                kg_co2 = kgmoles_h2 * ratio_val * 44.01
                 total_co2 = kg_co2 / 1000.0
             else:
                 raise ValueError("H2 stoichiometry (Eq 6-50) needs the hydrogen produced (scf or m3)")
