@@ -431,7 +431,7 @@ def create_scope2_emission():
         activity=data.get("activity"),
         division=data.get("division"),
         region=data.get("region"),
-        field=data.get("field"),
+        field=data.get("field"), gas_composition=data.get("gas_composition"),
         created_by=user_id,
         status=initial_status,
         approved_by=user.id if initial_status == "Verified" and user else None,
@@ -686,10 +686,9 @@ def update_scope2_emission(emission_id):
         emission.activity = data["activity"]
     if "division" in data:
         emission.division = data["division"]
-    if "region" in data:
-        emission.region = data["region"]
-    if "field" in data:
-        emission.field = data["field"]
+    if "region" in data: emission.region = data["region"]
+    if "field" in data: emission.field = data["field"]
+    if "gas_composition" in data: emission.gas_composition = data["gas_composition"]
     require_plausible_co2e(emission.co2e, emission.co2e_location_based, emission.co2e_market_based)
     from calculations.anomaly import AnomalyDetector
     try:

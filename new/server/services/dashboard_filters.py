@@ -104,6 +104,23 @@ def horizon_delta(ch4_t, n2o_t, horizon="100"):
     return float(ch4_t or 0) * (c20 - c100) + float(n2o_t or 0) * (n20 - n100)
 
 
+def scope3_record_co2e(co2e_val, gc, horizon="100"):
+    """Calculate effective Scope 3 co2e taking GWP-20 gas composition into account."""
+    val = float(co2e_val or 0.0)
+    if str(horizon).lower() in ("20", "gwp20", "20yr") and gc:
+        if isinstance(gc, str):
+            import json
+            try:
+                gc = json.loads(gc)
+            except Exception:
+                gc = None
+        if isinstance(gc, dict):
+            ch4_t = gc.get("ch4_tonnes") or (val * (gc.get("ch4_pct", 0) / 100.0) / 28.0 if gc.get("ch4_pct") else 0.0)
+            n2o_t = gc.get("n2o_tonnes") or (val * (gc.get("n2o_pct", 0) / 100.0) / 265.0 if gc.get("n2o_pct") else 0.0)
+            val += horizon_delta(ch4_t, n2o_t, "20")
+    return val
+
+
 # ── Source classification (BUG-061) ─────────────────────────────────────────────
 
 _FLARING = {"flaring", "flare", "routine_flaring", "non_routine_flaring", "safety_flaring", "flare_gas",

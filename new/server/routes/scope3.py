@@ -177,7 +177,7 @@ def create_scope3_emission():
         status=initial_status,
         approved_by=user.id if initial_status == "Verified" else None,
         approved_at=datetime.datetime.now(datetime.timezone.utc) if initial_status == "Verified" else None,
-        region=data.get("region") or facility.region or facility.name,
+        region=data.get("region") or facility.region or facility.name, gas_composition=data.get("gas_composition"),
     )
 
     # Calculate uncertainty
@@ -267,13 +267,10 @@ def create_scope3_emission():
             "facility_id": emission.facility_id,
             "category": emission.category,
             "sub_category": emission.sub_category,
-            "activity_data": emission.activity_data,
-            "amount": emission.activity_data,
-            "unit": emission.unit,
-            "emission_factor": emission.emission_factor,
-            "co2e": co2e_val,
-            "uncertainty": final_uncertainty,
-            "status": emission.status,
+            "activity_data": emission.activity_data, "amount": emission.activity_data,
+            "unit": emission.unit, "emission_factor": emission.emission_factor,
+            "co2e": co2e_val, "uncertainty": final_uncertainty, "status": emission.status,
+            "region": emission.region, "gas_composition": emission.gas_composition,
         },
         "calculation_method": calc_method,
     }), 201
@@ -374,6 +371,8 @@ def update_scope3_emission(emission_id):
         emission.notes = data["notes"]
     if "region" in data:
         emission.region = data["region"]
+    if "gas_composition" in data:
+        emission.gas_composition = data["gas_composition"]
 
     require_plausible_co2e(emission.co2e)
     from calculations.anomaly import AnomalyDetector

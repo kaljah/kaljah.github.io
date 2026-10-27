@@ -6,11 +6,11 @@
     "calculations/vented_downstream.py": 838,
     "calculations/vented_midstream.py": 807,
     "calculations/vented_unloading.py": 1034,
-    "routes/dashboard.py": 1272,
+    "routes/dashboard.py": 1258,
     "routes/data.py": 921,
     "routes/emissions.py": 1194,
     "routes/managedata.py": 1053,
-    "routes/scope2.py": 968
+    "routes/scope2.py": 967
   },
   "functions": {
     "background_processor.py::_process_row": 257,
@@ -31,7 +31,7 @@
     "calculations/vented_unloading.py::LiquidsUnloadingCalculator.calculate": 159,
     "calculations/vented_unloading.py::LiquidsUnloadingCalculator.calculate_tier3_equation_6_10": 159,
     "calculations/vented_unloading.py::LiquidsUnloadingCalculator.calculate_volume_based": 154,
-    "routes/dashboard.py::get_batch_dashboard_data": 253,
+    "routes/dashboard.py::get_batch_dashboard_data": 246,
     "routes/dashboard_flaring.py::get_flaring_summary": 168,
     "routes/dashboard_ogmp.py::get_ogmp_metrics": 165,
     "routes/dashboard_sbti.py::get_sbti_trajectory": 207,
@@ -47,8 +47,8 @@
     "routes/reports_national.py::export_national_inventory_report": 574,
     "routes/scope2.py::bulk_import_scope2": 161,
     "routes/scope2.py::create_scope2_emission": 266,
-    "routes/scope2.py::update_scope2_emission": 194,
-    "routes/scope3.py::create_scope3_emission": 167,
+    "routes/scope2.py::update_scope2_emission": 193,
+    "routes/scope3.py::create_scope3_emission": 164,
     "services/intensity.py::facility_row": 196,
     "services/inventory_uncertainty.py::inventory_uncertainty": 176,
     "services/scope1_template.py::build_xlsx": 186

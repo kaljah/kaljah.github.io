@@ -1960,7 +1960,7 @@ def _process_row_scope2(
         location=meter or grid_region or None,
         activity=row.get("activity") or facility.activity, division=row.get("division") or facility.division,
         field=row.get("field") or facility.field, region=row.get("region") or facility.region or facility.name,
-        created_by=user_id,
+        gas_composition=row.get("gas_composition"), created_by=user_id,
         **_bulk_status(user_id),  # Maker-Checker: awaits reviewer approval (admins: Verified)
     )
     
@@ -2083,7 +2083,7 @@ def _process_row_scope3_eeio(
         uncertainty=unc,
         calculation_method="Spend-based (EEIO)", data_quality="Average-data method",
         notes=row.get("notes", "Bulk Imported via EEIO"), region=row.get("region") or facility.region or facility.name,
-        created_by=user_id,
+        gas_composition=row.get("gas_composition"), created_by=user_id,
         **_bulk_status(user_id),
     )
     
@@ -2231,7 +2231,7 @@ def _process_row_scope3(
         uncertainty=unc,
         calculation_method=calc_method or f"Scope 3 - {cat_str}",  # as the manual form labels it
         notes=row.get("notes", "Bulk Imported"), region=row.get("region") or facility.region or facility.name,
-        created_by=user_id,
+        gas_composition=row.get("gas_composition"), created_by=user_id,
         **_bulk_status(user_id),  # Maker-Checker: awaits reviewer approval (admins: Verified)
     )
 

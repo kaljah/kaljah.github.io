@@ -41,7 +41,6 @@ _CACHE_STATS = {"hits": 0, "misses": 0}
 _CACHE_STATS_LOCK = threading.Lock()
 _CACHE_LOG_EVERY = 1000
 
-
 def _record_cache_lookup(hit):
     with _CACHE_STATS_LOCK:
         _CACHE_STATS["hits" if hit else "misses"] += 1
@@ -55,17 +54,14 @@ def _record_cache_lookup(hit):
         hits, misses, 100.0 * hits / total, total,
     )
 
-
 def cache_stats():
     """Current batch-all cache counters (since the last log line or reset)."""
     with _CACHE_STATS_LOCK:
         return dict(_CACHE_STATS)
 
-
 def reset_cache_stats():
     with _CACHE_STATS_LOCK:
         _CACHE_STATS["hits"] = _CACHE_STATS["misses"] = 0
-
 
 def _get_global_cache_epoch():
     """Fetches the latest global cache epoch timestamp from DB to sync multi-worker Gunicorn processes."""
@@ -98,7 +94,6 @@ def _get_global_cache_epoch():
         pass
     return _LOCAL_CACHE_EPOCH
 
-
 def clear_dashboard_cache():
     """Updates global epoch in shared DB state and invalidates local worker heap."""
     import time
@@ -122,7 +117,6 @@ def clear_dashboard_cache():
     with CACHE_LOCK:
         DASHBOARD_CACHE.clear()
 
-
 def make_cache_key(namespace):
     def cache_key_builder(*args, **kwargs):
         epoch = _get_global_cache_epoch()
@@ -133,7 +127,6 @@ def make_cache_key(namespace):
         return keys.hashkey(namespace, epoch, *args, **hashable_kwargs)
 
     return cache_key_builder
-
 
 def _run_in_app_ctx(app, fn, *args, **kwargs):
     """
@@ -148,10 +141,7 @@ def _run_in_app_ctx(app, fn, *args, **kwargs):
         finally:
             db.session.remove()
 
-
 dashboard_bp = Blueprint("dashboard", __name__)
-
-
 
 def _finite_or_none(value):
     """BUG-039: legacy goal rows may hold NULL/NaN; never let them break the dashboard."""
@@ -256,16 +246,9 @@ def get_batch_dashboard_data():
                 division=division,
             )
             f_scope3 = executor.submit(
-                _run_in_app_ctx,
-                app,
-                _query_scope3_summary,
-                facility_id=facility_id,
-                year=year,
-                activity=activity,
-                division=division,
-                allowed_fids=allowed_fids,
-                segment=segment,
-                include_pending=include_pending,
+                _run_in_app_ctx, app, _query_scope3_summary, facility_id=facility_id, year=year,
+                activity=activity, division=division, allowed_fids=allowed_fids, segment=segment,
+                include_pending=include_pending, gwp_horizon=gwp_horizon,
             )
             f_categorical = executor.submit(
                 _run_in_app_ctx,
@@ -419,14 +402,12 @@ def get_batch_dashboard_data():
         print(traceback.format_exc())
         return internal_error(e)
 
-
 # ─────────────────────────────────────────────────────────────────────────────
 # PRIVATE QUERY HELPERS
 # Each helper contains the pure DB logic extracted from the matching route.
 # Routes delegate to them; get_batch_dashboard_data() calls them directly.
 # This eliminates the need to mutate request.args (BUG-10 fix).
 # ─────────────────────────────────────────────────────────────────────────────
-
 
 @dashboard_bp.route("/intensity-trend", methods=["GET"])
 @login_required
@@ -465,7 +446,6 @@ def get_intensity_trend():
         scope2_method=request.args.get("scope2_method", "location"),
     )
     return jsonify(bulk)
-
 
 @cached(cache=DASHBOARD_CACHE, key=make_cache_key("_query_summary"), lock=CACHE_LOCK)
 def _query_summary(
@@ -550,9 +530,7 @@ def _query_summary(
             d[k] = round(d[k], 6)
     return list(yearly.values())
 
-
 IMPLEMENTED_MITIGATION = {"active", "completed", "implemented", "operational", "verified"}
-
 
 @cached(cache=DASHBOARD_CACHE, key=make_cache_key("_query_mitigation"), lock=CACHE_LOCK)
 def _query_mitigation(facility_id=None, year=None, allowed_fids=None, segment=None, activity=None, division=None):
@@ -604,7 +582,6 @@ def _query_mitigation(facility_id=None, year=None, allowed_fids=None, segment=No
         )
     return results
 
-
 @cached(
     cache=DASHBOARD_CACHE, key=make_cache_key("_query_scope3_summary"), lock=CACHE_LOCK
 )
@@ -616,19 +593,34 @@ def _query_scope3_summary(
     allowed_fids=None,
     segment=None,
     include_pending=False,
+    gwp_horizon="100",
 ):
     """Scope 3 total and per-year totals (RC-9 shared filters and status; NULL years excluded
     from both the total and by_year so they always reconcile - BUG-073)."""
-    from services.dashboard_filters import apply_scope, statuses
+    from services.dashboard_filters import apply_scope, horizon_delta, statuses
 
-    q = db.session.query(Scope3Emission.year, func.sum(Scope3Emission.co2e))
-    q = apply_scope(q, Scope3Emission, allowed_fids=allowed_fids, facility_id=facility_id, activity=activity,
-                    division=division, segment=segment)
-    q = q.filter(Scope3Emission.status.in_(statuses(include_pending)), Scope3Emission.year.isnot(None))
-    by_year = {str(y): float(v or 0) for y, v in q.group_by(Scope3Emission.year).all()}
+    is_20 = str(gwp_horizon).lower() in ("20", "gwp20", "20yr")
+    scope = dict(allowed_fids=allowed_fids, facility_id=facility_id, activity=activity,
+                 division=division, segment=segment)
+    st = statuses(include_pending)
+
+    if not is_20:
+        q = db.session.query(Scope3Emission.year, func.sum(Scope3Emission.co2e))
+        q = apply_scope(q, Scope3Emission, **scope)
+        q = q.filter(Scope3Emission.status.in_(st), Scope3Emission.year.isnot(None))
+        by_year = {str(y): float(v or 0) for y, v in q.group_by(Scope3Emission.year).all()}
+    else:
+        from collections import defaultdict
+        from services.dashboard_filters import scope3_record_co2e
+        q = apply_scope(db.session.query(Scope3Emission.year, Scope3Emission.co2e, Scope3Emission.gas_composition_json),
+                        Scope3Emission, **scope).filter(Scope3Emission.status.in_(st), Scope3Emission.year.isnot(None))
+        by_year_acc = defaultdict(float)
+        for yr, co2e, gc in q.all():
+            by_year_acc[str(yr)] += scope3_record_co2e(co2e, gc, gwp_horizon)
+        by_year = {str(y): float(v) for y, v in by_year_acc.items()}
+
     total = by_year.get(str(year), 0.0) if year and year != "all" else sum(by_year.values())
-    return {"total": float(total), "by_year": by_year}
-
+    return {"total": float(total), "by_year": by_year, "gwp_horizon": 20 if is_20 else 100}
 
 @cached(
     cache=DASHBOARD_CACHE,
@@ -651,12 +643,22 @@ def _query_categorical_breakdown(
     BUG-064: grouped by facility id (distinct facilities with the same name stay separate).
     BUG-004 / BUG-054: facility-level filters and the shared status rule.
     """
+    from collections import defaultdict
     from services.dashboard_filters import apply_scope, apply_year, horizon_delta, statuses
+    from services.scope2_gases import record_totals
 
     scope = dict(allowed_fids=allowed_fids, facility_id=facility_id, activity=activity, division=division,
                  segment=segment)
     st = statuses(include_pending)
-    labels = (Facility.id, Facility.activity, Facility.division, Facility.name, Facility.field)
+    is_20 = str(gwp_horizon).lower() in ("20", "gwp20", "20yr")
+    labels = (
+        Facility.id,
+        Facility.activity,
+        Facility.division,
+        func.coalesce(Facility.region, Facility.name).label("region"),
+        Facility.field,
+        Facility.name.label("facility_name"),
+    )
 
     def grouped(model, *cols):
         q = db.session.query(*labels, *cols).join(Facility, Facility.id == model.facility_id)
@@ -665,40 +667,40 @@ def _query_categorical_breakdown(
 
     s1 = grouped(Emission, func.sum(Emission.co2e_total), func.sum(Emission.ch4_emissions),
                  func.sum(Emission.n2o_emissions))
-    # Scope 2 per record, as in the summary: the method chosen and the GWP horizon (GWP-20 re-weighted
-    # Scope 2 in the summary but not here, so the breakdown did not add up to it; bug hunt 2026-10-15 #18)
-    from collections import defaultdict
-
-    from services.scope2_gases import record_totals
 
     s2_q = apply_year(apply_scope(db.session.query(Scope2Emission), Scope2Emission, **scope), Scope2Emission, year)
     s2_by_fac = defaultdict(float)
     for e in s2_q.filter(Scope2Emission.status.in_(st)).all():
-        loc, mkt = record_totals(e, "20" if str(gwp_horizon).lower() in ("20", "gwp20", "20yr") else "100")
+        loc, mkt = record_totals(e, "20" if is_20 else "100")
         s2_by_fac[e.facility_id] += mkt if str(scope2_method).lower() == "market" else loc
     s2_labels = {f[0]: f for f in db.session.query(*labels).filter(Facility.id.in_(list(s2_by_fac) or [-1])).all()}
     s2 = [(*s2_labels[fid], total) for fid, total in s2_by_fac.items() if fid in s2_labels]
-    s3 = grouped(Scope3Emission, func.sum(Scope3Emission.co2e))
+
+    s3_q = apply_year(apply_scope(db.session.query(Scope3Emission), Scope3Emission, **scope), Scope3Emission, year)
+    s3_by_fac = defaultdict(float)
+    from services.dashboard_filters import scope3_record_co2e
+    for e in s3_q.filter(Scope3Emission.status.in_(st)).all():
+        s3_by_fac[e.facility_id] += scope3_record_co2e(e.co2e, e.gas_composition, gwp_horizon)
+    s3_labels = {f[0]: f for f in db.session.query(*labels).filter(Facility.id.in_(list(s3_by_fac) or [-1])).all()}
+    s3 = [(*s3_labels[fid], total) for fid, total in s3_by_fac.items() if fid in s3_labels]
 
     out = {}
 
     def row(r):
         return out.setdefault(r[0], {
-            "facility_id": r[0], "activity": r[1], "division": r[2], "region": r[3], "field": r[4],
+            "facility_id": r[0], "activity": r[1], "division": r[2], "region": r[3], "field": r[4], "facility_name": r[5],
             "total_emissions": 0.0, "scope3_emissions": 0.0,
         })
 
     for r in s1:
-        row(r)["total_emissions"] += float(r[5] or 0) + horizon_delta(r[6], r[7], gwp_horizon)
+        row(r)["total_emissions"] += float(r[6] or 0) + horizon_delta(r[7], r[8], gwp_horizon)
     for r in s2:
-        row(r)["total_emissions"] += float(r[5] or 0)
+        row(r)["total_emissions"] += float(r[6] or 0)
     for r in s3:
-        row(r)["scope3_emissions"] += float(r[5] or 0)
+        row(r)["scope3_emissions"] += float(r[6] or 0)
     for d in out.values():
         d["total_emissions_all"] = d["total_emissions"] + d["scope3_emissions"]
     return list(out.values())
-
-
 
 def _query_available_years(allowed_fids=None):
     """Pure query logic for /years — returns a plain Python list. Years of the facilities in the
@@ -721,7 +723,6 @@ def _query_available_years(allowed_fids=None):
         if y[0] is not None and str(y[0]).isdigit()
     }
     return sorted(list(valid_years), reverse=True)
-
 
 @dashboard_bp.route("/summary", methods=["GET"])
 @login_required
@@ -756,7 +757,6 @@ def get_dashboard_summary():
         )
     )
 
-
 @dashboard_bp.route("/years", methods=["GET"])
 @login_required
 def get_available_years():
@@ -770,7 +770,6 @@ def get_available_years():
             403,
         )
     return jsonify(_query_available_years(get_allowed_facility_ids(user)))
-
 
 @dashboard_bp.route("/mitigation", methods=["GET"])
 @login_required
@@ -798,7 +797,6 @@ def get_mitigation():
         )
     )
 
-
 @dashboard_bp.route("/scope3/summary", methods=["GET"])
 @login_required
 def get_scope3_summary():
@@ -823,9 +821,9 @@ def get_scope3_summary():
             allowed_fids=allowed_fids,
             segment=request.args.get("segment"),
             include_pending=request.args.get("includePending", "false").lower() == "true",
+            gwp_horizon=request.args.get("gwp_horizon", "100"),
         )
     )
-
 
 @dashboard_bp.route("/goals/<int:year>", methods=["GET"])
 @login_required
@@ -854,7 +852,6 @@ def get_goal(year):
     except Exception as e:
         print(f"Error fetching goal for {year}: {e}")
         return internal_error(e)
-
 
 @dashboard_bp.route("/base-year", methods=["GET"])
 @login_required
@@ -894,7 +891,6 @@ def get_base_year():
         }
     )
 
-
 @dashboard_bp.route("/categorical-breakdown", methods=["GET"])
 @login_required
 def get_categorical_breakdown():
@@ -925,15 +921,12 @@ def get_categorical_breakdown():
         )
     )
 
-
 @dashboard_bp.route("/base-year-recalculation", methods=["POST"])
 @login_required
 def create_base_year_recalculation():
     """Create a new base year recalculation entry (delegates to canonical managedata route)."""
     from routes.managedata import add_base_year_recalculation
     return add_base_year_recalculation()
-
-
 
 @dashboard_bp.route("/intensity-stats", methods=["GET"])
 @login_required
@@ -965,11 +958,9 @@ def get_intensity_stats():
         )
     )
 
-
 # ─────────────────────────────────────────────────────────────────────────────
 # BULK INTENSITY TREND (replaces per-year N+1 loop in get_intensity_trend)
 # ─────────────────────────────────────────────────────────────────────────────
-
 
 @cached(
     cache=DASHBOARD_CACHE,
@@ -1100,7 +1091,6 @@ def get_uncertainty_analysis():
 
     return jsonify(result)
 
-
 def _filtered_facility_ids(allowed_fids, activity=None, division=None, segment=None):
     """Facility ids for the activity / division / segment filters within the user's scope, as a
     sorted tuple (hashable for the cache); None = unrestricted."""
@@ -1117,7 +1107,6 @@ def _filtered_facility_ids(allowed_fids, activity=None, division=None, segment=N
     if allowed_fids is not None:
         ids &= set(allowed_fids)
     return tuple(sorted(ids))
-
 
 @cached(
     cache=DASHBOARD_CACHE, key=make_cache_key("_query_uncertainty"), lock=CACHE_LOCK
@@ -1139,7 +1128,6 @@ def _query_uncertainty(year=None, allowed_fids=None, facility_id=None, scope="al
         include_gwp_uncertainty=include_gwp_uncertainty,
         scope2_method=scope2_method,
     )
-
 
 @dashboard_bp.route("/exclusions", methods=["GET"])
 @login_required
@@ -1172,7 +1160,6 @@ def get_report_exclusions():
             for e in exclusions
         ]
     )
-
 
 @dashboard_bp.route("/equipment-emissions", methods=["GET"])
 @login_required
@@ -1266,7 +1253,6 @@ def get_equipment_emissions():
         "unassigned_count": unassigned_count,
         "unassigned_share_pct": round((unassigned_emissions / total_source_emissions * 100), 2) if total_source_emissions > 0 else 0.0,
     })
-
 
 # Route modules split out of this file; imported last because they use the helpers above.
 from routes import dashboard_bridge, dashboard_flaring, dashboard_ogmp, dashboard_sbti  # noqa: E402,F401

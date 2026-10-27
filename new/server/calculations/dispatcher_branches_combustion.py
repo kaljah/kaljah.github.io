@@ -86,7 +86,7 @@ def calc_stationary_combustion(self, calculator, emission_factors, flat_inputs, 
 def calc_flaring(self, calculator, emission_factors, flat_inputs, gwp_dict, uncertainties, unit):
     vol_raw = self._require_float(
         flat_inputs,
-        ["amount", "quantity", "gas_volume"],
+        ["amount", "quantity", "gas_volume", "flared_gas_volume", "flare_volume", "volume"],
         "flared gas volume",
     )
     vol_m3 = self._normalize_volume(vol_raw, unit, "m3", flat_inputs.get("year"), flat_inputs.get("month"))
