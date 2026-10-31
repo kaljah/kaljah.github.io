@@ -140,6 +140,7 @@ class LNGVentingCalculator(BaseCalculator):
         disposition="vented",
         uncertainties=None,
         gwp_dict=None,
+        **kwargs,
     ):
         uncertainties = uncertainties or {}
         act = str(activity or "loading_transfer").lower().strip()
@@ -165,7 +166,7 @@ class LNGVentingCalculator(BaseCalculator):
 
             # Liquid LNG loss volume (m3)
             lng_lost_m3 = v_lng_m3 * loss_rate_per_km * l_km
-            # liquid to gas: section 6.7 describes LNG as "more than 600" times smaller than the gas
+            # liquid to gas: Section 6.7 Table 6-44 uses expansion ratio 600:1
             gas_lost_m3 = lng_lost_m3 * 600.0
             total_gas_scf = convert(gas_lost_m3, "m3", "scf")
 
@@ -179,7 +180,7 @@ class LNGVentingCalculator(BaseCalculator):
             if total_gas_scf < 0:
                 raise ValueError(f"vented_gas cannot be negative: {total_gas_scf}")
 
-        total_gas_m3 = convert(total_gas_scf, "scf", "m3")
+        total_gas_m3 = gas_lost_m3 if act == "loading_transfer" else convert(total_gas_scf, "scf", "m3")
 
         gross_ch4_tonnes = total_gas_scf * c_ch4 * (MW_CH4 / MOLAR_VOL_US) / LB_PER_TONNE
         gross_co2_tonnes = total_gas_scf * c_co2 * (MW_CO2 / MOLAR_VOL_US) / LB_PER_TONNE
@@ -244,6 +245,8 @@ class DistributionPneumaticsCalculator(BaseCalculator):
         co2_content=0.0,
         uncertainties=None,
         gwp_dict=None,
+        operating_hours=None,
+        **kwargs,
     ):
         uncertainties = uncertainties or {}
         n = _count(controller_count)  # 0 controllers is 0 (it was 1)
@@ -251,9 +254,9 @@ class DistributionPneumaticsCalculator(BaseCalculator):
                                    else controller_type, "distribution controller type")
 
         c_ch4, c_co2 = _parse_content(ch4_content, co2_content, default_ch4=factor_info["baseline_ch4_mol"])
-
-        gross_ch4_tonnes = n * factor_info["ef_tonnes_ch4"] * (c_ch4 / factor_info["baseline_ch4_mol"])
-        total_gas_scf = n * factor_info["scf_gas_hr"] * 8760.0
+        hrs = float(operating_hours if operating_hours is not None else (kwargs.get("hours") or 8760.0))
+        gross_ch4_tonnes = n * factor_info["ef_tonnes_ch4"] * (c_ch4 / factor_info["baseline_ch4_mol"]) * (hrs / 8760.0)
+        total_gas_scf = n * factor_info["scf_gas_hr"] * hrs
         gross_co2_tonnes = total_gas_scf * c_co2 * (MW_CO2 / MOLAR_VOL_US) / LB_PER_TONNE
 
         ch4_res, co2_res, n2o_res = _propagate_results(
@@ -310,10 +313,13 @@ class DistributionNonRoutineCalculator(BaseCalculator):
         disposition="vented",
         uncertainties=None,
         gwp_dict=None,
+        unit=None,
+        **kwargs,
     ):
         uncertainties = uncertainties or {}
         act, factor_info = _pick(self.TABLE_6_46, activity or "mr_station_blowdown", "Table 6-46 activity")
-        n = _count(count_or_miles)  # 0 stations / miles is 0 (it was 1)
+        u_dist = str(unit or kwargs.get("distance_unit") or "").lower().strip()
+        n = _count(count_or_miles) * (0.621371 if u_dist in ("km", "kilometer", "kilometers") else 1.0)
 
         c_ch4, c_co2 = _parse_content(ch4_content, co2_content, default_ch4=factor_info["baseline_ch4_mol"])
 

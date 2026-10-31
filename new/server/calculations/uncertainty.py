@@ -152,6 +152,16 @@ PROCESS_CATEGORY = {
     "nitric_acid_production": "stoichiometric",
     "adipic_acid_production": "stoichiometric",
     "fccu": "combustion",
+    "fugitive_screening": "fugitive",
+    "fugitive_measurement": "fugitive",
+    "fugitive_ogi": "fugitive",
+    "refining_coker": "vented",
+    "refining_h2_plant": "vented",
+    "asphalt_blowing": "vented",
+    "coke_calcining": "combustion",
+    "refining_other_vents": "vented",
+    "petrochemical": "stoichiometric",
+    "fire_suppression": "fugitive",
 }
 
 # ---------------------------------------------------------------------------
@@ -175,6 +185,8 @@ def propagate_co2e_uncertainty(
     gwp_dict=None,
     include_gwp_uncertainty=True,
     gwp_uncertainties=None,
+    cov_co2_ch4=None,
+    **kwargs,
 ):
     """
     Propagates constituent greenhouse gas emissions and uncertainties into total CO2e uncertainty.
@@ -244,7 +256,11 @@ def propagate_co2e_uncertainty(
     var_ch4 = (co2e_ch4 ** 2) * (unc_ch4 ** 2 + u_gwp_ch4 ** 2)
     var_n2o = (co2e_n2o ** 2) * (unc_n2o ** 2 + u_gwp_n2o ** 2)
 
-    total_var = var_co2 + var_ch4 + var_n2o
+    cov_term = 0.0
+    cov_val = cov_co2_ch4 if cov_co2_ch4 is not None else kwargs.get("cov_co2_ch4")
+    if cov_val is not None:
+        cov_term = 2.0 * gwp_ch4 * float(cov_val)
+    total_var = max(0.0, var_co2 + var_ch4 + var_n2o + cov_term)
     sigma_co2e = math.sqrt(total_var)
     abs_total = abs(total_co2e)
     rel_1sigma = (sigma_co2e / abs_total) if abs_total > 1e-12 else 0.0
@@ -482,13 +498,15 @@ def monte_carlo_simulation(
         })
 
     percentiles = {
-        "p5": round(ci_lower, 2),
+        "p2.5": round(ci_lower, 2),
+        "p5": round(totals[int(0.05 * n)], 2),
         "p10": round(totals[int(0.10 * n)], 2),
         "p25": round(totals[int(0.25 * n)], 2),
         "p50": round(median_res, 2),
         "p75": round(totals[int(0.75 * n)], 2),
         "p90": round(totals[int(0.90 * n)], 2),
-        "p95": round(ci_upper, 2),
+        "p95": round(totals[int(0.95 * n)], 2),
+        "p97.5": round(ci_upper, 2),
     }
 
     return {
@@ -497,8 +515,10 @@ def monte_carlo_simulation(
         "std": round(std_res, 4),
         "ci_lower": round(ci_lower, 4),
         "ci_upper": round(ci_upper, 4),
-        "p5": round(ci_lower, 4),
-        "p95": round(ci_upper, 4),
+        "p2.5": round(ci_lower, 4),
+        "p97.5": round(ci_upper, 4),
+        "p5": round(totals[int(0.05 * n)], 4),
+        "p95": round(totals[int(0.95 * n)], 4),
         "relative_uncertainty_95pct": round(u_95_pct, 2),
         "iterations": iterations,
         "histogram": bins,
@@ -520,6 +540,7 @@ def propagate_uncertainty(
     gas="co2",
     composition_uncertainty=None,
     uncertainties_dict=None,
+    is_1sigma=False,
 ):
     """
     Propagate uncertainty for a single emission source.
@@ -558,11 +579,16 @@ def propagate_uncertainty(
           coverage_factor       — k value (2)
           confidence_level_pct  — 95
     """
+    if isinstance(tier, str):
+        tier = resolve_tier(tier)
+
     if uncertainties_dict:
         if activity_uncertainty is None:
             activity_uncertainty = uncertainties_dict.get("_activity_uncertainty")
         if composition_uncertainty is None:
             composition_uncertainty = uncertainties_dict.get("_composition_uncertainty")
+        if not is_1sigma:
+            is_1sigma = bool(uncertainties_dict.get("is_1sigma") or uncertainties_dict.get("_is_1sigma"))
 
     # --- Resolve activity uncertainty from tier if not explicitly provided ---
     if activity_uncertainty is None:
@@ -593,7 +619,7 @@ def propagate_uncertainty(
     # --- Convert 95% CI table inputs to 1-sigma standard uncertainty (GUM §4.3.7) ---
     # Published IPCC / API uncertainty tables report 95% confidence bounds (U95 = k * u, k=2).
     # Converting to standard uncertainty (1σ) ensures rigorous propagation per GUM & IPCC Eq 3.1.
-    u_ef_1sigma = ef_float / COVERAGE_FACTOR_95
+    u_ef_1sigma = ef_float if is_1sigma else (ef_float / COVERAGE_FACTOR_95)
     u_act_1sigma = act_float / COVERAGE_FACTOR_95
     u_components = [u_ef_1sigma, u_act_1sigma]
 

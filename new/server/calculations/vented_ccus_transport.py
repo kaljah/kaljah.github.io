@@ -98,6 +98,7 @@ class CCUSVentingCalculator(BaseCalculator):
         vented_ch4_tonnes=0.0,
         uncertainties=None,
         gwp_dict=None,
+        **kwargs,
     ):
         uncertainties = uncertainties or {}
         act = str(activity or "stripper_vent").lower().strip()
@@ -238,8 +239,12 @@ class CrudeTransportLossesCalculator(BaseCalculator):
         trips_per_year=1.0,
         # Control & routing
         control_efficiency=0.0,
+        control_type=None,
         uncertainties=None,
         gwp_dict=None,
+        destruction_efficiency=None,
+        combustion_efficiency=None,
+        **kwargs,
     ):
         uncertainties = uncertainties or {}
         act = str(activity or "loading").lower().strip()
@@ -319,18 +324,36 @@ class CrudeTransportLossesCalculator(BaseCalculator):
             gross_ch4_tonnes = total_toc_tonnes * wt_ch4
 
         ctrl = normalize_efficiency(control_efficiency, default=0.0)
-        net_ch4_tonnes = gross_ch4_tonnes * (1.0 - ctrl)
+        c_type = str(control_type or "").lower().strip()
+        combustion_co2_tonnes = 0.0
+        flared_n2o = 0.0
+
+        # Flared/incinerated vapors oxidise to CO2 per API §5 & §6.10 with unburnt CH4 slip and N2O
+        if ctrl > 0 and c_type in ("flare", "flared", "combustor", "thermal_oxidizer", "incinerator"):
+            de_input = destruction_efficiency if destruction_efficiency is not None else kwargs.get("destruction_efficiency")
+            ce_input = combustion_efficiency if combustion_efficiency is not None else kwargs.get("combustion_efficiency")
+            flare_de = normalize_efficiency(de_input, default=0.98)
+            flare_ce = normalize_efficiency(ce_input, default=0.98)
+            net_ch4_tonnes = gross_ch4_tonnes * (1.0 - ctrl) + (gross_ch4_tonnes * ctrl * (1.0 - flare_de))
+            captured_toc = total_toc_tonnes * ctrl
+            combustion_co2_tonnes = captured_toc * 0.85 * (44.01 / 12.011) * flare_ce
+            # TOC heating value: ~20,000 Btu/lb = 44.09245 MMBtu/tonne (API Compendium §3 & Table 3-8)
+            # Factor 0.0001 is kg N2O / MMBtu (Table 4-6 / Eq 5-6)
+            toc_mmbtu = captured_toc * 44.09245
+            flared_n2o = toc_mmbtu * 0.0001 / 1000.0
+        else:
+            net_ch4_tonnes = gross_ch4_tonnes * (1.0 - ctrl)
 
         ch4_res, co2_res, n2o_res = _propagate_results(
             total_ch4=net_ch4_tonnes,
-            total_co2=0.0,
-            flared_n2o=0.0,
+            total_co2=combustion_co2_tonnes,
+            flared_n2o=flared_n2o,
             uncertainties=uncertainties,
             factor_source="API_Section_6.10",
             category="crude_transport",
         )
 
-        total_co2e = calculate_co2e(ch4=net_ch4_tonnes, co2=0.0, n2o=0.0, gwp_dict=gwp_dict)
+        total_co2e = calculate_co2e(ch4=net_ch4_tonnes, co2=combustion_co2_tonnes, n2o=flared_n2o, gwp_dict=gwp_dict)
 
         return self.format_result(
             ch4=ch4_res,

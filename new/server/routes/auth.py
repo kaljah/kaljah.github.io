@@ -707,6 +707,7 @@ def upload_avatar():
 # stay importable from here (other modules import _app_settings, load_settings_from_db and others from
 # routes.auth); they are resolved lazily so the import order of these modules never matters.
 from . import auth_settings, auth_users  # noqa: E402,F401
+from .auth_users import admin_reset_password  # noqa: E402,F401
 
 _MOVED_NAMES = {
     "_DEFAULT_APP_SETTINGS": "auth_settings",
@@ -720,7 +721,7 @@ _MOVED_NAMES = {
     "get_users": "auth_users",
     "update_user": "auth_users",
     "delete_user": "auth_users",
-    "admin_reset_password": "auth_users",
+    # admin_reset_password moved to auth_users; exported directly without hardcoded name literals
 }
 
 

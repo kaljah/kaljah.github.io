@@ -106,11 +106,12 @@ class AnomalyDetector:
             )
             exp_range = [round(expected_low, 2), round(expected_high, 2)]
         elif flagged_iqr:
+            clamped_lower = max(0.0, lower_fence)
             msg = (
                 f"Value {value:.2f} is an IQR outlier outside the interquartile range fence "
-                f"[{lower_fence:.2f} – {upper_fence:.2f}]."
+                f"[{clamped_lower:.2f} – {upper_fence:.2f}]."
             )
-            exp_range = [round(lower_fence, 2), round(upper_fence, 2)]
+            exp_range = [round(clamped_lower, 2), round(upper_fence, 2)]
         else:
             expected_low = max(0.0, mean - 3 * std)
             expected_high = mean + 3 * std

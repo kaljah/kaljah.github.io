@@ -17,13 +17,16 @@ import math
 
 from .base import BaseCalculator
 from .units import calculate_co2e
+from .uncertainty import propagate_uncertainty, resolve_tier, resolve_ef_uncertainty
 
-LB_PER_TONNE = 2204.62
-KG_PER_LB = 1000.0 / LB_PER_TONNE
-L_PER_GAL = 3.785412
-FT3_PER_M3 = 35.3147
-M3_PER_GAL = L_PER_GAL / 1000.0
-M3_PER_FT3 = 1.0 / FT3_PER_M3
+from .units import CONVERSIONS
+
+LB_PER_TONNE = 1000.0 / CONVERSIONS["lb_to_kg"]
+KG_PER_LB = CONVERSIONS["lb_to_kg"]
+L_PER_GAL = CONVERSIONS["gal_to_l"]
+FT3_PER_M3 = CONVERSIONS["m3_to_scf"]
+M3_PER_GAL = CONVERSIONS["gal_to_m3"]
+M3_PER_FT3 = CONVERSIONS["scf_to_m3"]
 CH4_PER_COD = 0.25  # B, kg CH4 / kg COD (Equation 7-17)
 N2O_EF_DEFAULT = 0.005  # kg N2O-N / kg N (Equation 7-18)
 
@@ -122,13 +125,45 @@ def fgas_gwp(gas, gwp_dict=None, override=None):
     raise ValueError(f"No GWP for '{gas}': use SF6, HFC-134a or a Table 7-84 blend, or enter the GWP")
 
 
-def _result(calc, co2=0.0, ch4=0.0, n2o=0.0, f_gas=None, inputs=None, gwp_dict=None):
+def _result(calc, co2=0.0, ch4=0.0, n2o=0.0, f_gas=None, inputs=None, gwp_dict=None, uncertainties=None):
+    unc = uncertainties or {}
+    _tier = resolve_tier(unc.get("_factor_source", "default"))
+    co2_res = propagate_uncertainty(
+        co2, resolve_ef_uncertainty("fugitive", "co2", _tier, unc.get("co2")),
+        tier=_tier, process_category="fugitive", gas="co2"
+    ) if co2 else propagate_uncertainty(0.0, 0.0, tier=_tier, process_category="fugitive", gas="co2")
+    ch4_res = propagate_uncertainty(
+        ch4, resolve_ef_uncertainty("fugitive", "ch4", _tier, unc.get("ch4")),
+        tier=_tier, process_category="fugitive", gas="ch4"
+    ) if ch4 else propagate_uncertainty(0.0, 0.0, tier=_tier, process_category="fugitive", gas="ch4")
+    n2o_res = propagate_uncertainty(
+        n2o, resolve_ef_uncertainty("fugitive", "n2o", _tier, unc.get("n2o")),
+        tier=_tier, process_category="fugitive", gas="n2o"
+    ) if n2o else propagate_uncertainty(0.0, 0.0, tier=_tier, process_category="fugitive", gas="n2o")
+
     total = calculate_co2e(co2=co2, ch4=ch4, n2o=n2o, gwp_dict=gwp_dict) + (f_gas["co2e"] if f_gas else 0.0)
-    out = calc.format_result(co2=co2 if co2 else None, ch4=ch4 if ch4 else None, n2o=n2o if n2o else None,
-                             total_co2e=total, inputs=inputs or {},
-                             metadata={"standard": "API Compendium 2021 " + calc.section_ref})
+    out = {
+        "results": {
+            "co2": co2_res,
+            "ch4": ch4_res,
+            "n2o": n2o_res,
+            "total_co2e": total,
+        },
+        "total_co2e": total,
+        "inputs": inputs or {},
+        "metadata": {"standard": "API Compendium 2021 " + calc.section_ref},
+    }
     if f_gas:
-        out["results"]["f_gas"] = f_gas
+        f_val = f_gas["value"]
+        f_res = propagate_uncertainty(
+            f_val, resolve_ef_uncertainty("fugitive", "co2", _tier, unc.get("fgas") or unc.get("hfc") or unc.get("sf6")),
+            tier=_tier, process_category="fugitive", gas="co2"
+        )
+        f_gas_out = dict(f_gas)
+        f_gas_out["uncertainty"] = f_res.get("relative_uncertainty_95pct", 0.0) / 100.0
+        f_gas_out["lower_bound"] = f_res.get("lower_bound_95", f_val)
+        f_gas_out["upper_bound"] = f_res.get("upper_bound_95", f_val)
+        out["results"]["f_gas"] = f_gas_out
     return out
 
 
@@ -188,11 +223,15 @@ class WastewaterCalculator(BaseCalculator):
         else:
             raise ValueError("Wastewater method must be aerobic, anaerobic_epa or ipcc")
         nitrogen = _num(inputs, "n_effluent_kg_m3", required=False)
+        if nitrogen is None and inputs.get("n_effluent_mg_l") is not None:
+            nitrogen = float(inputs["n_effluent_mg_l"]) / 1000.0
+        elif nitrogen is not None and str(inputs.get("n_effluent_unit") or "").lower() in ("mg/l", "ppm"):
+            nitrogen /= 1000.0
         if nitrogen:
             ef = _num(inputs, "n2o_ef_kg_n2o_n_per_kg_n", required=False)
             ef = N2O_EF_DEFAULT if ef is None else ef
             n2o = volume_m3 * nitrogen * ef * 44.0 / 28.0 * 0.001  # Eq 7-18
-        return _result(self, co2=co2, ch4=ch4, n2o=n2o, inputs=detail, gwp_dict=gwp_dict)
+        return _result(self, co2=co2, ch4=ch4, n2o=n2o, inputs=detail, gwp_dict=gwp_dict, uncertainties=uncertainties)
 
 
 def _mass_kg(value, unit):
@@ -250,7 +289,7 @@ class RefrigerantCalculator(BaseCalculator):
         else:
             raise ValueError("Refrigerant method must be charge or mass_balance")
         f_gas = {"gas": str(gas), "value": tonnes, "gwp": gwp, "co2e": tonnes * gwp}
-        return _result(self, f_gas=f_gas, inputs=detail, gwp_dict=gwp_dict)
+        return _result(self, f_gas=f_gas, inputs=detail, gwp_dict=gwp_dict, uncertainties=uncertainties)
 
 
 class ElectricalEquipmentCalculator(BaseCalculator):
@@ -267,25 +306,37 @@ class ElectricalEquipmentCalculator(BaseCalculator):
         if m in ("mass_balance", "eq_7_23"):
             tonnes = _mass_balance_kg(inputs, "SF6") / 1000.0
         elif m in ("recharge", "eq_7_24", "eq_7_25", "usage_factor"):
-            recharged = _mass_kg(_num(inputs, "recharge", "SF6 used to recharge equipment"), unit)
-            recovered = _mass_kg(_num(inputs, "recovered", "SF6 recovered from equipment"), unit)
-            if recovered > recharged:
-                raise ValueError("SF6 recovered cannot exceed the SF6 used to recharge")
-            kg = recharged - recovered  # Eq 7-24
+            kg = 0.0
+            is_decom = bool(inputs.get("decommissioning") or inputs.get("retired") or str(inputs.get("activity") or "").lower() == "decommissioning")
+            if inputs.get("recharge") is not None or (m in ("recharge", "eq_7_24") and not is_decom):
+                recharged = _mass_kg(_num(inputs, "recharge", "SF6 used to recharge equipment", required=not is_decom) or 0.0, unit)
+                recovered = _mass_kg(_num(inputs, "recovered", "SF6 recovered from equipment", required=False) or 0.0, unit)
+                if recovered > recharged and not is_decom:
+                    raise ValueError("SF6 recovered cannot exceed the SF6 used to recharge")
+                if is_decom and inputs.get("nameplate_capacity") is not None:
+                    cap = _mass_kg(_num(inputs, "nameplate_capacity", required=False) or 0.0, unit)
+                    kg = max(0.0, cap - recovered)
+                else:
+                    kg = max(0.0, recharged - recovered)  # Eq 7-24
+            elif is_decom:
+                recovered = _mass_kg(_num(inputs, "recovered", "SF6 recovered from equipment", required=False) or 0.0, unit)
+                cap = _mass_kg(_num(inputs, "nameplate_capacity", "Nameplate capacity of decommissioned equipment", required=True), unit)
+                kg = max(0.0, cap - recovered)
             capacity = _num(inputs, "nameplate_capacity", required=False)
             if m == "eq_7_24" and capacity is not None:
                 raise ValueError("Equation 7-24 has no nameplate term: use eq_7_25 (or 'recharge' for both) to add it")
-            if m in ("eq_7_25", "usage_factor") or capacity is not None:
-                if capacity is None:
+            if ((m in ("eq_7_25", "usage_factor")) or (m == "recharge" and capacity is not None)) and not is_decom:
+                if capacity is None and m != "recharge":
                     raise ValueError("Equation 7-25 needs the nameplate capacity of the equipment installed")
-                ef = _num(inputs, "usage_ef", required=False)
-                if ef is None:
-                    et = str(inputs.get("equipment_type") or "").strip().lower()
-                    if et not in USAGE_EF:
-                        raise ValueError(f"Give the usage factor (fraction/yr) or equipment type {sorted(USAGE_EF)}")
-                    ef = USAGE_EF[et]
-                kg += _mass_kg(capacity, unit) * ef * year_fraction  # Eq 7-25
-                detail["usage_ef"] = ef
+                if capacity is not None:
+                    ef = _num(inputs, "usage_ef", required=False)
+                    if ef is None:
+                        et = str(inputs.get("equipment_type") or "").strip().lower()
+                        if et not in USAGE_EF:
+                            raise ValueError(f"Give the usage factor (fraction/yr) or equipment type {sorted(USAGE_EF)}")
+                        ef = USAGE_EF[et]
+                    kg += _mass_kg(capacity, unit) * ef * year_fraction  # Eq 7-25
+                    detail["usage_ef"] = ef
             tonnes = kg / 1000.0
         elif m in ("distance", "transmission", "eq_7_26"):
             dist = _num(inputs, "distance", "Length of line at or above 34.5 kV")
@@ -299,7 +350,7 @@ class ElectricalEquipmentCalculator(BaseCalculator):
         else:
             raise ValueError("Electrical equipment method must be mass_balance, recharge or distance")
         f_gas = {"gas": "SF6", "value": tonnes, "gwp": gwp, "co2e": tonnes * gwp}
-        return _result(self, f_gas=f_gas, inputs=detail, gwp_dict=gwp_dict)
+        return _result(self, f_gas=f_gas, inputs=detail, gwp_dict=gwp_dict, uncertainties=uncertainties)
 
 
 # ------------------------------------------------------------------ dispatcher glue ------------------------------------

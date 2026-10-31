@@ -103,6 +103,7 @@ tmp/
 1m_exhaustive_test.*
 100k_test.*
 CarbonTech_PitchDeck_StartupAlgeria.pptx
+brag-output*/
 
 # Graphify temporary cache
 graphify-out/cache/

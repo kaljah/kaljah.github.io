@@ -146,8 +146,8 @@ def compute_facility_ogmp_level(
         # If measured but unreconciled, it's Level 4
         return 4
     elif td > 0:
-        # Top-down measurement exists but bottom-up missing or pending
-        return 4
+        # Top-down measurement exists but bottom-up missing or pending (requires source-level for L4)
+        return bottom_up_level if bottom_up_level is not None else 3
     elif bu > 0:
         # Return resolved bottom-up level, defaulting to Level 3
         return bottom_up_level if bottom_up_level is not None else 3

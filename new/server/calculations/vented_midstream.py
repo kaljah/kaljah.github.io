@@ -144,6 +144,7 @@ class GatheringCompressorVentingCalculator(BaseCalculator):
         ef_n2o=None,
         uncertainties=None,
         gwp_dict=None,
+        **kwargs,
     ):
         uncertainties = uncertainties or {}
         self.validate_inputs({"compressor_count": compressor_count}, ["compressor_count"])
@@ -247,6 +248,7 @@ class GatheringStorageTankCalculator(BaseCalculator):
         disposition="vented",
         uncertainties=None,
         gwp_dict=None,
+        **kwargs,
     ):
         uncertainties = uncertainties or {}
         n_tanks = _count(tank_count)
@@ -321,6 +323,7 @@ class GatheringNonRoutineVentingCalculator(BaseCalculator):
         disposition="vented",
         uncertainties=None,
         gwp_dict=None,
+        **kwargs,
     ):
         uncertainties = uncertainties or {}
         act, factor_info = _pick(self.TABLE_6_33, activity or "prv_releases", "Table 6-33 activity")
@@ -397,6 +400,7 @@ class ProcessingDehydrationCalculator(BaseCalculator):
         ef_n2o=None,
         uncertainties=None,
         gwp_dict=None,
+        **kwargs,
     ):
         uncertainties = uncertainties or {}
         days = _count(operating_days, 365.0)
@@ -412,6 +416,7 @@ class ProcessingDehydrationCalculator(BaseCalculator):
         # Exhibit 6-28:
         # Dehydrator CH4: annual_mmscf * 0.0023315 * (c_ch4 / 0.868)
         dehy_ch4_tonnes = annual_mmscf * self.TABLE_6_35["ef_ch4_tonnes_per_mmscf"] * (c_ch4 / 0.868)
+        dehy_co2_tonnes = 0.0
 
         # Kimray pump CH4: annual_mmscf * 0.0034096 * (c_ch4 / 0.868)
         pump_ch4_tonnes = 0.0
@@ -422,9 +427,11 @@ class ProcessingDehydrationCalculator(BaseCalculator):
                 pump_co2_tonnes = pump_ch4_tonnes * (1.0 / MW_CH4) * (1.0 / c_ch4) * c_co2 * MW_CO2
 
         gross_ch4_tonnes = dehy_ch4_tonnes + pump_ch4_tonnes
-        gross_co2_tonnes = pump_co2_tonnes
+        gross_co2_tonnes = dehy_co2_tonnes + pump_co2_tonnes
 
-        total_gas_scf = (gross_ch4_tonnes * LB_PER_TONNE * MOLAR_VOL_US) / (max(0.001, c_ch4) * MW_CH4)
+        if c_ch4 <= 0:
+            raise ValueError("Gas CH4 content must be greater than zero")
+        total_gas_scf = (gross_ch4_tonnes * LB_PER_TONNE * MOLAR_VOL_US) / (c_ch4 * MW_CH4)
         total_gas_m3 = convert(total_gas_scf, "scf", "m3")
 
         disp, eff, de, gross_ch4_tonnes, gross_co2_tonnes = _route(disposition, control_efficiency, gross_ch4_tonnes,
@@ -483,6 +490,7 @@ class ProcessingBlanketedTankCalculator(BaseCalculator):
         disposition="vented",
         uncertainties=None,
         gwp_dict=None,
+        **kwargs,
     ):
         uncertainties = uncertainties or {}
         if liquid_displacement_bbl is not None:
@@ -490,7 +498,7 @@ class ProcessingBlanketedTankCalculator(BaseCalculator):
             # 1 bbl = 42 gal; 7.4805 gal = 1 ft3
             v_acf = v_bbl * 42.0 / 7.48052
         elif liquid_displacement_m3 is not None:
-            v_acf = convert(float(liquid_displacement_m3), "m3", "scf")
+            v_acf = float(liquid_displacement_m3) * 35.3146667
         else:
             raise ValueError("liquid_displacement_bbl or liquid_displacement_m3 must be provided")
 
@@ -560,6 +568,7 @@ class ProcessingNonRoutineCalculator(BaseCalculator):
         disposition="vented",
         uncertainties=None,
         gwp_dict=None,
+        **kwargs,
     ):
         uncertainties = uncertainties or {}
         days = _count(operating_days, 365.0)
@@ -572,10 +581,15 @@ class ProcessingNonRoutineCalculator(BaseCalculator):
         else:
             raise ValueError("gas_throughput_m3_day or gas_throughput_mmscfd must be provided")
 
-        gross_ch4_tonnes = (m3_yr / 1_000_000.0) * self.TABLE_6_39_EF
-        gross_co2_tonnes = 0.0
+        c_ch4, c_co2 = _parse_gas_comp(ch4_content, co2_content, 0.868)
+        gross_ch4_tonnes = (m3_yr / 1_000_000.0) * self.TABLE_6_39_EF * (c_ch4 / 0.868)
+        if c_ch4 > 0 and c_co2 > 0:
+            gross_co2_tonnes = gross_ch4_tonnes * (1.0 / MW_CH4) * (1.0 / c_ch4) * c_co2 * MW_CO2
+        else:
+            gross_co2_tonnes = 0.0
 
-        total_gas_scf = (gross_ch4_tonnes * LB_PER_TONNE * MOLAR_VOL_US) / (0.868 * MW_CH4)
+        ch4_factor = c_ch4 if (c_ch4 is not None and c_ch4 > 0) else 0.868
+        total_gas_scf = (gross_ch4_tonnes * LB_PER_TONNE * MOLAR_VOL_US) / (ch4_factor * MW_CH4)
         total_gas_m3 = convert(total_gas_scf, "scf", "m3")
 
         disp, eff, de, gross_ch4_tonnes, gross_co2_tonnes = _route(disposition, control_efficiency, gross_ch4_tonnes,
@@ -675,13 +689,14 @@ class TransmissionCompressorCalculator(BaseCalculator):
 
             # Table 6-41 Zimmerle 2015 average factor scaled by site CH4 mole fraction:
             # 163.7 tonnes CH4/compressor-yr for wet seal, 51.1 for dry seal (at 95% CH4)
-            wet_tonnes = n_wet * 163.7 * (c_ch4 / 0.95)
-            dry_tonnes = n_dry * 51.1 * (c_ch4 / 0.95)
+            hrs = float(operating_hours or 8760.0)
+            wet_tonnes = n_wet * 163.7 * (c_ch4 / 0.95) * (hrs / 8760.0)
+            dry_tonnes = n_dry * 51.1 * (c_ch4 / 0.95) * (hrs / 8760.0)
             gross_ch4_tonnes = wet_tonnes + dry_tonnes
-
-            wet_scf = n_wet * self.TABLE_6_41_CENTRIFUGAL["wet_seal_average"]["scf_gas_hr"] * 8760.0
-            dry_scf = n_dry * self.TABLE_6_41_CENTRIFUGAL["dry_seal_average"]["scf_gas_hr"] * 8760.0
-            total_gas_scf = wet_scf + dry_scf
+            wet_scf = n_wet * self.TABLE_6_41_CENTRIFUGAL["wet_seal_average"]["scf_gas_hr"] * hrs
+            dry_scf = n_dry * self.TABLE_6_41_CENTRIFUGAL["dry_seal_average"]["scf_gas_hr"] * hrs
+            total_gas_scf = (gross_ch4_tonnes * LB_PER_TONNE * MOLAR_VOL_US) / (c_ch4 * MW_CH4) if c_ch4 > 0 else (wet_scf + dry_scf)
+            gross_co2_tonnes = total_gas_scf * c_co2 * (MW_CO2 / MOLAR_VOL_US) / LB_PER_TONNE
 
         else:
             # Exhibit 6-31: Reciprocating compressor rod packing
@@ -766,6 +781,7 @@ class TransmissionNonRoutineCalculator(BaseCalculator):
         disposition="vented",
         uncertainties=None,
         gwp_dict=None,
+        **kwargs,
     ):
         uncertainties = uncertainties or {}
         act, factor_info = _pick(self.TABLE_6_43, activity or "transmission_station", "Table 6-43 activity")

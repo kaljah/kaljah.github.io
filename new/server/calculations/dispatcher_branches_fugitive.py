@@ -13,8 +13,9 @@ def calc_fugitive(self, emission_factors, flat_inputs, gwp_dict, process_type, u
     _t = next((flat_inputs.get(k) for k in ("hours", "operating_hours", "hours_operating", "operating_time")
                if flat_inputs.get(k) not in (None, "")), None)
     time_unit = str(flat_inputs.get("time_unit") or flat_inputs.get("duration_unit") or "hours").lower().strip()
+    m_hours = record_period(flat_inputs)[0] if (flat_inputs.get("reporting_period") or flat_inputs.get("start_date")) else 730.0
     if _t is not None:  # an entered 0 h is 0, not a full year
-        per = (24.0 if "day" in time_unit else 730.0 if "month" in time_unit
+        per = (24.0 if "day" in time_unit else m_hours if "month" in time_unit
                else 8760.0 if ("yr" in time_unit or "year" in time_unit)
                else 1.0 if time_unit in ("hours", "hour", "hrs", "hr", "h") else None)
         if per is None:  # it was read as hours

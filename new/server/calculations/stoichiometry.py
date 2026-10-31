@@ -155,7 +155,7 @@ class NitricAcidCalculator(BaseCalculator):
         n2o_res = propagate_uncertainty(
             n2o_tonnes,
             resolve_ef_uncertainty(
-                "chemical_production", "n2o", _tier, uncertainties.get("n2o", 0.15)
+                "chemical_production", "n2o", _tier, uncertainties.get("n2o")
             ),
             tier=_tier,
             process_category="chemical_production",

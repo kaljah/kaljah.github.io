@@ -153,8 +153,7 @@ class RefiningCatalystRegenCalculator(BaseCalculator):
                 raise ValueError("K1 approach (Eq 6-35) needs the flue gas rate (dscm/min or dscf/min)")
 
         elif approach == "air_blower":
-            # percent, as in the K1 approach (a value of 1 or less was read as a fraction: 0.9 % became 90 %,
-            # and 0 % became the 11 % / 9 % defaults)
+            # percent, as in the K1 approach (API Compendium 2021 §6.4.1, Eq 6-36 / EPA Eq Y-2)
             f_co2 = float(co2_pct or 0.0) / 100.0
             f_co = float(co_pct or 0.0) / 100.0
             total_min = float(8760.0 if operating_hours is None else operating_hours) * 60.0
@@ -303,6 +302,7 @@ class RefiningCokerCalculator(BaseCalculator):
                     raise ValueError("Delayed coker steam (Eq 6-44) needs the water height in the vessel (ft)")
                 h_w = float(water_height_ft)
                 bed_volume = h_w * vessel_area
+                # API Eq 6-44: Water volume in vessel
                 coke_displaced_vol = m_coke_calculated / float(particle_density_tonne_cuft)
                 water_vol = max(0.0, bed_volume - coke_displaced_vol)
                 m_water_calculated = float(water_density_tonne_cuft) * water_vol
@@ -444,11 +444,22 @@ class RefiningHydrogenPlantCalculator(BaseCalculator):
                         kgmoles = float(feedstock_volume_m3_yr) / MOLAR_VOL_METRIC
                         kg_feed = kgmoles * mix_mw
                         fr_tonnes = kg_feed / 1000.0
+            elif fr_tonnes is None and cf is not None:
+                # Volumetric feedstock rate without full composition breakdown
+                feed_mw = 16.5  # Typical natural gas reformer feedstock MW
+                if feedstock_volume_scf_yr is not None:
+                    if float(feedstock_volume_scf_yr) < 0:
+                        raise ValueError("Feedstock volume cannot be negative")
+                    fr_tonnes = (float(feedstock_volume_scf_yr) / MOLAR_VOL_US * feed_mw) / LB_PER_TONNE
+                elif feedstock_volume_m3_yr is not None:
+                    if float(feedstock_volume_m3_yr) < 0:
+                        raise ValueError("Feedstock volume cannot be negative")
+                    fr_tonnes = (float(feedstock_volume_m3_yr) / MOLAR_VOL_METRIC * feed_mw) / 1000.0
 
             if fr_tonnes is None or cf is None:
                 raise ValueError("Feedstock balance (Eq 6-49) needs the feedstock rate (tonnes, scf or m3) and its "
                                  "carbon fraction or composition")
-            total_co2 = float(fr_tonnes) * float(cf) * (44.01 / 12.011)
+            total_co2 = float(fr_tonnes) * float(cf) * (44.0 / 12.0)
 
         elif method == "h2_stoichiometry":
             ratio = co2_to_h2_molar_ratio
@@ -457,7 +468,9 @@ class RefiningHydrogenPlantCalculator(BaseCalculator):
             if ratio is None and feedstock_comp is not None:
                 rxn_h2 = {"CH4": 4.0, "C2H6": 7.0, "C3H8": 10.0, "C4H10": 13.0, "C5H12": 16.0}
                 rxn_c = {"CH4": 1.0, "C2H6": 2.0, "C3H8": 3.0, "C4H10": 4.0, "C5H12": 5.0}
-                moles_c = sum(feedstock_comp.get(k, 0.0) * rxn_c.get(k, 0.0) for k in rxn_c)
+                # Native CO2 in reformer natural gas feed passes through to syngas vent/capture
+                feed_co2 = feedstock_comp.get("CO2", feedstock_comp.get("co2", 0.0))
+                moles_c = sum(feedstock_comp.get(k, 0.0) * rxn_c.get(k, 0.0) for k in rxn_c) + feed_co2
                 moles_h2 = sum(feedstock_comp.get(k, 0.0) * rxn_h2.get(k, 0.0) for k in rxn_h2)
                 if moles_h2 <= 0:
                     raise ValueError("The feed gas composition has no hydrocarbon to reform (Eq 6-48)")
@@ -470,13 +483,13 @@ class RefiningHydrogenPlantCalculator(BaseCalculator):
                 if float(h2_production_scf_yr) < 0:
                     raise ValueError("H2 production volume cannot be negative")
                 lbmoles_h2 = float(h2_production_scf_yr) / MOLAR_VOL_US
-                lb_co2 = lbmoles_h2 * ratio_val * 44.01
+                lb_co2 = lbmoles_h2 * ratio_val * 44.0
                 total_co2 = lb_co2 / LB_PER_TONNE
             elif h2_production_m3_yr is not None:
                 if float(h2_production_m3_yr) < 0:
                     raise ValueError("H2 production volume cannot be negative")
                 kgmoles_h2 = float(h2_production_m3_yr) / MOLAR_VOL_METRIC
-                kg_co2 = kgmoles_h2 * ratio_val * 44.01
+                kg_co2 = kgmoles_h2 * ratio_val * 44.0
                 total_co2 = kg_co2 / 1000.0
             else:
                 raise ValueError("H2 stoichiometry (Eq 6-50) needs the hydrogen produced (scf or m3)")
@@ -485,7 +498,11 @@ class RefiningHydrogenPlantCalculator(BaseCalculator):
             if simple_basis not in self.FACTORS_TABLE_6_51:
                 raise ValueError(f"Unknown Table 6-51 basis '{simple_basis}': {sorted(self.FACTORS_TABLE_6_51)}")
             ef = self.FACTORS_TABLE_6_51[simple_basis]
-            vol = float(simple_volume if simple_volume is not None else (h2_production_scf_yr or 0.0))
+            vol_map = {"h2_m3": h2_production_m3_yr, "h2_scf": h2_production_scf_yr, "feedstock_m3": feedstock_volume_m3_yr, "feedstock_scf": feedstock_volume_scf_yr}
+            vol_val = simple_volume if simple_volume is not None else vol_map.get(simple_basis)
+            if vol_val is None:
+                raise ValueError(f"Table 6-51 basis '{simple_basis}' needs the corresponding input volume")
+            vol = float(vol_val)
             if vol < 0:
                 raise ValueError("Hydrogen production or feedstock volume cannot be negative")
             total_co2 = vol * ef
@@ -605,11 +622,8 @@ class RefiningCokeCalciningCalculator(BaseCalculator):
         total_co2 = (44.0 / 12.0) * c_burned
 
         _, co2_res, _ = _propagate_results(0.0, total_co2, 0.0, uncertainties, factor_source, "coke_calcining")
-        return self.format_result(
-            co2=co2_res or total_co2, ch4=0.0, n2o=0.0, total_co2e=total_co2,
-            inputs={"carbon_consumed_tonnes": c_burned},
-            metadata={"standard": "API Compendium 2021 §6.11.5", "equation": "Eq 6-53"},
-        )
+        return self.format_result(co2=co2_res or total_co2, ch4=0.0, n2o=0.0, total_co2e=total_co2,
+            inputs={"carbon_consumed_tonnes": c_burned}, metadata={"standard": "API Compendium 2021 §6.11.5", "equation": "Eq 6-53"})
 
 
 # ==============================================================================
@@ -791,14 +805,23 @@ class FireSuppressionCalculator(BaseCalculator):
         agent = str(agent_type).lower().strip().replace("-", "_")
         if agent not in FIRE_AGENT_GWPS:
             raise ValueError(f"Unknown fire suppression agent '{agent_type}': {sorted(FIRE_AGENT_GWPS)}")
-        gwp = FIRE_AGENT_GWPS[agent]
-        charge, discharge = float(total_charge_kg or 0.0), float(direct_discharge_kg or 0.0)
+        orig_agent = str(agent_type).strip()
+        gwp_val = None
+        if gwp_dict:
+            for k in (agent, agent.upper(), orig_agent, orig_agent.upper(), orig_agent.lower(), orig_agent.replace("_", "-"), orig_agent.replace("_", "-").upper()):
+                if k in gwp_dict:
+                    gwp_val = float(gwp_dict[k])
+                    break
+        gwp = gwp_val if gwp_val is not None else FIRE_AGENT_GWPS[agent]
+        charge = float(kwargs.get("charge_capacity_kg", total_charge_kg) or 0.0)
+        discharge = float(kwargs.get("direct_discharge_kg", direct_discharge_kg) or 0.0)
         if charge < 0 or discharge < 0:
             raise ValueError("Fire suppression agent quantities cannot be negative")
-        if charge > 0 and annual_release_rate in (None, ""):
+        rel_rate_input = kwargs.get("release_fraction", annual_release_rate)
+        if charge > 0 and rel_rate_input in (None, ""):
             raise ValueError("Fire suppression leakage (Eq 6-56) needs the fraction of the charge released per year")
 
-        rel_rate = normalize_efficiency(annual_release_rate, default=0.0)
+        rel_rate = normalize_efficiency(rel_rate_input, default=0.0)
         leakage_kg = charge * rel_rate
         total_released_kg = leakage_kg + discharge
         total_released_tonnes = total_released_kg / 1000.0
@@ -824,10 +847,27 @@ class FireSuppressionCalculator(BaseCalculator):
             else None
         )
 
+        f_gas_item = None
+        if agent != "co2":
+            f_gas_item = {
+                "gas": agent.upper(),
+                "value": total_released_tonnes,
+                "gwp": gwp,
+                "co2e": total_co2e,
+                "unit": "tonnes",
+                "uncertainty": 0.0,
+                "abs_uncertainty": 0.0,
+                "abs_uncertainty_95": 0.0,
+                "lower_bound": total_released_tonnes,
+                "upper_bound": total_released_tonnes,
+                "confidence_level_pct": 95,
+                "coverage_factor": 2.0,
+            }
         return self.format_result(
             co2=co2_res or total_co2,
             ch4=0.0,
             n2o=0.0,
+            f_gas=f_gas_item if f_gas_item is not None else 0.0,
             total_co2e=total_co2e,
             inputs={
                 "agent_type": agent,

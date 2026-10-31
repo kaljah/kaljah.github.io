@@ -114,12 +114,14 @@ def get_ogmp_metrics():
         else:
             total_non_operated += 1
 
-        is_compliant = current_year <= target_yr
-        if is_compliant:
-            gold_compliant_count += 1
-
         top_down = float(survey_map.get(f.id, 0.0) or 0.0)
         bottom_up = float(ch4_map.get(f.id, 0.0) or 0.0)
+        highest_level = compute_facility_ogmp_level(
+            f, year=int(year) if single_year else None, top_down_tch4=top_down, bottom_up_tch4=bottom_up
+        )
+        is_compliant = (highest_level >= 4) or (current_year <= target_yr and highest_level >= 2)
+        if is_compliant:
+            gold_compliant_count += 1
         if top_down > 0 and bottom_up > 0:
             variance_pct = round(((top_down - bottom_up) / bottom_up * 100.0), 2)
             variance_flag = abs(variance_pct) > threshold
@@ -137,10 +139,6 @@ def get_ogmp_metrics():
             variance_pct = None
             variance_flag = False
             rec_status = "No Activity"
-
-        highest_level = compute_facility_ogmp_level(
-            f, year=int(year) if single_year else None, top_down_tch4=top_down, bottom_up_tch4=bottom_up
-        )
 
         fac_list.append(
             {

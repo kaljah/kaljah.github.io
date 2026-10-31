@@ -69,8 +69,6 @@ def _embedded(good, fig):
     em = ET.SubElement(good, "SpecificEmbeddedEmissions")
     _sub(em, "Direct", f"{fig.direct:.4f}", {"unit": "tCO2e/t"})
     _sub(em, "Indirect", f"{fig.indirect:.4f}", {"unit": "tCO2e/t"})
-    if fig.precursor > 0:
-        _sub(em, "PrecursorContribution", f"{fig.precursor:.4f}", {"unit": "tCO2e/t"})
     _sub(em, "Total", f"{fig.total_see:.4f}", {"unit": "tCO2e/t"})
     _sub(good, "TotalEmbeddedEmissions", f"{fig.total_emissions:.2f}", {"unit": "tCO2e"})
 

@@ -1,6 +1,6 @@
 import math
 
-from .units import CONVERSIONS, UnitError, calculate_co2e, parse_amount
+from .units import CONVERSIONS, UnitError, calculate_co2e, parse_amount, normalize_efficiency
 from input_validation import parse_number
 from .combustion import CombustionCalculator, FlaringCalculator, factor_hhv_unit, user_hhv
 from .vented import (
@@ -26,7 +26,32 @@ from .fugitive_onshore import (
 )
 from .midstream import AGRCalculator, DehydratorCalculator
 from .indirect import IndirectSteamCalculator, CogenAllocationCalculator
-from .vented_downstream import RefiningHydrogenPlantCalculator
+from .vented_downstream import (
+    RefiningHydrogenPlantCalculator,
+    AsphaltBlowingCalculator,
+    RefiningCokerCalculator,
+    RefiningCokeCalciningCalculator,
+    SulfurRecoveryTailGasCalculator,
+    PetrochemicalManufacturingCalculator,
+    FireSuppressionCalculator,
+    RefiningCatalystRegenCalculator,
+)
+from .vented_ccus_transport import CCUSVentingCalculator, CrudeTransportLossesCalculator
+from .vented_lng_distribution import (
+    LNGVentingCalculator,
+    DistributionPneumaticsCalculator,
+    DistributionNonRoutineCalculator,
+)
+from .vented_midstream import (
+    GatheringCompressorVentingCalculator,
+    GatheringStorageTankCalculator,
+    GatheringNonRoutineVentingCalculator,
+    ProcessingDehydrationCalculator,
+    ProcessingBlanketedTankCalculator,
+    ProcessingNonRoutineCalculator,
+    TransmissionCompressorCalculator,
+    TransmissionNonRoutineCalculator,
+)
 from .stoichiometry import StoichiometricCalculator, NitricAcidCalculator
 from .activity_factors import ACTIVITY_FACTORS, ActivityFactorCalculator
 from .vented_gas import VentedGasCalculator
@@ -223,8 +248,34 @@ class CalculationDispatcher:
             "chemical_production": StoichiometricCalculator(),
             "nitric_acid_production": NitricAcidCalculator(),
             "adipic_acid_production": NitricAcidCalculator(),
-            "asphalt_blowing": StoichiometricCalculator(),
-            "asphalt": StoichiometricCalculator(),
+            "asphalt_blowing": AsphaltBlowingCalculator(),
+            "asphalt": AsphaltBlowingCalculator(),
+            "refining_coker": RefiningCokerCalculator(),
+            "delayed_coker": RefiningCokerCalculator(),
+            "coke_calcining": RefiningCokeCalciningCalculator(),
+            "refining_coke_calcining": RefiningCokeCalciningCalculator(),
+            "sulfur_recovery": SulfurRecoveryTailGasCalculator(),
+            "sru": SulfurRecoveryTailGasCalculator(),
+            "tail_gas": SulfurRecoveryTailGasCalculator(),
+            "petrochemical": PetrochemicalManufacturingCalculator(),
+            "petrochemical_manufacturing": PetrochemicalManufacturingCalculator(),
+            "fire_suppression": FireSuppressionCalculator(),
+            "catalyst_regen": RefiningCatalystRegenCalculator(),
+            "fccu_regen": RefiningCatalystRegenCalculator(),
+            "ccus_venting": CCUSVentingCalculator(),
+            "crude_transport": CrudeTransportLossesCalculator(),
+            "crude_loading": CrudeTransportLossesCalculator(),
+            "lng_venting": LNGVentingCalculator(),
+            "distribution_pneumatics": DistributionPneumaticsCalculator(),
+            "distribution_non_routine": DistributionNonRoutineCalculator(),
+            "gathering_compressor": GatheringCompressorVentingCalculator(),
+            "gathering_tank": GatheringStorageTankCalculator(),
+            "gathering_non_routine": GatheringNonRoutineVentingCalculator(),
+            "processing_dehydration": ProcessingDehydrationCalculator(),
+            "processing_blanketed_tank": ProcessingBlanketedTankCalculator(),
+            "processing_non_routine": ProcessingNonRoutineCalculator(),
+            "transmission_compressor": TransmissionCompressorCalculator(),
+            "transmission_non_routine": TransmissionNonRoutineCalculator(),
             "venting": BlowdownCalculator(),
             "blowdown": BlowdownCalculator(),
             "associated_gas_venting": AssociatedGasVentingCalculator(),
@@ -397,8 +448,6 @@ class CalculationDispatcher:
           converted on the Compendium basis: t x 2204.62 lb/t / 2.016 lb/lbmol x 379.3 scf/lbmol.
         A CCS capture rate (fraction or %) removes the captured share of the process CO2.
         """
-        from .vented_downstream import RefiningHydrogenPlantCalculator
-
         def num(*keys):
             for k in keys:
                 v = flat_inputs.get(k)
@@ -441,7 +490,9 @@ class CalculationDispatcher:
                 if h2_t is None:
                     raise ValueError("Missing required field: hydrogen produced (h2_produced_tonnes or h2_produced_scf), "
                                      "or feedstock rate with carbon fraction")
-                h2_scf = h2_t * 2204.62 / 2.016 * 379.3
+                # API Compendium 2021 Table 6-51 factor is per standard volume (scf at 60°F, 14.696 psia)
+                # Standard molar volume is invariant at 379.3 scf/lb-mol; 1 tonne H2 = 2204.62262 lb / 2.016 lb/mol * 379.3 scf/mol
+                h2_scf = h2_t * 2204.6226218488 / 2.016 * 379.3
             res = calc.calculate(method="simple_factor", simple_basis="h2_scf", simple_volume=h2_scf,
                                  uncertainties=uncertainties, gwp_dict=gwp_dict)
         return res
@@ -474,6 +525,8 @@ class CalculationDispatcher:
                           "upper_bound_95", "ci_95_abs"):
                     if isinstance(co2.get(k), (int, float)):
                         co2[k] = co2[k] * (1.0 - capture)
+            else:
+                res["results"]["co2"] = co2_before * (1.0 - capture)
             captured = co2_before * capture  # CO2 has a GWP of 1
             res["total_co2e"] = float(res.get("total_co2e") or 0.0) - captured
             if "total_co2e" in res["results"]:
@@ -757,6 +810,25 @@ class CalculationDispatcher:
         if converted:
             flat_inputs = {**flat_inputs, **converted}
 
+        # Validate efficiency fields across all tiers and factor sources
+        for eff_k in (
+            "combustion_efficiency",
+            "destruction_efficiency",
+            "control_efficiency",
+            "flare_efficiency",
+            "flare_eff",
+            "combustion_eff",
+            "destruction_eff",
+            "unload_flare_eff",
+        ):
+            if flat_inputs.get(eff_k) not in (None, "", "-"):
+                try:
+                    eff_val = float(str(flat_inputs[eff_k]).replace("%", "").strip())
+                except (TypeError, ValueError):
+                    raise ValueError(f"'{eff_k}' must be a percentage (got {flat_inputs[eff_k]})")
+                if not math.isfinite(eff_val) or eff_val < 0.0 or eff_val > 100.0:
+                    raise ValueError(f"'{eff_k}' must be between 0 and 100 % (got {flat_inputs[eff_k]})")
+
         # Validate required gas composition for specific factor sources
         if process_type in [
             "stationary_combustion",
@@ -816,6 +888,7 @@ class CalculationDispatcher:
             (process_type in ("pneumatic_devices", "pneumatic_device", "pneumatic")
              and flat_inputs.get("pneu_controller_type") not in (None, ""))
             or (process_type in ("tank", "tank_flashing", "storage_tanks") and not _has_catalog_ef)
+            or (process_type in ("flaring", "routine_flaring", "non_routine_flaring", "safety_flaring", "flare") and not _has_catalog_ef)
             # Tier 2B component count without a selected factor: Table 7-12 by component / service
             or (process_type in ("fugitive", "fugitive_component", "component_fugitive")
                 and str(flat_inputs.get("fugitive_method") or "").lower() == "component"
@@ -823,7 +896,8 @@ class CalculationDispatcher:
         )
         if factor_source in ["default", "custom"] and not table_calculator and process_type not in [
             "drilling", "mud_degassing", "completions", "completion_flowback",
-            "associated_gas_venting", "associated_venting", "associated_gas"
+            "associated_gas_venting", "associated_venting", "associated_gas",
+            "fire_suppression",
         ]:
             if process_type in ["liquids_unloading", "unloading"]:
                 raw_tier = str(
@@ -991,7 +1065,7 @@ class CalculationDispatcher:
             ]:
                 return calc_stationary_combustion(self, calculator, emission_factors, flat_inputs, gwp_dict, quantity, uncertainties, unit)
 
-            elif process_type in ["flaring", "routine_flaring", "non_routine_flaring", "safety_flaring"]:
+            elif process_type in ["flaring", "routine_flaring", "non_routine_flaring", "safety_flaring", "flare"]:
                 return calc_flaring(self, calculator, emission_factors, flat_inputs, gwp_dict, uncertainties, unit)
 
             elif process_type in ["drilling", "mud_degassing"]:
@@ -1058,10 +1132,19 @@ class CalculationDispatcher:
                 return calc_nitric_acid_production(self, calculator, emission_factors, flat_inputs, gwp_dict, process_type, uncertainties, unit)
 
             elif process_type in [
-                "stoichiometry",
-                "chemical_production",
                 "asphalt_blowing",
                 "asphalt",
+            ]:
+                q = self._require_float(flat_inputs, ["amount", "quantity", "throughput", "asphalt_amount"], "asphalt blowing throughput")
+                u = str(flat_inputs.get("unit") or unit or "tonne").lower().strip()
+                ctrl = bool(flat_inputs.get("controlled") or flat_inputs.get("is_controlled") or (flat_inputs.get("control_efficiency") not in (None, "", "0", 0)))
+                raw_de = flat_inputs.get("destruction_efficiency") or flat_inputs.get("control_efficiency")
+                de = normalize_efficiency(raw_de, default=0.98) if raw_de not in (None, "") else 0.98
+                return calculator.calculate(throughput=q, unit=u, controlled=ctrl, destruction_efficiency=de, uncertainties=uncertainties, gwp_dict=gwp_dict)
+
+            elif process_type in [
+                "stoichiometry",
+                "chemical_production",
             ]:
                 return calc_stoichiometry(self, calculator, flat_inputs, gwp_dict, uncertainties, unit)
 
@@ -1070,6 +1153,41 @@ class CalculationDispatcher:
 
             elif process_type == "indirect_steam":
                 return calc_indirect_steam(self, calculator, emission_factors, flat_inputs, gwp_dict, uncertainties)
+
+            elif process_type == "fire_suppression":
+                agent = self._given(flat_inputs, "agent_type", "agent", "clean_agent", "substance", "fuel") or "hfc_227ea"
+                has_explicit_charge = any(k in flat_inputs for k in ("total_charge_kg", "charge_capacity_kg", "charge_kg"))
+                has_explicit_discharge = any(k in flat_inputs for k in ("direct_discharge_kg", "discharge_kg", "discharged"))
+                rel_rate = self._optional_float(flat_inputs, ["annual_release_rate", "release_fraction", "leak_rate", "rate"], None)
+
+                if has_explicit_charge:
+                    charge = self._optional_float(flat_inputs, ["total_charge_kg", "charge_capacity_kg", "charge_kg"], 0.0)
+                    discharge = self._optional_float(flat_inputs, ["direct_discharge_kg", "discharge_kg", "discharged"], 0.0)
+                elif has_explicit_discharge or rel_rate is None:
+                    discharge = self._optional_float(flat_inputs, ["direct_discharge_kg", "discharge_kg", "discharged", "amount", "quantity"], 0.0)
+                    charge = 0.0
+                else:
+                    charge = self._optional_float(flat_inputs, ["amount", "quantity"], 0.0)
+                    discharge = 0.0
+
+                return calculator.calculate(
+                    agent_type=agent,
+                    total_charge_kg=charge,
+                    annual_release_rate=rel_rate,
+                    direct_discharge_kg=discharge,
+                    uncertainties=uncertainties,
+                    gwp_dict=gwp_dict,
+                )
+
+            elif calculator is not None and hasattr(calculator, "calculate"):
+                try:
+                    return calculator.calculate(**flat_inputs, uncertainties=uncertainties, gwp_dict=gwp_dict)
+                except (TypeError, ValueError):
+                    if any(emission_factors.get(k) not in (None, "", "-", 0, 0.0) for k in ("co2", "ch4", "n2o", "ef_co2", "ef_ch4", "ef_n2o")):
+                        return self._generic_calculation(
+                            flat_inputs, emission_factors, uncertainties, process_type, gwp_dict=gwp_dict
+                        )
+                    raise
 
             else:
                 return self._generic_calculation(

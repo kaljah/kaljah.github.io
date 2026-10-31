@@ -14,6 +14,7 @@ from models import (
     CustomFactor
 )
 from calculations.constants import get_active_gwp
+from calculations.units import VOLUME_UNITS_TO_M3
 from services.regional_profiles import get_regional_profile, REGIONAL_PROFILES
 
 
@@ -110,7 +111,11 @@ def _query_emissions_by_year(facility_ids: List[int], start_year: int, end_year:
         elif "flare" in cat or "flaring" in cat:
             out[y]["flaring_t"] += co2e
             qty = float(getattr(e, "quantity", None) or getattr(e, "activity_data", 0.0) or 0.0)
-            m3_val = qty if (e.unit or "").lower() in ("m3", "sm3", "m³", "sm³") else (co2e / 0.0024 if co2e > 0 else 0.0)
+            u_c = (e.unit or "").lower().strip()
+            if u_c in VOLUME_UNITS_TO_M3:
+                m3_val = qty * VOLUME_UNITS_TO_M3[u_c]
+            else:
+                m3_val = co2e / 0.0024 if co2e > 0 else 0.0
             out[y]["total_flaring_m3"] += m3_val
             if "routine" in subcat and "non" not in subcat:
                 out[y]["routine_flaring_m3"] += m3_val
@@ -125,11 +130,12 @@ def _query_emissions_by_year(facility_ids: List[int], start_year: int, end_year:
         else:
             out[y]["process_t"] += co2e
 
-        out[y]["nox_t"] += float(getattr(e, "nox_emissions", 0.0) or (co2e * 0.0018))
-        out[y]["co_t"] += float(getattr(e, "co_emissions", 0.0) or (co2e * 0.0035))
-        out[y]["so2_t"] += float(getattr(e, "so2_emissions", 0.0) or (co2e * 0.0003))
-        out[y]["voc_t"] += float(getattr(e, "voc_emissions", 0.0) or (co2e * 0.0008))
-        out[y]["pm_t"] += float(getattr(e, "pm_emissions", 0.0) or (co2e * 0.0002))
+        is_comb = "combustion" in cat or "flare" in cat or "flaring" in cat
+        out[y]["nox_t"] += float(getattr(e, "nox_emissions", 0.0) or ((co2e * 0.0018) if is_comb and co2e > 0 else 0.0))
+        out[y]["co_t"] += float(getattr(e, "co_emissions", 0.0) or ((co2e * 0.0035) if is_comb and co2e > 0 else 0.0))
+        out[y]["so2_t"] += float(getattr(e, "so2_emissions", 0.0) or ((co2e * 0.0003) if is_comb and co2e > 0 else 0.0))
+        out[y]["voc_t"] += float(getattr(e, "voc_emissions", 0.0) or ((co2e * 0.0008) if is_comb and co2e > 0 else 0.0))
+        out[y]["pm_t"] += float(getattr(e, "pm_emissions", 0.0) or ((co2e * 0.0002) if is_comb and co2e > 0 else 0.0))
 
     return out
 
@@ -246,10 +252,8 @@ def _query_flaring_breakdown(
             nr_m3 = em.get("non_routine_flaring_m3", 0.0)
             s_m3 = em.get("safety_flaring_m3", 0.0)
             if (r_m3 + nr_m3 + s_m3) <= 0 and tot_m3 > 0:
-                r_m3 = tot_m3 * 0.65
-                nr_m3 = tot_m3 * 0.28
-                s_m3 = tot_m3 * 0.07
-            dre = 99.85
+                nr_m3 = tot_m3
+            dre = 98.0
 
         out[y] = {
             "routine_mmsm3": r_m3 / 1_000_000.0,
@@ -293,6 +297,7 @@ def _query_jv_equity_breakdown(
 
         tot_s1_sum = sum(t["scope1_co2e_t"] for t in timeline)
         tot_s2_sum = sum(t["scope2_co2e_t"] for t in timeline)
+        tot_ch4_sum = sum(t["ch4_mass_t"] for t in timeline)
 
         partners_list = []
         for pid, pdata in partners_dict.items():
@@ -315,7 +320,7 @@ def _query_jv_equity_breakdown(
                 "equity_s2_tco2e": round(tot_s2_sum * ratio, 1),
                 "equity_total_ghg_tco2e": round(tot_co2e, 1),
                 "total_equity_co2e": round(tot_co2e, 1),
-                "equity_ch4_t": round(sum(yearly_ch4.values()), 2),
+                "equity_ch4_t": round(tot_ch4_sum * ratio, 2),
             })
         partners_list.sort(key=lambda x: x["share_pct"], reverse=True)
 

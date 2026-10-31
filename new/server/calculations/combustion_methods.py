@@ -19,7 +19,7 @@ from .uncertainty import propagate_uncertainty, resolve_tier
 MW_C, MW_CO2 = 12.011, 44.01
 C_TO_CO2 = MW_CO2 / MW_C
 SCF_TO_M3 = 0.028316846592
-J_PER_MMBTU = 1.055056e9
+J_PER_MMBTU = 1.05505585262e9
 PER_TJ_TO_PER_MMBTU = J_PER_MMBTU / 1e12  # tonne / 10^12 J -> tonne / MMBtu
 
 # Table 4-5 (EPA Part 98 Table C-1): default HHV and CO2 factor (tonne CO2 / MMBtu HHV)
@@ -209,7 +209,9 @@ class CombustionMethodCalculator(BaseCalculator):
                 raise ValueError("Combustion efficiency must be below 100 % for a VOC back-calculation")
             c_mix = sum(w[k] * HC_CARBON[k] for k in HC_CARBON) / w_hc
             hc_emitted = voc_t * w_hc / w_voc
-            co2 = hc_emitted * c_mix * eff / (1 - eff) * C_TO_CO2 + voc_t * w_co2 / w_voc
+            # Native CO2 is chemically inert: 100% of feed CO2 passes through uncombusted (API Compendium 2021 §5.1, Exhibit 5.2)
+            feed_co2 = (voc_t / (1.0 - eff)) * (w_co2 / w_voc)
+            co2 = (hc_emitted * c_mix * eff / (1.0 - eff) * C_TO_CO2) + feed_co2
             ch4 = hc_emitted * w["ch4"] / w_hc
             # N2O (Exhibit 5.2 step 3): hydrocarbon flared -> scf (MW of the mix) x HHV of the mix (Eq 3-11)
             # x the natural gas fuel factor of Table 4-6, 9.50e-8 t N2O / MMBtu. It was stored as 0.
@@ -243,7 +245,8 @@ class CombustionMethodCalculator(BaseCalculator):
 
         _tier = resolve_tier((uncertainties or {}).get("_factor_source", "specific"))
         return {
-            "results": {g: propagate_uncertainty(v, 0.05 if g == "co2" else 0.5, tier=_tier, gas=g) if v else 0.0
+            "results": {g: propagate_uncertainty(v, 0.05 if g == "co2" else 0.5, tier=_tier, gas=g) if v
+                        else propagate_uncertainty(0.0, 0.0, tier=_tier, gas=g)
                         for g, v in (("co2", co2), ("ch4", ch4), ("n2o", n2o))},
             "total_co2e": calculate_co2e(co2=co2, ch4=ch4, n2o=n2o, gwp_dict=gwp_dict),
             "intermediate": inter,

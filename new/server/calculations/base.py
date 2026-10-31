@@ -56,7 +56,7 @@ class BaseCalculator:
         }
 
     def format_result(
-        self, co2=None, ch4=None, n2o=None, total_co2e=None, inputs=None, metadata=None
+        self, co2=None, ch4=None, n2o=None, total_co2e=None, inputs=None, metadata=None, f_gas=None, **kwargs
     ):
         """Formats the final calculation result into a standard structure."""
         def _ensure_dict(val):
@@ -74,7 +74,7 @@ class BaseCalculator:
                 "coverage_factor": 2.0,
             }
 
-        return {
+        res = {
             "method": self.name,
             "api_reference": self.section_ref,
             "inputs": inputs or {},
@@ -87,3 +87,6 @@ class BaseCalculator:
             },
             "metadata": metadata or {},
         }
+        if f_gas is not None:
+            res["results"]["f_gas"] = _ensure_dict(f_gas)
+        return res

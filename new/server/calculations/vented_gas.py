@@ -107,7 +107,10 @@ class VentedGasCalculator(BaseCalculator):
             if t_f <= -459.67:
                 raise ValueError("Gas temperature must be above absolute zero (-459.67 °F)")
             p_atm = _num(i.get("gas_pressure_atm"), "gas pressure (atm)")
-            return v_ft3 * p_atm * (60.0 + 459.67) / (t_f + 459.67)
+            z = float(i.get("z_factor") if i.get("z_factor") not in (None, "") else 1.0)
+            if z <= 0.0:
+                raise ValueError("Gas compressibility factor (z_factor) must be strictly positive")
+            return v_ft3 * p_atm * (60.0 + 459.67) / ((t_f + 459.67) * z)
         if m == "desiccant":
             h = _num(i.get("vessel_height_ft"), "vessel height (ft)")
             d = _num(i.get("vessel_diameter_ft"), "vessel diameter (ft)")
@@ -132,7 +135,15 @@ class VentedGasCalculator(BaseCalculator):
             ch4 = _num(i.get("ch4_mass"), "CH4 emitted") * to_t[u]
             co2 = _num(i.get("co2_mass"), "CO2 emitted", default=0.0) * to_t[u]
             eff = _frac(i.get("control_efficiency"), "control efficiency")
-            ch4, co2, v_scf = ch4 * (1 - eff), co2 * (1 - eff), None
+            ctrl_type = str(i.get("control_type") or i.get("disposition") or "").lower().strip()
+            if eff > 0 and ctrl_type in ("flare", "flared", "combustor", "thermal_oxidizer", "incinerator"):
+                # Flaring / thermal combustion: burned CH4 converts to CO2, native CO2 passes through 100%
+                combusted_co2 = ch4 * eff * (44.01 / 16.04)
+                ch4, co2, v_scf = ch4 * (1.0 - eff), co2 + combusted_co2, None
+            elif eff > 0:
+                ch4, co2, v_scf = ch4 * (1.0 - eff), co2 * (1.0 - eff), None
+            else:
+                v_scf = None
             activity = (ch4 / (1 - eff) if eff < 1 else ch4, "t CH4 before control")
         elif str(method).lower() == "thc_mass":
             u = str(i.get("thc_loss_unit") or "t").strip().lower()
@@ -165,8 +176,18 @@ class VentedGasCalculator(BaseCalculator):
                 raise ValueError("Sweet gas carries more CO2 than the sour gas; check the volumes and CO2 contents")
             co2 = co2_scf * SCF_TO_M3 * CONVERSIONS["density_co2"] / 1000.0
             # Table 6-19 throughput factor: 0.0185 tonne CH4 per 10^6 scf treated
-            ch4 = v_sour / 1e6 * 0.0185 if str(i.get("include_ch4", "true")).lower() not in ("false", "0", "no") else 0.0
-            v_scf = v_sour
+            raw_ch4 = v_sour / 1e6 * 0.0185 if str(i.get("include_ch4", "true")).lower() not in ("false", "0", "no") else 0.0
+            ch4_scf = (raw_ch4 * 1000.0 / CONVERSIONS["density_ch4"]) / SCF_TO_M3 if raw_ch4 > 0 else 0.0
+            v_acid_scf = co2_scf + ch4_scf
+            if str(i.get("disposition") or "vented").lower() == "flared":
+                de = _frac(i.get("destruction_efficiency"), "destruction efficiency") if i.get("destruction_efficiency") not in (None, "") else 0.98
+                ce = _frac(i.get("combustion_efficiency"), "combustion efficiency") if i.get("combustion_efficiency") not in (None, "") else 0.965
+                ch4 = raw_ch4 * (1.0 - de)
+                co2 += (raw_ch4 * ce) * (44.01 / 16.04)
+                v_scf = v_acid_scf
+            else:
+                ch4 = raw_ch4
+                v_scf = v_acid_scf
         elif str(method).lower() == "co2_mass":
             v = _num(i.get("physical_volume_m3"), "physical volume (m3)")
             rho = _num(i.get("co2_density"), "CO2 density at release conditions (kg/m3)")
@@ -187,21 +208,35 @@ class VentedGasCalculator(BaseCalculator):
             v_m3 = v_scf * SCF_TO_M3
             rho_ch4, rho_co2 = CONVERSIONS["density_ch4"], CONVERSIONS["density_co2"]
             if str(i.get("disposition") or "vented").lower() == "flared":
-                given = i.get("combustion_efficiency") not in (None, "")
-                de = _frac(i.get("combustion_efficiency"), "combustion efficiency") if given else 0.98
-                ce = de if given else 0.965
+                given_de = i.get("destruction_efficiency") not in (None, "")
+                given_ce = i.get("combustion_efficiency") not in (None, "")
+                if given_ce and given_de:
+                    ce = _frac(i.get("combustion_efficiency"), "combustion efficiency")
+                    de = _frac(i.get("destruction_efficiency"), "destruction efficiency")
+                elif given_ce:
+                    ce = _frac(i.get("combustion_efficiency"), "combustion efficiency")
+                    de = ce
+                elif given_de:
+                    de = _frac(i.get("destruction_efficiency"), "destruction efficiency")
+                    ce = de
+                else:
+                    de = 0.98
+                    ce = 0.965
                 ch4 = v_m3 * y_ch4 * (1 - de) * rho_ch4 / 1000.0
-                co2 = (v_m3 * y_co2 + v_m3 * (y_ch4 + 2 * y_c2) * ce) * rho_co2 / 1000.0
+                c2_c_num = float(i.get("c2_carbon_number") or i.get("c2_multiplier") or 2.0)
+                co2 = (v_m3 * y_co2 + v_m3 * (y_ch4 + c2_c_num * y_c2) * ce) * rho_co2 / 1000.0
             else:
                 ch4 = v_m3 * y_ch4 * rho_ch4 / 1000.0
                 co2 = v_m3 * y_co2 * rho_co2 / 1000.0
 
+        is_flared = str(i.get("disposition") or "vented").lower() == "flared"
+        n2o = (v_scf * 1020.0 / 1e6) * 1.0e-7 if is_flared and v_scf else 0.0
         _tier = resolve_tier((uncertainties or {}).get("_factor_source", "specific"))
         return {
             "results": {"ch4": propagate_uncertainty(ch4, 0.10 if ch4 else 0.0, tier=_tier, gas="ch4"),
                         "co2": propagate_uncertainty(co2, 0.10 if co2 else 0.0, tier=_tier, gas="co2"),
-                        "n2o": 0.0},
-            "total_co2e": calculate_co2e(co2=co2, ch4=ch4, gwp_dict=gwp_dict),
+                        "n2o": propagate_uncertainty(n2o, 0.20 if n2o else 0.0, tier=_tier, gas="n2o")},
+            "total_co2e": calculate_co2e(co2=co2, ch4=ch4, n2o=n2o, gwp_dict=gwp_dict),
             "intermediate": {"method": method, "gas_volume_scf": v_scf,
                              "activity_amount": activity[0] if activity else None,
                              "activity_unit": activity[1] if activity else None,

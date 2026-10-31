@@ -149,6 +149,7 @@ class CompletionFlowbackCalculator(BaseCalculator):
         choke_size_in=None,
         well_head_pressure=None,
         location="onshore",
+        **kwargs,
     ):
         uncertainties = uncertainties or {}
 
@@ -276,7 +277,9 @@ class CompletionFlowbackCalculator(BaseCalculator):
                 standard_ref = entry["standard"]
 
             base_ch4_per_event = entry["ch4"] if ef_ch4 in (None, "") else float(ef_ch4)  # an entered 0 is a value
-            base_ch4_tonnes = base_ch4_per_event * num_events
+            # API Table 6-7 offshore factor is per completion-day; onshore Table 6-5/6-6 are per completion event
+            comp_days = float(kwargs.get("completion_duration_days") or kwargs.get("duration_days") or kwargs.get("operating_days") or kwargs.get("days") or 1.0) if is_offshore else 1.0
+            base_ch4_tonnes = base_ch4_per_event * num_events * comp_days
 
             # Footnote c adjustments
             actual_ch4_mol = y_ch4 if y_ch4 is not None else self.DEFAULT_CH4_MOL_PCT
@@ -400,7 +403,9 @@ class CompletionFlowbackCalculator(BaseCalculator):
                     raise ValueError(f"Flowback rate unit '{rate_unit}' must be a rate (e.g. Mcf/hr, MMscf/d)")
                 rate_scf_hr = rate_val * m3_per_unit * CONVERSIONS["m3_to_scf"] * per_year / 8760.0
 
-                total_net_scf = rate_scf_hr * float(flowback_duration_hours) * num_events
+                gross_flowback = rate_scf_hr * float(flowback_duration_hours) * num_events
+                sales_scf = float(gas_produced_sales_scf or 0.0)
+                total_net_scf = max(0.0, gross_flowback - sales_scf)
                 standard_ref = "API Compendium 2021 §6.2.3.1, Flowback Rate × Duration"
                 calc_method_label = "Tier 2: Flowback Rate × Duration"
 
@@ -413,12 +418,21 @@ class CompletionFlowbackCalculator(BaseCalculator):
             vol_scf_raw = self._to_scf(raw_vol, u_norm, "flowback volume")
 
             # API Eq. 6-4: Net gas V_gas = V_t - EnF (injected N2 deduction)
-            injected_n2_scf = 0.0
-            gas_type_norm = str(injected_gas_type or "n2").lower().strip()
-            if gas_type_norm != "co2" and injected_n2_volume:
-                injected_n2_scf = self._to_scf(injected_n2_volume, injected_n2_unit or "scf", "injected N2")
+            # Injected CO2 does NOT deduct from metered gas (EnF = 0) per API §6.2.3.1
+            injected_gas_scf = 0.0
+            gas_type = str(injected_gas_type or kwargs.get("injected_gas_type") or "n2").strip().lower()
+            if gas_type in ("co2", "carbon_dioxide") and not kwargs.get("injected_co2_volume") and gas_type != "co2_inert":
+                injected_vol = None
+            else:
+                injected_vol = injected_n2_volume or kwargs.get("injected_gas_volume") or kwargs.get("injected_co2_volume")
 
-            net_scf_single = max(0.0, vol_scf_raw - injected_n2_scf)
+            if injected_vol:
+                injected_u = injected_n2_unit or kwargs.get("injected_gas_unit") or kwargs.get("injected_co2_unit") or "scf"
+                lbl = "injected N2" if (injected_n2_volume or injected_n2_unit) else "injected gas"
+                injected_gas_scf = self._to_scf(injected_vol, injected_u, lbl)
+
+            injected_n2_scf = injected_gas_scf
+            net_scf_single = max(0.0, vol_scf_raw - injected_gas_scf)
             total_net_scf = net_scf_single * num_events
 
             # API Eq. 6-5: Initial unmetered flowback period
@@ -451,7 +465,7 @@ class CompletionFlowbackCalculator(BaseCalculator):
                 raise ValueError(
                     f"Disposition fractions (vented={f_v*100:.1f}%, flared={f_f*100:.1f}%, recovered={f_r*100:.1f}%) must sum to 100% (sum is {split_sum*100:.1f}%)"
                 )
-            f_vented, f_flared, f_rec = f_v, f_f, f_r
+            f_vented, f_flared, f_rec = f_v / split_sum, f_f / split_sum, f_r / split_sum
             flare_ce_used, flare_de_used = flare_ce, flare_de
         elif not disp:
             # Fallback to control_efficiency if disposition unstated (treated as flared routing fraction per D-01)

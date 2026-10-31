@@ -542,6 +542,7 @@ class Scope3Emission(db.Model):
     activity_data = db.Column(db.Float, default=0)
     unit = db.Column(db.String(50))
     emission_factor = db.Column(db.Float)
+    factor_unit = db.Column(db.String(50), nullable=True)
     co2e = db.Column(db.Float)
     uncertainty = db.Column(db.Float, nullable=True)  # 1-sigma relative uncertainty
     uncertainty_pct = db.Column(db.Float, nullable=True)  # Overall combined uncertainty percentage

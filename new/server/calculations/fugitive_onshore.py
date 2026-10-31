@@ -24,6 +24,7 @@ from .units import (
     TIME_UNITS_TO_HOURS,
 )
 from .uncertainty import (
+    Tier,
     propagate_uncertainty,
     resolve_tier,
     resolve_ef_uncertainty,
@@ -378,7 +379,7 @@ class OnshoreComponentFugitiveCalculator(BaseCalculator):
                     if w is None:
                         raise ValueError(f"Give the CH4 weight fraction of TOC for '{service_norm}' service")
                     ch4_kg_hr = count * ef_kg_hr * w
-                co2_kg_hr = 0.0
+                co2_kg_hr = ch4_kg_hr * (y_co2 / y_ch4) * (MW_CO2 / MW_CH4) if (y_co2 and y_ch4) else 0.0
                 source = "given factor"
             else:
                 comp = str(comp_name or "").strip().lower().replace(" ", "_")
@@ -465,6 +466,9 @@ class OnshoreScreeningMeasurementCalculator(BaseCalculator):
         ch4_content: float = None,
         uncertainties: dict = None,
         gwp_dict: dict = None,
+        co2_content: float = None,
+        co2_wt_pct: float = None,
+        **kwargs,
     ) -> dict:
         """Screening ranges (Table 7-26): counts below / at or above 10,000 ppmv x TOC factor x CH4 wt
         fraction of TOC (default Table C-1 for the service) x hours."""
@@ -498,10 +502,18 @@ class OnshoreScreeningMeasurementCalculator(BaseCalculator):
 
         toc_kg_hr = n_low * meta["non_pegged_ef"] + n_high * (meta["pegged_10k_ef"] or 0.0)
         total_ch4_tonnes = toc_kg_hr * w * hours / 1000.0
-        total_co2e = calculate_co2e(co2=0.0, ch4=total_ch4_tonnes, gwp_dict=gwp_dict)
-        ch4_res = propagate_uncertainty(total_ch4_tonnes, 0.15, tier="Tier 3", process_category="fugitive_screening", gas="ch4")
+        c_co2 = float(co2_content or co2_wt_pct or kwargs.get("co2_content") or kwargs.get("co2_wt_pct") or 0.0)
+        c_co2 = c_co2 / 100.0 if c_co2 > 1.0 else c_co2
+        w_toc = float(kwargs.get("toc_wt_pct") or ((1.0 - c_co2) if c_co2 < 1.0 else 1.0))
+        whole_gas_kg_hr = toc_kg_hr / max(0.01, w_toc)
+        total_co2_tonnes = (whole_gas_kg_hr * c_co2 * hours / 1000.0) if c_co2 > 0 else 0.0
+
+        total_co2e = calculate_co2e(co2=total_co2_tonnes, ch4=total_ch4_tonnes, gwp_dict=gwp_dict)
+        ch4_res = propagate_uncertainty(total_ch4_tonnes, 0.15, tier=Tier.T3, process_category="fugitive_screening", gas="ch4")
+        co2_res = propagate_uncertainty(total_co2_tonnes, 0.15 if total_co2_tonnes else 0.0, tier=Tier.T3, process_category="fugitive_screening", gas="co2")
+        n2o_res = propagate_uncertainty(0.0, 0.0, tier=Tier.T3, process_category="fugitive_screening", gas="n2o")
         return {
-            "results": {"ch4": ch4_res, "co2": 0.0, "n2o": 0.0},
+            "results": {"ch4": ch4_res, "co2": co2_res, "n2o": n2o_res},
             "total_co2e": total_co2e,
             "intermediate": {
                 "api_table": meta["table"],
@@ -581,10 +593,12 @@ class OnshoreScreeningMeasurementCalculator(BaseCalculator):
         total_toc_kg_hr = toc_zero + toc_corr + toc_pegged
         total_ch4_tonnes = total_toc_kg_hr * c_ch4 * hours / 1000.0
         total_co2e = calculate_co2e(co2=0.0, ch4=total_ch4_tonnes, gwp_dict=gwp_dict)
-        ch4_res = propagate_uncertainty(total_ch4_tonnes, 0.15, tier="Tier 3", process_category="fugitive_screening", gas="ch4")
+        ch4_res = propagate_uncertainty(total_ch4_tonnes, 0.15, tier=Tier.T3, process_category="fugitive_screening", gas="ch4")
+        co2_res = propagate_uncertainty(0.0, 0.0, tier=Tier.T3, process_category="fugitive_screening", gas="co2")
+        n2o_res = propagate_uncertainty(0.0, 0.0, tier=Tier.T3, process_category="fugitive_screening", gas="n2o")
 
         return {
-            "results": {"ch4": ch4_res, "co2": 0.0, "n2o": 0.0},
+            "results": {"ch4": ch4_res, "co2": co2_res, "n2o": n2o_res},
             "total_co2e": total_co2e,
             "intermediate": {
                 "api_table": "Tables 7-40 / 7-41 / 7-42",
@@ -641,10 +655,11 @@ class OnshoreScreeningMeasurementCalculator(BaseCalculator):
         ch4_t = gas_m3 * y_ch4 * DENSITY_CH4 / 1000.0
         co2_t = gas_m3 * y_co2 * DENSITY_CO2 / 1000.0
         total_co2e = calculate_co2e(co2=co2_t, ch4=ch4_t, gwp_dict=gwp_dict)
-        ch4_res = propagate_uncertainty(ch4_t, 0.15, tier="Tier 3", process_category="fugitive_ogi", gas="ch4")
-        co2_res = propagate_uncertainty(co2_t, 0.15, tier="Tier 3", process_category="fugitive_ogi", gas="co2") if co2_t else 0.0
+        ch4_res = propagate_uncertainty(ch4_t, 0.15, tier=Tier.T3, process_category="fugitive_ogi", gas="ch4")
+        co2_res = propagate_uncertainty(co2_t, 0.15, tier=Tier.T3, process_category="fugitive_ogi", gas="co2") if co2_t else propagate_uncertainty(0.0, 0.0, tier=Tier.T3, process_category="fugitive_ogi", gas="co2")
+        n2o_res = propagate_uncertainty(0.0, 0.0, tier=Tier.T3, process_category="fugitive_ogi", gas="n2o")
         return {
-            "results": {"ch4": ch4_res, "co2": co2_res, "n2o": 0.0},
+            "results": {"ch4": ch4_res, "co2": co2_res, "n2o": n2o_res},
             "total_co2e": total_co2e,
             "intermediate": {
                 "api_table": meta["table"],
@@ -680,12 +695,13 @@ class OnshoreScreeningMeasurementCalculator(BaseCalculator):
         total_co2_tonnes = (co2_kg_hr * float(operating_hours)) / 1000.0
         total_co2e = calculate_co2e(co2=total_co2_tonnes, ch4=total_ch4_tonnes, gwp_dict=gwp_dict)
 
-        _tier = "Tier 3"
+        _tier = Tier.T3
         ch4_res = propagate_uncertainty(total_ch4_tonnes, 0.05, tier=_tier, process_category="fugitive_measurement", gas="ch4")
         co2_res = propagate_uncertainty(total_co2_tonnes, 0.05, tier=_tier, process_category="fugitive_measurement", gas="co2")
+        n2o_res = propagate_uncertainty(0.0, 0.0, tier=_tier, process_category="fugitive_measurement", gas="n2o")
 
         return {
-            "results": {"ch4": ch4_res, "co2": co2_res, "n2o": 0.0},
+            "results": {"ch4": ch4_res, "co2": co2_res, "n2o": n2o_res},
             "total_co2e": total_co2e,
             "intermediate": {
                 "methodology": "Tier 3D: Direct Measurement",

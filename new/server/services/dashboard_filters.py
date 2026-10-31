@@ -115,8 +115,12 @@ def scope3_record_co2e(co2e_val, gc, horizon="100"):
             except Exception:
                 gc = None
         if isinstance(gc, dict):
-            ch4_t = gc.get("ch4_tonnes") or (val * (gc.get("ch4_pct", 0) / 100.0) / 28.0 if gc.get("ch4_pct") else 0.0)
-            n2o_t = gc.get("n2o_tonnes") or (val * (gc.get("n2o_pct", 0) / 100.0) / 265.0 if gc.get("n2o_pct") else 0.0)
+            from calculations.constants import get_active_gwp
+            _gwp = get_active_gwp()
+            _g_ch4 = float(_gwp.get("CH4", _gwp.get("ch4", 28.0)))
+            _g_n2o = float(_gwp.get("N2O", _gwp.get("n2o", 265.0)))
+            ch4_t = gc.get("ch4_tonnes") or (val * (gc.get("ch4_pct", 0) / 100.0) / _g_ch4 if gc.get("ch4_pct") else 0.0)
+            n2o_t = gc.get("n2o_tonnes") or (val * (gc.get("n2o_pct", 0) / 100.0) / _g_n2o if gc.get("n2o_pct") else 0.0)
             val += horizon_delta(ch4_t, n2o_t, "20")
     return val
 
@@ -232,7 +236,7 @@ def production_boe(row):
     if getattr(row, "total_production_mmboe", None):
         return float(row.total_production_mmboe) * 1e6
     oil = production_oil_bbl(row)
-    gas_m3 = gas_volume_m3(row.gas_amount, row.gas_unit or "mscf", getattr(row, "year", None), getattr(row, "month", None)) if getattr(row, "gas_amount", None) else 0.0
+    gas_m3 = production_gas_m3(row)
     if oil is None or gas_m3 is None:
         return None
     return oil + gas_m3 * 35.314666721 / SCF_PER_BOE

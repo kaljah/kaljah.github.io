@@ -33,7 +33,7 @@ def heat_to_mmbtu(amount, unit, steam_enthalpy=None, steam_enthalpy_btu_lb=None)
     if u in _ENERGY_MMBTU:
         return amt * _ENERGY_MMBTU[u]
     if u in ("ton", "tons"):
-        raise ValueError("'ton' is ambiguous (short ton or metric tonne): write 'short_ton' or 'tonne'")
+        raise ValueError(f"Unit '{unit}' is ambiguous: use 'short_ton' (2,000 lb) or 'tonne' (1,000 kg)")
     if u not in _STEAM_MASS_LB:
         raise ValueError(f"Unknown unit '{unit}' for steam / heat: an energy unit (MMBtu, Btu, therm, GJ, MJ, kWh, "
                          "MWh) or a steam mass (lb, klb, kg, short_ton, tonne) with its enthalpy")
@@ -91,7 +91,8 @@ class IndirectSteamCalculator(BaseCalculator):
         t_loss = _parse_e(transmission_loss, 0.0)
         if not (0 <= b_eff <= 1 and 0 <= t_loss <= 1):
             raise ValueError(f"Boiler efficiency ({b_eff}) and transmission loss ({t_loss}) are fractions between 0 and 1")
-        net_efficiency = b_eff - t_loss  # Exhibit 8.3
+        # Net efficiency: API Compendium Exhibit 8.3 net efficiency = boiler efficiency - transmission loss
+        net_efficiency = b_eff - t_loss
         if net_efficiency <= 0:
             raise ValueError(
                 f"Net efficiency must be greater than 0 (got {net_efficiency:.4f}). "
@@ -152,6 +153,7 @@ class CogenAllocationCalculator(BaseCalculator):
         power_unit="mmbtu",
         heat_efficiency=None,
         power_efficiency=None,
+        **kwargs,
     ):
         """
         API Section 8.3 - Allocation of Cogeneration Emissions
@@ -198,11 +200,12 @@ class CogenAllocationCalculator(BaseCalculator):
             denominator = heat_share + power_share
         allocated_heat = heat_share / denominator * total_emissions if denominator > 0 else 0.0  # no heat bought
         allocated_power = power_share / denominator * total_emissions if denominator > 0 else 0.0
+        allocated_val = allocated_power if str(kwargs.get("purchased_stream") or kwargs.get("output_type") or "").lower() in ("power", "electricity", "electric") else allocated_heat
 
         _unc_dict = uncertainties or {}
         _tier = resolve_tier(_unc_dict.get("_factor_source", "default"))
         co2_res = propagate_uncertainty(
-            allocated_heat,
+            allocated_val,
             resolve_ef_uncertainty("indirect", "co2", _tier, _unc_dict.get("co2")),
             tier=_tier,
             process_category="indirect",
@@ -211,7 +214,7 @@ class CogenAllocationCalculator(BaseCalculator):
 
         return self.format_result(
             co2=co2_res,
-            total_co2e=calculate_co2e(co2=allocated_heat),
+            total_co2e=calculate_co2e(co2=allocated_val),
             inputs={
                 "total_emissions": total_emissions,
                 "heat_output": heat_output,
@@ -221,6 +224,7 @@ class CogenAllocationCalculator(BaseCalculator):
             metadata={
                 "allocated_heat_tonnes": allocated_heat,
                 "allocated_power_tonnes": allocated_power,
+                "allocated_tonnes": allocated_val,
                 "allocation_method": f"api2021_cogen_{method}",
             },
         )

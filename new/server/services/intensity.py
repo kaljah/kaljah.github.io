@@ -23,7 +23,8 @@ from sqlalchemy import func
 from extensions import db
 from models import Emission, Facility, OgmpSurvey, ProductionData, Scope2Emission, Scope3Emission
 from services.dashboard_filters import (apply_scope, gas_volume_m3, horizon_delta, production_boe,
-                                        production_gas_m3, production_oil_bbl, source_category, statuses)
+                                        production_gas_m3, production_oil_bbl, source_category, statuses,
+                                        SCF_PER_BOE)
 from services.ogmp import compute_facility_ogmp_level, ogmp_level_for
 
 from calculations.units import CONVERSIONS as _CONV
@@ -82,15 +83,32 @@ def intensity_cells(years=None, facility_id=None, activity=None, division=None, 
         c = cells[(p.facility_id, p.year)]
         boe = production_boe(p)
         gas = production_gas_m3(p)
-        if boe is None or gas is None:
+        oil_b = production_oil_bbl(p)
+        if boe is None and gas is None and oil_b is None:
             c["prod_unknown_units"] += 1
             continue
-        if boe > 0 or gas > 0:
+        if boe is None or gas is None or (oil_b is None and getattr(p, "oil_amount", None)):
+            c["prod_unknown_units"] += 1
+
+        if boe is not None:
+            c["boe"] += boe
+            if boe > 0:
+                c["has_prod"] = True
+        elif oil_b is not None and oil_b > 0:
+            c["boe"] += oil_b
             c["has_prod"] = True
-        c["boe"] += boe
-        c["gas_m3"] += gas
-        c["gas_mscf"] += gas * 35.314666721 / 1000.0
-        c["oil_bbl"] += production_oil_bbl(p) or 0.0
+        elif gas is not None and gas > 0:
+            c["boe"] += gas * 35.314666721 / SCF_PER_BOE
+            c["has_prod"] = True
+
+        if gas is not None:
+            c["gas_m3"] += gas
+            c["gas_mscf"] += gas * 35.314666721 / 1000.0
+            if gas > 0:
+                c["has_prod"] = True
+
+        if oil_b is not None:
+            c["oil_bbl"] += oil_b
 
     # scope 1 (row level: methane split, flaring volume, OGMP materiality)
     s1 = yfilter(apply_scope(Emission.query, Emission, **scope), Emission).filter(Emission.status.in_(st)).all()
@@ -236,8 +254,8 @@ def facility_row(fid, cell_list, fac, year_value, gwp_horizon="100"):
         return round(v, 4) if v is not None else None
 
     # EPA Waste Emissions Charge (40 CFR Part 99 / IRA s.136), per calendar year
-    wec_up = up_t / 100.0
-    wec_mid = mid_t / 100.0
+    wec_up = float(_app_settings.get("wec_upstream_threshold", 0.0020))
+    wec_mid = float(_app_settings.get("wec_midstream_threshold", 0.0005))
     wec_threshold = wec_mid if seg_cat == "midstream" else wec_up
     if gas_m3 > 0:
         # 40 CFR 99.20 Eq B-1 / B-2: threshold x gas sent to sale (Mscf) x 0.0192 mt CH4/Mscf (the rule's own
@@ -263,7 +281,7 @@ def facility_row(fid, cell_list, fac, year_value, gwp_horizon="100"):
         wec_rate, excess, fee, wec_status = 0.0, 0.0, 0.0, "Exempt (Downstream)"
     else:
         wec_rate = float(fee_map.get(str(wec_year), WEC_RATE_USD_PER_T))
-        excess = max(0.0, matched["ch4"] - allowed_ch4)
+        excess = max(0.0, (total["ch4"] if total["ch4"] > 0 else matched["ch4"]) - allowed_ch4)
         fee = round(excess * wec_rate, 2)
         wec_status = "Compliant" if excess <= 0 else "Taxable Liability"
 

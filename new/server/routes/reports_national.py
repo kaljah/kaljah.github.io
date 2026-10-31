@@ -327,11 +327,14 @@ def export_national_inventory_report():
             curr_row += 1
 
         # Scope 2 rows
+        s2_col = "co2e_market_based" if str(request.args.get("scope2_method") or "").lower() == "market" else "co2e_location_based"
+        from services.scope2_gases import gas_split
         for r in scope2_records:
             fac = facilities.get(r.facility_id)
             fac_name = fac.name if fac else f"Facility {r.facility_id}"
             s2_amount, s2_unit, s2_label = scope2_activity(r)
-            tot = _s2(r, "co2e_location_based")
+            tot = _s2(r, s2_col)
+            s2_g = gas_split(r)
 
             ws_inv.cell(row=curr_row, column=1, value=f"S2-{r.id}").font = font_mono
             ws_inv.cell(row=curr_row, column=2, value="Scope 2").font = font_bold
@@ -345,6 +348,9 @@ def export_national_inventory_report():
             ws_inv.cell(row=curr_row, column=10, value=_safe_excel_value(s2_label or r.grid_region or ""))
             ws_inv.cell(row=curr_row, column=11, value=round(float(s2_amount or 0.0), 2)).number_format = "#,##0.00"
             ws_inv.cell(row=curr_row, column=12, value=_safe_excel_value(s2_unit or ""))
+            ws_inv.cell(row=curr_row, column=13, value=round(s2_g.get("co2", 0.0), 2)).number_format = "#,##0.00"
+            ws_inv.cell(row=curr_row, column=14, value=round(s2_g.get("ch4", 0.0), 4)).number_format = "#,##0.0000"
+            ws_inv.cell(row=curr_row, column=15, value=round(s2_g.get("n2o", 0.0), 4)).number_format = "#,##0.0000"
             ws_inv.cell(row=curr_row, column=16, value=round(tot, 2)).number_format = "#,##0.00"
             ws_inv.cell(row=curr_row, column=17, value=_safe_excel_value(r.status or "")).font = font_regular
 
@@ -360,6 +366,10 @@ def export_national_inventory_report():
             fac_name = fac.name if fac else f"Facility {r.facility_id}"
             qty = float(r.activity_data or 0.0)
             tot = float(r.co2e or 0.0)
+            gc = getattr(r, "gas_composition", None) or {}
+            ch4_s3 = gc.get("ch4_tonnes", 0.0) if isinstance(gc, dict) else 0.0
+            n2o_s3 = gc.get("n2o_tonnes", 0.0) if isinstance(gc, dict) else 0.0
+            co2_s3 = max(0.0, tot - (ch4_s3 * 28.0 + n2o_s3 * 265.0))
 
             ws_inv.cell(row=curr_row, column=1, value=f"S3-{r.id}").font = font_mono
             ws_inv.cell(row=curr_row, column=2, value="Scope 3").font = font_bold
@@ -373,6 +383,9 @@ def export_national_inventory_report():
             ws_inv.cell(row=curr_row, column=10, value=_safe_excel_value(r.sub_category or ""))
             ws_inv.cell(row=curr_row, column=11, value=round(qty, 2)).number_format = "#,##0.00"
             ws_inv.cell(row=curr_row, column=12, value=_safe_excel_value(r.unit or ""))
+            ws_inv.cell(row=curr_row, column=13, value=round(co2_s3, 2)).number_format = "#,##0.00"
+            ws_inv.cell(row=curr_row, column=14, value=round(ch4_s3, 4)).number_format = "#,##0.0000"
+            ws_inv.cell(row=curr_row, column=15, value=round(n2o_s3, 4)).number_format = "#,##0.0000"
             ws_inv.cell(row=curr_row, column=16, value=round(tot, 2)).number_format = "#,##0.00"
             ws_inv.cell(row=curr_row, column=17, value=_safe_excel_value(r.status or "")).font = font_regular
 

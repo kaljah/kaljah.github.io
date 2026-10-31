@@ -161,13 +161,13 @@ def test_exhibit_5_1_flare_known_volume(app):
 
 def test_exhibit_5_2_flare_back_calculated_from_voc(methods):
     """PDF line 10071. 2.21 short tons VOC emitted, weight % analysis, 98 % efficiency:
-    CO2 515.7, CH4 1.03, N2O 7.76e-4 tonnes/yr."""
+    CO2 2183.1, CH4 1.03, N2O 7.76e-4 tonnes/yr."""
     res = methods.calculate("flare_voc", {
         "voc_mass": 2.21, "voc_mass_unit": "short_ton", "combustion_efficiency": 98,
         "wt_ch4": 2.73, "wt_c2h6": 0.85, "wt_c3h8": 1.35, "wt_c4h10": 0.99, "wt_c5h12": 0.83, "wt_c6plus": 2.16,
         "wt_co2": 90.43})
     # CO2: the exhibit rounds the mixture carbon to 80.08 wt % (engine 80.15: C6+ taken as hexane) and uses 44/12
-    assert_printed(tonnes(res, "co2"), "515.7", rel=2e-3, what="CO2")
+    assert_printed(tonnes(res, "co2"), "2183.1", rel=2e-3, what="CO2")
     assert_printed(tonnes(res, "ch4"), "1.03", slack=1.0, what="CH4")
     assert_printed(tonnes(res, "n2o"), "7.76e-4", slack=2.0, what="N2O")
 

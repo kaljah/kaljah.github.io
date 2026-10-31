@@ -26,7 +26,7 @@ def composition(flat_inputs, c1_keys=("c1",)):
     # N2 / H2S under any of their keys: a dropped inert made a 98.4 % analysis renormalise to 100 %
     # and inflated the hydrocarbons by 1.6 % (Exhibit 4.4a)
     co2_key = None
-    for key, names in (("co2", ("co2_mol", "co2_content", "co2_comp")),
+    for key, names in (("co2", ("co2", "co2_mol", "co2_content", "co2_comp")),
                        ("n2", ("n2", "n2_mol", "n2_comp", "n2_content", "n2_mole_pct")),
                        ("h2s", ("h2s", "h2s_mol", "h2s_content"))):
         for n in names:
@@ -42,4 +42,6 @@ def composition(flat_inputs, c1_keys=("c1",)):
     comps = {f"c{i}": fr.get(f"c{i}", 0.0) for i in range(1, 11)}
     comps["co2_comp"] = fr.get("co2", 0.0)
     comps["n2_comp"] = fr.get("n2", 0.0)
+    comps["h2s_comp"] = fr.get("h2s", 0.0)
+    comps["h2s"] = fr.get("h2s", 0.0)
     return comps

@@ -258,7 +258,7 @@ def test_flare_voc_back_calculation(calc):
     assert res["intermediate"]["hc_emitted_t"] == pytest.approx(9.7, rel=1e-9)
     assert res["intermediate"]["hc_carbon_wt"] == pytest.approx(c_mix, rel=1e-3)
     assert res["results"]["co2"]["value"] == pytest.approx(
-        hc_emitted * c_mix * 0.98 / 0.02 * 44.01 / 12.011 + 1.5 * 3.0 / 15.0, rel=2e-3)
+        hc_emitted * c_mix * 0.98 / 0.02 * 44.01 / 12.011 + (1.5 / 0.02) * 3.0 / 15.0, rel=2e-3)
     assert res["results"]["ch4"]["value"] == pytest.approx(hc_emitted * 70.0 / w_hc, rel=1e-9)
     # mixture molecular weight = hydrocarbon wt % / sum(wt % / MW)
     assert res["intermediate"]["hc_mw"] == pytest.approx(w_hc / sum(wt[k] / mw[k] for k in wt), rel=2e-3)
@@ -288,7 +288,7 @@ def test_flare_voc_back_calculation(calc):
         voc_t = 2000.0 * (0.001 if m_unit == "kg" else 1 / 2204.62)
         c_mix_m = (75.0 * 12.011 / 16.043 + 15.0 * 3 * 12.011 / 44.096) / 90.0
         assert res_m["results"]["co2"]["value"] == pytest.approx(
-            voc_t * 90 / 15 * c_mix_m * 0.98 / 0.02 * 44.01 / 12.011 + voc_t * 5.0 / 15.0, rel=2e-3), m_unit
+            voc_t * 90 / 15 * c_mix_m * 0.98 / 0.02 * 44.01 / 12.011 + (voc_t / 0.02) * 5.0 / 15.0, rel=2e-3), m_unit
         assert res_m["results"]["ch4"]["value"] == pytest.approx(voc_t * 90 / 15 * 75.0 / 90.0, rel=1e-9), m_unit
 
 

@@ -103,6 +103,7 @@ class WorkoverWithoutFracturingCalculator(BaseCalculator):
         ef_n2o=None,
         uncertainties=None,
         gwp_dict=None,
+        **kwargs,
     ):
         uncertainties = uncertainties or {}
         self.validate_inputs({"workovers": workovers}, ["workovers"])
@@ -260,6 +261,7 @@ class CasingGasVentCalculator(BaseCalculator):
         ef_n2o=None,
         uncertainties=None,
         gwp_dict=None,
+        **kwargs,
     ):
         uncertainties = uncertainties or {}
         meth = str(method or "throughput").lower().strip()
@@ -399,6 +401,7 @@ class CO2EORVentingCalculator(BaseCalculator):
         co2_retained_tonnes_per_bbl=None,
         uncertainties=None,
         gwp_dict=None,
+        **kwargs,
     ):
         uncertainties = uncertainties or {}
         act = str(activity or "pump_blowdown").lower().strip()
@@ -423,6 +426,8 @@ class CO2EORVentingCalculator(BaseCalculator):
                                  ["co2_density_kg_m3", "co2_weight_fraction"])
             rho = float(co2_density_kg_m3)
             wt_frac = float(co2_weight_fraction)
+            if wt_frac < 0:
+                raise ValueError("co2_weight_fraction cannot be negative")
             if wt_frac > 1.0:
                 wt_frac /= 100.0
 
@@ -508,6 +513,7 @@ class ProductionNonRoutineVentingCalculator(BaseCalculator):
         ef_n2o=None,
         uncertainties=None,
         gwp_dict=None,
+        **kwargs,
     ):
         uncertainties = uncertainties or {}
         stype = str(source_type or "event").lower().strip()
@@ -537,6 +543,13 @@ class ProductionNonRoutineVentingCalculator(BaseCalculator):
                 ["vent_rate_scfm", "duration_minutes"],
             )
             vr = float(vent_rate_scfm)
+            vru = str(kwargs.get("vent_rate_unit") or kwargs.get("rate_unit") or "scfm").lower().strip()
+            if vru in ("scf/hr", "scfh", "scf_hr"):
+                vr /= 60.0
+            elif vru in ("m3/min", "m3_min"):
+                vr = convert(vr, "m3", "scf")
+            elif vru in ("m3/hr", "m3_hr", "m3h"):
+                vr = convert(vr / 60.0, "m3", "scf")
             tv = float(duration_minutes)
             n = float(1.0 if events is None else events)
             if n < 0:

@@ -90,6 +90,7 @@ def get_scope3_emissions():
                 "activity_data": float(e.activity_data or 0),
                 "unit": e.unit,
                 "emission_factor": float(e.emission_factor or 0),
+                "factor_unit": getattr(e, "factor_unit", None),
                 "co2e": float(e.co2e or 0),
                 "uncertainty": float(e.uncertainty) if e.uncertainty is not None else None,
                 "calculation_method": e.calculation_method,
@@ -173,7 +174,7 @@ def create_scope3_emission():
         category=category_val,
         sub_category=data.get("sub_category") or data.get("activity_type"),
         activity_data=activity_data, unit=data.get("unit"),
-        emission_factor=emission_factor, co2e=co2e_val,
+        emission_factor=emission_factor, factor_unit=str(data.get("factor_unit") or data.get("emission_factor_unit") or "") or None, co2e=co2e_val,
         status=initial_status,
         approved_by=user.id if initial_status == "Verified" else None,
         approved_at=datetime.datetime.now(datetime.timezone.utc) if initial_status == "Verified" else None,
@@ -343,11 +344,15 @@ def update_scope3_emission(emission_id):
         factor_unit = str(data.get("factor_unit") or data.get("emission_factor_unit") or getattr(emission, "factor_unit", "") or "")
         calc_method = str(data.get("calculation_method") or getattr(emission, "calculation_method", "") or "")
         if act > 0 and ef > 0:
+            if "emission_factor" not in data:
+                factor_unit = "kg/unit"
             # a factor edited with its own unit is matched to the record's activity unit
             emission.co2e = compute_scope3_co2e(act, ef, factor_unit, calc_method,
                                                 activity_unit=emission.unit if factor_unit else "")
             from calculations.units import scope3_ef_kg_per_unit
             emission.emission_factor = scope3_ef_kg_per_unit(act, emission.co2e, ef)
+            if "factor_unit" in data or "emission_factor_unit" in data:
+                emission.factor_unit = str(data.get("factor_unit") or data.get("emission_factor_unit") or "")
         elif not ef and "emission_factor" not in data and emission.co2e:
             pass  # BUG-0008: a supplier-reported total stays; its activity amount is informational
         else:

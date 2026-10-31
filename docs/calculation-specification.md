@@ -298,7 +298,7 @@ $$\text{CO}_2\text{e} = (\text{Mass}_{\text{CO}_2} \times \text{GWP}_{\text{CO}_
 ## 8. Formal Specifications for Operational Intensities & Compliance
 
 ### 8.1 Production Normalization (Barrels of Oil Equivalent - BOE)
-$$\text{BOE} = \text{Oil}_{\text{bbl}} + (\text{Gas}_{\text{mscf}} \times 0.178)$$
+$$\text{BOE} = \text{Oil}_{\text{bbl}} + \left(\text{Gas}_{\text{mscf}} \times \frac{1020}{5800}\right) = \text{Oil}_{\text{bbl}} + (\text{Gas}_{\text{mscf}} \times 0.175862)$$
 
 ### 8.2 Operational Carbon & Methane Intensities
 $$\text{Carbon Intensity} = \frac{\text{Total CO}_2\text{e} (\text{tonnes}) \times 1000}{\text{BOE}}\ (\text{kg CO}_2\text{e/BOE})$$

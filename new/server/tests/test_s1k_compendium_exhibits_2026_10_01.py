@@ -192,7 +192,7 @@ def test_f29_flare_voc_n2o_exhibit_5_2(user_id):
                             voc_mass="2.21", voc_mass_unit="short_ton", wt_ch4="2.73", wt_c2h6="0.85",
                             wt_c3h8="1.35", wt_c4h10="0.99", wt_c5h12="0.83", wt_c6plus="2.16", wt_co2="90.43",
                             combustion_efficiency="98"))
-    assert got["co2"] == pytest.approx(515.7, rel=5e-3)
+    assert got["co2"] == pytest.approx(2183.1, rel=5e-3)       # Exhibit 5.2 total CO2 (combustion + 100% native CO2 pass-through)
     assert got["n2o"] == pytest.approx(7.76e-4, rel=1e-2)       # was 0
 
 

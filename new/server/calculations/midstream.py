@@ -24,6 +24,8 @@ class AGRCalculator(BaseCalculator):
         acid_gas_control_eff=0.0,
         acid_gas_control_type="vent",
         gwp_dict=None,
+        co2_capture_eff=0.0,
+        **kwargs,
     ):
         """
         API Compendium 2021 §6.5 & Table 6-5:
@@ -67,7 +69,7 @@ class AGRCalculator(BaseCalculator):
         # Eq 6-18 is V_in*y_in - V_out*y_out; the outlet stream is smaller than the inlet by the CO2
         # removed, V_out = V_in*(1 - y_in)/(1 - y_out), so the balance is V_in*(y_in - y_out)/(1 - y_out).
         # Using V_in for both streams left out that shrinkage (Exhibit 6-17: 78,925 t instead of 80,506 t)
-        co2_vented_scf = throughput_scf * diff_co2 / (1.0 - cout)
+        co2_vented_scf = throughput_scf * diff_co2 / max(0.0001, 1.0 - cout)
         co2_vented_m3 = convert(co2_vented_scf, "scf", "m3")
         co2_mass_kg = co2_vented_m3 * CONVERSIONS["density_co2"]
 
@@ -103,7 +105,8 @@ class AGRCalculator(BaseCalculator):
             # Thermal destruction / Claus SRU: destroys slipped CH4 to CO2, but native stripped CO2 passes through
             ch4_destroyed_kg = ch4_mass_kg * ctrl_eff
             combusted_co2_kg = ch4_destroyed_kg * (44.01 / 16.04)
-            co2_emitted_kg = co2_mass_kg + combusted_co2_kg
+            co2_capture = float(co2_capture_eff or kwargs.get("co2_capture_eff") or 0.0)
+            co2_emitted_kg = co2_mass_kg * (1.0 - co2_capture) + combusted_co2_kg
             ch4_emitted_kg = ch4_mass_kg * (1.0 - ctrl_eff)
         else:
             # Uncontrolled vent or unspecified: if control efficiency is provided, treat as capture/abatement
@@ -161,15 +164,10 @@ class DehydratorCalculator(BaseCalculator):
         processed at 78.8 mol % CH4, scaled to the site CH4 content (Exhibit 6-13)."""
         uncertainties = uncertainties or {}
 
-        # 1. Check if Tier 1 (Default Emission Factor based on throughput alone)
+        # 1. Check if Tier 1 (Default Emission Factor based on throughput or count)
         tp = throughput if throughput is not None else kwargs.get("gas_throughput")
-        if (pump_rate is None or float(pump_rate or 0) <= 0) and tp is not None:  # Tier 1
-            # API Compendium 2021 Table 6-17 (production segment, uncontrolled glycol dehydration, excludes
-            # gas-assisted pump emissions): 0.0052859 t CH4 / 10^6 scf processed at 78.8 mol % CH4;
-            # scaled by the site CH4 content (Exhibit 6-13). The former 0.266 t/MMscf had no source.
-            tp_mmscf = float(tp)
-            if tp_mmscf < 0:
-                raise ValueError("Throughput cannot be negative")
+        n_dehy = kwargs.get("dehydrator_count") or kwargs.get("count") or kwargs.get("n_dehydrators")
+        if (pump_rate is None or float(pump_rate or 0) <= 0) and (tp is not None or n_dehy is not None):  # Tier 1
             eff = normalize_efficiency(control_eff, default=0.0)
             s_c = str(ch4_content if ch4_content is not None else 0.788).replace("%", "").strip()
             c = float(s_c)
@@ -179,8 +177,35 @@ class DehydratorCalculator(BaseCalculator):
                 c /= 100.0
             if c > 1.0:
                 raise ValueError("CH4 content cannot exceed 100 %")
-            default_ef = 0.0052859 * (c / 0.788) * (1.0 - eff)
-            ch4_tonnes = tp_mmscf * default_ef
+
+            if tp is not None:
+                tp_val = float(tp)
+                if tp_val < 0:
+                    raise ValueError("Throughput cannot be negative")
+                u = str(kwargs.get("unit") or kwargs.get("throughput_unit") or "mmscf").lower().strip()
+                if u in ("mscf", "kscf"):
+                    tp_mmscf = tp_val / 1000.0
+                elif u in ("scf", "cf"):
+                    tp_mmscf = tp_val / 1_000_000.0
+                elif u in ("m3", "sm3", "nm3"):
+                    tp_mmscf = (tp_val * CONVERSIONS.get("m3_to_scf", 35.3147)) / 1_000_000.0
+                elif u in ("bcf",):
+                    tp_mmscf = tp_val * 1000.0
+                else:
+                    tp_mmscf = tp_val
+                default_ef = 0.0052859 * (c / 0.788) * (1.0 - eff)
+                ch4_tonnes = tp_mmscf * default_ef
+                in_dict = {"throughput_mmscf": tp_mmscf, "tier": "Tier 1 (Default Factor)"}
+                meth = "API Compendium 2021 Table 6-17 (uncontrolled glycol dehydration - throughput)"
+            else:
+                n = float(n_dehy)
+                if n < 0:
+                    raise ValueError("Dehydrator count cannot be negative")
+                days = float(kwargs.get("operating_days") or 365.0)
+                default_ef = 0.06149 * (c / 0.788) * (1.0 - eff) * (days / 365.0)
+                ch4_tonnes = n * default_ef
+                in_dict = {"dehydrator_count": n, "operating_days": days, "tier": "Tier 1 (Default Factor)"}
+                meth = "API Compendium 2021 Table 6-17 (uncontrolled glycol dehydration - count)"
 
             _tier = resolve_tier("default")
             ch4_res = propagate_uncertainty(
@@ -197,13 +222,8 @@ class DehydratorCalculator(BaseCalculator):
             return self.format_result(
                 ch4=ch4_res,
                 total_co2e=total_co2e,
-                inputs={
-                    "throughput_mmscf": tp_mmscf,
-                    "tier": "Tier 1 (Default Factor)",
-                },
-                metadata={
-                    "method": "API Compendium 2021 Table 6-17 (uncontrolled glycol dehydration)"
-                },
+                inputs=in_dict,
+                metadata={"method": meth},
             )
 
         # A glycol circulation rate has no API Compendium method (section 6.3.8.1: Tables 6-17 / 6-18, a

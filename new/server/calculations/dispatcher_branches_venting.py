@@ -237,7 +237,17 @@ def calc_tank(self, calculator, emission_factors, flat_inputs, gwp_dict, process
             if str(method or "").lower() == "working_loss" or process_type == "working_loss":
                 raise ValueError(f"Working-loss factor cannot be applied per bbl of throughput: {err}")
             ef_ch4_kg_bbl = 0.0  # not a per-bbl factor: the tank methods below apply instead
-    api_g = _opt(["api_gravity", "tank_api_gravity"])
+    api_g = _opt(["api_gravity", "tank_api_gravity", "density"])
+    api_val = None
+    if api_g is not None:
+        raw_val = float(api_g)
+        # If user passes specific gravity (e.g. 0.70 to 0.99) instead of API gravity (typically 10 to 70 °API)
+        # Convert SG to °API: °API = (141.5 / SG) - 131.5. Protect 1.0 °API bitumen from accidental inversion.
+        u_sg = str(flat_inputs.get("density_unit") or flat_inputs.get("api_gravity_unit") or "").lower().strip()
+        if (u_sg in ("sg", "specific_gravity", "sp_gr") and raw_val > 0) or (not u_sg and 0.5 < raw_val < 0.99):
+            api_val = (141.5 / raw_val) - 131.5
+        else:
+            api_val = raw_val
     sep_p = _opt(["separator_pressure_psig", "sep_pressure"])
     sep_t = _opt(["separator_temp_f", "sep_temp"])
 
@@ -256,7 +266,7 @@ def calc_tank(self, calculator, emission_factors, flat_inputs, gwp_dict, process
         method=method,
         liquid_type=liquid,
         tank_size=str(_opt(["tank_size"]) or "large").lower(),
-        api_gravity=float(api_g) if api_g is not None else None,
+        api_gravity=api_val,
         separator_pressure_psig=float(sep_p) if sep_p is not None else None,
         separator_temp_f=float(sep_t) if sep_t is not None else None,
     )
@@ -333,7 +343,10 @@ def calc_dehydrator(self, calculator, flat_inputs, gwp_dict, uncertainties):
             "Glycol dehydrator Tier 3: enter the measured vent volume or the simulation (GLYCalc) result; "
             "use Tier 1 for the Compendium factors"
         )
-    throughput = (
+    unit = str(flat_inputs.get("unit") or flat_inputs.get("throughput_unit") or "").lower()
+    is_count = unit in ("count", "units", "dehydrators", "items") or flat_inputs.get("dehydrator_count") is not None
+    dehy_count = flat_inputs.get("dehydrator_count") or (flat_inputs.get("amount") if is_count else None)
+    throughput = None if is_count else (
         flat_inputs.get("dehy_throughput")
         or flat_inputs.get("throughput")
         or flat_inputs.get("gas_throughput")
@@ -347,5 +360,5 @@ def calc_dehydrator(self, calculator, flat_inputs, gwp_dict, uncertainties):
     # Table 6-17 CH4 cut by the share controlled x the device's efficiency (98 % for a flare without one)
     share, eff = self._controlled_share(flat_inputs, ["dehy_eff", "control_efficiency"])
     control_eff = share * (0.98 if eff is None else eff)
-    return calculator.calculate(throughput=throughput, ch4_content=ch4_content, control_eff=control_eff,
-                                uncertainties=uncertainties, gwp_dict=gwp_dict)
+    return calculator.calculate(throughput=throughput, dehydrator_count=dehy_count, ch4_content=ch4_content,
+                                control_eff=control_eff, uncertainties=uncertainties, gwp_dict=gwp_dict, unit=unit)

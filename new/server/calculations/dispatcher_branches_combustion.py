@@ -39,8 +39,13 @@ def calc_stationary_combustion(self, calculator, emission_factors, flat_inputs, 
     )
     carbon_wt = next((flat_inputs.get(k) for k in ("carbon_content", "carbon_wt_pct", "c_content")
                       if flat_inputs.get(k) not in (None, "", "-")), None)
+    _is_h2 = (
+        str(flat_inputs.get("fuel_type") or "").strip().lower() in ("hydrogen", "h2")
+        or str(flat_inputs.get("fuel_name") or "").strip().lower() in ("hydrogen", "h2")
+        or comps.get("h2", 0) > 0.90
+    )
     if (not any(comps.get(f"c{i}") for i in range(1, 11)) and not comps.get("co2_comp") and not _measured
-            and carbon_wt is None):
+            and carbon_wt is None and not _is_h2):
         raise ValueError(
             "Tier 3 fuel analysis needs the fuel gas composition (Gas analysis) or measured emission factors"
         )
@@ -193,6 +198,13 @@ def calc_drilling(self, calculator, emission_factors, flat_inputs, gwp_dict, unc
     )
     if ch4_conc is None and flat_inputs.get("ch4_pct") is not None:
         ch4_conc = float(flat_inputs.get("ch4_pct")) / 100.0
+    elif ch4_conc is not None:
+        try:
+            ch4_f = float(str(ch4_conc).replace("%", "").strip())
+            if "%" in str(ch4_conc) or ch4_f > 1.0:
+                ch4_conc = ch4_f / 100.0
+        except (ValueError, TypeError):
+            pass
 
     co2_conc = (
         flat_inputs.get("co2_fraction")
@@ -201,12 +213,20 @@ def calc_drilling(self, calculator, emission_factors, flat_inputs, gwp_dict, unc
     )
     if co2_conc is None and flat_inputs.get("co2_pct") is not None:
         co2_conc = float(flat_inputs.get("co2_pct")) / 100.0
+    elif co2_conc is not None:
+        try:
+            co2_f = float(str(co2_conc).replace("%", "").strip())
+            if "%" in str(co2_conc) or co2_f > 1.0:
+                co2_conc = co2_f / 100.0
+        except (ValueError, TypeError):
+            pass
 
     unit_str = str(flat_inputs.get("unit") or unit or "").lower().strip()
     # Table 6-2 is per drilling day (or per well at Tier 1): a volume or mass is not an activity
     given_unit = str(flat_inputs.get("unit") or "").lower().strip()  # (not the dispatcher's "m3" default)
     if given_unit in ("h", "hr", "hrs", "hour", "hours"):
         # S1K-F16: drilling time given in hours is converted to drilling days (it was refused)
+        flat_inputs = dict(flat_inputs)
         for k in ("amount", "quantity", "drilling_days"):
             if flat_inputs.get(k) not in (None, "", "-"):
                 flat_inputs[k] = float(flat_inputs[k]) / 24.0
@@ -305,7 +325,7 @@ def calc_completions(self, calculator, emission_factors, flat_inputs, gwp_dict, 
     events_val = float(1.0 if events_raw is None else events_raw)
 
     gas_sales_mcf = float(flat_inputs.get("comp_gas_produced_mcf") or flat_inputs.get("gas_produced_sales_mcf") or 0.0)
-    gas_sales_scf = gas_sales_mcf * 1000.0 if gas_sales_mcf else float(flat_inputs.get("gas_produced_sales_scf") or 0.0)
+    gas_sales_scf = float(flat_inputs.get("gas_produced_sales_scf") or 0.0) or (gas_sales_mcf * 1000.0)
 
     # Flowback volume for Tier 3
     vol_val = None

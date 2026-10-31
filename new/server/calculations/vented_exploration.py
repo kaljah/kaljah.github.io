@@ -198,7 +198,7 @@ class WellTestingCalculator(BaseCalculator):
                     raise ValueError("Oil well testing Tier 2 requires non-negative GOR")
                 gor_scf_bbl = float(gor) * _per(_GOR_SCF_BBL, gor_unit, "scf/bbl", "GOR")
                 if oil_production_total is not None and float(oil_production_total) > 0:
-                    total_oil_bbl = float(oil_production_total)
+                    total_oil_bbl = convert(float(oil_production_total), str(kwargs.get("oil_unit") or kwargs.get("oil_production_unit") or "bbl").lower(), "bbl")
                 elif oil_production_rate is not None and float(oil_production_rate) > 0:
                     if duration_days <= 0:
                         raise ValueError("Oil well testing requires positive duration when using production rate")

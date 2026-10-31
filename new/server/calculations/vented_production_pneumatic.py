@@ -119,11 +119,8 @@ class PneumaticDeviceCalculator(BaseCalculator):
             if t_norm < 0 or t_mf < 0:
                 raise ValueError("Year fractions cannot be negative")
 
-            # API Table 6-15: normal = 0.28 scf gas/hr (0.038 t CH4/yr at 81.6%); mf = 24.1 scf gas/hr (3.30 t CH4/yr at 81.6%)
-            # Emissions can be computed directly in whole gas scf:
-            ef_norm_scf_yr = 0.28 * hrs
-            ef_mf_scf_yr = 24.1 * hrs
-            total_gas_scf = (n_norm * ef_norm_scf_yr * t_norm) + (n_mf * ef_mf_scf_yr * t_mf)
+            # API Table 6-15: normal = 0.28 scf gas/hr; mf = 24.1 scf gas/hr
+            total_gas_scf = (n_norm * 0.28 * t_norm + n_mf * 24.1 * t_mf) * hrs
 
         # Case 2: Equation 6-13 Physical actuation volume model
         elif id_pipe_inches is not None and length_pipe_ft is not None and delta_vol_bonnet_scf is not None:
@@ -135,19 +132,13 @@ class PneumaticDeviceCalculator(BaseCalculator):
             pipe_vol = (math.pi / 4.0) * (id_ft ** 2) * l_ft
             v_act = pipe_vol + d_vol
 
-            # Eq 6-13 has no default supply pressure or actuation count (30 psig / 1,000 were assumed)
             if p_control_psig in (None, ""):
                 raise ValueError("Equation 6-13 needs the controller supply pressure (psig)")
             n_act_raw = actuations_per_year if actuations_per_year not in (None, "") else actuations
             if n_act_raw in (None, ""):
                 raise ValueError("Equation 6-13 needs the number of actuations per year")
-            p_ctrl = float(p_control_psig)
-            p_atm = _given(p_atm_psia, 14.7)
-            p_factor = (p_ctrl + p_atm) / STD_PRESSURE_PSIA
-
-            n_act = float(n_act_raw)
-            vol_per_controller = v_act * p_factor * n_act
-            total_gas_scf = n_dev * vol_per_controller
+            p_factor = (float(p_control_psig) + _given(p_atm_psia, 14.7)) / STD_PRESSURE_PSIA
+            total_gas_scf = n_dev * v_act * p_factor * float(n_act_raw)
 
         # Case 3: API Table 6-14 / Table 6-15 Controller Type Selection
         elif controller_type is not None:
@@ -318,7 +309,7 @@ class PneumaticPumpCalculator(BaseCalculator):
 
             # Equation 6-15: V_G = [(P_O + P_A) / 14.7] * [T_A / (459.7 + T_G)] * V_L * (1 + I)
             p_ratio = (p_out + p_atm) / 14.7
-            t_ratio = t_atm_r / (459.67 + t_g)
+            t_ratio = float(atmospheric_temperature_r or 520.0) / (459.67 + t_g)
             v_g_single = p_ratio * t_ratio * v_liquid_ft3 * (1.0 + ineff)
             total_gas_scf = n_pumps * v_g_single
 
@@ -418,6 +409,49 @@ class GasDehydrationCalculator(BaseCalculator):
     def __init__(self):
         super().__init__("Gas Dehydration", "Section 6.3.8")
 
+    def _calc_glycol(
+        self, gas_throughput_mmscfd, gas_throughput_mmscf_yr, days,
+        has_gas_assisted_pump, dehydrator_count, use_unit_factor, c_ch4, c_co2
+    ):
+        """Glycol dehydrator calculation (count basis or throughput basis with optional pump)."""
+        if use_unit_factor or (gas_throughput_mmscfd is None and gas_throughput_mmscf_yr is None):
+            n_dehy = _given(dehydrator_count, 1.0)
+            if n_dehy < 0:
+                raise ValueError(f"dehydrator_count cannot be negative ({n_dehy})")
+            base_ef = self.TABLE_6_17_DEHY["unit"]["ef_ch4_tonnes_yr"]
+            day_fac = days / 365.0
+            gross_ch4_tonnes = n_dehy * base_ef * (c_ch4 / 0.788) * day_fac
+            total_gas_scf = n_dehy * self.TABLE_6_17_DEHY["unit"]["scf_gas_yr"] * day_fac
+            gross_co2_tonnes = 0.0
+            if has_gas_assisted_pump:
+                pump_ratio = (self.TABLE_6_18_KIMRAY["ef_ch4_tonnes_per_mmscf"]
+                              / self.TABLE_6_17_DEHY["throughput"]["ef_ch4_tonnes_per_mmscf"])
+                pump_ch4 = gross_ch4_tonnes * pump_ratio
+                gross_ch4_tonnes += pump_ch4
+                if c_ch4 > 0 and c_co2 > 0:
+                    gross_co2_tonnes = pump_ch4 * (1.0 / MW_CH4) * (1.0 / c_ch4) * c_co2 * MW_CO2
+                total_gas_scf += (n_dehy * (self.TABLE_6_18_KIMRAY["scf_gas_per_mmscf"]
+                                            / self.TABLE_6_17_DEHY["throughput"]["scf_gas_per_mmscf"])
+                                  * self.TABLE_6_17_DEHY["unit"]["scf_gas_yr"] * day_fac)
+        else:
+            annual_mmscf = float(gas_throughput_mmscfd) * days if gas_throughput_mmscfd is not None else float(gas_throughput_mmscf_yr)
+            if annual_mmscf < 0:
+                raise ValueError("Gas throughput cannot be negative")
+            base_ef = self.TABLE_6_17_DEHY["throughput"]["ef_ch4_tonnes_per_mmscf"]
+            dehy_ch4_tonnes = annual_mmscf * base_ef * (c_ch4 / 0.788)
+            dehy_scf = annual_mmscf * self.TABLE_6_17_DEHY["throughput"]["scf_gas_per_mmscf"]
+            pump_ch4_tonnes, pump_co2_tonnes, pump_scf = 0.0, 0.0, 0.0
+            if has_gas_assisted_pump:
+                pump_ef = self.TABLE_6_18_KIMRAY["ef_ch4_tonnes_per_mmscf"]
+                pump_ch4_tonnes = annual_mmscf * pump_ef * (c_ch4 / 0.788)
+                pump_scf = annual_mmscf * self.TABLE_6_18_KIMRAY["scf_gas_per_mmscf"]
+                if c_ch4 > 0 and c_co2 > 0:
+                    pump_co2_tonnes = pump_ch4_tonnes * (1.0 / MW_CH4) * (1.0 / c_ch4) * c_co2 * MW_CO2
+            gross_ch4_tonnes = dehy_ch4_tonnes + pump_ch4_tonnes
+            gross_co2_tonnes = pump_co2_tonnes
+            total_gas_scf = dehy_scf + pump_scf
+        return gross_ch4_tonnes, gross_co2_tonnes, total_gas_scf
+
     def calculate(
         self,
         dehydrator_type="glycol",  # "glycol", "desiccant"
@@ -486,45 +520,10 @@ class GasDehydrationCalculator(BaseCalculator):
             gross_co2_tonnes = total_gas_scf * c_co2 * (MW_CO2 / MOLAR_VOL_US) / LB_PER_TONNE
 
         else:
-            # Glycol Dehydrator
-            if use_unit_factor or (gas_throughput_mmscfd is None and gas_throughput_mmscf_yr is None):
-                # Count basis (Table 6-17)
-                n_dehy = _given(dehydrator_count, 1.0)  # 0 dehydrators is 0 (it was 1)
-                if n_dehy < 0:
-                    raise ValueError(f"dehydrator_count cannot be negative ({n_dehy})")
-                # 0.06149 t CH4/yr at 78.8%
-                base_ef = self.TABLE_6_17_DEHY["unit"]["ef_ch4_tonnes_yr"]
-                gross_ch4_tonnes = n_dehy * base_ef * (c_ch4 / 0.788)
-                total_gas_scf = n_dehy * self.TABLE_6_17_DEHY["unit"]["scf_gas_yr"]
-                # CO2 in glycol is negligible unless gas pump is present
-                gross_co2_tonnes = 0.0
-
-            else:
-                annual_mmscf = float(gas_throughput_mmscfd) * days if gas_throughput_mmscfd is not None else float(gas_throughput_mmscf_yr)
-                if annual_mmscf < 0:
-                    raise ValueError("Gas throughput cannot be negative")
-
-                # Table 6-17 Dehydrator vent emissions (Exhibit 6-13)
-                base_ef = self.TABLE_6_17_DEHY["throughput"]["ef_ch4_tonnes_per_mmscf"]
-                dehy_ch4_tonnes = annual_mmscf * base_ef * (c_ch4 / 0.788)
-                dehy_scf = annual_mmscf * self.TABLE_6_17_DEHY["throughput"]["scf_gas_per_mmscf"]
-
-                # Kimray gas-assisted glycol pump (Table 6-18, Exhibit 6-14)
-                pump_ch4_tonnes = 0.0
-                pump_co2_tonnes = 0.0
-                pump_scf = 0.0
-                if has_gas_assisted_pump:
-                    pump_ef = self.TABLE_6_18_KIMRAY["ef_ch4_tonnes_per_mmscf"]
-                    pump_ch4_tonnes = annual_mmscf * pump_ef * (c_ch4 / 0.788)
-                    pump_scf = annual_mmscf * self.TABLE_6_18_KIMRAY["scf_gas_per_mmscf"]
-                    # CO2 via ratio: ECO2 = ECH4 * (1/16) * (1/y_ch4) * y_co2 * 44
-                    if c_ch4 > 0 and c_co2 > 0:
-                        pump_co2_tonnes = pump_ch4_tonnes * (1.0 / MW_CH4) * (1.0 / c_ch4) * c_co2 * MW_CO2
-
-                gross_ch4_tonnes = dehy_ch4_tonnes + pump_ch4_tonnes
-                # In glycol regenerators, CO2 is not soluble so regenerator CO2 = 0; pump vents motive gas containing CO2
-                gross_co2_tonnes = pump_co2_tonnes
-                total_gas_scf = dehy_scf + pump_scf
+            gross_ch4_tonnes, gross_co2_tonnes, total_gas_scf = self._calc_glycol(
+                gas_throughput_mmscfd, gas_throughput_mmscf_yr, days,
+                has_gas_assisted_pump, dehydrator_count, use_unit_factor, c_ch4, c_co2,
+            )
 
         total_gas_m3 = convert(total_gas_scf, "scf", "m3")
 

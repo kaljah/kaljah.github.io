@@ -53,15 +53,21 @@ def get_active_gwp(standard=None, gwp_dict=None, horizon="100"):
     """
     if gwp_dict is not None and isinstance(gwp_dict, dict):
         norm_dict = {str(k).upper(): float(v) for k, v in gwp_dict.items() if v is not None}
-        if "CH4" in norm_dict:
+        if norm_dict:
             # Fall back to the active standard's values for any gas omitted from the custom dict,
             # so an AR6 installation gets N2O=273 instead of the hardcoded AR5 value of 265.
             _std_key = str(standard or "").upper().strip()
             _std = GWP_STANDARDS.get(_std_key, GWP_AR5)
+            if str(horizon) == "20":
+                return {
+                    "CO2": norm_dict.get("CO2", 1.0),
+                    "CH4": norm_dict.get("CH4", _std.get("CH4_20", 84.0)),
+                    "N2O": norm_dict.get("N2O", _std.get("N2O_20", 264.0)),
+                }
             return {
                 "CO2": norm_dict.get("CO2", 1.0),
-                "CH4": norm_dict["CH4"],
-                "N2O": norm_dict.get("N2O", _std["N2O"]),
+                "CH4": norm_dict.get("CH4", _std.get("CH4", 28.0)),
+                "N2O": norm_dict.get("N2O", _std.get("N2O", 265.0)),
             }
 
 

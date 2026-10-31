@@ -68,7 +68,8 @@ def _calc_indirect_steam(data):
         raise ValidationError(f"Transmission loss is a fraction from 0 to below 1 (got {trans_loss}; 5 % is 0.05)",
                               "trans_loss")
     ef_co2 = float(ci.get("ef_co2", _DEFAULT_BOILER_EF_KG_PER_MMBTU))
-    if 0 < ef_co2 < 1.0:
+    ef_u = str(ci.get("ef_unit") or ci.get("factor_unit") or "").lower().strip()
+    if ef_u in ("t/mmbtu", "tonne/mmbtu", "tonnes/mmbtu", "mt/mmbtu") or (not ef_u and 0 < ef_co2 < 0.1):
         ef_co2 = ef_co2 * 1000.0
 
     try:
@@ -165,6 +166,9 @@ def _calc_cogen_allocation(data):
         heat_efficiency=data.get("heat_efficiency") or ci.get("heat_efficiency"),
         power_efficiency=data.get("power_efficiency") or ci.get("power_efficiency"),
     )
+    p_stream = str(data.get("purchased_stream") or ci.get("purchased_stream") or data.get("energy_type") or "").lower()
+    if p_stream in ("power", "electricity", "electric"):
+        return res["metadata"]["allocated_power_tonnes"]
     return res["metadata"]["allocated_heat_tonnes"]
 
 

@@ -154,8 +154,8 @@ ACTIVITY_FACTORS = {
 }
 
 GAS_SCALE = {"scf": 1.0, "mcf": 1e3, "mscf": 1e3, "mmscf": 1e6, "m3": 1 / SCF_TO_M3, "sm3": 1 / SCF_TO_M3}
-LIQ_TO_GAL = {"gal": 1.0, "bbl": 42.0, "m3": 264.172052, "l": 0.264172052}
-LIQ_TO_BBL = {"bbl": 1.0, "gal": 1 / 42.0, "m3": 6.28981077, "l": 6.28981077e-3}
+LIQ_TO_GAL = {"gal": 1.0, "bbl": 42.0, "m3": 1.0 / CONVERSIONS["gal_to_m3"], "l": 0.001 / CONVERSIONS["gal_to_m3"]}
+LIQ_TO_BBL = {"bbl": 1.0, "gal": 1.0 / 42.0, "m3": 1.0 / CONVERSIONS["bbl_to_m3"], "l": 0.001 / CONVERSIONS["bbl_to_m3"]}
 
 # S1K-F16: every gas volume spelling the rest of the platform accepts (Nm3, ksm3, MMcf, kscf, cf ...)
 from .units import GAS_VOLUME_UNITS as _GV, VOLUME_UNITS_TO_M3 as _V2M3, _VOLUME_ALIASES as _VA
@@ -176,8 +176,7 @@ def activity_factor_list(process=None):
             if process is None or process in v["processes"]]
 
 
-def _frac(v):
-    """Normalize gas composition input whether provided as decimal fraction (0-1.0) or percentage (0-100%)."""
+def _parse_content(v):
     if v in (None, ""):
         return None
     s = str(v).replace("%", "").strip()
@@ -189,6 +188,14 @@ def _frac(v):
         raise ValueError("Gas content must be a non-negative number")
     if x > 100.0:
         raise ValueError("Gas content cannot exceed 100 %")
+    return x
+
+
+def _frac(v):
+    """Normalize gas composition input whether provided as decimal fraction (0-1.0) or percentage (0-100%)."""
+    x = _parse_content(v)
+    if x is None:
+        return None
     if "%" in str(v) or x > 1.0:
         return x / 100.0
     return x
@@ -244,10 +251,24 @@ class ActivityFactorCalculator(BaseCalculator):
             n = amount * LIQ_TO_BBL[u]
 
         basis = row["basis"]
-        # Audit 2026-10-14 BUG-0021: CH4 and CO2 contents are mol %, always (0.85 is 0.85 %, not 85 %)
-        _frac(ch4_content), _frac(co2_content)  # number and range checks
-        x_ch4 = None if ch4_content in (None, "") else float(str(ch4_content).replace("%", "")) / 100.0
-        x_co2 = 0.0 if co2_content in (None, "") else float(str(co2_content).replace("%", "")) / 100.0
+        raw_ch4 = _parse_content(ch4_content)
+        raw_co2 = _parse_content(co2_content)
+
+        # Detect whether gas content is provided in percentage mode (0-100%) or normalized fraction (0-1.0)
+        is_pct_mode = (
+            ("%" in str(ch4_content or ""))
+            or ("%" in str(co2_content or ""))
+            or (raw_ch4 is not None and raw_ch4 > 1.0)
+            or (raw_co2 is not None and raw_co2 > 1.0)
+        )
+
+        if is_pct_mode:
+            x_ch4 = (raw_ch4 / 100.0) if raw_ch4 is not None else None
+            x_co2 = (raw_co2 / 100.0) if raw_co2 is not None else 0.0
+        else:
+            x_ch4 = raw_ch4
+            x_co2 = raw_co2 if raw_co2 is not None else 0.0
+
         if ((x_ch4 or 0.0) + x_co2) > 1.0001:
             raise ValueError(f"Sum of CH4 ({(x_ch4 or 0.0)*100:.1f}%) and CO2 ({x_co2*100:.1f}%) cannot exceed 100%")
 
@@ -273,12 +294,16 @@ class ActivityFactorCalculator(BaseCalculator):
             else:
                 co2 = 0.0
 
-        _tier = resolve_tier((uncertainties or {}).get("_factor_source", "default"))
-        ch4_res = propagate_uncertainty(ch4, 0.30, tier=_tier, gas="ch4")
-        co2_res = propagate_uncertainty(co2, 0.30 if co2 else 0.0, tier=_tier, gas="co2")
+        unc_dict = uncertainties or {}
+        _tier = resolve_tier(unc_dict.get("_factor_source", "default"))
+        u_ch4 = unc_dict.get("ch4") if unc_dict.get("ch4") is not None else 0.30
+        u_co2 = unc_dict.get("co2") if unc_dict.get("co2") is not None else (0.30 if co2 else 0.0)
+        ch4_res = propagate_uncertainty(ch4, u_ch4, tier=_tier, gas="ch4", uncertainties_dict=unc_dict)
+        co2_res = propagate_uncertainty(co2, u_co2, tier=_tier, gas="co2", uncertainties_dict=unc_dict)
+        n2o_res = propagate_uncertainty(0.0, 0.0, tier=_tier, gas="n2o")
         total = calculate_co2e(co2=co2, ch4=ch4, gwp_dict=gwp_dict)
         return {
-            "results": {"ch4": ch4_res, "co2": co2_res, "n2o": 0.0},
+            "results": {"ch4": ch4_res, "co2": co2_res, "n2o": n2o_res},
             "total_co2e": total,
             "intermediate": {"api_table": row["table"], "factor": row["label"], "activity_basis": per,
                              "normalized_activity": n, "ch4_scale": (x_ch4 / basis) if (x_ch4 and basis) else 1.0},

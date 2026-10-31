@@ -495,6 +495,32 @@ def apply_result(record, payload, em_result, method, factor_data, gwp_std):
     record.n2o_emissions = em_result["n2o"]
     record.co_emissions = em_result.get("co", 0)
     record.co2e_total = em_result["totalCo2e"]
+    fgases = {k: em_result[k] for k in ("sf6", "hfc", "pfc", "nf3", "fgas_kg", "f_gas_kg", "f_gas") if em_result.get(k) is not None}
+    api_res = em_result.get("_full_api_res") or {}
+    res_dict = api_res.get("results") or {}
+    if not fgases and "f_gas" in res_dict:
+        f_item = res_dict["f_gas"]
+        f_val = f_item.get("value", 0.0) if isinstance(f_item, dict) else float(f_item or 0.0)
+        if f_val:
+            fgases["f_gas_t"] = f_val
+            fgases["f_gas_kg"] = f_val * 1000.0
+            ptype = str(record.process_type or "").lower()
+            pay_str = str(payload or "").lower()
+            if "sf6" in ptype or "sf6" in pay_str or "switchgear" in ptype:
+                fgases["sf6"] = f_val
+            elif "hfc" in pay_str or "refrigerant" in ptype:
+                fgases["hfc"] = f_val
+            elif "pfc" in pay_str:
+                fgases["pfc"] = f_val
+            elif "nf3" in pay_str:
+                fgases["nf3"] = f_val
+            else:
+                fgases["f_gas"] = f_val
+    if fgases:
+        _gc = record.gas_composition or {}
+        if isinstance(_gc, dict):
+            _gc.update(fgases)
+            record.gas_composition = _gc
     record.calc_method = method
     record.gwp_version = gwp_std
     record.custom_factor_id = factor_data.get("custom_factor_id") if factor_data else None
@@ -511,6 +537,7 @@ def apply_result(record, payload, em_result, method, factor_data, gwp_std):
         record.uncertainty = _gas_unc(api_res, "co2")
         record.uncertainty_ch4 = _gas_unc(api_res, "ch4")
         record.uncertainty_n2o = _gas_unc(api_res, "n2o")
+        record.uncertainty_pct = api_res.get("uncertainty_co2e") or api_res.get("uncertainty_pct")
         comps = api_res.get("uncertainty_components") or {}
         record.uncertainty_ad = comps.get("activity")
         record.uncertainty_ef_co2 = comps.get("ef_co2")
@@ -528,7 +555,7 @@ def apply_result(record, payload, em_result, method, factor_data, gwp_std):
     tier = resolve_tier(str(payload.get("factor_source") or "default"))
     for attr, gas in (("uncertainty", "co2"), ("uncertainty_ch4", "ch4"), ("uncertainty_n2o", "n2o")):
         if getattr(record, attr) is None and float(em_result.get(gas) or 0) > 0:
-            setattr(record, attr, resolve_ef_uncertainty(record.process_type or "", gas, tier))
+            setattr(record, attr, resolve_ef_uncertainty(record.process_type or "", gas, tier) / 2.0)
     record.ef_key = _ef_key(payload, factor_data)
 
 

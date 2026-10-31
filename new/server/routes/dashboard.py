@@ -359,6 +359,7 @@ def get_batch_dashboard_data():
         # BUG-054 / BUG-072: pending banner uses the same filters as every other panel, includes
         # Scope 3, and follows the GWP horizon
         from services.dashboard_filters import apply_scope, apply_year, horizon_delta
+        from services.scope2_gases import record_totals
 
         pscope = dict(allowed_fids=allowed_fids, facility_id=facility_id, activity=activity, division=division,
                       segment=segment)
@@ -369,11 +370,18 @@ def get_batch_dashboard_data():
             return apply_year(apply_scope(q, model, **pscope), model, year).filter(model.status.in_(pend)).first()
 
         p1 = pend_q(Emission, Emission.co2e_total, Emission.ch4_emissions, Emission.n2o_emissions)
-        p2 = pend_q(Scope2Emission, Scope2Emission.co2e)
+        s2_pend_q = apply_year(apply_scope(Scope2Emission.query, Scope2Emission, **pscope), Scope2Emission, year).filter(Scope2Emission.status.in_(pend))
+        s2_count = s2_pend_q.count()
+        market_s2 = str(scope2_method or "").lower() == "market"
+        s2_co2e = 0.0
+        for e in s2_pend_q.all():
+            loc, mkt = record_totals(e, gwp_horizon)
+            s2_co2e += (mkt if market_s2 else loc)
+
         p3 = pend_q(Scope3Emission, Scope3Emission.co2e)
         pending_stats = {
-            "count": int(p1[0] or 0) + int(p2[0] or 0) + int(p3[0] or 0),
-            "totalCo2e": round(float(p1[1]) + horizon_delta(p1[2], p1[3], gwp_horizon) + float(p2[1]) + float(p3[1]), 2),
+            "count": int(p1[0] or 0) + int(s2_count or 0) + int(p3[0] or 0),
+            "totalCo2e": round(float(p1[1]) + horizon_delta(p1[2], p1[3], gwp_horizon) + s2_co2e + float(p3[1]), 2),
             "scope3_count": int(p3[0] or 0),
             "gwp_horizon": "20" if str(gwp_horizon) == "20" else "100",
         }
@@ -526,8 +534,13 @@ def _query_summary(
         d["scope2_energy"] += t["energy"]
 
     for d in yearly.values():
-        for k in ("scope1_total", "scope1_total_gwp100", "scope1_total_gwp20"):
-            d[k] = round(d[k], 6)
+        for k in (
+            "scope1_total", "scope1_total_gwp100", "scope1_total_gwp20",
+            "scope2_total", "scope2_location_total", "scope2_market_total",
+            "co2_total", "ch4_total", "n2o_total", "bio_co2_total",
+        ):
+            if k in d and d[k] is not None:
+                d[k] = round(d[k], 6)
     return list(yearly.values())
 
 IMPLEMENTED_MITIGATION = {"active", "completed", "implemented", "operational", "verified"}

@@ -90,7 +90,7 @@ class AssociatedGasVentingCalculator(BaseCalculator):
     }
 
     # Physical molecular weights (API Compendium 2021 Table 3-1 & 3-2)
-    MW_CH4 = 16.0425
+    MW_CH4 = 16.04
     MW_CO2 = 44.01
     MOLAR_VOLUME_SCF_LBMOLE = 379.3  # scf/lb-mole at 60°F, 14.696 psia
     LB_TO_TONNE = 1.0 / 2204.6226218487757
@@ -356,6 +356,7 @@ class AssociatedGasVentingCalculator(BaseCalculator):
                 active_days = dur_days if dur_days is not None else (p_days or 365.0)
                 total_oil_during_vent = oil_rate_bbl_day * active_days
                 total_produced_gas_scf = total_oil_during_vent * gor_scf_bbl
+                total_period_gas_scf = oil_rate_bbl_day * (p_days or 365.0) * gor_scf_bbl
             else:
                 # Total period volume provided
                 total_period_gas_scf = oil_bbl * gor_scf_bbl
@@ -380,7 +381,8 @@ class AssociatedGasVentingCalculator(BaseCalculator):
                 raise ValueError(f"Flared gas volume cannot be negative: {flared_scf}")
 
             # Mass balance violation check (Recovered + Flared > Total Produced)
-            basis_gas = total_period_gas_scf if oil_rate_bbl_day is None else total_produced_gas_scf
+            dur_ratio = min(1.0, dur_days / p_days) if (dur_days and p_days and p_days > 0) else 1.0
+            basis_gas = total_period_gas_scf if (oil_rate_bbl_day is None or (p_days and dur_days and p_days > dur_days)) else total_produced_gas_scf
             if (rec_scf + flared_scf) > (basis_gas * 1.0001):
                 raise ValueError(f"Mass balance violation: Recovered gas ({rec_scf:.1f} scf) + Flared gas ({flared_scf:.1f} scf) exceeds total produced associated gas ({basis_gas:.1f} scf).")
 
@@ -391,7 +393,9 @@ class AssociatedGasVentingCalculator(BaseCalculator):
                     min(1.0, dur_days / 365.0) if (dur_days is not None and dur_days < 365.0) else 1.0)
                 net_vented_gas_scf = rem_gas * vf * (1.0 - ctrl_eff)
             else:
-                net_vented_gas_scf = max(0.0, total_produced_gas_scf - rec_scf - flared_scf) * (1.0 - ctrl_eff)
+                rec_event = rec_scf * dur_ratio if (p_days and dur_days and p_days > dur_days) else rec_scf
+                flared_event = flared_scf * dur_ratio if (p_days and dur_days and p_days > dur_days) else flared_scf
+                net_vented_gas_scf = max(0.0, total_produced_gas_scf - rec_event - flared_event) * (1.0 - ctrl_eff)
 
             # Gas composition: 70 % CH4 / 10 % CO2 are Exhibit 6-5's sample inputs, not defaults; an
             # unanalysed associated gas was silently given them
@@ -472,7 +476,7 @@ class AssociatedGasVentingCalculator(BaseCalculator):
                 net_vented_gas_scf = convert(v_val, u_vol, "scf")
                 if venting_duration is not None and float(venting_duration) < 0:
                     raise ValueError(f"Venting duration cannot be negative: {venting_duration}")
-                dur_hours = float(venting_duration) if (venting_duration and float(venting_duration) > 0) else None
+                dur_hours = (float(venting_duration) * (24.0 if str(duration_unit or "").lower() in ("days", "day", "d") else 1.0)) if (venting_duration and float(venting_duration) > 0) else None
             elif vent_rate is not None and str(vent_rate).strip() != "":
                 r_val = float(vent_rate)
                 if r_val < 0.0:

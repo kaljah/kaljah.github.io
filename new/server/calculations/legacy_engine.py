@@ -28,7 +28,7 @@ STD_PRESS_PSIA = 14.696  # Standard Pressure
 MOLAR_VOL_US = 379.3  # scf/lb-mole (at 60°F, 14.696 psia)
 
 MW = {
-    "C": 12.01,
+    "C": 12.011,
     "CO2": 44.01,
     "CH4": 16.04,
     "N2O": 44.013,
@@ -101,6 +101,9 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
         factor_data = {}
     if gwp_dict is None:
         gwp_dict = get_active_gwp(standard=gwp_standard)
+
+    _gwp_ch4 = float(gwp_dict.get("CH4", gwp_dict.get("ch4", 28.0)))
+    _gwp_n2o = float(gwp_dict.get("N2O", gwp_dict.get("n2o", 265.0)))
 
     process = str(payload.get("process_type") or payload.get("process") or "").lower()
 
@@ -236,11 +239,15 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
         em["co2"] = _extract(results.get("co2"))
         em["ch4"] = _extract(results.get("ch4"))
         em["n2o"] = _extract(results.get("n2o"))
+        f_gas_item = results.get("f_gas")
+        f_gas_co2e = float(f_gas_item.get("co2e") or f_gas_item.get("value") or 0) if isinstance(f_gas_item, dict) else float(f_gas_item or 0)
         em["totalCo2e"] = (
-            (em["co2"] * float(gwp_dict.get("CO2", 1.0)))
-            + (em["ch4"] * float(gwp_dict.get("CH4", 28.0)))
-            + (em["n2o"] * float(gwp_dict.get("N2O", 265.0)))
-            + float((results.get("f_gas") or {}).get("co2e") or 0)  # HFC / SF6 (sections 7.6)
+            float(api_res.get("total_co2e") or 0.0) if (f_gas_co2e > 0 and em["co2"] == 0 and em["ch4"] == 0 and em["n2o"] == 0) else (
+                (em["co2"] * float(gwp_dict.get("CO2", 1.0)))
+                + (em["ch4"] * float(gwp_dict.get("CH4", 28.0)))
+                + (em["n2o"] * float(gwp_dict.get("N2O", 265.0)))
+                + f_gas_co2e
+            )
         )
 
         em["_full_api_res"] = api_res  # the full rich result, for the route
@@ -311,14 +318,16 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
                 else _calculate_default_kg(amount, unit, factor_data, "n2o", **conv)
             )
             em["co"] = (
-                (amount * f_co) if (f_co is not None and process != "combustion") else 0
+                (amount * f_co) if (f_co is not None and process in ("combustion", "flaring")) else 0
             )
         else:
             em["ch4"] = (amount * f_ch4) if f_ch4 is not None else 0
             em["n2o"] = (amount * f_n2o) if f_n2o is not None else 0
 
+        _gwp_ch4 = float(gwp_dict.get("CH4", gwp_dict.get("ch4", 28.0)))
+        _gwp_n2o = float(gwp_dict.get("N2O", gwp_dict.get("n2o", 265.0)))
         em["totalCo2e"] = (
-            em["co2"] + (em["ch4"] * gwp_dict["CH4"]) + (em["n2o"] * gwp_dict["N2O"])
+            em["co2"] + (em["ch4"] * _gwp_ch4) + (em["n2o"] * _gwp_n2o)
         ) / 1000.0
         em["co2"] /= 1000.0
         em["ch4"] /= 1000.0
@@ -340,7 +349,7 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
         em["ch4"] = ch4_kg / 1000.0
         em["n2o"] = n2o_kg / 1000.0
         em["totalCo2e"] = (
-            em["co2"] + (em["ch4"] * gwp_dict["CH4"]) + (em["n2o"] * gwp_dict["N2O"])
+            em["co2"] + (em["ch4"] * _gwp_ch4) + (em["n2o"] * _gwp_n2o)
         )
 
         calc_method = "server_custom_factor"
@@ -363,7 +372,7 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
 
     # Calculate total CO2e
     em["totalCo2e"] = (
-        em["co2"] + (em["ch4"] * gwp_dict["CH4"]) + (em["n2o"] * gwp_dict["N2O"])
+        em["co2"] + (em["ch4"] * _gwp_ch4) + (em["n2o"] * _gwp_n2o)
     )
 
     _note_fallback(calc_method, process, payload)
@@ -399,6 +408,7 @@ def compute_emissions(payload, factor_data=None, gwp_dict=None, gwp_standard=Non
             factor_data = {**factor_data, "ch4": float(factor_data["ch4"]) * residual, "combustion_efficiency_ch4": REFINERY_DESTRUCTION}
 
     em, method = _compute_emissions_impl(payload, factor_data, gwp_dict=gwp_dict, gwp_standard=gwp_standard)
+    api_res = em.get("_full_api_res") if isinstance(em, dict) else None
     if "_full_api_res" not in em:
         # factor-math fallback: the dispatcher applies CCS capture itself, so apply it here too
         from .dispatcher import capture_fraction
@@ -407,7 +417,7 @@ def compute_emissions(payload, factor_data=None, gwp_dict=None, gwp_standard=Non
         if capture:
             em["totalCo2e"] -= em["co2"] * capture
             em["co2"] *= 1.0 - capture
-    if any(float(em.get(g) or 0) for g in ("co2", "ch4", "n2o")) or (raw_proc in OTHER_FUGITIVE_PROCESSES and "_full_api_res" in em):
+    if any(float(em.get(g) or 0) for g in ("co2", "ch4", "n2o", "totalCo2e")) or (raw_proc in OTHER_FUGITIVE_PROCESSES and "_full_api_res" in em) or (api_res and "_full_api_res" in em):
         return em, method
     raw = payload.get("amount") if payload.get("amount") not in (None, "") else payload.get("quantity")
     amount = float(str(raw).replace(",", "")) if raw not in (None, "") else 0.0  # parsed by the calculation

@@ -236,6 +236,8 @@ def _check_efficiency(name, val):
         raise ValueError(f"{name} is not a number: {val}") from None
     if x < 0:
         raise ValueError(f"{name} cannot be negative: {val}")
+    if x > 100:
+        raise ValueError(f"'{name}' must be between 0 and 100 % (got {val})")
 
 
 class CombustionCalculator(BaseCalculator):
@@ -560,6 +562,12 @@ class FlaringCalculator(BaseCalculator):
         # CH4 Emissions (Undestroyed native methane)
         ch4_tonnes = (vol_std * actual_ch4_fraction * (1 - eta_d) * CONVERSIONS["density_ch4"]) / 1000.0
 
+        # Uncombusted C2-C10 higher hydrocarbons (NMHC / VOC)
+        c2_plus_uncombusted_vol = sum(
+            vol_std * c_fractions[f"c{k}"] * (1.0 - eta_c)
+            for k in range(2, 11)
+        )
+
         # CO2 from Combustion of Hydrocarbons (C1-C10)
         total_carbon_moles_per_mole_gas = (
             c_fractions["c1"] * 1
@@ -610,11 +618,22 @@ class FlaringCalculator(BaseCalculator):
                 # an energy factor (kg/MMBtu, g/MMBtu, kg/GJ ...) on the flared energy; "mmbtu" in
                 # the unit used to mean kg/MMBtu whatever the numerator (g/MMBtu 1000x high)
                 hhv_val = float(hhv or 1020.0)
+                hhv_u = str(comps.get("hhv_unit") or "").lower().strip()
                 vol_scf = vol_std * CONVERSIONS.get("m3_to_scf", 35.3147)
+                if hhv_u in ("mj/m3", "mj_m3") or (not hhv_u and 15.0 <= hhv_val <= 60.0):
+                    hhv_val = hhv_val * 26.8392
+                elif hhv_u in ("gj/m3", "gj_m3") or (not hhv_u and 0.015 <= hhv_val <= 0.060):
+                    hhv_val = hhv_val * 26839.2
+                elif hhv_u in ("kj/m3", "kj_m3"):
+                    hhv_val = hhv_val * 0.0268392
+                elif hhv_u in ("mmbtu/mscf", "mmbtu/kscf"):
+                    hhv_val = hhv_val * 1000.0
+                elif hhv_u in ("mmbtu/scf",):
+                    hhv_val = hhv_val * 1e6
                 flared_mmbtu = (vol_scf * hhv_val) / 1_000_000.0
                 n2o_tonnes = flared_mmbtu * factor_to_kg_per_activity(_ef_n2o, f_unit, "mmbtu") / 1000.0
             else:
-                n2o_kg = vol_std * convert_factor_to_kg_per_unit(_ef_n2o, ef_unit, "m3", hhv=hhv, fuel_type="gases")
+                n2o_kg = vol_std * convert_factor_to_kg_per_unit(_ef_n2o, ef_unit or "kg/m3", "m3", hhv=hhv, fuel_type="gases")
                 n2o_tonnes = n2o_kg / 1000.0
         else:
             n2o_tonnes = 0.0
@@ -642,6 +661,7 @@ class FlaringCalculator(BaseCalculator):
             metadata={
                 "combustion_efficiency": eta_c,
                 "destruction_efficiency": eta_d,
+                "c2_plus_uncombusted_vol_m3": c2_plus_uncombusted_vol,
                 "thermodynamic_normalized": operating_temperature is not None
                 or operating_pressure is not None,
             },

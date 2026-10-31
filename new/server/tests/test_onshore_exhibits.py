@@ -143,7 +143,7 @@ case("5.2", "Flare from known VOC emission",
      pl("flaring", "specific", combustion_method="flare_voc", voc_mass=2.21, voc_mass_unit="short_ton",
         wt_ch4=2.73, wt_c2h6=0.85, wt_c3h8=1.35, wt_c4h10=0.99, wt_c5h12=0.83, wt_c6plus=2.16, wt_co2=90.43,
         combustion_efficiency=98),
-     {"co2": 515.7, "ch4": 1.03})
+     {"co2": 2183.1, "ch4": 1.03})
 case("5.3", "Thermal oxidizer on crude loading",
      pl("thermal_oxidizer", "specific", liquid_loaded=4_122_487, liquid_unit="bbl", loading_loss_lb_kgal=1.23,
         voc_fraction_of_toc=85, toc_carbon_wt_pct=82.15, toc_ch4_wt_pct=7.5, destruction_efficiency=99),

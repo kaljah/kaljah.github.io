@@ -181,6 +181,8 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         hhv=1020.0,
         ef_n2o=None,
         gwp_dict=None,
+        hours_per_event=False,
+        **kwargs,
     ):
         """
         API Compendium 2021 Section 6.3.4 / Table 6-11:
@@ -293,6 +295,8 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         hhv=1020.0,
         ef_n2o=None,
         gwp_dict=None,
+        hours_per_event=False,
+        **kwargs,
     ):
         """
         API Compendium 2021 Section 6.3.4 / Table 6-10:
@@ -447,6 +451,8 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         hhv=1020.0,
         ef_n2o=None,
         gwp_dict=None,
+        hours_per_event=False,
+        **kwargs,
     ):
         """
         API Compendium 2021 Section 6.3.4 / Equation 6-10 (EPA GHGRP Subpart W W-8 / W-9):
@@ -472,7 +478,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         hr_val = float(hours_open or 0.0)
         if sfr_val < 0 or hr_val < 0:
             raise ValueError("Flow-line rate (SFR) and hours open cannot be negative")
-        if ev == 0 and (sfr_val == 0 or hr_val == 0):
+        if ev == 0:
             return self._zero_result({"tier": "Tier 3", "method": "api_equation_6_10", "events": 0})
 
         # Diameter conversion to inches (D)
@@ -502,17 +508,20 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         # SFR conversion to scf/hr (every rate spelling; "Mcf/day" was read as scf/day, 1,000x low)
         sfr_scf_hr = sfr_val * _sfr_scf_per_hr(sfr_unit)
 
-        # Equation 6-10 parameters:
+        # Equation 6-10 parameters (API Compendium 2021 Eq. 6-10 / EPA Subpart W Eq. W-9):
         # X: 0.5 for plunger lift, 1.0 for non-plunger
         x_param = 0.5 if u_type == "plunger" else 1.0
-        # Z: If HR < 1.0, Z is 0; if HR >= 1.0, Z is 1
-        z_param = 1.0 if hr_val >= 1.0 else 0.0
+        # Z: If HR < X, Z is 0; if HR >= X, Z is 1 (EPA Subpart W W-8 / W-9, API Eq 6-10)
+        z_param = 1.0 if hr_val >= x_param else 0.0
 
         wellbore_vol_scf = ev * (0.37e-3) * (d_in ** 2) * depth_ft * p_psig
-        # Equation 6-10 as the Compendium prints it: only the wellbore term is multiplied by the number of events;
-        # the flow-line term SFR x (HR - X) x Z is counted once per well-year (EPA Subpart W W-8 sums it per event:
-        # 12 events open 3 h at 35,000 scf/h give 70,000 scf here, 840,000 scf in Subpart W)
-        flowline_vol_scf = sfr_scf_hr * max(0.0, hr_val - x_param) * z_param
+        # Equation 6-10 as API Compendium 2021 prints it:
+        # Wellbore decompression scales with events (ev); flowline venting is per well-year
+        # (or scales with ev if hours_per_event is explicitly set).
+        if hours_per_event or kwargs.get("hours_are_per_event"):
+            flowline_vol_scf = ev * sfr_scf_hr * max(0.0, hr_val - x_param) * z_param
+        else:
+            flowline_vol_scf = sfr_scf_hr * max(0.0, hr_val - x_param) * z_param
         vr_per_well_scf = wellbore_vol_scf + flowline_vol_scf
 
         total_gas_scf = wc * vr_per_well_scf
@@ -605,6 +614,8 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         hhv=1020.0,
         ef_n2o=None,
         gwp_dict=None,
+        hours_per_event=False,
+        **kwargs,
     ):
         """
         API Compendium 2021 Section 6.3.4 / Equation 6-11:
@@ -644,7 +655,9 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         sfr_rate = sfr_val * _sfr_scf_per_hr(sfr_unit)
 
         # Equation 6-11: VR = sqrt(Pshut - Patm) / sqrt(Pline - Psep) * SFRp * Tp
-        press_ratio = math.sqrt(p_shut_abs - p_atm_abs) / math.sqrt(p_line_abs - p_sep_abs)
+        num_diff = max(0.0, p_shut_abs - p_atm_abs)
+        den_diff = max(0.001, p_line_abs - p_sep_abs)
+        press_ratio = math.sqrt(num_diff) / math.sqrt(den_diff)
         vr_scf = press_ratio * sfr_rate * tp_val
 
         total_gas_scf = vr_scf * ev * wc

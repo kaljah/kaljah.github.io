@@ -48,7 +48,7 @@ _OIL_T_PER_BBL = 0.1364   # crude, ~33 API
 _GAS_T_PER_MSCF = 0.0210  # natural gas, ~0.74 kg/Sm3
 
 
-def _production_tonnes(amount, unit, kind):
+def _production_tonnes(amount, unit, kind, api_gravity=None):
     """Tonnes of one production amount in its own unit (oil: bbl, m3, Mbbl ... or a mass; gas: Mscf,
     MMscf, Sm3, MMSm3 ... or a mass). None when the unit cannot be read."""
     from calculations.units import UnitError, unit_dimension
@@ -67,7 +67,8 @@ def _production_tonnes(amount, unit, kind):
         return None
     m3 = float(amount) * f
     if kind == "oil":
-        return m3 / 0.158987294928 * _OIL_T_PER_BBL
+        oil_t_bbl = 0.158987294928 * (141.5 / max(0.1, float(api_gravity) + 131.5)) if api_gravity else _OIL_T_PER_BBL
+        return m3 / 0.158987294928 * oil_t_bbl
     return m3 / 28.316846592 * _GAS_T_PER_MSCF
 
 
@@ -233,9 +234,9 @@ class RecordFigures:
         self.qty = float(r.quantity_tonnes or 0.0)
         self.direct = float(r.specific_embedded_direct or 0.0)
         self.indirect = float(r.specific_embedded_indirect or 0.0)
-        self.precursor = ((float(r.precursor_ratio or 0.0)
-                           * (float(r.precursor_see_dir or 0.0) + float(r.precursor_see_indir or 0.0)))
-                          if r.is_complex_good else 0.0)
+        self.precursor_direct = (float(r.precursor_ratio or 0.0) * float(r.precursor_see_dir or 0.0)) if r.is_complex_good else 0.0
+        self.precursor_indirect = (float(r.precursor_ratio or 0.0) * float(r.precursor_see_indir or 0.0)) if r.is_complex_good else 0.0
+        self.precursor = self.precursor_direct + self.precursor_indirect
         self.total_see = self.direct + self.indirect + self.precursor
         self.total_emissions = self.qty * self.total_see
 

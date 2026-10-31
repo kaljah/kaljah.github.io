@@ -20,6 +20,8 @@ _DEFAULT_APP_SETTINGS = {
     # CAA s.136 as amended by P.L. 119-21: the charge starts with 2034 emissions at $1,500 / t
     "wec_fee_rates": {"2034": 1500.0},
     "wec_first_year": 2034,
+    "wec_upstream_threshold": 0.0020,
+    "wec_midstream_threshold": 0.0005,
     "theme": "light",
     "unit_system": "metric",
     "auto_flag_discrepancy": True,
@@ -166,6 +168,8 @@ def update_settings():
             "theme",
             "unit_system",
             "auto_flag_discrepancy",
+            "wec_upstream_threshold",
+            "wec_midstream_threshold",
         ]
 
         for k in system_setting_keys:
@@ -174,7 +178,7 @@ def update_settings():
                 try:
                     if k == "ogmp_default_base_year":
                         val = int(val)
-                    elif k in ["reconciliation_threshold", "ogmp_upstream_target_pct", "ogmp_midstream_target_pct"]:
+                    elif k in ["reconciliation_threshold", "ogmp_upstream_target_pct", "ogmp_midstream_target_pct", "wec_upstream_threshold", "wec_midstream_threshold"]:
                         val = float(val)
                     elif k == "auto_flag_discrepancy":
                         val = bool(val)

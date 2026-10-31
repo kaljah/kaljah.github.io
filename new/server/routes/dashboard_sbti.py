@@ -179,11 +179,9 @@ def get_sbti_trajectory():
 
     # Cumulative carbon budget remaining between current progress year and target year (BUG-A4-005)
     start_eval_year = progress_year or current_year
-    cumulative_budget = 0.0
-    for yr in range(start_eval_year, target_year + 1):
-        t_val = line(rate, yr - base_year)
-        if t_val is not None:
-            cumulative_budget += t_val
+    tot_b = sum(line(rate, y - base_year) or 0.0 for y in range(base_year, target_year + 1))
+    act_s = sum(series(y) or 0.0 for y in range(base_year, start_eval_year + 1))
+    cumulative_budget = max(0.0, tot_b - act_s)
     budget_years = max(0, target_year - start_eval_year + 1)
 
     def r2(v):

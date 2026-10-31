@@ -237,8 +237,19 @@ def get_granular_intensities():
 
     ci_total = ghg * 1000.0 / boe if boe > 0 else None
     ci_saleable = saleable_ghg * 1000.0 / saleable_boe if saleable_boe else None
-    # NGSI methane intensity (wt %): CH4 mass / natural gas mass, pipeline gas ~0.80 kg/Sm3
-    ngsi = ch4 / (gas_m3 * 0.00080) * 100.0 if gas_m3 > 0 else None
+    # NGSI methane intensity (wt %): CH4 mass / natural gas mass
+    # Lean pipeline gas ~0.80 kg/Sm3 (0.00080 t/Sm3); upstream rich gas ~0.92 kg/Sm3 (0.00092 t/Sm3)
+    gas_density_param = request.args.get("gas_density_kg_m3")
+    if gas_density_param:
+        try:
+            val = float(gas_density_param)
+            gas_density_t_m3 = (val / 1000.0) if val > 0 else 0.00092
+        except (ValueError, TypeError):
+            gas_density_t_m3 = 0.00092
+    else:
+        seg = str(request.args.get("segment") or "").lower()
+        gas_density_t_m3 = 0.00080 if seg in ("transmission", "distribution") else 0.00092
+    ngsi = ch4 / (gas_m3 * gas_density_t_m3) * 100.0 if (gas_m3 > 0 and gas_density_t_m3 > 0) else None
 
     OGCI_TARGET = 17.0
     basis = ci_saleable if ci_saleable is not None else ci_total

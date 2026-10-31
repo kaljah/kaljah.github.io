@@ -1840,7 +1840,7 @@ def _process_row_scope2(
                 {"amount": val, "unit": u, "boiler_efficiency": boiler_eff, "calc_inputs": {"indirect_steam": ci}})
         except ValueError as err:
             return None, [f"Row {row_idx}: {err}"]
-        if u in ("ton", "tonne", "mt", "us_ton", "short_ton", "metric_ton"):
+        if u in ("tonne", "mt", "metric_ton", "tonnes", "ton", "tons", "us_ton", "short_ton"):
             steam_ton = val
     elif source_type in ["cogen_allocation", "cogen"]:
         # BUG-099 pattern: never book a client-supplied co2e; allocate on the server
@@ -2034,9 +2034,24 @@ def _process_row_scope3_eeio(
     naics = str(row.get("naics_code") or "").strip()
     if naics.endswith(".0") and naics[:-2].isdigit():
         naics = naics[:-2]  # an Excel number cell (331110.0)
-    spend_usd = _clean_float(row.get("spend_usd"), default=-1.0)
-    if spend_usd is None or spend_usd <= 0:
-        return None, [f"Spend amount must be a number greater than zero (got '{row.get('spend_usd') or ''}')"]
+    raw_spend = row.get("spend_usd") if row.get("spend_usd") not in (None, "") else (row.get("spend") or row.get("amount"))
+    spend_val = _clean_float(raw_spend, default=-1.0)
+    if spend_val is None or spend_val <= 0:
+        return None, [f"Spend amount must be a number greater than zero (got '{raw_spend or ''}')"]
+
+    currency = str(row.get("currency") or row.get("spend_currency") or "USD").upper().strip()
+    FX_TO_USD = {
+        "USD": 1.0, "$": 1.0, "US$": 1.0,
+        "EUR": 1.08, "€": 1.08,
+        "GBP": 1.28, "£": 1.28,
+        "CAD": 0.74, "C$": 0.74,
+        "AUD": 0.66, "A$": 0.66,
+        "JPY": 0.0068, "¥": 0.0068,
+    }
+    if currency not in FX_TO_USD:
+        return None, [f"Row {row_idx}: Unsupported currency '{currency}'. Supported currencies: USD, EUR, GBP, CAD, AUD, JPY"]
+    fx_rate = FX_TO_USD[currency]
+    spend_usd = spend_val * fx_rate
 
     # 4. Calculate (EPA supply chain factors; an unknown code is a row error, not a default factor)
     try:
@@ -2830,6 +2845,9 @@ def _process_row(
         SCOPE2_PROCESS_TYPES, apply_result, canonicalize, check_factor_usage, normalize_process_type,
         resolve_factor, validate_activity,
     )
+    if gwp_dict is None:
+        from calculations.constants import get_active_gwp
+        gwp_dict = get_active_gwp(standard=gwp_std)
     from utils import user_label
 
     # Skip instructional walkthrough rows
@@ -2890,7 +2908,7 @@ def _process_row(
     # S1K-F8: a quantity cell that carries its own unit ("928 m3") must agree with the unit column
     # (the trailing text was dropped and the number booked in the unit column's unit)
     if raw_qty is not None and isinstance(raw_qty, str):
-        m_tail = re.match(r"^\s*[-+]?[0-9.,\s ]+(?:[eE][-+]?[0-9]+)?\s*(\S.*?)?\s*$", raw_qty)
+        m_tail = re.match(r"^\s*[-+]?[0-9.,\s ]+(?:\s*[eE]\s*[-+]?[0-9]+)?\s*(\S.*?)?\s*$", raw_qty)
         tail = (m_tail.group(1) or "").strip() if m_tail else ""
         if tail and tail.lower().replace(" ", "") != unit.lower().replace(" ", ""):
             return None, [f"Quantity '{raw_qty}' carries the unit '{tail}' but the unit column says "

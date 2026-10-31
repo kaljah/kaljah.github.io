@@ -97,6 +97,7 @@ def get_yoy_bridge():
             allowed_fids=allowed_fids,
             segment=request.args.get("segment"),
             include_pending=request.args.get("includePending", "false").lower() == "true",
+            gwp_horizon=request.args.get("gwp_horizon", "100"),
         )["by_year"]
         # _query_summary is cached and returns shared dicts: copy before adding a key.
         rows = [dict(r, scope3=s3.get(str(r["year"]), 0.0)) for r in rows]

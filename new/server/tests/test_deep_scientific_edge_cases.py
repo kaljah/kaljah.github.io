@@ -201,7 +201,7 @@ class TestGasChromatographyAndCompositionBoundaries:
         assert inter["hc_hhv_btu_scf"] == pytest.approx(sum(mol[k] * hhv[k] for k in wt) / sum(mol.values()), rel=2e-3)
         c_mix = sum(wt[k] * 12.011 * nc[k] / mw[k] for k in wt) / w_hc
         assert res["results"]["co2"]["value"] == pytest.approx(
-            98.0 * c_mix * 0.98 / 0.02 * 44.01 / 12.011 + 10.0 * 2.0 / 10.0, rel=2e-3)
+            98.0 * c_mix * 0.98 / 0.02 * 44.01 / 12.011 + (10.0 / 0.02) * 2.0 / 10.0, rel=2e-3)
         assert res["results"]["ch4"]["value"] == pytest.approx(98.0 * 80.0 / w_hc, rel=1e-9)
 
     def test_microscopic_and_astronomical_quantities(self):

@@ -24,7 +24,7 @@ Setting `SEED_ADMIN=true` also seeds the admin and IT-admin accounts on startup 
 
 Database Management & Migrations (run from `new/server`):
 ```bash
-flask db upgrade                   # run Alembic migrations up to head (6a8475783b53)
+flask db upgrade                   # run Alembic migrations up to head (e4a719c28b3d)
 python scripts/backup.py [--output-dir DIR]              # PostgreSQL (pg_dump --clean) or SQLite; default dir $BACKUP_DIR or ./backups, keeps the newest $BACKUP_RETAIN_COUNT (14)
 python scripts/restore.py <path/to/backup.sql> --apply   # without --apply: dry run; PostgreSQL restores in one transaction and stops at the first error (nothing changes on failure)
 ```

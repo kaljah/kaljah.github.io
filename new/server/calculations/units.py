@@ -45,6 +45,10 @@ CONVERSIONS = {
     "scf_to_mscf": 0.001,
     "mmscf_to_scf": 1_000_000.0,
     "scf_to_mmscf": 1e-6,
+    "mmcf_to_scf": 1_000_000.0,
+    "scf_to_mmcf": 1e-6,
+    "mmcf_to_m3": 28316.846592,
+    "m3_to_mmcf": 1.0 / 28316.846592,
     # Mass (Exact NIST Avoirdupois standards)
     "lb_to_kg": 0.45359237,
     "kg_to_lb": 2.2046226218487757,
@@ -75,6 +79,14 @@ CONVERSIONS = {
     # Global Warming Potentials (Comparison Reference)
     "GWP_AR4": {"ch4": 25, "n2o": 298}, "GWP_AR5": DEFAULT_GWP, "GWP_AR6": {"ch4": 29.8, "n2o": 273},
 }
+
+# Ensure all directional pairwise conversions have symmetric inverses in CONVERSIONS
+for _k, _v in list(CONVERSIONS.items()):
+    if "_to_" in _k and isinstance(_v, (int, float)) and _v != 0:
+        _u1, _u2 = _k.split("_to_", 1)
+        _rev_k = f"{_u2}_to_{_u1}"
+        if _rev_k not in CONVERSIONS:
+            CONVERSIONS[_rev_k] = 1.0 / _v
 
 
 # S1K-F7: unknown temperature / pressure units raise instead of being read as C / psig
@@ -200,7 +212,7 @@ VOLUME_UNITS_TO_M3 = {
     "cubic_meter": 1.0, "cubic_meters": 1.0,
     "actual_m3": 1.0, "actualm3": 1.0, "am3": 1.0, "acf": 0.028316846592,
     "scf": 0.028316846592, "cf": 0.028316846592, "ft3": 0.028316846592,
-    "mscf": 28.316846592, "mcf": 28.316846592, "mmscf": 28316.846592,
+    "mscf": 28.316846592, "mcf": 28.316846592, "mmcf": 28316.846592, "mmscf": 28316.846592,
     "bbl": 0.158987295, "barrel": 0.158987295, "barrels": 0.158987295,
     "kbbl": 158.987295, "mbbl": 158.987295, "mmbbl": 158987.295,
     "gal": 0.003785411784, "gallon": 0.003785411784, "gallons": 0.003785411784,
@@ -655,7 +667,7 @@ def norm_unit(unit):
 
 GAS_VOLUME_UNITS = {"m3", "m³", "sm3", "sm³", "nm3", "nm³", "ksm3", "mmsm3", "cubic_meter", "cubic_meters",
                     "actual_m3", "actualm3", "am3", "acf",
-                    "scf", "cf", "ft3", "mscf", "mcf", "mmscf"}
+                    "scf", "cf", "ft3", "mscf", "mcf", "mmcf", "mmscf"}
 
 
 def gas_volume_m3(quantity, unit):
@@ -681,6 +693,9 @@ def unit_dimension(unit):
                        ("distance", DISTANCE_UNITS_TO_M)):
         if u in table:
             return dim, table[u]
+        u_base = _re.sub(r"_(product|hno3|clinker|nh3|lime|steel|cement)$", "", u)
+        if dim == "mass" and u_base in table:
+            return dim, table[u_base]
     if u in _COUNT_WORDS:
         return "count", 1.0
     raise UnitError(f"Unknown unit '{unit}'")
@@ -816,8 +831,16 @@ def parse_factor_unit(unit):
     return {"mass_kg": MASS_UNITS_TO_KG[mass_tok], "gas": gas, "denominators": dens}
 
 
+def _extract_count_kw(kw):
+    for k in ("count", "device_count", "well_count", "equipment_count"):
+        val = kw.get(k)
+        if val is not None:
+            return max(0.0, float(val))
+    return 1.0
+
+
 def factor_to_kg_per_activity(factor_value, factor_unit, activity_unit, hours=None, hhv_mj_per_unit=None,
-                              year_hours=None):
+                              year_hours=None, **kwargs):
     """kg of pollutant per ONE activity unit (BUG-047/049/051/063).
 
     - A volume/mass/energy denominator is converted to the activity unit (energy <-> volume/mass
@@ -840,6 +863,8 @@ def factor_to_kg_per_activity(factor_value, factor_unit, activity_unit, hours=No
             continue
         if matched:
             if dim == "count":
+                cnt = _extract_count_kw(kwargs)
+                kg *= cnt / f
                 continue
             raise UnitError(f"Factor unit '{factor_unit}' has more than one activity denominator")
         if dim == a_dim:
@@ -849,6 +874,14 @@ def factor_to_kg_per_activity(factor_value, factor_unit, activity_unit, hours=No
                 raise UnitError(f"Energy-based factor '{factor_unit}' needs the fuel heating value for '{activity_unit}'")
             kg *= float(hhv_mj_per_unit) / f
         elif dim == "count" and a_dim != "count":
+            has_other_activity = any(
+                d[0] == a_dim or (d[0] == "energy" and a_dim in ("volume", "mass"))
+                for d in spec["denominators"] if d[0] not in ("time", "count")
+            )
+            if has_other_activity:
+                cnt = _extract_count_kw(kwargs)
+                kg *= cnt / f
+                continue
             raise UnitError(f"Factor unit '{factor_unit}' is per {tok} but the activity is in '{activity_unit}'")
         else:
             raise UnitError(f"Factor unit '{factor_unit}' cannot be applied to activity unit '{activity_unit}'")

@@ -100,11 +100,12 @@ class AcidGasRemovalCalculator(BaseCalculator):
             elif sweet_gas_scf_yr is not None:
                 v_sweet_scf = float(sweet_gas_scf_yr)
             else:
-                v_sweet_scf = v_sour_scf * (1.0 - c_sour_co2) / max(0.0001, 1.0 - c_sweet_co2)
+                v_sweet_scf = v_sour_scf * (1.0 - c_sour_co2)
 
             # Equation 6-18: E_CO2 = [V_sour * y_sour - V_sweet * y_sweet] * (44 / 379.3) / 2204.62
             co2_scf_removed = max(0.0, (v_sour_scf * c_sour_co2) - (v_sweet_scf * c_sweet_co2))
             gross_co2_tonnes = co2_scf_removed * (MW_CO2 / MOLAR_VOL_US) / LB_PER_TONNE
+            total_gas_scf += co2_scf_removed
 
         total_gas_m3 = convert(total_gas_scf, "scf", "m3")
 
@@ -232,6 +233,7 @@ class TankFlashingCalculator(BaseCalculator):
         gas_specific_gravity=0.90,  # default SGi = 0.90
         # Dump valve inputs (Equation 6-25)
         dump_valve_hours=None,
+        include_baseline=False,
         # Produced water inputs (Table 6-26)
         salt_content="average",  # "2%", "10%", "20%", "average"
         separator_pressure_psi=250.0,
@@ -378,15 +380,17 @@ class TankFlashingCalculator(BaseCalculator):
             ltype = "condensate" if liquid_type == "condensate" else "crude"
             info = self.TABLE_6_25_DUMP_VALVE[ltype]
             if dump_valve_hours is not None:
-                # Equation 6-25: E_dump = CF * E_tank * (T / 8760)
+                # Equation 6-25: E = CF * E_tank * (T / 8760)
                 t_hours = float(dump_valve_hours)
                 cf = info["cf"]
-                # Baseline tank emissions of the same liquid (Table 6-22 crude, Table 6-24 condensate);
-                # condensate used the crude factor (bug hunt 2026-10-15 #23)
+                # Baseline tank emissions of the same liquid (Table 6-22 crude, Table 6-24 condensate)
                 table = self.TABLE_6_24_CONDENSATE if ltype == "condensate" else self.TABLE_6_22_CRUDE
                 base_ef = table["large_uncontrolled"]["kg_ch4_per_bbl"]
                 base_tank_kg = q_bbl * base_ef
-                gross_ch4_kg = cf * base_tank_kg * (t_hours / 8760.0)
+                if include_baseline:
+                    gross_ch4_kg = base_tank_kg * (max(0.0, 8760.0 - t_hours) / 8760.0) + (cf * base_tank_kg * (t_hours / 8760.0))
+                else:
+                    gross_ch4_kg = cf * base_tank_kg * (t_hours / 8760.0)
             else:
                 gross_ch4_kg = q_bbl * info["kg_ch4_per_bbl"]
 
@@ -420,11 +424,8 @@ class TankFlashingCalculator(BaseCalculator):
         # ----------------------------------------------------------------------
         elif meth == "working_loss":
             gross_ch4_tonnes = (q_bbl * float(ef_ch4 or 0.0)) / 1000.0
-            if gross_ch4_tonnes > 0 and c_ch4 > 0:
-                total_gas_scf = gross_ch4_tonnes / (SCF_TO_M3 * c_ch4 * CONVERSIONS["density_ch4"] / 1000.0)
-                gross_co2_tonnes = total_gas_scf * SCF_TO_M3 * c_co2 * CONVERSIONS["density_co2"] / 1000.0
-            else:
-                total_gas_scf = gross_co2_tonnes = 0.0
+            total_gas_scf = (gross_ch4_tonnes / (SCF_TO_M3 * c_ch4 * CONVERSIONS["density_ch4"] / 1000.0)) if (gross_ch4_tonnes > 0 and c_ch4 > 0) else 0.0
+            gross_co2_tonnes = (q_bbl * float(ef_co2) / 1000.0) if (ef_co2 is not None and float(ef_co2) > 0) else (total_gas_scf * SCF_TO_M3 * c_co2 * CONVERSIONS["density_co2"] / 1000.0)
 
         # ----------------------------------------------------------------------
         # Method 9: Standard GOR Approach (Backwards Compatible)
@@ -559,7 +560,7 @@ class BlowdownCalculator(BaseCalculator):
         hhv=1020.0,
         gwp_dict=None,
         # API 2021 Section 6.4.6.1 advanced options
-        blowdown_mode="depressurization", # "depressurization", "evacuation", "differential", "table_6_32"
+        blowdown_mode=None,               # "depressurization", "evacuation", "differential", "table_6_32"
         activity_type=None,               # "vessel", "compressor", "pipeline_mile"
         equipment_count=None,
         final_pressure=None,              # gauge pressure remaining after blowdown
@@ -568,9 +569,10 @@ class BlowdownCalculator(BaseCalculator):
         liquid_volume_fraction=0.0,       # fraction occupied by liquid (Exhibit 6-25)
         gas_specific_gravity=0.65,
         control_type="flare",
+        volume_unit="m3",
     ):
         uncertainties = uncertainties or {}
-        bmode = str(blowdown_mode or "depressurization").lower().strip()
+        bmode = str(blowdown_mode or "").lower().strip()
 
         c_ch4 = _parse_frac(ch4_content, 0.85, "ch4_content")
         c_co2 = _parse_frac(co2_content, 0.0, "co2_content")
@@ -615,10 +617,10 @@ class BlowdownCalculator(BaseCalculator):
                 if not 0.0 <= liq_frac <= 1.0:
                     raise ValueError(f"liquid_volume_fraction must be between 0 and 1: {liquid_volume_fraction}")
                 v_gas_ft3 = v_cyl_ft3 * (1.0 - liq_frac)
-                v_phys_m3 = convert(v_gas_ft3, "scf", "m3")
+                v_phys_m3 = v_gas_ft3 * 0.028316846592
             else:
                 self.validate_inputs({"blowdown_volume": blowdown_volume}, ["blowdown_volume"])
-                v_phys_m3 = float(blowdown_volume)
+                v_phys_m3 = convert(float(blowdown_volume), volume_unit, "m3")
 
             # Thermodynamic correction
             per, gauge = _pressure_unit(press_unit, "psig")
@@ -634,20 +636,18 @@ class BlowdownCalculator(BaseCalculator):
             else:
                 z = 1.0
 
-            # Differential depressurization vs full evacuation (BUG-101 / BUG-0015 remediation):
-            # If final_pressure is specified (including 0.0 psig = atmospheric vent), or blowdown_mode is "differential":
-            if bmode == "differential" or final_pressure is not None:
+            # Differential depressurization vs full evacuation/purge (BUG-101 / BUG-0015 remediation):
+            if bmode in ("differential", "depressurization") or final_pressure is not None:
                 pf_per, pf_gauge = _pressure_unit(press_unit, "psig")
-                pf_val = float(final_pressure if final_pressure is not None else 0.0)
-                raw_pf_psia = pf_val * pf_per + (STD_PRESSURE_PSIA if pf_gauge else 0.0)
+                pf_val = float(final_pressure if final_pressure is not None else (0.0 if pf_gauge else STD_PRESSURE_PSIA))
+                raw_pf_psia = (pf_val * pf_per + STD_PRESSURE_PSIA) if pf_gauge else (pf_val * pf_per)
                 if raw_pf_psia < 0:
                     raise ValueError(f"Final pressure is below absolute vacuum ({raw_pf_psia:.2f} psia)")
-                p_final_psia = raw_pf_psia
-                p_factor = max(0.0, p_initial_psia - p_final_psia) / STD_PRESSURE_PSIA
+                p_ratio_diff = max(0.0, (p_initial_psia - raw_pf_psia)) / STD_PRESSURE_PSIA / z
             else:
-                p_factor = p_initial_psia / STD_PRESSURE_PSIA
+                p_ratio_diff = (p_initial_psia / z) / STD_PRESSURE_PSIA
 
-            v_std_per_event = v_phys_m3 * p_factor * t_factor * (1.0 / z)
+            v_std_per_event = v_phys_m3 * p_ratio_diff * t_factor
             total_v_std_m3 = v_std_per_event * float(events)
             total_gas_scf = convert(total_v_std_m3, "m3", "scf")
 
@@ -657,7 +657,7 @@ class BlowdownCalculator(BaseCalculator):
 
             co2_vol = total_v_std_m3 * c_co2
             co2_mass_kg = co2_vol * CONVERSIONS["density_co2"]
-            gross_co2_tonnes = co2_mass_kg / 1000.0
+            gross_co2_tonnes = (co2_mass_kg / 1000.0) if (c_co2 > 0 or ef_co2 is None) else (float(ef_co2) * float(events) / 1000.0)
 
         # Split vented and flared
         ctrl_eff = normalize_efficiency(control_efficiency, default=0.0)

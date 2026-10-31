@@ -278,6 +278,27 @@ class TestLiquidsUnloadingTier3Engineering:
         total_scf = wellbore_scf + flowline_scf                  # 42,312.5 scf
         assert res["inputs"]["whole_gas_scf"] == pytest.approx(total_scf, rel=1e-4)
 
+    def test_tier3_equation_6_10_plunger_lift_z_floor(self, calc):
+        """
+        EPA Subpart W Eq. W-9 / API Compendium Eq. 6-10:
+        For plunger lift wells, X = 0.5 hr and Z = 1.0 when HR >= 0.5 hr.
+        Verify HR = 0.75 hr correctly engages flowline venting with Z = 1.0.
+        """
+        res = calc.calculate_tier3_equation_6_10(
+            events=1,
+            well_depth=5000,
+            diameter=2.5,
+            pressure=200.0,
+            sfr=20000.0,
+            hours_open=0.75,
+            unloading_type="plunger",
+            ch4_content=0.85,
+        )
+        wellbore_scf = 1 * 0.37e-3 * (2.5 ** 2) * 5000 * 200.0  # 2,312.5 scf
+        flowline_scf = 20000.0 * (0.75 - 0.5) * 1.0            # 5,000 scf (X=0.5, Z=1.0)
+        total_scf = wellbore_scf + flowline_scf                  # 7,312.5 scf
+        assert res["inputs"]["whole_gas_scf"] == pytest.approx(total_scf, rel=1e-4)
+
     def test_tier3_equation_6_11_automated_plunger_lift(self, calc):
         """
         API Compendium 2021 Equation 6-11:
