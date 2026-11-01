@@ -40,6 +40,12 @@ if _log_path:
         app.logger.addHandler(_rotating_handler)
 app.logger.setLevel(logging.INFO)
 
+# Structured Logging & Error Tracking Setup (Item 4.3)
+from services.structured_logger import setup_logging
+from services.error_tracker import init_error_tracker
+setup_logging(app)
+init_error_tracker(app)
+
 
 # Enable CORS
 CORS(
@@ -464,6 +470,7 @@ from routes.recalculate import recalculate_bp
 from routes.period_locks import period_locks_bp
 from routes.traceability import traceability_bp
 from routes.tenant import tenant_bp
+from routes.health import health_bp
 
 app.register_blueprint(auth_bp, url_prefix="/api/auth")
 app.register_blueprint(emissions_bp, url_prefix="/api/emissions")
@@ -485,6 +492,7 @@ app.register_blueprint(recalculate_bp)
 app.register_blueprint(period_locks_bp)
 app.register_blueprint(traceability_bp)
 app.register_blueprint(tenant_bp)
+app.register_blueprint(health_bp)
 
 # Swagger UI Configuration (SEC-05 & INFO-01: Disabled in production unless explicitly enabled)
 if (
@@ -577,6 +585,11 @@ def ensure_database_indexes():
             "CREATE INDEX IF NOT EXISTS ix_emissions_year ON emissions(year);",
             "CREATE INDEX IF NOT EXISTS ix_emissions_facility_id ON emissions(facility_id);",
             "CREATE INDEX IF NOT EXISTS ix_emissions_status ON emissions(status);",
+            "CREATE INDEX IF NOT EXISTS ix_emissions_fac_yr_status ON emissions(facility_id, year, status);",
+            "CREATE INDEX IF NOT EXISTS ix_emissions_process_type ON emissions(process_type);",
+            "CREATE INDEX IF NOT EXISTS ix_facilities_region ON facilities(region);",
+            "CREATE INDEX IF NOT EXISTS ix_facilities_is_test ON facilities(is_test);",
+            "CREATE INDEX IF NOT EXISTS ix_activity_log_timestamp_action ON activity_logs(timestamp, action);",
             "CREATE INDEX IF NOT EXISTS ix_production_data_facility_id ON production_data(facility_id);",
             "CREATE INDEX IF NOT EXISTS ix_production_data_year ON production_data(year);",
             "CREATE INDEX IF NOT EXISTS ix_scope2_emissions_year ON scope2_emissions(year);",
@@ -684,12 +697,6 @@ def index():
     })
 
 
-@app.route("/api/health")
-def health_check():
-    # SEC-06 FIX: no longer expose DB engine name
-    return jsonify({"status": "ok", "version": app.config.get("APP_VERSION", "1.0.0")})
-
-
 @app.route("/api/map-config")
 def map_config():
     """Basemap tiles of the Emissions Map (pilot check 2026-10-09, F5). Empty unless MAP_TILE_URL is set:
@@ -703,38 +710,6 @@ def map_config():
         "attribution": os.environ.get("MAP_TILE_ATTRIBUTION", "").strip() or None,
         "subdomains": os.environ.get("MAP_TILE_SUBDOMAINS", "").strip() or None,
     })
-
-
-@app.route("/api/health/live")
-def health_liveness():
-    """Kubernetes / Docker shallow liveness probe."""
-    return jsonify({"status": "alive", "version": app.config.get("APP_VERSION", "1.0.0")}), 200
-
-
-@app.route("/api/health/ready")
-def health_readiness():
-    """Kubernetes / Docker deep readiness probe verifying DB pool and filesystem readiness."""
-    try:
-        from sqlalchemy import text
-        db.session.execute(text("SELECT 1"))
-        # audit 2026-10-14 BUG-0071: this probe is public, so it no longer discloses the WAL size (and the
-        # size is of the configured database file, not a fixed ghg_app.db); a large WAL is logged instead
-        db_file = db.engine.url.database if db.engine.url.get_backend_name() == "sqlite" else None
-        wal_path = f"{db_file}-wal" if db_file else None
-        if wal_path and os.path.exists(wal_path) and os.path.getsize(wal_path) > 100 * 1024 * 1024:
-            app.logger.warning("SQLite WAL file %s is larger than 100 MB", wal_path)
-        return jsonify({
-            "status": "ready",
-            "database": "connected",
-            "version": app.config.get("APP_VERSION", "1.0.0")
-        }), 200
-    except Exception as e:
-        app.logger.error(f"Readiness probe failed: {e}")
-        return jsonify({
-            "status": "unhealthy",
-            "database": "unreachable",
-            "error": "Database connectivity check failed"
-        }), 503
 
 
 if __name__ == "__main__":

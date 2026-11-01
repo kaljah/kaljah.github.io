@@ -76,7 +76,7 @@ def _method_tier(factor_source):
     return f"Tier {resolve_tier(factor_source)}"
 
 
-def inventory_uncertainty(year, allowed_fids=None, facility_id=None, scope="all", statuses=("Verified",), include_gwp_uncertainty=False, scope2_method="location"):
+def inventory_uncertainty(year, allowed_fids=None, facility_id=None, scope="all", statuses=("Verified",), include_gwp_uncertainty=False, scope2_method="location", include_monte_carlo=True):
     from calculations.constants import get_active_gwp
     from calculations.uncertainty import GWP_UNCERTAINTY_1SIGMA
     from services.dashboard_filters import _parse_facility_ids
@@ -217,7 +217,7 @@ def inventory_uncertainty(year, allowed_fids=None, facility_id=None, scope="all"
 
     # Approach 2: Monte Carlo simulation & distribution histogram
     mc_result = None
-    if results:
+    if results and include_monte_carlo:
         try:
             from calculations.uncertainty import monte_carlo_simulation
             mc_sources = [

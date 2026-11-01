@@ -1,0 +1,63 @@
+{
+  "timestamp": "2026-11-01T19:16:58Z",
+  "database_scale": {
+    "total_emissions_records": 100000,
+    "total_facilities": 30,
+    "years_covered": [
+      2022,
+      2023,
+      2024,
+      2025,
+      2026
+    ],
+    "total_production_records": 5000,
+    "total_audit_records": 2000
+  },
+  "overall_status": "PASS",
+  "endpoints": [
+    {
+      "endpoint": "Dashboard Summary (Scope 1 Aggregate)",
+      "url": "/api/dashboard/summary?year=2024",
+      "target_ms": 500,
+      "p95_ms": 12.63,
+      "avg_ms": 11.34,
+      "min_ms": 10.18,
+      "max_ms": 12.63,
+      "status_code": 200,
+      "passed": true
+    },
+    {
+      "endpoint": "Reports Ledger (Page 1, 50 rows)",
+      "url": "/api/emissions?year=2024&page=1&limit=50",
+      "target_ms": 1000,
+      "p95_ms": 662.75,
+      "avg_ms": 588.0,
+      "min_ms": 546.12,
+      "max_ms": 662.75,
+      "status_code": 200,
+      "passed": true
+    },
+    {
+      "endpoint": "Audit Trail (Page 1, 50 rows)",
+      "url": "/api/audit?page=1&limit=50",
+      "target_ms": 1000,
+      "p95_ms": 16.61,
+      "avg_ms": 15.52,
+      "min_ms": 15.0,
+      "max_ms": 16.61,
+      "status_code": 200,
+      "passed": true
+    },
+    {
+      "endpoint": "QA/QC Dashboard (Flagged Records)",
+      "url": "/api/qaqc/dashboard?year=2024",
+      "target_ms": 1000,
+      "p95_ms": 13.06,
+      "avg_ms": 11.17,
+      "min_ms": 10.3,
+      "max_ms": 13.06,
+      "status_code": 200,
+      "passed": true
+    }
+  ]
+}

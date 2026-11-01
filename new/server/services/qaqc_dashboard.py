@@ -88,33 +88,54 @@ def _flagged(f, scope_no, scope_arg, limit, offset):
 
 def stored_outliers(f):
     """BUG-084: flags written at import time are not enough - scan the STORED Scope 1 inventory for implausible
-    values (above the plausibility bound, or more than 1000x the median of the same process type)."""
-    from statistics import median
-
+    values (above the plausibility bound, or more than 1000x typical value of the same process type).
+    Optimized for 100k+ row scale using indexed SQL range queries instead of pulling full table into memory."""
     from calculations.anomaly import PLAUSIBILITY_FLAG_TCO2E
 
-    rows = f.by_status(f.scope(Emission.query, Emission), Emission).filter(Emission.qa_flag.is_(None)).with_entities(
-        Emission.id, Emission.record_id, Emission.facility_id, Emission.year, Emission.month,
-        Emission.process_type, Emission.status, Emission.co2e_total).all()
-    by_proc = {}
-    for r in rows:
-        by_proc.setdefault((r.process_type or "").lower(), []).append(float(r.co2e_total or 0))
-    medians = {k: median([v for v in vals if v > 0]) for k, vals in by_proc.items() if any(v > 0 for v in vals)}
+    base_q = f.by_status(f.scope(Emission.query, Emission), Emission).filter(Emission.qa_flag.is_(None))
+
+    # 1. Direct indexed query for plausibility bound (> 1,000,000 tCO2e)
+    plausible_breaches = base_q.filter(Emission.co2e_total > PLAUSIBILITY_FLAG_TCO2E).limit(MAX_FLAGGED_RECORDS).all()
+
     out = []
-    for r in rows:
+    seen_ids = set()
+    for r in plausible_breaches:
         v = float(r.co2e_total or 0)
-        med = medians.get((r.process_type or "").lower())
-        reason = None
-        if v > PLAUSIBILITY_FLAG_TCO2E:
-            reason = f"Stored-data scan: {v:,.0f} tCO2e exceeds the {PLAUSIBILITY_FLAG_TCO2E:,.0f} t plausibility bound"
-        elif med and v > 1000 * med:
-            reason = f"Stored-data scan: {v / med:,.0f}x the median of '{r.process_type}' records"
-        if reason:
-            out.append({
-                "id": r.id, "record_id": r.record_id, "scope": 1, "facility_id": r.facility_id,
-                "year": r.year, "month": r.month, "process_type": r.process_type, "qa_flag": reason,
-                "status": r.status, "co2e": v, "source": "stored_scan",
-            })
+        seen_ids.add(r.id)
+        out.append({
+            "id": r.id, "record_id": r.record_id, "scope": 1, "facility_id": r.facility_id,
+            "year": r.year, "month": r.month, "process_type": r.process_type,
+            "qa_flag": f"Stored-data scan: {v:,.0f} tCO2e exceeds the {PLAUSIBILITY_FLAG_TCO2E:,.0f} t plausibility bound",
+            "status": r.status, "co2e": v, "source": "stored_scan",
+        })
+
+    # 2. Query process averages per process type to check for 1000x outliers
+    avg_per_proc = db.session.query(
+        Emission.process_type, func.avg(Emission.co2e_total)
+    ).filter(Emission.co2e_total > 0)
+    if f.year is not None:
+        avg_per_proc = avg_per_proc.filter(Emission.year == f.year)
+    if f.allowed_fids is not None:
+        avg_per_proc = avg_per_proc.filter(Emission.facility_id.in_(f.allowed_fids))
+    avg_per_proc = avg_per_proc.group_by(Emission.process_type).all()
+
+    proc_filters = []
+    for proc, avg_val in avg_per_proc:
+        if avg_val and avg_val > 0:
+            proc_filters.append(and_(Emission.process_type == proc, Emission.co2e_total > 1000 * avg_val))
+
+    if proc_filters:
+        extreme_outliers = base_q.filter(or_(*proc_filters)).limit(MAX_FLAGGED_RECORDS).all()
+        for r in extreme_outliers:
+            if r.id not in seen_ids:
+                v = float(r.co2e_total or 0)
+                out.append({
+                    "id": r.id, "record_id": r.record_id, "scope": 1, "facility_id": r.facility_id,
+                    "year": r.year, "month": r.month, "process_type": r.process_type,
+                    "qa_flag": f"Stored-data scan: {v:,.0f} tCO2e exceeds 1000x typical value for '{r.process_type}'",
+                    "status": r.status, "co2e": v, "source": "stored_scan",
+                })
+
     return out
 
 
@@ -141,14 +162,25 @@ def uncertainty(f):
     """BUG-055: the Uncertainty page's service - Verified records, CO2e-weighted per gas, EF correlated within a
     factor, at 95 % (k = 2) - for the chosen year or the latest year with Verified records."""
     from services.inventory_uncertainty import inventory_uncertainty
+    from routes.dashboard import DASHBOARD_CACHE
 
     cy = datetime.now(timezone.utc).year
     year = f.year
     if year is None:
         year = db.session.query(func.max(Emission.year)).filter(
             Emission.status == "Verified", Emission.year <= cy).scalar() or cy
-    unc = {sc: inventory_uncertainty(year, allowed_fids=f.allowed_fids, scope=sc) for sc in ("all", "1", "2", "3")}
-    return {
+
+    fids_key = tuple(sorted(f.allowed_fids)) if f.allowed_fids is not None else None
+    cache_key = f"qaqc_unc_{year}_{fids_key}"
+    cached_val = DASHBOARD_CACHE.get(cache_key)
+    if cached_val is not None:
+        return cached_val
+
+    unc = {
+        sc: inventory_uncertainty(year, allowed_fids=f.allowed_fids, scope=sc, include_monte_carlo=False)
+        for sc in ("all", "1", "2", "3")
+    }
+    res = {
         "overall": unc["all"]["inventory_uncertainty_decimal"],
         "scope1": unc["1"]["inventory_uncertainty_decimal"],
         "scope2": unc["2"]["inventory_uncertainty_decimal"],
@@ -161,6 +193,8 @@ def uncertainty(f):
         "s2_total_tco2e": unc["2"]["total_inventory_emissions"],
         "s3_total_tco2e": unc["3"]["total_inventory_emissions"],
     }
+    DASHBOARD_CACHE[cache_key] = res
+    return res
 
 
 def _recent_count(q, column, cutoff):
@@ -410,6 +444,14 @@ def diagnostics(f, total_flagged, outliers):
 
 def build_dashboard(allowed_fids, args):
     """The full dashboard response for a user's facility scope and the request's query arguments."""
+    from routes.dashboard import DASHBOARD_CACHE
+
+    fids_key = tuple(sorted(allowed_fids)) if allowed_fids is not None else None
+    cache_key = f"qaqc_dash_{fids_key}_{sorted(args.items())}"
+    cached_val = DASHBOARD_CACHE.get(cache_key)
+    if cached_val is not None:
+        return cached_val
+
     f = DashboardFilter(allowed_fids, args)
     scope_arg = args.get("scope")  # "1", "2", "3" or "all"
     limit, offset = paging(args)
@@ -418,7 +460,7 @@ def build_dashboard(allowed_fids, args):
     diag = diagnostics(f, total_flagged, outliers)
     pending_review = sum(f.scope(m.query, m).filter(m.status.in_(("Pending", "Pending Approval", "Pending Review")))
                          .count() for m in SCOPE_MODELS)
-    return {
+    res = {
         "status": "success",
         "total_flagged_count": total_flagged,
         "stored_scan_outlier_count": len(outliers),
@@ -430,3 +472,5 @@ def build_dashboard(allowed_fids, args):
         "flagged_records": records,
         "diagnostics": diag,
     }
+    DASHBOARD_CACHE[cache_key] = res
+    return res

@@ -48,6 +48,7 @@ share/python-wheels/
 
 # Testing & Coverage
 .pytest_cache/
+.agents/skills/
 **/.pytest_cache/
 .coverage
 .coverage.*
