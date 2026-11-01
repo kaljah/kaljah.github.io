@@ -117,18 +117,23 @@ export interface AuditStatsProps {
     totalLogins: number;
     dataMutations: number;
     securityAlerts: number;
+    otherEvents?: number;
   };
 }
 
-/** Four headline counters. */
-export const AuditStats: React.FC<AuditStatsProps> = ({ stats }) => (
-  <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-    <StatCard icon={Activity} label={t("Total Events Logged")} valueText={stats.totalEvents.toLocaleString()} />
-    <StatCard icon={LogIn} label={t("User Logins")} valueText={stats.totalLogins.toLocaleString()} />
-    <StatCard icon={Database} label={t("Data Changes")} valueText={stats.dataMutations.toLocaleString()} />
-    <StatCard icon={ShieldAlert} label={t("Security & Alerts")} valueText={stats.securityAlerts.toLocaleString()} />
-  </div>
-);
+/** Five headline counters summing to totalEvents. */
+export const AuditStats: React.FC<AuditStatsProps> = ({ stats }) => {
+  const otherCount = stats.otherEvents ?? Math.max(0, stats.totalEvents - (stats.totalLogins + stats.dataMutations + stats.securityAlerts));
+  return (
+    <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <StatCard icon={Activity} label={t("Total Events Logged")} valueText={stats.totalEvents.toLocaleString()} />
+      <StatCard icon={LogIn} label={t("User Logins")} valueText={stats.totalLogins.toLocaleString()} />
+      <StatCard icon={Database} label={t("Data Changes")} valueText={stats.dataMutations.toLocaleString()} />
+      <StatCard icon={ShieldAlert} label={t("Security & Alerts")} valueText={stats.securityAlerts.toLocaleString()} />
+      <StatCard icon={Shield} label={t("Other / System")} valueText={otherCount.toLocaleString()} />
+    </div>
+  );
+};
 
 export const AuditSkeleton: React.FC = () => (
   <div role="status" aria-label={t("Loading audit events")} className="flex flex-col gap-4">
@@ -218,16 +223,27 @@ export const AuditIntegrityCheck: React.FC = () => {
   const [result, setResult] = React.useState<ChainResult | null>(null);
   const [error, setError] = React.useState("");
   const [busy, setBusy] = React.useState(false);
+  const [lastVerified, setLastVerified] = React.useState<string | null>(null);
 
   const verify = async () => {
     setBusy(true);
     setError("");
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+
     try {
-      const res = await api.get("/audit/verify-chain");
+      const res = await api.get("/audit/verify-chain", { signal: controller.signal });
+      clearTimeout(timeoutId);
       setResult(res.data);
+      setLastVerified(res.data?.verified_at ? new Date(res.data.verified_at).toLocaleTimeString() : new Date().toLocaleTimeString());
     } catch (err: any) {
+      clearTimeout(timeoutId);
       setResult(null);
-      setError(err.response?.data?.error || t("The log could not be verified."));
+      if (err.name === "CanceledError" || err.name === "AbortError" || controller.signal.aborted) {
+        setError(t("Verification request timed out after 10 seconds. Click Verify Chain to retry."));
+      } else {
+        setError(err.response?.data?.error || t("The audit hash chain could not be verified."));
+      }
     } finally {
       setBusy(false);
     }
@@ -236,6 +252,8 @@ export const AuditIntegrityCheck: React.FC = () => {
   React.useEffect(() => {
     verify();
   }, []);
+
+  const firstBroken = result?.issues?.[0];
 
   return (
     <Card className="mb-6 border-l-4 border-l-brand-500 bg-surface/80 p-5 shadow-xs">
@@ -247,21 +265,31 @@ export const AuditIntegrityCheck: React.FC = () => {
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
               <h3 className="m-0 text-base font-bold text-text">{t("Cryptographic Hash Chain Integrity")}</h3>
-              {result?.status === "verified" && (
+              {busy ? (
+                <Badge tone="neutral" className="gap-1 px-2 py-0.5 text-xs font-semibold">
+                  <RefreshCw className="size-3 animate-spin" aria-hidden="true" />
+                  {t("Verifying...")}
+                </Badge>
+              ) : result?.status === "verified" ? (
                 <Badge tone="success" className="gap-1 px-2 py-0.5 text-xs font-semibold">
                   <CheckCircle2 className="size-3" aria-hidden="true" />
-                  {t("Chain Intact")}
+                  {t("Verified (Chain Intact)")}
                 </Badge>
-              )}
-              {result?.status === "tampered" && (
+              ) : result?.status === "tampered" ? (
                 <Badge tone="danger" className="gap-1 px-2 py-0.5 text-xs font-semibold">
                   <ShieldAlert className="size-3" aria-hidden="true" />
-                  {t("Tampering Detected")}
+                  {t("Broken (Tampering Detected)")}
                 </Badge>
-              )}
+              ) : error ? (
+                <Badge tone="danger" className="gap-1 px-2 py-0.5 text-xs font-semibold">
+                  <XCircle className="size-3" aria-hidden="true" />
+                  {t("Verification Error")}
+                </Badge>
+              ) : null}
             </div>
             <p className="m-0 text-xs text-text-secondary leading-normal">
               {t("Every audit record is sealed with a SHA-256 hash linked to the previous block, ensuring tamper-evident non-repudiation.")}
+              {lastVerified && ` • ${t("Last verified at")} ${lastVerified}`}
             </p>
           </div>
         </div>
@@ -297,7 +325,7 @@ export const AuditIntegrityCheck: React.FC = () => {
 
       {result && result.status === "tampered" && (
         <div className="mt-3 border-t border-border pt-3">
-          <Banner tone="danger" title={t("Tampering Alert: {{count}} issues detected", { count: result.issue_count })}>
+          <Banner tone="danger" title={t("Tampering Alert: Chain Integrity Broken ({{count}} issues detected)", { count: result.issue_count })}>
             <ul className="m-0 mt-1 list-disc pl-5">
               {result.issues.map((i) => (
                 <li key={`${i.id}-${i.problem}`}>

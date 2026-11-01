@@ -1,3 +1,4 @@
+import os
 from flask import session
 from models import db, User, Facility
 

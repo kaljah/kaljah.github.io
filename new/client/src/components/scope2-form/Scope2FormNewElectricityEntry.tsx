@@ -106,33 +106,39 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
       <h4 className="section-title">{t("1. IDENTITY & LOCATION")}</h4>
       <div className="form-grid-4">
         <div className="input-group">
-          <label className="flex items-center gap-1">
-            <Lock className="size-3 text-ink-400" aria-hidden="true" />
+          <label className="flex items-center gap-1.5 text-sm font-medium text-text">
+            <Lock className="size-3.5 text-text-secondary" aria-hidden="true" />
             <span>{t("Activity")}</span>
           </label>
           <input
             type="text"
-            className="mole-input readonly bg-ink-100! text-ink-600!"
+            className="mole-input readonly bg-ink-50/80! border border-border text-ink-700! disabled:cursor-not-allowed text-sm"
             value={activity || ""}
+            placeholder={facilityId ? t("Not specified") : t("Select a region first")}
             disabled
           />
-          <span className="text-[0.65rem] text-text-secondary">{t("Auto-filled from Region")}</span>
+          <span className="text-xs text-text-secondary">
+            {facilityId ? t("Auto-filled from Region") : t("Select a region first")}
+          </span>
         </div>
         <div className="input-group">
-          <label className="flex items-center gap-1">
-            <Lock className="size-3 text-ink-400" aria-hidden="true" />
+          <label className="flex items-center gap-1.5 text-sm font-medium text-text">
+            <Lock className="size-3.5 text-text-secondary" aria-hidden="true" />
             <span>{t("Division")}</span>
           </label>
           <input
             type="text"
-            className="mole-input readonly bg-ink-100! text-ink-600!"
+            className="mole-input readonly bg-ink-50/80! border border-border text-ink-700! disabled:cursor-not-allowed text-sm"
             value={division || ""}
+            placeholder={facilityId ? t("Not specified") : t("Select a region first")}
             disabled
           />
-          <span className="text-[0.65rem] text-text-secondary">{t("Auto-filled from Region")}</span>
+          <span className="text-xs text-text-secondary">
+            {facilityId ? t("Auto-filled from Region") : t("Select a region first")}
+          </span>
         </div>
         <div className="input-group">
-          <label>{t("Region")}</label>
+          <label className="text-sm font-medium text-text">{t("Region")}</label>
           <CustomDropdown
             options={getFacilityOptions()}
             value={facilityId || ""}
@@ -141,17 +147,20 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
           />
         </div>
         <div className="input-group">
-          <label className="flex items-center gap-1">
-            <Lock className="size-3 text-ink-400" aria-hidden="true" />
+          <label className="flex items-center gap-1.5 text-sm font-medium text-text">
+            <Lock className="size-3.5 text-text-secondary" aria-hidden="true" />
             <span>{t("Field")}</span>
           </label>
           <input
             type="text"
-            className="mole-input readonly bg-ink-100! text-ink-600!"
+            className="mole-input readonly bg-ink-50/80! border border-border text-ink-700! disabled:cursor-not-allowed text-sm"
             value={field || ""}
+            placeholder={facilityId ? t("Not specified") : t("Select a region first")}
             disabled
           />
-          <span className="text-[0.65rem] text-text-secondary">{t("Auto-filled from Region")}</span>
+          <span className="text-xs text-text-secondary">
+            {facilityId ? t("Auto-filled from Region") : t("Select a region first")}
+          </span>
         </div>
       </div>
       <div className="form-grid-3">

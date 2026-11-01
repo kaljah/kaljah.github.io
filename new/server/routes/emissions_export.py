@@ -6,6 +6,7 @@ registered on the same ``emissions_bp`` blueprint, so URLs and endpoint names ar
 import datetime
 import hashlib
 from flask import jsonify, request
+from extensions import db
 from models import Emission, Facility, Scope2Emission, Scope3Emission
 from routes.auth import login_required
 from services.audit_chain import record_report_fingerprint
@@ -158,6 +159,12 @@ def export_emissions():
                     "co2e_total": float(r.co2e_total or 0),
                     "status": r.status or "Verified",
                     "data_source_ref": r.data_source_ref or "",
+                    "factor_version": r.factor_version or "API-2021.1",
+                    "factor_source": r.factor_source or "API Compendium 2021",
+                    "gwp_version": r.gwp_version or "AR5",
+                    "approved_by": r.approved_by_name or (f"User #{r.approved_by}" if r.approved_by else ""),
+                    "approved_at": r.approved_at.isoformat() if r.approved_at else "",
+                    "is_prior_period_adjustment": bool(getattr(r, "is_prior_period_adjustment", False)),
                 }
             )
 
@@ -210,6 +217,12 @@ def export_emissions():
                     "co2e_market_based": float(r.co2e_market_based if r.co2e_market_based is not None else (r.co2e or 0)),
                     "status": r.status or "Verified",
                     "data_source_ref": getattr(r, "data_source_ref", "") or "",
+                    "factor_version": getattr(r, "factor_version", None) or "2023.1",
+                    "factor_source": getattr(r, "factor_source", None) or f"Grid ({r.grid_region or 'National'})",
+                    "gwp_version": getattr(r, "gwp_version", None) or "AR5",
+                    "approved_by": r.approved_by_name or (f"User #{r.approved_by}" if r.approved_by else ""),
+                    "approved_at": r.approved_at.isoformat() if r.approved_at else "",
+                    "is_prior_period_adjustment": bool(getattr(r, "is_prior_period_adjustment", False)),
                 }
             )
 
@@ -259,6 +272,12 @@ def export_emissions():
                     "co2e_total": float(r.co2e or 0),
                     "status": r.status or "Verified",
                     "data_source_ref": getattr(r, "data_source_ref", "") or "",
+                    "factor_version": getattr(r, "factor_version", None) or "2023.1",
+                    "factor_source": getattr(r, "factor_source", None) or (r.calculation_method or "GHG Protocol Cat 11"),
+                    "gwp_version": getattr(r, "gwp_version", None) or "AR5",
+                    "approved_by": r.approved_by_name or (f"User #{r.approved_by}" if r.approved_by else ""),
+                    "approved_at": r.approved_at.isoformat() if r.approved_at else "",
+                    "is_prior_period_adjustment": bool(getattr(r, "is_prior_period_adjustment", False)),
                 }
             )
 
@@ -319,6 +338,11 @@ def export_emissions():
             "Total CO₂e (t)",
             "Status",
             "Source Reference",
+            "Factor Version",
+            "GWP Standard",
+            "Approved By",
+            "Approved At",
+            "Prior Period Adjustment",
         ]
 
         for col_idx, h in enumerate(headers, 1):

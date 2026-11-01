@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Neocarbon API",
+    "title": "NeoCarbon API",
     "description": "API documentation and health checking portal for the Greenhouse Gas (GHG) Platform backend.",
     "version": "1.0.0"
   },

@@ -1,5 +1,5 @@
 import UserManagementBlock, { type ManagedUser, type RoleMeta } from "./user-management/UserManagementBlock";
-import { Globe, Plus, Shield as ShieldIcon, User as UserIcon, Users as UsersIcon, Wrench as WrenchIcon, Lock } from "lucide-react";
+import { AlertTriangle, Globe, Plus, Shield as ShieldIcon, User as UserIcon, Users as UsersIcon, Wrench as WrenchIcon, Lock } from "lucide-react";
 import UserManagementBlock1205, { type UserFormData } from "./user-management/UserManagementBlock1205";
 import UserManagementBlock1503 from "./user-management/UserManagementBlock1503";
 import { UserManagementSessionTab } from "./user-management/UserManagementSessionTab";
@@ -938,6 +938,30 @@ const UserManagement: React.FC = () => {
         <UserManagementSessionTab currentUserRole={user?.role} />
       ) : (
         <>
+          {/* High Administrative Ratio Warning (2.2 Audit Remediation) */}
+          {(adminCount > 5 || (totalUsers > 0 && adminCount / totalUsers > 0.2)) && (
+            <div
+              id="um-high-admin-warning"
+              className="mb-4 rounded-xl border border-amber-300 bg-amber-50/90 p-4 text-amber-900 flex items-start gap-3 shadow-xs"
+            >
+              <AlertTriangle className="size-5 text-amber-600 shrink-0 mt-0.5" />
+              <div className="flex flex-col gap-1 text-xs">
+                <span className="font-bold text-sm text-amber-950">
+                  {t("High Administrative Privileges Concentration ({{count}} of {{total}} accounts)", {
+                    count: adminCount,
+                    total: totalUsers,
+                  })}
+                </span>
+                <p className="m-0 leading-relaxed text-amber-800">
+                  {t(
+                    "{{pct}}% of user accounts hold Administrator or Superuser roles. In accordance with the Principle of Least Privilege and ISO 27001 access control guidelines, review whether test or non-essential accounts can be de-escalated to standard operator roles.",
+                    { pct: Math.round((adminCount / Math.max(1, totalUsers)) * 100) }
+                  )}
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* ── Stats Row ── */}
           <div style={S.statsRow}>
             {[
@@ -1012,6 +1036,8 @@ const UserManagement: React.FC = () => {
             setHoveredRow={setHoveredRow}
             totalUsers={totalUsers}
             currentUserRole={user?.role}
+            currentUserEmail={user?.email}
+            currentUserId={user?.id}
           />
         </>
       )}

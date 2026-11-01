@@ -52,8 +52,8 @@ export const formatAuditDescription = (rawText?: string): string => {
   return text;
 };
 
-const Meta: React.FC<{ icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean | "true" | "false" }>; children: React.ReactNode }> = ({ icon: Icon, children }) => (
-  <span className="inline-flex items-center gap-1.5">
+const Meta: React.FC<{ icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean | "true" | "false" }>; title?: string; children: React.ReactNode }> = ({ icon: Icon, title, children }) => (
+  <span className="inline-flex items-center gap-1.5" title={title}>
     <Icon className="size-3" aria-hidden="true" />
     {children}
   </span>
@@ -161,6 +161,9 @@ const AuditTrailAuditTimeline: React.FC<AuditTrailAuditTimelineProps> = ({
           <Card className="min-w-0 flex-1 px-5 py-4 transition-shadow hover:shadow-md">
             <div className="mb-2.5 flex flex-wrap items-center justify-between gap-2">
               <div className="flex flex-wrap items-center gap-2.5">
+                <span className="font-mono text-xs font-bold text-text-secondary">
+                  #{log.id}
+                </span>
                 <span className="inline-flex items-center gap-1.5 rounded-md border border-border bg-ink-50 px-2 py-0.5 text-base font-bold text-ink-800">
                   <UserIcon className="size-3 text-ink-500" aria-hidden="true" /> {log.user}
                 </span>
@@ -185,7 +188,7 @@ const AuditTrailAuditTimeline: React.FC<AuditTrailAuditTimelineProps> = ({
 
             <div className="flex flex-wrap items-center justify-between gap-2 border-t border-ink-100 pt-2.5 text-sm text-text-secondary">
               <div className="flex flex-wrap items-center gap-4">
-                <Meta icon={Database}>{t("Ref: #")}{log.entityId || log.recordId || "N/A"}</Meta>
+                <Meta icon={Database} title={t("Target Entity Record ID")}>{t("Target:")} {log.entity ? `${log.entity} #${log.entityId || log.recordId}` : `#${log.entityId || log.recordId || "N/A"}`}</Meta>
                 <Meta icon={Globe}>{t("IP:")}{" "}{log.ipAddress || t("Local / System")}</Meta>
                 <Meta icon={Calendar}>{formatFullDateTime(log.timestamp)}</Meta>
               </div>

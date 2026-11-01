@@ -132,6 +132,11 @@ def add_production():
                     'field': 'total_production_mmboe'
                 }), 400
 
+    from services.period_lock_service import check_period_lock_for_record
+    lock_err = check_period_lock_for_record(year, month)
+    if lock_err:
+        return jsonify(lock_err[0]), lock_err[1]
+
     saved_rec_id = None
 
     # Atomic upsert pattern: try update if existing, handle race condition gracefully
@@ -234,6 +239,11 @@ def delete_production(record_id):
     
     if not require_facility_access(user, prod.facility_id):
         return jsonify({'error': 'Access to this facility is denied'}), 403
+
+    from services.period_lock_service import check_period_lock_for_record
+    lock_err = check_period_lock_for_record(prod.year, prod.month)
+    if lock_err:
+        return jsonify(lock_err[0]), lock_err[1]
     if user and user.role == 'user' and prod.created_by and prod.created_by != user.id:
         return jsonify({'error': 'Forbidden: You do not have permission to delete records created by another user'}), 403
 

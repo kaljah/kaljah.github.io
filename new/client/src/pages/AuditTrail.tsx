@@ -335,6 +335,12 @@ const AuditTrail: React.FC = () => {
 
   const tableColumns: ColumnDef<AuditLog, any>[] = [
     {
+      id: "eventId",
+      header: t("Event #"),
+      accessorFn: (l: AuditLog) => `#${l.id}`,
+      cell: (c) => <span className="font-mono text-xs font-semibold text-text">{c.getValue()}</span>,
+    },
+    {
       id: "time",
       header: t("Time"),
       accessorFn: (l: AuditLog) => l.timestamp,
@@ -356,9 +362,21 @@ const AuditTrail: React.FC = () => {
       id: "description",
       header: t("Description"),
       accessorFn: (l: AuditLog) => formatAuditDescription(l.description || l.details) || t("No details recorded"),
-      cell: (c) => <span className="block max-w-[32rem] truncate" title={c.getValue()}>{c.getValue()}</span>,
+      cell: (c) => <span className="block max-w-[28rem] truncate" title={c.getValue()}>{c.getValue()}</span>,
     },
-    { id: "ref", header: t("Ref"), accessorFn: (l: AuditLog) => l.entityId || l.recordId || "-" },
+    {
+      id: "ref",
+      header: t("Target ID"),
+      accessorFn: (l: AuditLog) => l.entityId || l.recordId || "-",
+      cell: (c) => (
+        <span
+          title={t("Target Entity Record ID: ID of the modified {{entity}}", { entity: c.row.original.entity || "record" })}
+          className="font-mono text-xs text-text-secondary"
+        >
+          {c.row.original.entity ? `${c.row.original.entity} #${c.getValue()}` : `#${c.getValue()}`}
+        </span>
+      ),
+    },
     { id: "ip", header: t("IP"), accessorFn: (l: AuditLog) => l.ipAddress || t("Local / System") },
     {
       id: "details",

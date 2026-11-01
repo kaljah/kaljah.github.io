@@ -188,6 +188,8 @@ class Emission(db.Model):
     approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     is_test = db.Column(db.Boolean, default=False, server_default="0", nullable=False)
     approved_at = db.Column(db.DateTime, nullable=True)
+    is_prior_period_adjustment = db.Column(db.Boolean, default=False, server_default="0", nullable=False)
+    prior_period_year = db.Column(db.Integer, nullable=True)
     gas_composition_json = db.Column("gas_composition", db.Text, nullable=True)
 
     @property
@@ -376,10 +378,12 @@ class CustomFactor(db.Model):
     approved_at = db.Column(db.DateTime, nullable=True)
     facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), nullable=True, index=True)
     region = db.Column(db.String(100), nullable=True, index=True)
+    valid_from = db.Column(db.String(20), nullable=True)
+    parent_factor_id = db.Column(db.Integer, db.ForeignKey("custom_factors.id"), nullable=True)
     gas_composition_json = db.Column("gas_composition", db.Text, nullable=True)
 
     __table_args__ = (
-        db.UniqueConstraint("name", "facility_id", name="uq_custom_factor_name_facility"),
+        db.UniqueConstraint("name", "version", "facility_id", name="uq_custom_factor_name_version_facility"),
     )
 
     @property
@@ -512,6 +516,11 @@ class Scope2Emission(db.Model):
     # Maker-Checker Approval
     approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     approved_at = db.Column(db.DateTime, nullable=True)
+    factor_version = db.Column(db.String(50), nullable=True)
+    factor_source = db.Column(db.String(100), nullable=True)
+    gwp_version = db.Column(db.String(20), default="AR5")
+    is_prior_period_adjustment = db.Column(db.Boolean, default=False, server_default="0", nullable=False)
+    prior_period_year = db.Column(db.Integer, nullable=True)
     gas_composition_json = db.Column("gas_composition", db.Text, nullable=True)
 
     @property
@@ -571,6 +580,11 @@ class Scope3Emission(db.Model):
     approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     approved_at = db.Column(db.DateTime, nullable=True)
     region = db.Column(db.String(100), nullable=True, index=True)
+    factor_version = db.Column(db.String(50), nullable=True)
+    factor_source = db.Column(db.String(100), nullable=True)
+    gwp_version = db.Column(db.String(20), default="AR5")
+    is_prior_period_adjustment = db.Column(db.Boolean, default=False, server_default="0", nullable=False)
+    prior_period_year = db.Column(db.Integer, nullable=True)
     gas_composition_json = db.Column("gas_composition", db.Text, nullable=True)
 
     @property
@@ -893,4 +907,147 @@ class ImportMapping(db.Model):
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,
             "last_used_at": self.last_used_at.isoformat() if self.last_used_at else None,
         }
+
+
+class PeriodLock(db.Model):
+    """
+    Reporting Period Lock (Part 2.3)
+    Prevents create, update, and delete actions for statutory closed reporting years/periods
+    without authorized unlock and audit justification.
+    """
+    __tablename__ = "period_locks"
+    id = db.Column(db.Integer, primary_key=True)
+    year = db.Column(db.Integer, nullable=False, index=True)
+    month = db.Column(db.Integer, nullable=True)  # None = entire reporting year
+    status = db.Column(db.String(20), default="locked", nullable=False)  # 'locked', 'open'
+    locked_at = db.Column(db.DateTime, default=utc_now)
+    locked_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    signoff_signatory = db.Column(db.String(120), nullable=True)
+    signoff_notes = db.Column(db.Text, nullable=True)
+    unlocked_at = db.Column(db.DateTime, nullable=True)
+    unlocked_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    unlock_reason = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=utc_now)
+
+    user_locked = db.relationship("User", foreign_keys=[locked_by])
+    user_unlocked = db.relationship("User", foreign_keys=[unlocked_by])
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "year": self.year,
+            "month": self.month,
+            "status": self.status,
+            "locked_at": self.locked_at.isoformat() if self.locked_at else None,
+            "locked_by": self.locked_by,
+            "locked_by_name": self.user_locked.fullName if self.user_locked else None,
+            "signoff_signatory": self.signoff_signatory,
+            "signoff_notes": self.signoff_notes,
+            "unlocked_at": self.unlocked_at.isoformat() if self.unlocked_at else None,
+            "unlocked_by": self.unlocked_by,
+            "unlocked_by_name": self.user_unlocked.fullName if self.user_unlocked else None,
+            "unlock_reason": self.unlock_reason,
+        }
+
+
+class RecalculationRequest(db.Model):
+    """
+    Recalculation Request & Maker-Checker Workflow (Part 2.2)
+    Supports GHG Protocol base-year recalculation triggers (methodology_change,
+    structural_change, error_correction) with impact preview and maker-checker approval.
+    """
+    __tablename__ = "recalculation_requests"
+    id = db.Column(db.Integer, primary_key=True)
+    target_year = db.Column(db.Integer, nullable=True)
+    target_facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), nullable=True)
+    target_scope = db.Column(db.String(20), nullable=True)  # '1', '2', '3', 'all'
+    target_factor_id = db.Column(db.Integer, db.ForeignKey("custom_factors.id"), nullable=True)
+    target_factor_version = db.Column(db.String(50), nullable=True)
+    target_gwp_standard = db.Column(db.String(20), nullable=True)
+    trigger_type = db.Column(db.String(50), nullable=False)  # 'methodology_change', 'structural_change', 'error_correction'
+    justification = db.Column(db.Text, nullable=False)
+    status = db.Column(db.String(30), default="pending_approval", nullable=False)  # 'pending_approval', 'approved', 'executed', 'rejected'
+    records_affected = db.Column(db.Integer, default=0)
+    tco2e_before = db.Column(db.Float, default=0.0)
+    tco2e_after = db.Column(db.Float, default=0.0)
+    delta_tco2e = db.Column(db.Float, default=0.0)
+    delta_pct = db.Column(db.Float, default=0.0)
+    requested_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    requested_at = db.Column(db.DateTime, default=utc_now)
+    approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    approved_at = db.Column(db.DateTime, nullable=True)
+    executed_at = db.Column(db.DateTime, nullable=True)
+    rejection_reason = db.Column(db.Text, nullable=True)
+
+    user_requested = db.relationship("User", foreign_keys=[requested_by])
+    user_approved = db.relationship("User", foreign_keys=[approved_by])
+    facility = db.relationship("Facility", foreign_keys=[target_facility_id])
+    custom_factor = db.relationship("CustomFactor", foreign_keys=[target_factor_id])
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "target_year": self.target_year,
+            "target_facility_id": self.target_facility_id,
+            "facility_name": self.facility.name if self.facility else "All Facilities",
+            "target_scope": self.target_scope or "all",
+            "target_factor_id": self.target_factor_id,
+            "target_factor_version": self.target_factor_version,
+            "target_gwp_standard": self.target_gwp_standard,
+            "trigger_type": self.trigger_type,
+            "justification": self.justification,
+            "status": self.status,
+            "records_affected": self.records_affected,
+            "tco2e_before": round(self.tco2e_before, 2),
+            "tco2e_after": round(self.tco2e_after, 2),
+            "delta_tco2e": round(self.delta_tco2e, 2),
+            "delta_pct": round(self.delta_pct, 2),
+            "requested_by": self.requested_by,
+            "requested_by_name": self.user_requested.fullName if self.user_requested else None,
+            "requested_at": self.requested_at.isoformat() if self.requested_at else None,
+            "approved_by": self.approved_by,
+            "approved_by_name": self.user_approved.fullName if self.user_approved else None,
+            "approved_at": self.approved_at.isoformat() if self.approved_at else None,
+            "executed_at": self.executed_at.isoformat() if self.executed_at else None,
+            "rejection_reason": self.rejection_reason,
+        }
+
+
+class RecalculationHistory(db.Model):
+    """
+    Granular record-level historical audit of recalculated emissions (Part 2.2).
+    Preserves exact previous values and factors for complete provenance.
+    """
+    __tablename__ = "recalculation_history"
+    id = db.Column(db.Integer, primary_key=True)
+    request_id = db.Column(db.Integer, db.ForeignKey("recalculation_requests.id"), nullable=True, index=True)
+    record_id = db.Column(db.String(50), nullable=False, index=True)
+    scope = db.Column(db.Integer, nullable=False)
+    facility_id = db.Column(db.Integer, nullable=True)
+    year = db.Column(db.Integer, nullable=True)
+    old_co2e = db.Column(db.Float, nullable=False)
+    new_co2e = db.Column(db.Float, nullable=False)
+    old_factor_version = db.Column(db.String(50), nullable=True)
+    new_factor_version = db.Column(db.String(50), nullable=True)
+    old_gwp_version = db.Column(db.String(20), nullable=True)
+    new_gwp_version = db.Column(db.String(20), nullable=True)
+    timestamp = db.Column(db.DateTime, default=utc_now)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "request_id": self.request_id,
+            "record_id": self.record_id,
+            "scope": self.scope,
+            "facility_id": self.facility_id,
+            "year": self.year,
+            "old_co2e": round(self.old_co2e, 4),
+            "new_co2e": round(self.new_co2e, 4),
+            "old_factor_version": self.old_factor_version,
+            "new_factor_version": self.new_factor_version,
+            "old_gwp_version": self.old_gwp_version,
+            "new_gwp_version": self.new_gwp_version,
+            "timestamp": self.timestamp.isoformat() if self.timestamp else None,
+        }
+
 

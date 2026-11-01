@@ -169,125 +169,172 @@ export function DataTable<TData>({
         </div>
       )}
 
-      <div className="overflow-auto rounded-lg border border-border bg-surface">
-        <table className="w-full border-separate border-spacing-0 text-base">
-          {caption && <caption className="sr-only">{caption}</caption>}
-          <thead>
-            {table.getHeaderGroups().map((hg) => (
-              <tr key={hg.id}>
-                {hg.headers.map((header) => {
-                  const meta = (header.column.columnDef.meta as DataTableColumnMeta) ?? {};
-                  const sorted = header.column.getIsSorted();
-                  const canSort = header.column.getCanSort();
-                  return (
-                    <th
-                      key={header.id}
-                      scope="col"
-                      aria-sort={sorted === "asc" ? "ascending" : sorted === "desc" ? "descending" : undefined}
-                      className={cn(
-                        "sticky top-0 z-(--z-sticky) whitespace-nowrap border-b border-border bg-ink-50 text-xs font-medium uppercase tracking-wide text-text-secondary",
-                        cell,
-                        meta.numeric ? "text-right" : "text-left",
-                        meta.pin === "left" && "left-0",
-                        meta.pin === "right" && "right-0",
-                      )}
-                    >
-                      {header.isPlaceholder ? null : canSort ? (
-                        <button
-                          type="button"
-                          onClick={header.column.getToggleSortingHandler()}
-                          className="inline-flex cursor-pointer items-center gap-1 border-0 bg-transparent p-0 font-[inherit] uppercase text-inherit hover:text-text"
-                        >
-                          {flexRender(header.column.columnDef.header, header.getContext())}
-                          {meta.unit && <span className="normal-case">({meta.unit})</span>}
-                          {sorted === "asc" ? (
-                            <ArrowUp className="size-3" aria-hidden="true" />
-                          ) : sorted === "desc" ? (
-                            <ArrowDown className="size-3" aria-hidden="true" />
-                          ) : (
-                            <ChevronsUpDown className="size-3 opacity-40" aria-hidden="true" />
-                          )}
-                        </button>
-                      ) : (
-                        <>
-                          {flexRender(header.column.columnDef.header, header.getContext())}
-                          {meta.unit && <span className="ml-1 normal-case">({meta.unit})</span>}
-                        </>
-                      )}
-                    </th>
-                  );
-                })}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {loading
-              ? Array.from({ length: 5 }).map((_, i) => (
-                  <tr key={i}>
-                    <td colSpan={table.getVisibleLeafColumns().length || 1} className={cell}>
-                      <Skeleton className="h-4 w-full" />
-                    </td>
-                  </tr>
-                ))
-              : rows.map((row) => (
-                  <tr
-                    role="row"
-                    key={row.id}
-                    onClick={onRowClick ? () => onRowClick(row.original) : undefined}
-                    tabIndex={onRowClick ? 0 : undefined}
-                    onKeyDown={
-                      onRowClick
-                        ? (e) => {
-                            if (e.target === e.currentTarget && (e.key === "Enter" || e.key === " ")) {
-                              e.preventDefault();
-                              onRowClick(row.original);
+      {/* Table Container with relative wrapper for scroll shadow cues */}
+      <div className="relative">
+        {canScrollRight && (
+          <div className="flex items-center justify-end pb-1 pr-1 lg:hidden">
+            <span className="inline-flex items-center gap-1 text-[11px] font-medium text-text-secondary">
+              <span>{t("Swipe table horizontally")}</span>
+              <ArrowRight className="size-3 text-brand-600" aria-hidden="true" />
+            </span>
+          </div>
+        )}
+
+        <div
+          ref={scrollRef}
+          className="relative overflow-x-auto rounded-lg border border-border bg-surface [webkit-overflow-scrolling:touch]"
+        >
+          {canScrollLeft && (
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-y-0 left-0 z-25 w-6 bg-gradient-to-r from-ink-900/10 to-transparent max-lg:block hidden"
+            />
+          )}
+          {canScrollRight && (
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-y-0 right-0 z-25 w-6 bg-gradient-to-l from-ink-900/10 to-transparent max-lg:block hidden"
+            />
+          )}
+
+          <table className="w-full border-separate border-spacing-0 text-base">
+            {caption && <caption className="sr-only">{caption}</caption>}
+            <thead>
+              {table.getHeaderGroups().map((hg) => (
+                <tr key={hg.id}>
+                  {hg.headers.map((header, headerIndex) => {
+                    const meta = (header.column.columnDef.meta as DataTableColumnMeta) ?? {};
+                    const sorted = header.column.getIsSorted();
+                    const canSort = header.column.getCanSort();
+                    const isFirst = headerIndex === 0;
+                    const isPinnedLeft = meta.pin === "left" || (pinFirstColumn === true && isFirst);
+                    const isPinnedMobileOnly = pinFirstColumn === "mobile-only" && isFirst && !meta.pin;
+                    const isPinnedRight = meta.pin === "right";
+
+                    return (
+                      <th
+                        key={header.id}
+                        scope="col"
+                        aria-sort={sorted === "asc" ? "ascending" : sorted === "desc" ? "descending" : undefined}
+                        className={cn(
+                          "sticky top-0 z-(--z-sticky) whitespace-nowrap border-b border-border bg-ink-50 text-xs font-medium uppercase tracking-wide text-text-secondary",
+                          cell,
+                          meta.numeric ? "text-right" : "text-left",
+                          isPinnedLeft && "sticky left-0 z-30 bg-ink-50 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.12)]",
+                          isPinnedMobileOnly && "max-lg:sticky max-lg:left-0 max-lg:z-30 max-lg:bg-ink-50 max-lg:shadow-[2px_0_5px_-2px_rgba(0,0,0,0.12)]",
+                          isPinnedRight && "sticky right-0 z-30 bg-ink-50 shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.12)]",
+                        )}
+                      >
+                        {header.isPlaceholder ? null : canSort ? (
+                          <button
+                            type="button"
+                            onClick={header.column.getToggleSortingHandler()}
+                            className="inline-flex cursor-pointer items-center gap-1 border-0 bg-transparent p-0 font-[inherit] uppercase text-inherit hover:text-text"
+                          >
+                            {flexRender(header.column.columnDef.header, header.getContext())}
+                            {meta.unit && <span className="normal-case">({meta.unit})</span>}
+                            {sorted === "asc" ? (
+                              <ArrowUp className="size-3" aria-hidden="true" />
+                            ) : sorted === "desc" ? (
+                              <ArrowDown className="size-3" aria-hidden="true" />
+                            ) : (
+                              <ChevronsUpDown className="size-3 opacity-40" aria-hidden="true" />
+                            )}
+                          </button>
+                        ) : (
+                          <>
+                            {flexRender(header.column.columnDef.header, header.getContext())}
+                            {meta.unit && <span className="ml-1 normal-case">({meta.unit})</span>}
+                          </>
+                        )}
+                      </th>
+                    );
+                  })}
+                </tr>
+              ))}
+            </thead>
+            <tbody>
+              {loading
+                ? Array.from({ length: 5 }).map((_, i) => (
+                    <tr key={i}>
+                      <td colSpan={table.getVisibleLeafColumns().length || 1} className={cell}>
+                        <Skeleton className="h-4 w-full" />
+                      </td>
+                    </tr>
+                  ))
+                : rows.map((row) => (
+                    <tr
+                      role="row"
+                      key={row.id}
+                      onClick={onRowClick ? () => onRowClick(row.original) : undefined}
+                      tabIndex={onRowClick ? 0 : undefined}
+                      onKeyDown={
+                        onRowClick
+                          ? (e) => {
+                              if (e.target === e.currentTarget && (e.key === "Enter" || e.key === " ")) {
+                                e.preventDefault();
+                                onRowClick(row.original);
+                              }
                             }
-                          }
-                        : undefined
-                    }
-                    className={cn(onRowClick && "cursor-pointer hover:bg-selected-bg")}
-                  >
-                    {row.getVisibleCells().map((c) => {
-                      const meta = (c.column.columnDef.meta as DataTableColumnMeta) ?? {};
-                      return (
-                        <td
-                          key={c.id}
-                          className={cn(
-                            "border-b border-ink-100 text-text",
-                            cell,
-                            meta.numeric && "text-right tabular-nums",
-                            meta.pin === "left" && "sticky left-0 bg-surface",
-                            meta.pin === "right" && "sticky right-0 bg-surface",
-                          )}
-                        >
-                          {flexRender(c.column.columnDef.cell, c.getContext())}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
-          </tbody>
-        </table>
-        {!loading &&
-          rows.length === 0 &&
-          (empty ?? <EmptyState title={t("No records")} description={t("Nothing matches the current filters.")} />)}
+                          : undefined
+                      }
+                      className={cn("group", onRowClick && "cursor-pointer hover:bg-selected-bg")}
+                    >
+                      {row.getVisibleCells().map((c, cellIndex) => {
+                        const meta = (c.column.columnDef.meta as DataTableColumnMeta) ?? {};
+                        const isFirst = cellIndex === 0;
+                        const isPinnedLeft = meta.pin === "left" || (pinFirstColumn === true && isFirst);
+                        const isPinnedMobileOnly = pinFirstColumn === "mobile-only" && isFirst && !meta.pin;
+                        const isPinnedRight = meta.pin === "right";
+
+                        return (
+                          <td
+                            key={c.id}
+                            className={cn(
+                              "border-b border-ink-100 text-text transition-colors",
+                              cell,
+                              meta.numeric && "text-right tabular-nums",
+                              isPinnedLeft && "sticky left-0 z-10 bg-surface shadow-[2px_0_5px_-2px_rgba(0,0,0,0.12)] group-hover:bg-selected-bg group-focus:bg-selected-bg",
+                              isPinnedMobileOnly && "max-lg:sticky max-lg:left-0 max-lg:z-10 max-lg:bg-surface max-lg:shadow-[2px_0_5px_-2px_rgba(0,0,0,0.12)] group-hover:bg-selected-bg group-focus:bg-selected-bg",
+                              isPinnedRight && "sticky right-0 z-10 bg-surface shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.12)] group-hover:bg-selected-bg group-focus:bg-selected-bg",
+                            )}
+                          >
+                            {flexRender(c.column.columnDef.cell, c.getContext())}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+            </tbody>
+          </table>
+          {!loading &&
+            rows.length === 0 &&
+            (empty ?? <EmptyState title={t("No records")} description={t("Nothing matches the current filters.")} />)}
+        </div>
       </div>
 
       {showPagination && table.getPageCount() > 1 && (
-        <div className="flex items-center justify-between gap-3 text-sm text-text-secondary">
+        <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-text-secondary">
           <span>
             {t("Page")}{" "}{table.getState().pagination.pageIndex + 1}{" "}{t("of")}{" "}{table.getPageCount()} ({tableData.length}{" "}{t("rows)")}
           </span>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             <Button
               variant="secondary"
               size="sm"
+              className="min-h-[36px] min-w-[36px] px-3 touch-manipulation"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
             >
               {t("Previous")}
             </Button>
-            <Button variant="secondary" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+            <Button
+              variant="secondary"
+              size="sm"
+              className="min-h-[36px] min-w-[36px] px-3 touch-manipulation"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
               {t("Next")}
             </Button>
           </div>

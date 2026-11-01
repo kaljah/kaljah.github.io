@@ -36,6 +36,8 @@ export interface UserManagementBlockProps {
   setHoveredRow: (id: number | string | null) => void;
   totalUsers: number;
   currentUserRole?: string;
+  currentUserEmail?: string;
+  currentUserId?: number | string;
 }
 
 // Extracted from UserManagement.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
@@ -52,6 +54,8 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
   setHoveredRow,
   totalUsers,
   currentUserRole,
+  currentUserEmail,
+  currentUserId,
 }) => (
   <div style={S.tableCard}>
     <div style={S.tableToolbar}>
@@ -114,9 +118,22 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
                 .slice(0, 2)
                 .toUpperCase();
               const isHovered = hoveredRow === u.id;
+              const isSelf = Boolean(
+                (currentUserId && String(u.id) === String(currentUserId)) ||
+                (currentUserEmail && u.email?.toLowerCase() === currentUserEmail.toLowerCase())
+              );
+              const isRootAdmin = u.id === 1 || u.email === "admin@ghg.com";
               const isProtected =
                 Boolean(currentUserRole && ["it_admin", "it"].includes(currentUserRole)) &&
                 Boolean(u.role && ["admin", "superuser", "it_manager"].includes(u.role));
+              const isTestAccount = Boolean(
+                u.is_test ||
+                u.email?.endsWith("@audit.test") ||
+                u.email === "a@a" ||
+                u.email === "a" ||
+                u.email?.endsWith("@example.test") ||
+                u.fullName?.toLowerCase().includes("test")
+              );
 
               return (
                 <tr
@@ -134,8 +151,13 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
                     <div className="flex! items-center! gap-[10px]!">
                       <div style={S.avatar(meta.color)}>{initials}</div>
                       <div>
-                        <div className="font-bold! text-[color:var(--text-primary)]! leading-[1.2]!">
-                          {u.fullName}
+                        <div className="flex! items-center! gap-1.5! font-bold! text-[color:var(--text-primary)]! leading-[1.2]!">
+                          <span>{u.fullName}</span>
+                          {isTestAccount && (
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-100 text-amber-900 border border-amber-300">
+                              {t("Test Account")}
+                            </span>
+                          )}
                         </div>
                         <div className="text-[length:0.75rem]! text-[color:var(--text-secondary)]! mt-[2px]!">
                           {u.orgName || "—"}
@@ -251,86 +273,106 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
                   {/* Actions */}
                   <td style={{ ...S.td, whiteSpace: "nowrap", minWidth: "130px", textAlign: "right" }}>
                     {!isITOnly && (
-                      <button
-                        id={`um-edit-btn-${u.id}`}
-                        disabled={isProtected}
-                        data-protected={isProtected ? "true" : undefined}
-                        style={{
-                          ...S.iconBtn("var(--color-legacy-6366f1)"),
-                          ...(isProtected
-                            ? { opacity: 0.35, cursor: "not-allowed", pointerEvents: "none" }
-                            : {}),
-                        }}
-                        onClick={() => !isProtected && handleOpenModal(u)}
+                      <span
                         title={
-                          isProtected
+                          isSelf
+                            ? t("Protected account — you cannot modify your own active account")
+                            : isRootAdmin
+                            ? t("Protected account — Root administrator cannot be modified")
+                            : isProtected
                             ? t("Protected account — requires platform manager authority")
                             : t("Edit User Information")
                         }
-                        onMouseEnter={(e) => {
-                          if (!isProtected)
-                            e.currentTarget.style.background = "var(--color-legacy-eef2ff)";
-                        }}
-                        onMouseLeave={(e) => {
-                          if (!isProtected) e.currentTarget.style.background = "none";
-                        }}
+                        className="inline-block"
                       >
-                        <SquarePenIcon size={15} strokeWidth={2} aria-hidden="true" />
-                      </button>
+                        <button
+                          id={`um-edit-btn-${u.id}`}
+                          disabled={isProtected || isSelf}
+                          data-protected={isProtected || isSelf ? "true" : undefined}
+                          style={{
+                            ...S.iconBtn("var(--color-legacy-6366f1)"),
+                            ...(isProtected || isSelf
+                              ? { opacity: 0.35, cursor: "not-allowed" }
+                              : {}),
+                          }}
+                          onClick={() => !isProtected && !isSelf && handleOpenModal(u)}
+                          onMouseEnter={(e) => {
+                            if (!isProtected && !isSelf)
+                              e.currentTarget.style.background = "var(--color-legacy-eef2ff)";
+                          }}
+                          onMouseLeave={(e) => {
+                            if (!isProtected && !isSelf) e.currentTarget.style.background = "none";
+                          }}
+                        >
+                          <SquarePenIcon size={15} strokeWidth={2} aria-hidden="true" />
+                        </button>
+                      </span>
                     )}
-                    <button
-                      id={`um-reset-pwd-btn-${u.id}`}
-                      disabled={isProtected}
-                      data-protected={isProtected ? "true" : undefined}
-                      style={{
-                        ...S.iconBtn("var(--color-amber-500)"),
-                        ...(isProtected
-                          ? { opacity: 0.35, cursor: "not-allowed", pointerEvents: "none" }
-                          : {}),
-                      }}
-                      onClick={() => !isProtected && handleOpenResetPassword(u)}
+                    <span
                       title={
                         isProtected
-                          ? t("Protected account — client IT staff cannot reset credentials")
+                          ? t("Protected account — client IT staff cannot reset credentials for compliance accounts")
                           : t("Modify / Reset Password")
                       }
-                      onMouseEnter={(e) => {
-                        if (!isProtected)
-                          e.currentTarget.style.background = "var(--color-amber-50)";
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!isProtected) e.currentTarget.style.background = "none";
-                      }}
+                      className="inline-block ml-1"
                     >
-                      <KeyIcon size={15} strokeWidth={2} aria-hidden="true" />
-                    </button>
-                    {!isITOnly && (
                       <button
-                        id={`um-delete-btn-${u.id}`}
+                        id={`um-reset-pwd-btn-${u.id}`}
                         disabled={isProtected}
                         data-protected={isProtected ? "true" : undefined}
                         style={{
-                          ...S.iconBtn("var(--color-red-500)"),
+                          ...S.iconBtn("var(--color-amber-500)"),
                           ...(isProtected
-                            ? { opacity: 0.35, cursor: "not-allowed", pointerEvents: "none" }
+                            ? { opacity: 0.35, cursor: "not-allowed" }
                             : {}),
                         }}
-                        onClick={() => !isProtected && handleDelete(u.id)}
-                        title={
-                          isProtected
-                            ? t("Protected account — client IT staff cannot delete compliance accounts")
-                            : t("Revoke Access")
-                        }
+                        onClick={() => !isProtected && handleOpenResetPassword(u)}
                         onMouseEnter={(e) => {
                           if (!isProtected)
-                            e.currentTarget.style.background = "var(--color-red-50)";
+                            e.currentTarget.style.background = "var(--color-amber-50)";
                         }}
                         onMouseLeave={(e) => {
                           if (!isProtected) e.currentTarget.style.background = "none";
                         }}
                       >
-                        <Trash2Icon size={15} strokeWidth={2} aria-hidden="true" />
+                        <KeyIcon size={15} strokeWidth={2} aria-hidden="true" />
                       </button>
+                    </span>
+                    {!isITOnly && (
+                      <span
+                        title={
+                          isSelf
+                            ? t("Protected account — you cannot delete your own active account")
+                            : isRootAdmin
+                            ? t("Protected account — Root administrator cannot be deleted")
+                            : isProtected
+                            ? t("Protected account — client IT staff cannot delete compliance accounts")
+                            : t("Revoke Access")
+                        }
+                        className="inline-block ml-1"
+                      >
+                        <button
+                          id={`um-delete-btn-${u.id}`}
+                          disabled={isProtected || isSelf}
+                          data-protected={isProtected || isSelf ? "true" : undefined}
+                          style={{
+                            ...S.iconBtn("var(--color-red-500)"),
+                            ...(isProtected || isSelf
+                              ? { opacity: 0.35, cursor: "not-allowed" }
+                              : {}),
+                          }}
+                          onClick={() => !isProtected && !isSelf && handleDelete(u.id)}
+                          onMouseEnter={(e) => {
+                            if (!isProtected && !isSelf)
+                              e.currentTarget.style.background = "var(--color-red-50)";
+                          }}
+                          onMouseLeave={(e) => {
+                            if (!isProtected && !isSelf) e.currentTarget.style.background = "none";
+                          }}
+                        >
+                          <Trash2Icon size={15} strokeWidth={2} aria-hidden="true" />
+                        </button>
+                      </span>
                     )}
                   </td>
                 </tr>

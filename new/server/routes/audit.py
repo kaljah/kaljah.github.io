@@ -50,7 +50,7 @@ def audit_access_required(f):
     return decorated
 
 
-SECURITY_ACTIONS = ["LOGIN", "LOGOUT", "REGISTER", "SECURITY", "UPDATE_PASSWORD", "PASSWORD_RESET"]
+SECURITY_ACTIONS = ["LOGIN", "LOGOUT", "REGISTER", "SECURITY", "UPDATE_PASSWORD", "PASSWORD_RESET", "FAILED_LOGIN", "SUSPICIOUS", "ACCOUNT_LOCKED", "REVOKE_ALL_SESSIONS"]
 
 
 def _scoped_base(user):
@@ -219,28 +219,16 @@ def get_audit_logs():
 @audit_access_required
 def get_audit_stats():
     user = get_current_user()
+    base = _scoped_base(user)
+    total_events = base.count()
+    total_logins = base.filter(ActivityLog.action == "LOGIN").count()
     if user and is_it_role(user):
-        sec_actions = ["LOGIN", "LOGOUT", "REGISTER", "SECURITY", "UPDATE_PASSWORD", "PASSWORD_RESET"]
-        total_events = ActivityLog.query.filter(ActivityLog.action.in_(sec_actions)).count()
-        total_logins = ActivityLog.query.filter(ActivityLog.action == "LOGIN").count()
-        data_mutations = 0
-        security_alerts = ActivityLog.query.filter(
-            ActivityLog.action.in_(["SECURITY", "FAILED_LOGIN", "SUSPICIOUS"])
-        ).count()
-        unique_users = (
-            db.session.query(func.count(distinct(ActivityLog.user_name)))
-            .filter(ActivityLog.action.in_(sec_actions))
-            .scalar()
-            or 0
-        )
+        data_mutations = base.filter(ActivityLog.entity == "User", ActivityLog.action.in_(["UPDATE", "DELETE_USER"])).count()
     else:
-        base = _scoped_base(user)
-        total_events = base.count()
-        total_logins = base.filter(ActivityLog.action == "LOGIN").count()
         data_mutations = base.filter(ActivityLog.action.in_(["CREATE", "UPDATE", "DELETE"])).count()
-        security_alerts = base.filter(ActivityLog.action.in_(["SECURITY", "FAILED_LOGIN", "SUSPICIOUS", "ACCOUNT_LOCKED", "REVOKE_ALL_SESSIONS"])).count()
-        other_events = max(0, total_events - (total_logins + data_mutations + security_alerts))
-        unique_users = base.with_entities(func.count(distinct(ActivityLog.user_name))).scalar() or 0
+    security_alerts = base.filter(ActivityLog.action.in_(["SECURITY", "FAILED_LOGIN", "SUSPICIOUS", "ACCOUNT_LOCKED", "REVOKE_ALL_SESSIONS"])).count()
+    other_events = max(0, total_events - (total_logins + data_mutations + security_alerts))
+    unique_users = base.with_entities(func.count(distinct(ActivityLog.user_name))).scalar() or 0
 
     return jsonify(
         {

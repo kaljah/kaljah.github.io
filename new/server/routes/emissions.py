@@ -540,6 +540,10 @@ def add_emission():
     try:
         data["year"] = parse_year(data["year"])
         data["month"] = parse_month(data["month"], required=True)
+        from services.period_lock_service import check_period_lock_for_record
+        lock_err = check_period_lock_for_record(data.get("year"), data.get("month"), is_prior_period_adjustment=bool(data.get("is_prior_period_adjustment")))
+        if lock_err:
+            return jsonify(lock_err[0]), lock_err[1]
         # RC-6: amount/quantity and fuel/fuel_type are one value each (BUG-030)
         data = canonicalize(data)
         validate_activity(data, require_unit=str(data.get("factor_source") or "default").lower() in ("default", "custom"))
@@ -699,6 +703,8 @@ def add_emission():
         approved_by_name=user_label(user) if status == "Verified" else None,
         approved_at=datetime.datetime.now(datetime.timezone.utc) if status == "Verified" else None,
         qa_flag=qa_msg[:255] if qa_msg else None,
+        is_prior_period_adjustment=bool(data.get("is_prior_period_adjustment")),
+        prior_period_year=data.get("prior_period_year") or (data["year"] if data.get("is_prior_period_adjustment") else None),
         factor_source=(
             data.get("factor_source")
             or ("custom" if data.get("factor_type") == "custom" else ("specific" if data.get("calc_method") in ("direct_measurement", "engineering", "specific", "tier3") else "default"))

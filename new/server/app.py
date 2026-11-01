@@ -460,6 +460,9 @@ from routes.audit import audit_bp
 from routes.qaqc import qaqc_bp
 from routes.equity_routes import equity_bp
 from routes.ldar import ldar_bp
+from routes.recalculate import recalculate_bp
+from routes.period_locks import period_locks_bp
+from routes.traceability import traceability_bp
 
 app.register_blueprint(auth_bp, url_prefix="/api/auth")
 app.register_blueprint(emissions_bp, url_prefix="/api/emissions")
@@ -477,6 +480,9 @@ app.register_blueprint(audit_bp, url_prefix="/api/audit")
 app.register_blueprint(qaqc_bp, url_prefix="/api/qaqc")
 app.register_blueprint(equity_bp, url_prefix="/api/equity")
 app.register_blueprint(ldar_bp, url_prefix="/api/ldar")
+app.register_blueprint(recalculate_bp)
+app.register_blueprint(period_locks_bp)
+app.register_blueprint(traceability_bp)
 
 # Swagger UI Configuration (SEC-05 & INFO-01: Disabled in production unless explicitly enabled)
 if (
@@ -490,7 +496,7 @@ if (
         API_URL = "/static/swagger.json"
 
         swaggerui_blueprint = get_swaggerui_blueprint(
-            SWAGGER_URL, API_URL, config={"app_name": "Neocarbon API Docs"}
+            SWAGGER_URL, API_URL, config={"app_name": "NeoCarbon API Docs"}
         )
         app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
         csrf.exempt(swaggerui_blueprint)

@@ -472,8 +472,28 @@ select option:disabled {
   }
 
   .table-container {
+    position: relative;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+
+  .data-table th:first-child,
+  .pending-table th:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 20;
+    background: var(--color-ink-50, #f8fafc);
+    box-shadow: 2px 0 5px -2px rgba(0, 0, 0, 0.12);
+  }
+
+  .data-table td:first-child,
+  .pending-table td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 10;
+    background: var(--bg-card, #ffffff);
+    box-shadow: 2px 0 5px -2px rgba(0, 0, 0, 0.12);
   }
 
   .data-table,

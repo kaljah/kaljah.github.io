@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Shield, Clock, AlertTriangle, KeyRound, CheckCircle2, RefreshCw, Lock } from "lucide-react";
 import api from "../../api";
 import { useToast } from "../../components/Toast";
-import ConfirmModal from "../../components/ConfirmModal";
 import { t } from "../../i18n";
 
 interface SessionPolicy {
   idle_timeout_minutes: number;
   max_failed_logins: number;
   nist_password_policy: string;
+  password_policy?: string;
   session_invalidation: string;
   total_users: number;
   active_users: number;
@@ -27,13 +27,14 @@ export const UserManagementSessionTab: React.FC<UserManagementSessionTabProps> =
   const [policy, setPolicy] = useState<SessionPolicy>({
     idle_timeout_minutes: 30,
     max_failed_logins: 5,
-    nist_password_policy: "NIST SP 800-63B Enforced (min 10 chars, uppercase, lowercase, digits, symbols)",
+    nist_password_policy: "Enterprise Complexity Standard (min 10 chars, uppercase, lowercase, digits, symbols)",
     session_invalidation: "Cryptographic Session Versioning (sv)",
     total_users: 0,
     active_users: 0,
   });
   const [selectedTimeout, setSelectedTimeout] = useState<number>(30);
   const [confirmRevokeOpen, setConfirmRevokeOpen] = useState<boolean>(false);
+  const [confirmText, setConfirmText] = useState<string>("");
   const [revoking, setRevoking] = useState<boolean>(false);
 
   useEffect(() => {
@@ -80,6 +81,7 @@ export const UserManagementSessionTab: React.FC<UserManagementSessionTabProps> =
         })
       );
       setConfirmRevokeOpen(false);
+      setConfirmText("");
       fetchPolicy();
     } catch (err: any) {
       toast.error(err?.response?.data?.error || t("Failed to revoke active sessions."));
@@ -130,10 +132,10 @@ export const UserManagementSessionTab: React.FC<UserManagementSessionTabProps> =
             <KeyRound className="size-4 text-amber-600" />
           </div>
           <div className="text-2xl font-bold text-amber-700">
-            NIST SP 800-63B
+            {t("Enterprise Complexity")}
           </div>
           <p className="text-xs text-text-secondary">
-            {t("10+ characters, 5 complexity rules strictly enforced")}
+            {t("10+ characters, 5 composition rules strictly enforced")}
           </p>
         </div>
 
@@ -156,7 +158,7 @@ export const UserManagementSessionTab: React.FC<UserManagementSessionTabProps> =
       {/* Configuration & Action Panels */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Policy Configuration Card */}
-        <div className="rounded-xl border border-border bg-surface p-6 shadow-xs flex flex-col justify-between gap-6">
+        <div className="rounded-xl border border-border bg-surface p-6 shadow-xs flex flex-col justify-between gap-6 outline-hidden focus:outline-hidden">
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
               <Shield className="size-5 text-brand-600" />
@@ -182,7 +184,7 @@ export const UserManagementSessionTab: React.FC<UserManagementSessionTabProps> =
                   type="button"
                   id={`timeout-btn-${mins}`}
                   onClick={() => setSelectedTimeout(mins)}
-                  className={`px-4 py-2 rounded-lg text-sm font-semibold border transition-all cursor-pointer ${
+                  className={`px-4 py-2 rounded-lg text-sm font-semibold border transition-all cursor-pointer outline-hidden focus:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500 ${
                     selectedTimeout === mins
                       ? "bg-brand-50 border-brand-500 text-brand-700 shadow-xs"
                       : "bg-surface border-border text-text hover:bg-ink-50"
@@ -209,7 +211,7 @@ export const UserManagementSessionTab: React.FC<UserManagementSessionTabProps> =
               id="save-session-policy-btn"
               disabled={saving || loading}
               onClick={handleUpdateTimeout}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm transition-colors shadow-xs cursor-pointer disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm transition-colors shadow-xs cursor-pointer disabled:opacity-50 outline-hidden focus:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
             >
               <RefreshCw className={`size-4 ${saving ? "animate-spin" : ""}`} />
               {saving ? t("Saving Policy...") : t("Save Session Policy")}
@@ -218,7 +220,7 @@ export const UserManagementSessionTab: React.FC<UserManagementSessionTabProps> =
         </div>
 
         {/* Global Invalidation / Emergency Revocation Card */}
-        <div className="rounded-xl border border-red-200 bg-red-50/20 p-6 shadow-xs flex flex-col justify-between gap-6">
+        <div className="rounded-xl border border-red-200 bg-red-50/20 p-6 shadow-xs flex flex-col justify-between gap-6 outline-hidden focus:outline-hidden">
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
               <AlertTriangle className="size-5 text-red-600" />
@@ -251,8 +253,11 @@ export const UserManagementSessionTab: React.FC<UserManagementSessionTabProps> =
               type="button"
               id="revoke-all-sessions-btn"
               disabled={revoking}
-              onClick={() => setConfirmRevokeOpen(true)}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium text-sm transition-colors shadow-xs cursor-pointer disabled:opacity-50"
+              onClick={() => {
+                setConfirmText("");
+                setConfirmRevokeOpen(true);
+              }}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium text-sm transition-colors shadow-xs cursor-pointer disabled:opacity-50 outline-hidden focus:outline-hidden focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
             >
               <AlertTriangle className="size-4" />
               {t("Revoke All Active Sessions")}
@@ -261,17 +266,61 @@ export const UserManagementSessionTab: React.FC<UserManagementSessionTabProps> =
         </div>
       </div>
 
-      <ConfirmModal
-        open={confirmRevokeOpen}
-        title={t("Revoke All Active Platform Sessions?")}
-        description={t(
-          "Are you sure you want to invalidate all active sessions? Users across all facilities and workstations will be required to sign back in immediately. Your current active session will be preserved."
-        )}
-        confirmLabel={revoking ? t("Revoking...") : t("Confirm Global Revocation")}
-        onConfirm={handleRevokeAllSessions}
-        onCancel={() => setConfirmRevokeOpen(false)}
-        variant="danger"
-      />
+      {/* Type-to-Confirm Emergency Revocation Modal */}
+      {confirmRevokeOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-xl bg-surface border border-border p-6 shadow-xl flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center gap-3 text-red-600">
+              <div className="rounded-full bg-red-100 p-2">
+                <AlertTriangle className="size-5" />
+              </div>
+              <h3 className="text-lg font-bold text-text m-0">
+                {t("Revoke All Active Platform Sessions")}
+              </h3>
+            </div>
+            <p className="text-sm text-text-secondary leading-relaxed m-0">
+              {t(
+                "Are you sure you want to invalidate all active sessions across client workstations? Users across all facilities will be required to sign back in immediately. Your current administrative session will be preserved."
+              )}
+            </p>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-text-secondary">
+                {t('Type "REVOKE" to confirm:')}
+              </label>
+              <input
+                type="text"
+                id="revoke-confirm-input"
+                value={confirmText}
+                onChange={(e) => setConfirmText(e.target.value)}
+                placeholder="REVOKE"
+                className="w-full px-3 py-2 text-sm rounded-lg border border-border bg-ink-50/50 focus:bg-surface focus:outline-hidden focus:ring-2 focus:ring-red-500 font-mono"
+                autoFocus
+              />
+            </div>
+            <div className="flex items-center justify-end gap-3 pt-3 border-t border-border">
+              <button
+                type="button"
+                onClick={() => {
+                  setConfirmRevokeOpen(false);
+                  setConfirmText("");
+                }}
+                className="px-4 py-2 rounded-lg text-sm font-medium border border-border text-text hover:bg-ink-50 transition-colors cursor-pointer"
+              >
+                {t("Cancel")}
+              </button>
+              <button
+                type="button"
+                id="confirm-revoke-btn"
+                disabled={confirmText.trim().toUpperCase() !== "REVOKE" || revoking}
+                onClick={handleRevokeAllSessions}
+                className="px-4 py-2 rounded-lg text-sm font-semibold bg-red-600 hover:bg-red-700 text-white transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shadow-xs"
+              >
+                {revoking ? t("Revoking...") : t("Confirm Global Revocation")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

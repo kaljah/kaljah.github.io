@@ -353,7 +353,7 @@ const UncertaintyAssessment: React.FC = () => {
             <div className="ua-hero-col">
               <div>
                 <div className="ua-hero-label">
-                  <ShieldCheck size={14} className="text-brand-500!" />
+                  <ShieldCheck size={14} className="text-blue-600!" />
                   {t("Global Inventory Uncertainty")}
                 </div>
                 <div className="ua-hero-kpi-row">
@@ -366,7 +366,7 @@ const UncertaintyAssessment: React.FC = () => {
                   </span>
                   {data.confidence_level_pct && (
                     <span className="ua-hero-confidence-badge">
-                      {data.confidence_level_pct}% IC (k={data.coverage_factor})
+                      {data.confidence_level_pct}% CI (k={data.coverage_factor})
                     </span>
                   )}
                 </div>
@@ -454,17 +454,17 @@ const UncertaintyAssessment: React.FC = () => {
                     <div
                       className="ua-stacked-segment band-low"
                       style={{ width: `${data.uncertainty_bands?.["low"] ?? 0}%` }}
-                      title={`Faible: ${data.uncertainty_bands?.["low"] ?? 0}%`}
+                      title={`${t("Low")}: ${data.uncertainty_bands?.["low"] ?? 0}%`}
                     />
                     <div
                       className="ua-stacked-segment band-medium"
                       style={{ width: `${data.uncertainty_bands?.["medium"] ?? 0}%` }}
-                      title={`Moyen: ${data.uncertainty_bands?.["medium"] ?? 0}%`}
+                      title={`${t("Moderate")}: ${data.uncertainty_bands?.["medium"] ?? 0}%`}
                     />
                     <div
                       className="ua-stacked-segment band-high"
                       style={{ width: `${data.uncertainty_bands?.["high"] ?? 0}%` }}
-                      title={`Élevé: ${data.uncertainty_bands?.["high"] ?? 0}%`}
+                      title={`${t("High")}: ${data.uncertainty_bands?.["high"] ?? 0}%`}
                     />
                   </div>
                   <div className="ua-stacked-legend">
@@ -613,10 +613,10 @@ const UncertaintyAssessment: React.FC = () => {
                         ) || 0;
                       const color =
                         value <= 10
-                          ? "var(--color-unc-low)"
+                          ? "var(--color-green-600)"
                           : value <= 30
-                          ? "var(--color-unc-medium)"
-                          : "var(--color-unc-high)";
+                          ? "var(--color-amber-500)"
+                          : "var(--color-red-600)";
                       return { name: c.category, value, color };
                     })}
                     dataKey="value"
@@ -628,11 +628,17 @@ const UncertaintyAssessment: React.FC = () => {
                     referenceLabel={t("Critical threshold (±30%)")}
                     exportName="uncertainty-by-category"
                     formatValue={(v) => `±${Number(v).toFixed(1)}%`}
+                    formatXAxisTick={(v) => `${v}%`}
+                    xTicks={[0, 10, 20, 30, 40]}
+                    xDomain={[0, 45]}
+                    fullCategoryLabels={true}
+                    yAxisWidth={260}
                     thresholds={{
                       warnAt: 10,
                       badAt: 30,
                       direction: "higher-is-worse",
                       labels: [t("Low (≤ ±10%)"), t("Moderate (±10% to ±30%)"), t("High (> ±30%)")],
+                      colors: ["var(--color-green-600)", "var(--color-amber-500)", "var(--color-red-600)"],
                     }}
                   />
                 </div>
@@ -683,25 +689,25 @@ const UncertaintyAssessment: React.FC = () => {
                     className={`ua-chip ${riskFilter === "all" ? "active" : ""}`}
                     onClick={() => setRiskFilter("all")}
                   >
-                    {t("Tous")} ({data.categories.length})
+                    {t("All")} ({data.categories.length})
                   </button>
                   <button
                     type="button"
-                    className={`ua-chip ${riskFilter === "high" ? "active" : ""}`}
+                    className={`ua-chip ${riskFilter === "high" ? "active ua-chip-high" : ""}`}
                     onClick={() => setRiskFilter("high")}
                   >
                     {t("High Risk (> ±30%)")} ({highRiskCount})
                   </button>
                   <button
                     type="button"
-                    className={`ua-chip ${riskFilter === "medium" ? "active" : ""}`}
+                    className={`ua-chip ${riskFilter === "medium" ? "active ua-chip-medium" : ""}`}
                     onClick={() => setRiskFilter("medium")}
                   >
                     {t("Moderate (±10% - ±30%)")} ({mediumRiskCount})
                   </button>
                   <button
                     type="button"
-                    className={`ua-chip ${riskFilter === "low" ? "active" : ""}`}
+                    className={`ua-chip ${riskFilter === "low" ? "active ua-chip-low" : ""}`}
                     onClick={() => setRiskFilter("low")}
                   >
                     {t("Low (≤ ±10%)")} ({lowRiskCount})
@@ -768,7 +774,7 @@ const UncertaintyAssessment: React.FC = () => {
                           >
                             <td className="[text-align:center]">
                               {isExpanded ? (
-                                <ChevronDown size={16} className="text-brand-500!" />
+                                <ChevronDown size={16} className="text-ink-500!" />
                               ) : (
                                 <ChevronRight size={16} className="text-ink-400!" />
                               )}
@@ -849,7 +855,15 @@ const UncertaintyAssessment: React.FC = () => {
                                       <div className="ua-contributor-bar-bg">
                                         <div
                                           className="ua-contributor-bar-fill"
-                                          style={{ width: `${contrib.contribution}%` }}
+                                          style={{
+                                            width: `${contrib.contribution}%`,
+                                            backgroundColor:
+                                              cat.level === "high"
+                                                ? "var(--color-red-600)"
+                                                : cat.level === "medium"
+                                                ? "var(--color-amber-500)"
+                                                : "var(--color-green-600)",
+                                          }}
                                         />
                                       </div>
                                     </div>

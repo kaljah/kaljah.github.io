@@ -90,6 +90,16 @@ export interface BarChartProps {
   errorKey?: string;
   /** Shows CSV/PNG buttons (on hover/focus) and uses this as the file name. */
   exportName?: string;
+  /** Explicit numeric ticks for the value axis (e.g. [0, 10, 20, 30, 40]) */
+  xTicks?: number[];
+  /** Explicit bounds for the value axis domain (e.g. [0, 45]) */
+  xDomain?: [number, number];
+  /** Custom formatter for the value axis ticks */
+  formatXAxisTick?: (val: any) => string;
+  /** Prevent truncation of category names on the category axis */
+  fullCategoryLabels?: boolean;
+  /** Custom width for category axis in horizontal orientation */
+  yAxisWidth?: number;
   thresholds?: {
     warnAt: number;
     badAt: number;
@@ -120,6 +130,11 @@ export const BarChart: React.FC<BarChartProps> = ({
   thresholds,
   exportName,
   errorKey,
+  xTicks,
+  xDomain,
+  formatXAxisTick,
+  fullCategoryLabels = false,
+  yAxisWidth,
 }) => {
   const wrapRef = React.useRef<HTMLDivElement | null>(null);
   const narrow = useNarrow();
@@ -349,24 +364,25 @@ export const BarChart: React.FC<BarChartProps> = ({
             <>
               <XAxis
                 type="number"
-                tickCount={4}
-                domain={computedDomain}
+                tickCount={xTicks ? undefined : 4}
+                ticks={xTicks}
+                domain={xDomain || computedDomain}
                 stroke="var(--color-ink-300)"
-                tick={{ fill: "var(--color-ink-500)", fontSize: 11, fontWeight: 500 }}
+                tick={{ fill: "var(--color-ink-600)", fontSize: 11, fontWeight: 500 }}
                 axisLine={false}
                 tickLine={false}
-                tickFormatter={valueFormatter}
+                tickFormatter={formatXAxisTick || valueFormatter}
               />
               <YAxis
                 type="category"
                 dataKey={finalXKey}
-                width={narrow ? 92 : 180}
+                width={yAxisWidth || (fullCategoryLabels ? (narrow ? 130 : 260) : (narrow ? 92 : 180))}
                 stroke="var(--color-ink-300)"
                 tick={
                   onSelect
                     ? (tickProps: any) => {
                         const { x, y, payload } = tickProps;
-                        const label = shortLabel(payload?.value);
+                        const label = fullCategoryLabels ? String(payload?.value ?? "") : shortLabel(payload?.value);
                         const row = rows.find((r) => r[finalXKey] === payload?.value);
                         return (
                           <text
@@ -389,7 +405,7 @@ export const BarChart: React.FC<BarChartProps> = ({
                 axisLine={false}
                 tickLine={false}
                 interval={0}
-                tickFormatter={shortLabel}
+                tickFormatter={fullCategoryLabels ? (v) => String(v ?? "") : shortLabel}
               />
             </>
           ) : (
@@ -517,7 +533,7 @@ export const BarChart: React.FC<BarChartProps> = ({
                 style={{
                   backgroundColor:
                     thresholds.colors?.[i] ||
-                    ["var(--color-green-600)", "var(--color-brand-500)", "var(--color-red-600)"][i],
+                    ["var(--color-green-600)", "var(--color-amber-500)", "var(--color-red-600)"][i],
                 }}
               />
               {label}

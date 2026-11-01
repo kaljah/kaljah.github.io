@@ -137,12 +137,14 @@ export const Sheet: React.FC<SheetProps> = ({
         <RadixDialog.Content
           aria-modal="true"
           onCloseAutoFocus={returnFocus}
-          style={{ width }} // eslint-disable-line no-restricted-syntax -- dynamic width
+          style={{ width, maxWidth: "100vw" }} // eslint-disable-line no-restricted-syntax -- dynamic width
           onPointerDownOutside={guardOutside}
           onInteractOutside={guardOutside}
           onFocusOutside={guardOutside}
-          className="fixed inset-y-0 right-0 z-(--z-modal) flex max-w-full flex-col border-l border-border bg-surface shadow-overlay"
+          className="fixed inset-y-0 right-0 z-(--z-modal) flex w-full max-w-[100vw] flex-col border-l border-border bg-surface shadow-overlay sm:w-auto h-[100dvh]"
         >
+          {/* Mobile Sheet grab handle */}
+          <div className="mx-auto mt-2 h-1 w-10 rounded-full bg-ink-300 sm:hidden shrink-0" aria-hidden="true" />
           <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
             <div className="flex min-w-0 items-start gap-3">
               {Icon && (

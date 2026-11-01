@@ -148,7 +148,7 @@ const Login: React.FC = () => {
       >
         {/* Welcome Text */}
         <div className="[text-align:center] [margin-bottom:32px] [&_h2]:[font-size:var(--text-2xl)] [&_h2]:[font-weight:800] [&_h2]:[color:var(--text-main)] [&_h2]:[margin-bottom:8px] [&_h2]:[letter-spacing:-0.5px] [&&]:[&_p]:[color:var(--text-muted)] [&&]:[&&]:[&_p]:[font-size:var(--text-md)]">
-          <img src={`${import.meta.env.BASE_URL}carbon_tech.svg`} alt={t("Neocarbon")} className="[display:block] [width:48px] [height:48px] [margin:0_auto_12px]" />
+          <img src={`${import.meta.env.BASE_URL}carbon_tech.svg`} alt={t("NeoCarbon")} className="[display:block] [width:48px] [height:48px] [margin:0_auto_12px]" />
           <h2>{t("Welcome Back")}</h2>
           <p>{t("Sign in to your GHG Reporting Platform")}</p>
         </div>
@@ -277,7 +277,7 @@ const Login: React.FC = () => {
             onChange={(v) => setLanguage(v as Language)}
             options={LANGUAGES.map((l) => ({ value: l.value, label: <span lang={l.value}>{l.label}</span> }))}
           />
-          <p>© {new Date().getFullYear()}{" "}{t("Neocarbon. All rights reserved.")}</p>
+          <p>© {new Date().getFullYear()}{" "}{t("NeoCarbon. All rights reserved.")}</p>
         </div>
       </motion.div>
 

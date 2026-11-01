@@ -342,21 +342,92 @@ def update_custom_factor(factor_id):
     value_changes = [f for f in changes if f in VALUE_FIELDS]
     if value_changes:
         refs = factor_references(factor)
-        if refs:
-            # Audit O-04: records keep the values they were calculated with; changing a factor in
-            # place would leave them inconsistent with the factor they cite. A new version is a new
-            # factor; the old one is archived (still shown on its records, hidden from new entries).
-            db.session.rollback()
+        # Part 2.1: Editing a custom factor creates a new version, never overwriting existing references
+        if refs > 0 or data.get("create_version") is True or request.args.get("create_version") == "true":
+            new_co2 = factor.co2_factor
+            new_ch4 = factor.ch4_factor
+            new_n2o = factor.n2o_factor
+            new_co = factor.co_factor
+            new_hhv = factor.hhv_factor
+            new_unit = factor.unit
+            new_usage = factor.usage
+            new_parent_fuel = factor.parent_fuel
+            new_source = data.get("source") or factor.source or "Site measurement / user defined"
+            new_desc = factor.description
+            new_unc = factor.uncertainty
+            new_co2_unc = factor.co2_uncertainty
+            new_ch4_unc = factor.ch4_uncertainty
+            new_n2o_unc = factor.n2o_uncertainty
+            new_fac_id = factor.facility_id
+            new_region = factor.region
+            new_gas_comp = factor.gas_composition_json
+
+            # Revert old factor back to 'before' state so existing records keep exact historical values
+            for f in tracked:
+                setattr(factor, f, before[f])
+
+            old_version = before.get("version") or factor.version or "1.0"
+            if data.get("version") and data["version"] != old_version:
+                new_version = data["version"]
+            else:
+                parts = str(old_version).strip().split(".")
+                try:
+                    new_version = f"{parts[0]}.{int(parts[1]) + 1}" if len(parts) > 1 else f"{parts[0]}.1"
+                except Exception:
+                    new_version = f"{old_version}.1"
+
+            # Archive old factor to freeze it for existing calculations
+            factor.is_archived = True
+
+            new_factor = CustomFactor(
+                name=factor.name,
+                version=new_version,
+                parent_factor_id=factor.id,
+                valid_from=data.get("valid_from") or datetime.date.today().isoformat(),
+                co2_factor=new_co2,
+                ch4_factor=new_ch4,
+                n2o_factor=new_n2o,
+                co_factor=new_co,
+                unit=new_unit,
+                hhv_factor=new_hhv,
+                usage=new_usage,
+                parent_fuel=new_parent_fuel,
+                source=new_source,
+                description=new_desc,
+                uncertainty=new_unc,
+                co2_uncertainty=new_co2_unc,
+                ch4_uncertainty=new_ch4_unc,
+                n2o_uncertainty=new_n2o_unc,
+                created_by=user.id if user else factor.created_by,
+                is_archived=False,
+                status="Approved" if (user and user.role == "admin" and not second_approver_required()) else "Pending",
+                approved_by=user.id if (user and user.role == "admin" and not second_approver_required()) else None,
+                approved_at=datetime.datetime.now(datetime.timezone.utc) if (user and user.role == "admin" and not second_approver_required()) else None,
+                facility_id=new_fac_id,
+                region=new_region,
+                gas_composition_json=new_gas_comp,
+            )
+            db.session.add(new_factor)
+            db.session.commit()
+
+            log_activity_and_notify(
+                action="VERSION_CREATED",
+                record_id=str(new_factor.id),
+                user=user,
+                request=request,
+                entity="CustomFactor",
+                details=f"Created new factor version v{new_version} for '{new_factor.name}' (supersedes v{old_version} #{factor.id} with {refs} references)",
+            )
             return jsonify({
-                "error": (f"'{factor.name}' is used by {refs} emission records, so its values cannot be "
-                          f"changed ({', '.join(value_changes)}). Create a new factor with the new values "
-                          "and archive this one."),
-                "references": refs,
-                "fields": value_changes,
-            }), 409
+                "message": f"Created new factor version {new_version}",
+                "id": new_factor.id,
+                "version": new_version,
+                "parent_factor_id": factor.id,
+                "status": new_factor.status,
+                "is_new_version": True,
+            }), 201
+
         if factor.status == "Approved" and (user.role != "admin" or second_approver_required()):
-            # maker-checker: new values need approval again; an admin's own change too, unless the
-            # one-admin mode is on (audit 2026-10-14 BUG-0017: the values changed under B's approval)
             changes["status"] = (factor.status, "Pending")
             factor.status = "Pending"
             factor.approved_by = None
@@ -652,4 +723,109 @@ def reject_custom_factor(factor_id):
         db.session.rollback()
         return internal_error(e, "Failed to reject custom factor")
     return jsonify({"message": f"Custom factor '{factor.name}' rejected successfully", "id": factor.id}), 200
+
+
+@custom_factors_bp.route("/<int:factor_id>/history", methods=["GET"])
+@login_required
+def get_factor_history(factor_id):
+    """Part 2.1: Full audit history and version lineage for a custom emission factor."""
+    factor = db.session.get(CustomFactor, factor_id)
+    if not factor:
+        return jsonify({"error": "Factor not found"}), 404
+
+    # Trace backward to root parent
+    root = factor
+    visited = set()
+    while root.parent_factor_id and root.id not in visited:
+        visited.add(root.id)
+        parent = db.session.get(CustomFactor, root.parent_factor_id)
+        if parent:
+            root = parent
+        else:
+            break
+
+    # Get all linked versions (descendants or same base name & facility)
+    chain = CustomFactor.query.filter(
+        db.or_(
+            CustomFactor.id == root.id,
+            CustomFactor.parent_factor_id == root.id,
+            db.and_(
+                CustomFactor.name == root.name,
+                CustomFactor.facility_id == root.facility_id,
+            )
+        )
+    ).order_by(CustomFactor.created_at.asc()).all()
+
+    return jsonify({
+        "factor_name": factor.name,
+        "current_id": factor.id,
+        "current_version": factor.version or "1.0",
+        "versions": [
+            {
+                "id": f.id,
+                "version": f.version or "1.0",
+                "valid_from": f.valid_from or (f.created_at.strftime("%Y-%m-%d") if f.created_at else None),
+                "co2_factor": float(f.co2_factor or 0),
+                "ch4_factor": float(f.ch4_factor or 0),
+                "n2o_factor": float(f.n2o_factor or 0),
+                "unit": f.unit,
+                "source": f.source or "",
+                "status": f.status,
+                "is_archived": bool(f.is_archived),
+                "created_at": f.created_at.isoformat() if f.created_at else None,
+                "approved_by": f.approved_by,
+                "approved_at": f.approved_at.isoformat() if f.approved_at else None,
+                "parent_factor_id": f.parent_factor_id,
+            }
+            for f in chain
+        ]
+    })
+
+
+@custom_factors_bp.route("/gwp-standards", methods=["GET"])
+@login_required
+def get_gwp_standards():
+    """Part 2.1: Versioned IPCC Global Warming Potential (GWP) standards."""
+    from routes.auth_settings import _app_settings
+    active = str(_app_settings.get("gwp_standard") or "AR5").upper()
+    standards = [
+        {
+            "id": "AR5",
+            "name": "IPCC Fifth Assessment Report (AR5 - 2013)",
+            "publication_year": 2013,
+            "valid_from": "2013-09-30",
+            "source": "IPCC AR5 WG1 Chapter 8, Table 8.7",
+            "approved_by": "IPCC / UNFCCC",
+            "is_default": True,
+            "is_active": active == "AR5",
+            "factors_100yr": {"co2": 1.0, "ch4": 28.0, "n2o": 265.0},
+            "factors_20yr": {"co2": 1.0, "ch4": 84.0, "n2o": 264.0},
+        },
+        {
+            "id": "AR6",
+            "name": "IPCC Sixth Assessment Report (AR6 - 2021)",
+            "publication_year": 2021,
+            "valid_from": "2021-08-09",
+            "source": "IPCC AR6 WG1 Chapter 7, Table 7.15 (fossil methane)",
+            "approved_by": "IPCC / UNFCCC",
+            "is_default": False,
+            "is_active": active == "AR6",
+            "factors_100yr": {"co2": 1.0, "ch4": 29.8, "n2o": 273.0},
+            "factors_20yr": {"co2": 1.0, "ch4": 82.5, "n2o": 273.0},
+        },
+        {
+            "id": "AR4",
+            "name": "IPCC Fourth Assessment Report (AR4 - 2007)",
+            "publication_year": 2007,
+            "valid_from": "2007-01-01",
+            "source": "IPCC AR4 WG1 Chapter 2, Table 2.14",
+            "approved_by": "IPCC / UNFCCC",
+            "is_default": False,
+            "is_active": active == "AR4",
+            "factors_100yr": {"co2": 1.0, "ch4": 25.0, "n2o": 298.0},
+            "factors_20yr": {"co2": 1.0, "ch4": 72.0, "n2o": 289.0},
+        },
+    ]
+    return jsonify(standards)
+
 
