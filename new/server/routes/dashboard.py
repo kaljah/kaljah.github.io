@@ -813,6 +813,148 @@ def get_available_years():
         )
     return jsonify(_query_available_years(get_allowed_facility_ids(user)))
 
+
+@dashboard_bp.route("/kpi-definitions", methods=["GET"])
+@login_required
+def get_kpi_definitions():
+    """Authoritative registry of NeoCarbon KPI definitions and calculation formulas (Part 5.1)."""
+    definitions = [
+        {
+            "id": "scope1_total",
+            "name": "Scope 1 Direct GHG Emissions",
+            "short_name": "Scope 1",
+            "unit": "t CO2e",
+            "category": "Emissions Inventory",
+            "formula": "∑ [ CO2 (t) + CH4 (t) × GWP_CH4 + N2O (t) × GWP_N2O ]",
+            "standard": "GHG Protocol Corporate Standard (Ch 4); API Compendium 2021 (Ch 3-6); ISO 14064-1:2018",
+            "description": "Direct greenhouse gas emissions released to the atmosphere from sources owned or controlled by the operator within the operational boundary (combustion, flaring, venting, fugitive, and industrial processes).",
+            "tier_support": ["Tier 1 (Default)", "Tier 2 (Basin/Fuel Specific)", "Tier 3 (GC/Component Analysis)"],
+            "notes": "Calculated with active GWP set (AR5 default: CH4=28, N2O=265 without climate-carbon feedbacks)."
+        },
+        {
+            "id": "scope2_total",
+            "name": "Scope 2 Indirect Electricity Emissions",
+            "short_name": "Scope 2",
+            "unit": "t CO2e",
+            "category": "Emissions Inventory",
+            "formula": "Purchased Electricity (MWh) × Emission Factor (kg CO2e/kWh) × 0.001",
+            "standard": "GHG Protocol Scope 2 Guidance (Dual Reporting Amendment); ISO 14064-1:2018 Category 2",
+            "description": "Indirect greenhouse gas emissions associated with the consumption of purchased electricity, heat, or cooling consumed by operational facilities.",
+            "tier_support": ["Location-based (National Grid Avg)", "Market-based (Contractual/PPA/REC)"],
+            "notes": "Both location-based and market-based totals are tracked concurrently to ensure audit compliance."
+        },
+        {
+            "id": "scope3_total",
+            "name": "Scope 3 Value Chain Emissions",
+            "short_name": "Scope 3",
+            "unit": "t CO2e",
+            "category": "Value Chain",
+            "formula": "∑ [ Activity Data_i × Emission Factor_i ] across Categories 1-15",
+            "standard": "GHG Protocol Corporate Value Chain (Scope 3) Accounting & Reporting Standard; Ipieca/API Scope 3 Guidance",
+            "description": "All indirect upstream and downstream value chain emissions, principally Category 11: Use of Sold Products (combustion of produced crude oil and pipeline natural gas).",
+            "tier_support": ["Activity-specific (Tier 1/2)", "Spend-based (EEIO)", "Supplier-specific"],
+            "notes": "Requires natural gas volume to energy conversion via explicit Higher Heating Value (HHV) before applying factor."
+        },
+        {
+            "id": "combined_boe",
+            "name": "Combined Hydrocarbon Production",
+            "short_name": "Combined BOE",
+            "unit": "BOE",
+            "category": "Production Denominator",
+            "formula": "Crude Oil (bbl) + Condensate (bbl) + [ Gross Natural Gas (mscf) / 6.0 mscf/BOE ]",
+            "standard": "API Compendium 2021 Section 3.1.2; SPE Petroleum Resources Management System (PRMS)",
+            "description": "Total energy-equivalent hydrocarbon production normalized to 6,000 standard cubic feet of natural gas per barrel of oil equivalent.",
+            "tier_support": ["Fiscal Fiscal-Metered Custody Transfer", "Separator Allocation"],
+            "notes": "Metric equivalent uses 169.904 Sm3/BOE. Total MMBOE stored fields must reconcile within ±0.1% of gas+oil conversion."
+        },
+        {
+            "id": "ghg_intensity",
+            "name": "Operational GHG Carbon Intensity",
+            "short_name": "GHG Intensity",
+            "unit": "kg CO2e / BOE",
+            "category": "Intensity & Performance",
+            "formula": "[ Scope 1 (t CO2e) + Scope 2 (t CO2e) ] × 1,000 kg/t / Combined Production (BOE)",
+            "standard": "OGCI Carbon Intensity Methodology (2021); API SMR Guidance; Ipieca / IOGP Sustainability Reporting",
+            "description": "Operational carbon efficiency metric measuring total direct and indirect Scope 1+2 emissions generated per barrel of oil equivalent produced.",
+            "tier_support": ["Facility Level", "Operated Asset Level", "Basin Portfolio Level"],
+            "notes": "Excludes Scope 3. Industry top-quartile benchmark for upstream onshore conventional is typically 8–18 kg CO2e/BOE."
+        },
+        {
+            "id": "scope3_intensity",
+            "name": "Scope 3 Value Chain Intensity",
+            "short_name": "Scope 3 Intensity",
+            "unit": "kg CO2e / BOE",
+            "category": "Intensity & Performance",
+            "formula": "Scope 3 Total (t CO2e) × 1,000 kg/t / Combined Production (BOE)",
+            "standard": "GHG Protocol Scope 3 Guidance; Transition Pathway Initiative (TPI)",
+            "description": "Downstream carbon footprint per unit of production, measuring the embedded emissions of products sold to end users.",
+            "tier_support": ["Category 11 Focus", "Comprehensive Cat 1-15"],
+            "notes": "Typical upstream oil & gas Scope 3 intensity is 350–450 kg CO2e/BOE. Values below 10 kg/BOE trigger an 'Incomplete Scope 3' QA warning."
+        },
+        {
+            "id": "methane_intensity",
+            "name": "Methane Intensity / Loss Rate",
+            "short_name": "CH4 Intensity",
+            "unit": "% (loss rate) or kg CH4 / BOE",
+            "category": "Methane & Flaring",
+            "formula": "Total Methane Emitted (t CH4) / [ Gross Gas Produced (t CH4) ] × 100%",
+            "standard": "OGCI Methane Target (0.20% by 2025); OGMP 2.0 Reporting Framework; UNEP IMEO",
+            "description": "Percentage of marketed and gross produced natural gas volume lost to the atmosphere as uncombusted methane through fugitives, venting, and incomplete flare combustion.",
+            "tier_support": ["OGMP Level 4 (Source-level direct measurement)", "OGMP Level 5 (Top-down reconciled)"],
+            "notes": "OGCI member commitment threshold is below 0.20% (with stretch goal 0.14%)."
+        },
+        {
+            "id": "flaring_intensity",
+            "name": "Flaring Intensity",
+            "short_name": "Flaring Intensity",
+            "unit": "m3 / BOE",
+            "category": "Methane & Flaring",
+            "formula": "Gross Flared Gas Volume (m3) / Combined Production (BOE)",
+            "standard": "World Bank Global Gas Flaring Reduction Partnership (GGFR); API Compendium Section 4.4",
+            "description": "Total volume of flared associated or process gas per barrel of oil equivalent produced.",
+            "tier_support": ["Ultrasonic Flare Metering (Tier 3)", "GOR Balance Mass Balance (Tier 2)", "Default Flare Factor (Tier 1)"],
+            "notes": "Zero Routine Flaring by 2030 target standard. High-efficiency flares assume 98% hydrocarbon combustion efficiency (2% slip)."
+        },
+        {
+            "id": "ogmp_level",
+            "name": "OGMP 2.0 Gold Standard Level",
+            "short_name": "OGMP Level",
+            "unit": "Level 1 - 5",
+            "category": "Regulatory & Maturity",
+            "formula": "Highest verified measurement maturity tier achieved across all facility sources",
+            "standard": "UNEP / CCAC Oil & Gas Methane Partnership (OGMP) 2.0 Framework",
+            "description": "Maturity classification reflecting whether emissions are estimated via generic desk factors (Level 3), source-level direct measurements (Level 4), or site-level top-down measurements with statistical reconciliation (Level 5).",
+            "tier_support": ["L1 (Venture)", "L2 (Division)", "L3 (Generic EF)", "L4 (Source Direct)", "L5 (Reconciled)"],
+            "notes": "Gold Standard Pathway status requires Level 4/5 compliance within 3 years for operated assets and 5 years for non-operated assets."
+        },
+        {
+            "id": "inventory_uncertainty",
+            "name": "Overall Inventory Uncertainty (95% CI)",
+            "short_name": "Uncertainty (95% CI)",
+            "unit": "% (at k=2)",
+            "category": "Assurance & QA/QC",
+            "formula": "√ [ ∑ ( Emission_i × Uncertainty_i )² ] / ∑ Emission_i",
+            "standard": "IPCC 2006 Guidelines Vol 1 Ch 3; ISO 14064-1:2018 Annex B; API Compendium 2021 Section 8",
+            "description": "Half-width 95% confidence interval of the total emission inventory calculated using Root-Sum-of-Squares (RSS) analytical error propagation or 5,000-iteration Monte Carlo Latin Hypercube simulation.",
+            "tier_support": ["IPCC Tier 1 RSS Analytical", "IPCC Tier 2 Monte Carlo Stochastic"],
+            "notes": "Inventory uncertainty combines activity data measurement uncertainty with emission factor uncertainty in quadrature."
+        }
+    ]
+    return jsonify({
+        "status": "success",
+        "total_kpis": len(definitions),
+        "standards_referenced": [
+            "API Compendium 2021",
+            "GHG Protocol Corporate Standard",
+            "GHG Protocol Scope 2 Guidance",
+            "GHG Protocol Scope 3 Standard",
+            "ISO 14064-1:2018",
+            "OGMP 2.0 Reporting Framework",
+            "IPCC 2006 Guidelines / AR5 / AR6"
+        ],
+        "kpis": definitions
+    })
+
 @dashboard_bp.route("/mitigation", methods=["GET"])
 @login_required
 def get_mitigation():

@@ -80,6 +80,7 @@ interface EmissionSourceItem {
 
 export const Scope1Form: React.FC = () => {
   const { user } = useAuth();
+  const orgGwpStandard = (user as any)?.gwp_standard || "AR5";
   const toast = useToast();
   // BUG-082: the inspector label reflects the org's active GWP standard
   const [loading, setLoading] = useState<boolean>(false);
@@ -2066,7 +2067,7 @@ export const Scope1Form: React.FC = () => {
               </span>
             )}
           </div>
-          <div className="mt-1.5 flex flex-wrap items-center justify-between text-xs text-text-secondary">
+          <div className="mt-1.5 flex flex-wrap items-center justify-between text-xs text-text-secondary gap-y-1">
             <span>
               {tr("Factor source:")}{" "}
               <strong className="text-text font-medium">{formData.fuel || sourceType}</strong>
@@ -2075,7 +2076,19 @@ export const Scope1Form: React.FC = () => {
               {tr("Unit:")}{" "}
               <strong className="text-text font-medium">{formData.unit || "—"}</strong>
             </span>
+            <span>
+              {tr("GWP Standard:")}{" "}
+              <strong className="text-text font-medium">{orgGwpStandard || "AR5"} (100-yr)</strong>
+            </span>
           </div>
+          {formData.quantity && Number(formData.quantity) > 10000000 && (
+            <div className="mt-2 flex items-center gap-1.5 rounded bg-amber-50 border border-amber-300 p-2 text-[0.75rem] text-amber-900">
+              <AlertTriangle className="size-3.5 text-amber-600 shrink-0" aria-hidden="true" />
+              <span>
+                {tr("Notice: High activity volume (> 10M). Verify that entered unit corresponds to standard cubic units, not thousand (mscf) or million (MMscf) multiples.")}
+              </span>
+            </div>
+          )}
         </div>
 
         <div className="s1-actions">

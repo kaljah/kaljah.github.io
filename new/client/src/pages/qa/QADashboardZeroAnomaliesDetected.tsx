@@ -1,6 +1,6 @@
 import React from "react";
 import { AlertTriangle, Check, CheckCircle, ChevronLeft, ChevronRight, Search, X } from "lucide-react";
-import { Badge, Button, Card, EmptyState, IconButton, Input, StatusPill, type BadgeTone } from "../../ui";
+import { Badge, Button, Card, EmptyState, IconButton, Input, StatusBadge, type BadgeTone } from "../../ui";
 import { cn } from "../../ui/cn";
 import { t } from "../../i18n";
 
@@ -183,6 +183,34 @@ const QADashboardZeroAnomaliesDetected: React.FC<QADashboardZeroAnomaliesDetecte
         )}
       </div>
 
+      {(searchQuery || statusFilter !== "all") && (
+        <div className="flex flex-wrap items-center gap-1.5 px-6 py-2 bg-ink-50/70 border-b border-border/60 text-xs">
+          <span className="font-semibold text-text-secondary mr-1">{t("Active Filters:")}</span>
+          {statusFilter !== "all" && (
+            <Badge tone="warning" className="gap-1 py-0.5">
+              {t("Status: {{status}}", { status: STATUS_FILTERS.find((f) => f.value === statusFilter)?.label || statusFilter })}
+              <button type="button" onClick={() => { setStatusFilter("all"); setOffset(0); }} className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
+            </Badge>
+          )}
+          {searchQuery && (
+            <Badge tone="neutral" className="gap-1 py-0.5">
+              {t('Search: "{{q}}"', { q: searchQuery })}
+              <button type="button" onClick={() => { setSearchQuery(""); setOffset(0); }} className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
+            </Badge>
+          )}
+          <span className="text-text-secondary ml-2 font-mono">
+            {t("Showing {{count}} of {{total}} records", { count: filteredRecords.length, total: total_flagged_count })}
+          </span>
+          <button
+            type="button"
+            onClick={resetFilters}
+            className="text-xs text-brand-600 hover:text-brand-700 hover:underline font-semibold ml-2 cursor-pointer border-0 bg-transparent p-0"
+          >
+            {t("Clear all")}
+          </button>
+        </div>
+      )}
+
       {filteredRecords.length === 0 ? (
         total_flagged_count === 0 ? (
           <EmptyState
@@ -273,7 +301,7 @@ const QADashboardZeroAnomaliesDetected: React.FC<QADashboardZeroAnomaliesDetecte
                       </td>
                       <td className={cn(td, "font-mono font-bold")}>{record.co2e != null ? Number(record.co2e).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "0.00"}</td>
                       <td className={td}>
-                        <StatusPill status={statusPart}>{record.status || t("Pending Review")}</StatusPill>
+                        <StatusBadge status={record.status || "Pending review"} size="sm" />
                       </td>
                       <td className={td}>
                         <div className="inline-flex gap-1.5">

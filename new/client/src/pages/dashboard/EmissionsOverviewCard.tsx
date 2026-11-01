@@ -1,8 +1,9 @@
-import React from "react";
-import { Printer } from "lucide-react";
+import React, { useState } from "react";
+import { Printer, BookOpen } from "lucide-react";
 import { Badge, Button, Card, StatCard } from "../../ui";
 import { formatCompactNumber } from "../../utils/formatters";
 import { buildKpiMetadata } from "../../utils/kpiMetadata";
+import { KpiMethodologyDrawer } from "../../components/KpiMethodologyDrawer";
 import { t } from "../../i18n";
 
 // "+5.2%" / "-3.1%" / "—" (from the parent) to a signed fraction, or null when there is no comparison
@@ -72,6 +73,7 @@ const EmissionsOverviewCard: React.FC<EmissionsOverviewCardProps> = ({
   stats,
   variance,
 }) => {
+  const [methodologyOpen, setMethodologyOpen] = useState(false);
   const location =
     currentRegion !== "all"
       ? facilities.find((f) => f.id.toString() === currentRegion)?.name || t("Region")
@@ -108,6 +110,15 @@ const EmissionsOverviewCard: React.FC<EmissionsOverviewCardProps> = ({
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Badge tone="neutral" className="font-mono text-xs font-medium">{location}</Badge>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => setMethodologyOpen(true)}
+            title={t("View KPI mathematical formulas and standards")}
+          >
+            <BookOpen className="size-4" aria-hidden="true" />
+            {t("KPI Formulas")}
+          </Button>
           <Button
             variant="secondary"
             size="sm"
@@ -234,6 +245,7 @@ const EmissionsOverviewCard: React.FC<EmissionsOverviewCardProps> = ({
           </span>
         </div>
       </div>
+      <KpiMethodologyDrawer open={methodologyOpen} onOpenChange={setMethodologyOpen} />
     </Card>
   );
 };

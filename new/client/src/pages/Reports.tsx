@@ -1,6 +1,6 @@
 import { CheckCircle2, ChevronDown, Download, FilePlus, FileSpreadsheet, FileText, FileCode, Funnel, Pencil, Plus, RotateCcw, Search, SlidersHorizontal, Table, Sparkles, Globe, Building2 } from "lucide-react";
 import { NativeSelect } from "../ui/NativeSelect";
-import { Badge, Button, Card, CardHeader, DataTable, Dialog, Field, Input, Menu, MenuContent, MenuItem, MenuTrigger, Page, PageHeader, StatusPill, Textarea, cn, type BadgeTone } from "../ui";
+import { Badge, Button, Card, CardHeader, DataTable, Dialog, Field, Input, Menu, MenuContent, MenuItem, MenuTrigger, Page, PageHeader, StatusBadge, Textarea, cn, type BadgeTone } from "../ui";
 import { controlClass } from "../components/import-wizard/mapping";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -107,7 +107,7 @@ const RECORD_COLUMNS: ColumnDef<EmissionRecord, any>[] = [
     // BUG-UI-06 FIX: show an em dash for null instead of a misleading 0.00
     cell: (c) => <span className="font-bold text-primary">{c.getValue() != null ? fmt(c.getValue()) : "—"}</span>,
   },
-  { accessorKey: "status", header: tr("Status"), cell: (c) => <StatusPill status={c.getValue() || "Verified"} /> },
+  { accessorKey: "status", header: tr("Status"), cell: (c) => <StatusBadge status={c.getValue() || "Verified"} size="sm" /> },
 ];
 
 const Reports: React.FC = () => {

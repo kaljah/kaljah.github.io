@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Badge, Button, Field, Input, Sheet } from "../../ui";
+import { Badge, Button, Field, Input, Sheet, StatusBadge } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import { Plus, Trash2, Edit2 } from "lucide-react";
 import PaginationControls from "./PaginationControls";
@@ -206,9 +206,7 @@ const OgmpTab: React.FC<OgmpTabProps> = ({
                 })}
               </Td>
               <Td>
-                <Badge tone={getOgmpTone(rStatus)} className="text-xs">
-                  {rStatus}
-                </Badge>
+                <StatusBadge status={rStatus} size="sm" />
               </Td>
               <Td className="max-w-xs truncate text-xs text-text-secondary" title={notes === "-" ? undefined : notes}>
                 {notes}

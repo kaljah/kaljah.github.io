@@ -1,6 +1,7 @@
-import React from "react";
-import { Activity, Cloud, Flame, Layers, ShieldCheck } from "lucide-react";
-import { Badge, SegmentedControl } from "../../ui";
+import React, { useState } from "react";
+import { Activity, Cloud, Flame, Layers, ShieldCheck, BookOpen } from "lucide-react";
+import { Badge, SegmentedControl, Button } from "../../ui";
+import { KpiMethodologyDrawer } from "../../components/KpiMethodologyDrawer";
 import { formatNumber } from "../../utils/formatters";
 import { getActiveGwpFactors } from "../../constants";
 import { HeroPanel, KpiGrid, KpiTile, ProdBar, ProdItem } from "../intensity/IntensityParts";
@@ -54,6 +55,7 @@ const CarbonIntensityCarbonIntensity: React.FC<CarbonIntensityCarbonIntensityPro
   const f100 = getActiveGwpFactors(activeGwpStandard, "100");
   const f20 = getActiveGwpFactors(activeGwpStandard, "20");
   const unit = "kg CO₂e / BOE";
+  const [methodologyOpen, setMethodologyOpen] = useState(false);
   return (
     <HeroPanel
       icon={Activity}
@@ -64,7 +66,17 @@ const CarbonIntensityCarbonIntensity: React.FC<CarbonIntensityCarbonIntensityPro
         </Badge>
       }
       actions={
-        <div className="flex items-center gap-2.5 rounded-md border border-border bg-ink-100 px-2 py-1">
+        <div className="flex items-center gap-2 flex-wrap">
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => setMethodologyOpen(true)}
+            title={t("View KPI mathematical formulas and standards")}
+          >
+            <BookOpen className="size-4" aria-hidden="true" />
+            {t("KPI Formulas")}
+          </Button>
+          <div className="flex items-center gap-2.5 rounded-md border border-border bg-ink-100 px-2 py-1">
           <span className="text-sm font-semibold text-text-secondary">{t("GWP Horizon:")}</span>
           <SegmentedControl
             label={t("GWP horizon")}
@@ -76,6 +88,7 @@ const CarbonIntensityCarbonIntensity: React.FC<CarbonIntensityCarbonIntensityPro
               { value: "20", label: `${activeGwpStandard} 20-Yr`, title: t("IPCC {{standard}} 20-Year GWP (CH4: {{ch4}}, N2O: {{n2o}})", { standard: activeGwpStandard, ch4: f20.CH4, n2o: f20.N2O }) },
             ]}
           />
+        </div>
         </div>
       }
     >
@@ -150,6 +163,7 @@ const CarbonIntensityCarbonIntensity: React.FC<CarbonIntensityCarbonIntensityPro
         <ProdItem label={t("Combined Production (BOE)")} value={`${formatNumber(stats.totalBoe, 0)} BOE`} accent="text-link" />
         <ProdItem label={t("Total Flared Gas (Decree 21-330 Streams)")} value={`${formatNumber(stats.totalFlaringVolume, 0)} m³`} accent="text-brand-600" />
       </ProdBar>
+      <KpiMethodologyDrawer open={methodologyOpen} onOpenChange={setMethodologyOpen} initialKpiId="ghg_intensity" />
     </HeroPanel>
   );
 };

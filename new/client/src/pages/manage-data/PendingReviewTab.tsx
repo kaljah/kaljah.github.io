@@ -128,6 +128,9 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
   user,
 }) => {
   const [editingRecord, setEditingRecord] = useState<PendingEmissionRecord | null>(null);
+  const activeRejectRecord = !rejectionModal.isBatch && rejectionModal.recordId
+    ? filteredPendingRecords.find((r) => String(r.id) === String(rejectionModal.recordId))
+    : null;
   // BUG-0055: one approval request per record at a time (a double click sent two, the second 409)
   const approvingRef = useRef<Set<string>>(new Set());
   const [approving, setApproving] = useState<Set<string>>(new Set());
@@ -180,6 +183,24 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
         }
       >
         <div className="[display:flex] [flex-direction:column] [gap:20px]">
+          {activeRejectRecord && (
+            <div className="rounded-lg border border-border bg-ink-50/60 p-3 text-xs flex flex-col gap-1.5">
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-text">#{activeRejectRecord.id} · {activeRejectRecord.desc}</span>
+                <span className="font-bold text-text">{activeRejectRecord.tco2e.toLocaleString(undefined, { minimumFractionDigits: 2 })} tCO₂e</span>
+              </div>
+              <div className="text-text-secondary flex flex-wrap gap-x-4">
+                <span>{t("Facility")}: <strong>{facilities.find((f) => f.id === activeRejectRecord.facility_id)?.name || activeRejectRecord.facility_id}</strong></span>
+                <span>{t("Period")}: <strong>{activeRejectRecord.date}</strong></span>
+                <span>{t("Submitter")}: <strong>{activeRejectRecord.created_by ? `User #${activeRejectRecord.created_by}` : t("Operational Import")}</strong></span>
+              </div>
+              {activeRejectRecord.qa_flag && (
+                <div className="mt-1 text-red-700 font-medium">
+                  {t("QA Flag")}: {activeRejectRecord.qa_flag}
+                </div>
+              )}
+            </div>
+          )}
           <div className="bg-[color:rgba(239,_68,_68,_0.06)]! [border:1px_solid_rgba(239,_68,_68,_0.2)]! rounded-[12px]! p-[12px_14px]! text-[length:0.84rem]! text-[color:var(--color-red-700)]! flex! gap-[10px]! items-start!">
             <AlertCircle size={16} className="shrink-0! mt-[2px]!" />
             <span>
@@ -259,6 +280,25 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
       </div>
 
       <WorkflowExplainer currentStep="review" className="my-1" />
+
+      {/* Maker-Checker Explanation & Segregation Banner */}
+      <div className="flex flex-col gap-2 rounded-lg border border-border bg-ink-50/70 p-3.5 text-xs text-text shadow-xs">
+        <div className="flex items-center gap-2 font-semibold text-text">
+          <Shield className="size-4 text-brand-600" aria-hidden="true" />
+          <span>{t("Dual-Control Maker-Checker Governance (ISO 14064-1 & GHG Protocol)")}</span>
+        </div>
+        <p className="m-0 text-text-secondary leading-relaxed">
+          {t("To prevent accounting errors and ensure integrity, the user who submits operational emission data cannot verify their own submission. An authorized checker or auditor must review the calculation methodology, activity evidence, and QA/QC diagnostic flags before formal inclusion into the official greenhouse gas inventory.")}
+        </p>
+        {filteredPendingRecords.some((r) => r.created_by && String(r.created_by) === String(user?.id)) && (
+          <div className="mt-1 flex items-center gap-2 rounded bg-amber-50 border border-amber-300/80 px-2.5 py-1.5 font-medium text-amber-900">
+            <AlertTriangle className="size-3.5 text-amber-600 shrink-0" aria-hidden="true" />
+            <span>
+              {t("Notice: You submitted records currently in this queue. Self-approval is disabled for your submissions per segregation of duties.")}
+            </span>
+          </div>
+        )}
+      </div>
 
       {/* Top Hero KPI Metrics Strip */}
       <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(220px,_1fr))] [gap:16px] [width:100%]">

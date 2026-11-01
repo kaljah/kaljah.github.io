@@ -101,6 +101,48 @@ export interface GlossaryEntry {
 
 export const GLOSSARY_ITEMS: GlossaryEntry[] = [
   {
+    term: "BOE",
+    category: "Metrics & Units",
+    definition: t(
+      "Barrel of Oil Equivalent. A unit of energy based on the approximate energy released by burning one barrel of crude oil, standardized in upstream O&G at 6.0 mscf (or 169.904 Sm3) of natural gas per BOE.",
+    ),
+  },
+  {
+    term: "HHV",
+    category: "Methodologies",
+    definition: t(
+      "Higher Heating Value (Gross Calorific Value). Total heat released by complete combustion of a fuel including the latent heat of water vaporization, required by the API Compendium for natural gas energy conversion.",
+    ),
+  },
+  {
+    term: "GWP (Global Warming Potential)",
+    category: "Metrics & Units",
+    definition: t(
+      "Metric comparing the heat-trapping capacity of greenhouse gases relative to CO2 over a given time horizon (typically 100-year or 20-year). Under IPCC AR5 without feedbacks, CH4=28 and N2O=265.",
+    ),
+  },
+  {
+    term: "AR4 / AR5 / AR6",
+    category: "Frameworks",
+    definition: t(
+      "IPCC Assessment Reports providing standardized GWP factors. AR4 (2007: CH4=25), AR5 (2014 default: CH4=28, N2O=265), and AR6 (2021: CH4=29.8, N2O=273).",
+    ),
+  },
+  {
+    term: "Flaring Intensity",
+    category: "Metrics & Units",
+    definition: t(
+      "Volume of flared associated or process gas per barrel of oil equivalent produced (m3/BOE). Central metric for World Bank Zero Routine Flaring by 2030 (ZRF) initiative.",
+    ),
+  },
+  {
+    term: "Monte Carlo Uncertainty",
+    category: "Methodologies",
+    definition: t(
+      "IPCC Tier 2 numerical simulation technique using Latin Hypercube stochastic sampling (5,000 iterations) to determine exact non-normal probability distributions and 95% confidence intervals (k=2).",
+    ),
+  },
+  {
     term: "Tier 1/2/3",
     category: "Methodologies",
     definition: t(
