@@ -1,4 +1,4 @@
-import { CircleAlert, Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { CircleAlert, Eye, EyeOff, Lock, Mail, Shield, ArrowLeft, KeyRound } from "lucide-react";
 import { Banner, SegmentedControl } from "../ui";
 import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
@@ -81,6 +81,12 @@ const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
+  // MFA & SSO Extension States
+  const [mfaRequired, setMfaRequired] = useState<boolean>(false);
+  const [mfaCode, setMfaCode] = useState<string>("");
+  const [mfaSessionToken, setMfaSessionToken] = useState<string>("");
+  const [mfaLoading, setMfaLoading] = useState<boolean>(false);
+
   // Forgot password modal state
   const [showForgotModal, setShowForgotModal] = useState<boolean>(false);
   const [forgotEmail, setForgotEmail] = useState<string>("");
@@ -101,11 +107,40 @@ const Login: React.FC = () => {
     setError("");
     if (sessionExpired) setSessionExpired(false);
     try {
-      await login(email, password);
+      const res: any = await login(email, password);
+      if (res?.mfa_required) {
+        setMfaRequired(true);
+        setMfaSessionToken(res.mfa_token || "");
+        return;
+      }
       navigate("/");
     } catch (err: any) {
+      if (err?.response?.data?.mfa_required) {
+        setMfaRequired(true);
+        setMfaSessionToken(err.response.data.mfa_token || "");
+        return;
+      }
       setError(err?.response?.data?.error || t("Invalid credentials"));
     }
+  };
+
+  const handleVerifyMfa = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError("");
+    setMfaLoading(true);
+    try {
+      await api.post("/auth/mfa/verify", { email, code: mfaCode, mfa_token: mfaSessionToken });
+      navigate("/");
+    } catch (err: any) {
+      setError(err?.response?.data?.error || t("Invalid verification code"));
+    } finally {
+      setMfaLoading(false);
+    }
+  };
+
+  const handleEnterpriseSSO = () => {
+    // Extension hook for enterprise SAML 2.0 / OIDC identity providers
+    window.location.href = `${api.defaults.baseURL || "/api"}/auth/sso/login`;
   };
 
   const handleForgotPassword = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -168,104 +203,174 @@ const Login: React.FC = () => {
           </div>
         )}
 
-        {/* Login Form */}
-        <motion.form
-          onSubmit={handleLogin}
-          className="login-form"
-          initial="hidden"
-          animate="visible"
-          variants={{
-            hidden: { opacity: 0 },
-            visible: {
-              opacity: 1,
-              transition: { staggerChildren: 0.1, delayChildren: 0.2 },
-            },
-          }}
-        >
-          <motion.div
-            className="form-group"
-            variants={{
-              hidden: { opacity: 0, y: 20 },
-              visible: { opacity: 1, y: 0 },
-            }}
-          >
-            <div className="[position:relative]">
-              <span className="input-icon [position:absolute] [left:16px] [top:50%] [transform:translateY(-50%)] [color:var(--color-ink-600)] [transition:color_0.3s]">
-                <Mail size={18} aria-hidden="true" />
-              </span>
+        {/* Login or MFA Form */}
+        {mfaRequired ? (
+          <form onSubmit={handleVerifyMfa} className="login-form flex flex-col gap-4">
+            <div className="text-center mb-2">
+              <div className="inline-flex size-12 items-center justify-center rounded-full bg-brand-50 text-brand-700 mb-2 border border-brand-200">
+                <KeyRound size={22} />
+              </div>
+              <h3 className="text-lg font-bold text-text">{t("Two-Factor Authentication")}</h3>
+              <p className="text-xs text-text-secondary mt-1">
+                {t("Enter the 6-digit security code from your authenticator app")}
+              </p>
+            </div>
+
+            <div className="form-group">
               <input
-                type="email"
-                className="[width:100%] [padding:14px_16px_14px_48px] [border:1px_solid_var(--border-light)] [&&]:[border-radius:var(--radius-md)] [font-size:var(--text-md)] [color:var(--text-main)]! [transition:all_0.2s] [background:var(--color-legacy-fafafa)] placeholder:[color:var(--color-ink-400)]! focus:[outline:none] focus:[border-color:var(--primary)] focus:[background:var(--color-white)] focus:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.1)] [&:focus+.input-icon]:[color:var(--primary)]!"
+                type="text"
+                maxLength={6}
+                inputMode="numeric"
+                pattern="[0-9]{6}"
+                className="w-full text-center tracking-[0.5em] font-mono text-2xl py-3 rounded-lg border border-border bg-ink-50/50 focus:border-brand-500 focus:bg-white focus:outline-none"
+                placeholder="000000"
                 required
-                placeholder={t("Email Address")}
-                aria-label={t("Email address")}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                autoComplete="username"
+                autoFocus
+                value={mfaCode}
+                onChange={(e) => setMfaCode(e.target.value.replace(/\D/g, ""))}
               />
             </div>
-          </motion.div>
 
-          <motion.div
-            className="form-group"
-            variants={{
-              hidden: { opacity: 0, y: 20 },
-              visible: { opacity: 1, y: 0 },
-            }}
-          >
-            <div className="[position:relative]">
-              <span className="input-icon [position:absolute] [left:16px] [top:50%] [transform:translateY(-50%)] [color:var(--color-ink-600)] [transition:color_0.3s]">
-                <Lock size={18} strokeWidth={2} aria-hidden="true" />
-              </span>
-              <input
-                type={showPassword ? "text" : "password"}
-                className="[width:100%] [padding:14px_16px_14px_48px] [border:1px_solid_var(--border-light)] [&&]:[border-radius:var(--radius-md)] [font-size:var(--text-md)] [color:var(--text-main)]! [transition:all_0.2s] [background:var(--color-legacy-fafafa)] placeholder:[color:var(--color-ink-400)]! focus:[outline:none] focus:[border-color:var(--primary)] focus:[background:var(--color-white)] focus:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.1)] [&:focus+.input-icon]:[color:var(--primary)]!"
-                required
-                placeholder={t("Password")}
-                aria-label={t("Password")}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                autoComplete="current-password"
-              />
-              <button
-                type="button"
-                className="[position:absolute] [top:50%] [right:12px] [transform:translateY(-50%)] [display:inline-flex] [padding:6px] [border:0] [&&]:[border-radius:var(--radius-md)] [background:transparent] [color:var(--color-ink-500)] [cursor:pointer] hover:[background:var(--color-ink-100)] hover:[color:var(--color-ink-900)]"
-                onClick={() => setShowPassword((v) => !v)}
-                aria-label={showPassword ? t("Hide password") : t("Show password")}
-                aria-pressed={showPassword}
-              >
-                {showPassword ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
-              </button>
-            </div>
-          </motion.div>
+            <button
+              type="submit"
+              disabled={mfaLoading || mfaCode.length < 6}
+              className="btn-primary w-full disabled:opacity-50 cursor-pointer"
+            >
+              {mfaLoading ? t("Loading") : t("Verify & Sign In")}
+            </button>
 
-          <div className="[display:flex] [justify-content:flex-end] [margin-top:8px] [margin-bottom:8px]">
             <button
               type="button"
-              className="[background:none] [border:none] [color:var(--primary)] [font-size:var(--text-base)] [font-weight:500] [cursor:pointer] [padding:0] [transition:color_0.2s] hover:[color:var(--primary-hover)] hover:[text-decoration:underline]"
+              className="inline-flex items-center justify-center gap-1.5 text-xs text-text-secondary hover:text-text cursor-pointer mt-2 bg-transparent border-0"
               onClick={() => {
-                setForgotEmail(email || "");
-                setForgotMsg({ text: "", type: "" });
-                setShowForgotModal(true);
+                setMfaRequired(false);
+                setMfaCode("");
               }}
             >
-              {t("Forgot password?")}
+              <ArrowLeft size={14} />
+              <span>{t("Back to Password Login")}</span>
             </button>
-          </div>
+          </form>
+        ) : (
+          <>
+            <motion.form
+              onSubmit={handleLogin}
+              className="login-form"
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+                },
+              }}
+            >
+              <motion.div
+                className="form-group"
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0 },
+                }}
+              >
+                <div className="[position:relative]">
+                  <span className="input-icon [position:absolute] [left:16px] [top:50%] [transform:translateY(-50%)] [color:var(--color-ink-600)] [transition:color_0.3s]">
+                    <Mail size={18} aria-hidden="true" />
+                  </span>
+                  <input
+                    type="email"
+                    className="[width:100%] [padding:14px_16px_14px_48px] [border:1px_solid_var(--border-light)] [&&]:[border-radius:var(--radius-md)] [font-size:var(--text-md)] [color:var(--text-main)]! [transition:all_0.2s] [background:var(--color-legacy-fafafa)] placeholder:[color:var(--color-ink-400)]! focus:[outline:none] focus:[border-color:var(--primary)] focus:[background:var(--color-white)] focus:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.1)] [&:focus+.input-icon]:[color:var(--primary)]!"
+                    required
+                    placeholder={t("Email Address")}
+                    aria-label={t("Email address")}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    autoComplete="username"
+                  />
+                </div>
+              </motion.div>
 
-          <motion.button
-            type="submit"
-            className="btn-primary"
-            variants={{
-              hidden: { opacity: 0, y: 20 },
-              visible: { opacity: 1, y: 0 },
-            }}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            {t("Sign In")}
-          </motion.button>
-        </motion.form>
+              <motion.div
+                className="form-group"
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0 },
+                }}
+              >
+                <div className="[position:relative]">
+                  <span className="input-icon [position:absolute] [left:16px] [top:50%] [transform:translateY(-50%)] [color:var(--color-ink-600)] [transition:color_0.3s]">
+                    <Lock size={18} strokeWidth={2} aria-hidden="true" />
+                  </span>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    className="[width:100%] [padding:14px_16px_14px_48px] [border:1px_solid_var(--border-light)] [&&]:[border-radius:var(--radius-md)] [font-size:var(--text-md)] [color:var(--text-main)]! [transition:all_0.2s] [background:var(--color-legacy-fafafa)] placeholder:[color:var(--color-ink-400)]! focus:[outline:none] focus:[border-color:var(--primary)] focus:[background:var(--color-white)] focus:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.1)] [&:focus+.input-icon]:[color:var(--primary)]!"
+                    required
+                    placeholder={t("Password")}
+                    aria-label={t("Password")}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    autoComplete="current-password"
+                  />
+                  <button
+                    type="button"
+                    className="[position:absolute] [top:50%] [right:12px] [transform:translateY(-50%)] [display:inline-flex] [padding:6px] [border:0] [&&]:[border-radius:var(--radius-md)] [background:transparent] [color:var(--color-ink-500)] [cursor:pointer] hover:[background:var(--color-ink-100)] hover:[color:var(--color-ink-900)]"
+                    onClick={() => setShowPassword((v) => !v)}
+                    aria-label={showPassword ? t("Hide password") : t("Show password")}
+                    aria-pressed={showPassword}
+                  >
+                    {showPassword ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
+                  </button>
+                </div>
+              </motion.div>
+
+              <div className="[display:flex] [justify-content:flex-end] [margin-top:8px] [margin-bottom:8px]">
+                <button
+                  type="button"
+                  className="[background:none] [border:none] [color:var(--primary)] [font-size:var(--text-base)] [font-weight:500] [cursor:pointer] [padding:0] [transition:color_0.2s] hover:[color:var(--primary-hover)] hover:[text-decoration:underline]"
+                  onClick={() => {
+                    setForgotEmail(email || "");
+                    setForgotMsg({ text: "", type: "" });
+                    setShowForgotModal(true);
+                  }}
+                >
+                  {t("Forgot password?")}
+                </button>
+              </div>
+
+              <motion.button
+                type="submit"
+                className="btn-primary"
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0 },
+                }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                {t("Sign In")}
+              </motion.button>
+            </motion.form>
+
+            {/* Enterprise SSO Extension Hook */}
+            <div className="relative my-4 flex items-center justify-center">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-border" />
+              </div>
+              <div className="relative bg-white px-2.5 text-2xs uppercase tracking-wider text-text-secondary">
+                {t("or continue with")}
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleEnterpriseSSO}
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg border border-border bg-white hover:bg-ink-50 text-text font-medium text-xs transition-all shadow-2xs cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+            >
+              <Shield className="size-3.5 text-brand-600" />
+              <span>{t("Sign in with Enterprise SSO (SAML 2.0 / OIDC)")}</span>
+            </button>
+          </>
+        )}
 
         {/* Footer */}
         <div className="[margin-top:40px] [text-align:center] [border-top:1px_solid_var(--border-light)] [padding-top:24px] [&_p]:[color:var(--text-muted)] [&_p]:[font-size:var(--text-sm)]">

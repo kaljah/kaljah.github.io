@@ -115,6 +115,7 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
           options={getFacilityOptions()}
           value={facilityId || ""}
           onChange={setFacilityId}
+          placeholder={t("Select Facility...")}
         />
       </div>
       <div className="input-group">
@@ -123,6 +124,7 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
           options={getCategoryOptions()}
           value={category}
           onChange={setCategory}
+          placeholder={t("Select Category...")}
         />
       </div>
     </div>
@@ -136,6 +138,7 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
           options={getActivityOptions()}
           value={activityType}
           onChange={setActivityType}
+          placeholder={category ? t("Select Activity Type...") : t("Select a category first")}
         />
       </div>
       <Field className="input-group" label={t("Amount")}>

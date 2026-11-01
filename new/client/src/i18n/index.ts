@@ -1,28 +1,30 @@
 /**
- * Interface languages (English, French).
+ * Interface languages (English, French, Arabic).
  *
  * The English text is the translation key: `t("Save changes")` looks the sentence up in fr.json
- * and falls back to the English text when no French entry exists yet. Strings with technical terms
- * stay in English until the HSE glossary (docs/sonatrach/glossary-fr.csv) validates them.
+ * or ar.json and falls back to the English text when no localized entry exists yet.
  *
  * The language is read once, before any module renders, so labels defined at module level are
- * translated too. Changing it saves the choice and reloads the page.
+ * translated too. Changing it saves the choice and reloads the page with correct dir ("ltr" or "rtl").
  */
 import i18next from "i18next";
 import fr from "./fr.json";
+import ar from "./ar.json";
 
-export type Language = "en" | "fr";
+export type Language = "en" | "fr" | "ar";
 
-export const LANGUAGES: { value: Language; label: string }[] = [
-  { value: "en", label: "English" },
-  { value: "fr", label: "Français" },
+export const LANGUAGES: { value: Language; label: string; dir: "ltr" | "rtl" }[] = [
+  { value: "en", label: "English", dir: "ltr" },
+  { value: "fr", label: "Français", dir: "ltr" },
+  { value: "ar", label: "العربية", dir: "rtl" },
 ];
 
 const STORAGE_KEY = "neocarbon.language";
 
 function storedLanguage(): Language {
   try {
-    return window.localStorage.getItem(STORAGE_KEY) === "fr" ? "fr" : "en";
+    const l = window.localStorage.getItem(STORAGE_KEY);
+    return l === "fr" ? "fr" : l === "ar" ? "ar" : "en";
   } catch {
     return "en";
   }
@@ -31,7 +33,10 @@ function storedLanguage(): Language {
 void i18next.init({
   lng: typeof window === "undefined" ? "en" : storedLanguage(),
   fallbackLng: "en",
-  resources: { fr: { translation: fr as Record<string, string> } },
+  resources: {
+    fr: { translation: fr as Record<string, string> },
+    ar: { translation: ar as Record<string, string> },
+  },
   initAsync: false,
   // English sentences contain "." and ":": they are whole keys, not paths.
   keySeparator: false,
@@ -41,7 +46,9 @@ void i18next.init({
 });
 
 if (typeof document !== "undefined") {
-  document.documentElement.lang = i18next.language;
+  const current = storedLanguage();
+  document.documentElement.lang = current;
+  document.documentElement.dir = current === "ar" ? "rtl" : "ltr";
 }
 
 /** Translate an English interface string; `vars` fill {{name}} placeholders. */
@@ -50,7 +57,8 @@ export function t(text: string, vars?: Record<string, string | number>): string 
 }
 
 export function currentLanguage(): Language {
-  return i18next.language === "fr" ? "fr" : "en";
+  const lang = i18next.language;
+  return lang === "fr" ? "fr" : lang === "ar" ? "ar" : "en";
 }
 
 /** Save the choice and reload so every label, including module-level ones, is rebuilt. */
@@ -66,5 +74,6 @@ export function setLanguage(language: Language, { reload = true } = {}): void {
   } else {
     void i18next.changeLanguage(language);
     document.documentElement.lang = language;
+    document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
   }
 }

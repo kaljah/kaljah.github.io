@@ -177,7 +177,7 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
                 <td>
                   <strong>{f.factor_name || f.name}</strong>
                   {f.gas_composition && (
-                    <div className="text-[10px] text-brand-700 font-mono mt-0.5">
+                    <div className="text-xs text-brand-700 font-mono mt-0.5">
                       GC: {f.gas_composition.ch4_mol_pct}% CH₄, {f.gas_composition.co2_mol_pct}% CO₂
                     </div>
                   )}

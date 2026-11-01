@@ -24,6 +24,7 @@ def get_flaring_summary():
     from models import FlaringDetail
     from services.dashboard_filters import (apply_scope, gas_volume_m3, horizon_delta, production_gas_m3,
                                             source_category, statuses, _parse_facility_ids)
+    from services.tenant_config import get_tenant_config, get_current_tenant_id
 
     user = get_current_user()
     if is_it_role(user):
@@ -174,7 +175,7 @@ def get_flaring_summary():
         "gas_production_m3": round(gas_m3, 2),
         "flaring_intensity_pct": round(intensity, 3) if intensity is not None else None,
         "regulatory_threshold_pct": 1.00,
-        "statute": "Executive Decree 21-330 Article 9",
+        "statute": get_tenant_config(get_current_tenant_id(user)).get("regulatory_framework") or "Executive Decree 21-330 Article 9",
         "is_compliant": compliant,
         "compliance_status": status_txt,
         "yoy_change_pct": round(yoy, 2) if yoy is not None else None,

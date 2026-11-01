@@ -42,7 +42,15 @@ export {
 export { Page, PageHeader, type PageProps, type PageHeaderProps } from "./Page";
 export { Banner, type BannerProps, type BannerTone } from "./Banner";
 export { EmptyState, type EmptyStateProps } from "./EmptyState";
-export { Skeleton, PageSkeleton, type SkeletonProps } from "./Skeleton";
+export {
+  Skeleton,
+  PageSkeleton,
+  TableSkeleton,
+  ChartSkeleton,
+  type SkeletonProps,
+  type TableSkeletonProps,
+  type ChartSkeletonProps,
+} from "./Skeleton";
 export { Num, Unit, type NumProps, type UnitProps, type NumFormat } from "./Num";
 export {
   StatCard,

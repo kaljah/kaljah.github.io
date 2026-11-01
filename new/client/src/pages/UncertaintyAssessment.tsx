@@ -20,6 +20,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import CustomDropdown from "../components/CustomDropdown";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
 import { ReportsNavTabs } from "../components/NavigationTabs";
+import { TableSkeleton, ChartSkeleton } from "../ui";
 import "./UncertaintyAssessment.css";
 import { t } from "../i18n";
 
@@ -333,7 +334,17 @@ const UncertaintyAssessment: React.FC = () => {
         </div>
       </div>
 
-      {!data ? (
+      {loading ? (
+        <div className="flex flex-col gap-6 mt-6" role="status" aria-label={t("Loading uncertainty assessment")}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <ChartSkeleton height={140} />
+            <ChartSkeleton height={140} />
+            <ChartSkeleton height={140} />
+          </div>
+          <ChartSkeleton height={360} />
+          <TableSkeleton rows={6} cols={6} />
+        </div>
+      ) : !data ? (
         <div className="ua-methodology-box mt-[24px]!">
           <Info size={24} className="ua-methodology-icon" />
           <div>

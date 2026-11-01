@@ -218,6 +218,7 @@ class Emission(db.Model):
     custom_factor_id = db.Column(db.Integer, db.ForeignKey("custom_factors.id"), nullable=True, index=True)
 
     __table_args__ = (
+        db.Index("idx_scope1_facility_year", "facility_id", "year"),
         db.Index("ix_emissions_fac_yr_status", "facility_id", "year", "status"),
         db.Index("ix_emissions_act_div", "activity", "division"),
         db.Index("ix_emissions_status_yr_co2e", "status", "year", "co2e_total"),
@@ -429,6 +430,10 @@ class ActivityLog(db.Model):
     # F12 (pilot check 2026-10-09): hash chain, sealed when the row is written (services/audit_chain.py)
     prev_hash = db.Column(db.String(64), nullable=True)
     entry_hash = db.Column(db.String(64), nullable=True)
+
+    __table_args__ = (
+        db.Index("idx_activity_log_timestamp_action", "timestamp", "action"),
+    )
 
 
 

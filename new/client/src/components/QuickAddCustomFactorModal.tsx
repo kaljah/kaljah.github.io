@@ -400,11 +400,11 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
                         {t("PVT & Chromatography Stream Composition")}
                       </label>
                       {includeGasComp && (
-                        <span className={`text-[10px] px-1.5 py-0.2 rounded font-mono font-semibold ${
+                        <span className={`text-xs px-2 py-0.5 rounded font-mono font-semibold ${
                           molSum >= 99.5 && molSum <= 100.5
                             ? "bg-green-100 text-green-800"
                             : molSum === 0
-                            ? "bg-slate-100 text-slate-600"
+                            ? "bg-slate-100 text-slate-700"
                             : "bg-amber-100 text-amber-800"
                         }`}>
                           {molSum >= 99.5 && molSum <= 100.5 ? `✓ ${molSum.toFixed(2)}%` : `Σ = ${molSum.toFixed(2)}%`}
@@ -416,7 +416,7 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
                         <button
                           type="button"
                           onClick={handleNormalizeModal}
-                          className="text-[11px] px-2 py-0.5 bg-orange-600 text-white rounded font-medium hover:bg-orange-700"
+                          className="text-xs px-2.5 py-1 bg-brand-600 text-white rounded font-medium hover:bg-brand-700 transition-colors"
                         >
                           Normalize
                         </button>
@@ -424,20 +424,20 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
                       <button
                         type="button"
                         onClick={() => setIncludeGasComp(!includeGasComp)}
-                        className="text-[length:0.75rem]! text-orange-600 font-semibold hover:underline flex! items-center! gap-[4px]!"
+                        className="text-xs text-brand-700 font-semibold hover:underline flex items-center gap-1"
                       >
-                        <PlusCircle size={13} />
+                        <PlusCircle size={14} />
                         {includeGasComp ? t("Remove Composition") : t("Include Gas Composition")}
                       </button>
                     </div>
                   </div>
                   {includeGasComp && (
-                    <div className="[display:grid]! [grid-template-columns:repeat(3,1fr)]! sm:[grid-template-columns:repeat(4,1fr)]! [gap:6px]! mt-[8px]!">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 mt-3">
                       {MODAL_PVT_FIELDS.map((fld) => (
-                        <div key={fld.key} className="bg-white p-1.5 rounded border border-slate-200">
-                          <div className="flex justify-between items-center mb-0.5">
-                            <span className="text-[10px] font-bold text-slate-700">{fld.label}</span>
-                            <span className="text-[9px] text-slate-400">{fld.unit}</span>
+                        <div key={fld.key} className="bg-white p-2 rounded-md border border-slate-200 shadow-2xs">
+                          <div className="flex justify-between items-center mb-1">
+                            <span className="text-xs font-bold text-slate-800">{fld.label}</span>
+                            <span className="text-xs text-slate-600 font-mono">{fld.unit}</span>
                           </div>
                           <Input
                             type="number"

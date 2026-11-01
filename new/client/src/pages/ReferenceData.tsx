@@ -1,4 +1,4 @@
-import { PageHeader, Button, Input } from "../ui";
+import { PageHeader, Button, Input, TableSkeleton } from "../ui";
 import { NativeSelect } from "../ui/NativeSelect";
 import React, { useState, useEffect } from "react";
 import { activateOnKey } from "../utils/a11yKeys";
@@ -71,6 +71,8 @@ const ReferenceData: React.FC = () => {
   const [apiFactors, setApiFactors] = useState<Record<string, any>>({});
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState<boolean>(true);
+  const [categoryPages, setCategoryPages] = useState<Record<string, number>>({});
+  const PAGE_SIZE = 20;
 
   const [loadErrors, setLoadErrors] = useState<string[]>([]);
 
@@ -447,134 +449,165 @@ const ReferenceData: React.FC = () => {
         </div>
       )}
       {loading ? (
-        <div
-          className="text-center! p-[100px]! text-[color:var(--color-ink-500)]!"
-        >
-          {t("Loading Library Assets...")}
+        <div className="flex flex-col gap-6 py-4">
+          <TableSkeleton rows={8} cols={6} />
+          <TableSkeleton rows={6} cols={5} />
         </div>
       ) : (
         <div className="factors-list">
-          {visibleCategories.map(([key, cat]) => (
-            <div
-              key={key}
-              className="category-section"
-              style={{ borderLeftColor: cat.color }}
-            >
-              <div role="button" tabIndex={0} onKeyDown={activateOnKey}
-                className="category-header"
-                onClick={() => toggleCategory(key)}
-              >
-                <div className="category-title">
-                  {cat.icon}
-                  {cat.title}
-                  <span
-                    className="[background:var(--color-primary)] [padding:3px_10px] [border-radius:999px] [font-size:var(--text-sm)] [font-weight:700] bg-[color:var(--color-ink-100)]! text-[color:var(--color-ink-800)]!"
-                  >
-                    {cat.isStatic
-                      ? cat.filteredItems?.length || 0
-                      : cat.factors?.length || 0}
-                  </span>
-                </div>
-                {collapsed[key] ? (
-                  <ChevronRight size={20} />
-                ) : (
-                  <ChevronDown size={20} />
-                )}
-              </div>
+          {visibleCategories.map(([key, cat]) => {
+            const allItems = cat.isStatic ? cat.filteredItems || [] : cat.factors || [];
+            const currentPage = categoryPages[key] || 1;
+            const totalCatPages = Math.max(1, Math.ceil(allItems.length / PAGE_SIZE));
+            const pagedItems = allItems.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
-              {!collapsed[key] && (
-                <div className="[width:100%] [overflow-x:auto]">
-                  <table className="factors-table">
-                    <thead>
-                      <tr>
-                        {cat.isStatic ? (
-                          cat.columns?.map((col, cIdx) => (
-                            <th key={cIdx}>{col}</th>
-                          ))
-                        ) : (
-                          <>
-                            <th>{t("Name")}</th>
-                            {key !== "equipment" ? (
-                              <>
-                                <th className="num">{t("HHV")}</th>
-                                <th className="num">{t("CO₂")}</th>
-                                <th className="num">{t("CH₄")}</th>
-                                <th className="num">N₂O</th>
-                                <th>{t("Unit")}</th>
-                              </>
-                            ) : (
-                              <>
-                                <th className="num">{t("CH₄ Factor")}</th>
-                                <th>{t("Unit")}</th>
-                                <th>{t("Description")}</th>
-                              </>
-                            )}
-                            <th>{t("Usage")}</th>
-                          </>
-                        )}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {cat.isStatic
-                        ? cat.filteredItems?.map((item, idx) => (
-                            <tr key={idx}>
-                              {Object.values(item).map((val, i) => (
-                                <td
-                                  key={i}
-                                  style={
-                                    i === 0
-                                      ? { fontWeight: 600, color: "var(--color-ink-800)" }
-                                      : {}
-                                  }
-                                >
-                                  {val}
-                                </td>
-                              ))}
-                            </tr>
-                          ))
-                        : cat.factors?.map((f, idx) => (
-                            <tr key={idx}>
-                              <td className="factor-name">
-                                {f.name}
-                                {f.isCustom && (
-                                  <Star size={14} className="custom-star" />
-                                )}
-                              </td>
+            return (
+              <div
+                key={key}
+                className="category-section"
+                style={{ borderLeftColor: cat.color }}
+              >
+                <div role="button" tabIndex={0} onKeyDown={activateOnKey}
+                  className="category-header"
+                  onClick={() => toggleCategory(key)}
+                >
+                  <div className="category-title">
+                    {cat.icon}
+                    {cat.title}
+                    <span
+                      className="[background:var(--color-primary)] [padding:3px_10px] [border-radius:999px] [font-size:var(--text-sm)] [font-weight:700] bg-[color:var(--color-ink-100)]! text-[color:var(--color-ink-800)]!"
+                    >
+                      {allItems.length}
+                    </span>
+                  </div>
+                  {collapsed[key] ? (
+                    <ChevronRight size={20} />
+                  ) : (
+                    <ChevronDown size={20} />
+                  )}
+                </div>
+
+                {!collapsed[key] && (
+                  <div className="[width:100%] [overflow-x:auto]">
+                    <table className="factors-table">
+                      <thead>
+                        <tr>
+                          {cat.isStatic ? (
+                            cat.columns?.map((col, cIdx) => (
+                              <th key={cIdx}>{col}</th>
+                            ))
+                          ) : (
+                            <>
+                              <th>{t("Name")}</th>
                               {key !== "equipment" ? (
                                 <>
-                                  <td className="num">{f.hhv || "-"}</td>
-                                  <td className="num">{f.co2 || "-"}</td>
-                                  <td className="num">{f.ch4 || "-"}</td>
-                                  <td className="num">{f.n2o || "-"}</td>
-                                  <td>{f.unit}</td>
+                                  <th className="num">{t("HHV")}</th>
+                                  <th className="num">{t("CO₂")}</th>
+                                  <th className="num">{t("CH₄")}</th>
+                                  <th className="num">N₂O</th>
+                                  <th>{t("Unit")}</th>
                                 </>
                               ) : (
                                 <>
-                                  <td className="num">{f.ch4 || "-"}</td>
-                                  <td>{f.unit}</td>
-                                  <td>{f.description}</td>
+                                  <th className="num">{t("CH₄ Factor")}</th>
+                                  <th>{t("Unit")}</th>
+                                  <th>{t("Description")}</th>
                                 </>
                               )}
-                              <td>
-                                <div className="flex! gap-[6px]!">
-                                  {f.usage.map((u, uIdx) => (
-                                    <span
-                                      key={uIdx}
-                                      className={`[display:inline-flex] [padding:3px_8px] [border-radius:var(--radius-sm)] [font-size:var(--text-xs)] [font-weight:600] usage-${u.toLowerCase()}`}
-                                    >
-                                      {t(usageLabel(u))}
-                                    </span>
-                                  ))}
-                                </div>
-                              </td>
-                            </tr>
-                          ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          ))}
+                              <th>{t("Usage")}</th>
+                            </>
+                          )}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {cat.isStatic
+                          ? (pagedItems as Record<string, any>[]).map((item, idx) => (
+                              <tr key={idx}>
+                                {Object.values(item).map((val, i) => (
+                                  <td
+                                    key={i}
+                                    style={
+                                      i === 0
+                                        ? { fontWeight: 600, color: "var(--color-ink-800)" }
+                                        : {}
+                                    }
+                                  >
+                                    {val}
+                                  </td>
+                                ))}
+                              </tr>
+                            ))
+                          : (pagedItems as FactorItem[]).map((f, idx) => (
+                              <tr key={idx}>
+                                <td className="factor-name">
+                                  {f.name}
+                                  {f.isCustom && (
+                                    <Star size={14} className="custom-star" />
+                                  )}
+                                </td>
+                                {key !== "equipment" ? (
+                                  <>
+                                    <td className="num">{f.hhv || "-"}</td>
+                                    <td className="num">{f.co2 || "-"}</td>
+                                    <td className="num">{f.ch4 || "-"}</td>
+                                    <td className="num">{f.n2o || "-"}</td>
+                                    <td>{f.unit}</td>
+                                  </>
+                                ) : (
+                                  <>
+                                    <td className="num">{f.ch4 || "-"}</td>
+                                    <td>{f.unit}</td>
+                                    <td>{f.description}</td>
+                                  </>
+                                )}
+                                <td>
+                                  <div className="flex! gap-[6px]!">
+                                    {f.usage.map((u, uIdx) => (
+                                      <span
+                                        key={uIdx}
+                                        className={`[display:inline-flex] [padding:3px_8px] [border-radius:var(--radius-sm)] [font-size:var(--text-xs)] [font-weight:600] usage-${u.toLowerCase()}`}
+                                      >
+                                        {t(usageLabel(u))}
+                                      </span>
+                                    ))}
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                      </tbody>
+                    </table>
+                    {totalCatPages > 1 && (
+                      <div className="flex items-center justify-between border-t border-border px-4 py-2.5 bg-ink-50/50">
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => setCategoryPages((prev) => ({ ...prev, [key]: Math.max(1, currentPage - 1) }))}
+                          disabled={currentPage === 1}
+                        >
+                          {t("Previous")}
+                        </Button>
+                        <span className="text-xs text-text-secondary">
+                          {t("Page {{page}} of {{total}} ({{count}} items)", {
+                            page: currentPage,
+                            total: totalCatPages,
+                            count: allItems.length,
+                          })}
+                        </span>
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => setCategoryPages((prev) => ({ ...prev, [key]: Math.min(totalCatPages, currentPage + 1) }))}
+                          disabled={currentPage === totalCatPages}
+                        >
+                          {t("Next")}
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
           {visibleCategories.length === 0 && (
             <div
               className="text-center! p-[60px]! bg-[color:rgba(255,255,255,0.4)]! rounded-[16px]! [border:1px_dashed_rgba(0,0,0,0.1)]!"

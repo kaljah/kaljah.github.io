@@ -463,6 +463,7 @@ from routes.ldar import ldar_bp
 from routes.recalculate import recalculate_bp
 from routes.period_locks import period_locks_bp
 from routes.traceability import traceability_bp
+from routes.tenant import tenant_bp
 
 app.register_blueprint(auth_bp, url_prefix="/api/auth")
 app.register_blueprint(emissions_bp, url_prefix="/api/emissions")
@@ -483,6 +484,7 @@ app.register_blueprint(ldar_bp, url_prefix="/api/ldar")
 app.register_blueprint(recalculate_bp)
 app.register_blueprint(period_locks_bp)
 app.register_blueprint(traceability_bp)
+app.register_blueprint(tenant_bp)
 
 # Swagger UI Configuration (SEC-05 & INFO-01: Disabled in production unless explicitly enabled)
 if (
