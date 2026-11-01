@@ -483,6 +483,20 @@ const NotificationCenter: React.FC = () => {
         });
       }
 
+      // 4. Scope 3 Completeness check (Cat 11 Use of Sold Products)
+      const summaryRes = await api.get("/dashboard/summary").catch(() => null);
+      if (summaryRes?.data?.scope3_incomplete) {
+        alerts.push({
+          id: "scope3-incomplete",
+          category: "scope3",
+          title: t("Scope 3 Inventory Incomplete"),
+          message: t("Category 11 (Use of Sold Products) has no recorded emissions despite active production."),
+          severity: "warning",
+          path: "/emissions",
+          actionText: t("Log Scope 3"),
+        });
+      }
+
       setSystemAlerts(alerts);
     } catch (err) {
       console.debug("Alerts load skipped", err);
