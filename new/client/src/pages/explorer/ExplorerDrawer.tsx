@@ -210,6 +210,30 @@ const ExplorerDrawer: React.FC<ExplorerDrawerProps> = ({
         </div>
       </fieldset>
 
+      <Field label={t("Super-emitter threshold")}>
+        <NativeSelect
+          className={selectClass}
+          value={filters.superEmitterThreshold ?? (viewMode === "total" ? 50000 : 2500)}
+          onChange={(e) => set({ superEmitterThreshold: Number(e.target.value) })}
+        >
+          {viewMode === "total" ? (
+            <>
+              <option value="25000">{t("Strict (≥ 25,000 tCO₂e/yr)")}</option>
+              <option value="50000">{t("Standard (≥ 50,000 tCO₂e/yr)")}</option>
+              <option value="100000">{t("High (≥ 100,000 tCO₂e/yr)")}</option>
+            </>
+          ) : (
+            <>
+              <option value="500">{t("Strict (≥ 500 tCH₄/yr)")}</option>
+              <option value="1000">{t("Moderate (≥ 1,000 tCH₄/yr)")}</option>
+              <option value="2500">{t("Standard OGMP (≥ 2,500 tCH₄/yr)")}</option>
+              <option value="5000">{t("High (≥ 5,000 tCH₄/yr)")}</option>
+              <option value="10000">{t("Major (≥ 10,000 tCH₄/yr)")}</option>
+            </>
+          )}
+        </NativeSelect>
+      </Field>
+
       <section className="rounded-md border border-border bg-ink-50 p-3" aria-label={t("Map display")}>
         <CheckRow
           label={t("Severity rings")}

@@ -12,7 +12,8 @@ import CustomDropdown from "../components/CustomDropdown";
 import MultiSelectDropdown from "../components/MultiSelectDropdown";
 import { formatNumber } from "../utils/formatters";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
-import { FileText, Activity } from "lucide-react";
+import { FileText, Activity, AlertTriangle } from "lucide-react";
+import { PerformanceNavTabs } from "../components/NavigationTabs";
 import "./TopBarFilters.css";
 import { t } from "../i18n";
 
@@ -571,6 +572,7 @@ const CarbonIntensity: React.FC = () => {
   return (
     <div className={cn("intensity-content min-h-[calc(100vh-64px)] bg-ink-50 p-4 transition-opacity duration-200 md:p-8", isUpdating && "opacity-80")}>
       <div className="intensity-grid mx-auto flex max-w-[1600px] flex-col gap-8">
+        <PerformanceNavTabs />
         <CarbonIntensityCarbonIntensity
           activeGwpStandard={activeGwpStandard}
           currentDisplayCo2Intensity={currentDisplayCo2Intensity}

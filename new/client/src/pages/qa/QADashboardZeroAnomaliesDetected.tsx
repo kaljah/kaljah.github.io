@@ -34,24 +34,31 @@ const formatRecordId = (id?: string | number, fallbackId?: string | number): { d
 
 const formatQaFlag = (flag?: string): string => {
   if (!flag) return t("Flagged");
-  const stdMatch = flag.match(/Value\s+([\d.]+)\s+is\s+([\d.eE+-]+)\s+standard deviations/i);
+  // Clean bogus or repetitive decision prefixes like [BogusStatus], [Verified], [Rejected]
+  const cleanFlag = flag
+    .replace(/^(\[(Verified|Rejected|Pending|BogusStatus|Draft)\]\s*|Rejected:\s*[^()]*\s*\(?)+/gi, "")
+    .replace(/\)+$/, "")
+    .trim();
+  const stdMatch = cleanFlag.match(/Value\s+([\d.]+)\s+is\s+([\d.eE+-]+)\s+standard deviations/i);
   if (stdMatch) {
     const val = parseFloat(stdMatch[1]);
     const dev = parseFloat(stdMatch[2]);
-    const formattedDev = dev > 1000 ? dev.toExponential(2) : dev.toFixed(1);
+    // Guard against astronomical values; cap at 10.0σ and format sensibly
+    const cappedDev = Math.min(10.0, Math.max(0.0, dev));
+    const formattedDev = cappedDev.toFixed(1);
     const formattedVal = Number.isFinite(val) ? val.toFixed(2) : stdMatch[1];
     return t("Value {{val}} is {{dev}}σ from average", { val: formattedVal, dev: formattedDev });
   }
-  const iqrMatch = flag.match(/Value\s+([\d.]+)\s+is an IQR outlier/i);
+  const iqrMatch = cleanFlag.match(/Value\s+([\d.]+)\s+is an IQR outlier/i);
   if (iqrMatch) {
     const val = parseFloat(iqrMatch[1]);
     const formattedVal = Number.isFinite(val) ? val.toFixed(2) : iqrMatch[1];
     return t("Value {{val}} is an IQR outlier", { val: formattedVal });
   }
-  return t(flag);
+  return t(cleanFlag || flag);
 };
 
-const th = "whitespace-nowrap border-b border-border px-4 py-3.5 text-left text-xs font-bold uppercase tracking-wide text-text-secondary";
+const th = "whitespace-nowrap border-b border-border px-4 py-3.5 text-left text-xs font-medium text-text-secondary";
 const td = "border-b border-ink-100 px-4 py-3.5 align-middle text-base text-ink-700";
 
 export interface FlaggedRecord {
@@ -257,7 +264,7 @@ const QADashboardZeroAnomaliesDetected: React.FC<QADashboardZeroAnomaliesDetecte
                                 <AlertTriangle className="size-3" aria-hidden="true" />
                                 {formatQaFlag(record.qa_flag)}
                               </Badge>
-                              <span className="text-[10px] font-bold uppercase tracking-wider text-text-secondary pl-0.5">
+                              <span className="text-2xs font-medium text-text-secondary pl-0.5">
                                 {sev.label} {t("Priority")}
                               </span>
                             </div>

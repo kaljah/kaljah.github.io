@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import {
   flexRender,
   getCoreRowModel,
@@ -11,7 +11,7 @@ import {
   type VisibilityState,
 } from "@tanstack/react-table";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { ArrowDown, ArrowUp, Check, ChevronsUpDown, Columns3 } from "lucide-react";
+import { ArrowDown, ArrowRight, ArrowUp, Check, ChevronsUpDown, Columns3 } from "lucide-react";
 import { Button } from "../Button";
 import { EmptyState } from "../EmptyState";
 import { Menu, MenuContent, MenuLabel, MenuTrigger } from "../Menu";
@@ -53,6 +53,7 @@ export interface DataTableProps<TData> {
   className?: string;
   showColumnMenu?: boolean;
   showPagination?: boolean;
+  pinFirstColumn?: boolean | "mobile-only";
 }
 
 /**
@@ -75,9 +76,20 @@ export function DataTable<TData>({
   className,
   showColumnMenu = true,
   showPagination = true,
+  pinFirstColumn = "mobile-only",
 }: DataTableProps<TData>): React.ReactElement {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(() => readHidden(tableId, defaultHidden));
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+
+  const checkScroll = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 6);
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 6);
+  };
 
   useEffect(() => {
     if (!tableId) return;
@@ -106,6 +118,18 @@ export function DataTable<TData>({
   const rows = table.getRowModel().rows;
   const cell = density === "compact" ? "px-3 py-1.5" : "px-3 py-2.5";
   const hideable = table.getAllLeafColumns().filter((c) => c.getCanHide());
+
+  useEffect(() => {
+    checkScroll();
+    const el = scrollRef.current;
+    if (!el) return;
+    el.addEventListener("scroll", checkScroll, { passive: true });
+    window.addEventListener("resize", checkScroll);
+    return () => {
+      el.removeEventListener("scroll", checkScroll);
+      window.removeEventListener("resize", checkScroll);
+    };
+  }, [rows, columnVisibility]);
 
   return (
     <div className={cn("flex flex-col gap-3", className)}>

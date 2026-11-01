@@ -383,10 +383,10 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
               </p>
             )}
 
-            <div className="[display:grid] [grid-template-columns:repeat(auto-fill,_minmax(140px,_1fr))] [gap:15px] [margin-bottom:30px]">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5 mb-7">
               {Object.entries(COMPONENT_DATA).map(([key, data]) => (
-                <div key={key} className="input-group">
-                  <label>{data.name}</label>
+                <div key={key} className="flex flex-col gap-1.5 p-2.5 rounded-lg border border-border bg-surface">
+                  <label className="text-xs font-semibold text-text-secondary truncate">{data.name}</label>
                   <input
                     type="number"
                     name={key}
@@ -394,26 +394,28 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
                     onChange={handleCompChange}
                     placeholder="0.00"
                     step="0.01"
+                    className="w-full h-10 px-3 text-base font-mono rounded-md border border-border bg-surface text-text focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
                   />
                 </div>
               ))}
             </div>
 
             <div className="params-section">
-              <h4>{t("Operating Parameters")}</h4>
-              <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(180px,_1fr))] [gap:20px]">
-                <div className="input-group">
-                  <label>{t("Molar Volume (L/mol)")}</label>
+              <h4 className="text-sm font-bold text-text mb-3">{t("Operating Parameters")}</h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-text-secondary">{t("Molar Volume (L/mol)")}</label>
                   <input
                     type="number"
                     name="molarVolume"
                     value={params.molarVolume}
                     onChange={handleParamChange}
                     step="0.001"
+                    className="w-full h-10 px-3 text-base font-mono rounded-md border border-border bg-surface text-text focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
                   />
                 </div>
-                <div className="input-group">
-                  <label>{t("Oxidation Factor")}</label>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-text-secondary">{t("Oxidation Factor")}</label>
                   <input
                     type="number"
                     name="oxidationFactor"
@@ -422,6 +424,7 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
                     step="0.1"
                     min="0"
                     max="1"
+                    className="w-full h-10 px-3 text-base font-mono rounded-md border border-border bg-surface text-text focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
                   />
                 </div>
               </div>
@@ -429,7 +432,7 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
 
             <button
               type="button"
-              className="[width:100%] [padding:14px] [background:var(--color-primary)] [color:white] [border:none] [&&]:[border-radius:var(--radius-md)] [font-weight:700] [cursor:pointer] [transition:all_0.2s] disabled:[opacity:0.5] disabled:[cursor:not-allowed] [&:hover:not(:disabled)]:[transform:translateY(-2px)] [&:hover:not(:disabled)]:[box-shadow:0_5px_15px_rgba(255,_102,_0,_0.3)]"
+              className="[width:100%] [padding:12px_20px] bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-md border border-brand-700 shadow-xs cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={calculate}
               disabled={!totalOk}
               title={totalOk ? undefined : t("The analysis must total 100 %")}

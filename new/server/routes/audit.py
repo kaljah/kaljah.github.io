@@ -238,7 +238,8 @@ def get_audit_stats():
         total_events = base.count()
         total_logins = base.filter(ActivityLog.action == "LOGIN").count()
         data_mutations = base.filter(ActivityLog.action.in_(["CREATE", "UPDATE", "DELETE"])).count()
-        security_alerts = base.filter(ActivityLog.action.in_(["SECURITY", "FAILED_LOGIN", "SUSPICIOUS"])).count()
+        security_alerts = base.filter(ActivityLog.action.in_(["SECURITY", "FAILED_LOGIN", "SUSPICIOUS", "ACCOUNT_LOCKED", "REVOKE_ALL_SESSIONS"])).count()
+        other_events = max(0, total_events - (total_logins + data_mutations + security_alerts))
         unique_users = base.with_entities(func.count(distinct(ActivityLog.user_name))).scalar() or 0
 
     return jsonify(
@@ -247,6 +248,7 @@ def get_audit_stats():
             "totalLogins": total_logins,
             "dataMutations": data_mutations,
             "securityAlerts": security_alerts,
+            "otherEvents": other_events,
             "uniqueUsers": unique_users,
         }
     )

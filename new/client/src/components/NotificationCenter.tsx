@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
+import { useNavigate } from "react-router-dom";
 import {
   AlertTriangle,
   ShieldAlert,
@@ -10,12 +11,24 @@ import {
   Trash2,
   CheckCheck,
   Zap,
+  ArrowRight,
   type LucideIcon,
 } from "lucide-react";
 import api from "../api";
 import { useToast } from "./Toast";
 import { useAuth } from "../context/AuthContext";
+import { cn } from "../ui/cn";
 import { t } from "../i18n";
+
+export interface SystemAlertItem {
+  id: string;
+  category: "anomalies" | "scope3" | "production" | "discrepancy" | "pending_sla" | "health_drop";
+  title: string;
+  message: string;
+  severity: "critical" | "warning" | "info";
+  path: string;
+  actionText: string;
+}
 
 export interface NotificationItem {
   id: number;
@@ -119,6 +132,59 @@ const BellButton: React.FC<BellButtonProps> = ({ count, onClick }) => (
     )}
   </button>
 );
+
+interface AlertRowProps {
+  alert: SystemAlertItem;
+  onNavigate: (path: string) => void;
+}
+
+const AlertRow: React.FC<AlertRowProps> = ({ alert, onNavigate }) => {
+  const isCrit = alert.severity === "critical";
+  const isWarn = alert.severity === "warning";
+  const iconColor = isCrit ? "var(--color-red-500)" : isWarn ? "var(--color-amber-500)" : "var(--color-blue-500)";
+  const iconBg = isCrit ? "rgba(239, 68, 68, 0.12)" : isWarn ? "rgba(245, 158, 11, 0.12)" : "rgba(59, 130, 246, 0.12)";
+
+  return (
+    <div
+      style={{
+        padding: "12px 16px",
+        borderBottom: "1px solid var(--border-light, var(--color-ink-100))",
+        display: "flex",
+        gap: 12,
+        alignItems: "flex-start",
+        transition: "background 0.15s",
+      }}
+    >
+      <div
+        style={{
+          flexShrink: 0,
+          width: 32,
+          height: 32,
+          borderRadius: 8,
+          background: iconBg,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          marginTop: 1,
+        }}
+      >
+        <AlertTriangle size={15} color={iconColor} strokeWidth={2} />
+      </div>
+      <div className="flex-1 min-w-0">
+        <h4 className="m-0 text-sm font-semibold text-text">{alert.title}</h4>
+        <p className="m-0 mt-1 text-xs text-text-secondary leading-normal">{alert.message}</p>
+        <button
+          type="button"
+          onClick={() => onNavigate(alert.path)}
+          className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-ink-100 hover:bg-ink-200 px-2.5 py-1 text-xs font-semibold text-text transition-colors border border-border cursor-pointer"
+        >
+          <span>{alert.actionText}</span>
+          <ArrowRight size={12} />
+        </button>
+      </div>
+    </div>
+  );
+};
 
 interface NotifRowProps {
   n: NotificationItem;
@@ -250,7 +316,10 @@ const POLL_INTERVAL_MS = 30_000;
 
 const NotificationCenter: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [systemAlerts, setSystemAlerts] = useState<SystemAlertItem[]>([]);
+  const [activeTab, setActiveTab] = useState<"alerts" | "notifications">("alerts");
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [unreadCount, setUnreadCount] = useState<number>(0);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
@@ -341,10 +410,90 @@ const NotificationCenter: React.FC = () => {
     [userId, queueToast],
   );
 
+  // ── System Alerts aggregation (B6) ──────────────────────────────────
+  const fetchSystemAlerts = useCallback(async () => {
+    if (!userId) {
+      setSystemAlerts([]);
+      return;
+    }
+    const alerts: SystemAlertItem[] = [];
+    try {
+      // 1. Pending records in review queue
+      const pendingRes = await api.get("/emissions/pending").catch(() => null);
+      const totalPending = pendingRes?.data?.total_pending || 0;
+      if (totalPending > 0) {
+        alerts.push({
+          id: "pending-items",
+          category: "pending_sla",
+          title: t("Pending Review Queue ({{count}} records)", { count: totalPending }),
+          message: t("Unreviewed records await dual-control maker-checker validation before inclusion in totals."),
+          severity: totalPending > 10 ? "critical" : "warning",
+          path: "/manage-data?tab=pending",
+          actionText: t("Review Queue"),
+        });
+      }
+
+      // 2. QA/QC Anomalies & Data Health Drop
+      if (user?.role && ["admin", "superuser"].includes(user.role)) {
+        const qaRes = await api.get("/qa/dashboard").catch(() => null);
+        if (qaRes?.data) {
+          const flagged = qaRes.data.total_flagged_count || qaRes.data.flagged_records?.length || 0;
+          if (flagged > 0) {
+            alerts.push({
+              id: "qa-flagged",
+              category: "anomalies",
+              title: t("QA/QC Flagged Anomalies ({{count}})", { count: flagged }),
+              message: t("Statistical anomalies or outlier emissions detected requiring review."),
+              severity: "critical",
+              path: "/qa-dashboard",
+              actionText: t("Open QA/QC Queue"),
+            });
+          }
+          const health = qaRes.data.diagnostics?.health_score;
+          if (health != null && health < 90) {
+            alerts.push({
+              id: "health-drop",
+              category: "health_drop",
+              title: t("Data Health Score Below Target ({{score}}%)", { score: health }),
+              message: t("Data completeness or validation coverage has dropped below the 90% assurance threshold."),
+              severity: "warning",
+              path: "/qa-dashboard",
+              actionText: t("Inspect Diagnostics"),
+            });
+          }
+        }
+      }
+
+      // 3. OGMP 2.0 Level 4/5 Discrepancies
+      const ogmpRes = await api.get("/ogmp/surveys").catch(() => null);
+      const surveys = Array.isArray(ogmpRes?.data) ? ogmpRes.data : ogmpRes?.data?.surveys || [];
+      const discrepancySurveys = surveys.filter((s: any) =>
+        s.reconciliation_status === "discrepancy" ||
+        (s.relative_difference_pct != null && Math.abs(s.relative_difference_pct) > 20)
+      );
+      if (discrepancySurveys.length > 0) {
+        alerts.push({
+          id: "ogmp-discrepancy",
+          category: "discrepancy",
+          title: t("OGMP 2.0 Measurement Discrepancies ({{count}})", { count: discrepancySurveys.length }),
+          message: t("Top-down site/source measurements show significant discrepancy with bottom-up inventory."),
+          severity: "warning",
+          path: "/manage-data?tab=ogmp",
+          actionText: t("Reconcile Surveys"),
+        });
+      }
+
+      setSystemAlerts(alerts);
+    } catch (err) {
+      console.debug("Alerts load skipped", err);
+    }
+  }, [userId, user?.role]);
+
   // ── Mount / unmount ───────────────────────────────────────────────────
   useEffect(() => {
     if (!userId) {
       setNotifications([]);
+      setSystemAlerts([]);
       setUnreadCount(0);
       return;
     }
@@ -352,8 +501,12 @@ const NotificationCenter: React.FC = () => {
     activeRef.current = true;
     lastIdRef.current = 0;
     fetchNotifications();
+    fetchSystemAlerts();
     const poll = () => {
-      if (document.visibilityState === "visible") fetchNotifications({ announce: true });
+      if (document.visibilityState === "visible") {
+        fetchNotifications({ announce: true });
+        fetchSystemAlerts();
+      }
     };
     const timer = setInterval(poll, POLL_INTERVAL_MS);
     document.addEventListener("visibilitychange", poll);
@@ -362,7 +515,7 @@ const NotificationCenter: React.FC = () => {
       clearInterval(timer);
       document.removeEventListener("visibilitychange", poll);
     };
-  }, [userId, fetchNotifications]);
+  }, [userId, fetchNotifications, fetchSystemAlerts]);
 
   // ── Click-outside ─────────────────────────────────────────────────────
   useEffect(() => {
@@ -541,27 +694,82 @@ const NotificationCenter: React.FC = () => {
         </div>
       </div>
 
-      {/* ── Notification list ── */}
-      <div className={`[max-height:420px]! [overflow-y:auto]!`}>
-        {notifications.length === 0 ? (
-          <div
-            className="p-[40px_24px]! text-center! text-[color:var(--text-secondary,_var(--color-ink-500))]!"
-          >
-            <div
-              className="w-[48px]! h-[48px]! rounded-[14px]! bg-[color:var(--bg-hover,_var(--color-ink-50))]! [border:1px_solid_var(--border-color,_var(--color-ink-200))]! flex! items-center! justify-center! m-[0_auto_12px]!"
-            >
-              <Bell
-                size={22}
-                color="var(--text-muted, var(--color-ink-400))"
-                strokeWidth={1.75}
-              />
+      {/* Switcher: System Alerts vs Activity Log (B6) */}
+      <div className="flex border-b border-border bg-ink-50/60 p-1.5 gap-1.5">
+        <button
+          type="button"
+          onClick={() => setActiveTab("alerts")}
+          className={cn(
+            "flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-semibold cursor-pointer border transition-colors",
+            activeTab === "alerts"
+              ? "bg-surface text-text shadow-xs border-border"
+              : "bg-transparent text-text-secondary border-transparent hover:text-text"
+          )}
+        >
+          <AlertTriangle className="size-3.5 text-amber-500" />
+          <span>{t("System Alerts")}</span>
+          {systemAlerts.length > 0 && (
+            <span className="rounded-full bg-amber-100 text-amber-800 px-1.5 py-0.2 text-[0.65rem] font-bold">
+              {systemAlerts.length}
+            </span>
+          )}
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("notifications")}
+          className={cn(
+            "flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-semibold cursor-pointer border transition-colors",
+            activeTab === "notifications"
+              ? "bg-surface text-text shadow-xs border-border"
+              : "bg-transparent text-text-secondary border-transparent hover:text-text"
+          )}
+        >
+          <Bell className="size-3.5 text-blue-500" />
+          <span>{t("Activity")}</span>
+          {unreadCount > 0 && (
+            <span className="rounded-full bg-blue-100 text-blue-800 px-1.5 py-0.2 text-[0.65rem] font-bold">
+              {unreadCount}
+            </span>
+          )}
+        </button>
+      </div>
+
+      {/* ── Content list ── */}
+      <div className="max-h-[420px] overflow-y-auto">
+        {activeTab === "alerts" ? (
+          systemAlerts.length === 0 ? (
+            <div className="p-8 text-center text-text-secondary">
+              <div className="w-12 h-12 rounded-2xl bg-green-50 border border-green-200 flex items-center justify-center mx-auto mb-3">
+                <CheckCheck size={22} className="text-green-600" strokeWidth={2} />
+              </div>
+              <p className="m-0 text-sm font-bold text-text">
+                {t("All systems healthy")}
+              </p>
+              <p className="m-0 mt-1 text-xs text-text-secondary">
+                {t("No anomalies, missing data, or discrepancy surveys requiring review.")}
+              </p>
             </div>
-            <p className="m-[0px]! text-[length:0.88rem]! font-bold! text-[color:var(--text-primary,_var(--color-ink-900))]!">
+          ) : (
+            systemAlerts.map((alert) => (
+              <AlertRow
+                key={alert.id}
+                alert={alert}
+                onNavigate={(path) => {
+                  navigate(path);
+                  setIsOpen(false);
+                }}
+              />
+            ))
+          )
+        ) : notifications.length === 0 ? (
+          <div className="p-8 text-center text-text-secondary">
+            <div className="w-12 h-12 rounded-2xl bg-ink-50 border border-border flex items-center justify-center mx-auto mb-3">
+              <Bell size={22} className="text-text-muted" strokeWidth={1.75} />
+            </div>
+            <p className="m-0 text-sm font-bold text-text">
               {t("No notifications")}
             </p>
-            <p
-              className="m-[4px_0_0]! text-[length:0.78rem]! text-[color:var(--text-secondary,_var(--color-ink-500))]!"
-            >
+            <p className="m-0 mt-1 text-xs text-text-secondary">
               {t("You're all caught up")}
             </p>
           </div>
@@ -578,22 +786,30 @@ const NotificationCenter: React.FC = () => {
       </div>
 
       {/* ── Footer ── */}
-      {notifications.length > 0 && (
-        <div
-          className="p-[9px_18px]! [border-top:1px_solid_var(--border-color,_var(--color-ink-200))]! bg-[color:var(--bg-hover,_var(--color-ink-50))]! text-[length:0.74rem]! text-[color:var(--text-secondary,_var(--color-ink-500))]! font-medium! flex! justify-between! items-center!"
+      <div className="p-2.5 px-4.5 border-t border-border bg-ink-50/60 text-xs text-text-secondary font-medium flex justify-between items-center">
+        <span className={cn("font-semibold", (unreadCount > 0 || systemAlerts.length > 0) && "text-brand-700")}>
+          {systemAlerts.length} {t("alerts")} · {unreadCount} {t("unread")}
+        </span>
+        <button
+          type="button"
+          onClick={() => {
+            fetchNotifications({ announce: false });
+            fetchSystemAlerts();
+            toast.info(t("Refreshed alerts & notifications"));
+          }}
+          className="text-xs text-brand-600 hover:text-brand-800 bg-transparent border-none cursor-pointer font-medium p-0"
         >
-          <span className={`[font-weight:600]! ${hasUnread ? "[color:var(--color-legacy-ea580c)]!" : "[color:inherit]!"}`}>
-            {unreadCount}{" "}{t("unread")}
-          </span>
-          <span>{t("Showing")}{" "}{notifications.length}{" "}{t("notifications")}</span>
-        </div>
-      )}
+          {t("Refresh")}
+        </button>
+      </div>
     </div>
   );
 
+  const totalBadgeCount = unreadCount + systemAlerts.length;
+
   return (
     <div ref={dropdownRef} className="relative!">
-      <BellButton count={unreadCount} onClick={() => setIsOpen((o) => !o)} />
+      <BellButton count={totalBadgeCount} onClick={() => setIsOpen((o) => !o)} />
 
       {isOpen && typeof document !== "undefined" && createPortal(trayPanel, document.body)}
 

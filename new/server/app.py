@@ -77,7 +77,9 @@ try:
 except ValueError:
     raise ValueError("TRUSTED_PROXIES must be the number of reverse proxies in front of the app (e.g. 1)")
 if not _proxy_hops and (os.environ.get("USE_PROXY_FIX", "").lower() == "true"
-                        or os.environ.get("BEHIND_PROXY", "").lower() == "true"):
+                        or os.environ.get("BEHIND_PROXY", "").lower() == "true"
+                        or os.environ.get("FLASK_ENV") == "development"
+                        or not app.config.get("IS_PRODUCTION", False)):
     _proxy_hops = 1
 if _proxy_hops:
     from werkzeug.middleware.proxy_fix import ProxyFix
@@ -356,6 +358,30 @@ def not_found_error(error):
         404,
     )
 
+
+
+@app.errorhandler(429)
+def handle_rate_limit_lockout(e):
+    from flask import request, jsonify
+    if request.path.endswith("/login"):
+        try:
+            data = request.get_json(silent=True) or {}
+            email = str(data.get("email", "")).strip()[:120]
+            from utils import log_activity_and_notify
+            log_activity_and_notify(
+                action="ACCOUNT_LOCKED",
+                record_id="",
+                user=email or "Unknown User",
+                request=request,
+                entity="User",
+                details=f"Account locked / rate limit exceeded after repeated failed sign-in attempts: {email or 'unknown'}",
+            )
+            db.session.commit()
+        except Exception as audit_err:
+            db.session.rollback()
+            app.logger.error(f"Audit Log Error on lockout: {audit_err}")
+    desc = getattr(e, "description", None) or "Too many requests. Please try again later."
+    return jsonify({"error": desc}), 429
 
 @app.errorhandler(413)
 def too_large_error(error):

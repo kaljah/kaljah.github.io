@@ -132,6 +132,34 @@ def compute_facility_ogmp_level(
             except Exception:
                 pass
 
+    if reconciled_survey is None and facility is not None:
+        try:
+            from flask import has_app_context
+            if has_app_context():
+                from models import OgmpSurvey
+                sq = OgmpSurvey.query.filter_by(facility_id=facility.id)
+                if year and year != "all" and str(year).isdigit():
+                    sq = sq.filter_by(year=int(year))
+                surveys = sq.all()
+                if surveys:
+                    has_discrepancy = any(
+                        (s.reconciliation_status or "").lower() == "discrepancy detected"
+                        or s.variance_flag is True
+                        or (s.variance_pct is not None and abs(s.variance_pct) > threshold)
+                        or (float(s.bottom_up_tch4 or 0.0) == 0.0 and float(s.estimated_annual_tch4 or 0.0) > 0.0)
+                        for s in surveys
+                    )
+                    has_reconciled = any(
+                        (s.reconciliation_status or "").lower() == "reconciled" and not s.variance_flag
+                        for s in surveys
+                    )
+                    if has_discrepancy or not has_reconciled:
+                        reconciled_survey = False
+                    else:
+                        reconciled_survey = True
+        except Exception:
+            pass
+
     if td > 0 and bu > 0:
         variance_pct = abs((td - bu) / bu * 100.0)
         # Check if reconciled within threshold

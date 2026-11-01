@@ -69,41 +69,46 @@ export const RecordTable: React.FC<RecordTableProps> = ({
   colSpan,
   footer,
   className,
-}) => (
-  <div className={cn("table-container mt-10", className)}>
-    {title && <h3 className="m-0 mb-3 text-lg font-semibold text-text">{title}</h3>}
-    {/* Focusable so keyboard users can scroll a wide table (axe scrollable-region-focusable). */}
-    <div
-      className="overflow-x-auto rounded-md border border-border"
-      tabIndex={0}
-      role="region"
-      aria-label={typeof title === "string" ? title : t("Records")}
-    >
-      <table className="data-table w-full border-collapse text-base">
-        <thead>
-          <tr>
-            {head.map((h, i) => (
-              <th key={i} scope="col" className="whitespace-nowrap border-b border-border bg-ink-50 px-4 py-3 text-left text-sm font-semibold text-text-secondary">
-                {h}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {children}
-          {empty && (
+}) => {
+  const hasRows = React.Children.toArray(children).length > 0;
+
+  return (
+    <div className={cn("table-container mt-10", className)}>
+      {title && <h3 className="m-0 mb-3 text-lg font-semibold text-text">{title}</h3>}
+      {/* Focusable so keyboard users can scroll a wide table (axe scrollable-region-focusable). */}
+      <div
+        className="overflow-x-auto rounded-md border border-border"
+        tabIndex={0}
+        role="region"
+        aria-label={typeof title === "string" ? title : t("Records")}
+      >
+        <table className="data-table w-full border-collapse text-base">
+          <thead>
             <tr>
-              <td colSpan={colSpan || head.length} className="p-10 text-center text-text-secondary">
-                {empty}
-              </td>
+              {head.map((h, i) => (
+                <th key={i} scope="col" className="whitespace-nowrap border-b border-border bg-ink-50 px-4 py-3 text-left text-sm font-semibold text-text-secondary">
+                  {h}
+                </th>
+              ))}
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {hasRows ? (
+              children
+            ) : empty ? (
+              <tr>
+                <td colSpan={colSpan || head.length} className="p-10 text-center text-text-secondary">
+                  {empty}
+                </td>
+              </tr>
+            ) : null}
+          </tbody>
+        </table>
+      </div>
+      {footer}
     </div>
-    {footer}
-  </div>
-);
+  );
+};
 
 /** Table body row and cell with the shared spacing. */
 export const Tr: React.FC<React.HTMLAttributes<HTMLTableRowElement>> = ({ className, ...props }) => (

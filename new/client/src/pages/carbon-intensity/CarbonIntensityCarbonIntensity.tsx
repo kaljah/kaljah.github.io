@@ -148,7 +148,7 @@ const CarbonIntensityCarbonIntensity: React.FC<CarbonIntensityCarbonIntensityPro
         <ProdItem bordered={false} label={t("Total Oil Production")} value={`${formatNumber(stats.totalOilProduction, 0)} bbl`} />
         <ProdItem label={t("Total Gas Production")} value={`${formatNumber(stats.totalGasProduction, 0)} mscf`} />
         <ProdItem label={t("Combined Production (BOE)")} value={`${formatNumber(stats.totalBoe, 0)} BOE`} accent="text-link" />
-        <ProdItem label={t("Total Gas Flared")} value={`${formatNumber(stats.totalFlaringVolume, 0)} m³`} accent="text-brand-600" />
+        <ProdItem label={t("Total Flared Gas (Decree 21-330 Streams)")} value={`${formatNumber(stats.totalFlaringVolume, 0)} m³`} accent="text-brand-600" />
       </ProdBar>
     </HeroPanel>
   );

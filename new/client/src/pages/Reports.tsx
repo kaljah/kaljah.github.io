@@ -1,4 +1,4 @@
-import { ChevronDown, Download, FilePlus, FileSpreadsheet, FileText, FileCode, Funnel, Pencil, Plus, RotateCcw, Search, ShieldCheck, SlidersHorizontal, Table, Sparkles, Globe, Building2 } from "lucide-react";
+import { CheckCircle2, ChevronDown, Download, FilePlus, FileSpreadsheet, FileText, FileCode, Funnel, Pencil, Plus, RotateCcw, Search, SlidersHorizontal, Table, Sparkles, Globe, Building2 } from "lucide-react";
 import { NativeSelect } from "../ui/NativeSelect";
 import { Badge, Button, Card, CardHeader, DataTable, Dialog, Field, Input, Menu, MenuContent, MenuItem, MenuTrigger, Page, PageHeader, StatusPill, Textarea, cn, type BadgeTone } from "../ui";
 import { controlClass } from "../components/import-wizard/mapping";
@@ -14,6 +14,7 @@ import { getUserOperationalDefaults } from "../utils/userDefaults";
 import { getActiveGwpFactors } from "../constants";
 import { apiError } from "../utils/apiError";
 import { useGwpStandard } from "../hooks/useGwpStandard";
+import { ReportsNavTabs } from "../components/NavigationTabs";
 import type { ColumnDef } from "@tanstack/react-table";
 import { t as tr } from "../i18n";
 
@@ -178,7 +179,7 @@ const Reports: React.FC = () => {
   const [totalRecords, setTotalRecords] = useState<number>(0);
 
   const [scope, setScope] = useState<string>(deepLink.scope || "all");
-  // record statuses the regulatory exports (Décret 21-330, CBAM) cover; Verified only by default
+  // record statuses exports cover; Verified only by default
   const [exportStatus, setExportStatus] = useState<string>("Verified");
   const [showAdvancedFilters, setShowAdvancedFilters] = useState<boolean>(false);
 
@@ -193,6 +194,7 @@ const Reports: React.FC = () => {
     setDivision("all");
     setField("all");
     setMethodFilter("all");
+    setExportStatus("Verified");
     setGroupBy("none");
     setComparisonYear("none");
     setSearchTerm("");
@@ -266,6 +268,7 @@ const Reports: React.FC = () => {
     division,
     field,
     methodFilter,
+    exportStatus,
     search: debouncedSearch,
   });
   useEffect(() => {
@@ -279,6 +282,7 @@ const Reports: React.FC = () => {
       prev.division !== division ||
       prev.field !== field ||
       prev.methodFilter !== methodFilter ||
+      prev.exportStatus !== exportStatus ||
       prev.search !== debouncedSearch;
     prevFiltersRef.current = {
       year,
@@ -289,6 +293,7 @@ const Reports: React.FC = () => {
       division,
       field,
       methodFilter,
+      exportStatus,
       search: debouncedSearch,
     };
     if (filterChanged && page !== 1) {
@@ -305,6 +310,7 @@ const Reports: React.FC = () => {
     division,
     field,
     methodFilter,
+    exportStatus,
     page,
     debouncedSearch,
   ]);
@@ -325,6 +331,7 @@ const Reports: React.FC = () => {
       ...(field !== "all" && { field: field }),
       ...(methodFilter !== "all" && { method: methodFilter }),
       ...(processType !== "all" && { process_type: processType }),
+      ...(exportStatus !== "all" && { status: exportStatus }),
       ...(debouncedSearch && { search: debouncedSearch }),
     };
   };
@@ -363,6 +370,7 @@ const Reports: React.FC = () => {
     try {
       const params = {
         ...buildFilterParams(),
+        status: "Verified", // Permanent restriction: executive exports cover verified records only
         format: "excel",
       };
 
@@ -392,7 +400,9 @@ const Reports: React.FC = () => {
 
   const handlePDFExport = async () => {
     try {
-      const params = new URLSearchParams(buildFilterParams());
+      const filterParams = buildFilterParams();
+      filterParams.status = "Verified"; // Permanent restriction: official PDF report contains verified records only
+      const params = new URLSearchParams(filterParams);
 
       const response = await api.get(`/reports/export?${params.toString()}`, {
         responseType: "blob",
@@ -426,7 +436,7 @@ const Reports: React.FC = () => {
         year !== "all" ? year : reportYear !== "all" ? reportYear
           : String(availableFilters.years[0] || new Date().getFullYear()); // latest year with data (was always 2024)
       const response = await api.get("/reports/ogmp-export", {
-        params: { year: yr, ...(regionId !== "all" && { facility_id: regionId }) },
+        params: { year: yr, status: "Verified", ...(regionId !== "all" && { facility_id: regionId }) },
         responseType: "blob",
       });
       const url = window.URL.createObjectURL(
@@ -458,7 +468,7 @@ const Reports: React.FC = () => {
         year !== "all" ? year : reportYear !== "all" ? reportYear
           : String(availableFilters.years[0] || new Date().getFullYear());
       const response = await api.get("/reports/cbam-export", {
-        params: { year: yr, format, status: exportStatus, ...(regionId !== "all" && { facility_id: regionId }) },
+        params: { year: yr, format, status: "Verified", ...(regionId !== "all" && { facility_id: regionId }) },
         responseType: "blob",
       });
       const mime = isXml ? "application/xml" : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
@@ -483,12 +493,12 @@ const Reports: React.FC = () => {
 
   const handleNationalInventoryExport = async () => {
     try {
-      toast.info(tr("Generating Décret 21-330 / ISO 14064-1 Official Excel Template..."));
+      toast.info(tr("Generating National Inventory Official Excel Template..."));
       const yr =
         year !== "all" ? year : reportYear !== "all" ? reportYear
           : String(availableFilters.years[0] || new Date().getFullYear());
       const response = await api.get("/reports/national-inventory-export", {
-        params: { year: yr, status: exportStatus, ...(regionId !== "all" && { facility_id: regionId }) },
+        params: { year: yr, status: "Verified", ...(regionId !== "all" && { facility_id: regionId }) },
         responseType: "blob",
       });
       const url = window.URL.createObjectURL(
@@ -498,17 +508,17 @@ const Reports: React.FC = () => {
       );
       const link = document.createElement("a");
       link.href = url;
-      link.download = `Inventaire_National_Decret_21-330_ISO_14064-1_${yr}.xlsx`;
+      link.download = `Inventaire_National_${yr}.xlsx`;
       document.body.appendChild(link);
       link.click();
       setTimeout(() => {
         link.remove();
         window.URL.revokeObjectURL(url);
       }, 1000);
-      toast.success(tr("Décret 21-330 Excel report for {{year}} downloaded successfully!", { year: yr }));
+      toast.success(tr("National inventory report for {{year}} downloaded successfully!", { year: yr }));
     } catch (error) {
       console.error("National inventory export failed:", error);
-      toast.error(tr("Failed to export Décret 21-330 inventory report."));
+      toast.error(tr("Failed to export national inventory report."));
     }
   };
 
@@ -595,6 +605,7 @@ const Reports: React.FC = () => {
     division !== "all" ||
     field !== "all" ||
     methodFilter !== "all" ||
+    exportStatus !== "Verified" ||
     groupBy !== "none" ||
     comparisonYear !== "none" ||
     searchTerm.trim() !== "" ||
@@ -659,7 +670,7 @@ const Reports: React.FC = () => {
 
   const handleISOReportWrapper = async () => {
     setLoading(true);
-    toast.info(tr("Generating ISO 14064-1 Report..."));
+    toast.info(tr("Generating GHG Inventory Report..."));
     try {
       const { generateModernPDF } = await import("../utils/ModernReportGenerator");
 
@@ -686,54 +697,6 @@ const Reports: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const REGION_INTEL: Record<string, { basin: string; operator: string; highlights: string }> = {
-    hmd: {
-      basin: "Triassic / Hassi Messaoud-Berkine Basin",
-      operator: "Sonatrach E&P (100% Operated)",
-      highlights: "Zone Ra/R2 Cambro-Ordovician sandstone, 14 gathering centers, FGR recovery loops.",
-    },
-    hrm: {
-      basin: "Triassic / Tilrhemt Dome (Laghouat)",
-      operator: "Sonatrach E&P / Gas Division",
-      highlights: "World-class TAGI sandstone gas-condensate field, Boosting Phase III Stage II compression.",
-    },
-    rns: {
-      basin: "Illizi Basin (Paleozoic Ordovician/Devonian)",
-      operator: "Sonatrach E&P",
-      highlights: "Sour gas sweetening, DEA amine absorption, Claus sulfur recovery, ZRF flaring minimization.",
-    },
-    in_amenas: {
-      basin: "Illizi Basin (Tiguentourine, Hassi Farida)",
-      operator: "Groupement In Amenas (Sonatrach / Eni / Equinor)",
-      highlights: "Wet gas condensate recovery, LDAR OGI optical imaging, Decree 21-330 compliance.",
-    },
-    in_salah: {
-      basin: "Ahnet-Gourara & Krechba Basins",
-      operator: "In Salah Gas (Sonatrach / Eni)",
-      highlights: "Pioneering Krechba industrial CCUS deep saline aquifer CO2 storage (850 ktCO2e/yr).",
-    },
-    tft: {
-      basin: "Illizi Basin (Tin Fouye Tabankort)",
-      operator: "Groupement TFT (Sonatrach / TotalEnergies / Repsol)",
-      highlights: "Devonian/Ordovician gas-oil CPF, low-pressure boosting, flare gas recovery compressors.",
-    },
-    berkine: {
-      basin: "Ghadames / Berkine Basin (Block 404 & 208)",
-      operator: "Groupement Berkine (Sonatrach / Oxy / Eni / Total)",
-      highlights: "HBNS CPF, El Merk mega-facility, multi-stage vapor recovery, high deliverability TAGI.",
-    },
-    skikda: {
-      basin: "Mediterranean Coastal Petrochemical Hub",
-      operator: "Sonatrach Refining & Petrochemicals",
-      highlights: "RA1K refinery (16.5 MT/yr), GL1K LNG liquefaction complex, EU CBAM carbon readiness.",
-    },
-    arzew: {
-      basin: "Mediterranean Coastal Refining & LNG Hub",
-      operator: "Sonatrach Downstream & Fertilizer JVs",
-      highlights: "GL1Z / GL2Z LNG complexes, RA1Z refinery, Sorfert / Fertial ammonia synthesis, BOG recovery.",
-    },
   };
 
   const handleDownloadMasterReport = async () => {
@@ -841,6 +804,7 @@ const Reports: React.FC = () => {
     <Page className="reports-page max-w-[1600px]">
       <PageHeader
         title={tr("Reports")}
+        tabs={<ReportsNavTabs />}
         description={
           <>
             {tr("Emission database and exports. Complete history of all recorded emissions and compliance data.")}{" "}
@@ -855,17 +819,10 @@ const Reports: React.FC = () => {
               <RotateCcw className="size-4" aria-hidden="true" />
               {tr("Reset filters")}
             </Button>
-            <NativeSelect
-              className={controlClass}
-              aria-label={tr("Records included in regulatory exports")}
-              title={tr("Records included in the Décret 21-330 and CBAM exports")}
-              value={exportStatus}
-              onChange={(e) => setExportStatus(e.target.value)}
-            >
-              <option value="Verified">{tr("Verified records only")}</option>
-              <option value="Verified,Pending">{tr("Verified and pending records")}</option>
-              <option value="all">{tr("All records (any status)")}</option>
-            </NativeSelect>
+            <div className="flex items-center gap-1.5 rounded-md border border-green-200 bg-green-50 px-3 py-1.5 text-xs font-semibold text-green-700">
+              <CheckCircle2 className="size-3.5" aria-hidden="true" />
+              <span>{tr("Executive Exports: Verified Only")}</span>
+            </div>
             <Menu>
               <MenuTrigger asChild>
                 <Button>
@@ -876,7 +833,7 @@ const Reports: React.FC = () => {
               </MenuTrigger>
               <MenuContent>
                 <MenuItem icon={FileSpreadsheet} onSelect={handleNationalInventoryExport}>
-                  {tr("Décret 21-330 / ISO 14064-1 (Excel)")}
+                  {tr("Regional Master Inventory (Excel)")}
                 </MenuItem>
                 <MenuItem icon={FileSpreadsheet} onSelect={handleOGMPExport}>
                   {tr("OGMP 2.0 (Excel)")}
@@ -899,107 +856,22 @@ const Reports: React.FC = () => {
         }
       />
 
-      {/* 1-Click Regulatory Compliance Presets Hub */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {/* ISO 14064-1 Card */}
-        <Card className="flex flex-col justify-between border-t-2 border-t-brand-500 p-5 shadow-xs transition-shadow hover:shadow-md">
-          <div className="flex flex-col gap-2.5">
-            <div className="flex items-center justify-between">
-              <span className="flex size-9 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
-                <FileText className="size-5" aria-hidden="true" />
-              </span>
-              <Badge tone="brand">{tr("ISO 14064-1")}</Badge>
-            </div>
-            <div>
-              <h3 className="m-0 text-base font-bold text-text">{tr("Corporate Inventory")}</h3>
-              <p className="m-0 mt-1 text-xs text-text-secondary leading-relaxed">
-                {tr("Comprehensive inventory across Scope 1, 2, and 3 compliant with ISO verification requirements.")}
-              </p>
-            </div>
-          </div>
-          <div className="mt-4 pt-3 border-t border-border flex flex-col gap-2">
-            <Button size="sm" variant="secondary" className="w-full justify-center gap-1.5" onClick={handleNationalInventoryExport}>
-              <Download className="size-3.5" aria-hidden="true" />
-              {tr("Export Décret 21-330 Excel")}
-            </Button>
-            <Button size="sm" variant="ghost" className="w-full justify-center gap-1.5" onClick={openConfigModal}>
-              <Plus className="size-3.5" aria-hidden="true" />
-              {tr("Configure ISO Report")}
-            </Button>
-          </div>
-        </Card>
-
-        {/* OGMP 2.0 Card */}
-        <Card className="flex flex-col justify-between border-t-2 border-t-blue-500 p-5 shadow-xs transition-shadow hover:shadow-md">
-          <div className="flex flex-col gap-2.5">
-            <div className="flex items-center justify-between">
-              <span className="flex size-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
-                <FileSpreadsheet className="size-5" aria-hidden="true" />
-              </span>
-              <Badge tone="info">{tr("UNEP / IMEO")}</Badge>
-            </div>
-            <div>
-              <h3 className="m-0 text-base font-bold text-text">{tr("OGMP 2.0 Workbook")}</h3>
-              <p className="m-0 mt-1 text-xs text-text-secondary leading-relaxed">
-                {tr("Methane emissions workbook formatted for Gold Standard compliance and level 4/5 reporting.")}
-              </p>
-            </div>
-          </div>
-          <div className="mt-4 pt-3 border-t border-border">
-            <Button size="sm" variant="secondary" className="w-full justify-center gap-1.5" onClick={handleOGMPExport}>
-              <Download className="size-3.5" aria-hidden="true" />
-              {tr("Export OGMP Excel")}
-            </Button>
-          </div>
-        </Card>
-
-        {/* Raw Activity Ledger Card */}
-        <Card className="flex flex-col justify-between border-t-2 border-t-emerald-500 p-5 shadow-xs transition-shadow hover:shadow-md">
-          <div className="flex flex-col gap-2.5">
-            <div className="flex items-center justify-between">
-              <span className="flex size-9 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
-                <Table className="size-5" aria-hidden="true" />
-              </span>
-              <Badge tone="success">{tr("Full Ledger")}</Badge>
-            </div>
-            <div>
-              <h3 className="m-0 text-base font-bold text-text">{tr("Activity Data Ledger")}</h3>
-              <p className="m-0 mt-1 text-xs text-text-secondary leading-relaxed">
-                {tr("Complete granular ledger export for third-party auditing, verification, and data science teams.")}
-              </p>
-            </div>
-          </div>
-          <div className="mt-4 pt-3 border-t border-border">
-            <Button size="sm" variant="secondary" className="w-full justify-center gap-1.5" onClick={handleExcelExport}>
-              <Download className="size-3.5" aria-hidden="true" />
-              {tr("Export Full Ledger")}
-            </Button>
-          </div>
-        </Card>
-      </div>
-
-      {/* Executive Master Report & Intelligence Studio */}
-      <Card className="flex flex-col gap-5 p-6 shadow-card border border-brand-200/60 dark:border-slate-800 bg-gradient-to-b from-surface via-surface to-brand-50/20">
-        {/* Studio Header */}
+      {/* Regional Asset Master Report Wizard */}
+      <Card className="flex flex-col gap-5 p-6 shadow-card border border-border border-t-2 border-t-brand-500 bg-surface">
+        {/* Wizard Header */}
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border/80 pb-4">
           <div className="flex items-center gap-3.5">
-            <span className="flex size-11 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-amber-600 text-white shadow-sm ring-2 ring-brand-200/50">
+            <span className="flex size-11 items-center justify-center rounded-xl bg-brand-600 text-white shadow-xs">
               <Sparkles className="size-5" aria-hidden="true" />
             </span>
             <div>
               <div className="flex items-center gap-2.5 flex-wrap">
                 <h2 className="m-0 text-lg font-bold text-text tracking-tight">
-                  {tr("Executive Master Report & Intelligence Studio")}
+                  {tr("Regional Asset Master Report Wizard")}
                 </h2>
-                <Badge tone="brand" className="text-2xs font-semibold px-2 py-0.5">
-                  {tr("300 DPI // Vector Publication Grade")}
-                </Badge>
-                <Badge tone="success" className="text-2xs font-semibold px-2 py-0.5">
-                  {tr("ISO 14064-1 & Décret 21-330")}
-                </Badge>
               </div>
               <p className="m-0 mt-1 text-xs text-text-secondary max-w-3xl leading-relaxed">
-                {tr("Synthesizes multi-year greenhouse gas inventories, production statistics, and criteria air pollutants into audit-certified executive publication reports and cross-basin benchmark league tables.")}
+                {tr("Configure and generate executive regional asset reports synthesizing multi-year greenhouse gas inventories, production statistics, and emission performance.")}
               </p>
             </div>
           </div>
@@ -1009,7 +881,7 @@ const Reports: React.FC = () => {
               variant="ghost"
               size="sm"
               onClick={openConfigModal}
-              className="gap-1.5 text-xs text-text-secondary hover:text-text"
+              className="gap-1.5 text-xs text-text-secondary hover:text-text cursor-pointer"
             >
               <SlidersHorizontal className="size-3.5" aria-hidden="true" />
               <span>{tr("Custom Scope Parameters")}</span>
@@ -1017,88 +889,24 @@ const Reports: React.FC = () => {
           </div>
         </div>
 
-        {/* Mode Selector Segmented Tabs */}
-        <div className="flex flex-col gap-2">
-          <label className="text-xs font-semibold text-text-secondary uppercase tracking-wider">
-            {tr("Select Publication Scope & Architecture:")}
-          </label>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 p-1 bg-slate-100/80 dark:bg-slate-900/60 rounded-xl border border-border/60">
-            <button
-              type="button"
-              onClick={() => setMasterMode("regional")}
-              className={cn(
-                "flex items-center justify-center gap-2.5 py-2.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer border-0",
-                masterMode === "regional"
-                  ? "bg-brand-600 text-white shadow-sm ring-1 ring-brand-600"
-                  : "bg-transparent text-text-secondary hover:text-text hover:bg-surface/60"
-              )}
-            >
-              <Building2 className="size-4" />
-              <span>{tr("Regional Asset Master Report")}</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setMasterMode("national")}
-              className={cn(
-                "flex items-center justify-center gap-2.5 py-2.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer border-0",
-                masterMode === "national"
-                  ? "bg-brand-600 text-white shadow-sm ring-1 ring-brand-600"
-                  : "bg-transparent text-text-secondary hover:text-text hover:bg-surface/60"
-              )}
-            >
-              <Globe className="size-4" />
-              <span>{tr("Consolidated Sonatrach Group")}</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setMasterMode("comparison")}
-              className={cn(
-                "flex items-center justify-center gap-2.5 py-2.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer border-0",
-                masterMode === "comparison"
-                  ? "bg-brand-600 text-white shadow-sm ring-1 ring-brand-600"
-                  : "bg-transparent text-text-secondary hover:text-text hover:bg-surface/60"
-              )}
-            >
-              <Table className="size-4" />
-              <span>{tr("Cross-Basin Benchmark League")}</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Studio Parameters Configuration Grid */}
-        <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(200px,1fr))] items-end">
+        {/* Wizard Parameters Configuration Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3.5 items-end">
           {/* Target Asset or Basin */}
-          <div className="flex flex-col gap-1.5 [grid-column:span_2] max-[640px]:[grid-column:auto]">
+          <div className="flex flex-col gap-1.5 sm:col-span-2">
             <label className="text-xs font-semibold text-text-secondary">
-              {masterMode === "regional"
-                ? tr("Target Regional Asset / Basin *")
-                : masterMode === "national"
-                ? tr("Corporate Entity Scope")
-                : tr("Benchmarked Basins")}
+              {tr("Target Regional Asset / Basin *")}
             </label>
-            {masterMode === "regional" ? (
-              <NativeSelect
-                className={controlClass}
-                value={masterRegion}
-                onChange={(e) => setMasterRegion(e.target.value)}
-              >
-                {availableRegions.map((r: any) => (
-                  <option key={r.key} value={r.key}>
-                    {r.name} ({r.segment || "Upstream"} • {r.facility_count || 1} {tr("facilities")})
-                  </option>
-                ))}
-              </NativeSelect>
-            ) : masterMode === "national" ? (
-              <div className="h-9 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-800/80 border border-border text-xs font-medium text-text flex items-center gap-2">
-                <Globe className="size-3.5 text-brand-600" />
-                <span>{tr("National Hydrocarbon Estate (All 26 Production & Refining Facilities)")}</span>
-              </div>
-            ) : (
-              <div className="h-9 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-800/80 border border-border text-xs font-medium text-text flex items-center gap-2">
-                <Table className="size-3.5 text-brand-600" />
-                <span>{tr("All 9 Hydrocarbon Basins & Coastal Corridors (Side-by-Side Comparison)")}</span>
-              </div>
-            )}
+            <NativeSelect
+              className={controlClass}
+              value={masterRegion}
+              onChange={(e) => setMasterRegion(e.target.value)}
+            >
+              {availableRegions.map((r: any) => (
+                <option key={r.key} value={r.key}>
+                  {r.name} ({r.segment || "Upstream"} • {r.facility_count || 1} {tr("facilities")})
+                </option>
+              ))}
+            </NativeSelect>
           </div>
 
           {/* Timeline: Start Year */}
@@ -1145,67 +953,6 @@ const Reports: React.FC = () => {
           )}
         </div>
 
-        {/* Live Operational & Geological Intelligence Snapshot */}
-        <div className="rounded-xl border border-brand-200/80 dark:border-slate-800 bg-brand-50/40 dark:bg-slate-900/40 p-4 transition-all">
-          <div className="flex items-center gap-2 mb-2 text-xs font-bold text-brand-700 dark:text-brand-400">
-            <ShieldCheck className="size-4" />
-            <span>{tr("Authentic Regional Profile & Statutory Alignment Snapshot:")}</span>
-          </div>
-
-          {masterMode === "regional" ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-              <div className="flex flex-col gap-0.5">
-                <span className="text-2xs font-bold uppercase tracking-wider text-text-secondary">{tr("Sedimentary Basin:")}</span>
-                <span className="font-semibold text-text">{REGION_INTEL[masterRegion]?.basin || tr("Algerian Saharan Basin")}</span>
-              </div>
-              <div className="flex flex-col gap-0.5">
-                <span className="text-2xs font-bold uppercase tracking-wider text-text-secondary">{tr("Operating Unit:")}</span>
-                <span className="font-semibold text-text">{REGION_INTEL[masterRegion]?.operator || tr("Société Nationale Sonatrach")}</span>
-              </div>
-              <div className="flex flex-col gap-0.5">
-                <span className="text-2xs font-bold uppercase tracking-wider text-text-secondary">{tr("Decree 21-330 Flaring Cap:")}</span>
-                <span className="font-semibold text-emerald-600 dark:text-emerald-400">
-                  {tr("Mandated Threshold <= 1.00% (Article 9)")}
-                </span>
-              </div>
-              <div className="md:col-span-3 pt-1 text-2xs text-text-secondary border-t border-brand-200/40">
-                <span className="font-semibold text-text">{tr("Geological & Technical Architecture:")} </span>
-                {REGION_INTEL[masterRegion]?.highlights || tr("Cambro-Ordovician and Triassic reservoir formations connected via multi-facility gathering.")}
-              </div>
-            </div>
-          ) : masterMode === "national" ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-              <div className="flex flex-col gap-0.5">
-                <span className="text-2xs font-bold uppercase tracking-wider text-text-secondary">{tr("National Estate:")}</span>
-                <span className="font-semibold text-text">{tr("Over 20,000 km pipelines, 5 CPFs, 6 gas complexes, 4 LNG hubs")}</span>
-              </div>
-              <div className="flex flex-col gap-0.5">
-                <span className="text-2xs font-bold uppercase tracking-wider text-text-secondary">{tr("Mandate & Standard:")}</span>
-                <span className="font-semibold text-text">{tr("ISO 14064-1:2018 / Décret 21-330 / Décret 06-138 / OGMP 2.0")}</span>
-              </div>
-              <div className="flex flex-col gap-0.5">
-                <span className="text-2xs font-bold uppercase tracking-wider text-text-secondary">{tr("Climate Roadmap:")}</span>
-                <span className="font-semibold text-emerald-600 dark:text-emerald-400">{tr("World Bank Zero Routine Flaring by 2030")}</span>
-              </div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-              <div className="flex flex-col gap-0.5">
-                <span className="text-2xs font-bold uppercase tracking-wider text-text-secondary">{tr("League Scope:")}</span>
-                <span className="font-semibold text-text">{tr("Cross-basin comparative ranking across 9 producing and coastal corridors")}</span>
-              </div>
-              <div className="flex flex-col gap-0.5">
-                <span className="text-2xs font-bold uppercase tracking-wider text-text-secondary">{tr("Key Performance Indicators:")}</span>
-                <span className="font-semibold text-text">{tr("kg CO2e/BOE, Flaring % vs Decree 21-330, and NGSI Methane wt.%")}</span>
-              </div>
-              <div className="flex flex-col gap-0.5">
-                <span className="text-2xs font-bold uppercase tracking-wider text-text-secondary">{tr("Deliverables:")}</span>
-                <span className="font-semibold text-brand-600 dark:text-brand-400">{tr("300 DPI Vector League Charts + Multi-Tab Audit Matrix")}</span>
-              </div>
-            </div>
-          )}
-        </div>
-
         {/* Action Controls Footer */}
         <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-border/80">
           <div className="flex items-center gap-2 text-2xs text-text-secondary">
@@ -1219,10 +966,10 @@ const Reports: React.FC = () => {
               onClick={handleDownloadBenchmarkExcel}
               loading={masterExcelLoading}
               disabled={masterExcelLoading || masterLoading}
-              className="gap-2 shadow-2xs font-semibold"
+              className="gap-2 shadow-2xs font-semibold cursor-pointer"
             >
               <FileSpreadsheet className="size-4 text-emerald-600" aria-hidden="true" />
-              <span>{masterExcelLoading ? tr("Exporting Excel...") : tr("Export Benchmark (Excel)")}</span>
+              <span>{masterExcelLoading ? tr("Exporting Excel...") : tr("Export Regional Inventory (Excel)")}</span>
             </Button>
 
             <Button
@@ -1230,17 +977,13 @@ const Reports: React.FC = () => {
               onClick={handleDownloadMasterReport}
               loading={masterLoading}
               disabled={masterLoading || masterExcelLoading}
-              className="gap-2 shadow-sm font-bold bg-brand-600 hover:bg-brand-700 text-white"
+              className="gap-2 shadow-sm font-bold bg-brand-600 hover:bg-brand-700 text-white cursor-pointer"
             >
               <Download className="size-4" aria-hidden="true" />
               <span>
                 {masterLoading
-                  ? tr("Compiling 300 DPI Publication...")
-                  : masterMode === "regional"
-                  ? tr("Download Regional Master (PDF)")
-                  : masterMode === "national"
-                  ? tr("Download Consolidated Master (PDF)")
-                  : tr("Download Cross-Basin Benchmark (PDF)")}
+                  ? tr("Compiling Publication...")
+                  : tr("Download Regional Master Report (PDF)")}
               </span>
             </Button>
           </div>
@@ -1263,9 +1006,14 @@ const Reports: React.FC = () => {
                 <Badge tone="neutral" className="text-xs font-semibold">
                   {tr("{{count}} total records", { count: totalRecords })}
                 </Badge>
-                {emissions.length > 0 && emissions.length !== totalRecords && (
-                  <Badge tone="brand" className="text-xs font-medium">
-                    {tr("{{count}} filtered", { count: emissions.length })}
+                {exportStatus !== "all" && (
+                  <Badge tone={exportStatus === "Verified" ? "success" : "warning"} className="text-xs font-medium">
+                    {exportStatus === "Verified" ? tr("Verified only") : tr("Verified & Pending")}
+                  </Badge>
+                )}
+                {hasActiveFilters && (
+                  <Badge tone="neutral" className="text-xs font-medium">
+                    {tr("Filtered view")}
                   </Badge>
                 )}
               </div>
@@ -1367,6 +1115,17 @@ const Reports: React.FC = () => {
                     {f.name} {f.region ? ` (${f.region})` : f.field ? ` - ${f.field}` : ""}
                   </option>
                 ))}
+              </>,
+            )}
+
+            {selectBase(
+              tr("Status / Assurance"),
+              exportStatus,
+              (e) => setExportStatus(e.target.value),
+              <>
+                <option value="Verified">{tr("Verified records only")}</option>
+                <option value="Verified,Pending">{tr("Verified & Pending")}</option>
+                <option value="all">{tr("All records (any status)")}</option>
               </>,
             )}
 
@@ -1540,6 +1299,12 @@ const Reports: React.FC = () => {
                   <button type="button" onClick={() => setMethodFilter("all")} className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
                 </Badge>
               )}
+              {exportStatus !== "Verified" && (
+                <Badge tone="warning" className="gap-1 text-xs py-0.5">
+                  {tr("Status: {{status}}", { status: exportStatus === "all" ? tr("All") : exportStatus })}
+                  <button type="button" onClick={() => setExportStatus("Verified")} className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
+                </Badge>
+              )}
               {groupBy !== "none" && (
                 <Badge tone="neutral" className="gap-1 text-xs py-0.5">
                   {tr("Group: {{group}}", { group: groupBy })}
@@ -1654,7 +1419,7 @@ const Reports: React.FC = () => {
               {tr("Cancel")}
             </Button>
             <Button onClick={handleGenerateModalReport} loading={loading} disabled={loading}>
-              {loading ? tr("Generating...") : tr("Generate ISO PDF")}
+              {loading ? tr("Generating...") : tr("Generate Executive PDF")}
             </Button>
           </>
         }
@@ -1662,7 +1427,7 @@ const Reports: React.FC = () => {
         <div className="flex flex-col gap-4">
           {/* Active Configuration Summary Badge Strip */}
           <div className="rounded-lg border border-border bg-ink-50 p-3 text-xs text-text-secondary flex flex-wrap gap-2 items-center">
-            <span className="font-semibold text-text uppercase tracking-wider">{tr("Active Scope & Boundaries:")}</span>
+            <span className="font-semibold text-text">{tr("Active Scope & Boundaries:")}</span>
             <Badge tone="brand">{reportYear === "all" ? tr("All Years") : `${tr("Year:")} ${reportYear}`}</Badge>
             <Badge tone={scope === "all" ? "neutral" : "brand"}>{scope === "all" ? tr("All Scopes") : `${tr("Scope")} ${scope}`}</Badge>
             <Badge tone="info">
@@ -1678,7 +1443,7 @@ const Reports: React.FC = () => {
             {/* Left Column: Configuration Forms (7 cols) */}
             <div className="md:col-span-7 flex flex-col gap-3.5">
               <p className="m-0 text-xs text-text-secondary leading-relaxed">
-                {tr("Please provide the declarations required by ISO 14064-1:2018 before compiling the verified document.")}
+                {tr("Please provide the inventory declarations before compiling the verified document.")}
               </p>
               <Field label={tr("Exclusion Criteria (Significance)")} hint={tr("Criteria used to define significant indirect emissions.")}>
                 <Textarea rows={2} value={exclusionCriteria} onChange={(e) => setExclusionCriteria(e.target.value)} />
@@ -1693,7 +1458,7 @@ const Reports: React.FC = () => {
             <div className="md:col-span-5 flex flex-col gap-2.5">
               <div className="rounded-lg border border-border bg-ink-50/70 p-3 flex flex-col items-center">
                 <div className="w-full flex items-center justify-between mb-2">
-                  <span className="text-[11px] font-semibold tracking-wider text-text-secondary uppercase">
+                  <span className="text-xs font-medium text-text-secondary">
                     {tr("Document Preview")}
                   </span>
                   <Badge tone="brand" className="text-[10px] px-1.5 py-0">
@@ -1710,7 +1475,7 @@ const Reports: React.FC = () => {
                   <div className="flex flex-col gap-0.5 mt-1">
                     <div className="flex items-center justify-between">
                       <span className="text-[8px] font-black tracking-widest text-brand-600 uppercase">NEOCARBON</span>
-                      <span className="text-[7px] text-text-secondary font-mono">ISO 14064</span>
+                      <span className="text-[7px] text-text-secondary font-mono">REPORT</span>
                     </div>
                     <div className="h-px w-full bg-border/60 my-0.5" />
                     <div className="text-[8.5px] font-bold leading-tight text-text line-clamp-2">
@@ -1753,7 +1518,6 @@ const Reports: React.FC = () => {
                 {/* Document Specs Badges */}
                 <div className="flex flex-wrap gap-1 mt-2.5 justify-center text-[10px]">
                   <Badge tone="neutral" className="text-[9.5px] py-0 px-1">{tr("A4 Portrait")}</Badge>
-                  <Badge tone="neutral" className="text-[9.5px] py-0 px-1">{tr("300 DPI")}</Badge>
                   <Badge tone="neutral" className="text-[9.5px] py-0 px-1">{tr("PDF/A")}</Badge>
                 </div>
               </div>

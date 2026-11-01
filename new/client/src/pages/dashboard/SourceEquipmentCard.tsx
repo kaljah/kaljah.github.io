@@ -180,19 +180,19 @@ export const SourceEquipmentCard: React.FC<SourceEquipmentCardProps> = ({
   };
 
   return (
-    <Card data-testid="emissions-by-source-card" className="min-w-0 transition-all duration-200">
+    <Card data-testid="emissions-by-source-card" className="min-w-0">
       {/* Header */}
       <div className="mb-2 flex items-center justify-between gap-2">
         {!selectedSource ? (
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="m-0 text-md font-bold text-ink-800">{title}</h3>
-              <Badge tone="brand" className="gap-1 text-[10px] py-0 px-1.5 font-medium">
+              <h3 className="m-0 text-base font-semibold text-text">{title}</h3>
+              <Badge tone="neutral" className="gap-1 text-xs py-0.5 px-2 font-medium">
                 <Layers className="size-3" />
                 {t("Clickable Drilldown")}
               </Badge>
             </div>
-            <p className="m-0 mt-0.5 text-xs text-ink-600">
+            <p className="m-0 mt-0.5 text-xs text-text-secondary">
               {t("Click any source bar to drill down into equipment")}
             </p>
           </div>
@@ -205,14 +205,14 @@ export const SourceEquipmentCard: React.FC<SourceEquipmentCardProps> = ({
                   setSelectedSource(null);
                   setSearchQuery("");
                 }}
-                className="inline-flex items-center gap-1 rounded-md border border-border bg-surface px-2 py-0.5 text-xs font-semibold text-brand-600 hover:bg-brand-50 hover:border-brand-300 transition-colors shrink-0 shadow-xs"
+                className="inline-flex items-center gap-1 rounded-md border border-border bg-surface px-2 py-0.5 text-xs font-medium text-brand-600 hover:bg-surface-hover hover:border-brand-300 transition-colors shrink-0 shadow-xs"
                 title={t("Back to all sources")}
               >
                 <ArrowLeft className="size-3.5" />
                 <span>{t("All Sources")}</span>
               </button>
               <ChevronRight className="size-3.5 text-ink-400 shrink-0" />
-              <h3 className="m-0 text-xs font-bold text-ink-800 truncate" title={`${selectedSource} ${t("Equipment")}`}>
+              <h3 className="m-0 text-xs font-semibold text-text truncate" title={`${selectedSource} ${t("Equipment")}`}>
                 {selectedSource} {t("Equipment")}
               </h3>
             </div>
@@ -245,13 +245,13 @@ export const SourceEquipmentCard: React.FC<SourceEquipmentCardProps> = ({
       )}
 
       {/* Chart Body */}
-      <div className="relative h-[195px] w-full min-w-0">
+      <div className="relative h-[290px] w-full min-w-0">
         {!selectedSource ? (
           <BarChartWrapper
             data={data}
             dataKey="value"
             xKey="name"
-            height={195}
+            height={290}
             horizontal
             sortDesc
             showShare
@@ -270,7 +270,7 @@ export const SourceEquipmentCard: React.FC<SourceEquipmentCardProps> = ({
             data={equipmentBars}
             dataKey="value"
             xKey="name"
-            height={195}
+            height={290}
             horizontal
             sortDesc
             showShare

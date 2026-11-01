@@ -176,13 +176,22 @@ def _scope_of(value):
 
 
 def _tag_qa_flags(model, flags, resolution, reason):
-    """Keep each decided record's QA flag text, marked with the decision (`flags`: id -> flag before)."""
+    """Keep each decided record's QA flag text, marked with the decision (`flags`: id -> flag before).
+    Ensures rec.status is strictly synchronized with the decision state machine (Verified / Rejected)."""
+    import re
     for rid, flag in flags.items():
         rec = db.session.get(model, rid)
         if rec is None:
             continue
         flag = flag or "Manually reviewed"
-        rec.qa_flag = (f"[Verified] {flag}" if resolution == "Verified" else f"Rejected: {reason} ({flag})")[:255]
+        clean_flag = re.sub(r"^(\[(Verified|Rejected|Pending|BogusStatus|Draft)\]\s*|Rejected:\s*[^()]*\s*\(?)+", "", flag).rstrip(")")
+        clean_flag = clean_flag.strip() or "Manually reviewed"
+        if resolution == "Verified":
+            rec.qa_flag = f"[Verified] {clean_flag}"[:255]
+            rec.status = "Verified"
+        else:
+            rec.qa_flag = f"Rejected: {reason} ({clean_flag})"[:255]
+            rec.status = "Rejected"
 
 
 def _skip_reason(model, rid, user, allowed):

@@ -31,8 +31,10 @@ USER_STATUSES = ("active", "inactive", "disabled")
 
 
 def _user_json(u):
-    return {k: getattr(u, k) for k in ("id", "fullName", "email", "orgName", "role", "location", "department",
+    data = {k: getattr(u, k) for k in ("id", "fullName", "email", "orgName", "role", "location", "department",
                                        "jobTitle", "status")}
+    data["is_test"] = bool(getattr(u, "is_test", False))
+    return data
 
 
 @auth_bp.route("/users", methods=["POST"])
@@ -315,7 +317,8 @@ def get_session_policy():
         "idle_timeout_minutes": timeout,
         # the per-account lockout really applied (LOGIN_ACCOUNT_LIMIT, "10 per 15 minutes"); it said 5
         "max_failed_logins": _limit_count(get_login_account_limit()),
-        "nist_password_policy": "NIST SP 800-63B Enforced (min 10 chars, uppercase, lowercase, digits, symbols)",
+        "nist_password_policy": "Enterprise Complexity Standard (min 10 chars, uppercase, lowercase, digits, symbols)",
+        "password_policy": "Enterprise Complexity Standard (min 10 chars, uppercase, lowercase, digits, symbols)",
         "session_invalidation": "Cryptographic Session Versioning (sv)",
         "total_users": total_count,
         "active_users": active_count,
@@ -364,20 +367,23 @@ def revoke_all_sessions():
 
     revoked_count = 0
     for u in users:
+        # Exclude the current admin's session from revocation
+        if current_admin and u.id == current_admin.id:
+            continue
         u.session_version = int(u.session_version or 0) + 1
         revoked_count += 1
 
     if current_admin:
-        session["sv"] = int(current_admin.session_version)
+        session["sv"] = int(current_admin.session_version or 0)
 
     try:
         log_activity_and_notify(
-            action="UPDATE",
+            action="REVOKE_ALL_SESSIONS",
             record_id="global-session-revoke",
             user=current_admin,
             request=request,
             entity="SessionGovernance",
-            details=f"Global session invalidation executed by {current_admin.email if current_admin else 'IT'}. Revoked {revoked_count} accounts.",
+            details=f"Global session invalidation executed by {current_admin.email if current_admin else 'IT'}. Revoked {revoked_count} accounts (current admin session preserved).",
         )
         db.session.commit()
     except Exception as e:

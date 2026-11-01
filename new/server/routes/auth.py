@@ -232,10 +232,13 @@ def register():
 
     required_fields = ["fullName", "orgName", "email", "sector", "password"]
     for field in required_fields:
-        if not data or not data.get(field):
+        val = str(data.get(field) or "").strip()
+        if not val or val.lower() in ("none", "null", "undefined"):
             return jsonify({"error": f"Missing required field: {field}"}), 400
 
     email_clean = str(data.get("email", "")).strip().lower()
+    if "@" not in email_clean or len(email_clean) < 5 or "." not in email_clean.split("@")[-1]:
+        return jsonify({"error": "Invalid email address"}), 400
     if User.query.filter(db.func.lower(User.email) == email_clean).first():
         return jsonify({"error": "Email already registered"}), 409
 

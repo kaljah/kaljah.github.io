@@ -101,7 +101,14 @@ def export_emissions():
 
     # 1. SCOPE 1
     if scope in ["all", "1", "scope1"]:
-        q1 = Emission.query.filter(Emission.status == "Verified")
+        status_arg = str(request.args.get("status") or "Verified").strip()
+        statuses = [x.strip().lower() for x in status_arg.split(",") if x.strip()] if status_arg.lower() != "all" else None
+        test_fids = Facility.query.with_entities(Facility.id).filter(Facility.is_test == True)
+        q1 = Emission.query.filter(~Emission.facility_id.in_(test_fids))
+        if hasattr(Emission, "is_test"):
+            q1 = q1.filter(Emission.is_test == False)
+        if statuses:
+            q1 = q1.filter(db.func.lower(db.func.trim(Emission.status)).in_(statuses))
         if allowed_ids is not None:
             q1 = q1.filter(Emission.facility_id.in_(allowed_ids))
         if year_int:
@@ -156,7 +163,11 @@ def export_emissions():
 
     # 2. SCOPE 2
     if scope in ["all", "2", "scope2"]:
-        q2 = Scope2Emission.query.filter(Scope2Emission.status == "Verified")
+        q2 = Scope2Emission.query.filter(~Scope2Emission.facility_id.in_(test_fids))
+        if hasattr(Scope2Emission, "is_test"):
+            q2 = q2.filter(Scope2Emission.is_test == False)
+        if statuses:
+            q2 = q2.filter(db.func.lower(db.func.trim(Scope2Emission.status)).in_(statuses))
         if allowed_ids is not None:
             q2 = q2.filter(Scope2Emission.facility_id.in_(allowed_ids))
         if year_int:
@@ -204,7 +215,11 @@ def export_emissions():
 
     # 3. SCOPE 3
     if scope in ["all", "3", "scope3"]:
-        q3 = Scope3Emission.query.filter(Scope3Emission.status == "Verified")
+        q3 = Scope3Emission.query.filter(~Scope3Emission.facility_id.in_(test_fids))
+        if hasattr(Scope3Emission, "is_test"):
+            q3 = q3.filter(Scope3Emission.is_test == False)
+        if statuses:
+            q3 = q3.filter(db.func.lower(db.func.trim(Scope3Emission.status)).in_(statuses))
         if allowed_ids is not None:
             q3 = q3.filter(Scope3Emission.facility_id.in_(allowed_ids))
         if year_int:

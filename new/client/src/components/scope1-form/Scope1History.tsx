@@ -84,11 +84,62 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
   toast,
   totalPages,
 }) => (
-  <div className="calculator-grid-container [background:white] [border-radius:var(--radius-md)] [overflow:hidden] [box-shadow:var(--shadow-xs)] mt-[30px]!">
+  <div className="calculator-grid-container [background:white] [border-radius:var(--radius-md)] [overflow:hidden] [box-shadow:var(--shadow-xs)] mt-[30px]! w-full border border-border">
+    {/* Header with Title and Actions */}
+    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 border-b border-border bg-ink-50/40">
+      <strong className="text-base font-semibold text-text">{t("Recent Activity (Scope 1)")}</strong>
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          className="inline-flex items-center gap-1.5 bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-3 py-1.5 rounded-md border border-primary shadow-xs transition-colors cursor-pointer"
+          onClick={async () => {
+            // BUG-095: export every matching record (server-side filters), not just the visible page.
+            try {
+              const rows: any[] = [];
+              const PAGE = 5000;
+              let total = Infinity;
+              while (rows.length < total) {
+                const res = await api.get("/emissions", {
+                  params: {
+                    scope: "1",
+                    limit: PAGE,
+                    offset: rows.length,
+                    ...(filterYear && { year: filterYear }),
+                    ...(filterProcess && { process: filterProcess }),
+                    ...(filterSearch && { search: filterSearch }),
+                  },
+                });
+                const page = res.data?.emissions || res.data?.data || (Array.isArray(res.data) ? res.data : []);
+                total = Number(res.data?.total ?? res.headers?.["x-total-count"] ?? rows.length + page.length);
+                if (!page.length) break;
+                rows.push(...page);
+              }
+              exportToCSV(rows, "scope1_export.csv");
+            } catch (err: any) {
+              toast.error(err.response?.data?.error || t("Export failed"));
+            }
+          }}
+        >
+          {t("↓ Export CSV")}
+        </button>
+        <button
+          className="inline-flex items-center gap-1.5 bg-surface hover:bg-ink-100 text-text text-xs font-medium px-3 py-1.5 rounded-md border border-border shadow-xs transition-colors cursor-pointer"
+          onClick={() => setImportModal({ isOpen: true, type: "activity" })}
+        >
+          {t("↑ Bulk Import (Wizard)")}
+        </button>
+        <button
+          type="button"
+          className="inline-flex items-center gap-1.5 bg-surface hover:bg-ink-100 text-text-secondary hover:text-text text-xs font-medium px-3 py-1.5 rounded-md border border-border shadow-xs transition-colors cursor-pointer"
+          aria-pressed={showUncertainty}
+          onClick={() => setShowUncertainty((v) => !v)}
+        >
+          {showUncertainty ? t("Hide") : t("Show")}{" "}{t("uncertainty columns")}
+        </button>
+      </div>
+    </div>
+
     {/* Filter bar */}
-    <div className="flex! gap-[10px]! flex-wrap! items-center! mb-[14px]!">
-      <strong className="text-[length:0.95rem]! mr-[4px]!">{t("Recent Activity (Scope 1)")}</strong>
-      <div className="flex-1!" />
+    <div className="flex flex-wrap items-center gap-3 p-4 bg-surface border-b border-border">
       <Input
         type="text"
         aria-label={t("Search records")}
@@ -98,7 +149,7 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
           setFilterSearch(e.target.value);
           setCurrentPage(1);
         }}
-        className="w-[160px]! p-[6px_10px]! text-[length:0.82rem]!"
+        className="w-48 py-1.5 px-3 text-xs"
       />
       <NativeSelect
         aria-label={t("Filter by year")}
@@ -107,10 +158,9 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
           setFilterYear(e.target.value);
           setCurrentPage(1);
         }}
-        className="component-select w-[100px]! text-[length:0.82rem]!"
+        className="w-32 py-1.5 px-3 text-xs"
       >
         <option value="">{t("All Years")}</option>
-        {/* BUG-095: options come from the server facets, not from the 10 rows of the current page */}
         {facetYears.map((y) => (
           <option key={y} value={y}>
             {y}
@@ -124,7 +174,7 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
           setFilterProcess(e.target.value);
           setCurrentPage(1);
         }}
-        className="component-select w-[140px]! text-[length:0.82rem]!"
+        className="w-44 py-1.5 px-3 text-xs"
       >
         <option value="">{t("All Processes")}</option>
         {Object.keys(PROCESS_TYPES).map((p) => {
@@ -147,59 +197,11 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
             setFilterSearch("");
             setCurrentPage(1);
           }}
-          className="text-[length:0.8rem]! p-[5px_10px]! text-[color:var(--text-secondary)]!"
+          className="text-xs py-1 px-2 text-text-secondary hover:text-text"
         >
           {t("Clear")}
         </Button>
       )}
-      <button
-        className="action-btn bg-[color:var(--color-green-500)]! p-[6px_14px]! text-[length:0.82rem]! whitespace-nowrap!"
-        onClick={async () => {
-          // BUG-095: export every matching record (server-side filters), not just the visible page.
-          // S1K-F13: the server caps one request at 5,000 records ("limit=all" silently returned
-          // 5,000 of 83,147), so the export pages through the whole result.
-          try {
-            const rows: any[] = [];
-            const PAGE = 5000;
-            let total = Infinity;
-            while (rows.length < total) {
-              const res = await api.get("/emissions", {
-                params: {
-                  scope: "1",
-                  limit: PAGE,
-                  offset: rows.length,
-                  ...(filterYear && { year: filterYear }),
-                  ...(filterProcess && { process: filterProcess }),
-                  ...(filterSearch && { search: filterSearch }),
-                },
-              });
-              const page = res.data?.emissions || res.data?.data || (Array.isArray(res.data) ? res.data : []);
-              total = Number(res.data?.total ?? res.headers?.["x-total-count"] ?? rows.length + page.length);
-              if (!page.length) break;
-              rows.push(...page);
-            }
-            exportToCSV(rows, "scope1_export.csv");
-          } catch (err: any) {
-            toast.error(err.response?.data?.error || t("Export failed"));
-          }
-        }}
-      >
-        {t("↓ Export CSV")}
-      </button>
-      <button
-        className="action-btn bg-[color:var(--color-green-500)]! p-[6px_14px]! text-[length:0.82rem]! whitespace-nowrap!"
-        onClick={() => setImportModal({ isOpen: true, type: "activity" })}
-      >
-        {t("↑ Bulk Import (Wizard)")}
-      </button>
-      <button
-        type="button"
-        className="action-btn secondary p-[6px_14px]! text-[length:0.82rem]! whitespace-nowrap!"
-        aria-pressed={showUncertainty}
-        onClick={() => setShowUncertainty((v) => !v)}
-      >
-        {showUncertainty ? t("Hide") : t("Show")}{" "}{t("uncertainty columns")}
-      </button>
     </div>
     <div className="table-scroll-container" tabIndex={0} role="region" aria-label={t("Entries table")}>
       <table className={`excel-table${showUncertainty ? "" : " hide-uncertainty"}`}>
@@ -368,20 +370,22 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
                       : "—"}
                   </td>
                   <td className="text-center! whitespace-nowrap!">
-                    <button
-                      className="icon-button text-[color:var(--color-blue-700)]! mr-[6px]!"
-                      onClick={() => handleInspect(entry)}
-                      title={t("Inspect Calculation Details")}
-                    >
-                      <Eye size={16} />
-                    </button>
-                    <button
-                      className="icon-button text-[color:var(--color-red-700)]!"
-                      onClick={() => handleDelete(entry.id)}
-                      title={t("Delete")}
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                    <div className="flex items-center justify-center gap-1.5">
+                      <button
+                        className="btn-review-action inspect"
+                        onClick={() => handleInspect(entry)}
+                        title={t("Inspect Calculation Details")}
+                      >
+                        <Eye size={15} />
+                      </button>
+                      <button
+                        className="btn-review-action delete"
+                        onClick={() => handleDelete(entry.id)}
+                        title={t("Delete")}
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               );

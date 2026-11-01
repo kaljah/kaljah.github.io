@@ -230,17 +230,27 @@ def _active_facility_ids(f):
 
 
 def anomaly_status_counts(f, outliers):
-    """{pending, verified, rejected} of flagged records, the stored-scan outliers included (browser test D5:
-    "0 flagged" above a queue showing one flagged record)."""
+    """{pending, verified, rejected} of flagged records, the stored-scan outliers included.
+    Derives status canonically: records flagged as [Rejected] or having status 'Rejected' are counted as rejected.
+    Records flagged as [Verified] or status 'Verified' (and not rejected) are counted as verified."""
     counts = {"pending": 0, "verified": 0, "rejected": 0}
     for model in SCOPE_MODELS:
         q = f.scope(model.query.filter(model.qa_flag.isnot(None)), model)
-        counts["pending"] += q.filter(or_(model.status.ilike("%pending%"), model.status.is_(None))).count()
-        counts["verified"] += q.filter(model.status.ilike("%verified%")).count()
-        counts["rejected"] += q.filter(model.status.ilike("%rejected%")).count()
+        # Authoritative state machine: rejected takes precedence
+        is_rej = or_(model.status.ilike("%rejected%"), model.qa_flag.ilike("[rejected]%"), model.qa_flag.ilike("rejected:%"))
+        is_ver = and_(model.status.ilike("%verified%"), ~is_rej)
+        counts["rejected"] += q.filter(is_rej).count()
+        counts["verified"] += q.filter(is_ver).count()
+        counts["pending"] += q.filter(~is_rej, ~is_ver).count()
     for o in outliers:
         st = str(o.get("status") or "").lower()
-        counts["rejected" if "rejected" in st else "verified" if "verified" in st else "pending"] += 1
+        flag = str(o.get("qa_flag") or "").lower()
+        if "rejected" in st or flag.startswith("[rejected]") or flag.startswith("rejected:"):
+            counts["rejected"] += 1
+        elif "verified" in st or flag.startswith("[verified]"):
+            counts["verified"] += 1
+        else:
+            counts["pending"] += 1
     return counts
 
 
@@ -372,7 +382,14 @@ def diagnostics(f, total_flagged, outliers):
     anomalies = anomaly_status_counts(f, outliers)
     dims, overall = completeness(h)
     issues, warnings, suggestions = findings(f, h, active, unused, custom_factor_count)
-    penalty = len(issues) * 10 + len(warnings) * 5 + min(15, anomalies["pending"] * 2)
+    # Data Health Score decreases when rejected or flagged records exist
+    penalty = (
+        len(issues) * 10
+        + len(warnings) * 5
+        + min(15, anomalies["pending"] * 2)
+        + min(15, anomalies["rejected"] * 3)
+        + min(10, total_flagged * 1)
+    )
     return {
         "health_score": max(0, min(100, int(round(overall - penalty)))),
         "completeness": overall,

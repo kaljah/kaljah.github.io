@@ -48,10 +48,10 @@ const useNarrow = (): boolean => {
 const STATUS_COLORS = {
   good: "var(--color-green-600)",
   warn: "var(--color-amber-500)",
-  bad: "var(--color-red-500)",
+  bad: "var(--color-red-600)",
 };
 
-const VALUE_LABEL_STYLE: React.CSSProperties = { fill: "var(--color-ink-700)", fontSize: 11, fontWeight: 600 };
+const VALUE_LABEL_STYLE: React.CSSProperties = { fill: "var(--color-ink-700)", fontSize: 11, fontWeight: 500, fontVariantNumeric: "tabular-nums" };
 
 export interface BarItemConfig {
   dataKey: string;
@@ -90,7 +90,13 @@ export interface BarChartProps {
   errorKey?: string;
   /** Shows CSV/PNG buttons (on hover/focus) and uses this as the file name. */
   exportName?: string;
-  thresholds?: { warnAt: number; badAt: number; labels?: [string, string, string] };
+  thresholds?: {
+    warnAt: number;
+    badAt: number;
+    direction?: "higher-is-worse" | "lower-is-worse";
+    labels?: [string, string, string];
+    colors?: [string, string, string];
+  };
 }
 
 export const BarChart: React.FC<BarChartProps> = ({
@@ -140,7 +146,7 @@ export const BarChart: React.FC<BarChartProps> = ({
   const manyCategories = (data?.length || 0) > 4;
   const shortLabel = (v: any): string => {
     const s = String(v ?? "");
-    const max = horizontal ? (narrow ? 13 : 28) : 16;
+    const max = horizontal ? (narrow ? 14 : 32) : 18;
     return s.length > max ? `${s.slice(0, max - 1)}…` : s;
   };
 
@@ -324,17 +330,17 @@ export const BarChart: React.FC<BarChartProps> = ({
         <RechartsBar
           data={rows}
           layout={horizontal ? "vertical" : "horizontal"}
-          margin={horizontal ? { top: referenceValue != null ? 24 : 8, right: showShare ? 104 : 64, left: 4, bottom: 4 } : { top: 20, right: 12, left: -4, bottom: 4 }}
+          margin={horizontal ? { top: referenceValue != null ? 24 : 10, right: showShare ? 112 : 72, left: 8, bottom: 6 } : { top: 20, right: 16, left: 4, bottom: 6 }}
         >
           <defs>
             <linearGradient id={gradientId} x1="0" y1="0" x2={horizontal ? "1" : "0"} y2={horizontal ? "0" : "1"}>
               <stop offset="0%" style={{ stopColor: color, stopOpacity: 1 }} />
-              <stop offset="100%" style={{ stopColor: color, stopOpacity: 0.72 }} />
+              <stop offset="100%" style={{ stopColor: color, stopOpacity: 0.82 }} />
             </linearGradient>
           </defs>
           <CartesianGrid
-            strokeDasharray="4 4"
-            stroke="rgba(226, 232, 240, 0.75)"
+            strokeDasharray="3 3"
+            stroke="var(--border-color, rgba(226, 232, 240, 0.75))"
             vertical={horizontal}
             horizontal={!horizontal}
           />
@@ -346,7 +352,7 @@ export const BarChart: React.FC<BarChartProps> = ({
                 tickCount={4}
                 domain={computedDomain}
                 stroke="var(--color-ink-300)"
-                tick={{ fill: "var(--color-ink-500)", fontSize: 11, fontWeight: 600 }}
+                tick={{ fill: "var(--color-ink-500)", fontSize: 11, fontWeight: 500 }}
                 axisLine={false}
                 tickLine={false}
                 tickFormatter={valueFormatter}
@@ -378,7 +384,7 @@ export const BarChart: React.FC<BarChartProps> = ({
                           </text>
                         );
                       }
-                    : { fill: "var(--color-ink-700)", fontSize: 12, fontWeight: 600 }
+                    : { fill: "var(--color-ink-700)", fontSize: 12, fontWeight: 500 }
                 }
                 axisLine={false}
                 tickLine={false}
@@ -441,8 +447,8 @@ export const BarChart: React.FC<BarChartProps> = ({
                   name={b.name || bKey}
                   fill={barColor}
                   stackId={b.stackId}
-                  maxBarSize={44}
-                  radius={isTopInStack ? [6, 6, 0, 0] : [0, 0, 0, 0]}
+                  maxBarSize={36}
+                  radius={isTopInStack ? (horizontal ? [0, 4, 4, 0] : [4, 4, 0, 0]) : [0, 0, 0, 0]}
                   opacity={isDimmed ? 0.35 : 1}
                   animationDuration={800}
                 />
@@ -452,8 +458,8 @@ export const BarChart: React.FC<BarChartProps> = ({
             <Bar
               dataKey={finalDataKey}
               fill={`url(#${gradientId})`}
-              maxBarSize={44}
-              radius={horizontal ? [0, 6, 6, 0] : [6, 6, 0, 0]}
+              maxBarSize={36}
+              radius={horizontal ? [0, 4, 4, 0] : [4, 4, 0, 0]}
               animationDuration={800}
               className={onSelect ? "cursor-pointer" : undefined}
               onClick={onSelect ? (_: unknown, i: number) => onSelect(rows[i]) : undefined}
@@ -507,7 +513,12 @@ export const BarChart: React.FC<BarChartProps> = ({
             <li key={label} className="inline-flex items-center gap-1.5">
               <span
                 aria-hidden="true"
-                className={`inline-block size-2.5 rounded-full ${["bg-green-600", "bg-amber-500", "bg-red-500"][i]}`}
+                className="inline-block size-2.5 rounded-full"
+                style={{
+                  backgroundColor:
+                    thresholds.colors?.[i] ||
+                    ["var(--color-green-600)", "var(--color-brand-500)", "var(--color-red-600)"][i],
+                }}
               />
               {label}
             </li>

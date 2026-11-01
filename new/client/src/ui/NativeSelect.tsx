@@ -17,13 +17,23 @@ export const NativeSelect = React.forwardRef<HTMLSelectElement, NativeSelectProp
 ) {
   const { wrapperClassName, className, ...rest } = props;
   const field = useFieldContext();
+  const widthClassMatches = className?.match(/\b(?:(?:sm|md|lg|xl):)?w-(?:auto|fit|max|min|\d+|\[[^\]]+\])!?(?=\s|$)/g);
+  const detectedWidthClass = widthClassMatches
+    ? widthClassMatches.map((cls) => cls.replace(/!$/, "")).join(" ")
+    : null;
   const isAuto = className?.includes("w-auto") || className?.includes("w-fit");
+
+  const defaultWrapperClass = detectedWidthClass
+    ? cn(detectedWidthClass, "shrink-0 inline-block")
+    : isAuto
+    ? "w-auto shrink-0 inline-block"
+    : "w-full";
 
   return (
     <div
       className={cn(
         "relative",
-        wrapperClassName ? wrapperClassName : isAuto ? "w-auto shrink-0 inline-block" : "w-full"
+        wrapperClassName ? wrapperClassName : defaultWrapperClass
       )}
     >
       <select
@@ -35,7 +45,7 @@ export const NativeSelect = React.forwardRef<HTMLSelectElement, NativeSelectProp
         {...rest}
         style={{ backgroundImage: "none", ...props.style }}
         className={cn(
-          "w-full appearance-none bg-[var(--bg-card,#ffffff)] text-[var(--text-primary,#0f172a)] border border-[var(--border-color,#e2e8f0)] rounded-[var(--radius-md,8px)] px-3.5 py-2 text-sm font-normal min-h-[36px] transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-[var(--accent-color,#0284c7)] focus:border-transparent cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 pr-9",
+          "w-full appearance-none bg-[var(--bg-card,#ffffff)] text-[var(--text-primary,#0f172a)] border border-[var(--border-color,#e2e8f0)] rounded-[var(--radius-md,8px)] px-3.5 py-2 text-sm font-normal min-h-[40px] h-10 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-[var(--accent-color,#0284c7)] focus:border-transparent cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 pr-9",
           className
         )}
       />

@@ -36,8 +36,7 @@
 
 .error-btn.primary:hover {
   background: var(--color-green-600);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  box-shadow: var(--shadow-xs);
 }
 
 .error-btn.secondary {

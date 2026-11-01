@@ -112,6 +112,26 @@ def add_production():
     field = data.get('field')
     region = data.get('region')
 
+    # Validate total_production_mmboe consistency against oil and gas inputs
+    tot_mmboe = mm.get('total_production_mmboe')
+    if tot_mmboe and tot_mmboe > 0 and (oil_amount > 0 or gas_amount > 0):
+        from services.dashboard_filters import calculate_oil_gas_boe, validate_production_mmboe_consistency
+        class _ProdCheck:
+            pass
+        _chk = _ProdCheck()
+        _chk.oil_amount, _chk.oil_unit = oil_amount, oil_unit
+        _chk.gas_amount, _chk.gas_unit = gas_amount, gas_unit
+        _chk.gross_gas_mmsm3 = mm.get('gross_gas_mmsm3')
+        _chk.year, _chk.month = year, month
+        calc_boe = calculate_oil_gas_boe(_chk)
+        if calc_boe and calc_boe > 0:
+            is_consistent, diff_pct = validate_production_mmboe_consistency(tot_mmboe, calc_boe, tolerance=0.30)
+            if not is_consistent:
+                return jsonify({
+                    'error': f'Total production ({tot_mmboe:.2f} MMBOE) differs by {diff_pct*100:.1f}% from the converted oil and gas sum ({calc_boe / 1e6:.2f} MMBOE). Verify values and units.',
+                    'field': 'total_production_mmboe'
+                }), 400
+
     saved_rec_id = None
 
     # Atomic upsert pattern: try update if existing, handle race condition gracefully

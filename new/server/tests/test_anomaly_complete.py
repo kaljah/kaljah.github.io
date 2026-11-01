@@ -29,8 +29,8 @@ def test_short_and_constant_history(d):
 def test_tiny_spread_history(d):
     hist = [1.0, 1.0 + 1e-9, 1.0 - 1e-9]
     assert d._z_score_check(1.0, hist)["z_score"] == 0
-    assert d._z_score_check(2.0, hist)["z_score"] == 999.0
-    assert d._z_score_check(0.0, hist)["z_score"] == -999.0
+    assert d._z_score_check(2.0, hist)["z_score"] == 10.0
+    assert d._z_score_check(0.0, hist)["z_score"] == -10.0
 
 
 def test_z_score_outlier_and_in_range(d):

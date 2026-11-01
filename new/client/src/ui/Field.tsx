@@ -78,7 +78,7 @@ const useFieldProps = (props: ControlledProps) => {
 };
 
 export const controlClass =
-  "w-full rounded-md border border-border bg-surface px-3 font-sans text-base text-text placeholder:text-text-disabled " +
+  "w-full rounded-md border border-border bg-surface px-3 font-sans text-base text-text placeholder:text-ink-500 " +
   "transition-colors hover:border-ink-300 focus:border-brand-500 disabled:cursor-not-allowed disabled:bg-ink-50 " +
   "disabled:text-text-disabled aria-invalid:border-danger";
 

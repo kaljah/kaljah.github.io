@@ -1,4 +1,5 @@
 import { Button, PageHeader, SegmentedControl } from "../ui";
+import { PerformanceNavTabs } from "../components/NavigationTabs";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import api from "../api";
@@ -256,7 +257,7 @@ const SbtiDashboard: React.FC = () => {
         name: tr("Business As Usual (+1.5%/yr)"),
         color: "var(--color-ink-400)",
         strokeWidth: 1.5,
-        strokeDasharray: "5 5",
+        strokeDasharray: "4 4",
       },
       {
         dataKey: "sbti_wb2c",
@@ -270,8 +271,8 @@ const SbtiDashboard: React.FC = () => {
         name: Number(rate) === 4.2
           ? tr("Corporate Target ({{rate}}%/yr, same as 1.5°C)", { rate })
           : tr("Corporate Target ({{rate}}%/yr)", { rate }),
-        color: "var(--color-green-500)",
-        strokeWidth: 4,
+        color: "var(--color-emerald-600)",
+        strokeWidth: 2.5,
         strokeDasharray: "1 0",
       },
       {
@@ -284,26 +285,41 @@ const SbtiDashboard: React.FC = () => {
       {
         dataKey: "actual",
         name: tr("Actual Emissions ({{scope}})", { scope: scopeMode === "s1_s2" ? "Scope 1+2" : "Scope 1+2+3" }),
-        color: "var(--color-brand-500)",
-        strokeWidth: 3,
+        color: "var(--color-brand-600)",
+        strokeWidth: 2.5,
+      },
+      {
+        dataKey: "actual_annualized",
+        name: tr("Annualized Projection (YTD Indicative)"),
+        color: "var(--color-amber-600)",
+        strokeWidth: 2,
+        strokeDasharray: "3 3",
       },
     ];
   }, [sbtiData, scopeMode]);
 
-  // Scope breakdown bars
+  // Scope breakdown bars (C2 unified scope tokens)
   const scopeBars = useMemo(() => [
-    { dataKey: "scope1", name: tr("Scope 1 (Direct)"), color: "var(--color-brand-500)", stackId: "a" },
-    { dataKey: "scope2", name: tr("Scope 2 (Indirect)"), color: "var(--color-blue-500)", stackId: "a" },
-    { dataKey: "scope3", name: tr("Scope 3 (Value Chain)"), color: "var(--color-violet-500)", stackId: "a" },
+    { dataKey: "scope1", name: tr("Scope 1 (Direct)"), color: "var(--color-scope-1)", stackId: "a" },
+    { dataKey: "scope2", name: tr("Scope 2 (Indirect)"), color: "var(--color-scope-2)", stackId: "a" },
+    { dataKey: "scope3", name: tr("Scope 3 (Value Chain)"), color: "var(--color-scope-3)", stackId: "a" },
   ], []);
+
+  const ytdYear = sbtiData?.ytd_year;
 
   const displayTrajectory = useMemo(() => {
     if (!sbtiData?.trajectory) return [];
-    if (milestoneZoom === "near_term") {
-      return sbtiData.trajectory.filter((r) => Number(r.year) <= 2030);
-    }
-    return sbtiData.trajectory;
-  }, [sbtiData?.trajectory, milestoneZoom]);
+    const base = milestoneZoom === "near_term"
+      ? sbtiData.trajectory.filter((r) => Number(r.year) <= 2030)
+      : sbtiData.trajectory;
+    return base.map((r) => {
+      const isPartial = r.is_partial_year || String(r.year) === String(ytdYear);
+      return {
+        ...r,
+        displayYear: isPartial ? `${r.year} (YTD)` : String(r.year),
+      };
+    });
+  }, [sbtiData?.trajectory, milestoneZoom, ytdYear]);
 
   const computedCumulativeBudget = useMemo(() => {
     if (sbtiData?.cumulative_budget_remaining != null) {
@@ -338,7 +354,6 @@ const SbtiDashboard: React.FC = () => {
   const isConfigured = Boolean(sbtiData && sbtiData.has_target);
   // No complete year yet: the server returns null for the current year and a year-to-date total;
   // the target of that year still comes from the pathway (browser test #14 showed both as 0)
-  const ytdYear = sbtiData?.ytd_year;
   const ytdRow = (sbtiData?.trajectory || []).find((r) => String(r.year) === String(ytdYear));
   const currentActual = sbtiData?.current_actual_emissions ?? sbtiData?.current_actual ?? null;
   const currentTarget =
@@ -354,8 +369,9 @@ const SbtiDashboard: React.FC = () => {
       {/* Top Header */}
       <PageHeader
         className="mb-6"
-        title={tr("SBTi & Net-Zero Trajectory")}
-        description={tr("Track corporate decarbonization against Science Based Targets initiative (SBTi) 1.5°C & Well-Below 2°C pathways per Corporate Net-Zero Standard v1.2.")}
+        title={tr("SBTi-aligned pathway (indicative)")}
+        description={tr("Track indicative corporate decarbonization against Science Based Targets initiative (SBTi) 1.5°C & Well-Below 2°C pathways per Corporate Net-Zero Standard v1.2. (Oil and gas targets are not validated by SBTi).")}
+        tabs={<PerformanceNavTabs />}
         actions={
           <>
             <SegmentedControl
@@ -513,9 +529,9 @@ const SbtiDashboard: React.FC = () => {
 
       {/* KPI Cards */}
       <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(240px,_1fr))] [gap:18px]">
-        <div className="[padding:22px_24px] [border-radius:var(--radius-lg)] [background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [display:flex] [flex-direction:column] [justify-content:space-between] [position:relative] [overflow:hidden] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated,_0_8px_24px_rgba(0,_0,_0,_0.08))] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:4px] before:[height:100%] before:[background:var(--primary,_var(--color-brand-500))] before:[border-radius:var(--radius-sm)_0_0_var(--radius-sm)] [&.success::before]:[background:var(--color-green-500)] [&&]:[&.warning::before]:[background:var(--color-amber-500)] [&&]:[&&]:[&.info::before]:[background:var(--color-blue-500)] [&&]:[&&]:[&&]:[&.neutral::before]:[background:var(--color-ink-400)]">
+        <div className="[padding:22px_24px] [border-radius:var(--radius-lg)] [background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [display:flex] [flex-direction:column] [justify-content:space-between] [position:relative] [overflow:hidden] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[border-color:var(--color-ink-300)] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:2px] before:[height:100%] before:[background:var(--primary,_var(--color-brand-500))] before:[border-radius:var(--radius-sm)_0_0_var(--radius-sm)] [&.success::before]:[background:var(--color-green-500)] [&&]:[&.warning::before]:[background:var(--color-amber-500)] [&&]:[&&]:[&.info::before]:[background:var(--color-blue-500)] [&&]:[&&]:[&&]:[&.neutral::before]:[background:var(--color-ink-400)]">
           <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
-            <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.05em]">{tr("Base Year Baseline")}</span>
+            <span className="text-xs font-medium text-[color:var(--text-secondary,_var(--color-ink-500))]">{tr("Base Year Baseline")}</span>
             <div className="[width:36px] [height:36px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [background:rgba(249,_115,_22,_0.1)] [color:var(--color-link)] [&.success]:[background:rgba(16,_185,_129,_0.1)] [&.success]:[color:var(--color-green-700)] [&&]:[&.warning]:[background:rgba(245,_158,_11,_0.1)] [&&]:[&.warning]:[color:var(--color-amber-700)] [&&]:[&&]:[&.info]:[background:rgba(59,_130,_246,_0.1)] [&&]:[&&]:[&.info]:[color:var(--color-blue-700)] [&&]:[&&]:[&&]:[&.neutral]:[background:rgba(148,_163,_184,_0.15)] [&&]:[&&]:[&&]:[&.neutral]:[color:var(--color-ink-500)]">
               <Calendar size={18} />
             </div>
@@ -529,9 +545,9 @@ const SbtiDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="[padding:22px_24px] [border-radius:var(--radius-lg)] [background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [display:flex] [flex-direction:column] [justify-content:space-between] [position:relative] [overflow:hidden] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated,_0_8px_24px_rgba(0,_0,_0,_0.08))] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:4px] before:[height:100%] before:[background:var(--primary,_var(--color-brand-500))] before:[border-radius:var(--radius-sm)_0_0_var(--radius-sm)] [&.success::before]:[background:var(--color-green-500)] [&&]:[&.warning::before]:[background:var(--color-amber-500)] [&&]:[&&]:[&.info::before]:[background:var(--color-blue-500)] [&&]:[&&]:[&&]:[&.neutral::before]:[background:var(--color-ink-400)] info">
+        <div className="[padding:22px_24px] [border-radius:var(--radius-lg)] [background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [display:flex] [flex-direction:column] [justify-content:space-between] [position:relative] [overflow:hidden] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[border-color:var(--color-ink-300)] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:2px] before:[height:100%] before:[background:var(--primary,_var(--color-brand-500))] before:[border-radius:var(--radius-sm)_0_0_var(--radius-sm)] [&.success::before]:[background:var(--color-green-500)] [&&]:[&.warning::before]:[background:var(--color-amber-500)] [&&]:[&&]:[&.info::before]:[background:var(--color-blue-500)] [&&]:[&&]:[&&]:[&.neutral::before]:[background:var(--color-ink-400)] info">
           <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
-            <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.05em]">{tr("Current Year Target")}</span>
+            <span className="text-xs font-medium text-[color:var(--text-secondary,_var(--color-ink-500))]">{tr("Current Year Target")}</span>
             <div className="[width:36px] [height:36px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [background:rgba(249,_115,_22,_0.1)] [color:var(--color-link)] [&.success]:[background:rgba(16,_185,_129,_0.1)] [&.success]:[color:var(--color-green-700)] [&&]:[&.warning]:[background:rgba(245,_158,_11,_0.1)] [&&]:[&.warning]:[color:var(--color-amber-700)] [&&]:[&&]:[&.info]:[background:rgba(59,_130,_246,_0.1)] [&&]:[&&]:[&.info]:[color:var(--color-blue-700)] [&&]:[&&]:[&&]:[&.neutral]:[background:rgba(148,_163,_184,_0.15)] [&&]:[&&]:[&&]:[&.neutral]:[color:var(--color-ink-500)] info">
               <Target size={18} />
             </div>
@@ -549,9 +565,9 @@ const SbtiDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className={`[padding:22px_24px] [border-radius:var(--radius-lg)] [background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [display:flex] [flex-direction:column] [justify-content:space-between] [position:relative] [overflow:hidden] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated,_0_8px_24px_rgba(0,_0,_0,_0.08))] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:4px] before:[height:100%] before:[background:var(--primary,_var(--color-brand-500))] before:[border-radius:var(--radius-sm)_0_0_var(--radius-sm)] [&.success::before]:[background:var(--color-green-500)] [&&]:[&.warning::before]:[background:var(--color-amber-500)] [&&]:[&&]:[&.info::before]:[background:var(--color-blue-500)] [&&]:[&&]:[&&]:[&.neutral::before]:[background:var(--color-ink-400)] ${isConfigured && !noData ? (isOnTrack ? "success" : "warning") : "neutral"}`}>
+        <div className={`[padding:22px_24px] [border-radius:var(--radius-lg)] [background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [display:flex] [flex-direction:column] [justify-content:space-between] [position:relative] [overflow:hidden] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[border-color:var(--color-ink-300)] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:2px] before:[height:100%] before:[background:var(--primary,_var(--color-brand-500))] before:[border-radius:var(--radius-sm)_0_0_var(--radius-sm)] [&.success::before]:[background:var(--color-green-500)] [&&]:[&.warning::before]:[background:var(--color-amber-500)] [&&]:[&&]:[&.info::before]:[background:var(--color-blue-500)] [&&]:[&&]:[&&]:[&.neutral::before]:[background:var(--color-ink-400)] ${isConfigured && !noData ? (isOnTrack ? "success" : "warning") : "neutral"}`}>
           <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
-            <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.05em]">{tr("Pathway Status")}</span>
+            <span className="text-xs font-medium text-[color:var(--text-secondary,_var(--color-ink-500))]">{tr("Pathway Status")}</span>
             <div className={`[width:36px] [height:36px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [background:rgba(249,_115,_22,_0.1)] [color:var(--color-link)] [&.success]:[background:rgba(16,_185,_129,_0.1)] [&.success]:[color:var(--color-green-700)] [&&]:[&.warning]:[background:rgba(245,_158,_11,_0.1)] [&&]:[&.warning]:[color:var(--color-amber-700)] [&&]:[&&]:[&.info]:[background:rgba(59,_130,_246,_0.1)] [&&]:[&&]:[&.info]:[color:var(--color-blue-700)] [&&]:[&&]:[&&]:[&.neutral]:[background:rgba(148,_163,_184,_0.15)] [&&]:[&&]:[&&]:[&.neutral]:[color:var(--color-ink-500)] ${isConfigured && !noData ? (isOnTrack ? "success" : "warning") : "neutral"}`}>
               {isConfigured && !noData ? (
                 isOnTrack ? <CheckCircle size={18} /> : <AlertTriangle size={18} />
@@ -574,9 +590,9 @@ const SbtiDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="[padding:22px_24px] [border-radius:var(--radius-lg)] [background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [display:flex] [flex-direction:column] [justify-content:space-between] [position:relative] [overflow:hidden] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated,_0_8px_24px_rgba(0,_0,_0,_0.08))] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:4px] before:[height:100%] before:[background:var(--color-blue-500,_#3b82f6)] before:[border-radius:var(--radius-sm)_0_0_var(--radius-sm)]" id="sbti-kpi-carbon-budget">
+        <div className="[padding:22px_24px] [border-radius:var(--radius-lg)] [background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [display:flex] [flex-direction:column] [justify-content:space-between] [position:relative] [overflow:hidden] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[border-color:var(--color-ink-300)] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:2px] before:[height:100%] before:[background:var(--color-blue-500,_#3b82f6)] before:[border-radius:var(--radius-sm)_0_0_var(--radius-sm)]" id="sbti-kpi-carbon-budget">
           <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
-            <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.05em]">{tr("Cumulative Carbon Budget")}</span>
+            <span className="text-xs font-medium text-[color:var(--text-secondary,_var(--color-ink-500))]">{tr("Cumulative Carbon Budget")}</span>
             <div className="[width:36px] [height:36px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [background:rgba(59,_130,_246,_0.1)] [color:var(--color-blue-600,_#2563eb)]">
               <Sparkles size={18} />
             </div>
@@ -592,9 +608,9 @@ const SbtiDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="[padding:22px_24px] [border-radius:var(--radius-lg)] [background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [display:flex] [flex-direction:column] [justify-content:space-between] [position:relative] [overflow:hidden] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[transform:translateY(-2px)] hover:[box-shadow:var(--shadow-card-elevated,_0_8px_24px_rgba(0,_0,_0,_0.08))] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:4px] before:[height:100%] before:[background:var(--primary,_var(--color-brand-500))] before:[border-radius:var(--radius-sm)_0_0_var(--radius-sm)] [&.success::before]:[background:var(--color-green-500)] [&&]:[&.warning::before]:[background:var(--color-amber-500)] [&&]:[&&]:[&.info::before]:[background:var(--color-blue-500)] [&&]:[&&]:[&&]:[&.neutral::before]:[background:var(--color-ink-400)] success">
+        <div className="[padding:22px_24px] [border-radius:var(--radius-lg)] [background:var(--bg-card,_rgba(255,_255,_255,_0.85))] [backdrop-filter:blur(14px)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [box-shadow:var(--shadow-card,_0_4px_12px_rgba(0,_0,_0,_0.05))] [display:flex] [flex-direction:column] [justify-content:space-between] [position:relative] [overflow:hidden] [transition:transform_0.22s_cubic-bezier(0.16,_1,_0.3,_1),_box-shadow_0.22s_ease,_border-color_0.22s_ease] hover:[border-color:var(--color-ink-300)] before:[content:''] before:[position:absolute] before:[top:0] before:[left:0] before:[width:2px] before:[height:100%] before:[background:var(--primary,_var(--color-brand-500))] before:[border-radius:var(--radius-sm)_0_0_var(--radius-sm)] [&.success::before]:[background:var(--color-green-500)] [&&]:[&.warning::before]:[background:var(--color-amber-500)] [&&]:[&&]:[&.info::before]:[background:var(--color-blue-500)] [&&]:[&&]:[&&]:[&.neutral::before]:[background:var(--color-ink-400)] success">
           <div className="[display:flex] [justify-content:space-between] [align-items:center] [margin-bottom:12px]">
-            <span className="[font-size:var(--text-base)] [font-weight:600] [color:var(--text-secondary,_var(--color-ink-500))] [text-transform:uppercase] [letter-spacing:0.05em]">{tr("Net-Zero Goal (")}{sbtiData?.target_year || 2050})</span>
+            <span className="text-xs font-medium text-[color:var(--text-secondary,_var(--color-ink-500))]">{tr("Net-Zero Goal (")}{sbtiData?.target_year || 2050})</span>
             <div className="[width:36px] [height:36px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [background:rgba(249,_115,_22,_0.1)] [color:var(--color-link)] [&.success]:[background:rgba(16,_185,_129,_0.1)] [&.success]:[color:var(--color-green-700)] [&&]:[&.warning]:[background:rgba(245,_158,_11,_0.1)] [&&]:[&.warning]:[color:var(--color-amber-700)] [&&]:[&&]:[&.info]:[background:rgba(59,_130,_246,_0.1)] [&&]:[&&]:[&.info]:[color:var(--color-blue-700)] [&&]:[&&]:[&&]:[&.neutral]:[background:rgba(148,_163,_184,_0.15)] [&&]:[&&]:[&&]:[&.neutral]:[color:var(--color-ink-500)] success">
               <TrendingDown size={18} />
             </div>
@@ -631,7 +647,7 @@ const SbtiDashboard: React.FC = () => {
                 onClick={() => setMilestoneZoom("near_term")}
                 className={`[padding:5px_12px] [border-radius:var(--radius-full)] [font-size:var(--text-xs)] [font-weight:600] [border:none] [cursor:pointer] [transition:all_0.15s_ease] ${
                   milestoneZoom === "near_term"
-                    ? "[background:var(--color-primary)] [color:var(--color-white)] [box-shadow:0_1px_4px_rgba(255,102,0,0.3)]"
+                    ? "[background:var(--color-primary)] [color:var(--color-white)] shadow-xs"
                     : "[background:transparent] [color:var(--text-secondary)] [&:hover]:[color:var(--text-primary)]"
                 }`}
               >
@@ -642,7 +658,7 @@ const SbtiDashboard: React.FC = () => {
                 onClick={() => setMilestoneZoom("full")}
                 className={`[padding:5px_12px] [border-radius:var(--radius-full)] [font-size:var(--text-xs)] [font-weight:600] [border:none] [cursor:pointer] [transition:all_0.15s_ease] ${
                   milestoneZoom === "full"
-                    ? "[background:var(--color-primary)] [color:var(--color-white)] [box-shadow:0_1px_4px_rgba(255,102,0,0.3)]"
+                    ? "[background:var(--color-primary)] [color:var(--color-white)] shadow-xs"
                     : "[background:transparent] [color:var(--text-secondary)] [&:hover]:[color:var(--text-primary)]"
                 }`}
               >
@@ -651,13 +667,13 @@ const SbtiDashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className="h-[360px]! w-full!">
+          <div className="h-[400px]! w-full!">
             {sbtiData?.trajectory && sbtiData.trajectory.length > 0 ? (
               <LineChart
                 data={displayTrajectory}
-                xAxisKey="year"
+                xAxisKey="displayYear"
                 lines={trajectoryLines}
-                height={350}
+                height={390}
               />
             ) : (
               <div className="flex! justify-center! items-center! h-full! text-[color:var(--color-ink-600)]!">
@@ -677,13 +693,21 @@ const SbtiDashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className="h-[360px]! w-full!">
+          <div className="h-[400px]! w-full!">
             {sbtiData?.trajectory && sbtiData.trajectory.length > 0 ? (
               <BarChart
-                data={sbtiData.trajectory.filter((t) => t.actual !== null && t.actual !== undefined && (t.actual as number) > 0)}
-                xAxisKey="year"
+                data={sbtiData.trajectory
+                  .filter((t) => t.actual !== null && t.actual !== undefined && (t.actual as number) > 0)
+                  .map((r) => {
+                    const isPartial = r.is_partial_year || String(r.year) === String(ytdYear);
+                    return {
+                      ...r,
+                      displayYear: isPartial ? `${r.year} (YTD)` : String(r.year),
+                    };
+                  })}
+                xAxisKey="displayYear"
                 bars={scopeBars}
-                height={350}
+                height={390}
               />
             ) : (
               <div className="flex! justify-center! items-center! h-full! text-[color:var(--color-ink-600)]!">
@@ -703,6 +727,14 @@ const SbtiDashboard: React.FC = () => {
               {tr("Yearly comparison of targets, actual emissions, and progress towards net-zero alignment (")}{scopeMode === "s1_s2" ? tr("Scope 1+2 Operational View") : tr("All Scopes View")})
             </p>
           </div>
+        </div>
+
+        <div className="mb-4 rounded-md border border-amber-300 bg-amber-50 px-3.5 py-2.5 text-xs text-amber-900 shadow-2xs">
+          <span className="font-semibold">{tr("Reporting Note:")}</span>{" "}
+          {tr(
+            "Current year ({{year}}) reflects year-to-date (YTD) partial data and is not an annualized total. Pathway progress is evaluated against the latest complete calendar year.",
+            { year: String(ytdYear || new Date().getFullYear()) }
+          )}
         </div>
 
         <div className="[overflow-x:auto] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [background:var(--bg-card,_rgba(255,_255,_255,_0.6))] [backdrop-filter:blur(8px)]" tabIndex={0} role="region" aria-label={tr("Pathway table")}>
@@ -726,11 +758,15 @@ const SbtiDashboard: React.FC = () => {
                 sbtiData.trajectory.map((row) => {
                   const hasActual = row.actual !== null && row.actual !== undefined && row.actual > 0;
                   const variance = hasActual && row.actual != null ? row.actual - row.sbti_target : null;
+                  const isPartial = Boolean(row.is_partial_year || String(row.year) === String(ytdYear));
                   let statusClass = "projected";
                   let statusLabel = "Projected";
 
                   if (hasActual && row.actual != null) {
-                    if (row.actual <= row.sbti_target) {
+                    if (isPartial) {
+                      statusClass = "neutral";
+                      statusLabel = "YTD (Partial Year)";
+                    } else if (row.actual <= row.sbti_target) {
                       statusClass = "achieved";
                       statusLabel = "Achieved";
                     } else {
@@ -741,11 +777,22 @@ const SbtiDashboard: React.FC = () => {
 
                   return (
                     <tr key={row.year}>
-                      <td className="font-semibold!">{row.year}</td>
+                      <td className="font-semibold!">
+                        {isPartial ? (
+                          <span className="inline-flex items-center gap-1.5">
+                            {row.year}
+                            <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[11px] font-semibold text-amber-800">
+                              YTD
+                            </span>
+                          </span>
+                        ) : (
+                          row.year
+                        )}
+                      </td>
                       <td className="font-medium!">{formatNumber(row.sbti_target, 1)} tCO2e</td>
                       <td className="text-[color:var(--text-primary,_var(--color-ink-900))]! font-medium!">{formatNumber(row.bau_projection, 1)} tCO2e</td>
                       <td className={`${hasActual ? "[font-weight:700]!" : "[font-weight:400]!"} ${hasActual ? "[color:var(--text-primary,_var(--color-ink-900))]!" : "[color:var(--color-ink-500)]!"}`}>
-                        {hasActual ? `${formatNumber(row.actual, 1)} tCO2e` : "—"}
+                        {hasActual ? `${formatNumber(row.actual, 1)} tCO2e${isPartial ? " (YTD)" : ""}` : "—"}
                       </td>
                       <td>{hasActual ? `${formatNumber(row.scope1, 1)}` : "—"}</td>
                       <td>{hasActual ? `${formatNumber(row.scope2, 1)}` : "—"}</td>
@@ -754,7 +801,7 @@ const SbtiDashboard: React.FC = () => {
                       <td>
                         {variance !== null ? (
                           <span className={`[font-weight:600]! ${variance <= 0 ? "[color:var(--color-green-700)]!" : "[color:var(--color-red-700)]!"}`}>
-                            {variance > 0 ? `+${formatNumber(variance, 1)}` : formatNumber(variance, 1)} tCO2e
+                            {variance > 0 ? `+${formatNumber(variance, 1)}` : formatNumber(variance, 1)} tCO2e{isPartial ? " (YTD)" : ""}
                           </span>
                         ) : (
                           "—"

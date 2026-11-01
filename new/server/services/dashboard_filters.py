@@ -58,11 +58,23 @@ def _parse_facility_ids(facility_id):
 
 
 def apply_scope(query, model, allowed_fids=None, facility_id=None, activity=None, division=None, segment=None,
-                joined=False):
+                joined=False, include_test=False):
     """Facility-level scoping and filters for any model with a facility_id column."""
     needs_join = any(_set(v) for v in (activity, division, segment))
     if needs_join and not joined:
         query = query.join(Facility, Facility.id == model.facility_id)
+    if not include_test:
+        if model is Facility and hasattr(Facility, "is_test"):
+            query = query.filter(Facility.is_test == False)
+        else:
+            if hasattr(model, "is_test"):
+                query = query.filter(model.is_test == False)
+            if needs_join and hasattr(Facility, "is_test"):
+                query = query.filter(Facility.is_test == False)
+            elif not needs_join and hasattr(model, "facility_id") and hasattr(Facility, "is_test"):
+                query = query.filter(~model.facility_id.in_(
+                    Facility.query.with_entities(Facility.id).filter(Facility.is_test == True)
+                ))
     if allowed_fids is not None:
         query = query.filter(model.facility_id.in_(allowed_fids or [-1]))
     fids = _parse_facility_ids(facility_id)
@@ -200,11 +212,12 @@ def gas_volume_m3(quantity, unit, year=None, month=None):
 # ── BOE (BUG-044): one definition for every endpoint ─────────────────────────────
 # API Compendium 2021 BOE conversion: 5.8 MMBtu per BOE and the heat content of the gas. With the platform's
 # natural gas HHV (1,020 Btu/scf, emission_factors.py) that is 1.020 / 5.8 = 0.17586 BOE per Mcf (5,686 scf/BOE).
-# Audit 2026-10-14 BUG-0072: the constant was 0.178, i.e. ~1,032 Btu/scf, inconsistent with the catalog HHV.
-NG_HHV_BTU_PER_SCF = 1020.0
-MMBTU_PER_BOE = 5.8
-GAS_BOE_PER_MSCF = NG_HHV_BTU_PER_SCF / 1000.0 / MMBTU_PER_BOE
-SCF_PER_BOE = 1000.0 / GAS_BOE_PER_MSCF
+from calculations.units import (
+    NG_HHV_BTU_PER_SCF,
+    MMBTU_PER_BOE,
+    GAS_BOE_PER_MSCF,
+    SCF_PER_BOE,
+)
 
 
 BBL_PER_TONNE_CRUDE = 7.33  # average crude (~33 API), the convention the dashboard already used
@@ -228,18 +241,58 @@ def production_oil_bbl(row):
     return None
 
 
+def calculate_oil_gas_boe(row):
+    """Compute BOE directly from oil barrels and gas volume at standard conversion."""
+    oil = production_oil_bbl(row)
+    gas_m3 = production_gas_m3(row)
+    if oil is None and gas_m3 is None:
+        return None
+    gas_boe = (gas_m3 * 35.314666721 / SCF_PER_BOE) if gas_m3 is not None else 0.0
+    oil_boe = oil if oil is not None else 0.0
+    return oil_boe + gas_boe
+
+
+def validate_production_mmboe_consistency(total_mmboe, calculated_boe, tolerance=0.30):
+    """
+    Validates whether total_production_mmboe is within tolerance of oil+gas converted BOE.
+    Returns (is_consistent, diff_pct).
+    """
+    if total_mmboe is None or calculated_boe is None or calculated_boe <= 0:
+        return True, 0.0
+    stored_boe = float(total_mmboe) * 1e6
+    diff_pct = abs(stored_boe - calculated_boe) / calculated_boe
+    return diff_pct <= tolerance, diff_pct
+
+
 def production_boe(row):
     """BOE of one ProductionData row, or None when a unit cannot be interpreted.
 
-    Uses total_production_mmboe when recorded, otherwise oil barrels + gas at GAS_BOE_PER_MSCF.
+    Consistent calculation:
+    Calculates oil barrels + gas at GAS_BOE_PER_MSCF.
+    If total_production_mmboe is recorded:
+      - Validates whether total_production_mmboe is within tolerance (30%) of the oil+gas converted BOE.
+      - If consistent, total_production_mmboe * 1e6 is used (incorporating detailed stream accounting).
+      - If discordant (e.g. test outlier like 10,000 MMBOE vs 0.62 MMBOE actual),
+        it falls back to the canonical oil+gas converted BOE and logs a warning.
     """
-    if getattr(row, "total_production_mmboe", None):
-        return float(row.total_production_mmboe) * 1e6
-    oil = production_oil_bbl(row)
-    gas_m3 = production_gas_m3(row)
-    if oil is None or gas_m3 is None:
-        return None
-    return oil + gas_m3 * 35.314666721 / SCF_PER_BOE
+    calc_boe = calculate_oil_gas_boe(row)
+    stored_mmboe = getattr(row, "total_production_mmboe", None)
+    if stored_mmboe is not None and float(stored_mmboe) > 0:
+        stored_boe = float(stored_mmboe) * 1e6
+        if calc_boe is not None and calc_boe > 0:
+            is_consistent, diff_pct = validate_production_mmboe_consistency(stored_mmboe, calc_boe, tolerance=0.30)
+            if is_consistent:
+                return stored_boe
+            else:
+                import logging
+                logging.getLogger(__name__).warning(
+                    "ProductionData row %s has discordant total_production_mmboe (%s MMBOE) "
+                    "differing by %.1f%% from calculated oil+gas BOE (%s BOE). Falling back to calculated BOE.",
+                    getattr(row, "id", "?"), stored_mmboe, diff_pct * 100.0, calc_boe
+                )
+                return calc_boe
+        return stored_boe
+    return calc_boe
 
 
 def production_gas_m3(row):

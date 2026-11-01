@@ -50,11 +50,12 @@ export const Scope3FormCalculatorGridContainer: React.FC<Scope3FormCalculatorGri
   setShowWizard,
   totalPages,
 }) => (
-  <div className="calculator-grid-container [background:white] [border-radius:var(--radius-md)] [overflow:hidden] [box-shadow:var(--shadow-xs)] mt-[30px]!">
-    <div className="table-controls flex! justify-between! items-center! p-[15px]!">
-      <strong className="text-[length:1rem]! text-[color:var(--color-legacy-374151)]!">{t("Documented Scope 3 Emissions")}</strong>
+  <div className="calculator-grid-container [background:white] [border-radius:var(--radius-md)] [overflow:hidden] [box-shadow:var(--shadow-xs)] mt-[30px]! w-full border border-border">
+    <div className="table-controls flex justify-between items-center p-4 border-b border-border bg-ink-50/40">
+      <strong className="text-base font-semibold text-text">{t("Documented Scope 3 Emissions")}</strong>
       <button
-        className="action-btn secondary flex! items-center! gap-[8px]! whitespace-nowrap!"
+        type="button"
+        className="inline-flex items-center gap-1.5 bg-surface hover:bg-ink-100 text-text text-xs font-medium px-3 py-1.5 rounded-md border border-border shadow-xs transition-colors cursor-pointer"
         onClick={() => setShowWizard(true)}
       >
         {t("↑ Bulk Import (Wizard)")}
@@ -144,20 +145,22 @@ export const Scope3FormCalculatorGridContainer: React.FC<Scope3FormCalculatorGri
                   )}
                 </td>
                 <td className="text-center! whitespace-nowrap!">
-                  <button
-                    className="icon-button text-[color:var(--color-blue-700)]! mr-[8px]!"
-                    onClick={() => handleInspect(entry)}
-                    title={t("Inspect Calculation Details")}
-                  >
-                    <Eye size={16} />
-                  </button>
-                  <button
-                    className="icon-button text-[color:var(--color-red-700)]!"
-                    onClick={() => handleDelete(entry.id)}
-                    title={t("Delete")}
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                  <div className="flex justify-center items-center gap-1.5">
+                    <button
+                      className="btn-review-action inspect"
+                      onClick={() => handleInspect(entry)}
+                      title={t("Inspect Calculation Details")}
+                    >
+                      <Eye size={15} />
+                    </button>
+                    <button
+                      className="btn-review-action delete"
+                      onClick={() => handleDelete(entry.id)}
+                      title={t("Delete")}
+                    >
+                      <Trash2 size={15} />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))

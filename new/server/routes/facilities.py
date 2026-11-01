@@ -61,6 +61,8 @@ def get_facilities():
                 "operator_status": f.operator_status or "operated",
                 "country": f.country or "Algeria",
                 "ogmp_membership_year": f.ogmp_membership_year or 2023,
+                "target_year": (f.ogmp_membership_year or 2023) + (3 if (f.operator_status or "operated") == "operated" else 5),
+                "target_gold_year": (f.ogmp_membership_year or 2023) + (3 if (f.operator_status or "operated") == "operated" else 5),
                 "reconciliation_threshold": f.reconciliation_threshold or 20.0,
                 "field": f.field,
                 "latitude": f.latitude,

@@ -109,7 +109,7 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
         <div className="[margin-bottom:12px] mt-[14px]!">
           <div className="form-grid-2 gap-[10px]!">
             <div className="input-group mb-[0px]!">
-              <label className="text-[length:0.75rem]!">
+              <label className="block text-sm font-medium text-text mb-1.5">
                 HHV
                 <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
               </label>
@@ -124,9 +124,10 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
               />
             </div>
             <div className="input-group mb-[0px]!">
-              <label className="text-[length:0.75rem]!">{t("HHV Unit")}</label>
+              <label className="block text-sm font-medium text-text mb-1.5">{t("HHV Unit")}</label>
               <NativeSelect
-                className="component-select"
+                wrapperClassName="w-36 shrink-0"
+                className="h-10 text-sm font-medium"
                 value={data.hhv_unit || "BTU/scf"}
                 onChange={(e) => onChange("hhv_unit", e.target.value)}
               >
@@ -144,7 +145,7 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
           {/* Combustion efficiency — required for stationary combustion */}
           {isCombustion && (
             <div className="input-group mt-[10px]! mb-[0px]!">
-              <label className="text-[length:0.75rem]!">
+              <label className="block text-sm font-medium text-text mb-1.5">
                 {t("Combustion efficiency")}
                 <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
               </label>
@@ -163,7 +164,7 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
                     borderColor: data.combustion_efficiency == null ? "var(--color-legacy-fbbf24)" : "var(--color-legacy-d1fae5)",
                   }}
                 />
-                <span className="text-[length:0.8rem]! text-[color:var(--color-legacy-6b7280)]! whitespace-nowrap!">%</span>
+                <span className="text-sm font-medium text-text-secondary whitespace-nowrap!">%</span>
               </div>
             </div>
           )}
@@ -172,11 +173,11 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
           {isFlaring && (
             <div className="form-grid-2 gap-[10px]! mt-[10px]!">
               <div className="input-group mb-[0px]!">
-                <label className="text-[length:0.75rem]!">{t("Flare Type")}</label>
+                <label className="block text-sm font-medium text-text mb-1.5">{t("Flare Type")}</label>
                 <NativeSelect
                   id="flare-type-select"
                   aria-label={t("Flare Type")}
-                  className="component-select"
+                  className="h-10 text-sm font-medium"
                   value={data.flare_type || "elevated"}
                   onChange={(e) => onChange("flare_type", e.target.value)}
                 >
@@ -186,7 +187,7 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
                 </NativeSelect>
               </div>
               <div className="input-group mb-[0px]!">
-                <label className="text-[length:0.75rem]!">
+                <label className="block text-sm font-medium text-text mb-1.5">
                   {t("CH₄ (%)")}
                   <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
                 </label>
@@ -204,7 +205,7 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
               {/* measured efficiencies; blank = API Compendium 2021 defaults as corrected in December 2025
                   (96.5 % to CO2; CH4 98 %, 99.5 % at facilities registered as Downstream) */}
               <div className="input-group mb-[0px]!">
-                <label className="text-[length:0.75rem]!">{t("Combustion efficiency (% carbon to CO₂)")}</label>
+                <label className="block text-sm font-medium text-text mb-1.5">{t("Combustion efficiency (% carbon to CO₂)")}</label>
                 <Input
                   id="flare-combustion-efficiency-input"
                   type="number"
@@ -217,7 +218,7 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
                 />
               </div>
               <div className="input-group mb-[0px]!">
-                <label className="text-[length:0.75rem]!">{t("Destruction efficiency (% CH₄ destroyed)")}</label>
+                <label className="block text-sm font-medium text-text mb-1.5">{t("Destruction efficiency (% CH₄ destroyed)")}</label>
                 <Input
                   id="flare-destruction-efficiency-input"
                   type="number"
@@ -236,7 +237,7 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
               converted to standard conditions (scf and Sm3 are already standard) */}
           <div className="form-grid-2 gap-[10px]! mt-[10px]!">
             <div className="input-group mb-[0px]!">
-              <label className="text-[length:0.75rem]!">{t("Operating Temp (°F)")}</label>
+              <label className="block text-sm font-medium text-text mb-1.5">{t("Operating Temp (°F)")}</label>
               <Input
                 type="number"
                 value={data.operating_temperature !== undefined ? data.operating_temperature : ""}
@@ -248,7 +249,7 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
               />
             </div>
             <div className="input-group mb-[0px]!">
-              <label className="text-[length:0.75rem]!">{t("Pressure (psia)")}</label>
+              <label className="block text-sm font-medium text-text mb-1.5">{t("Pressure (psia)")}</label>
               <Input
                 type="number"
                 value={data.operating_pressure !== undefined ? data.operating_pressure : ""}

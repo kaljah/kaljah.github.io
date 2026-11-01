@@ -633,7 +633,36 @@ def _query_scope3_summary(
         by_year = {str(y): float(v) for y, v in by_year_acc.items()}
 
     total = by_year.get(str(year), 0.0) if year and year != "all" else sum(by_year.values())
-    return {"total": float(total), "by_year": by_year, "gwp_horizon": 20 if is_20 else 100}
+
+    from models import ProductionData
+    from sqlalchemy import or_
+    q_cat11 = db.session.query(Scope3Emission.year, func.count(Scope3Emission.id))
+    q_cat11 = apply_scope(q_cat11, Scope3Emission, **scope).filter(
+        Scope3Emission.status.in_(st),
+        Scope3Emission.year.isnot(None),
+        or_(Scope3Emission.category.ilike("%11%"), Scope3Emission.category.ilike("%use of sold%"))
+    )
+    cat11_years = {str(y) for y, cnt in q_cat11.group_by(Scope3Emission.year).all() if cnt > 0}
+
+    q_prod = db.session.query(ProductionData.year, func.count(ProductionData.id))
+    q_prod = apply_scope(q_prod, ProductionData, **scope).filter(ProductionData.year.isnot(None))
+    prod_years = {str(y) for y, cnt in q_prod.group_by(ProductionData.year).all() if cnt > 0}
+
+    if year and year != "all":
+        has_prod = str(year) in prod_years
+        has_cat11 = str(year) in cat11_years
+        scope3_incomplete = bool(has_prod and not has_cat11)
+    else:
+        missing_years = prod_years - cat11_years
+        scope3_incomplete = bool(len(missing_years) > 0)
+
+    return {
+        "total": float(total),
+        "by_year": by_year,
+        "gwp_horizon": 20 if is_20 else 100,
+        "scope3_incomplete": scope3_incomplete,
+        "cat11_years": sorted(list(cat11_years)),
+    }
 
 @cached(
     cache=DASHBOARD_CACHE,

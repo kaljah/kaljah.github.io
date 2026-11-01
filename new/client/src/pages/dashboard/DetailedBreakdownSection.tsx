@@ -20,11 +20,11 @@ const Row: React.FC<RowProps> = ({ label, value, level = 0, tone = "detail", cla
   <tr
     className={cn(
       "border-b border-ink-100 text-base",
-      tone === "summary" && "font-bold text-text",
+      tone === "summary" && "font-semibold text-text",
       tone === "detail" && "text-text-secondary",
       tone === "sub" && "bg-ink-50/50 text-sm text-text-secondary",
-      tone === "total" && "bg-ink-50 font-bold text-text",
-      tone === "net" && "bg-ink-50 font-bold text-success-fg",
+      tone === "total" && "bg-ink-50 font-semibold text-text",
+      tone === "net" && "bg-ink-50 font-semibold text-success-fg",
       className,
     )}
     {...props}
@@ -107,12 +107,37 @@ const DetailedBreakdownSection: React.FC<DetailedBreakdownSectionProps> = ({
           {detailedBreakdownCollapsed ? <ChevronDown className="size-[18px] text-ink-500" aria-hidden="true" /> : <ChevronUp className="size-[18px] text-ink-500" aria-hidden="true" />}
         </button>
 
-        <div className={cn("overflow-auto", detailedBreakdownCollapsed && "hidden print:block")}>
+        {detailedBreakdownCollapsed ? (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+            <div className="rounded-lg border border-border bg-ink-50/50 p-3.5 flex flex-col justify-between">
+              <span className="text-xs font-semibold text-text-secondary">{t("Scope 1 (Direct)")}</span>
+              <div className="mt-1 flex items-baseline gap-1">
+                <span className="text-xl font-bold tabular-nums text-text">{fmt(stats.scope1)}</span>
+                <span className="text-xs text-text-secondary">tCO₂e</span>
+              </div>
+            </div>
+            <div className="rounded-lg border border-border bg-ink-50/50 p-3.5 flex flex-col justify-between">
+              <span className="text-xs font-semibold text-text-secondary">{t("Scope 2 (Indirect)")}</span>
+              <div className="mt-1 flex items-baseline gap-1">
+                <span className="text-xl font-bold tabular-nums text-text">{fmt(stats.scope2)}</span>
+                <span className="text-xs text-text-secondary">tCO₂e</span>
+              </div>
+            </div>
+            <div className="rounded-lg border border-border bg-ink-50/50 p-3.5 flex flex-col justify-between">
+              <span className="text-xs font-semibold text-text-secondary">{t("Scope 3 (Supply Chain)")}</span>
+              <div className="mt-1 flex items-baseline gap-1">
+                <span className="text-xl font-bold tabular-nums text-text">{fmt(stats.scope3)}</span>
+                <span className="text-xs text-text-secondary">tCO₂e</span>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="overflow-auto">
           <table className="data-table w-full border-collapse">
             <thead>
-              <tr className="bg-ink-50 text-left text-sm font-semibold text-text-secondary">
-                <th scope="col" className="py-2.5 pl-4 pr-4">{t("Category / Source")}</th>
-                <th scope="col" className="py-2.5 pr-4 text-right">{t("Results (tCO₂e)")}</th>
+              <tr className="bg-ink-50 text-left text-sm font-medium text-text-secondary">
+                <th scope="col" className="py-2.5 px-4">{t("Category / Source")}</th>
+                <th scope="col" className="py-2.5 px-4 text-right">{t("Results (tCO₂e)")}</th>
               </tr>
             </thead>
             <tbody>
@@ -133,7 +158,7 @@ const DetailedBreakdownSection: React.FC<DetailedBreakdownSectionProps> = ({
               <Row tone="net" label={t("Net Footprint")} value={fmt(total - (stats.mitigation || 0))} />
 
               <tr>
-                <td colSpan={2} className="px-4 pb-1.5 pt-5 text-xs font-bold uppercase tracking-wide text-text-secondary">
+                <td colSpan={2} className="px-4 pb-1.5 pt-5 text-xs font-semibold text-text-secondary">
                   {t("Organizational breakdown")}
                 </td>
               </tr>
@@ -186,6 +211,7 @@ const DetailedBreakdownSection: React.FC<DetailedBreakdownSectionProps> = ({
             </tbody>
           </table>
         </div>
+        )}
       </Card>
 
       <Card className="flex flex-col gap-4 self-start p-6">

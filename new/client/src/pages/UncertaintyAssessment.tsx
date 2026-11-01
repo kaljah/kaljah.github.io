@@ -19,6 +19,7 @@ import { useToast } from "../components/Toast";
 import LoadingSpinner from "../components/LoadingSpinner";
 import CustomDropdown from "../components/CustomDropdown";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
+import { ReportsNavTabs } from "../components/NavigationTabs";
 import "./UncertaintyAssessment.css";
 import { t } from "../i18n";
 
@@ -264,7 +265,7 @@ const UncertaintyAssessment: React.FC = () => {
   // Dynamic height for chart
   const chartDynamicHeight = useMemo(() => {
     const count = data?.categories?.length || 0;
-    return Math.max(340, count * 38 + 70);
+    return Math.max(380, count * 40 + 80);
   }, [data?.categories?.length]);
 
   if (loading) {
@@ -282,6 +283,7 @@ const UncertaintyAssessment: React.FC = () => {
 
   return (
     <div className="[padding:24px_32px_48px] [max-width:1600px] [margin:0_auto] [color:var(--text-primary,_var(--color-ink-900))]">
+      <ReportsNavTabs className="mb-6" />
       {/* ── Page Header ── */}
       <div className="[margin-bottom:28px] [display:flex] [justify-content:space-between] [align-items:flex-end]! [gap:24px] [flex-wrap:wrap]! [@media(max-width:900px)]:[flex-direction:column]! [@media(max-width:900px)]:[align-items:flex-start]!">
         <div>
@@ -471,7 +473,7 @@ const UncertaintyAssessment: React.FC = () => {
                         <span className="ua-legend-dot band-high" />
                         {t("High (> ±30%)")}
                       </span>
-                      <strong className="text-red-700!">
+                      <strong className="text-red-700">
                         {data.uncertainty_bands?.["high"] ?? 0}%
                       </strong>
                     </div>
@@ -480,7 +482,7 @@ const UncertaintyAssessment: React.FC = () => {
                         <span className="ua-legend-dot band-medium" />
                         {t("Moderate (±10% to ±30%)")}
                       </span>
-                      <strong className="text-amber-700!">
+                      <strong className="text-amber-700">
                         {data.uncertainty_bands?.["medium"] ?? 0}%
                       </strong>
                     </div>
@@ -489,7 +491,7 @@ const UncertaintyAssessment: React.FC = () => {
                         <span className="ua-legend-dot band-low" />
                         {t("Low (≤ ±10%)")}
                       </span>
-                      <strong className="text-green-700!">
+                      <strong className="text-green-700">
                         {data.uncertainty_bands?.["low"] ?? 0}%
                       </strong>
                     </div>
@@ -563,21 +565,21 @@ const UncertaintyAssessment: React.FC = () => {
                   {data.monte_carlo && (
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3.5 rounded-xl bg-ink-50/70 border border-border">
                       <div className="flex flex-col">
-                        <span className="text-[11px] font-semibold uppercase text-text-secondary">{t("Simulated Mean")}</span>
+                        <span className="text-xs font-medium text-text-secondary">{t("Simulated Mean")}</span>
                         <span className="text-sm font-bold text-text mt-0.5">{Number(data.monte_carlo.mean).toLocaleString()} tCO₂e</span>
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-[11px] font-semibold uppercase text-text-secondary">{t("Median (P50)")}</span>
+                        <span className="text-xs font-medium text-text-secondary">{t("Median (P50)")}</span>
                         <span className="text-sm font-bold text-text mt-0.5">{Number(data.monte_carlo.median).toLocaleString()} tCO₂e</span>
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-[11px] font-semibold uppercase text-text-secondary">{t("95% Interval (P5 - P95)")}</span>
+                        <span className="text-xs font-medium text-text-secondary">{t("95% Interval (P5 - P95)")}</span>
                         <span className="text-sm font-bold text-emerald-700 mt-0.5">
                           [{Number(data.monte_carlo.ci_lower).toLocaleString()} - {Number(data.monte_carlo.ci_upper).toLocaleString()}]
                         </span>
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-[11px] font-semibold uppercase text-text-secondary">{t("95% Uncertainty")}</span>
+                        <span className="text-xs font-medium text-text-secondary">{t("95% Uncertainty")}</span>
                         <span className="text-sm font-bold text-brand-600 mt-0.5">±{data.monte_carlo.relative_uncertainty_95pct}% ({data.monte_carlo.iterations} runs)</span>
                       </div>
                     </div>
@@ -619,7 +621,6 @@ const UncertaintyAssessment: React.FC = () => {
                     })}
                     dataKey="value"
                     xKey="name"
-                    color="var(--color-unc-high)"
                     horizontal
                     sortDesc
                     height={chartDynamicHeight}
@@ -627,6 +628,12 @@ const UncertaintyAssessment: React.FC = () => {
                     referenceLabel={t("Critical threshold (±30%)")}
                     exportName="uncertainty-by-category"
                     formatValue={(v) => `±${Number(v).toFixed(1)}%`}
+                    thresholds={{
+                      warnAt: 10,
+                      badAt: 30,
+                      direction: "higher-is-worse",
+                      labels: [t("Low (≤ ±10%)"), t("Moderate (±10% to ±30%)"), t("High (> ±30%)")],
+                    }}
                   />
                 </div>
               ) : (
@@ -650,6 +657,12 @@ const UncertaintyAssessment: React.FC = () => {
                     height={chartDynamicHeight}
                     errorKey="range"
                     exportName="emissions-by-category-with-95-range"
+                    thresholds={{
+                      warnAt: 0.1,
+                      badAt: 0.3,
+                      direction: "higher-is-worse",
+                      labels: [t("Low (≤ ±10%)"), t("Moderate (±10% to ±30%)"), t("High (> ±30%)")],
+                    }}
                   />
                 </div>
               )}
@@ -813,7 +826,7 @@ const UncertaintyAssessment: React.FC = () => {
                           {isExpanded && (
                             <tr>
                               <td colSpan={7} className="ua-detail-expanded-cell">
-                                <div className="[font-size:var(--text-xs)] [font-weight:700] [text-transform:uppercase] [color:var(--color-ink-500)] [margin-bottom:12px] [letter-spacing:0.04em]">
+                                <div className="text-xs font-medium text-[color:var(--color-ink-500)] mb-3">
                                   {t("Key uncertainty drivers for")} : {cat.category}
                                 </div>
                                 <div className="ua-detail-panel">
@@ -854,18 +867,7 @@ const UncertaintyAssessment: React.FC = () => {
             </div>
           </div>
 
-          {/* ── ZONE 4: Methodology Footer ── */}
-          <div className="ua-methodology-box">
-            <Info size={24} className="ua-methodology-icon" />
-            <div>
-              <h4>{t("Calculation Methodology & ISO 14064-1 Compliance")}</h4>
-              <p>
-                {t(
-                  "Uncertainty is quantified using the quadratic error propagation method (SRSS / Approach 1) per IPCC 2006 Guidelines Vol. 1, Ch. 3 (Eq. 3.3). Expansion factor k=2 is applied in accordance with GUM §6.2 to obtain expanded uncertainty at 95% confidence level. Emission factor uncertainties account for intra-sector correlations (Audit RC-10)."
-                )}
-              </p>
-            </div>
-          </div>
+          {/* ── End of Analytics ── */}
         </>
       )}
     </div>

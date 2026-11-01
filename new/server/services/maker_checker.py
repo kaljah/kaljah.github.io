@@ -136,6 +136,10 @@ def decide(user, scope, ids, decision, reason=None, request=None):
         )
         if n == 1:
             won.add(rec_id)
+            if decision == 'approve' and hasattr(model, 'qa_flag'):
+                rec = db.session.get(model, rec_id)
+                if rec and rec.qa_flag and rec.qa_flag.lower().startswith(('[rejected]', 'rejected:')):
+                    rec.qa_flag = None
     rows = [r for r in rows if r[0] in won]
     target = [r[0] for r in rows]
     _notify_makers(rows, label, decision, user, reason)

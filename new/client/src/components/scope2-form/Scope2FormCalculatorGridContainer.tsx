@@ -55,14 +55,14 @@ const Scope2FormCalculatorGridContainer: React.FC<Scope2FormCalculatorGridContai
   setShowWizard,
   totalPages,
 }) => (
-  <div className="calculator-grid-container [background:white] [border-radius:var(--radius-md)] [overflow:hidden] [box-shadow:var(--shadow-xs)] mt-[30px]!">
-    <div className="table-controls flex! justify-between! items-center! p-[15px]!">
-      <strong className="text-[length:1rem]! text-[color:var(--color-legacy-374151)]!">
+  <div className="calculator-grid-container [background:white] [border-radius:var(--radius-md)] [overflow:hidden] [box-shadow:var(--shadow-xs)] mt-[30px]! w-full border border-border">
+    <div className="table-controls flex justify-between items-center p-4 border-b border-border bg-ink-50/40">
+      <strong className="text-base font-semibold text-text">
         {t("Recent Scope 2 (Electricity) Entries")}
       </strong>
       <button
         type="button"
-        className="action-btn secondary flex! items-center! gap-[8px]! whitespace-nowrap!"
+        className="inline-flex items-center gap-1.5 bg-surface hover:bg-ink-100 text-text text-xs font-medium px-3 py-1.5 rounded-md border border-border shadow-xs transition-colors cursor-pointer"
         onClick={() => setShowWizard(true)}
       >
         {t("↑ Bulk Import (Wizard)")}
@@ -216,30 +216,30 @@ const Scope2FormCalculatorGridContainer: React.FC<Scope2FormCalculatorGridContai
                     )}
                   </td>
                   <td className="text-center!">
-                    <div className="flex! justify-center! gap-[8px]!">
+                    <div className="flex justify-center items-center gap-1.5">
                       <button
                         type="button"
-                        className="icon-button text-[color:var(--color-blue-700)]!"
+                        className="btn-review-action inspect"
                         onClick={() => handleInspect(entry)}
                         title={t("Inspect Calculation Details")}
                       >
-                        <Eye size={16} />
+                        <Eye size={15} />
                       </button>
                       <button
                         type="button"
-                        className="icon-button"
+                        className="btn-review-action edit"
                         onClick={() => handleDuplicate(entry)}
                         title={t("Duplicate")}
                       >
-                        <Copy size={16} />
+                        <Copy size={15} />
                       </button>
                       <button
                         type="button"
-                        className="icon-button delete"
+                        className="btn-review-action delete"
                         onClick={() => handleDelete(entry.id)}
                         title={t("Delete")}
                       >
-                        <Trash2 size={16} />
+                        <Trash2 size={15} />
                       </button>
                     </div>
                   </td>

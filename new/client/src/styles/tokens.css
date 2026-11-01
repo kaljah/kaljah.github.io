@@ -161,13 +161,24 @@
   --color-info-bg: var(--color-blue-50);
   --color-info-fg: var(--color-blue-700);
 
-  /* Data categories (S-2) */
-  --color-scope-1: var(--color-brand-500);
-  --color-scope-2: var(--color-blue-500);
+  /* Data categories (S-2, Phase C Scope Colors) */
+  --color-scope-1: var(--color-brand-700);
+  --color-scope-1-bg: var(--color-brand-50);
+  --color-scope-1-fg: var(--color-brand-700);
+  --color-scope-2: var(--color-blue-600);
+  --color-scope-2-bg: var(--color-blue-50);
+  --color-scope-2-fg: var(--color-blue-700);
   --color-scope-3: var(--color-violet-500);
-  --color-unc-low: var(--color-green-500);
+  --color-scope-3-bg: var(--color-legacy-f3e8ff);
+  --color-scope-3-fg: var(--color-violet-700);
+  --color-unc-low: var(--color-green-600);
   --color-unc-medium: var(--color-amber-500);
-  --color-unc-high: var(--color-red-500);
+  --color-unc-high: var(--color-red-600);
+
+  /* Secondary Brand Teal (C4) */
+  --color-brand-teal: #0d9488;
+  --color-brand-teal-light: #ccfbf1;
+  --color-brand-teal-dark: #0f766e;
 
   /* Type scale */
   --text-xs: 0.75rem;

@@ -2,7 +2,7 @@ import React from "react";
 import { Input, Field } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import CustomDropdown from "../../components/CustomDropdown";
-import { Upload } from "lucide-react";
+import { Download, Upload } from "lucide-react";
 import PaginationControls from "./PaginationControls";
 import { t } from "../../i18n";
 
@@ -35,8 +35,10 @@ export interface MitigationTabProps {
   filteredMitigations: MitigationRecord[];
   getAvailableActivities: () => string[];
   getAvailableDivisions: (activity?: string) => string[];
+  exportToCSV?: (data: any[], filename: string) => void;
   handleDeleteMitigation: (id: string | number) => void;
   handleSaveMitigation: () => void;
+  isSubmitting?: boolean;
   isPrivileged: boolean;
   mitigationForm: Record<string, any>;
   mitigations: MitigationRecord[];
@@ -50,12 +52,14 @@ const MitigationTab: React.FC<MitigationTabProps> = ({
   ACTIVITY_LABELS,
   ITEMS_PER_PAGE,
   currentPage,
+  exportToCSV,
   facilities,
   filteredMitigations,
   getAvailableActivities,
   getAvailableDivisions,
   handleDeleteMitigation,
   handleSaveMitigation,
+  isSubmitting,
   isPrivileged,
   mitigationForm,
   mitigations,
@@ -72,9 +76,8 @@ const MitigationTab: React.FC<MitigationTabProps> = ({
         </p>
       </div>
       <button
-        className="action-btn [display:flex]! [align-items:center]! [gap:8px]! [padding:8px_16px]! [font-size:0.9rem]! [width:auto]!"
+        className="action-btn [display:flex]! [align-items:center]! [gap:8px]! [padding:8px_16px]! [font-size:0.9rem]! [width:auto]! cursor-pointer"
         onClick={() => setImportModal({ isOpen: true, type: "mitigation" })}
-       
       >
         <Upload size={16} />{" "}{t("Bulk Import (CSV)")}
       </button>
@@ -222,15 +225,15 @@ const MitigationTab: React.FC<MitigationTabProps> = ({
       </Field>
     </div>
 
-    <div className="flex! gap-[12px]! mt-[20px]!">
-      <button className="action-btn" onClick={handleSaveMitigation}>
+    <div className="flex! items-center! gap-[12px]! mt-[20px]!">
+      <button className="action-btn" onClick={handleSaveMitigation} disabled={isSubmitting}>
         {t("Save Record")}
       </button>
       <button
-        className="action-btn bg-[color:var(--color-green-500)]!"
-        onClick={() => setImportModal({ isOpen: true, type: "mitigation" })}
+        className="action-btn [background:transparent]! [color:var(--text-primary)]! border border-[var(--border-color)]! flex! items-center! gap-[8px]! cursor-pointer"
+        onClick={() => (exportToCSV ? exportToCSV(mitigations, "mitigation_projects.csv") : null)}
       >
-        <Upload size={16} />{" "}{t("Import Mitigation CSV")}
+        <Download size={16} /> {t("Export CSV")}
       </button>
     </div>
 

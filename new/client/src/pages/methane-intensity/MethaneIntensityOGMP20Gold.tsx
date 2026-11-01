@@ -27,43 +27,40 @@ const MethaneIntensityOGMP20Gold: React.FC<MethaneIntensityOGMP20GoldProps> = ({
   setSelectedBaselineYear,
 }) => (
   <div
-    className={`[background:var(--bg-card)] [border:1px_solid_var(--border-color)] [&&]:[border-radius:var(--radius-lg)] [padding:28px] [box-shadow:var(--card-shadow)] [display:flex] [flex-direction:column] [gap:22px] [transition:gap_0.3s_ease] [&.collapsed-card]:[gap:0] ${roadmapCollapsed ? "collapsed-card" : ""}`}
+    className={`bg-surface border border-border rounded-lg p-7 shadow-card flex flex-col gap-5 transition-[gap] duration-200 ${roadmapCollapsed ? "gap-0" : ""}`}
   >
     <div
       role="presentation"
-      className="[display:flex] [justify-content:space-between] [align-items:center] [flex-wrap:wrap] [gap:16px] [padding-bottom:18px] [border-bottom:1px_solid_var(--border-color)] cursor-pointer! [user-select:none]!"
+      className={`flex justify-between items-center flex-wrap gap-4 cursor-pointer select-none ${roadmapCollapsed ? "" : "pb-4 border-b border-border"}`}
       onClick={() => setRoadmapCollapsed(!roadmapCollapsed)}
     >
-      <div className="[display:flex] [flex-direction:column] [gap:4px] [&_h3]:[font-size:var(--text-lg)]! [&_h3]:[font-weight:700]! [&_h3]:[color:var(--text-primary)]! [&_h3]:[margin:0]! [&_h3]:[display:flex] [&_h3]:[align-items:center] [&_h3]:[gap:10px] [&&]:[&&]:[&_p]:[font-size:var(--text-base)]! [&&]:[&_p]:[color:var(--text-secondary)]! [&&]:[&_p]:[margin:0]!">
-        <h3>
-          <Award size={22} color="var(--color-brand-500)" />
+      <div className="flex flex-col gap-1">
+        <h3 className="text-lg font-bold text-text m-0 flex items-center gap-2.5">
+          <Award size={22} className="text-brand-500" />
           {t("OGMP 2.0 Gold Standard Pathway & Milestone Roadmap")}
         </h3>
-        <p>
+        <p className="text-sm text-text-secondary m-0">
           {t("Multi-year reporting level progression towards Level 4/5 site-level measurement reconciliation.")}
         </p>
       </div>
 
-      <div className="flex! min-w-0 items-center! gap-[16px]!">
+      <div className="flex min-w-0 items-center gap-4">
         {/* Interactive Baseline Selector UI button/pill matching theme */}
         <div
           role="presentation"
-          className="min-w-0 [display:flex] [flex-wrap:wrap] [align-items:center] [gap:10px] [background:var(--bg-app)] [padding:6px_12px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color)]"
+          className="min-w-0 flex flex-wrap items-center gap-2.5 bg-ink-50 px-3 py-1.5 rounded-md border border-border"
           onClick={(e) => e.stopPropagation()}
         >
-          <span className="[font-size:var(--text-sm)] [font-weight:600] [color:var(--text-secondary)]">
-            <Calendar
-              size={14}
-              className="[display:inline]! [vertical-align:middle]! [margin-right:4px]!"
-            />
+          <span className="text-xs font-medium text-text-secondary inline-flex items-center gap-1">
+            <Calendar size={13} />
             {t("Base Year:")}
           </span>
-          <div className="[display:flex] [flex-wrap:wrap] [gap:6px]">
+          <div className="flex flex-wrap gap-1.5">
             {Array.from({ length: new Date().getFullYear() - 2020 }, (_, i) => 2021 + i).map((yr) => (
               <button
                 key={yr}
                 type="button"
-                className={`[background:var(--bg-card)]! [border:1px_solid_var(--border-color)]! [color:var(--text-primary)]! [font-size:var(--text-sm)] [font-weight:600] [padding:4px_10px] [&&]:[border-radius:var(--radius-sm)]! [cursor:pointer] [transition:all_0.2s_ease] hover:[border-color:var(--accent-secondary)]! hover:[color:var(--accent-secondary)]! [&.active]:[background:var(--accent-secondary)]! [&.active]:[color:var(--color-white)]! [&.active]:[border-color:var(--accent-secondary)]! [&.active]:[box-shadow:0_2px_8px_rgba(37,_99,_235,_0.3)]! ${selectedBaselineYear === yr ? "active" : ""}`}
+                className={`bg-surface border border-border text-text text-xs font-semibold px-2 py-0.5 rounded cursor-pointer transition-colors hover:border-ink-300 [&.active]:bg-brand-600 [&.active]:text-white [&.active]:border-brand-600 ${selectedBaselineYear === yr ? "active" : ""}`}
                 onClick={() => setSelectedBaselineYear(yr)}
               >
                 {yr}
@@ -72,18 +69,18 @@ const MethaneIntensityOGMP20Gold: React.FC<MethaneIntensityOGMP20GoldProps> = ({
           </div>
         </div>
         {roadmapCollapsed ? (
-          <ChevronDown size={18} color="var(--text-secondary)" />
+          <ChevronDown size={18} className="text-text-secondary" />
         ) : (
-          <ChevronUp size={18} color="var(--text-secondary)" />
+          <ChevronUp size={18} className="text-text-secondary" />
         )}
       </div>
     </div>
 
     <div
-      className={`[max-height:2500px] [opacity:1] [overflow:hidden] [transition:max-height_0.45s_cubic-bezier(0.4,_0,_0.2,_1),_opacity_0.3s_ease,_margin-top_0.3s_ease] [&.collapsed]:[max-height:0] [&.collapsed]:[opacity:0] [&.collapsed]:[margin-top:0] [&.collapsed]:[pointer-events:none] ${roadmapCollapsed ? "collapsed" : ""}`}
+      className={roadmapCollapsed ? "hidden" : "overflow-hidden"}
     >
       {/* Facility Roadmap Cards Grid */}
-      <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(min(480px,_100%),_1fr))] [gap:20px]">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(min(480px,100%),1fr))] gap-5 pt-5">
         {(ogmpRoadmapData.length > 0 ? ogmpRoadmapData : facilities).map(
           (fac) => {
             const facName = fac.facility_name || fac.name;
@@ -100,15 +97,16 @@ const MethaneIntensityOGMP20Gold: React.FC<MethaneIntensityOGMP20GoldProps> = ({
             );
             const yearsLeft = targetYear - currentYear;
 
-            const matchedSurvey = ogmpSurveys.find(
+            const matchedSurveys = ogmpSurveys.filter(
               (s) =>
                 String(s.facilityId || s.facility_id) ===
                   String(fac.facility_id || fac.id) ||
                 (s.facility_name || s.facilityName) === facName,
             );
             const threshold = Number(
-              fac.reconciliation_threshold ?? globalThreshold ?? 20.0,
+              fac.reconciliation_threshold ?? globalThreshold ?? 10.0,
             );
+            const matchedSurvey = matchedSurveys[0];
             const variancePct =
               fac.reconciliation_variance_pct ??
               fac.variance_pct ??
@@ -119,21 +117,37 @@ const MethaneIntensityOGMP20Gold: React.FC<MethaneIntensityOGMP20GoldProps> = ({
               variancePct !== null
                 ? Math.abs(variancePct) <= threshold
                 : false;
+            const hasSurveyDiscrepancy = (fac.reconciliation_status || "").toLowerCase().includes("discrepancy") ||
+              fac.variance_flag === true ||
+              matchedSurveys.some((s) => {
+                const status = (s.reconciliationStatus || s.reconciliation_status || "").toLowerCase();
+                const variance = s.variance_pct ?? s.reconciliation_variance_pct;
+                const bu = Number(s.bottom_up_tch4 ?? s.bottomUpTch4 ?? 0);
+                return status.includes("discrepancy") || s.variance_flag === true || (variance !== null && Math.abs(variance) > threshold) || bu === 0;
+              });
 
-            const highestLevel =
-              fac.highest_ogmp_level ||
-              fac.current_ogmp_level ||
-              (matchedSurvey && passThreshold ? 5 : matchedSurvey ? 4 : 3);
-            const isReconciled =
-              fac.is_reconciled !== undefined
-                ? fac.is_reconciled
-                : (highestLevel >= 5 && passThreshold);
+            const hasSurveyReconciled = !hasSurveyDiscrepancy && (
+              (fac.reconciliation_status || "").toLowerCase() === "reconciled" ||
+              (matchedSurveys.length > 0 && matchedSurveys.some((s) => (s.reconciliationStatus || s.reconciliation_status || "").toLowerCase().includes("reconciled")))
+            );
+
+            const highestLevel = hasSurveyDiscrepancy
+              ? Math.min(4, Number(fac.highest_ogmp_level || fac.current_ogmp_level || 4))
+              : hasSurveyReconciled
+                ? 5
+                : Number(fac.highest_ogmp_level || fac.current_ogmp_level || 3);
+
+            const isReconciled = hasSurveyReconciled && highestLevel >= 5;
 
             let statusBadgeClass = "ontrack";
             let statusText = yearsLeft > 0
               ? t("On Track ({{years}} yrs to Level 5)", { years: yearsLeft })
               : t("On Track (Target Year)");
-            if (isReconciled && highestLevel >= 5) {
+
+            if (hasSurveyDiscrepancy) {
+              statusBadgeClass = "action";
+              statusText = t("Discrepancy Detected (Level 4 - Action Required)");
+            } else if (isReconciled && highestLevel >= 5) {
               statusBadgeClass = "achieved";
               statusText = t("Gold Standard Achieved (Level 5)");
             } else if (yearsLeft < 0) {
@@ -147,12 +161,12 @@ const MethaneIntensityOGMP20Gold: React.FC<MethaneIntensityOGMP20GoldProps> = ({
             return (
               <div
                 key={fac.facility_id || fac.id}
-                className="[background:var(--bg-app)] [border:1px_solid_var(--border-color)] [&&]:[border-radius:var(--radius-md)] [padding:20px] [display:flex] [flex-direction:column] [gap:16px] [transition:transform_0.2s,_box-shadow_0.2s] hover:[transform:translateY(-2px)] hover:[box-shadow:var(--card-shadow-hover)]"
+                className="bg-ink-50/50 border border-border rounded-md p-5 flex flex-col gap-4 transition-colors hover:border-ink-300"
               >
-                <div className="[display:flex] [justify-content:space-between] [align-items:flex-start] [gap:12px]">
-                  <div className="[display:flex] [flex-direction:column] [gap:2px]">
-                    <span className="[font-size:var(--text-md)] [font-weight:700] [color:var(--text-primary)]">{facName}</span>
-                    <span className="[font-size:var(--text-sm)] [color:var(--text-secondary)]">
+                <div className="flex justify-between items-start gap-3">
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-base font-bold text-text">{facName}</span>
+                    <span className="text-xs text-text-secondary">
                       {opStatus === "operated"
                         ? t("Operated Asset (3-Yr Target)")
                         : t("Non-Operated Asset (5-Yr Target)")}{" "}
@@ -173,7 +187,7 @@ const MethaneIntensityOGMP20Gold: React.FC<MethaneIntensityOGMP20GoldProps> = ({
                 </div>
 
                 {/* 5-Level Stepper */}
-                <div className="[display:flex] [justify-content:space-between] [position:relative] [padding:10px_0] before:[content:''] before:[position:absolute] before:[top:24px] before:[left:20px] before:[right:20px] before:[height:3px] before:[background:var(--border-color)] before:[z-index:1]">
+                <div className="flex justify-between relative py-2.5 before:content-[''] before:absolute before:top-6 before:left-5 before:right-5 before:h-[2px] before:bg-border before:z-1">
                   {[1, 2, 3, 4, 5].map((lvl) => {
                     const isDone = highestLevel >= lvl;
                     const isCurrent = highestLevel === lvl;
@@ -187,12 +201,18 @@ const MethaneIntensityOGMP20Gold: React.FC<MethaneIntensityOGMP20GoldProps> = ({
                     return (
                       <div
                         key={lvl}
-                        className={`[position:relative] [z-index:2] [display:flex] [flex-direction:column] [align-items:center] [gap:6px] [text-align:center] [width:70px] [&.completed_.step-circle]:[background:var(--color-green-700)] [&.completed_.step-circle]:[border-color:var(--color-green-500)] [&.completed_.step-circle]:[color:var(--color-white)] [&.completed_.step-circle]:[box-shadow:0_0_10px_rgba(16,_185,_129,_0.4)] [&&]:[&.current_.step-circle]:[background:var(--accent-secondary)] [&&]:[&.current_.step-circle]:[border-color:var(--accent-secondary)] [&&]:[&.current_.step-circle]:[color:var(--color-white)] [&&]:[&.current_.step-circle]:[box-shadow:0_0_10px_rgba(37,_99,_235,_0.4)] [&.current_.step-circle]:[transform:scale(1.15)] [&&]:[&&]:[&.current_.step-name]:[color:var(--accent-secondary)] [&.current_.step-name]:[font-weight:700] [&&]:[&&]:[&&]:[&.completed_.step-name]:[color:var(--color-green-700)] ${isDone ? "completed" : ""} ${isCurrent ? "current" : ""}`}
+                        className={`relative z-2 flex flex-col items-center gap-1.5 text-center w-[70px] ${isDone ? "completed" : ""} ${isCurrent ? "current" : ""}`}
                       >
-                        <div className="step-circle [width:28px] [height:28px] [border-radius:50%] [background:var(--bg-card)] [border:2px_solid_var(--border-color)] [display:flex] [align-items:center] [justify-content:center] [font-size:var(--text-sm)] [font-weight:700] [color:var(--text-secondary)] [transition:all_0.25s_ease]">
+                        <div className={`size-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
+                          isDone
+                            ? "bg-emerald-600 text-white border border-emerald-700"
+                            : isCurrent
+                            ? "bg-white text-blue-700 border-2 border-blue-600 ring-2 ring-blue-500/20"
+                            : "bg-surface text-text-secondary border border-border"
+                        }`}>
                           {isDone ? "✓" : lvl}
                         </div>
-                        <span className="step-name [font-size:var(--text-xs)] [font-weight:600] [color:var(--text-secondary)] [line-height:1.2]">
+                        <span className={`text-[11px] leading-tight ${isCurrent ? "font-bold text-blue-700" : isDone ? "font-semibold text-emerald-700" : "font-medium text-text-secondary"}`}>
                           {levelNames[lvl - 1]}
                         </span>
                       </div>
@@ -201,21 +221,21 @@ const MethaneIntensityOGMP20Gold: React.FC<MethaneIntensityOGMP20GoldProps> = ({
                 </div>
 
                 {/* Footer stats */}
-                <div className="[display:grid] [grid-template-columns:repeat(3,_1fr)] [gap:10px] [background:var(--bg-card)] [border:1px_solid_var(--border-color)] [&&]:[border-radius:var(--radius-md)] [padding:10px_12px]">
-                  <div className="[display:flex] [flex-direction:column] [gap:2px]">
-                    <span className="[font-size:var(--text-xs)] [color:var(--text-secondary)] [font-weight:500]">
+                <div className="grid grid-cols-3 gap-2.5 bg-surface border border-border rounded-md px-3 py-2.5">
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-[11px] text-text-secondary font-medium">
                       {t("Current Milestone")}
                     </span>
-                    <span className="[font-size:var(--text-base)] [font-weight:700] [color:var(--text-primary)] [&.variance-pass]:[color:var(--color-green-700)] [&&]:[&.variance-fail]:[color:var(--color-red-700)]">
+                    <span className="text-sm font-bold text-text tabular-nums">
                       {t("OGMP Level")}{" "}{highestLevel}
                     </span>
                   </div>
-                  <div className="[display:flex] [flex-direction:column] [gap:2px]">
-                    <span className="[font-size:var(--text-xs)] [color:var(--text-secondary)] [font-weight:500]">
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-[11px] text-text-secondary font-medium">
                       {t("Reconciliation Var.")}
                     </span>
                     <span
-                      className={`[font-size:var(--text-base)] [font-weight:700] [color:var(--text-primary)] [&.variance-pass]:[color:var(--color-green-700)] [&&]:[&.variance-fail]:[color:var(--color-red-700)] ${variancePct !== null ? (passThreshold ? "variance-pass" : "variance-fail") : ""}`}
+                      className={`text-sm font-bold tabular-nums ${variancePct !== null ? (passThreshold ? "text-emerald-700" : "text-danger-fg") : "text-text"}`}
                     >
                       {variancePct !== null
                         ? variancePct >= 0
@@ -224,11 +244,11 @@ const MethaneIntensityOGMP20Gold: React.FC<MethaneIntensityOGMP20GoldProps> = ({
                         : t("Pending Survey")}
                     </span>
                   </div>
-                  <div className="[display:flex] [flex-direction:column] [gap:2px]">
-                    <span className="[font-size:var(--text-xs)] [color:var(--text-secondary)] [font-weight:500]">
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-[11px] text-text-secondary font-medium">
                       {t("Tolerance Limit")}
                     </span>
-                    <span className="[font-size:var(--text-base)] [font-weight:700] [color:var(--text-primary)] [&.variance-pass]:[color:var(--color-green-700)] [&&]:[&.variance-fail]:[color:var(--color-red-700)]">
+                    <span className={`text-sm font-bold tabular-nums ${variancePct !== null ? (passThreshold ? "text-emerald-700" : "text-danger-fg") : "text-text"}`}>
                       ±{threshold.toFixed(1)}%{" "}
                       {variancePct !== null
                         ? passThreshold

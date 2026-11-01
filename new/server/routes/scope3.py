@@ -142,6 +142,21 @@ def create_scope3_emission():
     year_val = parse_year(data.get("year"))
     month_val = parse_month(data.get("month"), required=True)  # BUG-0037
     category_val = normalize_scope3_category(data.get("category", "Category 11"))
+    sub_category_val = str(data.get("sub_category") or data.get("activity_type") or "").strip()
+    existing_s3 = Scope3Emission.query.filter(
+        Scope3Emission.facility_id == facility_id_int,
+        Scope3Emission.year == year_val,
+        Scope3Emission.month == month_val,
+        Scope3Emission.category == category_val,
+        db.func.lower(Scope3Emission.sub_category) == sub_category_val.lower(),
+        ~Scope3Emission.status.ilike("%rejected%")
+    ).first()
+    if existing_s3:
+        return jsonify({
+            "error": f"A Scope 3 record for {category_val} ('{sub_category_val}') already exists for {year_val}-{month_val:02d} at this facility",
+            "code": "DUPLICATE_RECORD"
+        }), 409
+
     activity_data = parse_number(
         data.get("activity_data") if data.get("activity_data") not in (None, "") else data.get("amount"),
         "activity_data", required=False, min_value=0, default=0.0,
@@ -150,13 +165,26 @@ def create_scope3_emission():
     co2e_input = data.get("co2e") if data.get("co2e") not in (None, "") else data.get("emissions_tco2e")
     # Enforce server-side calculation from activity_data and emission_factor to prevent client-side tampering
     if activity_data > 0 and emission_factor > 0:
-        factor_unit = str(data.get("factor_unit") or data.get("emission_factor_unit") or "")
+        factor_unit = str(data.get("factor_unit") or data.get("emission_factor_unit") or "").strip()
         calc_method = str(data.get("calculation_method") or "")
-        co2e_val = compute_scope3_co2e(activity_data, emission_factor, factor_unit, calc_method,
-                                       activity_unit=data.get("unit") or "")
+        if not factor_unit or ("/" not in factor_unit and " per " not in factor_unit):
+            from emission_factors.scope3_activity_factors import SCOPE3_ACTIVITY_FACTORS
+            from input_validation import scope3_category_number
+            cat_num = scope3_category_number(category_val)
+            sub_cat_name = str(data.get("sub_category") or data.get("activity_type") or "").strip().lower()
+            rows = SCOPE3_ACTIVITY_FACTORS.get(cat_num or 0, [])
+            match_row = next((r for r in rows if r[0].lower() == sub_cat_name), None)
+            den_unit = match_row[1] if match_row else (data.get("unit") or "unit")
+            factor_unit = f"kg CO2e / {den_unit}"
+        try:
+            co2e_val = compute_scope3_co2e(activity_data, emission_factor, factor_unit, calc_method,
+                                           activity_unit=data.get("unit") or "")
+        except ValidationError as ve:
+            return jsonify({"error": ve.message, "field": "unit"}), 400
     elif co2e_input not in [None, ""] and user.role in ["admin", "superuser"]:
         # Supplier-specific total reported directly (approver roles only)
         co2e_val = parse_number(co2e_input, "co2e", min_value=0)
+        factor_unit = str(data.get("factor_unit") or data.get("emission_factor_unit") or "") or None
     else:
         # never book a missing calculation as 0 tCO2e
         return jsonify({"error": "Give the activity amount and emission factor (or, for admins and superusers, "
@@ -174,7 +202,7 @@ def create_scope3_emission():
         category=category_val,
         sub_category=data.get("sub_category") or data.get("activity_type"),
         activity_data=activity_data, unit=data.get("unit"),
-        emission_factor=emission_factor, factor_unit=str(data.get("factor_unit") or data.get("emission_factor_unit") or "") or None, co2e=co2e_val,
+        emission_factor=emission_factor, factor_unit=factor_unit or None, co2e=co2e_val,
         status=initial_status,
         approved_by=user.id if initial_status == "Verified" else None,
         approved_at=datetime.datetime.now(datetime.timezone.utc) if initial_status == "Verified" else None,
@@ -341,18 +369,28 @@ def update_scope3_emission(emission_id):
         # Recalculate co2e in tonnes: activity_data * emission_factor (if factor is kg/unit -> /1000)
         ef = emission.emission_factor or 0.0
         act = emission.activity_data or 0.0
-        factor_unit = str(data.get("factor_unit") or data.get("emission_factor_unit") or getattr(emission, "factor_unit", "") or "")
+        factor_unit = str(data.get("factor_unit") or data.get("emission_factor_unit") or getattr(emission, "factor_unit", "") or "").strip()
         calc_method = str(data.get("calculation_method") or getattr(emission, "calculation_method", "") or "")
+        if not factor_unit or ("/" not in factor_unit and " per " not in factor_unit):
+            from emission_factors.scope3_activity_factors import SCOPE3_ACTIVITY_FACTORS
+            from input_validation import scope3_category_number
+            cat_num = scope3_category_number(emission.category)
+            sub_cat_name = str(emission.sub_category or "").strip().lower()
+            rows = SCOPE3_ACTIVITY_FACTORS.get(cat_num or 0, [])
+            match_row = next((r for r in rows if r[0].lower() == sub_cat_name), None)
+            den_unit = match_row[1] if match_row else (emission.unit or "unit")
+            factor_unit = f"kg CO2e / {den_unit}"
         if act > 0 and ef > 0:
-            if "emission_factor" not in data:
-                factor_unit = "kg/unit"
             # a factor edited with its own unit is matched to the record's activity unit
-            emission.co2e = compute_scope3_co2e(act, ef, factor_unit, calc_method,
-                                                activity_unit=emission.unit if factor_unit else "")
+            try:
+                emission.co2e = compute_scope3_co2e(act, ef, factor_unit, calc_method,
+                                                    activity_unit=emission.unit if factor_unit else "")
+            except ValidationError as ve:
+                db.session.rollback()
+                return jsonify({"error": ve.message, "field": "unit"}), 400
             from calculations.units import scope3_ef_kg_per_unit
             emission.emission_factor = scope3_ef_kg_per_unit(act, emission.co2e, ef)
-            if "factor_unit" in data or "emission_factor_unit" in data:
-                emission.factor_unit = str(data.get("factor_unit") or data.get("emission_factor_unit") or "")
+            emission.factor_unit = factor_unit
         elif not ef and "emission_factor" not in data and emission.co2e:
             pass  # BUG-0008: a supplier-reported total stays; its activity amount is informational
         else:

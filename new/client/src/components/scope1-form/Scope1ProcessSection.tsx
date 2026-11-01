@@ -269,7 +269,7 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
                     <div className="[display:flex] [flex-direction:column] [gap:12px]">
                       {/* Base Fuel Dropdown */}
                       <div>
-                        <label className="block! text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]! mb-[4px]!">
+                        <label className="block text-sm font-medium text-text mb-1.5">
                           {t("Fuel")}
                         </label>
                         <CustomDropdown
@@ -315,14 +315,14 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
                       {/* Measured Properties Grid */}
                       <div className="tier2-inputs-grid">
                         <div>
-                          <label className="block! text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]! mb-[4px]!">
+                          <label className="block text-sm font-medium text-text mb-1.5">
                             HHV
                           </label>
-                          <div className="flex! gap-[6px]!">
+                          <div className="flex gap-2">
                             <Input
                               type="number"
                               step="any"
-                              className="flex-1! p-[6px_8px]! text-[length:0.85rem]!"
+                              className="flex-1 h-10 text-base"
                               placeholder="e.g. 1085"
                               value={formData.hhv || ""}
                               onChange={(e) => {
@@ -331,7 +331,8 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
                               }}
                             />
                             <NativeSelect
-                              className="mole-input w-[110px]! max-[600px]:w-full! p-[6px_8px]! text-[length:0.8rem]!"
+                              wrapperClassName="w-36 shrink-0"
+                              className="h-10 text-sm font-medium"
                               value={formData.hhv_unit || "BTU/scf"}
                               onChange={(e) => handleFormChange("hhv_unit", e.target.value)}
                             >
@@ -346,13 +347,13 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
                         </div>
 
                         <div>
-                          <label className="block! text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]! mb-[4px]!">
+                          <label className="block text-sm font-medium text-text mb-1.5">
                             {t("Density (kg/m³)")}
                           </label>
                           <Input
                             type="number"
                             step="any"
-                            className="w-full! p-[6px_8px]! text-[length:0.85rem]!"
+                            className="w-full h-10 text-base"
                             placeholder={t("e.g. 840.0 for Gasoil NA 8110")}
                             value={fuelDensity}
                             onChange={(e) => {
@@ -365,12 +366,12 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
 
                       {/* Data Source / Audit Reference Field */}
                       <div>
-                        <label className="block! text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]! mb-[4px]!">
+                        <label className="block text-sm font-medium text-text mb-1.5">
                           {t("Ticket / lab ref")}
                         </label>
                         <Input
                           type="text"
-                          className="w-full! p-[6px_8px]! text-[length:0.85rem]!"
+                          className="w-full h-10 text-base"
                           placeholder={t("e.g. Ticket #4902-B")}
                           value={dataSourceRef}
                           onChange={(e) => setDataSourceRef(e.target.value)}
@@ -392,7 +393,7 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
                     </div>
                     <button
                       type="button"
-                      className="btn btn-secondary flex! items-center! gap-[4px]! p-[8px_12px]! text-[length:0.8rem]! whitespace-nowrap!"
+                      className="btn btn-secondary flex items-center gap-1.5 px-3 py-2 text-sm font-medium whitespace-nowrap h-10"
                       onClick={() => setIsQuickAddModalOpen(true)}
                     >
                       <PlusCircle size={15} />
@@ -424,16 +425,17 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
                   {t("Gas analysis")}
                 </button>
               </div>
-              <div className="grid gap-[10px] [grid-template-columns:1fr_1fr] max-[600px]:[grid-template-columns:1fr] mt-[10px]">
+              <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-3">
                 {["co2", "ch4", "n2o"]
                   .filter((gas) => (processType === "agr" ? gas !== "n2o" : true))
                   .map((gas) => (
-                    <div key={gas} className="input-group mb-[0px]!">
-                      <label className="text-[length:0.75rem]!">{gas.toUpperCase()}{" "}{t("Factor")}</label>
-                      <div className="flex! gap-[5px]!">
-                        <input
+                    <div key={gas} className="input-group mb-0!">
+                      <label className="block text-sm font-medium text-text mb-1.5">{gas.toUpperCase()}{" "}{t("Factor")}</label>
+                      <div className="flex gap-2">
+                        <Input
                           type="number"
-                          className="mole-input flex-1!"
+                          step="any"
+                          className="flex-1 h-10 text-base"
                           placeholder={t("Value")}
                           value={specFactors[gas] || ""}
                           onChange={(e) =>
@@ -444,7 +446,8 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
                           }
                         />
                         <NativeSelect
-                          className="component-select w-[80px]! max-[600px]:w-full! p-[4px]!"
+                          wrapperClassName="w-28 shrink-0"
+                          className="h-10 text-sm font-medium"
                           value={specFactors[`${gas}Unit`] || ""}
                           onChange={(e) =>
                             setSpecFactors((p) => ({

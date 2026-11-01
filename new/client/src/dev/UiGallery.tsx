@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Inbox } from "lucide-react";
+import { Inbox, Plus } from "lucide-react";
 import {
   Badge,
   Banner,
@@ -12,6 +12,8 @@ import {
   EmptyState,
   Field,
   FilterBar,
+  HelpTip,
+  GlossaryHelpTip,
   IconButton,
   Input,
   Menu,
@@ -26,7 +28,13 @@ import {
   SegmentedControl,
   Select,
   Sheet,
+  Skeleton,
   StatCard,
+  StatusBadge,
+  FlagChip,
+  DataHealthBadge,
+  OgmpL5Badge,
+  TargetTrackingBadge,
   StatusPill,
   Stepper,
   Switch,
@@ -38,28 +46,28 @@ import {
   Tooltip,
   TooltipProvider,
 } from "../ui";
+import { AdvancedSection } from "../components/AdvancedSection";
+import { BarChart, WaterfallChart } from "../components/charts";
 
 // Development-only catalogue of design tokens and components (route /__ui).
 const SWATCHES: [string, string][] = [
   ["brand-500", "var(--color-brand-500)"],
   ["brand-600", "var(--color-brand-600)"],
-  ["brand-700", "var(--color-brand-700)"],
-  ["brand-50", "var(--color-brand-50)"],
-  ["ink-900", "var(--color-ink-900)"],
+  ["brand-700 (primary)", "var(--color-brand-700)"],
+  ["brand-teal (secondary)", "var(--color-brand-teal)"],
+  ["scope-1 (deep orange)", "var(--color-scope-1)"],
+  ["scope-2 (blue)", "var(--color-scope-2)"],
+  ["scope-3 (violet)", "var(--color-scope-3)"],
+  ["ink-900 (text)", "var(--color-ink-900)"],
   ["ink-600", "var(--color-ink-600)"],
-  ["ink-500", "var(--color-ink-500)"],
-  ["ink-400", "var(--color-ink-400)"],
-  ["ink-200", "var(--color-ink-200)"],
-  ["ink-100", "var(--color-ink-100)"],
-  ["green-500", "var(--color-green-500)"],
-  ["green-700", "var(--color-green-700)"],
-  ["blue-500", "var(--color-blue-500)"],
-  ["blue-700", "var(--color-blue-700)"],
-  ["amber-500", "var(--color-amber-500)"],
-  ["amber-700", "var(--color-amber-700)"],
-  ["red-500", "var(--color-red-500)"],
-  ["red-700", "var(--color-red-700)"],
-  ["violet-500", "var(--color-violet-500)"],
+  ["ink-500 (placeholder)", "var(--color-ink-500)"],
+  ["ink-200 (border)", "var(--color-ink-200)"],
+  ["green-600 (unc-low)", "var(--color-green-600)"],
+  ["green-700 (text)", "var(--color-green-700)"],
+  ["amber-500 (unc-med)", "var(--color-amber-500)"],
+  ["amber-700 (text)", "var(--color-amber-700)"],
+  ["red-600 (unc-high)", "var(--color-red-600)"],
+  ["red-700 (text)", "var(--color-red-700)"],
 ];
 
 const lin = (c: number): number => {
@@ -113,6 +121,7 @@ const UiGallery: React.FC = () => {
   const [on, setOn] = useState<boolean>(true);
   const [dialog, setDialog] = useState<boolean>(false);
   const [sheet, setSheet] = useState<boolean>(false);
+  const [drawerDemoOpen, setDrawerDemoOpen] = useState<boolean>(false);
   const [confirm, setConfirm] = useState<boolean>(false);
   const [sel, setSel] = useState<string>("a");
 
@@ -172,18 +181,47 @@ const UiGallery: React.FC = () => {
         </Section>
 
         <Section title="Badges, statuses, banners">
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 items-center">
             <Badge>Neutral</Badge>
             <Badge tone="brand">Brand</Badge>
             <Badge tone="success">Success</Badge>
             <Badge tone="warning">Warning</Badge>
             <Badge tone="danger">Danger</Badge>
             <Badge tone="info">Info</Badge>
-            <StatusPill status="Verified" />
-            <StatusPill status="Pending" />
-            <StatusPill status="Draft" />
-            <StatusPill status="Rejected" />
           </div>
+
+          <div className="flex flex-col gap-2 mt-2">
+            <h4 className="text-xs font-semibold text-text-secondary uppercase tracking-wider m-0">
+              Single-Source StatusBadge (Phase A2 Canonical Enum)
+            </h4>
+            <div className="flex flex-wrap gap-2 items-center">
+              <StatusBadge status="Draft" />
+              <StatusBadge status="Pending review" />
+              <StatusBadge status="Verified" />
+              <StatusBadge status="Rejected" />
+              <StatusBadge status="Flagged" />
+              <StatusBadge status="Reconciled" />
+              <StatusBadge status="Discrepancy" />
+              <FlagChip label="Outlier (+3.2σ)" severity="danger" />
+              <FlagChip label="Missing factor docs" severity="warning" />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2 mt-2">
+            <h4 className="text-xs font-semibold text-text-secondary uppercase tracking-wider m-0">
+              Derived Page-Level Badges (Computed from Underlying Data)
+            </h4>
+            <div className="flex flex-wrap gap-2 items-center">
+              <DataHealthBadge cleanRatio={0.99} totalRecords={150} />
+              <DataHealthBadge cleanRatio={0.93} totalRecords={150} />
+              <DataHealthBadge cleanRatio={0.82} totalRecords={150} />
+              <OgmpL5Badge reconciledCount={14} discrepancyCount={0} />
+              <OgmpL5Badge reconciledCount={11} discrepancyCount={3} />
+              <TargetTrackingBadge actual={850} target={1000} />
+              <TargetTrackingBadge actual={1120} target={1000} />
+            </div>
+          </div>
+
           <Banner tone="info" title="Information">
             Neutral message.
           </Banner>
@@ -196,6 +234,38 @@ const UiGallery: React.FC = () => {
           <Banner tone="danger" title="Failed">
             The upload could not be processed.
           </Banner>
+        </Section>
+
+        <Section title="Jargon & Methodology HelpTip (Phase A5)">
+          <p className="text-sm text-text-secondary m-0">
+            Interactive glossary tooltips accessible via keyboard and touch (bottom sheet on mobile):
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
+            <div className="flex items-center justify-between p-3 rounded-md border border-border bg-surface">
+              <span className="text-sm font-medium text-text">IPCC Tiers</span>
+              <GlossaryHelpTip term="Tier 1/2/3" />
+            </div>
+            <div className="flex items-center justify-between p-3 rounded-md border border-border bg-surface">
+              <span className="text-sm font-medium text-text">SRSS Uncertainty</span>
+              <GlossaryHelpTip term="SRSS" />
+            </div>
+            <div className="flex items-center justify-between p-3 rounded-md border border-border bg-surface">
+              <span className="text-sm font-medium text-text">OGMP 2.0 Levels</span>
+              <GlossaryHelpTip term="OGMP 2.0 L1-L5" />
+            </div>
+            <div className="flex items-center justify-between p-3 rounded-md border border-border bg-surface">
+              <span className="text-sm font-medium text-text">Gold Standard</span>
+              <GlossaryHelpTip term="Gold Standard pathway" />
+            </div>
+            <div className="flex items-center justify-between p-3 rounded-md border border-border bg-surface">
+              <span className="text-sm font-medium text-text">GWP Standard</span>
+              <GlossaryHelpTip term="GWP-100/20" />
+            </div>
+            <div className="flex items-center justify-between p-3 rounded-md border border-border bg-surface">
+              <span className="text-sm font-medium text-text">Maker-Checker</span>
+              <GlossaryHelpTip term="Maker-Checker" />
+            </div>
+          </div>
         </Section>
 
         <Section title="Stat cards">
@@ -332,6 +402,132 @@ const UiGallery: React.FC = () => {
             onConfirm={() => setConfirm(false)}
             onCancel={() => setConfirm(false)}
           />
+        </Section>
+
+        <Section title="Drawer Form with Progressive Disclosure (Phase B3 & B4)">
+          <div className="flex flex-col gap-3">
+            <p className="text-sm text-text-secondary m-0">
+              Table-first pattern: data forms are housed in a sliding drawer on desktop (modal sheet on mobile) with essential fields first and collapsible AdvancedSection with field counts and memory.
+            </p>
+            <div>
+              <Button onClick={() => setDrawerDemoOpen(true)}>
+                <Plus className="size-4" />
+                Open Example Form Drawer
+              </Button>
+            </div>
+          </div>
+          <Sheet
+            open={drawerDemoOpen}
+            onOpenChange={setDrawerDemoOpen}
+            title="Add Emission Factor"
+            description="Register a custom emission factor with uncertainty bounds."
+            width="38rem"
+            footer={
+              <div className="flex justify-end gap-2 w-full">
+                <Button variant="secondary" onClick={() => setDrawerDemoOpen(false)}>Cancel</Button>
+                <Button onClick={() => setDrawerDemoOpen(false)}>Save Factor</Button>
+              </div>
+            }
+          >
+            <div className="flex flex-col gap-5">
+              <div className="flex flex-col gap-3">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-ink-500 m-0 pb-1 border-b border-border/60">
+                  Essential Factor Data
+                </h4>
+                <Field label="Fuel / Activity Name" required>
+                  <Input placeholder="e.g. Algerian Natural Gas" />
+                </Field>
+                <Field label="CO2 Factor (kg/unit)" required>
+                  <NumberInput defaultValue="2.145" />
+                </Field>
+              </div>
+              <AdvancedSection id="gallery-advanced-demo" title="Uncertainty & Technical Metadata" fieldCount={3}>
+                <Field label="Uncertainty Range (± %)" hint="95% confidence interval half-width">
+                  <NumberInput defaultValue="7.5" unit="%" />
+                </Field>
+                <Field label="Sampling Campaign Date">
+                  <Input type="date" defaultValue="2026-03-15" />
+                </Field>
+                <Field label="Laboratory Certificate ID">
+                  <Input placeholder="e.g. CERT-2026-ALG-089" />
+                </Field>
+              </AdvancedSection>
+            </div>
+          </Sheet>
+        </Section>
+
+        <Section title="Chart Palettes & Threshold Bands (Phase C2 & C3)">
+          <div className="flex flex-col gap-4">
+            <div>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-ink-500 m-0 mb-2">
+                Unified Scope Color Hierarchy (Phase C2)
+              </h4>
+              <div className="grid gap-3 sm:grid-cols-3">
+                <div className="p-3 rounded-lg border border-border bg-surface border-l-4 border-l-brand-700">
+                  <p className="text-xs font-semibold text-brand-700 m-0">Scope 1 (Direct)</p>
+                  <p className="text-sm font-bold text-text mt-1">Deep Orange · var(--color-scope-1)</p>
+                </div>
+                <div className="p-3 rounded-lg border border-border bg-surface border-l-4 border-l-blue-600">
+                  <p className="text-xs font-semibold text-blue-700 m-0">Scope 2 (Electricity)</p>
+                  <p className="text-sm font-bold text-text mt-1">Blue · var(--color-scope-2)</p>
+                </div>
+                <div className="p-3 rounded-lg border border-border bg-surface border-l-4 border-l-violet-600">
+                  <p className="text-xs font-semibold text-violet-700 m-0">Scope 3 (Value Chain)</p>
+                  <p className="text-sm font-bold text-text mt-1">Violet · var(--color-scope-3)</p>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-ink-500 m-0 mb-2">
+                Threshold-Based Bar Chart (&le;10% green, 10-30% amber, &gt;30% red per Phase C3)
+              </h4>
+              <div className="h-[280px] w-full">
+                <BarChart
+                  data={[
+                    { name: "Berkine Basin", value: 0.12 },
+                    { name: "Hassi Messaoud", value: 0.19 },
+                    { name: "Hassi R'Mel", value: 0.28 },
+                    { name: "Rhourde Nouss", value: 0.35 },
+                  ]}
+                  dataKey="value"
+                  xKey="name"
+                  height={250}
+                  horizontal
+                  sortDesc
+                  thresholds={{
+                    warnAt: 0.16,
+                    badAt: 0.20,
+                    labels: ["Within target (<=0.16%)", "Moderate risk (0.16 - 0.20%)", "Above limit (>0.20%)"],
+                  }}
+                  referenceValue={0.20}
+                  referenceLabel="OGMP 2.0 Target (0.20%)"
+                  formatValue={(v) => `${(Number(v) * 100).toFixed(1)}%`}
+                />
+              </div>
+            </div>
+
+            <div>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-ink-500 m-0 mb-2">
+                Waterfall Bridge (Ink Total, Red Increase, Green Reduction)
+              </h4>
+              <div className="h-[280px] w-full">
+                <WaterfallChart
+                  startLabel="2025 Start"
+                  endLabel="2026 Current"
+                  start={1200}
+                  end={1050}
+                  steps={[
+                    { name: "Flaring reduction", delta: -220 },
+                    { name: "Compressor venting", delta: 130 },
+                    { name: "LDAR repair campaign", delta: -60 },
+                  ]}
+                  height={250}
+                  formatValue={(v) => `${Number(v).toFixed(0)} t`}
+                />
+              </div>
+            </div>
+          </div>
         </Section>
 
         <Section title="Loading placeholder">

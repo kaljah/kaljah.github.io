@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { FileSpreadsheet, ShieldCheck, Layers, Coins } from "lucide-react";
-import { Badge, Button, Field, Input, controlClass, cn } from "../../ui";
+import { FileSpreadsheet, ShieldCheck, Layers, Coins, Plus, Edit2, Trash2 } from "lucide-react";
+import { Badge, Button, Field, Input, Sheet, controlClass, cn } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import PaginationControls from "./PaginationControls";
 import { FormActions, FormGrid, RecordTable, TabCard, Td, Tr } from "./MdParts";
+import AdvancedSection from "../../components/AdvancedSection";
 import { t } from "../../i18n";
 import api from "../../api";
 import { useToast } from "../../components/Toast";
@@ -122,6 +123,7 @@ const CbamTab: React.FC<CbamTabProps> = ({
   const toast = useToast();
   const [exporting, setExporting] = useState<boolean>(false);
   const [isCustomCn, setIsCustomCn] = useState<boolean>(false);
+  const [isAddDrawerOpen, setIsAddDrawerOpen] = useState<boolean>(false);
 
   const handleExportCbamExcel = async () => {
     try {
@@ -223,6 +225,12 @@ const CbamTab: React.FC<CbamTabProps> = ({
   const currentCnCode = rawCn === "2709 00" ? "2709 00 00" : rawCn || "2804 10 00";
   const isKnownCn = CN_OPTIONS.some((o) => o.code === currentCnCode);
 
+  const onSaveCbam = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    handleSaveCbamExport();
+    setIsAddDrawerOpen(false);
+  };
+
   return (
     <TabCard
       title={t("EU CBAM Export & Embedded Emission Tracking (Oil & Gas Scope)")}
@@ -230,18 +238,84 @@ const CbamTab: React.FC<CbamTabProps> = ({
         "Record product exports subject to EU Carbon Border Adjustment Mechanism tailored to Oil & Gas operations, including Clean Hydrogen, Ammonia, Fertilizers, Refinery streams, Carbon Capture & Storage (CCS), and Origin Carbon Taxes.",
       )}
       actions={
-        <Button
-          size="sm"
-          variant="secondary"
-          onClick={handleExportCbamExcel}
-          disabled={exporting}
-          className="inline-flex items-center gap-1.5"
-        >
-          <FileSpreadsheet className="size-4 text-text-secondary" aria-hidden="true" />
-          {exporting ? t("Exporting...") : t("Export Official CBAM Template")}
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            size="sm"
+            variant="primary"
+            onClick={() => {
+              setEditingCbamId(null);
+              setIsCustomCn(false);
+              setCbamForm({
+                id: null,
+                activity: "",
+                division: "",
+                facility_id: "",
+                year: new Date().getFullYear(),
+                month: 1,
+                quarter: "Q1",
+                product_name: "Clean & Low-Carbon Hydrogen",
+                cn_code: "2804 10 00",
+                quantity_tonnes: "",
+                export_destination: "EU",
+                specific_embedded_direct: "",
+                specific_embedded_indirect: "",
+                captured_co2_tonnes: "",
+                ccs_certificate_id: "",
+                carbon_price_paid_eur: "",
+                carbon_price_legal_ref: "",
+                is_complex_good: false,
+                precursor_name: "",
+                precursor_cn_code: "",
+                precursor_ratio: "",
+                precursor_see_dir: "",
+                precursor_see_indir: "",
+                notes: "",
+              });
+              setIsAddDrawerOpen(true);
+            }}
+            className="inline-flex items-center gap-1.5"
+          >
+            <Plus className="size-4" aria-hidden="true" />
+            {t("+ Add CBAM Product")}
+          </Button>
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={handleExportCbamExcel}
+            disabled={exporting}
+            className="inline-flex items-center gap-1.5"
+          >
+            <FileSpreadsheet className="size-4 text-text-secondary" aria-hidden="true" />
+            {exporting ? t("Exporting...") : t("Export Official CBAM Template")}
+          </Button>
+        </div>
       }
     >
+      <Sheet
+        open={isAddDrawerOpen}
+        onOpenChange={setIsAddDrawerOpen}
+        title={editingCbamId ? t("Edit CBAM Product Record") : t("Add CBAM Product Record")}
+        description={t("Declare exported products subject to the EU Carbon Border Adjustment Mechanism.")}
+        icon={Plus}
+        width="44rem"
+        footer={
+          <div className="flex items-center justify-end gap-2 w-full">
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setIsAddDrawerOpen(false);
+                setEditingCbamId(null);
+              }}
+            >
+              {t("Cancel")}
+            </Button>
+            <Button variant="primary" onClick={onSaveCbam}>
+              {editingCbamId ? t("Update CBAM Record") : t("Save CBAM Record")}
+            </Button>
+          </div>
+        }
+      >
+        <form onSubmit={onSaveCbam} className="flex flex-col gap-4">
       <FormGrid className="form-grid-3" cols="md:grid-cols-3">
         <Field label={t("Activity")}>
           <NativeSelect
@@ -619,7 +693,7 @@ const CbamTab: React.FC<CbamTabProps> = ({
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-6">
             <div>
-              <span className="block text-xs font-semibold uppercase tracking-wider text-text-secondary">
+              <span className="block text-xs font-medium text-text-secondary">
                 {t("Export Quantity")}
               </span>
               <span className="font-mono text-base font-bold text-text">
@@ -628,7 +702,7 @@ const CbamTab: React.FC<CbamTabProps> = ({
             </div>
             <div className="hidden h-8 w-px bg-border sm:block" />
             <div>
-              <span className="block text-xs font-semibold uppercase tracking-wider text-text-secondary">
+              <span className="block text-xs font-medium text-text-secondary">
                 {t("Direct SEE")}
               </span>
               <span className="font-mono text-base font-bold text-text">
@@ -637,7 +711,7 @@ const CbamTab: React.FC<CbamTabProps> = ({
             </div>
             <div className="hidden h-8 w-px bg-border sm:block" />
             <div>
-              <span className="block text-xs font-semibold uppercase tracking-wider text-text-secondary">
+              <span className="block text-xs font-medium text-text-secondary">
                 {t("Total Specific SEE")}
               </span>
               <span className="font-mono text-base font-bold text-text">
@@ -646,7 +720,7 @@ const CbamTab: React.FC<CbamTabProps> = ({
             </div>
             <div className="hidden h-8 w-px bg-border sm:block" />
             <div>
-              <span className="block text-xs font-semibold uppercase tracking-wider text-text-secondary">
+              <span className="block text-xs font-medium text-text-secondary">
                 {t("Total Embedded Emissions")}
               </span>
               <span className="font-mono text-base font-bold text-brand-700">
@@ -662,60 +736,8 @@ const CbamTab: React.FC<CbamTabProps> = ({
         </div>
       </div>
 
-      <FormActions className="mt-6">
-        <Button
-          className="action-btn !h-10 !px-4 !py-0 !text-base !font-semibold !rounded-md !transform-none"
-          onClick={handleSaveCbamExport}
-        >
-          {editingCbamId ? t("Update CBAM Record") : t("Save CBAM Record")}
-        </Button>
-        {editingCbamId && (
-          <Button
-            variant="secondary"
-            onClick={() => {
-              setEditingCbamId(null);
-              setIsCustomCn(false);
-              setCbamForm({
-                id: null,
-                activity: "",
-                division: "",
-                facility_id: "",
-                year: new Date().getFullYear(),
-                month: 1,
-                quarter: "Q1",
-                product_name: "Clean & Low-Carbon Hydrogen",
-                cn_code: "2804 10 00",
-                quantity_tonnes: "",
-                export_destination: "EU",
-                specific_embedded_direct: "",
-                specific_embedded_indirect: "",
-                captured_co2_tonnes: "",
-                ccs_certificate_id: "",
-                carbon_price_paid_eur: "",
-                carbon_price_legal_ref: "",
-                is_complex_good: false,
-                precursor_name: "",
-                precursor_cn_code: "",
-                precursor_ratio: "",
-                precursor_see_dir: "",
-                precursor_see_indir: "",
-                notes: "",
-              });
-            }}
-          >
-            {t("Cancel Edit")}
-          </Button>
-        )}
-        <Button
-          variant="secondary"
-          onClick={handleExportCbamExcel}
-          disabled={exporting}
-          className="inline-flex items-center gap-1.5"
-        >
-          <FileSpreadsheet className="size-4 text-text-secondary" aria-hidden="true" />
-          {exporting ? t("Exporting...") : t("Export Official CBAM Template")}
-        </Button>
-      </FormActions>
+        </form>
+      </Sheet>
 
       <RecordTable
         title={
@@ -861,7 +883,7 @@ const CbamTab: React.FC<CbamTabProps> = ({
                         precursor_see_indir: precIndir ? precIndir.toString() : "",
                         notes: c.notes || "",
                       });
-                      window.scrollTo({ top: 0, behavior: "smooth" });
+                      setIsAddDrawerOpen(true);
                     }}
                   >
                     {t("Edit")}

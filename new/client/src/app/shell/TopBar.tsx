@@ -1,7 +1,8 @@
-import React from "react";
-import { Menu, Search } from "lucide-react";
+import React, { useState } from "react";
+import { HelpCircle, Menu, Search } from "lucide-react";
 import { useLayout } from "../../context/LayoutContext";
 import NotificationCenter from "../../components/NotificationCenter";
+import { GlossaryModal } from "../../components/GlossaryModal";
 import { IconButton } from "../../ui";
 import AccountMenu from "./AccountMenu";
 import Breadcrumbs from "./Breadcrumbs";
@@ -16,6 +17,7 @@ export interface TopBarProps {
 
 const TopBar: React.FC<TopBarProps> = ({ onOpenPalette }) => {
   const { topBarLeft, topBarRight, toggleMobileNav } = useLayout();
+  const [glossaryOpen, setGlossaryOpen] = useState(false);
   const hasFilterRow = Boolean(topBarLeft || topBarRight);
   return (
     <header className="topbar sticky top-0 z-(--z-topbar) shrink-0 border-b border-border bg-surface/95 backdrop-blur">
@@ -46,6 +48,13 @@ const TopBar: React.FC<TopBarProps> = ({ onOpenPalette }) => {
             <Search className="size-5" aria-hidden="true" />
           </IconButton>
           <NotificationCenter />
+          <IconButton
+            label={t("GHG & MRV Technical Glossary")}
+            onClick={() => setGlossaryOpen(true)}
+            title={t("GHG & MRV Technical Glossary (?)")}
+          >
+            <HelpCircle className="size-5" aria-hidden="true" />
+          </IconButton>
           <AccountMenu />
         </div>
       </div>
@@ -58,6 +67,7 @@ const TopBar: React.FC<TopBarProps> = ({ onOpenPalette }) => {
           <div className="flex flex-wrap items-center gap-2">{topBarRight}</div>
         </div>
       )}
+      <GlossaryModal open={glossaryOpen} onOpenChange={setGlossaryOpen} />
     </header>
   );
 };

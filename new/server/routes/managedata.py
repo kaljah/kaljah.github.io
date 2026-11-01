@@ -83,9 +83,42 @@ def add_source():
     if (denied := facility_access_error(user, fid)):
         return denied
 
+    source_name = (data.get("name") or "").strip()
+    if not source_name or source_name.lower() in ("none", "null", "undefined"):
+        return jsonify({"error": "Source name is required and cannot be 'None'", "field": "name"}), 400
+
+    import re
+    if re.search(r"[-_\s]+\d{10,14}$", source_name):
+        return jsonify({
+            "error": "Do not append timestamps or random suffixes to source names. Emission sources must use clean natural identifiers.",
+            "code": "INVALID_NAME"
+        }), 400
+
+    existing_source = EmissionSource.query.filter(
+        EmissionSource.facility_id == fid,
+        db.func.lower(EmissionSource.name) == source_name.lower(),
+    ).first()
+    if existing_source:
+        return jsonify({
+            "error": f"Emission source '{source_name}' already exists for this facility",
+            "code": "DUPLICATE_RECORD"
+        }), 409
+
+    eq_id = (data.get("equipment_id") or "").strip()
+    if eq_id:
+        existing_eq = EmissionSource.query.filter(
+            EmissionSource.facility_id == fid,
+            db.func.lower(EmissionSource.equipment_id) == eq_id.lower()
+        ).first()
+        if existing_eq:
+            return jsonify({
+                "error": f"Emission source with equipment ID '{eq_id}' already exists for this facility ('{existing_eq.name}')",
+                "code": "DUPLICATE_RECORD"
+            }), 409
+
     source = EmissionSource(
         facility_id=fid,
-        name=data.get("name"),
+        name=source_name,
         type=data.get("type"),
         equipment_id=data.get("equipment_id"),
         fuel_type=data.get("fuel_type"),
@@ -277,8 +310,29 @@ def add_mitigation():
             return denied
 
         # Create MitigationProject
+        proj_name = (data.get("name") or "").strip()
+        if not proj_name or proj_name.lower() in ("none", "null", "undefined"):
+            return jsonify({"error": "Mitigation project name is required and cannot be 'None'", "field": "name"}), 400
+        import re
+        if re.search(r"[-_\s]+\d{10,14}$", proj_name):
+            return jsonify({
+                "error": "Do not append timestamps or random suffixes to project names. Use clean natural project identifiers.",
+                "code": "INVALID_NAME"
+            }), 400
+        proj_year = data.get("year")
+        existing_proj = MitigationProject.query.filter(
+            MitigationProject.facility_id == fid,
+            db.func.lower(MitigationProject.name) == proj_name.lower(),
+            MitigationProject.year == proj_year,
+        ).first()
+        if existing_proj:
+            return jsonify({
+                "error": f"Mitigation project '{proj_name}' already exists for this facility and year ({proj_year})",
+                "code": "DUPLICATE_RECORD"
+            }), 409
+
         project = MitigationProject(
-            name=data.get("name") or f"{data.get('type')} Project",
+            name=proj_name,
             project_type=data.get("type"),
             year=data.get("year"),
             quantity_tco2e=data.get("quantity_tco2e", 0),
@@ -645,6 +699,29 @@ def bulk_import_mitigation():
 
 
 # --- Yearly Emission Goals ---
+def _get_goals_baseline_context():
+    from models import BaseYear, Emission, Scope2Emission
+    base_year_obj = BaseYear.query.order_by(BaseYear.id.desc()).first()
+    base_year = base_year_obj.year if base_year_obj else 2024
+    base_s1 = db.session.query(db.func.sum(Emission.co2e_total)).filter(
+        Emission.year == base_year, ~Emission.status.ilike("%rejected%")
+    ).scalar() or 0.0
+    base_s2 = db.session.query(db.func.sum(Scope2Emission.co2e)).filter(
+        Scope2Emission.year == base_year, ~Scope2Emission.status.ilike("%rejected%")
+    ).scalar() or 0.0
+    base_total = base_s1 + base_s2
+
+    recent_s1 = db.session.query(db.func.sum(Emission.co2e_total)).filter(
+        Emission.year == base_year, ~Emission.status.ilike("%rejected%")
+    ).scalar() or base_s1 or 2300000.0
+
+    total_s1 = db.session.query(db.func.sum(Emission.co2e_total)).filter(
+        ~Emission.status.ilike("%rejected%")
+    ).scalar() or 0.0
+
+    return base_year, base_total, recent_s1, total_s1
+
+
 @managedata_bp.route("/goals", methods=["GET"])
 @managedata_bp.route("/goals/", methods=["GET"])
 @login_required
@@ -653,7 +730,12 @@ def get_all_goals():
     if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to view corporate emission targets."}), 403
     try:
-        goals = Goal.query.order_by(Goal.year.desc()).all()
+        goals = Goal.query.order_by(Goal.year.asc()).all()
+        base_year, base_total, recent_s1, total_s1 = _get_goals_baseline_context()
+        from calculations.goals_validation import validate_goal_trajectory
+        goal_dicts = [{"year": g.year, "target_amount": g.target_amount} for g in goals]
+        warnings_map = validate_goal_trajectory(goal_dicts, base_year, base_total, recent_s1, total_s1)
+
         return jsonify(
             [
                 {
@@ -662,8 +744,9 @@ def get_all_goals():
                         float(g.target_amount) if g.target_amount is not None else 0.0
                     ),
                     "created_at": g.created_at.isoformat() if g.created_at else None,
+                    "warnings": warnings_map.get(g.year, []),
                 }
-                for g in goals
+                for g in sorted(goals, key=lambda x: x.year, reverse=True)
             ]
         )
     except Exception as e:
@@ -690,6 +773,16 @@ def add_or_update_goal():
     if target <= 0:
         return jsonify({"error": "'target_amount' must be greater than 0", "field": "target_amount"}), 400
 
+    existing_goals = Goal.query.all()
+    goals_map = {g.year: g.target_amount for g in existing_goals}
+    goals_map[year] = target
+    goal_dicts = [{"year": y, "target_amount": t_val} for y, t_val in goals_map.items()]
+
+    base_year, base_total, recent_s1, total_s1 = _get_goals_baseline_context()
+    from calculations.goals_validation import validate_goal_trajectory
+    warnings_map = validate_goal_trajectory(goal_dicts, base_year, base_total, recent_s1, total_s1)
+    target_warnings = warnings_map.get(year, [])
+
     existing = Goal.query.filter_by(year=year).first()
     if existing:
         existing.target_amount = target
@@ -700,7 +793,12 @@ def add_or_update_goal():
     db.session.commit()
     from routes.dashboard import clear_dashboard_cache
     clear_dashboard_cache()
-    return jsonify({"message": "Emission goal saved successfully", "year": year, "target_amount": target}), 200
+    return jsonify({
+        "message": "Emission goal saved successfully",
+        "year": year,
+        "target_amount": target,
+        "warnings": target_warnings
+    }), 200
 
 
 @managedata_bp.route("/goals/<int:year>", methods=["DELETE"])

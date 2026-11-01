@@ -1,8 +1,9 @@
 /* Scope 1 Specific Styles */
 
 .scope-form {
-  padding: 20px;
-  max-width: 1200px;
+  padding: 0;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
 }
 

@@ -73,7 +73,8 @@ def _serialize_component(comp):
 
 
 def _serialize_survey(survey):
-    return {
+    leaking_hours = 0.0 if survey.leak_status == "Non-leaking" else (survey.leaking_hours if survey.leaking_hours is not None else 8760.0)
+    data = {
         "id": survey.id,
         "facility_id": survey.facility_id,
         "facility_name": survey.facility.name if survey.facility else None,
@@ -82,6 +83,8 @@ def _serialize_survey(survey):
         "created_by": survey.created_by,
         "created_at": survey.created_at.isoformat() if survey.created_at else None,
     }
+    data["leaking_hours"] = leaking_hours
+    return data
 
 
 def _scoped_list(model, user):
@@ -405,7 +408,9 @@ def create_survey():
     values.setdefault("leak_status", "Non-leaking")
     values.setdefault("measurement_unit", "kg/hr")
     values.setdefault("surveyor_name", user.fullName)
-    if values.get("leaking_hours") is None:
+    if values.get("leak_status") == "Non-leaking":
+        values["leaking_hours"] = 0.0
+    elif values.get("leaking_hours") is None:
         values["leaking_hours"] = HOURS_PER_YEAR
     if values.get("repair_date") and values.get("survey_date") and values["repair_date"] < values["survey_date"]:
         raise ValidationError("repair_date cannot precede survey_date", "repair_date")
@@ -459,6 +464,8 @@ def update_survey(survey_id):
             setattr(survey, f, value)
     if survey.repair_date and survey.survey_date and survey.repair_date < survey.survey_date:  # either date edited
         raise ValidationError("repair_date cannot precede survey_date", "repair_date")
+    if survey.leak_status == "Non-leaking":
+        survey.leaking_hours = 0.0
     if survey.leak_status == "Leaking" and before["leak_status"] != "Leaking":
         fac_name = survey.facility.name if survey.facility else f"Facility #{survey.facility_id}"
         _notify("LDAR Alert: Survey Marked Leaking", f"Survey #{survey.id} was marked as Leaking at {fac_name}.",
@@ -509,6 +516,8 @@ def bulk_update_surveys():
             if new_status == "Leaking" and s.leak_status != "Leaking":
                 marked.append(s)
             s.leak_status = new_status
+            if new_status == "Non-leaking":
+                s.leaking_hours = 0.0
         if repair_date is not False:
             if repair_date and s.survey_date and repair_date < s.survey_date:
                 raise ValidationError(f"repair_date cannot precede survey #{s.id}'s survey_date", "repair_date")

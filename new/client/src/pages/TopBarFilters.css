@@ -4,19 +4,19 @@
 .dashboard-filters {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   flex-wrap: wrap; /* the row has no visible scrollbar on desktop, so wrap instead of hiding filters */
   white-space: nowrap;
-  background: rgba(255, 255, 255, 0.7);
-  padding: 4px 6px;
-  border-radius: var(--radius-lg);
+  background: var(--bg-card, rgba(255, 255, 255, 0.85));
+  padding: 4px 8px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--border-color, var(--color-ink-200));
   backdrop-filter: blur(8px);
 }
 
 .dashboard-filters .filter-wrapper {
-  min-width: 105px;
-  max-width: 220px; /* size to the label ("All Supply Chains") */
+  min-width: 110px;
+  max-width: 240px; /* size to the label ("All Supply Chains") */
   flex: 0 0 auto;
 }
 

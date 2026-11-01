@@ -92,14 +92,14 @@ export const UserManagementSessionTab: React.FC<UserManagementSessionTabProps> =
     <div className="flex flex-col gap-6" id="it-session-governance-panel">
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="rounded-xl border border-border bg-surface p-5 shadow-xs flex flex-col gap-2">
+        <div className="rounded-xl border border-border border-l-2! border-l-brand-500! bg-surface p-5 shadow-xs flex flex-col gap-2">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+            <span className="text-xs font-medium text-text-secondary">
               {t("Idle Session Timeout")}
             </span>
             <Clock className="size-4 text-brand-600" />
           </div>
-          <div className="text-2xl font-bold text-text">
+          <div className="text-2xl font-bold tabular-nums text-text">
             {policy.idle_timeout_minutes} {t("Minutes")}
           </div>
           <p className="text-xs text-text-secondary">
@@ -109,7 +109,7 @@ export const UserManagementSessionTab: React.FC<UserManagementSessionTabProps> =
 
         <div className="rounded-xl border border-border bg-surface p-5 shadow-xs flex flex-col gap-2">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+            <span className="text-xs font-medium text-text-secondary">
               {t("Session Invalidation")}
             </span>
             <Shield className="size-4 text-emerald-600" />
@@ -124,7 +124,7 @@ export const UserManagementSessionTab: React.FC<UserManagementSessionTabProps> =
 
         <div className="rounded-xl border border-border bg-surface p-5 shadow-xs flex flex-col gap-2">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+            <span className="text-xs font-medium text-text-secondary">
               {t("Password Standard")}
             </span>
             <KeyRound className="size-4 text-amber-600" />
@@ -139,12 +139,12 @@ export const UserManagementSessionTab: React.FC<UserManagementSessionTabProps> =
 
         <div className="rounded-xl border border-border bg-surface p-5 shadow-xs flex flex-col gap-2">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+            <span className="text-xs font-medium text-text-secondary">
               {t("Monitored Accounts")}
             </span>
             <Lock className="size-4 text-brand-600" />
           </div>
-          <div className="text-2xl font-bold text-text">
+          <div className="text-2xl font-bold tabular-nums text-text">
             {policy.active_users} / {policy.total_users}
           </div>
           <p className="text-xs text-text-secondary">
@@ -172,7 +172,7 @@ export const UserManagementSessionTab: React.FC<UserManagementSessionTabProps> =
           </div>
 
           <div className="flex flex-col gap-4">
-            <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+            <label className="text-xs font-medium text-text-secondary">
               {t("Inactivity Timeout Window")}
             </label>
             <div className="flex flex-wrap items-center gap-3">

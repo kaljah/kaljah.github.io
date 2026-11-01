@@ -361,8 +361,7 @@ test.describe.serial('Suite 8: Deep Untested Platform Workflows & Enterprise Fea
     await expect(tabHeader).toBeVisible({ timeout: 15000 });
 
     // Fill form
-    const uniqueSuffix = Date.now();
-    const sourceName = `Gas Lift Compressor Train 4-${uniqueSuffix}`;
+    const sourceName = `Gas Lift Compressor Train 4`;
     const equipId = `COMP-GL-404`;
 
     console.log(`[E2E UNTESTED] Registering new operational emission source: ${sourceName}...`);
@@ -449,8 +448,7 @@ test.describe.serial('Suite 8: Deep Untested Platform Workflows & Enterprise Fea
     await expect(tabHeader).toBeVisible({ timeout: 15000 });
     await expect(page.locator('text=Record CCUS, RECs, and Carbon Offsets.').first()).toBeVisible();
 
-    const uniqueSuffix = Date.now();
-    const projName = `In Salah Geological Storage Unit 2-${uniqueSuffix}`;
+    const projName = `In Salah Geological Storage Unit 2`;
 
     console.log(`[E2E UNTESTED] Registering new mitigation project: ${projName}...`);
 

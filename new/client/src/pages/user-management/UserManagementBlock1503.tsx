@@ -247,8 +247,9 @@ const UserManagementBlock1503: React.FC<UserManagementBlock1503Props> = ({
             disabled={resetLoading || resetPwd !== resetPwdConfirm || resetPwd.length < 10}
             style={{
               ...S.btnPrimary,
-              background: "linear-gradient(135deg, var(--color-amber-500) 0%, var(--color-legacy-fbbf24) 100%)",
-              boxShadow: "0 4px 12px rgba(245,158,11,.3)",
+              background: "var(--color-amber-600)",
+              border: "1px solid var(--color-amber-700)",
+              boxShadow: "var(--shadow-xs)",
               opacity:
                 resetLoading || resetPwd !== resetPwdConfirm || resetPwd.length < 10
                   ? 0.6

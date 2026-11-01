@@ -80,13 +80,13 @@ export const CATEGORY_ACTIVITIES: Record<number | string, Scope3ActivityFactor[]
   10: [
     // electricity: enter the grid factor of the processing site (kg CO2e / kWh, Scope 2 grid list)
     { value: "Processing (Electricity)", unit: "kWh", factor: null },
-    { value: "Processing (Natural Gas)", unit: "mcf", factor: 54.18 },
+    { value: "Processing (Natural Gas)", unit: "MMBtu", factor: 54.18 },
   ],
   11: [
     // Combustion of sold products: API Compendium 2021 Table 4-5 heating value and CO2, Table 4-6 CH4 / N2O,
     // as kg CO2e per unit at AR5 (natural gas 1,020 Btu/scf, Table 3-8)
     { value: "Crude Oil", unit: "bbl", factor: 433.44 },
-    { value: "Natural Gas", unit: "mcf", factor: 54.18 },
+    { value: "Natural Gas", unit: "MMBtu", factor: 54.18 },
     { value: "NGL - Ethane", unit: "gal", factor: 4.07 },
     { value: "NGL - Propane", unit: "gal", factor: 5.74 },
     { value: "NGL - Butane", unit: "gal", factor: 6.7 },

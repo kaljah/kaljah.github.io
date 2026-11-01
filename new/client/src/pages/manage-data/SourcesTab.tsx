@@ -1,10 +1,11 @@
-import React from "react";
-import { Upload } from "lucide-react";
-import { Field, Input } from "../../ui";
+import React, { useState } from "react";
+import { Upload, Plus, Download, Trash2 } from "lucide-react";
+import { Button, Field, Input, Sheet } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import CustomDropdown from "../../components/CustomDropdown";
 import { PROCESS_TYPES } from "../../utils/EmissionFactors";
 import PaginationControls from "./PaginationControls";
+import AdvancedSection from "../../components/AdvancedSection";
 import { t } from "../../i18n";
 
 export interface SourceRecord {
@@ -36,6 +37,7 @@ export interface SourcesTabProps {
   getAvailableDivisions: (activity?: string) => string[];
   handleDeleteSource: (id: string | number) => void;
   handleSaveSource: () => void;
+  isSubmitting?: boolean;
   isPrivileged: boolean;
   setCurrentPage: (page: number) => void;
   setImportModal: (modal: { isOpen: boolean; type: string }) => void;
@@ -44,7 +46,6 @@ export interface SourcesTabProps {
   sources: SourceRecord[];
 }
 
-// Extracted from ManageData.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const SourcesTab: React.FC<SourcesTabProps> = ({
   ACTIVITY_LABELS,
   ITEMS_PER_PAGE,
@@ -56,190 +57,87 @@ const SourcesTab: React.FC<SourcesTabProps> = ({
   getAvailableDivisions,
   handleDeleteSource,
   handleSaveSource,
+  isSubmitting,
   isPrivileged,
   setCurrentPage,
   setImportModal,
   setSourceForm,
   sourceForm,
   sources,
-}) => (
-  <div className="manage-card glass-panel">
-    <h2 className="mb-[8px]! font-bold!">{t("Emission Sources Inventory")}</h2>
-    <p className="text-[color:var(--text-secondary)]! mb-[32px]!">
-      {t("Manage operational equipment and emission sources.")}
-    </p>
+}) => {
+  const [isAddDrawerOpen, setIsAddDrawerOpen] = useState(false);
 
-    <div className="grid-forms md:[grid-template-columns:repeat(3,1fr)]!">
-      <Field
-        className="input-group"
-        label={
-          <>
-            {t("Activity")}
-            {!isPrivileged && getAvailableActivities().length === 1 && (
-              <span className="text-[length:0.65rem]! bg-[color:var(--color-legacy-dbeafe)]! text-[color:var(--color-blue-700)]! rounded-[4px]! p-[1px_5px]! font-semibold!">
-                {t("Auto")}
-              </span>
-            )}
-          </>
-        }
-      >
-        <NativeSelect
-          value={sourceForm.activity || ""}
-          onChange={(e) =>
-            setSourceForm({ ...sourceForm, activity: e.target.value, division: "", facility_id: "" })
-          }
-          className="component-select"
-          disabled={!isPrivileged && getAvailableActivities().length === 1}
-        >
-          <option value="">{t("Select Activity")}</option>
-          {getAvailableActivities().map((a) => (
-            <option key={a} value={a}>
-              {ACTIVITY_LABELS[a] || a}
-            </option>
-          ))}
-        </NativeSelect>
-      </Field>
+  const onSave = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    handleSaveSource();
+    setIsAddDrawerOpen(false);
+  };
 
-      <Field
-        className="input-group"
-        label={
-          <>
-            {t("Division")}
-            {!isPrivileged && getAvailableDivisions(sourceForm.activity).length === 1 && (
-              <span className="text-[length:0.65rem]! bg-[color:var(--color-legacy-dbeafe)]! text-[color:var(--color-blue-700)]! rounded-[4px]! p-[1px_5px]! font-semibold!">
-                {t("Auto")}
-              </span>
-            )}
-          </>
-        }
-      >
-        <NativeSelect
-          value={sourceForm.division || ""}
-          onChange={(e) =>
-            setSourceForm({ ...sourceForm, division: e.target.value, facility_id: "" })
-          }
-          className="component-select"
-          disabled={!sourceForm.activity || (!isPrivileged && getAvailableDivisions(sourceForm.activity).length === 1)}
-        >
-          <option value="">{t("Select Division")}</option>
-          {getAvailableDivisions(sourceForm.activity).map((d) => (
-            <option key={d} value={d}>
-              {d}
-            </option>
-          ))}
-        </NativeSelect>
-      </Field>
+  const rows = filteredSources.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE,
+  );
 
-      <div className="input-group">
-        <label className="flex! items-center! gap-[6px]!">
-          {t("Region")}
-          {!isPrivileged &&
-            facilities.filter((f) => f.activity === sourceForm.activity && f.division === sourceForm.division).length === 1 && (
-              <span className="text-[length:0.65rem]! bg-[color:var(--color-legacy-dbeafe)]! text-[color:var(--color-blue-700)]! rounded-[4px]! p-[1px_5px]! font-semibold!">
-                {t("Auto")}
-              </span>
-            )}
-        </label>
-        <CustomDropdown
-          options={[
-            { value: "", label: t("Select Region") },
-            ...facilities
-              .filter((f) => f.activity === sourceForm.activity && f.division === sourceForm.division)
-              .map((f) => ({ value: f.id.toString(), label: f.name, subLabel: f.region || f.field })),
-          ]}
-          value={sourceForm.facility_id != null ? String(sourceForm.facility_id) : ""}
-          onChange={(val) => setSourceForm({ ...sourceForm, facility_id: val })}
-          placeholder={t("Select Region")}
-          disabled={
-            !sourceForm.division ||
-            (!isPrivileged &&
-              facilities.filter((f) => f.activity === sourceForm.activity && f.division === sourceForm.division).length === 1)
-          }
-        />
+  return (
+    <div className="manage-card glass-panel min-w-0">
+      {/* Header with Table-First Action Bar */}
+      <div className="flex flex-wrap justify-between items-start gap-4 mb-6">
+        <div>
+          <h2 className="m-0 mb-1 text-xl font-bold text-text">{t("Emission Sources Inventory")}</h2>
+          <p className="m-0 text-sm text-text-secondary">
+            {t("Manage operational equipment, combustion units and process emission points.")}
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            variant="primary"
+            onClick={() => setIsAddDrawerOpen(true)}
+            className="gap-2"
+          >
+            <Plus className="size-4" aria-hidden="true" />
+            {t("+ Add Emission Source")}
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => setImportModal({ isOpen: true, type: "sources" })}
+            className="gap-2"
+          >
+            <Upload className="size-4" aria-hidden="true" />
+            {t("Bulk Import")}
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => exportToCSV(sources, "emission_sources.csv")}
+            className="gap-2"
+          >
+            <Download className="size-4" aria-hidden="true" />
+            {t("Export CSV")}
+          </Button>
+        </div>
       </div>
 
-      <Field className="input-group" label={t("Source Name")}>
-        <Input
-          type="text"
-          value={sourceForm.name || ""}
-          onChange={(e) => setSourceForm({ ...sourceForm, name: e.target.value })}
-          placeholder={t("e.g. Flare A")}
-        />
-      </Field>
-
-      <Field className="input-group" label={t("Type")}>
-        <NativeSelect
-          value={sourceForm.type || ""}
-          onChange={(e) => setSourceForm({ ...sourceForm, type: e.target.value })}
-          className="component-select"
-        >
-          <option value="">{t("Select Type")}</option>
-          {Object.entries(PROCESS_TYPES).map(([val, label]) => (
-            <option key={val} value={val}>
-              {t(label)}
-            </option>
-          ))}
-        </NativeSelect>
-      </Field>
-
-      <Field className="input-group" label={t("Equipment ID (Optional)")}>
-        <Input
-          type="text"
-          value={sourceForm.equipment_id || ""}
-          onChange={(e) => setSourceForm({ ...sourceForm, equipment_id: e.target.value })}
-          placeholder={t("e.g. COMP-001")}
-        />
-      </Field>
-
-      <Field className="input-group" label={t("Fuel")}>
-        <Input
-          type="text"
-          value={sourceForm.fuel_type || ""}
-          onChange={(e) => setSourceForm({ ...sourceForm, fuel_type: e.target.value })}
-        />
-      </Field>
-    </div>
-
-    <div className="flex! gap-[12px]! mt-[20px]!">
-      <button className="action-btn" onClick={handleSaveSource}>
-        {t("Add Source")}
-      </button>
-      <button
-        className="action-btn bg-[color:var(--color-green-500)]!"
-        onClick={() => setImportModal({ isOpen: true, type: "sources" })}
-      >
-        <Upload size={16} />{" "}{t("Import Sources CSV")}
-      </button>
-      <button
-        className="action-btn bg-[color:var(--text-secondary)]!"
-        onClick={() => exportToCSV(sources, "emission_sources.csv")}
-      >
-        {t("Export CSV")}
-      </button>
-    </div>
-
-    <div className="table-container mt-[40px]!" tabIndex={0} role="region" aria-label={t("Emission sources")}>
-      <table className="data-table">
-        <thead>
-          <tr>
-            <th>{t("Name")}</th>
-            <th>{t("Equipment ID")}</th>
-            <th>{t("Type")}</th>
-            <th>{t("Region")}</th>
-            <th>{t("Status")}</th>
-            <th>{t("Actions")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredSources
-            .slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
-            .map((s) => (
+      {/* Table-First View */}
+      <div className="table-container" tabIndex={0} role="region" aria-label={t("Emission sources")}>
+        <table className="data-table w-full">
+          <thead>
+            <tr>
+              <th>{t("Name")}</th>
+              <th>{t("Equipment ID")}</th>
+              <th>{t("Type")}</th>
+              <th>{t("Region")}</th>
+              <th>{t("Status")}</th>
+              <th>{t("Actions")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((s) => (
               <tr key={s.id}>
                 <td>
                   <strong>{s.name}</strong>
                 </td>
-                <td className="text-[color:var(--text-secondary)]! text-[length:0.85rem]!">
-                  {s.equipment_id || "-"}
+                <td className="text-sm text-text-secondary">
+                  {s.equipment_id || "—"}
                 </td>
                 <td>{t(String(PROCESS_TYPES[s.type as keyof typeof PROCESS_TYPES] || s.type))}</td>
                 <td>
@@ -250,7 +148,7 @@ const SourcesTab: React.FC<SourcesTabProps> = ({
                       <>
                         {fac.name}
                         {fac.field && (
-                          <span className="text-[length:0.85em]! text-[color:var(--color-legacy-9ca3af)]! font-normal!">
+                          <span className="text-xs text-ink-400 font-normal ml-1">
                             -{fac.field}
                           </span>
                         )}
@@ -258,34 +156,210 @@ const SourcesTab: React.FC<SourcesTabProps> = ({
                     );
                   })()}
                 </td>
-                <td>{s.status}</td>
                 <td>
-                  <button
-                    className="[background:var(--color-legacy-fee2e2)] [color:var(--color-red-700)] [border:1px_solid_var(--color-legacy-fecaca)] [&&]:[border-radius:var(--radius-md)] [cursor:pointer] [transition:all_0.2s] hover:[background:var(--color-red-700)] hover:[color:white] p-[4px_8px]! text-[length:0.75rem]!"
+                  <span className="inline-flex rounded-full bg-green-50 px-2 py-0.5 text-xs font-semibold text-green-700">
+                    {s.status || t("Active")}
+                  </span>
+                </td>
+                <td>
+                  <Button
+                    variant="danger"
+                    size="sm"
                     onClick={() => handleDeleteSource(s.id)}
+                    className="gap-1 h-7 px-2 text-xs"
                   >
+                    <Trash2 className="size-3" />
                     {t("Delete")}
-                  </button>
+                  </Button>
                 </td>
               </tr>
             ))}
-          {filteredSources.length === 0 && (
-            <tr>
-              <td colSpan={6} className="text-center! p-[40px]! text-[color:var(--text-secondary)]!">
-                {t("No emission sources found.")}
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-      <PaginationControls
-        currentPage={currentPage}
-        totalItems={filteredSources.length}
-        itemsPerPage={ITEMS_PER_PAGE}
-        onPageChange={setCurrentPage}
-      />
+            {filteredSources.length === 0 && (
+              <tr>
+                <td colSpan={6} className="text-center p-10 text-text-secondary">
+                  {t("No emission sources found.")}
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+        <PaginationControls
+          currentPage={currentPage}
+          totalItems={filteredSources.length}
+          itemsPerPage={ITEMS_PER_PAGE}
+          onPageChange={setCurrentPage}
+        />
+      </div>
+
+      {/* Side Drawer Form with Progressive Disclosure */}
+      <Sheet
+        open={isAddDrawerOpen}
+        onOpenChange={setIsAddDrawerOpen}
+        title={t("Add Emission Source")}
+        description={t("Register a new equipment unit, combustion source or venting point.")}
+        icon={Plus}
+        width="34rem"
+        footer={
+          <div className="flex items-center justify-end gap-2 w-full">
+            <Button variant="secondary" onClick={() => setIsAddDrawerOpen(false)}>
+              {t("Cancel")}
+            </Button>
+            <Button variant="primary" onClick={onSave} disabled={isSubmitting}>
+              {t("Save Emission Source")}
+            </Button>
+          </div>
+        }
+      >
+        <form onSubmit={onSave} className="flex flex-col gap-5">
+          <div className="flex flex-col gap-4">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-ink-500 m-0 pb-1 border-b border-border/60">
+              {t("Essential Source Parameters")}
+            </h4>
+
+            <Field
+              label={
+                <span className="inline-flex items-center gap-1.5">
+                  {t("Activity")} *
+                  {!isPrivileged && getAvailableActivities().length === 1 && (
+                    <span className="rounded bg-blue-100 px-1.5 py-0 text-[0.65rem] font-bold text-blue-700">
+                      {t("Auto")}
+                    </span>
+                  )}
+                </span>
+              }
+            >
+              <NativeSelect
+                value={sourceForm.activity || ""}
+                onChange={(e) =>
+                  setSourceForm({ ...sourceForm, activity: e.target.value, division: "", facility_id: "" })
+                }
+                disabled={!isPrivileged && getAvailableActivities().length === 1}
+              >
+                <option value="">{t("Select Activity")}</option>
+                {getAvailableActivities().map((a) => (
+                  <option key={a} value={a}>
+                    {ACTIVITY_LABELS[a] || a}
+                  </option>
+                ))}
+              </NativeSelect>
+            </Field>
+
+            <Field
+              label={
+                <span className="inline-flex items-center gap-1.5">
+                  {t("Division")}
+                  {!isPrivileged && getAvailableDivisions(sourceForm.activity).length === 1 && (
+                    <span className="rounded bg-blue-100 px-1.5 py-0 text-[0.65rem] font-bold text-blue-700">
+                      {t("Auto")}
+                    </span>
+                  )}
+                </span>
+              }
+            >
+              <NativeSelect
+                value={sourceForm.division || ""}
+                onChange={(e) =>
+                  setSourceForm({ ...sourceForm, division: e.target.value, facility_id: "" })
+                }
+                disabled={!sourceForm.activity || (!isPrivileged && getAvailableDivisions(sourceForm.activity).length === 1)}
+              >
+                <option value="">{t("Select Division")}</option>
+                {getAvailableDivisions(sourceForm.activity).map((d) => (
+                  <option key={d} value={d}>
+                    {d}
+                  </option>
+                ))}
+              </NativeSelect>
+            </Field>
+
+            <Field
+              label={
+                <span className="inline-flex items-center gap-1.5">
+                  {t("Region")} *
+                  {!isPrivileged &&
+                    facilities.filter((f) => f.activity === sourceForm.activity && f.division === sourceForm.division).length === 1 && (
+                      <span className="rounded bg-blue-100 px-1.5 py-0 text-[0.65rem] font-bold text-blue-700">
+                        {t("Auto")}
+                      </span>
+                    )}
+                </span>
+              }
+            >
+              <CustomDropdown
+                options={[
+                  { value: "", label: t("Select Region") },
+                  ...facilities
+                    .filter((f) => f.activity === sourceForm.activity && f.division === sourceForm.division)
+                    .map((f) => ({ value: f.id.toString(), label: f.name, subLabel: f.region || f.field })),
+                ]}
+                value={sourceForm.facility_id != null ? String(sourceForm.facility_id) : ""}
+                onChange={(val) => setSourceForm({ ...sourceForm, facility_id: val })}
+                placeholder={t("Select Region")}
+                disabled={
+                  !sourceForm.division ||
+                  (!isPrivileged &&
+                    facilities.filter((f) => f.activity === sourceForm.activity && f.division === sourceForm.division).length === 1)
+                }
+              />
+            </Field>
+
+            <Field label={`${t("Source Name")} *`}>
+              <Input
+                type="text"
+                value={sourceForm.name || ""}
+                onChange={(e) => setSourceForm({ ...sourceForm, name: e.target.value })}
+                placeholder={t("e.g. Flare A / Compressor K-101")}
+                required
+              />
+            </Field>
+
+            <Field label={`${t("Source Type")} *`}>
+              <NativeSelect
+                value={sourceForm.type || ""}
+                onChange={(e) => setSourceForm({ ...sourceForm, type: e.target.value })}
+                required
+              >
+                <option value="">{t("Select Type")}</option>
+                {Object.entries(PROCESS_TYPES).map(([val, label]) => (
+                  <option key={val} value={val}>
+                    {t(label)}
+                  </option>
+                ))}
+              </NativeSelect>
+            </Field>
+          </div>
+
+          {/* Progressive Disclosure: Advanced Equipment & Fuel Properties */}
+          <AdvancedSection
+            id="sources-advanced"
+            title={t("Equipment Metadata & Fuel Classification")}
+            fieldCount={2}
+            description={t("Asset tag, equipment identifier, and default primary fuel type.")}
+          >
+            <div className="flex flex-col gap-4">
+              <Field label={t("Equipment ID / Asset Tag")}>
+                <Input
+                  type="text"
+                  value={sourceForm.equipment_id || ""}
+                  onChange={(e) => setSourceForm({ ...sourceForm, equipment_id: e.target.value })}
+                  placeholder={t("e.g. COMP-001")}
+                />
+              </Field>
+
+              <Field label={t("Fuel / Feedstock Type")}>
+                <Input
+                  type="text"
+                  value={sourceForm.fuel_type || ""}
+                  onChange={(e) => setSourceForm({ ...sourceForm, fuel_type: e.target.value })}
+                  placeholder={t("e.g. Natural Gas / Associated Gas")}
+                />
+              </Field>
+            </div>
+          </AdvancedSection>
+        </form>
+      </Sheet>
     </div>
-  </div>
-);
+  );
+};
 
 export default SourcesTab;

@@ -65,11 +65,11 @@ SCOPE3_ACTIVITY_FACTORS = {
     ],
     10: [
         ("Processing (Electricity)", "kWh", None),
-        ("Processing (Natural Gas)", "mcf", 54.18),
+        ("Processing (Natural Gas)", "MMBtu", 54.18),
     ],
     11: [
         ("Crude Oil", "bbl", 433.44),
-        ("Natural Gas", "mcf", 54.18),
+        ("Natural Gas", "MMBtu", 54.18),
         ("NGL - Ethane", "gal", 4.07),
         ("NGL - Propane", "gal", 5.74),
         ("NGL - Butane", "gal", 6.7),
@@ -99,6 +99,7 @@ _UNIT_ALIASES = {
     "passenger-km": {"passenger-km", "pkm", "p-km", "passenger-kilometer", "passenger-kilometre"},
     "km": {"km", "vehicle-km", "vkm", "kilometer", "kilometre"},
     "mcf": {"mcf", "mscf", "thousand-scf"},
+    "mmbtu": {"mmbtu", "mm-btu", "million-btu", "mm_btu"},
     "usd": {"usd", "$", "us$", "dollar", "dollars"},
     "kg": {"kg", "kilogram", "kilograms"},
     "kwh": {"kwh"},
@@ -126,6 +127,11 @@ def scope3_activity_factor(category_number, activity, unit):
     value, row_unit, factor = row
     if factor is None:
         return None, f"'{value}' has no published default factor; give the emission factor (kg CO2e per {row_unit})"
-    if _unit_key(unit) != _unit_key(row_unit):
+    uk = _unit_key(unit)
+    ruk = _unit_key(row_unit)
+    if uk != ruk:
+        # Gas volume to MMBtu conversion via standard HHV allowed
+        if ruk == "mmbtu" and uk in {"mcf", "mscf", "scf", "mmscf", "mmcf", "m3", "sm3", "nm3"}:
+            return factor, None
         return None, f"The factor for '{value}' is per {row_unit}; give the amount in {row_unit} or your own emission factor"
     return factor, None

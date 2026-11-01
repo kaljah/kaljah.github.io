@@ -114,7 +114,14 @@ def export_emissions():
                         Emission.group_name.ilike(f"%{s_term}%"),
                     )
                 )
-            q1 = q1.filter(Emission.status == "Verified")
+            status_filter = str(filters.get("status") or request.args.get("status") or "Verified").strip()
+            statuses = [x.strip().lower() for x in status_filter.split(",") if x.strip()] if status_filter.lower() != "all" else None
+            test_fids = Facility.query.with_entities(Facility.id).filter(Facility.is_test == True)
+            q1 = q1.filter(~Emission.facility_id.in_(test_fids))
+            if hasattr(Emission, "is_test"):
+                q1 = q1.filter(Emission.is_test == False)
+            if statuses:
+                q1 = q1.filter(db.func.lower(db.func.trim(Emission.status)).in_(statuses))
             for e in q1.all():
                 m_val = e.month if e.month is not None else 1
                 emissions_data.append(
@@ -158,7 +165,11 @@ def export_emissions():
                         Scope2Emission.grid_region.ilike(f"%{s_term}%"),
                     )
                 )
-            q2 = q2.filter(Scope2Emission.status == "Verified")
+            q2 = q2.filter(~Scope2Emission.facility_id.in_(test_fids))
+            if hasattr(Scope2Emission, "is_test"):
+                q2 = q2.filter(Scope2Emission.is_test == False)
+            if statuses:
+                q2 = q2.filter(db.func.lower(db.func.trim(Scope2Emission.status)).in_(statuses))
             for e in q2.all():
                 m_val = e.month if e.month is not None else 1
                 s2_amount, s2_unit, _s2_label = scope2_activity(e)
@@ -208,7 +219,11 @@ def export_emissions():
                         Scope3Emission.sub_category.ilike(f"%{s_term}%"),
                     )
                 )
-            q3 = q3.filter(Scope3Emission.status == "Verified")
+            q3 = q3.filter(~Scope3Emission.facility_id.in_(test_fids))
+            if hasattr(Scope3Emission, "is_test"):
+                q3 = q3.filter(Scope3Emission.is_test == False)
+            if statuses:
+                q3 = q3.filter(db.func.lower(db.func.trim(Scope3Emission.status)).in_(statuses))
             for e in q3.all():
                 m_val = e.month if e.month is not None else 1
                 emissions_data.append(

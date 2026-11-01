@@ -7,7 +7,7 @@
 /* ── Page Header ── */
 .ua-title {
   font-size: var(--text-3xl);
-  font-weight: 800;
+  font-weight: 700;
   color: var(--text-primary, var(--color-ink-900));
   margin: 0 0 8px 0;
   line-height: 1.15;
@@ -44,10 +44,8 @@
 
 .ua-hero-label {
   font-size: var(--text-xs);
-  font-weight: 700;
+  font-weight: 500;
   color: var(--text-secondary, var(--color-ink-500));
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
   margin-bottom: 12px;
   display: flex;
   align-items: center;
@@ -63,21 +61,22 @@
 
 .ua-hero-big-value {
   font-size: clamp(2.2rem, 3.5vw, 3rem);
-  font-weight: 900;
+  font-weight: 700;
   line-height: 1;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
 }
 
 .ua-hero-big-value.level-low {
-  color: var(--color-green-600);
+  color: var(--color-green-700);
 }
 
 .ua-hero-big-value.level-medium {
-  color: var(--color-amber-600);
+  color: var(--color-amber-700);
 }
 
 .ua-hero-big-value.level-high {
-  color: var(--color-red-600);
+  color: var(--color-red-700);
 }
 
 .ua-hero-confidence-badge {
@@ -133,6 +132,18 @@
   background: var(--color-green-500);
 }
 
+.ua-stacked-segment.band-low {
+  background: var(--color-green-600);
+}
+
+.ua-stacked-segment.band-medium {
+  background: var(--color-amber-500);
+}
+
+.ua-stacked-segment.band-high {
+  background: var(--color-red-600);
+}
+
 .ua-stacked-legend {
   display: flex;
   flex-direction: column;
@@ -145,6 +156,11 @@
   justify-content: space-between;
   font-size: var(--text-xs);
   color: var(--text-secondary, var(--color-ink-600));
+  gap: 8px;
+}
+
+.ua-stacked-legend-row strong {
+  flex-shrink: 0;
 }
 
 .ua-legend-dot {
@@ -155,8 +171,7 @@
   margin-right: 6px;
 }
 
-.ua-legend-dot.tier-1,
-.ua-legend-dot.band-medium {
+.ua-legend-dot.tier-1 {
   background: var(--color-amber-500);
 }
 
@@ -164,13 +179,20 @@
   background: var(--color-blue-500);
 }
 
-.ua-legend-dot.tier-3,
-.ua-legend-dot.band-low {
+.ua-legend-dot.tier-3 {
   background: var(--color-green-500);
 }
 
+.ua-legend-dot.band-low {
+  background: var(--color-green-600);
+}
+
+.ua-legend-dot.band-medium {
+  background: var(--color-amber-500);
+}
+
 .ua-legend-dot.band-high {
-  background: var(--color-red-500);
+  background: var(--color-red-600);
 }
 
 /* ── Chart & Analytics Card (Zone 2) ── */
@@ -346,9 +368,7 @@
   background: var(--color-ink-50);
   color: var(--text-secondary, var(--color-ink-600));
   font-size: var(--text-xs);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-weight: 500;
   padding: 12px 16px;
   border-bottom: 1px solid var(--border-color, var(--color-ink-200));
   white-space: nowrap;

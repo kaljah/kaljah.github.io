@@ -1,0 +1,172 @@
+scope,id,facility_id,year,process_or_source,stored_co2e,recalc_co2e,diff_abs,diff_pct,status,reason
+Scope 1,3,3,2026,combustion,0.0,3729.0349,3729.0349,372903.4928,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,4,3,2026,combustion,0.0,3729034928.2689,3729034928.2689,372903492826.8895,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,5,3,2026,combustion,0.0,163500.9176,163500.9176,16350091.7553,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,18,3,2026,combustion,0.0,3729034928268.8945,3729034928268.8945,372903492826889.44,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,19,3,2026,flaring,0.0,1704733.162,1704733.162,170473316.1997,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,21,3,2026,tank_flashing,0.0054,0.0054,0.0,0.2216,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,210,1,2026,agr,82.9457,83.1449,0.1993,0.2403,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,214,1,2026,agr,82.9457,83.1449,0.1993,0.2403,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,215,1,2026,associated_gas_venting,12738.5436,12755.1739,16.6303,0.1306,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,216,1,2026,associated_gas_venting,12738.5436,12755.1739,16.6303,0.1306,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,217,1,2026,associated_gas_venting,12738.5436,12755.1739,16.6303,0.1306,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,218,1,2026,associated_gas_venting,12738.5436,12755.1739,16.6303,0.1306,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,219,1,2026,associated_gas_venting,12738.5436,12755.1739,16.6303,0.1306,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,220,1,2026,associated_gas_venting,12738.5436,12755.1739,16.6303,0.1306,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,221,1,2026,associated_gas_venting,12738.5436,12755.1739,16.6303,0.1306,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,222,1,2026,associated_gas_venting,12738.5436,12755.1739,16.6303,0.1306,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,223,1,2026,associated_gas_venting,12738.5436,12755.1739,16.6303,0.1306,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,224,1,2026,associated_gas_venting,12738.5436,12755.1739,16.6303,0.1306,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,225,1,2026,associated_gas_venting,12738.5436,12755.1739,16.6303,0.1306,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,226,1,2026,associated_gas_venting,12738.5436,12755.1739,16.6303,0.1306,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,227,1,2026,associated_gas_venting,12738.5436,12755.1739,16.6303,0.1306,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,228,1,2026,associated_gas_venting,12738.5436,12755.1739,16.6303,0.1306,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,229,1,2026,associated_gas_venting,12738.5436,12755.1739,16.6303,0.1306,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,60713,7,2026,unloading,692.8272,442.8128,250.0144,36.0861,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,60718,10,2026,tank_flashing,1864.2633,1664.9793,199.2841,10.6897,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,60747,7,2026,unloading,1185.794,733.5746,452.2193,38.1364,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,60750,10,2026,tank_flashing,2000.1831,1735.8621,264.321,13.2148,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,60773,7,2026,unloading,1185.794,733.5746,452.2193,38.1364,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,60776,10,2026,tank_flashing,2000.1831,1735.8621,264.321,13.2148,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61394,37,2021,fuel_gas,743000.0,646.1517,742353.8483,99.913,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61395,37,2021,routine_flaring,159600.0,122140.9405,37459.0595,23.4706,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61396,37,2021,non_routine_flaring,114000.0,87243.5289,26756.4711,23.4706,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61397,37,2021,safety_flaring,11400.0,8724.3529,2675.6471,23.4706,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61398,37,2021,tank_venting,3000.0,5.7397,2994.2603,99.8087,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61399,37,2021,equipment_leaks,1000.0,1.9132,998.0868,99.8087,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61400,37,2022,fuel_gas,756000.0,657.4572,755342.5428,99.913,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61401,37,2022,routine_flaring,136640.0,104569.7876,32070.2124,23.4706,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61402,37,2022,non_routine_flaring,97600.0,74692.7054,22907.2946,23.4706,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61403,37,2022,safety_flaring,9760.0,7469.2705,2290.7295,23.4706,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61404,37,2022,tank_venting,3500.0,6.6963,3493.3037,99.8087,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61405,37,2022,equipment_leaks,1200.0,2.2959,1197.7041,99.8087,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61406,37,2023,fuel_gas,772000.0,671.3717,771328.6283,99.913,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61407,37,2023,routine_flaring,98560.0,75427.3878,23132.6122,23.4706,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61408,37,2023,non_routine_flaring,70400.0,53876.7056,16523.2944,23.4706,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61409,37,2023,safety_flaring,7040.0,5387.6706,1652.3294,23.4706,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61410,37,2023,tank_venting,2800.0,5.3571,2794.6429,99.8087,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61411,37,2023,equipment_leaks,1100.0,2.1046,1097.8954,99.8087,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61412,37,2024,fuel_gas,551000.0,479.1785,550520.8215,99.913,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61413,37,2024,routine_flaring,113680.0,86998.6348,26681.3652,23.4706,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61414,37,2024,non_routine_flaring,81200.0,62141.882,19058.118,23.4706,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61415,37,2024,safety_flaring,8120.0,6214.1882,1905.8118,23.4706,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61416,37,2024,tank_venting,2000.0,3.8265,1996.1735,99.8087,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61417,37,2024,equipment_leaks,800.0,1.5306,798.4694,99.8087,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61418,37,2025,fuel_gas,569000.0,494.8322,568505.1678,99.913,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61419,37,2025,routine_flaring,77280.0,59141.9291,18138.0709,23.4706,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61420,37,2025,non_routine_flaring,55200.0,42244.235,12955.765,23.4706,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61421,37,2025,safety_flaring,5520.0,4224.4235,1295.5765,23.4706,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61422,37,2025,tank_venting,1800.0,3.4438,1796.5562,99.8087,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61423,37,2025,equipment_leaks,700.0,1.3393,698.6607,99.8087,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61424,38,2021,fuel_gas,634000.0,551.3596,633448.6404,99.913,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61425,38,2021,routine_flaring,157360.0,120426.6816,36933.3184,23.4706,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61426,38,2021,non_routine_flaring,112400.0,86019.0583,26380.9417,23.4706,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61427,38,2021,safety_flaring,11240.0,8601.9058,2638.0942,23.4706,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61428,38,2021,tank_venting,2500.0,4.7831,2495.2169,99.8087,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61429,38,2021,equipment_leaks,1500.0,2.8699,1497.1301,99.8087,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61430,38,2022,fuel_gas,665000.0,578.3188,664421.6812,99.913,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61431,38,2022,routine_flaring,191520.0,146569.1286,44950.8714,23.4706,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61432,38,2022,non_routine_flaring,136800.0,104692.2347,32107.7653,23.4706,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61433,38,2022,safety_flaring,13680.0,10469.2235,3210.7765,23.4706,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61434,38,2022,tank_venting,2600.0,4.9744,2595.0256,99.8087,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61435,38,2022,equipment_leaks,1400.0,2.6785,1397.3215,99.8087,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61436,38,2023,fuel_gas,804000.0,699.2005,803300.7995,99.913,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61437,38,2023,routine_flaring,109760.0,83998.6819,25761.3181,23.4706,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61438,38,2023,non_routine_flaring,78400.0,59999.0585,18400.9415,23.4706,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61439,38,2023,safety_flaring,7840.0,5999.9058,1840.0942,23.4706,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61440,38,2023,tank_venting,2400.0,4.5918,2395.4082,99.8087,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61441,38,2023,equipment_leaks,1600.0,3.0612,1596.9388,99.8087,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61442,38,2024,fuel_gas,712000.0,619.1925,711380.8075,99.913,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61443,38,2024,routine_flaring,93520.0,71570.3055,21949.6945,23.4706,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61444,38,2024,non_routine_flaring,66800.0,51121.6468,15678.3532,23.4706,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61445,38,2024,safety_flaring,6680.0,5112.1647,1567.8353,23.4706,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61446,38,2024,tank_venting,2200.0,4.2091,2195.7909,99.8087,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61447,38,2024,equipment_leaks,1800.0,3.4438,1796.5562,99.8087,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61448,38,2025,fuel_gas,714000.0,620.9318,713379.0682,99.913,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61449,38,2025,routine_flaring,94080.0,71998.8702,22081.1298,23.4706,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61450,38,2025,non_routine_flaring,67200.0,51427.7644,15772.2356,23.4706,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61451,38,2025,safety_flaring,6720.0,5142.7764,1577.2236,23.4706,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61452,38,2025,tank_venting,2300.0,4.4004,2295.5996,99.8087,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 1,61453,38,2025,equipment_leaks,1700.0,3.2525,1696.7475,99.8087,DIFF > 0.1%,Stored value differs from current formula/factor
+Scope 2,47,1,2026,indirect_steam,42.3078,45.9853,3.6775,8.6922,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,49,1,2026,indirect_steam,42.3078,45.9853,3.6775,8.6922,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,51,1,2026,indirect_steam,42.3078,45.9853,3.6775,8.6922,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,53,1,2026,indirect_steam,42.3078,45.9853,3.6775,8.6922,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,55,1,2026,indirect_steam,42.3078,45.9853,3.6775,8.6922,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,57,1,2026,indirect_steam,42.3078,45.9853,3.6775,8.6922,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,59,1,2026,indirect_steam,42.3078,45.9853,3.6775,8.6922,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,61,1,2026,indirect_steam,42.3078,45.9853,3.6775,8.6922,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,63,1,2026,indirect_steam,42.3078,45.9853,3.6775,8.6922,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,65,1,2026,indirect_steam,42.3078,45.9853,3.6775,8.6922,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,67,1,2026,indirect_steam,42.3078,45.9853,3.6775,8.6922,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,69,1,2026,indirect_steam,42.3078,45.9853,3.6775,8.6922,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,71,1,2026,indirect_steam,42.3078,45.9853,3.6775,8.6922,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,73,1,2026,indirect_steam,42.3078,45.9853,3.6775,8.6922,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,75,1,2026,indirect_steam,42.3078,45.9853,3.6775,8.6922,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,77,1,2026,indirect_steam,42.3078,45.9853,3.6775,8.6922,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,79,1,2026,indirect_steam,42.3078,45.9853,3.6775,8.6922,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,98,3,2026,indirect_steam,75.625,70.7467,4.8783,6.4507,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,143,5,2025,cooling,60.0,0.0,60.0,100.0,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,144,5,2025,cooling,60.0,0.0,60.0,100.0,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,147,5,2025,cooling,60.0,0.0,60.0,100.0,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,151,11,2026,indirect_steam,843.4086,884.3333,40.9247,4.8523,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,155,11,2026,indirect_steam,843.4086,884.3333,40.9247,4.8523,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,159,11,2026,indirect_steam,843.4086,884.3333,40.9247,4.8523,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,163,11,2026,indirect_steam,843.4086,884.3333,40.9247,4.8523,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,255,37,2021,electricity,85000.0,85.0,84915.0,99.9,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,256,37,2022,electricity,89000.0,89.0,88911.0,99.9,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,257,37,2023,electricity,91000.0,91.0,90909.0,99.9,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,258,37,2024,electricity,76000.0,76.0,75924.0,99.9,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,259,37,2025,electricity,75000.0,75.0,74925.0,99.9,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,260,38,2021,electricity,172000.0,172.0,171828.0,99.9,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,261,38,2022,electricity,215000.0,215.0,214785.0,99.9,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,262,38,2023,electricity,245000.0,245.0,244755.0,99.9,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,263,38,2024,electricity,250000.0,250.0,249750.0,99.9,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 2,264,38,2025,electricity,239000.0,239.0,238761.0,99.9,DIFF > 0.1%,Grid factor or efficiency formula discrepancy
+Scope 3,3,1,2023,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,4,1,2024,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,5,1,2025,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,6,1,2026,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,7,2,2023,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,8,2,2024,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,9,2,2025,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,10,2,2026,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,11,3,2023,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,12,3,2024,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,13,3,2025,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,14,4,2023,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,15,4,2024,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,16,4,2025,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,17,4,2026,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,18,5,2023,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,19,5,2024,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,20,5,2025,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,21,5,2026,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,22,6,2023,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,23,6,2024,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,24,6,2025,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,25,6,2026,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,26,7,2023,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,27,7,2024,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,28,7,2025,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,29,7,2026,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,30,8,2023,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,31,8,2024,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,32,8,2025,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,33,8,2026,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,34,9,2023,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,35,9,2024,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,36,9,2025,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,37,9,2026,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,38,10,2023,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,39,10,2024,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,40,10,2025,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,41,10,2026,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,42,11,2023,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,43,11,2024,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,44,11,2025,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,45,11,2026,"Cat Category 1: Purchased Goods and Services: Chemicals, Catalysts & Drilling Mud",12070.0,12.07,12057.93,99.9,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,183,11,2026,Cat Category 11: Natural Gas,270.9,276.318,5.418,2.0,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,186,11,2026,Cat Category 11: Natural Gas,270.9,276.318,5.418,2.0,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,189,11,2026,Cat Category 11: Natural Gas,270.9,276.318,5.418,2.0,DIFF > 0.1%,Scope 3 activity factor basis discrepancy
+Scope 3,192,11,2026,Cat Category 11: Natural Gas,270.9,276.318,5.418,2.0,DIFF > 0.1%,Scope 3 activity factor basis discrepancy

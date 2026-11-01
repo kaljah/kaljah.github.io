@@ -106,6 +106,7 @@ interface FilterState {
   year: string | number;
   activity: string;
   severity: "all" | "high" | "medium" | "baseline" | string;
+  superEmitterThreshold?: number;
 }
 
 const EmissionsMap: React.FC = () => {
@@ -241,8 +242,8 @@ const EmissionsMap: React.FC = () => {
   // Multi-criteria facility filtering (Search, Region, Activity, Coordinates, Severity)
   useEffect(() => {
     const searchLower = (filters.search || "").toLowerCase().trim();
-    const highThreshold = viewMode === "total" ? 50000 : 500;
-    const medThreshold = viewMode === "total" ? 10000 : 100;
+    const highThreshold = filters.superEmitterThreshold || (viewMode === "total" ? 50000 : 2500);
+    const medThreshold = highThreshold / 5;
 
     const filtered = facilities.filter((f) => {
       // Region Filter — use region_identifier (= f.region ?? f.name) so facilities
@@ -407,9 +408,10 @@ const EmissionsMap: React.FC = () => {
   };
 
   const getSeverityLevel = (val: number): string => {
-    const threshold = viewMode === "total" ? 10000 : 100;
-    if (val > threshold * 5) return "high"; // Super-emitter
-    if (val > threshold) return "medium";
+    const highThreshold = filters.superEmitterThreshold || (viewMode === "total" ? 50000 : 2500);
+    const medThreshold = highThreshold / 5;
+    if (val >= highThreshold) return "high"; // Super-emitter
+    if (val >= medThreshold) return "medium";
     return "low";
   };
 
@@ -472,13 +474,15 @@ const EmissionsMap: React.FC = () => {
     let totalGhg = 0;
     let totalBoe = 0;
     let superEmitters = 0;
+    const highThreshold = filters.superEmitterThreshold || (viewMode === "total" ? 50000 : 2500);
 
     filteredFacilities.forEach((f) => {
       const s = getIntensityData(f.id);
       totalMethane += Number(s.total_ch4 || 0);
       totalGhg += Number(s.total_co2e || 0);
       totalBoe += Number(s.total_boe || 0);
-      if (Number(s.total_ch4 || 0) >= 500) {
+      const val = viewMode === "total" ? Number(s.total_co2e || 0) : Number(s.total_ch4 || 0);
+      if (val >= highThreshold) {
         superEmitters += 1;
       }
     });
@@ -494,7 +498,7 @@ const EmissionsMap: React.FC = () => {
       avgMethaneIntensity,
       superEmitters,
     };
-  }, [filteredFacilities, getIntensityData]);
+  }, [filteredFacilities, getIntensityData, filters.superEmitterThreshold, viewMode]);
 
   const selectedStats = selectedFacility
     ? getIntensityData(selectedFacility.id)

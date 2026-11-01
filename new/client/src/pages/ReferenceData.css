@@ -8,6 +8,8 @@
 .search-input-wrapper {
   position: relative;
   flex: 1;
+  min-width: 0;
+  width: 100%;
 }
 
 .filter-select {
@@ -37,12 +39,12 @@
   box-shadow: var(--shadow-card);
   border: 1px solid var(--border-color, rgba(226, 232, 240, 0.8));
   overflow: hidden;
-  border-left: 4px solid var(--accent-color, var(--color-brand-500));
+  border-left: 2px solid var(--accent-color, var(--color-brand-500));
   transition: transform 0.22s ease, box-shadow 0.22s ease;
 }
 
 .category-section:hover {
-  box-shadow: var(--shadow-card-elevated);
+  border-color: var(--color-ink-300);
 }
 
 .category-header {
@@ -82,11 +84,9 @@
 .factors-table th {
   padding: 16px 24px;
   text-align: left;
-  font-weight: 700;
+  font-weight: 500;
   color: var(--color-ink-600);
   font-size: var(--text-sm);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 
 .factors-table td {

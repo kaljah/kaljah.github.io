@@ -1,5 +1,6 @@
 import React from "react";
-import { Input, Field } from "../../ui";
+import { Lock } from "lucide-react";
+import { Input, Field, Badge } from "../../ui";
 import ColumnMappingWizard from "../ColumnMappingWizard";
 import CustomDropdown from "../CustomDropdown";
 import { currentLanguage, t } from "../../i18n";
@@ -81,12 +82,7 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
 }) => (
   <div className="calc-panel">
     <div className="flex! justify-between! items-center! mb-[20px]!">
-      <h3 className="m-[0px]!">{t("New Scope 3 Entry")}</h3>
-      <div className="text-right!">
-        <span className="text-[color:var(--color-violet-700)]! font-semibold! text-[length:0.9rem]!">
-          {t("Scope 3: Other Indirect")}
-        </span>
-      </div>
+      <h3 className="m-[0px]!">{t("Scope 3 Value Chain Emissions")}</h3>
     </div>
 
     <div
@@ -183,14 +179,42 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
       </Field>
     </div>
 
-    <div className="mt-[24px]!">
+    {/* Live Calculation Preview Card (A6) */}
+    <div className="live-calc-preview rounded-lg border border-border bg-ink-50/80 p-3 mt-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <span className="text-xs font-semibold text-text uppercase tracking-wider">
+          {t("Live Result Preview")}
+        </span>
+        {amount && Number(amount) > 0 && emissionFactor && Number(emissionFactor) > 0 ? (
+          <Badge tone="success" className="font-mono text-xs font-bold">
+            ~ {((Number(amount) * Number(emissionFactor)) / 1000).toLocaleString(undefined, { maximumFractionDigits: 3 })} tCO₂e
+          </Badge>
+        ) : (
+          <span className="text-xs text-text-secondary italic">
+            {t("Enter activity amount & emission factor to preview")}
+          </span>
+        )}
+      </div>
+      <div className="mt-1.5 flex flex-wrap items-center justify-between text-xs text-text-secondary">
+        <span>
+          {t("Activity:")}{" "}
+          <strong className="text-text font-medium">{activityType || t("General")}</strong>
+        </span>
+        <span>
+          {t("Quantity & Factor:")}{" "}
+          <strong className="text-text font-medium">{amount ? `${amount} ${unit}` : "—"} · {emissionFactor ? `${emissionFactor} kg CO₂e/${unit}` : "—"}</strong>
+        </span>
+      </div>
+    </div>
+
+    <div className="mt-[16px]!">
       <button
         type="button"
         className={`btn-add-activity w-full ${submitting ? "[cursor:not-allowed]! [opacity:0.6]!" : "[cursor:pointer]! [opacity:1]!"}`}
         disabled={submitting}
         onClick={() => handleAddEntry("Verified")}
       >
-        {submitting ? t("Processing...") : t("+ Calculate & Submit for Review")}
+        {submitting ? t("Calculating & submitting...") : t("+ Calculate & Submit for Review")}
       </button>
     </div>
 

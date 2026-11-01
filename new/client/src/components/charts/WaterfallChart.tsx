@@ -33,6 +33,12 @@ export interface WaterfallChartProps {
   labelMode?: "absolute" | "percent";
   /** Shows CSV/PNG buttons (on hover/focus) and uses this as the file name. */
   exportName?: string;
+  /** Custom colors for total anchor bars and increase/decrease steps */
+  colors?: {
+    total?: string;
+    up?: string;
+    down?: string;
+  };
 }
 
 interface Row {
@@ -44,17 +50,17 @@ interface Row {
   top: number;
 }
 
-const COLORS = {
-  total: "var(--color-blue-600)",
-  // More emissions is the bad direction, fewer is the good one.
-  up: "var(--color-red-500)",
-  down: "var(--color-green-500)",
+const DEFAULT_COLORS = {
+  total: "var(--color-ink-700)",
+  // More emissions is the bad direction (red), fewer is the good one (green per C1).
+  up: "var(--color-red-600)",
+  down: "var(--color-green-600)",
 };
 
 // Two decimals: on a zoomed axis one decimal repeats ("1.2M, 1.2M, 1.1M, 1.1M").
 const AXIS_FORMAT = new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 2 });
 
-const VALUE_LABEL_STYLE: React.CSSProperties = { fill: "var(--color-ink-700)", fontSize: 11, fontWeight: 600 };
+const VALUE_LABEL_STYLE: React.CSSProperties = { fill: "var(--color-ink-700)", fontSize: 11, fontWeight: 500, fontVariantNumeric: "tabular-nums" };
 
 /** Bridge from a start total to an end total: floating bars show what moved it in between. */
 export const WaterfallChart: React.FC<WaterfallChartProps> = ({
@@ -68,7 +74,16 @@ export const WaterfallChart: React.FC<WaterfallChartProps> = ({
   onSelectStep,
   labelMode = "absolute",
   exportName,
+  colors,
 }) => {
+  const activeColors = useMemo(
+    () => ({
+      total: colors?.total || DEFAULT_COLORS.total,
+      up: colors?.up || DEFAULT_COLORS.up,
+      down: colors?.down || DEFAULT_COLORS.down,
+    }),
+    [colors]
+  );
   const wrapRef = React.useRef<HTMLDivElement | null>(null);
   // Eight step names do not fit side by side on a phone: tilt them there.
   const [narrow, setNarrow] = React.useState<boolean>(() => typeof window !== "undefined" && !!window.matchMedia?.("(max-width: 639px)").matches);
@@ -124,7 +139,7 @@ export const WaterfallChart: React.FC<WaterfallChartProps> = ({
       )}
       <ResponsiveContainer width="100%" height={exportName ? height - 32 : height} debounce={100}>
         <RechartsBar data={rows} margin={{ top: 22, right: 12, left: -4, bottom: 4 }}>
-          <CartesianGrid strokeDasharray="4 4" stroke="rgba(226, 232, 240, 0.75)" vertical={false} />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color, rgba(226, 232, 240, 0.75))" vertical={false} />
           <XAxis
             dataKey="name"
             interval={0}
@@ -133,14 +148,14 @@ export const WaterfallChart: React.FC<WaterfallChartProps> = ({
             height={narrow ? 70 : 30}
             axisLine={false}
             tickLine={false}
-            tick={{ fill: "var(--color-ink-600)", fontSize: 11, fontWeight: 600 }}
+            tick={{ fill: "var(--color-ink-500)", fontSize: 11, fontWeight: 500 }}
           />
           <YAxis
             domain={domain}
             allowDataOverflow
             axisLine={false}
             tickLine={false}
-            tick={{ fill: "var(--color-ink-500)", fontSize: 11, fontWeight: 600 }}
+            tick={{ fill: "var(--color-ink-500)", fontSize: 11, fontWeight: 500 }}
             tickFormatter={(v) => AXIS_FORMAT.format(Number(v))}
             tickCount={5}
           />
@@ -155,7 +170,11 @@ export const WaterfallChart: React.FC<WaterfallChartProps> = ({
                     <span className="tooltip-label">{r.name}</span>
                   </div>
                   <div className="tooltip-items-list">
-                    <div className="tooltip-item-row">
+                    <div className="tooltip-item-row flex items-center gap-1.5">
+                      <span
+                        className="inline-block size-2 shrink-0 rounded-full"
+                        style={{ backgroundColor: activeColors[r.kind] }}
+                      />
                       <div className="tooltip-item-right">
                         <span>
                           {r.kind === "total"
@@ -174,7 +193,7 @@ export const WaterfallChart: React.FC<WaterfallChartProps> = ({
           <Bar
             dataKey="value"
             stackId="w"
-            maxBarSize={48}
+            maxBarSize={38}
             radius={[4, 4, 0, 0]}
             animationDuration={700}
             className={onSelectStep ? "cursor-pointer" : undefined}
@@ -188,7 +207,7 @@ export const WaterfallChart: React.FC<WaterfallChartProps> = ({
             }
           >
             {rows.map((r, i) => (
-              <Cell key={i} fill={COLORS[r.kind]} />
+              <Cell key={i} fill={activeColors[r.kind]} />
             ))}
             <LabelList
               dataKey="value"

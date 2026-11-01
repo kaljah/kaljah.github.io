@@ -4,8 +4,9 @@ import EmissionsOverviewCard from "./dashboard/EmissionsOverviewCard";
 import FlaringComplianceCard from "./dashboard/FlaringComplianceCard";
 import DetailedBreakdownSection from "./dashboard/DetailedBreakdownSection";
 import { useAnalyticsFilter } from "../filters/useAnalyticsFilter";
-import { SegmentedControl, Badge, cn } from "../ui";
+import { SegmentedControl, Badge, Button, cn } from "../ui";
 import { PendingBanner, TrendCard, DonutCard, SbtiCard, CategoricalCard, BridgeCard } from "./dashboard/DashboardCards";
+import { RoleHomeBanner } from "../components/RoleHomeBanner";
 import SourceEquipmentCard from "./dashboard/SourceEquipmentCard";
 import { useAuth } from "../context/AuthContext";
 import api from "../api";
@@ -16,6 +17,7 @@ import MultiSelectDropdown from "../components/MultiSelectDropdown";
 import { calculateTrend } from "../utils/formatters";
 import { useLayout } from "../context/LayoutContext";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
+import { AlertTriangle } from "lucide-react";
 
 import "./Dashboard.css";
 import "./TopBarFilters.css";
@@ -201,6 +203,7 @@ const DashboardEnhanced: React.FC = () => {
 
   const [sbtiData, setSbtiData] = useState<any>(null);
   const [flaringData, setFlaringData] = useState<any>(null);
+  const [scope3Incomplete, setScope3Incomplete] = useState<boolean>(false);
   const [trendData, setTrendData] = useState<any[]>([]);
   const [categoricalData, setCategoricalData] = useState<CategoricalItem[]>([]);
   const [currentYear, setCurrentYear] = useAnalyticsFilter("year");
@@ -373,6 +376,7 @@ const DashboardEnhanced: React.FC = () => {
 
       setGoal(gObj);
       setCategoricalData(catData);
+      setScope3Incomplete(Boolean(s3Data?.scope3_incomplete));
 
       // Fetch SBTi Trajectory Data
       try {
@@ -859,7 +863,7 @@ const DashboardEnhanced: React.FC = () => {
     );
 
     setTopBarRight(
-      <div className="flex! items-center! gap-[10px]!">
+      <div className="flex items-center gap-3">
         {/* Scope 2 method (location / market) */}
         <SegmentedControl
           label={tr("Scope 2 method")}
@@ -896,26 +900,30 @@ const DashboardEnhanced: React.FC = () => {
         />
 
         {goal ? (
-          <div className="[display:flex] [align-items:center] [gap:8px] [background:rgba(255,_255,_255,_0.8)] [padding:4px_10px] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [font-size:var(--text-sm)]">
-            <span className="text-[length:0.8rem]! text-[color:var(--text-secondary)]!">
-              {tr("Target")}{" "}{goal.year}: <strong className="text-[color:var(--text-primary)]!">{Number(goal.target_amount).toLocaleString()}{" "}{tr("tCO₂e")}</strong>
+          <div className="flex items-center gap-2 rounded-md border border-border bg-surface px-2.5 py-1 text-sm">
+            <span className="text-xs text-text-secondary">
+              {tr("Target")}{" "}{goal.year}: <strong className="font-semibold text-text">{Number(goal.target_amount).toLocaleString()}{" "}{tr("tCO₂e")}</strong>
             </span>
-            <button
-              className="btn-target-action [padding:6px_14px] [font-size:var(--text-sm)] [font-weight:600] [border-radius:var(--radius-md)] [background:rgba(255,_255,_255,_0.9)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [color:var(--text-primary)] [cursor:pointer] [transition:all_0.2s_ease] [white-space:nowrap] hover:[border-color:var(--accent-color,_var(--color-brand-500))] hover:[color:var(--color-link)]"
+            <Button
+              variant="secondary"
+              size="sm"
+              className="btn-target-action h-7 px-2.5 text-xs font-medium"
               onClick={() => navigate("/manage-data", { state: { tab: "goals" } })}
               title={tr("Manage emission goals and base years in Manage Data")}
             >
               {tr("Edit Target")}
-            </button>
+            </Button>
           </div>
         ) : (
-          <button
-            className="btn-target-action [padding:6px_14px] [font-size:var(--text-sm)] [font-weight:600] [border-radius:var(--radius-md)] [background:rgba(255,_255,_255,_0.9)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [color:var(--text-primary)] [cursor:pointer] [transition:all_0.2s_ease] [white-space:nowrap] hover:[border-color:var(--accent-color,_var(--color-brand-500))] hover:[color:var(--color-link)]"
+          <Button
+            variant="secondary"
+            size="sm"
+            className="btn-target-action h-8 px-3 text-xs font-medium"
             onClick={() => navigate("/sbti")}
             title={tr("Set emission targets in SBTi Workbench")}
           >
             {tr("+ Set Target")}
-          </button>
+          </Button>
         )}
       </div>,
     );
@@ -989,13 +997,26 @@ const DashboardEnhanced: React.FC = () => {
   }
 
   // every region of any year when comparing, otherwise the headline series that have data
+  const REGION_PALETTE = [
+    "var(--color-brand-500)",
+    "var(--color-blue-600)",
+    "var(--color-green-500)",
+    "var(--color-violet-500)",
+    "var(--color-amber-500)",
+    "var(--color-cyan-500)",
+    "var(--color-teal-600)",
+    "var(--color-pink-500)",
+    "var(--color-indigo-600)",
+    "var(--color-ink-500)",
+  ];
+
   const trendLines = isCompareMode
     ? [...new Set(trendData.flatMap((p) => Object.keys(p)))]
         .filter((k) => k !== "year" && k !== "trajectory" && k !== "forecast")
         .map((k, i) => ({
           dataKey: k,
           name: k,
-          color: `hsl(${(i * 137.5) % 360}, 70%, 60%)`,
+          color: REGION_PALETTE[i % REGION_PALETTE.length],
         }))
     : [
         {
@@ -1024,20 +1045,25 @@ const DashboardEnhanced: React.FC = () => {
 
   return (
     <div
-      className="[min-height:100vh] [background:transparent] [padding:24px_32px_48px]! [position:relative] [overflow-x:hidden] [color:var(--text-primary,_var(--color-ink-900))] [@media_print]:[padding:20px]! [@media_print]:[max-width:100%]! [@media(max-width:768px)]:[padding:14px_12px_36px]!"
+      className="min-h-screen bg-transparent px-6 py-6 pb-12 relative overflow-x-hidden text-text print:p-5 print:max-w-full max-md:px-3 max-md:py-4"
       style={{
         opacity: isUpdating ? 0.8 : 1,
         transition: "opacity 0.15s ease",
       }}
     >
-      <div className="dashboard-grid [display:flex] [flex-direction:column] [gap:24px] [max-width:1600px] [margin:0_auto] [&>*]:[opacity:0] [&>*]:[animation:dashboardFadeIn_0.5s_cubic-bezier(0.16,_1,_0.3,_1)_forwards] [&&]:[&>*:nth-child(1)]:[animation-delay:0.05s] [&&]:[&&]:[&>*:nth-child(2)]:[animation-delay:0.12s] [&&]:[&&]:[&&]:[&>*:nth-child(3)]:[animation-delay:0.18s] [&&]:[&&]:[&&]:[&&]:[&>*:nth-child(4)]:[animation-delay:0.24s] [&&]:[&&]:[&&]:[&&]:[&&]:[&>*:nth-child(5)]:[animation-delay:0.30s]">
+      <div className="dashboard-grid flex flex-col gap-6 max-w-[1600px] mx-auto animate-fadeIn">
         <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-          <h1 className="grid-title m-0 text-xl font-bold text-text">{tr("GHG Emissions Dashboard")}</h1>
-          <Badge className="live-badge gap-2 bg-surface/80 px-3.5 py-1.5 text-sm text-text-secondary">
-            <span className={cn("size-2 rounded-full bg-green-500", isUpdating && "animate-pulse")} aria-hidden="true" />
+          <h1 className="grid-title m-0 text-xl font-semibold text-text">{tr("GHG Emissions Dashboard")}</h1>
+          <Badge className="live-badge gap-2 bg-surface px-3 py-1 text-sm font-medium text-text-secondary border border-border">
+            <span className="relative flex size-2">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75 ring-2 ring-green-500/20" />
+              <span className="relative inline-flex size-2 rounded-full bg-green-500" />
+            </span>
             {isUpdating ? tr("Syncing filters...") : tr("Live content • Updated {{time}}", { time: lastUpdated })}
           </Badge>
         </div>
+
+        <RoleHomeBanner pendingCount={pendingCount} />
 
         {pendingCount > 0 && (
           <PendingBanner
@@ -1048,6 +1074,24 @@ const DashboardEnhanced: React.FC = () => {
             canReview={Boolean(user?.role && ["admin", "superuser"].includes(user.role))}
             onReview={() => navigate("/manage-data", { state: { tab: "pending" } })}
           />
+        )}
+
+        {scope3Incomplete && (
+          <div
+            role="alert"
+            data-testid="scope3-incomplete-warning"
+            className="flex items-center gap-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900 shadow-xs"
+          >
+            <AlertTriangle className="size-5 shrink-0 text-amber-600" />
+            <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
+              <span className="font-semibold">{tr("Scope 3 incomplete:")}</span>
+              <span>
+                {tr(
+                  "Category 11 (Use of Sold Products) has no recorded emissions for this reporting period despite active production."
+                )}
+              </span>
+            </div>
+          </div>
         )}
 
         {/* Hero Overview Card */}
@@ -1062,6 +1106,13 @@ const DashboardEnhanced: React.FC = () => {
           handleExportPDF={handleExportPDF}
           hasProductionData={hasProductionData}
           intensity={intensity}
+          pendingCount={pendingCount}
+          includePending={includePending}
+          scope2Method={scope2Method}
+          gwpStandard={activeGwpStandard || undefined}
+          gwpHorizon={gwpHorizon}
+          lastUpdated={lastUpdated}
+          onNavigateToPending={() => navigate("/manage-data", { state: { tab: "pending" } })}
           stats={stats}
           variance={variance}
         />
@@ -1071,7 +1122,7 @@ const DashboardEnhanced: React.FC = () => {
           <FlaringComplianceCard flaringData={flaringData} />
         )}
 
-        <div className="charts-section grid gap-6 [grid-template-columns:2fr_1fr] max-[1200px]:grid-cols-1">
+        <div className="charts-section grid gap-6 [grid-template-columns:1.25fr_1fr] max-[1200px]:grid-cols-1">
           <TrendCard data={trendData} lines={trendLines} compare={isCompareMode} onCompare={() => setIsCompareMode(!isCompareMode)} />
           <div className="flex min-w-0 flex-col gap-6">
             <DonutCard title={tr("Emissions by Activity")} data={activityChartData} noun={tr("activity")} />

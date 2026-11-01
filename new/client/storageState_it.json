@@ -1,0 +1,39 @@
+{
+  "cookies": [
+    {
+      "name": "csrf_token",
+      "value": "ImI2Nzk5M2VhN2E4MDAwZWIzMzk3ZDMxMmE1NjgxMzljODVlNzU0Mzki.auapWw.GLdZQq1S7BnvmXeV9gDPuRjjKEc",
+      "domain": "127.0.0.1",
+      "path": "/",
+      "expires": 1793587931.525313,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "session",
+      "value": ".eJwVy1EOwiAMANC79JuYdrVAuQxhW02MigbYfox33_x_7wv5Y-1VqtUBabTNHCy93fJ4P6xCgtkHVbYSSkREm5k1rExTER-JdYliQa6s4OBZ-sjd_o2CsiAJT5eo5MVB3yGhg61by_f1FIj0OwCRAiRQ.auapXA.51LSiVoGzgT_Ij2S2gTaempHkP4",
+      "domain": "127.0.0.1",
+      "path": "/",
+      "expires": 1793530332.908466,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "http://127.0.0.1:5173",
+      "localStorage": [
+        {
+          "name": "ct.sidebar.collapsed",
+          "value": "0"
+        },
+        {
+          "name": "ct.recentPages",
+          "value": "[\"/user-management\",\"/\"]"
+        }
+      ]
+    }
+  ]
+}

@@ -56,24 +56,23 @@ class AnomalyDetector:
         variance = sum((x - mean) ** 2 for x in historical) / (n - 1)
         std = math.sqrt(variance) if variance > 0 else 0
 
-        if std == 0:
-            # All historical values identical — flag only if new value differs significantly
+        if std < 1e-4:
+            # All historical values essentially identical (or floating-point epsilon)
             if (abs(mean) > 0 and abs(value - mean) / abs(mean) > 0.5) or (mean == 0 and abs(value) > 0):
                 return {
                     "flagged": True,
-                    "z_score": None,
-                    "mean": mean,
-                    "std": 0,
-                    "expected_range": [min(mean * 0.5, mean * 1.5), max(mean * 0.5, mean * 1.5)] if abs(mean) > 0 else [0.0, 0.0],
+                    "z_score": 10.0 if value > mean else -10.0,
+                    "mean": round(mean, 2),
+                    "std": round(std, 4),
+                    "expected_range": [round(min(mean * 0.5, mean * 1.5), 2), round(max(mean * 0.5, mean * 1.5), 2)] if abs(mean) > 0 else [0.0, 0.0],
                     "reason": "constant_history_deviation",
-                    "message": f"Historical values are constant ({mean:.1f}) but new value is {value:.1f}."
+                    "message": f"Historical values are constant ({mean:.2f}) but new value is {value:.2f}."
                 }
-            return {"flagged": False, "z_score": 0, "expected_range": [mean, mean]}
+            return {"flagged": False, "z_score": 0.0, "expected_range": [round(mean, 2), round(mean, 2)]}
 
-        if std < 1e-6:
-            z = 0.0 if abs(value - mean) < 1e-6 else (999.0 if value > mean else -999.0)
-        else:
-            z = (value - mean) / std
+        raw_z = (value - mean) / std
+        # Cap z-score to +/- 10.0 to prevent astronomical scientific notation
+        z = max(-10.0, min(10.0, raw_z))
 
         # IQR fence as secondary check (requires at least 4 observations for quartiles)
         sorted_h = sorted(historical)

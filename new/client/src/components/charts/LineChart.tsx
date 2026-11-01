@@ -13,14 +13,14 @@ import "./ChartWrappers.css";
 import { t } from "../../i18n";
 
 const DEFAULT_LINE_COLORS = [
-  "var(--color-brand-500)", // Core orange
-  "var(--color-blue-600)", // Royal blue
-  "var(--color-green-500)", // Emerald green
-  "var(--color-violet-500)", // Violet
-  "var(--color-amber-500)", // Amber
-  "var(--color-cyan-500)", // Cyan
-  "var(--color-pink-500)", // Rose
-  "var(--color-ink-500)", // Slate
+  "var(--color-brand-500)", // Core petroleum orange (#f97316)
+  "var(--color-blue-600)",  // Royal telemetry blue (#0284c7)
+  "var(--color-green-500)", // Verification emerald (#10b981)
+  "var(--color-violet-500)",// Deep violet (#8b5cf6)
+  "var(--color-amber-500)", // Warm amber (#f59e0b)
+  "var(--color-cyan-500)",  // Precision cyan (#06b6d4)
+  "var(--color-pink-500)",  // Accent rose (#ec4899)
+  "var(--color-ink-500)",   // Muted slate (#64748b)
 ];
 
 export interface LineSeriesConfig {
@@ -45,6 +45,7 @@ export interface LineChartProps {
   height?: number | string;
   showLegend?: boolean;
   formatValue?: (val: any) => string;
+  curveType?: "monotone" | "linear" | "step";
 }
 
 export const LineChart: React.FC<LineChartProps> = ({
@@ -57,6 +58,7 @@ export const LineChart: React.FC<LineChartProps> = ({
   height = 300,
   showLegend = true,
   formatValue,
+  curveType,
 }) => {
   const [isMounted] = useState<boolean>(() => typeof window !== "undefined");
   const [activeKey, setActiveKey] = useState<string | null>(null);
@@ -175,6 +177,9 @@ export const LineChart: React.FC<LineChartProps> = ({
     );
   }
 
+  // Smooth monotone interpolation for series with > 2 points, linear for 2 points or when specified
+  const effectiveCurve = curveType || (data.length <= 2 ? "linear" : "monotone");
+
   return (
     <div
       className="chart-wrapper"
@@ -196,7 +201,7 @@ export const LineChart: React.FC<LineChartProps> = ({
       >
         <AreaChart
           data={data}
-          margin={{ top: 12, right: 12, left: -4, bottom: 4 }}
+          margin={{ top: 16, right: 16, left: 4, bottom: 6 }}
         >
           <defs>
             {chartLines.map((line, idx) => {
@@ -214,7 +219,7 @@ export const LineChart: React.FC<LineChartProps> = ({
                   x2="0"
                   y2="1"
                 >
-                  <stop offset="0%" stopColor={strokeColor} stopOpacity={0.24} />
+                  <stop offset="0%" stopColor={strokeColor} stopOpacity={0.10} />
                   <stop offset="80%" stopColor={strokeColor} stopOpacity={0.02} />
                   <stop offset="100%" stopColor={strokeColor} stopOpacity={0} />
                 </linearGradient>
@@ -223,8 +228,8 @@ export const LineChart: React.FC<LineChartProps> = ({
           </defs>
 
           <CartesianGrid
-            strokeDasharray="4 4"
-            stroke="rgba(226, 232, 240, 0.75)"
+            strokeDasharray="3 3"
+            stroke="var(--border-color, rgba(226, 232, 240, 0.75))"
             vertical={false}
           />
 
@@ -232,7 +237,7 @@ export const LineChart: React.FC<LineChartProps> = ({
             dataKey={finalXKey}
             type="category"
             stroke="var(--color-ink-300)"
-            tick={{ fill: "var(--color-ink-500)", fontSize: 11, fontWeight: 600 }}
+            tick={{ fill: "var(--color-ink-500)", fontSize: 11, fontWeight: 500 }}
             axisLine={false}
             tickLine={false}
             dy={8}
@@ -241,7 +246,7 @@ export const LineChart: React.FC<LineChartProps> = ({
 
           <YAxis
             stroke="var(--color-ink-300)"
-            tick={{ fill: "var(--color-ink-500)", fontSize: 11, fontWeight: 600 }}
+            tick={{ fill: "var(--color-ink-500)", fontSize: 11, fontWeight: 500 }}
             axisLine={false}
             tickLine={false}
             tickFormatter={valueFormatter}
@@ -251,9 +256,9 @@ export const LineChart: React.FC<LineChartProps> = ({
           <Tooltip
             content={renderTooltip}
             cursor={{
-              stroke: "rgba(203, 213, 225, 0.9)",
+              stroke: "var(--color-ink-300, rgba(203, 213, 225, 0.8))",
               strokeWidth: 1.5,
-              strokeDasharray: "4 4",
+              strokeDasharray: "3 3",
             }}
           />
 
@@ -284,14 +289,14 @@ export const LineChart: React.FC<LineChartProps> = ({
             return (
               <Area
                 key={`area-${cleanKey}`}
-                type="monotone"
+                type={effectiveCurve}
                 dataKey={lineKey}
                 name={lineName}
                 stroke={lineColor}
                 strokeWidth={
                   isHighlighted
-                    ? (line.strokeWidth || 3) + 1
-                    : line.strokeWidth || (isTrajectory ? 2 : 2.75)
+                    ? (line.strokeWidth || 2.5) + 0.75
+                    : line.strokeWidth || (isTrajectory ? 1.75 : 2.5)
                 }
                 strokeDasharray={
                   line.strokeDasharray ||
@@ -300,24 +305,24 @@ export const LineChart: React.FC<LineChartProps> = ({
                 }
                 fillOpacity={isTrajectory ? 0 : isDimmed ? 0.05 : 1}
                 fill={isTrajectory ? "transparent" : `url(#gradient-${cleanKey})`}
-                opacity={isDimmed ? 0.35 : 1}
+                opacity={isDimmed ? 0.25 : 1}
                 dot={
-                  isTrajectory || data.length > 15
+                  isTrajectory || data.length > 20
                     ? false
                     : {
-                        fill: "var(--color-white)",
+                        fill: "var(--bg-card, #ffffff)",
                         stroke: lineColor,
                         strokeWidth: 2,
-                        r: 3.5,
+                        r: 3,
                       }
                 }
                 activeDot={{
                   fill: lineColor,
-                  stroke: "var(--color-white)",
+                  stroke: "var(--bg-card, #ffffff)",
                   strokeWidth: 2.5,
-                  r: isTrajectory ? 4.5 : 6,
+                  r: isTrajectory ? 4.5 : 5.5,
                 }}
-                animationDuration={900}
+                animationDuration={800}
                 connectNulls
               />
             );

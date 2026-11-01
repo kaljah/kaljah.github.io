@@ -44,8 +44,8 @@ export const PieChart: React.FC<PieChartProps> = ({
   colors = MODERN_PALETTE,
   height = 300,
   showLegend = true,
-  innerRadius = 55, // Modern donut default
-  outerRadius = 80,
+  innerRadius = 65, // Modern donut default
+  outerRadius = 95,
   formatValue,
   centerLabel,
   centerSub,
@@ -217,7 +217,7 @@ export const PieChart: React.FC<PieChartProps> = ({
               cy="50%"
               innerRadius={safeInnerRadius}
               outerRadius={safeOuterRadius}
-              paddingAngle={isDonut ? 3 : 0}
+              paddingAngle={isDonut ? 2.5 : 0}
               cornerRadius={isDonut ? 4 : 0}
               onMouseEnter={(_, index) => setActiveIndex(index)}
               onMouseLeave={() => setActiveIndex(null)}
@@ -230,13 +230,12 @@ export const PieChart: React.FC<PieChartProps> = ({
                   <Cell
                     key={`cell-${index}`}
                     fill={entry._color}
-                    stroke="var(--color-white)"
-                    strokeWidth={isSelected ? 3 : 2}
-                    opacity={isDimmed ? 0.4 : 1}
+                    stroke="var(--bg-card, #ffffff)"
+                    strokeWidth={isSelected ? 2.5 : 1.5}
+                    opacity={isDimmed ? 0.35 : 1}
                     style={{
                       cursor: "pointer",
-                      transition: "opacity 0.2s ease, transform 0.2s ease",
-                      filter: isSelected ? "drop-shadow(0 2px 6px rgba(0,0,0,0.15))" : "none",
+                      transition: "opacity 0.2s ease",
                     }}
                   />
                 );

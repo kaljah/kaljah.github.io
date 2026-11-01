@@ -1,8 +1,10 @@
-import React from "react";
-import { Badge, Banner, Button, Field, Input } from "../../ui";
+import React, { useState } from "react";
+import { Badge, Button, Field, Input, Sheet } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
+import { Plus, Trash2, Edit2 } from "lucide-react";
 import PaginationControls from "./PaginationControls";
-import { FormActions, FormGrid, RecordTable, TabCard, Td, Tr } from "./MdParts";
+import { RecordTable, TabCard, Td, Tr } from "./MdParts";
+import AdvancedSection from "../../components/AdvancedSection";
 import { t } from "../../i18n";
 
 export interface OgmpSurveyRecord {
@@ -78,184 +80,73 @@ const OgmpTab: React.FC<OgmpTabProps> = ({
   setEditingOgmpId,
   setOgmpForm,
 }) => {
+  const [isAddDrawerOpen, setIsAddDrawerOpen] = useState(false);
+
+  const openAdd = () => {
+    setEditingOgmpId(null);
+    setOgmpForm({
+      activity: "",
+      division: "",
+      facility_id: "",
+      year: new Date().getFullYear(),
+      survey_date: new Date().toISOString().split("T")[0],
+      survey_type: "Satellite (Sentinel-5P/MethaneSAT)",
+      measured_rate_kg_hr: "",
+      reconciliation_status: "Reconciled",
+      operator_notes: "",
+    });
+    setIsAddDrawerOpen(true);
+  };
+
+  const openEdit = (o: OgmpSurveyRecord) => {
+    const fid = o.facility_id || o.facilityId;
+    const fac = facilities.find((f) => f.id === fid);
+    const sDate = o.survey_date || o.surveyDate || "";
+    const sType = o.survey_type || o.surveyType || "Satellite";
+    const mRate = parseFloat(String(o.measured_rate_kg_hr ?? o.measuredRateKgHr ?? 0));
+    const rStatus = o.reconciliation_status || o.reconciliationStatus || "Reconciled";
+    const notes = o.operator_notes || o.operatorNotes || "";
+
+    setEditingOgmpId(o.id);
+    setOgmpForm({
+      id: o.id,
+      activity: fac?.activity || "",
+      division: fac?.division || "",
+      facility_id: fid ? fid.toString() : "",
+      year: o.year || (sDate ? new Date(sDate).getFullYear() : new Date().getFullYear()),
+      survey_date: sDate,
+      survey_type: sType,
+      measured_rate_kg_hr: mRate.toString(),
+      reconciliation_status: rStatus,
+      operator_notes: notes === "-" ? "" : notes,
+    });
+    setIsAddDrawerOpen(true);
+  };
+
+  const onSave = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    handleSaveOgmpSurvey();
+    setIsAddDrawerOpen(false);
+  };
+
   const rows = filteredOgmp.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   return (
     <TabCard
-      title={t("OGMP 2.0 Level 4 & 5 Top-Down / Bottom-Up Surveys")}
+      title={t("OGMP 2.0 Site-Level Measurement Surveys")}
       description={t(
-        "Log site-level top-down measurements (satellite, aerial LiDAR, drone, ground OGI) to reconcile against inventory estimates under Oil and Gas Methane Partnership (OGMP 2.0) Level 4/5 standards.",
+        "Manage top-down aerial, satellite, drone LiDAR, and site-level source measurements required for UNEP/IMEO Level 4 and Level 5 reconciliation.",
       )}
-    >
-      {/* O&G Scope Notice */}
-      <Banner tone="info" title={t("Oil & Gas Scope Only")} className="mb-6">
-        {t(
-          "OGMP 2.0 applies exclusively to Oil & Gas operations (Upstream, Midstream, LNG). Heavy industry facilities (Steel, Cement, Chemicals) are not in scope.",
-        )}
-      </Banner>
-
-      <FormGrid className="form-grid-3" cols="md:grid-cols-3">
-        <Field label={t("Activity")}>
-          <NativeSelect
-            value={ogmpForm.activity || ""}
-            onChange={(e) => {
-              const act = e.target.value;
-              const divs = getAvailableDivisions(act);
-              const autoDiv = divs.length === 1 ? divs[0] : "";
-              const facs = facilities.filter(
-                (f) => (!act || f.activity === act) && (!autoDiv || f.division === autoDiv),
-              );
-              const autoFac = facs.length === 1 ? facs[0].id.toString() : "";
-              setOgmpForm({ ...ogmpForm, activity: act, division: autoDiv, facility_id: autoFac });
-            }}
-            className="component-select"
-          >
-            <option value="">{t("-- Select Activity (Oil & Gas) --")}</option>
-            {getAvailableActivities()
-              .filter((a) => !NON_OG_ACTIVITIES.includes(a))
-              .map((a) => (
-                <option key={a} value={a}>
-                  {ACTIVITY_LABELS[a] || a}
-                </option>
-              ))}
-          </NativeSelect>
-        </Field>
-
-        <Field label={t("Division")}>
-          <NativeSelect
-            value={ogmpForm.division || ""}
-            onChange={(e) => {
-              const div = e.target.value;
-              const facs = facilities.filter(
-                (f) => (!ogmpForm.activity || f.activity === ogmpForm.activity) && (!div || f.division === div),
-              );
-              const autoFac = facs.length === 1 ? facs[0].id.toString() : "";
-              setOgmpForm({ ...ogmpForm, division: div, facility_id: autoFac });
-            }}
-            className="component-select"
-            disabled={!ogmpForm.activity}
-          >
-            <option value="">{t("-- Select Division --")}</option>
-            {getAvailableDivisions(ogmpForm.activity).map((d) => (
-              <option key={d} value={d}>
-                {d}
-              </option>
-            ))}
-          </NativeSelect>
-        </Field>
-
-        <Field label={t("Facility / Region *")}>
-          <NativeSelect
-            value={ogmpForm.facility_id || ""}
-            onChange={(e) => setOgmpForm({ ...ogmpForm, facility_id: e.target.value })}
-            className="component-select"
-          >
-            <option value="">{t("-- Select O& Gas Facility --")}</option>
-            {facilities
-              .filter(
-                (f) =>
-                  !NON_OG_ACTIVITIES.includes(f.activity || "") &&
-                  (!ogmpForm.activity || f.activity === ogmpForm.activity) &&
-                  (!ogmpForm.division || f.division === ogmpForm.division),
-              )
-              .map((f) => (
-                <option key={f.id} value={f.id}>
-                  {f.name} ({f.location || f.field || t("General")})
-                </option>
-              ))}
-          </NativeSelect>
-        </Field>
-
-        <Field label={t("Survey Date *")}>
-          <Input
-            type="date"
-            value={ogmpForm.survey_date || ""}
-            onChange={(e) => {
-              const dateVal = e.target.value;
-              const yr = dateVal ? new Date(dateVal).getFullYear() : ogmpForm.year;
-              setOgmpForm({ ...ogmpForm, survey_date: dateVal, year: yr });
-            }}
-          />
-        </Field>
-
-        <Field label={t("Measurement Technology (Level 4/5) *")}>
-          <NativeSelect
-            value={ogmpForm.survey_type || "Satellite (Sentinel-5P/MethaneSAT)"}
-            onChange={(e) => setOgmpForm({ ...ogmpForm, survey_type: e.target.value })}
-            className="component-select"
-          >
-            <option value="Satellite (Sentinel-5P/MethaneSAT)">{t("Satellite (Sentinel-5P / MethaneSAT / GHGSat)")}</option>
-            <option value="Aircraft OGI / Hyperspectral">{t("Aircraft Hyperspectral / LiDAR Aerial")}</option>
-            <option value="Drone / UAV LiDAR Scanning">{t("Drone / UAV Tunable Diode Laser (TDLAS)")}</option>
-            <option value="Ground Mobile / OGI FLIR Camera">{t("Ground Mobile / Optical Gas Imaging (OGI FLIR)")}</option>
-            <option value="Fixed Continuous Sensor Array">{t("Fixed Continuous Point Sensor Array")}</option>
-            <option value="Bottom-Up Source Component Measurement">{t("Bottom-Up High-Flow Component Sampling")}</option>
-          </NativeSelect>
-        </Field>
-
-        <Field label={t("Measured Emission Rate (kg CH₄ / hr) *")}>
-          <Input
-            type="number"
-            step="0.1"
-            value={ogmpForm.measured_rate_kg_hr || ""}
-            onChange={(e) => setOgmpForm({ ...ogmpForm, measured_rate_kg_hr: e.target.value })}
-            placeholder="0.0"
-          />
-        </Field>
-
-        <Field label={t("Reconciliation Status")}>
-          <NativeSelect
-            value={ogmpForm.reconciliation_status || "Reconciled"}
-            onChange={(e) => setOgmpForm({ ...ogmpForm, reconciliation_status: e.target.value })}
-            className="component-select"
-          >
-            <option value="Reconciled">{t("Reconciled (Within Uncertainty Margin)")}</option>
-            <option value="Discrepancy Detected">{t("Discrepancy Detected (Bottom-Up Underestimated)")}</option>
-            <option value="Investigation Pending">{t("Investigation Pending / Root Cause Analysis")}</option>
-            <option value="Under Review">{t("Under Review by Operations")}</option>
-          </NativeSelect>
-        </Field>
-
-        <div className="sm:col-span-2">
-          <Field label={t("Operator Notes & Campaign Metadata")}>
-            <Input
-              type="text"
-              value={ogmpForm.operator_notes || ""}
-              onChange={(e) => setOgmpForm({ ...ogmpForm, operator_notes: e.target.value })}
-              placeholder={t("Wind speed, flight altitude, pass number, observation conditions")}
-            />
-          </Field>
-        </div>
-      </FormGrid>
-
-      <FormActions>
-        <Button className="action-btn" onClick={handleSaveOgmpSurvey}>
-          {editingOgmpId ? t("Update Survey Record") : t("Save OGMP Survey")}
-        </Button>
-        {editingOgmpId && (
-          <Button
-            variant="secondary"
-            onClick={() => {
-              setEditingOgmpId(null);
-              setOgmpForm({
-                id: null,
-                activity: "",
-                division: "",
-                facility_id: "",
-                year: new Date().getFullYear(),
-                survey_date: new Date().toISOString().split("T")[0],
-                survey_type: "Satellite (Sentinel-5P/MethaneSAT)",
-                measured_rate_kg_hr: "",
-                reconciliation_status: "Reconciled",
-                operator_notes: "",
-              });
-            }}
-          >
-            {t("Cancel Edit")}
+      actions={
+        <div className="flex items-center gap-2">
+          <Button variant="primary" onClick={openAdd} className="gap-2">
+            <Plus className="size-4" aria-hidden="true" />
+            {t("+ Add OGMP Survey")}
           </Button>
-        )}
-      </FormActions>
-
+        </div>
+      }
+    >
+      {/* Table-First View */}
       <RecordTable
         title={
           <span className="flex items-center justify-between">
@@ -323,34 +214,25 @@ const OgmpTab: React.FC<OgmpTabProps> = ({
                 {notes}
               </Td>
               <Td className="text-center">
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-1.5">
                   <Button
                     size="sm"
                     variant="secondary"
-                    onClick={() => {
-                      setEditingOgmpId(o.id);
-                      setOgmpForm({
-                        id: o.id,
-                        activity: fac?.activity || "",
-                        division: fac?.division || "",
-                        facility_id: fid ? fid.toString() : "",
-                        year: o.year || (sDate ? new Date(sDate).getFullYear() : new Date().getFullYear()),
-                        survey_date: sDate,
-                        survey_type: sType,
-                        measured_rate_kg_hr: mRate.toString(),
-                        reconciliation_status: rStatus,
-                        operator_notes: notes === "-" ? "" : notes,
-                      });
-                      window.scrollTo({ top: 0, behavior: "smooth" });
-                    }}
+                    onClick={() => openEdit(o)}
+                    className="gap-1 h-7 px-2 text-xs"
+                    title={t("Edit")}
                   >
+                    <Edit2 className="size-3" />
                     {t("Edit")}
                   </Button>
                   <Button
                     size="sm"
                     variant="danger"
                     onClick={() => handleDeleteOgmpSurvey(o.id)}
+                    className="gap-1 h-7 px-2 text-xs"
+                    title={t("Delete")}
                   >
+                    <Trash2 className="size-3" />
                     {t("Delete")}
                   </Button>
                 </div>
@@ -359,6 +241,187 @@ const OgmpTab: React.FC<OgmpTabProps> = ({
           );
         })}
       </RecordTable>
+
+      {/* Side Drawer Form with Progressive Disclosure */}
+      <Sheet
+        open={isAddDrawerOpen}
+        onOpenChange={setIsAddDrawerOpen}
+        title={editingOgmpId ? t("Edit OGMP 2.0 Survey") : t("Add OGMP 2.0 Survey")}
+        description={t("Record empirical site-level or aerial measurement results for Level 4/5 reconciliation.")}
+        icon={Plus}
+        width="38rem"
+        footer={
+          <div className="flex items-center justify-end gap-2 w-full">
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setIsAddDrawerOpen(false);
+                setEditingOgmpId(null);
+              }}
+            >
+              {t("Cancel")}
+            </Button>
+            <Button variant="primary" onClick={onSave}>
+              {editingOgmpId ? t("Update Survey Record") : t("Save Survey Record")}
+            </Button>
+          </div>
+        }
+      >
+        <form onSubmit={onSave} className="flex flex-col gap-5">
+          {/* Essential Measurement Parameters */}
+          <div className="flex flex-col gap-4">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-ink-500 m-0 pb-1 border-b border-border/60">
+              {t("Essential Measurement Parameters")}
+            </h4>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Field label={`${t("Activity")} *`}>
+                <NativeSelect
+                  value={ogmpForm.activity || ""}
+                  onChange={(e) => {
+                    const act = e.target.value;
+                    const divs = getAvailableDivisions(act);
+                    const autoDiv = divs.length === 1 ? divs[0] : "";
+                    const facs = facilities.filter(
+                      (f) => (!act || f.activity === act) && (!autoDiv || f.division === autoDiv),
+                    );
+                    const autoFac = facs.length === 1 ? facs[0].id.toString() : "";
+                    setOgmpForm({ ...ogmpForm, activity: act, division: autoDiv, facility_id: autoFac });
+                  }}
+                  required
+                >
+                  <option value="">{t("Select Activity")}</option>
+                  {getAvailableActivities().map((a) => (
+                    <option key={a} value={a}>
+                      {ACTIVITY_LABELS[a] || a}
+                    </option>
+                  ))}
+                </NativeSelect>
+              </Field>
+
+              <Field label={t("Division")}>
+                <NativeSelect
+                  value={ogmpForm.division || ""}
+                  onChange={(e) => {
+                    const div = e.target.value;
+                    const facs = facilities.filter(
+                      (f) => (!ogmpForm.activity || f.activity === ogmpForm.activity) && (!div || f.division === div),
+                    );
+                    const autoFac = facs.length === 1 ? facs[0].id.toString() : "";
+                    setOgmpForm({ ...ogmpForm, division: div, facility_id: autoFac });
+                  }}
+                  disabled={!ogmpForm.activity}
+                >
+                  <option value="">{t("Select Division")}</option>
+                  {getAvailableDivisions(ogmpForm.activity).map((d) => (
+                    <option key={d} value={d}>
+                      {d}
+                    </option>
+                  ))}
+                </NativeSelect>
+              </Field>
+            </div>
+
+            <Field label={`${t("Facility / Operational Asset")} *`}>
+              <NativeSelect
+                value={ogmpForm.facility_id || ""}
+                onChange={(e) => setOgmpForm({ ...ogmpForm, facility_id: e.target.value })}
+                required
+              >
+                <option value="">{t("Select Facility")}</option>
+                {facilities
+                  .filter((f) => !NON_OG_ACTIVITIES.includes(f.activity || ""))
+                  .filter(
+                    (f) =>
+                      (!ogmpForm.activity || f.activity === ogmpForm.activity) &&
+                      (!ogmpForm.division || f.division === ogmpForm.division),
+                  )
+                  .map((f) => (
+                    <option key={f.id} value={f.id.toString()}>
+                      {f.name} {f.field ? `(${f.field})` : ""}
+                    </option>
+                  ))}
+              </NativeSelect>
+            </Field>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Field label={`${t("Survey Date")} *`}>
+                <Input
+                  type="date"
+                  value={ogmpForm.survey_date || ""}
+                  onChange={(e) => {
+                    const d = e.target.value;
+                    setOgmpForm({
+                      ...ogmpForm,
+                      survey_date: d,
+                      year: d ? new Date(d).getFullYear() : ogmpForm.year,
+                    });
+                  }}
+                  required
+                />
+              </Field>
+
+              <Field label={`${t("Measurement Method")} *`}>
+                <NativeSelect
+                  value={ogmpForm.survey_type || "Satellite (Sentinel-5P/MethaneSAT)"}
+                  onChange={(e) => setOgmpForm({ ...ogmpForm, survey_type: e.target.value })}
+                  required
+                >
+                  <option value="Satellite (Sentinel-5P/MethaneSAT)">{t("Satellite (Sentinel-5P/MethaneSAT)")}</option>
+                  <option value="Drone LiDAR / OGI Survey">{t("Drone LiDAR / OGI Survey")}</option>
+                  <option value="Aircraft / Hyperspectral Imaging">{t("Aircraft / Hyperspectral Imaging")}</option>
+                  <option value="Mobile Van OGI / Tracer Gas">{t("Mobile Van OGI / Tracer Gas")}</option>
+                  <option value="Fixed Continuous Sensor Network">{t("Fixed Continuous Sensor Network")}</option>
+                  <option value="High-Flow Sampler Source Measurement">{t("High-Flow Sampler Source Measurement")}</option>
+                </NativeSelect>
+              </Field>
+            </div>
+
+            <Field label={`${t("Measured Emission Rate (kg CH₄/hr)")} *`}>
+              <Input
+                type="number"
+                step="any"
+                min="0"
+                value={ogmpForm.measured_rate_kg_hr || ""}
+                onChange={(e) => setOgmpForm({ ...ogmpForm, measured_rate_kg_hr: e.target.value })}
+                placeholder="e.g. 14.8"
+                required
+              />
+            </Field>
+          </div>
+
+          {/* Progressive Disclosure: Reconciliation Status & Field Campaign Notes */}
+          <AdvancedSection
+            id="ogmp-advanced"
+            title={t("Reconciliation Status & Campaign Notes")}
+            fieldCount={2}
+            description={t("Level 4 source-level vs Level 5 site-level reconciliation status and campaign observations.")}
+          >
+            <div className="flex flex-col gap-4">
+              <Field label={t("Level 4/5 Reconciliation Status")}>
+                <NativeSelect
+                  value={ogmpForm.reconciliation_status || "Reconciled"}
+                  onChange={(e) => setOgmpForm({ ...ogmpForm, reconciliation_status: e.target.value })}
+                >
+                  <option value="Reconciled">{t("Reconciled (Within ±10% agreement)")}</option>
+                  <option value="Discrepancy Detected">{t("Discrepancy Detected (> 10% deviation)")}</option>
+                  <option value="Investigation Pending">{t("Investigation Pending")}</option>
+                  <option value="Under Review">{t("Under Review")}</option>
+                </NativeSelect>
+              </Field>
+
+              <Field label={t("Campaign Notes & Meteorological Conditions")}>
+                <Input
+                  type="text"
+                  value={ogmpForm.operator_notes || ""}
+                  onChange={(e) => setOgmpForm({ ...ogmpForm, operator_notes: e.target.value })}
+                  placeholder={t("Wind speed, detection threshold, cloud cover, flight altitude...")}
+                />
+              </Field>
+            </div>
+          </AdvancedSection>
+        </form>
+      </Sheet>
     </TabCard>
   );
 };

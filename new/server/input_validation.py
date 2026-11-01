@@ -153,6 +153,16 @@ def parse_number(value, field, *, required=True, min_value=None, max_value=None,
         return default
     if isinstance(value, bool):
         raise ValidationError(f"'{field}' must be a number", field)
+    if isinstance(value, str):
+        v = value.strip().replace(" ", "")
+        if "," in v and "." not in v:
+            v = v.replace(",", ".")
+        elif "," in v and "." in v:
+            if v.rfind(",") > v.rfind("."):
+                v = v.replace(".", "").replace(",", ".")
+            else:
+                v = v.replace(",", "")
+        value = v
     try:
         number = float(value)
     except (TypeError, ValueError):
@@ -201,8 +211,8 @@ def parse_month(value, field="month", *, required=False):
 
 def require_text(value, field):
     text = str(value or "").strip()
-    if not text:
-        raise ValidationError(f"'{field}' is required", field)
+    if not text or text.lower() in ("none", "null", "undefined"):
+        raise ValidationError(f"'{field}' is required and cannot be empty or 'None'", field)
     return text
 
 

@@ -260,6 +260,18 @@ def _resolve_log_facility(entity, record_id):
     return getattr(obj, "facility_id", None) if obj is not None else None
 
 
+
+def get_client_ip(req=None):
+    """Extract client IP, inspecting X-Forwarded-For if behind a proxy / dev server."""
+    if not req:
+        return None
+    xff = req.headers.get("X-Forwarded-For")
+    if xff:
+        ips = [ip.strip() for ip in xff.split(",") if ip.strip()]
+        if ips and (req.remote_addr in ("127.0.0.1", "::1", "localhost", None) or os.environ.get("BEHIND_PROXY")):
+            return ips[0]
+    return req.remote_addr
+
 def log_activity_and_notify(
     action,
     record_id,
@@ -278,9 +290,16 @@ def log_activity_and_notify(
     from extensions import db
     from flask import current_app
 
-    ip_address = request.remote_addr if request else None
-    user_name = user.fullName if user else "System"
-    user_id = user.id if user else None
+    ip_address = get_client_ip(request) if request else None
+    if isinstance(user, str):
+        user_name = user
+        user_id = None
+    elif user:
+        user_name = getattr(user, "fullName", None) or getattr(user, "email", None) or str(user)
+        user_id = getattr(user, "id", None)
+    else:
+        user_name = "System"
+        user_id = None
 
     # Serialize before/after state diffs if provided as dicts
     old_val_str = json.dumps(old_values, default=str) if isinstance(old_values, dict) else (str(old_values) if old_values is not None else None)

@@ -258,8 +258,12 @@ def test_boe_conversion_oil_units():
     assert production_boe(_prod_row(oil_amount=42.0, oil_unit="gal")) == pytest.approx(1.0, rel=1e-6)
     assert production_boe(_prod_row(oil_amount=10.0, oil_unit="tonne")) == pytest.approx(73.3, rel=1e-6)
     assert production_boe(_prod_row(oil_amount=7.0, oil_unit="bbl")) == pytest.approx(7.0, rel=1e-12)
-    # a recorded total in MMBOE wins over the parts
-    assert production_boe(_prod_row(oil_amount=5.0, total_production_mmboe=2.5)) == pytest.approx(2.5e6, rel=1e-12)
+    # MMBOE without parts is converted directly
+    assert production_boe(_prod_row(total_production_mmboe=2.5)) == pytest.approx(2.5e6, rel=1e-12)
+    # Consistent MMBOE and oil parts are accepted
+    assert production_boe(_prod_row(oil_amount=2.5e6, oil_unit="bbl", total_production_mmboe=2.5)) == pytest.approx(2.5e6, rel=1e-12)
+    # Discordant MMBOE (2.5 MMBOE vs 5 bbl) falls back to calculated oil+gas BOE per Item 1.2
+    assert production_boe(_prod_row(oil_amount=5.0, oil_unit="bbl", total_production_mmboe=2.5)) == pytest.approx(5.0, rel=1e-12)
 
 
 def test_gwp_horizon_intensity_scaling(ci_setup):

@@ -48,7 +48,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
   render(): ReactNode {
     if (this.state.hasError) {
       return (
-        <div className="[min-height:100vh] [display:flex] [align-items:center] [justify-content:center] [padding:20px] [background:linear-gradient(135deg,_var(--color-ink-900)_0%,_var(--color-ink-800)_100%)]">
+        <div className="[min-height:100vh] [display:flex] [align-items:center] [justify-content:center] [padding:20px] [background:var(--color-ink-900)]">
           <div className="[background:rgba(255,_255,_255,_0.05)] [backdrop-filter:blur(20px)] [border:1px_solid_rgba(255,_255,_255,_0.1)] [&&]:[border-radius:var(--radius-lg)] [padding:40px]! [max-width:600px] [width:100%] [text-align:center] [box-shadow:var(--shadow-raised)] [@media(max-width:768px)]:[padding:30px_20px]!">
             <div className="[color:var(--color-red-700)] [margin-bottom:24px] [animation:pulse_2s_ease-in-out_infinite]">
               <CircleAlert size="64" strokeWidth="2" aria-hidden="true" />

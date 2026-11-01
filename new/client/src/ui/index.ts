@@ -16,6 +16,24 @@ export {
   type BadgeTone,
 } from "./Badge";
 export {
+  StatusBadge,
+  FlagChip,
+  DataHealthBadge,
+  OgmpL5Badge,
+  TargetTrackingBadge,
+  normalizeWorkflowStatus,
+  type StatusBadgeProps,
+  type FlagChipProps,
+  type WorkflowStatus,
+} from "./StatusBadge";
+export {
+  HelpTip,
+  GlossaryHelpTip,
+  GLOSSARY_ITEMS,
+  type HelpTipProps,
+  type GlossaryEntry,
+} from "./HelpTip";
+export {
   Card,
   CardHeader,
   type CardProps,
@@ -31,6 +49,7 @@ export {
   type StatCardProps,
   type StatCardDelta,
   type StatCardTone,
+  type KpiMeta,
 } from "./StatCard";
 export {
   Field,

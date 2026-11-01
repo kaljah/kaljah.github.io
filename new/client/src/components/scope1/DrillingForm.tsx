@@ -94,7 +94,7 @@ export const DrillingForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sou
             </h5>
             <div className="grid gap-[14px] [grid-template-columns:1fr_1fr] max-[600px]:[grid-template-columns:1fr]">
               <div className="input-group mb-[0px]!">
-                <label className="text-[length:0.8rem]!">{t("CH₄ fraction")}</label>
+                <label className="block text-sm font-medium text-text mb-1.5">{t("CH₄ fraction")}</label>
                 <Input
                   type="number"
                   step="0.0001"
@@ -111,7 +111,7 @@ export const DrillingForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sou
               </div>
 
               <div className="input-group mb-[0px]!">
-                <label className="text-[length:0.8rem]!">{t("CO₂ fraction")}</label>
+                <label className="block text-sm font-medium text-text mb-1.5">{t("CO₂ fraction")}</label>
                 <Input
                   type="number"
                   step="0.0001"

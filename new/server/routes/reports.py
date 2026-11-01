@@ -412,6 +412,10 @@ def generate_report():
         # Batch facility lookup to prevent N+1 queries
         fac_map = {f.id: f.name for f in Facility.query.all()}
 
+        status_filter = str(filters.get("status") or "Verified").strip()
+        statuses = [x.strip().lower() for x in status_filter.split(",") if x.strip()] if status_filter.lower() != "all" else None
+        test_fids = Facility.query.with_entities(Facility.id).filter(Facility.is_test == True)
+
         # 1. SCOPE 1
         if scope in ["all", "1"]:
             q = Emission.query
@@ -425,7 +429,11 @@ def generate_report():
                 q = q.filter(Emission.facility_id.in_(allowed_fids))
             if process_type:
                 q = q.filter_by(process_type=process_type)
-            q = q.filter(Emission.status == "Verified")
+            q = q.filter(~Emission.facility_id.in_(test_fids))
+            if hasattr(Emission, "is_test"):
+                q = q.filter(Emission.is_test == False)
+            if statuses:
+                q = q.filter(db.func.lower(db.func.trim(Emission.status)).in_(statuses))
 
             for e in q.all():
                 m_val = e.month if e.month is not None else 1
@@ -457,7 +465,11 @@ def generate_report():
                 q2 = q2.filter_by(facility_id=facility_id)
             elif allowed_fids is not None:
                 q2 = q2.filter(Scope2Emission.facility_id.in_(allowed_fids))
-            q2 = q2.filter(Scope2Emission.status == "Verified")
+            q2 = q2.filter(~Scope2Emission.facility_id.in_(test_fids))
+            if hasattr(Scope2Emission, "is_test"):
+                q2 = q2.filter(Scope2Emission.is_test == False)
+            if statuses:
+                q2 = q2.filter(db.func.lower(db.func.trim(Scope2Emission.status)).in_(statuses))
             for e in q2.all():
                 m_val = e.month if e.month is not None else 1
                 s2_amount, s2_unit, _s2_label = scope2_activity(e)
@@ -491,7 +503,11 @@ def generate_report():
                 q3 = q3.filter_by(facility_id=facility_id)
             elif allowed_fids is not None:
                 q3 = q3.filter(Scope3Emission.facility_id.in_(allowed_fids))
-            q3 = q3.filter(Scope3Emission.status == "Verified")
+            q3 = q3.filter(~Scope3Emission.facility_id.in_(test_fids))
+            if hasattr(Scope3Emission, "is_test"):
+                q3 = q3.filter(Scope3Emission.is_test == False)
+            if statuses:
+                q3 = q3.filter(db.func.lower(db.func.trim(Scope3Emission.status)).in_(statuses))
             for e in q3.all():
                 m_val = e.month if e.month is not None else 1
                 emissions_data.append(

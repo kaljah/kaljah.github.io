@@ -7,6 +7,51 @@ import { t } from "../../i18n";
 
 const mono = "font-mono text-sm";
 
+export const formatAuditDescription = (rawText?: string): string => {
+  if (!rawText) return "";
+  let text = rawText;
+
+  // 1. Remove raw hex data fingerprints (e.g., data fingerprint 908641f896b4...)
+  text = text.replace(/,?\s*data fingerprint\s+[a-f0-9]{16,64}/gi, "");
+
+  // 2. Parse and format JSON / Python dict filters
+  text = text.replace(/filters\s*(\{[^}]+\})/gi, (_, jsonStr) => {
+    try {
+      const normalized = jsonStr
+        .replace(/'/g, '"')
+        .replace(/\bNone\b/g, 'null')
+        .replace(/\bTrue\b/g, 'true')
+        .replace(/\bFalse\b/g, 'false');
+      const d = JSON.parse(normalized);
+      const parts: string[] = [];
+      if (d.region && d.region !== "all") parts.push(`Region: ${String(d.region).toUpperCase()}`);
+      if (d.start_year && d.end_year) parts.push(`${d.start_year}–${d.end_year}`);
+      else if (d.year) parts.push(`Year: ${d.year}`);
+      if (d.gwp_standard) parts.push(`GWP: ${d.gwp_standard}`);
+      if (d.scope && d.scope !== "all") parts.push(`Scope: ${d.scope}`);
+      if (d.facility_id) parts.push(`Facility: ${d.facility_id}`);
+      return parts.length > 0 ? `(${parts.join(", ")})` : "";
+    } catch {
+      return "";
+    }
+  });
+
+  // 3. Remove "of None"
+  text = text.replace(/\s+of\s+None\b/gi, "");
+
+  // 4. Remove "Code: None, "
+  text = text.replace(/\(Code:\s*None,\s*/gi, "(");
+  text = text.replace(/\bCode:\s*None\b/gi, "");
+
+  // 5. Clean up duplicate commas, spaces, colons
+  text = text.replace(/,\s*,/g, ",");
+  text = text.replace(/:\s*,/g, ":");
+  text = text.replace(/,\s*\)/g, ")");
+  text = text.replace(/\s{2,}/g, " ").trim().replace(/^,\s*|,\s*$/g, "");
+
+  return text;
+};
+
 const Meta: React.FC<{ icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean | "true" | "false" }>; children: React.ReactNode }> = ({ icon: Icon, children }) => (
   <span className="inline-flex items-center gap-1.5">
     <Icon className="size-3" aria-hidden="true" />
@@ -130,7 +175,9 @@ const AuditTrailAuditTimeline: React.FC<AuditTrailAuditTimelineProps> = ({
               </span>
             </div>
 
-            <p className="m-0 mb-3 text-md leading-relaxed text-ink-700">{log.description || log.details || t("No details recorded")}</p>
+            <p className="m-0 mb-3 text-md leading-relaxed text-ink-700">
+              {formatAuditDescription(log.description || log.details) || t("No details recorded")}
+            </p>
 
             {Boolean(log.old_values || log.new_values) && <Diff log={log} formatDiffVal={formatDiffVal} />}
 

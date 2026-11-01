@@ -166,8 +166,18 @@ def get_emissions():
                 q = q.filter(model.month == int(month))
             except ValueError:
                 pass
-        if status_arg and status_arg != "all" and hasattr(model, "status"):
-            q = q.filter(model.status.in_([x.strip() for x in status_arg.split(",") if x.strip()]))
+        # Exclude test data from production ledger unless explicitly requested
+        include_test = request.args.get("include_test") in ("1", "true", "True")
+        if not include_test:
+            if hasattr(model, "is_test"):
+                q = q.filter(model.is_test == False)
+            if hasattr(Facility, "is_test") and hasattr(model, "facility_id"):
+                test_fids = Facility.query.with_entities(Facility.id).filter(Facility.is_test == True)
+                q = q.filter(~model.facility_id.in_(test_fids))
+
+        if status_arg and status_arg.strip().lower() != "all" and hasattr(model, "status"):
+            statuses = [x.strip().lower() for x in status_arg.split(",") if x.strip()]
+            q = q.filter(db.func.lower(db.func.trim(model.status)).in_(statuses))
         parsed_fids = _parse_facility_ids(facility_id)
         if parsed_fids is not None:
             if hasattr(model, "facility_id"):

@@ -1,5 +1,6 @@
 import React from "react";
-import { Input, Field } from "../../ui";
+import { Lock } from "lucide-react";
+import { Input, Field, Badge } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
 import { MARKET_INSTRUMENTS } from "./marketInstruments";
 import { currentLanguage, t } from "../../i18n";
@@ -97,7 +98,7 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
     <h2
       className="text-[length:1.2rem]! [font-weight:bold]! mb-[25px]! text-[color:var(--color-legacy-333333)]!"
     >
-      {t("New Electricity Entry")}
+      {t("Scope 2 Indirect Energy Emissions")}
     </h2>
 
     {/* 1. IDENTITY & LOCATION */}
@@ -105,22 +106,30 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
       <h4 className="section-title">{t("1. IDENTITY & LOCATION")}</h4>
       <div className="form-grid-4">
         <div className="input-group">
-          <label>{t("Activity")}</label>
+          <label className="flex items-center gap-1">
+            <Lock className="size-3 text-ink-400" aria-hidden="true" />
+            <span>{t("Activity")}</span>
+          </label>
           <input
             type="text"
-            className="mole-input readonly"
+            className="mole-input readonly bg-ink-100! text-ink-600!"
             value={activity || ""}
             disabled
           />
+          <span className="text-[0.65rem] text-text-secondary">{t("Auto-filled from Region")}</span>
         </div>
         <div className="input-group">
-          <label>{t("Division")}</label>
+          <label className="flex items-center gap-1">
+            <Lock className="size-3 text-ink-400" aria-hidden="true" />
+            <span>{t("Division")}</span>
+          </label>
           <input
             type="text"
-            className="mole-input readonly"
+            className="mole-input readonly bg-ink-100! text-ink-600!"
             value={division || ""}
             disabled
           />
+          <span className="text-[0.65rem] text-text-secondary">{t("Auto-filled from Region")}</span>
         </div>
         <div className="input-group">
           <label>{t("Region")}</label>
@@ -132,13 +141,17 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
           />
         </div>
         <div className="input-group">
-          <label>{t("Field")}</label>
+          <label className="flex items-center gap-1">
+            <Lock className="size-3 text-ink-400" aria-hidden="true" />
+            <span>{t("Field")}</span>
+          </label>
           <input
             type="text"
-            className="mole-input readonly"
+            className="mole-input readonly bg-ink-100! text-ink-600!"
             value={field || ""}
             disabled
           />
+          <span className="text-[0.65rem] text-text-secondary">{t("Auto-filled from Region")}</span>
         </div>
       </div>
       <div className="form-grid-3">
@@ -339,14 +352,42 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
       </div>
     </div>
 
-    <div className="mt-[24px]!">
+    {/* Live Calculation Preview Card (A6) */}
+    <div className="live-calc-preview rounded-lg border border-border bg-ink-50/80 p-3 mt-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <span className="text-xs font-semibold text-text uppercase tracking-wider">
+          {t("Live Result Preview")}
+        </span>
+        {amount && Number(amount) > 0 ? (
+          <Badge tone="success" className="font-mono text-xs font-bold">
+            {t("Ready to calculate")}
+          </Badge>
+        ) : (
+          <span className="text-xs text-text-secondary italic">
+            {t("Enter electricity/heat consumption to preview")}
+          </span>
+        )}
+      </div>
+      <div className="mt-1.5 flex flex-wrap items-center justify-between text-xs text-text-secondary">
+        <span>
+          {t("Scope 2 Method:")}{" "}
+          <strong className="text-text font-medium">{sourceType === "location" ? t("Location-based (Grid)") : t("Market-based (Contractual)")}</strong>
+        </span>
+        <span>
+          {t("Quantity:")}{" "}
+          <strong className="text-text font-medium">{amount ? `${amount} ${unit}` : "—"}</strong>
+        </span>
+      </div>
+    </div>
+
+    <div className="mt-[16px]!">
       <button
         type="button"
         className={`btn-add-activity w-full ${submitting ? "[cursor:not-allowed]! [opacity:0.6]!" : "[cursor:pointer]! [opacity:1]!"}`}
         disabled={submitting}
         onClick={() => handleAddEntry("Verified")}
       >
-        {submitting ? t("Processing...") : t("+ Calculate & Submit for Review")}
+        {submitting ? t("Calculating & submitting...") : t("+ Calculate & Submit for Review")}
       </button>
     </div>
   </div>

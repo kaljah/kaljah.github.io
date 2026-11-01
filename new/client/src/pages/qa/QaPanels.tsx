@@ -323,22 +323,15 @@ export interface UncertaintyPanelProps {
 /** IPCC Tier 1 error-propagation explainer plus one uncertainty card per scope. */
 export const UncertaintyPanel: React.FC<UncertaintyPanelProps> = ({ uncertainty }) => (
   <Card className="flex flex-col gap-6 p-7">
-    <div className="flex flex-col gap-4 rounded-lg border border-border bg-ink-50 p-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h3 className="m-0 text-lg font-bold text-text">{t("IPCC Tier 1 Error Propagation (Square Root of Sum of Squares)")}</h3>
-          <p className="m-0 mt-1 text-sm text-text-secondary">{t("Follows ISO 14064-1:2018 §7.5 and GHG Protocol Corporate Standard Chapter 11.")}</p>
-        </div>
-        <Badge tone="brand">{t("95% Confidence Interval (k=2)")}</Badge>
-      </div>
-      <code className="block rounded-md bg-ink-900 px-5 py-4 font-mono text-sky-400">U_total = √[ (U₁ · E₁)² + (U₂ · E₂)² + (U₃ · E₃)² ] / ( E₁ + E₂ + E₃ )</code>
-      <p className="m-0 text-sm leading-normal text-text-secondary">
-        {t("Each scope uncertainty is propagated from activity data precision and emission factor variance. Higher granularity (e.g. facility-specific continuous monitoring or Tier 3 custom factors) reduces total uncertainty.")}
-      </p>
-    </div>
     <div className="grid gap-4 md:grid-cols-3">
       {SCOPES.map(({ key, total, label, icon: Icon, tone, note }) => (
-        <div key={key} className="flex flex-col gap-3 rounded-md border border-border bg-surface p-5">
+        <div
+          key={key}
+          className={cn(
+            "flex flex-col gap-3 rounded-md border border-border bg-surface p-5 border-l-2",
+            key === "scope1" ? "border-l-emerald-600" : key === "scope2" ? "border-l-blue-600" : "border-l-brand-500"
+          )}
+        >
           <div className="flex items-center justify-between">
             <Badge tone={tone}>{label}</Badge>
             <Icon className="size-4 text-text-secondary" aria-hidden="true" />

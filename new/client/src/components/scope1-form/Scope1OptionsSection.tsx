@@ -53,37 +53,37 @@ export const Scope1OptionsSection: React.FC<Scope1OptionsSectionProps> = ({
             <label>{t("Measurement Instrumentation Precision")}</label>
             <div className="flex! gap-[8px]! flex-wrap!">
               <div className="flex-1! p-[8px_12px]! bg-[color:var(--color-legacy-f3f4f6)]! rounded-[6px]! [border:1px_solid_var(--color-legacy-e5e7eb)]! flex! justify-between! items-center!">
-                <span className="text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]!">
+                <span className="text-xs font-semibold text-text">
                   {t("Meter Calibration Tolerance")}
                 </span>
                 <div className="flex! items-center!">
-                  <span className="text-[length:0.85rem]! text-[color:var(--color-legacy-9ca3af)]! mr-[2px]!">±</span>
+                  <span className="text-sm text-text-secondary mr-1">±</span>
                   <Input
                     type="number"
-                    className="w-[45px]! p-[2px_4px]! text-[length:0.85rem]! text-right!"
+                    className="w-20 h-9 px-2.5 text-sm font-mono text-right"
                     placeholder="2.0"
                     value={meterUncertaintyPct}
                     onChange={(e) => setMeterUncertaintyPct(e.target.value)}
                     step="0.1"
                   />
-                  <span className="text-[length:0.85rem]! text-[color:var(--color-legacy-9ca3af)]! ml-[2px]!">%</span>
+                  <span className="text-sm text-text-secondary ml-1">%</span>
                 </div>
               </div>
               <div className="flex-1! p-[8px_12px]! bg-[color:var(--color-legacy-f3f4f6)]! rounded-[6px]! [border:1px_solid_var(--color-legacy-e5e7eb)]! flex! justify-between! items-center!">
-                <span className="text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]!">
+                <span className="text-xs font-semibold text-text">
                   {t("GC Analytical Precision")}
                 </span>
                 <div className="flex! items-center!">
-                  <span className="text-[length:0.85rem]! text-[color:var(--color-legacy-9ca3af)]! mr-[2px]!">±</span>
+                  <span className="text-sm text-text-secondary mr-1">±</span>
                   <Input
                     type="number"
-                    className="w-[55px]! p-[2px_4px]! text-[length:0.85rem]! text-right!"
+                    className="w-20 h-9 px-2.5 text-sm font-mono text-right"
                     placeholder={t("Opt.")}
                     value={gcUncertaintyPct}
                     onChange={(e) => setGcUncertaintyPct(e.target.value)}
                     step="0.1"
                   />
-                  <span className="text-[length:0.85rem]! text-[color:var(--color-legacy-9ca3af)]! ml-[2px]!">%</span>
+                  <span className="text-sm text-text-secondary ml-1">%</span>
                 </div>
               </div>
               <div className="flex-1!"></div>
@@ -94,13 +94,13 @@ export const Scope1OptionsSection: React.FC<Scope1OptionsSectionProps> = ({
           <label>{t("Emission Factor / Direct Measurement Uncertainty Override (±%)")}</label>
           <div className="flex! gap-[8px]! flex-wrap!">
             <div className="flex-1! p-[8px_12px]! bg-[color:var(--color-legacy-f3f4f6)]! rounded-[6px]! [border:1px_solid_var(--color-legacy-e5e7eb)]! flex! justify-between! items-center!">
-              <span className="text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]!">{t("CO₂")}</span>
+              <span className="text-xs font-semibold text-text">{t("CO₂")}</span>
               {sourceType === "specific" ? (
                 <div className="flex! items-center!">
-                  <span className="text-[length:0.85rem]! text-[color:var(--color-legacy-9ca3af)]! mr-[2px]!">±</span>
+                  <span className="text-sm text-text-secondary mr-1">±</span>
                   <Input
                     type="number"
-                    className="w-[45px]! p-[2px_4px]! text-[length:0.85rem]! text-right!"
+                    className="w-20 h-9 px-2.5 text-sm font-mono text-right"
                     placeholder="—"
                     value={userUncertainty.co2}
                     onChange={(e) =>
@@ -110,7 +110,7 @@ export const Scope1OptionsSection: React.FC<Scope1OptionsSectionProps> = ({
                       })
                     }
                   />
-                  <span className="text-[length:0.85rem]! text-[color:var(--color-legacy-9ca3af)]! ml-[2px]!">%</span>
+                  <span className="text-sm text-text-secondary ml-1">%</span>
                 </div>
               ) : (
                 <span
@@ -121,13 +121,13 @@ export const Scope1OptionsSection: React.FC<Scope1OptionsSectionProps> = ({
               )}
             </div>
             <div className="flex-1! p-[8px_12px]! bg-[color:var(--color-legacy-f3f4f6)]! rounded-[6px]! [border:1px_solid_var(--color-legacy-e5e7eb)]! flex! justify-between! items-center!">
-              <span className="text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]!">{t("CH₄")}</span>
+              <span className="text-xs font-semibold text-text">{t("CH₄")}</span>
               {sourceType === "specific" ? (
                 <div className="flex! items-center!">
-                  <span className="text-[length:0.85rem]! text-[color:var(--color-legacy-9ca3af)]! mr-[2px]!">±</span>
+                  <span className="text-sm text-text-secondary mr-1">±</span>
                   <Input
                     type="number"
-                    className="w-[45px]! p-[2px_4px]! text-[length:0.85rem]! text-right!"
+                    className="w-20 h-9 px-2.5 text-sm font-mono text-right"
                     placeholder="—"
                     value={userUncertainty.ch4}
                     onChange={(e) =>
@@ -137,7 +137,7 @@ export const Scope1OptionsSection: React.FC<Scope1OptionsSectionProps> = ({
                       })
                     }
                   />
-                  <span className="text-[length:0.85rem]! text-[color:var(--color-legacy-9ca3af)]! ml-[2px]!">%</span>
+                  <span className="text-sm text-text-secondary ml-1">%</span>
                 </div>
               ) : (
                 <span
@@ -148,13 +148,13 @@ export const Scope1OptionsSection: React.FC<Scope1OptionsSectionProps> = ({
               )}
             </div>
             <div className="flex-1! p-[8px_12px]! bg-[color:var(--color-legacy-f3f4f6)]! rounded-[6px]! [border:1px_solid_var(--color-legacy-e5e7eb)]! flex! justify-between! items-center!">
-              <span className="text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]!">N₂O</span>
+              <span className="text-xs font-semibold text-text">N₂O</span>
               {sourceType === "specific" ? (
                 <div className="flex! items-center!">
-                  <span className="text-[length:0.85rem]! text-[color:var(--color-legacy-9ca3af)]! mr-[2px]!">±</span>
+                  <span className="text-sm text-text-secondary mr-1">±</span>
                   <Input
                     type="number"
-                    className="w-[45px]! p-[2px_4px]! text-[length:0.85rem]! text-right!"
+                    className="w-20 h-9 px-2.5 text-sm font-mono text-right"
                     placeholder="—"
                     value={userUncertainty.n2o}
                     onChange={(e) =>
@@ -164,7 +164,7 @@ export const Scope1OptionsSection: React.FC<Scope1OptionsSectionProps> = ({
                       })
                     }
                   />
-                  <span className="text-[length:0.85rem]! text-[color:var(--color-legacy-9ca3af)]! ml-[2px]!">%</span>
+                  <span className="text-sm text-text-secondary ml-1">%</span>
                 </div>
               ) : (
                 <span

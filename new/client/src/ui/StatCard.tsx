@@ -3,16 +3,18 @@ import { ArrowDownRight, ArrowUpRight, type LucideIcon } from "lucide-react";
 import { Card, type CardProps } from "./Card";
 import { Num, Unit } from "./Num";
 import { Skeleton } from "./Skeleton";
+import { HelpTip } from "./HelpTip";
 import { cn } from "./cn";
+import { t } from "../i18n";
 
 const VALUE_TONES: Record<StatCardTone, string> = {
   default: "text-text",
-  brand: "text-brand-700", // AA text contrast on white (BUG-0060: brand-500 was 2.94:1)
-  success: "text-green-600",
-  warning: "text-amber-700", // amber-500 was 2.15:1
-  danger: "text-red-500",
-  info: "text-blue-600",
-  purple: "text-violet-500",
+  brand: "text-brand-700", // AA text contrast on white
+  success: "text-green-700",
+  warning: "text-amber-700",
+  danger: "text-red-700",
+  info: "text-blue-700",
+  purple: "text-violet-700",
 };
 
 export type StatCardTone = "default" | "brand" | "success" | "warning" | "danger" | "info" | "purple";
@@ -21,6 +23,14 @@ export interface StatCardDelta {
   value: number;
   goodWhen?: "up" | "down";
   label?: string;
+}
+
+export interface KpiMeta {
+  definition: string;
+  formula?: string;
+  filtersApplied?: string;
+  gwpStandard?: string;
+  lastUpdated?: string;
 }
 
 export interface StatCardProps extends Omit<CardProps, "children"> {
@@ -36,9 +46,10 @@ export interface StatCardProps extends Omit<CardProps, "children"> {
   icon?: LucideIcon | React.ComponentType<{ className?: string }>;
   tone?: StatCardTone;
   loading?: boolean;
+  info?: KpiMeta | React.ReactNode;
 }
 
-/** KPI tile. Supports tone styling to match dashboard categories and status themes. */
+/** KPI tile. Defaults to neutral ink for value numbers (rule C3), with structured metadata tooltip (A1). */
 export const StatCard: React.FC<StatCardProps> = ({
   label,
   sublabel,
@@ -52,16 +63,68 @@ export const StatCard: React.FC<StatCardProps> = ({
   icon: Icon,
   tone = "default",
   loading = false,
+  info,
   className,
   ...props
 }) => {
   const good = delta ? (delta.goodWhen === "up" ? delta.value >= 0 : delta.value <= 0) : false;
+
+  const renderInfoContent = () => {
+    if (!info) return null;
+    if (typeof info === "object" && "definition" in (info as any)) {
+      const meta = info as KpiMeta;
+      return (
+        <div className="flex flex-col gap-2 p-1 text-xs">
+          <div>
+            <span className="font-semibold text-text">{t("Definition:")} </span>
+            <span className="text-text-secondary">{meta.definition}</span>
+          </div>
+          {meta.formula && (
+            <div>
+              <span className="font-semibold text-text">{t("Formula:")} </span>
+              <code className="rounded bg-ink-100 px-1 py-0.5 font-mono text-[0.7rem] text-text">
+                {meta.formula}
+              </code>
+            </div>
+          )}
+          {meta.filtersApplied && (
+            <div>
+              <span className="font-semibold text-text">{t("Filters:")} </span>
+              <span className="text-text-secondary">{meta.filtersApplied}</span>
+            </div>
+          )}
+          {meta.gwpStandard && (
+            <div>
+              <span className="font-semibold text-text">{t("GWP Standard:")} </span>
+              <span className="text-text-secondary">{meta.gwpStandard}</span>
+            </div>
+          )}
+          {meta.lastUpdated && (
+            <div className="border-t border-border pt-1 text-[0.7rem] text-text-secondary">
+              {t("Last updated: {{time}}", { time: meta.lastUpdated })}
+            </div>
+          )}
+        </div>
+      );
+    }
+    return info as React.ReactNode;
+  };
+
   return (
     <Card className={cn("flex flex-col gap-2", className)} {...props}>
       <div className="flex items-start justify-between gap-2">
-        <div>
-          <p className="stat-label text-xs font-medium uppercase tracking-wide text-text-secondary">{label}</p>
-          {sublabel && <p className="text-xs text-text-secondary">{sublabel}</p>}
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <p className="stat-label text-xs font-medium text-text-secondary truncate">{label}</p>
+            {info && (
+              <HelpTip
+                icon="info"
+                content={renderInfoContent()}
+                term={typeof label === "string" ? label : undefined}
+              />
+            )}
+          </div>
+          {sublabel && <p className="text-xs text-text-secondary mt-0.5">{sublabel}</p>}
         </div>
         {Icon && <Icon className="size-4 shrink-0 text-ink-400" aria-hidden="true" />}
       </div>

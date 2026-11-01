@@ -157,8 +157,15 @@ def create_custom_factor():
     if "source" not in data:
         data["source"] = "Site measurement / user defined"
     factor_name = _text(data.get("factor_name") or data.get("name") or data.get("fuel_name")) if data else ""
-    if not factor_name:
-        return jsonify({"error": "Factor name is required"}), 400
+    if not factor_name or factor_name.lower() in ("none", "null", "undefined"):
+        return jsonify({"error": "Factor name is required and cannot be 'None'", "field": "name"}), 400
+
+    import re
+    if re.search(r"[-_\s]+\d{10,14}$", factor_name):
+        return jsonify({
+            "error": "Do not append timestamps or random suffixes to factor names. Use versioning instead of timestamp-suffixed names.",
+            "code": "INVALID_NAME"
+        }), 400
 
     field = "unit"
     try:
@@ -266,8 +273,8 @@ def update_custom_factor(factor_id):
 
     if "factor_name" in data or "name" in data or "fuel_name" in data:
         fn = _text(data.get("factor_name") or data.get("name") or data.get("fuel_name"))
-        if not fn:
-            return jsonify({"error": "Factor name cannot be empty"}), 400
+        if not fn or fn.lower() in ("none", "null", "undefined"):
+            return jsonify({"error": "Factor name cannot be empty or 'None'", "field": "name"}), 400
         if _name_taken(fn, exclude_id=factor.id):
             return jsonify({"error": f"A custom factor named '{fn}' already exists"}), 409
         factor.name = fn

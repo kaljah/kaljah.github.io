@@ -1,0 +1,15 @@
+[
+  {
+    "scope": "Scope 1",
+    "id": 9,
+    "facility_id": 3,
+    "year": 2026,
+    "co2e": 660430.1305962845,
+    "current_status": "Verified",
+    "qa_flag": "[Rejected] Manually reviewed",
+    "issue": "Flag indicates [Rejected] but status is NOT Rejected",
+    "proposed_status": "Rejected",
+    "proposed_clean_flag": "Manually reviewed",
+    "impact_on_inventory": "Excludes 660,430.13 tCO2e from active inventory totals"
+  }
+]

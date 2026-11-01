@@ -4,13 +4,13 @@ import { recordsLink } from "../../utils/reportLinks";
 import { BarChart2, FileText, Grid, FileSpreadsheet, FileCode } from "lucide-react";
 import { Badge, Button, SegmentedControl } from "../../ui";
 import { BarChart, LineChart } from "../../components/charts";
-import { formatNumber } from "../../utils/formatters";
+import { formatNumber, formatCompactNumber } from "../../utils/formatters";
 import { ChartCard, Heatmap, type HeatmapRow } from "../intensity/IntensityParts";
 import { t } from "../../i18n";
 import api from "../../api";
 import { useToast } from "../../components/Toast";
 
-const th = "whitespace-nowrap border-b-2 border-border px-4 py-3 text-left text-sm font-semibold uppercase tracking-wide text-text-secondary";
+const th = "whitespace-nowrap border-b-2 border-border px-4 py-3 text-left text-sm font-medium text-text-secondary";
 const td = "border-b border-border px-4 py-3.5 text-text";
 
 const pick = (obj: any, a: string, b: string) => obj?.[a] ?? obj?.[b];
@@ -242,7 +242,7 @@ export const RegionalCharts: React.FC<RegionalChartsProps> = ({ data, gwpHorizon
   }, [data, g20]);
 
   return (
-    <div className="chart-grid grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(100%,450px),1fr))]">
+    <div className="chart-grid grid grid-cols-1 lg:grid-cols-2 gap-6">
       <ChartCard className="card" title={t("GHG Intensity by Region (kg CO₂e / BOE)")} rule="var(--color-brand-500)">
         <BarChart
           data={regionalAggregated.map((d) => ({ id: d.id, name: d.name, value: d.value }))}
@@ -253,6 +253,7 @@ export const RegionalCharts: React.FC<RegionalChartsProps> = ({ data, gwpHorizon
           onSelect={openRecords}
           selectLabel={(r) => t("Open {{name}} records", { name: r.name })}
           exportName="ghg-intensity-by-region"
+          height={360}
           color="var(--color-brand-500)"
         />
       </ChartCard>
@@ -261,13 +262,14 @@ export const RegionalCharts: React.FC<RegionalChartsProps> = ({ data, gwpHorizon
           data={regionalAggregated.map((d) => ({ id: d.id, name: d.name, scope1: d.scope1, scope2: d.scope2 }))}
           bars={[
             { dataKey: "scope1", name: g20 ? t("Scope 1 (GWP₂₀ Direct)") : t("Scope 1 (Direct)"), color: "var(--color-blue-600)" },
-            { dataKey: "scope2", name: t("Scope 2 (Indirect)"), color: "var(--color-legacy-0ea5e9)" },
+            { dataKey: "scope2", name: t("Scope 2 (Indirect)"), color: "var(--color-cyan-500)" },
           ]}
           xKey="name"
+          height={360}
           exportName="scope1-vs-scope2-intensity-by-region"
         />
       </ChartCard>
-      <ChartCard className="card" title={t("Oil BOE Contribution by Region")} rule="var(--color-legacy-ea580c)">
+      <ChartCard className="card" title={t("Oil BOE Contribution by Region")} rule="var(--color-brand-600)">
         <BarChart
           data={regionalAggregated.map((d) => ({ id: d.id, name: d.name, value: d.oil_value }))}
           dataKey="value"
@@ -277,7 +279,8 @@ export const RegionalCharts: React.FC<RegionalChartsProps> = ({ data, gwpHorizon
           onSelect={openRecords}
           selectLabel={(r) => t("Open {{name}} records", { name: r.name })}
           exportName="oil-boe-by-region"
-          color="var(--color-legacy-ea580c)"
+          height={360}
+          color="var(--color-brand-600)"
         />
       </ChartCard>
       <ChartCard className="card" title={t("Gas BOE Contribution by Region")} rule="var(--color-violet-500)">
@@ -290,6 +293,7 @@ export const RegionalCharts: React.FC<RegionalChartsProps> = ({ data, gwpHorizon
           onSelect={openRecords}
           selectLabel={(r) => t("Open {{name}} records", { name: r.name })}
           exportName="gas-boe-by-region"
+          height={360}
           color="var(--color-violet-500)"
         />
       </ChartCard>
@@ -366,9 +370,10 @@ export const TrendSection: React.FC<TrendSectionProps> = ({ view, onView, trendC
           <LineChart
             data={trendChartData}
             xKey="year"
+            formatValue={(v) => `${Number(v).toFixed(1)} kg/BOE`}
             series={[
               { key: "co2_100", color: "var(--color-brand-700)", name: t("GHG Intensity ({{standard}} 100-Yr GWP)", { standard: activeGwpStandard }) },
-              { key: "co2_20", color: "var(--color-legacy-ea580c)", name: t("GHG Intensity ({{standard}} 20-Yr GWP)", { standard: activeGwpStandard }), dash: "5 5" },
+              { key: "co2_20", color: "var(--color-brand-600)", name: t("GHG Intensity ({{standard}} 20-Yr GWP)", { standard: activeGwpStandard }), dash: "5 5" },
             ]}
           />
         </div>

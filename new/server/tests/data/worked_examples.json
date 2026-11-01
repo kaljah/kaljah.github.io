@@ -1,0 +1,1583 @@
+{
+  "schema_version": "1.0",
+  "cases": [
+    {
+      "id": "s1_combustion_t1_01",
+      "scope": 1,
+      "process_type": "stationary_combustion",
+      "tier": "Tier 1",
+      "description": "Tier 1 Stationary Combustion: Natural Gas (100,000 scf)",
+      "arithmetic_comments": "Activity: 100,000 scf = 100 mscf.\nHHV: 1,020 Btu/scf -> Energy = 100,000 * 1,020 / 1e6 = 102 MMBtu.\nEFs (API Table 4-3/4-6): CO2 = 53.06 kg/MMBtu, CH4 = 0.0010 kg/MMBtu, N2O = 0.0001 kg/MMBtu.\nCO2 = 102 * 53.06 / 1000 = 5.41212 t.\nCH4 = 102 * 0.0010 / 1000 = 0.000102 t.\nN2O = 102 * 0.0001 / 1000 = 0.0000102 t.\nCO2e (AR5 100-yr: CH4=28, N2O=265): 5.41212 + 0.000102*28 + 0.0000102*265 = 5.417679 tCO2e.",
+      "inputs": {
+        "amount": 100000.0,
+        "unit": "scf",
+        "fuel": "Natural Gas",
+        "gwp_standard": "AR5",
+        "gwp_horizon": "100"
+      },
+      "expected": {
+        "co2_tonnes": 5.41212,
+        "ch4_tonnes": 0.000102,
+        "n2o_tonnes": 1.02e-05,
+        "co2e_tonnes": 5.417679
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s1_combustion_t1_02",
+      "scope": 1,
+      "process_type": "stationary_combustion",
+      "tier": "Tier 1",
+      "description": "Tier 1 Stationary Combustion: Diesel Fuel (1,000 gal)",
+      "arithmetic_comments": "Activity: 1,000 gal Diesel.\nEFs (API Table 4-3): CO2 = 10.21 kg/gal, CH4 = 0.00041 kg/gal, N2O = 0.00008 kg/gal.\nCO2 = 1,000 * 10.21 / 1000 = 10.210 t.\nCH4 = 1,000 * 0.00041 / 1000 = 0.00041 t.\nN2O = 1,000 * 0.00008 / 1000 = 0.00008 t.\nCO2e (AR5 100-yr): 10.210 + 0.00041*28 + 0.00008*265 = 10.24268 tCO2e.",
+      "inputs": {
+        "amount": 1000.0,
+        "unit": "gal",
+        "fuel": "Diesel",
+        "gwp_standard": "AR5",
+        "gwp_horizon": "100"
+      },
+      "expected": {
+        "co2_tonnes": 10.21,
+        "ch4_tonnes": 0.00041,
+        "n2o_tonnes": 8e-05,
+        "co2e_tonnes": 10.24268
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s1_combustion_t2_01",
+      "scope": 1,
+      "process_type": "stationary_combustion",
+      "tier": "Tier 2",
+      "description": "Tier 2 Stationary Combustion: Fuel Gas with site GC carbon content (50,000 m3)",
+      "arithmetic_comments": "Activity: 50,000 m3.\nSite lab analysis: Gas density = 0.78 kg/m3 -> mass = 39,000 kg.\nCarbon wt% = 74.5% -> Carbon mass = 39,000 * 0.745 = 29,055 kg C.\nCombustion efficiency = 99.5% -> Oxidized C = 29,055 * 0.995 = 28,909.725 kg C.\nStoichiometric CO2/C = 44/12 = 3.66667 -> CO2 = 28,909.725 * (44/12) / 1000 = 106.0023 t.\nUnburned fuel as CH4: (1 - 0.995) * 29,055 * (16/12) / 1000 = 0.1937 t CH4.\nCO2e (AR5 100-yr: CH4=28): 106.0023 + 0.1937 * 28 = 111.4259 tCO2e.",
+      "inputs": {
+        "volume_m3": 50000.0,
+        "density_kg_m3": 0.78,
+        "carbon_fraction": 0.745,
+        "oxidation_factor": 0.995,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 106.0023,
+        "ch4_tonnes": 0.1937,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 111.4259
+      },
+      "tolerance_rel": 0.001
+    },
+    {
+      "id": "s1_combustion_t2_02",
+      "scope": 1,
+      "process_type": "stationary_combustion",
+      "tier": "Tier 2",
+      "description": "Tier 2 Stationary Combustion: Fuel Oil with measured HHV & Carbon content (50 tonnes)",
+      "arithmetic_comments": "Activity: 50 tonnes = 50,000 kg fuel oil.\nCarbon wt% = 85.8% -> Carbon mass = 42,900 kg C.\nOxidation factor = 0.99 -> Oxidized C = 42,471 kg C.\nCO2 = 42,471 * (44/12) / 1000 = 155.727 t.\nCH4 factor = 0.003 kg/GJ, HHV = 42.5 GJ/t -> Energy = 2,125 GJ -> CH4 = 2,125 * 0.003 / 1000 = 0.006375 t.\nN2O factor = 0.0006 kg/GJ -> N2O = 2,125 * 0.0006 / 1000 = 0.001275 t.\nCO2e (AR5 100-yr): 155.727 + 0.006375*28 + 0.001275*265 = 156.2434 tCO2e.",
+      "inputs": {
+        "mass_tonnes": 50.0,
+        "carbon_fraction": 0.858,
+        "oxidation_factor": 0.99,
+        "hhv_gj_per_tonne": 42.5,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 155.727,
+        "ch4_tonnes": 0.006375,
+        "n2o_tonnes": 0.001275,
+        "co2e_tonnes": 156.2434
+      },
+      "tolerance_rel": 0.001
+    },
+    {
+      "id": "s1_combustion_t3_01",
+      "scope": 1,
+      "process_type": "stationary_combustion",
+      "tier": "Tier 3",
+      "description": "Tier 3 Stationary Combustion: Direct CEMS Stack Gas Monitoring",
+      "arithmetic_comments": "Measured stack gas dry standard volume: 1,000,000 Nm3.\nMeasured continuous CO2 concentration: 8.50% vol.\nCO2 volume = 1,000,000 * 0.0850 = 85,000 Nm3.\nMolar volume at standard conditions (0 C, 1 atm): 22.414 m3/kmol.\nCO2 mass = (85,000 / 22.414) * 44.01 kg/kmol / 1000 = 166.885 t CO2.\nMeasured stack CH4 concentration: 15 ppmv = 0.000015 -> CH4 volume = 15 Nm3.\nCH4 mass = (15 / 22.414) * 16.042 / 1000 = 0.01073 t CH4.\nCO2e (AR5 100-yr): 166.885 + 0.01073 * 28 = 167.185 tCO2e.",
+      "inputs": {
+        "stack_volume_nm3": 1000000.0,
+        "co2_pct": 8.5,
+        "ch4_ppmv": 15.0,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 166.885,
+        "ch4_tonnes": 0.01073,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 167.185
+      },
+      "tolerance_rel": 0.001
+    },
+    {
+      "id": "s1_combustion_t3_02",
+      "scope": 1,
+      "process_type": "stationary_combustion",
+      "tier": "Tier 3",
+      "description": "Tier 3 Stationary Combustion: Calibrated Coriolis Fuel Mass Meter + Online GC",
+      "arithmetic_comments": "Metered fuel mass: 200,000 kg.\nOnline GC real-time carbon fraction: 75.25%.\nCarbon mass = 150,500 kg C.\nComplete combustion via incinerator / thermal oxidizer efficiency 99.9%.\nCO2 = 150,500 * 0.999 * (44.01 / 12.011) / 1000 = 551.108 t CO2.\nUnoxidized CH4 = 150,500 * 0.001 * (16.042 / 12.011) / 1000 = 0.201 t CH4.\nCO2e (AR5 100-yr): 551.108 + 0.201 * 28 = 556.736 tCO2e.",
+      "inputs": {
+        "fuel_mass_kg": 200000.0,
+        "carbon_fraction": 0.7525,
+        "oxidation_efficiency": 0.999,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 551.108,
+        "ch4_tonnes": 0.201,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 556.736
+      },
+      "tolerance_rel": 0.001
+    },
+    {
+      "id": "s1_flaring_t1_01",
+      "scope": 1,
+      "process_type": "flaring",
+      "tier": "Tier 1",
+      "description": "Tier 1 Flaring: Default flare factor on flare volume (100,000 m3)",
+      "arithmetic_comments": "Volume: 100,000 m3 = 100 kSm3.\nAPI Compendium default high-heat flare emission factor: 2.45 kg CO2e / m3.\nCO2 = 100,000 * 2.38 kg/m3 / 1000 = 238.0 t CO2.\nCH4 = 100,000 * 0.0025 kg/m3 / 1000 = 0.25 t CH4.\nCO2e (AR5 100-yr: CH4=28): 238.0 + 0.25 * 28 = 245.0 tCO2e.",
+      "inputs": {
+        "volume_m3": 100000.0,
+        "co2_factor_kg_m3": 2.38,
+        "ch4_factor_kg_m3": 0.0025,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 238.0,
+        "ch4_tonnes": 0.25,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 245.0
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s1_flaring_t1_02",
+      "scope": 1,
+      "process_type": "flaring",
+      "tier": "Tier 1",
+      "description": "Tier 1 Flaring: Standard flare volume (50,000 mscf)",
+      "arithmetic_comments": "Volume: 50,000 mscf = 50,000,000 scf.\nAPI Table 5-4 default: 60.0 kg CO2 / mscf, 0.35 kg CH4 / mscf.\nCO2 = 50,000 * 60.0 / 1000 = 3,000.0 t CO2.\nCH4 = 50,000 * 0.35 / 1000 = 17.5 t CH4.\nCO2e (AR5 100-yr): 3,000.0 + 17.5 * 28 = 3,490.0 tCO2e.",
+      "inputs": {
+        "volume_mscf": 50000.0,
+        "co2_factor_kg_mscf": 60.0,
+        "ch4_factor_kg_mscf": 0.35,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 3000.0,
+        "ch4_tonnes": 17.5,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 3490.0
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s1_flaring_t2_01",
+      "scope": 1,
+      "process_type": "flaring",
+      "tier": "Tier 2",
+      "description": "Tier 2 Flaring: Field gas stream composition with 98% combustion efficiency (20,000 m3)",
+      "arithmetic_comments": "Volume: 20,000 m3 @ 15 C, 1 atm.\nStream composition: 85% CH4, 5% CO2, 10% C2H6. Molar mass mix = 0.85*16.04 + 0.05*44.01 + 0.10*30.07 = 18.84 kg/kmol.\nTotal molar volume: 23.685 m3/kmol -> total kmol = 20,000 / 23.685 = 844.42 kmol.\nInlet C moles = 844.42 * (0.85*1 + 0.05*1 + 0.10*2) = 928.86 kmol C.\nInlet native CO2 = 844.42 * 0.05 * 44.01 / 1000 = 1.858 t CO2.\nCombustion efficiency: 98% -> Combusted hydrocarbon C = 844.42 * (0.85 + 0.20) * 0.98 = 868.91 kmol C.\nCombustion CO2 = 868.91 * 44.01 / 1000 = 38.241 t CO2.\nTotal CO2 = 1.858 + 38.241 = 40.099 t CO2.\nUncombusted CH4: 844.42 * 0.85 * (1 - 0.98) * 16.04 / 1000 = 0.230 t CH4.\nCO2e (AR5 100-yr): 40.099 + 0.230 * 28 = 46.539 tCO2e.",
+      "inputs": {
+        "volume_m3": 20000.0,
+        "ch4_mol_pct": 85.0,
+        "co2_mol_pct": 5.0,
+        "c2_mol_pct": 10.0,
+        "combustion_efficiency": 0.98,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 40.099,
+        "ch4_tonnes": 0.23,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 46.539
+      },
+      "tolerance_rel": 0.002
+    },
+    {
+      "id": "s1_flaring_t2_02",
+      "scope": 1,
+      "process_type": "flaring",
+      "tier": "Tier 2",
+      "description": "Tier 2 Flaring: High-efficiency assisted flare (99.2% destruction) (10,000 m3)",
+      "arithmetic_comments": "Volume: 10,000 m3.\nGas composition: 92% CH4, 2% CO2, 6% C2H6. Kmol = 10,000 / 23.685 = 422.21 kmol.\nHydrocarbon C moles = 422.21 * (0.92 + 0.12) = 439.10 kmol C.\nCombusted at 99.2%: 439.10 * 0.992 * 44.01 / 1000 = 19.170 t CO2.\nNative CO2: 422.21 * 0.02 * 44.01 / 1000 = 0.372 t CO2 -> Total CO2 = 19.542 t CO2.\nUncombusted CH4: 422.21 * 0.92 * (1 - 0.992) * 16.04 / 1000 = 0.0498 t CH4.\nCO2e (AR5 100-yr): 19.542 + 0.0498 * 28 = 20.936 tCO2e.",
+      "inputs": {
+        "volume_m3": 10000.0,
+        "ch4_mol_pct": 92.0,
+        "co2_mol_pct": 2.0,
+        "c2_mol_pct": 6.0,
+        "combustion_efficiency": 0.992,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 19.542,
+        "ch4_tonnes": 0.0498,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 20.936
+      },
+      "tolerance_rel": 0.002
+    },
+    {
+      "id": "s1_flaring_t3_01",
+      "scope": 1,
+      "process_type": "flaring",
+      "tier": "Tier 3",
+      "description": "Tier 3 Flaring: Ultrasonic continuous flare meter + online GC (500,000 m3)",
+      "arithmetic_comments": "Metered flare gas: 500,000 m3 standard.\nGC analysis: 88.5% CH4, 3.2% CO2, 8.3% C2+. Total kmol = 500,000 / 23.685 = 21,110.4 kmol.\nMeasured flame combustion efficiency via optical flare monitor = 98.4%.\nHydrocarbon C moles = 21,110.4 * (0.885*1 + 0.083*2) = 22,187.0 kmol C.\nCombustion CO2 = 22,187.0 * 0.984 * 44.01 / 1000 = 960.84 t CO2.\nNative CO2 = 21,110.4 * 0.032 * 44.01 / 1000 = 29.73 t CO2 -> Total CO2 = 990.57 t CO2.\nUncombusted CH4 = 21,110.4 * 0.885 * 0.016 * 16.04 / 1000 = 4.794 t CH4.\nCO2e (AR5 100-yr): 990.57 + 4.794 * 28 = 1,124.80 tCO2e.",
+      "inputs": {
+        "volume_m3": 500000.0,
+        "ch4_mol_pct": 88.5,
+        "co2_mol_pct": 3.2,
+        "c2_mol_pct": 8.3,
+        "combustion_efficiency": 0.984,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 990.57,
+        "ch4_tonnes": 4.794,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 1124.8
+      },
+      "tolerance_rel": 0.002
+    },
+    {
+      "id": "s1_flaring_t3_02",
+      "scope": 1,
+      "process_type": "flaring",
+      "tier": "Tier 3",
+      "description": "Tier 3 Flaring: Measured flare gas volume with measured flare combustion efficiency 97.5%",
+      "arithmetic_comments": "Metered flare gas: 250,000 m3 standard.\nGC analysis: 91.0% CH4, 2.5% CO2, 6.5% C2+. Kmol = 250,000 / 23.685 = 10,555.2 kmol.\nMeasured flame efficiency = 97.5%.\nHydrocarbon C moles = 10,555.2 * (0.91 + 0.13) = 10,977.4 kmol C.\nCombustion CO2 = 10,977.4 * 0.975 * 44.01 / 1000 = 471.04 t CO2.\nNative CO2 = 10,555.2 * 0.025 * 44.01 / 1000 = 11.61 t CO2 -> Total CO2 = 482.65 t CO2.\nUncombusted CH4 = 10,555.2 * 0.91 * 0.025 * 16.04 / 1000 = 3.852 t CH4.\nCO2e (AR5 100-yr): 482.65 + 3.852 * 28 = 590.51 tCO2e.",
+      "inputs": {
+        "volume_m3": 250000.0,
+        "ch4_mol_pct": 91.0,
+        "co2_mol_pct": 2.5,
+        "c2_mol_pct": 6.5,
+        "combustion_efficiency": 0.975,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 482.65,
+        "ch4_tonnes": 3.852,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 590.51
+      },
+      "tolerance_rel": 0.002
+    },
+    {
+      "id": "s1_venting_t1_01",
+      "scope": 1,
+      "process_type": "venting",
+      "tier": "Tier 1",
+      "description": "Tier 1 Venting: High-bleed pneumatic controllers (10 devices * 8,760 hours)",
+      "arithmetic_comments": "Activity: 10 devices operating 8,760 hours/yr = 87,600 device-hours.\nAPI Compendium Table 5-15 default: 37.3 scf natural gas / device-hour.\nTotal gas = 87,600 * 37.3 = 3,267,480 scf = 3,267.48 mscf.\nGas composition default: 80% CH4 vol, 2% CO2 vol.\nCH4 volume = 3,267,480 * 0.80 = 2,613,984 scf.\nDensity of CH4 at standard conditions: 0.0192 kg/scf -> CH4 mass = 2,613,984 * 0.0192 / 1000 = 50.188 t CH4.\nCO2 volume = 3,267,480 * 0.02 = 65,349.6 scf.\nDensity of CO2 at standard conditions: 0.0526 kg/scf -> CO2 mass = 65,349.6 * 0.0526 / 1000 = 3.437 t CO2.\nCO2e (AR5 100-yr: CH4=28): 3.437 + 50.188 * 28 = 1,408.70 tCO2e.",
+      "inputs": {
+        "device_count": 10,
+        "operating_hours": 8760,
+        "bleed_rate_scf_hr": 37.3,
+        "ch4_mol_pct": 80.0,
+        "co2_mol_pct": 2.0,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 3.437,
+        "ch4_tonnes": 50.188,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 1408.7
+      },
+      "tolerance_rel": 0.002
+    },
+    {
+      "id": "s1_venting_t1_02",
+      "scope": 1,
+      "process_type": "venting",
+      "tier": "Tier 1",
+      "description": "Tier 1 Venting: Chemical injection pneumatic pumps (5 pumps * 4,000 hours)",
+      "arithmetic_comments": "Activity: 5 pumps * 4,000 hr = 20,000 pump-hours.\nAPI default vent rate: 24.8 scf / pump-hour -> Total gas = 496,000 scf.\nGas composition: 85% CH4, 1.5% CO2.\nCH4 mass = 496,000 * 0.85 * 0.0192 / 1000 = 8.095 t CH4.\nCO2 mass = 496,000 * 0.015 * 0.0526 / 1000 = 0.391 t CO2.\nCO2e (AR5 100-yr): 0.391 + 8.095 * 28 = 227.05 tCO2e.",
+      "inputs": {
+        "device_count": 5,
+        "operating_hours": 4000,
+        "bleed_rate_scf_hr": 24.8,
+        "ch4_mol_pct": 85.0,
+        "co2_mol_pct": 1.5,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 0.391,
+        "ch4_tonnes": 8.095,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 227.05
+      },
+      "tolerance_rel": 0.002
+    },
+    {
+      "id": "s1_venting_t2_01",
+      "scope": 1,
+      "process_type": "venting",
+      "tier": "Tier 2",
+      "description": "Tier 2 Venting: Crude storage tank flashing calculation (10,000 bbl throughput)",
+      "arithmetic_comments": "Throughput: 10,000 bbl crude oil.\nVasquez-Beggs / API flash factor: 18.5 scf flash gas / bbl crude.\nTotal flash gas = 185,000 scf.\nFlash gas composition: 65% CH4, 8% CO2.\nCH4 mass = 185,000 * 0.65 * 0.0192 / 1000 = 2.309 t CH4.\nCO2 mass = 185,000 * 0.08 * 0.0526 / 1000 = 0.778 t CO2.\nCO2e (AR5 100-yr): 0.778 + 2.309 * 28 = 65.43 tCO2e.",
+      "inputs": {
+        "throughput_bbl": 10000.0,
+        "flash_factor_scf_bbl": 18.5,
+        "ch4_mol_pct": 65.0,
+        "co2_mol_pct": 8.0,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 0.778,
+        "ch4_tonnes": 2.309,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 65.43
+      },
+      "tolerance_rel": 0.002
+    },
+    {
+      "id": "s1_venting_t2_02",
+      "scope": 1,
+      "process_type": "venting",
+      "tier": "Tier 2",
+      "description": "Tier 2 Venting: Compressor station blowdown physical volume (5 events * 250 m3 @ 60 bar)",
+      "arithmetic_comments": "Blowdown void volume: 250 m3, pressure: 60 bar (59.2 atm), temp: 25 C (298.15 K), Z: 0.88.\nStandard conditions: 15 C (288.15 K), 1 atm.\nV_std = V * (P / P_std) * (T_std / T) / Z = 250 * 59.2 * (288.15 / 298.15) / 0.88 = 16,254.4 m3 per event.\n5 events = 81,272 m3 gas.\nGas composition: 85% CH4, 2% CO2.\nCH4 mass = 81,272 * 0.85 * (16.04 / 23.685) / 1000 = 46.81 t CH4.\nCO2 mass = 81,272 * 0.02 * (44.01 / 23.685) / 1000 = 3.02 t CO2.\nCO2e (AR5 100-yr): 3.02 + 46.81 * 28 = 1,313.70 tCO2e.",
+      "inputs": {
+        "events": 5,
+        "void_volume_m3": 250.0,
+        "pressure_bar": 60.0,
+        "temp_c": 25.0,
+        "z_factor": 0.88,
+        "ch4_mol_pct": 85.0,
+        "co2_mol_pct": 2.0,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 3.02,
+        "ch4_tonnes": 46.81,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 1313.7
+      },
+      "tolerance_rel": 0.003
+    },
+    {
+      "id": "s1_venting_t3_01",
+      "scope": 1,
+      "process_type": "venting",
+      "tier": "Tier 3",
+      "description": "Tier 3 Venting: Direct calibrated high-flow sampler on vent header (12.5 kg/hr * 120 hr)",
+      "arithmetic_comments": "Direct measurement: 12.5 kg CH4/hr * 120 hours = 1,500 kg CH4 = 1.500 t CH4.\nSimultaneous CO2 vent rate: 0.8 kg CO2/hr * 120 hours = 96 kg CO2 = 0.096 t CO2.\nCO2e (AR5 100-yr): 0.096 + 1.500 * 28 = 42.096 tCO2e.",
+      "inputs": {
+        "ch4_rate_kg_hr": 12.5,
+        "co2_rate_kg_hr": 0.8,
+        "duration_hours": 120.0,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 0.096,
+        "ch4_tonnes": 1.5,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 42.096
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s1_venting_t3_02",
+      "scope": 1,
+      "process_type": "venting",
+      "tier": "Tier 3",
+      "description": "Tier 3 Venting: Thermal mass flow meter on glycol regenerator vent (8.2 kg/hr * 720 hr)",
+      "arithmetic_comments": "Direct meter reading: 8.2 kg CH4/hr * 720 hours = 5,904 kg CH4 = 5.904 t CH4.\nCO2 vent rate: 1.5 kg CO2/hr * 720 hours = 1,080 kg CO2 = 1.080 t CO2.\nCO2e (AR5 100-yr): 1.080 + 5.904 * 28 = 166.392 tCO2e.",
+      "inputs": {
+        "ch4_rate_kg_hr": 8.2,
+        "co2_rate_kg_hr": 1.5,
+        "duration_hours": 720.0,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 1.08,
+        "ch4_tonnes": 5.904,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 166.392
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s1_fugitives_t1_01",
+      "scope": 1,
+      "process_type": "fugitives",
+      "tier": "Tier 1",
+      "description": "Tier 1 Fugitives: Component count average factors (100 gas valves * 8,760 hours)",
+      "arithmetic_comments": "Activity: 100 valves in gas service * 8,760 hr = 876,000 valve-hours.\nEPA/API average factor: 0.0045 kg TOC / hr / valve.\nTotal TOC = 876,000 * 0.0045 = 3,942 kg TOC.\nStream CH4 fraction: 75% -> CH4 = 3,942 * 0.75 / 1000 = 2.9565 t CH4.\nCO2e (AR5 100-yr): 2.9565 * 28 = 82.782 tCO2e.",
+      "inputs": {
+        "component_count": 100,
+        "hours": 8760,
+        "toc_factor_kg_hr": 0.0045,
+        "ch4_fraction": 0.75,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 0.0,
+        "ch4_tonnes": 2.9565,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 82.782
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s1_fugitives_t1_02",
+      "scope": 1,
+      "process_type": "fugitives",
+      "tier": "Tier 1",
+      "description": "Tier 1 Fugitives: Light liquid pump seals (50 seals * 8,760 hours)",
+      "arithmetic_comments": "Activity: 50 pump seals in light liquid service * 8,760 hr = 438,000 seal-hours.\nEPA average factor: 0.0199 kg TOC / hr / seal.\nTotal TOC = 438,000 * 0.0199 = 8,716.2 kg TOC.\nStream CH4 fraction: 60% -> CH4 = 8,716.2 * 0.60 / 1000 = 5.2297 t CH4.\nCO2e (AR5 100-yr): 5.2297 * 28 = 146.432 tCO2e.",
+      "inputs": {
+        "component_count": 50,
+        "hours": 8760,
+        "toc_factor_kg_hr": 0.0199,
+        "ch4_fraction": 0.6,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 0.0,
+        "ch4_tonnes": 5.2297,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 146.432
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s1_fugitives_t2_01",
+      "scope": 1,
+      "process_type": "fugitives",
+      "tier": "Tier 2",
+      "description": "Tier 2 Fugitives: EPA Method 21 screening ranges (20 leaking valves > 10,000 ppmv)",
+      "arithmetic_comments": "20 valves with screening reading >= 10,000 ppmv.\nEPA pegged emission factor for gas valves >= 10,000 ppmv: 0.0437 kg TOC / hr / valve.\nHours leaking before repair: 1,500 hours.\nTotal TOC = 20 * 0.0437 * 1,500 = 1,311.0 kg TOC.\nCH4 content: 80% -> CH4 mass = 1,311.0 * 0.80 / 1000 = 1.0488 t CH4.\nCO2e (AR5 100-yr): 1.0488 * 28 = 29.366 tCO2e.",
+      "inputs": {
+        "leaking_components": 20,
+        "peg_factor_kg_hr": 0.0437,
+        "hours": 1500,
+        "ch4_fraction": 0.8,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 0.0,
+        "ch4_tonnes": 1.0488,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 29.366
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s1_fugitives_t2_02",
+      "scope": 1,
+      "process_type": "fugitives",
+      "tier": "Tier 2",
+      "description": "Tier 2 Fugitives: OGI optical gas imaging survey with repair tracking",
+      "arithmetic_comments": "15 leaking components identified by OGI.\nEPA OGI default leak rate: 0.030 kg CH4 / hr / leak.\nDuration leaking: 15 leaks * 720 hours (30 days to repair) = 10,800 leak-hours.\nTotal CH4 = 10,800 * 0.030 / 1000 = 0.324 t CH4.\nCO2e (AR5 100-yr): 0.324 * 28 = 9.072 tCO2e.",
+      "inputs": {
+        "leaks_count": 15,
+        "leak_rate_kg_hr": 0.03,
+        "hours": 720,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 0.0,
+        "ch4_tonnes": 0.324,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 9.072
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s1_fugitives_t3_01",
+      "scope": 1,
+      "process_type": "fugitives",
+      "tier": "Tier 3",
+      "description": "Tier 3 Fugitives: Direct bagging measurement of compressor seals (4 seals @ 0.85 kg/hr)",
+      "arithmetic_comments": "Measured leak rates via bagging: 4 compressor seals * 0.85 kg CH4/hr * 4,000 hr = 13,600 kg CH4 = 13.600 t CH4.\nCO2e (AR5 100-yr): 13.600 * 28 = 380.80 tCO2e.",
+      "inputs": {
+        "seal_count": 4,
+        "ch4_rate_kg_hr": 0.85,
+        "hours": 4000,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 0.0,
+        "ch4_tonnes": 13.6,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 380.8
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s1_fugitives_t3_02",
+      "scope": 1,
+      "process_type": "fugitives",
+      "tier": "Tier 3",
+      "description": "Tier 3 Fugitives: High-flow sampler quantitative measurement across flanges",
+      "arithmetic_comments": "Measured leak rates across 8 flanges: 0.12 kg CH4/hr per flange * 8 = 0.96 kg CH4/hr.\nTotal operating hours: 5,000 hr -> CH4 = 0.96 * 5,000 / 1000 = 4.800 t CH4.\nCO2e (AR5 100-yr): 4.800 * 28 = 134.40 tCO2e.",
+      "inputs": {
+        "flange_count": 8,
+        "ch4_rate_kg_hr": 0.12,
+        "hours": 5000,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 0.0,
+        "ch4_tonnes": 4.8,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 134.4
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s1_process_t1_01",
+      "scope": 1,
+      "process_type": "process",
+      "tier": "Tier 1",
+      "description": "Tier 1 Process: Acid Gas Removal (AGR) throughput default factor (1,000,000 m3)",
+      "arithmetic_comments": "Throughput: 1,000,000 m3 natural gas.\nAPI default AGR emission factor: 0.020 t CO2 / 1,000 m3 = 0.000020 t CO2/m3.\nCO2 = 1,000,000 * 0.000020 = 20.0 t CO2.\nCO2e (AR5 100-yr): 20.0 tCO2e.",
+      "inputs": {
+        "throughput_m3": 1000000.0,
+        "factor_t_per_m3": 2e-05,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 20.0,
+        "ch4_tonnes": 0.0,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 20.0
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s1_process_t1_02",
+      "scope": 1,
+      "process_type": "process",
+      "tier": "Tier 1",
+      "description": "Tier 1 Process: Claus Sulfur Recovery Unit default factor (500 tonnes sulfur)",
+      "arithmetic_comments": "Production: 500 tonnes elemental sulfur.\nAPI Table 5-25 default factor: 0.15 t CO2 / t sulfur produced.\nCO2 = 500 * 0.15 = 75.0 t CO2.\nCO2e (AR5 100-yr): 75.0 tCO2e.",
+      "inputs": {
+        "sulfur_tonnes": 500.0,
+        "factor_t_per_t": 0.15,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 75.0,
+        "ch4_tonnes": 0.0,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 75.0
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s1_process_t2_01",
+      "scope": 1,
+      "process_type": "process",
+      "tier": "Tier 2",
+      "description": "Tier 2 Process: AGR mass balance differential (5,000,000 scf @ 4.5% in, 0.5% out)",
+      "arithmetic_comments": "Inlet gas throughput: 5,000,000 scf.\nCO2 inlet: 4.50 mol%, CO2 outlet: 0.50 mol% -> Removed fraction = 4.00 mol%.\nCO2 volume removed = 5,000,000 * 0.04 = 200,000 scf CO2.\nDensity of CO2 at standard conditions: 0.0526 kg/scf -> CO2 = 200,000 * 0.0526 / 1000 = 10.52 t CO2.\nCO2e (AR5 100-yr): 10.52 tCO2e.",
+      "inputs": {
+        "throughput_scf": 5000000.0,
+        "co2_in_mol_pct": 4.5,
+        "co2_out_mol_pct": 0.5,
+        "co2_density_kg_scf": 0.0526,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 10.52,
+        "ch4_tonnes": 0.0,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 10.52
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s1_process_t2_02",
+      "scope": 1,
+      "process_type": "process",
+      "tier": "Tier 2",
+      "description": "Tier 2 Process: Glycol dehydrator GRI-GLYCalc simulation emission rate",
+      "arithmetic_comments": "Dehydrator throughput: 10,000 mscf (10,000,000 scf).\nSite-specific GLYCalc simulation rate: 0.018 kg CH4 / mscf, 0.005 kg CO2 / mscf.\nCH4 = 10,000 * 0.018 / 1000 = 0.180 t CH4.\nCO2 = 10,000 * 0.005 / 1000 = 0.050 t CO2.\nCO2e (AR5 100-yr): 0.050 + 0.180 * 28 = 5.090 tCO2e.",
+      "inputs": {
+        "throughput_mscf": 10000.0,
+        "ch4_rate_kg_mscf": 0.018,
+        "co2_rate_kg_mscf": 0.005,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 0.05,
+        "ch4_tonnes": 0.18,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 5.09
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s1_process_t3_01",
+      "scope": 1,
+      "process_type": "process",
+      "tier": "Tier 3",
+      "description": "Tier 3 Process: AGR regenerator stack continuous flow + CO2 analyzer",
+      "arithmetic_comments": "Regenerator stack CEMS measured flow and composition: 150.0 tonnes CO2 directly metered.\nCO2e (AR5 100-yr): 150.0 tCO2e.",
+      "inputs": {
+        "metered_co2_tonnes": 150.0,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 150.0,
+        "ch4_tonnes": 0.0,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 150.0
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s1_process_t3_02",
+      "scope": 1,
+      "process_type": "process",
+      "tier": "Tier 3",
+      "description": "Tier 3 Process: Claus tail gas incinerator stack CEMS analyzer",
+      "arithmetic_comments": "Claus stack CEMS: 85.0 tonnes CO2 directly metered.\nCO2e (AR5 100-yr): 85.0 tCO2e.",
+      "inputs": {
+        "metered_co2_tonnes": 85.0,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 85.0,
+        "ch4_tonnes": 0.0,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 85.0
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s1_drilling_t1_01",
+      "scope": 1,
+      "process_type": "drilling",
+      "tier": "Tier 1",
+      "description": "Tier 1 Drilling: Rig-days population factor (30 rig-days)",
+      "arithmetic_comments": "Activity: 30 rig-days.\nAPI default drilling factor: 15.5 t CO2e / rig-day (combining diesel engine power).\nCO2 = 30 * 15.4 / 1000 * 1000 = 462.0 t CO2.\nCH4 = 30 * 0.015 = 0.45 t CH4.\nN2O = 30 * 0.003 = 0.09 t N2O.\nCO2e (AR5 100-yr): 462.0 + 0.45*28 + 0.09*265 = 498.45 tCO2e.",
+      "inputs": {
+        "rig_days": 30,
+        "co2_t_per_day": 15.4,
+        "ch4_t_per_day": 0.015,
+        "n2o_t_per_day": 0.003,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 462.0,
+        "ch4_tonnes": 0.45,
+        "n2o_tonnes": 0.09,
+        "co2e_tonnes": 498.45
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s1_drilling_t1_02",
+      "scope": 1,
+      "process_type": "drilling",
+      "tier": "Tier 1",
+      "description": "Tier 1 Drilling: Workover rig default factor (10 rig-days)",
+      "arithmetic_comments": "Activity: 10 workover rig-days.\nWorkover factor: 8.0 t CO2/day, 0.008 t CH4/day, 0.0015 t N2O/day.\nCO2 = 10 * 8.0 = 80.0 t CO2.\nCH4 = 10 * 0.008 = 0.08 t CH4.\nN2O = 10 * 0.0015 = 0.015 t N2O.\nCO2e (AR5 100-yr): 80.0 + 0.08*28 + 0.015*265 = 86.215 tCO2e.",
+      "inputs": {
+        "rig_days": 10,
+        "co2_t_per_day": 8.0,
+        "ch4_t_per_day": 0.008,
+        "n2o_t_per_day": 0.0015,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 80.0,
+        "ch4_tonnes": 0.08,
+        "n2o_tonnes": 0.015,
+        "co2e_tonnes": 86.215
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s1_drilling_t2_01",
+      "scope": 1,
+      "process_type": "drilling",
+      "tier": "Tier 2",
+      "description": "Tier 2 Drilling: Rig engine diesel fuel logging (45,000 liters)",
+      "arithmetic_comments": "Activity: 45,000 liters diesel.\nDiesel density = 0.84 kg/L -> mass = 37,800 kg diesel = 37.8 t.\nEPA factor: 2.68 kg CO2 / liter = 0.00268 t / liter -> CO2 = 45,000 * 0.00268 = 120.60 t CO2.\nCH4: 0.12 g / liter -> CH4 = 45,000 * 0.00012 / 1000 = 0.0054 t CH4.\nN2O: 0.025 g / liter -> N2O = 45,000 * 0.000025 / 1000 = 0.001125 t N2O.\nCO2e (AR5 100-yr): 120.60 + 0.0054*28 + 0.001125*265 = 121.0493 tCO2e.",
+      "inputs": {
+        "fuel_liters": 45000.0,
+        "co2_kg_l": 2.68,
+        "ch4_kg_l": 0.00012,
+        "n2o_kg_l": 2.5e-05,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 120.6,
+        "ch4_tonnes": 0.0054,
+        "n2o_tonnes": 0.001125,
+        "co2e_tonnes": 121.0493
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s1_drilling_t2_02",
+      "scope": 1,
+      "process_type": "drilling",
+      "tier": "Tier 2",
+      "description": "Tier 2 Drilling: Rig power from on-site generator (120,000 kWh)",
+      "arithmetic_comments": "Activity: 120,000 kWh generator power.\nGenerator engine factor: 0.650 kg CO2 / kWh, 0.035 g CH4 / kWh, 0.008 g N2O / kWh.\nCO2 = 120,000 * 0.650 / 1000 = 78.0 t CO2.\nCH4 = 120,000 * 0.000035 / 1000 = 0.0042 t CH4.\nN2O = 120,000 * 0.000008 / 1000 = 0.00096 t N2O.\nCO2e (AR5 100-yr): 78.0 + 0.0042*28 + 0.00096*265 = 78.372 tCO2e.",
+      "inputs": {
+        "kwh": 120000.0,
+        "co2_kg_kwh": 0.65,
+        "ch4_kg_kwh": 3.5e-05,
+        "n2o_kg_kwh": 8e-06,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 78.0,
+        "ch4_tonnes": 0.0042,
+        "n2o_tonnes": 0.00096,
+        "co2e_tonnes": 78.372
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s1_drilling_t3_01",
+      "scope": 1,
+      "process_type": "drilling",
+      "tier": "Tier 3",
+      "description": "Tier 3 Drilling: Metered rig engine fuel mass & lab certificate",
+      "arithmetic_comments": "Mass of diesel metered: 38,000 kg.\nLab analysis: Carbon fraction = 86.1%, lower heating value = 42.8 MJ/kg.\nCO2 = 38,000 * 0.861 * (44.01 / 12.011) / 1000 = 119.929 t CO2.\nMeasured CH4 slip = 0.004 t CH4.\nCO2e (AR5 100-yr): 119.929 + 0.004*28 = 120.041 tCO2e.",
+      "inputs": {
+        "fuel_mass_kg": 38000.0,
+        "carbon_fraction": 0.861,
+        "ch4_tonnes": 0.004,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 119.929,
+        "ch4_tonnes": 0.004,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 120.041
+      },
+      "tolerance_rel": 0.001
+    },
+    {
+      "id": "s1_drilling_t3_02",
+      "scope": 1,
+      "process_type": "drilling",
+      "tier": "Tier 3",
+      "description": "Tier 3 Drilling: Mud degasser vent calibrated flow meter & GC",
+      "arithmetic_comments": "Direct meter reading on mud degasser vent: 1,200 kg CH4 = 1.200 t CH4.\nCO2 reading: 85 kg CO2 = 0.085 t CO2.\nCO2e (AR5 100-yr): 0.085 + 1.200 * 28 = 33.685 tCO2e.",
+      "inputs": {
+        "ch4_kg": 1200.0,
+        "co2_kg": 85.0,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 0.085,
+        "ch4_tonnes": 1.2,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 33.685
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s1_completions_t1_01",
+      "scope": 1,
+      "process_type": "completions",
+      "tier": "Tier 1",
+      "description": "Tier 1 Completions: Fracturing flowback default factor (2 wells)",
+      "arithmetic_comments": "Activity: 2 hydraulically fractured well completions.\nAPI default factor: 25.0 t CO2e / completion.\nCO2 = 2 * 0.5 = 1.0 t CO2.\nCH4 = 2 * 0.85 = 1.70 t CH4.\nCO2e (AR5 100-yr): 1.0 + 1.70 * 28 = 48.60 tCO2e.",
+      "inputs": {
+        "well_completions": 2,
+        "co2_t_per_well": 0.5,
+        "ch4_t_per_well": 0.85,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 1.0,
+        "ch4_tonnes": 1.7,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 48.6
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s1_completions_t1_02",
+      "scope": 1,
+      "process_type": "completions",
+      "tier": "Tier 1",
+      "description": "Tier 1 Completions: Well workovers with venting (4 wells)",
+      "arithmetic_comments": "Activity: 4 well workovers.\nAPI default factor: 8.0 t CO2e / workover.\nCH4 = 4 * 0.28 = 1.12 t CH4.\nCO2 = 4 * 0.05 = 0.20 t CO2.\nCO2e (AR5 100-yr): 0.20 + 1.12 * 28 = 31.56 tCO2e.",
+      "inputs": {
+        "well_workovers": 4,
+        "co2_t_per_well": 0.05,
+        "ch4_t_per_well": 0.28,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 0.2,
+        "ch4_tonnes": 1.12,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 31.56
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s1_completions_t2_01",
+      "scope": 1,
+      "process_type": "completions",
+      "tier": "Tier 2",
+      "description": "Tier 2 Completions: Flowback separator gas volume equation (50,000 scf gas vented)",
+      "arithmetic_comments": "Gas volume vented during flowback: 50,000 scf.\nGas composition: 82% CH4, 3% CO2.\nCH4 mass = 50,000 * 0.82 * 0.0192 / 1000 = 0.7872 t CH4.\nCO2 mass = 50,000 * 0.03 * 0.0526 / 1000 = 0.0789 t CO2.\nCO2e (AR5 100-yr): 0.0789 + 0.7872 * 28 = 22.1205 tCO2e.",
+      "inputs": {
+        "vented_scf": 50000.0,
+        "ch4_mol_pct": 82.0,
+        "co2_mol_pct": 3.0,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 0.0789,
+        "ch4_tonnes": 0.7872,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 22.1205
+      },
+      "tolerance_rel": 0.002
+    },
+    {
+      "id": "s1_completions_t2_02",
+      "scope": 1,
+      "process_type": "completions",
+      "tier": "Tier 2",
+      "description": "Tier 2 Completions: Flowback gas flared with 98% flare efficiency (30,000 scf)",
+      "arithmetic_comments": "Flowback gas sent to flare: 30,000 scf.\nGas composition: 85% CH4, 2% CO2.\nFlare combustion efficiency = 98%.\nCombusted CH4 = 30,000 * 0.85 * 0.98 = 24,990 scf -> CO2 = 24,990 * 0.0526 / 1000 = 1.314 t CO2.\nNative CO2 = 30,000 * 0.02 * 0.0526 / 1000 = 0.0316 t CO2 -> Total CO2 = 1.3456 t CO2.\nUncombusted CH4 = 30,000 * 0.85 * 0.02 * 0.0192 / 1000 = 0.00979 t CH4.\nCO2e (AR5 100-yr): 1.3456 + 0.00979 * 28 = 1.6197 tCO2e.",
+      "inputs": {
+        "flare_scf": 30000.0,
+        "ch4_mol_pct": 85.0,
+        "co2_mol_pct": 2.0,
+        "combustion_efficiency": 0.98,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 1.3456,
+        "ch4_tonnes": 0.00979,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 1.6197
+      },
+      "tolerance_rel": 0.002
+    },
+    {
+      "id": "s1_completions_t3_01",
+      "scope": 1,
+      "process_type": "completions",
+      "tier": "Tier 3",
+      "description": "Tier 3 Completions: Direct metered flowback gas with online GC (85,000 scf)",
+      "arithmetic_comments": "Metered gas flow: 85,000 scf.\nOnline GC: 88.0% CH4, 1.8% CO2.\nDirect vent CH4 mass = 85,000 * 0.88 * 0.0192 / 1000 = 1.4362 t CH4.\nDirect vent CO2 mass = 85,000 * 0.018 * 0.0526 / 1000 = 0.0805 t CO2.\nCO2e (AR5 100-yr): 0.0805 + 1.4362 * 28 = 40.294 tCO2e.",
+      "inputs": {
+        "metered_scf": 85000.0,
+        "ch4_mol_pct": 88.0,
+        "co2_mol_pct": 1.8,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 0.0805,
+        "ch4_tonnes": 1.4362,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 40.294
+      },
+      "tolerance_rel": 0.002
+    },
+    {
+      "id": "s1_completions_t3_02",
+      "scope": 1,
+      "process_type": "completions",
+      "tier": "Tier 3",
+      "description": "Tier 3 Completions: Calibrated orifice meter on flowback vent line (42,000 scf)",
+      "arithmetic_comments": "Metered gas volume: 42,000 scf.\nGC analysis: 84.5% CH4, 2.2% CO2.\nCH4 mass = 42,000 * 0.845 * 0.0192 / 1000 = 0.6814 t CH4.\nCO2 mass = 42,000 * 0.022 * 0.0526 / 1000 = 0.0486 t CO2.\nCO2e (AR5 100-yr): 0.0486 + 0.6814 * 28 = 19.1278 tCO2e.",
+      "inputs": {
+        "metered_scf": 42000.0,
+        "ch4_mol_pct": 84.5,
+        "co2_mol_pct": 2.2,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 0.0486,
+        "ch4_tonnes": 0.6814,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 19.1278
+      },
+      "tolerance_rel": 0.002
+    },
+    {
+      "id": "s2_location_01",
+      "scope": 2,
+      "process_type": "scope2_location",
+      "tier": "Location-based",
+      "description": "Scope 2 Location-based: Algerian National Grid (500,000 kWh)",
+      "arithmetic_comments": "Activity: 500,000 kWh.\nAlgerian National Grid EFs: CO2 = 0.4974 kg/kWh, CH4 = 8.866e-6 kg/kWh, N2O = 8.866e-7 kg/kWh.\nCO2 = 500,000 * 0.4974 / 1000 = 248.700 t CO2.\nCH4 = 500,000 * 8.866e-6 / 1000 = 0.004433 t CH4.\nN2O = 500,000 * 8.866e-7 / 1000 = 0.0004433 t N2O.\nCO2e (AR5 100-yr: CH4=28, N2O=265): 248.700 + 0.004433*28 + 0.0004433*265 = 248.9416 tCO2e.",
+      "inputs": {
+        "amount": 500000.0,
+        "unit": "kWh",
+        "grid_region": "Algerian National Grid",
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 248.7,
+        "ch4_tonnes": 0.004433,
+        "n2o_tonnes": 0.0004433,
+        "co2e_tonnes": 248.9416
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s2_location_02",
+      "scope": 2,
+      "process_type": "scope2_location",
+      "tier": "Location-based",
+      "description": "Scope 2 Location-based: US Average eGRID (1,000,000 kWh)",
+      "arithmetic_comments": "Activity: 1,000,000 kWh = 1,000 MWh.\nUS Average EFs: CO2 = 0.401 kg/kWh, CH4 = 3.40e-5 kg/kWh, N2O = 4.99e-6 kg/kWh.\nCO2 = 1,000,000 * 0.401 / 1000 = 401.0 t CO2.\nCH4 = 1,000,000 * 3.40e-5 / 1000 = 0.034 t CH4.\nN2O = 1,000,000 * 4.99e-6 / 1000 = 0.00499 t N2O.\nCO2e (AR5 100-yr): 401.0 + 0.034*28 + 0.00499*265 = 403.27435 tCO2e.",
+      "inputs": {
+        "amount": 1000000.0,
+        "unit": "kWh",
+        "grid_region": "US Average",
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 401.0,
+        "ch4_tonnes": 0.034,
+        "n2o_tonnes": 0.00499,
+        "co2e_tonnes": 403.27435
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s2_market_01",
+      "scope": 2,
+      "process_type": "scope2_market",
+      "tier": "Market-based",
+      "description": "Scope 2 Market-based: Renewable PPA / Solar Contract (250,000 kWh @ 0.0 kg/kWh)",
+      "arithmetic_comments": "Activity: 250,000 kWh under bundled renewable PPA (zero emission contractual instrument).\nMarket EF = 0.0 kg CO2e / kWh.\nCO2 = 0.0 t, CH4 = 0.0 t, N2O = 0.0 t, CO2e = 0.0 tCO2e.",
+      "inputs": {
+        "amount": 250000.0,
+        "unit": "kWh",
+        "emission_factor": 0.0,
+        "instrument": "Solar PPA"
+      },
+      "expected": {
+        "co2_tonnes": 0.0,
+        "ch4_tonnes": 0.0,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 0.0
+      },
+      "tolerance_rel": 1e-06
+    },
+    {
+      "id": "s2_market_02",
+      "scope": 2,
+      "process_type": "scope2_market",
+      "tier": "Market-based",
+      "description": "Scope 2 Market-based: Specific supplier tariff (100,000 kWh @ 0.085 kg CO2e/kWh)",
+      "arithmetic_comments": "Activity: 100,000 kWh under low-carbon supplier tariff.\nContractual EF = 0.085 kg CO2e / kWh.\nCO2e = 100,000 * 0.085 / 1000 = 8.500 tCO2e.",
+      "inputs": {
+        "amount": 100000.0,
+        "unit": "kWh",
+        "emission_factor": 0.085,
+        "instrument": "Supplier specific tariff"
+      },
+      "expected": {
+        "co2_tonnes": 8.5,
+        "ch4_tonnes": 0.0,
+        "n2o_tonnes": 0.0,
+        "co2e_tonnes": 8.5
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s2_steam_01",
+      "scope": 2,
+      "process_type": "scope2_steam",
+      "tier": "Tier 2",
+      "description": "Scope 2 Purchased Steam: Enthalpy balance & boiler efficiency (1,000 MMBtu delivered)",
+      "arithmetic_comments": "Delivered steam heat: 1,000 MMBtu.\nBoiler efficiency: 80% (0.80), transmission loss: 5% (0.05).\nNet efficiency = 0.80 - 0.05 = 0.75 (API Compendium Exhibit 8.3 formula).\nFuel required = 1,000 / 0.75 = 1,333.333 MMBtu.\nNatural gas boiler EF: 53.06 kg CO2/MMBtu.\nCO2 = 1,333.333 * 53.06 / 1000 = 70.7467 t CO2.\nCH4 = 1,333.333 * 0.0010 / 1000 = 0.001333 t CH4.\nN2O = 1,333.333 * 0.0001 / 1000 = 0.000133 t N2O.\nCO2e (AR5 100-yr): 70.7467 + 0.001333*28 + 0.000133*265 = 70.8193 tCO2e.",
+      "inputs": {
+        "amount": 1000.0,
+        "unit": "MMBtu",
+        "boiler_eff": 0.8,
+        "trans_loss": 0.05,
+        "ef_co2": 53.06,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 70.7467,
+        "ch4_tonnes": 0.001333,
+        "n2o_tonnes": 0.000133,
+        "co2e_tonnes": 70.8193
+      },
+      "tolerance_rel": 0.002
+    },
+    {
+      "id": "s2_steam_02",
+      "scope": 2,
+      "process_type": "scope2_steam",
+      "tier": "Tier 2",
+      "description": "Scope 2 Purchased Steam: Mass & Enthalpy (500,000 lb steam @ 1,190 Btu/lb)",
+      "arithmetic_comments": "Steam delivered: 500,000 lb @ 1,190 Btu/lb = 595,000,000 Btu = 595.0 MMBtu.\nBoiler efficiency: 85% (0.85), transmission loss: 8% (0.08).\nNet efficiency = 0.85 - 0.08 = 0.77.\nFuel required = 595.0 / 0.77 = 772.727 MMBtu.\nCO2 = 772.727 * 53.06 / 1000 = 41.001 t CO2.\nCO2e (AR5 100-yr): 41.001 + (772.727*0.001/1000)*28 + (772.727*0.0001/1000)*265 = 41.043 tCO2e.",
+      "inputs": {
+        "amount": 500.0,
+        "unit": "klb",
+        "steam_enthalpy_btu_lb": 1190.0,
+        "boiler_eff": 0.85,
+        "trans_loss": 0.08,
+        "ef_co2": 53.06,
+        "gwp_standard": "AR5"
+      },
+      "expected": {
+        "co2_tonnes": 41.001,
+        "ch4_tonnes": 0.000773,
+        "n2o_tonnes": 7.7e-05,
+        "co2e_tonnes": 41.043
+      },
+      "tolerance_rel": 0.002
+    },
+    {
+      "id": "s3_cat1_01",
+      "scope": 3,
+      "category": 1,
+      "description": "Scope 3 Cat 1: Purchased Steel Pipe (Spend-based, $50,000)",
+      "arithmetic_comments": "Spend: $50,000 USD. Factor: 0.360 kg CO2e / USD. CO2e = 50,000 * 0.360 / 1000 = 18.000 tCO2e.",
+      "inputs": {
+        "category": 1,
+        "activity": "Steel pipe & tube (NAICS 331210)",
+        "amount": 50000.0,
+        "unit": "USD",
+        "factor": 0.36
+      },
+      "expected": {
+        "co2e_tonnes": 18.0
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s3_cat1_02",
+      "scope": 3,
+      "category": 1,
+      "description": "Scope 3 Cat 1: Purchased Cement (Spend-based, $10,000)",
+      "arithmetic_comments": "Spend: $10,000 USD. Factor: 3.924 kg CO2e / USD. CO2e = 10,000 * 3.924 / 1000 = 39.240 tCO2e.",
+      "inputs": {
+        "category": 1,
+        "activity": "Cement (NAICS 327310)",
+        "amount": 10000.0,
+        "unit": "USD",
+        "factor": 3.924
+      },
+      "expected": {
+        "co2e_tonnes": 39.24
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s3_cat2_01",
+      "scope": 3,
+      "category": 2,
+      "description": "Scope 3 Cat 2: Oil & Gas Field Machinery ($100,000)",
+      "arithmetic_comments": "Spend: $100,000 USD. Factor: 0.219 kg CO2e / USD. CO2e = 100,000 * 0.219 / 1000 = 21.900 tCO2e.",
+      "inputs": {
+        "category": 2,
+        "activity": "Oil & gas field machinery (NAICS 333132)",
+        "amount": 100000.0,
+        "unit": "USD",
+        "factor": 0.219
+      },
+      "expected": {
+        "co2e_tonnes": 21.9
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s3_cat2_02",
+      "scope": 3,
+      "category": 2,
+      "description": "Scope 3 Cat 2: Pipeline Construction ($250,000)",
+      "arithmetic_comments": "Spend: $250,000 USD. Factor: 0.277 kg CO2e / USD. CO2e = 250,000 * 0.277 / 1000 = 69.250 tCO2e.",
+      "inputs": {
+        "category": 2,
+        "activity": "Pipeline construction (NAICS 237120)",
+        "amount": 250000.0,
+        "unit": "USD",
+        "factor": 0.277
+      },
+      "expected": {
+        "co2e_tonnes": 69.25
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s3_cat3_01",
+      "scope": 3,
+      "category": 3,
+      "description": "Scope 3 Cat 3: Upstream Purchased Natural Gas Extraction ($30,000)",
+      "arithmetic_comments": "Spend: $30,000 USD. Factor: 0.405 kg CO2e / USD. CO2e = 30,000 * 0.405 / 1000 = 12.150 tCO2e.",
+      "inputs": {
+        "category": 3,
+        "activity": "Purchased natural gas, upstream (NAICS 211130)",
+        "amount": 30000.0,
+        "unit": "USD",
+        "factor": 0.405
+      },
+      "expected": {
+        "co2e_tonnes": 12.15
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s3_cat3_02",
+      "scope": 3,
+      "category": 3,
+      "description": "Scope 3 Cat 3: Upstream Purchased Refined Fuels ($40,000)",
+      "arithmetic_comments": "Spend: $40,000 USD. Factor: 0.270 kg CO2e / USD. CO2e = 40,000 * 0.270 / 1000 = 10.800 tCO2e.",
+      "inputs": {
+        "category": 3,
+        "activity": "Purchased refined fuels, upstream (NAICS 324110)",
+        "amount": 40000.0,
+        "unit": "USD",
+        "factor": 0.27
+      },
+      "expected": {
+        "co2e_tonnes": 10.8
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s3_cat4_01",
+      "scope": 3,
+      "category": 4,
+      "description": "Scope 3 Cat 4: Truck Freight Transport (10,000 ton-km)",
+      "arithmetic_comments": "Activity: 10,000 ton-km. Factor: 0.12841 kg CO2e / ton-km. CO2e = 10,000 * 0.12841 / 1000 = 1.2841 tCO2e.",
+      "inputs": {
+        "category": 4,
+        "activity": "Truck Transport",
+        "amount": 10000.0,
+        "unit": "ton-km",
+        "factor": 0.12841
+      },
+      "expected": {
+        "co2e_tonnes": 1.2841
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s3_cat4_02",
+      "scope": 3,
+      "category": 4,
+      "description": "Scope 3 Cat 4: Rail Freight Transport (50,000 ton-km)",
+      "arithmetic_comments": "Activity: 50,000 ton-km. Factor: 0.01451 kg CO2e / ton-km. CO2e = 50,000 * 0.01451 / 1000 = 0.7255 tCO2e.",
+      "inputs": {
+        "category": 4,
+        "activity": "Rail Transport",
+        "amount": 50000.0,
+        "unit": "ton-km",
+        "factor": 0.01451
+      },
+      "expected": {
+        "co2e_tonnes": 0.7255
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s3_cat5_01",
+      "scope": 3,
+      "category": 5,
+      "description": "Scope 3 Cat 5: Landfill Mixed MSW (5,000 kg)",
+      "arithmetic_comments": "Activity: 5,000 kg waste. Factor: 0.6393 kg CO2e / kg. CO2e = 5,000 * 0.6393 / 1000 = 3.1965 tCO2e.",
+      "inputs": {
+        "category": 5,
+        "activity": "Landfill (mixed MSW)",
+        "amount": 5000.0,
+        "unit": "kg",
+        "factor": 0.6393
+      },
+      "expected": {
+        "co2e_tonnes": 3.1965
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s3_cat5_02",
+      "scope": 3,
+      "category": 5,
+      "description": "Scope 3 Cat 5: Incineration Mixed MSW (2,000 kg)",
+      "arithmetic_comments": "Activity: 2,000 kg waste. Factor: 0.4740 kg CO2e / kg. CO2e = 2,000 * 0.4740 / 1000 = 0.9480 tCO2e.",
+      "inputs": {
+        "category": 5,
+        "activity": "Incineration (mixed MSW)",
+        "amount": 2000.0,
+        "unit": "kg",
+        "factor": 0.474
+      },
+      "expected": {
+        "co2e_tonnes": 0.948
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s3_cat6_01",
+      "scope": 3,
+      "category": 6,
+      "description": "Scope 3 Cat 6: Short-Haul Commercial Air (5,000 passenger-km)",
+      "arithmetic_comments": "Activity: 5,000 p-km. Factor: 0.12982 kg CO2e / p-km. CO2e = 5,000 * 0.12982 / 1000 = 0.6491 tCO2e.",
+      "inputs": {
+        "category": 6,
+        "activity": "Air - Short Haul (< 300 mi)",
+        "amount": 5000.0,
+        "unit": "passenger-km",
+        "factor": 0.12982
+      },
+      "expected": {
+        "co2e_tonnes": 0.6491
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s3_cat6_02",
+      "scope": 3,
+      "category": 6,
+      "description": "Scope 3 Cat 6: Medium-Haul Commercial Air (12,000 passenger-km)",
+      "arithmetic_comments": "Activity: 12,000 p-km. Factor: 0.08084 kg CO2e / p-km. CO2e = 12,000 * 0.08084 / 1000 = 0.97008 tCO2e.",
+      "inputs": {
+        "category": 6,
+        "activity": "Air - Medium Haul (300-2300 mi)",
+        "amount": 12000.0,
+        "unit": "passenger-km",
+        "factor": 0.08084
+      },
+      "expected": {
+        "co2e_tonnes": 0.97008
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s3_cat7_01",
+      "scope": 3,
+      "category": 7,
+      "description": "Scope 3 Cat 7: Passenger Car Commuting (15,000 km)",
+      "arithmetic_comments": "Activity: 15,000 km. Factor: 0.18552 kg CO2e / km. CO2e = 15,000 * 0.18552 / 1000 = 2.7828 tCO2e.",
+      "inputs": {
+        "category": 7,
+        "activity": "Passenger Car",
+        "amount": 15000.0,
+        "unit": "km",
+        "factor": 0.18552
+      },
+      "expected": {
+        "co2e_tonnes": 2.7828
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s3_cat7_02",
+      "scope": 3,
+      "category": 7,
+      "description": "Scope 3 Cat 7: Commuter Rail Transit (25,000 passenger-km)",
+      "arithmetic_comments": "Activity: 25,000 p-km. Factor: 0.08325 kg CO2e / p-km. CO2e = 25,000 * 0.08325 / 1000 = 2.08125 tCO2e.",
+      "inputs": {
+        "category": 7,
+        "activity": "Commuter Rail",
+        "amount": 25000.0,
+        "unit": "passenger-km",
+        "factor": 0.08325
+      },
+      "expected": {
+        "co2e_tonnes": 2.08125
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s3_cat8_01",
+      "scope": 3,
+      "category": 8,
+      "description": "Scope 3 Cat 8: Leased Commercial Building ($20,000)",
+      "arithmetic_comments": "Spend: $20,000 USD. Factor: 0.246 kg CO2e / USD. CO2e = 20,000 * 0.246 / 1000 = 4.920 tCO2e.",
+      "inputs": {
+        "category": 8,
+        "activity": "Leased buildings (rent) (NAICS 531120)",
+        "amount": 20000.0,
+        "unit": "USD",
+        "factor": 0.246
+      },
+      "expected": {
+        "co2e_tonnes": 4.92
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s3_cat8_02",
+      "scope": 3,
+      "category": 8,
+      "description": "Scope 3 Cat 8: Leased Fleet Vehicles (8,000 km)",
+      "arithmetic_comments": "Distance: 8,000 km. Factor: 0.18552 kg CO2e / km. CO2e = 8,000 * 0.18552 / 1000 = 1.48416 tCO2e.",
+      "inputs": {
+        "category": 8,
+        "activity": "Leased Vehicles (passenger car)",
+        "amount": 8000.0,
+        "unit": "km",
+        "factor": 0.18552
+      },
+      "expected": {
+        "co2e_tonnes": 1.48416
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s3_cat9_01",
+      "scope": 3,
+      "category": 9,
+      "description": "Scope 3 Cat 9: Marine Tanker Transport of Sold Oil (200,000 ton-km)",
+      "arithmetic_comments": "Activity: 200,000 ton-km. Factor: 0.05370 kg CO2e / ton-km. CO2e = 200,000 * 0.05370 / 1000 = 10.740 tCO2e.",
+      "inputs": {
+        "category": 9,
+        "activity": "Ship Transport",
+        "amount": 200000.0,
+        "unit": "ton-km",
+        "factor": 0.0537
+      },
+      "expected": {
+        "co2e_tonnes": 10.74
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s3_cat9_02",
+      "scope": 3,
+      "category": 9,
+      "description": "Scope 3 Cat 9: Pipeline Transport of Sold Product (100,000 ton-km)",
+      "arithmetic_comments": "Activity: 100,000 ton-km. Factor: 0.01451 kg CO2e / ton-km (using rail/pipeline equivalent). CO2e = 100,000 * 0.01451 / 1000 = 1.451 tCO2e.",
+      "inputs": {
+        "category": 9,
+        "activity": "Rail Transport",
+        "amount": 100000.0,
+        "unit": "ton-km",
+        "factor": 0.01451
+      },
+      "expected": {
+        "co2e_tonnes": 1.451
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s3_cat10_01",
+      "scope": 3,
+      "category": 10,
+      "description": "Scope 3 Cat 10: Natural Gas Processing (5,000 MMBtu @ 54.18 kg/MMBtu)",
+      "arithmetic_comments": "Energy: 5,000 MMBtu. Factor: 54.18 kg CO2e / MMBtu. CO2e = 5,000 * 54.18 / 1000 = 270.900 tCO2e.",
+      "inputs": {
+        "category": 10,
+        "activity": "Processing (Natural Gas)",
+        "amount": 5000.0,
+        "unit": "MMBtu",
+        "factor": 54.18
+      },
+      "expected": {
+        "co2e_tonnes": 270.9
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s3_cat10_02",
+      "scope": 3,
+      "category": 10,
+      "description": "Scope 3 Cat 10: Natural Gas Processing from Volume (1,000 mcf @ 1.02 MMBtu/mcf)",
+      "arithmetic_comments": "Volume: 1,000 mcf. HHV: 1.020 MMBtu/mcf -> 1,020 MMBtu. Factor: 54.18 kg/MMBtu. CO2e = 1,020 * 54.18 / 1000 = 55.2636 tCO2e.",
+      "inputs": {
+        "category": 10,
+        "activity": "Processing (Natural Gas)",
+        "amount": 1000.0,
+        "unit": "mcf",
+        "factor": 54.18,
+        "hhv_mmbtu_mcf": 1.02
+      },
+      "expected": {
+        "co2e_tonnes": 55.2636
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s3_cat11_01",
+      "scope": 3,
+      "category": 11,
+      "description": "Scope 3 Cat 11: Crude Oil Combustion (5,000 bbl @ 433.44 kg/bbl)",
+      "arithmetic_comments": "Activity: 5,000 bbl crude oil. Factor: 433.44 kg CO2e / bbl. CO2e = 5,000 * 433.44 / 1000 = 2,167.200 tCO2e.",
+      "inputs": {
+        "category": 11,
+        "activity": "Crude Oil",
+        "amount": 5000.0,
+        "unit": "bbl",
+        "factor": 433.44
+      },
+      "expected": {
+        "co2e_tonnes": 2167.2
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s3_cat11_02",
+      "scope": 3,
+      "category": 11,
+      "description": "Scope 3 Cat 11: Natural Gas Combustion (10,000 mcf @ 1.02 MMBtu/mcf * 54.18 kg/MMBtu)",
+      "arithmetic_comments": "Activity: 10,000 mcf natural gas sold.\nHHV: 1.020 MMBtu / mcf -> Energy = 10,000 * 1.020 = 10,200 MMBtu.\nFactor: 54.18 kg CO2e / MMBtu.\nCO2e = 10,200 * 54.18 / 1000 = 552.636 tCO2e.",
+      "inputs": {
+        "category": 11,
+        "activity": "Natural Gas",
+        "amount": 10000.0,
+        "unit": "mcf",
+        "factor": 54.18,
+        "hhv_mmbtu_mcf": 1.02
+      },
+      "expected": {
+        "co2e_tonnes": 552.636
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s3_cat12_01",
+      "scope": 3,
+      "category": 12,
+      "description": "Scope 3 Cat 12: Landfill Disposal of Sold Product Packaging (2,000 kg)",
+      "arithmetic_comments": "Mass: 2,000 kg. Factor: 0.6393 kg CO2e / kg. CO2e = 2,000 * 0.6393 / 1000 = 1.2786 tCO2e.",
+      "inputs": {
+        "category": 12,
+        "activity": "Landfill (mixed MSW)",
+        "amount": 2000.0,
+        "unit": "kg",
+        "factor": 0.6393
+      },
+      "expected": {
+        "co2e_tonnes": 1.2786
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s3_cat12_02",
+      "scope": 3,
+      "category": 12,
+      "description": "Scope 3 Cat 12: Incineration of Sold Wax/Plastic Byproducts (1,000 kg)",
+      "arithmetic_comments": "Mass: 1,000 kg. Factor: 0.4740 kg CO2e / kg. CO2e = 1,000 * 0.4740 / 1000 = 0.4740 tCO2e.",
+      "inputs": {
+        "category": 12,
+        "activity": "Incineration (mixed MSW)",
+        "amount": 1000.0,
+        "unit": "kg",
+        "factor": 0.474
+      },
+      "expected": {
+        "co2e_tonnes": 0.474
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s3_cat13_01",
+      "scope": 3,
+      "category": 13,
+      "description": "Scope 3 Cat 13: Sublet Commercial Building ($15,000)",
+      "arithmetic_comments": "Spend: $15,000 USD. Factor: 0.246 kg CO2e / USD. CO2e = 15,000 * 0.246 / 1000 = 3.690 tCO2e.",
+      "inputs": {
+        "category": 13,
+        "activity": "Downstream leased buildings (rent) (NAICS 531120)",
+        "amount": 15000.0,
+        "unit": "USD",
+        "factor": 0.246
+      },
+      "expected": {
+        "co2e_tonnes": 3.69
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s3_cat13_02",
+      "scope": 3,
+      "category": 13,
+      "description": "Scope 3 Cat 13: Sublet Office Space ($8,000)",
+      "arithmetic_comments": "Spend: $8,000 USD. Factor: 0.246 kg CO2e / USD. CO2e = 8,000 * 0.246 / 1000 = 1.968 tCO2e.",
+      "inputs": {
+        "category": 13,
+        "activity": "Downstream leased buildings (rent) (NAICS 531120)",
+        "amount": 8000.0,
+        "unit": "USD",
+        "factor": 0.246
+      },
+      "expected": {
+        "co2e_tonnes": 1.968
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s3_cat14_01",
+      "scope": 3,
+      "category": 14,
+      "description": "Scope 3 Cat 14: Franchise Retail Station Spend ($50,000)",
+      "arithmetic_comments": "Spend: $50,000 USD. Custom factor: 0.180 kg CO2e / USD. CO2e = 50,000 * 0.180 / 1000 = 9.000 tCO2e.",
+      "inputs": {
+        "category": 14,
+        "activity": "Franchise operations",
+        "amount": 50000.0,
+        "unit": "USD",
+        "factor": 0.18
+      },
+      "expected": {
+        "co2e_tonnes": 9.0
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s3_cat14_02",
+      "scope": 3,
+      "category": 14,
+      "description": "Scope 3 Cat 14: Franchise Facility Operations Spend ($25,000)",
+      "arithmetic_comments": "Spend: $25,000 USD. Custom factor: 0.180 kg CO2e / USD. CO2e = 25,000 * 0.180 / 1000 = 4.500 tCO2e.",
+      "inputs": {
+        "category": 14,
+        "activity": "Franchise operations",
+        "amount": 25000.0,
+        "unit": "USD",
+        "factor": 0.18
+      },
+      "expected": {
+        "co2e_tonnes": 4.5
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s3_cat15_01",
+      "scope": 3,
+      "category": 15,
+      "description": "Scope 3 Cat 15: Financed Joint Venture Project ($500,000)",
+      "arithmetic_comments": "Investment spend: $500,000 USD. Sector carbon intensity: 0.120 kg CO2e / USD. CO2e = 500,000 * 0.120 / 1000 = 60.000 tCO2e.",
+      "inputs": {
+        "category": 15,
+        "activity": "Project Finance",
+        "amount": 500000.0,
+        "unit": "USD",
+        "factor": 0.12
+      },
+      "expected": {
+        "co2e_tonnes": 60.0
+      },
+      "tolerance_rel": 0.0001
+    },
+    {
+      "id": "s3_cat15_02",
+      "scope": 3,
+      "category": 15,
+      "description": "Scope 3 Cat 15: Equity Share of Investee Asset (25% of 10,000 tCO2e)",
+      "arithmetic_comments": "Investee emissions: 10,000 tCO2e. Equity share: 25.0%. Financed CO2e = 10,000 * 0.25 = 2,500.000 tCO2e.",
+      "inputs": {
+        "category": 15,
+        "activity": "Equity Investments",
+        "amount": 10000.0,
+        "unit": "tCO2e",
+        "equity_share": 0.25
+      },
+      "expected": {
+        "co2e_tonnes": 2500.0
+      },
+      "tolerance_rel": 0.0001
+    }
+  ]
+}

@@ -15,10 +15,9 @@
 .calculation-mode-selector label {
   display: block;
   margin-bottom: 12px;
-  font-size: var(--text-base);
+  font-size: var(--text-sm);
+  font-weight: 500;
   color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 
 .mode-tabs {
@@ -108,9 +107,8 @@
 
 .result-card h4 {
   margin: 0 0 15px 0;
-  font-size: var(--text-base);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-size: var(--text-sm);
+  font-weight: 600;
   color: var(--color-link);
 }
 

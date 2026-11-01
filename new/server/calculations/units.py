@@ -20,6 +20,15 @@ MOLAR_VOLUME_M3_PER_KMOL = 23.685
 MW_CH4 = 16.04
 MW_CO2 = 44.01
 
+# API Compendium 2021 BOE conversion: 5.8 MMBtu per BOE and standard gas HHV 1,020 Btu/scf (§8.1)
+# 1,020 Btu/scf / 1,000 / 5.8 MMBtu/BOE = 0.17586206896551725 BOE per Mscf (5,686.2745 scf/BOE)
+NG_HHV_BTU_PER_SCF = 1020.0
+MMBTU_PER_BOE = 5.8
+GAS_BOE_PER_MSCF = NG_HHV_BTU_PER_SCF / 1000.0 / MMBTU_PER_BOE
+SCF_PER_BOE = 1000.0 / GAS_BOE_PER_MSCF
+BOE_TO_GJ = MMBTU_PER_BOE * 1.05505585262
+BOE_TO_MJ = MMBTU_PER_BOE * 1055.05585262
+
 CONVERSIONS = {
     # Volume (API Compendium 2021 §4.2 / ISO 13443 at 60°F, 14.696 psia)
     "scf_to_m3": 0.028316846592,
@@ -63,6 +72,27 @@ CONVERSIONS = {
     "kwh_to_mj": 3.6,
     "mj_to_kwh": 0.2777777777777778,
     "therm_to_mj": 105.505585262,  # 1 therm = 100,000 Btu (IT), as in indirect.py
+    # BOE Conversions (API Compendium 2021 §8.1 / 5.8 MMBtu/BOE and 1,020 Btu/scf)
+    "boe_to_mmbtu": MMBTU_PER_BOE,
+    "mmbtu_to_boe": 1.0 / MMBTU_PER_BOE,
+    "boe_to_gj": BOE_TO_GJ,
+    "gj_to_boe": 1.0 / BOE_TO_GJ,
+    "boe_to_mj": BOE_TO_MJ,
+    "mj_to_boe": 1.0 / BOE_TO_MJ,
+    "boe_to_bbl": 1.0,
+    "bbl_to_boe": 1.0,
+    "mscf_to_boe": GAS_BOE_PER_MSCF,
+    "boe_to_mscf": 1.0 / GAS_BOE_PER_MSCF,
+    "scf_to_boe": 1.0 / SCF_PER_BOE,
+    "boe_to_scf": SCF_PER_BOE,
+    "m3_to_boe": 35.314666721 / SCF_PER_BOE,
+    "boe_to_m3": SCF_PER_BOE / 35.314666721,
+    "mmboe_to_boe": 1e6,
+    "boe_to_mmboe": 1e-6,
+    "gj_to_mj": 1000.0,
+    "mj_to_gj": 0.001,
+    "mmbtu_to_gj": 1.05505585262,
+    "gj_to_mmbtu": 1.0 / 1.05505585262,
     # Gas densities, kg/m3 at the API Compendium standard conditions (60 F, 14.696 psia): molecular
     # weight / 23.685 m3 per kg-mole (379.3 scf/lb-mole, the molar volume conversion of the Compendium
     # equations, e.g. Eq 5-1 / 6-1; Table 3-3 gives 379.48 scf / 23.690 m3). The former 0.6785 / 1.861
@@ -267,6 +297,10 @@ ENERGY_UNITS_TO_MJ = {
     "megawatt_hour": 3600.0,
     "therm": 105.505585262,
     "therms": 105.505585262,
+    "boe": BOE_TO_MJ,
+    "mmboe": BOE_TO_MJ * 1e6,
+    "barrel_of_oil_equivalent": BOE_TO_MJ,
+    "barrels_of_oil_equivalent": BOE_TO_MJ,
 }
 
 
@@ -515,9 +549,17 @@ _SCOPE3_MASS_TONNES = {
 }
 
 
-_SCOPE3_UNIT_ALIASES = {"$": "usd", "us$": "usd", "dollar": "usd", "dollars": "usd", "usd": "usd",
-                        "pkm": "passenger-km", "passenger_km": "passenger-km", "tkm": "tonne-km", "t-km": "tonne-km",
-                        "tonne_km": "tonne-km", "litre": "l", "litres": "l", "liter": "l", "liters": "l"}
+_SCOPE3_UNIT_ALIASES = {
+    "$": "usd", "us$": "usd", "dollar": "usd", "dollars": "usd", "usd": "usd",
+    "pkm": "passenger-km", "passenger_km": "passenger-km", "tkm": "tonne-km", "t-km": "tonne-km",
+    "tonne_km": "tonne-km", "litre": "l", "litres": "l", "liter": "l", "liters": "l",
+    "mmbtu": "mmbtu", "mm-btu": "mmbtu", "million-btu": "mmbtu", "mm_btu": "mmbtu",
+    "mscf": "mscf", "mmscf": "mmscf", "mcf": "mcf", "scf": "scf",
+}
+
+_GAS_VOLUME_UNITS = {"scf", "mcf", "mscf", "mmscf", "mmcf", "m3", "sm3", "nm3"}
+_LIQUID_VOLUME_UNITS = {"bbl", "gal", "gallon", "gallons", "l", "liter", "liters", "litre", "litres", "barrel", "barrels"}
+_ENERGY_UNITS = {"mmbtu", "gj", "mj", "kwh", "mwh", "therm", "btu"}
 
 
 def _scope3_activity_in_factor_unit(activity_unit, den):
@@ -531,6 +573,33 @@ def _scope3_activity_in_factor_unit(activity_unit, den):
     a, d = norm(activity_unit), norm(den)
     if not a or not d or a == d or a in ("unit", "units") or d in ("unit", "units", "item", "items"):
         return 1.0
+
+    a_clean = a.replace(" ", "_")
+    d_clean = d.replace(" ", "_")
+
+    # Gas volume to energy conversion via standard Natural Gas HHV (API Compendium §8.1 / 1,020 Btu/scf)
+    if a_clean in _GAS_VOLUME_UNITS and d_clean in _ENERGY_UNITS:
+        _, m3_factor = unit_dimension(a)
+        scf = m3_factor / CONVERSIONS["scf_to_m3"]
+        btu = scf * NG_HHV_BTU_PER_SCF
+        mj = btu * CONVERSIONS["btu_to_kj"] / 1000.0
+        _, d_mj_factor = unit_dimension(d)
+        return mj / d_mj_factor
+
+    if d_clean in _GAS_VOLUME_UNITS and a_clean in _ENERGY_UNITS:
+        _, d_m3_factor = unit_dimension(d)
+        d_scf = d_m3_factor / CONVERSIONS["scf_to_m3"]
+        d_btu = d_scf * NG_HHV_BTU_PER_SCF
+        d_mj = d_btu * CONVERSIONS["btu_to_kj"] / 1000.0
+        _, a_mj_factor = unit_dimension(a)
+        return a_mj_factor / d_mj
+
+    # Refuse conversion between gas volume and liquid volume
+    if (a_clean in _GAS_VOLUME_UNITS and d_clean in _LIQUID_VOLUME_UNITS) or \
+       (a_clean in _LIQUID_VOLUME_UNITS and d_clean in _GAS_VOLUME_UNITS):
+        from input_validation import ValidationError
+        raise ValidationError(f"Activity unit '{activity_unit}' cannot be converted to the factor's unit 'per {den}'",
+                              "unit")
 
     def dim(u):
         parts = u.split("-")

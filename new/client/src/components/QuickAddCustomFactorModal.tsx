@@ -191,14 +191,13 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
             {/* Factor Name */}
             <div>
               <label
-                className="block! text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]! mb-[4px]!"
+                className="block text-sm font-medium text-text mb-1.5"
               >
                 {t("Factor Name")}{" "}<span className="text-[color:var(--color-red-700)]!">*</span>
               </label>
               <Input
                 type="text"
-               
-                className="w-full! p-[8px_10px]! text-[length:0.85rem]!"
+                className="w-full h-10 text-base"
                 placeholder={t("e.g. Hassi R'Mel Fuel Gas 2026, Skikda Distillate")}
                 value={formData.factor_name}
                 onChange={(e) => handleChange("factor_name", e.target.value)}
@@ -210,7 +209,7 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
             <div className="[display:grid]! [grid-template-columns:1fr_1fr]! [gap:12px]!">
               <div>
                 <label
-                  className="block! text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]! mb-[4px]!"
+                  className="block text-sm font-medium text-text mb-1.5"
                 >
                   {t("Factor Unit")}{" "}<span className="text-[color:var(--color-red-700)]!">*</span>
                 </label>
@@ -231,14 +230,13 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
 
               <div>
                 <label
-                  className="block! text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]! mb-[4px]!"
+                  className="block text-sm font-medium text-text mb-1.5"
                 >
                   {t("Parent / Reference Fuel")}
                 </label>
                 <Input
                   type="text"
-                 
-                  className="w-full! p-[8px_10px]! text-[length:0.85rem]!"
+                  className="w-full h-10 text-base"
                   placeholder={t("e.g. Natural Gas, Diesel")}
                   value={formData.parent_fuel}
                   onChange={(e) => handleChange("parent_fuel", e.target.value)}
@@ -251,22 +249,21 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
               className="bg-[color:var(--color-legacy-f9fafb)]! [border:1px_solid_var(--color-legacy-e5e7eb)]! rounded-[8px]! p-[12px]!"
             >
               <div
-                className="text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-4b5563)]! mb-[8px]! uppercase! [letter-spacing:0.025em]!"
+                className="text-xs font-semibold text-text mb-2 uppercase tracking-wide"
               >
                 {t("Emission Factors (")}{formData.unit})
               </div>
               <div className="[display:grid]! [grid-template-columns:1fr_1fr_1fr]! [gap:10px]!">
                 <div>
                   <label
-                    className="block! text-[length:0.7rem]! text-[color:var(--color-legacy-6b7280)]! mb-[2px]!"
+                    className="block text-xs font-semibold text-text mb-1"
                   >
                     {t("CO₂ Factor")}
                   </label>
                   <Input
                     type="number"
                     step="any"
-                   
-                    className="w-full! p-[6px_8px]! text-[length:0.85rem]!"
+                    className="w-full h-10 text-base"
                     placeholder="e.g. 53.06"
                     value={formData.co2_factor}
                     onChange={(e) => handleChange("co2_factor", e.target.value)}
@@ -274,15 +271,14 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
                 </div>
                 <div>
                   <label
-                    className="block! text-[length:0.7rem]! text-[color:var(--color-legacy-6b7280)]! mb-[2px]!"
+                    className="block text-xs font-semibold text-text mb-1"
                   >
                     {t("CH₄ Factor")}
                   </label>
                   <Input
                     type="number"
                     step="any"
-                   
-                    className="w-full! p-[6px_8px]! text-[length:0.85rem]!"
+                    className="w-full h-10 text-base"
                     placeholder="e.g. 0.001"
                     value={formData.ch4_factor}
                     onChange={(e) => handleChange("ch4_factor", e.target.value)}
@@ -290,15 +286,14 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
                 </div>
                 <div>
                   <label
-                    className="block! text-[length:0.7rem]! text-[color:var(--color-legacy-6b7280)]! mb-[2px]!"
+                    className="block text-xs font-semibold text-text mb-1"
                   >
                     {t("N₂O Factor")}
                   </label>
                   <Input
                     type="number"
                     step="any"
-                   
-                    className="w-full! p-[6px_8px]! text-[length:0.85rem]!"
+                    className="w-full h-10 text-base"
                     placeholder="e.g. 0.0001"
                     value={formData.n2o_factor}
                     onChange={(e) => handleChange("n2o_factor", e.target.value)}
@@ -311,15 +306,14 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
             <div className="[display:grid]! [grid-template-columns:1fr_1fr]! [gap:12px]!">
               <div>
                 <label
-                  className="block! text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]! mb-[4px]!"
+                  className="block text-sm font-medium text-text mb-1.5"
                 >
                   {t("Heating Value (HHV)")}
                 </label>
                 <Input
                   type="number"
                   step="any"
-                 
-                  className="w-full! p-[8px_10px]! text-[length:0.85rem]!"
+                  className="w-full h-10 text-base"
                   placeholder={t("e.g. 1085 (Btu/scf)")}
                   value={formData.hhv_factor}
                   onChange={(e) => handleChange("hhv_factor", e.target.value)}
@@ -328,7 +322,7 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
 
               <div>
                 <label
-                  className="block! text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]! mb-[4px]!"
+                  className="block text-sm font-medium text-text mb-1.5"
                 >
                   {t("Factor Uncertainty (±%)")}
                 </label>
@@ -336,8 +330,7 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
                   <Input
                     type="number"
                     step="0.1"
-                   
-                    className="w-full! p-[8px_10px]! text-[length:0.85rem]!"
+                    className="w-full h-10 text-base"
                     placeholder="7.0"
                     value={formData.uncertainty}
                     onChange={(e) => handleChange("uncertainty", e.target.value)}
@@ -449,7 +442,7 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
                           <Input
                             type="number"
                             step="any"
-                            className="w-full! p-[3px_6px]! text-[length:0.75rem]! font-mono"
+                            className="w-full h-8 px-2 text-xs font-mono"
                             placeholder={fld.placeholder}
                             value={gasComp[fld.key]}
                             onChange={(e) => setGasComp({ ...gasComp, [fld.key]: e.target.value })}
@@ -465,14 +458,13 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
             {/* Audit Reference / Source */}
             <div>
               <label
-                className="block! text-[length:0.75rem]! font-semibold! text-[color:var(--color-legacy-374151)]! mb-[4px]!"
+                className="block text-sm font-medium text-text mb-1.5"
               >
                 {t("Data Source / Lab Certificate Reference")}
               </label>
               <Input
                 type="text"
-               
-                className="w-full! p-[8px_10px]! text-[length:0.85rem]!"
+                className="w-full h-10 text-base"
                 placeholder={t("e.g. Sonatrach Analysis Certificate #2026-GC-041, Naftal Slip")}
                 value={formData.source}
                 onChange={(e) => handleChange("source", e.target.value)}
@@ -486,18 +478,16 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
           >
             <button
               type="button"
-              className="btn btn-secondary p-[8px_16px]! text-[length:0.85rem]!"
+              className="btn btn-secondary px-4 py-2 text-sm font-medium h-10"
               onClick={onClose}
               disabled={loading}
-             
             >
               {t("Cancel")}
             </button>
             <button
               type="submit"
-              className="btn btn-primary p-[8px_20px]! text-[length:0.85rem]! flex! items-center! gap-[6px]!"
+              className="btn btn-primary px-5 py-2 text-sm font-medium h-10 flex items-center gap-2"
               disabled={loading}
-             
             >
               {loading ? (
                 t("Saving...")

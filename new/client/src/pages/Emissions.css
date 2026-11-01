@@ -3,12 +3,9 @@
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
   }
-
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
@@ -27,7 +24,7 @@
   padding: 30px;
   margin-bottom: 30px;
   box-shadow: var(--shadow-raised);
-  animation: fadeIn 0.3s ease-out;
+  animation: fadeIn 0.2s ease-out;
 }
 
 .input-group {
@@ -52,7 +49,7 @@
   color: var(--text-primary);
   font-family: inherit;
   font-size: var(--text-md);
-  transition: all 0.2s;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 /* Custom Dropdown Styling to match Inputs */
@@ -66,11 +63,11 @@
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: border-color 0.15s ease;
 }
 
 .custom-dropdown.open .dropdown-selected {
-  border-color: var(--accent-color);
+  border-color: var(--color-brand-500);
   box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.1);
 }
 
@@ -98,8 +95,8 @@
   font-weight: 600;
   font-size: var(--text-base);
   cursor: pointer;
-  transition: all 0.2s ease;
-  border: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  border: 1px solid transparent;
   font-family: inherit;
   display: inline-flex;
   align-items: center;
@@ -107,15 +104,15 @@
 }
 
 .action-btn.primary {
-  background: var(--accent-gradient, linear-gradient(135deg, var(--color-brand-500) 0%, var(--color-brand-400) 100%));
-  color: white;
-  box-shadow: 0 4px 14px rgba(255, 102, 0, 0.25);
+  background: var(--color-brand-600);
+  color: var(--color-white);
+  border-color: var(--color-brand-700);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .action-btn.primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--color-brand-600) 0%, var(--color-legacy-ff7519) 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(255, 102, 0, 0.35);
+  background: var(--color-brand-700);
+  border-color: var(--color-brand-800);
 }
 
 .action-btn.primary:disabled {
@@ -131,13 +128,12 @@
 
 .action-btn.secondary:hover {
   background: var(--bg-hover, rgba(255, 247, 237, 0.85));
-  border-color: var(--accent-color, var(--color-brand-500));
-  transform: translateY(-1px);
+  border-color: var(--color-ink-300);
 }
 
 .section-title {
   font-size: var(--text-lg);
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text-primary, var(--color-ink-900));
   margin-bottom: 18px;
   padding-bottom: 10px;
@@ -151,22 +147,14 @@
    SCOPE SWITCHER TABS (In-form Quick Switcher)
    ============================================================ */
 
-/* ============================================================
-   RESPONSIVE DESIGN (TABLET & MOBILE)
-   ============================================================ */
-
-
-
-/* Scope switcher (moved out of the old second header bar; breadcrumbs now come from the app shell) */
+/* Scope switcher */
 
 .scope-tag {
   display: inline-block;
   font-size: var(--text-xs);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 3px 10px;
-  border-radius: var(--radius-lg);
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
   margin-bottom: 8px;
-  line-height: 1;
+  line-height: 1.2;
 }

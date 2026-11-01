@@ -1,5 +1,5 @@
 import AuditTrailFiltersBarCard from "./audit-trail/AuditTrailFiltersBarCard";
-import AuditTrailAuditTimeline from "./audit-trail/AuditTrailAuditTimeline";
+import AuditTrailAuditTimeline, { formatAuditDescription } from "./audit-trail/AuditTrailAuditTimeline";
 import { AuditEmpty, AuditHeader, AuditIntegrityCheck, AuditPagination, AuditSkeleton, AuditStats, actionStyle } from "./audit-trail/AuditTrailChrome";
 import { Badge, DataTable, Dialog, type BadgeTone } from "../ui";
 import React, { useState, useEffect, useCallback } from "react";
@@ -9,6 +9,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { t } from "../i18n";
 import { useAuth } from "../context/AuthContext";
 import { canVerifyAuditChain } from "../app/access";
+import { GovernanceNavTabs } from "../components/NavigationTabs";
 
 export interface AuditLog {
   id: string | number;
@@ -71,7 +72,7 @@ const AuditTrail: React.FC = () => {
 
   // Expanded Raw JSON Inspection Set
   const [expandedRows, setExpandedRows] = useState<Set<string | number>>(new Set());
-  const [view, setView] = useState<string>("table");
+  const [view, setView] = useState<string>("timeline");
   const [detailLog, setDetailLog] = useState<AuditLog | null>(null);
 
   // Debounce search query changes
@@ -354,7 +355,7 @@ const AuditTrail: React.FC = () => {
     {
       id: "description",
       header: t("Description"),
-      accessorFn: (l: AuditLog) => l.description || l.details || t("No details recorded"),
+      accessorFn: (l: AuditLog) => formatAuditDescription(l.description || l.details) || t("No details recorded"),
       cell: (c) => <span className="block max-w-[32rem] truncate" title={c.getValue()}>{c.getValue()}</span>,
     },
     { id: "ref", header: t("Ref"), accessorFn: (l: AuditLog) => l.entityId || l.recordId || "-" },
@@ -387,6 +388,7 @@ const AuditTrail: React.FC = () => {
   return (
     <div>
       <div className="mx-auto max-w-[1400px] px-4 py-5 md:px-7 md:py-6">
+        <GovernanceNavTabs className="mb-4" />
         <AuditHeader view={view} onView={setView} refreshing={isRefreshing} onRefresh={refreshAll} onExport={handleExport} />
         {canVerifyAuditChain(user) && <AuditIntegrityCheck />}
         <AuditStats stats={stats} />
@@ -464,7 +466,7 @@ const AuditTrail: React.FC = () => {
       >
         {detailLog && (
           <div className="flex flex-col gap-3">
-            <p className="text-base text-text">{detailLog.description || detailLog.details || t("No details recorded")}</p>
+            <p className="text-base text-text">{formatAuditDescription(detailLog.description || detailLog.details) || t("No details recorded")}</p>
             <pre className="max-h-96 overflow-auto rounded-md bg-ink-50 p-3 text-sm text-text">
               {JSON.stringify(detailLog, null, 2)}
             </pre>

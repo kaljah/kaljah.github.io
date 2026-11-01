@@ -245,7 +245,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
 
             <div className="form-grid-2 mb-[0px]!">
               <div className="input-group mb-[0px]!">
-                <label className="text-[length:0.8rem]!">{t("CH₄ (mol %)")}</label>
+                <label className="block text-sm font-medium text-text mb-1.5">{t("CH₄ (mol %)")}</label>
                 <Input
                   type="number"
                   min="0"
@@ -257,7 +257,7 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
                 />
               </div>
               <div className="input-group mb-[0px]!">
-                <label className="text-[length:0.8rem]!">{t("CO₂ (mol %)")}</label>
+                <label className="block text-sm font-medium text-text mb-1.5">{t("CO₂ (mol %)")}</label>
                 <Input
                   type="number"
                   min="0"
@@ -416,11 +416,12 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
           </div>
 
           {/* Gas Volume Unit Selector for Partitioning */}
-          <div className="mb-[10px]! flex! justify-end!">
-            <div className="flex! items-center! gap-[6px]!">
-              <span className="text-[length:0.75rem]! text-[color:var(--color-legacy-6b7280)]!">{t("Unit")}</span>
+          <div className="mb-2 flex justify-end">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-text-secondary">{t("Unit")}</span>
               <NativeSelect
-                className="mole-input w-[110px]! max-[600px]:w-full! p-[4px_8px]! text-[length:0.8rem]!"
+                wrapperClassName="w-32 shrink-0"
+                className="h-10 text-sm font-medium"
                 value={data.gas_volume_unit || "scf"}
                 onChange={(e) => onChange("gas_volume_unit", e.target.value)}
               >
@@ -434,27 +435,27 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
           </div>
 
           {/* DISPOSITION PARTITIONING CARD (Zero Double-Counting) */}
-          <div className="p-[16px]! bg-[color:var(--color-ink-50)]! [border:1px_solid_var(--color-ink-300)]! rounded-[8px]! mb-[16px]!">
-            <div className="flex! items-center! justify-between! mb-[12px]!">
-              <div className="flex! items-center! gap-[6px]!">
-                <Flame size={16} className="text-[color:var(--color-legacy-ea580c)]!" />
-                <span className="font-bold! text-[length:0.85rem]! text-[color:var(--color-ink-800)]!">{t("Gas disposition")}</span>
+          <div className="p-4 bg-ink-50/60 border border-border rounded-lg mb-4">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-1.5">
+                <Flame size={16} className="text-orange-600" />
+                <span className="font-semibold text-sm text-text">{t("Gas disposition")}</span>
               </div>
             </div>
 
-            <div className="form-grid-3 mb-[12px]!">
-              <div className="input-group mb-[0px]!">
-                <label className="text-[length:0.78rem]!">{t("Produced")}</label>
-                <input
+            <div className="form-grid-3 mb-0!">
+              <div className="input-group mb-0!">
+                <label className="block text-sm font-medium text-text mb-1.5">{t("Produced")}</label>
+                <Input
                   type="text"
-                  className="mole-input readonly"
+                  className="bg-ink-50 cursor-not-allowed font-medium"
                   disabled
                   value={`${formatNumber(totalProducedGasScf, 1)} scf`}
                 />
               </div>
 
-              <div className="input-group mb-[0px]!">
-                <label className="text-[length:0.78rem]!">{t("Recovered (")}{gasVolUnit})</label>
+              <div className="input-group mb-0!">
+                <label className="block text-sm font-medium text-text mb-1.5">{t("Recovered (")}{gasVolUnit})</label>
                 <Input
                   type="number"
                   min="0"
@@ -465,8 +466,8 @@ export const AssociatedGasVentingForm: React.FC<AssociatedGasVentingFormProps> =
                 />
               </div>
 
-              <div className="input-group mb-[0px]!">
-                <label className="text-[length:0.78rem]!">{t("Flared (")}{gasVolUnit})</label>
+              <div className="input-group mb-0!">
+                <label className="block text-sm font-medium text-text mb-1.5">{t("Flared (")}{gasVolUnit})</label>
                 <Input
                   type="number"
                   min="0"

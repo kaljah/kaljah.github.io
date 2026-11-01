@@ -125,14 +125,40 @@ def get_sbti_trajectory():
             return scope3_actuals.get(yr) if yr in scope3_actuals else None
         return actuals.get(yr) if yr in actuals else None
 
+    from extensions import db
     restricted = allowed_fids is not None or bool(parsed_fids)
+    if restricted:
+        corp_s1 = db.session.query(
+            func.sum(func.coalesce(Emission.co2e_total, Emission.co2_emissions, 0))
+        ).filter(Emission.year == base_year, Emission.status == "Verified", Emission.is_test == False).scalar() or 0.0
+        corp_s2 = db.session.query(
+            func.sum(func.coalesce(Scope2Emission.co2e_location_based, Scope2Emission.co2e, 0))
+        ).filter(Scope2Emission.year == base_year, Scope2Emission.status == "Verified").scalar() or 0.0
+        corp_s3 = db.session.query(
+            func.sum(func.coalesce(Scope3Emission.co2e, 0))
+        ).filter(Scope3Emission.year == base_year, Scope3Emission.status == "Verified").scalar() or 0.0
+        corp_base_total = float(corp_s1)
+        if coverage in ("S1S2", "S1S2S3"):
+            corp_base_total += float(corp_s2)
+        if coverage in ("S3", "S1S2S3"):
+            corp_base_total += float(corp_s3)
+        actual_base_total = corp_base_total if corp_base_total > 0 else actuals.get(base_year, 0.0)
+    else:
+        actual_base_total = actuals.get(base_year, 0.0)
+    view_base_actual = series(base_year) or 0.0
+
     if view == coverage and not restricted:
-        baseline = float(target.base_year_emissions)
+        baseline = float(target.base_year_emissions) if target.base_year_emissions else view_base_actual
         baseline_source = "target"
     else:
-        # scope subset or a regional / facility view: its own base-year actual is the baseline
-        baseline = series(base_year)
-        baseline_source = "base-year actual for this view"
+        # scope subset or a regional / facility view: scale proportionally so subset cannot exceed total target baseline
+        if target.base_year_emissions and actual_base_total > 0 and view_base_actual > 0:
+            share = min(1.0, view_base_actual / actual_base_total)
+            baseline = float(target.base_year_emissions) * share
+            baseline_source = "proportional target share for this view"
+        else:
+            baseline = view_base_actual
+            baseline_source = "base-year actual for this view"
     residual_floor = baseline * 0.10 if baseline else None
 
     def line(r, yrs):
@@ -141,6 +167,11 @@ def get_sbti_trajectory():
         return round(max(residual_floor, baseline * (1 - r * yrs)), 2)
 
     end_year = max(target_year, current_year)
+    max_month_res = db.session.query(func.max(Emission.month)).filter(
+        Emission.year == current_year, Emission.status == "Verified", Emission.is_test == False
+    ).scalar()
+    months_reported = int(max_month_res or 1)
+
     trajectory = []
     for yr in range(base_year, end_year + 1):
         d = yr - base_year
@@ -149,14 +180,20 @@ def get_sbti_trajectory():
         s3 = round(scope3_actuals.get(yr, 0), 2)
         has = yr in actuals
         val = series(yr)
+        is_partial = (yr == current_year)
+        actual_val = round(val, 2) if (val is not None and yr <= current_year) else None
+        annualized = round(val * (12.0 / months_reported), 2) if (is_partial and val is not None and months_reported > 0) else None
         trajectory.append({
             "year": str(yr),
             "sbti_target": line(rate, d),
             "sbti_15c": line(rate_15c, d),
             "sbti_wb2c": line(rate_wb2c, d),
             "bau_projection": round(baseline * (1.015 ** d), 2) if baseline else None,
-            "actual": round(val, 2) if (val is not None and yr <= current_year) else None,
-            "is_partial_year": yr == current_year,
+            "actual": actual_val,
+            "actual_ytd": actual_val if is_partial else None,
+            "actual_annualized": annualized,
+            "is_partial_year": is_partial,
+            "months_reported": months_reported if is_partial else 12,
             "scope1": s1 if has else 0,
             "scope2": s2 if has else 0,
             "scope3": s3 if has else 0,
@@ -187,8 +224,8 @@ def get_sbti_trajectory():
     def r2(v):
         return round(v, 2) if v is not None else None
 
-    labels = {"1.5C": "SBTi 1.5\u00b0C Linear Target", "WB2C": "SBTi Well-Below 2\u00b0C Linear Target",
-              "custom": "Custom Linear Target"}
+    labels = {"1.5C": "SBTi-aligned 1.5\u00b0C Linear Target (Indicative)", "WB2C": "SBTi-aligned Well-Below 2\u00b0C Linear Target (Indicative)",
+              "custom": "Custom Linear Target (Indicative)"}
     return jsonify({
         "has_target": True,
         "base_year": base_year,

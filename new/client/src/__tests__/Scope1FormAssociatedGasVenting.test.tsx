@@ -119,7 +119,9 @@ describe("Scope1Form Associated Gas Venting Integration", () => {
     expect(payload.calc_inputs.associated_gas_venting).toBeDefined();
     expect(payload.calc_inputs.associated_gas_venting.oil_production).toBe(10000);
     expect(payload.calc_inputs.associated_gas_venting.tier).toBe("tier1");
-    expect(mockToast.success).toHaveBeenCalledWith("Scope 1 entry added successfully");
+    expect(mockToast.success).toHaveBeenCalledWith(
+      expect.stringMatching(/Submitted for review|Scope 1 entry added successfully/),
+    );
   });
 
   it("selects Tier 2 GOR Balance, fills engineering parameters, and submits payload", async () => {

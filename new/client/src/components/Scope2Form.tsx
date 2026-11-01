@@ -286,7 +286,11 @@ export const Scope2Form: React.FC = () => {
       }
 
       await api.post("/scope2", payload);
-      toast.success(status === "Draft" ? t("Entry saved as draft") : t("Scope 2 entry added successfully"));
+      toast.success(
+        status === "Draft"
+          ? t("Entry saved as draft")
+          : t("Submitted for review. It will count in totals after approval."),
+      );
       setAmount("");
       setCurrentPage(1);
       loadEntries();

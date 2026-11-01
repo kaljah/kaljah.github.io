@@ -18,7 +18,7 @@ One computation feeds /intensity-stats (and batch-all) and /intensity-trend:
 from collections import defaultdict
 from datetime import datetime, timezone
 
-from sqlalchemy import func
+from sqlalchemy import func, or_, and_
 
 from extensions import db
 from models import Emission, Facility, OgmpSurvey, ProductionData, Scope2Emission, Scope3Emission
@@ -60,8 +60,8 @@ def segment_category(segment):
 
 
 def _blank():
-    return {"s1": 0.0, "co2": 0.0, "ch4": 0.0, "n2o": 0.0, "s2": 0.0, "s2_20": 0.0, "s3": 0.0,
-            "flaring_t": 0.0, "flaring_m3": 0.0, "ch4_split": defaultdict(float), "records": [],
+    return {"s1": 0.0, "co2": 0.0, "ch4": 0.0, "n2o": 0.0, "s2": 0.0, "s2_20": 0.0, "s3": 0.0, "s3_cat11": 0.0,
+            "flaring_t": 0.0, "flaring_m3": 0.0, "flaring_ledger_m3": 0.0, "flaring_reconciled_m3": 0.0, "ch4_split": defaultdict(float), "records": [],
             "boe": 0.0, "gas_m3": 0.0, "oil_bbl": 0.0, "gas_mscf": 0.0, "has_prod": False,
             "prod_unknown_units": 0, "top_down": None}
 
@@ -111,7 +111,14 @@ def intensity_cells(years=None, facility_id=None, activity=None, division=None, 
             c["oil_bbl"] += oil_b
 
     # scope 1 (row level: methane split, flaring volume, OGMP materiality)
-    s1 = yfilter(apply_scope(Emission.query, Emission, **scope), Emission).filter(Emission.status.in_(st)).all()
+    # Strictly exclude rejected records (both status column and [Rejected] qa_flags)
+    s1 = (
+        yfilter(apply_scope(Emission.query, Emission, **scope), Emission)
+        .filter(Emission.status.in_(st))
+        .filter(~Emission.status.ilike("%rejected%"))
+        .filter(or_(Emission.qa_flag.is_(None), and_(~Emission.qa_flag.ilike("[rejected]%"), ~Emission.qa_flag.ilike("rejected:%"))))
+        .all()
+    )
     for e in s1:
         c = cells[(e.facility_id, e.year)]
         ch4 = float(e.ch4_emissions or 0)
@@ -126,6 +133,7 @@ def intensity_cells(years=None, facility_id=None, activity=None, division=None, 
             c["flaring_t"] += float(e.co2e_total or 0)
             vol = gas_volume_m3(e.quantity, e.unit, e.year, e.month)
             if vol:
+                c["flaring_ledger_m3"] += vol
                 c["flaring_m3"] += vol
         c["records"].append(e)
 
@@ -144,10 +152,13 @@ def intensity_cells(years=None, facility_id=None, activity=None, division=None, 
         c["s2_20"] += mkt20 if market else loc20
 
     # Scope 3
-    q3 = db.session.query(Scope3Emission.facility_id, Scope3Emission.year, func.sum(Scope3Emission.co2e))
+    q3 = db.session.query(Scope3Emission.facility_id, Scope3Emission.year, Scope3Emission.category, func.sum(Scope3Emission.co2e))
     q3 = yfilter(apply_scope(q3, Scope3Emission, **scope), Scope3Emission).filter(Scope3Emission.status.in_(st))
-    for fid, yr, val in q3.group_by(Scope3Emission.facility_id, Scope3Emission.year).all():
+    for fid, yr, cat, val in q3.group_by(Scope3Emission.facility_id, Scope3Emission.year, Scope3Emission.category).all():
         cells[(fid, yr)]["s3"] += float(val or 0)
+        norm_cat = str(cat or "").strip().lower()
+        if "11" in norm_cat or "use of sold" in norm_cat:
+            cells[(fid, yr)]["s3_cat11"] += float(val or 0)
 
     # OGMP top-down: mean of the surveys of each facility-year (each is an annual estimate, D-02)
     q = db.session.query(OgmpSurvey.facility_id, OgmpSurvey.year, func.avg(OgmpSurvey.estimated_annual_tch4))
@@ -155,6 +166,17 @@ def intensity_cells(years=None, facility_id=None, activity=None, division=None, 
     for fid, yr, avg in q.group_by(OgmpSurvey.facility_id, OgmpSurvey.year).all():
         if avg is not None:
             cells[(fid, yr)]["top_down"] = float(avg)
+    from models import FlaringDetail
+    q_fd = yfilter(apply_scope(FlaringDetail.query, FlaringDetail, **scope), FlaringDetail).filter(FlaringDetail.status.in_(st))
+    for fd in q_fd.all():
+        stream_vol = (float(fd.routine_knm3 or 0.0) + float(fd.non_routine_knm3 or 0.0) + float(fd.safety_knm3 or 0.0)) * 1000.0
+        if stream_vol > 0:
+            cells[(fd.facility_id, fd.year)]["flaring_reconciled_m3"] += stream_vol
+
+    for c in cells.values():
+        if c["flaring_reconciled_m3"] > 0:
+            c["flaring_m3"] = c["flaring_reconciled_m3"]
+
     return cells
 
 
@@ -167,7 +189,7 @@ def facility_row(fid, cell_list, fac, year_value, gwp_horizon="100"):
     years_used, top_down_years = [], []
     for yr, c in cell_list:
         for tgt in ([total, matched] if c["has_prod"] else [total]):
-            for k in ("s1", "co2", "ch4", "n2o", "s2", "s2_20", "s3", "flaring_t", "flaring_m3", "boe", "gas_m3",
+            for k in ("s1", "co2", "ch4", "n2o", "s2", "s2_20", "s3", "s3_cat11", "flaring_t", "flaring_m3", "flaring_ledger_m3", "flaring_reconciled_m3", "boe", "gas_m3",
                       "oil_bbl", "gas_mscf"):
                 tgt[k] += c[k]
             for k, v in c["ch4_split"].items():
@@ -223,8 +245,33 @@ def facility_row(fid, cell_list, fac, year_value, gwp_horizon="100"):
     else:
         variance, variance_flag, rec_status, ratio = None, False, "No Activity", None
 
+    # Check if actual surveys have recorded discrepancies
+    surveys_have_discrepancy = False
+    if fac:
+        try:
+            from models import OgmpSurvey
+            sq = OgmpSurvey.query.filter_by(facility_id=fac.id)
+            if year_value and year_value != "all" and str(year_value).isdigit():
+                sq = sq.filter_by(year=int(year_value))
+            actual_surveys = sq.all()
+            if actual_surveys:
+                surveys_have_discrepancy = any(
+                    (s.reconciliation_status or "").lower() == "discrepancy detected"
+                    or s.variance_flag is True
+                    or (s.variance_pct is not None and abs(s.variance_pct) > threshold)
+                    or (float(s.bottom_up_tch4 or 0.0) == 0.0 and float(s.estimated_annual_tch4 or 0.0) > 0.0)
+                    for s in actual_surveys
+                )
+        except Exception:
+            pass
+
+    if surveys_have_discrepancy:
+        variance_flag = True
+        rec_status = "Discrepancy Detected"
+
     level = compute_facility_ogmp_level(
         fac, year=year_value, top_down_tch4=td or None, bottom_up_tch4=bu_td_years or (total["ch4"] or None),
+        reconciled_survey=(not surveys_have_discrepancy) if (td > 0 and bu_td_years > 0) else None,
         bottom_up_level=_bottom_up_level(total["records"]),
     ) if fac else 1
 
@@ -240,8 +287,10 @@ def facility_row(fid, cell_list, fac, year_value, gwp_horizon="100"):
     deadline = 3 if op_status == "operated" else 5
     gold_year = base_year + deadline
     cal_year = int(year_value) if year_value not in (None, "all") and str(year_value).isdigit() else datetime.now(timezone.utc).year
-    if level == 5:
+    if level == 5 and not surveys_have_discrepancy:
         pathway = "Gold Standard Achieved (Level 5)"
+    elif surveys_have_discrepancy or (level == 4 and variance_flag):
+        pathway = "Level 4 (Discrepancy Detected - Remediation Required)"
     elif level == 4 and loss is not None and target is not None and loss <= target:
         pathway = "Level 4 Pathway (Target Met)"
     elif cal_year <= gold_year:
@@ -338,6 +387,11 @@ def facility_row(fid, cell_list, fac, year_value, gwp_horizon="100"):
         "total_gas_m3": gas_m3,
         "production_rows_with_unknown_units": total["prod_unknown_units"],
         "flaring_volume": total["flaring_m3"],
+        "flaring_m3": total["flaring_m3"],
+        "flaring_ledger_volume": total["flaring_ledger_m3"],
+        "flaring_ledger_m3": total["flaring_ledger_m3"],
+        "flaring_reconciled_volume": total["flaring_reconciled_m3"],
+        "flaring_reconciled_m3": total["flaring_reconciled_m3"],
         "flaring_emissions": total["flaring_t"],
         # totals over every requested year (display); intensities use the matched subset
         "total_co2e": total["s1"] + total["s2"],
@@ -346,6 +400,8 @@ def facility_row(fid, cell_list, fac, year_value, gwp_horizon="100"):
         "total_scope1_gwp20": s1_20,
         "total_scope2": total["s2"],
         "total_scope3": total["s3"],
+        "total_scope3_cat11": total["s3_cat11"],
+        "scope3_cat11_missing": bool(matched["boe"] > 0 and matched["s3_cat11"] == 0.0),
         "total_co2": total["co2"],
         "total_ch4": total["ch4"],
         "total_n2o": total["n2o"],

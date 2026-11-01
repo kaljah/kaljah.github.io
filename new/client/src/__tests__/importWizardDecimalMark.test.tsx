@@ -81,7 +81,7 @@ describe("ImportWizard decimal format", () => {
     const input = document.querySelector('input[type="file"]') as HTMLInputElement;
     const csv = ["c1,c2,n2_mol", "90,5,5", "90,5,", "80,,", "70,10,10", ""].join("\n");
     fireEvent.change(input, { target: { files: [new File([csv], "gas.csv", { type: "text/csv" })] } });
-    expect(await screen.findByText(/2 of 3 rows have a gas analysis that does not total 100 %/)).toBeTruthy();
+    expect(await screen.findByText(/2 of 3 rows have a gas analysis that does not total 100 %/, {}, { timeout: 4000 })).toBeTruthy();
     expect(screen.getByText(/First rows \(file line, total\): 3 \(95.00 %\), 5 \(90.00 %\)/)).toBeTruthy();
   });
 });

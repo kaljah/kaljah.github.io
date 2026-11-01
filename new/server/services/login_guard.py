@@ -38,8 +38,15 @@ def record_failed_sign_in(email, user):
     from utils import log_activity_and_notify
 
     try:
-        log_activity_and_notify(action="FAILED_LOGIN", record_id=str(user.id) if user else "", user=None,
-                                request=request, entity="User", details=f"Failed sign-in for {email[:120]}")
+        actor_email = (user.email if user and user.email else email) or "Unknown User"
+        log_activity_and_notify(
+            action="FAILED_LOGIN",
+            record_id=str(user.id) if user else "",
+            user=actor_email,
+            request=request,
+            entity="User",
+            details=f"Failed sign-in for {email[:120]}",
+        )
         db.session.commit()
     except Exception as e:
         db.session.rollback()
@@ -48,7 +55,7 @@ def record_failed_sign_in(email, user):
 
 def validate_password_complexity(password: str):
     """
-    Validates password against NIST SP 800-63B / corporate complexity rules:
+    Validates password against enterprise complexity policy:
     - Minimum 10 characters
     - At least 1 uppercase letter
     - At least 1 lowercase letter

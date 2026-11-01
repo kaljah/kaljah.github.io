@@ -1,9 +1,8 @@
-/* Staggered entrances for dashboard sections */
-
+/* Entrance animation */
 @keyframes dashboardFadeIn {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
@@ -12,60 +11,34 @@
 }
 
 /* Header Row */
-
-
 .grid-title {
   font-size: var(--text-xl);
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text-primary, var(--color-ink-900));
-  letter-spacing: -0.02em;
+  letter-spacing: normal;
   margin: 0;
 }
 
 .pulse-dot {
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
   background: var(--color-green-500);
   border-radius: 50%;
-  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
 }
 
-.pulse-dot::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--color-green-500);
-  border-radius: 50%;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); opacity: 0.8; }
-  100% { transform: scale(2.8); opacity: 0; }
-}
-
-/* Hero Card - Modern Glass */
+/* Hero Card - Crafted Surface */
 .hero-card {
-  padding: 28px 32px;
+  padding: 24px;
   border-radius: var(--radius-lg);
   position: relative;
   overflow: hidden;
+  border-top: 2px solid var(--color-brand-500);
 }
 
-.hero-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--accent-color) 0%, var(--color-brand-400) 50%, transparent 100%);
-}
-
-/* Charts Section */
-
-/* Goal Progress Badge */
-
+/* Header & Stat Labels */
 .hero-header {
   display: flex;
   justify-content: space-between;
@@ -74,18 +47,15 @@
 }
 
 .stat-label {
-  font-size: var(--text-base);
-  font-weight: 600;
+  font-size: var(--text-sm);
+  font-weight: 500;
   color: var(--text-secondary, var(--color-ink-500));
-  margin-bottom: 12px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  margin-bottom: 8px;
+  text-transform: none;
+  letter-spacing: normal;
 }
 
-/* Categorical Card */
-
 /* Detailed Table Refinements */
-
 .data-table {
   width: 100%;
   border-collapse: collapse;
@@ -96,10 +66,11 @@
   padding: 12px 16px;
   background: var(--color-ink-50);
   color: var(--color-ink-600);
-  font-weight: 600;
+  font-weight: 500;
   font-size: var(--text-sm);
-  text-transform: uppercase;
-  border-bottom: 2px solid var(--color-ink-200);
+  text-transform: none;
+  letter-spacing: normal;
+  border-bottom: 1px solid var(--color-ink-200);
 }
 
 .data-table td {
@@ -110,23 +81,23 @@
 }
 
 .data-table tr:hover:not(.header-divider) td {
-  background: var(--color-legacy-fffafa);
+  background: var(--color-ink-50);
 }
 
 .header-divider td {
   background: var(--color-ink-100);
-  font-weight: 700;
-  font-size: var(--text-sm);
-  text-transform: uppercase;
+  font-weight: 600;
+  font-size: var(--text-xs);
+  text-transform: none;
+  letter-spacing: normal;
   color: var(--color-ink-600);
   padding: 8px 16px;
-  letter-spacing: 0.5px;
 }
 
 .data-table td.text-right {
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum";
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text-primary, var(--color-ink-900));
 }
 
@@ -135,11 +106,10 @@
 }
 
 .font-bold {
-  font-weight: 700;
+  font-weight: 600;
 }
 
-/* Sidebar Cards */
-
+/* Sidebar Indicators */
 .dot {
   width: 8px;
   height: 8px;
@@ -181,8 +151,6 @@
   }
 }
 
-/* Donut Chart Headers */
-
 /* Common Card Styles */
 .card {
   border-radius: var(--radius-lg);
@@ -196,29 +164,24 @@
 
 .form-group label {
   display: block;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--color-ink-600);
   margin-bottom: 8px;
   font-size: var(--text-base);
 }
 
-/* TopBar filter row: see TopBarFilters.css */
+/* TopBar filter row */
 .filter-wrapper {
   display: flex;
   align-items: center;
   flex: 0 0 auto;
-  min-width: 105px;
+  min-width: 104px;
 }
 
 /* ==================================================
    RESPONSIVE DESIGN (TABLET & MOBILE)
    ================================================== */
-
-/* Tablet (max-width: 1200px) */
-
-/* Mobile (max-width: 768px) */
 @media (max-width: 768px) {
-
   .hero-header {
     flex-direction: column;
     align-items: flex-start;
@@ -237,32 +200,27 @@
 }
 
 /* Collapsible card animations & styles */
-
 .card.collapsed-card {
   padding-bottom: 20px;
 }
-
-/* ==========================================================================
-   Pending Records Notification & Live Preview Banner
-   ========================================================================== */
 
 /* ==========================================================================
    Operational Flaring Streams & Regulatory Compliance (Decree 21-330)
    ========================================================================== */
 .flaring-kpi-banner {
   margin-top: 20px;
-  padding: 22px 24px;
+  padding: 24px;
   border-radius: var(--radius-lg);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 247, 237, 0.6) 100%);
-  border: 1px solid rgba(251, 146, 60, 0.3);
-  box-shadow: 0 4px 20px -2px rgba(234, 88, 12, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
+  background: var(--surface-card, var(--color-white));
+  border: 1px solid var(--border-color, var(--color-ink-200));
+  box-shadow: var(--shadow-xs, 0 1px 2px rgba(0, 0, 0, 0.05));
 }
 
 .stream-label {
   font-size: var(--text-sm);
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text-secondary, var(--color-ink-500));
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  text-transform: none;
+  letter-spacing: normal;
   margin-bottom: 6px;
 }

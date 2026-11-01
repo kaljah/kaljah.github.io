@@ -563,6 +563,7 @@ const ManageDataInner: React.FC = () => {
         source: '', description: ''
     });
     const [editingFactorId, setEditingFactorId] = useState<string | number | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
     const [prodForm, setProdForm] = useState<Record<string, any>>({
         activity: '', division: '', facility_id: '',
@@ -813,11 +814,15 @@ const ManageDataInner: React.FC = () => {
             return toast.error(t("Year and target emission amount (tCO₂e) are required"));
         }
         try {
-            await api.post('/goals', {
+            const res = await api.post('/goals', {
                 year: parseInt(String(goalForm.year), 10),
                 target_amount: parseFloat(String(goalForm.target_amount))
             });
-            toast.success(editingGoalYear ? t("Emission goal updated!") : t("Emission goal saved!"));
+            if (res.data?.warnings && res.data.warnings.length > 0) {
+                res.data.warnings.forEach((w: string) => toast.warning(w));
+            } else {
+                toast.success(editingGoalYear ? t("Emission goal updated!") : t("Emission goal saved!"));
+            }
             setEditingGoalYear(null);
             setGoalForm({ year: new Date().getFullYear(), target_amount: '' });
             fetchGoals();
@@ -944,6 +949,8 @@ const ManageDataInner: React.FC = () => {
 
     const handleSaveFactor = async () => {
         if (!factorForm.factor_name) return toast.error(t("Name required"));
+        if (isSubmitting) return;
+        setIsSubmitting(true);
         try {
             if (editingFactorId) {
                 await api.put(`/custom-factors/${editingFactorId}`, factorForm);
@@ -956,6 +963,7 @@ const ManageDataInner: React.FC = () => {
             setEditingFactorId(null);
             fetchCustomFactors();
         } catch (err: any) { toast.error(apiError(err, t("Failed to save factor"))); }
+        finally { setIsSubmitting(false); }
     };
 
     const handleDeleteFactor = (id: string | number) => {
@@ -1014,9 +1022,11 @@ const ManageDataInner: React.FC = () => {
     };
 
     const handleSaveProduction = async () => {
+        if (isSubmitting) return;
         if (!prodForm.facility_id || !prodForm.year || !prodForm.month) {
             return toast.error(t("Region, Year and Month are required"));
         }
+        setIsSubmitting(true);
         try {
             await api.post('/data/production', {
                 ...prodForm,
@@ -1041,26 +1051,33 @@ const ManageDataInner: React.FC = () => {
                 total_production_mmboe: '', saleable_production_mmboe: ''
             }));
         } catch (err: any) { toast.error(apiError(err, t("Failed to save production"))); }
+        finally { setIsSubmitting(false); }
     };
 
     const handleSaveSource = async () => {
         if (!sourceForm.facility_id || !sourceForm.name) return toast.error(t("Name and Region required"));
+        if (isSubmitting) return;
+        setIsSubmitting(true);
         try {
             await api.post('/sources', sourceForm);
             toast.success(t("Source added!"));
             fetchSources();
             setSourceForm({ ...sourceForm, name: '', equipment_id: '', fuel_type: '', design_capacity: '', description: '' });
         } catch (err: any) { toast.error(apiError(err, t("Failed to add source"))); }
+        finally { setIsSubmitting(false); }
     };
 
     const handleSaveMitigation = async () => {
         if (!mitigationForm.quantity_tco2e) return toast.error(t("Quantity required"));
+        if (isSubmitting) return;
+        setIsSubmitting(true);
         try {
             await api.post('/mitigation', mitigationForm);
             toast.success(t("Mitigation record saved!"));
             fetchMitigations();
             setMitigationForm({ ...mitigationForm, quantity_tco2e: '', notes: '', reference_id: '', name: '' });
         } catch (err: any) { toast.error(apiError(err, t("Failed to save mitigation"))); }
+        finally { setIsSubmitting(false); }
     };
 
     const handleSaveCbamExport = async () => {
@@ -1498,47 +1515,97 @@ const ManageDataInner: React.FC = () => {
     const filteredCbam = getFilteredCbam();
 
     const isAdminLike = Boolean(user?.role && ['admin', 'superuser'].includes(user.role));
-    const NAV = [
-        { id: 'pending', label: t("Pending Review"), icon: Clock, show: isAdminLike, count: pendingMetrics.totalCount },
-        { id: 'factors', label: t("Emission Factors"), show: true },
-        { id: 'facilities', label: t("Regions"), show: isAdminLike },
-        { id: 'production', label: t("Production Data"), show: true },
-        { id: 'sources', label: t("Emission Sources"), show: true },
-        { id: 'goals', label: t("Emission Goals & Base Years"), show: true },
-        { id: 'mitigation', label: t("Mitigation Projects"), show: true },
-        { id: 'ogmp', label: t("OGMP 2.0 Surveys"), show: true },
-        { id: 'ldar', label: t("LDAR & Fugitives"), show: true },
-        { id: 'cbam', label: t("CBAM Products"), show: true },
-    ].filter((n) => n.show);
+
+    interface NavGroupDef {
+        id: string;
+        title: string;
+        badge?: number;
+        items: {
+            id: string;
+            label: string;
+            icon?: any;
+            show: boolean;
+            count?: number;
+        }[];
+    }
+
+    const GROUPS: NavGroupDef[] = [
+        {
+            id: "setup",
+            title: t("Setup"),
+            items: [
+                { id: 'facilities', label: t("Regions"), show: isAdminLike },
+                { id: 'sources', label: t("Emission Sources"), show: true },
+                { id: 'factors', label: t("Emission Factors"), show: true },
+                { id: 'goals', label: t("Emission Goals & Base Years"), show: true },
+            ].filter((i) => i.show),
+        },
+        {
+            id: "operations",
+            title: t("Operations"),
+            items: [
+                { id: 'production', label: t("Production Data"), show: true },
+                { id: 'ogmp', label: t("OGMP 2.0 Surveys"), show: true },
+                { id: 'ldar', label: t("LDAR & Fugitives"), show: true },
+                { id: 'mitigation', label: t("Mitigation Projects"), show: true },
+                { id: 'cbam', label: t("CBAM Products"), show: true },
+            ].filter((i) => i.show),
+        },
+        {
+            id: "review",
+            title: t("Review"),
+            badge: pendingMetrics.totalCount,
+            items: [
+                { id: 'pending', label: t("Pending Review"), icon: Clock, show: isAdminLike, count: pendingMetrics.totalCount },
+            ].filter((i) => i.show),
+        },
+    ].filter((g) => g.items.length > 0);
+
     const hasFilters = filterActivity || filterDivision || filterRegion || filterYear;
     const filterSelect = "h-9 w-auto min-w-[140px] shrink-0 rounded-md border border-border bg-surface px-2.5 text-sm text-text transition-colors hover:border-ink-300 focus:border-brand-500";
 
     return (
         <div className="manage-data-page">
             <div className="manage-container">
-                <div className="manage-layout mx-auto grid w-full max-w-[1600px] items-start gap-6 p-4 md:grid-cols-[240px_1fr] md:p-6">
+                <div className="manage-layout mx-auto grid w-full max-w-[1900px] items-start gap-6 p-2 md:grid-cols-[240px_1fr] md:p-4">
                     {/* Sidebar Navigation */}
                     <Card as="aside" className="min-w-0 p-4 md:sticky md:top-6">
-                        <h3 className="m-0 mb-4 ml-3 text-sm font-semibold uppercase tracking-widest text-text-secondary">{t("Management")}</h3>
-                        <nav aria-label={t("Manage data sections")} className="flex flex-col gap-1 max-md:flex-row max-md:overflow-x-auto max-md:pb-1">
-                            {NAV.map((n) => (
-                                <button
-                                    key={n.id}
-                                    type="button"
-                                    data-testid={`manage-nav-${n.id}`}
-                                    aria-current={activeTab === n.id ? 'page' : undefined}
-                                    onClick={() => handleTabChange(n.id)}
-                                    className={cn(
-                                        "manage-nav-item flex w-full cursor-pointer items-center justify-between gap-3 rounded-md border-0 bg-transparent px-4 py-3 text-left text-base font-medium text-text-secondary transition-colors hover:bg-ink-100 hover:text-text max-md:w-auto! max-md:shrink-0 max-md:whitespace-nowrap",
-                                        activeTab === n.id && "active bg-brand-50 font-semibold text-link hover:bg-brand-50 hover:text-link",
-                                    )}
-                                >
-                                    <span className="inline-flex items-center gap-2">
-                                        {n.icon && <n.icon className="size-4" aria-hidden="true" />}
-                                        {n.label}
-                                    </span>
-                                    {n.count && n.count > 0 ? <Badge tone="warning" className="min-w-5 justify-center px-1.5">{n.count}</Badge> : null}
-                                </button>
+                        <h3 className="m-0 mb-3 ml-2 text-xs font-semibold uppercase tracking-wider text-text-secondary">{t("Data Management")}</h3>
+                        <nav aria-label={t("Manage data sections")} className="flex flex-col gap-4 max-md:flex-row max-md:overflow-x-auto max-md:pb-1">
+                            {GROUPS.map((group) => (
+                                <div key={group.id} className="flex flex-col gap-1">
+                                    <div className="flex items-center justify-between px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-ink-500 border-b border-border/50 pb-1 mb-0.5">
+                                        <span>{group.title}</span>
+                                        {group.badge != null && group.badge > 0 && (
+                                            <Badge tone="warning" className="text-[0.65rem] px-1.5 py-0 min-w-5 justify-center">
+                                                {group.badge}
+                                            </Badge>
+                                        )}
+                                    </div>
+                                    {group.items.map((n) => (
+                                        <button
+                                            key={n.id}
+                                            type="button"
+                                            data-testid={`manage-nav-${n.id}`}
+                                            aria-current={activeTab === n.id ? 'page' : undefined}
+                                            onClick={() => handleTabChange(n.id)}
+                                            className={cn(
+                                                "manage-nav-item flex w-full cursor-pointer items-center justify-between gap-3 rounded-md border-0 bg-transparent px-3 py-2 text-left text-sm font-medium text-text-secondary transition-colors hover:bg-ink-100 hover:text-text max-md:w-auto! max-md:shrink-0 max-md:whitespace-nowrap",
+                                                activeTab === n.id && "active bg-brand-50 font-semibold text-link hover:bg-brand-50 hover:text-link",
+                                            )}
+                                        >
+                                            <span className="inline-flex items-center gap-2">
+                                                {n.icon && <n.icon className="size-4" aria-hidden="true" />}
+                                                {n.label}
+                                            </span>
+                                            {n.count && n.count > 0 ? (
+                                                <Badge tone="warning" className="min-w-5 justify-center px-1.5 text-xs font-bold">
+                                                    {n.count}
+                                                </Badge>
+                                            ) : null}
+                                        </button>
+                                    ))}
+                                </div>
                             ))}
                         </nav>
                     </Card>
@@ -1651,6 +1718,7 @@ const ManageDataInner: React.FC = () => {
                                 handleEditFactor={handleEditFactor}
                                 handleFactorChange={handleFactorChange}
                                 handleSaveFactor={handleSaveFactor}
+                            isSubmitting={isSubmitting}
                                 setCurrentPage={setCurrentPage}
                                 setEditingFactorId={setEditingFactorId}
                                 setFactorForm={setFactorForm}
@@ -1694,6 +1762,7 @@ const ManageDataInner: React.FC = () => {
                                 getAvailableDivisions={getAvailableDivisions}
                                 handleDeleteProduction={handleDeleteProduction}
                                 handleSaveProduction={handleSaveProduction}
+                                isSubmitting={isSubmitting}
                                 isPrivileged={isPrivileged}
                                 openGasConverter={openGasConverter}
                                 openOilConverter={openOilConverter}
@@ -1718,6 +1787,7 @@ const ManageDataInner: React.FC = () => {
                                 getAvailableDivisions={getAvailableDivisions}
                                 handleDeleteSource={handleDeleteSource}
                                 handleSaveSource={handleSaveSource}
+                            isSubmitting={isSubmitting}
                                 isPrivileged={isPrivileged}
                                 setCurrentPage={setCurrentPage}
                                 setImportModal={setImportModal}
@@ -1758,12 +1828,14 @@ const ManageDataInner: React.FC = () => {
                                 ACTIVITY_LABELS={ACTIVITY_LABELS}
                                 ITEMS_PER_PAGE={ITEMS_PER_PAGE}
                                 currentPage={currentPage}
+                                exportToCSV={exportToCSV}
                                 facilities={facilities}
                                 filteredMitigations={filteredMitigations}
                                 getAvailableActivities={getAvailableActivities}
                                 getAvailableDivisions={getAvailableDivisions}
                                 handleDeleteMitigation={handleDeleteMitigation}
                                 handleSaveMitigation={handleSaveMitigation}
+                            isSubmitting={isSubmitting}
                                 isPrivileged={isPrivileged}
                                 mitigationForm={mitigationForm}
                                 mitigations={mitigations}

@@ -11,6 +11,7 @@ import { controlClass } from '../components/import-wizard/mapping';
 import { QaKpis, DiagnosticsPanel, UncertaintyPanel } from './qa/QaPanels';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorBoundary from '../components/ErrorBoundary';
+import { ReviewNavTabs } from '../components/NavigationTabs';
 import { t } from "../i18n";
 
 const PAGE_SIZE = 100;
@@ -322,6 +323,7 @@ export default function QADashboard() {
     return (
         <ErrorBoundary>
             <Page className={cn("max-w-[1600px] px-4 pb-12 pt-6 transition-opacity duration-200 sm:px-8", isUpdating && "opacity-75")}>
+                <ReviewNavTabs className="mb-4" />
                 <Card className="p-7">
                     <div className="flex flex-wrap items-start justify-between gap-5">
                         <div className="flex min-w-0 flex-col gap-1.5">
@@ -334,13 +336,13 @@ export default function QADashboard() {
                             </p>
                         </div>
                         <div className="flex flex-wrap items-center gap-2.5">
-                            <NativeSelect className={cn(controlClass, "qa-filter-select h-[38px] w-auto")} aria-label={t("Filter by GHG Scope")} value={scopeFilter} onChange={e => { setScopeFilter(e.target.value); setOffset(0); }} title={t("Filter by GHG Scope")}>
+                            <NativeSelect wrapperClassName="w-auto shrink-0" className={cn(controlClass, "qa-filter-select h-10 w-auto")} aria-label={t("Filter by GHG Scope")} value={scopeFilter} onChange={e => { setScopeFilter(e.target.value); setOffset(0); }} title={t("Filter by GHG Scope")}>
                                 <option value="all">{t("All Scopes (1, 2, 3)")}</option>
                                 <option value="1">{t("Scope 1 (Direct)")}</option>
                                 <option value="2">{t("Scope 2 (Electricity)")}</option>
                                 <option value="3">{t("Scope 3 (Value Chain)")}</option>
                             </NativeSelect>
-                            <NativeSelect className={cn(controlClass, "qa-filter-select h-[38px] w-auto")} aria-label={t("Filter by Reporting Year")} value={yearFilter} onChange={e => { setYearFilter(e.target.value); setOffset(0); }} title={t("Filter by Reporting Year")}>
+                            <NativeSelect wrapperClassName="w-auto shrink-0" className={cn(controlClass, "qa-filter-select h-10 w-auto")} aria-label={t("Filter by Reporting Year")} value={yearFilter} onChange={e => { setYearFilter(e.target.value); setOffset(0); }} title={t("Filter by Reporting Year")}>
                                 <option value="all">{t("All Reporting Years")}</option>
                                 {Array.from({ length: new Date().getFullYear() - 2019 }, (_, i) => new Date().getFullYear() - i).map(y => (
                                     <option key={y} value={y}>{y}</option>

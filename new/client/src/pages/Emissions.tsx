@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { ArrowLeft, ArrowRight, Factory, Globe2, Zap, LucideIcon } from "lucide-react";
-import { Badge, Button, SegmentedControl, type BadgeTone } from "../ui";
+import { Badge, Button, SegmentedControl, cn, type BadgeTone } from "../ui";
 import { useSearchParams } from "react-router-dom";
 import { useBreadcrumbExtra } from "../hooks/useBreadcrumbExtra";
 import "./Emissions.css";
@@ -10,6 +10,7 @@ import "../pages/Dashboard.css";
 import Scope1Form from "../components/Scope1Form";
 import Scope2Form from "../components/Scope2Form";
 import Scope3Form from "../components/Scope3Form";
+import { WorkflowExplainer } from "../components/WorkflowExplainer";
 
 import {
   STAGE_SCOPE_SELECTION,
@@ -157,7 +158,7 @@ const Emissions: React.FC = () => {
     { value: STAGE_SCOPE2, label: t("02 Scope 2") },
     { value: STAGE_SCOPE3, label: t("03 Scope 3") },
   ];
-  const content = "w-full px-3 md:px-10";
+  const content = "w-full max-w-[1900px] mx-auto px-4 md:px-8";
 
   return (
     <div>
@@ -171,6 +172,9 @@ const Emissions: React.FC = () => {
       )}
 
       <div>
+        <div className={cn(content, "pt-4")}>
+          <WorkflowExplainer currentStep={stage === STAGE_SCOPE_SELECTION ? "submit" : "submit"} />
+        </div>
         {stage === STAGE_SCOPE_SELECTION && (
           <div className={content}>
             <div className="pb-1 pt-5 md:pt-9">

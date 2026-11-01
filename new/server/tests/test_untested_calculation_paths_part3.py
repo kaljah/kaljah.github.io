@@ -220,7 +220,7 @@ def test_anomaly_detection_statistics_and_fences():
     near_const = [10.0, 10.00000001, 10.00000002]
     res_low_var = detector._z_score_check(100.0, near_const)
     assert res_low_var["flagged"]
-    assert res_low_var["z_score"] == 999.0
+    assert res_low_var["z_score"] == 10.0
 
     # 5. Normal and IQR fences (>= 4 observations)
     normal_history = [100.0, 102.0, 98.0, 101.0, 99.0, 100.5, 99.5, 101.5]

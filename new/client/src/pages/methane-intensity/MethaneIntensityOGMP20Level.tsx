@@ -19,30 +19,55 @@ const MethaneIntensityOGMP20Level: React.FC<MethaneIntensityOGMP20LevelProps> = 
   ogmpSurveys,
   regionalData,
   setOgmpCollapsed,
-}) => (
-  <div className="card ogmp-section">
-    <div
-      role="button"
-      tabIndex={0}
-      onKeyDown={activateOnKey}
-      className="chart-header cursor-pointer! [user-select:none]!"
-      onClick={() => setOgmpCollapsed(!ogmpCollapsed)}
-    >
-      <div>
-        <h3 className="flex! items-center! gap-[8px]!">
-          <Radio size={20} color="var(--accent-secondary)" />
-          {t("OGMP 2.0 Level 4/5 Top-Down Survey & Bottom-Up Reconciliation")}
-        </h3>
-        <p className="text-[color:var(--text-secondary)]! text-[length:0.875rem]! m-[4px_0_0_0]!">
-          {t("Site-level measurement (Satellite, OGI, Drone, Aircraft) reconciled with source-level bottom-up inventory")}
-        </p>
-      </div>
-      <div className="flex! items-center! gap-[12px]!">
-        <div
-          className="ogmp-level-badge bg-[color:rgba(37,_99,_235,_0.1)]! text-[color:var(--color-blue-600)]! p-[6px_14px]! rounded-[8px]! text-[length:0.85rem]! font-semibold!"
-        >
-          {t("Gold Standard Pathway: Level 5 Reconciled")}
+}) => {
+  const hasDiscrepancy = ogmpSurveys.some((s) => {
+    const status = (s.reconciliationStatus || s.reconciliation_status || "").toLowerCase();
+    const variance = s.variance_pct ?? s.reconciliation_variance_pct;
+    const bu = Number(s.bottom_up_tch4 ?? s.bottomUpTch4 ?? 0);
+    return status.includes("discrepancy") || s.variance_flag === true || (variance !== null && Math.abs(variance) > (globalThreshold || 20.0)) || bu === 0;
+  });
+
+  const allReconciled = ogmpSurveys.length > 0 && !hasDiscrepancy && ogmpSurveys.every((s) => {
+    const status = (s.reconciliationStatus || s.reconciliation_status || "").toLowerCase();
+    return status.includes("reconciled") && !status.includes("pending");
+  });
+
+  const badgeText = hasDiscrepancy
+    ? t("Gold Standard Pathway: Level 4 Discrepancy Detected")
+    : allReconciled
+      ? t("Gold Standard Pathway: Level 5 Reconciled")
+      : t("Gold Standard Pathway: Reconciliation Pending");
+
+  const badgeClass = hasDiscrepancy
+    ? "bg-amber-100! text-amber-900! border border-amber-300!"
+    : allReconciled
+      ? "bg-emerald-100! text-emerald-900! border border-emerald-300!"
+      : "bg-blue-100! text-blue-900! border border-blue-300!";
+
+  return (
+    <div className="card ogmp-section">
+      <div
+        role="button"
+        tabIndex={0}
+        onKeyDown={activateOnKey}
+        className="chart-header cursor-pointer! [user-select:none]!"
+        onClick={() => setOgmpCollapsed(!ogmpCollapsed)}
+      >
+        <div>
+          <h3 className="flex! items-center! gap-[8px]!">
+            <Radio size={20} color="var(--accent-secondary)" />
+            {t("OGMP 2.0 Level 4/5 Top-Down Survey & Bottom-Up Reconciliation")}
+          </h3>
+          <p className="text-[color:var(--text-secondary)]! text-[length:0.875rem]! m-[4px_0_0_0]!">
+            {t("Site-level measurement (Satellite, OGI, Drone, Aircraft) reconciled with source-level bottom-up inventory")}
+          </p>
         </div>
+        <div className="flex! items-center! gap-[12px]!">
+          <div
+            className={`ogmp-level-badge p-[6px_14px]! rounded-[8px]! text-[length:0.85rem]! font-semibold! ${badgeClass}`}
+          >
+            {badgeText}
+          </div>
         {ogmpCollapsed ? (
           <ChevronDown size={18} color="var(--text-secondary)" />
         ) : (
@@ -181,5 +206,6 @@ const MethaneIntensityOGMP20Level: React.FC<MethaneIntensityOGMP20LevelProps> = 
     </div>
   </div>
 );
+};
 
 export default MethaneIntensityOGMP20Level;

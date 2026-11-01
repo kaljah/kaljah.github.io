@@ -1,7 +1,7 @@
 import React from "react";
-import { Button, Input, Textarea, Field } from "../../ui";
+import { Button, Input, Textarea, Field, cn } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
-import { Calendar, Check, CheckCircle, History, Plus, Target } from "lucide-react";
+import { Calendar, Check, CheckCircle, History, Plus, Target, AlertTriangle } from "lucide-react";
 import { t } from "../../i18n";
 
 export interface GoalRecord {
@@ -96,17 +96,17 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
 }) => (
   <div className="manage-card glass-panel">
     {/* Active Baseline Status Banner */}
-    <div className="[background:linear-gradient(_135deg,_rgba(255,_102,_0,_0.06),_rgba(255,_153,_51,_0.02)_)] [border:1px_solid_rgba(255,_102,_0,_0.2)] [&&]:[border-radius:var(--radius-lg)] [padding:20px] [margin-bottom:24px] [display:flex] [justify-content:space-between] [align-items:center] [flex-wrap:wrap] [gap:16px]">
+    <div className="[background:var(--bg-card)] [border:1px_solid_var(--border-color)] border-l-2! border-l-brand-500! [&&]:[border-radius:var(--radius-lg)] [padding:20px] [margin-bottom:24px] [display:flex] [justify-content:space-between] [align-items:center] [flex-wrap:wrap] [gap:16px]">
       <div>
         <div className="flex! items-center! gap-[8px]! mb-[6px]!">
-          <span className="text-[length:0.8rem]! uppercase! [letter-spacing:0.05em]! text-[color:var(--color-link)]! font-bold!">
+          <span className="text-xs! font-medium! text-[color:var(--color-link)]!">
             {t("GHG Protocol & OGMP 2.0 Baseline")}
           </span>
           <span className="[display:inline-flex] [align-items:center] [gap:4px] [padding:3px_8px] [border-radius:var(--radius-sm)] [font-size:var(--text-sm)] [font-weight:600] [background:var(--color-green-50)] [color:var(--color-green-700)] [&&]:[border:1px_solid_var(--color-legacy-a7f3d0)]">
             <CheckCircle size={12} />{" "}{t("Active Baseline")}
           </span>
         </div>
-        <div className="text-[length:1.4rem]! [font-weight:800]! text-[color:var(--text-primary)]!">
+        <div className="text-xl! font-bold! tabular-nums text-[color:var(--text-primary)]!">
           {t("Current Base Year:")}{" "}{baseYearsData.active_year || "2023"}
         </div>
         {baseYearsData.active_record?.reason && (
@@ -117,12 +117,12 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
       </div>
       <div className="flex! gap-[20px]! items-center!">
         <div className="text-right!">
-          <div className="text-[length:0.8rem]! text-[color:var(--text-secondary)]! font-semibold!">{t("ANNUAL TARGETS SET")}</div>
+          <div className="text-xs! text-[color:var(--text-secondary)]! font-medium!">{t("Annual Targets Set")}</div>
           <div className="text-[length:1.3rem]! font-bold! text-[color:var(--text-primary)]!">{goals.length}{" "}{t("Years")}</div>
         </div>
         {baseYearsData.active_record?.recalc_date && (
           <div className="text-right! [border-left:1px_solid_var(--border-color)]! pl-[16px]!">
-            <div className="text-[length:0.8rem]! text-[color:var(--text-secondary)]! font-semibold!">{t("LAST RECALCULATED")}</div>
+            <div className="text-xs! text-[color:var(--text-secondary)]! font-medium!">{t("Last Recalculated")}</div>
             <div className="text-[length:0.95rem]! font-semibold! text-[color:var(--text-primary)]!">
               {new Date(baseYearsData.active_record.recalc_date).toLocaleDateString()}
             </div>
@@ -217,7 +217,23 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
                     </span>
                   </td>
                   <td className="text-right! font-semibold! text-[color:var(--text-primary)]!">
-                    {Number(g.target_amount).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}{" "}{t("tCO₂e")}
+                    <div>
+                      {Number(g.target_amount).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}{" "}{t("tCO₂e")}
+                    </div>
+                    {g.warnings && g.warnings.length > 0 && (
+                      <div className="mt-1 flex flex-col items-end gap-1">
+                        {g.warnings.map((w: string, idx: number) => (
+                          <span
+                            key={idx}
+                            className="inline-flex items-center gap-1 rounded bg-amber-50 px-1.5 py-0.5 text-[11px] font-medium text-amber-800 border border-amber-200 text-left"
+                            title={w}
+                          >
+                            <AlertTriangle className="size-3 shrink-0 text-amber-600" />
+                            {w}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </td>
                   <td>
                     <span className="text-[length:0.85rem]! text-[color:var(--text-secondary)]!">
@@ -269,7 +285,8 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
       </div>
 
       <div className="[background:var(--color-ink-50)] [border:1px_solid_var(--color-ink-200)] [&&]:[border-left:4px_solid_var(--accent-color,_var(--color-brand-500))] [&&]:[border-radius:var(--radius-md)] [padding:14px_18px] [margin-bottom:24px] [font-size:var(--text-base)] [color:var(--text-secondary)] [line-height:1.5]">
-        <strong>{t("GHG Protocol Recalculation Rule:")}</strong>{" "}{t("Base year emissions must be recalculated to reflect significant structural changes (e.g. acquisitions, divestments, boundary changes), methodology updates (e.g. new emission factors or GWP standards), or cumulative data errors exceeding significance thresholds. Every adjustment must include a documented reason.")}
+        <strong>{t("GHG Protocol Recalculation Rule (5% Significance Threshold):")}</strong>{" "}
+        {t("Base year emissions must be recalculated whenever structural changes (acquisitions, divestments), calculation methodology updates, or cumulative data errors change the baseline inventory by 5% or more. Every adjustment requires a documented justification.")}
       </div>
 
       {/* Base Year Input Form */}
@@ -301,6 +318,27 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
             onChange={(e) => setBaseYearForm({ ...baseYearForm, adjusted_emissions: e.target.value })}
             placeholder={t("Optional")}
           />
+          {Boolean(
+            Number(baseYearForm.previous_emissions) > 0 &&
+            Number(baseYearForm.adjusted_emissions) > 0
+          ) && (() => {
+            const prev = Number(baseYearForm.previous_emissions);
+            const adj = Number(baseYearForm.adjusted_emissions);
+            const diffPct = Math.abs((adj - prev) / prev) * 100;
+            const isSignificant = diffPct >= 5.0;
+            return (
+              <span
+                className={cn(
+                  "mt-1 inline-flex items-center gap-1 text-[11px] font-semibold",
+                  isSignificant ? "text-amber-700" : "text-ink-500",
+                )}
+              >
+                {isSignificant
+                  ? t("⚠️ {{pct}}% change exceeds the 5% significance threshold", { pct: diffPct.toFixed(1) })
+                  : t("ℹ️ {{pct}}% change is below 5% significance threshold", { pct: diffPct.toFixed(1) })}
+              </span>
+            );
+          })()}
         </Field>
         <div className="input-group flex! items-end!">
           <button

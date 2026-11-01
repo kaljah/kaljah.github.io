@@ -31,6 +31,7 @@ class User(db.Model):
     # BUG-114: bumped on logout / password change / deactivation; sessions carrying an
     # older value are rejected, so a copied cookie stops working after logout.
     session_version = db.Column(db.Integer, default=0, server_default="0", nullable=False)
+    is_test = db.Column(db.Boolean, default=False, server_default="0", nullable=False)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -65,6 +66,7 @@ class Facility(db.Model):
     created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
     updated_at = db.Column(db.DateTime, onupdate=utc_now)
     created_at = db.Column(db.DateTime, default=utc_now)
+    is_test = db.Column(db.Boolean, default=False, server_default="0", nullable=False)
 
     # Cascading Deletes
     emissions = db.relationship(
@@ -184,6 +186,7 @@ class Emission(db.Model):
     timestamp = db.Column(db.DateTime, default=utc_now, index=True)
     # Maker-Checker Approval
     approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    is_test = db.Column(db.Boolean, default=False, server_default="0", nullable=False)
     approved_at = db.Column(db.DateTime, nullable=True)
     gas_composition_json = db.Column("gas_composition", db.Text, nullable=True)
 
@@ -253,6 +256,7 @@ class ProductionData(db.Model):
     created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
     updated_at = db.Column(db.DateTime, onupdate=utc_now)
     created_at = db.Column(db.DateTime, default=utc_now)
+    is_test = db.Column(db.Boolean, default=False, server_default="0", nullable=False)
 
     __table_args__ = (
         db.UniqueConstraint("facility_id", "month", "year", name="_facility_month_year_uc"),
@@ -283,6 +287,11 @@ class EmissionSource(db.Model):
     created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
     updated_at = db.Column(db.DateTime, onupdate=utc_now)
     created_at = db.Column(db.DateTime, default=utc_now)
+    is_test = db.Column(db.Boolean, default=False, server_default="0", nullable=False)
+
+    __table_args__ = (
+        db.UniqueConstraint("facility_id", "name", name="uq_emission_source_facility_name"),
+    )
 
 
 class ComponentInventory(db.Model):
@@ -358,6 +367,7 @@ class CustomFactor(db.Model):
     created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
     updated_at = db.Column(db.DateTime, onupdate=utc_now)
     created_at = db.Column(db.DateTime, default=utc_now)
+    is_test = db.Column(db.Boolean, default=False, server_default="0", nullable=False)
     # BUG-056: referenced factors are archived instead of deleted (ids are never reused)
     is_archived = db.Column(db.Boolean, default=False, server_default="0", nullable=False)
     # Maker-checker approval workflow
@@ -367,6 +377,10 @@ class CustomFactor(db.Model):
     facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), nullable=True, index=True)
     region = db.Column(db.String(100), nullable=True, index=True)
     gas_composition_json = db.Column("gas_composition", db.Text, nullable=True)
+
+    __table_args__ = (
+        db.UniqueConstraint("name", "facility_id", name="uq_custom_factor_name_facility"),
+    )
 
     @property
     def gas_composition(self):
@@ -586,6 +600,7 @@ class Scope3Emission(db.Model):
     __table_args__ = (
         db.Index("ix_scope3_fac_yr_status", "facility_id", "year", "status"),
         db.Index("ix_scope3_status_yr_co2e", "status", "year", "co2e"),
+        db.UniqueConstraint("facility_id", "year", "month", "category", "sub_category", name="uq_scope3_facility_period_category"),
     )
 
 
@@ -609,6 +624,11 @@ class MitigationProject(db.Model):
     )
     created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
     created_at = db.Column(db.DateTime, default=utc_now)
+    is_test = db.Column(db.Boolean, default=False, server_default="0", nullable=False)
+
+    __table_args__ = (
+        db.UniqueConstraint("facility_id", "name", "year", name="uq_mitigation_project_facility_name_year"),
+    )
 
 
 class BaseYearRecalculation(db.Model):

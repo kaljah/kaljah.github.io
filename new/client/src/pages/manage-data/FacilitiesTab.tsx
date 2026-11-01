@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Upload, Users, Trash2, Plus } from "lucide-react";
-import { Badge, Button, Field, Input, controlClass } from "../../ui";
+import { Upload, Users, Trash2, Plus, Download } from "lucide-react";
+import { Badge, Button, Field, Input, Sheet, controlClass } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import { BOUNDARY_OPTIONS } from "../../constants";
 import PaginationControls from "./PaginationControls";
 import { FormActions, FormGrid, RecordTable, TabCard, Td, Tr } from "./MdParts";
+import AdvancedSection from "../../components/AdvancedSection";
 import Modal from "../../components/Modal";
 import api from "../../api";
 import { useToast } from "../../components/Toast";
@@ -66,6 +67,7 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
   user,
 }) => {
   const canEdit = ["admin", "superuser"].includes(user?.role || "");
+  const [isAddDrawerOpen, setIsAddDrawerOpen] = useState(false);
   const [selectedFacilityForEquity, setSelectedFacilityForEquity] = useState<FacilityRecord | null>(null);
   const [partners, setPartners] = useState<Array<{ id: number; name: string; code: string; country: string }>>([]);
   const [shares, setShares] = useState<Array<any>>([]);
@@ -148,156 +150,70 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
   );
   const rows = filteredFacilities.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
+  const onFormSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    handleAddFacility();
+    setIsAddDrawerOpen(false);
+  };
+
   return (
-    <TabCard title={t("Active Regions")} description={t("Manage operational regions and their boundaries.")}>
-      {canEdit && (
-        <>
-          <FormGrid>
-            <Field label={t("Region Name")}>
-              <Input
-                type="text"
-                name="name"
-                value={facilityForm.name || ""}
-                onChange={handleFacilityChange}
-                placeholder={t("e.g. Hassi R'Mel")}
-              />
-            </Field>
-            <Field label={t("Activity")}>
-              {select(
-                "activity",
-                (e) => patch({ activity: e.target.value, division: "" }),
-                Object.keys(HIERARCHY).map((a) => (
-                  <option key={a} value={a}>
-                    {ACTIVITY_LABELS[a]}
-                  </option>
-                )),
-                t("Select Activity"),
-              )}
-            </Field>
-            <Field label={t("Division")}>
-              {select(
-                "division",
-                handleFacilityChange,
-                facilityForm.activity &&
-                  HIERARCHY[facilityForm.activity]?.map((d) => (
-                    <option key={d} value={d}>
-                      {d}
-                    </option>
-                  )),
-                t("Select Division"),
-                !facilityForm.activity,
-              )}
-            </Field>
-            <Field label={`${t("Field / Block")} *`}>
-              <Input
-                type="text"
-                name="field"
-                value={facilityForm.field || ""}
-                onChange={handleFacilityChange}
-                placeholder={t("e.g. Hassi Messaoud South")}
-                required
-              />
-            </Field>
-            <Field label={t("Location (Wilaya)")}>
-              <Input
-                type="text"
-                name="location"
-                value={facilityForm.location || ""}
-                onChange={handleFacilityChange}
-                placeholder={t("e.g. Laghouat")}
-              />
-            </Field>
-            <Field label={t("Consolidation Approach")}>
-              {select(
-                "boundary_type",
-                (e) => patch({ boundary_type: e.target.value, boundary_detail: "" }),
-                Object.keys(BOUNDARY_OPTIONS).map((opt) => (
-                  <option key={opt} value={opt}>
-                    {opt}
-                  </option>
-                )),
-                t("Select Approach"),
-              )}
-            </Field>
-            <Field label={t("Boundary Details")}>
-              {select(
-                "boundary_detail",
-                (e) => patch({ boundary_detail: e.target.value }),
-                facilityForm.boundary_type &&
-                  BOUNDARY_OPTIONS[facilityForm.boundary_type]?.map((detail) => (
-                    <option key={detail} value={detail}>
-                      {detail}
-                    </option>
-                  )),
-                t("Select Details"),
-                !facilityForm.boundary_type,
-              )}
-            </Field>
-            {facilityForm.boundary_type === "Equity Share" && (
-              <Field label={t("Equity Share Percentage (%)")}>
-                <Input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="100"
-                  name="equity_share_pct"
-                  value={facilityForm.equity_share_pct !== undefined ? facilityForm.equity_share_pct : ""}
-                  onChange={(e) => patch({ equity_share_pct: e.target.value })}
-                  placeholder="e.g. 51.00"
-                />
-              </Field>
-            )}
-            <Field label={t("Supply Chain Segment")}>
-              {select(
-                "segment",
-                handleFacilityChange,
-                SEGMENTS.map((s) => (
-                  <option key={s} value={s}>
-                    {t(s)}
-                  </option>
-                )),
-                t("Select Segment"),
-              )}
-            </Field>
-            <Field label={t("Latitude")}>
-              <Input
-                type="number"
-                step="any"
-                name="latitude"
-                value={facilityForm.latitude || ""}
-                onChange={handleFacilityChange}
-                placeholder="e.g. 33.8"
-              />
-            </Field>
-            <Field label={t("Longitude")}>
-              <Input
-                type="number"
-                step="any"
-                name="longitude"
-                value={facilityForm.longitude || ""}
-                onChange={handleFacilityChange}
-                placeholder="e.g. 6.07"
-              />
-            </Field>
-          </FormGrid>
-
-          <FormActions>
-            <Button onClick={handleAddFacility}>{t("Add Region")}</Button>
-            <Button variant="secondary" onClick={() => setImportModal({ isOpen: true, type: "facilities" })}>
-              <Upload className="size-4" aria-hidden="true" />{" "}{t("Bulk Import (CSV)")}
+    <TabCard
+      title={t("Active Regions")}
+      description={t("Manage operational regions and their boundaries.")}
+      actions={
+        <div className="flex flex-wrap items-center gap-2">
+          {canEdit && (
+            <Button
+              variant="primary"
+              onClick={() => setIsAddDrawerOpen(true)}
+              className="gap-2"
+            >
+              <Plus className="size-4" aria-hidden="true" />
+              {t("+ Add Region")}
             </Button>
-            <Button variant="secondary" onClick={() => exportToCSV(facilities, "regions_export.csv")}>
-              {t("Export CSV")}
-            </Button>
-          </FormActions>
-        </>
-      )}
-
+          )}
+          <Button
+            variant="secondary"
+            onClick={() => setImportModal({ isOpen: true, type: "facilities" })}
+            className="gap-2"
+          >
+            <Upload className="size-4" aria-hidden="true" />
+            {t("Bulk Import")}
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => exportToCSV(facilities, "regions_export.csv")}
+            className="gap-2"
+          >
+            <Download className="size-4" aria-hidden="true" />
+            {t("Export CSV")}
+          </Button>
+        </div>
+      }
+    >
+      {/* Table-first presentation */}
       <RecordTable
-        title={t("Active Regions")}
-        head={[t("Region"), t("Field / Facility"), t("Activity"), t("Division"), t("Location"), t("Boundary"), t("Segment"), t("Coordinates"), ...(canEdit ? [t("Actions")] : [])]}
+        title={t("Operational Regions Inventory")}
+        head={[
+          t("Region"),
+          t("Field / Facility"),
+          t("Activity"),
+          t("Division"),
+          t("Location"),
+          t("Boundary"),
+          t("Segment"),
+          t("Coordinates"),
+          ...(canEdit ? [t("Actions")] : []),
+        ]}
         empty={filteredFacilities.length === 0 && t("No regions found.")}
-        footer={<PaginationControls currentPage={currentPage} totalItems={filteredFacilities.length} itemsPerPage={ITEMS_PER_PAGE} onPageChange={setCurrentPage} />}
+        footer={
+          <PaginationControls
+            currentPage={currentPage}
+            totalItems={filteredFacilities.length}
+            itemsPerPage={ITEMS_PER_PAGE}
+            onPageChange={setCurrentPage}
+          />
+        }
       >
         {rows.map((f) => (
           <Tr key={f.id}>
@@ -312,12 +228,25 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
             <Td>{f.location || "-"}</Td>
             <Td>
               <div>
-                <span>{f.boundary_notes || (f.boundary_type ? `${f.boundary_type}${f.boundary_detail ? " - " + f.boundary_detail : ""}` : "-")}</span>
-                {f.boundary_type === "Equity Share" && f.equity_share_pct !== undefined && f.equity_share_pct !== null && Number(f.equity_share_pct) < 100 && (
-                  <div className="text-xs text-amber-600 dark:text-amber-400 font-medium mt-0.5" data-testid="unallocated-equity-flag">
-                    {t("{{unallocated}}% unallocated 3rd-party interest (GHG Protocol Ch. 3)", { unallocated: (100 - Number(f.equity_share_pct)).toFixed(1) })}
-                  </div>
-                )}
+                <span>
+                  {f.boundary_notes ||
+                    (f.boundary_type
+                      ? `${f.boundary_type}${f.boundary_detail ? " - " + f.boundary_detail : ""}`
+                      : "-")}
+                </span>
+                {f.boundary_type === "Equity Share" &&
+                  f.equity_share_pct !== undefined &&
+                  f.equity_share_pct !== null &&
+                  Number(f.equity_share_pct) < 100 && (
+                    <div
+                      className="text-xs text-amber-600 dark:text-amber-400 font-medium mt-0.5"
+                      data-testid="unallocated-equity-flag"
+                    >
+                      {t("{{unallocated}}% unallocated 3rd-party interest (GHG Protocol Ch. 3)", {
+                        unallocated: (100 - Number(f.equity_share_pct)).toFixed(1),
+                      })}
+                    </div>
+                  )}
               </div>
             </Td>
             <Td>{f.segment ? t(f.segment) : "-"}</Td>
@@ -325,7 +254,13 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
             {canEdit && (
               <Td>
                 <div className="flex items-center gap-2">
-                  <Button variant="secondary" size="sm" data-testid={`facility-jv-shares-${f.id}`} onClick={() => setSelectedFacilityForEquity(f)} title={t("Joint Venture Equity Partners")}>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    data-testid={`facility-jv-shares-${f.id}`}
+                    onClick={() => setSelectedFacilityForEquity(f)}
+                    title={t("Joint Venture Equity Partners")}
+                  >
                     <Users className="size-3.5 mr-1" />
                     {t("JV Partners")}
                   </Button>
@@ -338,6 +273,190 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
           </Tr>
         ))}
       </RecordTable>
+
+      {/* Form on demand: Side Drawer Sheet with Progressive Disclosure */}
+      <Sheet
+        open={isAddDrawerOpen}
+        onOpenChange={setIsAddDrawerOpen}
+        title={t("Add Operational Region")}
+        description={t("Register a new production facility, block or concession boundary.")}
+        icon={Plus}
+        width="36rem"
+        footer={
+          <div className="flex items-center justify-end gap-2 w-full">
+            <Button variant="secondary" onClick={() => setIsAddDrawerOpen(false)}>
+              {t("Cancel")}
+            </Button>
+            <Button variant="primary" onClick={onFormSubmit}>
+              {t("Save Region")}
+            </Button>
+          </div>
+        }
+      >
+        <form onSubmit={onFormSubmit} className="flex flex-col gap-5">
+          <div className="rounded-md bg-ink-50 p-3 text-xs text-text-secondary border border-border/60">
+            {t("Fields marked with an asterisk (*) are essential to establish GHG Protocol scope accounting.")}
+          </div>
+
+          {/* Essential Fields */}
+          <div className="flex flex-col gap-4">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-ink-500 m-0 pb-1 border-b border-border/60">
+              {t("Essential Information")}
+            </h4>
+
+            <Field label={`${t("Region Name")} *`}>
+              <Input
+                type="text"
+                name="name"
+                value={facilityForm.name || ""}
+                onChange={handleFacilityChange}
+                placeholder={t("e.g. Hassi R'Mel")}
+                required
+              />
+            </Field>
+
+            <Field label={`${t("Field / Block")} *`}>
+              <Input
+                type="text"
+                name="field"
+                value={facilityForm.field || ""}
+                onChange={handleFacilityChange}
+                placeholder={t("e.g. Hassi Messaoud South")}
+                required
+              />
+            </Field>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Field label={`${t("Activity")} *`}>
+                {select(
+                  "activity",
+                  (e) => patch({ activity: e.target.value, division: "" }),
+                  Object.keys(HIERARCHY).map((a) => (
+                    <option key={a} value={a}>
+                      {ACTIVITY_LABELS[a]}
+                    </option>
+                  )),
+                  t("Select Activity"),
+                )}
+              </Field>
+
+              <Field label={t("Division")}>
+                {select(
+                  "division",
+                  handleFacilityChange,
+                  facilityForm.activity &&
+                    HIERARCHY[facilityForm.activity]?.map((d) => (
+                      <option key={d} value={d}>
+                        {d}
+                      </option>
+                    )),
+                  t("Select Division"),
+                  !facilityForm.activity,
+                )}
+              </Field>
+            </div>
+
+            <Field label={t("Location (Wilaya)")}>
+              <Input
+                type="text"
+                name="location"
+                value={facilityForm.location || ""}
+                onChange={handleFacilityChange}
+                placeholder={t("e.g. Laghouat")}
+              />
+            </Field>
+          </div>
+
+          {/* Progressive Disclosure: Advanced Settings */}
+          <AdvancedSection
+            id="facilities-advanced"
+            title={t("Consolidation, Equity & Geospatial Configuration")}
+            fieldCount={5}
+            description={t("GHG Protocol consolidation approach, joint venture equity share, and GPS coordinates.")}
+          >
+            <div className="flex flex-col gap-4">
+              <Field label={t("Consolidation Approach")}>
+                {select(
+                  "boundary_type",
+                  (e) => patch({ boundary_type: e.target.value, boundary_detail: "" }),
+                  Object.keys(BOUNDARY_OPTIONS).map((opt) => (
+                    <option key={opt} value={opt}>
+                      {opt}
+                    </option>
+                  )),
+                  t("Select Approach"),
+                )}
+              </Field>
+
+              <Field label={t("Boundary Details")}>
+                {select(
+                  "boundary_detail",
+                  (e) => patch({ boundary_detail: e.target.value }),
+                  facilityForm.boundary_type &&
+                    BOUNDARY_OPTIONS[facilityForm.boundary_type]?.map((detail) => (
+                      <option key={detail} value={detail}>
+                        {detail}
+                      </option>
+                    )),
+                  t("Select Details"),
+                  !facilityForm.boundary_type,
+                )}
+              </Field>
+
+              {facilityForm.boundary_type === "Equity Share" && (
+                <Field label={t("Equity Share Percentage (%)")}>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    max="100"
+                    name="equity_share_pct"
+                    value={facilityForm.equity_share_pct !== undefined ? facilityForm.equity_share_pct : ""}
+                    onChange={(e) => patch({ equity_share_pct: e.target.value })}
+                    placeholder="e.g. 51.00"
+                  />
+                </Field>
+              )}
+
+              <Field label={t("Supply Chain Segment")}>
+                {select(
+                  "segment",
+                  handleFacilityChange,
+                  SEGMENTS.map((s) => (
+                    <option key={s} value={s}>
+                      {t(s)}
+                    </option>
+                  )),
+                  t("Select Segment"),
+                )}
+              </Field>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Field label={t("Latitude")}>
+                  <Input
+                    type="number"
+                    step="any"
+                    name="latitude"
+                    value={facilityForm.latitude || ""}
+                    onChange={handleFacilityChange}
+                    placeholder="e.g. 33.8"
+                  />
+                </Field>
+                <Field label={t("Longitude")}>
+                  <Input
+                    type="number"
+                    step="any"
+                    name="longitude"
+                    value={facilityForm.longitude || ""}
+                    onChange={handleFacilityChange}
+                    placeholder="e.g. 6.07"
+                  />
+                </Field>
+              </div>
+            </div>
+          </AdvancedSection>
+        </form>
+      </Sheet>
 
       {selectedFacilityForEquity && (
         <Modal

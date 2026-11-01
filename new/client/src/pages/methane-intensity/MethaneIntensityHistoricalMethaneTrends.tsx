@@ -42,18 +42,18 @@ const MethaneIntensityHistoricalMethaneTrends: React.FC<MethaneIntensityHistoric
   }, [regionalData]);
 
   return (
-    <div className="card trend-section [margin-top:8px]">
+    <div className="card trend-section mt-2">
       <div className="chart-header">
         <div>
-          <h3 className="mb-[4px]!">
+          <h3 className="mb-1">
             {t("Historical Methane Trends & Targets")}
           </h3>
-          <p className="text-[color:var(--text-secondary)]! text-[length:0.9rem]! m-[0px]!">
+          <p className="text-text-secondary text-sm m-0">
             {t("5-Year Methane Loss Rate (%) vs OGMP 2.0 Targets (≤")}{upstreamTargetPct.toFixed(2)}{t("% Upstream / ≤")}{midstreamTargetPct.toFixed(2)}{t("% Midstream)")}
           </p>
         </div>
-        <div className="[display:flex] [gap:12px] [align-items:center]">
-          <div className="[background:var(--bg-hover)] [padding:4px] [border-radius:var(--radius-md)] [display:flex] [gap:4px] [border:1px_solid_var(--border-color)]">
+        <div className="flex gap-3 items-center">
+          <div className="bg-ink-100 p-1 rounded-md flex gap-1 border border-border">
             <button
               className={`view-btn ${trendView === "chart" ? "active" : ""}`}
               onClick={() => setTrendView("chart")}
@@ -71,10 +71,12 @@ const MethaneIntensityHistoricalMethaneTrends: React.FC<MethaneIntensityHistoric
       </div>
 
       {trendView === "chart" ? (
-        <div className="h-[350px]!">
+        <div className="h-[380px]">
           <LineChart
             data={trendChartData}
             xKey="year"
+            formatValue={(v) => `${Number(v || 0).toFixed(2)}%`}
+            height={380}
             series={[
               {
                 key: "loss_rate_pct",
@@ -107,13 +109,13 @@ const MethaneIntensityHistoricalMethaneTrends: React.FC<MethaneIntensityHistoric
           />
         </div>
       ) : (
-        <div className="heatmap-container [margin-top:24px] [overflow-x:auto] [background:var(--bg-app)] [border-radius:var(--radius-md)] [border:1px_solid_var(--border-color)] [padding:16px]">
-          <div className="heatmap-header [display:grid] [grid-template-columns:200px_repeat(5,_1fr)] [gap:12px] [margin-bottom:16px] [padding:0_12px]">
-            <div className="[font-size:var(--text-sm)] [font-weight:700] [color:var(--text-secondary)] [text-transform:uppercase] [letter-spacing:0.05em] text-left!">
-              {t("REGION")}
+        <div className="heatmap-container mt-6 overflow-x-auto bg-ink-50 rounded-md border border-border p-4">
+          <div className="heatmap-header grid grid-cols-[200px_repeat(5,_1fr)] gap-3 mb-4 px-3">
+            <div className="text-xs font-medium text-text-secondary text-left">
+              {t("Region")}
             </div>
             {rawTrendData.map((d) => (
-              <div key={d.year} className="[font-size:var(--text-sm)] [font-weight:700] [color:var(--text-secondary)] [text-transform:uppercase] [text-align:center] [letter-spacing:0.05em]">
+              <div key={d.year} className="text-xs font-medium text-text-secondary text-center">
                 {d.year}
               </div>
             ))}
@@ -121,8 +123,8 @@ const MethaneIntensityHistoricalMethaneTrends: React.FC<MethaneIntensityHistoric
           <div className="heatmap-body">
             {regionalRows.length > 0 ? (
               regionalRows.map((regData) => (
-                <div key={regData.name} className="heatmap-row [display:grid] [grid-template-columns:200px_repeat(5,_1fr)] [gap:12px] [padding:12px] [border-bottom:1px_solid_var(--border-color)] [align-items:center] [transition:background-color_0.2s] last:[border-bottom:none] hover:[background:var(--bg-card)] hover:[border-radius:var(--radius-md)] hover:[box-shadow:var(--shadow-xs)]">
-                  <div className="[font-weight:600] [font-size:var(--text-base)] [color:var(--text-primary)]">
+                <div key={regData.name} className="heatmap-row grid grid-cols-[200px_repeat(5,_1fr)] gap-3 p-3 border-b border-border items-center transition-colors last:border-b-0 hover:bg-surface hover:rounded-md hover:shadow-xs">
+                  <div className="font-semibold text-base text-text">
                     {regData.name}
                   </div>
                   {rawTrendData.map((yData) => {
@@ -145,7 +147,7 @@ const MethaneIntensityHistoricalMethaneTrends: React.FC<MethaneIntensityHistoric
                     return (
                       <div
                         key={yData.year}
-                        className={`heatmap-cell ${missing ? "" : getHeatmapClass(val)} ${onOpenCell ? "cursor-pointer" : ""}`}
+                        className={`heatmap-cell tabular-nums ${missing ? "" : getHeatmapClass(val)} ${onOpenCell ? "cursor-pointer" : ""}`}
                         role={onOpenCell ? "button" : undefined}
                         tabIndex={onOpenCell ? 0 : undefined}
                         aria-label={onOpenCell ? t("Open {{facility}} records for {{year}}", { facility: regData.name, year: yData.year }) : undefined}
@@ -160,7 +162,7 @@ const MethaneIntensityHistoricalMethaneTrends: React.FC<MethaneIntensityHistoric
                 </div>
               ))
             ) : (
-              <p className="text-center! p-[40px]! text-[color:var(--text-secondary)]!">
+              <p className="text-center p-10 text-text-secondary">
                 {t("No regional data available")}
               </p>
             )}

@@ -1,4 +1,4 @@
-import { PageHeader, Button } from "../ui";
+import { PageHeader, Button, Input } from "../ui";
 import { NativeSelect } from "../ui/NativeSelect";
 import React, { useState, useEffect } from "react";
 import { activateOnKey } from "../utils/a11yKeys";
@@ -401,22 +401,23 @@ const ReferenceData: React.FC = () => {
         }
       />
 
-      <div className="[background:var(--bg-card,_rgba(255,_255,_255,_0.78))] [backdrop-filter:blur(14px)] [-webkit-backdrop-filter:blur(14px)] [padding:20px_24px] [border-radius:var(--radius-lg)] [margin-bottom:28px] [box-shadow:var(--shadow-card)] [border:1px_solid_var(--border-color,_rgba(226,_232,_240,_0.8))] [display:flex] [gap:16px] [align-items:center]">
-        <div className="search-input-wrapper">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 p-5 mb-7 rounded-xl border border-border bg-surface shadow-xs">
+        <div className="relative flex-1 min-w-0">
           <Search
-            className="search-icon [position:absolute]! [left:16px]! [top:50%]! [transform:translateY(-50%)]! opacity-[0.4]!"
-            size={18}
+            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-text-secondary"
+            aria-hidden="true"
           />
-          <input
+          <Input
             type="text"
-            className="[width:100%] [padding:11px_16px_11px_42px] [background:rgba(255,_255,_255,_0.85)] [border:1px_solid_var(--border-color,_var(--color-ink-200))] [&&]:[border-radius:var(--radius-md)] [font-size:var(--text-md)] [color:var(--text-primary,_var(--color-ink-900))] [outline:none] [transition:all_0.2s_ease] focus:[border-color:var(--accent-color,_var(--color-brand-500))] focus:[box-shadow:0_0_0_3px_rgba(255,_102,_0,_0.15)]"
+            className="pl-10 h-10 w-full"
             placeholder={t("Search by name, fuel type, code, or value...")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         <NativeSelect
-          className="filter-select"
+          wrapperClassName="w-full sm:w-72 shrink-0"
+          className="h-10"
           aria-label={t("Filter by category")}
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
@@ -559,7 +560,7 @@ const ReferenceData: React.FC = () => {
                                   {f.usage.map((u, uIdx) => (
                                     <span
                                       key={uIdx}
-                                      className={`[display:inline-flex] [padding:4px_10px] [border-radius:var(--radius-md)] [font-size:var(--text-xs)] [font-weight:700] [text-transform:uppercase] usage-${u.toLowerCase()}`}
+                                      className={`[display:inline-flex] [padding:3px_8px] [border-radius:var(--radius-sm)] [font-size:var(--text-xs)] [font-weight:600] usage-${u.toLowerCase()}`}
                                     >
                                       {t(usageLabel(u))}
                                     </span>

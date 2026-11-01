@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowRight, BarChart3, ChevronDown, ChevronUp, Clock, Eye, EyeOff, Hexagon } from "lucide-react";
+import { ArrowRight, BarChart3, ChevronDown, ChevronUp, Clock, Eye, EyeOff, FolderTree } from "lucide-react";
 import { Badge, Banner, Button, Card, CardHeader, SegmentedControl, Switch } from "../../ui";
 import { cn } from "../../ui/cn";
 import { BarChart as BarChartWrapper, LineChart as LineChartWrapper, WaterfallChart } from "../../components/charts";
@@ -32,14 +32,14 @@ export const PendingBanner: React.FC<PendingBannerProps> = ({
     role="region"
     aria-label={t("Pending records notification")}
     className={cn(
-      "flex flex-wrap items-center justify-between gap-3 rounded-xl border px-4 py-2.5 shadow-xs transition-all duration-200",
+      "flex flex-wrap items-center justify-between gap-3 rounded-lg border px-4 py-2.5 shadow-xs transition-colors duration-150",
       includePending
-        ? "border-amber-400 bg-amber-50/70 dark:bg-amber-950/20 shadow-amber-500/5 ring-1 ring-amber-400/30"
-        : "border-ink-200 bg-surface/90 hover:border-amber-300"
+        ? "border-amber-400 bg-amber-50/60 dark:bg-amber-950/20"
+        : "border-border bg-surface hover:border-amber-300"
     )}
   >
     <div className="flex flex-wrap items-center gap-2.5">
-      <Badge tone="warning" className="gap-1.5 px-2.5 py-1 text-xs font-semibold">
+      <Badge tone="warning" className="gap-1.5 px-2.5 py-1 text-xs font-medium">
         <Clock className="size-3.5" aria-hidden="true" />
         {includePending ? t("Draft Preview Active") : t("Pending Review")}
       </Badge>
@@ -48,7 +48,7 @@ export const PendingBanner: React.FC<PendingBannerProps> = ({
           {count.toLocaleString()} {t("records")}
         </span>
         {co2e > 0 && (
-          <span className="rounded bg-amber-100 px-1.5 py-0.5 font-mono text-xs font-bold text-amber-800">
+          <span className="rounded bg-amber-100 px-1.5 py-0.5 font-mono text-xs font-semibold text-amber-800">
             {co2e.toLocaleString()} tCO₂e
           </span>
         )}
@@ -61,23 +61,32 @@ export const PendingBanner: React.FC<PendingBannerProps> = ({
     </div>
 
     <div className="flex items-center gap-3">
-      <Switch
-        className="pending-switch"
-        label={
-          <span className="flex items-center gap-1.5 text-xs font-semibold text-text-secondary">
-            {includePending ? <Eye className="size-3.5 text-amber-600" aria-hidden="true" /> : <EyeOff className="size-3.5" aria-hidden="true" />}
-            {t("Preview Drafts")}
-          </span>
-        }
-        checked={includePending}
-        onChange={(e) => onIncludePending(e.target.checked)}
-      />
-      {canReview && (
-        <Button size="sm" variant="secondary" onClick={onReview} title={t("Go to Manage Data to review pending records")} className="h-8 gap-1.5 text-xs font-semibold">
-          {t("Review Queue")}
-          <ArrowRight className="size-3" aria-hidden="true" />
-        </Button>
-      )}
+      <div className="flex flex-col">
+        <Switch
+          className="pending-switch"
+          label={
+            <span className="flex items-center gap-1.5 text-xs font-semibold text-text">
+              {includePending ? <Eye className="size-3.5 text-amber-600" aria-hidden="true" /> : <EyeOff className="size-3.5 text-text-secondary" aria-hidden="true" />}
+              {t("Preview drafts")}
+            </span>
+          }
+          checked={includePending}
+          onChange={(e) => onIncludePending(e.target.checked)}
+        />
+        <span className="text-[0.65rem] text-text-secondary">
+          {t("Temporarily includes unverified records in totals")}
+        </span>
+      </div>
+      <Button
+        size="sm"
+        variant="secondary"
+        onClick={onReview}
+        title={t("Open the Pending Review queue to inspect, verify, or reject awaiting records")}
+        className="h-8 gap-1.5 text-xs font-medium"
+      >
+        <span>{canReview ? t("Approve in Queue") : t("View Queue")}</span>
+        <ArrowRight className="size-3" aria-hidden="true" />
+      </Button>
     </div>
   </div>
 );
@@ -91,7 +100,7 @@ export interface TrendCardProps {
 
 /** Emissions trend with the five-year forecast; the compare toggle switches to one line per region. */
 export const TrendCard: React.FC<TrendCardProps> = ({ data, lines, compare, onCompare }) => (
-  <Card className="min-w-0">
+  <Card className="min-w-0 flex flex-col h-full">
     <CardHeader
       title={t("Emissions trend & projection")}
       description={t("Historical inventory trajectory with 5-year predictive forecast")}
@@ -102,8 +111,8 @@ export const TrendCard: React.FC<TrendCardProps> = ({ data, lines, compare, onCo
         </Button>
       }
     />
-    <div className="relative h-[360px] w-full min-w-0">
-      <LineChartWrapper data={data} xKey="year" lines={lines} height={360} />
+    <div className="relative flex-1 min-h-[480px] h-[520px] w-full min-w-0">
+      <LineChartWrapper data={data} xKey="year" lines={lines} height={500} />
     </div>
   </Card>
 );
@@ -117,14 +126,14 @@ export interface DonutCardProps {
 
 export const DonutCard: React.FC<DonutCardProps> = ({ title, data, noun }) => (
   <Card className="min-w-0">
-    <h3 className="m-0 mb-1 text-md font-bold text-ink-800">{title}</h3>
-    <p className="m-0 mb-3 min-h-[1.25rem] text-xs text-ink-600">{describeRanking(data, noun)}</p>
-    <div className="relative h-[195px] w-full min-w-0">
+    <h3 className="m-0 mb-1 text-base font-semibold text-text">{title}</h3>
+    <p className="m-0 mb-3 min-h-[1.25rem] text-xs text-text-secondary">{describeRanking(data, noun)}</p>
+    <div className="relative h-[290px] w-full min-w-0">
       <BarChartWrapper
         data={data}
         dataKey="value"
         xKey="name"
-        height={195}
+        height={290}
         horizontal
         sortDesc
         showShare
@@ -137,9 +146,9 @@ export const DonutCard: React.FC<DonutCardProps> = ({ title, data, noun }) => (
 );
 
 const SBTI_SERIES = (label?: string) => [
-  { dataKey: "actual", name: t("Actual Verified Emissions"), color: "var(--color-blue-500)", strokeWidth: 3 },
-  { dataKey: "sbti_target", name: label || t("Linear Target"), color: "var(--color-green-500)", strokeDasharray: "5 5", strokeWidth: 2 },
-  { dataKey: "bau_projection", name: t("Business as Usual (+1.5%/yr)"), color: "var(--color-red-500)", strokeDasharray: "3 3", strokeWidth: 2 },
+  { dataKey: "actual", name: t("Actual Verified Emissions"), color: "var(--color-blue-500)", strokeWidth: 2.5 },
+  { dataKey: "sbti_target", name: label || t("Linear Target"), color: "var(--color-green-500)", strokeDasharray: "5 5", strokeWidth: 1.5 },
+  { dataKey: "bau_projection", name: t("Business as Usual (+1.5%/yr)"), color: "var(--color-red-500)", strokeDasharray: "3 3", strokeWidth: 1.5 },
 ];
 
 export interface SbtiCardProps {
@@ -164,9 +173,9 @@ export const SbtiCard: React.FC<SbtiCardProps> = ({ sbti, onOpen }) => (
         </Button>
       }
     />
-    <div className="h-[320px] w-full">
+    <div className="h-[360px] w-full">
       {/* BUG-059: the target line is labelled with the stored pathway */}
-      <LineChartWrapper data={sbti.trajectory} xAxisKey="year" series={SBTI_SERIES(sbti.pathway_label)} height={320} />
+      <LineChartWrapper data={sbti.trajectory} xAxisKey="year" series={SBTI_SERIES(sbti.pathway_label)} height={360} />
     </div>
   </Card>
 );
@@ -192,8 +201,9 @@ export const CategoricalCard: React.FC<CategoricalCardProps> = ({ collapsed, onT
     >
       <span className="flex flex-wrap items-center gap-3">
         <span className="text-lg font-semibold text-text">{t("Categorical emissions overview")}</span>
-        <Badge className="gap-1.5 px-2.5 py-1 text-sm">
-          <Hexagon className="size-3.5" aria-hidden="true" />{" "}{t("Activity → Division → Region")}
+        <Badge className="gap-1.5 px-2.5 py-1 text-sm font-medium">
+          <FolderTree className="size-3.5 text-text-secondary" aria-hidden="true" />
+          {t("Activity → Division → Region")}
         </Badge>
       </span>
       {collapsed ? <ChevronDown className="size-[18px] text-ink-500" aria-hidden="true" /> : <ChevronUp className="size-[18px] text-ink-500" aria-hidden="true" />}
@@ -202,18 +212,18 @@ export const CategoricalCard: React.FC<CategoricalCardProps> = ({ collapsed, onT
       <div className="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(260px,1fr))]">
         {activities.map((opt) => (
           <div key={opt.value} className="flex flex-col gap-4">
-            <h4 className="m-0 w-fit border-b-2 border-brand-500 pb-1.5 text-base font-bold text-text">{opt.label}</h4>
+            <h4 className="m-0 w-fit border-b border-border pb-1.5 text-base font-semibold text-text">{opt.label}</h4>
             {hierarchy[opt.value] ? (
               Object.entries(hierarchy[opt.value].divisions).map(([division, data]) => (
-                <div key={division} className="rounded-lg border border-border bg-surface/60 p-3.5">
-                  <h5 className="m-0 mb-3 text-sm font-bold uppercase tracking-wide text-text-secondary">{division}</h5>
+                <div key={division} className="rounded-lg border border-border bg-surface/60 p-3">
+                  <h5 className="m-0 mb-3 text-sm font-semibold text-text-secondary">{division}</h5>
                   <ul className="m-0 flex list-none flex-col gap-2 p-0">
                     {data.regions.map((reg, i) => (
-                      <li key={i} className="rounded-md border border-border bg-surface px-3 py-2.5 transition-shadow hover:shadow-sm">
-                        <div className="mb-1 text-sm font-semibold text-text">
-                          {reg.region} {reg.field && <span className="font-medium text-text-secondary">- {reg.field}</span>}
+                      <li key={i} className="rounded-md border border-border bg-surface px-3 py-2 transition-colors hover:bg-surface-hover">
+                        <div className="mb-1 text-sm font-medium text-text">
+                          {reg.region} {reg.field && <span className="font-normal text-text-secondary">- {reg.field}</span>}
                         </div>
-                        <div className="text-base font-bold tabular-nums text-text">
+                        <div className="text-base font-semibold tabular-nums text-text">
                           {formatCompactNumber(reg.total_emissions)} <span className="text-xs font-normal text-text-secondary">{t("tCO₂e")}</span>
                         </div>
                       </li>
@@ -275,7 +285,7 @@ export const BridgeCard: React.FC<BridgeCardProps> = ({ params }) => {
         <p className="m-0 text-sm text-ink-700">{t("No earlier year to compare against with Scope 3 included.")}</p>
         <div className="mt-3">
           <Switch
-            label={<span className="text-sm font-semibold text-text-secondary">{t("Include Scope 3")}</span>}
+            label={<span className="text-sm font-medium text-text-secondary">{t("Include Scope 3")}</span>}
             checked={includeScope3}
             onChange={(e) => setIncludeScope3(e.target.checked)}
           />
@@ -289,22 +299,36 @@ export const BridgeCard: React.FC<BridgeCardProps> = ({ params }) => {
   return (
     <Card className="min-w-0">
       <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
-        <h3 className="m-0 text-md font-bold text-ink-800">
+        <h3 className="m-0 text-base font-semibold text-text">
           {t("What moved")}{" "}{scopeLabel}{" "}{t("emissions,")}{" "}{bridge.prev_year} → {bridge.year}
         </h3>
-        <span className="text-sm font-semibold text-ink-600">
+        <span className="text-sm font-semibold tabular-nums text-text-secondary">
           {change >= 0 ? "+" : "−"}
           {formatCompactNumber(Math.abs(change))}{" "}{t("tCO₂e (")}{change >= 0 ? "+" : "−"}
           {Math.abs(pct).toFixed(1)}%)
         </span>
       </div>
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-        <p className="m-0 text-sm text-ink-700">
+        <p className="m-0 text-sm text-text-secondary">
           {describeBridge(bridge.start, bridge.end, bridge.steps, undefined, scopeLabel)}
         </p>
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex items-center gap-3 text-xs text-text-secondary">
+            <span className="inline-flex items-center gap-1.5">
+              <span className="size-2.5 rounded-sm" style={{ backgroundColor: "var(--color-ink-700)" }} />
+              <span>{t("Total")}</span>
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="size-2.5 rounded-sm" style={{ backgroundColor: "var(--color-red-600)" }} />
+              <span>{t("Increase")}</span>
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="size-2.5 rounded-sm" style={{ backgroundColor: "var(--color-green-600)" }} />
+              <span>{t("Reduction")}</span>
+            </span>
+          </div>
           <Switch
-            label={<span className="text-sm font-semibold text-text-secondary">{t("Include Scope 3")}</span>}
+            label={<span className="text-sm font-medium text-text-secondary">{t("Include Scope 3")}</span>}
             checked={includeScope3}
             onChange={(e) => setIncludeScope3(e.target.checked)}
           />
@@ -326,7 +350,7 @@ export const BridgeCard: React.FC<BridgeCardProps> = ({ params }) => {
         start={bridge.start}
         end={bridge.end}
         steps={bridge.steps}
-        height={300}
+        height={350}
         formatValue={formatCompactNumber}
         labelMode={labelMode}
         exportName={`emissions-bridge-${bridge.prev_year}-${bridge.year}${bridge.scope3 ? "-with-scope3" : ""}`}
@@ -340,7 +364,7 @@ export const BridgeCard: React.FC<BridgeCardProps> = ({ params }) => {
           )
         }
       />
-      <p className="mb-0 mt-2 text-xs text-ink-500">
+      <p className="mb-0 mt-2 text-xs text-text-secondary">
         {t("Axis is zoomed to the range the changes move through; it does not start at zero. Click a step to open that scope's records for the year.")}
       </p>
     </Card>

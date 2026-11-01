@@ -196,8 +196,19 @@ def update_settings():
             _app_settings["wec_fee_rates"] = rates
             save_setting_to_db("wec_fee_rates", rates)
 
-        # If GWP standard was changed or set, recalculate existing emissions
+        # If GWP standard was changed or set, log methodology change audit and recalculate existing emissions
         if gwp_changed:
+            try:
+                log_activity_and_notify(
+                    action="METHODOLOGY_CHANGE",
+                    record_id="gwp_standard",
+                    user=user,
+                    request=request,
+                    entity="SystemSetting",
+                    details=f"Methodology change: active IPCC GWP standard switched from {previous_gwp} to {_app_settings['gwp_standard']}. Triggered full recalculation across Scope 1, Scope 2, and Scope 3.",
+                )
+            except Exception as e:
+                current_app.logger.error(f"Audit log error on GWP methodology change: {e}")
             try:
                 recalculate_all_emissions_gwp(_app_settings["gwp_standard"], previous=previous_gwp, user=user)
             except Exception as e:

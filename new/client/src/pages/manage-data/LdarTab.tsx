@@ -143,7 +143,7 @@ export const LdarTab: React.FC<LdarTabProps> = ({
     survey_date: new Date().toISOString().split("T")[0],
     screening_value_ppm: "0",
     leak_status: "Non-leaking",
-    leaking_hours: "8760",
+    leaking_hours: "0",
     surveyor_name: "",
     notes: "",
   });
@@ -235,7 +235,7 @@ export const LdarTab: React.FC<LdarTabProps> = ({
         survey_date: surveyModal.survey_date,
         screening_value_ppm: parseFloat(surveyModal.screening_value_ppm) || 0,
         leak_status: surveyModal.leak_status,
-        leaking_hours: parseFloat(surveyModal.leaking_hours) || 8760,
+        leaking_hours: surveyModal.leak_status === "Non-leaking" ? 0 : (parseFloat(surveyModal.leaking_hours) || 8760),
         surveyor_name: surveyModal.surveyor_name,
         notes: surveyModal.notes,
       });
@@ -392,17 +392,48 @@ export const LdarTab: React.FC<LdarTabProps> = ({
     }
   };
 
+  const baseSurveys = useMemo(() => {
+    return surveys.filter((s) => {
+      const fac = facilities.find((f) => f.id === s.facility_id);
+      const facName = s.facility_name || fac?.name || `Facility #${s.facility_id}`;
+
+      if (filterRegion && filterRegion !== "all") {
+        const facRegion = fac?.region_identifier || fac?.location || "";
+        if (facRegion !== filterRegion && !facRegion.includes(filterRegion)) return false;
+      }
+      if (filterActivity) {
+        if (!fac?.activity || fac.activity !== filterActivity) return false;
+      }
+      if (filterDivision) {
+        if (!fac?.division || fac.division !== filterDivision) return false;
+      }
+      if (searchTerm) {
+        const term = searchTerm.toLowerCase();
+        const matches =
+          facName.toLowerCase().includes(term) ||
+          (s.survey_method || "").toLowerCase().includes(term) ||
+          (s.surveyor_name || "").toLowerCase().includes(term) ||
+          (s.notes || "").toLowerCase().includes(term) ||
+          (s.survey_date || "").includes(term);
+        if (!matches) return false;
+      }
+      if (methodFilter !== "all" && s.survey_method !== methodFilter) return false;
+
+      return true;
+    });
+  }, [surveys, facilities, filterRegion, filterActivity, filterDivision, searchTerm, methodFilter]);
+
   const surveyCounts = useMemo(() => {
     let leaking = 0;
     let repaired = 0;
     let nonLeaking = 0;
-    surveys.forEach((s) => {
+    baseSurveys.forEach((s) => {
       if (s.leak_status === "Leaking") leaking++;
       else if (s.leak_status === "Repaired") repaired++;
       else nonLeaking++;
     });
-    return { all: surveys.length, leaking, repaired, nonLeaking };
-  }, [surveys]);
+    return { all: baseSurveys.length, leaking, repaired, nonLeaking };
+  }, [baseSurveys]);
 
   const surveyStatusOptions = [
     { value: "all", label: t("All Statuses"), count: surveyCounts.all },
@@ -452,37 +483,9 @@ export const LdarTab: React.FC<LdarTabProps> = ({
   };
 
   const filteredSurveys = useMemo(() => {
-    return surveys.filter((s) => {
-      const fac = facilities.find((f) => f.id === s.facility_id);
-      const facName = s.facility_name || fac?.name || `Facility #${s.facility_id}`;
-
-      if (filterRegion && filterRegion !== "all") {
-        const facRegion = fac?.region_identifier || fac?.location || "";
-        if (facRegion !== filterRegion && !facRegion.includes(filterRegion)) return false;
-      }
-      if (filterActivity) {
-        if (!fac?.activity || fac.activity !== filterActivity) return false;
-      }
-      if (filterDivision) {
-        if (!fac?.division || fac.division !== filterDivision) return false;
-      }
-      if (searchTerm) {
-        const term = searchTerm.toLowerCase();
-        const matches =
-          facName.toLowerCase().includes(term) ||
-          (s.survey_method || "").toLowerCase().includes(term) ||
-          (s.surveyor_name || "").toLowerCase().includes(term) ||
-          (s.notes || "").toLowerCase().includes(term) ||
-          (s.survey_date || "").includes(term);
-        if (!matches) return false;
-      }
-
-      if (statusFilter !== "all" && s.leak_status !== statusFilter) return false;
-      if (methodFilter !== "all" && s.survey_method !== methodFilter) return false;
-
-      return true;
-    });
-  }, [surveys, facilities, filterRegion, filterActivity, filterDivision, searchTerm, statusFilter, methodFilter]);
+    if (statusFilter === "all") return baseSurveys;
+    return baseSurveys.filter((s) => s.leak_status === statusFilter);
+  }, [baseSurveys, statusFilter]);
 
   const filteredComponents = useMemo(() => {
     return components.filter((c) => {
@@ -682,7 +685,7 @@ export const LdarTab: React.FC<LdarTabProps> = ({
             <div className="flex flex-wrap items-center gap-4">
               {/* Leak Status */}
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+                <span className="text-xs font-medium text-text-secondary">
                   {t("Status")}:
                 </span>
                 <div className="inline-flex flex-wrap items-center gap-1 rounded-lg border border-border bg-ink-100 p-1">
@@ -725,7 +728,7 @@ export const LdarTab: React.FC<LdarTabProps> = ({
 
               {/* Method */}
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+                <span className="text-xs font-medium text-text-secondary">
                   {t("Method")}:
                 </span>
                 <div className="inline-flex flex-wrap items-center gap-1 rounded-lg border border-border bg-ink-100 p-1">
@@ -841,7 +844,13 @@ export const LdarTab: React.FC<LdarTabProps> = ({
               t("Duration (hrs)"),
               t("Actions"),
             ]}
-            empty={loading ? t("Loading surveys...") : t("No LDAR surveys recorded yet.")}
+            empty={
+              loading
+                ? t("Loading surveys...")
+                : surveys.length === 0
+                ? t("No LDAR surveys recorded yet.")
+                : t("No surveys match the current filters.")
+            }
           >
             {filteredSurveys.map((s) => (
               <Tr key={s.id} className={selectedSurveyIds.has(s.id) ? "bg-brand-50/30" : undefined}>
@@ -870,7 +879,7 @@ export const LdarTab: React.FC<LdarTabProps> = ({
                 </Td>
                 <Td>{getStatusBadge(s.leak_status)}</Td>
                 <Td>{s.repair_date || "-"}</Td>
-                <Td className="font-mono">{s.leaking_hours !== undefined ? s.leaking_hours : 8760}</Td>
+                <Td className="font-mono">{s.leak_status === "Non-leaking" ? 0 : (s.leaking_hours !== undefined ? s.leaking_hours : 8760)}</Td>
                 <Td>
                   {s.leak_status === "Leaking" && (
                     <Button
@@ -904,7 +913,7 @@ export const LdarTab: React.FC<LdarTabProps> = ({
             <div className="flex flex-wrap items-center gap-4">
               {/* Equipment */}
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+                <span className="text-xs font-medium text-text-secondary">
                   {t("Equipment")}:
                 </span>
                 <div className="inline-flex flex-wrap items-center gap-1 rounded-lg border border-border bg-ink-100 p-1">
@@ -931,7 +940,7 @@ export const LdarTab: React.FC<LdarTabProps> = ({
 
               {/* Status */}
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+                <span className="text-xs font-medium text-text-secondary">
                   {t("Status")}:
                 </span>
                 <div className="inline-flex flex-wrap items-center gap-1 rounded-lg border border-border bg-ink-100 p-1">
@@ -1045,7 +1054,13 @@ export const LdarTab: React.FC<LdarTabProps> = ({
               t("Operating Hours"),
               t("Status"),
             ]}
-            empty={loading ? t("Loading components...") : t("No components in inventory.")}
+            empty={
+              loading
+                ? t("Loading components...")
+                : components.length === 0
+                ? t("No components in inventory.")
+                : t("No components match the current filters.")
+            }
           >
             {filteredComponents.map((c) => (
               <Tr key={c.id} className={selectedCompIds.has(c.id) ? "bg-brand-50/30" : undefined}>

@@ -94,7 +94,8 @@ export const Scope3Form: React.FC = () => {
     kg: { kg: 1, tonne: 1000, "short ton": 907.185, lb: 0.453592 },
     bbl: { bbl: 1, gal: 1 / 42, m3: 6.2898, L: 0.0062898 },
     gal: { gal: 1, bbl: 42, L: 0.264172, m3: 264.172 },
-    mcf: { mcf: 1, scf: 0.001, m3: 0.0353147 },
+    MMBtu: { MMBtu: 1, mcf: 1.02, scf: 0.00102, m3: 0.036021, GJ: 1.055056 },
+    mcf: { mcf: 1, MMBtu: 1 / 1.02, scf: 0.001, m3: 0.0353147 },
     kWh: { kWh: 1, MWh: 1000 },
     "ton-km": { "ton-km": 1, "ton-mile": 1.45997 },
     "passenger-km": { "passenger-km": 1, "passenger-mile": 1.60934 },
@@ -263,6 +264,7 @@ export const Scope3Form: React.FC = () => {
         activity_data: amt,
         unit: unit,
         emission_factor: ef,
+        factor_unit: `kg CO2e / ${baseUnit || unit}`,
         co2e: totalEmissions,
         notes: SCOPE3_CATEGORIES[category]?.name || `Category ${category}`,
         status: status,
@@ -272,7 +274,7 @@ export const Scope3Form: React.FC = () => {
       toast.success(
         status === "Draft"
           ? t("Entry saved as draft")
-          : t("Scope 3 entry added successfully"),
+          : t("Submitted for review. It will count in totals after approval."),
       );
       setAmount("");
       setCurrentPage(1);

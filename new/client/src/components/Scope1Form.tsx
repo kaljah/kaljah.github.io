@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { toCsv } from "../utils/chartExport";
-import { Input, Field } from "../ui";
+import { Input, Field, Badge } from "../ui";
+import { Lock } from "lucide-react";
 import { NativeSelect } from "../ui/NativeSelect";
 import api from "../api";
 import CustomDropdown from "./CustomDropdown";
@@ -1578,7 +1579,7 @@ export const Scope1Form: React.FC = () => {
       toast.success(
         status === "Draft"
           ? tr("Entry saved as draft")
-          : tr("Scope 1 entry added successfully"),
+          : tr("Submitted for review. It will count in totals after approval."),
       );
 
       // Reset Form (keep identity)
@@ -1965,8 +1966,16 @@ export const Scope1Form: React.FC = () => {
               </NativeSelect>
             </Field>
           </FieldGrid>
-          {(activity || division || field) && (
-            <div className="[margin-top:6px] [font-size:var(--text-sm)] [color:var(--s1-muted)]">{[activity, division, field].filter(Boolean).join(" · ")}</div>
+          {facilityId ? (
+            <div className="mt-2 flex items-center gap-1.5 rounded-md border border-border bg-ink-50 px-2.5 py-1.5 text-xs text-text-secondary">
+              <Lock className="size-3.5 text-ink-400 shrink-0" aria-hidden="true" />
+              <span>{tr("Auto-filled from Region:")} </span>
+              <strong className="font-semibold text-text">{[activity, division, field].filter(Boolean).join(" · ") || tr("General operational facility")}</strong>
+            </div>
+          ) : (
+            <div className="mt-2 text-xs text-amber-700">
+              {tr("Select a region to load facility operational parameters")}
+            </div>
           )}
           <div className="[margin-top:16px]">
             <div className="[font-size:var(--text-sm)] [font-weight:600] [color:var(--s1-muted)] [text-transform:uppercase] [letter-spacing:0.04em] [margin-bottom:10px]">{tr("Source details")}</div>
@@ -1974,10 +1983,11 @@ export const Scope1Form: React.FC = () => {
               <div className="input-group">
                 <label>{tr("Emission source")}</label>
                 <CustomDropdown
-                  options={getEmissionSourceOptions()}
+                  options={facilityId ? getEmissionSourceOptions() : []}
                   value={emissionSourceId}
                   onChange={setEmissionSourceId}
-                  placeholder={tr("From inventory")}
+                  placeholder={facilityId ? tr("From inventory") : tr("Select a region first")}
+                  disabled={!facilityId}
                 />
               </div>
               <Field className="input-group" label={tr("Equipment ID")}>
@@ -2040,6 +2050,34 @@ export const Scope1Form: React.FC = () => {
           userUncertainty={userUncertainty}
         />
 
+        {/* Live Calculation Preview Card (A6) */}
+        <div className="live-calc-preview rounded-lg border border-border bg-ink-50/80 p-3 mb-3">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="text-xs font-semibold text-text uppercase tracking-wider">
+              {tr("Live Result Preview")}
+            </span>
+            {formData.quantity && Number(formData.quantity) > 0 ? (
+              <Badge tone="success" className="font-mono text-xs font-bold">
+                {tr("Ready to calculate")}
+              </Badge>
+            ) : (
+              <span className="text-xs text-text-secondary italic">
+                {tr("Enter activity quantity to preview result")}
+              </span>
+            )}
+          </div>
+          <div className="mt-1.5 flex flex-wrap items-center justify-between text-xs text-text-secondary">
+            <span>
+              {tr("Factor source:")}{" "}
+              <strong className="text-text font-medium">{formData.fuel || sourceType}</strong>
+            </span>
+            <span>
+              {tr("Unit:")}{" "}
+              <strong className="text-text font-medium">{formData.unit || "—"}</strong>
+            </span>
+          </div>
+        </div>
+
         <div className="s1-actions">
           <button
             type="button"
@@ -2051,7 +2089,7 @@ export const Scope1Form: React.FC = () => {
               opacity: submitting ? 0.6 : 1,
             }}
           >
-            {submitting ? tr("Processing...") : tr("+ Calculate & Submit for Review")}
+            {submitting ? tr("Calculating & submitting...") : tr("+ Calculate & Submit for Review")}
           </button>
         </div>
       </div>

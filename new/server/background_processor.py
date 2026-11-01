@@ -2169,7 +2169,7 @@ def _process_row_scope3(
         row.get("ef_unit")
         or row.get("efunit")
         or row.get("factor_unit")
-        or "kg"
+        or ""
     ).strip()
     calc_method = str(row.get("calculation_method") or "")
 
@@ -2180,13 +2180,26 @@ def _process_row_scope3(
     supplier_total = row.get("co2e") not in (None, "")
     if amt > 0 and raw_ef is None and not supplier_total:
         # no factor in the file: the factor of the same activity in the Scope 3 form (kg CO2e / unit)
-        from emission_factors.scope3_activity_factors import scope3_activity_factor
+        from emission_factors.scope3_activity_factors import scope3_activity_factor, SCOPE3_ACTIVITY_FACTORS
         from input_validation import scope3_category_number
 
-        ef_found, why = scope3_activity_factor(scope3_category_number(cat_str), sub_cat, row.get("unit"))
+        cat_num = scope3_category_number(cat_str)
+        ef_found, why = scope3_activity_factor(cat_num, sub_cat, row.get("unit"))
         if ef_found is None:
             return None, [why]
-        ef, ef_unit = ef_found, "kg"
+        cat_num_int = int(cat_num) if cat_num else 0
+        rows = SCOPE3_ACTIVITY_FACTORS.get(cat_num_int, [])
+        r_match = next((r for r in rows if r[0].lower() == str(sub_cat or "").strip().lower()), None)
+        row_unit = r_match[1] if r_match else (row.get("unit") or "unit")
+        ef, ef_unit = ef_found, f"kg CO2e / {row_unit}"
+    elif amt > 0 and ef > 0 and (not ef_unit or ("/" not in ef_unit and " per " not in ef_unit)):
+        from emission_factors.scope3_activity_factors import SCOPE3_ACTIVITY_FACTORS
+        from input_validation import scope3_category_number
+        cat_num_int = int(scope3_category_number(cat_str)) if cat_str else 0
+        rows = SCOPE3_ACTIVITY_FACTORS.get(cat_num_int, [])
+        r_match = next((r for r in rows if r[0].lower() == str(sub_cat or "").strip().lower()), None)
+        den_unit = r_match[1] if r_match else (row.get("unit") or "unit")
+        ef_unit = f"kg CO2e / {den_unit}"
     if amt > 0 and ef > 0:
         try:
             co2e = compute_scope3_co2e(amt, ef, ef_unit, calc_method, activity_unit=row.get("unit") or "")
@@ -2222,7 +2235,7 @@ def _process_row_scope3(
         return None, [unc_err]
     values = {
         "category": cat_str, "sub_category": sub_cat, "activity_data": amt, "unit": row.get("unit"),
-        "emission_factor": ef, "co2e": co2e, "notes": row.get("notes"), "uncertainty": unc,
+        "emission_factor": ef, "factor_unit": ef_unit, "co2e": co2e, "notes": row.get("notes"), "uncertainty": unc,
     }
     verdict, qa_msg = plausibility_check(co2e)  # the Scope 1 hard bound (1e300 kWh was stored)
     if verdict == "reject":
@@ -2242,6 +2255,7 @@ def _process_row_scope3(
         activity_data=amt,
         unit=row.get("unit"),
         emission_factor=ef,
+        factor_unit=ef_unit,
         co2e=co2e,
         uncertainty=unc,
         calculation_method=calc_method or f"Scope 3 - {cat_str}",  # as the manual form labels it
@@ -2411,6 +2425,25 @@ def _process_row_production(row, user_id, fac_name_map, fac_id_map, batch_prod_m
     total_production_no_injected_mmboe = _parse_float(["total_production_no_injected_mmboe", "total_net_mmboe"])
     saleable_production_mmboe = _parse_float(["saleable_production_mmboe", "saleable_mmboe"])
     fuel_gas_export = _parse_float(["fuel_gas_export_mmsm3", "fuel_gas_mmsm3", "fuel_gas"])
+
+    if total_production_mmboe:
+        from services.dashboard_filters import calculate_oil_gas_boe, validate_production_mmboe_consistency
+        scratch_prod = {
+            "oil_amount": oil_vol,
+            "oil_unit": oil_unit,
+            "gas_amount": gas_vol,
+            "gas_unit": gas_unit,
+            "gross_gas_mmsm3": gross_gas,
+        }
+        calc_boe = calculate_oil_gas_boe(scratch_prod)
+        if calc_boe > 0:
+            is_valid, pct_diff = validate_production_mmboe_consistency(total_production_mmboe, calc_boe)
+            if not is_valid:
+                errors.append(
+                    f"total_production_mmboe ({total_production_mmboe} MMBOE) differs by {pct_diff:.1f}% "
+                    f"from calculated oil+gas BOE ({calc_boe / 1e6:.4f} MMBOE). Must be within 30% tolerance."
+                )
+                return None, errors
 
     # Upsert: respect the (facility_id, month, year) UniqueConstraint
     # In-batch duplicate tracking prevents bulk_save_objects collision

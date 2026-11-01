@@ -71,6 +71,7 @@ export interface SettingsIPCCGlobalWarmingProps {
   gwpStandard: string;
   isAdmin: boolean;
   setGwpStandard: (standard: string) => void;
+  onRequestChangeStandard?: (standard: string) => void;
 }
 
 const SettingsIPCCGlobalWarming: React.FC<SettingsIPCCGlobalWarmingProps> = ({
@@ -78,6 +79,7 @@ const SettingsIPCCGlobalWarming: React.FC<SettingsIPCCGlobalWarmingProps> = ({
   gwpStandard,
   isAdmin,
   setGwpStandard,
+  onRequestChangeStandard,
 }) => (
   <SettingsSection
     icon={Scale}
@@ -87,7 +89,7 @@ const SettingsIPCCGlobalWarming: React.FC<SettingsIPCCGlobalWarmingProps> = ({
     <RadioCardGroup
       label={t("IPCC GWP standard")}
       value={gwpStandard}
-      onChange={setGwpStandard}
+      onChange={(val) => (onRequestChangeStandard ? onRequestChangeStandard(val) : setGwpStandard(val))}
       disabled={!isAdmin}
       options={Object.entries(GWP_DATA).map(([key, data]) => ({
         value: key,

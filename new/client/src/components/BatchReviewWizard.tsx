@@ -536,7 +536,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
         {/* ── Wizard Header ── */}
         <div className="[padding:18px_28px] [border-bottom:1px_solid_var(--border-color,_var(--color-ink-200))] [background:rgba(255,_255,_255,_0.95)] [display:flex] [justify-content:space-between] [align-items:center] [gap:20px] [flex-shrink:0]">
           <div className="[display:flex] [align-items:center] [gap:14px]">
-            <div className="[width:44px] [height:44px] [border-radius:var(--radius-md)] [background:linear-gradient(135deg,_rgba(255,_102,_0,_0.15)_0%,_rgba(255,_102,_0,_0.05)_100%)] [border:1px_solid_rgba(255,_102,_0,_0.25)] [color:var(--color-link)] [display:flex] [align-items:center] [justify-content:center] [flex-shrink:0]">
+            <div className="[width:44px] [height:44px] [border-radius:var(--radius-md)] bg-brand-50 border border-brand-200 text-brand-600 [display:flex] [align-items:center] [justify-content:center] [flex-shrink:0]">
               <Sparkles size={24} />
             </div>
             <div className="wizard-title-text">
@@ -602,7 +602,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
             )}
             <button
               type="button"
-              className="[display:inline-flex] [align-items:center] [gap:6px] [padding:8px_14px] [border-radius:var(--radius-md)] [font-size:var(--text-sm)] [font-weight:600] [cursor:pointer] [border:1px_solid_transparent] [transition:all_0.15s_ease] [background:var(--color-green-700)] [color:var(--color-white)] hover:[background:var(--color-green-600)] hover:[transform:translateY(-1px)] hover:[box-shadow:0_3px_8px_rgba(16,_185,_129,_0.3)]"
+              className="[display:inline-flex] [align-items:center] [gap:6px] [padding:8px_14px] [border-radius:var(--radius-md)] [font-size:var(--text-sm)] [font-weight:600] [cursor:pointer] [border:1px_solid_transparent] [transition:all_0.15s_ease] [background:var(--color-green-700)] [color:var(--color-white)] hover:[background:var(--color-green-600)] shadow-xs"
               onClick={() => handleApproveAll(false)}
               disabled={loading || isProcessing || stats.totalCount === 0}
               title={t("Verify all pending records across all scopes without exception")}
@@ -612,7 +612,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
             </button>
             <button
               type="button"
-              className="[display:inline-flex] [align-items:center] [gap:6px] [padding:8px_14px] [border-radius:var(--radius-md)] [font-size:var(--text-sm)] [font-weight:600] [cursor:pointer] [border:1px_solid_transparent] [transition:all_0.15s_ease] [background:rgba(239,_68,_68,_0.1)] [color:var(--color-red-700)] [&&]:[border-color:rgba(239,_68,_68,_0.25)] hover:[background:var(--color-red-700)] hover:[color:var(--color-white)] hover:[transform:translateY(-1px)] hover:[box-shadow:0_3px_8px_rgba(239,_68,_68,_0.3)]"
+              className="[display:inline-flex] [align-items:center] [gap:6px] [padding:8px_14px] [border-radius:var(--radius-md)] [font-size:var(--text-sm)] [font-weight:600] [cursor:pointer] [border:1px_solid_transparent] [transition:all_0.15s_ease] [background:rgba(239,_68,_68,_0.1)] [color:var(--color-red-700)] [&&]:[border-color:rgba(239,_68,_68,_0.25)] hover:[background:var(--color-red-700)] hover:[color:var(--color-white)] shadow-xs"
               onClick={() => setRejectionModal({ isOpen: true, mode: 'all', targetItem: null, reason: '' })}
               disabled={loading || isProcessing || stats.totalCount === 0}
               title={t("Delete all pending records with audit justification")}
@@ -713,7 +713,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
               <div className="flex! gap-[8px]!">
                 <button
                   type="button"
-                  className="[display:inline-flex] [align-items:center] [gap:6px] [border-radius:var(--radius-md)] [font-weight:600] [cursor:pointer] [border:1px_solid_transparent] [transition:all_0.15s_ease] [background:var(--color-green-700)] [color:var(--color-white)] hover:[background:var(--color-green-600)] hover:[transform:translateY(-1px)] hover:[box-shadow:0_3px_8px_rgba(16,_185,_129,_0.3)] p-[6px_12px]! text-[length:0.78rem]!"
+                  className="[display:inline-flex] [align-items:center] [gap:6px] [border-radius:var(--radius-md)] [font-weight:600] [cursor:pointer] [border:1px_solid_transparent] [transition:all_0.15s_ease] [background:var(--color-green-700)] [color:var(--color-white)] hover:[background:var(--color-green-600)] shadow-xs p-[6px_12px]! text-[length:0.78rem]!"
                   onClick={() => handleApproveAll(true)}
                   disabled={isProcessing}
                 >
@@ -722,7 +722,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
                 </button>
                 <button
                   type="button"
-                  className="[display:inline-flex] [align-items:center] [gap:6px] [border-radius:var(--radius-md)] [font-weight:600] [cursor:pointer] [border:1px_solid_transparent] [transition:all_0.15s_ease] [background:rgba(239,_68,_68,_0.1)] [color:var(--color-red-700)] [&&]:[border-color:rgba(239,_68,_68,_0.25)] hover:[background:var(--color-red-700)] hover:[color:var(--color-white)] hover:[transform:translateY(-1px)] hover:[box-shadow:0_3px_8px_rgba(239,_68,_68,_0.3)] p-[6px_12px]! text-[length:0.78rem]!"
+                  className="[display:inline-flex] [align-items:center] [gap:6px] [border-radius:var(--radius-md)] [font-weight:600] [cursor:pointer] [border:1px_solid_transparent] [transition:all_0.15s_ease] [background:rgba(239,_68,_68,_0.1)] [color:var(--color-red-700)] [&&]:[border-color:rgba(239,_68,_68,_0.25)] hover:[background:var(--color-red-700)] hover:[color:var(--color-white)] shadow-xs p-[6px_12px]! text-[length:0.78rem]!"
                   onClick={() => setRejectionModal({ isOpen: true, mode: 'filtered', targetItem: null, reason: '' })}
                   disabled={isProcessing}
                 >
@@ -736,7 +736,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
 
         {/* ── Floating Selected Batch Bar ── */}
         {selectedKeys.size > 0 && (
-          <div className="[padding:10px_28px] [background:linear-gradient(135deg,_var(--color-ink-800)_0%,_var(--color-ink-900)_100%)] [color:var(--color-white)] [display:flex] [align-items:center] [justify-content:space-between] [gap:16px] [flex-shrink:0] [animation:wizardBannerIn_0.2s_ease-out]">
+          <div className="[padding:10px_28px] [background:var(--color-ink-900)] border-y border-ink-800 [color:var(--color-white)] [display:flex] [align-items:center] [justify-content:space-between] [gap:16px] [flex-shrink:0] [animation:wizardBannerIn_0.2s_ease-out]">
             <div className="flex! items-center! gap-[14px]!">
               <span className="font-bold! text-[length:0.92rem]! inline-flex! items-center! gap-[8px]!">
                 <CheckSquare size={16} color="var(--color-legacy-38bdf8)" />
@@ -751,7 +751,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
             <div className="flex! gap-[10px]! items-center!">
               <button
                 type="button"
-                className="[display:inline-flex] [align-items:center] [gap:6px] [padding:8px_14px] [border-radius:var(--radius-md)] [font-size:var(--text-sm)] [font-weight:600] [cursor:pointer] [border:1px_solid_transparent] [transition:all_0.15s_ease] [background:var(--color-green-700)] [color:var(--color-white)] hover:[background:var(--color-green-600)] hover:[transform:translateY(-1px)] hover:[box-shadow:0_3px_8px_rgba(16,_185,_129,_0.3)]"
+                className="[display:inline-flex] [align-items:center] [gap:6px] [padding:8px_14px] [border-radius:var(--radius-md)] [font-size:var(--text-sm)] [font-weight:600] [cursor:pointer] [border:1px_solid_transparent] [transition:all_0.15s_ease] [background:var(--color-green-700)] [color:var(--color-white)] hover:[background:var(--color-green-600)] shadow-xs"
                 onClick={handleApproveSelected}
                 disabled={isProcessing}
               >
@@ -760,7 +760,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
               </button>
               <button
                 type="button"
-                className="[display:inline-flex] [align-items:center] [gap:6px] [padding:8px_14px] [border-radius:var(--radius-md)] [font-size:var(--text-sm)] [font-weight:600] [cursor:pointer] [border:1px_solid_transparent] [transition:all_0.15s_ease] [background:rgba(239,_68,_68,_0.1)] [color:var(--color-red-700)] [&&]:[border-color:rgba(239,_68,_68,_0.25)] hover:[background:var(--color-red-700)] hover:[color:var(--color-white)] hover:[transform:translateY(-1px)] hover:[box-shadow:0_3px_8px_rgba(239,_68,_68,_0.3)]"
+                className="[display:inline-flex] [align-items:center] [gap:6px] [padding:8px_14px] [border-radius:var(--radius-md)] [font-size:var(--text-sm)] [font-weight:600] [cursor:pointer] [border:1px_solid_transparent] [transition:all_0.15s_ease] [background:rgba(239,_68,_68,_0.1)] [color:var(--color-red-700)] [&&]:[border-color:rgba(239,_68,_68,_0.25)] hover:[background:var(--color-red-700)] hover:[color:var(--color-white)] shadow-xs"
                 onClick={() => setRejectionModal({ isOpen: true, mode: 'selected', targetItem: null, reason: '' })}
                 disabled={isProcessing}
               >
@@ -966,7 +966,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
             </p>
 
             <div>
-              <label className="block! mb-[8px]! text-[length:0.78rem]! font-semibold! text-[color:var(--text-secondary)]! uppercase!">
+              <label className="block! mb-[8px]! text-xs! font-medium! text-[color:var(--text-secondary)]!">
                 {t("Quick Audit Justifications")}
               </label>
               <div className="[display:flex] [flex-wrap:wrap] [gap:8px]">
@@ -984,7 +984,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
             </div>
 
             <div>
-              <label className="block! mb-[8px]! text-[length:0.78rem]! font-semibold! text-[color:var(--text-secondary)]! uppercase!">
+              <label className="block! mb-[8px]! text-xs! font-medium! text-[color:var(--text-secondary)]!">
                 {t("Custom Justification / Details")}
               </label>
               <Textarea

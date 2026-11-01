@@ -21,6 +21,14 @@ const VALUE_TONE: Record<IntensityTone, string> = {
   ch4: "text-blue-600",
 };
 
+const KPI_BORDER_TONE: Record<IntensityTone, string> = {
+  co2: "border-l-2 border-l-brand-500",
+  scope1: "border-l-2 border-l-blue-500",
+  flare: "border-l-2 border-l-amber-500",
+  scope3: "border-l-2 border-l-violet-500",
+  ch4: "border-l-2 border-l-blue-500",
+};
+
 export interface KpiTileProps {
   icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean | "true" | "false" }>;
   tone?: IntensityTone;
@@ -43,12 +51,12 @@ export const KpiTile: React.FC<KpiTileProps> = ({
   footer,
   note,
 }) => (
-  <div className="kpi-card rounded-lg border border-border bg-surface/70 p-6 shadow-card transition-shadow hover:shadow-md">
+  <div className={cn("kpi-card rounded-lg border border-border bg-surface/70 p-6 shadow-card transition-shadow hover:shadow-md", KPI_BORDER_TONE[tone])}>
     <div className="mb-4 flex items-center gap-3">
       <span className={cn("flex size-[38px] shrink-0 items-center justify-center rounded-md", ICON_TONE[tone])}>
         <Icon className="size-5" aria-hidden="true" />
       </span>
-      <span className="kpi-label text-sm font-semibold uppercase tracking-wide text-text-secondary">{label}</span>
+      <span className="kpi-label text-sm font-medium text-text-secondary">{label}</span>
     </div>
     <div className="flex items-baseline gap-2">
       <span className={cn("total-value font-bold leading-none tracking-tight tabular-nums", pending ? "text-lg text-warning-fg" : cn("text-3xl", VALUE_TONE[tone]))}>{value}</span>
@@ -69,8 +77,8 @@ export interface ProdItemProps {
 /** One production figure in the context bar under the KPI tiles. */
 export const ProdItem: React.FC<ProdItemProps> = ({ label, value, accent, bordered = true }) => (
   <div className={cn("scope-item flex flex-col gap-2", bordered && "md:border-l md:border-border md:pl-5")}>
-    <span className="label text-sm font-semibold uppercase tracking-wide text-text-secondary">{label}</span>
-    <span className={cn("val text-lg font-bold text-text", accent)}>{value}</span>
+    <span className="label text-sm font-medium text-text-secondary">{label}</span>
+    <span className={cn("val text-lg font-bold tabular-nums text-text", accent)}>{value}</span>
   </div>
 );
 
@@ -84,7 +92,7 @@ export interface HeroPanelProps {
 
 /** Hero panel with an accent rule on top: title row, KPI grid and production bar. */
 export const HeroPanel: React.FC<HeroPanelProps> = ({ title, icon: Icon, badge, actions, children }) => (
-  <Card className="hero-card relative overflow-hidden p-8 before:absolute before:inset-x-0 before:top-0 before:h-1 before:bg-gradient-to-r before:from-brand-500 before:via-blue-600 before:to-brand-600">
+  <Card className="hero-card relative overflow-hidden p-8 border-t-2 border-t-brand-500">
     <div className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-border pb-5">
       <div className="flex flex-wrap items-center gap-4">
         <h2 className="grid-title m-0 flex items-center gap-3 text-xl font-bold tracking-tight text-text">
@@ -173,9 +181,9 @@ export const Heatmap: React.FC<HeatmapProps> = ({ years, rows, empty = t("No reg
   return (
     <div className="heatmap-container mt-6 overflow-x-auto rounded-md border border-border bg-ink-50 p-4">
       <div className="heatmap-header mb-4 grid gap-3 px-3" style={cols}>
-        <div className="text-left text-sm font-bold uppercase tracking-wide text-text-secondary">{t("REGION")}</div>
+        <div className="text-left text-xs font-medium text-text-secondary">{t("REGION")}</div>
         {years.map((y) => (
-          <div key={y} className="text-center text-sm font-bold uppercase tracking-wide text-text-secondary">
+          <div key={y} className="text-center text-xs font-medium text-text-secondary">
             {y}
           </div>
         ))}
@@ -185,7 +193,7 @@ export const Heatmap: React.FC<HeatmapProps> = ({ years, rows, empty = t("No reg
           <div key={row.id} className="heatmap-row grid items-center gap-3 border-b border-border p-3 transition-colors last:border-b-0 hover:rounded-md hover:bg-surface hover:shadow-xs" style={cols}>
             <div className="text-base font-semibold text-text">{row.name}</div>
             {row.cells.map((c) => (
-              <div key={c.key} title={c.title} className={cn("flex min-h-10 cursor-default items-center justify-center rounded-sm p-2.5 text-base font-semibold", HEAT[heatBand(c.value)])}>
+              <div key={c.key} title={c.title} className={cn("flex min-h-10 cursor-default items-center justify-center rounded-sm p-2.5 text-base font-semibold tabular-nums", HEAT[heatBand(c.value)])}>
                 {c.value > 0 ? c.value.toFixed(2) : "-"}
               </div>
             ))}

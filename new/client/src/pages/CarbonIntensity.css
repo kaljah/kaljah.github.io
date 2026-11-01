@@ -10,17 +10,17 @@
   --border-color: var(--color-ink-200);
   --bg-hover: var(--color-ink-100);
   --card-shadow:
-    0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -1px rgba(15, 23, 42, 0.03);
+    0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.03);
   --card-shadow-hover:
-    0 10px 15px -3px rgba(15, 23, 42, 0.08),
-    0 4px 6px -2px rgba(15, 23, 42, 0.04);
+    0 4px 8px -2px rgba(15, 23, 42, 0.06),
+    0 2px 4px -2px rgba(15, 23, 42, 0.04);
 }
 
 .intensity-content {
   padding: 32px;
   background: var(--bg-app);
   min-height: calc(100vh - 64px);
-  animation: fadeIn 0.5s ease-out;
+  animation: fadeIn 0.3s ease-out;
   font-family: inherit;
 }
 
@@ -31,27 +31,13 @@
   background: var(--bg-card, rgba(255, 255, 255, 0.78));
   backdrop-filter: blur(14px);
   border: 1px solid var(--border-color, rgba(226, 232, 240, 0.8));
+  border-top: 2px solid var(--color-brand-500);
   border-radius: var(--radius-lg);
   padding: 32px;
   box-shadow: var(--shadow-card);
   position: relative;
   overflow: hidden;
-  transition: box-shadow 0.22s ease, border-color 0.22s ease;
-}
-
-.hero-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 4px;
-  background: linear-gradient(
-    90deg,
-    var(--accent-color),
-    var(--accent-secondary),
-    var(--accent-tertiary)
-  );
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
 .hero-header {
@@ -94,13 +80,12 @@
   padding: 24px;
   border: 1px solid var(--border-color);
   box-shadow: var(--card-shadow);
-  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease, border-color 0.22s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .kpi-card:hover {
-  transform: translateY(-2px);
+  border-color: var(--color-ink-300);
   box-shadow: var(--card-shadow-hover);
-  border-color: rgba(255, 255, 255, 0.95);
 }
 
 .kpi-icon {
@@ -129,9 +114,7 @@
 .kpi-label {
   font-size: var(--text-sm);
   color: var(--text-secondary);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-weight: 500;
 }
 
 .total-value {
@@ -141,6 +124,8 @@
   letter-spacing: -0.04em;
   line-height: 1;
   color: var(--text-primary, var(--color-ink-900));
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
 }
 
 .total-value.co2 {
@@ -196,9 +181,7 @@
 .scope-item .label {
   font-size: var(--text-sm);
   color: var(--text-secondary);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-weight: 500;
 }
 
 .scope-item .val {
@@ -206,6 +189,8 @@
   font-weight: 700;
   color: var(--text-primary);
   font-family: inherit;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
 }
 
 .scope-item .val.flare-val {
@@ -221,13 +206,12 @@
   border-radius: var(--radius-lg);
   padding: 24px;
   box-shadow: var(--shadow-card);
-  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease, border-color 0.22s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .intensity-content .card:hover {
-  transform: translateY(-2px);
+  border-color: var(--color-ink-300);
   box-shadow: var(--shadow-card-elevated);
-  border-color: rgba(255, 255, 255, 0.95);
 }
 
 .chart-header {
@@ -289,7 +273,7 @@
 
 .heatmap-cell:hover {
   transform: scale(1.02);
-  filter: brightness(1.1);
+  filter: brightness(1.05);
 }
 
 .heat-null {
@@ -335,10 +319,8 @@
   text-align: left;
   padding: 12px 16px;
   color: var(--text-secondary);
-  font-weight: 600;
+  font-weight: 500;
   font-size: var(--text-sm);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
   border-bottom: 2px solid var(--border-color);
 }
 
@@ -355,11 +337,9 @@
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
@@ -398,9 +378,9 @@
   align-items: center;
   gap: 6px;
   font-size: var(--text-sm);
-  font-weight: 700;
+  font-weight: 600;
   padding: 4px 10px;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
 }
 
 .badge-roadmap-status.achieved {
@@ -421,11 +401,6 @@
   border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
-/* 5-Level OGMP Stepper */
-
-/* Roadmap Footer Stats */
-
-/* Excel Export Button */
 /* CBAM and OGMP Sections */
 .ogmp-section {
   display: flex;

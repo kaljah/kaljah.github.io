@@ -18,6 +18,7 @@ import MultiSelectDropdown from "../components/MultiSelectDropdown";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
 import { CH4_DENSITY_KG_M3 } from "../constants";
 import { Download } from "lucide-react";
+import { PerformanceNavTabs } from "../components/NavigationTabs";
 import "./CarbonIntensity.css";
 import "./TopBarFilters.css";
 import { t } from "../i18n";
@@ -628,7 +629,7 @@ const MethaneIntensity: React.FC = () => {
 
     setTopBarRight(
       <button
-        className="[display:inline-flex] [align-items:center] [gap:8px] [background:linear-gradient(135deg,_var(--color-green-700)_0%,_var(--color-green-700)_100%)] [color:var(--color-white)] [font-size:var(--text-base)] [font-weight:600] [padding:8px_16px] [border-radius:var(--radius-md)] [border:none] [cursor:pointer] [box-shadow:0_4px_12px_rgba(16,_185,_129,_0.25)] [transition:all_0.2s_ease] [&:hover:not(:disabled)]:[transform:translateY(-1px)] [&:hover:not(:disabled)]:[box-shadow:0_6px_18px_rgba(16,_185,_129,_0.35)] disabled:[opacity:0.6] disabled:[cursor:not-allowed]"
+        className="inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold px-3.5 py-1.5 rounded-md border border-brand-600 shadow-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         onClick={handleExportExcel}
         disabled={exporting}
         title={t("Download 5-Tab OGMP 2.0 Disclosure Workbook (.xlsx)")}
@@ -781,6 +782,7 @@ const MethaneIntensity: React.FC = () => {
       }}
     >
       <div className="intensity-grid [display:flex] [flex-direction:column] [gap:32px] [max-width:1600px] [margin:0_auto]">
+        <PerformanceNavTabs />
         {/* KPI HERO CARD */}
         <MethaneIntensityMethaneIntensity
           midstreamTargetPct={midstreamTargetPct}
@@ -841,14 +843,14 @@ const MethaneIntensity: React.FC = () => {
             </div>
 
             {/* Metric Switcher Pills */}
-            <div className="[display:inline-flex] [padding:4px] [background:var(--color-ink-100)] [border-radius:var(--radius-full)] [border:1px_solid_var(--border-color)] [gap:4px]">
+            <div className="inline-flex p-1 bg-ink-100 rounded-full border border-border gap-1">
               <button
                 type="button"
                 onClick={() => setActiveMetricTab("loss_rate")}
-                className={`[padding:6px_14px] [border-radius:var(--radius-full)] [font-size:var(--text-sm)] [font-weight:600] [border:none] [cursor:pointer] [transition:all_0.15s_ease] ${
+                className={`px-3.5 py-1.5 rounded-full text-sm font-semibold border-none cursor-pointer transition-colors ${
                   activeMetricTab === "loss_rate"
-                    ? "[background:var(--color-primary)] [color:var(--color-white)] [box-shadow:0_2px_6px_rgba(255,102,0,0.3)]"
-                    : "[background:transparent] [color:var(--text-secondary)] [&:hover]:[color:var(--text-primary)]"
+                    ? "bg-primary text-white shadow-xs"
+                    : "bg-transparent text-text-secondary hover:text-text"
                 }`}
               >
                 {t("Loss Rate (%)")}
@@ -856,10 +858,10 @@ const MethaneIntensity: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setActiveMetricTab("intensity")}
-                className={`[padding:6px_14px] [border-radius:var(--radius-full)] [font-size:var(--text-sm)] [font-weight:600] [border:none] [cursor:pointer] [transition:all_0.15s_ease] ${
+                className={`px-3.5 py-1.5 rounded-full text-sm font-semibold border-none cursor-pointer transition-colors ${
                   activeMetricTab === "intensity"
-                    ? "[background:var(--color-primary)] [color:var(--color-white)] [box-shadow:0_2px_6px_rgba(255,102,0,0.3)]"
-                    : "[background:transparent] [color:var(--text-secondary)] [&:hover]:[color:var(--text-primary)]"
+                    ? "bg-primary text-white shadow-xs"
+                    : "bg-transparent text-text-secondary hover:text-text"
                 }`}
               >
                 {t("Intensity (kg CH₄/BOE)")}
@@ -867,10 +869,10 @@ const MethaneIntensity: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setActiveMetricTab("total_ch4")}
-                className={`[padding:6px_14px] [border-radius:var(--radius-full)] [font-size:var(--text-sm)] [font-weight:600] [border:none] [cursor:pointer] [transition:all_0.15s_ease] ${
+                className={`px-3.5 py-1.5 rounded-full text-sm font-semibold border-none cursor-pointer transition-colors ${
                   activeMetricTab === "total_ch4"
-                    ? "[background:var(--color-primary)] [color:var(--color-white)] [box-shadow:0_2px_6px_rgba(255,102,0,0.3)]"
-                    : "[background:transparent] [color:var(--text-secondary)] [&:hover]:[color:var(--text-primary)]"
+                    ? "bg-primary text-white shadow-xs"
+                    : "bg-transparent text-text-secondary hover:text-text"
                 }`}
               >
                 {t("Total CH₄ (t)")}
@@ -878,10 +880,10 @@ const MethaneIntensity: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setActiveMetricTab("flaring")}
-                className={`[padding:6px_14px] [border-radius:var(--radius-full)] [font-size:var(--text-sm)] [font-weight:600] [border:none] [cursor:pointer] [transition:all_0.15s_ease] ${
+                className={`px-3.5 py-1.5 rounded-full text-sm font-semibold border-none cursor-pointer transition-colors ${
                   activeMetricTab === "flaring"
-                    ? "[background:var(--color-primary)] [color:var(--color-white)] [box-shadow:0_2px_6px_rgba(255,102,0,0.3)]"
-                    : "[background:transparent] [color:var(--text-secondary)] [&:hover]:[color:var(--text-primary)]"
+                    ? "bg-primary text-white shadow-xs"
+                    : "bg-transparent text-text-secondary hover:text-text"
                 }`}
               >
                 {t("Flaring (m³)")}
@@ -889,7 +891,7 @@ const MethaneIntensity: React.FC = () => {
             </div>
           </div>
 
-          <div className="h-[400px]!">
+          <div className="h-[520px]!">
             {activeMetricTab === "loss_rate" && (
               <BarChart
                 data={methaneByRegion
@@ -901,6 +903,7 @@ const MethaneIntensity: React.FC = () => {
                   }))}
                 dataKey="value"
                 xKey="name"
+                height={480}
                 horizontal
                 sortDesc
                 onSelect={openFacilityRecords}
@@ -914,6 +917,7 @@ const MethaneIntensity: React.FC = () => {
                 referenceValue={upstreamTargetPct}
                 referenceLabel={t("Target {{value}}%", { value: upstreamTargetPct })}
                 color="var(--color-blue-600)"
+                formatValue={(v) => `${Number(v).toFixed(2)}%`}
               />
             )}
             {activeMetricTab === "intensity" && (
@@ -925,12 +929,14 @@ const MethaneIntensity: React.FC = () => {
                 }))}
                 dataKey="value"
                 xKey="name"
+                height={480}
                 horizontal
                 sortDesc
                 onSelect={openFacilityRecords}
                 selectLabel={(r) => t("Open {{name}} records", { name: r.name })}
                 exportName="methane-intensity-by-region"
                 color="var(--color-primary)"
+                formatValue={(v) => `${Number(v).toFixed(2)} kg/BOE`}
               />
             )}
             {activeMetricTab === "total_ch4" && (
@@ -942,6 +948,7 @@ const MethaneIntensity: React.FC = () => {
                 }))}
                 dataKey="value"
                 xKey="name"
+                height={480}
                 horizontal
                 sortDesc
                 onSelect={openFacilityRecords}
@@ -959,12 +966,14 @@ const MethaneIntensity: React.FC = () => {
                 }))}
                 dataKey="value"
                 xKey="name"
+                height={480}
                 horizontal
                 sortDesc
                 onSelect={openFacilityRecords}
                 selectLabel={(r) => t("Open {{name}} records", { name: r.name })}
                 exportName="gas-flaring-volume-by-region"
-                color="var(--color-legacy-ea580c, #ea580c)"
+                color="var(--color-brand-600)"
+                formatValue={(v) => `${Number(v).toLocaleString()} m³`}
               />
             )}
           </div>

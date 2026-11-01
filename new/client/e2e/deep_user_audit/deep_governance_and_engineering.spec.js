@@ -86,8 +86,7 @@ test.describe.serial('Suite 9: Advanced Engineering, Governance & Enterprise Ope
     await expect(modalHeader).toBeVisible();
 
     // Fill Custom Factor Form
-    const uniqueTs = Date.now();
-    const testFactorName = `Skikda Light Refinery Gas 2026-${uniqueTs}`;
+    const testFactorName = `Skikda Light Refinery Gas 2026`;
 
     console.log(`[E2E GOV] Filling custom factor form for ${testFactorName}...`);
     await page.locator('input[placeholder*="Hassi R\'Mel Fuel Gas"]').fill(testFactorName);
@@ -160,8 +159,7 @@ test.describe.serial('Suite 9: Advanced Engineering, Governance & Enterprise Ope
     console.log('[E2E GOV] Computed SRSS Combined Uncertainty.');
 
     // Fill Custom Factor Form on page
-    const uniqueTs = Date.now();
-    const factorName = `Laghouat Field Gas Blend-${uniqueTs}`;
+    const factorName = `Laghouat Field Gas Blend`;
 
     console.log(`[E2E GOV] Adding new custom factor via main form: ${factorName}...`);
     await page.locator('input[name="factor_name"]').fill(factorName);
@@ -266,8 +264,7 @@ test.describe.serial('Suite 9: Advanced Engineering, Governance & Enterprise Ope
     const facHeader = page.locator('text=Active Regions').first();
     await expect(facHeader).toBeVisible({ timeout: 15000 });
 
-    const uniqueTs = Date.now();
-    const facilityName = `Gassi Touil Gas Complex-${uniqueTs}`;
+    const facilityName = `Gassi Touil Gas Complex`;
 
     console.log(`[E2E GOV] Registering new operational facility: ${facilityName}...`);
     await page.locator('input[name="name"]').fill(facilityName);

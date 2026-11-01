@@ -9,6 +9,7 @@ import api from "../api";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../components/Toast";
 import ConfirmModal from "../components/ConfirmModal";
+import { GovernanceNavTabs } from "../components/NavigationTabs";
 import { tint } from "../utils/colorMix";
 import { t } from "../i18n";
 
@@ -184,16 +185,15 @@ const S: Record<string, any> = {
   },
   statValue: {
     fontSize: "1.8rem",
-    fontWeight: 800,
+    fontWeight: 700,
     color: "var(--text-primary)",
     lineHeight: 1,
+    fontVariantNumeric: "tabular-nums",
   },
   statLabel: {
-    fontSize: "0.78rem",
-    fontWeight: 600,
+    fontSize: "0.75rem",
+    fontWeight: 500,
     color: "var(--text-secondary)",
-    textTransform: "uppercase",
-    letterSpacing: ".6px",
   },
 
   /* table card */
@@ -233,10 +233,8 @@ const S: Record<string, any> = {
     padding: "11px 16px",
     background: "var(--bg-body)",
     color: "var(--color-ink-600)",
-    fontWeight: 700,
-    fontSize: "0.72rem",
-    textTransform: "uppercase",
-    letterSpacing: ".7px",
+    fontWeight: 500,
+    fontSize: "0.75rem",
     borderBottom: "1px solid var(--border-color)",
     whiteSpace: "nowrap",
   },
@@ -319,19 +317,18 @@ const S: Record<string, any> = {
 
   /* primary button */
   btnPrimary: {
-    background: "linear-gradient(135deg, var(--color-brand-500) 0%, var(--color-brand-400) 100%)",
+    background: "var(--color-brand-600)",
     color: "var(--color-white)",
-    border: "none",
-    borderRadius: "10px",
-    padding: "9px 18px",
-    fontSize: "0.88rem",
-    fontWeight: 700,
+    border: "1px solid var(--color-brand-700)",
+    borderRadius: "var(--radius-md)",
+    padding: "8px 16px",
+    fontSize: "0.875rem",
+    fontWeight: 600,
     cursor: "pointer",
     display: "inline-flex",
     alignItems: "center",
     gap: "7px",
-    transition: "transform .15s, box-shadow .15s",
-    boxShadow: "0 4px 12px rgba(255,102,0,.25)",
+    boxShadow: "var(--shadow-xs)",
     whiteSpace: "nowrap",
   },
   btnSecondary: {
@@ -350,12 +347,10 @@ const S: Record<string, any> = {
   formGroup: { marginBottom: "18px" },
   label: {
     display: "block",
-    marginBottom: "7px",
-    fontWeight: 700,
+    marginBottom: "6px",
+    fontWeight: 500,
     fontSize: "0.82rem",
     color: "var(--text-secondary)",
-    textTransform: "uppercase",
-    letterSpacing: ".5px",
   },
   input: {
     width: "100%",
@@ -404,11 +399,9 @@ const S: Record<string, any> = {
     flexShrink: 0,
   }),
   sectionTitle: {
-    fontSize: "0.82rem",
-    fontWeight: 700,
+    fontSize: "0.85rem",
+    fontWeight: 600,
     color: "var(--text-primary)",
-    textTransform: "uppercase",
-    letterSpacing: "0.5px",
   },
 
   /* empty / loading */
@@ -846,6 +839,7 @@ const UserManagement: React.FC = () => {
 
   return (
     <div style={S.page}>
+      <GovernanceNavTabs className="mb-4" />
       {/* ── Hero Header ── */}
       <div style={S.hero}>
         <div style={S.heroLeft}>
@@ -897,14 +891,10 @@ const UserManagement: React.FC = () => {
               style={S.btnPrimary}
               onClick={() => handleOpenModal()}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-2px)";
-                e.currentTarget.style.boxShadow =
-                  "0 8px 20px rgba(255,102,0,.35)";
+                e.currentTarget.style.background = "var(--color-brand-700)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "none";
-                e.currentTarget.style.boxShadow =
-                  "0 4px 12px rgba(255,102,0,.25)";
+                e.currentTarget.style.background = "var(--color-brand-600)";
               }}
             >
               <Plus size={16} strokeWidth={2.5} aria-hidden="true" />
@@ -991,12 +981,10 @@ const UserManagement: React.FC = () => {
                 key={stat.label}
                 style={S.statCard}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateY(-3px)";
-                  e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,.08)";
+                  e.currentTarget.style.borderColor = "var(--color-ink-300)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "none";
-                  e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,.04)";
+                  e.currentTarget.style.borderColor = "var(--border-color)";
                 }}
               >
                 <div
