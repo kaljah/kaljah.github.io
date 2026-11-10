@@ -20,7 +20,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import CustomDropdown from "../components/CustomDropdown";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
 import { ReportsNavTabs } from "../components/NavigationTabs";
-import { TableSkeleton, ChartSkeleton } from "../ui";
+import { Badge, TableSkeleton, ChartSkeleton } from "../ui";
 import "./UncertaintyAssessment.css";
 import { t } from "../i18n";
 
@@ -283,7 +283,7 @@ const UncertaintyAssessment: React.FC = () => {
           <h1 className="ua-title">{t("Data Reliability Analysis")}</h1>
           <p className="[font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-500))] [max-width:850px] [margin:0] [line-height:1.5]">
             {t(
-              "Dynamic quantification of GHG inventory uncertainty according to ISO 14064-1 §7.5 and IPCC 2006 Guidelines Vol.1 §3.3."
+              "Dynamic quantification of GHG inventory uncertainty using basic error propagation (Monte Carlo planned), aligned with ISO 14064-1 §7.5 and IPCC 2006 Vol.1 §3.3."
             )}
           </p>
         </div>
@@ -514,7 +514,7 @@ const UncertaintyAssessment: React.FC = () => {
                       ? t("Relative Uncertainty by Category (±%)")
                       : analyticsView === "absolute"
                       ? t("Verified Emissions & 95% Margin by Category (tCO₂e)")
-                      : t("Empirical Monte Carlo Distribution — Probability Histogram (IPCC Approach 2)")}
+                      : t("Stochastic Distribution Preview (Monte Carlo planned)")}
                   </h3>
                   <p className="[font-size:var(--text-xs)] [color:var(--text-secondary,_var(--color-ink-500))] [margin:4px_0_0_18px]">
                     {analyticsView === "relative"
@@ -526,7 +526,7 @@ const UncertaintyAssessment: React.FC = () => {
                           "Weighting of total emissions by category and absolute uncertainty whiskers."
                         )
                       : t(
-                          "Log-normal stochastic simulation (2,500 iterations) illustrating the probability density function and P5/P95 percentiles."
+                          "Preview log-normal histogram alongside basic error propagation (Monte Carlo planned)."
                         )}
                   </p>
                 </div>
@@ -558,7 +558,10 @@ const UncertaintyAssessment: React.FC = () => {
                     onClick={() => setAnalyticsView("monte_carlo")}
                   >
                     <Activity size={13} />
-                    {t("Monte Carlo Histogram")}
+                    <span>{t("Monte Carlo Histogram")}</span>
+                    <Badge tone="warning" className="ml-1 px-1.5 py-0 text-[0.65rem]">
+                      {t("Preview / Roadmap")}
+                    </Badge>
                   </button>
                 </div>
               </div>

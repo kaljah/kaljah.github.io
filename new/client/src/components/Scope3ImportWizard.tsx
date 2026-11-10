@@ -149,7 +149,7 @@ export const Scope3ImportWizard: React.FC<Scope3ImportWizardProps> = ({ onClose,
   return (
     <ImportWizard
       title={t("Scope 3 Bulk Import")}
-      subtitle={t("Upload value chain emissions data from CSV or Excel")}
+      subtitle={t("Upload CSV or Excel data for spend-based screening via in-process background processing")}
       modes={MODES}
       fieldGroupsFor={groupsFor}
       scopeFor={(mode) => (mode === "eeio" ? "3_eeio" : "3")}

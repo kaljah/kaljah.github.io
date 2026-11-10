@@ -338,7 +338,7 @@ const UploadProgress: React.FC<UploadProgressProps> = ({ jobId, onComplete, onCa
             <div>
               <p className="m-0 mb-1 text-md font-semibold text-text">{t("Importing your file…")}</p>
               <p className="m-0 text-base text-text-secondary">
-                {t("You can close this window: the import keeps running on the server. The file is saved in one go when every row is done, so its records appear together at the end.")}
+                {t("You can close this window: the import continues via in-process background processing on the server. The file is committed together once all rows finish.")}
               </p>
             </div>
           </div>

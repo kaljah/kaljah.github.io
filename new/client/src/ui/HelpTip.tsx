@@ -141,7 +141,7 @@ export const GLOSSARY_ITEMS: GlossaryEntry[] = [
     term: "Monte Carlo Uncertainty",
     category: "Methodologies",
     definition: t(
-      "IPCC Tier 2 numerical simulation technique using Latin Hypercube stochastic sampling (5,000 iterations) to determine exact non-normal probability distributions and 95% confidence intervals (k=2).",
+      "Basic error propagation (Monte Carlo planned): planned IPCC Tier 2 stochastic sampling roadmap to complement current analytical SRSS 95% confidence intervals (k=2).",
     ),
   },
   {
@@ -169,14 +169,14 @@ export const GLOSSARY_ITEMS: GlossaryEntry[] = [
     term: "OGMP 2.0 L1-L5",
     category: "Frameworks",
     definition: t(
-      "Oil and Gas Methane Partnership reporting framework. Progresses from L1 (venture-level) to L4 (source-level direct measurements) and L5 (site-level measurement reconciliation).",
+      "Oil and Gas Methane Partnership reporting framework (L1 venture-level to L4/L5 site-level measurement tracking; L4/L5 reconciliation preview, reconciliation logic in development).",
     ),
   },
   {
     term: "Gold Standard pathway",
     category: "Frameworks",
     definition: t(
-      "UNEP/IMEO status awarded to operators with credible, time-bound plans to report majority operated assets at OGMP 2.0 Level 4/5 within 3-5 years.",
+      "UNEP/IMEO status awarded to operators with credible, time-bound plans for OGMP 2.0 Level 4/5 reporting within 3-5 years (preview, reconciliation logic in development).",
     ),
   },
   {

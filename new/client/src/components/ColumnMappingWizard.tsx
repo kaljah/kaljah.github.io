@@ -32,7 +32,7 @@ const SUBTITLES: Record<WizardImportType, string> = {
   production: tr("Upload monthly oil and gas production throughput from CSV or Excel"),
   mitigation: tr("Upload carbon reduction and abatement projects from CSV or Excel"),
   facilities: tr("Upload operational regions, blocks and concessions from CSV or Excel"),
-  activity: tr("Upload fuel combustion, flaring, venting or fugitive data from CSV or Excel"),
+  activity: tr("Upload fuel combustion, flaring, venting or fugitive data from CSV or Excel via in-process background processing"),
 };
 
 const OVERWRITE_CONFIG: Record<WizardImportType, { label: string; hint: string }> = {

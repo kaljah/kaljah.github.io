@@ -28,10 +28,10 @@ Built on API Compendium (2021), GHG Protocol, OGMP 2.0, and IPCC AR5/AR6 methodo
   │     ├── Venting Engine        → Tanks, pneumatics, blowdown, acid gas
   │     ├── Fugitive Engine       → Component counts & leak detection (LDAR)
   │     ├── Scope 2 Engine        → Market & location-based electricity
-  │     └── Scope 3 Engine        → 15 value chain protocol categories
+  │     └── Scope 3 Engine        → Spend-based screening & GHG Protocol categories
   │
   ├── Background Processor (background_processor.py)
-  │     └── Asynchronous job processor (Redis / Threading) for batch imports
+  │     └── In-process background processing (threading; optional Redis queue) for batch imports & reports
   │
   └── Persistence Layer (SQLAlchemy ORM)
         ├── SQLite / PostgreSQL (Relational Database)

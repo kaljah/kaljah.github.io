@@ -344,7 +344,7 @@ const Settings: React.FC = () => {
             </Badge>
             <h1 className="m-0 text-xl font-bold text-text">{t("System Settings & Protocols")}</h1>
             <p className="m-0 text-md leading-normal text-text-secondary">
-              {t("Configure IPCC Global Warming Potential (GWP) conversion factors, OGMP 2.0 Gold Standard compliance parameters, and facility-specific reconciliation tolerances.")}
+              {t("Configure IPCC Global Warming Potential (GWP) conversion factors, OGMP 2.0 preview parameters, and facility-specific reconciliation tolerances.")}
             </p>
           </div>
           {/* only an admin can change these settings: other roles see them read-only, with no save button */}

@@ -15,7 +15,7 @@ App (App.tsx)
        ├── [ Overview ]
        │     ├── /                      → DashboardEnhanced.tsx (KPIs, Charts, Breakdowns)
        │     ├── /carbon-intensity      → CarbonIntensity.tsx (kg CO2e/boe benchmarks)
-       │     ├── /methane-intensity     → MethaneIntensity.tsx (OGMP 2.0 Gold Standard)
+       │     ├── /methane-intensity     → MethaneIntensity.tsx (OGMP 2.0 preview, reconciliation logic in development)
        │     ├── /sbti                  → SbtiDashboard.tsx (Net-zero target trajectories)
        │     └── /methane-explorer      → MethaneExplorer.tsx (Leaflet interactive GIS map)
        │
@@ -25,8 +25,8 @@ App (App.tsx)
        │     └── /reference-data        → ReferenceData.tsx (Emission factor library)
        │
        ├── [ Assurance & Reporting ]
-       │     ├── /reports               → Reports.tsx (PDF exporter, CBAM, OGMP)
-       │     ├── /uncertainty           → UncertaintyAssessment.tsx (Monte Carlo analytics)
+       │     ├── /reports               → Reports.tsx (PDF exporter, CBAM [Preview / Roadmap XML], OGMP)
+       │     ├── /uncertainty           → UncertaintyAssessment.tsx (Basic error propagation; Monte Carlo planned)
        │     ├── /qa-dashboard          → QADashboard.tsx (Diagnostics & anomaly review)
        │     └── /audit-trail           → AuditTrail.tsx (Immutable ledger view)
        │

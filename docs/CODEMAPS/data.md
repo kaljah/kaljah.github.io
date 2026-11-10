@@ -16,7 +16,7 @@ SQLAlchemy ORM relational data layer supporting SQLite (development/testing) and
    ├─► [ Emission ] (emissions: Scope 1 activity, fuel, flaring, venting)
    │     └─► [ FlaringDetail ] (flaring_details: gas composition, tip D, combustion eff)
    ├─► [ Scope2Emission ] (scope2_emissions: location/market electricity)
-   ├─► [ Scope3Emission ] (scope3_emissions: protocol categories 1-15)
+   ├─► [ Scope3Emission ] (scope3_emissions: spend-based screening categories)
    ├─► [ ProductionData ] (production_data: boe, oil, gas volumes for intensity metrics)
    ├─► [ EmissionSource ] (emission_sources: equipment, compressors, flares, tanks)
    ├─► [ ComponentInventory ] (component_inventories: valves, flanges, seals for LDAR)
@@ -49,11 +49,11 @@ SQLAlchemy ORM relational data layer supporting SQLite (development/testing) and
 | `production_data` | `ProductionData` | `facility_id, gross_boe, net_oil, gas_produced, date` | Denominator for carbon/methane intensity |
 | `flaring_details` | `FlaringDetail` | `emission_id, flare_type, tip_diameter, eff_percent` | High-fidelity flaring combustion specs |
 | `scope2_emissions` | `Scope2Emission` | `facility_id, mwh_consumed, method, grid_factor` | Indirect energy emissions (Scope 2) |
-| `scope3_emissions` | `Scope3Emission` | `facility_id, category, spend_usd, activity_val` | Value chain emissions across 15 categories |
+| `scope3_emissions` | `Scope3Emission` | `facility_id, category, spend_usd, activity_val` | Spend-based screening value chain emissions |
 | `component_inventories`| `ComponentInventory`| `facility_id, component_type, count, service_stream` | Fugitive emission factor equipment census |
 | `fugitive_surveys` | `FugitiveSurvey` | `facility_id, survey_date, leakers_found, method` | EPA Method 21 / OGI leak campaign log |
 | `activity_log` | `ActivityLog` | `user_id, action, entity_type, entity_id, timestamp` | Append-only security & audit history |
-| `ogmp_surveys` | `OgmpSurvey` | `facility_id, source_type, ogmp_level, measured_rate`| UNEP OGMP 2.0 Level 4/5 Gold Standard |
+| `ogmp_surveys` | `OgmpSurvey` | `facility_id, source_type, ogmp_level, measured_rate`| UNEP OGMP 2.0 tracking (preview, reconciliation logic in development) |
 | `facility_equity_shares`| `FacilityEquityShare`| `facility_id, partner_id, share_percentage` | Operational vs. Equity share boundaries |
 | `import_mappings` | `ImportMapping` | `source_column, target_field, facility_id` | Cached column mapping wizard profiles |
 

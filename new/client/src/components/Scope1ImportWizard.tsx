@@ -368,7 +368,7 @@ export const Scope1ImportWizard: React.FC<Scope1ImportWizardProps> = ({ onClose,
   return (
     <ImportWizard
       title={t("Scope 1 Bulk Import")}
-      subtitle={t("Upload emissions data from CSV or Excel")}
+      subtitle={t("Upload emissions data from CSV or Excel via in-process background processing")}
       fieldGroupsFor={fieldGroupsFor}
       scopeFor={() => "1"}
       preSteps={preSteps}

@@ -1,5 +1,6 @@
 import React from "react";
 import { AlertTriangle, Award, Calendar, Check, ChevronDown, ChevronUp } from "lucide-react";
+import { Badge } from "../../ui";
 import { t } from "../../i18n";
 
 export interface MethaneIntensityOGMP20GoldProps {
@@ -35,12 +36,13 @@ const MethaneIntensityOGMP20Gold: React.FC<MethaneIntensityOGMP20GoldProps> = ({
       onClick={() => setRoadmapCollapsed(!roadmapCollapsed)}
     >
       <div className="flex flex-col gap-1">
-        <h3 className="text-lg font-bold text-text m-0 flex items-center gap-2.5">
+        <h3 className="text-lg font-bold text-text m-0 flex flex-wrap items-center gap-2.5">
           <Award size={22} className="text-brand-500" />
-          {t("OGMP 2.0 Gold Standard Pathway & Milestone Roadmap")}
+          <span>{t("OGMP 2.0 Gold Standard Pathway & Milestone Roadmap")}</span>
+          <Badge tone="warning">{t("Preview / Roadmap")}</Badge>
         </h3>
         <p className="text-sm text-text-secondary m-0">
-          {t("Multi-year reporting level progression towards Level 4/5 site-level measurement reconciliation.")}
+          {t("Multi-year reporting level tracking towards Level 4/5 site-level measurement reconciliation (preview, reconciliation logic in development).")}
         </p>
       </div>
 

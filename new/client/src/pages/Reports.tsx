@@ -880,7 +880,10 @@ const Reports: React.FC = () => {
                   {tr("EU CBAM Template (Excel)")}
                 </MenuItem>
                 <MenuItem icon={FileCode} onSelect={() => handleCBAMExport("xml")}>
-                  {tr("EU CBAM Declaration (XML)")}
+                  <span className="flex-1">{tr("EU CBAM Declaration (XML)")}</span>
+                  <Badge tone="warning" className="ml-2 px-1.5 py-0 text-[0.65rem]">
+                    {tr("Preview / Roadmap")}
+                  </Badge>
                 </MenuItem>
                 <MenuItem icon={FileSpreadsheet} onSelect={handleExcelExport}>
                   {tr("Excel export")}
@@ -997,7 +1000,7 @@ const Reports: React.FC = () => {
             <span className="inline-block size-2 rounded-full bg-emerald-500 animate-pulse"></span>
             <span>
               {masterJobStatusText ||
-                tr("Background job compilation with status polling and cryptographic SHA-256 tamper-evident fingerprint.")}
+                tr("In-process background processing with status polling and cryptographic SHA-256 tamper-evident fingerprint.")}
             </span>
             {masterReadyDownload && (
               <a
