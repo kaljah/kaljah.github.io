@@ -160,3 +160,6 @@ audit/scope1_100k/out/
 deploy/.env
 deploy/certs/
 deploy/release/
+
+# Auto-generated chart/plot cache (server-side rendered PNGs)
+new/server/instance/chart_cache/
