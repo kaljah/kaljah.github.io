@@ -181,3 +181,7 @@ class Config:
         )
     # Expose X-RateLimit-* response headers so clients can self-throttle
     RATELIMIT_HEADERS_ENABLED = True
+
+    # CDSE / Copernicus credentials loaded strictly from environment variables (never stored in DB)
+    CDSE_USERNAME = os.environ.get("CDSE_USERNAME") or os.environ.get("COPERNICUS_USERNAME") or ""
+    CDSE_PASSWORD = os.environ.get("CDSE_PASSWORD") or os.environ.get("COPERNICUS_PASSWORD") or ""

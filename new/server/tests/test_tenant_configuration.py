@@ -1,6 +1,6 @@
 """
 Tests for Tenant Configuration (Item 3.7)
-Verifies that operator metadata ('Sonatrach') and regulatory decree ('Executive Decree 21-330 Article 9')
+Verifies that operator metadata ('Demo Operator Co.') and regulatory decree ('Executive Decree 21-330 Article 9')
 are configurable via service, DB persistence, and API.
 """
 import pytest
@@ -25,7 +25,7 @@ def admin_user():
             user = User(
                 email="tenant_admin@test.com",
                 fullName="Tenant Admin",
-                orgName="Sonatrach",
+                orgName="Demo Operator Co.",
                 sector="Oil & Gas",
                 role="admin",
                 status="active",
@@ -37,9 +37,9 @@ def admin_user():
 
 
 def test_default_tenant_config_values():
-    """Verify default tenant configuration matches Sonatrach & Executive Decree 21-330 Article 9."""
+    """Verify default tenant configuration matches Demo Operator Co. & Executive Decree 21-330 Article 9."""
     cfg = get_tenant_config("default")
-    assert cfg["organization_name"] == "Sonatrach"
+    assert cfg["organization_name"] == "Demo Operator Co."
     assert cfg["regulatory_framework"] == "Executive Decree 21-330 Article 9"
     assert cfg["country"] == "Algeria"
 
@@ -53,7 +53,7 @@ def test_get_tenant_config_api(client, admin_user):
     res = client.get("/api/tenant/config")
     assert res.status_code == 200
     data = res.get_json()
-    assert data["organization_name"] == "Sonatrach"
+    assert data["organization_name"] == "Demo Operator Co."
     assert data["regulatory_framework"] == "Executive Decree 21-330 Article 9"
 
 
@@ -64,7 +64,7 @@ def test_update_tenant_config_persists_and_audits(client, admin_user):
         sess["role"] = admin_user.role
 
     update_payload = {
-        "organization_name": "Sonatrach E&P Joint Venture",
+        "organization_name": "Demo Operator Co. E&P Joint Venture",
         "regulatory_framework": "Executive Decree 21-330 Article 9 (Audited)",
         "country": "Algeria",
     }
@@ -72,17 +72,17 @@ def test_update_tenant_config_persists_and_audits(client, admin_user):
     assert res.status_code == 200
     body = res.get_json()
     assert body["status"] == "success"
-    assert body["config"]["organization_name"] == "Sonatrach E&P Joint Venture"
+    assert body["config"]["organization_name"] == "Demo Operator Co. E&P Joint Venture"
     assert body["config"]["regulatory_framework"] == "Executive Decree 21-330 Article 9 (Audited)"
 
     # Verify persistence via get_tenant_config
     refreshed = get_tenant_config("default")
-    assert refreshed["organization_name"] == "Sonatrach E&P Joint Venture"
+    assert refreshed["organization_name"] == "Demo Operator Co. E&P Joint Venture"
 
     # Verify ActivityLog audit entry
     log = ActivityLog.query.filter_by(action="SETTINGS_CHANGE", entity="TenantConfig").order_by(ActivityLog.id.desc()).first()
     assert log is not None
-    assert "Sonatrach E&P Joint Venture" in log.new_values
+    assert "Demo Operator Co. E&P Joint Venture" in log.new_values
 
     # Clean up test override from DB
     from models import SystemSetting
@@ -97,7 +97,7 @@ def test_tenant_config_cross_tenant_isolation(client, app):
     with app.app_context():
         from models import SystemSetting
         # Ensure default override exists
-        update_tenant_config("default", {"organization_name": "Sonatrach Custom EP"})
+        update_tenant_config("default", {"organization_name": "Demo Operator Co. Custom EP"})
         
         # Non-default tenant should still retain its own registry values
         mena_b = get_tenant_config("mena_operator_b")

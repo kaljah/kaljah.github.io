@@ -25,7 +25,7 @@ def test_accounts(client):
                 orgName="Energy Corp",
                 sector="Energy",
                 role="user",
-                location="Hassi Messaoud",
+                location="Basin Alpha",
                 department="Operations",
                 jobTitle="Technician",
             )
@@ -246,14 +246,14 @@ def test_it_manager_full_management_capabilities(client):
         json={
             "fullName": "Managed User One Updated",
             "role": "superuser",
-            "location": "Hassi Messaoud",
+            "location": "Basin Alpha",
             "status": "disabled",
         },
     )
     assert res_update.status_code == 200
     u_data = res_update.get_json()["user"]
     assert u_data["role"] == "superuser"
-    assert u_data["location"] == "Hassi Messaoud"
+    assert u_data["location"] == "Basin Alpha"
     assert u_data["status"] == "disabled"
 
     # 3. IT Manager can reset password
@@ -297,7 +297,7 @@ def test_it_user_cannot_reset_admin_or_superuser_password(client, test_accounts)
                 orgName="Energy Corp",
                 sector="Energy",
                 role="superuser",
-                location="Hassi Messaoud",
+                location="Basin Alpha",
             )
             super_u.set_password("SuperSecurePass123!")
             db.session.add(super_u)
@@ -377,10 +377,10 @@ def _protected_account(email, role):
     user = User.query.filter_by(email=email).first()
     if not user:
         user = User(email=email, fullName=f"Protected {role}", orgName="Energy Corp", sector="Energy",
-                    role=role, location="Hassi Messaoud", status="active")
+                    role=role, location="Basin Alpha", status="active")
         user.set_password("ProtectedPass123!")
         db.session.add(user)
-    user.role, user.status, user.location = role, "active", "Hassi Messaoud"
+    user.role, user.status, user.location = role, "active", "Basin Alpha"
     db.session.commit()
     return user.id
 
@@ -394,7 +394,7 @@ def test_it_admin_cannot_assign_compliance_or_vendor_roles(client, test_accounts
         sess["user_id"] = test_accounts["it_admin_id"]
     for role in ("it_manager", " IT_MANAGER ", "admin", "superuser"):
         res = client.put(f"/api/auth/users/{test_accounts['target_id']}",
-                         json={"role": role, "location": "Hassi Messaoud"})
+                         json={"role": role, "location": "Basin Alpha"})
         assert res.status_code == 403, role
     with app.app_context():
         assert db.session.get(User, test_accounts["target_id"]).role == "user"
@@ -406,7 +406,7 @@ def test_it_admin_cannot_create_compliance_accounts(client, test_accounts, role)
         sess["user_id"] = test_accounts["it_admin_id"]
     res = client.post("/api/auth/register", json={
         "fullName": "Shadow", "orgName": "Energy Corp", "email": f"shadow_{role}@domain.com",
-        "sector": "Energy", "password": "ShadowPass123!", "role": role, "location": "Hassi Messaoud"})
+        "sector": "Energy", "password": "ShadowPass123!", "role": role, "location": "Basin Alpha"})
     assert res.status_code == 403
     with app.app_context():
         assert User.query.filter_by(email=f"shadow_{role}@domain.com").first() is None
@@ -448,7 +448,7 @@ def test_it_admin_cannot_modify_or_delete_protected_accounts(client, test_accoun
     assert client.delete(f"/api/auth/users/{target_id}").status_code == 403
     with app.app_context():
         user = db.session.get(User, target_id)
-        assert (user.role, user.status, user.location) == (role, "active", "Hassi Messaoud")
+        assert (user.role, user.status, user.location) == (role, "active", "Basin Alpha")
 
 
 @pytest.mark.parametrize("role", ["admin", "superuser", "it_manager"])

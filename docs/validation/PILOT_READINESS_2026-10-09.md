@@ -1,6 +1,6 @@
 # Pilot readiness check (2026-10-09)
 
-Bug hunt before the Sonatrach pilot, run against a production-mode install, then fixes for every finding.
+Bug hunt before the Demo Operator Co. pilot, run against a production-mode install, then fixes for every finding.
 
 ## How it was run
 
@@ -42,7 +42,7 @@ Regression tests: `new/server/tests/test_pilot_readiness_2026_10_09.py`, `new/cl
 
 ## Still open for the install
 
-- Set `TRUSTED_PROXIES=1` behind nginx, and `ALLOWED_ORIGINS` to the Sonatrach hostname.
+- Set `TRUSTED_PROXIES=1` behind nginx, and `ALLOWED_ORIGINS` to the Demo Operator Co. hostname.
 - The web server that serves the SPA must send its own `Content-Security-Policy` (Flask's covers API responses only).
 - `MAP_TILE_URL`: an internal tile server, or none.
 - Done 2026-10-09: `WTF_CSRF_SSL_STRICT` is on by default (env `WTF_CSRF_SSL_STRICT=false` turns it off), and sign-in / forgot-password now require the CSRF token. Previously: `WTF_CSRF_SSL_STRICT` was `False` (it dated from the cross-domain GitHub Pages setup). Turn it on once the proxy passes the right host and scheme, and check that saving works.

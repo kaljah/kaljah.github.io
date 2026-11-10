@@ -93,10 +93,10 @@ def test_user(db_session):
 
 @pytest.fixture
 def test_facility(db_session, test_user):
-    f = Facility.query.filter_by(name="Hassi Messaoud Central Unit").first()
+    f = Facility.query.filter_by(name="Basin Alpha Central Unit").first()
     if not f:
         f = Facility(
-            name="Hassi Messaoud Central Unit",
+            name="Basin Alpha Central Unit",
             location="Ouargla",
             segment="Upstream",
             created_by=test_user.id,

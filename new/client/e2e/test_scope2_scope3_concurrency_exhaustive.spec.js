@@ -53,7 +53,7 @@ test.describe.serial('Scope 2, Scope 3, and Concurrency Stress Test Suite', () =
 
     const emailIn = page.locator('input[placeholder*="Email"], input[type="email"]').first();
     await emailIn.waitFor({ state: 'visible', timeout: 15000 });
-    await emailIn.fill('operator@sonatrach.dz');
+    await emailIn.fill('operator@example.org');
     const passIn = page.locator('input[type="password"]').first();
     await passIn.fill('a');
     await page.locator('button[type="submit"]:has-text("Sign In"), button:has-text("Sign In")').first().click();

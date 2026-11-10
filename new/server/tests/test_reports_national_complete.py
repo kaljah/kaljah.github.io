@@ -96,11 +96,11 @@ def test_national_inventory_export_auth(client, app):
 
 def test_national_inventory_export_workbook_complete(client, app):
     with app.app_context():
-        f = make_facility(region=uniq("SonatrachSite"))
+        f = make_facility(region=uniq("Demo Operator Co.Site"))
         admin = make_user("admin", "Global")
-        admin.orgName = "Sonatrach Exploration & Production"
+        admin.orgName = "Demo Operator Co. Exploration & Production"
         admin.fullName = "Dr. Amina Benali"
-        admin.email = "amina.benali@sonatrach.dz"
+        admin.email = "amina.benali@example.org"
         db.session.commit()
         login(client, admin)
 
@@ -214,7 +214,7 @@ def _assert_sheets_content(wb, target_year):
     ws_cover = wb["0. Déclaration Décret 21-330"]
     cover_text = " ".join(str(cell.value or "") for row in ws_cover.iter_rows() for cell in row)
     assert "21-330" in cover_text
-    assert "Sonatrach Exploration & Production" in cover_text
+    assert "Demo Operator Co. Exploration & Production" in cover_text
     assert str(target_year) in cover_text
 
     ws_synth = wb["Executive Summary"]

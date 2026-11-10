@@ -19,7 +19,7 @@ def get_branding():
     tenant_id = tenant_param or get_current_tenant_id(None)
     cfg = get_tenant_config(tenant_id)
     return jsonify({
-        "organization_name": cfg.get("organization_name", "Sonatrach"),
+        "organization_name": cfg.get("organization_name", "Demo Operator Co."),
         "regulatory_framework": cfg.get("regulatory_framework", "Executive Decree 21-330"),
         "theme": cfg.get("theme", {}),
         "logo_url": cfg.get("logo_url", ""),

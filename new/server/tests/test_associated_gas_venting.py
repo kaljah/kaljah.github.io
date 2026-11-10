@@ -390,7 +390,7 @@ def test_api_add_emission_associated_gas_venting():
 
         fac = Facility.query.first()
         if not fac:
-            fac = Facility(name="Test Field AGV", location="Hassi Messaoud", segment="Upstream", code="FAC-AGV-01")
+            fac = Facility(name="Test Field AGV", location="Basin Alpha", segment="Upstream", code="FAC-AGV-01")
             db.session.add(fac)
             db.session.commit()
 

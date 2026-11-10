@@ -23,7 +23,7 @@ const DB_PATH = process.env.E2E_DB_PATH || 'C:/Users/samsung/Desktop/H2/new/serv
 const CURRENT_ROLE = (process.env.E2E_ROLE || 'user').toLowerCase();
 const USER_CONFIG = CURRENT_ROLE === 'superuser'
   ? { email: 'audit_superuser@ghg.com', id: 13, role: 'superuser', name: 'Superuser' }
-  : { email: 'operator@sonatrach.dz', id: 2, role: 'user', name: 'Operator' };
+  : { email: 'operator@example.org', id: 2, role: 'user', name: 'Operator' };
 
 if (!fs.existsSync(SCREENSHOT_DIR)) {
   fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
@@ -551,8 +551,8 @@ test.describe.serial('Advanced Scope 1 Calculations: 100+ Multi-Tier Exhaustive 
     const modal = page.locator('.modal-card:has-text("Register Tier 2 Custom Factor")').first();
     await expect(modal).toBeVisible({ timeout: 6000 });
 
-    const factorName = `Hassi R'Mel Blend ${Date.now()}`;
-    const nameIn = modal.locator('input[placeholder*="Hassi R\'Mel"], input[placeholder*="Skikda"]').first();
+    const factorName = `Basin Beta Blend ${Date.now()}`;
+    const nameIn = modal.locator('input[placeholder*="Basin Alpha R\'Mel"], input[placeholder*="Skikda"]').first();
     await nameIn.fill(factorName);
     const co2In = modal.locator('input[placeholder*="53.06"]').first();
     await co2In.fill('58.45');
@@ -603,7 +603,7 @@ test.describe.serial('Advanced Scope 1 Calculations: 100+ Multi-Tier Exhaustive 
       const modal = page.locator('.modal-card:has-text("Register Tier 2 Custom Factor")').first();
       if (await modal.isVisible({ timeout: 4000 }).catch(() => false)) {
         const factorName = `Laghouat Field ${Date.now()}`;
-        const nameIn = modal.locator('input[placeholder*="Hassi R\'Mel"], input[placeholder*="Skikda"]').first();
+        const nameIn = modal.locator('input[placeholder*="Basin Alpha R\'Mel"], input[placeholder*="Skikda"]').first();
         await nameIn.fill(factorName);
         const co2In = modal.locator('input[placeholder*="53.06"]').first();
         await co2In.fill('54.20');
@@ -722,7 +722,7 @@ test.describe.serial('Advanced Scope 1 Calculations: 100+ Multi-Tier Exhaustive 
     const hhvInput = page.locator('.tier2-inputs-grid input[placeholder*="1085"], #hhv-input').first();
     if (await hhvInput.isVisible()) await hhvInput.fill('1020');
     const ticketInput = page.locator('input[placeholder*="Ticket #4902-B"]').first();
-    if (await ticketInput.isVisible()) await ticketInput.fill('Ticket #SONATRACH-1020');
+    if (await ticketInput.isVisible()) await ticketInput.fill('Ticket #DEMO OPERATOR CO.-1020');
     await fillQuantity(page, '350000');
     await selectUnit(page, 'scf');
     const res = await submitCalculation(page);
@@ -1447,7 +1447,7 @@ test.describe.serial('Advanced Scope 1 Calculations: 100+ Multi-Tier Exhaustive 
 import sys, requests, json
 s = requests.Session()
 c_csrf = s.get('http://127.0.0.1:5000/api/csrf-token').json()['csrf_token']
-s.post('http://127.0.0.1:5000/api/auth/login', json={'email': 'operator@sonatrach.dz', 'password': 'a'}, headers={'X-CSRFToken': c_csrf})
+s.post('http://127.0.0.1:5000/api/auth/login', json={'email': 'operator@example.org', 'password': 'a'}, headers={'X-CSRFToken': c_csrf})
 c_csrf2 = s.get('http://127.0.0.1:5000/api/csrf-token').json()['csrf_token']
 r = s.post('http://127.0.0.1:5000/api/emissions/approve/batch', json={'scope': 'all', 'approve_all': True}, headers={'X-CSRFToken': c_csrf2})
 assert r.status_code == 403, f"Expected 403 for user approval attempt, got {r.status_code}"

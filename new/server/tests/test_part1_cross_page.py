@@ -72,7 +72,7 @@ def test_methane_map_vs_dashboard_distinction(app, client):
         # Fac 1: Geolocated on Map (lat/lon present)
         fac_map = make_facility(
             name=uniq("FAC_MAP"),
-            region="Hassi Messaoud",
+            region="Basin Alpha",
             latitude=31.67,
             longitude=6.06,
             is_test=False,
@@ -134,7 +134,7 @@ def test_ogmp_rns_discrepancy_blocks_level5(app, client):
         admin = make_user("admin")
         login(client, admin)
 
-        fac = make_facility(name=uniq("FAC_RNS"), region="Berkine")
+        fac = make_facility(name=uniq("FAC_RNS"), region="Basin Alpha")
 
         # 1. Add surveys with Discrepancy Detected
         survey1 = OgmpSurvey(

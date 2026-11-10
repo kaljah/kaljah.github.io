@@ -81,7 +81,7 @@ export interface Scope3ImportWizardProps {
 export const Scope3ImportWizard: React.FC<Scope3ImportWizardProps> = ({ onClose, onUploadSuccess }) => {
   const downloadActivityTemplate = () => {
     const header = "facility_name,year,month,category,sub_category,amount,unit,emission_factor,ef_unit,notes";
-    const sample = "Hassi Messaoud,2024,1,4,Truck Transport,10000,t-km,0.12841,kg,Crude trucking";
+    const sample = "Basin Alpha,2024,1,4,Truck Transport,10000,t-km,0.12841,kg,Crude trucking";
     const csv = `${header}\n${sample}\n`;
     const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8;" }));
     const a = document.createElement("a");
@@ -95,7 +95,7 @@ export const Scope3ImportWizard: React.FC<Scope3ImportWizardProps> = ({ onClose,
 
   const downloadEeioTemplate = () => {
     const header = "facility_name,year,month,naics_code,spend_usd,notes";
-    const sample = "Hassi Messaoud,2024,1,211120,50000,Well drilling equipment procurement";
+    const sample = "Basin Alpha,2024,1,211120,50000,Well drilling equipment procurement";
     const csv = `${header}\n${sample}\n`;
     const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8;" }));
     const a = document.createElement("a");

@@ -21,7 +21,7 @@ export function resolveGwpFactors(gwpChoice?: string) {
   };
 }
 
-// Sonatrach Brand Colors (White Theme)
+// Demo Operator Co. Brand Colors (White Theme)
 type RGB = [number, number, number];
 
 interface ThemeDef {
@@ -335,7 +335,7 @@ export async function generateModernPDF(api: any, filters: any): Promise<void> {
       doc.setFontSize(8);
       doc.setTextColor(...THEME.textMuted);
       doc.text(
-        `Sonatrach GHG Inventory ${isAllYears ? "Historical" : selectedYear} | Prepared following ISO 14064-1`,
+        `Demo Operator Co. GHG Inventory ${isAllYears ? "Historical" : selectedYear} | Prepared following ISO 14064-1`,
         margin,
         pageHeight - 6,
       );
@@ -517,7 +517,7 @@ export async function generateModernPDF(api: any, filters: any): Promise<void> {
     let cautionY = lineY + 15;
 
     // Dynamic Region Name
-    let regionName = "Sonatrach Corporate";
+    let regionName = "Demo Operator Co. Corporate";
     if (reportFacilities.length === 1) {
       regionName = reportFacilities[0].name;
     } else if (regionId !== "all" && !Array.isArray(regionId)) {
@@ -536,7 +536,7 @@ export async function generateModernPDF(api: any, filters: any): Promise<void> {
 
     const cautionText = `The estimated greenhouse gas emissions (GHG) described in this report for the reporting years in the "${regionName}" Region are derived from a combination of measured and estimated data using the best available information obtained.
 
-Industry standards and best practices for estimating GHG emissions, including guidelines from the Intergovernmental Panel on Climate Change (IPCC), the United States Environmental Protection Agency (EPA), the American Petroleum Institute (API), Sonatrach, and ISO 14064 have been applied.
+Industry standards and best practices for estimating GHG emissions, including guidelines from the Intergovernmental Panel on Climate Change (IPCC), the United States Environmental Protection Agency (EPA), the American Petroleum Institute (API), Demo Operator Co., and ISO 14064 have been applied.
 
 Conservative assumptions regarding the number and type of emitting equipment have been used, and they will be refined as more comprehensive emission inventories are developed. The uncertainty associated with emission estimates depends on the variation of processes and operations, the availability of sufficient representative data, the quality of available data, and the methodologies used for measurement and estimation.
 
@@ -671,7 +671,7 @@ ${scopeText}`;
       doc.setFontSize(24);
       doc.setTextColor(...THEME.dark);
       doc.setFont("helvetica", "bold");
-      doc.text("ABOUT SONATRACH", margin, curY);
+      doc.text("ABOUT DEMO OPERATOR CO.", margin, curY);
       doc.setDrawColor(...THEME.accent);
       doc.setLineWidth(1);
       doc.line(margin, curY + 4, margin + 80, curY + 4);
@@ -689,7 +689,7 @@ ${scopeText}`;
       doc.setTextColor(...THEME.text);
       doc.setFont("helvetica", "normal");
 
-      const companyDesc = `Sonatrach is the national state-owned oil company of Algeria. Founded in 1963, it is known today as the largest company in Africa with 154 subsidiaries, and often referred to as the first African major. In 2021, Sonatrach was the seventh largest gas company in the world.
+      const companyDesc = `Demo Operator Co. is the national state-owned oil company of Algeria. Founded in 1963, it is known today as the largest company in Africa with 154 subsidiaries, and often referred to as the first African major. In 2021, Demo Operator Co. was the seventh largest gas company in the world.
 
 As a major global player, we are integrating sustainability into every aspect of our value chain. Our strategy prioritizes significant greenhouse gas (GHG) emission reductions, methane abatement, and energy efficiency.`;
       
@@ -722,7 +722,7 @@ As a major global player, we are integrating sustainability into every aspect of
     doc.setFont("helvetica", "bold");
     doc.text("Description of the Reporting Organization", margin, curY);
     curY += 6;
-    curY = addTextBlock("Sonatrach is committed to leading the low-carbon energy transition. As a major global player, we are integrating sustainability into every aspect of our value chain. Our strategy prioritizes significant greenhouse gas (GHG) emission reductions, methane abatement, and energy efficiency.", curY);
+    curY = addTextBlock("Demo Operator Co. is committed to leading the low-carbon energy transition. As a major global player, we are integrating sustainability into every aspect of our value chain. Our strategy prioritizes significant greenhouse gas (GHG) emission reductions, methane abatement, and energy efficiency.", curY);
 
     curY = checkPageBreak(curY, 50);
     curY += 5;
@@ -1500,7 +1500,7 @@ Email: ${personResponsible.email || "N/A"}`;
       },
     });
 
-    // named after what the report covers (every report was saved as the Berkine master report)
+    // named after what the report covers (every report was saved as the Basin Alpha master report)
     const scopeName = reportFacilities.length === 1
       ? String(reportFacilities[0].name || "Facility").replace(/[^A-Za-z0-9]+/g, "_").replace(/^_|_$/g, "")
       : "All_Facilities";

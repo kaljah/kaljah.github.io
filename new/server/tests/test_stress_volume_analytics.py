@@ -54,7 +54,7 @@ def volume_test_env():
                     activity="Extraction",
                     division="Operations",
                     region="South",
-                    field="Hassi",
+                    field="Basin Alpha",
                     segment="Upstream",
                 )
                 db.session.add(fac)

@@ -1,7 +1,7 @@
 """
 End-to-End API and Integration Tests for Tier 2 Custom / Regional / Lab Factor Workflows.
 Verifies:
-1. Posting a Tier 2 emission record using Algerian national presets (e.g. Sonatrach Hassi R'Mel sales gas ISO 6976)
+1. Posting a Tier 2 emission record using Algerian national presets (e.g. Demo Operator Co. Basin Beta sales gas ISO 6976)
    - Preserves custom HHV and density in emission calculations
    - Persists data_source_ref and factor_source="custom" in the database
    - Verifies numerical exactness of the calculated emissions
@@ -33,7 +33,7 @@ def test_admin():
             user = User(
                 email="tier2_admin@example.com",
                 fullName="Tier 2 Verifier",
-                orgName="Sonatrach Exploration",
+                orgName="Demo Operator Co. Exploration",
                 sector="Oil & Gas",
                 role="admin",
             )
@@ -46,10 +46,10 @@ def test_admin():
 @pytest.fixture
 def test_facility():
     with app.app_context():
-        fac = Facility.query.filter_by(name="Hassi R'Mel Gas Field").first()
+        fac = Facility.query.filter_by(name="Basin Beta Gas Field").first()
         if not fac:
             fac = Facility(
-                name="Hassi R'Mel Gas Field",
+                name="Basin Beta Gas Field",
                 region="Laghouat",
                 division="Upstream Gas",
                 field="HRM South",
@@ -60,10 +60,10 @@ def test_facility():
         return fac
 
 
-def test_tier2_sonatrach_preset_e2e(client, test_admin, test_facility):
+def test_tier2_demo_operator_preset_e2e(client, test_admin, test_facility):
     """End-to-end verification of Tier 2 preset workflow:
     1. Authenticate as admin
-    2. Submit stationary combustion with Sonatrach ISO 6976 preset (HHV=1085 Btu/scf)
+    2. Submit stationary combustion with Demo Operator Co. ISO 6976 preset (HHV=1085 Btu/scf)
     3. Verify DB record fields (factor_source='custom', data_source_ref saved, Tier 2 assigned)
     4. Query /dashboard/uncertainty and verify Tier 2 breakdown aggregation.
     """
@@ -90,7 +90,7 @@ def test_tier2_sonatrach_preset_e2e(client, test_admin, test_facility):
         "hhv": 1085.0,
         "fuel_density": 0.81,
         "density": 0.81,
-        "data_source_ref": "Sonatrach Spécifications / ISO 6976",
+        "data_source_ref": "Demo Operator Co. Spécifications / ISO 6976",
         "status": "Verified",
     }
     res = client.post("/api/emissions/", json=payload)
@@ -111,7 +111,7 @@ def test_tier2_sonatrach_preset_e2e(client, test_admin, test_facility):
         rec = db.session.get(Emission, record_id)
         assert rec is not None
         assert rec.factor_source == "custom"
-        assert rec.data_source_ref == "Sonatrach Spécifications / ISO 6976"
+        assert rec.data_source_ref == "Demo Operator Co. Spécifications / ISO 6976"
         assert "combustion" in rec.calc_method.lower()
 
     # 4. Uncertainty Dashboard Verification
@@ -184,7 +184,7 @@ def test_tier2_quick_add_custom_factor_and_submit(client, test_admin, test_facil
             "n2o_factor": 0.0002,
             "hhv_factor": 1150.0,
             "uncertainty": 7.0,
-            "source": "Sonatrach Arzew Lab Certificate #AZ-992",
+            "source": "Demo Operator Co. Arzew Lab Certificate #AZ-992",
             "parent_fuel": "Natural Gas",
         },
     )
@@ -209,7 +209,7 @@ def test_tier2_quick_add_custom_factor_and_submit(client, test_admin, test_facil
         "amount": 20000.0,
         "unit": "scf",
         "hhv": 1150.0,
-        "data_source_ref": "Sonatrach Arzew Lab Certificate #AZ-992",
+        "data_source_ref": "Demo Operator Co. Arzew Lab Certificate #AZ-992",
         "status": "Verified",
     }
     res = client.post("/api/emissions/", json=payload)
@@ -220,4 +220,4 @@ def test_tier2_quick_add_custom_factor_and_submit(client, test_admin, test_facil
         rec = db.session.get(Emission, rec_id)
         assert rec is not None
         assert rec.factor_source == "custom"
-        assert rec.data_source_ref == "Sonatrach Arzew Lab Certificate #AZ-992"
+        assert rec.data_source_ref == "Demo Operator Co. Arzew Lab Certificate #AZ-992"

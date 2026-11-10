@@ -38,7 +38,7 @@ test.describe.serial('Executive Master Report & Intelligence Studio E2E Suite', 
 
     const emailIn = page.locator('input[placeholder*="Email"], input[type="email"]').first();
     await emailIn.waitFor({ state: 'visible', timeout: 15000 });
-    await emailIn.fill('operator@sonatrach.dz');
+    await emailIn.fill('operator@example.org');
     const passIn = page.locator('input[type="password"]').first();
     await passIn.fill('a');
     await page.locator('button[type="submit"]:has-text("Sign In"), button:has-text("Sign In")').first().click();
@@ -79,25 +79,25 @@ test.describe.serial('Executive Master Report & Intelligence Studio E2E Suite', 
     await page.waitForTimeout(300);
 
     // Verify presence of asset selector
-    const assetSelect = page.locator('select').filter({ hasText: /Hassi Messaoud/ }).first();
+    const assetSelect = page.locator('select').filter({ hasText: /Basin Alpha/ }).first();
     await expect(assetSelect).toBeVisible();
 
-    // Verify live intelligence snapshot displays Hassi Messaoud profile
+    // Verify live intelligence snapshot displays Basin Alpha profile
     const intelSnapshot = page.locator('text="Authentic Regional Profile & Statutory Alignment Snapshot:"');
     await expect(intelSnapshot).toBeVisible();
 
-    // Select Hassi R'Mel
+    // Select Basin Beta
     await assetSelect.selectOption('hrm');
     await page.waitForTimeout(300);
 
-    // Verify snapshot updated to Tilrhemt Dome / Hassi R'Mel
+    // Verify snapshot updated to Tilrhemt Dome / Basin Beta
     const hrmText = page.getByText(/Tilrhemt Dome/);
     await expect(hrmText).toBeVisible();
   });
 
-  test('Verify Consolidated Sonatrach Group mode and Cross-Basin Benchmark mode', async () => {
-    // Switch to Consolidated Sonatrach Group
-    const nationalTab = page.locator('button:has-text("Consolidated Sonatrach Group")');
+  test('Verify Consolidated Demo Operator Co. Group mode and Cross-Basin Benchmark mode', async () => {
+    // Switch to Consolidated Demo Operator Co. Group
+    const nationalTab = page.locator('button:has-text("Consolidated Demo Operator Co. Group")');
     await nationalTab.click();
     await page.waitForTimeout(300);
 

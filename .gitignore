@@ -160,3 +160,9 @@ audit/scope1_100k/out/
 deploy/.env
 deploy/certs/
 deploy/release/
+
+# Private benchmark fixtures (client data, never commit)
+tests/private_fixtures/
+**/private_fixtures/
+new/server/report_jobs/
+

@@ -1,8 +1,8 @@
 """
 Tenant Configuration & Multi-Tenancy Architecture (Part 3.2)
 ============================================================
-Moves hardcoded operator names ('Sonatrach'), regulatory frameworks
-('Executive Decree 21-330 Article 9'), email domains ('sonatrach.dz'),
+Moves hardcoded operator names ('Demo Operator Co.'), regulatory frameworks
+('Executive Decree 21-330 Article 9'), email domains ('example.org'),
 and factor tier labels into configurable tenant profiles.
 """
 from typing import Dict, Any, Optional
@@ -12,16 +12,16 @@ from models import db, SystemSetting, ActivityLog, utc_now
 
 DEFAULT_TENANT_CONFIG: Dict[str, Any] = {
     "tenant_id": "default",
-    "organization_name": "Sonatrach",
-    "short_code": "SH",
-    "legal_entity": "Société Nationale pour la Recherche, la Production, le Transport, la Transformation, et la Commercialisation des Hydrocarbures",
-    "email_domain": "sonatrach.dz",
+    "organization_name": "Demo Operator Co.",
+    "short_code": "DOC",
+    "legal_entity": "Demo Operator Co. Exploration & Production",
+    "email_domain": "example.org",
     "country": "Algeria",
     "regulatory_framework": "Executive Decree 21-330 Article 9",
     "regulatory_citation": "Décret exécutif n° 21-330 du 1er septembre 2021 relatif au contrôle des émissions atmosphériques et de gaz à effet de serre",
     "tier2_label": "Tier 2 (Site-Specific Laboratory Factors)",
     "tier2_partner_label": "Tier 2 (Operator Partner Factors)",
-    "national_group_name": "Sonatrach Corporate Group (Consolidated National)",
+    "national_group_name": "Demo Operator Group (Consolidated National)",
     "default_currency": "DZD",
     "base_year": 2023,
     "target_year": 2030,
@@ -29,7 +29,7 @@ DEFAULT_TENANT_CONFIG: Dict[str, Any] = {
 
 TENANT_REGISTRY: Dict[str, Dict[str, Any]] = {
     "default": DEFAULT_TENANT_CONFIG,
-    "sonatrach": DEFAULT_TENANT_CONFIG,
+    "demo_operator": DEFAULT_TENANT_CONFIG,
     "mena_operator_b": {
         "tenant_id": "mena_operator_b",
         "organization_name": "Al-Amal Petroleum Corp",

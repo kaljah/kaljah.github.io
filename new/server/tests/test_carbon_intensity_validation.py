@@ -62,7 +62,7 @@ def ci_setup():
                 segment="Upstream",
                 activity="Upstream Gas",
                 division="Exploration & Production",
-                region="Hassi Messaoud",
+                region="Basin Alpha",
                 operator_status="operated",
             )
             db.session.add(fac2)

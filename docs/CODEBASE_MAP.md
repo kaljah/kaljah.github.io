@@ -13,7 +13,7 @@ Last verified against the working tree: **2026-10-10**.
 ## 1. Orientation
 
 **What it is.** Neocarbon is an on-premise greenhouse-gas (GHG) accounting and compliance platform
-for the oil & gas industry. It is built for the **Sonatrach** pilot: operators record activity data
+for the oil & gas industry. It is built for the **Demo Operator Co.** pilot: operators record activity data
 per facility, the platform computes Scope 1 / 2 / 3 emissions using published methodology, and a
 maker-checker workflow plus a tamper-evident audit trail produce an assurance-ready inventory.
 
@@ -48,7 +48,7 @@ h2/
 │   └── client/               React SPA  — see §5
 ├── docs/                     maintained documentation (see §10)
 │   ├── validation/           dated audit artifacts (history, not live rules)
-│   └── sonatrach/            glossary-fr.csv (HSE French terminology)
+│   └── demo-operator/            glossary-fr.csv (HSE French terminology)
 ├── validation/               extra calculation tests, collected by the ROOT pytest.ini
 │   ├── calculation/ differential/ property/ mutation/ regression/ reference_model/
 │   └── golden_data/ golden_dataset/ expected_results/ reports/ scripts/ test_cases/
@@ -490,8 +490,8 @@ proxy. Full guide: `docs/deployment.md`.
 | `docs/deployment.md` | deploying / operating the stack |
 | `docs/ui-modernization-plan.md` | frontend structural/CSS work |
 | `docs/hardening-plan.md` | security-hardening history |
-| `docs/sonatrach-implementation-plan.md`, `docs/sonatrach-readiness-plan.md` | pilot scope/readiness |
-| `docs/sonatrach/glossary-fr.csv` | French terminology for translations |
+| `docs/demo-operator-implementation-plan.md`, `docs/demo-operator-readiness-plan.md` | pilot scope/readiness |
+| `docs/demo-operator/glossary-fr.csv` | French terminology for translations |
 | `docs/validation/00-current-architecture.md` | a **dated** audit artifact (Sep 2026) — history, not live rules; this map is the maintained reference |
 | `docs/validation/*` | forensics on a specific past audit (per-area audits, pilot readiness, 100k bulk) |
 | `specs/001-batch-approve-reject/` | batch approve/reject feature spec |

@@ -322,7 +322,7 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
                 name="name"
                 value={facilityForm.name || ""}
                 onChange={handleFacilityChange}
-                placeholder={t("e.g. Hassi R'Mel")}
+                placeholder={t("e.g. Basin Beta")}
                 required
               />
             </Field>
@@ -333,7 +333,7 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
                 name="field"
                 value={facilityForm.field || ""}
                 onChange={handleFacilityChange}
-                placeholder={t("e.g. Hassi Messaoud South")}
+                placeholder={t("e.g. Basin Alpha South")}
                 required
               />
             </Field>
@@ -437,7 +437,7 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
                       onChange={(e) => patch({ partner_id: e.target.value })}
                       className={controlClass}
                     >
-                      <option value="">{t("Default (Sonatrach / Operator)")}</option>
+                      <option value="">{t("Default (Demo Operator Co. / Operator)")}</option>
                       {partners.map((p) => (
                         <option key={p.id} value={p.id}>
                           {p.name} ({p.code})
@@ -452,7 +452,7 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
                       name="agreement_reference"
                       value={facilityForm.agreement_reference || ""}
                       onChange={(e) => patch({ agreement_reference: e.target.value })}
-                      placeholder={t("e.g. PSC Block 405b / Association Sonatrach")}
+                      placeholder={t("e.g. PSC Block 405b / Association Demo Operator Co.")}
                     />
                   </Field>
                 </>

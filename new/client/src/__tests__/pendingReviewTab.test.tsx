@@ -10,7 +10,7 @@ const record = { id: 129, key: "1-129", scope: 1, date: "2025-01", facility_id: 
 
 const props = (over: Partial<PendingReviewTabProps> = {}): PendingReviewTabProps => ({
   QUICK_REJECTION_REASONS: ["Wrong meter reading"],
-  facilities: [{ id: 1, name: "Hassi Plant" }],
+  facilities: [{ id: 1, name: "Basin Alpha Plant" }],
   fetchPendingEmissions: vi.fn(),
   filteredPendingRecords: [record],
   handleApproveAllInScope: vi.fn(),

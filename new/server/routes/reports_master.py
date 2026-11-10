@@ -105,7 +105,7 @@ def get_master_report_regions():
             "segment": "Integrated",
         })
         nat_copy = dict(national_entry)
-        if nat_copy.get("name") == "Sonatrach Corporate Group (Consolidated National)":
+        if nat_copy.get("name") == "Demo Operator Group (Consolidated National)":
             nat_copy["name"] = nat_name
         nat_copy["facility_count"] = len(facilities)
         present_regions.insert(0, nat_copy)

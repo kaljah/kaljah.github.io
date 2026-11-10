@@ -66,7 +66,7 @@ say("CSV as downloaded | check:", (await page.locator(".s1w-check").first().inne
 
 // 3. Excel with the examples copied into Data Entry
 const filled = path.join(OUT, "filled_template.xlsx");
-execFileSync("python3", [path.join(HERE, "ui_template_prep.py"), xlPath, filled, "Hassi Messaoud Gas Plant", "2024-02"]);
+execFileSync("python3", [path.join(HERE, "ui_template_prep.py"), xlPath, filled, "Basin Alpha Gas Plant", "2024-02"]);
 await openWizard("Per row — mixed tiers");
 await pick(filled);
 await page.locator(".s1w-saved-map").waitFor({ timeout: 30000 });   // the mapping appears once the check read the columns
@@ -82,7 +82,7 @@ say("Excel filled | result:", (await page.locator(".s1w-modal").innerText()).rep
 // 4. an export with its own column names: map once, save, reuse
 const exp = path.join(OUT, "erp_export.csv");
 fs.writeFileSync(exp, "Periode,Usine,Proc,Combustible,Volume,UoM\n" +
-  "2024-03,Hassi Messaoud Gas Plant,combustion,Natural Gas,1200,MMBtu\n" +
+  "2024-03,Basin Alpha Gas Plant,combustion,Natural Gas,1200,MMBtu\n" +
   "2024-03,In Amenas CPF,combustion,Diesel (No. 2 Fuel Oil),800,gal\n");
 await openWizard("Tier 1 — Standard");
 await page.locator('.s1w-modal input[type="file"]').setInputFiles(exp);

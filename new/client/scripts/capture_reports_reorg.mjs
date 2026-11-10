@@ -50,19 +50,19 @@ async function main() {
   const count = await facilitySelects.count();
   console.log(`Found ${count} select elements`);
   
-  // Find the select that contains facility options (like 170 or options with 'El Merk')
+  // Find the select that contains facility options (like 170 or options with 'Facility B-2')
   let facilitySelect = null;
   for (let i = 0; i < count; i++) {
     const s = facilitySelects.nth(i);
     const text = await s.innerText().catch(() => '');
-    if (text.includes('El Merk') || text.includes('All Regions & Facilities')) {
+    if (text.includes('Facility B-2') || text.includes('All Regions & Facilities')) {
       facilitySelect = s;
       break;
     }
   }
 
   if (facilitySelect) {
-    // Select El Merk (value 170 if present, or second option)
+    // Select Facility B-2 (value 170 if present, or second option)
     const options = await facilitySelect.locator('option').all();
     if (options.length > 1) {
       const val = await options[1].getAttribute('value');

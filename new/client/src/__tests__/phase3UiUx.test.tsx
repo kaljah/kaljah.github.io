@@ -36,8 +36,8 @@ describe("Phase 3 UI/UX Verifications", () => {
       facilityId: "",
       field: "",
       getFacilityOptions: () => [
-        { value: "1", label: "Hassi Messaoud North" },
-        { value: "2", label: "Hassi R'Mel" },
+        { value: "1", label: "Basin Alpha North" },
+        { value: "2", label: "Basin Beta" },
       ],
       getGridOptions: () => [],
       gridRegion: "",
@@ -90,7 +90,7 @@ describe("Phase 3 UI/UX Verifications", () => {
           facilityId="1"
           activity="Upstream"
           division="Production"
-          field="Hassi Messaoud"
+          field="Basin Alpha"
         />
       );
       const autoFilledBadges = screen.getAllByText("Auto-filled from Region");

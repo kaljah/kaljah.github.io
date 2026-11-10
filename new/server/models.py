@@ -257,7 +257,7 @@ class ProductionData(db.Model):
     oil_unit = db.Column(db.String(20), default="bbl")
     gas_unit = db.Column(db.String(20), default="mscf")
 
-    # Granular Production Metrics (API Compendium / Berkine standard)
+    # Granular Production Metrics (API Compendium / Basin Alpha standard)
     gross_gas_mmsm3 = db.Column(db.Float, default=0.0)
     injected_gas_mmsm3 = db.Column(db.Float, default=0.0)
     gas_without_injected_mmsm3 = db.Column(db.Float, default=0.0)
@@ -877,7 +877,7 @@ class JvPartner(db.Model):
     """
     __tablename__ = "jv_partners"
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), unique=True, nullable=False)  # Sonatrach, Occidental, Eni, TotalEnergies, Pertamina, Repsol
+    name = db.Column(db.String(120), unique=True, nullable=False)  # Demo Operator Co., Demo JV Partner A, Demo JV Partner B, TotalEnergies, Pertamina, Repsol
     code = db.Column(db.String(50), unique=True, nullable=False)
     country = db.Column(db.String(100), default="Algeria")
     is_operator = db.Column(db.Boolean, default=False)

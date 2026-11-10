@@ -25,7 +25,7 @@ def wec_world():
         us_fac = Facility(name=f"Permian Site {tag}", region=f"Texas{tag}", activity="EP", division="D",
                           field="F", segment="Upstream", code=f"US{tag}", country="United States")
         # Non-US facility for Decree 21-330 testing
-        dz_fac = Facility(name=f"Hassi Messaoud {tag}", region=f"Ouargla{tag}", activity="EP", division="D",
+        dz_fac = Facility(name=f"Basin Alpha {tag}", region=f"Ouargla{tag}", activity="EP", division="D",
                           field="F", segment="Upstream", code=f"DZ{tag}", country="Algeria")
 
         admin = User(email=f"wec_admin_{tag}@test.com", fullName="WEC Admin", orgName="Org",

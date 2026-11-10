@@ -101,12 +101,12 @@ def test_idor_protection_cross_facility_access(app, client):
 
 
 def test_multi_tenant_configuration_and_branding(client):
-    """Item 3.2: Dynamic tenant config endpoint replaces hardcoded Sonatrach labels."""
+    """Item 3.2: Dynamic tenant config endpoint replaces hardcoded Demo Operator Co. labels."""
     # 1. Default tenant
     res_def = client.get("/api/tenant/config")
     assert res_def.status_code == 200
     cfg_def = res_def.json
-    assert cfg_def["organization_name"] == "Sonatrach"
+    assert cfg_def["organization_name"] == "Demo Operator Co."
     assert "21-330" in cfg_def["regulatory_framework"]
 
     # 2. Operator B tenant
@@ -156,7 +156,7 @@ def test_password_policy_label_and_complexity(app, client):
         res_weak = client.post(
             "/api/auth/register",
             json={
-                "email": uniq("weak") + "@sonatrach.dz",
+                "email": uniq("weak") + "@example.org",
                 "password": "Short1!",
                 "fullName": "Weak Password User",
             },

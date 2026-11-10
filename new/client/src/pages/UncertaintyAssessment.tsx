@@ -425,7 +425,7 @@ const UncertaintyAssessment: React.FC = () => {
                     <div className="ua-stacked-legend-row">
                       <span>
                         <span className="ua-legend-dot tier-2" />
-                        {t("Tier 2 (Sonatrach Site-Specific Factors)")}
+                        {t("Tier 2 (Demo Operator Co. Site-Specific Factors)")}
                       </span>
                       <strong className="text-ink-900!">
                         {data.tier_breakdown?.["Tier 2"] ?? 0}%

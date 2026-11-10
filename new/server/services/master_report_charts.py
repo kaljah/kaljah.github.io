@@ -22,7 +22,7 @@ import numpy as np
 
 from services.master_report_i18n import get_t
 
-# Corporate Sonatrach & Publication Palette
+# Corporate Publication Palette
 COLOR_ORANGE = "#EA580C"
 COLOR_DARK = "#0F172A"
 COLOR_SLATE = "#334155"
@@ -341,7 +341,7 @@ def generate_criteria_pollutants_chart(
 
 
 def generate_regional_benchmark_chart(benchmarks: List[Dict[str, Any]], out_path: str, language: str = "en"):
-    """Horizontal bar chart comparing Carbon Intensities (kg CO2e/BOE) across Sonatrach basins."""
+    """Horizontal bar chart comparing Carbon Intensities (kg CO2e/BOE) across operational basins."""
     if not benchmarks:
         return
     fig, ax = plt.subplots(figsize=(7.2, 3.6), dpi=300)
@@ -457,7 +457,7 @@ def generate_jv_equity_chart(
 
     for idx, p in enumerate(partners):
         p_code = p.get("partner_code", p.get("code", "SH"))
-        p_name = p.get("partner_name", p.get("partner", "Sonatrach"))
+        p_name = p.get("partner_name", p.get("partner", "Demo Operator Co."))
         pct = p.get("equity_share_pct", p.get("share_pct", 100.0))
         c = palette[idx % len(palette)]
         vals_mmt = []

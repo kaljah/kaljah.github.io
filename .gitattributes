@@ -1,0 +1,3 @@
+.agents/ export-ignore
+tests/private_fixtures/ export-ignore
+audit/ export-ignore

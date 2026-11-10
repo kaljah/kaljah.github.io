@@ -11,9 +11,9 @@ def test_facility_add_mapping_region_and_field(client):
         if not admin:
             admin = User(
                 fullName="Admin Test",
-                orgName="Sonatrach",
+                orgName="Demo Operator Co.",
                 sector="Oil & Gas",
-                email="admin_field_test@sonatrach.dz",
+                email="admin_field_test@example.org",
                 role="admin",
                 password_hash="hash",
                 status="active"
@@ -81,9 +81,9 @@ def test_dashboard_multi_facility_query(client):
         if not admin:
             admin = User(
                 fullName="Admin Test",
-                orgName="Sonatrach",
+                orgName="Demo Operator Co.",
                 sector="Oil & Gas",
-                email="admin_multi_test@sonatrach.dz",
+                email="admin_multi_test@example.org",
                 role="admin",
                 password_hash="hash",
                 status="active"
@@ -131,7 +131,7 @@ def test_facility_consolidation_approach_saves_to_jv_ventures(client):
     """
     Test that adding a new facility with Equity Share / Joint Venture consolidation approach:
     1. Saves the facility with operator_status='non_operated' if equity_share_pct < 50.
-    2. Automatically persists a FacilityEquityShare record for the operator (Sonatrach).
+    2. Automatically persists a FacilityEquityShare record for the operator (Demo Operator Co.).
     3. GET /api/equity/shares?facility_id=<id> returns the newly created share.
     4. Updating the facility's equity share % via PUT /api/facilities/<id> updates the FacilityEquityShare.
     5. Updating the operator's share via POST /api/equity/shares keeps facility.equity_share_pct in sync.
@@ -142,9 +142,9 @@ def test_facility_consolidation_approach_saves_to_jv_ventures(client):
         if not admin:
             admin = User(
                 fullName="Admin Test",
-                orgName="Sonatrach",
+                orgName="Demo Operator Co.",
                 sector="Oil & Gas",
-                email="admin_jv_test@sonatrach.dz",
+                email="admin_jv_test@example.org",
                 role="admin",
                 password_hash="hash",
                 status="active"
@@ -194,7 +194,7 @@ def test_facility_consolidation_approach_saves_to_jv_ventures(client):
         shares_data = res_shares.get_json()
         assert len(shares_data) == 1
         assert shares_data[0]["equity_share_pct"] == 10.0
-        assert shares_data[0]["partner_name"] == "Sonatrach"
+        assert shares_data[0]["partner_name"] == "Demo Operator Co."
 
         # Test updating facility equity % via PUT /api/facilities/<id>
         res_put = client.put(f"/api/facilities/{fac_id}", json={"equity_share_pct": 25.0})
@@ -223,17 +223,17 @@ def test_facility_consolidation_approach_saves_to_jv_ventures(client):
             assert fac.equity_share_pct == 35.0
 
         # Test equity > 100% rejection in PUT /api/facilities/<id>
-        partner_eni = JvPartner.query.filter_by(name="Eni").first()
-        if partner_eni:
-            res_add_eni = client.post("/api/equity/shares", json={
+        partner_b = JvPartner.query.filter_by(name="Demo JV Partner B").first()
+        if partner_b:
+            res_add_partner_b = client.post("/api/equity/shares", json={
                 "facility_id": fac_id,
-                "partner_id": partner_eni.id,
+                "partner_id": partner_b.id,
                 "equity_share_pct": 50.0,
                 "effective_start_date": "2021-01-01"
             })
-            assert res_add_eni.status_code == 200
+            assert res_add_partner_b.status_code == 200
 
-            # Now Sonatrach has 35%, Eni has 50% = 85% total.
+            # Now Demo Operator Co. has 35%, Demo JV Partner B has 50% = 85% total.
             # Attempting to set facility equity to 60% (60 + 50 = 110% > 100%) must fail with 400
             res_overflow = client.put(f"/api/facilities/{fac_id}", json={"equity_share_pct": 60.0})
             assert res_overflow.status_code == 400

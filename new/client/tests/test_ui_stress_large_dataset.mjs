@@ -23,9 +23,9 @@ export async function runLargeDatasetStressTest() {
   console.log(`[SYNTHESIZING] Generating ${RECORD_COUNT.toLocaleString()} multi-scope emission records...`);
 
   const facilities = [
-    "Hassi Messaoud Main Plant",
+    "Basin Alpha Main Plant",
     "In Salah Gas Compression Hub",
-    "Rhourde Nouss Processing Unit",
+    "Basin Gamma Processing Unit",
     "Tin Fouye Tabankort Terminal",
     "Alrar Gas Separation Facility",
   ];
@@ -112,7 +112,7 @@ export async function runLargeDatasetStressTest() {
 
   const tFilterStart = performance.now();
   const targetYear = 2024;
-  const targetFacility = "Hassi Messaoud";
+  const targetFacility = "Basin Alpha";
   const targetProcess = "combustion";
   const searchSubstring = "gas";
 

@@ -26,7 +26,7 @@ def test_users():
                 orgName="AuditCorp",
                 sector="Energy",
                 role="admin",
-                location="Hassi Messaoud",
+                location="Basin Alpha",
             )
             admin.set_password("AuditAdmin123!")
             db.session.add(admin)
@@ -52,7 +52,7 @@ def test_users():
                 orgName="AuditCorp",
                 sector="Energy",
                 role="user",
-                location="Hassi Messaoud",
+                location="Basin Alpha",
             )
             regular.set_password("AuditUser123!")
             db.session.add(regular)
@@ -61,7 +61,7 @@ def test_users():
         if not fac:
             fac = Facility(
                 name="Remediation Test Facility",
-                location="Hassi Messaoud",
+                location="Basin Alpha",
                 boundary_type="Operational Control",
                 segment="Upstream",
             )
@@ -157,7 +157,7 @@ def test_profile_location_immutability(client, test_users):
         user = db.session.get(User, test_users["user"])
         assert user.fullName == "Updated Audit User"
         assert user.department == "HSE Engineering"
-        assert user.location == "Hassi Messaoud"
+        assert user.location == "Basin Alpha"
 
 
 def test_audit_sod_for_it_admin(client, test_users):
@@ -291,7 +291,7 @@ def test_scope2_rbac_and_creator_ownership(client, test_users):
                 orgName="AuditCorp",
                 sector="Energy",
                 role="auditor",
-                location="Hassi Messaoud",
+                location="Basin Alpha",
             )
             viewer.set_password("AuditViewer123!")
             db.session.add(viewer)
@@ -304,7 +304,7 @@ def test_scope2_rbac_and_creator_ownership(client, test_users):
                 orgName="AuditCorp",
                 sector="Energy",
                 role="user",
-                location="Hassi Messaoud",
+                location="Basin Alpha",
             )
             other_user.set_password("OtherUser123!")
             db.session.add(other_user)
@@ -1489,7 +1489,7 @@ def test_qaqc_dashboard_regional_facility_scoping(client, test_users):
                 orgName="AuditCorp",
                 sector="Energy",
                 role="superuser",
-                location="Hassi Messaoud",
+                location="Basin Alpha",
             )
             reg_super.set_password("RegSuper123!")
             db.session.add(reg_super)
@@ -1503,7 +1503,7 @@ def test_qaqc_dashboard_regional_facility_scoping(client, test_users):
     assert res.status_code == 200
     diag = res.get_json()["diagnostics"]
 
-    # The regional superuser only has access to Hassi Messaoud facilities
+    # The regional superuser only has access to Basin Alpha facilities
     assert diag["total_facilities"] >= 1
     assert diag["active_facilities"] <= diag["total_facilities"]
     assert diag["unused_facilities"] == diag["total_facilities"] - diag["active_facilities"]
@@ -1539,7 +1539,7 @@ def test_facility_boundary_type_and_detail_roundtrip(client, test_users):
             "division": "Upstream",
             "segment": "Upstream",
             "boundary_type": "Equity Share",
-            "boundary_detail": "Sonatrach 51%, Partner 49%",
+            "boundary_detail": "Demo Operator Co. 51%, Partner 49%",
         },
     )
     assert resp.status_code == 201
@@ -1552,7 +1552,7 @@ def test_facility_boundary_type_and_detail_roundtrip(client, test_users):
     target = next((f for f in all_facs if f["id"] == fac_id), None)
     assert target is not None
     assert target["boundary_type"] == "Equity Share"
-    assert target["boundary_detail"] == "Sonatrach 51%, Partner 49%"
+    assert target["boundary_detail"] == "Demo Operator Co. 51%, Partner 49%"
 
 
 def test_custom_factor_description_and_source_roundtrip(client, test_users):
@@ -1570,7 +1570,7 @@ def test_custom_factor_description_and_source_roundtrip(client, test_users):
             "co2_factor": 1.95,
             "ch4_factor": 0.012,
             "n2o_factor": 0.0001,
-            "source": "Sonatrach CRD Lab Cert #2026-B84",
+            "source": "Demo Operator Co. CRD Lab Cert #2026-B84",
             "description": "Gas chromatography sample from separator train B, calibrated to ISO 6974.",
         },
     )
@@ -1583,7 +1583,7 @@ def test_custom_factor_description_and_source_roundtrip(client, test_users):
     factors = get_resp.get_json()
     created = next((f for f in factors if f["id"] == factor_id), None)
     assert created is not None
-    assert created["source"] == "Sonatrach CRD Lab Cert #2026-B84"
+    assert created["source"] == "Demo Operator Co. CRD Lab Cert #2026-B84"
     assert created["description"] == "Gas chromatography sample from separator train B, calibrated to ISO 6974."
 
 

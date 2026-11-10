@@ -571,10 +571,10 @@ const Reports: React.FC = () => {
   const [masterLoading, setMasterLoading] = useState<boolean>(false);
   const [masterExcelLoading, setMasterExcelLoading] = useState<boolean>(false);
   const [availableRegions, setAvailableRegions] = useState<any[]>([
-    { key: "berkine", name: "Groupement Berkine (HBNS / El Merk)", segment: "Upstream", facility_count: 2 },
-    { key: "hmd", name: "Hassi Messaoud Oil Complex (HMD)", segment: "Upstream", facility_count: 2 },
-    { key: "hrm", name: "Hassi R'Mel Gas Supergiant (HRM)", segment: "Upstream", facility_count: 3 },
-    { key: "rns", name: "Rhourde Nouss Gas Processing (RNS)", segment: "Upstream", facility_count: 2 },
+    { key: "basin-alpha", name: "Demo JV Operations (Facility A-1 / Facility B-2)", segment: "Upstream", facility_count: 2 },
+    { key: "hmd", name: "Basin Alpha Oil Complex (HMD)", segment: "Upstream", facility_count: 2 },
+    { key: "hrm", name: "Basin Beta Gas Supergiant (HRM)", segment: "Upstream", facility_count: 3 },
+    { key: "rns", name: "Basin Gamma Gas Processing (RNS)", segment: "Upstream", facility_count: 2 },
     { key: "tft", name: "Tin Fouye Tabankort Gathering (TFT)", segment: "Upstream", facility_count: 1 },
     { key: "skikda", name: "Skikda Refining & LNG Corridors", segment: "Downstream", facility_count: 1 },
     { key: "arzew", name: "Arzew Liquefaction & Ammonia Hub", segment: "Downstream", facility_count: 1 },
@@ -722,7 +722,7 @@ const Reports: React.FC = () => {
       const langSuffix = `_${masterLanguage.toUpperCase()}`;
       link.setAttribute(
         "download",
-        `Sonatrach_${masterMode}_${cleanName}_Master_Report_${masterStartYear}_${masterEndYear}${langSuffix}.pdf`
+        `Demo Operator Co._${masterMode}_${cleanName}_Master_Report_${masterStartYear}_${masterEndYear}${langSuffix}.pdf`
       );
       document.body.appendChild(link);
       link.click();
@@ -757,7 +757,7 @@ const Reports: React.FC = () => {
       link.href = url;
       link.setAttribute(
         "download",
-        `Sonatrach_Cross_Basin_Benchmark_${masterStartYear}_${masterEndYear}.xlsx`
+        `Demo Operator Co._Cross_Basin_Benchmark_${masterStartYear}_${masterEndYear}.xlsx`
       );
       document.body.appendChild(link);
       link.click();
@@ -1510,7 +1510,7 @@ const Reports: React.FC = () => {
 
                   {/* Document Footer Miniature */}
                   <div className="border-t border-border/60 pt-1 flex items-center justify-between text-[6.5px] text-text-secondary">
-                    <span>Sonatrach E&P</span>
+                    <span>Demo Operator Co. E&P</span>
                     <span className="font-mono">P. 1 / 12</span>
                   </div>
                 </div>

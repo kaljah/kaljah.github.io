@@ -15,8 +15,8 @@ from models import User  # noqa: E402
 # (email, password, role, full name). Throwaway sign-ins for CI and local test databases only.
 E2E_USERS = [
     ("a@example.test", "a", "admin", "E2E Test User"),
-    ("itadmin@sonatrach.dz", "itadmin123", "it_admin", "E2E IT Admin"),
-    ("operator@sonatrach.dz", "operator123", "user", "E2E Operator"),
+    ("itadmin@example.org", "itadmin123", "it_admin", "E2E IT Admin"),
+    ("operator@example.org", "operator123", "user", "E2E Operator"),
 ]
 
 

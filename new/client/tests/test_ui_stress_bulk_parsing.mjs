@@ -39,7 +39,7 @@ export async function runBulkParsingStressTest() {
   ];
 
   const csvRows = [headers.join(",")];
-  const facilities = ["Algiers Terminal", "Hassi Messaoud Hub", "In Salah Plant", "Rhourde El Baguel"];
+  const facilities = ["Algiers Terminal", "Basin Alpha Hub", "In Salah Plant", "Basin Gamma El Baguel"];
   const processes = ["combustion", "flaring", "venting", "pneumatic", "fugitive"];
   const fuels = ["Natural Gas", "Diesel", "Field Gas", "LPG"];
 

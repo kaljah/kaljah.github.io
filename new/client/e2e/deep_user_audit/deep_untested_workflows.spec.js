@@ -109,7 +109,7 @@ test.describe.serial('Suite 8: Deep Untested Platform Workflows & Enterprise Fea
     console.log('[E2E UNTESTED] Testing asset inventory search input...');
     const searchInput = page.locator('input[placeholder="Search name, region, division..."]');
     await expect(searchInput).toBeVisible();
-    await searchInput.fill('Berkine');
+    await searchInput.fill('Basin Alpha');
     await page.waitForTimeout(600);
     // Clear search
     await searchInput.fill('');
@@ -264,7 +264,7 @@ test.describe.serial('Suite 8: Deep Untested Platform Workflows & Enterprise Fea
       await page.waitForTimeout(400);
     }
 
-    await page.locator('input[placeholder="Email Address"]').fill('itadmin@sonatrach.dz');
+    await page.locator('input[placeholder="Email Address"]').fill('itadmin@example.org');
     await page.locator('input[placeholder="Password"]').fill('itadmin123');
     await page.locator('button[type="submit"]:has-text("Sign In")').click();
 
@@ -295,8 +295,8 @@ test.describe.serial('Suite 8: Deep Untested Platform Workflows & Enterprise Fea
 
     // Fill form
     const uniqueTimestamp = Date.now();
-    const testEmail = `auditor_${uniqueTimestamp}@sonatrach.dz`;
-    const testFullName = `Amine Mansouri (E2E Test)`;
+    const testEmail = `auditor_${uniqueTimestamp}@example.org`;
+    const testFullName = `Amine Demo User B (E2E Test)`;
 
     console.log(`[E2E UNTESTED] Filling new user form for ${testEmail}...`);
     await page.locator('#um-modal-fullname').fill(testFullName);

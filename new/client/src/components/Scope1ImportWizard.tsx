@@ -44,7 +44,7 @@ const FIELD_GROUPS: FieldGroupData[] = [
       { key: "facility_name", label: t("Region / Facility"), required: true, hint: t("Must match an existing region in the system") },
       { key: "activity",      label: t("Activity"),       required: false, hint: t("e.g. Exploration & Production") },
       { key: "division",      label: t("Division"),       required: false, hint: t("e.g. Production, Association") },
-      { key: "field",         label: t("Field"),          required: false, hint: t("e.g. Bir Berkine") },
+      { key: "field",         label: t("Field"),          required: false, hint: t("e.g. Sector Alpha-1") },
       { key: "group",         label: t("Emission Source"),required: false, hint: t("Logical grouping for this emission source") },
       { key: "equipment",     label: t("Equipment Name"), required: false, hint: t("Name of the piece of equipment") },
       { key: "equipment_id",  label: t("Equipment ID"),   required: false, hint: t("Unique identifier for the equipment (duplicate check)") },

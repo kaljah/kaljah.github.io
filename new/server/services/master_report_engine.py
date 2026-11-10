@@ -2,8 +2,8 @@
 Universal Master Publication Report Engine
 ==========================================
 Generates high-resolution, publication-grade executive PDF reports:
-1. Consolidated Sonatrach Group Corporate Master Report
-2. Regional Asset Master Reports (HMD, HRM, RNS, In Amenas, In Salah, TFT, Berkine, Skikda, Arzew)
+1. Consolidated Demo Operator Corporate Master Report
+2. Regional Asset Master Reports (Basin Alpha, Basin Beta, Coastal Terminal)
 3. Multi-Region Cross-Basin Benchmark Report
 
 Complies with ISO 14064-1:2018, Algerian Executive Decree 21-330, and Executive Decree 06-138.
@@ -151,7 +151,7 @@ def _build_cover_elements(data: Dict[str, Any], styles: Dict[str, ParagraphStyle
     time_label = f"{start_y}" if start_y == end_y else f"{start_y} – {end_y}"
 
     elements.append(Spacer(1, 15))
-    org_name = str(profile.get("operator") or get_tenant_config().get("organization_name", "Sonatrach"))
+    org_name = str(profile.get("operator") or get_tenant_config().get("organization_name", "Demo Operator Co."))
     elements.append(Paragraph(f"<b>{org_name.upper()}</b>", styles["H2"]))
     jv_partners = data.get("jv_equity", {}).get("partners", [])
     if jv_partners and len(jv_partners) > 1:
@@ -183,7 +183,7 @@ def _build_cover_elements(data: Dict[str, Any], styles: Dict[str, ParagraphStyle
         ],
         [
             Paragraph(f"<b>{get_t('meta_operator', lang)}</b>", styles["Body"]),
-            Paragraph(str(profile.get("operator") or get_tenant_config().get("organization_name", "Sonatrach")), styles["Body"]),
+            Paragraph(str(profile.get("operator") or get_tenant_config().get("organization_name", "Demo Operator Co.")), styles["Body"]),
             Paragraph(f"<b>{get_t('meta_gwp', lang)}</b>", styles["Body"]),
             Paragraph(get_t("meta_gwp_val", lang, standard=data["gwp_standard"], ch4_factor=data["gwp_factors"].get("CH4", 28)), styles["Body"]),
         ],
@@ -568,10 +568,10 @@ def _build_signoff_elements(data: Dict[str, Any], sha256_hash: str, styles: Dict
     elements.append(Paragraph(get_t("signoff_cert", lang), styles["Body"]))
 
     tenant_cfg = get_tenant_config()
-    org = str(data.get("profile", {}).get("operator") or tenant_cfg.get("organization_name", "Sonatrach"))
-    hse_signer = str(tenant_cfg.get("hse_director_name", "F. Z. Bouziane"))
-    auditor_signer = str(tenant_cfg.get("lead_auditor_name", "M. K. Benhamouda"))
-    vp_signer = str(tenant_cfg.get("vp_upstream_name", "A. Ould Kaddour"))
+    org = str(data.get("profile", {}).get("operator") or tenant_cfg.get("organization_name", "Demo Operator Co."))
+    hse_signer = str(tenant_cfg.get("hse_director_name", "HSE Director (Demo)"))
+    auditor_signer = str(tenant_cfg.get("lead_auditor_name", "Lead Verifier (Demo)"))
+    vp_signer = str(tenant_cfg.get("vp_upstream_name", "VP Operations (Demo)"))
 
     sign_data = [
         [

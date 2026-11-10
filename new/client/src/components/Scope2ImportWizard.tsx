@@ -16,7 +16,7 @@ const FIELD_GROUPS: FieldGroupData[] = [
       { key: "facility_name", label: t("Region / Facility"), required: true, hint: t("Must match an existing region in the system") },
       { key: "activity",      label: t("Activity"),       required: false, hint: t("e.g. Exploration & Production") },
       { key: "division",      label: t("Division"),       required: false, hint: t("e.g. Production, Association") },
-      { key: "field",         label: t("Field"),          required: false, hint: t("e.g. Bir Berkine") },
+      { key: "field",         label: t("Field"),          required: false, hint: t("e.g. Sector Alpha-1") },
     ],
   },
   {
@@ -60,7 +60,7 @@ export interface Scope2ImportWizardProps {
 export const Scope2ImportWizard: React.FC<Scope2ImportWizardProps> = ({ onClose, onUploadSuccess }) => {
   const downloadTemplate = () => {
     const header = "facility_name,date,year,month,source_type,grid_region,consumption,unit,factor";
-    const sample = "Hassi Messaoud,2024-01-01,2024,1,electricity,Algerian National Grid,500,MWh,";
+    const sample = "Basin Alpha,2024-01-01,2024,1,electricity,Algerian National Grid,500,MWh,";
     const csv = `${header}\n${sample}\n`;
     const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8;" }));
     const a = document.createElement("a");

@@ -178,7 +178,7 @@ def sync_facility_equity_shares(facility, data):
     else:
         partner = (
             JvPartner.query.filter_by(is_operator=True).first()
-            or JvPartner.query.filter_by(name="Sonatrach").first()
+            or JvPartner.query.filter_by(name="Demo Operator Co.").first()
         )
 
     if partner:

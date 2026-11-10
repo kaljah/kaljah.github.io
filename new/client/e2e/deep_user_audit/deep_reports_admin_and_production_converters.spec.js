@@ -53,7 +53,7 @@ async function ensureITAuthenticatedPage(page, targetUrl) {
   const emailInput = page.locator('input[placeholder="Email Address"]').first();
   if (await emailInput.isVisible().catch(() => false)) {
     console.log('[E2E RAP] Performing authentication login as IT Administrator...');
-    await emailInput.fill('itadmin@sonatrach.dz');
+    await emailInput.fill('itadmin@example.org');
     const pwdInput = page.locator('input[type="password"]').first();
     await pwdInput.fill('itadmin123');
     await page.locator('button[type="submit"]:has-text("Sign In")').click();
@@ -73,7 +73,7 @@ async function ensureITAuthenticatedPage(page, targetUrl) {
       await page.goto(`${FRONTEND}/login`, { waitUntil: 'domcontentloaded' });
       await page.waitForTimeout(600);
       const eInput = page.locator('input[placeholder="Email Address"]').first();
-      await eInput.fill('itadmin@sonatrach.dz');
+      await eInput.fill('itadmin@example.org');
       const pInput = page.locator('input[type="password"]').first();
       await pInput.fill('itadmin123');
       await page.locator('button[type="submit"]:has-text("Sign In")').click();

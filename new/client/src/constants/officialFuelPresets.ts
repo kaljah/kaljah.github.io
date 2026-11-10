@@ -3,7 +3,7 @@
  * Strictly compliant with:
  *   - Algerian National Standards (IANOR - Normes Algériennes NA)
  *   - Executive Decrees & CREG/ARH Network Codes (Journal Officiel de la République Algérienne)
- *   - Sonatrach Field Technical Specifications (ISO 6976 / ISO 6974)
+ *   - Demo Operator Co. Field Technical Specifications (ISO 6976 / ISO 6974)
  *   - API Compendium 2021 (Tables 5-1, 5-2, 5-3)
  */
 
@@ -78,10 +78,10 @@ export const OFFICIAL_FUEL_PRESETS: OfficialFuelPreset[] = [
     uncertaintyAd: 0.07,
   },
   {
-    id: "dz_gaz_hassi_rmel",
-    name: "Gaz de Vente Hassi R'Mel",
-    shortLabel: "Hassi R'Mel (ISO 6976)",
-    citation: "Sonatrach Spécifications / ISO 6976",
+    id: "dz_gaz_basin-alpha_rmel",
+    name: "Gaz de Vente Basin Beta",
+    shortLabel: "Basin Beta (ISO 6976)",
+    citation: "Demo Operator Co. Spécifications / ISO 6976",
     citationType: "standard",
     country: "Algeria",
     fuelType: "gases",
@@ -91,7 +91,7 @@ export const OFFICIAL_FUEL_PRESETS: OfficialFuelPreset[] = [
     hhv: 1085,
     hhvUnit: "BTU/scf",
     description:
-      "Gaz de vente traité du champ d'hydrocarbures de Hassi R'Mel. PCS calculé selon la norme ISO 6976 (1 085 Btu/scf = ~40,5 MJ/Nm³, méthane ~80,5%, éthane ~7,4%).",
+      "Gaz de vente traité du champ d'hydrocarbures de Basin Beta. PCS calculé selon la norme ISO 6976 (1 085 Btu/scf = ~40,5 MJ/Nm³, méthane ~80,5%, éthane ~7,4%).",
     uncertaintyAd: 0.07,
   },
   {

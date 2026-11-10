@@ -152,7 +152,7 @@ def test_base_year_singleton_fallback(client):
     with client.application.app_context():
         admin = User.query.filter_by(role="admin", status="active").first()
         if not admin:
-            admin = User(email="admin_by@test.com", fullName="Admin BY", orgName="Sonatrach", role="admin", sector="Oil & Gas", status="active")
+            admin = User(email="admin_by@test.com", fullName="Admin BY", orgName="Demo Operator Co.", role="admin", sector="Oil & Gas", status="active")
             admin.set_password("pass")
             db.session.add(admin)
         else:
@@ -199,7 +199,7 @@ def test_notification_broadcast_handling(client):
     with client.application.app_context():
         admin = User.query.filter_by(role="admin", status="active").first()
         if not admin:
-            admin = User(email="admin_notif@test.com", fullName="Admin Notif", orgName="Sonatrach", sector="Energy", location="Algiers", role="admin", status="active")
+            admin = User(email="admin_notif@test.com", fullName="Admin Notif", orgName="Demo Operator Co.", sector="Energy", location="Algiers", role="admin", status="active")
             admin.set_password("pass")
             db.session.add(admin)
         else:
@@ -209,7 +209,7 @@ def test_notification_broadcast_handling(client):
 
         operator = User.query.filter_by(email="user_notif@test.com").first()
         if not operator:
-            operator = User(email="user_notif@test.com", fullName="User Notif", orgName="Sonatrach", sector="Energy", location="Algiers", role="user")
+            operator = User(email="user_notif@test.com", fullName="User Notif", orgName="Demo Operator Co.", sector="Energy", location="Algiers", role="user")
             operator.set_password("pass")
             db.session.add(operator)
         operator.status = "active"

@@ -479,7 +479,7 @@ def _query_jv_equity_breakdown(
     tot_s2_sum = sum(t["scope2_co2e_t"] for t in timeline)
     tot_ch4_sum = sum(t["ch4_mass_t"] for t in timeline)
     tenant_cfg = get_tenant_config()
-    op_name = tenant_cfg.get("legal_entity") or tenant_cfg.get("organization_name", "Société Nationale Sonatrach")
+    op_name = tenant_cfg.get("legal_entity") or tenant_cfg.get("organization_name", "Demo Operator Co.")
     op_code = tenant_cfg.get("short_code", "SH")
     single_p = {
         "partner": op_name,
@@ -1767,7 +1767,7 @@ def _generate_dynamic_quality_audit(
             "observation": f"Database logs {gc_count} laboratory gas chromatography stream analyses across {len(facilities)} facilities.",
             "recommendation": "Establish mandatory monthly gas chromatography sampling for all active fuel gas headers and flare manifolds to ensure Tier 3 calculation accuracy.",
             "priority": "High",
-            "statutory_ref": "API Compendium 2021 Section 4.1 & Sonatrach Standard 2019"
+            "statutory_ref": "API Compendium 2021 Section 4.1 & Corporate MRV Standard"
         })
     else:
         recommendations.append({

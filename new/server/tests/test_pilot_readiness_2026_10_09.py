@@ -61,7 +61,7 @@ def test_f11_reupload_with_fuel_alias_and_overwrite_updates_in_place(client, ctx
     ("0.125", "point", "0.125"), ("12", "point", "12"),
     ("1,5", None, "1,5"), ("1.5", None, "1.5"), ("12,345.6", None, "12,345.6"), ("0.125", None, "0.125"),
     ("14.696", None, "14.696"),
-    ("2025-05", "comma", "2025-05"), ("Hassi Messaoud, Nord", "point", "Hassi Messaoud, Nord"), ("5%", "comma", "5%"),
+    ("2025-05", "comma", "2025-05"), ("Basin Alpha, Nord", "point", "Basin Alpha, Nord"), ("5%", "comma", "5%"),
 ])
 def test_f6_number_cells_follow_the_chosen_format(cell, mark, expected):
     assert normalize_number_cell(cell, mark) == expected

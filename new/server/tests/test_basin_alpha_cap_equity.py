@@ -5,17 +5,17 @@ from models import db, User, Facility, FlaringDetail, JvPartner, FacilityEquityS
 @pytest.fixture
 def auth_client(client):
     with app.app_context():
-        user = User.query.filter_by(email="berkine_test_admin@test.com").first()
+        user = User.query.filter_by(email="basin-alpha_test_admin@test.com").first()
         if not user:
             user = User(
-                email="berkine_test_admin@test.com",
-                fullName="Berkine Admin",
-                orgName="Groupement Berkine",
+                email="basin-alpha_test_admin@test.com",
+                fullName="Basin Alpha Admin",
+                orgName="Demo JV Operations",
                 sector="Oil & Gas",
                 role="admin",
-                location="Hassi Berkine",
+                location="Basin Alpha",
             )
-            user.set_password("BerkineTestPass123!")
+            user.set_password("Basin AlphaTestPass123!")
             db.session.add(user)
             db.session.commit()
         user_id = user.id
@@ -55,7 +55,7 @@ def test_equity_routes_endpoint(auth_client):
     partners = resp.get_json()
     assert isinstance(partners, list)
     partner_names = [p["name"] for p in partners]
-    assert "Sonatrach" in partner_names
+    assert "Demo Operator Co." in partner_names
 
     resp_alloc = auth_client.get("/api/equity/allocation?year=2025")
     assert resp_alloc.status_code == 200

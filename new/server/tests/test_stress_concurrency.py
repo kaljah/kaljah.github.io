@@ -45,7 +45,7 @@ def test_env():
         if not fac:
             fac = Facility(
                 name="Concurrency Stress Terminal",
-                location="Hassi Messaoud",
+                location="Basin Alpha",
                 activity="Extraction",
                 division="Production",
                 region="Ouargla",

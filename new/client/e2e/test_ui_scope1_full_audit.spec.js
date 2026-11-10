@@ -258,7 +258,7 @@ test.describe('Scope 1 Exhaustive Headed UI Application Audit (All Tiers & Custo
 
   test('1. Adversarial & Validation Logic Fallacy Checks', async ({ page }) => {
     console.log('[ADV-1] Testing negative quantity rejection...');
-    await selectFacility(page, "Rhourde Nouss");
+    await selectFacility(page, "Basin Gamma");
     await selectProcess(page, 'Stationary Combustion');
     await selectTier(page, 'Tier 1');
     await selectFactor(page, 'Natural Gas');
@@ -299,7 +299,7 @@ test.describe('Scope 1 Exhaustive Headed UI Application Audit (All Tiers & Custo
 
     for (const r of runs) {
       console.log(`[T1-Comb/Flr] Testing ${r.process} - ${r.factor}...`);
-      await selectFacility(page, "Rhourde Nouss");
+      await selectFacility(page, "Basin Gamma");
       await selectProcess(page, r.process);
       await selectTier(page, 'Tier 1');
       await selectFactor(page, r.factor);
@@ -317,7 +317,7 @@ test.describe('Scope 1 Exhaustive Headed UI Application Audit (All Tiers & Custo
   test('3. Tier 1 Catalog & Default Factors Multi-Test - Part 2: Upstream, Venting & Downstream (12 Tests)', async ({ page }) => {
     // 3.1 Completions Gas HF
     console.log('[T1-Upstream] Completions Gas HF...');
-    await selectFacility(page, "Rhourde Nouss");
+    await selectFacility(page, "Basin Gamma");
     await selectProcess(page, 'Well Completions & Workovers');
     await selectTier(page, 'Tier 1');
     const compEvents = page.locator('.completions-form input[type="number"], .input-group:has-text("Events") input').first();
@@ -410,11 +410,11 @@ test.describe('Scope 1 Exhaustive Headed UI Application Audit (All Tiers & Custo
   test('4. Tier 2 Custom Factors: Registration & Live Application via Quick-Add Modal (4 Tests)', async ({ page }) => {
     // 4.1 Create & apply Custom Factor for Combustion
     console.log('[T2-Custom] Registering new custom factor for Combustion...');
-    await selectFacility(page, "Hassi R'Mel");
+    await selectFacility(page, "Basin Beta");
     await selectProcess(page, 'Stationary Combustion');
     await selectTier(page, 'Library factor');
 
-    const customFactorName1 = `Hassi R'Mel Custom Blend ${Date.now()}`;
+    const customFactorName1 = `Basin Beta Custom Blend ${Date.now()}`;
     const quickAddBtn = page.locator('button:has-text("New library factor")').first();
     await expect(quickAddBtn).toBeVisible({ timeout: 6000 });
     await quickAddBtn.click();
@@ -423,7 +423,7 @@ test.describe('Scope 1 Exhaustive Headed UI Application Audit (All Tiers & Custo
     const modal = page.locator('.modal-card:has-text("Register Tier 2 Custom Factor")').first();
     await expect(modal).toBeVisible({ timeout: 6000 });
 
-    const nameIn = modal.locator('input[placeholder*="Hassi R\'Mel"], input[placeholder*="Skikda"]').first();
+    const nameIn = modal.locator('input[placeholder*="Basin Alpha R\'Mel"], input[placeholder*="Skikda"]').first();
     await nameIn.fill(customFactorName1);
     const co2In = modal.locator('input[placeholder*="53.06"]').first();
     await co2In.fill('58.45');
@@ -472,7 +472,7 @@ test.describe('Scope 1 Exhaustive Headed UI Application Audit (All Tiers & Custo
   test('5. Tier 2 Measured Properties Override & Official Presets (5 Tests)', async ({ page }) => {
     // 5.1 Fuel Presets (North Sea / Pipeline)
     console.log('[T2-Presets] Testing Official Fuel Preset Chips...');
-    await selectFacility(page, "Rhourde Nouss");
+    await selectFacility(page, "Basin Gamma");
     await selectProcess(page, 'Stationary Combustion');
     await selectTier(page, 'Tier 2');
     await selectFactor(page, 'Natural Gas');
@@ -501,7 +501,7 @@ test.describe('Scope 1 Exhaustive Headed UI Application Audit (All Tiers & Custo
     const densInput = page.locator('.tier2-inputs-grid input[placeholder*="840"]').first();
     if (await densInput.isVisible()) await densInput.fill('845.5');
     const ticketInput = page.locator('input[placeholder*="Ticket #4902-B"]').first();
-    if (await ticketInput.isVisible()) await ticketInput.fill('Ticket #SONATRACH-2026-A');
+    if (await ticketInput.isVisible()) await ticketInput.fill('Ticket #DEMO OPERATOR CO.-2026-A');
     await setEquipmentId(page, 'PROP-OVERRIDE-01');
     await fillQuantity(page, '600000');
     await selectUnit(page, 'scf');
@@ -529,7 +529,7 @@ test.describe('Scope 1 Exhaustive Headed UI Application Audit (All Tiers & Custo
   test('6. Tier 2 Operational Data & Engineering Balance Multi-Test (8 Tests)', async ({ page }) => {
     // 6.1 Completions Model 1: Rate x Duration
     console.log('[T2-Ops] Completions Model 1 (Rate x Duration)...');
-    await selectFacility(page, "Rhourde Nouss");
+    await selectFacility(page, "Basin Gamma");
     await selectProcess(page, 'Well Completions & Workovers');
     await selectTier(page, 'Tier 2');
     const compRate = page.locator('.completions-form input[placeholder*="50"]').first();
@@ -608,7 +608,7 @@ test.describe('Scope 1 Exhaustive Headed UI Application Audit (All Tiers & Custo
   test('7. Tier 2+ Site Gas Composition & Equipment/Component Leaks (5 Tests)', async ({ page }) => {
     // 7.1 Drilling Tier 2+ Site Gas Composition
     console.log('[T2-Plus] Drilling Tier 2+ Site Gas Composition...');
-    await selectFacility(page, "Rhourde Nouss");
+    await selectFacility(page, "Basin Gamma");
     await selectProcess(page, 'Drilling Operations');
     await selectTier(page, 'Tier 2+');
     const drillDays = page.locator('.drilling-form input[type="number"]').first();
@@ -648,7 +648,7 @@ test.describe('Scope 1 Exhaustive Headed UI Application Audit (All Tiers & Custo
   test('8. Tier 3 Direct Measurement & Combustion/Flaring Advanced Models (6 Tests)', async ({ page }) => {
     // 8.1 Specific Efficiency 99.8%
     console.log('[T3-Comb] Specific Efficiency 99.8%...');
-    await selectFacility(page, "Hassi R'Mel");
+    await selectFacility(page, "Basin Beta");
     await selectProcess(page, 'Stationary Combustion');
     await selectTier(page, 'Tier 3');
     await fillQuantity(page, '700000');
@@ -716,7 +716,7 @@ test.describe('Scope 1 Exhaustive Headed UI Application Audit (All Tiers & Custo
   test('9. Tier 3 Well Operations & Upstream Field Models (6 Tests)', async ({ page }) => {
     // 9.1 Completions API Eq. 6-4 Net Metered Flowback & N2 Deduction
     console.log('[T3-Well] Completions Metered Flowback & Injected N2...');
-    await selectFacility(page, "Rhourde Nouss");
+    await selectFacility(page, "Basin Gamma");
     await selectProcess(page, 'Well Completions & Workovers');
     await selectTier(page, 'Tier 3');
     const flowbackVol = page.locator('.completions-form input[placeholder*="500"]').first();
@@ -866,7 +866,7 @@ test.describe('Scope 1 Exhaustive Headed UI Application Audit (All Tiers & Custo
   test('11. Tier 3 Fugitives, EOR & Downstream Advanced (6 Tests)', async ({ page }) => {
     // 11.1 Fugitives Method 21 Screening Ranges
     console.log('[T3-Adv] Fugitives Method 21...');
-    await selectFacility(page, "Rhourde Nouss");
+    await selectFacility(page, "Basin Gamma");
     await selectProcess(page, 'Onshore Equipment Leaks / Fugitives');
     await selectTier(page, 'Tier 3');
     const m21Tab = page.locator('.segmented-button:has-text("Screening Ranges"), button:has-text("Screening Ranges")').first();

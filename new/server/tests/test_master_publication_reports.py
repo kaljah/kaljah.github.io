@@ -33,10 +33,10 @@ def auth_headers(client):
             user = User(
                 email="admin_rep@test.com",
                 fullName="Admin Reporter",
-                orgName="Sonatrach Test",
+                orgName="Demo Operator Co. Test",
                 sector="Energy",
                 role="admin",
-                location="Hassi Messaoud",
+                location="Basin Alpha",
             )
             user.set_password("password123")
             db.session.add(user)
@@ -47,18 +47,15 @@ def auth_headers(client):
 
 
 def test_get_master_report_regions(client, auth_headers):
-    """Only regions that have facilities in the database are listed (plus "national"), each with its facility count.
-
-    The test creates its own HMD / HRM / Berkine facilities: it used to assume those regions were already present and
-    failed whenever an earlier test had left other facilities in the shared test database."""
-    codes = ("REGTEST-HMD", "REGTEST-HRM-A", "REGTEST-HRM-B", "REGTEST-BERKINE")
+    """Only regions that have facilities in the database are listed (plus "national"), each with its facility count."""
+    codes = ("REGTEST-ALPHA", "REGTEST-BETA-A", "REGTEST-BETA-B", "REGTEST-COAST")
     with app.app_context():
         Facility.query.filter(Facility.code.in_(codes)).delete(synchronize_session=False)
         db.session.add_all([
-            Facility(name="Hassi Messaoud Test Field", code="REGTEST-HMD", region="Hassi Messaoud", segment="Upstream"),
-            Facility(name="Hassi R'mel Test Plant A", code="REGTEST-HRM-A", region="Hassi R'mel", segment="Upstream"),
-            Facility(name="Hassi R'mel Test Plant B", code="REGTEST-HRM-B", region="Hassi R'mel", segment="Upstream"),
-            Facility(name="Berkine Test Field", code="REGTEST-BERKINE", region="Berkine", segment="Upstream"),
+            Facility(name="Facility A-1 Test", code="REGTEST-ALPHA", region="Basin Alpha", segment="Upstream"),
+            Facility(name="Facility B-2 Test A", code="REGTEST-BETA-A", region="Basin Beta", segment="Upstream"),
+            Facility(name="Facility B-2 Test B", code="REGTEST-BETA-B", region="Basin Beta", segment="Upstream"),
+            Facility(name="Facility C-3 Test", code="REGTEST-COAST", region="Coastal Terminal", segment="Midstream"),
         ])
         db.session.commit()
     try:
@@ -67,13 +64,12 @@ def test_get_master_report_regions(client, auth_headers):
         data = res.get_json()
         assert data["status"] == "success"
         by_key = {r["key"]: r for r in data["regions"]}
-        assert {"national", "hmd", "hrm", "berkine"} <= set(by_key)
+        assert {"national", "basin_alpha", "basin_beta", "coastal_terminal"} <= set(by_key)
         assert all("facility_count" in r for r in data["regions"])
-        # the counts include the facilities created here (other tests may have left more that also match)
-        assert by_key["hmd"]["facility_count"] >= 1 and "Hassi Messaoud Test Field" in by_key["hmd"]["facility_names"]
-        assert by_key["hrm"]["facility_count"] >= 2
-        assert {"Hassi R'mel Test Plant A", "Hassi R'mel Test Plant B"} <= set(by_key["hrm"]["facility_names"])
-        assert "Berkine Test Field" in by_key["berkine"]["facility_names"]
+        assert by_key["basin_alpha"]["facility_count"] >= 1 and "Facility A-1 Test" in by_key["basin_alpha"]["facility_names"]
+        assert by_key["basin_beta"]["facility_count"] >= 2
+        assert {"Facility B-2 Test A", "Facility B-2 Test B"} <= set(by_key["basin_beta"]["facility_names"])
+        assert "Facility C-3 Test" in by_key["coastal_terminal"]["facility_names"]
         # every facility sits in the national roll-up
         assert by_key["national"]["facility_count"] >= 4
     finally:
@@ -83,7 +79,7 @@ def test_get_master_report_regions(client, auth_headers):
 
 
 def test_post_master_report_national(client, auth_headers):
-    """Verifies generation of Consolidated Sonatrach Corporate Master Report PDF."""
+    """Verifies generation of Consolidated Demo Operator Co. Corporate Master Report PDF."""
     res = client.post("/api/reports/master-report", json={
         "mode": "national",
         "start_year": 2023,
@@ -99,10 +95,10 @@ def test_post_master_report_national(client, auth_headers):
 
 
 def test_post_master_report_regional(client, auth_headers):
-    """Verifies generation of Regional Asset Master Report PDF for Hassi Messaoud."""
+    """Verifies generation of Regional Asset Master Report PDF for Basin Alpha."""
     res = client.post("/api/reports/master-report", json={
         "mode": "regional",
-        "region": "hmd",
+        "region": "basin_alpha",
         "start_year": 2023,
         "end_year": 2025,
         "gwp_standard": "AR5",
@@ -140,7 +136,7 @@ def test_post_benchmark_excel(client, auth_headers):
     wb = openpyxl.load_workbook(io.BytesIO(res.data))
     assert "Cross-Basin Benchmark" in wb.sheetnames
     ws = wb["Cross-Basin Benchmark"]
-    assert "SONATRACH" in str(ws.cell(row=1, column=1).value)
+    assert "DEMO OPERATOR CO." in str(ws.cell(row=1, column=1).value)
 
 
 def test_post_master_report_french_localization(client, auth_headers):
@@ -155,7 +151,7 @@ def test_post_master_report_french_localization(client, auth_headers):
     })
     assert res.status_code == 200
     assert res.content_type == "application/pdf"
-    assert "Sonatrach_National_National_Master_Report_2023_2025_FR.pdf" in res.headers.get("Content-Disposition", "")
+    assert "Demo Operator Co._National_National_Master_Report_2023_2025_FR.pdf" in res.headers.get("Content-Disposition", "")
     assert res.data.startswith(b"%PDF")
 
     # Read extracted text from first page
@@ -166,15 +162,38 @@ def test_post_master_report_french_localization(client, auth_headers):
     pdf.close()
 
 
-def test_post_master_report_berkine_tripartite_jv_and_glidepath(client, auth_headers):
-    """Verifies that Berkine asset report includes tripartite flaring, 2030 glidepath, and JV equity."""
-    from seed_berkine_data import seed_berkine
-    seed_berkine()
+def test_post_master_report_basin_alpha_tripartite_jv_and_glidepath(client, auth_headers):
+    """Verifies that Basin Alpha asset report includes tripartite flaring, 2030 glidepath, and JV equity."""
+    from models import db, Facility, Emission, FlaringDetail, JvPartner, FacilityEquityShare, ProductionData
+    from datetime import date
+    from routes.equity_routes import ensure_default_partners
+    with app.app_context():
+        ensure_default_partners()
+        p1 = JvPartner.query.filter_by(name="Demo Operator Co.").first()
+        p2 = JvPartner.query.filter_by(name="Demo JV Partner A").first()
+        for code, fname in [("FA1-JV", "Facility A-1"), ("FB2-JV", "Facility B-2")]:
+            fac = Facility.query.filter_by(name=fname).first()
+            if not fac:
+                fac = Facility(name=fname, code=code, region="Basin Alpha", segment="Upstream", equity_share_pct=60.0)
+                db.session.add(fac)
+                db.session.flush()
+            if p1 and not FacilityEquityShare.query.filter_by(facility_id=fac.id, partner_id=p1.id).first():
+                db.session.add(FacilityEquityShare(facility_id=fac.id, partner_id=p1.id, equity_share_pct=60.0, effective_start_date=date(2023, 1, 1)))
+            if p2 and not FacilityEquityShare.query.filter_by(facility_id=fac.id, partner_id=p2.id).first():
+                db.session.add(FacilityEquityShare(facility_id=fac.id, partner_id=p2.id, equity_share_pct=40.0, effective_start_date=date(2023, 1, 1)))
+            for yr in (2023, 2024, 2025):
+                if not Emission.query.filter_by(facility_id=fac.id, year=yr).first():
+                    db.session.add(Emission(facility_id=fac.id, year=yr, month=6, process_type="flaring", fuel_type="Associated Gas", quantity=100.0, unit="mscf", co2_emissions=500.0, ch4_emissions=5.0, n2o_emissions=0.1, co2e_total=640.0, status="Verified"))
+                if not FlaringDetail.query.filter_by(facility_id=fac.id, year=yr).first():
+                    db.session.add(FlaringDetail(facility_id=fac.id, year=yr, month=6, routine_knm3=12.0, non_routine_knm3=4.0, safety_knm3=1.5, total_knm3=17.5, measured_dre_pct=98.5, status="Verified"))
+                if not ProductionData.query.filter_by(facility_id=fac.id, year=yr).first():
+                    db.session.add(ProductionData(facility_id=fac.id, year=yr, month=6, oil_amount=10000.0, gas_amount=25000.0, total_production_mmboe=0.15, saleable_production_mmboe=0.14))
+        db.session.commit()
 
     import pypdfium2
     res = client.post("/api/reports/master-report", json={
         "mode": "regional",
-        "region": "berkine",
+        "region": "basin_alpha",
         "start_year": 2023,
         "end_year": 2025,
         "gwp_standard": "AR5",
@@ -188,8 +207,8 @@ def test_post_master_report_berkine_tripartite_jv_and_glidepath(client, auth_hea
 
     # Feature 1: JV Partner Equity Allocation
     assert "JOINT VENTURE PARTNER EQUITY" in all_text
-    assert "Sonatrach" in all_text
-    assert "Occidental" in all_text or "Eni" in all_text or "TotalEnergies" in all_text
+    assert "Demo Operator Co." in all_text
+    assert "Demo JV Partner A" in all_text or "Demo JV Partner B" in all_text or "TotalEnergies" in all_text
 
     # Feature 2: Tripartite Flaring Breakdown
     assert "Routine" in all_text
@@ -207,8 +226,8 @@ def test_post_master_report_berkine_tripartite_jv_and_glidepath(client, auth_hea
 
     # Feature 5: Facility-Level Disaggregated Appendix
     assert "DISAGGREGATED FACILITY-LEVEL" in all_text
-    assert "HBNS" in all_text
-    assert "El Merk" in all_text
+    assert "Facility A-1" in all_text
+    assert "Facility B-2" in all_text
 
 
 def test_unauthenticated_guard(client):
@@ -224,7 +243,7 @@ def test_master_report_advanced_chapters_and_base_year_recalculations(client, au
     import pypdfium2
     res = client.post("/api/reports/master-report", json={
         "mode": "regional",
-        "region": "berkine",
+        "region": "basin_alpha",
         "start_year": 2021,
         "end_year": 2025,
         "gwp_standard": "AR5",

@@ -170,7 +170,7 @@ test.describe.serial('Deep User Workflows: Calculation Creation, Bulk Import & V
     const { csrf_token } = await csrfRes.json();
 
     const sampleCsv = `facility,date,scope,category,fuel,amount,unit
-Hassi Messaoud Main,2026-03-15,1,Stationary Combustion,Natural Gas,12500,MMBtu
+Basin Alpha Main,2026-03-15,1,Stationary Combustion,Natural Gas,12500,MMBtu
 `;
     const uploadRes = await request.post(`${FRONTEND}/api/emissions/upload/start`, {
       headers: { 'X-CSRFToken': csrf_token },

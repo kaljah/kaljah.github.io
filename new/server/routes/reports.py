@@ -556,7 +556,7 @@ def generate_report():
         )
 
 
-# Audit 2026-10-14 BUG-0002: the "master" annual reports (Groupement Berkine, El Merk) were static
+# Audit 2026-10-14 BUG-0002: the "master" annual reports (Demo JV Operations, Facility B-2) were static
 # documents with hard-coded figures labelled OFFICIAL VERIFIED, not built from the database. The
 # download is withdrawn; generate_*_master_report.py remain as standalone demo-sample scripts.
 @reports_bp.route("/master-annual-report", methods=["GET"])

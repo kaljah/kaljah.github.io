@@ -68,13 +68,13 @@ const SCOPE_OF: Record<string, string> = { activity: "1", activity_scope2: "2", 
 // Sample row appended to the client-side CSV template of each non-emissions type.
 const SAMPLE_ROW: Record<string, string> = {
   custom_factors: "Specialized Generator Gas,Natural Gas,MMBtu,53.06,0.001,0.0001,0,5,50,150,combustion",
-  production: "Hassi Messaoud,Exploration & Production,Production,Bir Berkine,2024,1,50000,bbl,12000,mscf",
-  mitigation: "Hassi Messaoud,Solar Farm A,REC,2024,1500,Active,2024-01-01,,500000,Solar panel installation",
-  sources: "Exploration & Production,Production,Hassi Messaoud,Bir Berkine,Combustion Unit A,EQ-001,combustion,Natural Gas,5 MW,2015-06-01,Active,Main export compressor,Laghouat",
-  activity_scope2: "Hassi Messaoud,2024,1,Algerian National Grid,500,MWh,electricity,",
-  activity_scope3: "Hassi Messaoud,2024,1,4,Truck Transport,10000,t-km,0.12841,kg,,Crude trucking",
-  activity_scope3_eeio: "Hassi Messaoud,2024,1,211120,50000,Well drilling equipment procurement",
-  facilities: "Hassi R'Mel,Laghouat,HRM-01,100,operated,Exploration & Production,Production,Block A,Laghouat,Operational Control,Details here,PSC Block 405b,Algeria,Upstream,33.8,3.2",
+  production: "Basin Alpha,Exploration & Production,Production,Sector Alpha-1,2024,1,50000,bbl,12000,mscf",
+  mitigation: "Basin Alpha,Solar Farm A,REC,2024,1500,Active,2024-01-01,,500000,Solar panel installation",
+  sources: "Exploration & Production,Production,Basin Alpha,Sector Alpha-1,Combustion Unit A,EQ-001,combustion,Natural Gas,5 MW,2015-06-01,Active,Main export compressor,Laghouat",
+  activity_scope2: "Basin Alpha,2024,1,Algerian National Grid,500,MWh,electricity,",
+  activity_scope3: "Basin Alpha,2024,1,4,Truck Transport,10000,t-km,0.12841,kg,,Crude trucking",
+  activity_scope3_eeio: "Basin Alpha,2024,1,211120,50000,Well drilling equipment procurement",
+  facilities: "Basin Beta,Laghouat,HRM-01,100,operated,Exploration & Production,Production,Block A,Laghouat,Operational Control,Details here,PSC Block 405b,Algeria,Upstream,33.8,3.2",
 };
 
 // Scope 1 columns shown before any Tier 3 inputs.

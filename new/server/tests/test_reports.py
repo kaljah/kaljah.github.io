@@ -27,10 +27,10 @@ def test_setup():
             admin = User(
                 email="admin_rep@test.com",
                 fullName="Admin Reporter",
-                orgName="Sonatrach Test",
+                orgName="Demo Operator Co. Test",
                 sector="Energy",
                 role="admin",
-                location="Hassi Messaoud",
+                location="Basin Alpha",
             )
             admin.set_password("password123")
             db.session.add(admin)
@@ -46,7 +46,7 @@ def test_setup():
             it_admin = User(
                 email="it_rep@test.com",
                 fullName="IT Admin Reporter",
-                orgName="Sonatrach Test",
+                orgName="Demo Operator Co. Test",
                 sector="IT",
                 role="it_admin",
                 location="Algiers",
@@ -65,10 +65,10 @@ def test_setup():
             user = User(
                 email="user_rep@test.com",
                 fullName="Regular Reporter",
-                orgName="Sonatrach Test",
+                orgName="Demo Operator Co. Test",
                 sector="Energy",
                 role="user",
-                location="Hassi Messaoud",
+                location="Basin Alpha",
             )
             user.set_password("password123")
             db.session.add(user)
@@ -83,11 +83,11 @@ def test_setup():
         if not fac:
             fac = Facility(
                 name="Report Test Facility",
-                location="Hassi Messaoud",
+                location="Basin Alpha",
                 activity="Extraction",
                 division="Production",
-                region="Hassi Messaoud",
-                field="Hassi",
+                region="Basin Alpha",
+                field="Basin Alpha",
                 segment="Upstream",
             )
             db.session.add(fac)

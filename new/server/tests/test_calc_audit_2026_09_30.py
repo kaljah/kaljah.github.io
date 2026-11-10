@@ -47,7 +47,7 @@ def facility(user):
     with flask_app.app_context():
         f = Facility.query.filter_by(name=FACILITY).first()
         if not f:
-            f = Facility(name=FACILITY, location="Hassi R'Mel", country="Algeria", region="Laghouat",
+            f = Facility(name=FACILITY, location="Basin Beta", country="Algeria", region="Laghouat",
                          division="Production", field="Gas Field", segment="Upstream", created_by=user)
             db.session.add(f)
             db.session.commit()
@@ -127,7 +127,7 @@ def test_scope3_bulk_row_with_eeio_method_column(user, facility):
 
 @pytest.mark.parametrize("cell, expected", [
     ("1,500", "1.500"), ("1,5", "1.5"), ("1.250,75", "1250.75"), ("12 345,6", "12345.6"), ("-0,25", "-0.25"),
-    ("1 234,5", "1234.5"), ("2024-01", "2024-01"), ("Hassi Messaoud, Nord", "Hassi Messaoud, Nord"),
+    ("1 234,5", "1234.5"), ("2024-01", "2024-01"), ("Basin Alpha, Nord", "Basin Alpha, Nord"),
     ("1500", "1500"), ("1.500", "1500"),
 ])
 def test_decimal_comma_cells(cell, expected):

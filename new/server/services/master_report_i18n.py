@@ -17,15 +17,15 @@ from typing import Any, Dict, List, Tuple
 
 TRANSLATIONS_EN = {
     # Headers & Footers
-    "canvas_cover_notice": "SONATRACH OFFICIAL MRV PUBLICATION // ISO 14064-1 & DÉCRET 21-330 AUDIT GRADE",
+    "canvas_cover_notice": "OFFICIAL MRV PUBLICATION // ISO 14064-1 & DÉCRET 21-330 AUDIT GRADE",
     "canvas_page_of": "Page {page} of {total}",
-    "canvas_inner_header_left": "SONATRACH HSE & CLIMATE INTELLIGENCE",
+    "canvas_inner_header_left": "CORPORATE HSE & CLIMATE INTELLIGENCE",
     "canvas_inner_header_mid": "|   EXECUTIVE MASTER ENVIRONMENTAL STATEMENT",
     "canvas_inner_header_right": "OFFICIAL VERIFIED // ISO 14064-1",
     "canvas_confidential": "CONFIDENTIAL // REPRODUCTION OR REDISTRIBUTION RESTRICTED UNDER HYDROCARBON LAW 19-13",
 
     # Cover
-    "corp_name": "SOCIÉTÉ NATIONALE SONATRACH",
+    "corp_name": "DEMO OPERATOR CO.",
     "hse_division": "DIRECTION CENTRALE HSE & DÉVELOPPEMENT DURABLE",
     "title_national": "CONSOLIDATED CORPORATE MASTER REPORT",
     "subtitle_national": "National Hydrocarbon Estate GHG, Flaring & Environmental Inventory ({time_label})",
@@ -182,7 +182,7 @@ TRANSLATIONS_EN = {
 
     # Chapter 7 / Benchmark League
     "bench_title": "CROSS-BASIN COMPARATIVE LEAGUE TABLE & COMPLIANCE",
-    "bench_desc": "Standardized benchmarking of carbon and flaring intensities across Sonatrach's major producing basins:",
+    "bench_desc": "Standardized benchmarking of carbon and flaring intensities across the operator's major producing basins:",
     "bench_headers": ["Basin / Asset", "Segment", "Facilities", "Throughput (MMBOE)", "Carbon Int. (kg/BOE)", "Flaring Int. (%)", "Decree 21-330"],
 
     # Sign-off & Certificate
@@ -251,7 +251,7 @@ TRANSLATIONS_EN = {
     "chart_poll_axis": "Atmospheric Mass Discharge (Tonnes)",
 
     "chart_bench_title": "Cross-Basin Carbon Intensity Benchmark",
-    "chart_bench_subtitle": "Multi-region performance ranking across Sonatrach operating basins",
+    "chart_bench_subtitle": "Multi-region performance ranking across operating basins",
     "chart_bench_axis": "Carbon Intensity (kg CO₂e/BOE)",
 
     "chart_ogmp_title": "OGMP 2.0 Level 4 (Bottom-Up) vs Level 5 (Top-Down) Methane Reconciliation",
@@ -265,15 +265,15 @@ TRANSLATIONS_EN = {
 
 TRANSLATIONS_FR = {
     # Headers & Footers
-    "canvas_cover_notice": "PUBLICATION OFFICIELLE MRV SONATRACH // QUALITÉ AUDIT ISO 14064-1 & DÉCRET 21-330",
+    "canvas_cover_notice": "PUBLICATION OFFICIELLE MRV // QUALITÉ AUDIT ISO 14064-1 & DÉCRET 21-330",
     "canvas_page_of": "Page {page} sur {total}",
-    "canvas_inner_header_left": "SONATRACH HSE & INTELLIGENCE CLIMATIQUE",
+    "canvas_inner_header_left": "HSE & INTELLIGENCE CLIMATIQUE",
     "canvas_inner_header_mid": "|   DÉCLARATION ENVIRONNEMENTALE MAÎTRE EXÉCUTIVE",
     "canvas_inner_header_right": "OFFICIEL VÉRIFIÉ // ISO 14064-1",
     "canvas_confidential": "CONFIDENTIEL // REPRODUCTION OU DIFFUSION RESTREINTE PAR LA LOI 19-13 SUR LES HYDROCARBURES",
 
     # Cover
-    "corp_name": "SOCIÉTÉ NATIONALE SONATRACH",
+    "corp_name": "DEMO OPERATOR CO.",
     "hse_division": "DIRECTION CENTRALE HSE & DÉVELOPPEMENT DURABLE",
     "title_national": "RAPPORT MAÎTRE D'ENTREPRISE CONSOLIDÉ",
     "subtitle_national": "Inventaire National GES, Torchage et Environnement du Domaine Hydrocarbures ({time_label})",
@@ -477,7 +477,7 @@ TRANSLATIONS_FR = {
 
     # Chapter 7 / Benchmark League
     "bench_title": "TABLEAU DE BORD COMPARATIF INTER-BASSINS ET CONFORMITÉ",
-    "bench_desc": "Classement comparatif normalisé des intensités carbone et de torchage à travers les principaux bassins producteurs de Sonatrach :",
+    "bench_desc": "Classement comparatif normalisé des intensités carbone et de torchage à travers les principaux bassins producteurs de l'opérateur :",
     "bench_headers": ["Bassin / Actif", "Segment", "Installations", "Débit (MMBEP)", "Int. Carbone (kg/BEP)", "Int. Torchage (%)", "Décret 21-330"],
 
     # Sign-off & Certificate
@@ -546,7 +546,7 @@ TRANSLATIONS_FR = {
     "chart_poll_axis": "Rejets Massiques Atmosphériques (Tonnes)",
 
     "chart_bench_title": "Classement Comparatif Inter-Bassins de l'Intensité Carbone",
-    "chart_bench_subtitle": "Performance multi-régionale à travers les bassins producteurs de Sonatrach",
+    "chart_bench_subtitle": "Performance multi-régionale à travers les bassins producteurs de l'opérateur",
     "chart_bench_axis": "Intensité Carbone (kg CO₂e/BEP)",
 
     "chart_ogmp_title": "Réconciliation Méthane OGMP 2.0 : Niveau 4 (Ascendant) vs Niveau 5 (Descendant)",

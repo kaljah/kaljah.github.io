@@ -17,7 +17,7 @@ def test_settings_target_year_calculation_rule(app, client):
 
         f_op = make_facility(
             name=uniq("FAC_OP"),
-            region="Berkine",
+            region="Basin Alpha",
             ogmp_membership_year=2023,
             operator_status="operated",
         )

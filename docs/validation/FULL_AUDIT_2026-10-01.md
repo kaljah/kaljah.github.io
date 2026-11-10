@@ -103,7 +103,7 @@ This audit was done on branch `ccr-669f6fbd-pew7ww`, which never reached `main` 
 | A-07 | Already on main in another form (`get_batch_dashboard_data` checks the shared epoch before trusting the cache). |
 | A-08 | Already on main. |
 | A-15 | Ported: Settings edits are admin only, matching the API. |
-| O-01, O-06 | Docker was removed on main too. The Sonatrach on-premise plan brings back a new, fixed package (`docs/sonatrach-implementation-plan.md`, M1). |
+| O-01, O-06 | Docker was removed on main too. The Demo Operator Co. on-premise plan brings back a new, fixed package (`docs/demo-operator-implementation-plan.md`, M1). |
 | O-02 | Ported: the client polls; the stream endpoint is gone. |
 | O-04 | Ported. In addition, a non-admin value edit sends an approved factor back to `Pending`, so maker-checker cannot be bypassed by editing. |
 | O-05 | Ported for settings, reporting metadata, goals, base year and SBTi. Custom factors follow main's later maker-checker design instead (superusers may propose, only admins approve). Superusers also no longer receive notifications outside their own location. |

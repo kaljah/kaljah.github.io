@@ -172,14 +172,14 @@ test.describe('Bulk CSV Uploader & Post-Calculation KPI Audit', () => {
     // Verify database counts for EACH database region:
     // Facility 1: West (Tosyali) -> >= 360 rows
     // Facility 3: Center (GICA) -> >= 360 rows
-    // Facility 4: South (Sonatrach) -> >= 360 rows
+    // Facility 4: South (Demo Operator Co.) -> >= 360 rows
     const westRows = queryDb('SELECT COUNT(*) as cnt FROM emissions WHERE facility_id = 1');
     const centerRows = queryDb('SELECT COUNT(*) as cnt FROM emissions WHERE facility_id = 3');
     const southRows = queryDb('SELECT COUNT(*) as cnt FROM emissions WHERE facility_id = 4');
 
     console.log(`[DB VERIFICATION] West (Tosyali): ${westRows[0].cnt} rows`);
     console.log(`[DB VERIFICATION] Center (GICA): ${centerRows[0].cnt} rows`);
-    console.log(`[DB VERIFICATION] South (Sonatrach): ${southRows[0].cnt} rows`);
+    console.log(`[DB VERIFICATION] South (Demo Operator Co.): ${southRows[0].cnt} rows`);
 
     expect(westRows[0].cnt).toBeGreaterThanOrEqual(360);
     expect(centerRows[0].cnt).toBeGreaterThanOrEqual(360);

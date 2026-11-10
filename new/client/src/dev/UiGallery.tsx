@@ -485,10 +485,10 @@ const UiGallery: React.FC = () => {
               <div className="h-[280px] w-full">
                 <BarChart
                   data={[
-                    { name: "Berkine Basin", value: 0.12 },
-                    { name: "Hassi Messaoud", value: 0.19 },
-                    { name: "Hassi R'Mel", value: 0.28 },
-                    { name: "Rhourde Nouss", value: 0.35 },
+                    { name: "Basin Alpha Basin", value: 0.12 },
+                    { name: "Basin Alpha", value: 0.19 },
+                    { name: "Basin Beta", value: 0.28 },
+                    { name: "Basin Gamma", value: 0.35 },
                   ]}
                   dataKey="value"
                   xKey="name"

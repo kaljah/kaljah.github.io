@@ -7,9 +7,9 @@ from utils import get_current_user, get_allowed_facility_ids, require_facility_a
 equity_bp = Blueprint("equity", __name__)
 
 DEFAULT_JV_PARTNERS = [
-    {"name": "Sonatrach", "code": "SH", "country": "Algeria", "is_operator": True},
-    {"name": "Occidental", "code": "OXY", "country": "United States", "is_operator": False},
-    {"name": "Eni", "code": "ENI", "country": "Italy", "is_operator": False},
+    {"name": "Demo Operator Co.", "code": "DOC", "country": "Algeria", "is_operator": True},
+    {"name": "Demo JV Partner A", "code": "JVPA", "country": "United States", "is_operator": False},
+    {"name": "Demo JV Partner B", "code": "JVPB", "country": "Italy", "is_operator": False},
     {"name": "TotalEnergies", "code": "TTE", "country": "France", "is_operator": False},
     {"name": "Pertamina", "code": "PER", "country": "Indonesia", "is_operator": False},
     {"name": "Repsol", "code": "REP", "country": "Spain", "is_operator": False},
@@ -40,7 +40,7 @@ def ensure_default_partners():
 def sync_equity_shares_for_facilities():
     """Ensure any facility configured with Equity Share or Joint Venture has its operator share in facility_equity_shares."""
     ensure_default_partners()
-    operator_partner = JvPartner.query.filter_by(is_operator=True).first() or JvPartner.query.filter_by(name="Sonatrach").first()
+    operator_partner = JvPartner.query.filter_by(is_operator=True).first() or JvPartner.query.filter_by(name="Demo Operator Co.").first()
     if not operator_partner:
         return
     facs = Facility.query.filter(

@@ -13,7 +13,7 @@ describe("SettingsFacilityLevelOGMPOverrides", () => {
     },
     {
       id: 7,
-      name: "Rhourde Nouss Sour Gas Plant",
+      name: "Basin Gamma Sour Gas Plant",
       code: "FAC-7",
       segment: "Upstream",
     },
@@ -48,7 +48,7 @@ describe("SettingsFacilityLevelOGMPOverrides", () => {
 
     // RNS is non-operated, base year 2023 -> target year must be 2028 (2023 + 5), NOT 2026!
     expect(screen.getByText("2028")).toBeInTheDocument();
-    // Rhourde Nouss is operated, base year 2023 -> target year must be 2026 (2023 + 3)
+    // Basin Gamma is operated, base year 2023 -> target year must be 2026 (2023 + 3)
     const year2026Elements = screen.getAllByText("2026");
     expect(year2026Elements.length).toBeGreaterThan(0);
     // Specifically ensure one of the 2026 elements is the Target Year badge (not just the dropdown option)

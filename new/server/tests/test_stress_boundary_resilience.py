@@ -37,7 +37,7 @@ def boundary_client():
                 orgName="ChaosCorp",
                 sector="Energy",
                 role="admin",
-                location="Hassi Messaoud",
+                location="Basin Alpha",
             )
             admin.set_password("BoundaryPass2026!")
             db.session.add(admin)
@@ -47,7 +47,7 @@ def boundary_client():
         if not fac:
             fac = Facility(
                 name="Resilience Testing Facility",
-                location="Hassi Messaoud",
+                location="Basin Alpha",
                 activity="Extraction",
                 division="Production",
                 region="South",

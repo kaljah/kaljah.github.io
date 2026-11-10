@@ -235,9 +235,9 @@ test.describe('Suite 17: CBAM, Operational Equipment, Methane Map & Simulations 
     }
 
     // Select a facility in intelligence drawer to open Dossier
-    const targetFacilityBtn = page.getByRole('button', { name: /Hassi Messaoud/i }).first();
+    const targetFacilityBtn = page.getByRole('button', { name: /Basin Alpha/i }).first();
     if (await targetFacilityBtn.isVisible().catch(() => false)) {
-      console.log('[CSS-3] Dispatching click to Hassi Messaoud facility card...');
+      console.log('[CSS-3] Dispatching click to Basin Alpha facility card...');
       await targetFacilityBtn.dispatchEvent('click');
       await page.waitForTimeout(1500);
     } else {
@@ -248,7 +248,7 @@ test.describe('Suite 17: CBAM, Operational Equipment, Methane Map & Simulations 
     }
 
     // Verify ExplorerDossier slides out
-    const dossierHeading = page.locator('section[aria-label="Facility Reconnaissance Dossier"] h3, section h3:has-text("Hassi"), section:has-text("Facility reconnaissance dossier") h3').first();
+    const dossierHeading = page.locator('section[aria-label="Facility Reconnaissance Dossier"] h3, section h3:has-text("Basin Alpha"), section:has-text("Facility reconnaissance dossier") h3').first();
     await expect(dossierHeading).toBeVisible({ timeout: 15000 });
     const openedFacilityName = await dossierHeading.innerText();
     console.log(`[CSS-3] Facility dossier inspection active for: ${openedFacilityName}`);

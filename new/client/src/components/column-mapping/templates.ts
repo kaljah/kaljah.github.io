@@ -25,7 +25,7 @@ export const TEMPLATES: Record<string, TemplateField[]> = {
       id: "facility_id",
       label: t("Region"),
       required: true,
-      hint: t("e.g. Hassi Messaoud"),
+      hint: t("e.g. Basin Alpha"),
     },
     { id: "field", label: t("Field"), required: false },
     { id: "name", label: t("Equipment Name"), required: true },

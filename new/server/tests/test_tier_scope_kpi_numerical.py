@@ -401,7 +401,7 @@ class TestKPIsAndIntensities:
                 db.session.add(admin)
                 db.session.commit()
             fac = Facility(name="KPI CI Oil Facility", segment="Upstream", activity="Upstream Oil", division="E&P",
-                           region="Hassi", operator_status="operated")
+                           region="Basin Alpha", operator_status="operated")
             db.session.add(fac)
             db.session.commit()
             db.session.add(Emission(record_id="EM-KPI-CI-1", facility_id=fac.id, year=2027, month=1,
@@ -483,7 +483,7 @@ class TestKPIsAndIntensities:
                 db.session.add(admin)
                 db.session.commit()
             fac = Facility(name="KPI Flare Facility", segment="Upstream", activity="Upstream Gas", division="E&P",
-                           region="Hassi", operator_status="operated")
+                           region="Basin Alpha", operator_status="operated")
             db.session.add(fac)
             db.session.commit()
             db.session.add(Emission(record_id="EM-KPI-FL-1", facility_id=fac.id, year=2028, month=1,
@@ -576,8 +576,8 @@ class TestUncertaintyQuantificationMath:
 class TestOfficialPresetsTier2:
     """Verifies numerical exactness of Tier 2 calculations using official legal and technical presets."""
 
-    def test_tier2_algerian_gas_sonatrach_iso6976(self):
-        """Sonatrach ISO 6976 Hassi R'Mel sales gas preset: HHV = 1085 Btu/scf.
+    def test_tier2_algerian_gas_demo_operator_iso6976(self):
+        """Demo Operator Co. ISO 6976 Basin Beta sales gas preset: HHV = 1085 Btu/scf.
         Fuel: 50,000 scf Natural Gas. Standard API factor: 53.06 kg CO2/MMBtu.
         Energy = 50,000 scf * (1085 / 1e6) = 54.25 MMBtu.
         CO2 = 54.25 * 53.06 / 1000 = 2.878505 tCO2.

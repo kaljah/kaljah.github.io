@@ -119,7 +119,7 @@ def export_national_inventory_report():
         wb.remove(wb.active)  # Remove default blank sheet
 
         # Corporate / Algerian National Colors & Typography
-        c_algeria_green = "0F766E"  # Algerian National Green / Sonatrach Green
+        c_algeria_green = "0F766E"  # Algerian National Green / Demo Operator Co. Green
         c_navy = "1E293B"           # Header Slate
         c_sub_green = "047857"      # Sub Header Green
         c_amber = "D97706"          # Caution Amber
@@ -183,9 +183,9 @@ def export_national_inventory_report():
 
         dec_fields = [
             ("Organisme Déclarant", company_name),
-            ("Forme Juridique & Statut", "Entreprise Publique Économique / Société par Actions (SPA)"),
-            ("Numéro d'Identification Fiscale (NIF)", "000016001550736"),
-            ("Siège Social", "Djenane El Malik, Hydra, Alger, Algérie"),
+            ("Forme Juridique & Statut", "Société par Actions (SPA)"),
+            ("Numéro d'Identification Fiscale (NIF)", "000000000000000"),
+            ("Siège Social", "Algiers, Algeria"),
             ("Direction Responsable", "Direction Centrale Qualité, Sécurité et Environnement (QSE / HSE)"),
             ("Responsable de la Déclaration", f"{assessor_name} ({assessor_email})"),
             ("Cadre Juridique National", "Décret exécutif n° 21-330 du 25 septembre 2021 & Loi n° 19-13 sur les hydrocarbures"),

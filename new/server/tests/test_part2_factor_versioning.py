@@ -33,7 +33,7 @@ def test_custom_factor_versioning_on_update(app, client):
                 "ch4_factor": 0.05,
                 "n2o_factor": 0.01,
                 "unit": "m3",
-                "source": "Sonatrach Lab Assay 2024",
+                "source": "Demo Operator Co. Lab Assay 2024",
                 "valid_from": "2024-01-01",
                 "version": "1.0",
                 "facility_id": fac.id,
@@ -64,7 +64,7 @@ def test_custom_factor_versioning_on_update(app, client):
             f"/api/custom-factors/{factor_id}",
             json={
                 "co2_factor": 1.45,  # Changed value
-                "source": "Sonatrach Lab Assay 2025 Rev B",
+                "source": "Demo Operator Co. Lab Assay 2025 Rev B",
                 "valid_from": "2025-01-01",
             },
         )
