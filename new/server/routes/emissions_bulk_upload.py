@@ -13,7 +13,8 @@ from flask import jsonify, request
 from models import CustomFactor, Emission, Facility, Notification, User
 from routes.auth import login_required
 from utils import (
-    build_name_map, get_allowed_facility_ids, get_current_user, internal_error, log_activity_and_notify,
+    build_name_map, get_allowed_facility_ids, get_current_tenant_id, get_current_user,
+    internal_error, log_activity_and_notify, tenant_matches,
 )
 from . import emissions_bp
 from routes.emissions import resolve_gwp_dict, resolve_gwp_standard
@@ -61,17 +62,26 @@ def add_bulk_upload():
     confirm = bool(data.get("confirm", False))
     py_fmt = _DATE_FORMATS.get(date_format, "%Y-%m-%d")
 
+    caller_tenant = get_current_tenant_id(user)
     allowed = get_allowed_facility_ids(user)
-    facilities = Facility.query.all() if allowed is None else Facility.query.filter(Facility.id.in_(allowed)).all()
+    facilities = Facility.query.all() if allowed is None else Facility.query.filter(Facility.id.in_(allowed or [-1])).all()
     fac_name_map = build_name_map(facilities)
     for fac in facilities:
         fac_name_map.add(fac.region, fac, overwrite=False)
     fac_id_map = {str(f.id): f for f in facilities}
-    cf_name_map = build_name_map(CustomFactor.query.filter(CustomFactor.is_archived.is_(False)).all())
+    cf_name_map = build_name_map(
+        CustomFactor.query.filter(
+            CustomFactor.is_archived.is_(False),
+            tenant_matches(CustomFactor.tenant_id, caller_tenant),
+        ).all()
+    )
 
     # existing live records, keyed as the file upload keys them (duplicates are found the same way)
     batch_keys = {}
-    for e in Emission.query.filter(Emission.status.in_(("Pending", "Verified", "Pending Approval"))).with_entities(
+    eq_q = Emission.query.filter(Emission.status.in_(("Pending", "Verified", "Pending Approval")))
+    if allowed is not None:
+        eq_q = eq_q.filter(Emission.facility_id.in_(allowed or [-1]))
+    for e in eq_q.with_entities(
         Emission.id, Emission.facility_id, Emission.year, Emission.month, Emission.process_type,
         Emission.fuel_type, Emission.equipment_id, Emission.data_source_ref,
     ).all():
@@ -118,7 +128,7 @@ def add_bulk_upload():
     try:
         status = new_emissions[0].status if new_emissions else None
         if status in ("Pending", "Pending Approval"):
-            for admin in User.query.filter_by(role="admin", status="active").all():
+            for admin in User.query.filter_by(role="admin", status="active").filter(tenant_matches(User.tenant_id, caller_tenant)).all():
                 Notification.create(
                     user_id=admin.id, type="audit", title="Scope 1 Bulk Upload Pending Review",
                     message=f"{len(new_emissions):,} new Scope 1 emission records were uploaded by {user.fullName} "

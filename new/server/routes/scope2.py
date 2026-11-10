@@ -6,7 +6,16 @@ from electricity_factors import GRID_FACTORS, grid_entry, grid_factor_kg_co2e_pe
 from routes.auth import login_required
 from calculations.indirect import heat_to_mmbtu
 from calculations.uncertainty import propagate_uncertainty, Tier
-from utils import facility_access_error, get_current_user, get_allowed_facility_ids, require_facility_access, initial_record_status, log_activity_and_notify
+from utils import (
+    facility_access_error,
+    get_allowed_facility_ids,
+    get_current_tenant_id,
+    get_current_user,
+    initial_record_status,
+    log_activity_and_notify,
+    require_facility_access,
+    tenant_matches,
+)
 from input_validation import ValidationError, parse_number, parse_year, parse_month, require_plausible_co2e
 from services.scope2_gases import gas_split
 from services.dashboard_filters import _parse_facility_ids
@@ -240,8 +249,13 @@ def get_scope2_emissions():
         status_arg = request.args.get("status")
         if year_arg == "baseline":
             from models import BaseYear, BaseYearRecalculation
-            rec = BaseYearRecalculation.query.order_by(BaseYearRecalculation.recalc_date.desc()).first()
-            base = rec or BaseYear.query.first()
+            caller_tenant = get_current_tenant_id(user)
+            rec = (
+                BaseYearRecalculation.query.filter(tenant_matches(BaseYearRecalculation.tenant_id, caller_tenant))
+                .order_by(BaseYearRecalculation.recalc_date.desc())
+                .first()
+            )
+            base = rec or (BaseYear.query.first() if caller_tenant == "default" else None)
             year_arg = str(base.year) if base else "-1"
         if year_arg and year_arg != "all":
             try:
@@ -250,6 +264,8 @@ def get_scope2_emissions():
                 return jsonify({"error": str(ve)}), 400
         parsed_fids = _parse_facility_ids(fac_arg)
         if parsed_fids is not None:
+            if allowed_fids is not None and not set(parsed_fids).issubset(set(allowed_fids)):
+                return jsonify({"error": "Unauthorized facility"}), 403
             query = query.filter(Scope2Emission.facility_id.in_(parsed_fids))
         if status_arg and status_arg != "all":
             query = query.filter(Scope2Emission.status.in_([x.strip() for x in status_arg.split(",") if x.strip()]))
@@ -517,7 +533,12 @@ def create_scope2_emission():
             from status import PENDING_STATUS_SET
             if initial_status in PENDING_STATUS_SET:
                 from models import Notification, User
-                admins = User.query.filter_by(role="admin", status="active").all()
+                caller_tenant = get_current_tenant_id(user)
+                admins = (
+                    User.query.filter_by(role="admin", status="active")
+                    .filter(tenant_matches(User.tenant_id, caller_tenant))
+                    .all()
+                )
                 for admin in admins:
                     Notification.create(
                         user_id=admin.id,
@@ -845,6 +866,7 @@ def bulk_import_scope2():
 
     # BUG-060/RC-2: every bulk import is Pending until an approver reviews it (same as Scope 1/3).
     bulk_status = initial_record_status(user, channel="bulk")
+    caller_tenant = get_current_tenant_id(user)
     imported_count = 0
     errors = []
     facility_cache = {}
@@ -860,7 +882,8 @@ def bulk_import_scope2():
                     facility = facility_cache[f_name_clean.lower()]
                 else:
                     facility = Facility.query.filter(
-                        func.lower(Facility.name) == f_name_clean.lower()
+                        tenant_matches(Facility.tenant_id, caller_tenant),
+                        func.lower(Facility.name) == f_name_clean.lower(),
                     ).first()
                     facility_cache[f_name_clean.lower()] = facility
             else:

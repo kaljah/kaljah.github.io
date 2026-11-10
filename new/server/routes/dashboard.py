@@ -15,7 +15,14 @@ from models import (
     EmissionSource,
 )
 from extensions import db
-from utils import get_current_user, get_allowed_facility_ids, log_activity_and_notify
+from utils import (
+    get_allowed_facility_ids,
+    get_current_tenant_id,
+    get_current_user,
+    is_org_wide_user,
+    log_activity_and_notify,
+    tenant_matches,
+)
 from sqlalchemy import func
 from datetime import datetime, timezone
 from cachetools import TTLCache, cached, keys
@@ -174,6 +181,8 @@ def get_batch_dashboard_data():
             ),
             403,
         )
+    caller_tenant = get_current_tenant_id(user)
+    org_wide = is_org_wide_user(user)
     allowed_fids = get_allowed_facility_ids(user)
     include_pending = request.args.get("includePending", "false").lower() == "true"
     gwp_horizon = request.args.get("gwp_horizon", "100")
@@ -183,6 +192,8 @@ def get_batch_dashboard_data():
     cache_facility = tuple(sorted(parsed_facility_ids)) if parsed_facility_ids is not None else facility_id
     cache_key = (
         "batch_all",
+        caller_tenant,
+        org_wide,
         cache_facility,
         year,
         activity,
@@ -244,6 +255,8 @@ def get_batch_dashboard_data():
                 segment=segment,
                 activity=activity,
                 division=division,
+                org_wide=org_wide,
+                tenant_id=caller_tenant,
             )
             f_scope3 = executor.submit(
                 _run_in_app_ctx, app, _query_scope3_summary, facility_id=facility_id, year=year,
@@ -316,10 +329,14 @@ def get_batch_dashboard_data():
         # Static / cheap lookups (sequential is fine — they're single-row queries)
         # BUG-041: a single-year organisation goal is only comparable with a single-year,
         # unfiltered, organisation-wide total
-        filtered_view = allowed_fids is not None or any(
+        filtered_view = (not org_wide) or any(
             v not in (None, "", "all") for v in (facility_id, activity, division, segment)
         )
-        goal = None if (not year or year == "all" or filtered_view) else Goal.query.filter_by(year=goal_year).first()
+        goal = (
+            None
+            if (not year or year == "all" or filtered_view or caller_tenant != "default")
+            else Goal.query.filter_by(year=goal_year).first()
+        )
         goal_obj = (
             {
                 "year": goal.year,
@@ -329,9 +346,11 @@ def get_batch_dashboard_data():
             if goal
             else None
         )
-        base_year_rec = BaseYearRecalculation.query.order_by(
-            BaseYearRecalculation.recalc_date.desc()
-        ).first()
+        base_year_rec = (
+            BaseYearRecalculation.query.filter(tenant_matches(BaseYearRecalculation.tenant_id, caller_tenant))
+            .order_by(BaseYearRecalculation.recalc_date.desc())
+            .first()
+        )
         if base_year_rec:
             base_year_obj = {
                 "id": base_year_rec.id,
@@ -344,7 +363,11 @@ def get_batch_dashboard_data():
                 ),
             }
         else:
-            base_year_singleton = db.session.get(BaseYear, 1) or BaseYear.query.first()
+            base_year_singleton = (
+                (db.session.get(BaseYear, 1) or BaseYear.query.first())
+                if caller_tenant == "default"
+                else None
+            )
             base_year_obj = (
                 {
                     "id": base_year_singleton.id,
@@ -546,11 +569,20 @@ def _query_summary(
 IMPLEMENTED_MITIGATION = {"active", "completed", "implemented", "operational", "verified"}
 
 @cached(cache=DASHBOARD_CACHE, key=make_cache_key("_query_mitigation"), lock=CACHE_LOCK)
-def _query_mitigation(facility_id=None, year=None, allowed_fids=None, segment=None, activity=None, division=None):
+def _query_mitigation(
+    facility_id=None,
+    year=None,
+    allowed_fids=None,
+    segment=None,
+    activity=None,
+    division=None,
+    org_wide=True,
+    tenant_id="default",
+):
     """Mitigation items for the dashboard.
 
     BUG-094: same facility-level filters as the other panels; unscoped company-wide records are
-    only shown in the unfiltered corporate view; each item says whether it counts toward "Net"
+    only shown in the unfiltered corporate view for the caller's tenant; each item says whether it counts toward "Net"
     (implemented projects only — Planned projects are shown but not netted).
     """
     from services.dashboard_filters import apply_scope, apply_year
@@ -561,8 +593,12 @@ def _query_mitigation(facility_id=None, year=None, allowed_fids=None, segment=No
 
     filtered = any(v not in (None, "", "all") for v in (facility_id, activity, division, segment))
     records = []
-    if not filtered and allowed_fids is None:
-        records = apply_year(MitigationRecord.query, MitigationRecord, year).all()
+    if not filtered and org_wide:
+        records = apply_year(
+            MitigationRecord.query.filter(tenant_matches(MitigationRecord.tenant_id, tenant_id)),
+            MitigationRecord,
+            year,
+        ).all()
 
     results = []
     for p in projects:
@@ -978,6 +1014,8 @@ def get_mitigation():
             segment=request.args.get("segment"),
             activity=request.args.get("activity"),
             division=request.args.get("division"),
+            org_wide=is_org_wide_user(user),
+            tenant_id=get_current_tenant_id(user),
         )
     )
 
@@ -1021,6 +1059,8 @@ def get_goal(year):
             ),
             403,
         )
+    if get_current_tenant_id(user) != "default":
+        return jsonify(None)
     try:
         goal = Goal.query.filter_by(year=year).first()
         if not goal:
@@ -1049,12 +1089,19 @@ def get_base_year():
             ),
             403,
         )
-    base_year = BaseYearRecalculation.query.order_by(
-        BaseYearRecalculation.recalc_date.desc()
-    ).first()
+    caller_tenant = get_current_tenant_id(user)
+    base_year = (
+        BaseYearRecalculation.query.filter(tenant_matches(BaseYearRecalculation.tenant_id, caller_tenant))
+        .order_by(BaseYearRecalculation.recalc_date.desc())
+        .first()
+    )
 
     if not base_year:
-        base_year_singleton = db.session.get(BaseYear, 1) or BaseYear.query.first()
+        base_year_singleton = (
+            (db.session.get(BaseYear, 1) or BaseYear.query.first())
+            if caller_tenant == "default"
+            else None
+        )
         if base_year_singleton:
             return jsonify({
                 "id": base_year_singleton.id,
@@ -1300,10 +1347,16 @@ def _query_uncertainty(year=None, allowed_fids=None, facility_id=None, scope="al
     from services.inventory_uncertainty import inventory_uncertainty
 
     if not year:
-        # latest year with Verified data that is not in the future
+        # latest year with Verified data in the caller's scope that is not in the future
         cy = datetime.now(timezone.utc).year
-        year = db.session.query(func.max(Emission.year)).filter(
-            Emission.status == "Verified", Emission.year <= cy).scalar() or cy
+        yq = db.session.query(func.max(Emission.year)).filter(
+            Emission.status == "Verified", Emission.year <= cy
+        )
+        if allowed_fids is not None:
+            yq = yq.filter(Emission.facility_id.in_(allowed_fids or [-1]))
+        if facility_id:
+            yq = yq.filter(Emission.facility_id == facility_id if isinstance(facility_id, int) else Emission.facility_id.in_(facility_id or [-1]))
+        year = yq.scalar() or cy
     return inventory_uncertainty(
         int(year),
         allowed_fids=allowed_fids,
@@ -1328,7 +1381,11 @@ def get_report_exclusions():
     year = request.args.get("year")
     # activity = request.args.get('activity') # potential future filter
 
-    query = MitigationRecord.query.filter(MitigationRecord.type.ilike("%exclusion%"))
+    caller_tenant = get_current_tenant_id(user)
+    query = MitigationRecord.query.filter(
+        MitigationRecord.type.ilike("%exclusion%"),
+        tenant_matches(MitigationRecord.tenant_id, caller_tenant),
+    )
 
     if year and year != "all":
         query = query.filter(MitigationRecord.year == int(year))
@@ -1374,7 +1431,10 @@ def get_equipment_emissions():
     eq_tags = set(e.equipment_id.strip() for e in emissions if e.equipment_id and str(e.equipment_id).strip())
     source_names = {}
     if eq_tags:
-        sources = EmissionSource.query.filter(EmissionSource.equipment_id.in_(list(eq_tags))).all()
+        src_q = EmissionSource.query.filter(EmissionSource.equipment_id.in_(list(eq_tags)))
+        if allowed_fids is not None:
+            src_q = src_q.filter(EmissionSource.facility_id.in_(allowed_fids or [-1]))
+        sources = src_q.all()
         for s in sources:
             if s.equipment_id and s.name:
                 source_names[s.equipment_id.strip()] = s.name

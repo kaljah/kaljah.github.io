@@ -12,7 +12,7 @@ from flask import Blueprint, request, jsonify, session
 from extensions import db
 from models import PeriodLock, User
 from routes.auth import login_required, admin_required
-from utils import get_current_user, log_activity_and_notify
+from utils import get_current_tenant_id, get_current_user, log_activity_and_notify, tenant_matches
 
 period_locks_bp = Blueprint("period_locks", __name__, url_prefix="/api/period-locks")
 
@@ -21,18 +21,33 @@ period_locks_bp = Blueprint("period_locks", __name__, url_prefix="/api/period-lo
 @period_locks_bp.route("/", methods=["GET"])
 @login_required
 def get_period_locks():
-    """List all period locks."""
-    locks = PeriodLock.query.order_by(PeriodLock.year.desc(), PeriodLock.month.asc()).all()
+    """List all period locks for the caller's tenant."""
+    user = get_current_user()
+    caller_tenant = get_current_tenant_id(user)
+    locks = (
+        PeriodLock.query.filter(tenant_matches(PeriodLock.tenant_id, caller_tenant))
+        .order_by(PeriodLock.year.desc(), PeriodLock.month.asc())
+        .all()
+    )
     return jsonify([l.to_dict() for l in locks]), 200
 
 
 @period_locks_bp.route("/status/<int:year>", methods=["GET"])
 @login_required
 def get_period_lock_status(year):
-    """Check if a specific reporting year is locked."""
+    """Check if a specific reporting year is locked for the caller's tenant."""
     from services.period_lock_service import is_period_locked
-    locked = is_period_locked(year)
-    lock_record = PeriodLock.query.filter_by(year=year, status="locked").first()
+    user = get_current_user()
+    caller_tenant = get_current_tenant_id(user)
+    locked = is_period_locked(year, tenant_id=caller_tenant)
+    lock_record = (
+        PeriodLock.query.filter(
+            tenant_matches(PeriodLock.tenant_id, caller_tenant),
+            PeriodLock.year == year,
+            PeriodLock.status == "locked",
+        )
+        .first()
+    )
     return jsonify({
         "year": year,
         "is_locked": locked,
@@ -47,6 +62,7 @@ def lock_period():
     user = get_current_user()
     if not user or user.role not in ("admin", "auditor", "superuser"):
         return jsonify({"error": "Only Administrators or Lead Auditors can lock a reporting period"}), 403
+    caller_tenant = get_current_tenant_id(user)
 
     data = request.get_json() or {}
     year = data.get("year")
@@ -66,10 +82,18 @@ def lock_period():
 
     notes = str(data.get("signoff_notes") or "").strip()
 
-    # Find existing or create new lock
-    lock = PeriodLock.query.filter_by(year=y, month=m).first()
+    # Find existing or create new lock scoped to caller's tenant
+    lock = (
+        PeriodLock.query.filter(
+            tenant_matches(PeriodLock.tenant_id, caller_tenant),
+            PeriodLock.year == y,
+            PeriodLock.month == m,
+        )
+        .first()
+    )
     if not lock:
         lock = PeriodLock(
+            tenant_id=caller_tenant,
             year=y,
             month=m,
             status="locked",
@@ -80,6 +104,7 @@ def lock_period():
         )
         db.session.add(lock)
     else:
+        lock.tenant_id = caller_tenant
         lock.status = "locked"
         lock.locked_at = datetime.datetime.now(datetime.timezone.utc)
         lock.locked_by = user.id
@@ -111,6 +136,7 @@ def lock_period():
 def unlock_period():
     """Part 2.3: Unlock a locked reporting period with mandatory justification (Admin only)."""
     user = get_current_user()
+    caller_tenant = get_current_tenant_id(user)
     data = request.get_json() or {}
     year = data.get("year")
     if not year:
@@ -130,7 +156,10 @@ def unlock_period():
     month = data.get("month")
     m = int(month) if month is not None else None
 
-    locks = PeriodLock.query.filter_by(year=y).all()
+    locks = PeriodLock.query.filter(
+        tenant_matches(PeriodLock.tenant_id, caller_tenant),
+        PeriodLock.year == y,
+    ).all()
     if m is not None:
         locks = [l for l in locks if l.month == m or l.month is None]
 

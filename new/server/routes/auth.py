@@ -9,7 +9,13 @@ from flask import request, jsonify, session, current_app
 from . import auth_bp
 from models import User, Notification, Facility
 from extensions import db, limiter
-from utils import get_allowed_facility_ids, is_unrestricted_location, log_activity_and_notify
+from utils import (
+    get_allowed_facility_ids,
+    get_current_tenant_id,
+    is_unrestricted_location,
+    log_activity_and_notify,
+    normalize_tenant_id,
+)
 from services.session_policy import idle_timeout_minutes
 from services.login_guard import (ACCOUNT_LOCKED, failed_sign_in, get_login_account_limit, get_login_rate_limit,  # noqa: F401
                                   login_account_key, record_failed_sign_in, validate_password_complexity)
@@ -266,6 +272,16 @@ def register():
     if role_requested == "superuser" and is_unrestricted_location(data.get("location")):
         return jsonify({"error": SUPERUSER_REGION_ERROR, "field": "location"}), 400
 
+    creator_tenant = get_current_tenant_id(creator) if creator else "default"
+    raw_tenant = data.get("tenant_id")
+    if raw_tenant not in (None, ""):
+        requested_tenant = normalize_tenant_id(raw_tenant)
+        if creator and creator.role != "it_manager" and requested_tenant != creator_tenant:
+            return jsonify({"error": "Forbidden: Cannot create user in another tenant"}), 403
+        target_tenant = requested_tenant
+    else:
+        target_tenant = creator_tenant
+
     user = User(
         fullName=data.get("fullName"),
         orgName=data.get("orgName"),
@@ -276,6 +292,7 @@ def register():
         phone=data.get("phone"),
         location=data.get("location"),
         role=role_requested,
+        tenant_id=target_tenant,
     )
     user.set_password(password)
 
@@ -308,6 +325,7 @@ def register():
                     "department": user.department,
                     "jobTitle": user.jobTitle,
                     "status": user.status,
+                    "tenant_id": get_current_tenant_id(user),
                     "created_at": (
                         user.created_at.isoformat() if user.created_at else None
                     ),
@@ -341,9 +359,11 @@ def login():
         if user.status != "active":
             return jsonify({"error": "Account disabled"}), 403
 
+        resolved_tenant = get_current_tenant_id(user)
         session.clear()
         session.permanent = True
         session["user_id"] = user.id
+        session["tenant_id"] = resolved_tenant
         session["sv"] = int(user.session_version or 0)  # BUG-114
         session["last_seen"] = time.time()  # idle timeout (services.session_policy)
         current_app.logger.debug(f"Session set for user_id={user.id}")
@@ -356,6 +376,7 @@ def login():
             "email": user.email,
             "role": user.role,
             "orgName": user.orgName,
+            "tenant_id": resolved_tenant,
             "jobTitle": user.jobTitle,
             "department": user.department,
             "sector": user.sector,
@@ -529,6 +550,7 @@ def me():
             "fullName": user.fullName,
             "email": user.email,
             "role": user.role,
+            "tenant_id": get_current_tenant_id(user),
             "orgName": user.orgName,
             "sector": user.sector,
             "jobTitle": user.jobTitle,

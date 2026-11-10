@@ -6,7 +6,14 @@ registered on the same ``dashboard_bp`` blueprint, so URLs and endpoint names ar
 from flask import jsonify, request
 from routes.auth import login_required
 from sqlalchemy import func
-from utils import get_allowed_facility_ids, get_current_user
+from utils import (
+    get_allowed_facility_ids,
+    get_current_tenant_id,
+    get_current_user,
+    has_multi_tenant_data,
+    is_org_wide_user,
+    tenant_matches,
+)
 from services.dashboard_filters import _parse_facility_ids
 from routes.dashboard import dashboard_bp, is_it_role
 
@@ -28,11 +35,16 @@ def get_sbti_trajectory():
             403,
         )
 
+    caller_tenant = get_current_tenant_id(user)
     allowed_fids = get_allowed_facility_ids(user)
     facility_id = request.args.get("facility_id") or request.args.get("facilityId")
     scope = (request.args.get("scope") or "all").lower().strip()
     
-    target = SbtiTarget.query.order_by(SbtiTarget.created_at.desc()).first()
+    target = (
+        SbtiTarget.query.filter(tenant_matches(SbtiTarget.tenant_id, caller_tenant))
+        .order_by(SbtiTarget.created_at.desc())
+        .first()
+    )
     if not target:
         return jsonify({"has_target": False})
         
@@ -126,17 +138,31 @@ def get_sbti_trajectory():
         return actuals.get(yr) if yr in actuals else None
 
     from extensions import db
-    restricted = allowed_fids is not None or bool(parsed_fids)
+    restricted = (not is_org_wide_user(user)) or bool(parsed_fids)
+    multi_tenant = caller_tenant != "default" or has_multi_tenant_data()
     if restricted:
-        corp_s1 = db.session.query(
+        q_cs1 = db.session.query(
             func.sum(func.coalesce(Emission.co2e_total, Emission.co2_emissions, 0))
-        ).filter(Emission.year == base_year, Emission.status == "Verified", Emission.is_test == False).scalar() or 0.0
-        corp_s2 = db.session.query(
+        ).filter(Emission.year == base_year, Emission.status == "Verified", Emission.is_test == False)
+        q_cs2 = db.session.query(
             func.sum(func.coalesce(Scope2Emission.co2e_location_based, Scope2Emission.co2e, 0))
-        ).filter(Scope2Emission.year == base_year, Scope2Emission.status == "Verified").scalar() or 0.0
-        corp_s3 = db.session.query(
+        ).filter(Scope2Emission.year == base_year, Scope2Emission.status == "Verified")
+        q_cs3 = db.session.query(
             func.sum(func.coalesce(Scope3Emission.co2e, 0))
-        ).filter(Scope3Emission.year == base_year, Scope3Emission.status == "Verified").scalar() or 0.0
+        ).filter(Scope3Emission.year == base_year, Scope3Emission.status == "Verified")
+        if multi_tenant:
+            tenant_fac_ids = [
+                fid for (fid,) in db.session.query(Facility.id)
+                .filter(tenant_matches(Facility.tenant_id, caller_tenant))
+                .all()
+            ]
+            t_fids = tenant_fac_ids or [-1]
+            q_cs1 = q_cs1.filter(Emission.facility_id.in_(t_fids))
+            q_cs2 = q_cs2.filter(Scope2Emission.facility_id.in_(t_fids))
+            q_cs3 = q_cs3.filter(Scope3Emission.facility_id.in_(t_fids))
+        corp_s1 = q_cs1.scalar() or 0.0
+        corp_s2 = q_cs2.scalar() or 0.0
+        corp_s3 = q_cs3.scalar() or 0.0
         corp_base_total = float(corp_s1)
         if coverage in ("S1S2", "S1S2S3"):
             corp_base_total += float(corp_s2)
@@ -167,9 +193,14 @@ def get_sbti_trajectory():
         return round(max(residual_floor, baseline * (1 - r * yrs)), 2)
 
     end_year = max(target_year, current_year)
-    max_month_res = db.session.query(func.max(Emission.month)).filter(
+    q_mm = db.session.query(func.max(Emission.month)).filter(
         Emission.year == current_year, Emission.status == "Verified", Emission.is_test == False
-    ).scalar()
+    )
+    if parsed_fids is not None:
+        q_mm = q_mm.filter(Emission.facility_id.in_(parsed_fids or [-1]))
+    elif allowed_fids is not None:
+        q_mm = q_mm.filter(Emission.facility_id.in_(allowed_fids or [-1]))
+    max_month_res = q_mm.scalar()
     months_reported = int(max_month_res or 1)
 
     trajectory = []

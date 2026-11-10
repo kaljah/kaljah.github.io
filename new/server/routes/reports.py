@@ -410,7 +410,8 @@ def generate_report():
         emissions_data = []
 
         # Batch facility lookup to prevent N+1 queries
-        fac_map = {f.id: f.name for f in Facility.query.all()}
+        fac_q = Facility.query if allowed_fids is None else Facility.query.filter(Facility.id.in_(allowed_fids or [-1]))
+        fac_map = {f.id: f.name for f in fac_q.all()}
 
         status_filter = str(filters.get("status") or "Verified").strip()
         statuses = [x.strip().lower() for x in status_filter.split(",") if x.strip()] if status_filter.lower() != "all" else None
@@ -426,7 +427,7 @@ def generate_report():
             if facility_id:
                 q = q.filter_by(facility_id=facility_id)
             elif allowed_fids is not None:
-                q = q.filter(Emission.facility_id.in_(allowed_fids))
+                q = q.filter(Emission.facility_id.in_(allowed_fids or [-1]))
             if process_type:
                 q = q.filter_by(process_type=process_type)
             q = q.filter(~Emission.facility_id.in_(test_fids))
@@ -464,7 +465,7 @@ def generate_report():
             if facility_id:
                 q2 = q2.filter_by(facility_id=facility_id)
             elif allowed_fids is not None:
-                q2 = q2.filter(Scope2Emission.facility_id.in_(allowed_fids))
+                q2 = q2.filter(Scope2Emission.facility_id.in_(allowed_fids or [-1]))
             q2 = q2.filter(~Scope2Emission.facility_id.in_(test_fids))
             if hasattr(Scope2Emission, "is_test"):
                 q2 = q2.filter(Scope2Emission.is_test == False)
@@ -502,7 +503,7 @@ def generate_report():
             if facility_id:
                 q3 = q3.filter_by(facility_id=facility_id)
             elif allowed_fids is not None:
-                q3 = q3.filter(Scope3Emission.facility_id.in_(allowed_fids))
+                q3 = q3.filter(Scope3Emission.facility_id.in_(allowed_fids or [-1]))
             q3 = q3.filter(~Scope3Emission.facility_id.in_(test_fids))
             if hasattr(Scope3Emission, "is_test"):
                 q3 = q3.filter(Scope3Emission.is_test == False)

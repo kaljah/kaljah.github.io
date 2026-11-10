@@ -2,7 +2,15 @@ from flask import request, jsonify, session, current_app
 import json
 from . import facilities_bp
 from services.labels import normalize_segment
-from utils import get_allowed_facility_ids, log_activity_and_notify, facility_in_user_scope, facility_change_allowed
+from utils import (
+    facility_change_allowed,
+    facility_in_user_scope,
+    get_allowed_facility_ids,
+    get_current_tenant_id,
+    log_activity_and_notify,
+    normalize_tenant_id,
+    tenant_matches,
+)
 from input_validation import parse_number, require_text, parse_year
 from models import Facility, User
 from extensions import db
@@ -31,7 +39,7 @@ def get_facilities():
     query = Facility.query
     allowed_fids = get_allowed_facility_ids(user)
     if allowed_fids is not None:
-        query = query.filter(Facility.id.in_(allowed_fids))
+        query = query.filter(Facility.id.in_(allowed_fids or [-1]))
 
     search_term = request.args.get("search")
     if search_term:
@@ -92,29 +100,28 @@ def get_all_regions():
 
     identifiers = set()
 
-    # 1. Facilities that have an explicit region value
-    region_rows = (
-        db.session.query(Facility.region)
-        .filter(Facility.region.isnot(None), Facility.region != "")
-        .distinct()
-        .all()
+    caller_tenant = get_current_tenant_id(caller)
+    # 1. Facilities that have an explicit region value (tenant-scoped unless it_manager)
+    reg_q = db.session.query(Facility.region).filter(
+        Facility.region.isnot(None), Facility.region != ""
     )
+    if caller.role != "it_manager":
+        reg_q = reg_q.filter(tenant_matches(Facility.tenant_id, caller_tenant))
+    region_rows = reg_q.distinct().all()
     for (r,) in region_rows:
         if r and r.strip():
             identifiers.add(r.strip())
 
     # 2. For facilities with no region set, fall back to their name
     #    (mirrors utils.py line 28: filter_by(name=user_region))
-    name_rows = (
-        db.session.query(Facility.name)
-        .filter(
-            db.or_(Facility.region.is_(None), Facility.region == ""),
-            Facility.name.isnot(None),
-            Facility.name != "",
-        )
-        .distinct()
-        .all()
+    name_q = db.session.query(Facility.name).filter(
+        db.or_(Facility.region.is_(None), Facility.region == ""),
+        Facility.name.isnot(None),
+        Facility.name != "",
     )
+    if caller.role != "it_manager":
+        name_q = name_q.filter(tenant_matches(Facility.tenant_id, caller_tenant))
+    name_rows = name_q.distinct().all()
     for (n,) in name_rows:
         if n and n.strip():
             identifiers.add(n.strip())
@@ -132,13 +139,15 @@ def _parse_coordinates(data, current=(None, None)):
     return lat, lon
 
 
-def _taken(column, value, exclude_id=None):
+def _taken(column, value, exclude_id=None, tenant_id=None):
     """Audit 2026-10-14 BUG-0011 / BUG-0033: facility names and codes are unique (case and surrounding
     spaces ignored), so a name-based import resolves to one facility and a duplicate code is a 409."""
     text = str(value or "").strip().lower()
     if not text:
         return False
     q = Facility.query.filter(db.func.lower(db.func.trim(column)) == text)
+    if tenant_id is not None:
+        q = q.filter(tenant_matches(Facility.tenant_id, tenant_id))
     if exclude_id is not None:
         q = q.filter(Facility.id != exclude_id)
     return db.session.query(q.exists()).scalar()
@@ -162,7 +171,8 @@ def sync_facility_equity_shares(facility, data):
     from routes.equity_routes import ensure_default_partners
     from models import JvPartner, FacilityEquityShare
 
-    ensure_default_partners()
+    fac_tenant = normalize_tenant_id(getattr(facility, "tenant_id", None))
+    ensure_default_partners(tenant_id=fac_tenant)
     partner = None
     if data.get("partner_id"):
         try:
@@ -175,10 +185,17 @@ def sync_facility_equity_shares(facility, data):
                 jsonify({"error": f"JV Partner with ID {data['partner_id']} does not exist", "field": "partner_id"}),
                 400,
             )
+        if normalize_tenant_id(getattr(partner, "tenant_id", None)) != fac_tenant:
+            db.session.rollback()
+            return False, (jsonify({"error": "Unauthorized cross-tenant JV Partner"}), 403)
     else:
         partner = (
-            JvPartner.query.filter_by(is_operator=True).first()
-            or JvPartner.query.filter_by(name="Demo Operator Co.").first()
+            JvPartner.query.filter_by(is_operator=True)
+            .filter(tenant_matches(JvPartner.tenant_id, fac_tenant))
+            .first()
+            or JvPartner.query.filter_by(name="Demo Operator Co.")
+            .filter(tenant_matches(JvPartner.tenant_id, fac_tenant))
+            .first()
         )
 
     if partner:
@@ -258,10 +275,11 @@ def add_facility():
             403,
         )
 
+    caller_tenant = get_current_tenant_id(user)
     code = data.get("code")
     if code and _taken(Facility.code, code):
         return jsonify({"error": f"Facility code '{code}' is already in use", "field": "code"}), 409
-    if _taken(Facility.name, data["name"]):
+    if _taken(Facility.name, data["name"], tenant_id=caller_tenant):
         return jsonify({"error": f"A facility named '{data['name']}' already exists", "field": "name"}), 409
 
     # Determine operator status if not provided:
@@ -298,6 +316,7 @@ def add_facility():
         latitude=lat,
         longitude=lon,
         description=data.get("description"),
+        tenant_id=caller_tenant,
     )
 
     try:
@@ -388,7 +407,12 @@ def update_facility(facility_id):
     new_name = data.get("name", facility.name)
     if not facility_change_allowed(user, facility, new_region, new_location, new_name):
         return jsonify({"error": f"Update would move the facility outside your region: {user.location}"}), 403
-    if "name" in data and _taken(Facility.name, data["name"], exclude_id=facility.id):
+    if "name" in data and _taken(
+        Facility.name,
+        data["name"],
+        exclude_id=facility.id,
+        tenant_id=normalize_tenant_id(getattr(facility, "tenant_id", None)),
+    ):
         return jsonify({"error": f"A facility named '{data['name']}' already exists", "field": "name"}), 409
     if data.get("code") and _taken(Facility.code, data["code"], exclude_id=facility.id):
         return jsonify({"error": f"Facility code '{data['code']}' is already in use", "field": "code"}), 409
@@ -615,11 +639,12 @@ def import_facilities():
     if not isinstance(facilities_data, list) or any(not isinstance(f, dict) for f in facilities_data):
         return jsonify({"error": "facilities must be a list of objects", "field": "facilities"}), 400
 
+    caller_tenant = get_current_tenant_id(user)
     seen_names = set()
     for i, fac_data in enumerate(facilities_data):
         fac_data["name"] = require_text(fac_data.get("name"), f"facilities[{i}].name")  # BUG-029
         key = fac_data["name"].strip().lower()
-        if key in seen_names or _taken(Facility.name, key):  # BUG-0011
+        if key in seen_names or _taken(Facility.name, key, tenant_id=caller_tenant):  # BUG-0011
             return jsonify({"error": f"facilities[{i}]: a facility named '{fac_data['name']}' already exists",
                             "field": f"facilities[{i}].name"}), 409
         seen_names.add(key)
@@ -650,6 +675,7 @@ def import_facilities():
             external_id=fac_data.get("external_id"),
             segment=normalize_segment(fac_data.get("segment")),
             created_by=user_id,
+            tenant_id=caller_tenant,
         )
         db.session.add(facility)
         imported_count += 1

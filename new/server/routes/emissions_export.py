@@ -96,7 +96,8 @@ def export_emissions():
         return jsonify({"error": "Unauthorized facility"}), 403
 
     # Batch facility lookup to prevent N+1 queries
-    all_facs = {f.id: f for f in Facility.query.all()}
+    fac_q = Facility.query if allowed_ids is None else Facility.query.filter(Facility.id.in_(allowed_ids or [-1]))
+    all_facs = {f.id: f for f in fac_q.all()}
 
     export_data = []
     status_arg = str(request.args.get("status") or "Verified").strip()
@@ -111,7 +112,7 @@ def export_emissions():
         if statuses:
             q1 = q1.filter(db.func.lower(db.func.trim(Emission.status)).in_(statuses))
         if allowed_ids is not None:
-            q1 = q1.filter(Emission.facility_id.in_(allowed_ids))
+            q1 = q1.filter(Emission.facility_id.in_(allowed_ids or [-1]))
         if year_int:
             q1 = q1.filter(Emission.year == year_int)
         if month_int:
@@ -176,7 +177,7 @@ def export_emissions():
         if statuses:
             q2 = q2.filter(db.func.lower(db.func.trim(Scope2Emission.status)).in_(statuses))
         if allowed_ids is not None:
-            q2 = q2.filter(Scope2Emission.facility_id.in_(allowed_ids))
+            q2 = q2.filter(Scope2Emission.facility_id.in_(allowed_ids or [-1]))
         if year_int:
             q2 = q2.filter(Scope2Emission.year == year_int)
         if month_int:
@@ -234,7 +235,7 @@ def export_emissions():
         if statuses:
             q3 = q3.filter(db.func.lower(db.func.trim(Scope3Emission.status)).in_(statuses))
         if allowed_ids is not None:
-            q3 = q3.filter(Scope3Emission.facility_id.in_(allowed_ids))
+            q3 = q3.filter(Scope3Emission.facility_id.in_(allowed_ids or [-1]))
         if year_int:
             q3 = q3.filter(Scope3Emission.year == year_int)
         if month_int:

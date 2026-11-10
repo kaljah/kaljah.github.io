@@ -2,7 +2,14 @@ from flask import Blueprint, jsonify, request
 from extensions import db
 from models import JvPartner, FacilityEquityShare, Facility, Emission
 from routes.auth import login_required
-from utils import get_current_user, get_allowed_facility_ids, require_facility_access
+from utils import (
+    get_allowed_facility_ids,
+    get_current_tenant_id,
+    get_current_user,
+    normalize_tenant_id,
+    require_facility_access,
+    tenant_matches,
+)
 
 equity_bp = Blueprint("equity", __name__)
 
@@ -16,8 +23,10 @@ DEFAULT_JV_PARTNERS = [
 ]
 
 
-def ensure_default_partners():
-    """Ensure baseline international JV partners are seeded."""
+def ensure_default_partners(tenant_id="default"):
+    """Ensure baseline international JV partners are seeded for the default tenant."""
+    if normalize_tenant_id(tenant_id) != "default":
+        return
     added = False
     for p in DEFAULT_JV_PARTNERS:
         exists = JvPartner.query.filter_by(name=p["name"]).first()
@@ -27,6 +36,7 @@ def ensure_default_partners():
                 code=p["code"],
                 country=p["country"],
                 is_operator=p["is_operator"],
+                tenant_id="default",
             )
             db.session.add(partner)
             added = True
@@ -37,20 +47,31 @@ def ensure_default_partners():
             db.session.rollback()
 
 
-def sync_equity_shares_for_facilities():
+def sync_equity_shares_for_facilities(tenant_id=None, facility_ids=None):
     """Ensure any facility configured with Equity Share or Joint Venture has its operator share in facility_equity_shares."""
-    ensure_default_partners()
-    operator_partner = JvPartner.query.filter_by(is_operator=True).first() or JvPartner.query.filter_by(name="Demo Operator Co.").first()
+    tid = normalize_tenant_id(tenant_id) if tenant_id is not None else "default"
+    ensure_default_partners(tid)
+    operator_partner = (
+        JvPartner.query.filter_by(is_operator=True)
+        .filter(tenant_matches(JvPartner.tenant_id, tid))
+        .first()
+        or JvPartner.query.filter_by(name="Demo Operator Co.")
+        .filter(tenant_matches(JvPartner.tenant_id, tid))
+        .first()
+    )
     if not operator_partner:
         return
-    facs = Facility.query.filter(
+    fac_q = Facility.query.filter(tenant_matches(Facility.tenant_id, tid)).filter(
         db.or_(
             Facility.boundary_type == "Equity Share",
             Facility.boundary_detail.ilike("%venture%"),
             Facility.boundary_notes.ilike("%venture%"),
             Facility.equity_share_pct < 100.0,
         )
-    ).all()
+    )
+    if facility_ids is not None:
+        fac_q = fac_q.filter(Facility.id.in_(facility_ids or [-1]))
+    facs = fac_q.all()
     added = False
     for fac in facs:
         # Auto-reconcile operator status for minority joint ventures
@@ -90,8 +111,13 @@ def get_partners():
     user = get_current_user()
     if user and user.role in ["it", "it_admin", "it_manager"]:
         return jsonify({"error": "Forbidden: IT roles do not have access to Joint Venture equity data"}), 403
-    ensure_default_partners()
-    partners = JvPartner.query.order_by(JvPartner.name).all()
+    caller_tenant = get_current_tenant_id(user)
+    ensure_default_partners(caller_tenant)
+    partners = (
+        JvPartner.query.filter(tenant_matches(JvPartner.tenant_id, caller_tenant))
+        .order_by(JvPartner.name)
+        .all()
+    )
     return jsonify([
         {
             "id": p.id,
@@ -110,13 +136,14 @@ def get_equity_shares():
     user = get_current_user()
     if user and user.role in ["it", "it_admin", "it_manager"]:
         return jsonify({"error": "Forbidden: IT roles do not have access to Joint Venture equity data"}), 403
-    ensure_default_partners()
-    sync_equity_shares_for_facilities()
+    caller_tenant = get_current_tenant_id(user)
     allowed_fids = get_allowed_facility_ids(user)
+    ensure_default_partners(caller_tenant)
+    sync_equity_shares_for_facilities(tenant_id=caller_tenant, facility_ids=allowed_fids)
 
     query = FacilityEquityShare.query
     if allowed_fids is not None:
-        query = query.filter(FacilityEquityShare.facility_id.in_(allowed_fids))
+        query = query.filter(FacilityEquityShare.facility_id.in_(allowed_fids or [-1]))
 
     facility_id = request.args.get("facility_id") or request.args.get("facilityId")
     if facility_id and facility_id != "all":
@@ -237,6 +264,8 @@ def save_equity_share():
     partner = db.session.get(JvPartner, partner_id)
     if partner is None:
         return jsonify({"error": "Unknown partner"}), 400
+    if normalize_tenant_id(getattr(partner, "tenant_id", None)) != normalize_tenant_id(getattr(fac, "tenant_id", None)):
+        return jsonify({"error": "Forbidden: partner belongs to a different tenant"}), 403
 
     start = _parse_date(data.get("effective_start_date") or "2021-01-01", "effective_start_date")
     end = _parse_date(data.get("effective_end_date"), "effective_end_date", required=False)
@@ -334,9 +363,10 @@ def get_equity_allocation():
     user = get_current_user()
     if user and user.role in ["it", "it_admin", "it_manager"]:
         return jsonify({"error": "Forbidden: IT roles do not have access to Joint Venture equity data"}), 403
-    ensure_default_partners()
-    sync_equity_shares_for_facilities()
+    caller_tenant = get_current_tenant_id(user)
     allowed_fids = get_allowed_facility_ids(user)
+    ensure_default_partners(caller_tenant)
+    sync_equity_shares_for_facilities(tenant_id=caller_tenant, facility_ids=allowed_fids)
 
     year = (request.args.get("year") or "").strip()
     yr = int(year) if year.isdigit() and 1900 <= int(year) <= 2100 else 2025  # malformed or out of range (F13): 2025
@@ -344,7 +374,7 @@ def get_equity_allocation():
     facility_id = request.args.get("facility_id") or request.args.get("facilityId")
     fac_q = Facility.query
     if allowed_fids is not None:
-        fac_q = fac_q.filter(Facility.id.in_(allowed_fids))
+        fac_q = fac_q.filter(Facility.id.in_(allowed_fids or [-1]))
     if facility_id and facility_id != "all":
         try:
             fid = int(facility_id)
@@ -355,7 +385,11 @@ def get_equity_allocation():
         fac_q = fac_q.filter(Facility.id == fid)
 
     facilities = fac_q.all()
-    partners = JvPartner.query.order_by(JvPartner.name).all()
+    partners = (
+        JvPartner.query.filter(tenant_matches(JvPartner.tenant_id, caller_tenant))
+        .order_by(JvPartner.name)
+        .all()
+    )
 
     # Get totals per facility
     allocation_by_facility = []

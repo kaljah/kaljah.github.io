@@ -427,7 +427,7 @@ def _plot_jv_equity_axes(ax, jv_equity: Any, language: str = "en") -> None:
 
     for idx, p in enumerate(partners):
         p_code = p.get("partner_code", p.get("code", "SH"))
-        p_name = p.get("partner_name", p.get("partner", "Demo Operator Co."))
+        p_name = p.get("partner_name", p.get("partner", "Operator"))
         pct = p.get("equity_share_pct", p.get("share_pct", 100.0))
         c = palette[idx % len(palette)]
         vals_mmt = []

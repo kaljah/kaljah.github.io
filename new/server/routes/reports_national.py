@@ -84,11 +84,11 @@ def export_national_inventory_report():
         # Query facilities
         fac_q = Facility.query
         if allowed_fids is not None:
-            fac_q = fac_q.filter(Facility.id.in_(allowed_fids))
+            fac_q = fac_q.filter(Facility.id.in_(allowed_fids or [-1]))
         if facility_filter:
             fac_q = fac_q.filter_by(id=facility_filter)
         facilities = {f.id: f for f in fac_q.all()}
-        allowed_ids_list = list(facilities.keys())
+        allowed_ids_list = list(facilities.keys()) or [-1]
 
         # Query Scope 1 records
         s1_q = Emission.query.filter(Emission.facility_id.in_(allowed_ids_list), Emission.status.in_(statuses))

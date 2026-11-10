@@ -32,7 +32,7 @@ from services.master_report_data import aggregate_master_report_data
 from services.master_report_engine import generate_master_publication_pdf
 from services.regional_profiles import get_regional_profile, list_available_regions
 from services.tenant_config import get_tenant_config
-from utils import get_allowed_facility_ids, get_current_user
+from utils import get_allowed_facility_ids, get_current_tenant_id, get_current_user, tenant_matches
 
 _MASTER_JOBS_LOCK = threading.Lock()
 _MASTER_JOBS: Dict[str, Dict[str, Any]] = {}
@@ -92,6 +92,7 @@ def _run_master_report_job(
     gwp_standard: str,
     allowed_ids: Any,
     language: str,
+    tenant_id: str = "default",
 ) -> None:
     with _MASTER_JOB_SEMAPHORE:
         with _MASTER_JOBS_LOCK:
@@ -110,6 +111,7 @@ def _run_master_report_job(
                         gwp_standard=gwp_standard,
                         allowed_facility_ids=allowed_ids,
                         language=language,
+                        tenant_id=tenant_id,
                     )
                     pdf_bytes = pdf_buffer.getvalue()
                     report_sha256 = getattr(pdf_buffer, "report_hash", None) or hashlib.sha256(pdf_bytes).hexdigest()
@@ -148,35 +150,31 @@ def _run_master_report_job(
 @reports_bp.route("/master-report/regions", methods=["GET"])
 @login_required
 def get_master_report_regions():
-    """Returns available regions strictly present in the software database."""
+    """Returns available regions strictly present for the caller's tenant."""
     user = get_current_user()
+    caller_tenant = get_current_tenant_id(user)
+    tenant = get_tenant_config(caller_tenant)
     allowed_ids = get_allowed_facility_ids(user)
-    all_profiles = list_available_regions()
+    all_profiles = list_available_regions(tenant_config=tenant)
 
-    # Query facilities in scope
-    fac_query = Facility.query
+    # Query facilities in caller's tenant/facility scope
+    fac_query = Facility.query.filter(tenant_matches(Facility.tenant_id, caller_tenant))
     if allowed_ids is not None:
-        fac_query = fac_query.filter(Facility.id.in_(allowed_ids))
+        fac_query = fac_query.filter(Facility.id.in_(allowed_ids or [-1]))
     facilities = fac_query.all()
 
-    # If database has no facilities yet, return the default regional registry
     if not facilities:
-        fallback_regions = []
-        for r in all_profiles:
-            rc = dict(r)
-            rc["facility_count"] = 0
-            fallback_regions.append(rc)
-        return jsonify({"status": "success", "regions": fallback_regions})
+        return jsonify({"status": "success", "regions": []})
 
     present_regions = []
     matched_fac_ids = set()
 
-    # 1. Match known regional profiles that have monitored facilities in the software
+    # 1. Match known regional profiles that have monitored facilities in this tenant
     for r in all_profiles:
         rk = r["key"].lower()
         if rk == "national":
             continue
-        p = get_regional_profile(rk)
+        p = get_regional_profile(rk, tenant_config=tenant)
         aliases = [a.lower() for a in p.get("aliases", [])]
         matched_facs = [
             f for f in facilities
@@ -191,7 +189,7 @@ def get_master_report_regions():
             for f in matched_facs:
                 matched_fac_ids.add(f.id)
 
-    # 2. Dynamically include any custom facility regions present in the software
+    # 2. Dynamically include any custom facility regions present for this tenant
     unmatched_facs = [f for f in facilities if f.id not in matched_fac_ids]
     custom_map: Dict[str, List[Facility]] = {}
     for f in unmatched_facs:
@@ -210,9 +208,8 @@ def get_master_report_regions():
             "facility_names": [f.name for f in fac_list],
         })
 
-    # 3. Add National (Consolidated Group) if facilities exist
+    # 3. Add National (Consolidated Group) if facilities exist in this tenant
     if facilities:
-        tenant = get_tenant_config()
         nat_name = tenant.get("national_group_name") or f"{tenant.get('organization_name', 'Corporate')} Group (Consolidated National)"
         national_entry = next((r for r in all_profiles if r["key"] == "national"), {
             "key": "national",
@@ -261,7 +258,8 @@ def generate_master_report_endpoint():
     if language not in ("en", "fr"):
         language = "en"
 
-    tenant = get_tenant_config()
+    caller_tenant = get_current_tenant_id(user)
+    tenant = get_tenant_config(caller_tenant)
     org_prefix = tenant.get("organization_name", "Operator")
     time_tag = f"{start_year}" if start_year == end_year else f"{start_year}_{end_year}"
     clean_name = (region_key.capitalize() if region_key else "National").replace(" ", "_").replace("/", "_")
@@ -284,7 +282,7 @@ def generate_master_report_endpoint():
         _MASTER_JOBS[job_id] = {
             "job_id": job_id,
             "user_id": user.id,
-            "tenant_id": getattr(user, "tenant_id", None) or "default",
+            "tenant_id": caller_tenant,
             "status": "queued",
             "created_at": datetime.now(timezone.utc).isoformat(),
             "filename": filename,
@@ -311,6 +309,7 @@ def generate_master_report_endpoint():
             gwp_standard,
             list(allowed_ids) if allowed_ids is not None else None,
             language,
+            caller_tenant,
         ),
         daemon=True,
         name=f"master-report-{job_id[:8]}",
@@ -334,7 +333,7 @@ def generate_master_report_endpoint():
 def get_master_report_job_status(job_id: str):
     """Returns current status and download metadata for a Master Report job."""
     user = get_current_user()
-    caller_tenant = getattr(user, "tenant_id", None) or "default"
+    caller_tenant = get_current_tenant_id(user)
 
     with _MASTER_JOBS_LOCK:
         job = _MASTER_JOBS.get(job_id)
@@ -361,7 +360,7 @@ def get_master_report_job_status(job_id: str):
 def download_master_report_job(job_id: str):
     """Downloads a completed Master Report PDF job."""
     user = get_current_user()
-    caller_tenant = getattr(user, "tenant_id", None) or "default"
+    caller_tenant = get_current_tenant_id(user)
 
     with _MASTER_JOBS_LOCK:
         job = _MASTER_JOBS.get(job_id)
@@ -425,6 +424,7 @@ def _style_excel_header(ws, col_count: int, title: str, subtitle: str):
 def export_benchmark_excel():
     """Generates an executive cross-basin benchmark Excel workbook."""
     user = get_current_user()
+    caller_tenant = get_current_tenant_id(user)
     allowed_ids = get_allowed_facility_ids(user)
     payload = request.get_json() or {}
 
@@ -432,7 +432,7 @@ def export_benchmark_excel():
     end_year = int(payload.get("end_year", 2025))
     gwp_standard = str(payload.get("gwp_standard", "AR5")).upper()
 
-    data = aggregate_master_report_data("comparison", None, start_year, end_year, gwp_standard, allowed_ids)
+    data = aggregate_master_report_data("comparison", None, start_year, end_year, gwp_standard, allowed_ids, tenant_id=caller_tenant)
     benchmarks = data.get("regional_benchmarks", [])
 
     wb = openpyxl.Workbook()
@@ -449,7 +449,7 @@ def export_benchmark_excel():
         "Flaring Intensity (% Gas)",
         "Decree 21-330 Status (<= 1.00%)",
     ]
-    tenant = get_tenant_config()
+    tenant = get_tenant_config(caller_tenant)
     org_name = tenant.get("organization_name", "Operator")
     _style_excel_header(ws, len(cols), f"{org_name} // Cross-Basin Benchmark & Intelligence Matrix", f"Period: {start_year} - {end_year} | Standard: ISO 14064-1 & Décret 21-330")
 

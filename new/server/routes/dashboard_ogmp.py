@@ -45,9 +45,11 @@ def get_ogmp_metrics():
     )
 
     fac_fids = _parse_facility_ids(fac_id)
+    if fac_fids is not None and allowed_fids is not None and not set(fac_fids).issubset(set(allowed_fids)):
+        return jsonify({"error": "Unauthorized facility"}), 403
     query = Facility.query
     if allowed_fids is not None:
-        query = query.filter(Facility.id.in_(allowed_fids))
+        query = query.filter(Facility.id.in_(allowed_fids or [-1]))
     if fac_fids is not None:
         query = query.filter(Facility.id.in_(fac_fids))
     if request.args.get("segment") and request.args.get("segment") != "all":

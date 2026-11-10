@@ -32,6 +32,7 @@ class User(db.Model):
     # older value are rejected, so a copied cookie stops working after logout.
     session_version = db.Column(db.Integer, default=0, server_default="0", nullable=False)
     is_test = db.Column(db.Boolean, default=False, server_default="0", nullable=False)
+    tenant_id = db.Column(db.String(64), nullable=False, default="default", server_default="default", index=True)
     facility_accesses = db.relationship(
         "UserFacilityAccess", backref="user", cascade="all, delete-orphan", lazy=True
     )
@@ -70,6 +71,7 @@ class Facility(db.Model):
     updated_at = db.Column(db.DateTime, onupdate=utc_now)
     created_at = db.Column(db.DateTime, default=utc_now)
     is_test = db.Column(db.Boolean, default=False, server_default="0", nullable=False)
+    tenant_id = db.Column(db.String(64), nullable=False, default="default", server_default="default", index=True)
 
     # Cascading Deletes
     emissions = db.relationship(
@@ -401,6 +403,7 @@ class CustomFactor(db.Model):
     valid_from = db.Column(db.String(20), nullable=True)
     parent_factor_id = db.Column(db.Integer, db.ForeignKey("custom_factors.id", ondelete="SET NULL"), nullable=True)
     gas_composition_json = db.Column("gas_composition", db.Text, nullable=True)
+    tenant_id = db.Column(db.String(64), nullable=False, default="default", server_default="default", index=True)
 
     __table_args__ = (
         db.UniqueConstraint("name", "version", "facility_id", name="uq_custom_factor_name_version_facility"),
@@ -486,6 +489,7 @@ class MitigationRecord(db.Model):
     notes = db.Column(db.Text)
     reference_id = db.Column(db.String(50))
     date_added = db.Column(db.DateTime, default=utc_now)
+    tenant_id = db.Column(db.String(64), nullable=False, default="default", server_default="default", index=True)
 
 
 class Scope3Data(db.Model):
@@ -680,6 +684,7 @@ class BaseYearRecalculation(db.Model):
     approved_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     created_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     created_at = db.Column(db.DateTime, default=utc_now)
+    tenant_id = db.Column(db.String(64), nullable=False, default="default", server_default="default", index=True)
 
 
 class ReportingMetadata(db.Model):
@@ -831,6 +836,7 @@ class SbtiTarget(db.Model):
     scope_coverage = db.Column(db.String(10), default="S1S2S3", server_default="S1S2S3", nullable=False)
     created_at = db.Column(db.DateTime, default=utc_now)
     created_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    tenant_id = db.Column(db.String(64), nullable=False, default="default", server_default="default", index=True)
 
 
 class SystemSetting(db.Model):
@@ -882,6 +888,7 @@ class JvPartner(db.Model):
     country = db.Column(db.String(100), default="Algeria")
     is_operator = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=utc_now)
+    tenant_id = db.Column(db.String(64), nullable=False, default="default", server_default="default", index=True)
 
 
 class FacilityEquityShare(db.Model):
@@ -952,6 +959,7 @@ class PeriodLock(db.Model):
     unlocked_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     unlock_reason = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=utc_now)
+    tenant_id = db.Column(db.String(64), nullable=False, default="default", server_default="default", index=True)
 
     user_locked = db.relationship("User", foreign_keys=[locked_by])
     user_unlocked = db.relationship("User", foreign_keys=[unlocked_by])
@@ -1002,6 +1010,7 @@ class RecalculationRequest(db.Model):
     approved_at = db.Column(db.DateTime, nullable=True)
     executed_at = db.Column(db.DateTime, nullable=True)
     rejection_reason = db.Column(db.Text, nullable=True)
+    tenant_id = db.Column(db.String(64), nullable=False, default="default", server_default="default", index=True)
 
     user_requested = db.relationship("User", foreign_keys=[requested_by])
     user_approved = db.relationship("User", foreign_keys=[approved_by])

@@ -16,10 +16,19 @@ from models import (
     BaseYearRecalculation,
 )
 from extensions import db
-from utils import log_activity_and_notify, get_current_user, get_allowed_facility_ids
+from utils import (
+    facility_access_error,
+    get_allowed_facility_ids,
+    get_current_tenant_id,
+    get_current_user,
+    internal_error,
+    is_org_wide_user,
+    log_activity_and_notify,
+    normalize_tenant_id,
+    tenant_matches,
+)
 from sqlalchemy import func, distinct, or_
 from routes.auth import login_required
-from utils import facility_access_error, internal_error
 from input_validation import parse_year
 from process_categories import NON_OG_ACTIVITIES
 
@@ -223,21 +232,29 @@ def get_mitigations():
     if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to view operational mitigation data."}), 403
     allowed_fids = get_allowed_facility_ids(user)
+    caller_tenant = get_current_tenant_id(user)
 
-    # Fetch Records (Legacy/Generic) — not facility-linked, visible to all
-    records = MitigationRecord.query.all()
+    # Fetch Records (Legacy/Generic) — scoped to caller's tenant
+    records = MitigationRecord.query.filter(
+        tenant_matches(MitigationRecord.tenant_id, caller_tenant)
+    ).all()
 
     # Fetch Projects (Facility-linked) — apply access filter
     proj_query = db.session.query(MitigationProject, Facility).outerjoin(
         Facility, MitigationProject.facility_id == Facility.id
     )
     if allowed_fids is not None:
-        proj_query = proj_query.filter(
-            or_(
-                MitigationProject.facility_id.is_(None),
-                MitigationProject.facility_id.in_(allowed_fids),
+        if caller_tenant == "default":
+            proj_query = proj_query.filter(
+                or_(
+                    MitigationProject.facility_id.is_(None),
+                    MitigationProject.facility_id.in_(allowed_fids or [-1]),
+                )
             )
-        )
+        else:
+            proj_query = proj_query.filter(
+                MitigationProject.facility_id.in_(allowed_fids or [-1])
+            )
     projects = proj_query.all()
 
     results = []
@@ -369,6 +386,7 @@ def add_mitigation():
             return jsonify({"error": "Choose a facility: only an administrator records organisation-wide "
                                      "mitigation", "field": "facility_id"}), 403
         # Create generic MitigationRecord
+        caller_tenant = get_current_tenant_id(user)
         mitigation = MitigationRecord(
             year=data.get("year"),
             type=data.get("type"),
@@ -376,6 +394,7 @@ def add_mitigation():
             quantity_tco2e=data.get("quantity_tco2e", 0),
             notes=data.get("notes"),
             reference_id=data.get("reference_id"),
+            tenant_id=caller_tenant,
         )
         db.session.add(mitigation)
         try:
@@ -434,11 +453,17 @@ def delete_mitigation(mitigation_id):
     if not item:
         return jsonify({"error": "Record not found"}), 404
 
+    caller_tenant = get_current_tenant_id(user)
     if isinstance(item, MitigationProject) and item.facility_id:
         allowed_fids = get_allowed_facility_ids(user)
         if allowed_fids is not None and item.facility_id not in allowed_fids:
             return jsonify({"error": "Access to this facility is denied"}), 403
-    elif not user or user.role != "admin":
+    elif isinstance(item, MitigationRecord):
+        if normalize_tenant_id(getattr(item, "tenant_id", None)) != caller_tenant:
+            return jsonify({"error": "Access to another tenant's mitigation record is denied"}), 403
+        if not user or user.role != "admin":
+            return jsonify({"error": "Only an administrator can delete organisation-wide mitigation"}), 403
+    elif not user or user.role != "admin" or caller_tenant != "default":
         # organisation-wide items (records, projects without a facility): admin only (BUG-0018)
         return jsonify({"error": "Only an administrator can delete organisation-wide mitigation"}), 403
 
@@ -476,7 +501,11 @@ def get_reporting_metadata():
         return jsonify({"error": "Year required"}), 400
     year = parse_year(request.args.get("year"))  # F13: a non-numeric year raised a 500
 
-    metadata = ReportingMetadata.query.filter_by(year=year).first()
+    metadata = (
+        ReportingMetadata.query.filter_by(year=year).first()
+        if get_current_tenant_id(user) == "default"
+        else None
+    )
     if not metadata:
         return jsonify(
             {
@@ -510,8 +539,13 @@ def save_reporting_metadata():
     user = get_current_user()
     if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to modify reporting metadata."}), 403
-    # one row per year for the whole organisation: organisation-wide admins only
-    if not user or user.role not in ["admin", "superuser"] or get_allowed_facility_ids(user) is not None:
+    # one row per year for the whole organisation: organisation-wide admins only (default tenant singleton)
+    if (
+        not user
+        or user.role not in ["admin", "superuser"]
+        or not is_org_wide_user(user)
+        or get_current_tenant_id(user) != "default"
+    ):
         return jsonify({"error": "Organisation-wide administrator privileges required to modify reporting metadata."}), 403
 
     data = request.get_json() or {}
@@ -577,9 +611,12 @@ def get_production_years():
     user = get_current_user()
     if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to view operational data."}), 403
+    allowed_fids = get_allowed_facility_ids(user)
+    q = db.session.query(ProductionData.year)
+    if allowed_fids is not None:
+        q = q.filter(ProductionData.facility_id.in_(allowed_fids or [-1]))
     years = (
-        db.session.query(ProductionData.year)
-        .distinct()
+        q.distinct()
         .order_by(ProductionData.year.desc())
         .all()
     )
@@ -594,13 +631,17 @@ def get_available_filters():
     if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to view operational filters."}), 403
     allowed_fids = get_allowed_facility_ids(user)
+    caller_tenant = get_current_tenant_id(user)
 
     # years of the facilities in the user's scope (bug hunt 2026-10-15 #15: every facility's years);
-    # mitigation records are organisation-wide (no facility) and count for everyone
+    # mitigation records are tenant-scoped corporate records.
     def _years(model):
         q = db.session.query(distinct(model.year))
-        if allowed_fids is not None and hasattr(model, "facility_id"):
-            q = q.filter(model.facility_id.in_(allowed_fids or [-1]))
+        if hasattr(model, "facility_id"):
+            if allowed_fids is not None:
+                q = q.filter(model.facility_id.in_(allowed_fids or [-1]))
+        elif hasattr(model, "tenant_id"):
+            q = q.filter(tenant_matches(model.tenant_id, caller_tenant))
         return q
 
     year_queries = [_years(m) for m in (Emission, ProductionData, MitigationRecord, Scope2Emission, Scope3Emission)]
@@ -617,14 +658,14 @@ def get_available_filters():
 
     em_query = db.session.query(distinct(Emission.facility_id))
     if allowed_fids is not None:
-        em_query = em_query.filter(Emission.facility_id.in_(allowed_fids))
+        em_query = em_query.filter(Emission.facility_id.in_(allowed_fids or [-1]))
     referenced_facility_ids = em_query.all()
     facility_ids = [r[0] for r in referenced_facility_ids if r[0]]
 
     # Get facility details
     fac_query = Facility.query
     if allowed_fids is not None:
-        fac_query = fac_query.filter(Facility.id.in_(allowed_fids))
+        fac_query = fac_query.filter(Facility.id.in_(allowed_fids or [-1]))
     facilities = (
         fac_query.filter(Facility.id.in_(facility_ids)).all()
         if facility_ids
@@ -633,7 +674,7 @@ def get_available_filters():
 
     segment_query = db.session.query(distinct(Facility.segment))
     if allowed_fids is not None:
-        segment_query = segment_query.filter(Facility.id.in_(allowed_fids))
+        segment_query = segment_query.filter(Facility.id.in_(allowed_fids or [-1]))
     
     # Strictly enforce only valid supply chain keywords: Upstream, Midstream, Downstream
     VALID_SEGMENTS = {"upstream", "midstream", "downstream"}
@@ -699,25 +740,40 @@ def bulk_import_mitigation():
 
 
 # --- Yearly Emission Goals ---
-def _get_goals_baseline_context():
-    from models import BaseYear, Emission, Scope2Emission
-    base_year_obj = BaseYear.query.order_by(BaseYear.id.desc()).first()
-    base_year = base_year_obj.year if base_year_obj else 2024
-    base_s1 = db.session.query(db.func.sum(Emission.co2e_total)).filter(
+def _get_goals_baseline_context(allowed_fids=None, tenant_id="default"):
+    from models import BaseYear, BaseYearRecalculation, Emission, Scope2Emission
+    eff_tenant = normalize_tenant_id(tenant_id)
+    rec = (
+        BaseYearRecalculation.query.filter(
+            tenant_matches(BaseYearRecalculation.tenant_id, eff_tenant)
+        )
+        .order_by(BaseYearRecalculation.recalc_date.desc())
+        .first()
+    )
+    base_year_obj = db.session.query(BaseYear).order_by(BaseYear.id.desc()).first() if eff_tenant == "default" else None
+    base_year = rec.year if rec else (base_year_obj.year if base_year_obj else 2024)
+
+    q1 = db.session.query(db.func.sum(Emission.co2e_total)).filter(
         Emission.year == base_year, ~Emission.status.ilike("%rejected%")
-    ).scalar() or 0.0
-    base_s2 = db.session.query(db.func.sum(Scope2Emission.co2e)).filter(
+    )
+    q2 = db.session.query(db.func.sum(Scope2Emission.co2e)).filter(
         Scope2Emission.year == base_year, ~Scope2Emission.status.ilike("%rejected%")
-    ).scalar() or 0.0
+    )
+    q_all = db.session.query(db.func.sum(Emission.co2e_total)).filter(
+        ~Emission.status.ilike("%rejected%")
+    )
+    if allowed_fids is not None:
+        fids = allowed_fids or [-1]
+        q1 = q1.filter(Emission.facility_id.in_(fids))
+        q2 = q2.filter(Scope2Emission.facility_id.in_(fids))
+        q_all = q_all.filter(Emission.facility_id.in_(fids))
+
+    base_s1 = q1.scalar() or 0.0
+    base_s2 = q2.scalar() or 0.0
     base_total = base_s1 + base_s2
 
-    recent_s1 = db.session.query(db.func.sum(Emission.co2e_total)).filter(
-        Emission.year == base_year, ~Emission.status.ilike("%rejected%")
-    ).scalar() or base_s1 or 2300000.0
-
-    total_s1 = db.session.query(db.func.sum(Emission.co2e_total)).filter(
-        ~Emission.status.ilike("%rejected%")
-    ).scalar() or 0.0
+    recent_s1 = q1.scalar() or base_s1 or (2300000.0 if eff_tenant == "default" else 0.0)
+    total_s1 = q_all.scalar() or 0.0
 
     return base_year, base_total, recent_s1, total_s1
 
@@ -729,9 +785,15 @@ def get_all_goals():
     user = get_current_user()
     if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to view corporate emission targets."}), 403
+    caller_tenant = get_current_tenant_id(user)
+    if caller_tenant != "default":
+        return jsonify([])
     try:
         goals = Goal.query.order_by(Goal.year.asc()).all()
-        base_year, base_total, recent_s1, total_s1 = _get_goals_baseline_context()
+        base_year, base_total, recent_s1, total_s1 = _get_goals_baseline_context(
+            allowed_fids=get_allowed_facility_ids(user),
+            tenant_id=caller_tenant,
+        )
         from calculations.goals_validation import validate_goal_trajectory
         goal_dicts = [{"year": g.year, "target_amount": g.target_amount} for g in goals]
         warnings_map = validate_goal_trajectory(goal_dicts, base_year, base_total, recent_s1, total_s1)
@@ -760,7 +822,8 @@ def add_or_update_goal():
     user = get_current_user()
     if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to modify corporate emission targets."}), 403
-    if not user or user.role not in ["admin", "superuser"] or get_allowed_facility_ids(user) is not None:
+    caller_tenant = get_current_tenant_id(user)
+    if not user or user.role not in ["admin", "superuser"] or not is_org_wide_user(user) or caller_tenant != "default":
         return jsonify({"error": "Organisation-wide administrator privileges required to modify corporate emission targets."}), 403
     from input_validation import parse_number
 
@@ -778,7 +841,10 @@ def add_or_update_goal():
     goals_map[year] = target
     goal_dicts = [{"year": y, "target_amount": t_val} for y, t_val in goals_map.items()]
 
-    base_year, base_total, recent_s1, total_s1 = _get_goals_baseline_context()
+    base_year, base_total, recent_s1, total_s1 = _get_goals_baseline_context(
+        allowed_fids=get_allowed_facility_ids(user),
+        tenant_id=caller_tenant,
+    )
     from calculations.goals_validation import validate_goal_trajectory
     warnings_map = validate_goal_trajectory(goal_dicts, base_year, base_total, recent_s1, total_s1)
     target_warnings = warnings_map.get(year, [])
@@ -808,7 +874,8 @@ def delete_goal(year):
     if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to modify corporate emission targets."}), 403
     # Audit 2026-10-01 (A-05): same rule as saving a goal (organisation-wide admins only)
-    if not user or user.role not in ["admin", "superuser"] or get_allowed_facility_ids(user) is not None:
+    caller_tenant = get_current_tenant_id(user)
+    if not user or user.role not in ["admin", "superuser"] or not is_org_wide_user(user) or caller_tenant != "default":
         return jsonify({"error": "Organisation-wide administrator privileges required to modify corporate emission targets."}), 403
     try:
         goal = Goal.query.filter_by(year=year).first()
@@ -842,11 +909,15 @@ def get_base_years():
     user = get_current_user()
     if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to view base year recalculation data."}), 403
+    caller_tenant = get_current_tenant_id(user)
     try:
-        active_rec = BaseYearRecalculation.query.order_by(
+        q = BaseYearRecalculation.query.filter(
+            tenant_matches(BaseYearRecalculation.tenant_id, caller_tenant)
+        )
+        active_rec = q.order_by(
             BaseYearRecalculation.recalc_date.desc()
         ).first()
-        base_year_entry = db.session.get(BaseYear, 1)
+        base_year_entry = db.session.get(BaseYear, 1) if caller_tenant == "default" else None
 
         active_year = None
         if active_rec:
@@ -854,7 +925,7 @@ def get_base_years():
         elif base_year_entry:
             active_year = base_year_entry.year
 
-        recalculations = BaseYearRecalculation.query.order_by(
+        recalculations = q.order_by(
             BaseYearRecalculation.recalc_date.desc()
         ).all()
         history = [
@@ -902,8 +973,9 @@ def add_base_year_recalculation():
     if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to modify base year recalculation data."}), 403
     # Audit A-05: the base year is organisation-wide; a facility-scoped superuser may not move it
-    if not user or user.role not in ["admin", "superuser"] or get_allowed_facility_ids(user) is not None:
+    if not user or user.role not in ["admin", "superuser"] or not is_org_wide_user(user):
         return jsonify({"error": "Organisation-wide administrator privileges required to modify base year recalculation data."}), 403
+    caller_tenant = get_current_tenant_id(user)
     try:
         data = request.get_json() or {}
         if not data.get("year") or not data.get("reason"):
@@ -938,17 +1010,19 @@ def add_base_year_recalculation():
             previous_emissions=prev_em,
             adjusted_emissions=adj_em,
             created_by=user_id,
+            tenant_id=caller_tenant,
         )
         db.session.add(recalc)
         db.session.flush()
 
-        # Keep BaseYear singleton synchronized
-        base_year_singleton = db.session.get(BaseYear, 1)
-        if base_year_singleton:
-            base_year_singleton.year = year
-        else:
-            base_year_singleton = BaseYear(id=1, year=year, locked=1)
-            db.session.add(base_year_singleton)
+        # Keep BaseYear singleton synchronized for the default tenant
+        if caller_tenant == "default":
+            base_year_singleton = db.session.get(BaseYear, 1)
+            if base_year_singleton:
+                base_year_singleton.year = year
+            else:
+                base_year_singleton = BaseYear(id=1, year=year, locked=1)
+                db.session.add(base_year_singleton)
 
         from utils import log_activity_and_notify
         log_activity_and_notify(
@@ -981,23 +1055,32 @@ def delete_base_year_recalculation(rec_id):
     if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to modify base year recalculation data."}), 403
     # Audit A-05: the base year is organisation-wide; a facility-scoped superuser may not move it
-    if not user or user.role not in ["admin", "superuser"] or get_allowed_facility_ids(user) is not None:
+    if not user or user.role not in ["admin", "superuser"] or not is_org_wide_user(user):
         return jsonify({"error": "Organisation-wide administrator privileges required to modify base year recalculation data."}), 403
+    caller_tenant = get_current_tenant_id(user)
     try:
         rec = db.session.get(BaseYearRecalculation, rec_id)
         if not rec:
             return jsonify({"error": "Recalculation record not found"}), 404
+        if normalize_tenant_id(getattr(rec, "tenant_id", None)) != caller_tenant:
+            return jsonify({"error": "Access to another tenant's base year recalculation is denied"}), 403
         rec_year = rec.year
         db.session.delete(rec)
 
-        # Resync singleton with latest remaining
-        latest = BaseYearRecalculation.query.filter(BaseYearRecalculation.id != rec_id).order_by(
-            BaseYearRecalculation.recalc_date.desc()
-        ).first()
-        if latest:
-            singleton = db.session.get(BaseYear, 1)
-            if singleton:
-                singleton.year = latest.year
+        # Resync singleton with latest remaining for the default tenant
+        if caller_tenant == "default":
+            latest = (
+                BaseYearRecalculation.query.filter(
+                    BaseYearRecalculation.id != rec_id,
+                    tenant_matches(BaseYearRecalculation.tenant_id, caller_tenant),
+                )
+                .order_by(BaseYearRecalculation.recalc_date.desc())
+                .first()
+            )
+            if latest:
+                singleton = db.session.get(BaseYear, 1)
+                if singleton:
+                    singleton.year = latest.year
 
         from utils import log_activity_and_notify
         log_activity_and_notify(
@@ -1028,9 +1111,14 @@ def manage_sbti():
     user = get_current_user()
     if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to access SBTi targets."}), 403
+    caller_tenant = get_current_tenant_id(user)
 
     if request.method == "GET":
-        target = SbtiTarget.query.order_by(SbtiTarget.created_at.desc()).first()
+        target = (
+            SbtiTarget.query.filter(tenant_matches(SbtiTarget.tenant_id, caller_tenant))
+            .order_by(SbtiTarget.created_at.desc())
+            .first()
+        )
         
         # Calculate suggested base year baseline from verified emissions or BaseYearRecalculation
         requested_by = request.args.get("base_year")
@@ -1045,8 +1133,15 @@ def manage_sbti():
         # BUG-032: the suggestion is computed only over the caller's facilities
         allowed_fids = get_allowed_facility_ids(user)
         per_scope = _verified_totals_by_scope(calc_year, allowed_fids)
-        recalc = BaseYearRecalculation.query.filter_by(year=calc_year).order_by(BaseYearRecalculation.recalc_date.desc()).first()
-        if recalc and recalc.adjusted_emissions and allowed_fids is None:
+        recalc = (
+            BaseYearRecalculation.query.filter(
+                BaseYearRecalculation.year == calc_year,
+                tenant_matches(BaseYearRecalculation.tenant_id, caller_tenant),
+            )
+            .order_by(BaseYearRecalculation.recalc_date.desc())
+            .first()
+        )
+        if recalc and recalc.adjusted_emissions and is_org_wide_user(user):
             suggested_emissions = float(recalc.adjusted_emissions)
         else:
             suggested_emissions = per_scope["scope1"] + per_scope["scope2"] + per_scope["scope3"]
@@ -1073,7 +1168,7 @@ def manage_sbti():
         })
 
     # POST: the SBTi target is organisation-wide, so only unrestricted approvers may set it
-    if not user or user.role not in ["admin", "superuser"] or get_allowed_facility_ids(user) is not None:
+    if not user or user.role not in ["admin", "superuser"] or not is_org_wide_user(user):
         return jsonify({"error": "Organisation-wide administrator privileges required to modify SBTi targets."}), 403
     data = request.get_json() or {}
     from input_validation import parse_number, ValidationError
@@ -1113,6 +1208,7 @@ def manage_sbti():
         pathway_type=pathway_type,
         scope_coverage=scope_coverage,
         created_by=user.id,
+        tenant_id=caller_tenant,
     )
     try:
         db.session.add(new_target)

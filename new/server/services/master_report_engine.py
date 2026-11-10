@@ -150,7 +150,8 @@ def _build_cover_elements(data: Dict[str, Any], styles: Dict[str, ParagraphStyle
     time_label = f"{start_y}" if start_y == end_y else f"{start_y} – {end_y}"
 
     elements.append(Spacer(1, 15))
-    org_name = str(profile.get("operator") or get_tenant_config().get("organization_name", "Demo Operator Co."))
+    tenant_cfg = data.get("tenant_config") or get_tenant_config(data.get("tenant_id"))
+    org_name = str(profile.get("operator") or tenant_cfg.get("organization_name", "Operator"))
     elements.append(Paragraph(f"<b>{safe_pdf_text(org_name.upper())}</b>", styles["H2"]))
     jv_partners = data.get("jv_equity", {}).get("partners", [])
     if jv_partners and len(jv_partners) > 1:
@@ -182,7 +183,7 @@ def _build_cover_elements(data: Dict[str, Any], styles: Dict[str, ParagraphStyle
         ],
         [
             Paragraph(f"<b>{get_t('meta_operator', lang)}</b>", styles["Body"]),
-            Paragraph(safe_pdf_text(profile.get("operator") or get_tenant_config().get("organization_name", "Demo Operator Co.")), styles["Body"]),
+            Paragraph(safe_pdf_text(profile.get("operator") or tenant_cfg.get("organization_name", "Operator")), styles["Body"]),
             Paragraph(f"<b>{get_t('meta_gwp', lang)}</b>", styles["Body"]),
             Paragraph(get_t("meta_gwp_val", lang, standard=data["gwp_standard"], ch4_factor=data["gwp_factors"].get("CH4", 28)), styles["Body"]),
         ],
@@ -578,8 +579,8 @@ def _build_signoff_elements(data: Dict[str, Any], sha256_hash: str, styles: Dict
     elements.append(Paragraph(get_t("signoff_title", lang), styles["H1"]))
     elements.append(Paragraph(get_t("signoff_cert", lang), styles["Body"]))
 
-    tenant_cfg = get_tenant_config()
-    org = safe_pdf_text(data.get("profile", {}).get("operator") or tenant_cfg.get("organization_name", "Demo Operator Co."))
+    tenant_cfg = data.get("tenant_config") or get_tenant_config(data.get("tenant_id"))
+    org = safe_pdf_text(data.get("profile", {}).get("operator") or tenant_cfg.get("organization_name", "Operator"))
     hse_signer = safe_pdf_text(tenant_cfg.get("hse_director_name", "HSE Director (Demo)"))
     auditor_signer = safe_pdf_text(tenant_cfg.get("lead_auditor_name", "Lead Verifier (Demo)"))
     vp_signer = safe_pdf_text(tenant_cfg.get("vp_upstream_name", "VP Operations (Demo)"))
@@ -1236,12 +1237,21 @@ def generate_master_publication_pdf(
     end_year: int,
     gwp_standard: str = "AR5",
     allowed_facility_ids: Optional[List[int]] = None,
-    language: str = "en"
+    language: str = "en",
+    tenant_id: str = "default",
 ) -> io.BytesIO:
     """
     Main orchestration routine. Compiles the publication PDF and returns an in-memory BytesIO buffer.
     """
-    data = aggregate_master_report_data(mode, region_key, start_year, end_year, gwp_standard, allowed_facility_ids)
+    data = aggregate_master_report_data(
+        mode,
+        region_key,
+        start_year,
+        end_year,
+        gwp_standard,
+        allowed_facility_ids,
+        tenant_id=tenant_id,
+    )
     timeline = data["timeline"]
     years = [t["year"] for t in timeline]
     styles = _build_styles()

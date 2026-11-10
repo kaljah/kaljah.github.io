@@ -1050,22 +1050,28 @@ class _ImportRun:
         from emission_factors import API_FACTORS
         from extensions import db
         from models import CustomFactor, Facility, User
-        from utils import build_name_map, get_allowed_facility_ids
+        from utils import build_name_map, get_allowed_facility_ids, get_current_tenant_id, tenant_matches
 
         self.compute_emissions, self.api_factors, self.grid_factors = compute_emissions, API_FACTORS, GRID_FACTORS
         self.user_obj = db.session.get(User, self.user_id)
         self.gwp_std, self.gwp_dict = _org_gwp()
+        caller_tenant = get_current_tenant_id(self.user_obj)
         allowed_fac_ids = get_allowed_facility_ids(self.user_obj)
         if allowed_fac_ids is None:
             self.all_facilities = Facility.query.all()
         else:
-            self.all_facilities = Facility.query.filter(Facility.id.in_(allowed_fac_ids)).all()
+            self.all_facilities = Facility.query.filter(Facility.id.in_(allowed_fac_ids or [-1])).all()
         self.fac_name_map = build_name_map(self.all_facilities)
         for fac in self.all_facilities:
             # region names are a convenience alias only when no facility carries that name
             self.fac_name_map.add(fac.region, fac, overwrite=False)
         self.fac_id_map = {str(fac.id): fac for fac in self.all_facilities}
-        self.cf_name_map = build_name_map(CustomFactor.query.filter(CustomFactor.is_archived.is_(False)).all())
+        self.cf_name_map = build_name_map(
+            CustomFactor.query.filter(
+                CustomFactor.is_archived.is_(False),
+                tenant_matches(CustomFactor.tenant_id, caller_tenant),
+            ).all()
+        )
 
     def load_existing_records(self):
         """Take the import lock (BUG-0003: held until the commit), then key the existing records the rows may
@@ -1329,7 +1335,8 @@ class _ImportRun:
         if str(self.scope) == "facilities":
             try:
                 from routes.equity_routes import sync_equity_shares_for_facilities
-                sync_equity_shares_for_facilities()
+                from utils import get_current_tenant_id
+                sync_equity_shares_for_facilities(tenant_id=get_current_tenant_id(self.user_obj))
             except Exception:
                 pass
         try:
@@ -1352,7 +1359,13 @@ class _ImportRun:
             success_count = self.processed - skipped_count
             scope_label = "Scope 3" if str(self.scope) == "3_eeio" else f"Scope {self.scope}"
             who = self.user_obj.fullName if self.user_obj else 'a user'
-            for reviewer in User.query.filter_by(role="admin", status="active").all():
+            from utils import get_current_tenant_id, tenant_matches
+            caller_tenant = get_current_tenant_id(self.user_obj)
+            for reviewer in (
+                User.query.filter_by(role="admin", status="active")
+                .filter(tenant_matches(User.tenant_id, caller_tenant))
+                .all()
+            ):
                 Notification.create(
                     user_id=reviewer.id, type="audit", title=f"{scope_label} Bulk Upload Pending Review",
                     message=(f"{success_count:,} {scope_label} emission records were imported or updated by {who} "
@@ -2741,7 +2754,12 @@ def _process_row_custom_factors(row, user_id, batch_names=None, overwrite_duplic
     name = str(row.get("name")).strip()
     if batch_names is not None and name.lower() in batch_names:
         return None, [f"A custom factor named '{name}' appears more than once in the file"]
-    holder = CustomFactor.query.filter(db.func.lower(CustomFactor.name) == name.lower()).first()
+    from utils import get_current_tenant_id, tenant_matches
+    caller_tenant = get_current_tenant_id(uploader)
+    holder = CustomFactor.query.filter(
+        db.func.lower(CustomFactor.name) == name.lower(),
+        tenant_matches(CustomFactor.tenant_id, caller_tenant),
+    ).first()
     if holder is not None:
         if str(overwrite_duplicates).lower().strip() == "skip":
             return None, []
@@ -2814,6 +2832,7 @@ def _process_row_custom_factors(row, user_id, batch_names=None, overwrite_duplic
         ch4_uncertainty=float(row.get("ch4_uncertainty") or 0),
         n2o_uncertainty=float(row.get("n2o_uncertainty") or 0),
         created_by=user_id,
+        tenant_id=caller_tenant,
     )
     return factor, errors
 
@@ -2858,19 +2877,23 @@ def _process_row_facilities(row, user_id, overwrite_duplicates, batch=None):
         if holder is not None and holder.name.strip().lower() != name.lower():
             return None, [f"Facility code '{code}' is already used by '{holder.name}'"]
 
-    existing = Facility.query.filter(db.func.lower(Facility.name) == name.lower()).first()
-
     # BUG-001: region-restricted superusers may only create/overwrite facilities in their
     # own region (same rule as POST /api/facilities/import).
     from extensions import db
     from models import User
 
-    from utils import facility_in_user_scope, facility_change_allowed
+    from utils import facility_in_user_scope, facility_change_allowed, get_current_tenant_id, tenant_matches
 
     uploader = db.session.get(User, user_id)
     if uploader is None or uploader.role not in ("admin", "superuser"):
         errors.append("Not authorised to import facilities")
         return None, errors
+
+    caller_tenant = get_current_tenant_id(uploader)
+    existing = Facility.query.filter(
+        db.func.lower(Facility.name) == name.lower(),
+        tenant_matches(Facility.tenant_id, caller_tenant),
+    ).first()
 
     def _new(field, current):
         v = row.get(field)
@@ -2954,6 +2977,7 @@ def _process_row_facilities(row, user_id, overwrite_duplicates, batch=None):
             equity_share_pct=100.0 if equity is None else equity,
             operator_status=operator or ("non_operated" if is_minority_jv else "operated"),
             created_by=user_id,
+            tenant_id=caller_tenant,
         )
         return facility, errors
 
@@ -3280,7 +3304,7 @@ def process_json_records(kind, records, user):
     from utils import build_name_map, get_allowed_facility_ids
 
     allowed = get_allowed_facility_ids(user)
-    facs = Facility.query.all() if allowed is None else Facility.query.filter(Facility.id.in_(allowed)).all()
+    facs = Facility.query.all() if allowed is None else Facility.query.filter(Facility.id.in_(allowed or [-1])).all()
     name_map = build_name_map(facs)
     id_map = {str(f.id): f for f in facs}
     batch_prod, batch_src = {}, set()

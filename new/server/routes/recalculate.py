@@ -17,7 +17,15 @@ from models import (
     RecalculationRequest, RecalculationHistory, BaseYearRecalculation, User
 )
 from routes.auth import login_required, admin_required
-from utils import get_current_user, log_activity_and_notify
+from utils import (
+    facility_access_error,
+    get_allowed_facility_ids,
+    get_current_tenant_id,
+    get_current_user,
+    log_activity_and_notify,
+    normalize_tenant_id,
+    tenant_matches,
+)
 from calculations.constants import GWP_STANDARDS, GWP_AR5, invalidate_gwp_cache
 from services.custom_factor_policy import second_approver_required
 
@@ -32,10 +40,10 @@ ALLOWED_TRIGGERS = {
 
 def _simulate_recalculation(target_year=None, target_facility_id=None, target_scope="all",
                             target_factor_id=None, target_factor_version=None,
-                            target_gwp_standard=None):
+                            target_gwp_standard=None, allowed_fids=None):
     """
     Simulates the recalculation across Scope 1, 2, and 3 without persisting changes.
-    Returns preview metrics and sample before/after rows.
+    Returns preview metrics and sample before/after rows scoped to `allowed_fids`.
     """
     gwp_dict = GWP_STANDARDS.get(str(target_gwp_standard or "").upper(), GWP_AR5) if target_gwp_standard else None
     co2_factor = float(gwp_dict.get("CO2", 1.0)) if gwp_dict else 1.0
@@ -58,6 +66,8 @@ def _simulate_recalculation(target_year=None, target_facility_id=None, target_sc
     # 1. Scope 1
     if target_scope in ("all", "1", 1):
         q1 = Emission.query.filter(Emission.is_test == False)
+        if allowed_fids is not None:
+            q1 = q1.filter(Emission.facility_id.in_(allowed_fids or [-1]))
         if target_year is not None:
             q1 = q1.filter(Emission.year == int(target_year))
         if target_facility_id is not None:
@@ -107,6 +117,8 @@ def _simulate_recalculation(target_year=None, target_facility_id=None, target_sc
     # 2. Scope 2
     if target_scope in ("all", "2", 2) and target_factor_id is None:
         q2 = Scope2Emission.query
+        if allowed_fids is not None:
+            q2 = q2.filter(Scope2Emission.facility_id.in_(allowed_fids or [-1]))
         if target_year is not None:
             q2 = q2.filter(Scope2Emission.year == int(target_year))
         if target_facility_id is not None:
@@ -125,6 +137,8 @@ def _simulate_recalculation(target_year=None, target_facility_id=None, target_sc
     # 3. Scope 3
     if target_scope in ("all", "3", 3) and target_factor_id is None:
         q3 = Scope3Emission.query
+        if allowed_fids is not None:
+            q3 = q3.filter(Scope3Emission.facility_id.in_(allowed_fids or [-1]))
         if target_year is not None:
             q3 = q3.filter(Scope3Emission.year == int(target_year))
         if target_facility_id is not None:
@@ -166,6 +180,12 @@ def _simulate_recalculation(target_year=None, target_facility_id=None, target_sc
 @login_required
 def recalculate_preview():
     """Part 2.2: Impact preview for proposed recalculation without writing to DB."""
+    user = get_current_user()
+    if user and user.role in ["it_admin", "it_manager", "it"]:
+        return jsonify({"error": "IT administrators are not authorized to access recalculation previews."}), 403
+    caller_tenant = get_current_tenant_id(user)
+    allowed_fids = get_allowed_facility_ids(user)
+
     data = request.get_json() or {}
     target_year = data.get("year")
     target_facility_id = data.get("facility_id")
@@ -174,6 +194,14 @@ def recalculate_preview():
     target_factor_version = data.get("target_factor_version")
     target_gwp_standard = data.get("target_gwp_standard")
 
+    if target_facility_id is not None:
+        if (denied := facility_access_error(user, target_facility_id)):
+            return denied
+    if target_factor_id is not None:
+        cf = db.session.get(CustomFactor, int(target_factor_id))
+        if cf and normalize_tenant_id(getattr(cf, "tenant_id", None)) != caller_tenant:
+            return jsonify({"error": "Unauthorized custom factor"}), 403
+
     preview = _simulate_recalculation(
         target_year=target_year,
         target_facility_id=target_facility_id,
@@ -181,6 +209,7 @@ def recalculate_preview():
         target_factor_id=target_factor_id,
         target_factor_version=target_factor_version,
         target_gwp_standard=target_gwp_standard,
+        allowed_fids=allowed_fids,
     )
     return jsonify(preview), 200
 
@@ -192,6 +221,10 @@ def submit_recalculation_request():
     user = get_current_user()
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
+    if user.role in ["auditor", "it_admin", "it_manager", "it"]:
+        return jsonify({"error": "Read-only or IT roles cannot request recalculations"}), 403
+    caller_tenant = get_current_tenant_id(user)
+    allowed_fids = get_allowed_facility_ids(user)
 
     data = request.get_json() or {}
     trigger_type = str(data.get("trigger_type") or "").strip().lower()
@@ -215,7 +248,15 @@ def submit_recalculation_request():
     target_factor_version = data.get("target_factor_version")
     target_gwp_standard = data.get("target_gwp_standard")
 
-    # Run preview simulation
+    if target_facility_id is not None:
+        if (denied := facility_access_error(user, target_facility_id)):
+            return denied
+    if target_factor_id is not None:
+        cf = db.session.get(CustomFactor, int(target_factor_id))
+        if cf and normalize_tenant_id(getattr(cf, "tenant_id", None)) != caller_tenant:
+            return jsonify({"error": "Unauthorized custom factor"}), 403
+
+    # Run preview simulation scoped to caller's facilities/tenant
     preview = _simulate_recalculation(
         target_year=target_year,
         target_facility_id=target_facility_id,
@@ -223,9 +264,11 @@ def submit_recalculation_request():
         target_factor_id=target_factor_id,
         target_factor_version=target_factor_version,
         target_gwp_standard=target_gwp_standard,
+        allowed_fids=allowed_fids,
     )
 
     req = RecalculationRequest(
+        tenant_id=caller_tenant,
         target_year=int(target_year) if target_year is not None else None,
         target_facility_id=int(target_facility_id) if target_facility_id is not None else None,
         target_scope=target_scope,
@@ -267,9 +310,13 @@ def submit_recalculation_request():
 def approve_and_execute_recalculation(request_id):
     """Part 2.2: Admin maker-checker approval and execution of recalculation."""
     user = get_current_user()
+    caller_tenant = get_current_tenant_id(user)
+    allowed_fids = get_allowed_facility_ids(user)
     req = db.session.get(RecalculationRequest, request_id)
     if not req:
         return jsonify({"error": "Recalculation request not found"}), 404
+    if normalize_tenant_id(getattr(req, "tenant_id", None)) != caller_tenant:
+        return jsonify({"error": "Forbidden"}), 403
 
     if req.status != "pending_approval":
         return jsonify({"error": f"Request cannot be approved: current status is '{req.status}'"}), 400
@@ -285,9 +332,11 @@ def approve_and_execute_recalculation(request_id):
     n2o_factor = float(gwp_dict.get("N2O", 265.0)) if gwp_dict else None
     cf = db.session.get(CustomFactor, req.target_factor_id) if req.target_factor_id else None
 
-    # Scope 1 Execution
+    # Scope 1 Execution (tenant-scoped)
     if req.target_scope in ("all", "1", "Scope 1"):
         q1 = Emission.query.filter(Emission.is_test == False)
+        if allowed_fids is not None:
+            q1 = q1.filter(Emission.facility_id.in_(allowed_fids or [-1]))
         if req.target_year is not None:
             q1 = q1.filter(Emission.year == req.target_year)
         if req.target_facility_id is not None:
@@ -342,6 +391,7 @@ def approve_and_execute_recalculation(request_id):
     # If base year was targeted, register in BaseYearRecalculation table
     if req.target_year:
         by_rec = BaseYearRecalculation(
+            tenant_id=caller_tenant,
             year=req.target_year,
             reason=f"[{req.trigger_type}: {ALLOWED_TRIGGERS.get(req.trigger_type, req.trigger_type)}] {req.justification}",
             previous_emissions=req.tco2e_before,
@@ -379,9 +429,12 @@ def approve_and_execute_recalculation(request_id):
 def reject_recalculation(request_id):
     """Part 2.2: Reject a recalculation request."""
     user = get_current_user()
+    caller_tenant = get_current_tenant_id(user)
     req = db.session.get(RecalculationRequest, request_id)
     if not req:
         return jsonify({"error": "Recalculation request not found"}), 404
+    if normalize_tenant_id(getattr(req, "tenant_id", None)) != caller_tenant:
+        return jsonify({"error": "Forbidden"}), 403
 
     data = request.get_json() or {}
     reason = str(data.get("reason") or "Rejected by administrator").strip()
@@ -410,8 +463,12 @@ def reject_recalculation(request_id):
 @recalculate_bp.route("/requests", methods=["GET"])
 @login_required
 def list_recalculation_requests():
-    """Part 2.2: List recalculation requests."""
-    q = RecalculationRequest.query.order_by(RecalculationRequest.requested_at.desc())
+    """Part 2.2: List recalculation requests for the caller's tenant."""
+    user = get_current_user()
+    caller_tenant = get_current_tenant_id(user)
+    q = RecalculationRequest.query.filter(
+        tenant_matches(RecalculationRequest.tenant_id, caller_tenant)
+    ).order_by(RecalculationRequest.requested_at.desc())
     status = request.args.get("status")
     if status:
         q = q.filter_by(status=status)
@@ -421,10 +478,20 @@ def list_recalculation_requests():
 @recalculate_bp.route("/history", methods=["GET"])
 @login_required
 def list_recalculation_history():
-    """Part 2.2: List granular record-level recalculation history."""
-    q = RecalculationHistory.query.order_by(RecalculationHistory.timestamp.desc())
+    """Part 2.2: List granular record-level recalculation history for the caller's tenant."""
+    user = get_current_user()
+    caller_tenant = get_current_tenant_id(user)
+    allowed_fids = get_allowed_facility_ids(user)
+    q = (
+        RecalculationHistory.query
+        .join(RecalculationRequest, RecalculationHistory.request_id == RecalculationRequest.id)
+        .filter(tenant_matches(RecalculationRequest.tenant_id, caller_tenant))
+    )
+    if allowed_fids is not None:
+        q = q.filter(RecalculationHistory.facility_id.in_(allowed_fids or [-1]))
+    q = q.order_by(RecalculationHistory.timestamp.desc())
     request_id = request.args.get("request_id")
     if request_id:
-        q = q.filter_by(request_id=int(request_id))
+        q = q.filter(RecalculationHistory.request_id == int(request_id))
     limit = min(int(request.args.get("limit") or 100), 500)
     return jsonify([h.to_dict() for h in q.limit(limit).all()])

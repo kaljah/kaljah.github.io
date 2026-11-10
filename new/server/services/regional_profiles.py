@@ -10,6 +10,7 @@ and corporate-level environmental statements, compliance analyses, and decarboni
 scorecards.
 """
 
+import copy
 from typing import Any, Dict, List, Optional
 
 CORPORATE_PROFILE: Dict[str, Any] = {
@@ -49,7 +50,7 @@ REGIONAL_PROFILES: Dict[str, Dict[str, Any]] = {
     "basin_alpha": {
         "key": "basin_alpha",
         "name": "Basin Alpha Oil & Gas Complex (Facility A-1)",
-        "aliases": ["basin alpha", "alpha", "facility a-1", "a-1"],
+        "aliases": ["basin alpha", "facility a-1", "a-1"],
         "basin": "Basin Alpha (Block 101)",
         "operator": "Demo Operator Co. (60% Operated JV)",
         "segment": "upstream",
@@ -76,7 +77,7 @@ REGIONAL_PROFILES: Dict[str, Dict[str, Any]] = {
     "basin_beta": {
         "key": "basin_beta",
         "name": "Basin Beta Wet Gas Processing Hub (Facility B-2)",
-        "aliases": ["basin beta", "beta", "facility b-2", "b-2"],
+        "aliases": ["basin beta", "facility b-2", "b-2"],
         "basin": "Basin Beta (Block 202)",
         "operator": "Demo Operator Co. (70% Operated JV)",
         "segment": "upstream",
@@ -102,7 +103,7 @@ REGIONAL_PROFILES: Dict[str, Dict[str, Any]] = {
     "coastal_terminal": {
         "key": "coastal_terminal",
         "name": "Coastal Midstream & Export Terminal (Facility C-3)",
-        "aliases": ["coastal terminal", "coastal", "facility c-3", "c-3", "midstream"],
+        "aliases": ["coastal terminal", "facility c-3", "c-3", "midstream"],
         "basin": "Coastal Export Corridor",
         "operator": "Demo JV Partner A (25% Non-Operated Equity)",
         "segment": "midstream",
@@ -127,38 +128,81 @@ REGIONAL_PROFILES: Dict[str, Dict[str, Any]] = {
 }
 
 
-def get_regional_profile(region_identifier: Optional[str]) -> Dict[str, Any]:
+def _apply_tenant_branding(
+    prof: Dict[str, Any],
+    tenant_config: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """Returns a deep-copied profile branded to `tenant_config` without mutating module state."""
+    out = copy.deepcopy(prof)
+    if not tenant_config:
+        return out
+    tid = str(tenant_config.get("tenant_id") or "default").strip().lower()
+    if tid in ("default", "demo_operator"):
+        return out
+    org_name = str(tenant_config.get("organization_name") or "").strip() or "Operator"
+    nat_name = str(tenant_config.get("national_group_name") or f"{org_name} (Consolidated)").strip()
+    country = str(tenant_config.get("country") or "International").strip()
+    framework = str(tenant_config.get("regulatory_framework") or "ISO 14064-1:2018").strip()
+
+    if out.get("key") == "national":
+        out["name"] = nat_name
+        out["arabic_name"] = org_name
+        out["basin"] = f"{org_name} Portfolio"
+        out["operator"] = org_name
+        out["headquarters"] = country
+        out["statutory_compliance"] = framework
+    else:
+        if "demo operator" in str(out.get("operator", "")).lower():
+            out["operator"] = org_name
+        if "demo operator" in str(out.get("name", "")).lower():
+            out["name"] = out["name"].replace("Demo Operator", org_name)
+    # Prevent default-tenant illustrative decarbonization projects from leaking to other tenants
+    out["decarbonization_projects"] = []
+    return out
+
+
+def get_regional_profile(
+    region_identifier: Optional[str],
+    tenant_config: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
     """
     Retrieves the operational and geological profile for a region,
     facility, or corporate entity using case-insensitive matching across keys and aliases.
     Defaults to the corporate consolidated profile if unmatched.
     """
     if not region_identifier or str(region_identifier).strip().lower() in ("all", "national", "global", "corporate"):
-        return CORPORATE_PROFILE
+        return _apply_tenant_branding(CORPORATE_PROFILE, tenant_config)
 
     needle = str(region_identifier).strip().lower()
 
     if needle in REGIONAL_PROFILES:
-        return REGIONAL_PROFILES[needle]
+        return _apply_tenant_branding(REGIONAL_PROFILES[needle], tenant_config)
 
     for prof in REGIONAL_PROFILES.values():
         if needle == prof["key"] or needle in prof["name"].lower():
-            return prof
+            return _apply_tenant_branding(prof, tenant_config)
         for alias in prof.get("aliases", []):
             if needle == alias or alias in needle or needle in alias:
-                return prof
+                return _apply_tenant_branding(prof, tenant_config)
 
     clean_title = str(region_identifier).replace("_", " ").title()
-    dyn_prof = dict(CORPORATE_PROFILE)
+    org_name = (
+        str((tenant_config or {}).get("organization_name") or "").strip()
+        if tenant_config and str(tenant_config.get("tenant_id") or "default").lower() not in ("default", "demo_operator")
+        else "Demo Operator"
+    )
+    dyn_prof = _apply_tenant_branding(CORPORATE_PROFILE, tenant_config)
     dyn_prof["key"] = needle
-    dyn_prof["name"] = f"Demo Operator {clean_title} Asset"
+    dyn_prof["name"] = f"{org_name} {clean_title} Asset"
     dyn_prof["basin"] = f"{clean_title} Operational Basin"
     return dyn_prof
 
 
-def list_available_regions() -> List[Dict[str, str]]:
+def list_available_regions(tenant_config: Optional[Dict[str, Any]] = None) -> List[Dict[str, str]]:
     """Returns a clean list of regional assets for UI selectors and dropdowns."""
-    out = [{"key": "national", "name": "Demo Operator Group (Consolidated)", "segment": "Corporate"}]
+    corp = _apply_tenant_branding(CORPORATE_PROFILE, tenant_config)
+    out = [{"key": "national", "name": corp["name"], "segment": "Corporate"}]
     for k, p in REGIONAL_PROFILES.items():
-        out.append({"key": k, "name": p["name"], "segment": p["segment"].capitalize()})
+        bp = _apply_tenant_branding(p, tenant_config)
+        out.append({"key": k, "name": bp["name"], "segment": bp["segment"].capitalize()})
     return out

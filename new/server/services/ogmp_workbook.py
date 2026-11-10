@@ -15,6 +15,7 @@ from services.audit_chain import data_fingerprint
 from services.dashboard_filters import production_gas_m3
 from services.labels import process_label
 from services.ogmp import compute_facility_ogmp_level, ogmp_level_for
+from utils import get_current_tenant_id, tenant_matches
 
 # Official UNEP palette
 UNEP_NAVY = "1E3A8A"
@@ -192,8 +193,17 @@ def sheet_profile(wb, ctx):
 
 def _summary_targets(ws, ctx):
     """Row 3: the emission goal and the active base year from Manage Data."""
-    goal = Goal.query.filter_by(year=ctx.year_filter if ctx.year_filter else datetime.now().year).first()
-    base_year = BaseYearRecalculation.query.order_by(BaseYearRecalculation.recalc_date.desc()).first()
+    caller_tenant = get_current_tenant_id(getattr(ctx, "user", None))
+    goal = (
+        Goal.query.filter_by(year=ctx.year_filter if ctx.year_filter else datetime.now().year).first()
+        if caller_tenant == "default"
+        else None
+    )
+    base_year = (
+        BaseYearRecalculation.query.filter(tenant_matches(BaseYearRecalculation.tenant_id, caller_tenant))
+        .order_by(BaseYearRecalculation.recalc_date.desc())
+        .first()
+    )
     if goal:
         ws.cell(row=3, column=1,
                 value=f"Emission Target {goal.year}: {float(goal.target_amount or 0):,.0f} tCO₂e").font = Styles.bold_font

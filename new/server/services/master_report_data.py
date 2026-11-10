@@ -21,6 +21,7 @@ from calculations.constants import get_active_gwp
 from calculations.units import VOLUME_UNITS_TO_M3
 from services.regional_profiles import get_regional_profile, REGIONAL_PROFILES
 from services.tenant_config import get_tenant_config
+from utils import normalize_tenant_id, tenant_matches
 
 # API Compendium Section 4 stoichiometric combustion ratios (t pollutant / t CO2e)
 DEFAULT_STOICHIOMETRIC_NOX_RATIO = 0.0018
@@ -38,21 +39,27 @@ DEFAULT_FLARE_DRE_PCT = 98.0
 def get_facilities_for_scope(
     mode: str,
     region_key: Optional[str],
-    allowed_facility_ids: Optional[List[int]] = None
+    allowed_facility_ids: Optional[List[int]] = None,
+    tenant_config: Optional[Dict[str, Any]] = None,
+    tenant_id: Optional[str] = None,
 ) -> List[Facility]:
-    """Resolves target facilities based on reporting mode and regional filters."""
+    """Resolves target facilities strictly within the caller's tenant and regional filters."""
     query = Facility.query
+    if tenant_id is not None:
+        query = query.filter(tenant_matches(Facility.tenant_id, tenant_id))
     if allowed_facility_ids is not None:
-        query = query.filter(Facility.id.in_(allowed_facility_ids))
+        query = query.filter(Facility.id.in_(allowed_facility_ids or [-1]))
 
     all_facs = query.all()
     if mode == "national" or not region_key or region_key.lower() in ("all", "national", "global"):
         return all_facs
 
-    profile = get_regional_profile(region_key)
+    profile = get_regional_profile(region_key, tenant_config=tenant_config)
     aliases = [a.lower() for a in profile.get("aliases", [])]
     target_key = profile.get("key", "").lower()
     target_name = profile.get("name", "").lower()
+    rk_raw = (region_key or "").strip().lower()
+    rk_spaced = rk_raw.replace("_", " ")
 
     matched = []
     for f in all_facs:
@@ -63,11 +70,11 @@ def get_facilities_for_scope(
         code_str = (getattr(f, "code", "") or "").lower()
 
         is_match = (
-            target_key in reg_str or target_key in name_str or
-            any(alias in reg_str or alias in name_str or alias in field_str for alias in aliases) or
-            target_name in name_str or target_name in reg_str or
-            (region_key and region_key.lower() in loc_str) or
-            (region_key and region_key.lower() in code_str)
+            (target_key and (target_key in reg_str or target_key in name_str))
+            or any(alias in reg_str or alias in name_str or alias in field_str for alias in aliases)
+            or (target_name and (target_name in name_str or target_name in reg_str))
+            or (rk_raw and (rk_raw in reg_str or rk_raw in name_str or rk_raw in field_str or rk_raw in loc_str or rk_raw in code_str))
+            or (rk_spaced and (rk_spaced in reg_str or rk_spaced in name_str or rk_spaced in field_str or rk_spaced in loc_str))
         )
         if is_match:
             matched.append(f)
@@ -303,16 +310,18 @@ def _query_flaring_breakdown(
 def _query_jv_equity_breakdown(
     facility_ids: List[int],
     timeline: List[Dict[str, Any]],
+    tenant_id: str = "default",
 ) -> Dict[str, Any]:
     """Computes GHG and CH4 emissions apportioned by JV partner equity share."""
     if not timeline:
         return {"is_jv": False, "partners": [], "annual_equity_timeline": []}
 
+    tid = normalize_tenant_id(tenant_id)
     shares = []
     if facility_ids:
         try:
             from routes.equity_routes import sync_equity_shares_for_facilities
-            sync_equity_shares_for_facilities()
+            sync_equity_shares_for_facilities(tenant_id=tid, facility_ids=facility_ids)
         except Exception:
             pass
         shares = FacilityEquityShare.query.filter(
@@ -324,7 +333,7 @@ def _query_jv_equity_breakdown(
         partner_meta: Dict[int, Any] = {}
         for s in shares:
             p = s.partner
-            if not p:
+            if not p or normalize_tenant_id(getattr(p, "tenant_id", None)) != tid:
                 continue
             partner_meta[p.id] = p
             fac_share_map.setdefault(s.facility_id, {})[p.id] = float(s.equity_share_pct or 0.0)
@@ -341,7 +350,11 @@ def _query_jv_equity_breakdown(
         if not operator_partner:
             try:
                 from models import JvPartner
-                op_db = JvPartner.query.filter_by(is_operator=True).first()
+                op_db = (
+                    JvPartner.query.filter_by(is_operator=True)
+                    .filter(tenant_matches(JvPartner.tenant_id, tid))
+                    .first()
+                )
                 if op_db:
                     operator_partner = op_db
                     partner_meta[op_db.id] = op_db
@@ -477,9 +490,10 @@ def _query_jv_equity_breakdown(
     tot_s1_sum = sum(t["scope1_co2e_t"] for t in timeline)
     tot_s2_sum = sum(t["scope2_co2e_t"] for t in timeline)
     tot_ch4_sum = sum(t["ch4_mass_t"] for t in timeline)
-    tenant_cfg = get_tenant_config()
-    op_name = tenant_cfg.get("legal_entity") or tenant_cfg.get("organization_name", "Demo Operator Co.")
-    op_code = tenant_cfg.get("short_code", "SH")
+    tenant_cfg = get_tenant_config(tid)
+    default_op = "Demo Operator Co." if tid == "default" else tenant_cfg.get("organization_name", "Operator")
+    op_name = tenant_cfg.get("legal_entity") or tenant_cfg.get("organization_name", default_op)
+    op_code = tenant_cfg.get("short_code", "SH" if tid == "default" else "OP")
     single_p = {
         "partner": op_name,
         "partner_name": op_name,
@@ -521,9 +535,13 @@ def _query_jv_equity_breakdown(
 def _resolve_dynamic_gas_composition(
     fac_ids: List[int],
     region_key: Optional[str],
-    profile: Dict[str, Any]
+    profile: Dict[str, Any],
+    tenant_id: str = "default",
+    allowed_is_restricted: bool = False,
 ) -> Tuple[Dict[str, Any], str, str]:
     """Resolves measured gas composition from CustomFactor or baseline profile."""
+    if not fac_ids and allowed_is_restricted:
+        return {}, "", "none"
     matched_cf = None
     if fac_ids:
         used_cf_ids = db.session.query(Emission.custom_factor_id).filter(
@@ -550,7 +568,8 @@ def _resolve_dynamic_gas_composition(
     if not matched_cf:
         all_cfs = CustomFactor.query.filter(
             CustomFactor.is_archived.is_(False),
-            CustomFactor.status == "Approved"
+            CustomFactor.status == "Approved",
+            tenant_matches(CustomFactor.tenant_id, tenant_id),
         ).all()
         for cand in all_cfs:
             if not cand.gas_composition:
@@ -634,6 +653,7 @@ def _compute_2030_target_projection(
     timeline: List[Dict[str, Any]],
     start_year: int,
     end_year: int,
+    tenant_id: str = "default",
 ) -> Dict[str, Any]:
     """Computes corporate 2030 decarbonization glidepath trajectory and milestones aligned with SBTi / net zero."""
     if not timeline:
@@ -649,7 +669,7 @@ def _compute_2030_target_projection(
 
     try:
         from models import SbtiTarget
-        sbti = SbtiTarget.query.order_by(SbtiTarget.id.desc()).first()
+        sbti = SbtiTarget.query.filter(tenant_matches(SbtiTarget.tenant_id, tenant_id)).order_by(SbtiTarget.id.desc()).first()
         if sbti and sbti.reduction_rate_pct:
             rate = float(sbti.reduction_rate_pct)
             # If rate is an annual linear rate (e.g. 4.2%/yr for 1.5C),
@@ -731,9 +751,12 @@ def _query_mitigation_projects(
     facility_ids: List[int],
     start_year: int,
     end_year: int,
-    fallback_projects: List[Dict[str, Any]]
+    fallback_projects: List[Dict[str, Any]],
+    allowed_is_restricted: bool = False,
 ) -> List[Dict[str, Any]]:
     """Queries live MitigationProject records from the database for the given facilities."""
+    if not facility_ids and allowed_is_restricted:
+        return []
     query = MitigationProject.query
     if facility_ids:
         query = query.filter(MitigationProject.facility_id.in_(facility_ids))
@@ -763,8 +786,22 @@ def _query_mitigation_projects(
     return fallback_projects
 
 
-def _query_uncertainty_assessment(facility_ids: List[int], end_year: int) -> Dict[str, Any]:
+def _query_uncertainty_assessment(
+    facility_ids: List[int],
+    end_year: int,
+    allowed_is_restricted: bool = False,
+) -> Dict[str, Any]:
     """Queries inventory uncertainty and Monte Carlo metrics calculated directly from database records."""
+    if not facility_ids and allowed_is_restricted:
+        return {
+            "year": end_year,
+            "inventory_uncertainty_pct": "N/A",
+            "tier_breakdown": {"Tier 1": 0.0, "Tier 2": 0.0, "Tier 3": 0.0},
+            "confidence_level_pct": 95,
+            "coverage_factor": 2.0,
+            "categories": [],
+            "has_data": False,
+        }
     try:
         from services.inventory_uncertainty import inventory_uncertainty
         u_res = inventory_uncertainty(year=end_year, allowed_fids=facility_ids, scope="all", statuses=None)
@@ -949,7 +986,8 @@ def _query_facility_breakdowns(
 def _query_scope3_breakdown(
     facility_ids: List[int],
     start_year: int,
-    end_year: int
+    end_year: int,
+    allowed_is_restricted: bool = False,
 ) -> Dict[str, Any]:
     """
     Aggregates Scope 3 Value Chain emissions across GHG Protocol categories 1 to 15.
@@ -961,6 +999,8 @@ def _query_scope3_breakdown(
     )
     if facility_ids:
         records = q.filter(Scope3Emission.facility_id.in_(facility_ids)).all()
+    elif allowed_is_restricted:
+        records = []
     else:
         records = q.all()
 
@@ -1047,7 +1087,8 @@ def _query_scope3_breakdown(
 def _query_ogmp_breakdown(
     facility_ids: List[int],
     start_year: int,
-    end_year: int
+    end_year: int,
+    allowed_is_restricted: bool = False,
 ) -> Dict[str, Any]:
     """
     Queries OGMP 2.0 Level 4/5 survey reconciliation data and LDAR component inventory.
@@ -1058,12 +1099,16 @@ def _query_ogmp_breakdown(
     )
     if facility_ids:
         surveys_raw = q_ogmp.filter(OgmpSurvey.facility_id.in_(facility_ids)).all()
+    elif allowed_is_restricted:
+        surveys_raw = []
     else:
         surveys_raw = q_ogmp.all()
 
     q_comp = ComponentInventory.query
     if facility_ids:
         components_raw = q_comp.filter(ComponentInventory.facility_id.in_(facility_ids)).all()
+    elif allowed_is_restricted:
+        components_raw = []
     else:
         components_raw = q_comp.all()
 
@@ -1127,7 +1172,8 @@ def _query_ogmp_breakdown(
 def _query_cbam_and_macc_breakdown(
     facility_ids: List[int],
     start_year: int,
-    end_year: int
+    end_year: int,
+    allowed_is_restricted: bool = False,
 ) -> Dict[str, Any]:
     """
     Queries EU CBAM Regulation (EU) 2023/956 export emissions and MACC abatement economics.
@@ -1138,6 +1184,8 @@ def _query_cbam_and_macc_breakdown(
     )
     if facility_ids:
         exports_raw = q_cbam.filter(CbamProductExport.facility_id.in_(facility_ids)).all()
+    elif allowed_is_restricted:
+        exports_raw = []
     else:
         exports_raw = q_cbam.all()
 
@@ -1198,8 +1246,8 @@ def _query_cbam_and_macc_breakdown(
     )
     if facility_ids:
         mits_raw = q_mit.filter(MitigationProject.facility_id.in_(facility_ids)).all()
-        if not mits_raw:
-            mits_raw = q_mit.all()
+    elif allowed_is_restricted:
+        mits_raw = []
     else:
         mits_raw = q_mit.all()
 
@@ -1242,15 +1290,17 @@ def _query_cbam_and_macc_breakdown(
 
 def _query_base_year_recalculations(
     start_year: int,
-    end_year: int
+    end_year: int,
+    tenant_id: str = "default",
 ) -> List[Dict[str, Any]]:
     """
     Queries formal ISO 14064-1:2018 Clause 6.4.1 base year recalculations audit trail.
     """
     raw_by = BaseYearRecalculation.query.filter(
+        tenant_matches(BaseYearRecalculation.tenant_id, tenant_id),
         BaseYearRecalculation.year.between(1990, 2035),
         BaseYearRecalculation.previous_emissions.isnot(None),
-        BaseYearRecalculation.adjusted_emissions.isnot(None)
+        BaseYearRecalculation.adjusted_emissions.isnot(None),
     ).order_by(BaseYearRecalculation.year.desc(), BaseYearRecalculation.id.desc()).all()
 
     clean_by = []
@@ -1524,9 +1574,11 @@ def _query_multistream_gas_chromatography(fac_ids: List[int]) -> List[Dict[str, 
     Dynamically extracts multi-stream gas chromatography assays from CustomFactors in the DB.
     Matches Tables 6 & 13 format dynamically.
     """
-    facilities = Facility.query.filter(Facility.id.in_(fac_ids)).all() if fac_ids else []
+    if not fac_ids:
+        return []
+    facilities = Facility.query.filter(Facility.id.in_(fac_ids)).all()
     fac_map = {f.id: f for f in facilities}
-    
+
     cfs = CustomFactor.query.filter(
         CustomFactor.facility_id.in_(fac_ids),
         CustomFactor.gas_composition_json.isnot(None)
@@ -1749,7 +1801,9 @@ def _generate_dynamic_quality_audit(
     Algorithmically audits live database completeness, meter tiers, and flare DRE measurements,
     synthesizing with active mitigation projects. Matches Section 7 format dynamically.
     """
-    facilities = Facility.query.filter(Facility.id.in_(fac_ids)).all() if fac_ids else []
+    if not fac_ids:
+        return []
+    facilities = Facility.query.filter(Facility.id.in_(fac_ids)).all()
     recommendations = []
 
     # 1. Fuel property sampling frequency
@@ -1820,7 +1874,7 @@ def _generate_dynamic_quality_audit(
     # 4. Pull any active HSE projects from MitigationProject
     active_projects = MitigationProject.query.filter(
         MitigationProject.facility_id.in_(fac_ids),
-        MitigationProject.status.in_(["Active", "Executing", "Proposed"])
+        db.func.lower(MitigationProject.status).in_(["active", "executing", "proposed"])
     ).all()
     for proj in active_projects[:3]:
         p_name = proj.name or "Decarbonization Initiative"
@@ -1851,12 +1905,26 @@ def aggregate_master_report_data(
     start_year: int,
     end_year: int,
     gwp_standard: str = "AR5",
-    allowed_facility_ids: Optional[List[int]] = None
+    allowed_facility_ids: Optional[List[int]] = None,
+    tenant_id: str = "default",
 ) -> Dict[str, Any]:
-    """Main aggregator function returning operational, emission, and compliance metrics."""
-    facilities = get_facilities_for_scope(mode, region_key, allowed_facility_ids)
+    """Main aggregator function returning operational, emission, and compliance metrics strictly scoped to one tenant."""
+    tid = normalize_tenant_id(tenant_id)
+    tenant_config = get_tenant_config(tid)
+    allowed_is_restricted = (allowed_facility_ids is not None) or (mode == "regional") or (tid != "default")
+
+    facilities = get_facilities_for_scope(
+        mode,
+        region_key,
+        allowed_facility_ids,
+        tenant_config=tenant_config,
+        tenant_id=tid,
+    )
     fac_ids = [f.id for f in facilities]
-    profile = get_regional_profile(region_key if mode == "regional" else "national")
+    profile = get_regional_profile(
+        region_key if mode == "regional" else "national",
+        tenant_config=tenant_config,
+    )
 
     gwp_factors = get_active_gwp(standard=gwp_standard)
     em_data = _query_emissions_by_year(fac_ids, start_year, end_year)
@@ -1868,23 +1936,28 @@ def aggregate_master_report_data(
         fac_ids,
         start_year,
         end_year,
-        profile.get("decarbonization_projects", [])
+        profile.get("decarbonization_projects", []),
+        allowed_is_restricted=allowed_is_restricted,
     )
 
     timeline_summary = _assemble_timeline_series(start_year, end_year, em_data, s2_data, prod_data, flare_detail_data)
 
     gas_comp_data, gas_comp_name, gas_comp_source = _resolve_dynamic_gas_composition(
-        fac_ids, region_key, profile
+        fac_ids,
+        region_key,
+        profile,
+        tenant_id=tid,
+        allowed_is_restricted=allowed_is_restricted,
     )
 
-    target_proj = _compute_2030_target_projection(timeline_summary, start_year, end_year)
-    jv_equity = _query_jv_equity_breakdown(fac_ids, timeline_summary)
-    uncertainty_data = _query_uncertainty_assessment(fac_ids, end_year)
+    target_proj = _compute_2030_target_projection(timeline_summary, start_year, end_year, tenant_id=tid)
+    jv_equity = _query_jv_equity_breakdown(fac_ids, timeline_summary, tenant_id=tid)
+    uncertainty_data = _query_uncertainty_assessment(fac_ids, end_year, allowed_is_restricted=allowed_is_restricted)
     facility_breakdowns = _query_facility_breakdowns(facilities, start_year, end_year)
-    scope3_data = _query_scope3_breakdown(fac_ids, start_year, end_year)
-    ogmp_data = _query_ogmp_breakdown(fac_ids, start_year, end_year)
-    cbam_macc_data = _query_cbam_and_macc_breakdown(fac_ids, start_year, end_year)
-    base_year_recalcs = _query_base_year_recalculations(start_year, end_year)
+    scope3_data = _query_scope3_breakdown(fac_ids, start_year, end_year, allowed_is_restricted=allowed_is_restricted)
+    ogmp_data = _query_ogmp_breakdown(fac_ids, start_year, end_year, allowed_is_restricted=allowed_is_restricted)
+    cbam_macc_data = _query_cbam_and_macc_breakdown(fac_ids, start_year, end_year, allowed_is_restricted=allowed_is_restricted)
+    base_year_recalcs = _query_base_year_recalculations(start_year, end_year, tenant_id=tid)
 
     # Dynamic Granular & Sub-Annual Engineering Ledgers
     granular_source_ledger = _query_granular_source_ledger(fac_ids, end_year, gwp_factors)
@@ -1897,10 +1970,9 @@ def aggregate_master_report_data(
     regional_benchmarks = []
     if mode == "comparison":
         years = range(start_year, end_year + 1)
-        for rk, rprof in REGIONAL_PROFILES.items():
-            r_facs = get_facilities_for_scope("regional", rk, allowed_facility_ids)
-            if not r_facs:
-                continue
+        bench_matched_ids = set()
+
+        def _append_benchmark_bucket(b_key: str, b_name: str, b_basin: str, b_seg: str, r_facs: List[Facility]):
             r_ids = [rf.id for rf in r_facs]
             r_em = _query_emissions_by_year(r_ids, start_year, end_year)
             r_s2 = _query_scope2_by_year(r_ids, start_year, end_year)
@@ -1915,10 +1987,10 @@ def aggregate_master_report_data(
             fi = (tot_flare_m3 / tot_gas_m3 * 100.0) if tot_gas_m3 > 0 else 0.0
 
             regional_benchmarks.append({
-                "key": rk,
-                "name": rprof["name"],
-                "basin": rprof["basin"],
-                "segment": rprof["segment"].capitalize(),
+                "key": b_key,
+                "name": b_name,
+                "basin": b_basin,
+                "segment": b_seg,
                 "facility_count": len(r_facs),
                 "total_co2e_t": tot_co2e,
                 "total_mmboe": tot_boe / 1e6,
@@ -1927,9 +1999,52 @@ def aggregate_master_report_data(
                 "decree_compliant": fi <= 1.00,
             })
 
+        for rk in REGIONAL_PROFILES:
+            rprof = get_regional_profile(rk, tenant_config=tenant_config)
+            r_facs = get_facilities_for_scope(
+                "regional",
+                rk,
+                allowed_facility_ids,
+                tenant_config=tenant_config,
+                tenant_id=tid,
+            )
+            if not r_facs:
+                continue
+            for rf in r_facs:
+                bench_matched_ids.add(rf.id)
+            _append_benchmark_bucket(
+                rk,
+                rprof["name"],
+                rprof["basin"],
+                rprof["segment"].capitalize(),
+                r_facs,
+            )
+
+        custom_groups: Dict[str, List[Facility]] = {}
+        for fac in facilities:
+            if fac.id in bench_matched_ids:
+                continue
+            reg_name = fac.region or fac.location or fac.name
+            if not reg_name or reg_name.lower() in ("algeria", "global", "south", "none"):
+                continue
+            custom_groups.setdefault(reg_name, []).append(fac)
+
+        for reg_name, r_facs in custom_groups.items():
+            clean_key = reg_name.lower().replace(" ", "_").replace("/", "_")
+            seg = (r_facs[0].segment or "Upstream").capitalize()
+            _append_benchmark_bucket(
+                clean_key,
+                f"{reg_name} Production Area",
+                f"{reg_name} Basin",
+                seg,
+                r_facs,
+            )
+
     return {
         "mode": mode,
         "region_key": region_key,
+        "tenant_id": tid,
+        "tenant_config": tenant_config,
         "profile": profile,
         "facilities": [{"id": f.id, "name": f.name, "region": f.region, "field": f.field} for f in facilities],
         "start_year": start_year,
