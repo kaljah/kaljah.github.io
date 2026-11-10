@@ -87,9 +87,10 @@ class IndirectSteamCalculator(BaseCalculator):
             v = float(s.replace("%", "").strip())
             return (v / 100.0 if "%" in s else v), False
 
-        # API Compendium (2021) Exhibit 8.3: 82% boiler efficiency and 10% transmission loss -> net 72%
-        b_eff, b_silent = _parse_e(boiler_efficiency, 0.82)
-        t_loss, t_silent = _parse_e(transmission_loss, 0.10)
+        # Restored defaults (UNV-06/07): 80% boiler efficiency and 0% line loss (net 80%).
+        # User-configurable parameters; e.g. API Compendium (2021) Exhibit 8.3 uses 82% / 10% (net 72%).
+        b_eff, b_silent = _parse_e(boiler_efficiency, 0.80)
+        t_loss, t_silent = _parse_e(transmission_loss, 0.0)
         if not (0 <= b_eff <= 1 and 0 <= t_loss <= 1):
             raise ValueError(f"Boiler efficiency ({b_eff}) and transmission loss ({t_loss}) are fractions between 0 and 1")
         # Net efficiency: API Compendium Exhibit 8.3 net efficiency = boiler efficiency - transmission loss
@@ -147,16 +148,16 @@ class IndirectSteamCalculator(BaseCalculator):
                     "factor_id": "SCP2-004",
                     "parameter": "Boiler Efficiency",
                     "applied_value": b_eff,
-                    "source": "API Compendium (2021) Exhibit 8.3",
-                    "warning": "Default Exhibit 8.3 assumption (82%). Use actual boiler efficiency if known."
+                    "source": "EPA GHG Emission Factors Hub Table 7 (optional Exhibit 8.3 example: 82%)",
+                    "warning": "Default boiler efficiency (80%). User-configurable; e.g. API Compendium Exhibit 8.3 uses 82%.",
                 })
             if t_silent:
                 res["silent_defaults"].append({
                     "factor_id": "SCP2-005",
                     "parameter": "Steam Transmission Loss",
                     "applied_value": t_loss,
-                    "source": "API Compendium (2021) Exhibit 8.3",
-                    "warning": "Default Exhibit 8.3 assumption (10%). Use actual transmission loss if known."
+                    "source": "Application Internal Default (optional Exhibit 8.3 example: 10%)",
+                    "warning": "Default line loss (0%). User-configurable; e.g. API Compendium Exhibit 8.3 uses 10%.",
                 })
         return res
 

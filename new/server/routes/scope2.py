@@ -55,7 +55,19 @@ def _calc_indirect_steam(data):
     amount = float(data.get("amount") or data.get("heat_mmbtu") or 0)
     unit = (data.get("unit") or "mmbtu").lower().replace(" ", "")
     ci = data.get("calc_inputs", {}).get("indirect_steam", {})
-    raw_be = data.get("boiler_efficiency") if data.get("boiler_efficiency") not in (None, "") else (ci.get("boiler_eff") or 0.80)
+    raw_be = next(
+        (
+            v
+            for v in (
+                data.get("boiler_efficiency"),
+                data.get("boiler_eff"),
+                ci.get("boiler_eff"),
+                ci.get("boiler_efficiency"),
+            )
+            if v not in (None, "")
+        ),
+        0.80,
+    )
     boiler_eff = float(str(raw_be).replace("%", "").strip())
     if boiler_eff > 1.0 or "%" in str(raw_be):
         # 85 is 85 %, as in the file upload (no boiler runs at 1 %); it was used as 85 x, so the
@@ -63,7 +75,23 @@ def _calc_indirect_steam(data):
         boiler_eff /= 100.0
     if not 0 < boiler_eff <= 1.0:
         raise ValidationError(f"Boiler efficiency must be above 0 and at most 100 % (got {raw_be})", "boiler_eff")
-    trans_loss = float(ci.get("trans_loss", 0.0) or 0.0)
+    raw_tl = next(
+        (
+            v
+            for v in (
+                data.get("transmission_loss"),
+                data.get("trans_loss"),
+                ci.get("trans_loss"),
+                ci.get("transmission_loss"),
+            )
+            if v not in (None, "")
+        ),
+        0.0,
+    )
+    tl_str = str(raw_tl).strip()
+    trans_loss = float(tl_str.replace("%", "").strip() or 0.0)
+    if "%" in tl_str:
+        trans_loss /= 100.0
     if not 0 <= trans_loss < 1.0:
         raise ValidationError(f"Transmission loss is a fraction from 0 to below 1 (got {trans_loss}; 5 % is 0.05)",
                               "trans_loss")
@@ -131,13 +159,21 @@ def _recalc_indirect_steam(emission, data, factor, old_heat, old_co2e, old_ef, o
                                            "calc_inputs": {"indirect_steam": ci}})
     else:
         heat = float(emission.heat_mmbtu or 0.0)
-    given = any(data.get(k) not in (None, "") for k in ("boiler_eff", "boiler_efficiency", "trans_loss")) \
-        or any(k in ci for k in ("boiler_eff", "trans_loss"))
+    given = any(
+        data.get(k) not in (None, "")
+        for k in ("boiler_eff", "boiler_efficiency", "trans_loss", "transmission_loss")
+    ) or any(k in ci for k in ("boiler_eff", "boiler_efficiency", "trans_loss", "transmission_loss"))
     if not given and old_heat and old_co2e and float(old_heat) > 0 and float(old_co2e) > 0:
         net_eff = float(old_heat) * _steam_fuel_factor_kg_per_mmbtu(old_ef) / (float(old_co2e) * 1000.0)
         return heat / net_eff * _steam_fuel_factor_kg_per_mmbtu(factor) / 1000.0, heat
-    ci.setdefault("boiler_eff", float(data.get("boiler_eff") or data.get("boiler_efficiency") or 0.80))
-    ci.setdefault("trans_loss", float(data.get("trans_loss") or 0.0))
+    for src_k in ("boiler_eff", "boiler_efficiency"):
+        if "boiler_eff" not in ci and data.get(src_k) not in (None, ""):
+            ci["boiler_eff"] = data[src_k]
+    ci.setdefault("boiler_eff", 0.80)
+    for src_k in ("trans_loss", "transmission_loss"):
+        if "trans_loss" not in ci and data.get(src_k) not in (None, ""):
+            ci["trans_loss"] = data[src_k]
+    ci.setdefault("trans_loss", 0.0)
     ci["ef_co2"] = factor or _DEFAULT_BOILER_EF_KG_PER_MMBTU
     co2e, _, _ = _calc_indirect_steam({"amount": heat, "unit": "mmbtu", "calc_inputs": {"indirect_steam": ci}})
     return co2e, heat
