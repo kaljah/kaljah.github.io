@@ -570,6 +570,8 @@ const Reports: React.FC = () => {
   const [masterLanguage, setMasterLanguage] = useState<"en" | "fr">("en");
   const [masterLoading, setMasterLoading] = useState<boolean>(false);
   const [masterExcelLoading, setMasterExcelLoading] = useState<boolean>(false);
+  const [masterJobStatusText, setMasterJobStatusText] = useState<string | null>(null);
+  const [masterReadyDownload, setMasterReadyDownload] = useState<{ url: string; filename: string } | null>(null);
   const [availableRegions, setAvailableRegions] = useState<any[]>([
     { key: "basin-alpha", name: "Demo JV Operations (Facility A-1 / Facility B-2)", segment: "Upstream", facility_count: 2 },
     { key: "hmd", name: "Basin Alpha Oil Complex (HMD)", segment: "Upstream", facility_count: 2 },
@@ -700,38 +702,74 @@ const Reports: React.FC = () => {
   };
 
   const handleDownloadMasterReport = async () => {
+    const normalizeApiPath = (rawUrl: string) => rawUrl.replace(/^\/api(?=\/)/, "");
     setMasterLoading(true);
+    setMasterReadyDownload(null);
+    setMasterJobStatusText(tr("Submitting Master Publication background job..."));
     try {
-      const resp = await api.post(
-        "/reports/master-report",
-        {
-          mode: masterMode,
-          region: masterRegion,
-          start_year: parseInt(masterStartYear, 10),
-          end_year: parseInt(masterEndYear, 10),
-          gwp_standard: masterGwp === "20yr" ? "AR5" : masterGwp,
-          language: masterLanguage,
-        },
-        { responseType: "blob" }
-      );
-      const blob = new Blob([resp.data], { type: "application/pdf" });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
       const cleanName = (masterMode === "national" ? "National" : masterRegion).replace(/[^a-zA-Z0-9]/g, "_");
       const langSuffix = `_${masterLanguage.toUpperCase()}`;
-      link.setAttribute(
-        "download",
-        `Demo Operator Co._${masterMode}_${cleanName}_Master_Report_${masterStartYear}_${masterEndYear}${langSuffix}.pdf`
-      );
+      const fallbackFilename = `Demo Operator Co._${masterMode}_${cleanName}_Master_Report_${masterStartYear}_${masterEndYear}${langSuffix}.pdf`;
+
+      const enqueueResp = await api.post("/reports/master-report", {
+        mode: masterMode,
+        region: masterRegion,
+        start_year: parseInt(masterStartYear, 10),
+        end_year: parseInt(masterEndYear, 10),
+        gwp_standard: masterGwp === "20yr" ? "AR5" : masterGwp,
+        language: masterLanguage,
+      });
+
+      const job = enqueueResp.data || {};
+      const statusUrl = normalizeApiPath(job.status_url || `/reports/master-report/jobs/${job.job_id}`);
+      let rawDownloadUrl: string = job.download_url || `/reports/master-report/jobs/${job.job_id}/download`;
+      let finalFilename: string = job.filename || fallbackFilename;
+
+      setMasterJobStatusText(tr("Compiling Master Publication PDF in background..."));
+      let completed = job.status === "completed";
+      for (let i = 0; i < 480 && !completed; i += 1) {
+        await new Promise((resolve) => setTimeout(resolve, 250));
+        const stResp = await api.get(statusUrl);
+        const stData = stResp.data || {};
+        if (stData.status === "failed") {
+          throw new Error(stData.error || tr("Master report background job failed."));
+        }
+        if (stData.status === "completed") {
+          completed = true;
+          if (stData.download_url) rawDownloadUrl = stData.download_url;
+          if (stData.filename) finalFilename = stData.filename;
+          break;
+        }
+      }
+      if (!completed) {
+        throw new Error(tr("Master report generation timed out waiting for background job."));
+      }
+
+      const apiDownloadPath = normalizeApiPath(rawDownloadUrl);
+      setMasterJobStatusText(tr("Downloading compiled PDF..."));
+      const fileResp = await api.get(apiDownloadPath, { responseType: "blob" });
+
+      const blob = new Blob([fileResp.data], { type: "application/pdf" });
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.setAttribute("download", finalFilename);
       document.body.appendChild(link);
       link.click();
       link.remove();
-      window.URL.revokeObjectURL(url);
+      window.URL.revokeObjectURL(blobUrl);
+
+      const publicDownloadHref = rawDownloadUrl.startsWith("/api/") ? rawDownloadUrl : `/api${apiDownloadPath}`;
+      setMasterReadyDownload({ url: publicDownloadHref, filename: finalFilename });
+      setMasterJobStatusText(tr("Master Publication PDF ready for download."));
       toast.success(tr("Executive Master Publication PDF generated & downloaded successfully!"));
     } catch (err: any) {
       console.error("Master report error", err);
-      toast.error(apiError(err, tr("Failed to generate Master Publication Report.")));
+      setMasterJobStatusText(null);
+      const msg = err?.response?.data?.error
+        ? apiError(err, tr("Failed to generate Master Publication Report."))
+        : err?.message || tr("Failed to generate Master Publication Report.");
+      toast.error(msg);
     } finally {
       setMasterLoading(false);
     }
@@ -955,9 +993,21 @@ const Reports: React.FC = () => {
 
         {/* Action Controls Footer */}
         <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-border/80">
-          <div className="flex items-center gap-2 text-2xs text-text-secondary">
+          <div className="flex items-center gap-2 text-2xs text-text-secondary flex-wrap">
             <span className="inline-block size-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span>{tr("Synchronous streaming with cryptographic SHA-256 tamper-evident fingerprint.")}</span>
+            <span>
+              {masterJobStatusText ||
+                tr("Background job compilation with status polling and cryptographic SHA-256 tamper-evident fingerprint.")}
+            </span>
+            {masterReadyDownload && (
+              <a
+                href={masterReadyDownload.url}
+                download={masterReadyDownload.filename}
+                className="font-semibold text-brand-600 underline hover:text-brand-700"
+              >
+                {tr("Download ready PDF")}
+              </a>
+            )}
           </div>
 
           <div className="flex items-center gap-2.5 flex-wrap">

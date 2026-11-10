@@ -29,13 +29,11 @@ from reportlab.pdfgen import canvas
 from services.master_report_data import aggregate_master_report_data
 from services.master_report_charts import (
     generate_production_chart,
-    generate_emissions_progression_chart,
-    generate_sangea_breakdown_chart,
+    generate_emissions_sangea_panel_chart,
     generate_flaring_decree_chart,
-    generate_intensities_chart,
-    generate_criteria_pollutants_chart,
+    generate_intensities_pollutants_panel_chart,
     generate_2030_glidepath_chart,
-    generate_jv_equity_chart,
+    generate_glidepath_jv_panel_chart,
     generate_regional_benchmark_chart,
     generate_ogmp_reconciliation_chart,
     generate_scope3_category_chart,
@@ -336,20 +334,21 @@ def _build_geology_and_ops_elements(data: Dict[str, Any], styles: Dict[str, Para
 def _build_chapter_with_chart(
     title: str,
     desc: str,
-    chart_path: str,
+    chart_path: Optional[str],
     table_headers: List[str],
     table_rows: List[List[str]],
     col_widths: List[float],
     styles: Dict[str, ParagraphStyle],
-    footnote: Optional[str] = None
+    footnote: Optional[str] = None,
+    img_height: float = 225,
 ) -> List[Any]:
-    """Helper to assemble an analytical chapter containing title, text, 300 DPI chart, and data table."""
+    """Helper to assemble an analytical chapter containing title, text, 150 DPI chart, and data table."""
     elements = []
     elements.append(Paragraph(title, styles["H1"]))
     elements.append(Paragraph(desc, styles["Body"]))
 
-    if os.path.exists(chart_path):
-        elements.append(Image(chart_path, width=520, height=230))
+    if chart_path and os.path.exists(chart_path):
+        elements.append(Image(chart_path, width=520, height=img_height))
         elements.append(Spacer(1, 6))
 
     if table_rows:
@@ -416,16 +415,22 @@ def _build_decarbonization_projects_elements(data: Dict[str, Any], styles: Dict[
     return elements
 
 
-def _build_glidepath_elements(data: Dict[str, Any], chart_path: str, styles: Dict[str, ParagraphStyle], lang: str = "en") -> List[Any]:
-    """Generates Chapter 7: 2030 Corporate Decarbonization Target Glidepath and milestone table."""
+def _build_glidepath_elements(
+    data: Dict[str, Any],
+    chart_path: Optional[str],
+    styles: Dict[str, ParagraphStyle],
+    lang: str = "en",
+    img_height: float = 165,
+) -> List[Any]:
+    """Generates Chapter 9: 2030 Corporate Decarbonization Target Glidepath and milestone table."""
     target_proj = data.get("target_projection", {})
     if not target_proj:
         return []
     elements = []
     elements.append(Paragraph(get_t("ch9_title", lang), styles["H1"]))
     elements.append(Paragraph(get_t("ch9_desc", lang), styles["Body"]))
-    if os.path.exists(chart_path):
-        elements.append(Image(chart_path, width=520, height=230))
+    if chart_path and os.path.exists(chart_path):
+        elements.append(Image(chart_path, width=520, height=img_height))
         elements.append(Spacer(1, 6))
 
     headers = TRANSLATIONS_FR["ch9_headers"] if str(lang).lower().startswith("fr") else TRANSLATIONS_EN["ch9_headers"]
@@ -459,16 +464,21 @@ def _build_glidepath_elements(data: Dict[str, Any], chart_path: str, styles: Dic
     return elements
 
 
-def _build_jv_equity_elements(data: Dict[str, Any], chart_path: str, styles: Dict[str, ParagraphStyle], lang: str = "en") -> List[Any]:
-    """Generates Chapter 8: Joint Venture Partner Equity Share Allocation and partner breakdown table."""
+def _build_jv_equity_elements(
+    data: Dict[str, Any],
+    chart_path: Optional[str],
+    styles: Dict[str, ParagraphStyle],
+    lang: str = "en",
+) -> List[Any]:
+    """Generates Chapter 11: Joint Venture Partner Equity Share Allocation and partner breakdown table."""
     jv_equity = data.get("jv_equity", {})
     if not jv_equity or not jv_equity.get("partners"):
         return []
     elements = []
     elements.append(Paragraph(get_t("ch11_title", lang), styles["H1"]))
     elements.append(Paragraph(get_t("ch11_desc", lang), styles["Body"]))
-    if os.path.exists(chart_path):
-        elements.append(Image(chart_path, width=520, height=230))
+    if chart_path and os.path.exists(chart_path):
+        elements.append(Image(chart_path, width=520, height=225))
         elements.append(Spacer(1, 6))
 
     raw_headers = TRANSLATIONS_FR["ch11_headers"] if str(lang).lower().startswith("fr") else TRANSLATIONS_EN["ch11_headers"]
@@ -1051,7 +1061,7 @@ def _assemble_document_story(
     ))
     elements.append(PageBreak())
 
-    # Chapter 2: Scope 1 & 2 Emissions
+    # Chapter 2: Scope 1 & 2 Emissions (paired 2-panel chart with Chapter 3 SANGEA attribution)
     em_rows = [
         [
             str(t["year"]),
@@ -1067,24 +1077,24 @@ def _assemble_document_story(
     elements.extend(_build_chapter_with_chart(
         get_t("ch2_title", lang),
         get_t("ch2_desc", lang),
-        charts["em"],
+        charts["em_sangea"],
         TRANSLATIONS_FR["ch2_headers"] if str(lang).lower().startswith("fr") else TRANSLATIONS_EN["ch2_headers"],
         em_rows,
         [45, 85, 80, 65, 60, 95, 90],
-        styles
+        styles,
+        img_height=165,
     ))
-    elements.append(PageBreak())
 
-    # Chapter 3: SANGEA Modules
+    # Chapter 3: SANGEA Modules (tabular companion to paired Figure 2/3 above)
     sangea_rows = [[str(t["year"]), f"{t['combustion_t']:,.0f}", f"{t['flaring_t']:,.0f}", f"{t['fugitives_t']:,.0f}", f"{t['venting_t']:,.0f}"] for t in timeline]
     elements.extend(_build_chapter_with_chart(
         get_t("ch3_title", lang),
         get_t("ch3_desc", lang),
-        charts["sangea"],
+        None,
         TRANSLATIONS_FR["ch3_headers"] if str(lang).lower().startswith("fr") else TRANSLATIONS_EN["ch3_headers"],
         sangea_rows,
         [60, 115, 115, 115, 115],
-        styles
+        styles,
     ))
     elements.append(PageBreak())
 
@@ -1121,16 +1131,17 @@ def _assemble_document_story(
     elements.extend(_build_ogmp_elements(data, charts["ogmp"], styles, lang))
     elements.append(PageBreak())
 
-    # Chapter 6: Operational Efficiency & Multi-Metric Intensities
+    # Chapter 6: Operational Efficiency & Multi-Metric Intensities (paired 2-panel chart with Ch 8 Pollutants)
     int_rows = [[str(t["year"]), f"{t['carbon_intensity_kg_boe']:.1f}", f"{t['methane_intensity_pct']:.3f}%", f"{t['ch4_mass_t']:,.0f}"] for t in timeline]
     elements.extend(_build_chapter_with_chart(
         get_t("ch6_title", lang),
         get_t("ch6_desc", lang),
-        charts["int"],
+        charts["int_poll"],
         TRANSLATIONS_FR["ch6_headers"] if str(lang).lower().startswith("fr") else TRANSLATIONS_EN["ch6_headers"],
         int_rows,
         [70, 160, 150, 140],
-        styles
+        styles,
+        img_height=165,
     ))
     elements.append(PageBreak())
 
@@ -1138,30 +1149,30 @@ def _assemble_document_story(
     elements.extend(_build_scope3_elements(data, charts["s3"], styles, lang))
     elements.append(PageBreak())
 
-    # Chapter 8: Criteria Pollutants Mass Discharge
+    # Chapter 8: Criteria Pollutants Mass Discharge (table paired with Fig. 6/8 above)
     poll_rows = [[str(t["year"]), f"{t['nox_t']:.1f}", f"{t['co_t']:.1f}", f"{t['so2_t']:.1f}", f"{t['voc_t']:.1f}"] for t in timeline]
     elements.extend(_build_chapter_with_chart(
         get_t("ch8_title", lang),
         get_t("ch8_desc", lang),
-        charts["poll"],
+        None,
         TRANSLATIONS_FR["ch8_headers"] if str(lang).lower().startswith("fr") else TRANSLATIONS_EN["ch8_headers"],
         poll_rows,
         [70, 110, 110, 110, 120],
         styles,
-        footnote=get_t("ch8_footnote", lang)
+        footnote=get_t("ch8_footnote", lang),
     ))
     elements.append(PageBreak())
 
-    # Chapter 9: 2030 Corporate Decarbonization Target Trajectory & Glidepath
-    elements.extend(_build_glidepath_elements(data, charts["glide"], styles, lang))
+    # Chapter 9: 2030 Corporate Decarbonization Target Trajectory & Glidepath (paired with Ch 11 JV Equity)
+    elements.extend(_build_glidepath_elements(data, charts["glide_jv"], styles, lang, img_height=charts.get("glide_jv_height", 165)))
     elements.append(PageBreak())
 
     # Chapter 10: EU CBAM Hydrocarbon Export Embeddings & Decarbonization Economics
     elements.extend(_build_cbam_macc_elements(data, charts["cbam"], styles, lang))
     elements.append(PageBreak())
 
-    # Chapter 11: Joint Venture Partner Equity Share Allocation
-    elements.extend(_build_jv_equity_elements(data, charts["jv"], styles, lang))
+    # Chapter 11: Joint Venture Partner Equity Share Allocation (tabular companion to paired Ch 9/11 figure)
+    elements.extend(_build_jv_equity_elements(data, None, styles, lang))
     elements.append(PageBreak())
 
     # Chapter 12: QA/QC Verification, Base Year Recalculations & Statutory Regimes
@@ -1236,15 +1247,17 @@ def generate_master_publication_pdf(
     styles = _build_styles()
 
     with tempfile.TemporaryDirectory() as tmp_dir:
+        jv_eq = data.get("jv_equity") or {}
+        has_jv_partners = bool(
+            isinstance(jv_eq, dict) and jv_eq.get("partners") and jv_eq.get("annual_equity_timeline")
+        )
         charts = {
             "prod": os.path.join(tmp_dir, "prod.png"),
-            "em": os.path.join(tmp_dir, "em.png"),
-            "sangea": os.path.join(tmp_dir, "sangea.png"),
+            "em_sangea": os.path.join(tmp_dir, "em_sangea.png"),
             "flare": os.path.join(tmp_dir, "flare.png"),
-            "int": os.path.join(tmp_dir, "int.png"),
-            "poll": os.path.join(tmp_dir, "poll.png"),
-            "glide": os.path.join(tmp_dir, "glide.png"),
-            "jv": os.path.join(tmp_dir, "jv.png"),
+            "int_poll": os.path.join(tmp_dir, "int_poll.png"),
+            "glide_jv": os.path.join(tmp_dir, "glide_jv.png"),
+            "glide_jv_height": 165 if has_jv_partners else 225,
             "bench": os.path.join(tmp_dir, "bench.png"),
             "ogmp": os.path.join(tmp_dir, "ogmp.png"),
             "s3": os.path.join(tmp_dir, "s3.png"),
@@ -1252,15 +1265,16 @@ def generate_master_publication_pdf(
         }
 
         generate_production_chart(years, [t["gross_gas_mmsm3"] for t in timeline], [t["liquid_mmbbl"] for t in timeline], charts["prod"], language=language)
-        generate_emissions_progression_chart(years, [t["scope1_mmt"] for t in timeline], [t["scope2_mmt"] for t in timeline], charts["em"], language=language)
-        generate_sangea_breakdown_chart(
+        generate_emissions_sangea_panel_chart(
             years,
+            [t["scope1_mmt"] for t in timeline],
+            [t["scope2_mmt"] for t in timeline],
             [t["combustion_t"] for t in timeline],
             [t["flaring_t"] for t in timeline],
             [t["fugitives_t"] for t in timeline],
             [t["venting_t"] for t in timeline],
-            charts["sangea"],
-            language=language
+            charts["em_sangea"],
+            language=language,
         )
         generate_flaring_decree_chart(
             years,
@@ -1272,18 +1286,21 @@ def generate_master_publication_pdf(
             non_routine_mmsm3=[t.get("non_routine_mmsm3", 0.0) for t in timeline],
             safety_mmsm3=[t.get("safety_mmsm3", 0.0) for t in timeline],
         )
-        generate_intensities_chart(years, [t["carbon_intensity_kg_boe"] for t in timeline], [t["methane_intensity_pct"] for t in timeline], charts["int"], language=language)
-        generate_criteria_pollutants_chart(
+        generate_intensities_pollutants_panel_chart(
             years,
+            [t["carbon_intensity_kg_boe"] for t in timeline],
+            [t["methane_intensity_pct"] for t in timeline],
             [t["nox_t"] for t in timeline],
             [t["co_t"] for t in timeline],
             [t["so2_t"] for t in timeline],
             [t["voc_t"] for t in timeline],
-            charts["poll"],
-            language=language
+            charts["int_poll"],
+            language=language,
         )
-        generate_2030_glidepath_chart(data["target_projection"], charts["glide"], language=language)
-        generate_jv_equity_chart(data["jv_equity"], charts["jv"], language=language)
+        if has_jv_partners:
+            generate_glidepath_jv_panel_chart(data["target_projection"], jv_eq, charts["glide_jv"], language=language)
+        else:
+            generate_2030_glidepath_chart(data["target_projection"], charts["glide_jv"], language=language)
         generate_ogmp_reconciliation_chart(data.get("ogmp", {}), charts["ogmp"], language=language)
         generate_scope3_category_chart(data.get("scope3", {}), charts["s3"], language=language)
         generate_cbam_embeddings_chart(data.get("cbam_macc", {}), charts["cbam"], language=language)

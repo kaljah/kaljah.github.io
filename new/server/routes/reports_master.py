@@ -1,33 +1,148 @@
 """
 Executive Master Report & Intelligence Studio Endpoints
-======================================================
+=====================================================
 Provides publication-grade reporting endpoints:
-1. POST /api/reports/master-report (streams 300 DPI executive PDF report)
-2. GET /api/reports/master-report/regions (available regions and assets)
-3. POST /api/reports/master-report/benchmark-excel (executive cross-basin benchmark workbook)
+1. POST /api/reports/master-report (enqueues background PDF generation job -> 202)
+2. GET  /api/reports/master-report/jobs/<job_id> (polls generation job status)
+3. GET  /api/reports/master-report/jobs/<job_id>/download (streams completed PDF)
+4. GET  /api/reports/master-report/regions (available regions and assets)
+5. POST /api/reports/master-report/benchmark-excel (executive cross-basin benchmark workbook)
 """
 
-import io
-import json
 import hashlib
+import io
+import os
+import threading
+import uuid
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any, Dict, List
 
-from flask import request, send_file, jsonify, current_app
 import openpyxl
-from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+from flask import current_app, jsonify, request, send_file
+from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 
 from extensions import db
 from models import Facility
 from routes.auth import login_required
-from routes.reports import reports_bp, _safe_excel_value
-from utils import get_current_user, get_allowed_facility_ids
+from routes.reports import _safe_excel_value, reports_bp
 from services.audit_chain import record_report_fingerprint
-from services.regional_profiles import list_available_regions, get_regional_profile
-from services.tenant_config import get_tenant_config
 from services.master_report_data import aggregate_master_report_data
 from services.master_report_engine import generate_master_publication_pdf
+from services.regional_profiles import get_regional_profile, list_available_regions
+from services.tenant_config import get_tenant_config
+from utils import get_allowed_facility_ids, get_current_user
+
+_MASTER_JOBS_LOCK = threading.Lock()
+_MASTER_JOBS: Dict[str, Dict[str, Any]] = {}
+_MASTER_JOB_SEMAPHORE = threading.Semaphore(2)
+_MAX_JOB_HISTORY = 100
+
+
+def get_master_jobs_dir() -> Path:
+    """Returns directory used to stage generated Master Report PDFs."""
+    custom = os.environ.get("MASTER_REPORT_JOBS_DIR", "").strip()
+    if custom:
+        jobs_dir = Path(custom)
+    else:
+        server_dir = Path(__file__).resolve().parent.parent
+        jobs_dir = server_dir / "instance" / "master_report_jobs"
+    jobs_dir.mkdir(parents=True, exist_ok=True)
+    return jobs_dir
+
+
+def clear_master_report_jobs() -> int:
+    """Clears tracked jobs and staged PDF files. Used by sandbox reset and tests."""
+    removed = 0
+    with _MASTER_JOBS_LOCK:
+        _MASTER_JOBS.clear()
+    jobs_dir = get_master_jobs_dir()
+    for pdf_file in jobs_dir.glob("*.pdf"):
+        try:
+            pdf_file.unlink()
+            removed += 1
+        except OSError:
+            pass
+    return removed
+
+
+def _prune_old_jobs_locked() -> None:
+    if len(_MASTER_JOBS) <= _MAX_JOB_HISTORY:
+        return
+    ordered = sorted(_MASTER_JOBS.items(), key=lambda kv: kv[1].get("created_at", ""))
+    for job_id, meta in ordered[: len(_MASTER_JOBS) - _MAX_JOB_HISTORY]:
+        if meta.get("status") in ("completed", "failed"):
+            pdf_path = meta.get("file_path")
+            if pdf_path and os.path.exists(pdf_path):
+                try:
+                    os.unlink(pdf_path)
+                except OSError:
+                    pass
+            _MASTER_JOBS.pop(job_id, None)
+
+
+def _run_master_report_job(
+    flask_app,
+    job_id: str,
+    mode: str,
+    region_key: Any,
+    start_year: int,
+    end_year: int,
+    gwp_standard: str,
+    allowed_ids: Any,
+    language: str,
+) -> None:
+    with _MASTER_JOB_SEMAPHORE:
+        with _MASTER_JOBS_LOCK:
+            if job_id not in _MASTER_JOBS:
+                return
+            _MASTER_JOBS[job_id]["status"] = "running"
+
+        try:
+            with flask_app.app_context():
+                try:
+                    pdf_buffer = generate_master_publication_pdf(
+                        mode=mode,
+                        region_key=region_key,
+                        start_year=start_year,
+                        end_year=end_year,
+                        gwp_standard=gwp_standard,
+                        allowed_facility_ids=allowed_ids,
+                        language=language,
+                    )
+                    pdf_bytes = pdf_buffer.getvalue()
+                    report_sha256 = getattr(pdf_buffer, "report_hash", None) or hashlib.sha256(pdf_bytes).hexdigest()
+                finally:
+                    db.session.remove()
+
+            jobs_dir = get_master_jobs_dir()
+            pdf_path = jobs_dir / f"{job_id}.pdf"
+            tmp_path = jobs_dir / f".tmp_{job_id}.pdf"
+            tmp_path.write_bytes(pdf_bytes)
+            os.replace(tmp_path, pdf_path)
+
+            with _MASTER_JOBS_LOCK:
+                if job_id in _MASTER_JOBS:
+                    _MASTER_JOBS[job_id].update({
+                        "status": "completed",
+                        "file_path": str(pdf_path),
+                        "sha256": report_sha256,
+                        "size_bytes": len(pdf_bytes),
+                        "generated_at": datetime.now(timezone.utc).isoformat(),
+                    })
+                    _prune_old_jobs_locked()
+        except Exception as exc:
+            try:
+                flask_app.logger.error(f"Error generating Master Report job {job_id}: {exc}", exc_info=True)
+            except Exception:
+                pass
+            with _MASTER_JOBS_LOCK:
+                if job_id in _MASTER_JOBS:
+                    _MASTER_JOBS[job_id].update({
+                        "status": "failed",
+                        "error": f"Failed to generate Master Publication Report: {str(exc)}",
+                    })
 
 
 @reports_bp.route("/master-report/regions", methods=["GET"])
@@ -116,7 +231,7 @@ def get_master_report_regions():
 @reports_bp.route("/master-report", methods=["POST"])
 @login_required
 def generate_master_report_endpoint():
-    """Generates and streams the publication-grade Master Report PDF."""
+    """Enqueues Master Report PDF generation as a background job and returns 202."""
     user = get_current_user()
     allowed_ids = get_allowed_facility_ids(user)
     payload = request.get_json() or {}
@@ -146,48 +261,143 @@ def generate_master_report_endpoint():
     if language not in ("en", "fr"):
         language = "en"
 
-    try:
-        pdf_buffer = generate_master_publication_pdf(
-            mode=mode,
-            region_key=region_key,
-            start_year=start_year,
-            end_year=end_year,
-            gwp_standard=gwp_standard,
-            allowed_facility_ids=allowed_ids,
-            language=language,
-        )
+    tenant = get_tenant_config()
+    org_prefix = tenant.get("organization_name", "Operator")
+    time_tag = f"{start_year}" if start_year == end_year else f"{start_year}_{end_year}"
+    clean_name = (region_key.capitalize() if region_key else "National").replace(" ", "_").replace("/", "_")
+    lang_tag = f"_{language.upper()}"
+    filename = f"{org_prefix}_{mode.capitalize()}_{clean_name}_Master_Report_{time_tag}{lang_tag}.pdf"
 
-        tenant = get_tenant_config()
-        org_prefix = tenant.get("organization_name", "Operator")
-        time_tag = f"{start_year}" if start_year == end_year else f"{start_year}_{end_year}"
-        clean_name = (region_key.capitalize() if region_key else "National").replace(" ", "_").replace("/", "_")
-        lang_tag = f"_{language.upper()}"
-        filename = f"{org_prefix}_{mode.capitalize()}_{clean_name}_Master_Report_{time_tag}{lang_tag}.pdf"
+    job_id = uuid.uuid4().hex
+    status_url = f"/api/reports/master-report/jobs/{job_id}"
+    download_url = f"/api/reports/master-report/jobs/{job_id}/download"
+    filters = {
+        "mode": mode,
+        "region": region_key,
+        "start_year": start_year,
+        "end_year": end_year,
+        "gwp_standard": gwp_standard,
+        "language": language,
+    }
 
-        report_sha256 = getattr(pdf_buffer, "report_hash", None) or hashlib.sha256(pdf_buffer.getvalue()).hexdigest()
-
-        resp = send_file(
-            pdf_buffer,
-            mimetype="application/pdf",
-            as_attachment=True,
-            download_name=filename,
-        )
-        resp.headers["X-Audit-Timestamp"] = datetime.now(timezone.utc).isoformat()
-        resp.headers["X-Report-SHA256"] = report_sha256
-
-        filters = {
-            "mode": mode,
-            "region": region_key,
-            "start_year": start_year,
-            "end_year": end_year,
-            "gwp_standard": gwp_standard,
-            "language": language,
+    with _MASTER_JOBS_LOCK:
+        _MASTER_JOBS[job_id] = {
+            "job_id": job_id,
+            "user_id": user.id,
+            "tenant_id": getattr(user, "tenant_id", None) or "default",
+            "status": "queued",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "filename": filename,
+            "filters": filters,
+            "status_url": status_url,
+            "download_url": download_url,
+            "file_path": None,
+            "sha256": None,
+            "size_bytes": None,
+            "generated_at": None,
+            "error": None,
         }
-        return record_report_fingerprint(resp, user, f"Master Publication Report ({mode})", filters, 1, report_sha256)
 
-    except Exception as e:
-        current_app.logger.error(f"Error generating Master Report: {e}", exc_info=True)
-        return jsonify({"error": f"Failed to generate Master Publication Report: {str(e)}"}), 500
+    flask_app = current_app._get_current_object()
+    worker = threading.Thread(
+        target=_run_master_report_job,
+        args=(
+            flask_app,
+            job_id,
+            mode,
+            region_key,
+            start_year,
+            end_year,
+            gwp_standard,
+            list(allowed_ids) if allowed_ids is not None else None,
+            language,
+        ),
+        daemon=True,
+        name=f"master-report-{job_id[:8]}",
+    )
+    worker.start()
+
+    return (
+        jsonify({
+            "job_id": job_id,
+            "status": "queued",
+            "status_url": status_url,
+            "download_url": download_url,
+            "filename": filename,
+        }),
+        202,
+    )
+
+
+@reports_bp.route("/master-report/jobs/<job_id>", methods=["GET"])
+@login_required
+def get_master_report_job_status(job_id: str):
+    """Returns current status and download metadata for a Master Report job."""
+    user = get_current_user()
+    caller_tenant = getattr(user, "tenant_id", None) or "default"
+
+    with _MASTER_JOBS_LOCK:
+        job = _MASTER_JOBS.get(job_id)
+        if not job:
+            return jsonify({"error": "Report job not found"}), 404
+        if job.get("tenant_id") != caller_tenant or job.get("user_id") != user.id:
+            return jsonify({"error": "Forbidden"}), 403
+        snapshot = {
+            "job_id": job["job_id"],
+            "status": job["status"],
+            "status_url": job["status_url"],
+            "download_url": job["download_url"] if job["status"] == "completed" else None,
+            "filename": job["filename"],
+            "sha256": job.get("sha256"),
+            "size_bytes": job.get("size_bytes"),
+            "generated_at": job.get("generated_at"),
+            "error": job.get("error"),
+        }
+    return jsonify(snapshot), 200
+
+
+@reports_bp.route("/master-report/jobs/<job_id>/download", methods=["GET"])
+@login_required
+def download_master_report_job(job_id: str):
+    """Downloads a completed Master Report PDF job."""
+    user = get_current_user()
+    caller_tenant = getattr(user, "tenant_id", None) or "default"
+
+    with _MASTER_JOBS_LOCK:
+        job = _MASTER_JOBS.get(job_id)
+        if not job:
+            return jsonify({"error": "Report job not found"}), 404
+        if job.get("tenant_id") != caller_tenant or job.get("user_id") != user.id:
+            return jsonify({"error": "Forbidden"}), 403
+        status = job["status"]
+        file_path = job.get("file_path")
+        filename = job["filename"]
+        report_sha256 = job.get("sha256")
+        filters = dict(job.get("filters") or {})
+        error_msg = job.get("error")
+        generated_at = job.get("generated_at")
+
+    if status in ("queued", "running"):
+        return jsonify({"status": status, "error": "Report generation still in progress"}), 409
+    if status == "failed":
+        return jsonify({"status": "failed", "error": error_msg or "Report generation failed"}), 500
+    if not file_path or not os.path.exists(file_path):
+        return jsonify({"error": "Generated PDF file no longer available"}), 404
+
+    with open(file_path, "rb") as fh:
+        pdf_bytes = fh.read()
+    report_sha256 = report_sha256 or hashlib.sha256(pdf_bytes).hexdigest()
+
+    resp = send_file(
+        io.BytesIO(pdf_bytes),
+        mimetype="application/pdf",
+        as_attachment=True,
+        download_name=filename,
+    )
+    resp.headers["X-Audit-Timestamp"] = generated_at or datetime.now(timezone.utc).isoformat()
+    resp.headers["X-Report-SHA256"] = report_sha256
+    mode = filters.get("mode", "regional")
+    return record_report_fingerprint(resp, user, f"Master Publication Report ({mode})", filters, 1, report_sha256)
 
 
 def _style_excel_header(ws, col_count: int, title: str, subtitle: str):
@@ -237,7 +447,7 @@ def export_benchmark_excel():
         "Scope 1+2 GHG (tCO2e)",
         "Carbon Intensity (kg CO2e/BOE)",
         "Flaring Intensity (% Gas)",
-        "Decree 21-330 Status (<= 1.00%)"
+        "Decree 21-330 Status (<= 1.00%)",
     ]
     tenant = get_tenant_config()
     org_name = tenant.get("organization_name", "Operator")

@@ -6,11 +6,31 @@ Excel benchmark exports, SHA-256 tamper-evident fingerprint headers, and authent
 """
 
 import io
+import time
 import pytest
 import openpyxl
 from app import app
 from extensions import db, limiter
 from models import User, Facility
+
+
+def _fetch_master_report_via_job(client, payload, timeout_s: float = 30.0):
+    """Enqueues a Master Report background job (202), polls status until completed, and downloads the PDF."""
+    post_res = client.post("/api/reports/master-report", json=payload)
+    assert post_res.status_code == 202, f"Expected 202 Accepted job enqueue, got {post_res.status_code}"
+    job = post_res.get_json()
+    assert job["job_id"]
+    deadline = time.perf_counter() + timeout_s
+    while time.perf_counter() < deadline:
+        st = client.get(job["status_url"])
+        assert st.status_code == 200
+        st_data = st.get_json()
+        if st_data["status"] == "completed":
+            dl = client.get(st_data["download_url"])
+            return dl
+        assert st_data["status"] != "failed", f"Master report job failed: {st_data}"
+        time.sleep(0.1)
+    raise AssertionError(f"Master report job {job['job_id']} did not finish within {timeout_s}s")
 
 
 @pytest.fixture
@@ -80,7 +100,7 @@ def test_get_master_report_regions(client, auth_headers):
 
 def test_post_master_report_national(client, auth_headers):
     """Verifies generation of Consolidated Demo Operator Co. Corporate Master Report PDF."""
-    res = client.post("/api/reports/master-report", json={
+    res = _fetch_master_report_via_job(client, {
         "mode": "national",
         "start_year": 2023,
         "end_year": 2025,
@@ -96,7 +116,7 @@ def test_post_master_report_national(client, auth_headers):
 
 def test_post_master_report_regional(client, auth_headers):
     """Verifies generation of Regional Asset Master Report PDF for Basin Alpha."""
-    res = client.post("/api/reports/master-report", json={
+    res = _fetch_master_report_via_job(client, {
         "mode": "regional",
         "region": "basin_alpha",
         "start_year": 2023,
@@ -111,7 +131,7 @@ def test_post_master_report_regional(client, auth_headers):
 
 def test_post_master_report_comparison(client, auth_headers):
     """Verifies generation of Multi-Region Cross-Basin Benchmark PDF."""
-    res = client.post("/api/reports/master-report", json={
+    res = _fetch_master_report_via_job(client, {
         "mode": "comparison",
         "start_year": 2023,
         "end_year": 2025,
@@ -142,7 +162,7 @@ def test_post_benchmark_excel(client, auth_headers):
 def test_post_master_report_french_localization(client, auth_headers):
     """Verifies generation of French-localized Master Report PDF with verified terminology."""
     import pypdfium2
-    res = client.post("/api/reports/master-report", json={
+    res = _fetch_master_report_via_job(client, {
         "mode": "national",
         "language": "fr",
         "start_year": 2023,
@@ -191,7 +211,7 @@ def test_post_master_report_basin_alpha_tripartite_jv_and_glidepath(client, auth
         db.session.commit()
 
     import pypdfium2
-    res = client.post("/api/reports/master-report", json={
+    res = _fetch_master_report_via_job(client, {
         "mode": "regional",
         "region": "basin_alpha",
         "start_year": 2023,
@@ -241,7 +261,7 @@ def test_unauthenticated_guard(client):
 def test_master_report_advanced_chapters_and_base_year_recalculations(client, auth_headers):
     """Verifies that the Master Report includes Scope 3, OGMP 2.0, EU CBAM, and Base Year Recalculation."""
     import pypdfium2
-    res = client.post("/api/reports/master-report", json={
+    res = _fetch_master_report_via_job(client, {
         "mode": "regional",
         "region": "basin_alpha",
         "start_year": 2021,
