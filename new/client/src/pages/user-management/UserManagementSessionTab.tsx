@@ -25,14 +25,14 @@ export const UserManagementSessionTab: React.FC<UserManagementSessionTabProps> =
   const [loading, setLoading] = useState<boolean>(true);
   const [saving, setSaving] = useState<boolean>(false);
   const [policy, setPolicy] = useState<SessionPolicy>({
-    idle_timeout_minutes: 30,
+    idle_timeout_minutes: 15,
     max_failed_logins: 5,
     nist_password_policy: "Enterprise Complexity Standard (min 10 chars, uppercase, lowercase, digits, symbols)",
     session_invalidation: "Cryptographic Session Versioning (sv)",
     total_users: 0,
     active_users: 0,
   });
-  const [selectedTimeout, setSelectedTimeout] = useState<number>(30);
+  const [selectedTimeout, setSelectedTimeout] = useState<number>(15);
   const [confirmRevokeOpen, setConfirmRevokeOpen] = useState<boolean>(false);
   const [confirmText, setConfirmText] = useState<string>("");
   const [revoking, setRevoking] = useState<boolean>(false);
@@ -47,7 +47,7 @@ export const UserManagementSessionTab: React.FC<UserManagementSessionTabProps> =
       const res = await api.get("/auth/sessions/policy");
       if (res.data) {
         setPolicy(res.data);
-        setSelectedTimeout(res.data.idle_timeout_minutes || 30);
+        setSelectedTimeout(res.data.idle_timeout_minutes || 15);
       }
     } catch (err: any) {
       console.error("Failed to load session policy:", err);

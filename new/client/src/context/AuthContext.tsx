@@ -14,7 +14,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 // Idle session timeout: the minutes IT sets in User Management (sent as idle_timeout_minutes by /auth/me
 // and sign-in), with a warning one minute before. The server applies the same timeout; while the user is
 // active without sending requests (reading a page) a keep-alive tells it so, at most once a minute.
-const DEFAULT_IDLE_TIMEOUT_MINUTES = 30;
+const DEFAULT_IDLE_TIMEOUT_MINUTES = 15;
 const IDLE_WARNING_LEAD_MS = 60 * 1000;
 const KEEPALIVE_INTERVAL_MS = 60 * 1000;
 

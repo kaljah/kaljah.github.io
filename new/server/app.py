@@ -170,11 +170,16 @@ def receive_after_commit(session):
     _wal_commit_counter += 1
     if _wal_commit_counter % _WAL_CHECKPOINT_INTERVAL == 0:
         try:
-            conn = db.engine.raw_connection()
-            driver_conn = getattr(conn, "driver_connection", getattr(conn, "connection", None))
-            if isinstance(driver_conn, sqlite3.Connection):
-                driver_conn.execute("PRAGMA wal_checkpoint(PASSIVE)")
-            conn.close()
+            from services.sqlite_lock import sqlite_write_lock
+
+            with sqlite_write_lock(db.engine):
+                conn = db.engine.raw_connection()
+                driver_conn = getattr(conn, "driver_connection", None)
+                if driver_conn is None:
+                    driver_conn = getattr(conn, "connection", None)
+                if isinstance(driver_conn, sqlite3.Connection):
+                    driver_conn.execute("PRAGMA wal_checkpoint(PASSIVE)")
+                conn.close()
         except Exception as _wal_err:
             app.logger.warning(f"WAL checkpoint failed: {_wal_err}")
 
@@ -262,6 +267,37 @@ def reject_malformed_query_parameters():
         from werkzeug.datastructures import ImmutableMultiDict
         request.args = ImmutableMultiDict(list(request.args.items(multi=True)) + [("facilityId", request.args["facility_id"])])
 
+
+
+@app.before_request
+def serialize_sqlite_writes():
+    """Serialize mutating HTTP requests on SQLite before the first DB query opens a read snapshot.
+
+    /api/auth/login runs CPU-heavy password hashing outside the lock and acquires
+    ``sqlite_write_lock`` strictly for its quick DB write/commit phase.
+    """
+    if request.method not in ("POST", "PUT", "PATCH", "DELETE"):
+        return None
+    if request.path.rstrip("/") == "/api/auth/login":
+        return None
+    from services.sqlite_lock import acquire_sqlite_write_lock
+
+    acquire_sqlite_write_lock(db.engine)
+    return None
+
+
+@app.teardown_request
+def release_sqlite_write_lock_on_teardown(exc=None):
+    from services.sqlite_lock import release_all_sqlite_write_locks
+
+    release_all_sqlite_write_locks()
+
+
+@app.teardown_appcontext
+def release_sqlite_write_lock_on_appcontext(exc=None):
+    from services.sqlite_lock import release_all_sqlite_write_locks
+
+    release_all_sqlite_write_locks()
 
 
 @app.before_request

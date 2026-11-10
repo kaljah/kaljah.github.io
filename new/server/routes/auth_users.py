@@ -329,15 +329,16 @@ def _limit_count(limit):
 def get_session_policy():
     """Retrieve operational session governance policies and statistics."""
     from models import SystemSetting
+    from services.session_policy import DEFAULT_IDLE_TIMEOUT_MINUTES
     import json
     row = db.session.get(SystemSetting, "session_timeout_minutes")
-    timeout = 30
+    timeout = DEFAULT_IDLE_TIMEOUT_MINUTES
     if row and row.value:
         try:
             val = json.loads(row.value) if isinstance(row.value, str) and (row.value.startswith('"') or row.value.isdigit()) else row.value
             timeout = int(val)
         except Exception:
-            timeout = 30
+            timeout = DEFAULT_IDLE_TIMEOUT_MINUTES
 
     from services.login_guard import get_login_account_limit
 
@@ -351,7 +352,7 @@ def get_session_policy():
 
     return jsonify({
         "idle_timeout_minutes": timeout,
-        # the per-account lockout really applied (LOGIN_ACCOUNT_LIMIT, "10 per 15 minutes"); it said 5
+        # Reflects the effective per-account lockout from LOGIN_ACCOUNT_LIMIT (default 5 per 15 minutes).
         "max_failed_logins": _limit_count(get_login_account_limit()),
         "nist_password_policy": "Enterprise Complexity Standard (min 10 chars, uppercase, lowercase, digits, symbols)",
         "password_policy": "Enterprise Complexity Standard (min 10 chars, uppercase, lowercase, digits, symbols)",

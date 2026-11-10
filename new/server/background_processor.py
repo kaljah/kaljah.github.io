@@ -28,21 +28,46 @@ _import_locks_guard = threading.Lock()
 _IMPORT_ADVISORY_BASE = 0x4748_0000
 
 
+class _CombinedImportLock:
+    def __init__(self, scope_lock, sqlite_lock_acquired: bool):
+        self._scope_lock = scope_lock
+        self._sqlite_lock_acquired = sqlite_lock_acquired
+
+    def release(self):
+        try:
+            if self._sqlite_lock_acquired:
+                from services.sqlite_lock import release_sqlite_write_lock
+
+                release_sqlite_write_lock()
+        finally:
+            self._scope_lock.release()
+
+
 def _hold_import_lock(session, scope):
     key = "3" if str(scope) == "3_eeio" else str(scope)
     with _import_locks_guard:
         lock = _import_locks.setdefault(key, threading.Lock())
     lock.acquire()
+    sqlite_acquired = False
     try:
-        if session.get_bind().dialect.name == "postgresql":
+        bind = session.get_bind()
+        if bind.dialect.name == "sqlite":
+            from services.sqlite_lock import acquire_sqlite_write_lock
+
+            sqlite_acquired = acquire_sqlite_write_lock(bind)
+        elif bind.dialect.name == "postgresql":
             from sqlalchemy import text
 
             n = sum(ord(c) for c in key)  # stable across processes (hash() is salted per process)
             session.execute(text("SELECT pg_advisory_xact_lock(:k)"), {"k": _IMPORT_ADVISORY_BASE + n})
     except Exception:
+        if sqlite_acquired:
+            from services.sqlite_lock import release_sqlite_write_lock
+
+            release_sqlite_write_lock()
         lock.release()
         raise
-    return lock
+    return _CombinedImportLock(lock, sqlite_acquired)
 
 UPLOAD_JOB_DIR = os.environ.get("UPLOAD_JOB_DIR") or os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "upload_jobs"

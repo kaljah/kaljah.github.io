@@ -360,18 +360,20 @@ def login():
             return jsonify({"error": "Account disabled"}), 403
 
         resolved_tenant = get_current_tenant_id(user)
+        user_id = user.id
+        user_sv = int(user.session_version or 0)
         session.clear()
         session.permanent = True
-        session["user_id"] = user.id
+        session["user_id"] = user_id
         session["tenant_id"] = resolved_tenant
-        session["sv"] = int(user.session_version or 0)  # BUG-114
+        session["sv"] = user_sv  # BUG-114
         session["last_seen"] = time.time()  # idle timeout (services.session_policy)
-        current_app.logger.debug(f"Session set for user_id={user.id}")
+        current_app.logger.debug(f"Session set for user_id={user_id}")
 
         user_defaults = get_user_operational_defaults(user)
 
         user_info = {
-            "id": user.id,
+            "id": user_id,
             "fullName": user.fullName,
             "email": user.email,
             "role": user.role,
@@ -391,25 +393,30 @@ def login():
             "idle_timeout_minutes": idle_timeout_minutes(),
         }
 
-        # Audit
-        try:
-            log_activity_and_notify(
-                action="LOGIN",
-                record_id=str(user.id),
-                user=user,
-                request=request,
-                entity="User",
-                details=f"User logged in: {user.email}",
-            )
-        except Exception as e:
-            current_app.logger.error(f"Audit Log Error on login: {e}")
+        # End the parallel read snapshot before acquiring the SQLite write lock so concurrent
+        # logins execute password hashing in parallel while DB writes serialize cleanly.
+        from services.sqlite_lock import sqlite_write_lock
 
-        # Set last as the commit's only row update: the queries above autoflushed it before the LOGIN audit
-        # row existed, so two sign-ins of one account took the user row and the audit-chain lock in opposite
-        # orders and PostgreSQL aborted one of them (deadlock, found 2026-10-16 by the concurrency test).
-        user.last_login = datetime.datetime.now(datetime.timezone.utc)
+        db.session.remove()
         try:
-            db.session.commit()
+            with sqlite_write_lock(db.engine):
+                db_user = db.session.get(User, user_id)
+                if db_user is not None:
+                    try:
+                        log_activity_and_notify(
+                            action="LOGIN",
+                            record_id=str(db_user.id),
+                            user=db_user,
+                            request=request,
+                            entity="User",
+                            details=f"User logged in: {db_user.email}",
+                        )
+                    except Exception as e:
+                        current_app.logger.error(f"Audit Log Error on login: {e}")
+
+                    # Set last_login as the commit's only user row update (prevents deadlocks under concurrency).
+                    db_user.last_login = datetime.datetime.now(datetime.timezone.utc)
+                    db.session.commit()
         except Exception as e:
             db.session.rollback()
             current_app.logger.warning(f"Login commit warning under concurrency: {e}")
