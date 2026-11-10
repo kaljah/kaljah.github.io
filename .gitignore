@@ -168,3 +168,6 @@ new/server/instance/chart_cache/
 tests/private_fixtures/
 **/private_fixtures/
 new/server/report_jobs/
+
+# Auto-generated master report PDFs
+new/server/instance/master_report_jobs/
