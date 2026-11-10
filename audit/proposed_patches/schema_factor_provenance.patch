@@ -1,0 +1,89 @@
+*** a/new/server/models.py
+--- b/new/server/models.py
+***************
+*** 184,189 ****
+--- 184,242 ----
+      created_at = db.Column(db.DateTime, default=datetime.utcnow)
+      updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+  
++ 
++ class FactorProvenanceRegistry(db.Model):
++     """Authoritative registry for emission factors, physical constants, and GWP standards.
++     Strictly complies with ISO 14064-1:2018 §9 and GHG Protocol Chapter 11.
++     """
++     __tablename__ = 'factor_provenance_registry'
++ 
++     id = db.Column(db.String(64), primary_key=True)  # e.g. 'PHY-012', 'FLR-001', 'SCP2-004'
++     factor_key = db.Column(db.String(128), nullable=False, index=True)
++     category = db.Column(db.String(64), nullable=False)  # 'physical_constant', 'emission_factor', 'gwp', etc.
++     parameter_name = db.Column(db.String(255), nullable=False)
++     value = db.Column(db.Numeric(18, 8), nullable=False)
++     unit = db.Column(db.String(64), nullable=False)
++     basis = db.Column(db.String(128), nullable=False)  # e.g. '60 F, 14.696 psia, 23.685 m3/kmol'
++     source_document = db.Column(db.String(255), nullable=False)  # e.g. 'API Compendium 2021'
++     edition_year = db.Column(db.String(32), nullable=False)      # e.g. '4th Edition (November 2021)'
++     table_or_equation_ref = db.Column(db.String(128), nullable=False)  # e.g. 'Section 3.4 / Table 3-7'
++     page_number = db.Column(db.String(32))                       # e.g. 'p. 3-8'
++     verbatim_citation = db.Column(db.Text, nullable=False)
++     is_user_overridable = db.Column(db.Boolean, default=True, nullable=False)
++     is_silent_default = db.Column(db.Boolean, default=False, nullable=False)
++     warning_flag = db.Column(db.String(32), default='NONE', nullable=False)
++     created_at = db.Column(db.DateTime, default=datetime.utcnow)
++     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
++ 
++     def to_dict(self):
++         return {
++             "id": self.id,
++             "factor_key": self.factor_key,
++             "parameter_name": self.parameter_name,
++             "value": float(self.value),
++             "unit": self.unit,
++             "basis": self.basis,
++             "source_document": self.source_document,
++             "edition_year": self.edition_year,
++             "table_or_equation_ref": self.table_or_equation_ref,
++             "page_number": self.page_number,
++             "is_user_overridable": self.is_user_overridable,
++             "is_silent_default": self.is_silent_default,
++             "warning_flag": self.warning_flag
++         }
++ 
++ 
++ class CalculationFactorLineage(db.Model):
++     """Immutable audit trail linking emission calculations to the exact factors consumed."""
++     __tablename__ = 'calculation_factor_lineage'
++ 
++     id = db.Column(db.Integer, primary_key=True)
++     calculation_id = db.Column(db.Integer, db.ForeignKey('emission_records.id', ondelete='CASCADE'), nullable=False, index=True)
++     factor_id = db.Column(db.String(64), db.ForeignKey('factor_provenance_registry.id'), nullable=False, index=True)
++     applied_value = db.Column(db.Numeric(18, 8), nullable=False)
++     applied_unit = db.Column(db.String(64), nullable=False)
++     was_user_override = db.Column(db.Boolean, default=False, nullable=False)
++     override_provenance_note = db.Column(db.Text)
++     warning_flag = db.Column(db.String(32), default='NONE', nullable=False)
++     recorded_at = db.Column(db.DateTime, default=datetime.utcnow)
++ 
+*** a/new/server/calculations/dispatcher.py
+--- b/new/server/calculations/dispatcher.py
+***************
+*** 142,147 ****
+--- 142,168 ----
+          res = engine.calculate(**clean_inputs)
++         
++         # Attach factor lineage and provenance audit trail
++         provenance_trail = []
++         has_silent_defaults = False
++         for f_id in getattr(engine, "consumed_factor_ids", []):
++             factor_meta = resolve_factor_provenance(f_id)
++             if factor_meta:
++                 if factor_meta.get("is_silent_default"):
++                     has_silent_defaults = True
++                 provenance_trail.append(factor_meta)
++                 
++         res["provenance_trail"] = {
++             "total_factors_consumed": len(provenance_trail),
++             "has_silent_defaults": has_silent_defaults,
++             "warning_level": "WARNING" if has_silent_defaults else "NONE",
++             "factors": provenance_trail
++         }
+          return res

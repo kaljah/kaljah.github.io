@@ -1,0 +1,20 @@
+[
+  {
+    "endpoint": "/api/reports/export",
+    "method": "GET",
+    "status": 500,
+    "condition": "unauthenticated basic request",
+    "data": {
+      "error": "Report export failed. Please try again or contact support."
+    }
+  },
+  {
+    "endpoint": "/api/reports/export",
+    "method": "GET",
+    "status": 500,
+    "condition": "authenticated GET",
+    "data": {
+      "error": "Report export failed. Please try again or contact support."
+    }
+  }
+]

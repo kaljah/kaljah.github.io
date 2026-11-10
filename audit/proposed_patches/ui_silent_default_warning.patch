@@ -1,0 +1,116 @@
+*** a/new/client/src/components/common/SilentDefaultBanner.tsx
+--- b/new/client/src/components/common/SilentDefaultBanner.tsx
+***************
+*** 0,0 ****
+--- 1,48 ----
++ import React, { useState } from 'react';
++ import { AlertTriangle, ExternalLink, HelpCircle } from 'lucide-react';
++ import { FactorLineageModal } from './FactorLineageModal';
++ 
++ interface FactorItem {
++   id: string;
++   name: string;
++   value: number;
++   unit: string;
++   source: string;
++   is_silent_default: boolean;
++   warning_flag: string;
++   message?: string;
++ }
++ 
++ interface SilentDefaultBannerProps {
++   factors: FactorItem[];
++   onOverrideRequested?: (factorId: string) => void;
++ }
++ 
++ export const SilentDefaultBanner: React.FC<SilentDefaultBannerProps> = ({ factors, onOverrideRequested }) => {
++   const [showModal, setShowModal] = useState(false);
++   const silentDefaults = factors.filter(f => f.is_silent_default);
++ 
++   if (silentDefaults.length === 0) return null;
++ 
++   return (
++     <>
++       <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3.5 mb-4 flex items-start gap-3 text-amber-200">
++         <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
++         <div className="flex-1 text-sm">
++           <span className="font-semibold text-amber-300">Methodology Notice: </span>
++           This calculation relies on {silentDefaults.length} unverified silent default assumption{silentDefaults.length > 1 ? 's' : ''} ({silentDefaults.map(f => `${f.name}: ${f.value} ${f.unit}`).join(', ')}).
++           <button
++             onClick={() => setShowModal(true)}
++             className="ml-2 inline-flex items-center gap-1 text-amber-300 underline hover:text-amber-100 font-medium"
++           >
++             Inspect Provenance & Override <ExternalLink className="w-3.5 h-3.5" />
++           </button>
++         </div>
++       </div>
++       {showModal && (
++         <FactorLineageModal factors={factors} onClose={() => setShowModal(false)} onOverride={onOverrideRequested} />
++       )}
++     </>
++   );
++ };
++ 
+*** a/new/client/src/components/common/FactorLineageModal.tsx
+--- b/new/client/src/components/common/FactorLineageModal.tsx
+***************
+*** 0,0 ****
+--- 1,62 ----
++ import React from 'react';
++ import { X, BookOpen, AlertCircle, CheckCircle2 } from 'lucide-react';
++ 
++ export const FactorLineageModal: React.FC<any> = ({ factors, onClose, onOverride }) => {
++   return (
++     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
++       <div className="bg-slate-900 border border-slate-700 rounded-xl max-w-2xl w-full max-h-[85vh] overflow-hidden flex flex-col shadow-2xl">
++         <div className="p-4 border-b border-slate-800 flex items-center justify-between">
++           <div className="flex items-center gap-2">
++             <BookOpen className="w-5 h-5 text-cyan-400" />
++             <h3 className="text-lg font-bold text-white">Calculation Factor Lineage & Provenance</h3>
++           </div>
++           <button onClick={onClose} className="text-slate-400 hover:text-white p-1 rounded-lg">
++             <X className="w-5 h-5" />
++           </button>
++         </div>
++         <div className="p-5 overflow-y-auto space-y-4">
++           <p className="text-sm text-slate-300">
++             Pursuant to ISO 14064-1:2018 §9, every numerical constant applied during emission evaluation is cataloged with statutory literature citations:
++           </p>
++           <div className="space-y-3">
++             {factors.map((f: any) => (
++               <div key={f.id} className={`p-4 rounded-lg border text-sm ${f.is_silent_default ? 'bg-amber-950/20 border-amber-600/40' : 'bg-slate-800/60 border-slate-700'}`}>
++                 <div className="flex items-center justify-between mb-1.5">
++                   <div className="flex items-center gap-2">
++                     {f.is_silent_default ? <AlertCircle className="w-4 h-4 text-amber-400" /> : <CheckCircle2 className="w-4 h-4 text-emerald-400" />}
++                     <span className="font-semibold text-white">{f.name}</span>
++                     <span className="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">{f.id}</span>
++                   </div>
++                   <span className="font-mono text-cyan-300 font-bold">{f.value} {f.unit}</span>
++                 </div>
++                 <div className="text-xs text-slate-400 space-y-1">
++                   <div><strong className="text-slate-300">Source:</strong> {f.source}</div>
++                   {f.message && <div className="text-amber-300/90 italic">{f.message}</div>}
++                 </div>
++                 {f.is_silent_default && (
++                   <div className="mt-3 pt-2 border-t border-slate-700/60 flex justify-end">
++                     <button
++                       onClick={() => onOverride?.(f.id)}
++                       className="text-xs bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 px-3 py-1 rounded font-medium border border-amber-500/40 transition-colors"
++                     >
++                       Provide Measured Facility Value
++                     </button>
++                   </div>
++                 )}
++               </div>
++             ))}
++           </div>
++         </div>
++         <div className="p-4 border-t border-slate-800 bg-slate-950 flex justify-end">
++           <button onClick={onClose} className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-sm font-medium">
++             Close Inspector
++           </button>
++         </div>
++       </div>
++     </div>
++   );
++ };

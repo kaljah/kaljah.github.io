@@ -1,0 +1,2408 @@
+{
+  "upstream": {
+    "workbook": "Upstream",
+    "sheets": {
+      "L1 and L2 Assets": {
+        "title": "L1 and L2 Assets",
+        "max_row": 251,
+        "max_column": 22,
+        "headers": [],
+        "formulas": [
+          {
+            "coord": "R3",
+            "formula": "=IF(SUM(M3:Q3)=0,\"\",SUM(M3:Q3))"
+          },
+          {
+            "coord": "R4",
+            "formula": "=IF(SUM(M4:Q4)=0,\"\",SUM(M4:Q4))"
+          },
+          {
+            "coord": "R5",
+            "formula": "=IF(SUM(M5:Q5)=0,\"\",SUM(M5:Q5))"
+          },
+          {
+            "coord": "R6",
+            "formula": "=IF(SUM(M6:Q6)=0,\"\",SUM(M6:Q6))"
+          },
+          {
+            "coord": "R7",
+            "formula": "=IF(SUM(M7:Q7)=0,\"\",SUM(M7:Q7))"
+          },
+          {
+            "coord": "R8",
+            "formula": "=IF(SUM(M8:Q8)=0,\"\",SUM(M8:Q8))"
+          },
+          {
+            "coord": "R9",
+            "formula": "=IF(SUM(M9:Q9)=0,\"\",SUM(M9:Q9))"
+          },
+          {
+            "coord": "R10",
+            "formula": "=IF(SUM(M10:Q10)=0,\"\",SUM(M10:Q10))"
+          },
+          {
+            "coord": "R11",
+            "formula": "=IF(SUM(M11:Q11)=0,\"\",SUM(M11:Q11))"
+          },
+          {
+            "coord": "R12",
+            "formula": "=IF(SUM(M12:Q12)=0,\"\",SUM(M12:Q12))"
+          },
+          {
+            "coord": "R13",
+            "formula": "=IF(SUM(M13:Q13)=0,\"\",SUM(M13:Q13))"
+          },
+          {
+            "coord": "R14",
+            "formula": "=IF(SUM(M14:Q14)=0,\"\",SUM(M14:Q14))"
+          },
+          {
+            "coord": "R15",
+            "formula": "=IF(SUM(M15:Q15)=0,\"\",SUM(M15:Q15))"
+          },
+          {
+            "coord": "R16",
+            "formula": "=IF(SUM(M16:Q16)=0,\"\",SUM(M16:Q16))"
+          },
+          {
+            "coord": "R17",
+            "formula": "=IF(SUM(M17:Q17)=0,\"\",SUM(M17:Q17))"
+          },
+          {
+            "coord": "R18",
+            "formula": "=IF(SUM(M18:Q18)=0,\"\",SUM(M18:Q18))"
+          },
+          {
+            "coord": "R19",
+            "formula": "=IF(SUM(M19:Q19)=0,\"\",SUM(M19:Q19))"
+          },
+          {
+            "coord": "R20",
+            "formula": "=IF(SUM(M20:Q20)=0,\"\",SUM(M20:Q20))"
+          },
+          {
+            "coord": "R21",
+            "formula": "=IF(SUM(M21:Q21)=0,\"\",SUM(M21:Q21))"
+          },
+          {
+            "coord": "R22",
+            "formula": "=IF(SUM(M22:Q22)=0,\"\",SUM(M22:Q22))"
+          },
+          {
+            "coord": "R23",
+            "formula": "=IF(SUM(M23:Q23)=0,\"\",SUM(M23:Q23))"
+          },
+          {
+            "coord": "R24",
+            "formula": "=IF(SUM(M24:Q24)=0,\"\",SUM(M24:Q24))"
+          },
+          {
+            "coord": "R25",
+            "formula": "=IF(SUM(M25:Q25)=0,\"\",SUM(M25:Q25))"
+          },
+          {
+            "coord": "R26",
+            "formula": "=IF(SUM(M26:Q26)=0,\"\",SUM(M26:Q26))"
+          },
+          {
+            "coord": "R27",
+            "formula": "=IF(SUM(M27:Q27)=0,\"\",SUM(M27:Q27))"
+          },
+          {
+            "coord": "R28",
+            "formula": "=IF(SUM(M28:Q28)=0,\"\",SUM(M28:Q28))"
+          },
+          {
+            "coord": "R29",
+            "formula": "=IF(SUM(M29:Q29)=0,\"\",SUM(M29:Q29))"
+          },
+          {
+            "coord": "R30",
+            "formula": "=IF(SUM(M30:Q30)=0,\"\",SUM(M30:Q30))"
+          },
+          {
+            "coord": "R31",
+            "formula": "=IF(SUM(M31:Q31)=0,\"\",SUM(M31:Q31))"
+          },
+          {
+            "coord": "R32",
+            "formula": "=IF(SUM(M32:Q32)=0,\"\",SUM(M32:Q32))"
+          }
+        ],
+        "dropdowns": [
+          {
+            "sqref": "C3:C251",
+            "type": "list",
+            "formula1": "\"Exploration, Abandoned wells, Production per region/basin: Onshore \u2013 Conventional, Production per region/basin: Onshore \u2013 Unconventional, Production Offshore, Gas Processing Unit,  Gathering and boosting facilities, Tank batteries\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "H3:H251",
+            "type": "list",
+            "formula1": "\"Yes, No\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "F3:F251",
+            "type": "decimal",
+            "formula1": "-90",
+            "formula2": "90",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "G3:G251",
+            "type": "decimal",
+            "formula1": "-180",
+            "formula2": "180",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "K3:K251",
+            "type": "list",
+            "formula1": "\"Working Interest, Financial Equity, Ownership equity, Operational equity, Production enhancement contract, Technical service contract, Production sharing agreement, Association contract agreement, Production-weighted working interest, Other\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "J3:J251",
+            "type": "decimal",
+            "formula1": "0",
+            "formula2": "1",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          }
+        ],
+        "sample_rows": [],
+        "header_rows": [
+          [
+            1,
+            [
+              [
+                12,
+                "L1 - Emissions reported for a venture at asset or country level"
+              ],
+              [
+                13,
+                "L2 - Emissions reported in consolidated, simplified sources categories"
+              ],
+              [
+                21,
+                "Comments on variation from prior year"
+              ],
+              [
+                22,
+                "Investments/divestments of facilities in the asset (Yes/No)"
+              ]
+            ]
+          ]
+        ],
+        "total_formulas": 97
+      },
+      "L3, L4 and L5 Assets": {
+        "title": "L3, L4 and L5 Assets",
+        "max_row": 254,
+        "max_column": 81,
+        "headers": [],
+        "formulas": [],
+        "dropdowns": [
+          {
+            "sqref": "C5:C254",
+            "type": "list",
+            "formula1": "\"Exploration, Abandoned wells, Production per region/basin: Onshore \u2013 Conventional, Production per region/basin: Onshore \u2013 Unconventional, Production Offshore, Gas Processing Unit,  Gathering and boosting facilities, Tank batteries\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "M5:M254 Q5:Q254 U5:U254 Y5:Y254 AC5:AC254 AG5:AG254 AK5:AK254 AO5:AO254 AS5:AS254 AW5:AW254 BA5:BA254 BE5:BE254 BI5:BI254 BM5:BM254 BQ5:BQ254",
+            "type": "list",
+            "formula1": "\"Level 3, Level 4\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "H5:H254",
+            "type": "list",
+            "formula1": "\"Yes, No\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "O5:O254 S5:S254 W5:W254 AA5:AA254 AE5:AE254 AI5:AI254 AM5:AM254 AQ5:AQ254 AU5:AU254 AY5:AY254 BC5:BC254 BG5:BG254 BK5:BK254 BO5:BO254 BS5:BS254",
+            "type": "list",
+            "formula1": "\"Measurement based emission factor, Detailed engineering calculations, Simulation tool, Continuous measurements, Others\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "G5:G254",
+            "type": "decimal",
+            "formula1": "-180",
+            "formula2": "180",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "F5:F254",
+            "type": "decimal",
+            "formula1": "-90",
+            "formula2": "90",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "K5:K254",
+            "type": "list",
+            "formula1": "\"Working Interest, Financial Equity, Ownership equity, Operational equity, Production enhancement contract, Technical service contract, Production sharing agreement, Association contract agreement, Production-weighted working interest, Other\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "J5:J254",
+            "type": "decimal",
+            "formula1": "0",
+            "formula2": "1",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          }
+        ],
+        "sample_rows": [],
+        "header_rows": [
+          [
+            1,
+            [
+              [
+                12,
+                "Combustion sources (incomplete combustion)"
+              ],
+              [
+                16,
+                "Flaring sources"
+              ],
+              [
+                24,
+                "Fugitive Component and Equipment Leaks"
+              ],
+              [
+                28,
+                "Venting Sources"
+              ]
+            ]
+          ]
+        ],
+        "total_formulas": 0
+      },
+      "List of Excluded Entities": {
+        "title": "List of Excluded Entities",
+        "max_row": 49,
+        "max_column": 14,
+        "headers": [],
+        "formulas": [],
+        "dropdowns": [
+          {
+            "sqref": "H4:H49 J4:J49 M4:M49",
+            "type": "list",
+            "formula1": "\"Yes, No\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "F4:F49",
+            "type": "decimal",
+            "formula1": "-90",
+            "formula2": "90",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "G4:G49",
+            "type": "decimal",
+            "formula1": "-180",
+            "formula2": "180",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "K4:K49",
+            "type": "decimal",
+            "formula1": "0",
+            "formula2": "1",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "C4:C49",
+            "type": "list",
+            "formula1": "\"Exploration, Abandoned wells, Production per region/basin: Onshore \u2013 Conventional, Production per region/basin: Onshore \u2013 Unconventional, Production Offshore, Gas Processing Unit,  Gathering and boosting facilities, Tank batteries\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "D4:D49",
+            "type": "list",
+            "formula1": "\"Reported by another OGMP 2.0 Member, Materiality Rule, Divested, Non-producing / Non-operational, No permission to report, Subsea tieback, Other\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          }
+        ],
+        "sample_rows": [],
+        "header_rows": [
+          [
+            3,
+            [
+              [
+                1,
+                "Asset/ Venture  Name"
+              ],
+              [
+                2,
+                "Asset id"
+              ],
+              [
+                3,
+                "Asset Type"
+              ],
+              [
+                4,
+                "Reason for exclusion"
+              ],
+              [
+                5,
+                "Country"
+              ],
+              [
+                6,
+                "Latitude"
+              ],
+              [
+                7,
+                "Longitude"
+              ],
+              [
+                8,
+                "Operated?"
+              ],
+              [
+                9,
+                "Operator"
+              ],
+              [
+                10,
+                "Reported by another OGMP 2.0 Member?"
+              ],
+              [
+                11,
+                "% Equity (Note- Ownership of emissions)"
+              ],
+              [
+                12,
+                "(Divested assets) Please indicate month/year when the asset was divested"
+              ],
+              [
+                13,
+                "(Divested assets) Was the asset divested to an OGMP2.0 member? (Y/N)"
+              ],
+              [
+                14,
+                "Comments"
+              ]
+            ]
+          ]
+        ],
+        "total_formulas": 0
+      },
+      "Change Log": {
+        "title": "Change Log",
+        "max_row": 1,
+        "max_column": 1,
+        "headers": [],
+        "formulas": [],
+        "dropdowns": [],
+        "sample_rows": [],
+        "header_rows": [],
+        "total_formulas": 0
+      },
+      "ListofCountries": {
+        "title": "ListofCountries",
+        "max_row": 194,
+        "max_column": 2,
+        "headers": [],
+        "formulas": [],
+        "dropdowns": [],
+        "sample_rows": [],
+        "header_rows": [],
+        "total_formulas": 0
+      },
+      "version": {
+        "title": "version",
+        "max_row": 1,
+        "max_column": 2,
+        "headers": [],
+        "formulas": [],
+        "dropdowns": [],
+        "sample_rows": [],
+        "header_rows": [],
+        "total_formulas": 0
+      }
+    }
+  },
+  "mid_downstream": {
+    "workbook": "Mid_Downstream",
+    "sheets": {
+      "LNG Liquefaction": {
+        "title": "LNG Liquefaction",
+        "max_row": 44,
+        "max_column": 18,
+        "headers": [],
+        "formulas": [],
+        "dropdowns": [
+          {
+            "sqref": "B7",
+            "type": "list",
+            "formula1": "\"Yes,No\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B3",
+            "type": "list",
+            "formula1": "\"LNG Liquefaction, Shipping, LNG Regasification, LNG Transport, UGS, Distribution Grid, Distribution-Compressors, Distribution LNG Satellite, Transmission Pipelines, Transmission Compressor Station, Transmission Stations, Transmission LNG Peak Shaving\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B6",
+            "type": "decimal",
+            "formula1": "-180",
+            "formula2": "180",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B5",
+            "type": "decimal",
+            "formula1": "-90",
+            "formula2": "90",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "J14:J41",
+            "type": "list",
+            "formula1": "\"Level 2, Level 3, Level 4\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "I33",
+            "type": "custom",
+            "formula1": "COUNTIF($I$10:$I1048569,\"\")=0",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": "Acceptable values:_x000a_MI: Missing Information_x000a_N/A: Not-Applicable, the source does not exist for the particular asset._x000a_Any value_x000a_If the numerical value is zero, please add a note explaining why there are no emissions from the_x000a_PLEASE DO NOT LEAVE EMPTY CELLS_x000a_",
+            "promptTitle": "Warning 1",
+            "error": "Please add a value on the cell above._x000a__x000a_Do not leave empty cells._x000a_",
+            "errorTitle": "Error 1"
+          },
+          {
+            "sqref": "K14:K41",
+            "type": "list",
+            "formula1": "\"Measurement based emission factor, Detailed engineering calculations, Simulation tool, Continuous measurements, Others\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B9",
+            "type": "decimal",
+            "formula1": "0",
+            "formula2": "1",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "J13",
+            "type": "list",
+            "formula1": "\"Level 1, Level 2, Level 3, Level 4\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          }
+        ],
+        "sample_rows": [],
+        "header_rows": [
+          [
+            10,
+            [
+              [
+                1,
+                "Description of the Asset"
+              ],
+              [
+                3,
+                "Activity Factors"
+              ],
+              [
+                5,
+                "Emission Factors"
+              ],
+              [
+                8,
+                "Levels 1, 2, 3, 4"
+              ]
+            ]
+          ]
+        ],
+        "total_formulas": 0
+      },
+      "LNG Regasification": {
+        "title": "LNG Regasification",
+        "max_row": 45,
+        "max_column": 18,
+        "headers": [],
+        "formulas": [],
+        "dropdowns": [
+          {
+            "sqref": "B7",
+            "type": "list",
+            "formula1": "\"Yes,No\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B3",
+            "type": "list",
+            "formula1": "\"LNG Liquefaction, Shipping, LNG Regasification, LNG Transport, UGS, Distribution Grid, Distribution-Compressors, Distribution LNG Satellite, Transmission Pipelines, Transmission Compressor Station, Transmission Stations, Transmission LNG Peak Shaving\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B6",
+            "type": "decimal",
+            "formula1": "-180",
+            "formula2": "180",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B5",
+            "type": "decimal",
+            "formula1": "-90",
+            "formula2": "90",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "I25",
+            "type": "custom",
+            "formula1": "COUNTIF($I$10:$I1048567,\"\")=0",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": "Acceptable values:_x000a_MI: Missing Information_x000a_N/A: Not-Applicable, the source does not exist for the particular asset._x000a_Any value_x000a_If the numerical value is zero, please add a note explaining why there are no emissions from the_x000a_PLEASE DO NOT LEAVE EMPTY CELLS_x000a_",
+            "promptTitle": "Warning 1",
+            "error": "Please add a value on the cell above._x000a__x000a_Do not leave empty cells._x000a_",
+            "errorTitle": "Error 1"
+          },
+          {
+            "sqref": "J14:J41",
+            "type": "list",
+            "formula1": "\"Level 2, Level 3, Level 4\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "I30:I33",
+            "type": "custom",
+            "formula1": "COUNTIF($I$10:$I1048566,\"\")=0",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": "Acceptable values:_x000a_MI: Missing Information_x000a_N/A: Not-Applicable, the source does not exist for the particular asset._x000a_Any value_x000a_If the numerical value is zero, please add a note explaining why there are no emissions from the_x000a_PLEASE DO NOT LEAVE EMPTY CELLS_x000a_",
+            "promptTitle": "Warning 1",
+            "error": "Please add a value on the cell above._x000a__x000a_Do not leave empty cells._x000a_",
+            "errorTitle": "Error 1"
+          },
+          {
+            "sqref": "K14:K41",
+            "type": "list",
+            "formula1": "\"Measurement based emission factor, Detailed engineering calculations, Simulation tool, Continuous measurements, Others\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B9",
+            "type": "decimal",
+            "formula1": "0",
+            "formula2": "1",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "J13",
+            "type": "list",
+            "formula1": "\"Level 1, Level 2, Level 3, Level 4\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          }
+        ],
+        "sample_rows": [],
+        "header_rows": [
+          [
+            10,
+            [
+              [
+                1,
+                "Description of the Asset"
+              ],
+              [
+                3,
+                "Activity Factors"
+              ],
+              [
+                5,
+                "Emission Factors"
+              ],
+              [
+                8,
+                "Levels 1, 2, 3, 4"
+              ]
+            ]
+          ]
+        ],
+        "total_formulas": 0
+      },
+      "Shipping": {
+        "title": "Shipping",
+        "max_row": 25,
+        "max_column": 18,
+        "headers": [],
+        "formulas": [],
+        "dropdowns": [
+          {
+            "sqref": "K14:K24",
+            "type": "list",
+            "formula1": "\"Measurement based emission factor, Detailed engineering calculations, Simulation tool, Continuous measurements, Others\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "J14:J24",
+            "type": "list",
+            "formula1": "\"Level 2, Level 3, Level 4\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "I18:I19",
+            "type": "custom",
+            "formula1": "COUNTIF($H$15:$H18,\"\")=0",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": "Acceptable values:_x000a_MI: Missing Information_x000a_N/A: Not-Applicable, the source does not exist for the particular asset._x000a_Any value_x000a_If the numerical value is zero, please add a note explaining why there are no emissions from the_x000a_PLEASE DO NOT LEAVE EMPTY CELLS_x000a_",
+            "promptTitle": "Warning 1",
+            "error": "Please add a value on the cell above._x000a__x000a_Do not leave empty cells._x000a_",
+            "errorTitle": "Error 1"
+          },
+          {
+            "sqref": "I21:I24",
+            "type": "custom",
+            "formula1": "COUNTIF($H$21:$H21,\"\")=0",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": "Acceptable values:_x000a_MI: Missing Information_x000a_N/A: Not-Applicable, the source does not exist for the particular asset._x000a_Any value_x000a_If the numerical value is zero, please add a note explaining why there are no emissions from the_x000a_PLEASE DO NOT LEAVE EMPTY CELLS_x000a_",
+            "promptTitle": "Warning 1",
+            "error": "Please add a value on the cell above._x000a__x000a_Do not leave empty cells._x000a_",
+            "errorTitle": "Error 1"
+          },
+          {
+            "sqref": "B9",
+            "type": "decimal",
+            "formula1": "0",
+            "formula2": "1",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "I16",
+            "type": "custom",
+            "formula1": "COUNTIF($H16:$H$16,\"\")=0",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": "Acceptable values:_x000a_MI: Missing Information_x000a_N/A: Not-Applicable, the source does not exist for the particular asset._x000a_Any value_x000a_If the numerical value is zero, please add a note explaining why there are no emissions from the_x000a_PLEASE DO NOT LEAVE EMPTY CELLS_x000a_",
+            "promptTitle": "Warning 1",
+            "error": "Please add a value on the cell above._x000a__x000a_Do not leave empty cells._x000a_",
+            "errorTitle": "Error 1"
+          },
+          {
+            "sqref": "B5",
+            "type": "decimal",
+            "formula1": "-90",
+            "formula2": "90",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B6",
+            "type": "decimal",
+            "formula1": "-180",
+            "formula2": "180",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B3",
+            "type": "list",
+            "formula1": "\"LNG Liquefaction, Shipping, LNG Regasification, LNG Transport, UGS, Distribution Grid, Distribution-Compressors, Distribution LNG Satellite, Transmission Pipelines, Transmission Compressor Station, Transmission Stations, Transmission LNG Peak Shaving\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B7",
+            "type": "list",
+            "formula1": "\"Yes,No\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "I17",
+            "type": "custom",
+            "formula1": "COUNTIF($I$10:$I13,\"\")=0",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": "Acceptable values:_x000a_MI: Missing Information_x000a_N/A: Not-Applicable, the source does not exist for the particular asset._x000a_Any value_x000a_If the numerical value is zero, please add a note explaining why there are no emissions from the_x000a_PLEASE DO NOT LEAVE EMPTY CELLS_x000a_",
+            "promptTitle": "Warning 1",
+            "error": "Please add a value on the cell above._x000a__x000a_Do not leave empty cells._x000a_",
+            "errorTitle": "Error 1"
+          },
+          {
+            "sqref": "J13",
+            "type": "list",
+            "formula1": "\"Level 1, Level 2, Level 3, Level 4\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          }
+        ],
+        "sample_rows": [],
+        "header_rows": [
+          [
+            10,
+            [
+              [
+                1,
+                "Description of the Asset"
+              ],
+              [
+                3,
+                "Activity Factors"
+              ],
+              [
+                5,
+                "Emission Factors"
+              ],
+              [
+                8,
+                "Levels 1, 2, 3, 4"
+              ]
+            ]
+          ]
+        ],
+        "total_formulas": 0
+      },
+      "LNG transport - truck or train": {
+        "title": "LNG transport - truck or train",
+        "max_row": 21,
+        "max_column": 18,
+        "headers": [],
+        "formulas": [],
+        "dropdowns": [
+          {
+            "sqref": "B7",
+            "type": "list",
+            "formula1": "\"Yes,No\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "I16",
+            "type": "custom",
+            "formula1": "COUNTIF($H16:$H$16,\"\")=0",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": "Acceptable values:_x000a_MI: Missing Information_x000a_N/A: Not-Applicable, the source does not exist for the particular asset._x000a_Any value_x000a_If the numerical value is zero, please add a note explaining why there are no emissions from the_x000a_PLEASE DO NOT LEAVE EMPTY CELLS_x000a_",
+            "promptTitle": "Warning 1",
+            "error": "Please add a value on the cell above._x000a__x000a_Do not leave empty cells._x000a_",
+            "errorTitle": "Error 1"
+          },
+          {
+            "sqref": "I20",
+            "type": "custom",
+            "formula1": "COUNTIF($H$20:$H20,\"\")=0",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": "Acceptable values:_x000a_MI: Missing Information_x000a_N/A: Not-Applicable, the source does not exist for the particular asset._x000a_Any value_x000a_If the numerical value is zero, please add a note explaining why there are no emissions from the_x000a_PLEASE DO NOT LEAVE EMPTY CELLS_x000a_",
+            "promptTitle": "Warning 1",
+            "error": "Please add a value on the cell above._x000a__x000a_Do not leave empty cells._x000a_",
+            "errorTitle": "Error 1"
+          },
+          {
+            "sqref": "I17:I18",
+            "type": "custom",
+            "formula1": "COUNTIF($H$15:$H17,\"\")=0",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": "Acceptable values:_x000a_MI: Missing Information_x000a_N/A: Not-Applicable, the source does not exist for the particular asset._x000a_Any value_x000a_If the numerical value is zero, please add a note explaining why there are no emissions from the_x000a_PLEASE DO NOT LEAVE EMPTY CELLS_x000a_",
+            "promptTitle": "Warning 1",
+            "error": "Please add a value on the cell above._x000a__x000a_Do not leave empty cells._x000a_",
+            "errorTitle": "Error 1"
+          },
+          {
+            "sqref": "J14:J20",
+            "type": "list",
+            "formula1": "\"Level 2, Level 3, Level 4\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "K14:K20",
+            "type": "list",
+            "formula1": "\"Measurement based emission factor, Detailed engineering calculations, Simulation tool, Continuous measurements, Others\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B3",
+            "type": "list",
+            "formula1": "\"LNG Liquefaction, Shipping, LNG Regasification, LNG Transport, UGS, Distribution Grid, Distribution-Compressors, Distribution LNG Satellite, Transmission Pipelines, Transmission Compressor Station, Transmission Stations, Transmission LNG Peak Shaving\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B6",
+            "type": "decimal",
+            "formula1": "-180",
+            "formula2": "180",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B5",
+            "type": "decimal",
+            "formula1": "-90",
+            "formula2": "90",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B9",
+            "type": "decimal",
+            "formula1": "0",
+            "formula2": "1",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "J13",
+            "type": "list",
+            "formula1": "\"Level 1, Level 2, Level 3, Level 4\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          }
+        ],
+        "sample_rows": [],
+        "header_rows": [
+          [
+            10,
+            [
+              [
+                1,
+                "Description of the Asset"
+              ],
+              [
+                3,
+                "Activity Factors"
+              ],
+              [
+                5,
+                "Emission Factors"
+              ],
+              [
+                8,
+                "Levels 1, 2, 3, 4"
+              ]
+            ]
+          ]
+        ],
+        "total_formulas": 0
+      },
+      "UGS": {
+        "title": "UGS",
+        "max_row": 63,
+        "max_column": 18,
+        "headers": [],
+        "formulas": [],
+        "dropdowns": [
+          {
+            "sqref": "B7",
+            "type": "list",
+            "formula1": "\"Yes,No\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "K15:K40 K42:K62",
+            "type": "list",
+            "formula1": "\"Measurement based emission factor, Detailed engineering calculations, Simulation tool, Continuous measurements, Others\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B3",
+            "type": "list",
+            "formula1": "\"LNG Liquefaction, Shipping, LNG Regasification, LNG Transport, UGS, Distribution Grid, Distribution-Compressors, Distribution LNG Satellite, Transmission Pipelines, Transmission Compressor Station, Transmission Stations, Transmission LNG Peak Shaving\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B6",
+            "type": "decimal",
+            "formula1": "-180",
+            "formula2": "180",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B5",
+            "type": "decimal",
+            "formula1": "-90",
+            "formula2": "90",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "J14:J62",
+            "type": "list",
+            "formula1": "\"Level 2, Level 3, Level 4\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B9",
+            "type": "decimal",
+            "formula1": "0",
+            "formula2": "1",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "J13",
+            "type": "list",
+            "formula1": "\"Level 1, Level 2, Level 3, Level 4\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          }
+        ],
+        "sample_rows": [],
+        "header_rows": [
+          [
+            10,
+            [
+              [
+                1,
+                "Description of the Asset"
+              ],
+              [
+                3,
+                "Activity Factors"
+              ],
+              [
+                5,
+                "Emission Factors"
+              ],
+              [
+                8,
+                "Levels 1, 2, 3, 4"
+              ]
+            ]
+          ]
+        ],
+        "total_formulas": 0
+      },
+      "Transmission - Pipelines": {
+        "title": "Transmission - Pipelines",
+        "max_row": 22,
+        "max_column": 18,
+        "headers": [],
+        "formulas": [],
+        "dropdowns": [
+          {
+            "sqref": "B7",
+            "type": "list",
+            "formula1": "\"Yes,No\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "J14:J21",
+            "type": "list",
+            "formula1": "\"Level 2, Level 3, Level 4\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "K14:K21",
+            "type": "list",
+            "formula1": "\"Measurement based emission factor, Detailed engineering calculations, Simulation tool, Continuous measurements, Others\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B3",
+            "type": "list",
+            "formula1": "\"LNG Liquefaction, Shipping, LNG Regasification, LNG Transport, UGS, Distribution Grid, Distribution-Compressors, Distribution LNG Satellite, Transmission Pipelines, Transmission Compressor Station, Transmission Stations, Transmission LNG Peak Shaving\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B6",
+            "type": "decimal",
+            "formula1": "-180",
+            "formula2": "180",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B5",
+            "type": "decimal",
+            "formula1": "-90",
+            "formula2": "90",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B9",
+            "type": "decimal",
+            "formula1": "0",
+            "formula2": "1",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "J13",
+            "type": "list",
+            "formula1": "\"Level 1, Level 2, Level 3, Level 4\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          }
+        ],
+        "sample_rows": [],
+        "header_rows": [
+          [
+            10,
+            [
+              [
+                1,
+                "Description of the Asset"
+              ],
+              [
+                3,
+                "Activity Factors"
+              ],
+              [
+                5,
+                "Emission Factors"
+              ],
+              [
+                8,
+                "Levels 1, 2, 3, 4"
+              ]
+            ]
+          ]
+        ],
+        "total_formulas": 0
+      },
+      "Transmission - Compressors": {
+        "title": "Transmission - Compressors",
+        "max_row": 40,
+        "max_column": 18,
+        "headers": [],
+        "formulas": [],
+        "dropdowns": [
+          {
+            "sqref": "B7",
+            "type": "list",
+            "formula1": "\"Yes,No\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B3",
+            "type": "list",
+            "formula1": "\"LNG Liquefaction, Shipping, LNG Regasification, LNG Transport, UGS, Distribution Grid, Distribution-Compressors, Distribution LNG Satellite, Transmission Pipelines, Transmission Compressor Station, Transmission Stations, Transmission LNG Peak Shaving\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B6",
+            "type": "decimal",
+            "formula1": "-180",
+            "formula2": "180",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B5",
+            "type": "decimal",
+            "formula1": "-90",
+            "formula2": "90",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "J14:J39",
+            "type": "list",
+            "formula1": "\"Level 2, Level 3, Level 4\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "K14:K39",
+            "type": "list",
+            "formula1": "\"Measurement based emission factor, Detailed engineering calculations, Simulation tool, Continuous measurements, Others\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B9",
+            "type": "decimal",
+            "formula1": "0",
+            "formula2": "1",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "J13",
+            "type": "list",
+            "formula1": "\"Level 1, Level 2, Level 3, Level 4\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          }
+        ],
+        "sample_rows": [],
+        "header_rows": [
+          [
+            10,
+            [
+              [
+                1,
+                "Description of the Asset"
+              ],
+              [
+                3,
+                "Activity Factors"
+              ],
+              [
+                5,
+                "Emission Factors"
+              ],
+              [
+                8,
+                "Levels 1, 2, 3, 4"
+              ]
+            ]
+          ]
+        ],
+        "total_formulas": 0
+      },
+      "Transmission - Stations": {
+        "title": "Transmission - Stations",
+        "max_row": 32,
+        "max_column": 18,
+        "headers": [],
+        "formulas": [],
+        "dropdowns": [
+          {
+            "sqref": "B7",
+            "type": "list",
+            "formula1": "\"Yes,No\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B3",
+            "type": "list",
+            "formula1": "\"LNG Liquefaction, Shipping, LNG Regasification, LNG Transport, UGS, Distribution Grid, Distribution-Compressors, Distribution LNG Satellite, Transmission Pipelines, Transmission Compressor Station, Transmission Stations, Transmission LNG Peak Shaving\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B6",
+            "type": "decimal",
+            "formula1": "-180",
+            "formula2": "180",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B5",
+            "type": "decimal",
+            "formula1": "-90",
+            "formula2": "90",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "J14:J31",
+            "type": "list",
+            "formula1": "\"Level 2, Level 3, Level 4\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "K14:K31",
+            "type": "list",
+            "formula1": "\"Measurement based emission factor, Detailed engineering calculations, Simulation tool, Continuous measurements, Others\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B9",
+            "type": "decimal",
+            "formula1": "0",
+            "formula2": "1",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "J13",
+            "type": "list",
+            "formula1": "\"Level 1, Level 2, Level 3, Level 4\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          }
+        ],
+        "sample_rows": [],
+        "header_rows": [
+          [
+            10,
+            [
+              [
+                1,
+                "Description of the Asset"
+              ],
+              [
+                3,
+                "Activity Factors"
+              ],
+              [
+                5,
+                "Emission Factors"
+              ],
+              [
+                8,
+                "Levels 1, 2, 3, 4"
+              ]
+            ]
+          ]
+        ],
+        "total_formulas": 0
+      },
+      "Transmission - LNG Peak shaving": {
+        "title": "Transmission - LNG Peak shaving",
+        "max_row": 37,
+        "max_column": 18,
+        "headers": [],
+        "formulas": [],
+        "dropdowns": [
+          {
+            "sqref": "B3",
+            "type": "list",
+            "formula1": "\"LNG Liquefaction, Shipping, LNG Regasification, LNG Transport, UGS, Distribution Grid, Distribution-Compressors, Distribution LNG Satellite, Transmission Pipelines, Transmission Compressor Station, Transmission Stations, Transmission LNG Peak Shaving\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B7",
+            "type": "list",
+            "formula1": "\"Yes,No\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B6",
+            "type": "decimal",
+            "formula1": "-180",
+            "formula2": "180",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B5",
+            "type": "decimal",
+            "formula1": "-90",
+            "formula2": "90",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "J14:J36",
+            "type": "list",
+            "formula1": "\"Level 2, Level 3, Level 4\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "K14:K36",
+            "type": "list",
+            "formula1": "\"Measurement based emission factor, Detailed engineering calculations, Simulation tool, Continuous measurements, Others\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B9",
+            "type": "decimal",
+            "formula1": "0",
+            "formula2": "1",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "J13",
+            "type": "list",
+            "formula1": "\"Level 1, Level 2, Level 3, Level 4\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          }
+        ],
+        "sample_rows": [],
+        "header_rows": [
+          [
+            10,
+            [
+              [
+                1,
+                "Description of the Asset"
+              ],
+              [
+                3,
+                "Activity Factors"
+              ],
+              [
+                5,
+                "Emission Factors"
+              ],
+              [
+                8,
+                "Levels 1, 2, 3, 4"
+              ]
+            ]
+          ]
+        ],
+        "total_formulas": 0
+      },
+      "Distribution - Compressor": {
+        "title": "Distribution - Compressor",
+        "max_row": 27,
+        "max_column": 18,
+        "headers": [],
+        "formulas": [],
+        "dropdowns": [
+          {
+            "sqref": "B7",
+            "type": "list",
+            "formula1": "\"Yes,No\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B3",
+            "type": "list",
+            "formula1": "\"LNG Liquefaction, Shipping, LNG Regasification, LNG Transport, UGS, Distribution Grid, Distribution-Compressors, Distribution LNG Satellite, Transmission Pipelines, Transmission Compressor Station, Transmission Stations, Transmission LNG Peak Shaving\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B5",
+            "type": "decimal",
+            "formula1": "-90",
+            "formula2": "90",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B6",
+            "type": "decimal",
+            "formula1": "-180",
+            "formula2": "180",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "J14:J26",
+            "type": "list",
+            "formula1": "\"Level 2, Level 3, Level 4\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "K14:K26",
+            "type": "list",
+            "formula1": "\"Measurement based emission factor, Detailed engineering calculations, Simulation tool, Continuous measurements, Others\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B9",
+            "type": "decimal",
+            "formula1": "0",
+            "formula2": "1",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "J13",
+            "type": "list",
+            "formula1": "\"Level 1, Level 2, Level 3, Level 4\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          }
+        ],
+        "sample_rows": [],
+        "header_rows": [
+          [
+            10,
+            [
+              [
+                1,
+                "Description of the Asset"
+              ],
+              [
+                3,
+                "Activity Factors"
+              ],
+              [
+                5,
+                "Emission Factors"
+              ],
+              [
+                8,
+                "Levels 1, 2, 3, 4"
+              ]
+            ]
+          ]
+        ],
+        "total_formulas": 0
+      },
+      "Distribution - Grid": {
+        "title": "Distribution - Grid",
+        "max_row": 38,
+        "max_column": 19,
+        "headers": [],
+        "formulas": [],
+        "dropdowns": [
+          {
+            "sqref": "K14:K37",
+            "type": "list",
+            "formula1": "\"Level 2, Level 3, Level 4\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "J25",
+            "type": "custom",
+            "formula1": "COUNTIF($I$15:$I25,\"\")=0",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": "Acceptable values:_x000a_MI: Missing Information_x000a_N/A: Not-Applicable, the source does not exist for the particular asset._x000a_Any value_x000a_If the numerical value is zero, please add a note explaining why there are no emissions from the_x000a_PLEASE DO NOT LEAVE EMPTY CELLS_x000a_",
+            "promptTitle": "Warning 1",
+            "error": "Please add a value on the cell above._x000a__x000a_Do not leave empty cells._x000a_",
+            "errorTitle": "Error 1"
+          },
+          {
+            "sqref": "B7",
+            "type": "list",
+            "formula1": "\"Yes,No\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "L15:L22 L24:L31 L33:L37",
+            "type": "list",
+            "formula1": "\"Measurement based emission factor, Detailed engineering calculations, Simulation tool, Continuous measurements, Others\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B3",
+            "type": "list",
+            "formula1": "\"LNG Liquefaction, Shipping, LNG Regasification, LNG Transport, UGS, Distribution Grid, Distribution-Compressors, Distribution LNG Satellite, Transmission Pipelines, Transmission Compressor Station, Transmission Stations, Transmission LNG Peak Shaving\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B6",
+            "type": "decimal",
+            "formula1": "-180",
+            "formula2": "180",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B5",
+            "type": "decimal",
+            "formula1": "-90",
+            "formula2": "90",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B9",
+            "type": "decimal",
+            "formula1": "0",
+            "formula2": "1",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "K13",
+            "type": "list",
+            "formula1": "\"Level 1, Level 2, Level 3, Level 4\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          }
+        ],
+        "sample_rows": [],
+        "header_rows": [
+          [
+            10,
+            [
+              [
+                1,
+                "Description of the Asset"
+              ],
+              [
+                3,
+                "Activity Factors"
+              ],
+              [
+                6,
+                "Emission Factors"
+              ],
+              [
+                9,
+                "Levels 1, 2, 3, 4"
+              ]
+            ]
+          ]
+        ],
+        "total_formulas": 0
+      },
+      "Distribution - LNG Satellite": {
+        "title": "Distribution - LNG Satellite",
+        "max_row": 20,
+        "max_column": 18,
+        "headers": [],
+        "formulas": [],
+        "dropdowns": [
+          {
+            "sqref": "B7",
+            "type": "list",
+            "formula1": "\"Yes,No\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "J14:J19",
+            "type": "list",
+            "formula1": "\"Level 2, Level 3, Level 4\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "K14:K19",
+            "type": "list",
+            "formula1": "\"Measurement based emission factor, Detailed engineering calculations, Simulation tool, Continuous measurements, Others\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B3",
+            "type": "list",
+            "formula1": "\"LNG Liquefaction, Shipping, LNG Regasification, LNG Transport, UGS, Distribution Grid, Distribution-Compressors, Distribution LNG Satellite, Transmission Pipelines, Transmission Compressor Station, Transmission Stations, Transmission LNG Peak Shaving\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B6",
+            "type": "decimal",
+            "formula1": "-180",
+            "formula2": "180",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B5",
+            "type": "decimal",
+            "formula1": "-90",
+            "formula2": "90",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "B9",
+            "type": "decimal",
+            "formula1": "0",
+            "formula2": "1",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "J13",
+            "type": "list",
+            "formula1": "\"Level 1, Level 2, Level 3, Level 4\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          }
+        ],
+        "sample_rows": [],
+        "header_rows": [
+          [
+            10,
+            [
+              [
+                1,
+                "Description of the Asset"
+              ],
+              [
+                3,
+                "Activity Factors"
+              ],
+              [
+                5,
+                "Emission Factors"
+              ],
+              [
+                8,
+                "Levels 1, 2, 3, 4"
+              ]
+            ]
+          ]
+        ],
+        "total_formulas": 0
+      },
+      "List of Excluded Entities": {
+        "title": "List of Excluded Entities",
+        "max_row": 49,
+        "max_column": 14,
+        "headers": [],
+        "formulas": [],
+        "dropdowns": [
+          {
+            "sqref": "H4:H49 J4:J49 M4:M49",
+            "type": "list",
+            "formula1": "\"Yes,No\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "G4:G49",
+            "type": "decimal",
+            "formula1": "-180",
+            "formula2": "180",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "F4:F49",
+            "type": "decimal",
+            "formula1": "-90",
+            "formula2": "90",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "K4:K49",
+            "type": "decimal",
+            "formula1": "0",
+            "formula2": "1",
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "C4:C49",
+            "type": "list",
+            "formula1": "\"LNG Liquefaction, Shipping, LNG Regasification, LNG Transport, UGS, Distribution Grid, Distribution-Compressors, Distribution LNG Satellite, Transmission Pipelines, Transmission Compressor Station, Transmission Stations, Transmission LNG Peak Shaving\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          },
+          {
+            "sqref": "D4:D49",
+            "type": "list",
+            "formula1": "\"Reported by another OGMP 2.0 Member, Materiality Rule, Divested, Non-producing / Non-operational, No permission to report, Subsea tieback, Other\"",
+            "formula2": null,
+            "allow_blank": false,
+            "showDropDown": false,
+            "prompt": null,
+            "promptTitle": null,
+            "error": null,
+            "errorTitle": null
+          }
+        ],
+        "sample_rows": [],
+        "header_rows": [
+          [
+            3,
+            [
+              [
+                1,
+                "Asset/ Venture  Name"
+              ],
+              [
+                2,
+                "Asset id"
+              ],
+              [
+                3,
+                "Asset Type"
+              ],
+              [
+                4,
+                "Reason for exclusion"
+              ],
+              [
+                5,
+                "Country"
+              ],
+              [
+                6,
+                "Latitude"
+              ],
+              [
+                7,
+                "Longitude"
+              ],
+              [
+                8,
+                "Operated?"
+              ],
+              [
+                9,
+                "Operator"
+              ],
+              [
+                10,
+                "Reported by another OGMP 2.0 Member?"
+              ],
+              [
+                11,
+                "% Equity (Note- Ownership of emissions)"
+              ],
+              [
+                12,
+                "(Divested assets) Please indicate month/year when the asset was divested"
+              ],
+              [
+                13,
+                "(Divested assets) Was the asset divested to an OGMP2.0 member? (Y/N)"
+              ],
+              [
+                14,
+                "Comments"
+              ]
+            ]
+          ]
+        ],
+        "total_formulas": 0
+      },
+      "ListofCountries": {
+        "title": "ListofCountries",
+        "max_row": 194,
+        "max_column": 2,
+        "headers": [],
+        "formulas": [],
+        "dropdowns": [],
+        "sample_rows": [],
+        "header_rows": [],
+        "total_formulas": 0
+      },
+      "version": {
+        "title": "version",
+        "max_row": 1,
+        "max_column": 2,
+        "headers": [],
+        "formulas": [],
+        "dropdowns": [],
+        "sample_rows": [],
+        "header_rows": [],
+        "total_formulas": 0
+      }
+    }
+  }
+}

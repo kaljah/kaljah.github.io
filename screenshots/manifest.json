@@ -1,0 +1,298 @@
+[
+  {
+    "id": "01_login",
+    "title": "Login Page",
+    "url": "http://127.0.0.1:5173/login",
+    "auth": "none",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\01_login.png",
+    "success": true
+  },
+  {
+    "id": "02_dashboard",
+    "title": "Executive GHG Dashboard",
+    "url": "http://127.0.0.1:5173/",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\02_dashboard.png",
+    "success": true
+  },
+  {
+    "id": "03_carbon_intensity_operational",
+    "title": "Carbon Intensity - Operational Emissions",
+    "url": "http://127.0.0.1:5173/carbon-intensity",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\03_carbon_intensity_operational.png",
+    "success": true
+  },
+  {
+    "id": "04_carbon_intensity_cbam",
+    "title": "Carbon Intensity - CBAM Embedded Emissions",
+    "url": "http://127.0.0.1:5173/carbon-intensity",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\04_carbon_intensity_cbam.png",
+    "success": true
+  },
+  {
+    "id": "05_methane_intensity_loss_rate",
+    "title": "Methane Intensity - Loss Rate (%)",
+    "url": "http://127.0.0.1:5173/methane-intensity",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\05_methane_intensity_loss_rate.png",
+    "success": true
+  },
+  {
+    "id": "06_methane_intensity_intensity",
+    "title": "Methane Intensity - CH4/Hydrocarbon Intensity",
+    "url": "http://127.0.0.1:5173/methane-intensity",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\06_methane_intensity_intensity.png",
+    "success": true
+  },
+  {
+    "id": "07_methane_intensity_total_ch4",
+    "title": "Methane Intensity - Total CH4 (t)",
+    "url": "http://127.0.0.1:5173/methane-intensity",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\07_methane_intensity_total_ch4.png",
+    "success": true
+  },
+  {
+    "id": "08_methane_intensity_flaring",
+    "title": "Methane Intensity - Flaring & Venting Efficiency",
+    "url": "http://127.0.0.1:5173/methane-intensity",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\08_methane_intensity_flaring.png",
+    "success": true
+  },
+  {
+    "id": "09_sbti_dashboard",
+    "title": "SBTi & Net-Zero Dashboard",
+    "url": "http://127.0.0.1:5173/sbti",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\09_sbti_dashboard.png",
+    "success": true
+  },
+  {
+    "id": "10_methane_explorer_map",
+    "title": "Methane Explorer GIS Emissions Map",
+    "url": "http://127.0.0.1:5173/methane-explorer",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\10_methane_explorer_map.png",
+    "success": true
+  },
+  {
+    "id": "11_emissions_scope_selection",
+    "title": "Emissions Calculations - Scope Selection",
+    "url": "http://127.0.0.1:5173/emissions",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\11_emissions_scope_selection.png",
+    "success": true
+  },
+  {
+    "id": "12_emissions_scope1_form",
+    "title": "Emissions Calculations - Scope 1 Direct Emissions",
+    "url": "http://127.0.0.1:5173/emissions?scope=1",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\12_emissions_scope1_form.png",
+    "success": true
+  },
+  {
+    "id": "13_emissions_scope2_form",
+    "title": "Emissions Calculations - Scope 2 Indirect Energy",
+    "url": "http://127.0.0.1:5173/emissions?scope=2",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\13_emissions_scope2_form.png",
+    "success": true
+  },
+  {
+    "id": "14_emissions_scope3_form",
+    "title": "Emissions Calculations - Scope 3 Value Chain",
+    "url": "http://127.0.0.1:5173/emissions?scope=3",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\14_emissions_scope3_form.png",
+    "success": true
+  },
+  {
+    "id": "15_manage_data_pending_review",
+    "title": "Manage Data - Pending Review",
+    "url": "http://127.0.0.1:5173/manage-data?tab=pending",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\15_manage_data_pending_review.png",
+    "success": true
+  },
+  {
+    "id": "16_manage_data_factors",
+    "title": "Manage Data - Emission Factors",
+    "url": "http://127.0.0.1:5173/manage-data?tab=factors",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\16_manage_data_factors.png",
+    "success": true
+  },
+  {
+    "id": "17_manage_data_regions",
+    "title": "Manage Data - Facilities & Regions",
+    "url": "http://127.0.0.1:5173/manage-data?tab=facilities",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\17_manage_data_regions.png",
+    "success": true
+  },
+  {
+    "id": "18_manage_data_production",
+    "title": "Manage Data - Production Data",
+    "url": "http://127.0.0.1:5173/manage-data?tab=production",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\18_manage_data_production.png",
+    "success": true
+  },
+  {
+    "id": "19_manage_data_sources",
+    "title": "Manage Data - Emission Sources",
+    "url": "http://127.0.0.1:5173/manage-data?tab=sources",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\19_manage_data_sources.png",
+    "success": true
+  },
+  {
+    "id": "20_manage_data_goals",
+    "title": "Manage Data - Emission Goals & Base Years",
+    "url": "http://127.0.0.1:5173/manage-data?tab=goals",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\20_manage_data_goals.png",
+    "success": true
+  },
+  {
+    "id": "21_manage_data_mitigation",
+    "title": "Manage Data - Mitigation Projects",
+    "url": "http://127.0.0.1:5173/manage-data?tab=mitigation",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\21_manage_data_mitigation.png",
+    "success": true
+  },
+  {
+    "id": "22_manage_data_ogmp_surveys",
+    "title": "Manage Data - OGMP 2.0 Surveys",
+    "url": "http://127.0.0.1:5173/manage-data?tab=ogmp",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\22_manage_data_ogmp_surveys.png",
+    "success": true
+  },
+  {
+    "id": "23_manage_data_ldar",
+    "title": "Manage Data - LDAR & Fugitives",
+    "url": "http://127.0.0.1:5173/manage-data?tab=ldar",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\23_manage_data_ldar.png",
+    "success": true
+  },
+  {
+    "id": "24_manage_data_cbam",
+    "title": "Manage Data - CBAM Products",
+    "url": "http://127.0.0.1:5173/manage-data?tab=cbam",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\24_manage_data_cbam.png",
+    "success": true
+  },
+  {
+    "id": "25_reference_data",
+    "title": "Reference Data - Factor Compendium",
+    "url": "http://127.0.0.1:5173/reference-data",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\25_reference_data.png",
+    "success": true
+  },
+  {
+    "id": "26_reports_studio",
+    "title": "Reports & Document Generation Studio",
+    "url": "http://127.0.0.1:5173/reports",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\26_reports_studio.png",
+    "success": true
+  },
+  {
+    "id": "27_uncertainty_assessment",
+    "title": "Uncertainty Assessment & Sensitivity Analysis",
+    "url": "http://127.0.0.1:5173/uncertainty",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\27_uncertainty_assessment.png",
+    "success": true
+  },
+  {
+    "id": "28_qa_dashboard_queue",
+    "title": "QA/QC & Diagnostics - Anomaly Queue",
+    "url": "http://127.0.0.1:5173/qa-dashboard",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\28_qa_dashboard_queue.png",
+    "success": true
+  },
+  {
+    "id": "29_qa_dashboard_diagnostics",
+    "title": "QA/QC & Diagnostics - System Diagnostics",
+    "url": "http://127.0.0.1:5173/qa-dashboard",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\29_qa_dashboard_diagnostics.png",
+    "success": true
+  },
+  {
+    "id": "30_qa_dashboard_uncertainty",
+    "title": "QA/QC & Diagnostics - Uncertainty & Tolerances",
+    "url": "http://127.0.0.1:5173/qa-dashboard",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\30_qa_dashboard_uncertainty.png",
+    "success": true
+  },
+  {
+    "id": "31_audit_trail",
+    "title": "Cryptographic Audit Trail",
+    "url": "http://127.0.0.1:5173/audit-trail",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\31_audit_trail.png",
+    "success": true
+  },
+  {
+    "id": "32_user_management_users",
+    "title": "User Management - Directory",
+    "url": "http://127.0.0.1:5173/user-management?tab=users",
+    "auth": "it",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\32_user_management_users.png",
+    "success": true
+  },
+  {
+    "id": "33_user_management_sessions",
+    "title": "User Management - Active Sessions & Security",
+    "url": "http://127.0.0.1:5173/user-management?tab=sessions",
+    "auth": "it",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\33_user_management_sessions.png",
+    "success": true
+  },
+  {
+    "id": "34_settings_gwp",
+    "title": "Settings - IPCC GWP Standards",
+    "url": "http://127.0.0.1:5173/settings",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\34_settings_gwp.png",
+    "success": true
+  },
+  {
+    "id": "35_settings_ogmp",
+    "title": "Settings - OGMP 2.0 Baseline & Thresholds",
+    "url": "http://127.0.0.1:5173/settings",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\35_settings_ogmp.png",
+    "success": true
+  },
+  {
+    "id": "36_settings_facilities",
+    "title": "Settings - Facility Overrides",
+    "url": "http://127.0.0.1:5173/settings",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\36_settings_facilities.png",
+    "success": true
+  },
+  {
+    "id": "37_dev_ui_gallery",
+    "title": "Design System & UI Component Gallery",
+    "url": "http://127.0.0.1:5173/__ui",
+    "auth": "admin",
+    "filePath": "C:\\Users\\samsung\\Desktop\\H2\\screenshots\\37_dev_ui_gallery.png",
+    "success": true
+  }
+]
