@@ -120,6 +120,17 @@ class Facility(db.Model):
         "UserFacilityAccess", backref="facility", cascade="all, delete-orphan", lazy=True
     )
 
+    __table_args__ = (
+        db.Index(
+            "ix_facilities_dash_tenant_test_filters",
+            "tenant_id",
+            "is_test",
+            "activity",
+            "division",
+            "segment",
+        ),
+    )
+
 
 class UserFacilityAccess(db.Model):
     __tablename__ = "user_facility_access"
@@ -244,6 +255,21 @@ class Emission(db.Model):
         db.Index("ix_emissions_act_div", "activity", "division"),
         db.Index("ix_emissions_status_yr_co2e", "status", "year", "co2e_total"),
         db.Index("ix_emissions_yr_status_proc", "year", "status", "process_type"),
+        db.Index(
+            "ix_emissions_dash_status_test_yr_proc_fac",
+            "status",
+            "is_test",
+            "year",
+            "process_type",
+            "facility_id",
+        ),
+        db.Index(
+            "ix_emissions_fac_yr_status_test",
+            "facility_id",
+            "year",
+            "status",
+            "is_test",
+        ),
     )
 
 
@@ -285,6 +311,7 @@ class ProductionData(db.Model):
     __table_args__ = (
         db.UniqueConstraint("facility_id", "month", "year", name="_facility_month_year_uc"),
         db.Index("ix_prod_yr_fac_units", "year", "facility_id", "oil_unit", "gas_unit"),
+        db.Index("ix_prod_dash_test_yr_fac", "is_test", "year", "facility_id"),
     )
 
 
@@ -578,6 +605,7 @@ class Scope2Emission(db.Model):
     __table_args__ = (
         db.Index("ix_scope2_fac_yr_status", "facility_id", "year", "status"),
         db.Index("ix_scope2_status_yr_co2e", "status", "year", "co2e", "electricity_kwh"),
+        db.Index("ix_scope2_dash_status_yr_fac", "status", "year", "facility_id"),
     )
 
 
@@ -642,6 +670,7 @@ class Scope3Emission(db.Model):
     __table_args__ = (
         db.Index("ix_scope3_fac_yr_status", "facility_id", "year", "status"),
         db.Index("ix_scope3_status_yr_co2e", "status", "year", "co2e"),
+        db.Index("ix_scope3_dash_status_yr_fac_cat", "status", "year", "facility_id", "category"),
         db.UniqueConstraint("facility_id", "year", "month", "category", "sub_category", name="uq_scope3_facility_period_category"),
     )
 
@@ -670,6 +699,7 @@ class MitigationProject(db.Model):
 
     __table_args__ = (
         db.UniqueConstraint("facility_id", "name", "year", name="uq_mitigation_project_facility_name_year"),
+        db.Index("ix_mitigation_projects_test_yr_fac", "is_test", "year", "facility_id"),
     )
 
 
@@ -795,6 +825,10 @@ class OgmpSurvey(db.Model):
     created_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"))
     created_at = db.Column(db.DateTime, default=utc_now)
 
+    __table_args__ = (
+        db.Index("ix_ogmp_surveys_fac_yr", "facility_id", "year"),
+    )
+
 
 class MethaneSourceType(db.Model):
     __tablename__ = "methane_source_types"
@@ -874,6 +908,7 @@ class FlaringDetail(db.Model):
 
     __table_args__ = (
         db.Index("ix_flare_fac_yr_net", "facility_id", "year", "network"),
+        db.Index("ix_flaring_details_status_yr_fac", "status", "year", "facility_id"),
     )
 
 

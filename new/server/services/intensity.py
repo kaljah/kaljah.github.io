@@ -17,6 +17,7 @@ One computation feeds /intensity-stats (and batch-all) and /intensity-trend:
 """
 from collections import defaultdict
 from datetime import datetime, timezone
+from types import SimpleNamespace
 
 from sqlalchemy import func, or_, and_
 
@@ -61,7 +62,10 @@ def segment_category(segment):
 
 def _blank():
     return {"s1": 0.0, "co2": 0.0, "ch4": 0.0, "n2o": 0.0, "s2": 0.0, "s2_20": 0.0, "s3": 0.0, "s3_cat11": 0.0,
-            "flaring_t": 0.0, "flaring_m3": 0.0, "flaring_ledger_m3": 0.0, "flaring_reconciled_m3": 0.0, "ch4_split": defaultdict(float), "records": [],
+            "flaring_t": 0.0, "flaring_m3": 0.0, "flaring_ledger_m3": 0.0, "flaring_reconciled_m3": 0.0,
+            "ch4_split": defaultdict(float), "records": [], "s1_count": 0,
+            "ogmp_ch4_weights": {1: 0.0, 2: 0.0, 3: 0.0, 4: 0.0},
+            "ogmp_co2e_weights": {1: 0.0, 2: 0.0, 3: 0.0, 4: 0.0},
             "boe": 0.0, "gas_m3": 0.0, "oil_bbl": 0.0, "gas_mscf": 0.0, "has_prod": False,
             "prod_unknown_units": 0, "top_down": None}
 
@@ -78,8 +82,20 @@ def intensity_cells(years=None, facility_id=None, activity=None, division=None, 
         q = q.filter(model.year.isnot(None))
         return q.filter(model.year.in_(years)) if years is not None else q
 
-    # production (row-level so every row gets its own unit conversion)
-    for p in yfilter(apply_scope(ProductionData.query, ProductionData, **scope), ProductionData).all():
+    # production (row-level so every row gets its own unit conversion; column projection avoids full ORM hydration)
+    prod_rows = yfilter(apply_scope(ProductionData.query, ProductionData, **scope), ProductionData).with_entities(
+        ProductionData.id,
+        ProductionData.facility_id,
+        ProductionData.year,
+        ProductionData.month,
+        ProductionData.total_production_mmboe,
+        ProductionData.oil_amount,
+        ProductionData.oil_unit,
+        ProductionData.gas_amount,
+        ProductionData.gas_unit,
+        ProductionData.gross_gas_mmsm3,
+    ).all()
+    for p in prod_rows:
         c = cells[(p.facility_id, p.year)]
         boe = production_boe(p)
         gas = production_gas_m3(p)
@@ -110,45 +126,102 @@ def intensity_cells(years=None, facility_id=None, activity=None, division=None, 
         if oil_b is not None:
             c["oil_bbl"] += oil_b
 
-    # scope 1 (row level: methane split, flaring volume, OGMP materiality)
+    # scope 1 (row level: methane split, flaring volume, OGMP materiality via column projection)
     # Strictly exclude rejected records (both status column and [Rejected] qa_flags)
+    s1_q = yfilter(apply_scope(Emission.query, Emission, **scope), Emission).filter(Emission.status.in_(st))
+    if any("rejected" in str(s).lower() for s in st):
+        s1_q = s1_q.filter(~Emission.status.ilike("%rejected%"))
     s1 = (
-        yfilter(apply_scope(Emission.query, Emission, **scope), Emission)
-        .filter(Emission.status.in_(st))
-        .filter(~Emission.status.ilike("%rejected%"))
-        .filter(or_(Emission.qa_flag.is_(None), and_(~Emission.qa_flag.ilike("[rejected]%"), ~Emission.qa_flag.ilike("rejected:%"))))
+        s1_q.filter(
+            or_(
+                Emission.qa_flag.is_(None),
+                and_(~Emission.qa_flag.ilike("[rejected]%"), ~Emission.qa_flag.ilike("rejected:%")),
+            )
+        )
+        .with_entities(
+            Emission.facility_id,
+            Emission.year,
+            Emission.month,
+            Emission.process_type,
+            Emission.quantity,
+            Emission.unit,
+            Emission.co2e_total,
+            Emission.co2_emissions,
+            Emission.ch4_emissions,
+            Emission.n2o_emissions,
+            Emission.ogmp_level,
+            Emission.factor_source,
+            Emission.calc_method,
+        )
         .all()
     )
-    for e in s1:
-        c = cells[(e.facility_id, e.year)]
-        ch4 = float(e.ch4_emissions or 0)
-        c["s1"] += float(e.co2e_total or 0)
-        c["co2"] += float(e.co2_emissions or 0)
-        c["ch4"] += ch4
-        c["n2o"] += float(e.n2o_emissions or 0)
-        cat = source_category(e.process_type)
-        c["ch4_split"][{"flaring": "ch4_flaring", "vented": "ch4_venting", "fugitive": "ch4_fugitive"}
-                       .get(cat, "ch4_combustion")] += ch4
+    cat_cache = {}
+    ogmp_cache = {}
+    _stub = SimpleNamespace(ogmp_level=None, factor_source=None, calc_method=None)
+    _ch4_key = {"flaring": "ch4_flaring", "vented": "ch4_venting", "fugitive": "ch4_fugitive"}
+    for fid, yr, mo, pt, qty, unit, co2e_tot, co2, ch4, n2o, olvl, fsrc, cmeth in s1:
+        c = cells[(fid, yr)]
+        ch4_v = float(ch4 or 0)
+        co2e_v = float(co2e_tot or 0)
+        c["s1"] += co2e_v
+        c["co2"] += float(co2 or 0)
+        c["ch4"] += ch4_v
+        c["n2o"] += float(n2o or 0)
+        c["s1_count"] += 1
+        cat = cat_cache.get(pt)
+        if cat is None:
+            cat = source_category(pt)
+            cat_cache[pt] = cat
+        c["ch4_split"][_ch4_key.get(cat, "ch4_combustion")] += ch4_v
         if cat == "flaring":
-            c["flaring_t"] += float(e.co2e_total or 0)
-            vol = gas_volume_m3(e.quantity, e.unit, e.year, e.month)
+            c["flaring_t"] += co2e_v
+            vol = gas_volume_m3(qty, unit, yr, mo)
             if vol:
                 c["flaring_ledger_m3"] += vol
                 c["flaring_m3"] += vol
-        c["records"].append(e)
+        okey = (olvl, fsrc, cmeth)
+        ol = ogmp_cache.get(okey)
+        if ol is None:
+            _stub.ogmp_level = olvl
+            _stub.factor_source = fsrc
+            _stub.calc_method = cmeth
+            ol = ogmp_level_for(_stub)
+            ogmp_cache[okey] = ol
+        c["ogmp_ch4_weights"][ol] += ch4_v
+        c["ogmp_co2e_weights"][ol] += co2e_v
 
     # Scope 2 dual reporting (location-based vs market-based per GHG Protocol), per record at both GWP
     # horizons: the GWP-20 intensity added Scope 2 at GWP-100 (bug hunt 2026-10-15 #18)
-    from services.scope2_gases import record_totals
+    from services.dashboard_filters import gwp_pair
+    from services.scope2_gases import record_totals_fields
 
     market = str(scope2_method).lower() == "market"
-    q2 = yfilter(apply_scope(Scope2Emission.query, Scope2Emission, **scope), Scope2Emission).filter(
-        Scope2Emission.status.in_(st))
-    for e in q2.all():
-        c = cells[(e.facility_id, e.year)]
-        loc, mkt = record_totals(e, "100")
-        loc20, mkt20 = record_totals(e, "20")
-        c["s2"] += mkt if market else loc
+    c100, n100 = gwp_pair("100")
+    c20, n20 = gwp_pair("20")
+    gwp_diff = (c20 - c100, n20 - n100)
+    s2_grid_cache = {}
+    q2 = (
+        yfilter(apply_scope(Scope2Emission.query, Scope2Emission, **scope), Scope2Emission)
+        .filter(Scope2Emission.status.in_(st))
+        .with_entities(
+            Scope2Emission.facility_id,
+            Scope2Emission.year,
+            Scope2Emission.source_type,
+            Scope2Emission.grid_region,
+            Scope2Emission.electricity_kwh,
+            Scope2Emission.co2e,
+            Scope2Emission.co2e_market_based,
+        )
+    )
+    for fid, yr, src_type, grid_region, kwh, co2e, co2e_mkt in q2.all():
+        c = cells[(fid, yr)]
+        co2e_f = float(co2e or 0)
+        mkt_f = float(co2e_mkt if co2e_mkt is not None else co2e or 0)
+        loc20, mkt20 = record_totals_fields(
+            src_type, grid_region, kwh, co2e, co2e_mkt, "20",
+            grid_cache=s2_grid_cache, gwp_diff=gwp_diff,
+        )
+        c["s2"] += mkt_f if market else co2e_f
         c["s2_20"] += mkt20 if market else loc20
 
     # Scope 3
@@ -167,11 +240,21 @@ def intensity_cells(years=None, facility_id=None, activity=None, division=None, 
         if avg is not None:
             cells[(fid, yr)]["top_down"] = float(avg)
     from models import FlaringDetail
-    q_fd = yfilter(apply_scope(FlaringDetail.query, FlaringDetail, **scope), FlaringDetail).filter(FlaringDetail.status.in_(st))
-    for fd in q_fd.all():
-        stream_vol = (float(fd.routine_knm3 or 0.0) + float(fd.non_routine_knm3 or 0.0) + float(fd.safety_knm3 or 0.0)) * 1000.0
+    q_fd = (
+        yfilter(apply_scope(FlaringDetail.query, FlaringDetail, **scope), FlaringDetail)
+        .filter(FlaringDetail.status.in_(st))
+        .with_entities(
+            FlaringDetail.facility_id,
+            FlaringDetail.year,
+            FlaringDetail.routine_knm3,
+            FlaringDetail.non_routine_knm3,
+            FlaringDetail.safety_knm3,
+        )
+    )
+    for fid, yr, r_knm3, nr_knm3, s_knm3 in q_fd.all():
+        stream_vol = (float(r_knm3 or 0.0) + float(nr_knm3 or 0.0) + float(s_knm3 or 0.0)) * 1000.0
         if stream_vol > 0:
-            cells[(fd.facility_id, fd.year)]["flaring_reconciled_m3"] += stream_vol
+            cells[(fid, yr)]["flaring_reconciled_m3"] += stream_vol
 
     for c in cells.values():
         if c["flaring_reconciled_m3"] > 0:
@@ -180,7 +263,23 @@ def intensity_cells(years=None, facility_id=None, activity=None, division=None, 
     return cells
 
 
-def facility_row(fid, cell_list, fac, year_value, gwp_horizon="100"):
+def _materiality_from_weights(ch4_weights, co2e_weights, s1_count, threshold=0.5):
+    if s1_count <= 0:
+        return None
+    total = sum(ch4_weights.values())
+    weights = ch4_weights
+    if total <= 0:
+        weights = co2e_weights
+        total = sum(weights.values())
+    if total <= 0:
+        return 2
+    for level in (4, 3, 2):
+        if sum(v for k, v in weights.items() if k >= level) / total >= threshold:
+            return level
+    return 1
+
+
+def facility_row(fid, cell_list, fac, year_value, gwp_horizon="100", surveys=None):
     """Aggregate one facility's cells into the API row (field names kept for the client)."""
     from routes.auth import _app_settings
 
@@ -194,8 +293,14 @@ def facility_row(fid, cell_list, fac, year_value, gwp_horizon="100"):
                 tgt[k] += c[k]
             for k, v in c["ch4_split"].items():
                 tgt["ch4_split"][k] += v
-            tgt["records"].extend(c["records"])
             tgt["prod_unknown_units"] += c["prod_unknown_units"]
+        if c.get("records"):
+            total["records"].extend(c["records"])
+        total["s1_count"] += c.get("s1_count", 0)
+        for lvl, w in c.get("ogmp_ch4_weights", {}).items():
+            total["ogmp_ch4_weights"][lvl] = total["ogmp_ch4_weights"].get(lvl, 0.0) + w
+        for lvl, w in c.get("ogmp_co2e_weights", {}).items():
+            total["ogmp_co2e_weights"][lvl] = total["ogmp_co2e_weights"].get(lvl, 0.0) + w
         if c["has_prod"]:
             years_used.append(yr)
         if c["top_down"] is not None:
@@ -249,11 +354,14 @@ def facility_row(fid, cell_list, fac, year_value, gwp_horizon="100"):
     surveys_have_discrepancy = False
     if fac:
         try:
-            from models import OgmpSurvey
-            sq = OgmpSurvey.query.filter_by(facility_id=fac.id)
-            if year_value and year_value != "all" and str(year_value).isdigit():
-                sq = sq.filter_by(year=int(year_value))
-            actual_surveys = sq.all()
+            if surveys is None:
+                from models import OgmpSurvey
+                sq = OgmpSurvey.query.filter_by(facility_id=fac.id)
+                if year_value and year_value != "all" and str(year_value).isdigit():
+                    sq = sq.filter_by(year=int(year_value))
+                actual_surveys = sq.all()
+            else:
+                actual_surveys = surveys
             if actual_surveys:
                 surveys_have_discrepancy = any(
                     (s.reconciliation_status or "").lower() == "discrepancy detected"
@@ -269,15 +377,23 @@ def facility_row(fid, cell_list, fac, year_value, gwp_horizon="100"):
         variance_flag = True
         rec_status = "Discrepancy Detected"
 
+    if total["records"]:
+        bu_level = _bottom_up_level(total["records"])
+        l_weights = defaultdict(float)
+        for r in total["records"]:
+            l_weights[ogmp_level_for(r)] += float(r.co2e_total or 0)
+    else:
+        bu_level = _materiality_from_weights(
+            total["ogmp_ch4_weights"], total["ogmp_co2e_weights"], total["s1_count"]
+        )
+        l_weights = total["ogmp_co2e_weights"]
+
     level = compute_facility_ogmp_level(
         fac, year=year_value, top_down_tch4=td or None, bottom_up_tch4=bu_td_years or (total["ch4"] or None),
         reconciled_survey=(not surveys_have_discrepancy) if (td > 0 and bu_td_years > 0) else None,
-        bottom_up_level=_bottom_up_level(total["records"]),
+        bottom_up_level=bu_level,
     ) if fac else 1
 
-    l_weights = defaultdict(float)
-    for r in total["records"]:
-        l_weights[ogmp_level_for(r)] += float(r.co2e_total or 0)
     s1_sum = sum(l_weights.values())
     l4_pct = round(sum(v for k, v in l_weights.items() if k >= 4) / s1_sum * 100.0, 1) if s1_sum > 0 else 0.0
     l3_pct = round(l_weights.get(3, 0.0) / s1_sum * 100.0, 1) if s1_sum > 0 else 0.0
@@ -425,17 +541,36 @@ def intensity_rows(year=None, include_pending=False, gwp_horizon="100", scope2_m
     by_fac = defaultdict(list)
     for (fid, yr), c in cells.items():
         by_fac[fid].append((yr, c))
-    facs = {f.id: f for f in Facility.query.filter(Facility.id.in_(list(by_fac) or [-1])).all()}
-    return [facility_row(fid, lst, facs.get(fid), year, gwp_horizon) for fid, lst in by_fac.items()]
+    fids = list(by_fac) or [-1]
+    facs = {f.id: f for f in Facility.query.filter(Facility.id.in_(fids)).all()}
+    sq = OgmpSurvey.query.filter(OgmpSurvey.facility_id.in_(fids))
+    if years is not None:
+        sq = sq.filter(OgmpSurvey.year.in_(years))
+    surveys_by_fid = defaultdict(list)
+    for s in sq.all():
+        surveys_by_fid[s.facility_id].append(s)
+    return [
+        facility_row(fid, lst, facs.get(fid), year, gwp_horizon, surveys=surveys_by_fid.get(fid, []))
+        for fid, lst in by_fac.items()
+    ]
 
 
 def intensity_trend(years, include_pending=False, gwp_horizon="100", scope2_method="location", **scope):
     """[{year, data: [facility rows]}] computed from one bulk read."""
-    cells = intensity_cells(years=list(years), include_pending=include_pending, scope2_method=scope2_method, **scope)
-    facs = {f.id: f for f in Facility.query.filter(Facility.id.in_({fid for fid, _ in cells} or {-1})).all()}
+    yr_list = list(years)
+    cells = intensity_cells(years=yr_list, include_pending=include_pending, scope2_method=scope2_method, **scope)
+    fids = list({fid for fid, _ in cells}) or [-1]
+    facs = {f.id: f for f in Facility.query.filter(Facility.id.in_(fids)).all()}
+    surveys_by_fy = defaultdict(list)
+    if yr_list:
+        for s in OgmpSurvey.query.filter(OgmpSurvey.facility_id.in_(fids), OgmpSurvey.year.in_(yr_list)).all():
+            surveys_by_fy[(s.facility_id, s.year)].append(s)
     out = []
     for y in years:
-        rows = [facility_row(fid, [(yr, c)], facs.get(fid), y, gwp_horizon)
-                for (fid, yr), c in cells.items() if yr == y]
+        rows = [
+            facility_row(fid, [(yr, c)], facs.get(fid), y, gwp_horizon, surveys=surveys_by_fy.get((fid, yr), []))
+            for (fid, yr), c in cells.items()
+            if yr == y
+        ]
         out.append({"year": str(y), "data": rows})  # string year: the established API contract
     return out

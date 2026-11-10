@@ -381,8 +381,8 @@ def get_batch_dashboard_data():
 
         # BUG-054 / BUG-072: pending banner uses the same filters as every other panel, includes
         # Scope 3, and follows the GWP horizon
-        from services.dashboard_filters import apply_scope, apply_year, horizon_delta
-        from services.scope2_gases import record_totals
+        from services.dashboard_filters import apply_scope, apply_year, gwp_pair, horizon_delta
+        from services.scope2_gases import record_totals_fields
 
         pscope = dict(allowed_fids=allowed_fids, facility_id=facility_id, activity=activity, division=division,
                       segment=segment)
@@ -393,12 +393,32 @@ def get_batch_dashboard_data():
             return apply_year(apply_scope(q, model, **pscope), model, year).filter(model.status.in_(pend)).first()
 
         p1 = pend_q(Emission, Emission.co2e_total, Emission.ch4_emissions, Emission.n2o_emissions)
-        s2_pend_q = apply_year(apply_scope(Scope2Emission.query, Scope2Emission, **pscope), Scope2Emission, year).filter(Scope2Emission.status.in_(pend))
-        s2_count = s2_pend_q.count()
+        s2_pend_q = (
+            apply_year(apply_scope(Scope2Emission.query, Scope2Emission, **pscope), Scope2Emission, year)
+            .filter(Scope2Emission.status.in_(pend))
+            .with_entities(
+                Scope2Emission.source_type,
+                Scope2Emission.grid_region,
+                Scope2Emission.electricity_kwh,
+                Scope2Emission.co2e,
+                Scope2Emission.co2e_market_based,
+            )
+        )
+        s2_pend_rows = s2_pend_q.all()
+        s2_count = len(s2_pend_rows)
         market_s2 = str(scope2_method or "").lower() == "market"
+        s2_grid_cache = {}
+        s2_diff = None
+        if str(gwp_horizon) == "20":
+            c100, n100 = gwp_pair("100")
+            c20, n20 = gwp_pair("20")
+            s2_diff = (c20 - c100, n20 - n100)
         s2_co2e = 0.0
-        for e in s2_pend_q.all():
-            loc, mkt = record_totals(e, gwp_horizon)
+        for src_type, grid_region, kwh, co2e, co2e_mkt in s2_pend_rows:
+            loc, mkt = record_totals_fields(
+                src_type, grid_region, kwh, co2e, co2e_mkt, gwp_horizon,
+                grid_cache=s2_grid_cache, gwp_diff=s2_diff,
+            )
             s2_co2e += (mkt if market_s2 else loc)
 
         p3 = pend_q(Scope3Emission, Scope3Emission.co2e)
@@ -722,8 +742,8 @@ def _query_categorical_breakdown(
     BUG-004 / BUG-054: facility-level filters and the shared status rule.
     """
     from collections import defaultdict
-    from services.dashboard_filters import apply_scope, apply_year, horizon_delta, statuses
-    from services.scope2_gases import record_totals
+    from services.dashboard_filters import apply_scope, apply_year, gwp_pair, horizon_delta, scope3_record_co2e, statuses
+    from services.scope2_gases import record_totals_fields
 
     scope = dict(allowed_fids=allowed_fids, facility_id=facility_id, activity=activity, division=division,
                  segment=segment)
@@ -746,21 +766,55 @@ def _query_categorical_breakdown(
     s1 = grouped(Emission, func.sum(Emission.co2e_total), func.sum(Emission.ch4_emissions),
                  func.sum(Emission.n2o_emissions))
 
-    s2_q = apply_year(apply_scope(db.session.query(Scope2Emission), Scope2Emission, **scope), Scope2Emission, year)
+    s2_q = (
+        apply_year(apply_scope(db.session.query(Scope2Emission), Scope2Emission, **scope), Scope2Emission, year)
+        .filter(Scope2Emission.status.in_(st))
+        .with_entities(
+            Scope2Emission.facility_id,
+            Scope2Emission.source_type,
+            Scope2Emission.grid_region,
+            Scope2Emission.electricity_kwh,
+            Scope2Emission.co2e,
+            Scope2Emission.co2e_market_based,
+        )
+    )
     s2_by_fac = defaultdict(float)
-    for e in s2_q.filter(Scope2Emission.status.in_(st)).all():
-        loc, mkt = record_totals(e, "20" if is_20 else "100")
-        s2_by_fac[e.facility_id] += mkt if str(scope2_method).lower() == "market" else loc
-    s2_labels = {f[0]: f for f in db.session.query(*labels).filter(Facility.id.in_(list(s2_by_fac) or [-1])).all()}
-    s2 = [(*s2_labels[fid], total) for fid, total in s2_by_fac.items() if fid in s2_labels]
+    s2_grid_cache = {}
+    s2_diff = None
+    if is_20:
+        c100, n100 = gwp_pair("100")
+        c20, n20 = gwp_pair("20")
+        s2_diff = (c20 - c100, n20 - n100)
+    is_mkt = str(scope2_method).lower() == "market"
+    s2_horizon = "20" if is_20 else "100"
+    for fid, src_type, grid_region, kwh, co2e, co2e_mkt in s2_q.all():
+        loc, mkt = record_totals_fields(
+            src_type, grid_region, kwh, co2e, co2e_mkt, s2_horizon,
+            grid_cache=s2_grid_cache, gwp_diff=s2_diff,
+        )
+        s2_by_fac[fid] += mkt if is_mkt else loc
 
-    s3_q = apply_year(apply_scope(db.session.query(Scope3Emission), Scope3Emission, **scope), Scope3Emission, year)
-    s3_by_fac = defaultdict(float)
-    from services.dashboard_filters import scope3_record_co2e
-    for e in s3_q.filter(Scope3Emission.status.in_(st)).all():
-        s3_by_fac[e.facility_id] += scope3_record_co2e(e.co2e, e.gas_composition, gwp_horizon)
-    s3_labels = {f[0]: f for f in db.session.query(*labels).filter(Facility.id.in_(list(s3_by_fac) or [-1])).all()}
-    s3 = [(*s3_labels[fid], total) for fid, total in s3_by_fac.items() if fid in s3_labels]
+    if is_20:
+        s3_q = (
+            apply_year(apply_scope(db.session.query(Scope3Emission), Scope3Emission, **scope), Scope3Emission, year)
+            .filter(Scope3Emission.status.in_(st))
+            .with_entities(Scope3Emission.facility_id, Scope3Emission.co2e, Scope3Emission.gas_composition_json)
+        )
+        s3_by_fac = defaultdict(float)
+        for fid, co2e_val, gc_json in s3_q.all():
+            s3_by_fac[fid] += scope3_record_co2e(co2e_val, gc_json, gwp_horizon)
+    else:
+        s3_q = (
+            apply_year(apply_scope(db.session.query(Scope3Emission.facility_id, func.sum(Scope3Emission.co2e)), Scope3Emission, **scope), Scope3Emission, year)
+            .filter(Scope3Emission.status.in_(st))
+            .group_by(Scope3Emission.facility_id)
+        )
+        s3_by_fac = {fid: float(val or 0.0) for fid, val in s3_q.all()}
+
+    needed_fids = list(set(s2_by_fac) | set(s3_by_fac)) or [-1]
+    fac_labels = {f[0]: f for f in db.session.query(*labels).filter(Facility.id.in_(needed_fids)).all()}
+    s2 = [(*fac_labels[fid], total) for fid, total in s2_by_fac.items() if fid in fac_labels]
+    s3 = [(*fac_labels[fid], total) for fid, total in s3_by_fac.items() if fid in fac_labels]
 
     out = {}
 

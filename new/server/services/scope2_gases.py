@@ -9,12 +9,21 @@ cooling) stay CO2e reported as CO2.
 from collections import defaultdict
 
 
-def _grid(e):
-    if "electric" not in str(e.source_type or "").lower() or not e.grid_region or not e.electricity_kwh:
+def _grid_lookup(source_type, grid_region, electricity_kwh, grid_cache=None):
+    if "electric" not in str(source_type or "").lower() or not grid_region or not electricity_kwh:
         return None
+    if grid_cache is not None and grid_region in grid_cache:
+        return grid_cache[grid_region]
     from electricity_factors import grid_entry
 
-    return grid_entry(e.grid_region)[1]
+    entry = grid_entry(grid_region)[1]
+    if grid_cache is not None:
+        grid_cache[grid_region] = entry
+    return entry
+
+
+def _grid(e):
+    return _grid_lookup(e.source_type, e.grid_region, e.electricity_kwh)
 
 
 def gas_split(e):
@@ -45,9 +54,38 @@ def list_row_gases(row):
 def yearly_totals(query, by_fac, horizon="100"):
     """{(year, facility_id | "total"): {"location", "market", "energy"}} over a filtered Scope 2 query.
     The location total follows the GWP horizon (GWP-20 adds CH4 / N2O x (GWP20 - GWP100))."""
-    from services.dashboard_filters import horizon_delta
-
     out = defaultdict(lambda: {"location": 0.0, "market": 0.0, "energy": 0.0})
+    if hasattr(query, "with_entities"):
+        from models import Scope2Emission
+
+        grid_cache = {}
+        gwp_diff = None
+        if str(horizon) == "20":
+            from services.dashboard_filters import gwp_pair
+
+            c100, n100 = gwp_pair("100")
+            c20, n20 = gwp_pair("20")
+            gwp_diff = (c20 - c100, n20 - n100)
+        rows = query.with_entities(
+            Scope2Emission.year,
+            Scope2Emission.facility_id,
+            Scope2Emission.source_type,
+            Scope2Emission.grid_region,
+            Scope2Emission.electricity_kwh,
+            Scope2Emission.co2e,
+            Scope2Emission.co2e_market_based,
+        ).all()
+        for yr, fid, src_type, grid_region, kwh, co2e, co2e_mkt in rows:
+            d = out[(int(yr), fid if by_fac else "total")]
+            loc, mkt = record_totals_fields(
+                src_type, grid_region, kwh, co2e, co2e_mkt, horizon,
+                grid_cache=grid_cache, gwp_diff=gwp_diff,
+            )
+            d["location"] += loc
+            d["market"] += mkt
+            d["energy"] += float(kwh or 0)
+        return out
+
     for e in query.all():
         d = out[(int(e.year), e.facility_id if by_fac else "total")]
         loc, mkt = record_totals(e, horizon)
@@ -57,15 +95,45 @@ def yearly_totals(query, by_fac, horizon="100"):
     return out
 
 
+def record_totals_fields(
+    source_type,
+    grid_region,
+    electricity_kwh,
+    co2e,
+    co2e_market_based,
+    horizon="100",
+    grid_cache=None,
+    gwp_diff=None,
+):
+    """Tuple-friendly counterpart to record_totals() avoiding full ORM hydration in hot paths."""
+    delta = 0.0
+    if str(horizon) == "20":
+        entry = _grid_lookup(source_type, grid_region, electricity_kwh, grid_cache=grid_cache)
+        if entry is None:
+            ch4_t, n2o_t = 0.0, 0.0
+        else:
+            kwh = float(electricity_kwh)
+            ch4_t = kwh * float(entry.get("ch4") or 0) / 1000.0
+            n2o_t = kwh * float(entry.get("n2o") or 0) / 1000.0
+        if gwp_diff is None:
+            from services.dashboard_filters import horizon_delta
+
+            delta = horizon_delta(ch4_t, n2o_t, "20")
+        else:
+            delta = ch4_t * gwp_diff[0] + n2o_t * gwp_diff[1]
+    location = float(co2e or 0) + delta
+    market = co2e_market_based if co2e_market_based is not None else co2e
+    return location, float(market or 0) + (delta if co2e_market_based is None else 0.0)
+
+
 def record_totals(e, horizon="100"):
     """(location, market) tCO2e of one Scope 2 record at the GWP horizon (GWP-20 adds the CH4 / N2O
     share x (GWP20 - GWP100); a market total entered by the user is kept as given)."""
-    from services.dashboard_filters import horizon_delta
-
-    delta = 0.0
-    if str(horizon) == "20":
-        g = gas_split(e)
-        delta = horizon_delta(g["ch4"], g["n2o"], "20")
-    location = float(e.co2e or 0) + delta
-    market = e.co2e_market_based if e.co2e_market_based is not None else e.co2e
-    return location, float(market or 0) + (delta if e.co2e_market_based is None else 0.0)
+    return record_totals_fields(
+        e.source_type,
+        e.grid_region,
+        e.electricity_kwh,
+        e.co2e,
+        e.co2e_market_based,
+        horizon,
+    )
