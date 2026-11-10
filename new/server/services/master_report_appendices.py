@@ -11,7 +11,8 @@ from reportlab.lib import colors
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import Paragraph, Table, TableStyle, Spacer, PageBreak
 
-from services.master_report_i18n import get_t, localize_status
+from services.master_report_i18n import get_t
+from services.pdf_escape import safe_pdf_text
 
 COLOR_DARK = colors.HexColor("#0F172A")
 COLOR_SLATE = colors.HexColor("#1E293B")
@@ -104,7 +105,7 @@ def build_qaqc_uncertainty_elements(data: Dict[str, Any], styles: Dict[str, Para
         r_headers_fmt = [Paragraph(h, r_hdr_style) for h in r_headers]
         r_rows = []
         for r in recalcs[:3]:
-            reason_p = Paragraph(f"<i>{r.get('reason', '')}</i>", styles["BodySmall"] if "BodySmall" in styles else styles["Body"])
+            reason_p = Paragraph(f"<i>{safe_pdf_text(r.get('reason', ''))}</i>", styles["BodySmall"] if "BodySmall" in styles else styles["Body"])
             d_val = f"{r.get('delta_pct', 0.0):+.1f}%"
             r_rows.append([
                 str(r.get("year", "")),
@@ -134,7 +135,7 @@ def build_qaqc_uncertainty_elements(data: Dict[str, Any], styles: Dict[str, Para
 
     # 4. Measurement Uncertainty Assessment (IPCC Approach 1 & Monte Carlo)
     elements.append(Paragraph(f"<b>{get_t('qaqc_uncert_title', lang)}</b>", styles["H2"]))
-    overall_u = uncert.get("inventory_uncertainty_pct") or "N/A"
+    overall_u = safe_pdf_text(uncert.get("inventory_uncertainty_pct") or "N/A")
     tier_info = uncert.get("tier_breakdown", {})
     t3_pct = tier_info.get("Tier 3", 0.0) if isinstance(tier_info, dict) else 0.0
 
@@ -221,10 +222,10 @@ def build_facility_appendix_elements(data: Dict[str, Any], styles: Dict[str, Par
     headers_fmt = [Paragraph(h, fac_hdr_style) for h in headers]
     fac_prefix = get_t("app_fac_prefix", lang)
     for fac in breakdowns:
-        fac_name = fac.get("name", "Facility")
-        fac_reg = fac.get("region", "")
-        fac_code = fac.get("code", "")
-        title_line = f"<b>{fac_prefix}{fac_name}</b>"
+        fac_name = safe_pdf_text(fac.get("name", "Facility"))
+        fac_reg = safe_pdf_text(fac.get("region", ""))
+        fac_code = safe_pdf_text(fac.get("code", ""))
+        title_line = f"<b>{safe_pdf_text(fac_prefix)}{fac_name}</b>"
         if fac_code:
             title_line += f" [{fac_code}]"
         if fac_reg:
@@ -419,9 +420,9 @@ def build_equipment_census_elements(data: Dict[str, Any], styles: Dict[str, Para
 
     fac_names = [f["name"] for f in data.get("facilities", [])]
     if len(fac_names) >= 2:
-        f1_name, f2_name = fac_names[0][:15], fac_names[1][:15]
+        f1_name, f2_name = safe_pdf_text(fac_names[0], 15), safe_pdf_text(fac_names[1], 15)
     elif len(fac_names) == 1:
-        f1_name, f2_name = fac_names[0][:15], "-"
+        f1_name, f2_name = safe_pdf_text(fac_names[0], 15), "-"
     else:
         f1_name, f2_name = "Fac 1", "Fac 2"
 
@@ -441,11 +442,11 @@ def build_equipment_census_elements(data: Dict[str, Any], styles: Dict[str, Para
         c1 = r["counts"].get(fac_names[0], 0) if fac_names else 0
         c2 = r["counts"].get(fac_names[1], 0) if len(fac_names) > 1 else 0
         rows.append([
-            Paragraph(r["category"], body_style),
-            Paragraph(str(c1), body_bold),
-            Paragraph(str(c2), body_bold),
-            Paragraph(str(r["total"]), body_bold),
-            Paragraph(r["notes"], body_style),
+            Paragraph(safe_pdf_text(r["category"]), body_style),
+            Paragraph(safe_pdf_text(c1), body_bold),
+            Paragraph(safe_pdf_text(c2), body_bold),
+            Paragraph(safe_pdf_text(r["total"]), body_bold),
+            Paragraph(safe_pdf_text(r["notes"]), body_style),
         ])
 
     t = Table([headers_fmt] + rows, colWidths=[130, 45, 45, 40, 260])
@@ -497,7 +498,7 @@ def build_gas_chromatography_elements(data: Dict[str, Any], styles: Dict[str, Pa
     for s in streams:
         c6_plus = (s.get("c6", 0) or 0) + (s.get("c7", 0) or 0) + (s.get("c8", 0) or 0)
         rows.append([
-            Paragraph(f"<b>{s['stream_name']}</b><br/><font color='#64748B'>{s['facility_name'][:18]}</font>", body_style),
+            Paragraph(f"<b>{safe_pdf_text(s['stream_name'])}</b><br/><font color='#64748B'>{safe_pdf_text(s['facility_name'], 18)}</font>", body_style),
             Paragraph(f"{s.get('carbon_content', 0.75):.3f}", num_style),
             Paragraph(f"{s.get('c1', 0):.3f}", num_style),
             Paragraph(f"{s.get('c2', 0):.3f}", num_style),
@@ -561,7 +562,7 @@ def build_flaring_operational_elements(data: Dict[str, Any], styles: Dict[str, P
     rows = []
     for fname, fd in by_fac.items():
         rows.append([
-            Paragraph(f"<b>{fname[:22]}</b>", ParagraphStyle("FlFac", fontName="Helvetica", fontSize=6.5, leading=7.5)),
+            Paragraph(f"<b>{safe_pdf_text(fname, 22)}</b>", ParagraphStyle("FlFac", fontName="Helvetica", fontSize=6.5, leading=7.5)),
             Paragraph(f"{fd.get('routine_mmsm3', 0):,.3f}", num_style),
             Paragraph(f"{fd.get('non_routine_mmsm3', 0):,.3f}", num_style),
             Paragraph(f"{fd.get('safety_mmsm3', 0):,.3f}", num_style),
@@ -634,11 +635,11 @@ def build_dynamic_quality_audit_elements(data: Dict[str, Any], styles: Dict[str,
         prio_txt = a.get("priority", "Medium")
         p_style = prio_high if prio_txt == "High" else (prio_low if prio_txt == "Low" else prio_med)
         rows.append([
-            Paragraph(f"<b>{a['topic']}</b>", body_style),
-            Paragraph(a["observation"], body_style),
-            Paragraph(a["recommendation"], body_style),
-            Paragraph(prio_txt, p_style),
-            Paragraph(f"<font color='#64748B'>{a.get('statutory_ref', 'ISO 14064-1')}</font>", body_style),
+            Paragraph(f"<b>{safe_pdf_text(a['topic'])}</b>", body_style),
+            Paragraph(safe_pdf_text(a["observation"]), body_style),
+            Paragraph(safe_pdf_text(a["recommendation"]), body_style),
+            Paragraph(safe_pdf_text(prio_txt), p_style),
+            Paragraph(f"<font color='#64748B'>{safe_pdf_text(a.get('statutory_ref', 'ISO 14064-1'))}</font>", body_style),
         ])
 
     t = Table([headers_fmt] + rows, colWidths=[105, 115, 150, 45, 105])
@@ -705,16 +706,17 @@ def build_granular_source_ledger_elements(data: Dict[str, Any], styles: Dict[str
     for fname, rows in by_fac.items():
         if not rows:
             continue
-        elements.append(Paragraph(f"<b>{fname} — Inventaire Detail ({len(rows)} sources)</b>" if is_fr else f"<b>{fname} — Granular Source Inventory ({len(rows)} sources)</b>", styles["H2"]))
+        fname_esc = safe_pdf_text(fname)
+        elements.append(Paragraph(f"<b>{fname_esc} — Inventaire Detail ({len(rows)} sources)</b>" if is_fr else f"<b>{fname_esc} — Granular Source Inventory ({len(rows)} sources)</b>", styles["H2"]))
         table_rows = []
         for idx, r in enumerate(rows, 1):
             table_rows.append([
                 Paragraph(str(idx), center_style),
-                Paragraph(f"<b>{r['source_name'][:25]}</b>", body_style),
-                Paragraph(r["module"][:22], body_style),
-                Paragraph(r["scope"], center_style),
+                Paragraph(f"<b>{safe_pdf_text(r['source_name'], 25)}</b>", body_style),
+                Paragraph(safe_pdf_text(r["module"], 22), body_style),
+                Paragraph(safe_pdf_text(r["scope"]), center_style),
                 Paragraph(f"{r['quantity']:,.2f}" if r["quantity"] > 0 else "0", num_style),
-                Paragraph(r["unit"][:8], center_style),
+                Paragraph(safe_pdf_text(r["unit"], 8), center_style),
                 Paragraph(f"{r['co2']:,.2f}", num_style),
                 Paragraph(f"{r['ch4']:,.3f}", num_style),
                 Paragraph(f"{r['n2o']:,.3f}", num_style),
@@ -728,7 +730,7 @@ def build_granular_source_ledger_elements(data: Dict[str, Any], styles: Dict[str
         tot_co2e = sum(r["co2e"] for r in rows)
         table_rows.append([
             Paragraph("—", center_style),
-            Paragraph(f"<b>SOUS-TOTAL {fname[:15].upper()}</b>" if is_fr else f"<b>SUBTOTAL {fname[:15].upper()}</b>", body_style),
+            Paragraph(f"<b>SOUS-TOTAL {safe_pdf_text(str(fname).upper(), 15)}</b>" if is_fr else f"<b>SUBTOTAL {safe_pdf_text(str(fname).upper(), 15)}</b>", body_style),
             Paragraph("—", center_style),
             Paragraph("—", center_style),
             Paragraph("—", center_style),
@@ -787,7 +789,8 @@ def build_subannual_timeseries_elements(data: Dict[str, Any], styles: Dict[str, 
             continue
 
         # 1. Quarterly Summary Table (Table B-1 equivalent)
-        elements.append(Paragraph(f"<b>{fname} — Bilan Trimestriel & Annuel (Niveau de Partenariat 100%)</b>" if is_fr else f"<b>{fname} — Quarterly & Annual Performance Summary (100% Equity Basis)</b>", styles["H2"]))
+        fname_esc = safe_pdf_text(fname)
+        elements.append(Paragraph(f"<b>{fname_esc} — Bilan Trimestriel &amp; Annuel (Niveau de Partenariat 100%)</b>" if is_fr else f"<b>{fname_esc} — Quarterly &amp; Annual Performance Summary (100% Equity Basis)</b>", styles["H2"]))
 
         q_headers = [
             "Indicateur" if is_fr else "Indicator / Metric",
@@ -851,7 +854,7 @@ def build_subannual_timeseries_elements(data: Dict[str, Any], styles: Dict[str, 
 
         # 2. Monthly Detail Table (Jan - Dec)
         if f_data.get("has_monthly_data") and m_rows:
-            elements.append(Paragraph(f"<b>{fname} — Ventilation Mensuelle Detaillee (Janvier - Decembre)</b>" if is_fr else f"<b>{fname} — Detailed Monthly Breakdown (January – December)</b>", styles["H3"]))
+            elements.append(Paragraph(f"<b>{fname_esc} — Ventilation Mensuelle Detaillee (Janvier - Decembre)</b>" if is_fr else f"<b>{fname_esc} — Detailed Monthly Breakdown (January – December)</b>", styles["H3"]))
 
             # Render in two semesters: Jan-Jun and Jul-Dec
             m_h1 = ["Metrique" if is_fr else "Indicator", "Jan", "Feb", "Mar", "Apr", "May", "Jun"]

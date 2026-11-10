@@ -7,7 +7,6 @@ metrics from the database for the Universal Master Publication Report Engine.
 """
 
 import math
-import html
 import json
 from typing import Any, Dict, List, Optional, Tuple
 from extensions import db
@@ -980,21 +979,21 @@ def _query_scope3_breakdown(
             latest_year_co2e += val
 
         raw_cname = r.category or "Other Value Chain"
-        cname = html.escape(str(raw_cname))
+        cname = str(raw_cname)
         if cname not in cat_map:
             cat_map[cname] = {
                 "category_name": cname,
                 "sub_categories": set(),
                 "activity_data": 0.0,
-                "unit": html.escape(str(r.unit or "tonnes")),
+                "unit": str(r.unit or "tonnes"),
                 "emission_factor": float(r.emission_factor or 0.0),
                 "co2e_t": 0.0,
                 "latest_co2e_t": 0.0,
-                "method": html.escape(str(r.calculation_method or "Spend/Activity Hybrid")),
+                "method": str(r.calculation_method or "Spend/Activity Hybrid"),
                 "tier": "Tier 2" if getattr(r, "data_quality", None) in ("high", "tier2", "measured") else "Tier 1",
             }
         if r.sub_category:
-            cat_map[cname]["sub_categories"].add(html.escape(str(r.sub_category)))
+            cat_map[cname]["sub_categories"].add(str(r.sub_category))
         cat_map[cname]["activity_data"] += float(r.activity_data or 0.0)
         cat_map[cname]["co2e_t"] += val
         if y == end_year:
@@ -1084,8 +1083,8 @@ def _query_ogmp_breakdown(
             "id": s.id,
             "year": s.year,
             "survey_date": str(s.survey_date or f"{s.year}-Q3"),
-            "survey_type": html.escape(str(s.survey_type or "Aerial / Satellite Detection")),
-            "vendor": html.escape(str(s.instrument_vendor or "Bridger Photonics / FLIR OGI")),
+            "survey_type": str(s.survey_type or "Aerial / Satellite Detection"),
+            "vendor": str(s.instrument_vendor or "Bridger Photonics / FLIR OGI"),
             "measured_rate_kg_hr": float(s.measured_rate_kg_hr or 0.0),
             "top_down_tch4": round(td, 1),
             "bottom_up_tch4": round(bu, 1),
@@ -1147,15 +1146,12 @@ def _query_cbam_and_macc_breakdown(
     total_embedded_co2e = 0.0
 
     for r in exports_raw:
-        pname_clean = html.escape(str(r.product_name or "Export Hydrocarbon"))
-        if "<" in pname_clean:
-            pname_clean = pname_clean.split(">")[-1].strip() or "Export Crude Hydrocarbon"
-        
+        pname_clean = str(r.product_name or "Export Hydrocarbon").strip() or "Export Crude Hydrocarbon"
         cn = str(r.cn_code or "2709 00")
         qty = float(r.quantity_tonnes or 0.0)
         see_dir = float(r.specific_embedded_direct or 0.0)
         see_indir = float(r.specific_embedded_indirect or 0.0)
-        dest = html.escape(str(r.export_destination or "EU"))
+        dest = str(r.export_destination or "EU")
         total_see = see_dir + see_indir
         row_ghg = qty * total_see
 
@@ -1217,7 +1213,7 @@ def _query_cbam_and_macc_breakdown(
         cost_per_t = (inv / qty) if qty > 0 and inv > 0 else 24.5
         total_abatement_capacity += qty
         macc_list.append({
-            "name": html.escape(str(m.name or "Decarbonization Project")),
+            "name": str(m.name or "Decarbonization Project"),
             "project_type": (m.project_type or "CCUS / Flaring").upper(),
             "year": m.year or end_year,
             "annual_abatement_tco2e": round(qty, 0),
@@ -1277,7 +1273,7 @@ def _query_base_year_recalculations(
         clean_by.append({
             "year": r.year,
             "date": date_str,
-            "reason": html.escape(str(reason)),
+            "reason": str(reason),
             "previous_emissions_t": round(prev, 0),
             "adjusted_emissions_t": round(adj, 0),
             "delta_pct": round(delta_pct, 1),

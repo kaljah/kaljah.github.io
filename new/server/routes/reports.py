@@ -5,8 +5,8 @@ from flask import Blueprint, jsonify, request, send_file, current_app
 from datetime import datetime, timezone
 import hashlib
 from io import BytesIO
-import html
 from utils import get_current_user, get_allowed_facility_ids
+from services.pdf_escape import safe_pdf_text
 from services.scope2_activity import scope2_activity
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
@@ -135,26 +135,26 @@ def create_pdf_report(emissions_data, filters):
     # Filter summary
     filter_text = "<b>Report Filters:</b><br/>"
     if filters.get("year"):
-        filter_text += f"Year: {html.escape(str(filters['year']))}<br/>"
+        filter_text += f"Year: {safe_pdf_text(filters['year'], 32)}<br/>"
     if filters.get("month"):
-        filter_text += f"Month: {html.escape(str(filters['month']))}<br/>"
+        filter_text += f"Month: {safe_pdf_text(filters['month'], 32)}<br/>"
     if filters.get("facility_id"):
         try:
             facility = db.session.get(Facility, int(filters["facility_id"]))
             if facility:
-                filter_text += f"Facility: {html.escape(str(facility.name))}<br/>"
+                filter_text += f"Facility: {safe_pdf_text(facility.name, 120)}<br/>"
         except (ValueError, TypeError):
             pass
     if filters.get("division"):
-        filter_text += f"Division: {html.escape(str(filters['division']))}<br/>"
+        filter_text += f"Division: {safe_pdf_text(filters['division'], 120)}<br/>"
     if filters.get("field"):
-        filter_text += f"Field: {html.escape(str(filters['field']))}<br/>"
+        filter_text += f"Field: {safe_pdf_text(filters['field'], 120)}<br/>"
     if filters.get("process_type"):
-        filter_text += f"Process Type: {html.escape(str(filters['process_type']))}<br/>"
+        filter_text += f"Process Type: {safe_pdf_text(filters['process_type'], 120)}<br/>"
     if filters.get("method"):
-        filter_text += f"Method: {html.escape(str(filters['method']))}<br/>"
+        filter_text += f"Method: {safe_pdf_text(filters['method'], 120)}<br/>"
     if filters.get("search"):
-        filter_text += f"Search: {html.escape(str(filters['search']))}<br/>"
+        filter_text += f"Search: {safe_pdf_text(filters['search'], 120)}<br/>"
 
     elements.append(Paragraph(filter_text, styles["Normal"]))
     elements.append(Spacer(1, 0.3 * inch))
@@ -284,7 +284,7 @@ def create_pdf_report(emissions_data, filters):
     cell_style = ParagraphStyle("pdfcell", fontName=font, fontSize=7, leading=8)
     for row in table_data[1:]:
         for c in (1, 2, 3, 4):
-            row[c] = Paragraph(html.escape(str(row[c])), cell_style)
+            row[c] = Paragraph(safe_pdf_text(row[c], 200), cell_style)
     details_table = Table(table_data, colWidths=col_widths, repeatRows=1)
     details_table.setStyle(
         TableStyle(

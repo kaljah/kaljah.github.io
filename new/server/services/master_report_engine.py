@@ -46,6 +46,7 @@ from services.tenant_config import get_tenant_config
 from services.master_report_i18n import (
     get_t, localize_status, localize_segment, TRANSLATIONS_EN, TRANSLATIONS_FR
 )
+from services.pdf_escape import safe_pdf_text
 from services.master_report_appendices import (
     build_qaqc_uncertainty_elements,
     build_facility_appendix_elements,
@@ -152,10 +153,10 @@ def _build_cover_elements(data: Dict[str, Any], styles: Dict[str, ParagraphStyle
 
     elements.append(Spacer(1, 15))
     org_name = str(profile.get("operator") or get_tenant_config().get("organization_name", "Demo Operator Co."))
-    elements.append(Paragraph(f"<b>{org_name.upper()}</b>", styles["H2"]))
+    elements.append(Paragraph(f"<b>{safe_pdf_text(org_name.upper())}</b>", styles["H2"]))
     jv_partners = data.get("jv_equity", {}).get("partners", [])
     if jv_partners and len(jv_partners) > 1:
-        partner_str = " & ".join(p["partner_name"] for p in jv_partners)
+        partner_str = " &amp; ".join(safe_pdf_text(p.get("partner_name", "")) for p in jv_partners)
         elements.append(Paragraph(f"<b>Joint Venture Partnership:</b> {partner_str}", styles["BodyMuted"]))
     elements.append(Paragraph(get_t("hse_division", lang), styles["BodyMuted"]))
     elements.append(Spacer(1, 10))
@@ -167,7 +168,7 @@ def _build_cover_elements(data: Dict[str, Any], styles: Dict[str, ParagraphStyle
         doc_title = get_t("title_comparison", lang)
         sub_title = get_t("subtitle_comparison", lang, time_label=time_label)
     else:
-        doc_title = profile.get("name", "REGIONAL ASSET").upper()
+        doc_title = safe_pdf_text(str(profile.get("name", "REGIONAL ASSET")).upper())
         sub_title = get_t("subtitle_regional", lang, time_label=time_label)
 
     elements.append(Paragraph(doc_title, styles["Title"]))
@@ -183,13 +184,13 @@ def _build_cover_elements(data: Dict[str, Any], styles: Dict[str, ParagraphStyle
         ],
         [
             Paragraph(f"<b>{get_t('meta_operator', lang)}</b>", styles["Body"]),
-            Paragraph(str(profile.get("operator") or get_tenant_config().get("organization_name", "Demo Operator Co.")), styles["Body"]),
+            Paragraph(safe_pdf_text(profile.get("operator") or get_tenant_config().get("organization_name", "Demo Operator Co.")), styles["Body"]),
             Paragraph(f"<b>{get_t('meta_gwp', lang)}</b>", styles["Body"]),
             Paragraph(get_t("meta_gwp_val", lang, standard=data["gwp_standard"], ch4_factor=data["gwp_factors"].get("CH4", 28)), styles["Body"]),
         ],
         [
             Paragraph(f"<b>{get_t('meta_basin', lang)}</b>", styles["Body"]),
-            Paragraph(str(profile.get("basin", "National Estate")), styles["Body"]),
+            Paragraph(safe_pdf_text(profile.get("basin", "National Estate")), styles["Body"]),
             Paragraph(f"<b>{get_t('meta_decree', lang)}</b>", styles["Body"]),
             Paragraph(get_t("meta_decree_val", lang), styles["Body"]),
         ],
@@ -276,9 +277,9 @@ def _build_geology_and_ops_elements(data: Dict[str, Any], styles: Dict[str, Para
     profile = data["profile"]
 
     elements.append(Paragraph(get_t("geology_title", lang), styles["H1"]))
-    elements.append(Paragraph(f"<b>{get_t('geology_reservoir', lang)}</b> {profile.get('geology', 'Authentic geological setting spanning the Saharan platform.')}", styles["Body"]))
-    elements.append(Paragraph(f"<b>{get_t('geology_infra', lang)}</b> {profile.get('infrastructure', 'Integrated gathering and processing network.')}", styles["Body"]))
-    elements.append(Paragraph(f"<b>{get_t('geology_flare', lang)}</b> {profile.get('flaring_profile', 'Flare minimization aligned with Zero Routine Flaring.')}", styles["Body"]))
+    elements.append(Paragraph(f"<b>{get_t('geology_reservoir', lang)}</b> {safe_pdf_text(profile.get('geology', 'Authentic geological setting spanning the Saharan platform.'))}", styles["Body"]))
+    elements.append(Paragraph(f"<b>{get_t('geology_infra', lang)}</b> {safe_pdf_text(profile.get('infrastructure', 'Integrated gathering and processing network.'))}", styles["Body"]))
+    elements.append(Paragraph(f"<b>{get_t('geology_flare', lang)}</b> {safe_pdf_text(profile.get('flaring_profile', 'Flare minimization aligned with Zero Routine Flaring.'))}", styles["Body"]))
 
     gc = data.get("gas_composition")
     gc_name = data.get("gas_comp_name")
@@ -286,7 +287,7 @@ def _build_geology_and_ops_elements(data: Dict[str, Any], styles: Dict[str, Para
         gc and isinstance(gc, dict) and any(float(gc.get(k, 0) or 0) > 0 for k in ("ch4_mol_pct", "c2h6_mol_pct", "co2_mol_pct"))
     )
     if has_custom_gc:
-        title_prefix = f"{gc_name} — " if gc_name else ""
+        title_prefix = f"{safe_pdf_text(gc_name)} — " if gc_name else ""
         section_title = f"{title_prefix}{get_t('gas_comp_title', lang)}"
         elements.append(Paragraph(f"<b>{section_title}</b>", styles["H2"]))
         is_fr = str(lang).lower().startswith("fr")
@@ -391,7 +392,7 @@ def _build_decarbonization_projects_elements(data: Dict[str, Any], styles: Dict[
     for p in projects:
         raw_status = p.get("status", "Executing")
         p_rows.append([
-            Paragraph(p.get("title", ""), styles["Body"]),
+            Paragraph(safe_pdf_text(p.get("title", "")), styles["Body"]),
             f"{int(p.get('reduction_tco2e', 0)):,}",
             localize_status(raw_status, lang),
         ])
@@ -568,10 +569,10 @@ def _build_signoff_elements(data: Dict[str, Any], sha256_hash: str, styles: Dict
     elements.append(Paragraph(get_t("signoff_cert", lang), styles["Body"]))
 
     tenant_cfg = get_tenant_config()
-    org = str(data.get("profile", {}).get("operator") or tenant_cfg.get("organization_name", "Demo Operator Co."))
-    hse_signer = str(tenant_cfg.get("hse_director_name", "HSE Director (Demo)"))
-    auditor_signer = str(tenant_cfg.get("lead_auditor_name", "Lead Verifier (Demo)"))
-    vp_signer = str(tenant_cfg.get("vp_upstream_name", "VP Operations (Demo)"))
+    org = safe_pdf_text(data.get("profile", {}).get("operator") or tenant_cfg.get("organization_name", "Demo Operator Co."))
+    hse_signer = safe_pdf_text(tenant_cfg.get("hse_director_name", "HSE Director (Demo)"))
+    auditor_signer = safe_pdf_text(tenant_cfg.get("lead_auditor_name", "Lead Verifier (Demo)"))
+    vp_signer = safe_pdf_text(tenant_cfg.get("vp_upstream_name", "VP Operations (Demo)"))
 
     sign_data = [
         [
@@ -651,8 +652,8 @@ def _build_ogmp_elements(
             st_raw = s.get("status", "Reconciled")
             st_text = ("Réconcilié" if "reconcil" in st_raw.lower() else "Écart Détecté") if is_fr else ("Reconciled" if "reconcil" in st_raw.lower() else "Discrepancy Detected")
             rows.append([
-                Paragraph(s.get("survey_type", "Aerial OGI")[:24], styles["BodySmall"] if "BodySmall" in styles else styles["Body"]),
-                Paragraph(s.get("vendor", "Bridger / FLIR")[:20], styles["BodySmall"] if "BodySmall" in styles else styles["Body"]),
+                Paragraph(safe_pdf_text(s.get("survey_type", "Aerial OGI"), 24), styles["BodySmall"] if "BodySmall" in styles else styles["Body"]),
+                Paragraph(safe_pdf_text(s.get("vendor", "Bridger / FLIR"), 20), styles["BodySmall"] if "BodySmall" in styles else styles["Body"]),
                 s.get("survey_date", ""),
                 f"{s.get('bottom_up_tch4', 0.0):,.1f}",
                 f"{s.get('top_down_tch4', 0.0):,.1f}",
@@ -718,7 +719,7 @@ def _build_ogmp_elements(
 
     pnote = ogmp.get("perimeter_note", "")
     if pnote:
-        elements.append(Paragraph(f"<i>* {pnote}</i>", styles["BodyMuted"]))
+        elements.append(Paragraph(f"<i>* {safe_pdf_text(pnote)}</i>", styles["BodyMuted"]))
 
     return elements
 
@@ -782,8 +783,8 @@ def _build_scope3_elements(
             act = f"{c.get('activity_data', 0.0):,.0f}" if c.get('activity_data') else "Spend / Vol"
             ef = f"{c.get('emission_factor', 0.0):.3f}" if c.get('emission_factor') else "DEFRA / Ecoinvent"
             rows.append([
-                Paragraph(cname[:26], styles["BodySmall"] if "BodySmall" in styles else styles["Body"]),
-                Paragraph(sub[:24], styles["BodySmall"] if "BodySmall" in styles else styles["Body"]),
+                Paragraph(safe_pdf_text(cname, 26), styles["BodySmall"] if "BodySmall" in styles else styles["Body"]),
+                Paragraph(safe_pdf_text(sub, 24), styles["BodySmall"] if "BodySmall" in styles else styles["Body"]),
                 act,
                 c.get("unit", "tonnes"),
                 ef,
@@ -817,7 +818,7 @@ def _build_scope3_elements(
 
     pnote = s3.get("perimeter_note", "")
     if pnote:
-        elements.append(Paragraph(f"<i>* {pnote}</i>", styles["BodyMuted"]))
+        elements.append(Paragraph(f"<i>* {safe_pdf_text(pnote)}</i>", styles["BodyMuted"]))
 
     return elements
 
@@ -871,9 +872,9 @@ def _build_cbam_macc_elements(
     if products:
         for p in products[:4]:
             rows.append([
-                Paragraph(p.get("product_name", "")[:22], styles["BodySmall"] if "BodySmall" in styles else styles["Body"]),
+                Paragraph(safe_pdf_text(p.get("product_name", ""), 22), styles["BodySmall"] if "BodySmall" in styles else styles["Body"]),
                 p.get("cn_code", ""),
-                Paragraph(p.get("destinations", "EU")[:20], styles["BodySmall"] if "BodySmall" in styles else styles["Body"]),
+                Paragraph(safe_pdf_text(p.get("destinations", "EU"), 20), styles["BodySmall"] if "BodySmall" in styles else styles["Body"]),
                 f"{p.get('quantity_tonnes', 0.0):,.0f}",
                 f"{p.get('see_direct', 0.0):.3f}",
                 f"{p.get('see_indirect', 0.0):.3f}",
@@ -916,7 +917,7 @@ def _build_cbam_macc_elements(
         for m in macc_projects[:3]:
             inv_str = f"${m.get('investment_usd', 0.0):,.0f}" if m.get("investment_usd") else "Operating / Opex"
             macc_rows.append([
-                Paragraph(m.get("name", "")[:26], styles["BodySmall"] if "BodySmall" in styles else styles["Body"]),
+                Paragraph(safe_pdf_text(m.get("name", ""), 26), styles["BodySmall"] if "BodySmall" in styles else styles["Body"]),
                 m.get("project_type", "CCUS"),
                 f"{m.get('annual_abatement_tco2e', 0.0):,.0f}",
                 inv_str,
@@ -942,7 +943,7 @@ def _build_cbam_macc_elements(
 
     pnote = cbam.get("perimeter_note", "")
     if pnote:
-        elements.append(Paragraph(f"<i>* {pnote}</i>", styles["BodyMuted"]))
+        elements.append(Paragraph(f"<i>* {safe_pdf_text(pnote)}</i>", styles["BodyMuted"]))
 
     return elements
 
@@ -978,15 +979,16 @@ def _build_process_architecture_elements(
             continue
         chart_path = pfd_charts.get(fname)
         if chart_path and os.path.exists(chart_path):
-            sub_title = f"{fname} — Architecture des Procedes CPF" if is_fr else f"{fname} — Process Flow & Block Overview"
+            fname_esc = safe_pdf_text(fname)
+            sub_title = f"{fname_esc} — Architecture des Procedes CPF" if is_fr else f"{fname_esc} — Process Flow &amp; Block Overview"
             elements.append(Paragraph(f"<b>{sub_title}</b>", styles["H2"]))
             elements.append(Image(chart_path, width=520, height=255))
             elements.append(Spacer(1, 4))
             narrative = (
-                f"Le complexe {fname} traite les fluides bruts issus des puits producteurs par separation etagee HP/MP, "
+                f"Le complexe {fname_esc} traite les fluides bruts issus des puits producteurs par separation etagee HP/MP, "
                 f"stabilisation du brut aux specifications commerciales, et recompression integrale du gaz associe pour reinjection ou valorisation."
                 if is_fr else
-                f"The {fname} Central Processing Facility (CPF) processes crude reservoir fluids through multistage HP/IP separation, "
+                f"The {fname_esc} Central Processing Facility (CPF) processes crude reservoir fluids through multistage HP/IP separation, "
                 f"crude oil desalting and atmospheric stabilization, with associated gas compression for reservoir pressure maintenance and zero routine flaring compliance."
             )
             elements.append(Paragraph(narrative, styles["BodyMuted"]))
