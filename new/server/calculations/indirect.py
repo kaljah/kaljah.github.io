@@ -82,13 +82,14 @@ class IndirectSteamCalculator(BaseCalculator):
 
         def _parse_e(val, default):
             if val in (None, "", "-"):
-                return default
+                return default, True
             s = str(val).strip()
             v = float(s.replace("%", "").strip())
-            return v / 100.0 if "%" in s else v
+            return (v / 100.0 if "%" in s else v), False
 
-        b_eff = _parse_e(boiler_efficiency, 0.80)  # EPA Hub Table 7 basis
-        t_loss = _parse_e(transmission_loss, 0.0)
+        # API Compendium (2021) Exhibit 8.3: 82% boiler efficiency and 10% transmission loss -> net 72%
+        b_eff, b_silent = _parse_e(boiler_efficiency, 0.82)
+        t_loss, t_silent = _parse_e(transmission_loss, 0.10)
         if not (0 <= b_eff <= 1 and 0 <= t_loss <= 1):
             raise ValueError(f"Boiler efficiency ({b_eff}) and transmission loss ({t_loss}) are fractions between 0 and 1")
         # Net efficiency: API Compendium Exhibit 8.3 net efficiency = boiler efficiency - transmission loss
@@ -123,7 +124,7 @@ class IndirectSteamCalculator(BaseCalculator):
             gas="co2",
         )
 
-        return self.format_result(
+        res = self.format_result(
             co2=co2_res,
             ch4=ch4_tonnes,
             n2o=n2o_tonnes,
@@ -132,10 +133,32 @@ class IndirectSteamCalculator(BaseCalculator):
                 "heat_energy": heat_energy,
                 "heat_unit": heat_unit,
                 "energy_btu": energy_btu,
-                "boiler_efficiency": boiler_efficiency,
-                "transmission_loss": transmission_loss,
+                "boiler_efficiency": b_eff,
+                "transmission_loss": t_loss,
+                "net_efficiency": net_efficiency,
             },
         )
+        res["has_silent_defaults"] = b_silent or t_silent
+        res["consumed_factors"] = ["SCP2-004", "SCP2-005"]
+        if b_silent or t_silent:
+            res["silent_defaults"] = []
+            if b_silent:
+                res["silent_defaults"].append({
+                    "factor_id": "SCP2-004",
+                    "parameter": "Boiler Efficiency",
+                    "applied_value": b_eff,
+                    "source": "API Compendium (2021) Exhibit 8.3",
+                    "warning": "Default Exhibit 8.3 assumption (82%). Use actual boiler efficiency if known."
+                })
+            if t_silent:
+                res["silent_defaults"].append({
+                    "factor_id": "SCP2-005",
+                    "parameter": "Steam Transmission Loss",
+                    "applied_value": t_loss,
+                    "source": "API Compendium (2021) Exhibit 8.3",
+                    "warning": "Default Exhibit 8.3 assumption (10%). Use actual transmission loss if known."
+                })
+        return res
 
 
 class CogenAllocationCalculator(BaseCalculator):

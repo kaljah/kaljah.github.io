@@ -413,7 +413,10 @@ def sheet_joint_ventures(wb, ctx):
     _headers(ws, 4, ["Asset Name", "Country", "Basin / Field", "Segment", "Operating Partner", "Equity Share (%)",
                      "Base Year", "Target Gold Year (5-Yr)", "Equity Share CH₄ (t)", "Reporting Source"], Styles.sub_fill)
     jvs = [f for f in ctx.facilities
-           if (f.operator_status or "operated") == "non_operated" or float(f.equity_share_pct or 100.0) < 100.0]
+           if (f.operator_status or "operated") == "non_operated"
+           or float(f.equity_share_pct or 100.0) < 100.0
+           or f.boundary_type == "Equity Share"
+           or (f.boundary_detail and "venture" in f.boundary_detail.lower())]
     if not jvs:
         ws.cell(row=5, column=1, value="No non-operated minority joint venture assets found in active filter scope.").font = Styles.sub_title_font
         ws.cell(row=5, column=10, value="All assets currently declared under 100% operational control.").font = Styles.sub_title_font

@@ -25,6 +25,7 @@ from routes.reports import reports_bp, _safe_excel_value
 from utils import get_current_user, get_allowed_facility_ids
 from services.audit_chain import record_report_fingerprint
 from services.regional_profiles import list_available_regions, get_regional_profile
+from services.tenant_config import get_tenant_config
 from services.master_report_data import aggregate_master_report_data
 from services.master_report_engine import generate_master_publication_pdf
 
@@ -94,14 +95,18 @@ def get_master_report_regions():
             "facility_names": [f.name for f in fac_list],
         })
 
-    # 3. Add National (Consolidated Sonatrach Group) if facilities exist
+    # 3. Add National (Consolidated Group) if facilities exist
     if facilities:
+        tenant = get_tenant_config()
+        nat_name = tenant.get("national_group_name") or f"{tenant.get('organization_name', 'Corporate')} Group (Consolidated National)"
         national_entry = next((r for r in all_profiles if r["key"] == "national"), {
             "key": "national",
-            "name": "Sonatrach Corporate Group (Consolidated National)",
+            "name": nat_name,
             "segment": "Integrated",
         })
         nat_copy = dict(national_entry)
+        if nat_copy.get("name") == "Sonatrach Corporate Group (Consolidated National)":
+            nat_copy["name"] = nat_name
         nat_copy["facility_count"] = len(facilities)
         present_regions.insert(0, nat_copy)
 
@@ -152,10 +157,12 @@ def generate_master_report_endpoint():
             language=language,
         )
 
+        tenant = get_tenant_config()
+        org_prefix = tenant.get("organization_name", "Operator")
         time_tag = f"{start_year}" if start_year == end_year else f"{start_year}_{end_year}"
         clean_name = (region_key.capitalize() if region_key else "National").replace(" ", "_").replace("/", "_")
         lang_tag = f"_{language.upper()}"
-        filename = f"Sonatrach_{mode.capitalize()}_{clean_name}_Master_Report_{time_tag}{lang_tag}.pdf"
+        filename = f"{org_prefix}_{mode.capitalize()}_{clean_name}_Master_Report_{time_tag}{lang_tag}.pdf"
 
         report_sha256 = getattr(pdf_buffer, "report_hash", None) or hashlib.sha256(pdf_buffer.getvalue()).hexdigest()
 
@@ -191,7 +198,7 @@ def _style_excel_header(ws, col_count: int, title: str, subtitle: str):
     white_sub = Font(name="Calibri", size=10, bold=True, color="FFFFFF")
 
     ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=col_count)
-    c1 = ws.cell(row=1, column=1, value=_safe_excel_value(f"SONATRACH // {title.upper()}"))
+    c1 = ws.cell(row=1, column=1, value=_safe_excel_value(title.upper()))
     c1.fill = header_fill
     c1.font = white_bold
     c1.alignment = Alignment(horizontal="center", vertical="center")
@@ -232,7 +239,9 @@ def export_benchmark_excel():
         "Flaring Intensity (% Gas)",
         "Decree 21-330 Status (<= 1.00%)"
     ]
-    _style_excel_header(ws, len(cols), "Cross-Basin Benchmark & Intelligence Matrix", f"Period: {start_year} - {end_year} | Standard: ISO 14064-1 & Décret 21-330")
+    tenant = get_tenant_config()
+    org_name = tenant.get("organization_name", "Operator")
+    _style_excel_header(ws, len(cols), f"{org_name} // Cross-Basin Benchmark & Intelligence Matrix", f"Period: {start_year} - {end_year} | Standard: ISO 14064-1 & Décret 21-330")
 
     # Table Header
     th_fill = PatternFill(start_color="1E293B", end_color="1E293B", fill_type="solid")
@@ -280,7 +289,7 @@ def export_benchmark_excel():
     buf.seek(0)
     hash_val = hashlib.sha256(buf.getvalue()).hexdigest()
 
-    filename = f"Sonatrach_Cross_Basin_Benchmark_{start_year}_{end_year}.xlsx"
+    filename = f"{org_name}_Cross_Basin_Benchmark_{start_year}_{end_year}.xlsx"
     resp = send_file(
         buf,
         mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

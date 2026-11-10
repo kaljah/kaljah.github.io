@@ -1,5 +1,6 @@
 import React from "react";
-import { Globe, Layers, Settings } from "lucide-react";
+import { Download, FileSpreadsheet, Globe, Layers, Settings } from "lucide-react";
+import { Button } from "../ui";
 import ImportWizard, { ImportWizardMode } from "./import-wizard/ImportWizard";
 import { FieldGroupData } from "./import-wizard/mapping";
 import { t } from "../i18n";
@@ -78,6 +79,73 @@ export interface Scope3ImportWizardProps {
 }
 
 export const Scope3ImportWizard: React.FC<Scope3ImportWizardProps> = ({ onClose, onUploadSuccess }) => {
+  const downloadActivityTemplate = () => {
+    const header = "facility_name,year,month,category,sub_category,amount,unit,emission_factor,ef_unit,notes";
+    const sample = "Hassi Messaoud,2024,1,4,Truck Transport,10000,t-km,0.12841,kg,Crude trucking";
+    const csv = `${header}\n${sample}\n`;
+    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8;" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "scope3_activity_template.csv";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
+
+  const downloadEeioTemplate = () => {
+    const header = "facility_name,year,month,naics_code,spend_usd,notes";
+    const sample = "Hassi Messaoud,2024,1,211120,50000,Well drilling equipment procurement";
+    const csv = `${header}\n${sample}\n`;
+    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8;" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "scope3_spend_eeio_template.csv";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
+
+  const fileExtras = (currentMode?: string) => {
+    const isEeio = currentMode === "eeio";
+    return (
+      <div className="flex flex-col gap-2.5">
+        <p className="m-0 text-sm font-medium text-text-secondary">
+          {t("Don't have a file? Download a sample CSV template:")}
+        </p>
+        <div className="flex flex-wrap gap-2.5">
+          <Button
+            variant="secondary"
+            className="h-auto min-w-0 flex-1 justify-start gap-3 px-4 py-3 text-left"
+            onClick={isEeio ? downloadEeioTemplate : downloadActivityTemplate}
+          >
+            <FileSpreadsheet className="size-5 shrink-0" aria-hidden="true" />
+            <span className="flex flex-col">
+              <strong className="text-sm">
+                {isEeio ? t("Scope 3 Spend (EEIO) CSV Template") : t("Scope 3 Activity CSV Template")}
+              </strong>
+              <small className="text-xs font-normal opacity-80">
+                {isEeio
+                  ? t("Includes NAICS code and spend columns with sample entry")
+                  : t("Includes GHG Protocol categories and activity columns with sample entry")}
+              </small>
+            </span>
+            <Download className="ml-auto size-4 shrink-0" aria-hidden="true" />
+          </Button>
+        </div>
+        <p className="m-0 text-xs text-text-secondary">
+          {t("Have an export from another system? Upload it as it is: you can map custom headers to system fields.")}
+        </p>
+      </div>
+    );
+  };
+
+  const overwriteLabel = (currentMode?: string) =>
+    currentMode === "eeio"
+      ? t("Overwrite existing Scope 3 spend records with matching region, month, and NAICS code")
+      : t("Overwrite existing Scope 3 activity records with matching region, month, and category/activity");
+
   return (
     <ImportWizard
       title={t("Scope 3 Bulk Import")}
@@ -85,6 +153,9 @@ export const Scope3ImportWizard: React.FC<Scope3ImportWizardProps> = ({ onClose,
       modes={MODES}
       fieldGroupsFor={groupsFor}
       scopeFor={(mode) => (mode === "eeio" ? "3_eeio" : "3")}
+      fileExtras={fileExtras}
+      overwriteLabel={overwriteLabel}
+      overwriteHint={t("If unchecked, duplicate records will be skipped to prevent double-counting.")}
       onClose={onClose}
       onUploadSuccess={onUploadSuccess}
     />

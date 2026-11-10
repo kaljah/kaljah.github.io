@@ -24,8 +24,8 @@ const VENT: Record<string, MethodChoice> = {
   reported_mass: { value: "vent:reported_mass", label: tr("Simulation / measured result") },
 };
 const COMB: Record<string, MethodChoice> = {
-  carbon_content: { value: "comb:carbon_content", label: tr("Carbon content") },
-  equipment: { value: "comb:equipment", label: tr("Equipment basis") },
+  carbon_content: { value: "comb:carbon_content", label: tr("Carbon content (Gas / Liquid / Solid)") },
+  equipment: { value: "comb:equipment", label: tr("Equipment basis (All fuels)") },
   vehicle_distance: { value: "comb:vehicle_distance", label: tr("Distance travelled") },
   flare_voc: { value: "comb:flare_voc", label: tr("From VOC emitted") },
   thermal_oxidizer: { value: "comb:thermal_oxidizer", label: tr("Thermal oxidizer") },
@@ -109,7 +109,8 @@ export function sectionChoices(processType: string, sourceType: string): MethodC
     case "tank_breathing":
       return t === "specific" ? [VENT.thc_mass] : null;
     case "combustion":
-      return t === "specific" ? [LEGACY(tr("Fuel analysis")), COMB.carbon_content, COMB.equipment] : null;
+    case "stationary_combustion":
+      return t === "specific" ? [LEGACY(tr("Fuel analysis (Gas chromatography)")), COMB.carbon_content, COMB.equipment] : null;
     case "mobile":
       return t === "specific" ? [COMB.vehicle_distance] : null;
     case "flaring":

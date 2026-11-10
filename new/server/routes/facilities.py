@@ -144,6 +144,87 @@ def _taken(column, value, exclude_id=None):
     return db.session.query(q.exists()).scalar()
 
 
+def sync_facility_equity_shares(facility, data):
+    """
+    Keep JV ventures (facility_equity_shares) in sync with consolidation approach.
+    Returns (True, None) on success, or (False, (json_response, status_code)) on failure.
+    """
+    is_equity_or_jv = (
+        facility.boundary_type == "Equity Share"
+        or (facility.boundary_detail and "venture" in str(facility.boundary_detail).lower())
+        or (facility.boundary_notes and "venture" in str(facility.boundary_notes).lower())
+        or (facility.equity_share_pct is not None and float(facility.equity_share_pct or 0) < 100.0)
+        or bool(data.get("partner_id"))
+    )
+    if not is_equity_or_jv:
+        return True, None
+
+    from routes.equity_routes import ensure_default_partners
+    from models import JvPartner, FacilityEquityShare
+
+    ensure_default_partners()
+    partner = None
+    if data.get("partner_id"):
+        try:
+            partner = db.session.get(JvPartner, int(data["partner_id"]))
+        except (ValueError, TypeError):
+            partner = None
+        if not partner:
+            db.session.rollback()
+            return False, (
+                jsonify({"error": f"JV Partner with ID {data['partner_id']} does not exist", "field": "partner_id"}),
+                400,
+            )
+    else:
+        partner = (
+            JvPartner.query.filter_by(is_operator=True).first()
+            or JvPartner.query.filter_by(name="Sonatrach").first()
+        )
+
+    if partner:
+        eq_val = float(facility.equity_share_pct if facility.equity_share_pct is not None else 100.0)
+        other_shares_sum = sum(
+            float(s.equity_share_pct or 0.0)
+            for s in FacilityEquityShare.query.filter_by(facility_id=facility.id).all()
+            if s.partner_id != partner.id
+        )
+        if eq_val + other_shares_sum > 100.0 + 1e-9:
+            db.session.rollback()
+            return False, (
+                jsonify({
+                    "error": f"Total equity shares would equal {eq_val + other_shares_sum:.2f}% (max 100%). Reduce partner shares first.",
+                    "field": "equity_share_pct",
+                }),
+                400,
+            )
+
+        ref_val = (
+            data.get("agreement_reference")
+            or facility.boundary_notes
+            or (
+                f"{facility.name} Joint Venture Agreement"
+                if (facility.boundary_detail == "Joint Venture" or facility.boundary_type == "Equity Share")
+                else f"{facility.name} Concession"
+            )
+        )
+        eq_share = FacilityEquityShare.query.filter_by(facility_id=facility.id, partner_id=partner.id).first()
+        if eq_share:
+            eq_share.equity_share_pct = eq_val
+            if ref_val:
+                eq_share.agreement_reference = ref_val
+        else:
+            eq_share = FacilityEquityShare(
+                facility_id=facility.id,
+                partner_id=partner.id,
+                equity_share_pct=eq_val,
+                effective_start_date=f"{facility.ogmp_membership_year or 2021}-01-01",
+                agreement_reference=ref_val,
+            )
+            db.session.add(eq_share)
+
+    return True, None
+
+
 @facilities_bp.route("", methods=["POST"])
 @facilities_bp.route("/", methods=["POST"])
 @login_required
@@ -183,6 +264,18 @@ def add_facility():
     if _taken(Facility.name, data["name"]):
         return jsonify({"error": f"A facility named '{data['name']}' already exists", "field": "name"}), 409
 
+    # Determine operator status if not provided:
+    # Under Equity Share / Joint Venture with minority interest (< 50%), asset is non_operated
+    op_status = data.get("operator_status")
+    eq_val = parse_number(data.get("equity_share_pct"), "equity_share_pct", required=False, min_value=0, max_value=100)
+    if not op_status:
+        b_type = str(data.get("boundary_type") or "")
+        b_detail = str(data.get("boundary_detail") or "")
+        if (b_type == "Equity Share" or "venture" in b_detail.lower()) and eq_val is not None and eq_val < 50.0:
+            op_status = "non_operated"
+        else:
+            op_status = "operated"
+
     fac = Facility(
         name=data.get("name"),
         location=data.get("location"),
@@ -194,9 +287,9 @@ def add_facility():
         boundary_notes=data.get("boundary_notes"),
         boundary_type=data.get("boundary_type", "Operational Control"),
         boundary_detail=data.get("boundary_detail"),
-        equity_share_pct=parse_number(data.get("equity_share_pct"), "equity_share_pct", required=False, min_value=0, max_value=100, default=100.0),
+        equity_share_pct=eq_val if eq_val is not None else 100.0,
         segment=normalize_segment(data.get("segment")),
-        operator_status=data.get("operator_status", "operated"),
+        operator_status=op_status,
         country=data.get("country", "Algeria"),
         ogmp_membership_year=parse_year(data.get("ogmp_membership_year"), required=False) or 2023,
         reconciliation_threshold=parse_number(
@@ -213,6 +306,11 @@ def add_facility():
     except IntegrityError:
         db.session.rollback()
         return jsonify({"error": f"Facility code '{fac.code}' is already in use"}), 409
+
+    # Save consolidation approach into JV ventures (facility_equity_shares)
+    ok, err_resp = sync_facility_equity_shares(fac, data)
+    if not ok:
+        return err_resp
 
     # Audit
     try:
@@ -345,6 +443,11 @@ def update_facility(facility_id):
     except IntegrityError:  # a concurrent update took the code first (BUG-0033: was a 500)
         db.session.rollback()
         return jsonify({"error": "Facility code is already in use", "field": "code"}), 409
+
+    # Keep JV ventures (facility_equity_shares) in sync with consolidation approach
+    ok, err_resp = sync_facility_equity_shares(facility, data)
+    if not ok:
+        return err_resp
 
     # Audit
     try:

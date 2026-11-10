@@ -45,6 +45,8 @@ export const TEMPLATES: Record<string, TemplateField[]> = {
     { id: "design_capacity", label: t("Design Capacity"), required: false },
     { id: "installation_date", label: t("Installation Date"), required: false, hint: "YYYY-MM-DD" },
     { id: "status", label: t("Status"), required: false, hint: t("Active / Inactive") },
+    { id: "description", label: t("Description"), required: false },
+    { id: "region", label: t("Region"), required: false },
   ],
   activity: [
     { id: "activity", label: t("Activity"), required: false },
@@ -192,6 +194,14 @@ export const TEMPLATES: Record<string, TemplateField[]> = {
     { id: "co2e", label: t("Total CO2e (t)"), required: false, hint: t("Supplier-specific total instead of a factor") },
     { id: "notes", label: t("Notes"), required: false },
   ],
+  activity_scope3_eeio: [
+    { id: "facility_id", label: t("Region"), required: true },
+    { id: "year", label: t("Year"), required: true },
+    { id: "month", label: t("Month"), required: true },
+    { id: "naics_code", label: t("NAICS Code"), required: true, hint: t("6-digit NAICS code") },
+    { id: "spend_usd", label: t("Spend (USD)"), required: true },
+    { id: "notes", label: t("Description / Notes"), required: false },
+  ],
   custom_factors: [
     {
       id: "name",
@@ -296,6 +306,8 @@ export const TEMPLATES: Record<string, TemplateField[]> = {
     { id: "location", label: t("Location (Wilaya)"), required: false },
     { id: "boundary_type", label: t("Consolidation Approach"), required: false },
     { id: "boundary_detail", label: t("Boundary Details"), required: false },
+    { id: "boundary_notes", label: t("Boundary Notes / Agreement Reference"), required: false },
+    { id: "country", label: t("Country"), required: false },
     { id: "segment", label: t("Supply Chain Segment"), required: false },
     { id: "latitude", label: t("Latitude"), required: false },
     { id: "longitude", label: t("Longitude"), required: false },

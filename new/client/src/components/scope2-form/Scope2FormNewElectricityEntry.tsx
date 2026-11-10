@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import { SilentDefaultBanner, FactorLineageModal } from "../common";
 import { Lock } from "lucide-react";
 import { Input, Field, Badge } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
@@ -49,6 +50,37 @@ export interface Scope2FormNewElectricityEntryProps {
   year: number | string;
 }
 
+const STEAM_FACTORS = [
+  {
+    id: "SCP2-004",
+    parameter_name: "Default Steam Boiler Efficiency",
+    value: 0.82,
+    unit: "fraction",
+    basis: "82% boiler efficiency",
+    source_document: "API Compendium (2021)",
+    edition_year: "4th Edition (November 2021)",
+    table_or_equation_ref: "Exhibit 8.3, p. 8-10",
+    verbatim_citation: "Assuming an 82% boiler efficiency and 10% line losses, the net efficiency is 72%.",
+    is_user_overridable: true,
+    is_silent_default: true,
+    warning_flag: "CAUTION_ASSUMPTION"
+  },
+  {
+    id: "SCP2-005",
+    parameter_name: "Default Steam Transmission Loss",
+    value: 0.10,
+    unit: "fraction",
+    basis: "10% line loss",
+    source_document: "API Compendium (2021)",
+    edition_year: "4th Edition (November 2021)",
+    table_or_equation_ref: "Exhibit 8.3, p. 8-10",
+    verbatim_citation: "Assuming an 82% boiler efficiency and 10% line losses, the net efficiency is 72%.",
+    is_user_overridable: true,
+    is_silent_default: true,
+    warning_flag: "CAUTION_ASSUMPTION"
+  }
+];
+
 // Extracted from Scope2Form.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps> = ({
   activity,
@@ -91,7 +123,10 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
   unit,
   unitOptions,
   year,
-}) => (
+}) => {
+  const [showSteamModal, setShowSteamModal] = useState(false);
+
+  return (
   <div
     className={`calc-panel [background:white]! [border-radius:8px]! [padding:25px]! [box-shadow:0_2px_10px_rgba(0,0,0,0.05)]!`}
   >
@@ -247,28 +282,52 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
           </div>
         )}
         {sourceType === "indirect_steam" && (
-          <div className={`form-grid-2 [grid-column:span_2]!`}>
-            <Field className="input-group" label={t("Boiler Efficiency (0.0 - 1.0)")}>
-              <Input
-                type="number"
-                min="0"
-                max="1"
-                step="any"
-                value={boilerEff}
-                onChange={(e) => setBoilerEff(e.target.value)}
+          <>
+            <div className={`form-grid-2 [grid-column:span_2]!`}>
+              <Field className="input-group" label={t("Boiler Efficiency (0.0 - 1.0)")}>
+                <Input
+                  type="number"
+                  min="0"
+                  max="1"
+                  step="any"
+                  value={boilerEff}
+                  onChange={(e) => setBoilerEff(e.target.value)}
+                  placeholder="Default: 0.82 (Exhibit 8.3)"
+                />
+              </Field>
+              <Field className="input-group" label={t("Transmission Loss (0.0 - 1.0)")}>
+                <Input
+                  type="number"
+                  min="0"
+                  max="1"
+                  step="any"
+                  value={transLoss}
+                  onChange={(e) => setTransLoss(e.target.value)}
+                  placeholder="Default: 0.10 (Exhibit 8.3)"
+                />
+              </Field>
+            </div>
+            <div className="[grid-column:span_2]! mb-2">
+              <SilentDefaultBanner
+                factorId="SCP2-004 / SCP2-005"
+                parameterName="Boiler Efficiency (82%) & Transmission Loss (10%)"
+                defaultValue="72% Net"
+                sourceCitation="API Compendium (2021) Exhibit 8.3, p. 8-10"
+                onInspect={() => setShowSteamModal(true)}
+                isSilentDefault={!boilerEff || !transLoss}
               />
-            </Field>
-            <Field className="input-group" label={t("Transmission Loss (0.0 - 1.0)")}>
-              <Input
-                type="number"
-                min="0"
-                max="1"
-                step="any"
-                value={transLoss}
-                onChange={(e) => setTransLoss(e.target.value)}
-              />
-            </Field>
-          </div>
+            </div>
+            <FactorLineageModal
+              isOpen={showSteamModal}
+              onClose={() => setShowSteamModal(false)}
+              factors={STEAM_FACTORS}
+              title="Steam Boiler & Line Loss Factor Provenance"
+              onApplyOverride={(overrides) => {
+                if (overrides["SCP2-004"]) setBoilerEff(String(overrides["SCP2-004"].value));
+                if (overrides["SCP2-005"]) setTransLoss(String(overrides["SCP2-005"].value));
+              }}
+            />
+          </>
         )}
         {sourceType === "cogen_allocation" && (
           <div className={`form-grid-3 [grid-column:span_2]!`}>
@@ -380,7 +439,11 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
       <div className="mt-1.5 flex flex-wrap items-center justify-between text-xs text-text-secondary">
         <span>
           {t("Scope 2 Method:")}{" "}
-          <strong className="text-text font-medium">{sourceType === "location" ? t("Location-based (Grid)") : t("Market-based (Contractual)")}</strong>
+          <strong className="text-text font-medium">
+            {sourceType === "electricity" && Boolean(marketInstrument)
+              ? t("Market-based (Contractual)")
+              : t("Location-based (Grid)")}
+          </strong>
         </span>
         <span>
           {t("Quantity:")}{" "}
@@ -400,6 +463,7 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
       </button>
     </div>
   </div>
-);
+  );
+};
 
 export default Scope2FormNewElectricityEntry;

@@ -37,6 +37,53 @@ def ensure_default_partners():
             db.session.rollback()
 
 
+def sync_equity_shares_for_facilities():
+    """Ensure any facility configured with Equity Share or Joint Venture has its operator share in facility_equity_shares."""
+    ensure_default_partners()
+    operator_partner = JvPartner.query.filter_by(is_operator=True).first() or JvPartner.query.filter_by(name="Sonatrach").first()
+    if not operator_partner:
+        return
+    facs = Facility.query.filter(
+        db.or_(
+            Facility.boundary_type == "Equity Share",
+            Facility.boundary_detail.ilike("%venture%"),
+            Facility.boundary_notes.ilike("%venture%"),
+            Facility.equity_share_pct < 100.0,
+        )
+    ).all()
+    added = False
+    for fac in facs:
+        # Auto-reconcile operator status for minority joint ventures
+        if (
+            fac.equity_share_pct is not None
+            and float(fac.equity_share_pct) < 50.0
+            and (fac.boundary_type == "Equity Share" or (fac.boundary_detail and "venture" in str(fac.boundary_detail).lower()))
+            and fac.operator_status == "operated"
+        ):
+            fac.operator_status = "non_operated"
+            added = True
+
+        exists = FacilityEquityShare.query.filter_by(facility_id=fac.id, partner_id=operator_partner.id).first()
+        if not exists:
+            eq_pct = float(fac.equity_share_pct if fac.equity_share_pct is not None else 100.0)
+            other_shares = sum(float(s.equity_share_pct or 0.0) for s in FacilityEquityShare.query.filter_by(facility_id=fac.id).all())
+            if eq_pct + other_shares <= 100.0 + 1e-9:
+                share = FacilityEquityShare(
+                    facility_id=fac.id,
+                    partner_id=operator_partner.id,
+                    equity_share_pct=eq_pct,
+                    effective_start_date=f"{fac.ogmp_membership_year or 2021}-01-01",
+                    agreement_reference=fac.boundary_notes or f"{fac.name} Joint Venture Agreement",
+                )
+                db.session.add(share)
+                added = True
+    if added:
+        try:
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+
+
 @equity_bp.route("/partners", methods=["GET"])
 @login_required
 def get_partners():
@@ -63,6 +110,8 @@ def get_equity_shares():
     user = get_current_user()
     if user and user.role in ["it", "it_admin", "it_manager"]:
         return jsonify({"error": "Forbidden: IT roles do not have access to Joint Venture equity data"}), 403
+    ensure_default_partners()
+    sync_equity_shares_for_facilities()
     allowed_fids = get_allowed_facility_ids(user)
 
     query = FacilityEquityShare.query
@@ -182,9 +231,11 @@ def save_equity_share():
 
     if not require_facility_access(user, facility_id):
         return jsonify({"error": "Forbidden: You do not have access to this facility"}), 403
-    if db.session.get(Facility, facility_id) is None:
+    fac = db.session.get(Facility, facility_id)
+    if fac is None:
         return jsonify({"error": f"Facility with ID {facility_id} does not exist"}), 404
-    if db.session.get(JvPartner, partner_id) is None:
+    partner = db.session.get(JvPartner, partner_id)
+    if partner is None:
         return jsonify({"error": "Unknown partner"}), 400
 
     start = _parse_date(data.get("effective_start_date") or "2021-01-01", "effective_start_date")
@@ -230,6 +281,14 @@ def save_equity_share():
     share.effective_end_date = end.isoformat() if end else None
     share.agreement_reference = data.get("agreement_reference")
 
+    # Keep Facility model synchronized if operator partner share was updated
+    if partner.is_operator:
+        fac.equity_share_pct = equity_pct
+        if not fac.boundary_type:
+            fac.boundary_type = "Equity Share"
+        if equity_pct < 50.0 and (fac.operator_status is None or fac.operator_status == "operated"):
+            fac.operator_status = "non_operated"
+
     from utils import log_activity_and_notify
     from routes.dashboard import clear_dashboard_cache
 
@@ -272,10 +331,11 @@ def get_equity_allocation():
     Allocates annual GHG (Scope 1 + Scope 2 tCO2e) and methane (tCH4) emissions to JV partners
     based on their effective equity share percentages.
     """
-    ensure_default_partners()
     user = get_current_user()
     if user and user.role in ["it", "it_admin", "it_manager"]:
         return jsonify({"error": "Forbidden: IT roles do not have access to Joint Venture equity data"}), 403
+    ensure_default_partners()
+    sync_equity_shares_for_facilities()
     allowed_fids = get_allowed_facility_ids(user)
 
     year = (request.args.get("year") or "").strip()

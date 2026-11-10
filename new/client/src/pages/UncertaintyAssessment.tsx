@@ -269,18 +269,10 @@ const UncertaintyAssessment: React.FC = () => {
     return Math.max(380, count * 40 + 80);
   }, [data?.categories?.length]);
 
-  if (loading) {
-    return (
-      <div className="[padding:24px_32px_48px] [max-width:1600px] [margin:0_auto] [color:var(--text-primary,_var(--color-ink-900))]">
-        <LoadingSpinner message={t("Quantifying Inventory Uncertainty...")} />
-      </div>
-    );
-  }
-
   const totalEmissions = data?.total_inventory_emissions || 1;
-  const highRiskCount = data?.categories.filter((c) => c.level === "high").length || 0;
-  const mediumRiskCount = data?.categories.filter((c) => c.level === "medium").length || 0;
-  const lowRiskCount = data?.categories.filter((c) => c.level === "low").length || 0;
+  const highRiskCount = data?.categories?.filter((c) => c.level === "high").length || 0;
+  const mediumRiskCount = data?.categories?.filter((c) => c.level === "medium").length || 0;
+  const lowRiskCount = data?.categories?.filter((c) => c.level === "low").length || 0;
 
   return (
     <div className="[padding:24px_32px_48px] [max-width:1600px] [margin:0_auto] [color:var(--text-primary,_var(--color-ink-900))]">

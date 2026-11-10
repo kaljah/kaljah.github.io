@@ -45,7 +45,16 @@ def get_allowed_facility_ids(user):
     if user.role == "auditor" and is_unrestricted_location(user.location):
         return None
 
-    # Superuser and regular users are strictly scoped to their assigned facility/region.
+    # Check explicit UserFacilityAccess table first (granular per-facility assignment)
+    try:
+        from models import UserFacilityAccess
+        user_accesses = UserFacilityAccess.query.filter_by(user_id=user.id).all()
+        if user_accesses:
+            return list(set(a.facility_id for a in user_accesses))
+    except Exception:
+        pass
+
+    # Superuser and regular users: fallback to assigned facility/region string matching.
     user_region = str(user.location).strip() if user.location else ""
     if not user_region or is_unrestricted_location(user_region):
         return []  # No specific facility/region assigned, no access for scoped role
@@ -110,11 +119,10 @@ def user_label(user):
     return f"{name} <{email}>" if name and email else (name or email or f"user#{user.id}")
 
 
-def facility_in_user_scope(user, region=None, location=None, name=None):
-    """True when a facility with these attributes falls inside the user's region scope.
+def facility_in_user_scope(user, region=None, location=None, name=None, facility_id=None):
+    """True when a facility with these attributes falls inside the user's region/facility scope.
 
-    Mirrors get_allowed_facility_ids (a regional user sees facilities whose region, location
-    or name equals user.location). Used to validate the *resulting* values of facility
+    Mirrors get_allowed_facility_ids. Used to validate the *resulting* values of facility
     creates/updates so a regional user cannot move a facility out of its own scope
     (audit RC-1: BUG-001, BUG-093).
     """
@@ -122,6 +130,13 @@ def facility_in_user_scope(user, region=None, location=None, name=None):
         return False
     if user.role == "admin":
         return True
+    allowed_ids = get_allowed_facility_ids(user)
+    if allowed_ids is not None and facility_id is not None:
+        try:
+            if int(facility_id) in [int(fid) for fid in allowed_ids]:
+                return True
+        except (ValueError, TypeError):
+            pass
     user_loc = str(user.location or "").strip().lower()
     if not user_loc or is_unrestricted_location(user_loc):
         return False
@@ -134,7 +149,8 @@ def facility_change_allowed(user, current, region=None, location=None, name=None
     Regional users must keep the facility in their scope and may not assign a region
     other than their own (re-regioning moves the facility into another region's scope).
     """
-    if not facility_in_user_scope(user, region, location, name):
+    fac_id = getattr(current, "id", None)
+    if not facility_in_user_scope(user, region, location, name, facility_id=fac_id):
         return False
     if user.role == "admin":
         return True

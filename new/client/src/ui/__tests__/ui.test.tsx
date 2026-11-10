@@ -14,6 +14,8 @@ import {
   StatCard,
   StatusPill,
   Switch,
+  Tooltip,
+  TooltipProvider,
   Unit,
   cn,
 } from "..";
@@ -154,6 +156,25 @@ describe("Num / Unit / StatCard", () => {
     render(<StatCard label="Gross" value={1000} unit="tCO2e" delta={{ value: -0.05, goodWhen: "down" }} />);
     const delta = screen.getByText("5.0%").closest("span[class*='inline-flex']");
     expect(delta?.className).toMatch(/text-success-fg/);
+  });
+});
+
+describe("Tooltip", () => {
+  it("renders with light surface background and border instead of dark background", async () => {
+    render(
+      <TooltipProvider>
+        <Tooltip content="Helpful information">
+          <button type="button">Hover me</button>
+        </Tooltip>
+      </TooltipProvider>,
+    );
+    const trigger = screen.getByRole("button", { name: "Hover me" });
+    await userEvent.hover(trigger);
+    const content = await screen.findByText("Helpful information");
+    expect(content.className).toContain("bg-surface");
+    expect(content.className).toContain("text-text");
+    expect(content.className).toContain("border-border");
+    expect(content.className).not.toContain("bg-ink-900");
   });
 });
 

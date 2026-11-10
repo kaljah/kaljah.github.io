@@ -553,6 +553,7 @@ const ManageDataInner: React.FC = () => {
     const [facilityForm, setFacilityForm] = useState<Record<string, any>>({
         name: '', activity: '', division: '', field: '', location: '',
         boundary_type: '', boundary_detail: '', equity_share_pct: '',
+        partner_id: '', agreement_reference: '',
         segment: '', latitude: '', longitude: ''
     });
 
@@ -933,7 +934,7 @@ const ManageDataInner: React.FC = () => {
                 location: (facilityForm.location || regionName).trim(),
                 boundary_notes: fullBoundary
             };
-            ['latitude', 'longitude', 'equity_share_pct'].forEach((k) => {
+            ['latitude', 'longitude', 'equity_share_pct', 'partner_id', 'agreement_reference'].forEach((k) => {
                 if (body[k] === '' || body[k] === null || body[k] === undefined) delete body[k];
             });
             await api.post('/facilities', body);
@@ -941,6 +942,7 @@ const ManageDataInner: React.FC = () => {
             setFacilityForm({
                 name: '', activity: '', division: '', field: '', location: '',
                 boundary_type: '', boundary_detail: '', equity_share_pct: '',
+                partner_id: '', agreement_reference: '',
                 segment: '', latitude: '', longitude: ''
             });
             fetchFacilities();

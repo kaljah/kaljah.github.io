@@ -65,7 +65,7 @@ export const MoreOptions: React.FC<MoreOptionsProps> = ({
 
 export interface SegmentedOption {
   value: string;
-  label: string;
+  label: React.ReactNode;
   hint?: string;
 }
 

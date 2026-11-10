@@ -126,7 +126,7 @@ class TestConcurrencyAndLockResilience:
                         "month": (task_id % 12) + 1,
                         "facility_id": facility_id,
                         "category": "1",
-                        "sub_category": "Purchased Materials",
+                        "sub_category": f"Purchased Materials {task_id}",
                         "activity_data": 2000 + task_id * 20,
                         "unit": "USD",
                         "emission_factor": 0.35,

@@ -405,7 +405,14 @@ def create_survey():
     values = {f: _value(f, data.get(f)) for f in SURVEY_FIELDS if f in data}
     values["survey_method"] = str(data.get("survey_method") or "Method 21").strip()
     values["survey_date"] = values.get("survey_date") or datetime.date.today().isoformat()
-    values.setdefault("leak_status", "Non-leaking")
+    if "leak_status" not in data or data.get("leak_status") is None:
+        if (values.get("leaking_hours") or 0) > 0 or (values.get("measured_emission_rate") or 0) > 0 or (values.get("screening_value_ppm") or 0) >= 10000:
+            values["leak_status"] = "Leaking"
+        else:
+            values["leak_status"] = "Non-leaking"
+    else:
+        values["leak_status"] = str(data["leak_status"]).strip()
+
     values.setdefault("measurement_unit", "kg/hr")
     values.setdefault("surveyor_name", user.fullName)
     if values.get("leak_status") == "Non-leaking":

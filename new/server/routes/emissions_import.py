@@ -44,7 +44,12 @@ def _read_upload_request():
     global_factor_type = request.form.get("global_factor_type", "auto")
     mapping_str = request.form.get("column_mapping") or request.form.get("mapping")
     scope = request.form.get("scope", "1")
-    overwrite_duplicates = request.form.get("overwrite_duplicates") == "true"
+    is_overwrite_requested = request.form.get("overwrite_duplicates") in ("true", "1", "yes")
+    dup_action = (request.form.get("duplicate_action") or "").lower().strip()
+    if is_overwrite_requested and dup_action in ("overwrite", "revision", "skip"):
+        overwrite_duplicates = dup_action
+    else:
+        overwrite_duplicates = is_overwrite_requested
     decimal_mark = decimal_mark_from(request.form)  # chosen per file in the wizard (F6)
 
     # BUG-001: the bulk job must enforce the same roles as the dedicated endpoints.

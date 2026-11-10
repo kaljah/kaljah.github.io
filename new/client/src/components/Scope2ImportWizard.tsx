@@ -1,5 +1,6 @@
 import React from "react";
-import { Activity, Layers } from "lucide-react";
+import { Activity, Download, FileSpreadsheet, Layers } from "lucide-react";
+import { Button } from "../ui";
 import ImportWizard from "./import-wizard/ImportWizard";
 import { FieldGroupData } from "./import-wizard/mapping";
 import { t } from "../i18n";
@@ -57,12 +58,52 @@ export interface Scope2ImportWizardProps {
 }
 
 export const Scope2ImportWizard: React.FC<Scope2ImportWizardProps> = ({ onClose, onUploadSuccess }) => {
+  const downloadTemplate = () => {
+    const header = "facility_name,date,year,month,source_type,grid_region,consumption,unit,factor";
+    const sample = "Hassi Messaoud,2024-01-01,2024,1,electricity,Algerian National Grid,500,MWh,";
+    const csv = `${header}\n${sample}\n`;
+    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8;" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "scope2_import_template.csv";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
+
+  const fileExtras = (
+    <div className="flex flex-col gap-2.5">
+      <p className="m-0 text-sm font-medium text-text-secondary">{t("Don't have a file? Download a sample CSV template:")}</p>
+      <div className="flex flex-wrap gap-2.5">
+        <Button
+          variant="secondary"
+          className="h-auto min-w-0 flex-1 justify-start gap-3 px-4 py-3 text-left"
+          onClick={downloadTemplate}
+        >
+          <FileSpreadsheet className="size-5 shrink-0" aria-hidden="true" />
+          <span className="flex flex-col">
+            <strong className="text-sm">{t("Scope 2 CSV Template")}</strong>
+            <small className="text-xs font-normal opacity-80">{t("Includes electricity and steam columns with sample entries")}</small>
+          </span>
+          <Download className="ml-auto size-4 shrink-0" aria-hidden="true" />
+        </Button>
+      </div>
+      <p className="m-0 text-xs text-text-secondary">
+        {t("Have an export from another system? Upload it as it is: you can map custom headers to system fields.")}
+      </p>
+    </div>
+  );
+
   return (
     <ImportWizard
       title={t("Scope 2 Bulk Import")}
       subtitle={t("Upload electricity and indirect steam data from CSV or Excel")}
       fieldGroupsFor={groupsFor}
       scopeFor={() => "2"}
+      fileExtras={fileExtras}
+      overwriteLabel={t("Overwrite existing Scope 2 records with matching region, month, source type, and grid/meter")}
+      overwriteHint={t("If unchecked, duplicate records will be skipped to prevent double-counting.")}
       onClose={onClose}
       onUploadSuccess={onUploadSuccess}
     />

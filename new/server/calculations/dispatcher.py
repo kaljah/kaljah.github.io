@@ -184,6 +184,20 @@ def operating_hours(inputs):
     return record_period(inputs)[0]
 
 
+_PROVENANCE_MAP = None
+
+
+def _get_provenance_map():
+    global _PROVENANCE_MAP
+    if _PROVENANCE_MAP is None:
+        try:
+            from scripts.verified_factors_seed_data import ALL_VERIFIED_FACTORS
+            _PROVENANCE_MAP = {f["id"]: f for f in ALL_VERIFIED_FACTORS}
+        except Exception:
+            _PROVENANCE_MAP = {}
+    return _PROVENANCE_MAP
+
+
 class CalculationDispatcher:
     """
     Routes a calculation request to the appropriate API 2021 calculator.
@@ -491,8 +505,8 @@ class CalculationDispatcher:
                     raise ValueError("Missing required field: hydrogen produced (h2_produced_tonnes or h2_produced_scf), "
                                      "or feedstock rate with carbon fraction")
                 # API Compendium 2021 Table 6-51 factor is per standard volume (scf at 60°F, 14.696 psia)
-                # Standard molar volume is invariant at 379.3 scf/lb-mol; 1 tonne H2 = 2204.62262 lb / 2.016 lb/mol * 379.3 scf/mol
-                h2_scf = h2_t * 2204.6226218488 / 2.016 * 379.3
+                # Standard molar volume is invariant at 379.3 scf/lb-mol; 1 tonne H2 = 2204.62 lb / 2.016 lb/mol * 379.3 scf/mol
+                h2_scf = h2_t * 2204.62 / 2.016 * 379.3
             res = calc.calculate(method="simple_factor", simple_basis="h2_scf", simple_volume=h2_scf,
                                  uncertainties=uncertainties, gwp_dict=gwp_dict)
         return res
@@ -666,6 +680,73 @@ class CalculationDispatcher:
                 comps.setdefault("activity", r.get("ad_uncertainty_1sigma"))
         if comps:
             res["uncertainty_components"] = comps
+        res = self._attach_provenance_lineage(res, process_type, flat, emission_factors, gwp_dict, gwp_standard)
+        return res
+
+    def _attach_provenance_lineage(self, res, process_type, flat_inputs, emission_factors, gwp_dict, gwp_standard):
+        """Attaches ISO 14064-1 / GHG Protocol factor provenance trail and silent default detection."""
+        prov_map = _get_provenance_map()
+
+        consumed_ids = list(res.get("consumed_factors") or [])
+        silent_defaults = list(res.get("silent_defaults") or [])
+
+        # 1. GWP factor provenance
+        std_key = str(gwp_standard or "AR5").upper().strip()
+        if std_key == "SAR":
+            gwp_id = "GWP-001"
+        elif std_key == "AR4":
+            gwp_id = "GWP-003"
+        elif std_key == "AR6":
+            gwp_id = "GWP-008"
+        else:
+            gwp_id = "GWP-005"
+        if gwp_id not in consumed_ids:
+            consumed_ids.append(gwp_id)
+
+        # 2. Process-specific factor identification
+        pt = str(process_type or "").strip().lower()
+        if pt in ("flaring", "routine_flaring", "non_routine_flaring", "safety_flaring", "flare"):
+            if "FLR-001" not in consumed_ids:
+                consumed_ids.extend(["FLR-001", "FLR-003", "FLR-004"])
+                if flat_inputs.get("combustion_efficiency") in (None, ""):
+                    silent_defaults.append({
+                        "factor_id": "FLR-001",
+                        "parameter": "Flare Destruction Efficiency",
+                        "applied_value": 0.98,
+                        "source": "API Compendium (2021) Section 5.1.2",
+                        "warning": "Prescribed default 98% applied. Override if facility stack is metered."
+                    })
+        elif pt in ("drilling", "mud_degassing"):
+            mud_type = str(flat_inputs.get("mud_type") or "water").lower()
+            fid = "VNT-002" if "oil" in mud_type else "VNT-001"
+            if fid not in consumed_ids:
+                consumed_ids.append(fid)
+        elif pt in ("indirect_steam", "steam"):
+            if "SCP2-004" not in consumed_ids:
+                consumed_ids.extend(["SCP2-004", "SCP2-005"])
+
+        # Build provenance trail objects
+        trail = []
+        for fid in consumed_ids:
+            factor = prov_map.get(fid)
+            if factor:
+                trail.append({
+                    "id": factor["id"],
+                    "parameter_name": factor["parameter_name"],
+                    "value": factor["value"],
+                    "unit": factor["unit"],
+                    "source_document": factor["source_document"],
+                    "table_or_equation_ref": factor["table_or_equation_ref"],
+                    "verbatim_citation": factor["verbatim_citation"],
+                    "is_silent_default": factor.get("is_silent_default", False),
+                    "warning_flag": factor.get("warning_flag", "NONE"),
+                })
+
+        res["consumed_factors"] = consumed_ids
+        res["provenance_trail"] = trail
+        res["has_silent_defaults"] = bool(silent_defaults) or res.get("has_silent_defaults", False)
+        if silent_defaults:
+            res["silent_defaults"] = silent_defaults
         return res
 
     def _route_section_methods(self, process_type, flat_inputs, uncertainties, gwp_dict):

@@ -1,9 +1,12 @@
 """
 Global Warming Potential (GWP) Constants & Resolution Engine
-Supports IPCC AR4 (2007), IPCC AR5 (2013), and IPCC AR6 (2021) standards.
+Supports IPCC SAR (1995), IPCC AR4 (2007), IPCC AR5 (2013), and IPCC AR6 (2021) standards.
 """
 
 import time
+
+# IPCC 2nd Assessment Report (SAR - 1995)
+GWP_SAR = {"CO2": 1.0, "CH4": 21.0, "N2O": 310.0, "CH4_20": 56.0, "N2O_20": 280.0}
 
 # IPCC 4th Assessment Report (AR4 - 2007)
 GWP_AR4 = {"CO2": 1.0, "CH4": 25.0, "N2O": 298.0, "CH4_20": 72.0, "N2O_20": 289.0}
@@ -17,7 +20,7 @@ GWP_AR5 = {"CO2": 1.0, "CH4": 28.0, "N2O": 265.0, "CH4_20": 84.0, "N2O_20": 264.
 GWP_AR6 = {"CO2": 1.0, "CH4": 29.8, "N2O": 273.0, "CH4_20": 82.5, "N2O_20": 273.0}
 
 # Standard registry
-GWP_STANDARDS = {"AR4": GWP_AR4, "AR5": GWP_AR5, "AR6": GWP_AR6}
+GWP_STANDARDS = {"SAR": GWP_SAR, "AR4": GWP_AR4, "AR5": GWP_AR5, "AR6": GWP_AR6}
 
 # Legacy alias for backward compatibility (resolves to AR5)
 GWP_DEFAULT_GWP = GWP_AR5

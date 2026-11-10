@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { toCsv } from "../utils/chartExport";
 import { Input, Field, Badge } from "../ui";
-import { Lock } from "lucide-react";
+import { Lock, AlertTriangle } from "lucide-react";
 import { NativeSelect } from "../ui/NativeSelect";
 import api from "../api";
 import CustomDropdown from "./CustomDropdown";
@@ -326,12 +326,22 @@ export const Scope1Form: React.FC = () => {
   ]);
 
   // Custom renderOption for emission factors with segment badges and uncertainty
-  const renderFactorOption = (option: any) => {
+  const renderFactorOption = useCallback((option: any) => {
     if (!option.factor) return option.label;
 
     const factor = option.factor;
     const segment = factor.segment || factor.stream;
     const factorUnc = factor.uncertainty;
+    const base = String(factor.baseUnit || "").toLowerCase();
+    const type = String(factor.type || "").toLowerCase();
+    const unit = String(factor.unit || "").toLowerCase();
+    const fuelForm = (["ton", "short_ton", "tonne", "kg", "lb"].includes(base) || type === "solids")
+      ? "SOLID"
+      : (["gal", "bbl", "l"].includes(base) || type === "liquids" || unit.includes("bbl"))
+      ? "LIQUID"
+      : (["scf", "m3", "mcf"].includes(base) || type === "gases" || /\/(m³|m3|scf|mcf)/.test(unit))
+      ? "GAS"
+      : null;
     const maxUncertainty = factorUnc
       ? Math.max(
           factorUnc.co2 || 0,
@@ -346,6 +356,31 @@ export const Scope1Form: React.FC = () => {
           <span className="overflow-hidden! [text-overflow:ellipsis]! whitespace-nowrap!">
             {option.label}
           </span>
+          {fuelForm && (
+            <span
+              style={{
+                padding: "2px 5px",
+                borderRadius: "3px",
+                fontSize: "0.6rem",
+                fontWeight: 700,
+                flexShrink: 0,
+                background:
+                  fuelForm === "GAS"
+                    ? "#dbeafe"
+                    : fuelForm === "LIQUID"
+                    ? "#fef3c7"
+                    : "#e2e8f0",
+                color:
+                  fuelForm === "GAS"
+                    ? "#1e40af"
+                    : fuelForm === "LIQUID"
+                    ? "#92400e"
+                    : "#334155",
+              }}
+            >
+              {fuelForm}
+            </span>
+          )}
           {segment && (
             <span
               style={{
@@ -372,7 +407,7 @@ export const Scope1Form: React.FC = () => {
         )}
       </div>
     );
-  };
+  }, []);
 
   const BLANK_SPEC = {
     co2: "", co2Unit: "kg/m3", ch4: "", ch4Unit: "kg/m3", n2o: "", n2oUnit: "kg/m3", co: "", coUnit: "kg/m3",

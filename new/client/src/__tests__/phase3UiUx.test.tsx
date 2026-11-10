@@ -96,6 +96,26 @@ describe("Phase 3 UI/UX Verifications", () => {
       const autoFilledBadges = screen.getAllByText("Auto-filled from Region");
       expect(autoFilledBadges.length).toBe(3);
     });
+
+    it("displays Location-based method for standard grid electricity and Market-based when contractual instrument selected", () => {
+      const { rerender } = render(
+        <Scope2FormNewElectricityEntry
+          {...dummyProps}
+          sourceType="electricity"
+          marketInstrument=""
+        />
+      );
+      expect(screen.getByText("Location-based (Grid)")).toBeInTheDocument();
+
+      rerender(
+        <Scope2FormNewElectricityEntry
+          {...dummyProps}
+          sourceType="electricity"
+          marketInstrument="REC"
+        />
+      );
+      expect(screen.getByText("Market-based (Contractual)")).toBeInTheDocument();
+    });
   });
 
   describe("3.6 Skeleton Loaders", () => {

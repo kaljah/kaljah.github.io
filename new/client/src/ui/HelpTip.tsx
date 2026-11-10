@@ -11,6 +11,7 @@ export interface HelpTipProps {
   term?: string;
   icon?: "help" | "info";
   className?: string;
+  tooltipClassName?: string;
   side?: "top" | "right" | "bottom" | "left";
 }
 
@@ -25,6 +26,7 @@ export const HelpTip: React.FC<HelpTipProps> = ({
   term,
   icon = "help",
   className,
+  tooltipClassName,
   side = "top",
 }) => {
   const isTouch = useMediaQuery("(pointer: coarse), (max-width: 768px)");
@@ -35,7 +37,7 @@ export const HelpTip: React.FC<HelpTipProps> = ({
 
   if (!isTouch) {
     return (
-      <Tooltip content={content} side={side}>
+      <Tooltip content={content} side={side} className={tooltipClassName}>
         <button
           type="button"
           aria-label={label}

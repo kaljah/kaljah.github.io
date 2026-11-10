@@ -217,3 +217,36 @@ def test_unauthenticated_guard(client):
     res = client.post("/api/reports/master-report", json={"mode": "national"})
     assert res.status_code in (401, 302)
 
+
+
+def test_master_report_advanced_chapters_and_base_year_recalculations(client, auth_headers):
+    """Verifies that the Master Report includes Scope 3, OGMP 2.0, EU CBAM, and Base Year Recalculation."""
+    import pypdfium2
+    res = client.post("/api/reports/master-report", json={
+        "mode": "regional",
+        "region": "berkine",
+        "start_year": 2021,
+        "end_year": 2025,
+        "gwp_standard": "AR5",
+        "language": "en"
+    })
+    assert res.status_code == 200
+    pdf = pypdfium2.PdfDocument(res.data)
+    assert len(pdf) >= 16
+    all_text = " ".join([pdf[i].get_textpage().get_text_range() for i in range(len(pdf))])
+    pdf.close()
+
+    # Chapter 5: OGMP 2.0 & LDAR
+    assert "OGMP 2.0 METHANE RECONCILIATION" in all_text
+    assert "Level 4 Bottom-Up" in all_text or "Gold Standard" in all_text
+
+    # Chapter 7: Scope 3 Value Chain
+    assert "SCOPE 3 VALUE CHAIN EMISSIONS" in all_text
+    assert "Category 1" in all_text or "GHG Protocol Category" in all_text
+
+    # Chapter 10: EU CBAM & Decarbonization Economics
+    assert "EU CBAM HYDROCARBON EXPORT EMBEDDINGS" in all_text
+    assert "SEE Direct" in all_text or "Specific Embedded" in all_text
+
+    # Chapter 12: Base Year Recalculation Audit Trail
+    assert "Base Year Recalculation Audit Trail" in all_text or "Clause 6.4.1" in all_text

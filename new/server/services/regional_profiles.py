@@ -43,19 +43,6 @@ SONATRACH_CORPORATE_PROFILE: Dict[str, Any] = {
         "(VRU), and real-time optical/ultrasonic telemetry have driven national flaring volumes down from historic "
         "peaks toward world-class international benchmarks."
     ),
-    "gas_composition": {
-        "ch4_mol_pct": 82.5,
-        "c2h6_mol_pct": 8.5,
-        "c3h8_mol_pct": 3.2,
-        "ic4_mol_pct": 0.8,
-        "nc4_mol_pct": 1.1,
-        "ic5_mol_pct": 0.4,
-        "nc5_mol_pct": 0.4,
-        "c6_plus_mol_pct": 0.3,
-        "co2_mol_pct": 1.5,
-        "n2_mol_pct": 1.3,
-        "h2s_ppm": 15.0,
-    },
     "decarbonization_projects": [
         {"title": "National Flare Gas Recovery (FGR) Expansion", "reduction_tco2e": 450000, "status": "Executing"},
         {"title": "Solar Photovoltaic Hybridization of Remote Desert CPFs (500 MW)", "reduction_tco2e": 320000, "status": "Executing"},
@@ -94,19 +81,6 @@ REGIONAL_PROFILES: Dict[str, Dict[str, Any]] = {
             "ultrasonic flare header flow measurement, and gas compression loops diverting off-gases into secondary "
             "reservoir reinjection."
         ),
-        "gas_composition": {
-            "ch4_mol_pct": 74.2,
-            "c2h6_mol_pct": 11.8,
-            "c3h8_mol_pct": 6.5,
-            "ic4_mol_pct": 1.4,
-            "nc4_mol_pct": 2.3,
-            "ic5_mol_pct": 0.8,
-            "nc5_mol_pct": 0.9,
-            "c6_plus_mol_pct": 0.6,
-            "co2_mol_pct": 1.0,
-            "n2_mol_pct": 0.5,
-            "h2s_ppm": 0.0,
-        },
         "decarbonization_projects": [
             {"title": "HMD South Satellite Low-Pressure Flare Gas Recovery", "reduction_tco2e": 140000, "status": "Executing"},
             {"title": "Optical Gas Imaging (OGI) LDAR Campaign on 28,000 Components", "reduction_tco2e": 65000, "status": "Active"},
@@ -141,19 +115,6 @@ REGIONAL_PROFILES: Dict[str, Dict[str, Any]] = {
             "strictly non-routine (operational startups and compressor trip depressurization). Modernized with "
             "fast-response inter-stage spillback loops and ultrasonic flare monitors."
         ),
-        "gas_composition": {
-            "ch4_mol_pct": 84.1,
-            "c2h6_mol_pct": 7.9,
-            "c3h8_mol_pct": 2.4,
-            "ic4_mol_pct": 0.6,
-            "nc4_mol_pct": 0.8,
-            "ic5_mol_pct": 0.3,
-            "nc5_mol_pct": 0.3,
-            "c6_plus_mol_pct": 0.2,
-            "co2_mol_pct": 0.3,
-            "n2_mol_pct": 3.1,
-            "h2s_ppm": 0.0,
-        },
         "decarbonization_projects": [
             {"title": "Boosting Phase III Multi-Stage Compression Optimization", "reduction_tco2e": 210000, "status": "Completed"},
             {"title": "Vapor Recovery Installation on Condensate Storage Spheres", "reduction_tco2e": 85000, "status": "Active"},
@@ -184,19 +145,6 @@ REGIONAL_PROFILES: Dict[str, Dict[str, Any]] = {
             "stabilizers are recovered through low-pressure booster compressors. Flare tips utilize high-kinetic "
             "sonic nozzles ensuring >= 99.5% combustion efficiency."
         ),
-        "gas_composition": {
-            "ch4_mol_pct": 79.5,
-            "c2h6_mol_pct": 9.2,
-            "c3h8_mol_pct": 4.1,
-            "ic4_mol_pct": 0.9,
-            "nc4_mol_pct": 1.2,
-            "ic5_mol_pct": 0.4,
-            "nc5_mol_pct": 0.5,
-            "c6_plus_mol_pct": 0.4,
-            "co2_mol_pct": 2.5,
-            "n2_mol_pct": 1.3,
-            "h2s_ppm": 120.0,
-        },
         "decarbonization_projects": [
             {"title": "Amine Flash Gas Re-Routing to Sales Pipeline Header", "reduction_tco2e": 95000, "status": "Completed"},
             {"title": "LDAR Thermal Optical Imaging Across Sour Gas Trains", "reduction_tco2e": 42000, "status": "Active"},
@@ -227,19 +175,6 @@ REGIONAL_PROFILES: Dict[str, Dict[str, Any]] = {
             "Operated under international joint venture environmental standards. Features continuous optical flare "
             "monitoring, purge gas reduction using nitrogen seals, and automated blowdown flare segregation."
         ),
-        "gas_composition": {
-            "ch4_mol_pct": 81.2,
-            "c2h6_mol_pct": 9.8,
-            "c3h8_mol_pct": 4.6,
-            "ic4_mol_pct": 0.8,
-            "nc4_mol_pct": 1.0,
-            "ic5_mol_pct": 0.3,
-            "nc5_mol_pct": 0.4,
-            "c6_plus_mol_pct": 0.3,
-            "co2_mol_pct": 0.8,
-            "n2_mol_pct": 0.8,
-            "h2s_ppm": 5.0,
-        },
         "decarbonization_projects": [
             {"title": "Nitrogen Flare Purge Conversion (Fuel Gas Savings)", "reduction_tco2e": 52000, "status": "Completed"},
             {"title": "Automated LDAR Valve Stem Repacking & Packing Replacement", "reduction_tco2e": 28000, "status": "Active"},
@@ -269,19 +204,6 @@ REGIONAL_PROFILES: Dict[str, Dict[str, Any]] = {
             "Zero routine flaring design. Atmospheric CO2 venting is mitigated through deep aquifer sequestration. "
             "Features automated emergency depressurization with high-destruction steam/air-assisted flares."
         ),
-        "gas_composition": {
-            "ch4_mol_pct": 86.4,
-            "c2h6_mol_pct": 3.8,
-            "c3h8_mol_pct": 0.8,
-            "ic4_mol_pct": 0.2,
-            "nc4_mol_pct": 0.3,
-            "ic5_mol_pct": 0.1,
-            "nc5_mol_pct": 0.1,
-            "c6_plus_mol_pct": 0.1,
-            "co2_mol_pct": 7.5,
-            "n2_mol_pct": 0.7,
-            "h2s_ppm": 0.0,
-        },
         "decarbonization_projects": [
             {"title": "Krechba Deep Saline Aquifer CO2 Sequestration (CCUS)", "reduction_tco2e": 620000, "status": "Active"},
             {"title": "Solar Photovoltaic Microgrid for Wellhead Remote RTUs", "reduction_tco2e": 12000, "status": "Completed"},
@@ -310,19 +232,6 @@ REGIONAL_PROFILES: Dict[str, Dict[str, Any]] = {
             "Flaring intensity rigorously monitored under JV ESG audits. Flare systems feature dedicated low-pressure "
             "header recovery compressors and flare gas measurement conforming to international ISO standards."
         ),
-        "gas_composition": {
-            "ch4_mol_pct": 82.8,
-            "c2h6_mol_pct": 8.7,
-            "c3h8_mol_pct": 3.8,
-            "ic4_mol_pct": 0.7,
-            "nc4_mol_pct": 1.1,
-            "ic5_mol_pct": 0.3,
-            "nc5_mol_pct": 0.4,
-            "c6_plus_mol_pct": 0.3,
-            "co2_mol_pct": 0.9,
-            "n2_mol_pct": 1.0,
-            "h2s_ppm": 2.0,
-        },
         "decarbonization_projects": [
             {"title": "TFT Low-Pressure Compressor Gas Recovery Project", "reduction_tco2e": 78000, "status": "Completed"},
             {"title": "Electrification of Remote Well Site Pumps", "reduction_tco2e": 26000, "status": "Active"},
@@ -351,19 +260,6 @@ REGIONAL_PROFILES: Dict[str, Dict[str, Any]] = {
             "Pioneered high-precision VISR camera optical flare monitoring establishing 99.89% (HBNS) and 99.85% (ELM) "
             "destruction efficiencies. Operational source category quantification per API Compendium with certified LDAR EPA Method 21 campaigns."
         ),
-        "gas_composition": {
-            "ch4_mol_pct": 74.4,
-            "c2h6_mol_pct": 12.8,
-            "c3h8_mol_pct": 5.6,
-            "ic4_mol_pct": 1.2,
-            "nc4_mol_pct": 2.0,
-            "ic5_mol_pct": 0.7,
-            "nc5_mol_pct": 0.8,
-            "c6_plus_mol_pct": 0.6,
-            "co2_mol_pct": 1.0,
-            "n2_mol_pct": 0.9,
-            "h2s_ppm": 0.0,
-        },
         "decarbonization_projects": [
             {"title": "VISR Real-Time Flare Destruction Efficiency Optimization", "reduction_tco2e": 115000, "status": "Active"},
             {"title": "LDAR EPA Method 21 Comprehensive Component Inventory", "reduction_tco2e": 82000, "status": "Active"},
@@ -392,19 +288,6 @@ REGIONAL_PROFILES: Dict[str, Dict[str, Any]] = {
             "Downstream continuous refinery and cryogenic liquefaction flare systems. Equipped with Flare Gas Recovery "
             "Units (FGRU), steam-assist smokeless flare burners, and boil-off gas (BOG) reliquefaction compressors."
         ),
-        "gas_composition": {
-            "ch4_mol_pct": 92.5,
-            "c2h6_mol_pct": 5.4,
-            "c3h8_mol_pct": 1.2,
-            "ic4_mol_pct": 0.1,
-            "nc4_mol_pct": 0.1,
-            "ic5_mol_pct": 0.05,
-            "nc5_mol_pct": 0.05,
-            "c6_plus_mol_pct": 0.05,
-            "co2_mol_pct": 0.05,
-            "n2_mol_pct": 0.5,
-            "h2s_ppm": 0.0,
-        },
         "decarbonization_projects": [
             {"title": "Refinery Furnace Air Preheater Thermal Efficiency Upgrade", "reduction_tco2e": 130000, "status": "Completed"},
             {"title": "Boil-off Gas (BOG) Modern Cryogenic Re-injection", "reduction_tco2e": 92000, "status": "Active"},
@@ -433,19 +316,6 @@ REGIONAL_PROFILES: Dict[str, Dict[str, Any]] = {
             "Downstream cryogenic boil-off gas management with closed-loop return headers, flare knock-out drums, and "
             "thermal oxidizers for petrochemical off-gas treatment."
         ),
-        "gas_composition": {
-            "ch4_mol_pct": 91.8,
-            "c2h6_mol_pct": 6.1,
-            "c3h8_mol_pct": 1.4,
-            "ic4_mol_pct": 0.1,
-            "nc4_mol_pct": 0.15,
-            "ic5_mol_pct": 0.05,
-            "nc5_mol_pct": 0.05,
-            "c6_plus_mol_pct": 0.05,
-            "co2_mol_pct": 0.1,
-            "n2_mol_pct": 0.2,
-            "h2s_ppm": 0.0,
-        },
         "decarbonization_projects": [
             {"title": "GL1Z LNG Train Turbo-Compressor Heat Recovery", "reduction_tco2e": 145000, "status": "Executing"},
             {"title": "Arzew Industrial Harbor Methane BOG Flare Minimization", "reduction_tco2e": 88000, "status": "Completed"},

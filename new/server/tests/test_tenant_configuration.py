@@ -84,9 +84,47 @@ def test_update_tenant_config_persists_and_audits(client, admin_user):
     assert log is not None
     assert "Sonatrach E&P Joint Venture" in log.new_values
 
-    # Clean up test override
-    update_tenant_config("default", {
-        "organization_name": "Sonatrach",
-        "regulatory_framework": "Executive Decree 21-330 Article 9",
-        "country": "Algeria",
-    }, user=admin_user)
+    # Clean up test override from DB
+    from models import SystemSetting
+    setting = SystemSetting.query.filter_by(key="tenant_config").first()
+    if setting:
+        db.session.delete(setting)
+        db.session.commit()
+
+
+def test_tenant_config_cross_tenant_isolation(client, app):
+    """Verify that updating default tenant does not leak into other tenant configs."""
+    with app.app_context():
+        from models import SystemSetting
+        # Ensure default override exists
+        update_tenant_config("default", {"organization_name": "Sonatrach Custom EP"})
+        
+        # Non-default tenant should still retain its own registry values
+        mena_b = get_tenant_config("mena_operator_b")
+        assert mena_b["organization_name"] == "Al-Amal Petroleum Corp"
+        assert mena_b["country"] == "MENA Region"
+
+        # Clean up
+        setting = SystemSetting.query.filter_by(key="tenant_config").first()
+        if setting:
+            db.session.delete(setting)
+            db.session.commit()
+
+
+def test_tenant_config_idor_and_validation(client, admin_user):
+    """Verify IDOR prevention and invalid year rejection."""
+    with client.session_transaction() as sess:
+        sess["user_id"] = admin_user.id
+        sess["role"] = admin_user.role
+        sess["tenant_id"] = "default"
+
+    # 1. Non-superuser cannot modify another tenant
+    res_idor = client.put("/api/tenant/config?tenant_id=mena_operator_b", json={"organization_name": "Hacked Corp"})
+    assert res_idor.status_code == 403
+
+    # 2. Invalid year format is rejected
+    res_val = client.put("/api/tenant/config", json={"base_year": "invalid_year"})
+    assert res_val.status_code == 400
+
+    res_val2 = client.put("/api/tenant/config", json={"base_year": 1850})
+    assert res_val2.status_code == 400

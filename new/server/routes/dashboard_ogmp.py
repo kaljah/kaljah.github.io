@@ -129,7 +129,7 @@ def get_ogmp_metrics():
             if single_year:
                 sq = sq.filter_by(year=int(year))
             for s in sq.all():
-                if (s.reconciliation_status or "").lower() == "discrepancy detected" or s.variance_flag is True or (float(s.bottom_up_tch4 or 0.0) == 0.0 and float(s.estimated_annual_tch4 or 0.0) > 0.0) or (s.variance_pct is not None and abs(s.variance_pct) > threshold):
+                if (s.reconciliation_status or "").lower() == "discrepancy detected" or s.variance_flag is True or (s.variance_pct is not None and abs(s.variance_pct) > threshold):
                     survey_has_discrepancy = True
                     break
         except Exception:

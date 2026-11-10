@@ -15,7 +15,7 @@ from routes.dashboard import dashboard_bp, is_it_role
 @login_required
 def get_sbti_trajectory():
     from models import SbtiTarget, Emission, Scope2Emission, Scope3Emission, Facility
-    from datetime import datetime
+    from datetime import datetime, timezone
 
     user = get_current_user()
     if not user:
@@ -111,7 +111,7 @@ def get_sbti_trajectory():
     rate = (target.reduction_rate_pct or 0.0) / 100.0
     rate_15c = 0.042  # SBTi 1.5C-aligned minimum linear annual reduction
     rate_wb2c = 0.025  # SBTi well-below-2C minimum
-    current_year = datetime.now().year
+    current_year = datetime.now(timezone.utc).year
     last_complete_year = current_year - 1
 
     # Which series does this view compare, and does it match what the target covers? (BUG-019)
@@ -224,8 +224,8 @@ def get_sbti_trajectory():
     def r2(v):
         return round(v, 2) if v is not None else None
 
-    labels = {"1.5C": "SBTi-aligned 1.5\u00b0C Linear Target (Indicative)", "WB2C": "SBTi-aligned Well-Below 2\u00b0C Linear Target (Indicative)",
-              "custom": "Custom Linear Target (Indicative)"}
+    labels = {"1.5C": "SBTi 1.5\u00b0C Linear Target (Indicative)", "WB2C": "SBTi Well-Below 2\u00b0C Linear Target (Indicative)",
+              "custom": "Custom Linear Target"}
     return jsonify({
         "has_target": True,
         "base_year": base_year,

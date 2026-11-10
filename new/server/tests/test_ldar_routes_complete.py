@@ -95,7 +95,7 @@ def test_survey_defaults_and_component_link(client, lw):
     _as(client, lw, "user")
     s = _survey(client, lw).get_json()["survey"]
     assert (s["survey_method"], s["leak_status"], s["measurement_unit"], s["leaking_hours"], s["surveyor_name"]) == (
-        "Method 21", "Non-leaking", "kg/hr", 8760.0, "Ld user")
+        "Method 21", "Non-leaking", "kg/hr", 0.0, "Ld user")
     assert s["survey_date"] == datetime.date.today().isoformat()
     comp = _component(client, lw).get_json()["component"]["id"]
     s = _survey(client, lw, component_inventory_id=comp, screening_value_ppm="12000", survey_date="2026-03-01",

@@ -601,9 +601,9 @@ def ensure_database_indexes():
             for q in queries:
                 try:
                     conn.execute(text(q))
+                    conn.commit()
                 except Exception:
-                    pass
-            conn.commit()
+                    conn.rollback()
     except Exception as e:
         app.logger.warning(f"Could not ensure database indexes: {e}")
 
@@ -720,6 +720,6 @@ if __name__ == "__main__":
         except Exception:
             pass
 
-    # SEC-05 FIX: never run debug=True in production; bind to localhost only
     is_debug = os.environ.get("FLASK_DEBUG", "false").lower() == "true"
-    app.run(debug=is_debug, host="127.0.0.1", port=int(os.environ.get("PORT", 5000)))
+    bind_host = os.environ.get("HOST", "0.0.0.0")
+    app.run(debug=is_debug, host=bind_host, port=int(os.environ.get("PORT", 5000)))

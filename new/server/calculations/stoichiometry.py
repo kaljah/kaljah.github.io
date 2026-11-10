@@ -58,20 +58,26 @@ class StoichiometricCalculator(BaseCalculator):
         # stoichiometric ratio CO2/C
         ratio = 44.01 / 12.011
 
-        # carbon_content normalized to fraction (e.g. 0.85, '85%', or 85.0 -> 0.85)
+        # carbon_content normalized to fraction (e.g. 0.85 or '85%')
+        is_c_pct = "%" in str(carbon_content)
         c_str = str(carbon_content).replace("%", "").strip()
         c = float(c_str)
-        if "%" in str(carbon_content) or c > 1.0:
+        if is_c_pct:
             c /= 100.0
+        elif c > 1.0:
+            raise ValueError(f"carbon_content without '%' must be a fraction between 0 and 1: got {carbon_content}")
         if c < 0 or c > 1.0:
             raise ValueError(f"carbon_content must be between 0 and 1 (or 0% to 100%): {carbon_content}")
 
-        # oxidation factor (default 1.0, e.g. 0.99 for solid fuels)
+        # oxidation factor (default 1.0, e.g. 0.99 for solid fuels or '99%')
         raw_ox = 1.0 if oxidation_factor is None else oxidation_factor
+        is_ox_pct = "%" in str(raw_ox)
         ox_str = str(raw_ox).replace("%", "").strip()
         ox = float(ox_str)
-        if "%" in str(raw_ox) or ox > 1.0:
+        if is_ox_pct:
             ox /= 100.0
+        elif ox > 1.0:
+            raise ValueError(f"oxidation_factor without '%' must be a fraction between 0 and 1: got {raw_ox}")
         if ox < 0 or ox > 1.0:
             raise ValueError(f"oxidation_factor must be between 0 and 1 (or 0% to 100%): {oxidation_factor}")
 

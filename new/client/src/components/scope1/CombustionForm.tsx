@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Wind, Droplets, Layers, Zap } from "lucide-react";
 import { Input, Field } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import CustomDropdown from "../CustomDropdown";
@@ -70,6 +71,46 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
 
   return (
     <div className="combustion-form">
+      {family && (
+        <div className="mb-2.5 flex items-center gap-2">
+          <span className="text-xs font-semibold text-text-secondary uppercase tracking-wider">
+            {t("Fuel Form:")}
+          </span>
+          <span
+            className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+              family === "gas"
+                ? "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300 border border-blue-200"
+                : family === "liquid"
+                ? "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300 border border-amber-200"
+                : family === "solid"
+                ? "bg-slate-200 text-slate-800 dark:bg-slate-800 dark:text-slate-300 border border-slate-300"
+                : "bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300 border border-purple-200"
+            }`}
+          >
+            {family === "gas" ? (
+              <>
+                <Wind size={12} className="shrink-0 text-blue-700 dark:text-blue-300" aria-hidden="true" />
+                <span>{t("Gas Fuel")}</span>
+              </>
+            ) : family === "liquid" ? (
+              <>
+                <Droplets size={12} className="shrink-0 text-amber-700 dark:text-amber-300" aria-hidden="true" />
+                <span>{t("Liquid Fuel")}</span>
+              </>
+            ) : family === "solid" ? (
+              <>
+                <Layers size={12} className="shrink-0 text-slate-700 dark:text-slate-300" aria-hidden="true" />
+                <span>{t("Solid Fuel")}</span>
+              </>
+            ) : (
+              <>
+                <Zap size={12} className="shrink-0 text-purple-700 dark:text-purple-300" aria-hidden="true" />
+                <span>{t("Event")}</span>
+              </>
+            )}
+          </span>
+        </div>
+      )}
       <div className="form-grid-2">
         <Field
           className="input-group"

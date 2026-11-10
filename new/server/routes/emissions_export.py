@@ -99,12 +99,12 @@ def export_emissions():
     all_facs = {f.id: f for f in Facility.query.all()}
 
     export_data = []
+    status_arg = str(request.args.get("status") or "Verified").strip()
+    statuses = [x.strip().lower() for x in status_arg.split(",") if x.strip()] if status_arg.lower() != "all" else None
+    test_fids = Facility.query.with_entities(Facility.id).filter(Facility.is_test == True)
 
     # 1. SCOPE 1
     if scope in ["all", "1", "scope1"]:
-        status_arg = str(request.args.get("status") or "Verified").strip()
-        statuses = [x.strip().lower() for x in status_arg.split(",") if x.strip()] if status_arg.lower() != "all" else None
-        test_fids = Facility.query.with_entities(Facility.id).filter(Facility.is_test == True)
         q1 = Emission.query.filter(~Emission.facility_id.in_(test_fids))
         if hasattr(Emission, "is_test"):
             q1 = q1.filter(Emission.is_test == False)
@@ -313,7 +313,7 @@ def export_emissions():
 
         ws1.cell(row=1, column=1, value="GHG EMISSIONS INVENTORY DISCLOSURE").font = title_font
         subtitle = (
-            f"Generated: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} | "
+            f"Generated: {datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} | "
             f"Scope: {scope.upper()} | Year: {year_arg or 'All'} | Month: {month_arg or 'All'} | "
             f"Facility: {all_facs.get(facility_int).name if facility_int and facility_int in all_facs else 'All'}"
         )

@@ -150,12 +150,14 @@ def test_base_year_singleton_fallback(client):
     from models import BaseYear, BaseYearRecalculation, User
 
     with client.application.app_context():
-        admin = User.query.filter_by(role="admin").first()
+        admin = User.query.filter_by(role="admin", status="active").first()
         if not admin:
-            admin = User(email="admin_by@test.com", fullName="Admin BY", orgName="Sonatrach", role="admin", sector="Oil & Gas")
+            admin = User(email="admin_by@test.com", fullName="Admin BY", orgName="Sonatrach", role="admin", sector="Oil & Gas", status="active")
             admin.set_password("pass")
             db.session.add(admin)
-            db.session.commit()
+        else:
+            admin.status = "active"
+        db.session.commit()
         admin_id = admin.id
 
         BaseYearRecalculation.query.delete()
@@ -195,12 +197,14 @@ def test_notification_broadcast_handling(client):
     from models import Notification, User
 
     with client.application.app_context():
-        admin = User.query.filter_by(role="admin").first()
+        admin = User.query.filter_by(role="admin", status="active").first()
         if not admin:
-            admin = User(email="admin_notif@test.com", fullName="Admin Notif", orgName="Sonatrach", sector="Energy", location="Algiers", role="admin")
+            admin = User(email="admin_notif@test.com", fullName="Admin Notif", orgName="Sonatrach", sector="Energy", location="Algiers", role="admin", status="active")
             admin.set_password("pass")
             db.session.add(admin)
-            db.session.commit()
+        else:
+            admin.status = "active"
+        db.session.commit()
         admin_id = admin.id
 
         operator = User.query.filter_by(email="user_notif@test.com").first()

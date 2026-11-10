@@ -9,7 +9,10 @@ import pypdfium2
 from app import app
 from services.master_report_engine import generate_master_publication_pdf
 
-OUTPUT_DIR = "C:/Users/samsung/.gemini/antigravity/brain/dd96e698-aa0b-4016-a59d-85ecf47988c4/screenshots/report_pages_fr"
+OUTPUT_DIR = os.environ.get(
+    "REPORT_SCREENSHOTS_DIR",
+    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "screenshots", "report_pages_fr"),
+)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 def render_report(mode: str, region: str, prefix: str):

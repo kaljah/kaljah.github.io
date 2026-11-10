@@ -4,7 +4,9 @@ Split out of routes/reports.py unchanged (hardening plan, task 5.3). The routes 
 registered on the same ``reports_bp`` blueprint, so URLs and endpoint names are the same.
 """
 from flask import current_app, jsonify, request, send_file
-from models import Emission, Facility
+from sqlalchemy import func, or_
+from models import Emission, Facility, Scope2Emission, Scope3Emission
+from extensions import db
 from routes.auth import login_required
 from services.labels import process_label, scope2_source_label
 from services.scope2_activity import scope2_activity

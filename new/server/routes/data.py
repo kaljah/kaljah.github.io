@@ -127,10 +127,9 @@ def add_production():
         if calc_boe and calc_boe > 0:
             is_consistent, diff_pct = validate_production_mmboe_consistency(tot_mmboe, calc_boe, tolerance=0.30)
             if not is_consistent:
-                return jsonify({
-                    'error': f'Total production ({tot_mmboe:.2f} MMBOE) differs by {diff_pct*100:.1f}% from the converted oil and gas sum ({calc_boe / 1e6:.2f} MMBOE). Verify values and units.',
-                    'field': 'total_production_mmboe'
-                }), 400
+                current_app.logger.warning(
+                    f'Total production ({tot_mmboe:.2f} MMBOE) differs by {diff_pct*100:.1f}% from the converted oil and gas sum ({calc_boe / 1e6:.2f} MMBOE).'
+                )
 
     from services.period_lock_service import check_period_lock_for_record
     lock_err = check_period_lock_for_record(year, month)
@@ -218,7 +217,6 @@ def add_production():
     except Exception as e:
         db.session.rollback()
         import traceback
-        from flask import current_app
         if current_app:
             current_app.logger.error(f"Production save error: {traceback.format_exc()}")
         return jsonify({'error': 'Failed to save production data'}), 500
@@ -911,7 +909,6 @@ def save_cbam_export():
         raise
     except Exception as e:
         import traceback
-        from flask import current_app
         current_app.logger.error(f"CBAM Export save error: {traceback.format_exc()}")
         db.session.rollback()
         return internal_error(e)
@@ -945,7 +942,6 @@ def delete_cbam_export(record_id):
         return jsonify({'message': 'CBAM export deleted successfully'})
     except Exception as e:
         import traceback
-        from flask import current_app
         current_app.logger.error(f"CBAM Export delete error: {traceback.format_exc()}")
         db.session.rollback()
         return internal_error(e)

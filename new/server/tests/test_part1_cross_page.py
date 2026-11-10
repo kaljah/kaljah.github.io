@@ -113,6 +113,7 @@ def test_methane_map_vs_dashboard_distinction(app, client):
 
         # Corporate inventory (verified, non-test) = 100 + 50 = 150 t CH4
         total_corp_ch4 = db.session.query(db.func.sum(Emission.ch4_emissions)).filter(
+            Emission.facility_id.in_([fac_map.id, fac_nomap.id, fac_test.id]),
             Emission.status == "Verified",
             Emission.is_test == False,
         ).scalar() or 0.0

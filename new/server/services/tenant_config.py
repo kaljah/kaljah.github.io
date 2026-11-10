@@ -59,8 +59,6 @@ def get_tenant_config(tenant_id: Optional[str] = None) -> Dict[str, Any]:
     try:
         setting_key = f"tenant_config_{key_name}" if key_name != "default" else "tenant_config"
         setting = SystemSetting.query.filter_by(key=setting_key).first()
-        if not setting and key_name != "default":
-            setting = SystemSetting.query.filter_by(key="tenant_config").first()
         if setting and setting.value:
             stored = json.loads(setting.value)
             if isinstance(stored, dict):
@@ -93,6 +91,14 @@ def update_tenant_config(tenant_id: Optional[str], updates: Dict[str, Any], user
         "target_year",
     }
     filtered = {k: v for k, v in updates.items() if k in allowed_keys}
+    for yr_key in ["base_year", "target_year"]:
+        if yr_key in filtered and filtered[yr_key] is not None:
+            try:
+                filtered[yr_key] = int(filtered[yr_key])
+                if not (1990 <= filtered[yr_key] <= 2100):
+                    raise ValueError(f"{yr_key} must be between 1990 and 2100")
+            except (ValueError, TypeError):
+                raise ValueError(f"{yr_key} must be a valid integer year between 1990 and 2100")
     current.update(filtered)
 
     setting_key = f"tenant_config_{tenant_id.lower()}" if tenant_id.lower() != "default" else "tenant_config"
@@ -124,10 +130,11 @@ def update_tenant_config(tenant_id: Optional[str], updates: Dict[str, Any], user
 
 def get_current_tenant_id(user=None) -> str:
     """Derive tenant_id from active user session, organization, or environment."""
-    if user and getattr(user, "orgName", None):
-        org = user.orgName.lower().strip()
-        if "al-amal" in org or "alamal" in org or "tenant_b" in org:
-            return "mena_operator_b"
+    if user:
         if getattr(user, "tenant_id", None):
             return str(user.tenant_id).lower().strip()
+        if getattr(user, "orgName", None):
+            org = user.orgName.lower().strip()
+            if "al-amal" in org or "alamal" in org or "tenant_b" in org:
+                return "mena_operator_b"
     return os.environ.get("DEFAULT_TENANT_ID", "default")

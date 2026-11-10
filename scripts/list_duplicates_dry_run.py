@@ -77,7 +77,7 @@ def run_dry_run_report(db_path):
     factor_dupes = {k: v for k, v in factor_groups.items() if len(v) > 1 or strip_timestamp_suffix(v[0]["name"]) != v[0]["name"]}
 
     if not factor_dupes:
-        print("  ✓ No duplicate or timestamped custom factors found.")
+        print("  [OK] No duplicate or timestamped custom factors found.")
     else:
         print(f"  Found {len(factor_dupes)} groups with timestamp suffixes or multiple copies:\n")
         print(f"  {'ID':<6} | {'Status':<10} | {'Facility':<10} | {'CO2 Factor':<12} | {'Action':<10} | {'Factor Name'}")
@@ -109,18 +109,21 @@ def run_dry_run_report(db_path):
         key = (base_name.lower(), p["facility_id"], p["year"])
         proj_groups[key].append(p)
 
-    proj_dupes = {k: v for k, v in proj_groups.items() if len(v) > 1}
+    proj_dupes = {k: v for k, v in proj_groups.items() if len(v) > 1 or strip_timestamp_suffix(v[0]["name"]) != v[0]["name"]}
 
     if not proj_dupes:
-        print("  ✓ No duplicate mitigation projects found.")
+        print("  [OK] No duplicate mitigation projects found.")
     else:
-        print(f"  Found {len(proj_dupes)} duplicate mitigation project groups:\n")
+        print(f"  Found {len(proj_dupes)} duplicate or timestamped mitigation project groups:\n")
         print(f"  {'ID':<6} | {'Year':<6} | {'Facility':<10} | {'tCO2e':<12} | {'Action':<10} | {'Project Name'}")
         print("  " + "-" * 78)
         for (base_name, fac, yr), rows in proj_dupes.items():
             rows_sorted = sorted(rows, key=lambda r: r["id"])
             for idx, r in enumerate(rows_sorted):
-                action = "KEEP" if idx == 0 else "DELETE"
+                if idx == 0:
+                    action = "RENAME" if strip_timestamp_suffix(r["name"]) != r["name"] else "KEEP"
+                else:
+                    action = "DELETE"
                 if action == "DELETE":
                     total_dupes_found += 1
                 print(f"  {r['id']:<6} | {str(yr):<6} | {str(fac):<10} | {str(r['quantity_tco2e']):<12} | {action:<10} | {r['name']}")
@@ -142,18 +145,21 @@ def run_dry_run_report(db_path):
         key = (base_name.lower(), s["facility_id"])
         source_groups[key].append(s)
 
-    source_dupes = {k: v for k, v in source_groups.items() if len(v) > 1}
+    source_dupes = {k: v for k, v in source_groups.items() if len(v) > 1 or strip_timestamp_suffix(v[0]["name"]) != v[0]["name"]}
 
     if not source_dupes:
-        print("  ✓ No duplicate emission sources found.")
+        print("  [OK] No duplicate emission sources found.")
     else:
-        print(f"  Found {len(source_dupes)} duplicate emission source groups:\n")
+        print(f"  Found {len(source_dupes)} duplicate or timestamped emission source groups:\n")
         print(f"  {'ID':<6} | {'Facility':<10} | {'Type':<14} | {'Equip ID':<12} | {'Action':<10} | {'Source Name'}")
         print("  " + "-" * 78)
         for (base_name, fac), rows in source_dupes.items():
             rows_sorted = sorted(rows, key=lambda r: r["id"])
             for idx, r in enumerate(rows_sorted):
-                action = "KEEP" if idx == 0 else "DELETE"
+                if idx == 0:
+                    action = "RENAME" if strip_timestamp_suffix(r["name"]) != r["name"] else "KEEP"
+                else:
+                    action = "DELETE"
                 if action == "DELETE":
                     total_dupes_found += 1
                 print(f"  {r['id']:<6} | {str(fac):<10} | {str(r['type']):<14} | {str(r['equipment_id']):<12} | {action:<10} | {r['name']}")
@@ -181,7 +187,7 @@ def run_dry_run_report(db_path):
     s3_dupes = {k: v for k, v in s3_groups.items() if len(v) > 1}
 
     if not s3_dupes:
-        print("  ✓ No duplicate Scope 3 records found.")
+        print("  [OK] No duplicate Scope 3 records found.")
     else:
         print(f"  Found {len(s3_dupes)} groups of identical Scope 3 records:\n")
         print(f"  {'Group Key':<45} | {'Count':<6} | {'Action Summary'}")

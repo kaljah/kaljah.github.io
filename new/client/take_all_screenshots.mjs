@@ -13,8 +13,9 @@ const chromeExe = fs.existsSync(CHROMIUM_1208)
   ? CHROMIUM_1208
   : 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 
+const SCRIPT_DIR = import.meta.dirname;
 const BASE_URL = 'http://127.0.0.1:5173';
-const OUTPUT_DIR = path.resolve('..', '..', 'screenshots');
+const OUTPUT_DIR = path.resolve(SCRIPT_DIR, '..', '..', 'screenshots');
 
 if (!fs.existsSync(OUTPUT_DIR)) {
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
@@ -354,13 +355,13 @@ async function run() {
   });
 
   const adminContext = await browser.newContext({
-    storageState: 'storageState.json',
+    storageState: path.join(SCRIPT_DIR, 'storageState.json'),
     viewport: { width: 1920, height: 1080 },
     deviceScaleFactor: 1,
   });
 
   const itContext = await browser.newContext({
-    storageState: 'storageState_it.json',
+    storageState: path.join(SCRIPT_DIR, 'storageState_it.json'),
     viewport: { width: 1920, height: 1080 },
     deviceScaleFactor: 1,
   });

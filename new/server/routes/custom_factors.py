@@ -342,8 +342,20 @@ def update_custom_factor(factor_id):
     value_changes = [f for f in changes if f in VALUE_FIELDS]
     if value_changes:
         refs = factor_references(factor)
-        # Part 2.1: Editing a custom factor creates a new version, never overwriting existing references
-        if refs > 0 or data.get("create_version") is True or request.args.get("create_version") == "true":
+        create_ver = (
+            data.get("create_version") is True
+            or request.args.get("create_version") == "true"
+            or bool(data.get("valid_from"))
+            or (data.get("version") and data["version"] != before.get("version"))
+        )
+        if refs > 0 and not create_ver:
+            db.session.rollback()
+            return jsonify({
+                "error": f"Custom factor '{factor.name}' is referenced by {refs} emission records and its values are locked",
+                "fields": value_changes,
+            }), 409
+        # Part 2.1: Editing a custom factor with create_version creates a new version, never overwriting existing references
+        if create_ver:
             new_co2 = factor.co2_factor
             new_ch4 = factor.ch4_factor
             new_n2o = factor.n2o_factor

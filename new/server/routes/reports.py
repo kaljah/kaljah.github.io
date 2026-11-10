@@ -128,7 +128,7 @@ def create_pdf_report(emissions_data, filters):
     elements.append(Paragraph("GHG Emissions Report", title_style))
 
     # Report metadata
-    report_date = datetime.now().strftime("%B %d, %Y")
+    report_date = datetime.now(timezone.utc).strftime("%B %d, %Y")
     elements.append(Paragraph(f"Generated on {report_date}", subtitle_style))
     elements.append(Spacer(1, 0.2 * inch))
 
@@ -533,7 +533,7 @@ def generate_report():
         pdf_buffer = create_pdf_report(emissions_data, filters)
 
         # Return PDF file
-        filename = f"emissions_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+        filename = f"emissions_report_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.pdf"
         report_sha256 = getattr(pdf_buffer, "report_hash", None) or hashlib.sha256(pdf_buffer.getvalue()).hexdigest()
         resp = send_file(
             pdf_buffer,

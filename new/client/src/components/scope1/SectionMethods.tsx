@@ -2,6 +2,7 @@
 // (Section 6), measured / engineered gas volumes, and combustion / waste-gas methods
 // (Sections 4 and 5). The server routes on activity_key, vent_method and combustion_method.
 import React, { useEffect, useState } from "react";
+import { Wind, Droplets, Layers, Info } from "lucide-react";
 import { Input, Field } from "../../ui";
 import api from "../../api";
 import CustomDropdown from "../CustomDropdown";
@@ -91,6 +92,10 @@ const NumUnit: React.FC<NumUnitProps> = ({
 
 const GAS_UNITS = ["scf", "Mcf", "MMscf", "m3"];
 const LIQ_UNITS = ["bbl", "gal", "m3", "L"];
+
+const GAS_FUELS = ["Fuel Gas", "Natural Gas", "Associated Gas", "Refinery Gas", "Custom Gas"];
+const LIQUID_FUELS = ["Diesel (No. 2 Fuel Oil)", "Crude Oil", "Motor Gasoline", "Kerosene / Jet Fuel", "Residual Fuel Oil (No. 6)", "LPG", "Custom Liquid Fuel"];
+const SOLID_FUELS = ["Bituminous Coal", "Sub-bituminous Coal", "Anthracite Coal", "Lignite", "Petroleum Coke", "Wood / Biomass", "Custom Solid Fuel"];
 
 interface CompositionProps {
   data: Record<string, any>;
@@ -314,14 +319,275 @@ export const CombustionMethodForm: React.FC<CombustionMethodFormProps> = ({ data
   const eqRow = equip.find((e) => e.key === data.equipment_type);
   const energyBy = data.energy_basis || "fuel";
 
+  const fuelState = data.fuel_state || (data.fuel_mass || data.fuel_mass_unit ? "solid" : (data.fuel_volume_unit && ["m3", "scf", "mcf", "mmscf", "nm3", "sm3"].includes(String(data.fuel_volume_unit).toLowerCase()) ? "gas" : "gas"));
+
   return (
     <div className="[display:grid] [grid-template-columns:1fr] [gap:16px]">
       {m === "carbon_content" && (
-        <FieldGrid min={170}>
-          <NumUnit label={t("Fuel burned")} field="fuel_volume" unitField="fuel_volume_unit" units={LIQ_UNITS.map((u) => u.toLowerCase())} data={data} onChange={onChange} required />
-          <NumUnit label={t("Fuel density")} field="fuel_density" unitField="density_unit" units={["lb/gal", "kg/m3", "kg/L"]} data={data} onChange={onChange} required />
-          <Num label={t("Carbon (wt %)")} field="carbon_wt_pct" data={data} onChange={onChange} required />
-        </FieldGrid>
+        <div className="[display:grid] [grid-template-columns:1fr] [gap:14px]">
+          {/* Fuel Physical Form Selector (Gas, Liquid, Solid) */}
+          <div className="input-group mb-0!">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary mb-1.5">
+              {t("Fuel Physical Form")}
+            </label>
+            <Segmented
+              ariaLabel={t("Fuel Physical Form")}
+              options={[
+                {
+                  value: "gas",
+                  label: (
+                    <span className="inline-flex items-center gap-1.5">
+                      <Wind size={13} className="shrink-0 text-sky-600 dark:text-sky-400" aria-hidden="true" />
+                      <span>{t("Gas (Natural / Fuel Gas)")}</span>
+                    </span>
+                  ),
+                },
+                {
+                  value: "liquid",
+                  label: (
+                    <span className="inline-flex items-center gap-1.5">
+                      <Droplets size={13} className="shrink-0 text-amber-600 dark:text-amber-400" aria-hidden="true" />
+                      <span>{t("Liquid (Diesel / Oil / LPG)")}</span>
+                    </span>
+                  ),
+                },
+                {
+                  value: "solid",
+                  label: (
+                    <span className="inline-flex items-center gap-1.5">
+                      <Layers size={13} className="shrink-0 text-slate-600 dark:text-slate-400" aria-hidden="true" />
+                      <span>{t("Solid (Coal / Coke / Biomass)")}</span>
+                    </span>
+                  ),
+                },
+              ]}
+              value={fuelState}
+              onChange={(val) => {
+                onChange("fuel_state", val);
+                if (val === "gas") {
+                  onChange("fuel_mass", undefined);
+                  onChange("fuel_mass_unit", undefined);
+                  const defaultName = data.fuel && GAS_FUELS.includes(data.fuel) ? data.fuel : "Fuel Gas";
+                  onChange("fuel", defaultName);
+                  onChange("fuel_name", defaultName);
+                  onChange("fuel_type", defaultName);
+                  onChange("fuel_volume_unit", "m3");
+                  onChange("unit", "m3");
+                  onChange("density_unit", "kg/m3");
+                } else if (val === "liquid") {
+                  onChange("fuel_mass", undefined);
+                  onChange("fuel_mass_unit", undefined);
+                  const defaultName = data.fuel && LIQUID_FUELS.includes(data.fuel) ? data.fuel : "Diesel (No. 2 Fuel Oil)";
+                  onChange("fuel", defaultName);
+                  onChange("fuel_name", defaultName);
+                  onChange("fuel_type", defaultName);
+                  onChange("fuel_volume_unit", "gal");
+                  onChange("unit", "gal");
+                  onChange("density_unit", "lb/gal");
+                } else if (val === "solid") {
+                  onChange("fuel_volume", undefined);
+                  onChange("fuel_volume_unit", undefined);
+                  onChange("fuel_density", undefined);
+                  onChange("density_unit", undefined);
+                  const defaultName = data.fuel && SOLID_FUELS.includes(data.fuel) ? data.fuel : "Bituminous Coal";
+                  onChange("fuel", defaultName);
+                  onChange("fuel_name", defaultName);
+                  onChange("fuel_type", defaultName);
+                  onChange("fuel_mass_unit", "tonne");
+                  onChange("unit", "tonne");
+                }
+              }}
+            />
+          </div>
+
+          {/* Fuel Name / Type */}
+          <div className="input-group mb-0!">
+            <label className="block text-sm font-medium text-text mb-1.5">
+              {t("Fuel / Activity Name")}
+              <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+            </label>
+            <CustomDropdown
+              options={
+                (fuelState === "solid" ? SOLID_FUELS : fuelState === "liquid" ? LIQUID_FUELS : GAS_FUELS).map((f) => ({
+                  value: f,
+                  label: f,
+                }))
+              }
+              value={data.fuel || (fuelState === "solid" ? "Bituminous Coal" : fuelState === "liquid" ? "Diesel (No. 2 Fuel Oil)" : "Fuel Gas")}
+              onChange={(v) => {
+                onChange("fuel", v);
+                onChange("fuel_name", v);
+                onChange("fuel_type", v);
+              }}
+            />
+          </div>
+
+          {/* Form fields tailored to physical form */}
+          {fuelState === "gas" && (
+            <FieldGrid min={170}>
+              <NumUnit
+                label={t("Gas volume burned")}
+                field="fuel_volume"
+                unitField="fuel_volume_unit"
+                units={["m3", "scf", "Mcf", "MMscf", "Nm3", "Sm3"]}
+                data={data}
+                onChange={(f, v) => {
+                  onChange(f, v);
+                  if (f === "fuel_volume") {
+                    onChange("amount", v);
+                    onChange("quantity", v);
+                  }
+                  if (f === "fuel_volume_unit") {
+                    onChange("unit", v);
+                  }
+                }}
+                placeholder="e.g. 24359006.31"
+                required
+              />
+              <NumUnit
+                label={t("Gas density")}
+                field="fuel_density"
+                unitField="density_unit"
+                units={["kg/m3", "lb/scf", "g/L"]}
+                data={data}
+                onChange={onChange}
+                placeholder="e.g. 1.0253"
+                required
+              />
+              <Num
+                label={t("Carbon content (wt % or fraction)")}
+                field="carbon_wt_pct"
+                data={data}
+                onChange={onChange}
+                placeholder="e.g. 77.1% or 0.771"
+                required
+              />
+              <Num
+                label={t("Oxidation factor (%)")}
+                field="oxidation_pct"
+                data={data}
+                onChange={onChange}
+                placeholder="Default: 100%"
+              />
+            </FieldGrid>
+          )}
+
+          {fuelState === "liquid" && (
+            <FieldGrid min={170}>
+              <NumUnit
+                label={t("Liquid volume burned")}
+                field="fuel_volume"
+                unitField="fuel_volume_unit"
+                units={["gal", "bbl", "m3", "L"]}
+                data={data}
+                onChange={(f, v) => {
+                  onChange(f, v);
+                  if (f === "fuel_volume") {
+                    onChange("amount", v);
+                    onChange("quantity", v);
+                  }
+                  if (f === "fuel_volume_unit") {
+                    onChange("unit", v);
+                  }
+                }}
+                placeholder="e.g. 10000"
+                required
+              />
+              <NumUnit
+                label={t("Liquid density")}
+                field="fuel_density"
+                unitField="density_unit"
+                units={["lb/gal", "kg/m3", "kg/L"]}
+                data={data}
+                onChange={onChange}
+                placeholder="e.g. 7.05 lb/gal or 845 kg/m3"
+                required
+              />
+              <Num
+                label={t("Carbon content (wt % or fraction)")}
+                field="carbon_wt_pct"
+                data={data}
+                onChange={onChange}
+                placeholder="e.g. 86.5% or 0.865"
+                required
+              />
+              <Num
+                label={t("Oxidation factor (%)")}
+                field="oxidation_pct"
+                data={data}
+                onChange={onChange}
+                placeholder="Default: 100%"
+              />
+            </FieldGrid>
+          )}
+
+          {fuelState === "solid" && (
+            <FieldGrid min={170}>
+              <NumUnit
+                label={t("Solid mass burned")}
+                field="fuel_mass"
+                unitField="fuel_mass_unit"
+                units={["tonne", "kg", "short_ton", "lb"]}
+                data={data}
+                onChange={(f, v) => {
+                  onChange(f, v);
+                  if (f === "fuel_mass") {
+                    onChange("amount", v);
+                    onChange("quantity", v);
+                  }
+                  if (f === "fuel_mass_unit") {
+                    onChange("unit", v);
+                  }
+                }}
+                placeholder="e.g. 100"
+                required
+              />
+              <Num
+                label={t("Carbon content (wt % or fraction)")}
+                field="carbon_wt_pct"
+                data={data}
+                onChange={onChange}
+                placeholder="e.g. 75.0% or 0.75"
+                required
+              />
+              <Num
+                label={t("Oxidation factor (%)")}
+                field="oxidation_pct"
+                data={data}
+                onChange={onChange}
+                placeholder="Default: 100%"
+              />
+            </FieldGrid>
+          )}
+
+          {/* Trace gases option */}
+          <div className="flex items-center gap-2 mt-0.5">
+            <label className="flex items-center gap-2 text-xs text-text-secondary cursor-pointer">
+              <input
+                type="checkbox"
+                checked={Boolean(data.include_trace)}
+                onChange={(e) => onChange("include_trace", e.target.checked)}
+                className="rounded border-border text-primary focus:ring-primary size-3.5"
+              />
+              <span>{t("Estimate trace CH₄ & N₂O emissions (API Table 4-6 fuel factor basis)")}</span>
+            </label>
+          </div>
+
+          {/* Informational Guidance Banner */}
+          <div className="p-2.5 rounded-md bg-blue-50/70 border border-blue-200 text-xs text-blue-900 flex items-start gap-2">
+            <Info size={15} className="text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" aria-hidden="true" />
+            <div>
+              <span className="font-semibold mr-1">{t("Tier 3 Mass Balance:")}</span>
+              <span>
+                {fuelState === "gas"
+                  ? t("Gas fuel carbon mass balance: CO₂ (t) = Volume (m³) × Density (kg/m³) / 1000 × Carbon wt% × 44.01/12.011 × Oxidation. Original activity volume is preserved.")
+                  : fuelState === "liquid"
+                  ? t("Liquid fuel carbon mass balance (API Exhibit 4.5): CO₂ (t) = Volume (gal) × Density (lb/gal) / 2204.62 × Carbon wt% × 44.01/12.011 × Oxidation.")
+                  : t("Solid fuel carbon mass balance (API §4.1): CO₂ (t) = Mass (t) × Carbon wt% × 44.01/12.011 × Oxidation.")}
+              </span>
+            </div>
+          </div>
+        </div>
       )}
       {m === "equipment" && (
         <>

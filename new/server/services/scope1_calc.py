@@ -464,6 +464,33 @@ def apply_result(record, payload, em_result, method, factor_data, gwp_std):
             row = ACTIVITY_FACTORS.get(str(key))
             if row:
                 record.fuel_type = row["label"]
+    if not record.fuel_type:
+        # Check if engineered calculation or inputs produced a fuel type / label
+        api_r = em_result.get("_full_api_res") or {}
+        inter = {**(api_r.get("inputs") if isinstance(api_r.get("inputs"), dict) else {}),
+                 **(api_r.get("intermediate") or {})}
+        proc = str(payload.get("process_type") or "")
+        c_inp = (payload.get("calc_inputs") or {}).get(proc) or {}
+        record.fuel_type = (
+            inter.get("fuel_type")
+            or inter.get("fuel")
+            or inter.get("equipment")
+            or payload.get("fuel_name")
+            or c_inp.get("fuel_name")
+            or c_inp.get("fuel_type")
+            or c_inp.get("fuel")
+        )
+        if not record.fuel_type and (
+            payload.get("combustion_method") == "carbon_content"
+            or c_inp.get("combustion_method") == "carbon_content"
+        ):
+            f_state = str(payload.get("fuel_state") or c_inp.get("fuel_state") or "").lower()
+            if f_state == "solid":
+                record.fuel_type = "Solid Fuel"
+            elif f_state == "liquid":
+                record.fuel_type = "Liquid Fuel"
+            else:
+                record.fuel_type = "Fuel Gas"
     if payload.get("amount") not in (None, ""):
         record.quantity = float(payload["amount"])
     record.unit = payload.get("unit") or record.unit
@@ -475,6 +502,12 @@ def apply_result(record, payload, em_result, method, factor_data, gwp_std):
         # vented volume, leakers found, measured hours)
         inter = {**(api_r.get("inputs") if isinstance(api_r.get("inputs"), dict) else {}),
                  **(api_r.get("intermediate") or {})}
+        proc = str(payload.get("process_type") or "")
+        c_inp = (payload.get("calc_inputs") or {}).get(proc) or {}
+        for f_amt, f_unit in (("fuel_volume", "fuel_volume_unit"), ("fuel_mass", "fuel_mass_unit")):
+            if inter.get("activity_amount") in (None, "") and c_inp.get(f_amt) not in (None, ""):
+                inter = {**inter, "activity_amount": c_inp[f_amt], "activity_unit": c_inp.get(f_unit) or ("m3" if "volume" in f_amt else "t")}
+                break
         for key, unit in (("net_flowback_scf", "scf"), ("total_vented_scf", "scf"), ("detected_leakers", "leakers")):
             if inter.get("activity_amount") in (None, "") and inter.get(key) not in (None, ""):
                 inter = {**inter, "activity_amount": inter[key], "activity_unit": unit}

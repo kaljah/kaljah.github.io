@@ -85,6 +85,8 @@ TRANSLATIONS_EN = {
     "gas_comp_headers": ["Methane (CH4)", "Ethane (C2H6)", "Propane (C3H8)", "Carbon Dioxide (CO2)", "Nitrogen (N2)", "Hydrogen Sulfide (H2S)"],
     "gas_comp_headers_r1": ["Methane (CH4)", "Ethane (C2H6)", "Propane (C3H8)", "Carbon Dioxide (CO2)", "Nitrogen (N2)", "Hydrogen Sulfide (H2S)"],
     "gas_comp_headers_r2": ["Isobutane (iC4)", "n-Butane (nC4)", "Isopentane (iC5)", "n-Pentane (nC5)", "Hexanes+ (C6+)", "Total Molar Balance"],
+    "gas_comp_none_title": "Facility Gas Stream Composition & Chromatography Status:",
+    "gas_comp_none_desc": "No site-specific laboratory gas chromatography (GC) analysis has been registered in the system for this operational perimeter. In accordance with ISO 14064-1 (§5.2.4) and API Compendium Section 4, combustion, flaring, and venting stoichiometric balances utilize standard industry fuel gas defaults.",
 
     # Chapter 1: Production
     "ch1_title": "1. HYDROCARBON PRODUCTION & ENERGY DELIVERABILITY",
@@ -93,8 +95,8 @@ TRANSLATIONS_EN = {
 
     # Chapter 2: Scope 1 & 2
     "ch2_title": "2. SCOPE 1 & SCOPE 2 GREENHOUSE GAS EMISSIONS",
-    "ch2_desc": "Multi-year audited emissions disaggregated by direct operating boundary (Scope 1) and purchased electricity (Scope 2):",
-    "ch2_headers": ["Year", "Scope 1 Direct (tCO2e)", "Scope 2 Indirect (tCO2e)", "Total Inventory (tCO2e)", "Total Mass (MMtCO2e)"],
+    "ch2_desc": "Multi-year audited operational emissions across Scope 1 direct and Scope 2 indirect boundaries, with mandatory ISO 14064-1 chemical species disaggregation (CO₂, CH₄, N₂O):",
+    "ch2_headers": ["Year", "Scope 1 Direct (tCO2e)", "CO2 Mass (t)", "CH4 Mass (t)", "N2O Mass (t)", "Scope 2 (tCO2e)", "Total Mass (MMtCO2e)"],
 
     # Chapter 3: Operational Source Categories
     "ch3_title": "3. OPERATIONAL SOURCE CATEGORY ATTRIBUTION",
@@ -108,34 +110,61 @@ TRANSLATIONS_EN = {
     "ch4_pass": "PASS",
     "ch4_fail": "EXCEEDED",
 
-    # Chapter 5: Intensities
-    "ch5_title": "5. MULTI-METRIC CARBON & METHANE INTENSITIES",
-    "ch5_desc": "Carbon intensity normalized against BOE deliverability and methane intensity (NGSI wt.%) against OGCI Gold Standard targets:",
-    "ch5_headers": ["Year", "Carbon Intensity (kg CO2e/BOE)", "Methane Intensity (NGSI wt.%)", "Methane Mass (tCH4)"],
 
-    # Chapter 6: Criteria Pollutants
-    "ch6_title": "6. CRITERIA AIR POLLUTANTS MASS DISCHARGE",
-    "ch6_desc": "Atmospheric emissions of non-GHG criteria air pollutants governed by Algerian Executive Decree 06-138:",
-    "ch6_headers": ["Year", "NOx Mass (t)", "CO Mass (t)", "SO2 Mass (t)", "NMVOC Mass (t)"],
-    "ch6_footnote": "* Note: Atmospheric criteria pollutant masses are stoichiometric combustion by-product estimates derived in accordance with API Compendium Section 4 default fuel factors and Algerian Executive Decree 06-138 standards.",
+    # Chapter 5: OGMP 2.0 & LDAR
+    "ch5_title": "5. OGMP 2.0 METHANE RECONCILIATION & LDAR TELEMETRY",
+    "ch5_desc": "UNEP Oil & Gas Methane Partnership (OGMP 2.0) Gold Standard Level 4 source-level measurement vs Level 5 site-level top-down reconciliation (Aerial LiDAR, Satellite TROPOMI, OGI) and EPA Method 21 component counts:",
+    "ch5_ogmp_headers": ["Survey Platform / Technology", "Instrument / Vendor", "Survey Date", "Level 4 Bottom-Up (tCH4)", "Level 5 Top-Down (tCH4)", "Variance (%)", "OGMP Status"],
+    "ch5_ldar_headers": ["Equipment Class", "Component Type", "Process Stream", "Monitored Count", "LDAR Quantification Protocol"],
+    "ch5_kpi": "<b>OGMP 2.0 Reconciliation Status:</b> {status} | <b>Mean Field Variance:</b> {variance}% (Gold Standard Threshold ±20%) | <b>Monitored LDAR Components:</b> {comp_count:,} units",
 
-    # Chapter 7: 2030 Decarbonization Target
-    "ch7_title": "7. 2030 DECARBONIZATION TARGET TRAJECTORY & GLIDEPATH",
-    "ch7_desc": "Trajectory projection modeling corporate greenhouse gas reductions and zero routine flaring targets toward 2030:",
-    "ch7_headers": ["Milestone Year", "Trajectory Target (MMtCO2e)", "Target Reduction vs Baseline", "Flaring Objective", "Decarbonization Status"],
+    # Chapter 6: Intensities
+    "ch6_title": "6. MULTI-METRIC CARBON & METHANE INTENSITIES",
+    "ch6_desc": "Carbon intensity normalized against BOE deliverability and methane intensity (NGSI wt.%) against OGCI Gold Standard targets:",
+    "ch6_headers": ["Year", "Carbon Intensity (kg CO2e/BOE)", "Methane Intensity (NGSI wt.%)", "Methane Mass (tCH4)"],
 
-    # Chapter 8: Joint Venture Partner Equity
-    "ch8_title": "8. JOINT VENTURE PARTNER EQUITY SHARE ALLOCATION",
-    "ch8_desc": "Apportionment of operational greenhouse gas and methane emissions according to contractual equity ownership interests:",
-    "ch8_headers": ["Partner Entity", "Working Interest (%)", "Equity Scope 1 (tCO2e)", "Equity Scope 2 (tCO2e)", "Total Equity GHG (tCO2e)", "Equity CH4 (tCH4)"],
+    # Chapter 7: Scope 3
+    "ch7_title": "7. SCOPE 3 VALUE CHAIN EMISSIONS & PRODUCT LIFECYCLE",
+    "ch7_desc": "Corporate Scope 3 greenhouse gas inventory structured in accordance with the GHG Protocol Corporate Value Chain Standard and ISO 14064-1:2018 Category 3–6 boundaries:",
+    "ch7_headers": ["GHG Protocol Category", "Operational Sub-Category", "Activity Data", "Unit", "Factor (tCO2e/u)", "Emissions (tCO2e)", "Share (%)", "Tier / Method"],
+    "ch7_kpi": "<b>Total Audited Scope 3:</b> {total_s3:,.0f} tCO2e | <b>Upstream Share:</b> {up_pct:.1f}% ({up_t:,.0f} t) | <b>Downstream Share:</b> {down_pct:.1f}% ({down_t:,.0f} t) | <b>Supplier Tier 2 Coverage:</b> {tier2_pct:.1f}%",
 
-    # Chapter 9: QA/QC Verification, Uncertainty & Statutory Regimes
-    "qaqc_title": "9. QA/QC VERIFICATION, UNCERTAINTY & STATUTORY REGIMES",
+    # Chapter 8: Criteria Pollutants
+    "ch8_title": "8. CRITERIA AIR POLLUTANTS MASS DISCHARGE",
+    "ch8_desc": "Atmospheric emissions of non-GHG criteria air pollutants governed by Algerian Executive Decree 06-138:",
+    "ch8_headers": ["Year", "NOx Mass (t)", "CO Mass (t)", "SO2 Mass (t)", "NMVOC Mass (t)"],
+    "ch8_footnote": "* Note: Atmospheric criteria pollutant masses are stoichiometric combustion by-product estimates derived in accordance with API Compendium Section 4 default fuel factors and Algerian Executive Decree 06-138 standards.",
+
+    # Chapter 9: 2030 Decarbonization Target
+    "ch9_title": "9. 2030 DECARBONIZATION TARGET TRAJECTORY & GLIDEPATH",
+    "ch9_desc": "Trajectory projection modeling corporate greenhouse gas reductions and zero routine flaring targets toward 2030:",
+    "ch9_headers": ["Milestone Year", "Trajectory Target (MMtCO2e)", "Target Reduction vs Baseline", "Flaring Objective", "Decarbonization Status"],
+
+    # Chapter 10: EU CBAM & Decarbonization Economics
+    "ch10_title": "10. EU CBAM HYDROCARBON EXPORT EMBEDDINGS & DECARBONIZATION ECONOMICS",
+    "ch10_desc": "Specific Embedded Emissions (SEE) under EU CBAM Regulation (EU) 2023/956 for European export streams, paired with Marginal Abatement Cost Curve (MACC) project economics:",
+    "ch10_cbam_headers": ["Export Commodity", "CN Customs Code", "Destination Port / Market", "Export Mass (t)", "SEE Direct (tCO2/t)", "SEE Indirect (tCO2/t)", "Total Embedded GHG (tCO2e)"],
+    "ch10_macc_headers": ["Strategic Abatement Project", "Technology Class", "Annual Abatement (tCO2e)", "Investment (CAPEX)", "Abatement Cost ($/tCO2e)", "Execution Status"],
+    "ch10_kpi": "<b>EU CBAM Monitored Volume:</b> {exp_tonnes:,.0f} tonnes | <b>Total Embedded Export GHG:</b> {exp_ghg:,.0f} tCO2e | <b>Pipeline Abatement Capacity:</b> {macc_cap:,.0f} tCO2e/yr",
+
+    # Chapter 11: Joint Venture Partner Equity
+    "ch11_title": "11. JOINT VENTURE PARTNER EQUITY SHARE ALLOCATION",
+    "ch11_desc": "Contractual equity working interest breakdown apportioning annual operational emissions and multi-year cumulative greenhouse gas inventory:",
+    "ch11_headers": ["Partner Entity", "Working Interest (%)", "{latest_year} Equity GHG (tCO2e)", "{num_years}-Yr Total Equity (tCO2e)", "{num_years}-Yr Scope 1 (tCO2e)", "{num_years}-Yr CH4 (tCH4)"],
+
+    # Chapter 12: QA/QC Verification, Uncertainty & Statutory Regimes
+    "ch12_title": "12. QA/QC VERIFICATION, UNCERTAINTY & STATUTORY REGIMES",
+    "recalc_title": "ISO 14064-1:2018 Clause 6.4.1 Base Year Recalculation Audit Trail:",
+    "recalc_headers": ["Year", "Recalc Date", "Trigger Event / Methodological Rationale", "Previous (tCO2e)", "Adjusted (tCO2e)", "Delta (%)", "Audit Approval"],
+
+    "qaqc_title": "12. QA/QC VERIFICATION, UNCERTAINTY & STATUTORY REGIMES",
     "qaqc_desc": "Quality assurance protocols, ISO 14064-3 audit verification tiers, IPCC Approach 1 & Monte Carlo measurement uncertainty assessment:",
     "qaqc_proto_title": "Quality Assurance & Measurement Calibration Protocols:",
-    "qaqc_proto_desc": "All custody transfer meters and fuel gas chromatographs are maintained with tamper-evident digital records. Ultrasonic flare meters undergo semi-annual calibration in accordance with API MPMS Chapter 14 (±1.5% accuracy). Flaring destruction efficiencies are optically verified with infrared VISR camera telemetry (99.85% DRE). Gas samples are analyzed weekly via on-site gas chromatography to verify heating values (HHV) and stoichiometric constants.",
+    "qaqc_proto_desc": "All custody transfer meters and fuel gas chromatographs are maintained with tamper-evident digital records. Ultrasonic flare meters undergo semi-annual calibration in accordance with API MPMS Chapter 14 (±1.5% accuracy). Flaring destruction removal efficiencies are optically verified with infrared VISR telemetry ({dre_pct} DRE). Gas samples are analyzed weekly via on-site gas chromatography to verify heating values (HHV) and stoichiometric constants.",
     "qaqc_statute_title": "Statutory Regimes & International Mandates Compliance Matrix:",
     "qaqc_statute_headers": ["Statutory Mandate", "Regulatory Scope", "Mandate Description", "Compliance Status"],
+    "qaqc_statute_d21_pass": "Audited Compliant",
+    "qaqc_statute_d21_fail": "Cap Exceeded ({flaring_pct}% > 1.00%) — Action Plan Active",
     "qaqc_uncert_title": "IPCC 2006 Vol.1 Ch.3 / API Compendium Measurement Uncertainty Assessment:",
     "qaqc_uncert_headers": ["Operational Source Category", "Total Mass (tCO2e)", "Relative 1-Sigma", "95% Conf. Interval (k=2)", "Uncertainty Band"],
     "qaqc_summary_kpi": "Overall Inventory Uncertainty (95% CI, k=2): <b>{overall_uncert}</b> | Tier 3 Coverage: <b>{tier3_pct}%</b> | Monte Carlo Iterations: <b>2,500</b>",
@@ -163,12 +192,12 @@ TRANSLATIONS_EN = {
         "herein have been calculated in compliance with ISO 14064-1:2018 specification and audited against Algerian "
         "Executive Decree 21-330 Article 9. All calculation steps are tamper-evident and traceable."
     ),
-    "role_hse": "<b>Directrice Centrale HSE</b><br/>Sonatrach Corporate",
+    "role_hse": "<b>Central HSE Director</b><br/>{org} Corporate",
     "role_auditor": "<b>Lead GHG Auditor</b><br/>ISO 14064-3 Certified",
     "role_vp": "<b>VP Exploration & Production</b><br/>Division E&P",
-    "sign_stamp_hse": "<br/><font color='#10B981'><b>[ DIGITALLY SIGNED ]</b></font><br/>F. Z. Bouziane",
-    "sign_stamp_auditor": "<br/><font color='#10B981'><b>[ VERIFIED & ENDORSED ]</b></font><br/>Bureau Veritas / Sonatrach MRV",
-    "sign_stamp_vp": "<br/><font color='#10B981'><b>[ APPROVED FOR ISSUE ]</b></font><br/>M. K. Benhamouda",
+    "sign_stamp_hse": "<br/><font color='#10B981'><b>[ DIGITALLY SIGNED ]</b></font><br/>{hse_signer}",
+    "sign_stamp_auditor": "<br/><font color='#10B981'><b>[ VERIFIED & ENDORSED ]</b></font><br/>{auditor_signer}",
+    "sign_stamp_vp": "<br/><font color='#10B981'><b>[ APPROVED FOR ISSUE ]</b></font><br/>{vp_signer}",
     "fingerprint_lbl": "CRYPTOGRAPHIC FINGERPRINT (SHA-256):",
     "generated_lbl": "Generated:",
 
@@ -185,7 +214,7 @@ TRANSLATIONS_EN = {
     "chart_em_s2_lbl": "Scope 2 Indirect Electricity",
 
     "chart_sangea_title": "Operational Source Category Breakdown",
-    "chart_sangea_axis": "Emissions (tCO₂e)",
+    "chart_sangea_axis": "Emissions (ktCO₂e)",
     "chart_sangea_comb": "Combustion",
     "chart_sangea_flare": "Flaring",
     "chart_sangea_fug": "Fugitive LDAR",
@@ -204,7 +233,7 @@ TRANSLATIONS_EN = {
     "chart_glide_title": "2030 Corporate Decarbonization Trajectory & Glidepath",
     "chart_glide_axis": "Emissions (MMtCO₂e)",
     "chart_glide_hist_lbl": "Historical Audited GHG",
-    "chart_glide_target_lbl": "2030 Target Trajectory (-20%)",
+    "chart_glide_target_lbl": "2030 Target Trajectory (-{pct}%)",
     "chart_glide_point_lbl": "2030 Target Point",
     "chart_glide_envelope_lbl": "Abatement Trajectory Envelope",
 
@@ -224,6 +253,13 @@ TRANSLATIONS_EN = {
     "chart_bench_title": "Cross-Basin Carbon Intensity Benchmark",
     "chart_bench_subtitle": "Multi-region performance ranking across Sonatrach operating basins",
     "chart_bench_axis": "Carbon Intensity (kg CO₂e/BOE)",
+
+    "chart_ogmp_title": "OGMP 2.0 Level 4 (Bottom-Up) vs Level 5 (Top-Down) Methane Reconciliation",
+    "chart_ogmp_axis": "Methane Mass Discharge (t CH4)",
+    "chart_scope3_title": "Scope 3 Value Chain Emissions Category Share (GHG Protocol)",
+    "chart_cbam_title": "EU CBAM Specific Embedded Emissions by Export Stream (Regulation 2023/956)",
+    "chart_cbam_axis": "Specific Embedded Emissions (t CO2e / t product)",
+
 }
 
 
@@ -297,6 +333,8 @@ TRANSLATIONS_FR = {
     "gas_comp_headers": ["Méthane (CH4)", "Éthane (C2H6)", "Propane (C3H8)", "Dioxyde de Carbone (CO2)", "Azote (N2)", "Hydrogène Sulfuré (H2S)"],
     "gas_comp_headers_r1": ["Méthane (CH4)", "Éthane (C2H6)", "Propane (C3H8)", "Dioxyde de Carbone (CO2)", "Azote (N2)", "Hydrogène Sulfuré (H2S)"],
     "gas_comp_headers_r2": ["Isobutane (iC4)", "n-Butane (nC4)", "Isopentane (iC5)", "n-Pentane (nC5)", "Hexanes+ (C6+)", "Bilan Molaire Total"],
+    "gas_comp_none_title": "Statut de la Composition et Chromatographie du Flux Gazeux :",
+    "gas_comp_none_desc": "Aucune analyse chromatographique de laboratoire (GC) spécifique au site n'a été enregistrée dans le système pour ce périmètre opérationnel. Conformément à la norme ISO 14064-1 (§5.2.4) et à la section 4 du Compendium API, les bilans stœchiométriques de combustion, torchage et évacuation utilisent les spécifications de gaz combustible standard de l'industrie.",
 
     # Chapter 1: Production
     "ch1_title": "1. PRODUCTION D'HYDROCARBURES ET LIVRABILITÉ ÉNERGÉTIQUE",
@@ -305,8 +343,8 @@ TRANSLATIONS_FR = {
 
     # Chapter 2: Scope 1 & 2
     "ch2_title": "2. ÉMISSIONS DE GAZ À EFFET DE SERRE (SCOPE 1 & SCOPE 2)",
-    "ch2_desc": "Émissions multi-annuelles auditées ventilées par périmètre direct d'exploitation (Scope 1) et électricité importée (Scope 2) :",
-    "ch2_headers": ["Année", "Scope 1 Direct (tCO2e)", "Scope 2 Indirect (tCO2e)", "Inventaire Total (tCO2e)", "Masse Totale (MMtCO2e)"],
+    "ch2_desc": "Émissions opérationnelles multi-annuelles auditées (Scope 1 direct et Scope 2 indirect), avec ventilation obligatoire ISO 14064-1 des espèces chimiques (CO₂, CH₄, N₂O) :",
+    "ch2_headers": ["Année", "Scope 1 Direct (tCO2e)", "Masse CO2 (t)", "Masse CH4 (t)", "Masse N2O (t)", "Scope 2 (tCO2e)", "Masse Totale (MMtCO2e)"],
 
     # Chapter 3: Catégories de Sources Opérationnelles
     "ch3_title": "3. VENTILATION PAR CATÉGORIE DE SOURCES OPÉRATIONNELLES",
@@ -320,34 +358,108 @@ TRANSLATIONS_FR = {
     "ch4_pass": "CONFORME",
     "ch4_fail": "DÉPASSÉ",
 
-    # Chapter 5: Intensities
-    "ch5_title": "5. INTENSITÉS CARBONE ET MÉTHANE MULTI-CRITÈRES",
-    "ch5_desc": "Intensité carbone normalisée par rapport à la livrabilité en BEP et intensité méthane (NGSI % poids) par rapport aux cibles OGCI :",
-    "ch5_headers": ["Année", "Intensité Carbone (kg CO2e/BEP)", "Intensité Méthane (NGSI % poids)", "Masse Méthane (tCH4)"],
 
-    # Chapter 6: Criteria Pollutants
-    "ch6_title": "6. REJETS MASSIQUES DES POLLUANTS ATMOSPHÉRIQUES RÉGLEMENTÉS",
-    "ch6_desc": "Émissions atmosphériques de polluants atmosphériques non-GES régis par le Décret exécutif algérien 06-138 :",
-    "ch6_headers": ["Année", "Masse NOx (t)", "Masse CO (t)", "Masse SO2 (t)", "Masse COVNM (t)"],
-    "ch6_footnote": "* Note : Les rejets massiques des polluants atmosphériques sont des estimations stœchiométriques dérivées des facteurs par défaut de la Section 4 de l'API Compendium et des normes du Décret exécutif algérien 06-138.",
+    # Chapter 5: OGMP 2.0 & LDAR
+    "ch5_title": "5. OGMP 2.0 METHANE RECONCILIATION & LDAR TELEMETRY",
+    "ch5_desc": "UNEP Oil & Gas Methane Partnership (OGMP 2.0) Gold Standard Level 4 source-level measurement vs Level 5 site-level top-down reconciliation (Aerial LiDAR, Satellite TROPOMI, OGI) and EPA Method 21 component counts:",
+    "ch5_ogmp_headers": ["Survey Platform / Technology", "Instrument / Vendor", "Survey Date", "Level 4 Bottom-Up (tCH4)", "Level 5 Top-Down (tCH4)", "Variance (%)", "OGMP Status"],
+    "ch5_ldar_headers": ["Equipment Class", "Component Type", "Process Stream", "Monitored Count", "LDAR Quantification Protocol"],
+    "ch5_kpi": "<b>OGMP 2.0 Reconciliation Status:</b> {status} | <b>Mean Field Variance:</b> {variance}% (Gold Standard Threshold ±20%) | <b>Monitored LDAR Components:</b> {comp_count:,} units",
 
-    # Chapter 7: 2030 Decarbonization Target
-    "ch7_title": "7. TRAJECTOIRE ET PLAN DE ROUTE DE DÉCARBONATION 2030",
-    "ch7_desc": "Modélisation prospective des réductions des gaz à effet de serre et de l'objectif de zéro torchage de routine à l'horizon 2030 :",
-    "ch7_headers": ["Année Jalon", "Objectif Trajectoire (MMtCO2e)", "Réduction Cible vs Référence", "Objectif Torchage", "Statut Décarbonation"],
+    # Chapter 6: Intensities
+    "ch6_title": "6. MULTI-METRIC CARBON & METHANE INTENSITIES",
+    "ch6_desc": "Carbon intensity normalized against BOE deliverability and methane intensity (NGSI wt.%) against OGCI Gold Standard targets:",
+    "ch6_headers": ["Year", "Carbon Intensity (kg CO2e/BOE)", "Methane Intensity (NGSI wt.%)", "Methane Mass (tCH4)"],
 
-    # Chapter 8: Joint Venture Partner Equity
-    "ch8_title": "8. RÉPARTITION PAR PARTICIPATION DES PARTENAIRES EN JOINT-VENTURE",
-    "ch8_desc": "Ventilation des émissions de gaz à effet de serre et de méthane selon les quotes-parts contractuelles d'intérêt d'exploitation :",
-    "ch8_headers": ["Entité Partenaire", "Participation (%)", "Scope 1 Détenu (tCO2e)", "Scope 2 Détenu (tCO2e)", "Total GES Détenu (tCO2e)", "CH4 Détenu (tCH4)"],
+    # Chapter 7: Scope 3
+    "ch7_title": "7. SCOPE 3 VALUE CHAIN EMISSIONS & PRODUCT LIFECYCLE",
+    "ch7_desc": "Corporate Scope 3 greenhouse gas inventory structured in accordance with the GHG Protocol Corporate Value Chain Standard and ISO 14064-1:2018 Category 3–6 boundaries:",
+    "ch7_headers": ["GHG Protocol Category", "Operational Sub-Category", "Activity Data", "Unit", "Factor (tCO2e/u)", "Emissions (tCO2e)", "Share (%)", "Tier / Method"],
+    "ch7_kpi": "<b>Total Audited Scope 3:</b> {total_s3:,.0f} tCO2e | <b>Upstream Share:</b> {up_pct:.1f}% ({up_t:,.0f} t) | <b>Downstream Share:</b> {down_pct:.1f}% ({down_t:,.0f} t) | <b>Supplier Tier 2 Coverage:</b> {tier2_pct:.1f}%",
 
-    # Chapter 9: QA/QC Verification, Uncertainty & Statutory Regimes
-    "qaqc_title": "9. ASSURANCE QUALITÉ, ÉVALUATION DES INCERTITUDES ET CADRE RÉGLEMENTAIRE",
+    # Chapter 8: Criteria Pollutants
+    "ch8_title": "8. CRITERIA AIR POLLUTANTS MASS DISCHARGE",
+    "ch8_desc": "Atmospheric emissions of non-GHG criteria air pollutants governed by Algerian Executive Decree 06-138:",
+    "ch8_headers": ["Year", "NOx Mass (t)", "CO Mass (t)", "SO2 Mass (t)", "NMVOC Mass (t)"],
+    "ch8_footnote": "* Note: Atmospheric criteria pollutant masses are stoichiometric combustion by-product estimates derived in accordance with API Compendium Section 4 default fuel factors and Algerian Executive Decree 06-138 standards.",
+
+    # Chapter 9: 2030 Decarbonization Target
+    "ch9_title": "9. 2030 DECARBONIZATION TARGET TRAJECTORY & GLIDEPATH",
+    "ch9_desc": "Trajectory projection modeling corporate greenhouse gas reductions and zero routine flaring targets toward 2030:",
+    "ch9_headers": ["Milestone Year", "Trajectory Target (MMtCO2e)", "Target Reduction vs Baseline", "Flaring Objective", "Decarbonization Status"],
+
+    # Chapter 10: EU CBAM & Decarbonization Economics
+    "ch10_title": "10. EU CBAM HYDROCARBON EXPORT EMBEDDINGS & DECARBONIZATION ECONOMICS",
+    "ch10_desc": "Specific Embedded Emissions (SEE) under EU CBAM Regulation (EU) 2023/956 for European export streams, paired with Marginal Abatement Cost Curve (MACC) project economics:",
+    "ch10_cbam_headers": ["Export Commodity", "CN Customs Code", "Destination Port / Market", "Export Mass (t)", "SEE Direct (tCO2/t)", "SEE Indirect (tCO2/t)", "Total Embedded GHG (tCO2e)"],
+    "ch10_macc_headers": ["Strategic Abatement Project", "Technology Class", "Annual Abatement (tCO2e)", "Investment (CAPEX)", "Abatement Cost ($/tCO2e)", "Execution Status"],
+    "ch10_kpi": "<b>EU CBAM Monitored Volume:</b> {exp_tonnes:,.0f} tonnes | <b>Total Embedded Export GHG:</b> {exp_ghg:,.0f} tCO2e | <b>Pipeline Abatement Capacity:</b> {macc_cap:,.0f} tCO2e/yr",
+
+    # Chapter 11: Joint Venture Partner Equity
+    "ch11_title": "11. JOINT VENTURE PARTNER EQUITY SHARE ALLOCATION",
+    "ch11_desc": "Contractual equity working interest breakdown apportioning annual operational emissions and multi-year cumulative greenhouse gas inventory:",
+    "ch11_headers": ["Partner Entity", "Working Interest (%)", "{latest_year} Equity GHG (tCO2e)", "{num_years}-Yr Total Equity (tCO2e)", "{num_years}-Yr Scope 1 (tCO2e)", "{num_years}-Yr CH4 (tCH4)"],
+
+    # Chapter 12: QA/QC Verification, Uncertainty & Statutory Regimes
+    "ch12_title": "12. QA/QC VERIFICATION, UNCERTAINTY & STATUTORY REGIMES",
+    "recalc_title": "ISO 14064-1:2018 Clause 6.4.1 Base Year Recalculation Audit Trail:",
+    "recalc_headers": ["Year", "Recalc Date", "Trigger Event / Methodological Rationale", "Previous (tCO2e)", "Adjusted (tCO2e)", "Delta (%)", "Audit Approval"],
+
+
+    # Chapter 5: OGMP 2.0 & LDAR
+    "ch5_title": "5. RÉCONCILIATION DU MÉTHANE OGMP 2.0 & TÉLÉMÉTRIE LDAR",
+    "ch5_desc": "Partenariat pour le Méthane Pétrole & Gaz (OGMP 2.0) Niveaux 4 (mesures à la source) vs Niveau 5 (réconciliation descendante par LiDAR aérien, Satellite TROPOMI et caméras OGI) et inventaire des composants :",
+    "ch5_ogmp_headers": ["Plateforme de Détection", "Instrument / Prestataire", "Date de Relevé", "Niveau 4 Ascendant (tCH4)", "Niveau 5 Descendant (tCH4)", "Écart (%)", "Statut OGMP 2.0"],
+    "ch5_ldar_headers": ["Classe d'Équipement", "Type de Composant", "Nature du Flux", "Nombre Contrôlé", "Protocole de Quantification LDAR"],
+    "ch5_kpi": "<b>Statut Réconciliation OGMP 2.0 :</b> {status} | <b>Écart Moyen de Terrain :</b> {variance}% (Seuil Normatif Gold Standard ±20%) | <b>Composants LDAR Recensés :</b> {comp_count:,} unités",
+
+    # Chapter 6: Intensities
+    "ch6_title": "6. INTENSITÉS CARBONE ET MÉTHANE MULTI-CRITÈRES",
+    "ch6_desc": "Intensité carbone normalisée par rapport à la livrabilité en BEP et intensité méthane (NGSI % poids) par rapport aux cibles OGCI :",
+    "ch6_headers": ["Année", "Intensité Carbone (kg CO2e/BEP)", "Intensité Méthane (NGSI % poids)", "Masse Méthane (tCH4)"],
+
+    # Chapter 7: Scope 3
+    "ch7_title": "7. ÉMISSIONS DU SCOPE 3 DE LA CHAÎNE DE VALEUR & CYCLE DE VIE",
+    "ch7_desc": "Bilan des émissions indirectes Scope 3 de la chaîne de valeur selon le standard GHG Protocol Corporate Value Chain et le périmètre des Catégories 3 à 6 de l'ISO 14064-1:2018 :",
+    "ch7_headers": ["Catégorie GHG Protocol", "Sous-Catégorie d'Activité", "Donnée d'Activité", "Unité", "Facteur (tCO2e/u)", "Émissions (tCO2e)", "Part (%)", "Niveau / Méthode"],
+    "ch7_kpi": "<b>Total Scope 3 Audité :</b> {total_s3:,.0f} tCO2e | <b>Part Amont (Scope 3 Upstream) :</b> {up_pct:.1f}% ({up_t:,.0f} t) | <b>Part Aval (Scope 3 Downstream) :</b> {down_pct:.1f}% ({down_t:,.0f} t) | <b>Couverture Fournisseurs Tier 2 :</b> {tier2_pct:.1f}%",
+
+    # Chapter 8: Criteria Pollutants
+    "ch8_title": "8. REJETS MASSIQUES DES POLLUANTS ATMOSPHÉRIQUES RÉGLEMENTÉS",
+    "ch8_desc": "Émissions atmosphériques de polluants atmosphériques non-GES régis par le Décret exécutif algérien 06-138 :",
+    "ch8_headers": ["Année", "Masse NOx (t)", "Masse CO (t)", "Masse SO2 (t)", "Masse COVNM (t)"],
+    "ch8_footnote": "* Note : Les rejets massiques des polluants atmosphériques sont des estimations stœchiométriques dérivées des facteurs par défaut de la Section 4 de l'API Compendium et des normes du Décret exécutif algérien 06-138.",
+
+    # Chapter 9: 2030 Decarbonization Target
+    "ch9_title": "9. TRAJECTOIRE ET PLAN DE ROUTE DE DÉCARBONATION 2030",
+    "ch9_desc": "Modélisation prospective des réductions des gaz à effet de serre et de l'objectif de zéro torchage de routine à l'horizon 2030 :",
+    "ch9_headers": ["Année Jalon", "Objectif Trajectoire (MMtCO2e)", "Réduction Cible vs Référence", "Objectif Torchage", "Statut Décarbonation"],
+
+    # Chapter 10: EU CBAM & Decarbonization Economics
+    "ch10_title": "10. EMBARQUEMENT CARBONE MACF UE & ÉCONOMIE DE LA DÉCARBONATION",
+    "ch10_desc": "Émissions Spécifiques Embarquées (ESE) selon le Règlement (UE) 2023/956 (MACF) pour les flux d'exportation vers l'Europe et analyse économique des coûts marginaux d'abattement (MACC) :",
+    "ch10_cbam_headers": ["Produit d'Exportation", "Code Douanier NC", "Marché / Port de Destination", "Volume Exporté (t)", "ESE Directe (tCO2/t)", "ESE Indirecte (tCO2/t)", "Total GES Embarqué (tCO2e)"],
+    "ch10_macc_headers": ["Projet Stratégique d'Atténuation", "Filière Technologique", "Abattement Annuel (tCO2e)", "Investissement (CAPEX)", "Coût Unitaire ($/tCO2e)", "Statut d'Exécution"],
+    "ch10_kpi": "<b>Volume Contrôlé MACF UE :</b> {exp_tonnes:,.0f} tonnes | <b>Total GES Export Embarqué :</b> {exp_ghg:,.0f} tCO2e | <b>Capacité Projets d'Abattement :</b> {macc_cap:,.0f} tCO2e/an",
+
+    # Chapter 11: Joint Venture Partner Equity
+    "ch11_title": "11. RÉPARTITION PAR PARTICIPATION DES PARTENAIRES EN JOINT-VENTURE",
+    "ch11_desc": "Ventilation des quotes-parts d'intérêts contractuels pour les émissions annuelles et l'inventaire cumulé multi-annuel :",
+    "ch11_headers": ["Entité Partenaire", "Participation (%)", "GES Détenu {latest_year} (tCO2e)", "Total Détenu {num_years} Ans (tCO2e)", "Scope 1 Cumulé (tCO2e)", "CH4 Cumulé (tCH4)"],
+
+    # Chapter 12: QA/QC Verification, Uncertainty & Statutory Regimes
+    "ch12_title": "12. ASSURANCE QUALITÉ, ÉVALUATION DES INCERTITUDES ET CADRE RÉGLEMENTAIRE",
+    "recalc_title": "Piste d'Audit du Recalcul de l'Année de Référence (ISO 14064-1:2018 Clause 6.4.1) :",
+    "recalc_headers": ["Année Recalcul", "Date Recalcul", "Déclencheur / Justification Méthodologique", "Précédent (tCO2e)", "Ajusté (tCO2e)", "Écart (%)", "Approbation Audit"],
+
+    "qaqc_title": "12. ASSURANCE QUALITÉ, ÉVALUATION DES INCERTITUDES ET CADRE RÉGLEMENTAIRE",
     "qaqc_desc": "Protocoles d'assurance qualité, niveaux d'audit ISO 14064-3, et évaluation des incertitudes de mesure selon l'Approche 1 du GIEC et Monte Carlo :",
     "qaqc_proto_title": "Protocoles d'Assurance Qualité et d'Étalonnage des Mesures :",
-    "qaqc_proto_desc": "Tous les débitmètres de comptage transactionnel et chromatographes de gaz sont consignés dans des registres numériques infalsifiables. Les débitmètres ultrasoniques font l'objet d'un étalonnage semestriel selon API MPMS Chapitre 14 (précision ±1,5 %). L'efficacité de destruction par torchage est vérifiée par télémétrie optique VISR (99,85 % DRE). Des échantillons de gaz sont analysés chaque semaine par chromatographie sur site pour vérifier les PCS et constantes stœchiométriques.",
+    "qaqc_proto_desc": "Tous les débitmètres de comptage transactionnel et chromatographes de gaz sont consignés dans des registres numériques infalsifiables. Les débitmètres ultrasoniques font l'objet d'un étalonnage semestriel selon API MPMS Chapitre 14 (précision ±1,5 %). L'efficacité de destruction par torchage est vérifiée par télémétrie optique VISR ({dre_pct} DRE). Des échantillons de gaz sont analysés chaque semaine par chromatographie sur site pour vérifier les PCS et constantes stœchiométriques.",
     "qaqc_statute_title": "Matrice de Conformité aux Régimes Réglementaires et Mandats Internationaux :",
     "qaqc_statute_headers": ["Cadre Réglementaire", "Périmètre Réglementaire", "Description du Mandat", "Statut de Conformité"],
+    "qaqc_statute_d21_pass": "Conforme Audité",
+    "qaqc_statute_d21_fail": "Plafond Dépassé ({flaring_pct}% > 1,00%) — Plan d'Atténuation Actif",
     "qaqc_uncert_title": "Évaluation des Incertitudes de Mesure (GIEC 2006 Vol.1 Ch.3 / API Compendium) :",
     "qaqc_uncert_headers": ["Catégorie de Source Opérationnelle", "Masse Totale (tCO2e)", "1-Sigma Relatif", "Intervalle Confiance 95% (k=2)", "Niveau d'Incertitude"],
     "qaqc_summary_kpi": "Incertitude Globale de l'Inventaire (IC 95%, k=2) : <b>{overall_uncert}</b> | Couverture Tier 3 : <b>{tier3_pct}%</b> | Itérations Monte Carlo : <b>2 500</b>",
@@ -375,12 +487,12 @@ TRANSLATIONS_FR = {
         "déclarés ci-après ont été calculés selon les spécifications ISO 14064-1:2018 et audités conformément à l'Article 9 "
         "du Décret exécutif 21-330. Tous les calculs sont infalsifiables et traçables."
     ),
-    "role_hse": "<b>Directrice Centrale HSE</b><br/>Sonatrach Siège",
+    "role_hse": "<b>Direction Centrale HSE</b><br/>{org} Siège",
     "role_auditor": "<b>Auditeur Principal GES</b><br/>Certifié ISO 14064-3",
     "role_vp": "<b>Vice-Président Exploration & Production</b><br/>Division E&P",
-    "sign_stamp_hse": "<br/><font color='#10B981'><b>[ SIGNÉ NUMÉRIQUEMENT ]</b></font><br/>F. Z. Bouziane",
-    "sign_stamp_auditor": "<br/><font color='#10B981'><b>[ VÉRIFIÉ & APPROUVÉ ]</b></font><br/>Bureau Veritas / Sonatrach MRV",
-    "sign_stamp_vp": "<br/><font color='#10B981'><b>[ BON POUR ÉMISSION ]</b></font><br/>M. K. Benhamouda",
+    "sign_stamp_hse": "<br/><font color='#10B981'><b>[ SIGNÉ NUMÉRIQUEMENT ]</b></font><br/>{hse_signer}",
+    "sign_stamp_auditor": "<br/><font color='#10B981'><b>[ VÉRIFIÉ & APPROUVÉ ]</b></font><br/>{auditor_signer}",
+    "sign_stamp_vp": "<br/><font color='#10B981'><b>[ BON POUR ÉMISSION ]</b></font><br/>{vp_signer}",
     "fingerprint_lbl": "EMPREINTE CRYPTOGRAPHIQUE (SHA-256) :",
     "generated_lbl": "Généré le :",
 
@@ -397,7 +509,7 @@ TRANSLATIONS_FR = {
     "chart_em_s2_lbl": "Scope 2 Électricité Indirecte",
 
     "chart_sangea_title": "Ventilation par Catégorie de Sources Opérationnelles",
-    "chart_sangea_axis": "Émissions (tCO₂e)",
+    "chart_sangea_axis": "Émissions (ktCO₂e)",
     "chart_sangea_comb": "Combustion",
     "chart_sangea_flare": "Torchage",
     "chart_sangea_fug": "Fugitives LDAR",
@@ -416,7 +528,7 @@ TRANSLATIONS_FR = {
     "chart_glide_title": "Trajectoire et Plan de Route de Décarbonation 2030",
     "chart_glide_axis": "Émissions (MMtCO₂e)",
     "chart_glide_hist_lbl": "GES Historique Audité",
-    "chart_glide_target_lbl": "Trajectoire Cible 2030 (-20 %)",
+    "chart_glide_target_lbl": "Trajectoire Cible 2030 (-{pct} %)",
     "chart_glide_point_lbl": "Cible 2030",
     "chart_glide_envelope_lbl": "Enveloppe de Réduction des Émissions",
 
@@ -436,6 +548,13 @@ TRANSLATIONS_FR = {
     "chart_bench_title": "Classement Comparatif Inter-Bassins de l'Intensité Carbone",
     "chart_bench_subtitle": "Performance multi-régionale à travers les bassins producteurs de Sonatrach",
     "chart_bench_axis": "Intensité Carbone (kg CO₂e/BEP)",
+
+    "chart_ogmp_title": "Réconciliation Méthane OGMP 2.0 : Niveau 4 (Ascendant) vs Niveau 5 (Descendant)",
+    "chart_ogmp_axis": "Rejets Massiques de Méthane (t CH4)",
+    "chart_scope3_title": "Répartition des Émissions Scope 3 par Catégorie (GHG Protocol)",
+    "chart_cbam_title": "Émissions Spécifiques Embarquées MACF UE par Produit (Règlement 2023/956)",
+    "chart_cbam_axis": "Émissions Spécifiques Embarquées (t CO2e / t produit)",
+
 }
 
 

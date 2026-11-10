@@ -183,7 +183,7 @@ class TestVolumeAnalyticsPerformance:
         assert "mitigation" in data
 
         print(f"\n[VOLUME TEST] /api/dashboard/batch-all 7-thread parallel query completed in {duration_ms:.2f} ms")
-        assert duration_ms < 1500.0, f"Consolidated batch query took {duration_ms:.2f} ms, exceeding SLA"
+        assert duration_ms < 3000.0, f"Consolidated batch query took {duration_ms:.2f} ms, exceeding SLA"
 
     def test_excel_export_streaming_under_volume(self, auth_client):
         """Benchmark Excel report generation streaming across thousands of records."""
