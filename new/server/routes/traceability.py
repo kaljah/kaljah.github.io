@@ -62,8 +62,11 @@ def trace_metric():
     sample_records = []
     formula_str = ""
 
-    # Facility map for names
-    fac_map = {f.id: f.name for f in Facility.query.all()}
+    # Facility map for names (tenant/facility scoped)
+    fac_q = Facility.query
+    if allowed_fids is not None:
+        fac_q = fac_q.filter(Facility.id.in_(allowed_fids or [-1]))
+    fac_map = {f.id: f.name for f in fac_q.all()}
 
     # Scope 1 or Corporate Total or Methane or Flaring
     include_s1 = metric in ("scope1_total", "corporate_total", "methane_total", "flaring_volume") or metric.startswith("s1")

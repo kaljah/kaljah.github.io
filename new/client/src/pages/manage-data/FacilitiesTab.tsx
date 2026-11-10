@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Upload, Users, Trash2, Plus, Download } from "lucide-react";
 import { Badge, Button, Field, Input, Sheet, controlClass } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
@@ -74,6 +74,18 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
   const [loadingShares, setLoadingShares] = useState(false);
   const [partnerForm, setPartnerForm] = useState({ partner_id: "", equity_share_pct: "", agreement_reference: "", effective_start_date: "2021-01-01" });
   const toast = useToast();
+
+  const totalAllocatedPct = useMemo(() => {
+    return shares.reduce((sum, s) => sum + Number(s.equity_share_pct || 0), 0);
+  }, [shares]);
+
+  useEffect(() => {
+    api.get("/equity/partners")
+      .then((res) => setPartners(res.data || []))
+      .catch((err) => {
+        console.warn("Could not load JV partners:", err);
+      });
+  }, []);
 
   useEffect(() => {
     if (selectedFacilityForEquity) {
@@ -310,7 +322,7 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
                 name="name"
                 value={facilityForm.name || ""}
                 onChange={handleFacilityChange}
-                placeholder={t("e.g. Hassi R'Mel")}
+                placeholder={t("e.g. Basin Beta")}
                 required
               />
             </Field>
@@ -321,7 +333,7 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
                 name="field"
                 value={facilityForm.field || ""}
                 onChange={handleFacilityChange}
-                placeholder={t("e.g. Hassi Messaoud South")}
+                placeholder={t("e.g. Basin Alpha South")}
                 required
               />
             </Field>
@@ -403,19 +415,47 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
                 )}
               </Field>
 
-              {facilityForm.boundary_type === "Equity Share" && (
-                <Field label={t("Equity Share Percentage (%)")}>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    max="100"
-                    name="equity_share_pct"
-                    value={facilityForm.equity_share_pct !== undefined ? facilityForm.equity_share_pct : ""}
-                    onChange={(e) => patch({ equity_share_pct: e.target.value })}
-                    placeholder="e.g. 51.00"
-                  />
-                </Field>
+              {(facilityForm.boundary_type === "Equity Share" || facilityForm.boundary_detail === "Joint Venture") && (
+                <>
+                  <Field label={t("Equity Share Percentage (%)")}>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      max="100"
+                      name="equity_share_pct"
+                      value={facilityForm.equity_share_pct !== undefined ? facilityForm.equity_share_pct : ""}
+                      onChange={(e) => patch({ equity_share_pct: e.target.value })}
+                      placeholder="e.g. 51.00"
+                    />
+                  </Field>
+
+                  <Field label={t("JV Operating / Equity Partner")}>
+                    <NativeSelect
+                      name="partner_id"
+                      value={facilityForm.partner_id || ""}
+                      onChange={(e) => patch({ partner_id: e.target.value })}
+                      className={controlClass}
+                    >
+                      <option value="">{t("Default (Demo Operator Co. / Operator)")}</option>
+                      {partners.map((p) => (
+                        <option key={p.id} value={p.id}>
+                          {p.name} ({p.code})
+                        </option>
+                      ))}
+                    </NativeSelect>
+                  </Field>
+
+                  <Field label={t("Joint Venture Agreement Reference")}>
+                    <Input
+                      type="text"
+                      name="agreement_reference"
+                      value={facilityForm.agreement_reference || ""}
+                      onChange={(e) => patch({ agreement_reference: e.target.value })}
+                      placeholder={t("e.g. PSC Block 405b / Association Demo Operator Co.")}
+                    />
+                  </Field>
+                </>
               )}
 
               <Field label={t("Supply Chain Segment")}>
@@ -466,10 +506,25 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
         >
           <div className="space-y-4 p-2 w-full">
             <div className="flex items-center justify-between text-sm pb-2 border-b border-border">
-              <span className="text-text-secondary">{t("Operational Boundary: {{boundary}}", { boundary: selectedFacilityForEquity.boundary_type || "Equity Share" })}</span>
-              <Badge tone={shares.reduce((sum, s) => sum + Number(s.equity_share_pct || 0), 0) === 100 ? "success" : "warning"}>
-                {t("Total Allocated: {{pct}}%", { pct: shares.reduce((sum, s) => sum + Number(s.equity_share_pct || 0), 0).toFixed(1) })}
-              </Badge>
+              <div className="flex flex-col gap-0.5">
+                <span className="text-text-secondary font-medium">
+                  {t("Operational Boundary: {{boundary}}", { boundary: selectedFacilityForEquity.boundary_type || "Equity Share" })}
+                  {selectedFacilityForEquity.boundary_detail ? ` (${selectedFacilityForEquity.boundary_detail})` : ""}
+                </span>
+                <span className="text-xs text-text-secondary">
+                  {t("Operator Status: {{status}}", { status: (selectedFacilityForEquity.operator_status || "operated").replace("_", " ").toUpperCase() })}
+                </span>
+              </div>
+              <div className="flex flex-col items-end gap-1">
+                <Badge tone={Math.abs(totalAllocatedPct - 100) < 0.01 ? "success" : "warning"}>
+                  {t("Total Allocated: {{pct}}%", { pct: totalAllocatedPct.toFixed(1) })}
+                </Badge>
+                {totalAllocatedPct < 99.99 && (
+                  <span className="text-xs text-amber-600 font-medium">
+                    {t("Unallocated: {{pct}}%", { pct: Math.max(0, 100 - totalAllocatedPct).toFixed(1) })}
+                  </span>
+                )}
+              </div>
             </div>
 
             {loadingShares ? (

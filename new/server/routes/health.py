@@ -67,10 +67,6 @@ def health_summary():
     uptime_sec = int(time.time() - _START_TIME)
     is_healthy = db_ok and (memory_info.get("status") != "critical")
 
-    backend_name = db.engine.url.get_backend_name()
-    # Mask connection details in production
-    db_backend = "sqlite" if "sqlite" in backend_name.lower() else "postgresql"
-
     payload = {
         "status": "healthy" if is_healthy else "unhealthy",
         "version": current_app.config.get("APP_VERSION", "1.0.0"),
@@ -79,7 +75,6 @@ def health_summary():
         "checks": {
             "database": {
                 "status": "connected" if db_ok else "unreachable",
-                "backend": db_backend,
                 "latency_ms": db_latency_ms,
                 "error": db_error if not db_ok else None,
             },

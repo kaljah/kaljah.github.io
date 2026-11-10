@@ -116,7 +116,7 @@ def test_facility(auth_admin):
         if not fac:
             fac = Facility(
                 name="UI Verification Complex",
-                location="Hassi Messaoud",
+                location="Basin Alpha",
                 activity="Integrated Production",
                 division="Operations",
                 region="Ouargla",

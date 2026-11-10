@@ -443,13 +443,13 @@ def calc_indirect_steam(self, calculator, emission_factors, flat_inputs, gwp_dic
     )
     # audit 2026-10-14 BUG-0051: an efficiency of 80 is 80 % (it was used as 80x), and the record's
     # unit is the heat unit (the amount was read as Btu whatever its unit)
-    boiler_eff = self._require_fraction(
+    boiler_eff = self._optional_fraction(
         flat_inputs,
         ["boiler_eff", "boiler_efficiency"],
-        "boiler efficiency (e.g. 80 % or 0.80)",
+        default=None,
     )
     trans_loss = self._optional_fraction(
-        flat_inputs, ["trans_loss", "transmission_loss"], 0.0
+        flat_inputs, ["trans_loss", "transmission_loss"], default=None
     )
 
     return calculator.calculate(

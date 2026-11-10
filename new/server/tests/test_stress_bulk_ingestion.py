@@ -83,7 +83,7 @@ def run_benchmark_for_dataset(row_count: int, benchmark_name: str):
     temp_csv.close()
 
     facility_name = f"Stress Plant {row_count}k"
-    user_email = f"benchmark_{row_count}@sonatrach.dz"
+    user_email = f"benchmark_{row_count}@example.org"
 
     with app.app_context():
         user = User.query.filter_by(email=user_email).first()
@@ -91,10 +91,10 @@ def run_benchmark_for_dataset(row_count: int, benchmark_name: str):
             user = User(
                 email=user_email,
                 fullName=f"Benchmark Worker {row_count}",
-                orgName="Sonatrach Exploration",
+                orgName="Demo Operator Co. Exploration",
                 sector="Oil & Gas",
                 role="admin",
-                location="Hassi Messaoud",
+                location="Basin Alpha",
             )
             user.set_password("StressPass2026!")
             db.session.add(user)
@@ -108,7 +108,7 @@ def run_benchmark_for_dataset(row_count: int, benchmark_name: str):
                 activity="Extraction",
                 division="Upstream",
                 region="South",
-                field="Hassi Messaoud South",
+                field="Basin Alpha South",
                 segment="Upstream",
             )
             db.session.add(fac)
@@ -286,7 +286,7 @@ def test_bulk_ingestion_50k_stress():
 
 if __name__ == "__main__":
     print("=" * 70)
-    print("SONATRACH ENTERPRISE BULK INGESTION STRESS BENCHMARK (10K & 50K)")
+    print("DEMO OPERATOR CO. ENTERPRISE BULK INGESTION STRESS BENCHMARK (10K & 50K)")
     print("=" * 70)
     r10 = run_benchmark_for_dataset(10_000, "10K Benchmark")
     r50 = run_benchmark_for_dataset(50_000, "50K Benchmark")

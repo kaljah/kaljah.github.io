@@ -91,7 +91,7 @@ def _facilities(allowed_fids, facility_filter):
     """The facilities in the user's scope and the request's facility / activity / division / segment filters."""
     fac_q = Facility.query
     if allowed_fids is not None:
-        fac_q = fac_q.filter(Facility.id.in_(allowed_fids))
+        fac_q = fac_q.filter(Facility.id.in_(allowed_fids or [-1]))
     if facility_filter:
         fac_q = fac_q.filter_by(id=facility_filter)
     for column, arg in ((Facility.activity, "activity"), (Facility.division, "division"), (Facility.segment, "segment")):

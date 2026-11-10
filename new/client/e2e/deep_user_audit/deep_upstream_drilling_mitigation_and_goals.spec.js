@@ -315,7 +315,7 @@ test.describe('Suite 13: Upstream Drilling, Well Completions, Mitigation Project
     }
 
     // Populate Project Name
-    const projName = `Hassi Messaoud CCUS Phase ${Date.now().toString().slice(-4)}`;
+    const projName = `Basin Alpha CCUS Phase ${Date.now().toString().slice(-4)}`;
     const nameInput = page.locator('input[placeholder="e.g. Flare Reduction Unit 1"]').first();
     await expect(nameInput).toBeVisible({ timeout: 10000 });
     await nameInput.fill(projName);
@@ -411,8 +411,8 @@ test.describe('Suite 13: Upstream Drilling, Well Completions, Mitigation Project
     console.log('[E2E UP] Confirmed Active Regions administration panel.');
 
     // Fill Region Name
-    const uniqueRegionName = `Rhourde CPF Phase ${Date.now().toString().slice(-4)}`;
-    const nameInput = page.locator('input[name="name"], input[placeholder="e.g. Hassi R\'Mel"]').first();
+    const uniqueRegionName = `Basin Gamma CPF Phase ${Date.now().toString().slice(-4)}`;
+    const nameInput = page.locator('input[name="name"], input[placeholder="e.g. Basin Alpha R\'Mel"]').first();
     await expect(nameInput).toBeVisible({ timeout: 10000 });
     await nameInput.fill(uniqueRegionName);
 

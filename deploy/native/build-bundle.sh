@@ -29,7 +29,7 @@ echo "==> Server code"
 (cd "$ROOT/new/server" && tar \
     --exclude=tests --exclude=__pycache__ --exclude='*.pyc' --exclude='*.db' --exclude='*.db-wal' \
     --exclude='*.db-shm' --exclude=backups --exclude=upload_jobs --exclude=instance --exclude=trace.log \
-    --exclude='audit_*_bugs*.json' --exclude='seed_berkine*' --exclude=.env -cf - .) | tar -C "$OUT/server" -xf -
+    --exclude='audit_*_bugs*.json' --exclude='seed_basin-alpha*' --exclude=.env -cf - .) | tar -C "$OUT/server" -xf -
 
 echo "==> Python packages (wheels for Python $PY_VERSION, $PLATFORM)"
 grep -viE '^(pytest|hypothesis)' "$ROOT/new/server/requirements.txt" > "$OUT/requirements-runtime.txt"
@@ -49,7 +49,7 @@ PY
 )"
 sed "s|__INLINE_SCRIPT_HASH__|$HASH|" "$ROOT/deploy/native/nginx-ghg.conf" > "$OUT/deploy/nginx-ghg.conf"
 grep -q '__INLINE_SCRIPT_HASH__' "$OUT/deploy/nginx-ghg.conf" && { echo "hash placeholder not replaced" >&2; exit 1; }
-cp "$ROOT/docs/sonatrach/install-linux.md" "$OUT/INSTALL.md" 2>/dev/null || true
+cp "$ROOT/docs/demo-operator/install-linux.md" "$OUT/INSTALL.md" 2>/dev/null || true
 echo "$VERSION" > "$OUT/VERSION"
 echo "$PY_VERSION" > "$OUT/PYTHON_VERSION"
 chmod +x "$OUT/deploy/"*.sh

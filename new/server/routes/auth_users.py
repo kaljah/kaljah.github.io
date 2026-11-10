@@ -9,7 +9,15 @@ from extensions import db
 from flask import current_app, jsonify, request, session
 from models import Notification, User
 from services.session_policy import forget_cached_timeout
-from utils import internal_error, is_unrestricted_location, log_activity_and_notify
+from utils import (
+    get_current_tenant_id,
+    get_current_user,
+    has_multi_tenant_data,
+    internal_error,
+    is_unrestricted_location,
+    log_activity_and_notify,
+    tenant_matches,
+)
 from . import auth_bp
 from routes.auth import (
     BUSINESS_ROLE_GRANTORS,
@@ -33,8 +41,19 @@ USER_STATUSES = ("active", "inactive", "disabled")
 def _user_json(u):
     data = {k: getattr(u, k) for k in ("id", "fullName", "email", "orgName", "role", "location", "department",
                                        "jobTitle", "status")}
+    data["tenant_id"] = get_current_tenant_id(u)
     data["is_test"] = bool(getattr(u, "is_test", False))
     return data
+
+
+def _cross_tenant_denied(caller, target_user):
+    """Non-vendor IT admins only manage users within their own tenant when multi-tenant data exists."""
+    if not caller or caller.role == "it_manager":
+        return None
+    caller_tenant = get_current_tenant_id(caller)
+    if (caller_tenant != "default" or has_multi_tenant_data()) and get_current_tenant_id(target_user) != caller_tenant:
+        return jsonify({"error": "Forbidden: Cannot manage user accounts from another tenant"}), 403
+    return None
 
 
 @auth_bp.route("/users", methods=["POST"])
@@ -48,9 +67,12 @@ def create_user():
 def get_users():
     # Force expire session cache so we always read fresh data from DB
     db.session.expire_all()
-
-    # IT Admins have global authority over all accounts — no regional restriction
-    users = User.query.order_by(User.created_at.desc()).all()
+    caller = get_current_user()
+    caller_tenant = get_current_tenant_id(caller)
+    q = User.query
+    if caller and caller.role != "it_manager" and (caller_tenant != "default" or has_multi_tenant_data()):
+        q = q.filter(tenant_matches(User.tenant_id, caller_tenant))
+    users = q.order_by(User.created_at.desc()).all()
     return jsonify([
         dict(_user_json(u), created_at=u.created_at.isoformat() if u.created_at else None,
              last_login=u.last_login.isoformat() if u.last_login else None)
@@ -66,9 +88,10 @@ def update_user(id):
     if not user:
         return jsonify({"error": "User not found"}), 404
 
-    # IT Admins have global authority over all user accounts — no regional restriction
     it_admin_id = session.get("user_id")
     it_admin = db.session.get(User, it_admin_id)
+    if (denied := _cross_tenant_denied(it_admin, user)):
+        return denied
 
     data = request.get_json(silent=True) or {}
     requester_is_client_it = bool(it_admin and it_admin.role in CLIENT_IT_ROLES)
@@ -130,7 +153,9 @@ def update_user(id):
             return jsonify({"error": f"Invalid status. Must be one of: {', '.join(USER_STATUSES)}",
                             "field": "status"}), 400
         if (user.role == "admin" and user.status == "active" and new_status != "active"
-                and User.query.filter_by(role="admin", status="active").count() <= 1):
+                and User.query.filter_by(role="admin", status="active").filter(
+                    tenant_matches(User.tenant_id, get_current_tenant_id(user))
+                ).count() <= 1):
             db.session.rollback()
             return jsonify({"error": "This is the last active administrator account"}), 409
         data["status"] = new_status
@@ -165,13 +190,17 @@ def delete_user(id):
     # IT Admins have global authority over all user accounts — no regional restriction
     it_admin_id = session.get("user_id")
     it_admin = db.session.get(User, it_admin_id)
+    if (denied := _cross_tenant_denied(it_admin, user)):
+        return denied
     if it_admin and it_admin.role in CLIENT_IT_ROLES and user.role in CLIENT_IT_PROTECTED_ROLES:
         return jsonify({"error": "Forbidden: Client IT staff cannot delete Compliance Admin, Superuser or platform operator accounts"}), 403
     if it_admin and it_admin.role == "it_admin" and user.role in IT_ADMIN_PROTECTED_ROLES:
         return jsonify({"error": "Forbidden: IT Administrator cannot delete Compliance Admin, Superuser, Auditor or platform operator accounts"}), 403
     # review 2026-10-15: the same guard as disabling (BUG-0038); deleting skipped it
     if (user.role == "admin" and user.status == "active"
-            and User.query.filter_by(role="admin", status="active").count() <= 1):
+            and User.query.filter_by(role="admin", status="active").filter(
+                tenant_matches(User.tenant_id, get_current_tenant_id(user))
+            ).count() <= 1):
         return jsonify({"error": "This is the last active administrator account"}), 409
 
     # BUG-010 / BUG-069: derive every reference to users.id from the schema instead of a
@@ -230,6 +259,8 @@ def admin_reset_password(id):
 
     current_admin_id = session.get("user_id")
     admin_user = db.session.get(User, current_admin_id) if current_admin_id else None
+    if (denied := _cross_tenant_denied(admin_user, user)):
+        return denied
 
     # Separation of Duties: Client IT staff (it, it_admin) CANNOT reset passwords for Admin or Superuser accounts.
     # Only it_manager (vendor platform operator) or an Admin can reset Admin/Superuser passwords.
@@ -298,24 +329,30 @@ def _limit_count(limit):
 def get_session_policy():
     """Retrieve operational session governance policies and statistics."""
     from models import SystemSetting
+    from services.session_policy import DEFAULT_IDLE_TIMEOUT_MINUTES
     import json
     row = db.session.get(SystemSetting, "session_timeout_minutes")
-    timeout = 30
+    timeout = DEFAULT_IDLE_TIMEOUT_MINUTES
     if row and row.value:
         try:
             val = json.loads(row.value) if isinstance(row.value, str) and (row.value.startswith('"') or row.value.isdigit()) else row.value
             timeout = int(val)
         except Exception:
-            timeout = 30
+            timeout = DEFAULT_IDLE_TIMEOUT_MINUTES
 
     from services.login_guard import get_login_account_limit
 
-    active_count = User.query.filter_by(status="active").count()
-    total_count = User.query.count()
+    caller = get_current_user()
+    caller_tenant = get_current_tenant_id(caller)
+    uq = User.query
+    if caller and caller.role != "it_manager" and (caller_tenant != "default" or has_multi_tenant_data()):
+        uq = uq.filter(tenant_matches(User.tenant_id, caller_tenant))
+    active_count = uq.filter_by(status="active").count()
+    total_count = uq.count()
 
     return jsonify({
         "idle_timeout_minutes": timeout,
-        # the per-account lockout really applied (LOGIN_ACCOUNT_LIMIT, "10 per 15 minutes"); it said 5
+        # Reflects the effective per-account lockout from LOGIN_ACCOUNT_LIMIT (default 5 per 15 minutes).
         "max_failed_logins": _limit_count(get_login_account_limit()),
         "nist_password_policy": "Enterprise Complexity Standard (min 10 chars, uppercase, lowercase, digits, symbols)",
         "password_policy": "Enterprise Complexity Standard (min 10 chars, uppercase, lowercase, digits, symbols)",
@@ -359,11 +396,15 @@ def revoke_all_sessions():
     """Invalidate all active sessions across the platform by bumping session_version."""
     current_admin_id = session.get("user_id")
     current_admin = db.session.get(User, current_admin_id) if current_admin_id else None
+    caller_tenant = get_current_tenant_id(current_admin)
 
+    q = User.query
+    if current_admin and current_admin.role != "it_manager" and (caller_tenant != "default" or has_multi_tenant_data()):
+        q = q.filter(tenant_matches(User.tenant_id, caller_tenant))
     if current_admin and current_admin.role == "it_admin":
-        users = User.query.filter(User.role.notin_(VENDOR_PROTECTED_ROLES)).all()
+        users = q.filter(User.role.notin_(VENDOR_PROTECTED_ROLES)).all()
     else:
-        users = User.query.all()
+        users = q.all()
 
     revoked_count = 0
     for u in users:
@@ -403,6 +444,8 @@ def revoke_user_sessions(id):
 
     current_admin_id = session.get("user_id")
     current_admin = db.session.get(User, current_admin_id) if current_admin_id else None
+    if (denied := _cross_tenant_denied(current_admin, user)):
+        return denied
 
     if current_admin and current_admin.role == "it_admin" and user.role in VENDOR_PROTECTED_ROLES:
         return jsonify({"error": "Forbidden: IT Administrator cannot revoke sessions for platform operator accounts"}), 403

@@ -6,7 +6,16 @@ from electricity_factors import GRID_FACTORS, grid_entry, grid_factor_kg_co2e_pe
 from routes.auth import login_required
 from calculations.indirect import heat_to_mmbtu
 from calculations.uncertainty import propagate_uncertainty, Tier
-from utils import facility_access_error, get_current_user, get_allowed_facility_ids, require_facility_access, initial_record_status, log_activity_and_notify
+from utils import (
+    facility_access_error,
+    get_allowed_facility_ids,
+    get_current_tenant_id,
+    get_current_user,
+    initial_record_status,
+    log_activity_and_notify,
+    require_facility_access,
+    tenant_matches,
+)
 from input_validation import ValidationError, parse_number, parse_year, parse_month, require_plausible_co2e
 from services.scope2_gases import gas_split
 from services.dashboard_filters import _parse_facility_ids
@@ -55,7 +64,19 @@ def _calc_indirect_steam(data):
     amount = float(data.get("amount") or data.get("heat_mmbtu") or 0)
     unit = (data.get("unit") or "mmbtu").lower().replace(" ", "")
     ci = data.get("calc_inputs", {}).get("indirect_steam", {})
-    raw_be = data.get("boiler_efficiency") if data.get("boiler_efficiency") not in (None, "") else (ci.get("boiler_eff") or 0.80)
+    raw_be = next(
+        (
+            v
+            for v in (
+                data.get("boiler_efficiency"),
+                data.get("boiler_eff"),
+                ci.get("boiler_eff"),
+                ci.get("boiler_efficiency"),
+            )
+            if v not in (None, "")
+        ),
+        0.80,
+    )
     boiler_eff = float(str(raw_be).replace("%", "").strip())
     if boiler_eff > 1.0 or "%" in str(raw_be):
         # 85 is 85 %, as in the file upload (no boiler runs at 1 %); it was used as 85 x, so the
@@ -63,7 +84,23 @@ def _calc_indirect_steam(data):
         boiler_eff /= 100.0
     if not 0 < boiler_eff <= 1.0:
         raise ValidationError(f"Boiler efficiency must be above 0 and at most 100 % (got {raw_be})", "boiler_eff")
-    trans_loss = float(ci.get("trans_loss", 0.0) or 0.0)
+    raw_tl = next(
+        (
+            v
+            for v in (
+                data.get("transmission_loss"),
+                data.get("trans_loss"),
+                ci.get("trans_loss"),
+                ci.get("transmission_loss"),
+            )
+            if v not in (None, "")
+        ),
+        0.0,
+    )
+    tl_str = str(raw_tl).strip()
+    trans_loss = float(tl_str.replace("%", "").strip() or 0.0)
+    if "%" in tl_str:
+        trans_loss /= 100.0
     if not 0 <= trans_loss < 1.0:
         raise ValidationError(f"Transmission loss is a fraction from 0 to below 1 (got {trans_loss}; 5 % is 0.05)",
                               "trans_loss")
@@ -131,13 +168,21 @@ def _recalc_indirect_steam(emission, data, factor, old_heat, old_co2e, old_ef, o
                                            "calc_inputs": {"indirect_steam": ci}})
     else:
         heat = float(emission.heat_mmbtu or 0.0)
-    given = any(data.get(k) not in (None, "") for k in ("boiler_eff", "boiler_efficiency", "trans_loss")) \
-        or any(k in ci for k in ("boiler_eff", "trans_loss"))
+    given = any(
+        data.get(k) not in (None, "")
+        for k in ("boiler_eff", "boiler_efficiency", "trans_loss", "transmission_loss")
+    ) or any(k in ci for k in ("boiler_eff", "boiler_efficiency", "trans_loss", "transmission_loss"))
     if not given and old_heat and old_co2e and float(old_heat) > 0 and float(old_co2e) > 0:
         net_eff = float(old_heat) * _steam_fuel_factor_kg_per_mmbtu(old_ef) / (float(old_co2e) * 1000.0)
         return heat / net_eff * _steam_fuel_factor_kg_per_mmbtu(factor) / 1000.0, heat
-    ci.setdefault("boiler_eff", float(data.get("boiler_eff") or data.get("boiler_efficiency") or 0.80))
-    ci.setdefault("trans_loss", float(data.get("trans_loss") or 0.0))
+    for src_k in ("boiler_eff", "boiler_efficiency"):
+        if "boiler_eff" not in ci and data.get(src_k) not in (None, ""):
+            ci["boiler_eff"] = data[src_k]
+    ci.setdefault("boiler_eff", 0.80)
+    for src_k in ("trans_loss", "transmission_loss"):
+        if "trans_loss" not in ci and data.get(src_k) not in (None, ""):
+            ci["trans_loss"] = data[src_k]
+    ci.setdefault("trans_loss", 0.0)
     ci["ef_co2"] = factor or _DEFAULT_BOILER_EF_KG_PER_MMBTU
     co2e, _, _ = _calc_indirect_steam({"amount": heat, "unit": "mmbtu", "calc_inputs": {"indirect_steam": ci}})
     return co2e, heat
@@ -204,8 +249,13 @@ def get_scope2_emissions():
         status_arg = request.args.get("status")
         if year_arg == "baseline":
             from models import BaseYear, BaseYearRecalculation
-            rec = BaseYearRecalculation.query.order_by(BaseYearRecalculation.recalc_date.desc()).first()
-            base = rec or BaseYear.query.first()
+            caller_tenant = get_current_tenant_id(user)
+            rec = (
+                BaseYearRecalculation.query.filter(tenant_matches(BaseYearRecalculation.tenant_id, caller_tenant))
+                .order_by(BaseYearRecalculation.recalc_date.desc())
+                .first()
+            )
+            base = rec or (BaseYear.query.first() if caller_tenant == "default" else None)
             year_arg = str(base.year) if base else "-1"
         if year_arg and year_arg != "all":
             try:
@@ -214,6 +264,8 @@ def get_scope2_emissions():
                 return jsonify({"error": str(ve)}), 400
         parsed_fids = _parse_facility_ids(fac_arg)
         if parsed_fids is not None:
+            if allowed_fids is not None and not set(parsed_fids).issubset(set(allowed_fids)):
+                return jsonify({"error": "Unauthorized facility"}), 403
             query = query.filter(Scope2Emission.facility_id.in_(parsed_fids))
         if status_arg and status_arg != "all":
             query = query.filter(Scope2Emission.status.in_([x.strip() for x in status_arg.split(",") if x.strip()]))
@@ -481,7 +533,12 @@ def create_scope2_emission():
             from status import PENDING_STATUS_SET
             if initial_status in PENDING_STATUS_SET:
                 from models import Notification, User
-                admins = User.query.filter_by(role="admin", status="active").all()
+                caller_tenant = get_current_tenant_id(user)
+                admins = (
+                    User.query.filter_by(role="admin", status="active")
+                    .filter(tenant_matches(User.tenant_id, caller_tenant))
+                    .all()
+                )
                 for admin in admins:
                     Notification.create(
                         user_id=admin.id,
@@ -809,6 +866,7 @@ def bulk_import_scope2():
 
     # BUG-060/RC-2: every bulk import is Pending until an approver reviews it (same as Scope 1/3).
     bulk_status = initial_record_status(user, channel="bulk")
+    caller_tenant = get_current_tenant_id(user)
     imported_count = 0
     errors = []
     facility_cache = {}
@@ -824,7 +882,8 @@ def bulk_import_scope2():
                     facility = facility_cache[f_name_clean.lower()]
                 else:
                     facility = Facility.query.filter(
-                        func.lower(Facility.name) == f_name_clean.lower()
+                        tenant_matches(Facility.tenant_id, caller_tenant),
+                        func.lower(Facility.name) == f_name_clean.lower(),
                     ).first()
                     facility_cache[f_name_clean.lower()] = facility
             else:

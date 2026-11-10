@@ -9,7 +9,13 @@ from flask import request, jsonify, session, current_app
 from . import auth_bp
 from models import User, Notification, Facility
 from extensions import db, limiter
-from utils import get_allowed_facility_ids, is_unrestricted_location, log_activity_and_notify
+from utils import (
+    get_allowed_facility_ids,
+    get_current_tenant_id,
+    is_unrestricted_location,
+    log_activity_and_notify,
+    normalize_tenant_id,
+)
 from services.session_policy import idle_timeout_minutes
 from services.login_guard import (ACCOUNT_LOCKED, failed_sign_in, get_login_account_limit, get_login_rate_limit,  # noqa: F401
                                   login_account_key, record_failed_sign_in, validate_password_complexity)
@@ -266,6 +272,16 @@ def register():
     if role_requested == "superuser" and is_unrestricted_location(data.get("location")):
         return jsonify({"error": SUPERUSER_REGION_ERROR, "field": "location"}), 400
 
+    creator_tenant = get_current_tenant_id(creator) if creator else "default"
+    raw_tenant = data.get("tenant_id")
+    if raw_tenant not in (None, ""):
+        requested_tenant = normalize_tenant_id(raw_tenant)
+        if creator and creator.role != "it_manager" and requested_tenant != creator_tenant:
+            return jsonify({"error": "Forbidden: Cannot create user in another tenant"}), 403
+        target_tenant = requested_tenant
+    else:
+        target_tenant = creator_tenant
+
     user = User(
         fullName=data.get("fullName"),
         orgName=data.get("orgName"),
@@ -276,6 +292,7 @@ def register():
         phone=data.get("phone"),
         location=data.get("location"),
         role=role_requested,
+        tenant_id=target_tenant,
     )
     user.set_password(password)
 
@@ -308,6 +325,7 @@ def register():
                     "department": user.department,
                     "jobTitle": user.jobTitle,
                     "status": user.status,
+                    "tenant_id": get_current_tenant_id(user),
                     "created_at": (
                         user.created_at.isoformat() if user.created_at else None
                     ),
@@ -341,21 +359,26 @@ def login():
         if user.status != "active":
             return jsonify({"error": "Account disabled"}), 403
 
+        resolved_tenant = get_current_tenant_id(user)
+        user_id = user.id
+        user_sv = int(user.session_version or 0)
         session.clear()
         session.permanent = True
-        session["user_id"] = user.id
-        session["sv"] = int(user.session_version or 0)  # BUG-114
+        session["user_id"] = user_id
+        session["tenant_id"] = resolved_tenant
+        session["sv"] = user_sv  # BUG-114
         session["last_seen"] = time.time()  # idle timeout (services.session_policy)
-        current_app.logger.debug(f"Session set for user_id={user.id}")
+        current_app.logger.debug(f"Session set for user_id={user_id}")
 
         user_defaults = get_user_operational_defaults(user)
 
         user_info = {
-            "id": user.id,
+            "id": user_id,
             "fullName": user.fullName,
             "email": user.email,
             "role": user.role,
             "orgName": user.orgName,
+            "tenant_id": resolved_tenant,
             "jobTitle": user.jobTitle,
             "department": user.department,
             "sector": user.sector,
@@ -370,25 +393,30 @@ def login():
             "idle_timeout_minutes": idle_timeout_minutes(),
         }
 
-        # Audit
-        try:
-            log_activity_and_notify(
-                action="LOGIN",
-                record_id=str(user.id),
-                user=user,
-                request=request,
-                entity="User",
-                details=f"User logged in: {user.email}",
-            )
-        except Exception as e:
-            current_app.logger.error(f"Audit Log Error on login: {e}")
+        # End the parallel read snapshot before acquiring the SQLite write lock so concurrent
+        # logins execute password hashing in parallel while DB writes serialize cleanly.
+        from services.sqlite_lock import sqlite_write_lock
 
-        # Set last as the commit's only row update: the queries above autoflushed it before the LOGIN audit
-        # row existed, so two sign-ins of one account took the user row and the audit-chain lock in opposite
-        # orders and PostgreSQL aborted one of them (deadlock, found 2026-10-16 by the concurrency test).
-        user.last_login = datetime.datetime.now(datetime.timezone.utc)
+        db.session.remove()
         try:
-            db.session.commit()
+            with sqlite_write_lock(db.engine):
+                db_user = db.session.get(User, user_id)
+                if db_user is not None:
+                    try:
+                        log_activity_and_notify(
+                            action="LOGIN",
+                            record_id=str(db_user.id),
+                            user=db_user,
+                            request=request,
+                            entity="User",
+                            details=f"User logged in: {db_user.email}",
+                        )
+                    except Exception as e:
+                        current_app.logger.error(f"Audit Log Error on login: {e}")
+
+                    # Set last_login as the commit's only user row update (prevents deadlocks under concurrency).
+                    db_user.last_login = datetime.datetime.now(datetime.timezone.utc)
+                    db.session.commit()
         except Exception as e:
             db.session.rollback()
             current_app.logger.warning(f"Login commit warning under concurrency: {e}")
@@ -529,6 +557,7 @@ def me():
             "fullName": user.fullName,
             "email": user.email,
             "role": user.role,
+            "tenant_id": get_current_tenant_id(user),
             "orgName": user.orgName,
             "sector": user.sector,
             "jobTitle": user.jobTitle,

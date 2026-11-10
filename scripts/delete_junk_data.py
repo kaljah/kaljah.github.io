@@ -30,18 +30,22 @@ def delete_flagged_junk_data():
             print(f"Flagged facilities to delete: {len(test_facs)} ({test_fac_ids})")
 
             if test_fac_ids:
-                id_tuple_str = ",".join(str(i) for i in test_fac_ids)
-
                 # Dependent emission/reporting tables under test facilities
-                for tbl in ["cap_emissions", "scope2_emissions", "scope3_emissions", "ogmp_surveys", 
-                            "flaring_details", "facility_equity_shares", "component_inventories", 
-                            "fugitive_surveys", "cbam_product_exports"]:
+                allowed_tables = {
+                    "cap_emissions", "scope2_emissions", "scope3_emissions", "ogmp_surveys", 
+                    "flaring_details", "facility_equity_shares", "component_inventories", 
+                    "fugitive_surveys", "cbam_product_exports"
+                }
+                for tbl in sorted(allowed_tables):
                     try:
-                        res = db.session.execute(text(f"DELETE FROM {tbl} WHERE facility_id IN ({id_tuple_str})"))
+                        stmt = text(f"DELETE FROM {tbl} WHERE facility_id IN :ids").bindparams(
+                            bindparam("ids", expanding=True)
+                        )
+                        res = db.session.execute(stmt, {"ids": test_fac_ids})
                         if res.rowcount > 0:
                             print(f"Deleted {res.rowcount} records from {tbl}")
                     except Exception as e:
-                        pass
+                        print(f"Warning: Failed to delete dependent records from {tbl}: {e}")
 
                 # Note: activity_log does NOT have a foreign key to facilities (activity_log outlives deleted facilities),
                 # so facility_id is retained to preserve cryptographic hash chain integrity.

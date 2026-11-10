@@ -47,7 +47,7 @@ def test_ogmp_export_invents_nothing(ctx):
         assert r.status_code == 200
     cells = _cells(r.data)
     text = _text(cells)
-    for invented in ("Sonatrach", "sonatrach.dz", "UNEP-OGMP-DZA-001", "Berkine", "HMAC", "Cryptographic Ledger"):
+    for invented in ("Demo Operator Co.", "example.org", "UNEP-OGMP-DZA-001", "Basin Alpha", "HMAC", "Cryptographic Ledger"):
         assert invented not in text, invented
     jv = [str(c.value) for c in cells["7. Non-Operated Assets (JV)"]]
     assert "50.0%" not in jv  # an unrecorded equity share was shown as 50 %

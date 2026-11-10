@@ -30,6 +30,8 @@ FUEL_BASIS = {
                "ch4": 3.0e-6, "n2o": 6.0e-7},
     "gasoline": {"label": "Motor gasoline", "co2": 0.07022, "hhv": 0.125, "hhv_unit": "MMBtu/gal",
                  "ch4": 3.0e-6, "n2o": 6.0e-7},
+    "coal": {"label": "Coal", "co2": 0.09552, "hhv": 24.0, "hhv_unit": "MMBtu/t",
+             "ch4": 1.1e-5, "n2o": 1.6e-6},
 }
 
 
@@ -99,10 +101,14 @@ def _num(v, name, default=None, positive=False):
 
 
 def _frac(v, name, default=None):
+    if v in (None, ""):
+        if default is None:
+            raise ValueError(f"Missing required field: {name}")
+        return float(default) / 100.0
     x = _num(v, name, default)
     if x > 100.0:
         raise ValueError(f"'{name}' cannot exceed 100 %")
-    return x / 100.0  # inputs are percentages (0-100)
+    return x / 100.0
 
 
 def _unit(v, table, name, default=None):
@@ -149,18 +155,110 @@ class CombustionMethodCalculator(BaseCalculator):
         co2 = ch4 = n2o = 0.0
 
         if m == "carbon_content":
-            if i.get("fuel_mass") not in (None, ""):
-                mass_t = _num(i["fuel_mass"], "fuel mass") * _unit(i.get("fuel_mass_unit"), MASS_TO_T, "Fuel mass", "t")
+            fuel_state = str(i.get("fuel_state") or "").strip().lower()
+            vol_raw = i.get("fuel_volume") if i.get("fuel_volume") not in (None, "") else i.get("amount")
+            unit_raw = str(i.get("fuel_volume_unit") or i.get("unit") or "").strip().lower().replace("³", "3").replace(" ", "_")
+            mass_raw = i.get("fuel_mass")
+            mass_unit_raw = str(i.get("fuel_mass_unit") or i.get("unit") or "").strip().lower()
+
+            if fuel_state == "solid":
+                is_mass, is_gas = True, False
+            elif fuel_state == "liquid":
+                is_mass, is_gas = False, False
+            elif fuel_state == "gas":
+                is_mass, is_gas = False, True
             else:
-                gal = _num(i.get("fuel_volume") if i.get("fuel_volume") not in (None, "") else i.get("amount"), "fuel volume") \
-                    * _unit(i.get("fuel_volume_unit") or i.get("unit"), LIQ_TO_GAL, "Fuel volume")
+                is_mass = mass_raw not in (None, "") or unit_raw in MASS_TO_T
+                is_gas = (not is_mass) and (any(g in unit_raw for g in ("scf", "nm3", "sm3", "mcf", "mmscf")) or (unit_raw in GAS_TO_SCF and unit_raw not in LIQ_TO_GAL))
+
+            if is_mass:
+                raw_mass_val = mass_raw if mass_raw not in (None, "") else (vol_raw if fuel_state != "solid" else None)
+                m_val = _num(raw_mass_val, "fuel mass")
+                m_u = mass_unit_raw if mass_raw not in (None, "") else unit_raw
+                mass_t = m_val * _unit(m_u, MASS_TO_T, "Fuel mass", "t")
+                inter.update(activity_amount=m_val, activity_unit=m_u or "t", fuel_mass_t=mass_t)
+            elif is_gas:
+                v_val = _num(vol_raw, "fuel gas volume")
+                u_norm = "m3" if unit_raw in ("nm3", "sm3", "") else unit_raw
+                scf_mult = _unit(u_norm, GAS_TO_SCF, "Fuel gas volume", "m3")
+                vol_m3 = v_val * scf_mult * SCF_TO_M3
+
+                dens_val = i.get("fuel_density") if i.get("fuel_density") not in (None, "") else i.get("density")
+                if dens_val not in (None, ""):
+                    d_num = _num(dens_val, "fuel density", positive=True)
+                    d_u = str(i.get("density_unit") or "kg/m3").strip().lower()
+                    if d_u in ("lb/scf", "lb/cf"):
+                        dens_kg_m3 = d_num * 16.018463
+                    elif d_u in ("lb/gal",):
+                        dens_kg_m3 = d_num * 119.826427
+                    elif d_u in ("kg/l", "g/ml"):
+                        dens_kg_m3 = d_num * 1000.0
+                    else:
+                        dens_kg_m3 = d_num
+                elif i.get("mw") or i.get("gas_mw"):
+                    mw = _num(i.get("mw") or i.get("gas_mw"), "molecular weight", positive=True)
+                    # API Compendium 60 °F / 14.696 psia standard conditions (379.3 scf/lbmol = 23.685 L/mol)
+                    dens_kg_m3 = mw / 23.685
+                else:
+                    dens_kg_m3 = 0.75  # default natural gas density kg/m3
+
+                mass_t = (vol_m3 * dens_kg_m3) / 1000.0
+                inter.update(activity_amount=v_val, activity_unit=unit_raw or "m3", fuel_mass_t=mass_t)
+            else:
+                v_val = _num(vol_raw, "fuel volume")
+                gal = v_val * _unit(unit_raw, LIQ_TO_GAL, "Fuel volume", "gal")
                 dens = _num(i.get("fuel_density"), "fuel density", positive=True) \
                     * _unit(i.get("density_unit"), DENSITY_TO_LB_GAL, "Density", "lb/gal")
                 mass_t = gal * dens / 2204.62
-            c = _frac(i.get("carbon_wt_pct"), "carbon content (wt %)")
+                inter.update(activity_amount=v_val, activity_unit=unit_raw or "gal", fuel_mass_t=mass_t)
+
+            c_raw = i.get("carbon_wt_pct") if i.get("carbon_wt_pct") not in (None, "") else i.get("carbon_content")
+            if c_raw in (None, ""):
+                raise ValueError("Missing required field: carbon content (wt %)")
+            c_num = _num(c_raw, "carbon content (wt %)")
+            if c_num > 100.0:
+                raise ValueError("'carbon content (wt %)' cannot exceed 100 %")
+            c = (c_num / 100.0) if ("%" in str(c_raw) or c_num > 1.0) else c_num
             ox = _frac(i.get("oxidation_pct"), "carbon oxidised", 100)
             co2 = mass_t * c * ox * C_TO_CO2
-            inter.update(fuel_mass_t=mass_t, carbon_wt=c)
+            inter.update(carbon_wt=c)
+
+            fuel_state_res = str(i.get("fuel_state") or ("solid" if is_mass else ("gas" if is_gas else "liquid"))).lower()
+            fuel_name_res = i.get("fuel_name") or i.get("fuel") or i.get("fuel_type")
+            if not fuel_name_res:
+                if fuel_state_res == "solid":
+                    fuel_name_res = "Solid Fuel"
+                elif fuel_state_res == "liquid":
+                    fuel_name_res = "Liquid Fuel"
+                else:
+                    fuel_name_res = "Fuel Gas"
+            inter.update(fuel_state=fuel_state_res, fuel_type=fuel_name_res, fuel=fuel_name_res)
+
+            # Trace CH4 and N2O per API Compendium when requested or when fuel and HHV are specified
+            include_trace = bool(i.get("include_trace") or i.get("include_trace_gases"))
+            fuel_key = str(i.get("fuel") or i.get("fuel_type") or "").strip().lower()
+            fuel_key_norm = (
+                "diesel" if "diesel" in fuel_key
+                else "gasoline" if "gasoline" in fuel_key
+                else "coal" if "coal" in fuel_key
+                else "natural_gas" if "gas" in fuel_key
+                else fuel_key
+            )
+            if include_trace or (fuel_key_norm in FUEL_BASIS and (i.get("hhv_btu_scf") or i.get("hhv") or i.get("hhv_mmbtu_gal"))):
+                fbasis = FUEL_BASIS.get(fuel_key_norm, FUEL_BASIS["natural_gas"] if is_gas else (FUEL_BASIS["coal"] if is_mass else FUEL_BASIS["diesel"]))
+                hhv_in = i.get("hhv_btu_scf") or i.get("hhv") or i.get("hhv_mmbtu_gal")
+                if is_gas:
+                    scf_total = vol_m3 / SCF_TO_M3
+                    hhv_val = _num(hhv_in, "HHV", fbasis["hhv"] * 1e6, positive=True) if hhv_in not in (None, "") else fbasis["hhv"] * 1e6
+                    e_mmbtu = scf_total * hhv_val / 1e6
+                elif is_mass:
+                    e_mmbtu = mass_t * fbasis.get("hhv", 24.0)
+                else:
+                    # 42 MJ/kg converted to MMBtu: 42 * 0.000947817 = 0.0398083 MMBtu/kg -> 39.8083 MMBtu/tonne
+                    e_mmbtu = (gal * _num(hhv_in, "HHV (MMBtu/gal)", fbasis["hhv"], positive=True)) if hhv_in not in (None, "") else (mass_t * 39.8083)
+                ch4 = e_mmbtu * fbasis.get("ch4", 1.0e-6)
+                n2o = e_mmbtu * fbasis.get("n2o", 1.0e-7)
+                inter.update(energy_mmbtu=e_mmbtu)
 
         elif m == "equipment":
             key = str(i.get("equipment_type") or "").strip()

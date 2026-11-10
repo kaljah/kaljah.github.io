@@ -3,8 +3,8 @@ Dry-Run Audit: Placeholder & Test User Accounts (Item 3.5)
 =========================================================
 Identifies candidate test and placeholder accounts in the database according to:
 - Test emails (@audit.test, @example.test, a@a, a)
-- Timestamp-suffixed test accounts (e.g., auditor_1791314711023@sonatrach.dz)
-- Benchmark worker accounts (benchmark_10000@sonatrach.dz)
+- Timestamp-suffixed test accounts (e.g., auditor_1791314711023@example.org)
+- Benchmark worker accounts (benchmark_10000@example.org)
 - Accounts with is_test = True
 
 Generates reports/placeholder_accounts_dryrun.json.

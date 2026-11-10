@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import { SilentDefaultBanner, FactorLineageModal } from "../common";
 import { Lock } from "lucide-react";
 import { Input, Field, Badge } from "../../ui";
 import CustomDropdown from "../CustomDropdown";
@@ -49,6 +50,37 @@ export interface Scope2FormNewElectricityEntryProps {
   year: number | string;
 }
 
+const STEAM_FACTORS = [
+  {
+    id: "SCP2-004",
+    parameter_name: "Default Steam Boiler Efficiency",
+    value: 0.80,
+    unit: "fraction",
+    basis: "80% default boiler efficiency (user-configurable; optional Exhibit 8.3 example: 82%)",
+    source_document: "EPA GHG Emission Factors Hub / App Default",
+    edition_year: "2021/Current",
+    table_or_equation_ref: "Table 7 (Steam and Heat) — optional Exhibit 8.3 example: 82%",
+    verbatim_citation: "Default boiler efficiency 80% (user-configurable). Optional example from API Compendium (2021) Exhibit 8.3, p. 8-10: assuming an 82% boiler efficiency and 10% line losses gives a 72% net efficiency.",
+    is_user_overridable: true,
+    is_silent_default: true,
+    warning_flag: "CAUTION_ASSUMPTION"
+  },
+  {
+    id: "SCP2-005",
+    parameter_name: "Default Steam Transmission Loss",
+    value: 0.00,
+    unit: "fraction",
+    basis: "0% default line loss (user-configurable; optional Exhibit 8.3 example: 10%)",
+    source_document: "Application Internal Default",
+    edition_year: "2021/Current",
+    table_or_equation_ref: "Default 0% — optional Exhibit 8.3 example: 10%",
+    verbatim_citation: "Default 0% line loss if unspecified (user-configurable). Optional example from API Compendium (2021) Exhibit 8.3, p. 8-10: assuming an 82% boiler efficiency and 10% line losses gives a 72% net efficiency.",
+    is_user_overridable: true,
+    is_silent_default: true,
+    warning_flag: "CAUTION_ASSUMPTION"
+  }
+];
+
 // Extracted from Scope2Form.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps> = ({
   activity,
@@ -91,7 +123,10 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
   unit,
   unitOptions,
   year,
-}) => (
+}) => {
+  const [showSteamModal, setShowSteamModal] = useState(false);
+
+  return (
   <div
     className={`calc-panel [background:white]! [border-radius:8px]! [padding:25px]! [box-shadow:0_2px_10px_rgba(0,0,0,0.05)]!`}
   >
@@ -247,28 +282,52 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
           </div>
         )}
         {sourceType === "indirect_steam" && (
-          <div className={`form-grid-2 [grid-column:span_2]!`}>
-            <Field className="input-group" label={t("Boiler Efficiency (0.0 - 1.0)")}>
-              <Input
-                type="number"
-                min="0"
-                max="1"
-                step="any"
-                value={boilerEff}
-                onChange={(e) => setBoilerEff(e.target.value)}
+          <>
+            <div className={`form-grid-2 [grid-column:span_2]!`}>
+              <Field className="input-group" label={t("Boiler Efficiency (0.0 - 1.0)")}>
+                <Input
+                  type="number"
+                  min="0"
+                  max="1"
+                  step="any"
+                  value={boilerEff}
+                  onChange={(e) => setBoilerEff(e.target.value)}
+                  placeholder="Default: 0.80 (e.g. 0.82 per Exhibit 8.3)"
+                />
+              </Field>
+              <Field className="input-group" label={t("Transmission Loss (0.0 - 1.0)")}>
+                <Input
+                  type="number"
+                  min="0"
+                  max="1"
+                  step="any"
+                  value={transLoss}
+                  onChange={(e) => setTransLoss(e.target.value)}
+                  placeholder="Default: 0.00 (e.g. 0.10 per Exhibit 8.3)"
+                />
+              </Field>
+            </div>
+            <div className="[grid-column:span_2]! mb-2">
+              <SilentDefaultBanner
+                factorId="SCP2-004 / SCP2-005"
+                parameterName="Boiler Efficiency (80%) & Transmission Loss (0%)"
+                defaultValue="80% Net"
+                sourceCitation="EPA Table 7 / App Default (optional Exhibit 8.3 example: 82% / 10%)"
+                onInspect={() => setShowSteamModal(true)}
+                isSilentDefault={boilerEff === "" || transLoss === "" || (Number(boilerEff) === 0.8 && Number(transLoss) === 0)}
               />
-            </Field>
-            <Field className="input-group" label={t("Transmission Loss (0.0 - 1.0)")}>
-              <Input
-                type="number"
-                min="0"
-                max="1"
-                step="any"
-                value={transLoss}
-                onChange={(e) => setTransLoss(e.target.value)}
-              />
-            </Field>
-          </div>
+            </div>
+            <FactorLineageModal
+              isOpen={showSteamModal}
+              onClose={() => setShowSteamModal(false)}
+              factors={STEAM_FACTORS}
+              title="Steam Boiler & Line Loss Factor Provenance"
+              onApplyOverride={(overrides) => {
+                if (overrides["SCP2-004"]) setBoilerEff(String(overrides["SCP2-004"].value));
+                if (overrides["SCP2-005"]) setTransLoss(String(overrides["SCP2-005"].value));
+              }}
+            />
+          </>
         )}
         {sourceType === "cogen_allocation" && (
           <div className={`form-grid-3 [grid-column:span_2]!`}>
@@ -380,7 +439,11 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
       <div className="mt-1.5 flex flex-wrap items-center justify-between text-xs text-text-secondary">
         <span>
           {t("Scope 2 Method:")}{" "}
-          <strong className="text-text font-medium">{sourceType === "location" ? t("Location-based (Grid)") : t("Market-based (Contractual)")}</strong>
+          <strong className="text-text font-medium">
+            {sourceType === "electricity" && Boolean(marketInstrument)
+              ? t("Market-based (Contractual)")
+              : t("Location-based (Grid)")}
+          </strong>
         </span>
         <span>
           {t("Quantity:")}{" "}
@@ -400,6 +463,7 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
       </button>
     </div>
   </div>
-);
+  );
+};
 
 export default Scope2FormNewElectricityEntry;

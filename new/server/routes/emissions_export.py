@@ -96,22 +96,23 @@ def export_emissions():
         return jsonify({"error": "Unauthorized facility"}), 403
 
     # Batch facility lookup to prevent N+1 queries
-    all_facs = {f.id: f for f in Facility.query.all()}
+    fac_q = Facility.query if allowed_ids is None else Facility.query.filter(Facility.id.in_(allowed_ids or [-1]))
+    all_facs = {f.id: f for f in fac_q.all()}
 
     export_data = []
+    status_arg = str(request.args.get("status") or "Verified").strip()
+    statuses = [x.strip().lower() for x in status_arg.split(",") if x.strip()] if status_arg.lower() != "all" else None
+    test_fids = Facility.query.with_entities(Facility.id).filter(Facility.is_test == True)
 
     # 1. SCOPE 1
     if scope in ["all", "1", "scope1"]:
-        status_arg = str(request.args.get("status") or "Verified").strip()
-        statuses = [x.strip().lower() for x in status_arg.split(",") if x.strip()] if status_arg.lower() != "all" else None
-        test_fids = Facility.query.with_entities(Facility.id).filter(Facility.is_test == True)
         q1 = Emission.query.filter(~Emission.facility_id.in_(test_fids))
         if hasattr(Emission, "is_test"):
             q1 = q1.filter(Emission.is_test == False)
         if statuses:
             q1 = q1.filter(db.func.lower(db.func.trim(Emission.status)).in_(statuses))
         if allowed_ids is not None:
-            q1 = q1.filter(Emission.facility_id.in_(allowed_ids))
+            q1 = q1.filter(Emission.facility_id.in_(allowed_ids or [-1]))
         if year_int:
             q1 = q1.filter(Emission.year == year_int)
         if month_int:
@@ -176,7 +177,7 @@ def export_emissions():
         if statuses:
             q2 = q2.filter(db.func.lower(db.func.trim(Scope2Emission.status)).in_(statuses))
         if allowed_ids is not None:
-            q2 = q2.filter(Scope2Emission.facility_id.in_(allowed_ids))
+            q2 = q2.filter(Scope2Emission.facility_id.in_(allowed_ids or [-1]))
         if year_int:
             q2 = q2.filter(Scope2Emission.year == year_int)
         if month_int:
@@ -234,7 +235,7 @@ def export_emissions():
         if statuses:
             q3 = q3.filter(db.func.lower(db.func.trim(Scope3Emission.status)).in_(statuses))
         if allowed_ids is not None:
-            q3 = q3.filter(Scope3Emission.facility_id.in_(allowed_ids))
+            q3 = q3.filter(Scope3Emission.facility_id.in_(allowed_ids or [-1]))
         if year_int:
             q3 = q3.filter(Scope3Emission.year == year_int)
         if month_int:
@@ -313,7 +314,7 @@ def export_emissions():
 
         ws1.cell(row=1, column=1, value="GHG EMISSIONS INVENTORY DISCLOSURE").font = title_font
         subtitle = (
-            f"Generated: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} | "
+            f"Generated: {datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} | "
             f"Scope: {scope.upper()} | Year: {year_arg or 'All'} | Month: {month_arg or 'All'} | "
             f"Facility: {all_facs.get(facility_int).name if facility_int and facility_int in all_facs else 'All'}"
         )

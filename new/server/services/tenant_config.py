@@ -1,8 +1,8 @@
 """
 Tenant Configuration & Multi-Tenancy Architecture (Part 3.2)
 ============================================================
-Moves hardcoded operator names ('Sonatrach'), regulatory frameworks
-('Executive Decree 21-330 Article 9'), email domains ('sonatrach.dz'),
+Moves hardcoded operator names ('Demo Operator Co.'), regulatory frameworks
+('Executive Decree 21-330 Article 9'), email domains ('example.org'),
 and factor tier labels into configurable tenant profiles.
 """
 from typing import Dict, Any, Optional
@@ -12,16 +12,16 @@ from models import db, SystemSetting, ActivityLog, utc_now
 
 DEFAULT_TENANT_CONFIG: Dict[str, Any] = {
     "tenant_id": "default",
-    "organization_name": "Sonatrach",
-    "short_code": "SH",
-    "legal_entity": "Société Nationale pour la Recherche, la Production, le Transport, la Transformation, et la Commercialisation des Hydrocarbures",
-    "email_domain": "sonatrach.dz",
+    "organization_name": "Demo Operator Co.",
+    "short_code": "DOC",
+    "legal_entity": "Demo Operator Co. Exploration & Production",
+    "email_domain": "example.org",
     "country": "Algeria",
     "regulatory_framework": "Executive Decree 21-330 Article 9",
     "regulatory_citation": "Décret exécutif n° 21-330 du 1er septembre 2021 relatif au contrôle des émissions atmosphériques et de gaz à effet de serre",
     "tier2_label": "Tier 2 (Site-Specific Laboratory Factors)",
     "tier2_partner_label": "Tier 2 (Operator Partner Factors)",
-    "national_group_name": "Sonatrach Corporate Group (Consolidated National)",
+    "national_group_name": "Demo Operator Group (Consolidated National)",
     "default_currency": "DZD",
     "base_year": 2023,
     "target_year": 2030,
@@ -29,7 +29,7 @@ DEFAULT_TENANT_CONFIG: Dict[str, Any] = {
 
 TENANT_REGISTRY: Dict[str, Dict[str, Any]] = {
     "default": DEFAULT_TENANT_CONFIG,
-    "sonatrach": DEFAULT_TENANT_CONFIG,
+    "demo_operator": DEFAULT_TENANT_CONFIG,
     "mena_operator_b": {
         "tenant_id": "mena_operator_b",
         "organization_name": "Al-Amal Petroleum Corp",
@@ -53,14 +53,42 @@ def get_tenant_config(tenant_id: Optional[str] = None) -> Dict[str, Any]:
     """Retrieve tenant configuration by tenant_id, with persistent DB overrides."""
     if not tenant_id:
         tenant_id = os.environ.get("DEFAULT_TENANT_ID", "default")
-    key_name = str(tenant_id).lower()
-    base_cfg = dict(TENANT_REGISTRY.get(key_name, DEFAULT_TENANT_CONFIG))
+    key_name = str(tenant_id).lower().strip() or "default"
+    if key_name in TENANT_REGISTRY:
+        base_cfg = dict(TENANT_REGISTRY[key_name])
+    else:
+        org_label = key_name.replace("_", " ").title()
+        try:
+            from models import User
+            u = User.query.filter(
+                User.tenant_id.isnot(None),
+                db.func.lower(db.func.trim(User.tenant_id)) == key_name,
+            ).first()
+            if u and getattr(u, "orgName", None):
+                org_label = str(u.orgName).strip()
+        except Exception:
+            pass
+        short = "".join(part[0] for part in org_label.split() if part).upper()[:4] or "TEN"
+        base_cfg = {
+            "tenant_id": key_name,
+            "organization_name": org_label,
+            "short_code": short,
+            "legal_entity": org_label,
+            "email_domain": "example.org",
+            "country": "International",
+            "regulatory_framework": "ISO 14064-1:2018",
+            "regulatory_citation": "ISO 14064-1:2018 Corporate GHG Reporting Standard",
+            "tier2_label": "Tier 2 (Site-Specific Laboratory Factors)",
+            "tier2_partner_label": "Tier 2 (Joint Venture Operating Factors)",
+            "national_group_name": f"{org_label} (Consolidated)",
+            "default_currency": "USD",
+            "base_year": 2023,
+            "target_year": 2030,
+        }
 
     try:
         setting_key = f"tenant_config_{key_name}" if key_name != "default" else "tenant_config"
         setting = SystemSetting.query.filter_by(key=setting_key).first()
-        if not setting and key_name != "default":
-            setting = SystemSetting.query.filter_by(key="tenant_config").first()
         if setting and setting.value:
             stored = json.loads(setting.value)
             if isinstance(stored, dict):
@@ -93,6 +121,14 @@ def update_tenant_config(tenant_id: Optional[str], updates: Dict[str, Any], user
         "target_year",
     }
     filtered = {k: v for k, v in updates.items() if k in allowed_keys}
+    for yr_key in ["base_year", "target_year"]:
+        if yr_key in filtered and filtered[yr_key] is not None:
+            try:
+                filtered[yr_key] = int(filtered[yr_key])
+                if not (1990 <= filtered[yr_key] <= 2100):
+                    raise ValueError(f"{yr_key} must be between 1990 and 2100")
+            except (ValueError, TypeError):
+                raise ValueError(f"{yr_key} must be a valid integer year between 1990 and 2100")
     current.update(filtered)
 
     setting_key = f"tenant_config_{tenant_id.lower()}" if tenant_id.lower() != "default" else "tenant_config"
@@ -124,10 +160,6 @@ def update_tenant_config(tenant_id: Optional[str], updates: Dict[str, Any], user
 
 def get_current_tenant_id(user=None) -> str:
     """Derive tenant_id from active user session, organization, or environment."""
-    if user and getattr(user, "orgName", None):
-        org = user.orgName.lower().strip()
-        if "al-amal" in org or "alamal" in org or "tenant_b" in org:
-            return "mena_operator_b"
-        if getattr(user, "tenant_id", None):
-            return str(user.tenant_id).lower().strip()
-    return os.environ.get("DEFAULT_TENANT_ID", "default")
+    from utils import get_current_tenant_id as _resolve_tenant_id
+
+    return _resolve_tenant_id(user)

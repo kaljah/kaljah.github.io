@@ -13,7 +13,30 @@ const chromeExe = fs.existsSync(CHROMIUM_1208)
   ? CHROMIUM_1208
   : 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 
-const BASE_URL = process.env.E2E_BASE_URL || 'http://127.0.0.1:5174';
+const BASE_URL = process.env.E2E_BASE_URL || 'http://127.0.0.1:5173';
+
+async function loginUser(browser, email, password, outputPath) {
+  const context = await browser.newContext();
+  const page = await context.newPage();
+
+  console.log(`Authenticating ${email} at ${BASE_URL}/login...`);
+  await page.goto(`${BASE_URL}/login`, { waitUntil: 'networkidle' });
+  await page.waitForTimeout(500);
+
+  const emailInput = page.locator('input[type="email"]').first();
+  if (await emailInput.isVisible()) {
+    await emailInput.fill(email);
+    const pwdInput = page.locator('input[type="password"]').first();
+    await pwdInput.fill(password);
+    await page.locator('button[type="submit"]:has-text("Sign In"), button[type="submit"]:has-text("Se connecter")').first().click();
+    await page.waitForTimeout(1500);
+    await page.waitForURL((u) => !u.toString().includes('/login'), { timeout: 15000 });
+  }
+
+  await context.storageState({ path: outputPath });
+  console.log(`Saved ${outputPath} successfully!`);
+  await context.close();
+}
 
 async function main() {
   const browser = await chromium.launch({
@@ -21,26 +44,12 @@ async function main() {
     headless: true,
   });
 
-  const context = await browser.newContext();
-  const page = await context.newPage();
-
-  console.log(`Authenticating at ${BASE_URL}/login...`);
-  await page.goto(`${BASE_URL}/login`, { waitUntil: 'networkidle' });
-  await page.waitForTimeout(500);
-
-  const emailInput = page.locator('input[placeholder="Email Address"]').first();
-  if (await emailInput.isVisible()) {
-    await emailInput.fill('a');
-    const pwdInput = page.locator('input[type="password"]').first();
-    await pwdInput.fill('a');
-    await page.locator('button[type="submit"]:has-text("Sign In")').click();
-    await page.waitForTimeout(1500);
-    await page.waitForURL((u) => !u.toString().includes('/login'), { timeout: 15000 });
+  try {
+    await loginUser(browser, 'a@a', 'a', 'storageState.json');
+    await loginUser(browser, 'itadmin@ghg.com', 'a', 'storageState_it.json');
+  } finally {
+    await browser.close();
   }
-
-  await context.storageState({ path: 'storageState.json' });
-  console.log('Saved storageState.json successfully!');
-  await browser.close();
 }
 
 main().catch(console.error);

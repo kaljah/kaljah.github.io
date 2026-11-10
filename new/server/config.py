@@ -135,7 +135,11 @@ class Config:
         }
 
 
-    # Session Configuration (8-hour session lifetime)
+    # Short session timeout configuration (default 15 minutes for sandbox/demo security)
+    try:
+        _session_lifetime_minutes = max(5, int(os.environ.get("SESSION_LIFETIME_MINUTES", "15")))
+    except ValueError:
+        _session_lifetime_minutes = 15
     SESSION_COOKIE_HTTPONLY = True
     # Lax: the app and the API share one address (pilot check 2026-10-09, F14). "None" was needed only
     # for the former GitHub Pages frontend on another domain; set SESSION_COOKIE_SAMESITE=None for that.
@@ -145,7 +149,7 @@ class Config:
         _is_production
         or os.environ.get("SESSION_COOKIE_SECURE", "").strip().lower() in ("true", "1", "yes")
     )
-    PERMANENT_SESSION_LIFETIME = timedelta(hours=8)
+    PERMANENT_SESSION_LIFETIME = timedelta(minutes=_session_lifetime_minutes)
     SESSION_REFRESH_EACH_REQUEST = True
 
     # CSRF Configuration
@@ -181,3 +185,7 @@ class Config:
         )
     # Expose X-RateLimit-* response headers so clients can self-throttle
     RATELIMIT_HEADERS_ENABLED = True
+
+    # CDSE / Copernicus credentials loaded strictly from environment variables (never stored in DB)
+    CDSE_USERNAME = os.environ.get("CDSE_USERNAME") or os.environ.get("COPERNICUS_USERNAME") or ""
+    CDSE_PASSWORD = os.environ.get("CDSE_PASSWORD") or os.environ.get("COPERNICUS_PASSWORD") or ""

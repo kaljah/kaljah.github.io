@@ -32,6 +32,10 @@ class User(db.Model):
     # older value are rejected, so a copied cookie stops working after logout.
     session_version = db.Column(db.Integer, default=0, server_default="0", nullable=False)
     is_test = db.Column(db.Boolean, default=False, server_default="0", nullable=False)
+    tenant_id = db.Column(db.String(64), nullable=False, default="default", server_default="default", index=True)
+    facility_accesses = db.relationship(
+        "UserFacilityAccess", backref="user", cascade="all, delete-orphan", lazy=True
+    )
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -63,10 +67,11 @@ class Facility(db.Model):
     reconciliation_threshold = db.Column(db.Float, default=20.0)  # % threshold for variance flagging
     latitude = db.Column(db.Float)
     longitude = db.Column(db.Float)
-    created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     updated_at = db.Column(db.DateTime, onupdate=utc_now)
     created_at = db.Column(db.DateTime, default=utc_now)
     is_test = db.Column(db.Boolean, default=False, server_default="0", nullable=False)
+    tenant_id = db.Column(db.String(64), nullable=False, default="default", server_default="default", index=True)
 
     # Cascading Deletes
     emissions = db.relationship(
@@ -110,6 +115,33 @@ class Facility(db.Model):
     )
     ogmp_surveys = db.relationship(
         "OgmpSurvey", backref="facility_parent", cascade="all, delete-orphan", lazy=True
+    )
+    user_accesses = db.relationship(
+        "UserFacilityAccess", backref="facility", cascade="all, delete-orphan", lazy=True
+    )
+
+    __table_args__ = (
+        db.Index(
+            "ix_facilities_dash_tenant_test_filters",
+            "tenant_id",
+            "is_test",
+            "activity",
+            "division",
+            "segment",
+        ),
+    )
+
+
+class UserFacilityAccess(db.Model):
+    __tablename__ = "user_facility_access"
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id", ondelete="CASCADE"), nullable=False, index=True)
+    access_level = db.Column(db.String(32), default="operator")  # operator, verifier, viewer
+    created_at = db.Column(db.DateTime, default=utc_now)
+
+    __table_args__ = (
+        db.UniqueConstraint("user_id", "facility_id", name="uq_user_facility_access"),
     )
 
 
@@ -161,7 +193,7 @@ class Emission(db.Model):
     qa_flag = db.Column(db.String(255), nullable=True)
     status = db.Column(db.String(20), default="Pending", index=True)
 
-    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), index=True)
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id", ondelete="RESTRICT"), index=True)
     facility = db.relationship("Facility", overlaps="emissions,facility_parent")
 
     activity = db.Column(db.String(100), index=True)
@@ -180,12 +212,12 @@ class Emission(db.Model):
     gwp_version = db.Column(db.String(20))
     source_payload = db.Column(db.Text)  # JSON string
 
-    created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
-    updated_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    updated_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     updated_at = db.Column(db.DateTime, onupdate=utc_now)
     timestamp = db.Column(db.DateTime, default=utc_now, index=True)
     # Maker-Checker Approval
-    approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    approved_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     is_test = db.Column(db.Boolean, default=False, server_default="0", nullable=False)
     approved_at = db.Column(db.DateTime, nullable=True)
     is_prior_period_adjustment = db.Column(db.Boolean, default=False, server_default="0", nullable=False)
@@ -215,7 +247,7 @@ class Emission(db.Model):
     created_by_name = db.Column(db.String(255), nullable=True)
     approved_by_name = db.Column(db.String(255), nullable=True)
     # BUG-056: Tier 2 records reference their custom factor by id (real FK)
-    custom_factor_id = db.Column(db.Integer, db.ForeignKey("custom_factors.id"), nullable=True, index=True)
+    custom_factor_id = db.Column(db.Integer, db.ForeignKey("custom_factors.id", ondelete="SET NULL"), nullable=True, index=True)
 
     __table_args__ = (
         db.Index("idx_scope1_facility_year", "facility_id", "year"),
@@ -223,13 +255,28 @@ class Emission(db.Model):
         db.Index("ix_emissions_act_div", "activity", "division"),
         db.Index("ix_emissions_status_yr_co2e", "status", "year", "co2e_total"),
         db.Index("ix_emissions_yr_status_proc", "year", "status", "process_type"),
+        db.Index(
+            "ix_emissions_dash_status_test_yr_proc_fac",
+            "status",
+            "is_test",
+            "year",
+            "process_type",
+            "facility_id",
+        ),
+        db.Index(
+            "ix_emissions_fac_yr_status_test",
+            "facility_id",
+            "year",
+            "status",
+            "is_test",
+        ),
     )
 
 
 class ProductionData(db.Model):
     __tablename__ = "production_data"
     id = db.Column(db.Integer, primary_key=True)
-    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), nullable=False, index=True)
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id", ondelete="CASCADE"), nullable=False, index=True)
     month = db.Column(db.Integer, nullable=False)
     year = db.Column(db.Integer, nullable=False, index=True)
     oil_amount = db.Column(db.Float, default=0)
@@ -238,7 +285,7 @@ class ProductionData(db.Model):
     oil_unit = db.Column(db.String(20), default="bbl")
     gas_unit = db.Column(db.String(20), default="mscf")
 
-    # Granular Production Metrics (API Compendium / Berkine standard)
+    # Granular Production Metrics (API Compendium / Basin Alpha standard)
     gross_gas_mmsm3 = db.Column(db.Float, default=0.0)
     injected_gas_mmsm3 = db.Column(db.Float, default=0.0)
     gas_without_injected_mmsm3 = db.Column(db.Float, default=0.0)
@@ -256,7 +303,7 @@ class ProductionData(db.Model):
     region = db.Column(db.String(100))
     field = db.Column(db.String(100))  # OF / GF / GNL / GPL / Raffinerie / Pétrochimie
 
-    created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"))
     updated_at = db.Column(db.DateTime, onupdate=utc_now)
     created_at = db.Column(db.DateTime, default=utc_now)
     is_test = db.Column(db.Boolean, default=False, server_default="0", nullable=False)
@@ -264,13 +311,14 @@ class ProductionData(db.Model):
     __table_args__ = (
         db.UniqueConstraint("facility_id", "month", "year", name="_facility_month_year_uc"),
         db.Index("ix_prod_yr_fac_units", "year", "facility_id", "oil_unit", "gas_unit"),
+        db.Index("ix_prod_dash_test_yr_fac", "is_test", "year", "facility_id"),
     )
 
 
 class EmissionSource(db.Model):
     __tablename__ = "emission_sources"
     id = db.Column(db.Integer, primary_key=True)
-    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"))
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id", ondelete="CASCADE"))
     name = db.Column(db.String(120))
     type = db.Column(db.String(50))
     equipment_id = db.Column(db.String(50))
@@ -287,7 +335,7 @@ class EmissionSource(db.Model):
     code = db.Column(db.String(50), unique=True)
     external_id = db.Column(db.String(50))
 
-    created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"))
     updated_at = db.Column(db.DateTime, onupdate=utc_now)
     created_at = db.Column(db.DateTime, default=utc_now)
     is_test = db.Column(db.Boolean, default=False, server_default="0", nullable=False)
@@ -300,8 +348,8 @@ class EmissionSource(db.Model):
 class ComponentInventory(db.Model):
     __tablename__ = "component_inventories"
     id = db.Column(db.Integer, primary_key=True)
-    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), index=True, nullable=False)
-    emission_source_id = db.Column(db.Integer, db.ForeignKey("emission_sources.id"), nullable=True)
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id", ondelete="CASCADE"), index=True, nullable=False)
+    emission_source_id = db.Column(db.Integer, db.ForeignKey("emission_sources.id", ondelete="CASCADE"), nullable=True)
     facility = db.relationship("Facility", foreign_keys=[facility_id], backref=db.backref("component_inventories", cascade="all, delete-orphan"))
     emission_source = db.relationship("EmissionSource", foreign_keys=[emission_source_id])
 
@@ -318,7 +366,7 @@ class ComponentInventory(db.Model):
     status = db.Column(db.String(20), default="Active")
     description = db.Column(db.Text, nullable=True)
 
-    created_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     created_at = db.Column(db.DateTime, default=utc_now)
     updated_at = db.Column(db.DateTime, onupdate=utc_now)
 
@@ -326,8 +374,8 @@ class ComponentInventory(db.Model):
 class FugitiveSurvey(db.Model):
     __tablename__ = "fugitive_surveys"
     id = db.Column(db.Integer, primary_key=True)
-    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), index=True, nullable=False)
-    component_inventory_id = db.Column(db.Integer, db.ForeignKey("component_inventories.id"), nullable=True)
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id", ondelete="CASCADE"), index=True, nullable=False)
+    component_inventory_id = db.Column(db.Integer, db.ForeignKey("component_inventories.id", ondelete="CASCADE"), nullable=True)
     facility = db.relationship("Facility", foreign_keys=[facility_id], backref=db.backref("fugitive_surveys", cascade="all, delete-orphan"))
     component_inventory = db.relationship("ComponentInventory", foreign_keys=[component_inventory_id], backref=db.backref("surveys", cascade="all, delete-orphan"))
 
@@ -343,7 +391,7 @@ class FugitiveSurvey(db.Model):
     surveyor_name = db.Column(db.String(100), nullable=True)
     notes = db.Column(db.Text, nullable=True)
 
-    created_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     created_at = db.Column(db.DateTime, default=utc_now)
 
 
@@ -367,7 +415,7 @@ class CustomFactor(db.Model):
     ch4_uncertainty = db.Column(db.Float)
     n2o_uncertainty = db.Column(db.Float)
     uncertainty_pct = db.Column(db.Float, nullable=True)  # Overall combined uncertainty percentage
-    created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"))
     updated_at = db.Column(db.DateTime, onupdate=utc_now)
     created_at = db.Column(db.DateTime, default=utc_now)
     is_test = db.Column(db.Boolean, default=False, server_default="0", nullable=False)
@@ -375,13 +423,14 @@ class CustomFactor(db.Model):
     is_archived = db.Column(db.Boolean, default=False, server_default="0", nullable=False)
     # Maker-checker approval workflow
     status = db.Column(db.String(20), default="Approved", server_default="Approved", nullable=False, index=True)
-    approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    approved_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     approved_at = db.Column(db.DateTime, nullable=True)
-    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), nullable=True, index=True)
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id", ondelete="SET NULL"), nullable=True, index=True)
     region = db.Column(db.String(100), nullable=True, index=True)
     valid_from = db.Column(db.String(20), nullable=True)
-    parent_factor_id = db.Column(db.Integer, db.ForeignKey("custom_factors.id"), nullable=True)
+    parent_factor_id = db.Column(db.Integer, db.ForeignKey("custom_factors.id", ondelete="SET NULL"), nullable=True)
     gas_composition_json = db.Column("gas_composition", db.Text, nullable=True)
+    tenant_id = db.Column(db.String(64), nullable=False, default="default", server_default="default", index=True)
 
     __table_args__ = (
         db.UniqueConstraint("name", "version", "facility_id", name="uq_custom_factor_name_version_facility"),
@@ -419,7 +468,7 @@ class ActivityLog(db.Model):
     new_values = db.Column(db.Text, nullable=True)  # JSON after-state diff
     ip_address = db.Column(db.String(50))
     user_id = db.Column(
-        db.Integer, db.ForeignKey("users.id"), index=True
+        db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), index=True, nullable=True
     )  # DB-03 FIX: add index
     entity = db.Column(db.String(50), index=True)  # DB-03 FIX: add index
     entity_id = db.Column(db.String(50))
@@ -467,6 +516,7 @@ class MitigationRecord(db.Model):
     notes = db.Column(db.Text)
     reference_id = db.Column(db.String(50))
     date_added = db.Column(db.DateTime, default=utc_now)
+    tenant_id = db.Column(db.String(64), nullable=False, default="default", server_default="default", index=True)
 
 
 class Scope3Data(db.Model):
@@ -487,7 +537,7 @@ class Scope3Data(db.Model):
 class Scope2Emission(db.Model):
     __tablename__ = "scope2_emissions"
     id = db.Column(db.Integer, primary_key=True)
-    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), index=True)
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id", ondelete="RESTRICT"), index=True)
     facility = db.relationship("Facility", overlaps="facility_parent,scope2_emissions")
     year = db.Column(db.Integer, index=True)
     month = db.Column(db.Integer)
@@ -515,11 +565,11 @@ class Scope2Emission(db.Model):
     region = db.Column(db.String(100))
     field = db.Column(db.String(100))  # OF / GF / GNL / GPL / Raffinerie / Pétrochimie
 
-    created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"))
     status = db.Column(db.String(20), default="Pending", index=True)
     created_at = db.Column(db.DateTime, default=utc_now)
     # Maker-Checker Approval
-    approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    approved_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     approved_at = db.Column(db.DateTime, nullable=True)
     factor_version = db.Column(db.String(50), nullable=True)
     factor_source = db.Column(db.String(100), nullable=True)
@@ -547,7 +597,7 @@ class Scope2Emission(db.Model):
             self.gas_composition_json = val
         else:
             self.gas_composition_json = json.dumps(val)
-    updated_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    updated_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     updated_at = db.Column(db.DateTime, onupdate=utc_now)
     created_by_name = db.Column(db.String(255), nullable=True)
     approved_by_name = db.Column(db.String(255), nullable=True)
@@ -555,13 +605,14 @@ class Scope2Emission(db.Model):
     __table_args__ = (
         db.Index("ix_scope2_fac_yr_status", "facility_id", "year", "status"),
         db.Index("ix_scope2_status_yr_co2e", "status", "year", "co2e", "electricity_kwh"),
+        db.Index("ix_scope2_dash_status_yr_fac", "status", "year", "facility_id"),
     )
 
 
 class Scope3Emission(db.Model):
     __tablename__ = "scope3_emissions"
     id = db.Column(db.Integer, primary_key=True)
-    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), index=True)
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id", ondelete="RESTRICT"), index=True)
     facility = db.relationship("Facility", overlaps="facility_parent,scope3_emissions")
     year = db.Column(db.Integer, index=True)
     month = db.Column(db.Integer)
@@ -578,11 +629,11 @@ class Scope3Emission(db.Model):
     calculation_method = db.Column(db.String(50))
     data_quality = db.Column(db.String(50))
     notes = db.Column(db.Text)
-    created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"))
     status = db.Column(db.String(20), default="Pending", index=True)
     created_at = db.Column(db.DateTime, default=utc_now)
     # Maker-Checker Approval
-    approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    approved_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     approved_at = db.Column(db.DateTime, nullable=True)
     region = db.Column(db.String(100), nullable=True, index=True)
     factor_version = db.Column(db.String(50), nullable=True)
@@ -611,7 +662,7 @@ class Scope3Emission(db.Model):
             self.gas_composition_json = val
         else:
             self.gas_composition_json = json.dumps(val)
-    updated_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    updated_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     updated_at = db.Column(db.DateTime, onupdate=utc_now)
     created_by_name = db.Column(db.String(255), nullable=True)
     approved_by_name = db.Column(db.String(255), nullable=True)
@@ -619,6 +670,7 @@ class Scope3Emission(db.Model):
     __table_args__ = (
         db.Index("ix_scope3_fac_yr_status", "facility_id", "year", "status"),
         db.Index("ix_scope3_status_yr_co2e", "status", "year", "co2e"),
+        db.Index("ix_scope3_dash_status_yr_fac_cat", "status", "year", "facility_id", "category"),
         db.UniqueConstraint("facility_id", "year", "month", "category", "sub_category", name="uq_scope3_facility_period_category"),
     )
 
@@ -637,16 +689,17 @@ class MitigationProject(db.Model):
     end_date = db.Column(db.Date)
     investment_amount = db.Column(db.Float)
     description = db.Column(db.Text)
-    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"))
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id", ondelete="CASCADE"))
     facility = db.relationship(
         "Facility", overlaps="facility_parent,mitigation_projects"
     )
-    created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     created_at = db.Column(db.DateTime, default=utc_now)
     is_test = db.Column(db.Boolean, default=False, server_default="0", nullable=False)
 
     __table_args__ = (
         db.UniqueConstraint("facility_id", "name", "year", name="uq_mitigation_project_facility_name_year"),
+        db.Index("ix_mitigation_projects_test_yr_fac", "is_test", "year", "facility_id"),
     )
 
 
@@ -658,9 +711,10 @@ class BaseYearRecalculation(db.Model):
     recalc_date = db.Column(db.DateTime, default=utc_now)
     previous_emissions = db.Column(db.Float)
     adjusted_emissions = db.Column(db.Float)
-    approved_by = db.Column(db.Integer, db.ForeignKey("users.id"))
-    created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+    approved_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     created_at = db.Column(db.DateTime, default=utc_now)
+    tenant_id = db.Column(db.String(64), nullable=False, default="default", server_default="default", index=True)
 
 
 class ReportingMetadata(db.Model):
@@ -679,7 +733,7 @@ class Notification(db.Model):
     __tablename__ = "notifications"
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(
-        db.Integer, db.ForeignKey("users.id"), nullable=True
+        db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), nullable=True
     )  # Nullable for system-wide
     type = db.Column(
         db.String(50)
@@ -711,7 +765,7 @@ class Notification(db.Model):
 class CbamProductExport(db.Model):
     __tablename__ = 'cbam_product_exports'
     id = db.Column(db.Integer, primary_key=True)
-    facility_id = db.Column(db.Integer, db.ForeignKey('facilities.id'), index=True, nullable=False)
+    facility_id = db.Column(db.Integer, db.ForeignKey('facilities.id', ondelete="CASCADE"), index=True, nullable=False)
     facility = db.relationship('Facility', overlaps="facility_parent,cbam_exports")
     year = db.Column(db.Integer, index=True, nullable=False)
     month = db.Column(db.Integer, nullable=False, default=1)
@@ -736,7 +790,7 @@ class CbamProductExport(db.Model):
     precursor_see_dir = db.Column(db.Float, default=0.0)          # tCO2e / t precursor direct
     precursor_see_indir = db.Column(db.Float, default=0.0)        # tCO2e / t precursor indirect
     notes = db.Column(db.Text)
-    created_by = db.Column(db.Integer, db.ForeignKey('users.id'))
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"))
     created_at = db.Column(db.DateTime, default=utc_now)
 
 
@@ -744,7 +798,7 @@ class OgmpSurvey(db.Model):
     __tablename__ = "ogmp_surveys"
     id = db.Column(db.Integer, primary_key=True)
     facility_id = db.Column(
-        db.Integer, db.ForeignKey("facilities.id"), index=True, nullable=False
+        db.Integer, db.ForeignKey("facilities.id", ondelete="CASCADE"), index=True, nullable=False
     )
     facility = db.relationship("Facility", overlaps="facility_parent,ogmp_surveys")
     year = db.Column(db.Integer, index=True, nullable=False)
@@ -768,8 +822,12 @@ class OgmpSurvey(db.Model):
     )  # Reconciled, Discrepancy Flagged, Pending
     status = db.Column(db.String(50), default="pending")  # pending, reviewed, reported
     operator_notes = db.Column(db.Text)
-    created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"))
     created_at = db.Column(db.DateTime, default=utc_now)
+
+    __table_args__ = (
+        db.Index("ix_ogmp_surveys_fac_yr", "facility_id", "year"),
+    )
 
 
 class MethaneSourceType(db.Model):
@@ -788,7 +846,7 @@ class MethaneSourceType(db.Model):
 class LevelUpgradeLog(db.Model):
     __tablename__ = "level_upgrade_logs"
     id = db.Column(db.Integer, primary_key=True)
-    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), nullable=False, index=True)
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id", ondelete="CASCADE"), nullable=False, index=True)
     # BUG-009: deleted with its facility (was the only facility child without a cascade)
     facility = db.relationship("Facility", backref=db.backref("level_upgrade_logs", cascade="all, delete-orphan"))
     source_type_code = db.Column(db.String(50))
@@ -797,7 +855,7 @@ class LevelUpgradeLog(db.Model):
     target_date = db.Column(db.String(20))
     justification = db.Column(db.Text)
     changed_at = db.Column(db.DateTime, default=utc_now)
-    created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"))
 
 
 class SbtiTarget(db.Model):
@@ -811,7 +869,8 @@ class SbtiTarget(db.Model):
     # BUG-019: which scopes the base-year emissions / target cover ("S1S2S3" or "S1S2")
     scope_coverage = db.Column(db.String(10), default="S1S2S3", server_default="S1S2S3", nullable=False)
     created_at = db.Column(db.DateTime, default=utc_now)
-    created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    tenant_id = db.Column(db.String(64), nullable=False, default="default", server_default="default", index=True)
 
 
 class SystemSetting(db.Model):
@@ -833,7 +892,7 @@ class FlaringDetail(db.Model):
     """
     __tablename__ = "flaring_details"
     id = db.Column(db.Integer, primary_key=True)
-    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), index=True, nullable=False)
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id", ondelete="CASCADE"), index=True, nullable=False)
     facility = db.relationship("Facility", backref=db.backref("flaring_details", cascade="all, delete-orphan"))
     year = db.Column(db.Integer, index=True, nullable=False)
     month = db.Column(db.Integer, nullable=True)
@@ -849,6 +908,7 @@ class FlaringDetail(db.Model):
 
     __table_args__ = (
         db.Index("ix_flare_fac_yr_net", "facility_id", "year", "network"),
+        db.Index("ix_flaring_details_status_yr_fac", "status", "year", "facility_id"),
     )
 
 
@@ -858,11 +918,12 @@ class JvPartner(db.Model):
     """
     __tablename__ = "jv_partners"
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), unique=True, nullable=False)  # Sonatrach, Occidental, Eni, TotalEnergies, Pertamina, Repsol
+    name = db.Column(db.String(120), unique=True, nullable=False)  # Demo Operator Co., Demo JV Partner A, Demo JV Partner B, TotalEnergies, Pertamina, Repsol
     code = db.Column(db.String(50), unique=True, nullable=False)
     country = db.Column(db.String(100), default="Algeria")
     is_operator = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=utc_now)
+    tenant_id = db.Column(db.String(64), nullable=False, default="default", server_default="default", index=True)
 
 
 class FacilityEquityShare(db.Model):
@@ -872,8 +933,8 @@ class FacilityEquityShare(db.Model):
     """
     __tablename__ = "facility_equity_shares"
     id = db.Column(db.Integer, primary_key=True)
-    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), index=True, nullable=False)
-    partner_id = db.Column(db.Integer, db.ForeignKey("jv_partners.id"), index=True, nullable=False)
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id", ondelete="CASCADE"), index=True, nullable=False)
+    partner_id = db.Column(db.Integer, db.ForeignKey("jv_partners.id", ondelete="CASCADE"), index=True, nullable=False)
     facility = db.relationship("Facility", backref=db.backref("equity_shares", cascade="all, delete-orphan"))
     partner = db.relationship("JvPartner", backref=db.backref("facility_shares", cascade="all, delete-orphan"))
     equity_share_pct = db.Column(db.Float, nullable=False)  # e.g. 51.0, 24.5
@@ -894,7 +955,7 @@ class ImportMapping(db.Model):
     __table_args__ = (db.UniqueConstraint("user_id", "scope", "name", name="uq_import_mapping_user_scope_name"),)
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False, index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     scope = db.Column(db.String(20), nullable=False, default="1")
     name = db.Column(db.String(80), nullable=False)
     headers = db.Column(db.Text, nullable=False)   # JSON list of the file's column names
@@ -926,13 +987,14 @@ class PeriodLock(db.Model):
     month = db.Column(db.Integer, nullable=True)  # None = entire reporting year
     status = db.Column(db.String(20), default="locked", nullable=False)  # 'locked', 'open'
     locked_at = db.Column(db.DateTime, default=utc_now)
-    locked_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    locked_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     signoff_signatory = db.Column(db.String(120), nullable=True)
     signoff_notes = db.Column(db.Text, nullable=True)
     unlocked_at = db.Column(db.DateTime, nullable=True)
-    unlocked_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    unlocked_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     unlock_reason = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=utc_now)
+    tenant_id = db.Column(db.String(64), nullable=False, default="default", server_default="default", index=True)
 
     user_locked = db.relationship("User", foreign_keys=[locked_by])
     user_unlocked = db.relationship("User", foreign_keys=[unlocked_by])
@@ -964,9 +1026,9 @@ class RecalculationRequest(db.Model):
     __tablename__ = "recalculation_requests"
     id = db.Column(db.Integer, primary_key=True)
     target_year = db.Column(db.Integer, nullable=True)
-    target_facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), nullable=True)
+    target_facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id", ondelete="SET NULL"), nullable=True)
     target_scope = db.Column(db.String(20), nullable=True)  # '1', '2', '3', 'all'
-    target_factor_id = db.Column(db.Integer, db.ForeignKey("custom_factors.id"), nullable=True)
+    target_factor_id = db.Column(db.Integer, db.ForeignKey("custom_factors.id", ondelete="SET NULL"), nullable=True)
     target_factor_version = db.Column(db.String(50), nullable=True)
     target_gwp_standard = db.Column(db.String(20), nullable=True)
     trigger_type = db.Column(db.String(50), nullable=False)  # 'methodology_change', 'structural_change', 'error_correction'
@@ -977,12 +1039,13 @@ class RecalculationRequest(db.Model):
     tco2e_after = db.Column(db.Float, default=0.0)
     delta_tco2e = db.Column(db.Float, default=0.0)
     delta_pct = db.Column(db.Float, default=0.0)
-    requested_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    requested_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=False)
     requested_at = db.Column(db.DateTime, default=utc_now)
-    approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    approved_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     approved_at = db.Column(db.DateTime, nullable=True)
     executed_at = db.Column(db.DateTime, nullable=True)
     rejection_reason = db.Column(db.Text, nullable=True)
+    tenant_id = db.Column(db.String(64), nullable=False, default="default", server_default="default", index=True)
 
     user_requested = db.relationship("User", foreign_keys=[requested_by])
     user_approved = db.relationship("User", foreign_keys=[approved_by])
@@ -1025,7 +1088,7 @@ class RecalculationHistory(db.Model):
     """
     __tablename__ = "recalculation_history"
     id = db.Column(db.Integer, primary_key=True)
-    request_id = db.Column(db.Integer, db.ForeignKey("recalculation_requests.id"), nullable=True, index=True)
+    request_id = db.Column(db.Integer, db.ForeignKey("recalculation_requests.id", ondelete="CASCADE"), nullable=True, index=True)
     record_id = db.Column(db.String(50), nullable=False, index=True)
     scope = db.Column(db.Integer, nullable=False)
     facility_id = db.Column(db.Integer, nullable=True)
@@ -1054,5 +1117,81 @@ class RecalculationHistory(db.Model):
             "new_gwp_version": self.new_gwp_version,
             "timestamp": self.timestamp.isoformat() if self.timestamp else None,
         }
+
+
+class FactorProvenanceRegistry(db.Model):
+    """Authoritative registry for emission factors, physical constants, efficiencies, and GWP standards.
+    Strictly complies with ISO 14064-1:2018 §9 and GHG Protocol Chapter 11.
+    """
+    __tablename__ = "factor_provenance_registry"
+
+    id = db.Column(db.String(64), primary_key=True)  # e.g. 'PHY-001', 'FLR-001', 'SCP2-004'
+    factor_key = db.Column(db.String(128), nullable=False, index=True)
+    category = db.Column(db.String(64), nullable=False)  # 'physical_constant', 'emission_factor', 'efficiency', 'gwp'
+    parameter_name = db.Column(db.String(255), nullable=False)
+    value = db.Column(db.Float, nullable=False)
+    unit = db.Column(db.String(64), nullable=False)
+    basis = db.Column(db.String(128), nullable=False)
+    source_document = db.Column(db.String(255), nullable=False)
+    edition_year = db.Column(db.String(64), nullable=False)
+    table_or_equation_ref = db.Column(db.String(128), nullable=False)
+    page_number = db.Column(db.String(64), nullable=True)
+    verbatim_citation = db.Column(db.Text, nullable=False)
+    is_user_overridable = db.Column(db.Boolean, default=True, nullable=False)
+    is_silent_default = db.Column(db.Boolean, default=False, nullable=False)
+    warning_flag = db.Column(db.String(32), default="NONE", nullable=False)
+    created_at = db.Column(db.DateTime, default=utc_now)
+    updated_at = db.Column(db.DateTime, default=utc_now, onupdate=utc_now)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "factor_key": self.factor_key,
+            "category": self.category,
+            "parameter_name": self.parameter_name,
+            "value": float(self.value),
+            "unit": self.unit,
+            "basis": self.basis,
+            "source_document": self.source_document,
+            "edition_year": self.edition_year,
+            "table_or_equation_ref": self.table_or_equation_ref,
+            "page_number": self.page_number,
+            "verbatim_citation": self.verbatim_citation,
+            "is_user_overridable": self.is_user_overridable,
+            "is_silent_default": self.is_silent_default,
+            "warning_flag": self.warning_flag
+        }
+
+
+class CalculationFactorLineage(db.Model):
+    """Immutable audit trail linking emission calculations to the exact factors consumed."""
+    __tablename__ = "calculation_factor_lineage"
+
+    id = db.Column(db.Integer, primary_key=True)
+    calculation_id = db.Column(db.Integer, db.ForeignKey("emissions.id", ondelete="CASCADE"), nullable=True, index=True)
+    factor_id = db.Column(db.String(64), db.ForeignKey("factor_provenance_registry.id", ondelete="CASCADE"), nullable=False, index=True)
+    applied_value = db.Column(db.Float, nullable=False)
+    applied_unit = db.Column(db.String(64), nullable=False)
+    was_user_override = db.Column(db.Boolean, default=False, nullable=False)
+    override_provenance_note = db.Column(db.Text, nullable=True)
+    warning_flag = db.Column(db.String(32), default="NONE", nullable=False)
+    recorded_at = db.Column(db.DateTime, default=utc_now)
+
+    factor = db.relationship("FactorProvenanceRegistry", lazy="joined")
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "calculation_id": self.calculation_id,
+            "factor_id": self.factor_id,
+            "applied_value": float(self.applied_value),
+            "applied_unit": self.applied_unit,
+            "was_user_override": self.was_user_override,
+            "override_provenance_note": self.override_provenance_note,
+            "warning_flag": self.warning_flag,
+            "recorded_at": self.recorded_at.isoformat() if self.recorded_at else None,
+            "factor_meta": self.factor.to_dict() if self.factor else None
+        }
+
 
 

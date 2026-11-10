@@ -17,7 +17,7 @@ def factor_env():
         admin = User(
             email=f"ef_admin_{tag}@test.com",
             fullName="EF Admin",
-            orgName="Sonatrach",
+            orgName="Demo Operator Co.",
             sector="Oil & Gas",
             role="admin",
             location="Algiers",
@@ -27,27 +27,27 @@ def factor_env():
         superuser = User(
             email=f"ef_super_{tag}@test.com",
             fullName="EF Superuser",
-            orgName="Sonatrach",
+            orgName="Demo Operator Co.",
             sector="Oil & Gas",
             role="superuser",
-            location="Hassi Messaoud",
+            location="Basin Alpha",
         )
         superuser.set_password("SuperPass123!")
 
         operator = User(
             email=f"ef_op_{tag}@test.com",
             fullName="EF Operator",
-            orgName="Sonatrach",
+            orgName="Demo Operator Co.",
             sector="Oil & Gas",
             role="operator",
-            location="Hassi Messaoud",
+            location="Basin Alpha",
         )
         operator.set_password("OperatorPass123!")
 
         it_user = User(
             email=f"ef_it_{tag}@test.com",
             fullName="EF IT",
-            orgName="Sonatrach",
+            orgName="Demo Operator Co.",
             sector="Oil & Gas",
             role="it_admin",
             location="Algiers",
@@ -56,7 +56,7 @@ def factor_env():
 
         fac = Facility(
             name=f"EF Facility {tag}",
-            location="Hassi Messaoud",
+            location="Basin Alpha",
             segment="Upstream",
             code=f"FAC-EF-{tag}",
         )
@@ -507,7 +507,7 @@ def test_custom_factor_approval_workflow(client, factor_env):
         "name": name,
         "unit": "m3",
         "co2_factor": 3.5,  # outside standard bound, forces Pending with justification
-        "justification": "High CO2 gas field analysis certified by Sonatrach laboratory",
+        "justification": "High CO2 gas field analysis certified by Demo Operator Co. laboratory",
         "source": "Certified Gas Analysis",
     })
     assert r_create.status_code in [201, 422]

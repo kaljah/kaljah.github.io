@@ -551,8 +551,10 @@ _SCOPE3_MASS_TONNES = {
 
 _SCOPE3_UNIT_ALIASES = {
     "$": "usd", "us$": "usd", "dollar": "usd", "dollars": "usd", "usd": "usd",
-    "pkm": "passenger-km", "passenger_km": "passenger-km", "tkm": "tonne-km", "t-km": "tonne-km",
-    "tonne_km": "tonne-km", "litre": "l", "litres": "l", "liter": "l", "liters": "l",
+    "pkm": "passenger-km", "passenger_km": "passenger-km", "p-km": "passenger-km",
+    "tkm": "tonne-km", "t-km": "tonne-km", "tonne_km": "tonne-km", "tonne-km": "tonne-km",
+    "ton-km": "tonne-km", "ton_km": "tonne-km", "tonkm": "tonne-km",
+    "litre": "l", "litres": "l", "liter": "l", "liters": "l",
     "mmbtu": "mmbtu", "mm-btu": "mmbtu", "million-btu": "mmbtu", "mm_btu": "mmbtu",
     "mscf": "mscf", "mmscf": "mmscf", "mcf": "mcf", "scf": "scf",
 }

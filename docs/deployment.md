@@ -11,7 +11,7 @@ This guide is for the IT team that installs and runs Neocarbon on its own server
 | PostgreSQL 16 | all data | `db` container | OS package or an existing database server |
 | Redis 7 | sign-in and request rate-limit counters (nothing to back up) | `redis` container | OS package |
 
-The browser talks only to nginx, on one address (for example `https://neocarbon.sonatrach.dz`). The web interface and the API share that address, so no cross-site requests are made.
+The browser talks only to nginx, on one address (for example `https://neocarbon.example.org`). The web interface and the API share that address, so no cross-site requests are made.
 
 ## Server requirements
 
@@ -92,7 +92,7 @@ Data lives in two Docker volumes: `neocarbon_pgdata` (database) and `neocarbon_a
 3. Fill in `/etc/neocarbon/neocarbon.env`: `DATABASE_URL` (`postgresql://neocarbon:PASSWORD@127.0.0.1:5432/neocarbon`), `SECRET_KEY`, `ALLOWED_ORIGINS` (`https://<host name>`), and the admin account values.
 4. Put the certificate at `/etc/neocarbon/tls/fullchain.pem` and the key at `/etc/neocarbon/tls/privkey.pem` (or set `TLS_CERT` and `TLS_KEY` when running the installer). Then run the installer again:
    ```bash
-   sudo SERVER_NAME=neocarbon.sonatrach.dz ./native/install.sh
+   sudo SERVER_NAME=neocarbon.example.org ./native/install.sh
    sudo neocarbon-seed-admin       # first install only
    ```
 
@@ -167,7 +167,7 @@ Container installs set these in `.env` (the compose file passes them on); native
 | `GUNICORN_WORKERS`, `GUNICORN_THREADS` | `4`, `4` | API processes and threads per process |
 | `GUNICORN_TIMEOUT` | `300` | seconds before a request is cut (reports, exports) |
 | `MAP_TILE_URL`, `MAP_TILE_ATTRIBUTION`, `MAP_TILE_SUBDOMAINS` | empty | internal map tile server for the Emissions Map; empty: the map shows facilities without a basemap |
-| `CSP_IMG_SRC_EXTRA` | empty | containers: tile server origin allowed in the browser policy (for example `https://tiles.sonatrach.dz`) |
+| `CSP_IMG_SRC_EXTRA` | empty | containers: tile server origin allowed in the browser policy (for example `https://tiles.example.org`) |
 | `DISABLE_OUTBOUND_EMAIL` | `true` | `false` to send email (approval and password-reset notices) |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_USE_TLS`, `EMAIL_FROM` | `587`, `true` | mail relay |
 | `WTF_CSRF_SSL_STRICT` | `true` | over HTTPS, a change must come from a page on the same address (`Referer`); `false` turns this check off |

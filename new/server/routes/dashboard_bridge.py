@@ -7,6 +7,7 @@ dashboard: start (previous year) + sum of the category changes = end (selected y
 from flask import jsonify, request
 from routes.auth import login_required
 from utils import get_allowed_facility_ids, get_current_user
+from services.dashboard_filters import _parse_facility_ids
 from routes.dashboard import _query_scope3_summary, _query_summary, dashboard_bp, is_it_role
 
 # (label, summary keys that feed it). Scope 3 is not part of the Scope 1+2 summary; it is added as its
@@ -77,6 +78,9 @@ def get_yoy_bridge():
     allowed_fids = get_allowed_facility_ids(user)
     scope2_method = request.args.get("scope2_method") or request.args.get("scope2Method") or "location"
     facility_id = request.args.get("facility_id") or request.args.get("facilityId")
+    fac_filter = _parse_facility_ids(facility_id)
+    if fac_filter and allowed_fids is not None and not set(fac_filter).issubset(set(allowed_fids)):
+        return jsonify({"error": "Unauthorized facility"}), 403
     rows = _query_summary(
         facility_id=facility_id,
         year=None,

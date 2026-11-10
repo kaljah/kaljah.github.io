@@ -9,6 +9,7 @@ from sqlalchemy import and_, distinct, func, or_
 from extensions import db
 from models import CustomFactor, Emission, Facility, Scope2Emission, Scope3Emission
 from process_categories import NON_COMBUSTION_PROCESSES
+from utils import normalize_tenant_id, tenant_matches
 
 MAX_FLAGGED_RECORDS = 500  # flagged records returned per request (prevents OOM on large databases)
 SCOPE_MODELS = (Emission, Scope2Emission, Scope3Emission)
@@ -24,8 +25,9 @@ _QUEUE = {
 class DashboardFilter:
     """The request's facility scope, year and status filters."""
 
-    def __init__(self, allowed_fids, args):
+    def __init__(self, allowed_fids, args, tenant_id="default"):
         self.allowed_fids = allowed_fids  # None = all, [] = none
+        self.tenant_id = normalize_tenant_id(tenant_id)
         year_arg = args.get("year")
         # audit 2026-10-14 BUG-0066: an out-of-range year is ignored like any malformed one (the documented
         # QA/QC rule); a huge number overflowed the database integer and answered 500
@@ -37,7 +39,7 @@ class DashboardFilter:
     def scope(self, q, model):
         """Facility scope and year."""
         if self.allowed_fids is not None:
-            q = q.filter(model.facility_id.in_(self.allowed_fids))
+            q = q.filter(model.facility_id.in_(self.allowed_fids or [-1]))
         if self.year is not None:
             q = q.filter(model.year == self.year)
         return q
@@ -116,7 +118,7 @@ def stored_outliers(f):
     if f.year is not None:
         avg_per_proc = avg_per_proc.filter(Emission.year == f.year)
     if f.allowed_fids is not None:
-        avg_per_proc = avg_per_proc.filter(Emission.facility_id.in_(f.allowed_fids))
+        avg_per_proc = avg_per_proc.filter(Emission.facility_id.in_(f.allowed_fids or [-1]))
     avg_per_proc = avg_per_proc.group_by(Emission.process_type).all()
 
     proc_filters = []
@@ -167,11 +169,15 @@ def uncertainty(f):
     cy = datetime.now(timezone.utc).year
     year = f.year
     if year is None:
-        year = db.session.query(func.max(Emission.year)).filter(
-            Emission.status == "Verified", Emission.year <= cy).scalar() or cy
+        yq = db.session.query(func.max(Emission.year)).filter(
+            Emission.status == "Verified", Emission.year <= cy
+        )
+        if f.allowed_fids is not None:
+            yq = yq.filter(Emission.facility_id.in_(f.allowed_fids or [-1]))
+        year = yq.scalar() or cy
 
     fids_key = tuple(sorted(f.allowed_fids)) if f.allowed_fids is not None else None
-    cache_key = f"qaqc_unc_{year}_{fids_key}"
+    cache_key = f"qaqc_unc_{f.tenant_id}_{year}_{fids_key}"
     cached_val = DASHBOARD_CACHE.get(cache_key)
     if cached_val is not None:
         return cached_val
@@ -256,7 +262,7 @@ def _active_facility_ids(f):
     for model in SCOPE_MODELS:
         q = db.session.query(distinct(model.facility_id)).filter(model.facility_id.isnot(None))
         if f.allowed_fids is not None:
-            q = q.filter(model.facility_id.in_(f.allowed_fids))
+            q = q.filter(model.facility_id.in_(f.allowed_fids or [-1]))
         if f.year is not None:
             q = q.filter(model.year == f.year)
         active |= {r[0] for r in q.all()}
@@ -337,7 +343,7 @@ def _record_sample(fac_map, extra):
 def _inactive_facility_samples(f, active):
     samples = []
     try:
-        q = Facility.query if f.allowed_fids is None else Facility.query.filter(Facility.id.in_(f.allowed_fids))
+        q = Facility.query if f.allowed_fids is None else Facility.query.filter(Facility.id.in_(f.allowed_fids or [-1]))
         for fac in q.all():
             if fac.id not in active:
                 samples.append({"id": fac.id, "name": fac.name, "location": fac.location or fac.field or "General"})
@@ -351,7 +357,8 @@ def _inactive_facility_samples(f, active):
 def findings(f, h, active, unused, custom_factor_count):
     """(issues, warnings, suggestions) of the data-health check."""
     try:
-        fac_map = dict(Facility.query.with_entities(Facility.id, Facility.name).all())
+        fac_q = Facility.query if f.allowed_fids is None else Facility.query.filter(Facility.id.in_(f.allowed_fids or [-1]))
+        fac_map = dict(fac_q.with_entities(Facility.id, Facility.name).all())
     except Exception:
         fac_map = {}
     issues, warnings, suggestions = [], [], []
@@ -410,7 +417,7 @@ def diagnostics(f, total_flagged, outliers):
     active = _active_facility_ids(f)
     unused = max(0, total_facilities - len(active))
     try:
-        custom_factor_count = CustomFactor.query.count()
+        custom_factor_count = CustomFactor.query.filter(tenant_matches(CustomFactor.tenant_id, f.tenant_id)).count()
     except Exception:
         custom_factor_count = 0
     anomalies = anomaly_status_counts(f, outliers)
@@ -442,17 +449,18 @@ def diagnostics(f, total_flagged, outliers):
     }
 
 
-def build_dashboard(allowed_fids, args):
+def build_dashboard(allowed_fids, args, tenant_id="default"):
     """The full dashboard response for a user's facility scope and the request's query arguments."""
     from routes.dashboard import DASHBOARD_CACHE
 
+    tid = normalize_tenant_id(tenant_id)
     fids_key = tuple(sorted(allowed_fids)) if allowed_fids is not None else None
-    cache_key = f"qaqc_dash_{fids_key}_{sorted(args.items())}"
+    cache_key = f"qaqc_dash_{tid}_{fids_key}_{sorted(args.items())}"
     cached_val = DASHBOARD_CACHE.get(cache_key)
     if cached_val is not None:
         return cached_val
 
-    f = DashboardFilter(allowed_fids, args)
+    f = DashboardFilter(allowed_fids, args, tenant_id=tid)
     scope_arg = args.get("scope")  # "1", "2", "3" or "all"
     limit, offset = paging(args)
     records, total_flagged, outliers = flagged_queue(f, scope_arg, limit, offset)

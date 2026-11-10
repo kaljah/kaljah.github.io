@@ -133,9 +133,14 @@ const OgmpTab: React.FC<OgmpTabProps> = ({
 
   return (
     <TabCard
-      title={t("OGMP 2.0 Site-Level Measurement Surveys")}
+      title={
+        <span className="inline-flex flex-wrap items-center gap-2">
+          <span>{t("OGMP 2.0 Site-Level Measurement Surveys")}</span>
+          <Badge tone="warning">{t("Preview / Roadmap")}</Badge>
+        </span>
+      }
       description={t(
-        "Manage top-down aerial, satellite, drone LiDAR, and site-level source measurements required for UNEP/IMEO Level 4 and Level 5 reconciliation.",
+        "Manage top-down aerial, satellite, drone LiDAR, and site-level source measurements for UNEP/IMEO Level 4 and Level 5 tracking (preview, reconciliation logic in development).",
       )}
       actions={
         <div className="flex items-center gap-2">

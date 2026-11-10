@@ -12,6 +12,7 @@ import math
 import re
 
 _NUMERIC_STRING = re.compile(r"^\s*[+-]?(nan|inf|infinity|(\d+\.?\d*|\.\d+)(e[+-]?\d+)?)\s*$", re.IGNORECASE)
+_THOUSANDS_COMMA_INT = re.compile(r"^\d{1,3}(,\d{3})+$")
 
 YEAR_MIN = 1900
 
@@ -155,6 +156,8 @@ def parse_number(value, field, *, required=True, min_value=None, max_value=None,
         raise ValidationError(f"'{field}' must be a number", field)
     if isinstance(value, str):
         v = value.strip().replace(" ", "")
+        if _THOUSANDS_COMMA_INT.match(v):
+            raise ValidationError(f"'{field}' must be a number", field)
         if "," in v and "." not in v:
             v = v.replace(",", ".")
         elif "," in v and "." in v:

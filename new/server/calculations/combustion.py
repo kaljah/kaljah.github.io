@@ -538,9 +538,14 @@ class FlaringCalculator(BaseCalculator):
                 return 0.0
 
         raw_c = {f"c{i}": _parse_c(comps.get(f"c{i}"), (ch4_fraction if i == 1 else 0.0)) for i in range(1, 11)}
-        raw_co2 = _parse_c(comps.get("co2_comp") or comps.get("co2_mol"), 0.0)
+        raw_co2 = _parse_c(comps.get("co2") or comps.get("co2_comp") or comps.get("co2_mol") or comps.get("co2_fraction"), 0.0)
         total_raw = sum(raw_c.values()) + raw_co2
-        is_pct = "%" in str(ch4_fraction) or any("%" in str(comps.get(f"c{i}", "")) for i in range(1, 11)) or "%" in str(comps.get("co2_comp", "")) or "%" in str(comps.get("co2_mol", "")) or total_raw > 1.0
+        is_pct = (
+            "%" in str(ch4_fraction)
+            or any("%" in str(comps.get(f"c{i}", "")) for i in range(1, 11))
+            or any("%" in str(comps.get(k, "")) for k in ("co2", "co2_comp", "co2_mol", "co2_fraction"))
+            or total_raw > 1.0
+        )
 
         if is_pct:  # Percentage format or has %
             c_fractions = {k: v / 100.0 for k, v in raw_c.items()}
@@ -626,6 +631,10 @@ class FlaringCalculator(BaseCalculator):
                     hhv_val = hhv_val * 26839.2
                 elif hhv_u in ("kj/m3", "kj_m3"):
                     hhv_val = hhv_val * 0.0268392
+                elif hhv_u in ("btu/m3", "btu_m3"):
+                    hhv_val = hhv_val / CONVERSIONS.get("m3_to_scf", 35.3147)
+                elif hhv_u in ("mmbtu/m3", "mmbtu_m3"):
+                    hhv_val = (hhv_val * 1e6) / CONVERSIONS.get("m3_to_scf", 35.3147)
                 elif hhv_u in ("mmbtu/mscf", "mmbtu/kscf"):
                     hhv_val = hhv_val * 1000.0
                 elif hhv_u in ("mmbtu/scf",):

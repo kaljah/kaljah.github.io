@@ -32,7 +32,7 @@ The frontend test harness (`new/client/tests/test_ui_stress_runner.mjs`) execute
   - String Sort (Facility Name): **2.02 ms**
   - Composite Multi-Key Sort: **4.69 ms**
 - **Filtering Benchmark (10,000 Rows)**:
-  - Multi-Criteria Filter (Year = 2024, Facility = "Hassi Messaoud", Process = "combustion"): **0.60 ms** (36 matching rows isolated).
+  - Multi-Criteria Filter (Year = 2024, Facility = "Basin Alpha", Process = "combustion"): **0.60 ms** (36 matching rows isolated).
 - **Pagination Chunking & Page Traversal**:
   - Page Size 25 (400 pages traversed): 327.82 ms (~0.82 ms/page)
   - Page Size 100 (100 pages traversed): 66.46 ms (~0.66 ms/page)

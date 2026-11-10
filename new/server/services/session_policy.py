@@ -9,7 +9,7 @@ import json
 import time
 
 IDLE_TIMEOUT_CHOICES = (15, 30, 60, 120, 240, 480)
-DEFAULT_IDLE_TIMEOUT_MINUTES = 30
+DEFAULT_IDLE_TIMEOUT_MINUTES = 15
 _CACHE_SECONDS = 5.0
 _cache = {"value": None, "at": 0.0}
 

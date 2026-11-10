@@ -496,12 +496,12 @@ test.describe.serial('Suite 11: Specialized Engineering Systems, EU CBAM & Enter
     const page = await itContext.newPage();
 
     // Authenticate specifically as IT Admin
-    console.log('[E2E ENG] Authenticating as IT Administrator (itadmin@sonatrach.dz)...');
+    console.log('[E2E ENG] Authenticating as IT Administrator (itadmin@example.org)...');
     await page.goto(`${FRONTEND}/login`, { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(800);
 
     const emailInput = page.locator('input[placeholder="Email Address"]').first();
-    await emailInput.fill('itadmin@sonatrach.dz');
+    await emailInput.fill('itadmin@example.org');
     const pwdInput = page.locator('input[type="password"]').first();
     await pwdInput.fill('itadmin123');
     await page.locator('button[type="submit"]:has-text("Sign In")').click();
@@ -528,9 +528,9 @@ test.describe.serial('Suite 11: Specialized Engineering Systems, EU CBAM & Enter
 
     // Populate user credentials and organizational properties
     const timestamp = Date.now();
-    const newUserEmail = `auditor_${timestamp}@sonatrach.dz`;
+    const newUserEmail = `auditor_${timestamp}@example.org`;
 
-    await page.locator('#um-modal-fullname').fill('Farid Belhadj (Field Auditor)');
+    await page.locator('#um-modal-fullname').fill('Farid Demo User A (Field Auditor)');
     await page.locator('#um-modal-email').fill(newUserEmail);
     await page.locator('#um-modal-department').fill('Field Operations');
     await page.locator('#um-modal-jobtitle').fill('Senior HSE Auditor');

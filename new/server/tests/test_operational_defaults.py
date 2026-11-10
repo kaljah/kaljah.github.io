@@ -18,9 +18,9 @@ def test_login_and_me_operational_defaults_regular_user(client):
         fac = Facility.query.filter_by(code="FAC-TEST-REGIONAL").first()
         if not fac:
             fac = Facility(
-                name="Hassi Messaoud Central Plant",
+                name="Basin Alpha Central Plant",
                 code="FAC-TEST-REGIONAL",
-                region="Hassi Messaoud",
+                region="Basin Alpha",
                 location="Ouargla",
                 division="Exploration & Production",
                 activity="Upstream",
@@ -34,10 +34,10 @@ def test_login_and_me_operational_defaults_regular_user(client):
             user = User(
                 email="reg_user_test@defaults.com",
                 fullName="Regional User Defaults Tester",
-                orgName="Sonatrach",
+                orgName="Demo Operator Co.",
                 sector="Energy",
                 role="user",
-                location="Hassi Messaoud",
+                location="Basin Alpha",
             )
             user.set_password("SecurePass123!")
             db.session.add(user)
@@ -51,8 +51,8 @@ def test_login_and_me_operational_defaults_regular_user(client):
     assert res.status_code == 200
     data = res.get_json()
     u = data["user"]
-    assert u["location"] == "Hassi Messaoud"
-    assert u["default_region"] in ["Hassi Messaoud", "Ouargla"]
+    assert u["location"] == "Basin Alpha"
+    assert u["default_region"] in ["Basin Alpha", "Ouargla"]
     assert u["default_division"] in ["Production", "Exploration & Production"]
     assert u["default_activity"] in ["Upstream", "Extraction"]
     assert u["default_facility_id"] is not None
@@ -61,8 +61,8 @@ def test_login_and_me_operational_defaults_regular_user(client):
     res_me = client.get("/api/auth/me")
     assert res_me.status_code == 200
     data_me = res_me.get_json()
-    assert data_me["location"] == "Hassi Messaoud"
-    assert data_me["default_region"] in ["Hassi Messaoud", "Ouargla"]
+    assert data_me["location"] == "Basin Alpha"
+    assert data_me["default_region"] in ["Basin Alpha", "Ouargla"]
     assert data_me["default_division"] in ["Production", "Exploration & Production"]
     assert data_me["default_activity"] in ["Upstream", "Extraction"]
 
@@ -89,7 +89,7 @@ def test_login_operational_defaults_superuser(client):
             super_user = User(
                 email="superuser_test@defaults.com",
                 fullName="Superuser Defaults Tester",
-                orgName="Sonatrach",
+                orgName="Demo Operator Co.",
                 sector="Energy",
                 role="superuser",
                 location="ADR",

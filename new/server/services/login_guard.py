@@ -15,12 +15,12 @@ ACCOUNT_LOCKED = "Too many failed sign-ins for this account. Try again in 15 min
 
 def get_login_rate_limit():
     """Failed sign-ins allowed per client address."""
-    return os.environ.get("LOGIN_RATE_LIMIT", "50 per 15 minutes")
+    return os.environ.get("LOGIN_RATE_LIMIT", "15 per 15 minutes")
 
 
 def get_login_account_limit():
     """Failed sign-ins allowed per account, from any address (per-account lockout)."""
-    return os.environ.get("LOGIN_ACCOUNT_LIMIT", "10 per 15 minutes")
+    return os.environ.get("LOGIN_ACCOUNT_LIMIT", "5 per 15 minutes")
 
 
 def login_account_key():
@@ -35,19 +35,25 @@ def failed_sign_in(response):
 def record_failed_sign_in(email, user):
     """FAILED_LOGIN entry in the audit log (the Audit Trail counts it as a security alert)."""
     from extensions import db
+    from services.sqlite_lock import sqlite_write_lock
     from utils import log_activity_and_notify
 
+    uid_str = str(user.id) if user else ""
+    actor_email = (user.email if user and user.email else email) or "Unknown User"
+    # End any deferred read snapshot before taking the SQLite write lock so login hash work stays
+    # parallel while audit writes serialize cleanly without SQLITE_BUSY_SNAPSHOT.
+    db.session.remove()
     try:
-        actor_email = (user.email if user and user.email else email) or "Unknown User"
-        log_activity_and_notify(
-            action="FAILED_LOGIN",
-            record_id=str(user.id) if user else "",
-            user=actor_email,
-            request=request,
-            entity="User",
-            details=f"Failed sign-in for {email[:120]}",
-        )
-        db.session.commit()
+        with sqlite_write_lock(db.engine):
+            log_activity_and_notify(
+                action="FAILED_LOGIN",
+                record_id=uid_str,
+                user=actor_email,
+                request=request,
+                entity="User",
+                details=f"Failed sign-in for {email[:120]}",
+            )
+            db.session.commit()
     except Exception as e:
         db.session.rollback()
         current_app.logger.error(f"Audit Log Error on failed login: {e}")

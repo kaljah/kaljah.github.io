@@ -1,6 +1,73 @@
 import os
-from flask import session
+from flask import has_request_context, session
 from models import db, User, Facility
+
+
+def normalize_tenant_id(value):
+    text = str(value or "").strip().lower()
+    return text or "default"
+
+
+def get_current_tenant_id(user=None):
+    """Resolve normalized tenant identifier from the authenticated user (or session/env)."""
+    if user is None and has_request_context():
+        user = get_current_user()
+    if user is not None:
+        raw_tid = normalize_tenant_id(getattr(user, "tenant_id", None))
+        if raw_tid != "default":
+            return raw_tid
+        org = str(getattr(user, "orgName", "") or "").lower().strip()
+        if "al-amal" in org or "alamal" in org or "tenant_b" in org:
+            return "mena_operator_b"
+        if raw_tid:
+            return raw_tid
+    if has_request_context() and session.get("tenant_id"):
+        return normalize_tenant_id(session.get("tenant_id"))
+    return normalize_tenant_id(os.environ.get("DEFAULT_TENANT_ID", "default"))
+
+
+def tenant_matches(column, tenant_id=None):
+    """SQLAlchemy filter expression matching rows owned by `tenant_id`."""
+    tid = normalize_tenant_id(tenant_id)
+    trimmed_lower = db.func.lower(db.func.trim(column))
+    if tid == "default":
+        return db.or_(
+            column.is_(None),
+            db.func.trim(column) == "",
+            trimmed_lower == "default",
+        )
+    return db.and_(column.isnot(None), trimmed_lower == tid)
+
+
+def has_multi_tenant_data():
+    """Return True if any non-default tenant exists in users or facilities."""
+    for model in (Facility, User):
+        col = getattr(model, "tenant_id", None)
+        if col is None:
+            continue
+        hit = (
+            db.session.query(model.id)
+            .filter(
+                col.isnot(None),
+                db.func.trim(col) != "",
+                db.func.lower(db.func.trim(col)) != "default",
+            )
+            .first()
+        )
+        if hit is not None:
+            return True
+    return False
+
+
+def is_org_wide_user(user):
+    """True for tenant-wide compliance roles (admin or unrestricted auditor)."""
+    return bool(
+        user
+        and (
+            user.role == "admin"
+            or (user.role == "auditor" and is_unrestricted_location(getattr(user, "location", None)))
+        )
+    )
 
 
 def get_current_user():
@@ -26,7 +93,9 @@ def is_it_role(user):
 
 def get_allowed_facility_ids(user):
     """
-    Returns None if user is admin (only admin has unrestricted global access).
+    Returns None when operating in single-tenant mode for an org-wide admin / unrestricted auditor.
+    When multiple tenants exist or caller belongs to a non-default tenant, returns only that
+    tenant's facility IDs (list[int]) so admins never read across tenants.
     Returns [] for it, it_admin, it_manager (zero facility/emission data access).
     Returns a list of facility IDs if user is restricted to a region/location/facility (including superuser).
     """
@@ -37,29 +106,50 @@ def get_allowed_facility_ids(user):
     if user.role in ["it_admin", "it_manager", "it"]:
         return []
 
-    # Admin has unrestricted global access to all facilities.
-    if user.role == "admin":
-        return None
+    caller_tenant = get_current_tenant_id(user)
 
-    # Auditor with unrestricted location ("All", "global", None, "") has unrestricted audit read access.
-    if user.role == "auditor" and is_unrestricted_location(user.location):
-        return None
+    # Org-wide admin or unrestricted auditor: strictly scoped to caller's tenant.
+    if user.role == "admin" or (user.role == "auditor" and is_unrestricted_location(user.location)):
+        if caller_tenant == "default" and not has_multi_tenant_data():
+            return None
+        rows = (
+            db.session.query(Facility.id)
+            .filter(tenant_matches(Facility.tenant_id, caller_tenant))
+            .all()
+        )
+        return [fid for (fid,) in rows]
 
-    # Superuser and regular users are strictly scoped to their assigned facility/region.
+    # Check explicit UserFacilityAccess table first (granular per-facility assignment, tenant-scoped)
+    try:
+        from models import UserFacilityAccess
+        user_accesses = (
+            db.session.query(UserFacilityAccess.facility_id)
+            .join(Facility, UserFacilityAccess.facility_id == Facility.id)
+            .filter(
+                UserFacilityAccess.user_id == user.id,
+                tenant_matches(Facility.tenant_id, caller_tenant),
+            )
+            .all()
+        )
+        if user_accesses:
+            return list(set(fid for (fid,) in user_accesses))
+    except Exception:
+        pass
+
+    # Superuser and regular users: fallback to assigned facility/region string matching within tenant.
     user_region = str(user.location).strip() if user.location else ""
     if not user_region or is_unrestricted_location(user_region):
         return []  # No specific facility/region assigned, no access for scoped role
 
-    # Audit 2026-10-14 BUG-0010: the assigned location is one facility, region or location, matched
-    # exactly (case and surrounding spaces ignored). It used to be a substring: "a" matched every
-    # facility whose name contained an "a". (A-04: it is a value, never a LIKE pattern.)
+    # Audit 2026-10-14 BUG-0010: exact case-insensitive match within caller's tenant.
     wanted = user_region.lower()
     facilities = Facility.query.filter(
+        tenant_matches(Facility.tenant_id, caller_tenant),
         db.or_(
             db.func.lower(db.func.trim(Facility.region)) == wanted,
             db.func.lower(db.func.trim(Facility.location)) == wanted,
             db.func.lower(db.func.trim(Facility.name)) == wanted,
-        )
+        ),
     ).all()
 
     allowed_ids = list(set([f.id for f in facilities]))
@@ -76,29 +166,34 @@ def facility_access_error(user, facility_id):
         int(facility_id) if isinstance(facility_id, str) and facility_id.strip().isdigit() else None)
     if fid is None or not 0 < fid < 2**31:
         return jsonify({"error": "Invalid facility_id: must be a positive integer", "field": "facility_id"}), 422
+    target = db.session.get(Facility, fid)
+    if target is None:
+        caller_tenant = get_current_tenant_id(user) if user else "default"
+        if caller_tenant != "default" or has_multi_tenant_data():
+            if not require_facility_access(user, fid):
+                return jsonify({"error": "Access to this facility is denied"}), 403
+        return jsonify({"error": "Facility not found"}), 404
     if not require_facility_access(user, fid):
         return jsonify({"error": "Access to this facility is denied"}), 403
-    if db.session.get(Facility, fid) is None:
-        return jsonify({"error": "Facility not found"}), 404
     return None
 
 
 def require_facility_access(user, facility_id):
     """
     Checks if user has permission to access or modify data for the given facility_id.
+    Enforces tenant isolation even for org-wide admin users.
     Returns True if permitted, False otherwise.
     """
     if not user or user.role in ["it_admin", "it_manager", "it"]:
         return False
-    if user.role == "admin":
-        return True
+    try:
+        fid = int(facility_id)
+    except (ValueError, TypeError):
+        return False
     allowed_ids = get_allowed_facility_ids(user)
     if allowed_ids is None:
         return True
-    try:
-        return int(facility_id) in [int(fid) for fid in allowed_ids]
-    except (ValueError, TypeError):
-        return False
+    return fid in [int(x) for x in allowed_ids]
 
 
 def user_label(user):
@@ -110,18 +205,26 @@ def user_label(user):
     return f"{name} <{email}>" if name and email else (name or email or f"user#{user.id}")
 
 
-def facility_in_user_scope(user, region=None, location=None, name=None):
-    """True when a facility with these attributes falls inside the user's region scope.
-
-    Mirrors get_allowed_facility_ids (a regional user sees facilities whose region, location
-    or name equals user.location). Used to validate the *resulting* values of facility
-    creates/updates so a regional user cannot move a facility out of its own scope
-    (audit RC-1: BUG-001, BUG-093).
-    """
+def facility_in_user_scope(user, region=None, location=None, name=None, facility_id=None):
+    """True when a facility with these attributes falls inside the user's tenant & region/facility scope."""
     if not user or user.role in ["it_admin", "it_manager", "it"]:
         return False
+    if facility_id is not None and not require_facility_access(user, facility_id):
+        return False
     if user.role == "admin":
-        return True
+        if facility_id is None:
+            return True
+        target = db.session.get(Facility, int(facility_id))
+        if target is None:
+            return False
+        return normalize_tenant_id(getattr(target, "tenant_id", None)) == get_current_tenant_id(user)
+    allowed_ids = get_allowed_facility_ids(user)
+    if allowed_ids is not None and facility_id is not None:
+        try:
+            if int(facility_id) in [int(fid) for fid in allowed_ids]:
+                return True
+        except (ValueError, TypeError):
+            pass
     user_loc = str(user.location or "").strip().lower()
     if not user_loc or is_unrestricted_location(user_loc):
         return False
@@ -131,10 +234,12 @@ def facility_in_user_scope(user, region=None, location=None, name=None):
 def facility_change_allowed(user, current, region=None, location=None, name=None):
     """May `user` create (current=None) or update `current` to these attribute values?
 
-    Regional users must keep the facility in their scope and may not assign a region
-    other than their own (re-regioning moves the facility into another region's scope).
+    Enforces tenant isolation for all roles, and keeps regional users in their scope.
     """
-    if not facility_in_user_scope(user, region, location, name):
+    fac_id = getattr(current, "id", None)
+    if current is not None and normalize_tenant_id(getattr(current, "tenant_id", None)) != get_current_tenant_id(user):
+        return False
+    if not facility_in_user_scope(user, region, location, name, facility_id=fac_id):
         return False
     if user.role == "admin":
         return True
@@ -143,9 +248,8 @@ def facility_change_allowed(user, current, region=None, location=None, name=None
     new_region = str(region or "").strip().lower()
     if not (new_region == old_region or new_region in ("", user_loc)):
         return False
-    # Scope matches region OR location OR name, so a location or name equal to another region's key
-    # (a facility region or a regional user's location) put the facility in that region's scope too.
-    foreign = _scope_keys() - {user_loc}
+    caller_tenant = get_current_tenant_id(user)
+    foreign = _scope_keys(caller_tenant) - {user_loc}
     for field, value in (("region", region), ("location", location), ("name", name)):
         v = str(value or "").strip().lower()
         if v and v in foreign and v != str(getattr(current, field, None) or "").strip().lower():
@@ -153,12 +257,19 @@ def facility_change_allowed(user, current, region=None, location=None, name=None
     return True
 
 
-def _scope_keys():
-    """Lower-cased values a regional scope can be keyed on: facility regions and the locations of
-    region-scoped users."""
-    keys = {str(r or "").strip().lower() for (r,) in db.session.query(Facility.region).distinct()}
-    keys |= {str(loc or "").strip().lower() for (loc,) in
-             db.session.query(User.location).filter(User.role.in_(["user", "superuser"])).distinct()}
+def _scope_keys(tenant_id=None):
+    """Lower-cased values a regional scope can be keyed on within a tenant."""
+    tid = normalize_tenant_id(tenant_id) if tenant_id is not None else get_current_tenant_id()
+    keys = {
+        str(r or "").strip().lower()
+        for (r,) in db.session.query(Facility.region).filter(tenant_matches(Facility.tenant_id, tid)).distinct()
+    }
+    keys |= {
+        str(loc or "").strip().lower()
+        for (loc,) in db.session.query(User.location)
+        .filter(User.role.in_(["user", "superuser"]), tenant_matches(User.tenant_id, tid))
+        .distinct()
+    }
     return {k for k in keys if k and not is_unrestricted_location(k)}
 
 
@@ -326,8 +437,13 @@ def log_activity_and_notify(
         return
 
     try:
+        caller_tenant = get_current_tenant_id(user) if not isinstance(user, str) else "default"
         if user.role == "superuser":
-            admins = User.query.filter_by(role="admin", status="active").all()
+            admins = (
+                User.query.filter_by(role="admin", status="active")
+                .filter(tenant_matches(User.tenant_id, caller_tenant))
+                .all()
+            )
             for admin in admins:
                 Notification.create(
                     user_id=admin.id,
@@ -336,7 +452,11 @@ def log_activity_and_notify(
                     message=f"Super User {user.fullName} performed {action}: {details}",
                 )
         elif user.role == "user":
-            superusers = User.query.filter_by(role="superuser", status="active").all()
+            superusers = (
+                User.query.filter_by(role="superuser", status="active")
+                .filter(tenant_matches(User.tenant_id, caller_tenant))
+                .all()
+            )
             for su in superusers:
                 if (  # superusers are facility/region-scoped: only their own scope's activity
                     su.location

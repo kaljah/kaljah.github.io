@@ -305,7 +305,7 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({ healthScore,
 const SCOPES: { key: string; total: string; label: string; icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean | "true" | "false" }>; tone: BadgeTone; note: string }[] = [
   { key: "scope1", total: "s1_total_tco2e", label: t("Scope 1"), icon: Flame, tone: "success", note: t("Combustion, flaring, vented & fugitive sources") },
   { key: "scope2", total: "s2_total_tco2e", label: t("Scope 2"), icon: Zap, tone: "info", note: t("Purchased electricity & grid emission factors") },
-  { key: "scope3", total: "s3_total_tco2e", label: t("Scope 3"), icon: Layers, tone: "brand", note: t("Upstream & downstream category estimations") },
+  { key: "scope3", total: "s3_total_tco2e", label: t("Scope 3"), icon: Layers, tone: "brand", note: t("Spend-based screening across upstream & downstream categories") },
 ];
 
 export interface UncertaintyPanelProps {

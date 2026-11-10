@@ -12,10 +12,11 @@ Rules:
 from typing import Optional, Tuple
 from extensions import db
 from models import PeriodLock
+from utils import tenant_matches
 
 
-def is_period_locked(year: Optional[int], month: Optional[int] = None) -> bool:
-    """Checks whether the given reporting year/month is locked."""
+def is_period_locked(year: Optional[int], month: Optional[int] = None, tenant_id: Optional[str] = None) -> bool:
+    """Checks whether the given reporting year/month is locked for the specified tenant."""
     if year is None:
         return False
     try:
@@ -23,7 +24,11 @@ def is_period_locked(year: Optional[int], month: Optional[int] = None) -> bool:
     except (ValueError, TypeError):
         return False
 
-    q = PeriodLock.query.filter(PeriodLock.year == y, PeriodLock.status == "locked")
+    q = PeriodLock.query.filter(
+        PeriodLock.year == y,
+        PeriodLock.status == "locked",
+        tenant_matches(PeriodLock.tenant_id, tenant_id or "default"),
+    )
     # If a year-level lock exists (month is None), the entire year is locked
     locks = q.all()
     if not locks:
@@ -46,6 +51,7 @@ def check_period_lock_for_record(
     year: Optional[int],
     month: Optional[int] = None,
     is_prior_period_adjustment: bool = False,
+    tenant_id: Optional[str] = None,
 ) -> Optional[Tuple[dict, int]]:
     """
     Returns an error payload and 403 status if the period is locked and the submission
@@ -54,7 +60,7 @@ def check_period_lock_for_record(
     if is_prior_period_adjustment:
         return None
 
-    if is_period_locked(year, month):
+    if is_period_locked(year, month, tenant_id=tenant_id):
         return (
             {
                 "error": f"Reporting period {year} is locked after official sign-off. Cannot create, edit, or delete records in a locked period without an authorized unlock.",

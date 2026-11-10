@@ -433,7 +433,7 @@ class TestExhaustiveUnitConversionsAllMatrices:
             1.0: ("m3", "m³", "sm3", "sm³", "cubic_meter", "cubic_meters", "actual_m3", "actualm3", "am3"),
             (273.15 + 15.5556) / 273.15: ("nm3", "nm³"),     # normal m3 (0 C) in standard m3 (60 F)
             1e3: ("ksm3",), 1e6: ("mmsm3",),
-            ft3: ("acf", "scf", "cf", "ft3"), ft3 * 1e3: ("mscf", "mcf"), ft3 * 1e6: ("mmscf",),
+            ft3: ("acf", "scf", "cf", "ft3"), ft3 * 1e3: ("mscf", "mcf"), ft3 * 1e6: ("mmscf", "mmcf"),
             bbl: ("bbl", "barrel", "barrels"), bbl * 1e3: ("kbbl", "mbbl"), bbl * 1e6: ("mmbbl",),
             gal: ("gal", "gallon", "gallons"), 1e-3: ("l", "liter", "liters", "litre", "litres"),
         }
@@ -484,11 +484,13 @@ class TestExhaustiveUnitConversionsAllMatrices:
         """Every energy unit is pinned to its defined size (1 Btu = 1,055.05585 J (IT), 1 kWh = 3.6 MJ, 1 therm = 10^5 Btu;
         the Compendium prints 1,055.056 J/Btu in Table 3-4 and Exhibit 4.3)."""
         btu = 1055.05585262e-6   # MJ
+        boe = 5.8 * 1055.05585262
         groups = {
             1.0: ("mj", "megajoule", "megajoules"), 1e-3: ("kj", "kilojoule", "kilojoules"),
             1e3: ("gj", "gigajoule", "gigajoules"), 1e6: ("tj", "terajoule"),
             btu: ("btu", "btus"), btu * 1e3: ("kbtu",), btu * 1e6: ("mmbtu", "mm_btu"), btu * 1e5: ("therm", "therms"),
             3.6: ("kwh", "kilowatt_hour"), 3600.0: ("mwh", "megawatt_hour"),
+            boe: ("boe", "barrel_of_oil_equivalent", "barrels_of_oil_equivalent"), boe * 1e6: ("mmboe",),
         }
         expected = {u: v for v, names in groups.items() for u in names}
         assert e1 in expected, f"energy unit {e1!r} has no pinned value"

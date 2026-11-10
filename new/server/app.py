@@ -170,11 +170,16 @@ def receive_after_commit(session):
     _wal_commit_counter += 1
     if _wal_commit_counter % _WAL_CHECKPOINT_INTERVAL == 0:
         try:
-            conn = db.engine.raw_connection()
-            driver_conn = getattr(conn, "driver_connection", getattr(conn, "connection", None))
-            if isinstance(driver_conn, sqlite3.Connection):
-                driver_conn.execute("PRAGMA wal_checkpoint(PASSIVE)")
-            conn.close()
+            from services.sqlite_lock import sqlite_write_lock
+
+            with sqlite_write_lock(db.engine):
+                conn = db.engine.raw_connection()
+                driver_conn = getattr(conn, "driver_connection", None)
+                if driver_conn is None:
+                    driver_conn = getattr(conn, "connection", None)
+                if isinstance(driver_conn, sqlite3.Connection):
+                    driver_conn.execute("PRAGMA wal_checkpoint(PASSIVE)")
+                conn.close()
         except Exception as _wal_err:
             app.logger.warning(f"WAL checkpoint failed: {_wal_err}")
 
@@ -262,6 +267,37 @@ def reject_malformed_query_parameters():
         from werkzeug.datastructures import ImmutableMultiDict
         request.args = ImmutableMultiDict(list(request.args.items(multi=True)) + [("facilityId", request.args["facility_id"])])
 
+
+
+@app.before_request
+def serialize_sqlite_writes():
+    """Serialize mutating HTTP requests on SQLite before the first DB query opens a read snapshot.
+
+    /api/auth/login runs CPU-heavy password hashing outside the lock and acquires
+    ``sqlite_write_lock`` strictly for its quick DB write/commit phase.
+    """
+    if request.method not in ("POST", "PUT", "PATCH", "DELETE"):
+        return None
+    if request.path.rstrip("/") == "/api/auth/login":
+        return None
+    from services.sqlite_lock import acquire_sqlite_write_lock
+
+    acquire_sqlite_write_lock(db.engine)
+    return None
+
+
+@app.teardown_request
+def release_sqlite_write_lock_on_teardown(exc=None):
+    from services.sqlite_lock import release_all_sqlite_write_locks
+
+    release_all_sqlite_write_locks()
+
+
+@app.teardown_appcontext
+def release_sqlite_write_lock_on_appcontext(exc=None):
+    from services.sqlite_lock import release_all_sqlite_write_locks
+
+    release_all_sqlite_write_locks()
 
 
 @app.before_request
@@ -587,23 +623,42 @@ def ensure_database_indexes():
             "CREATE INDEX IF NOT EXISTS ix_emissions_status ON emissions(status);",
             "CREATE INDEX IF NOT EXISTS ix_emissions_fac_yr_status ON emissions(facility_id, year, status);",
             "CREATE INDEX IF NOT EXISTS ix_emissions_process_type ON emissions(process_type);",
+            "CREATE INDEX IF NOT EXISTS ix_emissions_dash_status_test_yr_proc_fac ON emissions(status, is_test, year, process_type, facility_id);",
+            "CREATE INDEX IF NOT EXISTS ix_emissions_fac_yr_status_test ON emissions(facility_id, year, status, is_test);",
             "CREATE INDEX IF NOT EXISTS ix_facilities_region ON facilities(region);",
             "CREATE INDEX IF NOT EXISTS ix_facilities_is_test ON facilities(is_test);",
-            "CREATE INDEX IF NOT EXISTS ix_activity_log_timestamp_action ON activity_logs(timestamp, action);",
+            "CREATE INDEX IF NOT EXISTS ix_facilities_dash_tenant_test_filters ON facilities(tenant_id, is_test, activity, division, segment);",
+            "CREATE INDEX IF NOT EXISTS ix_activity_log_timestamp_action ON activity_log(timestamp, action);",
             "CREATE INDEX IF NOT EXISTS ix_production_data_facility_id ON production_data(facility_id);",
             "CREATE INDEX IF NOT EXISTS ix_production_data_year ON production_data(year);",
+            "CREATE INDEX IF NOT EXISTS ix_prod_dash_test_yr_fac ON production_data(is_test, year, facility_id);",
             "CREATE INDEX IF NOT EXISTS ix_scope2_emissions_year ON scope2_emissions(year);",
             "CREATE INDEX IF NOT EXISTS ix_scope2_emissions_status ON scope2_emissions(status);",
+            "CREATE INDEX IF NOT EXISTS ix_scope2_dash_status_yr_fac ON scope2_emissions(status, year, facility_id);",
             "CREATE INDEX IF NOT EXISTS ix_scope3_emissions_year ON scope3_emissions(year);",
             "CREATE INDEX IF NOT EXISTS ix_scope3_emissions_status ON scope3_emissions(status);",
+            "CREATE INDEX IF NOT EXISTS ix_scope3_dash_status_yr_fac_cat ON scope3_emissions(status, year, facility_id, category);",
+            "CREATE INDEX IF NOT EXISTS ix_ogmp_surveys_fac_yr ON ogmp_surveys(facility_id, year);",
+            "CREATE INDEX IF NOT EXISTS ix_flaring_details_status_yr_fac ON flaring_details(status, year, facility_id);",
+            "CREATE INDEX IF NOT EXISTS ix_mitigation_projects_test_yr_fac ON mitigation_projects(is_test, year, facility_id);",
         ]
         with db.engine.connect() as conn:
             for q in queries:
                 try:
                     conn.execute(text(q))
+                    conn.commit()
                 except Exception:
-                    pass
-            conn.commit()
+                    conn.rollback()
+            if db.engine.dialect.name == "sqlite":
+                try:
+                    stat_exists = conn.execute(
+                        text("SELECT 1 FROM sqlite_master WHERE type='table' AND name='sqlite_stat1'")
+                    ).fetchone()
+                    if not stat_exists:
+                        conn.execute(text("ANALYZE"))
+                        conn.commit()
+                except Exception:
+                    conn.rollback()
     except Exception as e:
         app.logger.warning(f"Could not ensure database indexes: {e}")
 
@@ -720,6 +775,6 @@ if __name__ == "__main__":
         except Exception:
             pass
 
-    # SEC-05 FIX: never run debug=True in production; bind to localhost only
     is_debug = os.environ.get("FLASK_DEBUG", "false").lower() == "true"
-    app.run(debug=is_debug, host="127.0.0.1", port=int(os.environ.get("PORT", 5000)))
+    bind_host = os.environ.get("HOST", "0.0.0.0")
+    app.run(debug=is_debug, host=bind_host, port=int(os.environ.get("PORT", 5000)))

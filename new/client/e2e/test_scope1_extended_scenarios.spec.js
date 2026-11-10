@@ -189,7 +189,7 @@ test.describe('Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit', () => {
       },
       {
         name: 'Crude Oil (South - Upstream)',
-        facilitySearch: 'Sonatrach',
+        facilitySearch: 'Demo Operator Co.',
         facilityId: 4,
         processLabel: 'Stationary Combustion',
         stream: 'Upstream',
@@ -199,7 +199,7 @@ test.describe('Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit', () => {
       },
       {
         name: 'Natural Gas - 4-Stroke Lean Burn Engine (High CH4 Slip)',
-        facilitySearch: 'Sonatrach',
+        facilitySearch: 'Demo Operator Co.',
         facilityId: 4,
         processLabel: 'Stationary Combustion',
         stream: 'Upstream',
@@ -209,7 +209,7 @@ test.describe('Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit', () => {
       },
       {
         name: 'Natural Gas Flaring - Elevated (South)',
-        facilitySearch: 'Sonatrach',
+        facilitySearch: 'Demo Operator Co.',
         facilityId: 4,
         processLabel: 'Flaring',
         stream: 'Upstream',
@@ -321,7 +321,7 @@ test.describe('Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit', () => {
     const tier3Scenarios = [
       {
         name: 'Drilling Mud Degassing - Water Based Mud',
-        facilitySearch: 'Sonatrach',
+        facilitySearch: 'Demo Operator Co.',
         facilityId: 4,
         stream: 'Upstream',
         processLabel: 'Drilling Operations',
@@ -353,7 +353,7 @@ test.describe('Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit', () => {
       },
       {
         name: 'Drilling Mud Degassing - Oil Based Mud (High Degassing Factor)',
-        facilitySearch: 'Sonatrach',
+        facilitySearch: 'Demo Operator Co.',
         facilityId: 4,
         stream: 'Upstream',
         processLabel: 'Drilling Operations',
@@ -393,7 +393,7 @@ test.describe('Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit', () => {
       },
       {
         name: 'Fugitive Emissions - Screening PPM Method (15,000 PPM Multiplier)',
-        facilitySearch: 'Sonatrach',
+        facilitySearch: 'Demo Operator Co.',
         facilityId: 4,
         stream: 'Upstream',
         processLabel: 'Fugitive Emissions',
@@ -430,7 +430,7 @@ test.describe('Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit', () => {
       },
       {
         name: 'Storage Tank Flashing with Vapor Recovery Unit (98% Control)',
-        facilitySearch: 'Sonatrach',
+        facilitySearch: 'Demo Operator Co.',
         facilityId: 4,
         stream: 'Upstream',
         processLabel: 'Storage Tank - Flashing/Events',
@@ -486,7 +486,7 @@ test.describe('Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit', () => {
       },
       {
         name: 'Flaring - Enclosed Flare with Ground Burner (99.5% Destruction)',
-        facilitySearch: 'Sonatrach',
+        facilitySearch: 'Demo Operator Co.',
         facilityId: 4,
         stream: 'Upstream',
         processLabel: 'Flaring',
@@ -527,7 +527,7 @@ test.describe('Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit', () => {
       },
       {
         name: 'Acid Gas Removal (AGR) - High Sour Gas with Thermal Oxidizer',
-        facilitySearch: 'Sonatrach',
+        facilitySearch: 'Demo Operator Co.',
         facilityId: 4,
         stream: 'Midstream',
         processLabel: 'Acid Gas Removal (AGR)',
@@ -550,7 +550,7 @@ test.describe('Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit', () => {
       },
       {
         name: 'Glycol Dehydrator with Stripping Gas & Condenser Control',
-        facilitySearch: 'Sonatrach',
+        facilitySearch: 'Demo Operator Co.',
         facilityId: 4,
         stream: 'Midstream',
         processLabel: 'Dehydrator',
@@ -576,7 +576,7 @@ test.describe('Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit', () => {
       },
       {
         name: 'Liquids Unloading - Deep Gas Well with Flaring Control',
-        facilitySearch: 'Sonatrach',
+        facilitySearch: 'Demo Operator Co.',
         facilityId: 4,
         stream: 'Upstream',
         processLabel: 'Liquids Unloading',

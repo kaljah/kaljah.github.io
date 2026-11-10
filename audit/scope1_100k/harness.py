@@ -17,13 +17,13 @@ ADMIN_PASSWORD = "Audit-Passw0rd!2026"
 
 # Facilities referenced by the CSV (names exercise apostrophes, accents, spaces, digits)
 FACILITIES = [
-    ("Hassi Messaoud Gas Plant", "HMD-GP", "Ouargla", "Production", "Upstream"),
-    ("Hassi R'Mel Hub", "HRM-HUB", "Laghouat", "Production", "Upstream"),
+    ("Basin Alpha Gas Plant", "HMD-GP", "Ouargla", "Production", "Upstream"),
+    ("Basin Beta Hub", "HRM-HUB", "Laghouat", "Production", "Upstream"),
     ("In Amenas CPF", "IAM-CPF", "Illizi", "Production", "Upstream"),
     ("Arzew GNL-1Z", "ARZ-GNL1Z", "Oran", "LNG", "Midstream"),
     ("Skikda Raffinerie", "SKK-RA1K", "Skikda", "Refining", "Downstream"),
     ("Béjaïa Terminal", "BJA-TERM", "Béjaïa", "Transport", "Midstream"),
-    ("Rhourde Nouss Complex", "RNS-CPX", "Illizi", "Production", "Upstream"),
+    ("Basin Gamma Complex", "RNS-CPX", "Illizi", "Production", "Upstream"),
     ("Tin Fouyé Tabankort", "TFT-01", "Illizi", "Production", "Upstream"),
     ("Gassi Touil Field", "GTL-FLD", "Ouargla", "Production", "Upstream"),
     ("Ohanet Gas Plant 2", "OHN-GP2", "Illizi", "Production", "Upstream"),

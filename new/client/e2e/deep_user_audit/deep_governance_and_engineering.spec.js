@@ -89,7 +89,7 @@ test.describe.serial('Suite 9: Advanced Engineering, Governance & Enterprise Ope
     const testFactorName = `Skikda Light Refinery Gas 2026`;
 
     console.log(`[E2E GOV] Filling custom factor form for ${testFactorName}...`);
-    await page.locator('input[placeholder*="Hassi R\'Mel Fuel Gas"]').fill(testFactorName);
+    await page.locator('input[placeholder*="Basin Alpha R\'Mel Fuel Gas"]').fill(testFactorName);
     
     // Units
     // the unit is the shared dropdown (button + options) since the UI modernization, no longer a <select>
@@ -109,7 +109,7 @@ test.describe.serial('Suite 9: Advanced Engineering, Governance & Enterprise Ope
     await page.locator('input[placeholder="7.0"]').fill('4.8');
 
     // Source
-    await page.locator('input[placeholder*="Sonatrach Analysis Certificate"]').fill('ISO 17025 Certified GC-2026-SKIKDA');
+    await page.locator('input[placeholder*="Demo Operator Co. Analysis Certificate"]').fill('ISO 17025 Certified GC-2026-SKIKDA');
 
     await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'gov01_quickadd_factor_created.png') });
     copyArtifact('gov01_quickadd_factor_created.png');
@@ -168,7 +168,7 @@ test.describe.serial('Suite 9: Advanced Engineering, Governance & Enterprise Ope
     await page.locator('input[name="co2_factor"]').fill('1.985');
     await page.locator('input[name="ch4_factor"]').fill('0.00035');
     await page.locator('input[name="n2o_factor"]').fill('0.00002');
-    await page.locator('input[name="source"]').fill('Sonatrach Central Gas Lab Report #2026-LGH-09');
+    await page.locator('input[name="source"]').fill('Demo Operator Co. Central Gas Lab Report #2026-LGH-09');
     await page.locator('textarea[name="description"]').fill('Field gas blend for upstream separation and booster compression.');
 
     await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'gov02_factors_registry_workbench.png') });

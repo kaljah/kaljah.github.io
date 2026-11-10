@@ -3,7 +3,15 @@ from flask import Blueprint, request, jsonify, session, current_app
 from models import CustomFactor, User
 from extensions import db
 from routes.auth import superuser_required, login_required
-from utils import get_current_user, internal_error, log_activity_and_notify
+from utils import (
+    facility_access_error,
+    get_current_tenant_id,
+    get_current_user,
+    internal_error,
+    log_activity_and_notify,
+    normalize_tenant_id,
+    tenant_matches,
+)
 from services.custom_factor_policy import (
     PLAUSIBILITY_BOUNDS, check_update, factor_references, governance, second_approver_required, with_justification,
 )
@@ -15,12 +23,13 @@ custom_factors_bp = Blueprint("custom_factors", __name__)
 @custom_factors_bp.route("/", methods=["GET"])
 @login_required
 def get_custom_factors():
-    """Get all custom emission factors"""
+    """Get all custom emission factors for the caller's tenant"""
     user = get_current_user()
     if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT personnel do not have access to operational factor data"}), 403
 
-    q = CustomFactor.query
+    caller_tenant = get_current_tenant_id(user)
+    q = CustomFactor.query.filter(tenant_matches(CustomFactor.tenant_id, caller_tenant))
     if request.args.get("include_archived") not in ("1", "true"):
         q = q.filter(CustomFactor.is_archived.is_(False))
     factors = q.all()
@@ -53,6 +62,7 @@ def get_custom_factors():
                 "facility_id": getattr(f, "facility_id", None),
                 "region": getattr(f, "region", None),
                 "gas_composition": f.gas_composition,
+                "tenant_id": getattr(f, "tenant_id", None) or "default",
             }
             for f in factors
         ]
@@ -105,10 +115,13 @@ def _text(value):
     return value.strip() if isinstance(value, str) else ""  # a number or object is no name (pilot check)
 
 
-def _name_taken(name, exclude_id=None):
-    """BUG-065: factor names are unique (case-insensitive) among active factors."""
-    q = CustomFactor.query.filter(db.func.lower(CustomFactor.name) == name.strip().lower(),
-                                  CustomFactor.is_archived.is_(False))
+def _name_taken(name, exclude_id=None, tenant_id=None):
+    """BUG-065: factor names are unique (case-insensitive) among active factors within a tenant."""
+    q = CustomFactor.query.filter(
+        tenant_matches(CustomFactor.tenant_id, tenant_id or "default"),
+        db.func.lower(CustomFactor.name) == name.strip().lower(),
+        CustomFactor.is_archived.is_(False),
+    )
     if exclude_id is not None:
         q = q.filter(CustomFactor.id != exclude_id)
     return db.session.query(q.exists()).scalar()
@@ -153,6 +166,7 @@ def _check_plausibility(data):
 def create_custom_factor():
     """Create a new custom emission factor (Super User / Admin only)"""
     user = db.session.get(User, session.get("user_id"))
+    caller_tenant = get_current_tenant_id(user)
     data = request.get_json() or {}
     if "source" not in data:
         data["source"] = "Site measurement / user defined"
@@ -166,6 +180,10 @@ def create_custom_factor():
             "error": "Do not append timestamps or random suffixes to factor names. Use versioning instead of timestamp-suffixed names.",
             "code": "INVALID_NAME"
         }), 400
+
+    if data.get("facility_id") not in (None, ""):
+        if (denied := facility_access_error(user, data.get("facility_id"))):
+            return denied
 
     field = "unit"
     try:
@@ -188,7 +206,7 @@ def create_custom_factor():
         _require_some_factor(co2_factor, ch4_factor, n2o_factor)
     except ValueError as err:
         return jsonify({"error": str(err)}), 400
-    if _name_taken(factor_name):
+    if _name_taken(factor_name, tenant_id=caller_tenant):
         return jsonify({"error": f"A custom factor named '{factor_name}' already exists"}), 409
 
     # Maker-checker policy for custom factors (HR-06): source required, out-of-range values need a
@@ -221,6 +239,7 @@ def create_custom_factor():
         facility_id=data.get("facility_id"),
         region=data.get("region"),
         gas_composition=data.get("gas_composition"),
+        tenant_id=caller_tenant,
     )
 
     try:
@@ -254,6 +273,7 @@ def update_custom_factor(factor_id):
     """Update a custom emission factor (Super User / Admin only)"""
     user_id = session.get("user_id")
     user = db.session.get(User, user_id)
+    caller_tenant = get_current_tenant_id(user)
 
     factor = db.session.get(CustomFactor, factor_id)
     if not factor:
@@ -275,7 +295,7 @@ def update_custom_factor(factor_id):
         fn = _text(data.get("factor_name") or data.get("name") or data.get("fuel_name"))
         if not fn or fn.lower() in ("none", "null", "undefined"):
             return jsonify({"error": "Factor name cannot be empty or 'None'", "field": "name"}), 400
-        if _name_taken(fn, exclude_id=factor.id):
+        if _name_taken(fn, exclude_id=factor.id, tenant_id=caller_tenant):
             return jsonify({"error": f"A custom factor named '{fn}' already exists"}), 409
         factor.name = fn
 
@@ -334,6 +354,10 @@ def update_custom_factor(factor_id):
     if "gas_composition" in data:
         factor.gas_composition = data["gas_composition"]
     if "facility_id" in data:
+        if data["facility_id"] not in (None, ""):
+            if (f_denied := facility_access_error(user, data["facility_id"])):
+                db.session.rollback()
+                return f_denied
         factor.facility_id = data["facility_id"]
     if "region" in data:
         factor.region = data["region"]
@@ -342,8 +366,20 @@ def update_custom_factor(factor_id):
     value_changes = [f for f in changes if f in VALUE_FIELDS]
     if value_changes:
         refs = factor_references(factor)
-        # Part 2.1: Editing a custom factor creates a new version, never overwriting existing references
-        if refs > 0 or data.get("create_version") is True or request.args.get("create_version") == "true":
+        create_ver = (
+            data.get("create_version") is True
+            or request.args.get("create_version") == "true"
+            or bool(data.get("valid_from"))
+            or (data.get("version") and data["version"] != before.get("version"))
+        )
+        if refs > 0 and not create_ver:
+            db.session.rollback()
+            return jsonify({
+                "error": f"Custom factor '{factor.name}' is referenced by {refs} emission records and its values are locked",
+                "fields": value_changes,
+            }), 409
+        # Part 2.1: Editing a custom factor with create_version creates a new version, never overwriting existing references
+        if create_ver:
             new_co2 = factor.co2_factor
             new_ch4 = factor.ch4_factor
             new_n2o = factor.n2o_factor
@@ -406,6 +442,7 @@ def update_custom_factor(factor_id):
                 facility_id=new_fac_id,
                 region=new_region,
                 gas_composition_json=new_gas_comp,
+                tenant_id=caller_tenant,
             )
             db.session.add(new_factor)
             db.session.commit()
@@ -460,9 +497,13 @@ def update_custom_factor(factor_id):
 
 
 def _org_factor_denied(user, factor, action):
-    """Audit 2026-10-14 BUG-0044: custom factors are organisation-wide. An approved factor, or one another
-    account created, is archived or deleted by an administrator only (a regional superuser could remove
-    factors other regions use)."""
+    """Audit 2026-10-14 BUG-0044: custom factors are organisation-wide within a tenant.
+    Cross-tenant access is always denied; within a tenant, an approved factor or one another
+    account created is archived or deleted by an administrator only."""
+    caller_tenant = get_current_tenant_id(user)
+    factor_tenant = normalize_tenant_id(getattr(factor, "tenant_id", None))
+    if factor_tenant != caller_tenant:
+        return jsonify({"error": "Forbidden: Factor belongs to another tenant"}), 403
     if user is not None and user.role == "admin":
         return None
     if factor.status == "Approved" or factor.created_by != getattr(user, "id", None):
@@ -552,6 +593,7 @@ def import_custom_factors():
     """Bulk import custom factors from CSV/Excel (Super User / Admin only)"""
     user_id = session.get("user_id")
     user = db.session.get(User, user_id)
+    caller_tenant = get_current_tenant_id(user)
 
     data = request.get_json() or {}
     factors_data = data.get("factors", [])
@@ -570,7 +612,7 @@ def import_custom_factors():
         if not name or not unit:
             skipped.append({"row": i + 1, "error": "name and unit are required"})
             continue
-        if name.lower() in seen or _name_taken(name):
+        if name.lower() in seen or _name_taken(name, tenant_id=caller_tenant):
             skipped.append({"row": i + 1, "error": f"duplicate factor name '{name}'"})
             continue
         try:
@@ -622,6 +664,7 @@ def import_custom_factors():
             status=initial_factor_status,
             approved_by=user_id if initial_factor_status == "Approved" else None,
             approved_at=datetime.datetime.now(datetime.timezone.utc) if initial_factor_status == "Approved" else None,
+            tenant_id=caller_tenant,
         )
         db.session.add(factor)
         imported_count += 1
@@ -652,10 +695,13 @@ def approve_custom_factor(factor_id):
     user = get_current_user()
     if not user or user.role not in FACTOR_APPROVER_ROLES:
         return jsonify({"error": "Only superusers and administrators can approve custom emission factors"}), 403
+    caller_tenant = get_current_tenant_id(user)
 
     factor = db.session.get(CustomFactor, factor_id)
     if not factor or factor.is_archived:
         return jsonify({"error": "Custom factor not found"}), 404
+    if normalize_tenant_id(getattr(factor, "tenant_id", None)) != caller_tenant:
+        return jsonify({"error": "Forbidden: Factor belongs to another tenant"}), 403
 
     if getattr(factor, "status", None) == "Approved":
         return jsonify({"message": "Factor is already approved", "id": factor.id}), 200
@@ -692,10 +738,13 @@ def reject_custom_factor(factor_id):
     user = get_current_user()
     if not user or user.role not in FACTOR_APPROVER_ROLES:
         return jsonify({"error": "Only superusers and administrators can reject custom emission factors"}), 403
+    caller_tenant = get_current_tenant_id(user)
 
     factor = db.session.get(CustomFactor, factor_id)
     if not factor or factor.is_archived:
         return jsonify({"error": "Custom factor not found"}), 404
+    if normalize_tenant_id(getattr(factor, "tenant_id", None)) != caller_tenant:
+        return jsonify({"error": "Forbidden: Factor belongs to another tenant"}), 403
     # review 2026-10-15: an approved factor (possibly used by records) is retired by archiving it, not rejected
     if (factor.status or "Approved") != "Pending":
         return jsonify({"error": f"Only a Pending factor can be rejected; this one is {factor.status or 'Approved'}. "
@@ -729,9 +778,13 @@ def reject_custom_factor(factor_id):
 @login_required
 def get_factor_history(factor_id):
     """Part 2.1: Full audit history and version lineage for a custom emission factor."""
+    user = get_current_user()
+    caller_tenant = get_current_tenant_id(user)
     factor = db.session.get(CustomFactor, factor_id)
     if not factor:
         return jsonify({"error": "Factor not found"}), 404
+    if normalize_tenant_id(getattr(factor, "tenant_id", None)) != caller_tenant:
+        return jsonify({"error": "Forbidden: Factor belongs to another tenant"}), 403
 
     # Trace backward to root parent
     root = factor
@@ -739,13 +792,14 @@ def get_factor_history(factor_id):
     while root.parent_factor_id and root.id not in visited:
         visited.add(root.id)
         parent = db.session.get(CustomFactor, root.parent_factor_id)
-        if parent:
+        if parent and normalize_tenant_id(getattr(parent, "tenant_id", None)) == caller_tenant:
             root = parent
         else:
             break
 
-    # Get all linked versions (descendants or same base name & facility)
+    # Get all linked versions (descendants or same base name & facility within tenant)
     chain = CustomFactor.query.filter(
+        tenant_matches(CustomFactor.tenant_id, caller_tenant),
         db.or_(
             CustomFactor.id == root.id,
             CustomFactor.parent_factor_id == root.id,

@@ -1,5 +1,6 @@
 import React from "react";
 import { ChevronDown, ChevronUp, Radio } from "lucide-react";
+import { Badge } from "../../ui";
 import { activateOnKey } from "../../utils/a11yKeys";
 import { formatNumber } from "../../utils/formatters";
 import { t } from "../../i18n";
@@ -54,12 +55,13 @@ const MethaneIntensityOGMP20Level: React.FC<MethaneIntensityOGMP20LevelProps> = 
         onClick={() => setOgmpCollapsed(!ogmpCollapsed)}
       >
         <div>
-          <h3 className="flex! items-center! gap-[8px]!">
+          <h3 className="flex! flex-wrap! items-center! gap-[8px]!">
             <Radio size={20} color="var(--accent-secondary)" />
-            {t("OGMP 2.0 Level 4/5 Top-Down Survey & Bottom-Up Reconciliation")}
+            <span>{t("OGMP 2.0 Level 4/5 Top-Down Survey & Bottom-Up Reconciliation")}</span>
+            <Badge tone="warning">{t("Preview / Roadmap")}</Badge>
           </h3>
           <p className="text-[color:var(--text-secondary)]! text-[length:0.875rem]! m-[4px_0_0_0]!">
-            {t("Site-level measurement (Satellite, OGI, Drone, Aircraft) reconciled with source-level bottom-up inventory")}
+            {t("Site-level measurement tracking (Satellite, OGI, Drone, Aircraft) paired with source-level bottom-up inventory — preview, reconciliation logic in development.")}
           </p>
         </div>
         <div className="flex! items-center! gap-[12px]!">

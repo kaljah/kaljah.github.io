@@ -132,7 +132,7 @@ describe("Phase 2 User Management & Session Governance", () => {
         setHoveredRow={vi.fn()}
         totalUsers={2}
         currentUserRole="it_admin"
-        currentUserEmail="itadmin@sonatrach.dz"
+        currentUserEmail="itadmin@example.org"
         currentUserId={3}
       />
     );

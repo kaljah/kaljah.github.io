@@ -25,7 +25,7 @@ def _scoped_query(model, allowed_fids, facility_filter, id_column="facility_id")
     q = model.query
     column = getattr(model, id_column)
     if allowed_fids is not None:
-        q = q.filter(column.in_(allowed_fids))
+        q = q.filter(column.in_(allowed_fids or [-1]))
     if facility_filter:
         q = q.filter(column == facility_filter)
     return q

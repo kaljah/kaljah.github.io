@@ -1,7 +1,15 @@
 from flask import request, jsonify, session, current_app
 from sqlalchemy import func
 from . import emissions_bp
-from utils import facility_access_error, get_allowed_facility_ids, get_current_user, internal_error, log_activity_and_notify
+from utils import (
+    facility_access_error,
+    get_allowed_facility_ids,
+    get_current_tenant_id,
+    get_current_user,
+    internal_error,
+    log_activity_and_notify,
+    tenant_matches,
+)
 from input_validation import choice
 from services.dashboard_filters import _parse_facility_ids
 from models import CustomFactor, Emission, Facility, Goal, Notification, Scope2Emission, Scope3Emission, User
@@ -130,6 +138,15 @@ def get_emissions():
     search_term = request.args.get("search")
     method_arg = request.args.get("method")
     status_arg = request.args.get("status")  # BUG-077: inventory consumers request Verified only
+    caller_tenant = get_current_tenant_id(user)
+    allowed_fids_top = get_allowed_facility_ids(user)
+    early_parsed_fids = _parse_facility_ids(facility_id)
+    if (
+        early_parsed_fids is not None
+        and allowed_fids_top is not None
+        and not set(early_parsed_fids).issubset(set(allowed_fids_top))
+    ):
+        return jsonify({"error": "Unauthorized facility"}), 403
 
     results = []
     # helper to apply common filters
@@ -138,9 +155,9 @@ def get_emissions():
         allowed_fids = get_allowed_facility_ids(user)
         if allowed_fids is not None:
             if hasattr(model, "facility_id"):
-                q = q.filter(model.facility_id.in_(allowed_fids))
+                q = q.filter(model.facility_id.in_(allowed_fids or [-1]))
             elif model == Facility:
-                q = q.filter(Facility.id.in_(allowed_fids))
+                q = q.filter(Facility.id.in_(allowed_fids or [-1]))
             else:
                 q = q.filter(model.id == -1)  # Restrict fully if unknown model
 
@@ -150,8 +167,12 @@ def get_emissions():
             # with none configured there is no baseline (it used to fall back to an invented 2020)
             from models import BaseYear, BaseYearRecalculation
 
-            rec = BaseYearRecalculation.query.order_by(BaseYearRecalculation.recalc_date.desc()).first()
-            base = rec or BaseYear.query.first()
+            rec = (
+                BaseYearRecalculation.query.filter(tenant_matches(BaseYearRecalculation.tenant_id, caller_tenant))
+                .order_by(BaseYearRecalculation.recalc_date.desc())
+                .first()
+            )
+            base = rec or (BaseYear.query.first() if caller_tenant == "default" else None)
             if not base:
                 return q.filter(model.id == -1)
             year = str(base.year)
@@ -467,7 +488,13 @@ def get_emissions():
               if str(d.get("custom_factor_id") or "").isdigit() and str(d.get("fuel") or "").isdigit()}
     if cf_ids:
         from models import CustomFactor
-        names = {cf.id: cf.name for cf in CustomFactor.query.filter(CustomFactor.id.in_(cf_ids)).all()}
+        names = {
+            cf.id: cf.name
+            for cf in CustomFactor.query.filter(
+                CustomFactor.id.in_(cf_ids),
+                tenant_matches(CustomFactor.tenant_id, caller_tenant),
+            ).all()
+        }
         for d in paginated_results:
             if str(d.get("fuel") or "").isdigit() and str(d.get("custom_factor_id") or "").isdigit():
                 d["fuel"] = names.get(int(d["custom_factor_id"]), d["fuel"])
@@ -541,7 +568,12 @@ def add_emission():
         data["year"] = parse_year(data["year"])
         data["month"] = parse_month(data["month"], required=True)
         from services.period_lock_service import check_period_lock_for_record
-        lock_err = check_period_lock_for_record(data.get("year"), data.get("month"), is_prior_period_adjustment=bool(data.get("is_prior_period_adjustment")))
+        lock_err = check_period_lock_for_record(
+            data.get("year"),
+            data.get("month"),
+            is_prior_period_adjustment=bool(data.get("is_prior_period_adjustment")),
+            tenant_id=get_current_tenant_id(user),
+        )
         if lock_err:
             return jsonify(lock_err[0]), lock_err[1]
         # RC-6: amount/quantity and fuel/fuel_type are one value each (BUG-030)
@@ -778,7 +810,11 @@ def add_emission():
             details=log_details,
         )
         if record.status in ("Pending", "Pending Approval"):
-            admins = User.query.filter_by(role="admin", status="active").all()
+            admins = (
+                User.query.filter_by(role="admin", status="active")
+                .filter(tenant_matches(User.tenant_id, get_current_tenant_id(user)))
+                .all()
+            )
             for admin in admins:
                 Notification.create(
                     user_id=admin.id,
@@ -807,8 +843,8 @@ def add_emission():
                         or 0
                     )
 
-                    # Get Goal
-                    goal = db.session.get(Goal, current_year)
+                    # Get Goal (single-tenant corporate singleton)
+                    goal = db.session.get(Goal, current_year) if get_current_tenant_id(user) == "default" else None
 
                     if goal and goal.target_amount > 0:
                         percent = total_emissions / goal.target_amount

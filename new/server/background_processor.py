@@ -28,21 +28,46 @@ _import_locks_guard = threading.Lock()
 _IMPORT_ADVISORY_BASE = 0x4748_0000
 
 
+class _CombinedImportLock:
+    def __init__(self, scope_lock, sqlite_lock_acquired: bool):
+        self._scope_lock = scope_lock
+        self._sqlite_lock_acquired = sqlite_lock_acquired
+
+    def release(self):
+        try:
+            if self._sqlite_lock_acquired:
+                from services.sqlite_lock import release_sqlite_write_lock
+
+                release_sqlite_write_lock()
+        finally:
+            self._scope_lock.release()
+
+
 def _hold_import_lock(session, scope):
     key = "3" if str(scope) == "3_eeio" else str(scope)
     with _import_locks_guard:
         lock = _import_locks.setdefault(key, threading.Lock())
     lock.acquire()
+    sqlite_acquired = False
     try:
-        if session.get_bind().dialect.name == "postgresql":
+        bind = session.get_bind()
+        if bind.dialect.name == "sqlite":
+            from services.sqlite_lock import acquire_sqlite_write_lock
+
+            sqlite_acquired = acquire_sqlite_write_lock(bind)
+        elif bind.dialect.name == "postgresql":
             from sqlalchemy import text
 
             n = sum(ord(c) for c in key)  # stable across processes (hash() is salted per process)
             session.execute(text("SELECT pg_advisory_xact_lock(:k)"), {"k": _IMPORT_ADVISORY_BASE + n})
     except Exception:
+        if sqlite_acquired:
+            from services.sqlite_lock import release_sqlite_write_lock
+
+            release_sqlite_write_lock()
         lock.release()
         raise
-    return lock
+    return _CombinedImportLock(lock, sqlite_acquired)
 
 UPLOAD_JOB_DIR = os.environ.get("UPLOAD_JOB_DIR") or os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "upload_jobs"
@@ -619,19 +644,27 @@ def _preview_summary(pv, rows, skipped_in_sample, headers, mapping, fac_name_map
 
 
 def _dedupe(batch_keys, key, overwrite, describe):
-    """BUG-057: returns ("new", None), ("error", message) or ("update", existing_object_or_id).
+    """BUG-057: returns ("new", None), ("error", message), ("update", existing_object_or_id),
+    ("skip", None), or ("revision", existing_object_or_id).
 
     batch_keys maps natural key -> existing DB id, or -> the pending object created earlier in
     this same file, so an in-file repeat updates that row instead of inserting a copy.
     """
     if batch_keys is None or key not in batch_keys:
         return "new", None
-    if not overwrite:
-        existing = batch_keys[key]
-        where = "earlier in this file" if (not isinstance(existing, int) or isinstance(existing, _InFile)) else "in the platform"
-        return "error", (f"Duplicate record: {describe} already exists {where}. Enable 'Overwrite Duplicates' to "
-                         "replace it, or give each source its own Equipment ID / source reference to keep both.")
-    return "update", batch_keys[key]
+
+    act_str = str(overwrite).lower().strip()
+    if act_str == "skip":
+        return "skip", None
+    if act_str == "revision":
+        return "revision", batch_keys[key]
+    if overwrite is True or act_str in ("true", "overwrite", "update"):
+        return "update", batch_keys[key]
+
+    existing = batch_keys[key]
+    where = "earlier in this file" if (not isinstance(existing, int) or isinstance(existing, _InFile)) else "in the platform"
+    return "error", (f"Duplicate record: {describe} already exists {where}. Enable 'Overwrite Duplicates' to "
+                     "replace it, or give each source its own Equipment ID / source reference to keep both.")
 
 
 def _resolve_existing(model, existing):
@@ -1011,6 +1044,7 @@ class _ImportRun:
         self.batch_cf_names = set()  # BUG-065: in-file duplicate custom factor names
         self.batch_facilities = {}  # in-file facility names / codes
         self.batch_sources = set()  # in-file emission sources
+        self.batch_mitigation = set()  # in-file mitigation projects
         self.batch_scope1_map = {}
         self.rejected_scope1_keys = set()  # BUG-0026: an import matching a Rejected record is a resubmission
         self.status_counts = {}  # BUG-0025: the saved status of the new records, shown by the result banner
@@ -1041,22 +1075,28 @@ class _ImportRun:
         from emission_factors import API_FACTORS
         from extensions import db
         from models import CustomFactor, Facility, User
-        from utils import build_name_map, get_allowed_facility_ids
+        from utils import build_name_map, get_allowed_facility_ids, get_current_tenant_id, tenant_matches
 
         self.compute_emissions, self.api_factors, self.grid_factors = compute_emissions, API_FACTORS, GRID_FACTORS
         self.user_obj = db.session.get(User, self.user_id)
         self.gwp_std, self.gwp_dict = _org_gwp()
+        caller_tenant = get_current_tenant_id(self.user_obj)
         allowed_fac_ids = get_allowed_facility_ids(self.user_obj)
         if allowed_fac_ids is None:
             self.all_facilities = Facility.query.all()
         else:
-            self.all_facilities = Facility.query.filter(Facility.id.in_(allowed_fac_ids)).all()
+            self.all_facilities = Facility.query.filter(Facility.id.in_(allowed_fac_ids or [-1])).all()
         self.fac_name_map = build_name_map(self.all_facilities)
         for fac in self.all_facilities:
             # region names are a convenience alias only when no facility carries that name
             self.fac_name_map.add(fac.region, fac, overwrite=False)
         self.fac_id_map = {str(fac.id): fac for fac in self.all_facilities}
-        self.cf_name_map = build_name_map(CustomFactor.query.filter(CustomFactor.is_archived.is_(False)).all())
+        self.cf_name_map = build_name_map(
+            CustomFactor.query.filter(
+                CustomFactor.is_archived.is_(False),
+                tenant_matches(CustomFactor.tenant_id, caller_tenant),
+            ).all()
+        )
 
     def load_existing_records(self):
         """Take the import lock (BUG-0003: held until the commit), then key the existing records the rows may
@@ -1156,13 +1196,17 @@ class _ImportRun:
             return _process_row_scope3(mapped_data, uid, names, ids, self.job_id, line_no,
                                        batch_keys=self.batch_scope3_map, overwrite_duplicates=self.overwrite_duplicates)
         if scope == "sources":
-            return _process_row_sources(mapped_data, uid, names, ids, self.batch_sources)
+            return _process_row_sources(mapped_data, uid, names, ids, self.batch_sources,
+                                        overwrite_duplicates=self.overwrite_duplicates)
         if scope == "production":
-            return _process_row_production(mapped_data, uid, names, ids, self.batch_prod_map)
+            return _process_row_production(mapped_data, uid, names, ids, self.batch_prod_map,
+                                           overwrite_duplicates=self.overwrite_duplicates)
         if scope == "mitigation":
-            return _process_row_mitigation(mapped_data, uid, names, ids)
+            return _process_row_mitigation(mapped_data, uid, names, ids, batch=self.batch_mitigation,
+                                           overwrite_duplicates=self.overwrite_duplicates)
         if scope == "custom_factors":
-            return _process_row_custom_factors(mapped_data, uid, self.batch_cf_names)
+            return _process_row_custom_factors(mapped_data, uid, self.batch_cf_names,
+                                               overwrite_duplicates=self.overwrite_duplicates)
         if scope == "facilities":
             return _process_row_facilities(mapped_data, uid, self.overwrite_duplicates, self.batch_facilities)
         if scope == "1":
@@ -1313,6 +1357,13 @@ class _ImportRun:
                      f"{self._skipped_count()} skipped",
              user=self.user_obj, entity=f"bulk_scope_{self.scope}", entity_id=self.job_id)
         db.session.commit()
+        if str(self.scope) == "facilities":
+            try:
+                from routes.equity_routes import sync_equity_shares_for_facilities
+                from utils import get_current_tenant_id
+                sync_equity_shares_for_facilities(tenant_id=get_current_tenant_id(self.user_obj))
+            except Exception:
+                pass
         try:
             from routes.dashboard import clear_dashboard_cache
 
@@ -1333,7 +1384,13 @@ class _ImportRun:
             success_count = self.processed - skipped_count
             scope_label = "Scope 3" if str(self.scope) == "3_eeio" else f"Scope {self.scope}"
             who = self.user_obj.fullName if self.user_obj else 'a user'
-            for reviewer in User.query.filter_by(role="admin", status="active").all():
+            from utils import get_current_tenant_id, tenant_matches
+            caller_tenant = get_current_tenant_id(self.user_obj)
+            for reviewer in (
+                User.query.filter_by(role="admin", status="active")
+                .filter(tenant_matches(User.tenant_id, caller_tenant))
+                .all()
+            ):
                 Notification.create(
                     user_id=reviewer.id, type="audit", title=f"{scope_label} Bulk Upload Pending Review",
                     message=(f"{success_count:,} {scope_label} emission records were imported or updated by {who} "
@@ -1909,6 +1966,8 @@ def _process_row_scope2(
         batch_keys, key, overwrite_duplicates,
         f"Scope 2 emission for '{facility.name}' ({year}-{month:02d}, source '{source_type}', grid '{grid_region}'{', meter ' + meter if meter else ''})",
     )
+    if action == "skip":
+        return None, []
     if action == "error":
         return None, [existing]
     mkt_inst = str(row.get("market_instrument_type") or row.get("market_instrument") or "").strip() or None
@@ -1939,6 +1998,11 @@ def _process_row_scope2(
         if obj is not None:
             denied = _bulk_overwrite(obj, values, user_id, "Scope 2")
             return None, ([denied] if denied else [])
+    if action == "revision":
+        obj = _resolve_existing(Scope2Emission, existing)
+        if obj is not None:
+            obj.status = "Superseded"
+            obj.qa_flag = "Superseded by audited revision"
 
     emission = Scope2Emission(
         facility_id=facility.id,
@@ -2066,6 +2130,8 @@ def _process_row_scope3_eeio(
     key = _scope3_key(facility.id, year, month, "Category 1", sub_cat, "USD")
     action, existing = _dedupe(batch_keys, key, overwrite_duplicates,
                                f"Scope 3 emission for facility '{facility.name}' ({year}-{month:02d}, Category 1, NAICS {naics})")
+    if action == "skip":
+        return None, []
     if action == "error":
         return None, [existing]
     unc, unc_err = _scope3_uncertainty(row, tonnes_co2e, row_idx)
@@ -2083,6 +2149,12 @@ def _process_row_scope3_eeio(
         obj = _resolve_existing(Scope3Emission, existing)
         if obj is not None:
             denied = _bulk_overwrite(obj, values, user_id, "Scope 3")
+            return None, ([denied] if denied else [])
+    if action == "revision":
+        obj = _resolve_existing(Scope3Emission, existing)
+        if obj is not None:
+            denied = _bulk_overwrite(obj, values, user_id, "Scope 3")
+            obj.qa_flag = "Audited Revision: Supersedes prior version"
             return None, ([denied] if denied else [])
 
     emission = Scope3Emission(
@@ -2228,6 +2300,8 @@ def _process_row_scope3(
     key = _scope3_key(facility.id, year, month, cat_str, sub_cat, row.get("unit"))
     action, existing = _dedupe(batch_keys, key, overwrite_duplicates,
                                f"Scope 3 emission for facility '{facility.name}' ({year}-{month:02d}, {cat_str}, '{sub_cat or ''}')")
+    if action == "skip":
+        return None, []
     if action == "error":
         return None, [existing]
     unc, unc_err = _scope3_uncertainty(row, co2e, row_idx)
@@ -2244,6 +2318,12 @@ def _process_row_scope3(
         obj = _resolve_existing(Scope3Emission, existing)
         if obj is not None:
             denied = _bulk_overwrite(obj, values, user_id, "Scope 3")
+            return None, ([denied] if denied else [])
+    if action == "revision":
+        obj = _resolve_existing(Scope3Emission, existing)
+        if obj is not None:
+            denied = _bulk_overwrite(obj, values, user_id, "Scope 3")
+            obj.qa_flag = "Audited Revision: Supersedes prior version"
             return None, ([denied] if denied else [])
 
     emission = Scope3Emission(
@@ -2278,7 +2358,7 @@ def _process_row_scope3(
     return emission, errors
 
 
-def _process_row_sources(row, user_id, fac_name_map, fac_id_map, batch=None):
+def _process_row_sources(row, user_id, fac_name_map, fac_id_map, batch=None, overwrite_duplicates=False):
     from extensions import db
     from models import EmissionSource
 
@@ -2303,17 +2383,6 @@ def _process_row_sources(row, user_id, fac_name_map, fac_id_map, batch=None):
         errors.append(f"Facility '{fac_input}' not found")
         return None, errors
 
-    # the same source (facility, name, equipment ID) is registered once
-    equipment_id = str(row.get("equipment_id") or "").strip() or None
-    key = (facility.id, name.lower(), (equipment_id or "").lower())
-    if batch is not None and key in batch:
-        return None, [f"Source '{name}' ({equipment_id or 'no equipment ID'}) appears more than once in the file"]
-    dup = EmissionSource.query.filter(
-        EmissionSource.facility_id == facility.id, db.func.lower(EmissionSource.name) == name.lower(),
-        db.func.coalesce(EmissionSource.equipment_id, "") == (equipment_id or ""),
-    ).first()
-    if dup is not None:
-        return None, [f"Source '{name}' ({equipment_id or 'no equipment ID'}) already exists for '{facility.name}'"]
     inst = row.get("installation_date")
     if inst not in (None, ""):
         import datetime as _dt
@@ -2327,6 +2396,45 @@ def _process_row_sources(row, user_id, fac_name_map, fac_id_map, batch=None):
                 inst = inst[:10]
             except ValueError:
                 return None, [f"Invalid installation date '{inst}': use YYYY-MM-DD"]
+
+    # the same source (facility, name, equipment ID) is registered once
+    equipment_id = str(row.get("equipment_id") or "").strip() or None
+    key = (facility.id, name.lower(), (equipment_id or "").lower())
+    if batch is not None and key in batch:
+        return None, [f"Source '{name}' ({equipment_id or 'no equipment ID'}) appears more than once in the file"]
+    dup = EmissionSource.query.filter(
+        EmissionSource.facility_id == facility.id, db.func.lower(EmissionSource.name) == name.lower(),
+        db.func.coalesce(EmissionSource.equipment_id, "") == (equipment_id or ""),
+    ).first()
+    if dup is not None:
+        if str(overwrite_duplicates).lower().strip() == "skip":
+            return None, []
+        if not (overwrite_duplicates is True or str(overwrite_duplicates).lower().strip() in ("true", "1", "yes", "overwrite", "revision", "update")):
+            return None, [f"Source '{name}' ({equipment_id or 'no equipment ID'}) already exists for '{facility.name}'. Choose 'Overwrite' to update it."]
+        if row.get("type") or row.get("process_type"):
+            dup.type = row.get("type") or row.get("process_type")
+        if row.get("fuel_type") or row.get("fuel"):
+            dup.fuel_type = row.get("fuel_type") or row.get("fuel")
+        if row.get("design_capacity") is not None and str(row.get("design_capacity")).strip() != "":
+            dup.design_capacity = row.get("design_capacity")
+        if inst:
+            dup.installation_date = inst
+        if row.get("status"):
+            dup.status = row.get("status")
+        if row.get("description") is not None:
+            dup.description = row.get("description")
+        if row.get("activity"):
+            dup.activity = row.get("activity")
+        if row.get("division"):
+            dup.division = row.get("division")
+        if row.get("field"):
+            dup.field = row.get("field")
+        if row.get("region"):
+            dup.region = row.get("region")
+        if batch is not None:
+            batch.add(key)
+        return None, errors
+
     if batch is not None:
         batch.add(key)
 
@@ -2349,7 +2457,7 @@ def _process_row_sources(row, user_id, fac_name_map, fac_id_map, batch=None):
     return source, errors
 
 
-def _process_row_production(row, user_id, fac_name_map, fac_id_map, batch_prod_map=None):
+def _process_row_production(row, user_id, fac_name_map, fac_id_map, batch_prod_map=None, overwrite_duplicates=False):
     from models import ProductionData
     from extensions import db
 
@@ -2461,6 +2569,10 @@ def _process_row_production(row, user_id, fac_name_map, fac_id_map, batch_prod_m
             batch_prod_map[key] = existing
 
     if existing:
+        if str(overwrite_duplicates).lower().strip() == "skip":
+            return None, []
+        if not (overwrite_duplicates is True or str(overwrite_duplicates).lower().strip() in ("true", "1", "yes", "overwrite", "revision", "update")):
+            return None, [f"Production data for '{facility.name}' ({year}-{month:02d}) already exists. Choose 'Overwrite' to update it."]
         existing.oil_amount = oil_vol
         existing.gas_amount = gas_vol
         existing.oil_unit = oil_unit
@@ -2528,7 +2640,8 @@ def _process_row_production(row, user_id, fac_name_map, fac_id_map, batch_prod_m
     return prod, errors
 
 
-def _process_row_mitigation(row, user_id, fac_name_map, fac_id_map):
+def _process_row_mitigation(row, user_id, fac_name_map, fac_id_map, batch=None, overwrite_duplicates=False):
+    from extensions import db
     from models import MitigationProject
     from datetime import datetime
 
@@ -2593,6 +2706,39 @@ def _process_row_mitigation(row, user_id, fac_name_map, fac_id_map):
         if investment is None or investment < 0:
             return None, [f"Investment '{raw_inv}' must be a non-negative number"]
 
+    key = (facility.id, project_name.lower(), year)
+    if batch is not None and key in batch:
+        return None, [f"Mitigation project '{project_name}' ({year}) appears more than once in the file"]
+    dup = MitigationProject.query.filter(
+        MitigationProject.facility_id == facility.id,
+        db.func.lower(MitigationProject.name) == project_name.lower(),
+        MitigationProject.year == year,
+    ).first()
+    if dup is not None:
+        if str(overwrite_duplicates).lower().strip() == "skip":
+            return None, []
+        if not (overwrite_duplicates is True or str(overwrite_duplicates).lower().strip() in ("true", "1", "yes", "overwrite", "revision", "update")):
+            return None, [f"Mitigation project '{project_name}' ({year}) already exists for '{facility.name}'. Choose 'Overwrite' to update it."]
+        dup.quantity_tco2e = qty
+        if row.get("project_type") or row.get("type"):
+            dup.project_type = row.get("project_type") or row.get("type")
+        if row.get("status"):
+            dup.status = row.get("status")
+        if start_date is not None:
+            dup.start_date = start_date
+        if end_date is not None:
+            dup.end_date = end_date
+        if investment is not None:
+            dup.investment_amount = investment
+        if row.get("description") is not None:
+            dup.description = row.get("description")
+        if batch is not None:
+            batch.add(key)
+        return None, errors
+
+    if batch is not None:
+        batch.add(key)
+
     proj = MitigationProject(
         facility_id=facility.id,
         name=project_name,
@@ -2609,7 +2755,7 @@ def _process_row_mitigation(row, user_id, fac_name_map, fac_id_map):
     return proj, errors
 
 
-def _process_row_custom_factors(row, user_id, batch_names=None):
+def _process_row_custom_factors(row, user_id, batch_names=None, overwrite_duplicates=False):
     from models import CustomFactor
 
     errors = []
@@ -2631,8 +2777,20 @@ def _process_row_custom_factors(row, user_id, batch_names=None):
     from routes.custom_factors import _name_taken, _parse_non_negative_float, _require_some_factor
 
     name = str(row.get("name")).strip()
-    if _name_taken(name) or (batch_names is not None and name.lower() in batch_names):
-        return None, [f"A custom factor named '{name}' already exists"]
+    if batch_names is not None and name.lower() in batch_names:
+        return None, [f"A custom factor named '{name}' appears more than once in the file"]
+    from utils import get_current_tenant_id, tenant_matches
+    caller_tenant = get_current_tenant_id(uploader)
+    holder = CustomFactor.query.filter(
+        db.func.lower(CustomFactor.name) == name.lower(),
+        tenant_matches(CustomFactor.tenant_id, caller_tenant),
+    ).first()
+    if holder is not None:
+        if str(overwrite_duplicates).lower().strip() == "skip":
+            return None, []
+        if not (overwrite_duplicates is True or str(overwrite_duplicates).lower().strip() in ("true", "1", "yes", "overwrite", "revision", "update")):
+            return None, [f"A custom factor named '{name}' already exists. Choose 'Overwrite' to update it."]
+
     from routes.custom_factors import _canonical_factor_unit
 
     if _is_bare_ton(row.get("unit")):
@@ -2656,6 +2814,28 @@ def _process_row_custom_factors(row, user_id, batch_names=None):
         parent_fuel = _canonical_parent_fuel(row.get("parent_fuel"))
     except ValueError as err:
         return None, [str(err)]
+
+    if holder is not None:
+        holder.co2_factor = float(vals["co2_factor"] or 0)
+        holder.ch4_factor = float(vals["ch4_factor"] or 0)
+        holder.n2o_factor = float(vals["n2o_factor"] or 0)
+        holder.co_factor = float(vals["co_factor"] or 0)
+        holder.hhv_factor = float(vals["hhv_factor"] or 0)
+        holder.unit = row.get("unit")
+        if parent_fuel:
+            holder.parent_fuel = parent_fuel
+        if row.get("usage"):
+            holder.usage = row.get("usage")
+        if row.get("source"):
+            holder.source = row.get("source")
+        if row.get("description"):
+            holder.description = row.get("description")
+        for unc_k in ("uncertainty", "co2_uncertainty", "ch4_uncertainty", "n2o_uncertainty"):
+            if vals.get(unc_k) is not None:
+                setattr(holder, unc_k, vals[unc_k])
+        if batch_names is not None:
+            batch_names.add(name.lower())
+        return None, errors
     row = dict(row, name=name, parent_fuel=parent_fuel, **vals)
     if batch_names is not None:
         batch_names.add(name.lower())
@@ -2677,6 +2857,7 @@ def _process_row_custom_factors(row, user_id, batch_names=None):
         ch4_uncertainty=float(row.get("ch4_uncertainty") or 0),
         n2o_uncertainty=float(row.get("n2o_uncertainty") or 0),
         created_by=user_id,
+        tenant_id=caller_tenant,
     )
     return factor, errors
 
@@ -2721,25 +2902,29 @@ def _process_row_facilities(row, user_id, overwrite_duplicates, batch=None):
         if holder is not None and holder.name.strip().lower() != name.lower():
             return None, [f"Facility code '{code}' is already used by '{holder.name}'"]
 
-    existing = Facility.query.filter(db.func.lower(Facility.name) == name.lower()).first()
-
     # BUG-001: region-restricted superusers may only create/overwrite facilities in their
     # own region (same rule as POST /api/facilities/import).
     from extensions import db
     from models import User
 
-    from utils import facility_in_user_scope, facility_change_allowed
+    from utils import facility_in_user_scope, facility_change_allowed, get_current_tenant_id, tenant_matches
 
     uploader = db.session.get(User, user_id)
     if uploader is None or uploader.role not in ("admin", "superuser"):
         errors.append("Not authorised to import facilities")
         return None, errors
 
+    caller_tenant = get_current_tenant_id(uploader)
+    existing = Facility.query.filter(
+        db.func.lower(Facility.name) == name.lower(),
+        tenant_matches(Facility.tenant_id, caller_tenant),
+    ).first()
+
     def _new(field, current):
         v = row.get(field)
         return v if v is not None and str(v).strip() != "" else current
 
-    if existing is not None and not facility_in_user_scope(uploader, existing.region, existing.location, existing.name):
+    if existing is not None and not facility_in_user_scope(uploader, existing.region, existing.location, existing.name, facility_id=existing.id):
         errors.append(f"Superusers can only import facilities in their assigned region: {uploader.location}")
         return None, errors
     # The facility must also stay in scope after the row is applied (no re-regioning out of scope).
@@ -2749,13 +2934,16 @@ def _process_row_facilities(row, user_id, overwrite_duplicates, batch=None):
         return None, errors
 
     if existing:
-        if not overwrite_duplicates:
+        if str(overwrite_duplicates).lower().strip() == "skip":
+            return None, []
+        if not (overwrite_duplicates is True or str(overwrite_duplicates).lower().strip() in ("true", "1", "yes", "overwrite", "revision", "update")):
             errors.append(f"Region '{name}' already exists. Choose 'Overwrite' to update it.")
             return None, errors
         
         # Overwrite mode - only overwrite fields that are present and non-empty in row
         facility_fields = [
             "location",
+            "country",
             "description",
             "boundary_notes",
             "boundary_type",
@@ -2774,6 +2962,8 @@ def _process_row_facilities(row, user_id, overwrite_duplicates, batch=None):
 
         if equity is not None:
             existing.equity_share_pct = equity
+            if not operator and equity < 50.0 and (existing.operator_status is None or existing.operator_status == "operated"):
+                existing.operator_status = "non_operated"
         if operator:
             existing.operator_status = operator
         if coords["latitude"] is not None:
@@ -2791,6 +2981,7 @@ def _process_row_facilities(row, user_id, overwrite_duplicates, batch=None):
         if code:
             batch["codes"].add(code.lower())
 
+        is_minority_jv = (equity is not None and equity < 50.0) or (row.get("boundary_type") == "Equity Share" and equity is not None and equity < 50.0)
         facility = Facility(
             name=name,
             location=row.get("location"),
@@ -2805,11 +2996,13 @@ def _process_row_facilities(row, user_id, overwrite_duplicates, batch=None):
             code=row.get("code"),
             external_id=row.get("external_id"),
             segment=normalize_segment(row.get("segment")),
+            country=row.get("country") or "Algeria",
             latitude=lat,
             longitude=lon,
             equity_share_pct=100.0 if equity is None else equity,
-            operator_status=operator or "operated",
+            operator_status=operator or ("non_operated" if is_minority_jv else "operated"),
             created_by=user_id,
+            tenant_id=caller_tenant,
         )
         return facility, errors
 
@@ -2976,11 +3169,22 @@ def _process_row(
     if fuel:
         payload["fuel"] = fuel
 
+    # Hierarchical Fallback: If factor_source is "default" (unspecified/omitted in CSV) and fuel matches an approved custom factor for this facility, auto-resolve to custom!
+    if factor_source == "default" and fuel and not fuel.isdigit():
+        cf_match = cf_name_map.get(fuel.lower())
+        if (cf_match is not None
+                and getattr(cf_match, "status", "Approved") == "Approved"
+                and getattr(cf_match, "facility_id", None) in (None, facility.id)):
+            factor_source = "custom"
+            payload["factor_source"] = "custom"
+
     if factor_source == "custom" and fuel and not fuel.isdigit():
         if fuel.lower() in getattr(cf_name_map, "ambiguous", ()):
             return None, [f"Custom factor name '{fuel}' is not unique; rename the duplicates before importing"]
         from routes.emissions import _lookup_api_factor
         cf = cf_name_map.get(fuel.lower())
+        if cf is not None and getattr(cf, "facility_id", None) not in (None, facility.id):
+            cf = None
         site_props = any(str(row.get(k) or "").strip() not in ("", "-", "0") for k in ("hhv", "density", "fuel_density"))
         if not cf and site_props and _lookup_api_factor(fuel):
             # S1K-F18: Tier 2 "catalog factor + site fuel properties" (the form's Tier 2 mode)
@@ -3071,6 +3275,8 @@ def _process_row(
         f"Scope 1 emission for facility '{facility.name}' ({year}-{month:02d}, process '{process_type}', fuel '{fuel}'"
         + (f", source ref '{source_ref}'" if source_ref else "") + ")",
     )
+    if action == "skip":
+        return None, []
     if action == "error":
         return None, [existing]
 
@@ -3079,6 +3285,13 @@ def _process_row(
         if obj is not None:
             denied = _bulk_overwrite(obj, {f: getattr(record, f) for f in _S1_RESULT_FIELDS}, user_id, "Scope 1")
             return None, ([denied] if denied else [])
+
+    if action == "revision":
+        obj = _resolve_existing(Emission, existing)
+        if obj is not None:
+            obj.status = "Superseded"
+            obj.qa_flag = "Superseded by audited revision"
+        record.qa_flag = "Audited Revision: Supersedes prior version"
 
     uploader = db.session.get(User, user_id)
     record.record_id = str(uuid.uuid4())
@@ -3116,7 +3329,7 @@ def process_json_records(kind, records, user):
     from utils import build_name_map, get_allowed_facility_ids
 
     allowed = get_allowed_facility_ids(user)
-    facs = Facility.query.all() if allowed is None else Facility.query.filter(Facility.id.in_(allowed)).all()
+    facs = Facility.query.all() if allowed is None else Facility.query.filter(Facility.id.in_(allowed or [-1])).all()
     name_map = build_name_map(facs)
     id_map = {str(f.id): f for f in facs}
     batch_prod, batch_src = {}, set()

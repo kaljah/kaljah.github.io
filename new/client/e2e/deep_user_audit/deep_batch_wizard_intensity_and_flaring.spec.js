@@ -116,7 +116,7 @@ test.describe('Suite 15: Deep Untested Batch Review Wizard, Custom Factors & Int
 
     // Fill in custom factor attributes
     const nameInput = page.locator('input[placeholder*="Skikda"]').first();
-    await nameInput.fill('Hassi Berkine LP Flare Gas 2026');
+    await nameInput.fill('Basin Alpha LP Flare Gas 2026');
 
     // Fill CO2 Factor
     const co2Input = page.locator('label:has-text("CO₂ Factor") + div input, label:has-text("CO₂ Factor") ~ input, input[placeholder="53.06"]').first();
@@ -131,9 +131,9 @@ test.describe('Suite 15: Deep Untested Batch Review Wizard, Custom Factors & Int
     }
 
     // Fill Data Source reference
-    const sourceInput = page.locator('input[placeholder*="Sonatrach Analysis"]').first();
+    const sourceInput = page.locator('input[placeholder*="Demo Operator Co. Analysis"]').first();
     if (await sourceInput.isVisible().catch(() => false)) {
-      await sourceInput.fill('Sonatrach GC Lab Test Ref #HB-2026-FL01');
+      await sourceInput.fill('Demo Operator Co. GC Lab Test Ref #HB-2026-FL01');
     }
 
     // Capture screenshot of modal populated

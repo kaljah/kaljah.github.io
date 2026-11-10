@@ -272,9 +272,8 @@ export const BarChart: React.FC<BarChartProps> = ({
     );
   }
 
-  const hasMultipleBars = bars && bars.length > 0;
-
-  const hasMultiple = bars.length > 0;
+  const hasMultiple = Boolean(bars && bars.length > 0);
+  const hasMultipleBars = hasMultiple;
   const rows =
     sortDesc && !hasMultiple
       ? [...data].sort((a, b) => Number(b[finalDataKey] || 0) - Number(a[finalDataKey] || 0))

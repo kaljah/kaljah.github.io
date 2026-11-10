@@ -15,7 +15,14 @@ from models import (
     EmissionSource,
 )
 from extensions import db
-from utils import get_current_user, get_allowed_facility_ids, log_activity_and_notify
+from utils import (
+    get_allowed_facility_ids,
+    get_current_tenant_id,
+    get_current_user,
+    is_org_wide_user,
+    log_activity_and_notify,
+    tenant_matches,
+)
 from sqlalchemy import func
 from datetime import datetime, timezone
 from cachetools import TTLCache, cached, keys
@@ -174,6 +181,8 @@ def get_batch_dashboard_data():
             ),
             403,
         )
+    caller_tenant = get_current_tenant_id(user)
+    org_wide = is_org_wide_user(user)
     allowed_fids = get_allowed_facility_ids(user)
     include_pending = request.args.get("includePending", "false").lower() == "true"
     gwp_horizon = request.args.get("gwp_horizon", "100")
@@ -183,6 +192,8 @@ def get_batch_dashboard_data():
     cache_facility = tuple(sorted(parsed_facility_ids)) if parsed_facility_ids is not None else facility_id
     cache_key = (
         "batch_all",
+        caller_tenant,
+        org_wide,
         cache_facility,
         year,
         activity,
@@ -244,6 +255,8 @@ def get_batch_dashboard_data():
                 segment=segment,
                 activity=activity,
                 division=division,
+                org_wide=org_wide,
+                tenant_id=caller_tenant,
             )
             f_scope3 = executor.submit(
                 _run_in_app_ctx, app, _query_scope3_summary, facility_id=facility_id, year=year,
@@ -316,10 +329,14 @@ def get_batch_dashboard_data():
         # Static / cheap lookups (sequential is fine — they're single-row queries)
         # BUG-041: a single-year organisation goal is only comparable with a single-year,
         # unfiltered, organisation-wide total
-        filtered_view = allowed_fids is not None or any(
+        filtered_view = (not org_wide) or any(
             v not in (None, "", "all") for v in (facility_id, activity, division, segment)
         )
-        goal = None if (not year or year == "all" or filtered_view) else Goal.query.filter_by(year=goal_year).first()
+        goal = (
+            None
+            if (not year or year == "all" or filtered_view or caller_tenant != "default")
+            else Goal.query.filter_by(year=goal_year).first()
+        )
         goal_obj = (
             {
                 "year": goal.year,
@@ -329,9 +346,11 @@ def get_batch_dashboard_data():
             if goal
             else None
         )
-        base_year_rec = BaseYearRecalculation.query.order_by(
-            BaseYearRecalculation.recalc_date.desc()
-        ).first()
+        base_year_rec = (
+            BaseYearRecalculation.query.filter(tenant_matches(BaseYearRecalculation.tenant_id, caller_tenant))
+            .order_by(BaseYearRecalculation.recalc_date.desc())
+            .first()
+        )
         if base_year_rec:
             base_year_obj = {
                 "id": base_year_rec.id,
@@ -344,7 +363,11 @@ def get_batch_dashboard_data():
                 ),
             }
         else:
-            base_year_singleton = db.session.get(BaseYear, 1) or BaseYear.query.first()
+            base_year_singleton = (
+                (db.session.get(BaseYear, 1) or BaseYear.query.first())
+                if caller_tenant == "default"
+                else None
+            )
             base_year_obj = (
                 {
                     "id": base_year_singleton.id,
@@ -358,8 +381,8 @@ def get_batch_dashboard_data():
 
         # BUG-054 / BUG-072: pending banner uses the same filters as every other panel, includes
         # Scope 3, and follows the GWP horizon
-        from services.dashboard_filters import apply_scope, apply_year, horizon_delta
-        from services.scope2_gases import record_totals
+        from services.dashboard_filters import apply_scope, apply_year, gwp_pair, horizon_delta
+        from services.scope2_gases import record_totals_fields
 
         pscope = dict(allowed_fids=allowed_fids, facility_id=facility_id, activity=activity, division=division,
                       segment=segment)
@@ -370,12 +393,32 @@ def get_batch_dashboard_data():
             return apply_year(apply_scope(q, model, **pscope), model, year).filter(model.status.in_(pend)).first()
 
         p1 = pend_q(Emission, Emission.co2e_total, Emission.ch4_emissions, Emission.n2o_emissions)
-        s2_pend_q = apply_year(apply_scope(Scope2Emission.query, Scope2Emission, **pscope), Scope2Emission, year).filter(Scope2Emission.status.in_(pend))
-        s2_count = s2_pend_q.count()
+        s2_pend_q = (
+            apply_year(apply_scope(Scope2Emission.query, Scope2Emission, **pscope), Scope2Emission, year)
+            .filter(Scope2Emission.status.in_(pend))
+            .with_entities(
+                Scope2Emission.source_type,
+                Scope2Emission.grid_region,
+                Scope2Emission.electricity_kwh,
+                Scope2Emission.co2e,
+                Scope2Emission.co2e_market_based,
+            )
+        )
+        s2_pend_rows = s2_pend_q.all()
+        s2_count = len(s2_pend_rows)
         market_s2 = str(scope2_method or "").lower() == "market"
+        s2_grid_cache = {}
+        s2_diff = None
+        if str(gwp_horizon) == "20":
+            c100, n100 = gwp_pair("100")
+            c20, n20 = gwp_pair("20")
+            s2_diff = (c20 - c100, n20 - n100)
         s2_co2e = 0.0
-        for e in s2_pend_q.all():
-            loc, mkt = record_totals(e, gwp_horizon)
+        for src_type, grid_region, kwh, co2e, co2e_mkt in s2_pend_rows:
+            loc, mkt = record_totals_fields(
+                src_type, grid_region, kwh, co2e, co2e_mkt, gwp_horizon,
+                grid_cache=s2_grid_cache, gwp_diff=s2_diff,
+            )
             s2_co2e += (mkt if market_s2 else loc)
 
         p3 = pend_q(Scope3Emission, Scope3Emission.co2e)
@@ -546,11 +589,20 @@ def _query_summary(
 IMPLEMENTED_MITIGATION = {"active", "completed", "implemented", "operational", "verified"}
 
 @cached(cache=DASHBOARD_CACHE, key=make_cache_key("_query_mitigation"), lock=CACHE_LOCK)
-def _query_mitigation(facility_id=None, year=None, allowed_fids=None, segment=None, activity=None, division=None):
+def _query_mitigation(
+    facility_id=None,
+    year=None,
+    allowed_fids=None,
+    segment=None,
+    activity=None,
+    division=None,
+    org_wide=True,
+    tenant_id="default",
+):
     """Mitigation items for the dashboard.
 
     BUG-094: same facility-level filters as the other panels; unscoped company-wide records are
-    only shown in the unfiltered corporate view; each item says whether it counts toward "Net"
+    only shown in the unfiltered corporate view for the caller's tenant; each item says whether it counts toward "Net"
     (implemented projects only — Planned projects are shown but not netted).
     """
     from services.dashboard_filters import apply_scope, apply_year
@@ -561,8 +613,12 @@ def _query_mitigation(facility_id=None, year=None, allowed_fids=None, segment=No
 
     filtered = any(v not in (None, "", "all") for v in (facility_id, activity, division, segment))
     records = []
-    if not filtered and allowed_fids is None:
-        records = apply_year(MitigationRecord.query, MitigationRecord, year).all()
+    if not filtered and org_wide:
+        records = apply_year(
+            MitigationRecord.query.filter(tenant_matches(MitigationRecord.tenant_id, tenant_id)),
+            MitigationRecord,
+            year,
+        ).all()
 
     results = []
     for p in projects:
@@ -686,8 +742,8 @@ def _query_categorical_breakdown(
     BUG-004 / BUG-054: facility-level filters and the shared status rule.
     """
     from collections import defaultdict
-    from services.dashboard_filters import apply_scope, apply_year, horizon_delta, statuses
-    from services.scope2_gases import record_totals
+    from services.dashboard_filters import apply_scope, apply_year, gwp_pair, horizon_delta, scope3_record_co2e, statuses
+    from services.scope2_gases import record_totals_fields
 
     scope = dict(allowed_fids=allowed_fids, facility_id=facility_id, activity=activity, division=division,
                  segment=segment)
@@ -710,21 +766,55 @@ def _query_categorical_breakdown(
     s1 = grouped(Emission, func.sum(Emission.co2e_total), func.sum(Emission.ch4_emissions),
                  func.sum(Emission.n2o_emissions))
 
-    s2_q = apply_year(apply_scope(db.session.query(Scope2Emission), Scope2Emission, **scope), Scope2Emission, year)
+    s2_q = (
+        apply_year(apply_scope(db.session.query(Scope2Emission), Scope2Emission, **scope), Scope2Emission, year)
+        .filter(Scope2Emission.status.in_(st))
+        .with_entities(
+            Scope2Emission.facility_id,
+            Scope2Emission.source_type,
+            Scope2Emission.grid_region,
+            Scope2Emission.electricity_kwh,
+            Scope2Emission.co2e,
+            Scope2Emission.co2e_market_based,
+        )
+    )
     s2_by_fac = defaultdict(float)
-    for e in s2_q.filter(Scope2Emission.status.in_(st)).all():
-        loc, mkt = record_totals(e, "20" if is_20 else "100")
-        s2_by_fac[e.facility_id] += mkt if str(scope2_method).lower() == "market" else loc
-    s2_labels = {f[0]: f for f in db.session.query(*labels).filter(Facility.id.in_(list(s2_by_fac) or [-1])).all()}
-    s2 = [(*s2_labels[fid], total) for fid, total in s2_by_fac.items() if fid in s2_labels]
+    s2_grid_cache = {}
+    s2_diff = None
+    if is_20:
+        c100, n100 = gwp_pair("100")
+        c20, n20 = gwp_pair("20")
+        s2_diff = (c20 - c100, n20 - n100)
+    is_mkt = str(scope2_method).lower() == "market"
+    s2_horizon = "20" if is_20 else "100"
+    for fid, src_type, grid_region, kwh, co2e, co2e_mkt in s2_q.all():
+        loc, mkt = record_totals_fields(
+            src_type, grid_region, kwh, co2e, co2e_mkt, s2_horizon,
+            grid_cache=s2_grid_cache, gwp_diff=s2_diff,
+        )
+        s2_by_fac[fid] += mkt if is_mkt else loc
 
-    s3_q = apply_year(apply_scope(db.session.query(Scope3Emission), Scope3Emission, **scope), Scope3Emission, year)
-    s3_by_fac = defaultdict(float)
-    from services.dashboard_filters import scope3_record_co2e
-    for e in s3_q.filter(Scope3Emission.status.in_(st)).all():
-        s3_by_fac[e.facility_id] += scope3_record_co2e(e.co2e, e.gas_composition, gwp_horizon)
-    s3_labels = {f[0]: f for f in db.session.query(*labels).filter(Facility.id.in_(list(s3_by_fac) or [-1])).all()}
-    s3 = [(*s3_labels[fid], total) for fid, total in s3_by_fac.items() if fid in s3_labels]
+    if is_20:
+        s3_q = (
+            apply_year(apply_scope(db.session.query(Scope3Emission), Scope3Emission, **scope), Scope3Emission, year)
+            .filter(Scope3Emission.status.in_(st))
+            .with_entities(Scope3Emission.facility_id, Scope3Emission.co2e, Scope3Emission.gas_composition_json)
+        )
+        s3_by_fac = defaultdict(float)
+        for fid, co2e_val, gc_json in s3_q.all():
+            s3_by_fac[fid] += scope3_record_co2e(co2e_val, gc_json, gwp_horizon)
+    else:
+        s3_q = (
+            apply_year(apply_scope(db.session.query(Scope3Emission.facility_id, func.sum(Scope3Emission.co2e)), Scope3Emission, **scope), Scope3Emission, year)
+            .filter(Scope3Emission.status.in_(st))
+            .group_by(Scope3Emission.facility_id)
+        )
+        s3_by_fac = {fid: float(val or 0.0) for fid, val in s3_q.all()}
+
+    needed_fids = list(set(s2_by_fac) | set(s3_by_fac)) or [-1]
+    fac_labels = {f[0]: f for f in db.session.query(*labels).filter(Facility.id.in_(needed_fids)).all()}
+    s2 = [(*fac_labels[fid], total) for fid, total in s2_by_fac.items() if fid in fac_labels]
+    s3 = [(*fac_labels[fid], total) for fid, total in s3_by_fac.items() if fid in fac_labels]
 
     out = {}
 
@@ -978,6 +1068,8 @@ def get_mitigation():
             segment=request.args.get("segment"),
             activity=request.args.get("activity"),
             division=request.args.get("division"),
+            org_wide=is_org_wide_user(user),
+            tenant_id=get_current_tenant_id(user),
         )
     )
 
@@ -1021,6 +1113,8 @@ def get_goal(year):
             ),
             403,
         )
+    if get_current_tenant_id(user) != "default":
+        return jsonify(None)
     try:
         goal = Goal.query.filter_by(year=year).first()
         if not goal:
@@ -1049,12 +1143,19 @@ def get_base_year():
             ),
             403,
         )
-    base_year = BaseYearRecalculation.query.order_by(
-        BaseYearRecalculation.recalc_date.desc()
-    ).first()
+    caller_tenant = get_current_tenant_id(user)
+    base_year = (
+        BaseYearRecalculation.query.filter(tenant_matches(BaseYearRecalculation.tenant_id, caller_tenant))
+        .order_by(BaseYearRecalculation.recalc_date.desc())
+        .first()
+    )
 
     if not base_year:
-        base_year_singleton = db.session.get(BaseYear, 1) or BaseYear.query.first()
+        base_year_singleton = (
+            (db.session.get(BaseYear, 1) or BaseYear.query.first())
+            if caller_tenant == "default"
+            else None
+        )
         if base_year_singleton:
             return jsonify({
                 "id": base_year_singleton.id,
@@ -1300,10 +1401,16 @@ def _query_uncertainty(year=None, allowed_fids=None, facility_id=None, scope="al
     from services.inventory_uncertainty import inventory_uncertainty
 
     if not year:
-        # latest year with Verified data that is not in the future
+        # latest year with Verified data in the caller's scope that is not in the future
         cy = datetime.now(timezone.utc).year
-        year = db.session.query(func.max(Emission.year)).filter(
-            Emission.status == "Verified", Emission.year <= cy).scalar() or cy
+        yq = db.session.query(func.max(Emission.year)).filter(
+            Emission.status == "Verified", Emission.year <= cy
+        )
+        if allowed_fids is not None:
+            yq = yq.filter(Emission.facility_id.in_(allowed_fids or [-1]))
+        if facility_id:
+            yq = yq.filter(Emission.facility_id == facility_id if isinstance(facility_id, int) else Emission.facility_id.in_(facility_id or [-1]))
+        year = yq.scalar() or cy
     return inventory_uncertainty(
         int(year),
         allowed_fids=allowed_fids,
@@ -1328,7 +1435,11 @@ def get_report_exclusions():
     year = request.args.get("year")
     # activity = request.args.get('activity') # potential future filter
 
-    query = MitigationRecord.query.filter(MitigationRecord.type.ilike("%exclusion%"))
+    caller_tenant = get_current_tenant_id(user)
+    query = MitigationRecord.query.filter(
+        MitigationRecord.type.ilike("%exclusion%"),
+        tenant_matches(MitigationRecord.tenant_id, caller_tenant),
+    )
 
     if year and year != "all":
         query = query.filter(MitigationRecord.year == int(year))
@@ -1374,7 +1485,10 @@ def get_equipment_emissions():
     eq_tags = set(e.equipment_id.strip() for e in emissions if e.equipment_id and str(e.equipment_id).strip())
     source_names = {}
     if eq_tags:
-        sources = EmissionSource.query.filter(EmissionSource.equipment_id.in_(list(eq_tags))).all()
+        src_q = EmissionSource.query.filter(EmissionSource.equipment_id.in_(list(eq_tags)))
+        if allowed_fids is not None:
+            src_q = src_q.filter(EmissionSource.facility_id.in_(allowed_fids or [-1]))
+        sources = src_q.all()
         for s in sources:
             if s.equipment_id and s.name:
                 source_names[s.equipment_id.strip()] = s.name

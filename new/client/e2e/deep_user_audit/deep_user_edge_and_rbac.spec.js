@@ -70,7 +70,7 @@ test.describe.serial('Edge Workflows, RBAC Personas & Untested User Journeys', (
     }
 
     // Fill credentials for standard operator
-    await page.locator('input[placeholder="Email Address"]').fill('operator@sonatrach.dz');
+    await page.locator('input[placeholder="Email Address"]').fill('operator@example.org');
     await page.locator('input[placeholder="Password"]').fill('operator123');
     await page.locator('button[type="submit"]:has-text("Sign In")').click();
 
@@ -146,7 +146,7 @@ test.describe.serial('Edge Workflows, RBAC Personas & Untested User Journeys', (
       await page.waitForTimeout(400);
     }
 
-    await page.locator('input[placeholder="Email Address"]').fill('itadmin@sonatrach.dz');
+    await page.locator('input[placeholder="Email Address"]').fill('itadmin@example.org');
     await page.locator('input[placeholder="Password"]').fill('itadmin123');
     await page.locator('button[type="submit"]:has-text("Sign In")').click();
 

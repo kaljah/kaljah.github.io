@@ -556,13 +556,13 @@ class TestJointVentureEquityShareConsolidation:
 
         with app.app_context():
             # Ensure distinct test partners
-            p1 = JvPartner.query.filter_by(name="Sonatrach").first()
+            p1 = JvPartner.query.filter_by(name="Demo Operator Co.").first()
             if not p1:
-                p1 = JvPartner(name="Sonatrach", code="SH", country="Algeria", is_operator=True)
+                p1 = JvPartner(name="Demo Operator Co.", code="DOC", country="Algeria", is_operator=True)
                 db.session.add(p1)
-            p2 = JvPartner.query.filter_by(name="Eni").first()
+            p2 = JvPartner.query.filter_by(name="Demo JV Partner B").first()
             if not p2:
-                p2 = JvPartner(name="Eni", code="ENI", country="Italy", is_operator=False)
+                p2 = JvPartner(name="Demo JV Partner B", code="JVPB", country="Italy", is_operator=False)
                 db.session.add(p2)
             db.session.commit()
             p1_id, p2_id = p1.id, p2.id

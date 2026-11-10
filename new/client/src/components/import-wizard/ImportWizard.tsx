@@ -38,12 +38,12 @@ export interface ImportWizardProps {
   scopeFor: (mode?: string) => string;
   preSteps?: ImportWizardPreStep[];
   fieldFilter?: (group: FieldGroupData, field: any) => boolean;
-  fileExtras?: React.ReactNode;
-  mappingExtras?: React.ReactNode;
+  fileExtras?: React.ReactNode | ((mode?: string) => React.ReactNode);
+  mappingExtras?: React.ReactNode | ((mode?: string) => React.ReactNode);
   extraForm?: (form: FormData) => void;
   finalLabel?: string;
-  overwriteLabel?: string;
-  overwriteHint?: string;
+  overwriteLabel?: string | ((mode?: string) => string);
+  overwriteHint?: string | ((mode?: string) => string);
   reviewable?: boolean;
   regionAccess?: boolean;
   /** check the file before importing (POST /emissions/upload/check: a sample is calculated, nothing saved) */
@@ -102,7 +102,8 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
   const [jobId, setJobId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [overwrite, setOverwrite] = useState<boolean>(false); // replace records that already exist
-  // How the file writes decimals: chosen per file, never guessed ("1,000" is 1000 in English, 1 in French)
+  const [duplicateAction, setDuplicateAction] = useState<"overwrite" | "revision" | "skip">("overwrite");
+  // How the file writes decimals: defaults to standard point, auto-switchable or user-toggleable
   const [decimalMark, setDecimalMark] = useState<"comma" | "point" | null>(null);
   const [allowedRegions, setAllowedRegions] = useState<string[] | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
@@ -112,6 +113,10 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
   const [showAllFields, setShowAllFields] = useState<boolean>(false);
   const [check, setCheck] = useState<FileCheckState>(EMPTY_CHECK);
   const scope = scopeFor(mode);
+  const resolvedOverwriteLabel = typeof overwriteLabel === "function" ? overwriteLabel(mode) : overwriteLabel;
+  const resolvedOverwriteHint = typeof overwriteHint === "function" ? overwriteHint(mode) : overwriteHint;
+  const resolvedFileExtras = typeof fileExtras === "function" ? fileExtras(mode) : fileExtras;
+  const resolvedMappingExtras = typeof mappingExtras === "function" ? mappingExtras(mode) : mappingExtras;
 
   useEffect(() => {
     api
@@ -220,6 +225,9 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
     form.append("file", f);
     form.append("scope", scope);
     form.append("overwrite_duplicates", overwrite ? "true" : "false");
+    if (overwrite) {
+      form.append("duplicate_action", duplicateAction);
+    }
     if (decimalMark) form.append("decimal_mark", decimalMark);
     extraForm?.(form);
     form.append("column_mapping", JSON.stringify(mapping));
@@ -252,7 +260,7 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
       setCheck({ ...EMPTY_CHECK, error: err.response?.data?.error || err.message });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [file, scope, overwrite, decimalMark, mapping, headers.length, allFields, savedMappings, extraForm]);
+  }, [file, scope, overwrite, duplicateAction, decimalMark, mapping, headers.length, allFields, savedMappings, extraForm]);
 
   // Gas analysis totals of a CSV (the server refuses a row whose analysis does not total 100 %): the whole file is read in
   // the browser while the mapping is chosen. Excel files are checked by the server's file check below.
@@ -301,7 +309,7 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
       return;
     }
     setCheck((c) => (c.data || c.error ? { ...c, stale: true } : c));
-  }, [mapping, overwrite, decimalMark, optionsKey]);
+  }, [mapping, overwrite, duplicateAction, decimalMark, optionsKey]);
   useEffect(() => {
     if (recheck) {
       setRecheck(false);
@@ -423,7 +431,7 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
             </div>
             <FileDrop inputRef={fileInputRef} dragging={dragging} onDragging={setDragging} onDrop={onDrop} onFileChange={onFileChange} error={parseError} />
             {maxBytes && <p className="m-0 text-xs text-text-secondary">{t("Up to")}{" "}{(maxBytes / 1048576).toFixed(0)}{" "}{t("MB per file · no row limit")}</p>}
-            {fileExtras}
+            {resolvedFileExtras}
           </>
         )}
 
@@ -505,7 +513,7 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
               )}
             </div>
 
-            {mappingExtras}
+            {resolvedMappingExtras}
 
             {checkBeforeImport && <FileCheckPanel
                 check={check}
@@ -514,13 +522,58 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
                 mappedHere={headers.length ? headers.filter((h) => matchedColumns.has(h)).length : undefined}
               />}
 
-            <label className={cn("flex cursor-pointer items-start gap-2 text-sm font-medium text-text-secondary")}>
-              <input type="checkbox" className="mt-0.5 size-4 shrink-0 accent-brand-500" checked={overwrite} onChange={(e) => setOverwrite(e.target.checked)} />
-              <span className="min-w-0 flex-1">
-                {overwriteLabel}
-                {overwriteHint && <span className="block text-xs font-normal">{overwriteHint}</span>}
-              </span>
-            </label>
+            <div className="rounded-lg border border-border bg-ink-50/50 p-3 flex flex-col gap-2">
+              <label className={cn("flex cursor-pointer items-start gap-2 text-sm font-medium text-text")}>
+                <input
+                  type="checkbox"
+                  className="mt-0.5 size-4 shrink-0 accent-brand-500"
+                  checked={overwrite}
+                  onChange={(e) => setOverwrite(e.target.checked)}
+                />
+                <span className="min-w-0 flex-1">
+                  {resolvedOverwriteLabel}
+                  {resolvedOverwriteHint && <span className="block text-xs font-normal text-text-secondary">{resolvedOverwriteHint}</span>}
+                </span>
+              </label>
+
+              {overwrite && (
+                <div className="mt-1 pl-6 flex flex-col gap-1.5 border-l-2 border-brand-500/40">
+                  <span id="conflict-policy-label" className="text-xs font-semibold text-text-secondary">{t("Conflict Resolution Policy:")}</span>
+                  <div role="radiogroup" aria-labelledby="conflict-policy-label" className="flex flex-wrap gap-2">
+                    <Button
+                      type="button"
+                      role="radio"
+                      aria-checked={duplicateAction === "overwrite"}
+                      size="sm"
+                      variant={duplicateAction === "overwrite" ? "primary" : "secondary"}
+                      onClick={() => setDuplicateAction("overwrite")}
+                    >
+                      {t("Overwrite In-Place")}
+                    </Button>
+                    <Button
+                      type="button"
+                      role="radio"
+                      aria-checked={duplicateAction === "revision"}
+                      size="sm"
+                      variant={duplicateAction === "revision" ? "primary" : "secondary"}
+                      onClick={() => setDuplicateAction("revision")}
+                    >
+                      {t("Create Audited Revision")}
+                    </Button>
+                    <Button
+                      type="button"
+                      role="radio"
+                      aria-checked={duplicateAction === "skip"}
+                      size="sm"
+                      variant={duplicateAction === "skip" ? "primary" : "secondary"}
+                      onClick={() => setDuplicateAction("skip")}
+                    >
+                      {t("Skip Duplicates")}
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
 
             {headers.length > 0 && (
               <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-text-secondary">

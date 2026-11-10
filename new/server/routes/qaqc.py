@@ -3,7 +3,7 @@ from sqlalchemy import or_, and_
 from extensions import db
 from models import Emission, Scope2Emission, Scope3Emission
 from routes.auth import login_required
-from utils import get_current_user, get_allowed_facility_ids
+from utils import get_allowed_facility_ids, get_current_tenant_id, get_current_user
 import csv
 import io
 from utils import internal_error
@@ -33,7 +33,7 @@ def get_qaqc_dashboard():
     if not _is_admin_or_superuser(user):
         return jsonify({"error": "Admin or Superuser privileges required"}), 403
     try:
-        return jsonify(build_dashboard(get_allowed_facility_ids(user), request.args))
+        return jsonify(build_dashboard(get_allowed_facility_ids(user), request.args, tenant_id=get_current_tenant_id(user)))
     except Exception as e:
         import traceback
         from flask import current_app
@@ -59,7 +59,7 @@ def export_qaqc_report():
 
         def _fac_filter(q, model):
             if allowed_fids is not None:
-                q = q.filter(model.facility_id.in_(allowed_fids))
+                q = q.filter(model.facility_id.in_(allowed_fids or [-1]))
             if year_arg and year_arg not in ["all", ""]:
                 try:
                     q = q.filter(model.year == int(year_arg))

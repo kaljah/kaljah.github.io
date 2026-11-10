@@ -9,11 +9,57 @@ import { controlClass, FieldGroupData, MappingField } from "./import-wizard/mapp
 import { TEMPLATES, TemplateField } from "./column-mapping/templates";
 import { t as tr } from "../i18n";
 
-const TITLES: Record<string, string> = {
+export type WizardImportType =
+  | "sources"
+  | "custom_factors"
+  | "production"
+  | "mitigation"
+  | "facilities"
+  | "activity";
+
+const TITLES: Record<WizardImportType, string> = {
   sources: tr("Import Equipment"),
   custom_factors: tr("Import Custom Factors"),
   production: tr("Import Production Data"),
   mitigation: tr("Import Mitigation Projects"),
+  facilities: tr("Import Regions"),
+  activity: tr("Import Emissions Data"),
+};
+
+const SUBTITLES: Record<WizardImportType, string> = {
+  sources: tr("Upload emission sources and equipment catalog from CSV or Excel"),
+  custom_factors: tr("Upload organization-specific emission factors from CSV or Excel"),
+  production: tr("Upload monthly oil and gas production throughput from CSV or Excel"),
+  mitigation: tr("Upload carbon reduction and abatement projects from CSV or Excel"),
+  facilities: tr("Upload operational regions, blocks and concessions from CSV or Excel"),
+  activity: tr("Upload fuel combustion, flaring, venting or fugitive data from CSV or Excel via in-process background processing"),
+};
+
+const OVERWRITE_CONFIG: Record<WizardImportType, { label: string; hint: string }> = {
+  facilities: {
+    label: tr("Overwrite existing Regions with the same name"),
+    hint: tr("If unchecked, duplicate regions will be skipped with an error."),
+  },
+  sources: {
+    label: tr("Overwrite existing Equipment with matching region and equipment ID/name"),
+    hint: tr("If unchecked, duplicate equipment will be skipped to prevent duplicates."),
+  },
+  custom_factors: {
+    label: tr("Overwrite existing Custom Factors with the same name"),
+    hint: tr("If unchecked, duplicate custom factors will be skipped with an error."),
+  },
+  production: {
+    label: tr("Overwrite existing Production records with matching region, year, and month"),
+    hint: tr("If unchecked, duplicate production periods will be skipped."),
+  },
+  mitigation: {
+    label: tr("Overwrite existing Mitigation Projects with matching region, name, and year"),
+    hint: tr("If unchecked, duplicate mitigation projects will be skipped."),
+  },
+  activity: {
+    label: tr("Overwrite existing records with matching facility, date, and source"),
+    hint: tr("If unchecked, duplicate records will be skipped to prevent double-counting."),
+  },
 };
 
 // Server scope code for each wizard type; the other types upload under their own name.
@@ -22,12 +68,13 @@ const SCOPE_OF: Record<string, string> = { activity: "1", activity_scope2: "2", 
 // Sample row appended to the client-side CSV template of each non-emissions type.
 const SAMPLE_ROW: Record<string, string> = {
   custom_factors: "Specialized Generator Gas,Natural Gas,MMBtu,53.06,0.001,0.0001,0,5,50,150,combustion",
-  production: "Hassi Messaoud,Exploration & Production,Production,Bir Berkine,2024,1,50000,bbl,12000,mscf",
-  mitigation: "Hassi Messaoud,Solar Farm A,REC,2024,1500,Active,2024-01-01,,500000,Solar panel installation",
-  sources: "Exploration & Production,Production,Hassi Messaoud,Bir Berkine,Combustion Unit A,EQ-001,combustion,Natural Gas,5 MW,2015-06-01,Active",
-  activity_scope2: "Hassi Messaoud,2024,1,Algerian National Grid,500,MWh,electricity,",
-  activity_scope3: "Hassi Messaoud,2024,1,4,Truck Transport,10000,t-km,0.12841,kg,,Crude trucking",
-  facilities: "Hassi R'Mel,Laghouat,HRM-01,100,operated,Exploration & Production,Production,Block A,Laghouat,Operational Control,Details here,Upstream,33.8,3.2",
+  production: "Basin Alpha,Exploration & Production,Production,Sector Alpha-1,2024,1,50000,bbl,12000,mscf",
+  mitigation: "Basin Alpha,Solar Farm A,REC,2024,1500,Active,2024-01-01,,500000,Solar panel installation",
+  sources: "Exploration & Production,Production,Basin Alpha,Sector Alpha-1,Combustion Unit A,EQ-001,combustion,Natural Gas,5 MW,2015-06-01,Active,Main export compressor,Laghouat",
+  activity_scope2: "Basin Alpha,2024,1,Algerian National Grid,500,MWh,electricity,",
+  activity_scope3: "Basin Alpha,2024,1,4,Truck Transport,10000,t-km,0.12841,kg,,Crude trucking",
+  activity_scope3_eeio: "Basin Alpha,2024,1,211120,50000,Well drilling equipment procurement",
+  facilities: "Basin Beta,Laghouat,HRM-01,100,operated,Exploration & Production,Production,Block A,Laghouat,Operational Control,Details here,PSC Block 405b,Algeria,Upstream,33.8,3.2",
 };
 
 // Scope 1 columns shown before any Tier 3 inputs.
@@ -90,7 +137,7 @@ function fieldsFor(type: string, tier: string, processScope: string, process: st
 export interface ColumnMappingWizardProps {
   onClose: () => void;
   onUploadSuccess?: () => void;
-  type?: string;
+  type?: WizardImportType | string;
 }
 
 /** Generic bulk importer for emissions rows and master data; `type` picks the column set and server scope. */
@@ -136,6 +183,7 @@ export const ColumnMappingWizard: React.FC<ColumnMappingWizardProps> = ({ onClos
     document.body.appendChild(a);
     a.click();
     a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
   const preSteps = useMemo(
@@ -199,7 +247,7 @@ export const ColumnMappingWizard: React.FC<ColumnMappingWizardProps> = ({ onClos
     </div>
   );
 
-  const mappingExtras = (
+  const mappingExtras = isEmissions ? (
     <Field label={tr("Default factor type when not specified in file")}>
       <NativeSelect className={controlClass} value={globalFactor} onChange={(e) => setGlobalFactor(e.target.value)}>
         <option value="auto">{tr("Auto-detect from file")}</option>
@@ -207,22 +255,25 @@ export const ColumnMappingWizard: React.FC<ColumnMappingWizardProps> = ({ onClos
         <option value="custom">{tr("Force Custom Factors")}</option>
       </NativeSelect>
     </Field>
-  );
+  ) : undefined;
 
-  const facilities = type === "facilities";
+  const overwriteInfo = OVERWRITE_CONFIG[type as WizardImportType] || OVERWRITE_CONFIG.activity;
+
   return (
     <ImportWizard
-      title={TITLES[type] || (facilities ? tr("Import Regions") : tr("Import Emissions Data"))}
-      subtitle={tr("Upload a CSV or Excel file to bulk-import your records")}
+      title={TITLES[type as WizardImportType] || tr("Import Data")}
+      subtitle={SUBTITLES[type as WizardImportType] || tr("Upload a CSV or Excel file to bulk-import your records")}
       fieldGroupsFor={fieldGroupsFor}
       scopeFor={() => SCOPE_OF[type] || type}
       preSteps={preSteps}
       fileExtras={fileExtras}
       mappingExtras={mappingExtras}
-      extraForm={(form) => form.append("global_factor_type", globalFactor)}
+      extraForm={(form) => {
+        if (isEmissions) form.append("global_factor_type", globalFactor);
+      }}
       finalLabel={tr("Processing")}
-      overwriteLabel={facilities ? tr("Overwrite existing Regions with the same name") : tr("Overwrite existing records with matching facility, date, and source")}
-      overwriteHint={facilities ? tr("If unchecked, duplicate regions will be skipped with an error.") : tr("If unchecked, duplicate records will be skipped to prevent double-counting.")}
+      overwriteLabel={overwriteInfo.label}
+      overwriteHint={overwriteInfo.hint}
       reviewable={type in SCOPE_OF}
       regionAccess={false}
       onClose={onClose}

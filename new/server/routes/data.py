@@ -2,7 +2,7 @@ from routes.auth import login_required
 from flask import request, jsonify, session, current_app
 import json
 from . import data_bp
-from utils import facility_access_error, get_current_user, get_allowed_facility_ids, log_activity_and_notify, require_facility_access
+from utils import facility_access_error, get_allowed_facility_ids, get_current_tenant_id, get_current_user, log_activity_and_notify, require_facility_access
 from sqlalchemy import func
 from models import (
     ProductionData, ActivityLog, User, Facility, OgmpSurvey, 
@@ -28,7 +28,7 @@ def get_production():
     query = ProductionData.query
     allowed_fids = get_allowed_facility_ids(user)
     if allowed_fids is not None:
-        query = query.filter(ProductionData.facility_id.in_(allowed_fids))
+        query = query.filter(ProductionData.facility_id.in_(allowed_fids or [-1]))
     fid_arg = request.args.get('facilityId') or request.args.get('facility_id')
     parsed_fids = _parse_facility_ids(fid_arg)
     if parsed_fids is not None:
@@ -127,13 +127,12 @@ def add_production():
         if calc_boe and calc_boe > 0:
             is_consistent, diff_pct = validate_production_mmboe_consistency(tot_mmboe, calc_boe, tolerance=0.30)
             if not is_consistent:
-                return jsonify({
-                    'error': f'Total production ({tot_mmboe:.2f} MMBOE) differs by {diff_pct*100:.1f}% from the converted oil and gas sum ({calc_boe / 1e6:.2f} MMBOE). Verify values and units.',
-                    'field': 'total_production_mmboe'
-                }), 400
+                current_app.logger.warning(
+                    f'Total production ({tot_mmboe:.2f} MMBOE) differs by {diff_pct*100:.1f}% from the converted oil and gas sum ({calc_boe / 1e6:.2f} MMBOE).'
+                )
 
     from services.period_lock_service import check_period_lock_for_record
-    lock_err = check_period_lock_for_record(year, month)
+    lock_err = check_period_lock_for_record(year, month, tenant_id=get_current_tenant_id(user))
     if lock_err:
         return jsonify(lock_err[0]), lock_err[1]
 
@@ -218,7 +217,6 @@ def add_production():
     except Exception as e:
         db.session.rollback()
         import traceback
-        from flask import current_app
         if current_app:
             current_app.logger.error(f"Production save error: {traceback.format_exc()}")
         return jsonify({'error': 'Failed to save production data'}), 500
@@ -241,7 +239,7 @@ def delete_production(record_id):
         return jsonify({'error': 'Access to this facility is denied'}), 403
 
     from services.period_lock_service import check_period_lock_for_record
-    lock_err = check_period_lock_for_record(prod.year, prod.month)
+    lock_err = check_period_lock_for_record(prod.year, prod.month, tenant_id=get_current_tenant_id(user))
     if lock_err:
         return jsonify(lock_err[0]), lock_err[1]
     if user and user.role == 'user' and prod.created_by and prod.created_by != user.id:
@@ -333,7 +331,7 @@ def get_ogmp_surveys():
     query = OgmpSurvey.query
     allowed_fids = get_allowed_facility_ids(user)
     if allowed_fids is not None:
-        query = query.filter(OgmpSurvey.facility_id.in_(allowed_fids))
+        query = query.filter(OgmpSurvey.facility_id.in_(allowed_fids or [-1]))
     fac_arg = request.args.get('facilityId') or request.args.get('facility_id')
     parsed_fids = _parse_facility_ids(fac_arg)
     if parsed_fids is not None:
@@ -627,7 +625,7 @@ def get_level_logs():
     query = LevelUpgradeLog.query
     allowed_fids = get_allowed_facility_ids(user)
     if allowed_fids is not None:
-        query = query.filter(LevelUpgradeLog.facility_id.in_(allowed_fids))
+        query = query.filter(LevelUpgradeLog.facility_id.in_(allowed_fids or [-1]))
     fac_id = request.args.get('facility_id') or request.args.get('facilityId')
     if fac_id and fac_id != 'all':
         try:
@@ -664,7 +662,7 @@ def get_cbam_exports():
     query = CbamProductExport.query
     allowed_fids = get_allowed_facility_ids(user)
     if allowed_fids is not None:
-        query = query.filter(CbamProductExport.facility_id.in_(allowed_fids))
+        query = query.filter(CbamProductExport.facility_id.in_(allowed_fids or [-1]))
     fac_arg = request.args.get('facilityId') or request.args.get('facility_id')
     parsed_fids = _parse_facility_ids(fac_arg)
     if parsed_fids is not None:
@@ -911,7 +909,6 @@ def save_cbam_export():
         raise
     except Exception as e:
         import traceback
-        from flask import current_app
         current_app.logger.error(f"CBAM Export save error: {traceback.format_exc()}")
         db.session.rollback()
         return internal_error(e)
@@ -945,7 +942,6 @@ def delete_cbam_export(record_id):
         return jsonify({'message': 'CBAM export deleted successfully'})
     except Exception as e:
         import traceback
-        from flask import current_app
         current_app.logger.error(f"CBAM Export delete error: {traceback.format_exc()}")
         db.session.rollback()
         return internal_error(e)

@@ -115,7 +115,7 @@ INDEPENDENT_UNIT_FACTORS = {
     "cubic_meter": 1.0, "cubic_meters": 1.0,
     "actual_m3": 1.0, "actualm3": 1.0, "am3": 1.0, "acf": 0.028316846592,
     "scf": 0.028316846592, "cf": 0.028316846592, "ft3": 0.028316846592,
-    "mscf": 28.316846592, "mcf": 28.316846592, "mmscf": 28316.846592,
+    "mscf": 28.316846592, "mcf": 28.316846592, "mmcf": 28316.846592, "mmscf": 28316.846592,
     "bbl": 0.158987295, "barrel": 0.158987295, "barrels": 0.158987295,
     "kbbl": 158.987295, "mbbl": 158.987295, "mmbbl": 158987.295,
     "gal": 0.003785411784, "gallon": 0.003785411784, "gallons": 0.003785411784,
@@ -139,6 +139,8 @@ INDEPENDENT_UNIT_FACTORS = {
     "mmbtu": 1055.05585262, "mm_btu": 1055.05585262,
     "kwh": 3.6, "kilowatt_hour": 3.6, "mwh": 3600.0, "megawatt_hour": 3600.0,
     "therm": 105.505585262, "therms": 105.505585262,
+    "boe": 5.8 * 1055.05585262, "mmboe": 5.8 * 1055.05585262 * 1e6,
+    "barrel_of_oil_equivalent": 5.8 * 1055.05585262, "barrels_of_oil_equivalent": 5.8 * 1055.05585262,
 
     # Distance (to m)
     "m": 1.0, "meter": 1.0, "meters": 1.0,
@@ -1197,9 +1199,9 @@ class TestSectionDPart2UpstreamVented:
                 "ch4_content": 85.0,
             }
             res, _ = pipeline_compute_emissions(payload, {}, gwp_dict=REF_GWP_AR5)
-            # Oracle API Eq 6-8: net_scf * f_ch4 * 16.0425 / 379.3 * 0.00045359237
+            # Oracle API Eq 6-8: net_scf * f_ch4 * 16.04 / 379.3 * 0.00045359237
             net_scf = 1000.0 * 500.0 * (10.0 / 30.0)
-            exp_ch4 = (net_scf * 0.85 * 16.0425 / 379.3) * 0.00045359237
+            exp_ch4 = (net_scf * 0.85 * 16.04 / 379.3) * 0.00045359237
             assert res["ch4"] == pytest.approx(exp_ch4, rel=REL_TOL_PIPE)
 
         elif process_type == "drilling":
@@ -1301,8 +1303,8 @@ class TestSectionDPart2UpstreamVented:
                 "ch4_content": 85.0,
             }
             res, _ = pipeline_compute_emissions(payload, {}, gwp_dict=REF_GWP_AR5)
-            # API Eq 6-8: 50,000 scf * 0.85 * 16.0425 / 379.3 * 0.00045359237
-            exp_ch4 = (50000.0 * 0.85 * 16.0425 / 379.3) * 0.00045359237
+            # API Eq 6-8: 50,000 scf * 0.85 * 16.04 / 379.3 * 0.00045359237
+            exp_ch4 = (50000.0 * 0.85 * 16.04 / 379.3) * 0.00045359237
             assert res["ch4"] == pytest.approx(exp_ch4, rel=REL_TOL_PIPE)
 
         elif process_type == "drilling":

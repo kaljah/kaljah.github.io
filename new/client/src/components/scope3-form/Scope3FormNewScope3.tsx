@@ -81,8 +81,9 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
   year,
 }) => (
   <div className="calc-panel">
-    <div className="flex! justify-between! items-center! mb-[20px]!">
+    <div className="flex! flex-wrap! justify-between! items-center! gap-2 mb-[20px]!">
       <h3 className="m-[0px]!">{t("Scope 3 Value Chain Emissions")}</h3>
+      <Badge tone="neutral">{t("Spend-based screening")}</Badge>
     </div>
 
     <div

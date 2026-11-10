@@ -553,6 +553,7 @@ const ManageDataInner: React.FC = () => {
     const [facilityForm, setFacilityForm] = useState<Record<string, any>>({
         name: '', activity: '', division: '', field: '', location: '',
         boundary_type: '', boundary_detail: '', equity_share_pct: '',
+        partner_id: '', agreement_reference: '',
         segment: '', latitude: '', longitude: ''
     });
 
@@ -933,7 +934,7 @@ const ManageDataInner: React.FC = () => {
                 location: (facilityForm.location || regionName).trim(),
                 boundary_notes: fullBoundary
             };
-            ['latitude', 'longitude', 'equity_share_pct'].forEach((k) => {
+            ['latitude', 'longitude', 'equity_share_pct', 'partner_id', 'agreement_reference'].forEach((k) => {
                 if (body[k] === '' || body[k] === null || body[k] === undefined) delete body[k];
             });
             await api.post('/facilities', body);
@@ -941,6 +942,7 @@ const ManageDataInner: React.FC = () => {
             setFacilityForm({
                 name: '', activity: '', division: '', field: '', location: '',
                 boundary_type: '', boundary_detail: '', equity_share_pct: '',
+                partner_id: '', agreement_reference: '',
                 segment: '', latitude: '', longitude: ''
             });
             fetchFacilities();
@@ -1526,6 +1528,7 @@ const ManageDataInner: React.FC = () => {
             icon?: any;
             show: boolean;
             count?: number;
+            badgeText?: string;
         }[];
     }
 
@@ -1545,7 +1548,7 @@ const ManageDataInner: React.FC = () => {
             title: t("Operations"),
             items: [
                 { id: 'production', label: t("Production Data"), show: true },
-                { id: 'ogmp', label: t("OGMP 2.0 Surveys"), show: true },
+                { id: 'ogmp', label: t("OGMP 2.0 Surveys"), show: true, badgeText: t("Preview / Roadmap") },
                 { id: 'ldar', label: t("LDAR & Fugitives"), show: true },
                 { id: 'mitigation', label: t("Mitigation Projects"), show: true },
                 { id: 'cbam', label: t("CBAM Products"), show: true },
@@ -1594,10 +1597,15 @@ const ManageDataInner: React.FC = () => {
                                                 activeTab === n.id && "active bg-brand-50 font-semibold text-link hover:bg-brand-50 hover:text-link",
                                             )}
                                         >
-                                            <span className="inline-flex items-center gap-2">
-                                                {n.icon && <n.icon className="size-4" aria-hidden="true" />}
-                                                {n.label}
+                                            <span className="inline-flex items-center gap-2 min-w-0">
+                                                {n.icon && <n.icon className="size-4 shrink-0" aria-hidden="true" />}
+                                                <span>{n.label}</span>
                                             </span>
+                                            {n.badgeText ? (
+                                                <Badge tone="warning" className="shrink-0 px-1.5 py-0 text-[0.65rem]">
+                                                    {n.badgeText}
+                                                </Badge>
+                                            ) : null}
                                             {n.count && n.count > 0 ? (
                                                 <Badge tone="warning" className="min-w-5 justify-center px-1.5 text-xs font-bold">
                                                     {n.count}

@@ -13,9 +13,9 @@ def it_admin_client(app, client):
         user = User.query.filter_by(role="it_admin", status="active").first()
         if not user:
             user = User(
-                email="it_phase2_admin@sonatrach.dz",
+                email="it_phase2_admin@example.org",
                 fullName="IT Admin",
-                orgName="Sonatrach",
+                orgName="Demo Operator Co.",
                 sector="Oil & Gas",
                 role="it_admin",
                 status="active"
@@ -75,7 +75,7 @@ def test_session_policy_password_label(app, it_admin_client):
 def test_failed_login_records_attempted_email_actor(app, client):
     """Item 2.4: Failed sign-in records the attempted email as actor, not 'System'."""
     with app.app_context():
-        test_email = "intruder_attempt@sonatrach.dz"
+        test_email = "intruder_attempt@example.org"
         client.post(
             "/api/auth/login",
             json={"email": test_email, "password": "WrongPassword123!"},
@@ -117,7 +117,7 @@ def test_emergency_session_revocation_preserves_admin(app, it_admin_client):
         # Create or fetch a test regular user
         reg_user = User.query.filter(User.role == "user", User.id != admin_id).first()
         if not reg_user:
-            reg_user = User(email="temp_user@test.com", fullName="Temp User", orgName="Sonatrach", sector="Oil & Gas", role="user", session_version=1)
+            reg_user = User(email="temp_user@test.com", fullName="Temp User", orgName="Demo Operator Co.", sector="Oil & Gas", role="user", session_version=1)
             reg_user.set_password("TempUserPass123!")
             db.session.add(reg_user)
             db.session.commit()

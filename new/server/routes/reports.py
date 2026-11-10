@@ -5,8 +5,8 @@ from flask import Blueprint, jsonify, request, send_file, current_app
 from datetime import datetime, timezone
 import hashlib
 from io import BytesIO
-import html
 from utils import get_current_user, get_allowed_facility_ids
+from services.pdf_escape import safe_pdf_text
 from services.scope2_activity import scope2_activity
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
@@ -128,33 +128,33 @@ def create_pdf_report(emissions_data, filters):
     elements.append(Paragraph("GHG Emissions Report", title_style))
 
     # Report metadata
-    report_date = datetime.now().strftime("%B %d, %Y")
+    report_date = datetime.now(timezone.utc).strftime("%B %d, %Y")
     elements.append(Paragraph(f"Generated on {report_date}", subtitle_style))
     elements.append(Spacer(1, 0.2 * inch))
 
     # Filter summary
     filter_text = "<b>Report Filters:</b><br/>"
     if filters.get("year"):
-        filter_text += f"Year: {html.escape(str(filters['year']))}<br/>"
+        filter_text += f"Year: {safe_pdf_text(filters['year'], 32)}<br/>"
     if filters.get("month"):
-        filter_text += f"Month: {html.escape(str(filters['month']))}<br/>"
+        filter_text += f"Month: {safe_pdf_text(filters['month'], 32)}<br/>"
     if filters.get("facility_id"):
         try:
             facility = db.session.get(Facility, int(filters["facility_id"]))
             if facility:
-                filter_text += f"Facility: {html.escape(str(facility.name))}<br/>"
+                filter_text += f"Facility: {safe_pdf_text(facility.name, 120)}<br/>"
         except (ValueError, TypeError):
             pass
     if filters.get("division"):
-        filter_text += f"Division: {html.escape(str(filters['division']))}<br/>"
+        filter_text += f"Division: {safe_pdf_text(filters['division'], 120)}<br/>"
     if filters.get("field"):
-        filter_text += f"Field: {html.escape(str(filters['field']))}<br/>"
+        filter_text += f"Field: {safe_pdf_text(filters['field'], 120)}<br/>"
     if filters.get("process_type"):
-        filter_text += f"Process Type: {html.escape(str(filters['process_type']))}<br/>"
+        filter_text += f"Process Type: {safe_pdf_text(filters['process_type'], 120)}<br/>"
     if filters.get("method"):
-        filter_text += f"Method: {html.escape(str(filters['method']))}<br/>"
+        filter_text += f"Method: {safe_pdf_text(filters['method'], 120)}<br/>"
     if filters.get("search"):
-        filter_text += f"Search: {html.escape(str(filters['search']))}<br/>"
+        filter_text += f"Search: {safe_pdf_text(filters['search'], 120)}<br/>"
 
     elements.append(Paragraph(filter_text, styles["Normal"]))
     elements.append(Spacer(1, 0.3 * inch))
@@ -284,7 +284,7 @@ def create_pdf_report(emissions_data, filters):
     cell_style = ParagraphStyle("pdfcell", fontName=font, fontSize=7, leading=8)
     for row in table_data[1:]:
         for c in (1, 2, 3, 4):
-            row[c] = Paragraph(html.escape(str(row[c])), cell_style)
+            row[c] = Paragraph(safe_pdf_text(row[c], 200), cell_style)
     details_table = Table(table_data, colWidths=col_widths, repeatRows=1)
     details_table.setStyle(
         TableStyle(
@@ -410,7 +410,8 @@ def generate_report():
         emissions_data = []
 
         # Batch facility lookup to prevent N+1 queries
-        fac_map = {f.id: f.name for f in Facility.query.all()}
+        fac_q = Facility.query if allowed_fids is None else Facility.query.filter(Facility.id.in_(allowed_fids or [-1]))
+        fac_map = {f.id: f.name for f in fac_q.all()}
 
         status_filter = str(filters.get("status") or "Verified").strip()
         statuses = [x.strip().lower() for x in status_filter.split(",") if x.strip()] if status_filter.lower() != "all" else None
@@ -426,7 +427,7 @@ def generate_report():
             if facility_id:
                 q = q.filter_by(facility_id=facility_id)
             elif allowed_fids is not None:
-                q = q.filter(Emission.facility_id.in_(allowed_fids))
+                q = q.filter(Emission.facility_id.in_(allowed_fids or [-1]))
             if process_type:
                 q = q.filter_by(process_type=process_type)
             q = q.filter(~Emission.facility_id.in_(test_fids))
@@ -464,7 +465,7 @@ def generate_report():
             if facility_id:
                 q2 = q2.filter_by(facility_id=facility_id)
             elif allowed_fids is not None:
-                q2 = q2.filter(Scope2Emission.facility_id.in_(allowed_fids))
+                q2 = q2.filter(Scope2Emission.facility_id.in_(allowed_fids or [-1]))
             q2 = q2.filter(~Scope2Emission.facility_id.in_(test_fids))
             if hasattr(Scope2Emission, "is_test"):
                 q2 = q2.filter(Scope2Emission.is_test == False)
@@ -502,7 +503,7 @@ def generate_report():
             if facility_id:
                 q3 = q3.filter_by(facility_id=facility_id)
             elif allowed_fids is not None:
-                q3 = q3.filter(Scope3Emission.facility_id.in_(allowed_fids))
+                q3 = q3.filter(Scope3Emission.facility_id.in_(allowed_fids or [-1]))
             q3 = q3.filter(~Scope3Emission.facility_id.in_(test_fids))
             if hasattr(Scope3Emission, "is_test"):
                 q3 = q3.filter(Scope3Emission.is_test == False)
@@ -533,7 +534,7 @@ def generate_report():
         pdf_buffer = create_pdf_report(emissions_data, filters)
 
         # Return PDF file
-        filename = f"emissions_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+        filename = f"emissions_report_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.pdf"
         report_sha256 = getattr(pdf_buffer, "report_hash", None) or hashlib.sha256(pdf_buffer.getvalue()).hexdigest()
         resp = send_file(
             pdf_buffer,
@@ -556,7 +557,7 @@ def generate_report():
         )
 
 
-# Audit 2026-10-14 BUG-0002: the "master" annual reports (Groupement Berkine, El Merk) were static
+# Audit 2026-10-14 BUG-0002: the "master" annual reports (Demo JV Operations, Facility B-2) were static
 # documents with hard-coded figures labelled OFFICIAL VERIFIED, not built from the database. The
 # download is withdrawn; generate_*_master_report.py remain as standalone demo-sample scripts.
 @reports_bp.route("/master-annual-report", methods=["GET"])

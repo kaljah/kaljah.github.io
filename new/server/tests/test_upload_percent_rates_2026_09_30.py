@@ -35,7 +35,7 @@ def user_id():
             db.session.add(u)
             db.session.commit()
         if not Facility.query.filter_by(name=FACILITY).first():
-            db.session.add(Facility(name=FACILITY, location="Hassi R'Mel", country="Algeria", region="Laghouat",
+            db.session.add(Facility(name=FACILITY, location="Basin Beta", country="Algeria", region="Laghouat",
                                     division="Production", field="HR", segment="Upstream"))
             db.session.commit()
         return u.id

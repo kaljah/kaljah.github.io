@@ -72,7 +72,7 @@ def test_methane_map_vs_dashboard_distinction(app, client):
         # Fac 1: Geolocated on Map (lat/lon present)
         fac_map = make_facility(
             name=uniq("FAC_MAP"),
-            region="Hassi Messaoud",
+            region="Basin Alpha",
             latitude=31.67,
             longitude=6.06,
             is_test=False,
@@ -113,6 +113,7 @@ def test_methane_map_vs_dashboard_distinction(app, client):
 
         # Corporate inventory (verified, non-test) = 100 + 50 = 150 t CH4
         total_corp_ch4 = db.session.query(db.func.sum(Emission.ch4_emissions)).filter(
+            Emission.facility_id.in_([fac_map.id, fac_nomap.id, fac_test.id]),
             Emission.status == "Verified",
             Emission.is_test == False,
         ).scalar() or 0.0
@@ -133,7 +134,7 @@ def test_ogmp_rns_discrepancy_blocks_level5(app, client):
         admin = make_user("admin")
         login(client, admin)
 
-        fac = make_facility(name=uniq("FAC_RNS"), region="Berkine")
+        fac = make_facility(name=uniq("FAC_RNS"), region="Basin Alpha")
 
         # 1. Add surveys with Discrepancy Detected
         survey1 = OgmpSurvey(

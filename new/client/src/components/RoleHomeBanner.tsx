@@ -95,7 +95,7 @@ export const RoleHomeBanner: React.FC<RoleHomeBannerProps> = ({ pendingCount = 0
           <div>
             <h2 className="text-base font-bold text-text m-0">{t("Independent Assurance & Audit Portal")}</h2>
             <p className="text-sm text-text-secondary m-0 mt-0.5">
-              {t("Inspect ISO 14064-1 compliance, immutable cryptographic audit logs, and Monte Carlo uncertainty assessments.")}
+              {t("Inspect ISO 14064-1 compliance, immutable cryptographic audit logs, and basic error propagation (Monte Carlo planned) uncertainty assessments.")}
             </p>
           </div>
         </div>

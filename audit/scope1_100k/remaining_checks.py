@@ -155,7 +155,7 @@ def main(db_path):
                                 password_hash=generate_password_hash("Illizi-Passw0rd!2026")))
             db.session.commit()
         own = Facility.query.filter_by(name="In Amenas CPF").first().id
-        other = Facility.query.filter_by(name="Hassi Messaoud Gas Plant").first().id
+        other = Facility.query.filter_by(name="Basin Alpha Gas Plant").first().id
         n_illizi = Emission.query.join(Facility, Emission.facility_id == Facility.id).filter(Facility.region == "Illizi").count()
     uc = app.test_client()
     login(uc, "illizi.user@ghg.test", "Illizi-Passw0rd!2026")
@@ -176,7 +176,7 @@ def main(db_path):
 
     # ---------------- E. dashboard reconciliation ----------------
     # spread records over another year and facility so the filters are exercised
-    for k, (fname, yr, mo, qty) in enumerate([("Hassi Messaoud Gas Plant", 2023, 5, 12000), ("Hassi Messaoud Gas Plant", 2024, 7, 3000),
+    for k, (fname, yr, mo, qty) in enumerate([("Basin Alpha Gas Plant", 2023, 5, 12000), ("Basin Alpha Gas Plant", 2024, 7, 3000),
                                               ("Arzew GNL-1Z", 2023, 1, 777)]):
         with app.app_context():
             f_id = Facility.query.filter_by(name=fname).first().id
@@ -189,7 +189,7 @@ def main(db_path):
         # one record left Pending: it must not be counted
         Emission.query.filter_by(equipment_id="DASH-2").update({Emission.status: "Pending"}, synchronize_session=False)
         db.session.commit()
-        hm = Facility.query.filter_by(name="Hassi Messaoud Gas Plant").first().id
+        hm = Facility.query.filter_by(name="Basin Alpha Gas Plant").first().id
 
         def dbsum(*flt):
             q = db.session.query(func.sum(Emission.co2e_total), func.sum(Emission.co2_emissions),

@@ -1,6 +1,6 @@
 # Neocarbon: the SPA and the API on one address.
 # Template variables (filled by the nginx image at start, or by envsubst on a native install):
-#   SERVER_NAME        public host name, e.g. neocarbon.sonatrach.dz
+#   SERVER_NAME        public host name, e.g. neocarbon.example.org
 #   APP_UPSTREAM       gunicorn address, e.g. app:8000 (containers) or 127.0.0.1:8000 (native)
 #   SPA_ROOT           folder holding the built SPA (index.html, assets/)
 #   TLS_CERT, TLS_KEY  certificate chain and private key (PEM)

@@ -15,7 +15,7 @@ async function main() {
   await page.waitForTimeout(1000);
   
   const emailInput = page.locator('input[placeholder="Email Address"]').first();
-  await emailInput.fill('itadmin@sonatrach.dz');
+  await emailInput.fill('itadmin@example.org');
   const pwdInput = page.locator('input[type="password"]').first();
   await pwdInput.fill('a');
   await page.locator('button[type="submit"]:has-text("Sign In")').click();

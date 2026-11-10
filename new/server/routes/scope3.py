@@ -5,8 +5,17 @@ from sqlalchemy import func
 from routes.auth import login_required
 from calculations.uncertainty import propagate_uncertainty, Tier
 from calculations.units import compute_scope3_co2e
-from utils import facility_access_error, get_current_user, get_allowed_facility_ids, log_activity_and_notify, \
-    require_facility_access, initial_record_status, internal_error
+from utils import (
+    facility_access_error,
+    get_allowed_facility_ids,
+    get_current_tenant_id,
+    get_current_user,
+    initial_record_status,
+    internal_error,
+    log_activity_and_notify,
+    require_facility_access,
+    tenant_matches,
+)
 from input_validation import ValidationError, parse_number, parse_year, parse_month, normalize_scope3_category, \
     require_plausible_co2e
 from services.dashboard_filters import _parse_facility_ids
@@ -55,8 +64,13 @@ def get_scope3_emissions():
     status_arg = request.args.get("status")
     if year_arg == "baseline":
         from models import BaseYear, BaseYearRecalculation
-        rec = BaseYearRecalculation.query.order_by(BaseYearRecalculation.recalc_date.desc()).first()
-        base = rec or BaseYear.query.first()
+        caller_tenant = get_current_tenant_id(user)
+        rec = (
+            BaseYearRecalculation.query.filter(tenant_matches(BaseYearRecalculation.tenant_id, caller_tenant))
+            .order_by(BaseYearRecalculation.recalc_date.desc())
+            .first()
+        )
+        base = rec or (BaseYear.query.first() if caller_tenant == "default" else None)
         year_arg = str(base.year) if base else "-1"
     if year_arg and year_arg != "all":
         try:
@@ -66,6 +80,8 @@ def get_scope3_emissions():
             return jsonify({"error": str(ve)}), 400
     parsed_fids = _parse_facility_ids(fac_arg)
     if parsed_fids is not None:
+        if allowed_fids is not None and not set(parsed_fids).issubset(set(allowed_fids)):
+            return jsonify({"error": "Unauthorized facility"}), 403
         query = query.filter(Scope3Emission.facility_id.in_(parsed_fids))
     if status_arg and status_arg != "all":
         query = query.filter(Scope3Emission.status.in_([x.strip() for x in status_arg.split(",") if x.strip()]))
@@ -260,7 +276,12 @@ def create_scope3_emission():
 
             if initial_status in ("Pending", "Pending Approval"):
                 from models import Notification
-                admins = User.query.filter_by(role="admin", status="active").all()
+                caller_tenant = get_current_tenant_id(user)
+                admins = (
+                    User.query.filter_by(role="admin", status="active")
+                    .filter(tenant_matches(User.tenant_id, caller_tenant))
+                    .all()
+                )
                 for admin in admins:
                     Notification.create(
                         user_id=admin.id,
@@ -355,12 +376,16 @@ def update_scope3_emission(emission_id):
     if "sub_category" in data:
         emission.sub_category = data["sub_category"]
 
+    old_unit = emission.unit
     recalc = False
     if "activity_data" in data:
         emission.activity_data = parse_number(data["activity_data"], "activity_data", required=False, min_value=0, default=0.0)
         recalc = True
     if "unit" in data:
-        emission.unit = data["unit"]
+        new_unit = data["unit"]
+        if new_unit != old_unit:
+            emission.unit = new_unit
+            recalc = True
     if "emission_factor" in data:
         emission.emission_factor = parse_number(data["emission_factor"], "emission_factor", required=False, min_value=0, default=0.0)
         recalc = True
@@ -371,6 +396,16 @@ def update_scope3_emission(emission_id):
         act = emission.activity_data or 0.0
         factor_unit = str(data.get("factor_unit") or data.get("emission_factor_unit") or getattr(emission, "factor_unit", "") or "").strip()
         calc_method = str(data.get("calculation_method") or getattr(emission, "calculation_method", "") or "")
+
+        # If unit changed but new emission_factor was not provided, convert the stored factor to match new unit
+        if "emission_factor" not in data and "unit" in data and old_unit and emission.unit and old_unit != emission.unit:
+            try:
+                from calculations.units import _scope3_activity_in_factor_unit
+                unit_scale = _scope3_activity_in_factor_unit(emission.unit, old_unit)
+                ef = ef * unit_scale
+            except Exception:
+                pass
+
         if not factor_unit or ("/" not in factor_unit and " per " not in factor_unit):
             from emission_factors.scope3_activity_factors import SCOPE3_ACTIVITY_FACTORS
             from input_validation import scope3_category_number
@@ -380,11 +415,19 @@ def update_scope3_emission(emission_id):
             match_row = next((r for r in rows if r[0].lower() == sub_cat_name), None)
             den_unit = match_row[1] if match_row else (emission.unit or "unit")
             factor_unit = f"kg CO2e / {den_unit}"
+        elif "unit" in data and old_unit and emission.unit and old_unit != emission.unit:
+            if "/" in factor_unit:
+                num_part = factor_unit.split("/")[0].strip()
+                factor_unit = f"{num_part} / {emission.unit}"
         if act > 0 and ef > 0:
             # a factor edited with its own unit is matched to the record's activity unit
             try:
-                emission.co2e = compute_scope3_co2e(act, ef, factor_unit, calc_method,
-                                                    activity_unit=emission.unit if factor_unit else "")
+                if "emission_factor" in data:
+                    emission.co2e = compute_scope3_co2e(act, ef, factor_unit, calc_method,
+                                                        activity_unit=emission.unit if factor_unit else "")
+                else:
+                    # Stored emission_factor is already in kg CO2e per activity unit
+                    emission.co2e = act * ef / 1000.0
             except ValidationError as ve:
                 db.session.rollback()
                 return jsonify({"error": ve.message, "field": "unit"}), 400
@@ -533,6 +576,7 @@ def bulk_import_scope3():
 
     # D-04: every bulk import is Pending until a reviewer approves it (admins: Verified)
     bulk_status = initial_record_status(user, channel="bulk")
+    caller_tenant = get_current_tenant_id(user)
     allowed_fids = get_allowed_facility_ids(user)
 
     imported_count = 0
@@ -550,7 +594,8 @@ def bulk_import_scope3():
                     facility = facility_cache[f_name_clean.lower()]
                 else:
                     facility = Facility.query.filter(
-                        func.lower(Facility.name) == f_name_clean.lower()
+                        tenant_matches(Facility.tenant_id, caller_tenant),
+                        func.lower(Facility.name) == f_name_clean.lower(),
                     ).first()
                     facility_cache[f_name_clean.lower()] = facility
             else:
@@ -591,7 +636,11 @@ def bulk_import_scope3():
     try:
         if bulk_status in ("Pending", "Pending Approval") and imported_count > 0:
             from models import Notification
-            admins = User.query.filter_by(role="admin", status="active").all()
+            admins = (
+                User.query.filter_by(role="admin", status="active")
+                .filter(tenant_matches(User.tenant_id, caller_tenant))
+                .all()
+            )
             for admin in admins:
                 Notification.create(
                     user_id=admin.id,

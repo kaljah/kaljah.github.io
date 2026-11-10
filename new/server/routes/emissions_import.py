@@ -44,7 +44,12 @@ def _read_upload_request():
     global_factor_type = request.form.get("global_factor_type", "auto")
     mapping_str = request.form.get("column_mapping") or request.form.get("mapping")
     scope = request.form.get("scope", "1")
-    overwrite_duplicates = request.form.get("overwrite_duplicates") == "true"
+    is_overwrite_requested = request.form.get("overwrite_duplicates") in ("true", "1", "yes")
+    dup_action = (request.form.get("duplicate_action") or "").lower().strip()
+    if is_overwrite_requested and dup_action in ("overwrite", "revision", "skip"):
+        overwrite_duplicates = dup_action
+    else:
+        overwrite_duplicates = is_overwrite_requested
     decimal_mark = decimal_mark_from(request.form)  # chosen per file in the wizard (F6)
 
     # BUG-001: the bulk job must enforce the same roles as the dedicated endpoints.
@@ -187,12 +192,20 @@ def upload_limits():
 
 
 def _job_visible(job_id):
-    """BUG-076: a bulk job is readable by its uploader, or by an admin; others get 404."""
+    """BUG-076: a bulk job is readable by its uploader, or by a same-tenant admin; others get 404."""
     from background_processor import get_job_owner
+    from utils import get_current_tenant_id
 
     user = get_current_user()
     owner = get_job_owner(job_id)
-    return user is not None and owner is not None and (owner == user.id or user.role == "admin")
+    if user is None or owner is None:
+        return False
+    if owner == user.id:
+        return True
+    if user.role == "admin":
+        owner_obj = db.session.get(User, owner)
+        return owner_obj is not None and get_current_tenant_id(owner_obj) == get_current_tenant_id(user)
+    return False
 
 
 @emissions_bp.route("/upload/status/<job_id>", methods=["GET"])
@@ -262,9 +275,15 @@ def import_emissions():
                 if f_name_clean.lower() in facility_cache:
                     facility = facility_cache[f_name_clean.lower()]
                 else:
-                    matches = Facility.query.filter(
-                        func.lower(func.trim(Facility.name)) == f_name_clean.lower()
-                    ).limit(2).all()
+                    from utils import get_current_tenant_id, tenant_matches
+                    matches = (
+                        Facility.query.filter(
+                            func.lower(func.trim(Facility.name)) == f_name_clean.lower(),
+                            tenant_matches(Facility.tenant_id, get_current_tenant_id(user)),
+                        )
+                        .limit(2)
+                        .all()
+                    )
                     if len(matches) > 1:  # BUG-0011: never guess between two facilities of one name
                         errors.append(f"Row {i}: more than one facility is named '{f_name_clean}'; give its id")
                         continue
@@ -400,7 +419,15 @@ def import_emissions():
                     + ", ".join(f"{n} {s}" for s, n in sorted(status_counts.items())) + ")",
         )
         n_pending = sum(n for s, n in status_counts.items() if s != "Verified")
-        for admin in (User.query.filter_by(role="admin", status="active").all() if n_pending else []):
+        from utils import get_current_tenant_id, tenant_matches
+        caller_tenant = get_current_tenant_id(user)
+        for admin in (
+            User.query.filter_by(role="admin", status="active")
+            .filter(tenant_matches(User.tenant_id, caller_tenant))
+            .all()
+            if n_pending
+            else []
+        ):
             if admin.id == user.id:
                 continue
             Notification.create(

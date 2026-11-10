@@ -101,7 +101,10 @@ export const CbamSection: React.FC<CbamSectionProps> = ({
             className="inline-flex items-center gap-1.5"
           >
             <FileCode className="size-4 text-blue-600" aria-hidden="true" />
-            {downloadingFormat === "xml" ? t("Exporting...") : t("Export CBAM XML")}
+            <span>{downloadingFormat === "xml" ? t("Exporting...") : t("Export CBAM XML")}</span>
+            <Badge tone="warning" className="px-1.5 py-0 text-[0.65rem]">
+              {t("Preview / Roadmap")}
+            </Badge>
           </Button>
         </div>
       }

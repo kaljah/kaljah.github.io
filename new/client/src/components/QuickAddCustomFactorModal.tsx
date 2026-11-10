@@ -198,7 +198,7 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
               <Input
                 type="text"
                 className="w-full h-10 text-base"
-                placeholder={t("e.g. Hassi R'Mel Fuel Gas 2026, Skikda Distillate")}
+                placeholder={t("e.g. Basin Beta Fuel Gas 2026, Skikda Distillate")}
                 value={formData.factor_name}
                 onChange={(e) => handleChange("factor_name", e.target.value)}
                 required
@@ -465,7 +465,7 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
               <Input
                 type="text"
                 className="w-full h-10 text-base"
-                placeholder={t("e.g. Sonatrach Analysis Certificate #2026-GC-041, Naftal Slip")}
+                placeholder={t("e.g. Demo Operator Co. Analysis Certificate #2026-GC-041, Naftal Slip")}
                 value={formData.source}
                 onChange={(e) => handleChange("source", e.target.value)}
               />

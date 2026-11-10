@@ -8,9 +8,17 @@ from datetime import datetime, timezone
 from functools import wraps
 from flask import Blueprint, jsonify, request, Response, current_app
 from sqlalchemy import distinct, func
-from models import ActivityLog, db
+from models import ActivityLog, Facility, User, db
 from utils import iso_utc
-from utils import get_current_user, log_activity_and_notify, get_allowed_facility_ids
+from utils import (
+    get_allowed_facility_ids,
+    get_current_tenant_id,
+    get_current_user,
+    has_multi_tenant_data,
+    is_org_wide_user,
+    log_activity_and_notify,
+    tenant_matches,
+)
 
 audit_bp = Blueprint("audit", __name__)
 
@@ -60,18 +68,59 @@ def _scoped_base(user):
     - BUG-038: region-restricted business users see entries for facilities in their scope
       and their own actions; entries without a facility (other regions' users, legacy rows)
       stay hidden from them.
-    - Auditor: certified auditors have read access to all audit records.
+    - Auditor / Admin in multi-tenant mode: strictly scoped to the caller's tenant.
     """
     query = ActivityLog.query
+    caller_tenant = get_current_tenant_id(user)
+    multi_tenant = caller_tenant != "default" or has_multi_tenant_data()
+
     if user and is_it_role(user):
         lifecycle = db.and_(ActivityLog.entity == "User", ActivityLog.action.in_(["UPDATE", "DELETE_USER"]))
-        return query.filter(db.or_(ActivityLog.action.in_(SECURITY_ACTIONS), lifecycle))
-    if user and user.role == "auditor":
+        query = query.filter(db.or_(ActivityLog.action.in_(SECURITY_ACTIONS), lifecycle))
+        if multi_tenant and user.role != "it_manager":
+            tenant_user_ids = [
+                uid for (uid,) in db.session.query(User.id)
+                .filter(tenant_matches(User.tenant_id, caller_tenant))
+                .all()
+            ]
+            query = query.filter(ActivityLog.user_id.in_(tenant_user_ids or [-1]))
         return query
+    if user and user.role == "auditor":
+        if not multi_tenant:
+            return query
+        tenant_fac_ids = [
+            fid for (fid,) in db.session.query(Facility.id)
+            .filter(tenant_matches(Facility.tenant_id, caller_tenant))
+            .all()
+        ]
+        tenant_user_ids = [
+            uid for (uid,) in db.session.query(User.id)
+            .filter(tenant_matches(User.tenant_id, caller_tenant))
+            .all()
+        ]
+        return query.filter(
+            db.or_(
+                ActivityLog.facility_id.in_(tenant_fac_ids or [-1]),
+                db.and_(ActivityLog.facility_id.is_(None), ActivityLog.user_id.in_(tenant_user_ids or [-1])),
+            )
+        )
     allowed = get_allowed_facility_ids(user)
     if allowed is not None:
         user_id = user.id if user else -1
-        query = query.filter(db.or_(ActivityLog.facility_id.in_(allowed or [-1]), ActivityLog.user_id == user_id))
+        if multi_tenant and is_org_wide_user(user):
+            tenant_user_ids = [
+                uid for (uid,) in db.session.query(User.id)
+                .filter(tenant_matches(User.tenant_id, caller_tenant))
+                .all()
+            ]
+            query = query.filter(
+                db.or_(
+                    ActivityLog.facility_id.in_(allowed or [-1]),
+                    db.and_(ActivityLog.facility_id.is_(None), ActivityLog.user_id.in_(tenant_user_ids or [-1])),
+                )
+            )
+        else:
+            query = query.filter(db.or_(ActivityLog.facility_id.in_(allowed or [-1]), ActivityLog.user_id == user_id))
     return query
 
 
@@ -249,11 +298,9 @@ def get_audit_filters():
     user = get_current_user()
     if user and is_it_role(user):
         sec_actions = ["LOGIN", "LOGOUT", "REGISTER", "SECURITY", "UPDATE_PASSWORD", "PASSWORD_RESET"]
-        users = (
-            db.session.query(distinct(ActivityLog.user_name))
-            .filter(ActivityLog.action.in_(sec_actions))
-            .all()
-        )
+        users = _scoped_base(user).with_entities(distinct(ActivityLog.user_name)).filter(
+            ActivityLog.action.in_(sec_actions)
+        ).all()
         return jsonify(
             {
                 "users": sorted([u[0] for u in users if u[0]]),
@@ -394,8 +441,11 @@ def verify_audit_chain():
     (chain_head_hash, total_records, checkpoint_hmac) through /verify-checkpoint.
     """
     user = get_current_user()
-    if user.role != "auditor" and get_allowed_facility_ids(user) is not None and not is_it_role(user):
+    if user.role != "auditor" and not is_org_wide_user(user) and not is_it_role(user):
         return jsonify({"error": "Chain verification requires organisation-wide audit access"}), 403
+    caller_tenant = get_current_tenant_id(user)
+    if caller_tenant != "default" and user.role != "it_manager":
+        return jsonify({"error": "Forbidden: Global hash-chain verification is unavailable in isolated tenant workspaces"}), 403
     from services.audit_chain import GENESIS_HASH, verify_chain
 
     query = ActivityLog.query.order_by(ActivityLog.id.asc()).yield_per(1000)

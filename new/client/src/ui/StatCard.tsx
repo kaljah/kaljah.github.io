@@ -82,7 +82,7 @@ export const StatCard: React.FC<StatCardProps> = ({
           {meta.formula && (
             <div>
               <span className="font-semibold text-text">{t("Formula:")} </span>
-              <code className="rounded bg-ink-100 px-1 py-0.5 font-mono text-[0.7rem] text-text">
+              <code className="rounded border border-border/60 bg-ink-100 px-1.5 py-0.5 font-mono text-[0.7rem] text-text break-words">
                 {meta.formula}
               </code>
             </div>
@@ -121,6 +121,7 @@ export const StatCard: React.FC<StatCardProps> = ({
                 icon="info"
                 content={renderInfoContent()}
                 term={typeof label === "string" ? label : undefined}
+                tooltipClassName="max-w-sm sm:max-w-md"
               />
             )}
           </div>

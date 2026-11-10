@@ -163,3 +163,8 @@ deploy/release/
 
 # Auto-generated chart/plot cache (server-side rendered PNGs)
 new/server/instance/chart_cache/
+
+# Private benchmark fixtures (client data, never commit)
+tests/private_fixtures/
+**/private_fixtures/
+new/server/report_jobs/

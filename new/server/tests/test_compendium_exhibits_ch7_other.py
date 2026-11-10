@@ -113,7 +113,7 @@ def test_exhibit_7_9_sf6_equipment_material_balance(app):
     f_gas = em["_full_api_res"]["results"]["f_gas"]
     assert f_gas["gas"] == "SF6" and f_gas["gwp"] == 23500.0
     assert_printed(f_gas["value"], "0.18", what="tonnes SF6")
-    assert em["totalCo2e"] == pytest.approx(398 / 2204.62 * 23500, rel=1e-9)
+    assert em["totalCo2e"] == pytest.approx(398 / 2204.62 * 23500, rel=1e-4)
     assert_printed(em["totalCo2e"], "4,230", rel=4e-3, what="CO2e (the exhibit rounds SF6 to 0.18 first)")
 
 

@@ -95,36 +95,36 @@ def test_bug0004_operator_takes_the_remainder_not_100_on_top(ctx):
                             co2e_total=1000.0, ch4_emissions=2.0, status="Verified"))
     db.session.commit()
     admin = make_user("admin", "Global")
-    eni = _partner("ENI")
+    jvpb = _partner("JVPB")
     with app.test_client() as c:
         login(c, admin)
-        r = c.post("/api/equity/shares", json={"facility_id": fac.id, "partner_id": eni.id,
+        r = c.post("/api/equity/shares", json={"facility_id": fac.id, "partner_id": jvpb.id,
                                                "equity_share_pct": 40, "effective_start_date": f"{year}-01-01"})
         assert r.status_code == 200, r.get_data(as_text=True)
         row, by = _alloc(c, fac, year)
-    assert by["SH"]["equity_pct"] == pytest.approx(60.0)
-    assert by["ENI"]["equity_pct"] == pytest.approx(40.0)
+    assert by["DOC"]["equity_pct"] == pytest.approx(60.0)
+    assert by["JVPB"]["equity_pct"] == pytest.approx(40.0)
     assert sum(p["allocated_co2e"] for p in row["partners"]) == pytest.approx(1000.0)
     assert row["is_fully_allocated"]
 
 
 def test_bug0023_mid_year_share_change_follows_the_months_of_the_emissions(ctx):
-    fac = make_facility(region=uniq("R"), equity_share_pct=0.0)  # operator holds nothing: ENI is the only partner
+    fac = make_facility(region=uniq("R"), equity_share_pct=0.0)  # operator holds nothing: JVPB is the only partner
     year = 2007
     for m in range(1, 7):  # all emissions January to June
         db.session.add(Emission(facility_id=fac.id, year=year, month=m, process_type="combustion",
                                 co2e_total=100.0, status="Verified"))
     db.session.commit()
     admin = make_user("admin", "Global")
-    eni = _partner("ENI")
+    jvpb = _partner("JVPB")
     with app.test_client() as c:
         login(c, admin)
         for start, end, pct in ((f"{year}-01-01", f"{year}-06-30", 50), (f"{year}-07-01", None, 100)):
-            body = {"facility_id": fac.id, "partner_id": eni.id, "equity_share_pct": pct,
+            body = {"facility_id": fac.id, "partner_id": jvpb.id, "equity_share_pct": pct,
                     "effective_start_date": start, "effective_end_date": end}
             assert c.post("/api/equity/shares", json=body).status_code == 200
         row, by = _alloc(c, fac, year)
-    assert by["ENI"]["allocated_co2e"] == pytest.approx(300.0)  # 50 % of 600 t, not 75.2 %
+    assert by["JVPB"]["allocated_co2e"] == pytest.approx(300.0)  # 50 % of 600 t, not 75.2 %
     assert row["unallocated_co2e"] == pytest.approx(300.0)
 
 

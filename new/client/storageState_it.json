@@ -2,20 +2,20 @@
   "cookies": [
     {
       "name": "csrf_token",
-      "value": "ImI2Nzk5M2VhN2E4MDAwZWIzMzk3ZDMxMmE1NjgxMzljODVlNzU0Mzki.auapWw.GLdZQq1S7BnvmXeV9gDPuRjjKEc",
+      "value": "ImJlY2ZlMzk0NmYyZTE0MmE1MjU4YWI5ZDdiYWYxZWQwZjc4N2M2MTIi.auiOPw.c1EL2ECGLRQj3B3TNSvPDUabxjM",
       "domain": "127.0.0.1",
       "path": "/",
-      "expires": 1793587931.525313,
+      "expires": 1793712063.215659,
       "httpOnly": false,
       "secure": false,
       "sameSite": "Lax"
     },
     {
       "name": "session",
-      "value": ".eJwVy1EOwiAMANC79JuYdrVAuQxhW02MigbYfox33_x_7wv5Y-1VqtUBabTNHCy93fJ4P6xCgtkHVbYSSkREm5k1rExTER-JdYliQa6s4OBZ-sjd_o2CsiAJT5eo5MVB3yGhg61by_f1FIj0OwCRAiRQ.auapXA.51LSiVoGzgT_Ij2S2gTaempHkP4",
+      "value": ".eJwVy0sOwiAQANC7zJoYPmUGuAzhMySNigZoN8a7a_fvfSC-eTxT574grHGwgDJHi-t15w4BMpfGxm_YNKtNJ6utS9lXyqkprrKRo4JKg4BHmitOvpoib1BbRHNzjiySEzBPCFLAMXnEvf6NlOr7A0edJkM.auiOPw.bWRi_s-AOreoV9F5Ys-BYnWiRFQ",
       "domain": "127.0.0.1",
       "path": "/",
-      "expires": 1793530332.908466,
+      "expires": 1793654463.90771,
       "httpOnly": true,
       "secure": false,
       "sameSite": "Lax"
@@ -31,7 +31,7 @@
         },
         {
           "name": "ct.recentPages",
-          "value": "[\"/user-management\",\"/\"]"
+          "value": "[\"/\"]"
         }
       ]
     }

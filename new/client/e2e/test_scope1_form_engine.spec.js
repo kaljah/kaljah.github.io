@@ -113,7 +113,7 @@ test.describe('Scope 1 Manual Calculation & Engineering Formulas Audit', () => {
       },
       {
         regionName: 'South',
-        facilitySearch: 'Sonatrach',
+        facilitySearch: 'Demo Operator Co.',
         facilityId: 4,
         fuel: 'Natural Gas',
         amount: '80000',
@@ -217,8 +217,8 @@ test.describe('Scope 1 Manual Calculation & Engineering Formulas Audit', () => {
       {
         name: 'Combustion (Tier 3)',
         processLabel: 'Stationary Combustion',
-        facilityId: 4, // South / Sonatrach
-        facilitySearch: 'Sonatrach',
+        facilityId: 4, // South / Demo Operator Co.
+        facilitySearch: 'Demo Operator Co.',
         setup: async () => {
           const specificBtn = page.locator('button.btn-toggle-sm:has-text("specific")').first();
           if (await specificBtn.isVisible()) await specificBtn.click();
@@ -256,7 +256,7 @@ test.describe('Scope 1 Manual Calculation & Engineering Formulas Audit', () => {
         name: 'Flaring (Tier 3)',
         processLabel: 'Flaring',
         facilityId: 4,
-        facilitySearch: 'Sonatrach',
+        facilitySearch: 'Demo Operator Co.',
         setup: async () => {
           const specificBtn = page.locator('button.btn-toggle-sm:has-text("specific")').first();
           if (await specificBtn.isVisible()) await specificBtn.click();
@@ -310,7 +310,7 @@ test.describe('Scope 1 Manual Calculation & Engineering Formulas Audit', () => {
         name: 'Acid Gas Removal - AGR (Tier 3)',
         processLabel: 'Acid Gas Removal (AGR)',
         facilityId: 4,
-        facilitySearch: 'Sonatrach',
+        facilitySearch: 'Demo Operator Co.',
         setup: async () => {
           const th = page.locator('.agr-form input[placeholder="Volume"]').first();
           if (await th.isVisible()) await th.fill('18');
@@ -329,7 +329,7 @@ test.describe('Scope 1 Manual Calculation & Engineering Formulas Audit', () => {
         name: 'Glycol Dehydrator (Tier 3)',
         processLabel: 'Dehydrator',
         facilityId: 4,
-        facilitySearch: 'Sonatrach',
+        facilitySearch: 'Demo Operator Co.',
         setup: async () => {
           const th = page.locator('.dehydrator-form input[placeholder="Volume"]').first();
           if (await th.isVisible()) await th.fill('35');
@@ -354,7 +354,7 @@ test.describe('Scope 1 Manual Calculation & Engineering Formulas Audit', () => {
         name: 'Pneumatic Devices (Tier 3)',
         processLabel: 'Pneumatic Device',
         facilityId: 4,
-        facilitySearch: 'Sonatrach',
+        facilitySearch: 'Demo Operator Co.',
         setup: async () => {
           const count = page.locator('.pneumatics-form input[placeholder="Count"]').first();
           if (await count.isVisible()) await count.fill('18');
@@ -373,7 +373,7 @@ test.describe('Scope 1 Manual Calculation & Engineering Formulas Audit', () => {
         name: 'Liquids Unloading (Tier 3)',
         processLabel: 'Liquids Unloading',
         facilityId: 4,
-        facilitySearch: 'Sonatrach',
+        facilitySearch: 'Demo Operator Co.',
         setup: async () => {
           const freq = page.locator('.unloading-form input[placeholder*="12"]').first();
           if (await freq.isVisible()) await freq.fill('12');
@@ -395,7 +395,7 @@ test.describe('Scope 1 Manual Calculation & Engineering Formulas Audit', () => {
         name: 'Well Completions Flowback (Tier 3)',
         processLabel: 'Well Completions & Workovers',
         facilityId: 4,
-        facilitySearch: 'Sonatrach',
+        facilitySearch: 'Demo Operator Co.',
         setup: async () => {
           const dur = page.locator('.completions-form input[placeholder*="24"]').first();
           if (await dur.isVisible()) await dur.fill('48');
@@ -411,7 +411,7 @@ test.describe('Scope 1 Manual Calculation & Engineering Formulas Audit', () => {
         name: 'Blowdowns & Venting (Tier 3)',
         processLabel: 'Venting (Blowdown)',
         facilityId: 4,
-        facilitySearch: 'Sonatrach',
+        facilitySearch: 'Demo Operator Co.',
         setup: async () => {
           const vol = page.locator('.blowdown-form input[placeholder="Vessel Vol"]').first();
           if (await vol.isVisible()) await vol.fill('220');

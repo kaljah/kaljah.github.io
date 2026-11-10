@@ -47,7 +47,7 @@ def seed_benchmark_db(db_path):
     cur = conn.cursor()
 
     # Seed 30 Facilities
-    regions = ["Hassi Messaoud", "Rhourde Nouss", "In Salah", "Skikda", "Arzew", "Illizi", "Berkine"]
+    regions = ["Basin Alpha", "Basin Gamma", "In Salah", "Skikda", "Arzew", "Illizi", "Basin Alpha"]
     facilities = []
     for i in range(1, 31):
         reg = regions[i % len(regions)]

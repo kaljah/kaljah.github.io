@@ -19,26 +19,26 @@ def test_custom_factor_gas_composition_roundtrip(client):
     """Verifies CustomFactor gas composition API persistence, full PVT chromatography, and ReportLab PDF."""
     with app.app_context():
         # Clean previous test factors
-        CustomFactor.query.filter_by(name="HBNS Wellhead Gas Analysis 2024").delete()
+        CustomFactor.query.filter_by(name="Facility A-1 Wellhead Gas Analysis 2024").delete()
         db.session.commit()
 
         # Create user if needed
         admin = User.query.filter_by(email="admin_gc@test.dz").first()
         if not admin:
-            admin = User(fullName="Admin GC", orgName="Sonatrach", sector="Upstream", email="admin_gc@test.dz", role="admin")
+            admin = User(fullName="Admin GC", orgName="Demo Operator Co.", sector="Upstream", email="admin_gc@test.dz", role="admin")
             admin.set_password("AdminPass123!")
             db.session.add(admin)
             db.session.commit()
 
         cf = CustomFactor(
-            name="HBNS Wellhead Gas Analysis 2024",
+            name="Facility A-1 Wellhead Gas Analysis 2024",
             co2_factor=52.5,
             ch4_factor=0.002,
             n2o_factor=0.0001,
             unit="kg/MMBtu",
             created_by=admin.id,
             status="Approved",
-            region="berkine",
+            region="basin-alpha",
         )
         cf.gas_composition = {
             "ch4_mol_pct": 74.40,
@@ -64,23 +64,23 @@ def test_custom_factor_gas_composition_roundtrip(client):
         assert fetched.gas_composition["ic4_mol_pct"] == 1.20
         assert fetched.gas_composition["c6_plus_mol_pct"] == 0.60
 
-        # Now test aggregate_master_report_data for berkine
+        # Now test aggregate_master_report_data for basin-alpha
         data = aggregate_master_report_data(
             mode="regional",
-            region_key="berkine",
+            region_key="basin-alpha",
             start_year=2023,
             end_year=2025,
             gwp_standard="AR5"
         )
         assert data["gas_comp_source"] == "custom_factor"
-        assert data["gas_comp_name"] == "HBNS Wellhead Gas Analysis 2024"
+        assert data["gas_comp_name"] == "Facility A-1 Wellhead Gas Analysis 2024"
         assert data["gas_composition"]["ch4_mol_pct"] == 74.40
         assert data["gas_composition"]["nc4_mol_pct"] == 2.00
 
         # Generate publication PDF to verify ReportLab layout & title (EN and FR)
         pdf_bytes_en = generate_master_publication_pdf(
             mode="regional",
-            region_key="berkine",
+            region_key="basin-alpha",
             start_year=2023,
             end_year=2025,
             language="en"
@@ -90,7 +90,7 @@ def test_custom_factor_gas_composition_roundtrip(client):
 
         pdf_bytes_fr = generate_master_publication_pdf(
             mode="regional",
-            region_key="berkine",
+            region_key="basin-alpha",
             start_year=2023,
             end_year=2025,
             language="fr"

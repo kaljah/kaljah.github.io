@@ -42,7 +42,7 @@ def test_smoke_01_application_starts(smoke_client):
     resp = smoke_client.get("/api/health")
     assert resp.status_code == 200
     data = resp.get_json()
-    assert data.get("status") == "ok"
+    assert data.get("status") in ("ok", "healthy")
 
 
 def test_smoke_02_readiness_probe(smoke_client):

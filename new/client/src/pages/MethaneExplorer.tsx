@@ -25,6 +25,7 @@ import { cn } from "../ui";
 import ExplorerHud from "./explorer/ExplorerHud";
 import ExplorerDrawer from "./explorer/ExplorerDrawer";
 import ExplorerDossier from "./explorer/ExplorerDossier";
+import OfflineAlgeriaVectorMap from "./explorer/OfflineAlgeriaVectorMap";
 import {
   ALGERIA_MASK_GEOJSON,
   ALGERIA_BORDER_GEOJSON,
@@ -65,9 +66,8 @@ const MapController: React.FC<MapControllerProps> = ({ center, zoom }) => {
   return null;
 };
 
-// Basemap tile configuration: OpenStreetMap (International)
-const OSM_FR_URL = "https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png";
-const OSM_FR_ATTRIBUTION =
+// Default attribution when a tile server URL is explicitly configured via /api/map-config
+const DEFAULT_TILE_ATTRIBUTION =
   '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors';
 
 interface MapTiles {
@@ -120,7 +120,6 @@ const EmissionsMap: React.FC = () => {
   // Core Data States (All fetched from authentic backend endpoints)
   const [facilities, setFacilities] = useState<FacilityRecord[]>([]);
   const [stats, setStats] = useState<FacilityIntensityStats[]>([]);
-  const [filteredFacilities, setFilteredFacilities] = useState<FacilityRecord[]>([]);
   const [selectedFacility, setSelectedFacility] = useState<FacilityRecord | null>(null);
   const [mapCenter, setMapCenter] = useState<[number, number]>(ALGERIA_CENTER);
   const [mapZoom, setMapZoom] = useState<number>(ALGERIA_DEFAULT_ZOOM);
@@ -141,7 +140,12 @@ const EmissionsMap: React.FC = () => {
   });
   const [viewMode, setViewMode] = useState<string>("methane"); // 'methane' (CH4 default) or 'total' (CO2e)
   const [mapTiles, setMapTiles] = useState<MapTiles | null>(null);
+  const [mapConfigLoaded, setMapConfigLoaded] = useState<boolean>(false);
+  const [isBrowserOnline, setIsBrowserOnline] = useState<boolean>(() =>
+    typeof navigator !== "undefined" ? navigator.onLine : true,
+  );
   const [tileOffline, setTileOffline] = useState<boolean>(false);
+  const [vectorZoomNonce, setVectorZoomNonce] = useState<number>(0);
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(true);
   const [showPlumeRings, setShowPlumeRings] = useState<boolean>(true);
   const [copiedCoords, setCopiedCoords] = useState<boolean>(false);
@@ -215,10 +219,37 @@ const EmissionsMap: React.FC = () => {
   }, [filters.year]);
 
   useEffect(() => {
+    let active = true;
     api
       .get("/map-config")
-      .then((res) => setMapTiles(res.data))
-      .catch(() => setMapTiles({ tile_url: null, attribution: null, subdomains: null }));
+      .then((res) => {
+        if (!active) return;
+        setMapTiles(res.data);
+      })
+      .catch(() => {
+        if (!active) return;
+        setMapTiles({ tile_url: null, attribution: null, subdomains: null });
+      })
+      .finally(() => {
+        if (active) setMapConfigLoaded(true);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleOffline = () => setIsBrowserOnline(false);
+    const handleOnline = () => {
+      setIsBrowserOnline(true);
+      setTileOffline(false);
+    };
+    window.addEventListener("offline", handleOffline);
+    window.addEventListener("online", handleOnline);
+    return () => {
+      window.removeEventListener("offline", handleOffline);
+      window.removeEventListener("online", handleOnline);
+    };
   }, []);
 
   // Helper to retrieve verified intensity stats for any facility
@@ -240,12 +271,12 @@ const EmissionsMap: React.FC = () => {
   );
 
   // Multi-criteria facility filtering (Search, Region, Activity, Coordinates, Severity)
-  useEffect(() => {
+  const filteredFacilities = useMemo(() => {
     const searchLower = (filters.search || "").toLowerCase().trim();
     const highThreshold = filters.superEmitterThreshold || (viewMode === "total" ? 50000 : 2500);
     const medThreshold = highThreshold / 5;
 
-    const filtered = facilities.filter((f) => {
+    return facilities.filter((f) => {
       // Region Filter — use region_identifier (= f.region ?? f.name) so facilities
       // uploaded via bulk uploader (where region=NULL) still match correctly. The options also list
       // locations (and a regional user's scope can be a location), so a location matches too.
@@ -299,8 +330,6 @@ const EmissionsMap: React.FC = () => {
         matchesSeverity
       );
     });
-
-    setFilteredFacilities(filtered);
   }, [filters, facilities, viewMode, getIntensityData]);
 
   // Keep a ref to the selected facility so a late survey response does not overwrite a newer selection
@@ -504,6 +533,13 @@ const EmissionsMap: React.FC = () => {
     ? getIntensityData(selectedFacility.id)
     : null;
 
+  const configuredTileUrl = mapTiles?.tile_url ? mapTiles.tile_url.trim() : "";
+  const hasConfiguredTiles = configuredTileUrl.length > 0;
+  const useVectorFallback =
+    !isBrowserOnline || tileOffline || (mapConfigLoaded && !hasConfiguredTiles);
+  const showLeafletTileMap =
+    mapConfigLoaded && hasConfiguredTiles && isBrowserOnline && !tileOffline;
+
   if (loading) {
     return (
       <div className="[display:flex] [flex-direction:column] [align-items:center] [justify-content:center] [height:calc(100vh_-_72px)] [gap:16px] [background:var(--color-ink-50)] [color:var(--color-ink-900)]">
@@ -534,34 +570,50 @@ const EmissionsMap: React.FC = () => {
         formatCompact={formatCompact}
       />
 
-      {tileOffline && (
-        <div className="absolute top-[80px] left-6 z-[1000] flex items-center gap-2 rounded-lg border border-amber-300 bg-amber-50/95 px-3 py-1.5 text-xs font-semibold text-amber-800 shadow-md backdrop-blur-sm">
-          <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+      {useVectorFallback && (
+        <div
+          role="status"
+          className={cn(
+            "absolute top-[78px] z-[940] flex max-w-[calc(100vw-32px)] flex-wrap items-center gap-2 rounded-lg border border-amber-300 bg-amber-50/95 px-3 py-1.5 text-xs font-semibold text-amber-800 shadow-md backdrop-blur-sm transition-[left] duration-300",
+            isDrawerOpen ? "left-4 md:left-[396px]" : "left-14",
+          )}
+        >
+          <span className="size-2 shrink-0 rounded-full bg-amber-500" aria-hidden="true" />
           <span>{t("Basemap tiles offline — operating in vector boundary mode")}</span>
+          {hasConfiguredTiles && isBrowserOnline && tileOffline && (
+            <button
+              type="button"
+              onClick={() => setTileOffline(false)}
+              className="ml-1 cursor-pointer rounded border border-amber-400 bg-white px-2 py-0.5 text-[11px] font-semibold text-amber-900 hover:bg-amber-100"
+            >
+              {t("Retry")}
+            </button>
+          )}
         </div>
       )}
 
-      {/* 3. LEAFLET INTERACTIVE GEOSPATIAL MAP CANVAS */}
+      {/* 3. MAP CANVAS: LEAFLET TILES WHEN CONFIGURED & ONLINE, ELSE BUNDLED VECTOR FALLBACK */}
       <div className="[position:absolute] [inset:0] [width:100%] [height:100%] [z-index:1]">
-        <MapContainer
-          center={mapCenter}
-          zoom={mapZoom}
-          minZoom={5}
-          maxZoom={14}
-          maxBounds={ALGERIA_BOUNDS}
-          maxBoundsViscosity={1.0}
-          zoomControl={false}
-          className="h-full! w-full! bg-ink-100!"
-        >
-          <TileLayer
-            key="osm-fr-basemap"
-            url={mapTiles?.tile_url || OSM_FR_URL}
-            attribution={mapTiles?.attribution || OSM_FR_ATTRIBUTION}
-            subdomains={mapTiles?.subdomains || "abc"}
-            eventHandlers={{
-              tileerror: () => setTileOffline(true),
-            }}
-          />
+        {showLeafletTileMap ? (
+          <MapContainer
+            center={mapCenter}
+            zoom={mapZoom}
+            minZoom={5}
+            maxZoom={14}
+            maxBounds={ALGERIA_BOUNDS}
+            maxBoundsViscosity={1.0}
+            zoomControl={false}
+            className="h-full! w-full! bg-ink-100!"
+          >
+            <TileLayer
+              key="configured-basemap"
+              url={configuredTileUrl}
+              attribution={mapTiles?.attribution || DEFAULT_TILE_ATTRIBUTION}
+              subdomains={mapTiles?.subdomains || "abc"}
+              eventHandlers={{
+                tileerror: () => setTileOffline(true),
+              }}
+            />
 
           {/* Mask layer that obscures every country outside Algeria */}
           <GeoJSON
@@ -703,6 +755,21 @@ const EmissionsMap: React.FC = () => {
             );
           })}
         </MapContainer>
+        ) : (
+          <OfflineAlgeriaVectorMap
+            facilities={filteredFacilities}
+            selectedFacilityId={selectedFacility?.id ?? null}
+            centeredFacility={selectedFacility}
+            zoomNonce={vectorZoomNonce}
+            isDrawerOpen={isDrawerOpen}
+            viewMode={viewMode}
+            showPlumeRings={showPlumeRings}
+            getStats={getIntensityData}
+            getSeverity={getSeverityLevel}
+            formatCompact={formatCompact}
+            onSelectFacility={handleSelectFacility}
+          />
+        )}
       </div>
 
       {/* 4. COLLAPSIBLE LEFT INTELLIGENCE & RECON DRAWER (WHITE LIGHT THEME) */}
@@ -761,6 +828,7 @@ const EmissionsMap: React.FC = () => {
             if (!isNaN(lat) && !isNaN(lon)) {
               setMapZoom(11);
               setMapCenter([lat, lon]);
+              setVectorZoomNonce((n) => n + 1);
             }
           }}
         />

@@ -153,7 +153,7 @@ def test_csv_formula_injection_defense_neutralizes_all_triggers(payload):
 
 def test_csv_formula_injection_leaves_safe_cells_unaltered():
     """Verifies that non-malicious text and numeric cells are untouched."""
-    assert sanitize_csv_cell("Hassi Messaoud South") == "Hassi Messaoud South"
+    assert sanitize_csv_cell("Basin Alpha South") == "Basin Alpha South"
     assert sanitize_csv_cell("12500.50") == "12500.50"
     assert sanitize_csv_cell(None) == ""
 
@@ -172,7 +172,7 @@ def test_cbam_xml_export_zero_production_and_entity_escaping(client, ctx):
     admin = make_user("admin", "Global")
     login(client, admin)
 
-    fac = make_facility(name="Sonatrach <Gassi Touil> & 'Rhode' Phase-1")
+    fac = make_facility(name="Demo Operator Co. <Gassi Touil> & 'Rhode' Phase-1")
 
     # Add verified Scope 1 emission with zero facility production
     em = Emission(
@@ -225,9 +225,9 @@ def test_equity_shares_exceeding_100_percent_rejected(client, ctx):
     admin = make_user("admin", "Global")
     login(client, admin)
 
-    fac = make_facility(name="Berkine Block 404a")
-    p1 = JvPartner.query.filter_by(name="Sonatrach").first() or JvPartner(name="Sonatrach", code="SH", country="DZ", is_operator=True)
-    p2 = JvPartner.query.filter_by(name="Eni").first() or JvPartner(name="Eni", code="ENI", country="IT", is_operator=False)
+    fac = make_facility(name="Basin Alpha Block 404a")
+    p1 = JvPartner.query.filter_by(name="Demo Operator Co.").first() or JvPartner(name="Demo Operator Co.", code="DOC", country="DZ", is_operator=True)
+    p2 = JvPartner.query.filter_by(name="Demo JV Partner B").first() or JvPartner(name="Demo JV Partner B", code="JVPB", country="IT", is_operator=False)
     db.session.add_all([p1, p2])
     db.session.commit()
 
@@ -259,8 +259,8 @@ def test_equity_shares_date_ordering_and_unallocated_residual(client, ctx):
     admin = make_user("admin", "Global")
     login(client, admin)
 
-    fac = make_facility(name="Hassi Berkine South")
-    p1 = JvPartner.query.filter_by(name="Sonatrach").first()
+    fac = make_facility(name="Basin Alpha South")
+    p1 = JvPartner.query.filter_by(name="Demo Operator Co.").first()
 
     # End date before start date rejected
     res_bad_dates = client.post("/api/equity/shares", json={
@@ -428,7 +428,7 @@ def test_maker_checker_self_approval_prohibited(client, ctx):
     An approver (admin or superuser) must NEVER be permitted to approve
     an emissions record they themselves created or last modified.
     """
-    maker_superuser = make_user("superuser", location="West", email="maker_super@sonatrach.dz")
+    maker_superuser = make_user("superuser", location="West", email="maker_super@example.org")
     login(client, maker_superuser)
     fac = make_facility(name="Gassi Touil Central", region="West")
 
@@ -453,7 +453,7 @@ def test_maker_checker_self_approval_prohibited(client, ctx):
     assert "cannot approve a record you created" in err_msg.lower() or "maker-checker" in err_msg.lower()
 
     # Second independent checker logs in and approves: MUST SUCCEED
-    checker_admin = make_user("admin", "Global", email="checker_admin@sonatrach.dz")
+    checker_admin = make_user("admin", "Global", email="checker_admin@example.org")
     login(client, checker_admin)
 
     res_valid_approve = client.post(f"/api/emissions/approve/{emission_id}", json={"scope": "1"})
@@ -467,7 +467,7 @@ def test_facility_deletion_cascades_ldar_and_surveys(client, ctx):
     Deleting a facility must cleanly delete or cascade its associated LDAR
     components and fugitive surveys without foreign key constraint violations or orphaned records.
     """
-    admin = make_user("admin", "Global", email="cascade_admin@sonatrach.dz")
+    admin = make_user("admin", "Global", email="cascade_admin@example.org")
     login(client, admin)
     fac = make_facility(name="LDAR Cascade Target", region="Global")
 
@@ -513,7 +513,7 @@ def test_component_deletion_cascades_surveys(client, ctx):
     Deleting a ComponentInventory record must cascade to its associated
     FugitiveSurvey records without leaving dangling foreign key references.
     """
-    admin = make_user("admin", "Global", email="comp_del_admin@sonatrach.dz")
+    admin = make_user("admin", "Global", email="comp_del_admin@example.org")
     login(client, admin)
     fac = make_facility(name="LDAR Component Test Fac", region="Global")
 

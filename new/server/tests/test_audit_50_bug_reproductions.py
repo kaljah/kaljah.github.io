@@ -156,7 +156,7 @@ class TestAuditBugReproduction:
         with app.app_context():
             fac = Facility.query.first()
             if not fac:
-                fac = Facility(name="OGMP Test Fac", location="Hassi Messaoud", activity="Upstream Oil & Gas")
+                fac = Facility(name="OGMP Test Fac", location="Basin Alpha", activity="Upstream Oil & Gas")
                 db.session.add(fac)
                 db.session.commit()
             fac_id = fac.id
@@ -240,7 +240,7 @@ class TestAuditBugReproduction:
         client.post("/api/auth/login", json={"email": "audit_repro_admin@example.com", "password": "AuditPassword123!"})
         payload = {
             "name": "Invalid Year Facility",
-            "location": "Hassi Messaoud",
+            "location": "Basin Alpha",
             "ogmp_membership_year": "invalid_year"
         }
         res = client.post("/api/facilities", json=payload)
