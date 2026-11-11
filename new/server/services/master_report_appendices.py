@@ -204,9 +204,26 @@ def build_qaqc_uncertainty_elements(data: Dict[str, Any], styles: Dict[str, Para
     return elements
 
 
+def _facility_breakdown_has_activity(fac: dict[str, Any]) -> bool:
+    timeline = fac.get("timeline") or []
+    return any(
+        (t.get("gross_gas_mmsm3") or 0) != 0
+        or (t.get("liquid_mmbbl") or 0) != 0
+        or (t.get("total_mmboe") or 0) != 0
+        or (t.get("scope1_t") or 0) != 0
+        or (t.get("scope2_t") or 0) != 0
+        or (t.get("total_ghg_t") or 0) != 0
+        or (t.get("flaring_mmsm3") or 0) != 0
+        or (t.get("routine_mmsm3") or 0) != 0
+        for t in timeline
+    )
+
+
 def build_facility_appendix_elements(data: Dict[str, Any], styles: Dict[str, ParagraphStyle], lang: str = "en") -> List[Any]:
     """Generates the Appendix containing granular disaggregated operational ledgers per Central Processing Facility."""
-    breakdowns = data.get("facility_breakdowns", [])
+    breakdowns = [
+        fac for fac in data.get("facility_breakdowns", []) if _facility_breakdown_has_activity(fac)
+    ]
     if not breakdowns:
         return []
 
@@ -697,9 +714,7 @@ def build_granular_source_ledger_elements(data: Dict[str, Any], styles: Dict[str
     headers_fmt = [Paragraph(h, hdr_style) for h in headers]
 
     body_style = ParagraphStyle("LedgerBody", fontName="Helvetica", fontSize=5.8, leading=6.8)
-    num_style = ParagraphStyle("LedgerNum", fontName="Helvetica", fontSize=5.8, leading=6.8, alignment=2)
     center_style = ParagraphStyle("LedgerCenter", fontName="Helvetica", fontSize=5.8, leading=6.8, alignment=1)
-    bold_num = ParagraphStyle("LedgerBoldNum", fontName="Helvetica-Bold", fontSize=5.8, leading=6.8, alignment=2)
 
     col_widths = [18, 105, 80, 42, 60, 32, 46, 38, 38, 61]
 
@@ -711,16 +726,16 @@ def build_granular_source_ledger_elements(data: Dict[str, Any], styles: Dict[str
         table_rows = []
         for idx, r in enumerate(rows, 1):
             table_rows.append([
-                Paragraph(str(idx), center_style),
+                str(idx),
                 Paragraph(f"<b>{safe_pdf_text(r['source_name'], 25)}</b>", body_style),
                 Paragraph(safe_pdf_text(r["module"], 22), body_style),
                 Paragraph(safe_pdf_text(r["scope"]), center_style),
-                Paragraph(f"{r['quantity']:,.2f}" if r["quantity"] > 0 else "0", num_style),
+                f"{r['quantity']:,.2f}" if r["quantity"] > 0 else "0",
                 Paragraph(safe_pdf_text(r["unit"], 8), center_style),
-                Paragraph(f"{r['co2']:,.2f}", num_style),
-                Paragraph(f"{r['ch4']:,.3f}", num_style),
-                Paragraph(f"{r['n2o']:,.3f}", num_style),
-                Paragraph(f"{r['co2e']:,.2f}", bold_num),
+                f"{r['co2']:,.2f}",
+                f"{r['ch4']:,.3f}",
+                f"{r['n2o']:,.3f}",
+                f"{r['co2e']:,.2f}",
             ])
 
         # Facility subtotal
@@ -729,22 +744,30 @@ def build_granular_source_ledger_elements(data: Dict[str, Any], styles: Dict[str
         tot_n2o = sum(r["n2o"] for r in rows)
         tot_co2e = sum(r["co2e"] for r in rows)
         table_rows.append([
-            Paragraph("—", center_style),
+            "—",
             Paragraph(f"<b>SOUS-TOTAL {safe_pdf_text(str(fname).upper(), 15)}</b>" if is_fr else f"<b>SUBTOTAL {safe_pdf_text(str(fname).upper(), 15)}</b>", body_style),
-            Paragraph("—", center_style),
-            Paragraph("—", center_style),
-            Paragraph("—", center_style),
-            Paragraph("—", center_style),
-            Paragraph(f"<b>{tot_co2:,.2f}</b>", bold_num),
-            Paragraph(f"<b>{tot_ch4:,.3f}</b>", bold_num),
-            Paragraph(f"<b>{tot_n2o:,.3f}</b>", bold_num),
-            Paragraph(f"<b>{tot_co2e:,.2f}</b>", bold_num),
+            "—",
+            "—",
+            "—",
+            "—",
+            f"{tot_co2:,.2f}",
+            f"{tot_ch4:,.3f}",
+            f"{tot_n2o:,.3f}",
+            f"{tot_co2e:,.2f}",
         ])
 
         t_fac = Table([headers_fmt] + table_rows, colWidths=col_widths, repeatRows=1)
         t_fac.setStyle(TableStyle([
             ("BACKGROUND", (0, 0), (-1, 0), COLOR_DARK),
             ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+            ("FONTNAME", (0, 1), (-1, -2), "Helvetica"),
+            ("FONTNAME", (9, 1), (9, -1), "Helvetica-Bold"),
+            ("FONTNAME", (0, -1), (-1, -1), "Helvetica-Bold"),
+            ("FONTSIZE", (0, 1), (-1, -1), 5.8),
+            ("ALIGN", (0, 1), (0, -1), "CENTER"),
+            ("ALIGN", (2, -1), (5, -1), "CENTER"),
+            ("ALIGN", (4, 1), (4, -2), "RIGHT"),
+            ("ALIGN", (6, 1), (9, -1), "RIGHT"),
             ("ROWBACKGROUNDS", (0, 1), (-1, -2), [colors.white, COLOR_LIGHT_BG]),
             ("BACKGROUND", (0, -1), (-1, -1), COLOR_CARD_BG),
             ("BOX", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
@@ -758,12 +781,28 @@ def build_granular_source_ledger_elements(data: Dict[str, Any], styles: Dict[str
     return elements
 
 
+def _subannual_has_activity(f_data: dict[str, Any]) -> bool:
+    q_rows = f_data.get("quarterly_rows", [])
+    m_rows = f_data.get("monthly_rows", [])
+    tot_co2e = sum((q.get("co2e") or 0) for q in q_rows)
+    tot_boe = sum((q.get("total_boe") or 0) for q in q_rows)
+    has_nonzero_monthly = any(
+        (m.get("co2e") or 0) != 0 or (m.get("total_boe") or 0) != 0
+        for m in m_rows
+    )
+    return not (tot_co2e == 0 and tot_boe == 0 and not has_nonzero_monthly)
+
+
 def build_subannual_timeseries_elements(data: Dict[str, Any], styles: Dict[str, ParagraphStyle], lang: str = "en") -> List[Any]:
     """
     Generates APPENDIX B: Sub-Annual Quarterly & Monthly Time-Series Ledgers (Tables B-1 to B-4c equivalent).
     Dynamically renders Q1-Q4 summaries and Jan-Dec monthly tables.
     """
-    subannual = data.get("subannual_time_series", {})
+    subannual = {
+        fname: f_data
+        for fname, f_data in data.get("subannual_time_series", {}).items()
+        if _subannual_has_activity(f_data)
+    }
     if not subannual:
         return []
 
@@ -783,10 +822,6 @@ def build_subannual_timeseries_elements(data: Dict[str, Any], styles: Dict[str, 
     for fname, f_data in subannual.items():
         q_rows = f_data.get("quarterly_rows", [])
         m_rows = f_data.get("monthly_rows", [])
-        tot_co2e = sum(q.get("co2e", 0) for q in q_rows)
-        tot_boe = sum(q.get("total_boe", 0) for q in q_rows)
-        if tot_co2e == 0 and tot_boe == 0 and not m_rows:
-            continue
 
         # 1. Quarterly Summary Table (Table B-1 equivalent)
         fname_esc = safe_pdf_text(fname)
@@ -799,16 +834,12 @@ def build_subannual_timeseries_elements(data: Dict[str, Any], styles: Dict[str, 
         ]
         hdr_style = ParagraphStyle("QtrHdr", fontName="Helvetica-Bold", fontSize=6.2, leading=7.2, textColor=colors.white, alignment=1)
         headers_fmt = [Paragraph(h, hdr_style) for h in q_headers]
-        body_style = ParagraphStyle("QtrBody", fontName="Helvetica", fontSize=6.2, leading=7.2)
-        num_style = ParagraphStyle("QtrNum", fontName="Helvetica", fontSize=6.2, leading=7.2, alignment=2)
-        bold_num = ParagraphStyle("QtrBold", fontName="Helvetica-Bold", fontSize=6.2, leading=7.2, alignment=2)
 
         tot_co2e = sum(q["co2e"] for q in q_rows)
         tot_co2 = sum(q["co2"] for q in q_rows)
         tot_ch4 = sum(q["ch4"] for q in q_rows)
         tot_n2o = sum(q["n2o"] for q in q_rows)
         tot_oil = sum(q["oil_bbl"] for q in q_rows)
-        tot_gas = sum(q["gas_mscf"] for q in q_rows)
         tot_boe = sum(q["total_boe"] for q in q_rows)
         tot_energy = sum(q["energy_hhv"] for q in q_rows)
         avg_ci = (tot_co2e / tot_boe) if tot_boe > 0 else 0.0
@@ -829,20 +860,22 @@ def build_subannual_timeseries_elements(data: Dict[str, Any], styles: Dict[str, 
         for ind_name, u_str, ytd_v, q_vals in indicators:
             is_intense = "Intensity" in ind_name
             fmt_ytd = f"{ytd_v:.3f}" if is_intense else f"{ytd_v:,.1f}"
-            row = [
-                Paragraph(f"<b>{ind_name}</b>", body_style),
-                Paragraph(u_str, ParagraphStyle("U", fontName="Helvetica", fontSize=6.2, leading=7.2, alignment=1)),
-                Paragraph(fmt_ytd, bold_num),
-            ]
+            row = [ind_name, u_str, fmt_ytd]
             for qv in q_vals:
-                fmt_qv = f"{qv:.3f}" if is_intense else f"{qv:,.1f}"
-                row.append(Paragraph(fmt_qv, num_style))
+                row.append(f"{qv:.3f}" if is_intense else f"{qv:,.1f}")
             t_q_rows.append(row)
 
         t_q = Table([headers_fmt] + t_q_rows, colWidths=[150, 50, 75, 60, 60, 60, 60])
         t_q.setStyle(TableStyle([
             ("BACKGROUND", (0, 0), (-1, 0), COLOR_DARK),
             ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+            ("FONTNAME", (0, 1), (-1, -1), "Helvetica"),
+            ("FONTNAME", (0, 1), (0, -1), "Helvetica-Bold"),
+            ("FONTNAME", (2, 1), (2, -1), "Helvetica-Bold"),
+            ("FONTSIZE", (0, 1), (-1, -1), 6.2),
+            ("ALIGN", (0, 1), (0, -1), "LEFT"),
+            ("ALIGN", (1, 1), (1, -1), "CENTER"),
+            ("ALIGN", (2, 1), (-1, -1), "RIGHT"),
             ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, COLOR_LIGHT_BG]),
             ("BOX", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
             ("INNERGRID", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
@@ -881,8 +914,8 @@ def build_subannual_timeseries_elements(data: Dict[str, Any], styles: Dict[str, 
             sem2 = m_rows[6:12]
 
             for iname, fn in m_indics:
-                r1 = [Paragraph(f"<b>{iname}</b>", body_style)] + [Paragraph(fn(m), num_style) for m in sem1]
-                r2 = [Paragraph(f"<b>{iname}</b>", body_style)] + [Paragraph(fn(m), num_style) for m in sem2]
+                r1 = [iname] + [fn(m) for m in sem1]
+                r2 = [iname] + [fn(m) for m in sem2]
                 t_m1_rows.append(r1)
                 t_m2_rows.append(r2)
 
@@ -890,6 +923,11 @@ def build_subannual_timeseries_elements(data: Dict[str, Any], styles: Dict[str, 
             t_m1.setStyle(TableStyle([
                 ("BACKGROUND", (0, 0), (-1, 0), COLOR_DARK),
                 ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                ("FONTNAME", (0, 1), (-1, -1), "Helvetica"),
+                ("FONTNAME", (0, 1), (0, -1), "Helvetica-Bold"),
+                ("FONTSIZE", (0, 1), (-1, -1), 6.2),
+                ("ALIGN", (0, 1), (0, -1), "LEFT"),
+                ("ALIGN", (1, 1), (-1, -1), "RIGHT"),
                 ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, COLOR_LIGHT_BG]),
                 ("BOX", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
                 ("INNERGRID", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
@@ -901,6 +939,11 @@ def build_subannual_timeseries_elements(data: Dict[str, Any], styles: Dict[str, 
             t_m2.setStyle(TableStyle([
                 ("BACKGROUND", (0, 0), (-1, 0), COLOR_DARK),
                 ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                ("FONTNAME", (0, 1), (-1, -1), "Helvetica"),
+                ("FONTNAME", (0, 1), (0, -1), "Helvetica-Bold"),
+                ("FONTSIZE", (0, 1), (-1, -1), 6.2),
+                ("ALIGN", (0, 1), (0, -1), "LEFT"),
+                ("ALIGN", (1, 1), (-1, -1), "RIGHT"),
                 ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, COLOR_LIGHT_BG]),
                 ("BOX", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
                 ("INNERGRID", (0, 0), (-1, -1), 0.5, COLOR_BORDER),

@@ -244,6 +244,7 @@ def test_chart_process_overview_dollar_math_safe():
 def test_master_report_skips_unused_empty_facility_pfds_and_scales_fast(monkeypatch):
     """Master report PDF must skip rendering PFDs for empty facilities and bulk-query without N+1 bottlenecks."""
     import uuid
+
     import services.master_report_charts as charts
     import services.master_report_engine as engine
     from models import EmissionSource
@@ -349,3 +350,224 @@ def test_master_report_skips_unused_empty_facility_pfds_and_scales_fast(monkeypa
             ProductionData.query.filter(ProductionData.facility_id.in_(created_fac_ids)).delete(synchronize_session=False)
             Facility.query.filter(Facility.id.in_(created_fac_ids)).delete(synchronize_session=False)
             db.session.commit()
+
+
+def test_appendices_skip_zero_activity_facilities_and_scale_fast():
+    """Appendices B & C must skip empty zero-activity facilities even with 12 zero-filled monthly rows."""
+    from reportlab.platypus import Paragraph
+    from services.master_report_appendices import (
+        build_facility_appendix_elements,
+        build_subannual_timeseries_elements,
+    )
+    from services.master_report_engine import _build_styles
+
+    def _q_rows(co2e: float, boe: float):
+        return [
+            {
+                "quarter": f"Qtr{q}",
+                "co2e": co2e,
+                "co2": co2e * 0.9,
+                "ch4": 0.1 if co2e else 0.0,
+                "n2o": 0.01 if co2e else 0.0,
+                "oil_bbl": boe * 0.5,
+                "gas_mscf": boe * 0.5,
+                "total_boe": boe,
+                "intensity_co2e_boe": (co2e / boe) if boe else 0.0,
+                "energy_hhv": boe * 1e6,
+                "daily_avg_co2e": co2e / 90.0,
+            }
+            for q in range(1, 5)
+        ]
+
+    def _m_rows(co2e: float, boe: float):
+        return [
+            {
+                "month": m,
+                "co2e": co2e,
+                "co2": co2e * 0.9,
+                "ch4": 0.01 if co2e else 0.0,
+                "n2o": 0.001 if co2e else 0.0,
+                "oil_bbl": boe * 0.5,
+                "gas_mscf": boe * 0.5,
+                "total_boe": boe,
+                "intensity_co2e_boe": (co2e / boe) if boe else 0.0,
+                "energy_hhv": boe * 1e6,
+                "daily_avg_co2e": co2e / 30.0,
+            }
+            for m in range(1, 13)
+        ]
+
+    def _zero_bd(i: int):
+        return {
+            "name": f"ZeroFac-{i}",
+            "code": f"ZF-{i}",
+            "region": "Basin Alpha",
+            "timeline": [
+                {
+                    "year": 2024,
+                    "gross_gas_mmsm3": 0.0,
+                    "liquid_mmbbl": 0.0,
+                    "total_mmboe": 0.0,
+                    "scope1_t": 0.0,
+                    "scope2_t": 0.0,
+                    "total_ghg_t": 0.0,
+                    "flaring_mmsm3": 0.0,
+                    "routine_mmsm3": 0.0,
+                    "flaring_intensity_pct": 0.0,
+                    "carbon_intensity_kg_boe": 0.0,
+                }
+            ],
+        }
+
+    subannual = {
+        "Active-CPF": {
+            "has_monthly_data": False,
+            "quarterly_rows": _q_rows(250.0, 1000.0),
+            "monthly_rows": _m_rows(0.0, 0.0),
+        }
+    }
+    breakdowns = [
+        {
+            "name": "Active-CPF",
+            "code": "ACT-1",
+            "region": "Basin Alpha",
+            "timeline": [
+                {
+                    "year": 2024,
+                    "gross_gas_mmsm3": 10.0,
+                    "liquid_mmbbl": 1.0,
+                    "total_mmboe": 2.0,
+                    "scope1_t": 1000.0,
+                    "scope2_t": 50.0,
+                    "total_ghg_t": 1050.0,
+                    "flaring_mmsm3": 0.05,
+                    "routine_mmsm3": 0.01,
+                    "flaring_intensity_pct": 0.5,
+                    "carbon_intensity_kg_boe": 12.0,
+                }
+            ],
+        }
+    ]
+    for i in range(350):
+        subannual[f"ZeroFac-{i}"] = {
+            "has_monthly_data": False,
+            "quarterly_rows": _q_rows(0.0, 0.0),
+            "monthly_rows": _m_rows(0.0, 0.0),
+        }
+        breakdowns.append(_zero_bd(i))
+
+    styles = _build_styles()
+    sub_elems = build_subannual_timeseries_elements({"subannual_time_series": subannual}, styles, lang="en")
+    fac_elems = build_facility_appendix_elements({"facility_breakdowns": breakdowns}, styles, lang="en")
+
+    sub_text = "\n".join(el.getPlainText() for el in sub_elems if isinstance(el, Paragraph))
+    fac_text = "\n".join(el.getPlainText() for el in fac_elems if isinstance(el, Paragraph))
+
+    assert "Active-CPF" in sub_text
+    assert "ZeroFac-" not in sub_text
+    assert len(sub_elems) < 20
+
+    assert "Active-CPF" in fac_text
+    assert "ZeroFac-" not in fac_text
+    assert len(fac_elems) < 20
+
+    zero_only_sub = {f"ZeroFac-{i}": subannual[f"ZeroFac-{i}"] for i in range(20)}
+    zero_only_bd = [_zero_bd(i) for i in range(20)]
+    assert build_subannual_timeseries_elements({"subannual_time_series": zero_only_sub}, styles, lang="en") == []
+    assert build_facility_appendix_elements({"facility_breakdowns": zero_only_bd}, styles, lang="en") == []
+
+
+def test_cold_pfds_and_large_appendix_tables_scale_within_budget():
+    """Rendering 40 distinct cold PFDs + large Appendix A/B tables must complete fast without bloated Paragraph cells."""
+    import io
+
+    import services.master_report_charts as charts
+    from reportlab.lib.pagesizes import A4
+    from reportlab.platypus import SimpleDocTemplate, Table
+    from services.master_report_appendices import (
+        build_granular_source_ledger_elements,
+        build_subannual_timeseries_elements,
+    )
+    from services.master_report_engine import _build_styles
+
+    # 1. Cold PFD scaling: 40 distinct facility names without disk cache must finish < 2.5s
+    with tempfile.TemporaryDirectory() as tmp:
+        t0 = time.perf_counter()
+        sizes = []
+        for i in range(40):
+            out = os.path.join(tmp, f"pfd_{i}.png")
+            charts.generate_process_overview_diagram(f"Scale Facility {i}", out, language="en", use_cache=False)
+            sizes.append(os.path.getsize(out))
+        pfd_elapsed = time.perf_counter() - t0
+
+    assert all(sz > 50_000 for sz in sizes), f"Expected crisp >50KB PFD PNGs, min={min(sizes)}"
+    assert plt.get_fignums() == []
+    assert pfd_elapsed < 2.5, f"40 cold PFDs took {pfd_elapsed:.2f}s (expected < 2.5s)"
+
+    # 2. Large Appendix A + B scaling: numeric cells must be plain strings rather than Paragraph objects
+    rows = [
+        {
+            "facility_id": 1,
+            "facility_name": "Scale Facility",
+            "source_name": f"Turbine-{i}",
+            "equipment_id": f"EQ-{i}",
+            "module": "Stationary Combustion",
+            "scope": "Scope 1",
+            "quantity": 1000.0 + i,
+            "unit": "m3",
+            "co2": 200.0 + i,
+            "ch4": 1.0,
+            "n2o": 0.05,
+            "co2e": 240.0 + i,
+        }
+        for i in range(1500)
+    ]
+    subannual = {
+        f"SubFac-{i}": {
+            "has_monthly_data": False,
+            "quarterly_rows": [
+                {
+                    "quarter": f"Qtr{q}",
+                    "co2e": 100.0,
+                    "co2": 90.0,
+                    "ch4": 0.2,
+                    "n2o": 0.01,
+                    "oil_bbl": 100.0,
+                    "gas_mscf": 500.0,
+                    "total_boe": 180.0,
+                    "intensity_co2e_boe": 0.55,
+                    "energy_hhv": 1e8,
+                    "daily_avg_co2e": 1.1,
+                }
+                for q in range(1, 5)
+            ],
+            "monthly_rows": [{"co2e": 0.0, "total_boe": 0.0} for _ in range(12)],
+        }
+        for i in range(40)
+    }
+
+    styles = _build_styles()
+    t1 = time.perf_counter()
+    elems = []
+    elems.extend(
+        build_granular_source_ledger_elements(
+            {"granular_source_ledger": {"total_sources_count": len(rows), "ledger_by_facility": {"Scale Facility": rows}}},
+            styles,
+            lang="en",
+        )
+    )
+    elems.extend(build_subannual_timeseries_elements({"subannual_time_series": subannual}, styles, lang="en"))
+    tables = [el for el in elems if isinstance(el, Table)]
+    assert tables
+    first_ledger_row = tables[0]._cellvalues[1]
+    assert isinstance(first_ledger_row[0], str)
+    assert isinstance(first_ledger_row[4], str)
+    assert isinstance(first_ledger_row[9], str)
+    first_sub_row = tables[1]._cellvalues[1]
+    assert all(isinstance(cell, str) for cell in first_sub_row)
+
+    buf = io.BytesIO()
+    SimpleDocTemplate(buf, pagesize=A4).build(elems)
+    build_elapsed = time.perf_counter() - t1
+    assert buf.getvalue().startswith(b"%PDF")
+    assert build_elapsed < 4.5, f"Large Appendix A+B build took {build_elapsed:.2f}s (expected < 4.5s)"

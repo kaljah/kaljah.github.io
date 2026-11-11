@@ -15,6 +15,7 @@ consolidated multi-panel layouts:
 """
 
 import hashlib
+import io
 import json
 import os
 import shutil
@@ -28,9 +29,11 @@ import matplotlib
 
 if matplotlib.get_backend().lower() != "agg":
     matplotlib.use("Agg", force=True)
-import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib import font_manager, patches
+from PIL import Image as PILImage
+from PIL import ImageDraw, ImageFont
 
 from services.master_report_i18n import get_t
 
@@ -39,6 +42,9 @@ _CACHE_SCHEMA_VERSION = "v2-150dpi"
 _PLOT_LOCK = threading.RLock()
 _CACHE_STATS_LOCK = threading.Lock()
 _CACHE_STATS = {"hits": 0, "misses": 0}
+_PFD_BASE_CACHE: dict[tuple[str, int], tuple[Any, float, float]] = {}
+_PFD_FONT_CACHE: dict[int, Any] = {}
+_PFD_FONT_PATH: str | None = None
 
 # Corporate Publication Palette
 COLOR_ORANGE = "#EA580C"
@@ -89,6 +95,8 @@ def clear_chart_cache() -> int:
             removed += 1
         except OSError:
             pass
+    with _PLOT_LOCK:
+        _PFD_BASE_CACHE.clear()
     with _CACHE_STATS_LOCK:
         _CACHE_STATS["hits"] = 0
         _CACHE_STATS["misses"] = 0
@@ -1066,6 +1074,94 @@ def generate_cbam_embeddings_chart(
     _cached_render("cbam", payload, out_path, _render, use_cache=use_cache)
 
 
+def _get_pfd_font(size_px: int) -> Any:
+    global _PFD_FONT_PATH
+    with _PLOT_LOCK:
+        if size_px in _PFD_FONT_CACHE:
+            return _PFD_FONT_CACHE[size_px]
+        if _PFD_FONT_PATH is None:
+            _PFD_FONT_PATH = font_manager.findfont(
+                font_manager.FontProperties(family="DejaVu Sans", weight="bold")
+            )
+        font = ImageFont.truetype(_PFD_FONT_PATH, size_px)
+        _PFD_FONT_CACHE[size_px] = font
+        return font
+
+
+def _get_pfd_base_template(lang_key: str, dpi: int) -> tuple[PILImage.Image, float, float]:
+    """Renders the static CPF PFD diagram template once per (language, dpi) and caches as RGB image."""
+    cache_key = (lang_key, dpi)
+    with _PLOT_LOCK:
+        cached = _PFD_BASE_CACHE.get(cache_key)
+        if cached is not None:
+            return cached[0].copy(), cached[1], cached[2]
+
+        fig, ax = plt.subplots(figsize=(8.5, 4.2), dpi=dpi)
+        try:
+            ax.set_xlim(0, 100)
+            ax.set_ylim(0, 50)
+            ax.axis("off")
+
+            is_fr = lang_key.startswith("fr")
+            ax.text(50, 47, "X", ha="center", va="center", fontsize=10.5, fontweight="bold", alpha=0.0)
+
+            fence = patches.Rectangle((3, 3), 94, 41, fill=False, edgecolor=COLOR_MUTED, linestyle="--", linewidth=0.8)
+            ax.add_patch(fence)
+            ax.text(5, 42, "CPF FENCE LINE" if not is_fr else "LIMITE DE L'INSTALLATION CPF", fontsize=6.5, fontweight="bold", color=COLOR_MUTED)
+
+            blocks = [
+                (5, 18, 14, 11, "Wellhead Gathering\n& FGS Manifolds" if not is_fr else "Collecte Puits\n& Manifolds FGS", "#0284C7"),
+                (23, 18, 15, 11, "Inlet Separation\n(HP / IP Trains)" if not is_fr else "Separation Entree\n(Trains HP / MP)", "#0D9488"),
+                (42, 18, 16, 11, "Oil Desalting &\nStabilization Tower" if not is_fr else "Dessalage & Colonne\nde Stabilisation", "#059669"),
+                (62, 18, 15, 11, "Crude / Condensate\nStorage Tanks" if not is_fr else "Stockage Brut &\nCondensats", "#10B981"),
+                (81, 18, 15, 11, "LACT Custody &\nExport Pipeline" if not is_fr else "Comptage LACT &\nExport Pipeline", "#047857"),
+                (23, 32, 15, 9, "Gas Compression\n(BGC / AGC / RGC)" if not is_fr else "Compression Gaz\n(BGC / AGC / RGC)", "#D97706"),
+                (42, 32, 16, 9, "Glycol / Mole Sieve\nDehydration Unit" if not is_fr else "Unite Deshydratation\n(Glycol / Tamis)", "#B45309"),
+                (62, 32, 15, 9, "High-Pressure Gas\nReinjection Network" if not is_fr else "Reseau Reinjection\nGaz Haute Pression", "#92400E"),
+                (42, 5, 16, 9, "Produced Water\nTreatment System" if not is_fr else "Traitement des\nEaux de Production", "#64748B"),
+                (62, 5, 15, 9, "Water Injection\nWells & Pumps" if not is_fr else "Puits & Pompes\nInjection d'Eau", "#475569"),
+                (81, 5, 15, 9, "Flaring System\n(HP/LP Smokeless)" if not is_fr else "Systeme Torches\n(HP/MP Sans Fumee)", "#DC2626"),
+                (81, 32, 15, 9, "Gas Turbines &\nPower Generation" if not is_fr else "Turbines a Gaz &\nProduction Elec.", "#7C3AED"),
+            ]
+
+            for x, y, w, h, label, bg in blocks:
+                rect = patches.FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0.3", facecolor=bg, edgecolor=COLOR_DARK, linewidth=0.8)
+                ax.add_patch(rect)
+                ax.text(x + w / 2, y + h / 2, label, ha="center", va="center", color="white", fontsize=6.2, fontweight="bold")
+
+            arrows = [
+                ((19, 23.5), (23, 23.5)),
+                ((38, 23.5), (42, 23.5)),
+                ((58, 23.5), (62, 23.5)),
+                ((77, 23.5), (81, 23.5)),
+                ((30.5, 29), (30.5, 32)),
+                ((38, 36.5), (42, 36.5)),
+                ((58, 36.5), (62, 36.5)),
+                ((58, 36.5), (81, 36.5)),
+                ((50, 18), (50, 14)),
+                ((58, 9.5), (62, 9.5)),
+                ((77, 9.5), (81, 9.5)),
+            ]
+            for start, end in arrows:
+                ax.annotate("", xy=end, xytext=start, arrowprops=dict(arrowstyle="->", color=COLOR_DARK, lw=1.2))
+
+            fig.tight_layout()
+            buf = io.BytesIO()
+            fig.savefig(buf, format="png", dpi=dpi)
+            img_w, img_h = fig.canvas.get_width_height()
+            disp_x, disp_y = ax.transData.transform((50, 47))
+            title_x = float(disp_x)
+            title_y = float(img_h - disp_y)
+            buf.seek(0)
+            with PILImage.open(buf) as loaded:
+                base_img = loaded.convert("RGB")
+            _PFD_BASE_CACHE[cache_key] = (base_img, title_x, title_y)
+            return base_img.copy(), title_x, title_y
+        finally:
+            fig.clear()
+            plt.close(fig)
+
+
 def generate_process_overview_diagram(
     facility_name: str,
     out_path: str,
@@ -1077,60 +1173,23 @@ def generate_process_overview_diagram(
     payload = {"facility_name": facility_name, "lang": language, "dpi": dpi}
 
     def _render(target_path: str) -> None:
-        with _PLOT_LOCK:
-            fig, ax = plt.subplots(figsize=(8.5, 4.2), dpi=dpi)
-            try:
-                ax.set_xlim(0, 100)
-                ax.set_ylim(0, 50)
-                ax.axis("off")
+        lang_norm = str(language or "en").lower()
+        lang_key = "fr" if lang_norm.startswith("fr") else "en"
+        is_fr = lang_key == "fr"
+        title_suffix = "Architecture des Procedees CPF" if is_fr else "CPF Process Architecture & Block Flow Overview"
+        title_text = f"{facility_name} - {title_suffix}"
 
-                is_fr = str(language).lower().startswith("fr")
-                title_suffix = "Architecture des Procedees CPF" if is_fr else "CPF Process Architecture & Block Flow Overview"
-                ax.text(50, 47, f"{facility_name} - {title_suffix}", ha="center", va="center", fontsize=10.5, fontweight="bold", color=COLOR_DARK, parse_math=False)
-
-                fence = patches.Rectangle((3, 3), 94, 41, fill=False, edgecolor=COLOR_MUTED, linestyle="--", linewidth=0.8)
-                ax.add_patch(fence)
-                ax.text(5, 42, "CPF FENCE LINE" if not is_fr else "LIMITE DE L'INSTALLATION CPF", fontsize=6.5, fontweight="bold", color=COLOR_MUTED)
-
-                blocks = [
-                    (5, 18, 14, 11, "Wellhead Gathering\n& FGS Manifolds" if not is_fr else "Collecte Puits\n& Manifolds FGS", "#0284C7"),
-                    (23, 18, 15, 11, "Inlet Separation\n(HP / IP Trains)" if not is_fr else "Separation Entree\n(Trains HP / MP)", "#0D9488"),
-                    (42, 18, 16, 11, "Oil Desalting &\nStabilization Tower" if not is_fr else "Dessalage & Colonne\nde Stabilisation", "#059669"),
-                    (62, 18, 15, 11, "Crude / Condensate\nStorage Tanks" if not is_fr else "Stockage Brut &\nCondensats", "#10B981"),
-                    (81, 18, 15, 11, "LACT Custody &\nExport Pipeline" if not is_fr else "Comptage LACT &\nExport Pipeline", "#047857"),
-                    (23, 32, 15, 9, "Gas Compression\n(BGC / AGC / RGC)" if not is_fr else "Compression Gaz\n(BGC / AGC / RGC)", "#D97706"),
-                    (42, 32, 16, 9, "Glycol / Mole Sieve\nDehydration Unit" if not is_fr else "Unite Deshydratation\n(Glycol / Tamis)", "#B45309"),
-                    (62, 32, 15, 9, "High-Pressure Gas\nReinjection Network" if not is_fr else "Reseau Reinjection\nGaz Haute Pression", "#92400E"),
-                    (42, 5, 16, 9, "Produced Water\nTreatment System" if not is_fr else "Traitement des\nEaux de Production", "#64748B"),
-                    (62, 5, 15, 9, "Water Injection\nWells & Pumps" if not is_fr else "Puits & Pompes\nInjection d'Eau", "#475569"),
-                    (81, 5, 15, 9, "Flaring System\n(HP/LP Smokeless)" if not is_fr else "Systeme Torches\n(HP/MP Sans Fumee)", "#DC2626"),
-                    (81, 32, 15, 9, "Gas Turbines &\nPower Generation" if not is_fr else "Turbines a Gaz &\nProduction Elec.", "#7C3AED"),
-                ]
-
-                for x, y, w, h, label, bg in blocks:
-                    rect = patches.FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0.3", facecolor=bg, edgecolor=COLOR_DARK, linewidth=0.8)
-                    ax.add_patch(rect)
-                    ax.text(x + w / 2, y + h / 2, label, ha="center", va="center", color="white", fontsize=6.2, fontweight="bold")
-
-                arrows = [
-                    ((19, 23.5), (23, 23.5)),
-                    ((38, 23.5), (42, 23.5)),
-                    ((58, 23.5), (62, 23.5)),
-                    ((77, 23.5), (81, 23.5)),
-                    ((30.5, 29), (30.5, 32)),
-                    ((38, 36.5), (42, 36.5)),
-                    ((58, 36.5), (62, 36.5)),
-                    ((58, 36.5), (81, 36.5)),
-                    ((50, 18), (50, 14)),
-                    ((58, 9.5), (62, 9.5)),
-                    ((77, 9.5), (81, 9.5)),
-                ]
-                for start, end in arrows:
-                    ax.annotate("", xy=end, xytext=start, arrowprops=dict(arrowstyle="->", color=COLOR_DARK, lw=1.2))
-
-                _finalize_figure(fig, target_path, dpi=dpi)
-            finally:
-                fig.clear()
-                plt.close(fig)
+        base_img, title_x, title_y = _get_pfd_base_template(lang_key, dpi)
+        base_px = max(10, round(10.5 * dpi / 72.0))
+        font = _get_pfd_font(base_px)
+        draw = ImageDraw.Draw(base_img)
+        bbox = draw.textbbox((0, 0), title_text, font=font)
+        text_w = bbox[2] - bbox[0]
+        max_w = max(200, base_img.width - 36)
+        if text_w > max_w and text_w > 0:
+            scaled_px = max(9, int(base_px * (max_w / text_w)))
+            font = _get_pfd_font(scaled_px)
+        draw.text((title_x, title_y), title_text, fill=COLOR_DARK, font=font, anchor="mm")
+        base_img.save(target_path, format="PNG", compress_level=1)
 
     _cached_render("pfd", payload, out_path, _render, use_cache=use_cache)

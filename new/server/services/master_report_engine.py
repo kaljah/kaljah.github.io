@@ -1224,8 +1224,10 @@ def _assemble_document_story(
 
     # Appendix C: Disaggregated Facility Ledgers (Multi-Facility Asset Breakdown)
     if data.get("facility_breakdowns"):
-        elements.append(PageBreak())
-        elements.extend(build_facility_appendix_elements(data, styles, lang=lang))
+        fac_app_elems = build_facility_appendix_elements(data, styles, lang=lang)
+        if fac_app_elems:
+            elements.append(PageBreak())
+            elements.extend(fac_app_elems)
 
     return elements
 
