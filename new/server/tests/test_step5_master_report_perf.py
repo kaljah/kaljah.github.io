@@ -223,3 +223,129 @@ def test_post_master_report_runs_as_background_job_with_status_and_download(perf
     assert len(dl.data) > 50_000
     assert len(dl.headers.get("X-Report-SHA256", "")) == 64
     assert plt.get_fignums() == []
+
+
+def test_chart_process_overview_dollar_math_safe():
+    """Facility names containing unescaped '$' must not trigger Matplotlib mathtext parser crashes."""
+    import services.master_report_charts as charts
+
+    with tempfile.TemporaryDirectory() as tmp:
+        out = os.path.join(tmp, "pfd_dollar.png")
+        charts.generate_process_overview_diagram(
+            r"Fac $\unknown$ <tag> & CO2",
+            out,
+            language="en",
+            use_cache=False,
+        )
+        assert os.path.exists(out) and os.path.getsize(out) > 5_000
+        assert plt.get_fignums() == []
+
+
+def test_master_report_skips_unused_empty_facility_pfds_and_scales_fast(monkeypatch):
+    """Master report PDF must skip rendering PFDs for empty facilities and bulk-query without N+1 bottlenecks."""
+    import uuid
+    import services.master_report_charts as charts
+    import services.master_report_engine as engine
+    from models import EmissionSource
+
+    charts.clear_chart_cache()
+    tenant_id = f"perf_b_{uuid.uuid4().hex[:8]}"
+    created_fac_ids = []
+
+    with app.app_context():
+        active_fac = Facility(
+            name="Perf Active CPF",
+            code=f"PERF-ACT-{tenant_id}",
+            region="Basin Alpha",
+            segment="Upstream",
+            tenant_id=tenant_id,
+        )
+        db.session.add(active_fac)
+        db.session.flush()
+        created_fac_ids.append(active_fac.id)
+
+        db.session.add(
+            EmissionSource(
+                facility_id=active_fac.id,
+                name="Turbine A",
+                type="stationary_combustion",
+                equipment_id="TURB-A",
+            )
+        )
+        db.session.add(
+            Emission(
+                facility_id=active_fac.id,
+                year=2024,
+                month=6,
+                process_type="stationary_combustion",
+                equipment_id="TURB-A",
+                fuel_type="Natural Gas",
+                quantity=1000.0,
+                unit="m3",
+                co2_emissions=200.0,
+                ch4_emissions=1.0,
+                n2o_emissions=0.05,
+                co2e_total=240.0,
+                status="Verified",
+            )
+        )
+        db.session.add(
+            ProductionData(
+                facility_id=active_fac.id,
+                year=2024,
+                month=6,
+                gross_gas_mmsm3=10.0,
+                crude_oil_mmboe=0.1,
+                total_production_mmboe=0.15,
+            )
+        )
+
+        empties = [
+            Facility(
+                name=f"Perf Empty Fac {i}",
+                code=f"PERF-EMP-{tenant_id}-{i}",
+                region="Basin Alpha",
+                segment="Upstream",
+                tenant_id=tenant_id,
+            )
+            for i in range(120)
+        ]
+        db.session.add_all(empties)
+        db.session.flush()
+        created_fac_ids.extend([f.id for f in empties])
+        db.session.commit()
+
+    pfd_calls = []
+    orig_pfd = engine.generate_process_overview_diagram
+
+    def _spy_pfd(facility_name, out_path, *args, **kwargs):
+        pfd_calls.append(facility_name)
+        return orig_pfd(facility_name, out_path, *args, **kwargs)
+
+    monkeypatch.setattr(engine, "generate_process_overview_diagram", _spy_pfd)
+
+    try:
+        with app.app_context():
+            t0 = time.perf_counter()
+            buf = engine.generate_master_publication_pdf(
+                mode="national",
+                region_key=None,
+                start_year=2024,
+                end_year=2024,
+                gwp_standard="AR5",
+                language="en",
+                tenant_id=tenant_id,
+            )
+            elapsed = time.perf_counter() - t0
+            assert buf.getvalue().startswith(b"%PDF")
+            assert pfd_calls == ["Perf Active CPF"], (
+                f"Expected PFD rendering only for active facility, got {len(pfd_calls)} calls"
+            )
+            assert elapsed < 10.0, f"121-facility master report took {elapsed:.2f}s (expected < 10s)"
+    finally:
+        with app.app_context():
+            EmissionSource.query.filter(EmissionSource.facility_id.in_(created_fac_ids)).delete(synchronize_session=False)
+            Emission.query.filter(Emission.facility_id.in_(created_fac_ids)).delete(synchronize_session=False)
+            ProductionData.query.filter(ProductionData.facility_id.in_(created_fac_ids)).delete(synchronize_session=False)
+            Facility.query.filter(Facility.id.in_(created_fac_ids)).delete(synchronize_session=False)
+            db.session.commit()

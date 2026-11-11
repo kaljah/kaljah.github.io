@@ -1317,9 +1317,12 @@ def generate_master_publication_pdf(
         if mode == "comparison":
             generate_regional_benchmark_chart(data.get("regional_benchmarks", []), charts["bench"], language=language)
 
+        ledger_by_fac = data.get("granular_source_ledger", {}).get("ledger_by_facility", {})
         pfd_charts = {}
         for fac in data.get("facilities", []):
             fname = fac["name"]
+            if ledger_by_fac and not ledger_by_fac.get(fname):
+                continue
             pfd_path = os.path.join(tmp_dir, f"pfd_{fac['id']}.png")
             generate_process_overview_diagram(fname, pfd_path, language=language)
             pfd_charts[fname] = pfd_path

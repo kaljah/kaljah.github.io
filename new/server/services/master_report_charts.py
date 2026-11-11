@@ -63,6 +63,7 @@ plt.rcParams.update({
     "grid.color": "#F1F5F9",
     "grid.linestyle": "--",
     "grid.alpha": 0.8,
+    "text.parse_math": False,
 })
 
 
@@ -790,7 +791,7 @@ def generate_regional_benchmark_chart(
                 bars = ax.barh(y_pos, ci_vals, color=colors_list, alpha=0.88, height=0.6)
 
                 ax.set_yticks(y_pos)
-                ax.set_yticklabels(names, fontsize=8, fontweight="bold", color=COLOR_DARK)
+                ax.set_yticklabels(names, fontsize=8, fontweight="bold", color=COLOR_DARK, parse_math=False)
                 ax.set_xlabel(get_t("chart_bench_axis", language), fontsize=8.5, fontweight="bold", color=COLOR_DARK)
                 ax.tick_params(axis="x", labelsize=8)
                 ax.grid(axis="x", linestyle="--", alpha=0.5)
@@ -924,7 +925,7 @@ def generate_ogmp_reconciliation_chart(
                     ax.bar(x + width / 2, td_vals, width, label=lbl_td, color=COLOR_TEAL, alpha=0.9)
 
                     ax.set_xticks(x)
-                    ax.set_xticklabels(labels, fontsize=7.2, fontweight="bold")
+                    ax.set_xticklabels(labels, fontsize=7.2, fontweight="bold", parse_math=False)
 
                     max_v = max(max(bu_vals + td_vals + [1.0]), 10.0)
                     ax.set_ylim(0, max_v * 1.3)
@@ -986,7 +987,7 @@ def generate_scope3_category_chart(
                     startangle=140,
                     colors=palette,
                     pctdistance=0.75,
-                    textprops=dict(color=COLOR_DARK, fontsize=7.2, fontweight="bold"),
+                    textprops=dict(color=COLOR_DARK, fontsize=7.2, fontweight="bold", parse_math=False),
                     wedgeprops=dict(width=0.45, edgecolor="white", linewidth=1.5),
                 )
                 for at in autotexts:
@@ -1043,7 +1044,7 @@ def generate_cbam_embeddings_chart(
 
                 ax.set_ylabel(get_t("chart_cbam_axis", language), fontsize=8.5, fontweight="bold", color=COLOR_DARK)
                 ax.set_xticks(x)
-                ax.set_xticklabels(names, fontsize=7.2, fontweight="bold", rotation=0)
+                ax.set_xticklabels(names, fontsize=7.2, fontweight="bold", rotation=0, parse_math=False)
                 ax.tick_params(axis="both", labelsize=7.5)
                 ax.grid(axis="y", linestyle="--", alpha=0.5)
 
@@ -1085,7 +1086,7 @@ def generate_process_overview_diagram(
 
                 is_fr = str(language).lower().startswith("fr")
                 title_suffix = "Architecture des Procedees CPF" if is_fr else "CPF Process Architecture & Block Flow Overview"
-                ax.text(50, 47, f"{facility_name} - {title_suffix}", ha="center", va="center", fontsize=10.5, fontweight="bold", color=COLOR_DARK)
+                ax.text(50, 47, f"{facility_name} - {title_suffix}", ha="center", va="center", fontsize=10.5, fontweight="bold", color=COLOR_DARK, parse_math=False)
 
                 fence = patches.Rectangle((3, 3), 94, 41, fill=False, edgecolor=COLOR_MUTED, linestyle="--", linewidth=0.8)
                 ax.add_patch(fence)

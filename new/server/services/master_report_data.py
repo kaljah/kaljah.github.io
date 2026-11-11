@@ -82,8 +82,8 @@ def get_facilities_for_scope(
     return matched
 
 
-def _query_emissions_by_year(facility_ids: List[int], start_year: int, end_year: int) -> Dict[int, Dict[str, float]]:
-    """Aggregates Scope 1 emissions by category and gas species per year."""
+def _aggregate_emissions_records(em_records: List[Emission], start_year: int, end_year: int) -> Dict[int, Dict[str, float]]:
+    """Aggregates preloaded Scope 1 emission rows by category and gas species per year."""
     years = range(start_year, end_year + 1)
     out: Dict[int, Dict[str, float]] = {
         y: {
@@ -108,15 +108,6 @@ def _query_emissions_by_year(facility_ids: List[int], start_year: int, end_year:
         }
         for y in years
     }
-    if not facility_ids:
-        return out
-
-    em_records = Emission.query.filter(
-        Emission.facility_id.in_(facility_ids),
-        Emission.year >= start_year,
-        Emission.year <= end_year
-    ).all()
-
     for e in em_records:
         y = e.year
         if y not in out:
@@ -177,6 +168,28 @@ def _query_emissions_by_year(facility_ids: List[int], start_year: int, end_year:
     return out
 
 
+def _query_emissions_by_year(facility_ids: List[int], start_year: int, end_year: int) -> Dict[int, Dict[str, float]]:
+    """Aggregates Scope 1 emissions by category and gas species per year."""
+    if not facility_ids:
+        return _aggregate_emissions_records([], start_year, end_year)
+
+    em_records = Emission.query.filter(
+        Emission.facility_id.in_(facility_ids),
+        Emission.year >= start_year,
+        Emission.year <= end_year
+    ).all()
+    return _aggregate_emissions_records(em_records, start_year, end_year)
+
+
+def _aggregate_scope2_records(records: List[Scope2Emission], start_year: int, end_year: int) -> Dict[int, float]:
+    """Aggregates preloaded Scope 2 records per year."""
+    out = {y: 0.0 for y in range(start_year, end_year + 1)}
+    for r in records:
+        if r.year in out:
+            out[r.year] += float(r.co2e or 0.0)
+    return out
+
+
 def _query_scope2_by_year(facility_ids: List[int], start_year: int, end_year: int) -> Dict[int, float]:
     """Aggregates Scope 2 indirect emissions (grid electricity, steam) per year."""
     if not facility_ids:
@@ -187,16 +200,11 @@ def _query_scope2_by_year(facility_ids: List[int], start_year: int, end_year: in
         Scope2Emission.year >= start_year,
         Scope2Emission.year <= end_year
     ).all()
-
-    out = {y: 0.0 for y in range(start_year, end_year + 1)}
-    for r in records:
-        if r.year in out:
-            out[r.year] += float(r.co2e or 0.0)
-    return out
+    return _aggregate_scope2_records(records, start_year, end_year)
 
 
-def _query_production_by_year(facility_ids: List[int], start_year: int, end_year: int) -> Dict[int, Dict[str, float]]:
-    """Aggregates production volumes (gas, crude, condensate, BOE) per year."""
+def _aggregate_production_records(records: List[ProductionData], start_year: int, end_year: int) -> Dict[int, Dict[str, float]]:
+    """Aggregates preloaded production volume records per year."""
     years = range(start_year, end_year + 1)
     out = {
         y: {
@@ -210,15 +218,6 @@ def _query_production_by_year(facility_ids: List[int], start_year: int, end_year
         }
         for y in years
     }
-    if not facility_ids:
-        return out
-
-    records = ProductionData.query.filter(
-        ProductionData.facility_id.in_(facility_ids),
-        ProductionData.year >= start_year,
-        ProductionData.year <= end_year
-    ).all()
-
     for p in records:
         y = p.year
         if y not in out:
@@ -252,25 +251,29 @@ def _query_production_by_year(facility_ids: List[int], start_year: int, end_year
     return out
 
 
-def _query_flaring_breakdown(
-    facility_ids: List[int],
+def _query_production_by_year(facility_ids: List[int], start_year: int, end_year: int) -> Dict[int, Dict[str, float]]:
+    """Aggregates production volumes (gas, crude, condensate, BOE) per year."""
+    if not facility_ids:
+        return _aggregate_production_records([], start_year, end_year)
+
+    records = ProductionData.query.filter(
+        ProductionData.facility_id.in_(facility_ids),
+        ProductionData.year >= start_year,
+        ProductionData.year <= end_year
+    ).all()
+    return _aggregate_production_records(records, start_year, end_year)
+
+
+def _aggregate_flaring_records(
+    fd_records: List[FlaringDetail],
     start_year: int,
     end_year: int,
     em_data: Dict[int, Dict[str, float]],
     prod_data: Dict[int, Dict[str, float]],
 ) -> Dict[int, Dict[str, float]]:
-    """Queries detailed flaring streams (routine, non-routine, safety) from FlaringDetail or emissions."""
+    """Aggregates preloaded FlaringDetail rows with emission/production fallbacks per year."""
     years = range(start_year, end_year + 1)
     out = {}
-
-    fd_records = []
-    if facility_ids:
-        fd_records = FlaringDetail.query.filter(
-            FlaringDetail.facility_id.in_(facility_ids),
-            FlaringDetail.year >= start_year,
-            FlaringDetail.year <= end_year
-        ).all()
-
     fd_by_year: Dict[int, List[FlaringDetail]] = {y: [] for y in years}
     for fd in fd_records:
         if fd.year in fd_by_year:
@@ -305,6 +308,24 @@ def _query_flaring_breakdown(
             "measured_dre_pct": dre,
         }
     return out
+
+
+def _query_flaring_breakdown(
+    facility_ids: List[int],
+    start_year: int,
+    end_year: int,
+    em_data: Dict[int, Dict[str, float]],
+    prod_data: Dict[int, Dict[str, float]],
+) -> Dict[int, Dict[str, float]]:
+    """Queries detailed flaring streams (routine, non-routine, safety) from FlaringDetail or emissions."""
+    fd_records = []
+    if facility_ids:
+        fd_records = FlaringDetail.query.filter(
+            FlaringDetail.facility_id.in_(facility_ids),
+            FlaringDetail.year >= start_year,
+            FlaringDetail.year <= end_year
+        ).all()
+    return _aggregate_flaring_records(fd_records, start_year, end_year, em_data, prod_data)
 
 
 def _query_jv_equity_breakdown(
@@ -941,14 +962,47 @@ def _query_facility_breakdowns(
     if not facilities:
         return []
 
+    fac_ids = [f.id for f in facilities]
+    em_by_fac: Dict[int, List[Emission]] = {}
+    for e in Emission.query.filter(
+        Emission.facility_id.in_(fac_ids),
+        Emission.year >= start_year,
+        Emission.year <= end_year,
+    ).all():
+        em_by_fac.setdefault(e.facility_id, []).append(e)
+
+    s2_by_fac: Dict[int, List[Scope2Emission]] = {}
+    for r in Scope2Emission.query.filter(
+        Scope2Emission.facility_id.in_(fac_ids),
+        Scope2Emission.year >= start_year,
+        Scope2Emission.year <= end_year,
+    ).all():
+        s2_by_fac.setdefault(r.facility_id, []).append(r)
+
+    prod_by_fac: Dict[int, List[ProductionData]] = {}
+    for p in ProductionData.query.filter(
+        ProductionData.facility_id.in_(fac_ids),
+        ProductionData.year >= start_year,
+        ProductionData.year <= end_year,
+    ).all():
+        prod_by_fac.setdefault(p.facility_id, []).append(p)
+
+    fd_by_fac: Dict[int, List[FlaringDetail]] = {}
+    for fd in FlaringDetail.query.filter(
+        FlaringDetail.facility_id.in_(fac_ids),
+        FlaringDetail.year >= start_year,
+        FlaringDetail.year <= end_year,
+    ).all():
+        fd_by_fac.setdefault(fd.facility_id, []).append(fd)
+
     out = []
     years = list(range(start_year, end_year + 1))
     for f in facilities:
         f_id = f.id
-        f_em = _query_emissions_by_year([f_id], start_year, end_year)
-        f_s2 = _query_scope2_by_year([f_id], start_year, end_year)
-        f_prod = _query_production_by_year([f_id], start_year, end_year)
-        f_fl = _query_flaring_breakdown([f_id], start_year, end_year, f_em, f_prod)
+        f_em = _aggregate_emissions_records(em_by_fac.get(f_id, []), start_year, end_year)
+        f_s2 = _aggregate_scope2_records(s2_by_fac.get(f_id, []), start_year, end_year)
+        f_prod = _aggregate_production_records(prod_by_fac.get(f_id, []), start_year, end_year)
+        f_fl = _aggregate_flaring_records(fd_by_fac.get(f_id, []), start_year, end_year, f_em, f_prod)
 
         timeline = []
         for y in years:
@@ -1384,21 +1438,49 @@ def _query_granular_source_ledger(
             return "Miscellaneous"
         return "Stationary Combustion"
 
+    srcs_by_fac: Dict[int, List[EmissionSource]] = {}
+    ems_by_fac: Dict[int, List[Emission]] = {}
+    em_by_equip: Dict[int, Dict[Any, Emission]] = {}
+    em_by_proc: Dict[int, Dict[Any, Emission]] = {}
+    s2_by_fac: Dict[int, List[Scope2Emission]] = {}
+    if fac_ids:
+        for s in EmissionSource.query.filter(EmissionSource.facility_id.in_(fac_ids)).order_by(
+            EmissionSource.type, EmissionSource.name
+        ).all():
+            srcs_by_fac.setdefault(s.facility_id, []).append(s)
+
+        for em in Emission.query.filter(
+            Emission.facility_id.in_(fac_ids),
+            Emission.year == target_year,
+        ).order_by(Emission.id).all():
+            ems_by_fac.setdefault(em.facility_id, []).append(em)
+            em_by_equip.setdefault(em.facility_id, {}).setdefault(em.equipment_id, em)
+            em_by_proc.setdefault(em.facility_id, {}).setdefault(em.process_type, em)
+
+        for s2 in Scope2Emission.query.filter(
+            Scope2Emission.facility_id.in_(fac_ids),
+            Scope2Emission.year == target_year,
+        ).all():
+            s2_by_fac.setdefault(s2.facility_id, []).append(s2)
+
     ledger_by_facility = {}
     total_ledger_rows = []
-    
+
     for fac in facilities:
         fac_rows = []
-        srcs = EmissionSource.query.filter_by(facility_id=fac.id).order_by(EmissionSource.type, EmissionSource.name).all()
+        srcs = srcs_by_fac.get(fac.id, [])
+        fac_ems = ems_by_fac.get(fac.id, [])
+        fac_equip_map = em_by_equip.get(fac.id, {})
+        fac_proc_map = em_by_proc.get(fac.id, {})
         matched_em_ids = set()
 
         for s in srcs:
-            em = Emission.query.filter_by(facility_id=fac.id, year=target_year, equipment_id=s.equipment_id).first()
+            em = fac_equip_map.get(s.equipment_id)
             if not em:
-                em = Emission.query.filter_by(facility_id=fac.id, year=target_year, equipment_id=s.name).first()
+                em = fac_equip_map.get(s.name)
             if not em and s.type:
-                em = Emission.query.filter_by(facility_id=fac.id, year=target_year, process_type=s.type).first()
-            
+                em = fac_proc_map.get(s.type)
+
             if em:
                 matched_em_ids.add(em.id)
 
@@ -1432,11 +1514,7 @@ def _query_granular_source_ledger(
             total_ledger_rows.append(row)
 
         # Capture any unmapped emissions
-        unmapped_ems = Emission.query.filter(
-            Emission.facility_id == fac.id,
-            Emission.year == target_year,
-            ~Emission.id.in_(matched_em_ids) if matched_em_ids else True
-        ).all()
+        unmapped_ems = [em for em in fac_ems if em.id not in matched_em_ids]
         for uem in unmapped_ems:
             sname = uem.equipment_id or uem.process_type or f"Process {uem.id}"
             co2 = uem.co2_emissions or 0.0
@@ -1466,7 +1544,7 @@ def _query_granular_source_ledger(
         # Include Scope 2 if not yet present in ledger
         has_scope2 = any(r["scope"] == "Scope 2" for r in fac_rows)
         if not has_scope2:
-            s2_list = Scope2Emission.query.filter_by(facility_id=fac.id, year=target_year).all()
+            s2_list = s2_by_fac.get(fac.id, [])
             if s2_list:
                 tot_kwh = sum(s.electricity_kwh or 0.0 for s in s2_list)
                 tot_co2e = sum(s.co2e or s.co2e_location_based or 0.0 for s in s2_list)
@@ -1536,20 +1614,31 @@ def _query_equipment_census(fac_ids: List[int]) -> List[Dict[str, Any]]:
         ("Indirect – Purchased Electricity", ["electricity", "imported", "grid"]),
     ]
 
+    srcs_by_fac: Dict[int, List[EmissionSource]] = {}
+    s2_fac_ids: set = set()
+    if fac_ids:
+        for s in EmissionSource.query.filter(EmissionSource.facility_id.in_(fac_ids)).all():
+            srcs_by_fac.setdefault(s.facility_id, []).append(s)
+        s2_fac_ids = {
+            fid
+            for (fid,) in db.session.query(Scope2Emission.facility_id)
+            .filter(Scope2Emission.facility_id.in_(fac_ids))
+            .distinct()
+            .all()
+        }
+
     census_rows = []
     for cat_name, keywords in categories:
         row = {"category": cat_name, "counts": {}, "total": 0, "notes": ""}
         for fac in facilities:
-            srcs = EmissionSource.query.filter_by(facility_id=fac.id).all()
+            srcs = srcs_by_fac.get(fac.id, [])
             cnt = 0
             for s in srcs:
                 s_full = f"{s.name} {s.type or ''}".lower()
                 if any(kw in s_full for kw in keywords):
                     cnt += 1
-            if "Electricity" in cat_name and cnt == 0:
-                s2_exists = Scope2Emission.query.filter_by(facility_id=fac.id).first()
-                if s2_exists:
-                    cnt = 1
+            if "Electricity" in cat_name and cnt == 0 and fac.id in s2_fac_ids:
+                cnt = 1
             row["counts"][fac.name] = cnt
             row["total"] += cnt
 
@@ -1634,6 +1723,14 @@ def _query_flaring_operational_split(
     Matches Table E-5 / 22 flaring blocks dynamically.
     """
     facilities = Facility.query.filter(Facility.id.in_(fac_ids)).all() if fac_ids else []
+    fds_by_fac: Dict[int, List[FlaringDetail]] = {}
+    if fac_ids:
+        for fd in FlaringDetail.query.filter(
+            FlaringDetail.facility_id.in_(fac_ids),
+            FlaringDetail.year == target_year,
+        ).all():
+            fds_by_fac.setdefault(fd.facility_id, []).append(fd)
+
     fac_split = {}
     tot_routine = 0.0
     tot_non_routine = 0.0
@@ -1641,7 +1738,7 @@ def _query_flaring_operational_split(
     tot_flaring = 0.0
 
     for fac in facilities:
-        fds = FlaringDetail.query.filter_by(facility_id=fac.id, year=target_year).all()
+        fds = fds_by_fac.get(fac.id, [])
         r_knm3 = sum(f.routine_knm3 or 0.0 for f in fds)
         nr_knm3 = sum(f.non_routine_knm3 or 0.0 for f in fds)
         sf_knm3 = sum(f.safety_knm3 or 0.0 for f in fds)
@@ -1688,11 +1785,29 @@ def _query_subannual_time_series(
     """
     month_names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
     facilities = Facility.query.filter(Facility.id.in_(fac_ids)).all() if fac_ids else []
+    prods_by_fac: Dict[int, List[ProductionData]] = {}
+    ems_by_fac_year: Dict[int, List[Emission]] = {}
+    ems_by_fac_month: Dict[Tuple[int, Any], List[Emission]] = {}
+    if fac_ids:
+        for p in ProductionData.query.filter(
+            ProductionData.facility_id.in_(fac_ids),
+            ProductionData.year == target_year,
+        ).order_by(ProductionData.month).all():
+            prods_by_fac.setdefault(p.facility_id, []).append(p)
+        for em in Emission.query.filter(
+            Emission.facility_id.in_(fac_ids),
+            Emission.year == target_year,
+        ).all():
+            ems_by_fac_year.setdefault(em.facility_id, []).append(em)
+            ems_by_fac_month.setdefault((em.facility_id, em.month), []).append(em)
+
     subannual_by_fac = {}
 
     for fac in facilities:
-        prods = ProductionData.query.filter_by(facility_id=fac.id, year=target_year).order_by(ProductionData.month).all()
+        prods = prods_by_fac.get(fac.id, [])
         prod_by_month = {p.month: p for p in prods}
+        tot_ems = ems_by_fac_year.get(fac.id, [])
+        tot_p = sum((p.oil_amount or 0.0) for p in prods) if prods else 1.0
 
         has_monthly = len([m for m in prod_by_month if m and 1 <= m <= 12]) >= 6
 
@@ -1713,7 +1828,7 @@ def _query_subannual_time_series(
             gas_boe = gas_mscf * 1000.0 / 5800.0
             tot_boe = oil + gas_boe
 
-            ems_m = Emission.query.filter_by(facility_id=fac.id, year=target_year, month=m_idx).all()
+            ems_m = ems_by_fac_month.get((fac.id, m_idx), [])
             if ems_m:
                 co2_m = sum(e.co2_emissions or 0.0 for e in ems_m)
                 ch4_m = sum(e.ch4_emissions or 0.0 for e in ems_m)
@@ -1722,9 +1837,7 @@ def _query_subannual_time_series(
                           ch4_m * gwp_factors.get("CH4", 25.0) +
                           n2o_m * gwp_factors.get("N2O", 298.0))
             else:
-                tot_p = sum(p.oil_amount for p in prods) if prods else 1.0
                 share = (oil / tot_p) if tot_p > 0 else (1.0 / 12.0)
-                tot_ems = Emission.query.filter_by(facility_id=fac.id, year=target_year).all()
                 co2_m = sum(e.co2_emissions or 0.0 for e in tot_ems) * share
                 ch4_m = sum(e.ch4_emissions or 0.0 for e in tot_ems) * share
                 n2o_m = sum(e.n2o_emissions or 0.0 for e in tot_ems) * share
