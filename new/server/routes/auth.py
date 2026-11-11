@@ -397,7 +397,8 @@ def login():
         # logins execute password hashing in parallel while DB writes serialize cleanly.
         from services.sqlite_lock import sqlite_write_lock
 
-        db.session.remove()
+        if not (db.session.new or db.session.dirty or db.session.deleted):
+            db.session.rollback()
         try:
             with sqlite_write_lock(db.engine):
                 db_user = db.session.get(User, user_id)

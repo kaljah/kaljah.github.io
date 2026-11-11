@@ -183,7 +183,7 @@ def test_five_concurrent_users_no_database_is_locked_errors():
 
 
 def test_default_login_rate_limiting_and_short_session_timeouts(monkeypatch):
-    """Default rate limit blocks brute force at 6th attempt and session timeout defaults to <= 15 minutes."""
+    """Default rate limits (15/15m IP, 10/15m account + env override) and session timeout <= 15m."""
     monkeypatch.delenv("LOGIN_RATE_LIMIT", raising=False)
     monkeypatch.delenv("LOGIN_ACCOUNT_LIMIT", raising=False)
     monkeypatch.delenv("SESSION_LIFETIME_MINUTES", raising=False)
@@ -201,10 +201,10 @@ def test_default_login_rate_limiting_and_short_session_timeouts(monkeypatch):
     assert DEFAULT_IDLE_TIMEOUT_MINUTES <= 15, (
         f"Expected default idle timeout <= 15m, got {DEFAULT_IDLE_TIMEOUT_MINUTES}"
     )
-    assert get_login_account_limit() == "5 per 15 minutes"
+    assert get_login_account_limit() == "10 per 15 minutes"
     assert int(get_login_rate_limit().split()[0]) <= 15
 
-    # Verify DB fallback when SystemSetting row is absent returns <= 15 and /api/auth/sessions/policy reflects 5/15
+    # Verify DB fallback when SystemSetting row is absent returns <= 15 and /api/auth/sessions/policy reflects defaults
     with app.app_context():
         prev_row = db.session.get(SystemSetting, "session_timeout_minutes")
         prev_val = prev_row.value if prev_row else None
@@ -228,25 +228,36 @@ def test_default_login_rate_limiting_and_short_session_timeouts(monkeypatch):
             assert pol.status_code == 200
             pdata = pol.get_json()
             assert pdata["idle_timeout_minutes"] <= 15
-            assert pdata["max_failed_logins"] == 5
+            assert pdata["max_failed_logins"] == 10
 
-        # Verify default rate limiter throttles on 6th attempt for one account
+        # Verify default rate limiter throttles on 11th failed attempt for one account
         app.config["RATELIMIT_ENABLED"] = True
         prev_enabled = limiter.enabled
         limiter.enabled = True
+        limiter.reset()
         try:
             with app.test_client() as c:
                 target_email = f"brute_{uuid.uuid4().hex[:8]}@example.org"
                 codes = []
-                for _ in range(6):
+                for _ in range(11):
                     resp = c.post(
                         "/api/auth/login",
                         json={"email": target_email, "password": "WrongPassword123!"},
                     )
                     codes.append(resp.status_code)
-                assert codes[:5] == [401, 401, 401, 401, 401]
-                assert codes[5] == 429, f"Expected HTTP 429 on 6th failed attempt, got {codes}"
+                assert codes[:10] == [401] * 10
+                assert codes[10] == 429, f"Expected HTTP 429 on 11th failed attempt, got {codes}"
+
+                # Also verify stricter LOGIN_ACCOUNT_LIMIT override (5 per 15 minutes) works cleanly
+                monkeypatch.setenv("LOGIN_ACCOUNT_LIMIT", "5 per 15 minutes")
+                strict_email = f"brute5_{uuid.uuid4().hex[:8]}@example.org"
+                strict_codes = [
+                    c.post("/api/auth/login", json={"email": strict_email, "password": "WrongPassword123!"}).status_code
+                    for _ in range(6)
+                ]
+                assert strict_codes[:5] == [401] * 5 and strict_codes[5] == 429
         finally:
+            limiter.reset()
             limiter.enabled = prev_enabled
     finally:
         with app.app_context():

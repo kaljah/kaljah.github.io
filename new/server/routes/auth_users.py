@@ -352,7 +352,7 @@ def get_session_policy():
 
     return jsonify({
         "idle_timeout_minutes": timeout,
-        # Reflects the effective per-account lockout from LOGIN_ACCOUNT_LIMIT (default 5 per 15 minutes).
+        # Reflects the effective per-account lockout from LOGIN_ACCOUNT_LIMIT (default 10 per 15 minutes).
         "max_failed_logins": _limit_count(get_login_account_limit()),
         "nist_password_policy": "Enterprise Complexity Standard (min 10 chars, uppercase, lowercase, digits, symbols)",
         "password_policy": "Enterprise Complexity Standard (min 10 chars, uppercase, lowercase, digits, symbols)",

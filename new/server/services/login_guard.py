@@ -20,7 +20,7 @@ def get_login_rate_limit():
 
 def get_login_account_limit():
     """Failed sign-ins allowed per account, from any address (per-account lockout)."""
-    return os.environ.get("LOGIN_ACCOUNT_LIMIT", "5 per 15 minutes")
+    return os.environ.get("LOGIN_ACCOUNT_LIMIT", "10 per 15 minutes")
 
 
 def login_account_key():
@@ -42,7 +42,8 @@ def record_failed_sign_in(email, user):
     actor_email = (user.email if user and user.email else email) or "Unknown User"
     # End any deferred read snapshot before taking the SQLite write lock so login hash work stays
     # parallel while audit writes serialize cleanly without SQLITE_BUSY_SNAPSHOT.
-    db.session.remove()
+    if not (db.session.new or db.session.dirty or db.session.deleted):
+        db.session.rollback()
     try:
         with sqlite_write_lock(db.engine):
             log_activity_and_notify(
