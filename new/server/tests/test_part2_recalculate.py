@@ -9,8 +9,12 @@ Verifies:
 """
 import pytest
 from extensions import db
-from models import Emission, RecalculationRequest, RecalculationHistory, BaseYearRecalculation
-from tests.audit_helpers import make_facility, make_user, login, uniq
+from models import (
+    BaseYearRecalculation,
+    Emission,
+    RecalculationHistory,
+)
+from tests.audit_helpers import login, make_facility, make_user, uniq
 
 
 def test_recalculate_preview_simulation(app, client):
@@ -69,7 +73,7 @@ def test_recalculate_preview_simulation(app, client):
 def test_recalculate_request_enforces_triggers_and_justification(app, client):
     """Item 2.2: Enforce GHG Protocol triggers and minimum justification length."""
     with app.app_context():
-        user = make_user("user")
+        user = make_user("user", location="West")
         login(client, user)
 
         fac = make_facility(name=uniq("FAC_REQ"))
@@ -119,7 +123,7 @@ def test_recalculate_request_enforces_triggers_and_justification(app, client):
 def test_recalculate_maker_checker_approval_and_history(app, client):
     """Item 2.2: Maker-checker approval executes recalculation, archives history, and logs audit."""
     with app.app_context():
-        engineer = make_user("user")
+        engineer = make_user("user", location="West")
         admin = make_user("admin")
 
         fac = make_facility(name=uniq("FAC_EXEC"))

@@ -783,6 +783,32 @@ def test_cross_tenant_api_endpoints_and_writes_blocked(client, two_tenant_datase
     assert client.put(f"/api/facilities/{info['fac_b1_id']}", json={"name": "Hijacked"}).status_code == 403
     assert client.delete(f"/api/base-years/{info['by_b_id']}").status_code == 403
     assert client.get("/api/tenant/config?tenant_id=mena_operator_b").status_code == 403
+    assert client.post("/api/recalculate/preview", json={"year": 2024, "facility_id": info["fac_b1_id"]}).status_code == 403
+    assert client.post("/api/recalculate/preview", json={"year": 2024, "target_factor_id": info["cf_b_id"]}).status_code == 403
+    assert (
+        client.post(
+            "/api/recalculate/request",
+            json={
+                "year": 2024,
+                "facility_id": info["fac_b1_id"],
+                "trigger_type": "methodology_change",
+                "justification": "Cross-tenant recalculation request must be denied.",
+            },
+        ).status_code
+        == 403
+    )
+    assert (
+        client.post(
+            "/api/recalculate/request",
+            json={
+                "year": 2024,
+                "target_factor_id": info["cf_b_id"],
+                "trigger_type": "methodology_change",
+                "justification": "Cross-tenant custom factor recalculation request must be denied.",
+            },
+        ).status_code
+        == 403
+    )
 
     # Tenant B dashboard, facilities, SBTi, base year, custom factors only show Tenant B
     _login_session(client, admin_b, "mena_operator_b")
