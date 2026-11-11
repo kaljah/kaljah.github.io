@@ -10,15 +10,15 @@ Validates that:
 6. Full PDF generation executes cleanly without ReportLab flowable crashes.
 """
 
-import json
 import os
 import tempfile
+
 import pytest
 from app import app
 from extensions import db
-from models import Facility, EmissionSource, Emission, CustomFactor, ProductionData
-from services.master_report_data import aggregate_master_report_data
+from models import CustomFactor, Emission, EmissionSource, Facility, ProductionData
 from services.master_report_charts import generate_process_overview_diagram
+from services.master_report_data import aggregate_master_report_data
 from services.master_report_engine import generate_master_publication_pdf
 
 
@@ -176,3 +176,75 @@ def test_full_pdf_generation_smoke(seeded_basin_alpha_data):
         assert len(pdf_bytes) > 200_000
         assert hasattr(buf, "report_hash")
         assert len(buf.report_hash) == 64
+
+
+def test_dynamic_quality_audit_prefers_newest_active_and_skips_test_projects():
+    """Chapter 13 quality audit must surface newest non-test active projects instead of stale leftover rows."""
+    import uuid
+
+    from models import MitigationProject
+    from services.master_report_data import _generate_dynamic_quality_audit
+
+    tag = uuid.uuid4().hex[:8]
+    fac_id = None
+    with app.app_context():
+        try:
+            fac = Facility(
+                name=f"Audit Order Facility {tag}",
+                code=f"AUD-ORD-{tag}",
+                region="Basin Alpha",
+                segment="Upstream",
+            )
+            db.session.add(fac)
+            db.session.flush()
+            fac_id = fac.id
+
+            for idx in range(4):
+                db.session.add(
+                    MitigationProject(
+                        facility_id=fac.id,
+                        name=f"Legacy Active Project {idx} {tag}",
+                        project_type="flare_recovery",
+                        year=2024,
+                        quantity_tco2e=50.0,
+                        status="Active",
+                        is_test=False,
+                    )
+                )
+            db.session.flush()
+
+            newest = MitigationProject(
+                facility_id=fac.id,
+                name=f"Newest Active Initiative {tag}",
+                project_type="methane_ldar",
+                year=2024,
+                quantity_tco2e=250.0,
+                status="Active",
+                is_test=False,
+            )
+            test_proj = MitigationProject(
+                facility_id=fac.id,
+                name=f"Hidden Test Initiative {tag}",
+                project_type="methane_ldar",
+                year=2024,
+                quantity_tco2e=999.0,
+                status="Active",
+                is_test=True,
+            )
+            db.session.add_all([newest, test_proj])
+            db.session.commit()
+
+            audits = _generate_dynamic_quality_audit([fac.id], 2024)
+            topics = [a["topic"] for a in audits]
+            assert any(f"Newest Active Initiative {tag}" in t for t in topics), (
+                f"Expected newest active project in Chapter 13 audits, got {topics}"
+            )
+            assert not any(f"Hidden Test Initiative {tag}" in t for t in topics), (
+                f"is_test=True project leaked into Chapter 13 audits: {topics}"
+            )
+        finally:
+            db.session.rollback()
+            if fac_id is not None:
+                MitigationProject.query.filter_by(facility_id=fac_id).delete(synchronize_session=False)
+                Facility.query.filter_by(id=fac_id).delete(synchronize_session=False)
+                db.session.commit()

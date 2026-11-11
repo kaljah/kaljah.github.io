@@ -1995,11 +1995,17 @@ def _generate_dynamic_quality_audit(
         })
 
     # 4. Pull any active HSE projects from MitigationProject
-    active_projects = MitigationProject.query.filter(
-        MitigationProject.facility_id.in_(fac_ids),
-        db.func.lower(MitigationProject.status).in_(["active", "executing", "proposed"])
-    ).all()
-    for proj in active_projects[:3]:
+    active_projects = (
+        MitigationProject.query.filter(
+            MitigationProject.facility_id.in_(fac_ids),
+            MitigationProject.is_test.is_(False),
+            db.func.lower(MitigationProject.status).in_(["active", "executing", "proposed"]),
+        )
+        .order_by(MitigationProject.id.desc())
+        .limit(3)
+        .all()
+    )
+    for proj in active_projects:
         p_name = proj.name or "Decarbonization Initiative"
         p_red = proj.quantity_tco2e or 0.0
         recommendations.append({
