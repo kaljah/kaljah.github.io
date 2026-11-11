@@ -10,18 +10,17 @@ Verifies:
 5. Multi-standard GWP consistency (AR4, AR5, AR6)
 """
 
-import pytest
-import math
-import sys
 import os
+import sys
+
+import pytest
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from calculations.combustion import CombustionCalculator, FlaringCalculator
-from calculations.units import calculate_co2e, CONVERSIONS
 from calculations.constants import GWP_AR4, GWP_AR5, GWP_AR6
+from calculations.units import calculate_co2e
 from routes.emissions import _lookup_api_factor
-from emission_factors import API_FACTORS
 
 
 def test_lookup_api_factor_resilience():
@@ -150,15 +149,27 @@ def test_base_year_singleton_fallback(client):
     from models import BaseYear, BaseYearRecalculation, User
 
     with client.application.app_context():
-        admin = User.query.filter_by(role="admin", status="active").first()
+        admin = User.query.filter_by(email="admin_by@test.com").first()
         if not admin:
-            admin = User(email="admin_by@test.com", fullName="Admin BY", orgName="Demo Operator Co.", role="admin", sector="Oil & Gas", status="active")
+            admin = User(
+                email="admin_by@test.com",
+                fullName="Admin BY",
+                orgName="Demo Operator Co.",
+                role="admin",
+                sector="Oil & Gas",
+                status="active",
+                tenant_id="default",
+            )
             admin.set_password("pass")
             db.session.add(admin)
         else:
+            admin.role = "admin"
             admin.status = "active"
+            admin.tenant_id = "default"
         db.session.commit()
         admin_id = admin.id
+        admin_sv = int(admin.session_version or 0)
+        admin_tenant = admin.tenant_id or "default"
 
         BaseYearRecalculation.query.delete()
         by = BaseYear.query.filter_by(id=1).first()
@@ -170,7 +181,10 @@ def test_base_year_singleton_fallback(client):
         db.session.commit()
 
     with client.session_transaction() as sess:
+        sess.clear()
         sess["user_id"] = admin_id
+        sess["sv"] = admin_sv
+        sess["tenant_id"] = admin_tenant
 
     from routes.dashboard import clear_dashboard_cache
     clear_dashboard_cache()
@@ -197,24 +211,48 @@ def test_notification_broadcast_handling(client):
     from models import Notification, User
 
     with client.application.app_context():
-        admin = User.query.filter_by(role="admin", status="active").first()
+        admin = User.query.filter_by(email="admin_notif@test.com").first()
         if not admin:
-            admin = User(email="admin_notif@test.com", fullName="Admin Notif", orgName="Demo Operator Co.", sector="Energy", location="Algiers", role="admin", status="active")
+            admin = User(
+                email="admin_notif@test.com",
+                fullName="Admin Notif",
+                orgName="Demo Operator Co.",
+                sector="Energy",
+                location="Algiers",
+                role="admin",
+                status="active",
+                tenant_id="default",
+            )
             admin.set_password("pass")
             db.session.add(admin)
         else:
+            admin.role = "admin"
             admin.status = "active"
+            admin.tenant_id = "default"
         db.session.commit()
         admin_id = admin.id
+        admin_sv = int(admin.session_version or 0)
+        admin_tenant = admin.tenant_id or "default"
 
         operator = User.query.filter_by(email="user_notif@test.com").first()
         if not operator:
-            operator = User(email="user_notif@test.com", fullName="User Notif", orgName="Demo Operator Co.", sector="Energy", location="Algiers", role="user")
+            operator = User(
+                email="user_notif@test.com",
+                fullName="User Notif",
+                orgName="Demo Operator Co.",
+                sector="Energy",
+                location="Algiers",
+                role="user",
+                tenant_id="default",
+            )
             operator.set_password("pass")
             db.session.add(operator)
         operator.status = "active"
+        operator.tenant_id = "default"
         db.session.commit()
         operator_id = operator.id
+        operator_sv = int(operator.session_version or 0)
+        operator_tenant = operator.tenant_id or "default"
 
         # Create a broadcast notification
         notif = Notification(
@@ -230,7 +268,10 @@ def test_notification_broadcast_handling(client):
 
     # Non-admin / operator can mark read without getting 403 Forbidden
     with client.session_transaction() as sess:
+        sess.clear()
         sess["user_id"] = operator_id
+        sess["sv"] = operator_sv
+        sess["tenant_id"] = operator_tenant
 
     res_read = client.put(f"/api/notifications/{notif_id}/read")
     assert res_read.status_code == 200
@@ -243,7 +284,10 @@ def test_notification_broadcast_handling(client):
         db.session.commit()
 
     with client.session_transaction() as sess:
+        sess.clear()
         sess["user_id"] = admin_id
+        sess["sv"] = admin_sv
+        sess["tenant_id"] = admin_tenant
 
     res_dismiss = client.post("/api/notifications/dismiss-all")
     assert res_dismiss.status_code == 200
