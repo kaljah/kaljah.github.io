@@ -1,11 +1,26 @@
-import pytest
+import logging
 import uuid
+
+import pytest
 from app import app
-from models import db, User, Facility, UserFacilityAccess, Emission, Scope2Emission, Scope3Emission, CustomFactor
-from utils import get_allowed_facility_ids, facility_in_user_scope
-from background_processor import _process_row, _process_row_scope2, _process_row_scope3, _dedupe, _scope1_key
+from background_processor import (
+    _dedupe,
+    _process_row,
+    _scope1_key,
+)
 from calculations import compute_emissions
 from emission_factors import API_FACTORS
+from models import (
+    CustomFactor,
+    Emission,
+    Facility,
+    User,
+    UserFacilityAccess,
+    db,
+)
+from sqlalchemy.exc import SQLAlchemyError
+from utils import facility_in_user_scope, get_allowed_facility_ids
+
 
 def _get_admin_user():
     admin = User.query.filter_by(role="admin").first()
@@ -23,8 +38,8 @@ def clean_db_session():
         try:
             db.session.rollback()
             db.session.remove()
-        except Exception:
-            pass
+        except (SQLAlchemyError, RuntimeError) as exc:
+            logging.getLogger(__name__).debug("cleanup skipped: %s", exc)
 
 def test_user_facility_access_scoping():
     """Verify that UserFacilityAccess takes priority over user.location string matching."""
@@ -140,7 +155,7 @@ def test_audited_revision_supersedes_prior_scope1_record():
             "unit": "gallons",
             "factor_type": "default",
         }
-        fac_name_map = {"facility-a1": fac}
+        fac_name_map = {"facility a-1": fac}
         fac_id_map = {37: fac}
         cf_name_map = {}
 
@@ -201,7 +216,7 @@ def test_hierarchical_custom_factor_scoping_and_status():
         db.session.add_all([cf_fac2, cf_pend, cf_fac1])
         db.session.commit()
 
-        fac_name_map = {"facility-a1": fac1, "facility b-2": fac2}
+        fac_name_map = {"facility a-1": fac1, "facility b-2": fac2}
         fac_id_map = {37: fac1, 38: fac2}
         cf_name_map = {
             "field specific gas": cf_fac2,
@@ -267,5 +282,4 @@ def test_hierarchical_custom_factor_scoping_and_status():
         db.session.delete(cf_fac2)
         db.session.delete(cf_pend)
         db.session.delete(cf_fac1)
-        db.session.commit()
         db.session.commit()
