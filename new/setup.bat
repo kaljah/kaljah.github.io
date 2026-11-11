@@ -51,7 +51,7 @@ if "%DB_ONLY%"=="0" (
 )
 
 echo.
-echo [3/4] Initializing Database Schema (Alembic) & Seeding Demo Data...
+echo [3/4] Initializing Database Schema (Alembic) ^& Seeding Demo Data...
 set "DB_URI_PATH=%GHG_DB_PATH:\=/%"
 set "DATABASE_URL=sqlite:///%DB_URI_PATH%"
 set "FLASK_ENV=development"
