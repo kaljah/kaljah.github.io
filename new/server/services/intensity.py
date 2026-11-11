@@ -126,29 +126,35 @@ def intensity_cells(years=None, facility_id=None, activity=None, division=None, 
         if oil_b is not None:
             c["oil_bbl"] += oil_b
 
-    # scope 1 (row level: methane split, flaring volume, OGMP materiality via column projection)
+    # scope 1 (SQL GROUP BY cell + process_type + OGMP classification, plus grouped flaring volume)
     # Strictly exclude rejected records (both status column and [Rejected] qa_flags)
-    s1_q = yfilter(apply_scope(Emission.query, Emission, **scope), Emission).filter(Emission.status.in_(st))
+    s1_base = yfilter(apply_scope(Emission.query, Emission, **scope), Emission).filter(Emission.status.in_(st))
     if any("rejected" in str(s).lower() for s in st):
-        s1_q = s1_q.filter(~Emission.status.ilike("%rejected%"))
-    s1 = (
-        s1_q.filter(
-            or_(
-                Emission.qa_flag.is_(None),
-                and_(~Emission.qa_flag.ilike("[rejected]%"), ~Emission.qa_flag.ilike("rejected:%")),
-            )
+        s1_base = s1_base.filter(~Emission.status.ilike("%rejected%"))
+    s1_base = s1_base.filter(
+        or_(
+            Emission.qa_flag.is_(None),
+            and_(~Emission.qa_flag.ilike("[rejected]%"), ~Emission.qa_flag.ilike("rejected:%")),
         )
-        .with_entities(
+    )
+    s1 = (
+        s1_base.with_entities(
             Emission.facility_id,
             Emission.year,
-            Emission.month,
             Emission.process_type,
-            Emission.quantity,
-            Emission.unit,
-            Emission.co2e_total,
-            Emission.co2_emissions,
-            Emission.ch4_emissions,
-            Emission.n2o_emissions,
+            Emission.ogmp_level,
+            Emission.factor_source,
+            Emission.calc_method,
+            func.count(Emission.id),
+            func.coalesce(func.sum(Emission.co2e_total), 0.0),
+            func.coalesce(func.sum(Emission.co2_emissions), 0.0),
+            func.coalesce(func.sum(Emission.ch4_emissions), 0.0),
+            func.coalesce(func.sum(Emission.n2o_emissions), 0.0),
+        )
+        .group_by(
+            Emission.facility_id,
+            Emission.year,
+            Emission.process_type,
             Emission.ogmp_level,
             Emission.factor_source,
             Emission.calc_method,
@@ -159,7 +165,8 @@ def intensity_cells(years=None, facility_id=None, activity=None, division=None, 
     ogmp_cache = {}
     _stub = SimpleNamespace(ogmp_level=None, factor_source=None, calc_method=None)
     _ch4_key = {"flaring": "ch4_flaring", "vented": "ch4_venting", "fugitive": "ch4_fugitive"}
-    for fid, yr, mo, pt, qty, unit, co2e_tot, co2, ch4, n2o, olvl, fsrc, cmeth in s1:
+    flaring_pts = set()
+    for fid, yr, pt, olvl, fsrc, cmeth, cnt, co2e_tot, co2, ch4, n2o in s1:
         c = cells[(fid, yr)]
         ch4_v = float(ch4 or 0)
         co2e_v = float(co2e_tot or 0)
@@ -167,7 +174,7 @@ def intensity_cells(years=None, facility_id=None, activity=None, division=None, 
         c["co2"] += float(co2 or 0)
         c["ch4"] += ch4_v
         c["n2o"] += float(n2o or 0)
-        c["s1_count"] += 1
+        c["s1_count"] += int(cnt or 0)
         cat = cat_cache.get(pt)
         if cat is None:
             cat = source_category(pt)
@@ -175,10 +182,8 @@ def intensity_cells(years=None, facility_id=None, activity=None, division=None, 
         c["ch4_split"][_ch4_key.get(cat, "ch4_combustion")] += ch4_v
         if cat == "flaring":
             c["flaring_t"] += co2e_v
-            vol = gas_volume_m3(qty, unit, yr, mo)
-            if vol:
-                c["flaring_ledger_m3"] += vol
-                c["flaring_m3"] += vol
+            if pt is not None:
+                flaring_pts.add(pt)
         okey = (olvl, fsrc, cmeth)
         ol = ogmp_cache.get(okey)
         if ol is None:
@@ -189,6 +194,37 @@ def intensity_cells(years=None, facility_id=None, activity=None, division=None, 
             ogmp_cache[okey] = ol
         c["ogmp_ch4_weights"][ol] += ch4_v
         c["ogmp_co2e_weights"][ol] += co2e_v
+
+    if flaring_pts:
+        fl_rows = (
+            s1_base.filter(
+                Emission.process_type.in_(sorted(flaring_pts)),
+                Emission.quantity.isnot(None),
+            )
+            .with_entities(
+                Emission.facility_id,
+                Emission.year,
+                Emission.month,
+                Emission.unit,
+                func.coalesce(func.sum(Emission.quantity), 0.0),
+            )
+            .group_by(Emission.facility_id, Emission.year, Emission.month, Emission.unit)
+            .all()
+        )
+        fl_scale_cache = {}
+        for fid, yr, mo, unit, qty_sum in fl_rows:
+            qty_f = float(qty_sum or 0.0)
+            if not qty_f:
+                continue
+            ukey = (unit or "", yr, mo)
+            if ukey not in fl_scale_cache:
+                fl_scale_cache[ukey] = gas_volume_m3(1.0, unit, yr, mo)
+            scale = fl_scale_cache[ukey]
+            if scale:
+                vol = qty_f * scale
+                c = cells[(fid, yr)]
+                c["flaring_ledger_m3"] += vol
+                c["flaring_m3"] += vol
 
     # Scope 2 dual reporting (location-based vs market-based per GHG Protocol), per record at both GWP
     # horizons: the GWP-20 intensity added Scope 2 at GWP-100 (bug hunt 2026-10-15 #18)

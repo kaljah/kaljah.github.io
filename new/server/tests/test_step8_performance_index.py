@@ -311,6 +311,7 @@ from app import app
 from extensions import limiter
 from models import User
 from routes.dashboard import clear_dashboard_cache
+from services.intensity import intensity_rows
 
 limiter.enabled = False
 app.config["TESTING"] = True
@@ -318,6 +319,10 @@ app.config["WTF_CSRF_ENABLED"] = False
 
 with app.app_context():
     uid = User.query.filter_by(email="bench50k@example.org").first().id
+    clear_dashboard_cache()
+    t0 = time.perf_counter()
+    rows_all = intensity_rows(year=None)
+    dt_intensity_all = time.perf_counter() - t0
 
 with app.test_client() as client:
     with client.session_transaction() as sess:
@@ -348,6 +353,8 @@ print("BENCH_RESULT=" + json.dumps({{
     "dt_all": dt_all,
     "status_sum": r3.status_code,
     "dt_sum": dt_sum,
+    "dt_intensity_all": dt_intensity_all,
+    "intensity_fac_count": len(rows_all),
 }}))
 """
     proc = subprocess.run(
@@ -364,5 +371,79 @@ print("BENCH_RESULT=" + json.dumps({{
     assert metrics["status_year"] == 200
     assert metrics["status_all"] == 200
     assert metrics["status_sum"] == 200
+    assert metrics["intensity_fac_count"] == 20
     assert metrics["dt_year"] < 3.0, f"/api/dashboard/batch-all?year=2025 took {metrics['dt_year']:.3f}s (>= 3.0s)"
     assert metrics["dt_all"] < 3.0, f"/api/dashboard/batch-all (all years) took {metrics['dt_all']:.3f}s (>= 3.0s)"
+    assert metrics["dt_intensity_all"] < 0.60, (
+        f"Cold intensity_rows(year=None) on 50k DB took {metrics['dt_intensity_all']:.3f}s (>= 0.60s); SQL GROUP BY expected"
+    )
+
+
+def test_grouped_intensity_and_apply_scope_equivalence(tmp_path: Path):
+    """Verify SQL-grouped Scope 1 intensity and apply_scope test-facility filter match exact semantics."""
+    db_path = tmp_path / "equiv_step8.db"
+    script = f"""
+import json, os, sys
+from pathlib import Path
+import pytest
+SERVER = Path(r"{SERVER_DIR}")
+DB = Path(r"{db_path}")
+os.environ["DATABASE_URL"] = f"sqlite:///{{DB.as_posix()}}"
+os.environ["FLASK_ENV"] = "development"
+os.environ["SEED_ADMIN"] = "false"
+os.environ["AUTO_MIGRATE"] = "true"
+if str(SERVER) not in sys.path:
+    sys.path.insert(0, str(SERVER))
+
+from app import app
+from extensions import db
+from models import Emission, Facility, ProductionData, User
+from services.intensity import intensity_rows
+
+with app.app_context():
+    u = User(email="eq@example.org", fullName="Eq", orgName="Demo Operator Co.", sector="Oil & Gas", role="admin", status="active")
+    u.set_password("StrongPass123!")
+    db.session.add(u)
+    f_real = Facility(name="Real Eq Facility", code="EQ-1", segment="Upstream", tenant_id="default", is_test=False)
+    f_test = Facility(name="Test Eq Facility", code="EQ-T", segment="Upstream", tenant_id="default", is_test=True)
+    db.session.add_all([f_real, f_test])
+    db.session.flush()
+
+    # Production in 2024 so intensity metrics are populated
+    db.session.add(ProductionData(facility_id=f_real.id, year=2024, month=1, oil_amount=10000.0, oil_unit="bbl", gas_amount=12000.0, gas_unit="mscf", created_by=u.id, is_test=False))
+    # Leap-year Feb flaring rate (29 days in 2024-02) + March flaring volume
+    db.session.add_all([
+        Emission(facility_id=f_real.id, year=2024, month=2, process_type="flaring", fuel_type="Flare", quantity=1.0, unit="MMscf/d", co2_emissions=100.0, ch4_emissions=2.0, n2o_emissions=0.01, co2e_total=158.65, factor_source="specific", ogmp_level=4, status="Verified", created_by=u.id, is_test=False),
+        Emission(facility_id=f_real.id, year=2024, month=3, process_type="flaring", fuel_type="Flare", quantity=5000.0, unit="m3", co2_emissions=20.0, ch4_emissions=0.5, n2o_emissions=0.0, co2e_total=34.0, factor_source="default", ogmp_level=2, status="Verified", created_by=u.id, is_test=False),
+        # Pending row (included only when include_pending=True)
+        Emission(facility_id=f_real.id, year=2024, month=4, process_type="venting", fuel_type="Gas", quantity=100.0, unit="m3", co2_emissions=1.0, ch4_emissions=1.0, n2o_emissions=0.0, co2e_total=29.0, factor_source="custom", ogmp_level=3, status="Pending", created_by=u.id, is_test=False),
+        # Rejected QA row (must always be excluded even when include_pending=True)
+        Emission(facility_id=f_real.id, year=2024, month=5, process_type="combustion", fuel_type="Gas", quantity=999.0, unit="m3", co2_emissions=999.0, ch4_emissions=0.0, n2o_emissions=0.0, co2e_total=999.0, qa_flag="[Rejected] bad", status="Pending", created_by=u.id, is_test=False),
+        # Test facility row (must always be excluded)
+        Emission(facility_id=f_test.id, year=2024, month=1, process_type="flaring", fuel_type="Flare", quantity=999.0, unit="m3", co2_emissions=999.0, ch4_emissions=0.0, n2o_emissions=0.0, co2e_total=999.0, status="Verified", created_by=u.id, is_test=False),
+    ])
+    db.session.commit()
+
+    rows_ver = intensity_rows(year=2024, include_pending=False)
+    rows_pend = intensity_rows(year=2024, include_pending=True)
+    assert len(rows_ver) == 1 and rows_ver[0]["facility_id"] == f_real.id
+    # 1.0 MMscf/d * 29 days = 29 MMscf = 29e6 * 0.028316846592 m3 = 821,188.551168 m3 + 5000 m3
+    expected_flare_m3 = 29.0 * 1e6 * 0.028316846592 + 5000.0
+    assert rows_ver[0]["flaring_ledger_m3"] == pytest.approx(expected_flare_m3, rel=1e-6)
+    assert rows_ver[0]["total_scope1"] == pytest.approx(192.65, rel=1e-6)
+    assert rows_ver[0]["total_ch4"] == pytest.approx(2.5, rel=1e-6)
+    assert rows_pend[0]["total_scope1"] == pytest.approx(221.65, rel=1e-6)
+    assert rows_pend[0]["total_ch4"] == pytest.approx(3.5, rel=1e-6)
+    assert rows_pend[0]["ogmp_l4_pct"] > 50.0
+print("EQUIV_UNIT_PASS")
+"""
+    proc = subprocess.run(
+        [sys.executable, "-c", script],
+        cwd=str(SERVER_DIR),
+        capture_output=True,
+        text=True,
+        timeout=60,
+        check=False,
+    )
+    assert proc.returncode == 0, f"Equivalence subtest failed: {proc.stderr}\n{proc.stdout}"
+    assert "EQUIV_UNIT_PASS" in proc.stdout

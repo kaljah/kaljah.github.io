@@ -72,9 +72,14 @@ def apply_scope(query, model, allowed_fids=None, facility_id=None, activity=None
             if needs_join and hasattr(Facility, "is_test"):
                 query = query.filter(Facility.is_test == False)
             elif not needs_join and hasattr(model, "facility_id") and hasattr(Facility, "is_test"):
-                query = query.filter(~model.facility_id.in_(
-                    Facility.query.with_entities(Facility.id).filter(Facility.is_test == True)
-                ))
+                test_fids = [
+                    fid
+                    for (fid,) in db.session.query(Facility.id)
+                    .filter(Facility.is_test == True)
+                    .all()
+                ]
+                if test_fids:
+                    query = query.filter(~model.facility_id.in_(test_fids))
     if allowed_fids is not None:
         query = query.filter(model.facility_id.in_(allowed_fids or [-1]))
     fids = _parse_facility_ids(facility_id)
