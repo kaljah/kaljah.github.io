@@ -163,6 +163,8 @@ def test_recalculate_maker_checker_approval_and_history(app, client):
         assert res_req.status_code == 201
         req_id = res_req.json["request"]["id"]
 
+        max_by_id = db.session.query(db.func.max(BaseYearRecalculation.id)).scalar() or 0
+
         # Admin approves recalculation
         login(client, admin)
         res_app = client.post(f"/api/recalculate/{req_id}/approve")
@@ -182,6 +184,13 @@ def test_recalculate_maker_checker_approval_and_history(app, client):
         assert hist.new_gwp_version == "AR6"
 
         # Verify BaseYearRecalculation record created for year 2023
-        by_rec = BaseYearRecalculation.query.filter_by(year=2023).first()
+        by_rec = (
+            BaseYearRecalculation.query.filter(
+                BaseYearRecalculation.year == 2023,
+                BaseYearRecalculation.id > max_by_id,
+            )
+            .order_by(BaseYearRecalculation.id.desc())
+            .first()
+        )
         assert by_rec is not None
         assert "methodology_change" in by_rec.reason.lower()
