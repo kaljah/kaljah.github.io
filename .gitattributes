@@ -1,3 +1,7 @@
 .agents/ export-ignore
 tests/private_fixtures/ export-ignore
 audit/ export-ignore
+docs/ogmp/ export-ignore
+reference/ export-ignore
+tests/verification/ export-ignore
+screenshots/ export-ignore

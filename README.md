@@ -52,9 +52,10 @@ H2/
 │   │   ├── package.json
 │   │   └── vite.config.ts
 │   ├── setup.bat             # Windows installation & demo seed script
-│   ├── reset_sandbox.bat     # Restore pristine demo sandbox snapshot (Windows)
-│   ├── reset_sandbox.sh      # Restore pristine demo sandbox snapshot (Linux/macOS)
 │   └── start_all.bat         # Windows launch script
+├── setup.bat                 # Root Windows wrapper calling new/setup.bat
+├── reset_sandbox.bat         # Restore pristine demo sandbox snapshot (Windows)
+├── reset_sandbox.sh          # Restore pristine demo sandbox snapshot (Linux/macOS)
 ├── scripts/
 │   ├── seed_demo.py          # Idempotent synthetic demo seeder (generated passwords)
 │   └── leak_scan.py          # Sensitive string scanner across code, DB, PDFs, dist
@@ -91,12 +92,11 @@ H2/
    - **Frontend UI**: http://localhost:5173
 
 3. **Resetting the Sandbox**:
-   To restore the pristine template DB, re-seed, and clear uploads/caches:
+   To restore the pristine template DB, re-seed, and clear uploads/caches (from repository root):
    ```cmd
-   cd new
    reset_sandbox.bat
    ```
-   On Linux/macOS, run `bash new/reset_sandbox.sh`.
+   On Linux/macOS, run `bash reset_sandbox.sh`.
 
 ---
 

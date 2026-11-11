@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import contextlib
 import os
 import re
 import sqlite3
@@ -160,27 +161,68 @@ def scan_sqlite_file(path: Path) -> list[dict[str, str]]:
     return hits
 
 
+def _strip_pdf_streams(raw: bytes) -> bytes:
+    """Remove PDF binary/compressed stream payloads in O(n) without regex backtracking."""
+    out = bytearray()
+    pos = 0
+    n = len(raw)
+    while pos < n:
+        s_idx = raw.find(b"stream", pos)
+        if s_idx == -1:
+            out.extend(raw[pos:])
+            break
+        after = s_idx + 6
+        if raw[after : after + 2] == b"\r\n" or raw[after : after + 1] == b"\n":
+            out.extend(raw[pos:s_idx])
+            out.append(32)
+            end_idx = raw.find(b"endstream", after)
+            if end_idx == -1:
+                break
+            pos = end_idx + 9
+        else:
+            out.extend(raw[pos:after])
+            pos = after
+    return bytes(out)
+
+
 def scan_pdf_file(path: Path) -> list[dict[str, str]]:
     hits: list[dict[str, str]] = []
     raw = path.read_bytes()
 
     # 1. Scan non-binary PDF sections (metadata/objects outside compressed stream payloads)
-    stripped = re.sub(rb"stream\r?\n.*?\r?\nendstream", b" ", raw, flags=re.DOTALL)
+    stripped = _strip_pdf_streams(raw)
     header_txt = stripped.decode("latin-1", errors="ignore")
     for h in scan_text(header_txt, str(path)):
         h["location"] = f"pdf-metadata {h['location']}"
         hits.append(h)
 
-    # 2. Decompress FlateDecode / zlib streams inside PDF
-    for idx, m in enumerate(re.finditer(rb"stream\r?\n(.*?)\r?\nendstream", raw, re.DOTALL)):
-        stream_data = m.group(1)
-        try:
+    # 2. Decompress FlateDecode / zlib streams inside PDF in O(n)
+    pos = 0
+    idx = 0
+    n = len(raw)
+    while pos < n:
+        s_idx = raw.find(b"stream", pos)
+        if s_idx == -1:
+            break
+        after = s_idx + 6
+        if raw[after : after + 2] == b"\r\n":
+            data_start = after + 2
+        elif raw[after : after + 1] == b"\n":
+            data_start = after + 1
+        else:
+            pos = after
+            continue
+        end_idx = raw.find(b"endstream", data_start)
+        if end_idx == -1:
+            break
+        stream_data = raw[data_start:end_idx].rstrip(b"\r\n")
+        with contextlib.suppress(zlib.error):
             decomp = zlib.decompress(stream_data).decode("latin-1", errors="ignore")
             for h in scan_text(decomp, str(path)):
                 h["location"] = f"pdf-stream-{idx}"
                 hits.append(h)
-        except Exception:
-            pass
+        idx += 1
+        pos = end_idx + 9
 
     # 3. Extract visible page text via pypdfium2 (fast) or pdfplumber
     extracted = False
