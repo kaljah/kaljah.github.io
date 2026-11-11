@@ -166,7 +166,7 @@ def get_master_report_regions():
     if not facilities:
         return jsonify({"status": "success", "regions": []})
 
-    present_regions = []
+    regions_by_key: Dict[str, Dict[str, Any]] = {}
     matched_fac_ids = set()
 
     # 1. Match known regional profiles that have monitored facilities in this tenant
@@ -174,18 +174,33 @@ def get_master_report_regions():
         rk = r["key"].lower()
         if rk == "national":
             continue
+        rk_spaced = rk.replace("_", " ").replace("-", " ")
         p = get_regional_profile(rk, tenant_config=tenant)
         aliases = [a.lower() for a in p.get("aliases", [])]
-        matched_facs = [
-            f for f in facilities
-            if rk in (f.region or "").lower() or rk in (f.name or "").lower()
-            or any(alias in (f.region or "").lower() or alias in (f.name or "").lower() for alias in aliases)
-        ]
+        matched_facs = []
+        for f in facilities:
+            reg_str = (f.region or "").lower()
+            name_str = (f.name or "").lower()
+            field_str = (f.field or "").lower()
+            loc_str = (f.location or "").lower()
+            if (
+                rk in reg_str or rk in name_str or rk in field_str or rk in loc_str
+                or (rk_spaced and (
+                    rk_spaced in reg_str or rk_spaced in name_str
+                    or rk_spaced in field_str or rk_spaced in loc_str
+                ))
+                or any(
+                    alias in reg_str or alias in name_str
+                    or alias in field_str or alias in loc_str
+                    for alias in aliases
+                )
+            ):
+                matched_facs.append(f)
         if matched_facs:
             r_copy = dict(r)
             r_copy["facility_count"] = len(matched_facs)
             r_copy["facility_names"] = [f.name for f in matched_facs]
-            present_regions.append(r_copy)
+            regions_by_key[r_copy["key"]] = r_copy
             for f in matched_facs:
                 matched_fac_ids.add(f.id)
 
@@ -200,13 +215,23 @@ def get_master_report_regions():
 
     for reg_name, fac_list in custom_map.items():
         clean_key = reg_name.lower().replace(" ", "_").replace("/", "_")
-        present_regions.append({
-            "key": clean_key,
-            "name": f"{reg_name} Production Area",
-            "segment": fac_list[0].segment or "Upstream",
-            "facility_count": len(fac_list),
-            "facility_names": [f.name for f in fac_list],
-        })
+        if clean_key == "national":
+            continue
+        existing = regions_by_key.get(clean_key)
+        if existing is not None:
+            merged_names = list(dict.fromkeys(list(existing.get("facility_names", [])) + [f.name for f in fac_list]))
+            existing["facility_names"] = merged_names
+            existing["facility_count"] = len(merged_names)
+        else:
+            regions_by_key[clean_key] = {
+                "key": clean_key,
+                "name": f"{reg_name} Production Area",
+                "segment": fac_list[0].segment or "Upstream",
+                "facility_count": len(fac_list),
+                "facility_names": [f.name for f in fac_list],
+            }
+
+    present_regions = list(regions_by_key.values())
 
     # 3. Add National (Consolidated Group) if facilities exist in this tenant
     if facilities:

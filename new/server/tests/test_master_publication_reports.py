@@ -98,6 +98,34 @@ def test_get_master_report_regions(client, auth_headers):
             db.session.commit()
 
 
+def test_get_master_report_regions_no_duplicate_keys_on_location_match(client, auth_headers):
+    """Facilities with region=None and location='Basin Alpha' must merge under basin_alpha with unique keys."""
+    codes = ("REGLOC-ALPHA-1", "REGLOC-ALPHA-2")
+    with app.app_context():
+        Facility.query.filter(Facility.code.in_(codes)).delete(synchronize_session=False)
+        db.session.add_all([
+            Facility(name="Alpha Explicit Facility", code="REGLOC-ALPHA-1", region="Basin Alpha", segment="Upstream"),
+            Facility(name="Alpha Location-Only Facility", code="REGLOC-ALPHA-2", region=None, location="Basin Alpha", segment="Upstream"),
+        ])
+        db.session.commit()
+    try:
+        res = client.get("/api/reports/master-report/regions")
+        assert res.status_code == 200
+        data = res.get_json()
+        assert data["status"] == "success"
+        regions = data["regions"]
+        keys = [r["key"] for r in regions]
+        assert len(keys) == len(set(keys)), f"Duplicate region keys returned: {keys}"
+        by_key = {r["key"]: r for r in regions}
+        assert "basin_alpha" in by_key
+        assert {"Alpha Explicit Facility", "Alpha Location-Only Facility"} <= set(by_key["basin_alpha"]["facility_names"])
+        assert by_key["basin_alpha"]["facility_count"] >= 2
+    finally:
+        with app.app_context():
+            Facility.query.filter(Facility.code.in_(codes)).delete(synchronize_session=False)
+            db.session.commit()
+
+
 def test_post_master_report_national(client, auth_headers):
     """Verifies generation of Consolidated Demo Operator Co. Corporate Master Report PDF."""
     res = _fetch_master_report_via_job(client, {
