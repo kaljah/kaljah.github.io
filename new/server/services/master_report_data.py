@@ -59,7 +59,7 @@ def get_facilities_for_scope(
     target_key = profile.get("key", "").lower()
     target_name = profile.get("name", "").lower()
     rk_raw = (region_key or "").strip().lower()
-    rk_spaced = rk_raw.replace("_", " ")
+    rk_spaced = rk_raw.replace("_", " ").replace("-", " ")
 
     matched = []
     for f in all_facs:
@@ -538,9 +538,10 @@ def _resolve_dynamic_gas_composition(
     profile: Dict[str, Any],
     tenant_id: str = "default",
     allowed_is_restricted: bool = False,
+    allow_regional_cf_fallback: bool = False,
 ) -> Tuple[Dict[str, Any], str, str]:
     """Resolves measured gas composition from CustomFactor or baseline profile."""
-    if not fac_ids and allowed_is_restricted:
+    if not fac_ids and allowed_is_restricted and not allow_regional_cf_fallback:
         return {}, "", "none"
     matched_cf = None
     if fac_ids:
@@ -574,14 +575,23 @@ def _resolve_dynamic_gas_composition(
         for cand in all_cfs:
             if not cand.gas_composition:
                 continue
-            if cand.region and region_key and cand.region.lower() == region_key.lower():
+            cand_reg = (cand.region or "").strip().lower()
+            cand_reg_norm = cand_reg.replace("-", "_").replace(" ", "_")
+            rk_raw = (region_key or "").strip().lower()
+            rk_norm = rk_raw.replace("-", "_").replace(" ", "_")
+            if cand.region and region_key and (cand_reg == rk_raw or cand_reg_norm == rk_norm):
                 matched_cf = cand
                 break
             cname = (cand.name or "").lower()
-            if region_key and region_key.lower() in cname:
+            if region_key and (rk_raw in cname or rk_norm.replace("_", " ") in cname):
                 matched_cf = cand
                 break
-            if profile.get("key", "").lower() in cname or any(a in cname for a in profile.get("aliases", [])):
+            prof_key = profile.get("key", "").lower()
+            aliases = profile.get("aliases", [])
+            if (
+                (prof_key and (prof_key in cname or prof_key.replace("_", " ") in cname))
+                or any(a in cname for a in aliases)
+            ):
                 matched_cf = cand
                 break
 
@@ -1948,6 +1958,9 @@ def aggregate_master_report_data(
         profile,
         tenant_id=tid,
         allowed_is_restricted=allowed_is_restricted,
+        allow_regional_cf_fallback=(
+            allowed_facility_ids is None and mode == "regional" and bool(region_key)
+        ),
     )
 
     target_proj = _compute_2030_target_projection(timeline_summary, start_year, end_year, tenant_id=tid)

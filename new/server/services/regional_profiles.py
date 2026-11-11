@@ -174,15 +174,28 @@ def get_regional_profile(
         return _apply_tenant_branding(CORPORATE_PROFILE, tenant_config)
 
     needle = str(region_identifier).strip().lower()
+    needle_key = needle.replace("-", "_").replace(" ", "_")
+    needle_spaced = needle.replace("-", " ").replace("_", " ")
 
     if needle in REGIONAL_PROFILES:
         return _apply_tenant_branding(REGIONAL_PROFILES[needle], tenant_config)
+    if needle_key in REGIONAL_PROFILES:
+        return _apply_tenant_branding(REGIONAL_PROFILES[needle_key], tenant_config)
 
     for prof in REGIONAL_PROFILES.values():
-        if needle == prof["key"] or needle in prof["name"].lower():
+        prof_name_l = prof["name"].lower()
+        if (
+            needle == prof["key"]
+            or needle_key == prof["key"]
+            or needle_spaced in prof_name_l
+            or needle in prof_name_l
+        ):
             return _apply_tenant_branding(prof, tenant_config)
         for alias in prof.get("aliases", []):
-            if needle == alias or alias in needle or needle in alias:
+            if any(
+                cand == alias or alias in cand or cand in alias
+                for cand in (needle, needle_spaced)
+            ):
                 return _apply_tenant_branding(prof, tenant_config)
 
     clean_title = str(region_identifier).replace("_", " ").title()
