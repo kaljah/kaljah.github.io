@@ -372,6 +372,9 @@ def seed_demo_in_app(
                 existing = db.session.get(FactorProvenanceRegistry, fdata["id"])
                 if not existing:
                     db.session.add(FactorProvenanceRegistry(**fdata))
+                else:
+                    for k, v in fdata.items():
+                        setattr(existing, k, v)
             db.session.commit()
         except Exception:
             db.session.rollback()

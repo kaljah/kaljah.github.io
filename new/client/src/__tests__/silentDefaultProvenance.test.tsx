@@ -6,13 +6,13 @@ import { SilentDefaultBanner, FactorLineageModal, FactorLineageItem } from "../c
 const MOCK_FACTOR: FactorLineageItem = {
   id: "SCP2-004",
   parameter_name: "Default Steam Boiler Efficiency",
-  value: 0.82,
+  value: 0.92,
   unit: "fraction",
-  basis: "82% boiler efficiency",
+  basis: "92% boiler efficiency",
   source_document: "API Compendium (2021)",
   edition_year: "4th Edition (November 2021)",
-  table_or_equation_ref: "Exhibit 8.3, p. 8-10",
-  verbatim_citation: "Assuming an 82% boiler efficiency and 10% line losses, the net efficiency is 72%.",
+  table_or_equation_ref: "Section 8.1.5 & Exhibit 8.3, pp. 8-17 to 8-19",
+  verbatim_citation: "Assuming a 92% boiler efficiency reduced by 10% for steam transport losses gives an 82% net efficiency.",
   is_user_overridable: true,
   is_silent_default: true,
   warning_flag: "CAUTION_ASSUMPTION",
@@ -74,12 +74,12 @@ describe("FactorLineageModal component", () => {
 
     expect(screen.getByText("Default Steam Boiler Efficiency")).toBeInTheDocument();
     expect(
-      screen.getByText(/Assuming an 82% boiler efficiency and 10% line losses, the net efficiency is 72%./)
+      screen.getByText(/Assuming a 92% boiler efficiency reduced by 10% for steam transport losses gives an 82% net efficiency./)
     ).toBeInTheDocument();
-    expect(screen.getByText("Exhibit 8.3, p. 8-10")).toBeInTheDocument();
+    expect(screen.getByText("Section 8.1.5 & Exhibit 8.3, pp. 8-17 to 8-19")).toBeInTheDocument();
 
     // Check override input
-    const input = screen.getByPlaceholderText("Default: 0.82");
+    const input = screen.getByPlaceholderText("Default: 0.92");
     fireEvent.change(input, { target: { value: "0.85" } });
 
     const saveBtn = screen.getByRole("button", { name: /Save & Apply Overrides/i });

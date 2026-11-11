@@ -54,13 +54,13 @@ const STEAM_FACTORS = [
   {
     id: "SCP2-004",
     parameter_name: "Default Steam Boiler Efficiency",
-    value: 0.80,
+    value: 0.92,
     unit: "fraction",
-    basis: "80% default boiler efficiency (user-configurable; optional Exhibit 8.3 example: 82%)",
-    source_document: "EPA GHG Emission Factors Hub / App Default",
-    edition_year: "2021/Current",
-    table_or_equation_ref: "Table 7 (Steam and Heat) — optional Exhibit 8.3 example: 82%",
-    verbatim_citation: "Default boiler efficiency 80% (user-configurable). Optional example from API Compendium (2021) Exhibit 8.3, p. 8-10: assuming an 82% boiler efficiency and 10% line losses gives a 72% net efficiency.",
+    basis: "92% default boiler efficiency per API Compendium §8.1.5 (user-configurable)",
+    source_document: "API Compendium (2021)",
+    edition_year: "4th Edition (November 2021)",
+    table_or_equation_ref: "Section 8.1.5 & Exhibit 8.3, pp. 8-17 to 8-19",
+    verbatim_citation: "Assuming that the steam was generated in a natural gas boiler with an assumed 92% boiler efficiency.",
     is_user_overridable: true,
     is_silent_default: true,
     warning_flag: "CAUTION_ASSUMPTION"
@@ -68,13 +68,13 @@ const STEAM_FACTORS = [
   {
     id: "SCP2-005",
     parameter_name: "Default Steam Transmission Loss",
-    value: 0.00,
+    value: 0.10,
     unit: "fraction",
-    basis: "0% default line loss (user-configurable; optional Exhibit 8.3 example: 10%)",
-    source_document: "Application Internal Default",
-    edition_year: "2021/Current",
-    table_or_equation_ref: "Default 0% — optional Exhibit 8.3 example: 10%",
-    verbatim_citation: "Default 0% line loss if unspecified (user-configurable). Optional example from API Compendium (2021) Exhibit 8.3, p. 8-10: assuming an 82% boiler efficiency and 10% line losses gives a 72% net efficiency.",
+    basis: "10% default steam transport loss per API Compendium Exhibit 8.3 (user-configurable)",
+    source_document: "API Compendium (2021)",
+    edition_year: "4th Edition (November 2021)",
+    table_or_equation_ref: "Exhibit 8.3, p. 8-19",
+    verbatim_citation: "The efficiency is reduced further by 10% to account for the steam transport losses (net 82%).",
     is_user_overridable: true,
     is_silent_default: true,
     warning_flag: "CAUTION_ASSUMPTION"
@@ -292,7 +292,7 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
                   step="any"
                   value={boilerEff}
                   onChange={(e) => setBoilerEff(e.target.value)}
-                  placeholder="Default: 0.80 (e.g. 0.82 per Exhibit 8.3)"
+                  placeholder="Default: 0.92 (API Compendium §8.1.5)"
                 />
               </Field>
               <Field className="input-group" label={t("Transmission Loss (0.0 - 1.0)")}>
@@ -303,18 +303,18 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
                   step="any"
                   value={transLoss}
                   onChange={(e) => setTransLoss(e.target.value)}
-                  placeholder="Default: 0.00 (e.g. 0.10 per Exhibit 8.3)"
+                  placeholder="Default: 0.10 (API Compendium Exhibit 8.3)"
                 />
               </Field>
             </div>
             <div className="[grid-column:span_2]! mb-2">
               <SilentDefaultBanner
                 factorId="SCP2-004 / SCP2-005"
-                parameterName="Boiler Efficiency (80%) & Transmission Loss (0%)"
-                defaultValue="80% Net"
-                sourceCitation="EPA Table 7 / App Default (optional Exhibit 8.3 example: 82% / 10%)"
+                parameterName="Boiler Efficiency (92%) & Transmission Loss (10%)"
+                defaultValue="82% Net"
+                sourceCitation="API Compendium (2021) §8.1.5 & Exhibit 8.3 (pp. 8-17 to 8-19)"
                 onInspect={() => setShowSteamModal(true)}
-                isSilentDefault={boilerEff === "" || transLoss === "" || (Number(boilerEff) === 0.8 && Number(transLoss) === 0)}
+                isSilentDefault={boilerEff === "" || transLoss === "" || (Number(boilerEff) === 0.92 && Number(transLoss) === 0.1)}
               />
             </div>
             <FactorLineageModal

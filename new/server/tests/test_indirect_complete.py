@@ -42,8 +42,8 @@ def test_steam_calculator():
     assert (res["results"]["ch4"]["value"], res["results"]["n2o"]["value"]) == pytest.approx((fuel * 1.1e-6, fuel * 3e-7))
     mass = calc.calculate(15e6, 59.0, 0.92, None, {}, heat_unit="lb", steam_enthalpy_btu_lb=1170)
     assert mass["inputs"]["energy_btu"] == pytest.approx(1.755e10)
-    default = calc.calculate(1e6, 50.0, None, None, {})                                           # Btu, 80 %
-    assert default["results"]["co2"]["value"] == pytest.approx(1 / 0.8 * 0.05)
+    default = calc.calculate(1e6, 50.0, None, None, {})                                           # Btu, 92% - 10% = 82%
+    assert default["results"]["co2"]["value"] == pytest.approx(1 / 0.82 * 0.05)
     with pytest.raises(ValueError, match="are fractions"):
         calc.calculate(100, 50.0, 80, 0, {}, heat_unit="mmbtu")
     with pytest.raises(ValueError, match="Net efficiency must be greater than 0"):
@@ -162,4 +162,4 @@ def test_percent_strings_for_steam_efficiencies():
     res = IndirectSteamCalculator().calculate(100, 50.0, "80%", "5 %", {}, heat_unit="mmbtu")
     assert res["results"]["co2"]["value"] == pytest.approx(100 / (0.8 - 0.05) * 0.05)
     assert IndirectSteamCalculator().calculate(100, 50.0, "-", "", {}, heat_unit="mmbtu")["results"]["co2"]["value"] \
-        == pytest.approx(100 / 0.8 * 0.05)
+        == pytest.approx(100 / 0.82 * 0.05)

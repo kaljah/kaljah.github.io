@@ -898,9 +898,9 @@ def test_scope2_steam_recalculation_enthalpy(client, test_users):
     with client.session_transaction() as sess:
         sess["user_id"] = test_users["admin"]
 
-    # Update steam: steam_ton=200.0, factor=0.06, steam enthalpy=2.75, boiler eff=0.8
-    # enthalpy_mult = 2.75 / 0.8 = 3.4375
-    # co2e = 200 * 0.06 * 3.4375 = 41.25 tCO2e
+    # Update steam: steam_ton=200.0, factor=0.06, steam enthalpy=2.75, boiler eff=0.8, default trans_loss=0.10
+    # enthalpy_mult = 2.75 / (0.8 - 0.10) = 3.928571...
+    # co2e = 200 * 0.06 * (2.75 / 0.70) = 47.142857 tCO2e
     res = client.put(f"/api/scope2/{rec_id}", json={
         "steam_ton": 200.0,
         "emission_factor": 0.06,
@@ -910,7 +910,7 @@ def test_scope2_steam_recalculation_enthalpy(client, test_users):
     assert res.status_code == 200
     with app.app_context():
         updated = db.session.get(Scope2Emission, rec_id)
-        assert pytest.approx(updated.co2e, 0.01) == 41.25
+        assert pytest.approx(updated.co2e, rel=1e-4) == (200.0 * 0.06 * 2.75 / 0.70)
 
 
 def test_scope3_eeio_per_thousand_scaling_defect(client, test_users):

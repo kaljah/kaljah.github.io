@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import Scope2FormNewElectricityEntry from "../components/scope2-form/Scope2FormNewElectricityEntry";
 
-function renderSteamEntry(boilerEff: string | number = 0.8, transLoss: string | number = 0.0) {
+function renderSteamEntry(boilerEff: string | number = 0.92, transLoss: string | number = 0.1) {
   return render(
     <Scope2FormNewElectricityEntry
       activity="Upstream"
@@ -50,18 +50,18 @@ function renderSteamEntry(boilerEff: string | number = 0.8, transLoss: string | 
   );
 }
 
-describe("Scope2FormNewElectricityEntry UNV-06/07 steam defaults", () => {
-  it("shows 80% / 0% defaults with Exhibit 8.3 (82%/10%) documented as optional example", () => {
-    renderSteamEntry(0.8, 0.0);
+describe("Scope2FormNewElectricityEntry API Compendium 2021 steam defaults", () => {
+  it("shows 92% / 10% (82% net) defaults per API Compendium §8.1.5 & Exhibit 8.3", () => {
+    renderSteamEntry(0.92, 0.1);
 
-    expect(screen.getByPlaceholderText("Default: 0.80 (e.g. 0.82 per Exhibit 8.3)")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Default: 0.00 (e.g. 0.10 per Exhibit 8.3)")).toBeInTheDocument();
-    expect(screen.getByText(/Boiler Efficiency \(80%\) & Transmission Loss \(0%\)/)).toBeInTheDocument();
-    expect(screen.getByText(/80% Net/)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Default: 0.92 (API Compendium §8.1.5)")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Default: 0.10 (API Compendium Exhibit 8.3)")).toBeInTheDocument();
+    expect(screen.getByText(/Boiler Efficiency \(92%\) & Transmission Loss \(10%\)/)).toBeInTheDocument();
+    expect(screen.getByText(/82% Net/)).toBeInTheDocument();
   });
 
-  it("hides silent default banner when user configures custom values like Exhibit 8.3 (0.82 / 0.10)", () => {
-    renderSteamEntry(0.82, 0.10);
+  it("hides silent default banner when user configures custom values (e.g. 0.80 / 0.00 or 0.85 / 0.05)", () => {
+    renderSteamEntry(0.8, 0.0);
 
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
   });

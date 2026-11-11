@@ -41,9 +41,9 @@ export const Scope2Form: React.FC = () => {
   const [unit, setUnit] = useState<string>("kWh");
   const [sourceType, setSourceType] = useState<string>("electricity");
 
-  // Section 8 specific state
-  const [boilerEff, setBoilerEff] = useState<number | string>(0.8);
-  const [transLoss, setTransLoss] = useState<number | string>(0.0);
+  // Section 8 specific state (API Compendium 2021 §8.1.5 & Exhibit 8.3 defaults: 92% boiler, 10% loss = 82% net)
+  const [boilerEff, setBoilerEff] = useState<number | string>(0.92);
+  const [transLoss, setTransLoss] = useState<number | string>(0.1);
   const [heatOutput, setHeatOutput] = useState<string>("");
   // plant efficiencies for the WRI efficiency method; blank = Compendium defaults (80 % heat, 35 % power)
   const [heatEff, setHeatEff] = useState<string>("");
@@ -196,14 +196,18 @@ export const Scope2Form: React.FC = () => {
       }
 
       if (sourceType === "indirect_steam") {
-        const be = parseFloat(String(boilerEff));
-        const tl = parseFloat(String(transLoss));
-        if (isNaN(be) || be < 0 || be > 1) {
+        const be = boilerEff === "" ? 0.92 : parseFloat(String(boilerEff));
+        const tl = transLoss === "" ? 0.1 : parseFloat(String(transLoss));
+        if (isNaN(be) || be <= 0 || be > 1) {
           toast.warning(t("Boiler efficiency must be between 0 and 1"));
           return;
         }
-        if (isNaN(tl) || tl < 0 || tl > 1) {
+        if (isNaN(tl) || tl < 0 || tl >= 1) {
           toast.warning(t("Transmission loss must be between 0 and 1"));
+          return;
+        }
+        if (be - tl <= 0) {
+          toast.warning(t("Boiler efficiency must exceed transmission loss"));
           return;
         }
       } else if (sourceType === "cogen_allocation") {
@@ -263,8 +267,8 @@ export const Scope2Form: React.FC = () => {
           unit: unit,
           calc_inputs: {
             indirect_steam: {
-              boiler_eff: parseFloat(String(boilerEff)),
-              trans_loss: parseFloat(String(transLoss)),
+              boiler_eff: boilerEff === "" ? 0.92 : parseFloat(String(boilerEff)),
+              trans_loss: transLoss === "" ? 0.1 : parseFloat(String(transLoss)),
             },
           },
         };

@@ -2533,8 +2533,8 @@
   "Statutory limit:": "Limite réglementaire :",
   "Steam & CHP (optional)": "Vapeur et cogénération (facultatif)",
   "Steam / Heat": "Vapeur / chaleur",
-  "Steam: % (85) or fraction (0.85). Default 80 %": "Vapeur : % (85) ou fraction (0.85). 80 % par défaut",
-  "Steam: percentage, e.g. 5 = 5 %, 0.9 = 0.9 %. Default 0": "Vapeur : pourcentage, ex. 5 = 5 %, 0.9 = 0.9 %. 0 par défaut",
+  "Steam: % (85) or fraction (0.85). Default 92 %": "Vapeur : % (85) ou fraction (0.85). 92 % par défaut",
+  "Steam: percentage, e.g. 5 = 5 %, 0.9 = 0.9 %. Default 10 %": "Vapeur : pourcentage, ex. 5 = 5 %, 0.9 = 0.9 %. 10 % par défaut",
   "Steel pipe & tube (NAICS 331210)": "Tubes et tuyaux en acier (NAICS 331210)",
   "Step labels": "Libellés des étapes",
   "Storage Tank": "Bac de stockage",
@@ -3596,5 +3596,9 @@
   "{{off}} of {{total}} rows have a gas analysis that does not total 100 % and will be skipped.": "{{off}} lignes sur {{total}} ont une analyse de gaz qui ne totalise pas 100 % et seront ignorées.",
   "Put the remainder in the N₂ column, or give only the CH4 content. First rows (file line, total): {{rows}}.": "Mettez le reste dans la colonne N₂, ou ne donnez que la teneur en CH4. Premières lignes (ligne du fichier, total) : {{rows}}.",
   "Nitrogen mole %; the C1–C10, CO₂ and N₂ columns of a row must total 100 % (put the remainder here)": "% molaire d'azote ; les colonnes C1–C10, CO₂ et N₂ d'une ligne doivent totaliser 100 % (mettez le reste ici)",
-  "CH4 mole % when the full composition is not given (the total is not checked)": "% molaire de CH4 quand la composition complète n'est pas donnée (le total n'est pas vérifié)"
+  "CH4 mole % when the full composition is not given (the total is not checked)": "% molaire de CH4 quand la composition complète n'est pas donnée (le total n'est pas vérifié)",
+  "Default Steam Boiler Efficiency": "Rendement par défaut de la chaudière à vapeur",
+  "Default Steam Transmission Loss": "Pertes en ligne vapeur par défaut",
+  "API Compendium (2021) §8.1.5 & Exhibit 8.3 (pp. 8-17 to 8-19)": "Compendium API (2021) §8.1.5 et Exhibit 8.3 (pp. 8-17 à 8-19)",
+  "API Compendium (2021) Exhibit 8.3 (p. 8-19)": "Compendium API (2021) Exhibit 8.3 (p. 8-19)"
 }

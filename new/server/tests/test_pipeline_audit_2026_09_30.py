@@ -81,7 +81,7 @@ def test_steam_edit_with_new_efficiency_recalculates(admin, facility):
     rid = _steam(admin, facility, amount=5000, unit="MMBtu", boiler_efficiency=0.8)
     co2e = _get(rid)[0]
     assert admin.put(f"/api/scope2/{rid}", json={"heat_mmbtu": 5000, "boiler_efficiency": 0.9}).status_code == 200
-    assert _get(rid)[0] == pytest.approx(co2e * 0.8 / 0.9, rel=1e-6)
+    assert _get(rid)[0] == pytest.approx(co2e * (0.8 - 0.10) / (0.9 - 0.10), rel=1e-6)
 
 
 def test_tier3_flaring_has_n2o():

@@ -20,6 +20,11 @@ _STEAM_MASS_LB = {
 }
 STEAM_MASS_UNITS = frozenset(_STEAM_MASS_LB)
 
+# API Compendium (November 2021) Section 8.1.5 & Exhibit 8.3 (pp. 8-17 to 8-19):
+# Natural gas boiler efficiency 92% minus 10% steam transport loss = 82% net efficiency.
+DEFAULT_BOILER_EFFICIENCY = 0.92
+DEFAULT_TRANSMISSION_LOSS = 0.10
+
 
 def heat_to_mmbtu(amount, unit, steam_enthalpy=None, steam_enthalpy_btu_lb=None):
     """Steam / heat in MMBtu. A steam mass needs its energy content (API Compendium 2021 Equation 8-1:
@@ -87,10 +92,10 @@ class IndirectSteamCalculator(BaseCalculator):
             v = float(s.replace("%", "").strip())
             return (v / 100.0 if "%" in s else v), False
 
-        # Restored defaults (UNV-06/07): 80% boiler efficiency and 0% line loss (net 80%).
-        # User-configurable parameters; e.g. API Compendium (2021) Exhibit 8.3 uses 82% / 10% (net 72%).
-        b_eff, b_silent = _parse_e(boiler_efficiency, 0.80)
-        t_loss, t_silent = _parse_e(transmission_loss, 0.0)
+        # API Compendium (November 2021) Section 8.1.5 & Exhibit 8.3 (pp. 8-17 to 8-19):
+        # 92% boiler efficiency and 10% steam transport loss -> 82% net efficiency (user-configurable).
+        b_eff, b_silent = _parse_e(boiler_efficiency, DEFAULT_BOILER_EFFICIENCY)
+        t_loss, t_silent = _parse_e(transmission_loss, DEFAULT_TRANSMISSION_LOSS)
         if not (0 <= b_eff <= 1 and 0 <= t_loss <= 1):
             raise ValueError(f"Boiler efficiency ({b_eff}) and transmission loss ({t_loss}) are fractions between 0 and 1")
         # Net efficiency: API Compendium Exhibit 8.3 net efficiency = boiler efficiency - transmission loss
@@ -148,16 +153,16 @@ class IndirectSteamCalculator(BaseCalculator):
                     "factor_id": "SCP2-004",
                     "parameter": "Boiler Efficiency",
                     "applied_value": b_eff,
-                    "source": "EPA GHG Emission Factors Hub Table 7 (optional Exhibit 8.3 example: 82%)",
-                    "warning": "Default boiler efficiency (80%). User-configurable; e.g. API Compendium Exhibit 8.3 uses 82%.",
+                    "source": "API Compendium (2021) Section 8.1.5 & Exhibit 8.3 (pp. 8-17 to 8-19)",
+                    "warning": "API Compendium default boiler efficiency (92%, net 82% with 10% transport loss). User-configurable.",
                 })
             if t_silent:
                 res["silent_defaults"].append({
                     "factor_id": "SCP2-005",
                     "parameter": "Steam Transmission Loss",
                     "applied_value": t_loss,
-                    "source": "Application Internal Default (optional Exhibit 8.3 example: 10%)",
-                    "warning": "Default line loss (0%). User-configurable; e.g. API Compendium Exhibit 8.3 uses 10%.",
+                    "source": "API Compendium (2021) Exhibit 8.3 (p. 8-19)",
+                    "warning": "API Compendium default steam transport loss (10%, deducted from boiler efficiency). User-configurable.",
                 })
         return res
 

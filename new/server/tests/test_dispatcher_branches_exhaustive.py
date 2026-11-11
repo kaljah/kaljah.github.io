@@ -153,8 +153,8 @@ def test_dispatcher_cogen_and_indirect_steam(dispatcher):
         {"co2": 53.06},
         {},
     )
-    # 500 MMBtu of steam / 0.82 boiler efficiency (no transmission loss) = 609.76 MMBtu of fuel x 53.06 kg/MMBtu
-    assert res_steam["results"]["co2"]["value"] == pytest.approx(500 / 0.82 * 53.06 / 1000, rel=1e-9)
+    # 500 MMBtu of steam / (0.82 - 0.10 default transmission loss) = 694.44 MMBtu of fuel x 53.06 kg/MMBtu
+    assert res_steam["results"]["co2"]["value"] == pytest.approx(500 / (0.82 - 0.10) * 53.06 / 1000, rel=1e-9)
 
 
 # =============================================================================

@@ -4,7 +4,11 @@ from extensions import db
 from sqlalchemy import func
 from electricity_factors import GRID_FACTORS, grid_entry, grid_factor_kg_co2e_per_kwh
 from routes.auth import login_required
-from calculations.indirect import heat_to_mmbtu
+from calculations.indirect import (
+    DEFAULT_BOILER_EFFICIENCY,
+    DEFAULT_TRANSMISSION_LOSS,
+    heat_to_mmbtu,
+)
 from calculations.uncertainty import propagate_uncertainty, Tier
 from utils import (
     facility_access_error,
@@ -75,7 +79,7 @@ def _calc_indirect_steam(data):
             )
             if v not in (None, "")
         ),
-        0.80,
+        DEFAULT_BOILER_EFFICIENCY,
     )
     boiler_eff = float(str(raw_be).replace("%", "").strip())
     if boiler_eff > 1.0 or "%" in str(raw_be):
@@ -95,7 +99,7 @@ def _calc_indirect_steam(data):
             )
             if v not in (None, "")
         ),
-        0.0,
+        DEFAULT_TRANSMISSION_LOSS,
     )
     tl_str = str(raw_tl).strip()
     trans_loss = float(tl_str.replace("%", "").strip() or 0.0)
@@ -151,7 +155,7 @@ def _recalc_indirect_steam(emission, data, factor, old_heat, old_co2e, old_ef, o
     The delivered energy is the stored heat_mmbtu, or the edited steam tonnage converted in the
     unit given. Boiler efficiency and transmission loss are not stored: unless the edit gives them,
     the record keeps the net efficiency it was calculated with (derived from its stored energy,
-    factor and co2e) instead of falling back to 80 %.
+    factor and co2e) instead of falling back to defaults.
     """
     tons = parse_number(data.get("steam_ton"), "steam_ton", required=False, min_value=0, default=0.0) \
         if "steam_ton" in data else 0.0
@@ -165,7 +169,7 @@ def _recalc_indirect_steam(emission, data, factor, old_heat, old_co2e, old_ef, o
     elif tons > 0:
         unit = str(data.get("unit") or getattr(emission, "unit", None) or "tonne").lower().replace(" ", "")
         _, heat, _ = _calc_indirect_steam({"amount": tons, "unit": unit, "boiler_efficiency": 1.0,
-                                           "calc_inputs": {"indirect_steam": ci}})
+                                           "calc_inputs": {"indirect_steam": {**ci, "trans_loss": 0.0}}})
     else:
         heat = float(emission.heat_mmbtu or 0.0)
     given = any(
@@ -178,11 +182,11 @@ def _recalc_indirect_steam(emission, data, factor, old_heat, old_co2e, old_ef, o
     for src_k in ("boiler_eff", "boiler_efficiency"):
         if "boiler_eff" not in ci and data.get(src_k) not in (None, ""):
             ci["boiler_eff"] = data[src_k]
-    ci.setdefault("boiler_eff", 0.80)
+    ci.setdefault("boiler_eff", DEFAULT_BOILER_EFFICIENCY)
     for src_k in ("trans_loss", "transmission_loss"):
         if "trans_loss" not in ci and data.get(src_k) not in (None, ""):
             ci["trans_loss"] = data[src_k]
-    ci.setdefault("trans_loss", 0.0)
+    ci.setdefault("trans_loss", DEFAULT_TRANSMISSION_LOSS)
     ci["ef_co2"] = factor or _DEFAULT_BOILER_EF_KG_PER_MMBTU
     co2e, _, _ = _calc_indirect_steam({"amount": heat, "unit": "mmbtu", "calc_inputs": {"indirect_steam": ci}})
     return co2e, heat

@@ -4,7 +4,7 @@ Integration Verification Suite: Factor Provenance, Silent Defaults & Statutory M
 Validates that:
 1. FactorProvenanceRegistry has 72 verified factors with full provenance (source, table, quote).
 2. CalculationFactorLineage tracks calculation inputs and detects silent defaults.
-3. Steam calculation defaults strictly to 82% boiler efficiency and 10% transmission loss (net 72%).
+3. Steam calculation defaults strictly to 92% boiler efficiency and 10% transmission loss (net 82%, API Compendium 2021 Exhibit 8.3).
 4. CBAM hydrogen library provides EU 2023/1773 transitional default (10.40), ETS benchmark (6.84),
    and RFNBO threshold (3.38).
 5. Algerian Scope 2 grid profiles (MEM 2024, IEA 2023, IGES CDM) are available and accurate.
@@ -52,7 +52,7 @@ def test_registry_factor_count_and_provenance(app_ctx):
 
 
 def test_steam_compendium_exhibit_8_3_defaults():
-    """Assert PurchasedSteamCalculator uses Exhibit 8.3 defaults (82% boiler, 10% line loss -> net 72%)."""
+    """Assert IndirectSteamCalculator uses Exhibit 8.3 defaults (92% boiler, 10% line loss -> net 82%)."""
     calc = IndirectSteamCalculator()
     # 100 MMBtu heat, 53.06 kg CO2/MMBtu
     res = calc.calculate(
@@ -63,10 +63,10 @@ def test_steam_compendium_exhibit_8_3_defaults():
         heat_unit="mmbtu",
         uncertainties={},
     )
-    # Net efficiency: 0.82 - 0.10 = 0.72
-    # Fuel MMBtu = 100 / 0.72 = 138.888888...
-    # CO2 tonnes = 138.888888... * 53.06 / 1000 = 7.369444...
-    expected_co2 = (100.0 / 0.72) * 53.06 / 1000.0
+    # Net efficiency: 0.92 - 0.10 = 0.82
+    # Fuel MMBtu = 100 / 0.82 = 121.9512195...
+    # CO2 tonnes = 121.9512195... * 53.06 / 1000 = 6.4707317...
+    expected_co2 = (100.0 / 0.82) * 53.06 / 1000.0
     actual_co2 = res["results"]["co2"]["value"]
     assert pytest.approx(actual_co2, rel=1e-4) == expected_co2
     assert res.get("has_silent_defaults") is True

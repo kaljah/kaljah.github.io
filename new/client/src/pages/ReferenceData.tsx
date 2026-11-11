@@ -356,6 +356,18 @@ const ReferenceData: React.FC = () => {
           src: t("API standard for generic natural gas fired boilers"),
         },
         {
+          cat: t("Scope 2 (Indirect Steam)"),
+          param: t("Default Steam Boiler Efficiency"),
+          val: "92% (0.92)",
+          src: t("API Compendium (2021) §8.1.5 & Exhibit 8.3 (pp. 8-17 to 8-19)"),
+        },
+        {
+          cat: t("Scope 2 (Indirect Steam)"),
+          param: t("Default Steam Transmission Loss"),
+          val: "10% (0.10 → 82% Net)",
+          src: t("API Compendium (2021) Exhibit 8.3 (p. 8-19)"),
+        },
+        {
           cat: t("Scope 2 (Overall)"),
           param: t("Normative Uncertainty"),
           val: "± 30%",

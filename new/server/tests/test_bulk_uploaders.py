@@ -346,8 +346,8 @@ def test_scope2_consumption_and_steam(app, client, env):
     assert st["skipped_count"] == 2 and all("positive number" in r for r in reasons(st))
     with app.app_context():
         steam = Scope2Emission.query.filter_by(facility_id=env["fid"], year=2024, month=3).one()
-        # 100 MMBtu of steam from an 80 % natural-gas boiler (Table 4-5 / 4-6)
-        assert steam.co2e == pytest.approx(100 / 0.8 * NG_KG_PER_MMBTU / 1000, rel=1e-9)
+        # 100 MMBtu of steam from a natural-gas boiler (API Compendium §8.1.5 / Exhibit 8.3: 92% boiler, 10% loss = 82% net)
+        assert steam.co2e == pytest.approx(100 / 0.82 * NG_KG_PER_MMBTU / 1000, rel=1e-9)
         assert steam.uncertainty and steam.uncertainty > 0
     manual = client.post("/api/scope2", json={"facility_id": env["fid"], "year": 2024, "month": 4,
                                              "source_type": "indirect_steam", "amount": 100, "unit": "mmbtu"})

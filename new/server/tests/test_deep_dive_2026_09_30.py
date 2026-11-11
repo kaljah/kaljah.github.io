@@ -65,7 +65,7 @@ def _steam(**kw):
 @pytest.mark.parametrize("eff", [0.85, 85, "85%"])
 def test_steam_boiler_efficiency_percent_or_fraction(eff):
     got = _steam(amount=1000, unit="mmbtu", calc_inputs={"indirect_steam": {"boiler_eff": eff}})
-    assert got == pytest.approx(1000 / 0.85 * NG_KG / 1000, rel=1e-9)  # 85 was used as 85x: 1/100
+    assert got == pytest.approx(1000 / (0.85 - 0.10) * NG_KG / 1000, rel=1e-9)  # 85 was used as 85x: 1/100; trans_loss defaults to 0.10
 
 
 def test_steam_unknown_unit_and_percent_loss_are_refused():
@@ -74,7 +74,7 @@ def test_steam_unknown_unit_and_percent_loss_are_refused():
     with pytest.raises(ValidationError, match="Transmission loss"):
         _steam(amount=1000, unit="mmbtu", calc_inputs={"indirect_steam": {"boiler_eff": 0.8, "trans_loss": 5}})
     assert _steam(amount=1000, unit="MMBtu", calc_inputs={"indirect_steam": {"boiler_eff": 0.8}}) == \
-        pytest.approx(1000 / 0.8 * NG_KG / 1000)
+        pytest.approx(1000 / (0.8 - 0.10) * NG_KG / 1000)
 
 
 def test_chp_from_fuel_includes_boiler_ch4_n2o():

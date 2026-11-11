@@ -30,7 +30,7 @@
 |---|---|---|---|---|
 | **Purchased Electricity (Location-based)** | $\text{Electricity (kWh)} \times \text{Grid EF}_{\text{loc}}$ | National / Subregional Grid Average (e.g. Algerian National Grid 0.4974 kg $\text{CO}_2/\text{kWh}$, US eGRID2019, AIB 2020) | `kWh`, `MWh`, `GWh` | API Compendium §8.1, GHG Protocol Scope 2 Guidance |
 | **Purchased Electricity (Market-based)** | $\text{Electricity (kWh)} \times \text{Supplier / Contract EF}$ | Contractual Instruments (PPA, EAC/REC, Guarantees of Origin, Supplier-specific emission factor, Residual Mix) | `kWh`, `MWh`, `GWh` | GHG Protocol Scope 2 Guidance Table 6.3 |
-| **Purchased Steam / District Heat** | $\frac{\text{Heat Delivered (MMBtu)}}{\text{Boiler Efficiency} - \text{Transmission Loss}} \times \text{Fuel EF}$ | Enthalpy calculation from steam temperature and pressure, boiler efficiency (default 80%), transmission loss (default 5%) | `MMBtu`, `GJ`, `lb`, `klb`, `tonne` | API Compendium Exhibit 8.3 |
+| **Purchased Steam / District Heat** | $\frac{\text{Heat Delivered (MMBtu)}}{\text{Boiler Efficiency} - \text{Transmission Loss}} \times \text{Fuel EF}$ | Enthalpy calculation (API Equation 8-1), boiler efficiency (default 92%), transmission loss (default 10%, net 82%; user-configurable) | `MMBtu`, `GJ`, `lb`, `klb`, `tonne` | API Compendium 2021 §8.1.5 & Exhibit 8.3 (pp. 8-17 to 8-19) |
 | **Cogeneration (CHP Allocation)** | Efficiency / Energy Allocation of CHP fuel between power and heat | API Compendium Equation 8-4 (Efficiency Method allocating fuel by work and heat output) | `kWh`, `MMBtu`, `GJ` | API Compendium §8.2 |
 
 ---

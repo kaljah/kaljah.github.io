@@ -1851,6 +1851,7 @@ def _process_row_scope2(
     if source_type == "indirect_steam":
         # same calculation as the manual form (routes.scope2._calc_indirect_steam), including the
         # boiler CH4 / N2O; the unit must be one it converts
+        from calculations.indirect import DEFAULT_BOILER_EFFICIENCY, DEFAULT_TRANSMISSION_LOSS
         from routes.scope2 import _calc_indirect_steam
 
         u = unit.lower().replace(" ", "")
@@ -1865,16 +1866,19 @@ def _process_row_scope2(
         # transmission loss: always a percentage in the file (0.9 = 0.9 %); it used to be read as a
         # fraction at or below 1, so 0.9 % became 90 % and 1 % was rejected
         raw_be = _first(row, "boiler_eff", "boiler_efficiency", "boiler_eff_pct")
-        boiler_eff = 0.80 if raw_be in (None, "") else _clean_float(raw_be, default=None)
+        boiler_eff = DEFAULT_BOILER_EFFICIENCY if raw_be in (None, "") else _clean_float(raw_be, default=None)
         if boiler_eff is None:
             return None, [f"Row {row_idx}: boiler efficiency '{raw_be}' is not a number (e.g. 85 or 0.85)"]
         if boiler_eff > 1.0 or "%" in str(raw_be):
             boiler_eff /= 100.0
         raw_tl = _first(row, "trans_loss", "trans_loss_pct", "transmission_loss")
-        trans_loss = 0.0 if raw_tl in (None, "") else _clean_float(raw_tl, default=None)
-        if trans_loss is None:
-            return None, [f"Row {row_idx}: transmission loss '{raw_tl}' is not a number (a percentage, e.g. 5)"]
-        trans_loss /= 100.0
+        if raw_tl in (None, ""):
+            trans_loss = DEFAULT_TRANSMISSION_LOSS
+        else:
+            trans_loss = _clean_float(raw_tl, default=None)
+            if trans_loss is None:
+                return None, [f"Row {row_idx}: transmission loss '{raw_tl}' is not a number (a percentage, e.g. 5)"]
+            trans_loss /= 100.0
         if not 0 < boiler_eff <= 1.0:
             return None, [f"Row {row_idx}: boiler efficiency must be above 0 and at most 100 % (got {raw_be})"]
         if not 0 <= trans_loss < 1.0:
