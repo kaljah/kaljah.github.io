@@ -208,6 +208,47 @@
       }
     },
     {
+      "$schema": "https://antigravity.google/schemas/v1/plugin.json",
+      "name": "betterstack",
+      "displayName": "Better Stack",
+      "description": "Investigate incidents, check who's on call, and query logs, metrics, traces, errors and RUM in Better Stack. Build dashboards and manage uptime monitors.",
+      "version": "1.3.14",
+      "author": {
+        "name": "Better Stack, Inc.",
+        "url": "https://betterstack.com"
+      },
+      "homepage": "https://betterstack.com/docs/getting-started/integrations/mcp/",
+      "repository": "https://github.com/BetterStackHQ/antigravity-plugin",
+      "license": "MIT",
+      "logo": "https://www.gstatic.com/antigravity/plugins-partners/betterstack/assets/logo.svg?v=e464ace977e5",
+      "suggestedPrompts": [
+        "Show me all monitors that are currently down.",
+        "Who's on call right now?",
+        "Create a dashboard showing error rates for my API service."
+      ],
+      "keywords": [
+        "observability",
+        "monitoring",
+        "incident-response",
+        "on-call",
+        "incidents",
+        "uptime",
+        "logs",
+        "metrics",
+        "traces",
+        "errors",
+        "dashboards",
+        "telemetry",
+        "better-stack",
+        "mcp"
+      ],
+      "source": {
+        "type": "archive",
+        "url": "https://www.gstatic.com/antigravity/plugins-partners/betterstack/betterstack.zip?v=ef31711ebfec",
+        "sha256": "ef31711ebfec8dd8dd49ebc7bad3a485ef4b7c3bca6f75ae3ce15f0669d8d802"
+      }
+    },
+    {
       "name": "browse",
       "displayName": "Browserbase",
       "version": "0.3.0",
@@ -283,6 +324,48 @@
         "type": "archive",
         "url": "https://www.gstatic.com/antigravity/plugins-partners/canva/canva.zip?v=1caea9a9a65f",
         "sha256": "1caea9a9a65f4f8f7bf7c46ba37d4de7466569c7c6a8ed5a2048b4d035c64031"
+      }
+    },
+    {
+      "$schema": "https://antigravity.google/schemas/v1/plugin.json",
+      "name": "cloudflare",
+      "displayName": "Cloudflare",
+      "version": "1.0.4",
+      "description": "Build, deploy and manage apps on Cloudflare Workers, storage and AI, with platform skills and the Cloudflare API through one MCP server.",
+      "logo": "https://www.gstatic.com/antigravity/plugins-partners/cloudflare/icon.png?v=eb43399c9b12",
+      "suggestedPrompts": [
+        "Deploy this project to Cloudflare Workers",
+        "Which Cloudflare storage fits this app: D1, KV, R2 or Durable Objects?",
+        "List my Cloudflare zones and Workers and flag anything that needs attention"
+      ],
+      "category": [
+        "Cloud",
+        "Developer Tools"
+      ],
+      "author": {
+        "name": "Cloudflare",
+        "email": "support@cloudflare.com",
+        "url": "https://www.cloudflare.com"
+      },
+      "homepage": "https://developers.cloudflare.com/",
+      "repository": "https://github.com/cloudflare/skills",
+      "license": "Apache-2.0",
+      "keywords": [
+        "cloudflare",
+        "workers",
+        "durable-objects",
+        "d1",
+        "r2",
+        "kv",
+        "agents",
+        "mcp",
+        "wrangler",
+        "serverless"
+      ],
+      "source": {
+        "type": "archive",
+        "url": "https://www.gstatic.com/antigravity/plugins-partners/cloudflare/cloudflare.zip?v=89081701a810",
+        "sha256": "89081701a8107cb0a72dcd4b0ae5fe5731431a46092a46a388f7169d2aeda184"
       }
     },
     {
@@ -378,7 +461,7 @@
       "name": "databricks",
       "displayName": "Databricks",
       "description": "Databricks skills for the CLI, Apps, Lakebase, Model Serving, Lakeflow Jobs, Spark Declarative Pipelines, Declarative Automation Bundles (DABs), and classic-to-serverless migration.",
-      "version": "0.2.47",
+      "version": "0.2.48",
       "author": {
         "name": "Databricks",
         "url": "https://databricks.com"
@@ -430,8 +513,8 @@
       "logo": "https://www.gstatic.com/antigravity/plugins-partners/databricks/assets/databricks.png?v=06873c31ebda",
       "source": {
         "type": "archive",
-        "url": "https://www.gstatic.com/antigravity/plugins-partners/databricks/databricks.zip?v=61c708388697",
-        "sha256": "61c708388697066123d434fd6f07e88ac62bd7ebfafeb8b0ff8215e0f5816743"
+        "url": "https://www.gstatic.com/antigravity/plugins-partners/databricks/databricks.zip?v=5849c5f73c72",
+        "sha256": "5849c5f73c726b953111e244696ef40214c8ef9db908bdb8cb693e7030d42747"
       }
     },
     {
@@ -571,7 +654,7 @@
     {
       "name": "figma",
       "displayName": "Figma",
-      "version": "2.2.207-agy.82ddeba0",
+      "version": "2.2.208-agy.82ddeba0",
       "description": "Turn Figma designs into production code, map components with Code Connect, and create or edit Figma files in Antigravity.",
       "author": {
         "name": "Figma",
@@ -596,8 +679,8 @@
       ],
       "source": {
         "type": "archive",
-        "url": "https://www.gstatic.com/antigravity/plugins-partners/figma/figma.zip?v=ceffd9dd8bc4",
-        "sha256": "ceffd9dd8bc4d41cc8969e2947f696d29baf2d6d129bc4c337d0854af87071ad"
+        "url": "https://www.gstatic.com/antigravity/plugins-partners/figma/figma.zip?v=b856a307b858",
+        "sha256": "b856a307b8582e9ebd14c1bfba0e4d06527760b666b56a974366ef1e7720f05f"
       }
     },
     {
@@ -713,6 +796,39 @@
       }
     },
     {
+      "$schema": "https://antigravity.google/schemas/v1/plugin.json",
+      "name": "incident-io",
+      "displayName": "incident.io",
+      "description": "Respond to and investigate incidents, manage on-call schedules and escalations, and write runbooks and skills. Bundles the official incident.io MCP server.",
+      "version": "1.20261109.495",
+      "logo": "https://www.gstatic.com/antigravity/plugins-partners/incident-io/assets/logo.png?v=1ecec40ec7a7",
+      "suggestedPrompts": [
+        "Run the extensions skill",
+        "What incidents are open right now?",
+        "Who's on call this week?"
+      ],
+      "author": {
+        "name": "incident.io",
+        "url": "https://incident.io"
+      },
+      "homepage": "https://incident.io",
+      "repository": "https://github.com/incident-io/skills",
+      "license": "MIT",
+      "keywords": [
+        "incident-response",
+        "on-call",
+        "investigations",
+        "runbooks",
+        "sre",
+        "devops"
+      ],
+      "source": {
+        "type": "archive",
+        "url": "https://www.gstatic.com/antigravity/plugins-partners/incident-io/incident-io.zip?v=2d4553671db5",
+        "sha256": "2d4553671db5aad4b1d3a7eaa2e8eccccfadfafc2bcc02ffc8382db3e4145cb5"
+      }
+    },
+    {
       "name": "intercom",
       "displayName": "Intercom",
       "version": "0.2.1",
@@ -811,8 +927,8 @@
       "license": "MIT",
       "source": {
         "type": "archive",
-        "url": "https://www.gstatic.com/antigravity/plugins-partners/keenable/keenable.zip?v=aa159f3ab6ab",
-        "sha256": "aa159f3ab6abab8e97e0a37983513ccf6d3b8a3ee19e12c28f6fab38494385df"
+        "url": "https://www.gstatic.com/antigravity/plugins-partners/keenable/keenable.zip?v=a80d7ee8dbb4",
+        "sha256": "a80d7ee8dbb43f0a86b7a5d40def3dd27aa6d0badfea142d2cf91cbd53221fa7"
       }
     },
     {
@@ -844,8 +960,8 @@
       "license": "MIT",
       "source": {
         "type": "archive",
-        "url": "https://www.gstatic.com/antigravity/plugins-partners/keenable-select/keenable-select.zip?v=e281ce2e2100",
-        "sha256": "e281ce2e2100dc7d41ac4b1bdb294f8a55d4be3d4fa2e043bdc867c8541abde1"
+        "url": "https://www.gstatic.com/antigravity/plugins-partners/keenable-select/keenable-select.zip?v=67d937259b77",
+        "sha256": "67d937259b7789404c7ce0f7baed42cfda67318ffa70d204e79b659eac7b3904"
       }
     },
     {
@@ -878,6 +994,53 @@
         "type": "archive",
         "url": "https://www.gstatic.com/antigravity/plugins-partners/leapwork-play/leapwork-play.zip?v=02683de7d4b7",
         "sha256": "02683de7d4b72cc0e8b0f593d7eda8417f34df84587a4d83c071529740bb9fc7"
+      }
+    },
+    {
+      "$schema": "https://antigravity.google/schemas/v1/plugin.json",
+      "name": "levels-fyi",
+      "displayName": "Levels.fyi",
+      "version": "1.0.0",
+      "description": "Real salaries and company levels from Levels.fyi: check if an offer is fair, compare offers, find jobs with pay shown and add your own salary.",
+      "author": {
+        "name": "Levels.fyi",
+        "email": "team@levels.fyi",
+        "url": "https://www.levels.fyi"
+      },
+      "homepage": "https://www.levels.fyi/?from=antigravity_plugin",
+      "repository": "https://github.com/Levels-fyi/levels-fyi-plugin",
+      "license": "MIT",
+      "keywords": [
+        "levels-fyi",
+        "salary",
+        "compensation",
+        "pay",
+        "job-offers",
+        "offer-negotiation",
+        "levels",
+        "jobs",
+        "career",
+        "tech-salaries",
+        "raise",
+        "promotion",
+        "counteroffer",
+        "rsu",
+        "vesting",
+        "comp-statement"
+      ],
+      "logo": "https://www.gstatic.com/antigravity/plugins-partners/levels-fyi/assets/logo.png?v=b1c874b87a9b",
+      "suggestedPrompts": [
+        "I'm a Google L5 in Seattle making $190k base and $120k stock a year. Am I underpaid?",
+        "I have a Stripe offer: $210k base, $400k RSUs over 4 years. Is it good?",
+        "Find remote product manager jobs that pay at least $200k base."
+      ],
+      "skills": [
+        "./skills"
+      ],
+      "source": {
+        "type": "archive",
+        "url": "https://www.gstatic.com/antigravity/plugins-partners/levels-fyi/levels-fyi.zip?v=3537b7296a16",
+        "sha256": "3537b7296a16d6f905570000362983f95bb2856a2b57b772a1b7ade4bcf7aa72"
       }
     },
     {
@@ -1010,8 +1173,8 @@
       ],
       "source": {
         "type": "archive",
-        "url": "https://www.gstatic.com/antigravity/plugins-partners/mongodb-atlas/mongodb-atlas.zip?v=f85cd76c406b",
-        "sha256": "f85cd76c406ba533f285c8a7c2f88073c589d3e7f539821199d994fc9bae2568"
+        "url": "https://www.gstatic.com/antigravity/plugins-partners/mongodb-atlas/mongodb-atlas.zip?v=e7e52ae0258a",
+        "sha256": "e7e52ae0258a182090100b39f7f422c28ceb21919cebaa78d5032934ff27dc44"
       }
     },
     {
@@ -1268,14 +1431,14 @@
       "mcpServers": "./mcp_config.json",
       "source": {
         "type": "archive",
-        "url": "https://www.gstatic.com/antigravity/plugins-partners/postman/postman.zip?v=1ce3a62294b2",
-        "sha256": "1ce3a62294b200410564048c0a9689299aa183af470c0d8a407f30149a81d14d"
+        "url": "https://www.gstatic.com/antigravity/plugins-partners/postman/postman.zip?v=d60fd19f1ca4",
+        "sha256": "d60fd19f1ca4c0d622c8d9878043ab4326ecc284e312ab0d27c3d10e114da70a"
       }
     },
     {
       "name": "qodo",
       "displayName": "Qodo",
-      "version": "2.3.0",
+      "version": "2.3.1",
       "description": "Set up Qodo, explore code and repository history, review local changes, and resolve pull-request findings directly from Antigravity.",
       "logo": "https://www.gstatic.com/antigravity/plugins-partners/qodo/assets/qodo.png?v=808b1d92b783",
       "suggestedPrompts": [
@@ -1301,8 +1464,8 @@
       "license": "MIT",
       "source": {
         "type": "archive",
-        "url": "https://www.gstatic.com/antigravity/plugins-partners/qodo/qodo.zip?v=f7b523536698",
-        "sha256": "f7b523536698ae5683727ee941169999e4973b255651027a886e3ad5bb9afa17"
+        "url": "https://www.gstatic.com/antigravity/plugins-partners/qodo/qodo.zip?v=f64a0be826de",
+        "sha256": "f64a0be826de5eef5c797868590570c0eb1a1c8da2034c04d345ceb04921b7d7"
       }
     },
     {
@@ -1475,6 +1638,31 @@
       }
     },
     {
+      "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+      "name": "sonarqube",
+      "version": "2.7.0",
+      "description": "SonarQube is the AI code quality and security verification platform used by millions of developers to catch bugs, vulnerabilities, and leaked secrets. This plugin enforces those standards in the agent coding loop: 7,500+ distinct issue types, secrets scanning, agentic analysis, and quality gates across 40+ languages.",
+      "author": {
+        "name": "Sonar",
+        "url": "https://www.sonarsource.com/"
+      },
+      "keywords": [
+        "sonarqube",
+        "code-quality",
+        "static-analysis",
+        "security",
+        "secrets"
+      ],
+      "license": "SSAL-1.0",
+      "repository": "https://github.com/SonarSource/sonarqube-agent-plugins",
+      "homepage": "https://www.sonarsource.com",
+      "source": {
+        "type": "archive",
+        "url": "https://www.gstatic.com/antigravity/plugins-partners/sonarqube/sonarqube.zip?v=e5e43a8cecea",
+        "sha256": "e5e43a8ceceaa4ca70e4f0cb3e55aad44e869f5eee2e9b584a0b2d6394ce460f"
+      }
+    },
+    {
       "name": "spacefast",
       "version": "0.9.0",
       "description": "Turn an idea into a website, dashboard, report, or small web tool you can share. Build it in chat or bring your own work, and publish it with Spacefast.",
@@ -1578,6 +1766,45 @@
     },
     {
       "$schema": "https://antigravity.google/schemas/v1/plugin.json",
+      "name": "tavily",
+      "displayName": "Tavily",
+      "version": "2.4.0",
+      "description": "Web search, content extraction, website crawling, URL discovery, and deep research for Antigravity via Tavily's hosted MCP server and skills.",
+      "logo": "https://www.gstatic.com/antigravity/plugins-partners/tavily/assets/tavily-logo.svg?v=59f7fcb8f581",
+      "suggestedPrompts": [
+        "Find key decision-makers at [company] and summarize their professional backgrounds.",
+        "Research [company], including its products, competitors, and latest news.",
+        "Find the latest documentation and code examples for integrating [API or library] into my project."
+      ],
+      "author": {
+        "name": "Tavily",
+        "email": "tavily-integrations@nebius.com",
+        "url": "https://www.tavily.com/"
+      },
+      "homepage": "https://docs.tavily.com",
+      "repository": "https://github.com/tavily-ai/skills",
+      "license": "MIT",
+      "keywords": [
+        "tavily",
+        "web-search",
+        "content-extraction",
+        "crawling",
+        "research",
+        "mcp"
+      ],
+      "skills": [
+        "./skills/core",
+        "./skills/tasks",
+        "./skills/developers"
+      ],
+      "source": {
+        "type": "archive",
+        "url": "https://www.gstatic.com/antigravity/plugins-partners/tavily/tavily.zip?v=e6e61e2edd9f",
+        "sha256": "e6e61e2edd9f1008d5049189d3d377cf682cdf5c51020a1c535ec5c7a78d3eb0"
+      }
+    },
+    {
+      "$schema": "https://antigravity.google/schemas/v1/plugin.json",
       "name": "trello",
       "displayName": "Trello",
       "description": "Official Trello plugin with the Trello MCP server and a skill for boards, lists, cards, checklists, Inbox, and Planner.",
@@ -1644,8 +1871,8 @@
       ],
       "source": {
         "type": "archive",
-        "url": "https://www.gstatic.com/antigravity/plugins-partners/unity/unity.zip?v=ba76e81bb698",
-        "sha256": "ba76e81bb698fab847351c4ce55066f068b506ec85e8319bedd9e15d2b6794e2"
+        "url": "https://www.gstatic.com/antigravity/plugins-partners/unity/unity.zip?v=b2fb02fe06ac",
+        "sha256": "b2fb02fe06ac3b565ba6ac13ecb53a85a895e22912ed8a7caa78624fb84c4c20"
       }
     },
     {
@@ -1774,8 +2001,8 @@
       "mcpServers": "./mcp_config.json",
       "source": {
         "type": "archive",
-        "url": "https://www.gstatic.com/antigravity/plugins-partners/wix/wix.zip?v=d5c835354914",
-        "sha256": "d5c8353549144718acb7bcd96d9a2c6fef064113fc840469561671384e9f087d"
+        "url": "https://www.gstatic.com/antigravity/plugins-partners/wix/wix.zip?v=cd9c3e393545",
+        "sha256": "cd9c3e393545e5bbc030dccf23753bba0348b6b3d76f77e6b9ba91a5738f618a"
       }
     },
     {

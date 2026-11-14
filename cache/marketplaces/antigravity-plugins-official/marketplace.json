@@ -5,7 +5,7 @@
     {
       "name": "data-agent-kit-plugin",
       "displayName": "Data Agent Kit",
-      "version": "1.2.0",
+      "version": "1.3.0",
       "description": "This plugin provides a specialized suite of skills for data engineers and database practitioners working on Google Cloud. It acts as an expert assistant, allowing you to use natural language prompts in your preferred coding agent to architect complex data pipelines, transform data with dbt, write Spark and BigQuery SQL notebooks, and orchestrate end-to-end workflows across GCP's data ecosystem.",
       "logo": "https://www.gstatic.com/antigravity/plugins/data-agent-kit-plugin/assets/logo.svg?v=057413350267",
       "suggestedPrompts": [
@@ -36,8 +36,8 @@
       ],
       "source": {
         "type": "archive",
-        "url": "https://www.gstatic.com/antigravity/plugins/data-agent-kit-plugin/data-agent-kit-plugin.zip?v=6c126226ae51",
-        "sha256": "6c126226ae51be41257cdfb7f938bc01d70aa66795ab7b0f9ce6c4d90ae74b69"
+        "url": "https://www.gstatic.com/antigravity/plugins/data-agent-kit-plugin/data-agent-kit-plugin.zip?v=f3fa78f2da2a",
+        "sha256": "f3fa78f2da2a95a451db4c106d79636b3f10c138904edee1afe27f0c573946da"
       }
     },
     {
@@ -345,8 +345,8 @@
     {
       "name": "gemini-api",
       "displayName": "Gemini API",
-      "version": "2.6.0",
-      "description": "Build applications and shell workflows with the Gemini Interactions API, Live API, and Gemini API CLI, including text, image, video, and speech generation, managed agents, and real-time multimodal streaming.",
+      "version": "2.7.0",
+      "description": "Build applications and shell workflows with the Gemini Interactions API, Decisions API, Live API, and Gemini API CLI, including text, image, video, and speech generation, managed agents, and real-time multimodal streaming.",
       "logo": "https://www.gstatic.com/images/branding/productlogos/gemini_2026/v1/web-96dp/logo_gemini_2026_color_2x_web_96dp.png",
       "suggestedPrompts": [
         "Build a stateful multi-turn chat script using the Interactions API and the latest models",
@@ -362,6 +362,7 @@
       "keywords": [
         "gemini",
         "interactions-api",
+        "decisions-api",
         "live-api",
         "omni-flash",
         "cli",
@@ -372,8 +373,8 @@
       ],
       "source": {
         "type": "archive",
-        "url": "https://www.gstatic.com/antigravity/plugins/gemini-api/gemini-api.zip?v=7e8aa9572892",
-        "sha256": "7e8aa95728922837ed8ace8699194d40633097c65cca41875cc8b675050d6df9"
+        "url": "https://www.gstatic.com/antigravity/plugins/gemini-api/gemini-api.zip?v=281820a43720",
+        "sha256": "281820a43720af9ac3e3a9d4d80e06b7f97933eec1c38ec9f0505725b5469ac8"
       }
     },
     {
