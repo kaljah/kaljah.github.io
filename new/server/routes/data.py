@@ -717,6 +717,7 @@ def get_cbam_exports():
         'export_destination': r.export_destination,
         'specific_embedded_direct': r.specific_embedded_direct,
         'specific_embedded_indirect': r.specific_embedded_indirect,
+        'activity_level_tonnes': r.activity_level_tonnes,
         'captured_co2_tonnes': r.captured_co2_tonnes or 0.0,
         'ccs_certificate_id': r.ccs_certificate_id or '',
         'carbon_price_paid_eur': r.carbon_price_paid_eur or 0.0,
@@ -761,7 +762,6 @@ def save_cbam_export():
         export_destination = (data.get('export_destination') or data.get('exportDestination') or 'EU').strip()
         specific_embedded_direct = parse_number(data.get('specific_embedded_direct') or data.get('specificEmbeddedDirect'), 'specific_embedded_direct', required=False, min_value=0, default=0.0)
         specific_embedded_indirect = parse_number(data.get('specific_embedded_indirect') or data.get('specificEmbeddedIndirect'), 'specific_embedded_indirect', required=False, min_value=0, default=0.0)
-        
         # CCS (Carbon Capture & Geological Storage)
         captured_co2_tonnes = parse_number(data.get('captured_co2_tonnes') or data.get('capturedCo2Tonnes'), 'captured_co2_tonnes',
                                      required=False, min_value=0, default=0.0)
@@ -827,7 +827,7 @@ def save_cbam_export():
             'activity_level_tonnes', required=False, min_value=0, default=0.0)
         if (specific_embedded_direct <= 0 or specific_embedded_indirect <= 0) and activity_level <= 0:
             return jsonify({'error': 'Give the specific embedded emissions, or the activity level: the tonnes of '
-                                     'this good the facility produced in the period (all of it, exported or not)',
+                                     'this good the facility produced in the year (all of it, exported or not)',
                             'field': 'activity_level_tonnes'}), 400
         if activity_level and activity_level < quantity_tonnes:
             return jsonify({'error': 'The activity level (tonnes produced) cannot be below the exported quantity',
@@ -870,7 +870,7 @@ def save_cbam_export():
             record.precursor_ratio = precursor_ratio
             record.precursor_see_dir = precursor_see_dir
             record.precursor_see_indir = precursor_see_indir
-            record.notes = notes
+            record.notes, record.activity_level_tonnes = notes, activity_level or None
             action = 'UPDATE'
         else:
             user_id = session.get('user_id') if session else None
@@ -895,7 +895,7 @@ def save_cbam_export():
                 precursor_ratio=precursor_ratio,
                 precursor_see_dir=precursor_see_dir,
                 precursor_see_indir=precursor_see_indir,
-                notes=notes,
+                notes=notes, activity_level_tonnes=activity_level or None,
                 created_by=user_id
             )
             db.session.add(record)

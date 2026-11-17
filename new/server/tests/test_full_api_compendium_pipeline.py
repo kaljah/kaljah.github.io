@@ -820,8 +820,9 @@ class TestSectionDPart1CombustionAndFlaring:
         exp_f_co2 = (1000.0 * 0.95 * 0.965 + 1000.0 * 0.02) * REF_DENSITY_CO2 / 1000.0
         # Undestroyed methane = 1000.0 * 0.85 * (1 - 0.98) * rho_CH4 / 1000.0
         exp_f_ch4_up = 1000.0 * 0.85 * (1.0 - 0.98) * REF_DENSITY_CH4 / 1000.0
-        # Flaring N2O per API Eq 5-6: E_N2O = E_CO2 x 1.0e-4 / 60 (natural gas, Dec 2025; BA-017)
-        exp_f_n2o = exp_f_co2 * 1.0e-4 / 60.0
+        # Flaring N2O per API Eq 5-6: E_N2O = E_CO2 x 1.0e-4 / 60 (natural gas, Dec 2025; BA-017), on the
+        # combustion CO2 only (the gas's own CO2 passes through the flare)
+        exp_f_n2o = 1000.0 * 0.95 * 0.965 * REF_DENSITY_CO2 / 1000.0 * 1.0e-4 / 60.0
         exp_f_co2e_up = exp_f_co2 + REF_GWP_AR5["CH4"] * exp_f_ch4_up + REF_GWP_AR5["N2O"] * exp_f_n2o
 
         assert res_up["co2"] == pytest.approx(exp_f_co2, rel=REL_TOL_PIPE)

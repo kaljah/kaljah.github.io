@@ -47,7 +47,7 @@ class IndependentVentedPartition:
 
             if ef_n2o is None:
                 # Compendium Eq 5-6: N2O = CO2 x EmF_N2O / EmF_CO2 = flared CO2 x 1.0E-04 / 60 (natural gas)
-                flared_n2o = flared_co2 * 0.0001 / 60.0
+                flared_n2o = (flared_co2 - flared_native_co2) * 0.0001 / 60.0  # combustion CO2 only
             else:
                 # an energy N2O factor on the flared gas
                 flared_m3 = total_gas_m3 * ctrl

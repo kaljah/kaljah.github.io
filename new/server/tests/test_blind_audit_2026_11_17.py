@@ -224,3 +224,72 @@ def test_ba046_unknown_traceability_metric_is_refused(client):
 # ---------------------------------------------------------------- BA-050 (days in a leap year)
 def test_ba050_leap_year_days():
     assert sum(calendar.monthrange(2024, m)[1] for m in range(1, 13)) == 366
+
+
+# ================================================================ code review of the audit fixes (2026-11-17)
+def _scope2_row(fac, **cols):
+    from background_processor import _process_row_scope2
+
+    maps = dict(fac_name_map={fac.name.lower(): fac}, fac_id_map={str(fac.id): fac}, GRID_FACTORS={},
+                job_id="review-s2", row_idx=2)
+    row = {"date": "2025-04", "facility_name": fac.name, "source_type": "electricity", "consumption": "1000",
+           "unit": "kWh", "grid_region": "Algerian National Grid", **cols}
+    return _process_row_scope2(row=row, user_id=None, **maps)
+
+
+def test_review_file_supplier_factor_is_bounded_and_strict(ctx):
+    from tests.audit_helpers import make_facility
+
+    fac = make_facility()
+    obj, errors = _scope2_row(fac, factor="450")              # a g/kWh figure: refused as on the manual form
+    assert obj is None and "market_emission_factor" in errors[0]
+    obj, errors = _scope2_row(fac, factor="0.3")
+    assert errors == [] and obj.market_emission_factor == pytest.approx(0.3)
+    assert obj.co2e_market_based == pytest.approx(1000 * 0.3 / 1000)
+    obj, errors = _scope2_row(fac, market_emission_factor=0, factor="0.3")  # an entered 0 is the factor
+    assert errors == [] and obj.market_emission_factor == 0.0 and obj.co2e_market_based == 0.0
+    obj, errors = _scope2_row(fac, market_emission_factor="abc")
+    assert obj is None and errors                             # unreadable: refused, never the location value
+
+
+def test_review_record_co2e_uses_the_records_own_gwp_basis():
+    from types import SimpleNamespace
+
+    from calculations.constants import GWP_STANDARDS
+    from services.master_report_data_records import record_co2e_at_gwp
+
+    rec = SimpleNamespace(co2e_total=10 + 1 * 25 + 0.1 * 298, co2_emissions=10, ch4_emissions=1, n2o_emissions=0.1,
+                          gwp_version="AR4")
+    assert record_co2e_at_gwp(rec, GWP_STANDARDS["AR6"]) == pytest.approx(10 + 1 * 29.8 + 0.1 * 273)
+
+
+def test_review_flare_n2o_follows_the_combustion_co2_only():
+    from calculations.vented_production import _split_vent_flare
+
+    rich = _split_vent_flare(total_gas_m3=1000, ch4_tonnes=0.5, co2_tonnes=0.0, ctrl_eff=1.0, ef_n2o=None)
+    sour = _split_vent_flare(total_gas_m3=1000, ch4_tonnes=0.5, co2_tonnes=5.0, ctrl_eff=1.0, ef_n2o=None)
+    assert sour["flared_n2o"] == pytest.approx(rich["flared_n2o"])          # the gas's own CO2 adds no N2O
+    assert rich["flared_n2o"] == pytest.approx(0.5 * 0.965 * 44.01 / 16.04 * 1e-4 / 60)
+
+
+def test_review_cbam_activity_level_is_stored(client):
+    from models import CbamProductExport, Emission, db
+    from tests.audit_helpers import login, make_facility, make_user
+
+    with app.app_context():
+        admin = make_user("admin", "Global")
+        fac = make_facility()
+        db.session.add(Emission(facility_id=fac.id, year=2025, month=1, process_type="combustion", fuel_type="x",
+                                quantity=1, unit="t", co2e_total=1000.0, status="Verified", is_test=False))
+        db.session.commit()
+        login(client, admin)
+        body = dict(facility_id=fac.id, year=2025, month=3, product_name="Ammonia", cn_code="2814 10 00",
+                    quantity_tonnes=100)
+        r = client.post("/api/data/cbam-exports", json=body)
+        assert r.status_code == 400 and "in the year" in r.get_json()["error"]
+        r = client.post("/api/data/cbam-exports", json={**body, "activity_level_tonnes": 400})
+        assert r.status_code == 200, r.get_json()
+        rec = db.session.get(CbamProductExport, r.get_json()["id"])
+        assert rec.activity_level_tonnes == 400 and rec.specific_embedded_direct == pytest.approx(1000 / 400)
+        listed = [x for x in client.get("/api/data/cbam-exports").get_json() if x["id"] == rec.id][0]
+        assert listed["activity_level_tonnes"] == 400

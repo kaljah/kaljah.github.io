@@ -489,7 +489,7 @@ class TestScope2ProcessMatrix:
         supplier_ef = supplier_market_factor(None, 0.450)
         assert pytest.approx(kwh * supplier_ef / 1000.0, 1e-9) == 4.50
         # a known grid region uses the catalog factor (US-RMPA: 0.564 t CO2 + 5.31e-5 t CH4 x 28 + 7.71e-6 t N2O x 265 per MWh)
-        rmpa, name = resolve_electricity_factor("US-RMPA (WECC Rockies)", None)
+        rmpa, name = resolve_electricity_factor("US-RMPA (WECC Rockies)")
         assert rmpa == pytest.approx(0.564 + 5.31e-5 * 28 + 7.71e-6 * 265, rel=1e-6)
 
     def test_scope2_market_based_electricity_zero_carbon(self):

@@ -81,8 +81,9 @@ def catalog_flare_at_efficiency(payload, factor_data):
     if ce is not None and factor_data.get("co2") not in (None, ""):
         native = float(factor_data.get("co2_native") or 0.0)
         co2 = (float(factor_data["co2"]) - native) * ce / row_ce + native
-        if factor_data.get("n2o") not in (None, ""):
-            out["n2o"] = float(factor_data["n2o"]) * co2 / float(factor_data["co2"])
+        if factor_data.get("n2o") not in (None, "") and float(factor_data["co2"]) > native:
+            # Eq 5-6: N2O follows the combustion CO2 (not the gas's own CO2)
+            out["n2o"] = float(factor_data["n2o"]) * (co2 - native) / (float(factor_data["co2"]) - native)
         out["co2"] = co2
         out["combustion_efficiency_co2"] = ce
     return out

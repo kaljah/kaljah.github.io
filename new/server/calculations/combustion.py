@@ -631,8 +631,8 @@ class FlaringCalculator(BaseCalculator):
         _ef_n2o = float(ef_n2o) if ef_n2o is not None else (0.0006 if _is_fuel_gas else 0.0001)
         # an entered heating value is checked even when Eq 5-6 does not need it
         _check_flare_hhv(hhv, str(comps.get("hhv_unit") or "").lower().strip(), float(1020.0 if hhv is None else hhv))
-        if ef_n2o is None:  # Eq 5-6: E_N2O = E_CO2 x EmF_N2O / 60 kg CO2/MMBtu, the CO2's N2O (BA-017)
-            n2o_tonnes = co2_tonnes * _ef_n2o / 60.0
+        if ef_n2o is None:  # Eq 5-6: E_N2O = E_CO2 x EmF_N2O / 60 kg CO2/MMBtu, on the combustion CO2 only, not the gas's own CO2 passing through (BA-017)
+            n2o_tonnes = co2_combusted_kg / 1000.0 * _ef_n2o / 60.0
         elif _ef_n2o > 0:
             f_unit = norm_unit(ef_unit or "kg/mmbtu")
             if "/" not in f_unit:

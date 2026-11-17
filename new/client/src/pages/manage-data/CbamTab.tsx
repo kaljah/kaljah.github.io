@@ -501,8 +501,8 @@ const CbamTab: React.FC<CbamTabProps> = ({
         </Field>
 
         <Field
-          label={t("Activity Level: Total Produced in the Period (Metric Tonnes)")}
-          hint={t("All of this good the facility produced, exported or not (EU 2023/1773 Annex III); needed when the specific embedded emissions are calculated")}
+          label={t("Activity Level: Total Produced in the Year (Metric Tonnes)")}
+          hint={t("All of this good the facility produced in the year, exported or not (EU 2023/1773 Annex III): the emissions divided by it are the year's; needed when the specific embedded emissions are calculated")}
         >
           <Input
             type="number"
@@ -798,6 +798,7 @@ const CbamTab: React.FC<CbamTabProps> = ({
           const qTonnes = parseFloat(String(c.quantity_tonnes ?? c.quantityTonnes ?? 0));
           const direct = parseFloat(String(c.specific_embedded_direct ?? c.specificEmbeddedDirect ?? 0));
           const indirect = parseFloat(String(c.specific_embedded_indirect ?? c.specificEmbeddedIndirect ?? 0));
+          const activityLevel = parseFloat(String(c.activity_level_tonnes ?? 0)) || 0;
           const ccsCaptured = parseFloat(String(c.captured_co2_tonnes ?? c.capturedCo2Tonnes ?? 0));
           const isComplex = Boolean(c.is_complex_good || c.isComplexGood);
           const precRatio = parseFloat(String(c.precursor_ratio ?? c.precursorRatio ?? 0));
@@ -883,8 +884,10 @@ const CbamTab: React.FC<CbamTabProps> = ({
                         cn_code: cnCode,
                         quantity_tonnes: qTonnes.toString(),
                         export_destination: dest,
-                        specific_embedded_direct: direct ? direct.toString() : "",
-                        specific_embedded_indirect: indirect ? indirect.toString() : "",
+                        // calculated from a stored activity level: left blank so they are recalculated on save
+                        activity_level_tonnes: activityLevel ? activityLevel.toString() : "",
+                        specific_embedded_direct: direct && !activityLevel ? direct.toString() : "",
+                        specific_embedded_indirect: indirect && !activityLevel ? indirect.toString() : "",
                         captured_co2_tonnes: ccsCaptured ? ccsCaptured.toString() : "",
                         ccs_certificate_id: c.ccs_certificate_id || c.ccsCertificateId || "",
                         carbon_price_paid_eur: originTax ? originTax.toString() : "",

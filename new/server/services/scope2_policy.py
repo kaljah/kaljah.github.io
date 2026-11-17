@@ -24,7 +24,7 @@ _LEGACY_BOILER_EF_KG_PER_MMBTU = 53.06
 MAX_GRID_EF_KG_PER_KWH = 2.0
 
 
-def resolve_electricity_factor(grid_region, supplied_ef=None, facility_id=None):
+def resolve_electricity_factor(grid_region, facility_id=None):
     """Location-based grid factor of a Scope 2 electricity record, one policy for manual, JSON-import and
     file-bulk paths (BUG-099).
 
@@ -157,7 +157,7 @@ def apply_electricity_edit(emission, data):
     the market-based factor (it was ignored on a known grid and was the location value on an unknown one)."""
     known = grid_entry(emission.grid_region)[1] is not None
     try:
-        emission.emission_factor, _ = resolve_electricity_factor(emission.grid_region, None, emission.facility_id)
+        emission.emission_factor, _ = resolve_electricity_factor(emission.grid_region, emission.facility_id)
     except ValidationError:
         db.session.rollback()
         raise

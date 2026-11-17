@@ -375,6 +375,7 @@ def approve_and_execute_recalculation(request_id):
         fac_q = fac_q.filter(Facility.id.in_(allowed_fids or [-1]))
     scoped_fids = [fid for (fid,) in fac_q.all()]
 
+    refused = []  # Scope 1 records the new factor cannot calculate (left unchanged)
     # Scope 1 Execution (tenant-scoped)
     if req.target_scope in ("all", "1", "Scope 1", 1):
         q1 = Emission.query.filter(Emission.is_test == False)
@@ -398,8 +399,9 @@ def approve_and_execute_recalculation(request_id):
 
             if cf is not None:
                 res = _engine_recalc(e, cf, gwp_dict)
-                if res is None:
-                    continue  # refused by the engine: the record keeps its values (logged)
+                if res is None:  # refused by the engine: the record keeps its values and is named to the approver
+                    refused.append(e.record_id or f"S1-{e.id}")
+                    continue
                 e.co2_emissions, e.ch4_emissions, e.n2o_emissions, new_val = res
                 e.factor_version = cf.version
             elif req.target_gwp_standard:
@@ -457,6 +459,8 @@ def approve_and_execute_recalculation(request_id):
     req.executed_at = datetime.datetime.now(datetime.timezone.utc)
 
     skipped_note = f"; not re-weighted (no stored gas split): {', '.join(skipped_scopes)}" if skipped_scopes else ""
+    if refused:
+        skipped_note += f"; left unchanged, the new factor cannot calculate them: {', '.join(refused)}"
     # the audit entry commits with the data change (one transaction)
     log_activity_and_notify(
         action="RECALCULATION_EXECUTED",
@@ -473,6 +477,7 @@ def approve_and_execute_recalculation(request_id):
         "message": "Recalculation executed successfully",
         "request": req.to_dict(),
         "skipped_scopes": skipped_scopes,
+        "refused_records": refused,
     }), 200
 
 

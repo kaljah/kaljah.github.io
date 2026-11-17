@@ -82,7 +82,12 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
 
   useEffect(() => {
     setActiveProcessType(initialProcessType);
-    setParams((prev) => ({ ...prev, oxidationFactor: initialProcessType === "flaring" ? 0.965 : 1.0 }));
+    // follow the process default only while the factor is still a default: an entered value is kept
+    setParams((prev) =>
+      prev.oxidationFactor === 0.965 || prev.oxidationFactor === 1.0
+        ? { ...prev, oxidationFactor: initialProcessType === "flaring" ? 0.965 : 1.0 }
+        : prev,
+    );
   }, [initialProcessType]);
 
   // the flaring default (96.5 % carbon to CO2) also when the calculator opens on a flaring record (it was set
@@ -206,9 +211,9 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
       // Unburnt CH4
       efCH4Mass = (ch4MassFraction / 100) * (1 - destructionEff);
 
-      // N2O follows the flare CO2 (Compendium Eq 5-6, 1.0E-04 kg N2O / 60 kg CO2 per MMBtu); it was half the
-      // energy default (BA-015)
-      efN2OMass = (efCO2Mass * 0.0001) / 60;
+      // N2O follows the flare's combustion CO2, not the gas's own CO2 (Compendium Eq 5-6, 1.0E-04 kg N2O / 60 kg
+      // CO2 per MMBtu); it was half the energy default (BA-015)
+      efN2OMass = ((efCO2Mass - co2MassFraction) * 0.0001) / 60;
     } else if (activeProcessType === "venting") {
       // the gas's own CO2 is vented with it (it was dropped, BA-015)
       efCO2Mass = co2Mass / totalMass;

@@ -800,6 +800,9 @@ class CbamProductExport(db.Model):
     quarter = db.Column(db.String(10), default='Q1')              # 'Q1', 'Q2', 'Q3', 'Q4'
     specific_embedded_direct = db.Column(db.Float, default=0.0)   # tCO2e / t product (gross or net)
     specific_embedded_indirect = db.Column(db.Float, default=0.0) # tCO2e / t product
+    # EU 2023/1773 Annex III activity level: tonnes of the good produced in the year, when the specific embedded
+    # emissions were calculated from it (migration m8d3f6a94c25); NULL when they were entered
+    activity_level_tonnes = db.Column(db.Float, nullable=True)
     # Carbon Capture & Geological Storage (CCS) for Blue H2 / Ammonia
     captured_co2_tonnes = db.Column(db.Float, default=0.0)        # tCO2 permanently sequestered
     ccs_certificate_id = db.Column(db.String(100))                # e.g. 'DZ-CCS-2026-004'

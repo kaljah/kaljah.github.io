@@ -229,7 +229,7 @@ class IndependentFlaringModel:
         n2o_t = 0.0
         if ef_n2o is None:
             # Compendium Eq 5-6: N2O = CO2 x EmF_N2O / EmF_CO2 = CO2 x 1.0E-04 / 60 (natural gas, Dec 2025)
-            n2o_t = co2_t * 0.0001 / 60.0
+            n2o_t = co2_combusted_kg / 1000.0 * 0.0001 / 60.0  # Eq 5-6 on the combustion CO2 only
         elif float(ef_n2o) > 0:
             ef_u = str(ef_unit or "kg/m3").lower()
             if "mmbtu" in ef_u:

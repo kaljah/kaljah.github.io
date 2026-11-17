@@ -86,17 +86,18 @@ def get_facilities_for_scope(
 def record_co2e_at_gwp(e, gwp_factors=None) -> float:
     """CO2e of a Scope 1 record on the report's GWP set: its gas masses re-weighted (BA-033: the stored CO2e was
     printed whatever GWP set the report named). A record whose CO2e is not in its gases (HFC / SF6, fire
-    suppression agents) keeps the stored CO2e plus the re-weighted CH4 / N2O difference."""
+    suppression agents) keeps the stored CO2e plus the re-weighted CH4 / N2O difference. The difference is taken
+    from the GWP set the record was calculated with (its gwp_version), else the active one."""
     stored = float(getattr(e, "co2e_total", None) or getattr(e, "co2e", 0.0) or 0.0)
     if not gwp_factors:
         return stored
-    from calculations.constants import get_active_gwp
+    from calculations.constants import GWP_STANDARDS, get_active_gwp
 
-    co2 = float(getattr(e, "co2_emissions", 0.0) or 0.0)
     ch4 = float(getattr(e, "ch4_emissions", 0.0) or 0.0)
     n2o = float(getattr(e, "n2o_emissions", 0.0) or 0.0)
-    active = get_active_gwp()
-    delta = ch4 * (float(gwp_factors.get("CH4", active["CH4"])) - float(active["CH4"]))         + n2o * (float(gwp_factors.get("N2O", active["N2O"])) - float(active["N2O"]))
+    base = GWP_STANDARDS.get(str(getattr(e, "gwp_version", None) or "").upper()) or get_active_gwp()
+    delta = (ch4 * (float(gwp_factors.get("CH4", base["CH4"])) - float(base["CH4"]))
+             + n2o * (float(gwp_factors.get("N2O", base["N2O"])) - float(base["N2O"])))
     return stored + delta
 
 

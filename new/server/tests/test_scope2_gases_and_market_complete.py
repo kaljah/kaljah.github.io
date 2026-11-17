@@ -265,7 +265,7 @@ def test_yearly_totals_aggregation():
 # ---------------------------------------------------------------------------
 
 def test_resolve_electricity_factor_known_grid():
-    factor, name = resolve_electricity_factor("Algerian National Grid", None)
+    factor, name = resolve_electricity_factor("Algerian National Grid")
     entry = grid_entry("Algerian National Grid")[1]
     expected_ef = grid_factor_kg_co2e_per_kwh(entry)
     assert factor == pytest.approx(expected_ef)
@@ -276,7 +276,7 @@ def test_resolve_electricity_factor_supplier():
     # a supplier factor is never the location-based value (GHG Protocol Scope 2 Guidance ch. 6, BA-007): an unknown
     # grid without a facility country grid is refused, and the supplier factor feeds the market-based method
     with pytest.raises(ValidationError):
-        resolve_electricity_factor("CleanPower Inc.", 0.125)
+        resolve_electricity_factor("CleanPower Inc.")
     from routes.scope2 import supplier_market_factor
     assert supplier_market_factor(None, 0.125) == 0.125
     assert supplier_market_factor(0.2, 0.125) == 0.2
@@ -284,7 +284,7 @@ def test_resolve_electricity_factor_supplier():
 
 def test_resolve_electricity_factor_unknown_without_ef_raises():
     with pytest.raises(ValidationError) as exc:
-        resolve_electricity_factor("Unknown Grid Region", None)
+        resolve_electricity_factor("Unknown Grid Region")
     assert exc.value.field == "grid_region"
     assert "valid_regions" in exc.value.extra
 

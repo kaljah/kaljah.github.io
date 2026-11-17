@@ -29,7 +29,8 @@ def _grid(e):
 def gas_split(e):
     """{"co2", "ch4", "n2o"} in tonnes for one Scope 2 record (location-based): the masses stored with the
     record when its calculation gave them (steam, BA-009), else the grid split, else the CO2e as CO2."""
-    if getattr(e, "co2_emissions", None) is not None and getattr(e, "ch4_emissions", None) is not None             and "electric" not in str(getattr(e, "source_type", "") or "").lower():
+    if getattr(e, "co2_emissions", None) is not None and getattr(e, "ch4_emissions", None) is not None \
+            and "electric" not in str(getattr(e, "source_type", "") or "").lower():
         return {"co2": float(e.co2_emissions), "ch4": float(e.ch4_emissions), "n2o": float(e.n2o_emissions or 0)}
     entry = _grid(e)
     if entry is None:

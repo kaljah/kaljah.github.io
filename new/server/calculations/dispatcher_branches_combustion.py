@@ -133,7 +133,8 @@ def calc_flaring(self, calculator, emission_factors, flat_inputs, gwp_dict, unce
     # No N2O factor: the calculator's API Compendium Table 5-3 default (kg/MMBtu of gas
     # flared) applies. An explicit 0 used to be passed, so Tier 3 flaring had no N2O.
     n2o_given = ef_n2o_val not in (None, "", "-")
-    if n2o_given and emission_factors.get("combustion_efficiency_ch4") not in (None, "")             and ef_n2o_val in (emission_factors.get("n2o"), emission_factors.get("ef_n2o")):
+    if n2o_given and emission_factors.get("combustion_efficiency_ch4") not in (None, "") \
+            and ef_n2o_val in (emission_factors.get("n2o"), emission_factors.get("ef_n2o")):
         # a catalog flare row's N2O is per m3 of ITS gas: at Tier 3 the entered gas sets the CO2 and
         # Eq 5-6 makes the N2O follow it (the row value was applied to any composition, BA-017)
         n2o_given = False

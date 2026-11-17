@@ -93,7 +93,7 @@ def _split_vent_flare(total_gas_m3, ch4_tonnes, co2_tonnes, ctrl_eff=0.0, hhv=10
         if ef_n2o is None:
             # Eq 5-6: N2O follows the flare's CO2 (1.0E-04 kg N2O / 60 kg CO2 per MMBtu, natural gas, Dec 2025),
             # as the flare calculator (BA-017); it was the flared energy at a fixed heating value
-            flared_n2o = flared_co2 * 0.0001 / 60.0
+            flared_n2o = (flared_co2 - flared_native_co2) * 0.0001 / 60.0  # the combustion CO2 only, not the gas's own CO2 passing through
         else:
             flared_m3 = total_gas_m3 * ctrl
             flared_scf = convert(flared_m3, "m3", "scf")

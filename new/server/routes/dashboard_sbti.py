@@ -16,6 +16,7 @@ from utils import (
 )
 from services.dashboard_filters import _parse_facility_ids
 from routes.dashboard import dashboard_bp, is_it_role
+from functools import partial
 
 
 def _months_reported(view, current_year, q_s1, q_s2, q_s3):
@@ -70,8 +71,8 @@ def get_sbti_trajectory():
     scope1_actuals = {}
     scope2_actuals = {}
     scope3_actuals = {}
-    
-    from services.dashboard_filters import exclude_test_rows  # test rows left out, as on the dashboard (BA-006)
+    from services.dashboard_filters import exclude_test_rows as _excl, test_facility_ids
+    exclude_test_rows = partial(_excl, test_fids=test_facility_ids())  # test rows left out, as the dashboard (BA-006)
     q_s1 = exclude_test_rows(Emission.query.filter_by(status="Verified"), Emission)
     q_s2 = exclude_test_rows(Scope2Emission.query.filter_by(status="Verified"), Scope2Emission)
     q_s3 = exclude_test_rows(Scope3Emission.query.filter_by(status="Verified"), Scope3Emission)

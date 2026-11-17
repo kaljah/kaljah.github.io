@@ -57,6 +57,11 @@ def _parse_facility_ids(facility_id):
     return res if res else ([-1] if s.lower() == "none" else None)
 
 
+def test_facility_ids():
+    """Ids of the test facilities (one query; pass the list to exclude_test_rows when calling it several times)."""
+    return [fid for (fid,) in db.session.query(Facility.id).filter(Facility.is_test == True).all()]  # noqa: E712
+
+
 def exclude_test_rows(query, model, test_fids=None):
     """Drop test rows (the record's own is_test flag and records of test facilities), as apply_scope does.
 
@@ -65,9 +70,7 @@ def exclude_test_rows(query, model, test_fids=None):
     if hasattr(model, "is_test"):
         query = query.filter(model.is_test == False)  # noqa: E712
     if hasattr(model, "facility_id") and hasattr(Facility, "is_test"):
-        fids = test_fids if test_fids is not None else [
-            fid for (fid,) in db.session.query(Facility.id).filter(Facility.is_test == True).all()  # noqa: E712
-        ]
+        fids = test_fids if test_fids is not None else test_facility_ids()
         if fids:
             query = query.filter(~model.facility_id.in_(fids))
     return query

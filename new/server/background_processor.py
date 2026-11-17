@@ -1816,7 +1816,7 @@ def _process_row_scope2(
 
         supplied = row.get("factor") if row.get("factor") not in (None, "") else row.get("emission_factor")
         try:
-            ef, grid_region = resolve_electricity_factor(grid_region, supplied, facility.id)
+            ef, grid_region = resolve_electricity_factor(grid_region, facility.id)
         except ValidationError as err:
             return None, [f"Row {row_idx}: {err.message}"]
 
@@ -1974,12 +1974,12 @@ def _process_row_scope2(
     mkt_inst = str(row.get("market_instrument_type") or row.get("market_instrument") or "").strip() or None
     from input_validation import ValidationError
     from services.scope2_market import market_factor
-
-    raw_mkt_ef = (row.get("market_emission_factor") or row.get("supplier_emission_factor") or row.get("supplier_factor")
-                  or (supplied if source_type == "electricity" else None))  # a supplier factor is market-based (BA-007)
-    try:
-        used_mkt_ef, mkt_ef_val = market_factor(
-            ef, mkt_inst, _clean_float(raw_mkt_ef, default=None) if raw_mkt_ef not in (None, "") else None)
+    from services.scope2_policy import supplier_market_factor
+    raw_mkt_ef = next((row.get(k) for k in ("market_emission_factor", "supplier_emission_factor", "supplier_factor")
+                       if row.get(k) not in (None, "")), None)  # a 0 factor is a factor (an `or` chain skipped it)
+    try:  # a supplier factor in the factor column is market-based (BA-007), read and bounded as on the manual form
+        used_mkt_ef, mkt_ef_val = market_factor(ef, mkt_inst, supplier_market_factor(
+            raw_mkt_ef, supplied if source_type == "electricity" else None))
     except ValidationError as exc:
         return None, [f"Row {row_idx}: {exc}"]
     co2e_mkt = (kwh * used_mkt_ef) / 1000.0 if source_type == "electricity" else co2e

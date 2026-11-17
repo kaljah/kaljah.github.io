@@ -72,6 +72,18 @@ def _extract_active_modules(ledger_rows: List[Dict[str, Any]]) -> List[str]:
     return sorted(active_modules_set)
 
 
+def _scope1_at_gwp(fac_ids, years, gwp_factors):
+    """{(facility_id, year): verified Scope 1 tCO2e on `gwp_factors`} (services.master_report_data_records)."""
+    from models import Emission
+    from services.master_report_data_records import record_co2e_at_gwp
+
+    out = {}
+    for e in Emission.query.filter(Emission.facility_id.in_(fac_ids), Emission.year.in_(years),
+                                   Emission.status == "Verified", Emission.is_test.is_(False)).all():
+        out[(e.facility_id, e.year)] = out.get((e.facility_id, e.year), 0.0) + record_co2e_at_gwp(e, gwp_factors)
+    return out
+
+
 def _apply_methane_intensities(timeline, fac_ids, gas_comp_data=None, gwp_factors=None):
     """Methane intensity of each report year from the dashboard's computation (services.intensity /
     services.methane_intensity, BA-054): the OGCI / OGMP volume figure (CH4 volume / marketed gas, compared to the
@@ -87,6 +99,7 @@ def _apply_methane_intensities(timeline, fac_ids, gas_comp_data=None, gwp_factor
     years = [int(t["year"]) for t in timeline]
     cells = intensity_cells(years=years, allowed_fids=list(fac_ids))
     seg = {f.id: segment_category(f.segment) for f in Facility.query.filter(Facility.id.in_(fac_ids)).all()}
+    s1_at_gwp = _scope1_at_gwp(fac_ids, years, gwp_factors) if gwp_factors else {}
     c1 = None
     if isinstance(gas_comp_data, dict):
         try:
@@ -110,14 +123,9 @@ def _apply_methane_intensities(timeline, fac_ids, gas_comp_data=None, gwp_factor
         # flaring at facilities without production is not divided by other facilities' gas (BA-034 / BA-055)
         boe = sum(c["boe"] for _, c in matched)
         if boe > 0:
-            # carbon intensity over the facility-years with production, as the dashboard (BA-032)
-            from calculations.constants import get_active_gwp
-
-            act = get_active_gwp()
-            g = gwp_factors or act
-            d_ch4, d_n2o = float(g.get("CH4", act["CH4"])) - act["CH4"], float(g.get("N2O", act["N2O"])) - act["N2O"]
-            t["carbon_intensity_kg_boe"] = sum(c["s1"] + c["s2"] + c["ch4"] * d_ch4 + c["n2o"] * d_n2o
-                                               for _, c in matched) * 1000.0 / boe
+            # carbon intensity over the facility-years with production, as the dashboard (BA-032), Scope 1 on the
+            # report's GWP set from each record's own GWP basis
+            t["carbon_intensity_kg_boe"] = sum(s1_at_gwp.get(k, c["s1"]) + c["s2"] for k, c in matched) * 1000.0 / boe
         gas = sum(c["gas_m3"] for _, c in matched)
         if gas > 0:
             t["flaring_intensity_pct"] = sum(c["flaring_m3"] for _, c in matched) / gas * 100.0
