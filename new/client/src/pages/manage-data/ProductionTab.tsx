@@ -151,7 +151,7 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
                       <>
                         <strong>{fac.name}</strong>
                         {fac.field && (
-                          <span className="text-xs text-ink-400 font-normal ml-1">
+                          <span className="text-xs text-ink-400 font-normal ms-1">
                             -{fac.field}
                           </span>
                         )}
@@ -165,12 +165,12 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
                 <td>{p.month ? t("Month {{m}}", { m: p.month }) : t("Annual")}</td>
                 <td>
                   {p.oil != null
-                    ? `${Number(p.oil).toLocaleString()} ${p.oilUnit || "bbl"}`
+                    ? `${Number(p.oil).toLocaleString("en-US")} ${p.oilUnit || "bbl"}`
                     : "—"}
                 </td>
                 <td>
                   {p.gas != null
-                    ? `${Number(p.gas).toLocaleString()} ${p.gasUnit || "mscf"}`
+                    ? `${Number(p.gas).toLocaleString("en-US")} ${p.gasUnit || "mscf"}`
                     : "—"}
                 </td>
                 <td>
@@ -457,6 +457,28 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
                     placeholder="0.0"
                   />
                 </Field>
+              </div>
+
+              {/* marketed gas = gross - injected - flared - vented - burned on site - NGL shrinkage: a blank term is
+                  taken from the emission records (shrinkage only from here) */}
+              <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                {([
+                  ["flared_gas_mmsm3", t("Flared Gas (MMSm³)")],
+                  ["vented_gas_mmsm3", t("Vented Gas (MMSm³)")],
+                  ["fuel_gas_consumed_mmsm3", t("Fuel Gas Burned On Site (MMSm³)")],
+                  ["ngl_shrinkage_mmsm3", t("NGL / LPG Shrinkage (MMSm³)")],
+                ] as const).map(([key, label]) => (
+                  <Field key={key} label={label} hint={t("Optional: blank uses the emission records")}>
+                    <Input
+                      type="number"
+                      step="any"
+                      min="0"
+                      value={prodForm[key] ?? ""}
+                      onChange={(e) => setProdForm({ ...prodForm, [key]: e.target.value })}
+                      placeholder="—"
+                    />
+                  </Field>
+                ))}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">

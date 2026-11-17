@@ -213,7 +213,7 @@ class TestBoundaryConditions:
             return compute_emissions({
                 "process_type": "tank", "quantity": 1000.0, "unit": "bbl",
                 "factor_source": "specific", "tank_gor": 100.0,
-                "tank_ch4_content": 0.85, "tank_control_eff": ctrl
+                "tank_ch4_content": 0.85, "tank_control_eff": ctrl * 100.0  # percent (BA-012)
             }, {})[0]
 
         em_no_ctrl = run_tank(0.0)
@@ -238,7 +238,7 @@ class TestBoundaryConditions:
         em, _ = compute_emissions({
             "process_type": "combustion", "quantity": 500.0, "unit": "m3",
             "factor_source": "specific", "c1": 0.95,
-            "combustion_efficiency": 1.0, "hhv": 1020.0
+            "combustion_efficiency": 100, "hhv": 1020.0
         }, {"co2": 0, "ch4": 0, "n2o": 0, "unit": "kg/m3", "hhv": 1020.0})
         # At perfect combustion: no CH4 slip
         assert em["ch4"] == pytest.approx(0.0, abs=1e-10)
@@ -482,7 +482,9 @@ class TestOATSensitivity:
         base = {
             "process_type": "blowdown", "quantity": 5.0, "unit": "m3",
             "factor_source": "specific", "blowdown_volume": 5.0,
-            "blowdown_events": 10, "ch4_content": 0.85
+            "blowdown_events": 10, "ch4_content": 0.85,
+            # ideal gas: at >= 1,000 psia the real-gas Z is estimated unless entered (BA-003)
+            "z_factor": 1.0,
         }
         em_500, _ = compute_emissions({**base, "blowdown_pressure": p_500_psig}, {})
         em_1000, _ = compute_emissions({**base, "blowdown_pressure": p_1000_psig}, {})
@@ -512,8 +514,8 @@ class TestOATSensitivity:
         }
 
         # Override destruction efficiency
-        em_d95, _ = compute_emissions({**base, "destruction_efficiency": 0.95}, {})
-        em_d98, _ = compute_emissions({**base, "destruction_efficiency": 0.98}, {})
+        em_d95, _ = compute_emissions({**base, "destruction_efficiency": 95}, {})
+        em_d98, _ = compute_emissions({**base, "destruction_efficiency": 98}, {})
 
         assert em_d95["ch4"] > em_d98["ch4"], (
             f"eta_d=0.95 should produce more CH4 than eta_d=0.98\n"

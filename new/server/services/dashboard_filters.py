@@ -57,12 +57,29 @@ def _parse_facility_ids(facility_id):
     return res if res else ([-1] if s.lower() == "none" else None)
 
 
+def exclude_test_rows(query, model, test_fids=None):
+    """Drop test rows (the record's own is_test flag and records of test facilities), as apply_scope does.
+
+    For the queries that do their own facility / tenant scoping (SBTi, national inventory, equity, CBAM, OGMP,
+    QA/QC): they counted test rows the dashboard leaves out (blind audit BA-006 / BA-011)."""
+    if hasattr(model, "is_test"):
+        query = query.filter(model.is_test == False)  # noqa: E712
+    if hasattr(model, "facility_id") and hasattr(Facility, "is_test"):
+        fids = test_fids if test_fids is not None else [
+            fid for (fid,) in db.session.query(Facility.id).filter(Facility.is_test == True).all()  # noqa: E712
+        ]
+        if fids:
+            query = query.filter(~model.facility_id.in_(fids))
+    return query
+
+
 def apply_scope(query, model, allowed_fids=None, facility_id=None, activity=None, division=None, segment=None,
-                joined=False, include_test=False):
+                joined=False, include_test=False, test_fids=None, tenant_id=None):
     """Facility-level scoping and filters for any model with a facility_id column."""
     needs_join = any(_set(v) for v in (activity, division, segment))
     if needs_join and not joined:
         query = query.join(Facility, Facility.id == model.facility_id)
+        joined = True
     if not include_test:
         if model is Facility and hasattr(Facility, "is_test"):
             query = query.filter(Facility.is_test == False)
@@ -72,22 +89,47 @@ def apply_scope(query, model, allowed_fids=None, facility_id=None, activity=None
             if needs_join and hasattr(Facility, "is_test"):
                 query = query.filter(Facility.is_test == False)
             elif not needs_join and hasattr(model, "facility_id") and hasattr(Facility, "is_test"):
-                test_fids = [
-                    fid
-                    for (fid,) in db.session.query(Facility.id)
-                    .filter(Facility.is_test == True)
-                    .all()
-                ]
-                if test_fids:
-                    query = query.filter(~model.facility_id.in_(test_fids))
+                resolved_test_fids = (
+                    test_fids
+                    if test_fids is not None
+                    else [
+                        fid
+                        for (fid,) in db.session.query(Facility.id)
+                        .filter(Facility.is_test == True)
+                        .all()
+                    ]
+                )
+                if resolved_test_fids:
+                    query = query.filter(~model.facility_id.in_(resolved_test_fids))
     if allowed_fids is not None:
-        query = query.filter(model.facility_id.in_(allowed_fids or [-1]))
+        target_col = Facility.id if model is Facility else getattr(model, "facility_id", None)
+        if target_col is not None:
+            query = query.filter(target_col.in_(allowed_fids or [-1]))
+    else:
+        # BUG-FLT-001: When allowed_fids is None, apply tenant filtering to prevent cross-tenant leak
+        if tenant_id is None:
+            # no try/except: if the tenant cannot be resolved the query must fail, not run unfiltered
+            from utils import get_current_tenant_id, has_multi_tenant_data
+            tid = get_current_tenant_id()
+            if tid != "default" or has_multi_tenant_data():
+                tenant_id = tid
+        if tenant_id is not None:
+            from utils import tenant_matches
+            if model is Facility:
+                query = query.filter(tenant_matches(Facility.tenant_id, tenant_id))
+            elif hasattr(model, "facility_id"):
+                if not joined:
+                    query = query.join(Facility, Facility.id == model.facility_id)
+                    joined = True
+                query = query.filter(tenant_matches(Facility.tenant_id, tenant_id))
     fids = _parse_facility_ids(facility_id)
     if fids is not None:
-        if len(fids) == 1:
-            query = query.filter(model.facility_id == fids[0])
-        else:
-            query = query.filter(model.facility_id.in_(fids))
+        target_col = Facility.id if model is Facility else getattr(model, "facility_id", None)
+        if target_col is not None:
+            if len(fids) == 1:
+                query = query.filter(target_col == fids[0])
+            else:
+                query = query.filter(target_col.in_(fids))
     if _set(activity):
         query = query.filter(Facility.activity == activity)
     if _set(division):
@@ -228,15 +270,31 @@ from calculations.units import (
 BBL_PER_TONNE_CRUDE = 7.33  # average crude (~33 API), the convention the dashboard already used
 
 
+def _safe_float(val, default=0.0):
+    if val in (None, "", "-"):
+        return default
+    try:
+        return float(val)
+    except (ValueError, TypeError):
+        return default
+
+
+def _row_attr(row, key, default=None):
+    """Safely retrieves a field from either an ORM row, namedtuple, SimpleNamespace, or dict."""
+    if isinstance(row, dict):
+        return row.get(key, default)
+    return getattr(row, key, default)
+
+
 def production_oil_bbl(row):
     """Oil / condensate in barrels, or None for an unknown unit."""
     from calculations.units import UnitError, unit_dimension
 
-    amt = getattr(row, "oil_amount", None)
+    amt = _row_attr(row, "oil_amount", None)
     if not amt:
         return 0.0
     try:
-        dim, f = unit_dimension(row.oil_unit or "bbl")
+        dim, f = unit_dimension(_row_attr(row, "oil_unit", "bbl") or "bbl")
     except UnitError:
         return None
     if dim == "volume":
@@ -273,17 +331,29 @@ def production_boe(row):
     """BOE of one ProductionData row, or None when a unit cannot be interpreted.
 
     Consistent calculation:
-    Calculates oil barrels + gas at GAS_BOE_PER_MSCF.
-    If total_production_mmboe is recorded:
+    Calculates oil barrels + gas at GAS_BOE_PER_MSCF (gas is net of reinjected volume).
+    If total_production_no_injected_mmboe is recorded, it is preferred over total_production_mmboe
+    so that reinjected gas does not inflate the denominator of intensity metrics.
+    If total_production_mmboe is recorded (and no net variant exists):
       - Validates whether total_production_mmboe is within tolerance (30%) of the oil+gas converted BOE.
       - If consistent, total_production_mmboe * 1e6 is used (incorporating detailed stream accounting).
       - If discordant (e.g. test outlier like 10,000 MMBOE vs 0.62 MMBOE actual),
         it falls back to the canonical oil+gas converted BOE and logs a warning.
     """
     calc_boe = calculate_oil_gas_boe(row)
-    stored_mmboe = getattr(row, "total_production_mmboe", None)
-    if stored_mmboe is not None and float(stored_mmboe) > 0:
-        stored_boe = float(stored_mmboe) * 1e6
+
+    # Prefer the net-of-reinjected BOE column when available
+    # BUG-FLT-002: Respect total_production_no_injected_mmboe whenever present, regardless of stored volume magnitude
+    raw_stored_no_inj = _row_attr(row, "total_production_no_injected_mmboe", None)
+    if raw_stored_no_inj is not None and str(raw_stored_no_inj).strip() != "":
+        stored_mmboe = _safe_float(raw_stored_no_inj, 0.0)
+        if stored_mmboe > 0:
+            return stored_mmboe * 1e6
+
+    raw_stored = _row_attr(row, "total_production_mmboe", None)
+    stored_mmboe = _safe_float(raw_stored, 0.0)
+    if stored_mmboe > 0:
+        stored_boe = stored_mmboe * 1e6
         if calc_boe is not None and calc_boe > 0:
             is_consistent, diff_pct = validate_production_mmboe_consistency(stored_mmboe, calc_boe, tolerance=0.30)
             if is_consistent:
@@ -293,7 +363,7 @@ def production_boe(row):
                 logging.getLogger(__name__).warning(
                     "ProductionData row %s has discordant total_production_mmboe (%s MMBOE) "
                     "differing by %.1f%% from calculated oil+gas BOE (%s BOE). Falling back to calculated BOE.",
-                    getattr(row, "id", "?"), stored_mmboe, diff_pct * 100.0, calc_boe
+                    _row_attr(row, "id", "?"), stored_mmboe, diff_pct * 100.0, calc_boe
                 )
                 return calc_boe
         return stored_boe
@@ -301,11 +371,30 @@ def production_boe(row):
 
 
 def production_gas_m3(row):
-    """Produced gas volume (m3) of one ProductionData row, or None if unknown unit."""
-    if getattr(row, "gross_gas_mmsm3", None):
-        return float(row.gross_gas_mmsm3) * 1e6
-    if getattr(row, "gas_amount", None):
-        return gas_volume_m3(row.gas_amount, row.gas_unit or "mscf", getattr(row, "year", None), getattr(row, "month", None))
+    """Produced gas volume (m³) of one ProductionData row, **net of reinjected gas**, or None if unknown unit.
+
+    Reinjected gas (pressure maintenance, EOR, storage) is not marketed production: keeping it in
+    the denominator understates flaring intensity, carbon intensity and methane loss rate.  The
+    Master Report already computes net gas (master_report_data_records._aggregate_production_records); the dashboard and
+    intensity service now follow the same logic.
+    """
+    # 1. Prefer the pre-computed net column (gross minus reinjected)
+    net_mm = _safe_float(_row_attr(row, "gas_without_injected_mmsm3", None), 0.0)
+    if net_mm > 0:
+        return net_mm * 1e6
+
+    # 2. Gross minus reinjected if both are available
+    gross_mm = _safe_float(_row_attr(row, "gross_gas_mmsm3", None), 0.0)
+    injected_mm = _safe_float(_row_attr(row, "injected_gas_mmsm3", None), 0.0)
+    if gross_mm > 0:
+        if injected_mm > 0:
+            return max(gross_mm - injected_mm, 0.0) * 1e6
+        return gross_mm * 1e6
+
+    # 3. Fall back to the legacy oil_amount / gas_amount columns (no reinjection data available)
+    gas_amt = _row_attr(row, "gas_amount", None)
+    if gas_amt:
+        return gas_volume_m3(gas_amt, _row_attr(row, "gas_unit", "mscf") or "mscf", _row_attr(row, "year", None), _row_attr(row, "month", None))
     return 0.0
 
 

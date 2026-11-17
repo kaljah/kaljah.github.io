@@ -160,7 +160,7 @@ class IndependentFlaringModel:
         combustion_eff=None,
         destruction_eff=None,
         composition=None,
-        ef_n2o=0.0,
+        ef_n2o=None,
         ef_unit="kg/m3",
         hhv=1020.0,
         operating_temp=None,
@@ -227,7 +227,10 @@ class IndependentFlaringModel:
 
         # 3. Flared N2O
         n2o_t = 0.0
-        if ef_n2o and float(ef_n2o) > 0:
+        if ef_n2o is None:
+            # Compendium Eq 5-6: N2O = CO2 x EmF_N2O / EmF_CO2 = CO2 x 1.0E-04 / 60 (natural gas, Dec 2025)
+            n2o_t = co2_t * 0.0001 / 60.0
+        elif float(ef_n2o) > 0:
             ef_u = str(ef_unit or "kg/m3").lower()
             if "mmbtu" in ef_u:
                 scf = vol_m3_std / 0.028316846592

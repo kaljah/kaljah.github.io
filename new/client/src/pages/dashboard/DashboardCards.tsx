@@ -45,11 +45,11 @@ export const PendingBanner: React.FC<PendingBannerProps> = ({
       </Badge>
       <div className="flex flex-wrap items-center gap-1.5 text-sm text-text">
         <span className="font-semibold text-text">
-          {count.toLocaleString()} {t("records")}
+          {count.toLocaleString("en-US")} {t("records")}
         </span>
         {co2e > 0 && (
           <span className="rounded bg-amber-100 px-1.5 py-0.5 font-mono text-xs font-semibold text-amber-800">
-            {co2e.toLocaleString()} tCO₂e
+            {co2e.toLocaleString("en-US")} tCO₂e
           </span>
         )}
         <span className="hidden sm:inline text-xs text-text-secondary">
@@ -195,7 +195,7 @@ export const CategoricalCard: React.FC<CategoricalCardProps> = ({ collapsed, onT
       aria-expanded={!collapsed}
       onClick={onToggle}
       className={cn(
-        "flex w-full cursor-pointer items-center justify-between gap-3 border-0 bg-transparent p-0 text-left",
+        "flex w-full cursor-pointer items-center justify-between gap-3 border-0 bg-transparent p-0 text-start",
         !collapsed && "mb-6",
       )}
     >
@@ -315,15 +315,15 @@ export const BridgeCard: React.FC<BridgeCardProps> = ({ params }) => {
         <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-3 text-xs text-text-secondary">
             <span className="inline-flex items-center gap-1.5">
-              <span className="size-2.5 rounded-sm" style={{ backgroundColor: "var(--color-ink-700)" }} />
+              <span className="size-2.5 rounded-sm [background-color:var(--color-ink-700)]" />
               <span>{t("Total")}</span>
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <span className="size-2.5 rounded-sm" style={{ backgroundColor: "var(--color-red-600)" }} />
+              <span className="size-2.5 rounded-sm [background-color:var(--color-red-600)]" />
               <span>{t("Increase")}</span>
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <span className="size-2.5 rounded-sm" style={{ backgroundColor: "var(--color-green-600)" }} />
+              <span className="size-2.5 rounded-sm [background-color:var(--color-green-600)]" />
               <span>{t("Reduction")}</span>
             </span>
           </div>

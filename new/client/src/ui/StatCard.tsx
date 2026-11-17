@@ -153,7 +153,7 @@ export const StatCard: React.FC<StatCardProps> = ({
                 <ArrowDownRight className="size-3.5" aria-hidden="true" />
               )}
               <Num value={Math.abs(delta.value) * 100} format="percent" decimals={1} />
-              {delta.label && <span className="ml-1 font-normal text-text-secondary">{delta.label}</span>}
+              {delta.label && <span className="ms-1 font-normal text-text-secondary">{delta.label}</span>}
             </span>
           )}
         </div>

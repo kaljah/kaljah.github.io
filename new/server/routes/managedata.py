@@ -823,7 +823,7 @@ def add_or_update_goal():
     if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to modify corporate emission targets."}), 403
     caller_tenant = get_current_tenant_id(user)
-    if not user or user.role not in ["admin", "superuser"] or not is_org_wide_user(user) or caller_tenant != "default":
+    if not user or user.role not in ["admin", "superuser"] or not is_org_wide_user(user):
         return jsonify({"error": "Organisation-wide administrator privileges required to modify corporate emission targets."}), 403
     from input_validation import parse_number
 
@@ -875,7 +875,7 @@ def delete_goal(year):
         return jsonify({"error": "IT administrators are not authorized to modify corporate emission targets."}), 403
     # Audit 2026-10-01 (A-05): same rule as saving a goal (organisation-wide admins only)
     caller_tenant = get_current_tenant_id(user)
-    if not user or user.role not in ["admin", "superuser"] or not is_org_wide_user(user) or caller_tenant != "default":
+    if not user or user.role not in ["admin", "superuser"] or not is_org_wide_user(user):
         return jsonify({"error": "Organisation-wide administrator privileges required to modify corporate emission targets."}), 403
     try:
         goal = Goal.query.filter_by(year=year).first()
@@ -917,7 +917,11 @@ def get_base_years():
         active_rec = q.order_by(
             BaseYearRecalculation.recalc_date.desc()
         ).first()
-        base_year_entry = db.session.get(BaseYear, 1) if caller_tenant == "default" else None
+        base_year_entry = (
+            BaseYear.query.filter(tenant_matches(BaseYear.tenant_id, caller_tenant)).first()
+            if hasattr(BaseYear, "tenant_id")
+            else db.session.get(BaseYear, 1)
+        )
 
         active_year = None
         if active_rec:

@@ -1,3 +1,4 @@
+import contextlib
 import os
 import time
 import threading
@@ -75,6 +76,7 @@ UPLOAD_JOB_DIR = os.environ.get("UPLOAD_JOB_DIR") or os.path.join(
 os.makedirs(UPLOAD_JOB_DIR, exist_ok=True)
 STALE_JOB_SECONDS = 600  # a job whose worker stopped writing for this long was interrupted
 _last_persist = {}
+_persist_lock = threading.Lock()
 _redis_client = None
 
 
@@ -142,11 +144,16 @@ def _snapshot(job):
 
 def _persist_job(job_id, force=False):
     """Write the job snapshot (at most once a second while running; always when forced)."""
-    import json
-
     now = time.time()
     if not force and now - _last_persist.get(job_id, 0) < 1.0:
         return
+    with _persist_lock:  # snapshots are written in the order they are taken (an older one overwrote "completed")
+        _write_job_snapshot(job_id, now)
+
+
+def _write_job_snapshot(job_id, now):
+    import json
+
     with upload_jobs_lock:
         job = upload_jobs.get(job_id)
         if job is None:
@@ -173,10 +180,8 @@ def _persist_job(job_id, force=False):
         pass  # the in-memory job still answers for this worker
     finally:
         if tmp and os.path.exists(tmp):
-            try:
+            with contextlib.suppress(OSError):
                 os.unlink(tmp)
-            except OSError:
-                pass
 
 
 def _load_job(job_id):
@@ -187,8 +192,7 @@ def _load_job(job_id):
         try:
             raw = r.get(f"upload_job:{job_id}")
             if raw:
-                snap = json.loads(raw if isinstance(raw, str) else raw.decode("utf-8"))
-                return snap
+                return json.loads(raw if isinstance(raw, str) else raw.decode("utf-8"))
         except Exception:
             pass
     path = _job_file(job_id)
@@ -1781,21 +1785,14 @@ def _process_row_scope2(
         return None, [period_error]
 
     # 2. Resolve Facility
-    facility = None
     fac_input = row.get("facility_name") or row.get("facility") or row.get("facility_id")
-    if fac_input:
-        fac_str = str(fac_input).strip().lower()
-        if fac_str in fac_name_map:
-            facility = fac_name_map[fac_str]
-        elif fac_str in fac_id_map:
-            facility = fac_id_map[fac_str]
+    fac_str = str(fac_input or "").strip().lower()
+    facility = (fac_name_map.get(fac_str) or fac_id_map.get(fac_str)) if fac_input else None
 
     if not facility:
-        errors.append(f"Facility '{fac_input}' not found")
-        return None, errors
+        return None, errors + [f"Facility '{fac_input}' not found"]
 
-    raw_source = str(row.get("source_type") or row.get("factor_type") or "electricity").strip().lower()
-    raw_source = re.sub(r"[\s\-/]+", "_", raw_source)
+    raw_source = re.sub(r"[\s\-/]+", "_", str(row.get("source_type") or row.get("factor_type") or "electricity").strip().lower())
     if raw_source in ["indirect_steam", "steam", "heat", "purchased_steam", "purchased_heat", "steam_heat"]:
         source_type = "indirect_steam"
     elif raw_source in ["cogen_allocation", "cogen", "chp", "cogeneration"]:
@@ -1819,7 +1816,7 @@ def _process_row_scope2(
 
         supplied = row.get("factor") if row.get("factor") not in (None, "") else row.get("emission_factor")
         try:
-            ef, grid_region = resolve_electricity_factor(grid_region, supplied)
+            ef, grid_region = resolve_electricity_factor(grid_region, supplied, facility.id)
         except ValidationError as err:
             return None, [f"Row {row_idx}: {err.message}"]
 
@@ -1852,7 +1849,7 @@ def _process_row_scope2(
         # same calculation as the manual form (routes.scope2._calc_indirect_steam), including the
         # boiler CH4 / N2O; the unit must be one it converts
         from calculations.indirect import DEFAULT_BOILER_EFFICIENCY, DEFAULT_TRANSMISSION_LOSS
-        from routes.scope2 import _calc_indirect_steam
+        from routes.scope2 import steam_emissions
 
         u = unit.lower().replace(" ", "")
         u = {"shortton": "short_ton", "shorttons": "short_ton", "metricton": "metric_ton", "tonnes": "tonne"}.get(u, u)
@@ -1897,12 +1894,12 @@ def _process_row_scope2(
                 if ci[key] is None or ci[key] <= 0:
                     return None, [f"Row {row_idx}: {key} '{raw_h}' must be a positive number"]
         try:
-            co2e, heat_mmbtu, ef = _calc_indirect_steam(
+            steam = steam_emissions(
                 {"amount": val, "unit": u, "boiler_efficiency": boiler_eff, "calc_inputs": {"indirect_steam": ci}})
         except ValueError as err:
             return None, [f"Row {row_idx}: {err}"]
-        if u in ("tonne", "mt", "metric_ton", "tonnes", "ton", "tons", "us_ton", "short_ton"):
-            steam_ton = val
+        co2e, heat_mmbtu, ef = steam["co2e"], steam["energy_mmbtu"], steam["ef_co2"]
+        steam_ton = val if u in ("tonne", "mt", "metric_ton", "tonnes", "ton", "tons", "us_ton", "short_ton") else steam_ton
     elif source_type in ["cogen_allocation", "cogen"]:
         # BUG-099 pattern: never book a client-supplied co2e; allocate on the server
         from routes.scope2 import _calc_cogen_allocation
@@ -1978,7 +1975,8 @@ def _process_row_scope2(
     from input_validation import ValidationError
     from services.scope2_market import market_factor
 
-    raw_mkt_ef = row.get("market_emission_factor") or row.get("supplier_emission_factor") or row.get("supplier_factor")
+    raw_mkt_ef = (row.get("market_emission_factor") or row.get("supplier_emission_factor") or row.get("supplier_factor")
+                  or (supplied if source_type == "electricity" else None))  # a supplier factor is market-based (BA-007)
     try:
         used_mkt_ef, mkt_ef_val = market_factor(
             ef, mkt_inst, _clean_float(raw_mkt_ef, default=None) if raw_mkt_ef not in (None, "") else None)
@@ -1993,6 +1991,7 @@ def _process_row_scope2(
         "market_instrument_type": mkt_inst, "market_emission_factor": mkt_ef_val,
         "uncertainty": unc, "grid_region": grid_region or None,
         "location": meter or grid_region or None,
+        **({f"{g}_emissions": steam[g] for g in ("co2", "ch4", "n2o")} if source_type == "indirect_steam" else {}),
     }
     verdict, qa_msg = plausibility_check(co2e)  # the Scope 1 hard bound (1e300 kWh was stored)
     if verdict == "reject":
@@ -2211,14 +2210,9 @@ def _process_row_scope3(
         return None, [period_error]
 
     # 2. Resolve Facility
-    facility = None
     fac_input = row.get("facility_name") or row.get("facility") or row.get("facility_id")
-    if fac_input:
-        fac_str = str(fac_input).strip().lower()
-        if fac_str in fac_name_map:
-            facility = fac_name_map[fac_str]
-        elif fac_str in fac_id_map:
-            facility = fac_id_map[fac_str]
+    fac_str = str(fac_input or "").strip().lower()
+    facility = (fac_name_map.get(fac_str) or fac_id_map.get(fac_str)) if fac_input else None
 
     if not facility:
         errors.append(f"Facility '{fac_input}' not found")
@@ -2298,9 +2292,9 @@ def _process_row_scope3(
         return None, ["Provide activity amount and emission factor (or a supplier-specific co2e)"]
 
     if amt > 0 and ef > 0:
-        # stored as kg CO2e per activity unit, the unit the tables and edits read
         from calculations.units import scope3_ef_kg_per_unit
-        ef = scope3_ef_kg_per_unit(amt, co2e, ef)
+        ef = scope3_ef_kg_per_unit(amt, co2e, ef)  # stored as kg CO2e per activity unit, and labelled so (BA-057)
+        ef_unit = f"kg CO2e / {row.get('unit') or 'unit'}"
     key = _scope3_key(facility.id, year, month, cat_str, sub_cat, row.get("unit"))
     action, existing = _dedupe(batch_keys, key, overwrite_duplicates,
                                f"Scope 3 emission for facility '{facility.name}' ({year}-{month:02d}, {cat_str}, '{sub_cat or ''}')")
@@ -2374,14 +2368,9 @@ def _process_row_sources(row, user_id, fac_name_map, fac_id_map, batch=None, ove
         errors.append("Equipment Name is required for emission source")
         return None, errors
 
-    facility = None
     fac_input = row.get("facility_name") or row.get("facility") or row.get("facility_id")
-    if fac_input:
-        fac_str = str(fac_input).strip().lower()
-        if fac_str in fac_name_map:
-            facility = fac_name_map[fac_str]
-        elif fac_str in fac_id_map:
-            facility = fac_id_map[fac_str]
+    fac_str = str(fac_input or "").strip().lower()
+    facility = (fac_name_map.get(fac_str) or fac_id_map.get(fac_str)) if fac_input else None
 
     if not facility:
         errors.append(f"Facility '{fac_input}' not found")
@@ -2461,20 +2450,23 @@ def _process_row_sources(row, user_id, fac_name_map, fac_id_map, batch=None, ove
     return source, errors
 
 
+# production-data columns of the marketed-gas deductions and the file headers they are read from (BA-053)
+_MARKETED_GAS_COLUMNS = {
+    "flared_gas_mmsm3": ["flared_gas_mmsm3", "flared_gas"],
+    "vented_gas_mmsm3": ["vented_gas_mmsm3", "vented_gas"],
+    "fuel_gas_consumed_mmsm3": ["fuel_gas_consumed_mmsm3", "fuel_gas_consumed", "own_use_gas_mmsm3"],
+    "ngl_shrinkage_mmsm3": ["ngl_shrinkage_mmsm3", "ngl_shrinkage", "shrinkage_mmsm3"],
+}
+
 def _process_row_production(row, user_id, fac_name_map, fac_id_map, batch_prod_map=None, overwrite_duplicates=False):
     from models import ProductionData
     from extensions import db
 
     errors = []
 
-    facility = None
     fac_input = row.get("facility_name") or row.get("facility") or row.get("facility_id")
-    if fac_input:
-        fac_str = str(fac_input).strip().lower()
-        if fac_str in fac_name_map:
-            facility = fac_name_map[fac_str]
-        elif fac_str in fac_id_map:
-            facility = fac_id_map[fac_str]
+    fac_str = str(fac_input or "").strip().lower()
+    facility = (fac_name_map.get(fac_str) or fac_id_map.get(fac_str)) if fac_input else None
 
     if not facility:
         errors.append(f"Facility '{fac_input}' not found")
@@ -2516,7 +2508,7 @@ def _process_row_production(row, user_id, fac_name_map, fac_id_map, batch_prod_m
     field = row.get("field") or facility.field
     region = row.get("region") or getattr(facility, "region", None)
 
-    def _parse_float(keys, default=0.0):
+    def _parse_float(keys, default=None):
         for k in keys:
             v = row.get(k)
             if v not in (None, "", "-"):
@@ -2537,6 +2529,8 @@ def _process_row_production(row, user_id, fac_name_map, fac_id_map, batch_prod_m
     total_production_no_injected_mmboe = _parse_float(["total_production_no_injected_mmboe", "total_net_mmboe"])
     saleable_production_mmboe = _parse_float(["saleable_production_mmboe", "saleable_mmboe"])
     fuel_gas_export = _parse_float(["fuel_gas_export_mmsm3", "fuel_gas_mmsm3", "fuel_gas"])
+    # marketed-gas deductions (MMSm3, optional): they take priority over the emission records (BA-053)
+    marketed_terms = {col: _parse_float(keys) for col, keys in _MARKETED_GAS_COLUMNS.items()}
 
     if total_production_mmboe:
         from services.dashboard_filters import calculate_oil_gas_boe, validate_production_mmboe_consistency
@@ -2545,7 +2539,9 @@ def _process_row_production(row, user_id, fac_name_map, fac_id_map, batch_prod_m
             "oil_unit": oil_unit,
             "gas_amount": gas_vol,
             "gas_unit": gas_unit,
-            "gross_gas_mmsm3": gross_gas,
+            "gross_gas_mmsm3": gross_gas or 0.0,
+            "injected_gas_mmsm3": injected_gas or 0.0,
+            "gas_without_injected_mmsm3": gas_without_injected or 0.0,
         }
         calc_boe = calculate_oil_gas_boe(scratch_prod)
         if calc_boe > 0:
@@ -2589,28 +2585,15 @@ def _process_row_production(row, user_id, fac_name_map, fac_id_map, batch_prod_m
             existing.field = field
         if region:
             existing.region = region
-        if gross_gas:
-            existing.gross_gas_mmsm3 = gross_gas
-        if injected_gas:
-            existing.injected_gas_mmsm3 = injected_gas
-        if gas_without_injected:
-            existing.gas_without_injected_mmsm3 = gas_without_injected
-        if crude_oil_mmboe:
-            existing.crude_oil_mmboe = crude_oil_mmboe
-        if condensate_mmboe:
-            existing.condensate_mmboe = condensate_mmboe
-        if lpg_mmboe:
-            existing.lpg_mmboe = lpg_mmboe
-        if ngl_mmboe:
-            existing.ngl_mmboe = ngl_mmboe
-        if total_production_mmboe:
-            existing.total_production_mmboe = total_production_mmboe
-        if total_production_no_injected_mmboe:
-            existing.total_production_no_injected_mmboe = total_production_no_injected_mmboe
-        if saleable_production_mmboe:
-            existing.saleable_production_mmboe = saleable_production_mmboe
-        if fuel_gas_export:
-            existing.fuel_gas_export_mmsm3 = fuel_gas_export
+        for col, val in {"gross_gas_mmsm3": gross_gas, "injected_gas_mmsm3": injected_gas,
+                         "gas_without_injected_mmsm3": gas_without_injected, "crude_oil_mmboe": crude_oil_mmboe,
+                         "condensate_mmboe": condensate_mmboe, "lpg_mmboe": lpg_mmboe, "ngl_mmboe": ngl_mmboe,
+                         "total_production_mmboe": total_production_mmboe,
+                         "total_production_no_injected_mmboe": total_production_no_injected_mmboe,
+                         "saleable_production_mmboe": saleable_production_mmboe,
+                         "fuel_gas_export_mmsm3": fuel_gas_export, **marketed_terms}.items():
+            if val is not None:  # a blank cell keeps the stored value
+                setattr(existing, col, val)
         # Return None — session already tracks existing; no need to bulk_save_objects it
         return None, errors
 
@@ -2626,18 +2609,19 @@ def _process_row_production(row, user_id, fac_name_map, fac_id_map, batch_prod_m
         division=division,
         field=field,
         region=region,
-        gross_gas_mmsm3=gross_gas,
-        injected_gas_mmsm3=injected_gas,
-        gas_without_injected_mmsm3=gas_without_injected,
-        crude_oil_mmboe=crude_oil_mmboe,
-        condensate_mmboe=condensate_mmboe,
-        lpg_mmboe=lpg_mmboe,
-        ngl_mmboe=ngl_mmboe,
-        total_production_mmboe=total_production_mmboe,
-        total_production_no_injected_mmboe=total_production_no_injected_mmboe,
-        saleable_production_mmboe=saleable_production_mmboe,
-        fuel_gas_export_mmsm3=fuel_gas_export,
+        gross_gas_mmsm3=gross_gas or 0.0,
+        injected_gas_mmsm3=injected_gas or 0.0,
+        gas_without_injected_mmsm3=gas_without_injected or 0.0,
+        crude_oil_mmboe=crude_oil_mmboe or 0.0,
+        condensate_mmboe=condensate_mmboe or 0.0,
+        lpg_mmboe=lpg_mmboe or 0.0,
+        ngl_mmboe=ngl_mmboe or 0.0,
+        total_production_mmboe=total_production_mmboe or 0.0,
+        total_production_no_injected_mmboe=total_production_no_injected_mmboe or 0.0,
+        saleable_production_mmboe=saleable_production_mmboe or 0.0,
+        fuel_gas_export_mmsm3=fuel_gas_export or 0.0,
         created_by=user_id,
+        **marketed_terms,
     )
     if batch_prod_map is not None:
         batch_prod_map[key] = prod
@@ -2657,14 +2641,9 @@ def _process_row_mitigation(row, user_id, fac_name_map, fac_id_map, batch=None, 
         errors.append("Project Name is required for mitigation project")
         return None, errors
 
-    facility = None
     fac_input = row.get("facility_name") or row.get("facility") or row.get("facility_id")
-    if fac_input:
-        fac_str = str(fac_input).strip().lower()
-        if fac_str in fac_name_map:
-            facility = fac_name_map[fac_str]
-        elif fac_str in fac_id_map:
-            facility = fac_id_map[fac_str]
+    fac_str = str(fac_input or "").strip().lower()
+    facility = (fac_name_map.get(fac_str) or fac_id_map.get(fac_str)) if fac_input else None
 
     if not facility:
         errors.append(f"Facility '{fac_input}' not found")

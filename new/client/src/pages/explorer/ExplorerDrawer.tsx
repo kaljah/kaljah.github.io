@@ -136,15 +136,15 @@ const ExplorerDrawer: React.FC<ExplorerDrawerProps> = ({
 
       <Field label={t("Search asset / field")}>
         <div className="relative">
-          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-secondary" aria-hidden="true" />
+          <Search className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-text-secondary" aria-hidden="true" />
           <Input
-            className="h-9 pl-9 pr-8 text-sm"
+            className="h-9 ps-9 pe-8 text-sm"
             placeholder={t("Search name, region, division...")}
             value={filters.search}
             onChange={(e) => set({ search: e.target.value })}
           />
           {filters.search && (
-            <IconButton label={t("Clear search")} className="absolute right-1 top-1/2 size-7 -translate-y-1/2" onClick={() => set({ search: "" })}>
+            <IconButton label={t("Clear search")} className="absolute end-1 top-1/2 size-7 -translate-y-1/2" onClick={() => set({ search: "" })}>
               <X className="size-3.5" aria-hidden="true" />
             </IconButton>
           )}
@@ -249,7 +249,7 @@ const ExplorerDrawer: React.FC<ExplorerDrawerProps> = ({
         <span className="font-normal normal-case">{t("Click to inspect")}</span>
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pr-0.5">
+      <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pe-0.5">
         {facilities.length === 0 ? (
           <div className="flex flex-col items-center gap-2.5 px-2.5 py-8 text-center text-sm text-text-secondary">
             <AlertCircle className="size-5 text-ink-400" aria-hidden="true" />

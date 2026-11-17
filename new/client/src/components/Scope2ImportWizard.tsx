@@ -78,7 +78,7 @@ export const Scope2ImportWizard: React.FC<Scope2ImportWizardProps> = ({ onClose,
       <div className="flex flex-wrap gap-2.5">
         <Button
           variant="secondary"
-          className="h-auto min-w-0 flex-1 justify-start gap-3 px-4 py-3 text-left"
+          className="h-auto min-w-0 flex-1 justify-start gap-3 px-4 py-3 text-start"
           onClick={downloadTemplate}
         >
           <FileSpreadsheet className="size-5 shrink-0" aria-hidden="true" />
@@ -86,7 +86,7 @@ export const Scope2ImportWizard: React.FC<Scope2ImportWizardProps> = ({ onClose,
             <strong className="text-sm">{t("Scope 2 CSV Template")}</strong>
             <small className="text-xs font-normal opacity-80">{t("Includes electricity and steam columns with sample entries")}</small>
           </span>
-          <Download className="ml-auto size-4 shrink-0" aria-hidden="true" />
+          <Download className="ms-auto size-4 shrink-0" aria-hidden="true" />
         </Button>
       </div>
       <p className="m-0 text-xs text-text-secondary">

@@ -1,7 +1,6 @@
 """The UNEP / IMEO OGMP 2.0 member disclosure workbook (GET /api/reports/ogmp-export).
 
-One function per sheet, split out of routes/reports_ogmp.export_ogmp_excel (a 770-line function) on 2026-10-16;
-the workbook is unchanged.
+Builds all 13 official member disclosure tabs (0–12) plus the SHA-256 Audit Assurance manifest.
 """
 from datetime import datetime, timezone
 
@@ -10,11 +9,24 @@ from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 
 from extensions import db
-from models import BaseYearRecalculation, Emission, Facility, Goal, OgmpSurvey, ProductionData
+from models import (
+    BaseYearRecalculation,
+    Emission,
+    Facility,
+    Goal,
+    OgmpAnnualReport,
+    OgmpEmissionSource,
+    OgmpImplementationPlan,
+    OgmpReportingEntity,
+    OgmpSurvey,
+    OgmpTarget,
+    ProductionData,
+)
 from services.audit_chain import data_fingerprint
 from services.dashboard_filters import production_gas_m3
 from services.labels import process_label
 from services.ogmp import compute_facility_ogmp_level, ogmp_level_for
+from services.ogmp_reconciliation import compute_portfolio_materiality
 from utils import get_current_tenant_id, tenant_matches
 
 # Official UNEP palette
@@ -69,16 +81,16 @@ class Context:
 
     def __init__(self, user, year, year_filter, facility_filter, allowed_fids, facilities, safe):
         self.user = user
-        self.year = year  # the request's text ("all" or a year)
+        self.year = year
         self.year_filter = year_filter
         self.facility_filter = facility_filter
         self.allowed_fids = allowed_fids
         self.facilities = facilities
-        self.safe = safe  # routes.reports._safe_excel_value
-        # the declaring account as it is: no invented organisation, name or address (review 2026-10-16)
+        self.safe = safe
         self.company_name = getattr(user, "orgName", None) or ""
         self.assessor_name = getattr(user, "fullName", None) or ""
         self.assessor_email = getattr(user, "email", None) or ""
+        self.tenant_id = get_current_tenant_id(user)
         self._ch4 = {}
         self._td = {}
 
@@ -86,7 +98,7 @@ class Context:
         """Verified Scope 1 CH4 (t) of a facility for the period."""
         if fac.id not in self._ch4:
             q = db.session.query(db.func.sum(Emission.ch4_emissions)).filter(
-                Emission.facility_id == fac.id, Emission.status == "Verified")
+                Emission.facility_id == fac.id, Emission.status == "Verified", Emission.is_test == False)  # noqa: E712
             if self.year_filter:
                 q = q.filter(Emission.year == self.year_filter)
             self._ch4[fac.id] = q.scalar() or 0.0
@@ -144,9 +156,10 @@ def _data_row(ws, row, values):
 
 
 def _facility_name(obj):
-    if obj.facility:
+    if getattr(obj, "facility", None):
         return obj.facility.name
-    fac = db.session.get(Facility, obj.facility_id) if obj.facility_id else None
+    fid = getattr(obj, "facility_id", None)
+    fac = db.session.get(Facility, fid) if fid else None
     return fac.name if fac else "Unknown"
 
 
@@ -154,6 +167,19 @@ def _target_year(fac):
     op_st = fac.operator_status or "operated"
     b_yr = fac.ogmp_membership_year or 2023
     return op_st, b_yr, b_yr + (3 if op_st == "operated" else 5)
+
+
+def _apply_facility_scope(q, model, ctx, allow_null=False):
+    if hasattr(model, "tenant_id"):
+        q = q.filter(tenant_matches(model.tenant_id, ctx.tenant_id))
+    if ctx.allowed_fids is not None:
+        if allow_null:
+            q = q.filter(db.or_(model.facility_id.is_(None), model.facility_id.in_(ctx.allowed_fids or [-1])))
+        else:
+            q = q.filter(model.facility_id.in_(ctx.allowed_fids or [-1]))
+    if ctx.facility_filter:
+        q = q.filter(model.facility_id == ctx.facility_filter)
+    return q
 
 
 def sheet_profile(wb, ctx):
@@ -192,8 +218,7 @@ def sheet_profile(wb, ctx):
 
 
 def _summary_targets(ws, ctx):
-    """Row 3: the emission goal and the active base year from Manage Data."""
-    caller_tenant = get_current_tenant_id(getattr(ctx, "user", None))
+    caller_tenant = ctx.tenant_id
     goal = (
         Goal.query.filter_by(year=ctx.year_filter if ctx.year_filter else datetime.now().year).first()
         if caller_tenant == "default"
@@ -215,7 +240,6 @@ def _summary_targets(ws, ctx):
 
 
 def _loss_rate(bu_ch4, gas_m3, segment, ch4_density):
-    """(loss rate % or None, target %, compliance text)."""
     ch4_vol_m3 = (bu_ch4 * 1000.0) / ch4_density if bu_ch4 > 0 else 0.0
     target_rate = 0.20 if "upstream" in (segment or "Upstream").lower() else 0.05
     if gas_m3 > 0:
@@ -251,8 +275,8 @@ def sheet_summary(wb, ctx, ch4_density):
                    else ("On Track" if (ctx.year_filter or datetime.now().year) <= target_yr else "Overdue"))
         _data_row(ws, row, [
             ctx.safe(f.name), ctx.safe(f.code or "N/A"), ctx.safe(f.segment or "Upstream"),
-            ctx.safe(op_st.replace("_", "-").title()), ctx.safe(f.country or "Algeria"),
-            float(f.equity_share_pct or 100.0), b_yr, target_yr, f"Level {level}", round(gas_m3, 2),
+            ctx.safe(op_st.replace("_", "-").title()), ctx.safe(f.country or "Not Specified"),
+            float(f.equity_share_pct if f.equity_share_pct is not None else 100.0), b_yr, target_yr, f"Level {level}", round(gas_m3, 2),
             round(bu_ch4, 2), round(td_ch4, 2), round(rate, 4) if rate is not None else "N/A", target_rate,
             compliance, pathway])
     autofit_columns(ws)
@@ -260,14 +284,13 @@ def sheet_summary(wb, ctx, ch4_density):
 
 
 def sheet_inventory(wb, ctx):
-    """Source-level inventory (Verified records); returns the Level 4+ records with their facility names."""
     ws = _sheet(wb, "2. Bottom-Up Inventory", "OGMP 2.0 SOURCE-LEVEL EMISSIONS INVENTORY (L1 - L4)")
     _headers(ws, 3, ["Record ID", "Facility", "Year", "Month", "Process / Category", "Equipment / Source Code",
                      "Activity Quantity", "Unit", "EF Source", "CH₄ Emissions (t)", "CO₂e Total (t)", "OGMP Level",
                      "Calculation Method", "OGMP Source Category"], Styles.sub_fill)
-    q = Emission.query.filter(Emission.status == "Verified")
+    q = Emission.query.filter(Emission.status == "Verified", Emission.is_test == False)  # noqa: E712 (BA-011)
     if ctx.allowed_fids is not None:
-        q = q.filter(Emission.facility_id.in_(ctx.allowed_fids))
+        q = q.filter(Emission.facility_id.in_(ctx.allowed_fids or [-1]))
     if ctx.year_filter:
         q = q.filter_by(year=ctx.year_filter)
     if ctx.facility_filter:
@@ -302,7 +325,7 @@ def sheet_surveys(wb, ctx):
              Styles.accent_fill)
     q = OgmpSurvey.query
     if ctx.allowed_fids is not None:
-        q = q.filter(OgmpSurvey.facility_id.in_(ctx.allowed_fids))
+        q = q.filter(OgmpSurvey.facility_id.in_(ctx.allowed_fids or [-1]))
     if ctx.year_filter:
         q = q.filter_by(year=ctx.year_filter)
     if ctx.facility_filter:
@@ -317,7 +340,6 @@ def sheet_surveys(wb, ctx):
 
 
 def _reconciliation(bu_total, td_total, thresh):
-    """(variance text, flag text, status, explanation) of bottom-up against top-down."""
     var_pct = None
     if bu_total > 0 and td_total > 0:
         var_pct = round(((td_total - bu_total) / bu_total * 100.0), 2)
@@ -360,7 +382,6 @@ def sheet_reconciliation(wb, ctx):
 
 
 def _milestone(fac, level, target_yr, ref_year):
-    """(milestone status, next action) from the latest survey and the facility's level."""
     latest = (OgmpSurvey.query.filter_by(facility_id=fac.id)
               .order_by(OgmpSurvey.year.desc(), OgmpSurvey.survey_date.desc()).first())
     reconciled = latest is not None and latest.reconciliation_status == "Reconciled" and not latest.variance_flag
@@ -424,7 +445,7 @@ def sheet_joint_ventures(wb, ctx):
                      "Base Year", "Target Gold Year (5-Yr)", "Equity Share CH₄ (t)", "Reporting Source"], Styles.sub_fill)
     jvs = [f for f in ctx.facilities
            if (f.operator_status or "operated") == "non_operated"
-           or float(f.equity_share_pct or 100.0) < 100.0
+           or float(f.equity_share_pct if f.equity_share_pct is not None else 100.0) < 100.0
            or f.boundary_type == "Equity Share"
            or (f.boundary_detail and "venture" in f.boundary_detail.lower())]
     if not jvs:
@@ -432,14 +453,206 @@ def sheet_joint_ventures(wb, ctx):
         ws.cell(row=5, column=10, value="All assets currently declared under 100% operational control.").font = Styles.sub_title_font
     for row, f in enumerate(jvs, start=5):
         b_yr = f.ogmp_membership_year or 2023
-        # an unrecorded equity share is said so (it was shown as 50 %); review 2026-10-16
         eq_pct = float(f.equity_share_pct) if f.equity_share_pct is not None else None
         _data_row(ws, row, [
-            ctx.safe(f.name), ctx.safe(f.country or "Algeria"), ctx.safe(f.region or f.field or ""),
+            ctx.safe(f.name), ctx.safe(f.country or "Not Specified"), ctx.safe(f.region or f.field or ""),
             ctx.safe(f.segment or "Upstream"), ctx.safe(f.boundary_detail or "Partner Joint Venture"),
             f"{eq_pct:.1f}%" if eq_pct is not None else "Equity share not recorded", b_yr, b_yr + 5,
             round(ctx.bottom_up_ch4(f) * (eq_pct / 100.0), 3) if eq_pct is not None else "N/A",
             "Partner Operator Data Exchange / Equity Model"])
+    autofit_columns(ws)
+
+
+def sheet_entities(wb, ctx):
+    """8. UNEP Reporting Entities, Membership & Target Intensity Objectives."""
+    ws = _sheet(wb, "8. UNEP Reporting Entities", "OGMP 2.0 REPORTING ENTITIES, NOJV STATUS & INTENSITY TARGETS",
+                "Corporate entity boundary, working interest equity shares and target commitments")
+    _headers(ws, 4, ["Entity Name", "Facility / Asset", "Segment", "Country", "Operator Status", "Operating Company",
+                     "Working Interest (%)", "Membership Year", "Target Gold Year", "Member-Reported NOJV",
+                     "NOJV Excluded (<5%)", "Target Commitment Summary"], Styles.header_fill)
+    q = _apply_facility_scope(OgmpReportingEntity.query, OgmpReportingEntity, ctx, allow_null=(ctx.facility_filter is None))
+    entities = q.order_by(OgmpReportingEntity.id.asc()).all()
+    if not entities:
+        ws.cell(row=5, column=1, value="No structured UNEP reporting entity records defined in active filter scope.").font = Styles.sub_title_font
+    for row, ent in enumerate(entities, start=5):
+        targets = OgmpTarget.query.filter_by(reporting_entity_id=ent.id).order_by(OgmpTarget.target_year.asc()).all()
+        target_summary = "; ".join(
+            f"{t.target_year}: <= {t.upstream_target_pct}% up / {t.midstream_target_pct}% mid" for t in targets
+        ) if targets else "Default Gold Standard Intensity Benchmarks"
+        _data_row(ws, row, [
+            ctx.safe(ent.entity_name),
+            ctx.safe(ent.asset_name or (_facility_name(ent) if ent.facility_id else "Portfolio Entity")),
+            ctx.safe(ent.segment or "Upstream"),
+            ctx.safe(ent.country or ""),
+            ctx.safe((ent.operator_status or "operated").replace("_", "-").title()),
+            ctx.safe(ent.operating_company or ""),
+            float(ent.working_interest_pct) if ent.working_interest_pct is not None else "Not recorded",
+            ent.membership_year or "",
+            ent.target_gold_year or "",
+            "Yes" if ent.is_member_reported_nojv else "No",
+            "Yes" if ent.is_nojv_material_excluded else "No",
+            ctx.safe(target_summary),
+        ])
+    autofit_columns(ws)
+    return entities
+
+
+def sheet_source_catalog(wb, ctx):
+    """9. UNEP Standardized Source Catalog Disclosure (MI, N/A, YoY & Zero Explanations)."""
+    ws = _sheet(wb, "9. Source Catalog (MI & N-A)", "OGMP 2.0 SOURCE CATALOG & DATA STATUS (QUANTIFIED / MI / N-A)",
+                "15 Upstream & 12 Mid/Downstream standardized UNEP source categories with YoY and zero-emission audit notes")
+    _headers(ws, 4, ["Facility", "Year", "Segment", "Source Code", "Source Name", "Category", "OGMP Level",
+                     "Status Flag", "CH4 (t)", "Uncertainty (95% CI ±%)", "EF / Method Reference",
+                     "YoY Change (%)", "YoY Explanation (>±10%)", "Zero Emission Explanation"], Styles.sub_fill)
+    q = _apply_facility_scope(OgmpEmissionSource.query, OgmpEmissionSource, ctx)
+    if ctx.year_filter:
+        q = q.filter(OgmpEmissionSource.year == ctx.year_filter)
+    sources = q.order_by(OgmpEmissionSource.facility_id.asc(), OgmpEmissionSource.year.desc(), OgmpEmissionSource.source_code.asc()).all()
+    if not sources:
+        ws.cell(row=5, column=1, value="No UNEP Level 1-4 catalog source disclosures recorded in active filter scope.").font = Styles.sub_title_font
+    for row, src in enumerate(sources, start=5):
+        _data_row(ws, row, [
+            ctx.safe(_facility_name(src)),
+            src.year,
+            ctx.safe(src.segment),
+            ctx.safe(src.source_code),
+            ctx.safe(src.source_name),
+            ctx.safe(src.source_category or ""),
+            f"Level {src.ogmp_level}",
+            ctx.safe(src.status_flag or "Quantified"),
+            round(float(src.ch4_tonnes or 0.0), 4),
+            f"±{float(src.uncertainty_pct or 0.0):.1f}%",
+            ctx.safe(src.emission_factor_ref or src.quantification_method or ""),
+            round(float(src.yoy_change_pct), 2) if src.yoy_change_pct is not None else "N/A",
+            ctx.safe(src.yoy_explanation or ""),
+            ctx.safe(src.zero_emission_explanation or ""),
+        ])
+    autofit_columns(ws)
+
+
+def sheet_uncertainty_reconciliation(wb, ctx):
+    """10. Level 4/5 RSS Uncertainty Propagation, 95% CI Overlap & UNEP Pathways."""
+    ws = _sheet(wb, "10. Uncertainty & 95% CI", "OGMP 2.0 LEVEL 4/5 RSS UNCERTAINTY & 95% CI RECONCILIATION",
+                "Root-Sum-of-Squares 95% confidence bounds, CI overlap test, Instantaneous/Annualized & Pathway classification")
+    _headers(ws, 4, ["Facility", "Year", "OGMP Level", "BU CH4 (t)", "BU Unc (±%)", "BU 95% CI Low", "BU 95% CI High",
+                     "TD CH4 (t)", "TD Unc (±%)", "TD 95% CI Low", "TD 95% CI High", "95% CI Overlap",
+                     "Variance (%)", "Pathway", "Measurement Mode", "Option Mode", "L4 Materiality (%)", "Status"],
+             Styles.gold_fill)
+    q = _apply_facility_scope(OgmpAnnualReport.query, OgmpAnnualReport, ctx)
+    if ctx.year_filter:
+        q = q.filter(OgmpAnnualReport.year == ctx.year_filter)
+    reports = q.order_by(OgmpAnnualReport.year.desc(), OgmpAnnualReport.facility_id.asc()).all()
+    if not reports:
+        ws.cell(row=5, column=1, value="No persisted Level 4/5 RSS reconciliation reports in active filter scope.").font = Styles.sub_title_font
+    for row, rep in enumerate(reports, start=5):
+        _data_row(ws, row, [
+            ctx.safe(_facility_name(rep)),
+            rep.year,
+            f"Level {rep.reporting_level}",
+            round(float(rep.total_bottom_up_tch4 or 0.0), 4),
+            f"±{float(rep.bu_uncertainty_pct or 0.0):.2f}%",
+            round(float(rep.bu_ci_low_tch4 or 0.0), 4),
+            round(float(rep.bu_ci_high_tch4 or 0.0), 4),
+            round(float(rep.total_top_down_tch4 or 0.0), 4),
+            f"±{float(rep.td_uncertainty_pct or 0.0):.2f}%",
+            round(float(rep.td_ci_low_tch4 or 0.0), 4),
+            round(float(rep.td_ci_high_tch4 or 0.0), 4),
+            "Yes (Overlaps)" if rep.ci_overlaps else "No (Disjoint)",
+            f"{rep.variance_pct:+.2f}%" if rep.variance_pct is not None else "N/A",
+            ctx.safe(f"Pathway {rep.pathway_code or '1'}"),
+            ctx.safe(rep.measurement_mode or "Annualized"),
+            ctx.safe(rep.option_mode or "Option 1"),
+            round(float(rep.l4_materiality_pct or 0.0), 2),
+            ctx.safe(rep.reconciliation_status or "Pending"),
+        ])
+    autofit_columns(ws)
+
+
+def sheet_implementation_plan(wb, ctx):
+    """11. Y0-Y10 Multi-Year OGMP 2.0 Implementation Plan."""
+    ws = _sheet(wb, "11. Impl. Plan (Y0-Y10)", "OGMP 2.0 IMPLEMENTATION PLAN ROADMAP (Y0 - Y10)",
+                "3-Year Operated / 5-Year Non-Operated Level 4/5 schedule and methodology upgrades")
+    _headers(ws, 4, ["Facility", "Asset Name", "Operator Status", "Base Year", "Horizon", "Planned Year",
+                     "Target Level", "Actual Level", "Source Scope", "Methodology Upgrade", "Milestone Status"],
+             Styles.accent_fill)
+    q = _apply_facility_scope(OgmpImplementationPlan.query, OgmpImplementationPlan, ctx)
+    plans = q.order_by(OgmpImplementationPlan.facility_id.asc(), OgmpImplementationPlan.planned_year.asc()).all()
+    if not plans:
+        ws.cell(row=5, column=1, value="No Y0-Y10 implementation plan milestones logged for active filter scope.").font = Styles.sub_title_font
+    for row, p in enumerate(plans, start=5):
+        _data_row(ws, row, [
+            ctx.safe(_facility_name(p)),
+            ctx.safe(p.asset_name or _facility_name(p)),
+            ctx.safe((p.operator_status or "operated").replace("_", "-").title()),
+            p.base_year,
+            ctx.safe(p.milestone_horizon),
+            p.planned_year,
+            f"Level {p.target_level}",
+            f"Level {p.actual_level}" if p.actual_level else "Pending",
+            ctx.safe(p.source_scope or ""),
+            ctx.safe(p.methodology_upgrade or ""),
+            ctx.safe(p.milestone_status or "Planned"),
+        ])
+    autofit_columns(ws)
+
+
+def sheet_portfolio_materiality(wb, ctx, entities):
+    """12. Portfolio 95% Equity CH4 Materiality & <5% NOJV Exclusions."""
+    ws = _sheet(wb, "12. Portfolio Materiality", "OGMP 2.0 PORTFOLIO 95% EQUITY MATERIALITY & NOJV EXCLUSIONS",
+                "Corporate equity-weighted CH4 coverage vs 95% materiality threshold & <5% NOJV exclusion list")
+    fids = [e.facility_id for e in entities if e.facility_id]
+    fac_ch4 = {}
+    if fids:
+        sq = db.session.query(
+            OgmpEmissionSource.facility_id,
+            db.func.sum(OgmpEmissionSource.ch4_tonnes),
+        ).filter(
+            OgmpEmissionSource.facility_id.in_(fids),
+            tenant_matches(OgmpEmissionSource.tenant_id, ctx.tenant_id),
+            OgmpEmissionSource.status_flag == "Quantified",
+        )
+        if ctx.year_filter:
+            sq = sq.filter(OgmpEmissionSource.year == ctx.year_filter)
+        for fid, val in sq.group_by(OgmpEmissionSource.facility_id).all():
+            if val:
+                fac_ch4[fid] = float(val)
+        for fac in ctx.facilities:
+            if fac.id not in fac_ch4:
+                fac_ch4[fac.id] = float(ctx.bottom_up_ch4(fac) or 0.0)
+        missing_fids = [fid for fid in fids if fid not in fac_ch4]
+        if missing_fids:
+            eq = db.session.query(Emission.facility_id, db.func.sum(Emission.ch4_emissions)).filter(
+                Emission.facility_id.in_(missing_fids), Emission.status == "Verified", Emission.is_test == False  # noqa: E712
+            )
+            if ctx.year_filter:
+                eq = eq.filter(Emission.year == ctx.year_filter)
+            for fid, val in eq.group_by(Emission.facility_id).all():
+                fac_ch4[fid] = float(val or 0.0)
+
+    port = compute_portfolio_materiality(entities, fac_ch4)
+    ws.cell(row=3, column=1, value=(
+        f"Total Equity CH4: {port['total_equity_ch4_tch4']:.2f} t | Included: {port['included_equity_ch4_tch4']:.2f} t "
+        f"({port['included_coverage_pct']:.2f}%) | 95% Rule: {'PASS' if port['meets_95pct_threshold'] else 'FAIL'}"
+    )).font = Styles.bold_font
+    _headers(ws, 4, ["Entity Name", "Segment", "Operator Status", "Working Interest (%)", "Facility CH4 (t)",
+                     "Equity CH4 (t)", "Portfolio Share (%)", "Eligible <5% Excl.", "NOJV Excluded",
+                     "Member-Reported NOJV", "Exclusion Justification"], Styles.header_fill)
+    if not port["entities"]:
+        ws.cell(row=5, column=1, value="No reporting entities registered in active scope for materiality rollup.").font = Styles.sub_title_font
+    for row, item in enumerate(port["entities"], start=5):
+        _data_row(ws, row, [
+            ctx.safe(item["entity_name"]),
+            ctx.safe(item["segment"]),
+            ctx.safe(item["operator_status"].replace("_", "-").title()),
+            item["working_interest_pct"],
+            item["facility_ch4_tch4"],
+            item["equity_ch4_tch4"],
+            item["portfolio_equity_share_pct"],
+            "Yes" if item["eligible_below_5pct_exclusion"] else "No",
+            "Yes" if item["is_nojv_material_excluded"] else "No",
+            "Yes" if item["is_member_reported_nojv"] else "No",
+            ctx.safe(item["exclusion_reason"]),
+        ])
     autofit_columns(ws)
 
 
@@ -453,14 +666,14 @@ def sheet_audit(wb, ctx, sha256):
         name="Calibri", size=12, bold=True, color="334155")
     rows = [
         ("Data Fingerprint (SHA-256)", sha256),
-        ("Covers", "Every cell of all official sheets of this UNEP OGMP 2.0 filing workbook"),
+        ("Covers", "Every cell of all 13 official disclosure sheets (Sheets 0–12) of this UNEP OGMP 2.0 workbook"),
         ("Check", "Matches the REPORT entry of the immutable audit log written when exported"),
         ("Export Timestamp (UTC)", datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")),
         ("Exporting Organization", ctx.safe(ctx.company_name)),
         ("Exporting User & Role", f"{ctx.assessor_name} ({getattr(ctx.user, 'email', '')}) - Role: {ctx.user.role}"),
         ("Facilities Covered", len(ctx.facilities)),
         ("UNEP IMEO Template Spec", "OGMP 2.0 Member Submission Format (TGD 2024/2025)"),
-    ]  # no "digital seal" row: the platform has no HMAC or ledger seal, only the fingerprint in the audit log
+    ]
     for col, label in enumerate(("Assurance Property", "Audit Manifest Value"), start=1):
         ws.cell(row=4, column=col, value=label).fill = Styles.header_fill
         ws.cell(row=4, column=col).font = Styles.header_font
@@ -474,7 +687,7 @@ def sheet_audit(wb, ctx, sha256):
 
 
 def build_workbook(ctx, ch4_density):
-    """(workbook, SHA-256 fingerprint of its official sheets)."""
+    """(workbook, SHA-256 fingerprint of its 13 official disclosure sheets)."""
     wb = openpyxl.Workbook()
     wb.remove(wb.active)
     sheet_profile(wb, ctx)
@@ -485,6 +698,11 @@ def build_workbook(ctx, ch4_density):
     sheet_roadmap(wb, ctx, levels)
     sheet_level4(wb, ctx, level4)
     sheet_joint_ventures(wb, ctx)
+    entities = sheet_entities(wb, ctx)
+    sheet_source_catalog(wb, ctx)
+    sheet_uncertainty_reconciliation(wb, ctx)
+    sheet_implementation_plan(wb, ctx)
+    sheet_portfolio_materiality(wb, ctx, entities)
     sha256 = data_fingerprint([[ws.title, [list(r) for r in ws.iter_rows(values_only=True)]] for ws in wb.worksheets])
     sheet_audit(wb, ctx, sha256)
     return wb, sha256

@@ -491,6 +491,7 @@ class CalculationDispatcher:
             return res
         feed_t = num("feedstock_rate_tonnes", "feedstock_tonnes")
         cf = num("feedstock_carbon_fraction")
+        feed_t = feedstock_tonnes(flat_inputs, num, cf, feed_t)  # BA-039
         if feed_t is not None and cf is not None:
             res = calc.calculate(method="feedstock_balance", feedstock_rate_tonnes_yr=feed_t,
                                  feedstock_carbon_fraction=cf if cf <= 1 else cf / 100.0,
@@ -891,24 +892,7 @@ class CalculationDispatcher:
         if converted:
             flat_inputs = {**flat_inputs, **converted}
 
-        # Validate efficiency fields across all tiers and factor sources
-        for eff_k in (
-            "combustion_efficiency",
-            "destruction_efficiency",
-            "control_efficiency",
-            "flare_efficiency",
-            "flare_eff",
-            "combustion_eff",
-            "destruction_eff",
-            "unload_flare_eff",
-        ):
-            if flat_inputs.get(eff_k) not in (None, "", "-"):
-                try:
-                    eff_val = float(str(flat_inputs[eff_k]).replace("%", "").strip())
-                except (TypeError, ValueError):
-                    raise ValueError(f"'{eff_k}' must be a percentage (got {flat_inputs[eff_k]})")
-                if not math.isfinite(eff_val) or eff_val < 0.0 or eff_val > 100.0:
-                    raise ValueError(f"'{eff_k}' must be between 0 and 100 % (got {flat_inputs[eff_k]})")
+        flat_inputs = efficiencies_as_fractions(flat_inputs)  # always percent (BA-012)
 
         # Validate required gas composition for specific factor sources
         if process_type in [
@@ -1105,9 +1089,7 @@ class CalculationDispatcher:
                         fuel_type=emission_factors.get("type") or catalog.get("type") or flat_inputs.get("fuel_type")
                         or emission_factors.get("fuel_type", "unknown"),
                         hhv_unit=user_hu or factor_hhv_unit(emission_factors) or factor_hhv_unit(catalog),
-                        combustion_efficiency=float(
-                            flat_inputs.get("combustion_efficiency") or 0.995
-                        ),
+                        combustion_efficiency=flat_inputs.get("combustion_efficiency"),  # None: complete (s4.2)
                         operating_temperature=self._given(flat_inputs, "operating_temperature", "temperature"),
                         temp_unit=flat_inputs.get("temp_unit") or "C",
                         operating_pressure=self._given(flat_inputs, "operating_pressure", "pressure"),
@@ -1261,14 +1243,9 @@ class CalculationDispatcher:
                 )
 
             elif calculator is not None and hasattr(calculator, "calculate"):
-                try:
-                    return calculator.calculate(**flat_inputs, uncertainties=uncertainties, gwp_dict=gwp_dict)
-                except (TypeError, ValueError):
-                    if any(emission_factors.get(k) not in (None, "", "-", 0, 0.0) for k in ("co2", "ch4", "n2o", "ef_co2", "ef_ch4", "ef_n2o")):
-                        return self._generic_calculation(
-                            flat_inputs, emission_factors, uncertainties, process_type, gwp_dict=gwp_dict
-                        )
-                    raise
+                # its error is the record's (it fell back to the fuel's factor, BA-029)
+                return calculator.calculate(**_period_kwargs(calculator.calculate, flat_inputs),
+                                            uncertainties=uncertainties, gwp_dict=gwp_dict)
 
             else:
                 return self._generic_calculation(
@@ -1312,6 +1289,7 @@ class CalculationDispatcher:
             raise ValueError("Missing required field: unit (the activity unit is needed to apply the factor)")
         if not f_unit:
             raise ValueError(f"Emission factor '{emission_factors.get('name') or inputs.get('fuel')}' has no unit")
+        quantity, unit = rate_to_period_volume(quantity, unit, inputs)  # BA-024
 
         # RC-5 (BUG-047/049/051/063): one parser for every factor unit; per-hour factors need
         # operating hours; energy factors need the heating value in the factor's declared basis.
@@ -1383,6 +1361,8 @@ dispatcher = CalculationDispatcher()
 
 # Branch implementations of _dispatch_impl, split into their own modules; imported last because
 # they use the helpers and imports defined above.
+from .dispatcher_inputs import (EFFICIENCY_FIELDS, _period_kwargs, efficiencies_as_fractions,  # noqa: E402,F401
+                               feedstock_tonnes, rate_to_period_volume)
 from .dispatcher_branches_combustion import calc_stationary_combustion, calc_flaring, calc_drilling, calc_completions, calc_liquids_unloading  # noqa: E402,F401
 from .dispatcher_branches_venting import calc_venting, calc_associated_gas_venting, calc_tank, calc_pneumatic_devices, calc_dehydrator  # noqa: E402,F401
 from .dispatcher_branches_fugitive import calc_fugitive, calc_compressor_seal, calc_agr, calc_cogen_allocation, calc_nitric_acid_production, calc_stoichiometry, calc_indirect_steam  # noqa: E402,F401

@@ -54,7 +54,7 @@ const ROWS: MatrixRow[] = [
   { name: "Nitrous Oxide (N₂O) - 100 Year", key: "N2O", context: t("Flaring / Combustion byproducts") },
 ];
 
-const th = "whitespace-nowrap border-b border-border bg-surface px-3.5 py-2.5 text-left text-xs font-bold uppercase tracking-wide text-text-secondary";
+const th = "whitespace-nowrap border-b border-border bg-surface px-3.5 py-2.5 text-start text-xs font-bold uppercase tracking-wide text-text-secondary";
 const td = "border-b border-ink-100 px-3.5 py-2.5 text-base text-text";
 
 export interface GwpDataEntry {

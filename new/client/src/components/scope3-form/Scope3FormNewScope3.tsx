@@ -191,7 +191,7 @@ export const Scope3FormNewScope3: React.FC<Scope3FormNewScope3Props> = ({
         </span>
         {amount && Number(amount) > 0 && emissionFactor && Number(emissionFactor) > 0 ? (
           <Badge tone="success" className="font-mono text-xs font-bold">
-            ~ {((Number(amount) * Number(emissionFactor)) / 1000).toLocaleString(undefined, { maximumFractionDigits: 3 })} tCO₂e
+            ~ {((Number(amount) * Number(emissionFactor)) / 1000).toLocaleString("en-US", { maximumFractionDigits: 3 })} tCO₂e
           </Badge>
         ) : (
           <span className="text-xs text-text-secondary italic">

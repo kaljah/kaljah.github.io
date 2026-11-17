@@ -77,22 +77,22 @@ def test_fix3_fire_suppression_dynamic_gwp_override():
 
     # 3. Default AR5 fallback when not overridden
     res_default = calc.calculate(agent_type="HFC-227ea", direct_discharge_kg=1000.0)
-    assert res_default["inputs"]["gwp"] == 3220.0
-    assert pytest.approx(res_default["total_co2e"], rel=1e-3) == 3220.0
+    assert res_default["inputs"]["gwp"] == 3350.0  # IPCC AR5 (3,220 was the AR4 value, BA-036)
+    assert pytest.approx(res_default["total_co2e"], rel=1e-3) == 3350.0
 
 
 def test_fix4_fire_suppression_physical_mass_format():
     """Verify format_result carries physical chemical mass in results['f_gas']['value'], not CO2e mass."""
     calc = FireSuppressionCalculator()
-    # 2000 kg = 2.0 metric tonnes of HFC-227ea (GWP = 3220)
+    # 2000 kg = 2.0 metric tonnes of HFC-227ea (GWP = 3350, AR5)
     res = calc.calculate(agent_type="HFC-227ea", direct_discharge_kg=2000.0)
     
     f_gas_dict = res["results"]["f_gas"]
     assert isinstance(f_gas_dict, dict)
-    # Physical mass must be 2.0 tonnes, NOT 2.0 * 3220 = 6440 tonnes!
+    # Physical mass must be 2.0 tonnes, NOT 2.0 * 3350 = 6700 tonnes!
     assert pytest.approx(f_gas_dict["value"], rel=1e-4) == 2.0
-    assert pytest.approx(f_gas_dict["co2e"], rel=1e-4) == 6440.0
-    assert pytest.approx(res["total_co2e"], rel=1e-4) == 6440.0
+    assert pytest.approx(f_gas_dict["co2e"], rel=1e-4) == 6700.0
+    assert pytest.approx(res["total_co2e"], rel=1e-4) == 6700.0
 
 
 def test_fix5_liquids_unloading_eq6_10_scales_with_events():
@@ -158,10 +158,10 @@ def test_fix7_crude_transport_flared_n2o_heating_value_dimension():
     )
     
     n2o_val = res["results"]["n2o"]["value"]
-    # 9.24 t TOC captured * 0.98 = 9.055 t TOC -> ~399 MMBtu -> ~3.99e-5 t N2O
-    # Before the fix without MMBtu conversion, it was 9.055 * 0.85 * 1e-7 = 7.7e-7 t (understated by 50x)
+    # Compendium Eq 5-6: N2O = flare CO2 x 1.0E-04 / 60 (BA-017; it was an assumed TOC heating value x 1.0E-04)
+    co2_val = res["results"]["co2"]["value"]
     assert n2o_val > 1.0e-5
-    assert pytest.approx(n2o_val, rel=0.1) == 3.99e-5
+    assert n2o_val == pytest.approx(co2_val * 1.0e-4 / 60, rel=1e-9)
 
 
 def test_fix8_liquids_unloading_plunger_lift_z_floor():

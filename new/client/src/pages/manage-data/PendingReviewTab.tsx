@@ -93,7 +93,7 @@ export interface PendingReviewTabProps {
 
 // The review actions stay in view while the wide text columns scroll (audit 2026-10-14 BUG-0059).
 const STICKY_ACTIONS =
-  "[position:sticky]! [right:0]! [z-index:1]! [background:var(--bg-card)]! [border-left:1px_solid_var(--border-color)]!";
+  "[position:sticky]! [inset-inline-end:0]! [z-index:1]! [background:var(--bg-card)]! [border-inline-start:1px_solid_var(--border-color)]!";
 
 // Extracted from ManageData.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
@@ -187,7 +187,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
             <div className="rounded-lg border border-border bg-ink-50/60 p-3 text-xs flex flex-col gap-1.5">
               <div className="flex items-center justify-between">
                 <span className="font-semibold text-text">#{activeRejectRecord.id} · {activeRejectRecord.desc}</span>
-                <span className="font-bold text-text">{activeRejectRecord.tco2e.toLocaleString(undefined, { minimumFractionDigits: 2 })} tCO₂e</span>
+                <span className="font-bold text-text">{activeRejectRecord.tco2e.toLocaleString("en-US", { minimumFractionDigits: 2 })} tCO₂e</span>
               </div>
               <div className="text-text-secondary flex flex-wrap gap-x-4">
                 <span>{t("Facility")}: <strong>{facilities.find((f) => f.id === activeRejectRecord.facility_id)?.name || activeRejectRecord.facility_id}</strong></span>
@@ -302,7 +302,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
 
       {/* Top Hero KPI Metrics Strip */}
       <div className="[display:grid] [grid-template-columns:repeat(auto-fit,_minmax(220px,_1fr))] [gap:16px] [width:100%]">
-        <div className="[background:var(--bg-card)] [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)] [&&]:[border-radius:var(--radius-lg)] [padding:20px] [display:flex] [align-items:center] [gap:16px] [box-shadow:var(--shadow-card)] [transition:all_0.2s_cubic-bezier(0.4,_0,_0.2,_1)] border-l-2! border-l-brand-500! hover:border-ink-300">
+        <div className="[background:var(--bg-card)] [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)] [&&]:[border-radius:var(--radius-lg)] [padding:20px] [display:flex] [align-items:center] [gap:16px] [box-shadow:var(--shadow-card)] [transition:all_0.2s_cubic-bezier(0.4,_0,_0.2,_1)] border-s-2! border-s-brand-500! hover:border-ink-300">
           <div className="[width:48px] [height:48px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [flex-shrink:0] bg-[color:rgba(255,_102,_0,_0.1)]! text-[color:var(--color-link)]!">
             <Clock size={22} />
           </div>
@@ -315,21 +315,21 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
           </div>
         </div>
 
-        <div className="[background:var(--bg-card)] [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)] [&&]:[border-radius:var(--radius-lg)] [padding:20px] [display:flex] [align-items:center] [gap:16px] [box-shadow:var(--shadow-card)] [transition:all_0.2s_cubic-bezier(0.4,_0,_0.2,_1)] border-l-2! border-l-red-600! hover:border-ink-300">
+        <div className="[background:var(--bg-card)] [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)] [&&]:[border-radius:var(--radius-lg)] [padding:20px] [display:flex] [align-items:center] [gap:16px] [box-shadow:var(--shadow-card)] [transition:all_0.2s_cubic-bezier(0.4,_0,_0.2,_1)] border-s-2! border-s-red-600! hover:border-ink-300">
           <div className="[width:48px] [height:48px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [flex-shrink:0] bg-[color:rgba(239,_68,_68,_0.1)]! text-[color:var(--color-red-700)]!">
             <Flame size={22} />
           </div>
           <div className="[display:flex] [flex-direction:column] [gap:2px] [min-width:0]">
             <span className="text-xs font-medium text-[color:var(--text-secondary)]">{t("Pending Impact")}</span>
             <span className="[font-size:var(--text-xl)] [font-weight:700] tabular-nums [color:var(--text-primary)] [line-height:1.2]">
-              {pendingMetrics.totalTco2e.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
-              <span className="text-[length:0.8rem]! font-medium! text-[color:var(--text-secondary)]! ml-[4px]!">{t("tCO₂e")}</span>
+              {pendingMetrics.totalTco2e.toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
+              <span className="text-[length:0.8rem]! font-medium! text-[color:var(--text-secondary)]! ms-[4px]!">{t("tCO₂e")}</span>
             </span>
             <span className="[font-size:var(--text-sm)] [color:var(--text-muted)] [white-space:nowrap] [overflow:hidden] [text-overflow:ellipsis]">{t("Awaiting inventory commit")}</span>
           </div>
         </div>
 
-        <div className="[background:var(--bg-card)] [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)] [&&]:[border-radius:var(--radius-lg)] [padding:20px] [display:flex] [align-items:center] [gap:16px] [box-shadow:var(--shadow-card)] [transition:all_0.2s_cubic-bezier(0.4,_0,_0.2,_1)] border-l-2! border-l-amber-500! hover:border-ink-300">
+        <div className="[background:var(--bg-card)] [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)] [&&]:[border-radius:var(--radius-lg)] [padding:20px] [display:flex] [align-items:center] [gap:16px] [box-shadow:var(--shadow-card)] [transition:all_0.2s_cubic-bezier(0.4,_0,_0.2,_1)] border-s-2! border-s-amber-500! hover:border-ink-300">
           <div className={`[width:48px] [height:48px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [flex-shrink:0] ${pendingMetrics.flaggedCount > 0 ? "[background:rgba(245,_158,_11,_0.1)]!" : "[background:rgba(16,_185,_129,_0.1)]!"} ${pendingMetrics.flaggedCount > 0 ? "[color:var(--color-amber-600)]!" : "[color:var(--color-green-600)]!"}`}>
             {pendingMetrics.flaggedCount > 0 ? <AlertTriangle size={22} /> : <CheckCircle size={22} />}
           </div>
@@ -342,7 +342,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
           </div>
         </div>
 
-        <div className="[background:var(--bg-card)] [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)] [&&]:[border-radius:var(--radius-lg)] [padding:20px] [display:flex] [align-items:center] [gap:16px] [box-shadow:var(--shadow-card)] [transition:all_0.2s_cubic-bezier(0.4,_0,_0.2,_1)] border-l-2! border-l-blue-600! hover:border-ink-300">
+        <div className="[background:var(--bg-card)] [backdrop-filter:blur(10px)] [border:1px_solid_var(--border-color)] [&&]:[border-radius:var(--radius-lg)] [padding:20px] [display:flex] [align-items:center] [gap:16px] [box-shadow:var(--shadow-card)] [transition:all_0.2s_cubic-bezier(0.4,_0,_0.2,_1)] border-s-2! border-s-blue-600! hover:border-ink-300">
           <div className="[width:48px] [height:48px] [border-radius:var(--radius-md)] [display:flex] [align-items:center] [justify-content:center] [flex-shrink:0] bg-[color:rgba(59,_130,_246,_0.1)]! text-[color:var(--color-blue-600)]!">
             <Shield size={22} />
           </div>
@@ -474,7 +474,7 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
             </span>
             <span className="text-[color:rgba(255,255,255,0.3)]!">•</span>
             <span className="text-[length:0.84rem]! text-[color:var(--color-ink-300)]!">
-              {t("Cumulative:")}{" "}<strong className="text-[color:var(--color-white)]!">{selectedPendingImpactTco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>{" "}{t("tCO₂e")}
+              {t("Cumulative:")}{" "}<strong className="text-[color:var(--color-white)]!">{selectedPendingImpactTco2e.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>{" "}{t("tCO₂e")}
             </span>
           </div>
           <div className="[display:flex] [align-items:center] [gap:10px]">
@@ -554,11 +554,11 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
                   : t("Scope {{scope}} Pending Records", { scope: pendingScopeFilter })}
               </h3>
               <span className="bg-[color:rgba(15,_23,_42,_0.06)]! text-[color:var(--text-secondary)]! text-[length:0.78rem]! font-semibold! p-[2px_8px]! rounded-[8px]!">
-                {t("Showing")}{" "}{filteredPendingRecords.length}{" "}{t("of")}{" "}{pendingMetrics.totalCount}
+                {t("Showing {{shown}} of {{total}}", { shown: filteredPendingRecords.length, total: pendingMetrics.totalCount })}
               </span>
               {pendingMetrics.loadedCount < pendingMetrics.totalCount && (
-                <span className="text-[length:0.78rem]! text-[color:var(--color-amber-700)]! ml-[8px]!">
-                  {t("The first")}{" "}{pendingMetrics.loadedCount}{" "}{t("are listed (200 per scope); decide on them to load the next ones, or use the Review Wizard to approve all")}
+                <span className="text-[length:0.78rem]! text-[color:var(--color-amber-700)]! ms-[8px]!">
+                  {t("The first {{count}} are listed (200 per scope); decide on them to load the next ones, or use the Review Wizard to approve all", { count: pendingMetrics.loadedCount })}
                 </span>
               )}
             </div>
@@ -650,12 +650,12 @@ const PendingReviewTab: React.FC<PendingReviewTabProps> = ({
                       </td>
                       <td className="text-right!">
                         <span className="font-bold! text-[length:0.92rem]! text-[color:var(--text-primary)]!">
-                          {item.tco2e.toLocaleString(undefined, {
+                          {item.tco2e.toLocaleString("en-US", {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
                           })}
                         </span>
-                        <span className="text-[length:0.72rem]! text-[color:var(--text-secondary)]! ml-[4px]!">
+                        <span className="text-[length:0.72rem]! text-[color:var(--text-secondary)]! ms-[4px]!">
                           {t("tCO₂e")}
                         </span>
                       </td>

@@ -337,7 +337,7 @@ class TestScope2Adversarial:
         """Testing indirect steam under extreme boiler efficiency and line loss."""
         # 1000 MMBtu, boiler eff 80%, loss 0%
         co2e_base, mmbtu_base, _ = _calc_indirect_steam({
-            "amount": 1000.0, "unit": "mmbtu", "boiler_efficiency": 0.80,
+            "amount": 1000.0, "unit": "mmbtu", "boiler_efficiency": 80,
             "calc_inputs": {"indirect_steam": {"trans_loss": 0.0}}
         })
         assert co2e_base > 0.0
@@ -345,7 +345,7 @@ class TestScope2Adversarial:
 
         # High line loss (15%) increases required boiler fuel and emissions
         co2e_loss, _, _ = _calc_indirect_steam({
-            "amount": 1000.0, "unit": "mmbtu", "boiler_efficiency": 0.80,
+            "amount": 1000.0, "unit": "mmbtu", "boiler_efficiency": 80,
             "calc_inputs": {"indirect_steam": {"trans_loss": 0.15}}
         })
         assert co2e_loss > co2e_base

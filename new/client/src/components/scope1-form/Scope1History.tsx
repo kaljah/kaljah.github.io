@@ -301,9 +301,9 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
                     {/* BUG-092: every record shows its maker-checker status */}
                     {entry.status && (
                       <span
-                        title={`Status: ${entry.status}`}
+                        title={t("Status: {{status}}", { status: t(entry.status) })}
                         style={{
-                          marginLeft: "8px",
+                          marginInlineStart: "8px",
                           fontSize: "0.65rem",
                           padding: "1px 5px",
                           borderRadius: "4px",
@@ -394,7 +394,7 @@ export const Scope1History: React.FC<Scope1HistoryProps> = ({
         </tbody>
         <tfoot>
           <tr className="[background-color:var(--color-legacy-f9fafb)]! [font-weight:bold]!">
-            <td colSpan={14} className="text-right! pr-[15px]!">
+            <td colSpan={14} className="text-right! pe-[15px]!">
               {t("Total (")}{filterYear || filterProcess || filterSearch ? t("Filtered") : t("Page")}):
             </td>
             <td className="text-[color:var(--color-link)]!">

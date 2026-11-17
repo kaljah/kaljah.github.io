@@ -13,6 +13,7 @@ from utils import (
     initial_record_status,
     internal_error,
     log_activity_and_notify,
+    normalize_tenant_id,
     require_facility_access,
     tenant_matches,
 )
@@ -71,7 +72,11 @@ def get_scope3_emissions():
             .first()
         )
         base = rec or (BaseYear.query.first() if caller_tenant == "default" else None)
-        year_arg = str(base.year) if base else "-1"
+        if not base:
+            query = query.filter(Scope3Emission.id == -1)
+            year_arg = None
+        else:
+            year_arg = str(base.year)
     if year_arg and year_arg != "all":
         try:
             parsed_year = parse_year(year_arg, "year", required=True)
@@ -152,6 +157,10 @@ def create_scope3_emission():
     if facility is None:
         return jsonify({"error": "Facility not found", "field": "facility_id"}), 404
 
+    caller_tenant = get_current_tenant_id(user)
+    if normalize_tenant_id(getattr(facility, "tenant_id", None)) != caller_tenant:
+        return jsonify({"error": "Unauthorized for this facility"}), 403
+
     initial_status = initial_record_status(user, data.get("status"))
 
     # BUG-073 / BUG-089 / BUG-083: validate period, category and numbers before anything is stored.
@@ -173,10 +182,8 @@ def create_scope3_emission():
             "code": "DUPLICATE_RECORD"
         }), 409
 
-    activity_data = parse_number(
-        data.get("activity_data") if data.get("activity_data") not in (None, "") else data.get("amount"),
-        "activity_data", required=False, min_value=0, default=0.0,
-    )
+    activity_data = parse_number(data.get("activity_data") if data.get("activity_data") not in (None, "") else
+                                 data.get("amount"), "activity_data", required=False, min_value=0, default=0.0)
     emission_factor = parse_number(data.get("emission_factor"), "emission_factor", required=False, min_value=0, default=0.0)
     co2e_input = data.get("co2e") if data.get("co2e") not in (None, "") else data.get("emissions_tco2e")
     # Enforce server-side calculation from activity_data and emission_factor to prevent client-side tampering
@@ -206,9 +213,10 @@ def create_scope3_emission():
         return jsonify({"error": "Give the activity amount and emission factor (or, for admins and superusers, "
                                  "a supplier-reported co2e)"}), 422
     if activity_data > 0 and emission_factor > 0:
-        # stored as kg CO2e per activity unit whatever unit it was entered in (t/unit, g/unit, per $1,000)
+        # stored as kg CO2e per activity unit whatever unit it was entered in, and labelled so (0.43 t/bbl read 430 t/bbl, BA-057)
         from calculations.units import scope3_ef_kg_per_unit
         emission_factor = scope3_ef_kg_per_unit(activity_data, co2e_val, emission_factor)
+        factor_unit = f"kg CO2e / {data.get('unit') or 'unit'}"
 
     require_plausible_co2e(co2e_val)
     emission = Scope3Emission(
@@ -433,7 +441,7 @@ def update_scope3_emission(emission_id):
                 return jsonify({"error": ve.message, "field": "unit"}), 400
             from calculations.units import scope3_ef_kg_per_unit
             emission.emission_factor = scope3_ef_kg_per_unit(act, emission.co2e, ef)
-            emission.factor_unit = factor_unit
+            emission.factor_unit = f"kg CO2e / {emission.unit or 'unit'}"  # the stored kg basis (BA-057)
         elif not ef and "emission_factor" not in data and emission.co2e:
             pass  # BUG-0008: a supplier-reported total stays; its activity amount is informational
         else:
@@ -604,13 +612,21 @@ def bulk_import_scope3():
                     if fid in facility_cache:
                         facility = facility_cache[fid]
                     else:
-                        facility = db.session.get(Facility, fid)
+                        f_candidate = db.session.get(Facility, fid)
+                        if f_candidate and normalize_tenant_id(getattr(f_candidate, "tenant_id", None)) == caller_tenant:
+                            facility = f_candidate
+                        else:
+                            facility = None
                         facility_cache[fid] = facility
                 except (ValueError, TypeError):
                     facility = None
 
             if not facility:
                 errors.append(f"Row {i}: Facility '{f_val}' not found")
+                continue
+
+            if normalize_tenant_id(getattr(facility, "tenant_id", None)) != caller_tenant:
+                errors.append(f"Row {i}: Unauthorized for facility '{f_val}'")
                 continue
 
             if allowed_fids is not None and facility.id not in allowed_fids:

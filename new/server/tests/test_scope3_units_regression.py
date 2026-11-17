@@ -65,6 +65,9 @@ def test_scope3_explicit_factor_unit_stored(client, app):
 
         rec = db.session.get(Scope3Emission, rec_id)
         assert rec is not None
-        assert rec.factor_unit == "kg CO2e / MMBtu"
         # 2000 mcf * 1.020 * 54.18 / 1000 = 110.5272
         assert rec.co2e == pytest.approx(110.5272, rel=1e-3)
+        # the factor is stored per activity unit (kg CO2e per mcf) and its unit says so (it kept "per MMBtu"
+        # beside a per-mcf value, BA-057)
+        assert rec.factor_unit == "kg CO2e / mcf"
+        assert rec.emission_factor == pytest.approx(1.020 * 54.18, rel=1e-3)

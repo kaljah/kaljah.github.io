@@ -15,7 +15,7 @@ export const AGRForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceTy
       <div className="input-group">
         <label>
           {t("Inlet (sour) gas throughput")}
-          <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+          <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
         </label>
         <div className="grid gap-[10px] [grid-template-columns:1fr_130px] max-[600px]:[grid-template-columns:1fr]">
           <Input
@@ -60,7 +60,7 @@ export const AGRForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceTy
             label={
               <>
                 {t("Inlet CO2 (%)")}
-                <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
               </>
             }
           >
@@ -78,7 +78,7 @@ export const AGRForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceTy
             label={
               <>
                 {t("Outlet CO2 (%)")}
-                <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
               </>
             }
           >
@@ -136,7 +136,7 @@ export const AGRForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceTy
               label={
                 <>
                   {t("Control Efficiency (%)")}
-                  <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                  <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
                 </>
               }
             >

@@ -140,21 +140,23 @@ def update_tenant_config(tenant_id: Optional[str], updates: Dict[str, Any], user
         setting.value = json.dumps(current)
         setting.updated_at = utc_now()
 
-    # Log audit event
-    user_name = getattr(user, "fullName", None) or getattr(user, "email", "Admin") if user else "System"
-    user_id = getattr(user, "id", None) if user else None
-    audit = ActivityLog(
-        action="SETTINGS_CHANGE",
-        entity="TenantConfig",
-        entity_id=setting_key,
-        user_name=user_name,
-        user_id=user_id,
-        details=f"Tenant configuration '{tenant_id}' updated: {', '.join(filtered.keys())}",
-        old_values=json.dumps(old_snapshot),
-        new_values=json.dumps(current),
-    )
-    db.session.add(audit)
-    db.session.commit()
+    # the change and its (hash-chained) audit entry commit together, or neither does
+    from utils import log_activity_and_notify
+    try:
+        log_activity_and_notify(
+            action="SETTINGS_CHANGE",
+            record_id=setting_key,
+            entity="TenantConfig",
+            entity_id=setting_key,
+            user=user,
+            details=f"Tenant configuration '{tenant_id}' updated: {', '.join(filtered.keys())}",
+            old_values=old_snapshot,
+            new_values=current,
+        )
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        raise
     return current
 
 

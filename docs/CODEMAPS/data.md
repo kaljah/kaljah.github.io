@@ -53,7 +53,7 @@ SQLAlchemy ORM relational data layer supporting SQLite (development/testing) and
 | `component_inventories`| `ComponentInventory`| `facility_id, component_type, count, service_stream` | Fugitive emission factor equipment census |
 | `fugitive_surveys` | `FugitiveSurvey` | `facility_id, survey_date, leakers_found, method` | EPA Method 21 / OGI leak campaign log |
 | `activity_log` | `ActivityLog` | `user_id, action, entity_type, entity_id, timestamp` | Append-only security & audit history |
-| `ogmp_surveys` | `OgmpSurvey` | `facility_id, source_type, ogmp_level, measured_rate`| UNEP OGMP 2.0 tracking (preview, reconciliation logic in development) |
+| `ogmp_surveys` | `OgmpSurvey` | `facility_id, source_type, ogmp_level, measured_rate`| UNEP OGMP 2.0 Level 4/5 site measurements & RSS reconciliation |
 | `facility_equity_shares`| `FacilityEquityShare`| `facility_id, partner_id, share_percentage` | Operational vs. Equity share boundaries |
 | `import_mappings` | `ImportMapping` | `source_column, target_field, facility_id` | Cached column mapping wizard profiles |
 

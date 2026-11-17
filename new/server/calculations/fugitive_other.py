@@ -68,6 +68,11 @@ TRANSMISSION_EF_T_PER_KM = 1.40e-4
 _FGAS_GWP = {
     "SF6": {"AR4": (22800.0, 16300.0), "AR5": (23500.0, 17500.0), "AR6": (25200.0, 18300.0)},
     "HFC-134A": {"AR4": (1430.0, 3830.0), "AR5": (1300.0, 3710.0), "AR6": (1530.0, 4140.0)},
+    # fire suppression clean agents (Compendium s6.14): AR4 WG1 Table 2.14, AR5 WG1 Table 8.A.1, AR6 WG1 Table 7.SM.7
+    "HFC-227EA": {"AR4": (3220.0, 5310.0), "AR5": (3350.0, 5360.0), "AR6": (3600.0, 5850.0)},
+    "HFC-125": {"AR4": (3500.0, 6350.0), "AR5": (3170.0, 6090.0), "AR6": (3740.0, 6740.0)},
+    "HFC-236FA": {"AR4": (9810.0, 8100.0), "AR5": (8060.0, 6940.0), "AR6": (8690.0, 7450.0)},
+    "HALON-1301": {"AR4": (7140.0, 8480.0), "AR5": (6290.0, 7800.0), "AR6": (6670.0, 8320.0)},
 }
 _AR5_BLENDS = {  # Table 7-84 (IPCC AR5, 100 years); "na" entries are absent
     "R-401A": 18, "R-401B": 15, "R-401C": 21, "R-402A": 1902, "R-402B": 1205, "R-403A": 1780, "R-403B": 3471,
@@ -160,7 +165,7 @@ def _result(calc, co2=0.0, ch4=0.0, n2o=0.0, f_gas=None, inputs=None, gwp_dict=N
             tier=_tier, process_category="fugitive", gas="co2"
         )
         f_gas_out = dict(f_gas)
-        f_gas_out["uncertainty"] = f_res.get("relative_uncertainty_95pct", 0.0) / 100.0
+        f_gas_out["uncertainty"] = f_res.get("relative_uncertainty_95pct", 0.0)
         f_gas_out["lower_bound"] = f_res.get("lower_bound_95", f_val)
         f_gas_out["upper_bound"] = f_res.get("upper_bound_95", f_val)
         out["results"]["f_gas"] = f_gas_out

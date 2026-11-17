@@ -50,7 +50,7 @@
   height: 100%;
   border: 3px solid transparent;
   border-top-color: var(--accent-color);
-  border-right-color: rgba(255, 102, 0, 0.2);
+  border-inline-end-color: rgba(255, 102, 0, 0.2);
   border-radius: 50%;
   animation: stylish-spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
   filter: drop-shadow(0 0 6px rgba(255, 102, 0, 0.4));
@@ -59,10 +59,10 @@
 .stylish-theme-spinner .spinner-ring::before {
   content: "";
   position: absolute;
-  top: 4px; left: 4px; right: 4px; bottom: 4px;
+  top: 4px; inset-inline-start: 4px; inset-inline-end: 4px; bottom: 4px;
   border: 3px solid transparent;
   border-bottom-color: var(--accent-color);
-  border-left-color: rgba(255, 102, 0, 0.2);
+  border-inline-start-color: rgba(255, 102, 0, 0.2);
   border-radius: 50%;
   animation: stylish-spin-reverse 2s linear infinite;
 }

@@ -125,7 +125,7 @@ const BellButton: React.FC<BellButtonProps> = ({ count, onClick }) => (
     <Bell size={20} strokeWidth={1.75} />
     {count > 0 && (
       <span
-        className="[position:absolute]! [top:3px]! [right:3px]! min-w-[16px]! h-[16px]! bg-[color:var(--color-red-500)]! rounded-[8px]! [border:1.5px_solid_var(--bg-card,_var(--color-white))]! text-[length:0.6rem]! font-bold! text-[color:var(--color-white)]! flex! items-center! justify-center! p-[0_3px]! leading-[1]! [letter-spacing:-0.02em]!"
+        className="[position:absolute]! [top:3px]! [inset-inline-end:3px]! min-w-[16px]! h-[16px]! bg-[color:var(--color-red-500)]! rounded-[8px]! [border:1.5px_solid_var(--bg-card,_var(--color-white))]! text-[length:0.6rem]! font-bold! text-[color:var(--color-white)]! flex! items-center! justify-center! p-[0_3px]! leading-[1]! [letter-spacing:-0.02em]!"
       >
         {count > 99 ? "99+" : count}
       </span>
@@ -145,16 +145,7 @@ const AlertRow: React.FC<AlertRowProps> = ({ alert, onNavigate }) => {
   const iconBg = isCrit ? "rgba(239, 68, 68, 0.12)" : isWarn ? "rgba(245, 158, 11, 0.12)" : "rgba(59, 130, 246, 0.12)";
 
   return (
-    <div
-      style={{
-        padding: "12px 16px",
-        borderBottom: "1px solid var(--border-light, var(--color-ink-100))",
-        display: "flex",
-        gap: 12,
-        alignItems: "flex-start",
-        transition: "background 0.15s",
-      }}
-    >
+    <div className="[padding:12px_16px] [border-bottom:1px_solid_var(--border-light,_var(--color-ink-100))] [display:flex] [gap:12px] [align-items:flex-start] [transition:background_0.15s]">
       <div
         style={{
           flexShrink: 0,
@@ -648,16 +639,8 @@ const NotificationCenter: React.FC = () => {
           <span
             className="inline-flex! items-center! gap-[4px]! text-[length:0.65rem]! font-bold! text-[color:var(--color-green-600)]! bg-[color:rgba(16,185,129,0.1)]! [border:1px_solid_rgba(16,185,129,0.25)]! rounded-[20px]! p-[2px_8px]! [letter-spacing:0.03em]!"
           >
-            <span
-              style={{
-                width: 6,
-                height: 6,
-                borderRadius: "50%",
-                background: "var(--color-green-500)",
-                animation: "pulse-dot 2s ease-in-out infinite",
-              }}
-            />
-            LIVE
+            <span className="[width:6px] [height:6px] [border-radius:50%] [background:var(--color-green-500)] [animation:pulse-dot_2s_ease-in-out_infinite]" />
+            {t("LIVE")}
           </span>
         </div>
 

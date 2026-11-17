@@ -77,8 +77,14 @@ textarea:focus-visible {
     background-repeat: no-repeat;
     background-position: right 10px center;
     background-size: 16px;
-    padding-right: 32px;
+    padding-inline-end: 32px;
   }
+}
+
+/* Right-to-left (Arabic): the select chevron sits at the inline end, which is the left. Unlayered and
+   more specific than the legacy select rules, which place it with `right Npx center`. */
+html[dir="rtl"] select:not([multiple]):not([size]) {
+  background-position: left 12px center;
 }
 
 ::selection {

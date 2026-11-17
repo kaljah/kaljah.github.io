@@ -73,8 +73,9 @@ def test_propagate_co2e_uncertainty_formula():
 
     # Variance calculations:
     var_co2 = (100.0 * 0.05) ** 2  # 25.0
-    var_ch4 = (2.0 * 28.0) ** 2 * (0.10 ** 2 + 0.30 ** 2)  # 56^2 * 0.10 = 313.6
-    var_n2o = (0.1 * 265.0) ** 2 * (0.15 ** 2 + 0.20 ** 2)  # 26.5^2 * 0.0625 = 43.890625
+    # GWP 1-sigma: AR5 +/-40 % / +/-30 % (5-95 %) / 1.645 (BA-019)
+    var_ch4 = (2.0 * 28.0) ** 2 * (0.10 ** 2 + (0.40 / 1.645) ** 2)
+    var_n2o = (0.1 * 265.0) ** 2 * (0.15 ** 2 + (0.30 / 1.645) ** 2)
     expected_var = var_co2 + var_ch4 + var_n2o
     expected_sigma = math.sqrt(expected_var)
 
@@ -117,8 +118,8 @@ def test_propagate_co2e_uncertainty_dict_inputs():
     # 1-sigma by hand: each gas combines its own relative uncertainty (EF 0.05 / 2 = 0.025 and activity 0.05 in quadrature)
     # with the GWP uncertainty (CH4 30 %, N2O 20 %); the gases are independent
     u_co2 = math.sqrt(0.025 ** 2 + 0.05 ** 2)
-    u_ch4 = math.sqrt(0.075 ** 2 + 0.05 ** 2 + 0.30 ** 2)
-    u_n2o = math.sqrt(0.10 ** 2 + 0.05 ** 2 + 0.20 ** 2)
+    u_ch4 = math.sqrt(0.075 ** 2 + 0.05 ** 2 + (0.40 / 1.645) ** 2)
+    u_n2o = math.sqrt(0.10 ** 2 + 0.05 ** 2 + (0.30 / 1.645) ** 2)
     sigma = math.sqrt((100.0 * u_co2) ** 2 + (56.0 * u_ch4) ** 2 + (26.5 * u_n2o) ** 2)
     assert res["sigma_co2e"] == pytest.approx(sigma, rel=1e-3)
     assert res["gas_breakdown"]["ch4"]["co2e"] == pytest.approx(56.0)

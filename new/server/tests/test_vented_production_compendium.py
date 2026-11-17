@@ -64,8 +64,8 @@ class TestWorkoverWithoutFracturing:
         v_ch4 = 10 * 3114 * 0.028316846592 * 0.80
         assert _val(res["results"]["ch4"]) == pytest.approx(v_ch4 * (16.04 / 23.685) / 1000 * 0.02, rel=1e-3)  # 2% unburnt
         assert _val(res["results"]["co2"]) == pytest.approx(v_ch4 * (44.01 / 23.685) / 1000 * 0.98, rel=1e-3)  # 98% combusted
-        # N2O: 31,140 scf x 1,020 Btu/scf = 31.76 MMBtu x 1.0e-7 t N2O/MMBtu
-        assert _val(res["results"]["n2o"]) == pytest.approx(31140 * 1020 / 1e6 * 1.0e-7, rel=1e-6)
+        # N2O: Eq 5-6, the flare CO2 x 1.0E-04 / 60 (BA-017)
+        assert _val(res["results"]["n2o"]) == pytest.approx(_val(res["results"]["co2"]) * 1.0e-4 / 60, rel=1e-6)
 
 
 # ==============================================================================

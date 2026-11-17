@@ -11,30 +11,49 @@ from extensions import db, limiter
 
 @pytest.fixture(scope="module")
 def smoke_client():
+    keys = ("TESTING", "WTF_CSRF_ENABLED", "SECRET_KEY", "SEED_ADMIN")
+    prev = {k: flask_app.config.get(k) for k in keys}
+    prev_lim = limiter.enabled
     flask_app.config.update({
         "TESTING": True,
         "WTF_CSRF_ENABLED": False,
         "SECRET_KEY": "smoke-test-key-random",
-        "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
         "SEED_ADMIN": "false",
     })
     limiter.enabled = False
     with flask_app.app_context():
         db.create_all()
         from models import User
-        u = User(
-            fullName="Smoke Admin",
-            orgName="GHG Operations",
-            email="smoke_admin@test.com",
-            sector="Energy",
-            role="admin",
-            status="active"
-        )
-        u.set_password("SmokeAdmin123!")
-        db.session.add(u)
-        db.session.commit()
-        yield flask_app.test_client()
-        db.session.remove()
+        u = User.query.filter_by(email="smoke_admin@test.com").first()
+        created = False
+        if not u:
+            u = User(
+                fullName="Smoke Admin",
+                orgName="GHG Operations",
+                email="smoke_admin@test.com",
+                sector="Energy",
+                role="admin",
+                status="active",
+            )
+            u.set_password("SmokeAdmin123!")
+            db.session.add(u)
+            db.session.commit()
+            created = True
+        try:
+            yield flask_app.test_client()
+        finally:
+            if created:
+                obj = User.query.filter_by(email="smoke_admin@test.com").first()
+                if obj:
+                    db.session.delete(obj)
+                    db.session.commit()
+            db.session.remove()
+            for k, v in prev.items():
+                if v is None:
+                    flask_app.config.pop(k, None)
+                else:
+                    flask_app.config[k] = v
+            limiter.enabled = prev_lim
 
 
 def test_smoke_01_application_starts(smoke_client):

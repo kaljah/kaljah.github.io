@@ -358,25 +358,13 @@ export const Scope1Form: React.FC = () => {
           </span>
           {fuelForm && (
             <span
-              style={{
-                padding: "2px 5px",
-                borderRadius: "3px",
-                fontSize: "0.6rem",
-                fontWeight: 700,
-                flexShrink: 0,
-                background:
-                  fuelForm === "GAS"
-                    ? "#dbeafe"
-                    : fuelForm === "LIQUID"
-                    ? "#fef3c7"
-                    : "#e2e8f0",
-                color:
-                  fuelForm === "GAS"
-                    ? "#1e40af"
-                    : fuelForm === "LIQUID"
-                    ? "#92400e"
-                    : "#334155",
-              }}
+              className={`[padding:2px_5px] [border-radius:3px] [font-size:0.6rem] [font-weight:700] [flex-shrink:0] ${
+                fuelForm === "GAS"
+                  ? "[background:var(--color-legacy-dbeafe)] [color:var(--color-legacy-1e40af)]"
+                  : fuelForm === "LIQUID"
+                  ? "[background:var(--color-legacy-fef3c7)] [color:var(--color-legacy-92400e)]"
+                  : "[background:var(--color-ink-200)] [color:var(--color-ink-700)]"
+              }`}
             >
               {fuelForm}
             </span>
@@ -1440,19 +1428,23 @@ export const Scope1Form: React.FC = () => {
         processInputs.equipment_type = formData.equipment_type;
         processInputs.component_type = formData.component_type;
         processInputs.service_type = formData.service_type || "gas";
-        processInputs.operating_hours = formData.operating_hours !== undefined ? parseFloat(formData.operating_hours) : undefined;
-        processInputs.operating_days = formData.operating_days !== undefined ? parseFloat(formData.operating_days) : undefined;
+        const parseOptionalFloat = (val: any) =>
+          val !== undefined && val !== null && val !== "" && !isNaN(Number(val))
+            ? parseFloat(val)
+            : undefined;
+        processInputs.operating_hours = parseOptionalFloat(formData.operating_hours);
+        processInputs.operating_days = parseOptionalFloat(formData.operating_days);
         processInputs.time_unit = formData.time_unit || "hours";
         processInputs.duration_unit = formData.duration_unit || formData.time_unit || "hours";
-        processInputs.screening_ppm = formData.screening_ppm !== undefined ? parseFloat(formData.screening_ppm) : undefined;
-        processInputs.fugitive_ppm = formData.fugitive_ppm !== undefined ? parseFloat(formData.fugitive_ppm) : processInputs.screening_ppm;
-        processInputs.leakers_count = formData.leakers_count !== undefined ? parseFloat(formData.leakers_count) : undefined;
-        processInputs.non_leakers_count = formData.non_leakers_count !== undefined ? parseFloat(formData.non_leakers_count) : undefined;
-        processInputs.measured_rate = formData.measured_rate !== undefined ? parseFloat(formData.measured_rate) : undefined;
+        processInputs.screening_ppm = parseOptionalFloat(formData.screening_ppm);
+        processInputs.fugitive_ppm = parseOptionalFloat(formData.fugitive_ppm) ?? processInputs.screening_ppm;
+        processInputs.leakers_count = parseOptionalFloat(formData.leakers_count);
+        processInputs.non_leakers_count = parseOptionalFloat(formData.non_leakers_count);
+        processInputs.measured_rate = parseOptionalFloat(formData.measured_rate);
         // Tier 3 measurement: the unit must be chosen (kg/h vs scf/h changes the meaning of the rate)
         processInputs.rate_unit = formData.rate_unit || (tier === "tier3" ? undefined : "kg/hr");
-        processInputs.ch4_mole_pct = formData.ch4_mole_pct !== undefined ? parseFloat(formData.ch4_mole_pct) : undefined;
-        processInputs.co2_mole_pct = formData.co2_mole_pct !== undefined ? parseFloat(formData.co2_mole_pct) : undefined;
+        processInputs.ch4_mole_pct = parseOptionalFloat(formData.ch4_mole_pct);
+        processInputs.co2_mole_pct = parseOptionalFloat(formData.co2_mole_pct);
         processInputs.gas_stream = formData.gas_stream;
         processInputs.correlation_type = formData.correlation_type;
 
@@ -1566,12 +1558,14 @@ export const Scope1Form: React.FC = () => {
             hhv_unit: hhvUnit,
             hhv_original: parseFloat(formData.hhv), // audit trail
             hhv_original_unit: formData.hhv_unit || "BTU/scf",
+            // efficiencies are sent in percent, as entered: the server reads every efficiency as percent
+            // (blind audit BA-012; a fraction 0.98 would be 0.98 %)
             combustion_efficiency: formData.combustion_efficiency
-              ? parseFloat(formData.combustion_efficiency) / 100.0
+              ? parseFloat(formData.combustion_efficiency)
               : undefined,
             // flaring: CH4 destroyed (eta_d), separate from the carbon conversion (eta_c)
             destruction_efficiency: formData.destruction_efficiency
-              ? parseFloat(formData.destruction_efficiency) / 100.0
+              ? parseFloat(formData.destruction_efficiency)
               : undefined,
             flare_type: formData.flare_type || undefined,
           };

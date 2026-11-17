@@ -199,7 +199,7 @@ def test_gwp_switch_recalculates_scope2(admin):
             after = {e.month: e.co2e for e in Scope2Emission.query.filter_by(facility_id=fid, year=2015)}
             entry = grid_entry("Algerian National Grid")[1]
             assert after[1] == pytest.approx(1_000_000 * grid_factor_kg_co2e_per_kwh(entry, gwp=GWP_AR6) / 1000.0)
-            k = lambda g: 53.06 + 0.001 * g["CH4"] + 0.0001 * g["N2O"]
+            k = lambda g: 59.0 + 0.0011 * g["CH4"] + 0.0003 * g["N2O"]  # Exhibit 8.3 boiler (BA-045)
             assert after[2] == pytest.approx(5000 / (0.8 - 0.10) * k(GWP_AR6) / 1000.0, rel=1e-6)
             assert after[2] != pytest.approx(before[2], rel=1e-9)
     finally:

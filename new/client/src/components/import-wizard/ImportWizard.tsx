@@ -498,16 +498,16 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
             )}
 
             <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-secondary" aria-hidden="true" />
+              <Search className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-text-secondary" aria-hidden="true" />
               <Input
                 aria-label={t("Search fields")}
-                className="pl-9 pr-9"
+                className="ps-9 pe-9"
                 placeholder={t("Search fields by name, key, or description…")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               {searchQuery && (
-                <IconButton label={t("Clear search")} className="absolute right-1 top-1/2 size-7 -translate-y-1/2" onClick={() => setSearchQuery("")}>
+                <IconButton label={t("Clear search")} className="absolute end-1 top-1/2 size-7 -translate-y-1/2" onClick={() => setSearchQuery("")}>
                   <X className="size-3.5" aria-hidden="true" />
                 </IconButton>
               )}
@@ -537,7 +537,7 @@ export const ImportWizard: React.FC<ImportWizardProps> = ({
               </label>
 
               {overwrite && (
-                <div className="mt-1 pl-6 flex flex-col gap-1.5 border-l-2 border-brand-500/40">
+                <div className="mt-1 ps-6 flex flex-col gap-1.5 border-s-2 border-brand-500/40">
                   <span id="conflict-policy-label" className="text-xs font-semibold text-text-secondary">{t("Conflict Resolution Policy:")}</span>
                   <div role="radiogroup" aria-labelledby="conflict-policy-label" className="flex flex-wrap gap-2">
                     <Button

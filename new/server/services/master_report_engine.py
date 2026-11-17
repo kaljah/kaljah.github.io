@@ -8,6 +8,10 @@ Generates high-resolution, publication-grade executive PDF reports:
 
 Complies with ISO 14064-1:2018, Algerian Executive Decree 21-330, and Executive Decree 06-138.
 Supports bilingual output (English and French).
+
+The section builders live in master_report_engine_front (cover, scorecard, geology, glidepath, JV, benchmark,
+sign-off, process architecture) and master_report_engine_chapters (chart chapters, projects, OGMP, Scope 3,
+CBAM / MACC); they use the styles and palette defined here and are imported at the end of this module.
 """
 
 import os
@@ -15,14 +19,13 @@ import io
 import json
 import tempfile
 import hashlib
-from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import (
-    SimpleDocTemplate, Paragraph, Table, TableStyle, Image, Spacer, PageBreak, HRFlowable
+    SimpleDocTemplate, Paragraph, Image, PageBreak, Flowable
 )
 from reportlab.pdfgen import canvas
 
@@ -40,12 +43,11 @@ from services.master_report_charts import (
     generate_cbam_embeddings_chart,
     generate_process_overview_diagram,
 )
-from services.tenant_config import get_tenant_config
 from services.master_report_i18n import (
-    get_t, localize_status, localize_segment, TRANSLATIONS_EN, TRANSLATIONS_FR
+    get_t, TRANSLATIONS_EN, TRANSLATIONS_FR
 )
-from services.pdf_escape import safe_pdf_text
 from services.master_report_appendices import (
+    register_pdf_fonts,
     build_qaqc_uncertainty_elements,
     build_facility_appendix_elements,
     build_toc_and_glossary_elements,
@@ -73,18 +75,73 @@ PAGE_WIDTH, PAGE_HEIGHT = A4
 MARGIN = 36
 
 
+COLOR_AMBER = colors.HexColor("#B45309")
+COLOR_AMBER_BG = colors.HexColor("#FFFBEB")
+COLOR_AMBER_BORDER = colors.HexColor("#D97706")
+COLOR_SUCCESS_BG = colors.HexColor("#ECFDF5")
+
+
+class _MasterDocTemplate(SimpleDocTemplate):
+    """Custom DocTemplate collecting exact heading page numbers for 2-pass Table of Contents."""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.toc_pages: Dict[str, int] = {}
+
+    def afterFlowable(self, flowable):
+        """Records the first page number for each flowable tagged with a `_toc_key` attribute."""
+        toc_key = getattr(flowable, "_toc_key", None)
+        if toc_key:
+            self.toc_pages.setdefault(toc_key, self.page)
+
+
+def _mark_toc(elems: List[Any], key: str) -> List[Any]:
+    """Attaches a Pass-1 TOC lookup marker onto the first heading Paragraph without altering layout flow."""
+    for item in elems:
+        if isinstance(item, Paragraph):
+            setattr(item, "_toc_key", key)
+            break
+    return elems
+
+
+class _ImagePlaceholder(Flowable):
+    """Exact-size Pass-1 placeholder avoiding redundant image decoding/compression during TOC discovery."""
+
+    def __init__(self, width: float, height: float) -> None:
+        super().__init__()
+        self.width = width
+        self.height = height
+
+    def wrap(self, availWidth: float, availHeight: float):
+        return self.width, self.height
+
+    def draw(self) -> None:
+        pass
+
+
+def _chart_flowable(chart_path: Optional[str], width: float, height: float, for_toc_pass: bool = False) -> Optional[Flowable]:
+    """Returns a size-matched placeholder during Pass 1 or the decoded Image during Pass 2."""
+    if not chart_path or not os.path.exists(chart_path):
+        return None
+    if for_toc_pass:
+        return _ImagePlaceholder(width, height)
+    return Image(chart_path, width=width, height=height)
+
+
 class MasterReportNumberedCanvas(canvas.Canvas):
-    """Two-pass canvas generating dynamic 'Page X of Y' footers and running headers."""
-    def __init__(self, *args, language: str = "en", **kwargs):
+    """Two-pass canvas generating dynamic 'Page X of Y' footers and period-lock-aware running headers."""
+    def __init__(self, *args, language: str = "en", governance: Optional[Dict[str, Any]] = None, **kwargs):
         super().__init__(*args, **kwargs)
         self.language = language
+        self.governance = governance or {}
         self._saved_page_states = []
 
     def showPage(self):
+        """Buffers current canvas page state so total page count is known before final drawing."""
         self._saved_page_states.append(dict(self.__dict__))
         self._startPage()
 
     def save(self):
+        """Replays buffered pages with final headers/footers and persists the PDF stream."""
         num_pages = len(self._saved_page_states)
         for state in self._saved_page_states:
             self.__dict__.update(state)
@@ -94,23 +151,34 @@ class MasterReportNumberedCanvas(canvas.Canvas):
 
     def _draw_decorations(self, total_pages: int):
         lang = self.language
+        font_reg, font_bold, _ = register_pdf_fonts()
+        is_locked = bool(self.governance.get("is_locked"))
         if self._pageNumber == 1:
             self.setFillColor(COLOR_ORANGE)
             self.rect(0, PAGE_HEIGHT - 6, PAGE_WIDTH, 6, fill=1, stroke=0)
-            self.setFont("Helvetica-Bold", 7)
+            self.setFont(font_bold, 6.8)
+            self.setFillColor(COLOR_SUCCESS if is_locked else COLOR_AMBER)
+            cover_key = "canvas_cover_notice" if is_locked else "canvas_prelim_cover_notice"
+            self.drawString(MARGIN, 22, get_t(cover_key, lang))
             self.setFillColor(COLOR_MUTED)
-            self.drawString(MARGIN, 22, get_t("canvas_cover_notice", lang))
             self.drawRightString(PAGE_WIDTH - MARGIN, 22, get_t("canvas_page_of", lang, page=1, total=total_pages))
             return
 
-        # Running header on inner pages
-        self.setFont("Helvetica-Bold", 7.5)
+        # Running header on inner pages (computed width avoids overlapping with DejaVuSans metrics)
+        left_txt = get_t("canvas_inner_header_left", lang)
+        self.setFont(font_bold, 7.5)
         self.setFillColor(COLOR_ORANGE)
-        self.drawString(MARGIN, PAGE_HEIGHT - 24, get_t("canvas_inner_header_left", lang))
-        self.setFont("Helvetica", 7.5)
+        self.drawString(MARGIN, PAGE_HEIGHT - 24, left_txt)
+        left_w = self.stringWidth(left_txt, font_bold, 7.5)
+
+        self.setFont(font_reg, 7.0)
         self.setFillColor(COLOR_MUTED)
-        self.drawString(MARGIN + 182, PAGE_HEIGHT - 24, get_t("canvas_inner_header_mid", lang))
-        self.drawRightString(PAGE_WIDTH - MARGIN, PAGE_HEIGHT - 24, get_t("canvas_inner_header_right", lang))
+        self.drawString(MARGIN + left_w + 6, PAGE_HEIGHT - 24, get_t("canvas_inner_header_mid", lang))
+
+        self.setFont(font_bold, 7.0)
+        self.setFillColor(COLOR_SUCCESS if is_locked else COLOR_AMBER)
+        right_key = "canvas_inner_header_right" if is_locked else "canvas_prelim_inner_right"
+        self.drawRightString(PAGE_WIDTH - MARGIN, PAGE_HEIGHT - 24, get_t(right_key, lang))
 
         self.setStrokeColor(COLOR_BORDER)
         self.setLineWidth(0.5)
@@ -118,948 +186,83 @@ class MasterReportNumberedCanvas(canvas.Canvas):
 
         # Running footer
         self.line(MARGIN, 30, PAGE_WIDTH - MARGIN, 30)
-        self.setFont("Helvetica", 7)
+        self.setFont(font_reg, 6.8)
         self.setFillColor(COLOR_MUTED)
         self.drawString(MARGIN, 20, get_t("canvas_confidential", lang))
         self.drawRightString(PAGE_WIDTH - MARGIN, 20, get_t("canvas_page_of", lang, page=self._pageNumber, total=total_pages))
 
 
 def _build_styles() -> Dict[str, ParagraphStyle]:
-    """Prepares consistent typography hierarchy for the publication document."""
+    """Prepares consistent Unicode-capable typography hierarchy for the publication document."""
+    font_reg, font_bold, _ = register_pdf_fonts()
     styles = {}
-    styles["Title"] = ParagraphStyle("CoverTitle", fontName="Helvetica-Bold", fontSize=20, leading=24, textColor=COLOR_DARK, spaceAfter=6)
-    styles["Subtitle"] = ParagraphStyle("CoverSubtitle", fontName="Helvetica", fontSize=11, leading=15, textColor=COLOR_MUTED, spaceAfter=14)
-    styles["H1"] = ParagraphStyle("Heading1", fontName="Helvetica-Bold", fontSize=12, leading=16, textColor=COLOR_DARK, spaceBefore=12, spaceAfter=6, keepWithNext=True)
-    styles["H2"] = ParagraphStyle("Heading2", fontName="Helvetica-Bold", fontSize=10, leading=13, textColor=COLOR_ORANGE, spaceBefore=8, spaceAfter=4, keepWithNext=True)
-    styles["Body"] = ParagraphStyle("BodyDark", fontName="Helvetica", fontSize=8.5, leading=11.5, textColor=COLOR_SLATE, spaceAfter=6)
-    styles["BodyMuted"] = ParagraphStyle("BodyMuted", fontName="Helvetica", fontSize=7.5, leading=10, textColor=COLOR_MUTED, spaceAfter=4)
-    styles["CardVal"] = ParagraphStyle("CardValue", fontName="Helvetica-Bold", fontSize=13, leading=16, textColor=COLOR_DARK, alignment=1)
-    styles["CardLbl"] = ParagraphStyle("CardLabel", fontName="Helvetica-Bold", fontSize=7, leading=9, textColor=COLOR_MUTED, alignment=1)
-    styles["H3"] = ParagraphStyle("Heading3", fontName="Helvetica-Bold", fontSize=8.5, leading=11, textColor=COLOR_DARK, spaceBefore=6, spaceAfter=3, keepWithNext=True)
-    styles["BodySmall"] = ParagraphStyle("BodySmall", fontName="Helvetica", fontSize=7, leading=9, textColor=COLOR_SLATE, spaceAfter=3)
+    styles["Title"] = ParagraphStyle("CoverTitle", fontName=font_bold, fontSize=20, leading=24, textColor=COLOR_DARK, spaceAfter=6)
+    styles["Subtitle"] = ParagraphStyle("CoverSubtitle", fontName=font_reg, fontSize=11, leading=15, textColor=COLOR_MUTED, spaceAfter=14)
+    styles["H1"] = ParagraphStyle("Heading1", fontName=font_bold, fontSize=12, leading=16, textColor=COLOR_DARK, spaceBefore=12, spaceAfter=6, keepWithNext=True)
+    styles["H2"] = ParagraphStyle("Heading2", fontName=font_bold, fontSize=10, leading=13, textColor=COLOR_ORANGE, spaceBefore=8, spaceAfter=4, keepWithNext=True)
+    styles["Body"] = ParagraphStyle("BodyDark", fontName=font_reg, fontSize=8.5, leading=11.5, textColor=COLOR_SLATE, spaceAfter=6)
+    styles["BodyMuted"] = ParagraphStyle("BodyMuted", fontName=font_reg, fontSize=7.5, leading=10, textColor=COLOR_MUTED, spaceAfter=4)
+    styles["CardVal"] = ParagraphStyle("CardValue", fontName=font_bold, fontSize=13, leading=16, textColor=COLOR_DARK, alignment=1)
+    styles["CardLbl"] = ParagraphStyle("CardLabel", fontName=font_bold, fontSize=7, leading=9, textColor=COLOR_MUTED, alignment=1)
+    styles["H3"] = ParagraphStyle("Heading3", fontName=font_bold, fontSize=8.5, leading=11, textColor=COLOR_DARK, spaceBefore=6, spaceAfter=3, keepWithNext=True)
+    styles["BodySmall"] = ParagraphStyle("BodySmall", fontName=font_reg, fontSize=7, leading=9, textColor=COLOR_SLATE, spaceAfter=3)
     return styles
 
 
-def _build_cover_elements(data: Dict[str, Any], styles: Dict[str, ParagraphStyle], lang: str = "en") -> List[Any]:
-    """Generates the executive publication cover page elements."""
+def _front_matter_elements(data: Dict[str, Any], styles: Dict[str, ParagraphStyle], lang: str, pfd_elems: List[Any], census_elems: List[Any], narr_elems: List[Any], toc_pages: Optional[Dict[str, int]], section_flags: Dict[str, bool]) -> List[Any]:
+    """Cover, scorecard, process diagrams, geology, census / narrative and the table of contents."""
     elements = []
-    profile = data["profile"]
-    mode = data["mode"]
-    start_y = data["start_year"]
-    end_y = data["end_year"]
-    time_label = f"{start_y}" if start_y == end_y else f"{start_y} – {end_y}"
-
-    elements.append(Spacer(1, 15))
-    tenant_cfg = data.get("tenant_config") or get_tenant_config(data.get("tenant_id"))
-    org_name = str(profile.get("operator") or tenant_cfg.get("organization_name", "Operator"))
-    elements.append(Paragraph(f"<b>{safe_pdf_text(org_name.upper())}</b>", styles["H2"]))
-    jv_partners = data.get("jv_equity", {}).get("partners", [])
-    if jv_partners and len(jv_partners) > 1:
-        partner_str = " &amp; ".join(safe_pdf_text(p.get("partner_name", "")) for p in jv_partners)
-        elements.append(Paragraph(f"<b>Joint Venture Partnership:</b> {partner_str}", styles["BodyMuted"]))
-    elements.append(Paragraph(get_t("hse_division", lang), styles["BodyMuted"]))
-    elements.append(Spacer(1, 10))
-
-    if mode == "national":
-        doc_title = get_t("title_national", lang)
-        sub_title = get_t("subtitle_national", lang, time_label=time_label)
-    elif mode == "comparison":
-        doc_title = get_t("title_comparison", lang)
-        sub_title = get_t("subtitle_comparison", lang, time_label=time_label)
-    else:
-        doc_title = safe_pdf_text(str(profile.get("name", "REGIONAL ASSET")).upper())
-        sub_title = get_t("subtitle_regional", lang, time_label=time_label)
-
-    elements.append(Paragraph(doc_title, styles["Title"]))
-    elements.append(Paragraph(sub_title, styles["Subtitle"]))
-    elements.append(HRFlowable(width="100%", thickness=2, color=COLOR_ORANGE, spaceBefore=4, spaceAfter=14))
-
-    meta_data = [
-        [
-            Paragraph(f"<b>{get_t('meta_period', lang)}</b>", styles["Body"]),
-            Paragraph(get_t("meta_period_val", lang, time_label=time_label), styles["Body"]),
-            Paragraph(f"<b>{get_t('meta_standard', lang)}</b>", styles["Body"]),
-            Paragraph(get_t("meta_standard_val", lang), styles["Body"]),
-        ],
-        [
-            Paragraph(f"<b>{get_t('meta_operator', lang)}</b>", styles["Body"]),
-            Paragraph(safe_pdf_text(profile.get("operator") or tenant_cfg.get("organization_name", "Operator")), styles["Body"]),
-            Paragraph(f"<b>{get_t('meta_gwp', lang)}</b>", styles["Body"]),
-            Paragraph(get_t("meta_gwp_val", lang, standard=data["gwp_standard"], ch4_factor=data["gwp_factors"].get("CH4", 28)), styles["Body"]),
-        ],
-        [
-            Paragraph(f"<b>{get_t('meta_basin', lang)}</b>", styles["Body"]),
-            Paragraph(safe_pdf_text(profile.get("basin", "National Estate")), styles["Body"]),
-            Paragraph(f"<b>{get_t('meta_decree', lang)}</b>", styles["Body"]),
-            Paragraph(get_t("meta_decree_val", lang), styles["Body"]),
-        ],
-        [
-            Paragraph(f"<b>{get_t('meta_facilities', lang)}</b>", styles["Body"]),
-            Paragraph(get_t("meta_facilities_val", lang, count=len(data["facilities"])), styles["Body"]),
-            Paragraph(f"<b>{get_t('meta_assurance', lang)}</b>", styles["Body"]),
-            Paragraph(get_t("meta_assurance_val", lang), styles["Body"]),
-        ],
-    ]
-    t_meta = Table(meta_data, colWidths=[115, 155, 115, 135])
-    t_meta.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, -1), COLOR_LIGHT_BG),
-        ("BOX", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
-        ("INNERGRID", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
-        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-        ("TOPPADDING", (0, 0), (-1, -1), 5),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
-    ]))
-    elements.append(t_meta)
-    elements.append(Spacer(1, 14))
-
-    elements.append(Paragraph(get_t("regulatory_banner", lang), styles["BodyMuted"]))
-    elements.append(Spacer(1, 10))
-    return elements
-
-
-def _build_scorecard_elements(data: Dict[str, Any], styles: Dict[str, ParagraphStyle], lang: str = "en") -> List[Any]:
-    """Generates the executive KPI cards block."""
-    elements = []
-    timeline = data["timeline"]
-    if not timeline:
-        return elements
-
-    active_entries = [t for t in timeline if (t.get("total_co2e_t") or 0.0) > 0 or (t.get("gross_gas_mmsm3") or 0.0) > 0]
-    latest = active_entries[-1] if active_entries else timeline[-1]
-    if active_entries and len(active_entries) > 1:
-        prev = active_entries[-2]
-    elif len(timeline) > 1:
-        prev = timeline[-2]
-    else:
-        prev = latest
-
-    co2e_delta = ((latest["total_co2e_t"] - prev["total_co2e_t"]) / prev["total_co2e_t"] * 100.0) if prev["total_co2e_t"] > 0 else 0.0
-    ci_delta = ((latest["carbon_intensity_kg_boe"] - prev["carbon_intensity_kg_boe"]) / prev["carbon_intensity_kg_boe"] * 100.0) if prev["carbon_intensity_kg_boe"] > 0 else 0.0
-
-    fi_val = latest["flaring_intensity_pct"]
-    fi_status = get_t("decree_compliant", lang) if fi_val <= 1.00 else get_t("decree_exceeded", lang)
-    fi_color = COLOR_SUCCESS if fi_val <= 1.00 else COLOR_DANGER
-
-    cards_data = [
-        [
-            Paragraph(f"{latest['total_mmt']:.3f} MMt", styles["CardVal"]),
-            Paragraph(f"{latest['carbon_intensity_kg_boe']:.1f}", styles["CardVal"]),
-            Paragraph(f"{fi_val:.2f}%", styles["CardVal"]),
-            Paragraph(f"{latest['methane_intensity_pct']:.3f}%", styles["CardVal"]),
-        ],
-        [
-            Paragraph(f"{get_t('scorecard_lbl_ghg', lang)}<br/><font size=6 color='#64748B'>{get_t('scorecard_delta', lang, delta=co2e_delta)}</font>", styles["CardLbl"]),
-            Paragraph(f"{get_t('scorecard_lbl_ci', lang)}<br/><font size=6 color='#64748B'>{get_t('scorecard_delta', lang, delta=ci_delta)}</font>", styles["CardLbl"]),
-            Paragraph(f"{get_t('scorecard_lbl_fi', lang)}<br/><font size=6 color='{fi_color.hexval()}'>{get_t('decree_card_sub', lang, status=fi_status)}</font>", styles["CardLbl"]),
-            Paragraph(f"{get_t('scorecard_lbl_mi', lang)}<br/><font size=6 color='#0D9488'>{get_t('ogci_target_sub', lang)}</font>", styles["CardLbl"]),
-        ],
-    ]
-    t_cards = Table(cards_data, colWidths=[130, 130, 130, 130])
-    t_cards.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, -1), COLOR_CARD_BG),
-        ("BOX", (0, 0), (-1, -1), 1, COLOR_BORDER),
-        ("INNERGRID", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
-        ("TOPPADDING", (0, 0), (-1, -1), 6),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
-        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-    ]))
-
-    elements.append(Paragraph(get_t("scorecard_title", lang), styles["H1"]))
-    elements.append(t_cards)
-    elements.append(Spacer(1, 12))
-    return elements
-
-
-def _build_geology_and_ops_elements(data: Dict[str, Any], styles: Dict[str, ParagraphStyle], lang: str = "en") -> List[Any]:
-    """Generates the geological and operational context section."""
-    elements = []
-    profile = data["profile"]
-
-    elements.append(Paragraph(get_t("geology_title", lang), styles["H1"]))
-    elements.append(Paragraph(f"<b>{get_t('geology_reservoir', lang)}</b> {safe_pdf_text(profile.get('geology', 'Authentic geological setting spanning the Saharan platform.'))}", styles["Body"]))
-    elements.append(Paragraph(f"<b>{get_t('geology_infra', lang)}</b> {safe_pdf_text(profile.get('infrastructure', 'Integrated gathering and processing network.'))}", styles["Body"]))
-    elements.append(Paragraph(f"<b>{get_t('geology_flare', lang)}</b> {safe_pdf_text(profile.get('flaring_profile', 'Flare minimization aligned with Zero Routine Flaring.'))}", styles["Body"]))
-
-    gc = data.get("gas_composition")
-    gc_name = data.get("gas_comp_name")
-    has_custom_gc = bool(
-        gc and isinstance(gc, dict) and any(float(gc.get(k, 0) or 0) > 0 for k in ("ch4_mol_pct", "c2h6_mol_pct", "co2_mol_pct"))
-    )
-    if has_custom_gc:
-        title_prefix = f"{safe_pdf_text(gc_name)} — " if gc_name else ""
-        section_title = f"{title_prefix}{get_t('gas_comp_title', lang)}"
-        elements.append(Paragraph(f"<b>{section_title}</b>", styles["H2"]))
-        is_fr = str(lang).lower().startswith("fr")
-        h1 = TRANSLATIONS_FR.get("gas_comp_headers_r1") if is_fr else TRANSLATIONS_EN.get("gas_comp_headers_r1")
-        h2 = TRANSLATIONS_FR.get("gas_comp_headers_r2") if is_fr else TRANSLATIONS_EN.get("gas_comp_headers_r2")
-        r1 = [f"{gc.get('ch4_mol_pct', 0)} mol%", f"{gc.get('c2h6_mol_pct', 0)} mol%", f"{gc.get('c3h8_mol_pct', 0)} mol%", f"{gc.get('co2_mol_pct', 0)} mol%", f"{gc.get('n2_mol_pct', 0)} mol%", f"{gc.get('h2s_ppm', 0)} ppm"]
-        m_keys = ("ch4_mol_pct", "c2h6_mol_pct", "c3h8_mol_pct", "ic4_mol_pct", "nc4_mol_pct", "ic5_mol_pct", "nc5_mol_pct", "c6_plus_mol_pct", "co2_mol_pct", "n2_mol_pct")
-        tot = sum(float(gc.get(k, 0) or 0) for k in m_keys)
-        r2 = [f"{gc.get('ic4_mol_pct', 0)} mol%", f"{gc.get('nc4_mol_pct', 0)} mol%", f"{gc.get('ic5_mol_pct', 0)} mol%", f"{gc.get('nc5_mol_pct', 0)} mol%", f"{gc.get('c6_plus_mol_pct', 0)} mol%", f"{tot:.2f} mol%"]
-        t_gc = Table([h1, r1, h2, r2], colWidths=[86, 86, 86, 88, 86, 88])
-        t_gc.setStyle(TableStyle([
-            ("BACKGROUND", (0, 0), (-1, 0), COLOR_SLATE),
-            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-            ("BACKGROUND", (0, 1), (-1, 1), COLOR_LIGHT_BG),
-            ("BACKGROUND", (0, 2), (-1, 2), COLOR_SLATE),
-            ("TEXTCOLOR", (0, 2), (-1, 2), colors.white),
-            ("FONTNAME", (0, 2), (-1, 2), "Helvetica-Bold"),
-            ("BACKGROUND", (0, 3), (-1, 3), COLOR_LIGHT_BG),
-            ("FONTNAME", (-1, 3), (-1, 3), "Helvetica-Bold"),
-            ("FONTSIZE", (0, 0), (-1, -1), 7.2),
-            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-            ("BOX", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
-            ("INNERGRID", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
-            ("TOPPADDING", (0, 0), (-1, -1), 2.5),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 2.5),
-        ]))
-        elements.append(t_gc)
-    else:
-        note_p = Paragraph(f"<b>{get_t('gas_comp_none_title', lang)}</b><br/>{get_t('gas_comp_none_desc', lang)}", styles["BodyMuted"])
-        note_tbl = Table([[note_p]], colWidths=[520])
-        note_tbl.setStyle(TableStyle([
-            ("BACKGROUND", (0, 0), (-1, -1), COLOR_LIGHT_BG),
-            ("BOX", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
-            ("TOPPADDING", (0, 0), (-1, -1), 6),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
-            ("LEFTPADDING", (0, 0), (-1, -1), 8),
-            ("RIGHTPADDING", (0, 0), (-1, -1), 8),
-        ]))
-        elements.append(note_tbl)
-
-    elements.append(Spacer(1, 10))
-    return elements
-
-
-def _build_chapter_with_chart(
-    title: str,
-    desc: str,
-    chart_path: Optional[str],
-    table_headers: List[str],
-    table_rows: List[List[str]],
-    col_widths: List[float],
-    styles: Dict[str, ParagraphStyle],
-    footnote: Optional[str] = None,
-    img_height: float = 225,
-) -> List[Any]:
-    """Helper to assemble an analytical chapter containing title, text, 150 DPI chart, and data table."""
-    elements = []
-    elements.append(Paragraph(title, styles["H1"]))
-    elements.append(Paragraph(desc, styles["Body"]))
-
-    if chart_path and os.path.exists(chart_path):
-        elements.append(Image(chart_path, width=520, height=img_height))
-        elements.append(Spacer(1, 6))
-
-    if table_rows:
-        t_data = [table_headers] + table_rows
-        t = Table(t_data, colWidths=col_widths)
-        t.setStyle(TableStyle([
-            ("BACKGROUND", (0, 0), (-1, 0), COLOR_DARK),
-            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-            ("FONTSIZE", (0, 0), (-1, -1), 7.5),
-            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-            ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, COLOR_LIGHT_BG]),
-            ("BOX", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
-            ("INNERGRID", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
-            ("TOPPADDING", (0, 0), (-1, -1), 3.5),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 3.5),
-        ]))
-        elements.append(t)
-
-    if footnote:
-        elements.append(Spacer(1, 4))
-        elements.append(Paragraph(footnote, styles["BodyMuted"]))
-
-    elements.append(Spacer(1, 12))
-    return elements
-
-
-def _build_decarbonization_projects_elements(data: Dict[str, Any], styles: Dict[str, ParagraphStyle], lang: str = "en") -> List[Any]:
-    """Builds the strategic decarbonization projects table."""
-    elements = []
-    projects = data.get("decarbonization_projects") or data["profile"].get("decarbonization_projects", [])
-    if not projects:
-        return elements
-
-    elements.append(Paragraph(get_t("decarb_title", lang), styles["H1"]))
-    elements.append(Paragraph(get_t("decarb_desc", lang), styles["Body"]))
-
-    p_headers = TRANSLATIONS_FR["decarb_headers"] if str(lang).lower().startswith("fr") else TRANSLATIONS_EN["decarb_headers"]
-    p_rows = []
-    for p in projects:
-        raw_status = p.get("status", "Executing")
-        p_rows.append([
-            Paragraph(safe_pdf_text(p.get("title", "")), styles["Body"]),
-            f"{int(p.get('reduction_tco2e', 0)):,}",
-            localize_status(raw_status, lang),
-        ])
-
-    t_p = Table([p_headers] + p_rows, colWidths=[280, 130, 110])
-    t_p.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, 0), COLOR_SLATE),
-        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-        ("FONTSIZE", (0, 0), (-1, -1), 7.5),
-        ("ALIGN", (0, 0), (-1, -1), "LEFT"),
-        ("ALIGN", (1, 0), (2, -1), "CENTER"),
-        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, COLOR_LIGHT_BG]),
-        ("BOX", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
-        ("INNERGRID", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
-        ("TOPPADDING", (0, 0), (-1, -1), 4),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
-    ]))
-    elements.append(t_p)
-    elements.append(Spacer(1, 12))
-    return elements
-
-
-def _build_glidepath_elements(
-    data: Dict[str, Any],
-    chart_path: Optional[str],
-    styles: Dict[str, ParagraphStyle],
-    lang: str = "en",
-    img_height: float = 165,
-) -> List[Any]:
-    """Generates Chapter 9: 2030 Corporate Decarbonization Target Glidepath and milestone table."""
-    target_proj = data.get("target_projection", {})
-    if not target_proj:
-        return []
-    elements = []
-    elements.append(Paragraph(get_t("ch9_title", lang), styles["H1"]))
-    elements.append(Paragraph(get_t("ch9_desc", lang), styles["Body"]))
-    if chart_path and os.path.exists(chart_path):
-        elements.append(Image(chart_path, width=520, height=img_height))
-        elements.append(Spacer(1, 6))
-
-    headers = TRANSLATIONS_FR["ch9_headers"] if str(lang).lower().startswith("fr") else TRANSLATIONS_EN["ch9_headers"]
-    milestones = target_proj.get("milestones", [])
-    rows = []
-    for m in milestones:
-        stat = localize_status(m.get("status", "Planned"), lang)
-        rows.append([
-            str(m.get("year", "")),
-            f"{m.get('target_ghg_mmt', 0.0):.3f}",
-            str(m.get("reduction_str", "0.0%")),
-            str(m.get("flaring_objective", "Zero Routine Flaring")),
-            stat,
-        ])
-    if rows:
-        t_m = Table([headers] + rows, colWidths=[70, 110, 110, 130, 100])
-        t_m.setStyle(TableStyle([
-            ("BACKGROUND", (0, 0), (-1, 0), COLOR_DARK),
-            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-            ("FONTSIZE", (0, 0), (-1, -1), 7.5),
-            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-            ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, COLOR_LIGHT_BG]),
-            ("BOX", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
-            ("INNERGRID", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
-            ("TOPPADDING", (0, 0), (-1, -1), 3.5),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 3.5),
-        ]))
-        elements.append(t_m)
-    elements.append(Spacer(1, 12))
-    return elements
-
-
-def _build_jv_equity_elements(
-    data: Dict[str, Any],
-    chart_path: Optional[str],
-    styles: Dict[str, ParagraphStyle],
-    lang: str = "en",
-) -> List[Any]:
-    """Generates Chapter 11: Joint Venture Partner Equity Share Allocation and partner breakdown table."""
-    jv_equity = data.get("jv_equity", {})
-    if not jv_equity or not jv_equity.get("partners"):
-        return []
-    elements = []
-    elements.append(Paragraph(get_t("ch11_title", lang), styles["H1"]))
-    elements.append(Paragraph(get_t("ch11_desc", lang), styles["Body"]))
-    if chart_path and os.path.exists(chart_path):
-        elements.append(Image(chart_path, width=520, height=225))
-        elements.append(Spacer(1, 6))
-
-    raw_headers = TRANSLATIONS_FR["ch11_headers"] if str(lang).lower().startswith("fr") else TRANSLATIONS_EN["ch11_headers"]
-    latest_year = data.get("timeline", [{}])[-1].get("year", 2025) if data.get("timeline") else 2025
-    start_year = data.get("start_year", 2021)
-    end_year = data.get("end_year", 2025)
-    num_years = end_year - start_year + 1
-    headers = [h.format(latest_year=latest_year, num_years=num_years) for h in raw_headers]
-
-    hdr_style = ParagraphStyle(
-        "JVHdr",
-        fontName="Helvetica-Bold",
-        fontSize=6.8,
-        leading=8,
-        textColor=colors.white,
-        alignment=1,
-    )
-    formatted_headers = [Paragraph(h, hdr_style) for h in headers]
-    partners = jv_equity.get("partners", [])
-    rows = []
-    for p in partners:
-        rows.append([
-            p.get("partner_name", ""),
-            f"{p.get('equity_share_pct', 0.0):.1f}%",
-            f"{p.get('latest_year_co2e', 0.0):,.0f}",
-            f"{p.get('equity_total_ghg_tco2e', 0.0):,.0f}",
-            f"{p.get('equity_s1_tco2e', 0.0):,.0f}",
-            f"{p.get('equity_ch4_t', 0.0):,.0f}",
-        ])
-    if rows:
-        t_jv = Table([formatted_headers] + rows, colWidths=[110, 60, 85, 95, 85, 85])
-        t_jv.setStyle(TableStyle([
-            ("BACKGROUND", (0, 0), (-1, 0), COLOR_SLATE),
-            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-            ("FONTSIZE", (0, 1), (-1, -1), 7.5),
-            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-            ("ALIGN", (0, 1), (0, -1), "LEFT"),
-            ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, COLOR_LIGHT_BG]),
-            ("BOX", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
-            ("INNERGRID", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
-            ("TOPPADDING", (0, 0), (-1, -1), 3.5),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 3.5),
-        ]))
-        elements.append(t_jv)
-    elements.append(Spacer(1, 12))
-    return elements
-
-
-def _build_benchmark_league_elements(data: Dict[str, Any], chart_path: str, styles: Dict[str, ParagraphStyle], lang: str = "en") -> List[Any]:
-    """Builds the multi-region league table and comparative chart for comparison mode."""
-    elements = []
-    elements.append(Paragraph(get_t("bench_title", lang), styles["H1"]))
-    elements.append(Paragraph(get_t("bench_desc", lang), styles["Body"]))
-
-    if os.path.exists(chart_path):
-        elements.append(Image(chart_path, width=520, height=240))
-        elements.append(Spacer(1, 6))
-
-    benchmarks = data.get("regional_benchmarks", [])
-    if benchmarks:
-        b_headers = TRANSLATIONS_FR["bench_headers"] if str(lang).lower().startswith("fr") else TRANSLATIONS_EN["bench_headers"]
-        b_rows = []
-        for b in sorted(benchmarks, key=lambda x: x.get("carbon_intensity_kg_boe", 0.0)):
-            stat = get_t("decree_compliant", lang) if b.get("decree_compliant") else get_t("decree_exceeded", lang)
-            b_rows.append([
-                b.get("name", "").split("(")[0].strip()[:24],
-                localize_segment(b.get("segment", "Upstream"), lang),
-                str(b.get("facility_count", 1)),
-                f"{b.get('total_mmboe', 0.0):.2f}",
-                f"{b.get('carbon_intensity_kg_boe', 0.0):.1f}",
-                f"{b.get('flaring_intensity_pct', 0.0):.2f}%",
-                stat,
-            ])
-        t_b = Table([b_headers] + b_rows, colWidths=[120, 65, 45, 75, 75, 70, 70])
-        t_b.setStyle(TableStyle([
-            ("BACKGROUND", (0, 0), (-1, 0), COLOR_DARK),
-            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-            ("FONTSIZE", (0, 0), (-1, -1), 7),
-            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-            ("ALIGN", (0, 1), (0, -1), "LEFT"),
-            ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, COLOR_LIGHT_BG]),
-            ("BOX", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
-            ("INNERGRID", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
-            ("TOPPADDING", (0, 0), (-1, -1), 3),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
-        ]))
-        elements.append(t_b)
-    elements.append(Spacer(1, 12))
-    return elements
-
-
-def _build_signoff_elements(data: Dict[str, Any], sha256_hash: str, styles: Dict[str, ParagraphStyle], lang: str = "en") -> List[Any]:
-    """Generates the official MRV verification certificate and cryptographic seal."""
-    elements = []
-    elements.append(Spacer(1, 10))
-    elements.append(Paragraph(get_t("signoff_title", lang), styles["H1"]))
-    elements.append(Paragraph(get_t("signoff_cert", lang), styles["Body"]))
-
-    tenant_cfg = data.get("tenant_config") or get_tenant_config(data.get("tenant_id"))
-    org = safe_pdf_text(data.get("profile", {}).get("operator") or tenant_cfg.get("organization_name", "Operator"))
-    hse_signer = safe_pdf_text(tenant_cfg.get("hse_director_name", "HSE Director (Demo)"))
-    auditor_signer = safe_pdf_text(tenant_cfg.get("lead_auditor_name", "Lead Verifier (Demo)"))
-    vp_signer = safe_pdf_text(tenant_cfg.get("vp_upstream_name", "VP Operations (Demo)"))
-
-    sign_data = [
-        [
-            Paragraph(get_t("role_hse", lang, org=org), styles["Body"]),
-            Paragraph(get_t("role_auditor", lang), styles["Body"]),
-            Paragraph(get_t("role_vp", lang, org=org), styles["Body"]),
-        ],
-        [
-            Paragraph(get_t("sign_stamp_hse", lang, hse_signer=hse_signer, org=org), styles["Body"]),
-            Paragraph(get_t("sign_stamp_auditor", lang, auditor_signer=auditor_signer), styles["Body"]),
-            Paragraph(get_t("sign_stamp_vp", lang, vp_signer=vp_signer, org=org), styles["Body"]),
-        ],
-    ]
-    t_sign = Table(sign_data, colWidths=[173, 173, 174])
-    t_sign.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, -1), COLOR_LIGHT_BG),
-        ("BOX", (0, 0), (-1, -1), 0.8, COLOR_BORDER),
-        ("INNERGRID", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
-        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-        ("TOPPADDING", (0, 0), (-1, -1), 6),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
-    ]))
-    elements.append(t_sign)
-    elements.append(Spacer(1, 8))
-
-    hash_p = f"<b>{get_t('fingerprint_lbl', lang)}</b> <code>{sha256_hash}</code><br/>{get_t('generated_lbl', lang)} {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}"
-    elements.append(Paragraph(hash_p, styles["BodyMuted"]))
-    return elements
-
-
-
-def _build_ogmp_elements(
-    data: Dict[str, Any],
-    chart_path: str,
-    styles: Dict[str, ParagraphStyle],
-    lang: str = "en"
-) -> List[Any]:
-    """Generates Chapter 5: OGMP 2.0 Methane Reconciliation & LDAR Telemetry."""
-    elements = []
-    ogmp = data.get("ogmp", {})
-    is_fr = str(lang).lower().startswith("fr")
-
-    elements.append(Paragraph(get_t("ch5_title", lang), styles["H1"]))
-    elements.append(Paragraph(get_t("ch5_desc", lang), styles["Body"]))
-    elements.append(Spacer(1, 4))
-
-    status_str = ("Niveau 5 Réconcilié (Gold Standard)" if is_fr else "Gold Standard Level 5 (Reconciled)") if ogmp.get("gold_standard_compliant", True) else ("Écart Détecté" if is_fr else "Discrepancy Detected")
-    kpi_p = get_t(
-        "ch5_kpi", lang,
-        status=status_str,
-        variance=f"{ogmp.get('mean_variance_pct', 0.0):+.1f}",
-        comp_count=ogmp.get("total_components_monitored", 15)
-    )
-    t_kpi = Table([[Paragraph(kpi_p, styles["Body"])]], colWidths=[520])
-    t_kpi.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, -1), COLOR_CARD_BG),
-        ("BOX", (0, 0), (-1, -1), 0.8, COLOR_BORDER),
-        ("TOPPADDING", (0, 0), (-1, -1), 4),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
-        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-    ]))
-    elements.append(t_kpi)
-    elements.append(Spacer(1, 6))
-
-    if os.path.exists(chart_path):
-        elements.append(Image(chart_path, width=520, height=210))
-        elements.append(Spacer(1, 6))
-
-    surveys = ogmp.get("surveys", [])
-    headers = get_t("ch5_ogmp_headers", lang)
-    hdr_style = ParagraphStyle("OgmpHdr", fontName="Helvetica-Bold", fontSize=6.2, leading=7.2, textColor=colors.white, alignment=1)
-    headers_fmt = [Paragraph(h, hdr_style) for h in headers]
-
-    rows = []
-    if surveys:
-        for s in surveys[:4]:
-            st_raw = s.get("status", "Reconciled")
-            st_text = ("Réconcilié" if "reconcil" in st_raw.lower() else "Écart Détecté") if is_fr else ("Reconciled" if "reconcil" in st_raw.lower() else "Discrepancy Detected")
-            rows.append([
-                Paragraph(safe_pdf_text(s.get("survey_type", "Aerial OGI"), 24), styles["BodySmall"] if "BodySmall" in styles else styles["Body"]),
-                Paragraph(safe_pdf_text(s.get("vendor", "Bridger / FLIR"), 20), styles["BodySmall"] if "BodySmall" in styles else styles["Body"]),
-                s.get("survey_date", ""),
-                f"{s.get('bottom_up_tch4', 0.0):,.1f}",
-                f"{s.get('top_down_tch4', 0.0):,.1f}",
-                f"{s.get('variance_pct', 0.0):+.1f}%",
-                st_text
-            ])
-    else:
-        rows.append([
-            Paragraph("Aerial LiDAR (Bridger Photonics)", styles["Body"]),
-            Paragraph("Bridger GasMapping", styles["Body"]),
-            "2025-Q3",
-            "845.0",
-            "809.4",
-            "-4.2%",
-            "Conforme" if is_fr else "Reconciled"
-        ])
-
-    t_ogmp = Table([headers_fmt] + rows, colWidths=[120, 105, 55, 65, 65, 55, 55])
-    t_ogmp.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, 0), COLOR_DARK),
-        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-        ("FONTNAME", (0, 1), (-1, -1), "Helvetica"),
-        ("FONTSIZE", (0, 1), (-1, -1), 6.5),
-        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-        ("ALIGN", (0, 1), (1, -1), "LEFT"),
-        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, COLOR_LIGHT_BG]),
-        ("BOX", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
-        ("INNERGRID", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
-        ("TOPPADDING", (0, 0), (-1, -1), 2.5),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 2.5),
-    ]))
-    elements.append(t_ogmp)
-    elements.append(Spacer(1, 6))
-
-    comps = ogmp.get("components", [])
-    if comps:
-        ldar_hdrs = get_t("ch5_ldar_headers", lang)
-        ldar_hdrs_fmt = [Paragraph(h, hdr_style) for h in ldar_hdrs]
-        comp_rows = []
-        for c in comps[:3]:
-            comp_rows.append([
-                c.get("equipment_type", "Valves"),
-                c.get("component_type", "Gate"),
-                c.get("service_type", "Gas"),
-                str(c.get("quantity", 1)),
-                c.get("methodology", "Component Average")
-            ])
-        t_ldar = Table([ldar_hdrs_fmt] + comp_rows, colWidths=[110, 110, 80, 70, 150])
-        t_ldar.setStyle(TableStyle([
-            ("BACKGROUND", (0, 0), (-1, 0), COLOR_SLATE),
-            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-            ("FONTNAME", (0, 1), (-1, -1), "Helvetica"),
-            ("FONTSIZE", (0, 1), (-1, -1), 6.5),
-            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-            ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, COLOR_LIGHT_BG]),
-            ("BOX", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
-            ("INNERGRID", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
-            ("TOPPADDING", (0, 0), (-1, -1), 2),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
-        ]))
-        elements.append(t_ldar)
-        elements.append(Spacer(1, 4))
-
-    pnote = ogmp.get("perimeter_note", "")
-    if pnote:
-        elements.append(Paragraph(f"<i>* {safe_pdf_text(pnote)}</i>", styles["BodyMuted"]))
-
-    return elements
-
-
-def _build_scope3_elements(
-    data: Dict[str, Any],
-    chart_path: str,
-    styles: Dict[str, ParagraphStyle],
-    lang: str = "en"
-) -> List[Any]:
-    """Generates Chapter 7: Scope 3 Value Chain Emissions & Product Lifecycle."""
-    elements = []
-    s3 = data.get("scope3", {})
-    is_fr = str(lang).lower().startswith("fr")
-
-    elements.append(Paragraph(get_t("ch7_title", lang), styles["H1"]))
-    elements.append(Paragraph(get_t("ch7_desc", lang), styles["Body"]))
-    elements.append(Spacer(1, 4))
-
-    tot_s3 = s3.get("total_period_co2e", 0.0)
-    up_t = s3.get("upstream_t", 0.0)
-    down_t = s3.get("downstream_t", 0.0)
-    up_pct = s3.get("upstream_pct", 0.0)
-    down_pct = s3.get("downstream_pct", 0.0)
-    tier2_cov = 100.0 if any(c.get("tier") == "Tier 2" for c in s3.get("categories", [])) else 45.0
-
-    kpi_p = get_t(
-        "ch7_kpi", lang,
-        total_s3=tot_s3 if tot_s3 > 0 else 483084.0,
-        up_pct=up_pct if tot_s3 > 0 else 99.9,
-        up_t=up_t if tot_s3 > 0 else 482812.0,
-        down_pct=down_pct if tot_s3 > 0 else 0.1,
-        down_t=down_t if tot_s3 > 0 else 272.0,
-        tier2_pct=tier2_cov
-    )
-    t_kpi = Table([[Paragraph(kpi_p, styles["Body"])]], colWidths=[520])
-    t_kpi.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, -1), COLOR_CARD_BG),
-        ("BOX", (0, 0), (-1, -1), 0.8, COLOR_BORDER),
-        ("TOPPADDING", (0, 0), (-1, -1), 4),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
-        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-    ]))
-    elements.append(t_kpi)
-    elements.append(Spacer(1, 6))
-
-    if os.path.exists(chart_path):
-        elements.append(Image(chart_path, width=520, height=210))
-        elements.append(Spacer(1, 6))
-
-    headers = get_t("ch7_headers", lang)
-    hdr_style = ParagraphStyle("S3Hdr", fontName="Helvetica-Bold", fontSize=6.2, leading=7.2, textColor=colors.white, alignment=1)
-    headers_fmt = [Paragraph(h, hdr_style) for h in headers]
-
-    categories = s3.get("categories", [])
-    rows = []
-    if categories:
-        for c in categories[:6]:
-            cname = c.get("category_name", "")
-            sub = c.get("sub_category", "")
-            act = f"{c.get('activity_data', 0.0):,.0f}" if c.get('activity_data') else "Spend / Vol"
-            ef = f"{c.get('emission_factor', 0.0):.3f}" if c.get('emission_factor') else "DEFRA / Ecoinvent"
-            rows.append([
-                Paragraph(safe_pdf_text(cname, 26), styles["BodySmall"] if "BodySmall" in styles else styles["Body"]),
-                Paragraph(safe_pdf_text(sub, 24), styles["BodySmall"] if "BodySmall" in styles else styles["Body"]),
-                act,
-                c.get("unit", "tonnes"),
-                ef,
-                f"{c.get('co2e_t', 0.0):,.1f}",
-                f"{c.get('share_pct', 0.0):.1f}%",
-                c.get("tier", "Tier 2")
-            ])
-    else:
-        rows.append([
-            Paragraph("Category 1: Purchased Goods", styles["Body"]),
-            Paragraph("Chemicals, Catalysts & Mud", styles["Body"]),
-            "8,500", "tonnes", "1.420", "12,070.0", "99.8%", "Tier 2"
-        ])
-
-    t_s3 = Table([headers_fmt] + rows, colWidths=[110, 110, 50, 40, 65, 55, 45, 45])
-    t_s3.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, 0), COLOR_DARK),
-        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-        ("FONTNAME", (0, 1), (-1, -1), "Helvetica"),
-        ("FONTSIZE", (0, 1), (-1, -1), 6.5),
-        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-        ("ALIGN", (0, 1), (1, -1), "LEFT"),
-        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, COLOR_LIGHT_BG]),
-        ("BOX", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
-        ("INNERGRID", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
-        ("TOPPADDING", (0, 0), (-1, -1), 2.5),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 2.5),
-    ]))
-    elements.append(t_s3)
-    elements.append(Spacer(1, 6))
-
-    pnote = s3.get("perimeter_note", "")
-    if pnote:
-        elements.append(Paragraph(f"<i>* {safe_pdf_text(pnote)}</i>", styles["BodyMuted"]))
-
-    return elements
-
-
-def _build_cbam_macc_elements(
-    data: Dict[str, Any],
-    chart_path: str,
-    styles: Dict[str, ParagraphStyle],
-    lang: str = "en"
-) -> List[Any]:
-    """Generates Chapter 10: EU CBAM Hydrocarbon Export Embeddings & Decarbonization Economics."""
-    elements = []
-    cbam = data.get("cbam_macc", {})
-    is_fr = str(lang).lower().startswith("fr")
-
-    elements.append(Paragraph(get_t("ch10_title", lang), styles["H1"]))
-    elements.append(Paragraph(get_t("ch10_desc", lang), styles["Body"]))
-    elements.append(Spacer(1, 4))
-
-    exp_tonnes = cbam.get("total_export_tonnes", 0.0)
-    exp_ghg = cbam.get("total_embedded_co2e", 0.0)
-    macc_cap = cbam.get("total_abatement_capacity", 0.0)
-
-    kpi_p = get_t(
-        "ch10_kpi", lang,
-        exp_tonnes=exp_tonnes if exp_tonnes > 0 else 309500.0,
-        exp_ghg=exp_ghg if exp_ghg > 0 else 235120.0,
-        macc_cap=macc_cap if macc_cap > 0 else 307375.0
-    )
-    t_kpi = Table([[Paragraph(kpi_p, styles["Body"])]], colWidths=[520])
-    t_kpi.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, -1), COLOR_CARD_BG),
-        ("BOX", (0, 0), (-1, -1), 0.8, COLOR_BORDER),
-        ("TOPPADDING", (0, 0), (-1, -1), 4),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
-        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-    ]))
-    elements.append(t_kpi)
-    elements.append(Spacer(1, 6))
-
-    if os.path.exists(chart_path):
-        elements.append(Image(chart_path, width=520, height=210))
-        elements.append(Spacer(1, 6))
-
-    headers = get_t("ch10_cbam_headers", lang)
-    hdr_style = ParagraphStyle("CbamHdr", fontName="Helvetica-Bold", fontSize=6.2, leading=7.2, textColor=colors.white, alignment=1)
-    headers_fmt = [Paragraph(h, hdr_style) for h in headers]
-
-    products = cbam.get("products", [])
-    rows = []
-    if products:
-        for p in products[:4]:
-            rows.append([
-                Paragraph(safe_pdf_text(p.get("product_name", ""), 22), styles["BodySmall"] if "BodySmall" in styles else styles["Body"]),
-                p.get("cn_code", ""),
-                Paragraph(safe_pdf_text(p.get("destinations", "EU"), 20), styles["BodySmall"] if "BodySmall" in styles else styles["Body"]),
-                f"{p.get('quantity_tonnes', 0.0):,.0f}",
-                f"{p.get('see_direct', 0.0):.3f}",
-                f"{p.get('see_indirect', 0.0):.3f}",
-                f"{p.get('total_embedded_ghg', 0.0):,.0f}"
-            ])
-    else:
-        rows.append([
-            Paragraph("Sahara Blend Export Crude", styles["Body"]),
-            "2709 00 10",
-            "EU - France (Fos)",
-            "50,000",
-            "0.045",
-            "0.012",
-            "2,850"
-        ])
-
-    t_cbam = Table([headers_fmt] + rows, colWidths=[110, 60, 110, 60, 60, 60, 60])
-    t_cbam.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, 0), COLOR_DARK),
-        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-        ("FONTNAME", (0, 1), (-1, -1), "Helvetica"),
-        ("FONTSIZE", (0, 1), (-1, -1), 6.5),
-        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-        ("ALIGN", (0, 1), (0, -1), "LEFT"),
-        ("ALIGN", (2, 1), (2, -1), "LEFT"),
-        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, COLOR_LIGHT_BG]),
-        ("BOX", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
-        ("INNERGRID", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
-        ("TOPPADDING", (0, 0), (-1, -1), 2.5),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 2.5),
-    ]))
-    elements.append(t_cbam)
-    elements.append(Spacer(1, 6))
-
-    macc_projects = cbam.get("macc_projects", [])
-    if macc_projects:
-        macc_hdrs = get_t("ch10_macc_headers", lang)
-        macc_hdrs_fmt = [Paragraph(h, hdr_style) for h in macc_hdrs]
-        macc_rows = []
-        for m in macc_projects[:3]:
-            inv_str = f"${m.get('investment_usd', 0.0):,.0f}" if m.get("investment_usd") else "Operating / Opex"
-            macc_rows.append([
-                Paragraph(safe_pdf_text(m.get("name", ""), 26), styles["BodySmall"] if "BodySmall" in styles else styles["Body"]),
-                m.get("project_type", "CCUS"),
-                f"{m.get('annual_abatement_tco2e', 0.0):,.0f}",
-                inv_str,
-                f"${m.get('cost_per_tonne_usd', 24.5):.1f}",
-                m.get("status", "Active")
-            ])
-        t_macc = Table([macc_hdrs_fmt] + macc_rows, colWidths=[140, 70, 75, 80, 75, 80])
-        t_macc.setStyle(TableStyle([
-            ("BACKGROUND", (0, 0), (-1, 0), COLOR_SLATE),
-            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-            ("FONTNAME", (0, 1), (-1, -1), "Helvetica"),
-            ("FONTSIZE", (0, 1), (-1, -1), 6.5),
-            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-            ("ALIGN", (0, 1), (0, -1), "LEFT"),
-            ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, COLOR_LIGHT_BG]),
-            ("BOX", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
-            ("INNERGRID", (0, 0), (-1, -1), 0.5, COLOR_BORDER),
-            ("TOPPADDING", (0, 0), (-1, -1), 2),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
-        ]))
-        elements.append(t_macc)
-        elements.append(Spacer(1, 4))
-
-    pnote = cbam.get("perimeter_note", "")
-    if pnote:
-        elements.append(Paragraph(f"<i>* {safe_pdf_text(pnote)}</i>", styles["BodyMuted"]))
-
-    return elements
-
-def _build_process_architecture_elements(
-    data: Dict[str, Any],
-    pfd_charts: Optional[Dict[str, str]],
-    styles: Dict[str, ParagraphStyle],
-    lang: str = "en"
-) -> List[Any]:
-    """Generates the Process Architecture & PFD Flowchart section for facilities in scope."""
-    elements = []
-    facilities = data.get("facilities", [])
-    if not facilities or not pfd_charts:
-        return []
-
-    is_fr = str(lang).lower().startswith("fr")
-    title = "ARCHITECTURE DES INSTALLATIONS & PROCEDES CPF" if is_fr else "CPF PROCESS ARCHITECTURE & GATHERING NETWORK"
-    desc = (
-        "Description des schemas de procedes des centres de traitement (CPF), incluant les collecteurs d'entree, "
-        "les trains de separation d'huile, la deshydratation et compression de gaz, la reinjection et les systemes de torche."
-        if is_fr else
-        "Process block flow topology and gathering system architectures across the reporting production complexes, "
-        "documenting inlet separation manifolds, crude desalting/stabilization, gas compression/dehydration, high-pressure reinjection, and flaring systems."
-    )
-    elements.append(Paragraph(title, styles["H1"]))
-    elements.append(Paragraph(desc, styles["Body"]))
-    elements.append(Spacer(1, 4))
-
-    ledger_by_fac = data.get("granular_source_ledger", {}).get("ledger_by_facility", {})
-    for fac in facilities:
-        fname = fac["name"]
-        if ledger_by_fac and not ledger_by_fac.get(fname):
-            continue
-        chart_path = pfd_charts.get(fname)
-        if chart_path and os.path.exists(chart_path):
-            fname_esc = safe_pdf_text(fname)
-            sub_title = f"{fname_esc} — Architecture des Procedes CPF" if is_fr else f"{fname_esc} — Process Flow &amp; Block Overview"
-            elements.append(Paragraph(f"<b>{sub_title}</b>", styles["H2"]))
-            elements.append(Image(chart_path, width=520, height=255))
-            elements.append(Spacer(1, 4))
-            narrative = (
-                f"Le complexe {fname_esc} traite les fluides bruts issus des puits producteurs par separation etagee HP/MP, "
-                f"stabilisation du brut aux specifications commerciales, et recompression integrale du gaz associe pour reinjection ou valorisation."
-                if is_fr else
-                f"The {fname_esc} Central Processing Facility (CPF) processes crude reservoir fluids through multistage HP/IP separation, "
-                f"crude oil desalting and atmospheric stabilization, with associated gas compression for reservoir pressure maintenance and zero routine flaring compliance."
-            )
-            elements.append(Paragraph(narrative, styles["BodyMuted"]))
-            elements.append(Spacer(1, 6))
-
-    return elements
-
-
-def _assemble_document_story(
-    data: Dict[str, Any],
-    charts: Dict[str, str],
-    styles: Dict[str, ParagraphStyle],
-    pfd_charts: Optional[Dict[str, str]] = None,
-    lang: str = "en"
-) -> List[Any]:
-    """Assembles all sections, scorecards, chapters, charts, and appendices into a cohesive flow."""
-    elements = []
-    mode = data["mode"]
-    timeline = data["timeline"]
-
     # 1. Executive Cover & Performance Scorecard (Page 1)
-    elements.extend(_build_cover_elements(data, styles, lang))
+    elements.extend(_mark_toc(_build_cover_elements(data, styles, lang), "cover"))
     elements.extend(_build_scorecard_elements(data, styles, lang))
     elements.append(PageBreak())
 
-    # 2. Process Architecture & PFD Flowcharts (Section 2 equivalent)
-    pfd_elems = _build_process_architecture_elements(data, pfd_charts, styles, lang)
+    # 2. Process Architecture & PFD Flowcharts
     if pfd_elems:
-        elements.extend(pfd_elems)
+        elements.extend(_mark_toc(pfd_elems, "pfd"))
         elements.append(PageBreak())
 
-    # 3. Regional Geology & Stream-by-Stream Gas Chromatography (Tables 6 & 13 equivalent)
-    elements.extend(_build_geology_and_ops_elements(data, styles, lang))
+    # 3. Regional Geology & Stream-by-Stream Gas Chromatography
+    elements.extend(_mark_toc(_build_geology_and_ops_elements(data, styles, lang), "geology"))
     gc_elems = build_gas_chromatography_elements(data, styles, lang=lang)
     if gc_elems:
         elements.extend(gc_elems)
     elements.append(PageBreak())
 
-    # 4. Equipment Census & Narrative Highlights (Table 2 equivalent)
-    census_elems = build_equipment_census_elements(data, styles, lang=lang)
+    # 4. Equipment Census & Narrative Highlights
     if census_elems:
-        elements.extend(census_elems)
-    elements.extend(build_executive_narrative_elements(data, styles, lang=lang))
+        elements.extend(_mark_toc(census_elems, "census_narrative"))
+        elements.extend(narr_elems)
+    else:
+        elements.extend(_mark_toc(narr_elems, "census_narrative"))
     elements.append(PageBreak())
 
-    # 5. Table of Contents & Technical Glossary
-    elements.extend(build_toc_and_glossary_elements(data, styles, lang=lang))
+    # 5. Table of Contents & Technical Glossary (exact 2-pass page numbers)
+    elements.extend(
+        _mark_toc(
+            build_toc_and_glossary_elements(data, styles, lang=lang, toc_pages=toc_pages, section_flags=section_flags),
+            "toc",
+        )
+    )
     elements.append(PageBreak())
+    return elements
 
+
+def _production_emissions_flaring_chapters(data: Dict[str, Any], timeline: List[Dict[str, Any]], charts: Dict[str, str], styles: Dict[str, ParagraphStyle], lang: str, for_toc_pass: bool) -> List[Any]:
+    """Chapters 1 to 4: production, Scope 1 and 2 emissions, source categories and flaring."""
+    elements = []
     # Chapter 1: Production
     prod_rows = [[str(t["year"]), f"{t['gross_gas_mmsm3']:,.1f}", f"{t['liquid_mmbbl']:.2f}", f"{t['total_mmboe']:.2f}"] for t in timeline]
-    elements.extend(_build_chapter_with_chart(
+    elements.extend(_mark_toc(_build_chapter_with_chart(
         get_t("ch1_title", lang),
         get_t("ch1_desc", lang),
         charts["prod"],
         TRANSLATIONS_FR["ch1_headers"] if str(lang).lower().startswith("fr") else TRANSLATIONS_EN["ch1_headers"],
         prod_rows,
         [70, 150, 150, 150],
-        styles
-    ))
+        styles,
+        for_toc_pass=for_toc_pass,
+    ), "ch1"))
     elements.append(PageBreak())
 
     # Chapter 2: Scope 1 & 2 Emissions (paired 2-panel chart with Chapter 3 SANGEA attribution)
@@ -1075,20 +278,21 @@ def _assemble_document_story(
         ]
         for t in timeline
     ]
-    elements.extend(_build_chapter_with_chart(
+    elements.extend(_mark_toc(_build_chapter_with_chart(
         get_t("ch2_title", lang),
         get_t("ch2_desc", lang),
         charts["em_sangea"],
         TRANSLATIONS_FR["ch2_headers"] if str(lang).lower().startswith("fr") else TRANSLATIONS_EN["ch2_headers"],
         em_rows,
-        [45, 85, 80, 65, 60, 95, 90],
+        [42, 88, 78, 66, 60, 88, 98],
         styles,
         img_height=165,
-    ))
+        for_toc_pass=for_toc_pass,
+    ), "ch2"))
 
     # Chapter 3: SANGEA Modules (tabular companion to paired Figure 2/3 above)
     sangea_rows = [[str(t["year"]), f"{t['combustion_t']:,.0f}", f"{t['flaring_t']:,.0f}", f"{t['fugitives_t']:,.0f}", f"{t['venting_t']:,.0f}"] for t in timeline]
-    elements.extend(_build_chapter_with_chart(
+    elements.extend(_mark_toc(_build_chapter_with_chart(
         get_t("ch3_title", lang),
         get_t("ch3_desc", lang),
         None,
@@ -1096,7 +300,7 @@ def _assemble_document_story(
         sangea_rows,
         [60, 115, 115, 115, 115],
         styles,
-    ))
+    ), "ch3"))
     elements.append(PageBreak())
 
     # Chapter 4: Flaring & Decree 21-330
@@ -1114,45 +318,87 @@ def _assemble_document_story(
         ]
         for t in timeline
     ]
-    elements.extend(_build_chapter_with_chart(
+    elements.extend(_mark_toc(_build_chapter_with_chart(
         get_t("ch4_title", lang),
         get_t("ch4_desc", lang),
         charts["flare"],
         TRANSLATIONS_FR["ch4_headers"] if str(lang).lower().startswith("fr") else TRANSLATIONS_EN["ch4_headers"],
         flare_rows,
-        [50, 75, 85, 75, 75, 80, 80],
-        styles
-    ))
+        [42, 76, 86, 74, 80, 78, 84],
+        styles,
+        for_toc_pass=for_toc_pass,
+    ), "ch4"))
     flare_op_elems = build_flaring_operational_elements(data, styles, lang=lang)
     if flare_op_elems:
         elements.extend(flare_op_elems)
     elements.append(PageBreak())
+    return elements
+
+
+def _assemble_document_story(
+    data: Dict[str, Any],
+    charts: Dict[str, str],
+    styles: Dict[str, ParagraphStyle],
+    pfd_charts: Optional[Dict[str, str]] = None,
+    lang: str = "en",
+    toc_pages: Optional[Dict[str, int]] = None,
+    for_toc_pass: bool = False,
+) -> List[Any]:
+    """Assembles all sections, scorecards, chapters, charts, and appendices into a cohesive flow."""
+    elements = []
+    mode = data["mode"]
+    timeline = data["timeline"]
+
+    # Pre-build dynamic optional appendices & sections so TOC lists only included sections
+    pfd_elems = _build_process_architecture_elements(data, pfd_charts, styles, lang, for_toc_pass=for_toc_pass)
+    census_elems = build_equipment_census_elements(data, styles, lang=lang)
+    narr_elems = build_executive_narrative_elements(data, styles, lang=lang)
+    audit_elems = build_dynamic_quality_audit_elements(data, styles, lang=lang)
+    jv_elems = _build_jv_equity_elements(data, None, styles, lang)
+    ledger_elems = build_granular_source_ledger_elements(data, styles, lang=lang)
+    subannual_elems = build_subannual_timeseries_elements(data, styles, lang=lang)
+    fac_app_elems = build_facility_appendix_elements(data, styles, lang=lang) if data.get("facility_breakdowns") else []
+
+    section_flags = {
+        "pfd": bool(pfd_elems),
+        "jv": bool(jv_elems),
+        "ch13": bool(audit_elems),
+        "app_a": bool(ledger_elems),
+        "app_b": bool(subannual_elems),
+        "app_c": bool(fac_app_elems),
+    }
+
+    elements.extend(_front_matter_elements(data, styles, lang, pfd_elems, census_elems, narr_elems, toc_pages, section_flags))
+    elements.extend(_production_emissions_flaring_chapters(data, timeline, charts, styles, lang, for_toc_pass))
 
     # Chapter 5: OGMP 2.0 Methane Reconciliation & LDAR Telemetry
-    elements.extend(_build_ogmp_elements(data, charts["ogmp"], styles, lang))
+    elements.extend(_mark_toc(_build_ogmp_elements(data, charts["ogmp"], styles, lang, for_toc_pass=for_toc_pass), "ch5"))
     elements.append(PageBreak())
 
     # Chapter 6: Operational Efficiency & Multi-Metric Intensities (paired 2-panel chart with Ch 8 Pollutants)
-    int_rows = [[str(t["year"]), f"{t['carbon_intensity_kg_boe']:.1f}", f"{t['methane_intensity_pct']:.3f}%", f"{t['ch4_mass_t']:,.0f}"] for t in timeline]
-    elements.extend(_build_chapter_with_chart(
+    int_rows = [[str(t["year"]), f"{t['carbon_intensity_kg_boe']:.1f}", f"{t['methane_intensity_pct']:.3f}%",
+                 (f"{t['methane_intensity_ngsi_pct']:.3f}%" if t.get("methane_intensity_ngsi_pct") is not None else "N/A"),
+                 f"{t['ch4_mass_t']:,.0f}"] for t in timeline]
+    elements.extend(_mark_toc(_build_chapter_with_chart(
         get_t("ch6_title", lang),
         get_t("ch6_desc", lang),
         charts["int_poll"],
         TRANSLATIONS_FR["ch6_headers"] if str(lang).lower().startswith("fr") else TRANSLATIONS_EN["ch6_headers"],
         int_rows,
-        [70, 160, 150, 140],
+        [55, 120, 135, 95, 115],
         styles,
         img_height=165,
-    ))
+        for_toc_pass=for_toc_pass,
+    ), "ch6"))
     elements.append(PageBreak())
 
     # Chapter 7: Scope 3 Value Chain Emissions & Product Lifecycle
-    elements.extend(_build_scope3_elements(data, charts["s3"], styles, lang))
+    elements.extend(_mark_toc(_build_scope3_elements(data, charts["s3"], styles, lang, for_toc_pass=for_toc_pass), "ch7"))
     elements.append(PageBreak())
 
-    # Chapter 8: Criteria Pollutants Mass Discharge (table paired with Fig. 6/8 above)
+    # Chapter 8: Criteria Pollutants Mass Discharge & DB Decarbonization Projects
     poll_rows = [[str(t["year"]), f"{t['nox_t']:.1f}", f"{t['co_t']:.1f}", f"{t['so2_t']:.1f}", f"{t['voc_t']:.1f}"] for t in timeline]
-    elements.extend(_build_chapter_with_chart(
+    elements.extend(_mark_toc(_build_chapter_with_chart(
         get_t("ch8_title", lang),
         get_t("ch8_desc", lang),
         None,
@@ -1161,75 +407,74 @@ def _assemble_document_story(
         [70, 110, 110, 110, 120],
         styles,
         footnote=get_t("ch8_footnote", lang),
-    ))
+        badge_text=get_t("ch8_screening_badge", lang),
+    ), "ch8"))
+    elements.extend(_build_decarbonization_projects_elements(data, styles, lang))
     elements.append(PageBreak())
 
-    # Chapter 9: 2030 Corporate Decarbonization Target Trajectory & Glidepath (paired with Ch 11 JV Equity)
-    elements.extend(_build_glidepath_elements(data, charts["glide_jv"], styles, lang, img_height=charts.get("glide_jv_height", 165)))
+    # Chapter 9: 2030 Corporate Decarbonization Target Trajectory & Glidepath
+    elements.extend(_mark_toc(_build_glidepath_elements(data, charts["glide_jv"], styles, lang, img_height=charts.get("glide_jv_height", 165), for_toc_pass=for_toc_pass), "ch9"))
     elements.append(PageBreak())
 
     # Chapter 10: EU CBAM Hydrocarbon Export Embeddings & Decarbonization Economics
-    elements.extend(_build_cbam_macc_elements(data, charts["cbam"], styles, lang))
+    elements.extend(_mark_toc(_build_cbam_macc_elements(data, charts["cbam"], styles, lang, for_toc_pass=for_toc_pass), "ch10"))
     elements.append(PageBreak())
 
-    # Chapter 11: Joint Venture Partner Equity Share Allocation (tabular companion to paired Ch 9/11 figure)
-    elements.extend(_build_jv_equity_elements(data, None, styles, lang))
-    elements.append(PageBreak())
+    # Chapter 11: Joint Venture Partner Equity Share Allocation (when JV partners exist)
+    if jv_elems:
+        elements.extend(_mark_toc(jv_elems, "ch11"))
+        elements.append(PageBreak())
 
     # Chapter 12: QA/QC Verification, Base Year Recalculations & Statutory Regimes
-    elements.extend(build_qaqc_uncertainty_elements(data, styles, lang=lang))
+    elements.extend(_mark_toc(build_qaqc_uncertainty_elements(data, styles, lang=lang), "ch12"))
     elements.append(PageBreak())
 
-    # Chapter 13: Dynamic Inventory Data Quality Audit & Improvement Roadmap (Section 7 equivalent)
-    audit_elems = build_dynamic_quality_audit_elements(data, styles, lang=lang)
+    # Chapter 13: Dynamic Inventory Data Quality Audit & Improvement Roadmap
     if audit_elems:
-        elements.extend(audit_elems)
+        elements.extend(_mark_toc(audit_elems, "ch13"))
         elements.append(PageBreak())
 
-    # Executive MRV Sign-off & Verification Certificate
-    active_entries = [t for t in timeline if (t.get("total_co2e_t") or 0.0) > 0 or (t.get("gross_gas_mmsm3") or 0.0) > 0]
-    latest = active_entries[-1] if active_entries else (timeline[-1] if timeline else {})
-    dataset_summary = {
-        "mode": mode,
-        "region_key": data.get("region_key"),
-        "start_year": data["start_year"],
-        "end_year": data["end_year"],
-        "timeline_len": len(timeline),
-        "total_co2e_t": latest["total_co2e_t"] if latest else 0,
-        "scope1_co2e_t": latest["scope1_co2e_t"] if latest else 0,
-        "scope2_co2e_t": latest["scope2_co2e_t"] if latest else 0,
-        "gross_gas_mmsm3": latest["gross_gas_mmsm3"] if latest else 0,
-        "liquid_mmbbl": latest["liquid_mmbbl"] if latest else 0,
-        "flaring_mmsm3": latest["flaring_mmsm3"] if latest else 0,
-        "carbon_intensity_kg_boe": latest["carbon_intensity_kg_boe"] if latest else 0,
-    }
-    canonical_bytes = json.dumps(dataset_summary, sort_keys=True).encode("utf-8")
-    dataset_hash = hashlib.sha256(canonical_bytes).hexdigest()
-    elements.extend(_build_signoff_elements(data, dataset_hash, styles, lang))
+    # Executive MRV Sign-off & Canonical Dataset Integrity SHA-256 Certificate
+    dataset_hash = data.get("dataset_sha256")
+    if not dataset_hash:
+        canonical_bytes = json.dumps(data, sort_keys=True, default=str, ensure_ascii=False).encode("utf-8")
+        dataset_hash = hashlib.sha256(canonical_bytes).hexdigest()
+    elements.extend(_mark_toc(_build_signoff_elements(data, dataset_hash, styles, lang), "signoff"))
 
-    # Cross-Basin Comparative League Table (Page 17 if comparison mode)
+    # Cross-Basin Comparative League Table (if comparison mode)
     if mode == "comparison":
         elements.append(PageBreak())
-        elements.extend(_build_benchmark_league_elements(data, charts["bench"], styles, lang))
+        elements.extend(_mark_toc(_build_benchmark_league_elements(data, charts["bench"], styles, lang, for_toc_pass=for_toc_pass), "benchmark"))
 
-    # Appendix A: Full Granular Source-by-Source Activity & Emissions Ledger (unbounded N sources)
-    ledger_elems = build_granular_source_ledger_elements(data, styles, lang=lang)
+    # Appendix A: Full Granular Source-by-Source Activity & Emissions Ledger
     if ledger_elems:
-        elements.extend(ledger_elems)
+        elements.extend(_mark_toc(ledger_elems, "app_a"))
 
-    # Appendix B: Sub-Annual Quarterly & Monthly Time-Series Ledgers (Tables B-1 to B-4c equivalent)
-    subannual_elems = build_subannual_timeseries_elements(data, styles, lang=lang)
+    # Appendix B: Sub-Annual Quarterly & Monthly Time-Series Ledgers
     if subannual_elems:
-        elements.extend(subannual_elems)
+        elements.extend(_mark_toc(subannual_elems, "app_b"))
 
-    # Appendix C: Disaggregated Facility Ledgers (Multi-Facility Asset Breakdown)
-    if data.get("facility_breakdowns"):
-        fac_app_elems = build_facility_appendix_elements(data, styles, lang=lang)
-        if fac_app_elems:
-            elements.append(PageBreak())
-            elements.extend(fac_app_elems)
+    # Appendix C: Disaggregated Facility Ledgers
+    if fac_app_elems:
+        elements.append(PageBreak())
+        elements.extend(_mark_toc(fac_app_elems, "app_c"))
 
     return elements
+
+
+class MasterReportPdfBuffer(io.BytesIO):
+    """Typed BytesIO PDF buffer carrying cryptographic report and dataset SHA-256 digests."""
+
+    def __init__(
+        self,
+        initial_bytes: bytes = b"",
+        *,
+        report_hash: str = "",
+        dataset_hash: Optional[str] = None,
+    ) -> None:
+        super().__init__(initial_bytes)
+        self.report_hash: str = report_hash
+        self.dataset_hash: Optional[str] = dataset_hash
 
 
 def generate_master_publication_pdf(
@@ -1241,7 +486,7 @@ def generate_master_publication_pdf(
     allowed_facility_ids: Optional[List[int]] = None,
     language: str = "en",
     tenant_id: str = "default",
-) -> io.BytesIO:
+) -> MasterReportPdfBuffer:
     """
     Main orchestration routine. Compiles the publication PDF and returns an in-memory BytesIO buffer.
     """
@@ -1320,17 +565,38 @@ def generate_master_publication_pdf(
             generate_regional_benchmark_chart(data.get("regional_benchmarks", []), charts["bench"], language=language)
 
         ledger_by_fac = data.get("granular_source_ledger", {}).get("ledger_by_facility", {})
+        active_mods = data.get("active_modules")
+        active_by_fac = data.get("active_modules_by_facility") or {}
         pfd_charts = {}
         for fac in data.get("facilities", []):
             fname = fac["name"]
             if ledger_by_fac and not ledger_by_fac.get(fname):
                 continue
+            fac_mods = active_by_fac[fname] if fname in active_by_fac else active_mods
             pfd_path = os.path.join(tmp_dir, f"pfd_{fac['id']}.png")
-            generate_process_overview_diagram(fname, pfd_path, language=language)
+            generate_process_overview_diagram(fname, pfd_path, language=language, active_modules=fac_mods)
             pfd_charts[fname] = pfd_path
 
-        elements = _assemble_document_story(data, charts, styles, pfd_charts=pfd_charts, lang=language)
+        # Pass 1: compute exact heading page numbers for the Table of Contents
+        pass1_elements = _assemble_document_story(
+            data, charts, styles, pfd_charts=pfd_charts, lang=language, toc_pages=None, for_toc_pass=True
+        )
+        pass1_buf = io.BytesIO()
+        pass1_doc = _MasterDocTemplate(
+            pass1_buf,
+            pagesize=A4,
+            leftMargin=MARGIN,
+            rightMargin=MARGIN,
+            topMargin=MARGIN,
+            bottomMargin=MARGIN,
+        )
+        pass1_doc.build(pass1_elements)
+        toc_map = dict(pass1_doc.toc_pages)
 
+        # Pass 2: assemble fresh flowables with real TOC page numbers and period-lock-aware canvas
+        elements = _assemble_document_story(
+            data, charts, styles, pfd_charts=pfd_charts, lang=language, toc_pages=toc_map
+        )
         buffer = io.BytesIO()
         doc = SimpleDocTemplate(
             buffer,
@@ -1340,10 +606,38 @@ def generate_master_publication_pdf(
             topMargin=MARGIN,
             bottomMargin=MARGIN,
         )
-        doc.build(elements, canvasmaker=lambda *args, **kwargs: MasterReportNumberedCanvas(*args, language=language, **kwargs))
+        gov_ctx = data.get("governance") or {}
+        doc.build(
+            elements,
+            canvasmaker=lambda *args, **kwargs: MasterReportNumberedCanvas(
+                *args, language=language, governance=gov_ctx, **kwargs
+            ),
+        )
 
         pdf_bytes = buffer.getvalue()
         real_hash = hashlib.sha256(pdf_bytes).hexdigest()
-        buffer.seek(0)
-        buffer.report_hash = real_hash
-        return buffer
+        return MasterReportPdfBuffer(
+            pdf_bytes,
+            report_hash=real_hash,
+            dataset_hash=data.get("dataset_sha256"),
+        )
+
+
+# Split modules (they import from this one, so they come last)
+from services.master_report_engine_front import (  # noqa: F401,E402
+    _build_benchmark_league_elements,
+    _build_cover_elements,
+    _build_geology_and_ops_elements,
+    _build_glidepath_elements,
+    _build_jv_equity_elements,
+    _build_process_architecture_elements,
+    _build_scorecard_elements,
+    _build_signoff_elements,
+)
+from services.master_report_engine_chapters import (  # noqa: F401,E402
+    _build_cbam_macc_elements,
+    _build_chapter_with_chart,
+    _build_decarbonization_projects_elements,
+    _build_ogmp_elements,
+    _build_scope3_elements,
+)

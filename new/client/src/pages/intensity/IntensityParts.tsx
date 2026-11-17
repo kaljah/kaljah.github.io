@@ -22,11 +22,11 @@ const VALUE_TONE: Record<IntensityTone, string> = {
 };
 
 const KPI_BORDER_TONE: Record<IntensityTone, string> = {
-  co2: "border-l-2 border-l-brand-500",
-  scope1: "border-l-2 border-l-blue-500",
-  flare: "border-l-2 border-l-amber-500",
-  scope3: "border-l-2 border-l-violet-500",
-  ch4: "border-l-2 border-l-blue-500",
+  co2: "border-s-2 border-s-brand-500",
+  scope1: "border-s-2 border-s-blue-500",
+  flare: "border-s-2 border-s-amber-500",
+  scope3: "border-s-2 border-s-violet-500",
+  ch4: "border-s-2 border-s-blue-500",
 };
 
 export interface KpiTileProps {
@@ -76,7 +76,7 @@ export interface ProdItemProps {
 
 /** One production figure in the context bar under the KPI tiles. */
 export const ProdItem: React.FC<ProdItemProps> = ({ label, value, accent, bordered = true }) => (
-  <div className={cn("scope-item flex flex-col gap-2", bordered && "md:border-l md:border-border md:pl-5")}>
+  <div className={cn("scope-item flex flex-col gap-2", bordered && "md:border-s md:border-border md:ps-5")}>
     <span className="label text-sm font-medium text-text-secondary">{label}</span>
     <span className={cn("val text-lg font-bold tabular-nums text-text", accent)}>{value}</span>
   </div>
@@ -181,7 +181,7 @@ export const Heatmap: React.FC<HeatmapProps> = ({ years, rows, empty = t("No reg
   return (
     <div className="heatmap-container mt-6 overflow-x-auto rounded-md border border-border bg-ink-50 p-4">
       <div className="heatmap-header mb-4 grid gap-3 px-3" style={cols}>
-        <div className="text-left text-xs font-medium text-text-secondary">{t("REGION")}</div>
+        <div className="text-start text-xs font-medium text-text-secondary">{t("REGION")}</div>
         {years.map((y) => (
           <div key={y} className="text-center text-xs font-medium text-text-secondary">
             {y}

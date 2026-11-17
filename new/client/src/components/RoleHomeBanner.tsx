@@ -58,7 +58,7 @@ export const RoleHomeBanner: React.FC<RoleHomeBannerProps> = ({ pendingCount = 0
               <h2 className="text-base font-bold text-text m-0">
                 {t("Compliance Review Desk")}
                 {pendingCount > 0 && (
-                  <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-bold text-amber-800">
+                  <span className="ms-2 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-bold text-amber-800">
                     {t("{{count}} pending", { count: pendingCount })}
                   </span>
                 )}
@@ -95,7 +95,7 @@ export const RoleHomeBanner: React.FC<RoleHomeBannerProps> = ({ pendingCount = 0
           <div>
             <h2 className="text-base font-bold text-text m-0">{t("Independent Assurance & Audit Portal")}</h2>
             <p className="text-sm text-text-secondary m-0 mt-0.5">
-              {t("Inspect ISO 14064-1 compliance, immutable cryptographic audit logs, and basic error propagation (Monte Carlo planned) uncertainty assessments.")}
+              {t("Inspect ISO 14064-1 compliance, immutable cryptographic audit logs, and uncertainty assessments (error propagation and Monte Carlo).")}
             </p>
           </div>
         </div>

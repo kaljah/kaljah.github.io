@@ -100,22 +100,60 @@ def test_idor_protection_cross_facility_access(app, client):
         assert "unauthorized" in res_create.get_data(as_text=True).lower()
 
 
-def test_multi_tenant_configuration_and_branding(client):
-    """Item 3.2: Dynamic tenant config endpoint replaces hardcoded Demo Operator Co. labels."""
-    # 1. Default tenant
-    res_def = client.get("/api/tenant/config")
-    assert res_def.status_code == 200
-    cfg_def = res_def.json
-    assert cfg_def["organization_name"] == "Demo Operator Co."
-    assert "21-330" in cfg_def["regulatory_framework"]
+def test_multi_tenant_configuration_and_branding(app, client):
+    """Item 3.2: Public branding endpoint and authenticated tenant config endpoint."""
+    with app.app_context():
+        # 1. Public unauthenticated branding subset works for both default & Operator B
+        res_brand_def = client.get("/api/tenant/branding")
+        assert res_brand_def.status_code == 200
+        brand_def = res_brand_def.json
+        assert brand_def["organization_name"] == "Demo Operator Co."
+        assert "21-330" in brand_def["regulatory_framework"]
 
-    # 2. Operator B tenant
-    res_b = client.get("/api/tenant/config?tenant_id=mena_operator_b")
-    assert res_b.status_code == 200
-    cfg_b = res_b.json
-    assert cfg_b["organization_name"] == "Al-Amal Petroleum Corp"
-    assert cfg_b["email_domain"] == "alamal-petro.com"
-    assert "14/2019" in cfg_b["regulatory_framework"]
+        res_brand_b = client.get("/api/tenant/branding?tenant_id=mena_operator_b")
+        assert res_brand_b.status_code == 200
+        brand_b = res_brand_b.json
+        assert brand_b["organization_name"] == "Al-Amal Petroleum Corp"
+        assert "14/2019" in brand_b["regulatory_framework"]
+
+        # 2. Full /api/tenant/config requires authentication and is strictly tenant-scoped
+        assert client.get("/api/tenant/config").status_code == 401
+
+        admin_def = make_user("admin")
+        login(client, admin_def)
+        res_def = client.get("/api/tenant/config")
+        assert res_def.status_code == 200
+        assert res_def.json["organization_name"] == "Demo Operator Co."
+
+        admin_b = User(
+            email=f"{uniq('admin_b')}@alamal-petro.com",
+            fullName="Tenant B Admin",
+            orgName="Al-Amal Petroleum Corp",
+            sector="Oil & Gas",
+            role="admin",
+            status="active",
+            location="Global",
+            tenant_id="mena_operator_b",
+        )
+        admin_b.set_password("AuditPass!2026")
+        db.session.add(admin_b)
+        db.session.commit()
+        admin_b_id = admin_b.id
+        try:
+            with client.session_transaction() as sess:
+                sess.clear()
+            login(client, admin_b)
+            res_b = client.get("/api/tenant/config")
+            assert res_b.status_code == 200
+            cfg_b = res_b.json
+            assert cfg_b["organization_name"] == "Al-Amal Petroleum Corp"
+            assert cfg_b["email_domain"] == "alamal-petro.com"
+            assert "14/2019" in cfg_b["regulatory_framework"]
+        finally:
+            to_del = db.session.get(User, admin_b_id)
+            if to_del is not None:
+                db.session.delete(to_del)
+                db.session.commit()
 
 
 def test_session_invalidation_on_password_or_role_change(app, client):

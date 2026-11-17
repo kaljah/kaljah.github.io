@@ -1,5 +1,5 @@
 import os
-from flask import has_request_context, session
+from flask import has_request_context, session, current_app
 from models import db, User, Facility
 
 
@@ -13,12 +13,8 @@ def get_current_tenant_id(user=None):
     if user is None and has_request_context():
         user = get_current_user()
     if user is not None:
+        # the tenant comes from the account's tenant_id only (never guessed from the organisation name)
         raw_tid = normalize_tenant_id(getattr(user, "tenant_id", None))
-        if raw_tid != "default":
-            return raw_tid
-        org = str(getattr(user, "orgName", "") or "").lower().strip()
-        if "al-amal" in org or "alamal" in org or "tenant_b" in org:
-            return "mena_operator_b"
         if raw_tid:
             return raw_tid
     if has_request_context() and session.get("tenant_id"):
@@ -71,6 +67,9 @@ def is_org_wide_user(user):
 
 
 def get_current_user():
+    if not has_request_context():
+        return None
+    # Session cookie only: revocation (session_version) and the idle timeout are enforced on it
     user_id = session.get("user_id")
     if not user_id:
         return None
@@ -348,7 +347,7 @@ _FACILITY_ENTITIES = {
     "Emission": "Emission", "Scope1": "Emission", "Scope1Emission": "Emission", "Scope2": "Scope2Emission", "Scope2Emission": "Scope2Emission",
     "Scope3": "Scope3Emission", "Scope3Emission": "Scope3Emission", "ProductionData": "ProductionData",
     "Production": "ProductionData", "OgmpSurvey": "OgmpSurvey",
-    "MitigationProject": "MitigationProject", "EmissionSource": "EmissionSource",
+    "MitigationProject": "MitigationProject", "EmissionSource": "EmissionSource", "OgmpEmissionSource": "OgmpEmissionSource", "OgmpSiteMeasurement": "OgmpSiteMeasurement", "OgmpAnnualReport": "OgmpAnnualReport", "OgmpImplementationPlan": "OgmpImplementationPlan", "OgmpReportingEntity": "OgmpReportingEntity",
 }
 
 

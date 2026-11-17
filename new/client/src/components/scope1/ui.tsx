@@ -19,7 +19,7 @@ export const Section: React.FC<SectionProps> = ({ n, title, aside, children }) =
         {n}
       </span>
       <h3 className="[font-size:var(--text-md)] [font-weight:600] [color:var(--s1-ink)] [margin:0]">{title}</h3>
-      {aside && <div className="[margin-left:auto]">{aside}</div>}
+      {aside && <div className="[margin-inline-start:auto]">{aside}</div>}
     </header>
     <div className="s1-section-body">{children}</div>
   </section>

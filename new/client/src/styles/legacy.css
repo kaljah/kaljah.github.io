@@ -62,7 +62,7 @@ select.component-select {
   background-color: var(--color-white);
   border: 1px solid var(--border-color, var(--color-ink-200));
   border-radius: var(--radius-md);
-  padding: 10px 36px 10px 14px;
+  padding-block: 10px 10px; padding-inline: 14px 36px;
   font-size: var(--text-base);
   font-family: inherit;
   font-weight: 500;

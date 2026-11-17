@@ -8,6 +8,7 @@ from io import BytesIO
 from utils import get_current_user, get_allowed_facility_ids
 from services.pdf_escape import safe_pdf_text
 from services.scope2_activity import scope2_activity
+from services.scope2_gases import gas_split
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -188,9 +189,9 @@ def create_pdf_report(emissions_data, filters):
         ["Scope 2 — Indirect Energy (Location-Based)", f"{scope2_location_total:,.2f} tCO₂e"],
         ["Scope 2 — Indirect Energy (Market-Based)", f"{scope2_market_total:,.2f} tCO₂e"],
         ["Scope 3 — Value Chain", f"{scope3_total:,.2f} tCO₂e"],
-        ["Total CO₂ Gas Mass", f"{total_co2:,.2f} tonnes CO₂"],
-        ["Total CH₄ Gas Mass", f"{total_ch4:,.2f} tonnes CH₄"],
-        ["Total N₂O Gas Mass", f"{total_n2o:,.2f} tonnes N₂O"],
+        ["Total CO₂ Gas Mass (Scopes 1 and 2)", f"{total_co2:,.2f} tonnes CO₂"],
+        ["Total CH₄ Gas Mass (Scopes 1 and 2)", f"{total_ch4:,.4f} tonnes CH₄"],
+        ["Total N₂O Gas Mass (Scopes 1 and 2)", f"{total_n2o:,.4f} tonnes N₂O"],
         ["Total CO₂e (Grand Total)", f"{total_co2e:,.2f} tCO₂e"],
     ]
 
@@ -466,14 +467,13 @@ def generate_report():
                 q2 = q2.filter_by(facility_id=facility_id)
             elif allowed_fids is not None:
                 q2 = q2.filter(Scope2Emission.facility_id.in_(allowed_fids or [-1]))
-            q2 = q2.filter(~Scope2Emission.facility_id.in_(test_fids))
-            if hasattr(Scope2Emission, "is_test"):
-                q2 = q2.filter(Scope2Emission.is_test == False)
+            q2 = q2.filter(~Scope2Emission.facility_id.in_(test_fids))  # Scope 2 rows carry no is_test flag
             if statuses:
                 q2 = q2.filter(db.func.lower(db.func.trim(Scope2Emission.status)).in_(statuses))
             for e in q2.all():
                 m_val = e.month if e.month is not None else 1
                 s2_amount, s2_unit, _s2_label = scope2_activity(e)
+                _g = gas_split(e)  # the grid / stored gas masses (they were printed 0.00, BA-051)
                 emissions_data.append(
                     {
                         "scope": 2,
@@ -483,9 +483,9 @@ def generate_report():
                         "fuel_type": _s2_label,
                         "amount": s2_amount,
                         "unit": s2_unit,
-                        "co2_emissions": 0,
-                        "ch4_emissions": 0,
-                        "n2o_emissions": 0,
+                        "co2_emissions": _g["co2"],
+                        "ch4_emissions": _g["ch4"],
+                        "n2o_emissions": _g["n2o"],
                         "total_co2e": e.co2e or 0,
                         "co2e_location_based": e.co2e_location_based if e.co2e_location_based is not None else (e.co2e or 0),
                         "co2e_market_based": e.co2e_market_based if e.co2e_market_based is not None else (e.co2e or 0),

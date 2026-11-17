@@ -8,6 +8,7 @@ from utils import (
     get_current_user,
     internal_error,
     log_activity_and_notify,
+    normalize_tenant_id,
     tenant_matches,
 )
 from input_validation import choice
@@ -160,6 +161,13 @@ def get_emissions():
                 q = q.filter(Facility.id.in_(allowed_fids or [-1]))
             else:
                 q = q.filter(model.id == -1)  # Restrict fully if unknown model
+        else:
+            # BUG-EMS-002: Ensure queries never stream cross-tenant records
+            if hasattr(model, "facility_id"):
+                tenant_fids = Facility.query.with_entities(Facility.id).filter(tenant_matches(Facility.tenant_id, caller_tenant))
+                q = q.filter(model.facility_id.in_(tenant_fids))
+            elif model == Facility:
+                q = q.filter(tenant_matches(Facility.tenant_id, caller_tenant))
 
         nonlocal year
         if year == "baseline":
@@ -535,6 +543,21 @@ from background_processor import start_background_upload, get_job_status
 
 
 
+def _goal_year_total(year, tenant_id):
+    """Verified Scope 1 + 2 tCO2e of the year for the goal notice: the caller's tenant without test rows, Scope 2
+    location-based as the dashboard default (it summed every tenant and facility, test rows included; BA-025)."""
+    from services.dashboard_filters import exclude_test_rows
+
+    t_fids = [fid for (fid,) in Facility.query.with_entities(Facility.id)
+              .filter(tenant_matches(Facility.tenant_id, tenant_id)).all()] or [-1]
+    s1 = exclude_test_rows(db.session.query(func.sum(Emission.co2e_total)), Emission).filter(
+        Emission.year == year, Emission.status == "Verified", Emission.facility_id.in_(t_fids)).scalar()
+    s2 = exclude_test_rows(db.session.query(func.sum(
+        func.coalesce(Scope2Emission.co2e_location_based, Scope2Emission.co2e))), Scope2Emission).filter(
+        Scope2Emission.year == year, Scope2Emission.status == "Verified", Scope2Emission.facility_id.in_(t_fids)).scalar()
+    return (s1 or 0) + (s2 or 0)
+
+
 @emissions_bp.route("/", methods=["POST"])
 @login_required
 def add_emission():
@@ -830,18 +853,7 @@ def add_emission():
             if prefs.get("notifTargets", True):  # Default to True
                 current_year = data.get("year")
                 if current_year:
-                    # Get Total Emissions for Year
-                    total_emissions = (
-                        db.session.query(func.sum(Emission.co2e_total))
-                        .filter(Emission.year == current_year, Emission.status == "Verified")
-                        .scalar()
-                        or 0
-                    ) + (
-                        db.session.query(func.sum(Scope2Emission.co2e))
-                        .filter(Scope2Emission.year == current_year, Scope2Emission.status == "Verified")
-                        .scalar()
-                        or 0
-                    )
+                    total_emissions = _goal_year_total(current_year, get_current_tenant_id(user))
 
                     # Get Goal (single-tenant corporate singleton)
                     goal = db.session.get(Goal, current_year) if get_current_tenant_id(user) == "default" else None
@@ -989,6 +1001,11 @@ def update_emission(id):
 
     if not record:
         return jsonify({"error": "Not found"}), 404
+    caller_tenant = get_current_tenant_id(user)
+    if record.facility_id:
+        fac = db.session.get(Facility, record.facility_id)
+        if fac and normalize_tenant_id(getattr(fac, "tenant_id", None)) != caller_tenant:
+            return jsonify({"error": "Forbidden: Record belongs to another organization"}), 403
     allowed_fids = get_allowed_facility_ids(user)
     if allowed_fids is not None and record.facility_id not in allowed_fids:
         return jsonify({"error": "Unauthorized: Outside your region"}), 403
@@ -1127,22 +1144,13 @@ def update_emission(id):
 
     # --- Audit Log ---
     try:
-        # For updates, we could track exactly what changed
-        changes = []
-        for key in data:
-            if key in [
-                "year",
-                "month",
-                "facility_id",
-                "process_type",
-                "fuel_type",
-                "quantity",
-                "unit",
-                "group_name",
-                "equipment_id",
-                "data_source_ref",
-            ]:
-                changes.append(key)
+        # the fields whose stored value changed (before vs after), named as the user knows them: an amount
+        # edit sent as "amount" / "fuel" was not listed (BA-020)
+        _labels = {"quantity": "amount", "fuel_type": "fuel"}
+        _after_now = {"year": record.year, "month": record.month, "facility_id": record.facility_id,
+                      "process_type": record.process_type, "fuel_type": record.fuel_type,
+                      "quantity": record.quantity, "unit": record.unit, "co2e_total": record.co2e_total}
+        changes = [_labels.get(k, k) for k, v in _after_now.items() if before_state.get(k) != v]
 
         log_details = (
             f"Updated emission record {id}. Changed fields: {', '.join(changes)}"

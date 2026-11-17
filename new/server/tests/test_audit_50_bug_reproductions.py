@@ -43,8 +43,9 @@ def admin_token(client):
             user.set_password("AuditPassword123!")
             db.session.commit()
     res = client.post("/api/auth/login", json={"email": "audit_repro_admin@example.com", "password": "AuditPassword123!"})
-    token = res.get_json().get("token") or res.get_json().get("access_token")
-    return {"Authorization": f"Bearer {token}"}
+    # sign-in is session based (the test client keeps the cookie): no token header is needed
+    assert res.status_code == 200, res.get_json()
+    return {}
 
 
 @pytest.fixture(scope="module")
@@ -67,8 +68,9 @@ def it_token(client):
             user.set_password("AuditPassword123!")
             db.session.commit()
     res = client.post("/api/auth/login", json={"email": "audit_repro_it@example.com", "password": "AuditPassword123!"})
-    token = res.get_json().get("token") or res.get_json().get("access_token")
-    return {"Authorization": f"Bearer {token}"}
+    # sign-in is session based (the test client keeps the cookie): no token header is needed
+    assert res.status_code == 200, res.get_json()
+    return {}
 
 
 class TestAuditBugReproduction:
@@ -176,6 +178,10 @@ class TestAuditBugReproduction:
         client.post("/api/auth/login", json={"email": "audit_repro_admin@example.com", "password": "AuditPassword123!"})
         with app.app_context():
             fac = Facility.query.first()
+            if not fac:
+                fac = Facility(name="Audit Repro Fac", location="Basin Alpha", activity="Upstream Oil & Gas")
+                db.session.add(fac)
+                db.session.commit()
             fac_id = fac.id
 
         res = client.post("/api/data/production", json={"facility_id": fac_id, "year": "invalid_year", "month": 5}, headers=admin_token)
@@ -192,6 +198,10 @@ class TestAuditBugReproduction:
         client.post("/api/auth/login", json={"email": "audit_repro_admin@example.com", "password": "AuditPassword123!"})
         with app.app_context():
             fac = Facility.query.first()
+            if not fac:
+                fac = Facility(name="Audit Repro Fac", location="Basin Alpha", activity="Upstream Oil & Gas")
+                db.session.add(fac)
+                db.session.commit()
             fac_id = fac.id
 
         payload = {
@@ -251,6 +261,10 @@ class TestAuditBugReproduction:
         client.post("/api/auth/login", json={"email": "audit_repro_admin@example.com", "password": "AuditPassword123!"})
         with app.app_context():
             fac = Facility.query.first()
+            if not fac:
+                fac = Facility(name="Audit Repro Fac", location="Basin Alpha", activity="Upstream Oil & Gas")
+                db.session.add(fac)
+                db.session.commit()
             fac_id = fac.id
         payload = {
             "ogmp_membership_year": "invalid_year"

@@ -259,7 +259,10 @@ export const LdarTab: React.FC<LdarTabProps> = ({
         component_type: compModal.component_type,
         service_type: compModal.service_type,
         quantity: parseInt(compModal.quantity, 10) || 1,
-        operating_hours: parseFloat(compModal.operating_hours) || 8760,
+        operating_hours:
+          compModal.operating_hours === "" || isNaN(parseFloat(compModal.operating_hours))
+            ? 8760
+            : parseFloat(compModal.operating_hours),
         status: compModal.status || "Active",
         description: compModal.description,
       });
@@ -279,7 +282,7 @@ export const LdarTab: React.FC<LdarTabProps> = ({
     };
     if (bulkCompModal.status) payload.status = bulkCompModal.status;
     if (bulkCompModal.service_type) payload.service_type = bulkCompModal.service_type;
-    if (bulkCompModal.operating_hours) {
+    if (bulkCompModal.operating_hours !== undefined && bulkCompModal.operating_hours !== "") {
       const hrs = parseFloat(bulkCompModal.operating_hours);
       if (!isNaN(hrs)) payload.operating_hours = hrs;
     }
@@ -764,7 +767,7 @@ export const LdarTab: React.FC<LdarTabProps> = ({
                 }}
                 className="h-8 px-2.5 text-xs font-semibold text-text-secondary hover:text-text"
               >
-                <RotateCcw className="size-3 mr-1" />
+                <RotateCcw className="size-3 me-1" />
                 {t("Reset")}
               </Button>
             )}
@@ -874,7 +877,7 @@ export const LdarTab: React.FC<LdarTabProps> = ({
                 </Td>
                 <Td className="font-mono">
                   {s.screening_value_ppm !== undefined && s.screening_value_ppm !== null
-                    ? `${s.screening_value_ppm.toLocaleString()} ppm`
+                    ? `${s.screening_value_ppm.toLocaleString("en-US")} ppm`
                     : "-"}
                 </Td>
                 <Td>{getStatusBadge(s.leak_status)}</Td>
@@ -976,7 +979,7 @@ export const LdarTab: React.FC<LdarTabProps> = ({
                 }}
                 className="h-8 px-2.5 text-xs font-semibold text-text-secondary hover:text-text"
               >
-                <RotateCcw className="size-3 mr-1" />
+                <RotateCcw className="size-3 me-1" />
                 {t("Reset")}
               </Button>
             )}
@@ -1309,7 +1312,7 @@ export const LdarTab: React.FC<LdarTabProps> = ({
               <Field label={t("Operating Hours / Year")}>
                 <Input
                   type="number"
-                  min="1"
+                  min="0"
                   max="8760"
                   value={compModal.operating_hours}
                   onChange={(e) =>

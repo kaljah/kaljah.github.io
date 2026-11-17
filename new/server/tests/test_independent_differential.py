@@ -98,7 +98,7 @@ class TestDifferentialScope1:
             "quantity": qty,
             "unit": unit,
             "factor_source": "specific",
-            "combustion_efficiency": 0.995,
+            "combustion_efficiency": 99.5,
             "operating_temperature": 25.0,
             "temp_unit": "C",
             "operating_pressure": 50.0,
@@ -323,7 +323,7 @@ class TestDifferentialScope2and3:
         data = {
             "amount": 2500.0,
             "unit": "mmbtu",
-            "boiler_efficiency": 0.82,
+            "boiler_efficiency": 82,
             "calc_inputs": {
                 "indirect_steam": {
                     "trans_loss": 0.05,
@@ -339,8 +339,8 @@ class TestDifferentialScope2and3:
             boiler_eff=0.82,
             trans_loss=0.05,
             ef_co2=53.06,
-            ef_ch4=0.001,   # natural-gas boiler, Table 4-6 (= EPA Hub Table 7)
-            ef_n2o=0.0001,
+            ef_ch4=0.0011,  # natural-gas boiler of Exhibit 8.3 (Table 4-7, controlled; BA-008)
+            ef_n2o=0.0003,
         )
 
         assert pytest.approx(prod_co2e, rel=1e-6) == ref_res["co2e"]

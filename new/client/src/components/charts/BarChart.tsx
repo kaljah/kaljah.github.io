@@ -1,4 +1,5 @@
 import React, { useId, useState, useMemo } from "react";
+import { ChartNoAxesColumnIncreasing } from "lucide-react";
 import {
   BarChart as RechartsBar,
   Bar,
@@ -154,7 +155,7 @@ export const BarChart: React.FC<BarChartProps> = ({
     if (Math.abs(num) >= 1_000) return `${(num / 1_000).toFixed(1)}k`;
     // Small magnitudes (rates, intensities) need more digits or every tick collapses to "0" / "0.1".
     const digits = Math.abs(num) >= 10 ? 1 : Math.abs(num) >= 1 ? 2 : 3;
-    return num.toLocaleString(undefined, { maximumFractionDigits: digits });
+    return num.toLocaleString("en-US", { maximumFractionDigits: digits });
   };
 
   // Show every category label (long names are shortened; the tooltip carries the full name).
@@ -251,20 +252,7 @@ export const BarChart: React.FC<BarChartProps> = ({
       >
         <div className="chart-empty-content">
           <div className="chart-empty-icon">
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="12" y1="20" x2="12" y2="10" />
-              <line x1="18" y1="20" x2="18" y2="4" />
-              <line x1="6" y1="20" x2="6" y2="16" />
-            </svg>
+            <ChartNoAxesColumnIncreasing size={20} strokeWidth={2} aria-hidden="true" />
           </div>
           <span>{t("No benchmark data available")}</span>
         </div>
@@ -392,7 +380,7 @@ export const BarChart: React.FC<BarChartProps> = ({
                             fill="var(--color-ink-700)"
                             fontSize={12}
                             fontWeight={600}
-                            style={{ cursor: "pointer" }}
+                            className="cursor-pointer"
                             onClick={() => row && onSelect(row)}
                           >
                             {label}

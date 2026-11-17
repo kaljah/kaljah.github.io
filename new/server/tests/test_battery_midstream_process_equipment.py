@@ -307,9 +307,8 @@ class TestBlowdownBattery:
         assert res["inputs"]["total_v_std_m3"] == pytest.approx(2 * 50.0 * (500.0 + 14.696) / 14.696, rel=1e-6)
         assert _val(res["results"]["ch4"]) == pytest.approx(v_ch4 * rho_ch4 / 1000 * (0.02 + 0.98 * 0.02), rel=1e-6)
         assert _val(res["results"]["co2"]) == pytest.approx(v_ch4 * rho_co2 / 1000 * 0.98 * 0.965, rel=1e-6)
-        # N2O of the flared share: gas x 1,020 Btu/scf x 1.0e-7 t/MMBtu
-        flared_mmbtu = 0.98 * (v_ch4 / 0.85) * 35.3146667 * 1020.0 / 1e6
-        assert _val(res["results"]["n2o"]) == pytest.approx(flared_mmbtu * 1.0e-7, rel=1e-3)
+        # N2O of the flared share: Eq 5-6, the flare CO2 x 1.0E-04 / 60 (BA-017)
+        assert _val(res["results"]["n2o"]) == pytest.approx(_val(res["results"]["co2"]) * 1.0e-4 / 60, rel=1e-6)
 
 
 class TestTankFlashingBattery:

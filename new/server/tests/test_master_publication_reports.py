@@ -286,34 +286,205 @@ def test_unauthenticated_guard(client):
 
 
 
-def test_master_report_advanced_chapters_and_base_year_recalculations(client, auth_headers):
-    """Verifies that the Master Report includes Scope 3, OGMP 2.0, EU CBAM, and Base Year Recalculation."""
+def test_master_report_advanced_chapters_and_base_year_recalculations(client):
+    """Verifies honest empty states when Scope3/OGMP/CBAM/Recalc are unseeded AND real DB data when seeded."""
+    import uuid
     import pypdfium2
-    res = _fetch_master_report_via_job(client, {
-        "mode": "regional",
-        "region": "basin_alpha",
-        "start_year": 2021,
-        "end_year": 2025,
-        "gwp_standard": "AR5",
-        "language": "en"
-    })
-    assert res.status_code == 200
-    pdf = pypdfium2.PdfDocument(res.data)
-    assert len(pdf) >= 16
-    all_text = " ".join([pdf[i].get_textpage().get_text_range() for i in range(len(pdf))])
-    pdf.close()
+    from models import (
+        BaseYearRecalculation,
+        CbamProductExport,
+        Emission,
+        OgmpSurvey,
+        ProductionData,
+        Scope3Emission,
+    )
 
-    # Chapter 5: OGMP 2.0 & LDAR
-    assert "OGMP 2.0 METHANE RECONCILIATION" in all_text
-    assert "Level 4 Bottom-Up" in all_text or "Gold Standard" in all_text
+    tag = uuid.uuid4().hex[:8]
+    tid = f"adv_{tag}"
+    uid = None
+    fac_id = None
+    ogmp_id = None
+    s3_id = None
+    cbam_id = None
+    recalc_id = None
 
-    # Chapter 7: Scope 3 Value Chain
-    assert "SCOPE 3 VALUE CHAIN EMISSIONS" in all_text
-    assert "Category 1" in all_text or "GHG Protocol Category" in all_text
+    with app.app_context():
+        user = User(
+            email=f"adv_{tag}@test.com",
+            fullName="Advanced Chapter Admin",
+            orgName="Isolated Test Operator",
+            sector="Energy",
+            role="admin",
+            status="active",
+            location="Basin Alpha",
+            tenant_id=tid,
+        )
+        user.set_password("AdvTestPass!123")
+        db.session.add(user)
+        db.session.flush()
+        uid = user.id
 
-    # Chapter 10: EU CBAM & Decarbonization Economics
-    assert "EU CBAM HYDROCARBON EXPORT EMBEDDINGS" in all_text
-    assert "SEE Direct" in all_text or "Specific Embedded" in all_text
+        fac = Facility(
+            name=f"Adv Ch Basin Alpha {tag}",
+            code=f"ADV-BA-{tag}",
+            region="Basin Alpha",
+            segment="Upstream",
+            equity_share_pct=100.0,
+            tenant_id=tid,
+        )
+        db.session.add(fac)
+        db.session.flush()
+        fac_id = fac.id
 
-    # Chapter 12: Base Year Recalculation Audit Trail
-    assert "Base Year Recalculation Audit Trail" in all_text or "Clause 6.4.1" in all_text
+        db.session.add(
+            Emission(
+                facility_id=fac.id,
+                year=2024,
+                month=6,
+                process_type="stationary_combustion",
+                fuel_type="Natural Gas",
+                quantity=1000.0,
+                unit="m3",
+                co2_emissions=500.0,
+                ch4_emissions=1.0,
+                n2o_emissions=0.05,
+                co2e_total=540.0,
+                status="Verified",
+                created_by=user.id,
+                is_test=False,
+            )
+        )
+        db.session.add(
+            ProductionData(
+                facility_id=fac.id,
+                year=2024,
+                month=6,
+                oil_amount=5000.0,
+                gas_amount=15000.0,
+                gross_gas_mmsm3=5.0,
+                total_production_mmboe=0.1,
+            )
+        )
+        db.session.commit()
+
+    login_res = client.post(
+        "/api/auth/login",
+        json={"email": f"adv_{tag}@test.com", "password": "AdvTestPass!123"},
+    )
+    assert login_res.status_code == 200
+
+    try:
+        # Part A: Unseeded tables -> honest empty-state disclosure, zero fabricated fallback values
+        res_empty = _fetch_master_report_via_job(client, {
+            "mode": "regional",
+            "region": "basin_alpha",
+            "start_year": 2021,
+            "end_year": 2025,
+            "gwp_standard": "AR5",
+            "language": "en",
+        })
+        assert res_empty.status_code == 200
+        pdf_e = pypdfium2.PdfDocument(res_empty.data)
+        assert len(pdf_e) >= 14
+        empty_text = " ".join(" ".join([pdf_e[i].get_textpage().get_text_range() for i in range(len(pdf_e))]).split())
+        pdf_e.close()
+
+        assert "OGMP 2.0 METHANE RECONCILIATION" in empty_text
+        assert "SCOPE 3 VALUE CHAIN EMISSIONS" in empty_text
+        assert "EU CBAM HYDROCARBON EXPORT EMBEDDINGS" in empty_text
+        assert "Base Year Recalculation" in empty_text or "Clause 6.4.1" in empty_text
+        assert "NO RECORDS / NOT APPLICABLE IN SCOPE" in empty_text or "No Verified Scope 3" in empty_text
+        for fabricated in ("Aerial LiDAR", "Bridger Photonics", "483,084", "12,070", "Sahara Blend Export Crude", "309,500"):
+            assert fabricated not in empty_text, f"Fabricated fallback leaked into unseeded report: {fabricated}"
+
+        # Part B: Seed real DB records -> chapters dynamically render real values
+        with app.app_context():
+            ogmp = OgmpSurvey(
+                facility_id=fac_id,
+                year=2024,
+                survey_date="2024-06-10",
+                survey_type="Drone OGI",
+                instrument_vendor=f"CleanSky-{tag}",
+                measured_rate_kg_hr=2.5,
+                estimated_annual_tch4=21.9,
+                bottom_up_tch4=23.0,
+                variance_pct=-4.8,
+                reconciliation_status="Reconciled",
+                status="reported",
+            )
+            s3 = Scope3Emission(
+                facility_id=fac_id,
+                year=2024,
+                month=6,
+                category="Category 1: Purchased Goods",
+                sub_category=f"Pipeline Steel {tag}",
+                activity_data=100.0,
+                unit="tonnes",
+                emission_factor=2.1,
+                co2e=210.0,
+                calculation_method="Supplier Primary Data (Tier 2)",
+                data_quality="High",
+                status="Verified",
+            )
+            cbam = CbamProductExport(
+                facility_id=fac_id,
+                year=2024,
+                month=6,
+                product_name=f"Methanol-{tag}",
+                cn_code="2905 11 00",
+                quantity_tonnes=5000.0,
+                export_destination="EU-NL",
+                quarter="Q2",
+                specific_embedded_direct=0.45,
+                specific_embedded_indirect=0.05,
+                carbon_price_paid_eur=10.0,
+            )
+            recalc = BaseYearRecalculation(
+                year=2021,
+                reason=f"Boundary alignment audit {tag}",
+                previous_emissions=100000.0,
+                adjusted_emissions=104000.0,
+                tenant_id=tid,
+            )
+            db.session.add_all([ogmp, s3, cbam, recalc])
+            db.session.commit()
+            ogmp_id, s3_id, cbam_id, recalc_id = ogmp.id, s3.id, cbam.id, recalc.id
+
+        res_pop = _fetch_master_report_via_job(client, {
+            "mode": "regional",
+            "region": "basin_alpha",
+            "start_year": 2021,
+            "end_year": 2025,
+            "gwp_standard": "AR5",
+            "language": "en",
+        })
+        assert res_pop.status_code == 200
+        pdf_p = pypdfium2.PdfDocument(res_pop.data)
+        assert len(pdf_p) >= 14
+        pop_text = " ".join(" ".join([pdf_p[i].get_textpage().get_text_range() for i in range(len(pdf_p))]).split())
+        pdf_p.close()
+
+        assert f"CleanSky-{tag}" in pop_text or "Drone OGI" in pop_text
+        assert "Category 1" in pop_text and f"Pipeline Steel {tag}" in pop_text
+        assert f"Methanol-{tag}" in pop_text
+        assert "SEE Direct" in pop_text or "Specific Embedded" in pop_text
+        assert f"Boundary alignment audit {tag}" in pop_text
+    finally:
+        client.post("/api/auth/logout")
+        with app.app_context():
+            db.session.rollback()
+            if ogmp_id:
+                OgmpSurvey.query.filter_by(id=ogmp_id).delete(synchronize_session=False)
+            if s3_id:
+                Scope3Emission.query.filter_by(id=s3_id).delete(synchronize_session=False)
+            if cbam_id:
+                CbamProductExport.query.filter_by(id=cbam_id).delete(synchronize_session=False)
+            if recalc_id:
+                BaseYearRecalculation.query.filter_by(id=recalc_id).delete(synchronize_session=False)
+            if fac_id:
+                Emission.query.filter_by(facility_id=fac_id).delete(synchronize_session=False)
+                ProductionData.query.filter_by(facility_id=fac_id).delete(synchronize_session=False)
+                Facility.query.filter_by(id=fac_id).delete(synchronize_session=False)
+            if uid:
+                User.query.filter_by(id=uid).delete(synchronize_session=False)
+            db.session.commit()

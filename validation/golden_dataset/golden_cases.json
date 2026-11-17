@@ -374,8 +374,8 @@
       "c1": 0.85,
       "ch4_fraction": 0.85,
       "flare_type": "elevated",
-      "combustion_efficiency": 1.0,
-      "destruction_efficiency": 1.0
+      "combustion_efficiency": 100.0,
+      "destruction_efficiency": 100.0
     },
     "units": "m3",
     "emission_factor": {
@@ -390,8 +390,8 @@
     "expected_final_result": {
       "co2": 15.794173527549082,
       "ch4": 0.0,
-      "n2o": 3.602096e-05,
-      "co2e": 15.803719081549081,
+      "n2o": 2.6323622545915137e-05,
+      "co2e": 15.80114928752375,
       "vol_m3_std": 10000.0,
       "eta_c": 1.0,
       "eta_d": 1.0
@@ -430,8 +430,8 @@
     "expected_final_result": {
       "co2": 0.0,
       "ch4": 5.756385898247836,
-      "n2o": 3.602096e-05,
-      "co2e": 161.1883507049394,
+      "n2o": 0.0,
+      "co2e": 161.1788051509394,
       "vol_m3_std": 10000.0,
       "eta_c": 0.0,
       "eta_d": 0.0

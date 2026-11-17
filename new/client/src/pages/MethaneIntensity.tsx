@@ -44,6 +44,9 @@ interface RegionalMethaneData {
   flaring_emissions?: number;
   total_ch4?: number;
   methane_loss_rate_pct?: number | null;
+  methane_intensity_ngsi_pct?: number | null;
+  ngsi_ch4_content?: number;
+  marketed_gas_m3?: number;
   ch4_intensity?: number;
   segment_category?: string;
   wec_fee_usd?: number | null;
@@ -95,6 +98,8 @@ const MethaneIntensity: React.FC = () => {
     totalCh4Emissions: 0,
     totalCh4VolumeM3: 0,
     totalGasProductionM3: 0,
+    totalMarketedGasM3: 0,
+    ngsiIntensityPct: null,
     totalGasProductionMscf: 0,
     totalOilProduction: 0,
     totalBoe: 0,
@@ -110,6 +115,8 @@ const MethaneIntensity: React.FC = () => {
 
   const [regionalData, setRegionalData] = useState<RegionalMethaneData[]>([]);
   const [ogmpSurveys, setOgmpSurveys] = useState<any[]>([]);
+  const [ogmpAnnualReports, setOgmpAnnualReports] = useState<any[]>([]);
+  const [ogmpSiteMeasurements, setOgmpSiteMeasurements] = useState<any[]>([]);
   const [ogmpRoadmapData, setOgmpRoadmapData] = useState<any[]>([]);
   const [rawTrendData, setRawTrendData] = useState<TrendItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -239,10 +246,19 @@ const MethaneIntensity: React.FC = () => {
         upCh4Tonnes = 0;
       let midGasM3 = 0,
         midCh4Tonnes = 0;
+      // loss rate on the OGCI / OGMP basis: CH4 volume / MARKETED gas (gross - reinjected - flared - vented -
+      // fuel - shrinkage, server services/methane_intensity.py); NGSI: CH4 / CH4 in the throughput (BA-054)
+      let tMarketedM3 = 0,
+        tNgsiCh4InThroughputT = 0;
 
       data.forEach((d) => {
         const boe = d.total_boe || 0;
         const gasM3 = d.total_gas_m3 || (d.total_gas || 0) * 28.3168;
+        const mktM3 = d.marketed_gas_m3 ?? gasM3;
+        if (gasM3 > 0) {
+          tMarketedM3 += mktM3;
+          tNgsiCh4InThroughputT += (gasM3 / 28.316846592) * (d.ngsi_ch4_content ?? 0.833) * 0.0192;
+        }
         const ch4Tonnes = d.total_ch4 || 0;
         // BUG-086: one server-side segment classifier (segment_category) for KPI cards, trend and targets
         const seg = d.segment_category || "";
@@ -260,10 +276,10 @@ const MethaneIntensity: React.FC = () => {
         if (d.wec_rate_usd_per_t) wecRate = d.wec_rate_usd_per_t;
         // loss rate numerator and denominator cover the same facilities (those with gas production)
         if (seg === "midstream" && gasM3 > 0) {
-          midGasM3 += gasM3;
+          midGasM3 += mktM3;
           midCh4Tonnes += ch4Tonnes;
         } else if (seg === "upstream" && gasM3 > 0) {
-          upGasM3 += gasM3;
+          upGasM3 += mktM3;
           upCh4Tonnes += ch4Tonnes;
         }
         // "downstream" and unclassified records are intentionally excluded
@@ -278,7 +294,8 @@ const MethaneIntensity: React.FC = () => {
       // Methane density at the API Compendium standard conditions (60 F, 14.696 psia)
       const totalCh4VolM3 = (tCh4WithGas * 1000.0) / CH4_DENSITY_KG_M3;
       const avgLossRatePct =
-        tGasM3 > 0 ? (totalCh4VolM3 / tGasM3) * 100.0 : 0.0;
+        tMarketedM3 > 0 ? (totalCh4VolM3 / tMarketedM3) * 100.0 : 0.0;
+      const ngsiPct = tNgsiCh4InThroughputT > 0 ? (tCh4WithGas / tNgsiCh4InThroughputT) * 100.0 : null;
 
       const upCh4VolM3 = (upCh4Tonnes * 1000.0) / CH4_DENSITY_KG_M3;
       const midCh4VolM3 = (midCh4Tonnes * 1000.0) / CH4_DENSITY_KG_M3;
@@ -316,6 +333,8 @@ const MethaneIntensity: React.FC = () => {
         totalCh4Emissions: tCh4Tonnes,
         totalCh4VolumeM3: totalCh4VolM3,
         totalGasProductionM3: tGasM3,
+        totalMarketedGasM3: tMarketedM3,
+        ngsiIntensityPct: ngsiPct,
         totalGasProductionMscf: tGasMscf,
         totalOilProduction: tOil,
         totalBoe: tBoe,
@@ -354,11 +373,15 @@ const MethaneIntensity: React.FC = () => {
         params.append("activity", currentActivity);
       if (currentDivision && currentDivision !== "all")
         params.append("division", currentDivision);
-      const res = await api
-        .get(`/data/ogmp-surveys?${params}`)
-        .catch(() => ({ data: [] }));
+      const [res, repRes, measRes] = await Promise.all([
+        api.get(`/data/ogmp-surveys?${params}`).catch(() => ({ data: [] })),
+        api.get(`/ogmp/annual-reports?${params}`).catch(() => ({ data: [] })),
+        api.get(`/ogmp/site-measurements?${params}`).catch(() => ({ data: [] })),
+      ]);
       const data = Array.isArray(res.data) ? res.data : res.data?.data || [];
       setOgmpSurveys(data);
+      setOgmpAnnualReports(Array.isArray(repRes.data) ? repRes.data : []);
+      setOgmpSiteMeasurements(Array.isArray(measRes.data) ? measRes.data : []);
     } catch (error) {
       console.error("OGMP load error:", error);
     }
@@ -632,7 +655,7 @@ const MethaneIntensity: React.FC = () => {
         className="inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold px-3.5 py-1.5 rounded-md border border-brand-600 shadow-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         onClick={handleExportExcel}
         disabled={exporting}
-        title={t("Download 5-Tab OGMP 2.0 Disclosure Workbook (.xlsx)")}
+        title={t("Download 13-Sheet UNEP OGMP 2.0 Disclosure Workbook (.xlsx)")}
       >
         <Download size={16} />
         {exporting ? t("Exporting...") : t("Export OGMP 2.0 (Excel)")}
@@ -680,18 +703,20 @@ const MethaneIntensity: React.FC = () => {
 
       yearData.forEach((d) => {
         const boe = d.total_boe || 0;
-        const gasM3 = d.total_gas_m3 || (d.total_gas || 0) * 28.3168;
+        const gasM3Raw = d.total_gas_m3 || (d.total_gas || 0) * 28.3168;
+        // the loss rate divides by marketed gas (BA-054)
+        const gasM3 = gasM3Raw > 0 ? (d.marketed_gas_m3 ?? gasM3Raw) : 0;
         const ch4Tonnes = d.total_ch4 || 0;
         const volM3 = (ch4Tonnes * 1000.0) / CH4_DENSITY_KG_M3;
         const seg = d.segment_category || ""; // BUG-086
 
         tGasM3 += gasM3;
-        if (gasM3 > 0) tCh4VolM3 += volM3;
+        if (gasM3Raw > 0) tCh4VolM3 += volM3;
 
-        if (seg === "midstream" && gasM3 > 0) {
+        if (seg === "midstream" && gasM3Raw > 0) {
           midGas += gasM3;
           midCh4 += volM3;
-        } else if (seg === "upstream" && gasM3 > 0) {
+        } else if (seg === "upstream" && gasM3Raw > 0) {
           upGas += gasM3;
           upCh4 += volM3;
         }
@@ -747,7 +772,7 @@ const MethaneIntensity: React.FC = () => {
       item.total_ch4 += d.total_ch4 || 0;
       item.total_boe += d.total_boe || 0;
       item.flaring_volume += d.flaring_volume || 0;
-      const gm3 = d.total_gas_m3 || (d.total_gas || 0) * 28.3168;
+      const gm3 = d.marketed_gas_m3 ?? (d.total_gas_m3 || (d.total_gas || 0) * 28.3168);  // marketed (BA-054)
       if (d.methane_loss_rate_pct != null) {
         item.hasLossRate = true;
         item.gas_m3 += gm3;
@@ -826,6 +851,8 @@ const MethaneIntensity: React.FC = () => {
           globalThreshold={globalThreshold}
           ogmpCollapsed={ogmpCollapsed}
           ogmpSurveys={ogmpSurveys}
+          ogmpAnnualReports={ogmpAnnualReports}
+          ogmpSiteMeasurements={ogmpSiteMeasurements}
           regionalData={regionalData}
           setOgmpCollapsed={setOgmpCollapsed}
         />
@@ -973,7 +1000,7 @@ const MethaneIntensity: React.FC = () => {
                 selectLabel={(r) => t("Open {{name}} records", { name: r.name })}
                 exportName="gas-flaring-volume-by-region"
                 color="var(--color-brand-600)"
-                formatValue={(v) => `${Number(v).toLocaleString()} m³`}
+                formatValue={(v) => `${Number(v).toLocaleString("en-US")} m³`}
               />
             )}
           </div>

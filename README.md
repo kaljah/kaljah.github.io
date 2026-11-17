@@ -17,8 +17,8 @@ A Greenhouse Gas (GHG) accounting, emission analytics, and reporting platform de
   - **Scope 3**: Spend-based screening across GHG Protocol value chain categories (EEIO / NAICS factors and activity estimates).
 - **Regulatory Compliance & Intensity Analytics**:
   - **Carbon & Methane Intensity**: Field-level and corporate intensity indicators (kg CO2e/boe, % methane loss).
-  - **OGMP 2.0 Framework**: Survey tracking and pathway view (preview, reconciliation logic in development; marked **Preview / Roadmap** in the UI).
-  - **CBAM Reporting**: EU CBAM Excel template export plus XML export preview (marked **Preview / Roadmap** in the UI).
+  - **OGMP 2.0 Framework**: Full UNEP/IMEO Level 1–5 source catalogs (15 Upstream / 12 Mid-Downstream), L5 campaigns, 95% CI RSS reconciliation, Y0–Y10 implementation plans, 95% equity portfolio materiality, and 13-sheet Excel disclosure workbook.
+  - **CBAM Reporting**: EU CBAM Communication Template Excel export, strict Q1–Q4 filtering, Regulation (EU) 2023/1773 pre-export validation checklist, Gross/CCS/Net breakdown, and live XML Declaration generation.
   - **Uncertainty Assessment**: Basic error propagation (Monte Carlo planned) and confidence interval assessment for emission data.
 - **Ingestion & Reporting**:
   - In-process background processing for CSV/Excel emission datasets and PDF master reports.

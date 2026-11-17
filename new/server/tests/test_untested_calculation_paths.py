@@ -493,9 +493,9 @@ def test_uncertainty_additional_edge_cases():
     res_str = propagate_uncertainty(100.0, 0.05, composition_uncertainty="invalid_comp")
     assert res_str["relative_uncertainty_95pct"] > 0
 
-    # resolve_ef_uncertainty with invalid tier fallback to 0.15
+    # an invalid tier falls back to Tier 1: combustion CH4 is IPCC 2006 Vol.2 Table 2.12 (50-150 %, BA-052)
     unc_fallback = resolve_ef_uncertainty("combustion", "ch4", "T99")
-    assert unc_fallback == 0.15
+    assert unc_fallback == 1.50
 
 
 def test_units_scale_activity_and_denominators():

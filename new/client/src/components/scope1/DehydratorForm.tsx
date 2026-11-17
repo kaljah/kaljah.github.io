@@ -39,7 +39,7 @@ export const DehydratorForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
             label={
               <>
                 {t("Throughput (MMscf/yr)")}
-                <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
               </>
             }
           >
@@ -55,7 +55,7 @@ export const DehydratorForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
           <div className="input-group">
             <label>
               {t("Glycol pump rate")}
-              <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+              <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
             </label>
             <div className="flex! gap-[10px]!">
               <input
@@ -85,7 +85,7 @@ export const DehydratorForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
             label={
               <>
                 {t("CH₄ (%)")}
-                <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
               </>
             }
           >
@@ -107,7 +107,7 @@ export const DehydratorForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
             label={
               <>
                 {t("Hours per year")}
-                <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
               </>
             }
           >
@@ -125,7 +125,7 @@ export const DehydratorForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
             label={
               <>
                 {t("Contactor pressure (psig)")}
-                <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
               </>
             }
           >
@@ -143,7 +143,7 @@ export const DehydratorForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
             label={
               <>
                 {t("Contactor temp (°F)")}
-                <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
               </>
             }
           >

@@ -92,7 +92,7 @@ class AssociatedGasVentingCalculator(BaseCalculator):
     # Physical molecular weights (API Compendium 2021 Table 3-1 & 3-2)
     MW_CH4 = 16.04
     MW_CO2 = 44.01
-    MOLAR_VOLUME_SCF_LBMOLE = 379.3  # scf/lb-mole at 60°F, 14.696 psia
+    from .units import MOLAR_VOLUME_SCF_PER_LBMOL as MOLAR_VOLUME_SCF_LBMOLE  # one molar volume (BA-016)
     LB_TO_TONNE = 1.0 / 2204.6226218487757
 
     def __init__(self):
@@ -128,6 +128,38 @@ class AssociatedGasVentingCalculator(BaseCalculator):
         if "%" in s or f > 1.0:
             f /= 100.0
         return f
+
+    @classmethod
+    def _parse_gas_comp(cls, ch4_content, co2_content=None):
+        def _raw_and_pct(v):
+            if v in [None, "", "-"]:
+                return (None, False)
+            try:
+                s = str(v).strip()
+                has_pct = "%" in s
+                f = float(s.replace("%", "").strip())
+                return (f, has_pct)
+            except (ValueError, TypeError):
+                raise ValueError(f"Invalid fraction: {v}")
+
+        val_ch4, pct_ch4 = _raw_and_pct(ch4_content)
+        val_co2, pct_co2 = _raw_and_pct(co2_content)
+
+        if val_ch4 is not None and (val_ch4 < 0 or (val_ch4 > 1.0 and not pct_ch4 and val_ch4 > 100.0)):
+            raise ValueError(f"CH4 molar fraction must be between 0.0 and 1.0 (or 0% to 100%, got {val_ch4}) and cannot be negative.")
+        if val_co2 is not None and (val_co2 < 0 or (val_co2 > 1.0 and not pct_co2 and val_co2 > 100.0)):
+            raise ValueError(f"CO2 molar fraction must be between 0.0 and 1.0 (or 0% to 100%, got {val_co2}) and cannot be negative.")
+
+        c_ch4 = (val_ch4 / 100.0) if (val_ch4 is not None and (pct_ch4 or val_ch4 > 1.0)) else val_ch4
+        c_co2 = (val_co2 / 100.0) if (val_co2 is not None and (pct_co2 or val_co2 > 1.0)) else val_co2
+
+        if c_ch4 is not None and not (0.0 <= c_ch4 <= 1.0):
+            raise ValueError(f"CH4 molar fraction must be between 0.0 and 1.0 (got {c_ch4}).")
+        if c_co2 is not None and not (0.0 <= c_co2 <= 1.0):
+            raise ValueError(f"CO2 molar fraction must be between 0.0 and 1.0 (got {c_co2}).")
+        if c_ch4 is not None and c_co2 is not None and (c_ch4 + c_co2) > 1.0001:
+            raise ValueError(f"Gas composition error: Sum of CH4 ({c_ch4*100:.1f}%) and CO2 ({c_co2*100:.1f}%) exceeds 100% ({((c_ch4 + c_co2)*100):.1f}%).")
+        return c_ch4, c_co2
 
     def calculate(
         self,
@@ -182,14 +214,7 @@ class AssociatedGasVentingCalculator(BaseCalculator):
             )
 
         # 2. Validate Gas Composition (applies across all tiers when provided)
-        c_ch4 = self._normalize_fraction(ch4_content) if ch4_content is not None else None
-        if c_ch4 is not None and not (0.0 <= c_ch4 <= 1.0):
-            raise ValueError(f"CH4 molar fraction must be between 0.0 and 1.0 (got {c_ch4}).")
-        c_co2 = self._normalize_fraction(co2_content) if co2_content is not None else None
-        if c_co2 is not None and not (0.0 <= c_co2 <= 1.0):
-            raise ValueError(f"CO2 molar fraction must be between 0.0 and 1.0 (got {c_co2}).")
-        if c_ch4 is not None and c_co2 is not None and (c_ch4 + c_co2) > 1.0001:
-            raise ValueError(f"Gas composition error: Sum of CH4 ({c_ch4*100:.1f}%) and CO2 ({c_co2*100:.1f}%) exceeds 100% ({((c_ch4 + c_co2)*100):.1f}%).")
+        c_ch4, c_co2 = self._parse_gas_comp(ch4_content, co2_content)
 
         ctrl_eff = self._normalize_fraction(control_efficiency, default=0.0)
         if ctrl_eff < 0.0 or ctrl_eff > 1.0:

@@ -121,7 +121,7 @@ export const TraceDrilldownModal: React.FC<TraceModalProps> = ({
         {loading && (
           <div className="flex items-center justify-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
-            <span className="ml-3 font-medium">Resolving calculation graph & audit trail...</span>
+            <span className="ms-3 font-medium">Resolving calculation graph & audit trail...</span>
           </div>
         )}
 
@@ -141,7 +141,7 @@ export const TraceDrilldownModal: React.FC<TraceModalProps> = ({
                 </p>
                 <div className="flex items-baseline gap-2 mt-1">
                   <span className="text-3xl font-bold font-mono text-slate-900 dark:text-white">
-                    {data.total_value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    {data.total_value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </span>
                   <span className="text-base font-semibold text-emerald-700 dark:text-emerald-400">
                     {data.unit}
@@ -190,7 +190,7 @@ export const TraceDrilldownModal: React.FC<TraceModalProps> = ({
                     : "border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
                 }`}
               >
-                Factor Versions ({data.factors_applied.length})
+                Factor Versions ({data.factors_applied?.length || 0})
               </button>
               <button
                 type="button"
@@ -201,7 +201,7 @@ export const TraceDrilldownModal: React.FC<TraceModalProps> = ({
                     : "border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
                 }`}
               >
-                Contributing Records ({data.sample_records.length})
+                Contributing Records ({data.sample_records?.length || 0})
               </button>
             </div>
 
@@ -214,7 +214,7 @@ export const TraceDrilldownModal: React.FC<TraceModalProps> = ({
                       Review & Approval State
                     </h4>
                     <div className="flex flex-wrap gap-2">
-                      {Object.entries(data.data_lineage.statuses).map(([st, cnt]) => (
+                      {Object.entries(data.data_lineage?.statuses || {}).map(([st, cnt]) => (
                         <div key={st} className="flex items-center gap-1.5 text-xs">
                           <StatusBadge status={st} />
                           <span className="font-mono font-medium">({cnt})</span>
@@ -230,11 +230,11 @@ export const TraceDrilldownModal: React.FC<TraceModalProps> = ({
                     <div className="text-xs space-y-1">
                       <div>
                         <span className="text-slate-500">First Entry: </span>
-                        <span className="font-mono">{data.data_lineage.earliest_entry || "N/A"}</span>
+                        <span className="font-mono">{data.data_lineage?.earliest_entry || "N/A"}</span>
                       </div>
                       <div>
                         <span className="text-slate-500">Latest Sign-off: </span>
-                        <span className="font-mono">{data.data_lineage.latest_approval || "N/A"}</span>
+                        <span className="font-mono">{data.data_lineage?.latest_approval || "N/A"}</span>
                       </div>
                     </div>
                   </div>
@@ -246,22 +246,22 @@ export const TraceDrilldownModal: React.FC<TraceModalProps> = ({
                     Category Breakdown
                   </h4>
                   <div className="border border-slate-200 dark:border-slate-800 rounded-lg overflow-hidden">
-                    <table className="w-full text-left text-xs">
+                    <table className="w-full text-start text-xs">
                       <thead className="bg-slate-50 dark:bg-slate-800/50 font-semibold border-b border-slate-200 dark:border-slate-800">
                         <tr>
                           <th className="py-2 px-3">Process / Category</th>
-                          <th className="py-2 px-3 text-right">Records</th>
-                          <th className="py-2 px-3 text-right">Value ({data.unit})</th>
-                          <th className="py-2 px-3 text-right">% of Total</th>
+                          <th className="py-2 px-3 text-end">Records</th>
+                          <th className="py-2 px-3 text-end">Value ({data.unit})</th>
+                          <th className="py-2 px-3 text-end">% of Total</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                        {data.breakdown_by_category.map((cat, idx) => (
+                        {(data.breakdown_by_category || []).map((cat, idx) => (
                           <tr key={idx} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
                             <td className="py-2 px-3 font-medium">{cat.category}</td>
-                            <td className="py-2 px-3 text-right font-mono text-slate-500">{cat.record_count}</td>
-                            <td className="py-2 px-3 text-right font-mono font-semibold">{cat.value.toLocaleString()}</td>
-                            <td className="py-2 px-3 text-right font-mono">{cat.percentage}%</td>
+                            <td className="py-2 px-3 text-end font-mono text-slate-500">{cat.record_count}</td>
+                            <td className="py-2 px-3 text-end font-mono font-semibold">{(cat.value ?? 0).toLocaleString("en-US")}</td>
+                            <td className="py-2 px-3 text-end font-mono">{cat.percentage}%</td>
                           </tr>
                         ))}
                       </tbody>
@@ -275,19 +275,19 @@ export const TraceDrilldownModal: React.FC<TraceModalProps> = ({
             {activeTab === "factors" && (
               <div className="space-y-3">
                 <div className="border border-slate-200 dark:border-slate-800 rounded-lg overflow-hidden">
-                  <table className="w-full text-left text-xs">
+                  <table className="w-full text-start text-xs">
                     <thead className="bg-slate-50 dark:bg-slate-800/50 font-semibold border-b border-slate-200 dark:border-slate-800">
                       <tr>
                         <th className="py-2.5 px-3">Factor Source Reference</th>
                         <th className="py-2.5 px-3">Version</th>
-                        <th className="py-2.5 px-3 text-right">CO₂ EF</th>
-                        <th className="py-2.5 px-3 text-right">CH₄ EF</th>
-                        <th className="py-2.5 px-3 text-right">N₂O EF</th>
-                        <th className="py-2.5 px-3 text-right">Records Using</th>
+                        <th className="py-2.5 px-3 text-end">CO₂ EF</th>
+                        <th className="py-2.5 px-3 text-end">CH₄ EF</th>
+                        <th className="py-2.5 px-3 text-end">N₂O EF</th>
+                        <th className="py-2.5 px-3 text-end">Records Using</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                      {data.factors_applied.map((f, idx) => (
+                      {(data.factors_applied || []).map((f, idx) => (
                         <tr key={idx} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
                           <td className="py-2.5 px-3 font-medium">{f.source}</td>
                           <td className="py-2.5 px-3">
@@ -295,10 +295,10 @@ export const TraceDrilldownModal: React.FC<TraceModalProps> = ({
                               {f.version}
                             </span>
                           </td>
-                          <td className="py-2.5 px-3 text-right font-mono">{f.ef_co2 ?? "-"}</td>
-                          <td className="py-2.5 px-3 text-right font-mono">{f.ef_ch4 ?? "-"}</td>
-                          <td className="py-2.5 px-3 text-right font-mono">{f.ef_n2o ?? "-"}</td>
-                          <td className="py-2.5 px-3 text-right font-mono font-semibold">{f.records_count}</td>
+                          <td className="py-2.5 px-3 text-end font-mono">{f.ef_co2 ?? "-"}</td>
+                          <td className="py-2.5 px-3 text-end font-mono">{f.ef_ch4 ?? "-"}</td>
+                          <td className="py-2.5 px-3 text-end font-mono">{f.ef_n2o ?? "-"}</td>
+                          <td className="py-2.5 px-3 text-end font-mono font-semibold">{f.records_count}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -311,32 +311,32 @@ export const TraceDrilldownModal: React.FC<TraceModalProps> = ({
             {activeTab === "records" && (
               <div className="space-y-3">
                 <div className="border border-slate-200 dark:border-slate-800 rounded-lg overflow-x-auto max-h-72">
-                  <table className="w-full text-left text-xs whitespace-nowrap">
+                  <table className="w-full text-start text-xs whitespace-nowrap">
                     <thead className="bg-slate-50 dark:bg-slate-800/50 font-semibold border-b border-slate-200 dark:border-slate-800 sticky top-0">
                       <tr>
                         <th className="py-2.5 px-3">Record ID</th>
                         <th className="py-2.5 px-3">Facility</th>
                         <th className="py-2.5 px-3">Process</th>
-                        <th className="py-2.5 px-3 text-right">Activity</th>
+                        <th className="py-2.5 px-3 text-end">Activity</th>
                         <th className="py-2.5 px-3">Factor Version</th>
-                        <th className="py-2.5 px-3 text-right">CO₂e (t)</th>
+                        <th className="py-2.5 px-3 text-end">CO₂e (t)</th>
                         <th className="py-2.5 px-3">Status</th>
                         <th className="py-2.5 px-3">Approver</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                      {data.sample_records.map((r, idx) => (
+                      {(data.sample_records || []).map((r, idx) => (
                         <tr key={idx} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
                           <td className="py-2 px-3 font-mono font-medium text-emerald-700 dark:text-emerald-400">
                             {r.record_id}
                           </td>
                           <td className="py-2 px-3">{r.facility_name}</td>
                           <td className="py-2 px-3">{r.process_type}</td>
-                          <td className="py-2 px-3 text-right font-mono">
-                            {r.quantity?.toLocaleString()} {r.unit}
+                          <td className="py-2 px-3 text-end font-mono">
+                            {r.quantity?.toLocaleString("en-US")} {r.unit}
                           </td>
                           <td className="py-2 px-3 font-mono text-[11px]">{r.factor_version}</td>
-                          <td className="py-2 px-3 text-right font-mono font-semibold">{r.co2e_t.toLocaleString()}</td>
+                          <td className="py-2 px-3 text-end font-mono font-semibold">{(r.co2e_t ?? 0).toLocaleString("en-US")}</td>
                           <td className="py-2 px-3">
                             <StatusBadge status={r.status} />
                           </td>

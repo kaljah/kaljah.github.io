@@ -228,13 +228,14 @@ describe("DataTable", () => {
     { name: "A", co2e: 10, note: "n2" },
   ];
 
-  it("renders rows, sorts on header click, and right-aligns numeric cells", async () => {
+  it("renders rows, sorts on header click, and end-aligns numeric cells", async () => {
     render(<DataTable columns={columns} data={data} />);
     const rows = () => screen.getAllByRole("row").slice(1);
     expect(rows()[0]).toHaveTextContent("B");
     await userEvent.click(screen.getByRole("button", { name: /Name/ }));
     expect(rows()[0]).toHaveTextContent("A");
-    expect(screen.getByText("10").className).toMatch(/text-right/);
+    // text-end: right-aligned in English and French, left-aligned in Arabic (right-to-left)
+    expect(screen.getByText("10").className).toMatch(/text-end/);
   });
 
   it("hides default-hidden columns and offers them in the Columns menu", async () => {

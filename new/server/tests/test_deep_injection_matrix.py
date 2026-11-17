@@ -174,7 +174,7 @@ class TestUnitConversionInvarianceMatrix:
             {
                 "amount": base_mmbtu,
                 "heat_unit": "mmbtu",
-                "boiler_efficiency": 0.80,
+                "boiler_efficiency": 80,  # percent (BA-012)
                 "transmission_loss": 0.05,
                 "factor_source": "specific",
             },
@@ -191,7 +191,7 @@ class TestUnitConversionInvarianceMatrix:
                 {
                     "amount": equiv_qty,
                     "heat_unit": u,
-                    "boiler_efficiency": 0.80,
+                    "boiler_efficiency": 80,  # percent (BA-012)
                     "transmission_loss": 0.05,
                     "factor_source": "specific",
                 },
@@ -517,7 +517,8 @@ class TestBulkCSVIngestionAllTiersAndScopes:
 
         s2_rec = Scope2Emission.query.filter_by(facility_id=test_facility.id, year=2024, month=1).first()
         assert s2_rec is not None
-        assert pytest.approx(s2_rec.co2e, 1e-3) == (25000 * 0.520) / 1000.0
+        # the supplier factor is market-based; location-based is the facility's country grid (BA-007)
+        assert pytest.approx(s2_rec.co2e_market_based, 1e-3) == (25000 * 0.520) / 1000.0
 
     def test_scope3_bulk_csv_upload_all_categories_and_units(self, app, test_user, test_facility, db_session):
         """Scope 3 Bulk CSV: Uploading mass, distance, and spend EEIO units across multiple categories."""

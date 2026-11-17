@@ -418,12 +418,12 @@ const ReferenceData: React.FC = () => {
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 p-5 mb-7 rounded-xl border border-border bg-surface shadow-xs">
         <div className="relative flex-1 min-w-0">
           <Search
-            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-text-secondary"
+            className="pointer-events-none absolute start-3.5 top-1/2 -translate-y-1/2 size-4 text-text-secondary"
             aria-hidden="true"
           />
           <Input
             type="text"
-            className="pl-10 h-10 w-full"
+            className="ps-10 h-10 w-full"
             placeholder={t("Search by name, fuel type, code, or value...")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}

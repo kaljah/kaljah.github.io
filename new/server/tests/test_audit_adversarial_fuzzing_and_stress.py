@@ -389,8 +389,9 @@ class TestDoubleBlindCleanRoomParity:
                 "co2_comp": co2_nat,
                 "n2_comp": n2_inert,
                 "flare_type": "elevated",
-                "combustion_efficiency": eta_c,
-                "destruction_efficiency": eta_d,
+                # efficiencies are entered in percent (blind audit BA-012)
+                "combustion_efficiency": eta_c * 100.0,
+                "destruction_efficiency": eta_d * 100.0,
                 "tier": "tier3",
                 "factor_source": "specific",
             },

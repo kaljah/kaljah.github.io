@@ -14,7 +14,8 @@ def _fgas_processes():
     cannot re-weight it (changing the GWP standard used to set every such record to 0)."""
     from calculations.fugitive_other import OTHER_FUGITIVE_PROCESSES, WastewaterCalculator
 
-    return frozenset(k for k, calc in OTHER_FUGITIVE_PROCESSES.items() if not isinstance(calc, WastewaterCalculator))
+    return frozenset([k for k, calc in OTHER_FUGITIVE_PROCESSES.items() if not isinstance(calc, WastewaterCalculator)]
+                     + ["fire_suppression"])  # its HFC CO2e is re-run too (it was kept on AR4, BA-036)
 
 
 def _recalculate_fgas(record, gwp_dict, standard):
@@ -110,7 +111,8 @@ def recalculate_all_emissions_gwp(standard, previous=None, user=None):
     )
 
     from electricity_factors import grid_entry, grid_factor_kg_co2e_per_kwh
-    from routes.scope2 import _DEFAULT_BOILER_EF_KG_PER_MMBTU as _NG_BOILER
+    from routes.scope2 import _LEGACY_BOILER_EF_KG_PER_MMBTU as _NG_BOILER  # records saved before gas masses
+    from services.scope2_gases import gas_split
 
     new_gwp = {"CH4": ch4_factor, "N2O": n2o_factor}
     old_std = GWP_STANDARDS.get(str(previous or "").upper()) if previous else None
@@ -126,10 +128,23 @@ def recalculate_all_emissions_gwp(standard, previous=None, user=None):
                 e.emission_factor = grid_factor_kg_co2e_per_kwh(entry, gwp=new_gwp)
                 e.co2e = e.electricity_kwh * e.emission_factor / 1000.0
                 e.co2e_location_based = e.co2e
-                if not getattr(e, "market_instrument_type", None) or e.market_instrument_type in ("None", "Grid Average / Residual Mix"):
-                    e.co2e_market_based = e.co2e
-                elif getattr(e, "market_emission_factor", None) is not None:
+                if getattr(e, "market_emission_factor", None) is not None:
+                    # a contractual (supplier / instrument) factor is kg CO2e/kWh as given: it does not change
+                    # with the GWP set (it was overwritten with the location value and lost, BA-004)
                     e.co2e_market_based = e.electricity_kwh * float(e.market_emission_factor) / 1000.0
+                elif not getattr(e, "market_instrument_type", None) or e.market_instrument_type in (
+                        "None", "Grid Average / Residual Mix"):
+                    e.co2e_market_based = e.co2e  # grid-average fallback follows the re-weighted grid (BA-005)
+                # an instrument without a stored factor keeps its market value: nothing to recalculate it from
+                g = gas_split(e)
+                e.co2_emissions, e.ch4_emissions, e.n2o_emissions = g["co2"], g["ch4"], g["n2o"]
+        elif "steam" in st and getattr(e, "ch4_emissions", None) is not None and e.co2_emissions is not None:
+            # gases stored with the record: CO2e = CO2 + CH4 x GWP + N2O x GWP of the new set
+            new_co2e = (float(e.co2_emissions) + float(e.ch4_emissions) * float(ch4_factor)
+                        + float(e.n2o_emissions or 0) * float(n2o_factor))
+            for attr in ("co2e", "co2e_location_based", "co2e_market_based"):
+                if getattr(e, attr, None) is not None:
+                    setattr(e, attr, new_co2e)
         elif "steam" in st and old_std and e.co2e and abs(float(e.emission_factor or 0) - _NG_BOILER) < 1e-4:
             ratio = _steam_k(new_gwp) / _steam_k(old_std)
             e.co2e = e.co2e * ratio

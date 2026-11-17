@@ -29,7 +29,7 @@ interface StreamTileProps {
 const StreamTile: React.FC<StreamTileProps> = ({ label, sublabel, stream, rule, tone = "default", testId, shareLabel = t("of total"), info }) => (
   <StatCard
     data-testid={testId}
-    className={`border-l-2 p-4 min-w-0 ${rule}`}
+    className={`border-s-2 p-4 min-w-0 ${rule}`}
     tone={tone}
     label={label}
     sublabel={sublabel}
@@ -129,7 +129,7 @@ const FlaringComplianceCard: React.FC<FlaringComplianceCardProps> = ({ flaringDa
               : t("Metered CPF streams · Verified only")
           }
           stream={{ ...flaringData.total_flaring, percentage: null }}
-          rule="border-l-brand-700"
+          rule="border-s-brand-700"
           tone="default"
           info={buildKpiMetadata("flaring", {
             year: flaringData.year,
@@ -141,21 +141,21 @@ const FlaringComplianceCard: React.FC<FlaringComplianceCardProps> = ({ flaringDa
           testId="flaring-routine"
           label={t("Routine Flaring")}
           stream={flaringData.routine_flaring}
-          rule="border-l-red-500"
+          rule="border-s-red-500"
           tone="danger"
         />
         <StreamTile
           testId="flaring-non-routine"
           label={t("Non-Routine Flaring")}
           stream={flaringData.non_routine_flaring}
-          rule="border-l-amber-500"
+          rule="border-s-amber-500"
           tone="warning"
         />
         <StreamTile
           testId="flaring-safety"
           label={t("Safety & Purge Flaring")}
           stream={flaringData.safety_flaring}
-          rule="border-l-blue-500"
+          rule="border-s-blue-500"
           tone="info"
         />
         {showUnclassified && (
@@ -163,7 +163,7 @@ const FlaringComplianceCard: React.FC<FlaringComplianceCardProps> = ({ flaringDa
             testId="flaring-unclassified"
             label={t("Unclassified Flaring")}
             stream={flaringData.unclassified_flaring}
-            rule="border-l-ink-400"
+            rule="border-s-ink-400"
             tone="default"
           />
         )}
@@ -183,7 +183,7 @@ const FlaringComplianceCard: React.FC<FlaringComplianceCardProps> = ({ flaringDa
                 {flaringData.flaring_intensity_pct}%
               </span>
               <span className="text-xs text-text-secondary">
-                {t("of Gross Gas Produced (")}{formatCompactNumber((flaringData.gas_production_m3 ?? 0) / 1e6, 2)}{" "}{t("MMSm³)")}
+                {t("of gross gas produced ({{volume}} MMSm³)", { volume: formatCompactNumber((flaringData.gas_production_m3 ?? 0) / 1e6, 2) })}
               </span>
             </div>
             <div className="flex items-center gap-2 text-xs font-mono text-text-secondary">

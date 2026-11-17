@@ -150,7 +150,7 @@ def track_modified_entities(session):
         "ProductionData",
         "Facility",
         "CustomFactor",
-        "OgmpSurvey",
+        "OgmpSurvey", "OgmpAnnualReport", "OgmpEmissionSource", "OgmpSiteMeasurement", "OgmpReportingEntity", "OgmpImplementationPlan",
     )
     has_relevant = False
     for obj in session.new | session.dirty | session.deleted:
@@ -507,6 +507,7 @@ from routes.period_locks import period_locks_bp
 from routes.traceability import traceability_bp
 from routes.tenant import tenant_bp
 from routes.health import health_bp
+from routes.ogmp import ogmp_bp
 
 app.register_blueprint(auth_bp, url_prefix="/api/auth")
 app.register_blueprint(emissions_bp, url_prefix="/api/emissions")
@@ -529,6 +530,7 @@ app.register_blueprint(period_locks_bp)
 app.register_blueprint(traceability_bp)
 app.register_blueprint(tenant_bp)
 app.register_blueprint(health_bp)
+app.register_blueprint(ogmp_bp)
 
 # Swagger UI Configuration (SEC-05 & INFO-01: Disabled in production unless explicitly enabled)
 if (

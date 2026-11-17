@@ -265,7 +265,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
       displayContent = (
         <div className="[display:flex] [align-items:center] [gap:2px]">
           {selectedOption.label}{" "}
-          <span className="[font-size:var(--text-xs)]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-weight:600]! [display:inline-block] [margin-left:2px]"> - {selectedOption.subLabel}</span>
+          <span className="[font-size:var(--text-xs)]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-weight:600]! [display:inline-block] [margin-inline-start:2px]"> - {selectedOption.subLabel}</span>
         </div>
       );
     } else {
@@ -357,7 +357,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
                   ) : option.subLabel ? (
                     <div className="[display:flex] [align-items:center] [gap:2px]">
                       {option.label}{" "}
-                      <span className="[font-size:var(--text-xs)]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-weight:600]! [display:inline-block] [margin-left:2px]"> - {option.subLabel}</span>
+                      <span className="[font-size:var(--text-xs)]! [color:var(--text-secondary,_var(--color-ink-500))]! [font-weight:600]! [display:inline-block] [margin-inline-start:2px]"> - {option.subLabel}</span>
                     </div>
                   ) : (
                     option.label

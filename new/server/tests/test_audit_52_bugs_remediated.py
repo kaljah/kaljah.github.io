@@ -29,11 +29,12 @@ def test_bug02_flaring_hhv_units():
 
     calc = FlaringCalculator()
     # MMBtu/Mscf
-    res1 = calc.calculate(gas_volume=1000.0, fuel_unit="m3", flare_type="elevated", uncertainties={}, hhv=1.02, comps={"hhv_unit": "mmbtu/mscf"}, ch4_fraction=0.90)
+    # (hhv_unit is a keyword like the other flare inputs; a `comps={...}` argument was never read)
+    res1 = calc.calculate(gas_volume=1000.0, fuel_unit="m3", flare_type="elevated", uncertainties={}, hhv=1.02, hhv_unit="mmbtu/mscf", ch4_fraction=0.90)
     assert res1["results"]["n2o"]["value"] > 0
-    # MJ/m3
-    res2 = calc.calculate(gas_volume=1000.0, fuel_unit="m3", flare_type="elevated", uncertainties={}, hhv=38.0, comps={"hhv_unit": "mj/m3"}, ch4_fraction=0.90)
-    assert res2["results"]["n2o"]["value"] > 0
+    # MJ/m3: 38 MJ/m3 x 26.8392 = 1019.9 Btu/scf, the same gas as 1.02 MMBtu/Mscf (1020 Btu/scf)
+    res2 = calc.calculate(gas_volume=1000.0, fuel_unit="m3", flare_type="elevated", uncertainties={}, hhv=38.0, hhv_unit="mj/m3", ch4_fraction=0.90)
+    assert res2["results"]["n2o"]["value"] == pytest.approx(res1["results"]["n2o"]["value"], rel=1e-3)
 
 
 def test_bug04_offshore_completion_duration():

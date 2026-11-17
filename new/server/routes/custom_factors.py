@@ -271,8 +271,7 @@ def create_custom_factor():
 @superuser_required
 def update_custom_factor(factor_id):
     """Update a custom emission factor (Super User / Admin only)"""
-    user_id = session.get("user_id")
-    user = db.session.get(User, user_id)
+    user = get_current_user()
     caller_tenant = get_current_tenant_id(user)
 
     factor = db.session.get(CustomFactor, factor_id)
@@ -369,8 +368,13 @@ def update_custom_factor(factor_id):
         create_ver = (
             data.get("create_version") is True
             or request.args.get("create_version") == "true"
-            or bool(data.get("valid_from"))
-            or (data.get("version") and data["version"] != before.get("version"))
+            or (
+                refs > 0
+                and (
+                    bool(data.get("valid_from"))
+                    or (bool(data.get("version")) and data["version"] != before.get("version"))
+                )
+            )
         )
         if refs > 0 and not create_ver:
             db.session.rollback()
@@ -516,8 +520,7 @@ def _org_factor_denied(user, factor, action):
 @superuser_required
 def delete_custom_factor(factor_id):
     """Delete a custom emission factor (Super User / Admin only)"""
-    user_id = session.get("user_id")
-    user = db.session.get(User, user_id)
+    user = get_current_user()
 
     factor = db.session.get(CustomFactor, factor_id)
     if not factor:
@@ -591,8 +594,7 @@ def archive_custom_factor(factor_id):
 @superuser_required
 def import_custom_factors():
     """Bulk import custom factors from CSV/Excel (Super User / Admin only)"""
-    user_id = session.get("user_id")
-    user = db.session.get(User, user_id)
+    user = get_current_user()
     caller_tenant = get_current_tenant_id(user)
 
     data = request.get_json() or {}
@@ -660,10 +662,10 @@ def import_custom_factors():
             co2_uncertainty=co2_uncertainty,
             ch4_uncertainty=ch4_uncertainty,
             n2o_uncertainty=n2o_uncertainty,
-            created_by=user_id,
+            created_by=user.id if user else None,
             status=initial_factor_status,
-            approved_by=user_id if initial_factor_status == "Approved" else None,
-            approved_at=datetime.datetime.now(datetime.timezone.utc) if initial_factor_status == "Approved" else None,
+            approved_by=user.id if (user and initial_factor_status == "Approved") else None,
+            approved_at=datetime.datetime.now(datetime.timezone.utc) if (user and initial_factor_status == "Approved") else None,
             tenant_id=caller_tenant,
         )
         db.session.add(factor)

@@ -1,4 +1,4 @@
-"""Query parameters shared by the report exports: one strict reading of year / facility / status.
+"""Query parameters shared by the report exports: one strict reading of year / facility / status / quarter.
 
 Bug hunt 2026-10-15 #22, #35, #36: the national inventory and CBAM reports took every record whatever
 its status (Pending, Rejected and Draft rows in an official submission), and a malformed year or
@@ -7,6 +7,7 @@ facility silently meant "all years / all facilities".
 from input_validation import ValidationError
 
 RECORD_STATUSES = ("Verified", "Pending", "Draft", "Rejected")
+VALID_QUARTERS = ("Q1", "Q2", "Q3", "Q4", "Q1-Q4", "ALL")
 
 
 def report_statuses(raw):
@@ -22,6 +23,19 @@ def report_statuses(raw):
         raise ValidationError(f"Unknown record status '{', '.join(bad) or raw}' (use {', '.join(RECORD_STATUSES)} or all)",
                               "status")
     return tuple(dict.fromkeys(names))
+
+
+def report_quarter(raw, default="Q1-Q4"):
+    """Quarter filter for CBAM exports: Q1, Q2, Q3, Q4, Q1-Q4, or all (case-insensitive)."""
+    if raw is None or not str(raw).strip():
+        return default
+    norm = str(raw).strip().upper()
+    if norm not in VALID_QUARTERS:
+        raise ValidationError(
+            f"Invalid quarter '{raw}'. Must be one of: Q1, Q2, Q3, Q4, Q1-Q4, all",
+            "quarter",
+        )
+    return "Q1-Q4" if norm == "ALL" else norm
 
 
 def optional_int(value, name, low, high):

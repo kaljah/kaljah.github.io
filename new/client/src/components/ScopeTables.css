@@ -19,7 +19,7 @@
 .excel-table th,
 .excel-table td {
   padding: 14px 18px;
-  text-align: left;
+  text-align: start;
   border-bottom: 1px solid var(--border-color);
   vertical-align: middle;
 }
@@ -38,7 +38,7 @@
 }
 
 .excel-table tr:hover td {
-  background-color: var(--bg-hover) !important;
+  background-color: var(--bg-hover);
 }
 
 .table-controls {
@@ -105,12 +105,12 @@
 
 .btn-review-action.edit {
   background: rgba(59, 130, 246, 0.08);
-  color: var(--color-blue-700, #1d4ed8);
+  color: var(--color-blue-700);
   border-color: rgba(59, 130, 246, 0.25);
 }
 
 .btn-review-action.edit:hover {
-  background: var(--color-blue-600, #2563eb);
+  background: var(--color-blue-600);
   color: var(--color-white);
   box-shadow: var(--shadow-xs);
 }
@@ -137,20 +137,6 @@
   background: var(--color-red-700);
   color: var(--color-white);
   box-shadow: var(--shadow-xs);
-}
-
-.icon-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: var(--text-lg);
-  padding: 4px;
-  border-radius: var(--radius-sm);
-  transition: background-color 0.2s;
-}
-
-.icon-button:hover {
-  background-color: var(--color-ink-100);
 }
 
 /* Specific column widths if needed */
@@ -182,7 +168,7 @@
 .excel-table th:first-child,
 .excel-table td:first-child {
   position: sticky;
-  left: 0;
+  inset-inline-start: 0;
   z-index: 1;
   background: var(--color-white);
 }
@@ -194,7 +180,7 @@
 
 .excel-table td:last-child {
   position: sticky;
-  right: 0;
+  inset-inline-end: 0;
   background: var(--color-white);
 }
 
@@ -202,10 +188,6 @@
   z-index: 3;
 }
 
-.excel-table tr:hover td:first-child,
-.excel-table tr:hover td:last-child {
-  background: var(--color-brand-50);
-}
 
 /* Scope 1 history: uncertainty columns (16-21) are opt-in */
 .excel-table.hide-uncertainty th:nth-child(n + 16):nth-child(-n + 21),

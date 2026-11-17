@@ -52,7 +52,10 @@ def test_lng_facility_factor_without_time_basis_is_refused(name):
 
 # -- Scope 2 steam / CHP (manual form) --------------------------------------------------------------
 
-NG_KG = 53.06 + 0.001 * 28 + 0.0001 * 265  # default natural-gas boiler, AR5
+# default natural-gas boiler of unknown steam generation (Exhibit 8.3, LHV basis: CO2 59.0, CH4 1.1E-03, N2O 3.0E-04
+# kg/MMBtu; BA-045), AR5
+NG_KG = 59.0 + 0.0011 * 28 + 0.0003 * 265
+NG_KG_HHV = 53.06 + 0.001 * 28 + 0.0001 * 265  # CHP fuel (HHV, Table C-1 / Table 4-6)
 
 
 def _steam(**kw):
@@ -83,7 +86,7 @@ def test_chp_from_fuel_includes_boiler_ch4_n2o():
     with flask_app.app_context():
         got = _calc_cogen_allocation({"fuel_consumed_mmbtu": 10000, "heat_output_mmbtu": 5000,
                                       "power_output_mwh": 800, "allocation_method": "energy_content"})
-    assert got == pytest.approx(10000 * NG_KG / 1000 * 5000 / (5000 + 800 * 3.412142), rel=1e-6)
+    assert got == pytest.approx(10000 * NG_KG_HHV / 1000 * 5000 / (5000 + 800 * 3.412142), rel=1e-6)
 
 
 # -- Scope 3 factor units ---------------------------------------------------------------------------

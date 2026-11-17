@@ -131,10 +131,10 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         },
     }
 
-    # API Standard Molar Conversion Factors (at 60°F, 14.696 psia: 379.3 scf/lbmol, 2204.6226 lb/tonne)
-    # Mass (tonnes) = scf * MW / (379.3 * 2204.6226218)
-    SCF_TO_TONNES_CH4 = 16.04 / (379.3 * 2204.6226218)  # ≈ 1.9184852e-5
-    SCF_TO_TONNES_CO2 = 44.01 / (379.3 * 2204.6226218)  # ≈ 5.263158e-5
+    # Mass (tonnes) = scf * MW / (molar volume * 2204.6226 lb/tonne), the engine's one molar volume (BA-016)
+    from .units import MOLAR_VOLUME_SCF_PER_LBMOL as _MV
+    SCF_TO_TONNES_CH4 = 16.04 / (_MV * 2204.6226218)
+    SCF_TO_TONNES_CO2 = 44.01 / (_MV * 2204.6226218)
 
     def __init__(self):
         super().__init__("Liquids Unloading", "Section 6.3.4")

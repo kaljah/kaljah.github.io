@@ -8,7 +8,7 @@ from .base import BaseCalculator
 from .units import calculate_co2e, normalize_efficiency
 from .uncertainty import propagate_uncertainty, resolve_tier, resolve_ef_uncertainty
 
-MOLAR_VOL_US = 379.3   # scf / lb-mole at 60 °F, 14.696 psia
+from .units import MOLAR_VOLUME_SCF_PER_LBMOL as MOLAR_VOL_US  # noqa: E402  scf / lb-mole (BA-016)
 MOLAR_VOL_METRIC = 23.685  # Sm3 / kg-mole at 15 °C, 101.325 kPa
 MW_CH4 = 16.04
 MW_CO2 = 44.01
@@ -22,7 +22,7 @@ EF_COKE_CO2_MMBTU = 0.1021   # tonne CO2 / MMBtu (Table 4-3)
 EF_COKE_CH4_MMBTU = 3.0e-6   # tonne CH4 / MMBtu (Table 4-5)
 EF_COKE_N2O_MMBTU = 6.0e-7   # tonne N2O / MMBtu (Table 4-5)
 
-# GWP values for fire suppression agents (IPCC AR4 / AR5 standard)
+# Fallback GWPs (AR4) of the fire suppression agents; the active report's value comes from fugitive_other.fgas_gwp
 FIRE_AGENT_GWPS = {
     "co2": 1.0, "hfc_227ea": 3220.0, "hfc_125": 3500.0, "hfc_236fa": 9810.0,
     "halon_1301": 7140.0, "fk_5_1_12": 1.0, "other": 1.0,
@@ -65,6 +65,10 @@ def _propagate_results(total_ch4, total_co2, n2o, uncertainties, factor_source="
 # ==============================================================================
 # §6.11.1 Refining Catalyst Regeneration
 # ==============================================================================
+
+_CO2_PER_C = 44.01 / 12.011  # the Compendium prints 44 / 12; molecular weights as everywhere else (BA-040)
+
+
 class RefiningCatalystRegenCalculator(BaseCalculator):
     """
     API Compendium 2021 §6.11.1 - Catalyst Regeneration:
@@ -134,8 +138,8 @@ class RefiningCatalystRegenCalculator(BaseCalculator):
                 raise ValueError("Coke burn approach needs the coke burn rate (per year or per day) or the unit throughput")
 
             cf = _given(carbon_content_fraction, 0.93)
-            # Equation 6-34: ECO2 = CCAvg * CF * (44 / 12) * T
-            co2_coke = annual_coke * cf * (44.0 / 12.0)
+            # Equation 6-34: ECO2 = CCAvg * CF * (44 / 12) * T (molecular weights 44.01 / 12.011, as everywhere else)
+            co2_coke = annual_coke * cf * _CO2_PER_C
 
         elif approach == "k1_k2_k3":
             p_co2 = float(co2_pct or 0.0)
@@ -144,11 +148,11 @@ class RefiningCatalystRegenCalculator(BaseCalculator):
             if flue_gas_rate_dscm_min is not None:
                 qr = float(flue_gas_rate_dscm_min)
                 k1 = 0.2982
-                co2_coke = k1 * qr * (p_co2 + p_co) * (44.0 / 12.0) * hrs / 1000.0
+                co2_coke = k1 * qr * (p_co2 + p_co) * _CO2_PER_C * hrs / 1000.0
             elif flue_gas_rate_dscf_min is not None:
                 qr = float(flue_gas_rate_dscf_min)
                 k1 = 0.0186
-                co2_coke = (k1 * qr * (p_co2 + p_co) * (44.0 / 12.0) * hrs) / LB_PER_TONNE
+                co2_coke = (k1 * qr * (p_co2 + p_co) * _CO2_PER_C * hrs) / LB_PER_TONNE
             else:
                 raise ValueError("K1 approach (Eq 6-35) needs the flue gas rate (dscm/min or dscf/min)")
 
@@ -164,7 +168,7 @@ class RefiningCatalystRegenCalculator(BaseCalculator):
                 co2_coke = kg_co2 / 1000.0
             elif air_rate_scf_min is not None:
                 ar = float(air_rate_scf_min) + float(sor_scf_min or 0.0)
-                lb_co2 = ar * (f_co2 + f_co) * (44.0 / 379.3) * total_min
+                lb_co2 = ar * (f_co2 + f_co) * (MW_CO2 / MOLAR_VOL_US) * total_min
                 co2_coke = lb_co2 / LB_PER_TONNE
             else:
                 raise ValueError("Air blower approach (Eq 6-36) needs the air rate (m3/min or scf/min)")
@@ -173,13 +177,13 @@ class RefiningCatalystRegenCalculator(BaseCalculator):
             crr = float(catalyst_circulation_rate_tonnes_hr or 0.0)
             h = float(8760.0 if operating_hours is None else operating_hours)
             c_diff = float(fc_spent or 0.0) - float(fc_regen or 0.0)
-            co2_coke = crr * h * c_diff * (44.0 / 12.0)
+            co2_coke = crr * h * c_diff * _CO2_PER_C
 
         else:  # intermittent (approaches checked above)
             crr = float(catalyst_inventory_tonnes or 0.0)
             n_cycles = _given(regeneration_cycles_per_yr, 1.0)
             c_diff = float(fc_spent or 0.0) - float(fc_regen or 0.0)
-            co2_coke = crr * n_cycles * c_diff * (44.0 / 12.0)
+            co2_coke = crr * n_cycles * c_diff * _CO2_PER_C
 
         # Equations 6-38 and 6-39 for coke combustion CH4 and N2O
         ratio_ch4 = EF_COKE_CH4_MMBTU / EF_COKE_CO2_MMBTU
@@ -336,12 +340,12 @@ class RefiningCokerCalculator(BaseCalculator):
                 cb = float(coke_burned_lb_yr)
                 if cb < 0:
                     raise ValueError("Coke burned cannot be negative")
-                total_co2 = (cb * cf * (44.0 / 12.0)) / LB_PER_TONNE
+                total_co2 = (cb * cf * _CO2_PER_C) / LB_PER_TONNE
             elif coke_burned_tonnes_yr is not None:
                 cb = float(coke_burned_tonnes_yr)
                 if cb < 0:
                     raise ValueError("Coke burned cannot be negative")
-                total_co2 = cb * cf * (44.0 / 12.0)
+                total_co2 = cb * cf * _CO2_PER_C
             else:
                 raise ValueError("Fluid coker needs the coke burned (lb or tonnes per year)")
 
@@ -415,9 +419,15 @@ class RefiningHydrogenPlantCalculator(BaseCalculator):
         total_co2 = 0.0
         if method not in ("feedstock_balance", "h2_stoichiometry", "simple_factor"):
             raise ValueError(f"Unknown hydrogen plant method '{method}'")
-        unknown = sorted(set(feedstock_comp or {}) - set(self.SPECIES))
-        if unknown:
-            raise ValueError(f"Unknown feed gas species {unknown}: use {sorted(self.SPECIES)}")
+        species_map = {k.upper(): k for k in self.SPECIES}
+        feedstock_comp_normalized = {}
+        if feedstock_comp:
+            for k, mol_frac in feedstock_comp.items():
+                k_upper = str(k).strip().upper()
+                if k_upper not in species_map:
+                    raise ValueError(f"Unknown feed gas species {[k]}: use {sorted(self.SPECIES)}")
+                feedstock_comp_normalized[species_map[k_upper]] = float(mol_frac)
+            feedstock_comp = feedstock_comp_normalized
 
         if method == "feedstock_balance":
             cf = _parse_fraction(feedstock_carbon_fraction, default=None, name="Feedstock carbon fraction") if feedstock_carbon_fraction is not None else None
@@ -429,6 +439,8 @@ class RefiningHydrogenPlantCalculator(BaseCalculator):
                 species_data = self.SPECIES
                 mix_mw = sum(mol_frac * species_data[k][0] for k, mol_frac in feedstock_comp.items())
                 total_c_wt = sum(mol_frac * species_data[k][1] * 12.011 for k, mol_frac in feedstock_comp.items())
+                if mix_mw <= 0:
+                    raise ValueError("Total molecular weight of feedstock composition must be greater than zero")
                 cf = total_c_wt / mix_mw
 
                 if fr_tonnes is None:
@@ -459,7 +471,7 @@ class RefiningHydrogenPlantCalculator(BaseCalculator):
             if fr_tonnes is None or cf is None:
                 raise ValueError("Feedstock balance (Eq 6-49) needs the feedstock rate (tonnes, scf or m3) and its "
                                  "carbon fraction or composition")
-            total_co2 = float(fr_tonnes) * float(cf) * (44.0 / 12.0)
+            total_co2 = float(fr_tonnes) * float(cf) * _CO2_PER_C
 
         elif method == "h2_stoichiometry":
             ratio = co2_to_h2_molar_ratio
@@ -619,7 +631,7 @@ class RefiningCokeCalciningCalculator(BaseCalculator):
         pcdust = max(0.0, float(dust_collected_tonnes_yr or 0.0) - float(dust_recycled_tonnes_yr or 0.0))
 
         c_burned = max(0.0, (gc * cc_gc) - ((pcout + pcdust) * cc_pc))
-        total_co2 = (44.0 / 12.0) * c_burned
+        total_co2 = _CO2_PER_C * c_burned
 
         _, co2_res, _ = _propagate_results(0.0, total_co2, 0.0, uncertainties, factor_source, "coke_calcining")
         return self.format_result(co2=co2_res or total_co2, ch4=0.0, n2o=0.0, total_co2e=total_co2,
@@ -753,7 +765,7 @@ class PetrochemicalManufacturingCalculator(BaseCalculator):
                     raise ValueError("Secondary product tonnes cannot be negative")
                 c_sec += s_t * _parse_fraction(s[1], default=0.0, name="Secondary product carbon fraction")
             c_emitted = max(0.0, c_feed - (c_primary + c_sec))
-            total_co2 = c_emitted * (44.0 / 12.0)
+            total_co2 = c_emitted * _CO2_PER_C
         elif process_type is not None:
             pt = str(process_type).lower().strip().replace(" ", "_").replace("-", "_")
             efs = self.TABLE_6_53.get(pt)
@@ -812,6 +824,9 @@ class FireSuppressionCalculator(BaseCalculator):
                 if k in gwp_dict:
                     gwp_val = float(gwp_dict[k])
                     break
+        if gwp_val is None and agent not in ("co2", "fk_5_1_12", "other"):  # active report's GWP (BA-036)
+            from .fugitive_other import fgas_gwp
+            gwp_val = fgas_gwp(agent.replace("_", "-"), gwp_dict, kwargs.get("gwp"))
         gwp = gwp_val if gwp_val is not None else FIRE_AGENT_GWPS[agent]
         charge = float(kwargs.get("charge_capacity_kg", total_charge_kg) or 0.0)
         discharge = float(kwargs.get("direct_discharge_kg", direct_discharge_kg) or 0.0)
@@ -823,17 +838,10 @@ class FireSuppressionCalculator(BaseCalculator):
 
         rel_rate = normalize_efficiency(rel_rate_input, default=0.0)
         leakage_kg = charge * rel_rate
-        total_released_kg = leakage_kg + discharge
-        total_released_tonnes = total_released_kg / 1000.0
+        total_released_tonnes = (leakage_kg + discharge) / 1000.0
 
-        total_co2 = 0.0
-        total_co2e = 0.0
-
-        if agent == "co2":
-            total_co2 = total_released_tonnes
-            total_co2e = total_co2
-        else:
-            total_co2e = total_released_tonnes * gwp
+        total_co2 = total_released_tonnes if agent == "co2" else 0.0
+        total_co2e = total_co2 if agent == "co2" else total_released_tonnes * gwp
 
         co2_res = (
             propagate_uncertainty(

@@ -39,7 +39,7 @@ export const Field: React.FC<FieldProps> = ({ label, hint, error, required = fal
         <label htmlFor={id} className="text-sm font-medium text-text">
           {label}
           {required && (
-            <span aria-hidden="true" className="ml-0.5 text-danger-fg">
+            <span aria-hidden="true" className="ms-0.5 text-danger-fg">
               *
             </span>
           )}
@@ -104,12 +104,12 @@ export const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
         ref={ref}
         type="text"
         inputMode="decimal"
-        className={cn(controlClass, "h-10 tabular-nums", unit && "pr-14", className)}
+        className={cn(controlClass, "h-10 tabular-nums", unit && "pe-14", className)}
         {...props}
         {...fieldProps}
       />
       {unit && (
-        <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm text-text-secondary">
+        <span className="pointer-events-none absolute inset-y-0 end-3 flex items-center text-sm text-text-secondary">
           {unit}
         </span>
       )}
@@ -142,7 +142,7 @@ export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(function S
       <input ref={ref} type="checkbox" role="switch" className="peer sr-only" {...props} />
       <span
         aria-hidden="true"
-        className="relative h-6 w-11 rounded-full bg-ink-300 transition-colors after:absolute after:left-0.5 after:top-0.5 after:size-5 after:rounded-full after:bg-white after:transition-transform peer-checked:bg-primary peer-checked:after:translate-x-5 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-focus peer-disabled:opacity-50"
+        className="relative h-6 w-11 rounded-full bg-ink-300 transition-colors after:absolute after:start-0.5 after:top-0.5 after:size-5 after:rounded-full after:bg-white after:transition-transform peer-checked:bg-primary peer-checked:after:translate-x-5 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-focus peer-disabled:opacity-50"
       />
       {label}
     </label>

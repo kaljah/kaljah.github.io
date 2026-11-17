@@ -7,7 +7,6 @@ from routes.auth import login_required
 from calculations.indirect import (
     DEFAULT_BOILER_EFFICIENCY,
     DEFAULT_TRANSMISSION_LOSS,
-    heat_to_mmbtu,
 )
 from calculations.uncertainty import propagate_uncertainty, Tier
 from utils import (
@@ -17,6 +16,7 @@ from utils import (
     get_current_user,
     initial_record_status,
     log_activity_and_notify,
+    normalize_tenant_id,
     require_facility_access,
     tenant_matches,
 )
@@ -26,35 +26,14 @@ from services.dashboard_filters import _parse_facility_ids
 from services.scope2_market import is_zero_emission_instrument, market_factor
 import datetime
 
+from services.scope2_policy import (  # noqa: E402,F401  (re-exported: imports, tests and the GWP service use them)
+    MAX_GRID_EF_KG_PER_KWH, _DEFAULT_BOILER_CH4_KG_PER_MMBTU, _DEFAULT_BOILER_EF_KG_PER_MMBTU,
+    _DEFAULT_BOILER_N2O_KG_PER_MMBTU, _LEGACY_BOILER_EF_KG_PER_MMBTU, apply_electricity_edit, resolve_electricity_factor,
+    scale_steam_gases, steam_emissions, supplier_market_factor,
+)
 scope2_bp = Blueprint("scope2", __name__)
-# Default emission factor for natural-gas boilers: ~53.06 kg CO2/MMBtu (EPA AP-42 / API Compendium)
-_DEFAULT_BOILER_EF_KG_PER_MMBTU = 53.06
 MMBTU_PER_MWH = 3.412142
-# Upper bound for a supplier-specific grid factor; the most carbon-intensive grids are ~1.2 kg CO2e/kWh.
-MAX_GRID_EF_KG_PER_KWH = 2.0
 SCOPE2_SOURCE_TYPES = ("electricity", "indirect_steam", "cogen_allocation", "cooling")
-
-def resolve_electricity_factor(grid_region, supplied_ef):
-    """One Scope 2 electricity factor policy for manual, JSON-import and file-bulk paths (BUG-099).
-
-    - Known grid region: the location-based grid factor; a client factor is ignored.
-    - Otherwise: an explicit supplier / contractual factor (market-based instrument, e.g. a
-      renewable PPA at 0) within [0, MAX_GRID_EF_KG_PER_KWH] kg CO2e/kWh.
-    Returns (factor_kg_per_kwh, resolved_grid_region). Raises ValidationError otherwise.
-    """
-    name = str(grid_region or "").strip()
-    canonical, entry = grid_entry(name) if name else (name, None)
-    if entry is not None:
-        # CO2 / CH4 / N2O of the grid (API Compendium Tables 8-2 / 8-6) with the active GWP set
-        return grid_factor_kg_co2e_per_kwh(entry), canonical
-    ef = parse_number(supplied_ef, "emission_factor", required=False, min_value=0, max_value=MAX_GRID_EF_KG_PER_KWH)
-    if ef is None:
-        raise ValidationError(
-            f"Unknown grid region '{name}'. Select a known grid or provide a supplier emission factor (kg CO2e/kWh).",
-            "grid_region",
-            extra={"valid_regions": sorted(list(GRID_FACTORS.keys()))},
-        )
-    return ef, name or None
 
 def default_scope2_uncertainty(co2e):
     """Default Scope 2 uncertainty, stored as a 1-sigma fraction: 5 % factor and 2 % activity data, both 95 %
@@ -64,90 +43,23 @@ def default_scope2_uncertainty(co2e):
     )["relative_uncertainty"]
 
 def _calc_indirect_steam(data):
-    """Calculate tCO2e for indirect steam / heat entry."""
-    amount = float(data.get("amount") or data.get("heat_mmbtu") or 0)
-    unit = (data.get("unit") or "mmbtu").lower().replace(" ", "")
-    ci = data.get("calc_inputs", {}).get("indirect_steam", {})
-    raw_be = next(
-        (
-            v
-            for v in (
-                data.get("boiler_efficiency"),
-                data.get("boiler_eff"),
-                ci.get("boiler_eff"),
-                ci.get("boiler_efficiency"),
-            )
-            if v not in (None, "")
-        ),
-        DEFAULT_BOILER_EFFICIENCY,
-    )
-    boiler_eff = float(str(raw_be).replace("%", "").strip())
-    if boiler_eff > 1.0 or "%" in str(raw_be):
-        # 85 is 85 %, as in the file upload (no boiler runs at 1 %); it was used as 85 x, so the
-        # manual form booked 1/100 of the emissions
-        boiler_eff /= 100.0
-    if not 0 < boiler_eff <= 1.0:
-        raise ValidationError(f"Boiler efficiency must be above 0 and at most 100 % (got {raw_be})", "boiler_eff")
-    raw_tl = next(
-        (
-            v
-            for v in (
-                data.get("transmission_loss"),
-                data.get("trans_loss"),
-                ci.get("trans_loss"),
-                ci.get("transmission_loss"),
-            )
-            if v not in (None, "")
-        ),
-        DEFAULT_TRANSMISSION_LOSS,
-    )
-    tl_str = str(raw_tl).strip()
-    trans_loss = float(tl_str.replace("%", "").strip() or 0.0)
-    if "%" in tl_str:
-        trans_loss /= 100.0
-    if not 0 <= trans_loss < 1.0:
-        raise ValidationError(f"Transmission loss is a fraction from 0 to below 1 (got {trans_loss}; 5 % is 0.05)",
-                              "trans_loss")
-    ef_co2 = float(ci.get("ef_co2", _DEFAULT_BOILER_EF_KG_PER_MMBTU))
-    ef_u = str(ci.get("ef_unit") or ci.get("factor_unit") or "").lower().strip()
-    if ef_u in ("t/mmbtu", "tonne/mmbtu", "tonnes/mmbtu", "mt/mmbtu") or (not ef_u and 0 < ef_co2 < 0.1):
-        ef_co2 = ef_co2 * 1000.0
+    """(tCO2e, delivered heat MMBtu, CO2 factor kg/MMBtu) of an indirect steam / heat entry."""
+    res = steam_emissions(data)
+    return res["co2e"], res["energy_mmbtu"], res["ef_co2"]
 
-    try:
-        energy_mmbtu = heat_to_mmbtu(amount, unit, ci.get("steam_enthalpy"), ci.get("steam_enthalpy_btu_lb"))
-    except ValueError as exc:
-        raise ValidationError(str(exc), "unit") from None
-
-    net_eff = boiler_eff - trans_loss  # API Compendium Exhibit 8.3: 0.92 - 0.10 (it was 0.92 x (1 - 0.10))
-    if net_eff <= 0:
-        raise ValidationError(
-            f"Net efficiency must be greater than 0 (got {net_eff:.4f}). "
-            f"Check boiler efficiency ({boiler_eff}) and transmission loss ({trans_loss}).", "trans_loss"
-        )
-    fuel_mmbtu = energy_mmbtu / net_eff
-    co2_kg = fuel_mmbtu * ef_co2
-    if ef_co2 == _DEFAULT_BOILER_EF_KG_PER_MMBTU:
-        # natural-gas boiler: CH4 / N2O of API Compendium Table 4-6 (1.0E-03 / 1.0E-04 kg per MMBtu of
-        # fuel), the basis of EPA Emission Factors Hub Table 7 (1.25 / 0.125 g per MMBtu of steam at 80 %)
-        from calculations.constants import get_active_gwp
-        gwp = get_active_gwp()
-        co2_kg += fuel_mmbtu * (0.001 * float(gwp["CH4"]) + 0.0001 * float(gwp["N2O"]))
-    return co2_kg / 1000.0, energy_mmbtu, ef_co2
 
 _STEAM_MASS_UNITS = {"ton", "tons", "tonne", "tonnes", "mt", "metric_ton", "us_ton", "short_ton", "mlb", "klb",
                      "thousand_lbs", "lb", "lbs", "pound", "pounds", "kg", "kilogram"}
 
 def _steam_fuel_factor_kg_per_mmbtu(ef_co2):
-    """kg CO2e per MMBtu of boiler fuel as _calc_indirect_steam applies it (CO2, plus the Table 4-6
-    CH4 / N2O of the default natural-gas boiler)."""
+    """kg CO2e per MMBtu of boiler fuel as steam_emissions applies it: CO2 plus the default boiler CH4 / N2O
+    (Exhibit 8.3), which steam_emissions adds whatever the CO2 factor (BA-008)."""
     ef = float(ef_co2 or _DEFAULT_BOILER_EF_KG_PER_MMBTU)
     if 0 < ef < 1.0:
         ef *= 1000.0
-    if ef == _DEFAULT_BOILER_EF_KG_PER_MMBTU:
-        from calculations.constants import get_active_gwp
-        gwp = get_active_gwp()
-        ef += 0.001 * float(gwp["CH4"]) + 0.0001 * float(gwp["N2O"])
-    return ef
+    from calculations.constants import get_active_gwp
+    gwp = get_active_gwp()
+    return ef + _DEFAULT_BOILER_CH4_KG_PER_MMBTU * float(gwp["CH4"]) + _DEFAULT_BOILER_N2O_KG_PER_MMBTU * float(gwp["N2O"])
 
 def _recalc_indirect_steam(emission, data, factor, old_heat, old_co2e, old_ef, old_tons=None):
     """(co2e t, delivered heat MMBtu) of an edited steam record.
@@ -199,7 +111,12 @@ def _calc_cogen_allocation(data):
     if total_emissions == 0 and data.get("fuel_consumed_mmbtu"):
         # Calculate facility emissions from fuel consumed (e.g. 53.06 kg CO2/MMBtu)
         # natural gas: CO2 plus the Table 4-6 CH4 / N2O, as for the default steam boiler
-        total_emissions = (float(data["fuel_consumed_mmbtu"]) * _steam_fuel_factor_kg_per_mmbtu(None)) / 1000.0
+        # fuel energy (HHV, as fuel is metered): the natural-gas HHV factor 53.06 kg CO2/MMBtu with the Table 4-6
+        # CH4 / N2O (the LHV factors of Exhibit 8.3 belong to its 92 % LHV boiler efficiency only)
+        from calculations.constants import get_active_gwp
+        _g = get_active_gwp()
+        total_emissions = (float(data["fuel_consumed_mmbtu"])
+                           * (_LEGACY_BOILER_EF_KG_PER_MMBTU + 0.001 * float(_g["CH4"]) + 0.0001 * float(_g["N2O"]))) / 1000.0
     heat_output = float(data.get("heat_output_mmbtu") or ci.get("heat_output", 0))
     power_output = float(data.get("power_output_mwh") or ci.get("power_output", 0))
     method = data.get("allocation_method") or ci.get("allocation_method", "wri_efficiency")
@@ -260,7 +177,11 @@ def get_scope2_emissions():
                 .first()
             )
             base = rec or (BaseYear.query.first() if caller_tenant == "default" else None)
-            year_arg = str(base.year) if base else "-1"
+            if not base:
+                query = query.filter(Scope2Emission.id == -1)
+                year_arg = None
+            else:
+                year_arg = str(base.year)
         if year_arg and year_arg != "all":
             try:
                 query = query.filter(Scope2Emission.year == parse_year(year_arg, "year", required=True))
@@ -353,6 +274,10 @@ def create_scope2_emission():
     if facility is None:
         return jsonify({"error": "Facility not found", "field": "facility_id"}), 404
 
+    caller_tenant = get_current_tenant_id(user)
+    if normalize_tenant_id(getattr(facility, "tenant_id", None)) != caller_tenant:
+        return jsonify({"error": "Unauthorized for this facility"}), 403
+
     user_id = user.id
     source_type = data.get("source_type", "electricity")
     if source_type not in SCOPE2_SOURCE_TYPES:
@@ -368,6 +293,7 @@ def create_scope2_emission():
     co2e_market = 0.0
     emission_factor = 0.0
     market_ef = None
+    gases, grid_resolved = {}, None  # gas masses (BA-009); the grid of the location factor (BA-007)
     market_instrument_type = (data.get("market_instrument_type") or "").strip() or None
     electricity_kwh = 0.0
     heat_mmbtu = 0.0
@@ -389,16 +315,13 @@ def create_scope2_emission():
             return jsonify({"error": "'electricity_kwh' must be greater than 0"}), 400
 
         grid_region = data.get("grid_region") or data.get("location")
-        location_ef, _ = resolve_electricity_factor(grid_region, data.get("emission_factor"))
+        location_ef, grid_resolved = resolve_electricity_factor(grid_region, None, data.get("facility_id"))
         co2e_location = (electricity_kwh * location_ef) / 1000.0
 
         # Market-based calculation (GHG Protocol Scope 2 Guidance, services/scope2_market.py)
         raw_mkt_ef = data.get("market_emission_factor")
-        supplier_ef = None
-        if raw_mkt_ef not in (None, ""):
-            supplier_ef = parse_number(raw_mkt_ef, "market_emission_factor", required=False, min_value=0, max_value=MAX_GRID_EF_KG_PER_KWH)
-        used_market_ef, market_ef = market_factor(location_ef, market_instrument_type, supplier_ef)
-
+        used_market_ef, market_ef = market_factor(location_ef, market_instrument_type,
+                                                  supplier_market_factor(raw_mkt_ef, data.get("emission_factor")))
         co2e_market = (electricity_kwh * used_market_ef) / 1000.0
         has_market_instrument = bool(market_instrument_type) or (raw_mkt_ef not in (None, ""))
         co2e = co2e_location
@@ -406,9 +329,10 @@ def create_scope2_emission():
 
     elif source_type == "indirect_steam":
         try:
-            co2e, heat_mmbtu, emission_factor = _calc_indirect_steam(data)
-            co2e_location = co2e
-            co2e_market = co2e  # no contractual factor: market_emission_factor stays None (BUG-0006)
+            steam = steam_emissions(data)
+            co2e = co2e_location = co2e_market = steam["co2e"]  # no contractual factor (BUG-0006)
+            heat_mmbtu, emission_factor = steam["energy_mmbtu"], steam["ef_co2"]
+            gases = {f"{g}_emissions": steam[g] for g in ("co2", "ch4", "n2o")}
         except ValidationError:
             raise
         except Exception as exc:
@@ -485,9 +409,10 @@ def create_scope2_emission():
         co2e_market_based=co2e_market,
         market_instrument_type=market_instrument_type,
         market_emission_factor=market_ef,
+        **gases,
         uncertainty=final_uncertainty,
         location=data.get("location") or data.get("grid_region"),
-        grid_region=data.get("grid_region") or data.get("location"),
+        grid_region=grid_resolved or data.get("grid_region") or data.get("location"),
         activity=data.get("activity"),
         division=data.get("division"),
         region=data.get("region"),
@@ -677,13 +602,12 @@ def update_scope2_emission(emission_id):
         emission.grid_region = data.get("grid_region") or data.get("location") or emission.grid_region
         activity_changed = True
     st_now = (emission.source_type or "").strip().lower()
-    _grid = grid_entry(emission.grid_region)[1] if ("electric" in st_now) else None
-    if _grid is not None:
-        # BUG-099: a known grid always uses the server factor, never the client's.
-        emission.emission_factor = grid_factor_kg_co2e_per_kwh(_grid)
+    if "electric" in st_now and (grid_entry(emission.grid_region)[1] is not None or "emission_factor" in data
+                                 or "grid_region" in data):  # BUG-099 / BA-007 / BA-010
+        data, changed = apply_electricity_edit(emission, data)
+        activity_changed = activity_changed or changed
     elif "emission_factor" in data:
-        max_ef = MAX_GRID_EF_KG_PER_KWH if "electric" in st_now else None
-        emission.emission_factor = parse_number(data["emission_factor"], "emission_factor", min_value=0, max_value=max_ef)
+        emission.emission_factor = parse_number(data["emission_factor"], "emission_factor", min_value=0)
 
     st_cogen = (emission.source_type or "").strip().lower() in ("cogen_allocation", "cogen", "chp")
     cogen_ci = (data.get("calc_inputs") or {}).get("cogen_allocation") or {}
@@ -734,6 +658,7 @@ def update_scope2_emission(emission_id):
                 emission, data, factor, old_heat, old_co2e, old_ef, old_tons)
             emission.co2e_location_based = emission.co2e
             emission.co2e_market_based = emission.co2e
+            scale_steam_gases(emission, old_co2e, factor == old_ef)
         elif st in ["heat"] or "heat" in st:
             emission.co2e = (emission.heat_mmbtu * factor) / 1000.0
             emission.co2e_location_based = emission.co2e
@@ -896,13 +821,21 @@ def bulk_import_scope2():
                     if fid in facility_cache:
                         facility = facility_cache[fid]
                     else:
-                        facility = db.session.get(Facility, fid)
+                        f_candidate = db.session.get(Facility, fid)
+                        if f_candidate and normalize_tenant_id(getattr(f_candidate, "tenant_id", None)) == caller_tenant:
+                            facility = f_candidate
+                        else:
+                            facility = None
                         facility_cache[fid] = facility
                 except (ValueError, TypeError):
                     facility = None
 
             if not facility:
                 errors.append(f"Row {i}: Facility '{f_val}' not found")
+                continue
+
+            if normalize_tenant_id(getattr(facility, "tenant_id", None)) != caller_tenant:
+                errors.append(f"Row {i}: Unauthorized for facility '{f_val}'")
                 continue
 
             if allowed_fids is not None and facility.id not in allowed_fids:
@@ -912,7 +845,8 @@ def bulk_import_scope2():
             # 2. Get Factor and Calculate
             grid_region = rec.get("grid_region")
             try:
-                ef, grid_region = resolve_electricity_factor(grid_region, rec.get("emission_factor") or rec.get("factor"))
+                ef, grid_region = resolve_electricity_factor(grid_region, rec.get("emission_factor") or rec.get("factor"),
+                                                             facility.id)
             except ValidationError as err:
                 errors.append(f"Row {i}: {err.message}")
                 continue
@@ -940,9 +874,7 @@ def bulk_import_scope2():
             # Market-based calculation for bulk import
             mkt_inst = (rec.get("market_instrument_type") or "").strip() or None
             mkt_ef_raw = rec.get("market_emission_factor")
-            supplier_ef = None
-            if mkt_ef_raw not in (None, ""):
-                supplier_ef = parse_number(mkt_ef_raw, "market_emission_factor", required=False, min_value=0, max_value=MAX_GRID_EF_KG_PER_KWH)
+            supplier_ef = supplier_market_factor(mkt_ef_raw, rec.get("emission_factor") or rec.get("factor"))
             used_mkt_ef, mkt_ef = market_factor(ef, mkt_inst, supplier_ef)
             co2e_mkt_val = (kwh * used_mkt_ef) / 1000.0
 

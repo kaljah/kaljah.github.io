@@ -50,11 +50,11 @@ const detectAnomalies = (record: any, facilitiesList: any[]): AnomalyResult => {
 
   // 3. Extreme outliers
   if (val > 10000) {
-    reasons.push(t("Extreme emission spike: {{value}} tCO2e", { value: val.toLocaleString() }));
+    reasons.push(t("Extreme emission spike: {{value}} tCO2e", { value: val.toLocaleString("en-US") }));
     if (severity !== 'danger') severity = 'warning';
   }
   if (qty > 10000000) {
-    reasons.push(t("High volume metric: {{value}}", { value: qty.toLocaleString() }));
+    reasons.push(t("High volume metric: {{value}}", { value: qty.toLocaleString("en-US") }));
     if (severity !== 'danger') severity = 'warning';
   }
 
@@ -223,7 +223,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
         date: `${r.year}-${String(r.month || 1).padStart(2, '0')}`,
         facility_id: r.facility_id,
         created_by: r.created_by,
-        desc: `${r.process_type || t("General")} · ${r.fuel_type || ''} (${Number(r.quantity || 0).toLocaleString()} ${r.unit || ''})`,
+        desc: `${r.process_type || t("General")} · ${r.fuel_type || ''} (${Number(r.quantity || 0).toLocaleString("en-US")} ${r.unit || ''})`,
         tco2e: Number(r.co2e_total || 0),
         qa_flag: r.qa_flag,
         ...anomaly
@@ -246,7 +246,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
         date: `${r.year}-${String(r.month || 1).padStart(2, '0')}`,
         facility_id: r.facility_id,
         created_by: r.created_by,
-        desc: `${r.source_type || t("Electricity")} (${Number(amt || 0).toLocaleString()} ${unit})`,
+        desc: `${r.source_type || t("Electricity")} (${Number(amt || 0).toLocaleString("en-US")} ${unit})`,
         tco2e: Number(r.co2e || 0),
         qa_flag: r.qa_flag,
         ...anomaly
@@ -575,7 +575,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
             </div>
             <div className="kpi-chip">
               <span>{t("Cumulative Impact:")}</span>
-              <strong>{stats.totalTco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{" "}{t("tCO₂e")}</strong>
+              <strong>{stats.totalTco2e.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{" "}{t("tCO₂e")}</strong>
             </div>
             <div className="kpi-chip">
               <span>{t("Scope Distribution:")}</span>
@@ -661,7 +661,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
             <NativeSelect
               value={facilityFilter}
               onChange={(e) => setFacilityFilter(e.target.value)}
-              className="component-select [width:auto]! [padding:6px_30px_6px_12px]! [font-size:0.8rem]! [height:34px]!"
+              className="component-select [width:auto]! [padding-block:6px_6px]! [padding-inline:12px_30px]! [font-size:0.8rem]! [height:34px]!"
              
             >
               <option value="all">{t("All Facilities")}</option>
@@ -675,7 +675,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
               <NativeSelect
                 value={yearFilter}
                 onChange={(e) => setYearFilter(e.target.value)}
-                className="component-select [width:auto]! [padding:6px_30px_6px_12px]! [font-size:0.8rem]! [height:34px]!"
+                className="component-select [width:auto]! [padding-block:6px_6px]! [padding-inline:12px_30px]! [font-size:0.8rem]! [height:34px]!"
                
               >
                 <option value="all">{t("All Years")}</option>
@@ -744,7 +744,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
               </span>
               <span className="text-[color:rgba(255,255,255,0.4)]!">•</span>
               <span className="text-[length:0.84rem]! text-[color:var(--color-ink-300)]!">
-                {t("Impact:")}{" "}<strong className="text-[color:var(--color-white)]!">{selectedImpactTco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>{" "}{t("tCO₂e")}
+                {t("Impact:")}{" "}<strong className="text-[color:var(--color-white)]!">{selectedImpactTco2e.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>{" "}{t("tCO₂e")}
               </span>
             </div>
 
@@ -782,7 +782,7 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
         <div className="[flex:1] [overflow-y:auto] [overflow-x:auto] [padding:0] [position:relative]">
           {loading ? (
             <div className="[padding:64px_24px] [text-align:center] [display:flex] [flex-direction:column] [align-items:center] [gap:14px] [color:var(--text-secondary,_var(--color-ink-500))]">
-              <RefreshCw size={36} style={{ animation: 'spin 1s linear infinite', color: 'var(--color-link)' }} />
+              <RefreshCw size={36} className="animate-spin [color:var(--color-link)]" />
               <p className="font-semibold!">{t("Loading 100% of pending records across all scopes...")}</p>
             </div>
           ) : stats.totalCount === 0 ? (
@@ -868,9 +868,9 @@ const BatchReviewWizard: React.FC<BatchReviewWizardProps> = ({ isOpen, onClose, 
                       </td>
                       <td className="text-right!">
                         <strong className="num-tabular text-[length:0.9rem]!">
-                          {item.tco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          {item.tco2e.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </strong>
-                        <span className="text-[length:0.75rem]! text-[color:var(--text-secondary)]! ml-[4px]!">{t("tCO₂e")}</span>
+                        <span className="text-[length:0.75rem]! text-[color:var(--text-secondary)]! ms-[4px]!">{t("tCO₂e")}</span>
                       </td>
                       <td>
                         {item.isWeird ? (

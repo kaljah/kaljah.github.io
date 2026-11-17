@@ -1,9 +1,9 @@
 from flask import Blueprint, jsonify, request, Response
 from sqlalchemy import or_, and_
 from extensions import db
-from models import Emission, Scope2Emission, Scope3Emission
+from models import Emission, Facility, Scope2Emission, Scope3Emission
 from routes.auth import login_required
-from utils import get_allowed_facility_ids, get_current_tenant_id, get_current_user
+from utils import get_allowed_facility_ids, get_current_tenant_id, get_current_user, normalize_tenant_id, tenant_matches
 import csv
 import io
 from utils import internal_error
@@ -54,12 +54,16 @@ def export_qaqc_report():
 
     try:
         allowed_fids = get_allowed_facility_ids(user)
+        caller_tenant = get_current_tenant_id(user)
         year_arg = request.args.get("year")
         scope_arg = request.args.get("scope")
 
         def _fac_filter(q, model):
             if allowed_fids is not None:
                 q = q.filter(model.facility_id.in_(allowed_fids or [-1]))
+            else:
+                tenant_fids = Facility.query.with_entities(Facility.id).filter(tenant_matches(Facility.tenant_id, caller_tenant))
+                q = q.filter(model.facility_id.in_(tenant_fids))
             if year_arg and year_arg not in ["all", ""]:
                 try:
                     q = q.filter(model.year == int(year_arg))
@@ -202,6 +206,11 @@ def _skip_reason(model, rid, user, allowed):
         return "not_found"
     if allowed is not None and rec.facility_id not in allowed:
         return "access_denied"
+    caller_tenant = get_current_tenant_id(user)
+    if rec.facility_id:
+        fac = db.session.get(Facility, rec.facility_id)
+        if fac and normalize_tenant_id(getattr(fac, "tenant_id", None)) != caller_tenant:
+            return "access_denied"
     if rec.status not in REVIEWABLE_STATUSES:
         return "not_awaiting_review"
     return "maker_checker_violation"

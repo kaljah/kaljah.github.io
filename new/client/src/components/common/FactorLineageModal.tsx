@@ -139,7 +139,7 @@ export const FactorLineageModal: React.FC<FactorLineageModalProps> = ({
               </div>
 
               {factor.verbatim_citation && (
-                <div className="text-xs border-l-2 border-amber-400/80 pl-3 py-1 bg-amber-500/5 text-amber-200/90 italic">
+                <div className="text-xs border-s-2 border-amber-400/80 ps-3 py-1 bg-amber-500/5 text-amber-200/90 italic">
                   &ldquo;{factor.verbatim_citation}&rdquo;
                 </div>
               )}

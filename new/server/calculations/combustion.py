@@ -367,8 +367,8 @@ class CombustionCalculator(BaseCalculator):
             if c2_plus_total > 0.10:
                 heavy_hc_warning = True
 
-            # Use passed combustion_efficiency (safely normalized to fraction)
-            eta_c = _normalize_efficiency(combustion_efficiency, default=0.995)
+            # Compendium s4.2: complete combustion unless an efficiency is entered (it was 99.5 %)
+            eta_c = _normalize_efficiency(combustion_efficiency, default=1.0)
 
             total_carbon_moles = (
                 c_fractions["c1"] * 1
@@ -399,8 +399,8 @@ class CombustionCalculator(BaseCalculator):
 
                 co2_val = (co2_combusted_kg + co2_native_kg) / 1000.0
 
-                # Uncombusted methane slip per stoichiometry & combustion efficiency
-                if c_fractions["c1"] > 0:
+                # CH4 comes from the factors; only an ENTERED efficiency below 100 % adds unburnt CH4 (BA-013)
+                if combustion_efficiency not in (None, "") and c_fractions["c1"] > 0 and eta_c < 1.0:
                     density_ch4 = CONVERSIONS["density_ch4"]
                     ch4_slip_vol = vol_m3 * c_fractions["c1"] * max(0.0, 1.0 - eta_c)
                     ch4_val = (ch4_slip_vol * density_ch4) / 1000.0
@@ -467,6 +467,21 @@ class CombustionCalculator(BaseCalculator):
                 or operating_pressure is not None,
             },
         )
+
+
+_FLARE_HHV_UNITS = frozenset({
+    "btu/scf", "btu_scf", "mj/m3", "mj_m3", "gj/m3", "gj_m3", "kj/m3", "kj_m3", "btu/m3", "btu_m3",
+    "mmbtu/m3", "mmbtu_m3", "mmbtu/mscf", "mmbtu/kscf", "mmbtu/scf",
+})
+
+
+def _check_flare_hhv(hhv, hhv_u, hhv_val):
+    """An HHV without a unit is Btu/scf; a value no gas has in Btu/scf (e.g. 38 = MJ/m3) is refused
+    instead of being read 26x low, and so is a unit the flare conversions do not know."""
+    if hhv is not None and not hhv_u and hhv_val < 100.0:
+        raise ValueError(f"Flare gas HHV {hhv_val:g} has no unit: enter hhv_unit (e.g. Btu/scf or MJ/m3)")
+    if hhv_u and hhv_u not in _FLARE_HHV_UNITS:
+        raise ValueError(f"Unknown flare gas HHV unit '{hhv_u}'")
 
 
 class FlaringCalculator(BaseCalculator):
@@ -610,12 +625,15 @@ class FlaringCalculator(BaseCalculator):
             )
         co2_res, ch4_res = _prop(co2_tonnes, "co2"), _prop(ch4_tonnes, "ch4")
 
-        # N2O from flaring (energy or volume basis aware)
-        # API Compendium 2021 Eq 5-6 default as corrected in December 2025: 1.0E-04 kg/MMBtu for natural gas,
+        # N2O: API Compendium 2021 Eq 5-6 default as corrected in December 2025: 1.0E-04 kg/MMBtu for natural gas,
         # 6.0E-04 kg/MMBtu for (refinery) fuel gas (audit 2026-10-14 BUG-0072 review)
         _is_fuel_gas = "fuel gas" in str(fuel_type or "").lower() or "refinery" in str(fuel_type or "").lower()
         _ef_n2o = float(ef_n2o) if ef_n2o is not None else (0.0006 if _is_fuel_gas else 0.0001)
-        if _ef_n2o > 0:
+        # an entered heating value is checked even when Eq 5-6 does not need it
+        _check_flare_hhv(hhv, str(comps.get("hhv_unit") or "").lower().strip(), float(1020.0 if hhv is None else hhv))
+        if ef_n2o is None:  # Eq 5-6: E_N2O = E_CO2 x EmF_N2O / 60 kg CO2/MMBtu, the CO2's N2O (BA-017)
+            n2o_tonnes = co2_tonnes * _ef_n2o / 60.0
+        elif _ef_n2o > 0:
             f_unit = norm_unit(ef_unit or "kg/mmbtu")
             if "/" not in f_unit:
                 f_unit = f"kg/{f_unit}"
@@ -625,9 +643,9 @@ class FlaringCalculator(BaseCalculator):
                 hhv_val = float(hhv or 1020.0)
                 hhv_u = str(comps.get("hhv_unit") or "").lower().strip()
                 vol_scf = vol_std * CONVERSIONS.get("m3_to_scf", 35.3147)
-                if hhv_u in ("mj/m3", "mj_m3") or (not hhv_u and 15.0 <= hhv_val <= 60.0):
+                if hhv_u in ("mj/m3", "mj_m3"):
                     hhv_val = hhv_val * 26.8392
-                elif hhv_u in ("gj/m3", "gj_m3") or (not hhv_u and 0.015 <= hhv_val <= 0.060):
+                elif hhv_u in ("gj/m3", "gj_m3"):
                     hhv_val = hhv_val * 26839.2
                 elif hhv_u in ("kj/m3", "kj_m3"):
                     hhv_val = hhv_val * 0.0268392
@@ -639,14 +657,12 @@ class FlaringCalculator(BaseCalculator):
                     hhv_val = hhv_val * 1000.0
                 elif hhv_u in ("mmbtu/scf",):
                     hhv_val = hhv_val * 1e6
-                flared_mmbtu = (vol_scf * hhv_val) / 1_000_000.0
-                n2o_tonnes = flared_mmbtu * factor_to_kg_per_activity(_ef_n2o, f_unit, "mmbtu") / 1000.0
+                n2o_tonnes = vol_scf * hhv_val / 1e6 * factor_to_kg_per_activity(_ef_n2o, f_unit, "mmbtu") / 1000.0
             else:
-                n2o_kg = vol_std * convert_factor_to_kg_per_unit(_ef_n2o, ef_unit or "kg/m3", "m3", hhv=hhv, fuel_type="gases")
-                n2o_tonnes = n2o_kg / 1000.0
+                n2o_tonnes = vol_std * convert_factor_to_kg_per_unit(_ef_n2o, ef_unit or "kg/m3", "m3", hhv=hhv,
+                                                                     fuel_type="gases") / 1000.0
         else:
             n2o_tonnes = 0.0
-
         n2o_res = _prop(n2o_tonnes, "n2o")
 
         total_co2e = calculate_co2e(

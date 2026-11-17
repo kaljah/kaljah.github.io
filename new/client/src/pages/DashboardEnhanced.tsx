@@ -488,7 +488,8 @@ const DashboardEnhanced: React.FC = () => {
         }
       });
 
-      totals.netEmissions = totals.totalEmissions - totals.mitigation;
+      // gross inventory: mitigation is reported beside it, never subtracted (BA-037)
+      totals.netEmissions = totals.totalEmissions;
 
       // Weighted Intensity Calculation
       let weightedIntensity = 0;
@@ -902,7 +903,7 @@ const DashboardEnhanced: React.FC = () => {
         {goal ? (
           <div className="flex items-center gap-2 rounded-md border border-border bg-surface px-2.5 py-1 text-sm">
             <span className="text-xs text-text-secondary">
-              {tr("Target")}{" "}{goal.year}: <strong className="font-semibold text-text">{Number(goal.target_amount).toLocaleString()}{" "}{tr("tCO₂e")}</strong>
+              {tr("Target")}{" "}{goal.year}: <strong className="font-semibold text-text">{Number(goal.target_amount).toLocaleString("en-US")}{" "}{tr("tCO₂e")}</strong>
             </span>
             <Button
               variant="secondary"

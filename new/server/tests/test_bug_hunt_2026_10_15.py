@@ -51,7 +51,8 @@ def test_2_standard_flare_volume_is_not_corrected_for_temperature_and_pressure_t
 
 @pytest.mark.parametrize("hhv,unit", [(1020, "Btu/scf"), (38.0, "MJ/Sm3"), (38.0, "MJ/m3"), (40.1, "MJ/Nm3")])
 def test_6_flare_hhv_per_standard_volume_is_rescaled_to_scf(ctx, hhv, unit):
-    n2o = _em(dict(FLARE, hhv=hhv, hhv_unit=unit))["n2o"]
+    # the HHV applies to an energy-based N2O factor; without one Eq 5-6 makes the N2O follow the CO2 (BA-017)
+    n2o = _em(dict(FLARE, hhv=hhv, hhv_unit=unit, ef_n2o=0.0001, ef_unit="kg/MMBtu"))["n2o"]
     assert n2o == pytest.approx(1.02e-4, rel=0.06)  # MJ/Sm3 was read as Btu/scf: 35x high
 
 

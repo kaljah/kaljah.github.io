@@ -444,8 +444,6 @@ def verify_audit_chain():
     if user.role != "auditor" and not is_org_wide_user(user) and not is_it_role(user):
         return jsonify({"error": "Chain verification requires organisation-wide audit access"}), 403
     caller_tenant = get_current_tenant_id(user)
-    if caller_tenant != "default" and user.role != "it_manager":
-        return jsonify({"error": "Forbidden: Global hash-chain verification is unavailable in isolated tenant workspaces"}), 403
     from services.audit_chain import GENESIS_HASH, verify_chain
 
     query = ActivityLog.query.order_by(ActivityLog.id.asc()).yield_per(1000)

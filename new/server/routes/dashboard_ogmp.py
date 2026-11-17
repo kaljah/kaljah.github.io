@@ -6,48 +6,18 @@ registered on the same ``dashboard_bp`` blueprint, so URLs and endpoint names ar
 from datetime import datetime, timezone
 from extensions import db
 from flask import jsonify, request
-from models import Emission, Facility, OgmpSurvey
+from models import Emission, Facility, OgmpAnnualReport, OgmpSurvey
 from routes.auth import login_required
 from services.ogmp import compute_facility_ogmp_level
 from services.dashboard_filters import _parse_facility_ids
 from sqlalchemy import func
-from utils import get_allowed_facility_ids, get_current_user
+from utils import get_allowed_facility_ids, get_current_tenant_id, get_current_user, tenant_matches
 from routes.dashboard import dashboard_bp, is_it_role
 
 
-@dashboard_bp.route("/ogmp-metrics", methods=["GET"])
-@login_required
-def get_ogmp_metrics():
-    """
-    OGMP 2.0 Gold Standard roadmap & milestone progress per facility.
-    Returns compliance deadlines, current L1-L5 levels, and reconciliation status.
-    """
-    user = get_current_user()
-    if is_it_role(user):
-        return (
-            jsonify(
-                {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
-            ),
-            403,
-        )
-    from routes.auth import _app_settings
-
-    default_base_year = _app_settings.get("ogmp_default_base_year", 2023)
-    default_threshold = _app_settings.get("reconciliation_threshold", 20.0)
-    allowed_fids = get_allowed_facility_ids(user)
-
-    fac_id = request.args.get("facilityId") or request.args.get("facility_id")
-    year = request.args.get("year")
-    current_year = (
-        int(year)
-        if year and year != "all" and str(year).isdigit()
-        else datetime.now(timezone.utc).year
-    )
-
-    fac_fids = _parse_facility_ids(fac_id)
-    if fac_fids is not None and allowed_fids is not None and not set(fac_fids).issubset(set(allowed_fids)):
-        return jsonify({"error": "Unauthorized facility"}), 403
-    query = Facility.query
+def _scoped_facilities(caller_tenant, allowed_fids, fac_fids):
+    """Facilities of the caller's tenant and scope, narrowed by the facility / segment / activity / division filters."""
+    query = Facility.query.filter(tenant_matches(Facility.tenant_id, caller_tenant))
     if allowed_fids is not None:
         query = query.filter(Facility.id.in_(allowed_fids or [-1]))
     if fac_fids is not None:
@@ -58,13 +28,11 @@ def get_ogmp_metrics():
         query = query.filter(Facility.activity == request.args.get("activity"))
     if request.args.get("division") and request.args.get("division") != "all":
         query = query.filter(Facility.division == request.args.get("division"))
+    return query.all()
 
-    facilities = query.all()
 
-    # BUG-079: reconcile per facility-YEAR. Surveys are annual estimates, so they are averaged within
-    # a facility-year (D-02) and summed across years; the bottom-up side covers exactly the years
-    # that have a survey. Never pair a multi-year average with a multi-year sum.
-    single_year = year and year != "all" and str(year).isdigit()
+def _survey_and_inventory_ch4(allowed_fids, fac_fids, single_year, year):
+    """(top-down survey tCH4, bottom-up verified tCH4) per facility; bottom-up covers the surveyed years only."""
     survey_query = db.session.query(
         OgmpSurvey.facility_id, OgmpSurvey.year, func.avg(OgmpSurvey.estimated_annual_tch4).label("td"),
     )
@@ -81,7 +49,7 @@ def get_ogmp_metrics():
 
     ch4_query = db.session.query(
         Emission.facility_id, Emission.year, func.sum(Emission.ch4_emissions).label("total_ch4")
-    ).filter(Emission.status == "Verified")
+    ).filter(Emission.status == "Verified", Emission.is_test == False)  # noqa: E712 (BA-011)
     if allowed_fids is not None:
         ch4_query = ch4_query.filter(Emission.facility_id.in_(allowed_fids or [-1]))
     if fac_fids is not None:
@@ -97,8 +65,96 @@ def get_ogmp_metrics():
         sy = survey_years.get(fid, {})
         cy = ch4_years.get(fid, {})
         survey_map[fid] = sum(sy.values())
-        # bottom-up over the surveyed years when there are surveys, else over all years in scope
         ch4_map[fid] = sum(cy.get(y, 0.0) for y in sy) if sy else sum(cy.values())
+    return survey_map, ch4_map
+
+
+def _latest_annual_reports(caller_tenant, allowed_fids, fac_fids, single_year, year):
+    """The newest OGMP annual report of each facility in scope."""
+    rep_q = OgmpAnnualReport.query.filter(tenant_matches(OgmpAnnualReport.tenant_id, caller_tenant))
+    if allowed_fids is not None:
+        rep_q = rep_q.filter(OgmpAnnualReport.facility_id.in_(allowed_fids or [-1]))
+    if fac_fids is not None:
+        rep_q = rep_q.filter(OgmpAnnualReport.facility_id.in_(fac_fids))
+    if single_year:
+        rep_q = rep_q.filter(OgmpAnnualReport.year == int(year))
+    annual_by_fac = {}
+    for rep in rep_q.order_by(OgmpAnnualReport.year.desc(), OgmpAnnualReport.id.desc()).all():
+        annual_by_fac.setdefault(rep.facility_id, rep)
+    return annual_by_fac
+
+
+def _survey_has_discrepancy(f, single_year, year, threshold) -> bool:
+    """Whether a survey of the facility is flagged or differs from the inventory by more than the threshold."""
+    # no try/except: a failed query must not read as "no discrepancy"
+    sq = OgmpSurvey.query.filter_by(facility_id=f.id)
+    if single_year:
+        sq = sq.filter_by(year=int(year))
+    for s in sq.all():
+        if (s.reconciliation_status or "").lower() == "discrepancy detected" or s.variance_flag is True or (s.variance_pct is not None and abs(s.variance_pct) > threshold):
+            return True
+    return False
+
+
+def _reconciliation_result(top_down, bottom_up, threshold, survey_has_discrepancy):
+    """(variance %, variance flag, reconciliation status) of the top-down vs bottom-up comparison."""
+    if top_down > 0 and bottom_up > 0:
+        variance_pct = round(((top_down - bottom_up) / bottom_up * 100.0), 2)
+        variance_flag = abs(variance_pct) > threshold or survey_has_discrepancy
+        rec_status = "Discrepancy Detected" if variance_flag else "Reconciled"
+    elif top_down > 0 and bottom_up == 0:
+        variance_pct = None
+        variance_flag = True
+        rec_status = "Discrepancy Detected"
+    elif top_down == 0 and bottom_up > 0:
+        variance_pct = None
+        variance_flag = False
+        rec_status = "Bottom-Up Only"
+    else:
+        variance_pct = None
+        variance_flag = False
+        rec_status = "No Activity"
+    return variance_pct, variance_flag, rec_status
+
+
+@dashboard_bp.route("/ogmp-metrics", methods=["GET"])
+@login_required
+def get_ogmp_metrics():
+    """
+    OGMP 2.0 Gold Standard roadmap & milestone progress per facility.
+    Returns compliance deadlines, current L1-L5 levels, L4 materiality, RSS 95% CI reconciliation & pathways.
+    """
+    user = get_current_user()
+    if is_it_role(user):
+        return (
+            jsonify(
+                {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
+            ),
+            403,
+        )
+    from routes.auth import _app_settings
+
+    default_base_year = _app_settings.get("ogmp_default_base_year", 2023)
+    default_threshold = _app_settings.get("reconciliation_threshold", 20.0)
+    allowed_fids = get_allowed_facility_ids(user)
+    caller_tenant = get_current_tenant_id(user)
+
+    fac_id = request.args.get("facilityId") or request.args.get("facility_id")
+    year = request.args.get("year")
+    current_year = (
+        int(year)
+        if year and year != "all" and str(year).isdigit()
+        else datetime.now(timezone.utc).year
+    )
+
+    fac_fids = _parse_facility_ids(fac_id)
+    if fac_fids is not None and allowed_fids is not None and not set(fac_fids).issubset(set(allowed_fids)):
+        return jsonify({"error": "Unauthorized facility"}), 403
+    facilities = _scoped_facilities(caller_tenant, allowed_fids, fac_fids)
+
+    single_year = year and year != "all" and str(year).isdigit()
+    survey_map, ch4_map = _survey_and_inventory_ch4(allowed_fids, fac_fids, single_year, year)
+    annual_by_fac = _latest_annual_reports(caller_tenant, allowed_fids, fac_fids, single_year, year)
 
     fac_list = []
     total_operated = 0
@@ -122,43 +178,25 @@ def get_ogmp_metrics():
             f, year=int(year) if single_year else None, top_down_tch4=top_down, bottom_up_tch4=bottom_up
         )
         is_compliant = (highest_level >= 4) or (current_year <= target_yr and highest_level >= 2)
-        if is_compliant:
-            gold_compliant_count += 1
-        # Check empirical survey records for recorded discrepancies
-        survey_has_discrepancy = False
-        try:
-            sq = OgmpSurvey.query.filter_by(facility_id=f.id)
-            if single_year:
-                sq = sq.filter_by(year=int(year))
-            for s in sq.all():
-                if (s.reconciliation_status or "").lower() == "discrepancy detected" or s.variance_flag is True or (s.variance_pct is not None and abs(s.variance_pct) > threshold):
-                    survey_has_discrepancy = True
-                    break
-        except Exception:
-            pass
 
-        if top_down > 0 and bottom_up > 0:
-            variance_pct = round(((top_down - bottom_up) / bottom_up * 100.0), 2)
-            variance_flag = abs(variance_pct) > threshold or survey_has_discrepancy
-            rec_status = "Discrepancy Detected" if variance_flag else "Reconciled"
-        elif top_down > 0 and bottom_up == 0:
-            # Invariant Zero (Decision D-02): Zero Bottom-Up Edge Case
-            variance_pct = None
-            variance_flag = True
-            rec_status = "Discrepancy Detected"
-        elif top_down == 0 and bottom_up > 0:
-            variance_pct = None
-            variance_flag = False
-            rec_status = "Bottom-Up Only"
-        else:
-            variance_pct = None
-            variance_flag = False
-            rec_status = "No Activity"
+        survey_has_discrepancy = _survey_has_discrepancy(f, single_year, year, threshold)
+        variance_pct, variance_flag, rec_status = _reconciliation_result(top_down, bottom_up, threshold, survey_has_discrepancy)
 
         if survey_has_discrepancy:
             variance_flag = True
             rec_status = "Discrepancy Detected"
             highest_level = min(4, highest_level)
+
+        ann_rep = annual_by_fac.get(f.id)
+        if ann_rep is not None and not survey_has_discrepancy and top_down == 0:
+            highest_level = int(ann_rep.reporting_level or highest_level)
+            is_compliant = (highest_level >= 4) or (current_year <= target_yr and highest_level >= 2)
+            variance_pct = ann_rep.variance_pct
+            variance_flag = bool(ann_rep.variance_flag)
+            rec_status = ann_rep.reconciliation_status or rec_status
+
+        if is_compliant:
+            gold_compliant_count += 1
 
         fac_list.append(
             {
@@ -168,7 +206,7 @@ def get_ogmp_metrics():
                 "name": f.name,
                 "facility_code": f.code or f"FAC-{f.id}",
                 "segment": f.segment or "Upstream",
-                "country": f.country or "Algeria",
+                "country": f.country or "",
                 "operator_status": op_status,
                 "ogmp_membership_year": membership_yr,
                 "target_year": target_yr,
@@ -180,6 +218,15 @@ def get_ogmp_metrics():
                 "reconciliation_variance_pct": variance_pct,
                 "variance_flag": variance_flag,
                 "reconciliation_status": rec_status,
+                "l4_materiality_pct": ann_rep.l4_materiality_pct if ann_rep else None,
+                "pathway_code": ann_rep.pathway_code if ann_rep else None,
+                "ci_overlaps": bool(ann_rep.ci_overlaps) if ann_rep else None,
+                "bu_ci_low_tch4": ann_rep.bu_ci_low_tch4 if ann_rep else None,
+                "bu_ci_high_tch4": ann_rep.bu_ci_high_tch4 if ann_rep else None,
+                "td_ci_low_tch4": ann_rep.td_ci_low_tch4 if ann_rep else None,
+                "td_ci_high_tch4": ann_rep.td_ci_high_tch4 if ann_rep else None,
+                "measurement_mode": ann_rep.measurement_mode if ann_rep else None,
+                "option_mode": ann_rep.option_mode if ann_rep else None,
                 "status": "Gold Pathway Active" if is_compliant else "Target Milestone Overdue",
             }
         )

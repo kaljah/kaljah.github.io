@@ -10,7 +10,7 @@ from extensions import db
 from routes.auth import login_required
 from services.labels import process_label, scope2_source_label
 from services.scope2_activity import scope2_activity
-from utils import get_allowed_facility_ids, get_current_user
+from utils import get_allowed_facility_ids, get_current_user, get_current_tenant_id, tenant_matches
 from routes.reports import create_pdf_report, reports_bp
 from services.audit_chain import record_report_fingerprint
 
@@ -84,8 +84,13 @@ def export_emissions():
         field_f = field.strip().lower() if field and field.strip().lower() != "all" else None
 
         # Batch facility lookup to prevent N+1 queries
-        fac_q = Facility.query if allowed_fids is None else Facility.query.filter(Facility.id.in_(allowed_fids or [-1]))
+        caller_tenant = get_current_tenant_id(user)
+        if allowed_fids is not None:
+            fac_q = Facility.query.filter(Facility.id.in_(allowed_fids or [-1]))
+        else:
+            fac_q = Facility.query.filter(tenant_matches(Facility.tenant_id, caller_tenant))
         fac_map = {f.id: f.name for f in fac_q.all()}
+        tenant_fids = list(fac_map.keys()) or [-1]
 
         # 1. SCOPE 1
         if scope in ["all", "1", "scope1"]:
@@ -98,6 +103,8 @@ def export_emissions():
                 q1 = q1.filter_by(facility_id=f_int)
             elif allowed_fids is not None:
                 q1 = q1.filter(Emission.facility_id.in_(allowed_fids or [-1]))
+            else:
+                q1 = q1.filter(Emission.facility_id.in_(tenant_fids))
             if process_type and process_type != "all":
                 q1 = q1.filter_by(process_type=process_type)
             # bug hunt 2026-10-15 #37: division / field match exactly (case-insensitive); "Sud" matched "Sud-Est"
@@ -156,6 +163,8 @@ def export_emissions():
                 q2 = q2.filter_by(facility_id=f_int)
             elif allowed_fids is not None:
                 q2 = q2.filter(Scope2Emission.facility_id.in_(allowed_fids or [-1]))
+            else:
+                q2 = q2.filter(Scope2Emission.facility_id.in_(tenant_fids))
             if division_f:
                 q2 = q2.filter(func.lower(Scope2Emission.division) == division_f)
             if field_f:
@@ -216,6 +225,8 @@ def export_emissions():
                 q3 = q3.filter_by(facility_id=f_int)
             elif allowed_fids is not None:
                 q3 = q3.filter(Scope3Emission.facility_id.in_(allowed_fids or [-1]))
+            else:
+                q3 = q3.filter(Scope3Emission.facility_id.in_(tenant_fids))
             if search:
                 s_term = search.strip()
                 q3 = q3.filter(

@@ -109,7 +109,7 @@ export const FieldGroup: React.FC<FieldGroupProps> = ({ group, headers, mapping,
         type="button"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full cursor-pointer items-center justify-between gap-3 border-0 bg-ink-50 px-4 py-2.5 text-left hover:bg-ink-100"
+        className="flex w-full cursor-pointer items-center justify-between gap-3 border-0 bg-ink-50 px-4 py-2.5 text-start hover:bg-ink-100"
       >
         <span className="flex items-center gap-2.5 text-base font-bold text-text">
           <span className="flex size-6 items-center justify-center rounded-md bg-brand-50 text-brand-700">

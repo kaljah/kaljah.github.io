@@ -8,6 +8,8 @@ export interface MethaneIntensityStats {
   avgCh4Intensity?: number | null;
   totalCh4Emissions?: number;
   totalGasProductionM3?: number;
+  totalMarketedGasM3?: number;
+  ngsiIntensityPct?: number | null;
   avgMethaneLossRatePct?: number | null;
   upstreamGasM3?: number;
   upstreamCh4Tonnes?: number;
@@ -132,9 +134,9 @@ const MethaneIntensityMethaneIntensity: React.FC<MethaneIntensityMethaneIntensit
           </div>
           <span
             className="kpi-label"
-            title={t("CH4 volume emitted / gas produced (OGMP 2.0). Reports also give the NGSI intensity, a mass ratio (wt %), which reads lower.")}
+            title={t("CH4 volume emitted / marketed gas (OGCI / OGMP basis, the 0.20 % target). The NGSI figure divides the CH4 emitted by the CH4 contained in the gas handled.")}
           >
-            {t("Methane Loss Rate (vol. %)")}
+            {t("Methane Intensity (OGCI/OGMP, vol. % of marketed gas)")}
           </span>
         </div>
         <div className="[display:flex] [align-items:baseline] [gap:8px]">
@@ -162,6 +164,11 @@ const MethaneIntensityMethaneIntensity: React.FC<MethaneIntensityMethaneIntensit
               : t("Overall Avg")}
           </span>
         </div>
+        {stats.ngsiIntensityPct != null && (
+          <div className="kpi-unit" title={t("NGSI Methane Emissions Intensity Protocol: CH4 emitted / CH4 in the throughput (0.0192 t/Mcf, segment default CH4 content).")}>
+            {t("NGSI intensity: {{pct}}%", { pct: stats.ngsiIntensityPct.toFixed(3) })}
+          </div>
+        )}
 
         {/* Upstream & Midstream Segment Loss Rates */}
         <div
@@ -197,7 +204,7 @@ const MethaneIntensityMethaneIntensity: React.FC<MethaneIntensityMethaneIntensit
           </div>
 
           <div
-            className="[border-left:1px_solid_var(--border-color,_var(--color-legacy-e5e7eb))]! pl-[8px]!"
+            className="[border-inline-start:1px_solid_var(--border-color,_var(--color-legacy-e5e7eb))]! ps-[8px]!"
           >
             <div
               className="text-[length:0.7rem]! text-[color:var(--text-secondary)]! uppercase! [letter-spacing:0.5px]! font-semibold!"

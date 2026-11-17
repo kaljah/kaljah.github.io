@@ -109,7 +109,7 @@ def _s2get(app, rid):
 
 def test_scope2_branches(app, gworld):
     from electricity_factors import grid_entry, grid_factor_kg_co2e_per_kwh
-    from routes.scope2 import _DEFAULT_BOILER_EF_KG_PER_MMBTU as NG
+    from routes.scope2 import _LEGACY_BOILER_EF_KG_PER_MMBTU as NG  # a record saved before the gas columns (HHV default)
 
     grid = "Algerian National Grid"
     entry = grid_entry(grid)[1]
@@ -159,7 +159,7 @@ def test_scope2_branches(app, gworld):
 
 
 def test_steam_without_the_previous_standard_is_left_alone(app, gworld):
-    from routes.scope2 import _DEFAULT_BOILER_EF_KG_PER_MMBTU as NG
+    from routes.scope2 import _LEGACY_BOILER_EF_KG_PER_MMBTU as NG  # a record saved before the gas columns (HHV default)
 
     rid = _s2(app, gworld["fid"], month=6, source_type="indirect_steam", heat_mmbtu=10, emission_factor=NG, co2e=1.0)
     try:

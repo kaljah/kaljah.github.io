@@ -58,7 +58,7 @@ const formatQaFlag = (flag?: string): string => {
   return t(cleanFlag || flag);
 };
 
-const th = "whitespace-nowrap border-b border-border px-4 py-3.5 text-left text-xs font-medium text-text-secondary";
+const th = "whitespace-nowrap border-b border-border px-4 py-3.5 text-start text-xs font-medium text-text-secondary";
 const td = "border-b border-ink-100 px-4 py-3.5 align-middle text-base text-ink-700";
 
 export interface FlaggedRecord {
@@ -141,8 +141,8 @@ const QADashboardZeroAnomaliesDetected: React.FC<QADashboardZeroAnomaliesDetecte
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-6 py-4">
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative min-w-60">
-            <Search className="pointer-events-none absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-text-secondary" aria-hidden="true" />
-            <Input aria-label={t("Search flagged records")} className="h-9 pl-9" placeholder={t("Search by ID, process, or reason…")} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+            <Search className="pointer-events-none absolute start-3 top-1/2 size-3.5 -translate-y-1/2 text-text-secondary" aria-hidden="true" />
+            <Input aria-label={t("Search flagged records")} className="h-9 ps-9" placeholder={t("Search by ID, process, or reason…")} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
           </div>
           <div role="group" aria-label={t("Status filter")} className="flex flex-wrap items-center gap-1.5">
             {STATUS_FILTERS.map((f) => (
@@ -185,26 +185,26 @@ const QADashboardZeroAnomaliesDetected: React.FC<QADashboardZeroAnomaliesDetecte
 
       {(searchQuery || statusFilter !== "all") && (
         <div className="flex flex-wrap items-center gap-1.5 px-6 py-2 bg-ink-50/70 border-b border-border/60 text-xs">
-          <span className="font-semibold text-text-secondary mr-1">{t("Active Filters:")}</span>
+          <span className="font-semibold text-text-secondary me-1">{t("Active Filters:")}</span>
           {statusFilter !== "all" && (
             <Badge tone="warning" className="gap-1 py-0.5">
               {t("Status: {{status}}", { status: STATUS_FILTERS.find((f) => f.value === statusFilter)?.label || statusFilter })}
-              <button type="button" onClick={() => { setStatusFilter("all"); setOffset(0); }} className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
+              <button type="button" onClick={() => { setStatusFilter("all"); setOffset(0); }} className="cursor-pointer ms-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
             </Badge>
           )}
           {searchQuery && (
             <Badge tone="neutral" className="gap-1 py-0.5">
               {t('Search: "{{q}}"', { q: searchQuery })}
-              <button type="button" onClick={() => { setSearchQuery(""); setOffset(0); }} className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
+              <button type="button" onClick={() => { setSearchQuery(""); setOffset(0); }} className="cursor-pointer ms-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
             </Badge>
           )}
-          <span className="text-text-secondary ml-2 font-mono">
+          <span className="text-text-secondary ms-2 font-mono">
             {t("Showing {{count}} of {{total}} records", { count: filteredRecords.length, total: total_flagged_count })}
           </span>
           <button
             type="button"
             onClick={resetFilters}
-            className="text-xs text-brand-600 hover:text-brand-700 hover:underline font-semibold ml-2 cursor-pointer border-0 bg-transparent p-0"
+            className="text-xs text-brand-600 hover:text-brand-700 hover:underline font-semibold ms-2 cursor-pointer border-0 bg-transparent p-0"
           >
             {t("Clear all")}
           </button>
@@ -234,7 +234,7 @@ const QADashboardZeroAnomaliesDetected: React.FC<QADashboardZeroAnomaliesDetecte
       ) : (
         <>
           <div className="w-full overflow-x-auto">
-            <table className="w-full border-collapse text-left">
+            <table className="w-full border-collapse text-start">
               <thead>
                 <tr>
                   <th scope="col" className={th}>
@@ -292,14 +292,14 @@ const QADashboardZeroAnomaliesDetected: React.FC<QADashboardZeroAnomaliesDetecte
                                 <AlertTriangle className="size-3" aria-hidden="true" />
                                 {formatQaFlag(record.qa_flag)}
                               </Badge>
-                              <span className="text-2xs font-medium text-text-secondary pl-0.5">
+                              <span className="text-2xs font-medium text-text-secondary ps-0.5">
                                 {sev.label} {t("Priority")}
                               </span>
                             </div>
                           );
                         })()}
                       </td>
-                      <td className={cn(td, "font-mono font-bold")}>{record.co2e != null ? Number(record.co2e).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "0.00"}</td>
+                      <td className={cn(td, "font-mono font-bold")}>{record.co2e != null ? Number(record.co2e).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "0.00"}</td>
                       <td className={td}>
                         <StatusBadge status={record.status || "Pending review"} size="sm" />
                       </td>

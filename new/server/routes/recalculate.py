@@ -38,9 +38,42 @@ ALLOWED_TRIGGERS = {
 }
 
 
+def _engine_recalc(e, cf, gwp_dict=None):
+    """(co2, ch4, n2o, co2e) in tonnes of a Scope 1 record recalculated with a custom factor by the Scope 1 engine.
+
+    Blind audit BA-043: the recalculation multiplied the stored quantity by the kg/MMBtu factor (no unit, no
+    heating value; 980x on a scf record) and left the gas masses as they were. The record's saved inputs, unit
+    and period go through compute_emissions with the new factor, as an edit would. None when it cannot be re-run.
+    """
+    import json
+
+    from calculations import compute_emissions
+    from calculations.constants import get_active_gwp
+    from services.scope1_calc import canonicalize, custom_factor_data
+
+    try:
+        stored = json.loads(e.source_payload or "{}")
+    except (TypeError, ValueError):
+        stored = {}
+    if not isinstance(stored, dict):
+        stored = {}
+    base = {"process_type": e.process_type, "process": e.process_type, "fuel_type": e.fuel_type, "fuel": e.fuel_type,
+            "unit": e.unit, "quantity": e.quantity, "amount": e.quantity}
+    payload = canonicalize({**base, **{k: v for k, v in stored.items() if v is not None}})
+    payload.update(year=e.year, month=e.month, facility_id=e.facility_id, factor_source="custom",
+                   custom_factor_id=cf.id)
+    try:
+        em, _method = compute_emissions(payload, custom_factor_data(cf), gwp_dict=gwp_dict or get_active_gwp())
+    except Exception as exc:  # the engine's refusal: the record is left as it is and reported
+        current_app.logger.warning("Recalculation of record %s with factor %s refused: %s", e.id, cf.id, exc)
+        return None
+    return (float(em.get("co2") or 0.0), float(em.get("ch4") or 0.0), float(em.get("n2o") or 0.0),
+            float(em.get("totalCo2e") or 0.0))
+
+
 def _simulate_recalculation(target_year=None, target_facility_id=None, target_scope="all",
                             target_factor_id=None, target_factor_version=None,
-                            target_gwp_standard=None, allowed_fids=None):
+                            target_gwp_standard=None, allowed_fids=None, caller_tenant=None):
     """
     Simulates the recalculation across Scope 1, 2, and 3 without persisting changes.
     Returns preview metrics and sample before/after rows scoped to `allowed_fids`.
@@ -52,6 +85,14 @@ def _simulate_recalculation(target_year=None, target_facility_id=None, target_sc
 
     # Custom factor lookup if factor_id is specified
     cf = db.session.get(CustomFactor, target_factor_id) if target_factor_id else None
+
+    # Resolve tenant & authorized facilities
+    fac_q = Facility.query.with_entities(Facility.id)
+    if caller_tenant is not None:
+        fac_q = fac_q.filter(tenant_matches(Facility.tenant_id, caller_tenant))
+    if allowed_fids is not None:
+        fac_q = fac_q.filter(Facility.id.in_(allowed_fids or [-1]))
+    scoped_fids = [fid for (fid,) in fac_q.all()]
 
     total_before = 0.0
     total_after = 0.0
@@ -66,8 +107,7 @@ def _simulate_recalculation(target_year=None, target_facility_id=None, target_sc
     # 1. Scope 1
     if target_scope in ("all", "1", 1):
         q1 = Emission.query.filter(Emission.is_test == False)
-        if allowed_fids is not None:
-            q1 = q1.filter(Emission.facility_id.in_(allowed_fids or [-1]))
+        q1 = q1.filter(Emission.facility_id.in_(scoped_fids or [-1]))
         if target_year is not None:
             q1 = q1.filter(Emission.year == int(target_year))
         if target_facility_id is not None:
@@ -82,14 +122,9 @@ def _simulate_recalculation(target_year=None, target_facility_id=None, target_sc
             proj_co2e = curr_co2e
 
             if cf is not None:
-                # Recalculate from activity quantity and new factor values
-                qty = float(e.quantity or 0.0)
-                cf_co2 = float(cf.co2_factor or 0.0)
-                cf_ch4 = float(cf.ch4_factor or 0.0)
-                cf_n2o = float(cf.n2o_factor or 0.0)
-                gwp_ch4 = ch4_factor or 28.0
-                gwp_n2o = n2o_factor or 265.0
-                proj_co2e = qty * (cf_co2 + cf_ch4 * gwp_ch4 + cf_n2o * gwp_n2o)
+                # the Scope 1 engine with the new factor (units, heating value, period), never quantity x factor
+                res = _engine_recalc(e, cf, gwp_dict)
+                proj_co2e = res[3] if res is not None else curr_co2e
             elif target_gwp_standard:
                 # Re-weight stored gas masses with target GWP
                 co2_m = float(e.co2_emissions or 0.0)
@@ -117,8 +152,7 @@ def _simulate_recalculation(target_year=None, target_facility_id=None, target_sc
     # 2. Scope 2
     if target_scope in ("all", "2", 2) and target_factor_id is None:
         q2 = Scope2Emission.query
-        if allowed_fids is not None:
-            q2 = q2.filter(Scope2Emission.facility_id.in_(allowed_fids or [-1]))
+        q2 = q2.filter(Scope2Emission.facility_id.in_(scoped_fids or [-1]))
         if target_year is not None:
             q2 = q2.filter(Scope2Emission.year == int(target_year))
         if target_facility_id is not None:
@@ -137,8 +171,7 @@ def _simulate_recalculation(target_year=None, target_facility_id=None, target_sc
     # 3. Scope 3
     if target_scope in ("all", "3", 3) and target_factor_id is None:
         q3 = Scope3Emission.query
-        if allowed_fids is not None:
-            q3 = q3.filter(Scope3Emission.facility_id.in_(allowed_fids or [-1]))
+        q3 = q3.filter(Scope3Emission.facility_id.in_(scoped_fids or [-1]))
         if target_year is not None:
             q3 = q3.filter(Scope3Emission.year == int(target_year))
         if target_facility_id is not None:
@@ -210,6 +243,7 @@ def recalculate_preview():
         target_factor_version=target_factor_version,
         target_gwp_standard=target_gwp_standard,
         allowed_fids=allowed_fids,
+        caller_tenant=caller_tenant,
     )
     return jsonify(preview), 200
 
@@ -265,6 +299,7 @@ def submit_recalculation_request():
         target_factor_version=target_factor_version,
         target_gwp_standard=target_gwp_standard,
         allowed_fids=allowed_fids,
+        caller_tenant=caller_tenant,
     )
 
     req = RecalculationRequest(
@@ -332,11 +367,18 @@ def approve_and_execute_recalculation(request_id):
     n2o_factor = float(gwp_dict.get("N2O", 265.0)) if gwp_dict else None
     cf = db.session.get(CustomFactor, req.target_factor_id) if req.target_factor_id else None
 
+    # Resolve tenant & authorized facilities
+    fac_q = Facility.query.with_entities(Facility.id)
+    if caller_tenant is not None:
+        fac_q = fac_q.filter(tenant_matches(Facility.tenant_id, caller_tenant))
+    if allowed_fids is not None:
+        fac_q = fac_q.filter(Facility.id.in_(allowed_fids or [-1]))
+    scoped_fids = [fid for (fid,) in fac_q.all()]
+
     # Scope 1 Execution (tenant-scoped)
-    if req.target_scope in ("all", "1", "Scope 1"):
+    if req.target_scope in ("all", "1", "Scope 1", 1):
         q1 = Emission.query.filter(Emission.is_test == False)
-        if allowed_fids is not None:
-            q1 = q1.filter(Emission.facility_id.in_(allowed_fids or [-1]))
+        q1 = q1.filter(Emission.facility_id.in_(scoped_fids or [-1]))
         if req.target_year is not None:
             q1 = q1.filter(Emission.year == req.target_year)
         if req.target_facility_id is not None:
@@ -355,11 +397,10 @@ def approve_and_execute_recalculation(request_id):
             new_gwp_ver = req.target_gwp_standard or e.gwp_version
 
             if cf is not None:
-                qty = float(e.quantity or 0.0)
-                cf_co2 = float(cf.co2_factor or 0.0)
-                cf_ch4 = float(cf.ch4_factor or 0.0)
-                cf_n2o = float(cf.n2o_factor or 0.0)
-                new_val = qty * (cf_co2 + cf_ch4 * (ch4_factor or 28.0) + cf_n2o * (n2o_factor or 265.0))
+                res = _engine_recalc(e, cf, gwp_dict)
+                if res is None:
+                    continue  # refused by the engine: the record keeps its values (logged)
+                e.co2_emissions, e.ch4_emissions, e.n2o_emissions, new_val = res
                 e.factor_version = cf.version
             elif req.target_gwp_standard:
                 co2_m = float(e.co2_emissions or 0.0)
@@ -388,6 +429,15 @@ def approve_and_execute_recalculation(request_id):
             e.updated_at = datetime.datetime.now(datetime.timezone.utc)
             e.updated_by = user.id
 
+    # Scope 2 / 3 store only their CO2e (no per-gas masses), so a GWP change cannot re-weight them
+    # here: they are left as they are and named in the response, never logged as recalculated
+    skipped_scopes = []
+    if req.target_factor_id is None and req.target_gwp_standard:
+        if req.target_scope in ("all", "2", "Scope 2", 2):
+            skipped_scopes.append("Scope 2")
+        if req.target_scope in ("all", "3", "Scope 3", 3):
+            skipped_scopes.append("Scope 3")
+
     # If base year was targeted, register in BaseYearRecalculation table
     if req.target_year:
         by_rec = BaseYearRecalculation(
@@ -406,21 +456,23 @@ def approve_and_execute_recalculation(request_id):
     req.approved_at = datetime.datetime.now(datetime.timezone.utc)
     req.executed_at = datetime.datetime.now(datetime.timezone.utc)
 
-    db.session.commit()
-    invalidate_gwp_cache()
-
+    skipped_note = f"; not re-weighted (no stored gas split): {', '.join(skipped_scopes)}" if skipped_scopes else ""
+    # the audit entry commits with the data change (one transaction)
     log_activity_and_notify(
         action="RECALCULATION_EXECUTED",
         record_id=str(req.id),
         user=user,
         request=request,
         entity="RecalculationRequest",
-        details=f"Recalculation #{req.id} executed by {user.fullName}: {req.records_affected} records updated ({req.tco2e_before} -> {req.tco2e_after} tCO2e)",
+        details=f"Recalculation #{req.id} executed by {user.fullName}: {req.records_affected} records updated ({req.tco2e_before} -> {req.tco2e_after} tCO2e){skipped_note}",
     )
+    db.session.commit()
+    invalidate_gwp_cache()
 
     return jsonify({
         "message": "Recalculation executed successfully",
         "request": req.to_dict(),
+        "skipped_scopes": skipped_scopes,
     }), 200
 
 

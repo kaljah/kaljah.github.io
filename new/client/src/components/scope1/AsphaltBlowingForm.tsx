@@ -34,7 +34,7 @@ export const AsphaltBlowingForm: React.FC<Scope1SubFormProps> = ({ data, onChang
         <div className="input-group">
           <label>
             {t("Asphalt Blown Throughput")}
-            <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+            <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
           </label>
           <div className="grid gap-[10px] [grid-template-columns:1fr_120px] max-[600px]:[grid-template-columns:1fr]">
             <Input

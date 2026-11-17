@@ -18,7 +18,7 @@ from services.audit_chain import data_fingerprint, record_report_fingerprint
 from services.labels import process_label, scope2_source_label
 from services.report_params import report_facility, report_statuses, report_year
 from services.scope2_activity import scope2_activity
-from utils import get_allowed_facility_ids, get_current_user
+from utils import get_allowed_facility_ids, get_current_user, get_current_tenant_id, tenant_matches
 from routes.reports import _safe_excel_value, reports_bp
 
 
@@ -82,21 +82,21 @@ def export_national_inventory_report():
             return jsonify({"error": "Unauthorized facility"}), 403
 
         # Query facilities
-        fac_q = Facility.query
-        if allowed_fids is not None:
-            fac_q = fac_q.filter(Facility.id.in_(allowed_fids or [-1]))
+        caller_tenant = get_current_tenant_id(user)
+        fac_q = Facility.query.filter(Facility.id.in_(allowed_fids or [-1]) if allowed_fids is not None
+                                      else tenant_matches(Facility.tenant_id, caller_tenant))
         if facility_filter:
             fac_q = fac_q.filter_by(id=facility_filter)
+        fac_q = fac_q.filter(Facility.is_test == False)  # noqa: E712  (test facilities / rows left out, BA-011)
         facilities = {f.id: f for f in fac_q.all()}
         allowed_ids_list = list(facilities.keys()) or [-1]
 
-        # Query Scope 1 records
-        s1_q = Emission.query.filter(Emission.facility_id.in_(allowed_ids_list), Emission.status.in_(statuses))
+        s1_q = Emission.query.filter(Emission.facility_id.in_(allowed_ids_list), Emission.status.in_(statuses),
+                                     Emission.is_test == False)  # noqa: E712
         if year_filter:
             s1_q = s1_q.filter_by(year=year_filter)
         scope1_records = s1_q.order_by(Emission.year.desc(), Emission.month.desc(), Emission.id.asc()).all()
 
-        # Query Scope 2 records
         s2_q = Scope2Emission.query.filter(Scope2Emission.facility_id.in_(allowed_ids_list), Scope2Emission.status.in_(statuses))
         if year_filter:
             s2_q = s2_q.filter_by(year=year_filter)
@@ -259,9 +259,10 @@ def export_national_inventory_report():
 
         for idx, (label, val, unit) in enumerate(sum_metrics, start=5):
             ws_sum.cell(row=idx, column=1, value=label).font = font_bold if "Grand Total" in label or "Scope" in label else font_regular
-            val_cell = ws_sum.cell(row=idx, column=2, value=round(val, 2) if isinstance(val, float) else val)
+            small = isinstance(val, float) and 0 < abs(val) < 1  # an N2O total of 0.00881 t read 0.01 (BA-022)
+            val_cell = ws_sum.cell(row=idx, column=2, value=round(val, 5 if small else 2) if isinstance(val, float) else val)
             if isinstance(val, (int, float)):
-                val_cell.number_format = "#,##0.00" if isinstance(val, float) else "#,##0"
+                val_cell.number_format = ("0.00000" if small else "#,##0.00") if isinstance(val, float) else "#,##0"
             val_cell.font = font_bold if "Grand Total" in label else font_regular
             val_cell.alignment = Alignment(horizontal="right")
             ws_sum.cell(row=idx, column=3, value=unit).font = font_regular
@@ -315,8 +316,8 @@ def export_national_inventory_report():
             ws_inv.cell(row=curr_row, column=11, value=round(qty, 2)).number_format = "#,##0.00"
             ws_inv.cell(row=curr_row, column=12, value=_safe_excel_value(r.unit or ""))
             ws_inv.cell(row=curr_row, column=13, value=round(co2, 2)).number_format = "#,##0.00"
-            ws_inv.cell(row=curr_row, column=14, value=round(ch4, 2)).number_format = "#,##0.00"
-            ws_inv.cell(row=curr_row, column=15, value=round(n2o, 2)).number_format = "#,##0.00"
+            ws_inv.cell(row=curr_row, column=14, value=round(ch4, 4)).number_format = "#,##0.0000"
+            ws_inv.cell(row=curr_row, column=15, value=round(n2o, 4)).number_format = "#,##0.0000"  # 0.0001 t (BA-022)
             ws_inv.cell(row=curr_row, column=16, value=round(tot, 2)).number_format = "#,##0.00"
             ws_inv.cell(row=curr_row, column=17, value=_safe_excel_value(r.status or "")).font = font_regular
 

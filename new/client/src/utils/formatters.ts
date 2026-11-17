@@ -10,7 +10,8 @@ export const formatCompactNumber = (
   value: number | string | null | undefined,
   decimals: number = 1,
 ): string => {
-  if (value === null || value === undefined || value === "") return "0";
+  // a missing value is shown as missing, not as a measured zero (BA-027)
+  if (value === null || value === undefined || value === "") return "—";
   let num = typeof value === "number" ? value : parseFloat(String(value));
   if (!Number.isFinite(num)) {
     if (num === Infinity) return "∞";
@@ -43,7 +44,8 @@ export const formatNumber = (
   value: number | string | null | undefined,
   decimals: number = 3,
 ): string => {
-  if (value === null || value === undefined || value === "") return "0";
+  // a missing value is shown as missing, not as a measured zero (BA-027)
+  if (value === null || value === undefined || value === "") return "—";
   let num = typeof value === "number" ? value : parseFloat(String(value));
   if (!Number.isFinite(num)) {
     if (num === Infinity) return "∞";
@@ -119,4 +121,25 @@ export const formatDate = (date: string | number | Date | null | undefined): str
   } catch {
     return String(date);
   }
+};
+
+
+/**
+ * Whole-number percentage shares that add up to 100 (largest remainder): each share rounded on its own gave
+ * 33 + 33 + 33 = 99 % (BA-021). Returns null for every share when the total is not positive.
+ */
+export const roundedShares = (values: number[]): (number | null)[] => {
+  const nums = values.map((v) => (Number.isFinite(v) && v > 0 ? v : 0));
+  const total = nums.reduce((a, b) => a + b, 0);
+  if (!(total > 0)) return nums.map(() => null);
+  const raw = nums.map((v) => (v / total) * 100);
+  const floors = raw.map((r) => Math.floor(r));
+  let rest = 100 - floors.reduce((a, b) => a + b, 0);
+  const order = raw.map((r, i) => [r - Math.floor(r), i] as [number, number]).sort((a, b) => b[0] - a[0]);
+  for (const [, i] of order) {
+    if (rest <= 0) break;
+    floors[i] += 1;
+    rest -= 1;
+  }
+  return floors;
 };

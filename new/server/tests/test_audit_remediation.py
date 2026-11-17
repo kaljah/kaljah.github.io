@@ -399,8 +399,10 @@ def test_scope2_case_insensitive_recalc_and_steam_amount(client, test_users):
     assert res_up.status_code == 200
     with app.app_context():
         rec_el = db.session.get(Scope2Emission, el_id)
-        # 20,000 kWh * 0.6 kgCO2/kWh / 1000 = 12.0 tCO2e
-        assert abs(rec_el.co2e - 12.0) < 1e-4
+        # the supplier factor is the market-based value: 20,000 kWh * 0.6 kgCO2/kWh / 1000 = 12.0 tCO2e; the
+        # location-based value is the facility's country grid (BA-007)
+        assert abs(rec_el.co2e_market_based - 12.0) < 1e-4
+        assert rec_el.co2e == pytest.approx(rec_el.co2e_location_based) and rec_el.co2e != pytest.approx(12.0)
 
     # 2. Create indirect steam entry with amount and unit="short_ton"
     res_steam = client.post(
@@ -910,7 +912,8 @@ def test_scope2_steam_recalculation_enthalpy(client, test_users):
     assert res.status_code == 200
     with app.app_context():
         updated = db.session.get(Scope2Emission, rec_id)
-        assert pytest.approx(updated.co2e, rel=1e-4) == (200.0 * 0.06 * 2.75 / 0.70)
+        # plus the boiler CH4 / N2O of Exhibit 8.3 (1.1E-03 / 3.0E-04 kg per MMBtu of fuel), AR5 (BA-008)
+        assert pytest.approx(updated.co2e, rel=1e-4) == (200.0 * 2.75 / 0.70 * (60.0 + 0.0011 * 28 + 0.0003 * 265) / 1000)
 
 
 def test_scope3_eeio_per_thousand_scaling_defect(client, test_users):
@@ -1275,11 +1278,13 @@ def test_scope2_authoritative_calculation_overrides_injected_co2e(client, test_u
     res = client.post("/api/scope2", json=payload)
     assert res.status_code == 201
     res_data = res.get_json()
-    # The server must have authoritatively calculated 1.0 tCO2e instead of 9999.0
-    assert pytest.approx(res_data["co2e"], 0.001) == 1.0
+    # The server must have authoritatively calculated the values instead of 9999.0: market-based from the supplier
+    # factor (1.0 t), location-based from the facility's country grid (BA-007)
+    assert res_data["co2e"] != 9999.0
     with app.app_context():
         rec = db.session.get(Scope2Emission, res_data["id"])
-        assert pytest.approx(rec.co2e, 0.001) == 1.0
+        assert pytest.approx(rec.co2e_market_based, 0.001) == 1.0
+        assert pytest.approx(rec.co2e, 0.001) == 2000.0 * 0.4978832 / 1000
 
 
 def test_compressor_seal_and_storage_tank_uncertainty_mapping():

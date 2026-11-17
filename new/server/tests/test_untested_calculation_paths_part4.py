@@ -7,6 +7,8 @@ Governing Standards: API Compendium 2021 4th Edition (Chapters 4, 6) & IPCC 2006
 
 import math
 import pytest
+
+C_TO_CO2 = 44.01 / 12.011  # the engine's CO2 per carbon (the Compendium prints 44 / 12; BA-040)
 import re
 
 from calculations.base import BaseCalculator
@@ -246,8 +248,8 @@ def test_refining_downstream_catalyst_and_cokers():
 
     # Approach 1: Coke burn rate per year / per day / unit throughput
     res_cb_yr = cat.calculate(approach="coke_burn", coke_burn_rate_tonnes_yr=5000.0, carbon_content_fraction=0.93)
-    # CO2 = 5000 * 0.93 * (44 / 12) = 17050 t
-    assert res_cb_yr["results"]["co2"]["value"] == pytest.approx(5000.0 * 0.93 * (44.0 / 12.0))
+    # CO2 = 5000 * 0.93 * (C_TO_CO2) = 17050 t
+    assert res_cb_yr["results"]["co2"]["value"] == pytest.approx(5000.0 * 0.93 * (C_TO_CO2))
     assert res_cb_yr["results"]["ch4"]["value"] > 0
     assert res_cb_yr["results"]["n2o"]["value"] > 0
 
@@ -341,8 +343,8 @@ def test_refining_downstream_h2_asphalt_calcining_sru_petro_fire():
         feedstock_rate_tonnes_yr=10000.0,
         feedstock_carbon_fraction=0.75,
     )
-    # CO2 = 10000 * 0.75 * (44 / 12) = 27500 t
-    assert res_h2_tonnes["results"]["co2"]["value"] == pytest.approx(27500.0)
+    # CO2 = 10000 * 0.75 * (C_TO_CO2) = 27500 t
+    assert res_h2_tonnes["results"]["co2"]["value"] == pytest.approx(10000 * 0.75 * C_TO_CO2)
 
     # H2 stoichiometry (Eq 6-50) with auto-computed ratio from feed composition
     res_h2_stoich = h2_calc.calculate(

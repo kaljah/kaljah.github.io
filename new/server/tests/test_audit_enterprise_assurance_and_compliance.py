@@ -369,15 +369,24 @@ class TestScope2DualReportingReconciliation:
             "amount": 20000,
             "unit": "kWh",
             "grid_region": "Algeria",
-            "emission_factor": 0.50,
         })
         assert res.status_code == 201
         data = res.get_json()
         rec = data.get("record", data)
 
-        assert (pytest.approx(rec["co2e_location_based"], rel=1e-3) == 9.9576 or
-                pytest.approx(rec["co2e_location_based"], rel=1e-4) == 10.0)
+        assert pytest.approx(rec["co2e_location_based"], rel=1e-3) == 9.9576
         assert pytest.approx(rec["co2e_market_based"], rel=1e-4) == rec["co2e_location_based"]
+
+        # a supplier factor sent with the record is a contractual (market-based) factor; the location-based
+        # value stays the grid's (GHG Protocol Scope 2 Guidance; it was ignored, blind audit BA-010)
+        res2 = client.post("/api/scope2", json={
+            "facility_id": fac.id, "year": 2025, "month": 6, "source_type": "electricity",
+            "electricity_kwh": 20000, "grid_region": "Algeria", "emission_factor": 0.50,
+        })
+        assert res2.status_code == 201
+        rec2 = res2.get_json().get("record", res2.get_json())
+        assert pytest.approx(rec2["co2e_location_based"], rel=1e-3) == 9.9576
+        assert pytest.approx(rec2["co2e_market_based"], rel=1e-6) == 10.0
 
 
 # ==============================================================================
@@ -695,8 +704,9 @@ class TestIPCCUncertaintyPropagationMultiGasTaylorSeries:
         co2e_n2o = e_n2o * gwp_n2o
         expected_total_co2e = co2e_co2 + co2e_ch4 + co2e_n2o
 
-        u_gwp_ch4 = 0.30  # IPCC default GWP uncertainty
-        u_gwp_n2o = 0.20
+        # IPCC AR5 ch. 8 GWP100 uncertainty, +/-40 % (CH4) and +/-30 % (N2O) as 5-95 % ranges -> 1 sigma (BA-019)
+        u_gwp_ch4 = 0.40 / 1.645
+        u_gwp_n2o = 0.30 / 1.645
 
         var_co2 = (e_co2 * u_co2) ** 2
         var_ch4 = (co2e_ch4 ** 2) * (u_ch4 ** 2 + u_gwp_ch4 ** 2)

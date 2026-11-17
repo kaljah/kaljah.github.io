@@ -148,7 +148,7 @@ def test_dispatcher_cogen_and_indirect_steam(dispatcher):
             "factor_source": "specific",
             "quantity": 500.0,
             "unit": "mmbtu",
-            "boiler_efficiency": 0.82,
+            "boiler_efficiency": 82,
         },
         {"co2": 53.06},
         {},

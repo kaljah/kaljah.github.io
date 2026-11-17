@@ -126,11 +126,11 @@ export const AuditStats: React.FC<AuditStatsProps> = ({ stats }) => {
   const otherCount = stats.otherEvents ?? Math.max(0, stats.totalEvents - (stats.totalLogins + stats.dataMutations + stats.securityAlerts));
   return (
     <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-      <StatCard icon={Activity} label={t("Total Events Logged")} valueText={stats.totalEvents.toLocaleString()} />
-      <StatCard icon={LogIn} label={t("User Logins")} valueText={stats.totalLogins.toLocaleString()} />
-      <StatCard icon={Database} label={t("Data Changes")} valueText={stats.dataMutations.toLocaleString()} />
-      <StatCard icon={ShieldAlert} label={t("Security & Alerts")} valueText={stats.securityAlerts.toLocaleString()} />
-      <StatCard icon={Shield} label={t("Other / System")} valueText={otherCount.toLocaleString()} />
+      <StatCard icon={Activity} label={t("Total Events Logged")} valueText={stats.totalEvents.toLocaleString("en-US")} />
+      <StatCard icon={LogIn} label={t("User Logins")} valueText={stats.totalLogins.toLocaleString("en-US")} />
+      <StatCard icon={Database} label={t("Data Changes")} valueText={stats.dataMutations.toLocaleString("en-US")} />
+      <StatCard icon={ShieldAlert} label={t("Security & Alerts")} valueText={stats.securityAlerts.toLocaleString("en-US")} />
+      <StatCard icon={Shield} label={t("Other / System")} valueText={otherCount.toLocaleString("en-US")} />
     </div>
   );
 };
@@ -176,7 +176,7 @@ export interface AuditPaginationProps {
 }
 
 export const AuditPagination: React.FC<AuditPaginationProps> = ({ page, totalPages, totalRecords, limit, onLimit, onPage }) => (
-  <Card className="mt-7 flex flex-col items-stretch justify-between gap-4 px-5 py-4 text-center sm:flex-row sm:items-center sm:text-left">
+  <Card className="mt-7 flex flex-col items-stretch justify-between gap-4 px-5 py-4 text-center sm:flex-row sm:items-center sm:text-start">
     <p className="m-0 text-base text-text-secondary">
       {t("Page")}{" "}<strong>{page}</strong>{" "}{t("of")}{" "}<strong>{totalPages}</strong> ({totalRecords}{" "}{t("total events)")}
     </p>
@@ -256,7 +256,7 @@ export const AuditIntegrityCheck: React.FC = () => {
   const firstBroken = result?.issues?.[0];
 
   return (
-    <Card className="mb-6 border-l-4 border-l-brand-500 bg-surface/80 p-5 shadow-xs">
+    <Card className="mb-6 border-s-4 border-s-brand-500 bg-surface/80 p-5 shadow-xs">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3.5">
           <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
@@ -315,7 +315,7 @@ export const AuditIntegrityCheck: React.FC = () => {
       {result && result.status === "verified" && (
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-3 text-xs text-text-secondary">
           <span>
-            {t("Validated")} <strong className="text-text">{result.total_records.toLocaleString()}</strong> {t("sequential cryptographic blocks.")}
+            {t("Validated")} <strong className="text-text">{result.total_records.toLocaleString("en-US")}</strong> {t("sequential cryptographic blocks.")}
           </span>
           <span className="font-mono text-[11px] text-text-secondary">
             {t("Seal HMAC:")} {result.checkpoint_hmac ? `${result.checkpoint_hmac.slice(0, 12)}…` : "Verified"}
@@ -326,7 +326,7 @@ export const AuditIntegrityCheck: React.FC = () => {
       {result && result.status === "tampered" && (
         <div className="mt-3 border-t border-border pt-3">
           <Banner tone="danger" title={t("Tampering Alert: Chain Integrity Broken ({{count}} issues detected)", { count: result.issue_count })}>
-            <ul className="m-0 mt-1 list-disc pl-5">
+            <ul className="m-0 mt-1 list-disc ps-5">
               {result.issues.map((i) => (
                 <li key={`${i.id}-${i.problem}`}>
                   {t("Block #")}{i.id}: {i.detail}

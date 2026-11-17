@@ -122,7 +122,7 @@ const Emissions: React.FC = () => {
           key={c.title}
           type="button"
           onClick={() => goToStage(c.stage)}
-          className={`group flex cursor-pointer flex-col gap-4 rounded-lg border border-t-4 border-border bg-surface p-6 text-left shadow-card transition-all hover:shadow-raised hover:-translate-y-0.5 ${c.rule}`}
+          className={`group flex cursor-pointer flex-col gap-4 rounded-lg border border-t-4 border-border bg-surface p-6 text-start shadow-card transition-all hover:shadow-raised hover:-translate-y-0.5 ${c.rule}`}
         >
           <span className="flex items-center justify-between">
             <span className={`inline-flex size-12 items-center justify-center rounded-md ${c.iconBox}`}>

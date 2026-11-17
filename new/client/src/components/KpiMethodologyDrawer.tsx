@@ -96,14 +96,14 @@ export const KpiMethodologyDrawer: React.FC<KpiMethodologyDrawerProps> = ({
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div className="relative flex-1">
             <Search
-              className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-secondary"
+              className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-text-secondary"
               aria-hidden="true"
             />
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t("Search by formula, standard, or KPI name...")}
-              className="pl-9 h-9"
+              className="ps-9 h-9"
               aria-label={t("Filter KPI definitions")}
             />
           </div>
@@ -138,7 +138,7 @@ export const KpiMethodologyDrawer: React.FC<KpiMethodologyDrawerProps> = ({
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4 max-h-[60vh] overflow-hidden">
             {/* KPI List Selector Sidebar */}
-            <div className="md:col-span-5 flex flex-col gap-1.5 overflow-y-auto pr-1 max-h-[58vh]">
+            <div className="md:col-span-5 flex flex-col gap-1.5 overflow-y-auto pe-1 max-h-[58vh]">
               {filtered.map((k) => {
                 const isSelected = activeKpi?.id === k.id;
                 return (

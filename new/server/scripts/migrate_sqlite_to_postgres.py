@@ -2,7 +2,8 @@
 """
 SQLite to PostgreSQL Data Migration Tool.
 Transfers all schemas, users, emissions, activity logs, and metadata
-from local SQLite to PostgreSQL with data validation and integrity verification.
+from local SQLite to PostgreSQL with data validation, integrity verification,
+and auto-incrementing sequence resets.
 
 Usage:
   python migrate_sqlite_to_postgres.py --sqlite-db ghg_app.db --postgres-url postgresql://user:pass@host:5432/dbname
@@ -15,8 +16,13 @@ import argparse
 TABLE_TRANSFER_ORDER = [
     "users",
     "facilities",
+    "jv_partners",
+    "facility_equity_shares",
+    "user_facility_access",
     "emission_sources",
     "custom_factors",
+    "factor_provenance_registry",
+    "calculation_factor_lineage",
     "emissions",
     "production_data",
     "scope2_emissions",
@@ -30,12 +36,30 @@ TABLE_TRANSFER_ORDER = [
     "reporting_metadata",
     "notifications",
     "cbam_product_exports",
+    "component_inventories",
+    "fugitive_surveys",
+    "flaring_details",
+    "period_locks",
+    "recalculation_requests",
+    "recalculation_history",
+    "import_mappings",
+    "ogmp_reporting_entities",
+    "ogmp_assets",
+    "ogmp_emission_sources",
+    "ogmp_site_measurements",
     "ogmp_surveys",
     "methane_source_types",
     "level_upgrade_logs",
+    "ogmp_annual_reports",
+    "ogmp_asset_reports",
+    "ogmp_audit_trails",
+    "ogmp_implementation_plans",
+    "ogmp_targets",
     "sbti_targets",
     "system_settings",
+    "id_high_water",
     "activity_log",
+    "alembic_version",
 ]
 
 
@@ -72,7 +96,7 @@ def run_migration(sqlite_path, pg_url, dry_run=False):
         sq_conn.close()
         return False
 
-    print(f"[INFO] Connecting to PostgreSQL...")
+    print("[INFO] Connecting to PostgreSQL...")
     try:
         pg_conn = psycopg2.connect(pg_url)
         pg_cur = pg_conn.cursor()
@@ -110,6 +134,21 @@ def run_migration(sqlite_path, pg_url, dry_run=False):
             pg_conn.rollback()
             print(f"  [FAILED] {table} transfer error: {err}")
             transferred_summary[table] = f"Error: {err}"
+
+    # BUG-SCR-003: Reset PostgreSQL auto-incrementing ID sequences
+    print("[INFO] Resetting PostgreSQL sequences...")
+    for table in TABLE_TRANSFER_ORDER:
+        try:
+            reset_sql = f"""
+                SELECT setval(
+                    pg_get_serial_sequence('"{table}"', 'id'),
+                    COALESCE((SELECT MAX(id) FROM "{table}"), 1)
+                );
+            """
+            pg_cur.execute(reset_sql)
+            pg_conn.commit()
+        except Exception:
+            pg_conn.rollback()
 
     sq_conn.close()
     pg_conn.close()

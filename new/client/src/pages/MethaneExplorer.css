@@ -76,14 +76,9 @@
    3. COLLAPSIBLE LEFT INTELLIGENCE & RECON DRAWER
    ============================================================ */
 
-.search-input-wrapper {
-  position: relative;
-  width: 100%;
-}
-
 .search-icon {
   position: absolute;
-  left: 11px;
+  inset-inline-start: 11px;
   top: 50%;
   transform: translateY(-50%);
   color: var(--color-ink-600);

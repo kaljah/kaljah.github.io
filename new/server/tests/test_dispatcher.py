@@ -258,7 +258,7 @@ def test_completions_flowback_methods():
         "comp_rate_unit": "mscf/day",  # without it the rate is Mcf per HOUR (the form's default): 12,000 Mcf, not 500
         "comp_duration": 48.0,  # 48 hours = 2 days -> 500 Mscf
         "comp_ch4_content": 85.0,
-        "control_efficiency": 0.98,
+        "control_efficiency": 98,
     }
     res_rate = dispatcher.dispatch("completions", payload_rate, {}, {})
     assert res_rate is not None

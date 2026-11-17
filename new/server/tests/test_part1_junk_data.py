@@ -94,7 +94,9 @@ def test_is_test_flag_excludes_test_data_from_emissions_ledger(client, app):
 
 
 def test_junk_data_dryrun_report_exists():
-    report_path = "new/server/reports/junk_test_data_dryrun.json"
+    report_path = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "..", "reports", "junk_test_data_dryrun.json")
+    )
     assert os.path.exists(report_path)
     with open(report_path, "r", encoding="utf-8") as f:
         data = json.load(f)

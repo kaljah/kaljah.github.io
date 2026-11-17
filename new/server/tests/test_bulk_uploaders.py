@@ -14,7 +14,9 @@ import openpyxl
 import pytest
 
 CH4_GWP, N2O_GWP = 28, 265
-NG_KG_PER_MMBTU = 53.06 + 0.001 * CH4_GWP + 0.0001 * N2O_GWP  # Table 4-5 CO2, Table 4-6 CH4 / N2O
+NG_KG_PER_MMBTU = 53.06 + 0.001 * CH4_GWP + 0.0001 * N2O_GWP  # Table 4-5 CO2, Table 4-6 CH4 / N2O (combustion)
+# steam of unknown generation: the Exhibit 8.3 natural-gas boiler, LHV basis (BA-045)
+STEAM_KG_PER_MMBTU = 59.0 + 0.0011 * CH4_GWP + 0.0003 * N2O_GWP
 NG_HHV_BTU_SCF = 1020
 
 
@@ -347,7 +349,7 @@ def test_scope2_consumption_and_steam(app, client, env):
     with app.app_context():
         steam = Scope2Emission.query.filter_by(facility_id=env["fid"], year=2024, month=3).one()
         # 100 MMBtu of steam from a natural-gas boiler (API Compendium §8.1.5 / Exhibit 8.3: 92% boiler, 10% loss = 82% net)
-        assert steam.co2e == pytest.approx(100 / 0.82 * NG_KG_PER_MMBTU / 1000, rel=1e-9)
+        assert steam.co2e == pytest.approx(100 / 0.82 * STEAM_KG_PER_MMBTU / 1000, rel=1e-9)
         assert steam.uncertainty and steam.uncertainty > 0
     manual = client.post("/api/scope2", json={"facility_id": env["fid"], "year": 2024, "month": 4,
                                              "source_type": "indirect_steam", "amount": 100, "unit": "mmbtu"})
@@ -643,5 +645,6 @@ def test_recalculation_tool(app, env, capsys):
         rec = db.session.get(Emission, rid)
         assert rec.co2e_total == pytest.approx(1000 * NG_KG_PER_MMBTU / 1000)
         assert rec.factor_source == "default" and rec.status == "Pending"
-        assert "ch4_content" not in json.loads(rec.source_payload)
+        # the CH4 85 % / CO2 2 % pair is kept unless --strip-bulk-defaults (BA-047)
+        assert json.loads(rec.source_payload).get("ch4_content") == 85.0
         assert ActivityLog.query.filter_by(action="RECALCULATE", record_id=str(rid)).count() == 1

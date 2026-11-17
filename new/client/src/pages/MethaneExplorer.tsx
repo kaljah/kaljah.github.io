@@ -433,7 +433,7 @@ const EmissionsMap: React.FC = () => {
     const n = Number(num);
     if (n >= 1000000) return (n / 1000000).toFixed(1) + "M";
     if (n >= 1000) return (n / 1000).toFixed(1) + "k";
-    return Math.round(n).toLocaleString();
+    return Math.round(n).toLocaleString("en-US");
   };
 
   const getSeverityLevel = (val: number): string => {
@@ -575,7 +575,7 @@ const EmissionsMap: React.FC = () => {
           role="status"
           className={cn(
             "absolute top-[78px] z-[940] flex max-w-[calc(100vw-32px)] flex-wrap items-center gap-2 rounded-lg border border-amber-300 bg-amber-50/95 px-3 py-1.5 text-xs font-semibold text-amber-800 shadow-md backdrop-blur-sm transition-[left] duration-300",
-            isDrawerOpen ? "left-4 md:left-[396px]" : "left-14",
+            isDrawerOpen ? "start-4 md:start-[396px]" : "start-14",
           )}
         >
           <span className="size-2 shrink-0 rounded-full bg-amber-500" aria-hidden="true" />
@@ -584,7 +584,7 @@ const EmissionsMap: React.FC = () => {
             <button
               type="button"
               onClick={() => setTileOffline(false)}
-              className="ml-1 cursor-pointer rounded border border-amber-400 bg-white px-2 py-0.5 text-[11px] font-semibold text-amber-900 hover:bg-amber-100"
+              className="ms-1 cursor-pointer rounded border border-amber-400 bg-white px-2 py-0.5 text-[11px] font-semibold text-amber-900 hover:bg-amber-100"
             >
               {t("Retry")}
             </button>
@@ -775,13 +775,13 @@ const EmissionsMap: React.FC = () => {
       {/* 4. COLLAPSIBLE LEFT INTELLIGENCE & RECON DRAWER (WHITE LIGHT THEME) */}
       <div
         className={cn(
-          "pointer-events-none absolute bottom-5 left-4 top-[78px] z-950 w-[340px] transition-transform duration-300 ease-out",
+          "pointer-events-none absolute bottom-5 start-4 top-[78px] z-950 w-[340px] transition-transform duration-300 ease-out",
           !isDrawerOpen && "-translate-x-[346px]",
         )}
       >
         <button
           type="button"
-          className="pointer-events-auto absolute -right-9 top-3.5 flex h-11 w-9 cursor-pointer items-center justify-center rounded-r-md border border-l-0 border-border bg-surface text-brand-700 shadow-md hover:bg-ink-50"
+          className="pointer-events-auto absolute -end-9 top-3.5 flex h-11 w-9 cursor-pointer items-center justify-center rounded-e-md border border-s-0 border-border bg-surface text-brand-700 shadow-md hover:bg-ink-50"
           onClick={() => setIsDrawerOpen(!isDrawerOpen)}
           title={isDrawerOpen ? t("Collapse drawer") : t("Expand drawer")}
           aria-label={isDrawerOpen ? t("Collapse drawer") : t("Expand drawer")}

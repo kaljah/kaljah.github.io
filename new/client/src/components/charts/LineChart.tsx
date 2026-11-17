@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Activity } from "lucide-react";
 import {
   AreaChart,
   Area,
@@ -72,7 +73,7 @@ export const LineChart: React.FC<LineChartProps> = ({
     if (!isFinite(num)) return "0";
     if (Math.abs(num) >= 1_000_000) return `${(num / 1_000_000).toFixed(1)}M`;
     if (Math.abs(num) >= 1_000) return `${(num / 1_000).toFixed(1)}k`;
-    return num.toLocaleString(undefined, { maximumFractionDigits: 1 });
+    return num.toLocaleString("en-US", { maximumFractionDigits: 1 });
   };
 
   const valueFormatter = formatValue || defaultFormat;
@@ -158,18 +159,7 @@ export const LineChart: React.FC<LineChartProps> = ({
       >
         <div className="chart-empty-content">
           <div className="chart-empty-icon">
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-            </svg>
+            <Activity size={20} strokeWidth={2} aria-hidden="true" />
           </div>
           <span>{t("No trend data available")}</span>
         </div>

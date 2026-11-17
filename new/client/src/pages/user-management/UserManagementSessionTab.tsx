@@ -94,7 +94,7 @@ export const UserManagementSessionTab: React.FC<UserManagementSessionTabProps> =
     <div className="flex flex-col gap-6" id="it-session-governance-panel">
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="rounded-xl border border-border border-l-2! border-l-brand-500! bg-surface p-5 shadow-xs flex flex-col gap-2">
+        <div className="rounded-xl border border-border border-s-2! border-s-brand-500! bg-surface p-5 shadow-xs flex flex-col gap-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-text-secondary">
               {t("Idle Session Timeout")}

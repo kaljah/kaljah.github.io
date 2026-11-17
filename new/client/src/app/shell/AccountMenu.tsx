@@ -33,7 +33,7 @@ const AccountMenu: React.FC = () => {
         <button
           type="button"
           aria-label={t("Account menu for {{name}}", { name })}
-          className="flex cursor-pointer items-center gap-2 rounded-full border-0 bg-transparent py-1 pl-1 pr-3 transition-colors hover:bg-ink-100"
+          className="flex cursor-pointer items-center gap-2 rounded-full border-0 bg-transparent py-1 ps-1 pe-3 transition-colors hover:bg-ink-100"
         >
           <span className="flex size-8 items-center justify-center rounded-full bg-primary text-sm font-bold text-on-primary">
             {initial}

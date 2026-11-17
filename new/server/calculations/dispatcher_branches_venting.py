@@ -60,7 +60,9 @@ def calc_venting(self, calculator, emission_factors, flat_inputs, gwp_dict, unce
         temp_unit=flat_inputs.get("blowdown_temp_unit") or flat_inputs.get("temp_unit") or "C",
         press_unit=flat_inputs.get("press_unit")
         or flat_inputs.get("blowdown_press_unit", "psig"),
-        z_factor=flat_inputs.get("z_factor", 1.0),
+        # no entered Z: the calculator estimates it at >= 1,000 psia (Compendium s6.4.6), ideal gas below;
+        # the default 1.0 sent here made that estimate unreachable (BA-003)
+        z_factor=flat_inputs.get("z_factor"),
         hhv=float(flat_inputs.get("hhv") or emission_factors.get("hhv") or 1020.0),
         gwp_dict=gwp_dict,
         # Eq 6-32 / Exhibit 6-25 by default; a residual pressure switches to the released dP (BUG-101)
@@ -244,7 +246,7 @@ def calc_tank(self, calculator, emission_factors, flat_inputs, gwp_dict, process
         # If user passes specific gravity (e.g. 0.70 to 0.99) instead of API gravity (typically 10 to 70 °API)
         # Convert SG to °API: °API = (141.5 / SG) - 131.5. Protect 1.0 °API bitumen from accidental inversion.
         u_sg = str(flat_inputs.get("density_unit") or flat_inputs.get("api_gravity_unit") or "").lower().strip()
-        if (u_sg in ("sg", "specific_gravity", "sp_gr") and raw_val > 0) or (not u_sg and 0.5 < raw_val < 0.99):
+        if (u_sg in ("sg", "specific_gravity", "sp_gr") and raw_val > 0) or (not u_sg and 0.5 < raw_val <= 1.05):
             api_val = (141.5 / raw_val) - 131.5
         else:
             api_val = raw_val
@@ -360,5 +362,22 @@ def calc_dehydrator(self, calculator, flat_inputs, gwp_dict, uncertainties):
     # Table 6-17 CH4 cut by the share controlled x the device's efficiency (98 % for a flare without one)
     share, eff = self._controlled_share(flat_inputs, ["dehy_eff", "control_efficiency"])
     control_eff = share * (0.98 if eff is None else eff)
+    if throughput not in (None, "") and unit:
+        # a rate (MMscf/d, Mscf/yr, m3/h) covers the record's period, as for flaring and AGR; the
+        # calculator read every unit it did not know as MMscf, so "/d" and "/yr" were dropped (BA-031)
+        from .units import UnitError, period_volume_m3
+        try:
+            throughput = period_volume_m3(float(throughput), unit, flat_inputs.get("year"), flat_inputs.get("month"))
+        except UnitError:
+            raise ValueError(f"Unknown dehydrator throughput unit '{flat_inputs.get('unit') or unit}': "
+                             "give a gas volume (MMscf, Mscf, m3) or a rate (MMscf/d, m3/yr)")
+        unit = "m3"
+    days = None
+    if dehy_count not in (None, ""):
+        # Table 6-17 per-dehydrator factor is per year: the record's own period
+        days = record_period(flat_inputs)[1] if flat_inputs.get("operating_days") in (None, "") else None
+    extra = {"operating_days": days} if days is not None else {}
     return calculator.calculate(throughput=throughput, dehydrator_count=dehy_count, ch4_content=ch4_content,
-                                control_eff=control_eff, uncertainties=uncertainties, gwp_dict=gwp_dict, unit=unit)
+                                control_eff=control_eff, uncertainties=uncertainties, gwp_dict=gwp_dict, unit=unit,
+                                **extra, **({"operating_days": flat_inputs["operating_days"]}
+                                            if flat_inputs.get("operating_days") not in (None, "") else {}))

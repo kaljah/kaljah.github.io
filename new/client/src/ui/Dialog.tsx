@@ -141,7 +141,7 @@ export const Sheet: React.FC<SheetProps> = ({
           onPointerDownOutside={guardOutside}
           onInteractOutside={guardOutside}
           onFocusOutside={guardOutside}
-          className="fixed inset-y-0 right-0 z-(--z-modal) flex w-full max-w-[100vw] flex-col border-l border-border bg-surface shadow-overlay sm:w-auto h-[100dvh]"
+          className="fixed inset-y-0 end-0 z-(--z-modal) flex w-full max-w-[100vw] flex-col border-s border-border bg-surface shadow-overlay sm:w-auto h-[100dvh]"
         >
           {/* Mobile Sheet grab handle */}
           <div className="mx-auto mt-2 h-1 w-10 rounded-full bg-ink-300 sm:hidden shrink-0" aria-hidden="true" />

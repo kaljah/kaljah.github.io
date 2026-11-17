@@ -96,7 +96,7 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
 }) => (
   <div className="manage-card glass-panel">
     {/* Active Baseline Status Banner */}
-    <div className="[background:var(--bg-card)] [border:1px_solid_var(--border-color)] border-l-2! border-l-brand-500! [&&]:[border-radius:var(--radius-lg)] [padding:20px] [margin-bottom:24px] [display:flex] [justify-content:space-between] [align-items:center] [flex-wrap:wrap] [gap:16px]">
+    <div className="[background:var(--bg-card)] [border:1px_solid_var(--border-color)] border-s-2! border-s-brand-500! [&&]:[border-radius:var(--radius-lg)] [padding:20px] [margin-bottom:24px] [display:flex] [justify-content:space-between] [align-items:center] [flex-wrap:wrap] [gap:16px]">
       <div>
         <div className="flex! items-center! gap-[8px]! mb-[6px]!">
           <span className="text-xs! font-medium! text-[color:var(--color-link)]!">
@@ -121,7 +121,7 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
           <div className="text-[length:1.3rem]! font-bold! text-[color:var(--text-primary)]!">{goals.length}{" "}{t("Years")}</div>
         </div>
         {baseYearsData.active_record?.recalc_date && (
-          <div className="text-right! [border-left:1px_solid_var(--border-color)]! pl-[16px]!">
+          <div className="text-right! [border-inline-start:1px_solid_var(--border-color)]! ps-[16px]!">
             <div className="text-xs! text-[color:var(--text-secondary)]! font-medium!">{t("Last Recalculated")}</div>
             <div className="text-[length:0.95rem]! font-semibold! text-[color:var(--text-primary)]!">
               {new Date(baseYearsData.active_record.recalc_date).toLocaleDateString()}
@@ -218,14 +218,14 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
                   </td>
                   <td className="text-right! font-semibold! text-[color:var(--text-primary)]!">
                     <div>
-                      {Number(g.target_amount).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}{" "}{t("tCO₂e")}
+                      {Number(g.target_amount).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 })}{" "}{t("tCO₂e")}
                     </div>
                     {g.warnings && g.warnings.length > 0 && (
                       <div className="mt-1 flex flex-col items-end gap-1">
                         {g.warnings.map((w: string, idx: number) => (
                           <span
                             key={idx}
-                            className="inline-flex items-center gap-1 rounded bg-amber-50 px-1.5 py-0.5 text-[11px] font-medium text-amber-800 border border-amber-200 text-left"
+                            className="inline-flex items-center gap-1 rounded bg-amber-50 px-1.5 py-0.5 text-[11px] font-medium text-amber-800 border border-amber-200 text-start"
                             title={w}
                           >
                             <AlertTriangle className="size-3 shrink-0 text-amber-600" />
@@ -284,7 +284,7 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
         </div>
       </div>
 
-      <div className="[background:var(--color-ink-50)] [border:1px_solid_var(--color-ink-200)] [&&]:[border-left:4px_solid_var(--accent-color,_var(--color-brand-500))] [&&]:[border-radius:var(--radius-md)] [padding:14px_18px] [margin-bottom:24px] [font-size:var(--text-base)] [color:var(--text-secondary)] [line-height:1.5]">
+      <div className="[background:var(--color-ink-50)] [border:1px_solid_var(--color-ink-200)] [&&]:[border-inline-start:4px_solid_var(--accent-color,_var(--color-brand-500))] [&&]:[border-radius:var(--radius-md)] [padding:14px_18px] [margin-bottom:24px] [font-size:var(--text-base)] [color:var(--text-secondary)] [line-height:1.5]">
         <strong>{t("GHG Protocol Recalculation Rule (5% Significance Threshold):")}</strong>{" "}
         {t("Base year emissions must be recalculated whenever structural changes (acquisitions, divestments), calculation methodology updates, or cumulative data errors change the baseline inventory by 5% or more. Every adjustment requires a documented justification.")}
       </div>
@@ -410,7 +410,7 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
                     </td>
                     <td className="text-right! text-[length:0.88rem]!">
                       {b.previous_emissions !== null && b.previous_emissions !== undefined
-                        ? Number(b.previous_emissions).toLocaleString(undefined, {
+                        ? Number(b.previous_emissions).toLocaleString("en-US", {
                             minimumFractionDigits: 0,
                             maximumFractionDigits: 2,
                           })
@@ -418,7 +418,7 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
                     </td>
                     <td className="text-right! text-[length:0.88rem]! font-semibold!">
                       {b.adjusted_emissions !== null && b.adjusted_emissions !== undefined
-                        ? Number(b.adjusted_emissions).toLocaleString(undefined, {
+                        ? Number(b.adjusted_emissions).toLocaleString("en-US", {
                             minimumFractionDigits: 0,
                             maximumFractionDigits: 2,
                           })
@@ -432,7 +432,7 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
                             fontWeight: 600,
                           }}
                         >
-                          {diff > 0 ? `+${diff.toLocaleString()}` : diff.toLocaleString()}{" "}{t("tCO₂e")}
+                          {diff > 0 ? `+${diff.toLocaleString("en-US")}` : diff.toLocaleString("en-US")}{" "}{t("tCO₂e")}
                         </span>
                       ) : (
                         "-"
@@ -478,35 +478,43 @@ const GoalsTab: React.FC<GoalsTabProps> = ({
         <Field className="input-group" label={t("Base Year")}>
           <Input
             type="number"
-            value={sbtiConfig.base_year || ""}
-            onChange={(e) => setSbtiConfig({ ...sbtiConfig, base_year: parseInt(e.target.value, 10) || 2024 })}
+            value={sbtiConfig.base_year ?? ""}
+            onChange={(e) => {
+              const val = parseInt(e.target.value, 10);
+              setSbtiConfig({ ...sbtiConfig, base_year: isNaN(val) ? "" : val });
+            }}
           />
         </Field>
         <Field className="input-group" label={t("Base Year Verified Emissions (tCO₂e)")}>
           <Input
             type="number"
-            value={sbtiConfig.base_year_emissions || ""}
-            onChange={(e) =>
-              setSbtiConfig({ ...sbtiConfig, base_year_emissions: parseFloat(e.target.value) || 0 })
-            }
+            value={sbtiConfig.base_year_emissions ?? ""}
+            onChange={(e) => {
+              const val = parseFloat(e.target.value);
+              setSbtiConfig({ ...sbtiConfig, base_year_emissions: isNaN(val) ? "" : val });
+            }}
             placeholder={t("Auto-calculated or manual override")}
           />
         </Field>
         <Field className="input-group" label={t("Target Year (Net-Zero)")}>
           <Input
             type="number"
-            value={sbtiConfig.target_year || ""}
-            onChange={(e) => setSbtiConfig({ ...sbtiConfig, target_year: parseInt(e.target.value, 10) || 2050 })}
+            value={sbtiConfig.target_year ?? ""}
+            onChange={(e) => {
+              const val = parseInt(e.target.value, 10);
+              setSbtiConfig({ ...sbtiConfig, target_year: isNaN(val) ? "" : val });
+            }}
           />
         </Field>
         <Field className="input-group" label={t("Annual Reduction Rate (%)")}>
           <Input
             type="number"
             step="0.1"
-            value={sbtiConfig.reduction_rate_pct || ""}
-            onChange={(e) =>
-              setSbtiConfig({ ...sbtiConfig, reduction_rate_pct: parseFloat(e.target.value) || 4.2 })
-            }
+            value={sbtiConfig.reduction_rate_pct ?? ""}
+            onChange={(e) => {
+              const val = parseFloat(e.target.value);
+              setSbtiConfig({ ...sbtiConfig, reduction_rate_pct: isNaN(val) ? "" : val });
+            }}
             placeholder={t("4.2% for 1.5°C")}
           />
         </Field>

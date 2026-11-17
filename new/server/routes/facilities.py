@@ -7,6 +7,7 @@ from utils import (
     facility_in_user_scope,
     get_allowed_facility_ids,
     get_current_tenant_id,
+    get_current_user,
     log_activity_and_notify,
     normalize_tenant_id,
     tenant_matches,
@@ -22,10 +23,7 @@ from routes.auth import login_required
 @facilities_bp.route("/", methods=["GET"])
 @login_required
 def get_facilities():
-    user_id = session.get("user_id")
-    user = (
-        db.session.get(User, user_id) if user_id else None
-    )  # API-02 FIX: replaced deprecated query.get
+    user = get_current_user()
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
     if user.role in ["it_admin", "it_manager", "it"]:
@@ -67,7 +65,7 @@ def get_facilities():
                 "equity_share_pct": f.equity_share_pct if f.equity_share_pct is not None else 100.0,
                 "segment": f.segment,
                 "operator_status": f.operator_status or "operated",
-                "country": f.country or "Algeria",
+                "country": f.country or "",
                 "ogmp_membership_year": f.ogmp_membership_year or 2023,
                 "target_year": (f.ogmp_membership_year or 2023) + (3 if (f.operator_status or "operated") == "operated" else 5),
                 "target_gold_year": (f.ogmp_membership_year or 2023) + (3 if (f.operator_status or "operated") == "operated" else 5),
@@ -246,8 +244,7 @@ def sync_facility_equity_shares(facility, data):
 @facilities_bp.route("/", methods=["POST"])
 @login_required
 def add_facility():
-    user_id = session.get("user_id")
-    user = db.session.get(User, user_id) if user_id else None
+    user = get_current_user()
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
     if user.role not in ["admin", "superuser"]:
@@ -277,7 +274,7 @@ def add_facility():
 
     caller_tenant = get_current_tenant_id(user)
     code = data.get("code")
-    if code and _taken(Facility.code, code):
+    if code and _taken(Facility.code, code, tenant_id=caller_tenant):
         return jsonify({"error": f"Facility code '{code}' is already in use", "field": "code"}), 409
     if _taken(Facility.name, data["name"], tenant_id=caller_tenant):
         return jsonify({"error": f"A facility named '{data['name']}' already exists", "field": "name"}), 409
@@ -333,9 +330,6 @@ def add_facility():
 
     # Audit
     try:
-        user_id = session.get("user_id")
-        user = db.session.get(User, user_id) if user_id else None
-
         log_details = (
             f"Created facility: {fac.name} (Code: {fac.code}, Segment: {fac.segment})"
         )
@@ -373,8 +367,7 @@ def add_facility():
 @facilities_bp.route("/<int:facility_id>", methods=["PUT"])
 @login_required
 def update_facility(facility_id):
-    user_id = session.get("user_id")
-    user = db.session.get(User, user_id) if user_id else None  # API-02 FIX
+    user = get_current_user()
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
     if user.role not in ["admin", "superuser"]:
@@ -414,7 +407,12 @@ def update_facility(facility_id):
         tenant_id=normalize_tenant_id(getattr(facility, "tenant_id", None)),
     ):
         return jsonify({"error": f"A facility named '{data['name']}' already exists", "field": "name"}), 409
-    if data.get("code") and _taken(Facility.code, data["code"], exclude_id=facility.id):
+    if data.get("code") and _taken(
+        Facility.code,
+        data["code"],
+        exclude_id=facility.id,
+        tenant_id=normalize_tenant_id(getattr(facility, "tenant_id", None)),
+    ):
         return jsonify({"error": f"Facility code '{data['code']}' is already in use", "field": "code"}), 409
     old_values = {"name": facility.name, "region": facility.region, "location": facility.location}
 
@@ -475,8 +473,6 @@ def update_facility(facility_id):
 
     # Audit
     try:
-        user = db.session.get(User, user_id) if user_id else None  # API-02 FIX
-
         changes = [
             k
             for k in data
@@ -533,8 +529,7 @@ def update_facility(facility_id):
 @facilities_bp.route("/<facility_id>", methods=["DELETE"])
 @login_required
 def delete_facility(facility_id):
-    user_id = session.get("user_id")
-    user = db.session.get(User, user_id) if user_id else None  # API-02 FIX
+    user = get_current_user()
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
     if user.role not in ["admin", "superuser"]:
@@ -587,7 +582,6 @@ def delete_facility(facility_id):
         db.session.flush()
 
         # Audit
-        user = db.session.get(User, user_id) if user_id else None  # API-02 FIX
         log_details = (f"Deleted facility: {fac_name} (Code: {fac_code}) with {n_records} emission records "
                        f"(Scope 1: {counts['scope1']}, Scope 2: {counts['scope2']}, Scope 3: {counts['scope3']}; "
                        f"{counts['verified']} Verified)")

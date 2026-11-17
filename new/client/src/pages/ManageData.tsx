@@ -280,7 +280,7 @@ const ManageDataInner: React.FC = () => {
                 facility_id: r.facility_id,
                 created_by: r.created_by,
                 raw: r,
-                desc: `${r.process_type || 'General'} · ${r.fuel_type || ''} (${Number(r.quantity || 0).toLocaleString()} ${r.unit || ''})`,
+                desc: `${r.process_type || 'General'} · ${r.fuel_type || ''} (${Number(r.quantity || 0).toLocaleString("en-US")} ${r.unit || ''})`,
                 tco2e: Number(r.co2e_total || r.co2e || 0),
                 qa_flag: r.qa_flag
             });
@@ -297,7 +297,7 @@ const ManageDataInner: React.FC = () => {
                 facility_id: r.facility_id,
                 created_by: r.created_by,
                 raw: r,
-                desc: `${r.source_type || 'Electricity'} (${Number(r.electricity_kwh || 0).toLocaleString()} kWh)`,
+                desc: `${r.source_type || 'Electricity'} (${Number(r.electricity_kwh || 0).toLocaleString("en-US")} kWh)`,
                 tco2e: Number(r.co2e_total || r.co2e || 0),
                 qa_flag: r.qa_flag
             });
@@ -572,6 +572,7 @@ const ManageDataInner: React.FC = () => {
         oil_amount: '', oil_unit: 'bbl',
         gas_amount: '', gas_unit: 'mscf',
         gross_gas_mmsm3: '', gas_without_injected_mmsm3: '', injected_gas_mmsm3: '',
+        flared_gas_mmsm3: '', vented_gas_mmsm3: '', fuel_gas_consumed_mmsm3: '', ngl_shrinkage_mmsm3: '',
         crude_oil_mmboe: '', condensate_mmboe: '', lpg_mmboe: '',
         total_production_mmboe: '', saleable_production_mmboe: ''
     });
@@ -1042,6 +1043,9 @@ const ManageDataInner: React.FC = () => {
                 lpg_mmboe: parseFloat(prodForm.lpg_mmboe) || 0,
                 total_production_mmboe: parseFloat(prodForm.total_production_mmboe) || 0,
                 saleable_production_mmboe: parseFloat(prodForm.saleable_production_mmboe) || 0,
+                // marketed-gas terms: blank stays blank (null) so the emission records are used
+                ...Object.fromEntries(["flared_gas_mmsm3", "vented_gas_mmsm3", "fuel_gas_consumed_mmsm3",
+                    "ngl_shrinkage_mmsm3"].map((k) => [k, prodForm[k] === '' || prodForm[k] == null ? null : parseFloat(prodForm[k])])),
             });
             toast.success(t("Production record saved!"));
             fetchProduction();
@@ -1099,6 +1103,8 @@ const ManageDataInner: React.FC = () => {
                 product_name: cbamForm.product_name,
                 cn_code: cbamForm.cn_code || "2804 10 00",
                 quantity_tonnes: parseFloat(cbamForm.quantity_tonnes),
+                // the facility's whole production of the good in the period (Annex III activity level, BA-044)
+                activity_level_tonnes: cbamForm.activity_level_tonnes ? parseFloat(cbamForm.activity_level_tonnes) : undefined,
                 export_destination: cbamForm.export_destination || "EU",
                 specific_embedded_direct: cbamForm.specific_embedded_direct ? parseFloat(cbamForm.specific_embedded_direct) : 0.0,
                 specific_embedded_indirect: cbamForm.specific_embedded_indirect ? parseFloat(cbamForm.specific_embedded_indirect) : 0.0,
@@ -1548,7 +1554,7 @@ const ManageDataInner: React.FC = () => {
             title: t("Operations"),
             items: [
                 { id: 'production', label: t("Production Data"), show: true },
-                { id: 'ogmp', label: t("OGMP 2.0 Surveys"), show: true, badgeText: t("Preview / Roadmap") },
+                { id: 'ogmp', label: t("OGMP 2.0 Surveys"), show: true },
                 { id: 'ldar', label: t("LDAR & Fugitives"), show: true },
                 { id: 'mitigation', label: t("Mitigation Projects"), show: true },
                 { id: 'cbam', label: t("CBAM Products"), show: true },
@@ -1573,7 +1579,7 @@ const ManageDataInner: React.FC = () => {
                 <div className="manage-layout mx-auto grid w-full max-w-[1900px] items-start gap-6 p-2 md:grid-cols-[240px_1fr] md:p-4">
                     {/* Sidebar Navigation */}
                     <Card as="aside" className="min-w-0 p-4 md:sticky md:top-6">
-                        <h3 className="m-0 mb-3 ml-2 text-xs font-semibold uppercase tracking-wider text-text-secondary">{t("Data Management")}</h3>
+                        <h3 className="m-0 mb-3 ms-2 text-xs font-semibold uppercase tracking-wider text-text-secondary">{t("Data Management")}</h3>
                         <nav aria-label={t("Manage data sections")} className="flex flex-col gap-4 max-md:flex-row max-md:overflow-x-auto max-md:pb-1">
                             {GROUPS.map((group) => (
                                 <div key={group.id} className="flex flex-col gap-1">
@@ -1593,7 +1599,7 @@ const ManageDataInner: React.FC = () => {
                                             aria-current={activeTab === n.id ? 'page' : undefined}
                                             onClick={() => handleTabChange(n.id)}
                                             className={cn(
-                                                "manage-nav-item flex w-full cursor-pointer items-center justify-between gap-3 rounded-md border-0 bg-transparent px-3 py-2 text-left text-sm font-medium text-text-secondary transition-colors hover:bg-ink-100 hover:text-text max-md:w-auto! max-md:shrink-0 max-md:whitespace-nowrap",
+                                                "manage-nav-item flex w-full cursor-pointer items-center justify-between gap-3 rounded-md border-0 bg-transparent px-3 py-2 text-start text-sm font-medium text-text-secondary transition-colors hover:bg-ink-100 hover:text-text max-md:w-auto! max-md:shrink-0 max-md:whitespace-nowrap",
                                                 activeTab === n.id && "active bg-brand-50 font-semibold text-link hover:bg-brand-50 hover:text-link",
                                             )}
                                         >
@@ -1623,14 +1629,14 @@ const ManageDataInner: React.FC = () => {
                         {activeTab !== 'pending' && (
                             <div className="mb-6 flex flex-wrap items-center gap-3">
                                 <div className="relative min-w-[240px] flex-1">
-                                    <Search className="pointer-events-none absolute left-3 top-1/2 size-[18px] -translate-y-1/2 text-text-secondary" aria-hidden="true" />
+                                    <Search className="pointer-events-none absolute start-3 top-1/2 size-[18px] -translate-y-1/2 text-text-secondary" aria-hidden="true" />
                                     <Input
                                         type="text"
                                         aria-label={t("Search records")}
                                         placeholder={activeTab === 'goals' ? t("Search goals or base years...") : t("Search records...")}
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
-                                        className="pl-10 h-9"
+                                        className="ps-10 h-9"
                                     />
                                 </div>
 

@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { ChartPie } from "lucide-react";
 import {
   PieChart as RechartsPie,
   Pie,
@@ -8,6 +9,7 @@ import {
 } from "recharts";
 import "./ChartWrappers.css";
 import { t } from "../../i18n";
+import { roundedShares } from "../../utils/formatters";
 
 const MODERN_PALETTE = [
   "var(--color-brand-500)", // Core brand orange
@@ -60,7 +62,7 @@ export const PieChart: React.FC<PieChartProps> = ({
     if (!isFinite(num)) return "0";
     if (Math.abs(num) >= 1_000_000) return `${(num / 1_000_000).toFixed(1)}M`;
     if (Math.abs(num) >= 1_000) return `${(num / 1_000).toFixed(1)}k`;
-    return num.toLocaleString(undefined, { maximumFractionDigits: 1 });
+    return num.toLocaleString("en-US", { maximumFractionDigits: 1 });
   };
 
   const valueFormatter = formatValue || defaultFormat;
@@ -87,6 +89,11 @@ export const PieChart: React.FC<PieChartProps> = ({
       0
     );
   }, [sanitizedData, dataKey]);
+
+  const legendShares = useMemo(
+    () => roundedShares(sanitizedData.map((d) => Number(d[dataKey]) || 0)),
+    [sanitizedData, dataKey],
+  );
 
   const activeItem =
     activeIndex !== null && sanitizedData[activeIndex]
@@ -164,19 +171,7 @@ export const PieChart: React.FC<PieChartProps> = ({
       <div className="chart-wrapper empty" style={{ height: `${totalNumericHeight}px` }}>
         <div className="chart-empty-content">
           <div className="chart-empty-icon">
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
-              <path d="M22 12A10 10 0 0 0 12 2v10z" />
-            </svg>
+            <ChartPie size={20} strokeWidth={2} aria-hidden="true" />
           </div>
           <span>{t("No distribution data available")}</span>
         </div>
@@ -281,8 +276,8 @@ export const PieChart: React.FC<PieChartProps> = ({
           {sanitizedData.map((item, idx) => {
             const isDimmed = activeIndex !== null && activeIndex !== idx;
             const val = Number(item[dataKey]) || 0;
-            const pct =
-              totalValue > 0 ? ((val / totalValue) * 100).toFixed(0) : "0";
+            // shares that add up to 100 % (BA-021)
+            const pct = String(legendShares[idx] ?? 0);
 
             return (
               <div

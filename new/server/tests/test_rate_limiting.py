@@ -5,19 +5,32 @@ from extensions import db, limiter
 
 @pytest.fixture
 def rate_limit_client():
+    keys = ("TESTING", "WTF_CSRF_ENABLED", "SECRET_KEY", "RATELIMIT_ENABLED", "RATELIMIT_STORAGE_URI")
+    prev = {k: flask_app.config.get(k) for k in keys}
+    prev_lim = limiter.enabled
     flask_app.config.update({
         "TESTING": True,
         "WTF_CSRF_ENABLED": False,
         "SECRET_KEY": "test-rate-limit-key",
         "RATELIMIT_ENABLED": True,
         "RATELIMIT_STORAGE_URI": "memory://",
-        "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
     })
     limiter.enabled = True
-    with flask_app.app_context():
-        db.create_all()
-        yield flask_app.test_client()
-    limiter.enabled = False
+    try:
+        with flask_app.app_context():
+            db.create_all()
+            yield flask_app.test_client()
+    finally:
+        try:
+            limiter.reset()
+        except Exception:
+            pass
+        limiter.enabled = prev_lim
+        for k, v in prev.items():
+            if v is None:
+                flask_app.config.pop(k, None)
+            else:
+                flask_app.config[k] = v
 
 
 

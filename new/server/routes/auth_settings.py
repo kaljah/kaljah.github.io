@@ -6,7 +6,7 @@ same ``auth_bp`` blueprint, and routes.auth re-exports every name, so imports an
 from extensions import db
 from flask import current_app, jsonify, request, session
 from models import User
-from utils import log_activity_and_notify
+from utils import log_activity_and_notify, get_current_user, get_current_tenant_id
 from . import auth_bp
 from routes.auth import login_required
 
@@ -92,8 +92,7 @@ from services.gwp_recalculation import recalculate_all_emissions_gwp  # noqa: E4
 def get_settings():
     import json
 
-    user_id = session.get("user_id")
-    user = db.session.get(User, user_id) if user_id else None
+    user = get_current_user()
 
     # Load fresh persistent settings from DB
     load_settings_from_db()
@@ -118,8 +117,8 @@ def update_settings():
     import json
     from models import SystemSetting
 
-    user_id = session.get("user_id")
-    user = db.session.get(User, user_id) if user_id else None
+    user = get_current_user()
+    caller_tenant = get_current_tenant_id(user)
     data = request.get_json() or {}
 
     load_settings_from_db()
@@ -142,9 +141,10 @@ def update_settings():
         return jsonify({"error": "IT administrators are not authorized to modify operational GHG calculation standards or settings."}), 403
 
     # organisation-wide settings are admin only; superusers are limited to one facility/region
+    # In multi-tenant environments, only default tenant admins can modify system-wide calculation standards
     is_admin = bool(user and user.role == "admin")
-    if has_operational_keys and not is_admin:
-        return jsonify({"error": "Administrator privileges are required to modify system-wide calculation standards."}), 403
+    if has_operational_keys and (not is_admin or caller_tenant != "default"):
+        return jsonify({"error": "Administrator privileges in default tenant workspace are required to modify system-wide calculation standards."}), 403
 
     # Global system & GWP standards updates
     gwp_changed = False

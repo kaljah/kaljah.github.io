@@ -76,7 +76,7 @@ export const RadioCardGroup = <T extends string | number>({
               } else onKeyDown(e, i);
             }}
             className={cn(
-              "flex flex-col gap-2 rounded-lg border bg-surface p-4 text-left transition-colors",
+              "flex flex-col gap-2 rounded-lg border bg-surface p-4 text-start transition-colors",
               disabled ? "cursor-default" : "cursor-pointer",
               selected ? "border-brand-500 bg-selected-bg" : "border-border hover:border-ink-300",
             )}

@@ -11,12 +11,15 @@ Provides publication-grade reporting endpoints:
 
 import hashlib
 import io
+import json
+import logging
 import os
+import re
 import threading
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import openpyxl
 from flask import current_app, jsonify, request, send_file
@@ -34,10 +37,201 @@ from services.regional_profiles import get_regional_profile, list_available_regi
 from services.tenant_config import get_tenant_config
 from utils import get_allowed_facility_ids, get_current_tenant_id, get_current_user, tenant_matches
 
+logger = logging.getLogger(__name__)
+
 _MASTER_JOBS_LOCK = threading.Lock()
 _MASTER_JOBS: Dict[str, Dict[str, Any]] = {}
 _MASTER_JOB_SEMAPHORE = threading.Semaphore(2)
 _MAX_JOB_HISTORY = 100
+
+_SAFE_JOB_ID_RE = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
+_SAFE_FILENAME_CHAR_RE = re.compile(r"[^A-Za-z0-9 ._()-]+")
+_VALID_MODES = ("regional", "national", "comparison")
+_VALID_GWP_STANDARDS = ("AR4", "AR5", "AR6")
+_VALID_LANGUAGES = ("en", "fr")
+_MIN_REPORT_YEAR = 1990
+_MAX_REPORT_YEAR = 2100
+_MAX_YEAR_SPAN = 30
+
+
+class _MasterReportValidationError(ValueError):
+    """Validation error raised when explicit Master Report parameters are invalid."""
+
+    def __init__(self, message: str, field: str):
+        super().__init__(message)
+        self.message = message
+        self.field = field
+
+
+def _sanitize_filename_part(raw: Any, fallback: str = "Report") -> str:
+    """Strips control chars, path separators, and unsafe tokens while preserving safe punctuation."""
+    text = re.sub(r"[\x00-\x1f\x7f]+", "", str(raw or ""))
+    text = text.replace("/", "_").replace("\\", "_")
+    text = re.sub(r"\.\.+", "_", text)
+    cleaned = _SAFE_FILENAME_CHAR_RE.sub("_", text)
+    cleaned = re.sub(r"\s+", " ", cleaned).lstrip(" ._").rstrip(" _")
+    if not cleaned or not cleaned.strip(" ._"):
+        return fallback
+    return cleaned[:80]
+
+
+def _parse_int_year(raw: Any, default: int, field: str) -> int:
+    """Parses an explicit integer reporting year or returns default when omitted."""
+    if raw is None:
+        return default
+    if isinstance(raw, bool):
+        raise _MasterReportValidationError(f"{field} must be an integer year", field)
+    if isinstance(raw, int):
+        year = raw
+    elif isinstance(raw, str) and re.fullmatch(r"[+-]?\d+", raw.strip()):
+        year = int(raw.strip())
+    else:
+        raise _MasterReportValidationError(f"{field} must be an integer year", field)
+    if year < _MIN_REPORT_YEAR or year > _MAX_REPORT_YEAR:
+        raise _MasterReportValidationError(
+            f"{field} must be between {_MIN_REPORT_YEAR} and {_MAX_REPORT_YEAR}",
+            field,
+        )
+    return year
+
+
+def _parse_str_choice(raw: Any, default: str, allowed: tuple[str, ...], field: str, *, upper: bool = False) -> str:
+    """Parses an enumerated string parameter or returns default when omitted."""
+    if raw is None:
+        return default
+    if not isinstance(raw, str):
+        raise _MasterReportValidationError(f"{field} must be one of {', '.join(allowed)}", field)
+    val = raw.strip().upper() if upper else raw.strip().lower()
+    if val not in allowed:
+        raise _MasterReportValidationError(f"{field} must be one of {', '.join(allowed)}", field)
+    return val
+
+
+def _parse_report_filters(
+    *,
+    allow_mode: bool = True,
+    default_mode: str = "regional",
+) -> Dict[str, Any]:
+    """Validates JSON parameters for Master Report PDF and Benchmark Excel endpoints."""
+    raw_body = request.get_data(as_text=True) or ""
+    raw_payload = request.get_json(silent=True)
+    if raw_body.strip() and raw_payload is None:
+        raise _MasterReportValidationError("Malformed JSON payload", "payload")
+    if raw_payload is None:
+        payload: Dict[str, Any] = {}
+    elif isinstance(raw_payload, dict):
+        payload = raw_payload
+    else:
+        raise _MasterReportValidationError("JSON body must be an object", "payload")
+
+    mode = (
+        _parse_str_choice(payload.get("mode"), default_mode, _VALID_MODES, "mode", upper=False)
+        if allow_mode
+        else default_mode
+    )
+
+    raw_region = payload.get("region")
+    if raw_region is not None and not isinstance(raw_region, str):
+        raise _MasterReportValidationError("region must be a string", "region")
+    region_key = raw_region.strip() if isinstance(raw_region, str) and raw_region.strip() else None
+    if mode == "national":
+        region_key = "national"
+
+    start_year = _parse_int_year(payload.get("start_year"), 2023, "start_year")
+    end_year = _parse_int_year(payload.get("end_year"), 2025, "end_year")
+    if start_year > end_year:
+        raise _MasterReportValidationError("start_year cannot exceed end_year", "start_year")
+    if (end_year - start_year) > _MAX_YEAR_SPAN:
+        raise _MasterReportValidationError(
+            f"Reporting span cannot exceed {_MAX_YEAR_SPAN} years",
+            "end_year",
+        )
+
+    from routes.auth import _app_settings
+
+    gwp_standard = _parse_str_choice(
+        payload.get("gwp_standard"),
+        # the organisation's GWP standard when none is chosen (it was AR5 even on an AR6 system, BA-033)
+        str(_app_settings.get("gwp_standard") or "AR5").upper(),
+        _VALID_GWP_STANDARDS,
+        "gwp_standard",
+        upper=True,
+    )
+    language = _parse_str_choice(
+        payload.get("language"),
+        "en",
+        _VALID_LANGUAGES,
+        "language",
+        upper=False,
+    )
+
+    return {
+        "mode": mode,
+        "region_key": region_key,
+        "start_year": start_year,
+        "end_year": end_year,
+        "gwp_standard": gwp_standard,
+        "language": language,
+    }
+
+
+def _unlink_if_exists(path_str: Any, label: str) -> None:
+    """Removes an expired staged artifact if present, logging any OS failure."""
+    if not path_str:
+        return
+    p = Path(path_str)
+    if not p.exists():
+        return
+    try:
+        p.unlink()
+    except OSError as exc:
+        logger.warning("Failed removing %s %s: %s", label, p, exc)
+
+
+def _job_meta_path(job_id: str) -> Optional[Path]:
+    """Returns validated disk snapshot path for a Master Report job ID."""
+    if not _SAFE_JOB_ID_RE.fullmatch(str(job_id or "")):
+        return None
+    return get_master_jobs_dir() / f"{job_id}.json"
+
+
+def _persist_job_snapshot(job_id: str, snapshot: Dict[str, Any]) -> None:
+    """Atomically persists job metadata to disk so any WSGI worker can serve status polling."""
+    meta_path = _job_meta_path(job_id)
+    if meta_path is None:
+        return
+    tmp_path = meta_path.parent / f".tmp_{job_id}_{os.getpid()}_{threading.get_ident()}.json"
+    try:
+        tmp_path.write_text(json.dumps(snapshot, default=str), encoding="utf-8")
+        os.replace(tmp_path, meta_path)
+    except OSError as exc:
+        logger.warning("Failed to persist master report job snapshot %s: %s", job_id, exc)
+    finally:
+        _unlink_if_exists(tmp_path, "temp job snapshot")
+
+
+def _get_job_snapshot(job_id: str) -> Optional[Dict[str, Any]]:
+    """Loads a Master Report job from RAM cache or cross-worker disk snapshot."""
+    if not _SAFE_JOB_ID_RE.fullmatch(str(job_id or "")):
+        return None
+    with _MASTER_JOBS_LOCK:
+        job = _MASTER_JOBS.get(job_id)
+        if job is not None:
+            return dict(job)
+
+    meta_path = _job_meta_path(job_id)
+    if meta_path is None or not meta_path.exists():
+        return None
+    try:
+        loaded = json.loads(meta_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        logger.warning("Failed to read master report job snapshot %s: %s", job_id, exc)
+        return None
+    if not isinstance(loaded, dict):
+        return None
+    with _MASTER_JOBS_LOCK:
+        _MASTER_JOBS.setdefault(job_id, loaded)
+        return dict(_MASTER_JOBS[job_id])
 
 
 def get_master_jobs_dir() -> Path:
@@ -53,17 +247,19 @@ def get_master_jobs_dir() -> Path:
 
 
 def clear_master_report_jobs() -> int:
-    """Clears tracked jobs and staged PDF files. Used by sandbox reset and tests."""
+    """Clears tracked jobs and staged PDF/metadata files. Used by sandbox reset and tests."""
     removed = 0
     with _MASTER_JOBS_LOCK:
         _MASTER_JOBS.clear()
     jobs_dir = get_master_jobs_dir()
-    for pdf_file in jobs_dir.glob("*.pdf"):
-        try:
-            pdf_file.unlink()
-            removed += 1
-        except OSError:
-            pass
+    for pattern in ("*.pdf", "*.json"):
+        for artifact in jobs_dir.glob(pattern):
+            try:
+                artifact.unlink()
+                if pattern == "*.pdf":
+                    removed += 1
+            except OSError as exc:
+                logger.warning("Failed removing staged report artifact %s: %s", artifact, exc)
     return removed
 
 
@@ -72,14 +268,85 @@ def _prune_old_jobs_locked() -> None:
         return
     ordered = sorted(_MASTER_JOBS.items(), key=lambda kv: kv[1].get("created_at", ""))
     for job_id, meta in ordered[: len(_MASTER_JOBS) - _MAX_JOB_HISTORY]:
-        if meta.get("status") in ("completed", "failed"):
-            pdf_path = meta.get("file_path")
-            if pdf_path and os.path.exists(pdf_path):
-                try:
-                    os.unlink(pdf_path)
-                except OSError:
-                    pass
-            _MASTER_JOBS.pop(job_id, None)
+        if meta.get("status") not in ("completed", "failed"):
+            continue
+        _unlink_if_exists(meta.get("file_path"), "expired report PDF")
+        _unlink_if_exists(_job_meta_path(job_id), "expired report metadata")
+        _MASTER_JOBS.pop(job_id, None)
+
+
+def _record_job_failure(flask_app, job_id: str, exc: Exception) -> None:
+    """Logs job exception internally and stores a sanitized client-safe failure state."""
+    logger.exception("Error generating Master Report job %s: %s", job_id, exc)
+    try:
+        flask_app.logger.error("Error generating Master Report job %s: %s", job_id, exc, exc_info=True)
+    except Exception as log_exc:
+        logger.warning("Flask logger failed recording Master Report job %s error: %s", job_id, log_exc)
+
+    failed_snapshot: Optional[Dict[str, Any]] = None
+    with _MASTER_JOBS_LOCK:
+        if job_id in _MASTER_JOBS:
+            _MASTER_JOBS[job_id].update({
+                "status": "failed",
+                "error": f"Failed to generate Master Publication Report (ref: {job_id[:8]}).",
+            })
+            failed_snapshot = dict(_MASTER_JOBS[job_id])
+    if failed_snapshot is not None:
+        _persist_job_snapshot(job_id, failed_snapshot)
+
+
+def _execute_and_store_job_pdf(
+    flask_app,
+    job_id: str,
+    mode: str,
+    region_key: Any,
+    start_year: int,
+    end_year: int,
+    gwp_standard: str,
+    allowed_ids: Any,
+    language: str,
+    tenant_id: str,
+) -> None:
+    """Generates the Master Report PDF inside app context, stages it atomically, and updates status."""
+    with flask_app.app_context():
+        try:
+            pdf_buffer = generate_master_publication_pdf(
+                mode=mode,
+                region_key=region_key,
+                start_year=start_year,
+                end_year=end_year,
+                gwp_standard=gwp_standard,
+                allowed_facility_ids=allowed_ids,
+                language=language,
+                tenant_id=tenant_id,
+            )
+            pdf_bytes = pdf_buffer.getvalue()
+            report_sha256 = getattr(pdf_buffer, "report_hash", None) or hashlib.sha256(pdf_bytes).hexdigest()
+            dataset_sha256 = getattr(pdf_buffer, "dataset_hash", None)
+        finally:
+            db.session.remove()
+
+    jobs_dir = get_master_jobs_dir()
+    pdf_path = jobs_dir / f"{job_id}.pdf"
+    tmp_path = jobs_dir / f".tmp_{job_id}.pdf"
+    tmp_path.write_bytes(pdf_bytes)
+    os.replace(tmp_path, pdf_path)
+
+    completed_snapshot: Optional[Dict[str, Any]] = None
+    with _MASTER_JOBS_LOCK:
+        if job_id in _MASTER_JOBS:
+            _MASTER_JOBS[job_id].update({
+                "status": "completed",
+                "file_path": str(pdf_path),
+                "sha256": report_sha256,
+                "dataset_sha256": dataset_sha256,
+                "size_bytes": len(pdf_bytes),
+                "generated_at": datetime.now(timezone.utc).isoformat(),
+            })
+            completed_snapshot = dict(_MASTER_JOBS[job_id])
+            _prune_old_jobs_locked()
+    if completed_snapshot is not None:
+        _persist_job_snapshot(job_id, completed_snapshot)
 
 
 def _run_master_report_job(
@@ -95,56 +362,20 @@ def _run_master_report_job(
     tenant_id: str = "default",
 ) -> None:
     with _MASTER_JOB_SEMAPHORE:
+        running_snapshot: Optional[Dict[str, Any]] = None
         with _MASTER_JOBS_LOCK:
             if job_id not in _MASTER_JOBS:
                 return
             _MASTER_JOBS[job_id]["status"] = "running"
+            running_snapshot = dict(_MASTER_JOBS[job_id])
+        _persist_job_snapshot(job_id, running_snapshot)
 
         try:
-            with flask_app.app_context():
-                try:
-                    pdf_buffer = generate_master_publication_pdf(
-                        mode=mode,
-                        region_key=region_key,
-                        start_year=start_year,
-                        end_year=end_year,
-                        gwp_standard=gwp_standard,
-                        allowed_facility_ids=allowed_ids,
-                        language=language,
-                        tenant_id=tenant_id,
-                    )
-                    pdf_bytes = pdf_buffer.getvalue()
-                    report_sha256 = getattr(pdf_buffer, "report_hash", None) or hashlib.sha256(pdf_bytes).hexdigest()
-                finally:
-                    db.session.remove()
-
-            jobs_dir = get_master_jobs_dir()
-            pdf_path = jobs_dir / f"{job_id}.pdf"
-            tmp_path = jobs_dir / f".tmp_{job_id}.pdf"
-            tmp_path.write_bytes(pdf_bytes)
-            os.replace(tmp_path, pdf_path)
-
-            with _MASTER_JOBS_LOCK:
-                if job_id in _MASTER_JOBS:
-                    _MASTER_JOBS[job_id].update({
-                        "status": "completed",
-                        "file_path": str(pdf_path),
-                        "sha256": report_sha256,
-                        "size_bytes": len(pdf_bytes),
-                        "generated_at": datetime.now(timezone.utc).isoformat(),
-                    })
-                    _prune_old_jobs_locked()
+            _execute_and_store_job_pdf(
+                flask_app, job_id, mode, region_key, start_year, end_year, gwp_standard, allowed_ids, language, tenant_id
+            )
         except Exception as exc:
-            try:
-                flask_app.logger.error(f"Error generating Master Report job {job_id}: {exc}", exc_info=True)
-            except Exception:
-                pass
-            with _MASTER_JOBS_LOCK:
-                if job_id in _MASTER_JOBS:
-                    _MASTER_JOBS[job_id].update({
-                        "status": "failed",
-                        "error": f"Failed to generate Master Publication Report: {str(exc)}",
-                    })
+            _record_job_failure(flask_app, job_id, exc)
 
 
 @reports_bp.route("/master-report/regions", methods=["GET"])
@@ -256,38 +487,26 @@ def generate_master_report_endpoint():
     """Enqueues Master Report PDF generation as a background job and returns 202."""
     user = get_current_user()
     allowed_ids = get_allowed_facility_ids(user)
-    payload = request.get_json() or {}
-
-    mode = str(payload.get("mode", "regional")).lower()
-    if mode not in ("regional", "national", "comparison"):
-        mode = "regional"
-
-    region_key = payload.get("region")
-    if mode == "national":
-        region_key = "national"
-
     try:
-        start_year = int(payload.get("start_year", 2023))
-        end_year = int(payload.get("end_year", 2025))
-    except (ValueError, TypeError):
-        start_year, end_year = 2023, 2025
+        parsed = _parse_report_filters(allow_mode=True, default_mode="regional")
+    except _MasterReportValidationError as exc:
+        return jsonify({"error": exc.message, "field": exc.field}), 400
 
-    if start_year > end_year:
-        start_year, end_year = end_year, start_year
-
-    gwp_standard = str(payload.get("gwp_standard", "AR5")).upper()
-    if gwp_standard not in ("AR4", "AR5", "AR6"):
-        gwp_standard = "AR5"
-
-    language = str(payload.get("language", "en")).lower()
-    if language not in ("en", "fr"):
-        language = "en"
+    mode = parsed["mode"]
+    region_key = parsed["region_key"]
+    start_year = parsed["start_year"]
+    end_year = parsed["end_year"]
+    gwp_standard = parsed["gwp_standard"]
+    language = parsed["language"]
 
     caller_tenant = get_current_tenant_id(user)
     tenant = get_tenant_config(caller_tenant)
-    org_prefix = tenant.get("organization_name", "Operator")
+    org_prefix = _sanitize_filename_part(tenant.get("organization_name"), "Operator")
     time_tag = f"{start_year}" if start_year == end_year else f"{start_year}_{end_year}"
-    clean_name = (region_key.capitalize() if region_key else "National").replace(" ", "_").replace("/", "_")
+    clean_name = _sanitize_filename_part(
+        region_key.capitalize() if region_key else "National",
+        "National",
+    ).replace(" ", "_")
     lang_tag = f"_{language.upper()}"
     filename = f"{org_prefix}_{mode.capitalize()}_{clean_name}_Master_Report_{time_tag}{lang_tag}.pdf"
 
@@ -303,23 +522,26 @@ def generate_master_report_endpoint():
         "language": language,
     }
 
+    initial_snapshot = {
+        "job_id": job_id,
+        "user_id": user.id,
+        "tenant_id": caller_tenant,
+        "status": "queued",
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "filename": filename,
+        "filters": filters,
+        "status_url": status_url,
+        "download_url": download_url,
+        "file_path": None,
+        "sha256": None,
+        "dataset_sha256": None,
+        "size_bytes": None,
+        "generated_at": None,
+        "error": None,
+    }
     with _MASTER_JOBS_LOCK:
-        _MASTER_JOBS[job_id] = {
-            "job_id": job_id,
-            "user_id": user.id,
-            "tenant_id": caller_tenant,
-            "status": "queued",
-            "created_at": datetime.now(timezone.utc).isoformat(),
-            "filename": filename,
-            "filters": filters,
-            "status_url": status_url,
-            "download_url": download_url,
-            "file_path": None,
-            "sha256": None,
-            "size_bytes": None,
-            "generated_at": None,
-            "error": None,
-        }
+        _MASTER_JOBS[job_id] = dict(initial_snapshot)
+    _persist_job_snapshot(job_id, initial_snapshot)
 
     flask_app = current_app._get_current_object()
     worker = threading.Thread(
@@ -360,23 +582,23 @@ def get_master_report_job_status(job_id: str):
     user = get_current_user()
     caller_tenant = get_current_tenant_id(user)
 
-    with _MASTER_JOBS_LOCK:
-        job = _MASTER_JOBS.get(job_id)
-        if not job:
-            return jsonify({"error": "Report job not found"}), 404
-        if job.get("tenant_id") != caller_tenant or job.get("user_id") != user.id:
-            return jsonify({"error": "Forbidden"}), 403
-        snapshot = {
-            "job_id": job["job_id"],
-            "status": job["status"],
-            "status_url": job["status_url"],
-            "download_url": job["download_url"] if job["status"] == "completed" else None,
-            "filename": job["filename"],
-            "sha256": job.get("sha256"),
-            "size_bytes": job.get("size_bytes"),
-            "generated_at": job.get("generated_at"),
-            "error": job.get("error"),
-        }
+    job = _get_job_snapshot(job_id)
+    if not job:
+        return jsonify({"error": "Report job not found"}), 404
+    if job.get("tenant_id") != caller_tenant or job.get("user_id") != user.id:
+        return jsonify({"error": "Forbidden"}), 403
+    snapshot = {
+        "job_id": job["job_id"],
+        "status": job["status"],
+        "status_url": job["status_url"],
+        "download_url": job["download_url"] if job["status"] == "completed" else None,
+        "filename": job["filename"],
+        "sha256": job.get("sha256"),
+        "dataset_sha256": job.get("dataset_sha256"),
+        "size_bytes": job.get("size_bytes"),
+        "generated_at": job.get("generated_at"),
+        "error": job.get("error"),
+    }
     return jsonify(snapshot), 200
 
 
@@ -387,19 +609,19 @@ def download_master_report_job(job_id: str):
     user = get_current_user()
     caller_tenant = get_current_tenant_id(user)
 
-    with _MASTER_JOBS_LOCK:
-        job = _MASTER_JOBS.get(job_id)
-        if not job:
-            return jsonify({"error": "Report job not found"}), 404
-        if job.get("tenant_id") != caller_tenant or job.get("user_id") != user.id:
-            return jsonify({"error": "Forbidden"}), 403
-        status = job["status"]
-        file_path = job.get("file_path")
-        filename = job["filename"]
-        report_sha256 = job.get("sha256")
-        filters = dict(job.get("filters") or {})
-        error_msg = job.get("error")
-        generated_at = job.get("generated_at")
+    job = _get_job_snapshot(job_id)
+    if not job:
+        return jsonify({"error": "Report job not found"}), 404
+    if job.get("tenant_id") != caller_tenant or job.get("user_id") != user.id:
+        return jsonify({"error": "Forbidden"}), 403
+    status = job["status"]
+    file_path = job.get("file_path")
+    filename = job["filename"]
+    report_sha256 = job.get("sha256")
+    dataset_sha256 = job.get("dataset_sha256")
+    filters = dict(job.get("filters") or {})
+    error_msg = job.get("error")
+    generated_at = job.get("generated_at")
 
     if status in ("queued", "running"):
         return jsonify({"status": status, "error": "Report generation still in progress"}), 409
@@ -420,6 +642,8 @@ def download_master_report_job(job_id: str):
     )
     resp.headers["X-Audit-Timestamp"] = generated_at or datetime.now(timezone.utc).isoformat()
     resp.headers["X-Report-SHA256"] = report_sha256
+    if dataset_sha256:
+        resp.headers["X-Dataset-SHA256"] = dataset_sha256
     mode = filters.get("mode", "regional")
     return record_report_fingerprint(resp, user, f"Master Publication Report ({mode})", filters, 1, report_sha256)
 
@@ -451,11 +675,14 @@ def export_benchmark_excel():
     user = get_current_user()
     caller_tenant = get_current_tenant_id(user)
     allowed_ids = get_allowed_facility_ids(user)
-    payload = request.get_json() or {}
+    try:
+        parsed = _parse_report_filters(allow_mode=False, default_mode="comparison")
+    except _MasterReportValidationError as exc:
+        return jsonify({"error": exc.message, "field": exc.field}), 400
 
-    start_year = int(payload.get("start_year", 2023))
-    end_year = int(payload.get("end_year", 2025))
-    gwp_standard = str(payload.get("gwp_standard", "AR5")).upper()
+    start_year = parsed["start_year"]
+    end_year = parsed["end_year"]
+    gwp_standard = parsed["gwp_standard"]
 
     data = aggregate_master_report_data("comparison", None, start_year, end_year, gwp_standard, allowed_ids, tenant_id=caller_tenant)
     benchmarks = data.get("regional_benchmarks", [])
@@ -524,7 +751,8 @@ def export_benchmark_excel():
     buf.seek(0)
     hash_val = hashlib.sha256(buf.getvalue()).hexdigest()
 
-    filename = f"{org_name}_Cross_Basin_Benchmark_{start_year}_{end_year}.xlsx"
+    safe_org = _sanitize_filename_part(org_name, "Operator")
+    filename = f"{safe_org}_Cross_Basin_Benchmark_{start_year}_{end_year}.xlsx"
     resp = send_file(
         buf,
         mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

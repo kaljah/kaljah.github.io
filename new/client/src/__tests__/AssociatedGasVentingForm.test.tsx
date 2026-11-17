@@ -145,7 +145,7 @@ describe("AssociatedGasVentingForm & Table 6-8 API Reference Integrity", () => {
     );
 
     expect(screen.getByText(/Mass Balance Violation:/i)).toBeInTheDocument();
-    expect(screen.getByText(/exceeds total produced associated gas/i)).toBeInTheDocument();
+    expect(screen.getByText(/exceeds the total associated gas produced/i)).toBeInTheDocument();
   });
 
   it("detects physical gas composition errors when sum of CH4 and CO2 exceeds 100%", () => {

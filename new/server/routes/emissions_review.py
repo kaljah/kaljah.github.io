@@ -5,9 +5,9 @@ registered on the same ``emissions_bp`` blueprint, so URLs and endpoint names ar
 """
 from extensions import db
 from flask import jsonify, request
-from models import Emission, Scope2Emission, Scope3Emission
+from models import Emission, Facility, Scope2Emission, Scope3Emission
 from routes.auth import login_required
-from utils import get_allowed_facility_ids, get_current_user, internal_error
+from utils import get_allowed_facility_ids, get_current_tenant_id, get_current_user, internal_error, tenant_matches
 from . import emissions_bp
 
 
@@ -127,6 +127,11 @@ def get_pending_emissions():
         return jsonify({"error": "Insufficient permissions"}), 403
 
     allowed_fids = get_allowed_facility_ids(user)
+    caller_tenant = get_current_tenant_id(user)
+    if allowed_fids is not None:
+        filter_fids = allowed_fids
+    else:
+        filter_fids = [fid for (fid,) in Facility.query.with_entities(Facility.id).filter(tenant_matches(Facility.tenant_id, caller_tenant)).all()]
     # drafts are the maker's unsubmitted work: they enter review only when submitted (browser test)
     from services.maker_checker import REVIEWABLE_STATUSES
 
@@ -154,8 +159,7 @@ def get_pending_emissions():
 
     def q_scope1():
         q = Emission.query.filter(Emission.status.in_(pending_statuses))
-        if allowed_fids is not None:
-            q = q.filter(Emission.facility_id.in_(allowed_fids))
+        q = q.filter(Emission.facility_id.in_(filter_fids))
         q = q.order_by(Emission.timestamp.desc())
         if limit_val:
             q = q.limit(limit_val)
@@ -176,8 +180,7 @@ def get_pending_emissions():
 
     def q_scope2():
         q = Scope2Emission.query.filter(Scope2Emission.status.in_(pending_statuses))
-        if allowed_fids is not None:
-            q = q.filter(Scope2Emission.facility_id.in_(allowed_fids))
+        q = q.filter(Scope2Emission.facility_id.in_(filter_fids))
         q = q.order_by(Scope2Emission.created_at.desc())
         if limit_val:
             q = q.limit(limit_val)
@@ -198,8 +201,7 @@ def get_pending_emissions():
 
     def q_scope3():
         q = Scope3Emission.query.filter(Scope3Emission.status.in_(pending_statuses))
-        if allowed_fids is not None:
-            q = q.filter(Scope3Emission.facility_id.in_(allowed_fids))
+        q = q.filter(Scope3Emission.facility_id.in_(filter_fids))
         q = q.order_by(Scope3Emission.created_at.desc())
         if limit_val:
             q = q.limit(limit_val)

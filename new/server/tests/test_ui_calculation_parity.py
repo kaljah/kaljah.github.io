@@ -281,7 +281,7 @@ class TestScope1UINumericalParity:
             "c2": 0.08,
             "c3": 0.04,
             "co2_comp": 0.03,
-            "combustion_efficiency": 0.995,
+            "combustion_efficiency": 99.5,
             "hhv": 1020.0,
             "status": "Verified",
         }
@@ -382,7 +382,7 @@ class TestScope2UINumericalParity:
             "facility_id": test_facility,
             "source_type": "indirect_steam",
             "heat_mmbtu": 1200,
-            "boiler_efficiency": 0.80,
+            "boiler_efficiency": 80,
             "status": "Verified",
         }
         res = client.post("/api/scope2", json=payload)
@@ -432,10 +432,12 @@ class TestScope2UINumericalParity:
         res = client.post("/api/scope2", json=payload)
         assert res.status_code == 201
         rec = res.get_json()["record"]
-        # 75,000 * 0.085 / 1000 = 6.375 tCO2e
-        assert pytest.approx(rec["co2e"], 1e-3) == 6.375
-        assert ui_format_number(rec["co2e"], 3) == "6.375"
-        assert ui_format_number(rec["emission_factor"], 4) == "0.0850"
+        # the supplier factor is the market-based value: 75,000 * 0.085 / 1000 = 6.375 tCO2e; the location-based
+        # value is the facility's country grid (GHG Protocol Scope 2 Guidance, BA-007)
+        assert pytest.approx(rec["co2e_market_based"], 1e-3) == 6.375
+        assert ui_format_number(rec["co2e_market_based"], 3) == "6.375"
+        assert ui_format_number(rec["market_emission_factor"], 4) == "0.0850"
+        assert rec["co2e_location_based"] == pytest.approx(rec["co2e"])
 
 
 # ==============================================================================

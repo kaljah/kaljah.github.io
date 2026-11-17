@@ -48,7 +48,7 @@ export const DrillingForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sou
           label={
             <>
               {isTier1 && !isDefaultDays ? t("Wells Drilled") : t("Drilling Days")}
-              <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+              <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
             </>
           }
         >

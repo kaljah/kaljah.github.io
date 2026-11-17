@@ -105,7 +105,7 @@ const UserManagementBlock1503: React.FC<UserManagementBlock1503Props> = ({
               onChange={(e) => setResetPwd(e.target.value)}
               style={{
                 ...S.input,
-                paddingRight: "44px",
+                paddingInlineEnd: "44px",
                 borderColor:
                   resetPwd && resetPwd.length < 10
                     ? "var(--color-red-500)"
@@ -125,7 +125,7 @@ const UserManagementBlock1503: React.FC<UserManagementBlock1503Props> = ({
             <button
               type="button"
               onClick={() => setResetPwdShow((s) => !s)}
-              className="[position:absolute]! [right:12px]! [top:50%]! [transform:translateY(-50%)]! [background:none]! [border:none]! [cursor:pointer]! [color:var(--text-secondary)]! [display:flex]! [align-items:center]! [justify-content:center]! [padding:4px]!"
+              className="[position:absolute]! [inset-inline-end:12px]! [top:50%]! [transform:translateY(-50%)]! [background:none]! [border:none]! [cursor:pointer]! [color:var(--text-secondary)]! [display:flex]! [align-items:center]! [justify-content:center]! [padding:4px]!"
               title={resetPwdShow ? t("Hide password") : t("Show password")}
             >
               {resetPwdShow ? <EyeOff size={16} /> : <Eye size={16} />}

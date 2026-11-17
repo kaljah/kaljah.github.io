@@ -44,7 +44,7 @@ from .constants import DEFAULT_GWP, get_active_gwp
 SCF_TO_M3 = 0.028316846592
 
 # Thermodynamic constants under standard conditions (60°F / 14.696 psia; 15.56°C / 101.325 kPa)
-MOLAR_VOL_US = 379.3   # scf / lb-mole
+from .units import MOLAR_VOLUME_SCF_PER_LBMOL as MOLAR_VOL_US  # noqa: E402  scf / lb-mole (BA-016)
 MOLAR_VOL_SI = 23.685  # Sm³ / kg-mole
 MW_CH4 = 16.04
 MW_CO2 = 44.01
@@ -62,7 +62,7 @@ def _split_vent_flare(total_gas_m3, ch4_tonnes, co2_tonnes, ctrl_eff=0.0, hhv=10
         Zero combustion slip, zero combustion CO2, zero N2O.
     Else (flare / thermal):
         Flared gas: 98 % CH4 destruction and 96.5 % carbon to CO2 by default, native CO2 pass-through,
-        unburnt CH4 slip, and N2O from flared MMBtu. Supports custom destruction efficiency (e.g. 99.5% for refinery flares).
+        unburnt CH4 slip, and N2O by Eq 5-6 (from the flare CO2) unless an energy factor is given. Supports custom destruction efficiency (e.g. 99.5% for refinery flares).
     """
     ctrl = normalize_efficiency(ctrl_eff, default=0.0)
     vented_frac = 1.0 - ctrl
@@ -90,12 +90,16 @@ def _split_vent_flare(total_gas_m3, ch4_tonnes, co2_tonnes, ctrl_eff=0.0, hhv=10
         flared_co2 = (flared_ch4_mass * ce * (MW_CO2 / MW_CH4)) + flared_native_co2
         flared_unburnt_ch4 = flared_ch4_mass * slip
 
-        flared_m3 = total_gas_m3 * ctrl
-        flared_scf = convert(flared_m3, "m3", "scf")
-        hhv_val = float(hhv or 1020.0)
-        flared_mmbtu = (flared_scf * hhv_val) / 1_000_000.0
-        n2o_ef_kg = float(ef_n2o if ef_n2o is not None else 0.0001)
-        flared_n2o = (flared_mmbtu * n2o_ef_kg) / 1000.0
+        if ef_n2o is None:
+            # Eq 5-6: N2O follows the flare's CO2 (1.0E-04 kg N2O / 60 kg CO2 per MMBtu, natural gas, Dec 2025),
+            # as the flare calculator (BA-017); it was the flared energy at a fixed heating value
+            flared_n2o = flared_co2 * 0.0001 / 60.0
+        else:
+            flared_m3 = total_gas_m3 * ctrl
+            flared_scf = convert(flared_m3, "m3", "scf")
+            hhv_val = float(hhv or 1020.0)
+            flared_mmbtu = (flared_scf * hhv_val) / 1_000_000.0
+            flared_n2o = (flared_mmbtu * float(ef_n2o)) / 1000.0
 
     total_ch4 = vented_ch4 + flared_unburnt_ch4
     total_co2 = vented_co2 + flared_co2

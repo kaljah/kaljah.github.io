@@ -156,7 +156,7 @@ const AuditTrailAuditTimeline: React.FC<AuditTrailAuditTimelineProps> = ({
           <span className={cn("z-10 flex size-9 shrink-0 items-center justify-center rounded-md text-white sm:size-10", style.node)}>
             <Icon className="size-[18px]" aria-hidden="true" />
           </span>
-          <span className="absolute bottom-[-20px] left-[17px] top-10 w-0.5 bg-ink-200 group-last:hidden sm:left-[19px]" aria-hidden="true" />
+          <span className="absolute bottom-[-20px] start-[17px] top-10 w-0.5 bg-ink-200 group-last:hidden sm:start-[19px]" aria-hidden="true" />
 
           <Card className="min-w-0 flex-1 px-5 py-4 transition-shadow hover:shadow-md">
             <div className="mb-2.5 flex flex-wrap items-center justify-between gap-2">

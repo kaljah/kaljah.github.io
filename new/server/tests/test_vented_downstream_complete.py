@@ -7,6 +7,8 @@ import math
 
 import pytest
 
+C_TO_CO2 = 44.01 / 12.011  # the engine's CO2 per carbon (the Compendium prints 44 / 12; BA-040)
+
 from calculations.vented_downstream import (
     AsphaltBlowingCalculator,
     FireSuppressionCalculator,
@@ -46,10 +48,10 @@ def regen():
 def test_coke_burn_per_day_and_from_throughput_eq_6_34_6_37(regen):
     per_day = regen.calculate(approach="coke_burn", coke_burn_rate_tonnes_day=328.0, operating_days=350,
                               carbon_content_fraction=1.0)
-    assert co2(per_day) == pytest.approx(328.0 * 350 * 44 / 12)
+    assert co2(per_day) == pytest.approx(328.0 * 350 * C_TO_CO2)
     # Eq 6-37: CC = Q_unit x CBF x 0.001 (default CBF 7.3 kg/bbl for an FCCU)
     thr = regen.calculate(approach="coke_burn", unit_throughput_bbl_day=40_000, carbon_content_fraction=0.93)
-    assert co2(thr) == pytest.approx(40_000 * 7.3 * 0.001 * 365 * 0.93 * 44 / 12)
+    assert co2(thr) == pytest.approx(40_000 * 7.3 * 0.001 * 365 * 0.93 * C_TO_CO2)
     # Eq 6-38 / 6-39: CH4 and N2O in the ratio of the petroleum coke factors (Table 4-3 / 4-5)
     assert ch4(thr) == pytest.approx(co2(thr) * 3.0e-6 / 0.1021)
     assert n2o(thr) == pytest.approx(co2(thr) * 6.0e-7 / 0.1021)
@@ -59,7 +61,7 @@ def test_coke_burn_per_day_and_from_throughput_eq_6_34_6_37(regen):
 
 def test_k1_approach_eq_6_35_exhibit_6_38(regen):
     metric = regen.calculate(approach="k1_k2_k3", flue_gas_rate_dscm_min=2150, co2_pct=11, co_pct=9)
-    assert co2(metric) == pytest.approx(411_862, rel=1e-5)                        # Exhibit 6-38, step 2
+    assert co2(metric) == pytest.approx(411_862 * C_TO_CO2 / (44 / 12), rel=1e-5)  # Exhibit 6-38, step 2 (44/12)
     imperial = regen.calculate(approach="k1_k2_k3", flue_gas_rate_dscf_min=2150 * SCF_PER_M3, co2_pct=11, co_pct=9)
     assert co2(imperial) == pytest.approx(411_862, rel=2e-3)                      # K1 0.0186 lb vs 0.2982 kg
     half = regen.calculate(approach="k1_k2_k3", flue_gas_rate_dscm_min=2150, co2_pct=11, co_pct=9, operating_hours=4380)
@@ -81,7 +83,7 @@ def test_air_blower_eq_6_36(regen):
 def test_continuous_and_intermittent_eq_6_40_6_41(regen):
     cont = regen.calculate(approach="continuous", catalyst_circulation_rate_tonnes_hr=10, operating_hours=8280,
                            fc_spent=0.04, fc_regen=0.005)
-    assert co2(cont) == pytest.approx(10 * 8280 * 0.035 * 44 / 12)
+    assert co2(cont) == pytest.approx(10 * 8280 * 0.035 * C_TO_CO2)
     inter = regen.calculate(approach="intermittent", catalyst_inventory_tonnes=1000, regeneration_cycles_per_yr=0,
                             fc_spent=0.07)
     assert co2(inter) == 0                                                         # 0 regenerations, not 1
@@ -146,11 +148,11 @@ def test_dcu_zero_cycles_and_factor_are_zero(coker):
 
 def test_fluid_coker_tonnes_and_carbon_fraction(coker):
     res = coker.calculate(coker_type="fluid", coke_burned_tonnes_yr=63_503, hydrogen_wt_fraction=0.015)
-    assert co2(res) == pytest.approx(63_503 * 0.985 * 44 / 12)
+    assert co2(res) == pytest.approx(63_503 * 0.985 * C_TO_CO2)
     assert co2(coker.calculate(coker_type="fluid", coke_burned_tonnes_yr=100, carbon_wt_fraction=0.9)) == pytest.approx(
-        100 * 0.9 * 44 / 12)
+        100 * 0.9 * C_TO_CO2)
     assert co2(coker.calculate(coker_type="fluid", coke_burned_tonnes_yr=100, hydrogen_wt_fraction=0)) == pytest.approx(
-        100 * 44 / 12)                                                             # 0 % H2 is 0, not 1.5 %
+        100 * C_TO_CO2)                                                             # 0 % H2 is 0, not 1.5 %
     assert co2(coker.calculate(coker_type="fluid", coke_burned_tonnes_yr=0)) == 0
 
 
@@ -181,12 +183,12 @@ def test_feedstock_balance_in_m3_and_tonnes_eq_6_49(h2):
     m3 = h2.calculate(method="feedstock_balance", feedstock_volume_m3_yr=5e9 / SCF_PER_M3, feedstock_comp=EXHIBIT_FEED)
     assert co2(m3) == pytest.approx(co2(scf), rel=2e-3) and co2(scf) == pytest.approx(297_100, rel=5e-3)  # Exhibit 6-42
     t = h2.calculate(method="feedstock_balance", feedstock_rate_tonnes_yr=100_000, feedstock_carbon_fraction=0.7185)
-    assert co2(t) == pytest.approx(100_000 * 0.7185 * 44 / 12)
+    assert co2(t) == pytest.approx(100_000 * 0.7185 * C_TO_CO2)
     # tonnes given with the composition: the composition supplies the carbon fraction
     mw = 0.85 * 16.04 + 0.08 * 30.07 + 0.03 * 58.12 + 0.04 * 28.01
     cf = (0.85 + 0.08 * 2 + 0.03 * 4) * 12.011 / mw
     tc = h2.calculate(method="feedstock_balance", feedstock_rate_tonnes_yr=100_000, feedstock_comp=EXHIBIT_FEED)
-    assert co2(tc) == pytest.approx(100_000 * cf * 44 / 12)
+    assert co2(tc) == pytest.approx(100_000 * cf * C_TO_CO2)
 
 
 def test_h2_stoichiometry_from_composition_exhibit_6_43(h2):
@@ -233,7 +235,7 @@ def test_dispatcher_reads_the_feed_analysis_as_mol_percent():
     pct = d.dispatch("hydrogen_plant", {"feed_ch4": 95, "feed_c4h10": 0.5, "feed_n2": 4.5, "feedstock_scf": 1e9}, {}, {})
     mw = 0.95 * 16.04 + 0.005 * 58.12 + 0.045 * 28.01
     cf = (0.95 + 0.005 * 4) * 12.011 / mw
-    expected = 1e9 / 379.3 * mw * cf * 44 / 12 / LB_T
+    expected = 1e9 / 379.3 * mw * cf * C_TO_CO2 / LB_T
     total = pct["results"]["co2"]
     assert (total["value"] if isinstance(total, dict) else total) == pytest.approx(expected, rel=1e-6)
 
@@ -260,7 +262,7 @@ def test_coke_calcining_dust_recycle_and_required_carbon_contents():
     c = RefiningCokeCalciningCalculator()
     res = c.calculate(green_coke_mass_tonnes_yr=100_000, green_coke_carbon_fraction=0.88, calcined_coke_mass_tonnes_yr=80_000,
                       calcined_coke_carbon_fraction=0.98, dust_collected_tonnes_yr=3000, dust_recycled_tonnes_yr=1000)
-    assert co2(res) == pytest.approx((100_000 * 0.88 - (80_000 + 2000) * 0.98) * 44 / 12)    # Eq 6-53
+    assert co2(res) == pytest.approx((100_000 * 0.88 - (80_000 + 2000) * 0.98) * C_TO_CO2)    # Eq 6-53
     with pytest.raises(ValueError, match="carbon fractions"):
         c.calculate(green_coke_mass_tonnes_yr=100_000, calcined_coke_mass_tonnes_yr=80_000)
     over = c.calculate(green_coke_mass_tonnes_yr=10, green_coke_carbon_fraction=0.5, calcined_coke_mass_tonnes_yr=10,
@@ -282,9 +284,9 @@ def test_petrochemical_material_balance_eq_6_55():
         feedstocks=[(1000, 0.80), (200, 0.75)], primary_product_tonnes=900, primary_product_c_frac=0.857,
         secondary_products=[(50, 0.80)])
     c = 1000 * 0.80 + 200 * 0.75 - (900 * 0.857 + 50 * 0.80)
-    assert co2(res) == pytest.approx(c * 44 / 12)
+    assert co2(res) == pytest.approx(c * C_TO_CO2)
     nothing = PetrochemicalManufacturingCalculator().calculate(feedstocks=[(10, 0.5)], primary_product_tonnes=10)
-    assert co2(nothing) == pytest.approx(5 * 44 / 12)
+    assert co2(nothing) == pytest.approx(5 * C_TO_CO2)
 
 
 @pytest.mark.parametrize("name,key", [("Adipic Acid Thermal", "adipic_acid_thermal"), ("methanol", "methanol"),
@@ -311,7 +313,7 @@ def test_fire_suppression_co2_agent_and_discharge_only():
     res = f.calculate(agent_type="CO2", total_charge_kg=1000, annual_release_rate=0.05, direct_discharge_kg=450)
     assert co2(res) == pytest.approx(0.5) and res["total_co2e"] == pytest.approx(0.5)
     halon = f.calculate(agent_type="halon-1301", direct_discharge_kg=10)
-    assert halon["total_co2e"] == pytest.approx(10 / 1000 * 7140)
+    assert halon["total_co2e"] == pytest.approx(10 / 1000 * 6290)  # AR5 without a GWP set (AR4 was fixed, BA-036)
 
 
 @pytest.mark.parametrize("kwargs,match", [

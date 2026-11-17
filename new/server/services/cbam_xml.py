@@ -1,14 +1,26 @@
 """EU CBAM transitional registry XML declaration (GET /api/reports/cbam-export?format=xml).
 
-Split out of routes/reports_cbam.export_cbam_report on 2026-10-16; the XML is unchanged.
+Generates enriched DG TAXUD compliant XML with explicit reporting period dates,
+Scope 1/2 provenance splits, Gross/CCS/Net specific embedded breakdown,
+Article 7 complex precursors (never <PrecursorContribution>), and ReportingMetadata assurance.
 """
 import hashlib
 import json
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
 
-from services.cbam_data import (RecordFigures, _clean_xml_text, fingerprint_row, get_cbam_aggregated_category,
-                                get_cbam_production_route, quarter_of)
+from services.cbam_data import (
+    RecordFigures,
+    _clean_xml_text,
+    _get_facility_production_tonnes,
+    _get_facility_scope1_split,
+    _get_facility_scope2_metrics,
+    catalog_grid_factor,
+    fingerprint_row,
+    get_cbam_aggregated_category,
+    get_cbam_production_route,
+    quarter_of,
+)
 
 
 def _sub(parent, tag, text, attrs=None):
@@ -25,6 +37,8 @@ def _header(root, ctx, quarter):
     period = ET.SubElement(header, "ReportingPeriod")
     _sub(period, "Year", ctx.rep_year_str)
     _sub(period, "Quarter", quarter)
+    _sub(period, "PeriodStart", ctx.period_start)
+    _sub(period, "PeriodEnd", ctx.period_end)
     _sub(period, "PeriodType", "Transitional Period Declaration")
 
 
@@ -49,7 +63,7 @@ def _installations(root, ctx):
         _sub(inst, "InstallationId", _clean_xml_text(fac.code or f"{ctx.op_iso}-FAC-{fac.id:03d}"))
         _sub(inst, "Name", _clean_xml_text(fac.name))
         _sub(inst, "Country", _clean_xml_text(fac.country or ctx.op_iso))
-        _sub(inst, "EconomicActivity", _clean_xml_text(fac.activity or "Petrochemical & Refining"))
+        _sub(inst, "EconomicActivity", _clean_xml_text(fac.activity or "Industrial Production"))
         coords = ET.SubElement(inst, "Coordinates")
         _sub(coords, "Latitude", f"{fac.latitude:.6f}" if fac.latitude is not None else "0.000000")
         _sub(coords, "Longitude", f"{fac.longitude:.6f}" if fac.longitude is not None else "0.000000")
@@ -65,8 +79,44 @@ def _ccs(good, r):
         _sub(ccs, "PermanentStorageStandard", "Directive 2009/31/EC & ISO 27914 Geological Sequestration")
 
 
+def _provenance(good, ctx, r, fig):
+    """Scope 1 split & Scope 2 electricity provenance per installation/year."""
+    total_prod, from_prod = _get_facility_production_tonnes(r.facility_id, r.year, fig.qty)
+    share_pct = round((fig.qty / total_prod * 100.0), 2) if total_prod > 0 else 100.0
+    prod_el = ET.SubElement(good, "ProductionBoundary")
+    _sub(prod_el, "TotalInstallationProductionTonnes", f"{total_prod:.2f}", {"unit": "t"})
+    _sub(prod_el, "ExportSharePct", f"{share_pct:.2f}")
+    _sub(prod_el, "ProductionDataSource", "Verified ProductionData" if from_prod else "Export Quantity Fallback")
+
+    comb_pct, proc_pct, flare_pct, has_s1 = _get_facility_scope1_split(r.facility_id, r.year, ctx.statuses)
+    s1_el = ET.SubElement(good, "DirectEmissionsBreakdown")
+    _sub(s1_el, "CombustionSharePct", f"{comb_pct * 100.0:.2f}")
+    _sub(s1_el, "ProcessSharePct", f"{proc_pct * 100.0:.2f}")
+    _sub(s1_el, "FlaringVentingSharePct", f"{flare_pct * 100.0:.2f}")
+    _sub(s1_el, "HasVerifiedScope1Data", "true" if has_s1 else "false")
+
+    country = ctx.fac_country(r)
+    mwh, grid_ef, supplier, has_s2 = _get_facility_scope2_metrics(r.facility_id, r.year, country, ctx.statuses)
+    basis = "Verified Scope 2 Metering"
+    if not has_s2:
+        cat = catalog_grid_factor(country)
+        if cat:
+            grid_ef = cat[1]
+            basis = f"Catalog Grid Factor ({cat[0]}: {cat[2]})"
+        else:
+            basis = "Direct Indirect SEE Declaration (No Scope 2 / Catalog Grid Factor)"
+    s2_el = ET.SubElement(good, "IndirectElectricityMetrics")
+    _sub(s2_el, "ConsumedElectricityMWh", f"{mwh:.2f}", {"unit": "MWh"})
+    _sub(s2_el, "GridEmissionFactor", f"{grid_ef:.4f}" if grid_ef is not None else "N/A", {"unit": "tCO2e/MWh"})
+    _sub(s2_el, "ElectricitySupplier", _clean_xml_text(supplier))
+    _sub(s2_el, "AccountingBasis", _clean_xml_text(basis))
+    _sub(s2_el, "HasVerifiedScope2Data", "true" if has_s2 else "false")
+
+
 def _embedded(good, fig):
     em = ET.SubElement(good, "SpecificEmbeddedEmissions")
+    _sub(em, "GrossDirect", f"{fig.gross_direct:.4f}", {"unit": "tCO2e/t"})
+    _sub(em, "CapturedCO2Reduction", f"{fig.ccs_reduction_per_t:.4f}", {"unit": "tCO2e/t"})
     _sub(em, "Direct", f"{fig.direct:.4f}", {"unit": "tCO2e/t"})
     _sub(em, "Indirect", f"{fig.indirect:.4f}", {"unit": "tCO2e/t"})
     _sub(em, "Total", f"{fig.total_see:.4f}", {"unit": "tCO2e/t"})
@@ -74,7 +124,7 @@ def _embedded(good, fig):
 
 
 def _precursors(good, r, fig):
-    """Article 7 complex goods."""
+    """Article 7 complex goods (uses TotalPrecursorContribution — never <PrecursorContribution>)."""
     _sub(good, "IsComplexGood", "true" if r.is_complex_good else "false")
     if r.is_complex_good and r.precursor_name:
         prec = ET.SubElement(ET.SubElement(good, "Precursors"), "Precursor")
@@ -114,6 +164,7 @@ def _good(goods, ctx, r, fig):
     _sub(good, "QuantityTonnes", f"{fig.qty:.2f}")
     _sub(good, "ExportDestination", _clean_xml_text(r.export_destination or "EU"))
     _ccs(good, r)
+    _provenance(good, ctx, r, fig)
     _embedded(good, fig)
     _precursors(good, r, fig)
     _carbon_price(good, r, fig, ctx.fac_country(r))
@@ -139,7 +190,10 @@ def build_xml(ctx, quarter):
     assurance = ET.SubElement(root, "AuditAssurance")
     _sub(assurance, "VerificationStandard", "ISO 14064-3 / Implementing Regulation (EU) 2023/1773 Art. 18")
     _sub(assurance, "SHA256DataFingerprint", data_hash)
-    _sub(assurance, "LeadAssessor", f"{ctx.assessor_name} ({ctx.user.role})")
-    _sub(assurance, "AssuranceLevel", "Reasonable Assurance")
+    user_role = getattr(ctx.user, "role", "Lead Assessor") if ctx.user else "Lead Assessor"
+    _sub(assurance, "LeadAssessor", _clean_xml_text(f"{ctx.assessor_name} ({user_role})"))
+    _sub(assurance, "AssuranceLevel", _clean_xml_text(ctx.assurance_level))
+    if ctx.assurance_provider:
+        _sub(assurance, "AssuranceProvider", _clean_xml_text(ctx.assurance_provider))
     pretty = minidom.parseString(ET.tostring(root, encoding="utf-8")).toprettyxml(indent="  ", encoding="utf-8")
     return pretty, data_hash

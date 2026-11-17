@@ -175,7 +175,7 @@ class TestCombustionTier3:
             'c1': c1,
             'c2': c2,
             'c3': c3,
-            'combustion_efficiency': comb_eff,
+            'combustion_efficiency': comb_eff * 100.0,  # percent (BA-012)
             'hhv': 1020.0
         }
         factor_data = {'co2': 0, 'ch4': 0, 'n2o': 0, 'unit': 'kg/m3', 'hhv': 1020.0}
@@ -204,7 +204,7 @@ class TestCombustionTier3:
             'unit': 'm3',
             'factor_source': 'specific',
             'c1': 1.0,
-            'combustion_efficiency': 0.98,
+            'combustion_efficiency': 98,
             'hhv': 1020.0
         }
         factor_data = {'unit': 'kg/m3', 'hhv': 1020.0}
@@ -305,8 +305,8 @@ class TestFlaringTier3:
             'factor_source': 'specific',
             'c1': 1.0,
             'flare_type': 'elevated',
-            'combustion_efficiency': 0.95, # Override
-            'destruction_efficiency': 0.95, # Override
+            'combustion_efficiency': 95, # Override
+            'destruction_efficiency': 95, # Override
             'hhv': 1020.0
         }
         
@@ -530,7 +530,7 @@ class TestTankFlashing:
             'factor_source': 'specific',
             'tank_gor': 100.0,
             'tank_ch4_content': 85,
-            'tank_control_eff': ctrl_eff
+            'tank_control_eff': ctrl_eff * 100.0,  # percent (BA-012)
         }
         em, method = compute_emissions(payload, {}, GWP_AR5)
         assert em['ch4'] == pytest.approx(expected_ch4, rel=1e-3)
@@ -680,7 +680,7 @@ class TestIndirectSteam:
             'total_emissions': 0.0,
             'heat_unit': 'mmbtu',
             'heat_output': 100.0,
-            'boiler_eff': 0.80,
+            'boiler_eff': 80,
             'trans_loss': 0.05
         }
         factor_data = {'co2': 56.1, 'ch4': 0.001, 'n2o': 0.0001, 'unit': 'kg/mmbtu'}
@@ -701,7 +701,7 @@ class TestIndirectSteam:
             'total_emissions': 0.0,
             'heat_unit': 'mmbtu',
             'heat_output': 100.0,
-            'boiler_eff': 0.80,
+            'boiler_eff': 80,
             'trans_loss': 0.0
         }
         factor_data = {'co2': 56.1, 'ch4': 0.001, 'n2o': 0.0001, 'unit': 'kg/mmbtu'}
@@ -799,12 +799,12 @@ class TestSensitivityOAT:
             'unit': 'm3',
             'factor_source': 'specific',
             'c1': 1.0,
-            'combustion_efficiency': 0.90,
+            'combustion_efficiency': 90,
             'hhv': 1020.0
         }
         factor_data = {'unit': 'kg/m3'}
         em1, _ = compute_emissions(payload, factor_data, GWP_AR5)
-        payload['combustion_efficiency'] = 0.95
+        payload['combustion_efficiency'] = 95  # percent (BA-012)
         em2, _ = compute_emissions(payload, factor_data, GWP_AR5)
         # unburned methane halves when eff goes from 0.90 to 0.95 (slip goes 0.10 -> 0.05)
         assert em2['ch4'] == pytest.approx(em1['ch4'] / 2, rel=1e-4)

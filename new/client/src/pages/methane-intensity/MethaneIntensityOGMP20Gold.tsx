@@ -15,7 +15,6 @@ export interface MethaneIntensityOGMP20GoldProps {
   setSelectedBaselineYear: (year: number) => void;
 }
 
-// Extracted from MethaneIntensity.jsx; markup and behavior are unchanged. State and handlers stay in the parent.
 const MethaneIntensityOGMP20Gold: React.FC<MethaneIntensityOGMP20GoldProps> = ({
   facilities,
   globalThreshold,
@@ -39,15 +38,14 @@ const MethaneIntensityOGMP20Gold: React.FC<MethaneIntensityOGMP20GoldProps> = ({
         <h3 className="text-lg font-bold text-text m-0 flex flex-wrap items-center gap-2.5">
           <Award size={22} className="text-brand-500" />
           <span>{t("OGMP 2.0 Gold Standard Pathway & Milestone Roadmap")}</span>
-          <Badge tone="warning">{t("Preview / Roadmap")}</Badge>
+          <Badge tone="brand">{t("UNEP Level 4 / Level 5")}</Badge>
         </h3>
         <p className="text-sm text-text-secondary m-0">
-          {t("Multi-year reporting level tracking towards Level 4/5 site-level measurement reconciliation (preview, reconciliation logic in development).")}
+          {t("Multi-year reporting level tracking, Level 4 source materiality (>=90% or >=70% justified), and Level 5 95% CI site-level reconciliation.")}
         </p>
       </div>
 
       <div className="flex min-w-0 items-center gap-4">
-        {/* Interactive Baseline Selector UI button/pill matching theme */}
         <div
           role="presentation"
           className="min-w-0 flex flex-wrap items-center gap-2.5 bg-ink-50 px-3 py-1.5 rounded-md border border-border"
@@ -78,192 +76,217 @@ const MethaneIntensityOGMP20Gold: React.FC<MethaneIntensityOGMP20GoldProps> = ({
       </div>
     </div>
 
-    <div
-      className={roadmapCollapsed ? "hidden" : "overflow-hidden"}
-    >
-      {/* Facility Roadmap Cards Grid */}
+    <div className={roadmapCollapsed ? "hidden" : "overflow-hidden"}>
       <div className="grid grid-cols-[repeat(auto-fit,minmax(min(480px,100%),1fr))] gap-5 pt-5">
-        {(ogmpRoadmapData.length > 0 ? ogmpRoadmapData : facilities).map(
-          (fac) => {
-            const facName = fac.facility_name || fac.name;
-            const opStatus = fac.operator_status || "operated";
-            const baseYear =
-              selectedBaselineYear ||
-              Number(fac.ogmp_membership_year || 2023);
-            const targetYear =
-              baseYear + (opStatus === "operated" ? 3 : 5);
-            const currentYear = Number(
-              selectedYear !== "all"
-                ? selectedYear
-                : new Date().getFullYear(),
-            );
-            const yearsLeft = targetYear - currentYear;
+        {(ogmpRoadmapData.length > 0 ? ogmpRoadmapData : facilities).map((fac) => {
+          const facName = fac.facility_name || fac.name;
+          const opStatus = fac.operator_status || "operated";
+          const baseYear = selectedBaselineYear || Number(fac.ogmp_membership_year || 2023);
+          const targetYear = baseYear + (opStatus === "operated" ? 3 : 5);
+          const currentYear = Number(
+            selectedYear !== "all" ? selectedYear : new Date().getFullYear(),
+          );
+          const yearsLeft = targetYear - currentYear;
 
-            const matchedSurveys = ogmpSurveys.filter(
-              (s) =>
-                String(s.facilityId || s.facility_id) ===
-                  String(fac.facility_id || fac.id) ||
-                (s.facility_name || s.facilityName) === facName,
-            );
-            const threshold = Number(
-              fac.reconciliation_threshold ?? globalThreshold ?? 10.0,
-            );
-            const matchedSurvey = matchedSurveys[0];
-            const variancePct =
-              fac.reconciliation_variance_pct ??
-              fac.variance_pct ??
-              (matchedSurvey
-                ? (matchedSurvey.reconciliation_variance_pct ?? matchedSurvey.variance_pct ?? null)
-                : null);
-            const passThreshold =
-              variancePct !== null
-                ? Math.abs(variancePct) <= threshold
-                : false;
-            const hasSurveyDiscrepancy = (fac.reconciliation_status || "").toLowerCase().includes("discrepancy") ||
-              fac.variance_flag === true ||
-              matchedSurveys.some((s) => {
-                const status = (s.reconciliationStatus || s.reconciliation_status || "").toLowerCase();
-                const variance = s.variance_pct ?? s.reconciliation_variance_pct;
-                const bu = Number(s.bottom_up_tch4 ?? s.bottomUpTch4 ?? 0);
-                return status.includes("discrepancy") || s.variance_flag === true || (variance !== null && Math.abs(variance) > threshold) || bu === 0;
-              });
+          const matchedSurveys = ogmpSurveys.filter(
+            (s) =>
+              String(s.facilityId || s.facility_id) === String(fac.facility_id || fac.id) ||
+              (s.facility_name || s.facilityName) === facName,
+          );
+          const threshold = Number(fac.reconciliation_threshold ?? globalThreshold ?? 20.0);
+          const matchedSurvey = matchedSurveys[0];
+          const variancePct =
+            fac.reconciliation_variance_pct ??
+            fac.variance_pct ??
+            (matchedSurvey
+              ? (matchedSurvey.reconciliation_variance_pct ?? matchedSurvey.variance_pct ?? null)
+              : null);
+          const passThreshold = variancePct !== null ? Math.abs(variancePct) <= threshold : false;
+          const hasSurveyDiscrepancy =
+            (fac.reconciliation_status || "").toLowerCase().includes("discrepancy") ||
+            fac.variance_flag === true ||
+            matchedSurveys.some((s) => {
+              const status = (s.reconciliationStatus || s.reconciliation_status || "").toLowerCase();
+              const variance = s.variance_pct ?? s.reconciliation_variance_pct;
+              const bu = Number(s.bottom_up_tch4 ?? s.bottomUpTch4 ?? 0);
+              return (
+                status.includes("discrepancy") ||
+                s.variance_flag === true ||
+                (variance !== null && variance !== undefined && Math.abs(variance) > threshold) ||
+                bu === 0
+              );
+            });
 
-            const hasSurveyReconciled = !hasSurveyDiscrepancy && (
-              (fac.reconciliation_status || "").toLowerCase() === "reconciled" ||
-              (matchedSurveys.length > 0 && matchedSurveys.some((s) => (s.reconciliationStatus || s.reconciliation_status || "").toLowerCase().includes("reconciled")))
-            );
+          const hasSurveyReconciled =
+            !hasSurveyDiscrepancy &&
+            ((fac.reconciliation_status || "").toLowerCase() === "reconciled" ||
+              (matchedSurveys.length > 0 &&
+                matchedSurveys.some((s) =>
+                  (s.reconciliationStatus || s.reconciliation_status || "").toLowerCase().includes("reconciled"),
+                )));
 
-            const highestLevel = hasSurveyDiscrepancy
-              ? Math.min(4, Number(fac.highest_ogmp_level || fac.current_ogmp_level || 4))
-              : hasSurveyReconciled
+          const highestLevel = hasSurveyDiscrepancy
+            ? Math.min(4, Number(fac.highest_ogmp_level || fac.current_ogmp_level || 4))
+            : hasSurveyReconciled
+              ? Number(fac.highest_ogmp_level || fac.current_ogmp_level || 5) >= 5
                 ? 5
-                : Number(fac.highest_ogmp_level || fac.current_ogmp_level || 3);
+                : Math.max(4, Number(fac.highest_ogmp_level || fac.current_ogmp_level || 5))
+              : Number(fac.highest_ogmp_level || fac.current_ogmp_level || 3);
 
-            const isReconciled = hasSurveyReconciled && highestLevel >= 5;
+          const isReconciled = hasSurveyReconciled && highestLevel >= 5;
 
-            let statusBadgeClass = "ontrack";
-            let statusText = yearsLeft > 0
+          let statusBadgeClass = "ontrack";
+          let statusText =
+            yearsLeft > 0
               ? t("On Track ({{years}} yrs to Level 5)", { years: yearsLeft })
               : t("On Track (Target Year)");
 
-            if (hasSurveyDiscrepancy) {
-              statusBadgeClass = "action";
-              statusText = t("Discrepancy Detected (Level 4 - Action Required)");
-            } else if (isReconciled && highestLevel >= 5) {
-              statusBadgeClass = "achieved";
-              statusText = t("Gold Standard Achieved (Level 5)");
-            } else if (yearsLeft < 0) {
-              statusBadgeClass = "action";
-              statusText = t("Action Plan Required (Overdue)");
-            } else if (yearsLeft === 0) {
-              statusBadgeClass = "ontrack";
-              statusText = t("Target Milestone Year (Level 5 Due)");
-            }
+          if (hasSurveyDiscrepancy) {
+            statusBadgeClass = "action";
+            statusText = t("Discrepancy Detected (Level 4 - Action Required)");
+          } else if (isReconciled && highestLevel >= 5) {
+            statusBadgeClass = "achieved";
+            statusText = t("Gold Standard Achieved (Level 5)");
+          } else if (yearsLeft < 0) {
+            statusBadgeClass = "action";
+            statusText = t("Action Plan Required (Overdue)");
+          } else if (yearsLeft === 0) {
+            statusBadgeClass = "ontrack";
+            statusText = t("Target Milestone Year (Level 5 Due)");
+          }
 
-            return (
-              <div
-                key={fac.facility_id || fac.id}
-                className="bg-ink-50/50 border border-border rounded-md p-5 flex flex-col gap-4 transition-colors hover:border-ink-300"
-              >
-                <div className="flex justify-between items-start gap-3">
-                  <div className="flex flex-col gap-0.5">
+          const hasL4L5Stats =
+            fac.l4_materiality_pct !== null && fac.l4_materiality_pct !== undefined ||
+            Boolean(fac.pathway_code);
+
+          return (
+            <div
+              key={fac.facility_id || fac.id}
+              className="bg-ink-50/50 border border-border rounded-md p-5 flex flex-col gap-4 transition-colors hover:border-ink-300"
+            >
+              <div className="flex justify-between items-start gap-3">
+                <div className="flex flex-col gap-0.5">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className="text-base font-bold text-text">{facName}</span>
-                    <span className="text-xs text-text-secondary">
-                      {opStatus === "operated"
-                        ? t("Operated Asset (3-Yr Target)")
-                        : t("Non-Operated Asset (5-Yr Target)")}{" "}
-                      {t("• Base:")}{" "}{baseYear}{" "}{t("• Target:")}{" "}{targetYear}
-                    </span>
+                    {fac.pathway_code && (
+                      <Badge tone="brand" className="text-[11px] px-2 py-0">
+                        {t("Pathway")} {fac.pathway_code}
+                      </Badge>
+                    )}
                   </div>
-                  <span
-                    className={`badge-roadmap-status ${statusBadgeClass}`}
-                  >
-                    {statusBadgeClass === "achieved" && (
-                      <Check size={13} />
-                    )}
-                    {statusBadgeClass === "action" && (
-                      <AlertTriangle size={13} />
-                    )}
-                    {statusText}
+                  <span className="text-xs text-text-secondary">
+                    {opStatus === "operated"
+                      ? t("Operated Asset (3-Yr Target)")
+                      : t("Non-Operated Asset (5-Yr Target)")}{" "}
+                    {t("• Base:")} {baseYear} {t("• Target:")} {targetYear}
                   </span>
                 </div>
+                <span className={`badge-roadmap-status ${statusBadgeClass}`}>
+                  {statusBadgeClass === "achieved" && <Check size={13} />}
+                  {statusBadgeClass === "action" && <AlertTriangle size={13} />}
+                  {statusText}
+                </span>
+              </div>
 
-                {/* 5-Level Stepper */}
-                <div className="flex justify-between relative py-2.5 before:content-[''] before:absolute before:top-6 before:left-5 before:right-5 before:h-[2px] before:bg-border before:z-1">
-                  {[1, 2, 3, 4, 5].map((lvl) => {
-                    const isDone = highestLevel >= lvl;
-                    const isCurrent = highestLevel === lvl;
-                    const levelNames = [
-                      t("L1: Venture"),
-                      t("L2: Segment"),
-                      t("L3: Generic"),
-                      t("L4: Specific"),
-                      t("L5: Reconciled"),
-                    ];
-                    return (
+              <div className="flex justify-between relative py-2.5 before:content-[''] before:absolute before:top-6 before:start-5 before:end-5 before:h-[2px] before:bg-border before:z-1">
+                {[1, 2, 3, 4, 5].map((lvl) => {
+                  const isDone = highestLevel >= lvl;
+                  const isCurrent = highestLevel === lvl;
+                  const levelNames = [
+                    t("L1: Venture"),
+                    t("L2: Segment"),
+                    t("L3: Generic"),
+                    t("L4: Specific"),
+                    t("L5: Reconciled"),
+                  ];
+                  return (
+                    <div
+                      key={lvl}
+                      className={`relative z-2 flex flex-col items-center gap-1.5 text-center w-[70px] ${isDone ? "completed" : ""} ${isCurrent ? "current" : ""}`}
+                    >
                       <div
-                        key={lvl}
-                        className={`relative z-2 flex flex-col items-center gap-1.5 text-center w-[70px] ${isDone ? "completed" : ""} ${isCurrent ? "current" : ""}`}
-                      >
-                        <div className={`size-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
+                        className={`size-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
                           isDone
                             ? "bg-emerald-600 text-white border border-emerald-700"
                             : isCurrent
-                            ? "bg-white text-blue-700 border-2 border-blue-600 ring-2 ring-blue-500/20"
-                            : "bg-surface text-text-secondary border border-border"
-                        }`}>
-                          {isDone ? "✓" : lvl}
-                        </div>
-                        <span className={`text-[11px] leading-tight ${isCurrent ? "font-bold text-blue-700" : isDone ? "font-semibold text-emerald-700" : "font-medium text-text-secondary"}`}>
-                          {levelNames[lvl - 1]}
-                        </span>
+                              ? "bg-white text-blue-700 border-2 border-blue-600 ring-2 ring-blue-500/20"
+                              : "bg-surface text-text-secondary border border-border"
+                        }`}
+                      >
+                        {isDone ? "✓" : lvl}
                       </div>
-                    );
-                  })}
-                </div>
+                      <span
+                        className={`text-[11px] leading-tight ${isCurrent ? "font-bold text-blue-700" : isDone ? "font-semibold text-emerald-700" : "font-medium text-text-secondary"}`}
+                      >
+                        {levelNames[lvl - 1]}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
 
-                {/* Footer stats */}
-                <div className="grid grid-cols-3 gap-2.5 bg-surface border border-border rounded-md px-3 py-2.5">
-                  <div className="flex flex-col gap-0.5">
-                    <span className="text-[11px] text-text-secondary font-medium">
-                      {t("Current Milestone")}
-                    </span>
-                    <span className="text-sm font-bold text-text tabular-nums">
-                      {t("OGMP Level")}{" "}{highestLevel}
-                    </span>
-                  </div>
-                  <div className="flex flex-col gap-0.5">
-                    <span className="text-[11px] text-text-secondary font-medium">
-                      {t("Reconciliation Var.")}
-                    </span>
-                    <span
-                      className={`text-sm font-bold tabular-nums ${variancePct !== null ? (passThreshold ? "text-emerald-700" : "text-danger-fg") : "text-text"}`}
-                    >
-                      {variancePct !== null
-                        ? variancePct >= 0
-                          ? `+${Number(variancePct).toFixed(1)}%`
-                          : `${Number(variancePct).toFixed(1)}%`
-                        : t("Pending Survey")}
-                    </span>
-                  </div>
-                  <div className="flex flex-col gap-0.5">
-                    <span className="text-[11px] text-text-secondary font-medium">
-                      {t("Tolerance Limit")}
-                    </span>
-                    <span className={`text-sm font-bold tabular-nums ${variancePct !== null ? (passThreshold ? "text-emerald-700" : "text-danger-fg") : "text-text"}`}>
-                      ±{threshold.toFixed(1)}%{" "}
-                      {variancePct !== null
-                        ? passThreshold
-                          ? t("(PASS)")
-                          : t("(FLAGGED)")
-                        : ""}
-                    </span>
-                  </div>
+              <div className="grid grid-cols-3 gap-2.5 bg-surface border border-border rounded-md px-3 py-2.5">
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-[11px] text-text-secondary font-medium">
+                    {t("Current Milestone")}
+                  </span>
+                  <span className="text-sm font-bold text-text tabular-nums">
+                    {t("OGMP Level")} {highestLevel}
+                  </span>
+                </div>
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-[11px] text-text-secondary font-medium">
+                    {t("Reconciliation Var.")}
+                  </span>
+                  <span
+                    className={`text-sm font-bold tabular-nums ${variancePct !== null ? (passThreshold ? "text-emerald-700" : "text-danger-fg") : "text-text"}`}
+                  >
+                    {variancePct !== null
+                      ? variancePct >= 0
+                        ? `+${Number(variancePct).toFixed(1)}%`
+                        : `${Number(variancePct).toFixed(1)}%`
+                      : t("Pending Survey")}
+                  </span>
+                </div>
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-[11px] text-text-secondary font-medium">
+                    {t("Tolerance Limit")}
+                  </span>
+                  <span
+                    className={`text-sm font-bold tabular-nums ${variancePct !== null ? (passThreshold ? "text-emerald-700" : "text-danger-fg") : "text-text"}`}
+                  >
+                    ±{threshold.toFixed(1)}%{" "}
+                    {variancePct !== null ? (passThreshold ? t("(PASS)") : t("(FLAGGED)")) : ""}
+                  </span>
                 </div>
               </div>
-            );
-          },
-        )}
+
+              {hasL4L5Stats && (
+                <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border/80 bg-surface/80 px-3 py-2 text-xs text-text-secondary">
+                  <span>
+                    {t("L4 Materiality:")}{" "}
+                    <strong className="font-mono text-text">
+                      {fac.l4_materiality_pct != null ? `${Number(fac.l4_materiality_pct).toFixed(1)}%` : "—"}
+                    </strong>
+                  </span>
+                  {fac.bu_ci_low_tch4 != null && fac.td_ci_low_tch4 != null && (
+                    <span className="font-mono">
+                      BU CI [{Number(fac.bu_ci_low_tch4).toFixed(1)}–{Number(fac.bu_ci_high_tch4).toFixed(1)}] vs TD CI [{Number(fac.td_ci_low_tch4).toFixed(1)}–{Number(fac.td_ci_high_tch4).toFixed(1)}]{" "}
+                      <strong className={fac.ci_overlaps ? "text-emerald-700" : "text-amber-700"}>
+                        ({fac.ci_overlaps ? t("CI Overlap") : t("Disjoint")})
+                      </strong>
+                    </span>
+                  )}
+                  {fac.option_mode && (
+                    <span className="font-medium text-text">
+                      {fac.measurement_mode || "Annualized"} · {fac.option_mode}
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   </div>

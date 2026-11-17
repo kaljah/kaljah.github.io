@@ -39,7 +39,7 @@ COMBUSTION_FACTORS = {
         "segment": "Upstream",
         "process_category": "stationary_combustion",
         "type": "gases",
-        "source": "API Compendium 2021 Section 5, Table 5-1",
+        "source": "EPA 40 CFR 98 Subpart C Table C-1 (CO2, HHV) and Table C-2 (CH4, N2O), as API Compendium 2021 Table 4-5 reproduces them (Table 4-3 prints 0.3-1 % different rounded values)",
     },
     "Coke Oven Gas": {
         "code": "COG",
@@ -53,7 +53,7 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "stationary_combustion",
         "type": "gases",
-        "source": "API Compendium 2021 Section 5",
+        "source": "API Compendium 2021 Section 4 (combustion; EPA 40 CFR 98 Tables C-1 / C-2)",
     },
     "Blast Furnace Gas": {
         "code": "BFG",
@@ -67,7 +67,7 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "stationary_combustion",
         "type": "gases",
-        "source": "API Compendium 2021 Section 5",
+        "source": "API Compendium 2021 Section 4 (combustion; EPA 40 CFR 98 Tables C-1 / C-2)",
     },
     "Propane (Gas)": {
         "code": "LPG_Gas",
@@ -81,7 +81,7 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "stationary_combustion",
         "type": "gases",
-        "source": "API Compendium 2021 Section 5",
+        "source": "API Compendium 2021 Section 4 (combustion; EPA 40 CFR 98 Tables C-1 / C-2)",
     },
     "Refinery Fuel Gas": {
         "code": "RFG",
@@ -95,7 +95,7 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "stationary_combustion",
         "type": "gases",
-        "source": "API Compendium 2021 Section 5",
+        "source": "API Compendium 2021 Section 4 (combustion; EPA 40 CFR 98 Tables C-1 / C-2)",
     },
     # LIQUID FUELS
     "Marine Diesel Oil": {
@@ -126,7 +126,7 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "stationary_combustion",
         "type": "liquids",
-        "source": "API Compendium 2021 Section 5, Table 5-1",
+        "source": "EPA 40 CFR 98 Subpart C Table C-1 (CO2, HHV) and Table C-2 (CH4, N2O), as API Compendium 2021 Table 4-5 reproduces them (Table 4-3 prints 0.3-1 % different rounded values)",
     },
     "Residual Fuel Oil (No. 6)": {
         "code": "RFO",
@@ -140,7 +140,7 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "stationary_combustion",
         "type": "liquids",
-        "source": "API Compendium 2021 Section 5, Table 5-1",
+        "source": "EPA 40 CFR 98 Subpart C Table C-1 (CO2, HHV) and Table C-2 (CH4, N2O), as API Compendium 2021 Table 4-5 reproduces them (Table 4-3 prints 0.3-1 % different rounded values)",
     },
     "Kerosene": {
         "code": "Kero",
@@ -154,7 +154,7 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "stationary_combustion",
         "type": "liquids",
-        "source": "API Compendium 2021 Section 5",
+        "source": "API Compendium 2021 Section 4 (combustion; EPA 40 CFR 98 Tables C-1 / C-2)",
     },
     "Motor Gasoline": {
         "code": "GAS",
@@ -168,7 +168,7 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "mobile_combustion",
         "type": "liquids",
-        "source": "API Compendium 2021 Section 5",
+        "source": "API Compendium 2021 Section 4 (combustion; EPA 40 CFR 98 Tables C-1 / C-2)",
     },
     "Jet Fuel": {
         "code": "JET",
@@ -182,7 +182,7 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "mobile_combustion",
         "type": "liquids",
-        "source": "API Compendium 2021 Section 5",
+        "source": "API Compendium 2021 Section 4 (combustion; EPA 40 CFR 98 Tables C-1 / C-2)",
     },
     "Propane (Liquid/LPG)": {
         "code": "LPG_Liq",
@@ -196,7 +196,7 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "stationary_combustion",
         "type": "liquids",
-        "source": "API Compendium 2021 Section 5",
+        "source": "API Compendium 2021 Section 4 (combustion; EPA 40 CFR 98 Tables C-1 / C-2)",
     },
     "Ethane": {
         "code": "Ethane",
@@ -213,7 +213,7 @@ COMBUSTION_FACTORS = {
         "segment": "Midstream",
         "process_category": "stationary_combustion",
         "type": "liquids",  # HHV is per gallon of liquid ethane (see "Ethane (Gas)" for gas-phase use)
-        "source": "API Compendium 2021 Section 5",
+        "source": "API Compendium 2021 Section 4 (combustion; EPA 40 CFR 98 Tables C-1 / C-2)",
     },
     "Ethane (Gas)": {
         "code": "EthaneGas",
@@ -242,7 +242,7 @@ COMBUSTION_FACTORS = {
         "segment": "Upstream",
         "process_category": "stationary_combustion",
         "type": "liquids",
-        "source": "API Compendium 2021 Section 5",
+        "source": "API Compendium 2021 Section 4 (combustion; EPA 40 CFR 98 Tables C-1 / C-2)",
     },
     # SOLID FUELS
     "Anthracite Coal": {
@@ -257,7 +257,7 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "stationary_combustion",
         "type": "solids",
-        "source": "API Compendium 2021 Section 5",
+        "source": "API Compendium 2021 Section 4 (combustion; EPA 40 CFR 98 Tables C-1 / C-2)",
     },
     "Bituminous Coal": {
         "code": "CoalBit",
@@ -271,7 +271,7 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "stationary_combustion",
         "type": "solids",
-        "source": "API Compendium 2021 Section 5",
+        "source": "API Compendium 2021 Section 4 (combustion; EPA 40 CFR 98 Tables C-1 / C-2)",
     },
     "Sub-Bituminous Coal": {
         "code": "CoalSub",
@@ -285,7 +285,7 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "stationary_combustion",
         "type": "solids",
-        "source": "API Compendium 2021 Section 5",
+        "source": "API Compendium 2021 Section 4 (combustion; EPA 40 CFR 98 Tables C-1 / C-2)",
     },
     "Lignite Coal": {
         "code": "CoalLig",
@@ -299,7 +299,7 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "stationary_combustion",
         "type": "solids",
-        "source": "API Compendium 2021 Section 5",
+        "source": "API Compendium 2021 Section 4 (combustion; EPA 40 CFR 98 Tables C-1 / C-2)",
     },
     "Petroleum Coke": {
         "code": "PetCoke",
@@ -313,9 +313,16 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "stationary_combustion",
         "type": "solids",
-        "source": "API Compendium 2021 Section 5",
+        "source": "API Compendium 2021 Section 4 (combustion; EPA 40 CFR 98 Tables C-1 / C-2)",
     },
 }
+
+# Default uncertainties (95 % half-widths, the larger side of an asymmetric range as IPCC 2006 Vol.1 Table 3.2
+# column F instructs): stationary combustion CH4 / N2O from IPCC 2006 Vol.2 Table 2.12 (50-150 %, an order of
+# magnitude); the rows' CO2 values stand (blind audit BA-052: ±20 % had no source)
+for _row in COMBUSTION_FACTORS.values():
+    if _row.get("process_category") == "stationary_combustion" and isinstance(_row.get("uncertainty"), dict):
+        _row["uncertainty"] = {**_row["uncertainty"], "ch4": 1.50, "n2o": 9.00}
 
 # FLARING EMISSION FACTORS (Section 5.2)
 # API Compendium 2021 Eq 5-2 / 5-4 / 5-6 on the Table 5-1 generic compositions, with the December 2025
@@ -332,6 +339,7 @@ FLARING_FACTORS = {
         "n2o": 3.173e-06,  # kg/Sm3, Equation 5-6
         "combustion_efficiency_co2": 0.965,
         "combustion_efficiency_ch4": 0.98,
+        "co2_native": 0.010777,  # kg/Sm3: the 0.58 mol % CO2 of the Table 5-1 gas, passed through the flare
         "uncertainty": {"co2": 0.02, "ch4": 0.25, "n2o": 0.50},
         "unit": "kg/m³",
         "usage": ["flaring"],
@@ -347,6 +355,7 @@ FLARING_FACTORS = {
         "n2o": 3.173e-06,  # kg/Sm3, Equation 5-6
         "combustion_efficiency_co2": 0.965,
         "combustion_efficiency_ch4": 0.98,
+        "co2_native": 0.010777,  # kg/Sm3: the 0.58 mol % CO2 of the Table 5-1 gas, passed through the flare
         "uncertainty": {"co2": 0.02, "ch4": 0.25, "n2o": 0.50},
         "unit": "kg/m³",
         "usage": ["flaring"],
@@ -365,6 +374,7 @@ FLARING_FACTORS = {
         "n2o": 3.173e-06,  # kg/Sm3, Equation 5-6
         "combustion_efficiency_co2": 0.965,
         "combustion_efficiency_ch4": 0.98,
+        "co2_native": 0.010777,  # kg/Sm3: the 0.58 mol % CO2 of the Table 5-1 gas, passed through the flare
         "uncertainty": {"co2": 0.02, "ch4": 0.20, "n2o": 0.50},
         "unit": "kg/m³",
         "usage": ["flaring"],
@@ -380,6 +390,7 @@ FLARING_FACTORS = {
         "n2o": 3.736e-06,  # kg/Sm3, Equation 5-6
         "combustion_efficiency_co2": 0.965,
         "combustion_efficiency_ch4": 0.98,
+        "co2_native": 0.0,  # the Table 5-1 raw gas has no CO2
         "uncertainty": {"co2": 0.03, "ch4": 0.25, "n2o": 0.50},
         "unit": "kg/m³",
         "usage": ["flaring"],
@@ -389,6 +400,10 @@ FLARING_FACTORS = {
         "source": _FLARE_SOURCE.format(gas="raw / produced gas"),
     },
 }
+
+# API Compendium 2021 Table 5-5 (gas flares): CO2 and CH4 +/-25 %, N2O -10 % to +1000 % (larger side)
+for _row in FLARING_FACTORS.values():
+    _row["uncertainty"] = {"co2": 0.25, "ch4": 0.25, "n2o": 10.0}
 
 # =============================================================================
 # SECTION 6 VENTED & PROCESS EMISSION FACTORS
@@ -1301,7 +1316,7 @@ EQUIPMENT_FACTORS = {
     "Pneumatic Controller - High Bleed (>6 scfh)": {
         "code": "HighBleed",
         "type": "pneumatic",
-        "ch4": 5.11,  # tonnes CH4/controller-yr
+        "ch4": 2.25,  # tonnes CH4/controller-yr (API study; the controller-type method uses the same row, BA-035)
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
@@ -1309,13 +1324,13 @@ EQUIPMENT_FACTORS = {
         "segment": "Upstream",
         "process_category": "pneumatic_devices",
         "type": "equipment",
-        "description": "Table 6-14 EPA GHGRP production high-bleed (37.3 scf/h)",
-        "source": "API Compendium 2021 Table 6-14 EPA GHGRP production high-bleed (37.3 scf/h)",
+        "description": "Table 6-14 API study production high-bleed (16.4 scf/h)",
+        "source": "API Compendium 2021 Table 6-14 API study production high-bleed (16.4 scf/h)",
     },
     "Pneumatic Controller - Low Bleed (<6 scfh)": {
         "code": "LowBleed",
         "type": "pneumatic",
-        "ch4": 0.191,  # tonnes CH4/controller-yr
+        "ch4": 0.36,  # tonnes CH4/controller-yr (API study, as the controller-type method)
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
@@ -1323,8 +1338,8 @@ EQUIPMENT_FACTORS = {
         "segment": "Upstream",
         "process_category": "pneumatic_devices",
         "type": "equipment",
-        "description": "Table 6-14 EPA GHGRP production low-bleed (1.39 scf/h)",
-        "source": "API Compendium 2021 Table 6-14 EPA GHGRP production low-bleed (1.39 scf/h)",
+        "description": "Table 6-14 API study production low-bleed (2.6 scf/h)",
+        "source": "API Compendium 2021 Table 6-14 API study production low-bleed (2.6 scf/h)",
     },
     "Pneumatic Controller - Intermittent": {
         "code": "Intermittent",

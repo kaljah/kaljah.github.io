@@ -289,7 +289,7 @@ export const MethaneIntensityLdarCard: React.FC<MethaneIntensityLdarCardProps> =
       {/* 4-Column Metric Grid */}
       <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-3.5">
         {/* Tile 1: Monitored Components */}
-        <div className="p-3.5 rounded-md border border-border border-l-2 border-l-blue-500 bg-surface">
+        <div className="p-3.5 rounded-md border border-border border-s-2 border-s-blue-500 bg-surface">
           <div className="flex items-center justify-between mb-1.5">
             <span className="text-xs font-medium text-text-secondary">
               {t("Monitored Components")}
@@ -297,7 +297,7 @@ export const MethaneIntensityLdarCard: React.FC<MethaneIntensityLdarCardProps> =
             <Layers size={15} className="text-blue-500" />
           </div>
           <div className="text-2xl font-bold text-text tabular-nums leading-tight">
-            {loading ? "..." : totalComponents.toLocaleString()}
+            {loading ? "..." : totalComponents.toLocaleString("en-US")}
           </div>
           <div className="text-xs text-text-secondary mt-1">
             {filteredSurveys.length > 0
@@ -314,8 +314,8 @@ export const MethaneIntensityLdarCard: React.FC<MethaneIntensityLdarCardProps> =
         <div
           className={`p-3.5 rounded-md border border-border border-l-2 bg-surface ${
             openLeaksCount > 0
-              ? "border-l-rose-600"
-              : "border-l-emerald-600"
+              ? "border-s-rose-600"
+              : "border-s-emerald-600"
           }`}
         >
           <div className="flex items-center justify-between mb-1.5">
@@ -351,7 +351,7 @@ export const MethaneIntensityLdarCard: React.FC<MethaneIntensityLdarCardProps> =
         </div>
 
         {/* Tile 3: Repaired Leaks */}
-        <div className="p-3.5 rounded-md border border-border border-l-2 border-l-emerald-600 bg-surface">
+        <div className="p-3.5 rounded-md border border-border border-s-2 border-s-emerald-600 bg-surface">
           <div className="flex items-center justify-between mb-1.5">
             <span className="text-xs font-medium text-text-secondary">
               {t("Repaired Leaks")}
@@ -367,7 +367,7 @@ export const MethaneIntensityLdarCard: React.FC<MethaneIntensityLdarCardProps> =
         </div>
 
         {/* Tile 4: Component Leak Rate */}
-        <div className="p-3.5 rounded-md border border-border border-l-2 border-l-indigo-500 bg-surface">
+        <div className="p-3.5 rounded-md border border-border border-s-2 border-s-indigo-500 bg-surface">
           <div className="flex items-center justify-between mb-1.5">
             <span className="text-xs font-medium text-text-secondary">
               {t("Component Leak Rate")}

@@ -344,7 +344,7 @@ class TestEnergyUnitsIndirectSteam:
             "factor_source": "specific",
             "heat_output": qty,
             "heat_unit": unit,
-            "boiler_eff": self.BOILER_EFF,
+            "boiler_eff": self.BOILER_EFF * 100.0,  # percent (BA-012)
             "trans_loss": self.TRANS_LOSS,
             "total_emissions": 0.0,
         }

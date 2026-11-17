@@ -146,6 +146,8 @@ def test_regional_profiles_and_engine_no_real_client_data():
     files_to_check = [
         os.path.join(SERVER_ROOT, "services", "regional_profiles.py"),
         os.path.join(SERVER_ROOT, "services", "master_report_engine.py"),
+        os.path.join(SERVER_ROOT, "services", "master_report_engine_front.py"),
+        os.path.join(SERVER_ROOT, "services", "master_report_engine_chapters.py"),
         os.path.join(SERVER_ROOT, "services", "tenant_config.py"),
         os.path.join(SERVER_ROOT, "seed_showcase_data.py"),
         os.path.join(SERVER_ROOT, "config.py"),

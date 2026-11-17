@@ -14,7 +14,7 @@ from services.labels import process_label, scope2_source_label
 from services.scope2_activity import scope2_activity
 from services.scope2_gases import gas_split
 from sqlalchemy import or_
-from utils import get_allowed_facility_ids, get_current_user
+from utils import get_allowed_facility_ids, get_current_user, get_current_tenant_id, tenant_matches
 from . import emissions_bp
 from routes.emissions import _escape_like
 
@@ -96,8 +96,13 @@ def export_emissions():
         return jsonify({"error": "Unauthorized facility"}), 403
 
     # Batch facility lookup to prevent N+1 queries
-    fac_q = Facility.query if allowed_ids is None else Facility.query.filter(Facility.id.in_(allowed_ids or [-1]))
+    caller_tenant = get_current_tenant_id(user)
+    if allowed_ids is not None:
+        fac_q = Facility.query.filter(Facility.id.in_(allowed_ids or [-1]))
+    else:
+        fac_q = Facility.query.filter(tenant_matches(Facility.tenant_id, caller_tenant))
     all_facs = {f.id: f for f in fac_q.all()}
+    tenant_fids = list(all_facs.keys()) or [-1]
 
     export_data = []
     status_arg = str(request.args.get("status") or "Verified").strip()
@@ -113,6 +118,8 @@ def export_emissions():
             q1 = q1.filter(db.func.lower(db.func.trim(Emission.status)).in_(statuses))
         if allowed_ids is not None:
             q1 = q1.filter(Emission.facility_id.in_(allowed_ids or [-1]))
+        else:
+            q1 = q1.filter(Emission.facility_id.in_(tenant_fids))
         if year_int:
             q1 = q1.filter(Emission.year == year_int)
         if month_int:
@@ -178,6 +185,8 @@ def export_emissions():
             q2 = q2.filter(db.func.lower(db.func.trim(Scope2Emission.status)).in_(statuses))
         if allowed_ids is not None:
             q2 = q2.filter(Scope2Emission.facility_id.in_(allowed_ids or [-1]))
+        else:
+            q2 = q2.filter(Scope2Emission.facility_id.in_(tenant_fids))
         if year_int:
             q2 = q2.filter(Scope2Emission.year == year_int)
         if month_int:
@@ -236,6 +245,8 @@ def export_emissions():
             q3 = q3.filter(db.func.lower(db.func.trim(Scope3Emission.status)).in_(statuses))
         if allowed_ids is not None:
             q3 = q3.filter(Scope3Emission.facility_id.in_(allowed_ids or [-1]))
+        else:
+            q3 = q3.filter(Scope3Emission.facility_id.in_(tenant_fids))
         if year_int:
             q3 = q3.filter(Scope3Emission.year == year_int)
         if month_int:

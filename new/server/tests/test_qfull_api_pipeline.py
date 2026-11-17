@@ -287,7 +287,7 @@ class TestCombustionTier3Pipeline:
             "c1": c1,
             "c2": c2,
             "c3": c3,
-            "combustion_efficiency": eta_c,
+            "combustion_efficiency": eta_c * 100.0,  # percent (BA-012)
             "hhv": 1020.0,
         }
         factor_data = {"co2": 0, "ch4": 0, "n2o": 0, "unit": "kg/m3", "hhv": 1020.0}
@@ -341,7 +341,7 @@ class TestCombustionTier3Pipeline:
             "unit": "m3",
             "factor_source": "specific",
             "c1": c1,
-            "combustion_efficiency": eta_c,
+            "combustion_efficiency": eta_c * 100.0,  # percent (BA-012)
             "hhv": 1020.0,
         }
         factor_data = {"co2": 0, "ch4": 0, "n2o": 0, "unit": "kg/m3", "hhv": 1020.0}
@@ -1228,7 +1228,7 @@ class TestIndirectSteamPipeline:
             "factor_source": "specific",
             "heat_output": heat_mmbtu,
             "heat_unit": "mmbtu",
-            "boiler_eff": boiler_eff,
+            "boiler_eff": boiler_eff * 100.0,  # percent (BA-012)
             "trans_loss": trans_loss,
             "total_emissions": 0.0,
         }

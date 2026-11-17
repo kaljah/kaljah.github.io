@@ -23,7 +23,7 @@ from .uncertainty import (
     resolve_ef_uncertainty,
 )
 
-MOLAR_VOL_US = 379.3   # scf / lb-mole
+from .units import MOLAR_VOLUME_SCF_PER_LBMOL as MOLAR_VOL_US  # noqa: E402  scf / lb-mole (BA-016)
 MW_CH4 = 16.04
 MW_CO2 = 44.01
 MW_N2O = 44.013
@@ -254,12 +254,13 @@ class CrudeTransportLossesCalculator(BaseCalculator):
         gross_ch4_tonnes = 0.0
         total_toc_tonnes = 0.0
 
-        raw_wt = str(ch4_weight_pct if ch4_weight_pct not in (None, "") else 15.0).replace("%", "").strip()
-        wt_ch4 = float(raw_wt) / 100.0
-        if wt_ch4 < 0:
+        raw_wt_str = str(ch4_weight_pct if ch4_weight_pct not in (None, "") else 15.0)
+        raw_wt = float(raw_wt_str.replace("%", "").strip())
+        if raw_wt < 0:
             raise ValueError(f"ch4_weight_pct cannot be negative: {ch4_weight_pct}")
-        if wt_ch4 > 1.0:
+        if raw_wt > 100.0:
             raise ValueError(f"ch4_weight_pct must be between 0 and 100: {ch4_weight_pct}")
+        wt_ch4 = raw_wt / 100.0
 
         # ----------------------------------------------------------------------
         # Case 1: Loading Losses (Exhibit 6-35)
@@ -337,10 +338,9 @@ class CrudeTransportLossesCalculator(BaseCalculator):
             net_ch4_tonnes = gross_ch4_tonnes * (1.0 - ctrl) + (gross_ch4_tonnes * ctrl * (1.0 - flare_de))
             captured_toc = total_toc_tonnes * ctrl
             combustion_co2_tonnes = captured_toc * 0.85 * (44.01 / 12.011) * flare_ce
-            # TOC heating value: ~20,000 Btu/lb = 44.09245 MMBtu/tonne (API Compendium §3 & Table 3-8)
-            # Factor 0.0001 is kg N2O / MMBtu (Table 4-6 / Eq 5-6)
-            toc_mmbtu = captured_toc * 44.09245
-            flared_n2o = toc_mmbtu * 0.0001 / 1000.0
+            # Eq 5-6: N2O = CO2 x 1.0E-04 / 60 (it was an assumed 20,000 Btu/lb TOC heating value x 1.0E-04,
+            # BA-017: one flare N2O method for every process)
+            flared_n2o = combustion_co2_tonnes * 0.0001 / 60.0
         else:
             net_ch4_tonnes = gross_ch4_tonnes * (1.0 - ctrl)
 

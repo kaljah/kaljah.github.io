@@ -20,7 +20,7 @@ export const PneumaticsForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
         label={
           <>
             {t("Devices")}
-            <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+            <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
           </>
         }
       >
@@ -39,7 +39,7 @@ export const PneumaticsForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
           <div className="input-group">
             <label>
               {t("Bleed rate")}
-              <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+              <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
             </label>
             <div className="grid gap-[10px] [grid-template-columns:1fr_100px] max-[600px]:[grid-template-columns:1fr]">
               <Input
@@ -65,7 +65,7 @@ export const PneumaticsForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
             label={
               <>
                 {t("CH₄ (%)")}
-                <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
               </>
             }
           >
@@ -83,7 +83,7 @@ export const PneumaticsForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
             label={
               <>
                 {t("Hours per year")}
-                <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
               </>
             }
           >

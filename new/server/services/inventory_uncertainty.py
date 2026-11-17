@@ -12,6 +12,7 @@ Records that store only a combined 1-sigma value (legacy) are treated as EF-domi
 the conservative choice. Stored values must be 1-sigma FRACTIONS in [0, 2]; anything else is
 flagged and replaced by the tier default (BUG-043). Results are reported at 95 % (k = 2).
 """
+import logging
 import math
 from collections import defaultdict
 
@@ -20,8 +21,10 @@ from sqlalchemy import func
 from extensions import db
 from models import Emission, Scope2Emission, Scope3Emission
 
+logger = logging.getLogger(__name__)
+
 K95 = 2.0
-MAX_REL_1SIGMA = 2.0
+MAX_REL_1SIGMA = 5.0  # an order-of-magnitude N2O default is 450 % at 1 sigma (IPCC 2006 Vol.2 Table 2.12)
 
 
 def _valid(u):
@@ -29,7 +32,8 @@ def _valid(u):
         return None, False
     try:
         x = float(u)
-    except (TypeError, ValueError):
+    except (TypeError, ValueError) as exc:
+        logger.debug("Ignoring non-numeric uncertainty value %r: %s", u, exc)
         return None, True
     if not math.isfinite(x) or x < 0 or x > MAX_REL_1SIGMA:
         return None, True
@@ -37,7 +41,7 @@ def _valid(u):
 
 
 def default_rel_1sigma(scope, process_type="", calc_method="", factor_source=""):
-    """Normative 1-sigma defaults when nothing valid is stored (IPCC Vol.1 Table 3.1 / API 2021 s2.4)."""
+    """Platform 1-sigma defaults (expert judgement) for a record with no valid stored uncertainty."""
     if scope == 2:
         return 0.05  # grid factor +/-10 % at 95 %
     if scope == 3:
@@ -77,6 +81,7 @@ def _method_tier(factor_source):
 
 
 def inventory_uncertainty(year, allowed_fids=None, facility_id=None, scope="all", statuses=("Verified",), include_gwp_uncertainty=False, scope2_method="location", include_monte_carlo=True):
+    """Computes IPCC Approach 1 (correlated EF) and Approach 2 Monte Carlo inventory uncertainty."""
     from calculations.constants import get_active_gwp
     from calculations.uncertainty import GWP_UNCERTAINTY_1SIGMA
     from services.dashboard_filters import _parse_facility_ids
@@ -104,7 +109,10 @@ def inventory_uncertainty(year, allowed_fids=None, facility_id=None, scope="all"
     tier_s1 = defaultdict(float)
 
     def restrict(q, model):
+        """Applies year, status, non-test, and facility scope filters to an ORM query."""
         q = q.filter(model.year == year, model.status.in_(statuses))
+        if hasattr(model, "is_test"):
+            q = q.filter(model.is_test.is_(False))
         if fids is not None:
             q = q.filter(model.facility_id.in_(fids or [-1]))
         return q
@@ -180,6 +188,7 @@ def inventory_uncertainty(year, allowed_fids=None, facility_id=None, scope="all"
             band_e[_band(uu * K95)] += e
 
     def sigma(key):
+        """Combines correlated emission-factor and independent activity-data variance in quadrature."""
         return math.sqrt(sum(v ** 2 for v in ef_lin[key].values()) + ad_sq[key])
 
     cats = defaultdict(lambda: {"e": 0.0, "var": 0.0, "names": defaultdict(float)})
@@ -226,7 +235,8 @@ def inventory_uncertainty(year, allowed_fids=None, facility_id=None, scope="all"
             ]
             if mc_sources:
                 mc_result = monte_carlo_simulation(mc_sources, iterations=2500, seed=42)
-        except Exception:
+        except Exception as exc:
+            logger.warning("Monte Carlo uncertainty simulation failed for year %s: %s", year, exc, exc_info=True)
             mc_result = None
 
     return {

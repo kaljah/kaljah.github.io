@@ -5,6 +5,7 @@ import { Plus, Trash2, Edit2 } from "lucide-react";
 import PaginationControls from "./PaginationControls";
 import { RecordTable, TabCard, Td, Tr } from "./MdParts";
 import AdvancedSection from "../../components/AdvancedSection";
+import OgmpL4L5Panel, { type OgmpWorkspaceSubTab } from "./OgmpL4L5Panel";
 import { t } from "../../i18n";
 
 export interface OgmpSurveyRecord {
@@ -81,8 +82,10 @@ const OgmpTab: React.FC<OgmpTabProps> = ({
   setOgmpForm,
 }) => {
   const [isAddDrawerOpen, setIsAddDrawerOpen] = useState(false);
+  const [subTab, setSubTab] = useState<"surveys" | OgmpWorkspaceSubTab>("surveys");
 
   const openAdd = () => {
+    setSubTab("surveys");
     setEditingOgmpId(null);
     setOgmpForm({
       activity: "",
@@ -135,12 +138,12 @@ const OgmpTab: React.FC<OgmpTabProps> = ({
     <TabCard
       title={
         <span className="inline-flex flex-wrap items-center gap-2">
-          <span>{t("OGMP 2.0 Site-Level Measurement Surveys")}</span>
-          <Badge tone="warning">{t("Preview / Roadmap")}</Badge>
+          <span>{t("OGMP 2.0 Level 4 / Level 5 Workspace")}</span>
+          <Badge tone="brand">{t("UNEP OGMP 2.0 L4/L5")}</Badge>
         </span>
       }
       description={t(
-        "Manage top-down aerial, satellite, drone LiDAR, and site-level source measurements for UNEP/IMEO Level 4 and Level 5 tracking (preview, reconciliation logic in development).",
+        "Manage UNEP/IMEO Level 1–4 source catalogs, Level 5 site measurement campaigns, 95% CI RSS reconciliation, Y0–Y10 implementation plans, and 95% equity portfolio materiality.",
       )}
       actions={
         <div className="flex items-center gap-2">
@@ -151,6 +154,37 @@ const OgmpTab: React.FC<OgmpTabProps> = ({
         </div>
       }
     >
+      {/* Sub-navigation for Surveys vs full L4/L5 Workspace */}
+      <div className="mb-5 flex flex-wrap gap-1.5 border-b border-border pb-3">
+        {[
+          { id: "surveys", label: t("Legacy Top-Down Surveys") },
+          { id: "sources", label: t("L1–L4 Source Catalog") },
+          { id: "reconcile", label: t("L5 Campaigns & RSS Reconciliation") },
+          { id: "entities", label: t("Entities & 95% Portfolio") },
+          { id: "plan", label: t("Y0–Y10 Plan & Audit") },
+        ].map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            onClick={() => setSubTab(item.id as "surveys" | OgmpWorkspaceSubTab)}
+            className={`px-3 py-1.5 rounded-md text-xs font-semibold border cursor-pointer transition-colors ${
+              subTab === item.id
+                ? "bg-brand-600 text-white border-brand-600"
+                : "bg-surface text-text-secondary border-border hover:text-text"
+            }`}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
+      {subTab !== "surveys" ? (
+        <OgmpL4L5Panel
+          activeSubTab={subTab}
+          facilities={facilities}
+          NON_OG_ACTIVITIES={NON_OG_ACTIVITIES}
+        />
+      ) : (
+      <>
       {/* Table-First View */}
       <RecordTable
         title={
@@ -201,11 +235,11 @@ const OgmpTab: React.FC<OgmpTabProps> = ({
               <Td>
                 <span className="font-medium text-text">{sType}</span>
               </Td>
-              <Td className="text-right font-semibold">
-                {mRate.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 2 })}
+              <Td className="text-end font-semibold">
+                {mRate.toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 2 })}
               </Td>
-              <Td className="text-right font-bold text-success-fg">
-                {parseFloat(String(annualizedTonne)).toLocaleString(undefined, {
+              <Td className="text-end font-bold text-success-fg">
+                {parseFloat(String(annualizedTonne)).toLocaleString("en-US", {
                   minimumFractionDigits: 1,
                   maximumFractionDigits: 1,
                 })}
@@ -406,8 +440,9 @@ const OgmpTab: React.FC<OgmpTabProps> = ({
                   value={ogmpForm.reconciliation_status || "Reconciled"}
                   onChange={(e) => setOgmpForm({ ...ogmpForm, reconciliation_status: e.target.value })}
                 >
-                  <option value="Reconciled">{t("Reconciled (Within ±10% agreement)")}</option>
-                  <option value="Discrepancy Detected">{t("Discrepancy Detected (> 10% deviation)")}</option>
+                  <option value="Reconciled">{t("Reconciled (Within ±20% agreement)")}</option>
+                  <option value="Discrepancy Detected">{t("Discrepancy Detected (> 20% deviation)")}</option>
+
                   <option value="Investigation Pending">{t("Investigation Pending")}</option>
                   <option value="Under Review">{t("Under Review")}</option>
                 </NativeSelect>
@@ -425,6 +460,8 @@ const OgmpTab: React.FC<OgmpTabProps> = ({
           </AdvancedSection>
         </form>
       </Sheet>
+      </>
+      )}
     </TabCard>
   );
 };

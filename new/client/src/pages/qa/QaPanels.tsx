@@ -108,7 +108,7 @@ export const QaKpis: React.FC<QaKpisProps> = ({ diagnostics, uncertainty, anomal
           {t("Rejected:")}{" "}<strong className="text-danger-fg">{anomalies.rejected}</strong>
         </span>
       </Tile>
-      <Tile icon={Database} label={t("Inventory Coverage")} tone="bg-info-bg text-info-fg" value={totalRecords.toLocaleString()} unit="entries">
+      <Tile icon={Database} label={t("Inventory Coverage")} tone="bg-info-bg text-info-fg" value={totalRecords.toLocaleString("en-US")} unit="entries">
         <span>
           {t("Active Facilities:")}{" "}<strong>{activeFacilities}/{totalFacilities}</strong>
         </span>
@@ -121,14 +121,14 @@ export const QaKpis: React.FC<QaKpisProps> = ({ diagnostics, uncertainty, anomal
 };
 
 const IMPACT_TONE: Record<string, BadgeTone> = { critical: "danger", high: "danger", medium: "warning", low: "info" };
-const FINDING_RULE: Record<string, string> = { critical: "border-l-red-500", warning: "border-l-amber-500", info: "border-l-blue-500" };
+const FINDING_RULE: Record<string, string> = { critical: "border-s-red-500", warning: "border-s-amber-500", info: "border-s-blue-500" };
 const FINDING_ICON: Record<string, React.ReactNode> = {
   critical: <AlertCircle className="size-4 text-danger-fg" aria-hidden="true" />,
   warning: <AlertTriangle className="size-4 text-warning-fg" aria-hidden="true" />,
   info: <Shield className="size-4 text-info-fg" aria-hidden="true" />,
 };
 
-const th = "border-b border-border bg-ink-50 px-3 py-2 text-left text-xs font-bold uppercase tracking-wide text-text-secondary";
+const th = "border-b border-border bg-ink-50 px-3 py-2 text-start text-xs font-bold uppercase tracking-wide text-text-secondary";
 const td = "border-b border-ink-100 px-3 py-2 text-sm text-text";
 
 export interface DiagnosticItem {
@@ -148,9 +148,9 @@ const SampleTable: React.FC<{ item: DiagnosticItem }> = ({ item }) => {
     <div className="mt-1 flex flex-col gap-2 rounded-md border border-border bg-surface p-3">
       <div className="flex flex-wrap items-center justify-between gap-1.5 text-sm text-text-secondary">
         <span className="font-semibold text-text">
-          {t("Sample Affected Entries (Showing")}{" "}{records.length}{" "}{t("of")}{" "}{item.affected_count})
+          {t("Sample affected entries (showing {{shown}} of {{total}})", { shown: records.length, total: item.affected_count })}
         </span>
-        <span>{t("Direct correction available via the “")}{item.action || t("Resolve")}{t("” button.")}</span>
+        <span>{t("Direct correction available via the “{{action}}” button.", { action: item.action ? t(item.action) : t("Resolve") })}</span>
       </div>
       <div className="max-h-60 overflow-auto rounded-sm border border-ink-100">
         <table className="w-full border-collapse">
@@ -183,9 +183,9 @@ const SampleTable: React.FC<{ item: DiagnosticItem }> = ({ item }) => {
                       <Badge tone="info">{s.process_type || s.process || "—"}</Badge>
                     </td>
                     <td className={td}>
-                      {s.fuel && <span className="mr-2">{t("Fuel:")}{" "}<strong>{s.fuel}</strong></span>}
+                      {s.fuel && <span className="me-2">{t("Fuel:")}{" "}<strong>{s.fuel}</strong></span>}
                       {s.quantity !== undefined && <span>{t("Qty:")}{" "}<strong>{s.quantity === null ? t("None") : s.quantity}</strong></span>}
-                      {s.co2e !== undefined && <span className="ml-2">{t("CO₂e:")}{" "}<strong>{s.co2e === null ? t("None") : s.co2e}</strong></span>}
+                      {s.co2e !== undefined && <span className="ms-2">{t("CO₂e:")}{" "}<strong>{s.co2e === null ? t("None") : s.co2e}</strong></span>}
                     </td>
                   </>
                 )}
@@ -209,7 +209,7 @@ interface FindingCardProps {
 const FindingCard: React.FC<FindingCardProps> = ({ item, type, expanded, onToggle, onAction }) => {
   const hasSamples = Boolean(item.sample_records && item.sample_records.length > 0);
   return (
-    <div className={cn("qa-issue-item flex flex-col gap-3 rounded-md border border-border border-l-4 bg-surface px-4 py-3.5", FINDING_RULE[type], type)}>
+    <div className={cn("qa-issue-item flex flex-col gap-3 rounded-md border border-border border-s-4 bg-surface px-4 py-3.5", FINDING_RULE[type], type)}>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex min-w-0 flex-col gap-1">
           <div className="flex flex-wrap items-center gap-2.5">
@@ -267,7 +267,7 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({ healthScore,
             <h3 className="m-0 text-lg font-bold text-text">{t("Inventory Completeness by Attribute")}</h3>
             <p className="m-0 mt-1 text-sm text-text-secondary">{t("Evaluates key GHG Protocol and ISO 14064 required fields across all reported records.")}</p>
           </div>
-          <div className="text-right">
+          <div className="text-end">
             <span className={cn("text-2xl font-extrabold", h.text)}>{completeness}%</span>
             <div className="text-xs font-semibold uppercase text-text-secondary">{t("Overall Completeness")}</div>
           </div>
@@ -328,8 +328,8 @@ export const UncertaintyPanel: React.FC<UncertaintyPanelProps> = ({ uncertainty 
         <div
           key={key}
           className={cn(
-            "flex flex-col gap-3 rounded-md border border-border bg-surface p-5 border-l-2",
-            key === "scope1" ? "border-l-emerald-600" : key === "scope2" ? "border-l-blue-600" : "border-l-brand-500"
+            "flex flex-col gap-3 rounded-md border border-border bg-surface p-5 border-s-2",
+            key === "scope1" ? "border-s-emerald-600" : key === "scope2" ? "border-s-blue-600" : "border-s-brand-500"
           )}
         >
           <div className="flex items-center justify-between">
@@ -338,7 +338,7 @@ export const UncertaintyPanel: React.FC<UncertaintyPanelProps> = ({ uncertainty 
           </div>
           <div className="text-2xl font-extrabold text-text">±{((uncertainty[key] || 0) * 100).toFixed(2)}%</div>
           <div className="text-sm text-text-secondary">
-            {t("Total Audited:")}{" "}<strong className="text-text">{(uncertainty[total] || 0).toLocaleString(undefined, { maximumFractionDigits: 1 })}{" "}{t("tCO₂e")}</strong>
+            {t("Total Audited:")}{" "}<strong className="text-text">{(uncertainty[total] || 0).toLocaleString("en-US", { maximumFractionDigits: 1 })}{" "}{t("tCO₂e")}</strong>
           </div>
           <div className="border-t border-ink-100 pt-2 text-xs text-text-secondary">{note}</div>
         </div>

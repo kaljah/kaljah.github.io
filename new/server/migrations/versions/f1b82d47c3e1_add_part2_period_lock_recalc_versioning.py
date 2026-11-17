@@ -118,4 +118,5 @@ def upgrade():
 
 
 def downgrade():
+    # Period locks and recalculation history are audit evidence: a downgrade keeps the tables and columns.
     pass

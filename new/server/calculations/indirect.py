@@ -90,7 +90,11 @@ class IndirectSteamCalculator(BaseCalculator):
                 return default, True
             s = str(val).strip()
             v = float(s.replace("%", "").strip())
-            return (v / 100.0 if "%" in s else v), False
+            if "%" in s:
+                v = v / 100.0
+            if not (0 <= v <= 1):
+                raise ValueError(f"Boiler efficiency ({val}) and transmission loss are fractions between 0 and 1")
+            return v, False
 
         # API Compendium (November 2021) Section 8.1.5 & Exhibit 8.3 (pp. 8-17 to 8-19):
         # 92% boiler efficiency and 10% steam transport loss -> 82% net efficiency (user-configurable).
@@ -227,9 +231,17 @@ class CogenAllocationCalculator(BaseCalculator):
             # Energy-content allocation: shares are the raw energy outputs in MMBtu.
             heat_share, power_share = heat_mmbtu, power_mmbtu
             denominator = heat_share + power_share
+        is_power = str(kwargs.get("purchased_stream") or kwargs.get("output_type") or "").lower() in ("power", "electricity", "electric")
+        alloc_ratio = (power_share / denominator) if is_power else (heat_share / denominator) if denominator > 0 else 0.0
+
         allocated_heat = heat_share / denominator * total_emissions if denominator > 0 else 0.0  # no heat bought
         allocated_power = power_share / denominator * total_emissions if denominator > 0 else 0.0
-        allocated_val = allocated_power if str(kwargs.get("purchased_stream") or kwargs.get("output_type") or "").lower() in ("power", "electricity", "electric") else allocated_heat
+        allocated_val = allocated_power if is_power else allocated_heat
+
+        ch4_in = kwargs.get("total_ch4") if kwargs.get("total_ch4") is not None else kwargs.get("ch4")
+        n2o_in = kwargs.get("total_n2o") if kwargs.get("total_n2o") is not None else kwargs.get("n2o")
+        allocated_ch4 = alloc_ratio * float(ch4_in) if ch4_in is not None else 0.0
+        allocated_n2o = alloc_ratio * float(n2o_in) if n2o_in is not None else 0.0
 
         _unc_dict = uncertainties or {}
         _tier = resolve_tier(_unc_dict.get("_factor_source", "default"))
@@ -240,10 +252,26 @@ class CogenAllocationCalculator(BaseCalculator):
             process_category="indirect",
             gas="co2",
         )
+        ch4_res = propagate_uncertainty(
+            allocated_ch4,
+            resolve_ef_uncertainty("indirect", "ch4", _tier, _unc_dict.get("ch4")),
+            tier=_tier,
+            process_category="indirect",
+            gas="ch4",
+        ) if allocated_ch4 > 0 else None
+        n2o_res = propagate_uncertainty(
+            allocated_n2o,
+            resolve_ef_uncertainty("indirect", "n2o", _tier, _unc_dict.get("n2o")),
+            tier=_tier,
+            process_category="indirect",
+            gas="n2o",
+        ) if allocated_n2o > 0 else None
 
         return self.format_result(
             co2=co2_res,
-            total_co2e=calculate_co2e(co2=allocated_val),
+            ch4=ch4_res,
+            n2o=n2o_res,
+            total_co2e=calculate_co2e(co2=allocated_val, ch4=allocated_ch4, n2o=allocated_n2o, gwp_dict=kwargs.get("gwp_dict")),
             inputs={
                 "total_emissions": total_emissions,
                 "heat_output": heat_output,
@@ -254,6 +282,8 @@ class CogenAllocationCalculator(BaseCalculator):
                 "allocated_heat_tonnes": allocated_heat,
                 "allocated_power_tonnes": allocated_power,
                 "allocated_tonnes": allocated_val,
+                "allocated_ch4_tonnes": allocated_ch4,
+                "allocated_n2o_tonnes": allocated_n2o,
                 "allocation_method": f"api2021_cogen_{method}",
             },
         )

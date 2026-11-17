@@ -297,9 +297,8 @@ class CompletionFlowbackCalculator(BaseCalculator):
                 total_co2 = co2_adjusted + combusted_co2
                 total_ch4 = unburnt_ch4
 
-                scf_flared = entry["scf"] * num_events
-                flared_mmbtu = (scf_flared * hhv_val) / 1_000_000.0
-                flared_n2o = (flared_mmbtu * n2o_ef_val) / 1000.0
+                flared_n2o = (combusted_co2 * 0.0001 / 60.0 if ef_n2o is None  # Eq 5-6: N2O follows the CO2 (BA-017)
+                              else entry["scf"] * num_events * hhv_val / 1_000_000.0 * n2o_ef_val / 1000.0)
             else:
                 total_ch4 = ch4_adjusted
                 total_co2 = co2_adjusted
@@ -518,8 +517,8 @@ class CompletionFlowbackCalculator(BaseCalculator):
             flared_combustion_co2 += (flared_m3 * c2 * 2.0 * CONVERSIONS["density_co2"] / 1000.0) * flare_ce_used
         flared_total_co2 = flared_native_co2_tonnes + flared_combustion_co2
 
-        flared_mmbtu = (flared_scf * hhv_val) / 1_000_000.0
-        flared_n2o = (flared_mmbtu * n2o_ef_val) / 1000.0 if flared_scf > 0 else 0.0
+        flared_n2o = 0.0 if flared_scf <= 0 else (flared_total_co2 * 0.0001 / 60.0 if ef_n2o is None  # Eq 5-6 (BA-017)
+                                                  else flared_scf * hhv_val / 1_000_000.0 * n2o_ef_val / 1000.0)
 
         # 3. Aggregated Totals
         total_ch4 = vented_ch4_tonnes + flared_unburnt_ch4

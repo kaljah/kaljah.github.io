@@ -9,7 +9,7 @@ from calculations.vented_exploration import CoalSeamDrillingCalculator, WellTest
 from calculations.vented_mud import MudDegassingCalculator
 from calculations.vented_production_wells import WorkoverWithoutFracturingCalculator
 
-from compendium_exhibits_support import REL_MW, assert_printed, run_scope1, tonnes
+from compendium_exhibits_support import CONSTANTS_SHIFT, REL_MW, assert_printed, run_scope1, tonnes
 
 GWP = {"CO2": 1.0, "CH4": 28.0, "N2O": 265.0}
 
@@ -305,14 +305,14 @@ def test_exhibit_6_38_fccu_coke_burn_and_co_boiler():
     CO2 408,348 (regenerator) and 46,516 (boiler), CH4 12.04 + 0.88, N2O 2.40 + 0.86 tonnes/yr."""
     res = _fccu(approach="coke_burn", coke_burn_rate_tonnes_yr=119750.0, carbon_content_fraction=0.93)
     inputs = res["inputs"]
-    assert_printed(inputs["coke_burn_co2"], "408,348", rel=0.0002, what="coke burn CO2")
+    assert_printed(inputs["coke_burn_co2"], "408,348", rel=0.0002, what="coke burn CO2", gas="co2_per_c")
     assert_printed(inputs["supplemental_co2"], "46,516", rel=0.0002, what="boiler CO2")
     # Eq 6-38 scales the CO2 by EF_CH4/EF_CO2 of petroleum coke: the engine's ratio is 0.34 % below the exhibit's
     assert_printed(inputs["coke_burn_ch4"], "12.04", rel=4e-3, what="coke burn CH4")
     assert_printed(inputs["coke_burn_n2o"], "2.40", rel=0.0002, what="coke burn N2O")
     # the summary table prints a total of 454,149, but its own parts add up to 408,348 + 46,516 = 454,864 (exhibit
     # arithmetic slip); the sum of the printed parts is what is checked
-    assert tonnes(res, "co2") == pytest.approx(408_348 + 46_516, rel=1e-4)
+    assert tonnes(res, "co2") == pytest.approx(408_348 * CONSTANTS_SHIFT["co2_per_c"] + 46_516, rel=1e-4)
 
 
 def test_exhibit_6_38_fccu_flue_gas_k_factor_approach():
@@ -321,7 +321,7 @@ def test_exhibit_6_38_fccu_flue_gas_k_factor_approach():
     uses for the other two approaches (2.40 / 408,348 and 2.47 / 419,859) gives 2.42 for 411,862, which is what the
     engine returns; 2.45 is an exhibit slip and is not asserted."""
     res = _fccu(approach="k1_k2_k3", flue_gas_rate_dscm_min=2150.0, co2_pct=11.0, co_pct=9.0, operating_hours=8760.0)
-    assert_printed(res["inputs"]["coke_burn_co2"], "411,862", rel=0.0002, what="coke burn CO2")
+    assert_printed(res["inputs"]["coke_burn_co2"], "411,862", rel=0.0002, what="coke burn CO2", gas="co2_per_c")
     assert_printed(res["inputs"]["coke_burn_ch4"], "12.14", rel=4e-3, what="coke burn CH4")
     assert_printed(res["inputs"]["coke_burn_n2o"], "2.42", rel=0.0002, what="coke burn N2O (ratio of the other two rows)")
 

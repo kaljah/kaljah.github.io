@@ -37,7 +37,10 @@ class DashboardFilter:
         self.status = (args.get("status") or "all").lower().strip()
 
     def scope(self, q, model):
-        """Facility scope and year."""
+        """Facility scope and year, without test rows (as the dashboard; BA-011)."""
+        from services.dashboard_filters import exclude_test_rows
+
+        q = exclude_test_rows(q, model)
         if self.allowed_fids is not None:
             q = q.filter(model.facility_id.in_(self.allowed_fids or [-1]))
         if self.year is not None:

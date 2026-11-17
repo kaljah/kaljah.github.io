@@ -172,7 +172,7 @@ export function DataTable<TData>({
       {/* Table Container with relative wrapper for scroll shadow cues */}
       <div className="relative">
         {canScrollRight && (
-          <div className="flex items-center justify-end pb-1 pr-1 lg:hidden">
+          <div className="flex items-center justify-end pb-1 pe-1 lg:hidden">
             <span className="inline-flex items-center gap-1 text-[11px] font-medium text-text-secondary">
               <span>{t("Swipe table horizontally")}</span>
               <ArrowRight className="size-3 text-brand-600" aria-hidden="true" />
@@ -187,13 +187,13 @@ export function DataTable<TData>({
           {canScrollLeft && (
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-y-0 left-0 z-25 w-6 bg-gradient-to-r from-ink-900/10 to-transparent max-lg:block hidden"
+              className="pointer-events-none absolute inset-y-0 start-0 z-25 w-6 bg-gradient-to-r from-ink-900/10 to-transparent max-lg:block hidden"
             />
           )}
           {canScrollRight && (
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-y-0 right-0 z-25 w-6 bg-gradient-to-l from-ink-900/10 to-transparent max-lg:block hidden"
+              className="pointer-events-none absolute inset-y-0 end-0 z-25 w-6 bg-gradient-to-l from-ink-900/10 to-transparent max-lg:block hidden"
             />
           )}
 
@@ -219,10 +219,10 @@ export function DataTable<TData>({
                         className={cn(
                           "sticky top-0 z-(--z-sticky) whitespace-nowrap border-b border-border bg-ink-50 text-xs font-medium uppercase tracking-wide text-text-secondary",
                           cell,
-                          meta.numeric ? "text-right" : "text-left",
-                          isPinnedLeft && "sticky left-0 z-30 bg-ink-50 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.12)]",
-                          isPinnedMobileOnly && "max-lg:sticky max-lg:left-0 max-lg:z-30 max-lg:bg-ink-50 max-lg:shadow-[2px_0_5px_-2px_rgba(0,0,0,0.12)]",
-                          isPinnedRight && "sticky right-0 z-30 bg-ink-50 shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.12)]",
+                          meta.numeric ? "text-end" : "text-start",
+                          isPinnedLeft && "sticky start-0 z-30 bg-ink-50 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.12)]",
+                          isPinnedMobileOnly && "max-lg:sticky max-lg:start-0 max-lg:z-30 max-lg:bg-ink-50 max-lg:shadow-[2px_0_5px_-2px_rgba(0,0,0,0.12)]",
+                          isPinnedRight && "sticky end-0 z-30 bg-ink-50 shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.12)]",
                         )}
                       >
                         {header.isPlaceholder ? null : canSort ? (
@@ -244,7 +244,7 @@ export function DataTable<TData>({
                         ) : (
                           <>
                             {flexRender(header.column.columnDef.header, header.getContext())}
-                            {meta.unit && <span className="ml-1 normal-case">({meta.unit})</span>}
+                            {meta.unit && <span className="ms-1 normal-case">({meta.unit})</span>}
                           </>
                         )}
                       </th>
@@ -293,10 +293,10 @@ export function DataTable<TData>({
                             className={cn(
                               "border-b border-ink-100 text-text transition-colors",
                               cell,
-                              meta.numeric && "text-right tabular-nums",
-                              isPinnedLeft && "sticky left-0 z-10 bg-surface shadow-[2px_0_5px_-2px_rgba(0,0,0,0.12)] group-hover:bg-selected-bg group-focus:bg-selected-bg",
-                              isPinnedMobileOnly && "max-lg:sticky max-lg:left-0 max-lg:z-10 max-lg:bg-surface max-lg:shadow-[2px_0_5px_-2px_rgba(0,0,0,0.12)] group-hover:bg-selected-bg group-focus:bg-selected-bg",
-                              isPinnedRight && "sticky right-0 z-10 bg-surface shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.12)] group-hover:bg-selected-bg group-focus:bg-selected-bg",
+                              meta.numeric && "text-end tabular-nums",
+                              isPinnedLeft && "sticky start-0 z-10 bg-surface shadow-[2px_0_5px_-2px_rgba(0,0,0,0.12)] group-hover:bg-selected-bg group-focus:bg-selected-bg",
+                              isPinnedMobileOnly && "max-lg:sticky max-lg:start-0 max-lg:z-10 max-lg:bg-surface max-lg:shadow-[2px_0_5px_-2px_rgba(0,0,0,0.12)] group-hover:bg-selected-bg group-focus:bg-selected-bg",
+                              isPinnedRight && "sticky end-0 z-10 bg-surface shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.12)] group-hover:bg-selected-bg group-focus:bg-selected-bg",
                             )}
                           >
                             {flexRender(c.column.columnDef.cell, c.getContext())}

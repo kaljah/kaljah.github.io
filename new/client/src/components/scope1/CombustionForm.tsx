@@ -152,7 +152,7 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
             <div className="input-group mb-[0px]!">
               <label className="block text-sm font-medium text-text mb-1.5">
                 HHV
-                <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
               </label>
               <Input
                 id="hhv-input"
@@ -188,7 +188,7 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
             <div className="input-group mt-[10px]! mb-[0px]!">
               <label className="block text-sm font-medium text-text mb-1.5">
                 {t("Combustion efficiency")}
-                <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
               </label>
               <div className="flex! gap-[8px]! items-center!">
                 <Input
@@ -230,7 +230,7 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
               <div className="input-group mb-[0px]!">
                 <label className="block text-sm font-medium text-text mb-1.5">
                   {t("CH₄ (%)")}
-                  <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                  <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
                 </label>
                 <Input
                   id="flare-ch4-input"

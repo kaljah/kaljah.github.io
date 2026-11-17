@@ -159,13 +159,15 @@ def test_refinery_flare_destruction_for_downstream_facilities(monkeypatch):
     catalog = {"ch4": 2.0, "combustion_efficiency_ch4": 0.98}
     assert fd.compute_emissions({"process_type": "Flaring", "facility_segment": "Downstream"}, dict(catalog)) == "ok"
     payload, factor = seen[-1]
-    assert payload["destruction_efficiency"] == 0.995
+    assert payload["destruction_efficiency"] == pytest.approx(99.5)  # percent, as an entered efficiency (BA-012)
     assert factor["ch4"] == pytest.approx(0.5) and factor["combustion_efficiency_ch4"] == 0.995
     fd.compute_emissions({"process_type": "flaring", "facility_segment": "downstream"}, {"co2": 1})
     assert seen[-1][1] == {"co2": 1}                                                             # no catalog CH4
     nested = {"process_type": "flaring", "facility_segment": "downstream", "calc_inputs": {"flaring": {"flare_eff": 99}}}
     fd.compute_emissions(nested, dict(catalog))
-    assert "destruction_efficiency" not in seen[-1][0] and seen[-1][1] == catalog               # entered: kept
+    # an entered efficiency is applied to the catalog row (BA-001: it was ignored): 1 % residual vs the row's 2 %
+    assert "destruction_efficiency" not in seen[-1][0]
+    assert seen[-1][1]["ch4"] == pytest.approx(1.0) and seen[-1][1]["combustion_efficiency_ch4"] == pytest.approx(0.99)
     fd.compute_emissions({"process_type": "flaring", "facility_segment": "upstream"}, dict(catalog))
     assert seen[-1][1] == catalog
 

@@ -101,9 +101,10 @@ def sheet_installations(wb, ctx):
                 "CBAM Communication Template for Installations outside the EU (Regulation (EU) 2023/956 & "
                 "Implementing Reg (EU) 2023/1773)")
     fields = [
-        ("Reporting Period (Start Date)", f"{ctx.rep_year_str}-01-01"),
-        ("Reporting Period (End Date)", f"{ctx.rep_year_str}-12-31"),
+        ("Reporting Period (Start Date)", ctx.period_start),
+        ("Reporting Period (End Date)", ctx.period_end),
         ("Reporting Year", ctx.rep_year_str),
+        ("Reporting Quarter", getattr(ctx, "quarter", "Q1-Q4")),
         ("Name of the Operator", ctx.company_name),
         ("Unique Operator Identifier", ctx.op_id),
         ("Country of Operator", f"{ctx.op_country} ({ctx.op_iso})"),
@@ -112,7 +113,7 @@ def sheet_installations(wb, ctx):
         ("Role of Declarant", "Non-EU Installation Operator / Direct Exporter"),
         ("EU ETS Benchmark Reference", "Commission Implementing Regulation (EU) 2021/447"),
         ("Applicable Methodology", "Annex III of Implementing Regulation (EU) 2023/1773 (Calculation-based / Activity-based)"),
-        ("Accreditation Standard for Verifier", "ISO 14065 / ISO 14064-3 Reasonable Assurance"),
+        ("Declared Assurance Level", ctx.assurance_level + (f" ({ctx.assurance_provider})" if getattr(ctx, "assurance_provider", "") else "")),
         ("Operating Facilities in Scope", len(ctx.facilities)),
         ("CBAM Export Records Count", len(ctx.records)),
     ]
@@ -373,11 +374,12 @@ def sheet_assurance(wb, ctx, sha256):
                 "Official operator declaration and immutable SHA-256 seal under Regulation (EU) 2023/956 Art. 8")
     rows = [
         ("Assurance Standard", "ISO 14064-3 / Commission Implementing Regulation (EU) 2023/1773 Article 18"),
+        ("Declared Assurance Level", ctx.assurance_level + (f" ({ctx.assurance_provider})" if getattr(ctx, "assurance_provider", "") else "")),
         ("Cryptographic Data Fingerprint (SHA-256)", sha256),
         ("Audit Log Record", "The fingerprint is recorded in the platform audit log (REPORT entry) when exported"),
         ("Export Timestamp (UTC)", ctx.now_utc.strftime("%Y-%m-%d %H:%M:%S UTC")),
         ("Exporting Organization", ctx.safe(ctx.company_name)),
-        ("Lead Environmental Assessor", f"{ctx.assessor_name} ({ctx.assessor_email}) - Role: {ctx.user.role}"),
+        ("Lead Environmental Assessor", f"{ctx.assessor_name} ({ctx.assessor_email}) - Role: {getattr(ctx.user, 'role', 'Assessor') if ctx.user else 'Assessor'}"),
         ("Declared Installation Sites", len(ctx.facilities)),
         ("Declared CBAM Export Records", len(ctx.records)),
         ("Legal Certification Clause", CERTIFICATION),

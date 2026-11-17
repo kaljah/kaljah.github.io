@@ -26,6 +26,7 @@ from models import Emission, Facility, OgmpSurvey, ProductionData, Scope2Emissio
 from services.dashboard_filters import (apply_scope, gas_volume_m3, horizon_delta, production_boe,
                                         production_gas_m3, production_oil_bbl, source_category, statuses,
                                         SCF_PER_BOE)
+from services.methane_intensity import ngsi_ch4_content
 from services.ogmp import compute_facility_ogmp_level, ogmp_level_for
 
 from calculations.units import CONVERSIONS as _CONV
@@ -67,23 +68,22 @@ def _blank():
             "ogmp_ch4_weights": {1: 0.0, 2: 0.0, 3: 0.0, 4: 0.0},
             "ogmp_co2e_weights": {1: 0.0, 2: 0.0, 3: 0.0, 4: 0.0},
             "boe": 0.0, "gas_m3": 0.0, "oil_bbl": 0.0, "gas_mscf": 0.0, "has_prod": False,
-            "prod_unknown_units": 0, "top_down": None}
+            "prod_unknown_units": 0, "top_down": None,
+            # marketed-gas deductions (services.methane_intensity): production data (None = not entered) and the
+            # emission-record fallbacks
+            "p_terms": {"flared": None, "vented": None, "fuel": None, "shrinkage": None},
+            "vented_m3": 0.0, "fuel_m3": 0.0, "marketed_m3": 0.0, "marketed_basis": None}
 
 
-def intensity_cells(years=None, facility_id=None, activity=None, division=None, allowed_fids=None, segment=None,
-                    include_pending=False, scope2_method="location"):
-    """{(facility_id, year): cell} for the requested years (None = all years)."""
-    scope = dict(allowed_fids=allowed_fids, facility_id=facility_id, activity=activity, division=division,
-                 segment=segment)
-    st = statuses(include_pending)
-    cells = defaultdict(_blank)
+def _year_filter(q, model, years):
+    q = q.filter(model.year.isnot(None))
+    return q.filter(model.year.in_(years)) if years is not None else q
 
-    def yfilter(q, model):
-        q = q.filter(model.year.isnot(None))
-        return q.filter(model.year.in_(years)) if years is not None else q
 
+def _add_production(cells, scope, years):
+    """BOE, gas and oil of each facility-year, each row with its own unit conversion."""
     # production (row-level so every row gets its own unit conversion; column projection avoids full ORM hydration)
-    prod_rows = yfilter(apply_scope(ProductionData.query, ProductionData, **scope), ProductionData).with_entities(
+    prod_rows = _year_filter(apply_scope(ProductionData.query, ProductionData, **scope), ProductionData, years).with_entities(
         ProductionData.id,
         ProductionData.facility_id,
         ProductionData.year,
@@ -94,9 +94,24 @@ def intensity_cells(years=None, facility_id=None, activity=None, division=None, 
         ProductionData.gas_amount,
         ProductionData.gas_unit,
         ProductionData.gross_gas_mmsm3,
+        # Net-of-reinjected columns: production_gas_m3() and production_boe() subtract reinjected
+        # gas so that intensity denominators reflect marketed production, not gross extraction.
+        ProductionData.injected_gas_mmsm3,
+        ProductionData.gas_without_injected_mmsm3,
+        ProductionData.total_production_no_injected_mmboe,
+        ProductionData.flared_gas_mmsm3,
+        ProductionData.vented_gas_mmsm3,
+        ProductionData.fuel_gas_consumed_mmsm3,
+        ProductionData.ngl_shrinkage_mmsm3,
     ).all()
+    from services.methane_intensity import PRODUCTION_COLUMNS
+
     for p in prod_rows:
         c = cells[(p.facility_id, p.year)]
+        for term, col in PRODUCTION_COLUMNS.items():
+            v = getattr(p, col, None)
+            if v is not None:
+                c["p_terms"][term] = (c["p_terms"][term] or 0.0) + float(v) * 1e6
         boe = production_boe(p)
         gas = production_gas_m3(p)
         oil_b = production_oil_bbl(p)
@@ -126,9 +141,12 @@ def intensity_cells(years=None, facility_id=None, activity=None, division=None, 
         if oil_b is not None:
             c["oil_bbl"] += oil_b
 
+
+def _add_scope1(cells, scope, st, years):
+    """Scope 1 gases, CH4 split, OGMP weights and flaring volume of each facility-year."""
     # scope 1 (SQL GROUP BY cell + process_type + OGMP classification, plus grouped flaring volume)
     # Strictly exclude rejected records (both status column and [Rejected] qa_flags)
-    s1_base = yfilter(apply_scope(Emission.query, Emission, **scope), Emission).filter(Emission.status.in_(st))
+    s1_base = _year_filter(apply_scope(Emission.query, Emission, **scope), Emission, years).filter(Emission.status.in_(st))
     if any("rejected" in str(s).lower() for s in st):
         s1_base = s1_base.filter(~Emission.status.ilike("%rejected%"))
     s1_base = s1_base.filter(
@@ -225,7 +243,44 @@ def intensity_cells(years=None, facility_id=None, activity=None, division=None, 
                 c = cells[(fid, yr)]
                 c["flaring_ledger_m3"] += vol
                 c["flaring_m3"] += vol
+    _add_vented_and_fuel_gas(cells, s1_base)
 
+
+def _add_vented_and_fuel_gas(cells, s1_base):
+    """Gas vented (venting records entered as a gas volume) and natural gas burned on site (combustion records of
+    a natural-gas fuel, by volume or energy at 1,020 Btu/scf) of each facility-year: the emission-record
+    fallbacks of the marketed-gas deductions (services.methane_intensity)."""
+    from calculations.units import NG_HHV_BTU_PER_SCF, UnitError, unit_dimension
+
+    rows = (
+        s1_base.filter(Emission.quantity.isnot(None))
+        .with_entities(Emission.facility_id, Emission.year, Emission.month, Emission.process_type,
+                       Emission.fuel_type, Emission.unit, func.coalesce(func.sum(Emission.quantity), 0.0))
+        .group_by(Emission.facility_id, Emission.year, Emission.month, Emission.process_type, Emission.fuel_type,
+                  Emission.unit)
+        .all()
+    )
+    for fid, yr, mo, pt, fuel, unit, qty in rows:
+        cat = source_category(pt)
+        qty = float(qty or 0.0)
+        if not qty or cat not in ("vented", "combustion"):
+            continue
+        if cat == "combustion" and "natural gas" not in str(fuel or "").lower() and "fuel gas" not in str(fuel or "").lower():
+            continue
+        vol = gas_volume_m3(qty, unit, yr, mo)
+        if vol is None and cat == "combustion":
+            try:
+                dim, mj = unit_dimension(unit)
+            except UnitError:
+                dim, mj = None, None
+            if dim == "energy":
+                vol = qty * mj / 1055.05585262 * 1e6 / NG_HHV_BTU_PER_SCF * 0.028316846592  # MJ -> Btu -> scf -> m3
+        if vol:
+            cells[(fid, yr)]["vented_m3" if cat == "vented" else "fuel_m3"] += vol
+
+
+def _add_scope2(cells, scope, st, years, scope2_method):
+    """Scope 2 of each facility-year at GWP-100 and GWP-20, location- or market-based."""
     # Scope 2 dual reporting (location-based vs market-based per GHG Protocol), per record at both GWP
     # horizons: the GWP-20 intensity added Scope 2 at GWP-100 (bug hunt 2026-10-15 #18)
     from services.dashboard_filters import gwp_pair
@@ -237,32 +292,44 @@ def intensity_cells(years=None, facility_id=None, activity=None, division=None, 
     gwp_diff = (c20 - c100, n20 - n100)
     s2_grid_cache = {}
     q2 = (
-        yfilter(apply_scope(Scope2Emission.query, Scope2Emission, **scope), Scope2Emission)
+        _year_filter(apply_scope(Scope2Emission.query, Scope2Emission, **scope), Scope2Emission, years)
         .filter(Scope2Emission.status.in_(st))
         .with_entities(
             Scope2Emission.facility_id,
             Scope2Emission.year,
             Scope2Emission.source_type,
             Scope2Emission.grid_region,
-            Scope2Emission.electricity_kwh,
-            Scope2Emission.co2e,
-            Scope2Emission.co2e_market_based,
+            Scope2Emission.co2e_market_based.is_(None),
+            func.coalesce(func.sum(Scope2Emission.electricity_kwh), 0.0),
+            func.coalesce(func.sum(Scope2Emission.co2e), 0.0),
+            func.coalesce(func.sum(Scope2Emission.co2e_market_based), 0.0),
         )
     )
-    for fid, yr, src_type, grid_region, kwh, co2e, co2e_mkt in q2.all():
+    q2 = q2.group_by(
+        Scope2Emission.facility_id,
+        Scope2Emission.year,
+        Scope2Emission.source_type,
+        Scope2Emission.grid_region,
+        Scope2Emission.co2e_market_based.is_(None),
+    )
+    for fid, yr, src_type, grid_region, mkt_is_none, kwh, co2e, co2e_mkt in q2.all():
         c = cells[(fid, yr)]
         co2e_f = float(co2e or 0)
-        mkt_f = float(co2e_mkt if co2e_mkt is not None else co2e or 0)
+        mkt_in = None if mkt_is_none else float(co2e_mkt or 0)
+        mkt_f = co2e_f if mkt_is_none else mkt_in
         loc20, mkt20 = record_totals_fields(
-            src_type, grid_region, kwh, co2e, co2e_mkt, "20",
+            src_type, grid_region, kwh, co2e, mkt_in, "20",
             grid_cache=s2_grid_cache, gwp_diff=gwp_diff,
         )
         c["s2"] += mkt_f if market else co2e_f
         c["s2_20"] += mkt20 if market else loc20
 
+
+def _add_scope3_surveys_and_flaring(cells, scope, st, years):
+    """Scope 3, OGMP top-down surveys and reconciled flaring stream volumes of each facility-year."""
     # Scope 3
     q3 = db.session.query(Scope3Emission.facility_id, Scope3Emission.year, Scope3Emission.category, func.sum(Scope3Emission.co2e))
-    q3 = yfilter(apply_scope(q3, Scope3Emission, **scope), Scope3Emission).filter(Scope3Emission.status.in_(st))
+    q3 = _year_filter(apply_scope(q3, Scope3Emission, **scope), Scope3Emission, years).filter(Scope3Emission.status.in_(st))
     for fid, yr, cat, val in q3.group_by(Scope3Emission.facility_id, Scope3Emission.year, Scope3Emission.category).all():
         cells[(fid, yr)]["s3"] += float(val or 0)
         norm_cat = str(cat or "").strip().lower()
@@ -271,13 +338,13 @@ def intensity_cells(years=None, facility_id=None, activity=None, division=None, 
 
     # OGMP top-down: mean of the surveys of each facility-year (each is an annual estimate, D-02)
     q = db.session.query(OgmpSurvey.facility_id, OgmpSurvey.year, func.avg(OgmpSurvey.estimated_annual_tch4))
-    q = yfilter(apply_scope(q, OgmpSurvey, **scope), OgmpSurvey)
+    q = _year_filter(apply_scope(q, OgmpSurvey, **scope), OgmpSurvey, years)
     for fid, yr, avg in q.group_by(OgmpSurvey.facility_id, OgmpSurvey.year).all():
         if avg is not None:
             cells[(fid, yr)]["top_down"] = float(avg)
     from models import FlaringDetail
     q_fd = (
-        yfilter(apply_scope(FlaringDetail.query, FlaringDetail, **scope), FlaringDetail)
+        _year_filter(apply_scope(FlaringDetail.query, FlaringDetail, **scope), FlaringDetail, years)
         .filter(FlaringDetail.status.in_(st))
         .with_entities(
             FlaringDetail.facility_id,
@@ -292,9 +359,32 @@ def intensity_cells(years=None, facility_id=None, activity=None, division=None, 
         if stream_vol > 0:
             cells[(fid, yr)]["flaring_reconciled_m3"] += stream_vol
 
+
+def intensity_cells(years=None, facility_id=None, activity=None, division=None, allowed_fids=None, segment=None,
+                    include_pending=False, scope2_method="location"):
+    """{(facility_id, year): cell} for the requested years (None = all years)."""
+    resolved_test_fids = [
+        fid
+        for (fid,) in db.session.query(Facility.id).filter(Facility.is_test == True).all()
+    ]
+    scope = dict(allowed_fids=allowed_fids, facility_id=facility_id, activity=activity, division=division,
+                 segment=segment, test_fids=resolved_test_fids)
+    st = statuses(include_pending)
+    cells = defaultdict(_blank)
+
+    _add_production(cells, scope, years)
+    _add_scope1(cells, scope, st, years)
+    _add_scope2(cells, scope, st, years, scope2_method)
+    _add_scope3_surveys_and_flaring(cells, scope, st, years)
+
+    from services.methane_intensity import marketed_gas
+
     for c in cells.values():
         if c["flaring_reconciled_m3"] > 0:
             c["flaring_m3"] = c["flaring_reconciled_m3"]
+        c["marketed_m3"], c["marketed_basis"] = marketed_gas(
+            c["gas_m3"], c["p_terms"],
+            {"flared": c["flaring_m3"], "vented": c["vented_m3"], "fuel": c["fuel_m3"], "shrinkage": None})
 
     return cells
 
@@ -315,6 +405,26 @@ def _materiality_from_weights(ch4_weights, co2e_weights, s1_count, threshold=0.5
     return 1
 
 
+def _methane_loss(matched, total_ch4, seg_cat, target):
+    """(loss %, target status, NGSI %) of a facility. The loss rate compared to the OGMP target is on the OGCI /
+    OGMP volume basis, CH4 volume / marketed gas (it was / gas produced, BA-054); NGSI is CH4 / CH4 in the
+    throughput at the segment's CH4 content."""
+    from services.methane_intensity import ngsi_intensity_pct, volume_intensity_pct
+
+    gas_m3, marketed_m3 = matched["gas_m3"], matched["marketed_m3"]
+    ngsi = ngsi_intensity_pct(matched["ch4"], gas_m3, ngsi_ch4_content(seg_cat))
+    if not (gas_m3 > 0 and marketed_m3 > 0):
+        return None, ("Missing Production Data" if total_ch4 > 0 else "No Activity"), ngsi
+    loss = volume_intensity_pct(matched["ch4"], marketed_m3)
+    if target is None:
+        status = "Segment not set"
+    elif loss <= target:
+        status = "Compliant"
+    else:
+        status = "Warning" if loss <= target * 1.25 else "Non-Compliant"
+    return loss, status, ngsi
+
+
 def facility_row(fid, cell_list, fac, year_value, gwp_horizon="100", surveys=None):
     """Aggregate one facility's cells into the API row (field names kept for the client)."""
     from routes.auth import _app_settings
@@ -325,7 +435,7 @@ def facility_row(fid, cell_list, fac, year_value, gwp_horizon="100", surveys=Non
     for yr, c in cell_list:
         for tgt in ([total, matched] if c["has_prod"] else [total]):
             for k in ("s1", "co2", "ch4", "n2o", "s2", "s2_20", "s3", "s3_cat11", "flaring_t", "flaring_m3", "flaring_ledger_m3", "flaring_reconciled_m3", "boe", "gas_m3",
-                      "oil_bbl", "gas_mscf"):
+                      "oil_bbl", "gas_mscf", "marketed_m3"):
                 tgt[k] += c[k]
             for k, v in c["ch4_split"].items():
                 tgt["ch4_split"][k] += v
@@ -350,24 +460,12 @@ def facility_row(fid, cell_list, fac, year_value, gwp_horizon="100", surveys=Non
         return (t * 1000.0) / boe if boe > 0 else None
 
     gas_m3 = matched["gas_m3"]
-    ch4_vol = matched["ch4"] * 1000.0 / CH4_DENSITY_KG_M3
     seg_cat = segment_category(fac.segment if fac else None)
     up_t = float(_app_settings.get("ogmp_upstream_target_pct", 0.20))
     mid_t = float(_app_settings.get("ogmp_midstream_target_pct", 0.05))
     target = up_t if seg_cat == "upstream" else (mid_t if seg_cat in ("midstream", "downstream") else None)
-    if gas_m3 > 0:
-        loss = ch4_vol / gas_m3 * 100.0
-        if target is None:
-            loss_status = "Segment not set"
-        elif loss <= target:
-            loss_status = "Compliant"
-        elif loss <= target * 1.25:
-            loss_status = "Warning"
-        else:
-            loss_status = "Non-Compliant"
-    else:
-        loss = None
-        loss_status = "Missing Production Data" if total["ch4"] > 0 else "No Activity"
+    loss, loss_status, ngsi = _methane_loss(matched, total["ch4"], seg_cat, target)
+    marketed_m3 = matched["marketed_m3"]
 
     # OGMP reconciliation over the facility-years that have a top-down survey (BUG-079)
     threshold = (fac.reconciliation_threshold if fac and fac.reconciliation_threshold else
@@ -428,6 +526,7 @@ def facility_row(fid, cell_list, fac, year_value, gwp_horizon="100", surveys=Non
         fac, year=year_value, top_down_tch4=td or None, bottom_up_tch4=bu_td_years or (total["ch4"] or None),
         reconciled_survey=(not surveys_have_discrepancy) if (td > 0 and bu_td_years > 0) else None,
         bottom_up_level=bu_level,
+        skip_db=(surveys is not None),
     ) if fac else 1
 
     s1_sum = sum(l_weights.values())
@@ -516,7 +615,10 @@ def facility_row(fid, cell_list, fac, year_value, gwp_horizon="100", surveys=Non
         "scope3_intensity": per_boe(matched["s3"]),
         "ch4_intensity": per_boe(matched["ch4"]),
         "api_flaring_intensity": per_boe(matched["flaring_t"]),
-        "methane_loss_rate_pct": r4(loss),
+        "methane_loss_rate_pct": r4(loss),  # OGCI / OGMP: CH4 volume / marketed gas
+        "methane_intensity_ngsi_pct": r4(ngsi),  # NGSI: CH4 / CH4 in the throughput (0.0192 t/Mcf)
+        "ngsi_ch4_content": ngsi_ch4_content(seg_cat),
+        "marketed_gas_m3": marketed_m3,
         "flaring_rate_pct": r4(matched["flaring_m3"] / gas_m3 * 100.0) if gas_m3 > 0 else None,
         "ogmp_gold_standard_target": target,
         "ogmp_target_status": loss_status,

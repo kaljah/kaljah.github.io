@@ -5,15 +5,8 @@
   color: var(--text-primary, var(--color-ink-900));
 }
 
-.search-input-wrapper {
-  position: relative;
-  flex: 1;
-  min-width: 0;
-  width: 100%;
-}
-
 .filter-select {
-  padding: 11px 36px 11px 18px;
+  padding-block: 11px 11px; padding-inline: 18px 36px;
   background-color: rgba(255, 255, 255, 0.85);
   border: 1px solid var(--border-color, var(--color-ink-200));
   border-radius: var(--radius-md);
@@ -39,7 +32,7 @@
   box-shadow: var(--shadow-card);
   border: 1px solid var(--border-color, rgba(226, 232, 240, 0.8));
   overflow: hidden;
-  border-left: 2px solid var(--accent-color, var(--color-brand-500));
+  border-inline-start: 2px solid var(--accent-color, var(--color-brand-500));
   transition: transform 0.22s ease, box-shadow 0.22s ease;
 }
 
@@ -83,7 +76,7 @@
 
 .factors-table th {
   padding: 16px 24px;
-  text-align: left;
+  text-align: start;
   font-weight: 500;
   color: var(--color-ink-600);
   font-size: var(--text-sm);
@@ -97,7 +90,7 @@
 }
 
 .factors-table .num {
-  text-align: right;
+  text-align: end;
   font-variant-numeric: tabular-nums;
 }
 
@@ -139,5 +132,5 @@
   color: var(--color-amber-700);
   display: inline-block;
   vertical-align: middle;
-  margin-left: 4px;
+  margin-inline-start: 4px;
 }

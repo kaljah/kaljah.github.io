@@ -202,7 +202,7 @@ class TestAllProcessTypesTier3:
             "flowback_volume": 15000.0,
             "unit": "m3",
             "ch4_content": 80.0,
-            "control_efficiency": 0.95,
+            "control_efficiency": 95,
         }
         res = dispatcher.dispatch("completions", payload, {}, {})
         # 15,000 m3 flowback at 80 % CH4; control_efficiency 0.95 = 95 % of the gas to a flare at the default 98 %
@@ -252,7 +252,7 @@ class TestAllProcessTypesTier3:
             "tank_unit": "bbl",
             "tank_gor": 300.0,
             "ch4_content": 80.0,
-            "control_efficiency": 0.98,
+            "control_efficiency": 98,
         }
         res = dispatcher.dispatch("storage_tanks", payload, {}, {})
         # flash gas = 50,000 bbl x 300 scf/bbl = 15e6 scf, 80 % CH4. An entered efficiency of 0.98 is the efficiency of the
@@ -364,7 +364,7 @@ class TestAllProcessTypesTier3:
             "factor_source": "specific",
             "amount": 2500.0,
             "heat_unit": "mmbtu",
-            "boiler_efficiency": 0.82,
+            "boiler_efficiency": 82,
             "transmission_loss": 0.03,
         }
         factors = {"co2": 53.06}
@@ -483,19 +483,19 @@ class TestScope2ProcessMatrix:
     """Verify all Scope 2 utility types: Grid Electricity (Location/Market) and Purchased Steam."""
 
     def test_scope2_location_based_electricity(self):
-        from routes.scope2 import resolve_electricity_factor
+        from routes.scope2 import resolve_electricity_factor, supplier_market_factor
         kwh = 10000.0
-        grid_ef, region = resolve_electricity_factor(None, 0.450)   # a supplier factor, kg CO2e / kWh, through the platform
-        assert region is None
-        assert pytest.approx(kwh * grid_ef / 1000.0, 1e-9) == 4.50
+        # a supplier factor (kg CO2e / kWh) is a market-based factor; location-based needs a grid (BA-007)
+        supplier_ef = supplier_market_factor(None, 0.450)
+        assert pytest.approx(kwh * supplier_ef / 1000.0, 1e-9) == 4.50
         # a known grid region uses the catalog factor (US-RMPA: 0.564 t CO2 + 5.31e-5 t CH4 x 28 + 7.71e-6 t N2O x 265 per MWh)
         rmpa, name = resolve_electricity_factor("US-RMPA (WECC Rockies)", None)
         assert rmpa == pytest.approx(0.564 + 5.31e-5 * 28 + 7.71e-6 * 265, rel=1e-6)
 
     def test_scope2_market_based_electricity_zero_carbon(self):
-        from routes.scope2 import resolve_electricity_factor
+        from routes.scope2 import supplier_market_factor
         kwh = 50000.0
-        ppa_ef, _ = resolve_electricity_factor(None, 0.0)   # 100 % solar PPA: a zero supplier factor is accepted
+        ppa_ef = supplier_market_factor(None, 0.0)   # 100 % solar PPA: a zero supplier factor is accepted
         assert kwh * ppa_ef / 1000.0 == 0.0
 
     def test_scope2_purchased_steam_indirect(self, dispatcher):
@@ -504,7 +504,7 @@ class TestScope2ProcessMatrix:
             "factor_source": "specific",
             "amount": 1000.0,
             "heat_unit": "mmbtu",
-            "boiler_efficiency": 0.80,
+            "boiler_efficiency": 80,
             "transmission_loss": 0.05,
         }
         res = dispatcher.dispatch("indirect_steam", payload, {"co2": 53.06}, {})

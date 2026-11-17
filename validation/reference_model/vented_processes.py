@@ -18,7 +18,7 @@ from .gwp import IndependentGWPModel
 
 class IndependentVentedPartition:
     @staticmethod
-    def partition(total_gas_m3, ch4_tonnes, co2_tonnes, control_efficiency, hhv=1020.0, ef_n2o=0.0001):
+    def partition(total_gas_m3, ch4_tonnes, co2_tonnes, control_efficiency, hhv=1020.0, ef_n2o=None):
         """
         Partitions gross episodic vented gas into uncombusted vent and flared combustion stream.
         Decision D-01 / API Compendium 2021 §5.2.
@@ -45,11 +45,15 @@ class IndependentVentedPartition:
             flared_co2 = (flared_ch4_mass * 0.965 * (44.01 / 16.04)) + flared_native_co2
             flared_unburnt_ch4 = flared_ch4_mass * 0.02
 
-            # Flared N2O from energy of flared gas
-            flared_m3 = total_gas_m3 * ctrl
-            flared_scf = flared_m3 / 0.028316846592
-            flared_mmbtu = (flared_scf * float(hhv or 1020.0)) / 1_000_000.0
-            flared_n2o = (flared_mmbtu * float(ef_n2o or 0.0001)) / 1000.0
+            if ef_n2o is None:
+                # Compendium Eq 5-6: N2O = CO2 x EmF_N2O / EmF_CO2 = flared CO2 x 1.0E-04 / 60 (natural gas)
+                flared_n2o = flared_co2 * 0.0001 / 60.0
+            else:
+                # an energy N2O factor on the flared gas
+                flared_m3 = total_gas_m3 * ctrl
+                flared_scf = flared_m3 / 0.028316846592
+                flared_mmbtu = (flared_scf * float(hhv or 1020.0)) / 1_000_000.0
+                flared_n2o = (flared_mmbtu * float(ef_n2o)) / 1000.0
 
         total_ch4 = vented_ch4 + flared_unburnt_ch4
         total_co2 = vented_co2 + flared_co2
@@ -214,7 +218,7 @@ class IndependentCompletions:
         co2_content=0.0,
         control_efficiency=0.0,
         hhv=1020.0,
-        ef_n2o=0.0001,
+        ef_n2o=None,
         gwp_standard="AR5",
         gwp_horizon="100",
     ):
@@ -275,7 +279,7 @@ class IndependentLiquidsUnloading:
         co2_content=0.0,
         control_efficiency=0.0,
         hhv=1020.0,
-        ef_n2o=0.0001,
+        ef_n2o=None,
         gwp_standard="AR5",
         gwp_horizon="100",
     ):
@@ -339,7 +343,7 @@ class IndependentBlowdown:
         co2_content=0.0,
         control_efficiency=0.0,
         hhv=1020.0,
-        ef_n2o=0.0001,
+        ef_n2o=None,
         gwp_standard="AR5",
         gwp_horizon="100",
     ):
@@ -396,7 +400,7 @@ class IndependentStorageTanks:
         control_efficiency=0.0,
         ef_ch4=0.0,
         hhv=1020.0,
-        ef_n2o=0.0001,
+        ef_n2o=None,
         gwp_standard="AR5",
         gwp_horizon="100",
     ):

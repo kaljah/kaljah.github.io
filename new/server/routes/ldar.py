@@ -13,7 +13,16 @@ from extensions import db
 from input_validation import ValidationError, parse_number
 from models import ComponentInventory, FugitiveSurvey, Facility, Notification
 from routes.auth import login_required
-from utils import get_allowed_facility_ids, get_current_user, internal_error, is_it_role, log_activity_and_notify
+from utils import (
+    get_allowed_facility_ids,
+    get_current_tenant_id,
+    get_current_user,
+    internal_error,
+    is_it_role,
+    log_activity_and_notify,
+    normalize_tenant_id,
+    tenant_matches,
+)
 from services.dashboard_filters import _parse_facility_ids
 from . import ldar_bp
 
@@ -90,7 +99,12 @@ def _serialize_survey(survey):
 def _scoped_list(model, user):
     """The model's query within the user's facilities and the facility_id filter; (query, error)."""
     allowed = get_allowed_facility_ids(user)
-    query = model.query if allowed is None else model.query.filter(model.facility_id.in_(allowed))
+    caller_tenant = get_current_tenant_id(user)
+    if allowed is not None:
+        query = model.query.filter(model.facility_id.in_(allowed))
+    else:
+        tenant_fids = Facility.query.with_entities(Facility.id).filter(tenant_matches(Facility.tenant_id, caller_tenant))
+        query = model.query.filter(model.facility_id.in_(tenant_fids))
     fac = request.args.get("facility_id") or request.args.get("facilityId")
     parts = [p.strip() for p in str(fac or "").split(",") if p.strip() and p.strip().lower() != "all"]
     if any(not p.isdigit() for p in parts):  # an unreadable ID is refused, never dropped (it widened the list)
@@ -118,6 +132,9 @@ def _target_facility(user, data):
     facility = db.session.get(Facility, fid)
     if not facility:
         return None, (jsonify({"error": "Facility not found"}), 404)
+    caller_tenant = get_current_tenant_id(user)
+    if normalize_tenant_id(getattr(facility, "tenant_id", None)) != caller_tenant:
+        return None, (jsonify({"error": "Unauthorized: Outside your assigned facilities"}), 403)
     return facility, None
 
 
@@ -129,6 +146,11 @@ def _scoped_get(model, obj_id, user, label):
     allowed = get_allowed_facility_ids(user)
     if allowed is not None and obj.facility_id not in allowed:
         return None, (jsonify({"error": "Unauthorized"}), 403)
+    caller_tenant = get_current_tenant_id(user)
+    if obj.facility_id:
+        fac = db.session.get(Facility, obj.facility_id)
+        if fac and normalize_tenant_id(getattr(fac, "tenant_id", None)) != caller_tenant:
+            return None, (jsonify({"error": "Unauthorized"}), 403)
     return obj, None
 
 
@@ -143,8 +165,12 @@ def _scoped_ids(model, user, data, label):
         return None, (jsonify({"error": f"Invalid {label} IDs"}), 400)
     query = model.query.filter(model.id.in_(int_ids))
     allowed = get_allowed_facility_ids(user)
+    caller_tenant = get_current_tenant_id(user)
     if allowed is not None:
         query = query.filter(model.facility_id.in_(allowed))
+    else:
+        tenant_fids = Facility.query.with_entities(Facility.id).filter(tenant_matches(Facility.tenant_id, caller_tenant))
+        query = query.filter(model.facility_id.in_(tenant_fids))
     records = query.all()
     if not records:
         return None, (jsonify({"error": f"No matching {label}s found or unauthorized"}), 404)

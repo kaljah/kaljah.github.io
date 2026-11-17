@@ -74,7 +74,10 @@ def lock_period():
         return jsonify({"error": "Year must be an integer", "field": "year"}), 400
 
     month = data.get("month")
-    m = int(month) if month is not None else None
+    try:
+        m = int(month) if month not in (None, "") and str(month).strip() != "" else None
+    except (ValueError, TypeError):
+        return jsonify({"error": "Month must be an integer between 1 and 12", "field": "month"}), 400
 
     signatory = str(data.get("signoff_signatory") or "").strip()
     if not signatory:
@@ -154,7 +157,10 @@ def unlock_period():
         }), 400
 
     month = data.get("month")
-    m = int(month) if month is not None else None
+    try:
+        m = int(month) if month not in (None, "") and str(month).strip() != "" else None
+    except (ValueError, TypeError):
+        return jsonify({"error": "Month must be an integer between 1 and 12", "field": "month"}), 400
 
     locks = PeriodLock.query.filter(
         tenant_matches(PeriodLock.tenant_id, caller_tenant),

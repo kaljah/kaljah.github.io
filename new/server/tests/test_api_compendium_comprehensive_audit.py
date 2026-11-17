@@ -1148,8 +1148,8 @@ class TestLayer5BoundaryConservationAndAnomalies:
 
         # Independent Oracle:
         # Released (kg) = 500 kg * 0.02 + 10 kg = 20.0 kg = 0.020 tonnes HFC-227ea
-        # CO2e (GWP HFC-227ea = 3220) = 0.020 * 3220 = 64.40 tonnes CO2e
-        assert math.isclose(res["totalCo2e"], 64.40, rel_tol=REL_TOL_EXACT)
+        # CO2e (GWP HFC-227ea = 3350, AR5) = 0.020 * 3350 = 67.00 tonnes CO2e
+        assert math.isclose(res["totalCo2e"], 67.00, rel_tol=REL_TOL_EXACT)
         DIAGNOSTICS.record_pass()
 
     def test_anomaly_table_7_86_printed_divergence_acceptance(self):

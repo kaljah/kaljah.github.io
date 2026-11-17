@@ -307,8 +307,11 @@ def test_methane_loss_rate_calculation(ci_setup):
         assert gas_m3 > 0
         assert ch4_tonnes > 0
 
+        # OGCI / OGMP basis: CH4 volume / marketed gas (produced gas less flared, vented and burned on site, BA-054)
+        marketed_m3 = fac["marketed_gas_m3"]
+        assert 0 < marketed_m3 <= gas_m3
         ch4_vol_m3 = (ch4_tonnes * 1000.0) / DENSITY_CH4
-        expected_loss_rate = round((ch4_vol_m3 / gas_m3) * 100.0, 4)
+        expected_loss_rate = round((ch4_vol_m3 / marketed_m3) * 100.0, 4)
         assert abs(fac["methane_loss_rate_pct"] - expected_loss_rate) < 1e-4
 
 

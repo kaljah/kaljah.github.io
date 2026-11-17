@@ -49,7 +49,7 @@ def test_tier1_composition_flare_and_entered_factor(c):
     flared = c.calculate(tier="default", control_type="flared")
     assert val(flared, "ch4") == pytest.approx(28.8 * 0.02)                                       # DE 98 %
     assert val(flared, "co2") == pytest.approx(28.8 * 0.965 * R)                                   # CE 96.5 %
-    assert val(flared, "n2o") == pytest.approx(1842577.0 * 1020 / 1e6 * 0.0001 / 1000)
+    assert val(flared, "n2o") == pytest.approx(28.8 * 0.965 * R * 1.0e-4 / 60)                    # Eq 5-6 (BA-017)
     entered = c.calculate(tier="t1", control_type="flare", control_efficiency=99)
     assert val(entered, "ch4") == pytest.approx(28.8 * 0.01)
     assert val(entered, "co2") == pytest.approx(28.8 * 0.99 * R)

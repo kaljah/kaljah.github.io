@@ -50,7 +50,7 @@ const SettingsOGMP20Framework: React.FC<SettingsOGMP20FrameworkProps> = ({
   <SettingsSection
     icon={Target}
     title={tr("OGMP 2.0 Framework & Threshold Configuration")}
-    intro={tr("Establish global compliance benchmarks, default asset membership years, and reconciliation tolerances (preview, reconciliation logic in development).")}
+    intro={tr("Establish global compliance benchmarks, default asset membership years, and Level 4/5 RSS 95% CI reconciliation tolerances.")}
   >
     <div className="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))]">
       <Panel title={tr("Default OGMP 2.0 Membership Baseline Year")} hint={tr("The year from which the Gold Standard milestone clock begins (Year 0).")}>
@@ -65,7 +65,7 @@ const SettingsOGMP20Framework: React.FC<SettingsOGMP20FrameworkProps> = ({
           <p className="m-0 mb-1.5 flex items-center gap-1.5 font-bold text-text">
             <ShieldCheck className="size-4" aria-hidden="true" />{" "}{tr("Gold Standard Deadlines:")}
           </p>
-          <ul className="m-0 ml-[18px] list-disc p-0">
+          <ul className="m-0 ms-[18px] list-disc p-0">
             <li>
               {tr("Operated Assets (3 Years):")}{" "}<strong>{defaultBaseYear + 3}</strong>
             </li>
@@ -93,7 +93,7 @@ const SettingsOGMP20Framework: React.FC<SettingsOGMP20FrameworkProps> = ({
           <span className="min-w-20 rounded-md border border-brand-100 bg-brand-50 px-3.5 py-1.5 text-center text-lg font-extrabold text-brand-700">±{globalThreshold}%</span>
         </div>
         <p className="m-0 text-sm text-text-secondary">
-          {tr("OGMP 2.0 recommended default is")}{" "}<strong>±20.0%</strong>{tr(". Facilities exceeding this threshold will be flagged for investigation.")}
+          {tr("OGMP 2.0 recommended default is ±20.0%. Facilities exceeding this threshold will be flagged for investigation.")}
         </p>
       </Panel>
     </div>
@@ -104,10 +104,10 @@ const SettingsOGMP20Framework: React.FC<SettingsOGMP20FrameworkProps> = ({
       </h3>
       <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))]">
         {[
-          { label: tr("Upstream Exploration & Production"), value: upstreamTarget, set: setUpstreamTarget, hint: tr("Methane loss volume as % of total marketable natural gas volume. (Default: 0.20%)"), id: "upstream-target-input", tone: "border-l-blue-500" },
-          { label: tr("Midstream Processing & LNG"), value: midstreamTarget, set: setMidstreamTarget, hint: tr("Methane loss volume as % of total throughput volume. (Default: 0.05%)"), id: "midstream-target-input", tone: "border-l-green-500" },
+          { label: tr("Upstream Exploration & Production"), value: upstreamTarget, set: setUpstreamTarget, hint: tr("Methane loss volume as % of total marketable natural gas volume. (Default: 0.20%)"), id: "upstream-target-input", tone: "border-s-blue-500" },
+          { label: tr("Midstream Processing & LNG"), value: midstreamTarget, set: setMidstreamTarget, hint: tr("Methane loss volume as % of total throughput volume. (Default: 0.05%)"), id: "midstream-target-input", tone: "border-s-green-500" },
         ].map((t) => (
-          <div key={t.id} className={`rounded-md border border-border border-l-4 bg-surface p-4 ${t.tone}`}>
+          <div key={t.id} className={`rounded-md border border-border border-s-4 bg-surface p-4 ${t.tone}`}>
             <Field label={t.label} hint={t.hint}>
               <div className="flex items-center gap-2">
                 <Input type="number" step="0.01" min="0.01" max="5.0" disabled={!isAdmin} value={t.value} onChange={(e) => t.set(Number(e.target.value))} className="w-24 text-md font-bold" />

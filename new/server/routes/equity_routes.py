@@ -375,6 +375,8 @@ def get_equity_allocation():
     fac_q = Facility.query
     if allowed_fids is not None:
         fac_q = fac_q.filter(Facility.id.in_(allowed_fids or [-1]))
+    else:
+        fac_q = fac_q.filter(tenant_matches(Facility.tenant_id, caller_tenant))
     if facility_id and facility_id != "all":
         try:
             fid = int(facility_id)
@@ -384,7 +386,7 @@ def get_equity_allocation():
             return jsonify({"error": "Unauthorized facility"}), 403
         fac_q = fac_q.filter(Facility.id == fid)
 
-    facilities = fac_q.all()
+    facilities = fac_q.filter(Facility.is_test == False).all()  # noqa: E712
     partners = (
         JvPartner.query.filter(tenant_matches(JvPartner.tenant_id, caller_tenant))
         .order_by(JvPartner.name)
@@ -404,7 +406,8 @@ def get_equity_allocation():
         # verified emissions of this facility and year, per month
         for m, co2e, ch4 in db.session.query(
                 Emission.month, db.func.sum(Emission.co2e_total), db.func.sum(Emission.ch4_emissions)
-        ).filter(Emission.facility_id == fac.id, Emission.year == yr, Emission.status == "Verified"
+        ).filter(Emission.facility_id == fac.id, Emission.year == yr, Emission.status == "Verified",
+                 Emission.is_test == False  # noqa: E712  test rows are not allocated (BA-011)
                  ).group_by(Emission.month).all():
             row = periods.setdefault(m if m in range(1, 13) else None, [0.0, 0.0, 0.0])
             row[0] += float(co2e or 0.0)

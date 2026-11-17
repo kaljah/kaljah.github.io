@@ -153,6 +153,8 @@ INDEPENDENT_UNIT_FACTORS = {
     # Freight Transport (to tonne-km)
     "tonne-km": 1.0, "t-km": 1.0, "tkm": 1.0, "tonne_km": 1.0,
     "ton-mile": 1.459972, "ton_mile": 1.459972, "tonmile": 1.459972,
+    "short_ton-mile": 1.459972, "short_ton_mile": 1.459972, "short-ton-mile": 1.459972,
+    "tonne-mile": 1.609344, "tonne_mile": 1.609344,
 
     # Passenger Transport (to passenger-km)
     "passenger-km": 1.0, "p-km": 1.0, "pkm": 1.0, "passenger_km": 1.0,
@@ -758,7 +760,7 @@ class TestSectionDPart1CombustionAndFlaring:
             "unit": "m3",
             "fuel_type": "Natural Gas",
             "hhv": 1020.0,
-            "combustion_efficiency": 0.995,
+            "combustion_efficiency": 99.5,
             "c1": 0.90,
             "c2": 0.05,
             "co2_comp": 0.02,
@@ -818,9 +820,8 @@ class TestSectionDPart1CombustionAndFlaring:
         exp_f_co2 = (1000.0 * 0.95 * 0.965 + 1000.0 * 0.02) * REF_DENSITY_CO2 / 1000.0
         # Undestroyed methane = 1000.0 * 0.85 * (1 - 0.98) * rho_CH4 / 1000.0
         exp_f_ch4_up = 1000.0 * 0.85 * (1.0 - 0.98) * REF_DENSITY_CH4 / 1000.0
-        # Flaring N2O per API Eq 5-6 default (1.0e-4 kg/MMBtu):
-        flared_mmbtu = 1000.0 * 35.314666721 * 1020.0 / 1e6
-        exp_f_n2o = flared_mmbtu * 1.0e-4 / 1000.0
+        # Flaring N2O per API Eq 5-6: E_N2O = E_CO2 x 1.0e-4 / 60 (natural gas, Dec 2025; BA-017)
+        exp_f_n2o = exp_f_co2 * 1.0e-4 / 60.0
         exp_f_co2e_up = exp_f_co2 + REF_GWP_AR5["CH4"] * exp_f_ch4_up + REF_GWP_AR5["N2O"] * exp_f_n2o
 
         assert res_up["co2"] == pytest.approx(exp_f_co2, rel=REL_TOL_PIPE)
@@ -854,7 +855,7 @@ class TestSectionDPart1CombustionAndFlaring:
             "density": 850.0,
             "density_unit": "kg/m3",
             "carbon_content": 0.865,
-            "combustion_efficiency": 0.995,
+            "combustion_efficiency": 99.5,
             "hhv": 137380.0,
         }
         res, _ = pipeline_compute_emissions(payload, API_FACTORS[fuel], gwp_dict=REF_GWP_AR5)
@@ -885,8 +886,8 @@ class TestSectionDPart1CombustionAndFlaring:
             "co2_comp": 0.02,
             "n2": 0.08,
             "flare_type": "elevated",
-            "combustion_efficiency": 0.965,
-            "destruction_efficiency": 0.980,
+            "combustion_efficiency": 96.5,
+            "destruction_efficiency": 98,
             "hhv": 1020.0,
         }
         res_base, _ = pipeline_compute_emissions(base_flare, {})
@@ -897,12 +898,12 @@ class TestSectionDPart1CombustionAndFlaring:
         assert pct_diff_amt == pytest.approx(0.10, rel=REL_TOL_PIPE)
 
         # 2. Destruction efficiency eta_d: +1% (0.980 -> 0.990) -> uncombusted CH4 drops by exactly 50%
-        res_dest, _ = pipeline_compute_emissions(dict(base_flare, destruction_efficiency=0.990), {})
+        res_dest, _ = pipeline_compute_emissions(dict(base_flare, destruction_efficiency=99.0), {})  # percent (BA-012)
         assert res_dest["ch4"] < res_base["ch4"]
         assert (res_dest["ch4"] / res_base["ch4"]) == pytest.approx(0.50, rel=REL_TOL_PIPE)
 
         # 3. Combustion efficiency eta_c: +1% (0.965 -> 0.975) -> CO2 increases by analytical derivative
-        res_comb, _ = pipeline_compute_emissions(dict(base_flare, combustion_efficiency=0.975), {})
+        res_comb, _ = pipeline_compute_emissions(dict(base_flare, combustion_efficiency=97.5), {})
         assert res_comb["co2"] > res_base["co2"]
         delta_co2_exp = 1000.0 * 0.95 * 0.010 * REF_DENSITY_CO2 / 1000.0
         assert (res_comb["co2"] - res_base["co2"]) == pytest.approx(delta_co2_exp, rel=REL_TOL_PIPE)
@@ -915,7 +916,7 @@ class TestSectionDPart1CombustionAndFlaring:
             "unit": "m3",
             "fuel_type": "Natural Gas",
             "hhv": 1020.0,
-            "combustion_efficiency": 0.995,
+            "combustion_efficiency": 99.5,
             "c1": 0.90,
             "c2": 0.05,
             "co2_comp": 0.02,
@@ -947,7 +948,7 @@ class TestSectionDPart1CombustionAndFlaring:
             "density": 850.0,
             "density_unit": "kg/m3",
             "carbon_content": 0.865,
-            "combustion_efficiency": 0.995,
+            "combustion_efficiency": 99.5,
             "hhv": 137380.0,
         }
         res_m_base, _ = pipeline_compute_emissions(base_mob, API_FACTORS["Diesel (No. 2 Fuel Oil)"])
@@ -1017,7 +1018,7 @@ class TestSectionDPart1CombustionAndFlaring:
             "unit": "m3",
             "fuel_type": "Natural Gas",
             "hhv": 1020.0,
-            "combustion_efficiency": 0.995,
+            "combustion_efficiency": 99.5,
             "c1": 0.90,
             "c2": 0.05,
             "co2_comp": 0.02,
@@ -1943,7 +1944,7 @@ class TestSectionDPart4DownstreamAndComponents:
             "amount": 100.0,
             "unit": "tonne",
             "controlled": True,
-            "destruction_efficiency": 0.98,
+            "destruction_efficiency": 98,
         }
         res, _ = pipeline_compute_emissions(payload, {}, gwp_dict=REF_GWP_AR5)
         # Table 6-52 for "tonne": ef_ch4 = 3.38e-3, ef_co2 = 6.19e-3
@@ -2019,7 +2020,7 @@ class TestSectionDPart4DownstreamAndComponents:
             "amount": 100.0,
             "unit": "tonne",
             "controlled": True,
-            "destruction_efficiency": 0.98,
+            "destruction_efficiency": 98,
         }
         res_asph, _ = pipeline_compute_emissions(p_asph, {})
         res_asph_plus, _ = pipeline_compute_emissions(dict(p_asph, amount=110.0), {})

@@ -5,7 +5,7 @@ Compliant with:
   - ISO 14064-1:2018 §7.5 (Uncertainty quantification and aggregation)
   - IPCC 2006 GL Vol.1 §3.3 (Error propagation, SRSS Approach 1)
   - ISO/IEC Guide 98-3 (GUM) §6.2 (Coverage factor k=2 for 95% CI)
-  - API Compendium 2021 §2.4 (Uncertainty ranges by source type)
+  - API Compendium 2021 s3.7 (Emission estimation quality, Equations 3-13 to 3-16) and Table 5-5
   - OGMP 2.0 Framework §5 (Tier-specific uncertainty requirements)
 
 Method:
@@ -13,11 +13,19 @@ Method:
   u_E = √(u_AD² + u_EF²)      [SRSS for product — IPCC Eq. 3.1]
   U95 = k × u_E  where k = 2  [95% CI — GUM §6.2, coverage factor]
 
-Activity-data uncertainty is tier-specific per IPCC GL Vol.1 Table 3.1:
-  Tier 1 (allocation/default):        ±10–15%
+Activity-data uncertainty is tier-specific, within IPCC 2006 Vol.2 Table 2.15 (2-10 % at 95 % for industrial
+combustion activity data); these are platform defaults (expert judgement), not a printed table. IPCC Vol.1
+Table 3.1 is the qualitative list of strategies and holds no numbers (blind audit BA-052):
+  Tier 1 (allocation/default):        ±10%
   Tier 2 (regional/custom factors):   ±7%
   Tier 3 (calibrated meters/CEMS):    ±2%
-  Fugitive/vented (physical meas.):   ±20%
+  Fugitive / vented:                  ±20% / ±15%
+
+Tier 1 emission-factor uncertainties are the published defaults (95 % half-widths; a highly asymmetric range
+enters as its larger side, IPCC 2006 Vol.1 s3.2.3.1, Table 3.2 column F): IPCC 2006 Vol.2 Table 2.12 for
+stationary combustion CH4 (50-150 %) and N2O (an order of magnitude: -90 % / +900 %), API Compendium 2021
+Table 5-5 for gas flares (CO2 and CH4 +/-25 %, N2O -10 % / +1000 %). Such ranges are beyond the validity of
+Approach 1 (U > 100 %, Vol.1 s3.7.3): the inventory reports the Monte Carlo (Approach 2) result alongside.
 """
 
 import math
@@ -35,7 +43,7 @@ class Tier:
     T3 = 3  # Site-measured, CEMS, mass balance (most accurate)
 
 
-# Activity-data uncertainty by tier — IPCC GL Vol.1 Table 3.1
+# Activity-data uncertainty by tier (95 % half-widths): platform defaults within IPCC 2006 Vol.2 Table 2.15
 ACTIVITY_UNCERTAINTY = {
     Tier.T1: 0.10,  # ±10% — metering without calibration, allocation methods
     Tier.T2: 0.07,  # ±7%  — regional data, estimated throughput
@@ -50,20 +58,21 @@ ACTIVITY_UNCERTAINTY_VENTED = 0.15  # ±15%  — vent volume measurement
 # ISO/IEC Guide 98-3 §6.2
 COVERAGE_FACTOR_95 = 2.0
 
-# Per-GHG EF uncertainty defaults when no measured value is available
-# Values align with API Compendium 2021 §2.4 and IPCC 2006 GL Vol.1 Annex 3A
+# Per-GHG EF uncertainty defaults (95 % half-widths) when no measured value is available. Tier 1 combustion and
+# flaring are the published defaults (see the module docstring); Tier 2 / 3 and the other categories are platform
+# defaults (expert judgement: country-specific or measured factors are tighter than the Tier 1 defaults)
 DEFAULT_EF_UNCERTAINTY = {
-    # Combustion sources — well-characterised stoichiometry
+    # Combustion: CO2 within IPCC 2006 Vol.2 Table 2.13 (country studies +/-0.5 to +/-10 %); CH4 / N2O Table 2.12
     "combustion": {
-        "co2": {"T1": 0.05, "T2": 0.03, "T3": 0.02},  # ±2–5%
-        "ch4": {"T1": 0.15, "T2": 0.10, "T3": 0.05},  # ±5–15%
-        "n2o": {"T1": 0.20, "T2": 0.15, "T3": 0.10},  # ±10–20%
+        "co2": {"T1": 0.05, "T2": 0.03, "T3": 0.02},
+        "ch4": {"T1": 1.50, "T2": 0.50, "T3": 0.15},  # Table 2.12: 50-150 % (larger side)
+        "n2o": {"T1": 9.00, "T2": 1.50, "T3": 0.20},  # Table 2.12: an order of magnitude (+900 %)
     },
-    # Flaring — combustion efficiency variation is primary driver
+    # Flaring: API Compendium 2021 Table 5-5 (gas production / processing flares)
     "flaring": {
-        "co2": {"T1": 0.10, "T2": 0.07, "T3": 0.05},  # ±5–10%
-        "ch4": {"T1": 0.25, "T2": 0.20, "T3": 0.10},  # ±10–25% (destruction eff.)
-        "n2o": {"T1": 0.50, "T2": 0.40, "T3": 0.30},  # ±30–50% (poorly constrained)
+        "co2": {"T1": 0.25, "T2": 0.10, "T3": 0.05},  # Table 5-5: +/-25 %
+        "ch4": {"T1": 0.25, "T2": 0.20, "T3": 0.10},  # Table 5-5: +/-25 %
+        "n2o": {"T1": 10.0, "T2": 1.50, "T3": 0.30},  # Table 5-5: -10 % / +1000 % (larger side)
     },
     # Fugitive — high inherent variability in leak rates
     "fugitive": {
@@ -170,8 +179,10 @@ PROCESS_CATEGORY = {
 # Relative standard uncertainty (1σ) for 100-year Global Warming Potential metrics
 GWP_UNCERTAINTY_1SIGMA = {
     "co2": 0.0,    # Reference gas, identically zero uncertainty by definition
-    "ch4": 0.30,   # ±30% standard uncertainty (IPCC AR5 Ch. 8 §8.7 / Table 8.SM.16)
-    "n2o": 0.20,   # ±20% standard uncertainty (IPCC AR5 Ch. 8 §8.7 / Table 8.SM.16)
+    # IPCC AR5 WG1 ch. 8 (s8.7.1.4): GWP100 uncertainty +/-40 % for CH4 and +/-30 % for N2O as 5-95 % ranges,
+    # i.e. 1-sigma = range / 1.645 (the ranges were used as 1-sigma, BA-019)
+    "ch4": 0.40 / 1.645,
+    "n2o": 0.30 / 1.645,
 }
 
 
@@ -221,30 +232,24 @@ def propagate_co2e_uncertainty(
     gwp_ch4 = float(gwps.get("CH4", 28.0))
     gwp_n2o = float(gwps.get("N2O", 265.0))
 
-    val_co2 = float(e_co2["value"] if isinstance(e_co2, dict) else (e_co2 or 0.0))
-    unc_co2 = float(
-        e_co2.get("relative_uncertainty_1sigma", e_co2.get("uncertainty", 0.0))
-        if isinstance(e_co2, dict)
-        else (u_co2 or 0.0)
-    )
+    def _extract_val_unc(e, fallback_u):
+        if isinstance(e, dict):
+            val = float(e.get("value") or 0.0)
+            u = e.get("relative_uncertainty_1sigma")
+            if u in (None, ""):
+                u = e.get("uncertainty")
+            if u in (None, ""):
+                u = fallback_u
+            return val, float(u or 0.0)
+        return float(e or 0.0), float(fallback_u or 0.0)
 
-    val_ch4 = float(e_ch4["value"] if isinstance(e_ch4, dict) else (e_ch4 or 0.0))
-    unc_ch4 = float(
-        e_ch4.get("relative_uncertainty_1sigma", e_ch4.get("uncertainty", 0.0))
-        if isinstance(e_ch4, dict)
-        else (u_ch4 or 0.0)
-    )
-
-    val_n2o = float(e_n2o["value"] if isinstance(e_n2o, dict) else (e_n2o or 0.0))
-    unc_n2o = float(
-        e_n2o.get("relative_uncertainty_1sigma", e_n2o.get("uncertainty", 0.0))
-        if isinstance(e_n2o, dict)
-        else (u_n2o or 0.0)
-    )
+    val_co2, unc_co2 = _extract_val_unc(e_co2, u_co2)
+    val_ch4, unc_ch4 = _extract_val_unc(e_ch4, u_ch4)
+    val_n2o, unc_n2o = _extract_val_unc(e_n2o, u_n2o)
 
     gwp_uncs = gwp_uncertainties or GWP_UNCERTAINTY_1SIGMA
-    u_gwp_ch4 = float(gwp_uncs.get("ch4", 0.30)) if include_gwp_uncertainty else 0.0
-    u_gwp_n2o = float(gwp_uncs.get("n2o", 0.20)) if include_gwp_uncertainty else 0.0
+    u_gwp_ch4 = float(gwp_uncs.get("ch4", GWP_UNCERTAINTY_1SIGMA["ch4"])) if include_gwp_uncertainty else 0.0
+    u_gwp_n2o = float(gwp_uncs.get("n2o", GWP_UNCERTAINTY_1SIGMA["n2o"])) if include_gwp_uncertainty else 0.0
 
     co2e_co2 = val_co2 * 1.0
     co2e_ch4 = val_ch4 * gwp_ch4
@@ -431,14 +436,17 @@ def monte_carlo_simulation(
             u_rel = s.get("uncertainty") if s.get("uncertainty") is not None else 0.05
         u_rel = max(0.0, float(u_rel or 0.0))
 
-        if mean_val <= 0 or u_rel == 0:
+        if mean_val == 0 or u_rel == 0:
             deterministic_offset += mean_val
         else:
-            var = (mean_val * u_rel) ** 2
-            sig_sq = math.log(1.0 + (var / (mean_val ** 2)))
+            # a removal (negative value) is sampled on its magnitude and subtracted: it was added as an exact
+            # constant, so its uncertainty was lost (BA-041)
+            sign, mag = (1.0, mean_val) if mean_val > 0 else (-1.0, -mean_val)
+            var = (mag * u_rel) ** 2
+            sig_sq = math.log(1.0 + (var / (mag ** 2)))
             sigma = math.sqrt(sig_sq)
-            mu = math.log((mean_val ** 2) / math.sqrt(var + (mean_val ** 2)))
-            params.append((mu, sigma))
+            mu = math.log((mag ** 2) / math.sqrt(var + (mag ** 2)))
+            params.append((mu, sigma, sign))
 
     if not params:
         return {
@@ -454,8 +462,8 @@ def monte_carlo_simulation(
     totals = []
     for _ in range(iterations):
         tot = deterministic_offset
-        for mu, sigma in params:
-            tot += math.exp(random.gauss(mu, sigma))
+        for mu, sigma, sign in params:
+            tot += sign * math.exp(random.gauss(mu, sigma))
         totals.append(tot)
 
     totals.sort()

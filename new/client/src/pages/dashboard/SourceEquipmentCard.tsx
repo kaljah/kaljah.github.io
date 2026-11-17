@@ -218,13 +218,13 @@ export const SourceEquipmentCard: React.FC<SourceEquipmentCardProps> = ({
             </div>
 
             <div className="relative shrink-0">
-              <Search className="size-3 absolute left-2 top-2 text-ink-400 pointer-events-none" />
+              <Search className="size-3 absolute start-2 top-2 text-ink-400 pointer-events-none" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={t("Filter tag...")}
-                className="h-6 w-24 focus:w-32 transition-all rounded-md border border-border bg-surface pl-6 pr-2 text-xs text-text placeholder:text-ink-400 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                className="h-6 w-24 focus:w-32 transition-all rounded-md border border-border bg-surface ps-6 pe-2 text-xs text-text placeholder:text-ink-400 focus:outline-none focus:ring-1 focus:ring-brand-500"
               />
             </div>
           </div>

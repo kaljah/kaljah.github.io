@@ -2,7 +2,7 @@ from routes.auth import login_required
 from flask import request, jsonify, session, current_app
 import json
 from . import data_bp
-from utils import facility_access_error, get_allowed_facility_ids, get_current_tenant_id, get_current_user, log_activity_and_notify, require_facility_access
+from utils import facility_access_error, get_allowed_facility_ids, get_current_tenant_id, get_current_user, log_activity_and_notify, require_facility_access, tenant_matches
 from sqlalchemy import func
 from models import (
     ProductionData, ActivityLog, User, Facility, OgmpSurvey, 
@@ -27,8 +27,12 @@ def get_production():
         return jsonify({'error': 'IT administrators are not authorized to access operational production data.'}), 403
     query = ProductionData.query
     allowed_fids = get_allowed_facility_ids(user)
+    caller_tenant = get_current_tenant_id(user)
     if allowed_fids is not None:
         query = query.filter(ProductionData.facility_id.in_(allowed_fids or [-1]))
+    else:
+        tenant_fids = Facility.query.with_entities(Facility.id).filter(tenant_matches(Facility.tenant_id, caller_tenant))
+        query = query.filter(ProductionData.facility_id.in_(tenant_fids))
     fid_arg = request.args.get('facilityId') or request.args.get('facility_id')
     parsed_fids = _parse_facility_ids(fid_arg)
     if parsed_fids is not None:
@@ -59,6 +63,11 @@ def get_production():
         'total_production_no_injected_mmboe': d.total_production_no_injected_mmboe or 0.0,
         'saleable_production_mmboe': d.saleable_production_mmboe or 0.0,
         'fuel_gas_export_mmsm3': d.fuel_gas_export_mmsm3 or 0.0,
+        # marketed-gas deductions (None = not entered: the emission records are used)
+        'flared_gas_mmsm3': d.flared_gas_mmsm3,
+        'vented_gas_mmsm3': d.vented_gas_mmsm3,
+        'fuel_gas_consumed_mmsm3': d.fuel_gas_consumed_mmsm3,
+        'ngl_shrinkage_mmsm3': d.ngl_shrinkage_mmsm3,
         'activity': d.activity,
         'division': d.division,
         'field': d.field,
@@ -104,6 +113,9 @@ def add_production():
           for k in ('gross_gas_mmsm3', 'gas_without_injected_mmsm3', 'injected_gas_mmsm3', 'crude_oil_mmboe',
                     'condensate_mmboe', 'lpg_mmboe', 'ngl_mmboe', 'total_production_mmboe',
                     'total_production_no_injected_mmboe', 'saleable_production_mmboe', 'fuel_gas_export_mmsm3')}
+    # marketed-gas deductions: optional, blank stays None so the emission records are the fallback
+    mm.update({k: parse_number(data.get(k), k, required=False, default=None, min_value=0, max_value=1e5)
+               for k in ('flared_gas_mmsm3', 'vented_gas_mmsm3', 'fuel_gas_consumed_mmsm3', 'ngl_shrinkage_mmsm3')})
 
     oil_unit = data.get('oil_unit', 'bbl')
     gas_unit = data.get('gas_unit', 'mscf')
@@ -116,14 +128,10 @@ def add_production():
     tot_mmboe = mm.get('total_production_mmboe')
     if tot_mmboe and tot_mmboe > 0 and (oil_amount > 0 or gas_amount > 0):
         from services.dashboard_filters import calculate_oil_gas_boe, validate_production_mmboe_consistency
-        class _ProdCheck:
-            pass
-        _chk = _ProdCheck()
-        _chk.oil_amount, _chk.oil_unit = oil_amount, oil_unit
-        _chk.gas_amount, _chk.gas_unit = gas_amount, gas_unit
-        _chk.gross_gas_mmsm3 = mm.get('gross_gas_mmsm3')
-        _chk.year, _chk.month = year, month
-        calc_boe = calculate_oil_gas_boe(_chk)
+        from types import SimpleNamespace
+        calc_boe = calculate_oil_gas_boe(SimpleNamespace(oil_amount=oil_amount, oil_unit=oil_unit, gas_amount=gas_amount,
+                                                         gas_unit=gas_unit, gross_gas_mmsm3=mm.get('gross_gas_mmsm3'),
+                                                         year=year, month=month))
         if calc_boe and calc_boe > 0:
             is_consistent, diff_pct = validate_production_mmboe_consistency(tot_mmboe, calc_boe, tolerance=0.30)
             if not is_consistent:
@@ -330,8 +338,12 @@ def get_ogmp_surveys():
         return jsonify({'error': 'IT administrators are not authorized to view operational OGMP data.'}), 403
     query = OgmpSurvey.query
     allowed_fids = get_allowed_facility_ids(user)
+    caller_tenant = get_current_tenant_id(user)
     if allowed_fids is not None:
         query = query.filter(OgmpSurvey.facility_id.in_(allowed_fids or [-1]))
+    else:
+        tenant_fids = Facility.query.with_entities(Facility.id).filter(tenant_matches(Facility.tenant_id, caller_tenant))
+        query = query.filter(OgmpSurvey.facility_id.in_(tenant_fids))
     fac_arg = request.args.get('facilityId') or request.args.get('facility_id')
     parsed_fids = _parse_facility_ids(fac_arg)
     if parsed_fids is not None:
@@ -624,8 +636,12 @@ def get_level_logs():
         return jsonify({'error': 'IT administrators are not authorized to view operational OGMP data.'}), 403
     query = LevelUpgradeLog.query
     allowed_fids = get_allowed_facility_ids(user)
+    caller_tenant = get_current_tenant_id(user)
     if allowed_fids is not None:
         query = query.filter(LevelUpgradeLog.facility_id.in_(allowed_fids or [-1]))
+    else:
+        tenant_fids = Facility.query.with_entities(Facility.id).filter(tenant_matches(Facility.tenant_id, caller_tenant))
+        query = query.filter(LevelUpgradeLog.facility_id.in_(tenant_fids))
     fac_id = request.args.get('facility_id') or request.args.get('facilityId')
     if fac_id and fac_id != 'all':
         try:
@@ -661,8 +677,12 @@ def get_cbam_exports():
         return jsonify({'error': 'IT administrators are not authorized to view operational CBAM data.'}), 403
     query = CbamProductExport.query
     allowed_fids = get_allowed_facility_ids(user)
+    caller_tenant = get_current_tenant_id(user)
     if allowed_fids is not None:
         query = query.filter(CbamProductExport.facility_id.in_(allowed_fids or [-1]))
+    else:
+        tenant_fids = Facility.query.with_entities(Facility.id).filter(tenant_matches(Facility.tenant_id, caller_tenant))
+        query = query.filter(CbamProductExport.facility_id.in_(tenant_fids))
     fac_arg = request.args.get('facilityId') or request.args.get('facility_id')
     parsed_fids = _parse_facility_ids(fac_arg)
     if parsed_fids is not None:
@@ -743,50 +763,25 @@ def save_cbam_export():
         specific_embedded_indirect = parse_number(data.get('specific_embedded_indirect') or data.get('specificEmbeddedIndirect'), 'specific_embedded_indirect', required=False, min_value=0, default=0.0)
         
         # CCS (Carbon Capture & Geological Storage)
-        captured_co2_tonnes = parse_number(
-            data.get('captured_co2_tonnes') or data.get('capturedCo2Tonnes'),
-            'captured_co2_tonnes',
-            required=False,
-            min_value=0,
-            default=0.0
-        )
+        captured_co2_tonnes = parse_number(data.get('captured_co2_tonnes') or data.get('capturedCo2Tonnes'), 'captured_co2_tonnes',
+                                     required=False, min_value=0, default=0.0)
         ccs_certificate_id = (data.get('ccs_certificate_id') or data.get('ccsCertificateId') or '').strip()
         
         # Article 9 Origin Carbon Price / Flaring Tax
-        carbon_price_paid_eur = parse_number(
-            data.get('carbon_price_paid_eur') or data.get('carbonPricePaidEur'),
-            'carbon_price_paid_eur',
-            required=False,
-            min_value=0,
-            default=0.0
-        )
+        carbon_price_paid_eur = parse_number(data.get('carbon_price_paid_eur') or data.get('carbonPricePaidEur'), 'carbon_price_paid_eur',
+                                     required=False, min_value=0, default=0.0)
         carbon_price_legal_ref = (data.get('carbon_price_legal_ref') or data.get('carbonPriceLegalRef') or '').strip()
         
         # Article 7 Complex Precursor Attribution
         is_complex_good = bool(data.get('is_complex_good') or data.get('isComplexGood'))
         precursor_name = (data.get('precursor_name') or data.get('precursorName') or '').strip() if is_complex_good else ''
         precursor_cn_code = (data.get('precursor_cn_code') or data.get('precursorCnCode') or '').strip() if is_complex_good else ''
-        precursor_ratio = parse_number(
-            data.get('precursor_ratio') or data.get('precursorRatio'),
-            'precursor_ratio',
-            required=False,
-            min_value=0,
-            default=0.0
-        ) if is_complex_good else 0.0
-        precursor_see_dir = parse_number(
-            data.get('precursor_see_dir') or data.get('precursorSeeDir'),
-            'precursor_see_dir',
-            required=False,
-            min_value=0,
-            default=0.0
-        ) if is_complex_good else 0.0
-        precursor_see_indir = parse_number(
-            data.get('precursor_see_indir') or data.get('precursorSeeIndir'),
-            'precursor_see_indir',
-            required=False,
-            min_value=0,
-            default=0.0
-        ) if is_complex_good else 0.0
+        precursor_ratio = parse_number(data.get('precursor_ratio') or data.get('precursorRatio'), 'precursor_ratio',
+                                     required=False, min_value=0, default=0.0) if is_complex_good else 0.0
+        precursor_see_dir = parse_number(data.get('precursor_see_dir') or data.get('precursorSeeDir'), 'precursor_see_dir',
+                                     required=False, min_value=0, default=0.0) if is_complex_good else 0.0
+        precursor_see_indir = parse_number(data.get('precursor_see_indir') or data.get('precursorSeeIndir'), 'precursor_see_indir',
+                                     required=False, min_value=0, default=0.0) if is_complex_good else 0.0
 
         notes = (data.get('notes') or '').strip()
 
@@ -810,7 +805,8 @@ def save_cbam_export():
         total_direct_tco2e = db.session.query(func.coalesce(func.sum(Emission.co2e_total), 0.0)).filter(
             Emission.facility_id == facility_id,
             Emission.year == year,
-            Emission.status == 'Verified'
+            Emission.status == 'Verified',
+            Emission.is_test == False  # noqa: E712
         ).scalar()
         
         from models import Scope2Emission
@@ -823,16 +819,30 @@ def save_cbam_export():
             Scope2Emission.status == 'Verified'
         ).scalar()
 
+        # EU 2023/1773 Annex III: specific embedded emissions = attributed emissions / activity level, the
+        # installation's whole production of the good in the period (exported or not). Each export was divided
+        # by its own quantity, so two exports carried the facility's emissions twice (BA-044)
+        activity_level = parse_number(
+            data.get('activity_level_tonnes') or data.get('activityLevelTonnes') or data.get('production_tonnes'),
+            'activity_level_tonnes', required=False, min_value=0, default=0.0)
+        if (specific_embedded_direct <= 0 or specific_embedded_indirect <= 0) and activity_level <= 0:
+            return jsonify({'error': 'Give the specific embedded emissions, or the activity level: the tonnes of '
+                                     'this good the facility produced in the period (all of it, exported or not)',
+                            'field': 'activity_level_tonnes'}), 400
+        if activity_level and activity_level < quantity_tonnes:
+            return jsonify({'error': 'The activity level (tonnes produced) cannot be below the exported quantity',
+                            'field': 'activity_level_tonnes'}), 400
+
         if specific_embedded_direct > 0:
             se_dir = specific_embedded_direct
         else:
             net_direct_tco2e = max(0.0, float(total_direct_tco2e) - float(captured_co2_tonnes))
-            se_dir = round(net_direct_tco2e / quantity_tonnes, 4) if quantity_tonnes > 0 else 0.0
+            se_dir = round(net_direct_tco2e / activity_level, 4)
 
         if specific_embedded_indirect > 0:
             se_ind = specific_embedded_indirect
         else:
-            se_ind = round(float(total_indirect_tco2e) / quantity_tonnes, 4) if quantity_tonnes > 0 else 0.0
+            se_ind = round(float(total_indirect_tco2e) / activity_level, 4)
 
         if record_id:
             record = db.session.get(CbamProductExport, record_id)

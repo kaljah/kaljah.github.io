@@ -201,16 +201,16 @@ const Scope2FormCalculatorGridContainer: React.FC<Scope2FormCalculatorGridContai
                         )}%`
                       : "—"}
                     {entry.status === "Draft" ? (
-                      <span className="ml-[8px]! text-[length:0.65rem]! bg-[color:var(--color-legacy-fee2e2)]! text-[color:var(--color-red-700)]! p-[2px_6px]! rounded-[4px]! font-semibold!">
+                      <span className="ms-[8px]! text-[length:0.65rem]! bg-[color:var(--color-legacy-fee2e2)]! text-[color:var(--color-red-700)]! p-[2px_6px]! rounded-[4px]! font-semibold!">
                         {t("Draft")}
                       </span>
                     ) : entry.status === "Pending Approval" ||
                       entry.status === "Pending" ? (
-                      <span className="ml-[8px]! text-[length:0.65rem]! bg-[color:var(--color-legacy-fef3c7)]! text-[color:var(--color-amber-600)]! p-[2px_6px]! rounded-[4px]! font-semibold!">
+                      <span className="ms-[8px]! text-[length:0.65rem]! bg-[color:var(--color-legacy-fef3c7)]! text-[color:var(--color-amber-600)]! p-[2px_6px]! rounded-[4px]! font-semibold!">
                         {t("Pending")}
                       </span>
                     ) : (
-                      <span className="ml-[8px]! text-[length:0.65rem]! bg-[color:var(--color-legacy-dcfce7)]! text-[color:var(--color-legacy-15803d)]! p-[2px_6px]! rounded-[4px]! font-semibold!">
+                      <span className="ms-[8px]! text-[length:0.65rem]! bg-[color:var(--color-legacy-dcfce7)]! text-[color:var(--color-legacy-15803d)]! p-[2px_6px]! rounded-[4px]! font-semibold!">
                         {t("Verified")}
                       </span>
                     )}
@@ -250,7 +250,7 @@ const Scope2FormCalculatorGridContainer: React.FC<Scope2FormCalculatorGridContai
         </tbody>
         <tfoot>
           <tr className={`[background-color:var(--color-legacy-f9fafb)]! [font-weight:bold]!`}>
-            <td colSpan={7} className="text-right! pr-[15px]!">
+            <td colSpan={7} className="text-right! pe-[15px]!">
               {t("Total (Page):")}
             </td>
             <td className="text-[color:var(--color-blue-700)]!">

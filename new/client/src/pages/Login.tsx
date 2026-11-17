@@ -67,7 +67,7 @@ const GhgCloud: React.FC = () => {
   }, []);
 
   return (
-    <div className="[position:absolute] [top:0] [left:0] [right:0] [bottom:0] [pointer-events:none] [z-index:1] [overflow:hidden]">
+    <div className="[position:absolute] [top:0] [inset-inline-start:0] [inset-inline-end:0] [bottom:0] [pointer-events:none] [z-index:1] [overflow:hidden]">
       <div className="ghg-cloud [background:radial-gradient(_circle,_rgba(16,_185,_129,_0.3)_0%,_rgba(16,_185,_129,_0.1)_50%,_transparent_70%_)] [width:900px]! [height:900px]!" ref={cloud2Ref}></div>
       <div className="ghg-cloud [background:radial-gradient(_circle,_rgba(255,_102,_0,_0.35)_0%,_rgba(255,_102,_0,_0.1)_50%,_transparent_70%_)]" ref={cloud1Ref}></div>
       <div className="ghg-noise-overlay"></div>
@@ -172,7 +172,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="[--primary:var(--color-brand-700)] [&&]:[--primary-hover:var(--color-brand-800)] [--accent:var(--color-green-500)] [--bg-page:var(--color-ink-50)] [--text-main:var(--color-ink-900)] [--text-muted:var(--color-ink-500)] [--border-light:var(--color-ink-200)] [min-height:100vh] [display:flex] [justify-content:center] [align-items:center] [background-color:var(--bg-page)] [font-family:inherit] [color:var(--text-main)] [padding:20px] [position:relative] [overflow:hidden] before:[content:''] before:[position:absolute] before:[top:-20%] before:[right:-10%] before:[width:600px] before:[height:600px] before:[border-radius:50%] before:[background:radial-gradient(_circle,_rgba(255,_102,_0,_0.04)_0%,_transparent_70%_)] before:[pointer-events:none] before:[z-index:0] after:[content:''] after:[position:absolute] after:[bottom:-20%] after:[left:-10%] after:[width:600px] after:[height:600px] after:[border-radius:50%] after:[background:radial-gradient(_circle,_rgba(16,_185,_129,_0.04)_0%,_transparent_70%_)] after:[pointer-events:none] after:[z-index:0]">
+    <div className="[--primary:var(--color-brand-700)] [&&]:[--primary-hover:var(--color-brand-800)] [--accent:var(--color-green-500)] [--bg-page:var(--color-ink-50)] [--text-main:var(--color-ink-900)] [--text-muted:var(--color-ink-500)] [--border-light:var(--color-ink-200)] [min-height:100vh] [display:flex] [justify-content:center] [align-items:center] [background-color:var(--bg-page)] [font-family:inherit] [color:var(--text-main)] [padding:20px] [position:relative] [overflow:hidden] before:[content:''] before:[position:absolute] before:[top:-20%] before:[inset-inline-end:-10%] before:[width:600px] before:[height:600px] before:[border-radius:50%] before:[background:radial-gradient(_circle,_rgba(255,_102,_0,_0.04)_0%,_transparent_70%_)] before:[pointer-events:none] before:[z-index:0] after:[content:''] after:[position:absolute] after:[bottom:-20%] after:[inset-inline-start:-10%] after:[width:600px] after:[height:600px] after:[border-radius:50%] after:[background:radial-gradient(_circle,_rgba(16,_185,_129,_0.04)_0%,_transparent_70%_)] after:[pointer-events:none] after:[z-index:0]">
       <GhgCloud />
 
       <motion.div
@@ -274,12 +274,12 @@ const Login: React.FC = () => {
                 }}
               >
                 <div className="[position:relative]">
-                  <span className="input-icon [position:absolute] [left:16px] [top:50%] [transform:translateY(-50%)] [color:var(--color-ink-600)] [transition:color_0.3s]">
+                  <span className="input-icon [position:absolute] [inset-inline-start:16px] [top:50%] [transform:translateY(-50%)] [color:var(--color-ink-600)] [transition:color_0.3s]">
                     <Mail size={18} aria-hidden="true" />
                   </span>
                   <input
                     type="email"
-                    className="[width:100%] [padding:14px_16px_14px_48px] [border:1px_solid_var(--border-light)] [&&]:[border-radius:var(--radius-md)] [font-size:var(--text-md)] [color:var(--text-main)]! [transition:all_0.2s] [background:var(--color-legacy-fafafa)] placeholder:[color:var(--color-ink-400)]! focus:[outline:none] focus:[border-color:var(--primary)] focus:[background:var(--color-white)] focus:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.1)] [&:focus+.input-icon]:[color:var(--primary)]!"
+                    className="[width:100%] [padding-block:14px_14px] [padding-inline:48px_16px] [border:1px_solid_var(--border-light)] [&&]:[border-radius:var(--radius-md)] [font-size:var(--text-md)] [color:var(--text-main)]! [transition:all_0.2s] [background:var(--color-legacy-fafafa)] placeholder:[color:var(--color-ink-400)]! focus:[outline:none] focus:[border-color:var(--primary)] focus:[background:var(--color-white)] focus:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.1)] [&:focus+.input-icon]:[color:var(--primary)]!"
                     required
                     placeholder={t("Email Address")}
                     aria-label={t("Email address")}
@@ -298,12 +298,12 @@ const Login: React.FC = () => {
                 }}
               >
                 <div className="[position:relative]">
-                  <span className="input-icon [position:absolute] [left:16px] [top:50%] [transform:translateY(-50%)] [color:var(--color-ink-600)] [transition:color_0.3s]">
+                  <span className="input-icon [position:absolute] [inset-inline-start:16px] [top:50%] [transform:translateY(-50%)] [color:var(--color-ink-600)] [transition:color_0.3s]">
                     <Lock size={18} strokeWidth={2} aria-hidden="true" />
                   </span>
                   <input
                     type={showPassword ? "text" : "password"}
-                    className="[width:100%] [padding:14px_16px_14px_48px] [border:1px_solid_var(--border-light)] [&&]:[border-radius:var(--radius-md)] [font-size:var(--text-md)] [color:var(--text-main)]! [transition:all_0.2s] [background:var(--color-legacy-fafafa)] placeholder:[color:var(--color-ink-400)]! focus:[outline:none] focus:[border-color:var(--primary)] focus:[background:var(--color-white)] focus:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.1)] [&:focus+.input-icon]:[color:var(--primary)]!"
+                    className="[width:100%] [padding-block:14px_14px] [padding-inline:48px_16px] [border:1px_solid_var(--border-light)] [&&]:[border-radius:var(--radius-md)] [font-size:var(--text-md)] [color:var(--text-main)]! [transition:all_0.2s] [background:var(--color-legacy-fafafa)] placeholder:[color:var(--color-ink-400)]! focus:[outline:none] focus:[border-color:var(--primary)] focus:[background:var(--color-white)] focus:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.1)] [&:focus+.input-icon]:[color:var(--primary)]!"
                     required
                     placeholder={t("Password")}
                     aria-label={t("Password")}
@@ -313,7 +313,7 @@ const Login: React.FC = () => {
                   />
                   <button
                     type="button"
-                    className="[position:absolute] [top:50%] [right:12px] [transform:translateY(-50%)] [display:inline-flex] [padding:6px] [border:0] [&&]:[border-radius:var(--radius-md)] [background:transparent] [color:var(--color-ink-500)] [cursor:pointer] hover:[background:var(--color-ink-100)] hover:[color:var(--color-ink-900)]"
+                    className="[position:absolute] [top:50%] [inset-inline-end:12px] [transform:translateY(-50%)] [display:inline-flex] [padding:6px] [border:0] [&&]:[border-radius:var(--radius-md)] [background:transparent] [color:var(--color-ink-500)] [cursor:pointer] hover:[background:var(--color-ink-100)] hover:[color:var(--color-ink-900)]"
                     onClick={() => setShowPassword((v) => !v)}
                     aria-label={showPassword ? t("Hide password") : t("Show password")}
                     aria-pressed={showPassword}
@@ -398,7 +398,7 @@ const Login: React.FC = () => {
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               transition={{ duration: 0.2 }}
             >
-              <div className="[margin-bottom:20px] [text-align:left] [&_h3]:[font-size:var(--text-xl)] [&_h3]:[font-weight:700] [&_h3]:[color:var(--text-main)] [&_h3]:[margin-bottom:6px] [&&]:[&&]:[&_p]:[font-size:var(--text-base)] [&&]:[&_p]:[color:var(--text-muted)] [&_p]:[line-height:1.4]">
+              <div className="[margin-bottom:20px] [text-align:start] [&_h3]:[font-size:var(--text-xl)] [&_h3]:[font-weight:700] [&_h3]:[color:var(--text-main)] [&_h3]:[margin-bottom:6px] [&&]:[&&]:[&_p]:[font-size:var(--text-base)] [&&]:[&_p]:[color:var(--text-muted)] [&_p]:[line-height:1.4]">
                 <h3>{t("Reset Your Password")}</h3>
                 <p>
                   {t("Enter your account email. A notification will be dispatched to your IT Administrator to reset your credentials.")}
@@ -414,12 +414,12 @@ const Login: React.FC = () => {
               <form onSubmit={handleForgotPassword}>
                 <div className="form-group mb-[16px]!">
                   <div className="[position:relative]">
-                    <span className="input-icon [position:absolute] [left:16px] [top:50%] [transform:translateY(-50%)] [color:var(--color-ink-600)] [transition:color_0.3s]">
+                    <span className="input-icon [position:absolute] [inset-inline-start:16px] [top:50%] [transform:translateY(-50%)] [color:var(--color-ink-600)] [transition:color_0.3s]">
                       <Mail size={18} aria-hidden="true" />
                     </span>
                     <input
                       type="email"
-                      className="[width:100%] [padding:14px_16px_14px_48px] [border:1px_solid_var(--border-light)] [&&]:[border-radius:var(--radius-md)] [font-size:var(--text-md)] [color:var(--text-main)]! [transition:all_0.2s] [background:var(--color-legacy-fafafa)] placeholder:[color:var(--color-ink-400)]! focus:[outline:none] focus:[border-color:var(--primary)] focus:[background:var(--color-white)] focus:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.1)] [&:focus+.input-icon]:[color:var(--primary)]!"
+                      className="[width:100%] [padding-block:14px_14px] [padding-inline:48px_16px] [border:1px_solid_var(--border-light)] [&&]:[border-radius:var(--radius-md)] [font-size:var(--text-md)] [color:var(--text-main)]! [transition:all_0.2s] [background:var(--color-legacy-fafafa)] placeholder:[color:var(--color-ink-400)]! focus:[outline:none] focus:[border-color:var(--primary)] focus:[background:var(--color-white)] focus:[box-shadow:0_0_0_4px_rgba(255,_102,_0,_0.1)] [&:focus+.input-icon]:[color:var(--primary)]!"
                       required
                       placeholder={t("Enter registered email")}
                       value={forgotEmail}

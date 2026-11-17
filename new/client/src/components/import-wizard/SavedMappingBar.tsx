@@ -45,7 +45,7 @@ export const SavedMappingBar: React.FC<SavedMappingBarProps> = ({ applied, fitti
       ) : (
         <span>{t("Columns matched automatically. Save the mapping to reuse it for the next file with these columns.")}</span>
       )}
-      <span className="ml-auto flex items-center gap-2">
+      <span className="ms-auto flex items-center gap-2">
         {name === null ? (
           <Button variant="link" size="sm" className="h-auto px-0" disabled={!canSave} onClick={() => setName(applied?.name || defaultName)}>
             {applied ? t("Update saved mapping") : t("Save this mapping")}

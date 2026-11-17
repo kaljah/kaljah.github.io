@@ -86,7 +86,7 @@ export const RecordTable: React.FC<RecordTableProps> = ({
           <thead>
             <tr>
               {head.map((h, i) => (
-                <th key={i} scope="col" className="whitespace-nowrap border-b border-border bg-ink-50 px-4 py-3 text-left text-sm font-semibold text-text-secondary">
+                <th key={i} scope="col" className="whitespace-nowrap border-b border-border bg-ink-50 px-4 py-3 text-start text-sm font-semibold text-text-secondary">
                   {h}
                 </th>
               ))}
@@ -215,7 +215,7 @@ export const RegionName: React.FC<RegionNameProps> = ({ facility, fallback }) =>
   facility ? (
     <>
       {facility.name}
-      {facility.field && <span className="ml-1 text-[0.85em] font-normal text-ink-400">-{facility.field}</span>}
+      {facility.field && <span className="ms-1 text-[0.85em] font-normal text-ink-400">-{facility.field}</span>}
     </>
   ) : (
     <>{fallback}</>

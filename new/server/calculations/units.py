@@ -13,8 +13,11 @@ STD_PRESSURE_PSIA = 14.696
 STD_PRESSURE_KPA = 101.325
 STD_PRESSURE_BAR = 1.01325
 
-# API Compendium 2021 standard conditions (Section 3.4, 60 F and 14.696 psia) and the molar volume
-# conversion its equations use: 379.3 scf/lb-mole = 23.685 m3/kg-mole
+# API Compendium 2021 standard conditions (Section 3.4, 60 F and 14.696 psia) and the two molar volumes it
+# prints: 379.3 scf/lb-mole for its US-unit equations and 23.685 m3/kg-mole for its SI ones. Converted exactly,
+# 379.3 scf/lb-mole is 23.679 m3/kg-mole: the Compendium's own figures are 0.026 % apart, so a US-unit path and
+# an SI path give the same gas 0.026 % apart (blind audit BA-016). Both are kept as printed, every module takes
+# them from here, and the exhibits are reproduced on their own unit basis.
 MOLAR_VOLUME_SCF_PER_LBMOL = 379.3
 MOLAR_VOLUME_M3_PER_KMOL = 23.685
 MW_CH4 = 16.04
@@ -363,6 +366,11 @@ FREIGHT_UNITS_TO_TONNE_KM = {
     "ton-mile": 1.459972,
     "ton_mile": 1.459972,
     "tonmile": 1.459972,
+    "short_ton-mile": 1.459972,  # 0.90718474 t x 1.609344 km
+    "short_ton_mile": 1.459972,
+    "short-ton-mile": 1.459972,
+    "tonne-mile": 1.609344,
+    "tonne_mile": 1.609344,
 }
 
 PASSENGER_UNITS_TO_PKM = {
@@ -524,172 +532,6 @@ def normalize_efficiency(eff_val, default=0.0, unit=None):
 
 # Common alias for internal module usage
 _normalize_efficiency = normalize_efficiency
-
-
-def scope3_ef_kg_per_unit(amount, co2e_tonnes, ef=None):
-    """The factor as stored on a Scope 3 record: kg CO2e per activity unit (the unit the tables and
-    calculation details read), whatever unit it was entered in (t/unit, g/unit, per $1,000)."""
-    try:
-        amt = float(amount or 0)
-        if amt > 0 and co2e_tonnes is not None:
-            return float(co2e_tonnes) * 1000.0 / amt
-    except (TypeError, ValueError):
-        pass
-    return ef
-
-
-_SCOPE3_MASS_TONNES = {
-    "": 0.001, "kg": 0.001, "kgs": 0.001, "kilogram": 0.001, "kilograms": 0.001,
-    "t": 1.0, "tonne": 1.0, "tonnes": 1.0, "metric ton": 1.0, "metric tons": 1.0, "metric tonne": 1.0,
-    "metric tonnes": 1.0, "mt": 1.0,
-    "g": 1e-6, "gram": 1e-6, "grams": 1e-6,
-    "lb": 0.45359237e-3, "lbs": 0.45359237e-3, "pound": 0.45359237e-3, "pounds": 0.45359237e-3,
-    "short ton": 0.90718474, "short tons": 0.90718474, "us ton": 0.90718474, "us tons": 0.90718474,
-    "long ton": 1.0160469088, "long tons": 1.0160469088,
-}
-
-
-_SCOPE3_UNIT_ALIASES = {
-    "$": "usd", "us$": "usd", "dollar": "usd", "dollars": "usd", "usd": "usd",
-    "pkm": "passenger-km", "passenger_km": "passenger-km", "p-km": "passenger-km",
-    "tkm": "tonne-km", "t-km": "tonne-km", "tonne_km": "tonne-km", "tonne-km": "tonne-km",
-    "ton-km": "tonne-km", "ton_km": "tonne-km", "tonkm": "tonne-km",
-    "litre": "l", "litres": "l", "liter": "l", "liters": "l",
-    "mmbtu": "mmbtu", "mm-btu": "mmbtu", "million-btu": "mmbtu", "mm_btu": "mmbtu",
-    "mscf": "mscf", "mmscf": "mmscf", "mcf": "mcf", "scf": "scf",
-}
-
-_GAS_VOLUME_UNITS = {"scf", "mcf", "mscf", "mmscf", "mmcf", "m3", "sm3", "nm3"}
-_LIQUID_VOLUME_UNITS = {"bbl", "gal", "gallon", "gallons", "l", "liter", "liters", "litre", "litres", "barrel", "barrels"}
-_ENERGY_UNITS = {"mmbtu", "gj", "mj", "kwh", "mwh", "therm", "btu"}
-
-
-def _scope3_activity_in_factor_unit(activity_unit, den):
-    """Activity units per factor denominator unit (1000 for kg against a per-tonne factor). Equal or
-    absent units give 1. Units that are both physical convert; anything else that differs is
-    refused: an amount in kg against a per-tonne factor was booked 1000x high (bug hunt #30)."""
-    def norm(u):
-        u = _re.sub(r"\s+", " ", str(u or "").strip().lower())
-        return _SCOPE3_UNIT_ALIASES.get(u, u)
-
-    a, d = norm(activity_unit), norm(den)
-    if not a or not d or a == d or a in ("unit", "units") or d in ("unit", "units", "item", "items"):
-        return 1.0
-
-    a_clean = a.replace(" ", "_")
-    d_clean = d.replace(" ", "_")
-
-    # Gas volume to energy conversion via standard Natural Gas HHV (API Compendium §8.1 / 1,020 Btu/scf)
-    if a_clean in _GAS_VOLUME_UNITS and d_clean in _ENERGY_UNITS:
-        _, m3_factor = unit_dimension(a)
-        scf = m3_factor / CONVERSIONS["scf_to_m3"]
-        btu = scf * NG_HHV_BTU_PER_SCF
-        mj = btu * CONVERSIONS["btu_to_kj"] / 1000.0
-        _, d_mj_factor = unit_dimension(d)
-        return mj / d_mj_factor
-
-    if d_clean in _GAS_VOLUME_UNITS and a_clean in _ENERGY_UNITS:
-        _, d_m3_factor = unit_dimension(d)
-        d_scf = d_m3_factor / CONVERSIONS["scf_to_m3"]
-        d_btu = d_scf * NG_HHV_BTU_PER_SCF
-        d_mj = d_btu * CONVERSIONS["btu_to_kj"] / 1000.0
-        _, a_mj_factor = unit_dimension(a)
-        return a_mj_factor / d_mj
-
-    # Refuse conversion between gas volume and liquid volume
-    if (a_clean in _GAS_VOLUME_UNITS and d_clean in _LIQUID_VOLUME_UNITS) or \
-       (a_clean in _LIQUID_VOLUME_UNITS and d_clean in _GAS_VOLUME_UNITS):
-        from input_validation import ValidationError
-        raise ValidationError(f"Activity unit '{activity_unit}' cannot be converted to the factor's unit 'per {den}'",
-                              "unit")
-
-    def dim(u):
-        parts = u.split("-")
-        out = []
-        for p in parts:
-            dm, f = unit_dimension(p)
-            out.append((dm, f))
-        return out
-
-    try:
-        da, dd = dim(a), dim(d)
-    except UnitError as err:
-        from input_validation import ValidationError
-        raise ValidationError(f"Activity unit '{activity_unit}' cannot be matched to the factor's unit "
-                              f"'per {den}': {err}", "unit")
-    if len(da) != len(dd) or any(x[0] != y[0] for x, y in zip(da, dd)):
-        from input_validation import ValidationError
-        raise ValidationError(f"Activity unit '{activity_unit}' cannot be converted to the factor's unit 'per {den}'",
-                              "unit")
-    scale = 1.0
-    for (_, fa), (_, fd) in zip(da, dd):
-        scale *= fa / fd
-    return scale
-
-
-def compute_scope3_co2e(
-    amt: float, ef: float, ef_unit: str = "", calc_method: str = "", activity_unit: str = ""
-) -> float:
-    """
-    Authoritatively calculates Scope 3 CO2e in metric tonnes from activity amount and emission factor.
-
-    Distinguishes the numerator GHG mass unit (t, kg, g, lb; kg when not given) from the
-    denominator activity unit (tonne, liter, $1,000 ...).
-    - A per-1,000 denominator ('kg CO2e/$1000', 't CO2e/1000 km') divides the activity by 1,000.
-    - Tonnes numerator ('tCO2e/unit', 'tonne CO2e/bbl', 't/bbl'): co2e = amt * ef.
-    - kg numerator ('kg CO2e/liter', 'kg/unit'): co2e = amt * ef / 1000.
-    `calc_method` is accepted for backward compatibility and does not change the result.
-    `activity_unit`, when given with a factor denominator, converts the amount into it (kg against a
-    per-tonne factor) or is refused when the two cannot be converted.
-    """
-    try:
-        amt_val = float(amt or 0.0)
-        ef_val = float(ef or 0.0)
-    except (ValueError, TypeError):
-        return 0.0
-
-    if amt_val <= 0.0 or ef_val <= 0.0:
-        return 0.0
-
-    unit_str = str(ef_unit or "").lower().strip()
-
-    # 1. Split the unit into numerator (GHG mass) and denominator (activity)
-    if "/" in unit_str:
-        num, den = (p.strip() for p in unit_str.split("/", 1))
-    elif " per " in unit_str:
-        num, den = (p.strip() for p in unit_str.split(" per ", 1))
-    else:
-        num, den = unit_str, ""
-
-    if den in ("ton", "tons"):
-        from input_validation import ValidationError
-        raise ValidationError(f"Emission factor unit '{ef_unit}': 'ton' is ambiguous - use tonne (metric) or short ton", "factor_unit")
-
-    # 2. A per-1,000 denominator ("kg CO2e/$1000", "t CO2e/1,000 km") scales the activity; it is
-    # read from the unit only. The method name says nothing about the factor's basis: an EEIO
-    # record stores its factor per USD (audit 2026-09-30: an "EEIO" method read a per-USD factor
-    # as per $1,000, 1000x low).
-    m_thousand = _re.match(r"^(?:\$|usd)?\s*(?:1,?000(?![0-9])|1k(?![0-9a-z])|thousand\b|k\s*(?:\$|usd(?![a-z])))", den)
-    scale = 0.001 if m_thousand else 1.0
-    den_unit = den[m_thousand.end():].strip() if m_thousand else den
-    if m_thousand and not den_unit:
-        den_unit = "usd" if ("$" in den or "usd" in den) else ""
-    scale *= _scope3_activity_in_factor_unit(activity_unit, den_unit)
-
-    # 3. Numerator mass in tonnes per unit, by exact token after the gas name is cut off
-    # ("kgCO2e" -> "kg", "MT CO2e" -> "mt"). "MT" / "metric ton(s)" / "short ton" used to fall
-    # through to kg (1000x / 907x low); a bare "ton" is ambiguous and refused as in the uploads.
-    mass = _re.split(r"co2|ch4|n2o|ghg|carbon", num, maxsplit=1)[0].strip().replace("_", " ")
-    mass = _re.sub(r"\s+", " ", mass)
-    if mass not in _SCOPE3_MASS_TONNES:
-        from input_validation import ValidationError
-        if mass in ("ton", "tons"):
-            raise ValidationError(f"Emission factor unit '{ef_unit}': 'ton' is ambiguous - use tonne (metric) or "
-                                  "short ton", "factor_unit")
-        raise ValidationError(f"Emission factor unit '{ef_unit}': unknown mass '{mass}' (use kg, t, g or lb CO2e "
-                              "per unit)", "factor_unit")
-    to_tonnes = _SCOPE3_MASS_TONNES[mass]
-    return amt_val * ef_val * scale * to_tonnes
 
 
 # -- Canonical unit parsing (audit RC-5: BUG-011/027/033/047/048/049/051/063/066) ---------------
@@ -893,9 +735,10 @@ def parse_factor_unit(unit):
         tok = toks[0]
         if "-" in tok and tok not in ("tonne-km", "passenger-km"):
             # compound denominators such as "well-year" = per well per year
-            for sub in tok.split("-"):
+            subs = tok.split("-")
+            for i, sub in enumerate(subs):
                 dim, f = unit_dimension(sub)
-                dens.append((dim, f, sub))
+                dens.append((dim, f * (scale if i == 0 else 1.0), sub))
             continue
         dim, f = unit_dimension(tok)
         dens.append((dim, f * scale, tok))
@@ -1039,3 +882,10 @@ def parse_amount(raw):
     if math.isnan(val) or math.isinf(val):
         raise ValueError(f"Activity amount cannot be NaN or Infinite: {raw}")
     return val
+
+
+# Scope 3 activity / factor units (split out for the size ratchet; re-exported here)
+from .units_scope3 import (  # noqa: E402,F401
+    scope3_ef_kg_per_unit, _SCOPE3_MASS_TONNES, _SCOPE3_UNIT_ALIASES, _GAS_VOLUME_UNITS, _LIQUID_VOLUME_UNITS,
+    _ENERGY_UNITS, _scope3_activity_in_factor_unit, compute_scope3_co2e,
+)

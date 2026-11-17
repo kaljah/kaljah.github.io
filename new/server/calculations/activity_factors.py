@@ -286,10 +286,12 @@ class ActivityFactorCalculator(BaseCalculator):
             if x_co2 > 0:
                 if gas:
                     co2 = n * gas * x_co2 * SCF_TO_M3 * RHO_CO2 / 1000.0
+                elif per == "mmscf":
+                    co2 = n * 1_000_000.0 * x_co2 * SCF_TO_M3 * RHO_CO2 / 1000.0
                 else:
-                    x_used = x_ch4 if x_ch4 else (basis or None)
-                    if not x_used or x_used <= 0:
-                        raise ValueError("CO2 needs a positive site CH4 content for this factor")
+                    if not x_ch4 and not basis:
+                        raise ValueError("Estimating CO2 emissions from a pure CH4 factor requires a positive site CH4 content")
+                    x_used = x_ch4 if x_ch4 else basis
                     co2 = ch4 * (x_co2 / x_used) * (44.01 / 16.04)
             else:
                 co2 = 0.0

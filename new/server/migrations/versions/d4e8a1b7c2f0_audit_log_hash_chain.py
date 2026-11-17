@@ -73,5 +73,6 @@ def downgrade():
         op.execute("DROP TRIGGER IF EXISTS activity_log_append_only ON activity_log")
         op.execute("DROP TRIGGER IF EXISTS activity_log_no_truncate ON activity_log")
         op.execute("DROP FUNCTION IF EXISTS activity_log_append_only()")
-    op.drop_column("activity_log", "entry_hash")
-    op.drop_column("activity_log", "prev_hash")
+    with op.batch_alter_table("activity_log") as batch_op:
+        batch_op.drop_column("entry_hash")
+        batch_op.drop_column("prev_hash")

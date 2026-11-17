@@ -153,7 +153,10 @@ def test_bug089_bulk_and_api_store_same_category_form(client, ctx):
 
 
 def test_bug099_bulk_unknown_grid_without_factor_is_rejected(client, ctx):
+    # an unknown grid falls back to the facility's country grid (BA-007): a country without one is refused
     fac = make_facility(region="West")
+    fac.country = "Atlantis"
+    db.session.commit()
     login(client, make_user("admin", "Global"))
     csv = ("date,facility_name,source_type,consumption,unit,grid_region\n"
            f"2024-01,{fac.name},electricity,1000,kWh,Atlantis Grid\n")

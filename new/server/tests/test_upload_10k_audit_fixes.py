@@ -15,7 +15,7 @@ import pytest
 from calculations.constants import get_active_gwp
 from calculations.legacy_engine import compute_emissions
 
-NG = 53.06 + 0.001 * 28 + 0.0001 * 265  # kg CO2e / MMBtu of boiler fuel
+NG = 59.0 + 0.0011 * 28 + 0.0003 * 265  # kg CO2e / MMBtu of boiler fuel (Exhibit 8.3, LHV; BA-045)
 RHO_CO2, RHO_CH4 = 1.8613, (16.04 / 23.685)
 
 
@@ -261,4 +261,4 @@ def test_per_device_year_factor_uses_the_days_of_the_year(app, year):
                     "quantity": 10, "unit": "devices", "factor_source": "default", "year": year, "month": 2})
     days = calendar.monthrange(year, 2)[1]
     # 5.11 t CH4 per device-year (catalog, Table 6-14 row)
-    assert em["ch4"] == pytest.approx(10 * 5.11 * days / (366 if calendar.isleap(year) else 365), rel=1e-6)
+    assert em["ch4"] == pytest.approx(10 * 2.25 * days / (366 if calendar.isleap(year) else 365), rel=1e-6)  # API study (BA-035)

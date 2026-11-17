@@ -17,11 +17,15 @@ from models import (
     Emission, Scope2Emission, Scope3Emission, Facility, CustomFactor, User, FlaringDetail
 )
 from routes.auth import login_required
-from utils import get_current_user, get_allowed_facility_ids
+from utils import get_current_user, get_allowed_facility_ids, get_current_tenant_id, tenant_matches
 from calculations.constants import GWP_STANDARDS, GWP_AR5
 from routes.auth_settings import _app_settings
 
 traceability_bp = Blueprint("traceability", __name__, url_prefix="/api/traceability")
+
+
+_KNOWN_METRICS = ("scope1_total", "scope2_total", "scope3_total", "corporate_total", "methane_total",
+                  "flaring_volume")
 
 
 @traceability_bp.route("/trace", methods=["GET"])
@@ -33,6 +37,8 @@ def trace_metric():
     """
     user = get_current_user()
     metric = str(request.args.get("metric") or "scope1_total").strip().lower()
+    if metric not in _KNOWN_METRICS and not metric.startswith(("s1", "s2", "s3")):  # it answered 200, 0 t (BA-046)
+        return jsonify({"error": f"Unknown metric '{metric}'", "valid_metrics": list(_KNOWN_METRICS)}), 400
     year_arg = request.args.get("year")
     facility_id_arg = request.args.get("facility_id") or request.args.get("facilityId")
     process_type = request.args.get("process_type")
@@ -54,19 +60,21 @@ def trace_metric():
     records_count = 0
     categories = defaultdict(lambda: {"count": 0, "val": 0.0})
     factors_used = {}
-    submitters = set()
-    approvers = set()
+    submitters, approvers = set(), set()
     statuses = defaultdict(int)
-    earliest_date = None
-    latest_date = None
+    earliest_date = latest_date = None
     sample_records = []
     formula_str = ""
 
     # Facility map for names (tenant/facility scoped)
+    caller_tenant = get_current_tenant_id(user)
     fac_q = Facility.query
     if allowed_fids is not None:
         fac_q = fac_q.filter(Facility.id.in_(allowed_fids or [-1]))
+    else:
+        fac_q = fac_q.filter(tenant_matches(Facility.tenant_id, caller_tenant))
     fac_map = {f.id: f.name for f in fac_q.all()}
+    tenant_fids = list(fac_map.keys()) or [-1]
 
     # Scope 1 or Corporate Total or Methane or Flaring
     include_s1 = metric in ("scope1_total", "corporate_total", "methane_total", "flaring_volume") or metric.startswith("s1")
@@ -81,6 +89,8 @@ def trace_metric():
             q1 = q1.filter(Emission.facility_id == facility_id)
         elif allowed_fids is not None:
             q1 = q1.filter(Emission.facility_id.in_(allowed_fids))
+        else:
+            q1 = q1.filter(Emission.facility_id.in_(tenant_fids))
         if process_type:
             q1 = q1.filter(Emission.process_type == process_type)
         if metric == "flaring_volume":
@@ -154,6 +164,8 @@ def trace_metric():
             q2 = q2.filter(Scope2Emission.facility_id == facility_id)
         elif allowed_fids is not None:
             q2 = q2.filter(Scope2Emission.facility_id.in_(allowed_fids))
+        else:
+            q2 = q2.filter(Scope2Emission.facility_id.in_(tenant_fids))
 
         for r in q2.all():
             records_count += 1
@@ -206,6 +218,8 @@ def trace_metric():
             q3 = q3.filter(Scope3Emission.facility_id == facility_id)
         elif allowed_fids is not None:
             q3 = q3.filter(Scope3Emission.facility_id.in_(allowed_fids))
+        else:
+            q3 = q3.filter(Scope3Emission.facility_id.in_(tenant_fids))
 
         for r in q3.all():
             records_count += 1

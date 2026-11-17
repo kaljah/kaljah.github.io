@@ -4,6 +4,8 @@ Downstream Refining, Petrochemical Manufacturing & Fire Suppression
 """
 
 import pytest
+
+C_TO_CO2 = 44.01 / 12.011  # the engine's CO2 per carbon (the Compendium prints 44 / 12; BA-040)
 import math
 from calculations.vented_downstream import (
     RefiningCatalystRegenCalculator,
@@ -240,7 +242,7 @@ class TestCokeCalciningAndSRUCompendium:
             calcined_coke_carbon_fraction=0.98,
             dust_collected_tonnes_yr=2000.0,
         )
-        assert pytest.approx(_val(res["results"]["co2"]), rel=1e-3) == 7640.0 * (44.0 / 12.0)
+        assert pytest.approx(_val(res["results"]["co2"]), rel=1e-3) == 7640.0 * (C_TO_CO2)
 
     def test_sru_tail_gas_eq_6_54(self):
         """Equation 6-54: Sulfur recovery unit sour gas carbon feed."""
@@ -288,7 +290,7 @@ class TestFireSuppressionCompendium:
         self.calc = FireSuppressionCalculator()
 
     def test_hfc_227ea_leakage_and_discharge(self):
-        """Equation 6-56: HFC-227ea (FM-200, GWP 3220)."""
+        """Equation 6-56: HFC-227ea (FM-200), GWP 3350 (IPCC AR5, the default report; BA-036)."""
         res = self.calc.calculate(
             agent_type="hfc_227ea",
             total_charge_kg=5000.0,
@@ -296,4 +298,4 @@ class TestFireSuppressionCompendium:
             direct_discharge_kg=200.0,
         )
         assert pytest.approx(res["inputs"]["chemical_released_tonnes"], rel=1e-3) == 0.3
-        assert pytest.approx(res["total_co2e"], rel=1e-3) == 966.0
+        assert pytest.approx(res["total_co2e"], rel=1e-3) == 1005.0

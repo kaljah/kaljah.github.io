@@ -1,6 +1,6 @@
 """UNEP OGMP 2.0 Official Annual Member Submission Template & Excel Export Route.
 
-Generates the 100% compliant, 8-sheet UNEP / IMEO OGMP 2.0 Member Disclosure Workbook:
+Generates the 13-sheet UNEP / IMEO OGMP 2.0 Member Disclosure Workbook (Sheets 0–12 + Audit Assurance):
 0. Company Profile & Declaration (UNEP IMEO official metadata)
 1. Executive Summary & Operated Assets (Facility overview, production, loss rates)
 2. Bottom-Up Inventory (L1-L4 source emissions with API Compendium 2021 factors)
@@ -9,7 +9,12 @@ Generates the 100% compliant, 8-sheet UNEP / IMEO OGMP 2.0 Member Disclosure Wor
 5. Gold Standard Roadmap (3-year operated / 5-year non-operated compliance milestones)
 6. Level 4 Direct Measurements (Source-level direct measurement & component uncertainty)
 7. Non-Operated Assets (JV) (Joint venture working interest & equity disclosures)
-Audit Assurance (Cryptographic SHA-256 data fingerprint & digital seal)
+8. UNEP Reporting Entities (Entity ownership, targets & member-reported NOJV flags)
+9. Source Catalog (MI & N-A) (15 Upstream / 12 Mid-Downstream source disclosures & explanations)
+10. Uncertainty & 95% CI (RSS uncertainty propagation, 95% CI overlap & Pathway 1/2a/2b/2c/2d/3)
+11. Impl. Plan (Y0-Y10) (Multi-year implementation roadmap & target upgrade schedule)
+12. Portfolio Materiality (95% equity CH4 materiality coverage & <5% NOJV exclusion register)
+Audit Assurance (Cryptographic SHA-256 data fingerprint & integrity manifest)
 """
 import io
 from datetime import datetime, timezone
@@ -19,7 +24,7 @@ from models import Facility
 from routes.auth import login_required
 from services.audit_chain import record_report_fingerprint
 from services.ogmp_workbook import Context, build_workbook
-from utils import get_allowed_facility_ids, get_current_user
+from utils import get_allowed_facility_ids, get_current_tenant_id, get_current_user, tenant_matches
 from routes.reports import _CH4_DENSITY, _safe_excel_value, reports_bp
 
 
@@ -44,6 +49,7 @@ def export_ogmp_excel():
 
     try:
         allowed_fids = get_allowed_facility_ids(user)
+        caller_tenant = get_current_tenant_id(user)
 
         year = request.args.get("year", "all")
         year_filter = int(year) if year and year.isdigit() and year != "all" else None
@@ -60,7 +66,7 @@ def export_ogmp_excel():
             return jsonify({"error": "Unauthorized facility"}), 403
 
         ctx = Context(user, year, year_filter, facility_filter, allowed_fids,
-                      _facilities(allowed_fids, facility_filter), _safe_excel_value)
+                      _facilities(allowed_fids, facility_filter, caller_tenant), _safe_excel_value)
         wb, wb_sha256 = build_workbook(ctx, _CH4_DENSITY)
 
         output_buffer = io.BytesIO()
@@ -87,9 +93,9 @@ def export_ogmp_excel():
         )
 
 
-def _facilities(allowed_fids, facility_filter):
+def _facilities(allowed_fids, facility_filter, caller_tenant="default"):
     """The facilities in the user's scope and the request's facility / activity / division / segment filters."""
-    fac_q = Facility.query
+    fac_q = Facility.query.filter(tenant_matches(Facility.tenant_id, caller_tenant))
     if allowed_fids is not None:
         fac_q = fac_q.filter(Facility.id.in_(allowed_fids or [-1]))
     if facility_filter:

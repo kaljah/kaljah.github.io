@@ -13,6 +13,19 @@ from models import PeriodLock, Emission, ActivityLog
 from tests.audit_helpers import make_facility, make_user, login, uniq
 
 
+@pytest.fixture(autouse=True)
+def _drop_new_period_locks(app):
+    """The locks these tests create are for the shared test tenant: left in place, they lock 2022-2024
+    for every later test file (scripts/recalculate_emissions.py skips locked periods)."""
+    with app.app_context():
+        existing = {lock_id for (lock_id,) in db.session.query(PeriodLock.id).all()}
+    yield
+    with app.app_context():
+        db.session.rollback()
+        PeriodLock.query.filter(PeriodLock.id.notin_(existing or [-1])).delete(synchronize_session=False)
+        db.session.commit()
+
+
 def test_period_locking_blocks_crud(app, client):
     """Item 2.3: Locked period blocks create, edit, delete with 403 PERIOD_LOCKED."""
     with app.app_context():

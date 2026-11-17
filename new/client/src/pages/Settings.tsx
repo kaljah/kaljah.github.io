@@ -136,7 +136,7 @@ const Settings: React.FC = () => {
         facList.forEach((f) => {
           initialMap[f.id] = {
             operator_status: f.operator_status || "operated",
-            country: f.country || "Algeria",
+            country: f.country || "",
             ogmp_membership_year: f.ogmp_membership_year || 2023,
             reconciliation_threshold: f.reconciliation_threshold || 20.0,
           };
@@ -175,7 +175,7 @@ const Settings: React.FC = () => {
       const curr = facilityEdits[fac.id] || {};
       if (
         (curr.operator_status || "operated") !== (init.operator_status || "operated") ||
-        (curr.country || "Algeria") !== (init.country || "Algeria") ||
+        (curr.country || "") !== (init.country || "") ||
         Number(curr.ogmp_membership_year || 2023) !== Number(init.ogmp_membership_year || 2023) ||
         Number(curr.reconciliation_threshold || 20) !== Number(init.reconciliation_threshold || 20)
       ) {
@@ -344,7 +344,7 @@ const Settings: React.FC = () => {
             </Badge>
             <h1 className="m-0 text-xl font-bold text-text">{t("System Settings & Protocols")}</h1>
             <p className="m-0 text-md leading-normal text-text-secondary">
-              {t("Configure IPCC Global Warming Potential (GWP) conversion factors, OGMP 2.0 preview parameters, and facility-specific reconciliation tolerances.")}
+              {t("Configure IPCC Global Warming Potential (GWP) conversion factors, OGMP 2.0 compliance parameters, and facility-specific reconciliation tolerances.")}
             </p>
           </div>
           {/* only an admin can change these settings: other roles see them read-only, with no save button */}

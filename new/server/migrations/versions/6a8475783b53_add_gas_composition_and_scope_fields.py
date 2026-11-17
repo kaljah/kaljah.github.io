@@ -45,5 +45,19 @@ def upgrade():
     _add("scope3_emissions", sa.Column("gas_composition", sa.Text(), nullable=True))
 
 
+def _drop(table, column_name):
+    from schema_sync import has_column, has_table
+
+    if has_table(_bind(), table) and has_column(_bind(), table, column_name):
+        with op.batch_alter_table(table, schema=None) as batch_op:
+            batch_op.drop_column(column_name)
+
+
 def downgrade():
-    pass
+    _drop("scope3_emissions", "gas_composition")
+    _drop("scope3_emissions", "region")
+    _drop("scope2_emissions", "gas_composition")
+    _drop("emissions", "gas_composition")
+    _drop("custom_factors", "gas_composition")
+    _drop("custom_factors", "region")
+    _drop("custom_factors", "facility_id")

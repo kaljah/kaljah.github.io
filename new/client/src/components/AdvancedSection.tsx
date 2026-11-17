@@ -52,7 +52,7 @@ export const AdvancedSection: React.FC<AdvancedSectionProps> = ({
         onClick={toggle}
         aria-expanded={isOpen}
         aria-controls={`section-content-${id}`}
-        className="flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-3 text-left border-0 bg-transparent rounded-lg hover:bg-ink-100/60 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+        className="flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-3 text-start border-0 bg-transparent rounded-lg hover:bg-ink-100/60 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
       >
         <div className="flex items-center gap-2.5 min-w-0">
           <ChevronDown

@@ -78,7 +78,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onOpenChange }) =
                   <Command.Item key={r.path} value={`${r.title} ${r.group ?? ""}`} onSelect={() => go(r.path)} className={itemClass}>
                     <r.icon className="size-4 text-text-secondary" aria-hidden="true" />
                     {r.title}
-                    {r.group && <span className="ml-auto text-sm text-text-secondary">{NAV_GROUP_LABEL[r.group]}</span>}
+                    {r.group && <span className="ms-auto text-sm text-text-secondary">{NAV_GROUP_LABEL[r.group]}</span>}
                   </Command.Item>
                 ))}
               </Command.Group>
@@ -88,7 +88,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onOpenChange }) =
                     <Command.Item key={a.label} value={a.label} onSelect={() => go(a.to)} className={itemClass}>
                       <Calculator className="size-4 text-text-secondary" aria-hidden="true" />
                       {a.label}
-                      <CornerDownLeft className="ml-auto size-3.5 text-ink-400" aria-hidden="true" />
+                      <CornerDownLeft className="ms-auto size-3.5 text-ink-400" aria-hidden="true" />
                     </Command.Item>
                   ))}
                 </Command.Group>

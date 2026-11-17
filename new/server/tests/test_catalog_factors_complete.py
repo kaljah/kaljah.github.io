@@ -180,8 +180,10 @@ def test_table_6_8_associated_gas_kg_per_bbl(key):
     assert row["unit"] == "kg CH4/bbl" and row["baseUnit"] == "bbl"
 
 
-PNEUMATIC_SCFH = {"Pneumatic Controller - High Bleed": 37.3, "Pneumatic Controller - High Bleed (>6 scfh)": 37.3,
-                  "Pneumatic Controller - Low Bleed": 1.39, "Pneumatic Controller - Low Bleed (<6 scfh)": 1.39,
+# High / low bleed rows: the Table 6-14 API study rates (16.4 / 2.6 scf/h), the same rows the controller-type method
+# uses (blind audit BA-035; they were the EPA GHGRP 37.3 / 1.39 scf/h). The low-bleed row is the printed 0.36 t.
+PNEUMATIC_SCFH = {"Pneumatic Controller - High Bleed": 16.4, "Pneumatic Controller - High Bleed (>6 scfh)": 16.4,
+                  "Pneumatic Controller - Low Bleed": 2.6, "Pneumatic Controller - Low Bleed (<6 scfh)": 2.6,
                   "Pneumatic Controller - Intermittent": 13.5}
 pin(*PNEUMATIC_SCFH, "Pneumatic Controller - Continuous Vent (T&S)")
 
@@ -189,7 +191,7 @@ pin(*PNEUMATIC_SCFH, "Pneumatic Controller - Continuous Vent (T&S)")
 @pytest.mark.parametrize("key", sorted(PNEUMATIC_SCFH))
 def test_pneumatic_bleed_rates_tables_6_14_6_15(key):
     """EPA GHGRP bleed rates (whole gas scf/h) x 8,760 h x 81.6 mol % CH4 -> tonnes CH4 per device-year."""
-    assert CAT[key]["ch4"] == pytest.approx(t_ch4(PNEUMATIC_SCFH[key] * 8760 * 0.816), rel=0.005)
+    assert CAT[key]["ch4"] == pytest.approx(t_ch4(PNEUMATIC_SCFH[key] * 8760 * 0.816), rel=0.005, abs=0.005)
 
 
 # ---------------------------------------------------------------- Table 7-12: kg TOC/hr -> tonne CH4/hr
@@ -331,7 +333,9 @@ def test_row_hygiene(key):
         assert v is None or (isinstance(v, (int, float)) and v >= 0), (key, gas, v)
     assert any((row.get(g) or 0) > 0 for g in ("co2", "ch4", "n2o")), f"{key}: no gas has a factor"
     for gas, u in (row.get("uncertainty") or {}).items():
-        assert 0 <= u <= 5, (key, gas, u)
+        # up to +1,000 %: the published N2O defaults are an order of magnitude (IPCC 2006 Vol.2 Table 2.12) and
+        # -10 % / +1000 % for flares (Compendium Table 5-5), entered as their larger side (blind audit BA-052)
+        assert 0 <= u <= 10, (key, gas, u)
 
 
 def test_unsourced_gathering_flange_row_removed():

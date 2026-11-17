@@ -18,6 +18,23 @@ from services.dashboard_filters import _parse_facility_ids
 from routes.dashboard import dashboard_bp, is_it_role
 
 
+def _months_reported(view, current_year, q_s1, q_s2, q_s3):
+    """Months reported in the current year over the scopes of the view (it counted Scope 1 months only and took 1
+    month when there were none, so a year without Scope 1 was annualised x12; BA-026)."""
+    from models import Emission, Scope2Emission, Scope3Emission
+
+    scopes = {"S3": (Scope3Emission, q_s3)} if view == "S3" else {"S1": (Emission, q_s1)}
+    if view not in ("S1", "S3"):
+        scopes["S2"] = (Scope2Emission, q_s2)
+    if view == "S1S2S3":
+        scopes["S3"] = (Scope3Emission, q_s3)
+    seen = set()
+    for model, qbase in scopes.values():
+        seen.update(m for (m,) in qbase.filter(model.year == current_year).with_entities(model.month).distinct().all()
+                    if m)
+    return len(seen)
+
+
 @dashboard_bp.route("/sbti-trajectory", methods=["GET"])
 @login_required
 def get_sbti_trajectory():
@@ -54,9 +71,10 @@ def get_sbti_trajectory():
     scope2_actuals = {}
     scope3_actuals = {}
     
-    q_s1 = Emission.query.filter_by(status="Verified")
-    q_s2 = Scope2Emission.query.filter_by(status="Verified")
-    q_s3 = Scope3Emission.query.filter_by(status="Verified")
+    from services.dashboard_filters import exclude_test_rows  # test rows left out, as on the dashboard (BA-006)
+    q_s1 = exclude_test_rows(Emission.query.filter_by(status="Verified"), Emission)
+    q_s2 = exclude_test_rows(Scope2Emission.query.filter_by(status="Verified"), Scope2Emission)
+    q_s3 = exclude_test_rows(Scope3Emission.query.filter_by(status="Verified"), Scope3Emission)
     
     parsed_fids = _parse_facility_ids(facility_id)
     if parsed_fids is not None:
@@ -69,6 +87,10 @@ def get_sbti_trajectory():
         q_s1 = q_s1.filter(Emission.facility_id.in_(allowed_fids))
         q_s2 = q_s2.filter(Scope2Emission.facility_id.in_(allowed_fids))
         q_s3 = q_s3.filter(Scope3Emission.facility_id.in_(allowed_fids))
+    else:
+        q_s1 = q_s1.join(Facility, Facility.id == Emission.facility_id).filter(tenant_matches(Facility.tenant_id, caller_tenant))
+        q_s2 = q_s2.join(Facility, Facility.id == Scope2Emission.facility_id).filter(tenant_matches(Facility.tenant_id, caller_tenant))
+        q_s3 = q_s3.join(Facility, Facility.id == Scope3Emission.facility_id).filter(tenant_matches(Facility.tenant_id, caller_tenant))
             
     s1_rows = (
         q_s1.with_entities(
@@ -144,12 +166,15 @@ def get_sbti_trajectory():
         q_cs1 = db.session.query(
             func.sum(func.coalesce(Emission.co2e_total, Emission.co2_emissions, 0))
         ).filter(Emission.year == base_year, Emission.status == "Verified", Emission.is_test == False)
-        q_cs2 = db.session.query(
-            func.sum(func.coalesce(Scope2Emission.co2e_location_based, Scope2Emission.co2e, 0))
-        ).filter(Scope2Emission.year == base_year, Scope2Emission.status == "Verified")
-        q_cs3 = db.session.query(
+        q_cs1 = exclude_test_rows(q_cs1, Emission)
+        # the corporate base year on the view's Scope 2 method (it was location-based whatever the toggle, BA-026)
+        q_cs2 = exclude_test_rows(db.session.query(func.sum(
+            func.coalesce(Scope2Emission.co2e_market_based, Scope2Emission.co2e, 0) if scope2_method == "market"
+            else func.coalesce(Scope2Emission.co2e_location_based, Scope2Emission.co2e, 0)
+        )).filter(Scope2Emission.year == base_year, Scope2Emission.status == "Verified"), Scope2Emission)
+        q_cs3 = exclude_test_rows(db.session.query(
             func.sum(func.coalesce(Scope3Emission.co2e, 0))
-        ).filter(Scope3Emission.year == base_year, Scope3Emission.status == "Verified")
+        ).filter(Scope3Emission.year == base_year, Scope3Emission.status == "Verified"), Scope3Emission)
         if multi_tenant:
             tenant_fac_ids = [
                 fid for (fid,) in db.session.query(Facility.id)
@@ -193,15 +218,7 @@ def get_sbti_trajectory():
         return round(max(residual_floor, baseline * (1 - r * yrs)), 2)
 
     end_year = max(target_year, current_year)
-    q_mm = db.session.query(func.max(Emission.month)).filter(
-        Emission.year == current_year, Emission.status == "Verified", Emission.is_test == False
-    )
-    if parsed_fids is not None:
-        q_mm = q_mm.filter(Emission.facility_id.in_(parsed_fids or [-1]))
-    elif allowed_fids is not None:
-        q_mm = q_mm.filter(Emission.facility_id.in_(allowed_fids or [-1]))
-    max_month_res = q_mm.scalar()
-    months_reported = int(max_month_res or 1)
+    months_reported = _months_reported(view, current_year, q_s1, q_s2, q_s3)
 
     trajectory = []
     for yr in range(base_year, end_year + 1):

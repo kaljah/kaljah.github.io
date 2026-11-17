@@ -323,8 +323,13 @@ def test_old_bulk_defaults_and_tier_column_are_reported(app, rworld):
     payload = {"process_type": "combustion", "fuel": "Natural Gas", "amount": 1000, "unit": "MMBtu",
                "factor_source": "default", "ch4_content": 85.0, "co2_content": 2.0}
     rid = _record(app, rworld, factor_source="liquids", payload=payload)
+    # kept and flagged by default: an operator may have entered 85 % / 2 % (BA-047)
     new, notes = tool.recalculate(_get(app, rid), _gwp())
-    assert "removed the bulk-import defaults CH4 85 % / CO2 2 %" in notes
+    assert "has CH4 85 % / CO2 2 % (possibly old bulk-import defaults; kept)" in notes
+    assert json.loads(new["source_payload"]).get("ch4_content") == 85.0
+    # removed on request
+    new, notes = tool.recalculate(_get(app, rid), _gwp(), strip_bulk_defaults=True)
+    assert "removed the bulk-import defaults CH4 85 % / CO2 2 % (--strip-bulk-defaults)" in notes
     assert "tier column 'liquids' -> 'default'" in notes
     assert new["factor_source"] == "default"
     assert "ch4_content" not in json.loads(new["source_payload"])

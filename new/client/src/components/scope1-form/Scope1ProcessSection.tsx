@@ -410,7 +410,7 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
                 <div className="p-2.5 rounded-md bg-blue-50/70 border border-blue-200 text-xs text-blue-900 flex items-start gap-2 mb-2">
                   <Info size={15} className="text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" aria-hidden="true" />
                   <div>
-                    <span className="font-semibold mr-1">{t("Gas Fuel Analysis:")}</span>
+                    <span className="font-semibold me-1">{t("Gas Fuel Analysis:")}</span>
                     <span>{t("For gaseous fuels with laboratory gas chromatography (mol % of C₁–C₈, CO₂, N₂), click 'Gas analysis' to derive specific emission factors.")}</span>
                   </div>
                 </div>

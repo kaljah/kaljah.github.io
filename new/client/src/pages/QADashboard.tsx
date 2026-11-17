@@ -436,8 +436,8 @@ export default function QADashboard() {
                 onConfirm={confirmBulkResolve}
                 loading={resolving}
                 title={resolveModal.resolution === 'Verified' ? t("Confirm Bulk Verification") : t("Confirm Bulk Rejection")}
-                message={<>{t("Are you sure you want to mark")}{" "}<strong>{selectedIds.size}</strong>{" "}{t("selected record(s) as")}{" "}<strong>{resolveModal.resolution}</strong>?</>}
-                confirmLabel={`Confirm ${resolveModal.resolution === 'Verified' ? 'Verification' : 'Rejection'}`}
+                message={t("Are you sure you want to mark {{count}} selected record(s) as {{status}}?", { count: selectedIds.size, status: resolveModal.resolution ? t(resolveModal.resolution) : "" })}
+                confirmLabel={resolveModal.resolution === 'Verified' ? t("Confirm Verification") : t("Confirm Rejection")}
                 confirmVariant={resolveModal.resolution === 'Verified' ? 'primary' : 'danger'}
             />
         </ErrorBoundary>

@@ -39,7 +39,7 @@ from emission_factors_chapter7_onshore import (
 )
 
 # Standard Thermodynamic Constants (60°F / 14.696 psia)
-MOLAR_VOL_US = 379.3   # scf / lb-mole
+from .units import MOLAR_VOLUME_SCF_PER_LBMOL as MOLAR_VOL_US  # noqa: E402  scf / lb-mole (BA-016)
 MOLAR_VOL_SI = 23.685  # Sm³ / kg-mole
 MW_CH4 = 16.04
 MW_CO2 = 44.01
@@ -362,11 +362,12 @@ class OnshoreComponentFugitiveCalculator(BaseCalculator):
         tables = set()
         for comp_name, data in component_counts.items():
             if isinstance(data, dict):
-                count = float(data.get("count", 0))
+                raw_c = data.get("count", 0)
+                count = float(0 if raw_c in (None, "") else raw_c)
                 ef = float(data.get("ef", 0) or 0)
                 ef_unit = str(data.get("unit") or data.get("ef_unit") or "kg TOC/hr/component")
             else:
-                count, ef, ef_unit = float(data or 0), 0.0, None
+                count, ef, ef_unit = float(0 if data in (None, "") else data), 0.0, None
             if count < 0:
                 raise ValueError(f"Component count for '{comp_name}' cannot be negative ({count})")
 

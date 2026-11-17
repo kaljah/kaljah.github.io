@@ -6,7 +6,7 @@ from flask import Response, request
 
 from . import emissions_bp
 from routes.auth import login_required
-from utils import get_allowed_facility_ids, get_current_user
+from utils import get_allowed_facility_ids, get_current_tenant_id, get_current_user, tenant_matches
 
 
 def _template_args():
@@ -22,7 +22,11 @@ def _template_args():
         from models import Facility
 
         allowed = get_allowed_facility_ids(user)
-        q = Facility.query if allowed is None else Facility.query.filter(Facility.id.in_(allowed))
+        caller_tenant = get_current_tenant_id(user)
+        if allowed is not None:
+            q = Facility.query.filter(Facility.id.in_(allowed))
+        else:
+            q = Facility.query.filter(tenant_matches(Facility.tenant_id, caller_tenant))
         facilities = sorted({f.name for f in q.all() if f.name})
     return tier, processes, optional, facilities
 

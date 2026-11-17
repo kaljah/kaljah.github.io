@@ -21,7 +21,7 @@ from .uncertainty import (
 from .constants import get_active_gwp
 
 # Standard molar volume conversions
-MOLAR_VOL_US = 379.3  # scf / lb-mole at 60°F, 14.696 psia
+from .units import MOLAR_VOLUME_SCF_PER_LBMOL as MOLAR_VOL_US  # noqa: E402  scf / lb-mole (BA-016)
 MOLAR_VOL_SI = 23.685  # Sm³ / kg-mole at 15.56°C, 101.325 kPa
 MW_CH4 = 16.04
 MW_CO2 = 44.01
@@ -366,7 +366,10 @@ class CoalSeamDrillingCalculator(BaseCalculator):
         flared_n2o_tonnes = 0.0
 
         if flared_testing_scf > 0:
-            eta_c = float(0.98 if flare_combustion_efficiency is None else flare_combustion_efficiency)
+            raw_eta = float(0.98 if flare_combustion_efficiency is None else str(flare_combustion_efficiency).replace("%", "").strip())
+            eta_c = (raw_eta / 100.0) if ("%" in str(flare_combustion_efficiency) or raw_eta > 1.0) else raw_eta
+            if not (0.0 <= eta_c <= 1.0):
+                raise ValueError(f"flare_combustion_efficiency must be between 0 and 1: {flare_combustion_efficiency}")
             flared_moles_gas = flared_testing_scf / MOLAR_VOL_US
             moles_ch4 = flared_moles_gas * c_ch4
             moles_native_co2 = flared_moles_gas * c_co2

@@ -1,8 +1,10 @@
 import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { recordsLink } from "../../utils/reportLinks";
-import { BarChart2, FileText, Grid, FileSpreadsheet, FileCode } from "lucide-react";
-import { Badge, Button, SegmentedControl } from "../../ui";
+import { BarChart2, FileText, Grid, FileSpreadsheet, FileCode, ShieldCheck } from "lucide-react";
+import { Badge, Button, NativeSelect, SegmentedControl } from "../../ui";
+import CbamValidationModal from "../../components/CbamValidationModal";
+import type { CbamQuarter } from "../../types/reports";
 import { BarChart, LineChart } from "../../components/charts";
 import { formatNumber, formatCompactNumber } from "../../utils/formatters";
 import { ChartCard, Heatmap, type HeatmapRow } from "../intensity/IntensityParts";
@@ -10,7 +12,7 @@ import { t } from "../../i18n";
 import api from "../../api";
 import { useToast } from "../../components/Toast";
 
-const th = "whitespace-nowrap border-b-2 border-border px-4 py-3 text-left text-sm font-medium text-text-secondary";
+const th = "whitespace-nowrap border-b-2 border-border px-4 py-3 text-start text-sm font-medium text-text-secondary";
 const td = "border-b border-border px-4 py-3.5 text-text";
 
 const pick = (obj: any, a: string, b: string) => obj?.[a] ?? obj?.[b];
@@ -31,8 +33,11 @@ export const CbamSection: React.FC<CbamSectionProps> = ({
 }) => {
   const toast = useToast();
   const [downloadingFormat, setDownloadingFormat] = useState<"excel" | "xml" | null>(null);
+  const [cbamQuarter, setCbamQuarter] = useState<CbamQuarter>("Q1-Q4");
+  const [cbamModalOpen, setCbamModalOpen] = useState(false);
+  const [cbamModalTab, setCbamModalTab] = useState<"validation" | "xml">("validation");
 
-  const handleExport = async (format: "excel" | "xml") => {
+  const handleExport = async (format: "excel" | "xml", quarterOverride?: CbamQuarter | string) => {
     try {
       setDownloadingFormat(format);
       const isXml = format === "xml";
@@ -40,6 +45,7 @@ export const CbamSection: React.FC<CbamSectionProps> = ({
       const params = new URLSearchParams();
       if (selectedYear && selectedYear !== "all") params.append("year", selectedYear);
       if (selectedFacility && selectedFacility !== "all") params.append("facility_id", selectedFacility);
+      params.append("quarter", String(quarterOverride || cbamQuarter || "Q1-Q4"));
       params.append("format", format);
 
       const res = await api.get(`/reports/cbam-export?${params.toString()}`, {
@@ -70,121 +76,168 @@ export const CbamSection: React.FC<CbamSectionProps> = ({
   };
 
   return (
-    <ChartCard
-      className="cbam-section"
-      title={
-        <span className="flex items-center gap-2">
-          <FileText className="size-5 text-brand-500" aria-hidden="true" />{" "}{t("EU CBAM Product Specific Embedded Emissions")}
-        </span>
-      }
-      subtitle={t("Direct & indirect specific embedded emissions per export product")}
-      actions={
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge tone="brand" className="cbam-benchmark-badge max-w-full shrink whitespace-normal px-3.5 py-1.5 text-sm">
-            {t("EU ETS Benchmark (Product-Specific): ~0.025 - 1.2 tCO₂e/t")}
-          </Badge>
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={() => handleExport("excel")}
-            disabled={downloadingFormat !== null}
-            className="inline-flex items-center gap-1.5"
-          >
-            <FileSpreadsheet className="size-4 text-emerald-600" aria-hidden="true" />
-            {downloadingFormat === "excel" ? t("Exporting...") : t("Export CBAM Excel")}
-          </Button>
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={() => handleExport("xml")}
-            disabled={downloadingFormat !== null}
-            className="inline-flex items-center gap-1.5"
-          >
-            <FileCode className="size-4 text-blue-600" aria-hidden="true" />
-            <span>{downloadingFormat === "xml" ? t("Exporting...") : t("Export CBAM XML")}</span>
-            <Badge tone="warning" className="px-1.5 py-0 text-[0.65rem]">
-              {t("Preview / Roadmap")}
+    <>
+      <ChartCard
+        className="cbam-section"
+        title={
+          <span className="flex items-center gap-2">
+            <FileText className="size-5 text-brand-500" aria-hidden="true" />{" "}{t("EU CBAM Product Specific Embedded Emissions")}
+          </span>
+        }
+        subtitle={t("Direct & indirect specific embedded emissions per export product")}
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge tone="brand" className="cbam-benchmark-badge max-w-full shrink whitespace-normal px-3.5 py-1.5 text-sm">
+              {t("EU ETS Benchmark (Product-Specific): ~0.025 - 1.2 tCO₂e/t")}
             </Badge>
-          </Button>
-        </div>
-      }
-    >
-    {products.length > 0 ? (
-      <div className="overflow-x-auto" tabIndex={0} role="region" aria-label={t("CBAM embedded emissions by product")}>
-        <table className="custom-table w-full border-collapse text-base">
-          <thead>
-            <tr>
-              {["Facility", "Product Name", "EU CN Code", "Period", "Export Qty (t)", "Destination", "CCS Captured", "Direct SEE (tCO₂e/t)", "Indirect SEE (tCO₂e/t)", "Precursor SEE", "Total Embedded (tCO₂e)", "Origin Tax"].map((h) => (
-                <th key={h} scope="col" className={th}>
-                  {t(h)}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {products.map((p, idx) => {
-              const fac = facilities.find((f) => String(f.id) === String(p.facility_id));
-              const qty = p.quantityTonnes ?? p.quantity_tonnes ?? 0;
-              const direct = p.specificEmbeddedDirect ?? p.specific_embedded_direct;
-              const indirect = p.specificEmbeddedIndirect ?? p.specific_embedded_indirect;
-              const ccs = p.capturedCo2Tonnes ?? p.captured_co2_tonnes ?? 0;
-              const isComplex = Boolean(p.isComplexGood ?? p.is_complex_good);
-              const pRatio = p.precursorRatio ?? p.precursor_ratio ?? 0;
-              const pDir = p.precursorSeeDir ?? p.precursor_see_dir ?? 0;
-              const pIndir = p.precursorSeeIndir ?? p.precursor_see_indir ?? 0;
-              const pContrib = isComplex ? pRatio * (pDir + pIndir) : 0;
-              const taxPaid = p.carbonPricePaidEur ?? p.carbon_price_paid_eur ?? 0;
-              const qtr = p.quarter || `Q${Math.floor(((Number(p.month || 1) - 1) / 3)) + 1}`;
-              const total = p.totalEmbeddedEmissions ?? p.total_embedded_emissions ?? (qty * (((direct || 0) + (indirect || 0)) + pContrib));
-              return (
-                <tr key={p.id || idx} className="hover:bg-ink-100">
-                  <td className={`${td} font-semibold`}>{fac ? fac.name : p.facilityName || p.facility_name || "—"}</td>
-                  <td className={td}>{pick(p, "productName", "product_name") || "—"}</td>
-                  <td className={td}>
-                    <span className="code-pill rounded-sm border border-border bg-ink-100 px-2 py-0.5 font-mono text-sm">{pick(p, "cnCode", "cn_code") || "—"}</span>
-                  </td>
-                  <td className={`${td} whitespace-nowrap`}>
-                    {p.year} - {qtr} (M{p.month || 1})
-                  </td>
-                  <td className={td}>{formatNumber(qty, 0)}</td>
-                  <td className={td}>{pick(p, "exportDestination", "export_destination") || "EU"}</td>
-                  <td className={td}>
-                    {ccs > 0 ? (
-                      <span className="font-mono text-emerald-600 dark:text-emerald-400 font-semibold">-{formatNumber(ccs, 1)} t</span>
-                    ) : (
-                      <span className="text-text-secondary">—</span>
-                    )}
-                  </td>
-                  <td className={td}>
-                    <strong className="text-brand-700 font-mono">{typeof direct === "number" ? direct.toFixed(4) : "—"}</strong>
-                  </td>
-                  <td className={`${td} font-mono`}>{typeof indirect === "number" ? indirect.toFixed(4) : "—"}</td>
-                  <td className={`${td} font-mono`}>
-                    {pContrib > 0 ? <span className="text-blue-600 dark:text-blue-400 font-medium">+{pContrib.toFixed(4)}</span> : "—"}
-                  </td>
-                  <td className={td}>
-                    <strong className="font-mono text-link">{formatNumber(total, 1)}</strong>
-                  </td>
-                  <td className={td}>
-                    {taxPaid > 0 ? (
-                      <span className="font-mono text-xs font-semibold text-amber-600 dark:text-amber-400">€{Number(taxPaid).toFixed(2)}/t</span>
-                    ) : (
-                      <span className="text-text-secondary">—</span>
-                    )}
-                  </td>
+            <NativeSelect
+              aria-label={t("CBAM Reporting Quarter")}
+              value={cbamQuarter}
+              onChange={(e) => setCbamQuarter(e.target.value as CbamQuarter)}
+              className="h-8 w-auto min-w-[120px] text-xs"
+            >
+              <option value="Q1-Q4">{t("Q1-Q4 (All)")}</option>
+              <option value="Q1">{t("Q1 (Jan–Mar)")}</option>
+              <option value="Q2">{t("Q2 (Apr–Jun)")}</option>
+              <option value="Q3">{t("Q3 (Jul–Sep)")}</option>
+              <option value="Q4">{t("Q4 (Oct–Dec)")}</option>
+            </NativeSelect>
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() => {
+                setCbamModalTab("validation");
+                setCbamModalOpen(true);
+              }}
+              className="inline-flex items-center gap-1.5"
+            >
+              <ShieldCheck className="size-4 text-emerald-600" aria-hidden="true" />
+              <span>{t("Validate CBAM")}</span>
+            </Button>
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() => {
+                setCbamModalTab("xml");
+                setCbamModalOpen(true);
+              }}
+              className="inline-flex items-center gap-1.5"
+            >
+              <FileCode className="size-4 text-indigo-600" aria-hidden="true" />
+              <span>{t("Preview XML")}</span>
+            </Button>
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() => handleExport("excel")}
+              disabled={downloadingFormat !== null}
+              className="inline-flex items-center gap-1.5"
+            >
+              <FileSpreadsheet className="size-4 text-emerald-600" aria-hidden="true" />
+              {downloadingFormat === "excel" ? t("Exporting...") : t("Export CBAM Excel")}
+            </Button>
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() => handleExport("xml")}
+              disabled={downloadingFormat !== null}
+              className="inline-flex items-center gap-1.5"
+            >
+              <FileCode className="size-4 text-blue-600" aria-hidden="true" />
+              <span>{downloadingFormat === "xml" ? t("Exporting...") : t("Export CBAM XML")}</span>
+            </Button>
+          </div>
+        }
+      >
+        {products.length > 0 ? (
+          <div className="overflow-x-auto" tabIndex={0} role="region" aria-label={t("CBAM embedded emissions by product")}>
+            <table className="custom-table w-full border-collapse text-base">
+              <thead>
+                <tr>
+                  {["Facility", "Product Name", "EU CN Code", "Period", "Export Qty (t)", "Destination", "CCS Captured", "Direct SEE (tCO₂e/t)", "Indirect SEE (tCO₂e/t)", "Precursor SEE", "Total Embedded (tCO₂e)", "Origin Tax"].map((h) => (
+                    <th key={h} scope="col" className={th}>
+                      {t(h)}
+                    </th>
+                  ))}
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-    ) : (
-      <p className="m-0 px-5 py-10 text-center text-base text-text-secondary">
-        {t("No CBAM product export records registered for the selected filters. Track exports via")}{" "}<strong>{t("Manage Data > CBAM Products")}</strong>.
-      </p>
-    )}
-  </ChartCard>
-);
+              </thead>
+              <tbody>
+                {products.map((p, idx) => {
+                  const fac = facilities.find((f) => String(f.id) === String(p.facility_id));
+                  const qty = p.quantityTonnes ?? p.quantity_tonnes ?? 0;
+                  const direct = p.specificEmbeddedDirect ?? p.specific_embedded_direct;
+                  const indirect = p.specificEmbeddedIndirect ?? p.specific_embedded_indirect;
+                  const ccs = p.capturedCo2Tonnes ?? p.captured_co2_tonnes ?? 0;
+                  const isComplex = Boolean(p.isComplexGood ?? p.is_complex_good);
+                  const pRatio = p.precursorRatio ?? p.precursor_ratio ?? 0;
+                  const pDir = p.precursorSeeDir ?? p.precursor_see_dir ?? 0;
+                  const pIndir = p.precursorSeeIndir ?? p.precursor_see_indir ?? 0;
+                  const pContrib = isComplex ? pRatio * (pDir + pIndir) : 0;
+                  const taxPaid = p.carbonPricePaidEur ?? p.carbon_price_paid_eur ?? 0;
+                  const qtr = p.quarter || `Q${Math.floor(((Number(p.month || 1) - 1) / 3)) + 1}`;
+                  const total = p.totalEmbeddedEmissions ?? p.total_embedded_emissions ?? (qty * (((direct || 0) + (indirect || 0)) + pContrib));
+                  return (
+                    <tr key={p.id || idx} className="hover:bg-ink-100">
+                      <td className={`${td} font-semibold`}>{fac ? fac.name : p.facilityName || p.facility_name || "—"}</td>
+                      <td className={td}>{pick(p, "productName", "product_name") || "—"}</td>
+                      <td className={td}>
+                        <span className="code-pill rounded-sm border border-border bg-ink-100 px-2 py-0.5 font-mono text-sm">{pick(p, "cnCode", "cn_code") || "—"}</span>
+                      </td>
+                      <td className={`${td} whitespace-nowrap`}>
+                        {p.year} - {qtr} (M{p.month || 1})
+                      </td>
+                      <td className={td}>{formatNumber(qty, 0)}</td>
+                      <td className={td}>{pick(p, "exportDestination", "export_destination") || "EU"}</td>
+                      <td className={td}>
+                        {ccs > 0 ? (
+                          <span className="font-mono text-emerald-600 dark:text-emerald-400 font-semibold">-{formatNumber(ccs, 1)} t</span>
+                        ) : (
+                          <span className="text-text-secondary">—</span>
+                        )}
+                      </td>
+                      <td className={td}>
+                        <strong className="text-brand-700 font-mono">{typeof direct === "number" ? direct.toFixed(4) : "—"}</strong>
+                      </td>
+                      <td className={`${td} font-mono`}>{typeof indirect === "number" ? indirect.toFixed(4) : "—"}</td>
+                      <td className={`${td} font-mono`}>
+                        {pContrib > 0 ? <span className="text-blue-600 dark:text-blue-400 font-medium">+{pContrib.toFixed(4)}</span> : "—"}
+                      </td>
+                      <td className={td}>
+                        <strong className="font-mono text-link">{formatNumber(total, 1)}</strong>
+                      </td>
+                      <td className={td}>
+                        {taxPaid > 0 ? (
+                          <span className="font-mono text-xs font-semibold text-amber-600 dark:text-amber-400">€{Number(taxPaid).toFixed(2)}/t</span>
+                        ) : (
+                          <span className="text-text-secondary">—</span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="m-0 px-5 py-10 text-center text-base text-text-secondary">
+            {t("No CBAM product export records registered for the selected filters. Track exports via")}{" "}<strong>{t("Manage Data > CBAM Products")}</strong>.
+          </p>
+        )}
+      </ChartCard>
+
+      <CbamValidationModal
+        open={cbamModalOpen}
+        onOpenChange={setCbamModalOpen}
+        year={selectedYear && selectedYear !== "all" ? selectedYear : undefined}
+        quarter={cbamQuarter}
+        onQuarterChange={setCbamQuarter}
+        facilityId={selectedFacility || "all"}
+        status="Verified"
+        initialTab={cbamModalTab}
+        onExportXml={(q) => handleExport("xml", q)}
+      />
+    </>
+  );
 };
 
 const GAS_TO_BOE = (1.02 / 5.8);

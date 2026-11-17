@@ -136,7 +136,7 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
 
   return (
     <div role="presentation"
-      className="modal-overlay [position:fixed]! [top:0]! [left:0]! [right:0]! [bottom:0]! [background-color:rgba(17,_24,_39,_0.6)]! [backdrop-filter:blur(4px)]! [display:flex]! [align-items:center]! [justify-content:center]! [z-index:9999]! [padding:16px]!"
+      className="modal-overlay [position:fixed]! [top:0]! [inset-inline-start:0]! [inset-inline-end:0]! [bottom:0]! [background-color:rgba(17,_24,_39,_0.6)]! [backdrop-filter:blur(4px)]! [display:flex]! [align-items:center]! [justify-content:center]! [z-index:9999]! [padding:16px]!"
      
       onClick={(e) => {
         if (e.target === e.currentTarget && !loading) onClose();
@@ -336,7 +336,7 @@ const QuickAddCustomFactorModal: React.FC<QuickAddCustomFactorModalProps> = ({
                     onChange={(e) => handleChange("uncertainty", e.target.value)}
                   />
                   <span
-                    className="[position:absolute]! [right:10px]! [top:50%]! [transform:translateY(-50%)]! text-[length:0.75rem]! text-[color:var(--color-legacy-9ca3af)]!"
+                    className="[position:absolute]! [inset-inline-end:10px]! [top:50%]! [transform:translateY(-50%)]! text-[length:0.75rem]! text-[color:var(--color-legacy-9ca3af)]!"
                   >
                     {t("% (Tier 2 default: ±7%)")}
                   </span>

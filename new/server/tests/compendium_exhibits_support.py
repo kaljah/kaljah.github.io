@@ -44,6 +44,9 @@ REL_ENGINE = 5e-3
 # arithmetic and CO2 0.0054 % below; ``gas="ch4"`` / ``"co2"`` expects exactly that shift, leaving ``rel`` for everything else.
 _ENGINE_LB_PER_SCF = lambda mw: mw / 23.685 * 0.028316846592 / 0.45359237  # noqa: E731
 CONSTANTS_SHIFT = {"ch4": _ENGINE_LB_PER_SCF(16.04) / (16.0 / 379.3), "co2": _ENGINE_LB_PER_SCF(44.01) / (44.0 / 379.3)}
+# a carbon balance: the exhibits print 44 / 12 t CO2 per t C, the engine uses the molecular weights 44.01 / 12.011
+# (+0.069 %, blind audit BA-040)
+CONSTANTS_SHIFT["co2_per_c"] = (44.01 / 12.011) / (44.0 / 12.0)
 
 
 def assert_printed(got, text, slack=1.0, what="", rel=0.0, sig=None, gas=None):

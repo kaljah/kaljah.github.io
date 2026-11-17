@@ -245,7 +245,7 @@ const ProcessTile: React.FC<ProcessTileProps> = ({ process, selected, onToggle }
       aria-pressed={selected}
       onClick={onToggle}
       className={cn(
-        "flex cursor-pointer items-center gap-2 rounded-md border bg-surface px-3 py-2.5 text-left text-sm font-semibold text-text transition-colors",
+        "flex cursor-pointer items-center gap-2 rounded-md border bg-surface px-3 py-2.5 text-start text-sm font-semibold text-text transition-colors",
         selected ? "border-brand-500 bg-selected-bg" : "border-border hover:border-ink-300",
       )}
     >
@@ -279,10 +279,11 @@ export const Scope1ImportWizard: React.FC<Scope1ImportWizardProps> = ({ onClose,
   const fieldFilter = useCallback((group: FieldGroupData) => !(group.tier3Only && (tier === "1" || tier === "2")), [tier]);
 
   const downloadTemplate = async (fmt: "excel" | "csv") => {
+    let url: string | null = null;
     try {
       const processParam = selectedProcesses.length ? selectedProcesses.join(",") : "all";
       const res = await api.get(`/emissions/template/${fmt}?tier=${tier}&process=${processParam}${optionalCols ? "&optional=1" : ""}`, { responseType: "blob" });
-      const url = URL.createObjectURL(new Blob([res.data]));
+      url = URL.createObjectURL(new Blob([res.data]));
       const a = document.createElement("a");
       a.href = url;
       const stem = `scope1_template_${tier === "auto" ? "per_row" : `tier${tier}`}`;
@@ -292,6 +293,8 @@ export const Scope1ImportWizard: React.FC<Scope1ImportWizardProps> = ({ onClose,
       a.remove();
     } catch {
       toast.error(t("Template download failed."));
+    } finally {
+      if (url) URL.revokeObjectURL(url);
     }
   };
 
@@ -334,7 +337,7 @@ export const Scope1ImportWizard: React.FC<Scope1ImportWizardProps> = ({ onClose,
             <Button
               key={fmt}
               variant={recommended ? "primary" : "secondary"}
-              className="h-auto min-w-0 flex-1 justify-start gap-3 px-4 py-3 text-left"
+              className="h-auto min-w-0 flex-1 justify-start gap-3 px-4 py-3 text-start"
               onClick={() => downloadTemplate(fmt)}
             >
               <Icon className="size-5 shrink-0" aria-hidden="true" />
@@ -345,7 +348,7 @@ export const Scope1ImportWizard: React.FC<Scope1ImportWizardProps> = ({ onClose,
                 </strong>
                 <small className="text-xs font-normal opacity-80">{note}</small>
               </span>
-              <Download className="ml-auto size-4 shrink-0" aria-hidden="true" />
+              <Download className="ms-auto size-4 shrink-0" aria-hidden="true" />
             </Button>
           ))}
         </div>

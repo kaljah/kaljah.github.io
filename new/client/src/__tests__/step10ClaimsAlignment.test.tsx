@@ -55,7 +55,7 @@ import Scope3ImportWizard from "../components/Scope3ImportWizard";
 import { TooltipProvider } from "../ui/Tooltip";
 import { GLOSSARY_ITEMS, GlossaryHelpTip } from "../ui/HelpTip";
 
-describe("Step 10: Claims alignment & Preview / Roadmap badges", () => {
+describe("Step 10: Claims alignment & Full OGMP 2.0 / CBAM feature parity", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     apiGetMock.mockImplementation((url: string) => {
@@ -101,13 +101,15 @@ describe("Step 10: Claims alignment & Preview / Roadmap badges", () => {
     });
   });
 
-  it("shows Preview / Roadmap badge and development copy on OGMP 2.0 Level 4/5 reconciliation sections and tab", async () => {
+  it("renders full OGMP 2.0 Level 4/5 workspace and RSS 95% CI UI without Preview / Roadmap disclaimers", async () => {
     render(
       <MemoryRouter>
         <MethaneIntensityOGMP20Level
           globalThreshold={20}
           ogmpCollapsed={false}
           ogmpSurveys={[]}
+          ogmpAnnualReports={[]}
+          ogmpSiteMeasurements={[]}
           regionalData={[]}
           setOgmpCollapsed={vi.fn()}
         />
@@ -142,12 +144,16 @@ describe("Step 10: Claims alignment & Preview / Roadmap badges", () => {
       </MemoryRouter>,
     );
 
-    const badges = screen.getAllByText(/Preview \/ Roadmap/i);
-    expect(badges.length).toBeGreaterThanOrEqual(3);
-    expect(screen.getAllByText(/preview, reconciliation logic in development/i).length).toBeGreaterThanOrEqual(3);
+    expect(screen.queryAllByText(/Preview \/ Roadmap/i)).toHaveLength(0);
+    expect(screen.queryAllByText(/preview, reconciliation logic in development/i)).toHaveLength(0);
+    expect(screen.getByText(/OGMP 2\.0 Level 4 \/ Level 5 Workspace/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /L1–L4 Source Catalog/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /L5 Campaigns & RSS Reconciliation/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Entities & 95% Portfolio/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Y0–Y10 Plan & Audit/i })).toBeInTheDocument();
   });
 
-  it("shows Preview / Roadmap badge on the Manage Data OGMP 2.0 Surveys navigation tab", async () => {
+  it("shows live OGMP 2.0 Surveys navigation tab without Preview / Roadmap badge", async () => {
     render(
       <MemoryRouter>
         <ManageData />
@@ -156,10 +162,10 @@ describe("Step 10: Claims alignment & Preview / Roadmap badges", () => {
 
     const ogmpNavTab = await screen.findByTestId("manage-nav-ogmp");
     expect(ogmpNavTab).toHaveTextContent(/OGMP 2\.0 Surveys/i);
-    expect(ogmpNavTab).toHaveTextContent(/Preview \/ Roadmap/i);
+    expect(ogmpNavTab).not.toHaveTextContent(/Preview \/ Roadmap/i);
   });
 
-  it("shows Preview / Roadmap badge on CBAM XML export button and Reports export menu item", async () => {
+  it("exposes quarter filter, CBAM validation, and XML declaration controls without Preview / Roadmap badges", async () => {
     const user = userEvent.setup();
     render(
       <MemoryRouter>
@@ -169,18 +175,21 @@ describe("Step 10: Claims alignment & Preview / Roadmap badges", () => {
     );
 
     const xmlBtn = screen.getByRole("button", { name: /Export CBAM XML/i });
-    expect(xmlBtn).toHaveTextContent(/Preview \/ Roadmap/i);
+    expect(xmlBtn).not.toHaveTextContent(/Preview \/ Roadmap/i);
+    expect(screen.getByRole("combobox", { name: /CBAM Reporting Quarter/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Validate CBAM/i })).toBeInTheDocument();
 
     const exportMenuTrigger = screen.getByRole("button", { name: /^Export$/i });
     await user.click(exportMenuTrigger);
 
     const cbamXmlMenuItem = await screen.findByText(/EU CBAM Declaration \(XML\)/i);
-    expect(cbamXmlMenuItem.closest("[role='menuitem']") ?? cbamXmlMenuItem.parentElement).toHaveTextContent(
+    expect(cbamXmlMenuItem.closest("[role='menuitem']") ?? cbamXmlMenuItem.parentElement).not.toHaveTextContent(
       /Preview \/ Roadmap/i,
     );
+    expect(await screen.findByText(/Validate CBAM & Preview XML/i)).toBeInTheDocument();
   });
 
-  it("aligns UI copy for Scope 3, uncertainty, ingestion, and OGMP 2.0", async () => {
+  it("preserves honest disclaimers for Scope 3, Monte Carlo uncertainty, and background ingestion", async () => {
     mockUser.role = "auditor";
     try {
       render(
@@ -201,12 +210,13 @@ describe("Step 10: Claims alignment & Preview / Roadmap badges", () => {
       // Scope 3 -> spend-based screening
       expect(screen.getAllByText(/spend-based screening/i).length).toBeGreaterThanOrEqual(2);
 
-      // Uncertainty -> basic error propagation (Monte Carlo planned)
-      await waitFor(() => {
-        expect(screen.getAllByText(/basic error propagation \(Monte Carlo planned\)/i).length).toBeGreaterThanOrEqual(2);
-      });
+      // Uncertainty -> the API runs the Monte Carlo simulation, so the page no longer calls it "planned" (blind audit BA-059)
+      expect(await screen.findByText(/Monte Carlo Histogram/i)).toBeInTheDocument();
+      expect(screen.queryByText(/Preview \/ Roadmap/i)).not.toBeInTheDocument();
+      expect(screen.queryAllByText(/Monte Carlo planned/i).length).toBe(0);
+      expect(screen.getAllByText(/Monte Carlo/i).length).toBeGreaterThanOrEqual(2);
       const mcGlossary = GLOSSARY_ITEMS.find((g) => g.term === "Monte Carlo Uncertainty");
-      expect(mcGlossary?.definition).toMatch(/basic error propagation \(Monte Carlo planned\)/i);
+      expect(mcGlossary?.definition).toMatch(/Monte Carlo simulation of the inventory total/i);
 
       // Ingestion -> in-process background processing
       expect(screen.getAllByText(/in-process background processing/i).length).toBeGreaterThanOrEqual(1);

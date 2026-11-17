@@ -176,6 +176,13 @@ new/server/instance/master_report_jobs/
 screenshots/
 scratch_*.py
 BROWSER_TEST_ALL_68_RESULTS.md
+/_blind_audit/
+/FULL_AUDIT_REPORT.md
+/FULL_SYSTEM_TEST_REPORT.md
+/REMEDIATION_VERIFICATION_REPORT.md
+/UNCHECKED_SCOPE.md
+# dry-run and benchmark output of new/server/scripts/*
+new/server/reports/
 DETAILED_EXECUTION_AUDIT_REPORT.md
 RESULTS_vs_REPORT.md
 ROLE_AND_CSV_AUDIT_REPORT.md

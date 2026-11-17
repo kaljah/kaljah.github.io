@@ -82,7 +82,7 @@ const SettingsFacilityLevelOGMPOverrides: React.FC<SettingsFacilityLevelOGMPOver
           <thead>
             <tr>
               {COLUMNS.map((c) => (
-                <th key={c} scope="col" className="whitespace-nowrap border-b border-border bg-ink-50 px-4 py-3 text-left text-xs font-bold uppercase tracking-wide text-text-secondary">
+                <th key={c} scope="col" className="whitespace-nowrap border-b border-border bg-ink-50 px-4 py-3 text-start text-xs font-bold uppercase tracking-wide text-text-secondary">
                   {t(c)}
                 </th>
               ))}
@@ -123,7 +123,7 @@ const SettingsFacilityLevelOGMPOverrides: React.FC<SettingsFacilityLevelOGMPOver
                     </NativeSelect>
                   </td>
                   <td className="px-4 py-3">
-                    <Input aria-label={t("Country for {{name}}", { name })} className="h-9 min-w-28" value={edit.country || "Algeria"} disabled={!isAdmin} onChange={change("country")} />
+                    <Input aria-label={t("Country for {{name}}", { name })} className="h-9 min-w-28" placeholder={t("Country")} value={edit.country ?? ""} disabled={!isAdmin} onChange={change("country")} />
                   </td>
                   <td className="px-4 py-3">
                     <NativeSelect aria-label={t("Base year for {{name}}", { name })} className={controlClass} value={baseYear} disabled={!isAdmin} onChange={change("ogmp_membership_year")}>

@@ -277,7 +277,7 @@ const MitigationTab: React.FC<MitigationTabProps> = ({
                   </span>
                 </td>
                 <td className="text-right! text-[color:var(--color-green-700)]! font-semibold!">
-                  -{parseFloat(String(m.quantity_tco2e)).toLocaleString()}
+                  -{parseFloat(String(m.quantity_tco2e)).toLocaleString("en-US")}
                 </td>
                 <td className="text-center!">
                   <button

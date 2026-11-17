@@ -1,191 +1,138 @@
 /**
  * test_master_publication_report_studio.spec.js
  *
- * END-TO-END VERIFICATION OF THE EXECUTIVE MASTER REPORT & INTELLIGENCE STUDIO
+ * END-TO-END VERIFICATION OF THE REGIONAL ASSET MASTER REPORT WIZARD
  *
- * Validates:
- * 1. Studio presentation & 300 DPI publication-grade badge display
- * 2. Dynamic mode switching: Regional Asset, Consolidated National, Cross-Basin Benchmark
- * 3. Dynamic authentic regional profiles & geological intelligence updates
- * 4. Multi-year timeline selection & GWP standards
- * 5. Synchronous HTTP streaming of Master Report PDF with SHA-256 header
- * 6. Cross-basin benchmark Excel export
- * 7. High-resolution screenshot capture for audit verification
+ * Validates against playwright.config.js baseURL & storageState:
+ * 1. Wizard heading & DB-driven /api/reports/master-report/regions hydration (including national)
+ * 2. Unsupported 20yr GWP omitted from Master Report GWP selector
+ * 3. Async 202 Accepted job enqueue -> GET job status polling -> PDF download with SHA-256 headers
+ * 4. Cross-Basin Benchmark Excel export with SHA-256 header
+ * 5. French language Master Report generation yielding *_FR.pdf Content-Disposition
  */
 
 import { test, expect } from '@playwright/test';
-import fs from 'fs';
-import path from 'path';
 
-const FRONTEND = process.env.E2E_BASE_URL || 'http://localhost:5174';
-const SCREENSHOT_DIR = 'C:/Users/samsung/.gemini/antigravity/brain/dd96e698-aa0b-4016-a59d-85ecf47988c4/screenshots';
-
-if (!fs.existsSync(SCREENSHOT_DIR)) {
-  fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
+async function openReportsStudio(page) {
+  await page.goto('/reports', { waitUntil: 'domcontentloaded', timeout: 30000 });
+  if (page.url().includes('/login')) {
+    const email = process.env.E2E_USER_EMAIL;
+    const password = process.env.E2E_USER_PASSWORD;
+    if (!email || !password) {
+      throw new Error('Redirected to /login without authenticated storageState or E2E_USER_EMAIL/E2E_USER_PASSWORD.');
+    }
+    await page.locator('input[type="email"], input[placeholder*="Email"]').first().fill(email);
+    await page.locator('input[type="password"]').first().fill(password);
+    await page.locator('button[type="submit"]').first().click();
+    await page.waitForURL((url) => !url.toString().includes('/login'), { timeout: 15000 });
+    await page.goto('/reports', { waitUntil: 'domcontentloaded', timeout: 30000 });
+  }
 }
 
-test.describe.serial('Executive Master Report & Intelligence Studio E2E Suite', () => {
-  let page;
-  let context;
+test.describe.serial('Regional Asset Master Report Wizard E2E Suite', () => {
+  test('Renders Wizard with DB-driven regions and excludes unsupported 20yr GWP option', async ({ page }) => {
+    await openReportsStudio(page);
 
-  test.beforeAll(async ({ browser }) => {
-    context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
-    page = await context.newPage();
+    const wizardHeading = page.locator('h2:has-text("Regional Asset Master Report Wizard")');
+    await expect(wizardHeading).toBeVisible({ timeout: 15000 });
 
-    // Login as operator
-    await page.goto(`${FRONTEND}/login`, { waitUntil: 'domcontentloaded', timeout: 30000 });
-    await page.waitForTimeout(400);
+    const regionSelect = page.locator('#master-region-select');
+    await expect(regionSelect).toBeVisible();
+    await expect(regionSelect).toBeEnabled({ timeout: 15000 });
 
-    const emailIn = page.locator('input[placeholder*="Email"], input[type="email"]').first();
-    await emailIn.waitFor({ state: 'visible', timeout: 15000 });
-    await emailIn.fill('operator@example.org');
-    const passIn = page.locator('input[type="password"]').first();
-    await passIn.fill('a');
-    await page.locator('button[type="submit"]:has-text("Sign In"), button:has-text("Sign In")').first().click();
-    await page.waitForURL(url => !url.toString().includes('/login'), { timeout: 15000 });
-    await page.waitForTimeout(600);
+    const optionCount = await regionSelect.locator('option').count();
+    expect(optionCount).toBeGreaterThan(0);
+
+    const gwpSelect = page.locator('#master-gwp-select');
+    const gwpValues = await gwpSelect.locator('option').evaluateAll((opts) => opts.map((o) => o.value));
+    expect(gwpValues).toEqual(['AR5', 'AR6', 'AR4']);
   });
 
-  test.afterAll(async () => {
-    if (context) await context.close();
+  test('Enqueues async 202 job, polls status, and downloads Master Publication PDF with SHA-256 headers', async ({ page }) => {
+    await openReportsStudio(page);
+
+    const downloadBtn = page.getByRole('button', { name: /Download (Regional|National) Master Report/i });
+    await expect(downloadBtn).toBeEnabled({ timeout: 15000 });
+
+    const enqueuePromise = page.waitForResponse(
+      (resp) => resp.url().endsWith('/api/reports/master-report') && resp.request().method() === 'POST',
+      { timeout: 30000 }
+    );
+    const pollPromise = page.waitForResponse(
+      (resp) => /\/api\/reports\/master-report\/jobs\/[A-Za-z0-9_-]+$/.test(resp.url()) && resp.request().method() === 'GET',
+      { timeout: 45000 }
+    );
+    const filePromise = page.waitForResponse(
+      (resp) => /\/api\/reports\/master-report\/jobs\/[A-Za-z0-9_-]+\/download$/.test(resp.url()) && resp.request().method() === 'GET',
+      { timeout: 45000 }
+    );
+
+    await downloadBtn.click();
+
+    const enqueueResp = await enqueuePromise;
+    expect(enqueueResp.status()).toBe(202);
+    const jobPayload = await enqueueResp.json();
+    expect(jobPayload.job_id).toBeTruthy();
+
+    const pollResp = await pollPromise;
+    expect(pollResp.status()).toBe(200);
+
+    const fileResp = await filePromise;
+    expect(fileResp.status()).toBe(200);
+    expect(fileResp.headers()['content-type']).toContain('application/pdf');
+    expect(fileResp.headers()['x-report-sha256']).toHaveLength(64);
+    expect(fileResp.headers()['x-dataset-sha256']).toHaveLength(64);
+
+    await expect(page.getByRole('link', { name: /Download ready PDF/i })).toBeVisible({ timeout: 15000 });
   });
 
-  test('Navigate to Reports and verify Studio presence and architecture', async () => {
-    await page.goto(`${FRONTEND}/reports`, { waitUntil: 'domcontentloaded', timeout: 25000 });
-    await page.waitForTimeout(1000);
+  test('Exports Cross-Basin Benchmark Excel workbook with SHA-256 header', async ({ page }) => {
+    await openReportsStudio(page);
 
-    // Verify Studio Title
-    const studioTitle = page.locator('h2:has-text("Executive Master Report & Intelligence Studio")');
-    await expect(studioTitle).toBeVisible({ timeout: 10000 });
+    const excelBtn = page.getByRole('button', { name: /Export Regional Inventory \(Excel\)/i });
+    await expect(excelBtn).toBeEnabled({ timeout: 15000 });
 
-    // Verify Badges
-    const pubBadge = page.locator('text="300 DPI // Vector Publication Grade"');
-    await expect(pubBadge).toBeVisible();
-
-    const isoBadge = page.locator('text="ISO 14064-1 & Décret 21-330"');
-    await expect(isoBadge).toBeVisible();
-
-    // Take screenshot of Regional View
-    await page.screenshot({
-      path: path.join(SCREENSHOT_DIR, 'master_report_studio_regional_view.png'),
-      fullPage: false,
-    });
-  });
-
-  test('Verify Regional Asset switching and live geological intelligence', async () => {
-    // Click Regional Asset mode
-    const regionalTab = page.locator('button:has-text("Regional Asset Master Report")');
-    await regionalTab.click();
-    await page.waitForTimeout(300);
-
-    // Verify presence of asset selector
-    const assetSelect = page.locator('select').filter({ hasText: /Basin Alpha/ }).first();
-    await expect(assetSelect).toBeVisible();
-
-    // Verify live intelligence snapshot displays Basin Alpha profile
-    const intelSnapshot = page.locator('text="Authentic Regional Profile & Statutory Alignment Snapshot:"');
-    await expect(intelSnapshot).toBeVisible();
-
-    // Select Basin Beta
-    await assetSelect.selectOption('hrm');
-    await page.waitForTimeout(300);
-
-    // Verify snapshot updated to Tilrhemt Dome / Basin Beta
-    const hrmText = page.getByText(/Tilrhemt Dome/);
-    await expect(hrmText).toBeVisible();
-  });
-
-  test('Verify Consolidated Demo Operator Co. Group mode and Cross-Basin Benchmark mode', async () => {
-    // Switch to Consolidated Demo Operator Co. Group
-    const nationalTab = page.locator('button:has-text("Consolidated Demo Operator Co. Group")');
-    await nationalTab.click();
-    await page.waitForTimeout(300);
-
-    const nationalScopeText = page.getByText(/National Hydrocarbon Estate/);
-    await expect(nationalScopeText).toBeVisible();
-
-    // Switch to Cross-Basin Benchmark League
-    const benchmarkTab = page.locator('button:has-text("Cross-Basin Benchmark League")');
-    await benchmarkTab.click();
-    await page.waitForTimeout(300);
-
-    const benchmarkScopeText = page.getByText(/All 9 Hydrocarbon Basins/);
-    await expect(benchmarkScopeText).toBeVisible();
-
-    // Take screenshot of Benchmark View
-    await page.screenshot({
-      path: path.join(SCREENSHOT_DIR, 'master_report_studio_benchmark_view.png'),
-      fullPage: false,
-    });
-  });
-
-  test('Generate and verify Master Publication PDF download stream', async () => {
-    // Switch back to Regional mode
-    await page.locator('button:has-text("Regional Asset Master Report")').click();
-    await page.waitForTimeout(300);
-
-    // Set up response listener for /api/reports/master-report
-    const [response] = await Promise.all([
+    const [excelResp] = await Promise.all([
       page.waitForResponse(
-        (resp) => resp.url().includes('/api/reports/master-report') && resp.request().method() === 'POST',
-        { timeout: 35000 }
+        (resp) => resp.url().endsWith('/api/reports/master-report/benchmark-excel') && resp.request().method() === 'POST',
+        { timeout: 45000 }
       ),
-      page.locator('button:has-text("Download Regional Master (PDF)")').click(),
+      excelBtn.click(),
     ]);
 
-    expect(response.status()).toBe(200);
-    const contentType = response.headers()['content-type'];
-    expect(contentType).toContain('application/pdf');
-
-    const sha256 = response.headers()['x-report-sha256'];
-    expect(sha256).toBeDefined();
-    expect(sha256.length).toBe(64);
-
-    // Verify success toast appears
-    const toast = page.getByText(/Executive Master Publication PDF generated/);
-    await expect(toast).toBeVisible({ timeout: 10000 });
+    expect(excelResp.status()).toBe(200);
+    expect(excelResp.headers()['content-type']).toMatch(/spreadsheetml|excel/);
+    expect(excelResp.headers()['x-report-sha256']).toHaveLength(64);
   });
 
-  test('Generate and verify Cross-Basin Benchmark Excel export', async () => {
-    // Set up response listener for /api/reports/master-report/benchmark-excel
-    const [response] = await Promise.all([
-      page.waitForResponse(
-        (resp) => resp.url().includes('/api/reports/master-report/benchmark-excel') && resp.request().method() === 'POST',
-        { timeout: 35000 }
-      ),
-      page.locator('button:has-text("Export Benchmark (Excel)")').click(),
-    ]);
+  test('Generates French Master Report PDF yielding _FR.pdf download header', async ({ page }) => {
+    await openReportsStudio(page);
 
-    expect(response.status()).toBe(200);
-    const contentType = response.headers()['content-type'];
-    expect(contentType).toMatch(/spreadsheetml|excel/);
-
-    const sha256 = response.headers()['x-report-sha256'];
-    expect(sha256).toBeDefined();
-
-    // Verify success toast appears
-    const toast = page.getByText(/Cross-Basin Benchmark Excel exported/);
-    await expect(toast).toBeVisible({ timeout: 10000 });
-  });
-
-  test('Select French language and verify French Master Report PDF generation', async () => {
-    // Select French in the studio language dropdown
-    const langSelect = page.locator('select').filter({ hasText: /English/ }).first();
+    const langSelect = page.locator('#master-language-select');
     await expect(langSelect).toBeVisible();
     await langSelect.selectOption('fr');
-    await page.waitForTimeout(300);
 
-    const [response] = await Promise.all([
-      page.waitForResponse(
-        (resp) => resp.url().includes('/api/reports/master-report') && resp.request().method() === 'POST',
-        { timeout: 35000 }
-      ),
-      page.locator('button:has-text("Download Regional Master (PDF)")').click(),
-    ]);
+    const downloadBtn = page.getByRole('button', { name: /Download (Regional|National) Master Report/i });
+    await expect(downloadBtn).toBeEnabled({ timeout: 15000 });
 
-    expect(response.status()).toBe(200);
-    expect(response.headers()['content-type']).toContain('application/pdf');
-    expect(response.headers()['content-disposition']).toContain('_FR.pdf');
+    const enqueuePromise = page.waitForResponse(
+      (resp) => resp.url().endsWith('/api/reports/master-report') && resp.request().method() === 'POST',
+      { timeout: 30000 }
+    );
+    const filePromise = page.waitForResponse(
+      (resp) => /\/api\/reports\/master-report\/jobs\/[A-Za-z0-9_-]+\/download$/.test(resp.url()) && resp.request().method() === 'GET',
+      { timeout: 45000 }
+    );
+
+    await downloadBtn.click();
+
+    const enqueueResp = await enqueuePromise;
+    expect(enqueueResp.status()).toBe(202);
+    expect(enqueueResp.request().postDataJSON()).toMatchObject({ language: 'fr' });
+
+    const fileResp = await filePromise;
+    expect(fileResp.status()).toBe(200);
+    expect(fileResp.headers()['content-type']).toContain('application/pdf');
+    expect(fileResp.headers()['content-disposition']).toContain('_FR.pdf');
   });
 });
-

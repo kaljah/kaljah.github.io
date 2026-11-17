@@ -68,7 +68,7 @@ const SCOPE_OF: Record<string, string> = { activity: "1", activity_scope2: "2", 
 // Sample row appended to the client-side CSV template of each non-emissions type.
 const SAMPLE_ROW: Record<string, string> = {
   custom_factors: "Specialized Generator Gas,Natural Gas,MMBtu,53.06,0.001,0.0001,0,5,50,150,combustion",
-  production: "Basin Alpha,Exploration & Production,Production,Sector Alpha-1,2024,1,50000,bbl,12000,mscf",
+  production: "Basin Alpha,Exploration & Production,Production,Sector Alpha-1,2024,1,50000,bbl,12000,mscf,0.34,0.34,0.0,0.0,0.050,0.0,0.0,0.0,0.052,0.052,0.052",
   mitigation: "Basin Alpha,Solar Farm A,REC,2024,1500,Active,2024-01-01,,500000,Solar panel installation",
   sources: "Exploration & Production,Production,Basin Alpha,Sector Alpha-1,Combustion Unit A,EQ-001,combustion,Natural Gas,5 MW,2015-06-01,Active,Main export compressor,Laghouat",
   activity_scope2: "Basin Alpha,2024,1,Algerian National Grid,500,MWh,electricity,",
@@ -169,6 +169,7 @@ export const ColumnMappingWizard: React.FC<ColumnMappingWizardProps> = ({ onClos
         document.body.appendChild(a);
         a.click();
         a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
       } catch {
         toast.error(tr("Template download failed."));
       }
@@ -226,22 +227,22 @@ export const ColumnMappingWizard: React.FC<ColumnMappingWizardProps> = ({ onClos
       <p className="m-0 text-sm font-medium text-text-secondary">{tr("Don't have a file yet? Start from our template:")}</p>
       <div className="grid gap-3 sm:grid-cols-2">
         {isEmissions && (
-          <Button variant="secondary" className="h-auto justify-start gap-3 px-4 py-3 text-left" onClick={() => downloadTemplate("excel")}>
+          <Button variant="secondary" className="h-auto justify-start gap-3 px-4 py-3 text-start" onClick={() => downloadTemplate("excel")}>
             <FileSpreadsheet className="size-5 shrink-0 text-brand-700" aria-hidden="true" />
             <span className="flex flex-col">
               <strong className="text-sm">{tr("Excel Template")}</strong>
               <small className="text-xs font-normal text-text-secondary">{tr("With dropdowns, sample data & engineering sheets")}</small>
             </span>
-            <Download className="ml-auto size-4 shrink-0" aria-hidden="true" />
+            <Download className="ms-auto size-4 shrink-0" aria-hidden="true" />
           </Button>
         )}
-        <Button variant="secondary" className="h-auto justify-start gap-3 px-4 py-3 text-left" onClick={() => downloadTemplate("csv")}>
+        <Button variant="secondary" className="h-auto justify-start gap-3 px-4 py-3 text-start" onClick={() => downloadTemplate("csv")}>
           <FileIcon className="size-5 shrink-0 text-brand-700" aria-hidden="true" />
           <span className="flex flex-col">
             <strong className="text-sm">{tr("CSV Template")}</strong>
             <small className="text-xs font-normal text-text-secondary">{tr("Lightweight flat file for maximum performance")}</small>
           </span>
-          <Download className="ml-auto size-4 shrink-0" aria-hidden="true" />
+          <Download className="ms-auto size-4 shrink-0" aria-hidden="true" />
         </Button>
       </div>
     </div>

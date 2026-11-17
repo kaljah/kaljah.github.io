@@ -23,9 +23,13 @@ def _is_read_for_user(n, uid):
 @notifications_bp.route("/", methods=["GET"])
 @login_required
 def get_notifications():
-    user_id = session.get("user_id")
-    if not user_id:
+    from utils import get_allowed_facility_ids, get_current_user, get_current_tenant_id, normalize_tenant_id
+
+    viewer = get_current_user()
+    if not viewer:
         return jsonify({"error": "Not authenticated"}), 401
+    user_id = viewer.id
+    caller_tenant = get_current_tenant_id(viewer)
 
     notifs = (
         Notification.query.filter(
@@ -36,16 +40,16 @@ def get_notifications():
         .all()
     )
 
-    from utils import get_allowed_facility_ids, get_current_user as _current
-
-    viewer = _current()
-    allowed = get_allowed_facility_ids(viewer) if viewer else []
-    is_it = bool(viewer and viewer.role in ("it", "it_admin", "it_manager"))
+    allowed = get_allowed_facility_ids(viewer)
+    is_it = bool(viewer.role in ("it", "it_admin", "it_manager"))
     result = []
     for n in notifs:
         if n.user_id is None and n.metadata_json:
             try:
                 meta = json.loads(n.metadata_json)
+                meta_tid = meta.get("tenant_id")
+                if meta_tid and normalize_tenant_id(meta_tid) != caller_tenant:
+                    continue
                 dismissed = meta.get("dismissed_by", []) or meta.get("deleted_by", [])
                 if user_id in dismissed:
                     continue

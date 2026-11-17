@@ -11,21 +11,12 @@ def calc_stationary_combustion(self, calculator, emission_factors, flat_inputs, 
     hhv_val = self._require_float(
         flat_inputs, ["hhv"], "Higher Heating Value (HHV)"
     )
-    comb_eff = self._require_float(
-        flat_inputs,
-        [
-            "combustion_efficiency",
-            "combustion_eff",
-            "combustioneff",
-            "comb_eff",
-            "efficiency",
-        ],
-        "Combustion Efficiency (%)",
+    # API Compendium 2021 s4.2: complete combustion (100 % of the fuel carbon to CO2) unless an efficiency is
+    # entered (a fraction here: entered percent is converted in _dispatch_impl); it was required (BA-013)
+    comb_eff = self._optional_float(
+        flat_inputs, ["combustion_efficiency", "combustion_eff", "combustioneff", "comb_eff", "efficiency"], None
     )
-    if comb_eff > 1.0:
-        comb_eff_frac = comb_eff / 100.0
-    else:
-        comb_eff_frac = comb_eff
+    comb_eff_frac = comb_eff  # None: complete combustion; an entered efficiency leaves its unburnt methane as CH4
 
     t3_hhv, t3_hu = user_hhv(hhv_val, flat_inputs.get("hhv_unit"))
     comps = self._composition(flat_inputs)
@@ -142,6 +133,10 @@ def calc_flaring(self, calculator, emission_factors, flat_inputs, gwp_dict, unce
     # No N2O factor: the calculator's API Compendium Table 5-3 default (kg/MMBtu of gas
     # flared) applies. An explicit 0 used to be passed, so Tier 3 flaring had no N2O.
     n2o_given = ef_n2o_val not in (None, "", "-")
+    if n2o_given and emission_factors.get("combustion_efficiency_ch4") not in (None, "")             and ef_n2o_val in (emission_factors.get("n2o"), emission_factors.get("ef_n2o")):
+        # a catalog flare row's N2O is per m3 of ITS gas: at Tier 3 the entered gas sets the CO2 and
+        # Eq 5-6 makes the N2O follow it (the row value was applied to any composition, BA-017)
+        n2o_given = False
 
     return calculator.calculate(
         gas_volume=vol_m3,
@@ -196,8 +191,11 @@ def calc_drilling(self, calculator, emission_factors, flat_inputs, gwp_dict, unc
         if flat_inputs.get("ch4_fraction") is not None
         else flat_inputs.get("ch4_concentration")
     )
-    if ch4_conc is None and flat_inputs.get("ch4_pct") is not None:
-        ch4_conc = float(flat_inputs.get("ch4_pct")) / 100.0
+    if ch4_conc is None and flat_inputs.get("ch4_pct") not in (None, ""):
+        try:
+            ch4_conc = float(str(flat_inputs.get("ch4_pct")).replace("%", "").strip()) / 100.0
+        except (ValueError, TypeError):
+            ch4_conc = None
     elif ch4_conc is not None:
         try:
             ch4_f = float(str(ch4_conc).replace("%", "").strip())
@@ -211,8 +209,11 @@ def calc_drilling(self, calculator, emission_factors, flat_inputs, gwp_dict, unc
         if flat_inputs.get("co2_fraction") is not None
         else flat_inputs.get("co2_concentration")
     )
-    if co2_conc is None and flat_inputs.get("co2_pct") is not None:
-        co2_conc = float(flat_inputs.get("co2_pct")) / 100.0
+    if co2_conc is None and flat_inputs.get("co2_pct") not in (None, ""):
+        try:
+            co2_conc = float(str(flat_inputs.get("co2_pct")).replace("%", "").strip()) / 100.0
+        except (ValueError, TypeError):
+            co2_conc = None
     elif co2_conc is not None:
         try:
             co2_f = float(str(co2_conc).replace("%", "").strip())

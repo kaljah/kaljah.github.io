@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * French translation coverage: lists the interface strings passed to t() / tr() under src/ and
- * compares them with src/i18n/fr.json.
+ * French and Arabic translation coverage: lists the interface strings passed to t() / tr() under
+ * src/ and compares them with src/i18n/fr.json and ar.json.
  *
  *   npm run i18n:check                 summary
  *   npm run i18n:check -- --missing    also print the strings without a French entry
@@ -67,6 +67,12 @@ const translated = used.size - missing.length;
 console.log(`French: ${translated} of ${used.size} interface strings translated (${((100 * translated) / Math.max(used.size, 1)).toFixed(1)}%), ${missing.length} still in English.`);
 if (unused.length) console.log(`${unused.length} entries in fr.json are no longer used.`);
 if (args.includes("--missing")) for (const k of missing) console.log(`  ${JSON.stringify(k)}   (${used.get(k)})`);
+
+// Arabic is checked for coverage only (its unused entries are not reported).
+const ar = JSON.parse(fs.readFileSync(path.join(SRC, "i18n", "ar.json"), "utf8"));
+const arMissing = [...used.keys()].filter((k) => !(k in ar)).sort();
+console.log(`Arabic: ${used.size - arMissing.length} of ${used.size} interface strings translated (${((100 * (used.size - arMissing.length)) / Math.max(used.size, 1)).toFixed(1)}%), ${arMissing.length} still in English.`);
+if (args.includes("--missing")) for (const k of arMissing) console.log(`  ar: ${JSON.stringify(k)}   (${used.get(k)})`);
 if (args.includes("--strict") && unused.length) {
   for (const k of unused) console.log(`  unused: ${JSON.stringify(k)}`);
   process.exit(1);

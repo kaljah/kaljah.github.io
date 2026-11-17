@@ -597,13 +597,7 @@ class BlowdownCalculator(BaseCalculator):
                 gross_co2_tonnes = gross_ch4_tonnes * (1.0 / MW_CH4) * (1.0 / c_ch4) * c_co2 * MW_CO2
 
         else:
-            self.validate_inputs(
-                {
-                    "pressure": pressure,
-                    "events": events,
-                },
-                ["pressure", "events"],
-            )  # both >= 0
+            self.validate_inputs({"pressure": pressure, "events": events}, ["pressure", "events"])  # both >= 0
 
             # Resolve physical volume
             v_phys_m3 = 0.0
@@ -657,7 +651,8 @@ class BlowdownCalculator(BaseCalculator):
 
             co2_vol = total_v_std_m3 * c_co2
             co2_mass_kg = co2_vol * CONVERSIONS["density_co2"]
-            gross_co2_tonnes = (co2_mass_kg / 1000.0) if (c_co2 > 0 or ef_co2 is None) else (float(ef_co2) * float(events) / 1000.0)
+            # no CO2 content: the row's per-m3 CO2 factor x the released volume (it was x the event count, BA-002)
+            gross_co2_tonnes = (co2_mass_kg / 1000.0) if (c_co2 > 0 or ef_co2 in (None, "")) else float(ef_co2) * total_v_std_m3 / 1000.0
 
         # Split vented and flared
         ctrl_eff = normalize_efficiency(control_efficiency, default=0.0)

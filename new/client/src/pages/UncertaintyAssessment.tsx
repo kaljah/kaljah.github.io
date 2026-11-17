@@ -20,7 +20,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import CustomDropdown from "../components/CustomDropdown";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
 import { ReportsNavTabs } from "../components/NavigationTabs";
-import { Badge, TableSkeleton, ChartSkeleton } from "../ui";
+import { TableSkeleton, ChartSkeleton } from "../ui";
 import "./UncertaintyAssessment.css";
 import { t } from "../i18n";
 
@@ -283,7 +283,7 @@ const UncertaintyAssessment: React.FC = () => {
           <h1 className="ua-title">{t("Data Reliability Analysis")}</h1>
           <p className="[font-size:var(--text-base)] [color:var(--text-secondary,_var(--color-ink-500))] [max-width:850px] [margin:0] [line-height:1.5]">
             {t(
-              "Dynamic quantification of GHG inventory uncertainty using basic error propagation (Monte Carlo planned), aligned with ISO 14064-1 §7.5 and IPCC 2006 Vol.1 §3.3."
+              "Dynamic quantification of GHG inventory uncertainty using error propagation (IPCC Approach 1) and a Monte Carlo simulation (Approach 2), aligned with ISO 14064-1 §7.5 and IPCC 2006 Vol.1 §3.3."
             )}
           </p>
         </div>
@@ -505,7 +505,7 @@ const UncertaintyAssessment: React.FC = () => {
           </div>
 
           {/* ── ZONE 2: Analytics Hub with Segmented Switcher ── */}
-          {data.categories.length > 0 && (
+          {Boolean(data?.categories?.length) && (
             <div className="ua-chart-card">
               <div className="ua-chart-header">
                 <div>
@@ -514,9 +514,9 @@ const UncertaintyAssessment: React.FC = () => {
                       ? t("Relative Uncertainty by Category (±%)")
                       : analyticsView === "absolute"
                       ? t("Verified Emissions & 95% Margin by Category (tCO₂e)")
-                      : t("Stochastic Distribution Preview (Monte Carlo planned)")}
+                      : t("Monte Carlo Distribution (IPCC Approach 2)")}
                   </h3>
-                  <p className="[font-size:var(--text-xs)] [color:var(--text-secondary,_var(--color-ink-500))] [margin:4px_0_0_18px]">
+                  <p className="[font-size:var(--text-xs)] [color:var(--text-secondary,_var(--color-ink-500))] [margin-block:4px_0] [margin-inline:18px_0]">
                     {analyticsView === "relative"
                       ? t(
                           "Ranking of categories according to their statistical dispersion relative to the critical threshold of ±30%."
@@ -526,7 +526,7 @@ const UncertaintyAssessment: React.FC = () => {
                           "Weighting of total emissions by category and absolute uncertainty whiskers."
                         )
                       : t(
-                          "Preview log-normal histogram alongside basic error propagation (Monte Carlo planned)."
+                          "Log-normal Monte Carlo histogram of the inventory total, beside the error propagation result."
                         )}
                   </p>
                 </div>
@@ -559,9 +559,6 @@ const UncertaintyAssessment: React.FC = () => {
                   >
                     <Activity size={13} />
                     <span>{t("Monte Carlo Histogram")}</span>
-                    <Badge tone="warning" className="ml-1 px-1.5 py-0 text-[0.65rem]">
-                      {t("Preview / Roadmap")}
-                    </Badge>
                   </button>
                 </div>
               </div>
@@ -572,16 +569,16 @@ const UncertaintyAssessment: React.FC = () => {
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3.5 rounded-xl bg-ink-50/70 border border-border">
                       <div className="flex flex-col">
                         <span className="text-xs font-medium text-text-secondary">{t("Simulated Mean")}</span>
-                        <span className="text-sm font-bold text-text mt-0.5">{Number(data.monte_carlo.mean).toLocaleString()} tCO₂e</span>
+                        <span className="text-sm font-bold text-text mt-0.5">{Number(data.monte_carlo.mean).toLocaleString("en-US")} tCO₂e</span>
                       </div>
                       <div className="flex flex-col">
                         <span className="text-xs font-medium text-text-secondary">{t("Median (P50)")}</span>
-                        <span className="text-sm font-bold text-text mt-0.5">{Number(data.monte_carlo.median).toLocaleString()} tCO₂e</span>
+                        <span className="text-sm font-bold text-text mt-0.5">{Number(data.monte_carlo.median).toLocaleString("en-US")} tCO₂e</span>
                       </div>
                       <div className="flex flex-col">
                         <span className="text-xs font-medium text-text-secondary">{t("95% Interval (P5 - P95)")}</span>
                         <span className="text-sm font-bold text-emerald-700 mt-0.5">
-                          [{Number(data.monte_carlo.ci_lower).toLocaleString()} - {Number(data.monte_carlo.ci_upper).toLocaleString()}]
+                          [{Number(data.monte_carlo.ci_lower).toLocaleString("en-US")} - {Number(data.monte_carlo.ci_upper).toLocaleString("en-US")}]
                         </span>
                       </div>
                       <div className="flex flex-col">
@@ -612,7 +609,7 @@ const UncertaintyAssessment: React.FC = () => {
               ) : analyticsView === "relative" ? (
                 <div style={{ height: `${chartDynamicHeight}px` }} className="w-full min-w-0">
                   <BarChart
-                    data={data.categories.map((c) => {
+                    data={(data?.categories || []).map((c) => {
                       const value =
                         Math.abs(
                           parseFloat(String(c.uncertainty_pct).replace(/[^0-9.\-]/g, ""))
@@ -651,7 +648,7 @@ const UncertaintyAssessment: React.FC = () => {
               ) : (
                 <div style={{ height: `${chartDynamicHeight}px` }} className="w-full min-w-0">
                   <BarChart
-                    data={data.categories.map((c: any) => {
+                    data={(data?.categories || []).map((c: any) => {
                       const u = Number(c.uncertainty_decimal) || 0;
                       const value = Number(c.total_emissions) || 0;
                       const color =
@@ -695,7 +692,7 @@ const UncertaintyAssessment: React.FC = () => {
                     className={`ua-chip ${riskFilter === "all" ? "active" : ""}`}
                     onClick={() => setRiskFilter("all")}
                   >
-                    {t("All")} ({data.categories.length})
+                    {t("All")} ({data?.categories?.length || 0})
                   </button>
                   <button
                     type="button"
@@ -725,7 +722,7 @@ const UncertaintyAssessment: React.FC = () => {
               <div className="ua-search-input-wrap">
                 <Search
                   size={14}
-                  className="[position:absolute] [left:10px] [top:50%] [transform:translateY(-50%)] [color:var(--color-ink-400)]"
+                  className="[position:absolute] [inset-inline-start:10px] [top:50%] [transform:translateY(-50%)] [color:var(--color-ink-400)]"
                 />
                 <input
                   type="text"
@@ -792,7 +789,7 @@ const UncertaintyAssessment: React.FC = () => {
                             </td>
                             <td>
                               <span className="[font-family:var(--font-mono)] [font-weight:600]">
-                                {Number(cat.total_emissions || 0).toLocaleString("fr-FR", {
+                                {Number(cat.total_emissions || 0).toLocaleString("en-US", {
                                   maximumFractionDigits: 1,
                                 })}
                               </span>

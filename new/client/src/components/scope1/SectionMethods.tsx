@@ -25,7 +25,7 @@ const Num: React.FC<NumProps> = ({ label, field, data, onChange, placeholder, re
     label={
       <>
         {label}
-        {required && <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>}
+        {required && <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>}
       </>
     }
   >
@@ -65,7 +65,7 @@ const NumUnit: React.FC<NumUnitProps> = ({
   <div className="input-group">
     <label>
       {label}
-      {required && <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>}
+      {required && <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>}
     </label>
     <div className="grid gap-[8px] [grid-template-columns:1fr_110px] max-[600px]:[grid-template-columns:1fr]">
       <Input
@@ -159,7 +159,7 @@ export const ActivityFactorForm: React.FC<ActivityFactorFormProps> = ({ processT
     <div className="[display:grid] [grid-template-columns:1fr] [gap:16px]">
       <div className="input-group">
         <label>
-          {t("Source")}<span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+          {t("Source")}<span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
         </label>
         <CustomDropdown
           options={rows.map((r) => ({ value: r.key, label: r.label }))}
@@ -404,7 +404,7 @@ export const CombustionMethodForm: React.FC<CombustionMethodFormProps> = ({ data
           <div className="input-group mb-0!">
             <label className="block text-sm font-medium text-text mb-1.5">
               {t("Fuel / Activity Name")}
-              <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+              <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
             </label>
             <CustomDropdown
               options={
@@ -577,7 +577,7 @@ export const CombustionMethodForm: React.FC<CombustionMethodFormProps> = ({ data
           <div className="p-2.5 rounded-md bg-blue-50/70 border border-blue-200 text-xs text-blue-900 flex items-start gap-2">
             <Info size={15} className="text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" aria-hidden="true" />
             <div>
-              <span className="font-semibold mr-1">{t("Tier 3 Mass Balance:")}</span>
+              <span className="font-semibold me-1">{t("Tier 3 Mass Balance:")}</span>
               <span>
                 {fuelState === "gas"
                   ? t("Gas fuel carbon mass balance: CO₂ (t) = Volume (m³) × Density (kg/m³) / 1000 × Carbon wt% × 44.01/12.011 × Oxidation. Original activity volume is preserved.")
@@ -593,7 +593,7 @@ export const CombustionMethodForm: React.FC<CombustionMethodFormProps> = ({ data
         <>
           <div className="input-group">
             <label>
-              {t("Equipment")}<span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+              {t("Equipment")}<span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
             </label>
             <CustomDropdown
               options={equip.map((e) => ({ value: e.key, label: e.label }))}

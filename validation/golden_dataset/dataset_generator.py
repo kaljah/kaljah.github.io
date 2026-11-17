@@ -301,7 +301,7 @@ def generate_golden_dataset():
         category_name="Boundary Value",
         calc_type="flaring",
         methodology="API Compendium 2021 §5.2",
-        activity_data={"volume": 10_000.0, "amount": 10_000.0, "c1": 0.85, "ch4_fraction": 0.85, "flare_type": "elevated", "combustion_efficiency": 1.0, "destruction_efficiency": 1.0},
+        activity_data={"volume": 10_000.0, "amount": 10_000.0, "c1": 0.85, "ch4_fraction": 0.85, "flare_type": "elevated", "combustion_efficiency": 100.0, "destruction_efficiency": 100.0},
         units="m3",
         emission_factor={"ch4_content": 0.85, "c1": 0.85},
         expected_final_result=res_f1,

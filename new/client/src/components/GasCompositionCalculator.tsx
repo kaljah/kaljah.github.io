@@ -82,11 +82,14 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
 
   useEffect(() => {
     setActiveProcessType(initialProcessType);
+    setParams((prev) => ({ ...prev, oxidationFactor: initialProcessType === "flaring" ? 0.965 : 1.0 }));
   }, [initialProcessType]);
 
+  // the flaring default (96.5 % carbon to CO2) also when the calculator opens on a flaring record (it was set
+  // only by the Flaring button, so the form's flaring records got 100 %; BA-058)
   const [params, setParams] = useState({
     molarVolume: 23.685,
-    oxidationFactor: 1.0,
+    oxidationFactor: initialProcessType === "flaring" ? 0.965 : 1.0,
     specificCO: "",
   });
   const [results, setResults] = useState<ResultsData | null>(null);
@@ -182,10 +185,10 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
       // Note: Total Carbon includes CO2 carbon, which "burns" to CO2 (identity), so this is correct for total exhaust CO2
       efCO2Mass =
         (carbonMassFraction / 100) * params.oxidationFactor * (44.01 / 12.011);
-      // Methane slip (incomplete combustion): ~0.01% of CH4 content
-      efCH4Mass = (ch4MassFraction / 100) * 0.0001;
-      // N2O from high-temp combustion: ~0.1 g/GJ (API default)
-      efN2OMass = (mixtureHHV * 0.0001) / 1000;
+      // CH4 and N2O from the combustion factors, as the server (API Compendium s4.2): 1.0E-03 and 1.0E-04
+      // kg per MMBtu of fuel (the CH4 was 0.01 % of the methane, BA-015); HHV MJ/kg -> MMBtu/kg
+      efCH4Mass = (mixtureHHV / 1055.05585262) * 0.001;
+      efN2OMass = (mixtureHHV / 1055.05585262) * 0.0001;
     } else if (activeProcessType === "flaring") {
       // API Compendium 2021 Section 5.1: Flaring
       const combustionEff = params.oxidationFactor || 0.965;
@@ -203,17 +206,19 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
       // Unburnt CH4
       efCH4Mass = (ch4MassFraction / 100) * (1 - destructionEff);
 
-      // N2O from high-temperature flaring
-      efN2OMass = (mixtureHHV * 0.00005) / 1000;
+      // N2O follows the flare CO2 (Compendium Eq 5-6, 1.0E-04 kg N2O / 60 kg CO2 per MMBtu); it was half the
+      // energy default (BA-015)
+      efN2OMass = (efCO2Mass * 0.0001) / 60;
     } else if (activeProcessType === "venting") {
-      efCO2Mass = 0;
+      // the gas's own CO2 is vented with it (it was dropped, BA-015)
+      efCO2Mass = co2Mass / totalMass;
       efCH4Mass = ch4MassFraction / 100;
       efN2OMass = 0;
     } else {
       efCO2Mass =
         (carbonMassFraction / 100) * params.oxidationFactor * (44.01 / 12.011);
-      efCH4Mass = (ch4MassFraction / 100) * 0.0001;
-      efN2OMass = (mixtureHHV * 0.0001) / 1000;
+      efCH4Mass = (mixtureHHV / 1055.05585262) * 0.001;
+      efN2OMass = (mixtureHHV / 1055.05585262) * 0.0001;
     }
 
     // Convert to volumetric (kg/m3)

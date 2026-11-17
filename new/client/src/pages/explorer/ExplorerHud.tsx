@@ -12,7 +12,7 @@ interface MetricProps {
 
 // One telemetry figure in the HUD strip: small caption over a tabular value.
 const Metric: React.FC<MetricProps> = ({ label, children, tone }) => (
-  <div className="flex flex-col items-center gap-px px-2.5 first:pl-0 last:pr-0 [&:not(:first-child)]:border-l [&:not(:first-child)]:border-border">
+  <div className="flex flex-col items-center gap-px px-2.5 first:ps-0 last:pe-0 [&:not(:first-child)]:border-s [&:not(:first-child)]:border-border">
     <span className="whitespace-nowrap text-[0.68rem] font-medium text-text-secondary">{label}</span>
     <span className={cn("text-sm font-bold tabular-nums text-text", tone === "accent" && "text-brand-700", tone === "alert" && "text-danger-fg")}>
       {children}

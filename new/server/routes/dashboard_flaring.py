@@ -9,6 +9,7 @@ from routes.auth import login_required
 from services.dashboard_filters import _parse_facility_ids
 from utils import get_allowed_facility_ids, get_current_user
 from routes.dashboard import dashboard_bp, is_it_role
+from services.tenant_config import get_tenant_config, get_current_tenant_id
 
 
 @dashboard_bp.route("/flaring-summary", methods=["GET"])
@@ -28,12 +29,7 @@ def get_flaring_summary():
 
     user = get_current_user()
     if is_it_role(user):
-        return (
-            jsonify(
-                {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
-            ),
-            403,
-        )
+        return jsonify({"error": "Forbidden: IT Administrators cannot access operational dashboard data"}), 403
     allowed_fids = get_allowed_facility_ids(user)
     year = request.args.get("year")
     all_years = not year or year == "all"
@@ -46,8 +42,9 @@ def get_flaring_summary():
     fac_filter = _parse_facility_ids(facility_id)
     if fac_filter and allowed_fids is not None and not set(fac_filter).issubset(set(allowed_fids)):
         return jsonify({"error": "Unauthorized facility"}), 403
+    caller_tenant = get_current_tenant_id(user)
     scope = dict(allowed_fids=allowed_fids, facility_id=fac_filter, activity=request.args.get("activity"),
-                 division=request.args.get("division"), segment=request.args.get("segment"))
+                 division=request.args.get("division"), segment=request.args.get("segment"), tenant_id=caller_tenant)
     include_pending = request.args.get("includePending", "false").lower() == "true"
     horizon = request.args.get("gwp_horizon", "100")
 
@@ -68,6 +65,7 @@ def get_flaring_summary():
         # BUG-0027: generic "flaring" records of a facility that reports stream volumes are split over
         # those streams by volume (they used to sit in a hidden bucket while every stream showed 0 t)
         unsplit_by_fac = {}
+        by_fac = {}  # flared m3 per facility (the intensity pairs it with the same facilities' gas, BA-034)
         for e in em_q.all():
             if source_category(e.process_type) != "flaring":
                 continue
@@ -80,6 +78,7 @@ def get_flaring_summary():
                     unconverted += 1
                 else:
                     out[key]["m3"] += vol
+                    by_fac[e.facility_id] = by_fac.get(e.facility_id, 0.0) + vol
             t = float(e.co2e_total or 0) + horizon_delta(e.ch4_emissions, e.n2o_emissions, horizon)
             if key == "unclassified" and e.facility_id in detail_fids:
                 unsplit_by_fac[e.facility_id] = unsplit_by_fac.get(e.facility_id, 0.0) + t
@@ -93,6 +92,7 @@ def get_flaring_summary():
                 for k, v in (("routine", r.routine_knm3), ("non_routine", r.non_routine_knm3), ("safety", r.safety_knm3)):
                     vols[k] += float(v or 0) * 1000.0
                     out[k]["m3"] += float(v or 0) * 1000.0
+                    by_fac[r.facility_id] = by_fac.get(r.facility_id, 0.0) + float(v or 0) * 1000.0
         allocated = False
         for fid, t in unsplit_by_fac.items():
             vols = fac_streams.get(fid) or {}
@@ -104,27 +104,22 @@ def get_flaring_summary():
             else:
                 out["unclassified"]["tco2e"] += t
         dres = [float(r.measured_dre_pct) for r in fd if r.measured_dre_pct is not None]
-        return out, unconverted, detail_used, dres, allocated
+        return out, unconverted, detail_used, dres, allocated, by_fac
 
-    streams, unconverted, detail_used, dres, allocated = streams_for(yr)
+    streams, unconverted, detail_used, dres, allocated, flared_by_fac = streams_for(yr)
     total_m3 = sum(v["m3"] for v in streams.values())
     total_tco2e = sum(v["tco2e"] for v in streams.values())
 
     # Gas produced over the same population and period
     prod_q = apply_scope(ProductionData.query, ProductionData, **scope)
     prod_q = prod_q if yr is None else prod_q.filter(ProductionData.year == yr)
-    gas_m3, prod_unconverted = 0.0, 0
-    for prow in prod_q.all():
-        g = production_gas_m3(prow)
-        if g is None:
-            prod_unconverted += 1
-        else:
-            gas_m3 += g
+    gas_m3, prod_unconverted, matched_flared_m3, unmatched_flared_m3 = _paired_flaring(prod_q.all(), flared_by_fac,
+                                                                                         production_gas_m3)
 
     if all_years:
         intensity, compliant, status_txt = None, None, "Select a single year to assess Decree 21-330 compliance"
     elif gas_m3 > 0:
-        intensity = total_m3 / gas_m3 * 100.0
+        intensity = matched_flared_m3 / gas_m3 * 100.0
         compliant = intensity <= 1.00
         status_txt = "COMPLIANT (Under 1.00% Target)" if compliant else "EXCEEDS THRESHOLD (> 1.00%)"
         if compliant and unconverted:  # flaring with no convertible volume: the % is only a lower bound
@@ -136,7 +131,7 @@ def get_flaring_summary():
 
     yoy = None
     if not all_years:
-        prev, prev_unconverted, _, _, _ = streams_for(yr - 1)
+        prev, prev_unconverted, _, _, _, _ = streams_for(yr - 1)
         prev_m3 = sum(v["m3"] for v in prev.values())
         if prev_m3 > 0 and not unconverted and not prev_unconverted:
             yoy = (total_m3 - prev_m3) / prev_m3 * 100.0
@@ -173,6 +168,8 @@ def get_flaring_summary():
         "records_with_unknown_volume_unit": unconverted,
         "production_rows_with_unknown_gas_unit": prod_unconverted,
         "gas_production_m3": round(gas_m3, 2),
+        "flared_with_production_m3": round(matched_flared_m3, 2),
+        "flared_without_production_m3": round(unmatched_flared_m3, 2),
         "flaring_intensity_pct": round(intensity, 3) if intensity is not None else None,
         "regulatory_threshold_pct": 1.00,
         "statute": get_tenant_config(get_current_tenant_id(user)).get("regulatory_framework") or "Executive Decree 21-330 Article 9",
@@ -182,6 +179,24 @@ def get_flaring_summary():
         "measured_dre_pct": round(sum(dres) / len(dres), 2) if dres else None,
         "dre_method": "Measured (FlaringDetail)" if dres else "Not measured (98% default in calculations)",
     })
+
+
+def _paired_flaring(prod_rows, flared_by_fac, production_gas_m3):
+    """(gas m3, unconvertible production rows, flared m3 at facilities with gas production, flared m3 elsewhere).
+
+    The intensity numerator covers the facilities whose gas production is the denominator: flaring at facilities
+    without production was divided by other facilities' gas (48.75 % instead of 14.13 %, BA-034)."""
+    gas_m3, unconverted, gas_fids = 0.0, 0, set()
+    for prow in prod_rows:
+        g = production_gas_m3(prow)
+        if g is None:
+            unconverted += 1
+            continue
+        gas_m3 += g
+        if g > 0:
+            gas_fids.add(prow.facility_id)
+    matched = sum(v for fid, v in flared_by_fac.items() if fid in gas_fids)
+    return gas_m3, unconverted, matched, sum(flared_by_fac.values()) - matched
 
 
 @dashboard_bp.route("/granular-intensities", methods=["GET"])
@@ -225,9 +240,10 @@ def get_granular_intensities():
     # saleable production only where it is actually recorded (no assumed 85 % fraction)
     # the same facility filters as the emissions (activity / division / segment were not applied,
     # so a filtered view divided its emissions by every facility's saleable production)
+    caller_tenant = get_current_tenant_id(user)
     prod_q = apply_scope(ProductionData.query, ProductionData, allowed_fids=allowed_fids, facility_id=fac_filter,
                          activity=request.args.get("activity"), division=request.args.get("division"),
-                         segment=request.args.get("segment"))
+                         segment=request.args.get("segment"), tenant_id=caller_tenant)
     if years:
         prod_q = prod_q.filter(ProductionData.year.in_(years))
     saleable_rows = [p for p in prod_q.all() if p.saleable_production_mmboe]
@@ -238,19 +254,21 @@ def get_granular_intensities():
 
     ci_total = ghg * 1000.0 / boe if boe > 0 else None
     ci_saleable = saleable_ghg * 1000.0 / saleable_boe if saleable_boe else None
-    # NGSI methane intensity (wt %): CH4 mass / natural gas mass
-    # Lean pipeline gas ~0.80 kg/Sm3 (0.00080 t/Sm3); upstream rich gas ~0.92 kg/Sm3 (0.00092 t/Sm3)
-    gas_density_param = request.args.get("gas_density_kg_m3")
-    if gas_density_param:
-        try:
-            val = float(gas_density_param)
-            gas_density_t_m3 = (val / 1000.0) if val > 0 else 0.00092
-        except (ValueError, TypeError):
-            gas_density_t_m3 = 0.00092
-    else:
-        seg = str(request.args.get("segment") or "").lower()
-        gas_density_t_m3 = 0.00080 if seg in ("transmission", "distribution") else 0.00092
-    ngsi = ch4 / (gas_m3 * gas_density_t_m3) * 100.0 if (gas_m3 > 0 and gas_density_t_m3 > 0) else None
+    # Methane intensity (services.methane_intensity, BA-053): NGSI = CH4 / CH4 contained in the throughput at
+    # 0.0192 t/Mcf with the segment's default CH4 content (it was CH4 / all-gas mass at 0.92 kg/Sm3), and the
+    # OGCI / OGMP volume figure = CH4 volume / marketed gas
+    from models import Facility
+    from services.intensity import segment_category
+    from services.methane_intensity import (M3_PER_MCF, NGSI_CH4_T_PER_MCF, ngsi_ch4_content,
+                                            volume_intensity_pct)
+
+    seg_by_fid = {f.id: segment_category(f.segment) for f in
+                  Facility.query.filter(Facility.id.in_({k[0] for k, _ in matched} or {-1})).all()}
+    ch4_in_throughput_t = sum(c["gas_m3"] / M3_PER_MCF * ngsi_ch4_content(seg_by_fid.get(k[0])) * NGSI_CH4_T_PER_MCF
+                              for k, c in matched)
+    marketed_m3 = sum(c["marketed_m3"] for _, c in matched)
+    ngsi = ch4 / ch4_in_throughput_t * 100.0 if ch4_in_throughput_t > 0 else None
+    ogci_volume = volume_intensity_pct(ch4, marketed_m3)
 
     OGCI_TARGET = 17.0
     basis = ci_saleable if ci_saleable is not None else ci_total
@@ -268,6 +286,9 @@ def get_granular_intensities():
         "ci_by_total_production_kg_boe": round(ci_total, 2) if ci_total is not None else None,
         "ci_by_saleable_production_kg_boe": round(ci_saleable, 2) if ci_saleable is not None else None,
         "methane_intensity_ngsi_wt_pct": round(ngsi, 3) if ngsi is not None else None,
+        "methane_intensity_ngsi_pct": round(ngsi, 4) if ngsi is not None else None,
+        "methane_intensity_ogci_volume_pct": round(ogci_volume, 4) if ogci_volume is not None else None,
+        "marketed_gas_sm3": round(marketed_m3, 2),
         "ogci_target_kg_boe": OGCI_TARGET,
         "ogci_comparison_basis": "saleable" if ci_saleable is not None else ("total" if ci_total is not None else None),
         "ratio_to_ogci_target": round(ratio, 2) if ratio is not None else None,

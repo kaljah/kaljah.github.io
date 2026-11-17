@@ -75,9 +75,10 @@ class TestCbamEmbeddedEmissionsAccounting:
 
     def test_cbam_export_specific_embedded_direct_and_indirect_calculation(self, client, advanced_audit_env):
         """
-        Tests calculation of specific embedded direct (Scope 1) and indirect (Scope 2) emissions:
-        SE_dir = Total_Direct_tCO2e / Quantity_Tonnes
-        SE_ind = Total_Indirect_tCO2e / Quantity_Tonnes
+        Tests calculation of specific embedded direct (Scope 1) and indirect (Scope 2) emissions
+        (EU 2023/1773 Annex III: over the activity level, the whole production of the period; BA-044):
+        SE_dir = Total_Direct_tCO2e / Activity_Level_Tonnes
+        SE_ind = Total_Indirect_tCO2e / Activity_Level_Tonnes
         """
         admin = advanced_audit_env["admin"]
         fac = advanced_audit_env["fac1"]
@@ -120,6 +121,7 @@ class TestCbamEmbeddedEmissionsAccounting:
             "export_destination": "France (EU)",
             "specific_embedded_direct": 0.0,
             "specific_embedded_indirect": 0.0,
+            "activity_level_tonnes": 4000.0,  # the facility produced 4,000 t, 2,000 t of which were exported
             "notes": "CBAM quarterly shipment Q1 2026",
         })
         assert res_post.status_code == 200
@@ -129,10 +131,16 @@ class TestCbamEmbeddedEmissionsAccounting:
         with app.app_context():
             cbam_record = db.session.get(CbamProductExport, export_id)
             assert cbam_record is not None
-            # Expected SE_direct = 4000.0 tCO2e / 2000.0 t = 2.0000 tCO2e/t
-            assert pytest.approx(cbam_record.specific_embedded_direct, rel=1e-4) == 2.0000
-            # Expected SE_indirect = 1000.0 tCO2e / 2000.0 t = 0.5000 tCO2e/t
-            assert pytest.approx(cbam_record.specific_embedded_indirect, rel=1e-4) == 0.5000
+            # Expected SE_direct = 4000.0 tCO2e / 4000.0 t = 1.0000 tCO2e/t
+            assert pytest.approx(cbam_record.specific_embedded_direct, rel=1e-4) == 1.0000
+            # Expected SE_indirect = 1000.0 tCO2e / 4000.0 t = 0.2500 tCO2e/t
+            assert pytest.approx(cbam_record.specific_embedded_indirect, rel=1e-4) == 0.2500
+
+        # without the activity level (and no entered SEE) the export is refused, not divided by its own quantity
+        res_no_al = client.post("/api/data/cbam-exports", json={
+            "facility_id": fac.id, "year": 2026, "month": 1, "product_name": "Refined Petroleum Fuels",
+            "cn_code": "27101245", "quantity_tonnes": 2000.0})
+        assert res_no_al.status_code == 400 and res_no_al.get_json()["field"] == "activity_level_tonnes"
 
     def test_cbam_validation_rejects_negative_or_blank_fields(self, client, advanced_audit_env):
         """Validates that negative quantities or blank product codes are rejected."""

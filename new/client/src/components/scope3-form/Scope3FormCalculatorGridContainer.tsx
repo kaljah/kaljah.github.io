@@ -138,7 +138,7 @@ export const Scope3FormCalculatorGridContainer: React.FC<Scope3FormCalculatorGri
                     : "—"}
                   {entry.status === "Draft" && (
                     <span
-                      className="ml-[8px]! text-[length:0.65rem]! bg-[color:var(--color-legacy-fee2e2)]! text-[color:var(--color-red-700)]! p-[1px_5px]! rounded-[4px]!"
+                      className="ms-[8px]! text-[length:0.65rem]! bg-[color:var(--color-legacy-fee2e2)]! text-[color:var(--color-red-700)]! p-[1px_5px]! rounded-[4px]!"
                     >
                       {t("Draft")}
                     </span>
@@ -170,7 +170,7 @@ export const Scope3FormCalculatorGridContainer: React.FC<Scope3FormCalculatorGri
           <tr className={`[background-color:var(--color-legacy-f9fafb)]! [font-weight:bold]!`}>
             <td
               colSpan={6}
-              className="text-right! pr-[15px]!"
+              className="text-right! pe-[15px]!"
             >
               {t("Total (Page):")}
             </td>

@@ -6,7 +6,7 @@ import { activateOnKey } from "../../utils/a11yKeys";
 import { formatCompactNumber as fmt } from "../../utils/formatters";
 import { t } from "../../i18n";
 
-const INDENT = { 0: "pl-4", 1: "pl-7", 2: "pl-9", 3: "pl-11" } as const;
+const INDENT = { 0: "ps-4", 1: "ps-7", 2: "ps-9", 3: "ps-11" } as const;
 
 interface RowProps extends React.HTMLAttributes<HTMLTableRowElement> {
   label: React.ReactNode;
@@ -29,13 +29,13 @@ const Row: React.FC<RowProps> = ({ label, value, level = 0, tone = "detail", cla
     )}
     {...props}
   >
-    <td className={cn("py-2.5 pr-4", INDENT[level])}>{label}</td>
-    <td className="py-2.5 pr-4 text-right tabular-nums">{value}</td>
+    <td className={cn("py-2.5 pe-4", INDENT[level])}>{label}</td>
+    <td className="py-2.5 pe-4 text-end tabular-nums">{value}</td>
   </tr>
 );
 
 const Caret: React.FC<{ open?: boolean }> = ({ open }) => (
-  <ChevronRight className={cn("mr-1 inline size-3.5 align-text-bottom text-text-secondary transition-transform", open && "rotate-90")} aria-hidden="true" />
+  <ChevronRight className={cn("me-1 inline size-3.5 align-text-bottom text-text-secondary transition-transform", open && "rotate-90")} aria-hidden="true" />
 );
 
 const LIBRARIES = [
@@ -101,7 +101,7 @@ const DetailedBreakdownSection: React.FC<DetailedBreakdownSectionProps> = ({
           type="button"
           aria-expanded={!detailedBreakdownCollapsed}
           onClick={() => setDetailedBreakdownCollapsed(!detailedBreakdownCollapsed)}
-          className="table-header-row clickable-card-header mb-5 flex w-full cursor-pointer items-center justify-between border-0 bg-transparent p-0 text-left hover:opacity-85"
+          className="table-header-row clickable-card-header mb-5 flex w-full cursor-pointer items-center justify-between border-0 bg-transparent p-0 text-start hover:opacity-85"
         >
           <span className="text-lg font-semibold text-text">{t("Detailed breakdown")}</span>
           {detailedBreakdownCollapsed ? <ChevronDown className="size-[18px] text-ink-500" aria-hidden="true" /> : <ChevronUp className="size-[18px] text-ink-500" aria-hidden="true" />}
@@ -135,9 +135,9 @@ const DetailedBreakdownSection: React.FC<DetailedBreakdownSectionProps> = ({
           <div className="overflow-auto">
           <table className="data-table w-full border-collapse">
             <thead>
-              <tr className="bg-ink-50 text-left text-sm font-medium text-text-secondary">
+              <tr className="bg-ink-50 text-start text-sm font-medium text-text-secondary">
                 <th scope="col" className="py-2.5 px-4">{t("Category / Source")}</th>
-                <th scope="col" className="py-2.5 px-4 text-right">{t("Results (tCO₂e)")}</th>
+                <th scope="col" className="py-2.5 px-4 text-end">{t("Results (tCO₂e)")}</th>
               </tr>
             </thead>
             <tbody>
@@ -155,7 +155,9 @@ const DetailedBreakdownSection: React.FC<DetailedBreakdownSectionProps> = ({
               <Row level={1} label={t("Scope 2 market-based (contractual instruments; not added to the total)")} value={fmt(stats.scope2Market ?? stats.scope2)} />
               <Row tone="summary" label={t("Scope 3 (Supply Chain)")} value={fmt(stats.scope3)} />
               <Row tone="total" label={t("Total Footprint (Scopes 1+2+3)")} value={fmt(total)} />
-              <Row tone="net" label={t("Net Footprint")} value={fmt(total - (stats.mitigation || 0))} />
+              {/* GHG Protocol Corporate Standard ch. 8-9: the inventory is reported gross; reductions of
+                  implemented projects are shown apart, not subtracted (a "Net Footprint" was, BA-037) */}
+              <Row level={1} label={t("Reported mitigation (not deducted)")} value={fmt(stats.mitigation || 0)} />
 
               <tr>
                 <td colSpan={2} className="px-4 pb-1.5 pt-5 text-xs font-semibold text-text-secondary">

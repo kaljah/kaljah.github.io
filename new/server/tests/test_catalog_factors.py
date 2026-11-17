@@ -78,7 +78,7 @@ def test_venting_row_table_6_50():
     ("Drilling - Mud Degassing (Water Based)", 0.0458), ("Drilling - Mud Degassing (Oil Based)", 0.0103),  # 6-2
     ("Liquids Unloading - Plunger Lift", 1.774), ("Liquids Unloading - Non-Plunger", 2.792),           # 6-11
     ("Well Completion - Gas Well with Hydraulic Fracturing (Uncontrolled Venting)", 28.8),             # 6-5
-    ("Pneumatic Controller - High Bleed", 5.11), ("Pneumatic Controller - Low Bleed", 0.191),          # 6-14
+    ("Pneumatic Controller - High Bleed", 2.25), ("Pneumatic Controller - Low Bleed", 0.36),           # 6-14 API study (BA-035)
     ("Pneumatic Controller - Intermittent", 1.85),                                                     # 6-15
     ("Pneumatic Controller - Continuous Vent (T&S)", 3.5),                                             # 6-42
 ])

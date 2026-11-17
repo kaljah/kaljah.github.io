@@ -33,7 +33,9 @@ def health_summary():
         db_latency_ms = round((time.perf_counter() - t0) * 1000, 2)
         db_ok = True
     except Exception as e:
-        db_error = str(e)
+        db.session.rollback()
+        current_app.logger.error("Health check DB connection failed: %s", e)
+        db_error = "Database connectivity check failed"
 
     # Memory utilization
     memory_info = {}
@@ -107,6 +109,7 @@ def health_readiness():
             "version": current_app.config.get("APP_VERSION", "1.0.0")
         }), 200
     except Exception as e:
+        db.session.rollback()
         current_app.logger.error(f"Readiness probe failed: {e}")
         return jsonify({
             "status": "unhealthy",

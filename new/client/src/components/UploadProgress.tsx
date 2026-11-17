@@ -67,7 +67,7 @@ function formatEta(sec: number): string {
   return m >= 60 ? `${Math.floor(m / 60)} h ${m % 60} min` : `${m} min ${s.toString().padStart(2, "0")} s`;
 }
 
-const th = "sticky top-0 whitespace-nowrap border-b border-border bg-ink-50 px-3 py-2 text-left text-xs font-bold uppercase tracking-wide text-text-secondary";
+const th = "sticky top-0 whitespace-nowrap border-b border-border bg-ink-50 px-3 py-2 text-start text-xs font-bold uppercase tracking-wide text-text-secondary";
 const td = "max-w-[120px] truncate border-b border-ink-100 px-3 py-2 text-text-secondary";
 const mono = "text-center font-mono font-semibold text-ink-700";
 
@@ -106,7 +106,7 @@ const Stat: React.FC<StatProps> = ({ icon: Icon, value, label, tone }) => (
       <Icon className="size-6" aria-hidden="true" />
     </span>
     <div>
-      <p className="m-0 text-xl font-bold leading-none tabular-nums text-text">{value.toLocaleString()}</p>
+      <p className="m-0 text-xl font-bold leading-none tabular-nums text-text">{value.toLocaleString("en-US")}</p>
       <p className="m-0 mt-0.5 text-base font-medium text-text-secondary">{label}</p>
     </div>
   </div>
@@ -124,7 +124,7 @@ const Disclosure: React.FC<DisclosureProps> = ({ open, onToggle, children, class
     type="button"
     aria-expanded={open}
     onClick={onToggle}
-    className={cn("flex flex-1 cursor-pointer items-center gap-2 border-0 bg-transparent px-4 py-3 text-left text-base font-semibold hover:bg-ink-100", className)}
+    className={cn("flex flex-1 cursor-pointer items-center gap-2 border-0 bg-transparent px-4 py-3 text-start text-base font-semibold hover:bg-ink-100", className)}
   >
     <ChevronRight className={cn("size-4 shrink-0 transition-transform", open && "rotate-90")} aria-hidden="true" />
     {children}
@@ -151,7 +151,7 @@ const SkippedRows: React.FC<SkippedRowsProps> = ({ skippedCount, skippedPreview,
           <span>{t("Row details")}{skippedCount > 100 ? t(" (first 100)") : ""}</span>
         </Disclosure>
         {hasErrorCsv && (
-          <Button variant="secondary" size="sm" className="mr-3" onClick={onDownload}>
+          <Button variant="secondary" size="sm" className="me-3" onClick={onDownload}>
             <Download className="size-4" aria-hidden="true" />{" "}{t("Download all")}{" "}{skippedCount.toLocaleString("en-US")}{" "}{t("skipped rows (CSV)")}
           </Button>
         )}
@@ -313,9 +313,10 @@ const UploadProgress: React.FC<UploadProgressProps> = ({ jobId, onComplete, onCa
   }, [jobId]);
 
   const downloadErrors = async () => {
+    let url: string | null = null;
     try {
       const res = await api.get(`/emissions/upload/errors/${jobId}`, { responseType: "blob" });
-      const url = URL.createObjectURL(new Blob([res.data]));
+      url = URL.createObjectURL(new Blob([res.data]));
       const a = document.createElement("a");
       a.href = url;
       a.download = `skipped_rows_${jobId}.csv`;
@@ -324,6 +325,8 @@ const UploadProgress: React.FC<UploadProgressProps> = ({ jobId, onComplete, onCa
       a.remove();
     } catch {
       toast.error(t("Failed to download error CSV."));
+    } finally {
+      if (url) URL.revokeObjectURL(url);
     }
   };
 
@@ -356,7 +359,7 @@ const UploadProgress: React.FC<UploadProgressProps> = ({ jobId, onComplete, onCa
           </div>
           {skippedCount > 0 && (
             <Banner tone="warning" className="mt-4">
-              {skippedCount.toLocaleString()}{" "}{t("rows skipped so far")}
+              {skippedCount.toLocaleString("en-US")}{" "}{t("rows skipped so far")}
             </Banner>
           )}
         </Card>

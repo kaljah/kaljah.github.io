@@ -21,9 +21,10 @@ def test_flaring_n2o_default_consistency():
         gwp_dict=GWP_AR5,
     )
     n2o_val = result["results"]["n2o"]["value"]
-    # 1000 m3 = 35314.7 scf * 1020 BTU / 1e6 = 36.02 MMBtu * 0.0001 kg / 1000 = ~3.6e-6 tonnes
+    co2_val = result["results"]["co2"]["value"]
+    # Compendium Eq 5-6 (Dec 2025 natural-gas factor): E_N2O = E_CO2 x 1.0E-04 / 60 (blind audit BA-017)
     assert n2o_val > 0.0
-    assert abs(n2o_val - 0.0000036) < 1e-6
+    assert n2o_val == pytest.approx(co2_val * 0.0001 / 60.0, rel=1e-9)
 
 
 def test_split_vented_and_flared_n2o_default():
@@ -38,4 +39,4 @@ def test_split_vented_and_flared_n2o_default():
         ef_n2o=None,
     )
     assert res["flared_n2o"] > 0.0
-    assert abs(res["flared_n2o"] - 0.0000036) < 1e-6
+    assert res["flared_n2o"] == pytest.approx(res["flared_co2"] * 0.0001 / 60.0, rel=1e-9)  # Eq 5-6 (BA-017)

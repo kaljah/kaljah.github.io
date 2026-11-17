@@ -139,22 +139,22 @@ export const FileCheckPanel: React.FC<{ check: FileCheckState; onRecheck: () => 
       )}
       {unknownProc.length > 0 && (
         <Warn>
-          <strong>{fmt(p.unknown_process_rows)}{" "}{t("rows have a process type that is not recognised:")}</strong> {list(unknownProc)}
+          <strong>{t("{{count}} rows have a process type that is not recognised:", { count: fmt(p.unknown_process_rows) })}</strong> {list(unknownProc)}
         </Warn>
       )}
       {scope2Proc.length > 0 && (
         <Warn>
-          <strong>{fmt(p.scope2_rows)}{" "}{t("rows are Scope 2 (purchased energy):")}</strong> {list(scope2Proc)}{t(". Import them with the Scope 2 template.")}
+          <strong>{t("{{count}} rows are Scope 2 (purchased energy):", { count: fmt(p.scope2_rows) })}</strong> {list(scope2Proc)}.{" "}{t("Import them with the Scope 2 template.")}
         </Warn>
       )}
       {(p.example_rows || 0) > 0 && (
         <Warn>
-          <strong>{fmt(p.example_rows)}{" "}{t("example rows from the template")}</strong>{" "}{t("(dated EXAMPLE) will not be imported. Delete them, or replace EXAMPLE with the real month to keep a row.")}
+          <strong>{t("{{count}} example rows from the template (dated EXAMPLE) will not be imported.", { count: fmt(p.example_rows) })}</strong>{" "}{t("Delete them, or replace EXAMPLE with the real month to keep a row.")}
         </Warn>
       )}
       {(p.period?.unreadable_rows || 0) > 0 && (
         <Warn>
-          <strong>{fmt(p.period?.unreadable_rows)}{" "}{t("rows have a missing or unreadable date.")}</strong>
+          <strong>{t("{{count}} rows have a missing or unreadable date.", { count: fmt(p.period?.unreadable_rows) })}</strong>
         </Warn>
       )}
       {groups.length > 0 && (
@@ -165,7 +165,7 @@ export const FileCheckPanel: React.FC<{ check: FileCheckState; onRecheck: () => 
       )}
       {p.columns && (
         <p className="m-0 text-xs text-text-secondary">
-          {p.columns.matched.length}{" "}{t("of")}{" "}{p.columns.total}{" "}{t("columns are matched to fields")}
+          {t("{{matched}} of {{total}} columns are matched to fields", { matched: p.columns.matched.length, total: p.columns.total })}
           {/* the mapping step counts only what it matched; the server also recognises some headers itself (SU-11) */}
           {mappedHere != null && p.columns.matched.length > mappedHere
             ? t(" ({{mapped}} mapped above, {{more}} more recognised by their header)", { mapped: mappedHere, more: p.columns.matched.length - mappedHere })
@@ -174,7 +174,7 @@ export const FileCheckPanel: React.FC<{ check: FileCheckState; onRecheck: () => 
           {p.columns.by_name.length > 0 && (
             <>
               {" "}
-              {t("The other")}{" "}{p.columns.by_name.length}{" "}{t("are read by their name when a calculation needs them (for example c1, gor, hhv) and ignored otherwise.")}
+              {t("The other {{count}} are read by their name when a calculation needs them (for example c1, gor, hhv) and ignored otherwise.", { count: p.columns.by_name.length })}
             </>
           )}
         </p>

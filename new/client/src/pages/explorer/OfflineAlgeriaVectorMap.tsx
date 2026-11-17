@@ -145,7 +145,7 @@ const OfflineAlgeriaVectorMap: React.FC<OfflineAlgeriaVectorMapProps> = ({
       aria-label={t("Offline Algeria vector boundary map")}
       className={cn(
         "relative flex h-full w-full items-center justify-center overflow-hidden bg-ink-100 p-4 pt-[76px] transition-[padding] duration-300",
-        isDrawerOpen && "md:pl-[364px]",
+        isDrawerOpen && "md:ps-[364px]",
       )}
     >
       <div className="relative flex h-full w-full items-center justify-center [container-type:size]">
@@ -163,7 +163,7 @@ const OfflineAlgeriaVectorMap: React.FC<OfflineAlgeriaVectorMapProps> = ({
             className="block h-full w-full"
           >
             {/* Subtle coordinate graticule */}
-            <g stroke="#cbd5e1" strokeWidth={0.8 / zoom} strokeDasharray="4 4" opacity={0.7}>
+            <g className="[stroke:var(--color-ink-300)]" strokeWidth={0.8 / zoom} strokeDasharray="4 4" opacity={0.7}>
               {latGrid.map((g) => (
                 <line key={`lat-${g.lat}`} x1={PAD} y1={g.y} x2={SVG_W - PAD} y2={g.y} />
               ))}
@@ -173,7 +173,7 @@ const OfflineAlgeriaVectorMap: React.FC<OfflineAlgeriaVectorMapProps> = ({
             </g>
 
             {/* Graticule labels */}
-            <g fill="#64748b" fontSize={10 / zoom} fontFamily="monospace">
+            <g className="[fill:var(--color-ink-500)]" fontSize={10 / zoom} fontFamily="monospace">
               {latGrid.map((g) => (
                 <text key={`lbl-lat-${g.lat}`} x={PAD + 4} y={g.y - 3}>
                   {g.lat}°N
@@ -296,7 +296,7 @@ const OfflineAlgeriaVectorMap: React.FC<OfflineAlgeriaVectorMapProps> = ({
       </div>
 
       {/* Vector Zoom & Reset Controls */}
-      <div className="absolute bottom-4 right-4 z-20 flex flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-md">
+      <div className="absolute bottom-4 end-4 z-20 flex flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-md">
         <button
           type="button"
           onClick={() => setZoom((z) => Math.min(3, Number((z + 0.5).toFixed(2))))}

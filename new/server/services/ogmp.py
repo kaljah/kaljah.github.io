@@ -92,6 +92,7 @@ def compute_facility_ogmp_level(
     bottom_up_tch4: Optional[float] = None,
     reconciled_survey: Optional[bool] = None,
     bottom_up_level: Optional[int] = None,
+    skip_db: bool = False,
 ) -> int:
     """
     Canonical determination of facility OGMP 2.0 level (1-5).
@@ -113,12 +114,12 @@ def compute_facility_ogmp_level(
     bu = bottom_up_tch4 if bottom_up_tch4 is not None else 0.0
 
     # If bottom_up_level not passed, derive it from the facility's VERIFIED records (BUG-031)
-    if bottom_up_level is None and facility is not None:
+    if bottom_up_level is None and facility is not None and not skip_db:
         try:
             from flask import has_app_context
             if has_app_context():
                 from models import Emission
-                q = Emission.query.filter_by(facility_id=facility.id, status="Verified")
+                q = Emission.query.filter_by(facility_id=facility.id, status="Verified", is_test=False)
                 if year and year != "all" and str(year).isdigit():
                     q = q.filter_by(year=int(year))
                 records = q.all()
@@ -132,7 +133,7 @@ def compute_facility_ogmp_level(
             except Exception:
                 pass
 
-    if reconciled_survey is None and facility is not None:
+    if reconciled_survey is None and facility is not None and not skip_db:
         try:
             from flask import has_app_context
             if has_app_context():
@@ -221,4 +222,5 @@ def facility_bottom_up_tch4(facility_id, year):
     from sqlalchemy import func
 
     return float(db.session.query(func.coalesce(func.sum(Emission.ch4_emissions), 0.0)).filter(
-        Emission.facility_id == facility_id, Emission.year == year, Emission.status == "Verified").scalar() or 0.0)
+        Emission.facility_id == facility_id, Emission.year == year, Emission.status == "Verified",
+        Emission.is_test == False).scalar() or 0.0)  # noqa: E712 (BA-011)

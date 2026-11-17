@@ -433,18 +433,6 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
                     }
                   />
                 </Field>
-                <Field label={t("GWP Standard Uncertainty (±%)")}>
-                  <Input
-                    type="number"
-                    step="0.1"
-                    min="0"
-                    max="100"
-                    value={workbench.gwp_uncertainty}
-                    onChange={(e) =>
-                      setWorkbench({ ...workbench, gwp_uncertainty: parseFloat(e.target.value) || 0 })
-                    }
-                  />
-                </Field>
               </div>
 
               <div className="flex items-center justify-between gap-3 pt-2">
@@ -453,12 +441,13 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
                   variant="secondary"
                   size="sm"
                   onClick={() => {
-                    const gwpU = Number(workbench.gwp_uncertainty || 0);
+                    // a CH4 / N2O factor is a gas MASS factor: the GWP uncertainty belongs to the CO2e step, where
+                    // the server adds it when "include GWP uncertainty" is on (it was counted twice, BA-037)
                     const co2_u = Math.sqrt(
                       Math.pow(workbench.meter_precision, 2) + Math.pow(workbench.lab_precision, 2),
                     );
-                    const ch4_u = Math.sqrt(Math.pow(workbench.meter_precision, 2) + Math.pow(50.0, 2) + Math.pow(gwpU, 2));
-                    const n2o_u = Math.sqrt(Math.pow(workbench.meter_precision, 2) + Math.pow(150.0, 2) + Math.pow(gwpU, 2));
+                    const ch4_u = Math.sqrt(Math.pow(workbench.meter_precision, 2) + Math.pow(50.0, 2));
+                    const n2o_u = Math.sqrt(Math.pow(workbench.meter_precision, 2) + Math.pow(150.0, 2));
 
                     setFactorForm({
                       ...factorForm,

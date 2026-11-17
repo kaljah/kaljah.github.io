@@ -180,7 +180,7 @@ from flask_migrate import downgrade, stamp, upgrade
 
 with app.app_context():
     upgrade(directory=migrate.directory)
-    downgrade(directory=migrate.directory, revision="-1")
+    downgrade(directory=migrate.directory, revision="h3d8e2a19f04")
     conn = sqlite3.connect(str(Path(app.config["SQLALCHEMY_DATABASE_URI"].replace("sqlite:///", ""))))
     after_down = {r[0] for r in conn.execute("SELECT name FROM sqlite_master WHERE type='index'").fetchall()}
     conn.close()

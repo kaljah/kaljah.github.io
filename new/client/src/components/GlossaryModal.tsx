@@ -44,14 +44,14 @@ export const GlossaryModal: React.FC<GlossaryModalProps> = ({ open, onOpenChange
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div className="relative flex-1">
             <Search
-              className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-secondary"
+              className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-text-secondary"
               aria-hidden="true"
             />
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t("Search terms or definitions...")}
-              className="pl-9 h-9"
+              className="ps-9 h-9"
               aria-label={t("Filter glossary terms")}
             />
           </div>
@@ -73,7 +73,7 @@ export const GlossaryModal: React.FC<GlossaryModalProps> = ({ open, onOpenChange
           </div>
         </div>
 
-        <div className="max-h-[55vh] overflow-y-auto space-y-3 pr-1">
+        <div className="max-h-[55vh] overflow-y-auto space-y-3 pe-1">
           {filtered.length === 0 ? (
             <p className="py-6 text-center text-sm text-text-secondary">
               {t("No glossary terms match your search.")}

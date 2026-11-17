@@ -141,7 +141,7 @@ export const GLOSSARY_ITEMS: GlossaryEntry[] = [
     term: "Monte Carlo Uncertainty",
     category: "Methodologies",
     definition: t(
-      "Basic error propagation (Monte Carlo planned): planned IPCC Tier 2 stochastic sampling roadmap to complement current analytical SRSS 95% confidence intervals (k=2).",
+      "Error propagation (IPCC Approach 1, SRSS 95 % confidence intervals, k=2) and a log-normal Monte Carlo simulation of the inventory total (IPCC Approach 2, 2,500 iterations).",
     ),
   },
   {
@@ -169,14 +169,14 @@ export const GLOSSARY_ITEMS: GlossaryEntry[] = [
     term: "OGMP 2.0 L1-L5",
     category: "Frameworks",
     definition: t(
-      "Oil and Gas Methane Partnership reporting framework (L1 venture-level to L4/L5 site-level measurement tracking; L4/L5 reconciliation preview, reconciliation logic in development).",
+      "Oil and Gas Methane Partnership reporting framework covering Level 1–4 source catalogs, RSS 95% CI uncertainty propagation, and Level 5 site-level reconciliation across UNEP Pathways 1, 2a–2d, and 3.",
     ),
   },
   {
     term: "Gold Standard pathway",
     category: "Frameworks",
     definition: t(
-      "UNEP/IMEO status awarded to operators with credible, time-bound plans for OGMP 2.0 Level 4/5 reporting within 3-5 years (preview, reconciliation logic in development).",
+      "UNEP/IMEO Gold Standard status awarded to operators achieving or executing Y0–Y10 plans for Level 4 materiality (>=90%, or >=70% justified) and Level 5 reconciliation within 3 years (operated) or 5 years (non-operated).",
     ),
   },
   {

@@ -70,13 +70,13 @@ const NavItem: React.FC<NavItemProps> = ({ item, showLabel, onNavigate, user }) 
         active
           ? "bg-selected-bg text-selected-fg font-semibold"
           : "text-text-secondary hover:bg-ink-100 hover:text-text",
-        isEmphasized && !active && "border-l-2 border-brand-500/70 bg-brand-50/30",
+        isEmphasized && !active && "border-s-2 border-brand-500/70 bg-brand-50/30",
       )}
     >
       {active && (
         <span
           aria-hidden="true"
-          className="absolute inset-y-2 left-0 w-[3px] rounded-full bg-brand-600"
+          className="absolute inset-y-2 start-0 w-[3px] rounded-full bg-brand-600"
         />
       )}
       <Icon
@@ -87,7 +87,7 @@ const NavItem: React.FC<NavItemProps> = ({ item, showLabel, onNavigate, user }) 
         aria-hidden="true"
       />
       {showLabel && (
-        <span className="truncate flex-1 text-left">{item.title}</span>
+        <span className="truncate flex-1 text-start">{item.title}</span>
       )}
       {item.badge != null && item.badge > 0 && (
         <span
@@ -96,7 +96,7 @@ const NavItem: React.FC<NavItemProps> = ({ item, showLabel, onNavigate, user }) 
             item.badgeTone === "amber"
               ? "bg-amber-100 text-amber-800"
               : "bg-brand-100 text-brand-700",
-            !showLabel && "absolute top-1.5 right-1.5 size-2 p-0 rounded-full bg-brand-600",
+            !showLabel && "absolute top-1.5 end-1.5 size-2 p-0 rounded-full bg-brand-600",
           )}
         >
           {showLabel ? (item.badge > 99 ? "99+" : item.badge) : null}
@@ -275,7 +275,7 @@ const Sidebar: React.FC = () => {
           <RadixDialog.Overlay className="fixed inset-0 z-(--z-overlay) bg-ink-900/45" />
           <RadixDialog.Content
             aria-describedby={undefined}
-            className="fixed inset-y-0 left-0 z-(--z-modal) flex w-72 max-w-[85vw] flex-col bg-surface shadow-overlay"
+            className="fixed inset-y-0 start-0 z-(--z-modal) flex w-72 max-w-[85vw] flex-col bg-surface shadow-overlay"
           >
             <RadixDialog.Title className="sr-only">{t("Navigation")}</RadixDialog.Title>
             <div className="flex h-16 items-center justify-between border-b border-border/50 px-4">
@@ -309,7 +309,7 @@ const Sidebar: React.FC = () => {
         onFocus={() => collapsed && open(true)}
         onBlur={(e) => !e.currentTarget.contains(e.relatedTarget as Node) && open(false)}
         className={cn(
-          "absolute inset-y-0 left-0 z-(--z-sidebar) flex flex-col border-r border-border bg-surface transition-[width,box-shadow] duration-200",
+          "absolute inset-y-0 start-0 z-(--z-sidebar) flex flex-col border-e border-border bg-surface transition-[width,box-shadow] duration-200",
           expanded ? "w-60" : "w-16",
           collapsed && peek && "shadow-raised",
         )}

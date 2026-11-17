@@ -273,9 +273,13 @@ def test_resolve_electricity_factor_known_grid():
 
 
 def test_resolve_electricity_factor_supplier():
-    factor, name = resolve_electricity_factor("CleanPower Inc.", 0.125)
-    assert factor == 0.125
-    assert name == "CleanPower Inc."
+    # a supplier factor is never the location-based value (GHG Protocol Scope 2 Guidance ch. 6, BA-007): an unknown
+    # grid without a facility country grid is refused, and the supplier factor feeds the market-based method
+    with pytest.raises(ValidationError):
+        resolve_electricity_factor("CleanPower Inc.", 0.125)
+    from routes.scope2 import supplier_market_factor
+    assert supplier_market_factor(None, 0.125) == 0.125
+    assert supplier_market_factor(0.2, 0.125) == 0.2
 
 
 def test_resolve_electricity_factor_unknown_without_ef_raises():
@@ -286,10 +290,11 @@ def test_resolve_electricity_factor_unknown_without_ef_raises():
 
 
 def test_resolve_electricity_factor_out_of_bounds():
+    from routes.scope2 import supplier_market_factor
     with pytest.raises(ValidationError):
-        resolve_electricity_factor("CleanPower", -0.01)
+        supplier_market_factor(None, -0.01)
     with pytest.raises(ValidationError):
-        resolve_electricity_factor("CleanPower", MAX_GRID_EF_KG_PER_KWH + 0.5)
+        supplier_market_factor(None, MAX_GRID_EF_KG_PER_KWH + 0.5)
 
 
 def test_default_scope2_uncertainty():
@@ -300,15 +305,17 @@ def test_default_scope2_uncertainty():
 
 def test_steam_fuel_factor_kg_per_mmbtu():
     # Custom factor in kg/MMBtu
-    assert _steam_fuel_factor_kg_per_mmbtu(60.0) == 60.0
+    gwp = get_active_gwp()
+    boiler_ch4_n2o = 0.0011 * float(gwp["CH4"]) + 0.0003 * float(gwp["N2O"])  # Exhibit 8.3 boiler, added always (BA-008)
+    assert _steam_fuel_factor_kg_per_mmbtu(60.0) == pytest.approx(60.0 + boiler_ch4_n2o)
 
     # Custom factor in t/MMBtu (< 1.0 -> multiplied by 1000)
-    assert _steam_fuel_factor_kg_per_mmbtu(0.065) == 65.0
+    assert _steam_fuel_factor_kg_per_mmbtu(0.065) == pytest.approx(65.0 + boiler_ch4_n2o)
 
     # Default factor includes AP-42 natural gas CH4 and N2O
     default_ef = _steam_fuel_factor_kg_per_mmbtu(None)
     gwp = get_active_gwp()
-    expected = _DEFAULT_BOILER_EF_KG_PER_MMBTU + 0.001 * float(gwp["CH4"]) + 0.0001 * float(gwp["N2O"])
+    expected = _DEFAULT_BOILER_EF_KG_PER_MMBTU + 0.0011 * float(gwp["CH4"]) + 0.0003 * float(gwp["N2O"])
     assert default_ef == pytest.approx(expected)
 
 

@@ -1,4 +1,4 @@
-import { CheckCircle2, ChevronDown, Download, FilePlus, FileSpreadsheet, FileText, FileCode, Funnel, Pencil, Plus, RotateCcw, Search, SlidersHorizontal, Table, Sparkles, Globe, Building2 } from "lucide-react";
+import { CheckCircle2, ChevronDown, Download, FilePlus, FileSpreadsheet, FileText, FileCode, Funnel, Pencil, Plus, RotateCcw, Search, ShieldCheck, SlidersHorizontal, Table, Sparkles } from "lucide-react";
 import { NativeSelect } from "../ui/NativeSelect";
 import { Badge, Button, Card, CardHeader, DataTable, Dialog, Field, Input, Menu, MenuContent, MenuItem, MenuTrigger, Page, PageHeader, StatusBadge, Textarea, cn, type BadgeTone } from "../ui";
 import { controlClass } from "../components/import-wizard/mapping";
@@ -12,9 +12,11 @@ import MultiSelectDropdown from "../components/MultiSelectDropdown";
 import EditEmissionModal from "../components/modals/EditEmissionModal";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
 import { getActiveGwpFactors } from "../constants";
-import { apiError } from "../utils/apiError";
+import { apiError, readApiError } from "../utils/apiError";
 import { useGwpStandard } from "../hooks/useGwpStandard";
 import { ReportsNavTabs } from "../components/NavigationTabs";
+import CbamValidationModal from "../components/CbamValidationModal";
+import type { CbamQuarter } from "../types/reports";
 import type { ColumnDef } from "@tanstack/react-table";
 import { t as tr } from "../i18n";
 
@@ -53,6 +55,34 @@ interface Facility {
 const gwpOptionLabel = (standard: string, horizon: string) => {
   const f = getActiveGwpFactors(standard, horizon);
   return `IPCC ${standard} (${horizon}-yr: CH4=${f.CH4}, N2O=${f.N2O})`;
+};
+
+const parseContentDispositionFilename = (disposition?: string | null): string | null => {
+  if (!disposition || typeof disposition !== "string") return null;
+  const extMatch = /filename\*\s*=\s*(?:UTF-8''|utf-8'')?([^;\r\n]+)/i.exec(disposition);
+  if (extMatch?.[1]) {
+    const cleaned = extMatch[1].trim().replace(/^["']|["']$/g, "");
+    try {
+      const decoded = decodeURIComponent(cleaned);
+      if (decoded) return decoded;
+    } catch {
+      if (cleaned) return cleaned;
+    }
+  }
+  const quotedMatch = /filename\s*=\s*"([^"\r\n]+)"/i.exec(disposition);
+  if (quotedMatch?.[1]) return quotedMatch[1].trim() || null;
+  const unquotedMatch = /filename\s*=\s*([^;\r\n]+)/i.exec(disposition);
+  if (unquotedMatch?.[1]) return unquotedMatch[1].trim().replace(/^["']|["']$/g, "") || null;
+  return null;
+};
+
+const getResponseHeader = (resp: any, headerName: string): string | null => {
+  const headers = resp?.headers;
+  if (!headers) return null;
+  if (typeof headers.get === "function") {
+    return headers.get(headerName) || headers.get(headerName.toLowerCase()) || null;
+  }
+  return headers[headerName] || headers[headerName.toLowerCase()] || null;
 };
 
 const NA = (v: any) => v || "N/A";
@@ -227,6 +257,20 @@ const Reports: React.FC = () => {
             ? filterRes.data.segments
             : [],
         });
+
+        const numericYears = (Array.isArray(filterRes.data?.years) ? filterRes.data.years : [])
+          .map((y: any) => Number(y))
+          .filter((y: number) => Number.isFinite(y))
+          .sort((a: number, b: number) => a - b);
+        if (numericYears.length > 0) {
+          const minY = numericYears[0];
+          const maxY = numericYears[numericYears.length - 1];
+          setMasterStartYear((prev) => (numericYears.includes(Number(prev)) ? prev : String(minY)));
+          setMasterEndYear((prev) => (numericYears.includes(Number(prev)) ? prev : String(maxY)));
+        } else {
+          setMasterStartYear("");
+          setMasterEndYear("");
+        }
 
         // Sync year picker to the most recent year that has actual data
         if (deepLink.year) {
@@ -460,7 +504,7 @@ const Reports: React.FC = () => {
     }
   };
 
-  const handleCBAMExport = async (format: "excel" | "xml") => {
+  const handleCBAMExport = async (format: "excel" | "xml", quarterOverride?: CbamQuarter | string) => {
     try {
       const isXml = format === "xml";
       toast.info(isXml ? tr("Generating EU CBAM XML Declaration...") : tr("Generating EU CBAM Excel Communication Template..."));
@@ -468,7 +512,7 @@ const Reports: React.FC = () => {
         year !== "all" ? year : reportYear !== "all" ? reportYear
           : String(availableFilters.years[0] || new Date().getFullYear());
       const response = await api.get("/reports/cbam-export", {
-        params: { year: yr, format, status: "Verified", ...(regionId !== "all" && { facility_id: regionId }) },
+        params: { year: yr, format, quarter: String(quarterOverride || cbamQuarter || "Q1-Q4"), status: "Verified", ...(regionId !== "all" && { facility_id: regionId }) },
         responseType: "blob",
       });
       const mime = isXml ? "application/xml" : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
@@ -555,15 +599,24 @@ const Reports: React.FC = () => {
   // the report's GWP set starts at the organisation's active standard (it always started at AR5)
   const { standard: activeGwpStandard } = useGwpStandard();
   const [reportGwpStandard, setReportGwpStandard] = useState<string>(activeGwpStandard || "AR5");
+  const [cbamQuarter, setCbamQuarter] = useState<CbamQuarter>("Q1-Q4");
+  const [cbamModalOpen, setCbamModalOpen] = useState<boolean>(false);
+  const [cbamModalTab, setCbamModalTab] = useState<"validation" | "xml">("validation");
   const gwpTouched = useRef<boolean>(false);
+  const mountedRef = useRef<boolean>(true);
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
   useEffect(() => {
     if (activeGwpStandard && !gwpTouched.current) setReportGwpStandard(activeGwpStandard);
   }, [activeGwpStandard]);
   const [reportSelectedRegions, setReportSelectedRegions] = useState<any[]>([]); // Multiselect
 
-  // Executive Master Report & Intelligence Studio State
-  const [masterMode, setMasterMode] = useState<"regional" | "national" | "comparison">("regional");
-  const [masterRegion, setMasterRegion] = useState<string>("hmd");
+  // Executive Master Report & Intelligence Studio State (strictly DB-driven via API)
+  const [masterRegion, setMasterRegion] = useState<string>("");
   const [masterStartYear, setMasterStartYear] = useState<string>("2023");
   const [masterEndYear, setMasterEndYear] = useState<string>("2025");
   const [masterGwp, setMasterGwp] = useState<string>("AR5");
@@ -572,30 +625,38 @@ const Reports: React.FC = () => {
   const [masterExcelLoading, setMasterExcelLoading] = useState<boolean>(false);
   const [masterJobStatusText, setMasterJobStatusText] = useState<string | null>(null);
   const [masterReadyDownload, setMasterReadyDownload] = useState<{ url: string; filename: string } | null>(null);
-  const [availableRegions, setAvailableRegions] = useState<any[]>([
-    { key: "basin-alpha", name: "Demo JV Operations (Facility A-1 / Facility B-2)", segment: "Upstream", facility_count: 2 },
-    { key: "hmd", name: "Basin Alpha Oil Complex (HMD)", segment: "Upstream", facility_count: 2 },
-    { key: "hrm", name: "Basin Beta Gas Supergiant (HRM)", segment: "Upstream", facility_count: 3 },
-    { key: "rns", name: "Basin Gamma Gas Processing (RNS)", segment: "Upstream", facility_count: 2 },
-    { key: "tft", name: "Tin Fouye Tabankort Gathering (TFT)", segment: "Upstream", facility_count: 1 },
-    { key: "skikda", name: "Skikda Refining & LNG Corridors", segment: "Downstream", facility_count: 1 },
-    { key: "arzew", name: "Arzew Liquefaction & Ammonia Hub", segment: "Downstream", facility_count: 1 },
-  ]);
+  const [availableRegions, setAvailableRegions] = useState<any[]>([]);
+  const [regionsLoaded, setRegionsLoaded] = useState<boolean>(false);
+  const masterMode: "regional" | "national" = masterRegion === "national" ? "national" : "regional";
 
   useEffect(() => {
+    let cancelled = false;
     api.get("/reports/master-report/regions")
       .then((res: any) => {
-        if (res.data?.regions && Array.isArray(res.data.regions)) {
-          const present = res.data.regions.filter((r: any) => r.key !== "national" && (r.facility_count > 0 || r.facility_count === undefined));
-          if (present.length > 0) {
-            setAvailableRegions(present);
-            if (!present.some((r: any) => r.key === masterRegion)) {
-              setMasterRegion(present[0].key);
-            }
-          }
+        if (cancelled) return;
+        const rawRegions = Array.isArray(res.data?.regions) ? res.data.regions : [];
+        const present = rawRegions.filter((r: any) => r.facility_count > 0 || r.facility_count === undefined);
+        setAvailableRegions(present);
+        setRegionsLoaded(true);
+        if (present.length === 0) {
+          setMasterRegion("");
+          return;
         }
+        const defaultReg = present.find((r: any) => r.key !== "national") || present[0];
+        setMasterRegion((prev) =>
+          prev && present.some((r: any) => r.key === prev) ? prev : defaultReg.key
+        );
       })
-      .catch((err: any) => console.warn("Regions loader warning, using defaults:", err));
+      .catch((err: any) => {
+        if (cancelled) return;
+        console.warn("Failed to load Master Report regions:", err);
+        setAvailableRegions([]);
+        setMasterRegion("");
+        setRegionsLoaded(true);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const hasActiveFilters = Boolean(
@@ -701,22 +762,32 @@ const Reports: React.FC = () => {
     }
   };
 
+  const getSafeOrgPrefix = () =>
+    String(user?.orgName || user?.org_name || "Operator")
+      .replace(/[\\/:*?"<>|\r\n]+/g, "_")
+      .trim() || "Operator";
+
   const handleDownloadMasterReport = async () => {
     const normalizeApiPath = (rawUrl: string) => rawUrl.replace(/^\/api(?=\/)/, "");
+    if (!masterRegion) {
+      toast.error(tr("No reporting basin or facility available for this account."));
+      return;
+    }
     setMasterLoading(true);
     setMasterReadyDownload(null);
     setMasterJobStatusText(tr("Submitting Master Publication background job..."));
     try {
-      const cleanName = (masterMode === "national" ? "National" : masterRegion).replace(/[^a-zA-Z0-9]/g, "_");
+      const cleanName = (masterMode === "national" ? "National" : masterRegion).replace(/[^a-zA-Z0-9._-]/g, "_");
+      const timeTag = masterStartYear === masterEndYear ? masterStartYear : `${masterStartYear}_${masterEndYear}`;
       const langSuffix = `_${masterLanguage.toUpperCase()}`;
-      const fallbackFilename = `Demo Operator Co._${masterMode}_${cleanName}_Master_Report_${masterStartYear}_${masterEndYear}${langSuffix}.pdf`;
+      const fallbackFilename = `${getSafeOrgPrefix()}_${masterMode}_${cleanName}_Master_Report_${timeTag}${langSuffix}.pdf`;
 
       const enqueueResp = await api.post("/reports/master-report", {
         mode: masterMode,
-        region: masterRegion,
+        region: masterMode === "national" ? "national" : masterRegion,
         start_year: parseInt(masterStartYear, 10),
         end_year: parseInt(masterEndYear, 10),
-        gwp_standard: masterGwp === "20yr" ? "AR5" : masterGwp,
+        gwp_standard: masterGwp,
         language: masterLanguage,
       });
 
@@ -727,9 +798,11 @@ const Reports: React.FC = () => {
 
       setMasterJobStatusText(tr("Compiling Master Publication PDF in background..."));
       let completed = job.status === "completed";
-      for (let i = 0; i < 480 && !completed; i += 1) {
+      for (let i = 0; i < 480 && !completed && mountedRef.current; i += 1) {
         await new Promise((resolve) => setTimeout(resolve, 250));
+        if (!mountedRef.current) return;
         const stResp = await api.get(statusUrl);
+        if (!mountedRef.current) return;
         const stData = stResp.data || {};
         if (stData.status === "failed") {
           throw new Error(stData.error || tr("Master report background job failed."));
@@ -741,6 +814,7 @@ const Reports: React.FC = () => {
           break;
         }
       }
+      if (!mountedRef.current) return;
       if (!completed) {
         throw new Error(tr("Master report generation timed out waiting for background job."));
       }
@@ -748,6 +822,8 @@ const Reports: React.FC = () => {
       const apiDownloadPath = normalizeApiPath(rawDownloadUrl);
       setMasterJobStatusText(tr("Downloading compiled PDF..."));
       const fileResp = await api.get(apiDownloadPath, { responseType: "blob" });
+      finalFilename =
+        parseContentDispositionFilename(getResponseHeader(fileResp, "content-disposition")) || finalFilename;
 
       const blob = new Blob([fileResp.data], { type: "application/pdf" });
       const blobUrl = window.URL.createObjectURL(blob);
@@ -764,14 +840,15 @@ const Reports: React.FC = () => {
       setMasterJobStatusText(tr("Master Publication PDF ready for download."));
       toast.success(tr("Executive Master Publication PDF generated & downloaded successfully!"));
     } catch (err: any) {
+      if (!mountedRef.current) return;
       console.error("Master report error", err);
       setMasterJobStatusText(null);
-      const msg = err?.response?.data?.error
-        ? apiError(err, tr("Failed to generate Master Publication Report."))
-        : err?.message || tr("Failed to generate Master Publication Report.");
+      const msg = await readApiError(err, err?.message || tr("Failed to generate Master Publication Report."));
       toast.error(msg);
     } finally {
-      setMasterLoading(false);
+      if (mountedRef.current) {
+        setMasterLoading(false);
+      }
     }
   };
 
@@ -783,20 +860,22 @@ const Reports: React.FC = () => {
         {
           start_year: parseInt(masterStartYear, 10),
           end_year: parseInt(masterEndYear, 10),
-          gwp_standard: masterGwp === "20yr" ? "AR5" : masterGwp,
+          gwp_standard: masterGwp,
         },
         { responseType: "blob" }
       );
+      const timeTag = masterStartYear === masterEndYear ? masterStartYear : `${masterStartYear}_${masterEndYear}`;
+      const fallbackFilename = `${getSafeOrgPrefix()}_Cross_Basin_Benchmark_${timeTag}.xlsx`;
+      const downloadFilename =
+        parseContentDispositionFilename(getResponseHeader(resp, "content-disposition")) || fallbackFilename;
+
       const blob = new Blob([resp.data], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute(
-        "download",
-        `Demo Operator Co._Cross_Basin_Benchmark_${masterStartYear}_${masterEndYear}.xlsx`
-      );
+      link.setAttribute("download", downloadFilename);
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -804,7 +883,7 @@ const Reports: React.FC = () => {
       toast.success(tr("Cross-Basin Benchmark Excel exported successfully!"));
     } catch (err: any) {
       console.error("Benchmark Excel error", err);
-      toast.error(apiError(err, tr("Failed to export benchmark Excel.")));
+      toast.error(await readApiError(err, tr("Failed to export benchmark Excel.")));
     } finally {
       setMasterExcelLoading(false);
     }
@@ -817,19 +896,19 @@ const Reports: React.FC = () => {
 
   const selectBase = (label: string, value: any, onChange: (e: any) => void, children: React.ReactNode, extra: Record<string, any> = {}) => (
     <Field label={label} className={extra.className}>
-      <NativeSelect className={controlClass} value={value} onChange={onChange}>
+      <NativeSelect id={extra.selectId} className={controlClass} value={value} onChange={onChange}>
         {children}
       </NativeSelect>
     </Field>
   );
   const MONTHS = [...Array(12)].map((_, i) => ({ value: i + 1, label: new Date(0, i).toLocaleString("default", { month: "long" }) }));
   const uniq = (key: string) => [...new Set(facilities.map((f) => f[key]))].filter(Boolean);
-  const gwpOptions = (suffix = "") => (
+  const gwpOptions = (suffix = "", include20yr = true) => (
     <>
       <option value="AR5">{`${gwpOptionLabel("AR5", "100")}${suffix}`}</option>
       <option value="AR6">{gwpOptionLabel("AR6", "100")}</option>
       <option value="AR4">{gwpOptionLabel("AR4", "100")}</option>
-      <option value="20yr">{gwpOptionLabel("AR5", "20")}</option>
+      {include20yr && <option value="20yr">{gwpOptionLabel("AR5", "20")}</option>}
     </>
   );
   const onGwp = (e: any) => {
@@ -881,9 +960,18 @@ const Reports: React.FC = () => {
                 </MenuItem>
                 <MenuItem icon={FileCode} onSelect={() => handleCBAMExport("xml")}>
                   <span className="flex-1">{tr("EU CBAM Declaration (XML)")}</span>
-                  <Badge tone="warning" className="ml-2 px-1.5 py-0 text-[0.65rem]">
-                    {tr("Preview / Roadmap")}
+                  <Badge tone="brand" className="ms-2 px-1.5 py-0 text-[0.65rem]">
+                    {cbamQuarter}
                   </Badge>
+                </MenuItem>
+                <MenuItem
+                  icon={ShieldCheck}
+                  onSelect={() => {
+                    setCbamModalTab("validation");
+                    setCbamModalOpen(true);
+                  }}
+                >
+                  {tr("Validate CBAM & Preview XML")}
                 </MenuItem>
                 <MenuItem icon={FileSpreadsheet} onSelect={handleExcelExport}>
                   {tr("Excel export")}
@@ -934,19 +1022,27 @@ const Reports: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3.5 items-end">
           {/* Target Asset or Basin */}
           <div className="flex flex-col gap-1.5 sm:col-span-2">
-            <label className="text-xs font-semibold text-text-secondary">
+            <label htmlFor="master-region-select" className="text-xs font-semibold text-text-secondary">
               {tr("Target Regional Asset / Basin *")}
             </label>
             <NativeSelect
+              id="master-region-select"
               className={controlClass}
               value={masterRegion}
+              disabled={!regionsLoaded || availableRegions.length === 0}
               onChange={(e) => setMasterRegion(e.target.value)}
             >
-              {availableRegions.map((r: any) => (
-                <option key={r.key} value={r.key}>
-                  {r.name} ({r.segment || "Upstream"} • {r.facility_count || 1} {tr("facilities")})
-                </option>
-              ))}
+              {!regionsLoaded ? (
+                <option value="">{tr("Loading reporting basins...")}</option>
+              ) : availableRegions.length === 0 ? (
+                <option value="">{tr("No reporting facilities available")}</option>
+              ) : (
+                availableRegions.map((r: any) => (
+                  <option key={r.key} value={r.key}>
+                    {r.name} ({r.segment || "Upstream"} • {r.facility_count || 1} {tr("facilities")})
+                  </option>
+                ))
+              )}
             </NativeSelect>
           </div>
 
@@ -956,10 +1052,15 @@ const Reports: React.FC = () => {
             masterStartYear,
             (e) => setMasterStartYear(e.target.value),
             <>
-              {years.map((y) => (
-                <option key={`start-${y}`} value={y}>{y}</option>
-              ))}
-            </>
+              {years.length === 0 ? (
+                <option value="">{tr("No reporting years")}</option>
+              ) : (
+                years.map((y) => (
+                  <option key={`start-${y}`} value={y}>{y}</option>
+                ))
+              )}
+            </>,
+            { selectId: "master-start-year-select" }
           )}
 
           {/* Timeline: End Year */}
@@ -968,10 +1069,15 @@ const Reports: React.FC = () => {
             masterEndYear,
             (e) => setMasterEndYear(e.target.value),
             <>
-              {years.map((y) => (
-                <option key={`end-${y}`} value={y}>{y}</option>
-              ))}
-            </>
+              {years.length === 0 ? (
+                <option value="">{tr("No reporting years")}</option>
+              ) : (
+                years.map((y) => (
+                  <option key={`end-${y}`} value={y}>{y}</option>
+                ))
+              )}
+            </>,
+            { selectId: "master-end-year-select" }
           )}
 
           {/* GWP Metric Standard */}
@@ -979,7 +1085,8 @@ const Reports: React.FC = () => {
             tr("GWP Metric Standard"),
             masterGwp,
             (e) => setMasterGwp(e.target.value),
-            gwpOptions()
+            gwpOptions("", false),
+            { selectId: "master-gwp-select" }
           )}
 
           {/* Publication Language */}
@@ -990,7 +1097,8 @@ const Reports: React.FC = () => {
             <>
               <option value="en">{tr("English (Executive)")}</option>
               <option value="fr">{tr("Français (Réglementaire)")}</option>
-            </>
+            </>,
+            { selectId: "master-language-select" }
           )}
         </div>
 
@@ -1018,7 +1126,7 @@ const Reports: React.FC = () => {
               variant="secondary"
               onClick={handleDownloadBenchmarkExcel}
               loading={masterExcelLoading}
-              disabled={masterExcelLoading || masterLoading}
+              disabled={!regionsLoaded || availableRegions.length === 0 || !masterStartYear || !masterEndYear || masterExcelLoading || masterLoading}
               className="gap-2 shadow-2xs font-semibold cursor-pointer"
             >
               <FileSpreadsheet className="size-4 text-emerald-600" aria-hidden="true" />
@@ -1029,13 +1137,15 @@ const Reports: React.FC = () => {
               variant="primary"
               onClick={handleDownloadMasterReport}
               loading={masterLoading}
-              disabled={masterLoading || masterExcelLoading}
+              disabled={!regionsLoaded || availableRegions.length === 0 || !masterRegion || !masterStartYear || !masterEndYear || masterLoading || masterExcelLoading}
               className="gap-2 shadow-sm font-bold bg-brand-600 hover:bg-brand-700 text-white cursor-pointer"
             >
               <Download className="size-4" aria-hidden="true" />
               <span>
                 {masterLoading
                   ? tr("Compiling Publication...")
+                  : masterMode === "national"
+                  ? tr("Download National Master Report (PDF)")
                   : tr("Download Regional Master Report (PDF)")}
               </span>
             </Button>
@@ -1097,9 +1207,9 @@ const Reports: React.FC = () => {
             <div className="relative min-w-[200px]">
               <label className="mb-1 block text-xs font-semibold text-text-secondary">{tr("Search Records")}</label>
               <div className="relative">
-                <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-secondary" aria-hidden="true" />
+                <Search className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-text-secondary" aria-hidden="true" />
                 <Input
-                  className="h-9 pl-9 pr-7"
+                  className="h-9 ps-9 pe-7"
                   placeholder={tr("Keyword, fuel, facility, equipment...")}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -1108,7 +1218,7 @@ const Reports: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setSearchTerm("")}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-text-secondary hover:text-text cursor-pointer p-0.5 border-0 bg-transparent"
+                    className="absolute end-2 top-1/2 -translate-y-1/2 text-sm text-text-secondary hover:text-text cursor-pointer p-0.5 border-0 bg-transparent"
                     aria-label={tr("Clear search")}
                   >
                     ×
@@ -1303,89 +1413,89 @@ const Reports: React.FC = () => {
           {/* Active Filter Chips Strip */}
           {hasActiveFilters && (
             <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-border/60">
-              <span className="text-xs font-semibold text-text-secondary mr-1">{tr("Active Filters:")}</span>
+              <span className="text-xs font-semibold text-text-secondary me-1">{tr("Active Filters:")}</span>
               {scope !== "all" && (
                 <Badge tone="brand" className="gap-1 text-xs py-0.5">
                   {tr("Scope {{scope}}", { scope })}
-                  <button type="button" onClick={() => setScope("all")} className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
+                  <button type="button" onClick={() => setScope("all")} className="cursor-pointer ms-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
                 </Badge>
               )}
               {year !== "all" && (
                 <Badge tone="brand" className="gap-1 text-xs py-0.5">
                   {tr("Year: {{year}}", { year })}
-                  <button type="button" onClick={() => { setYear("all"); setReportYear("all"); }} className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
+                  <button type="button" onClick={() => { setYear("all"); setReportYear("all"); }} className="cursor-pointer ms-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
                 </Badge>
               )}
               {month !== "all" && (
                 <Badge tone="neutral" className="gap-1 text-xs py-0.5">
                   {MONTHS.find(m => m.value.toString() === month.toString())?.label || month}
-                  <button type="button" onClick={() => setMonth("all")} className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
+                  <button type="button" onClick={() => setMonth("all")} className="cursor-pointer ms-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
                 </Badge>
               )}
               {regionId !== "all" && (
                 <Badge tone="info" className="gap-1 text-xs py-0.5">
                   {facilities.find(f => f.id.toString() === regionId.toString())?.name || regionId}
-                  <button type="button" onClick={() => { setRegionId("all"); setReportSelectedRegions([]); }} className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
+                  <button type="button" onClick={() => { setRegionId("all"); setReportSelectedRegions([]); }} className="cursor-pointer ms-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
                 </Badge>
               )}
               {processType !== "all" && (
                 <Badge tone="neutral" className="gap-1 text-xs py-0.5">
                   {processType}
-                  <button type="button" onClick={() => setProcessType("all")} className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
+                  <button type="button" onClick={() => setProcessType("all")} className="cursor-pointer ms-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
                 </Badge>
               )}
               {division !== "all" && (
                 <Badge tone="neutral" className="gap-1 text-xs py-0.5">
                   {tr("Division: {{division}}", { division })}
-                  <button type="button" onClick={() => setDivision("all")} className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
+                  <button type="button" onClick={() => setDivision("all")} className="cursor-pointer ms-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
                 </Badge>
               )}
               {field !== "all" && (
                 <Badge tone="neutral" className="gap-1 text-xs py-0.5">
                   {tr("Field: {{field}}", { field })}
-                  <button type="button" onClick={() => setField("all")} className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
+                  <button type="button" onClick={() => setField("all")} className="cursor-pointer ms-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
                 </Badge>
               )}
               {methodFilter !== "all" && (
                 <Badge tone="neutral" className="gap-1 text-xs py-0.5">
                   {tr("Method: {{method}}", { method: methodFilter })}
-                  <button type="button" onClick={() => setMethodFilter("all")} className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
+                  <button type="button" onClick={() => setMethodFilter("all")} className="cursor-pointer ms-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
                 </Badge>
               )}
               {exportStatus !== "Verified" && (
                 <Badge tone="warning" className="gap-1 text-xs py-0.5">
                   {tr("Status: {{status}}", { status: exportStatus === "all" ? tr("All") : exportStatus })}
-                  <button type="button" onClick={() => setExportStatus("Verified")} className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
+                  <button type="button" onClick={() => setExportStatus("Verified")} className="cursor-pointer ms-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
                 </Badge>
               )}
               {groupBy !== "none" && (
                 <Badge tone="neutral" className="gap-1 text-xs py-0.5">
                   {tr("Group: {{group}}", { group: groupBy })}
-                  <button type="button" onClick={() => setGroupBy("none")} className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
+                  <button type="button" onClick={() => setGroupBy("none")} className="cursor-pointer ms-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
                 </Badge>
               )}
               {comparisonYear !== "none" && (
                 <Badge tone="neutral" className="gap-1 text-xs py-0.5">
                   {tr("Compare: {{comp}}", { comp: comparisonYear })}
-                  <button type="button" onClick={() => setComparisonYear("none")} className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
+                  <button type="button" onClick={() => setComparisonYear("none")} className="cursor-pointer ms-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
                 </Badge>
               )}
               {searchTerm.trim() !== "" && (
                 <Badge tone="neutral" className="gap-1 text-xs py-0.5">
                   {tr('Search: "{{term}}"', { term: searchTerm })}
-                  <button type="button" onClick={() => setSearchTerm("")} className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
+                  <button type="button" onClick={() => setSearchTerm("")} className="cursor-pointer ms-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
                 </Badge>
               )}
               {reportGwpStandard !== "AR6" && (
                 <Badge tone="warning" className="gap-1 text-xs py-0.5">
                   {reportGwpStandard}
-                  <button type="button" onClick={() => setReportGwpStandard("AR6")} className="cursor-pointer ml-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
+                  <button type="button" onClick={() => setReportGwpStandard("AR6")} className="cursor-pointer ms-1 text-inherit hover:opacity-75 border-0 bg-transparent p-0">×</button>
                 </Badge>
               )}
               <button
                 type="button"
                 onClick={resetFilters}
-                className="text-xs text-brand-600 hover:text-brand-700 hover:underline font-semibold ml-2 cursor-pointer border-0 bg-transparent p-0"
+                className="text-xs text-brand-600 hover:text-brand-700 hover:underline font-semibold ms-2 cursor-pointer border-0 bg-transparent p-0"
               >
                 {tr("Clear all")}
               </button>
@@ -1522,7 +1632,7 @@ const Reports: React.FC = () => {
                 {/* Miniature Realistic A4 Sheet Representation */}
                 <div className="w-[170px] h-[225px] rounded-sm border border-border/80 bg-surface shadow-md p-2.5 flex flex-col justify-between relative overflow-hidden select-none">
                   {/* Top accent bar */}
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-brand-500" />
+                  <div className="absolute top-0 start-0 end-0 h-1 bg-brand-500" />
 
                   {/* Document Header */}
                   <div className="flex flex-col gap-0.5 mt-1">
@@ -1563,7 +1673,7 @@ const Reports: React.FC = () => {
 
                   {/* Document Footer Miniature */}
                   <div className="border-t border-border/60 pt-1 flex items-center justify-between text-[6.5px] text-text-secondary">
-                    <span>Demo Operator Co. E&P</span>
+                    <span className="truncate">{getSafeOrgPrefix()}</span>
                     <span className="font-mono">P. 1 / 12</span>
                   </div>
                 </div>
@@ -1588,6 +1698,17 @@ const Reports: React.FC = () => {
           onSuccess={() => fetchEmissions()}
         />
       )}
+      <CbamValidationModal
+        open={cbamModalOpen}
+        onOpenChange={setCbamModalOpen}
+        year={year !== "all" ? year : reportYear}
+        quarter={cbamQuarter}
+        onQuarterChange={setCbamQuarter}
+        facilityId={regionId !== "all" ? regionId : "all"}
+        status={exportStatus || "Verified"}
+        initialTab={cbamModalTab}
+        onExportXml={(q) => handleCBAMExport("xml", q)}
+      />
     </Page>
   );
 };

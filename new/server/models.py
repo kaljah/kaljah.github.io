@@ -251,6 +251,22 @@ class Emission(db.Model):
 
     __table_args__ = (
         db.Index("idx_scope1_facility_year", "facility_id", "year"),
+        db.Index(
+            "ix_emissions_intensity_cov",
+            "status",
+            "is_test",
+            "facility_id",
+            "year",
+            "process_type",
+            "ogmp_level",
+            "factor_source",
+            "calc_method",
+            "qa_flag",
+            "co2e_total",
+            "co2_emissions",
+            "ch4_emissions",
+            "n2o_emissions",
+        ),
         db.Index("ix_emissions_fac_yr_status", "facility_id", "year", "status"),
         db.Index("ix_emissions_act_div", "activity", "division"),
         db.Index("ix_emissions_status_yr_co2e", "status", "year", "co2e_total"),
@@ -297,6 +313,11 @@ class ProductionData(db.Model):
     total_production_no_injected_mmboe = db.Column(db.Float, default=0.0)
     saleable_production_mmboe = db.Column(db.Float, default=0.0)
     fuel_gas_export_mmsm3 = db.Column(db.Float, default=0.0)
+    # marketed-gas terms (migration l7c2e5f83b14): when entered they take priority over the emission records
+    flared_gas_mmsm3 = db.Column(db.Float, nullable=True)
+    vented_gas_mmsm3 = db.Column(db.Float, nullable=True)
+    fuel_gas_consumed_mmsm3 = db.Column(db.Float, nullable=True)  # burned on site (turbines, heaters)
+    ngl_shrinkage_mmsm3 = db.Column(db.Float, nullable=True)  # gas volume removed as NGL / LPG
 
     activity = db.Column(db.String(100), index=True)
     division = db.Column(db.String(100), index=True)
@@ -495,15 +516,14 @@ class Goal(db.Model):
 
 class BaseYear(db.Model):
     __tablename__ = "base_year"
-    id = db.Column(
-        db.Integer, primary_key=True
-    )  # DB-02 FIX: enforced singleton via CheckConstraint below
+    id = db.Column(db.Integer, primary_key=True)
     year = db.Column(db.Integer, nullable=False)
     locked = db.Column(db.Integer, default=1)
+    tenant_id = db.Column(db.String(64), nullable=False, default='default', server_default='default', index=True)
     created_at = db.Column(db.DateTime, default=utc_now)
 
-    # DB-02 FIX: Only one row is ever allowed (id must equal 1)
-    __table_args__ = (db.CheckConstraint("id = 1", name="base_year_singleton"),)
+    # one base year per tenant (migration k6b1d4e72a90 replaced the DB-02 singleton CHECK id = 1)
+    __table_args__ = (db.UniqueConstraint("tenant_id", name="uq_base_year_tenant"),)
 
 
 class MitigationRecord(db.Model):
@@ -553,6 +573,10 @@ class Scope2Emission(db.Model):
     co2e_market_based = db.Column(db.Float, nullable=True)
     market_instrument_type = db.Column(db.String(50), nullable=True)  # PPA, REC, GO, supplier_tariff, residual_mix
     market_emission_factor = db.Column(db.Float, nullable=True)
+    # gas masses in tonnes as calculated (migration l7c2e5f83b14); NULL on records saved before it
+    co2_emissions = db.Column(db.Float, nullable=True)
+    ch4_emissions = db.Column(db.Float, nullable=True)
+    n2o_emissions = db.Column(db.Float, nullable=True)
     uncertainty = db.Column(db.Float, nullable=True)  # 1-sigma relative uncertainty
     uncertainty_pct = db.Column(db.Float, nullable=True)  # Overall combined uncertainty percentage
     qa_flag = db.Column(db.String(255), nullable=True)
@@ -1194,4 +1218,266 @@ class CalculationFactorLineage(db.Model):
         }
 
 
+class OgmpReportingEntity(db.Model):
+    """UNEP OGMP 2.0 reporting entity & joint venture membership metadata."""
+    __tablename__ = "ogmp_reporting_entities"
 
+    id = db.Column(db.Integer, primary_key=True)
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id", ondelete="CASCADE"), nullable=True, index=True)
+    facility = db.relationship("Facility", backref=db.backref("ogmp_reporting_entities", cascade="all, delete-orphan"))
+    entity_name = db.Column(db.String(160), nullable=False)
+    asset_name = db.Column(db.String(160))
+    segment = db.Column(db.String(50), default="Upstream")
+    sub_segment = db.Column(db.String(100))
+    country = db.Column(db.String(100))
+    operator_status = db.Column(db.String(20), default="operated")
+    operating_company = db.Column(db.String(160))
+    working_interest_pct = db.Column(db.Float, default=100.0)
+    has_operational_control = db.Column(db.Boolean, default=True)
+    membership_year = db.Column(db.Integer, default=2023)
+    target_gold_year = db.Column(db.Integer)
+    is_nojv_material_excluded = db.Column(db.Boolean, default=False)
+    exclusion_reason = db.Column(db.Text)
+    is_member_reported_nojv = db.Column(db.Boolean, default=False)
+    tenant_id = db.Column(db.String(64), nullable=False, default="default", server_default="default", index=True)
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    created_at = db.Column(db.DateTime, default=utc_now)
+
+
+class OgmpTarget(db.Model):
+    """UNEP OGMP 2.0 corporate / entity methane intensity & reduction targets."""
+    __tablename__ = "ogmp_targets"
+
+    id = db.Column(db.Integer, primary_key=True)
+    reporting_entity_id = db.Column(
+        db.Integer, db.ForeignKey("ogmp_reporting_entities.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    reporting_entity = db.relationship("OgmpReportingEntity", backref=db.backref("targets", cascade="all, delete-orphan"))
+    target_year = db.Column(db.Integer, nullable=False)
+    metric_type = db.Column(db.String(50), default="methane_intensity")
+    upstream_target_pct = db.Column(db.Float, default=0.20)
+    midstream_target_pct = db.Column(db.Float, default=0.05)
+    reduction_target_pct = db.Column(db.Float, default=0.0)
+    base_year = db.Column(db.Integer, default=2023)
+    notes = db.Column(db.Text)
+    tenant_id = db.Column(db.String(64), nullable=False, default="default", server_default="default", index=True)
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    created_at = db.Column(db.DateTime, default=utc_now)
+
+
+class OgmpAsset(db.Model):
+    """UNEP OGMP 2.0 asset registry linked to facilities and reporting entities."""
+    __tablename__ = "ogmp_assets"
+
+    id = db.Column(db.Integer, primary_key=True)
+    reporting_entity_id = db.Column(
+        db.Integer, db.ForeignKey("ogmp_reporting_entities.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    reporting_entity = db.relationship("OgmpReportingEntity", backref=db.backref("assets", cascade="all, delete-orphan"))
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id", ondelete="CASCADE"), nullable=False, index=True)
+    facility = db.relationship("Facility", backref=db.backref("ogmp_assets", cascade="all, delete-orphan"))
+    asset_code = db.Column(db.String(64))
+    asset_name = db.Column(db.String(160), nullable=False)
+    asset_type = db.Column(db.String(80))
+    segment = db.Column(db.String(50), default="Upstream")
+    operator_status = db.Column(db.String(20), default="operated")
+    equity_share_pct = db.Column(db.Float, default=100.0)
+    is_nojv = db.Column(db.Boolean, default=False)
+    is_excluded_below_5pct = db.Column(db.Boolean, default=False)
+    tenant_id = db.Column(db.String(64), nullable=False, default="default", server_default="default", index=True)
+    created_at = db.Column(db.DateTime, default=utc_now)
+
+
+class OgmpAnnualReport(db.Model):
+    """UNEP OGMP 2.0 annual facility reconciliation & Gold Standard reporting summary."""
+    __tablename__ = "ogmp_annual_reports"
+
+    id = db.Column(db.Integer, primary_key=True)
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id", ondelete="CASCADE"), nullable=False, index=True)
+    facility = db.relationship("Facility", backref=db.backref("ogmp_annual_reports", cascade="all, delete-orphan"))
+    reporting_entity_id = db.Column(
+        db.Integer, db.ForeignKey("ogmp_reporting_entities.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    year = db.Column(db.Integer, nullable=False, index=True)
+    reporting_level = db.Column(db.Integer, default=3)
+    status = db.Column(db.String(30), default="Draft")
+    total_bottom_up_tch4 = db.Column(db.Float, default=0.0)
+    total_top_down_tch4 = db.Column(db.Float, default=0.0)
+    bu_uncertainty_pct = db.Column(db.Float, default=0.0)
+    bu_ci_low_tch4 = db.Column(db.Float, default=0.0)
+    bu_ci_high_tch4 = db.Column(db.Float, default=0.0)
+    td_uncertainty_pct = db.Column(db.Float, default=0.0)
+    td_ci_low_tch4 = db.Column(db.Float, default=0.0)
+    td_ci_high_tch4 = db.Column(db.Float, default=0.0)
+    ci_overlaps = db.Column(db.Boolean, default=False)
+    variance_pct = db.Column(db.Float, nullable=True)
+    variance_flag = db.Column(db.Boolean, default=False)
+    reconciliation_status = db.Column(db.String(50), default="Pending")
+    l4_materiality_pct = db.Column(db.Float, default=0.0)
+    l4_justification = db.Column(db.Text)
+    pathway_code = db.Column(db.String(10), default="1")
+    measurement_mode = db.Column(db.String(30), default="Annualized")
+    option_mode = db.Column(db.String(20), default="Option 1")
+    gas_production_m3 = db.Column(db.Float, default=0.0)
+    ch4_intensity_pct = db.Column(db.Float, nullable=True)
+    equity_ch4_tch4 = db.Column(db.Float, default=0.0)
+    tenant_id = db.Column(db.String(64), nullable=False, default="default", server_default="default", index=True)
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    created_at = db.Column(db.DateTime, default=utc_now)
+    updated_at = db.Column(db.DateTime, default=utc_now, onupdate=utc_now)
+
+    __table_args__ = (
+        db.Index("ix_ogmp_annual_fac_yr", "facility_id", "year"),
+        db.Index("ix_ogmp_annual_tenant_yr", "tenant_id", "year"),
+    )
+
+
+class OgmpAssetReport(db.Model):
+    """Per-asset snapshot linked to an annual OGMP 2.0 report."""
+    __tablename__ = "ogmp_asset_reports"
+
+    id = db.Column(db.Integer, primary_key=True)
+    annual_report_id = db.Column(
+        db.Integer, db.ForeignKey("ogmp_annual_reports.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    annual_report = db.relationship("OgmpAnnualReport", backref=db.backref("asset_reports", cascade="all, delete-orphan"))
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id", ondelete="CASCADE"), nullable=False, index=True)
+    facility = db.relationship("Facility", backref=db.backref("ogmp_asset_reports", cascade="all, delete-orphan"))
+    year = db.Column(db.Integer, nullable=False, index=True)
+    ogmp_level = db.Column(db.Integer, default=3)
+    bottom_up_tch4 = db.Column(db.Float, default=0.0)
+    top_down_tch4 = db.Column(db.Float, default=0.0)
+    bu_ci_low_tch4 = db.Column(db.Float, default=0.0)
+    bu_ci_high_tch4 = db.Column(db.Float, default=0.0)
+    td_ci_low_tch4 = db.Column(db.Float, default=0.0)
+    td_ci_high_tch4 = db.Column(db.Float, default=0.0)
+    variance_pct = db.Column(db.Float, nullable=True)
+    reconciliation_status = db.Column(db.String(50), default="Pending")
+    l4_coverage_pct = db.Column(db.Float, default=0.0)
+    gas_throughput_m3 = db.Column(db.Float, default=0.0)
+    ch4_intensity_pct = db.Column(db.Float, nullable=True)
+    tenant_id = db.Column(db.String(64), nullable=False, default="default", server_default="default", index=True)
+    created_at = db.Column(db.DateTime, default=utc_now)
+
+
+class OgmpEmissionSource(db.Model):
+    """UNEP OGMP 2.0 source-level methane disclosure (15 Upstream / 12 Mid-Downstream categories)."""
+    __tablename__ = "ogmp_emission_sources"
+
+    id = db.Column(db.Integer, primary_key=True)
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id", ondelete="CASCADE"), nullable=False, index=True)
+    facility = db.relationship("Facility", backref=db.backref("ogmp_emission_sources", cascade="all, delete-orphan"))
+    annual_report_id = db.Column(
+        db.Integer, db.ForeignKey("ogmp_annual_reports.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    year = db.Column(db.Integer, nullable=False, index=True)
+    segment = db.Column(db.String(50), nullable=False, default="Upstream")
+    source_code = db.Column(db.String(64), nullable=False)
+    source_name = db.Column(db.String(160), nullable=False)
+    source_category = db.Column(db.String(80))
+    ogmp_level = db.Column(db.Integer, default=3)
+    status_flag = db.Column(db.String(20), default="Quantified")
+    ch4_tonnes = db.Column(db.Float, default=0.0)
+    uncertainty_pct = db.Column(db.Float, default=25.0)
+    emission_factor_ref = db.Column(db.String(160))
+    quantification_method = db.Column(db.String(160))
+    pathway_code = db.Column(db.String(10), nullable=True)
+    yoy_change_pct = db.Column(db.Float, nullable=True)
+    yoy_explanation = db.Column(db.Text)
+    zero_emission_explanation = db.Column(db.Text)
+    tenant_id = db.Column(db.String(64), nullable=False, default="default", server_default="default", index=True)
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    created_at = db.Column(db.DateTime, default=utc_now)
+
+    __table_args__ = (
+        db.Index("ix_ogmp_sources_fac_yr", "facility_id", "year"),
+    )
+
+
+class OgmpSiteMeasurement(db.Model):
+    """UNEP OGMP 2.0 Level 5 site-level measurement campaigns with 95% CI & Instantaneous/Annualized modes."""
+    __tablename__ = "ogmp_site_measurements"
+
+    id = db.Column(db.Integer, primary_key=True)
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id", ondelete="CASCADE"), nullable=False, index=True)
+    facility = db.relationship("Facility", backref=db.backref("ogmp_site_measurements", cascade="all, delete-orphan"))
+    annual_report_id = db.Column(
+        db.Integer, db.ForeignKey("ogmp_annual_reports.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    year = db.Column(db.Integer, nullable=False, index=True)
+    campaign_date = db.Column(db.String(20), nullable=False)
+    survey_type = db.Column(db.String(80), nullable=False)
+    instrument_vendor = db.Column(db.String(120))
+    measurement_mode = db.Column(db.String(30), default="Annualized")
+    option_mode = db.Column(db.String(20), default="Option 1")
+    measured_rate_kg_hr = db.Column(db.Float, nullable=False, default=0.0)
+    operating_hours_year = db.Column(db.Float, default=8760.0)
+    annualized_tch4 = db.Column(db.Float, default=0.0)
+    uncertainty_pct = db.Column(db.Float, default=20.0)
+    ci_low_tch4 = db.Column(db.Float, default=0.0)
+    ci_high_tch4 = db.Column(db.Float, default=0.0)
+    detection_threshold_kg_hr = db.Column(db.Float, nullable=True)
+    meteorological_notes = db.Column(db.Text)
+    tenant_id = db.Column(db.String(64), nullable=False, default="default", server_default="default", index=True)
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    created_at = db.Column(db.DateTime, default=utc_now)
+
+    __table_args__ = (
+        db.Index("ix_ogmp_meas_fac_yr", "facility_id", "year"),
+    )
+
+
+class OgmpImplementationPlan(db.Model):
+    """UNEP OGMP 2.0 multi-year Y0-Y10 implementation plan (3-yr operated / 5-yr non-operated)."""
+    __tablename__ = "ogmp_implementation_plans"
+
+    id = db.Column(db.Integer, primary_key=True)
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id", ondelete="CASCADE"), nullable=False, index=True)
+    facility = db.relationship("Facility", backref=db.backref("ogmp_implementation_plans", cascade="all, delete-orphan"))
+    reporting_entity_id = db.Column(
+        db.Integer, db.ForeignKey("ogmp_reporting_entities.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    asset_name = db.Column(db.String(160))
+    operator_status = db.Column(db.String(20), default="operated")
+    base_year = db.Column(db.Integer, nullable=False, default=2023)
+    milestone_horizon = db.Column(db.String(10), nullable=False)
+    planned_year = db.Column(db.Integer, nullable=False)
+    target_level = db.Column(db.Integer, nullable=False, default=4)
+    actual_level = db.Column(db.Integer, nullable=True)
+    source_scope = db.Column(db.String(160))
+    methodology_upgrade = db.Column(db.String(200))
+    milestone_status = db.Column(db.String(40), default="Planned")
+    justification = db.Column(db.Text)
+    tenant_id = db.Column(db.String(64), nullable=False, default="default", server_default="default", index=True)
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    created_at = db.Column(db.DateTime, default=utc_now)
+
+    __table_args__ = (
+        db.Index("ix_ogmp_plan_fac_yr", "facility_id", "planned_year"),
+    )
+
+
+class OgmpAuditTrail(db.Model):
+    """Audit trail specifically capturing OGMP 2.0 L4/L5 reconciliation decisions & state transitions."""
+    __tablename__ = "ogmp_audit_trails"
+
+    id = db.Column(db.Integer, primary_key=True)
+    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id", ondelete="CASCADE"), nullable=True, index=True)
+    facility = db.relationship("Facility", backref=db.backref("ogmp_audit_trails", cascade="all, delete-orphan"))
+    annual_report_id = db.Column(
+        db.Integer, db.ForeignKey("ogmp_annual_reports.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    entity_type = db.Column(db.String(64), nullable=False)
+    entity_id = db.Column(db.String(64), nullable=False)
+    action = db.Column(db.String(40), nullable=False)
+    actor_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    actor_name = db.Column(db.String(160))
+    summary = db.Column(db.Text, nullable=False)
+    before_json = db.Column(db.Text)
+    after_json = db.Column(db.Text)
+    tenant_id = db.Column(db.String(64), nullable=False, default="default", server_default="default", index=True)
+    created_at = db.Column(db.DateTime, default=utc_now)
+
+    __table_args__ = (
+        db.Index("ix_ogmp_audit_fac_created", "facility_id", "created_at"),
+    )

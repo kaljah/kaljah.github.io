@@ -100,7 +100,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
               label={
                 <>
                   {t("Lift type")}
-                  <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                  <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
                 </>
               }
             >
@@ -122,7 +122,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
               label={
                 <>
                   {t("Wells")}
-                  <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                  <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
                 </>
               }
             >
@@ -193,7 +193,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
               label={
                 <>
                   {t("Lift type")}
-                  <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                  <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
                 </>
               }
             >
@@ -215,7 +215,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
               label={
                 <>
                   {t("Events")}
-                  <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                  <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
                 </>
               }
             >
@@ -332,7 +332,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   label={
                     <>
                       {t("Lift type")}
-                      <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                      <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
                     </>
                   }
                 >
@@ -354,7 +354,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   label={
                     <>
                       {t("Events per year")}
-                      <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                      <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
                     </>
                   }
                 >
@@ -380,7 +380,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   label={
                     <>
                       {unloadingType === "plunger" ? t("Tubing diameter (in)") : t("Casing diameter (in)")}
-                      <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                      <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
                     </>
                   }
                 >
@@ -403,7 +403,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   label={
                     <>
                       {unloadingType === "plunger" ? t("Tubing depth to plunger bumper (ft)") : t("Well depth (ft)")}
-                      <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                      <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
                     </>
                   }
                 >
@@ -426,7 +426,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   label={
                     <>
                       {t("Flow-line pressure (psig)")}
-                      <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                      <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
                     </>
                   }
                 >
@@ -449,7 +449,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   label={
                     <>
                       {t("Flow-line gas rate (scf/hr)")}
-                      <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                      <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
                     </>
                   }
                 >
@@ -469,7 +469,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   label={
                     <>
                       {t("Hours open to atmosphere (h/event)")}
-                      <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                      <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
                     </>
                   }
                 >
@@ -489,7 +489,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   label={
                     <>
                       {t("CH₄ (mol %)")}
-                      <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                      <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
                     </>
                   }
                 >
@@ -544,7 +544,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   label={
                     <>
                       {t("Shut-In Pressure Pshut (psia)")}
-                      <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                      <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
                     </>
                   }
                 >
@@ -564,7 +564,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   label={
                     <>
                       {t("Flow-Line Pressure Pline (psia)")}
-                      <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                      <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
                     </>
                   }
                 >
@@ -584,7 +584,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   label={
                     <>
                       {t("Separator Pressure Psep (psia)")}
-                      <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                      <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
                     </>
                   }
                 >
@@ -604,7 +604,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   label={
                     <>
                       {t("Gas Production Rate SFRp (scf/hr)")}
-                      <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                      <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
                     </>
                   }
                 >
@@ -624,7 +624,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   label={
                     <>
                       {t("Venting Time Tp (hours/event)")}
-                      <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                      <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
                     </>
                   }
                 >
@@ -644,7 +644,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   label={
                     <>
                       {t("Events per year")}
-                      <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                      <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
                     </>
                   }
                 >
@@ -669,7 +669,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   label={
                     <>
                       {t("CH₄ (mol %)")}
-                      <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                      <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
                     </>
                   }
                 >
@@ -724,7 +724,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   label={
                     <>
                       {t("Frequency (events/yr)")}
-                      <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                      <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
                     </>
                   }
                 >
@@ -750,7 +750,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   label={
                     <>
                       {t("Tubing diameter (in)")}
-                      <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                      <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
                     </>
                   }
                 >
@@ -773,7 +773,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   label={
                     <>
                       {t("Well Depth (ft)")}
-                      <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                      <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
                     </>
                   }
                 >
@@ -796,7 +796,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   label={
                     <>
                       {t("Surface Pressure (psig)")}
-                      <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                      <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
                     </>
                   }
                 >
@@ -819,7 +819,7 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
                   label={
                     <>
                       {t("CH₄ (mol %)")}
-                      <span className="text-[color:var(--color-red-700)]! ml-[3px]!">*</span>
+                      <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
                     </>
                   }
                 >

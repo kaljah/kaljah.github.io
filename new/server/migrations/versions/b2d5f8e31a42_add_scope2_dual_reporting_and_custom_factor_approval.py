@@ -59,4 +59,5 @@ def upgrade():
 
 
 def downgrade():
+    # Custom factor approval metadata is maker-checker evidence: a downgrade keeps the columns.
     pass

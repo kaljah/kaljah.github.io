@@ -15,8 +15,15 @@ import datetime
 from sqlalchemy import or_
 
 from extensions import db
-from models import Emission, Notification, Scope2Emission, Scope3Emission
-from utils import get_allowed_facility_ids, log_activity_and_notify, user_label
+from models import Emission, Facility, Notification, Scope2Emission, Scope3Emission
+from utils import (
+    get_allowed_facility_ids,
+    get_current_tenant_id,
+    log_activity_and_notify,
+    normalize_tenant_id,
+    tenant_matches,
+    user_label,
+)
 
 # Audit 2026-10-14 BUG-0005: Draft is the maker's unsubmitted work, not in the review queue, so it
 # cannot be decided either (approve-all used to verify drafts no reviewer had seen). The review
@@ -52,8 +59,12 @@ def _model(scope):
 def _reviewable_query(model, user, ids=None, approving=True):
     q = model.query.filter(model.status.in_(REVIEWABLE_STATUSES))
     allowed = get_allowed_facility_ids(user)
+    caller_tenant = get_current_tenant_id(user)
     if allowed is not None:
         q = q.filter(model.facility_id.in_(allowed or [-1]))
+    else:
+        tenant_fids = Facility.query.with_entities(Facility.id).filter(tenant_matches(Facility.tenant_id, caller_tenant))
+        q = q.filter(model.facility_id.in_(tenant_fids))
     if approving:
         # segregation of duties: neither the maker nor the last modifier may approve
         q = q.filter(or_(model.created_by.is_(None), model.created_by != user.id))
@@ -169,6 +180,11 @@ def decide_single(user, scope, record_id, decision, reason=None, request=None):
     allowed = get_allowed_facility_ids(user)
     if allowed is not None and record.facility_id not in allowed:
         raise DecisionError("Access to record facility is denied", 403)
+    caller_tenant = get_current_tenant_id(user)
+    if record.facility_id:
+        fac = db.session.get(Facility, record.facility_id)
+        if fac and normalize_tenant_id(getattr(fac, "tenant_id", None)) != caller_tenant:
+            raise DecisionError("Access to record facility is denied", 403)
     if record.status not in REVIEWABLE_STATUSES:
         raise DecisionError(f"Record is already {record.status}; only records awaiting review can be decided", 409)
     if decision == "approve" and user.id in {record.created_by, getattr(record, "updated_by", None)}:
@@ -215,6 +231,13 @@ def delete_denied_reason(user, record):
     """None when `user` may delete `record`, else the reason (HTTP 403)."""
     if not user or user.role in ("auditor", "it_admin", "it_manager", "it"):
         return "Forbidden: this account cannot delete emission records"
+    from utils import get_current_tenant_id, normalize_tenant_id
+    caller_tenant = get_current_tenant_id(user)
+    if getattr(record, "facility_id", None):
+        from models import Facility
+        fac = db.session.get(Facility, record.facility_id)
+        if fac and normalize_tenant_id(getattr(fac, "tenant_id", None)) != caller_tenant:
+            return "Forbidden: Record belongs to another organization"
     allowed = get_allowed_facility_ids(user)
     if allowed is not None and record.facility_id not in allowed:
         return "Forbidden: Outside your region"

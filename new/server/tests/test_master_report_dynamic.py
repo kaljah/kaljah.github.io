@@ -66,7 +66,8 @@ def seeded_basin_alpha_data():
                     activity="Stationary Combustion",
                     fuel_type="natural_gas",
                     quantity=50000.0 * i,
-                    unit="m3"
+                    unit="m3",
+                    status="Verified",
                 )
                 db.session.add(em)
 
@@ -110,7 +111,17 @@ def seeded_basin_alpha_data():
                 db.session.add(prod)
 
         db.session.commit()
-        yield fac
+        try:
+            yield fac
+        finally:
+            db.session.rollback()
+            fac_id = fac.id
+            EmissionSource.query.filter_by(facility_id=fac_id).delete(synchronize_session=False)
+            Emission.query.filter_by(facility_id=fac_id).delete(synchronize_session=False)
+            CustomFactor.query.filter_by(facility_id=fac_id).delete(synchronize_session=False)
+            ProductionData.query.filter_by(facility_id=fac_id).delete(synchronize_session=False)
+            Facility.query.filter_by(id=fac_id).delete(synchronize_session=False)
+            db.session.commit()
 
 
 def test_aggregate_master_report_basin_alpha_unbounded(seeded_basin_alpha_data):

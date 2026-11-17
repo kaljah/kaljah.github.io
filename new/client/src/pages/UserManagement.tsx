@@ -229,7 +229,7 @@ const S: Record<string, any> = {
   tableWrap: { overflowX: "auto" },
   table: { width: "100%", borderCollapse: "collapse", minWidth: "980px" },
   th: {
-    textAlign: "left",
+    textAlign: "start",
     padding: "11px 16px",
     background: "var(--bg-body)",
     color: "var(--color-ink-600)",

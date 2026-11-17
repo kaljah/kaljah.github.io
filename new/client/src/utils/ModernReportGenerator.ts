@@ -637,11 +637,11 @@ ${scopeText}`;
     const na = "n/a";
     const flareIntensityHl = flaringSummary?.flaring_intensity_pct;
     const execHighlights = [
-      ["Scope 1 & 2 Emissions", `${(fullData.totalEmissions).toLocaleString(undefined, { maximumFractionDigits: 0 })} tCO2e`,
+      ["Scope 1 & 2 Emissions", `${(fullData.totalEmissions).toLocaleString("en-US", { maximumFractionDigits: 0 })} tCO2e`,
         `Verified Scope 1 + 2 for ${isAllYears ? "all years" : selectedYear}.`],
-      ["Methane Emissions", `${fullData.ch4Total.toLocaleString(undefined, { maximumFractionDigits: 0 })} tCH4`,
+      ["Methane Emissions", `${fullData.ch4Total.toLocaleString("en-US", { maximumFractionDigits: 0 })} tCH4`,
         "Verified bottom-up methane for the period."],
-      ["Operational Flaring Volume", flaringSummary?.total_flaring ? `${flaringSummary.total_flaring.volume_knm3.toLocaleString()} kNm3` : na,
+      ["Operational Flaring Volume", flaringSummary?.total_flaring ? `${flaringSummary.total_flaring.volume_knm3.toLocaleString("en-US")} kNm3` : na,
         flareIntensityHl != null ? `Flaring intensity ${flareIntensityHl}% of gross gas vs the 1.00% limit (${flaringSummary.compliance_status}).` : (flaringSummary?.compliance_status || "Flaring intensity not assessable for this period.")],
       ["Flare Destruction Efficiency (DRE)", flaringSummary?.measured_dre_pct != null ? `${flaringSummary.measured_dre_pct}% measured` : na,
         flaringSummary?.dre_method || "No measured DRE recorded; calculations use the API defaults (96.5% combustion, 98% CH4 destruction; 99.5% at refineries)."],
@@ -902,15 +902,16 @@ Email: ${personResponsible.email || "N/A"}`;
       0
     );
 
-    // 1 MMSm3 = 35,314.67 Mcf x 0.178 BOE/Mcf (platform BOE definition, services/dashboard_filters.py)
-    const MMBOE_PER_MMSM3 = 35.314666721 * 0.178 / 1000;
+    // 1 MMSm3 = 35,314.67 Mcf x 1.020 MMBtu/Mcf / 5.8 MMBtu/BOE (the server's BOE definition,
+    // calculations/units.py GAS_BOE_PER_MSCF; 0.178 was 1/5.615, a volume equivalence: +1.2 %, BA-014)
+    const MMBOE_PER_MMSM3 = (35.314666721 * (1.02 / 5.8)) / 1000;
     const NA = "—";
     const prodRows = [
       [
         "Gross Gas Production",
         "MMSm3",
         grossGasMmsm3 > 0
-          ? grossGasMmsm3.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+          ? grossGasMmsm3.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
           : NA,
         grossGasMmsm3 > 0 ? (grossGasMmsm3 * MMBOE_PER_MMSM3).toFixed(2) + " MMBOE" : NA,
       ],
@@ -918,7 +919,7 @@ Email: ${personResponsible.email || "N/A"}`;
         "Injected Gas Volume",
         "MMSm3",
         injGasMmsm3 > 0
-          ? injGasMmsm3.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+          ? injGasMmsm3.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
           : NA,
         injGasMmsm3 > 0 ? (injGasMmsm3 * MMBOE_PER_MMSM3).toFixed(2) + " MMBOE" : NA,
       ],
@@ -926,7 +927,7 @@ Email: ${personResponsible.email || "N/A"}`;
         "Gas Production w/o Injected Gas",
         "MMSm3",
         gasWoInjMmsm3 > 0
-          ? gasWoInjMmsm3.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+          ? gasWoInjMmsm3.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
           : NA,
         gasWoInjMmsm3 > 0 ? (gasWoInjMmsm3 * MMBOE_PER_MMSM3).toFixed(2) + " MMBOE" : NA,
       ],
@@ -987,28 +988,28 @@ Email: ${personResponsible.email || "N/A"}`;
       body: [
         [
           "Category 1: Direct GHG emissions (Scope 1)",
-          fullData.scope1Total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+          fullData.scope1Total.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
           fullData.totalEmissions > 0 ? ((fullData.scope1Total / fullData.totalEmissions) * 100).toFixed(1) + "%" : "0.0%",
         ],
         [
           "Category 2: Indirect emissions from imported energy (Scope 2)",
-          fullData.scope2Total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+          fullData.scope2Total.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
           fullData.totalEmissions > 0 ? ((fullData.scope2Total / fullData.totalEmissions) * 100).toFixed(1) + "%" : "0.0%",
         ],
         [
           "    Scope 2 market-based (contractual instruments; reported beside, not added)",
           scope2MarketTotal == null ? "n/a"
-            : scope2MarketTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+            : scope2MarketTotal.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
           "—",
         ],
         [
           "Categories 3-6: Value chain indirect GHG emissions (Scope 3)",
-          fullData.scope3Total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+          fullData.scope3Total.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
           "—",
         ],
         [
           { content: "Total Consolidated Footprint (Scopes 1+2)", styles: { fontStyle: "bold" } },
-          { content: fullData.totalEmissions.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }), styles: { fontStyle: "bold" } },
+          { content: fullData.totalEmissions.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }), styles: { fontStyle: "bold" } },
           { content: "100.0%", styles: { fontStyle: "bold" } },
         ],
       ],
@@ -1032,14 +1033,14 @@ Email: ${personResponsible.email || "N/A"}`;
     const sangeaVenting = fullData.processBreakdown?.["Venting"] ?? 0.0;
 
     const sangeaRows = [
-      ["Stationary Combustion", Number(sangeaCombustion).toLocaleString(undefined, { maximumFractionDigits: 1 }), "Gas turbines, compressor drivers, heaters, thermal oxidizers"],
-      ["Flaring (Routine, Non-Routine, Safety)", Number(sangeaFlaring).toLocaleString(undefined, { maximumFractionDigits: 1 }), "Central processing facility (CPF) flares, low-pressure flares, pilots"],
-      ["Equipment Leaks & Fugitives", Number(sangeaLeaks).toLocaleString(undefined, { maximumFractionDigits: 1 }), "Valves, pump seals, compressor rod packing, flanges"],
-      ["Tank & Process Venting", Number(sangeaVenting).toLocaleString(undefined, { maximumFractionDigits: 1 }), "Atmospheric storage tanks, glycol dehydrators, pig launching/receiving"],
-      ["Scope 2 (Purchased Electricity)", Number(fullData.scope2Total).toLocaleString(undefined, { maximumFractionDigits: 1 }), "Purchased power imported from national electricity grid"],
+      ["Stationary Combustion", Number(sangeaCombustion).toLocaleString("en-US", { maximumFractionDigits: 1 }), "Gas turbines, compressor drivers, heaters, thermal oxidizers"],
+      ["Flaring (Routine, Non-Routine, Safety)", Number(sangeaFlaring).toLocaleString("en-US", { maximumFractionDigits: 1 }), "Central processing facility (CPF) flares, low-pressure flares, pilots"],
+      ["Equipment Leaks & Fugitives", Number(sangeaLeaks).toLocaleString("en-US", { maximumFractionDigits: 1 }), "Valves, pump seals, compressor rod packing, flanges"],
+      ["Tank & Process Venting", Number(sangeaVenting).toLocaleString("en-US", { maximumFractionDigits: 1 }), "Atmospheric storage tanks, glycol dehydrators, pig launching/receiving"],
+      ["Scope 2 (Purchased Electricity)", Number(fullData.scope2Total).toLocaleString("en-US", { maximumFractionDigits: 1 }), "Purchased power imported from national electricity grid"],
       [
         { content: "Total Operational Footprint", styles: { fontStyle: "bold" } },
-        { content: Number(fullData.totalEmissions).toLocaleString(undefined, { maximumFractionDigits: 1 }), styles: { fontStyle: "bold" } },
+        { content: Number(fullData.totalEmissions).toLocaleString("en-US", { maximumFractionDigits: 1 }), styles: { fontStyle: "bold" } },
         { content: "Comprehensive Operational Inventory (API Compendium 2021)", styles: { fontStyle: "bold" } },
       ],
     ];
@@ -1081,15 +1082,15 @@ Email: ${personResponsible.email || "N/A"}`;
     const tot_tco2e = flaringSummary?.total_flaring?.tco2e ?? sangeaFlaring;
 
     const flareStreamRows = [
-      ["Routine Flaring", r_knm3.toLocaleString(), (r_knm3 / 1000).toFixed(3), (flaringSummary?.routine_flaring?.percentage ?? 0) + "%", Number(r_tco2e).toLocaleString(undefined, { maximumFractionDigits: 1 }), "Continuous flaring of associated gas during normal operations"],
-      ["Non-Routine Flaring", nr_knm3.toLocaleString(), (nr_knm3 / 1000).toFixed(3), (flaringSummary?.non_routine_flaring?.percentage ?? 0) + "%", Number(nr_tco2e).toLocaleString(undefined, { maximumFractionDigits: 1 }), "Process upsets, plant turnarounds, depressurizations, unit trips"],
-      ["Safety & Purge Flaring", s_knm3.toLocaleString(), (s_knm3 / 1000).toFixed(3), (flaringSummary?.safety_flaring?.percentage ?? 0) + "%", Number(s_tco2e).toLocaleString(undefined, { maximumFractionDigits: 1 }), "Continuous flare header sweep, pilot gas, and positive pressure seal"],
+      ["Routine Flaring", r_knm3.toLocaleString("en-US"), (r_knm3 / 1000).toFixed(3), (flaringSummary?.routine_flaring?.percentage ?? 0) + "%", Number(r_tco2e).toLocaleString("en-US", { maximumFractionDigits: 1 }), "Continuous flaring of associated gas during normal operations"],
+      ["Non-Routine Flaring", nr_knm3.toLocaleString("en-US"), (nr_knm3 / 1000).toFixed(3), (flaringSummary?.non_routine_flaring?.percentage ?? 0) + "%", Number(nr_tco2e).toLocaleString("en-US", { maximumFractionDigits: 1 }), "Process upsets, plant turnarounds, depressurizations, unit trips"],
+      ["Safety & Purge Flaring", s_knm3.toLocaleString("en-US"), (s_knm3 / 1000).toFixed(3), (flaringSummary?.safety_flaring?.percentage ?? 0) + "%", Number(s_tco2e).toLocaleString("en-US", { maximumFractionDigits: 1 }), "Continuous flare header sweep, pilot gas, and positive pressure seal"],
       [
         { content: "Total CPF & Field Flaring", styles: { fontStyle: "bold" } },
-        { content: tot_knm3.toLocaleString(), styles: { fontStyle: "bold" } },
+        { content: tot_knm3.toLocaleString("en-US"), styles: { fontStyle: "bold" } },
         { content: (tot_knm3 / 1000).toFixed(3), styles: { fontStyle: "bold" } },
         { content: "100.0%", styles: { fontStyle: "bold" } },
-        { content: Number(tot_tco2e).toLocaleString(undefined, { maximumFractionDigits: 1 }), styles: { fontStyle: "bold" } },
+        { content: Number(tot_tco2e).toLocaleString("en-US", { maximumFractionDigits: 1 }), styles: { fontStyle: "bold" } },
         { content: "Consolidated Annual Flare Stream", styles: { fontStyle: "bold" } },
       ],
     ];
@@ -1228,7 +1229,7 @@ Email: ${personResponsible.email || "N/A"}`;
           pa.code,
           "",
           totCo2eAll > 0 ? `${((pa.co2e / totCo2eAll) * 100).toFixed(2)}%` : "n/a",
-          pa.co2e.toLocaleString(undefined, { maximumFractionDigits: 1 }),
+          pa.co2e.toLocaleString("en-US", { maximumFractionDigits: 1 }),
           pa.ch4.toFixed(1),
         ]),
         [
@@ -1236,7 +1237,7 @@ Email: ${personResponsible.email || "N/A"}`;
           "",
           "",
           "",
-          { content: totCo2eAll.toLocaleString(undefined, { maximumFractionDigits: 1 }), styles: { fontStyle: "bold" } },
+          { content: totCo2eAll.toLocaleString("en-US", { maximumFractionDigits: 1 }), styles: { fontStyle: "bold" } },
           { content: totCh4All.toFixed(1), styles: { fontStyle: "bold" } },
         ],
       ];
@@ -1486,11 +1487,11 @@ Email: ${personResponsible.email || "N/A"}`;
         r[12] || "1",
         r[2],
         r[3],
-        Number(r[4] || 0).toLocaleString(undefined, { maximumFractionDigits: 1 }),
+        Number(r[4] || 0).toLocaleString("en-US", { maximumFractionDigits: 1 }),
         r[11],
-        Number(r[5] || 0).toLocaleString(undefined, { maximumFractionDigits: 1 }),
-        Number(r[6] || 0).toLocaleString(undefined, { maximumFractionDigits: 2 }),
-        Number(r[7] || 0).toLocaleString(undefined, { maximumFractionDigits: 1 }),
+        Number(r[5] || 0).toLocaleString("en-US", { maximumFractionDigits: 1 }),
+        Number(r[6] || 0).toLocaleString("en-US", { maximumFractionDigits: 2 }),
+        Number(r[7] || 0).toLocaleString("en-US", { maximumFractionDigits: 1 }),
       ]),
       ...cleanTableTheme,
       styles: { fontSize: 6.5, cellPadding: 1.2 },
@@ -1715,7 +1716,7 @@ async function fetchAllReportData(
     intensityMetrics = {
       avgCo2: totalBoeSum > 0 ? ((weightedCo2Sum / totalBoeSum) * gwpRatio).toFixed(4) : "0",
       avgCh4: totalBoeSum > 0 ? (weightedCh4Sum / totalBoeSum).toFixed(4) : "0",
-      totalProd: totalBoeSum.toLocaleString(undefined, {
+      totalProd: totalBoeSum.toLocaleString("en-US", {
         maximumFractionDigits: 0,
       }),
     };
@@ -1746,7 +1747,7 @@ async function fetchAllReportData(
     facilityBreakdown,
     intensityMetrics,
     monthlyData,
-    totalScale: totalEmissions.toLocaleString(undefined, {
+    totalScale: totalEmissions.toLocaleString("en-US", {
       maximumFractionDigits: 2,
     }),
     totalEmissions,

@@ -90,8 +90,8 @@ def test_tier3_flaring_has_n2o():
     res = CalculationDispatcher().dispatch(
         "flaring", dict(process_type="flaring", factor_source="specific", amount=50000, unit="m3", c1=85, c2=7, c3=3,
                         co2_mol=2, n2_mol=3, flare_type="elevated"), {}, {})["results"]
-    # 50,000 m3 x 35.3147 scf/m3 x 1,020 Btu/scf = 1,801 MMBtu x 0.0001 kg/MMBtu (Table 5-3)
-    assert res["n2o"]["value"] == pytest.approx(50000 * 35.314666721 * 1020 / 1e6 * 0.0001 / 1000, rel=1e-9)
+    # Eq 5-6: E_N2O = E_CO2 x 1.0E-04 / 60 (the N2O follows the flare CO2, blind audit BA-017)
+    assert res["n2o"]["value"] == pytest.approx(res["co2"]["value"] * 0.0001 / 60.0, rel=1e-9)
     # carbon balance: 50,000 m3 x 1.08 C x 98.4 % + 2 % native CO2, at 44.01 / 23.685 kg/m3
     assert res["co2"]["value"] == pytest.approx((50000 * 1.08 * 0.965 + 50000 * 0.02) * (44.01 / 23.685) / 1000, rel=1e-6)
 

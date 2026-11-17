@@ -16,7 +16,7 @@ from models import Emission, Facility, Notification, User
 from routes.auth import login_required
 from services.ogmp import ogmp_level_for
 from sqlalchemy import func
-from utils import bulk_status_fields, get_allowed_facility_ids, get_current_user, log_activity_and_notify
+from utils import bulk_status_fields, get_allowed_facility_ids, get_current_user, get_current_tenant_id, log_activity_and_notify, normalize_tenant_id, tenant_matches
 from . import emissions_bp
 from routes.emissions import resolve_gwp_dict, resolve_gwp_standard
 
@@ -275,7 +275,6 @@ def import_emissions():
                 if f_name_clean.lower() in facility_cache:
                     facility = facility_cache[f_name_clean.lower()]
                 else:
-                    from utils import get_current_tenant_id, tenant_matches
                     matches = (
                         Facility.query.filter(
                             func.lower(func.trim(Facility.name)) == f_name_clean.lower(),
@@ -297,7 +296,12 @@ def import_emissions():
                         if fid in facility_cache:
                             facility = facility_cache[fid]
                         else:
-                            facility = db.session.get(Facility, fid)
+                            f_candidate = db.session.get(Facility, fid)
+                            caller_tenant = get_current_tenant_id(user)
+                            if f_candidate and normalize_tenant_id(getattr(f_candidate, "tenant_id", None)) == caller_tenant:
+                                facility = f_candidate
+                            else:
+                                facility = None
                             facility_cache[fid] = facility
                     else:
                         facility = None
@@ -306,6 +310,10 @@ def import_emissions():
 
             if not facility:
                 errors.append(f"Row {i}: Facility/Region '{f_val}' not found")
+                continue
+            caller_tenant = get_current_tenant_id(user)
+            if normalize_tenant_id(getattr(facility, "tenant_id", None)) != caller_tenant:
+                errors.append(f"Row {i}: Unauthorized for facility '{f_val}'")
                 continue
             elif allowed_ids is not None and facility.id not in allowed_ids:
                 errors.append(f"Row {i}: Unauthorized for facility '{f_val}'")
@@ -419,7 +427,6 @@ def import_emissions():
                     + ", ".join(f"{n} {s}" for s, n in sorted(status_counts.items())) + ")",
         )
         n_pending = sum(n for s, n in status_counts.items() if s != "Verified")
-        from utils import get_current_tenant_id, tenant_matches
         caller_tenant = get_current_tenant_id(user)
         for admin in (
             User.query.filter_by(role="admin", status="active")

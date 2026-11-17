@@ -88,8 +88,7 @@ def update_user(id):
     if not user:
         return jsonify({"error": "User not found"}), 404
 
-    it_admin_id = session.get("user_id")
-    it_admin = db.session.get(User, it_admin_id)
+    it_admin = get_current_user()
     if (denied := _cross_tenant_denied(it_admin, user)):
         return denied
 
@@ -179,7 +178,8 @@ def update_user(id):
 @auth_bp.route("/users/<int:id>", methods=["DELETE"])
 @it_admin_required
 def delete_user(id):
-    if id == session.get("user_id"):
+    current_u = get_current_user()
+    if current_u and id == current_u.id:
         return jsonify({"error": "Cannot delete your own account"}), 400
 
     db.session.expire_all()
@@ -188,8 +188,7 @@ def delete_user(id):
         return jsonify({"error": "User not found"}), 404
 
     # IT Admins have global authority over all user accounts — no regional restriction
-    it_admin_id = session.get("user_id")
-    it_admin = db.session.get(User, it_admin_id)
+    it_admin = current_u
     if (denied := _cross_tenant_denied(it_admin, user)):
         return denied
     if it_admin and it_admin.role in CLIENT_IT_ROLES and user.role in CLIENT_IT_PROTECTED_ROLES:
@@ -208,26 +207,44 @@ def delete_user(id):
     from sqlalchemy import text
     from utils import user_label
 
+    personal_tables = ("users", "notifications", "import_mappings", "user_facility_access")
+    user_refs = [
+        (table, col)
+        for table in db.metadata.sorted_tables
+        if table.name not in personal_tables
+        for col in table.columns
+        if any(fk.column.table.name == "users" for fk in col.foreign_keys)
+    ]
+    # The f-string SQL below only interpolates table and column names taken from the SQLAlchemy model
+    # metadata (never request input); the user id is always a bound parameter.
+    # a required reference (e.g. recalculation_requests.requested_by) cannot be cleared, and handing
+    # it to another account would rewrite who did the work: the account is deactivated instead
+    for table, col in user_refs:
+        if col.nullable:
+            continue
+        if db.session.execute(text(f'SELECT 1 FROM "{table.name}" WHERE "{col.name}" = :uid LIMIT 1'), {"uid": id}).first():
+            return jsonify({
+                "error": f"This account is recorded as {col.name} on {table.name} and cannot be deleted: deactivate it instead",
+                "code": 409,
+            }), 409
+
     label = user_label(user)
     db.session.execute(text("DELETE FROM notifications WHERE user_id = :uid"), {"uid": id})
-    # saved import column mappings are personal (user_id is NOT NULL): they go with the account
+    # saved import column mappings and facility assignments are personal: they go with the account
     db.session.execute(text("DELETE FROM import_mappings WHERE user_id = :uid"), {"uid": id})
-    for table in db.metadata.sorted_tables:
-        if table.name in ("users", "notifications", "import_mappings"):
-            continue
-        for col in table.columns:
-            if not any(fk.column.table.name == "users" for fk in col.foreign_keys):
-                continue
-            snapshot = f"{col.name}_name"
-            if snapshot in table.columns:
-                db.session.execute(
-                    text(f'UPDATE "{table.name}" SET "{snapshot}" = :label '
-                         f'WHERE "{col.name}" = :uid AND ("{snapshot}" IS NULL OR "{snapshot}" = \'\')'),
-                    {"uid": id, "label": label},
-                )
+    db.session.execute(text("DELETE FROM user_facility_access WHERE user_id = :uid"), {"uid": id})
+
+    for table, col in user_refs:  # every reference left is nullable (checked above)
+        snapshot = f"{col.name}_name"
+        if snapshot in table.columns:
             db.session.execute(
-                text(f'UPDATE "{table.name}" SET "{col.name}" = NULL WHERE "{col.name}" = :uid'), {"uid": id}
+                text(f'UPDATE "{table.name}" SET "{snapshot}" = :label '
+                     f'WHERE "{col.name}" = :uid AND ("{snapshot}" IS NULL OR "{snapshot}" = \'\')'),
+                {"uid": id, "label": label},
             )
+        db.session.execute(
+            text(f'UPDATE "{table.name}" SET "{col.name}" = NULL WHERE "{col.name}" = :uid'), {"uid": id}
+        )
 
     # BUG-106: user deletion is an auditable action
     log_activity_and_notify(
@@ -257,8 +274,7 @@ def admin_reset_password(id):
     if not user:
         return jsonify({"error": "User not found"}), 404
 
-    current_admin_id = session.get("user_id")
-    admin_user = db.session.get(User, current_admin_id) if current_admin_id else None
+    admin_user = get_current_user()
     if (denied := _cross_tenant_denied(admin_user, user)):
         return denied
 

@@ -30,7 +30,9 @@ FUEL_BASIS = {
                "ch4": 3.0e-6, "n2o": 6.0e-7},
     "gasoline": {"label": "Motor gasoline", "co2": 0.07022, "hhv": 0.125, "hhv_unit": "MMBtu/gal",
                  "ch4": 3.0e-6, "n2o": 6.0e-7},
-    "coal": {"label": "Coal", "co2": 0.09552, "hhv": 24.0, "hhv_unit": "MMBtu/t",
+    # one Table C-1 row: coal, mixed (electric power sector) 95.52 kg CO2/MMBtu at 19.73 MMBtu/short ton
+    # = 21.749 MMBtu/tonne (the 24.0 MMBtu/t had no row; BA-018)
+    "coal": {"label": "Coal (mixed, electric power)", "co2": 0.09552, "hhv": 19.73 / 0.90718474, "hhv_unit": "MMBtu/t",
              "ch4": 1.1e-5, "n2o": 1.6e-6},
 }
 
@@ -207,7 +209,8 @@ class CombustionMethodCalculator(BaseCalculator):
             else:
                 v_val = _num(vol_raw, "fuel volume")
                 gal = v_val * _unit(unit_raw, LIQ_TO_GAL, "Fuel volume", "gal")
-                dens = _num(i.get("fuel_density"), "fuel density", positive=True) \
+                raw_dens = i.get("fuel_density") if i.get("fuel_density") not in (None, "") else i.get("density")
+                dens = _num(raw_dens, "fuel density", positive=True) \
                     * _unit(i.get("density_unit"), DENSITY_TO_LB_GAL, "Density", "lb/gal")
                 mass_t = gal * dens / 2204.62
                 inter.update(activity_amount=v_val, activity_unit=unit_raw or "gal", fuel_mass_t=mass_t)

@@ -133,6 +133,7 @@ class VentedGasCalculator(BaseCalculator):
             if u not in to_t:
                 raise ValueError("Mass unit must be t, kg, lb or short_ton")
             ch4 = _num(i.get("ch4_mass"), "CH4 emitted") * to_t[u]
+            inlet_ch4 = ch4
             co2 = _num(i.get("co2_mass"), "CO2 emitted", default=0.0) * to_t[u]
             eff = _frac(i.get("control_efficiency"), "control efficiency")
             ctrl_type = str(i.get("control_type") or i.get("disposition") or "").lower().strip()
@@ -144,7 +145,7 @@ class VentedGasCalculator(BaseCalculator):
                 ch4, co2, v_scf = ch4 * (1.0 - eff), co2 * (1.0 - eff), None
             else:
                 v_scf = None
-            activity = (ch4 / (1 - eff) if eff < 1 else ch4, "t CH4 before control")
+            activity = (0.0 if eff >= 1.0 else inlet_ch4, "t CH4 before control")
         elif str(method).lower() == "thc_mass":
             u = str(i.get("thc_loss_unit") or "t").strip().lower()
             to_t = {"t": 1.0, "tonne": 1.0, "kg": 1e-3, "lb": 1 / 2204.62, "short_ton": 0.90718474}
@@ -184,7 +185,8 @@ class VentedGasCalculator(BaseCalculator):
                 ce = _frac(i.get("combustion_efficiency"), "combustion efficiency") if i.get("combustion_efficiency") not in (None, "") else 0.965
                 ch4 = raw_ch4 * (1.0 - de)
                 co2 += (raw_ch4 * ce) * (44.01 / 16.04)
-                v_scf = v_acid_scf
+                assist_scf = float(i.get("assist_gas_scf") or 0.0)
+                v_scf = ch4_scf + assist_scf
             else:
                 ch4 = raw_ch4
                 v_scf = v_acid_scf

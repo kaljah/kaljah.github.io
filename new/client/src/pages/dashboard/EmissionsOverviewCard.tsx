@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Printer, BookOpen } from "lucide-react";
 import { Badge, Button, Card, StatCard } from "../../ui";
-import { formatCompactNumber } from "../../utils/formatters";
+import { formatCompactNumber, roundedShares } from "../../utils/formatters";
 import { buildKpiMetadata } from "../../utils/kpiMetadata";
 import { KpiMethodologyDrawer } from "../../components/KpiMethodologyDrawer";
 import { t } from "../../i18n";
@@ -89,9 +89,11 @@ const EmissionsOverviewCard: React.FC<EmissionsOverviewCardProps> = ({
   const intensityPending = !hasProductionData && stats.totalEmissions > 0;
 
   const totalReported = (stats.scope1 || 0) + (stats.scope2 || 0) + (stats.scope3 || 0);
-  const s1Pct = totalReported > 0 ? (((stats.scope1 || 0) / totalReported) * 100).toFixed(0) : null;
-  const s2Pct = totalReported > 0 ? (((stats.scope2 || 0) / totalReported) * 100).toFixed(0) : null;
-  const s3Pct = totalReported > 0 ? (((stats.scope3 || 0) / totalReported) * 100).toFixed(0) : null;
+  // shares that add up to 100 % (each rounded alone gave 99 %, BA-021)
+  const [s1Share, s2Share, s3Share] = roundedShares([stats.scope1 || 0, stats.scope2 || 0, stats.scope3 || 0]);
+  const s1Pct = totalReported > 0 && s1Share !== null ? String(s1Share) : null;
+  const s2Pct = totalReported > 0 && s2Share !== null ? String(s2Share) : null;
+  const s3Pct = totalReported > 0 && s3Share !== null ? String(s3Share) : null;
 
   const kpiOpts = {
     year: currentYear,
@@ -211,7 +213,7 @@ const EmissionsOverviewCard: React.FC<EmissionsOverviewCardProps> = ({
 
       {/* Row 2: Scope breakdown (Scope 1 = deep orange, Scope 2 = blue, Scope 3 = violet per C2) */}
       <div className="flex flex-col sm:flex-row gap-3 rounded-lg border border-border bg-surface/60 p-3">
-        <div className="scope-pill scope-1 flex flex-1 min-w-0 flex-col justify-between gap-1.5 rounded-md border-l-3 border-l-brand-700 border border-border/60 bg-surface p-3 text-sm">
+        <div className="scope-pill scope-1 flex flex-1 min-w-0 flex-col justify-between gap-1.5 rounded-md border-s-3 border-s-brand-700 border border-border/60 bg-surface p-3 text-sm">
           <div className="flex items-center justify-between gap-2">
             <span className="pill-label font-medium text-text truncate">{t("Scope 1 (Direct)")}</span>
             {s1Pct !== null && (
@@ -222,7 +224,7 @@ const EmissionsOverviewCard: React.FC<EmissionsOverviewCardProps> = ({
             {formatCompactNumber(stats.scope1)} <span className="text-xs font-normal text-text-secondary">{t("tCO₂e")}</span>
           </span>
         </div>
-        <div className="scope-pill scope-2 flex flex-1 min-w-0 flex-col justify-between gap-1.5 rounded-md border-l-3 border-l-blue-600 border border-border/60 bg-surface p-3 text-sm">
+        <div className="scope-pill scope-2 flex flex-1 min-w-0 flex-col justify-between gap-1.5 rounded-md border-s-3 border-s-blue-600 border border-border/60 bg-surface p-3 text-sm">
           <div className="flex items-center justify-between gap-2">
             <span className="pill-label font-medium text-text truncate">{t("Scope 2 (Indirect)")}</span>
             {s2Pct !== null && (
@@ -233,7 +235,7 @@ const EmissionsOverviewCard: React.FC<EmissionsOverviewCardProps> = ({
             {formatCompactNumber(stats.scope2)} <span className="text-xs font-normal text-text-secondary">{t("tCO₂e")}</span>
           </span>
         </div>
-        <div className="scope-pill scope-3 flex flex-1 min-w-0 flex-col justify-between gap-1.5 rounded-md border-l-3 border-l-violet-600 border border-border/60 bg-surface p-3 text-sm">
+        <div className="scope-pill scope-3 flex flex-1 min-w-0 flex-col justify-between gap-1.5 rounded-md border-s-3 border-s-violet-600 border border-border/60 bg-surface p-3 text-sm">
           <div className="flex items-center justify-between gap-2">
             <span className="pill-label font-medium text-text truncate">{t("Scope 3 (Supply Chain)")}</span>
             {s3Pct !== null && (

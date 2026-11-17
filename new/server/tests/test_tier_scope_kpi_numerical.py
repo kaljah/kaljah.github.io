@@ -234,15 +234,14 @@ class TestScope2Methods:
     def test_scope2_market_based_contractual_instruments(self):
         """Scope 2 market-based method through the platform factor policy: a verified green tariff / REC at 0 kg/kWh
         gives 0 t; a supplier-specific contract factor of 0.120 kg/kWh on 500,000 kWh gives 60 t CO2e."""
-        from routes.scope2 import resolve_electricity_factor
-        green_ef, _ = resolve_electricity_factor(None, 0.0)
+        from routes.scope2 import supplier_market_factor
+        green_ef = supplier_market_factor(None, 0.0)
         assert (500_000.0 * green_ef) / 1000.0 == 0.0
-        supplier_ef, region = resolve_electricity_factor(None, 0.120)
-        assert region is None
+        supplier_ef = supplier_market_factor(None, 0.120)
         assert (500_000.0 * supplier_ef) / 1000.0 == pytest.approx(60.0, abs=1e-5)
         # a negative factor is refused, not booked
         with pytest.raises(Exception):
-            resolve_electricity_factor(None, -1.0)
+            supplier_market_factor(None, -1.0)
 
     def test_scope2_indirect_steam_thermodynamic_equation(self):
         """Scope 2 Indirect Steam & Heat:
@@ -257,16 +256,16 @@ class TestScope2Methods:
             "unit": "MMBtu",
             "calc_inputs": {
                 "indirect_steam": {
-                    "boiler_eff": 0.80,
+                    "boiler_eff": 80,
                     "trans_loss": 0.05,
                     "ef_co2": 53.06,
                 }
             },
         }
         co2_tonnes, energy_mmbtu, ef = _calc_indirect_steam(data)
-        # CO2 plus the natural-gas CH4 / N2O of Table 4-6 (= EPA Hub Table 7) at AR5
+        # CO2 plus the boiler CH4 / N2O of Exhibit 8.3 (Table 4-7, 1.1E-06 / 3.0E-07 t/MMBtu) at AR5 (BA-008 / BA-045)
         fuel = 500.0 / (0.80 - 0.05)
-        expected = fuel * (53.06 + 0.001 * 28 + 0.0001 * 265) / 1000.0
+        expected = fuel * (53.06 + 0.0011 * 28 + 0.0003 * 265) / 1000.0
         assert abs(co2_tonnes - expected) < 1e-4
         assert energy_mmbtu == 500.0
 

@@ -86,16 +86,16 @@ const ExplorerDossier: React.FC<ExplorerDossierProps> = ({
   return (
     <section
       aria-label={t("Facility Reconnaissance Dossier")}
-      className="absolute bottom-5 right-4 top-[78px] z-950 flex w-[390px] max-w-[calc(100vw-32px)] animate-[slideInDossier_0.2s_ease-out] flex-col overflow-y-auto overflow-x-hidden rounded-lg border border-border bg-surface/95 p-5 shadow-lg backdrop-blur-lg"
+      className="absolute bottom-5 end-4 top-[78px] z-950 flex w-[390px] max-w-[calc(100vw-32px)] animate-[slideInDossier_0.2s_ease-out] flex-col overflow-y-auto overflow-x-hidden rounded-lg border border-border bg-surface/95 p-5 shadow-lg backdrop-blur-lg"
     >
       <header className="relative mb-4 border-b border-ink-100 pb-3.5">
-        <IconButton label={t("Close dossier")} className="absolute right-0 top-0" onClick={onClose}>
+        <IconButton label={t("Close dossier")} className="absolute end-0 top-0" onClick={onClose}>
           <X className="size-4" aria-hidden="true" />
         </IconButton>
         <p className="m-0 mb-1 inline-flex items-center gap-1.5 text-xs font-semibold text-brand-700">
           <span className="size-1.5 rounded-full bg-brand-500" aria-hidden="true" />{" "}{t("Facility reconnaissance dossier")}
         </p>
-        <h3 className="m-0 mb-1.5 pr-10 text-lg font-bold leading-tight text-text">{facility.name}</h3>
+        <h3 className="m-0 mb-1.5 pe-10 text-lg font-bold leading-tight text-text">{facility.name}</h3>
         <div className="flex items-center justify-between gap-2.5">
           <span className="flex items-center gap-1.5 text-xs text-text-secondary">
             <MapPin className="size-3.5 text-brand-500" aria-hidden="true" />
@@ -133,7 +133,7 @@ const ExplorerDossier: React.FC<ExplorerDossierProps> = ({
                   <span>
                     {t("Annual:")}{" "}<strong>{num(s.estimated_annual_tch4 || s.estimatedAnnualTch4)}{" "}{t("tCH₄")}</strong>
                   </span>
-                  <Badge tone="success" className="ml-auto">
+                  <Badge tone="success" className="ms-auto">
                     {s.reconciliation_status || t("Recorded")}
                   </Badge>
                 </div>
@@ -147,7 +147,7 @@ const ExplorerDossier: React.FC<ExplorerDossierProps> = ({
         <SectionTitle icon={BarChart3}>{t("Bottom-up reported inventory")}</SectionTitle>
         <div className="grid grid-cols-2 gap-2">
           <Stat
-            className="col-span-2 border-l-2 border-l-brand-500"
+            className="col-span-2 border-s-2 border-s-brand-500"
             label={methane ? t("Reported methane (CH₄)") : t("Reported total GHG")}
             value={methane ? `${formatCompact(stats.total_ch4)} tCH₄` : `${formatCompact(stats.total_co2e)} tCO₂e`}
           />

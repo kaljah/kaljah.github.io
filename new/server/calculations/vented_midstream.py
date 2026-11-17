@@ -33,7 +33,7 @@ from .uncertainty import (
     resolve_ef_uncertainty,
 )
 
-MOLAR_VOL_US = 379.3   # scf / lb-mole at 60°F, 14.696 psia
+from .units import MOLAR_VOLUME_SCF_PER_LBMOL as MOLAR_VOL_US  # noqa: E402  scf / lb-mole (BA-016)
 MOLAR_VOL_SI = 23.685  # Sm³ / kg-mole at 15.56°C, 101.325 kPa
 MW_CH4 = 16.04
 MW_CO2 = 44.01
@@ -57,18 +57,25 @@ def _count(value, default=1.0):
 
 
 def _parse_gas_comp(ch4_content, co2_content=None, default_ch4=0.85):
-    def _to_f(v, d):
+    def _raw_and_pct(v, d):
         if v in (None, "", "-"):
-            return d
+            return (d, False)
         s = str(v).strip()
+        has_pct = "%" in s
         val = float(s.replace("%", "").strip())
-        return (val / 100.0) if ("%" in s or val > 1.0) else val
-    c_ch4 = _to_f(ch4_content, default_ch4)
-    c_co2 = _to_f(co2_content, 0.0)
-    if c_ch4 < 0:
-        raise ValueError(f"ch4_content cannot be negative: {c_ch4}")
-    if c_co2 < 0:
-        raise ValueError(f"co2_content cannot be negative: {c_co2}")
+        return (val, has_pct)
+
+    val_ch4, pct_ch4 = _raw_and_pct(ch4_content, default_ch4)
+    val_co2, pct_co2 = _raw_and_pct(co2_content, 0.0)
+
+    if val_ch4 < 0:
+        raise ValueError(f"ch4_content cannot be negative: {val_ch4}")
+    if val_co2 < 0:
+        raise ValueError(f"co2_content cannot be negative: {val_co2}")
+
+    c_ch4 = (val_ch4 / 100.0) if (pct_ch4 or val_ch4 > 1.0) else val_ch4
+    c_co2 = (val_co2 / 100.0) if (pct_co2 or val_co2 > 1.0) else val_co2
+
     if (c_ch4 + c_co2) > 1.0001:
         raise ValueError(f"Sum of CH4 ({c_ch4*100:.1f}%) and CO2 ({c_co2*100:.1f}%) exceeds 100%")
     return c_ch4, c_co2
@@ -135,7 +142,7 @@ class GatheringCompressorVentingCalculator(BaseCalculator):
         self,
         compressor_count=1.0,
         pressurized_hours=8760.0,
-        source_standard="us_ghgrp",  # "us_ghgrp", "us_zimmerle", "canada_alberta"
+        source_standard="us_zimmerle",  # Table 6-30 default (Zimmerle 2019); GHGRP and Alberta for comparison (BA-035)
         ch4_content=None,
         co2_content=None,
         control_efficiency=None,
@@ -151,7 +158,7 @@ class GatheringCompressorVentingCalculator(BaseCalculator):
         n_comp = float(compressor_count)
         hrs = max(0.0, float(8760.0 if pressurized_hours is None else pressurized_hours))
 
-        std, factor_info = _pick(self.TABLE_6_30, source_standard or "us_ghgrp", "Table 6-30 source")
+        std, factor_info = _pick(self.TABLE_6_30, source_standard or "us_zimmerle", "Table 6-30 source")
 
         c_ch4, c_co2 = _parse_gas_comp(ch4_content, co2_content, factor_info["baseline_ch4_mol"])
 
@@ -399,7 +406,7 @@ class ProcessingDehydrationCalculator(BaseCalculator):
         hhv=1020.0,
         ef_n2o=None,
         uncertainties=None,
-        gwp_dict=None,
+        gwp_dict=None, year_fraction=1.0,  # year_fraction: an annual throughput's share on a monthly record (BA-031)
         **kwargs,
     ):
         uncertainties = uncertainties or {}
@@ -407,7 +414,7 @@ class ProcessingDehydrationCalculator(BaseCalculator):
         if gas_throughput_mmscfd is not None:
             annual_mmscf = float(gas_throughput_mmscfd) * days
         elif gas_throughput_mmscf_yr is not None:
-            annual_mmscf = float(gas_throughput_mmscf_yr)
+            annual_mmscf = float(gas_throughput_mmscf_yr) * _count(year_fraction, 1.0)
         else:
             raise ValueError("gas_throughput_mmscfd or gas_throughput_mmscf_yr must be provided")
 
@@ -780,12 +787,12 @@ class TransmissionNonRoutineCalculator(BaseCalculator):
         control_efficiency=None,
         disposition="vented",
         uncertainties=None,
-        gwp_dict=None,
+        gwp_dict=None, year_fraction=1.0,  # Table 6-43 factors are per station / mile-YEAR: the record's period
         **kwargs,
     ):
         uncertainties = uncertainties or {}
         act, factor_info = _pick(self.TABLE_6_43, activity or "transmission_station", "Table 6-43 activity")
-        n = _count(count_or_miles)
+        n = _count(count_or_miles) * _count(year_fraction, 1.0)
 
         c_ch4, c_co2 = _parse_gas_comp(ch4_content, co2_content, factor_info["baseline_ch4_mol"])
 

@@ -148,7 +148,7 @@ const SourcesTab: React.FC<SourcesTabProps> = ({
                       <>
                         {fac.name}
                         {fac.field && (
-                          <span className="text-xs text-ink-400 font-normal ml-1">
+                          <span className="text-xs text-ink-400 font-normal ms-1">
                             -{fac.field}
                           </span>
                         )}

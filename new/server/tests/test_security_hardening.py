@@ -13,19 +13,27 @@ from extensions import db, limiter
 
 @pytest.fixture(scope="module")
 def client():
+    keys = ("TESTING", "WTF_CSRF_ENABLED", "SECRET_KEY")
+    prev = {k: flask_app.config.get(k) for k in keys}
+    prev_lim = limiter.enabled
     flask_app.config.update({
         "TESTING": True,
         "WTF_CSRF_ENABLED": False,
         "SECRET_KEY": "security-hardening-test-secret",
-        "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
-        "SQLALCHEMY_ENGINE_OPTIONS": {"connect_args": {"check_same_thread": False}},
     })
-    # Ensure SEED_ADMIN is off — new code must not seed any accounts
     os.environ.pop("SEED_ADMIN", None)
     limiter.enabled = False
-    with flask_app.app_context():
-        db.create_all()
-        yield flask_app.test_client()
+    try:
+        with flask_app.app_context():
+            db.create_all()
+            yield flask_app.test_client()
+    finally:
+        limiter.enabled = prev_lim
+        for k, v in prev.items():
+            if v is None:
+                flask_app.config.pop(k, None)
+            else:
+                flask_app.config[k] = v
 
 
 

@@ -111,7 +111,7 @@ const MethaneIntensityHistoricalMethaneTrends: React.FC<MethaneIntensityHistoric
       ) : (
         <div className="heatmap-container mt-6 overflow-x-auto bg-ink-50 rounded-md border border-border p-4">
           <div className="heatmap-header grid grid-cols-[200px_repeat(5,_1fr)] gap-3 mb-4 px-3">
-            <div className="text-xs font-medium text-text-secondary text-left">
+            <div className="text-xs font-medium text-text-secondary text-start">
               {t("Region")}
             </div>
             {rawTrendData.map((d) => (

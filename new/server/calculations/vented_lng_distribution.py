@@ -29,7 +29,7 @@ from .uncertainty import (
     resolve_ef_uncertainty,
 )
 
-MOLAR_VOL_US = 379.3   # scf / lb-mole
+from .units import MOLAR_VOLUME_SCF_PER_LBMOL as MOLAR_VOL_US  # noqa: E402  scf / lb-mole (BA-016)
 MW_CH4 = 16.04
 MW_CO2 = 44.01
 MW_N2O = 44.013
@@ -314,12 +314,14 @@ class DistributionNonRoutineCalculator(BaseCalculator):
         uncertainties=None,
         gwp_dict=None,
         unit=None,
+        year_fraction=1.0,  # Table 6-46 factors are per station / mile-YEAR: a record covers its own period
         **kwargs,
     ):
         uncertainties = uncertainties or {}
         act, factor_info = _pick(self.TABLE_6_46, activity or "mr_station_blowdown", "Table 6-46 activity")
         u_dist = str(unit or kwargs.get("distance_unit") or "").lower().strip()
-        n = _count(count_or_miles) * (0.621371 if u_dist in ("km", "kilometer", "kilometers") else 1.0)
+        n = (_count(count_or_miles) * (0.621371 if u_dist in ("km", "kilometer", "kilometers") else 1.0)
+             * _count(year_fraction, 1.0))
 
         c_ch4, c_co2 = _parse_content(ch4_content, co2_content, default_ch4=factor_info["baseline_ch4_mol"])
 

@@ -57,16 +57,16 @@ export const Scope1OptionsSection: React.FC<Scope1OptionsSectionProps> = ({
                   {t("Meter Calibration Tolerance")}
                 </span>
                 <div className="flex! items-center!">
-                  <span className="text-sm text-text-secondary mr-1">±</span>
+                  <span className="text-sm text-text-secondary me-1">±</span>
                   <Input
                     type="number"
-                    className="w-20 h-9 px-2.5 text-sm font-mono text-right"
+                    className="w-20 h-9 px-2.5 text-sm font-mono text-end"
                     placeholder="2.0"
                     value={meterUncertaintyPct}
                     onChange={(e) => setMeterUncertaintyPct(e.target.value)}
                     step="0.1"
                   />
-                  <span className="text-sm text-text-secondary ml-1">%</span>
+                  <span className="text-sm text-text-secondary ms-1">%</span>
                 </div>
               </div>
               <div className="flex-1! p-[8px_12px]! bg-[color:var(--color-legacy-f3f4f6)]! rounded-[6px]! [border:1px_solid_var(--color-legacy-e5e7eb)]! flex! justify-between! items-center!">
@@ -74,16 +74,16 @@ export const Scope1OptionsSection: React.FC<Scope1OptionsSectionProps> = ({
                   {t("GC Analytical Precision")}
                 </span>
                 <div className="flex! items-center!">
-                  <span className="text-sm text-text-secondary mr-1">±</span>
+                  <span className="text-sm text-text-secondary me-1">±</span>
                   <Input
                     type="number"
-                    className="w-20 h-9 px-2.5 text-sm font-mono text-right"
+                    className="w-20 h-9 px-2.5 text-sm font-mono text-end"
                     placeholder={t("Opt.")}
                     value={gcUncertaintyPct}
                     onChange={(e) => setGcUncertaintyPct(e.target.value)}
                     step="0.1"
                   />
-                  <span className="text-sm text-text-secondary ml-1">%</span>
+                  <span className="text-sm text-text-secondary ms-1">%</span>
                 </div>
               </div>
               <div className="flex-1!"></div>
@@ -97,10 +97,10 @@ export const Scope1OptionsSection: React.FC<Scope1OptionsSectionProps> = ({
               <span className="text-xs font-semibold text-text">{t("CO₂")}</span>
               {sourceType === "specific" ? (
                 <div className="flex! items-center!">
-                  <span className="text-sm text-text-secondary mr-1">±</span>
+                  <span className="text-sm text-text-secondary me-1">±</span>
                   <Input
                     type="number"
-                    className="w-20 h-9 px-2.5 text-sm font-mono text-right"
+                    className="w-20 h-9 px-2.5 text-sm font-mono text-end"
                     placeholder="—"
                     value={userUncertainty.co2}
                     onChange={(e) =>
@@ -110,7 +110,7 @@ export const Scope1OptionsSection: React.FC<Scope1OptionsSectionProps> = ({
                       })
                     }
                   />
-                  <span className="text-sm text-text-secondary ml-1">%</span>
+                  <span className="text-sm text-text-secondary ms-1">%</span>
                 </div>
               ) : (
                 <span
@@ -124,10 +124,10 @@ export const Scope1OptionsSection: React.FC<Scope1OptionsSectionProps> = ({
               <span className="text-xs font-semibold text-text">{t("CH₄")}</span>
               {sourceType === "specific" ? (
                 <div className="flex! items-center!">
-                  <span className="text-sm text-text-secondary mr-1">±</span>
+                  <span className="text-sm text-text-secondary me-1">±</span>
                   <Input
                     type="number"
-                    className="w-20 h-9 px-2.5 text-sm font-mono text-right"
+                    className="w-20 h-9 px-2.5 text-sm font-mono text-end"
                     placeholder="—"
                     value={userUncertainty.ch4}
                     onChange={(e) =>
@@ -137,7 +137,7 @@ export const Scope1OptionsSection: React.FC<Scope1OptionsSectionProps> = ({
                       })
                     }
                   />
-                  <span className="text-sm text-text-secondary ml-1">%</span>
+                  <span className="text-sm text-text-secondary ms-1">%</span>
                 </div>
               ) : (
                 <span
@@ -151,10 +151,10 @@ export const Scope1OptionsSection: React.FC<Scope1OptionsSectionProps> = ({
               <span className="text-xs font-semibold text-text">N₂O</span>
               {sourceType === "specific" ? (
                 <div className="flex! items-center!">
-                  <span className="text-sm text-text-secondary mr-1">±</span>
+                  <span className="text-sm text-text-secondary me-1">±</span>
                   <Input
                     type="number"
-                    className="w-20 h-9 px-2.5 text-sm font-mono text-right"
+                    className="w-20 h-9 px-2.5 text-sm font-mono text-end"
                     placeholder="—"
                     value={userUncertainty.n2o}
                     onChange={(e) =>
@@ -164,7 +164,7 @@ export const Scope1OptionsSection: React.FC<Scope1OptionsSectionProps> = ({
                       })
                     }
                   />
-                  <span className="text-sm text-text-secondary ml-1">%</span>
+                  <span className="text-sm text-text-secondary ms-1">%</span>
                 </div>
               ) : (
                 <span

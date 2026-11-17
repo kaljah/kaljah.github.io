@@ -200,10 +200,11 @@ def test_exhibit_8_3_purchased_steam():
 def test_exhibit_8_1_purchased_electricity_supplier_factor():
     """PDF line 29705. 500,000 kWh from a natural gas combined-cycle plant at 0.40 t CO2/MWh: CO2 200 tonnes/yr.
     The platform has no generation-technology factor table, only grid regions and a supplier CO2e factor, so the
-    exhibit's CH4 (0.0034 t) and N2O (0.0143 t) lines are not reproducible; the CO2 line is, as a 0.40 kg/kWh factor."""
-    from routes.scope2 import resolve_electricity_factor
-    factor, region = resolve_electricity_factor(None, 0.40)
-    assert region is None
+    exhibit's CH4 (0.0034 t) and N2O (0.0143 t) lines are not reproducible; the CO2 line is, as a 0.40 kg/kWh factor.
+    A supplier (generator-specific) factor is the market-based factor (GHG Protocol Scope 2 Guidance, blind audit
+    BA-007); the location-based value needs a grid-average factor."""
+    from routes.scope2 import supplier_market_factor
+    factor = supplier_market_factor(None, 0.40)
     assert_printed(500_000 * factor / 1000.0, "200", what="CO2e")
 
 

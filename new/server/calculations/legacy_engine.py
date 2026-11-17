@@ -25,7 +25,7 @@ def _note_fallback(branch, process, payload):
 # Constants
 STD_TEMP_R = 519.67  # 60°F in Rankine
 STD_PRESS_PSIA = 14.696  # Standard Pressure
-MOLAR_VOL_US = 379.3  # scf/lb-mole (at 60°F, 14.696 psia)
+from .units import MOLAR_VOLUME_SCF_PER_LBMOL as MOLAR_VOL_US  # noqa: E402  scf / lb-mole (BA-016)
 
 MW = {
     "C": 12.011,
@@ -402,7 +402,7 @@ def compute_emissions(payload, factor_data=None, gwp_dict=None, gwp_standard=Non
                                  facility_segment, _efficiency_given)
     raw_proc = str(payload.get("process_type") or payload.get("process") or "").strip().lower()
     if raw_proc in FLARE_PROCESSES and not _efficiency_given(payload) and facility_segment(payload) == "downstream":
-        payload = {**payload, "destruction_efficiency": REFINERY_DESTRUCTION}
+        payload = {**payload, "destruction_efficiency": REFINERY_DESTRUCTION * 100.0}  # percent, as every entered efficiency (BA-012)
         if factor_data and factor_data.get("combustion_efficiency_ch4") == PRODUCTION_DESTRUCTION and factor_data.get("ch4") not in (None, ""):
             residual = (1 - REFINERY_DESTRUCTION) / (1 - PRODUCTION_DESTRUCTION)
             factor_data = {**factor_data, "ch4": float(factor_data["ch4"]) * residual, "combustion_efficiency_ch4": REFINERY_DESTRUCTION}

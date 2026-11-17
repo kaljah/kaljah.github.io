@@ -12,6 +12,7 @@ from extensions import db, limiter
 from utils import (
     get_allowed_facility_ids,
     get_current_tenant_id,
+    get_current_user,
     is_unrestricted_location,
     log_activity_and_notify,
     normalize_tenant_id,
@@ -105,15 +106,10 @@ def login_required(f):
     def decorated_function(*args, **kwargs):
         if request.method == "OPTIONS":
             return ("", 204)
-        user_id = session.get("user_id")
-        if not user_id:
-            return jsonify({"error": "Not authenticated"}), 401
-        user = db.session.get(User, user_id)
+        user = get_current_user()
         if not user:
-            session.pop("user_id", None)
-            return jsonify({"error": "User not found"}), 401
+            return jsonify({"error": "Not authenticated"}), 401
         if user.status != "active":
-            session.pop("user_id", None)
             return jsonify({"error": "Account disabled"}), 403
         return f(*args, **kwargs)
 
@@ -126,15 +122,10 @@ def it_admin_required(f):
     def decorated_function(*args, **kwargs):
         if request.method == "OPTIONS":
             return ("", 204)
-        user_id = session.get("user_id")
-        if not user_id:
-            return jsonify({"error": "Not authenticated"}), 401
-        user = db.session.get(User, user_id)
+        user = get_current_user()
         if not user:
-            session.pop("user_id", None)
-            return jsonify({"error": "User not found"}), 401
+            return jsonify({"error": "Not authenticated"}), 401
         if user.status != "active":
-            session.pop("user_id", None)
             return jsonify({"error": "Account disabled"}), 403
         if user.role not in ["it_admin", "it_manager"]:
             return jsonify({"error": "IT Admin privileges required"}), 403
@@ -149,15 +140,10 @@ def it_access_required(f):
     def decorated_function(*args, **kwargs):
         if request.method == "OPTIONS":
             return ("", 204)
-        user_id = session.get("user_id")
-        if not user_id:
-            return jsonify({"error": "Not authenticated"}), 401
-        user = db.session.get(User, user_id)
+        user = get_current_user()
         if not user:
-            session.pop("user_id", None)
-            return jsonify({"error": "User not found"}), 401
+            return jsonify({"error": "Not authenticated"}), 401
         if user.status != "active":
-            session.pop("user_id", None)
             return jsonify({"error": "Account disabled"}), 403
         if user.role not in ["it_admin", "it_manager", "it"]:
             return jsonify({"error": "IT privileges required"}), 403
@@ -172,15 +158,10 @@ def admin_required(f):
     def decorated_function(*args, **kwargs):
         if request.method == "OPTIONS":
             return ("", 204)
-        user_id = session.get("user_id")
-        if not user_id:
-            return jsonify({"error": "Not authenticated"}), 401
-        user = db.session.get(User, user_id)
+        user = get_current_user()
         if not user:
-            session.pop("user_id", None)
-            return jsonify({"error": "User not found"}), 401
+            return jsonify({"error": "Not authenticated"}), 401
         if user.status != "active":
-            session.pop("user_id", None)
             return jsonify({"error": "Account disabled"}), 403
         if user.role != "admin":
             return jsonify({"error": "Admin privileges required"}), 403
@@ -198,15 +179,10 @@ def superuser_required(f):
     def decorated_function(*args, **kwargs):
         if request.method == "OPTIONS":
             return ("", 204)
-        user_id = session.get("user_id")
-        if not user_id:
-            return jsonify({"error": "Not authenticated"}), 401
-        user = db.session.get(User, user_id)
+        user = get_current_user()
         if not user:
-            session.pop("user_id", None)
-            return jsonify({"error": "User not found"}), 401
+            return jsonify({"error": "Not authenticated"}), 401
         if user.status != "active":
-            session.pop("user_id", None)
             return jsonify({"error": "Account disabled"}), 403
         if user.role not in ["superuser", "admin"]:
             return jsonify({"error": "Super User or Admin privileges required"}), 403
@@ -540,13 +516,9 @@ def logout():
 
 @auth_bp.route("/me", methods=["GET"])
 def me():
-    user_id = session.get("user_id")
-    if not user_id:
-        return jsonify({"error": "Not authenticated", "authenticated": False, "user": None}), 401
-
-    user = db.session.get(User, user_id)
+    user = get_current_user()
     if not user:
-        session.pop("user_id", None)
+        session.pop("user_id", None)  # a session whose account was deleted
         return jsonify({"error": "Not authenticated", "authenticated": False, "user": None}), 401
 
     user_defaults = get_user_operational_defaults(user)
@@ -590,11 +562,7 @@ def keepalive():
 @auth_bp.route("/profile", methods=["PUT"])
 @login_required
 def update_profile():
-    user_id = session.get("user_id")
-    if not user_id:
-        return jsonify({"error": "Not authenticated"}), 401
-
-    user = db.session.get(User, user_id)
+    user = get_current_user()
     if not user:
         return jsonify({"error": "User not found"}), 404
 

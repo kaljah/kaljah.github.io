@@ -127,11 +127,14 @@ def clear_dashboard_cache():
 def make_cache_key(namespace):
     def cache_key_builder(*args, **kwargs):
         epoch = _get_global_cache_epoch()
+        # no fallback: a tenant that cannot be resolved must not share the default tenant's entries
+        from utils import get_current_tenant_id
+        tenant_id = kwargs.get("tenant_id") or get_current_tenant_id()
         # Convert any list values to tuples so they are hashable for the cache key
         hashable_kwargs = {
             k: tuple(v) if isinstance(v, list) else v for k, v in kwargs.items()
         }
-        return keys.hashkey(namespace, epoch, *args, **hashable_kwargs)
+        return keys.hashkey(namespace, tenant_id, epoch, *args, **hashable_kwargs)
 
     return cache_key_builder
 
@@ -235,7 +238,7 @@ def get_batch_dashboard_data():
                 app,
                 _query_summary,
                 facility_id=facility_id,
-                year=None,
+                year=year,
                 activity=activity,
                 division=division,
                 group_by=group_by,

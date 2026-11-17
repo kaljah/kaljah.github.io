@@ -26,6 +26,7 @@ export interface CbamRecord {
   exportDestination?: string;
   quantity_tonnes?: number | string;
   quantityTonnes?: number | string;
+  activity_level_tonnes?: number | string;
   specific_embedded_direct?: number | string;
   specificEmbeddedDirect?: number | string;
   specific_embedded_indirect?: number | string;
@@ -101,7 +102,7 @@ const formatMetric = (val: number | string | undefined | null, maxDecimals = 2):
   const num = parseFloat(String(val ?? 0));
   if (!Number.isFinite(num)) return "—";
   if (Math.abs(num) >= 1e9) return num.toExponential(3);
-  return num.toLocaleString(undefined, { maximumFractionDigits: maxDecimals });
+  return num.toLocaleString("en-US", { maximumFractionDigits: maxDecimals });
 };
 
 const CbamTab: React.FC<CbamTabProps> = ({
@@ -256,6 +257,7 @@ const CbamTab: React.FC<CbamTabProps> = ({
                 product_name: "Clean & Low-Carbon Hydrogen",
                 cn_code: "2804 10 00",
                 quantity_tonnes: "",
+                activity_level_tonnes: "",
                 export_destination: "EU",
                 specific_embedded_direct: "",
                 specific_embedded_indirect: "",
@@ -499,6 +501,18 @@ const CbamTab: React.FC<CbamTabProps> = ({
         </Field>
 
         <Field
+          label={t("Activity Level: Total Produced in the Period (Metric Tonnes)")}
+          hint={t("All of this good the facility produced, exported or not (EU 2023/1773 Annex III); needed when the specific embedded emissions are calculated")}
+        >
+          <Input
+            type="number"
+            value={cbamForm.activity_level_tonnes || ""}
+            onChange={(e) => setCbamForm({ ...cbamForm, activity_level_tonnes: e.target.value })}
+            placeholder="0.00"
+          />
+        </Field>
+
+        <Field
           label={t("Direct Specific Embedded (SEE_dir) (tCO₂e / t)")}
           hint={t("Auto-calculated from site if 0")}
         >
@@ -553,7 +567,7 @@ const CbamTab: React.FC<CbamTabProps> = ({
               type="text"
               value={cbamForm.ccs_certificate_id || ""}
               onChange={(e) => setCbamForm({ ...cbamForm, ccs_certificate_id: e.target.value })}
-              placeholder={t("e.g. DZ-CCS-2026-IN-SALAH-001")}
+              placeholder={t("e.g. CC-CCS-2026-001")}
             />
           </Field>
         </div>
@@ -697,7 +711,7 @@ const CbamTab: React.FC<CbamTabProps> = ({
                 {t("Export Quantity")}
               </span>
               <span className="font-mono text-base font-bold text-text">
-                {quantityVal > 0 ? quantityVal.toLocaleString() : "0.00"} t
+                {quantityVal > 0 ? quantityVal.toLocaleString("en-US") : "0.00"} t
               </span>
             </div>
             <div className="hidden h-8 w-px bg-border sm:block" />
@@ -724,13 +738,13 @@ const CbamTab: React.FC<CbamTabProps> = ({
                 {t("Total Embedded Emissions")}
               </span>
               <span className="font-mono text-base font-bold text-brand-700">
-                {totalEmbeddedVal.toLocaleString(undefined, { maximumFractionDigits: 1 })} <span className="text-xs font-normal text-text-secondary">tCO₂e</span>
+                {totalEmbeddedVal.toLocaleString("en-US", { maximumFractionDigits: 1 })} <span className="text-xs font-normal text-text-secondary">tCO₂e</span>
               </span>
             </div>
           </div>
           {carbonTaxVal > 0 && quantityVal > 0 && (
             <Badge tone="warning" className="text-xs font-medium">
-              {t("Origin Tax Credit:")} €{(carbonTaxVal * quantityVal).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+              {t("Origin Tax Credit:")} €{(carbonTaxVal * quantityVal).toLocaleString("en-US", { maximumFractionDigits: 2 })}
             </Badge>
           )}
         </div>
@@ -816,10 +830,10 @@ const CbamTab: React.FC<CbamTabProps> = ({
                   {dest}
                 </Badge>
               </Td>
-              <Td className="text-right font-semibold text-text whitespace-nowrap">
+              <Td className="text-end font-semibold text-text whitespace-nowrap">
                 {formatMetric(qTonnes)}
               </Td>
-              <Td className="text-right whitespace-nowrap">
+              <Td className="text-end whitespace-nowrap">
                 {ccsCaptured > 0 ? (
                   <Badge tone="success" className="text-xs font-mono">
                     -{formatMetric(ccsCaptured)} t
@@ -828,19 +842,19 @@ const CbamTab: React.FC<CbamTabProps> = ({
                   <span className="text-text-secondary">—</span>
                 )}
               </Td>
-              <Td className="text-right font-mono text-xs text-text-secondary whitespace-nowrap">
+              <Td className="text-end font-mono text-xs text-text-secondary whitespace-nowrap">
                 {direct.toFixed(4)}
               </Td>
-              <Td className="text-right font-mono text-xs text-text-secondary whitespace-nowrap">
+              <Td className="text-end font-mono text-xs text-text-secondary whitespace-nowrap">
                 {indirect.toFixed(4)}
               </Td>
-              <Td className="text-right font-mono text-xs text-text-secondary whitespace-nowrap">
+              <Td className="text-end font-mono text-xs text-text-secondary whitespace-nowrap">
                 {precContrib > 0 ? `+${precContrib.toFixed(4)}` : "—"}
               </Td>
-              <Td className="text-right font-bold text-brand-700 font-mono whitespace-nowrap">
+              <Td className="text-end font-bold text-brand-700 font-mono whitespace-nowrap">
                 {formatMetric(totalEmbedded, 1)}
               </Td>
-              <Td className="text-right font-mono whitespace-nowrap">
+              <Td className="text-end font-mono whitespace-nowrap">
                 {originTax > 0 ? (
                   <Badge tone="warning" className="text-xs">
                     €{originTax.toFixed(2)}

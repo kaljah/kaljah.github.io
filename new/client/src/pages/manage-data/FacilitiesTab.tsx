@@ -273,7 +273,7 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
                     onClick={() => setSelectedFacilityForEquity(f)}
                     title={t("Joint Venture Equity Partners")}
                   >
-                    <Users className="size-3.5 mr-1" />
+                    <Users className="size-3.5 me-1" />
                     {t("JV Partners")}
                   </Button>
                   <Button variant="danger" size="sm" onClick={() => handleDeleteFacility(f.id)}>
@@ -533,7 +533,7 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
               <p className="text-sm text-text-secondary py-4">{t("No partner equity shares assigned to this facility yet.")}</p>
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm border-collapse">
+                <table className="w-full text-start text-sm border-collapse">
                   <thead>
                     <tr className="border-b border-border text-xs text-text-secondary">
                       <th className="py-2">{t("Partner")}</th>
@@ -541,7 +541,7 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
                       <th className="py-2">{t("Equity Share")}</th>
                       <th className="py-2">{t("Agreement Ref")}</th>
                       <th className="py-2">{t("Effective Date")}</th>
-                      {canEdit && <th className="py-2 text-right">{t("Action")}</th>}
+                      {canEdit && <th className="py-2 text-end">{t("Action")}</th>}
                     </tr>
                   </thead>
                   <tbody>
@@ -553,7 +553,7 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
                         <td className="py-2 text-xs text-text-secondary">{s.agreement_reference || "-"}</td>
                         <td className="py-2 text-xs">{s.effective_start_date}</td>
                         {canEdit && (
-                          <td className="py-2 text-right">
+                          <td className="py-2 text-end">
                             <Button variant="danger" size="sm" onClick={() => handleDeleteShare(s.id)}>
                               <Trash2 className="size-3.5" />
                             </Button>
@@ -618,7 +618,7 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
                     {t("Close")}
                   </Button>
                   <Button variant="primary" type="submit">
-                    <Plus className="size-3.5 mr-1" />
+                    <Plus className="size-3.5 me-1" />
                     {t("Save Partner Share")}
                   </Button>
                 </div>

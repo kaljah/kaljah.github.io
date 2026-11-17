@@ -81,7 +81,7 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
               "Joined",
               "Actions",
             ].map((h) => (
-              <th key={h} style={h === "Actions" ? { ...S.th, minWidth: "130px", textAlign: "right" } : S.th}>
+              <th key={h} style={h === "Actions" ? { ...S.th, minWidth: "130px", textAlign: "end" } : S.th}>
                 {t(h)}
               </th>
             ))}
@@ -214,7 +214,7 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
                         style={S.regionPill("var(--color-red-700)", "var(--color-red-50)", "rgba(239,68,68,.25)")}
                         data-testid={`user-status-${u.id}`}
                       >
-                        <span className="w-1.5 h-1.5 rounded-full bg-red-500 mr-1.5 inline-block" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-red-500 me-1.5 inline-block" />
                         {t("Disabled")}
                       </span>
                     ) : (
@@ -222,7 +222,7 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
                         style={S.regionPill("var(--color-green-700)", "var(--color-green-50)", "rgba(16,185,129,.25)")}
                         data-testid={`user-status-${u.id}`}
                       >
-                        <span className="w-1.5 h-1.5 rounded-full bg-green-500 mr-1.5 inline-block" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-500 me-1.5 inline-block" />
                         {t("Active")}
                       </span>
                     )}
@@ -271,7 +271,7 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
                   </td>
 
                   {/* Actions */}
-                  <td style={{ ...S.td, whiteSpace: "nowrap", minWidth: "130px", textAlign: "right" }}>
+                  <td style={{ ...S.td, whiteSpace: "nowrap", minWidth: "130px", textAlign: "end" }}>
                     {!isITOnly && (
                       <span
                         title={
@@ -314,7 +314,7 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
                           ? t("Protected account — client IT staff cannot reset credentials for compliance accounts")
                           : t("Modify / Reset Password")
                       }
-                      className="inline-block ml-1"
+                      className="inline-block ms-1"
                     >
                       <button
                         id={`um-reset-pwd-btn-${u.id}`}
@@ -349,7 +349,7 @@ const UserManagementBlock: React.FC<UserManagementBlockProps> = ({
                             ? t("Protected account — client IT staff cannot delete compliance accounts")
                             : t("Revoke Access")
                         }
-                        className="inline-block ml-1"
+                        className="inline-block ms-1"
                       >
                         <button
                           id={`um-delete-btn-${u.id}`}

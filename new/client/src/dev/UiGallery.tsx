@@ -111,7 +111,7 @@ const rows: ExampleRow[] = [
 
 const columns: any[] = [
   { accessorKey: "name", header: "Source" },
-  { accessorKey: "co2e", header: "CO2e", meta: { numeric: true, unit: "t" }, cell: (c: any) => c.getValue().toLocaleString() },
+  { accessorKey: "co2e", header: "CO2e", meta: { numeric: true, unit: "t" }, cell: (c: any) => c.getValue().toLocaleString("en-US") },
   { accessorKey: "status", header: "Status", cell: (c: any) => <StatusPill status={c.getValue()} /> },
 ];
 
@@ -463,15 +463,15 @@ const UiGallery: React.FC = () => {
                 Unified Scope Color Hierarchy (Phase C2)
               </h4>
               <div className="grid gap-3 sm:grid-cols-3">
-                <div className="p-3 rounded-lg border border-border bg-surface border-l-4 border-l-brand-700">
+                <div className="p-3 rounded-lg border border-border bg-surface border-s-4 border-s-brand-700">
                   <p className="text-xs font-semibold text-brand-700 m-0">Scope 1 (Direct)</p>
                   <p className="text-sm font-bold text-text mt-1">Deep Orange · var(--color-scope-1)</p>
                 </div>
-                <div className="p-3 rounded-lg border border-border bg-surface border-l-4 border-l-blue-600">
+                <div className="p-3 rounded-lg border border-border bg-surface border-s-4 border-s-blue-600">
                   <p className="text-xs font-semibold text-blue-700 m-0">Scope 2 (Electricity)</p>
                   <p className="text-sm font-bold text-text mt-1">Blue · var(--color-scope-2)</p>
                 </div>
-                <div className="p-3 rounded-lg border border-border bg-surface border-l-4 border-l-violet-600">
+                <div className="p-3 rounded-lg border border-border bg-surface border-s-4 border-s-violet-600">
                   <p className="text-xs font-semibold text-violet-700 m-0">Scope 3 (Value Chain)</p>
                   <p className="text-sm font-bold text-text mt-1">Violet · var(--color-scope-3)</p>
                 </div>

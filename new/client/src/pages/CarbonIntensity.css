@@ -174,8 +174,8 @@
 }
 
 .scope-item.bordered {
-  border-left: 1px solid var(--border-color);
-  padding-left: 20px;
+  border-inline-start: 1px solid var(--border-color);
+  padding-inline-start: 20px;
 }
 
 .scope-item .label {
@@ -279,7 +279,7 @@
 .heat-null {
   background: var(--bg-hover);
   border: 1px dashed var(--border-color);
-  color: var(--text-secondary) !important;
+  color: var(--text-secondary);
 }
 
 /* Professional Color Scale */
@@ -291,7 +291,7 @@
 } /* Green (white text passes AA; the lighter emeralds did not) */
 .heat-mid {
   background: var(--color-amber-700);
-  color: var(--color-white) !important;
+  color: var(--color-white);
 } /* Amber */
 .heat-high {
   background: var(--color-brand-600);
@@ -316,7 +316,7 @@
 }
 
 .custom-table th {
-  text-align: left;
+  text-align: start;
   padding: 12px 16px;
   color: var(--text-secondary);
   font-weight: 500;

@@ -6,7 +6,8 @@ writes the new values through the maker-checker: the record goes back to Pending
 and new values are kept in the audit trail (action RECALCULATE).
 
 It rebuilds each calculation from the stored inputs as an edit does (PUT /api/emissions/<id>),
-and also removes the defaults the old bulk import added to every row (CH4 85 %, CO2 2 %).
+With --strip-bulk-defaults it also removes the defaults the old bulk import added to every row (CH4 85 %,
+CO2 2 %); without it those inputs are kept and the record is only flagged (they may have been entered).
 
     python scripts/recalculate_emissions.py                   # report only
     python scripts/recalculate_emissions.py --csv out.csv     # report to a file
@@ -30,8 +31,8 @@ RESULT_FIELDS = ("co2_emissions", "ch4_emissions", "n2o_emissions", "co2e_total"
 TIERS = ("default", "custom", "specific", "tier2_plus")  # tier2_plus: drilling Tier 2+ (site gas composition)
 
 
-def stored_payload(record):
-    """Inputs of the record as an edit rebuilds them, without the old bulk-import defaults."""
+def stored_payload(record, strip_bulk_defaults=False):
+    """Inputs of the record as an edit rebuilds them; the old bulk-import defaults removed only on request."""
     from services.scope1_calc import canonicalize
 
     try:
@@ -40,10 +41,14 @@ def stored_payload(record):
         stored = {}
     notes = []
     if stored.get("ch4_content") == 85.0 and stored.get("co2_content") == 2.0:
-        # added to every row by the old bulk import, not entered by the user
-        stored.pop("ch4_content")
-        stored.pop("co2_content")
-        notes.append("removed the bulk-import defaults CH4 85 % / CO2 2 %")
+        # possibly added to every row by the old bulk import, but an operator can enter these values too: they were
+        # always dropped (BA-047), now only on request
+        if strip_bulk_defaults:
+            stored.pop("ch4_content")
+            stored.pop("co2_content")
+            notes.append("removed the bulk-import defaults CH4 85 % / CO2 2 % (--strip-bulk-defaults)")
+        else:
+            notes.append("has CH4 85 % / CO2 2 % (possibly old bulk-import defaults; kept)")
     tier = str(record.factor_source or "").lower()
     if tier not in TIERS:
         tier = str(stored.get("factor_source") or "default").lower()
@@ -64,13 +69,13 @@ def stored_payload(record):
     return payload, stored, notes
 
 
-def recalculate(record, gwp_dict):
+def recalculate(record, gwp_dict, strip_bulk_defaults=False):
     from calculations import compute_emissions
     from calculations.anomaly import plausibility_check
     from models import Emission
     from services.scope1_calc import apply_result, resolve_factor, validate_activity
 
-    payload, stored, notes = stored_payload(record)
+    payload, stored, notes = stored_payload(record, strip_bulk_defaults)
     validate_activity(payload, require_unit=payload["factor_source"] in ("default", "custom"))
     factor_data = resolve_factor(payload, stored_payload=stored, allow_archived=True,
                                  kept_factor_id=record.custom_factor_id or stored.get("custom_factor_id")) or {}
@@ -89,9 +94,12 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--apply", action="store_true", help="write the new values (records go back to Pending)")
     ap.add_argument("--user", help="email of the admin the change is recorded under (required with --apply)")
+    ap.add_argument("--tenant", default=None, help="target tenant id (default: caller tenant or 'default')")
     ap.add_argument("--ids", help="comma-separated record ids to recalculate")
     ap.add_argument("--all", action="store_true", help="with --apply: every record that changes")
     ap.add_argument("--csv", help="write the report to this CSV file")
+    ap.add_argument("--strip-bulk-defaults", action="store_true",
+                    help="drop CH4 85 % / CO2 2 % pairs as old bulk-import defaults (kept otherwise)")
     ap.add_argument("--tolerance", type=float, default=1e-6, help="relative change reported (default 1e-6)")
     args = ap.parse_args(argv)
     if args.apply and not (args.user and (args.ids or args.all)):
@@ -100,8 +108,8 @@ def main(argv=None):
     from app import app
     from calculations.constants import get_active_gwp
     from extensions import db
-    from models import Emission, User
-    from utils import log_activity_and_notify
+    from models import Emission, Facility, PeriodLock, User
+    from utils import get_current_tenant_id, log_activity_and_notify, tenant_matches
 
     ids = {int(x) for x in args.ids.split(",")} if args.ids else None
     report = []
@@ -111,16 +119,38 @@ def main(argv=None):
             actor = User.query.filter(db.func.lower(User.email) == args.user.lower()).first()
             if actor is None or actor.role != "admin":
                 ap.error(f"'{args.user}' is not an admin account")
-        q = Emission.query.order_by(Emission.id)
+        target_tenant = args.tenant or (get_current_tenant_id(actor) if actor else "default")
+        q = (
+            Emission.query.join(Facility, Facility.id == Emission.facility_id)
+            .filter(tenant_matches(Facility.tenant_id, target_tenant))
+            .order_by(Emission.id)
+        )
         if ids:
             q = q.filter(Emission.id.in_(ids))
         for rec in q.all():
+            # Check period lock before touching the record
+            lock_q = PeriodLock.query.filter(
+                tenant_matches(PeriodLock.tenant_id, target_tenant),
+                PeriodLock.year == rec.year,
+                PeriodLock.status == "locked",
+            )
+            if rec.month is not None:
+                lock_q = lock_q.filter(db.or_(PeriodLock.month == rec.month, PeriodLock.month.is_(None)))
+            if lock_q.first() is not None:
+                report.append({
+                    "id": rec.id, "period": f"{rec.year}-{rec.month:02d}" if rec.year and rec.month else "",
+                    "process": rec.process_type, "fuel": rec.fuel_type, "status": rec.status,
+                    "old_co2e": rec.co2e_total, "new_co2e": None, "change_pct": None,
+                    "result": "skipped (period locked)", "notes": f"Period {rec.year}-{rec.month} is locked for statutory reporting"
+                })
+                continue
+
             gwp = get_active_gwp(standard=rec.gwp_version or "AR5")
             row = {"id": rec.id, "period": f"{rec.year}-{rec.month:02d}" if rec.year and rec.month else "",
                    "process": rec.process_type, "fuel": rec.fuel_type, "status": rec.status,
                    "old_co2e": rec.co2e_total, "new_co2e": None, "change_pct": None, "result": "", "notes": ""}
             try:
-                new, notes = recalculate(rec, gwp)
+                new, notes = recalculate(rec, gwp, args.strip_bulk_defaults)
             except Exception as err:  # the stored inputs are not enough for the current methods
                 row["result"] = "cannot recalculate"
                 row["notes"] = getattr(err, "message", None) or str(err)

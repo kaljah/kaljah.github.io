@@ -20,6 +20,8 @@ def list_import_mappings():
     from models import ImportMapping
 
     user = get_current_user()
+    if not user:
+        return jsonify({"error": "Unauthorized"}), 401
     scope = str(request.args.get("scope", "1"))
     rows = ImportMapping.query.filter_by(user_id=user.id, scope=scope).all()
     rows.sort(key=lambda m: (m.last_used_at or m.updated_at or m.created_at).isoformat() if (
@@ -36,6 +38,8 @@ def save_import_mapping():
     from models import ImportMapping
 
     user = get_current_user()
+    if not user:
+        return jsonify({"error": "Unauthorized"}), 401
     data = request.get_json(silent=True) or {}
     scope = str(data.get("scope", "1"))
     name = str(data.get("name") or "").strip()
@@ -82,7 +86,10 @@ def touch_import_mapping(mapping_id):
     """Mark a saved mapping as used (it is then offered first)."""
     from models import ImportMapping, utc_now
 
-    row = ImportMapping.query.filter_by(id=mapping_id, user_id=get_current_user().id).first()
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Unauthorized"}), 401
+    row = ImportMapping.query.filter_by(id=mapping_id, user_id=user.id).first()
     if row is None:
         return jsonify({"error": "Not found"}), 404
     row.last_used_at = utc_now()
@@ -95,7 +102,10 @@ def touch_import_mapping(mapping_id):
 def delete_import_mapping(mapping_id):
     from models import ImportMapping
 
-    row = ImportMapping.query.filter_by(id=mapping_id, user_id=get_current_user().id).first()
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Unauthorized"}), 401
+    row = ImportMapping.query.filter_by(id=mapping_id, user_id=user.id).first()
     if row is None:
         return jsonify({"error": "Not found"}), 404
     db.session.delete(row)

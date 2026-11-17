@@ -348,5 +348,5 @@ def test_downstream_fire_suppression_release_rate_normalization():
         annual_release_rate="2%",
     )
     assert res["total_co2e"] > 0
-    # Released tonnes: (1000 * 0.02) / 1000 = 0.02 tonnes * 3220 = 64.4 tonnes CO2e
-    assert abs(res["total_co2e"] - 64.4) < 1e-2
+    # Released tonnes: (1000 * 0.02) / 1000 = 0.02 tonnes * 3350 (AR5) = 67.0 tonnes CO2e
+    assert abs(res["total_co2e"] - 67.0) < 1e-2

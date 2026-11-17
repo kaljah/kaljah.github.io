@@ -98,7 +98,7 @@ const AuditTrailFiltersBarCard: React.FC<AuditTrailFiltersBarCardProps> = ({
   return (
     <Card className="mb-7 flex flex-col gap-4">
       <div className="relative">
-        <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-secondary" aria-hidden="true" />
+        <Search className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-text-secondary" aria-hidden="true" />
         <Input
           aria-label={t("Search audit log")}
           className="px-10"
@@ -107,7 +107,7 @@ const AuditTrailFiltersBarCard: React.FC<AuditTrailFiltersBarCardProps> = ({
           onChange={(e) => setSearchQuery(e.target.value)}
         />
         {searchQuery && (
-          <IconButton label={t("Clear search")} className="absolute right-1 top-1/2 size-7 -translate-y-1/2" onClick={() => setSearchQuery("")}>
+          <IconButton label={t("Clear search")} className="absolute end-1 top-1/2 size-7 -translate-y-1/2" onClick={() => setSearchQuery("")}>
             <X className="size-3.5" aria-hidden="true" />
           </IconButton>
         )}
@@ -148,7 +148,7 @@ const AuditTrailFiltersBarCard: React.FC<AuditTrailFiltersBarCardProps> = ({
           </Button>
         )}
 
-        <p className="m-0 ml-auto pb-2 text-sm text-text-secondary">
+        <p className="m-0 ms-auto pb-2 text-sm text-text-secondary">
           {t("Showing")}{" "}<strong>{auditLogs.length}</strong>{" "}{t("of")}{" "}<strong>{totalRecords}</strong>{" "}{t("records")}
         </p>
       </div>
