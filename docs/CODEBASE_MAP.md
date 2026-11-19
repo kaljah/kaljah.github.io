@@ -53,10 +53,8 @@ h2/
 │   ├── calculation/ differential/ property/ mutation/ regression/ reference_model/
 │   └── golden_data/ golden_dataset/ expected_results/ reports/ scripts/ test_cases/
 ├── deploy/                   containers, nginx, systemd, release tooling — see §9
-├── specs/                    spec-driven-development feature specs
 │   ├── 001-batch-approve-reject/
 │   └── 002-qa-qc-ipcc-iso14064/
-├── .agents/                  agent tooling: rules/, workflows/, agents/ (not app code)
 ├── .specify/                 speckit templates/scripts
 ├── .github/workflows/        deploy-pages.yml, e2e-matrix.yml, package.yml
 ├── pytest.ini                ROOT pytest config (collects validation/ + new/server/tests)
@@ -69,10 +67,10 @@ h2/
 |---|---|
 | `new/server/migrations/versions/*.py` (via `flask db`) | `new/server/routes/`, `calculations/`, `services/` |
 | `new/client/dist/` (`npm run build`) | `new/client/src/` |
-| `__pycache__/`, `.pytest_cache/`, `node_modules/` | `deploy/`, `docs/`, `specs/` |
+| `__pycache__/`, `.pytest_cache/`, `node_modules/` | `deploy/`, `docs/` |
 | `new/client/src/i18n/fr.json` (partly, via `scripts/i18n-wrap.mjs`) | `deploy/.env` (local secrets, untracked) |
 
-**Not in the repository** (do not assume they exist): `archive/` (git-ignored, local only), `graphify-out/` (generated), `AUDIT_MEMORY.md` and a root `package.json` (purged from history on 2026-10-15; kept only in the offline backup bundle), `AUDIT_ARTIFACTS_*/` and `test_artifacts/` (git-ignored outputs).
+**Not in the repository** (do not assume they exist): `graphify-out/` (generated), `AUDIT_MEMORY.md` and a root `package.json` (purged from history on 2026-10-15; kept only in the offline backup bundle), `AUDIT_ARTIFACTS_*/` and `test_artifacts/` (git-ignored outputs).
 
 ---
 
@@ -418,7 +416,7 @@ not always catch.
 | Backend unit/integration | `new/server/tests/` (~125 files) | pytest | `tests/conftest.py`: `FLASK_ENV=testing`, temp `tests/test_app.db`, `SEED_ADMIN=false`, CSRF + rate limiter off |
 | Independent calculation validation | `validation/` (repo root) | root `pytest.ini` | differential, property, golden-dataset, mutation suites |
 | Frontend unit | `new/client/src/**/*.{test,spec}.*` | vitest + jsdom | |
-| End-to-end | `new/client/e2e/` + `e2e/deep_user_audit/` | Playwright | needs a running dev server + `storageState.json` |
+| End-to-end | `new/client/e2e/` (`e2e/deep_user_audit/`) | Playwright | needs a running dev server + `storageState.json` |
 
 Two pytest roots: `new/server/pytest.ini` collects `test_*.py` in the server dir (ignoring
 `test_runner.py`); the **root** `pytest.ini` sets `pythonpath = . new/server` and
@@ -494,9 +492,6 @@ proxy. Full guide: `docs/deployment.md`.
 | `docs/demo-operator/glossary-fr.csv` | French terminology for translations |
 | `docs/validation/00-current-architecture.md` | a **dated** audit artifact (Sep 2026) — history, not live rules; this map is the maintained reference |
 | `docs/validation/*` | forensics on a specific past audit (per-area audits, pilot readiness, 100k bulk) |
-| `specs/001-batch-approve-reject/` | batch approve/reject feature spec |
-| `specs/002-qa-qc-ipcc-iso14064/` | QA/QC + IPCC/ISO 14064 spec |
-| `.agents/rules/`, `.agents/workflows/` | agent-tooling conventions (not application code) |
 
 A graphify knowledge graph (`graphify-out/`) is **absent** from the working tree; if regenerated,
 use `graphify query|path|explain` for architecture questions and re-run `graphify update .` after
