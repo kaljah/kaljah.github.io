@@ -442,7 +442,8 @@ class TestLayer2DefaultFactorRegistry:
     def test_audit_all_105_activity_factors_integrity(self):
         """Assert all 105 ACTIVITY_FACTORS are well-formed and map to valid API Compendium tables."""
         # 105 + Table 6-13 active / suspended casing gas and the Table 6-17 per-dehydrator row (audit 2026-11 F-VENT1-12)
-        assert len(ACTIVITY_FACTORS) == 108, f"Expected 108 ACTIVITY_FACTORS, found {len(ACTIVITY_FACTORS)}"
+        # + 10 rows of Tables 6-34 / 6-40 / 6-42 / 6-43 / 6-46 (audit 2026-11 F-VENT2-06)
+        assert len(ACTIVITY_FACTORS) == 118, f"Expected 118 ACTIVITY_FACTORS, found {len(ACTIVITY_FACTORS)}"
         for key, row in ACTIVITY_FACTORS.items():
             assert "table" in row, f"Missing table in ACTIVITY_FACTORS key '{key}'"
             assert "per" in row or "unit" in row, f"Missing unit/per in ACTIVITY_FACTORS key '{key}'"

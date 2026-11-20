@@ -91,10 +91,15 @@ ACTIVITY_FACTORS = {
     "proc_pc_piston_operator": _r("Processing piston valve operator", ["pneumatic"], "unit_hr", "Table 6-34", ch4=8.010e-4 / 8760, gas=5.48e-3, basis=0.868, activity="controller"),
     "proc_pc_hydraulic_operator": _r("Processing pneumatic / hydraulic valve operator", ["pneumatic"], "unit_hr", "Table 6-34", ch4=0.0939 / 8760, gas=0.642, basis=0.868, activity="controller"),
     "proc_pc_turbine_operator": _r("Processing turbine valve operator", ["pneumatic"], "unit_hr", "Table 6-34", ch4=1.128 / 8760, gas=7.72, basis=0.868, activity="controller"),
+    # Table 6-34 processing averages when the controller type is unknown (audit 2026-11 F-VENT2-06)
+    "proc_pc_avg_plant": _r("Processing controllers, type unknown, per plant", ["pneumatic"], "unit", "Table 6-34", ch4=3.164, gas=190033, basis=0.868, activity="plant-year"),
+    "proc_pc_avg_throughput": _r("Processing controllers, type unknown, per gas processed", ["pneumatic"], "mmscf", "Table 6-34", ch4=1.425e-4, gas=8.56, basis=0.868),
+    "proc_pc_avg_throughput_m3": _r("Processing controllers, type unknown, per gas processed (per 10^6 m3)", ["pneumatic"], "mm_m3", "Table 6-34", ch4=5.034e-3, gas=8.56 / SCF_TO_M3, basis=0.868),  # 8.56 Sm3 gas / 10^6 Sm3
     # ---- 6.6.3 transmission & storage pneumatic controllers (Table 6-42, tonnes CH4 / controller-yr) ----
     "ts_pc_continuous": _r("Transmission / storage continuous-vent controller", ["pneumatic"], "unit_hr", "Table 6-42", ch4=3.5 / 8760, gas=22.3, basis=0.934, activity="controller"),
     "ts_pc_intermittent": _r("Transmission / storage intermittent-vent controller", ["pneumatic"], "unit_hr", "Table 6-42", ch4=0.4 / 8760, gas=2.5, basis=0.934, activity="controller"),
     "ts_pc_avg": _r("Transmission / storage controller, type unknown", ["pneumatic"], "unit_hr", "Table 6-42", ch4=3.0 / 8760, gas=19.3, basis=0.934, activity="controller"),
+    "ts_pc_facility": _r("Transmission / storage controllers, facility average", ["pneumatic"], "unit", "Table 6-42", ch4=21.6, gas=1.21e6, basis=0.934, activity="station-year"),
     # ---- 6.3.9 separator dump valves and produced water (Tables 6-25, 6-26, 6-27), per bbl ----
     "sep_dump_valve_crude": _r("Malfunctioning separator dump valve, crude service", ["separation"], "bbl", "Table 6-25", ch4=2.70e-6, basis=0.816, activity="bbl oil"),
     "sep_dump_valve_condensate": _r("Malfunctioning separator dump valve, condensate service", ["separation"], "bbl", "Table 6-25", ch4=2.64e-6, basis=0.816, activity="bbl condensate"),
@@ -121,6 +126,10 @@ ACTIVITY_FACTORS = {
     "ts_rp_standby": _r("Reciprocating rod packing, transmission & storage, standby pressurized", ["compressor_venting"], "unit_hr", "Table 6-40", ch4=6.91e-3, gas=385, basis=0.934, activity="compressor"),
     "trans_rp_operating": _r("Reciprocating rod packing, transmission, operating", ["compressor_venting"], "unit_hr", "Table 6-40", ch4=1.96e-3, gas=110, basis=0.934, activity="compressor"),
     "stor_rp_operating": _r("Reciprocating rod packing, storage, operating", ["compressor_venting"], "unit_hr", "Table 6-40", ch4=2.41e-3, gas=134, basis=0.934, activity="compressor"),
+    "trans_rp_standby": _r("Reciprocating rod packing, transmission, standby pressurized", ["compressor_venting"], "unit_hr", "Table 6-40", ch4=1.24e-3, gas=69.5, basis=0.934, activity="compressor"),
+    "stor_rp_standby": _r("Reciprocating rod packing, storage, standby pressurized", ["compressor_venting"], "unit_hr", "Table 6-40", ch4=2.34e-3, gas=130, basis=0.934, activity="compressor"),
+    "trans_rp_avg": _r("Reciprocating rod packing, transmission, average", ["compressor_venting"], "unit_hr", "Table 6-40", ch4=7.42e-3, gas=415, basis=0.934, activity="compressor"),
+    "stor_rp_avg": _r("Reciprocating rod packing, storage, average", ["compressor_venting"], "unit_hr", "Table 6-40", ch4=7.99e-3, gas=446, basis=0.934, activity="compressor"),
     "ts_cent_wet_operating": _r("Centrifugal wet seal, operating", ["compressor_venting"], "unit_hr", "Table 6-41", ch4=3.04e-2, gas=1696, basis=0.934, activity="compressor"),
     "ts_cent_wet_degassing": _r("Centrifugal wet seal degassing vent, operating", ["compressor_venting"], "unit_hr", "Table 6-41", ch4=2.87e-3, gas=160, basis=0.934, activity="compressor"),
     "ts_cent_wet_avg": _r("Centrifugal wet seal, average", ["compressor_venting"], "unit_hr", "Table 6-41", ch4=1.84e-2, gas=1028, basis=0.934, activity="compressor"),
@@ -144,10 +153,12 @@ ACTIVITY_FACTORS = {
     "ts_prv_lifts": _r("Transmission PRV lifts", ["non_routine_venting"], "unit", "Table 6-43", ch4=3.68, gas=206e3, basis=0.934, activity="station-year"),
     "ts_esd": _r("Transmission ESD activation", ["non_routine_venting"], "unit", "Table 6-43", ch4=7.97, gas=444e3, basis=0.934, activity="station-year"),
     "ts_mr_bd": _r("Transmission M&R station blowdowns", ["non_routine_venting"], "unit", "Table 6-43", ch4=13.75, gas=756e3, basis=0.934, activity="station-year"),
+    "ts_misc": _r("Transmission / storage miscellaneous (M&R, odorizer, drips, sampling, pigging, dehydrators)", ["non_routine_venting"], "unit", "Table 6-43", ch4=21.75, gas=1214e3, basis=0.934, activity="station-year"),
     "dist_mr": _r("Distribution M&R station maintenance / upsets", ["non_routine_venting"], "unit", "Table 6-46", ch4=0.002895, gas=159, basis=0.948, activity="station-year"),
     "dist_odorizer": _r("Distribution odorizer and gas sampling vents", ["non_routine_venting"], "unit", "Table 6-46", ch4=0.02275, gas=1251, basis=0.948, activity="station-year"),
     "dist_pipeline_bd": _r("Distribution pipeline blowdowns", ["non_routine_venting"], "unit", "Table 6-46", ch4=0.03220, gas=1798, basis=0.934, activity="mile-year"),
     "dist_digins": _r("Distribution pipeline mishaps (dig-ins)", ["non_routine_venting"], "unit", "Table 6-46", ch4=0.03040, gas=1697, basis=0.934, activity="mile-year"),
+    "dist_digins_lamb": _r("Distribution pipeline mishaps (dig-ins), Lamb et al. 2015", ["non_routine_venting"], "unit", "Table 6-46", ch4=0.0466, gas=2600, basis=0.934, activity="mile-year"),
     "dist_prv": _r("Distribution pressure relief valves", ["non_routine_venting"], "unit", "Table 6-46", ch4=9.591e-4, gas=54, basis=0.934, activity="mile-year"),
     # ---- 6.10.1 crude loading losses (Table 6-47, tonne TOC / 10^6 gal) ----
     "load_submerged_dedicated": _r("Rail/truck submerged loading, dedicated service", ["loading"], "mgal", "Table 6-47", ch4=0.91, toc=True),
