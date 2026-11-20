@@ -258,16 +258,17 @@ def get_granular_intensities():
     # 0.0192 t/Mcf with the segment's default CH4 content (it was CH4 / all-gas mass at 0.92 kg/Sm3), and the
     # OGCI / OGMP volume figure = CH4 volume / marketed gas
     from models import Facility
-    from services.intensity import segment_category
-    from services.methane_intensity import (M3_PER_MCF, NGSI_CH4_T_PER_MCF, ngsi_ch4_content,
-                                            volume_intensity_pct)
+    from services.methane_intensity import (M3_PER_MCF, NGSI_CH4_T_PER_MCF, gas_ratio, ngsi_ch4_content,
+                                            ngsi_segment, volume_intensity_pct)
 
-    seg_by_fid = {f.id: segment_category(f.segment) for f in
+    seg_by_fid = {f.id: ngsi_segment(f.segment, f.activity) for f in
                   Facility.query.filter(Facility.id.in_({k[0] for k, _ in matched} or {-1})).all()}
     ch4_in_throughput_t = sum(c["gas_m3"] / M3_PER_MCF * ngsi_ch4_content(seg_by_fid.get(k[0])) * NGSI_CH4_T_PER_MCF
                               for k, c in matched)
     marketed_m3 = sum(c["marketed_m3"] for _, c in matched)
-    ngsi = ch4 / ch4_in_throughput_t * 100.0 if ch4_in_throughput_t > 0 else None
+    # the gas share of the CH4 by facility-year (NGSI production gas ratio; audit 2026-11 F-AGG-05)
+    ch4_gas = sum(c["ch4"] * gas_ratio(seg_by_fid.get(k[0]), c["gas_m3"], c.get("oil_bbl")) for k, c in matched)
+    ngsi = ch4_gas / ch4_in_throughput_t * 100.0 if ch4_in_throughput_t > 0 else None
     ogci_volume = volume_intensity_pct(ch4, marketed_m3)
 
     OGCI_TARGET = 17.0

@@ -77,4 +77,22 @@ def _period_kwargs(method, inputs):
             out[k] = hrs / 24.0
     if "year_fraction" in params and inputs.get("year_fraction") in (None, "", "-"):
         out["year_fraction"] = year_fraction
+    elif takes_any and inputs.get("year_fraction") in (None, "", "-"):
+        out["year_fraction"] = year_fraction
+    # the record's amount is the calculator's count / miles: it never reached these parameters, which default
+    # to 1 (audit 2026-11 F-VENT2-01: 50 miles of pipeline booked as 1 mile)
+    amount = inputs.get("amount") if inputs.get("amount") not in (None, "", "-") else inputs.get("quantity")
+    if amount not in (None, "", "-"):
+        for k in _COUNT_PARAMS:
+            if k in params and inputs.get(k) in (None, "", "-"):
+                val = float(amount)
+                u = str(inputs.get("unit") or "").strip().lower()
+                if k == "count_or_miles" and u in ("km", "kilometer", "kilometers", "kilometre", "kilometres"):
+                    val *= 0.621371192
+                out[k] = val
+                break
     return out
+
+
+# the count / length parameter of each midstream calculator (one per calculator)
+_COUNT_PARAMS = ("count_or_miles", "events_or_count", "compressor_count", "tank_count", "controller_count")

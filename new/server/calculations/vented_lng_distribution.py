@@ -30,6 +30,7 @@ from .uncertainty import (
 )
 
 from .units import MOLAR_VOLUME_SCF_PER_LBMOL as MOLAR_VOL_US  # noqa: E402  scf / lb-mole (BA-016)
+from .units import MOLAR_VOLUME_M3_PER_KMOL as MOLAR_VOL_METRIC  # noqa: E402  m3 / kmol (60 F; F-VENT2-11)
 MW_CH4 = 16.04
 MW_CO2 = 44.01
 MW_N2O = 44.013
@@ -166,8 +167,20 @@ class LNGVentingCalculator(BaseCalculator):
 
             # Liquid LNG loss volume (m3)
             lng_lost_m3 = v_lng_m3 * loss_rate_per_km * l_km
-            # liquid to gas: Section 6.7 Table 6-44 uses expansion ratio 600:1
-            gas_lost_m3 = lng_lost_m3 * 600.0
+            # liquid to gas: the expansion ratio of the site's LNG (gas volume at standard conditions per volume of
+            # liquid). A fixed 600:1 was used, which the Compendium does not give (audit 2026-11 F-VENT2-11).
+            ratio_in = kwargs.get("expansion_ratio")
+            if ratio_in in (None, "") and kwargs.get("lng_density_kg_m3") not in (None, "") and kwargs.get("gas_mw") not in (None, ""):
+                ratio_in = float(kwargs["lng_density_kg_m3"]) / float(kwargs["gas_mw"]) * MOLAR_VOL_METRIC
+            if ratio_in in (None, "") and lng_lost_m3 == 0:
+                ratio_in = 0.0  # no liquid lost, nothing to expand
+            elif ratio_in in (None, ""):
+                raise ValueError("LNG transfer losses need the liquid-to-gas expansion ratio (expansion_ratio, Sm3 gas per "
+                                 "m3 LNG) or the LNG density (kg/m3) with the gas molecular weight")
+            ratio = float(ratio_in)
+            if ratio < 0 or (ratio == 0 and lng_lost_m3 > 0):
+                raise ValueError("The expansion ratio must be positive")
+            gas_lost_m3 = lng_lost_m3 * ratio
             total_gas_scf = convert(gas_lost_m3, "m3", "scf")
 
         else:

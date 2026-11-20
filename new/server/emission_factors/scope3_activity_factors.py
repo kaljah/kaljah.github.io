@@ -2,7 +2,11 @@
 activity unit; the bulk import uses them when a row gives no factor. Sources are cited in the client file:
 EPA Supply Chain GHG Emission Factors v1.3.0, EPA GHG Emission Factors Hub 2025 Tables 8-10, API Compendium
 2021 Tables 4-5 / 4-6. None = no published default (the user gives the factor).
-Kept identical to the client list by tests/test_bulk_uploaders.py."""
+Kept identical to the client list by tests/test_bulk_uploaders.py.
+
+GWP basis: each factor is a fixed CO2e value at the GWP set of its source (AR5, except the WARM waste factors of
+Categories 5 / 12, which the Hub prints at AR4) and is not re-weighted when the platform's GWP setting changes: the
+sources give no per-gas split (audit 2026-11 F-S23-13)."""
 
 SCOPE3_ACTIVITY_FACTORS = {
     1: [
@@ -65,11 +69,11 @@ SCOPE3_ACTIVITY_FACTORS = {
     ],
     10: [
         ("Processing (Electricity)", "kWh", None),
-        ("Processing (Natural Gas)", "MMBtu", 54.18),
+        ("Processing (Natural Gas)", "MMBtu", 53.11),  # Table 4-5/4-6 at AR5 per MMBtu (54.18 is per Mcf; F-S23-03)
     ],
     11: [
         ("Crude Oil", "bbl", 433.44),
-        ("Natural Gas", "MMBtu", 54.18),
+        ("Natural Gas", "MMBtu", 53.11),  # 53.06 + 0.001 x 28 + 0.0001 x 265 (audit 2026-11 F-S23-03)
         ("NGL - Ethane", "gal", 4.07),
         ("NGL - Propane", "gal", 5.74),
         ("NGL - Butane", "gal", 6.7),

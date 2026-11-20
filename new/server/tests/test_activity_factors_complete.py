@@ -98,14 +98,14 @@ def test_activity_factor_list_by_process():
 
 
 def test_dispatcher_fraction_and_percent_equivalence(a):
-    """Verify that entering gas composition as percentage (81.6 / '81.6%') or normalized fraction (0.816)
-    yields identical emissions and scale."""
+    """Gas contents are mol %, always (audit 2026-11 F-CORE-03): 81.6 and '81.6%' are the same, and 0.816 is
+    0.816 %, not a fraction guessed from its size."""
     res_pct = a.calculate("wt_gas", 2, ch4_content=81.6, co2_content=2.0)
     res_str = a.calculate("wt_gas", 2, ch4_content="81.6%", co2_content="2%")
-    res_frac = a.calculate("wt_gas", 2, ch4_content=0.816, co2_content=0.02)
+    res_small = a.calculate("wt_gas", 2, ch4_content=0.816, co2_content=0.02)
 
-    assert val(res_pct, "ch4") == pytest.approx(val(res_frac, "ch4"))
-    assert val(res_str, "ch4") == pytest.approx(val(res_frac, "ch4"))
-    assert val(res_pct, "co2") == pytest.approx(val(res_frac, "co2"))
-    assert val(res_str, "co2") == pytest.approx(val(res_frac, "co2"))
-    assert res_frac["intermediate"]["ch4_scale"] == pytest.approx(1.0)
+    assert val(res_str, "ch4") == pytest.approx(val(res_pct, "ch4"))
+    assert val(res_str, "co2") == pytest.approx(val(res_pct, "co2"))
+    assert res_pct["intermediate"]["ch4_scale"] == pytest.approx(1.0)
+    assert val(res_small, "ch4") == pytest.approx(val(res_pct, "ch4") / 100)
+    assert val(res_small, "co2") == pytest.approx(val(res_pct, "co2") / 100)

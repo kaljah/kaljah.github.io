@@ -34,7 +34,7 @@ class PneumaticDeviceCalculator(BaseCalculator):
       - Unknown controller type default: 9.2 scf gas/hr (Table on p. 6-40)
       - Proactive monitoring LDAR survey model (Equation 6-14, Exhibit 6-12)
       - Physical actuation model (Equation 6-13)
-      - GPSA Orifice continuous model (Equation 6-12)
+      - (Equation 6-12, the GPSA orifice model, is not implemented: audit 2026-11 F-GUI2-02)
     Verified against Exhibits 6-11 and 6-12.
     """
 
@@ -54,6 +54,20 @@ class PneumaticDeviceCalculator(BaseCalculator):
 
     DEFAULT_UNKNOWN_SCF_HR = 9.2  # 9.2 scf whole gas/hr/controller
 
+    # "subpart_w" is the pre-2024 Table W-1A as Compendium Tables 6-14 / 6-15 reprint it (kept so stored records
+    # recalculate the same). The current 40 CFR 98 Table W-1 (89 FR 42323, 14 May 2024), whole gas scf/h/device,
+    # is offered by segment (audit 2026-11 F-GSTD-02: the old values were presented as "Subpart W").
+    SUBPART_W_2024 = {
+        "subpart_w_2024_production": {"low_bleed": 6.8, "high_bleed": 21.0, "intermittent": 8.8},   # production, G&B
+        "subpart_w_2024_transmission": {"low_bleed": 6.8, "high_bleed": 30.0, "intermittent": 2.3},  # processing, T&S, storage, distribution
+    }
+    STANDARD_LABELS = {
+        "api": "API Compendium 2021 Tables 6-14 / 6-15",
+        "subpart_w": "40 CFR 98 Table W-1A before the 2024 amendments (as reprinted in Compendium Tables 6-14 / 6-15)",
+        "subpart_w_2024_production": "40 CFR 98 Table W-1 (2024), onshore production / gathering and boosting",
+        "subpart_w_2024_transmission": "40 CFR 98 Table W-1 (2024), processing / transmission / storage / distribution",
+    }
+
     def __init__(self):
         super().__init__("Pneumatic Controllers", "Section 6.3.6")
 
@@ -61,9 +75,16 @@ class PneumaticDeviceCalculator(BaseCalculator):
         """Whole gas scf/h of a controller type (Tables 6-14 / 6-15; 9.2 scf/h when the type is unknown)."""
         ctype = str(controller_type).lower().strip()
         std = str(source_standard or "api").lower().strip()
-        if std not in ("api", "subpart_w"):
-            raise ValueError(f"Unknown factor standard '{source_standard}': api or subpart_w")
+        if std not in self.STANDARD_LABELS:
+            raise ValueError(f"Unknown factor standard '{source_standard}': {', '.join(self.STANDARD_LABELS)}")
         rows = {**self.TABLE_6_14_CONTINUOUS, **self.TABLE_6_15_INTERMITTENT}
+        if std in self.SUBPART_W_2024:
+            w1 = self.SUBPART_W_2024[std]
+            key = "intermittent" if ctype.startswith("intermittent") else ctype
+            if key not in w1:
+                raise ValueError(f"Table W-1 (2024) has no row for controller type '{controller_type}': "
+                                 "low_bleed, high_bleed or intermittent")
+            return w1[key]
         if ctype in ("unknown", "average", "production_average"):
             return self.DEFAULT_UNKNOWN_SCF_HR
         if ctype not in rows:  # a misspelt type took the 9.2 scf/h unknown-controller factor
@@ -82,7 +103,7 @@ class PneumaticDeviceCalculator(BaseCalculator):
         gwp_dict=None,
         # API 2021 Section 6.3.6 advanced options
         controller_type=None,  # "high_bleed", "low_bleed", "intermittent_average", "intermittent_normal", "intermittent_malfunctioning", "unknown"
-        source_standard="api", # "api" or "subpart_w"
+        source_standard="api", # "api", "subpart_w" (pre-2024 W-1A), "subpart_w_2024_production" / "_transmission"
         # Equation 6-14 Monitoring / LDAR Survey inputs
         monitoring_program=False,
         normal_count=None,
@@ -147,8 +168,9 @@ class PneumaticDeviceCalculator(BaseCalculator):
             n_dev = float(count)
             total_gas_scf = n_dev * self._table_rate(controller_type, source_standard) * hrs
             row = self.TABLE_6_14_CONTINUOUS.get(str(controller_type).lower().strip())
-            if row:
-                std = "subpart_w" if str(source_standard or "api").lower().strip() == "subpart_w" else "api"
+            _std_in = str(source_standard or "api").lower().strip()
+            if row and _std_in in ("api", "subpart_w"):  # Table W-1 (2024) prints whole gas only
+                std = _std_in
                 # Exhibit 6-11: scf CH4/hr of Table 6-14 x site CH4 mol % / 81.6 mol %; CO2 stays on the whole-gas factor
                 ch4_basis_scf = n_dev * row[f"{std}_ch4_scf_hr"] * hrs * c_ch4 / row["baseline_ch4_mol"]
 

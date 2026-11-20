@@ -18,7 +18,7 @@ def test_category_11_natural_gas_factor_unit():
     unit, factor = cat11["Natural Gas"]
     # Explicit denominator unit must be MMBtu (not mcf or scf)
     assert unit == "MMBtu"
-    assert factor == 54.18
+    assert factor == 53.11  # 53.06 + 0.001 x 28 + 0.0001 x 265 per MMBtu (audit 2026-11 F-S23-03)
 
 
 def test_mcf_to_mmbtu_hhv_conversion():

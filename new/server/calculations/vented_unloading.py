@@ -45,7 +45,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
       - Tier 1: API Table 6-11 per-well default factors (plunger and non-plunger)
       - Tier 2: API Table 6-10 event-based factors (average and regional)
       - Tier 3: Engineering and measured data:
-          * API Eq. 6-10 (EPA Subpart W integrated W-8/W-9)
+          * API Eq. 6-10 (Compendium method; differs from 40 CFR 98 Eq W-8 / W-9 as written, see below)
           * API Eq. 6-11 (Automated plunger lift vent rate)
           * Wellbore volume decompression (platform method, not Compendium Equation 6-3; key "api_equation_6_3" kept)
     """
@@ -455,7 +455,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         **kwargs,
     ):
         """
-        API Compendium 2021 Section 6.3.4 / Equation 6-10 (EPA GHGRP Subpart W W-8 / W-9):
+        API Compendium 2021 Section 6.3.4 / Equation 6-10 (not 40 CFR 98 W-8 / W-9 as written: psig, flow line per well-year):
         VR = (# events / well-year * 0.37e-3 * D^2 * Depth * P) + (SFR * (HR - X) * Z)
         """
         # Validate inputs
@@ -508,10 +508,10 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         # SFR conversion to scf/hr (every rate spelling; "Mcf/day" was read as scf/day, 1,000x low)
         sfr_scf_hr = sfr_val * _sfr_scf_per_hr(sfr_unit)
 
-        # Equation 6-10 parameters (API Compendium 2021 Eq. 6-10 / EPA Subpart W Eq. W-9):
-        # X: 0.5 for plunger lift, 1.0 for non-plunger
+        # Eq 6-10 as the Compendium prints it (psig, flow line once per well-year), not W-8 / W-9 (F-VENT1-06 /
+        # F-GSTD-03); Z's threshold is X (W-9: 0.5 h plunger lift, 1.0 h without); HR per well-year unless per event
         x_param = 0.5 if u_type == "plunger" else 1.0
-        # Z: If HR < X, Z is 0; if HR >= X, Z is 1 (EPA Subpart W W-8 / W-9, API Eq 6-10)
+        # Z: 0 when HR < X, else 1
         z_param = 1.0 if hr_val >= x_param else 0.0
 
         wellbore_vol_scf = ev * (0.37e-3) * (d_in ** 2) * depth_ft * p_psig

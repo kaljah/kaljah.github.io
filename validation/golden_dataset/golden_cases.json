@@ -338,7 +338,7 @@
     "methodology": "API Compendium 2021 \u00a77.2",
     "activity_data": {
       "equipment_count": 17.385,
-      "ch4_content": 84.32
+      "ch4_wt_fraction": 84.32
     },
     "units": "count",
     "emission_factor": {

@@ -49,6 +49,9 @@ export const Scope2Form: React.FC = () => {
   const [heatEff, setHeatEff] = useState<string>("");
   const [powerEff, setPowerEff] = useState<string>("");
   const [powerOutput, setPowerOutput] = useState<string>("");
+  // CHP: the stream bought and its quantity (the share of the plant's output; audit 2026-11 F-S23-01)
+  const [purchasedStream, setPurchasedStream] = useState<string>("heat");
+  const [boughtQty, setBoughtQty] = useState<string>("");
   const [allocationMethod, setAllocationMethod] = useState<string>("wri_efficiency");
 
   // Result and Inspect Modals
@@ -217,8 +220,13 @@ export const Scope2Form: React.FC = () => {
           toast.warning(t("Facility emissions cannot be negative"));
           return;
         }
-        if (isNaN(ho) || ho < 0 || isNaN(po) || po < 0) {
-          toast.warning(t("Heat and power output must be non-negative"));
+        if (isNaN(ho) || ho <= 0 || isNaN(po) || po <= 0) {
+          toast.warning(t("Enter the plant's total heat and power outputs"));
+          return;
+        }
+        const bq = parseFloat(boughtQty);
+        if (isNaN(bq) || bq <= 0 || bq > (purchasedStream === "power" ? po : ho)) {
+          toast.warning(t("The quantity bought must be above 0 and at most the plant's output of that stream"));
           return;
         }
       }
@@ -281,6 +289,8 @@ export const Scope2Form: React.FC = () => {
               total_emissions: val,
               heat_output: parseFloat(heatOutput),
               power_output: parseFloat(powerOutput),
+              purchased_stream: purchasedStream,
+              quantity_bought: parseFloat(boughtQty),
               allocation_method: allocationMethod,
               ...(allocationMethod === "wri_efficiency" && heatEff !== "" ? { heat_efficiency: parseFloat(heatEff) } : {}),
               ...(allocationMethod === "wri_efficiency" && powerEff !== "" ? { power_efficiency: parseFloat(powerEff) } : {}),
@@ -436,6 +446,10 @@ export const Scope2Form: React.FC = () => {
         handleSourceTypeChange={handleSourceTypeChange}
         heatEff={heatEff}
         heatOutput={heatOutput}
+        purchasedStream={purchasedStream}
+        setPurchasedStream={setPurchasedStream}
+        boughtQty={boughtQty}
+        setBoughtQty={setBoughtQty}
         marketFactor={marketFactor}
         marketInstrument={marketInstrument}
         month={month}

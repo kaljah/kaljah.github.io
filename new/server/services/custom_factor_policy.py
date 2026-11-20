@@ -20,11 +20,37 @@ def second_approver_required():
     return os.environ.get("CUSTOM_FACTOR_SECOND_APPROVER", "true").strip().lower() not in ("0", "false", "no")
 
 
-def out_of_range_fields(co2, ch4, n2o):
+def _per_mmbtu_scale(unit):
+    """Factor that converts a factor in `unit` to kg per MMBtu, or None when the unit is not per unit of energy.
+
+    The bounds are kg/MMBtu (energy basis). They were applied to the number whatever its unit, so 3,186 kg CO2 per
+    tonne of diesel (73.96 kg/MMBtu) needed a justification and 50 kg CH4/MMBtu passed (audit 2026-11 F-FAC-03).
+    A factor per activity unit (per gal, scf, bbl, event ...) is not compared with an energy bound."""
+    if not unit:
+        return 1.0  # the form's default unit is kg/MMBtu
+    from calculations.units import UnitError, parse_factor_unit
+
+    try:
+        parsed = parse_factor_unit(unit)
+    except (UnitError, ValueError, TypeError):
+        return None
+    dens = parsed.get("denominators") or []
+    if len(dens) != 1 or dens[0][0] != "energy":
+        return None
+    # base_factor_per_unit is the energy of one denominator unit in the parser's energy base; rescaled to MMBtu
+    per_unit = float(dens[0][1])
+    mmbtu = float(parse_factor_unit("kg/MMBtu")["denominators"][0][1])
+    return float(parsed.get("mass_kg") or 1.0) / per_unit * mmbtu if per_unit else None
+
+
+def out_of_range_fields(co2, ch4, n2o, unit=None):
     values = {"co2_factor": co2, "ch4_factor": ch4, "n2o_factor": n2o}
+    scale = _per_mmbtu_scale(unit)
+    if scale is None:
+        return []  # not an energy-basis factor: the kg/MMBtu bounds do not apply
     return [
         f for f, (lo, hi) in PLAUSIBILITY_BOUNDS.items()
-        if values[f] is not None and not lo <= float(values[f]) <= hi
+        if values[f] is not None and not lo <= float(values[f]) * scale <= hi
     ]
 
 
@@ -40,7 +66,7 @@ def governance(user, data, co2, ch4, n2o):
         return "'source' and 'justification' must be text", None, None
     if not (data.get("source") or "").strip():
         return "A source or method reference is required for a custom factor", None, None
-    out = out_of_range_fields(co2, ch4, n2o)
+    out = out_of_range_fields(co2, ch4, n2o, data.get("unit"))
     justification = (data.get("justification") or "").strip()
     if out and len(justification) < JUSTIFICATION_MIN_CHARS:
         return _needs_justification_message(out), None, None
@@ -53,7 +79,7 @@ def check_update(factor, data):
     """For an edit that touches a factor value: (error_message, justification)."""
     if not any(k in data for k in ("co2_factor", "ch4_factor", "n2o_factor")):
         return None, None
-    out = out_of_range_fields(factor.co2_factor, factor.ch4_factor, factor.n2o_factor)
+    out = out_of_range_fields(factor.co2_factor, factor.ch4_factor, factor.n2o_factor, data.get("unit") or factor.unit)
     if not out:
         return None, None
     justification = (data.get("justification") or "").strip()
@@ -87,3 +113,15 @@ def factor_references(factor):
     ).count()
     s2 = Scope2Emission.query.filter(Scope2Emission.source_type == factor.name).count()
     return s1 + s2
+
+
+def visible_factors(query, user):
+    """Custom factors a user may list: global ones and those of facilities in the user's scope (F-GREST-01)."""
+    from extensions import db
+    from models import CustomFactor
+    from utils import get_allowed_facility_ids
+
+    allowed = get_allowed_facility_ids(user)
+    if allowed is None:
+        return query
+    return query.filter(db.or_(CustomFactor.facility_id.is_(None), CustomFactor.facility_id.in_(list(allowed) or [-1])))

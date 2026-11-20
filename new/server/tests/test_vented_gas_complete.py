@@ -55,7 +55,7 @@ def test_desiccant_eq_6_17_monthly_share(g):
     scf = 6.4 * 1.6 ** 2 * math.pi / 4 * (464.7 / 14.7) * 0.45 * 52
     assert res["intermediate"]["gas_volume_scf"] == pytest.approx(scf)
     month = g.calculate("desiccant", base(vessel_height_ft=6.4, vessel_diameter_ft=1.6, vessel_pressure_psig=450,
-                                          gas_fraction=0.45, refills=52, year=2025, month=2))
+                                          gas_fraction=45, refills=52, year=2025, month=2))
     assert month["intermediate"]["gas_volume_scf"] == pytest.approx(scf * 28 / 365)
 
 

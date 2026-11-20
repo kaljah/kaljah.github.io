@@ -231,6 +231,7 @@ class TestCleanScope1VentingAndMidstream:
             co2_out=outlet,
             ch4_in=ch4_in,
             acid_gas_control_eff=0.0,
+            ch4_slip_fraction=0.001,  # a measured slip: there is no default slip (audit 2026-11 F-VENT2-17)
             uncertainties={},
         )
 

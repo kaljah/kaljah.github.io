@@ -2,6 +2,7 @@
 // (Section 6), measured / engineered gas volumes, and combustion / waste-gas methods
 // (Sections 4 and 5). The server routes on activity_key, vent_method and combustion_method.
 import React, { useEffect, useState } from "react";
+import { MOBILE_VEHICLES } from "../../constants/mobileVehicles";
 import { Wind, Droplets, Layers, Info } from "lucide-react";
 import { Input, Field } from "../../ui";
 import api from "../../api";
@@ -115,7 +116,14 @@ const Composition: React.FC<CompositionProps> = ({ data, onChange, c2 = false, r
 // ---- Tier 1: activity-factor tables ----
 const plural = (a?: string) => (a && !a.endsWith("s") ? `${a}s` : a);
 const PER_INPUT: Record<string, { label: (a?: string) => string; units?: string[]; extra?: { field: string; label: string; placeholder: string } }> = {
-  unit: { label: (a) => t("Number ({{unit}})", { unit: a || t("events") }) },
+  // a per unit-year factor is scaled to the record's period on the server: the number is the units in service,
+  // not unit-years (audit 2026-11 F-GUI2-04: "Number (vessel-year)" read as vessel-years)
+  unit: {
+    label: (a) =>
+      a && /-year$/.test(a)
+        ? t("Number of {{items}} in service (factor per year, scaled to the record's period)", { items: plural(a.replace(/-year$/, "")) || t("units") })
+        : t("Number ({{unit}})", { unit: a || t("events") }),
+  },
   unit_day: { label: (a) => t("Number of {{items}}", { items: plural(a) || t("units") }), extra: { field: "activity_days", label: t("Days"), placeholder: t("whole month") } },
   unit_hr: { label: (a) => t("Number of {{items}}", { items: plural(a) || t("units") }), extra: { field: "activity_hours", label: t("Hours"), placeholder: t("whole month") } },
   mmscf: { label: () => t("Gas throughput"), units: GAS_UNITS },
@@ -455,11 +463,11 @@ export const CombustionMethodForm: React.FC<CombustionMethodFormProps> = ({ data
                 required
               />
               <Num
-                label={t("Carbon content (wt % or fraction)")}
+                label={t("Carbon content (wt %)")}
                 field="carbon_wt_pct"
                 data={data}
                 onChange={onChange}
-                placeholder="e.g. 77.1% or 0.771"
+                placeholder="e.g. 77.1"
                 required
               />
               <Num
@@ -504,11 +512,11 @@ export const CombustionMethodForm: React.FC<CombustionMethodFormProps> = ({ data
                 required
               />
               <Num
-                label={t("Carbon content (wt % or fraction)")}
+                label={t("Carbon content (wt %)")}
                 field="carbon_wt_pct"
                 data={data}
                 onChange={onChange}
-                placeholder="e.g. 86.5% or 0.865"
+                placeholder="e.g. 86.5"
                 required
               />
               <Num
@@ -543,11 +551,11 @@ export const CombustionMethodForm: React.FC<CombustionMethodFormProps> = ({ data
                 required
               />
               <Num
-                label={t("Carbon content (wt % or fraction)")}
+                label={t("Carbon content (wt %)")}
                 field="carbon_wt_pct"
                 data={data}
                 onChange={onChange}
-                placeholder="e.g. 75.0% or 0.75"
+                placeholder="e.g. 75.0"
                 required
               />
               <Num
@@ -646,7 +654,7 @@ export const CombustionMethodForm: React.FC<CombustionMethodFormProps> = ({ data
           <MoreOptions>
             <FieldGrid min={170}>
               <Num label={t("CO₂ factor (t/MMBtu)")} field="co2_ef_t_mmbtu" data={data} onChange={onChange} placeholder={t("fuel default")} />
-              {energyBy === "engine" && <Num label={t("Heat rate (Btu/hp-hr)")} field="heat_rate_btu_hphr" data={data} onChange={onChange} placeholder="7000" />}
+              {energyBy === "engine" && <Num label={t("Heat rate (Btu/hp-hr)")} field="heat_rate_btu_hphr" data={data} onChange={onChange} placeholder={!eqRow || eqRow.fuel === "natural_gas" ? "6186" : eqRow.fuel === "diesel" ? "8089" : "7000"} />}
             </FieldGrid>
           </MoreOptions>
         </>
@@ -658,21 +666,18 @@ export const CombustionMethodForm: React.FC<CombustionMethodFormProps> = ({ data
             <Num label={t("Fuel economy (miles/gal)")} field="fuel_economy_mpg" data={data} onChange={onChange} required />
             <div className="input-group">
               <label>{t("Vehicle")}</label>
+              {/* every Table 4-16 diesel / gasoline vehicle type; "other diesel / gasoline" used the stationary
+                  fuel CH4 / N2O factors (audit 2026-11 F-FAC-02) */}
               <CustomDropdown
-                options={[
-                  { value: "hd_diesel_advanced", label: t("Heavy-duty diesel, advanced control") },
-                  { value: "diesel", label: t("Other diesel vehicle") },
-                  { value: "gasoline", label: t("Gasoline vehicle") },
-                ]}
-                value={data.vehicle_type || data.vehicle_fuel || ""}
+                options={MOBILE_VEHICLES.filter((v) => v.fuel === "diesel" || v.fuel === "gasoline").map((v) => ({
+                  value: v.key,
+                  label: t(v.label),
+                }))}
+                value={data.vehicle_type || ""}
                 onChange={(v) => {
-                  if (v === "hd_diesel_advanced") {
-                    onChange("vehicle_type", v);
-                    onChange("vehicle_fuel", "diesel");
-                  } else {
-                    onChange("vehicle_type", undefined);
-                    onChange("vehicle_fuel", v);
-                  }
+                  const row = MOBILE_VEHICLES.find((x) => x.key === v);
+                  onChange("vehicle_type", v);
+                  onChange("vehicle_fuel", row ? row.fuel : undefined);
                 }}
                 placeholder={t("Select vehicle")}
               />

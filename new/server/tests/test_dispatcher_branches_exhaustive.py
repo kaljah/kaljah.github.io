@@ -186,7 +186,7 @@ def test_dispatcher_chemical_and_stoichiometry(dispatcher):
             "factor_source": "specific",   # without it the result is a silent zero
             "amount": 500.0,
             "unit": "tonne",
-            "carbon_content": 0.75,
+            "carbon_content": 75,  # wt % (F-CMB-06)
             "production_type": "ammonia",
         },
         {},
@@ -585,8 +585,8 @@ def test_dispatcher_fugitive_time_and_components(dispatcher):
             "factor_source": "specific",
             "amount": 1000.0,
             "unit": "kg",
-            "carbon_content": 0.85,
-            "oxidation_factor": 1.0,
+            "carbon_content": 85,  # wt % (F-CMB-06)
+            "oxidation_factor": 100,
         },
         {},
         {},
@@ -600,7 +600,7 @@ def test_dispatcher_fugitive_time_and_components(dispatcher):
             "factor_source": "specific",
             "amount": 1000.0,
             "unit": "kg",
-            "carbon_content": 0.85,
+            "carbon_content": 85,  # wt % (F-CMB-06)
         },
         {},
         {},

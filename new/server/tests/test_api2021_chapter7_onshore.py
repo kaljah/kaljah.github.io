@@ -199,7 +199,7 @@ def test_tier3_method21_screening_ranges():
         non_pegged_count=90,
         pegged_count=10,
         operating_hours=8760.0,
-        ch4_content=0.85,
+        ch4_content=85,  # wt %, always (audit 2026-11 F-FUG-08)
     )
     ch4_tonnes = get_val(res["results"]["ch4"])
     assert ch4_tonnes == pytest.approx((10 * 0.098 + 90 * 2.5e-5) * 0.85 * 8760 / 1000, rel=1e-6)

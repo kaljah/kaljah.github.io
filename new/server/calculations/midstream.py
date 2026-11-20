@@ -20,7 +20,7 @@ class AGRCalculator(BaseCalculator):
         co2_out=0.0,
         uncertainties=None,
         ch4_in=0.85,
-        ch4_slip_fraction=0.001,
+        ch4_slip_fraction=None,  # None: Table 6-19 vent factor (a 0.1 % default had no source; F-VENT2-17)
         acid_gas_control_eff=0.0,
         acid_gas_control_type="vent",
         gwp_dict=None,
@@ -37,7 +37,7 @@ class AGRCalculator(BaseCalculator):
         - co2_in: Native CO2 mole fraction entering unit (e.g. 0.04 for 4%)
         - co2_out: Treated gas CO2 mole fraction (e.g. 0.0005 for 50 ppm)
         - ch4_in: Methane mole fraction in feed gas (e.g. 0.85)
-        - ch4_slip_fraction: Methane slip fraction per API Table 6-5 (default 0.001 = 0.1%)
+        - ch4_slip_fraction: measured methane slip, a fraction of the inlet CH4 (default: the Table 6-19 vent factor)
         - acid_gas_control_eff: Destruction/recovery efficiency (e.g. 0.98 for Claus/thermal oxidizer)
         - acid_gas_control_type: Control technology ('vent', 'agi', 'ccus', 'claus', 'thermal_oxidizer', 'flare')
         """
@@ -183,7 +183,7 @@ class DehydratorCalculator(BaseCalculator):
                 if tp_val < 0:
                     raise ValueError("Throughput cannot be negative")
                 u = str(kwargs.get("unit") or kwargs.get("throughput_unit") or "mmscf").lower().strip()
-                if u in ("mscf", "kscf"):
+                if u in ("mscf", "kscf", "mcf"):  # "mcf" was read as MMscf (F-VENT2-05)
                     tp_mmscf = tp_val / 1000.0
                 elif u in ("scf", "cf"):
                     tp_mmscf = tp_val / 1_000_000.0
@@ -191,8 +191,10 @@ class DehydratorCalculator(BaseCalculator):
                     tp_mmscf = (tp_val * CONVERSIONS.get("m3_to_scf", 35.3147)) / 1_000_000.0
                 elif u in ("bcf",):
                     tp_mmscf = tp_val * 1000.0
-                else:
+                elif u in ("mmscf", "mmcf", "mmscf/yr", "mmscf_yr"):
                     tp_mmscf = tp_val
+                else:  # an unknown unit was read as MMscf
+                    raise ValueError(f"Gas throughput unit '{u}' is not a volume: scf, Mcf, MMscf, Bcf or m3")
                 default_ef = 0.0052859 * (c / 0.788) * (1.0 - eff)
                 ch4_tonnes = tp_mmscf * default_ef
                 in_dict = {"throughput_mmscf": tp_mmscf, "tier": "Tier 1 (Default Factor)"}
@@ -201,7 +203,10 @@ class DehydratorCalculator(BaseCalculator):
                 n = float(n_dehy)
                 if n < 0:
                     raise ValueError("Dehydrator count cannot be negative")
-                days = float(kwargs.get("operating_days") or 365.0)
+                _d = kwargs.get("operating_days")
+                days = float(365.0 if _d in (None, "") else _d)  # an entered 0 days is 0 (F-VENT2-05)
+                if not 0 <= days <= 366:
+                    raise ValueError("Operating days must be between 0 and 366")
                 default_ef = 0.06149 * (c / 0.788) * (1.0 - eff) * (days / 365.0)
                 ch4_tonnes = n * default_ef
                 in_dict = {"dehydrator_count": n, "operating_days": days, "tier": "Tier 1 (Default Factor)"}

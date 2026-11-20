@@ -133,7 +133,7 @@ def test_fix6_agr_balance_flared_methane_destruction_and_n2o_volume():
         "sour_co2_content": 0.08,
         "sweet_co2_content": 0.01,
         "disposition": "flared",
-        "destruction_efficiency": 0.98,
+        "destruction_efficiency": 98,  # percent, always (BA-012; audit 2026-11 F-CORE-03)
     })
     
     ch4_val = res_flared["results"]["ch4"]["value"]
@@ -155,6 +155,7 @@ def test_fix7_crude_transport_flared_n2o_heating_value_dimension():
         vessel_type="tanker",
         control_efficiency=0.98,
         control_type="flare",
+        toc_carbon_wt_pct=85,  # the vapour's carbon content is entered (audit 2026-11 F-VENT2-08)
     )
     
     n2o_val = res["results"]["n2o"]["value"]
@@ -187,11 +188,12 @@ def test_fix9_activity_factors_gas_fraction_scaling():
     from calculations.activity_factors import ActivityFactorCalculator
     calc = ActivityFactorCalculator()
     # wt_gas row has basis 0.816
+    # contents are mol %, always (audit 2026-11 F-CORE-03): "81.6%" is 81.6, no size guess
     res_pct = calc.calculate("wt_gas", 2, ch4_content=81.6, co2_content=2.0)
-    res_frac = calc.calculate("wt_gas", 2, ch4_content=0.816, co2_content=0.02)
-    assert res_pct["results"]["ch4"]["value"] == pytest.approx(res_frac["results"]["ch4"]["value"])
-    assert res_pct["results"]["co2"]["value"] == pytest.approx(res_frac["results"]["co2"]["value"])
-    assert res_frac["intermediate"]["ch4_scale"] == pytest.approx(1.0)
+    res_str = calc.calculate("wt_gas", 2, ch4_content="81.6%", co2_content="2%")
+    assert res_pct["results"]["ch4"]["value"] == pytest.approx(res_str["results"]["ch4"]["value"])
+    assert res_pct["results"]["co2"]["value"] == pytest.approx(res_str["results"]["co2"]["value"])
+    assert res_pct["intermediate"]["ch4_scale"] == pytest.approx(1.0)
 
 
 def test_fix10_scope2_steam_ton_canonical_metric_tonnes():

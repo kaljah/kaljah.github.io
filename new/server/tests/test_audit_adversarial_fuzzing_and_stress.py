@@ -489,5 +489,5 @@ class TestEnterpriseBatchAndConcurrencyStress:
 
         for i in range(10):
             assert errors[i] is None, f"Thread {i} failed: {errors[i]}"
-            expected = 1.91323528 * (i + 1)
+            expected = 1.91323528 * 1026 / 1020 * (i + 1)  # Table C-1 1,026 Btu/scf (audit 2026-11 F-FAC-01)
             assert pytest.approx(results[i], rel=1e-6) == expected

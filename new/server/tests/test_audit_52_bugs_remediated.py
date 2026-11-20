@@ -229,6 +229,7 @@ def test_bug16_17_marine_loading_flared_vapors():
         activity="loading",
         loading_service="marine_barges",
         volume_loaded_bbl=100000.0,
+        toc_carbon_wt_pct=85,  # the vapour carbon content is entered (audit 2026-11 F-VENT2-08)
         control_efficiency=0.98,
         control_type="flare",
     )
@@ -246,7 +247,7 @@ def test_bug18_vented_gas_reported_mass_flaring():
         "ch4_mass": 10.0,
         "co2_mass": 5.0,
         "mass_unit": "t",
-        "control_efficiency": 0.98,
+        "control_efficiency": 98,  # percent (audit 2026-11 F-CORE-03)
         "disposition": "flared",
     })
     # 9.8 tonnes CH4 burned -> 26.9 tonnes CO2 + 5.0 tonnes native CO2 = 31.9 tonnes CO2
@@ -266,7 +267,7 @@ def test_bug20_method21_toc_to_co2():
         pegged_count=1,
         operating_hours=8760.0,
         ch4_content=0.85,
-        co2_content=0.05,
+        co2_wt_pct=5.0,  # the CO2 weight % of the leaking gas (audit 2026-11 F-FUG-09)
     )
     assert res["results"]["co2"]["value"] > 0.0
 

@@ -400,7 +400,8 @@ class TestLayer2DefaultFactorRegistry:
 
     def test_audit_all_180_api_factors_integrity(self):
         """Assert no default factor in API_FACTORS is None, NaN, negative, or missing unit metadata."""
-        assert len(API_FACTORS) == 180, f"Expected exactly 180 API_FACTORS, found {len(API_FACTORS)}"
+        # 180 + the Table C-1 LPG row (audit 2026-11 F-FAC-07)
+        assert len(API_FACTORS) == 181, f"Expected exactly 181 API_FACTORS, found {len(API_FACTORS)}"
         for name, data in API_FACTORS.items():
             unit = data.get("unit") or data.get("factor_unit") or data.get("baseUnit")
             assert unit, f"Missing unit in API_FACTOR '{name}'"
@@ -416,7 +417,7 @@ class TestLayer2DefaultFactorRegistry:
         """Independently cross-check core catalog factors against API Compendium tables."""
         benchmarks = {
             # Table 5-1: Natural Gas combustion (kg/MMBtu)
-            "Natural Gas": {"co2": 53.06, "ch4": 0.001, "n2o": 0.0001, "hhv": 1020, "unit": "kg/MMBtu"},
+            "Natural Gas": {"co2": 53.06, "ch4": 0.001, "n2o": 0.0001, "hhv": 1026, "unit": "kg/MMBtu"},
             # Table 5-1: Diesel / Fuel Oil No. 2 (kg/MMBtu)
             "Diesel (No. 2 Fuel Oil)": {"co2": 73.96, "ch4": 0.003, "n2o": 0.0006, "unit": "kg/MMBtu"},
             # Table 5-1: Crude Oil (kg/MMBtu)
@@ -440,7 +441,8 @@ class TestLayer2DefaultFactorRegistry:
 
     def test_audit_all_105_activity_factors_integrity(self):
         """Assert all 105 ACTIVITY_FACTORS are well-formed and map to valid API Compendium tables."""
-        assert len(ACTIVITY_FACTORS) == 105, f"Expected 105 ACTIVITY_FACTORS, found {len(ACTIVITY_FACTORS)}"
+        # 105 + Table 6-13 active / suspended casing gas and the Table 6-17 per-dehydrator row (audit 2026-11 F-VENT1-12)
+        assert len(ACTIVITY_FACTORS) == 108, f"Expected 108 ACTIVITY_FACTORS, found {len(ACTIVITY_FACTORS)}"
         for key, row in ACTIVITY_FACTORS.items():
             assert "table" in row, f"Missing table in ACTIVITY_FACTORS key '{key}'"
             assert "per" in row or "unit" in row, f"Missing unit/per in ACTIVITY_FACTORS key '{key}'"
@@ -521,20 +523,20 @@ class TestLayer3FullPipelineRoute:
     # 1. Stationary Combustion
     # --------------------------------------------------------------------------
     def test_combustion_tier1_catalog(self):
-        """Tier 1: Fuel quantity (1000 Mscf) * EF (53.06 kg CO2/MMBtu) at 1020 Btu/scf."""
+        """Tier 1: Fuel quantity (1000 Mscf) * EF (53.06 kg CO2/MMBtu) at 1026 Btu/scf (Table C-1, F-FAC-01)."""
         fd = _lookup_api_factor("Natural Gas")
         payload = {"process_type": "combustion", "fuel": "Natural Gas", "amount": 1000.0, "unit": "mscf"}
         res, method = compute_emissions(payload, factor_data=fd)
 
-        # Independent Oracle: Energy = 1000 Mscf * 1020 Btu/scf * 1e-3 = 1020 MMBtu
-        # CO2 (t) = 1020 MMBtu * 53.06 kg/MMBtu / 1000 = 54.1212 tonnes
-        # CH4 (t) = 1020 MMBtu * 0.001 kg/MMBtu / 1000 = 0.00102 tonnes
-        # N2O (t) = 1020 MMBtu * 0.0001 kg/MMBtu / 1000 = 0.000102 tonnes
-        # CO2e (t) = 54.1212 + 0.00102 * 28 + 0.000102 * 265 = 54.17679 tonnes
-        assert math.isclose(res["co2"], 54.1212, rel_tol=REL_TOL_EXACT)
-        assert math.isclose(res["ch4"], 0.00102, rel_tol=REL_TOL_EXACT)
-        assert math.isclose(res["n2o"], 0.000102, rel_tol=REL_TOL_EXACT)
-        assert math.isclose(res["totalCo2e"], 54.17679, rel_tol=REL_TOL_EXACT)
+        # Independent Oracle: Energy = 1000 Mscf * 1026 Btu/scf * 1e-3 = 1026 MMBtu
+        # CO2 (t) = 1026 MMBtu * 53.06 kg/MMBtu / 1000 = 54.43956 tonnes
+        # CH4 (t) = 1026 MMBtu * 0.001 kg/MMBtu / 1000 = 0.001026 tonnes
+        # N2O (t) = 1026 MMBtu * 0.0001 kg/MMBtu / 1000 = 0.0001026 tonnes
+        assert math.isclose(res["co2"], 54.43956, rel_tol=REL_TOL_EXACT)
+        assert math.isclose(res["ch4"], 0.001026, rel_tol=REL_TOL_EXACT)
+        assert math.isclose(res["n2o"], 0.0001026, rel_tol=REL_TOL_EXACT)
+        # CO2e = 54.43956 + 0.001026 * 28 + 0.0001026 * 265 = 54.495477 tonnes
+        assert math.isclose(res["totalCo2e"], 54.495477, rel_tol=REL_TOL_EXACT)
         DIAGNOSTICS.record_pass()
 
     def test_combustion_tier3_gas_chromatographic_carbon_balance(self):
@@ -811,7 +813,7 @@ class TestLayer3FullPipelineRoute:
             "m21_below_count": 100, # non-leakers
             "m21_above_count": 5,   # leakers
             "operating_hours": 8760,
-            "ch4_wt_fraction": 0.90,
+            "ch4_wt_fraction": 90,  # wt %, always (audit 2026-11 F-FUG-08)
         }
         res, method = compute_emissions(payload)
         # Independent Oracle: (100 * 2.5e-5 kg TOC/hr + 5 * 0.098 kg TOC/hr) * 8760 hr * 0.90 / 1000 = 3.88287 tonnes CH4

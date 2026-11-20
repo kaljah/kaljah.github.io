@@ -1,12 +1,12 @@
 import math
 from .constants import DEFAULT_GWP, get_active_gwp
 
-# Standard Thermodynamic Conditions (API Compendium 2021 §4.2.1, ISO 13443)
+# Standard conditions (API Compendium 2021 §4.2.1): 60 °F, 14.696 psia; not ISO 13443's 15 °C (F-CORE-09)
 # T_std = 60°F = 15.56°C = 288.705555... K = 519.67 °R
 # P_std = 14.696 psia = 101.325 kPa = 1.01325 bar = 1.0 atm
 STD_TEMP_K = (60.0 - 32.0) * 5.0 / 9.0 + 273.15
 STD_TEMP_R = 519.67
-STD_TEMP_C = 15.556
+STD_TEMP_C = (60.0 - 32.0) * 5.0 / 9.0  # 15.5556 °C (was rounded to 15.556)
 STD_TEMP_F = 60.0
 
 STD_PRESSURE_PSIA = 14.696
@@ -23,17 +23,16 @@ MOLAR_VOLUME_M3_PER_KMOL = 23.685
 MW_CH4 = 16.04
 MW_CO2 = 44.01
 
-# API Compendium 2021 BOE conversion: 5.8 MMBtu per BOE and standard gas HHV 1,020 Btu/scf (§8.1)
-# 1,020 Btu/scf / 1,000 / 5.8 MMBtu/BOE = 0.17586206896551725 BOE per Mscf (5,686.2745 scf/BOE)
+# BOE: Compendium Table 3-4, 1 BOE of gas = 159.920 m3 = 5,647.52 ft3 (1,020 / 5.8 was 0.68 % low; F-CORE-07)
 NG_HHV_BTU_PER_SCF = 1020.0
 MMBTU_PER_BOE = 5.8
-GAS_BOE_PER_MSCF = NG_HHV_BTU_PER_SCF / 1000.0 / MMBTU_PER_BOE
-SCF_PER_BOE = 1000.0 / GAS_BOE_PER_MSCF
+SCF_PER_BOE = 5647.52
+GAS_BOE_PER_MSCF = 1000.0 / SCF_PER_BOE
 BOE_TO_GJ = MMBTU_PER_BOE * 1.05505585262
 BOE_TO_MJ = MMBTU_PER_BOE * 1055.05585262
 
 CONVERSIONS = {
-    # Volume (API Compendium 2021 §4.2 / ISO 13443 at 60°F, 14.696 psia)
+    # Volume (API Compendium 2021 §4.2, 60°F, 14.696 psia)
     "scf_to_m3": 0.028316846592,
     "m3_to_scf": 35.314666721,
     "mscf_to_m3": 28.316846592,
@@ -75,7 +74,7 @@ CONVERSIONS = {
     "kwh_to_mj": 3.6,
     "mj_to_kwh": 0.2777777777777778,
     "therm_to_mj": 105.505585262,  # 1 therm = 100,000 Btu (IT), as in indirect.py
-    # BOE Conversions (API Compendium 2021 §8.1 / 5.8 MMBtu/BOE and 1,020 Btu/scf)
+    # BOE Conversions (API Compendium 2021 Table 3-4: 5.8 MMBtu/BOE, natural gas 5,647.52 scf/BOE)
     "boe_to_mmbtu": MMBTU_PER_BOE,
     "mmbtu_to_boe": 1.0 / MMBTU_PER_BOE,
     "boe_to_gj": BOE_TO_GJ,
@@ -264,7 +263,7 @@ MASS_UNITS_TO_KG = {
     "tonnes": 1000.0,
     "metric_ton": 1000.0,
     "metric_tons": 1000.0,
-    "mt": 1000.0,
+    "mt": 1000.0,  # internal only: user input "mt" is refused as ambiguous at entry (validate_activity, S1K-F6)
     "t": 1000.0,
     "lb": 0.45359237,
     "lbs": 0.45359237,
@@ -363,7 +362,7 @@ FREIGHT_UNITS_TO_TONNE_KM = {
     "t-km": 1.0,
     "tkm": 1.0,
     "tonne_km": 1.0,
-    "ton-mile": 1.459972,
+    "ton-mile": 1.459972,  # internal only: a bare "ton-mile" is refused at entry like a bare "ton" (F-CORE-12)
     "ton_mile": 1.459972,
     "tonmile": 1.459972,
     "short_ton-mile": 1.459972,  # 0.90718474 t x 1.609344 km
@@ -422,7 +421,7 @@ LIQUID_FLOW_UNITS_TO_M3_HR = {
 TEMP_UNITS = {
     "c", "celsius", "degc", "°c",
     "f", "fahrenheit", "degf", "°f",
-    "k", "kelvin",
+    "k", "kelvin", "degk", "°k",  # "degk" / "°k" were accepted by to_kelvin only (audit 2026-11 F-CORE-12)
     "r", "rankine", "degr", "°r",
 }
 
@@ -857,7 +856,7 @@ def composition_fractions(raw, basis=None, check_total=True):
     scale = 0.01 if basis == "percent" else 1.0
     fr = {k: v * scale for k, v in vals.items()}
     tot = sum(fr.values())
-    if tot > 1.005 or (tot < 0.995 and len(vals) > 1 and check_total):  # a lone CH4 content is a content, not an analysis
+    if tot > 1.005 + 1e-9 or (tot < 0.995 - 1e-9 and len(vals) > 1 and check_total):  # 1e-9: float sums (F-UPL-13); a lone CH4 is a content
         raise ValueError(f"Gas composition sums to {tot * 100:.2f} %: it must total 100 % (0.5 % rounding; enter the remainder as N2, CO2 or H2S)")
     renorm = (0.995 <= tot < 0.99999 and len(vals) > 1 and check_total) or 1.00001 < tot
     if renorm:

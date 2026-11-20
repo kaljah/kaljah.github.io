@@ -121,15 +121,10 @@ class TestFieldCoercionAndSanitization:
             (1234.56, 1234.56),
             (100, 100.0),
             # European comma decimals
-            ("1234,56", 1234.56),
-            ("0,0045", 0.0045),
-            ("-85,25", -85.25),
             # Thousands separators (comma)
             ("1,000,000.50", 1000000.50),
             ("12,345", None),  # ambiguous (12345 or 12.345): never guessed (bug hunt 2026-10-15 #31)
             # Thousands separators (dot) with European comma
-            ("1.000.000,50", 1000000.50),
-            ("12.345,67", 12345.67),
             # Scientific notation
             ("1.45e-4", 0.000145),
             ("2.1E+6", 2100000.0),
@@ -151,6 +146,11 @@ class TestFieldCoercionAndSanitization:
     def test_clean_float_valid_coercion(self, raw_input, expected):
         res = _clean_float(raw_input)
         assert pytest.approx(res, rel=1e-6) == expected
+
+    @pytest.mark.parametrize("raw_input", ["-85,25", "0,0045", "1.000.000,50", "12.345,67", "1234,56"])
+    def test_clean_float_decimal_comma_needs_the_mark(self, raw_input):
+        # a decimal comma is never guessed without the file's decimal mark (audit 2026-11 F-UPL-09)
+        assert _clean_float(raw_input) is None
 
     @pytest.mark.parametrize(
         "raw_null",

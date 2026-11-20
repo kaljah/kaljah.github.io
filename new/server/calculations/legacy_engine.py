@@ -66,13 +66,14 @@ def _calculate_default_kg(amount, unit, factor_data, gas, hours=None, **conv):
     if not factor_data:
         return 0.0
 
-    raw_val = (
-        factor_data.get(gas)
-        or factor_data.get("factor")
-        or factor_data.get("total")
-        or (factor_data.get("co2") if gas == "co2" else None)
-        or 0.0
-    )
+    # each gas is activity x that gas's own factor; a gas whose factor is 0 emits 0. A 0 (falsy) gas used to
+    # fall through to the row's generic `factor` key, which on 42 catalog rows is the CH4 value, so a
+    # CH4-only row booked the CH4 factor as CO2 and N2O too (audit 2026-11 F-CORE-02). The generic key is
+    # read only by a row that carries no per-gas factor at all.
+    if any(g in factor_data for g in ("co2", "ch4", "n2o")):
+        raw_val = factor_data.get(gas) or 0.0
+    else:
+        raw_val = factor_data.get("factor") or factor_data.get("total") or 0.0
     try:
         val = float(raw_val or 0.0)
     except (ValueError, TypeError):  # an unreadable factor was taken as 0 (no emissions booked)

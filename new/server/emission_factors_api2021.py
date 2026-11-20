@@ -29,7 +29,7 @@ COMBUSTION_FACTORS = {
     # NATURAL GAS & GASEOUS FUELS
     "Natural Gas": {
         "code": "NG",
-        "hhv": 1020,  # Btu/scf
+        "hhv": 1026,  # Btu/scf: Table C-1 1.026E-03 MMBtu/scf, as cited below (1,020 is Table 3-8; audit 2026-11 F-FAC-01)
         "co2": 53.06,  # kg CO₂/MMBtu
         "ch4": 0.001,  # kg CH₄/MMBtu
         "n2o": 0.0001,  # kg N₂O/MMBtu
@@ -198,11 +198,26 @@ COMBUSTION_FACTORS = {
         "type": "liquids",
         "source": "API Compendium 2021 Section 4 (combustion; EPA 40 CFR 98 Tables C-1 / C-2)",
     },
+    # 40 CFR 98 Table C-1 lists LPG on its own row; "lpg" resolved to propane (+0.8 % CO2 / gal; audit 2026-11 F-FAC-07)
+    "Liquefied Petroleum Gas (LPG)": {
+        "code": "LPG",
+        "hhv": 92000,  # Table C-1: 0.092 MMBtu/gal
+        "co2": 61.71,  # Table C-1 LPG
+        "ch4": 0.003,
+        "n2o": 0.0006,
+        "uncertainty": {"co2": 0.02, "ch4": 0.25, "n2o": 0.30},
+        "unit": "kg/MMBtu",
+        "usage": ["combustion", "mobile"],
+        "segment": "Downstream",
+        "process_category": "stationary_combustion",
+        "type": "liquids",
+        "source": "40 CFR 98 Table C-1 (LPG: 0.092 MMBtu/gal, 61.71 kg CO2/MMBtu) and Table C-2 petroleum products",
+    },
     "Ethane": {
         "code": "Ethane",
         "hhv": 68000,  # Table 4-5: 0.068 MMBtu/gal (liquid)
-        # BUG-027: 69,600 Btu is per US gallon of liquid ethane (EPA Table C-1 0.0696 MMBtu/gal),
-        # not per scf; the explicit basis stops it being multiplied by scf.
+        # BUG-027: the HHV is per US gallon of liquid ethane (Table 4-5 0.068 MMBtu/gal), not per scf; the
+        # explicit basis stops it being multiplied by scf.
         "hhv_unit": "btu/gal",
         "co2": 59.60,
         "ch4": 0.003,
@@ -247,7 +262,7 @@ COMBUSTION_FACTORS = {
     # SOLID FUELS
     "Anthracite Coal": {
         "code": "CoalAnth",
-        "hhv": 25090,  # Btu/lb
+        "hhv": 25090,  # kBtu per short ton: Table C-1 25.09 MMBtu/short ton (audit 2026-11 F-FAC-10)
         "co2": 103.69,
         "ch4": 0.011,
         "n2o": 0.0016,
@@ -305,15 +320,19 @@ COMBUSTION_FACTORS = {
         "code": "PetCoke",
         "hhv": 30000,
         "co2": 102.41,
-        "ch4": 0.032,  # Table 4-6: 3.20E-05 t/MMBtu (HHV)
-        "n2o": 0.0042,  # Table 4-6: 4.20E-06 t/MMBtu (HHV)
+        # 40 CFR 98 Table C-2 (petroleum products), Compendium Table 4-8 and its December 2025 correction:
+        # 3.0E-03 / 6.0E-04 kg/MMBtu. Compendium Table 4-6 and the EPA Hub print 0.032 / 0.0042 (solid fuels);
+        # the regulation and the Compendium's own correction are followed (audit 2026-11 F-FAC-05)
+        "ch4": 0.003,
+        "n2o": 0.0006,
         "uncertainty": {"co2": 0.03, "ch4": 0.30, "n2o": 0.40},
         "unit": "kg/MMBtu",
         "usage": ["combustion"],
         "segment": "Downstream",
         "process_category": "stationary_combustion",
         "type": "solids",
-        "source": "API Compendium 2021 Section 4 (combustion; EPA 40 CFR 98 Tables C-1 / C-2)",
+        "source": "40 CFR 98 Table C-1 (CO2, HHV) and Table C-2 petroleum products (CH4, N2O), as API Compendium "
+                  "2021 Table 4-8 and the December 2025 corrections print them",
     },
 }
 
@@ -1373,7 +1392,7 @@ EQUIPMENT_FACTORS = {
     "Tank - Flash Emissions (Oil)": {
         "code": "TankFlashOil",
         "type": "tank",
-        "ch4": 0.193,  # kg CH₄/bbl (API Table 6-4 / Table 5-16)
+        "ch4": 0.193,  # kg CH₄/bbl (API Compendium 2021 Table 6-22)
         "co2": 0,  # Table 6-22 is CH4 only; CO2 needs the separator gas CO2 content
         "n2o": 0,
         "uncertainty": {"co2": 0.15, "ch4": 0.40, "n2o": 0},
@@ -1381,7 +1400,7 @@ EQUIPMENT_FACTORS = {
         "segment": "Upstream",
         "process_category": "storage_tanks",
         "type": "equipment",
-        "description": "API Table 5-16 / 6-4 — Default crude oil flash emission factor",
+        "description": "API Compendium 2021 Table 6-22 — crude oil flashing (large tank, without control)",
         "source": "API Compendium 2021 Table 6-22 (large tanks without control)",
     },
     "Tank - Crude Oil (Small, ≤10 bbl/d)": {
@@ -1395,7 +1414,7 @@ EQUIPMENT_FACTORS = {
         "segment": "Upstream",
         "process_category": "storage_tanks",
         "type": "equipment",
-        "description": "Crude oil flashing, small tank (≤ 10 bbl/d)",
+        "description": "Crude oil flashing, small tank (< 10 bbl/d, Table 6-22)",
         "source": "API Compendium 2021 Table 6-22",
     },
     "Tank - Crude Oil (Large, >10 bbl/d)": {
@@ -1409,7 +1428,7 @@ EQUIPMENT_FACTORS = {
         "segment": "Upstream",
         "process_category": "storage_tanks",
         "type": "equipment",
-        "description": "Crude oil flashing, large tank (> 10 bbl/d)",
+        "description": "Crude oil flashing, large tank (>= 10 bbl/d, Table 6-22)",
         "source": "API Compendium 2021 Table 6-22",
     },
     "Tank - Production Condensate (Small, ≤10 bbl/d)": {
@@ -1423,7 +1442,7 @@ EQUIPMENT_FACTORS = {
         "segment": "Upstream",
         "process_category": "storage_tanks",
         "type": "equipment",
-        "description": "Production condensate flashing, small tank (≤ 10 bbl/d)",
+        "description": "Production condensate flashing, small tank (< 10 bbl/d, Table 6-24)",
         "source": "API Compendium 2021 Table 6-24",
     },
     "Tank - Production Condensate (Large, >10 bbl/d)": {
@@ -1437,7 +1456,7 @@ EQUIPMENT_FACTORS = {
         "segment": "Upstream",
         "process_category": "storage_tanks",
         "type": "equipment",
-        "description": "Production condensate flashing, large tank (> 10 bbl/d)",
+        "description": "Production condensate flashing, large tank (>= 10 bbl/d, Table 6-24)",
         "source": "API Compendium 2021 Table 6-24",
     },
     # ========== DRILLING ==========
@@ -1498,7 +1517,8 @@ EQUIPMENT_FACTORS = {
         "ch4": 0.0052859,  # Table 6-17: tonnes CH4 / 10^6 scf processed
         "co2": 0,
         "n2o": 0,
-        "uncertainty": {"co2": 0.30, "ch4": 0.30, "n2o": 0.30},
+        # Table 6-17 prints +/-191 % for the CH4 factor (audit 2026-11 F-FAC-04: 30 % was stored)
+        "uncertainty": {"co2": 0.30, "ch4": 1.91, "n2o": 0.30},
         "unit": "tonnes CH4/MMscf",
         "segment": "Midstream",
         "process_category": "dehydrator",

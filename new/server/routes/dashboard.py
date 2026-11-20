@@ -169,9 +169,9 @@ def get_batch_dashboard_data():
     """Consolidated dashboard API — all sub-queries run in parallel threads."""
     facility_id = request.args.get("facilityId") or request.args.get("facility_id")
     year = request.args.get("year")
-    request.args.get("month")
-    activity = request.args.get("activity")
-    division = request.args.get("division")
+    if request.args.get("month") not in (None, "", "all"):  # it was ignored: a year total (F-AGG-13)
+        return jsonify({"error": "batch-all reports whole years: no month filter"}), 400
+    activity, division = request.args.get("activity"), request.args.get("division")
     segment = request.args.get("segment")
     group_by = request.args.get("groupBy")
     include_pending = request.args.get("includePending") == "true"
@@ -385,7 +385,7 @@ def get_batch_dashboard_data():
         # BUG-054 / BUG-072: pending banner uses the same filters as every other panel, includes
         # Scope 3, and follows the GWP horizon
         from services.dashboard_filters import apply_scope, apply_year, gwp_pair, horizon_delta
-        from services.scope2_gases import record_totals_fields
+        from services.scope2_gases import S2_GAS_COLUMNS, record_totals_fields
 
         pscope = dict(allowed_fids=allowed_fids, facility_id=facility_id, activity=activity, division=division,
                       segment=segment)
@@ -403,8 +403,8 @@ def get_batch_dashboard_data():
                 Scope2Emission.source_type,
                 Scope2Emission.grid_region,
                 Scope2Emission.electricity_kwh,
-                Scope2Emission.co2e,
-                Scope2Emission.co2e_market_based,
+                Scope2Emission.co2e, Scope2Emission.co2e_market_based,
+                *S2_GAS_COLUMNS,  # stored gases and contract factor: GWP-20 re-weighting (audit 2026-11 F-GUI-02)
             )
         )
         s2_pend_rows = s2_pend_q.all()
@@ -417,10 +417,10 @@ def get_batch_dashboard_data():
             c20, n20 = gwp_pair("20")
             s2_diff = (c20 - c100, n20 - n100)
         s2_co2e = 0.0
-        for src_type, grid_region, kwh, co2e, co2e_mkt in s2_pend_rows:
+        for src_type, grid_region, kwh, co2e, co2e_mkt, ch4_t, n2o_t, mkt_ef in s2_pend_rows:
             loc, mkt = record_totals_fields(
                 src_type, grid_region, kwh, co2e, co2e_mkt, gwp_horizon,
-                grid_cache=s2_grid_cache, gwp_diff=s2_diff,
+                grid_cache=s2_grid_cache, gwp_diff=s2_diff, ch4_t=ch4_t, n2o_t=n2o_t, market_ef=mkt_ef,
             )
             s2_co2e += (mkt if market_s2 else loc)
 
@@ -541,8 +541,10 @@ def _query_summary(
     )
     s1_q = apply_year(apply_scope(s1_q, Emission, **scope), Emission, year)
     s1_q = s1_q.filter(Emission.status.in_(statuses(include_pending)), Emission.year.isnot(None))
-    s1_rows = s1_q.group_by(*[c for c in (Emission.year, Emission.process_type,
-                                          Emission.facility_id if by_fac else None) if c is not None]).all()
+    s1_rows = s1_q.group_by(Emission.year, Emission.process_type, *([Emission.facility_id] if by_fac else [])).all()
+    from services.gwp_recalculation import fgas_horizon_deltas  # HFC / SF6 at GWP-20 too (audit 2026-11 F-AGG-10)
+    fgas_20 = fgas_horizon_deltas(apply_year(apply_scope(Emission.query, Emission, **scope), Emission, year),
+                                  statuses(include_pending), by_fac)
 
     def blank(yr, fid):
         return {"year": yr, "facility_id": fid, "scope1_total": 0.0, "scope1_total_gwp100": 0.0,
@@ -557,7 +559,7 @@ def _query_summary(
         fid = getattr(r, "facility_id", "total") if by_fac else "total"
         d = yearly.setdefault((yr, fid), blank(yr, fid))
         g100 = float(r.total or 0)
-        g20 = g100 + horizon_delta(r.ch4_total, r.n2o_total, "20")
+        g20 = g100 + horizon_delta(r.ch4_total, r.n2o_total, "20") + fgas_20.get((yr, r.process_type, fid), 0.0)
         shown = g20 if is_20 else g100
         d["scope1_total_gwp100"] += g100
         d["scope1_total_gwp20"] += g20
@@ -746,7 +748,7 @@ def _query_categorical_breakdown(
     """
     from collections import defaultdict
     from services.dashboard_filters import apply_scope, apply_year, gwp_pair, horizon_delta, scope3_record_co2e, statuses
-    from services.scope2_gases import record_totals_fields
+    from services.scope2_gases import S2_GAS_COLUMNS, record_totals_fields
 
     scope = dict(allowed_fids=allowed_fids, facility_id=facility_id, activity=activity, division=division,
                  segment=segment)
@@ -777,8 +779,8 @@ def _query_categorical_breakdown(
             Scope2Emission.source_type,
             Scope2Emission.grid_region,
             Scope2Emission.electricity_kwh,
-            Scope2Emission.co2e,
-            Scope2Emission.co2e_market_based,
+            Scope2Emission.co2e, Scope2Emission.co2e_market_based,
+            *S2_GAS_COLUMNS,  # stored gases and contract factor: GWP-20 re-weighting (audit 2026-11 F-GUI-02)
         )
     )
     s2_by_fac = defaultdict(float)
@@ -790,10 +792,10 @@ def _query_categorical_breakdown(
         s2_diff = (c20 - c100, n20 - n100)
     is_mkt = str(scope2_method).lower() == "market"
     s2_horizon = "20" if is_20 else "100"
-    for fid, src_type, grid_region, kwh, co2e, co2e_mkt in s2_q.all():
+    for fid, src_type, grid_region, kwh, co2e, co2e_mkt, ch4_t, n2o_t, mkt_ef in s2_q.all():
         loc, mkt = record_totals_fields(
             src_type, grid_region, kwh, co2e, co2e_mkt, s2_horizon,
-            grid_cache=s2_grid_cache, gwp_diff=s2_diff,
+            grid_cache=s2_grid_cache, gwp_diff=s2_diff, ch4_t=ch4_t, n2o_t=n2o_t, market_ef=mkt_ef,
         )
         s2_by_fac[fid] += mkt if is_mkt else loc
 
@@ -954,7 +956,7 @@ def get_kpi_definitions():
             "short_name": "Combined BOE",
             "unit": "BOE",
             "category": "Production Denominator",
-            "formula": "Crude Oil (bbl) + Condensate (bbl) + [ Gross Natural Gas (mscf) / 6.0 mscf/BOE ]",
+            "formula": "Crude Oil (bbl) + Condensate (bbl) + [ Natural Gas (scf) / 5,647.52 scf/BOE (API Compendium Table 3-4) ]",
             "standard": "API Compendium 2021 Section 3.1.2; SPE Petroleum Resources Management System (PRMS)",
             "description": "Total energy-equivalent hydrocarbon production normalized to 6,000 standard cubic feet of natural gas per barrel of oil equivalent.",
             "tier_support": ["Fiscal Fiscal-Metered Custody Transfer", "Separator Allocation"],
@@ -990,9 +992,9 @@ def get_kpi_definitions():
             "short_name": "CH4 Intensity",
             "unit": "% (loss rate) or kg CH4 / BOE",
             "category": "Methane & Flaring",
-            "formula": "Total Methane Emitted (t CH4) / [ Gross Gas Produced (t CH4) ] × 100%",
+            "formula": "CH4 emitted (Sm3, at 0.677 kg/Sm3) / Marketed gas (Sm3) × 100 % (OGCI / OGMP volume basis)",
             "standard": "OGCI Methane Target (0.20% by 2025); OGMP 2.0 Reporting Framework; UNEP IMEO",
-            "description": "Percentage of marketed and gross produced natural gas volume lost to the atmosphere as uncombusted methane through fugitives, venting, and incomplete flare combustion.",
+            "description": "Volume of methane emitted (fugitives, venting, incomplete flare combustion) as a share of the marketed gas: gross production less reinjection, flaring, venting, fuel use and NGL shrinkage. The NGSI figure is shown beside it.",
             "tier_support": ["OGMP Level 4 (Source-level direct measurement)", "OGMP Level 5 (Top-down reconciled)"],
             "notes": "OGCI member commitment threshold is below 0.20% (with stretch goal 0.14%)."
         },
@@ -1028,7 +1030,7 @@ def get_kpi_definitions():
             "category": "Assurance & QA/QC",
             "formula": "√ [ ∑ ( Emission_i × Uncertainty_i )² ] / ∑ Emission_i",
             "standard": "IPCC 2006 Guidelines Vol 1 Ch 3; ISO 14064-1:2018 Annex B; API Compendium 2021 Section 8",
-            "description": "Half-width 95% confidence interval of the total emission inventory calculated using Root-Sum-of-Squares (RSS) analytical error propagation or 5,000-iteration Monte Carlo Latin Hypercube simulation.",
+            "description": "Half-width 95% confidence interval of the total emission inventory calculated using Root-Sum-of-Squares (RSS) analytical error propagation (IPCC Approach 1), with a 2,500-draw random Monte Carlo simulation (Approach 2) beside it.",
             "tier_support": ["IPCC Tier 1 RSS Analytical", "IPCC Tier 2 Monte Carlo Stochastic"],
             "notes": "Inventory uncertainty combines activity data measurement uncertainty with emission factor uncertainty in quadrature."
         }
@@ -1406,14 +1408,11 @@ def _query_uncertainty(year=None, allowed_fids=None, facility_id=None, scope="al
     if not year:
         # latest year with Verified data in the caller's scope that is not in the future
         cy = datetime.now(timezone.utc).year
-        yq = db.session.query(func.max(Emission.year)).filter(
-            Emission.status == "Verified", Emission.year <= cy
-        )
-        if allowed_fids is not None:
-            yq = yq.filter(Emission.facility_id.in_(allowed_fids or [-1]))
-        if facility_id:
-            yq = yq.filter(Emission.facility_id == facility_id if isinstance(facility_id, int) else Emission.facility_id.in_(facility_id or [-1]))
-        year = yq.scalar() or cy
+        from services.dashboard_filters import apply_scope  # tests and other tenants out (audit 2026-11 F-AGG-08)
+
+        yq = db.session.query(func.max(Emission.year)).select_from(Emission).filter(
+            Emission.status == "Verified", Emission.year <= cy)
+        year = apply_scope(yq, Emission, allowed_fids=allowed_fids, facility_id=facility_id).scalar() or cy
     return inventory_uncertainty(
         int(year),
         allowed_fids=allowed_fids,

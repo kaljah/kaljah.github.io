@@ -47,6 +47,10 @@ CONSTANTS_SHIFT = {"ch4": _ENGINE_LB_PER_SCF(16.04) / (16.0 / 379.3), "co2": _EN
 # a carbon balance: the exhibits print 44 / 12 t CO2 per t C, the engine uses the molecular weights 44.01 / 12.011
 # (+0.069 %, blind audit BA-040)
 CONSTANTS_SHIFT["co2_per_c"] = (44.01 / 12.011) / (44.0 / 12.0)
+# Exhibit 6-38 scales CH4 / N2O by the coke factor ratio EF_CH4 / EF_CO2 with 102.1 kg CO2/MMBtu; the December 2025
+# corrections point Eq 6-38 / 6-39 to Table 4-5, 102.41 (audit 2026-11 F-VENT2-12): CH4 / N2O -0.30 %
+CONSTANTS_SHIFT["coke_ef"] = 0.1021 / 0.10241
+CONSTANTS_SHIFT["coke_ef_per_c"] = CONSTANTS_SHIFT["coke_ef"] * CONSTANTS_SHIFT["co2_per_c"]
 
 
 def assert_printed(got, text, slack=1.0, what="", rel=0.0, sig=None, gas=None):

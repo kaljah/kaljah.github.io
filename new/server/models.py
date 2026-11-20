@@ -61,7 +61,9 @@ class Facility(db.Model):
     external_id = db.Column(db.String(50))
     segment = db.Column(db.String(20))  # Upstream, Midstream, Downstream
     operator_status = db.Column(db.String(20), default="operated")  # operated, non_operated
-    country = db.Column(db.String(100), default="Algeria")
+    # no default country: a facility without one was stored as Algeria and its electricity got the Algerian grid
+    # (audit 2026-11 F-E2E-01)
+    country = db.Column(db.String(100))
     equity_share_pct = db.Column(db.Float, default=100.0)
     ogmp_membership_year = db.Column(db.Integer, default=2023)
     reconciliation_threshold = db.Column(db.Float, default=20.0)  # % threshold for variance flagging

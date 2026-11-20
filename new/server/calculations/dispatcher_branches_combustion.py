@@ -222,6 +222,12 @@ def calc_drilling(self, calculator, emission_factors, flat_inputs, gwp_dict, unc
                 co2_conc = co2_f / 100.0
         except (ValueError, TypeError):
             pass
+    # the site gas contents under their documented names (percent fields, already fractions here): they were
+    # ignored, so the Table 6-2 basin factor stood unscaled and no CO2 was booked (audit 2026-11 F-VENT1-04)
+    if ch4_conc is None and flat_inputs.get("ch4_content") not in (None, "", "-"):
+        ch4_conc = float(flat_inputs["ch4_content"])
+    if co2_conc is None and flat_inputs.get("co2_content") not in (None, "", "-"):
+        co2_conc = float(flat_inputs["co2_content"])
 
     unit_str = str(flat_inputs.get("unit") or unit or "").lower().strip()
     # Table 6-2 is per drilling day (or per well at Tier 1): a volume or mass is not an activity

@@ -14,7 +14,7 @@ import itertools
 # AR5 (the default standard): CH4 28, N2O 265. Natural gas, API Compendium 2021 Table 4-5 / 4-6.
 CH4_GWP, N2O_GWP = 28, 265
 NG_KG_CO2E_PER_MMBTU = 53.06 + 0.001 * CH4_GWP + 0.0001 * N2O_GWP
-NG_HHV_BTU_SCF = 1020
+NG_HHV_BTU_SCF = 1026  # Table C-1 (audit 2026-11 F-FAC-01)
 
 CUSTOM_FACTOR = {"name": "Matrix Site Fuel", "co2_factor": 70.0, "ch4_factor": 0.01, "n2o_factor": 0.001,
                  "unit": "kg/MMBtu", "source": "Site lab report 2025"}
@@ -26,7 +26,7 @@ CASES = {
     "t1_ng_scf": (1, "combustion", "Natural Gas", "scf", {}),
     "t1_ng_mmbtu": (1, "combustion", "Natural Gas", "MMBtu", {}),
     "t1_diesel_gal": (1, "combustion", "Diesel (No. 2 Fuel Oil)", "gal", {}),
-    "t1_gasoline_mobile": (1, "mobile", "Motor Gasoline", "gal", {}),
+    "t1_gasoline_mobile": (1, "mobile", "Motor Gasoline", "gal", {"vehicle_type": "ldgv_tier2"}),  # Table 4-16
     "t1_lpg_gal": (1, "combustion", "Propane (Liquid/LPG)", "gal", {}),
     "t1_resid_bbl": (1, "combustion", "Residual Fuel Oil (No. 6)", "bbl", {}),
     "t1_flare_m3": (1, "flaring", "Natural Gas (Flaring)", "m3", {}),
@@ -156,7 +156,7 @@ def payload(case, qty, year, month, facility_ref, eq, custom_factor_id=None):
 
 
 FILE_HEADER = ["Date", "Facility", "Process Type", "Fuel", "Quantity", "Unit", "Factor Type", "Equipment ID",
-               "hhv", "hhv_unit"]
+               "hhv", "hhv_unit", "vehicle_type"]  # mobile: Table 4-16 vehicle (audit 2026-11 F-FAC-02)
 
 
 def file_row(case, qty, year, month, facility_name, eq):
@@ -164,7 +164,7 @@ def file_row(case, qty, year, month, facility_name, eq):
     if tier == 3:
         raise ValueError("entered Tier 3 factors have no file column")
     return [f"{year}-{month:02d}", facility_name, process, fuel, qty, unit, FACTOR_SOURCE[tier], eq,
-            extra.get("hhv", ""), extra.get("hhv_unit", "")]
+            extra.get("hhv", ""), extra.get("hhv_unit", ""), extra.get("vehicle_type", "")]
 
 
 def to_csv(rows, header=FILE_HEADER):

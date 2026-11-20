@@ -71,9 +71,9 @@ def test_stoichiometric_calculator_exact_math():
     # Percentage inputs normalization (85.0 instead of 0.85, 99.0% oxidation)
     res_pct = calc.calculate(
         fuel_mass=1000.0,
-        carbon_content=85.0,
+        carbon_content="85%",  # numbers are fractions (F-CMB-06)
         mass_unit="kg",
-        oxidation_factor=99.0,
+        oxidation_factor="99%",
     )
     expected_co2_ox = 1000.0 * 0.85 * 0.99 * (44.01 / 12.011) / 1000.0
     assert res_pct["results"]["co2"]["value"] == pytest.approx(expected_co2_ox)

@@ -20,12 +20,21 @@ from routes.auth import login_required
 from utils import get_current_user, get_allowed_facility_ids, get_current_tenant_id, tenant_matches
 from calculations.constants import GWP_STANDARDS, GWP_AR5
 from routes.auth_settings import _app_settings
+from services.dashboard_filters import exclude_test_rows, gas_volume_m3, statuses as _dashboard_statuses
 
 traceability_bp = Blueprint("traceability", __name__, url_prefix="/api/traceability")
 
 
 _KNOWN_METRICS = ("scope1_total", "scope2_total", "scope3_total", "corporate_total", "methane_total",
                   "flaring_volume")
+
+
+def _trace_population(args):
+    """The dashboard's population: its statuses (Verified, or with Pending on request) and no test facilities. The
+    trace counted Draft / Pending / Rejected and test rows (audit 2026-11 F-AGG-04)."""
+    include_pending = str(args.get("includePending") or args.get("include_pending") or "").lower() in ("1", "true", "yes")
+    live = _dashboard_statuses(include_pending)
+    return lambda q, model: exclude_test_rows(q.filter(model.status.in_(live)), model)
 
 
 @traceability_bp.route("/trace", methods=["GET"])
@@ -82,7 +91,7 @@ def trace_metric():
     include_s3 = metric in ("scope3_total", "corporate_total") or metric.startswith("s3")
 
     if include_s1:
-        q1 = Emission.query.filter(Emission.is_test == False)
+        q1 = _trace_population(request.args)(Emission.query, Emission)
         if year:
             q1 = q1.filter(Emission.year == year)
         if facility_id:
@@ -103,7 +112,7 @@ def trace_metric():
                 v = float(r.ch4_emissions or 0.0)
                 unit = "tCH4"
             elif metric == "flaring_volume":
-                v = float(r.quantity or 0.0) if str(r.unit or "").lower() in ("m3", "nm3", "sm3") else 0.0
+                v = gas_volume_m3(r.quantity, r.unit, r.year, r.month) or 0.0  # scf, Mscf ... too (F-AGG-04)
                 unit = "m3"
             else:
                 v = float(r.co2e_total or 0.0)
@@ -157,7 +166,7 @@ def trace_metric():
 
     # Scope 2
     if include_s2 and metric != "flaring_volume" and metric != "methane_total":
-        q2 = Scope2Emission.query
+        q2 = _trace_population(request.args)(Scope2Emission.query, Scope2Emission)
         if year:
             q2 = q2.filter(Scope2Emission.year == year)
         if facility_id:
@@ -211,7 +220,7 @@ def trace_metric():
 
     # Scope 3
     if include_s3 and metric != "flaring_volume" and metric != "methane_total":
-        q3 = Scope3Emission.query
+        q3 = _trace_population(request.args)(Scope3Emission.query, Scope3Emission)
         if year:
             q3 = q3.filter(Scope3Emission.year == year)
         if facility_id:
@@ -253,7 +262,7 @@ def trace_metric():
                     "fuel_or_source": r.sub_category or "Natural Gas / Crude",
                     "quantity": r.activity_data,
                     "unit": r.unit,
-                    "factor_source": "GHG Protocol Cat 11 (54.18 kg/MMBtu)",
+                    "factor_source": "GHG Protocol Cat 11 (53.11 kg CO2e/MMBtu, API Compendium Tables 4-5 / 4-6, AR5)",
                     "factor_version": r.factor_version or "2023.1",
                     "gwp_version": r.gwp_version or active_gwp,
                     "co2e_t": round(v, 4),
@@ -273,7 +282,7 @@ def trace_metric():
     elif metric == "scope2_total":
         formula_str = "Scope 2 (tCO2e) = Electricity Consumption (MWh) × Grid Emission Factor (tCO2e/MWh) + Steam / Heat (MMBtu) × Boiler Factor"
     elif metric == "scope3_total":
-        formula_str = "Scope 3 (tCO2e) = Activity (Volume/Energy) × HHV Conversion × Product Combustion Factor (e.g. 54.18 kg CO2e/MMBtu / 1000)"
+        formula_str = "Scope 3 (tCO2e) = Activity (Volume/Energy) × HHV Conversion × Product Combustion Factor (e.g. 53.11 kg CO2e/MMBtu / 1000)"
     else:
         formula_str = f"Total Corporate Inventory (tCO2e) = Scope 1 (Direct) + Scope 2 (Location-Based Indirect) + Scope 3 (Value Chain) under IPCC {active_gwp}"
 

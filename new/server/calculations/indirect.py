@@ -190,7 +190,7 @@ class CogenAllocationCalculator(BaseCalculator):
     ):
         """
         API Section 8.3 - Allocation of Cogeneration Emissions
-        Methods: wri_efficiency (Equation 8-5), energy_content
+        Methods: wri_efficiency (Equations 8-3 / 8-4; Eq 8-5 is the UK ETS method, audit 2026-11 F-S23-11), energy_content
         """
         self.validate_inputs(
             {
@@ -207,7 +207,7 @@ class CogenAllocationCalculator(BaseCalculator):
             raise ValueError(f"Unknown cogeneration allocation method '{method}' (wri_efficiency or energy_content)")
 
         if method == "wri_efficiency":
-            # API Equation 8-5: WRI/WBCSD Efficiency Method. Without the plant's actual efficiencies,
+            # API Equations 8-3 / 8-4: WRI/WBCSD Efficiency Method. Without the plant's actual efficiencies,
             # the Compendium (section 8.2.2, EPA Climate Leaders / WRI tool) defaults are 80 % for heat
             # and 35 % for electricity (the 33 % in Exhibit 8.4 is that plant's known efficiency)
             def _eff(v, default, name):
@@ -221,7 +221,7 @@ class CogenAllocationCalculator(BaseCalculator):
                 return val
             e_h = _eff(heat_efficiency, 0.80, "Heat")
             e_p = _eff(power_efficiency, 0.35, "Power")
-            # Each output's "virtual fuel input" = its energy output / reference efficiency (Eq 8-5).
+            # Each output's "virtual fuel input" = its energy output / reference efficiency (Eq 8-3 / 8-4).
             # The denominator must be the sum of these efficiency-weighted shares, not the raw MMBtu
             # outputs (bug: the shared line below used to overwrite this with raw shares, making the
             # efficiency weighting have no effect on the allocation ratio).

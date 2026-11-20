@@ -124,7 +124,7 @@ def test_lng_and_distribution_percentage_strings_and_mixture_bounds():
     """Verify Bug 35: LNG and Distribution calculators handle percentage strings and mixture bounds."""
     lng = LNGVentingCalculator()
     res_lng = lng.calculate(
-        activity="loading_transfer",
+        activity="loading_transfer", expansion_ratio=600.0,
         transfer_volume_m3=1000.0,
         pipe_length_km=2.0,
         ch4_content="95%",

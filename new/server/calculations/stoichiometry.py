@@ -36,6 +36,17 @@ def mass_to_kg(amount, unit):
     except Exception:
         raise ValueError(f"Unknown mass unit '{unit}' (use kg, tonne, short ton, long ton, lb or g)") from None
 
+def _share(v):
+    """A 0-1 fraction, or percent when the text carries "%". Never guessed from its size: a value above 1
+    was taken for percent, so a user's 1 wt % became 100 % (audit 2026-11 F-CMB-06). User inputs are
+    percent and are converted once by the dispatcher."""
+    t = str(v).strip()
+    try:
+        return float(t.replace("%", "").strip()) / 100.0 if "%" in t else float(t)
+    except (TypeError, ValueError):
+        raise ValueError(f"Not a fraction or percentage: {v}") from None
+
+
 class StoichiometricCalculator(BaseCalculator):
     def __init__(self):
         super().__init__("Stoichiometric Mass Balance", "Section 4.1")
@@ -58,22 +69,13 @@ class StoichiometricCalculator(BaseCalculator):
         # stoichiometric ratio CO2/C
         ratio = 44.01 / 12.011
 
-        # carbon_content normalized to fraction (e.g. 0.85, 85, or '85%')
-        is_c_pct = "%" in str(carbon_content)
-        c_str = str(carbon_content).replace("%", "").strip()
-        c = float(c_str)
-        if is_c_pct or c > 1.0:
-            c /= 100.0
+        # carbon content as a 0-1 fraction ("85%" also accepted)
+        c = _share(carbon_content)
         if c < 0 or c > 1.0:
             raise ValueError(f"carbon_content must be between 0 and 1 (or 0% to 100%): {carbon_content}")
 
-        # oxidation factor (default 1.0, e.g. 0.99, 99, or '99%')
-        raw_ox = 1.0 if oxidation_factor is None else oxidation_factor
-        is_ox_pct = "%" in str(raw_ox)
-        ox_str = str(raw_ox).replace("%", "").strip()
-        ox = float(ox_str)
-        if is_ox_pct or ox > 1.0:
-            ox /= 100.0
+        # oxidation factor as a 0-1 fraction (default 1.0), same rule
+        ox = 1.0 if oxidation_factor in (None, "") else _share(oxidation_factor)
         if ox < 0 or ox > 1.0:
             raise ValueError(f"oxidation_factor must be between 0 and 1 (or 0% to 100%): {oxidation_factor}")
 

@@ -32,7 +32,8 @@ COMPONENT_FIELDS = ("equipment_type", "component_type", "service_type", "methodo
 SURVEY_FIELDS = ("survey_method", "survey_date", "detection_threshold_ppm", "screening_value_ppm", "leak_status",
                  "measured_emission_rate", "measurement_unit", "repair_date", "leaking_hours", "surveyor_name", "notes")
 NUMBER_LIMITS = {  # field: (min, max)
-    "quantity": (0, None), "operating_hours": (0, HOURS_PER_YEAR), "leaking_hours": (0, HOURS_PER_YEAR),
+    # a leap year has 8,784 h (they were refused above 8,760; audit 2026-11 F-FUG-15)
+    "quantity": (0, None), "operating_hours": (0, 8784.0), "leaking_hours": (0, 8784.0),
     "factor_value": (0, None), "detection_threshold_ppm": (0, 1e6), "screening_value_ppm": (0, 1e6),
     "measured_emission_rate": (0, None),
 }
@@ -432,7 +433,10 @@ def create_survey():
     values["survey_method"] = str(data.get("survey_method") or "Method 21").strip()
     values["survey_date"] = values.get("survey_date") or datetime.date.today().isoformat()
     if "leak_status" not in data or data.get("leak_status") is None:
-        if (values.get("leaking_hours") or 0) > 0 or (values.get("measured_emission_rate") or 0) > 0 or (values.get("screening_value_ppm") or 0) >= 10000:
+        # a leaker is a screening value at or above the survey's own leak definition (Table 7-24 includes 500 ppm
+        # surveys); 10,000 ppmv only when no threshold is given (audit 2026-11 F-FUG-15)
+        threshold = values.get("detection_threshold_ppm") or 10000
+        if (values.get("leaking_hours") or 0) > 0 or (values.get("measured_emission_rate") or 0) > 0 or (values.get("screening_value_ppm") or 0) >= threshold:
             values["leak_status"] = "Leaking"
         else:
             values["leak_status"] = "Non-leaking"

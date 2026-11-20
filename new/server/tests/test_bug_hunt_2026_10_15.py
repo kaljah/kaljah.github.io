@@ -62,8 +62,9 @@ def test_6_flare_hhv_per_mass_is_refused(ctx):
 
 
 def test_9_flare_n2o_factor_in_g_per_mmbtu_is_not_read_as_kg(ctx):
-    kg = _em(dict(FLARE, ef_n2o=0.0001, ef_unit="kg/MMBtu"))["n2o"]
-    g = _em(dict(FLARE, ef_n2o=0.1, ef_unit="g/MMBtu"))["n2o"]
+    # an energy-basis factor needs the flare gas HHV (audit 2026-11 F-CMB-07: 1,020 was assumed silently)
+    kg = _em(dict(FLARE, ef_n2o=0.0001, ef_unit="kg/MMBtu", hhv=1020))["n2o"]
+    g = _em(dict(FLARE, ef_n2o=0.1, ef_unit="g/MMBtu", hhv=1020))["n2o"]
     assert g == pytest.approx(kg)  # was 1000x high
 
 
@@ -157,7 +158,8 @@ def test_31_clean_float_never_turns_unreadable_text_into_the_default():
     assert _clean_float("abc", default=150.0) is None  # was 150
     assert _clean_float("12 [ambiguous: decimal or thousands separator?]", default=0.0) is None  # was 0
     assert _clean_float("1,000", default=0.0) is None  # was 1000 (1 in French)
-    assert _clean_float("1,234.5") == 1234.5 and _clean_float("1234,5") == 1234.5
+    assert _clean_float("1,234.5") == 1234.5
+    assert _clean_float("1234,5") is None  # a decimal comma needs the file's decimal mark (audit 2026-11 F-UPL-09)
 
 
 # ── Batch 3: venting and tanks ──────────────────────────────────────────────────────

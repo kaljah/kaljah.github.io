@@ -232,7 +232,7 @@ def test_equipment_factor_not_ch4_needs_weight_fraction(app):
     with pytest.raises(ValueError, match="CH4 weight fraction"):
         calc.calculate(equipment_count=10, equipment_type="x", factor_value=0.0045, factor_unit="kg/hr")
     res = calc.calculate(equipment_count=10, equipment_type="x", factor_value=0.0045, factor_unit="kg/hr",
-                         ch4_wt_fraction=0.8)
+                         ch4_wt_fraction=80)  # wt %, always (audit 2026-11 F-FUG-08)
     assert res["results"]["ch4"]["value"] == pytest.approx(10 * 0.0045 * 0.8 * 8760 / 1000)
 
 

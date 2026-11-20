@@ -118,10 +118,22 @@ def convert_fugitive_flow_to_kg_hr(value: float, unit: str, ch4_mol: float = Non
     return {"ch4_kg_hr": m3_hr * y_ch4 * DENSITY_CH4, "co2_kg_hr": m3_hr * y_co2 * DENSITY_CO2}
 
 
+def _co2_from_ch4(ch4_t, co2_content, ch4_content, basis):
+    """CO2 (t) of a leak from its CH4 by the gas's CO2 / CH4 mole ratio x 44.01 / 16.04 (Table 7-8 footnote a,
+    Exhibit 7-4 step 2). Contents are 0-1 fractions; without a CO2 content there is no CO2 term."""
+    if co2_content in (None, "") or not float(co2_content) or not ch4_t:
+        return 0.0
+    y_ch4 = float(ch4_content) if ch4_content not in (None, "") else (float(basis) if basis else None)
+    if not y_ch4:
+        raise ValueError("A leak CO2 estimate from the CO2 content needs the gas CH4 content")
+    return ch4_t * float(co2_content) / y_ch4 * 44.01 / 16.04
+
+
 # API Compendium 2021 Table 7-8 - facility-level average equipment leak factors for onshore
 # production, per unit of production (tonnes CH4). Gas factors are on a 78.8 mol % CH4 basis.
 TABLE_7_8 = {
-    "oil_production": {"bbl": 2.346e-04, "m3": 1.476e-03, "basis": None,
+    # Table 7-8 prints 78.8 mol % for the oil row too (it was None, so a site CH4 content was ignored; F-FUG-04)
+    "oil_production": {"bbl": 2.346e-04, "m3": 1.476e-03, "basis": 0.788,
                        "name": "Facility - Onshore Oil Production (Table 7-8)"},
     "gas_production": {"mmscf": 2.601e-02, "mm_m3": 9.184e-01, "basis": 0.788,
                        "name": "Facility - Onshore Gas Production (Table 7-8)"},
@@ -166,6 +178,7 @@ class OnshoreFacilityFugitiveCalculator(BaseCalculator):
         ch4_content: float = None,
         uncertainties: dict = None,
         gwp_dict: dict = None,
+        co2_content: float = None,
     ) -> dict:
         ftype = str(facility_type or "").strip().lower()
         if ftype not in TABLE_7_8:
@@ -183,10 +196,14 @@ class OnshoreFacilityFugitiveCalculator(BaseCalculator):
         ef = row[tunit]
         scale = 1.0
         if ch4_content not in (None, "") and row["basis"]:
-            c = float(ch4_content)
-            c = c / 100.0 if c > 1.0 else c
+            c = float(ch4_content)  # a 0-1 fraction (the dispatcher converts the user's mol % once)
+            if not 0 < c <= 1:
+                raise ValueError("The gas CH4 content must be between 0 and 100 mol %")
             scale = c / row["basis"]
+            ch4_content = c
         total_ch4 = qty * ef * scale
+        # Table 7-8 footnote a / Exhibit 7-4: CO2 from the CH4 by the relative CO2 / CH4 content (it was 0; F-FUG-03)
+        total_co2 = _co2_from_ch4(total_ch4, co2_content, ch4_content, row["basis"])
 
         _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
         u_ef = 0.955 if ftype == "oil_production" else 0.529  # Table 7-8, 95 % half-widths
@@ -195,8 +212,8 @@ class OnshoreFacilityFugitiveCalculator(BaseCalculator):
             resolve_ef_uncertainty("fugitive_facility", "ch4", _tier, uncertainties.get("ch4", u_ef)),
             tier=_tier, process_category="fugitive_facility", gas="ch4",
         )
-        co2_res = propagate_uncertainty(0.0, 0.0, tier=_tier, process_category="fugitive_facility", gas="co2")
-        total_co2e = calculate_co2e(co2=0.0, ch4=total_ch4, gwp_dict=gwp_dict)
+        co2_res = propagate_uncertainty(total_co2, 0.0, tier=_tier, process_category="fugitive_facility", gas="co2")
+        total_co2e = calculate_co2e(co2=total_co2, ch4=total_ch4, gwp_dict=gwp_dict)
         return {
             "results": {"ch4": ch4_res, "co2": co2_res, "n2o": 0.0},
             "total_co2e": total_co2e,
@@ -232,6 +249,9 @@ class OnshoreEquipmentFugitiveCalculator(BaseCalculator):
         uncertainties: dict = None,
         gwp_dict: dict = None,
         ch4_wt_fraction: float = None,
+        ch4_content: float = None,
+        co2_content: float = None,
+        factor_basis: float = None,
     ) -> dict:
         self.validate_inputs(
             {"count": equipment_count, "hours": operating_hours},
@@ -258,15 +278,20 @@ class OnshoreEquipmentFugitiveCalculator(BaseCalculator):
             # (API Compendium Eq 7-6); without one the CH4 share is unknown, never assumed 100 %
             if ch4_wt_fraction in (None, ""):
                 raise ValueError(f"Factor unit '{factor_unit}' is not CH4-specific: give the CH4 weight fraction")
-            w = float(ch4_wt_fraction)
-            w = w / 100.0 if w > 1.0 else w
+            # the CH4 share of the TOC is wt % (the form's "CH4 in TOC (wt %)"), always: 1 is 1 % (F-FUG-08)
+            w = float(str(ch4_wt_fraction).replace("%", "").strip()) / 100.0
             if not 0.0 <= w <= 1.0:
                 raise ValueError("CH4 weight fraction must be between 0 and 100 %")
             kg_per_hr *= w
-        total_ch4 = float(equipment_count) * kg_per_hr * float(operating_hours) / 1000.0
+        # Tables 7-9 / 7-10 (78.8 mol %) and 7-29 (81.6 mol %) may be scaled to the site CH4 content; it was
+        # ignored (audit 2026-11 F-FUG-04). CO2 follows by the CO2 / CH4 ratio (Exhibit 7-4; F-FUG-03).
+        scale = 1.0
+        if _is_ch4 and ch4_content not in (None, "") and factor_basis:
+            scale = float(ch4_content) / float(factor_basis)
+        total_ch4 = float(equipment_count) * kg_per_hr * scale * float(operating_hours) / 1000.0
         kg_per_source_hour = kg_per_hr  # audit trace
 
-        total_co2 = 0.0  # Equipment factors are pure CH4
+        total_co2 = _co2_from_ch4(total_ch4, co2_content, ch4_content, factor_basis)
 
         _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
         ch4_res = propagate_uncertainty(
@@ -276,8 +301,8 @@ class OnshoreEquipmentFugitiveCalculator(BaseCalculator):
             process_category="equipment_fugitive",
             gas="ch4",
         )
-        co2_res = propagate_uncertainty(0.0, 0.0, tier=_tier, process_category="equipment_fugitive", gas="co2")
-        total_co2e = calculate_co2e(co2=0.0, ch4=total_ch4, gwp_dict=gwp_dict)
+        co2_res = propagate_uncertainty(total_co2, 0.0, tier=_tier, process_category="equipment_fugitive", gas="co2")
+        total_co2e = calculate_co2e(co2=total_co2, ch4=total_ch4, gwp_dict=gwp_dict)
 
         audit_trace = {
             "api_section": "Section 7.2.2 / 7.2.3",
@@ -493,8 +518,8 @@ class OnshoreScreeningMeasurementCalculator(BaseCalculator):
             if w is None:
                 raise ValueError(f"Enter the CH4 weight fraction of TOC for '{service_type}' service")
         else:
-            w = float(ch4_content)
-            w = w / 100.0 if w > 1.0 else w
+            # the form's "CH4 in TOC (wt %)": always percent, 1 is 1 % (it was 100 %: audit 2026-11 F-FUG-08)
+            w = float(str(ch4_content).replace("%", "").strip()) / 100.0
         if not 0.0 <= w <= 1.0:
             raise ValueError("CH4 weight fraction must be between 0 and 100 %")
         hours = float(operating_hours)
@@ -503,8 +528,9 @@ class OnshoreScreeningMeasurementCalculator(BaseCalculator):
 
         toc_kg_hr = n_low * meta["non_pegged_ef"] + n_high * (meta["pegged_10k_ef"] or 0.0)
         total_ch4_tonnes = toc_kg_hr * w * hours / 1000.0
-        c_co2 = float(co2_content or co2_wt_pct or kwargs.get("co2_content") or kwargs.get("co2_wt_pct") or 0.0)
-        c_co2 = c_co2 / 100.0 if c_co2 > 1.0 else c_co2
+        # the CO2 term is on a mass basis (TOC mass / (1 - CO2 mass share)): only the CO2 weight % applies; a mole
+        # fraction (co2_content) was mixed in (audit 2026-11 F-FUG-09). wt %, always.
+        c_co2 = float(co2_wt_pct or kwargs.get("co2_wt_pct") or 0.0) / 100.0
         w_toc = float(kwargs.get("toc_wt_pct") or ((1.0 - c_co2) if c_co2 < 1.0 else 1.0))
         whole_gas_kg_hr = toc_kg_hr / max(0.01, w_toc)
         total_co2_tonnes = (whole_gas_kg_hr * c_co2 * hours / 1000.0) if c_co2 > 0 else 0.0

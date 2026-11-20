@@ -354,6 +354,7 @@ class TestDifferentialScope2and3:
             "total_emissions": 10_000.0,
             "heat_output_mmbtu": 50_000.0,
             "power_output_mwh": 10_000.0,
+            "quantity_bought": 50_000.0,  # the whole heat output bought (audit 2026-11 F-S23-01)
             "allocation_method": "wri_efficiency",
         }
 
@@ -416,7 +417,7 @@ class TestDifferentialUncertaintyAndCompliance:
         total_co2e = 1200.0
 
         boe = IndependentIntensityModel.calculate_boe(oil_bbl, gas_mscf)
-        assert pytest.approx(boe, rel=1e-6) == oil_bbl + (gas_mscf * (1.02 / 5.8))
+        assert pytest.approx(boe, rel=1e-6) == oil_bbl + (gas_mscf * (1000 / 5647.52))
 
         ci = IndependentIntensityModel.calculate_carbon_intensity(total_co2e, boe)
         assert pytest.approx(ci, rel=1e-6) == (total_co2e * 1000.0) / boe

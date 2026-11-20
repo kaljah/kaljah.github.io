@@ -120,8 +120,8 @@ class TestIntensityMetrics:
         oil_bbl = 10_000.0
         gas_mscf = 50_000.0
         boe = IndependentIntensityModel.calculate_boe(oil_bbl, gas_mscf)
-        # 10,000 + 50,000 * 1.02 / 5.8 = 10,000 + 8,793.1 = 18,793.1 BOE
-        assert boe == pytest.approx(10_000 + 50_000 * 1.02 / 5.8)
+        # 10,000 + 50,000 * (1000 / 5647.52) = 10,000 + 8,853.4 = 18,853.4 BOE
+        assert boe == pytest.approx(10_000 + 50_000 * (1000 / 5647.52))
 
     def test_carbon_intensity_calculation(self):
         co2e_tonnes = 500.0

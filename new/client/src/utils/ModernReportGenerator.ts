@@ -902,9 +902,9 @@ Email: ${personResponsible.email || "N/A"}`;
       0
     );
 
-    // 1 MMSm3 = 35,314.67 Mcf x 1.020 MMBtu/Mcf / 5.8 MMBtu/BOE (the server's BOE definition,
-    // calculations/units.py GAS_BOE_PER_MSCF; 0.178 was 1/5.615, a volume equivalence: +1.2 %, BA-014)
-    const MMBOE_PER_MMSM3 = (35.314666721 * (1.02 / 5.8)) / 1000;
+    // 1 MMSm3 = 35,314.67 Mcf / 5.64752 Mcf per BOE (API Compendium 2021 Table 3-4, the server's BOE
+    // definition in calculations/units.py SCF_PER_BOE; audit 2026-11 F-CORE-07)
+    const MMBOE_PER_MMSM3 = (35.314666721 * (1000 / 5647.52)) / 1000;
     const NA = "—";
     const prodRows = [
       [

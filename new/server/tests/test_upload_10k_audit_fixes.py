@@ -93,14 +93,14 @@ def test_flare_separate_efficiencies_win_over_the_single_one(app):
                                            (2000, "lb", 0.90718474), (5, "long ton", 5.080234544)])
 def test_carbon_balance_mass_units(app, q, unit, tonnes):
     em = calc(app, {"process_type": "stoichiometry", "fuel": "", "amount": q, "quantity": q, "unit": unit,
-                    "factor_source": "specific", "carbon_content": 0.75})
+                    "factor_source": "specific", "carbon_content": 75})  # wt % (F-CMB-06)
     assert em["co2"] == pytest.approx(tonnes * 0.75 * 44.01 / 12.011, rel=1e-4)
 
 
 def test_carbon_balance_unknown_mass_unit_is_refused(app):
     with pytest.raises(Exception, match="mass unit"):
         calc(app, {"process_type": "stoichiometry", "fuel": "", "amount": 10, "quantity": 10, "unit": "furlong",
-                   "factor_source": "specific", "carbon_content": 0.75})
+                   "factor_source": "specific", "carbon_content": 75})  # wt % (F-CMB-06)
 
 
 # ---------------------------------------------------------------- 3 steam boiler efficiency / loss
@@ -109,18 +109,21 @@ def test_steam_transmission_loss_is_a_percentage(app, client, env):
 
     fac = env["fac"]
     st = upload(client, 2, "Date,Facility,Source Type,Consumption,Unit,Boiler Eff,Trans Loss,Meter\n"
-                           f"2019-01,{fac},steam,1000,MMBtu,80,0.9,K1\n"
-                           f"2019-02,{fac},steam,1000,MMBtu,0.8,1,K2\n"
+                           f"2019-01,{fac},steam,1000,MMBtu,80,0.9%,K1\n"
+                           f"2019-02,{fac},steam,1000,MMBtu,0.8,1%,K2\n"
                            f"2019-03,{fac},steam,1000,MMBtu,85%,5%,K3\n"
-                           f"2019-04,{fac},steam,1000,MMBtu,abc,5,K4\n"
-                           f"2019-05,{fac},steam,1000,MMBtu,80,100,K5\n")
-    assert st["skipped_count"] == 2, st["skipped_preview"]
+                           f"2019-04,{fac},steam,1000,MMBtu,abc,0.05,K4\n"
+                           f"2019-05,{fac},steam,1000,MMBtu,80,100,K5\n"
+                           f"2019-06,{fac},steam,1000,MMBtu,80,5,K6\n"   # a bare 5 is refused, as on the form
+                           f"2019-07,{fac},steam,1000,MMBtu,80,0.05,K7\n")  # a fraction (audit 2026-11 F-S23-04)
+    assert st["skipped_count"] == 3, st["skipped_preview"]
     with app.app_context():
         rows = {r.month: r.co2e for r in Scope2Emission.query.filter_by(facility_id=env["fid"], year=2019)}
     assert rows[1] == pytest.approx(1000 / (0.80 - 0.009) * NG / 1000, rel=1e-6)
     assert rows[2] == pytest.approx(1000 / (0.80 - 0.01) * NG / 1000, rel=1e-6)
     assert rows[3] == pytest.approx(1000 / (0.85 - 0.05) * NG / 1000, rel=1e-6)
-    assert set(rows) == {1, 2, 3}
+    assert rows[7] == pytest.approx(1000 / (0.80 - 0.05) * NG / 1000, rel=1e-6)
+    assert set(rows) == {1, 2, 3, 7}
 
 
 # ---------------------------------------------------------------- 5 one notification per batch

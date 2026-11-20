@@ -26,7 +26,8 @@ from utils import (
     normalize_tenant_id,
     tenant_matches,
 )
-from calculations.constants import GWP_STANDARDS, GWP_AR5, invalidate_gwp_cache
+from calculations.constants import invalidate_gwp_cache
+from services.gwp_recalculation import known_gwp_dict, reweighted_co2e
 from services.custom_factor_policy import second_approver_required
 
 recalculate_bp = Blueprint("recalculate", __name__, url_prefix="/api/recalculate")
@@ -78,10 +79,7 @@ def _simulate_recalculation(target_year=None, target_facility_id=None, target_sc
     Simulates the recalculation across Scope 1, 2, and 3 without persisting changes.
     Returns preview metrics and sample before/after rows scoped to `allowed_fids`.
     """
-    gwp_dict = GWP_STANDARDS.get(str(target_gwp_standard or "").upper(), GWP_AR5) if target_gwp_standard else None
-    co2_factor = float(gwp_dict.get("CO2", 1.0)) if gwp_dict else 1.0
-    ch4_factor = float(gwp_dict.get("CH4", 28.0)) if gwp_dict else None
-    n2o_factor = float(gwp_dict.get("N2O", 265.0)) if gwp_dict else None
+    gwp_dict = known_gwp_dict(target_gwp_standard) if target_gwp_standard else None  # unknown refused (F-CORE-08)
 
     # Custom factor lookup if factor_id is specified
     cf = db.session.get(CustomFactor, target_factor_id) if target_factor_id else None
@@ -126,11 +124,9 @@ def _simulate_recalculation(target_year=None, target_facility_id=None, target_sc
                 res = _engine_recalc(e, cf, gwp_dict)
                 proj_co2e = res[3] if res is not None else curr_co2e
             elif target_gwp_standard:
-                # Re-weight stored gas masses with target GWP
-                co2_m = float(e.co2_emissions or 0.0)
-                ch4_m = float(e.ch4_emissions or 0.0)
-                n2o_m = float(e.n2o_emissions or 0.0)
-                proj_co2e = co2_m * co2_factor + ch4_m * ch4_factor + n2o_m * n2o_factor
+                # stored gas masses re-weighted; HFC / SF6 re-run, rows without gases kept (F-CORE-01 / F-AGG-07)
+                proj = reweighted_co2e(e, gwp_dict)
+                proj_co2e = curr_co2e if proj is None else proj
 
             total_before += curr_co2e
             total_after += proj_co2e
@@ -361,10 +357,7 @@ def approve_and_execute_recalculation(request_id):
         return jsonify({"error": "Maker-checker policy violation: Request creator cannot approve their own recalculation"}), 403
 
     # Execute recalculation
-    gwp_dict = GWP_STANDARDS.get(str(req.target_gwp_standard or "").upper(), GWP_AR5) if req.target_gwp_standard else None
-    co2_factor = float(gwp_dict.get("CO2", 1.0)) if gwp_dict else 1.0
-    ch4_factor = float(gwp_dict.get("CH4", 28.0)) if gwp_dict else None
-    n2o_factor = float(gwp_dict.get("N2O", 265.0)) if gwp_dict else None
+    gwp_dict = known_gwp_dict(req.target_gwp_standard) if req.target_gwp_standard else None
     cf = db.session.get(CustomFactor, req.target_factor_id) if req.target_factor_id else None
 
     # Resolve tenant & authorized facilities
@@ -405,11 +398,12 @@ def approve_and_execute_recalculation(request_id):
                 e.co2_emissions, e.ch4_emissions, e.n2o_emissions, new_val = res
                 e.factor_version = cf.version
             elif req.target_gwp_standard:
-                co2_m = float(e.co2_emissions or 0.0)
-                ch4_m = float(e.ch4_emissions or 0.0)
-                n2o_m = float(e.n2o_emissions or 0.0)
-                new_val = co2_m * co2_factor + ch4_m * ch4_factor + n2o_m * n2o_factor
-                e.gwp_version = req.target_gwp_standard
+                proj = reweighted_co2e(e, gwp_dict)  # HFC / SF6 re-run, rows without gases kept (F-CORE-01)
+                if proj is None:
+                    refused.append(e.record_id or f"S1-{e.id}")
+                    continue
+                new_val = proj
+                e.gwp_version = req.target_gwp_standard.upper()
 
             # Save snapshot in history
             hist = RecalculationHistory(
@@ -460,7 +454,7 @@ def approve_and_execute_recalculation(request_id):
 
     skipped_note = f"; not re-weighted (no stored gas split): {', '.join(skipped_scopes)}" if skipped_scopes else ""
     if refused:
-        skipped_note += f"; left unchanged, the new factor cannot calculate them: {', '.join(refused)}"
+        skipped_note += f"; left unchanged, they cannot be recalculated: {', '.join(refused)}"
     # the audit entry commits with the data change (one transaction)
     log_activity_and_notify(
         action="RECALCULATION_EXECUTED",

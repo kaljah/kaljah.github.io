@@ -84,7 +84,7 @@ def test_tank_method_auto_detection(tank):
         liquid_type="produced_water",
         throughput=50000.0,
         separator_pressure_psi=250.0,
-        salt_content="unknown_salt_spec",  # falls back to "average"
+        salt_content="average",  # an unknown salt spec is refused now (audit 2026-11 F-VENT1-02)
         co2_content=0.02,
     )
     assert res_pw["inputs"]["method"] == "produced_water"

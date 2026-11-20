@@ -316,7 +316,7 @@ def test_entered_activity_from_calc_inputs_is_used(app, rworld):
                "factor_source": "default", "calc_inputs": {"combustion": {"amount": 1000, "unit": "m3"}}}
     rid = _record(app, rworld, quantity=35314.67, unit="scf", payload=payload)
     new, _ = tool.recalculate(_get(app, rid), _gwp())
-    assert new["co2_emissions"] == pytest.approx(1000 * 35.3147 * 1020 / 1e6 * 53.06 / 1000, rel=1e-3)
+    assert new["co2_emissions"] == pytest.approx(1000 * 35.3147 * 1026 / 1e6 * 53.06 / 1000, rel=1e-3)  # Table C-1 1,026 Btu/scf (audit 2026-11 F-FAC-01)
 
 
 def test_old_bulk_defaults_and_tier_column_are_reported(app, rworld):

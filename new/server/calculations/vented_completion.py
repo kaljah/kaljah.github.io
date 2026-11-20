@@ -467,11 +467,9 @@ class CompletionFlowbackCalculator(BaseCalculator):
             f_vented, f_flared, f_rec = f_v / split_sum, f_f / split_sum, f_r / split_sum
             flare_ce_used, flare_de_used = flare_ce, flare_de
         elif not disp:
-            # Fallback to control_efficiency if disposition unstated (treated as flared routing fraction per D-01)
-            if entered_eff and flare_eff > 0:  # the controlled share goes to a flare with the default efficiencies
-                f_flared, f_vented, f_rec = flare_eff, 1.0 - flare_eff, 0.0
-            else:
-                f_vented, f_flared, f_rec = 1.0, 0.0, 0.0
+            # an efficiency without a disposition is the flare's, as on every other row (F-VENT1-03: ~2 x the CH4)
+            f_vented, f_flared, f_rec = (0.0, 1.0, 0.0) if (entered_eff and flare_eff > 0) else (1.0, 0.0, 0.0)
+            flare_ce_used, flare_de_used = flare_ce, flare_de
         elif disp in ["rec", "recovered", "green", "green_completion"]:
             f_vented, f_flared, f_rec = 0.0, 0.0, 1.0
         elif disp in ["flared", "flare"]:

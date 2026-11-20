@@ -240,7 +240,8 @@ export const CbamSection: React.FC<CbamSectionProps> = ({
   );
 };
 
-const GAS_TO_BOE = (1.02 / 5.8);
+// BOE per Mcf: API Compendium 2021 Table 3-4, 1 BOE of natural gas = 5,647.52 scf (audit 2026-11 F-CORE-07)
+const GAS_TO_BOE = 1000 / 5647.52;
 
 export interface RegionalChartsProps {
   data: any[];

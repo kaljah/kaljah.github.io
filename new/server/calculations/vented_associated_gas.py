@@ -114,7 +114,11 @@ class AssociatedGasVentingCalculator(BaseCalculator):
             return cls.TABLE_6_8_FACTORS["permian"]
         if "other" in b:
             return cls.TABLE_6_8_FACTORS["other"]
-        return cls.TABLE_6_8_FACTORS["us_average"]
+        if "average" in b or b in ("us", "usa", "national", "us_average", "us average"):
+            return cls.TABLE_6_8_FACTORS["us_average"]
+        # a basin matching no Table 6-8 row got the US average silently (audit 2026-11 F-VENT1-10)
+        raise ValueError(f"Basin '{basin_name}' is not a Table 6-8 row: Gulf Coast, Anadarko, Williston, Permian, "
+                         "Other US Basins or US Average")
 
     @staticmethod
     def _normalize_fraction(val, default=0.0):

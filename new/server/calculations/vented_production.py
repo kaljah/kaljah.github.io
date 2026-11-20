@@ -54,7 +54,7 @@ R_GAS_US = 10.7316  # psi * ft³ / (lb-mole * °R)
 R_GAS_SI = 8.31446  # kPa * m³ / (kg-mole * K)
 
 
-def _split_vent_flare(total_gas_m3, ch4_tonnes, co2_tonnes, ctrl_eff=0.0, hhv=1020.0, ef_n2o=None, destruction_eff=None, control_type="flare"):
+def _split_vent_flare(total_gas_m3, ch4_tonnes, co2_tonnes, ctrl_eff=0.0, hhv=None, ef_n2o=None, destruction_eff=None, control_type="flare"):
     """
     Decision D-01: Partitions gross gas into vented and controlled fractions.
     If control_type in ("vru", "recovery"):
@@ -97,7 +97,10 @@ def _split_vent_flare(total_gas_m3, ch4_tonnes, co2_tonnes, ctrl_eff=0.0, hhv=10
         else:
             flared_m3 = total_gas_m3 * ctrl
             flared_scf = convert(flared_m3, "m3", "scf")
-            hhv_val = float(hhv or 1020.0)
+            # an energy-basis factor needs the gas's heating value: 1,020 Btu/scf was assumed (F-CMB-07)
+            if hhv in (None, "", 0):
+                raise ValueError("An N2O factor per unit of energy needs the flare gas heating value (HHV)")
+            hhv_val = float(hhv)
             flared_mmbtu = (flared_scf * hhv_val) / 1_000_000.0
             flared_n2o = (flared_mmbtu * float(ef_n2o)) / 1000.0
 

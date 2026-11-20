@@ -182,7 +182,8 @@ def _add_scope1(cells, scope, st, years):
     cat_cache = {}
     ogmp_cache = {}
     _stub = SimpleNamespace(ogmp_level=None, factor_source=None, calc_method=None)
-    _ch4_key = {"flaring": "ch4_flaring", "vented": "ch4_venting", "fugitive": "ch4_fugitive"}
+    _ch4_key = {"flaring": "ch4_flaring", "vented": "ch4_venting", "fugitive": "ch4_fugitive",
+                "process": "ch4_other", "other": "ch4_other"}  # non-combustion CH4 is not combustion (F-GAPI-01)
     flaring_pts = set()
     for fid, yr, pt, olvl, fsrc, cmeth, cnt, co2e_tot, co2, ch4, n2o in s1:
         c = cells[(fid, yr)]
@@ -246,6 +247,9 @@ def _add_scope1(cells, scope, st, years):
     _add_vented_and_fuel_gas(cells, s1_base)
 
 
+_LIQUID_UNITS = {"bbl", "kbbl", "gal", "kgal", "l", "litre", "liter", "litres", "liters", "barrel", "barrels"}
+
+
 def _add_vented_and_fuel_gas(cells, s1_base):
     """Gas vented (venting records entered as a gas volume) and natural gas burned on site (combustion records of
     a natural-gas fuel, by volume or energy at 1,020 Btu/scf) of each facility-year: the emission-record
@@ -265,6 +269,8 @@ def _add_vented_and_fuel_gas(cells, s1_base):
         qty = float(qty or 0.0)
         if not qty or cat not in ("vented", "combustion"):
             continue
+        if cat == "vented" and str(unit or "").strip().lower() in _LIQUID_UNITS:
+            continue  # an oil volume is not vented gas (it was deducted as m3 of gas; audit 2026-11 F-GREST-05)
         if cat == "combustion" and "natural gas" not in str(fuel or "").lower() and "fuel gas" not in str(fuel or "").lower():
             continue
         vol = gas_volume_m3(qty, unit, yr, mo)
@@ -405,14 +411,17 @@ def _materiality_from_weights(ch4_weights, co2e_weights, s1_count, threshold=0.5
     return 1
 
 
-def _methane_loss(matched, total_ch4, seg_cat, target):
+def _methane_loss(matched, total_ch4, seg_cat, target, fac=None):
     """(loss %, target status, NGSI %) of a facility. The loss rate compared to the OGMP target is on the OGCI /
     OGMP volume basis, CH4 volume / marketed gas (it was / gas produced, BA-054); NGSI is CH4 / CH4 in the
     throughput at the segment's CH4 content."""
-    from services.methane_intensity import ngsi_intensity_pct, volume_intensity_pct
+    from services.methane_intensity import gas_ratio, ngsi_intensity_pct, ngsi_segment, volume_intensity_pct
 
     gas_m3, marketed_m3 = matched["gas_m3"], matched["marketed_m3"]
-    ngsi = ngsi_intensity_pct(matched["ch4"], gas_m3, ngsi_ch4_content(seg_cat))
+    # the NGSI segment, its CH4 content and (production) gas ratio (audit 2026-11 F-AGG-05)
+    seg = ngsi_segment(fac.segment, fac.activity) if fac is not None else seg_cat
+    ngsi = ngsi_intensity_pct(matched["ch4"], gas_m3, ngsi_ch4_content(seg),
+                              gas_ratio(seg, gas_m3, matched.get("oil_bbl")))
     if not (gas_m3 > 0 and marketed_m3 > 0):
         return None, ("Missing Production Data" if total_ch4 > 0 else "No Activity"), ngsi
     loss = volume_intensity_pct(matched["ch4"], marketed_m3)
@@ -423,6 +432,48 @@ def _methane_loss(matched, total_ch4, seg_cat, target):
     else:
         status = "Warning" if loss <= target * 1.25 else "Non-Compliant"
     return loss, status, ngsi
+
+
+def _waste_emissions_charge(matched, total, seg_cat, fac, year_value, cal_year):
+    """(rate, excess t CH4, fee USD, status) of the EPA Waste Emissions Charge (42 USC 7436, 40 CFR Part 99) for a
+    facility-year. Audit 2026-11 F-GREST-03: the threshold is a share of the gas *sent to sale* (marketed gas, not
+    the gas net of reinjection), 0.20 % production / 0.05 % processing, LNG and gathering / 0.11 % transmission and
+    storage (every midstream facility was 0.05 %), and only facilities reporting more than 25,000 t CO2e are
+    charged."""
+    from routes.auth import _app_settings
+    from services.methane_intensity import ngsi_segment
+
+    seg = ngsi_segment(fac.segment, fac.activity) if fac is not None else None
+    wec_up = float(_app_settings.get("wec_upstream_threshold", 0.0020))
+    wec_mid = float(_app_settings.get("wec_midstream_threshold", 0.0005))
+    wec_ts = float(_app_settings.get("wec_transmission_threshold", 0.0011))
+    wec_threshold = wec_ts if seg == "transmission_storage" else (wec_mid if seg_cat == "midstream" else wec_up)
+    sent_to_sale_m3 = matched.get("marketed_m3") or 0.0
+    if sent_to_sale_m3 > 0:
+        # 40 CFR 99.20 Eq B-1 / B-2: threshold x gas sent to sale (Mscf) x 0.0192 mt CH4/Mscf (the rule's own
+        # methane density, not the Compendium 0.6772 kg/m3)
+        allowed_ch4 = sent_to_sale_m3 * 35.3146667 / 1000.0 * wec_threshold * WEC_CH4_DENSITY_T_PER_MSCF
+    elif matched["oil_bbl"] > 0 and seg_cat == "upstream":
+        allowed_ch4 = matched["oil_bbl"] / 1_000_000.0 * 10.0  # 40 CFR 99.20(a)(2)
+    else:
+        allowed_ch4 = 0.0
+    fee_map = _app_settings.get("wec_fee_rates", {})
+    first_year = int(_app_settings.get("wec_first_year", WEC_FIRST_YEAR))
+    if year_value in (None, "all"):
+        return None, None, None, "Select a single year"
+    if not wec_applies_to_country(fac.country if fac else None):
+        # a liability was shown for every facility, whatever its country
+        return None, None, None, "Not Applicable (US subpart W facilities only)"
+    if cal_year < first_year:
+        # 2024-2033 emissions carried $900 / $1,200 / $1,500 per tonne before P.L. 119-21
+        return None, None, None, f"Not Applicable (charge starts with {first_year} emissions)"
+    if seg_cat == "downstream":
+        return 0.0, 0.0, 0.0, "Exempt (Downstream)"
+    if float(total.get("s1") or 0.0) <= 25000.0:  # 42 USC 7436(c): facilities reporting more than 25,000 t CO2e
+        return None, None, None, "Not Applicable (25,000 t CO2e or less reported)"
+    wec_rate = float(fee_map.get(str(cal_year), WEC_RATE_USD_PER_T))
+    excess = max(0.0, (total["ch4"] if total["ch4"] > 0 else matched["ch4"]) - allowed_ch4)
+    return wec_rate, excess, round(excess * wec_rate, 2), ("Compliant" if excess <= 0 else "Taxable Liability")
 
 
 def facility_row(fid, cell_list, fac, year_value, gwp_horizon="100", surveys=None):
@@ -464,7 +515,7 @@ def facility_row(fid, cell_list, fac, year_value, gwp_horizon="100", surveys=Non
     up_t = float(_app_settings.get("ogmp_upstream_target_pct", 0.20))
     mid_t = float(_app_settings.get("ogmp_midstream_target_pct", 0.05))
     target = up_t if seg_cat == "upstream" else (mid_t if seg_cat in ("midstream", "downstream") else None)
-    loss, loss_status, ngsi = _methane_loss(matched, total["ch4"], seg_cat, target)
+    loss, loss_status, ngsi = _methane_loss(matched, total["ch4"], seg_cat, target, fac)
     marketed_m3 = matched["marketed_m3"]
 
     # OGMP reconciliation over the facility-years that have a top-down survey (BUG-079)
@@ -553,37 +604,7 @@ def facility_row(fid, cell_list, fac, year_value, gwp_horizon="100", surveys=Non
     def r4(v):
         return round(v, 4) if v is not None else None
 
-    # EPA Waste Emissions Charge (40 CFR Part 99 / IRA s.136), per calendar year
-    wec_up = float(_app_settings.get("wec_upstream_threshold", 0.0020))
-    wec_mid = float(_app_settings.get("wec_midstream_threshold", 0.0005))
-    wec_threshold = wec_mid if seg_cat == "midstream" else wec_up
-    if gas_m3 > 0:
-        # 40 CFR 99.20 Eq B-1 / B-2: threshold x gas sent to sale (Mscf) x 0.0192 mt CH4/Mscf (the rule's own
-        # methane density, not the Compendium 0.6772 kg/m3)
-        allowed_ch4 = gas_m3 * 35.3146667 / 1000.0 * wec_threshold * WEC_CH4_DENSITY_T_PER_MSCF
-    elif matched["oil_bbl"] > 0 and seg_cat == "upstream":
-        allowed_ch4 = matched["oil_bbl"] / 1_000_000.0 * 10.0  # 40 CFR 99.20(a)(2)
-    else:
-        allowed_ch4 = 0.0
-    wec_year = cal_year
-    fee_map = _app_settings.get("wec_fee_rates", {})
-    first_year = int(_app_settings.get("wec_first_year", WEC_FIRST_YEAR))
-    country = (fac.country if fac else None) or "Algeria"
-    if year_value in (None, "all"):
-        wec_rate, excess, fee, wec_status = None, None, None, "Select a single year"
-    elif not wec_applies_to_country(country):
-        # a liability was shown for every facility, whatever its country
-        wec_rate, excess, fee, wec_status = None, None, None, "Not Applicable (US subpart W facilities only)"
-    elif wec_year < first_year:
-        # 2024-2033 emissions carried $900 / $1,200 / $1,500 per tonne before P.L. 119-21
-        wec_rate, excess, fee, wec_status = None, None, None, f"Not Applicable (charge starts with {first_year} emissions)"
-    elif seg_cat == "downstream":
-        wec_rate, excess, fee, wec_status = 0.0, 0.0, 0.0, "Exempt (Downstream)"
-    else:
-        wec_rate = float(fee_map.get(str(wec_year), WEC_RATE_USD_PER_T))
-        excess = max(0.0, (total["ch4"] if total["ch4"] > 0 else matched["ch4"]) - allowed_ch4)
-        fee = round(excess * wec_rate, 2)
-        wec_status = "Compliant" if excess <= 0 else "Taxable Liability"
+    wec_rate, excess, fee, wec_status = _waste_emissions_charge(matched, total, seg_cat, fac, year_value, cal_year)
 
     return {
         "facility_id": fid,
@@ -633,7 +654,7 @@ def facility_row(fid, cell_list, fac, year_value, gwp_horizon="100", surveys=Non
         "ch4_venting": total["ch4_split"]["ch4_venting"],
         "ch4_fugitive": total["ch4_split"]["ch4_fugitive"],
         "ch4_flaring": total["ch4_split"]["ch4_flaring"],
-        "ch4_combustion": total["ch4_split"]["ch4_combustion"],
+        "ch4_combustion": total["ch4_split"]["ch4_combustion"], "ch4_other": total["ch4_split"]["ch4_other"],
         # production over the matched years
         "total_boe": boe,
         "total_oil": matched["oil_bbl"],

@@ -175,8 +175,9 @@ def test_completion_disposition_fallbacks_and_c2plus(calc):
         ch4_content=0.80,
         c2plus_content=5.0,  # 5% ethane-equivalent
     )
-    assert res_disp_ctrl["inputs"]["frac_flared"] == 0.95
-    assert res_disp_ctrl["inputs"]["frac_vented"] == pytest.approx(0.05)
+    # an efficiency without a disposition is the flare's efficiency: all the gas to that flare (audit 2026-11 F-VENT1-03)
+    assert res_disp_ctrl["inputs"]["frac_flared"] == 1.0
+    assert res_disp_ctrl["inputs"]["frac_vented"] == pytest.approx(0.0)
     assert res_disp_ctrl["results"]["co2"]["value"] > 0
 
     # An unknown disposition is refused (it was booked as 100 % vented)

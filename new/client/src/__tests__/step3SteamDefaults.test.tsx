@@ -25,6 +25,10 @@ function renderSteamEntry(boilerEff: string | number = 0.92, transLoss: string |
       month={1}
       powerEff=""
       powerOutput=""
+      purchasedStream="heat"
+      setPurchasedStream={() => {}}
+      boughtQty=""
+      setBoughtQty={() => {}}
       setAllocationMethod={vi.fn()}
       setAmount={vi.fn()}
       setBoilerEff={vi.fn()}

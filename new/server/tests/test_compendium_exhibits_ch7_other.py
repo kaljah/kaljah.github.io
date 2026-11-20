@@ -144,7 +144,7 @@ def test_sf6_mass_balance_matches_equation_7_23():
 
 
 @pytest.mark.parametrize("gwp_dict, gas, expected", [
-    (GWP_AR4, "SF6", 22800.0), (GWP_AR5, "SF6", 23500.0), (GWP_AR6, "SF6", 25200.0),
+    (GWP_AR4, "SF6", 22800.0), (GWP_AR5, "SF6", 23500.0), (GWP_AR6, "SF6", 24300.0),
     (GWP_AR4, "HFC-134a", 1430.0), (GWP_AR5, "R-134a", 1300.0), (GWP_AR6, "HFC-134a", 1530.0),
     (GWP_AR5, "R-404A", 3943.0), ({**GWP_AR5, "CH4": 84.0}, "SF6", 17500.0),
 ])

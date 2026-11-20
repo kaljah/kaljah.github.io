@@ -99,7 +99,8 @@ def test_excel_percent_transmission_loss_scope2(user_id):
     ws = wb.active
     ws.append(["Facility", "Date", "Source_Type", "Consumption", "Unit", "boiler_eff", "trans_loss", "uncertainty"])
     ws.append([FACILITY, datetime.date(2021, 4, 1), "indirect_steam", 5000, "MMBtu", 0.85, 0.05, 0.02])
-    ws.append([FACILITY, datetime.date(2021, 5, 1), "indirect_steam", 5000, "MMBtu", 85, 5, "2%"])
+    # a bare 5 is no longer read as 5 % (the manual form refuses it): a fraction or "%" text (audit 2026-11 F-S23-04)
+    ws.append([FACILITY, datetime.date(2021, 5, 1), "indirect_steam", 5000, "MMBtu", 85, "5%", "2%"])
     for col in "FGH":
         ws[f"{col}2"].number_format = "0%"
     assert _upload_xlsx(wb, user_id, 2)["status"] == "completed"
@@ -116,10 +117,11 @@ def test_percent_text_conversion():
     assert _percent_text_to_number("meter_uncertainty_pct", "2.5%") == pytest.approx(2.5)
     assert _percent_text_to_number("user_unc_ch4", "4%") == pytest.approx(4.0)
     assert _percent_text_to_number("c1", "85%") == pytest.approx(85.0)
-    assert _percent_text_to_number("co2_content", "0.5%") == pytest.approx(0.005)
+    # percent columns read "X %" as X (audit 2026-11 F-CORE-04); the slip columns are fractions
+    assert _percent_text_to_number("co2_content", "0.5%") == pytest.approx(0.5)
     assert _percent_text_to_number("agr_ch4_slip", "0.1%") == pytest.approx(0.001)
     assert _percent_text_to_number("control_efficiency", "98 %") == pytest.approx(98.0)
-    assert _percent_text_to_number("carbon_content", "85%") == pytest.approx(0.85)
+    assert _percent_text_to_number("carbon_content", "85%") == pytest.approx(85.0)
     assert _percent_text_to_number("c1", "85") == "85"
     assert _percent_text_to_number("flare_type", "elevated") == "elevated"
 
@@ -167,7 +169,7 @@ def test_monthly_production_rate_is_not_annualised():
         oil_amount, oil_unit, total_production_mmboe, gross_gas_mmsm3 = 0, "bbl", 0, 0
 
     assert production_gas_m3(Row()) == pytest.approx(310 * 28316.846592)
-    assert production_boe(Row()) == pytest.approx(310e6 / (1000.0 / (1.02 / 5.8)))
+    assert production_boe(Row()) == pytest.approx(310e6 / (1000.0 / (1000 / 5647.52)))
 
 
 # -- Factor-name matching, custom factor and equity percentages ---------------------------------

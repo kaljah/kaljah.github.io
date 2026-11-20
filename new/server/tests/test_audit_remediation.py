@@ -62,6 +62,7 @@ def test_users():
             fac = Facility(
                 name="Remediation Test Facility",
                 location="Basin Alpha",
+                country="Algeria",  # the grid fallback needs a country (audit 2026-11 F-E2E-01)
                 boundary_type="Operational Control",
                 segment="Upstream",
             )
@@ -763,8 +764,8 @@ def test_dashboard_intensity_mmscf_scaling(client, test_users):
         fac_stat = stats[0]
         # 10 MMscf = 283,168.0 m3
         assert abs(fac_stat["total_gas_m3"] - 283168.0) < 1.0
-        # 10 MMscf = 10,000 Mscf -> BOE = 100 + (10,000 * 1.02 / 5.8) = 1,858.6 BOE
-        assert abs(fac_stat["total_boe"] - (100 + 10_000 * 1.02 / 5.8)) < 1.0
+        # 10 MMscf = 10,000 Mscf -> BOE = 100 + (10,000 * (1000 / 5647.52)) = 1,858.6 BOE
+        assert abs(fac_stat["total_boe"] - (100 + 10_000 * (1000 / 5647.52))) < 1.0
         # 1 MMscf flaring = 28,316.8 m3
         assert abs(fac_stat["flaring_volume"] - 28316.8) < 1.0
         # Flaring rate % = 28,316.8 / 283,168.0 * 100 = 10.0%
@@ -905,7 +906,7 @@ def test_scope2_steam_recalculation_enthalpy(client, test_users):
     # co2e = 200 * 0.06 * (2.75 / 0.70) = 47.142857 tCO2e
     res = client.put(f"/api/scope2/{rec_id}", json={
         "steam_ton": 200.0,
-        "emission_factor": 0.06,
+        "emission_factor": 60.0,  # kg CO2/MMBtu: a factor's unit is never guessed from its size (audit 2026-11 F-S23-10)
         "steam_enthalpy": 2.75,
         "boiler_efficiency": 0.8,
     })
@@ -1319,7 +1320,7 @@ def test_stoichiometry_dispatcher_gwp_propagation():
     dispatcher = CalculationDispatcher()
     res = dispatcher.dispatch(
         process_type="stoichiometry",
-        inputs={"quantity": 1000, "carbon_content": 0.85, "unit": "kg", "factor_source": "specific"},
+        inputs={"quantity": 1000, "carbon_content": 85, "unit": "kg", "factor_source": "specific"},  # wt %
         emission_factors={},
         uncertainties={"_factor_source": "specific"},
         gwp_dict={"CO2": 1, "CH4": 28, "N2O": 265},

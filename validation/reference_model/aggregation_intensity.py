@@ -5,7 +5,7 @@ Zero production dependencies.
 """
 from .unit_conversions import DENSITY_CH4_STD
 
-GAS_TO_BOE_FACTOR = 1.020 / 5.8  # API Compendium: 5.8 MMBtu/BOE at 1,020 Btu/scf = 0.17586 BOE per Mscf
+GAS_TO_BOE_FACTOR = 1000.0 / 5647.52  # API Compendium 2021 Table 3-4: 1 BOE of natural gas = 5,647.52 scf
 
 
 class IndependentIntensityModel:

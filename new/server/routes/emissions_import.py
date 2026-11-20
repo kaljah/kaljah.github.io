@@ -324,10 +324,10 @@ def import_emissions():
             if not rec_data.get("group_name"):
                 rec_data["group_name"] = facility.name
 
-            # Fill in hierarchy if missing
-            rec_data["activity"] = rec_data.get("activity") or facility.activity
-            rec_data["division"] = rec_data.get("division") or facility.division
-            rec_data["field"] = rec_data.get("field") or facility.field
+            # hierarchy from the facility, kept out of the payload, where `activity` is the midstream / LNG method
+            # (audit 2026-11 F-GAPI-04: "Unknown LNG activity 'Production'", a method stored as the hierarchy)
+            hierarchy = {"activity": facility.activity, "division": rec_data.get("division") or facility.division,
+                         "field": rec_data.get("field") or facility.field}
 
             # CSV templates use '-' for empty optional fields
             for key in list(rec_data.keys()):
@@ -375,9 +375,9 @@ def import_emissions():
                 month=rec_data["month"],
                 facility_id=facility.id,
                 group_name=rec_data["group_name"],
-                activity=rec_data["activity"],
-                division=rec_data["division"],
-                field=rec_data["field"],
+                activity=hierarchy["activity"],
+                division=hierarchy["division"],
+                field=hierarchy["field"],
                 equipment_id=rec_data.get("equipment_id"),
                 created_by=user.id,
                 created_by_name=user_label(user),

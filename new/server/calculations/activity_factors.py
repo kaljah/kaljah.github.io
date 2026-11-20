@@ -42,8 +42,13 @@ ACTIVITY_FACTORS = {
     "cg_thermal_heavy": _r("Thermal heavy oil casing gas", ["casing_gas"], "bbl", "Table 6-12", ch4=0.223e-3, gas=14.2, basis=0.816, activity="bbl oil"),
     "cg_bitumen": _r("Crude bitumen casing gas", ["casing_gas"], "bbl", "Table 6-12", ch4=0.207e-3, gas=12.9, basis=0.816, activity="bbl oil"),
     "cg_migration": _r("Low-pressure well casing gas migration", ["casing_gas"], "unit_day", "Section 6.3.5.2 (CAPP)", ch4=0.00213, gas=3.85 / SCF_TO_M3, basis=0.816, activity="well"),
+    # Table 6-13, heavy oil / bitumen casing gas per well-day (audit 2026-11 F-VENT1-12: no row existed)
+    "cg_well_active": _r("Heavy oil / bitumen casing gas, active well", ["casing_gas"], "unit_day", "Table 6-13", ch4=0.0205, gas=1310, basis=0.816, activity="well"),
+    "cg_well_suspended": _r("Heavy oil / bitumen casing gas, suspended well", ["casing_gas"], "unit_day", "Table 6-13", ch4=0.0111, gas=710, basis=0.816, activity="well"),
     # ---- 6.3.8 / 6.5.2 dehydration (Tables 6-17, 6-18, 6-35, 6-36) ----
     "dh_glycol_production": _r("Glycol dehydrator vent, production (no gas pump)", ["dehydrator"], "mmscf", "Table 6-17", ch4=0.0052859, gas=349.7, basis=0.788),
+    # Table 6-17 per-dehydrator factor (Subpart W Eq W-5): 73.4 Mscf CH4 = 0.06149 t / dehydrator-year (F-VENT1-12)
+    "dh_glycol_per_unit": _r("Glycol dehydrator vent, production, per dehydrator", ["dehydrator"], "unit", "Table 6-17", ch4=0.06149, gas=93200, basis=0.788, activity="dehydrator-year"),
     "dh_kimray_production": _r("Kimray / gas-assisted glycol pump, production", ["dehydrator"], "mmscf", "Table 6-18", ch4=0.01903, gas=1258, basis=0.788),
     "dh_glycol_processing": _r("Glycol dehydrator vent, processing", ["dehydrator"], "mmscf", "Table 6-35", ch4=0.0023315, gas=140.03, basis=0.868),
     "dh_kimray_processing": _r("Kimray / gas-assisted glycol pump, processing", ["dehydrator"], "mmscf", "Table 6-36", ch4=0.0034096, gas=205, basis=0.868),
@@ -254,20 +259,10 @@ class ActivityFactorCalculator(BaseCalculator):
         raw_ch4 = _parse_content(ch4_content)
         raw_co2 = _parse_content(co2_content)
 
-        # Detect whether gas content is provided in percentage mode (0-100%) or normalized fraction (0-1.0)
-        is_pct_mode = (
-            ("%" in str(ch4_content or ""))
-            or ("%" in str(co2_content or ""))
-            or (raw_ch4 is not None and raw_ch4 > 1.0)
-            or (raw_co2 is not None and raw_co2 > 1.0)
-        )
-
-        if is_pct_mode:
-            x_ch4 = (raw_ch4 / 100.0) if raw_ch4 is not None else None
-            x_co2 = (raw_co2 / 100.0) if raw_co2 is not None else 0.0
-        else:
-            x_ch4 = raw_ch4
-            x_co2 = raw_co2 if raw_co2 is not None else 0.0
+        # the site gas contents are documented as mol % and always read as percent: 0.9 is 0.9 %. The basis
+        # was guessed from the size of the numbers (audit 2026-11 F-CORE-03: 0.5 % CO2 was read as 50 %)
+        x_ch4 = (raw_ch4 / 100.0) if raw_ch4 is not None else None
+        x_co2 = (raw_co2 / 100.0) if raw_co2 is not None else 0.0
 
         if ((x_ch4 or 0.0) + x_co2) > 1.0001:
             raise ValueError(f"Sum of CH4 ({(x_ch4 or 0.0)*100:.1f}%) and CO2 ({x_co2*100:.1f}%) cannot exceed 100%")
@@ -287,6 +282,8 @@ class ActivityFactorCalculator(BaseCalculator):
                 if gas:
                     co2 = n * gas * x_co2 * SCF_TO_M3 * RHO_CO2 / 1000.0
                 elif per == "mmscf":
+                    # AGR rows: CO2 = treated gas x inlet CO2, i.e. Eq 6-18 with sweet-gas CO2 = 0 (all inlet CO2
+                    # vented); stated here because the row does not say it (audit 2026-11 F-VENT1-14)
                     co2 = n * 1_000_000.0 * x_co2 * SCF_TO_M3 * RHO_CO2 / 1000.0
                 else:
                     if not x_ch4 and not basis:

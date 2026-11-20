@@ -523,13 +523,13 @@ def test_lng_distribution_negative_guards():
     )
     lng_calc = LNGVentingCalculator()
     with pytest.raises(ValueError, match="cannot be negative"):
-        lng_calc.calculate(activity="loading_transfer", transfer_volume_m3=-100.0)
+        lng_calc.calculate(activity="loading_transfer", expansion_ratio=600.0, transfer_volume_m3=-100.0)
 
     with pytest.raises(ValueError, match="cannot be negative"):
         lng_calc.calculate(activity="direct_bog_vent", vented_gas_scf=-500.0)
 
     with pytest.raises(ValueError, match="cannot be negative"):
-        lng_calc.calculate(activity="loading_transfer", transfer_volume_m3=100.0, ch4_content=-0.2)
+        lng_calc.calculate(activity="loading_transfer", expansion_ratio=600.0, transfer_volume_m3=100.0, ch4_content=-0.2)
 
     dist_pneu = DistributionPneumaticsCalculator()
     with pytest.raises(ValueError, match="cannot be negative"):

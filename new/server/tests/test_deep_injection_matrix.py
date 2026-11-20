@@ -147,7 +147,7 @@ class TestUnitConversionInvarianceMatrix:
         # Base: 10 tonnes * 0.85 carbon * (44.01 / 12.011) = 31.144 tonnes CO2
         base_res = dispatcher.dispatch(
             "stoichiometry",
-            {"amount": base_tonnes, "unit": "tonne", "carbon_content": 0.85, "factor_source": "specific"},
+            {"amount": base_tonnes, "unit": "tonne", "carbon_content": 85, "factor_source": "specific"},
             {},
             {},
         )
@@ -158,7 +158,7 @@ class TestUnitConversionInvarianceMatrix:
             equiv_qty = convert(base_tonnes, "tonne", u)
             res = dispatcher.dispatch(
                 "stoichiometry",
-                {"amount": equiv_qty, "unit": u, "carbon_content": 0.85, "factor_source": "specific"},
+                {"amount": equiv_qty, "unit": u, "carbon_content": 85, "factor_source": "specific"},
                 {},
                 {},
             )

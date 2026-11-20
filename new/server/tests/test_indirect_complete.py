@@ -134,7 +134,7 @@ def test_scope2_import_reads_the_enthalpy_column(steam_admin, app):
         maps = dict(fac_name_map={fac.name.lower(): fac}, fac_id_map={str(fac.id): fac}, GRID_FACTORS={},
                     job_id="steam-h", row_idx=2)
         row = {"date": "2025-04", "facility_name": fac.name, "source_type": "steam", "consumption": "15000",
-               "unit": "klb", "boiler_eff": "92", "trans_loss": "10"}
+               "unit": "klb", "boiler_eff": "92", "trans_loss": "10%"}
         obj, errors = _process_row_scope2(row=row, user_id=user_id, **maps)
         assert obj is None and "enthalpy" in errors[0]
         obj, errors = _process_row_scope2(row={**row, "steam_enthalpy_btu_lb": "1170"}, user_id=user_id, **maps)

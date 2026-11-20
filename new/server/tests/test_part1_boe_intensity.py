@@ -3,7 +3,7 @@ Unit & Regression Tests for Production Denominator (BOE) and Intensity (Item 1.2
 ================================================================================
 Verifies that:
 1. Combined BOE is consistently computed using canonical conversion constants:
-   - 1020 Btu/scf HHV, 5.8 MMBtu/BOE -> 0.175862 BOE/mscf, 5686.27 scf/BOE
+   - API Compendium Table 3-4: 5,647.52 scf/BOE -> 0.177069 BOE/mscf
    - 1 m3 crude = 6.28981 bbl
 2. Total MMBOE is validated against oil+gas converted BOE within 30% tolerance.
 3. Discordant MMBOE (such as 10,000 MMBOE on 'rz' vs 0.625 MMBOE oil+gas) falls back
@@ -43,7 +43,7 @@ def test_calculate_oil_gas_boe_components():
     row_oil = _make_prod(oil_amount=1000.0, oil_unit="bbl", gas_amount=0.0)
     assert calculate_oil_gas_boe(row_oil) == pytest.approx(1000.0, rel=1e-9)
 
-    # 1,000 mscf gas = 1,000 * 0.17586206896551725 = 175.86206896551725 BOE
+    # 1,000 mscf gas = 1,000 / 5.64752 = 177.07 BOE (Compendium Table 3-4)
     row_gas = _make_prod(oil_amount=0.0, gas_amount=1000.0, gas_unit="mscf")
     assert calculate_oil_gas_boe(row_gas) == pytest.approx(1000.0 * GAS_BOE_PER_MSCF, rel=1e-9)
 

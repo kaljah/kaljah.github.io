@@ -29,7 +29,7 @@ class TestLNGVentingCompendium:
     def test_pipeline_transfer_foam_insulation(self):
         """Table 6-44: Transfer line boil-off gas with foam insulation (0.0012% per km)."""
         res = self.calc.calculate(
-            activity="loading_transfer",
+            activity="loading_transfer", expansion_ratio=600.0,
             transfer_volume_m3=100000.0,
             pipe_length_km=2.0,
             insulation_type="foam",
@@ -42,13 +42,13 @@ class TestLNGVentingCompendium:
     def test_pipeline_transfer_vacuum_insulation(self):
         """Table 6-44: Vacuum insulation has lower boil-off loss (0.00012% per km)."""
         res_foam = self.calc.calculate(
-            activity="loading_transfer",
+            activity="loading_transfer", expansion_ratio=600.0,
             transfer_volume_m3=100000.0,
             pipe_length_km=1.0,
             insulation_type="foam",
         )
         res_vac = self.calc.calculate(
-            activity="loading_transfer",
+            activity="loading_transfer", expansion_ratio=600.0,
             transfer_volume_m3=100000.0,
             pipe_length_km=1.0,
             insulation_type="vacuum",

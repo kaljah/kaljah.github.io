@@ -53,8 +53,8 @@ def test_coke_burn_per_day_and_from_throughput_eq_6_34_6_37(regen):
     thr = regen.calculate(approach="coke_burn", unit_throughput_bbl_day=40_000, carbon_content_fraction=0.93)
     assert co2(thr) == pytest.approx(40_000 * 7.3 * 0.001 * 365 * 0.93 * C_TO_CO2)
     # Eq 6-38 / 6-39: CH4 and N2O in the ratio of the petroleum coke factors (Table 4-3 / 4-5)
-    assert ch4(thr) == pytest.approx(co2(thr) * 3.0e-6 / 0.1021)
-    assert n2o(thr) == pytest.approx(co2(thr) * 6.0e-7 / 0.1021)
+    assert ch4(thr) == pytest.approx(co2(thr) * 3.0e-6 / 0.10241)  # Table 4-5 per the Dec 2025 correction (F-VENT2-12)
+    assert n2o(thr) == pytest.approx(co2(thr) * 6.0e-7 / 0.10241)  # Table 4-5 (F-VENT2-12)
     # an entered carbon fraction of 0 is 0, not the 0.93 default
     assert co2(regen.calculate(approach="coke_burn", coke_burn_rate_tonnes_yr=1000, carbon_content_fraction=0)) == 0
 
@@ -90,7 +90,8 @@ def test_continuous_and_intermittent_eq_6_40_6_41(regen):
 
 
 def test_supplemental_firing_exhibit_6_38(regen):
-    res = regen.calculate(approach="continuous", catalyst_circulation_rate_tonnes_hr=0, supplemental_fuel_mmbtu_hr=100)
+    res = regen.calculate(approach="continuous", catalyst_circulation_rate_tonnes_hr=0, supplemental_fuel_mmbtu_hr=100,
+                          fc_spent=0.04)  # the spent-catalyst carbon is required (audit 2026-11 F-VENT2-03)
     assert res["inputs"]["supplemental_co2"] == pytest.approx(46_516, rel=1e-4)
     assert res["inputs"]["supplemental_ch4"] == pytest.approx(0.876, rel=1e-3)    # printed 0.88
     assert res["inputs"]["supplemental_n2o"] == pytest.approx(0.858, rel=1e-3)    # printed 0.86

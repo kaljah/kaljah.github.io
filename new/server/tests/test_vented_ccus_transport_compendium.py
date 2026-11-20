@@ -46,7 +46,7 @@ class TestCCUSCompendium:
             physical_volume_m3=1.5,
             events=4.0,
             co2_density_kg_m3=650.0,
-            co2_weight_fraction=0.985,
+            co2_weight_fraction=98.5,  # wt %, always (Exhibit 6-22; audit 2026-11 F-VENT2-13)
         )
         # Mass = 4 * 1.5 * 650 * 0.985 * 0.001 = 3.8415 tonnes CO2
         assert pytest.approx(_val(res["results"]["co2"]), rel=1e-3) == 3.8415

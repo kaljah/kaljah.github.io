@@ -278,20 +278,17 @@ def _clean_float(val, default=0.0):
 
     # Handle both comma and dot present
     if "," in s and "." in s:
-        if s.rfind(".") > s.rfind(","):
-            # e.g. 1,250.50 -> 1250.50
+        if s.rfind(".") > s.rfind(",") and re.fullmatch(r"[-+]?\d{1,3}(,\d{3})+\.\d+", s):
+            # e.g. 1,250.50 -> 1250.50 (grouped thousands with a decimal point)
             s = s.replace(",", "")
         else:
-            # e.g. 1.250,50 -> 1250.50
-            s = s.replace(".", "").replace(",", ".")
-    elif "," in s and "." not in s:
-        # "1,000" is 1000 in English and 1 in French: never guessed (the decimal format chosen for
-        # the file resolves it in normalize_number_cell before this point)
-        if re.match(r"^[-+]?\d{1,3}(,\d{3})+$", s):
+            # "1.250,50" (decimal comma) is not guessed without the file's chosen format (audit 2026-11 F-UPL-09)
             return None
-        else:
-            # European decimal format: 1234,56 -> 1234.56
-            s = s.replace(",", ".")
+    elif "," in s:
+        # a comma without the file's decimal format is never read: "1,000" is 1000 in English and 1 in French,
+        # "1,5" was read as 1.5 and "1,0000" as 1.0 (audit 2026-11 F-UPL-09 / F-CORE-11). The chosen decimal
+        # format resolves it in normalize_number_cell before this point.
+        return None
 
     try:
         res = float(s)
@@ -317,7 +314,23 @@ _SPACE_GROUPS = re.compile(r"[\s\u00a0\u202f']")
 # exactly three digits ("1,000": 1000 in English, 1 in French) is refused as ambiguous.
 _AMBIGUOUS_NUMBER = re.compile(r"[1-9]\d{0,2},\d{3}")
 # identifiers and labels that may look like numbers ("1.2", "001") are never rewritten
-_TEXT_COLUMN = re.compile(r"equipment|source|meter|group|facility|date|ref|name|code|region|basin|id$")
+class _TextColumn:
+    """Identifier / label columns, matched on whole words of the header ("source_ref", "meter", "facility_name").
+    A substring match caught "diameter" and "meter_uncertainty_pct", whose decimal-comma numbers were then not
+    converted ("1,000" in a comma file became 1000; audit 2026-11 F-UPL-01). Percent / number columns are never
+    text."""
+    _WORDS = {"equipment", "source", "meter", "group", "facility", "date", "ref", "name", "code", "region", "basin",
+              "id"}
+
+    def search(self, header):
+        h = str(header or "").lower()
+        words = set(re.split(r"[^a-z0-9]+", h))
+        if words & {"pct", "percent", "uncertainty", "rate", "volume", "count", "pressure"}:
+            return False
+        return bool(words & self._WORDS)
+
+
+_TEXT_COLUMN = _TextColumn()
 
 
 def normalize_number_cell(text, decimal_mark=None):
@@ -372,19 +385,17 @@ def _percent_field(name):
     return n.endswith("_pct") or n.startswith("user_unc") or "_pct_" in n
 
 
-# Scope 1 fields that are fractions only (0-1), never percentages
-_FRACTION_FIELDS = {"agr_ch4_slip", "ch4_slip", "carbon_content", "ch4_wt_fraction"}
+# Scope 1 fields that are fractions only (0-1), never percentages (carbon contents and CH4-in-TOC are wt %: audit
+# 2026-11 F-CMB-06 / F-FUG-08)
+_FRACTION_FIELDS = {"agr_ch4_slip", "ch4_slip"}
 
 
 def _percent_text_to_number(name, value):
     """"2.5%" in a Scope 1 input column as the number that column expects (it used to reach the
     calculators as text, and '2.5%' failed with a conversion error).
 
-    Percentage columns (`*_pct`, `user_unc_*`) take X; fraction-only columns X / 100. The other
-    columns (contents, compositions, efficiencies) are read as percentages by some calculators
-    (activity factors, vent and combustion methods: 0-100) and as fraction-or-percent by the others
-    (a value above 1 is a percentage): X above 1 suits both, and X up to 1 is sent as the fraction
-    X / 100 (0.5 % must not become the fraction 0.5 = 50 %)."""
+    Fraction-only columns take X / 100; every other column takes X, because the engine reads contents,
+    compositions and efficiencies as percentages, always."""
     if not isinstance(value, str):
         return value
     m = _PERCENT_TEXT.match(value)
@@ -396,7 +407,10 @@ def _percent_text_to_number(name, value):
         return x
     if n in _FRACTION_FIELDS:
         return x / 100.0
-    return x if x > 1.0 else x / 100.0
+    # every content, composition and efficiency the engine reads is a percentage, always (PERCENT_FIELDS,
+    # EFFICIENCY_FIELDS): "0.5%" is 0.5. It was sent as 0.005, then read as percent again, 100 x low
+    # (audit 2026-11 F-CORE-04 / F-UPL-02)
+    return x
 
 
 _TON_ERROR = ("'{v}' is ambiguous in a file: write 'tonne' (metric, 1,000 kg) or 'short_ton' (2,000 lb). "
@@ -734,9 +748,10 @@ def _scope2_key(facility_id, year, month, source_type, grid_region, meter):
             (grid_region or "").strip().lower(), (meter or "").strip().lower())
 
 
-def _scope3_key(facility_id, year, month, category, sub_category, unit):
-    return (facility_id, year, month, (category or "").strip().lower(),
-            (sub_category or "").strip().lower(), (unit or "").strip().lower())
+def _scope3_key(facility_id, year, month, category, sub_category, unit=None):
+    """The unique key of uq_scope3_facility_period_category. The unit is not part of it: two rows that differ only by
+    unit passed the duplicate check and then broke the whole import on the constraint (audit 2026-11 F-UPL-04)."""
+    return (facility_id, year, month, (category or "").strip().lower(), (sub_category or "").strip().lower())
 
 
 def _scope1_key(facility_id, year, month, process_type, fuel, equipment_id, source_ref):
@@ -1304,6 +1319,13 @@ class _ImportRun:
         self.pv = {"dates": {}, "bad_dates": 0, "facilities": {}, "processes": {}, "checked": 0}
         sample_step = (max(1, _math.ceil((self.total_rows or 0) / self.sample_rows))
                        if (self.dry_run and self.sample_rows) else 1)
+        # a random (seeded, repeatable) sample of about one row in sample_step: every k-th row missed a bad row that
+        # recurs with the same period (audit 2026-11 F-UPL-06)
+        import random as _random
+        _sample = None
+        if sample_step > 1:
+            _n = int(self.total_rows or 0)
+            _sample = {1} | set(_random.Random(_n).sample(range(2, _n + 1), min(_n - 1, int(self.sample_rows) - 1)))
         self.anomaly_detector = BatchAnomalyDetector()  # history read once per series
         self.scope1_source = scope1_source
         db.session.autoflush = False
@@ -1319,10 +1341,10 @@ class _ImportRun:
             self.processed += 1
             if self.dry_run:
                 _preview_count(self.pv, row_dict, self.mapping)
-                # the sample is spread over the whole file (every k-th row): files are often sorted by process or
+                # the sample is spread over the whole file (seeded random rows): files are often sorted by process or
                 # source, and the first rows alone misjudged a 100k file (47 % vs 16 % skipped)
-                if self.sample_rows and sample_step > 1 and (self.processed - 1) % sample_step:
-                    continue  # not in the sample: statistics only
+                if _sample is not None and self.processed not in _sample:
+                    continue  # not in the sample: statistics only (the first row is always checked)
                 self.pv["checked"] += 1
             mapped_data = self._mapped_data(row_dict)
             obj, row_errors = self._process(mapped_data, raw_row, line_no)
@@ -1771,6 +1793,10 @@ def _build_mapping(headers, scope=1):
     return mapping
 
 
+from services.scope2_import_rows import chp_row, cooling_row_factor, steam_row_trans_loss  # noqa: E402
+from calculations.units_scope3 import scope3_complete_factor_unit  # noqa: E402
+
+
 def _process_row_scope2(
     row, user_id, fac_name_map, fac_id_map, GRID_FACTORS,
     job_id, row_idx, batch_keys=None, overwrite_duplicates=False,
@@ -1860,26 +1886,17 @@ def _process_row_scope2(
             errors.append(f"Row {row_idx}: Unknown unit '{unit}' for indirect steam")
             return None, errors
         # boiler efficiency: a fraction (0.85) or a percentage (85) - unambiguous, no boiler runs at 1 %.
-        # transmission loss: always a percentage in the file (0.9 = 0.9 %); it used to be read as a
-        # fraction at or below 1, so 0.9 % became 90 % and 1 % was rejected
         raw_be = _first(row, "boiler_eff", "boiler_efficiency", "boiler_eff_pct")
         boiler_eff = DEFAULT_BOILER_EFFICIENCY if raw_be in (None, "") else _clean_float(raw_be, default=None)
         if boiler_eff is None:
             return None, [f"Row {row_idx}: boiler efficiency '{raw_be}' is not a number (e.g. 85 or 0.85)"]
         if boiler_eff > 1.0 or "%" in str(raw_be):
             boiler_eff /= 100.0
-        raw_tl = _first(row, "trans_loss", "trans_loss_pct", "transmission_loss")
-        if raw_tl in (None, ""):
-            trans_loss = DEFAULT_TRANSMISSION_LOSS
-        else:
-            trans_loss = _clean_float(raw_tl, default=None)
-            if trans_loss is None:
-                return None, [f"Row {row_idx}: transmission loss '{raw_tl}' is not a number (a percentage, e.g. 5)"]
-            trans_loss /= 100.0
+        trans_loss, tl_err = steam_row_trans_loss(row, row_idx)  # fraction or "%" text, as the form (F-S23-04)
+        if tl_err:
+            return None, [tl_err]
         if not 0 < boiler_eff <= 1.0:
             return None, [f"Row {row_idx}: boiler efficiency must be above 0 and at most 100 % (got {raw_be})"]
-        if not 0 <= trans_loss < 1.0:
-            return None, [f"Row {row_idx}: transmission loss is a percentage from 0 to below 100 (got {raw_tl})"]
         ci = {"trans_loss": trans_loss}
         boiler_ef = _first(row, "ef_co2", "factor", "emission_factor")
         if boiler_ef is not None:
@@ -1901,25 +1918,10 @@ def _process_row_scope2(
         co2e, heat_mmbtu, ef = steam["co2e"], steam["energy_mmbtu"], steam["ef_co2"]
         steam_ton = val if u in ("tonne", "mt", "metric_ton", "tonnes", "ton", "tons", "us_ton", "short_ton") else steam_ton
     elif source_type in ["cogen_allocation", "cogen"]:
-        # BUG-099 pattern: never book a client-supplied co2e; allocate on the server
-        from routes.scope2 import _calc_cogen_allocation
-
         source_type = "cogen_allocation"
-        cogen_in = {
-            "total_emissions": row.get("total_emissions"),
-            "fuel_consumed_mmbtu": row.get("fuel_consumed_mmbtu"),
-            "heat_output_mmbtu": row.get("heat_output_mmbtu"),
-            "power_output_mwh": row.get("power_output_mwh"),
-            "allocation_method": row.get("allocation_method") or "wri_efficiency",
-            "heat_efficiency": row.get("heat_efficiency"),
-            "power_efficiency": row.get("power_efficiency"),
-        }
-        if not _clean_float(cogen_in["heat_output_mmbtu"], default=0.0) or not (
-            _clean_float(cogen_in["total_emissions"], default=0.0) or _clean_float(cogen_in["fuel_consumed_mmbtu"], default=0.0)
-        ):
-            return None, [f"Row {row_idx}: CHP rows need heat_output_mmbtu and total_emissions or fuel_consumed_mmbtu"]
-        co2e = _calc_cogen_allocation({k: v for k, v in cogen_in.items() if v not in (None, "")})
-        heat_mmbtu = _clean_float(cogen_in["heat_output_mmbtu"], default=0.0)
+        co2e, heat_mmbtu, chp_err = chp_row(row, row_idx)  # plant totals and the share bought (F-S23-01)
+        if chp_err:
+            return None, [chp_err]
         ef = None
     elif source_type in ["cooling", "purchased_cooling"]:
         source_type = "cooling"
@@ -1929,11 +1931,9 @@ def _process_row_scope2(
         if unit.lower().replace(" ", "").replace("-", "_") not in COOLING_UNITS:
             return None, [f"Row {row_idx}: cooling is entered in ton-hours of refrigeration (unit 'ton_hour'), not '{unit}'"]
         cooling_ton = val
-        supplied_ef = row.get("factor") if row.get("factor") not in (None, "") else row.get("emission_factor")
-        ef = _clean_float(supplied_ef, default=None)
-        if ef is None or ef < 0:
-            return None, [f"Row {row_idx}: cooling needs its emission factor in kg CO2e per ton-hour "
-                          f"(factor column; got '{supplied_ef if supplied_ef is not None else ''}')"]
+        ef, cool_err = cooling_row_factor(row, row_idx, grid_region, facility.id)  # factor or chiller COP (F-S23-12)
+        if cool_err:
+            return None, [cool_err]
         co2e = (cooling_ton * ef) / 1000.0
     else:
         source_type = "electricity"
@@ -1979,7 +1979,7 @@ def _process_row_scope2(
                        if row.get(k) not in (None, "")), None)  # a 0 factor is a factor (an `or` chain skipped it)
     try:  # a supplier factor in the factor column is market-based (BA-007), read and bounded as on the manual form
         used_mkt_ef, mkt_ef_val = market_factor(ef, mkt_inst, supplier_market_factor(
-            raw_mkt_ef, supplied if source_type == "electricity" else None))
+            raw_mkt_ef, supplied if source_type == "electricity" else None), grid_name=grid_region)
     except ValidationError as exc:
         return None, [f"Row {row_idx}: {exc}"]
     co2e_mkt = (kwh * used_mkt_ef) / 1000.0 if source_type == "electricity" else co2e
@@ -2028,9 +2028,11 @@ def _process_row_scope2(
         activity=row.get("activity") or facility.activity, division=row.get("division") or facility.division,
         field=row.get("field") or facility.field, region=row.get("region") or facility.region or facility.name,
         gas_composition=row.get("gas_composition"), created_by=user_id,
+        # the steam gas masses, as the manual form stores them (they were left NULL: audit 2026-11 F-UPL-07)
+        **{k: v for k, v in values.items() if k.endswith("_emissions")},
         **_bulk_status(user_id),  # Maker-Checker: awaits reviewer approval (admins: Verified)
     )
-    
+
     # QA/QC Anomaly Detection
     amount = max(kwh, heat_mmbtu)
     if amount > 10000000:
@@ -2106,19 +2108,16 @@ def _process_row_scope3_eeio(
     if spend_val is None or spend_val <= 0:
         return None, [f"Spend amount must be a number greater than zero (got '{raw_spend or ''}')"]
 
-    currency = str(row.get("currency") or row.get("spend_currency") or "USD").upper().strip()
-    FX_TO_USD = {
-        "USD": 1.0, "$": 1.0, "US$": 1.0,
-        "EUR": 1.08, "€": 1.08,
-        "GBP": 1.28, "£": 1.28,
-        "CAD": 0.74, "C$": 0.74,
-        "AUD": 0.66, "A$": 0.66,
-        "JPY": 0.0068, "¥": 0.0068,
-    }
-    if currency not in FX_TO_USD:
-        return None, [f"Row {row_idx}: Unsupported currency '{currency}'. Supported currencies: USD, EUR, GBP, CAD, AUD, JPY"]
-    fx_rate = FX_TO_USD[currency]
-    spend_usd = spend_val * fx_rate
+    # dated, entered exchange rate and optional deflator to the factors' 2022 USD (audit 2026-11 F-S23-05 / F-UPL-08)
+    from input_validation import ValidationError
+    from services.eeio_spend import spend_in_factor_usd
+
+    try:
+        spend_usd, spend_notes = spend_in_factor_usd(
+            spend_val, row.get("currency") or row.get("spend_currency"), row.get("fx_rate_to_usd"), year,
+            row.get("deflator_to_2022"))
+    except ValidationError as exc:
+        return None, [f"Row {row_idx}: {exc.message}"]
 
     # 4. Calculate (EPA supply chain factors; an unknown code is a row error, not a default factor)
     try:
@@ -2143,7 +2142,7 @@ def _process_row_scope3_eeio(
     values = {
         "sub_category": sub_cat, "activity_data": spend_usd, "unit": "USD",
         "emission_factor": factor_data["kg_co2e_per_usd"], "co2e": tonnes_co2e,
-        "notes": row.get("notes", "Bulk Imported via EEIO"), "uncertainty": unc,
+        "notes": "; ".join([str(row.get("notes") or "Bulk Imported via EEIO")] + spend_notes), "uncertainty": unc,
     }
     verdict, qa_msg = plausibility_check(tonnes_co2e)  # the Scope 1 hard bound (1e300 kWh was stored)
     if verdict == "reject":
@@ -2269,7 +2268,7 @@ def _process_row_scope3(
         rows = SCOPE3_ACTIVITY_FACTORS.get(cat_num_int, [])
         r_match = next((r for r in rows if r[0].lower() == str(sub_cat or "").strip().lower()), None)
         den_unit = r_match[1] if r_match else (row.get("unit") or "unit")
-        ef_unit = f"kg CO2e / {den_unit}"
+        ef_unit = scope3_complete_factor_unit(ef_unit, den_unit)  # its own mass kept (audit 2026-11 F-UPL-03)
     if amt > 0 and ef > 0:
         try:
             co2e = compute_scope3_co2e(amt, ef, ef_unit, calc_method, activity_unit=row.get("unit") or "")

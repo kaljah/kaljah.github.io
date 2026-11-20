@@ -121,7 +121,7 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
   );
 
   // The server refuses an analysis that does not total 100 % (99.5 to 100.5 is rounding)
-  const totalOk = totalMolePct >= 99.5 && totalMolePct <= 100.5;
+  const totalOk = totalMolePct >= 99.5 - 1e-9 && totalMolePct <= 100.5 + 1e-9;  // float rounding (F-UPL-13)
 
   const handleCompChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -247,7 +247,7 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
   };
 
   const getStatusText = () => {
-    if (totalMolePct > 100.5) return t("⚠️ Over 100%");
+    if (totalMolePct > 100.5 + 1e-9) return t("⚠️ Over 100%");
     if (Math.abs(totalMolePct - 100) < 0.1) return t("✓ Perfect 100%");
     if (totalOk) return t("✓ Valid (~100%)");
     return t("Need {{pct}}%", { pct: (100 - totalMolePct).toFixed(2) });

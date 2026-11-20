@@ -60,7 +60,7 @@ def test_kpi_definitions_endpoint(app, client):
     # 4. Combined BOE
     assert "combined_boe" in kpi_map
     assert kpi_map["combined_boe"]["unit"] == "BOE"
-    assert "6.0 mscf/BOE" in kpi_map["combined_boe"]["formula"]
+    assert "5,647.52 scf/BOE" in kpi_map["combined_boe"]["formula"]  # Table 3-4 (audit 2026-11 F-AGG-14)
 
     # 5. Operational GHG Intensity
     assert "ghg_intensity" in kpi_map

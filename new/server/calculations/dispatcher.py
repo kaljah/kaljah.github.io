@@ -3,6 +3,7 @@ import math
 from .units import CONVERSIONS, UnitError, calculate_co2e, parse_amount, normalize_efficiency
 from input_validation import parse_number
 from .combustion import CombustionCalculator, FlaringCalculator, factor_hhv_unit, user_hhv
+from .mobile_factors import first_given, mobile_tier1_factors
 from .vented import (
     PneumaticDeviceCalculator,
     LiquidsUnloadingCalculator,
@@ -523,11 +524,11 @@ class CalculationDispatcher:
                              "facility-level fugitives")
         production = self._require_float(flat_inputs, ["production_volume", "amount", "quantity"], "production volume")
         unit = flat_inputs.get("production_unit") or flat_inputs.get("unit")
-        ch4 = next((flat_inputs.get(k) for k in ("ch4_content", "c1") if flat_inputs.get(k) not in (None, "", "-")), None)
-        return OnshoreFacilityFugitiveCalculator().calculate(
+        ch4 = flat_inputs.get("ch4_content") if flat_inputs.get("ch4_content") not in (None, "", "-") else (
+            None if flat_inputs.get("c1") in (None, "", "-") else float(flat_inputs["c1"]) / 100.0)  # c1 is mol %
+        return OnshoreFacilityFugitiveCalculator().calculate(  # co2_content: a fraction (PERCENT_FIELDS; F-FUG-03)
             production=production, production_unit=unit, facility_type=str(fac_type), ch4_content=ch4,
-            uncertainties=uncertainties, gwp_dict=gwp_dict,
-        )
+            uncertainties=uncertainties, gwp_dict=gwp_dict, co2_content=flat_inputs.get("co2_content"))
 
     def _apply_capture(self, res, flat_inputs):
         """CCS: the captured share of the process CO2 is not emitted (CH4 and N2O are unchanged)."""
@@ -536,8 +537,8 @@ class CalculationDispatcher:
             co2 = res["results"].get("co2")
             co2_before = float(co2.get("value") or 0.0) if isinstance(co2, dict) else float(co2 or 0.0)
             if isinstance(co2, dict):
-                for k in ("value", "absolute_uncertainty", "lower_bound", "upper_bound", "lower_bound_95",
-                          "upper_bound_95", "ci_95_abs"):
+                for k in ("value", "absolute_uncertainty", "abs_uncertainty", "abs_uncertainty_95", "lower_bound",
+                          "upper_bound", "lower_bound_95", "upper_bound_95", "ci_95_abs"):  # (F-CORE-13)
                     if isinstance(co2.get(k), (int, float)):
                         co2[k] = co2[k] * (1.0 - capture)
             else:
@@ -1073,7 +1074,7 @@ class CalculationDispatcher:
                 if flat_inputs.get("hhv") not in (None, ""):
                     hhv_val, user_hu = user_hhv(flat_inputs.get("hhv"), flat_inputs.get("hhv_unit"))
                 if hhv_val or density_val:
-                    return calculator.calculate(
+                    res = calculator.calculate(
                         fuel_quantity=quantity,
                         ef_co2=emission_factors.get("co2", 0),
                         ef_ch4=emission_factors.get("ch4", 0),
@@ -1081,9 +1082,7 @@ class CalculationDispatcher:
                         uncertainties=uncertainties,
                         # no HHV is an error for an energy factor, never the natural-gas 1020 Btu/scf
                         hhv=float(hhv_val) if hhv_val else None,
-                        ef_unit=flat_inputs.get(
-                            "ef_unit", emission_factors.get("unit", "kg/unit")
-                        ),
+                        ef_unit=flat_inputs.get("ef_unit", emission_factors.get("unit", "kg/unit")),
                         fuel_unit=unit,
                         # BUG-027: the HHV basis comes from the factor's catalog type / hhv_unit
                         fuel_type=emission_factors.get("type") or catalog.get("type") or flat_inputs.get("fuel_type")
@@ -1098,6 +1097,8 @@ class CalculationDispatcher:
                         gwp_dict=gwp_dict,
                         density=float(density_val) if density_val else None,
                     )
+                    return mobile_tier1_factors(res, process_type, factor_source, emission_factors, catalog,  # F-FAC-02
+                                                flat_inputs, quantity, unit, gwp_dict)
             # BUG-110: the facility-level Tier 1 fugitive method (Table 7-1/7-2) is a calculator,
             # not a catalog multiplication; it used to fall through to "valves x count"
             if process_type in ("fugitive", "fugitive_facility", "facility_fugitive") and (
@@ -1201,7 +1202,7 @@ class CalculationDispatcher:
                 q = self._require_float(flat_inputs, ["amount", "quantity", "throughput", "asphalt_amount"], "asphalt blowing throughput")
                 u = str(flat_inputs.get("unit") or unit or "tonne").lower().strip()
                 ctrl = bool(flat_inputs.get("controlled") or flat_inputs.get("is_controlled") or (flat_inputs.get("control_efficiency") not in (None, "", "0", 0)))
-                raw_de = flat_inputs.get("destruction_efficiency") or flat_inputs.get("control_efficiency")
+                raw_de = first_given(flat_inputs, "destruction_efficiency", "control_efficiency")  # 0 is 0 (F-CORE-13)
                 de = normalize_efficiency(raw_de, default=0.98) if raw_de not in (None, "") else 0.98
                 return calculator.calculate(throughput=q, unit=u, controlled=ctrl, destruction_efficiency=de, uncertainties=uncertainties, gwp_dict=gwp_dict)
 
@@ -1359,8 +1360,7 @@ class CalculationDispatcher:
 dispatcher = CalculationDispatcher()
 
 
-# Branch implementations of _dispatch_impl, split into their own modules; imported last because
-# they use the helpers and imports defined above.
+# Branch implementations of _dispatch_impl, split into their own modules; imported last (they use the helpers above).
 from .dispatcher_inputs import (EFFICIENCY_FIELDS, _period_kwargs, efficiencies_as_fractions,  # noqa: E402,F401
                                feedstock_tonnes, rate_to_period_volume)
 from .dispatcher_branches_combustion import calc_stationary_combustion, calc_flaring, calc_drilling, calc_completions, calc_liquids_unloading  # noqa: E402,F401

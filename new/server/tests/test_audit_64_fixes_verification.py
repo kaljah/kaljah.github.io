@@ -70,6 +70,9 @@ def test_bug50_wec_statutory_threshold_independence(client, app):
             gas_mscf = 1_000_000.0 * 35.3146667 / 1000.0
             db.session.add(ProductionData(facility_id=fac.id, year=2034, month=1, gas_amount=gas_mscf, gas_unit="mscf"))
             db.session.add(Emission(facility_id=fac.id, year=2034, month=1, process_type="venting", ch4_emissions=2.0, co2e_total=56.0, status="Verified"))
+            # the charge applies to facilities reporting more than 25,000 t CO2e (42 USC 7436(c); audit 2026-11 F-GREST-03)
+            db.session.add(Emission(facility_id=fac.id, year=2034, month=1, process_type="combustion",
+                                    co2_emissions=30_000.0, co2e_total=30_000.0, status="Verified"))
             db.session.commit()
 
             rows = intensity_rows(facility_id=fac.id, year="2034")

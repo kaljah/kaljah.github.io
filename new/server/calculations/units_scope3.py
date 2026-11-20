@@ -119,6 +119,19 @@ def _scope3_activity_in_factor_unit(activity_unit, den):
     return scale
 
 
+def scope3_complete_factor_unit(ef_unit, den_unit):
+    """A factor unit with its activity denominator: blank is kg CO2e per unit, and a unit given without "/" or " per "
+    keeps its own mass ("tCO2e" -> "tCO2e / den"). It used to be replaced by "kg CO2e / den", reading a factor in
+    t CO2e 1000x low (audit 2026-11 F-UPL-03); an unknown mass is then refused by compute_scope3_co2e."""
+    u = str(ef_unit or "").strip()
+    den = str(den_unit or "unit").strip() or "unit"
+    if not u:
+        return f"kg CO2e / {den}"
+    if "/" in u or " per " in u.lower():
+        return u
+    return f"{u} / {den}"
+
+
 def compute_scope3_co2e(
     amt: float, ef: float, ef_unit: str = "", calc_method: str = "", activity_unit: str = ""
 ) -> float:

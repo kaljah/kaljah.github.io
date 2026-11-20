@@ -39,7 +39,8 @@ def ci(process, tier_src, amount, unit, fuel=None, **inputs):
 # 4.2 / 4.4 natural gas: 800e6 scf at HHV 1020 Btu/scf = 8.16e11 Btu (Exhibit 4.2); fuel-basis CO2 with
 # Table 4-3 NG factor 53.06 kg/MMBtu -> 816,000 MMBtu x 0.05306 = 43,297 t (derived from 4.2's energy)
 case("4.2", "DERIVED Natural gas 800e6 scf, default HHV (Tier 1)",
-     ci("combustion", "default", 800e6, "scf", fuel="Natural Gas"),
+     # the exhibit's own 1,020 Btu/scf is entered: the catalog row carries Table C-1 1,026 (audit 2026-11 F-FAC-01)
+     ci("combustion", "default", 800e6, "scf", fuel="Natural Gas", hhv=1020),
      {"co2": 816000 * 0.05306}, note="energy input per Exhibit 4.2; CO2 = energy x Table 4-3 factor (derived)")
 
 # 4.4(a): composition known, 100 % oxidation (Eq 4-11). Answer not extractable from the PDF text ->
@@ -135,7 +136,8 @@ case("6-20", "Tank flashing, Table 6-22 large uncontrolled",
 
 # 6-21: produced water 50 bbl/d, salt unknown, 250 psi -> 0.26
 case("6-21", "Produced water tank (Table 6-26)",
-     ci("tank_flashing", "specific", 50 * 365, "bbl", tank_liquid_type="produced_water"),
+     ci("tank_flashing", "specific", 50 * 365, "bbl", tank_liquid_type="produced_water",
+        separator_pressure_psig=250),  # the row follows the entered pressure (audit 2026-11 F-VENT1-02)
      {"ch4": 0.26})
 
 # 6-25: blowdown 83.8 ft3 at 100 psig, 80 F, z 0.9864, 90 % CH4 -> 0.011
@@ -203,7 +205,7 @@ MASS = {"kg": 1000.0, "tonne": 1.0, "short_ton": 1000.0 / KG_PER_TON}
 
 
 @pytest.mark.parametrize("process,fuel,units,gas,expected", [
-    ("combustion", "Natural Gas", GAS, "co2", 1000.0 * FT3_PER_M3 * 1020 / 1e6 * 53.06 / 1000),
+    ("combustion", "Natural Gas", GAS, "co2", 1000.0 * FT3_PER_M3 * 1026 / 1e6 * 53.06 / 1000),  # Table C-1 (F-FAC-01)
     ("combustion", "Ethane (Gas)", GAS, "co2", 1000.0 * FT3_PER_M3 * 1768.8 / 1e6 * 59.60 / 1000),
     ("combustion", "Diesel (No. 2 Fuel Oil)", LIQ, "co2", 1000.0 * 138000 / 1e6 * 73.96 / 1000),
     ("combustion", "Residual Fuel Oil (No. 6)", LIQ, "co2", 1000.0 * 150000 / 1e6 * 75.1 / 1000),

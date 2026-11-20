@@ -55,10 +55,11 @@ def test_f3_mud_degassing_table_6_2(app, fuel, ef):
 ])
 def test_f2_engine_factors_table_4_7(app, fuel, ch4_t_per_tj, n2o_t_per_tj):
     em = calc(app, tier1("combustion", fuel, 1000, "m3"))
-    tj = 1000 * SCF_PER_M3 * 1020 / 1e6 * J_PER_MMBTU / 1e12   # 1,020 Btu/scf (Table 3-8)
-    assert em["ch4"] == pytest.approx(tj * ch4_t_per_tj, rel=1e-3)
+    tj = 1000 * SCF_PER_M3 * 1026 / 1e6 * J_PER_MMBTU / 1e12   # 1,026 Btu/scf (Table C-1; audit 2026-11 F-FAC-01)
+    # the rows follow the lb/10^6 Btu column of Table 4-11, which the SI column rounds (F-FAC-06)
+    assert em["ch4"] == pytest.approx(tj * ch4_t_per_tj, rel=1.5e-2)
     if n2o_t_per_tj:
-        assert em["n2o"] == pytest.approx(tj * n2o_t_per_tj, rel=1e-3)
+        assert em["n2o"] == pytest.approx(tj * n2o_t_per_tj, rel=1.5e-2)
 
 
 # ---- F1: fuels the form offered and the server rejected (Table 4-5 / 40 CFR 98 Table C-1) ----
@@ -85,7 +86,7 @@ def test_f1_solids_and_gases(app):
     em = calc(app, tier1("combustion", "Acetylene", 1000, "scf"))
     assert em["co2"] == pytest.approx(1000 * 0.0686 * 0.923 * 44.01 / 12.011 / 2204.62, rel=2e-3)
     em = calc(app, tier1("mobile", "Compressed Natural Gas (CNG)", 1000, "scf"))
-    assert em["co2"] == pytest.approx(1000 * 1020 / 1e6 * 53.06 / 1000, rel=1e-3)
+    assert em["co2"] == pytest.approx(1000 * 1026 / 1e6 * 53.06 / 1000, rel=1e-3)  # Table C-1 1,026 Btu/scf (audit 2026-11 F-FAC-01)
 
 
 @pytest.mark.parametrize("fuel,carbons", [("Propane (Flaring)", 3), ("Butane (Flaring)", 4),

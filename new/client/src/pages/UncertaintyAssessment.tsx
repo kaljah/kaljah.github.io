@@ -57,6 +57,8 @@ export interface MonteCarloData {
   p5: number;
   p95: number;
   relative_uncertainty_95pct: number;
+  lower_uncertainty_95pct?: number | null;
+  upper_uncertainty_95pct?: number | null;
   iterations: number;
   histogram: MonteCarloHistogramBin[];
   percentiles: Record<string, number>;
@@ -583,7 +585,10 @@ const UncertaintyAssessment: React.FC = () => {
                       </div>
                       <div className="flex flex-col">
                         <span className="text-xs font-medium text-text-secondary">{t("95% Uncertainty")}</span>
-                        <span className="text-sm font-bold text-brand-600 mt-0.5">±{data.monte_carlo.relative_uncertainty_95pct}% ({data.monte_carlo.iterations} runs)</span>
+                        <span className="text-sm font-bold text-brand-600 mt-0.5">{data.monte_carlo.lower_uncertainty_95pct != null && data.monte_carlo.upper_uncertainty_95pct != null
+                            ? `${data.monte_carlo.lower_uncertainty_95pct}% / +${data.monte_carlo.upper_uncertainty_95pct}%`
+                            : `±${data.monte_carlo.relative_uncertainty_95pct}%`}{" "}
+                          ({t("{{n}} runs", { n: data.monte_carlo.iterations })})</span>
                       </div>
                     </div>
                   )}

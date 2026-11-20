@@ -73,7 +73,7 @@ def test_stoichiometry_percent_carbon_and_oxidation():
 
     s = StoichiometricCalculator()
     frac = s.calculate(1000, 0.85, oxidation_factor=0.99)
-    pct = s.calculate(1000, 85, oxidation_factor=99)
+    pct = s.calculate(1000, "85%", oxidation_factor="99%")  # numbers are fractions (F-CMB-06)
     assert pct["results"]["co2"]["value"] == pytest.approx(frac["results"]["co2"]["value"])
     assert frac["results"]["co2"]["value"] == pytest.approx(1.0 * 0.85 * 0.99 * 44.01 / 12.011)
 
@@ -244,7 +244,7 @@ def test_stoichiometric_carbon_content_above_100_percent_refused():
 @pytest.mark.parametrize("call,match", [
     (lambda: __import__("calculations.stoichiometry", fromlist=["x"]).mass_to_kg(-1, "kg"), "mass cannot be negative"),
     (lambda: __import__("calculations.stoichiometry", fromlist=["x"]).StoichiometricCalculator().calculate(
-        10, 85, oxidation_factor="150%"), "oxidation_factor must be between 0 and 1"),
+        10, 0.85, oxidation_factor="150%"), "oxidation_factor must be between 0 and 1"),
     (lambda: __import__("calculations.stoichiometry", fromlist=["x"]).NitricAcidCalculator().calculate(
         10, ef_n2o=-1), "N2O emission factor cannot be negative"),
     (lambda: __import__("calculations.stoichiometry", fromlist=["x"]).NitricAcidCalculator().calculate(

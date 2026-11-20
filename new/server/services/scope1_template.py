@@ -94,6 +94,8 @@ def _p(*keys):
     return frozenset(out)
 
 
+from calculations.mobile_factors import MOBILE_VEHICLES as _MOBILE_VEHICLES  # noqa: E402
+
 # ── Columns ─────────────────────────────────────────────────────────────────────
 CORE = [
     Col("date", DATE_HELP[len("Required. "):], True),
@@ -122,6 +124,9 @@ ACTIVITY_TIME = [
     Col("operating_hours", "Hours in the month (e.g. 744) for factors per hour: pneumatic devices, leaks, compressors.",
         processes=_HOURS),
     Col("activity_days", "Days in the month for factors per unit-day (AGR units, casing gas wells).", processes=_DAYS),
+    # mobile CH4 / N2O follow the vehicle (API Compendium Table 4-16; audit 2026-11 F-FAC-02)
+    Col("vehicle_type", "Mobile, liquid fuel: vehicle type and technology (API Compendium Table 4-16).",
+        processes=_p("mobile"), choices=tuple(_MOBILE_VEHICLES)),
 ]
 
 _GASCOMP = [Col("c1", "Methane mol % of the gas.")] + [
@@ -197,9 +202,18 @@ TIER3 = (
     + _with(_TANKS, [
         Col("tank_gor", "Flash gas-to-oil ratio (scf/bbl)."),
         Col("tank_ch4_content", "CH4 mol % of the flash gas."),
-        Col("tank_control_eff", "% of the vapour recovered or destroyed."),
+        Col("tank_control_eff", "% of the vapour sent to a flare (its destruction efficiency), or recovered with "
+                                "tank_disposition = recovered (vapour recovery unit: no combustion CO2)."),
+        Col("tank_disposition", "Blank or flared = the controlled share is flared; recovered = vapour recovery unit.",
+            choices=("flared", "recovered")),
         Col("tank_unit", "Unit of the throughput. Blank = unit.", choices=("bbl", "m3", "gal", "L")),
         Col("tank_api_gravity", "Liquid API gravity (degrees)."),
+        # produced water (Table 6-26): the row follows the separator pressure and salt content (F-VENT1-02)
+        Col("tank_method", "Tank method. produced_water = Table 6-26 produced salt water flashing.",
+            choices=("produced_water",)),
+        Col("separator_pressure_psig", "Produced water: separator pressure (psig)."),
+        Col("salt_content", "Produced water: salt content. Blank = average (250 / 1,000 psi rows only).",
+            choices=("2%", "10%", "20%", "average")),
     ])
     + _with(_p("pneumatic"), [
         Col("pneu_count", "Number of devices."),
@@ -379,6 +393,19 @@ def fuels_by_process():
         if not out[p] and p != "stoichiometry":   # stoichiometry is a carbon balance: no factor
             for name in names:
                 add(p, name)
+    # a Table 6-22 / 6-24 flashing row is not a working / breathing loss factor (audit 2026-11 F-GREST-06)
+    from services.scope1_calc import check_working_loss_factor
+    from input_validation import ValidationError
+    for p in ("tank_working", "tank_breathing"):
+        keep = []
+        for name in out.get(p, []):
+            try:
+                check_working_loss_factor(p, catalog.get(name) or {"name": name}, name)
+                keep.append(name)
+            except ValidationError:
+                pass
+        if p in out:
+            out[p] = keep
     return out
 
 

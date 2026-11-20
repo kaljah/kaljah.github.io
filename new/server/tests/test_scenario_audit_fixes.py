@@ -73,8 +73,8 @@ def test_composition_method_is_the_same_in_every_volume_unit(app):
 def test_normal_m3_is_converted_to_standard_m3(app):
     em = calc(app, {"process_type": "combustion", "fuel": "Natural Gas", "amount": 1000, "quantity": 1000, "unit": "Nm3",
                     "factor_source": "default"})
-    # 1 Nm3 (0 C) = 288.706 / 273.15 standard m3 (60 F); 1 m3 = 35.3146667 scf; 1,020 Btu/scf
-    mmbtu = 1000 * 288.706 / 273.15 * 35.3146667 * 1020 / 1e6
+    # 1 Nm3 (0 C) = 288.706 / 273.15 standard m3 (60 F); 1 m3 = 35.3146667 scf; 1,026 Btu/scf (Table C-1, F-FAC-01)
+    mmbtu = 1000 * 288.706 / 273.15 * 35.3146667 * 1026 / 1e6
     assert em["totalCo2e"] == pytest.approx(mmbtu * NG / 1000, rel=1e-4)
 
 

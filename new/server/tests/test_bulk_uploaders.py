@@ -17,7 +17,7 @@ CH4_GWP, N2O_GWP = 28, 265
 NG_KG_PER_MMBTU = 53.06 + 0.001 * CH4_GWP + 0.0001 * N2O_GWP  # Table 4-5 CO2, Table 4-6 CH4 / N2O (combustion)
 # steam of unknown generation: the Exhibit 8.3 natural-gas boiler, LHV basis (BA-045)
 STEAM_KG_PER_MMBTU = 59.0 + 0.0011 * CH4_GWP + 0.0003 * N2O_GWP
-NG_HHV_BTU_SCF = 1020
+NG_HHV_BTU_SCF = 1026  # Table C-1 1,026 Btu/scf (audit 2026-11 F-FAC-01)
 
 
 # ---------------------------------------------------------------- fixtures / helpers
@@ -439,7 +439,7 @@ TIER3_METHODS = [
     dict(process_type="combustion", combustion_method="carbon_content", fuel_volume=1000, fuel_volume_unit="gal",
          fuel_density=7.1, density_unit="lb/gal", carbon_wt_pct=85),
     dict(process_type="mobile", combustion_method="vehicle_distance", distance=1000, distance_unit="km",
-         vehicle_fuel="diesel", fuel_economy_mpg=8.8),
+         vehicle_type="hd_diesel_moderate", fuel_economy_mpg=8.8),
     dict(process_type="well_testing", vent_method="volume", amount=50, unit="Mscf", ch4_content=85),
 ]
 

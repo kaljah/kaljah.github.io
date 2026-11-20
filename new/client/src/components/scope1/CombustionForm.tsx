@@ -4,6 +4,7 @@ import { Input, Field } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import CustomDropdown from "../CustomDropdown";
 import { API_FACTORS } from "../../utils/EmissionFactors";
+import { MOBILE_VEHICLES } from "../../constants/mobileVehicles";
 import { t } from "../../i18n";
 
 const ALL_UNITS = [
@@ -144,6 +145,23 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
           />
         </div>
       </div>
+
+      {/* Mobile CH4 / N2O follow the vehicle type and technology (API Compendium Table 4-16); the stationary fuel
+          factors were used (audit 2026-11 F-FAC-02). Table 4-16 is per volume of liquid fuel. */}
+      {["mobile", "mobile_combustion"].includes(data.process_type) && family !== "gas" && (
+        <div className="input-group mt-[10px]!">
+          <label>
+            {t("Vehicle type (API Table 4-16)")}
+            <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
+          </label>
+          <CustomDropdown
+            options={MOBILE_VEHICLES.map((v) => ({ value: v.key, label: t(v.label) }))}
+            value={data.vehicle_type || ""}
+            onChange={(v) => onChange("vehicle_type", v)}
+            placeholder={t("Select vehicle")}
+          />
+        </div>
+      )}
 
       {/* HHV — required in specific (Tier 3) mode */}
       {needsHHV && sourceType === "specific" && (

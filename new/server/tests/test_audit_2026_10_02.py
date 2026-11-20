@@ -64,6 +64,8 @@ def test_wec_from_2034_for_us_facilities_only(app, client, env):
         for y in (2033, 2034):
             add(app, Emission(facility_id=fid, year=y, month=1, process_type="venting", ch4_emissions=85.0,
                               co2e_total=85.0 * 28, status="Verified"),
+                Emission(facility_id=fid, year=y, month=1, process_type="combustion", co2_emissions=30_000.0,
+                         co2e_total=30_000.0, status="Verified"),  # above 25,000 t CO2e (F-GREST-03)
                 ProductionData(facility_id=fid, year=y, month=1, gas_amount=50_000_000, gas_unit="m3",
                                oil_amount=0, oil_unit="bbl"))
     allowed = 50_000_000 * 35.3146667 / 1000 * 0.0020 * 0.0192  # 67.80416 t (40 CFR 99.20, production)

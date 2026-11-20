@@ -43,7 +43,7 @@ for _u, _f in list(GAS_UNITS.items()):
         RATE_UNITS.setdefault(_u + _sfx, _f)
 
 
-def _frac(v, name, required=False, percent=False):
+def _frac(v, name, required=False, percent=True):
     if v in (None, ""):
         if required:
             raise ValueError(f"Missing required field: {name}")
@@ -54,7 +54,9 @@ def _frac(v, name, required=False, percent=False):
         raise ValueError(f"'{name}' must be a non-negative number")
     if x > 100.0:
         raise ValueError(f"'{name}' cannot exceed 100 %")
-    if percent or "%" in str(v) or x > 1.0:
+    # every share on these forms (gas-filled share, efficiencies, CO2 wt %) is documented as percent and is
+    # always read as one: 0.5 is 0.5 %. It was guessed from its size (audit 2026-11 F-CORE-03).
+    if percent or "%" in str(v):
         return x / 100.0
     return x
 
@@ -125,6 +127,7 @@ class VentedGasCalculator(BaseCalculator):
         raise ValueError(f"Unknown gas volume method '{method}'")
 
     def calculate(self, method, inputs, uncertainties=None, gwp_dict=None):
+        comb_co2 = 0.0  # combustion CO2 of a flared stream (Eq 5-6 N2O basis)
         i = inputs
         activity = None
         if str(method).lower() == "reported_mass":
@@ -184,7 +187,8 @@ class VentedGasCalculator(BaseCalculator):
                 de = _frac(i.get("destruction_efficiency"), "destruction efficiency") if i.get("destruction_efficiency") not in (None, "") else 0.98
                 ce = _frac(i.get("combustion_efficiency"), "combustion efficiency") if i.get("combustion_efficiency") not in (None, "") else 0.965
                 ch4 = raw_ch4 * (1.0 - de)
-                co2 += (raw_ch4 * ce) * (44.01 / 16.04)
+                comb_co2 = (raw_ch4 * ce) * (44.01 / 16.04)
+                co2 += comb_co2
                 assist_scf = float(i.get("assist_gas_scf") or 0.0)
                 v_scf = ch4_scf + assist_scf
             else:
@@ -226,13 +230,16 @@ class VentedGasCalculator(BaseCalculator):
                     ce = 0.965
                 ch4 = v_m3 * y_ch4 * (1 - de) * rho_ch4 / 1000.0
                 c2_c_num = float(i.get("c2_carbon_number") or i.get("c2_multiplier") or 2.0)
-                co2 = (v_m3 * y_co2 + v_m3 * (y_ch4 + c2_c_num * y_c2) * ce) * rho_co2 / 1000.0
+                comb_co2 = v_m3 * (y_ch4 + c2_c_num * y_c2) * ce * rho_co2 / 1000.0
+                co2 = v_m3 * y_co2 * rho_co2 / 1000.0 + comb_co2
             else:
                 ch4 = v_m3 * y_ch4 * rho_ch4 / 1000.0
                 co2 = v_m3 * y_co2 * rho_co2 / 1000.0
 
         is_flared = str(i.get("disposition") or "vented").lower() == "flared"
-        n2o = (v_scf * 1020.0 / 1e6) * 1.0e-7 if is_flared and v_scf else 0.0
+        # Eq 5-6 on the flare's combustion CO2 (1.0E-04 kg N2O / 60 kg CO2 per MMBtu), as every other flare path;
+        # an assumed 1,020 Btu/scf x 1e-7 t/MMBtu was used here, 20 % apart (audit 2026-11 F-VENT2-16)
+        n2o = comb_co2 * 0.0001 / 60.0 if is_flared else 0.0
         _tier = resolve_tier((uncertainties or {}).get("_factor_source", "specific"))
         return {
             "results": {"ch4": propagate_uncertainty(ch4, 0.10 if ch4 else 0.0, tier=_tier, gas="ch4"),

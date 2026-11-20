@@ -42,7 +42,7 @@ def _canonical_api_factor_name(fuel_name: str):
     insensitive, or factor code), or None."""
     if not fuel_name:
         return None
-    factor_catalog = {**API_FACTORS, **ALL_EMISSION_FACTORS}
+    factor_catalog = API_FACTORS  # one copy per name for every path (audit 2026-11 F-FAC-08)
     if fuel_name in factor_catalog:
         return fuel_name
     norm = str(fuel_name).lower().replace("_", " ").replace("-", " ").strip()
@@ -51,7 +51,7 @@ def _canonical_api_factor_name(fuel_name: str):
         "gas": "Natural Gas",
         "diesel": "Diesel (No. 2 Fuel Oil)",
         "crude oil": "Crude Oil",
-        "lpg": "Propane (Liquid)",
+        "lpg": "Liquefied Petroleum Gas (LPG)",
         "propane": "Propane (Gas)",
         "gasoline": "Motor Gasoline",
         "kerosene": "Kerosene",
@@ -82,7 +82,7 @@ def _canonical_api_factor_name(fuel_name: str):
 def _lookup_api_factor(fuel_name: str) -> dict:
     """Look up an emission factor from ALL_EMISSION_FACTORS / API_FACTORS supporting exact, normalized, and alias matches."""
     name = _canonical_api_factor_name(fuel_name)
-    return {**API_FACTORS, **ALL_EMISSION_FACTORS}[name] if name else {}
+    return API_FACTORS[name] if name else {}  # one copy per name (F-FAC-08)
 
 
 @emissions_bp.route("/", methods=["GET"])
@@ -746,7 +746,7 @@ def add_emission():
         month=data["month"],
         facility_id=data["facility_id"],
         group_name=data.get("group_name"),
-        activity=data.get("activity") or (facility.activity if facility else None),
+        activity=(facility.activity if facility and facility.activity else data.get("activity")),  # F-GAPI-04
         division=data.get("division") or (facility.division if facility else None),
         region=data.get("region") or (facility.region if facility and facility.region else (facility.name if facility else None)),
         field=data.get("field") or (facility.field if facility else None),

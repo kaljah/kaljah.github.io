@@ -184,6 +184,10 @@ class TankFlashingCalculator(BaseCalculator):
     TABLE_6_24_CONDENSATE = {
         "large_uncontrolled": {"kg_ch4_per_bbl": 0.146, "baseline_ch4_mol": 0.816},
         "large_vru": {"kg_ch4_per_bbl": 0.00665, "baseline_ch4_mol": 0.816},
+        "large_flared": {"kg_ch4_per_bbl": 0.00579, "baseline_ch4_mol": 0.816},
+        "small_uncontrolled": {"kg_ch4_per_bbl": 0.119, "baseline_ch4_mol": 0.816},
+        "small_flared": {"kg_ch4_per_bbl": 0.00091, "baseline_ch4_mol": 0.816},
+        "average_uncontrolled": {"kg_ch4_per_bbl": 2.30, "baseline_ch4_mol": None},
     }
 
     TABLE_6_25_DUMP_VALVE = {
@@ -205,6 +209,26 @@ class TankFlashingCalculator(BaseCalculator):
 
     def __init__(self):
         super().__init__("Storage Tank Emissions", "Section 6.3.9")
+
+    @classmethod
+    def _produced_water_factor(cls, p_in, salt_content):
+        """Table 6-26 t CH4 / 1,000 bbl by separator pressure (rows 50, 250 and 1,000 psi: <= 150 -> 50, >= 600 ->
+        1,000, else 250) and salt content. The record's pressure never reached this method and the salt content was
+        not passed, so every record used the 250 psi average row (audit 2026-11 F-VENT1-02: 1,000 psig 3.6 x low,
+        50 psig 9.5 x high)."""
+        if p_in in (None, ""):
+            raise ValueError("Produced water tanks (Table 6-26) need the separator pressure (psig)")
+        p = float(p_in)
+        key_p = 50 if p <= 150.0 else (1000 if p >= 600.0 else 250)
+        s_key = str(salt_content or "average").lower().replace(" ", "").strip()
+        if s_key in ("2", "10", "20"):
+            s_key += "%"
+        if s_key not in ("2%", "10%", "20%", "average"):
+            raise ValueError("Produced water salt content must be 2 %, 10 %, 20 % or average (Table 6-26)")
+        if (key_p, s_key) not in cls.TABLE_6_26_SALT_WATER:
+            raise ValueError(f"Table 6-26 has no row for {key_p} psi and {s_key} salt "
+                             "(at 50 psi only 20 % salt is printed)")
+        return cls.TABLE_6_26_SALT_WATER[(key_p, s_key)]
 
     def calculate(
         self,
@@ -236,7 +260,7 @@ class TankFlashingCalculator(BaseCalculator):
         include_baseline=False,
         # Produced water inputs (Table 6-26)
         salt_content="average",  # "2%", "10%", "20%", "average"
-        separator_pressure_psi=250.0,
+        separator_pressure_psi=None,
         control_type="flare",
     ):
         uncertainties = uncertainties or {}
@@ -351,7 +375,8 @@ class TankFlashingCalculator(BaseCalculator):
         # ----------------------------------------------------------------------
         elif meth in ["table_6_22", "table_6_24", "default_ef"]:
             if liquid_type == "condensate" or meth == "table_6_24":
-                key = "large_uncontrolled"
+                # a small condensate tank (< 10 bbl/d) has its own Table 6-24 row (F-VENT1-07: +23 %)
+                key = "small_uncontrolled" if str(tank_size or "large").lower().strip() == "small" else "large_uncontrolled"
                 info = self.TABLE_6_24_CONDENSATE[key]
             else:
                 sz = str(tank_size or "large").lower().strip()
@@ -403,14 +428,8 @@ class TankFlashingCalculator(BaseCalculator):
         # Method 7: Produced Salt Water Tank Flashing (Table 6-26 & 6-27, Exhibit 6-21)
         # ----------------------------------------------------------------------
         elif meth == "produced_water":
-            # Round pressure to nearest table key: 50, 250, 1000
-            p = float(separator_pressure_psi or 250.0)
-            key_p = 50 if p <= 150.0 else (1000 if p >= 600.0 else 250)
-            s_key = str(salt_content or "average").lower().strip()
-            if s_key not in ["2%", "10%", "20%", "average"]:
-                s_key = "average"
-
-            ef_tonnes_per_1000bbl = self.TABLE_6_26_SALT_WATER.get((key_p, s_key), 0.0142)
+            ef_tonnes_per_1000bbl = self._produced_water_factor(
+                separator_pressure_psig if separator_pressure_psig is not None else separator_pressure_psi, salt_content)
             gross_ch4_tonnes = (q_bbl / 1000.0) * ef_tonnes_per_1000bbl
             denom_ch4 = c_ch4 if c_ch4 > 0 else 0.80
             total_gas_scf = (gross_ch4_tonnes * LB_PER_TONNE * MOLAR_VOL_US) / (denom_ch4 * MW_CH4)

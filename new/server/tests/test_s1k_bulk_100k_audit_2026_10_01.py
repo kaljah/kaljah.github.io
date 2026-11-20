@@ -102,8 +102,9 @@ def test_f1_tier3_hhv_without_composition_keeps_factor_co2(user_id):
              hhv="1020", combustion_efficiency="99.5"),
         dict(process_type="combustion", fuel="Natural Gas", quantity="1000", unit="Mscf", factor_type="default"))
     assert t is not None, err
-    # 1,000 Mscf x 1,020 Btu/scf = 1,020 MMBtu x 53.06 kg CO2/MMBtu = 54.12 t, the same as the default row
-    assert t["co2"] == pytest.approx(1020 * 53.06 / 1000, rel=1e-3) and _close(t["co2"], r["co2"])
+    # 1,000 Mscf x 1,020 Btu/scf (entered) = 1,020 MMBtu x 53.06 kg CO2/MMBtu = 54.12 t; the default row carries
+    # Table C-1 1,026 Btu/scf (audit 2026-11 F-FAC-01)
+    assert t["co2"] == pytest.approx(1020 * 53.06 / 1000, rel=1e-3) and _close(t["co2"], r["co2"] * 1020 / 1026)
 
 
 def test_f1_composition_still_drives_carbon_balance(user_id):
@@ -460,7 +461,7 @@ def test_f18_tier2_catalog_with_site_hhv(user_id):
                              dict(process_type="combustion", fuel="Natural Gas", quantity="1000", unit="Mscf",
                                   factor_type="default"))
     assert t is not None, err
-    assert _close(t["co2"], r["co2"] * 1035 / 1020)
+    assert _close(t["co2"], r["co2"] * 1035 / 1026)  # default row: Table C-1 (F-FAC-01)
 
 
 def test_f18_tier2_unknown_name_without_site_props_refused(user_id):

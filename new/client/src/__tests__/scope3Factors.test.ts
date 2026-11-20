@@ -34,7 +34,7 @@ describe("Scope 3 factors", () => {
 
   it("use of sold fuels = API Compendium Tables 4-5 / 4-6", () => {
     expect(find(11, "Crude Oil")).toBeCloseTo(42 * 0.138 * (74.54 + 0.003 * 28 + 0.0006 * 265), 1);
-    expect(find(11, "Natural Gas")).toBeCloseTo(1.02 * (53.06 + 0.001 * 28 + 0.0001 * 265), 1);
+    expect(find(11, "Natural Gas")).toBeCloseTo(53.06 + 0.001 * 28 + 0.0001 * 265, 1); // per MMBtu (F-S23-03)
     expect(find(11, "NGL - Butane")).toBeCloseTo(0.103 * (64.77 + 0.003 * 28 + 0.0006 * 265), 2);
   });
 

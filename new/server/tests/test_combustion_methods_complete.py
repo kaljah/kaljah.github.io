@@ -34,8 +34,8 @@ def test_equipment_energy_sources(c):
     assert liquid["intermediate"]["energy_mmbtu"] == pytest.approx(138.0)
     engine = c.calculate("equipment", {"equipment_type": "ic_4s_lean_ng", "engine_hp": 1000, "load_pct": 50,
                                        "operating_hours": 100})
-    assert engine["intermediate"]["energy_mmbtu"] == pytest.approx(1000 * 0.5 * 100 * 7000 / 1e6)
-    gas = c.calculate("equipment", {"equipment_type": "boiler_ng_controlled", "amount": 1e6, "unit": "scf", "hhv": 1030})
+    assert engine["intermediate"]["energy_mmbtu"] == pytest.approx(1000 * 0.5 * 100 * 6186 / 1e6)  # Table 4-2 gas IC engine (F-CMB-02)
+    gas = c.calculate("equipment", {"equipment_type": "boiler_ng_controlled", "amount": 1e6, "unit": "scf", "hhv_btu_scf": 1030})
     assert gas["intermediate"]["energy_mmbtu"] == pytest.approx(1030)
     assert val(gas, "n2o") == pytest.approx(1030 * 2.8e-7)
     assert len(equipment_factor_list()) == len(EQUIPMENT_FACTORS)
@@ -46,8 +46,11 @@ def test_vehicle_distance(c):
                                            "fuel_economy_mpg": 6.2137119})
     gal = 1000 * 0.621371192 / 6.2137119
     assert val(res, "ch4") == pytest.approx(gal / 1000 * 4.2e-4)
-    own = c.calculate("vehicle_distance", {"amount": 100, "vehicle_fuel": "gasoline", "fuel_economy_mpg": 20})
-    assert val(own, "ch4") == pytest.approx(5 * 0.125 * FUEL_BASIS["gasoline"]["ch4"])
+    # any Table 4-16 vehicle (audit 2026-11 F-FAC-02): LDGV Tier 1, 8.7E-04 t CH4 / 1,000 gal
+    own = c.calculate("vehicle_distance", {"amount": 100, "vehicle_type": "ldgv_tier1", "fuel_economy_mpg": 20})
+    assert val(own, "ch4") == pytest.approx(5 / 1000 * 8.7e-4)
+    with pytest.raises(ValueError, match="Table 4-16"):  # the stationary fuel factors are no longer used
+        c.calculate("vehicle_distance", {"amount": 100, "vehicle_fuel": "gasoline", "fuel_economy_mpg": 20})
 
 
 def test_flare_voc_and_thermal_oxidizer(c):
@@ -69,7 +72,7 @@ def test_flare_voc_and_thermal_oxidizer(c):
     ("carbon_content", {"fuel_mass": 1, "carbon_wt_pct": 120}, "cannot exceed 100"),
     ("carbon_content", {"fuel_mass": 1, "fuel_mass_unit": "ton", "carbon_wt_pct": 85}, "Fuel mass unit"),
     ("equipment", {"equipment_type": "kettle"}, "Unknown equipment type"),
-    ("equipment", {"equipment_type": "boiler_ng_controlled", "amount": 1, "unit": "scf", "hhv": 0}, "positive"),
+    ("equipment", {"equipment_type": "boiler_ng_controlled", "amount": 1, "unit": "scf", "hhv_btu_scf": 0}, "positive"),
     ("vehicle_distance", {"distance": 1, "vehicle_fuel": "lpg", "fuel_economy_mpg": 5}, "diesel or gasoline"),
     ("flare_voc", {"voc_mass": 1, "wt_ch4": 90}, "VOC \\(C3\\+\\) weight"),
     ("flare_voc", {"voc_mass": 1, "wt_ch4": 60, "wt_c3h8": 50}, "exceeds 100 wt"),

@@ -23,7 +23,8 @@ from utils import (
 from input_validation import ValidationError, parse_number, parse_year, parse_month, require_plausible_co2e
 from services.scope2_gases import gas_split
 from services.dashboard_filters import _parse_facility_ids
-from services.scope2_market import is_zero_emission_instrument, market_factor
+from services.scope2_market import is_zero_emission_instrument, market_basis, market_factor
+from services.scope2_chp import calc_cogen_allocation as _calc_cogen_allocation, chp_heat_bought  # noqa: F401
 import datetime
 
 from services.scope2_policy import (  # noqa: E402,F401  (re-exported: imports, tests and the GWP service use them)
@@ -54,9 +55,7 @@ _STEAM_MASS_UNITS = {"ton", "tons", "tonne", "tonnes", "mt", "metric_ton", "us_t
 def _steam_fuel_factor_kg_per_mmbtu(ef_co2):
     """kg CO2e per MMBtu of boiler fuel as steam_emissions applies it: CO2 plus the default boiler CH4 / N2O
     (Exhibit 8.3), which steam_emissions adds whatever the CO2 factor (BA-008)."""
-    ef = float(ef_co2 or _DEFAULT_BOILER_EF_KG_PER_MMBTU)
-    if 0 < ef < 1.0:
-        ef *= 1000.0
+    ef = float(_DEFAULT_BOILER_EF_KG_PER_MMBTU if ef_co2 in (None, "") else ef_co2)  # an entered 0 stays 0 (F-S23-10)
     from calculations.constants import get_active_gwp
     gwp = get_active_gwp()
     return ef + _DEFAULT_BOILER_CH4_KG_PER_MMBTU * float(gwp["CH4"]) + _DEFAULT_BOILER_N2O_KG_PER_MMBTU * float(gwp["N2O"])
@@ -99,44 +98,9 @@ def _recalc_indirect_steam(emission, data, factor, old_heat, old_co2e, old_ef, o
         if "trans_loss" not in ci and data.get(src_k) not in (None, ""):
             ci["trans_loss"] = data[src_k]
     ci.setdefault("trans_loss", DEFAULT_TRANSMISSION_LOSS)
-    ci["ef_co2"] = factor or _DEFAULT_BOILER_EF_KG_PER_MMBTU
+    ci["ef_co2"] = _DEFAULT_BOILER_EF_KG_PER_MMBTU if factor in (None, "") else factor  # 0 is a value (F-S23-10)
     co2e, _, _ = _calc_indirect_steam({"amount": heat, "unit": "mmbtu", "calc_inputs": {"indirect_steam": ci}})
     return co2e, heat
-
-def _calc_cogen_allocation(data):
-    """Calculate heat-allocated tCO2e for CHP / cogeneration entry."""
-    val = float(data.get("amount", 0) or data.get("co2e", 0) or data.get("total_emissions", 0))
-    ci = data.get("calc_inputs", {}).get("cogen_allocation", {})
-    total_emissions = float(data.get("total_emissions") or ci.get("total_emissions", val))
-    if total_emissions == 0 and data.get("fuel_consumed_mmbtu"):
-        # Calculate facility emissions from fuel consumed (e.g. 53.06 kg CO2/MMBtu)
-        # natural gas: CO2 plus the Table 4-6 CH4 / N2O, as for the default steam boiler
-        # fuel energy (HHV, as fuel is metered): the natural-gas HHV factor 53.06 kg CO2/MMBtu with the Table 4-6
-        # CH4 / N2O (the LHV factors of Exhibit 8.3 belong to its 92 % LHV boiler efficiency only)
-        from calculations.constants import get_active_gwp
-        _g = get_active_gwp()
-        total_emissions = (float(data["fuel_consumed_mmbtu"])
-                           * (_LEGACY_BOILER_EF_KG_PER_MMBTU + 0.001 * float(_g["CH4"]) + 0.0001 * float(_g["N2O"]))) / 1000.0
-    heat_output = float(data.get("heat_output_mmbtu") or ci.get("heat_output", 0))
-    power_output = float(data.get("power_output_mwh") or ci.get("power_output", 0))
-    method = data.get("allocation_method") or ci.get("allocation_method", "wri_efficiency")
-    if total_emissions <= 0 or (heat_output + power_output) <= 0:
-        return 0.0
-    # One allocation formula: calculations.indirect.CogenAllocationCalculator. Power output is
-    # entered in MWh (BUG-097) and converted there.
-    from calculations.indirect import CogenAllocationCalculator
-
-    res = CogenAllocationCalculator().calculate(
-        total_emissions=total_emissions, heat_output=heat_output, power_output=power_output,
-        method="wri_efficiency" if method == "wri_efficiency" else "energy_content", power_unit="mwh",
-        heat_efficiency=data.get("heat_efficiency") or ci.get("heat_efficiency"),
-        power_efficiency=data.get("power_efficiency") or ci.get("power_efficiency"),
-    )
-    p_stream = str(data.get("purchased_stream") or ci.get("purchased_stream") or data.get("energy_type") or "").lower()
-    if p_stream in ("power", "electricity", "electric"):
-        return res["metadata"]["allocated_power_tonnes"]
-    return res["metadata"]["allocated_heat_tonnes"]
-
 
 def _page_args():
     """(limit, offset) when the caller asks for a page, else None (full list, the old contract)."""
@@ -222,10 +186,9 @@ def get_scope2_emissions():
                     "co2e_market_based": float(e.co2e_market_based if e.co2e_market_based is not None else (e.co2e or 0)),
                     "market_instrument_type": e.market_instrument_type,
                     "market_emission_factor": float(e.market_emission_factor) if e.market_emission_factor is not None else None,
-                    # audit 2026-10-14 BUG-0073: without a contractual instrument the market-based method uses
-                    # the grid average (no residual mix is available); say so instead of leaving it implicit
-                    "market_basis": ("contractual" if e.market_emission_factor is not None
-                                     else "grid average (no residual mix)")
+                    # without a contractual instrument the market-based method uses the grid's residual mix, else the
+                    # grid average; the basis is stated (BUG-0073, audit 2026-11 F-S23-02)
+                    "market_basis": market_basis(e.market_instrument_type, e.market_emission_factor, e.grid_region)
                     if "electric" in str(e.source_type or "electricity").lower() else None,
                     "location": e.location,
                     "grid_region": e.grid_region,
@@ -321,7 +284,8 @@ def create_scope2_emission():
         # Market-based calculation (GHG Protocol Scope 2 Guidance, services/scope2_market.py)
         raw_mkt_ef = data.get("market_emission_factor")
         used_market_ef, market_ef = market_factor(location_ef, market_instrument_type,
-                                                  supplier_market_factor(raw_mkt_ef, data.get("emission_factor")))
+                                                  supplier_market_factor(raw_mkt_ef, data.get("emission_factor")),
+                                                  grid_name=grid_resolved or grid_region)
         co2e_market = (electricity_kwh * used_market_ef) / 1000.0
         has_market_instrument = bool(market_instrument_type) or (raw_mkt_ef not in (None, ""))
         co2e = co2e_location
@@ -344,9 +308,7 @@ def create_scope2_emission():
             co2e = _calc_cogen_allocation(data)
             co2e_location = co2e
             co2e_market = co2e
-            # the allocated heat output, as the file upload stores it
-            heat_mmbtu = parse_number(data.get("heat_output_mmbtu") or ((data.get("calc_inputs") or {}).get(
-                "cogen_allocation") or {}).get("heat_output"), "heat_output", required=False, min_value=0, default=0.0)
+            heat_mmbtu = chp_heat_bought(data)  # the heat bought, as the file upload stores it (F-S23-01)
         except ValidationError:
             raise
         except Exception as exc:
@@ -357,8 +319,8 @@ def create_scope2_emission():
         cooling_ton_val = parse_number(data.get("cooling_ton") or data.get("amount"), "cooling_ton", required=False, min_value=0, default=0.0)
         # BUG-0007: an explicit factor of 0 is a factor, not "missing". A missing factor is refused: it
         # was 150 kg CO2e per ton-hour, a value with no source (bug hunt 2026-10-15 #13)
-        raw_ef = data.get("emission_factor") if data.get("emission_factor") not in (None, "") else data.get("ef")
-        ef_val = parse_number(raw_ef, "emission_factor", min_value=0)
+        from services.scope2_policy import cooling_factor
+        ef_val = cooling_factor(data)  # entered per ton-hour, or Equation 8-2 from the chiller COP (F-S23-12)
         co2e = (cooling_ton_val * ef_val) / 1000.0
         co2e_location = co2e
         co2e_market = co2e
@@ -612,7 +574,7 @@ def update_scope2_emission(emission_id):
     st_cogen = (emission.source_type or "").strip().lower() in ("cogen_allocation", "cogen", "chp")
     cogen_ci = (data.get("calc_inputs") or {}).get("cogen_allocation") or {}
     cogen_given = bool(cogen_ci) or any(data.get(k) not in (None, "") for k in (
-        "total_emissions", "fuel_consumed_mmbtu", "heat_output_mmbtu", "power_output_mwh"))
+        "total_emissions", "fuel_consumed_mmbtu", "heat_output_mmbtu", "power_output_mwh", "quantity_bought"))
     if st_cogen and (activity_changed or cogen_given):
         # the allocation inputs (facility total, heat and power output) are not stored: an edit of the
         # heat alone changed heat_mmbtu and left the allocated co2e as it was (deep-dive audit)
@@ -621,12 +583,12 @@ def update_scope2_emission(emission_id):
         power_in = cogen_ci.get("power_output") if cogen_ci.get("power_output") not in (None, "") else data.get("power_output_mwh")
         if total_in in (None, "") or heat_in in (None, "") or power_in in (None, ""):
             db.session.rollback()
-            return jsonify({"error": "A CHP allocation is recalculated from the facility total emissions (or fuel "
+            return jsonify({"error": "A CHP allocation is recalculated from the plant's total emissions (or fuel "
                                      "consumed), heat output and power output: give all three"}), 422
         emission.co2e = _calc_cogen_allocation(data)
         emission.co2e_location_based = emission.co2e
         emission.co2e_market_based = emission.co2e
-        emission.heat_mmbtu = parse_number(heat_in, "heat_output", min_value=0)
+        emission.heat_mmbtu = chp_heat_bought(data, cogen_ci, required=True)  # the heat bought (F-S23-01)
         activity_changed = False
 
     if (emission.market_emission_factor is not None and not emission.market_instrument_type
@@ -649,9 +611,9 @@ def update_scope2_emission(emission_id):
             supplier_ef = emission.market_emission_factor
             if is_zero_emission_instrument(emission.market_instrument_type) and "market_emission_factor" not in data:
                 supplier_ef = None  # the stored 0 of the instrument, or a factor kept from before it was chosen
-            m_ef, emission.market_emission_factor = market_factor(factor, emission.market_instrument_type, supplier_ef)
+            m_ef, emission.market_emission_factor = market_factor(factor, emission.market_instrument_type, supplier_ef,
+                                                                  grid_name=emission.grid_region)
             emission.co2e_market_based = (emission.electricity_kwh * m_ef) / 1000.0
-            has_market_instrument = bool(emission.market_instrument_type) or (emission.market_emission_factor is not None)
             emission.co2e = emission.co2e_location_based
         elif st in ["steam", "indirect_steam"] or "steam" in st:
             emission.co2e, emission.heat_mmbtu = _recalc_indirect_steam(
@@ -874,7 +836,7 @@ def bulk_import_scope2():
             mkt_inst = (rec.get("market_instrument_type") or "").strip() or None
             mkt_ef_raw = rec.get("market_emission_factor")
             supplier_ef = supplier_market_factor(mkt_ef_raw, rec.get("emission_factor") or rec.get("factor"))
-            used_mkt_ef, mkt_ef = market_factor(ef, mkt_inst, supplier_ef)
+            used_mkt_ef, mkt_ef = market_factor(ef, mkt_inst, supplier_ef, grid_name=grid_region)
             co2e_mkt_val = (kwh * used_mkt_ef) / 1000.0
 
             # Default Scope 2 uncertainty

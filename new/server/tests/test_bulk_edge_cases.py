@@ -56,10 +56,11 @@ def test_number_formats_equal_plain_number(app, client, env, cell, mark):  # noq
 
 
 @pytest.mark.parametrize("name,text,expected", [
-    ("vent_pct", "98%", 98), ("user_unc_co2", "5%", 5), ("ch4_wt_fraction", "50%", 0.5),
-    ("ch4_content", "0.5%", 0.005), ("ch4_content", "80%", 80), ("flare_efficiency", "98%", 98),
-    ("ch4_content", "1%", 0.01), ("carbon_content", "75%", 0.75), ("ch4_content", " 85.5 % ", 85.5),
-    ("ch4_content", "0%", 0.0)])
+    # a percent column reads "X %" as X (audit 2026-11 F-CORE-04); only the fraction columns divide by 100
+    ("vent_pct", "98%", 98), ("user_unc_co2", "5%", 5), ("ch4_wt_fraction", "50%", 50),
+    ("ch4_content", "0.5%", 0.5), ("ch4_content", "80%", 80), ("flare_efficiency", "98%", 98),
+    ("ch4_content", "1%", 1), ("carbon_content", "75%", 75), ("ch4_content", " 85.5 % ", 85.5),
+    ("ch4_content", "0%", 0.0), ("agr_ch4_slip", "0.1%", 0.001)])
 def test_percent_text(name, text, expected):
     assert _percent_text_to_number(name, text) == pytest.approx(expected)
 

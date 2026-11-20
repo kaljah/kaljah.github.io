@@ -117,6 +117,7 @@ def test_facility(auth_admin):
             fac = Facility(
                 name="UI Verification Complex",
                 location="Basin Alpha",
+                country="Algeria",  # the grid fallback needs a country (audit 2026-11 F-E2E-01)
                 activity="Integrated Production",
                 division="Operations",
                 region="Ouargla",
@@ -406,6 +407,8 @@ class TestScope2UINumericalParity:
             "fuel_consumed_mmbtu": 5000,
             "heat_output_mmbtu": 2500,
             "power_output_mwh": 500,
+            "purchased_stream": "heat",
+            "quantity_bought": 2500,  # the buyer's share (audit 2026-11 F-S23-01)
             "allocation_method": "wri_efficiency",
             "status": "Verified",
         }

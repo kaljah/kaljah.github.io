@@ -27,6 +27,10 @@ export interface Scope2FormNewElectricityEntryProps {
   month: number | string;
   powerEff: string | number;
   powerOutput: string | number;
+  purchasedStream: string;
+  setPurchasedStream: (s: string) => void;
+  boughtQty: string | number;
+  setBoughtQty: (q: string) => void;
   setAllocationMethod: (m: string) => void;
   setAmount: (a: string) => void;
   setBoilerEff: (b: string) => void;
@@ -102,6 +106,10 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
   month,
   powerEff,
   powerOutput,
+  purchasedStream,
+  setPurchasedStream,
+  boughtQty,
+  setBoughtQty,
   setAllocationMethod,
   setAmount,
   setBoilerEff,
@@ -331,7 +339,9 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
         )}
         {sourceType === "cogen_allocation" && (
           <div className={`form-grid-3 [grid-column:span_2]!`}>
-            <Field className="input-group" label={t("Heat Output (MMBtu)")}>
+            {/* the plant's total outputs allocate its emissions (Eq 8-3 / 8-4); the buyer's share is the stream x
+                bought / total (Exhibit 8.4 step 5; audit 2026-11 F-S23-01) */}
+            <Field className="input-group" label={t("Plant total heat output (MMBtu)")}>
               <Input
                 type="number"
                 min="0"
@@ -340,13 +350,33 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
                 onChange={(e) => setHeatOutput(e.target.value)}
               />
             </Field>
-            <Field className="input-group" label={t("Power Output (MWh)")}>
+            <Field className="input-group" label={t("Plant total power output (MWh)")}>
               <Input
                 type="number"
                 min="0"
                 step="any"
                 value={powerOutput}
                 onChange={(e) => setPowerOutput(e.target.value)}
+              />
+            </Field>
+            <div className="input-group">
+              <label>{t("Stream bought")}</label>
+              <CustomDropdown
+                options={[
+                  { value: "heat", label: t("Heat / steam (MMBtu)") },
+                  { value: "power", label: t("Power (MWh)") },
+                ]}
+                value={purchasedStream}
+                onChange={(val) => setPurchasedStream(String(val))}
+              />
+            </div>
+            <Field className="input-group" label={t("Quantity bought (MMBtu heat or MWh power)")}>
+              <Input
+                type="number"
+                min="0"
+                step="any"
+                value={boughtQty}
+                onChange={(e) => setBoughtQty(e.target.value)}
               />
             </Field>
             <div className="input-group">
@@ -397,7 +427,7 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
           className="input-group"
           label={
             sourceType === "cogen_allocation"
-              ? t("Total Facility Emissions (tCO2e)")
+              ? t("Total plant emissions (tCO2e)")
               : t("Usage Amount")
           }
         >

@@ -1,10 +1,4 @@
-"""
-API Compendium 2021 - Sections 6.4, 6.5, 6.6: Midstream Oil & Gas
-Gathering & Boosting, Natural Gas Processing, and Transmission & Storage
-
-Governing Standard:
-API Compendium of Greenhouse Gas Emissions Methodologies for the Oil and Natural Gas Industry
-4th Edition, November 2021:
+"""API Compendium 2021 (4th Edition, November 2021) Sections 6.4, 6.5, 6.6: midstream oil & gas.
 - §6.4 Gathering & Boosting:
     * §6.4.1 Pneumatics (Table 6-29, Exhibit 6-23)
     * §6.4.2 Compressors: Reciprocating Rod Packing (Table 6-30, Eq 6-29, Exhibit 6-24)
@@ -17,8 +11,7 @@ API Compendium of Greenhouse Gas Emissions Methodologies for the Oil and Natural
     * §6.5.4 Compressors: Reciprocating & Centrifugal (Table 6-37, Table 6-38)
     * §6.5.5 Non-Routine Plant Blowdowns (Table 6-39, Exhibit 6-30)
 - §6.6 Natural Gas Transmission and Storage (T&S):
-    * §6.6.1 Reciprocating Rod Packing (Table 6-40, Exhibit 6-31) & Centrifugal Seals (Table 6-41, Exhibit 6-32)
-    * §6.6.2 Transmission Storage Tanks
+    * §6.6.1 Rod Packing (Table 6-40, Exhibit 6-31) & Centrifugal Seals (Table 6-41, Exhibit 6-32); §6.6.2 Tanks
     * §6.6.3 Pneumatics (Table 6-42)
     * §6.6.4 Non-Routine Releases & Pipeline Blowdowns (Table 6-43, Exhibit 6-33)
 """
@@ -34,6 +27,7 @@ from .uncertainty import (
 )
 
 from .units import MOLAR_VOLUME_SCF_PER_LBMOL as MOLAR_VOL_US  # noqa: E402  scf / lb-mole (BA-016)
+from .input_checks import above_absolute_zero_r, hours_in_year, non_negative, year_fraction as checked_year_fraction
 MOLAR_VOL_SI = 23.685  # Sm³ / kg-mole at 15.56°C, 101.325 kPa
 MW_CH4 = 16.04
 MW_CO2 = 44.01
@@ -330,11 +324,14 @@ class GatheringNonRoutineVentingCalculator(BaseCalculator):
         disposition="vented",
         uncertainties=None,
         gwp_dict=None,
+        year_fraction=1.0,
         **kwargs,
     ):
         uncertainties = uncertainties or {}
         act, factor_info = _pick(self.TABLE_6_33, activity or "prv_releases", "Table 6-33 activity")
-        n = max(0.0, float(1.0 if events_or_count is None else events_or_count))
+        n = non_negative(1.0 if events_or_count is None else events_or_count, "The count")
+        if act != "compressor_starts":  # per unit-year factors cover the record's period; starts are per start
+            n *= checked_year_fraction(year_fraction)
 
         c_ch4, c_co2 = _parse_gas_comp(ch4_content, co2_content, factor_info["baseline_ch4_mol"])
 
@@ -508,12 +505,13 @@ class ProcessingBlanketedTankCalculator(BaseCalculator):
             v_acf = float(liquid_displacement_m3) * 35.3146667
         else:
             raise ValueError("liquid_displacement_bbl or liquid_displacement_m3 must be provided")
+        non_negative(v_acf, "The liquid displacement")  # it gave negative emissions (F-VENT2-09)
 
         self.validate_inputs({"ch4_content": ch4_content}, ["ch4_content"])
         if vapor_temperature_f in (None, ""):
             raise ValueError("Missing required input: vapor_temperature_f")
         t_f = float(vapor_temperature_f)  # 0 F is 0 F (it was 75 F)
-        t_r = t_f + 459.67
+        t_r = above_absolute_zero_r(t_f + 459.67)
         # Convert acf to scf at 60°F (519.67 °R)
         v_scf = v_acf * (519.67 / t_r)
         total_gas_m3 = convert(v_scf, "scf", "m3")
@@ -696,7 +694,7 @@ class TransmissionCompressorCalculator(BaseCalculator):
 
             # Table 6-41 Zimmerle 2015 average factor scaled by site CH4 mole fraction:
             # 163.7 tonnes CH4/compressor-yr for wet seal, 51.1 for dry seal (at 95% CH4)
-            hrs = float(operating_hours or 8760.0)
+            hrs = hours_in_year(operating_hours)  # an entered 0 h is 0 h (F-VENT2-04)
             wet_tonnes = n_wet * 163.7 * (c_ch4 / 0.95) * (hrs / 8760.0)
             dry_tonnes = n_dry * 51.1 * (c_ch4 / 0.95) * (hrs / 8760.0)
             gross_ch4_tonnes = wet_tonnes + dry_tonnes
@@ -712,6 +710,8 @@ class TransmissionCompressorCalculator(BaseCalculator):
                 raise ValueError("Missing required input: operating_hours (rod packing, Equation 6-29)")
             hrs_op = float(operating_hours)
             hrs_stby = float(standby_pressurized_hours or 0.0)
+            if hrs_op < 0 or hrs_stby < 0 or hrs_op + hrs_stby > 8784:  # negative hours gave negative CH4 (F-VENT2-09)
+                raise ValueError("Operating and standby hours must be non-negative and total at most 8,784")
 
             scf_op = n_comp * self.TABLE_6_40_RECIP["operating"] * hrs_op
             scf_stby = n_comp * self.TABLE_6_40_RECIP["standby_pressurized"] * hrs_stby

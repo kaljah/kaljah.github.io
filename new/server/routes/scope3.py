@@ -17,6 +17,7 @@ from utils import (
     require_facility_access,
     tenant_matches,
 )
+from calculations.units_scope3 import scope3_complete_factor_unit
 from input_validation import ValidationError, parse_number, parse_year, parse_month, normalize_scope3_category, \
     require_plausible_co2e
 from services.dashboard_filters import _parse_facility_ids
@@ -198,7 +199,7 @@ def create_scope3_emission():
             rows = SCOPE3_ACTIVITY_FACTORS.get(cat_num or 0, [])
             match_row = next((r for r in rows if r[0].lower() == sub_cat_name), None)
             den_unit = match_row[1] if match_row else (data.get("unit") or "unit")
-            factor_unit = f"kg CO2e / {den_unit}"
+            factor_unit = scope3_complete_factor_unit(factor_unit, den_unit)  # its own mass kept (F-UPL-03)
         try:
             co2e_val = compute_scope3_co2e(activity_data, emission_factor, factor_unit, calc_method,
                                            activity_unit=data.get("unit") or "")
@@ -422,7 +423,7 @@ def update_scope3_emission(emission_id):
             rows = SCOPE3_ACTIVITY_FACTORS.get(cat_num or 0, [])
             match_row = next((r for r in rows if r[0].lower() == sub_cat_name), None)
             den_unit = match_row[1] if match_row else (emission.unit or "unit")
-            factor_unit = f"kg CO2e / {den_unit}"
+            factor_unit = scope3_complete_factor_unit(factor_unit, den_unit)  # its own mass kept (F-UPL-03)
         elif "unit" in data and old_unit and emission.unit and old_unit != emission.unit:
             if "/" in factor_unit:
                 num_part = factor_unit.split("/")[0].strip()
@@ -701,8 +702,13 @@ def calculate_eeio():
         return jsonify({"error": "No data provided"}), 400
         
     naics_code = str(data.get("naics_code", ""))
-    spend_usd = parse_number(data.get("spend_usd"), "spend_usd", required=False, min_value=0, default=0.0)
-    
+    raw_spend = data.get("spend") if data.get("spend") not in (None, "") else data.get("spend_usd")
+    spend_usd = parse_number(raw_spend, "spend", required=False, min_value=0, default=0.0)
+    # the same currency / deflator rule as the EEIO import (audit 2026-11 F-UPL-08)
+    from services.eeio_spend import spend_in_factor_usd
+    spend_usd, spend_notes = spend_in_factor_usd(spend_usd, data.get("currency"), data.get("fx_rate_to_usd"),
+                                                 data.get("year"), data.get("deflator_to_2022"))
+
     if spend_usd <= 0:
         return jsonify({"co2e": 0, "emission_factor": 0, "message": "Zero spend"}), 200
         
@@ -727,6 +733,8 @@ def calculate_eeio():
         "industry_name": factor_data["name"],
         "naics_code": naics_code,
         "source": factor_data["source"],
+        "spend_usd_2022": spend_usd,
+        "notes": spend_notes,
     }), 200
 
 

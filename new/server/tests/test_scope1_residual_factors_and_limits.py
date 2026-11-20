@@ -393,7 +393,8 @@ def test_zero_activity_is_zero_emissions_on_every_process(app, client, lifecycle
     problems = [f"{meta[eq]}: {v} t from quantity 0" for eq, v in saved.items() if v and meta[eq] not in _OWN_ACTIVITY]
     problems += [f"{meta[eq]}: refused '{msg[:90]}'" for eq, msg in errs.items() if eq in meta and
                  ("Unknown unit '" in msg and "drilling" in msg or "operating hours are required" in msg)]
-    assert len(saved) >= len(rows) - 6, (len(saved), len(rows), errs)     # only unit mismatches are refused
+    # only unit mismatches are refused, and (audit 2026-11) casing-gas rows whose unit the row does not take
+    assert len(saved) >= len(rows) - 12, (len(saved), len(rows), errs)
     assert not problems, "\n".join(problems)
 
 

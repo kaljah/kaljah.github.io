@@ -18,15 +18,20 @@ from .gwp import IndependentGWPModel
 
 class IndependentVentedPartition:
     @staticmethod
-    def partition(total_gas_m3, ch4_tonnes, co2_tonnes, control_efficiency, hhv=1020.0, ef_n2o=None):
+    def partition(total_gas_m3, ch4_tonnes, co2_tonnes, control_efficiency, hhv=1020.0, ef_n2o=None,
+                  as_flare_efficiency=False):
         """
         Partitions gross episodic vented gas into uncombusted vent and flared combustion stream.
-        Decision D-01 / API Compendium 2021 §5.2.
+        Decision D-01 / API Compendium 2021 §5.2. as_flare_efficiency: the efficiency is the flare's own
+        (all the gas goes to a flare that destroys / converts at it; audit 2026-11 F-VENT1-03, completions).
         """
         ctrl = float(control_efficiency or 0.0)
         if ctrl > 1.0:
             ctrl /= 100.0
         ctrl = max(0.0, min(1.0, ctrl))
+        flare_eff = None
+        if as_flare_efficiency and ctrl > 0:
+            flare_eff, ctrl = ctrl, 1.0
         vented_frac = 1.0 - ctrl
 
         vented_ch4 = ch4_tonnes * vented_frac
@@ -42,8 +47,9 @@ class IndependentVentedPartition:
 
             # API Compendium 2021 corrections (December 2025, section 5.1.2): 96.5 % of the carbon to CO2,
             # 98 % CH4 destruction (CH4 + 2 O2 -> CO2 + 2 H2O, 44.01 / 16.04)
-            flared_co2 = (flared_ch4_mass * 0.965 * (44.01 / 16.04)) + flared_native_co2
-            flared_unburnt_ch4 = flared_ch4_mass * 0.02
+            ce, de = (flare_eff, flare_eff) if flare_eff is not None else (0.965, 0.98)
+            flared_co2 = (flared_ch4_mass * ce * (44.01 / 16.04)) + flared_native_co2
+            flared_unburnt_ch4 = flared_ch4_mass * (1.0 - de)
 
             if ef_n2o is None:
                 # Compendium Eq 5-6: N2O = CO2 x EmF_N2O / EmF_CO2 = flared CO2 x 1.0E-04 / 60 (natural gas)
@@ -250,6 +256,7 @@ class IndependentCompletions:
             control_efficiency=control_efficiency,
             hhv=hhv,
             ef_n2o=ef_n2o,
+            as_flare_efficiency=True,  # audit 2026-11 F-VENT1-03
         )
         co2e = IndependentGWPModel.calculate_co2e(
             co2=split["total_co2"], ch4=split["total_ch4"], n2o=split["flared_n2o"], standard=gwp_standard, horizon=gwp_horizon

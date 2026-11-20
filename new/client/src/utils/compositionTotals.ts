@@ -38,7 +38,8 @@ export function analysisRowStatus(row: Record<string, unknown>, mapping: Record<
   const sum = values.reduce((a, b) => a + b, 0);
   const fractions = Math.max(...values) <= 1 && sum <= 1.5;
   const total = fractions ? sum * 100 : sum;
-  return { isAnalysis: true, total, off: total < MIN_TOTAL || total > MAX_TOTAL };
+  // a 1e-9 tolerance: 100.5 summed in floating point is 100.50000000000001 (audit 2026-11 F-UPL-13)
+  return { isAnalysis: true, total, off: total < MIN_TOTAL - 1e-9 || total > MAX_TOTAL + 1e-9 };
 }
 
 /** True when the mapping has at least two analysis columns, so a row can be an analysis. */

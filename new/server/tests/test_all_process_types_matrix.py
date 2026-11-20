@@ -205,12 +205,12 @@ class TestAllProcessTypesTier3:
             "control_efficiency": 95,
         }
         res = dispatcher.dispatch("completions", payload, {}, {})
-        # 15,000 m3 flowback at 80 % CH4; control_efficiency 0.95 = 95 % of the gas to a flare at the default 98 %
-        # CH4 destruction / 96.5 % carbon conversion, the other 5 % vented
+        # 15,000 m3 flowback at 80 % CH4; an efficiency without a disposition is the flare's efficiency (audit 2026-11
+        # F-VENT1-03): all the gas to a flare that destroys 95 % of the CH4 and converts 95 % of the carbon
         v_ch4 = 15000 * 0.80
         rho_co2, rho_ch4 = 44.01 / 23.685, 16.04 / 23.685
-        assert res["results"]["ch4"]["value"] == pytest.approx(v_ch4 * rho_ch4 / 1000 * (0.05 + 0.95 * 0.02), rel=1e-6)
-        assert res["results"]["co2"]["value"] == pytest.approx(v_ch4 * rho_co2 / 1000 * 0.95 * 0.965, rel=1e-6)
+        assert res["results"]["ch4"]["value"] == pytest.approx(v_ch4 * rho_ch4 / 1000 * 0.05, rel=1e-6)
+        assert res["results"]["co2"]["value"] == pytest.approx(v_ch4 * rho_co2 / 1000 * 0.95, rel=1e-6)
 
     def test_liquids_unloading_tier3(self, dispatcher):
         payload = {
@@ -307,10 +307,10 @@ class TestAllProcessTypesTier3:
             "count": 25,
             "ef": 0.45,
             "unit": "kg/hr",
-            "ch4_content": 85.0,
+            "ch4_wt_fraction": 85.0,  # the CH4 weight share of the gas (a mole % is not one: audit 2026-11 F-FUG-06)
         }
         res = dispatcher.dispatch(fugitive_type, payload, {}, {})
-        # 25 sources x 0.45 kg/h x 8,760 h = 98.55 t of gas; the equipment route takes ch4_content (85 %) as the CH4 share
+        # 25 sources x 0.45 kg/h x 8,760 h = 98.55 t of gas x 85 wt % CH4
         assert res["results"]["ch4"]["value"] == pytest.approx(25 * 0.45 * 8760 / 1000 * 0.85, rel=1e-9)
         assert res["total_co2e"] == pytest.approx(28.0 * res["results"]["ch4"]["value"], rel=1e-9)
 
@@ -397,7 +397,7 @@ class TestAllProcessTypesTier3:
             "process_type": chem_type,
             "factor_source": "specific",
             "production_amount": 10000.0,
-            "carbon_content": 0.82,
+            "carbon_content": 82,  # wt % (audit 2026-11 F-CMB-06)
             "unit": "kg",
         }
         res = dispatcher.dispatch(chem_type, payload, {}, {})

@@ -305,7 +305,7 @@ def add_facility():
         equity_share_pct=eq_val if eq_val is not None else 100.0,
         segment=normalize_segment(data.get("segment")),
         operator_status=op_status,
-        country=data.get("country", "Algeria"),
+        country=(str(data.get("country")).strip() or None) if data.get("country") not in (None, "") else None,  # F-E2E-01
         ogmp_membership_year=parse_year(data.get("ogmp_membership_year"), required=False) or 2023,
         reconciliation_threshold=parse_number(
             data.get("reconciliation_threshold"), "reconciliation_threshold", required=False, min_value=0, max_value=1000, default=20.0

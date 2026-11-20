@@ -195,7 +195,7 @@ def test_vented_completion_scf_day_unit():
 def test_vented_lng_and_distribution_negative_guards():
     lng = LNGVentingCalculator()
     with pytest.raises(ValueError, match="co2_content cannot be negative"):
-        lng.calculate(activity="loading_transfer", transfer_volume_m3=100.0, co2_content=-0.05)
+        lng.calculate(activity="loading_transfer", expansion_ratio=600.0, transfer_volume_m3=100.0, co2_content=-0.05)
 
     dp = DistributionPneumaticsCalculator()
     with pytest.raises(ValueError, match="co2_content cannot be negative"):

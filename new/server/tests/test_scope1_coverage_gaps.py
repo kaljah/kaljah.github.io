@@ -81,7 +81,10 @@ def test_every_offered_unit_is_accepted_by_some_row(app, client, site):
     assert st["status"] == "completed", st
     saved = _saved(app, site["fid"])
     accepted = {owner[eq] for eq in saved}
-    dead = sorted({pair for pair in owner.values()} - accepted)
+    # working / breathing losses have no Tier 1 catalog factor: the Table 6-22 / 6-24 rows the file used are flashing
+    # factors and are refused (audit 2026-11 F-GREST-06); these losses are entered with the THC-mass method
+    dead = sorted({pair for pair in owner.values()} - accepted
+                  - {pair for pair in owner.values() if pair[0] in ("tank_working", "tank_breathing")})
     offered = sum(len(u) for u in T.PROCESS_UNITS.values())
     print(f"\n{len(rows)} rows, {len(saved)} saved; {offered - len(dead)}/{offered} offered units accepted")
     assert not dead, f"the template offers units nothing accepts: {dead}"

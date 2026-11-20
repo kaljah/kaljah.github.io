@@ -11,7 +11,7 @@ import { t } from "../../i18n";
  *   - Tier 1: API Table 6-11 Per-Well Default Factor (Plunger vs Non-Plunger)
  *   - Tier 2: API Table 6-10 Event-Based Factor (Frequency Bins & Regional Basins)
  *   - Tier 3: Engineering Models:
- *       * API Eq. 6-10 (EPA Subpart W W-8 / W-9 Integrated Formula)
+ *       * API Eq. 6-10 (Compendium method; not 40 CFR 98 W-8 / W-9 as written)
  *       * API Eq. 6-11 (Automated Plunger Lift Vent Rate Formula)
  *       * Wellbore volume decompression (platform method, not a Compendium equation)
  */
@@ -214,7 +214,9 @@ export const UnloadingForm: React.FC<UnloadingFormProps> = ({
               className="input-group"
               label={
                 <>
-                  {t("Events")}
+                  {/* Table 6-10 factors are per event and the server multiplies by the wells: the
+                      number is per well (audit 2026-11 F-VENT1-05) */}
+                  {t("Events per well")}
                   <span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span>
                 </>
               }

@@ -57,6 +57,7 @@ export interface DetailedBreakdownSectionProps {
     scope1?: number;
     scope2?: number;
     scope2Market?: number;
+    scope2Location?: number;
     scope3?: number;
     combustion?: number;
     flaring?: number;
@@ -151,7 +152,9 @@ const DetailedBreakdownSection: React.FC<DetailedBreakdownSectionProps> = ({
               <Row level={1} label={t("Venting")} value={fmt(stats.venting)} />
               <Row level={1} label={t("Equipment Leaks / Fugitives")} value={fmt(stats.fugitive)} />
               <Row level={1} label={t("Other Sources")} value={fmt(stats.other)} />
-              <Row tone="summary" label={t("Scope 2 (Indirect - Energy), location-based")} value={fmt(stats.scope2)} />
+              {/* each figure under its own method: the row showed the toggle's method under a fixed "location-based"
+                  label (audit 2026-11 F-GUI-03) */}
+              <Row tone="summary" label={t("Scope 2 (Indirect - Energy), location-based")} value={fmt(stats.scope2Location ?? stats.scope2)} />
               <Row level={1} label={t("Scope 2 market-based (contractual instruments; not added to the total)")} value={fmt(stats.scope2Market ?? stats.scope2)} />
               <Row tone="summary" label={t("Scope 3 (Supply Chain)")} value={fmt(stats.scope3)} />
               <Row tone="total" label={t("Total Footprint (Scopes 1+2+3)")} value={fmt(total)} />

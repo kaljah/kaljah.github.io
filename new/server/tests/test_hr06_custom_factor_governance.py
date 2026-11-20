@@ -102,7 +102,8 @@ def test_import_skips_rows_without_source_or_justification(client):
     rows = [
         {"name": f"HR06 imp {uuid.uuid4().hex[:6]}", "co2_factor": 50, "unit": "kg/m3", "source": "Lab"},
         {"name": f"HR06 imp {uuid.uuid4().hex[:6]}", "co2_factor": 50, "unit": "kg/m3"},
-        {"name": f"HR06 imp {uuid.uuid4().hex[:6]}", "co2_factor": 5000, "unit": "kg/m3", "source": "Lab"},
+        # the bounds are per MMBtu: a per-volume factor is not compared (audit 2026-11 F-FAC-03)
+        {"name": f"HR06 imp {uuid.uuid4().hex[:6]}", "co2_factor": 5000, "unit": "kg/MMBtu", "source": "Lab"},
     ]
     r = client.post("/api/custom-factors/import", json={"factors": rows})
     body = r.get_json()

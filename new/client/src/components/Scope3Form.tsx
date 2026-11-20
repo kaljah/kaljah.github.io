@@ -101,7 +101,8 @@ export const Scope3Form: React.FC = () => {
     "passenger-km": { "passenger-km": 1, "passenger-mile": 1.60934 },
     km: { km: 1, mile: 1.60934 },
     "sq ft": { "sq ft": 1, "sq m": 10.7639 },
-    USD: { USD: 1, EUR: 1.1, DZD: 0.0074 },
+    // no currency conversion here: EPA factors are per 2022 USD and a rate must be the spend year's (F-UPL-08)
+    USD: { USD: 1 },
     day: { day: 1, week: 5, month: 20, year: 240 },
   };
 

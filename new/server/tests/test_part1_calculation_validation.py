@@ -134,8 +134,8 @@ def test_canonical_boe_constants():
     """Verify single canonical gas-to-BOE and BOE constants used across NeoCarbon."""
     assert NG_HHV_BTU_PER_SCF == pytest.approx(1020.0, rel=1e-12)
     assert MMBTU_PER_BOE == pytest.approx(5.8, rel=1e-12)
-    assert GAS_BOE_PER_MSCF == pytest.approx(0.17586206896551725, rel=1e-12)
-    assert SCF_PER_BOE == pytest.approx(5686.274509803921, rel=1e-12)
+    assert GAS_BOE_PER_MSCF == pytest.approx(1000 / 5647.52, rel=1e-12)  # Table 3-4 (audit 2026-11 F-CORE-07)
+    assert SCF_PER_BOE == pytest.approx(5647.52, rel=1e-12)
     assert BOE_TO_GJ == pytest.approx(6.119323945196, rel=1e-12)
     assert BOE_TO_MJ == pytest.approx(6119.323945196, rel=1e-12)
 

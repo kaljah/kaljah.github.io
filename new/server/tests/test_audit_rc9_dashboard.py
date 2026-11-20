@@ -106,7 +106,7 @@ def test_bug041_no_goal_badge_in_all_years_or_filtered_view(world):
 def test_bug017_all_years_intensity_pairs_emissions_with_production(world):
     rows = world["client"].get(f"/api/dashboard/intensity-stats?year=all&facilityId={world['f1'].id}").get_json()
     r = rows[0]
-    boe = 1000 + 10000 * (1.02 / 5.8)
+    boe = 1000 + 10000 * (1000 / 5647.52)
     assert r["total_boe"] == pytest.approx(boe)
     assert r["intensity_years"] == [2031]
     assert r["co2_intensity"] == pytest.approx((178 + 10) * 1000 / boe)  # 2032's 1000 t excluded

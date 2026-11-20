@@ -78,12 +78,13 @@ def yearly_totals(query, by_fac, horizon="100"):
             Scope2Emission.electricity_kwh,
             Scope2Emission.co2e,
             Scope2Emission.co2e_market_based,
+            *_s2_gas_columns(),
         ).all()
-        for yr, fid, src_type, grid_region, kwh, co2e, co2e_mkt in rows:
+        for yr, fid, src_type, grid_region, kwh, co2e, co2e_mkt, ch4_t, n2o_t, mkt_ef in rows:
             d = out[(int(yr), fid if by_fac else "total")]
             loc, mkt = record_totals_fields(
                 src_type, grid_region, kwh, co2e, co2e_mkt, horizon,
-                grid_cache=grid_cache, gwp_diff=gwp_diff,
+                grid_cache=grid_cache, gwp_diff=gwp_diff, ch4_t=ch4_t, n2o_t=n2o_t, market_ef=mkt_ef,
             )
             d["location"] += loc
             d["market"] += mkt
@@ -108,26 +109,46 @@ def record_totals_fields(
     horizon="100",
     grid_cache=None,
     gwp_diff=None,
+    ch4_t=None,
+    n2o_t=None,
+    market_ef=None,
 ):
-    """Tuple-friendly counterpart to record_totals() avoiding full ORM hydration in hot paths."""
+    """Tuple-friendly counterpart to record_totals() avoiding full ORM hydration in hot paths.
+
+    GWP-20 re-weights every CH4 / N2O mass in the totals: the grid split of an electricity record, or the masses
+    stored with a steam record; the market total gets the same delta when its factor is not a contract or a
+    (CO2-only) residual mix, i.e. when it equals the location-based value. Steam and grid-fallback market totals
+    were left on GWP-100 (audit 2026-11 F-GUI-02 / F-S23-08)."""
     delta = 0.0
+    is_elec = "electric" in str(source_type or "").lower()
     if str(horizon) == "20":
         entry = _grid_lookup(source_type, grid_region, electricity_kwh, grid_cache=grid_cache)
-        if entry is None:
-            ch4_t, n2o_t = 0.0, 0.0
-        else:
+        if entry is not None:
             kwh = float(electricity_kwh)
-            ch4_t = kwh * float(entry.get("ch4") or 0) / 1000.0
-            n2o_t = kwh * float(entry.get("n2o") or 0) / 1000.0
+            c, n = kwh * float(entry.get("ch4") or 0) / 1000.0, kwh * float(entry.get("n2o") or 0) / 1000.0
+        elif not is_elec and (ch4_t is not None or n2o_t is not None):
+            c, n = float(ch4_t or 0.0), float(n2o_t or 0.0)
+        else:
+            c, n = 0.0, 0.0
         if gwp_diff is None:
             from services.dashboard_filters import horizon_delta
 
-            delta = horizon_delta(ch4_t, n2o_t, "20")
+            delta = horizon_delta(c, n, "20")
         else:
-            delta = ch4_t * gwp_diff[0] + n2o_t * gwp_diff[1]
+            delta = c * gwp_diff[0] + n * gwp_diff[1]
     location = float(co2e or 0) + delta
-    market = co2e_market_based if co2e_market_based is not None else co2e
-    return location, float(market or 0) + (delta if co2e_market_based is None else 0.0)
+    if co2e_market_based is None:
+        return location, location
+    market = float(co2e_market_based or 0)
+    if delta and market_ef is None:
+        if not is_elec:
+            market += delta  # steam / heat: the market value is the location value
+        else:
+            from electricity_factors import residual_mix_for
+
+            if residual_mix_for(grid_region) is None and abs(market - float(co2e or 0)) <= 1e-9 * max(1.0, abs(market)):
+                market += delta  # grid-average fallback: the location value
+    return location, market
 
 
 def record_totals(e, horizon="100"):
@@ -140,4 +161,19 @@ def record_totals(e, horizon="100"):
         e.co2e,
         e.co2e_market_based,
         horizon,
+        ch4_t=getattr(e, "ch4_emissions", None),
+        n2o_t=getattr(e, "n2o_emissions", None),
+        market_ef=getattr(e, "market_emission_factor", None),
     )
+
+
+def _s2_gas_columns():
+    from models import Scope2Emission
+
+    return (Scope2Emission.ch4_emissions, Scope2Emission.n2o_emissions, Scope2Emission.market_emission_factor)
+
+
+def __getattr__(name):  # S2_GAS_COLUMNS, resolved after the models are importable
+    if name == "S2_GAS_COLUMNS":
+        return _s2_gas_columns()
+    raise AttributeError(name)

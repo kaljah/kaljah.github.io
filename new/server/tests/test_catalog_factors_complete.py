@@ -34,15 +34,16 @@ def pin(*keys):
 
 
 # ---------------------------------------------------------------- combustion: Table C-1 (Table 4-5)
-C1 = {  # key: (HHV in the row's base unit, kg CO2 / MMBtu)
+C1 = {  # key: (HHV in the row's base unit, kg CO2 / MMBtu); natural gas 1,026 Btu/scf (audit 2026-11 F-FAC-01)
     "Propylene": (91000, 67.77), "Butane": (103000, 64.77), "Isobutane": (99000, 64.94),
     "Naphtha": (125000, 68.02), "Lubricants": (144000, 74.27), "Waste Oil": (138000, 74.00),
-    "Tires": (28000, 85.97), "Compressed Natural Gas (CNG)": (1020, 53.06),
-    "Liquefied Natural Gas (LNG)": (1020, 53.06), "Natural Gas - Turbine": (1020, 53.06),
-    "Natural Gas - Heater/Boiler": (1020, 53.06), "Natural Gas - 2-Stroke Lean Burn Engine": (1020, 53.06),
-    "Natural Gas - 4-Stroke Lean Burn Engine": (1020, 53.06), "Natural Gas - 4-Stroke Rich Burn Engine": (1020, 53.06),
+    "Tires": (28000, 85.97), "Compressed Natural Gas (CNG)": (1026, 53.06),
+    "Liquefied Petroleum Gas (LPG)": (92000, 61.71),  # Table C-1 LPG row (audit 2026-11 F-FAC-07)
+    "Liquefied Natural Gas (LNG)": (1026, 53.06), "Natural Gas - Turbine": (1026, 53.06),
+    "Natural Gas - Heater/Boiler": (1026, 53.06), "Natural Gas - 2-Stroke Lean Burn Engine": (1026, 53.06),
+    "Natural Gas - 4-Stroke Lean Burn Engine": (1026, 53.06), "Natural Gas - 4-Stroke Rich Burn Engine": (1026, 53.06),
     # already in test_catalog_factors.py, repeated so this file covers every combustion row
-    "Natural Gas": (1020, 53.06), "Propane (Gas)": (2516, 61.46), "Propane (Liquid)": (91000, 62.87),
+    "Natural Gas": (1026, 53.06), "Propane (Gas)": (2516, 61.46), "Propane (Liquid)": (91000, 62.87),
     "Propane (Liquid/LPG)": (91000, 62.87), "Ethane": (68000, 59.60), "Diesel (No. 2 Fuel Oil)": (138000, 73.96),
     "Marine Diesel Oil": (138000, 73.96), "Residual Fuel Oil (No. 6)": (150000, 75.10), "Kerosene": (135000, 75.20),
     "Jet Fuel": (135000, 72.22), "Motor Gasoline": (125000, 70.22), "Crude Oil": (138000, 74.54),
@@ -68,9 +69,10 @@ C2 = {
     **{k: _PET for k in ("Propylene", "Butane", "Isobutane", "Naphtha", "Lubricants", "Waste Oil", "Propane (Gas)",
                           "Propane (Liquid)", "Propane (Liquid/LPG)", "Ethane", "Ethane (Gas)", "Diesel (No. 2 Fuel Oil)",
                           "Residual Fuel Oil (No. 6)", "Kerosene", "Jet Fuel", "Motor Gasoline",
-                          "Crude Oil", "Refinery Fuel Gas", "Acetylene")},
+                          "Crude Oil", "Refinery Fuel Gas", "Acetylene", "Liquefied Petroleum Gas (LPG)")},
     **{k: _COAL for k in ("Anthracite Coal", "Bituminous Coal", "Sub-Bituminous Coal", "Lignite Coal")},
-    **{k: _SOLID for k in ("Tires", "Petroleum Coke")},   # EPA EF Hub: 32 g CH4, 4.2 g N2O per MMBtu
+    "Tires": _SOLID,   # EPA EF Hub: 32 g CH4, 4.2 g N2O per MMBtu
+    "Petroleum Coke": _PET,  # Table C-2 petroleum products / Table 4-8 / Dec 2025 correction (F-FAC-05)
     "Blast Furnace Gas": (2.2e-5, 1.0e-4), "Coke Oven Gas": (4.8e-4, 1.0e-4),
     # Table 4-16 "Diesel Ships" (Exhibit 4.13): 2.5E-04 t CH4 and 7.2E-05 t N2O per m3 of fuel,
     # divided by 0.138 MMBtu/gal x 264.172 gal/m3 = 36.456 MMBtu/m3
@@ -88,7 +90,7 @@ def test_table_c2_ch4_n2o(key):
 ENGINES = {  # key: (gas, Table 4-7 t/TJ, AP-42 lb/MMBtu)
     "Natural Gas - 2-Stroke Lean Burn Engine": ("ch4", 0.623, 1.45),
     "Natural Gas - 4-Stroke Lean Burn Engine": ("ch4", 0.537, 1.25),
-    "Natural Gas - 4-Stroke Rich Burn Engine": ("ch4", 0.10, 0.229),
+    "Natural Gas - 4-Stroke Rich Burn Engine": ("ch4", 0.10, 0.23),
     "Natural Gas - Turbine": ("ch4", 0.0037, 8.6e-3),
 }
 
@@ -96,13 +98,14 @@ ENGINES = {  # key: (gas, Table 4-7 t/TJ, AP-42 lb/MMBtu)
 @pytest.mark.parametrize("key", sorted(ENGINES))
 def test_table_4_7_engines_and_ap42(key):
     gas, t_tj, lb = ENGINES[key]
-    assert CAT[key][gas] == pytest.approx(t_tj * MMBTU_PER_TJ_KG, rel=1e-4)
-    assert CAT[key][gas] == pytest.approx(lb * LB_TO_KG, rel=0.02)     # the Compendium rounds 0.229 lb to 0.10 t/TJ
+    # the original lb/10^6 Btu column (audit 2026-11 F-FAC-06); the SI column is its rounding
+    assert CAT[key][gas] == pytest.approx(lb * LB_TO_KG, rel=1e-4)
+    assert CAT[key][gas] == pytest.approx(t_tj * MMBTU_PER_TJ_KG, rel=0.02)
 
 
 def test_turbine_n2o_and_engine_n2o():
-    assert CAT["Natural Gas - Turbine"]["n2o"] == pytest.approx(0.0013 * MMBTU_PER_TJ_KG, rel=5e-4)
-    assert CAT["Natural Gas - Turbine"]["n2o"] == pytest.approx(3.0e-3 * LB_TO_KG, rel=0.01)   # AP-42 3.1-2a
+    assert CAT["Natural Gas - Turbine"]["n2o"] == pytest.approx(3.0e-3 * LB_TO_KG, rel=1e-4)   # AP-42 3.1-2a (F-FAC-06)
+    assert CAT["Natural Gas - Turbine"]["n2o"] == pytest.approx(0.0013 * MMBTU_PER_TJ_KG, rel=0.01)
     for key in ("Natural Gas - 2-Stroke Lean Burn Engine", "Natural Gas - 4-Stroke Lean Burn Engine",
                 "Natural Gas - 4-Stroke Rich Burn Engine"):
         assert CAT[key]["n2o"] == pytest.approx(_NG[1])

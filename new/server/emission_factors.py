@@ -148,21 +148,21 @@ LEGACY_FACTORS = {
     },
     "Natural Gas - 4-Stroke Lean Burn Engine": {
         "code": "NG_4SLB",
-        "hhv": 1020,
+        "hhv": 1026,  # Btu/scf, 40 CFR 98 Table C-1 / Compendium Table 4-5 (audit 2026-11 F-FAC-01)
         "co2": 53.06,
-        "ch4": 0.56656,  # Table 4-7 AP-42: 0.537 t/10^12 J (HHV)
+        "ch4": 0.56699,  # Table 4-11 (AP-42 3.2-2): 1.25 lb/10^6 Btu (HHV) x 0.45359 (audit 2026-11 F-FAC-06)
         "n2o": 0.0001,
         "unit": "kg/MMBtu",
         "usage": ["combustion"],
-        "description": "Natural gas 4-stroke lean-burn engine (Table 4-7)",
+        "description": "Natural gas 4-stroke lean-burn engine (Table 4-11)",
         "uncertainty": {"co2": 0.05, "ch4": 0.3, "n2o": 0.3},
         "baseUnit": "scf",
     },
     "Natural Gas - 4-Stroke Rich Burn Engine": {
         "code": "NG_4SRB",
-        "hhv": 1020,
+        "hhv": 1026,  # Btu/scf, 40 CFR 98 Table C-1 / Compendium Table 4-5 (audit 2026-11 F-FAC-01)
         "co2": 53.06,
-        "ch4": 0.10551,  # Table 4-7 AP-42 uncontrolled: 0.10 t/10^12 J (HHV)
+        "ch4": 0.10433,  # Table 4-11 (AP-42 3.2-3) uncontrolled: 0.23 lb/10^6 Btu (HHV) (F-FAC-06)
         "n2o": 0.0001,
         "unit": "kg/MMBtu",
         "usage": ["combustion"],
@@ -209,10 +209,10 @@ LEGACY_FACTORS = {
     },
     "Natural Gas - Turbine": {
         "code": "NG_Turbine",
-        "hhv": 1020,
+        "hhv": 1026,  # Btu/scf, 40 CFR 98 Table C-1 / Compendium Table 4-5 (audit 2026-11 F-FAC-01)
         "co2": 53.06,
-        "ch4": 0.003904,  # Table 4-7: 0.0037 t/10^12 J (HHV)
-        "n2o": 0.001372,  # Table 4-7: 0.0013 t/10^12 J (HHV)
+        "ch4": 0.003901,  # Table 4-11 (AP-42 3.1-2a): 0.0086 lb/10^6 Btu (HHV) (F-FAC-06)
+        "n2o": 0.0013608,  # Table 4-11 (AP-42 3.1-2a): 0.003 lb/10^6 Btu (HHV) (F-FAC-06)
         "unit": "kg/MMBtu",
         "usage": ["combustion"],
         "uncertainty": {"co2": 0.05, "ch4": 0.2, "n2o": 0.2},
@@ -220,9 +220,9 @@ LEGACY_FACTORS = {
     },
     "Natural Gas - 2-Stroke Lean Burn Engine": {
         "code": "NG_2SLB",
-        "hhv": 1020,
+        "hhv": 1026,  # Btu/scf, 40 CFR 98 Table C-1 / Compendium Table 4-5 (audit 2026-11 F-FAC-01)
         "co2": 53.06,
-        "ch4": 0.6573,  # Table 4-7 AP-42: 0.623 t/10^12 J (HHV)
+        "ch4": 0.65771,  # Table 4-11 (AP-42 3.2-1): 1.45 lb/10^6 Btu (HHV) (F-FAC-06)
         "n2o": 0.0001,
         "unit": "kg/MMBtu",
         "usage": ["combustion"],
@@ -231,7 +231,7 @@ LEGACY_FACTORS = {
     },
     "Natural Gas - Heater/Boiler": {
         "code": "NG_Heater",
-        "hhv": 1020,
+        "hhv": 1026,  # Btu/scf, 40 CFR 98 Table C-1 / Compendium Table 4-5 (audit 2026-11 F-FAC-01)
         "co2": 53.06,
         "ch4": 0.001,
         "n2o": 0.0001,
@@ -262,7 +262,8 @@ LEGACY_FACTORS = {
         "unit": "tonnes/event",
         "usage": ["completions"],
         "description": "Average per event (Uncontrolled)",
-        "uncertainty": {"co2": 0.0, "ch4": 0.3, "n2o": 0.0},
+        # Table 6-9 prints +/-924 % for this factor (audit 2026-11 F-FAC-04: 30 % was stored)
+        "uncertainty": {"co2": 0.0, "ch4": 9.24, "n2o": 0.0},
     },
     "Tank - Flash Emissions (Oil)": {
         "code": "TankFlashOil",
@@ -273,7 +274,7 @@ LEGACY_FACTORS = {
         "factor": 0.193,
         "unit": "kg/bbl",
         "usage": ["tank_flashing"],
-        "description": "API Table 5-16 / 6-4 — Default crude oil flash emission factor",
+        "description": "API Compendium 2021 Table 6-22 — crude oil flashing (large tank, without control)",
         "uncertainty": {"co2": 0.15, "ch4": 0.4, "n2o": 0.0},
     },
 }
@@ -317,11 +318,11 @@ TIER1_FUEL_ADDITIONS = {
     # gases (per scf)
     "Acetylene": _fuel("Acetylene", 1470, "scf", 71.59, _PETROLEUM_CH4, _PETROLEUM_N2O,
                        "Table 3-8 (1,470 Btu/scf, 0.0686 lb/ft3, 92.3 wt % C), 100 % oxidation; Table 4-6"),
-    "Compressed Natural Gas (CNG)": _fuel("CNG", 1020, "scf", 53.06, _NG_CH4, _NG_N2O,
-                                          "Natural gas, Tables 3-8 / 4-5 / 4-6 (standard volume)",
+    "Compressed Natural Gas (CNG)": _fuel("CNG", 1026, "scf", 53.06, _NG_CH4, _NG_N2O,
+                                          "Natural gas, Table 4-5 (40 CFR 98 Table C-1: 1,026 Btu/scf, 53.06 kg CO2/MMBtu) / Table 4-6 (standard volume)",
                                           usage=("combustion", "mobile")),
-    "Liquefied Natural Gas (LNG)": _fuel("LNG", 1020, "scf", 53.06, _NG_CH4, _NG_N2O,
-                                         "Natural gas, Tables 3-8 / 4-5 / 4-6 (regasified standard volume)",
+    "Liquefied Natural Gas (LNG)": _fuel("LNG", 1026, "scf", 53.06, _NG_CH4, _NG_N2O,
+                                         "Natural gas, Table 4-5 (40 CFR 98 Table C-1: 1,026 Btu/scf, 53.06 kg CO2/MMBtu) / Table 4-6 (regasified standard volume)",
                                          usage=("combustion", "mobile")),
     "Propane (Flaring)": _pure_gas_flare("LPG_Flare", 3, "Propane flared (pure stream)"),
     "Butane (Flaring)": _pure_gas_flare("Butane_Flare", 4, "Butane flared (pure stream)"),
@@ -333,6 +334,71 @@ LEGACY_FACTORS.update(TIER1_FUEL_ADDITIONS)
 # Source of truth: ALL_EMISSION_FACTORS contains the full 120+ factors from Sections 5, 6, 7
 # We merge legacy definitions on top if they differ, but favor the new comprehensive database.
 API_FACTORS = {**ALL_EMISSION_FACTORS, **LEGACY_FACTORS}
+# a name defined in both tables is one row: the API 2021 table's values and metadata, with the legacy row's
+# fields it lacks and both usage lists. The manual route (ALL wins) and the bulk import (LEGACY wins) served
+# different copies, so a usage check ran on one path only (audit 2026-11 F-FAC-08).
+for _name in set(ALL_EMISSION_FACTORS) & set(LEGACY_FACTORS):
+    _all, _leg = ALL_EMISSION_FACTORS[_name], LEGACY_FACTORS[_name]
+    _usage = list(dict.fromkeys(list(_all.get("usage") or []) + list(_leg.get("usage") or [])))
+    API_FACTORS[_name] = {**_leg, **_all, **({"usage": _usage} if _usage else {})}
+
+# Rows whose source table prints no uncertainty ("Not specified"): their stored uncertainty is a platform
+# default, labelled as one so it is not read as a published value (audit 2026-11 F-FAC-04)
+UNCERTAINTY_DEFAULT_ROWS = frozenset({
+    'Acrylonitrile',
+    'Adipic Acid - Catalytic Abatement',
+    'Adipic Acid - Thermal Abatement',
+    'Adipic Acid - Uncontrolled',
+    'Asphalt',
+    'Associated Gas Venting - Anadarko Basin (Basin 360)',
+    'Associated Gas Venting - Gulf Coast Basin (Basin 220)',
+    'Associated Gas Venting - Other US Basins',
+    'Associated Gas Venting - Permian Basin (Basin 430)',
+    'Associated Gas Venting - US Average',
+    'Associated Gas Venting - Williston Basin (Basin 395)',
+    'Carbon Black',
+    'Carbon Black (Thermal Abatement)',
+    'Component - Block Valve',
+    'Component - Compressor Seal',
+    'Component - Connector (Non-Compressor)',
+    'Component - Control Valve',
+    'Component - Pressure Regulator',
+    'Component - Pressure Relief Valve',
+    'Ethylene (Ethane Feedstock)',
+    'Ethylene (Other Feedstocks)',
+    'Ethylene Dichloride',
+    'Ethylene Oxide',
+    'Ethylene Oxide (Thermal Abatement)',
+    'LNG - Export Terminal',
+    'LNG - Import Terminal',
+    'LNG - Storage Station',
+    'Liquids Unloading - Non-Plunger',
+    'Liquids Unloading - Non-Plunger (Tier 1 Default)',
+    'Liquids Unloading - Plunger Lift',
+    'Liquids Unloading - Plunger Lift (Tier 1 Default)',
+    'Methanol',
+    'Nitric Acid - With NSCR',
+    'Nitric Acid - Without NSCR',
+    'Offshore - Gas Production (Facility)',
+    'Offshore - Oil Production (Facility)',
+    'Pneumatic Controller - Continuous Vent (T&S)',
+    'Pneumatic Controller - High Bleed (>6 scfh)',
+    'Pneumatic Controller - Intermittent',
+    'Pneumatic Controller - Low Bleed (<6 scfh)',
+    'Refinery - Fuel Gas System (100-199k bbl/day)',
+    'Refinery - Fuel Gas System (50-99k bbl/day)',
+    'Tank - Crude Oil (Large, >10 bbl/d)',
+    'Tank - Crude Oil (Small, ≤10 bbl/d)',
+    'Tank - Flash Emissions (Oil)',
+    'Tank - Production Condensate (Large, >10 bbl/d)',
+    'Tank - Production Condensate (Small, ≤10 bbl/d)',
+    'UnloadNonPlunger',
+    'UnloadPlunger',
+})
+for _name, _row in API_FACTORS.items():
+    if isinstance(_row, dict) and isinstance(_row.get("uncertainty"), dict):
+        _row.setdefault("uncertainty_basis", "platform default (the source table prints no uncertainty)"
+                        if _name in UNCERTAINTY_DEFAULT_ROWS else "source table or IPCC 2006 default")
 
 # Update EQUIPMENT_FACTORS for internal module compatibility
 EQUIPMENT_FACTORS = {
@@ -372,56 +438,5 @@ PROCESS_TYPES = {
     "fugitive": "Fugitive Emissions",
 }
 
-# API Table 7-3: Correlation Equations (kg/hr/source)
-# Leak Rate = A * (Screening Value)^B
-CORRELATION_EQUATIONS = {
-    "gas_valve": {
-        "A": 2.29e-6,
-        "B": 0.746,
-        "max_ppm": 100000,
-        "pegged_10k": 0.064,
-        "pegged_100k": 0.11,
-    },
-    "light_liquid_valve": {
-        "A": 6.41e-6,
-        "B": 0.797,
-        "max_ppm": 100000,
-        "pegged_10k": 0.074,
-        "pegged_100k": 0.15,
-    },
-    "light_liquid_pump": {
-        "A": 5.03e-5,
-        "B": 0.610,
-        "max_ppm": 100000,
-        "pegged_10k": 0.16,
-        "pegged_100k": 0.68,
-    },
-    "connector": {
-        "A": 1.53e-6,
-        "B": 0.735,
-        "max_ppm": 100000,
-        "pegged_10k": 0.028,
-        "pegged_100k": 0.030,
-    },
-    "flange": {
-        "A": 4.61e-6,
-        "B": 0.703,
-        "max_ppm": 100000,
-        "pegged_10k": 0.085,
-        "pegged_100k": 0.089,
-    },
-    "open_ended_line": {
-        "A": 2.20e-6,
-        "B": 0.704,
-        "max_ppm": 100000,
-        "pegged_10k": 0.012,
-        "pegged_100k": 0.014,
-    },
-    "other": {
-        "A": 1.36e-5,
-        "B": 0.589,
-        "max_ppm": 100000,
-        "pegged_10k": 0.073,
-        "pegged_100k": 0.11,
-    },
-}
+# CORRELATION_EQUATIONS is the API 2021 table imported above (Compendium Tables 7-40 / 7-42). A second,
+# unused copy re-bound it here with values not in those tables (audit 2026-11 F-FAC-09).

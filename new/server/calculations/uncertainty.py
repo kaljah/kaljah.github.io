@@ -185,6 +185,25 @@ GWP_UNCERTAINTY_1SIGMA = {
     "n2o": 0.30 / 1.645,
 }
 
+# 5-95 % ranges by report and horizon, as 1-sigma (range / 1.645). The AR5 GWP100 ranges were used for every report
+# and horizon (audit 2026-11 F-AGG-09). AR5 WG1 s8.7.1.4: CH4 +/-40 % (100 yr) and +/-30 % (20 yr), N2O +/-30 % and
+# +/-20 %; AR6 WG1 Table 7.15: CH4 (fossil) 29.8 +/- 11 and 82.5 +/- 25.8, N2O 273 +/- 130 and 273 +/- 118; AR4 WG1
+# s2.10: +/-35 % for both gases. The report is recognised by its CH4 GWP.
+_GWP_RANGES_BY_CH4 = {
+    28.0: (0.40, 0.30), 84.0: (0.30, 0.20), 86.0: (0.30, 0.20),       # AR5 (84 / 86: 20-year, without / with feedback)
+    29.8: (11 / 29.8, 130 / 273), 27.0: (11 / 29.8, 130 / 273),       # AR6 100-year (fossil / non-fossil CH4)
+    82.5: (25.8 / 82.5, 118 / 273), 80.8: (25.8 / 82.5, 118 / 273), 79.7: (25.8 / 82.5, 118 / 273),  # AR6 20-yr
+    25.0: (0.35, 0.35), 72.0: (0.35, 0.35),                           # AR4
+}
+
+
+def gwp_uncertainty_1sigma(gwp_dict=None):
+    """Relative 1-sigma GWP uncertainties {co2, ch4, n2o} of the report and horizon of `gwp_dict` (AR5 GWP100 when
+    the set is not recognised)."""
+    ch4 = round(float((gwp_dict or {}).get("CH4", 28.0)), 1)
+    r_ch4, r_n2o = _GWP_RANGES_BY_CH4.get(ch4, (0.40, 0.30))
+    return {"co2": 0.0, "ch4": r_ch4 / 1.645, "n2o": r_n2o / 1.645}
+
 
 def propagate_co2e_uncertainty(
     e_co2,
@@ -247,7 +266,7 @@ def propagate_co2e_uncertainty(
     val_ch4, unc_ch4 = _extract_val_unc(e_ch4, u_ch4)
     val_n2o, unc_n2o = _extract_val_unc(e_n2o, u_n2o)
 
-    gwp_uncs = gwp_uncertainties or GWP_UNCERTAINTY_1SIGMA
+    gwp_uncs = gwp_uncertainties or gwp_uncertainty_1sigma(gwps)
     u_gwp_ch4 = float(gwp_uncs.get("ch4", GWP_UNCERTAINTY_1SIGMA["ch4"])) if include_gwp_uncertainty else 0.0
     u_gwp_n2o = float(gwp_uncs.get("n2o", GWP_UNCERTAINTY_1SIGMA["n2o"])) if include_gwp_uncertainty else 0.0
 
@@ -528,6 +547,10 @@ def monte_carlo_simulation(
         "p5": round(totals[int(0.05 * n)], 4),
         "p95": round(totals[int(0.95 * n)], 4),
         "relative_uncertainty_95pct": round(u_95_pct, 2),
+        # IPCC 2006 Vol 1 p 3.9: an asymmetric distribution is given by its lower and upper limits; the symmetric
+        # half-width above is kept for continuity (audit 2026-11 F-GREST-02)
+        "lower_uncertainty_95pct": round((ci_lower - mean_res) / mean_res * 100.0, 2) if mean_res else None,
+        "upper_uncertainty_95pct": round((ci_upper - mean_res) / mean_res * 100.0, 2) if mean_res else None,
         "iterations": iterations,
         "histogram": bins,
         "percentiles": percentiles,
@@ -721,6 +744,15 @@ def resolve_tier(factor_source: str) -> int:
     ]:
         return Tier.T2
     return Tier.T1  # 'default' or unknown → Tier 1
+
+
+def flare_tier1_uncertainty(fuel_type, gas, tier):
+    """Compendium Table 5-5 Tier 1 CO2 / CH4 half-widths for oil-production flares: +/-50 % conventional, +/-75 % heavy /
+    thermal oil (the gas-flare +/-25 % was used for every flare: audit 2026-11 F-AGG-12). None for other flares."""
+    f = str(fuel_type or "").lower()
+    if tier != Tier.T1 or gas not in ("co2", "ch4") or not any(k in f for k in ("oil", "associated", "crude")):
+        return None
+    return 0.75 if any(k in f for k in ("heavy", "thermal")) else 0.50
 
 
 def resolve_ef_uncertainty(

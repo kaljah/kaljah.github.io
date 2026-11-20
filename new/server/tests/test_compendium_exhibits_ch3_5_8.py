@@ -65,6 +65,7 @@ def test_exhibit_4_2_natural_gas_energy_input_and_co2(app):
     only the energy; CO2 is that energy times the Table 4-3 / 4-5 natural-gas factor 0.05306 t/MMBtu (HHV)."""
     em = run_scope1(app, {"process_type": "combustion", "factor_source": "default", "fuel": "Natural Gas",
                           "fuel_type": "Natural Gas", "amount": 800e6, "quantity": 800e6, "unit": "scf",
+                          "hhv": 1020,  # the exhibit's own HHV; the catalog row carries Table C-1 1,026 (F-FAC-01)
                           "calc_inputs": {"combustion": {"amount": 800e6, "unit": "scf", "fuel": "Natural Gas"}}})
     assert em["co2"] == pytest.approx(8.16e11 / 1e6 * 0.05306, rel=1e-6)
 

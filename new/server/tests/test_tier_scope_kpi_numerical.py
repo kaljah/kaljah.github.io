@@ -288,6 +288,7 @@ class TestScope2Methods:
                     "total_emissions": 10000.0,
                     "heat_output": 60.0,
                     "power_output": 40.0,
+                    "quantity_bought": 60.0,  # the whole heat output bought (audit 2026-11 F-S23-01)
                     "allocation_method": "wri_efficiency",
                 }
             },
@@ -304,6 +305,7 @@ class TestScope2Methods:
                     "total_emissions": 10000.0,
                     "heat_output": 60.0,
                     "power_output": 40.0,
+                    "quantity_bought": 60.0,
                     "allocation_method": "energy_content",
                 }
             },
@@ -378,13 +380,13 @@ class TestKPIsAndIntensities:
     """Verifies all Dashboard and Executive KPI mathematical equations."""
 
     def test_boe_production_normalization_exactness(self):
-        """BOE = oil (bbl) + gas (Mscf) x 1.02 / 5.8 through the platform function: 5,000 bbl + 10 MMscf (10,000 Mscf)
+        """BOE = oil (bbl) + gas (Mscf) x (1000 / 5647.52) through the platform function: 5,000 bbl + 10 MMscf (10,000 Mscf)
         = 5,000 + 1,758.6 = 6,758.6 BOE."""
         from types import SimpleNamespace
         from services.dashboard_filters import production_boe
         row = SimpleNamespace(oil_amount=5000.0, oil_unit="bbl", gas_amount=10.0, gas_unit="mmscf", year=2026, month=1,
                               total_production_mmboe=None)
-        assert production_boe(row) == pytest.approx(5000.0 + 10_000.0 * 1.02 / 5.8, rel=1e-6)
+        assert production_boe(row) == pytest.approx(5000.0 + 10_000.0 * (1000 / 5647.52), rel=1e-6)
 
     def test_carbon_intensity_metric_equations(self):
         """Carbon intensity (kg CO2e / BOE) = tCO2e x 1,000 / BOE, through the platform for a facility with 120 t Scope 1 and

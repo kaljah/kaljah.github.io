@@ -65,14 +65,17 @@ TRANSMISSION_EF_KG_PER_MILE = 0.226
 TRANSMISSION_EF_T_PER_KM = 1.40e-4
 
 # 100-year / 20-year GWPs of the fluorinated gases, by IPCC report. Blends: Table 7-84 prints AR5 values only.
+# AR6 SF6 and Halon-1301 follow AR6 WG1 Table 7.SM.7 (SF6 24,300 / 18,200 with its assessed 1,000-year lifetime;
+# Halon-1301 7,200 / 8,320); 25,200 was Hodnebrog et al. 2020 (audit 2026-11 F-GSTD-01). SAR (100 years) from
+# AR4 WG1 Table 2.14's SAR column; SAR 20-year F-gas values are not printed there (None: refused) (F-FUG-05).
 _FGAS_GWP = {
-    "SF6": {"AR4": (22800.0, 16300.0), "AR5": (23500.0, 17500.0), "AR6": (25200.0, 18300.0)},
-    "HFC-134A": {"AR4": (1430.0, 3830.0), "AR5": (1300.0, 3710.0), "AR6": (1530.0, 4140.0)},
+    "SF6": {"SAR": (23900.0, None), "AR4": (22800.0, 16300.0), "AR5": (23500.0, 17500.0), "AR6": (24300.0, 18200.0)},
+    "HFC-134A": {"SAR": (1300.0, None), "AR4": (1430.0, 3830.0), "AR5": (1300.0, 3710.0), "AR6": (1530.0, 4140.0)},
     # fire suppression clean agents (Compendium s6.14): AR4 WG1 Table 2.14, AR5 WG1 Table 8.A.1, AR6 WG1 Table 7.SM.7
-    "HFC-227EA": {"AR4": (3220.0, 5310.0), "AR5": (3350.0, 5360.0), "AR6": (3600.0, 5850.0)},
-    "HFC-125": {"AR4": (3500.0, 6350.0), "AR5": (3170.0, 6090.0), "AR6": (3740.0, 6740.0)},
-    "HFC-236FA": {"AR4": (9810.0, 8100.0), "AR5": (8060.0, 6940.0), "AR6": (8690.0, 7450.0)},
-    "HALON-1301": {"AR4": (7140.0, 8480.0), "AR5": (6290.0, 7800.0), "AR6": (6670.0, 8320.0)},
+    "HFC-227EA": {"SAR": (2900.0, None), "AR4": (3220.0, 5310.0), "AR5": (3350.0, 5360.0), "AR6": (3600.0, 5850.0)},
+    "HFC-125": {"SAR": (2800.0, None), "AR4": (3500.0, 6350.0), "AR5": (3170.0, 6090.0), "AR6": (3740.0, 6740.0)},
+    "HFC-236FA": {"SAR": (6300.0, None), "AR4": (9810.0, 8100.0), "AR5": (8060.0, 6940.0), "AR6": (8690.0, 7450.0)},
+    "HALON-1301": {"SAR": (5400.0, None), "AR4": (7140.0, 8480.0), "AR5": (6290.0, 7800.0), "AR6": (7200.0, 8320.0)},
 }
 _AR5_BLENDS = {  # Table 7-84 (IPCC AR5, 100 years); "na" entries are absent
     "R-401A": 18, "R-401B": 15, "R-401C": 21, "R-402A": 1902, "R-402B": 1205, "R-403A": 1780, "R-403B": 3471,
@@ -82,8 +85,8 @@ _AR5_BLENDS = {  # Table 7-84 (IPCC AR5, 100 years); "na" entries are absent
     "R-503": 4972, "R-504": 326, "R-507": 3985, "R-507A": 3985, "R-509": 4984, "R-509A": 4984,
 }
 _ALIASES = {"R-134A": "HFC-134A", "HFC134A": "HFC-134A", "R134A": "HFC-134A", "FREON-134A": "HFC-134A"}
-_STANDARD_BY_CH4 = {25.0: ("AR4", 0), 28.0: ("AR5", 0), 29.8: ("AR6", 0), 72.0: ("AR4", 1), 84.0: ("AR5", 1),
-                    82.5: ("AR6", 1)}
+_STANDARD_BY_CH4 = {21.0: ("SAR", 0), 56.0: ("SAR", 1), 25.0: ("AR4", 0), 28.0: ("AR5", 0), 29.8: ("AR6", 0),
+                    72.0: ("AR4", 1), 84.0: ("AR5", 1), 82.5: ("AR6", 1)}
 
 
 def _num(inputs, key, what=None, required=True, minimum=0.0):
@@ -119,9 +122,15 @@ def fgas_gwp(gas, gwp_dict=None, override=None):
     key = _ALIASES.get(key, key)
     std, horizon = "AR5", 0
     if gwp_dict and gwp_dict.get("CH4") is not None:
-        std, horizon = _STANDARD_BY_CH4.get(round(float(gwp_dict["CH4"]), 1), ("AR5", 0))
+        found = _STANDARD_BY_CH4.get(round(float(gwp_dict["CH4"]), 1))
+        if found is None:  # an unknown set was mapped to AR5 silently (audit 2026-11 F-FUG-05)
+            raise ValueError(f"No F-gas GWP set matches the CH4 GWP {gwp_dict['CH4']}: enter the gas's GWP")
+        std, horizon = found
     if key in _FGAS_GWP:
-        return _FGAS_GWP[key][std][horizon]
+        g = _FGAS_GWP[key][std][horizon]
+        if g is None:
+            raise ValueError(f"{gas}: no {std} {'20' if horizon else '100'}-year GWP is printed; enter the gas's GWP")
+        return g
     if key in _AR5_BLENDS:
         if std != "AR5" or horizon:
             raise ValueError(f"Table 7-84 prints the GWP of {gas} for IPCC AR5 (100 years) only: enter its GWP for the "
@@ -202,6 +211,16 @@ class WastewaterCalculator(BaseCalculator):
             bod5 = _num(inputs, "bod5_mg_l", "BOD5 removed (mg/L)")
             co2 = volume_m3 * 1000.0 * bod5 / 0.7 * 44.0 / 32.0 / 1e9  # Eq 7-19, tonnes (mg -> t is 1e9)
             detail["ultimate_bod_mg_l"] = bod5 / 0.7
+            # Eq 7-17 CH4 of an aerobic plant: Table 7-81 allows an MCF up to 0.1 (poorly managed / overloaded);
+            # it had no CH4 term at all (audit 2026-11 F-FUG-12). Only with an entered MCF and COD.
+            mcf_a = _num(inputs, "mcf", required=False)
+            if mcf_a:
+                if mcf_a > 0.1:
+                    raise ValueError("Table 7-81: an aerobic treatment MCF is at most 0.1")
+                cod_a = _num(inputs, "cod_kg_m3", "COD (kg/m3), for the CH4 of an aerobic plant (Eq 7-17)")
+                b_a = _num(inputs, "ch4_capacity_kg_per_kg_cod", required=False)
+                ch4 = volume_m3 * cod_a * (CH4_PER_COD if b_a is None else b_a) * mcf_a * 0.001
+                detail.update(mcf=mcf_a)
         elif m in ("anaerobic_epa", "epa", "eq_7_20"):
             bod_lb_ft3 = _num(inputs, "bod5_lb_ft3", "BOD5 loading (lb/ft3)")
             fad_pct = _num(inputs, "fad_pct", "Fraction anaerobically digested (%)")
@@ -219,7 +238,8 @@ class WastewaterCalculator(BaseCalculator):
             if mcf > 1:
                 raise ValueError("MCF is a fraction between 0 and 1")
             sludge = _num(inputs, "sludge_cod_kg", required=False) or 0.0
-            b = _num(inputs, "ch4_capacity_kg_per_kg_cod", required=False) or CH4_PER_COD
+            b = _num(inputs, "ch4_capacity_kg_per_kg_cod", required=False)
+            b = CH4_PER_COD if b is None else b  # an entered 0 is 0 (it took the default via `or`; F-FUG-12)
             organic = volume_m3 * cod - sludge
             if organic < 0:
                 raise ValueError("Organic component removed as sludge exceeds the COD of the wastewater")
@@ -384,7 +404,14 @@ def dispatch_other_fugitive(process_type, inputs, emission_factors, uncertaintie
     days = record_period(flat)[1] if days is None else days
     if days > 366:
         raise ValueError("'operating_days' must be between 0 and 366")
-    year_fraction = days / 365.0 if _num(flat, "operating_days", required=False) is not None else record_period(flat)[2]
+    # entered days over the days of the record's year (366 in a leap year; audit 2026-11 F-FUG-07)
+    if _num(flat, "operating_days", required=False) is not None:
+        import calendar
+        _y = flat.get("year")
+        year_days = 366.0 if (_y not in (None, "") and calendar.isleap(int(_y))) else 365.0
+        year_fraction = days / year_days
+    else:
+        year_fraction = record_period(flat)[2]
     if isinstance(calc, WastewaterCalculator):
         if flat.get("flow") in (None, ""):  # the record's activity amount and unit are the flow
             flat = {**flat, "flow": flat.get("amount", flat.get("quantity")), "flow_unit": flat.get("flow_unit") or flat.get("unit")}

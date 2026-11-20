@@ -49,7 +49,9 @@ def validate_goal_trajectory(
 
         # 3. Consistency with annual and cumulative inventory baseline
         if annual_inventory_baseline > 0:
-            if target < 0.10 * annual_inventory_baseline:
+            # a net-zero target (2040 onwards) keeps ~10 % residual emissions and is not "suspicious" (audit 2026-11
+            # F-AGG-15): only under 1 % is flagged there (more likely entered in kt); nearer years under 10 %
+            if target < (0.01 if int(yr) >= 2040 else 0.10) * annual_inventory_baseline:
                 msg = f"Target for {yr} ({target:,.0f} tCO2e) is suspiciously low compared to annual inventory (~{annual_inventory_baseline:,.0f} tCO2e)"
                 if cumulative_scope1 > 0:
                     msg += f" and cumulative Scope 1 (~{cumulative_scope1:,.0f} tCO2e)"

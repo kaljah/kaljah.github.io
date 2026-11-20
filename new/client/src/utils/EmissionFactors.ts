@@ -31,7 +31,7 @@ export const API_FACTORS: Record<string, ApiFactorItem> = {
   // --- GASES ---
   "Natural Gas": {
     code: "NG",
-    hhv: 1020, // Btu/scf
+    hhv: 1026, // Btu/scf, 40 CFR 98 Table C-1 (audit 2026-11 F-FAC-01)
     co2: 53.06,
     ch4: 0.001,
     n2o: 0.0001,
@@ -154,7 +154,7 @@ export const API_FACTORS: Record<string, ApiFactorItem> = {
   },
   "Compressed Natural Gas (CNG)": {
     code: "CNG",
-    hhv: 1020,
+    hhv: 1026,
     co2: 53.06,
     ch4: 0.001,
     n2o: 0.0001,
@@ -165,7 +165,7 @@ export const API_FACTORS: Record<string, ApiFactorItem> = {
   },
   "Liquefied Natural Gas (LNG)": {
     code: "LNG",
-    hhv: 1020,
+    hhv: 1026,
     co2: 53.06,
     ch4: 0.001,
     n2o: 0.0001,
@@ -273,49 +273,49 @@ export const API_FACTORS: Record<string, ApiFactorItem> = {
   },
 
   // --- COMBUSTION - EQUIPMENT SPECIFIC (API Compendium Sec 4) ---
-  // Table 4-7 (t/10^12 J HHV) in kg/MMBtu
+  // Table 4-11 original lb/10^6 Btu (HHV) x 0.45359 in kg/MMBtu (audit 2026-11 F-FAC-06)
   "Natural Gas - 4-Stroke Lean Burn Engine": {
     code: "NG_4SLB",
-    hhv: 1020,
+    hhv: 1026,
     co2: 53.06,
-    ch4: 0.56656,
+    ch4: 0.56699,
     n2o: 0.0001,
     unit: "kg/MMBtu",
     usage: ["combustion"],
     uncertainty: { co2: 0.05, ch4: 0.3, n2o: 0.3 },
     baseUnit: "scf",
   },
-  // Table 4-7 (t/10^12 J HHV) in kg/MMBtu
+  // Table 4-11 original lb/10^6 Btu (HHV) x 0.45359 in kg/MMBtu (audit 2026-11 F-FAC-06)
   "Natural Gas - 4-Stroke Rich Burn Engine": {
     code: "NG_4SRB",
-    hhv: 1020,
+    hhv: 1026,
     co2: 53.06,
-    ch4: 0.10551,
+    ch4: 0.10433,
     n2o: 0.0001,
     unit: "kg/MMBtu",
     usage: ["combustion"],
     uncertainty: { co2: 0.05, ch4: 0.3, n2o: 0.3 },
     baseUnit: "scf",
   },
-  // Table 4-7 (t/10^12 J HHV) in kg/MMBtu
+  // Table 4-11 original lb/10^6 Btu (HHV) x 0.45359 in kg/MMBtu (audit 2026-11 F-FAC-06)
   "Natural Gas - 2-Stroke Lean Burn Engine": {
     code: "NG_2SLB",
-    hhv: 1020,
+    hhv: 1026,
     co2: 53.06,
-    ch4: 0.6573,
+    ch4: 0.65771,
     n2o: 0.0001,
     unit: "kg/MMBtu",
     usage: ["combustion"],
     uncertainty: { co2: 0.05, ch4: 0.3, n2o: 0.2 },
     baseUnit: "scf",
   },
-  // Table 4-7 (t/10^12 J HHV) in kg/MMBtu
+  // Table 4-11 original lb/10^6 Btu (HHV) x 0.45359 in kg/MMBtu (audit 2026-11 F-FAC-06)
   "Natural Gas - Turbine": {
     code: "NG_Turbine",
-    hhv: 1020,
+    hhv: 1026,
     co2: 53.06,
-    ch4: 0.003904,
-    n2o: 0.001372,
+    ch4: 0.003901,
+    n2o: 0.0013608,
     unit: "kg/MMBtu",
     usage: ["combustion"],
     uncertainty: { co2: 0.05, ch4: 0.2, n2o: 0.2 },
@@ -323,7 +323,7 @@ export const API_FACTORS: Record<string, ApiFactorItem> = {
   },
   "Natural Gas - Heater/Boiler": {
     code: "NG_Heater",
-    hhv: 1020,
+    hhv: 1026,
     co2: 53.06,
     ch4: 0.001,
     n2o: 0.0001,
@@ -392,6 +392,18 @@ export const API_FACTORS: Record<string, ApiFactorItem> = {
     unit: "kg/MMBtu",
     usage: ["combustion", "mobile"],
     // stream: "Downstream"
+    baseUnit: "gal",
+  },
+  // 40 CFR 98 Table C-1 LPG row (audit 2026-11 F-FAC-07)
+  "Liquefied Petroleum Gas (LPG)": {
+    code: "LPG",
+    hhv: 92000,
+    co2: 61.71,
+    ch4: 0.003,
+    n2o: 0.0006,
+    uncertainty: { co2: 0.02, ch4: 0.25, n2o: 0.3 },
+    unit: "kg/MMBtu",
+    usage: ["combustion", "mobile"],
     baseUnit: "gal",
   },
   "Propane (Liquid)": {
@@ -513,8 +525,9 @@ export const API_FACTORS: Record<string, ApiFactorItem> = {
     code: "PetCoke",
     hhv: 30000,
     co2: 102.41,
-    ch4: 0.032,
-    n2o: 0.0042,
+    // 40 CFR 98 Table C-2 petroleum products / Compendium Table 4-8 + Dec 2025 correction (audit 2026-11 F-FAC-05)
+    ch4: 0.003,
+    n2o: 0.0006,
     uncertainty: { co2: 0.03, ch4: 0.3, n2o: 0.4 },
     unit: "kg/MMBtu",
     usage: ["combustion"],

@@ -209,7 +209,12 @@ _TOKENS = [
 # a thermal oxidizer is a combustion device (5.3). As "other" their CH4 was counted as combustion
 # methane and their emissions left out of Venting on the dashboard.
 _EXPLICIT = {"well_testing": "vented", "workovers": "vented", "workover": "vented", "separation": "vented",
-             "co2_eor": "vented", "thermal_oxidizer": "combustion"}
+             "co2_eor": "vented", "thermal_oxidizer": "combustion",
+             # midstream non-routine releases and compressor venting (Compendium Tables 6-33 / 6-43, s6.6) are vented;
+             # wastewater (s7.5) is a non-combustion process source (audit 2026-11 F-GAPI-01: all were "other")
+             "transmission_non_routine": "vented", "gathering_non_routine": "vented",
+             "processing_non_routine": "vented", "distribution_non_routine": "vented",
+             "transmission_compressor": "vented", "gathering_compressor": "vented", "wastewater": "process"}
 
 
 def source_category(process_type):
@@ -260,8 +265,7 @@ def gas_volume_m3(quantity, unit, year=None, month=None):
 
 
 # ── BOE (BUG-044): one definition for every endpoint ─────────────────────────────
-# API Compendium 2021 BOE conversion: 5.8 MMBtu per BOE and the heat content of the gas. With the platform's
-# natural gas HHV (1,020 Btu/scf, emission_factors.py) that is 1.020 / 5.8 = 0.17586 BOE per Mcf (5,686 scf/BOE).
+# API Compendium 2021 Table 3-4 BOE: 5.8 MMBtu per BOE; 1 BOE of natural gas = 5,647.52 scf (0.17707 BOE per Mcf).
 from calculations.units import (
     NG_HHV_BTU_PER_SCF,
     MMBTU_PER_BOE,

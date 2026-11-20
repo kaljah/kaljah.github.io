@@ -111,11 +111,23 @@ def normalize_process_type(raw):
     return s if s in dispatcher.calculators else None
 
 
+def check_working_loss_factor(process_type, factor_data, fuel=None):
+    """A Table 6-22 / 6-24 flashing-loss row is not a working or standing (breathing) loss factor (Compendium
+    s6.3.9.3); it was accepted and double-counted with the tank's flashing record (audit 2026-11 F-GREST-06)."""
+    if not factor_data or factor_data.get("custom_factor_id") or _slug(process_type) not in ("tank_working", "tank_breathing"):
+        return
+    txt = " ".join(str(factor_data.get(k) or "") for k in ("source", "description", "name")).lower() + " " + str(fuel or "").lower()
+    if "flash" in txt or "table 6-22" in txt or "table 6-24" in txt or "crude oil (" in txt or "condensate (" in txt:
+        raise ValidationError(f"'{fuel or factor_data.get('name') or 'This factor'}' is a flashing-loss factor "
+                              "(Table 6-22 / 6-24) and does not apply to working or breathing losses", "fuel")
+
+
 def check_factor_usage(process_type, factor_data, fuel=None):
     """A catalog factor carries the processes it applies to (`usage`); a Tier 1 row must not
     book, for example, crude-oil combustion under tank flashing."""
     from calculations.dispatcher import dispatcher
 
+    check_working_loss_factor(process_type, factor_data, fuel)
     usage = (factor_data or {}).get("usage")
     if not usage or factor_data.get("custom_factor_id"):
         return
@@ -197,8 +209,11 @@ def edit_names_a_saved_input(data, source_payload, process_type):
     return any(k in names and k not in _NOT_INPUTS for k in data)
 
 
+# year / month / facility_id change the record's period (per-hour and per-year factors) and the facility's segment
+# (downstream flare default), so an edit of them recalculates (audit 2026-11 F-CORE-05)
 _RECALC_KEYS = frozenset({"quantity", "amount", "fuel", "fuel_type", "unit", "custom_factor_id", "calc_method",
-                          "process_type", "factor_source", "calc_inputs", "hhv", "user_uncertainty"})
+                          "process_type", "factor_source", "calc_inputs", "hhv", "user_uncertainty",
+                          "year", "month", "facility_id"})
 
 
 def edit_needs_recalculation(data, record):
@@ -287,14 +302,54 @@ def _check_numeric_inputs(values):
             parse_number(raw, key)
 
 
+def map_activity_label(payload):
+    """A Compendium activity row named by its label in the fuel field selects that row (activity_key), on every
+    path: the bulk import did it, the JSON import and POST did not (audit 2026-11 F-GAPI-04)."""
+    from calculations.activity_factors import ACTIVITY_FACTORS
+    from routes.emissions import _lookup_api_factor
+
+    if payload.get("activity_key") not in (None, ""):
+        return
+    if str(payload.get("factor_source") or "default").lower() != "default":
+        return
+    fuel = str(payload.get("fuel") or payload.get("fuel_type") or "").strip()
+    if not fuel or _lookup_api_factor(fuel):
+        return
+    by_label = {v["label"].strip().lower(): k for k, v in ACTIVITY_FACTORS.items()}
+    akey = by_label.get(fuel.lower())
+    proc = _slug(payload.get("process_type"))
+    if akey and proc in ACTIVITY_FACTORS[akey]["processes"]:
+        payload["activity_key"] = akey
+        payload.pop("fuel", None)
+        payload.pop("fuel_type", None)
+
+
 def validate_activity(payload, require_unit):
     """BUG-050 / BUG-068 / BUG-109: validate before any calculator runs."""
-    ptype = str(payload.get("process_type") or "").strip().lower()
-    if ptype in SCOPE2_PROCESS_TYPES:
+    raw = payload.get("process_type")
+    ptype = str(raw or "").strip().lower()
+    slug = _slug(raw)
+    canonical = normalize_process_type(raw) if not isinstance(raw, (dict, list)) else None
+    # a Section 8 label ("Indirect Steam / Heat (Section 8)") or "purchased steam" passed the Scope 2 check as raw
+    # text and was booked as Scope 1 (audit 2026-11 F-GAPI-03)
+    if ptype in SCOPE2_PROCESS_TYPES or slug in SCOPE2_PROCESS_TYPES or canonical in SCOPE2_PROCESS_TYPES:
         raise ValidationError(f"'{payload.get('process_type')}' is a Scope 2 (purchased energy) source; "
                               "record it on the Scope 2 page", "process_type")
+    if raw not in (None, "") and not isinstance(raw, (dict, list)):
+        if canonical is None:
+            # an unknown process silently became a catalog multiplication on every tier (audit 2026-11 F-CORE-06)
+            raise ValidationError(f"Unknown process type '{raw}'", "process_type")
+        from calculations.dispatcher import dispatcher
+        if slug not in PROCESS_LABELS and slug not in dispatcher.calculators and canonical != slug:
+            # a label or synonym is stored as its process key, as the bulk import does (audit 2026-11 F-UPL-11)
+            payload["process_type"] = canonical
+            ci = payload.get("calc_inputs")
+            if isinstance(ci, dict) and raw in ci and canonical not in ci:
+                ci[canonical] = ci.pop(raw)
+            ptype = canonical
     if any(isinstance(payload.get(k), (dict, list)) for k in ("fuel", "fuel_type", "unit", "process_type")):
         raise ValidationError("fuel, unit and process type must be text", "fuel_type")
+    map_activity_label(payload)
     _check_numeric_inputs(payload)
     for nested in (payload.get("calc_inputs") or {}).values() if isinstance(payload.get("calc_inputs"), dict) else ():
         if isinstance(nested, dict):
@@ -380,6 +435,18 @@ def resolve_factor(payload, stored_payload=None, allow_archived=False, kept_fact
             cf = None
         if cf is None or (cf.is_archived and not allow_archived):
             raise ValidationError(f"Custom factor {cf_id} does not exist or is archived", "custom_factor_id")
+        # a factor belongs to its organisation and, when saved for one facility, to that facility only: another
+        # tenant's factor was usable by its id and a facility-2 factor on facility 1 (audit 2026-11 F-GAPI-02,
+        # F-GREST-01). The message does not reveal whether another organisation owns the id.
+        from flask import has_request_context
+        from utils import get_current_tenant_id, normalize_tenant_id
+
+        if has_request_context() and normalize_tenant_id(getattr(cf, "tenant_id", None)) != get_current_tenant_id():
+            raise ValidationError(f"Custom factor {cf_id} does not exist or is archived", "custom_factor_id")
+        rec_fac = payload.get("facility_id") if payload.get("facility_id") not in (None, "") else             (stored_payload or {}).get("facility_id")
+        if getattr(cf, "facility_id", None) is not None and rec_fac not in (None, "") and                 str(cf.facility_id) != str(rec_fac) and str(cf.id) != str(kept_factor_id or ""):
+            raise ValidationError(f"Custom factor '{cf.name}' was saved for another facility and cannot be used here",
+                                  "custom_factor_id")
         # review 2026-10-15: a factor calculates only once a superuser or admin approved it (Pending and
         # Rejected factors were used at once). A record keeps the factor it was saved with when edited.
         if (cf.status or "Approved") != "Approved" and str(cf.id) != str(kept_factor_id or ""):
@@ -409,6 +476,8 @@ def resolve_factor(payload, stored_payload=None, allow_archived=False, kept_fact
                 "fuel",
             )
         check_activity_unit(catalog, payload.get("unit"), payload.get("fuel") or payload.get("fuel_type"))
+        # a flashing-loss row on a working / breathing loss record is refused on this path too (F-GREST-06)
+        check_working_loss_factor(process, catalog, payload.get("fuel") or payload.get("fuel_type"))
     return catalog
 
 

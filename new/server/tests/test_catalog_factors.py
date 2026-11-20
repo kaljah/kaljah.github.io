@@ -24,7 +24,7 @@ def flare(ch4, nmhc_c, co2_in, de, ce=0.965):
 
 # ---- Table 4-5 (40 CFR 98 Table C-1): heating value and kg CO2/MMBtu ----
 @pytest.mark.parametrize("key,hhv,co2", [
-    ("Natural Gas", 1020, 53.06), ("Propane (Gas)", 2516, 61.46), ("Propane (Liquid)", 91000, 62.87),
+    ("Natural Gas", 1026, 53.06), ("Propane (Gas)", 2516, 61.46), ("Propane (Liquid)", 91000, 62.87),
     ("Propane (Liquid/LPG)", 91000, 62.87), ("Ethane", 68000, 59.60), ("Diesel (No. 2 Fuel Oil)", 138000, 73.96),
     ("Marine Diesel Oil", 138000, 73.96), ("Residual Fuel Oil (No. 6)", 150000, 75.10), ("Kerosene", 135000, 75.20),
     ("Jet Fuel", 135000, 72.22), ("Motor Gasoline", 125000, 70.22), ("Crude Oil", 138000, 74.54),
@@ -37,7 +37,8 @@ def test_table_4_5_fuels(key, hhv, co2):
 
 
 def test_table_4_6_petroleum_coke_and_fuel_gas():
-    assert (CAT["Petroleum Coke"]["ch4"], CAT["Petroleum Coke"]["n2o"]) == (0.032, 0.0042)
+    # Table C-2 petroleum products / Table 4-8 / Dec 2025 correction (audit 2026-11 F-FAC-05)
+    assert (CAT["Petroleum Coke"]["ch4"], CAT["Petroleum Coke"]["n2o"]) == (0.003, 0.0006)
     assert (CAT["Refinery Fuel Gas"]["ch4"], CAT["Refinery Fuel Gas"]["n2o"]) == (0.003, 0.0006)
 
 

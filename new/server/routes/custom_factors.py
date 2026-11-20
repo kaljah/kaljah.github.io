@@ -12,9 +12,8 @@ from utils import (
     normalize_tenant_id,
     tenant_matches,
 )
-from services.custom_factor_policy import (
-    PLAUSIBILITY_BOUNDS, check_update, factor_references, governance, second_approver_required, with_justification,
-)
+from services.custom_factor_policy import PLAUSIBILITY_BOUNDS, check_update, factor_references, governance
+from services.custom_factor_policy import second_approver_required, visible_factors, with_justification
 
 custom_factors_bp = Blueprint("custom_factors", __name__)
 
@@ -32,6 +31,7 @@ def get_custom_factors():
     q = CustomFactor.query.filter(tenant_matches(CustomFactor.tenant_id, caller_tenant))
     if request.args.get("include_archived") not in ("1", "true"):
         q = q.filter(CustomFactor.is_archived.is_(False))
+    q = visible_factors(q, user)  # a facility's factor only to users who see the facility (audit 2026-11 F-GREST-01)
     factors = q.all()
     return jsonify(
         [

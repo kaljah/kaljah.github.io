@@ -251,10 +251,10 @@ def test_vented_associated_and_lng_additional_bounds():
 
     lng = LNGVentingCalculator()
     with pytest.raises(ValueError, match="transfer_volume cannot be negative"):
-        lng.calculate(activity="loading_transfer", transfer_volume_m3=-10.0)
+        lng.calculate(activity="loading_transfer", expansion_ratio=600.0, transfer_volume_m3=-10.0)
 
     with pytest.raises(ValueError, match="ch4_content cannot be negative"):
-        lng.calculate(activity="loading_transfer", transfer_volume_m3=100.0, ch4_content=-0.1)
+        lng.calculate(activity="loading_transfer", expansion_ratio=600.0, transfer_volume_m3=100.0, ch4_content=-0.1)
 
     with pytest.raises(ValueError, match="vented_gas cannot be negative"):
         lng.calculate(activity="direct_bog_vent", vented_gas_scf=-50.0)

@@ -163,7 +163,7 @@ def test_lng_distribution_and_non_routine_thorough():
     # Table 6-44 BOG transfer pipe losses for foam, powder, vacuum
     for ins in ("foam", "powder", "vacuum"):
         res_lng = lng.calculate(
-            activity="loading_transfer",
+            activity="loading_transfer", expansion_ratio=600.0,
             transfer_volume_m3=10000.0,
             pipe_length_km=2.5,
             insulation_type=ins,
@@ -175,7 +175,7 @@ def test_lng_distribution_and_non_routine_thorough():
 
     # LNG Transfer volume in bbl
     res_lng_bbl = lng.calculate(
-        activity="loading_transfer",
+        activity="loading_transfer", expansion_ratio=600.0,
         transfer_volume_bbl=50000.0,
         pipe_length_km=1.0,
         insulation_type="foam",
@@ -445,7 +445,7 @@ def test_stoichiometry_and_uncertainty_advanced():
 
     # 2. StoichiometricCalculator
     stoich = StoichiometricCalculator()
-    res_st1 = stoich.calculate(fuel_mass=1000.0, carbon_content=85.0, mass_unit="kg", oxidation_factor=99.0)
+    res_st1 = stoich.calculate(fuel_mass=1000.0, carbon_content="85%", mass_unit="kg", oxidation_factor="99%")
     # CO2 = 1000 * 0.85 * 0.99 * (44.01 / 12.011) / 1000 = 3.0837 t CO2
     expected_co2 = 1000.0 * 0.85 * 0.99 * (44.01 / 12.011) / 1000.0
     assert res_st1["results"]["co2"]["value"] == pytest.approx(expected_co2, rel=1e-3)

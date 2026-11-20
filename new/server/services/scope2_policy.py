@@ -123,8 +123,13 @@ def steam_emissions(data):
                               "trans_loss")
     ef_co2 = float(ci.get("ef_co2", _DEFAULT_BOILER_EF_KG_PER_MMBTU))
     ef_u = str(ci.get("ef_unit") or ci.get("factor_unit") or "").lower().strip()
-    if ef_u in ("t/mmbtu", "tonne/mmbtu", "tonnes/mmbtu", "mt/mmbtu") or (not ef_u and 0 < ef_co2 < 0.1):
+    # the unit says t per MMBtu; the size of the number does not (a value under 0.1 was read as t/MMBtu on create and
+    # one under 1 on edit: audit 2026-11 F-S23-10). Without a unit a value under 1 kg CO2/MMBtu is refused.
+    if ef_u in ("t/mmbtu", "tonne/mmbtu", "tonnes/mmbtu", "mt/mmbtu"):
         ef_co2 = ef_co2 * 1000.0
+    elif not ef_u and 0 < ef_co2 < 1.0:
+        raise ValidationError(f"Boiler factor {ef_co2:g}: give its unit (kg/MMBtu or t/MMBtu); a boiler emits about "
+                              "53 to 100 kg CO2/MMBtu", "ef_unit")
 
     try:
         energy_mmbtu = heat_to_mmbtu(amount, unit, ci.get("steam_enthalpy"), ci.get("steam_enthalpy_btu_lb"))
@@ -176,3 +181,30 @@ def scale_steam_gases(emission, old_co2e, same_factor):
         emission.n2o_emissions = (emission.n2o_emissions or 0.0) * k
     else:
         emission.co2_emissions = emission.ch4_emissions = emission.n2o_emissions = None
+
+
+BTU_PER_TON_HOUR = 12000.0
+BTU_PER_KWH = 3412.142
+
+
+def cooling_factor_from_cop(cop, grid_region, facility_id=None):
+    """kg CO2e per ton-hour of cooling made by an electric chiller (API Compendium 2021 Equation 8-2: electricity =
+    cooling x 12,000 Btu/ton-hr / COP / 3,412 Btu/kWh, times the grid factor). Cooling could only be entered with a
+    factor per ton-hour (audit 2026-11 F-S23-12). Returns (factor, kWh per ton-hour, resolved grid)."""
+    try:
+        c = float(cop)
+    except (TypeError, ValueError):
+        raise ValidationError("The chiller's coefficient of performance (COP) must be a number", "cooling_cop") from None
+    if not c > 0:
+        raise ValidationError("The chiller's coefficient of performance (COP) must be greater than 0", "cooling_cop")
+    grid_ef, grid = resolve_electricity_factor(grid_region, facility_id)
+    kwh_per_ton_hour = BTU_PER_TON_HOUR / c / BTU_PER_KWH
+    return kwh_per_ton_hour * grid_ef, kwh_per_ton_hour, grid
+
+
+def cooling_factor(data):
+    """kg CO2e per ton-hour of a cooling record: the entered factor, else Equation 8-2 from the chiller COP."""
+    raw_ef = data.get("emission_factor") if data.get("emission_factor") not in (None, "") else data.get("ef")
+    if raw_ef in (None, "") and data.get("cooling_cop") not in (None, ""):
+        return cooling_factor_from_cop(data.get("cooling_cop"), data.get("grid_region"), data.get("facility_id"))[0]
+    return parse_number(raw_ef, "emission_factor", min_value=0)

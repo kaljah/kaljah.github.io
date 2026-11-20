@@ -102,10 +102,10 @@ GRID_ALIASES = {
     "algerie": "Algerian National Grid",
     "dz": "Algerian National Grid",
     "algerian grid": "Algerian National Grid",
-    "national grid": "Algerian National Grid",
+    # "national grid" / "reseau national" are generic names (a UK site typing "National Grid" got the Algerian
+    # factor, +153 %: audit 2026-11 F-S23-06); only the Algerian names resolve to the Algerian grid
     "sonelgaz": "Algerian National Grid",
     "sonelgaz grid": "Algerian National Grid",
-    "reseau national": "Algerian National Grid",
     "us": "US Average",
     "usa": "US Average",
     "united states": "US Average",
@@ -134,3 +134,77 @@ def grid_factor_kg_co2e_per_kwh(entry, gwp=None):
         from calculations.constants import get_active_gwp
         gwp = get_active_gwp()
     return float(entry["co2"]) + float(entry.get("ch4") or 0) * float(gwp["CH4"]) + float(entry.get("n2o") or 0) * float(gwp["N2O"])
+
+
+# Residual mixes for the market-based method (GHG Protocol Scope 2 Guidance s6.11.4, Table 6.3: the grid average only
+# "if a residual mix is not available"). kg CO2 per kWh. Europe: AIB European Residual Mixes 2023, Table 2 (CO2,
+# g/kWh); United States: API Compendium 2021 Table 8-3 (Green-e residual mix, 2019). Austria, Switzerland and
+# Algeria print none. The market-based total fell back to the grid average for every record (audit 2026-11
+# F-S23-02: Germany 0.3387 instead of 0.7199).
+RESIDUAL_MIX = {
+    'Belgium (grid average)': (0.16749, "AIB European Residual Mixes 2023, Table 2"),
+    'Bulgaria (grid average)': (0.41870, "AIB European Residual Mixes 2023, Table 2"),
+    'Cyprus (grid average)': (0.59503, "AIB European Residual Mixes 2023, Table 2"),
+    'Czech Republic (grid average)': (0.65858, "AIB European Residual Mixes 2023, Table 2"),
+    'Germany (grid average)': (0.71990, "AIB European Residual Mixes 2023, Table 2"),
+    'Denmark (grid average)': (0.58275, "AIB European Residual Mixes 2023, Table 2"),
+    'Estonia (grid average)': (0.71166, "AIB European Residual Mixes 2023, Table 2"),
+    'Spain (grid average)': (0.28245, "AIB European Residual Mixes 2023, Table 2"),
+    'Finland (grid average)': (0.56531, "AIB European Residual Mixes 2023, Table 2"),
+    'France (grid average)': (0.04074, "AIB European Residual Mixes 2023, Table 2"),
+    'United Kingdom (grid average)': (0.38840, "AIB European Residual Mixes 2023, Table 2"),
+    'Greece (grid average)': (0.49178, "AIB European Residual Mixes 2023, Table 2"),
+    'Croatia (grid average)': (0.55015, "AIB European Residual Mixes 2023, Table 2"),
+    'Hungary (grid average)': (0.32263, "AIB European Residual Mixes 2023, Table 2"),
+    'Ireland (grid average)': (0.44550, "AIB European Residual Mixes 2023, Table 2"),
+    'Iceland (grid average)': (0.59553, "AIB European Residual Mixes 2023, Table 2"),
+    'Italy (grid average)': (0.50057, "AIB European Residual Mixes 2023, Table 2"),
+    'Lithuania (grid average)': (0.58315, "AIB European Residual Mixes 2023, Table 2"),
+    'Luxembourg (grid average)': (0.35790, "AIB European Residual Mixes 2023, Table 2"),
+    'Latvia (grid average)': (0.53537, "AIB European Residual Mixes 2023, Table 2"),
+    'Malta (grid average)': (0.40822, "AIB European Residual Mixes 2023, Table 2"),
+    'Netherlands (grid average)': (0.37989, "AIB European Residual Mixes 2023, Table 2"),
+    'Norway (grid average)': (0.59861, "AIB European Residual Mixes 2023, Table 2"),
+    'Poland (grid average)': (0.78824, "AIB European Residual Mixes 2023, Table 2"),
+    'Portugal (grid average)': (0.53901, "AIB European Residual Mixes 2023, Table 2"),
+    'Romania (grid average)': (0.21254, "AIB European Residual Mixes 2023, Table 2"),
+    'Serbia (grid average)': (0.96696, "AIB European Residual Mixes 2023, Table 2"),
+    'Sweden (grid average)': (0.06823, "AIB European Residual Mixes 2023, Table 2"),
+    'Slovenia (grid average)': (0.48676, "AIB European Residual Mixes 2023, Table 2"),
+    'Slovakia (grid average)': (0.35756, "AIB European Residual Mixes 2023, Table 2"),
+    'US-AKGD (ASCC Alaska Grid)': (0.5108, "API Compendium 2021 Table 8-3 (Green-e residual mix 2019)"),
+    'US-AKMS (ASCC Miscellaneous)': (0.2492, "API Compendium 2021 Table 8-3 (Green-e residual mix 2019)"),
+    'US-AZNM (WECC Southwest)': (0.4331, "API Compendium 2021 Table 8-3 (Green-e residual mix 2019)"),
+    'US-CAMX (WECC California)': (0.2093, "API Compendium 2021 Table 8-3 (Green-e residual mix 2019)"),
+    'US-ERCT (ERCOT All)': (0.4206, "API Compendium 2021 Table 8-3 (Green-e residual mix 2019)"),
+    'US-FRCC (FRCC All)': (0.3934, "API Compendium 2021 Table 8-3 (Green-e residual mix 2019)"),
+    'US-HIMS (HICC Miscellaneous)': (0.5378, "API Compendium 2021 Table 8-3 (Green-e residual mix 2019)"),
+    'US-HIOA (HICC Oahu)': (0.7686, "API Compendium 2021 Table 8-3 (Green-e residual mix 2019)"),
+    'US-MROE (MRO East)': (0.6816, "API Compendium 2021 Table 8-3 (Green-e residual mix 2019)"),
+    'US-MROW (MRO West)': (0.5215, "API Compendium 2021 Table 8-3 (Green-e residual mix 2019)"),
+    'US-NEWE (NPCC New England)': (0.2227, "API Compendium 2021 Table 8-3 (Green-e residual mix 2019)"),
+    'US-NWPP (WECC Northwest)': (0.3329, "API Compendium 2021 Table 8-3 (Green-e residual mix 2019)"),
+    'US-NYCW (NPCC NYC/Westchester)': (0.2512, "API Compendium 2021 Table 8-3 (Green-e residual mix 2019)"),
+    'US-NYLI (NPCC Long Island)': (0.5484, "API Compendium 2021 Table 8-3 (Green-e residual mix 2019)"),
+    'US-NYUP (NPCC Upstate NY)': (0.1054, "API Compendium 2021 Table 8-3 (Green-e residual mix 2019)"),
+    'US-PRMS (Puerto Rico Miscellaneous)': (0.705, "API Compendium 2021 Table 8-3 (Green-e residual mix 2019)"),
+    'US-RFCE (RFC East)': (0.3154, "API Compendium 2021 Table 8-3 (Green-e residual mix 2019)"),
+    'US-RFCM (RFC Michigan)': (0.5398, "API Compendium 2021 Table 8-3 (Green-e residual mix 2019)"),
+    'US-RFCW (RFC West)': (0.4845, "API Compendium 2021 Table 8-3 (Green-e residual mix 2019)"),
+    'US-RMPA (WECC Rockies)': (0.5783, "API Compendium 2021 Table 8-3 (Green-e residual mix 2019)"),
+    'US-SPNO (SPP North)': (0.5205, "API Compendium 2021 Table 8-3 (Green-e residual mix 2019)"),
+    'US-SPSO (SPP South)': (0.538, "API Compendium 2021 Table 8-3 (Green-e residual mix 2019)"),
+    'US-SRMV (SERC Mississippi Valley)': (0.3667, "API Compendium 2021 Table 8-3 (Green-e residual mix 2019)"),
+    'US-SRMW (SERC Midwest)': (0.7222, "API Compendium 2021 Table 8-3 (Green-e residual mix 2019)"),
+    'US-SRSO (SERC South)': (0.4426, "API Compendium 2021 Table 8-3 (Green-e residual mix 2019)"),
+    'US-SRTV (SERC Tennessee Valley)': (0.4309, "API Compendium 2021 Table 8-3 (Green-e residual mix 2019)"),
+    'US-SRVC (SERC Virginia/Carolina)': (0.3077, "API Compendium 2021 Table 8-3 (Green-e residual mix 2019)"),
+}
+
+
+def residual_mix_for(grid_name):
+    """(kg CO2/kWh, source) of the residual mix of a grid row (name or alias), or None when none is published."""
+    if not grid_name:
+        return None
+    key = grid_name if grid_name in GRID_FACTORS else GRID_ALIASES.get(grid_name) or GRID_ALIASES.get(str(grid_name).strip().lower())
+    return RESIDUAL_MIX.get(key) if key else None

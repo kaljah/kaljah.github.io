@@ -753,15 +753,15 @@ def _get_goals_baseline_context(allowed_fids=None, tenant_id="default"):
     base_year_obj = db.session.query(BaseYear).order_by(BaseYear.id.desc()).first() if eff_tenant == "default" else None
     base_year = rec.year if rec else (base_year_obj.year if base_year_obj else 2024)
 
-    q1 = db.session.query(db.func.sum(Emission.co2e_total)).filter(
-        Emission.year == base_year, ~Emission.status.ilike("%rejected%")
-    )
-    q2 = db.session.query(db.func.sum(Scope2Emission.co2e)).filter(
-        Scope2Emission.year == base_year, ~Scope2Emission.status.ilike("%rejected%")
-    )
-    q_all = db.session.query(db.func.sum(Emission.co2e_total)).filter(
-        ~Emission.status.ilike("%rejected%")
-    )
+    # Verified records without test facilities, as every total (Draft / Pending / test rows were in; F-AGG-15)
+    from services.dashboard_filters import exclude_test_rows
+
+    q1 = exclude_test_rows(db.session.query(db.func.sum(Emission.co2e_total)).filter(
+        Emission.year == base_year, Emission.status == "Verified"), Emission)
+    q2 = exclude_test_rows(db.session.query(db.func.sum(Scope2Emission.co2e)).filter(
+        Scope2Emission.year == base_year, Scope2Emission.status == "Verified"), Scope2Emission)
+    q_all = exclude_test_rows(db.session.query(db.func.sum(Emission.co2e_total)).filter(
+        Emission.status == "Verified"), Emission)
     if allowed_fids is not None:
         fids = allowed_fids or [-1]
         q1 = q1.filter(Emission.facility_id.in_(fids))
@@ -772,7 +772,7 @@ def _get_goals_baseline_context(allowed_fids=None, tenant_id="default"):
     base_s2 = q2.scalar() or 0.0
     base_total = base_s1 + base_s2
 
-    recent_s1 = q1.scalar() or base_s1 or (2300000.0 if eff_tenant == "default" else 0.0)
+    recent_s1 = base_s1  # never an invented 2,300,000 t baseline (F-AGG-15)
     total_s1 = q_all.scalar() or 0.0
 
     return base_year, base_total, recent_s1, total_s1

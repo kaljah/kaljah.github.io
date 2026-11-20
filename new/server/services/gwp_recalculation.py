@@ -21,15 +21,70 @@ def _fgas_processes():
 def _recalculate_fgas(record, gwp_dict, standard):
     """Re-run an HFC / SF6 record from its saved inputs under the new GWP. False (record left as it was) when it
     cannot be re-run, e.g. a Table 7-84 blend, which is printed for AR5 only, under AR4 or AR6."""
+    value = fgas_co2e(record, gwp_dict)
+    if value is None:
+        return False
+    record.co2e_total = value
+    record.gwp_version = standard
+    return True
+
+
+def reweighted_co2e(record, gwp_dict):
+    """A Scope 1 record's CO2e under another GWP set, or None when it cannot be re-weighted and keeps its value:
+    an HFC / SF6 record is re-run from its saved inputs (its CO2e is in co2e_total only), a record without any gas
+    mass is left as it is. Both were set to 0 (audit 2026-11 F-CORE-01 on the recalculation route, F-AGG-07)."""
+    if str(record.process_type or "").strip().lower() in _fgas_processes():
+        return fgas_co2e(record, gwp_dict)
+    gases = (record.co2_emissions, record.ch4_emissions, record.n2o_emissions)
+    if all(g is None for g in gases):
+        return None
+    co2, ch4, n2o = (float(g or 0.0) for g in gases)
+    return co2 * float(gwp_dict.get("CO2", 1.0)) + ch4 * float(gwp_dict["CH4"]) + n2o * float(gwp_dict["N2O"])
+
+
+def fgas_horizon_deltas(query, live_statuses, by_facility):
+    """{(year, process_type, facility_id or "total"): tCO2e to add to the GWP-100 totals of the HFC / SF6 records of `query`
+    (an Emission query already scoped) to express them at GWP-20. horizon_delta re-weights CH4 / N2O only, so these
+    records stayed on GWP-100 in the GWP-20 view (audit 2026-11 F-AGG-10: HFC-134a 130 t shown for 371 t)."""
+    from sqlalchemy import func
+    from calculations.constants import get_active_gwp
+    from models import Emission
+
+    g20 = get_active_gwp(horizon="20")
+    out = {}
+    query = query.filter(Emission.status.in_(live_statuses))
+    for rec in query.filter(func.lower(func.coalesce(Emission.process_type, "")).in_(_fgas_processes())).all():
+        v20 = fgas_co2e(rec, g20)
+        if v20 is not None:
+            key = (int(rec.year), rec.process_type, rec.facility_id if by_facility else "total")
+            out[key] = out.get(key, 0.0) + float(v20) - float(rec.co2e_total or 0.0)
+    return out
+
+
+def known_gwp_dict(standard):
+    """The GWP set of a standard name; an unknown one (e.g. "AR7") is refused, it was re-weighted with AR5 and stored
+    under its own label (audit 2026-11 F-CORE-08)."""
+    from calculations.constants import GWP_STANDARDS
+    from input_validation import ValidationError
+
+    key = str(standard or "").strip().upper()
+    if key not in GWP_STANDARDS:
+        raise ValidationError(f"Unknown GWP standard '{standard}': use one of {', '.join(GWP_STANDARDS)}",
+                              "target_gwp_standard")
+    return GWP_STANDARDS[key]
+
+
+def fgas_co2e(record, gwp_dict):
+    """CO2e of an HFC / SF6 record re-run from its saved inputs, or None when it cannot be re-run."""
     from calculations import compute_emissions
     from services.scope1_calc import canonicalize
 
     try:
         stored = json.loads(record.source_payload or "{}")
     except ValueError:
-        return False
+        return None
     if not isinstance(stored, dict) or not stored:
-        return False
+        return None
     base = {"process_type": record.process_type, "process": record.process_type, "fuel_type": record.fuel_type,
             "fuel": record.fuel_type, "unit": record.unit, "quantity": record.quantity, "amount": record.quantity,
             "factor_source": record.factor_source}
@@ -38,10 +93,8 @@ def _recalculate_fgas(record, gwp_dict, standard):
     try:
         result, _method = compute_emissions(payload, {}, gwp_dict=gwp_dict)
     except (ValueError, TypeError, KeyError):
-        return False
-    record.co2e_total = result["totalCo2e"]
-    record.gwp_version = standard
-    return True
+        return None
+    return result["totalCo2e"]
 
 
 def recalculate_all_emissions_gwp(standard, previous=None, user=None):
@@ -81,7 +134,10 @@ def recalculate_all_emissions_gwp(standard, previous=None, user=None):
 
     before = _totals()
     fgas = _fgas_processes()
-    db.session.query(Emission).filter(~func.lower(func.coalesce(Emission.process_type, "")).in_(fgas)).update(
+    # rows without any gas mass keep their CO2e (they were set to 0; audit 2026-11 F-AGG-07)
+    has_gas = db.or_(Emission.co2_emissions.isnot(None), Emission.ch4_emissions.isnot(None),
+                    Emission.n2o_emissions.isnot(None))
+    db.session.query(Emission).filter(~func.lower(func.coalesce(Emission.process_type, "")).in_(fgas), has_gas).update(
         {
             Emission.co2e_total: (
                 func.coalesce(Emission.co2_emissions, 0.0) * co2_factor
@@ -160,7 +216,8 @@ def recalculate_all_emissions_gwp(standard, previous=None, user=None):
         details=(f"GWP standard {previous or '?'} -> {standard}: {after['scope1_records']} Scope 1 records recalculated "
                  f"(Verified included); Scope 1 {before['scope1_tco2e']:,.2f} -> {after['scope1_tco2e']:,.2f} tCO2e, "
                  f"Scope 2 {before['scope2_tco2e']:,.2f} -> {after['scope2_tco2e']:,.2f} tCO2e, "
-                 f"Scope 3 {before['scope3_tco2e']:,.2f} -> {after['scope3_tco2e']:,.2f} tCO2e"
+                 f"Scope 3 {before['scope3_tco2e']:,.2f} -> {after['scope3_tco2e']:,.2f} tCO2e (not re-weighted: "
+                 "Scope 3 factors are fixed CO2e values at their source's GWP set; audit 2026-11 F-AGG-16)"
                  + (f"; {fgas_kept} HFC / SF6 records kept their previous CO2e and GWP standard (a Table 7-84 blend is "
                     "printed for AR5 only: enter its GWP on the record)" if fgas_kept else "")),
         old_values=json.dumps(dict(before, gwp_standard=previous)), new_values=json.dumps(dict(after, gwp_standard=standard)),

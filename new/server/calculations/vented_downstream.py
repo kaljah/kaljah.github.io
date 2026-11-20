@@ -9,6 +9,7 @@ from .units import calculate_co2e, normalize_efficiency
 from .uncertainty import propagate_uncertainty, resolve_tier, resolve_ef_uncertainty
 
 from .units import MOLAR_VOLUME_SCF_PER_LBMOL as MOLAR_VOL_US  # noqa: E402  scf / lb-mole (BA-016)
+from .downstream_inputs import carbon_difference, feed_molecular_weight, measured_pcts, unit_fraction
 MOLAR_VOL_METRIC = 23.685  # Sm3 / kg-mole at 15 °C, 101.325 kPa
 MW_CH4 = 16.04
 MW_CO2 = 44.01
@@ -18,7 +19,8 @@ LB_PER_TONNE = 2204.6226218487757
 
 # Default emission factors for petroleum coke combustion from Tables 4-3 and 4-5
 # in tonnes / MMBtu
-EF_COKE_CO2_MMBTU = 0.1021   # tonne CO2 / MMBtu (Table 4-3)
+# Dec 2025 corrections: Eq 6-38 / 6-39 use Table 4-5, 102.41 kg CO2/MMBtu (0.1021 was neither table; F-VENT2-12)
+EF_COKE_CO2_MMBTU = 0.10241  # tonne CO2 / MMBtu (Table 4-5, 40 CFR 98 Table C-1)
 EF_COKE_CH4_MMBTU = 3.0e-6   # tonne CH4 / MMBtu (Table 4-5)
 EF_COKE_N2O_MMBTU = 6.0e-7   # tonne N2O / MMBtu (Table 4-5)
 
@@ -92,13 +94,13 @@ class RefiningCatalystRegenCalculator(BaseCalculator):
         unit_throughput_bbl_day=None,
         coke_burn_off_factor_kg_bbl=7.3,  # default 7.3 kg/bbl for FCCU, 11 for fluid coker
         operating_days=365.0,
-        carbon_content_fraction=0.93,     # Exhibit 6-38 default 0.93 or 1.0
+        carbon_content_fraction=None,     # unknown: 1.0, the conservative value of s6.11.1 (0.93 is Exhibit 6-38's site)
         # 2. Exhaust gas flow approach (Eq 6-35)
         flue_gas_rate_dscm_min=None,
         flue_gas_rate_dscf_min=None,
         operating_hours=8760.0,
-        co2_pct=11.0,
-        co_pct=9.0,
+        co2_pct=None,                     # Eq 6-35 / 6-36 need the measured concentrations (11 / 9 % were
+        co_pct=None,                      # Exhibit 6-39's site values: audit 2026-11 F-VENT2-03)
         # 3. Air blower rate approach (Eq 6-36)
         air_rate_m3_min=None,
         air_rate_scf_min=None,
@@ -106,7 +108,7 @@ class RefiningCatalystRegenCalculator(BaseCalculator):
         sor_scf_min=0.0,
         # 4. Continuous catalyst regeneration (Eq 6-40)
         catalyst_circulation_rate_tonnes_hr=None,
-        fc_spent=0.04,                    # wt fraction carbon on spent catalyst
+        fc_spent=None,                    # wt fraction carbon on spent catalyst (required; 0.04 was an example)
         fc_regen=0.0,                     # wt fraction carbon on regenerated catalyst
         # 5. Intermittent catalyst regeneration (Eq 6-41)
         catalyst_inventory_tonnes=None,
@@ -137,13 +139,14 @@ class RefiningCatalystRegenCalculator(BaseCalculator):
             else:
                 raise ValueError("Coke burn approach needs the coke burn rate (per year or per day) or the unit throughput")
 
-            cf = _given(carbon_content_fraction, 0.93)
+            cf = unit_fraction(_given(carbon_content_fraction, 1.0), "The coke carbon content is a fraction between 0 and 1")
             # Equation 6-34: ECO2 = CCAvg * CF * (44 / 12) * T (molecular weights 44.01 / 12.011, as everywhere else)
             co2_coke = annual_coke * cf * _CO2_PER_C
 
         elif approach == "k1_k2_k3":
-            p_co2 = float(co2_pct or 0.0)
-            p_co = float(co_pct or 0.0)
+            if flue_gas_rate_dscm_min is None and flue_gas_rate_dscf_min is None:
+                raise ValueError("K1 approach (Eq 6-35) needs the flue gas rate (dscm/min or dscf/min)")
+            p_co2, p_co = measured_pcts(co2_pct, co_pct, "6-35")
             hrs = float(8760.0 if operating_hours is None else operating_hours)
             if flue_gas_rate_dscm_min is not None:
                 qr = float(flue_gas_rate_dscm_min)
@@ -153,13 +156,12 @@ class RefiningCatalystRegenCalculator(BaseCalculator):
                 qr = float(flue_gas_rate_dscf_min)
                 k1 = 0.0186
                 co2_coke = (k1 * qr * (p_co2 + p_co) * _CO2_PER_C * hrs) / LB_PER_TONNE
-            else:
-                raise ValueError("K1 approach (Eq 6-35) needs the flue gas rate (dscm/min or dscf/min)")
 
         elif approach == "air_blower":
             # percent, as in the K1 approach (API Compendium 2021 §6.4.1, Eq 6-36 / EPA Eq Y-2)
-            f_co2 = float(co2_pct or 0.0) / 100.0
-            f_co = float(co_pct or 0.0) / 100.0
+            if air_rate_m3_min is None and air_rate_scf_min is None:
+                raise ValueError("Air blower approach (Eq 6-36) needs the air rate (m3/min or scf/min)")
+            f_co2, f_co = (v / 100.0 for v in measured_pcts(co2_pct, co_pct, "6-36"))
             total_min = float(8760.0 if operating_hours is None else operating_hours) * 60.0
 
             if air_rate_m3_min is not None:
@@ -170,19 +172,17 @@ class RefiningCatalystRegenCalculator(BaseCalculator):
                 ar = float(air_rate_scf_min) + float(sor_scf_min or 0.0)
                 lb_co2 = ar * (f_co2 + f_co) * (MW_CO2 / MOLAR_VOL_US) * total_min
                 co2_coke = lb_co2 / LB_PER_TONNE
-            else:
-                raise ValueError("Air blower approach (Eq 6-36) needs the air rate (m3/min or scf/min)")
 
         elif approach == "continuous":
             crr = float(catalyst_circulation_rate_tonnes_hr or 0.0)
             h = float(8760.0 if operating_hours is None else operating_hours)
-            c_diff = float(fc_spent or 0.0) - float(fc_regen or 0.0)
+            c_diff = carbon_difference(fc_spent, fc_regen)
             co2_coke = crr * h * c_diff * _CO2_PER_C
 
         else:  # intermittent (approaches checked above)
             crr = float(catalyst_inventory_tonnes or 0.0)
             n_cycles = _given(regeneration_cycles_per_yr, 1.0)
-            c_diff = float(fc_spent or 0.0) - float(fc_regen or 0.0)
+            c_diff = carbon_difference(fc_spent, fc_regen)
             co2_coke = crr * n_cycles * c_diff * _CO2_PER_C
 
         # Equations 6-38 and 6-39 for coke combustion CH4 and N2O
@@ -457,8 +457,7 @@ class RefiningHydrogenPlantCalculator(BaseCalculator):
                         kg_feed = kgmoles * mix_mw
                         fr_tonnes = kg_feed / 1000.0
             elif fr_tonnes is None and cf is not None:
-                # Volumetric feedstock rate without full composition breakdown
-                feed_mw = 16.5  # Typical natural gas reformer feedstock MW
+                feed_mw = feed_molecular_weight(kwargs)  # a volume without the composition needs its MW (F-VENT2-07)
                 if feedstock_volume_scf_yr is not None:
                     if float(feedstock_volume_scf_yr) < 0:
                         raise ValueError("Feedstock volume cannot be negative")

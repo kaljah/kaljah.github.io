@@ -5,7 +5,8 @@
                     Exhibits 4.7, 4.8), energy from fuel x HHV, direct MMBtu, or engine hp x load x hours
   vehicle_distance  distance / fuel economy -> fuel volume -> fuel-basis CO2, per-volume CH4 / N2O
                     (Exhibit 4.12)
-  flare_voc         flare emissions back-calculated from a known VOC emission (Exhibit 5.2)
+  flare_voc         flare emissions back-calculated from a known VOC emission (Exhibit 5.2 method;
+                    native CO2 on the Eq 5-1 inlet basis, see the method)
   thermal_oxidizer  TOC to the oxidizer x carbon content x destruction efficiency (Exhibit 5.3)
 
 All energy is on an HHV basis. Masses are returned in tonnes.
@@ -63,12 +64,19 @@ EQUIPMENT_FACTORS = {
     "turbine_ng_uncontrolled": _eq("Gas turbine, natural gas, uncontrolled", "natural_gas", 0.0037, 0.0013),
 }
 TOC_CH4_WT = 0.09  # AP-42: engine exhaust TOC is 9 wt % CH4 (Table 4-11 footnote a)
-HP_HR_BTU = 7000.0  # Table 4-2: energy input per hp-hr output
+# Table 4-2 (HHV basis), internal combustion engine: energy input per hp-hr output, by fuel.
+# Exhibit 4.1 / Eq 4-6 use 6,186 for a gas engine; one 7,000 for every engine was +13.2 % on gas
+# (audit 2026-11 F-CMB-02). The dual-fuel row is mostly natural gas.
+HP_HR_BTU_BY_FUEL = {"natural_gas": 6186.0, "diesel": 8089.0, "gasoline": 7000.0}
+HP_HR_BTU = HP_HR_BTU_BY_FUEL["gasoline"]  # kept for importers; the default now follows the fuel
 
-# Table 4-16 rows used as vehicle defaults (tonne per 1,000 gal fuel)
+# Table 4-16 rows (tonne per 1,000 gal fuel) for the vehicle types whose fuel has a Table C-1 CO2 basis here;
+# the full table is calculations/mobile_factors.py (audit 2026-11 F-FAC-02)
+from .mobile_factors import MOBILE_VEHICLES  # noqa: E402
+
 VEHICLE_FACTORS = {
-    "hd_diesel_advanced": {"label": "Heavy-duty diesel vehicle, advanced control", "fuel": "diesel",
-                           "ch4": 4.2e-4, "n2o": 5.7e-4},
+    k: {"label": v["label"], "fuel": v["fuel"], "ch4": v["ch4_t_per_gal"] * 1000.0, "n2o": v["n2o_t_per_gal"] * 1000.0}
+    for k, v in MOBILE_VEHICLES.items() if v["fuel"] in ("diesel", "gasoline")
 }
 
 LIQ_TO_GAL = {"gal": 1.0, "bbl": 42.0, "m3": 264.172052, "l": 0.264172052}
@@ -131,6 +139,48 @@ class CombustionMethodCalculator(BaseCalculator):
         super().__init__("Combustion / waste gas method", "Sections 4 and 5")
 
     # ---- energy input (MMBtu HHV) for the equipment method ----
+    @staticmethod
+    def _trace_gases(i, inter, is_gas, is_mass, mass_t, vol_m3, gal):
+        """Trace CH4 and N2O of the carbon balance (Table 4-6 fuel factors). They used to start whenever any `hhv` key
+        was present; the route puts the catalog HHV there (diesel 138000 Btu/gal, no unit), read as MMBtu/gal: CH4 /
+        N2O 10^6 x too high (audit 2026-11 F-GUI-01). The HHV is read only from a field that names its unit."""
+        fuel_key = str(i.get("fuel") or i.get("fuel_type") or "").strip().lower()
+        fuel_key_norm = (
+            "diesel" if "diesel" in fuel_key
+            else "gasoline" if "gasoline" in fuel_key
+            else "coal" if "coal" in fuel_key
+            else "natural_gas" if "gas" in fuel_key
+            else fuel_key
+        )
+        fbasis = FUEL_BASIS.get(fuel_key_norm, FUEL_BASIS["natural_gas"] if is_gas else (FUEL_BASIS["coal"] if is_mass else FUEL_BASIS["diesel"]))
+        if is_gas:
+            scf_total = vol_m3 / SCF_TO_M3
+            hhv_val = _num(i.get("hhv_btu_scf"), "HHV (Btu/scf)", fbasis["hhv"] * 1e6, positive=True) \
+                if fbasis["hhv_unit"] == "MMBtu/scf" or i.get("hhv_btu_scf") not in (None, "") else None
+            if hhv_val is None:
+                raise ValueError("Trace gases for a fuel gas need its HHV (Btu/scf)")
+            e_mmbtu = scf_total * hhv_val / 1e6
+        elif is_mass:
+            # a mass needs an HHV per tonne; the liquid fuels' HHV is per gallon (F-CMB-03: tonnes
+            # x MMBtu/gal was ~300 x low)
+            if i.get("hhv_mmbtu_t") not in (None, ""):
+                e_mmbtu = mass_t * _num(i.get("hhv_mmbtu_t"), "HHV (MMBtu/t)", positive=True)
+            elif fbasis["hhv_unit"] == "MMBtu/t":
+                e_mmbtu = mass_t * fbasis["hhv"]
+            else:
+                raise ValueError("Trace gases for a fuel entered by mass need its HHV (MMBtu/t), "
+                                 "or enter the fuel as a volume")
+        else:
+            if fbasis["hhv_unit"] != "MMBtu/gal" and i.get("hhv_mmbtu_gal") in (None, ""):
+                raise ValueError("Trace gases for a liquid fuel need its HHV (MMBtu/gal)")
+            # Table C-1 HHV per gallon of the fuel (F-CMB-05: an unsourced 42 MJ/kg on the mass was used)
+            e_mmbtu = gal * _num(i.get("hhv_mmbtu_gal"), "HHV (MMBtu/gal)",
+                                 fbasis["hhv"] if fbasis["hhv_unit"] == "MMBtu/gal" else None, positive=True)
+        ch4 = e_mmbtu * fbasis["ch4"]
+        n2o = e_mmbtu * fbasis["n2o"]
+        inter.update(energy_mmbtu=e_mmbtu)
+        return ch4, n2o
+
     def _energy_mmbtu(self, i, fuel):
         if i.get("energy_mmbtu") not in (None, ""):
             return _num(i["energy_mmbtu"], "energy input (MMBtu)")
@@ -138,14 +188,14 @@ class CombustionMethodCalculator(BaseCalculator):
             hp = _num(i["engine_hp"], "engine rating (hp)")
             load = _frac(i.get("load_pct"), "load", 100)
             hours = _num(i.get("operating_hours"), "operating hours")
-            rate = _num(i.get("heat_rate_btu_hphr"), "heat rate (Btu/hp-hr)", HP_HR_BTU, positive=True)
+            rate = _num(i.get("heat_rate_btu_hphr"), "heat rate (Btu/hp-hr)", HP_HR_BTU_BY_FUEL[fuel], positive=True)
             return hp * load * hours * rate / 1e6
         vol = _num(i.get("fuel_volume") if i.get("fuel_volume") not in (None, "") else i.get("amount"), "fuel volume")
         unit = str(i.get("fuel_volume_unit") or i.get("unit") or "").strip().lower()
         if fuel == "natural_gas":
             scf = vol * _unit(unit, GAS_TO_SCF, "Fuel gas volume")
-            hhv_in = i.get("hhv_btu_scf") if i.get("hhv_btu_scf") not in (None, "") else i.get("hhv")
-            hhv_btu_scf = _num(hhv_in, "HHV (Btu/scf)", FUEL_BASIS["natural_gas"]["hhv"] * 1e6, positive=True)
+            # only the field that names its unit: a generic `hhv` may be the catalog row's (F-GUI-01)
+            hhv_btu_scf = _num(i.get("hhv_btu_scf"), "HHV (Btu/scf)", FUEL_BASIS["natural_gas"]["hhv"] * 1e6, positive=True)
             return scf * hhv_btu_scf / 1e6
         gal = vol * _unit(unit, LIQ_TO_GAL, "Fuel volume")
         return gal * _num(i.get("hhv_mmbtu_gal"), "HHV (MMBtu/gal)", FUEL_BASIS[fuel]["hhv"], positive=True)
@@ -202,7 +252,9 @@ class CombustionMethodCalculator(BaseCalculator):
                     # API Compendium 60 °F / 14.696 psia standard conditions (379.3 scf/lbmol = 23.685 L/mol)
                     dens_kg_m3 = mw / 23.685
                 else:
-                    dens_kg_m3 = 0.75  # default natural gas density kg/m3
+                    # an unsourced 0.75 kg/m3 was used (audit 2026-11 F-CMB-04): the gas carbon balance
+                    # needs the gas's own density or molecular weight (Exhibit 4.4b uses MW 17.4)
+                    raise ValueError("The gas carbon balance needs the fuel gas density (kg/m3) or its molecular weight")
 
                 mass_t = (vol_m3 * dens_kg_m3) / 1000.0
                 inter.update(activity_amount=v_val, activity_unit=unit_raw or "m3", fuel_mass_t=mass_t)
@@ -221,7 +273,9 @@ class CombustionMethodCalculator(BaseCalculator):
             c_num = _num(c_raw, "carbon content (wt %)")
             if c_num > 100.0:
                 raise ValueError("'carbon content (wt %)' cannot exceed 100 %")
-            c = (c_num / 100.0) if ("%" in str(c_raw) or c_num > 1.0) else c_num
+            # always wt % (1 = 1 %): a value of 1 or less was taken for a fraction, so 1 wt % became
+            # 100 % (audit 2026-11 F-CMB-06; same rule as every other percent field)
+            c = c_num / 100.0
             ox = _frac(i.get("oxidation_pct"), "carbon oxidised", 100)
             co2 = mass_t * c * ox * C_TO_CO2
             inter.update(carbon_wt=c)
@@ -237,31 +291,10 @@ class CombustionMethodCalculator(BaseCalculator):
                     fuel_name_res = "Fuel Gas"
             inter.update(fuel_state=fuel_state_res, fuel_type=fuel_name_res, fuel=fuel_name_res)
 
-            # Trace CH4 and N2O per API Compendium when requested or when fuel and HHV are specified
-            include_trace = bool(i.get("include_trace") or i.get("include_trace_gases"))
-            fuel_key = str(i.get("fuel") or i.get("fuel_type") or "").strip().lower()
-            fuel_key_norm = (
-                "diesel" if "diesel" in fuel_key
-                else "gasoline" if "gasoline" in fuel_key
-                else "coal" if "coal" in fuel_key
-                else "natural_gas" if "gas" in fuel_key
-                else fuel_key
-            )
-            if include_trace or (fuel_key_norm in FUEL_BASIS and (i.get("hhv_btu_scf") or i.get("hhv") or i.get("hhv_mmbtu_gal"))):
-                fbasis = FUEL_BASIS.get(fuel_key_norm, FUEL_BASIS["natural_gas"] if is_gas else (FUEL_BASIS["coal"] if is_mass else FUEL_BASIS["diesel"]))
-                hhv_in = i.get("hhv_btu_scf") or i.get("hhv") or i.get("hhv_mmbtu_gal")
-                if is_gas:
-                    scf_total = vol_m3 / SCF_TO_M3
-                    hhv_val = _num(hhv_in, "HHV", fbasis["hhv"] * 1e6, positive=True) if hhv_in not in (None, "") else fbasis["hhv"] * 1e6
-                    e_mmbtu = scf_total * hhv_val / 1e6
-                elif is_mass:
-                    e_mmbtu = mass_t * fbasis.get("hhv", 24.0)
-                else:
-                    # 42 MJ/kg converted to MMBtu: 42 * 0.000947817 = 0.0398083 MMBtu/kg -> 39.8083 MMBtu/tonne
-                    e_mmbtu = (gal * _num(hhv_in, "HHV (MMBtu/gal)", fbasis["hhv"], positive=True)) if hhv_in not in (None, "") else (mass_t * 39.8083)
-                ch4 = e_mmbtu * fbasis.get("ch4", 1.0e-6)
-                n2o = e_mmbtu * fbasis.get("n2o", 1.0e-7)
-                inter.update(energy_mmbtu=e_mmbtu)
+            # Trace CH4 / N2O (Table 4-6) only when asked, the HHV from a field that names its unit (F-GUI-01)
+            if i.get("include_trace") or i.get("include_trace_gases"):
+                ch4, n2o = self._trace_gases(i, inter, is_gas, is_mass, mass_t, vol_m3 if is_gas else None,
+                                             gal if not (is_gas or is_mass) else None)
 
         elif m == "equipment":
             key = str(i.get("equipment_type") or "").strip()
@@ -290,8 +323,13 @@ class CombustionMethodCalculator(BaseCalculator):
             co2 = e * _num(i.get("co2_ef_t_mmbtu"), "CO2 factor (t/MMBtu)", FUEL_BASIS[fuel]["co2"])
             ch4_k = i.get("ch4_t_per_kgal") if i.get("ch4_t_per_kgal") not in (None, "") else (vrow or {}).get("ch4")
             n2o_k = i.get("n2o_t_per_kgal") if i.get("n2o_t_per_kgal") not in (None, "") else (vrow or {}).get("n2o")
-            ch4 = gal / 1000.0 * _num(ch4_k, "CH4 factor") if ch4_k is not None else e * FUEL_BASIS[fuel]["ch4"]
-            n2o = gal / 1000.0 * _num(n2o_k, "N2O factor") if n2o_k is not None else e * FUEL_BASIS[fuel]["n2o"]
+            # mobile CH4 / N2O come from Table 4-16 by vehicle type (or entered); the stationary Table C-2
+            # fuel factors were used for any vehicle but one (audit 2026-11 F-FAC-02)
+            if ch4_k is None or n2o_k is None:
+                raise ValueError("Select the vehicle type (API Compendium Table 4-16) or enter its CH4 and N2O "
+                                 "factors (t / 1,000 gal)")
+            ch4 = gal / 1000.0 * _num(ch4_k, "CH4 factor")
+            n2o = gal / 1000.0 * _num(n2o_k, "N2O factor")
             inter.update(fuel_gal=gal, energy_mmbtu=e)
 
         elif m == "flare_voc":
@@ -310,8 +348,12 @@ class CombustionMethodCalculator(BaseCalculator):
                 raise ValueError("Combustion efficiency must be below 100 % for a VOC back-calculation")
             c_mix = sum(w[k] * HC_CARBON[k] for k in HC_CARBON) / w_hc
             hc_emitted = voc_t * w_hc / w_voc
-            # Native CO2 is chemically inert: 100% of feed CO2 passes through uncombusted (API Compendium 2021 §5.1, Exhibit 5.2)
+            # Native CO2 is chemically inert: all of the inlet CO2 leaves the flare. Eq 5-1 defines M_CO2 as the
+            # CO2 of the flared (inlet) stream, so it is the VOC flared, VOC emitted / (1 - CE), x wt CO2 / wt VOC.
+            # This differs on purpose from the worked Exhibit 5.2, which multiplies the VOC *emitted* by the
+            # ratio (37.50 short tons, 515.7 t in all, where the inlet basis gives 2,183 t; audit 2026-11 F-CMB-01).
             feed_co2 = (voc_t / (1.0 - eff)) * (w_co2 / w_voc)
+            inter.update(native_co2_basis="inlet stream (Eq 5-1 definition; differs from Exhibit 5.2)")
             co2 = (hc_emitted * c_mix * eff / (1.0 - eff) * C_TO_CO2) + feed_co2
             ch4 = hc_emitted * w["ch4"] / w_hc
             # N2O (Exhibit 5.2 step 3): hydrocarbon flared -> scf (MW of the mix) x HHV of the mix (Eq 3-11)

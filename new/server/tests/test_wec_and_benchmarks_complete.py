@@ -45,6 +45,9 @@ def wec_world():
                                  gas_amount=10_000_000, gas_unit="m3", oil_amount=50000, oil_unit="bbl")
         em_us = Emission(facility_id=us_fac.id, year=2034, month=6, process_type="venting",
                          quantity=1000, unit="m3", co2e_total=700.0, ch4_emissions=25.0, status="Verified")
+        # the charge applies to facilities reporting more than 25,000 t CO2e (42 USC 7436(c); audit 2026-11 F-GREST-03)
+        db.session.add(Emission(facility_id=us_fac.id, year=2034, month=6, process_type="combustion",
+                                co2_emissions=30_000.0, co2e_total=30_000.0, status="Verified"))
 
         # Seed Algerian facility in 2024 for Decree 21-330 flaring intensity
         # Gas produced: 10,000,000 m3

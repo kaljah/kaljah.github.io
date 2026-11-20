@@ -92,7 +92,7 @@ class CCUSVentingCalculator(BaseCalculator):
         events=1.0,
         physical_volume_m3=None,
         co2_density_kg_m3=None,        # Eq 6-27 R_C at injection conditions (no default)
-        co2_weight_fraction=None,      # Eq 6-27 GHG_CO2 mass fraction (no default)
+        co2_weight_fraction=None,      # Eq 6-27 GHG_CO2 mass share, wt % (no default)
         # Direct measured vent volume
         vented_co2_tonnes=None,
         vented_ch4_tonnes=0.0,
@@ -140,11 +140,11 @@ class CCUSVentingCalculator(BaseCalculator):
             wt_frac = float(s_wt)
             if wt_frac < 0:
                 raise ValueError("co2_weight_fraction cannot be negative")
-            if "%" in str(co2_weight_fraction) or wt_frac > 1.0:
-                if wt_frac <= 100.0:
-                    wt_frac /= 100.0
-                else:
-                    raise ValueError(f"co2_weight_fraction cannot exceed 100%: {co2_weight_fraction}")
+            # the CO2 share is wt %, always (Exhibit 6-22 prints 98.5 wt %); it was guessed from its size, so a
+            # 0.5 % share was read as 50 % (audit 2026-11 F-VENT2-13)
+            if wt_frac > 100.0:
+                raise ValueError(f"co2_weight_fraction cannot exceed 100%: {co2_weight_fraction}")
+            wt_frac /= 100.0
 
             gross_co2_tonnes = n * v_m3 * rho * wt_frac * 0.001
             gross_ch4_tonnes = 0.0
@@ -334,10 +334,18 @@ class CrudeTransportLossesCalculator(BaseCalculator):
             de_input = destruction_efficiency if destruction_efficiency is not None else kwargs.get("destruction_efficiency")
             ce_input = combustion_efficiency if combustion_efficiency is not None else kwargs.get("combustion_efficiency")
             flare_de = normalize_efficiency(de_input, default=0.98)
-            flare_ce = normalize_efficiency(ce_input, default=0.98)
+            # Dec 2025 corrections: 96.5 % of the carbon to CO2 without an entered efficiency (it was 98 %)
+            flare_ce = normalize_efficiency(ce_input, default=0.965)
             net_ch4_tonnes = gross_ch4_tonnes * (1.0 - ctrl) + (gross_ch4_tonnes * ctrl * (1.0 - flare_de))
             captured_toc = total_toc_tonnes * ctrl
-            combustion_co2_tonnes = captured_toc * 0.85 * (44.01 / 12.011) * flare_ce
+            # the vapour TOC's carbon wt %: 0.85 was AP-42's VOC share of TOC, not a carbon content (F-VENT2-08)
+            c_raw = kwargs.get("toc_carbon_wt_pct")
+            if c_raw in (None, ""):
+                raise ValueError("Flared loading vapour: enter the carbon content of the vapour TOC (toc_carbon_wt_pct, wt %)")
+            toc_c = float(str(c_raw).replace("%", "").strip()) / 100.0
+            if not 0 < toc_c <= 1:
+                raise ValueError("toc_carbon_wt_pct must be between 0 and 100 wt %")
+            combustion_co2_tonnes = captured_toc * toc_c * (44.01 / 12.011) * flare_ce
             # Eq 5-6: N2O = CO2 x 1.0E-04 / 60 (it was an assumed 20,000 Btu/lb TOC heating value x 1.0E-04,
             # BA-017: one flare N2O method for every process)
             flared_n2o = combustion_co2_tonnes * 0.0001 / 60.0

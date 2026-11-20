@@ -17,6 +17,7 @@ from .uncertainty import (
     propagate_uncertainty,
     resolve_tier,
     resolve_ef_uncertainty,
+    flare_tier1_uncertainty,
 )
 
 
@@ -414,7 +415,7 @@ class CombustionCalculator(BaseCalculator):
                 cw = cw / 100.0
             elif cw_u in ("fraction", "ratio", "dec", "decimal"):
                 pass
-            elif cw > 1.0:
+            else:  # no unit: wt %, never guessed from the size (1 = 1 %; audit 2026-11 F-CMB-06)
                 cw = cw / 100.0
             if not 0.0 <= cw <= 1.0:
                 raise ValueError("Fuel carbon content must be between 0 and 100 wt %")
@@ -612,7 +613,6 @@ class FlaringCalculator(BaseCalculator):
         co2_native_kg = co2_native_vol * density_co2
 
         co2_tonnes = (co2_combusted_kg + co2_native_kg) / 1000.0
-
         # Resolve tier — flaring with full gas composition is Tier 3
         uncertainties = uncertainties or {}
         _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
@@ -620,7 +620,8 @@ class FlaringCalculator(BaseCalculator):
         def _prop(val, gas):
             return propagate_uncertainty(
                 val,
-                ef_uncertainty=resolve_ef_uncertainty(_cat, gas, _tier, uncertainties.get(gas)),
+                ef_uncertainty=resolve_ef_uncertainty(_cat, gas, _tier, uncertainties.get(gas)
+                                                      or flare_tier1_uncertainty(fuel_type, gas, _tier)),  # F-AGG-12
                 tier=_tier, process_category=_cat, gas=gas,
             )
         co2_res, ch4_res = _prop(co2_tonnes, "co2"), _prop(ch4_tonnes, "ch4")
@@ -635,12 +636,12 @@ class FlaringCalculator(BaseCalculator):
             n2o_tonnes = co2_combusted_kg / 1000.0 * _ef_n2o / 60.0
         elif _ef_n2o > 0:
             f_unit = norm_unit(ef_unit or "kg/mmbtu")
-            if "/" not in f_unit:
-                f_unit = f"kg/{f_unit}"
+            f_unit = f_unit if "/" in f_unit else f"kg/{f_unit}"
             if any(d[0] == "energy" for d in parse_factor_unit(f_unit)["denominators"]):
-                # an energy factor (kg/MMBtu, g/MMBtu, kg/GJ ...) on the flared energy; "mmbtu" in
-                # the unit used to mean kg/MMBtu whatever the numerator (g/MMBtu 1000x high)
-                hhv_val = float(hhv or 1020.0)
+                # an energy factor (kg/MMBtu, g/MMBtu, kg/GJ ...) on the flared energy (g/MMBtu was 1000x high)
+                if hhv in (None, "", 0):  # 1,020 Btu/scf was assumed silently (audit 2026-11 F-CMB-07)
+                    raise ValueError("An N2O factor per unit of energy needs the flare gas heating value (HHV)")
+                hhv_val = float(hhv)
                 hhv_u = str(comps.get("hhv_unit") or "").lower().strip()
                 vol_scf = vol_std * CONVERSIONS.get("m3_to_scf", 35.3147)
                 if hhv_u in ("mj/m3", "mj_m3"):

@@ -204,9 +204,9 @@ def test_combustion_methods_num_and_frac_percentage_strings():
             "operating_hours": 8000.0,
         },
     )
-    # 1,000 hp x 75 % x 8,000 h x 7,000 Btu/hp-hr = 42,000 MMBtu: CO2 0.05306 t/MMBtu, CH4 0.537 t/10^12 J (Table 4-11),
+    # 1,000 hp x 75 % x 8,000 h x 6,186 Btu/hp-hr (Table 4-2 gas IC engine) = 37,116 MMBtu: CO2 0.05306 t/MMBtu, CH4 0.537 t/10^12 J (Table 4-11),
     # N2O 1.0e-7 t/MMBtu (natural gas fuel factor)
-    mmbtu = 1000.0 * 0.75 * 8000.0 * 7000.0 / 1e6
+    mmbtu = 1000.0 * 0.75 * 8000.0 * 6186.0 / 1e6
     co2, ch4, n2o = mmbtu * 0.05306, mmbtu * 0.537 * 1.055056e-3, mmbtu * 1.0e-7
     assert res_eq["results"]["co2"]["value"] == pytest.approx(co2, rel=1e-4)
     assert res_eq["results"]["ch4"]["value"] == pytest.approx(ch4, rel=1e-4)

@@ -262,13 +262,12 @@ def test_completions_flowback_methods():
     }
     res_rate = dispatcher.dispatch("completions", payload_rate, {}, {})
     assert res_rate is not None
-    # 500 Mscf = 14,158 m3 of gas, 85 % CH4. control_efficiency 0.98 alone = 98 % of the gas sent to a flare running at the
-    # default 98 % CH4 destruction / 96.5 % carbon conversion; the other 2 % is vented.
+    # 500 Mscf = 14,158 m3 of gas, 85 % CH4. control_efficiency 98 without a disposition is the flare's efficiency: all
+    # the gas to a flare destroying 98 % of the CH4 and converting 98 % of the carbon (audit 2026-11 F-VENT1-03)
     v_ch4 = 500e3 * 0.028316846592 * 0.85
     rho_co2, rho_ch4 = 44.01 / 23.685, 16.04 / 23.685
-    assert res_rate["results"]["ch4"]["value"] == pytest.approx(
-        v_ch4 * rho_ch4 / 1000 * (0.02 + 0.98 * 0.02), rel=1e-9)
-    assert res_rate["results"]["co2"]["value"] == pytest.approx(v_ch4 * rho_co2 / 1000 * 0.98 * 0.965, rel=1e-9)
+    assert res_rate["results"]["ch4"]["value"] == pytest.approx(v_ch4 * rho_ch4 / 1000 * 0.02, rel=1e-9)
+    assert res_rate["results"]["co2"]["value"] == pytest.approx(v_ch4 * rho_co2 / 1000 * 0.98, rel=1e-9)
 
 
 def test_dispatcher_nitric_acid_production_n2o():

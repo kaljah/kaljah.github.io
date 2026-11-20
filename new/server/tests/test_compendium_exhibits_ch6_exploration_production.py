@@ -308,8 +308,8 @@ def test_exhibit_6_38_fccu_coke_burn_and_co_boiler():
     assert_printed(inputs["coke_burn_co2"], "408,348", rel=0.0002, what="coke burn CO2", gas="co2_per_c")
     assert_printed(inputs["supplemental_co2"], "46,516", rel=0.0002, what="boiler CO2")
     # Eq 6-38 scales the CO2 by EF_CH4/EF_CO2 of petroleum coke: the engine's ratio is 0.34 % below the exhibit's
-    assert_printed(inputs["coke_burn_ch4"], "12.04", rel=4e-3, what="coke burn CH4")
-    assert_printed(inputs["coke_burn_n2o"], "2.40", rel=0.0002, what="coke burn N2O")
+    assert_printed(inputs["coke_burn_ch4"], "12.04", rel=4e-3, what="coke burn CH4", gas="coke_ef_per_c")
+    assert_printed(inputs["coke_burn_n2o"], "2.40", rel=0.0002, what="coke burn N2O", gas="coke_ef_per_c")
     # the summary table prints a total of 454,149, but its own parts add up to 408,348 + 46,516 = 454,864 (exhibit
     # arithmetic slip); the sum of the printed parts is what is checked
     assert tonnes(res, "co2") == pytest.approx(408_348 * CONSTANTS_SHIFT["co2_per_c"] + 46_516, rel=1e-4)
@@ -322,8 +322,9 @@ def test_exhibit_6_38_fccu_flue_gas_k_factor_approach():
     engine returns; 2.45 is an exhibit slip and is not asserted."""
     res = _fccu(approach="k1_k2_k3", flue_gas_rate_dscm_min=2150.0, co2_pct=11.0, co_pct=9.0, operating_hours=8760.0)
     assert_printed(res["inputs"]["coke_burn_co2"], "411,862", rel=0.0002, what="coke burn CO2", gas="co2_per_c")
-    assert_printed(res["inputs"]["coke_burn_ch4"], "12.14", rel=4e-3, what="coke burn CH4")
-    assert_printed(res["inputs"]["coke_burn_n2o"], "2.42", rel=0.0002, what="coke burn N2O (ratio of the other two rows)")
+    assert_printed(res["inputs"]["coke_burn_ch4"], "12.14", rel=4e-3, what="coke burn CH4", gas="coke_ef_per_c")
+    assert_printed(res["inputs"]["coke_burn_n2o"], "2.42", rel=0.0002, what="coke burn N2O (ratio of the other two rows)",
+                   gas="coke_ef_per_c")
 
 
 def test_exhibit_6_38_fccu_air_blower_rate_approach():
@@ -331,5 +332,5 @@ def test_exhibit_6_38_fccu_air_blower_rate_approach():
     coke-burn CO2 419,859 tonnes/yr; summary CH4 12.38, N2O 2.47."""
     res = _fccu(approach="air_blower", air_rate_m3_min=2150.0, co2_pct=11.0, co_pct=9.0, operating_hours=8760.0)
     assert_printed(res["inputs"]["coke_burn_co2"], "419,859", rel=0.0002, what="coke burn CO2")
-    assert_printed(res["inputs"]["coke_burn_ch4"], "12.38", rel=4e-3, what="coke burn CH4")
-    assert_printed(res["inputs"]["coke_burn_n2o"], "2.47", rel=0.0002, what="coke burn N2O")
+    assert_printed(res["inputs"]["coke_burn_ch4"], "12.38", rel=4e-3, what="coke burn CH4", gas="coke_ef")
+    assert_printed(res["inputs"]["coke_burn_n2o"], "2.47", rel=0.0002, what="coke burn N2O", gas="coke_ef")

@@ -172,12 +172,11 @@ def uncertainty(f):
     cy = datetime.now(timezone.utc).year
     year = f.year
     if year is None:
-        yq = db.session.query(func.max(Emission.year)).filter(
-            Emission.status == "Verified", Emission.year <= cy
-        )
-        if f.allowed_fids is not None:
-            yq = yq.filter(Emission.facility_id.in_(f.allowed_fids or [-1]))
-        year = yq.scalar() or cy
+        from services.dashboard_filters import apply_scope  # tests and other tenants out (audit 2026-11 F-AGG-08)
+
+        yq = db.session.query(func.max(Emission.year)).select_from(Emission).filter(
+            Emission.status == "Verified", Emission.year <= cy)
+        year = apply_scope(yq, Emission, allowed_fids=f.allowed_fids).scalar() or cy
 
     fids_key = tuple(sorted(f.allowed_fids)) if f.allowed_fids is not None else None
     cache_key = f"qaqc_unc_{f.tenant_id}_{year}_{fids_key}"

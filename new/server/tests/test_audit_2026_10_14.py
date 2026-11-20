@@ -182,7 +182,11 @@ def test_bug0006_grid_change_recalculates_the_market_method(ctx):
         assert c.put(f"/api/scope2/{rid}", json={"grid_region": "US-CAMX (WECC California)"}).status_code == 200
     row = _scope2_row(rid)
     assert row.market_emission_factor is None
-    assert row.co2e_market_based == pytest.approx(row.co2e_location_based)
+    # no contract: the residual mix of the new grid (Compendium Table 8-3, CAMX), not the grid average (F-S23-02)
+    from electricity_factors import residual_mix_for
+    rm = residual_mix_for("US-CAMX (WECC California)")
+    assert rm is not None
+    assert row.co2e_market_based == pytest.approx(100000 * rm[0] / 1000.0)
 
 
 def test_bug0007_cooling_factor_of_zero_is_kept(ctx):

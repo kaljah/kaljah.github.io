@@ -120,9 +120,9 @@ def test_dispositions(c):
     assert val(flared, "ch4") == pytest.approx(ch4 * 0.02)
     c2_co2 = t(1e6, 0.05 * 2, RHO_CO2) * 0.965
     assert val(flared, "co2") == pytest.approx(co2 + ch4 * 0.965 * R + c2_co2)
-    routed = c.calculate(**base, control_efficiency=95)                                           # 95 % to a flare
-    assert routed["inputs"]["frac_flared"] == pytest.approx(0.95)
-    assert val(routed, "ch4") == pytest.approx(ch4 * 0.05 + ch4 * 0.95 * 0.02)
+    routed = c.calculate(**base, control_efficiency=95)                     # a 95 % flare (audit 2026-11 F-VENT1-03)
+    assert routed["inputs"]["frac_flared"] == pytest.approx(1.0)
+    assert val(routed, "ch4") == pytest.approx(ch4 * 0.05)
     split = c.calculate(**base, frac_vented=0.2, frac_flared=0.5, frac_recovered=0.3, control_efficiency=99)
     assert val(split, "ch4") == pytest.approx(ch4 * 0.2 + ch4 * 0.5 * 0.01)
     assert val(c.calculate(**base, disposition="split", frac_vented="20%", frac_flared="80%"), "ch4") == \

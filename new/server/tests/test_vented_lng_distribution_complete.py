@@ -26,11 +26,11 @@ def val(res, gas):
 
 @pytest.mark.parametrize("insulation,rate", [("foam", 0.000012), ("Powder", 0.000006), ("vacuum", 0.0000012)])
 def test_table_6_44(insulation, rate):
-    res = LNGVentingCalculator().calculate(transfer_volume_m3=100_000, pipe_length_km=2, insulation_type=insulation)
+    res = LNGVentingCalculator().calculate(expansion_ratio=600.0, transfer_volume_m3=100_000, pipe_length_km=2, insulation_type=insulation)
     scf = convert(100_000 * rate * 2 * 600, "m3", "scf")
     assert val(res, "ch4") == pytest.approx(t_gas(scf, 0.95))                    # 95 mol % CH4 (section 6.7)
     assert val(res, "co2") == 0
-    bbl = LNGVentingCalculator().calculate(transfer_volume_bbl=100_000 / 0.1589873, pipe_length_km=2,
+    bbl = LNGVentingCalculator().calculate(expansion_ratio=600.0, transfer_volume_bbl=100_000 / 0.1589873, pipe_length_km=2,
                                            insulation_type=insulation)
     assert val(bbl, "ch4") == pytest.approx(val(res, "ch4"), rel=1e-6)
 

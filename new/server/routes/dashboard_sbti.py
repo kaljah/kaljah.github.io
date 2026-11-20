@@ -186,20 +186,17 @@ def get_sbti_trajectory():
             q_cs1 = q_cs1.filter(Emission.facility_id.in_(t_fids))
             q_cs2 = q_cs2.filter(Scope2Emission.facility_id.in_(t_fids))
             q_cs3 = q_cs3.filter(Scope3Emission.facility_id.in_(t_fids))
-        corp_s1 = q_cs1.scalar() or 0.0
-        corp_s2 = q_cs2.scalar() or 0.0
-        corp_s3 = q_cs3.scalar() or 0.0
-        corp_base_total = float(corp_s1)
-        if coverage in ("S1S2", "S1S2S3"):
-            corp_base_total += float(corp_s2)
-        if coverage in ("S3", "S1S2S3"):
-            corp_base_total += float(corp_s3)
+        corp_s1, corp_s2, corp_s3 = (float(q.scalar() or 0.0) for q in (q_cs1, q_cs2, q_cs3))
+        # the covered scopes only (an S3 target also counted Scope 1; F-AGG-06)
+        corp_base_total = {"S1S2": corp_s1 + corp_s2, "S3": corp_s3}.get(coverage, corp_s1 + corp_s2 + corp_s3)
         actual_base_total = corp_base_total if corp_base_total > 0 else actuals.get(base_year, 0.0)
-    else:
-        actual_base_total = actuals.get(base_year, 0.0)
+    else:  # the base year of the scopes the target covers (all scopes were summed; F-AGG-06)
+        actual_base_total = {"S1S2": scope1_actuals.get(base_year, 0.0) + scope2_actuals.get(base_year, 0.0),
+                             "S3": scope3_actuals.get(base_year, 0.0)}.get(coverage, actuals.get(base_year, 0.0))
     view_base_actual = series(base_year) or 0.0
-
-    if view == coverage and not restricted:
+    if coverage != "S1S2S3" and view != coverage:  # a target never scales a view of scopes it does not cover
+        baseline, baseline_source = None, f"not applicable: the target covers {coverage}, not {view}"
+    elif view == coverage and not restricted:
         baseline = float(target.base_year_emissions) if target.base_year_emissions else view_base_actual
         baseline_source = "target"
     else:

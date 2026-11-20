@@ -80,13 +80,44 @@ def _method_tier(factor_source):
     return f"Tier {resolve_tier(factor_source)}"
 
 
+def _published_1sigma(process_type, gas, factor_source, fallback):
+    """1-sigma EF uncertainty of a record without a stored one: the published per-gas default of its category
+    (calculations.uncertainty.DEFAULT_EF_UNCERTAINTY, 95 % half-widths: IPCC 2006 Table 2.12, Compendium Table 5-5),
+    else the platform default. One 2.5-20 % value served every gas (audit 2026-11 F-AGG-11)."""
+    from calculations.uncertainty import DEFAULT_EF_UNCERTAINTY, PROCESS_CATEGORY, resolve_tier
+
+    cat = PROCESS_CATEGORY.get(str(process_type or "").strip().lower())
+    row = (DEFAULT_EF_UNCERTAINTY.get(cat) or {}).get(gas)
+    if not row:
+        return fallback
+    return row.get(f"T{resolve_tier(factor_source)}", row["T1"]) / K95
+
+
+def _restrict(q, model, year, statuses, fids):
+    """Year, status and the dashboard's scope: test records and test facilities out, the caller's facilities, or the
+    tenant when unrestricted (only the record flag was checked and no tenant: audit 2026-11 F-AGG-02 / F-AGG-08)."""
+    from services.dashboard_filters import apply_scope
+
+    return apply_scope(q.filter(model.year == year, model.status.in_(statuses)), model, allowed_fids=fids)
+
+
+def _gwp_variance(gwp_e, u_gwp):
+    """({category: variance}, inventory variance) of the GWP uncertainty. One GWP serves every source, so it is fully
+    correlated: sigma = u_GWP x sum(E_gas) (IPCC 2006 Vol 1 s3.2.3). It was added per factor key and the keys summed
+    in quadrature, ~1/sqrt(n) of it (audit 2026-11 F-AGG-03)."""
+    per_cat = {cat: sum((u_gwp.get(g, 0.0) * e) ** 2 for g, e in by_gas.items()) for cat, by_gas in gwp_e.items()}
+    total = sum((u_gwp.get(g, 0.0) * sum(b.get(g, 0.0) for b in gwp_e.values())) ** 2 for g in ("co2", "ch4", "n2o"))
+    return per_cat, total
+
+
 def inventory_uncertainty(year, allowed_fids=None, facility_id=None, scope="all", statuses=("Verified",), include_gwp_uncertainty=False, scope2_method="location", include_monte_carlo=True):
     """Computes IPCC Approach 1 (correlated EF) and Approach 2 Monte Carlo inventory uncertainty."""
     from calculations.constants import get_active_gwp
-    from calculations.uncertainty import GWP_UNCERTAINTY_1SIGMA
+    from calculations.uncertainty import gwp_uncertainty_1sigma
     from services.dashboard_filters import _parse_facility_ids
 
     g = get_active_gwp(horizon="100")
+    GWP_UNCERTAINTY_1SIGMA = gwp_uncertainty_1sigma(g)  # of the active report (audit 2026-11 F-AGG-09)
     gwp = {"co2": 1.0, "ch4": float(g["CH4"]), "n2o": float(g["N2O"])}
     parsed = _parse_facility_ids(facility_id)
     if parsed is not None:
@@ -107,15 +138,10 @@ def inventory_uncertainty(year, allowed_fids=None, facility_id=None, scope="all"
     flagged = 0
     band_e = defaultdict(float)
     tier_s1 = defaultdict(float)
+    gwp_e = defaultdict(lambda: defaultdict(float))  # category -> gas -> CO2e (one GWP for all: _gwp_variance)
 
     def restrict(q, model):
-        """Applies year, status, non-test, and facility scope filters to an ORM query."""
-        q = q.filter(model.year == year, model.status.in_(statuses))
-        if hasattr(model, "is_test"):
-            q = q.filter(model.is_test.is_(False))
-        if fids is not None:
-            q = q.filter(model.facility_id.in_(fids or [-1]))
-        return q
+        return _restrict(q, model, year, statuses, fids)
 
     if scope in ("all", "1"):
         rows = restrict(Emission.query, Emission).with_entities(
@@ -146,11 +172,12 @@ def inventory_uncertainty(year, allowed_fids=None, facility_id=None, scope="all"
                     continue
                 u_ef, bad1 = _valid(efc if has_components else comb)
                 flagged += int(bad1)
-                u_ef = u_ef if u_ef is not None else dflt
+                u_ef = u_ef if u_ef is not None else _published_1sigma(r.process_type, gas, r.factor_source, dflt)
                 # IPCC AR5 Chapter 8 GWP uncertainty propagation
                 gwp_u = GWP_UNCERTAINTY_1SIGMA.get(gas, 0.0) if include_gwp_uncertainty else 0.0
                 effective_u_ef = math.sqrt(u_ef ** 2 + gwp_u ** 2) if gwp_u > 0 else u_ef
-                ef_lin[key][gas] += effective_u_ef * e_gas[gas]
+                ef_lin[key][gas] += u_ef * e_gas[gas]
+                gwp_e[_process_label(r.process_type)][gas] += e_gas[gas] if gwp_u > 0 else 0.0
                 rec_u95 = max(rec_u95, effective_u_ef * K95)
             flagged += int(bad_ad)
             if has_components:
@@ -198,8 +225,11 @@ def inventory_uncertainty(year, allowed_fids=None, facility_id=None, scope="all"
         c["var"] += sigma(key) ** 2
         for n, v in names[key].items():
             c["names"][n] += v
+    gwp_cat_var, gwp_var = _gwp_variance(gwp_e, GWP_UNCERTAINTY_1SIGMA)
+    for cat, v in gwp_cat_var.items():
+        cats[cat]["var"] += v
     total = sum(tot.values())
-    var_total = sum(sigma(k) ** 2 for k in tot)
+    var_total = sum(sigma(k) ** 2 for k in tot) + gwp_var
     u_inv_1s = math.sqrt(var_total) / total if total > 0 else None
 
     results = []

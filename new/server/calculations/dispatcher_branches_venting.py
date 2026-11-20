@@ -218,7 +218,17 @@ def calc_tank(self, calculator, emission_factors, flat_inputs, gwp_dict, process
 
     gor = _opt(["tank_gor", "gor"])
     ch4_raw = _opt(["tank_ch4_content", "ch4_content", "c1"])
-    tank_eff, tank_de = self._controlled_share(flat_inputs, ["tank_control_eff", "control_efficiency"])
+    # a vapour recovery unit returns the vapour to the process: no combustion CO2 (audit 2026-11 F-UPL-14: the
+    # "recovered or destroyed" share was always booked as flared). disposition "recovered" = VRU.
+    _disp = str(flat_inputs.get("tank_disposition") or flat_inputs.get("disposition") or "").lower().strip()
+    if _disp in ("recovered", "vru", "vapor_recovery", "vapour_recovery"):
+        tank_eff = self._optional_fraction(flat_inputs, ["tank_control_eff", "control_efficiency"], None)
+        if tank_eff is None:
+            raise ValueError("A vapour recovery unit needs the share of the vapour recovered (tank_control_eff %)")
+        tank_de, tank_control_type = None, "vru"
+    else:
+        tank_eff, tank_de = self._controlled_share(flat_inputs, ["tank_control_eff", "control_efficiency"])
+        tank_control_type = "flare"
     co2_content = self._optional_fraction(
         flat_inputs, ["tank_co2_content", "co2_content", "co2_mol"], 0.0
     )
@@ -252,6 +262,14 @@ def calc_tank(self, calculator, emission_factors, flat_inputs, gwp_dict, process
             api_val = raw_val
     sep_p = _opt(["separator_pressure_psig", "sep_pressure"])
     sep_t = _opt(["separator_temp_f", "sep_temp"])
+    if sep_p is not None:
+        import math as _m
+        try:
+            _sp = float(sep_p)
+        except (TypeError, ValueError):
+            raise ValueError(f"Separator pressure is not a number: {sep_p}") from None
+        if not _m.isfinite(_sp) or _sp < 0:  # the produced-water row now follows it (F-VENT1-02)
+            raise ValueError("Separator pressure must be a finite number of at least 0 psig")
 
     return calculator.calculate(
         throughput=throughput_bbl,
@@ -271,6 +289,10 @@ def calc_tank(self, calculator, emission_factors, flat_inputs, gwp_dict, process
         api_gravity=api_val,
         separator_pressure_psig=float(sep_p) if sep_p is not None else None,
         separator_temp_f=float(sep_t) if sep_t is not None else None,
+        salt_content=_opt(["salt_content", "water_salt_content"]) or "average",  # Table 6-26 (F-VENT1-02)
+        control_type=tank_control_type,
+        # the Standing correlation's tank temperature (fixed at 80 F; audit 2026-11 F-VENT1-09)
+        tank_temp_f=float(_opt(["tank_temp_f", "tank_temperature_f"])) if _opt(["tank_temp_f", "tank_temperature_f"]) is not None else 80.0,
     )
 
 
@@ -290,7 +312,8 @@ def calc_pneumatic_devices(self, calculator, flat_inputs, gwp_dict, uncertaintie
     ctype = flat_inputs.get("pneu_controller_type") or flat_inputs.get("controller_type")
     monitoring = str(flat_inputs.get("pneu_monitoring") or "").lower() in ("true", "1", "yes")
     bleed_raw = flat_inputs.get("pneu_bleed_rate") or flat_inputs.get("bleed_rate")
-    if not ctype and not monitoring and bleed_raw in (None, "", "-"):
+    eq_6_13 = all(flat_inputs.get(k) not in (None, "", "-") for k in ("id_pipe_inches", "length_pipe_ft", "delta_vol_bonnet_scf"))
+    if not ctype and not monitoring and not eq_6_13 and bleed_raw in (None, "", "-"):
         raise ValueError("Missing required parameter for Tier 3 specific calculation: pneumatic "
                          "controllers need a controller type (Tables 6-14 / 6-15), monitoring "
                          "survey counts, or a measured bleed rate")
@@ -333,6 +356,13 @@ def calc_pneumatic_devices(self, calculator, flat_inputs, gwp_dict, uncertaintie
         normal_fraction_year=_f("pneu_normal_fraction") if _f("pneu_normal_fraction") is not None else 1.0,
         malfunctioning_count=_f("pneu_malfunction_count"),
         malfunctioning_fraction_year=_f("pneu_malfunction_fraction") or 0.0,
+        # Equation 6-13 (actuation volume) inputs: the method existed but no route passed them (F-GUI2-02)
+        id_pipe_inches=_f("id_pipe_inches"),
+        length_pipe_ft=_f("length_pipe_ft"),
+        delta_vol_bonnet_scf=_f("delta_vol_bonnet_scf"),
+        p_control_psig=_f("p_control_psig"),
+        p_atm_psia=_f("p_atm_psia") if _f("p_atm_psia") is not None else 14.7,
+        actuations_per_year=_f("actuations_per_year"),
     )
 
 

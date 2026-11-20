@@ -16,6 +16,7 @@ def _facs(app, n=3):
     tag = uuid.uuid4().hex[:6]
     with app.app_context():
         fs = [Facility(name=f"P{i} {tag}", region="R", activity="EP", division="D", field="F", segment="Upstream",
+                       country="Algeria",  # the grid fallback needs a country (audit 2026-11 F-E2E-01)
                        code=f"P{i}{tag}") for i in range(n)]
         db.session.add_all(fs)
         db.session.commit()

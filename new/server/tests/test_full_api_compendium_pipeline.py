@@ -179,7 +179,7 @@ INDEPENDENT_UNIT_FACTORS = {
 INDEPENDENT_TEMP_UNITS = {
     "c", "celsius", "degc", "°c",
     "f", "fahrenheit", "degf", "°f",
-    "k", "kelvin",
+    "k", "kelvin", "degk", "°k",
     "r", "rankine", "degr", "°r",
 }
 
@@ -673,6 +673,7 @@ class TestSectionDPart1CombustionAndFlaring:
                 "amount": 500.0,
                 "unit": "gal",
                 "fuel_type": fuel,
+                "vehicle_type": "hd_diesel_uncontrolled",
             }
             factor_data = API_FACTORS[fuel]
             res, _ = pipeline_compute_emissions(payload, factor_data, gwp_dict=REF_GWP_AR5)
@@ -683,8 +684,9 @@ class TestSectionDPart1CombustionAndFlaring:
             hhv_btu_gal = float(factor_data.get("hhv", 138000))
             mmbtu_liquid = 500.0 * hhv_btu_gal / 1e6
             exp_co2 = mmbtu_liquid * float(factor_data["co2"]) / 1000.0
-            exp_ch4 = mmbtu_liquid * float(factor_data["ch4"]) / 1000.0
-            exp_n2o = mmbtu_liquid * float(factor_data["n2o"]) / 1000.0
+            # CH4 / N2O: Table 4-16 HD diesel uncontrolled, 5.7E-04 / 2.8E-04 t per 1,000 gal (audit 2026-11 F-FAC-02)
+            exp_ch4 = 500.0 / 1000.0 * 5.7e-4
+            exp_n2o = 500.0 / 1000.0 * 2.8e-4
             exp_co2e = exp_co2 + REF_GWP_AR5["CH4"] * exp_ch4 + REF_GWP_AR5["N2O"] * exp_n2o
 
             assert res["co2"] == pytest.approx(exp_co2, rel=REL_TOL_PIPE)
@@ -855,7 +857,7 @@ class TestSectionDPart1CombustionAndFlaring:
             "fuel_type": fuel,
             "density": 850.0,
             "density_unit": "kg/m3",
-            "carbon_content": 0.865,
+            "carbon_content": 86.5,  # wt % (F-CMB-06)
             "combustion_efficiency": 99.5,
             "hhv": 137380.0,
         }
@@ -948,12 +950,12 @@ class TestSectionDPart1CombustionAndFlaring:
             "fuel_type": "Diesel (No. 2 Fuel Oil)",
             "density": 850.0,
             "density_unit": "kg/m3",
-            "carbon_content": 0.865,
+            "carbon_content": 86.5,  # wt % (F-CMB-06)
             "combustion_efficiency": 99.5,
             "hhv": 137380.0,
         }
         res_m_base, _ = pipeline_compute_emissions(base_mob, API_FACTORS["Diesel (No. 2 Fuel Oil)"])
-        res_m_c_plus, _ = pipeline_compute_emissions(dict(base_mob, carbon_content=0.865 * 1.05), API_FACTORS["Diesel (No. 2 Fuel Oil)"])
+        res_m_c_plus, _ = pipeline_compute_emissions(dict(base_mob, carbon_content=86.5 * 1.05), API_FACTORS["Diesel (No. 2 Fuel Oil)"])
         assert (res_m_c_plus["co2"] / res_m_base["co2"]) == pytest.approx(1.05, rel=REL_TOL_PIPE)
 
         # 7. Mobile Fuel Density: +10% (850 -> 935 kg/m3) -> CO2 increases by exactly +10.0%
@@ -993,6 +995,7 @@ class TestSectionDPart1CombustionAndFlaring:
         fuel_mob = "Diesel (No. 2 Fuel Oil)"
         res_liq_base, _ = pipeline_compute_emissions({
             "process_type": "mobile_combustion",
+            "vehicle_type": "hd_diesel_uncontrolled",  # Table 4-16 (audit 2026-11 F-FAC-02)
             "factor_source": "default",
             "amount": base_gal,
             "unit": "gal",
@@ -1004,6 +1007,7 @@ class TestSectionDPart1CombustionAndFlaring:
             amt = convert(base_gal, "gal", u)
             res_u, _ = pipeline_compute_emissions({
                 "process_type": "mobile_combustion",
+            "vehicle_type": "hd_diesel_uncontrolled",  # Table 4-16 (audit 2026-11 F-FAC-02)
                 "factor_source": "default",
                 "amount": amt,
                 "unit": u,
@@ -1894,7 +1898,7 @@ class TestSectionDPart4DownstreamAndComponents:
             "amount": 1000.0,
             "unit": "kg",
             "carbon_content": 85.0,
-            "oxidation_factor": 1.0,
+            "oxidation_factor": 100.0,  # percent (F-CMB-06)
         }
         res, _ = pipeline_compute_emissions(payload, {}, gwp_dict=REF_GWP_AR5)
         # 1000 kg * 0.85 * 1.0 * (44.01 / 12.011) / 1000 = 3.114520 tonnes CO2
@@ -1983,7 +1987,7 @@ class TestSectionDPart4DownstreamAndComponents:
             "amount": 1000.0,
             "unit": "kg",
             "carbon_content": 85.0,
-            "oxidation_factor": 1.0,
+            "oxidation_factor": 100.0,  # percent (F-CMB-06)
         }
         res_chem, _ = pipeline_compute_emissions(p_chem, {})
         res_chem_plus, _ = pipeline_compute_emissions(dict(p_chem, amount=1100.0), {})
@@ -1994,7 +1998,7 @@ class TestSectionDPart4DownstreamAndComponents:
         assert (res_chem_c["co2"] / res_chem["co2"]) == pytest.approx(1.10, rel=REL_TOL_PIPE)
 
         # 3. Chemical oxidation factor sensitivity (1.0 -> 0.9)
-        res_chem_ox, _ = pipeline_compute_emissions(dict(p_chem, oxidation_factor=0.90), {})
+        res_chem_ox, _ = pipeline_compute_emissions(dict(p_chem, oxidation_factor=90.0), {})
         assert (res_chem_ox["co2"] / res_chem["co2"]) == pytest.approx(0.90, rel=REL_TOL_PIPE)
 
         # 4. Nitric acid production throughput sensitivity +10%
@@ -2058,7 +2062,7 @@ class TestSectionDPart4DownstreamAndComponents:
             "amount": 1000.0,
             "unit": "kg",
             "carbon_content": 85.0,
-            "oxidation_factor": 1.0,
+            "oxidation_factor": 100.0,  # percent (F-CMB-06)
         }
         res_base, _ = pipeline_compute_emissions(base_p, {})
 

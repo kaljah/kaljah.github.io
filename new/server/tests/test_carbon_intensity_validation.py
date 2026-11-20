@@ -18,7 +18,7 @@ from models import Facility, Emission, ProductionData, Scope2Emission, Scope3Emi
 from routes.dashboard import _query_intensity_stats, _query_intensity_trend_bulk, clear_dashboard_cache
 from calculations.constants import get_active_gwp
 
-GAS_TO_BOE = (1.02 / 5.8)
+GAS_TO_BOE = (1000 / 5647.52)
 DENSITY_CH4 = (16.04 / 23.685)  # kg/m3
 
 
@@ -236,10 +236,10 @@ def _prod_row(**kw):
 
 def test_boe_conversion_gas_units():
     """BOE of gas in every supported unit, through services.dashboard_filters.production_boe: 5.8 MMBtu per BOE at
-    1,020 Btu/scf -> 1 Mscf = 1.02 / 5.8 = 0.175862 BOE (5,686 scf/BOE)."""
+    Compendium Table 3-4 -> 1 Mscf = 1000 / 5647.52 = 0.177069 BOE (5,647.52 scf/BOE)."""
     from services.dashboard_filters import production_boe
-    boe_per_scf = 1.02 / 5.8 / 1000.0
-    assert production_boe(_prod_row(gas_amount=1.0, gas_unit="mscf")) == pytest.approx(1.02 / 5.8, rel=1e-6)
+    boe_per_scf = (1000 / 5647.52) / 1000.0
+    assert production_boe(_prod_row(gas_amount=1.0, gas_unit="mscf")) == pytest.approx((1000 / 5647.52), rel=1e-6)
     assert production_boe(_prod_row(gas_amount=1_000_000.0, gas_unit="scf")) == pytest.approx(1e6 * boe_per_scf, rel=1e-6)
     assert production_boe(_prod_row(gas_amount=10.0, gas_unit="mmscf")) == pytest.approx(10e6 * boe_per_scf, rel=1e-6)
     # 1 m3 = 35.3147 scf (Table 3-4)
@@ -247,7 +247,7 @@ def test_boe_conversion_gas_units():
         1000.0 * 35.3146667 * boe_per_scf, rel=1e-6)
     # oil and gas add
     assert production_boe(_prod_row(oil_amount=5000.0, gas_amount=10_000.0, gas_unit="mscf")) == pytest.approx(
-        5000.0 + 10_000.0 * 1.02 / 5.8, rel=1e-6)
+        5000.0 + 10_000.0 * (1000 / 5647.52), rel=1e-6)
 
 
 def test_boe_conversion_oil_units():
@@ -351,6 +351,9 @@ def _us_facility(name, year, ch4_tonnes, gas_mscf, oil_bbl=0.0, record_id=None):
                             process_type="venting", status="Verified", activity=fac.activity, division=fac.division,
                             co2_emissions=0.0, ch4_emissions=ch4_tonnes, n2o_emissions=0.0,
                             co2e_total=ch4_tonnes * 28.0, quantity=1.0, unit="m3", created_by=admin.id))
+    # the charge applies to facilities reporting more than 25,000 t CO2e (42 USC 7436(c); audit 2026-11 F-GREST-03)
+    db.session.add(Emission(record_id=f"BIG-{name}", facility_id=fac.id, year=year, month=1, process_type="combustion",
+                            status="Verified", co2_emissions=30_000.0, co2e_total=30_000.0, created_by=admin.id))
     db.session.add(ProductionData(facility_id=fac.id, year=year, month=1, oil_amount=oil_bbl, gas_amount=gas_mscf,
                                   unit="bbl", oil_unit="bbl", gas_unit="mscf", activity=fac.activity,
                                   division=fac.division, region=fac.region, created_by=admin.id))
@@ -368,6 +371,8 @@ def test_wec_charge_on_a_us_facility_from_2034(ci_setup):
         row = _query_intensity_stats(year="2034", facility_id=str(fac.id))[0]
         allowed = gas_mscf * 0.0020 * 0.0192
         assert allowed == pytest.approx(67.80416, abs=1e-4)
+        # the threshold is on the gas sent to sale: the record's 1 m3 of vented gas is deducted (F-GREST-03)
+        allowed = (gas_mscf - 1.0 * 35.3146667 / 1000.0) * 0.0020 * 0.0192
         assert row["excess_ch4_tonnes"] == pytest.approx(85.0 - allowed, abs=1e-6)
         assert row["wec_rate_usd_per_t"] == 1500.0
         assert row["wec_fee_usd"] == pytest.approx(round((85.0 - allowed) * 1500.0, 2), abs=0.01)
@@ -408,13 +413,13 @@ def test_methane_loss_rate_and_segment_targets():
 
 def test_flaring_rate_and_intensity_from_the_records(ci_setup):
     """Flaring rate % = flared m3 / produced gas m3 x 100 (fac2: 50,000 m3 flared of 500,000 Mscf = 14,158,423 m3), and the
-    Scope 1 intensity = tCO2e x 1,000 / BOE (fac1: 1,545 t over 10,000 bbl + 50,000 Mscf x 1.02/5.8 BOE)."""
+    Scope 1 intensity = tCO2e x 1,000 / BOE (fac1: 1,545 t over 10,000 bbl + 50,000 Mscf x (1000 / 5647.52) BOE)."""
     with flask_app.app_context():
         fac2 = _query_intensity_stats(year="2026", facility_id=str(ci_setup["fac2"].id))[0]
         gas_m3 = 500_000.0 * 1000.0 * 0.028316846592
         assert fac2["flaring_rate_pct"] == pytest.approx(round(50_000.0 / gas_m3 * 100.0, 4), abs=1e-4)
         fac1 = _query_intensity_stats(year="2026", facility_id=str(ci_setup["fac1"].id))[0]
-        boe = 10_000.0 + 50_000.0 * 1.02 / 5.8
+        boe = 10_000.0 + 50_000.0 * (1000 / 5647.52)
         assert fac1["total_boe"] == pytest.approx(boe, rel=1e-6)
         assert fac1["scope1_intensity"] == pytest.approx(1545.0 * 1000.0 / boe, rel=1e-6)
 

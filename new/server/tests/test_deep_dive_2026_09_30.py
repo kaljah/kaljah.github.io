@@ -85,7 +85,8 @@ def test_chp_from_fuel_includes_boiler_ch4_n2o():
 
     with flask_app.app_context():
         got = _calc_cogen_allocation({"fuel_consumed_mmbtu": 10000, "heat_output_mmbtu": 5000,
-                                      "power_output_mwh": 800, "allocation_method": "energy_content"})
+                                      "power_output_mwh": 800, "quantity_bought": 5000,
+                                      "allocation_method": "energy_content"})
     assert got == pytest.approx(10000 * NG_KG_HHV / 1000 * 5000 / (5000 + 800 * 3.412142), rel=1e-6)
 
 
@@ -214,13 +215,15 @@ def test_chp_edit_recalculates_or_is_refused(admin2):
                                     division="Production", field="DDC", segment="Upstream", activity="Upstream"))
             db.session.commit()
         fid = Facility.query.filter_by(name="Deep Dive CHP").first().id
-    ci = {"total_emissions": 1000, "heat_output": 5000, "power_output": 800, "allocation_method": "energy_content"}
+    ci = {"total_emissions": 1000, "heat_output": 5000, "power_output": 800, "quantity_bought": 5000,
+          "allocation_method": "energy_content"}
     r = admin2.post("/api/scope2", json={"facility_id": fid, "year": 2013, "month": 1, "source_type": "cogen_allocation",
                                           "amount": 1000, "calc_inputs": {"cogen_allocation": ci}})
     assert r.status_code == 201
     rid = (r.get_json().get("emission") or r.get_json().get("data") or r.get_json())["id"]
     assert admin2.put(f"/api/scope2/{rid}", json={"heat_mmbtu": 2500}).status_code == 422
-    r = admin2.put(f"/api/scope2/{rid}", json={"calc_inputs": {"cogen_allocation": dict(ci, heat_output=2500)}})
+    r = admin2.put(f"/api/scope2/{rid}", json={"calc_inputs": {"cogen_allocation": dict(ci, heat_output=2500,
+                                                                                         quantity_bought=2500)}})
     assert r.status_code == 200
     from models import Scope2Emission
 

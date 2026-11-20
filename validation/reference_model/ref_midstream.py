@@ -24,7 +24,7 @@ def ref_calculate_agr(
     co2_inlet_fraction,
     co2_outlet_fraction=0.0001,
     ch4_inlet_fraction=0.85,
-    ch4_slip_fraction=0.001,  # API Compendium 2021 Table 6-5 default (0.1% of feed methane)
+    ch4_slip_fraction=0.001,  # a measured slip (the engine has no default: the 0.1 % had no source)
     unit="m3",
     control_eff=0.0,
     temp=None,

@@ -204,7 +204,7 @@ def calc_fugitive(self, emission_factors, flat_inputs, gwp_dict, process_type, u
             co2_content=c_co2,
             uncertainties=uncertainties,
             gwp_dict=gwp_dict,
-            ch4_wt_fraction=flat_inputs.get("ch4_wt_fraction") or flat_inputs.get("ch4_fraction"),
+            ch4_wt_fraction=self._optional_fraction(flat_inputs, ["ch4_wt_fraction", "ch4_fraction"], None, is_percent=True),  # wt % (F-FUG-08)
         )
 
     else:
@@ -229,12 +229,11 @@ def calc_fugitive(self, emission_factors, flat_inputs, gwp_dict, process_type, u
             equipment_type=eq_type,
             service_type=service,
             operating_hours=op_hours,
-            factor_value=ef,
-            factor_unit=ef_u,
-            uncertainties=uncertainties,
-            gwp_dict=gwp_dict,
-            ch4_wt_fraction=next((flat_inputs.get(k) for k in ("ch4_wt_fraction", "ch4_content")
-                                  if flat_inputs.get(k) not in (None, "")), None),
+            factor_value=ef, factor_unit=ef_u, uncertainties=uncertainties, gwp_dict=gwp_dict,
+            # a weight fraction only from its own field (F-FUG-06); the mole fraction scales a CH4 factor (F-FUG-04)
+            ch4_wt_fraction=flat_inputs.get("ch4_wt_fraction"), ch4_content=flat_inputs.get("ch4_content"),
+            co2_content=flat_inputs.get("co2_content"),
+            factor_basis=0.816 if "7-29" in str(emission_factors.get("API_table") or "") else 0.788,
         )
 
 
@@ -371,16 +370,10 @@ def calc_nitric_acid_production(self, calculator, emission_factors, flat_inputs,
             ["quantity", "amount", "fuel_mass", "production_amount"],
             "mass / production amount",
         )
-        carbon_content = self._optional_fraction(
-            flat_inputs,
-            ["carbon_content", "c_content"],
-            0.85,
-        )
-        oxidation_factor = self._optional_fraction(
-            flat_inputs,
-            ["oxidation_factor", "ox_factor"],
-            1.0,
-        )
+        # user inputs are percent (1 = 1 %), converted to fractions once here; a value of 1 or less
+        # was guessed to be a fraction (audit 2026-11 F-CMB-06)
+        carbon_content = self._optional_fraction(flat_inputs, ["carbon_content", "c_content"], 0.85, is_percent=True)
+        oxidation_factor = self._optional_fraction(flat_inputs, ["oxidation_factor", "ox_factor"], 1.0, is_percent=True)
         return stoich_calc.calculate(
             fuel_mass=raw_amt,
             carbon_content=carbon_content,
@@ -420,12 +413,11 @@ def calc_stoichiometry(self, calculator, flat_inputs, gwp_dict, uncertainties, u
         "mass / production amount",
     )
     # the fuel / feed carbon content is the method's input: it was taken as 85 % when missing
-    carbon_content = self._require_fraction(flat_inputs, ["carbon_content", "c_content"], "carbon content %")
-    oxidation_factor = self._optional_fraction(
-        flat_inputs,
-        ["oxidation_factor", "ox_factor"],
-        1.0,
-    )
+    # user inputs are percent (1 = 1 %), converted to fractions once here; a value of 1 or less
+    # was guessed to be a fraction (audit 2026-11 F-CMB-06)
+    carbon_content = self._require_fraction(flat_inputs, ["carbon_content", "c_content"], "carbon content %",
+                                            is_percent=True)
+    oxidation_factor = self._optional_fraction(flat_inputs, ["oxidation_factor", "ox_factor"], 1.0, is_percent=True)
 
     return calculator.calculate(
         fuel_mass=raw_amt,

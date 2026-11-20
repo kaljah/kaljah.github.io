@@ -409,7 +409,7 @@ class TestAllProcessTypesTier3Exhaustive:
             "factor_source": "specific",
             "production_amount": 50_000.0,
             "unit": "kg",
-            "carbon_content": 0.85,
+            "carbon_content": 85,  # wt % (audit 2026-11 F-CMB-06)
         }
         res = dispatcher.dispatch("stoichiometry", payload, {}, {}, gwp_dict=GWP_AR5)
         expected_co2 = (50_000.0 * 0.85 * (44.01 / 12.011)) / 1000.0
@@ -635,7 +635,7 @@ class TestCSVUploaderExhaustiveParity:
                 "consumption": "1500",
                 "unit": "mmbtu",
                 "boiler_eff": "82",
-                "trans_loss": "4",
+                "trans_loss": "4%",  # a fraction or "%" text (audit 2026-11 F-S23-04)
                 "emission_factor": "53.06",
             }
             scope2_obj, row_errors = _process_row_scope2(

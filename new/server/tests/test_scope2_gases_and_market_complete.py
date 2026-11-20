@@ -309,8 +309,9 @@ def test_steam_fuel_factor_kg_per_mmbtu():
     boiler_ch4_n2o = 0.0011 * float(gwp["CH4"]) + 0.0003 * float(gwp["N2O"])  # Exhibit 8.3 boiler, added always (BA-008)
     assert _steam_fuel_factor_kg_per_mmbtu(60.0) == pytest.approx(60.0 + boiler_ch4_n2o)
 
-    # Custom factor in t/MMBtu (< 1.0 -> multiplied by 1000)
-    assert _steam_fuel_factor_kg_per_mmbtu(0.065) == pytest.approx(65.0 + boiler_ch4_n2o)
+    # a value is kg CO2/MMBtu whatever its size (< 1.0 was multiplied by 1000; audit 2026-11 F-S23-10)
+    assert _steam_fuel_factor_kg_per_mmbtu(0.065) == pytest.approx(0.065 + boiler_ch4_n2o)
+    assert _steam_fuel_factor_kg_per_mmbtu(0) == pytest.approx(boiler_ch4_n2o)  # an entered 0 stays 0
 
     # Default factor includes AP-42 natural gas CH4 and N2O
     default_ef = _steam_fuel_factor_kg_per_mmbtu(None)
@@ -395,13 +396,17 @@ def test_recalc_indirect_steam():
 def test_calc_cogen_allocation():
     # Test zero emissions or zero outputs
     assert _calc_cogen_allocation({"total_emissions": 0, "heat_output_mmbtu": 100, "power_output_mwh": 50}) == 0.0
-    assert _calc_cogen_allocation({"total_emissions": 1000, "heat_output_mmbtu": 0, "power_output_mwh": 0}) == 0.0
+    # the plant's outputs are required: zero outputs are refused, not booked as 0 (audit 2026-11 F-S23-01)
+    from input_validation import ValidationError
+    with pytest.raises(ValidationError):
+        _calc_cogen_allocation({"total_emissions": 1000, "heat_output_mmbtu": 0, "power_output_mwh": 0})
 
     # Fuel consumed fallback
     data_fuel = {
         "fuel_consumed_mmbtu": 10_000.0,
         "heat_output_mmbtu": 4000.0,
         "power_output_mwh": 1000.0,
+        "quantity_bought": 4000.0,
         "allocation_method": "wri_efficiency",
         "heat_efficiency": 0.8,
         "power_efficiency": 0.35,
