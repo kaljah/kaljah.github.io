@@ -416,10 +416,11 @@ def _query_ogmp_breakdown(
     for s in surveys_raw:
         td = float(s.estimated_annual_tch4 or 0.0)
         bu = float(s.bottom_up_tch4 or 0.0)
-        var = float(s.variance_pct or 0.0)
+        var = float(s.variance_pct) if (s.variance_pct is not None and bu > 0) else None  # missing is not 0 (F-RPT-03)
         tot_td += td
         tot_bu += bu
-        var_list.append(var)
+        if var is not None:
+            var_list.append(var)
         survey_list.append({
             "id": s.id,
             "year": s.year,
@@ -429,8 +430,8 @@ def _query_ogmp_breakdown(
             "measured_rate_kg_hr": float(s.measured_rate_kg_hr or 0.0),
             "top_down_tch4": round(td, 1),
             "bottom_up_tch4": round(bu, 1),
-            "variance_pct": round(var, 2),
-            "status": s.reconciliation_status or ("Reconciled" if abs(var) <= 20.0 else "Discrepancy Detected"),
+            "variance_pct": round(var, 2) if var is not None else None,
+            "status": s.reconciliation_status or "Not recorded",
         })
 
     component_list = []
@@ -446,7 +447,11 @@ def _query_ogmp_breakdown(
     has_surveys = len(survey_list) > 0
     has_components = len(component_list) > 0
     mean_var = (sum(var_list) / len(var_list)) if var_list else None
-    gold_std = (abs(mean_var) <= 20.0) if (mean_var is not None) else None
+    # the stored reconciliation outcomes (a mean variance within +/-20 % printed "Gold Standard Level 5" for a
+    # survey without a bottom-up; audit 2026-11 F-RPT-03)
+    stored = [str(x["status"]).lower() for x in survey_list]
+    gold_std = (any(st.startswith("reconciled") for st in stored)
+                and not any("discrepancy" in st for st in stored)) if survey_list else None
     has_data = has_surveys or has_components
 
     return {

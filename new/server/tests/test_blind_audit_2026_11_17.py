@@ -280,7 +280,8 @@ def test_review_cbam_activity_level_is_stored(client):
         admin = make_user("admin", "Global")
         fac = make_facility()
         db.session.add(Emission(facility_id=fac.id, year=2025, month=1, process_type="combustion", fuel_type="x",
-                                quantity=1, unit="t", co2e_total=1000.0, status="Verified", is_test=False))
+                                quantity=1, unit="t", co2e_total=1000.0, co2_emissions=1000.0, status="Verified",
+                                is_test=False))
         db.session.commit()
         login(client, admin)
         body = dict(facility_id=fac.id, year=2025, month=3, product_name="Ammonia", cn_code="2814 10 00",

@@ -12,6 +12,7 @@ import Modal from "../components/Modal";
 import { GWP_AR4, GWP_AR5, GWP_AR6 } from "../constants";
 import { GovernanceNavTabs } from "../components/NavigationTabs";
 import { t } from "../i18n";
+import CustomDropdown from "../components/CustomDropdown";
 
 const GWP_DATA = {
   AR5: {
@@ -60,6 +61,8 @@ const Settings: React.FC = () => {
 
   // Settings state
   const [gwpStandard, setGwpStandard] = useState<string>("AR5");
+  // GHG Protocol ch. 3 organisational boundary of every total (audit 2026-11 F-AGG-01)
+  const [consolidation, setConsolidation] = useState<string>("operational_control");
   const [defaultBaseYear, setDefaultBaseYear] = useState<number>(2023);
   const [globalThreshold, setGlobalThreshold] = useState<number>(20.0);
   const [upstreamTarget, setUpstreamTarget] = useState<number>(0.2);
@@ -108,6 +111,7 @@ const Settings: React.FC = () => {
         const af = settings.auto_flag_discrepancy !== undefined ? Boolean(settings.auto_flag_discrepancy) : true;
 
         setGwpStandard(std);
+        setConsolidation(settings.consolidation_approach || "operational_control");
         setDefaultBaseYear(yr);
         setGlobalThreshold(thresh);
         setUpstreamTarget(up);
@@ -437,6 +441,26 @@ const Settings: React.FC = () => {
           setGwpStandard={setGwpStandard}
           onRequestChangeStandard={handleRequestChangeGwp}
         />
+        <Card className="mt-4 p-4">
+          <h3 className="text-sm font-semibold">{t("Consolidation approach")}</h3>
+          <p className="mb-3 text-xs text-text-secondary">
+            {t("Which share of each facility every total reports (GHG Protocol Corporate Standard, chapter 3): operational control counts 100 % of operated facilities and none of the others; equity share counts the organisation's equity share of each facility.")}
+          </p>
+          <CustomDropdown
+            options={[
+              { value: "operational_control", label: t("Operational control") },
+              { value: "equity_share", label: t("Equity share") },
+            ]}
+            value={consolidation}
+            disabled={!isAdmin || saving}
+            onChange={async (val) => {
+              const next = String(val);
+              if (next === consolidation) return;
+              setConsolidation(next);
+              await handleSaveGlobal({ consolidation_approach: next });
+            }}
+          />
+        </Card>
       </TabsContent>
 
       <TabsContent value="ogmp" className="pt-0">

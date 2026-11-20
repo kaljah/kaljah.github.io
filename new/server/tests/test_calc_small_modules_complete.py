@@ -31,7 +31,7 @@ def test_component_calculator_rules():
 
     c = ComponentFugitiveCalculator()
     res = c.calculate({"gas_valve": 10, "Open-Ended Line": 2}, 85, {})
-    expected = (10 * 0.0045 + 2 * 0.002) * 0.85 * 8760 / 1000
+    expected = (10 * 0.0045 + 2 * 0.002) * 0.85 * 16.04 / 20 * 8760 / 1000  # CH4 wt fraction (F-FUG-10)
     assert res["results"]["ch4"]["value"] == pytest.approx(expected)
     custom = c.calculate({"compressor_vent": {"count": 2, "ef": 0.01, "unit": "kg CH4/hr/component"}}, 0.85, {})
     assert custom["results"]["ch4"]["value"] == pytest.approx(2 * 0.01 * 8760 / 1000)       # CH4 factor: no scaling
@@ -216,7 +216,7 @@ def test_component_dict_without_factor_and_fraction_ch4():
     from calculations.fugitive import ComponentFugitiveCalculator, EquipmentFugitiveCalculator
 
     res = ComponentFugitiveCalculator().calculate({"valve": {"count": 4}}, 0.5, {})
-    assert res["results"]["ch4"]["value"] == pytest.approx(4 * 0.0045 * 0.5 * 8760 / 1000)       # catalog gas valve
+    assert res["results"]["ch4"]["value"] == pytest.approx(4 * 0.0045 * 0.5 * 16.04 / 20 * 8760 / 1000)  # gas valve
     eq = EquipmentFugitiveCalculator().calculate(2, 0.1, ch4_content=0.5, ef_unit="kg TOC/hr/source")
     assert eq["results"]["ch4"]["value"] == pytest.approx(2 * 0.1 * 0.5 * 8760 / 1000)
 

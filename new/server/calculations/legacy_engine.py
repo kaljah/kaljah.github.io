@@ -346,12 +346,11 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
         ch4_kg = _calculate_default_kg(amount, unit, factor_data, "ch4", **conv)
         n2o_kg = _calculate_default_kg(amount, unit, factor_data, "n2o", **conv)
 
-        em["co2"] = co2_kg / 1000.0
+        em["co2"] = co2_kg / 1000.0  # an entered CO2 is kept (leaked or vented gas carries its own CO2)
         em["ch4"] = ch4_kg / 1000.0
-        em["n2o"] = n2o_kg / 1000.0
-        em["totalCo2e"] = (
-            em["co2"] + (em["ch4"] * _gwp_ch4) + (em["n2o"] * _gwp_n2o)
-        )
+        # a leak or a vent emits no N2O: the gas rules of the default path apply here too (audit 2026-11 F-CMB-08)
+        em["n2o"] = 0 if process in _CH4_ONLY or process in _NO_N2O else n2o_kg / 1000.0
+        em["totalCo2e"] = em["co2"] + (em["ch4"] * _gwp_ch4) + (em["n2o"] * _gwp_n2o)
 
         calc_method = "server_custom_factor"
         _note_fallback(calc_method, process, payload)

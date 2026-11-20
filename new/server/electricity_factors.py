@@ -128,6 +128,57 @@ def grid_entry(name):
     return raw, None
 
 
+# EPA eGRID2022 (released 30 January 2024), Table 1 subregion total output emission rates, lb/MWh (CO2, CH4, N2O).
+# API Compendium s8.1.2 asks for the inventory year's grid factors: eGRID2019 (Compendium Table 8-2) served every
+# year (audit 2026-11 F-S23-09 / F-GREST-04). Records of 2022 onwards use eGRID2022, earlier years keep eGRID2019.
+LB_PER_MWH_TO_KG_PER_KWH = 0.45359237 / 1000.0
+EGRID2022_FIRST_YEAR = 2022
+EGRID2022_LB_PER_MWH = {
+    'AKGD': (1052.1, 0.088, 0.012),
+    'AKMS': (495.8, 0.023, 0.004),
+    'AZNM': (776.0, 0.051, 0.007),
+    'CAMX': (497.4, 0.03, 0.004),
+    'ERCT': (771.1, 0.049, 0.007),
+    'FRCC': (813.8, 0.048, 0.006),
+    'HIMS': (1155.5, 0.124, 0.019),
+    'HIOA': (1575.4, 0.163, 0.025),
+    'MROE': (1479.6, 0.133, 0.019),
+    'MROW': (936.5, 0.102, 0.015),
+    'NEWE': (536.4, 0.063, 0.008),
+    'NWPP': (602.1, 0.056, 0.008),
+    'NYCW': (885.2, 0.023, 0.003),
+    'NYLI': (1200.7, 0.135, 0.018),
+    'NYUP': (274.6, 0.015, 0.002),
+    'PRMS': (1593.5, 0.087, 0.014),
+    'RFCE': (657.4, 0.045, 0.006),
+    'RFCM': (1216.4, 0.116, 0.016),
+    'RFCW': (1000.1, 0.087, 0.012),
+    'RMPA': (1124.9, 0.101, 0.014),
+    'SPNO': (952.6, 0.1, 0.014),
+    'SPSO': (970.4, 0.072, 0.01),
+    'SRMV': (801.0, 0.04, 0.006),
+    'SRMW': (1369.9, 0.151, 0.022),
+    'SRSO': (893.3, 0.064, 0.009),
+    'SRTV': (933.1, 0.082, 0.012),
+    'SRVC': (623.0, 0.047, 0.007),
+    'US': (823.1, 0.066, 0.009),
+}
+
+
+def grid_entry_for_year(name, year=None):
+    """grid_entry with the vintage of the reporting year: eGRID2022 for U.S. rows from 2022, else the catalog row."""
+    canonical, entry = grid_entry(name)
+    if entry is None or year in (None, "") or int(year) < EGRID2022_FIRST_YEAR or not canonical.startswith("US"):
+        return canonical, entry
+    code = "US" if canonical == "US Average" else canonical[3:7]
+    lb = EGRID2022_LB_PER_MWH.get(code)
+    if lb is None:
+        return canonical, entry
+    k = LB_PER_MWH_TO_KG_PER_KWH
+    row = _grid(lb[0] * k, lb[1] * k, lb[2] * k, f"{canonical} (eGRID2022)", "EPA eGRID2022 Table 1 (Jan 2024)")
+    return canonical, row
+
+
 def grid_factor_kg_co2e_per_kwh(entry, gwp=None):
     """kg CO2e / kWh of a grid entry with the given (or the active) GWP set."""
     if gwp is None:

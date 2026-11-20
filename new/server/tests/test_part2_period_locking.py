@@ -98,9 +98,10 @@ def test_prior_period_adjustment_allowed_in_locked_period(app, client):
                 "is_prior_period_adjustment": True,
             },
         )
-        # Should NOT be blocked with 403
-        assert res_create.status_code != 403
-        assert res_create.status_code in (200, 201)
+        # the adjustment is booked in the current, open period, not written into the locked one (audit 2026-11
+        # F-RPT-31: the flag bypassed the lock)
+        assert res_create.status_code == 403
+        assert "prior-period adjustment" in res_create.get_json()["hint"]
 
 
 def test_period_unlock_requires_admin_and_reason(app, client):

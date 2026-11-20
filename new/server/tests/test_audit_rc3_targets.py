@@ -29,9 +29,11 @@ def test_bug034_059_invalid_sbti_targets_rejected(admin_client, override):
 
 
 def test_bug059_valid_targets_accepted(admin_client):
-    for extra in ({"pathway_type": "1.5C", "reduction_rate_pct": 4.2}, {"pathway_type": "WB2C", "reduction_rate_pct": 2.5},
+    for extra in ({"pathway_type": "1.5C", "reduction_rate_pct": 4.2},
                   {"pathway_type": "custom", "reduction_rate_pct": 0.5, "scope_coverage": "S1S2"}):
         assert admin_client.post("/api/manage/sbti", json=dict(BASE, **extra)).status_code == 201, extra
+    # SBTi accepts well-below 2 °C for scope 3 only: every target here covers scope 1+2 (audit 2026-11 F-GSTD-05)
+    assert admin_client.post("/api/manage/sbti", json=dict(BASE, pathway_type="WB2C", reduction_rate_pct=2.5)).status_code == 400
 
 
 @pytest.mark.parametrize("body", [{"year": 2030, "target_amount": -5}, {"year": 1, "target_amount": 10},

@@ -13,6 +13,10 @@ from routes.auth import login_required
 
 _DEFAULT_APP_SETTINGS = {
     "gwp_standard": "AR5",
+    # GHG Protocol ch. 3 organisational boundary of every total (services/consolidation.py; audit 2026-11 F-AGG-01)
+    "consolidation_approach": "operational_control",
+    # the declarant's EORI number for the CBAM XML (it was built from the organisation name: audit 2026-11 F-E2E-06)
+    "cbam_eori": "",
     "ogmp_default_base_year": 2023,
     "reconciliation_threshold": 20.0,
     "ogmp_upstream_target_pct": 0.20,
@@ -111,6 +115,27 @@ def get_settings():
     return jsonify(resp)
 
 
+def _set_consolidation(value, user):
+    """Organisation-wide consolidation approach (services/consolidation.py; audit 2026-11 F-AGG-01). Returns a 400
+    response for an unknown value, else None."""
+    from services.consolidation import APPROACHES
+
+    appr = str(value or "").strip().lower()
+    if appr not in APPROACHES:
+        return jsonify({"error": f"consolidation_approach must be one of {', '.join(APPROACHES)}",
+                        "field": "consolidation_approach"}), 400
+    previous = _app_settings.get("consolidation_approach")
+    if previous != appr:
+        _app_settings["consolidation_approach"] = appr
+        save_setting_to_db("consolidation_approach", appr)
+        from routes.dashboard import clear_dashboard_cache
+        clear_dashboard_cache()
+        log_activity_and_notify(action="METHODOLOGY_CHANGE", record_id="consolidation_approach", user=user,
+                                request=request, entity="SystemSetting",
+                                details=f"Consolidation approach {previous} -> {appr}: every total follows it")
+    return None
+
+
 @auth_bp.route("/settings", methods=["PUT", "POST"])
 @login_required
 def update_settings():
@@ -125,12 +150,14 @@ def update_settings():
 
     operational_keys = {
         "gwp_standard",
+        "consolidation_approach",
         "ogmp_default_base_year",
         "reconciliation_threshold",
         "ogmp_upstream_target_pct",
         "ogmp_midstream_target_pct",
         "auto_flag_discrepancy",
         "wec_fee_rates",
+        "cbam_eori",
     }
     has_operational_keys = any(k in data for k in operational_keys)
 
@@ -160,6 +187,9 @@ def update_settings():
                 save_setting_to_db("gwp_standard", new_gwp)
                 gwp_changed = True
 
+        if "consolidation_approach" in data and (refused := _set_consolidation(data["consolidation_approach"], user)):
+            return refused
+
         system_setting_keys = [
             "ogmp_default_base_year",
             "reconciliation_threshold",
@@ -170,6 +200,7 @@ def update_settings():
             "auto_flag_discrepancy",
             "wec_upstream_threshold",
             "wec_midstream_threshold",
+            "cbam_eori",
         ]
 
         for k in system_setting_keys:

@@ -337,8 +337,8 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
                               onChange={(e) => handleFormChange("hhv_unit", e.target.value)}
                             >
                               <option value="BTU/scf">BTU/scf</option>
-                              <option value="MJ/m3">MJ/m³</option>
-                              <option value="kcal/m3">kcal/m³</option>
+                              <option value="MJ/m3">MJ/m³ (60 °F, 14.696 psia)</option>
+                              <option value="kcal/m3">kcal/m³ (thermochemical cal, 60 °F m³)</option>
                               <option value="BTU/gal">BTU/gal</option>
                               <option value="BTU/lb">BTU/lb</option>
                               <option value="MJ/kg">MJ/kg</option>

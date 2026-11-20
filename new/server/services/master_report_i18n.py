@@ -107,7 +107,7 @@ TRANSLATIONS_EN = {
     "gas_comp_headers_r1": ["Methane (CH4)", "Ethane (C2H6)", "Propane (C3H8)", "Carbon Dioxide (CO2)", "Nitrogen (N2)", "Hydrogen Sulfide (H2S)"],
     "gas_comp_headers_r2": ["Isobutane (iC4)", "n-Butane (nC4)", "Isopentane (iC5)", "n-Pentane (nC5)", "Hexanes+ (C6+)", "Total Molar Balance"],
     "gas_comp_none_title": "Facility Gas Stream Composition & Chromatography Status:",
-    "gas_comp_none_desc": "No site-specific laboratory gas chromatography (GC) analysis has been registered in the system for this operational perimeter. In accordance with ISO 14064-1 (§5.2.4) and API Compendium Section 4, combustion, flaring, and venting stoichiometric balances utilize standard industry fuel gas defaults.",
+    "gas_comp_none_desc": "No site-specific laboratory gas analysis has been registered for this operational perimeter: the calculations use the catalog fuel factors and the defaults named on each record.",
 
     # Chapter 1: Production
     "ch1_title": "1. HYDROCARBON PRODUCTION & ENERGY DELIVERABILITY",
@@ -137,7 +137,7 @@ TRANSLATIONS_EN = {
     "ch5_desc": "UNEP Oil &amp; Gas Methane Partnership (OGMP 2.0) Level 4 source-level bottom-up measurement vs Level 5 site-level top-down reconciliation and LDAR component counts logged in database:",
     "ch5_ogmp_headers": ["Survey Platform / Technology", "Instrument / Vendor", "Survey Date", "Level 4 Bottom-Up (tCH4)", "Level 5 Top-Down (tCH4)", "Variance (%)", "OGMP Status"],
     "ch5_ldar_headers": ["Equipment Class", "Component Type", "Process Stream", "Monitored Count", "LDAR Quantification Protocol"],
-    "ch5_kpi": "<b>OGMP 2.0 Reconciliation Status:</b> {status} | <b>Mean Field Variance:</b> {variance}% (Gold Standard Threshold ±20%) | <b>Monitored LDAR Components:</b> {comp_count:,} units",
+    "ch5_kpi": "<b>OGMP 2.0 Reconciliation Status:</b> {status} | <b>Mean Field Variance:</b> {variance}% | <b>Monitored LDAR Components:</b> {comp_count:,} units",
     "ch5_empty_kpi": "<b>OGMP 2.0 Reconciliation Status:</b> Not Applicable / No Top-Down Surveys in Database | <b>Mean Field Variance:</b> N/A | <b>Monitored LDAR Components:</b> {comp_count:,} units",
     "ch5_empty_notice": "<b>NO RECORDS / NOT APPLICABLE IN SCOPE:</b> No OGMP 2.0 Level 4/5 top-down measurement campaigns are recorded in the software database for this operational perimeter and reporting cycle.",
 
@@ -158,7 +158,7 @@ TRANSLATIONS_EN = {
     "ch8_title": "8. CRITERIA AIR POLLUTANTS MASS DISCHARGE",
     "ch8_desc": "Theoretical atmospheric screening estimates of non-GHG criteria air pollutants referenced against Algerian Executive Decree 06-138:",
     "ch8_headers": ["Year", "NOx Mass (t)", "CO Mass (t)", "SO2 Mass (t)", "NMVOC Mass (t)"],
-    "ch8_screening_badge": "<b>METHODOLOGY NOTICE — THEORETICAL SCREENING ESTIMATE (UNVERIFIED DEFAULTS):</b> Mass discharges below are API Compendium Section 4 stoichiometric default estimates derived from fuel/flare volumes rather than site-specific CEMS or stack sampling under Decree 06-138.",
+    "ch8_screening_badge": "<b>METHODOLOGY NOTICE:</b> The pollutant masses below are the values recorded on the emission records; a source without a recorded value counts as not recorded (no ratio to CO2e is applied).",
     "ch8_footnote": "* Note: Atmospheric criteria pollutant masses are theoretical screening estimates calculated using API Compendium Section 4 default fuel factors. Stack concentration monitoring (mg/Nm³) is required for formal Executive Decree 06-138 compliance verification.",
 
     # Chapter 9: 2030 Decarbonization Target
@@ -189,7 +189,7 @@ TRANSLATIONS_EN = {
     "qaqc_title": "12. QA/QC VERIFICATION, UNCERTAINTY & STATUTORY REGIMES",
     "qaqc_desc": "Quality assurance protocols, ISO 14064-3 audit verification tiers, IPCC Approach 1 & Monte Carlo measurement uncertainty assessment:",
     "qaqc_proto_title": "Quality Assurance & Measurement Calibration Protocols:",
-    "qaqc_proto_desc": "All custody transfer meters and fuel gas chromatographs are maintained with tamper-evident digital records. Ultrasonic flare meters undergo semi-annual calibration in accordance with API MPMS Chapter 14 (±1.5% accuracy). Flaring destruction removal efficiencies are optically verified with infrared VISR telemetry ({dre_pct} DRE). Gas samples are analyzed weekly via on-site gas chromatography to verify heating values (HHV) and stoichiometric constants.",
+    "qaqc_proto_desc": "Meter calibration, gas analysis frequency and flare destruction efficiency verification are not recorded in the platform: describe them in the site's own monitoring plan. Recorded flare destruction efficiency: {dre_pct}.",
     "qaqc_statute_title": "Statutory Regimes & International Mandates Compliance Matrix:",
     "qaqc_statute_headers": ["Statutory Mandate", "Regulatory Scope", "Mandate Description", "Compliance Status"],
     "qaqc_statute_d21_pass": "Audited Compliant",
@@ -389,7 +389,7 @@ TRANSLATIONS_FR = {
     "gas_comp_headers_r1": ["Méthane (CH4)", "Éthane (C2H6)", "Propane (C3H8)", "Dioxyde de Carbone (CO2)", "Azote (N2)", "Hydrogène Sulfuré (H2S)"],
     "gas_comp_headers_r2": ["Isobutane (iC4)", "n-Butane (nC4)", "Isopentane (iC5)", "n-Pentane (nC5)", "Hexanes+ (C6+)", "Bilan Molaire Total"],
     "gas_comp_none_title": "Statut de la Composition et Chromatographie du Flux Gazeux :",
-    "gas_comp_none_desc": "Aucune analyse chromatographique de laboratoire (GC) spécifique au site n'a été enregistrée dans le système pour ce périmètre opérationnel. Conformément à la norme ISO 14064-1 (§5.2.4) et à la section 4 du Compendium API, les bilans stœchiométriques de combustion, torchage et évacuation utilisent les spécifications de gaz combustible standard de l'industrie.",
+    "gas_comp_none_desc": "Aucune analyse de gaz de laboratoire spécifique au site n'a été enregistrée pour ce périmètre : les calculs utilisent les facteurs de combustible du catalogue et les valeurs par défaut indiquées sur chaque fiche.",
 
     # Chapter 1: Production
     "ch1_title": "1. PRODUCTION D'HYDROCARBURES ET LIVRABILITÉ ÉNERGÉTIQUE",
@@ -418,7 +418,7 @@ TRANSLATIONS_FR = {
     "ch5_desc": "Partenariat pour le Méthane Pétrole &amp; Gaz (OGMP 2.0) : réconciliation entre mesures à la source (Niveau 4) et campagnes descendantes au niveau site (Niveau 5), et inventaire des composants LDAR en base :",
     "ch5_ogmp_headers": ["Plateforme de Détection", "Instrument / Prestataire", "Date de Relevé", "Niveau 4 Ascendant (tCH4)", "Niveau 5 Descendant (tCH4)", "Écart (%)", "Statut OGMP 2.0"],
     "ch5_ldar_headers": ["Classe d'Équipement", "Type de Composant", "Nature du Flux", "Nombre Contrôlé", "Protocole de Quantification LDAR"],
-    "ch5_kpi": "<b>Statut Réconciliation OGMP 2.0 :</b> {status} | <b>Écart Moyen de Terrain :</b> {variance}% (Seuil Normatif Gold Standard ±20%) | <b>Composants LDAR Recensés :</b> {comp_count:,} unités",
+    "ch5_kpi": "<b>Statut Réconciliation OGMP 2.0 :</b> {status} | <b>Écart Moyen de Terrain :</b> {variance}% | <b>Composants LDAR Recensés :</b> {comp_count:,} unités",
     "ch5_empty_kpi": "<b>Statut Réconciliation OGMP 2.0 :</b> Non applicable / Aucun relevé descendant en base | <b>Écart Moyen :</b> N/D | <b>Composants LDAR Recensés :</b> {comp_count:,} unités",
     "ch5_empty_notice": "<b>AUCUNE DONNÉE / NON APPLICABLE DANS CE PÉRIMÈTRE :</b> Aucune campagne de mesure OGMP 2.0 Niveau 4/5 n'est enregistrée dans la base de données pour ce périmètre et cette période.",
 
@@ -439,7 +439,7 @@ TRANSLATIONS_FR = {
     "ch8_title": "8. REJETS MASSIQUES DES POLLUANTS ATMOSPHÉRIQUES RÉGLEMENTÉS",
     "ch8_desc": "Estimations théoriques de dépistage des polluants atmosphériques non-GES au regard du Décret exécutif algérien 06-138 :",
     "ch8_headers": ["Année", "Masse NOx (t)", "Masse CO (t)", "Masse SO2 (t)", "Masse COVNM (t)"],
-    "ch8_screening_badge": "<b>AVIS MÉTHODOLOGIQUE — ESTIMATION THÉORIQUE DE DÉPISTAGE (FACTEURS PAR DÉFAUT NON VÉRIFIÉS) :</b> Les rejets ci-dessous sont calculés via les facteurs par défaut de l'API Compendium Section 4 appliqués aux volumes de gaz, et non à partir de mesures cheminée CEMS au titre du Décret 06-138.",
+    "ch8_screening_badge": "<b>AVIS MÉTHODOLOGIQUE :</b> Les masses de polluants ci-dessous sont les valeurs enregistrées sur les fiches d'émission ; une source sans valeur enregistrée est comptée comme non renseignée (aucun ratio au CO2e n'est appliqué).",
     "ch8_footnote": "* Note : Les rejets massiques des polluants atmosphériques sont des estimations théoriques de dépistage dérivées de la Section 4 de l'API Compendium. Des mesures cheminée (mg/Nm³) sont requises pour attester la conformité réglementaire au Décret 06-138.",
 
     # Chapter 9: 2030 Decarbonization Target
@@ -470,7 +470,7 @@ TRANSLATIONS_FR = {
     "qaqc_title": "12. ASSURANCE QUALITÉ, ÉVALUATION DES INCERTITUDES ET CADRE RÉGLEMENTAIRE",
     "qaqc_desc": "Protocoles d'assurance qualité, niveaux d'audit ISO 14064-3, et évaluation des incertitudes de mesure selon l'Approche 1 du GIEC et Monte Carlo :",
     "qaqc_proto_title": "Protocoles d'Assurance Qualité et d'Étalonnage des Mesures :",
-    "qaqc_proto_desc": "Tous les débitmètres de comptage transactionnel et chromatographes de gaz sont consignés dans des registres numériques infalsifiables. Les débitmètres ultrasoniques font l'objet d'un étalonnage semestriel selon API MPMS Chapitre 14 (précision ±1,5 %). L'efficacité de destruction par torchage est vérifiée par télémétrie optique VISR ({dre_pct} DRE). Des échantillons de gaz sont analysés chaque semaine par chromatographie sur site pour vérifier les PCS et constantes stœchiométriques.",
+    "qaqc_proto_desc": "L'étalonnage des compteurs, la fréquence des analyses de gaz et la vérification de l'efficacité de destruction des torches ne sont pas enregistrés dans la plateforme : décrivez-les dans le plan de surveillance du site. Efficacité de destruction enregistrée : {dre_pct}.",
     "qaqc_statute_title": "Matrice de Conformité aux Régimes Réglementaires et Mandats Internationaux :",
     "qaqc_statute_headers": ["Cadre Réglementaire", "Périmètre Réglementaire", "Description du Mandat", "Statut de Conformité"],
     "qaqc_statute_d21_pass": "Conforme Audité",

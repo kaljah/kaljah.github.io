@@ -166,7 +166,7 @@ def recalculate_all_emissions_gwp(standard, previous=None, user=None):
         synchronize_session=False,
     )
 
-    from electricity_factors import grid_entry, grid_factor_kg_co2e_per_kwh
+    from electricity_factors import grid_entry, grid_entry_for_year, grid_factor_kg_co2e_per_kwh
     from routes.scope2 import _LEGACY_BOILER_EF_KG_PER_MMBTU as _NG_BOILER  # records saved before gas masses
     from services.scope2_gases import gas_split
 
@@ -179,7 +179,7 @@ def recalculate_all_emissions_gwp(standard, previous=None, user=None):
     for e in Scope2Emission.query.all():
         st = str(e.source_type or "").lower()
         if "electric" in st:
-            entry = grid_entry(e.grid_region)[1] if e.grid_region else None
+            entry = grid_entry_for_year(e.grid_region, e.year)[1] if e.grid_region else None  # vintage (F-S23-09)
             if entry is not None and e.electricity_kwh:
                 e.emission_factor = grid_factor_kg_co2e_per_kwh(entry, gwp=new_gwp)
                 e.co2e = e.electricity_kwh * e.emission_factor / 1000.0
@@ -190,7 +190,10 @@ def recalculate_all_emissions_gwp(standard, previous=None, user=None):
                     e.co2e_market_based = e.electricity_kwh * float(e.market_emission_factor) / 1000.0
                 elif not getattr(e, "market_instrument_type", None) or e.market_instrument_type in (
                         "None", "Grid Average / Residual Mix"):
-                    e.co2e_market_based = e.co2e  # grid-average fallback follows the re-weighted grid (BA-005)
+                    # the residual mix (CO2, no GWP), else the re-weighted grid average (BA-005, F-S23-02)
+                    from services.scope2_market import market_factor
+                    m_ef, _ = market_factor(e.emission_factor, None, None, grid_name=e.grid_region)
+                    e.co2e_market_based = e.electricity_kwh * m_ef / 1000.0
                 # an instrument without a stored factor keeps its market value: nothing to recalculate it from
                 g = gas_split(e)
                 e.co2_emissions, e.ch4_emissions, e.n2o_emissions = g["co2"], g["ch4"], g["n2o"]

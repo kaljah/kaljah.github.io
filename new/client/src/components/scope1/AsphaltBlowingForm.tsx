@@ -26,7 +26,7 @@ export const AsphaltBlowingForm: React.FC<Scope1SubFormProps> = ({ data, onChang
           <input
             type="text"
             className="mole-input readonly"
-            value="Asphalt Blowing (10.43 kg CO₂/t, 0.0227 kg CH₄/t)"
+            value="Asphalt Blowing (6.19 kg CO₂/t, 3.38 kg CH₄/t, Compendium Table 6-52 uncontrolled)"
             disabled
           />
         </div>

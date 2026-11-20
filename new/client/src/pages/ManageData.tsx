@@ -622,7 +622,7 @@ const ManageDataInner: React.FC = () => {
         year: new Date().getFullYear(),
         survey_date: new Date().toISOString().split('T')[0],
         survey_type: 'Satellite (Sentinel-5P/MethaneSAT)',
-        measured_rate_kg_hr: '', reconciliation_status: 'Reconciled', operator_notes: ''
+        measured_rate_kg_hr: '', reconciliation_status: '', operator_notes: ''
     });
     const [editingOgmpId, setEditingOgmpId] = useState<string | number | null>(null);
 
@@ -1184,8 +1184,12 @@ const ManageDataInner: React.FC = () => {
                 survey_date: ogmpForm.survey_date,
                 survey_type: ogmpForm.survey_type,
                 measured_rate_kg_hr: parseFloat(ogmpForm.measured_rate_kg_hr),
-                reconciliation_status: ogmpForm.reconciliation_status,
-                reconciliation_override_reason: ogmpForm.operator_notes || 'Operational field survey observation',
+                // the status is derived on the server; an override only when the user picked one and typed why
+                // (a default "Reconciled" and a canned reason overrode the derived discrepancy: F-GUI2-06)
+                ...(ogmpForm.reconciliation_status
+                  ? { reconciliation_status: ogmpForm.reconciliation_status,
+                      reconciliation_override_reason: ogmpForm.operator_notes }
+                  : {}),
                 operator_notes: ogmpForm.operator_notes
             });
             toast.success(editingOgmpId ? t("OGMP survey record updated!") : t("OGMP survey record saved!"));
@@ -1195,7 +1199,7 @@ const ManageDataInner: React.FC = () => {
                 year: new Date().getFullYear(),
                 survey_date: new Date().toISOString().split('T')[0],
                 survey_type: 'Satellite (Sentinel-5P/MethaneSAT)',
-                measured_rate_kg_hr: '', reconciliation_status: 'Reconciled', operator_notes: ''
+                measured_rate_kg_hr: '', reconciliation_status: '', operator_notes: ''
             });
             fetchOgmpSurveys();
         } catch (err: any) {

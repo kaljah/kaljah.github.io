@@ -10,6 +10,7 @@ from extensions import db
 from routes.auth import login_required
 from services.labels import process_label, scope2_source_label
 from services.scope2_activity import scope2_activity
+from services.scope2_gases import gas_split
 from utils import get_allowed_facility_ids, get_current_user, get_current_tenant_id, tenant_matches
 from routes.reports import create_pdf_report, reports_bp
 from services.audit_chain import record_report_fingerprint
@@ -185,6 +186,7 @@ def export_emissions():
             for e in q2.all():
                 m_val = e.month if e.month is not None else 1
                 s2_amount, s2_unit, _s2_label = scope2_activity(e)
+                _g = gas_split(e)  # the gas masses (they were printed 0: audit 2026-11 F-RPT-15)
                 emissions_data.append(
                     {
                         "scope": 2,
@@ -194,9 +196,7 @@ def export_emissions():
                         "fuel_type": _s2_label,
                         "amount": s2_amount,
                         "unit": s2_unit,
-                        "co2_emissions": 0,
-                        "ch4_emissions": 0,
-                        "n2o_emissions": 0,
+                        "co2_emissions": _g["co2"], "ch4_emissions": _g["ch4"], "n2o_emissions": _g["n2o"],
                         "total_co2e": e.co2e or 0,
                         "co2e_location_based": e.co2e_location_based if e.co2e_location_based is not None else (e.co2e or 0),
                         "co2e_market_based": e.co2e_market_based if e.co2e_market_based is not None else (e.co2e or 0),
@@ -251,9 +251,7 @@ def export_emissions():
                         "fuel_type": str(getattr(e, "sub_category", None) or "Value Chain"),
                         "amount": e.activity_data or 0,
                         "unit": e.unit or "",
-                        "co2_emissions": 0,
-                        "ch4_emissions": 0,
-                        "n2o_emissions": 0,
+                        "co2_emissions": _g["co2"], "ch4_emissions": _g["ch4"], "n2o_emissions": _g["n2o"],
                         "total_co2e": e.co2e or 0,
                     }
                 )

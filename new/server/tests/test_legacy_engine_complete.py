@@ -54,7 +54,8 @@ def test_custom_factor_fallback_keeps_every_gas(no_dispatch):
     em, method = le._compute_emissions_impl({"process_type": "fugitive", "amount": 10, "unit": "m3"},
                                             {**FACTOR, "type": "custom"}, gwp_dict=GWP)
     assert method == "server_custom_factor"
-    assert (em["co2"], em["ch4"], em["n2o"]) == pytest.approx((0.5, 0.01, 0.001))
+    # the entered CO2 and CH4 are kept; a leak emits no N2O (audit 2026-11 F-CMB-08)
+    assert (em["co2"], em["ch4"], em["n2o"]) == pytest.approx((0.5, 0.01, 0.0))
 
 
 def test_catalog_hhv_reaches_the_dispatcher(no_dispatch):

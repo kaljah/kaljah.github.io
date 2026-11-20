@@ -25,7 +25,9 @@ def test_bug031_materiality_not_max():
 
     # 236.6 of 338.9 t at Level 2 (the audit's facility 13): facility is Level 2, not 4
     assert materiality_level([R(2, 236.6), R(4, 102.3)]) == 2
-    assert materiality_level([R(4, 300), R(2, 38.9)]) == 4
+    # one 90 % rule with the L4 / L5 reconciliation (audit 2026-11 F-RPT-05): 88.5 % at L4 is not L4
+    assert materiality_level([R(4, 300), R(2, 38.9)]) == 2
+    assert materiality_level([R(4, 300), R(2, 30.0)]) == 4
 
 
 def test_bug052_survey_override_needs_justification(client, app):

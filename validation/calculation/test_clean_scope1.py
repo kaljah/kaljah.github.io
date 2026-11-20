@@ -249,7 +249,9 @@ class TestCleanScope1VentingAndMidstream:
         ch4_f = 0.90
         ef_valve = 0.0045
 
-        ref = ref_calculate_component_fugitives(valves, hours=hrs, component_type="valve", ef_kg_hr=ef_valve, ch4_fraction=ch4_f)
+        # the component calculator reports CH4 only (no CO2 in the leaked gas)
+        ref = ref_calculate_component_fugitives(valves, hours=hrs, component_type="valve", ef_kg_hr=ef_valve,
+                                                ch4_fraction=ch4_f, co2_fraction=0.0)
 
         res = calc.calculate(
             component_counts={"valves": {"count": valves, "ef": ef_valve, "unit": "kg/hr"}},

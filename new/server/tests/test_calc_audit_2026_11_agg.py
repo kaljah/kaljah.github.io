@@ -147,3 +147,60 @@ def test_f_grest_02_monte_carlo_gives_lower_and_upper_limits():
     lo, hi = res["lower_uncertainty_95pct"], res["upper_uncertainty_95pct"]
     assert lo < 0 < hi
     assert hi > -lo  # a skewed (lognormal-like) distribution is not symmetric
+
+
+# ---------------------------------------------------------------- F-AGG-01 organisational boundary (Critical)
+@pytest.fixture
+def boundary_world(ctx):
+    import uuid
+
+    from extensions import db
+    from models import Emission, Facility
+    from routes.auth_settings import _app_settings
+    from routes.dashboard import clear_dashboard_cache
+
+    tag = uuid.uuid4().hex[:6]
+    alpha = Facility(name=f"Alpha {tag}", code=f"A{tag}", region=f"RA{tag}", segment="Upstream", country="Algeria",
+                     operator_status="operated", equity_share_pct=100.0)
+    beta = Facility(name=f"Beta {tag}", code=f"B{tag}", region=f"RB{tag}", segment="Upstream", country="Algeria",
+                    operator_status="non_operated", equity_share_pct=30.0)
+    db.session.add_all([alpha, beta])
+    db.session.flush()
+    db.session.add_all([
+        Emission(facility_id=alpha.id, year=2024, month=1, process_type="combustion", co2_emissions=1985.565,
+                 ch4_emissions=0.0, n2o_emissions=0.0, co2e_total=1985.565, status="Verified"),
+        Emission(facility_id=beta.id, year=2024, month=1, process_type="combustion", co2_emissions=2125.25,
+                 ch4_emissions=0.0, n2o_emissions=0.0, co2e_total=2125.25, status="Verified"),
+    ])
+    db.session.commit()
+    prev = _app_settings.get("consolidation_approach")
+    yield alpha.id, beta.id
+    _app_settings["consolidation_approach"] = prev
+    clear_dashboard_cache()
+
+
+def _s1_total(fids, approach):
+    from routes.auth_settings import _app_settings
+    from routes.dashboard import _query_summary, clear_dashboard_cache
+
+    _app_settings["consolidation_approach"] = approach
+    clear_dashboard_cache()
+    rows = _query_summary(year="2024", allowed_fids=list(fids))
+    return sum(r["scope1_total"] for r in rows)
+
+
+def test_f_agg_01_operational_control_excludes_non_operated(boundary_world):
+    # GHG Protocol ch. 3: 100 % of operated facilities, 0 % of the others -> 1,985.565 t
+    assert _s1_total(boundary_world, "operational_control") == pytest.approx(1985.565)
+
+
+def test_f_agg_01_equity_share_weights_each_facility(boundary_world):
+    # 100 % x 1,985.565 + 30 % x 2,125.25 = 2,623.14 t
+    assert _s1_total(boundary_world, "equity_share") == pytest.approx(1985.565 + 0.30 * 2125.25)
+
+
+def test_f_agg_01_unknown_approach_is_refused(client=None):
+    from services.consolidation import APPROACHES, current_approach
+
+    assert "operational_control" in APPROACHES and "equity_share" in APPROACHES
+    assert current_approach() in APPROACHES

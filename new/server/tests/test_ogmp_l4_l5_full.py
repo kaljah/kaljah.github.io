@@ -131,6 +131,7 @@ def test_ogmp_source_catalog_counts_and_rules():
                 "ogmp_level": 4,
                 "status_flag": "Quantified",
                 "ch4_tonnes": 80.0,
+                "uncertainty_pct": 10.0,  # a Level 4 source carries its uncertainty (audit 2026-11 F-RPT-06)
             },
             prior_year_ch4=100.0,  # -20% YoY
         )
@@ -141,7 +142,7 @@ def test_ogmp_source_catalog_counts_and_rules():
             "source_name": "Flaring",
             "ogmp_level": 4,
             "status_flag": "Quantified",
-            "ch4_tonnes": 80.0,
+            "ch4_tonnes": 80.0, "uncertainty_pct": 10.0,
             "yoy_explanation": "VRU tie-in reduced flaring.",
         },
         prior_year_ch4=100.0,
@@ -194,28 +195,30 @@ def test_rss_uncertainty_pathways_and_option2_variance():
     assert res_p1["reporting_level"] == 5
     assert res_p1["ci_overlaps"] is True
 
-    # Pathway 2a: variance > 20% (+25%), but wide CIs still overlap -> Level 5 under 2a
+    # Reconciliation & L5 Guidance s3.3.1 (audit 2026-11 F-RPT-02): +25 % with a wide top-down band that holds the
+    # bottom-up central estimate (187.5-312.5 t holds 200 t) is reasonable agreement, Pathway 1
     meas_2a = [SimpleNamespace(measurement_mode="Annualized", option_mode="Option 1", measured_rate_kg_hr=28.5, operating_hours_year=8760.0, annualized_tch4=250.0, uncertainty_pct=25.0)]
     res_2a = reconcile_l4_l5(srcs, meas_2a, threshold_pct=20.0)
-    assert res_2a["pathway_code"] == "2a"
+    assert res_2a["pathway_code"] == "1"
     assert res_2a["ci_overlaps"] is True
 
-    # Pathway 2b: TD >> BU and disjoint CIs -> Level 4 Discrepancy Flagged
+    # TD >> BU with disjoint bands: unexplained -> Pathway 3, the asset stays at Level 4
     meas_2b = [SimpleNamespace(measurement_mode="Annualized", option_mode="Option 1", measured_rate_kg_hr=50.0, operating_hours_year=8760.0, annualized_tch4=400.0, uncertainty_pct=5.0)]
     res_2b = reconcile_l4_l5(srcs, meas_2b, threshold_pct=20.0)
-    assert res_2b["pathway_code"] == "2b"
+    assert res_2b["pathway_code"] == "3"
     assert res_2b["reporting_level"] == 4
     assert res_2b["ci_overlaps"] is False
+    # the operator records the explanation (Pathway 2b): the reconciled estimate is Level 5
+    res_2b_ex = reconcile_l4_l5(srcs, meas_2b, threshold_pct=20.0, pathway_override="2b")
+    assert res_2b_ex["pathway_code"] == "2b" and res_2b_ex["reporting_level"] == 5
 
-    # Pathway 2c: BU >> TD and disjoint CIs -> Pathway 2c
+    # BU >> TD, instantaneous: also unresolved until explained
     meas_2c = [SimpleNamespace(measurement_mode="Annualized", option_mode="Option 1", measured_rate_kg_hr=10.0, operating_hours_year=8760.0, annualized_tch4=80.0, uncertainty_pct=5.0)]
-    res_2c = reconcile_l4_l5(srcs, meas_2c, threshold_pct=20.0)
-    assert res_2c["pathway_code"] == "2c"
-
-    # Pathway 2d: Instantaneous disjoint -> Pathway 2d
+    assert reconcile_l4_l5(srcs, meas_2c, threshold_pct=20.0)["pathway_code"] == "3"
     meas_2d = [SimpleNamespace(measurement_mode="Instantaneous", option_mode="Option 1", measured_rate_kg_hr=45.0, operating_hours_year=8760.0, annualized_tch4=390.0, uncertainty_pct=5.0)]
-    res_2d = reconcile_l4_l5(srcs, meas_2d, threshold_pct=20.0)
-    assert res_2d["pathway_code"] == "2d"
+    assert reconcile_l4_l5(srcs, meas_2d, threshold_pct=20.0)["pathway_code"] == "3"
+    # Pathway 1 cannot be claimed without agreement
+    assert reconcile_l4_l5(srcs, meas_2d, threshold_pct=20.0, pathway_override="1")["pathway_code"] == "3"
 
     # Option 2 multi-campaign widens CI when campaigns diverge
     opt1_multi = compute_top_down_rss([

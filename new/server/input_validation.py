@@ -179,6 +179,25 @@ def parse_number(value, field, *, required=True, min_value=None, max_value=None,
     return number
 
 
+def parse_future_year(value, field="target_year", *, required=True, horizon=60):
+    """A target or plan year: up to `horizon` years ahead (reporting years stop at next year; targets and plans need
+    future years: audit 2026-11 F-GOGMP-07)."""
+    if value is None or (isinstance(value, str) and value.strip() == ""):
+        if required:
+            raise ValidationError(f"'{field}' is required", field)
+        return None
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        raise ValidationError(f"'{field}' must be a year", field)
+    if not math.isfinite(number) or number != int(number):
+        raise ValidationError(f"'{field}' must be a whole year", field)
+    year, max_year = int(number), datetime.date.today().year + horizon
+    if not YEAR_MIN <= year <= max_year:
+        raise ValidationError(f"'{field}' must be between {YEAR_MIN} and {max_year}", field)
+    return year
+
+
 def parse_year(value, field="year", *, required=True):
     """Reporting year: integer in [1900, current year + 1]."""
     if value is None or (isinstance(value, str) and value.strip() == ""):

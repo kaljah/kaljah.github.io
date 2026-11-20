@@ -59,7 +59,7 @@ def chp_row(row, row_idx):
         return None, None, f"Row {row_idx}: {exc}"
 
 
-def cooling_row_factor(row, row_idx, grid_region, facility_id):
+def cooling_row_factor(row, row_idx, grid_region, facility_id, year=None):
     """(kg CO2e per ton-hour, error): the factor column, else Equation 8-2 from the chiller COP and the row's grid
     (audit 2026-11 F-S23-12). A missing or unreadable factor is refused (bug hunt 2026-10-15 #13)."""
     clean = _bp()._clean_float
@@ -69,7 +69,8 @@ def cooling_row_factor(row, row_idx, grid_region, facility_id):
         from services.scope2_policy import cooling_factor_from_cop
 
         try:
-            ef = cooling_factor_from_cop(clean(row.get("cooling_cop"), default=None), grid_region, facility_id)[0]
+            ef = cooling_factor_from_cop(clean(row.get("cooling_cop"), default=None), grid_region, facility_id,
+                                         year)[0]
         except ValidationError as exc:
             return None, f"Row {row_idx}: {exc.message}"
     if ef is None or ef < 0:

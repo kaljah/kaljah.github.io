@@ -753,9 +753,7 @@ def _get_goals_baseline_context(allowed_fids=None, tenant_id="default"):
     base_year_obj = db.session.query(BaseYear).order_by(BaseYear.id.desc()).first() if eff_tenant == "default" else None
     base_year = rec.year if rec else (base_year_obj.year if base_year_obj else 2024)
 
-    # Verified records without test facilities, as every total (Draft / Pending / test rows were in; F-AGG-15)
-    from services.dashboard_filters import exclude_test_rows
-
+    from services.dashboard_filters import exclude_test_rows  # Verified, no test rows, as every total (F-AGG-15)
     q1 = exclude_test_rows(db.session.query(db.func.sum(Emission.co2e_total)).filter(
         Emission.year == base_year, Emission.status == "Verified"), Emission)
     q2 = exclude_test_rows(db.session.query(db.func.sum(Scope2Emission.co2e)).filter(
@@ -1194,6 +1192,8 @@ def manage_sbti():
         return jsonify({"error": f"pathway_type must be one of {sorted(SBTI_PATHWAY_MIN_RATE)}"}), 400
     if scope_coverage not in ("S1S2S3", "S1S2"):
         return jsonify({"error": "scope_coverage must be 'S1S2S3' or 'S1S2'"}), 400
+    if pathway_type == "WB2C":  # SBTi: WB2C for scope 3 only, every coverage here has scope 1+2 (F-GSTD-05)
+        return jsonify({"error": "SBTi accepts well-below 2 °C for scope 3 only: use 1.5C", "field": "pathway_type"}), 400
     if target_year <= base_year or target_year > 2070:
         return jsonify({"error": f"Target year must be greater than base year ({base_year}) and not exceed 2070."}), 400
     if base_year_emissions <= 0:

@@ -184,19 +184,12 @@ def get_regional_profile(
 
     for prof in REGIONAL_PROFILES.values():
         prof_name_l = prof["name"].lower()
-        if (
-            needle == prof["key"]
-            or needle_key == prof["key"]
-            or needle_spaced in prof_name_l
-            or needle in prof_name_l
-        ):
+        # exact matches only: a substring match gave any "midstream" facility the demo coastal terminal profile, with
+        # its demo operator and 25 % JV equity (audit 2026-11 F-GUI2-07)
+        if needle in (prof["key"], prof_name_l) or needle_key == prof["key"] or needle_spaced == prof_name_l:
             return _apply_tenant_branding(prof, tenant_config)
-        for alias in prof.get("aliases", []):
-            if any(
-                cand == alias or alias in cand or cand in alias
-                for cand in (needle, needle_spaced)
-            ):
-                return _apply_tenant_branding(prof, tenant_config)
+        if any(cand == alias for alias in prof.get("aliases", []) for cand in (needle, needle_spaced)):
+            return _apply_tenant_branding(prof, tenant_config)
 
     clean_title = str(region_identifier).replace("_", " ").title()
     org_name = (

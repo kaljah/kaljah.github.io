@@ -176,15 +176,16 @@ def sheet_direct(wb, ctx):
                 ["Record ID", "Product Name", "CN Code", "Quantity Exported (t)", "Combustion Emissions (tCO2e)",
                  "Process Reaction Emissions (tCO2e)", "Flaring & Venting (tCO2e)", "Measurable Net Heat (GJ)",
                  "Heat Emission Factor (tCO2/GJ)", "Attributed Direct Emissions (tCO2e)",
-                 "Specific Direct Embedded (SEE_dir) (tCO2e/t)", "EU ETS Benchmark Benchmark (tCO2e/t)",
+                 "Specific Direct Embedded (SEE_dir) (tCO2e/t)", "EU ETS Benchmark (tCO2e/t)",
                  "Benchmark Alignment"])
     for idx, r in enumerate(ctx.records, start=5):
         qty = float(r.quantity_tonnes or 0.0)
         direct_see = float(r.specific_embedded_direct or 0.0)
         attr_direct = qty * direct_see
         comb_pct, proc_pct, flare_pct, _has_split = _get_facility_scope1_split(r.facility_id, r.year, ctx.statuses)
-        ets_bench = 1.30 if "ammonia" in r.product_name.lower() else (0.28 if "diesel" in r.product_name.lower() else 0.85)
-        alignment = "Compliant (Within Expected Envelope)" if direct_see <= ets_bench * 1.5 else "Higher Than Benchmark"
+        # no benchmark, heat or heat factor is recorded: they are left "Not provided" (1.30 / 0.28 / 0.85 t/t, a 0.0561
+        # t/GJ heat factor and 0 GJ were hard-coded; audit 2026-11 F-RPT-08)
+        ets_bench, alignment = "Not provided", "Not assessed"
         _cell(ws, idx, 1, r.id, Styles.mono)
         _cell(ws, idx, 2, ctx.safe(r.product_name), Styles.bold)
         _cell(ws, idx, 3, ctx.safe(str(r.cn_code)), Styles.mono)
@@ -192,11 +193,11 @@ def sheet_direct(wb, ctx):
         _cell(ws, idx, 5, round(attr_direct * comb_pct, 1), number_format="#,##0.0")
         _cell(ws, idx, 6, round(attr_direct * proc_pct, 1), number_format="#,##0.0")
         _cell(ws, idx, 7, round(attr_direct * flare_pct, 1), number_format="#,##0.0")
-        _cell(ws, idx, 8, round(0.0, 1), number_format="#,##0.0")  # measurable net heat
-        _cell(ws, idx, 9, 0.0561, number_format="0.0000")  # heat emission factor
+        _cell(ws, idx, 8, "Not provided")  # measurable net heat
+        _cell(ws, idx, 9, "Not provided")  # heat emission factor
         _cell(ws, idx, 10, round(attr_direct, 1), number_format="#,##0.0")
         _cell(ws, idx, 11, round(direct_see, 4), number_format="0.0000")
-        _cell(ws, idx, 12, ets_bench, number_format="0.0000")
+        _cell(ws, idx, 12, ets_bench)
         _cell(ws, idx, 13, alignment, Styles.bold)
         _finish_row(ws, idx, 13)
     autofit_columns(ws)
@@ -264,7 +265,7 @@ def sheet_precursors(wb, ctx):
                                      float(r.precursor_see_indir or 0.0))
             p_tot = p_dir + p_indir
             rows.append((ctx.safe(r.product_name), ctx.safe(r.cn_code), ctx.safe(r.precursor_name),
-                         ctx.safe(r.precursor_cn_code or "2814 10 00"),
+                         ctx.safe(r.precursor_cn_code or "Not provided"),
                          ctx.safe(f"{ctx.fac_country(r)} (In-House / Attributed)"), ratio, p_dir, p_indir, p_tot,
                          ratio * p_tot))
     if not rows:
@@ -361,7 +362,9 @@ def sheet_carbon_price(wb, ctx):
         _cell(ws, idx, 7, ctx.safe(legal_ref), Styles.regular)
         _cell(ws, idx, 8, rate, number_format="€#,##0.00")
         _cell(ws, idx, 9, round(qty * rate, 2), number_format="€#,##0.00")
-        _cell(ws, idx, 10, "Eligible for Full Article 9 Deduction" if rate > 0 else "No Origin Price Claimed", Styles.bold)
+        # whether the price is deductible is the competent authority's decision (Art. 9): only what was entered
+        _cell(ws, idx, 10, "Carbon price paid declared (Art. 9)" if rate > 0 else "No origin carbon price declared",
+              Styles.bold)
         _cell(ws, idx, 11, ctx.safe(_receipt_id(r, rate)), Styles.mono)
         _finish_row(ws, idx, 11)
     _totals_row(ws, len(ctx.records) + 5, "TOTAL CARBON PRICE PAID IN COUNTRY OF ORIGIN",

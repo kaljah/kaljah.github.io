@@ -191,9 +191,12 @@ def site_measurements_collection():
     year = parse_year(data.get("year"))
     cdate = str(data.get("campaign_date") or "").strip()
     try:
-        datetime.date.fromisoformat(cdate)
+        c_day = datetime.date.fromisoformat(cdate)
     except ValueError:
         return jsonify({"error": "campaign_date must be YYYY-MM-DD", "field": "campaign_date"}), 400
+    if c_day.year != year:  # a campaign of another year was accepted (audit 2026-11 F-GOGMP-09)
+        return jsonify({"error": f"campaign_date {cdate} is not in the reporting year {year}",
+                        "field": "campaign_date"}), 400
 
     survey_type = str(data.get("survey_type") or "").strip()
     if not survey_type:
@@ -209,8 +212,8 @@ def site_measurements_collection():
 
     rate = parse_number(data.get("measured_rate_kg_hr"), "measured_rate_kg_hr", min_value=0.0)
     hours = parse_number(data.get("operating_hours_year", 8760.0), "operating_hours_year", required=False, min_value=0.0, max_value=8784.0, default=8760.0)
-    default_u = 30.0 if mode == "Instantaneous" else 20.0
-    unc = parse_number(data.get("uncertainty_pct", default_u), "uncertainty_pct", required=False, min_value=0.0, max_value=500.0, default=default_u)
+    # the campaign's own uncertainty (95 %): a 30 / 20 % default was inserted silently (audit 2026-11 F-RPT-06)
+    unc = parse_number(data.get("uncertainty_pct"), "uncertainty_pct", min_value=0.0, max_value=500.0)
     det = parse_number(data.get("detection_threshold_kg_hr"), "detection_threshold_kg_hr", required=False, min_value=0.0)
 
     raw_ann = data.get("annualized_tch4")
@@ -323,7 +326,11 @@ def implementation_plans_collection():
         rep_ent_id = None
 
     if data.get("generate_default"):
-        b_year = parse_year(data.get("base_year", fac.ogmp_membership_year or 2023), required=False) or 2023
+        # the reporting entity's membership year, as its Gold target (the facility default 2023 was used: F-GOGMP-12)
+        _ent = (db.session.get(OgmpReportingEntity, rep_ent_id) if rep_ent_id else
+                OgmpReportingEntity.query.filter_by(facility_id=fid, tenant_id=tenant_id).first())
+        b_default = (_ent.membership_year if _ent and _ent.membership_year else fac.ogmp_membership_year) or 2023
+        b_year = parse_year(data.get("base_year", b_default), required=False) or b_default
         op_st = str(data.get("operator_status") or fac.operator_status or "operated").lower()
         # tenant_matches, like the other OGMP routes: "Default " or "default" is the same tenant
         existing = OgmpImplementationPlan.query.filter(
@@ -367,7 +374,8 @@ def implementation_plans_collection():
     actual_raw = data.get("actual_level")
     actual_lvl = int(parse_number(actual_raw, "actual_level", required=False, min_value=1, max_value=5)) if actual_raw not in (None, "") else None
     b_year = parse_year(data.get("base_year", fac.ogmp_membership_year or 2023), required=False) or 2023
-    p_year = parse_year(data.get("planned_year", b_year + int(horizon[1:])), required=False) or b_year
+    from input_validation import parse_future_year  # plan years run up to Y10 (F-GOGMP-07)
+    p_year = parse_future_year(data.get("planned_year", b_year + int(horizon[1:])), "planned_year", required=False) or b_year
 
     plan = OgmpImplementationPlan(
         facility_id=fid,

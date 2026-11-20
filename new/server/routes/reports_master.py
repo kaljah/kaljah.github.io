@@ -729,9 +729,10 @@ def export_benchmark_excel():
             b.get("facility_count", 1),
             round(b.get("total_mmboe", 0.0), 3),
             round(b.get("total_co2e_t", 0.0), 1),
-            round(b.get("carbon_intensity_kg_boe", 0.0), 2),
-            f"{b.get('flaring_intensity_pct', 0.0):.2f}%",
-            "COMPLIANT" if b.get("decree_compliant") else "EXCEEDED CAP",
+            # "n/a" without production: 0.00 % "COMPLIANT" was printed (audit 2026-11 F-GUI2-08)
+            round(b["carbon_intensity_kg_boe"], 2) if b.get("carbon_intensity_kg_boe") is not None else "n/a",
+            f"{b['flaring_intensity_pct']:.2f}%" if b.get("flaring_intensity_pct") is not None else "n/a",
+            {True: "COMPLIANT", False: "EXCEEDED CAP"}.get(b.get("decree_compliant"), "NOT ASSESSABLE"),
         ]
         for c_idx, v in enumerate(row_vals, 1):
             cell = ws.cell(row=r_idx, column=c_idx, value=_safe_excel_value(v))

@@ -113,7 +113,7 @@ def generate_ogmp_reconciliation_chart(
                     ax.set_ylim(0, max_v * 1.35)
 
                     for i, s in enumerate(pts):
-                        var = s.get("variance_pct", 0.0)
+                        var = s.get("variance_pct") or 0.0
                         higher = max(bu_vals[i], td_vals[i])
                         var_color = COLOR_SUCCESS if abs(var) <= 20.0 else COLOR_WARNING
                         ax.text(x[i], higher + max_v * 0.03, f"Δ {var:+.1f}%", ha="center", va="bottom", fontsize=6.8, fontweight="bold", color=var_color)

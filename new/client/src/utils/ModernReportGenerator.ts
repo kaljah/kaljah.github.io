@@ -1,3 +1,4 @@
+import { sourceCategory } from "../constants/sourceCategories";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { DEFAULT_GWP, getActiveGwpFactors, GWP_STANDARDS } from "../constants";
@@ -11,7 +12,8 @@ export function resolveGwpFactors(gwpChoice?: string) {
   else if (str.includes("AR6")) standard = "AR6";
   else standard = "AR5";
 
-  if (str.includes("20")) horizon = "20";
+  // a 20-year horizon only from an explicit GWP-20 / 20-yr token ("AR6 (2021)" read as GWP-20: F-CLIENT-10)
+  if (/(GWP[-_ ]?20|20[-_ ]?(YR|YEAR))/.test(str) || str === "20") horizon = "20";
   const factors = getActiveGwpFactors(standard, horizon);
   return {
     standard,
@@ -1031,12 +1033,17 @@ Email: ${personResponsible.email || "N/A"}`;
     const sangeaFlaring = fullData.processBreakdown?.["Flaring"] ?? (flaringSummary?.total_flaring?.tco2e ?? 0);
     const sangeaLeaks = fullData.processBreakdown?.["Fugitive"] ?? 0.0;
     const sangeaVenting = fullData.processBreakdown?.["Venting"] ?? 0.0;
+    const sangeaProcess = fullData.processBreakdown?.["Process"] ?? 0.0;
+    const sangeaOther = fullData.processBreakdown?.["Other"] ?? 0.0;
 
     const sangeaRows = [
       ["Stationary Combustion", Number(sangeaCombustion).toLocaleString("en-US", { maximumFractionDigits: 1 }), "Gas turbines, compressor drivers, heaters, thermal oxidizers"],
       ["Flaring (Routine, Non-Routine, Safety)", Number(sangeaFlaring).toLocaleString("en-US", { maximumFractionDigits: 1 }), "Central processing facility (CPF) flares, low-pressure flares, pilots"],
       ["Equipment Leaks & Fugitives", Number(sangeaLeaks).toLocaleString("en-US", { maximumFractionDigits: 1 }), "Valves, pump seals, compressor rod packing, flanges"],
       ["Tank & Process Venting", Number(sangeaVenting).toLocaleString("en-US", { maximumFractionDigits: 1 }), "Atmospheric storage tanks, glycol dehydrators, pig launching/receiving"],
+      // process and unclassified sources are printed so the rows add up to the total (F-GUI2-10)
+      ["Industrial Process Sources", Number(sangeaProcess).toLocaleString("en-US", { maximumFractionDigits: 1 }), "Hydrogen, catalyst regeneration, coking, other process reactions"],
+      ["Other Scope 1 Sources", Number(sangeaOther).toLocaleString("en-US", { maximumFractionDigits: 1 }), "Sources without a category"],
       ["Scope 2 (Purchased Electricity)", Number(fullData.scope2Total).toLocaleString("en-US", { maximumFractionDigits: 1 }), "Purchased power imported from national electricity grid"],
       [
         { content: "Total Operational Footprint", styles: { fontStyle: "bold" } },
@@ -1638,18 +1645,9 @@ async function fetchAllReportData(
     else scope1Total += tVal;
     if (scope !== "3") storedScope12 += Number(r.co2e_total || 0) || tVal;
 
-    const pType = (r.process_type || "").toLowerCase();
-    let procCat = "Other";
-    if (scope === "1") {
-      if (pType.includes("combustion") || pType.includes("fuel"))
-        procCat = "Combustion";
-      else if (pType.includes("flare") || pType.includes("flaring"))
-        procCat = "Flaring";
-      else if (pType.includes("vent") || pType.includes("venting"))
-        procCat = "Venting";
-      else if (pType.includes("fugitive") || pType.includes("leak"))
-        procCat = "Fugitive";
-    }
+    // the server's source classification (a substring match left tanks, completions, process sources ... out)
+    const procCat = ({ combustion: "Combustion", flaring: "Flaring", vented: "Venting", fugitive: "Fugitive",
+      process: "Process" } as Record<string, string>)[sourceCategory(r.process_type)] || "Other";
 
     // Scope 1 sources only: Scope 2 / 3 rows landed in "Other", which then read as the primary driver
     if (scope === "1") processBreakdown[procCat] = (processBreakdown[procCat] || 0) + tVal;

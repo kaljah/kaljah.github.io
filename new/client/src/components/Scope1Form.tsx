@@ -1923,6 +1923,8 @@ export const Scope1Form: React.FC = () => {
       co2Unit: res.unit,
       ch4: res.ch4, // Usually 0 or low for pure analysis
       ch4Unit: res.unit,
+      // N2O too: it was dropped when the analysis was applied (audit 2026-11 F-GUI-05)
+      ...(res.n2o != null ? { n2o: res.n2o, n2oUnit: res.unit } : {}),
     }));
 
     // Auto-map composition to engineering forms if raw_composition is provided
@@ -1949,7 +1951,7 @@ export const Scope1Form: React.FC = () => {
         c3h8_mol_pct: pct("C3H8"),
         co2_mol_pct: pct("CO2"),
         n2_mol_pct: pct("N2"),
-        h2s_ppm: parseFloat(rc.H2S || 0) || 0,
+        h2s_mol_pct: parseFloat(rc.H2S || 0) || 0,  // mol %, not ppm (F-CLIENT-05)
       });
     }
 
@@ -2086,9 +2088,10 @@ export const Scope1Form: React.FC = () => {
             <span className="text-xs font-semibold text-text uppercase tracking-wider">
               {tr("Live Result Preview")}
             </span>
-            {formData.quantity && Number(formData.quantity) > 0 ? (
+            {/* the method forms write `amount`, not `quantity`: the preview never left its prompt (F-GUI-04) */}
+            {Number(formData.amount || formData.quantity) > 0 ? (
               <Badge tone="success" className="font-mono text-xs font-bold">
-                {tr("Ready to calculate")}
+                {tr("Ready: the server calculates the result when you save")}
               </Badge>
             ) : (
               <span className="text-xs text-text-secondary italic">
@@ -2110,7 +2113,7 @@ export const Scope1Form: React.FC = () => {
               <strong className="text-text font-medium">{orgGwpStandard || "AR5"} (100-yr)</strong>
             </span>
           </div>
-          {formData.quantity && Number(formData.quantity) > 10000000 && (
+          {Number(formData.amount || formData.quantity) > 10000000 && (
             <div className="mt-2 flex items-center gap-1.5 rounded bg-amber-50 border border-amber-300 p-2 text-[0.75rem] text-amber-900">
               <AlertTriangle className="size-3.5 text-amber-600 shrink-0" aria-hidden="true" />
               <span>

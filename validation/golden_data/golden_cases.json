@@ -509,9 +509,9 @@
     "independent_intermediate_values": {},
     "independent_expected_result": {
       "co2": 0.0,
-      "ch4": 5.321699999999999,
+      "ch4": 4.2680034,
       "n2o": 0.0,
-      "co2e": 149.00759999999997
+      "co2e": 119.5040952
     },
     "tolerance": 0.001,
     "source": "API Compendium 2021 Table 6-1",

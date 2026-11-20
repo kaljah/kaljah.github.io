@@ -50,21 +50,22 @@ def ogmp_level_for(emission) -> int:
     ):
         return 3
 
-    # Level 2: Generic / default standard factors
+    # Level 3 too: the catalog defaults are generic *source-type* factors (per device, per well, per bbl of a given
+    # process), which Framework s4.4 places at Level 3; Level 2 is a factor for a whole emission category. They were
+    # given Level 2 (audit 2026-11 F-RPT-14). A legacy record without its factor's basis stays Level 2.
     if (
-        factor_source in ("default", "generic", "legacy", "epa_table", "standard")
+        factor_source in ("default", "generic", "epa_table", "standard")
         or calc_method in ("tier1", "generic", "standard", "default")
     ):
-        return 2
-
-    # Default fallback for registered equipment inventory
+        return 3
     return 2
 
 
-def materiality_level(records, threshold=0.5):
+def materiality_level(records, threshold=0.9):
     """BUG-031: OGMP 2.0 levels are materiality-based. The facility's bottom-up level is the highest
     level L such that records at level >= L carry at least `threshold` of the facility's CH4
-    (CO2e when no CH4 is reported) - not the maximum level of any single record."""
+    (CO2e when no CH4 is reported) - not the maximum level of any single record. One rule with the L4 / L5
+    reconciliation: 90 % of the CH4 (a 50 % majority was used here: audit 2026-11 F-RPT-05)."""
     weights = {}
     total = 0.0
     for r in records:
@@ -98,7 +99,7 @@ def compute_facility_ogmp_level(
     Canonical determination of facility OGMP 2.0 level (1-5).
     
     - Level 5: Both bottom-up (L4 source-level measured / Tier 3 engineering) and top-down measurement
-               exist for the facility/year, reconciled within threshold (<= 20% variance) without discrepancy.
+               exist for the facility/year and the stored reconciliation outcome is "Reconciled" (Guidance s3.3.1).
     - Level 4: Top-down site measurements conducted OR source-level direct measurements (L4) exist.
     - Level 3: Equipment-level generic factors (L3) populated.
     - Level 2: Generic asset-level factors.
@@ -164,7 +165,9 @@ def compute_facility_ogmp_level(
     if td > 0 and bu > 0:
         variance_pct = abs((td - bu) / bu * 100.0)
         # Check if reconciled within threshold
-        is_reconciled = reconciled_survey is True or (reconciled_survey is None and variance_pct <= threshold)
+        # the stored reconciliation outcome decides (Reconciliation & L5 Guidance s3.3.1): a variance within an
+        # unsourced +/-20 % was taken as reconciled (audit 2026-11 F-RPT-03)
+        is_reconciled = reconciled_survey is True
         if is_reconciled:
             # Under strict UNEP OGMP 2.0 Gold Standard rules, Level 5 requires that the bottom-up
             # inventory is already Level 4 (source-level measured / Tier 3 engineering).

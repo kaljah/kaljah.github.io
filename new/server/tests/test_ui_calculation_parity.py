@@ -351,8 +351,8 @@ class TestScope2UINumericalParity:
         rec = data["record"]
         em = data["emissions"]
 
-        # Table 8-2 U.S. average at AR5: (0.401 + 3.40E-05 x 28 + 4.99E-06 x 265) kg CO2e/kWh
-        expected = 50000 * (0.401 + 3.40e-05 * 28 + 4.99e-06 * 265) / 1000.0
+        # 2025 uses eGRID2022 (audit 2026-11 F-S23-09): U.S. 823.1 / 0.066 / 0.009 lb/MWh at AR5
+        expected = 50000 * (823.1 + 0.066 * 28 + 0.009 * 265) * 0.45359237 / 1000.0 / 1000.0
         assert pytest.approx(rec["co2e"], 1e-3) == expected
         assert pytest.approx(em["totalCo2e"], 1e-3) == expected
 

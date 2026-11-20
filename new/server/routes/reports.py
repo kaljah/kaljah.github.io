@@ -260,8 +260,8 @@ def create_pdf_report(emissions_data, filters):
                 str(emission.get("fuel_type", "N/A")),
                 f"{_amount(emission.get('amount', 0))}{unit_str}",
                 f"{emission.get('co2_emissions', 0):,.2f}",
-                f"{emission.get('ch4_emissions', 0):,.2f}",
-                f"{emission.get('n2o_emissions', 0):,.2f}",
+                f"{emission.get('ch4_emissions', 0):,.4f}",  # small CH4 / N2O printed 0.00 (audit 2026-11 F-RPT-24)
+                f"{emission.get('n2o_emissions', 0):,.4f}",
                 f"{emission.get('total_co2e', 0):,.2f}",
             ]
         )

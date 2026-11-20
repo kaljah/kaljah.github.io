@@ -519,7 +519,8 @@ def create_target():
     if ent.facility_id and (denied := facility_access_error(user, ent.facility_id)):
         return denied
 
-    t_year = parse_year(data.get("target_year", 2026))
+    from input_validation import parse_future_year
+    t_year = parse_future_year(data.get("target_year"), "target_year")  # a future year (F-GOGMP-07)
     b_year = parse_year(data.get("base_year", ent.membership_year or 2023), required=False) or 2023
     up_pct = parse_number(data.get("upstream_target_pct", 0.20), "upstream_target_pct", required=False, min_value=0.0, max_value=100.0, default=0.20)
     mid_pct = parse_number(data.get("midstream_target_pct", 0.05), "midstream_target_pct", required=False, min_value=0.0, max_value=100.0, default=0.05)

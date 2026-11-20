@@ -50,8 +50,9 @@ def ref_calculate_component_fugitives(
     co2_f = _frac(co2_fraction, 0.01)
 
     total_leak_kg = count * ef * hrs
-    ch4_tonnes = (total_leak_kg * c1) / 1000.0
-    co2_tonnes = (total_leak_kg * co2_f) / 1000.0
+    # a whole-gas mass (Table 7-12: kg gas at MW 20) x the weight fractions = mole fraction x MW / 20
+    ch4_tonnes = (total_leak_kg * c1 * 16.04 / 20.0) / 1000.0
+    co2_tonnes = (total_leak_kg * co2_f * 44.01 / 20.0) / 1000.0
 
     gwp = resolve_gwp(gwp_standard, gwp_horizon)
     co2e = co2_tonnes * gwp["CO2"] + ch4_tonnes * gwp["CH4"]

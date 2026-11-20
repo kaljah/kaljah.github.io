@@ -86,10 +86,14 @@ const getResponseHeader = (resp: any, headerName: string): string | null => {
 };
 
 const NA = (v: any) => v || "N/A";
-const fmt = (num: any) =>
-  num === null || num === undefined
-    ? "0.00"
-    : parseFloat(num).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 3 });
+// small values keep 4 significant figures and text is not printed as NaN (0.0004 t showed "0.00": F-CLIENT-11)
+const fmt = (num: any) => {
+  if (num === null || num === undefined || num === "") return "—";
+  const v = Number(num);
+  if (!Number.isFinite(v)) return "—";
+  if (v !== 0 && Math.abs(v) < 0.01) return v.toPrecision(4);
+  return v.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 3 });
+};
 
 const FACTOR_TYPE_LABELS: Record<string, string> = {
   default: tr("Default"),

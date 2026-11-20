@@ -10,9 +10,13 @@ export const MAX_TOTAL = 100.5;
 
 /** A cell as a number, or null when it is empty or not a number. */
 export function readNumber(text: unknown, mark: DecimalMark): number | null {
+  // the server's reading: plain decimal digits only ('0x10', 'Infinity' and a comma in a point-marked file are not
+  // numbers: audit 2026-11 F-CLIENT-14)
   let s = String(text ?? "").replace(/%/g, "").replace(/\s+/g, "").trim();
   if (!s || s === "-") return null;
+  if (mark !== "comma" && /,\d{1,2}$/.test(s)) return null;  // '1,5' needs the decimal comma mark
   s = mark === "comma" ? s.replace(/\./g, "").replace(",", ".") : s.replace(/,/g, "");
+  if (!/^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/.test(s)) return null;
   const n = Number(s);
   return Number.isFinite(n) ? n : null;
 }

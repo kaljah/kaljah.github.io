@@ -43,6 +43,7 @@ interface RegionalMethaneData {
   flaring_volume?: number;
   flaring_emissions?: number;
   total_ch4?: number;
+  matched_ch4?: number;
   methane_loss_rate_pct?: number | null;
   methane_intensity_ngsi_pct?: number | null;
   ngsi_ch4_content?: number;
@@ -260,6 +261,8 @@ const MethaneIntensity: React.FC = () => {
           tNgsiCh4InThroughputT += (gasM3 / 28.316846592) * (d.ngsi_ch4_content ?? 0.833) * 0.0192;
         }
         const ch4Tonnes = d.total_ch4 || 0;
+        // the CH4 of the years with production, as the server (all-year CH4 over producing-year gas: F-CLIENT-03)
+        const ch4Matched = d.matched_ch4 ?? ch4Tonnes;
         // BUG-086: one server-side segment classifier (segment_category) for KPI cards, trend and targets
         const seg = d.segment_category || "";
 
@@ -269,7 +272,7 @@ const MethaneIntensity: React.FC = () => {
         tFlaringVol += d.flaring_volume || 0;
         tFlaringEm += d.flaring_emissions || 0;
         tCh4Tonnes += ch4Tonnes;
-        if (gasM3 > 0) tCh4WithGas += ch4Tonnes; // loss-rate numerator: facilities with gas production
+        if (gasM3 > 0) tCh4WithGas += ch4Matched; // loss-rate numerator: facility-years with gas production
         tWecFee += d.wec_fee_usd || 0;
         if (d.wec_fee_usd != null) wecAssessed = true;
         else if (!wecReason && d.wec_status) wecReason = d.wec_status;
@@ -277,10 +280,10 @@ const MethaneIntensity: React.FC = () => {
         // loss rate numerator and denominator cover the same facilities (those with gas production)
         if (seg === "midstream" && gasM3 > 0) {
           midGasM3 += mktM3;
-          midCh4Tonnes += ch4Tonnes;
+          midCh4Tonnes += ch4Matched;
         } else if (seg === "upstream" && gasM3 > 0) {
           upGasM3 += mktM3;
-          upCh4Tonnes += ch4Tonnes;
+          upCh4Tonnes += ch4Matched;
         }
         // "downstream" and unclassified records are intentionally excluded
         // from methane loss rate calculations.
@@ -707,6 +710,8 @@ const MethaneIntensity: React.FC = () => {
         // the loss rate divides by marketed gas (BA-054)
         const gasM3 = gasM3Raw > 0 ? (d.marketed_gas_m3 ?? gasM3Raw) : 0;
         const ch4Tonnes = d.total_ch4 || 0;
+        // the CH4 of the years with production, as the server (all-year CH4 over producing-year gas: F-CLIENT-03)
+        const ch4Matched = d.matched_ch4 ?? ch4Tonnes;
         const volM3 = (ch4Tonnes * 1000.0) / CH4_DENSITY_KG_M3;
         const seg = d.segment_category || ""; // BUG-086
 

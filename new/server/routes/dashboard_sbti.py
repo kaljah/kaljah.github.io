@@ -93,17 +93,13 @@ def get_sbti_trajectory():
         q_s2 = q_s2.join(Facility, Facility.id == Scope2Emission.facility_id).filter(tenant_matches(Facility.tenant_id, caller_tenant))
         q_s3 = q_s3.join(Facility, Facility.id == Scope3Emission.facility_id).filter(tenant_matches(Facility.tenant_id, caller_tenant))
             
-    s1_rows = (
-        q_s1.with_entities(
-            Emission.year,
-            func.sum(func.coalesce(Emission.co2e_total, Emission.co2_emissions, 0)),
-        )
-        .group_by(Emission.year)
-        .all()
-    )
-    for yr, val in s1_rows:
+    from services.consolidation import Weights  # the organisational boundary (audit 2026-11 F-AGG-01)
+    weight = Weights()
+    s1_rows = q_s1.with_entities(Emission.year, Emission.facility_id, func.sum(func.coalesce(
+        Emission.co2e_total, Emission.co2_emissions, 0))).group_by(Emission.year, Emission.facility_id).all()
+    for yr, fid, val in s1_rows:
         if yr is not None:
-            v = float(val or 0)
+            v = float(val or 0) * weight(fid, yr)
             actuals[yr] = actuals.get(yr, 0) + v
             scope1_actuals[yr] = scope1_actuals.get(yr, 0) + v
 
@@ -113,17 +109,11 @@ def get_sbti_trajectory():
         if scope2_method == "market"
         else func.coalesce(Scope2Emission.co2e_location_based, Scope2Emission.co2e, 0)
     )
-    s2_rows = (
-        q_s2.with_entities(
-            Scope2Emission.year,
-            func.sum(s2_col),
-        )
-        .group_by(Scope2Emission.year)
-        .all()
-    )
-    for yr, val in s2_rows:
+    s2_rows = q_s2.with_entities(Scope2Emission.year, Scope2Emission.facility_id, func.sum(s2_col)).group_by(
+        Scope2Emission.year, Scope2Emission.facility_id).all()
+    for yr, fid, val in s2_rows:
         if yr is not None:
-            v = float(val or 0)
+            v = float(val or 0) * weight(fid, yr)
             actuals[yr] = actuals.get(yr, 0) + v
             scope2_actuals[yr] = scope2_actuals.get(yr, 0) + v
 

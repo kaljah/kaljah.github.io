@@ -578,7 +578,7 @@ const UncertaintyAssessment: React.FC = () => {
                         <span className="text-sm font-bold text-text mt-0.5">{Number(data.monte_carlo.median).toLocaleString("en-US")} tCO₂e</span>
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-xs font-medium text-text-secondary">{t("95% Interval (P5 - P95)")}</span>
+                        <span className="text-xs font-medium text-text-secondary">{t("95% Interval (P2.5 - P97.5)")}</span>
                         <span className="text-sm font-bold text-emerald-700 mt-0.5">
                           [{Number(data.monte_carlo.ci_lower).toLocaleString("en-US")} - {Number(data.monte_carlo.ci_upper).toLocaleString("en-US")}]
                         </span>

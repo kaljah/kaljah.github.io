@@ -59,7 +59,9 @@ class ComponentFugitiveCalculator(BaseCalculator):
                     c_ch4 /= 100.0
                 else:
                     raise ValueError(f"ch4_content cannot exceed 100%: {ch4_content}")
-            ch4_scaling = 1.0 if is_methane else c_ch4
+            # a whole-gas mass factor x the CH4 *weight* fraction: the mole fraction x 16.04 / the gas MW (Table 7-12
+            # basis MW 20). The mole fraction itself was applied (+24.9 %; audit 2026-11 F-FUG-10)
+            ch4_scaling = 1.0 if is_methane else c_ch4 * 16.04 / 20.0
             total_ch4_kg_hr += count * ef * ch4_scaling
 
         total_ch4_tonnes_year = (total_ch4_kg_hr * 8760) / 1000.0

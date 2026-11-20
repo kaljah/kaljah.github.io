@@ -278,7 +278,7 @@ def create_scope2_emission():
             return jsonify({"error": "'electricity_kwh' must be greater than 0"}), 400
 
         grid_region = data.get("grid_region") or data.get("location")
-        location_ef, grid_resolved = resolve_electricity_factor(grid_region, data.get("facility_id"))
+        location_ef, grid_resolved = resolve_electricity_factor(grid_region, data.get("facility_id"), data.get("year"))
         co2e_location = (electricity_kwh * location_ef) / 1000.0
 
         # Market-based calculation (GHG Protocol Scope 2 Guidance, services/scope2_market.py)
@@ -807,7 +807,7 @@ def bulk_import_scope2():
             # 2. Get Factor and Calculate
             grid_region = rec.get("grid_region")
             try:
-                ef, grid_region = resolve_electricity_factor(grid_region, facility.id)
+                ef, grid_region = resolve_electricity_factor(grid_region, facility.id, rec.get("year"))
             except ValidationError as err:
                 errors.append(f"Row {i}: {err.message}")
                 continue

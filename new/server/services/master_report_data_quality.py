@@ -76,13 +76,13 @@ def _subannual_energy_btu(ems_list: List[Emission], s2_list: List[Scope2Emission
 
 
 def _subannual_month_row(m_idx: int, p, ems_m, s2_m, gwp_factors: Dict[str, float], hhv_btu_scf: float) -> Dict[str, Any]:
-    oil = float(p.oil_amount or 0.0) if p else 0.0
-    gas_mscf = float(p.gas_amount or 0.0) if p else 0.0
+    # the platform's one unit-aware BOE (services.dashboard_filters.production_boe, Table 3-4 5,647.52 scf/BOE): the
+    # month used 5,800 scf/BOE and read gas_amount as Mscf whatever its unit (audit 2026-11 F-RPT-22)
+    from services.dashboard_filters import production_boe, production_gas_m3
     tot_mmboe_val = float(getattr(p, "total_production_mmboe", 0.0) or 0.0) if p else 0.0
-    if tot_mmboe_val > 0:
-        tot_boe = tot_mmboe_val * 1_000_000.0
-    else:
-        tot_boe = oil + (gas_mscf * 1000.0 / 5800.0)
+    tot_boe = tot_mmboe_val * 1e6 if tot_mmboe_val > 0 else (float(production_boe(p) or 0.0) if p else 0.0)
+    oil = float(p.oil_amount or 0.0) if p else 0.0
+    gas_mscf = float(production_gas_m3(p) or 0.0) * 35.3146667 / 1000.0 if p else 0.0  # Mscf from the row's unit
 
     co2e_m = sum(_subannual_em_co2e(e, gwp_factors) for e in ems_m) + sum(float(s.co2e or 0.0) for s in s2_m)
     energy_btu_m = _subannual_energy_btu(ems_m, s2_m, hhv_btu_scf)

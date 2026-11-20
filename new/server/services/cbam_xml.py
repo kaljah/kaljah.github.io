@@ -9,7 +9,8 @@ import json
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
 
-from services.cbam_data import (
+from services.cbam_data import (  # noqa: E402
+    country_iso,
     RecordFigures,
     _clean_xml_text,
     _get_facility_production_tonnes,
@@ -60,13 +61,15 @@ def _installations(root, ctx):
         if not fac:
             continue
         inst = ET.SubElement(installations, "Installation")
-        _sub(inst, "InstallationId", _clean_xml_text(fac.code or f"{ctx.op_iso}-FAC-{fac.id:03d}"))
+        # only recorded values: no invented id, activity or 0 / 0 coordinates (audit 2026-11 F-E2E-06)
+        _sub(inst, "InstallationId", _clean_xml_text(fac.code or f"FAC-{fac.id:03d}"))
         _sub(inst, "Name", _clean_xml_text(fac.name))
-        _sub(inst, "Country", _clean_xml_text(fac.country or ctx.op_iso))
-        _sub(inst, "EconomicActivity", _clean_xml_text(fac.activity or "Industrial Production"))
-        coords = ET.SubElement(inst, "Coordinates")
-        _sub(coords, "Latitude", f"{fac.latitude:.6f}" if fac.latitude is not None else "0.000000")
-        _sub(coords, "Longitude", f"{fac.longitude:.6f}" if fac.longitude is not None else "0.000000")
+        _sub(inst, "Country", _clean_xml_text(country_iso(fac.country) or "Not provided"))
+        _sub(inst, "EconomicActivity", _clean_xml_text(fac.activity or "Not provided"))
+        if fac.latitude is not None and fac.longitude is not None:
+            coords = ET.SubElement(inst, "Coordinates")
+            _sub(coords, "Latitude", f"{fac.latitude:.6f}")
+            _sub(coords, "Longitude", f"{fac.longitude:.6f}")
 
 
 def _ccs(good, r):
@@ -75,7 +78,7 @@ def _ccs(good, r):
         ccs = ET.SubElement(good, "CarbonCaptureAndStorage")
         _sub(ccs, "CapturedCO2Tonnes", f"{float(r.captured_co2_tonnes):.2f}", {"unit": "tCO2"})
         _sub(ccs, "StorageCertificateId",
-             _clean_xml_text(r.ccs_certificate_id or "Self-Declared / Pending Storage Certificate"))
+             _clean_xml_text(r.ccs_certificate_id or "Not provided"))
         _sub(ccs, "PermanentStorageStandard", "Directive 2009/31/EC & ISO 27914 Geological Sequestration")
 
 
@@ -143,10 +146,10 @@ def _carbon_price(good, r, fig, country):
     _sub(price, "Currency", "EUR")
     _sub(price, "AmountPerTonne", f"{float(r.carbon_price_paid_eur or 0.0):.2f}", {"unit": "EUR/t"})
     _sub(price, "TotalAmountPaidEUR", f"{(float(r.carbon_price_paid_eur or 0.0) * fig.qty):.2f}")
-    legal_ref = r.carbon_price_legal_ref or (
-        f"{country} Environmental / Carbon Fiscality" if (r.carbon_price_paid_eur or 0) > 0 else "None")
-    _sub(price, "LegalBasis", _clean_xml_text(legal_ref))
-    _sub(price, "RebateOrCompensation", "None")
+    # the entered legal act only (a "<country> Environmental / Carbon Fiscality" basis was invented) and no claim
+    # about rebates, which are not recorded (it printed "None"; audit 2026-11 F-GSTD-04)
+    _sub(price, "LegalBasis", _clean_xml_text(r.carbon_price_legal_ref or "Not provided"))
+    _sub(price, "RebateOrCompensation", "Not provided")
 
 
 def _good(goods, ctx, r, fig):

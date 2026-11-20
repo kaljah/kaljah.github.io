@@ -1,4 +1,5 @@
 from routes.auth import login_required
+from services.consolidation import Weights
 from flask import Blueprint, request, jsonify, current_app
 from models import (
     Emission,
@@ -417,10 +418,10 @@ def get_batch_dashboard_data():
             c20, n20 = gwp_pair("20")
             s2_diff = (c20 - c100, n20 - n100)
         s2_co2e = 0.0
-        for src_type, grid_region, kwh, co2e, co2e_mkt, ch4_t, n2o_t, mkt_ef in s2_pend_rows:
+        for src_type, grid_region, kwh, co2e, co2e_mkt, ch4_t, n2o_t, mkt_ef, s2_yr in s2_pend_rows:
             loc, mkt = record_totals_fields(
                 src_type, grid_region, kwh, co2e, co2e_mkt, gwp_horizon,
-                grid_cache=s2_grid_cache, gwp_diff=s2_diff, ch4_t=ch4_t, n2o_t=n2o_t, market_ef=mkt_ef,
+                grid_cache=s2_grid_cache, gwp_diff=s2_diff, ch4_t=ch4_t, n2o_t=n2o_t, market_ef=mkt_ef, year=s2_yr,
             )
             s2_co2e += (mkt if market_s2 else loc)
 
@@ -529,9 +530,9 @@ def _query_summary(
                  segment=segment)
     by_fac = group_by == "facility"
 
-    s1_cols = [Emission.year.label("year"), Emission.process_type.label("process_type")]
-    if by_fac:
-        s1_cols.append(Emission.facility_id.label("facility_id"))
+    weight = Weights()  # per facility always: each facility-year in the organisational boundary (F-AGG-01)
+    s1_cols = [Emission.year.label("year"), Emission.process_type.label("process_type"),
+               Emission.facility_id.label("facility_id")]
     s1_q = db.session.query(
         *s1_cols,
         func.sum(Emission.co2_emissions).label("co2_total"),
@@ -541,10 +542,10 @@ def _query_summary(
     )
     s1_q = apply_year(apply_scope(s1_q, Emission, **scope), Emission, year)
     s1_q = s1_q.filter(Emission.status.in_(statuses(include_pending)), Emission.year.isnot(None))
-    s1_rows = s1_q.group_by(Emission.year, Emission.process_type, *([Emission.facility_id] if by_fac else [])).all()
+    s1_rows = s1_q.group_by(Emission.year, Emission.process_type, Emission.facility_id).all()
     from services.gwp_recalculation import fgas_horizon_deltas  # HFC / SF6 at GWP-20 too (audit 2026-11 F-AGG-10)
     fgas_20 = fgas_horizon_deltas(apply_year(apply_scope(Emission.query, Emission, **scope), Emission, year),
-                                  statuses(include_pending), by_fac)
+                                  statuses(include_pending), True)
 
     def blank(yr, fid):
         return {"year": yr, "facility_id": fid, "scope1_total": 0.0, "scope1_total_gwp100": 0.0,
@@ -555,31 +556,29 @@ def _query_summary(
 
     yearly = {}
     for r in s1_rows:
-        yr = int(r.year)
-        fid = getattr(r, "facility_id", "total") if by_fac else "total"
+        yr, w = int(r.year), weight(r.facility_id, int(r.year))
+        fid = r.facility_id if by_fac else "total"
         d = yearly.setdefault((yr, fid), blank(yr, fid))
-        g100 = float(r.total or 0)
-        g20 = g100 + horizon_delta(r.ch4_total, r.n2o_total, "20") + fgas_20.get((yr, r.process_type, fid), 0.0)
+        g100 = float(r.total or 0) * w
+        g20 = g100 + (horizon_delta(r.ch4_total, r.n2o_total, "20") + fgas_20.get((yr, r.process_type, r.facility_id), 0)) * w
         shown = g20 if is_20 else g100
         d["scope1_total_gwp100"] += g100
         d["scope1_total_gwp20"] += g20
         d["scope1_total"] += shown
-        d["co2_total"] += float(r.co2_total or 0)
-        d["ch4_total"] += float(r.ch4_total or 0)
-        d["n2o_total"] += float(r.n2o_total or 0)
+        for k, v in (("co2_total", r.co2_total), ("ch4_total", r.ch4_total), ("n2o_total", r.n2o_total)):
+            d[k] += float(v or 0) * w
         cat = source_category(r.process_type)
         d["venting" if cat == "vented" else cat] += shown
 
     from services.scope2_gases import yearly_totals
     s2_q = apply_year(apply_scope(Scope2Emission.query, Scope2Emission, **scope), Scope2Emission, year)
     s2_q = s2_q.filter(Scope2Emission.status.in_(statuses(include_pending)), Scope2Emission.year.isnot(None))
-    for (yr, fid), t in yearly_totals(s2_q, by_fac, horizon).items():
-        d = yearly.setdefault((yr, fid), blank(yr, fid))
-        d["scope2_location_total"] += t["location"]
-        d["scope2_market_total"] += t["market"]
-        # Dual reporting: use chosen method
-        d["scope2_total"] += t["market"] if str(scope2_method).lower() == "market" else t["location"]
-        d["scope2_energy"] += t["energy"]
+    for (yr, s2_fid), t in yearly_totals(s2_q, True, horizon).items():
+        w, d = weight(s2_fid, yr), yearly.setdefault((yr, s2_fid if by_fac else "total"), blank(yr, s2_fid if by_fac else "total"))
+        d["scope2_location_total"] += t["location"] * w
+        d["scope2_market_total"] += t["market"] * w
+        d["scope2_total"] += (t["market"] if str(scope2_method).lower() == "market" else t["location"]) * w
+        d["scope2_energy"] += t["energy"] * w
 
     for d in yearly.values():
         for k in (
@@ -792,10 +791,10 @@ def _query_categorical_breakdown(
         s2_diff = (c20 - c100, n20 - n100)
     is_mkt = str(scope2_method).lower() == "market"
     s2_horizon = "20" if is_20 else "100"
-    for fid, src_type, grid_region, kwh, co2e, co2e_mkt, ch4_t, n2o_t, mkt_ef in s2_q.all():
+    for fid, src_type, grid_region, kwh, co2e, co2e_mkt, ch4_t, n2o_t, mkt_ef, s2_yr in s2_q.all():
         loc, mkt = record_totals_fields(
             src_type, grid_region, kwh, co2e, co2e_mkt, s2_horizon,
-            grid_cache=s2_grid_cache, gwp_diff=s2_diff, ch4_t=ch4_t, n2o_t=n2o_t, market_ef=mkt_ef,
+            grid_cache=s2_grid_cache, gwp_diff=s2_diff, ch4_t=ch4_t, n2o_t=n2o_t, market_ef=mkt_ef, year=s2_yr,
         )
         s2_by_fac[fid] += mkt if is_mkt else loc
 
@@ -829,10 +828,11 @@ def _query_categorical_breakdown(
             "total_emissions": 0.0, "scope3_emissions": 0.0,
         })
 
+    weight, w_year = Weights(), (int(year) if str(year or "").isdigit() else None)  # boundary (F-AGG-01)
     for r in s1:
-        row(r)["total_emissions"] += float(r[6] or 0) + horizon_delta(r[7], r[8], gwp_horizon)
+        row(r)["total_emissions"] += (float(r[6] or 0) + horizon_delta(r[7], r[8], gwp_horizon)) * weight(r[0], w_year)
     for r in s2:
-        row(r)["total_emissions"] += float(r[6] or 0)
+        row(r)["total_emissions"] += float(r[6] or 0) * weight(r[0], w_year)
     for r in s3:
         row(r)["scope3_emissions"] += float(r[6] or 0)
     for d in out.values():

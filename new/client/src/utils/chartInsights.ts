@@ -52,11 +52,16 @@ export const describeRanking = (items: RankedItem[], noun = t("contributor")): s
   const rows = items.filter((i) => Number.isFinite(i.value) && i.value > 0).sort((a, b) => b.value - a.value);
   const total = rows.reduce((a, r) => a + r.value, 0);
   if (!rows.length || total <= 0) return "";
-  const share = (v: number) => Math.round((v / total) * 100);
+  // whole-percent shares that add up to 100 (largest remainder), as the pie labels: 1/1/1 read "33 %, top 2 66 %"
+  // next to labels 34 / 33 / 33 (audit 2026-11 F-CLIENT-15)
+  const raw = rows.map((r) => (r.value / total) * 100);
+  const pct = raw.map(Math.floor);
+  let left = 100 - pct.reduce((a, b) => a + b, 0);
+  raw.map((v, i) => [v - Math.floor(v), i] as [number, number]).sort((a, b) => b[0] - a[0])
+    .forEach(([, i]) => { if (left > 0) { pct[i] += 1; left -= 1; } });
   if (rows.length === 1) return t("{{name}} is the only {{noun}}.", { name: rows[0].name, noun });
-  // Sum of the rounded shares, so the sentence matches the percentages printed on the bars.
-  const top2 = share(rows[0].value) + share(rows[1].value);
-  const vars = { name: rows[0].name, noun, share: share(rows[0].value), top2 };
+  const top2 = pct[0] + pct[1];
+  const vars = { name: rows[0].name, noun, share: pct[0], top2 };
   return rows.length > 2
     ? t("{{name}} is the largest {{noun}}, {{share}}% of the total; the top 2 make up {{top2}}%.", vars)
     : t("{{name}} is the largest {{noun}}, {{share}}% of the total.", vars);

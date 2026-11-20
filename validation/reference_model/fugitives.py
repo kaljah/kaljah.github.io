@@ -34,7 +34,7 @@ class IndependentFugitiveModel:
                 cnt = float(data or 0)
                 ef = DEFAULT_EFS.get(k_norm, 0.0045)
                 is_m = False
-            scaling = 1.0 if is_m else c1
+            scaling = 1.0 if is_m else c1 * 16.04 / 20.0  # mole -> weight fraction, Table 7-12 gas MW 20
             total_ch4_kg_hr += cnt * ef * scaling
 
         ch4_t = (total_ch4_kg_hr * 8760.0) / 1000.0

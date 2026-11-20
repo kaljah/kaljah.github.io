@@ -192,11 +192,11 @@ export const CombustionForm: React.FC<Scope1SubFormProps> = ({ data, onChange, s
               >
                 <option value="BTU/scf">BTU/scf</option>
                 <option value="BTU/ft3">BTU/ft³</option>
-                <option value="MJ/m3">MJ/m³</option>
+                <option value="MJ/m3">MJ/m³ (60 °F, 14.696 psia)</option>
                 <option value="MJ/kg">MJ/kg</option>
                 <option value="BTU/gal">BTU/gal</option>
                 <option value="BTU/lb">BTU/lb</option>
-                <option value="kcal/m3">kcal/m³</option>
+                <option value="kcal/m3">kcal/m³ (thermochemical cal, 60 °F m³)</option>
               </NativeSelect>
             </div>
           </div>

@@ -24,8 +24,9 @@ Table 3.1 is the qualitative list of strategies and holds no numbers (blind audi
 Tier 1 emission-factor uncertainties are the published defaults (95 % half-widths; a highly asymmetric range
 enters as its larger side, IPCC 2006 Vol.1 s3.2.3.1, Table 3.2 column F): IPCC 2006 Vol.2 Table 2.12 for
 stationary combustion CH4 (50-150 %) and N2O (an order of magnitude: -90 % / +900 %), API Compendium 2021
-Table 5-5 for gas flares (CO2 and CH4 +/-25 %, N2O -10 % / +1000 %). Such ranges are beyond the validity of
-Approach 1 (U > 100 %, Vol.1 s3.7.3): the inventory reports the Monte Carlo (Approach 2) result alongside.
+Table 5-5 for gas flares (CO2 and CH4 +/-25 %, N2O -10 % / +1000 %). IPCC 2006 Vol.1 s3.2.3.1 sets the Approach 1
+limit at sigma / mean < 0.3 and says Approach 1 may still be used beyond it: the inventory reports the Monte Carlo
+(Approach 2) result alongside (the limit was cited as "U > 100 %, s3.7.3": audit 2026-11 F-GSTD-06).
 """
 
 import math

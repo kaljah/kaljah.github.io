@@ -293,6 +293,21 @@ export const CompletionsForm: React.FC<CompletionsFormProps> = ({
       {/* TIER 2: ENGINEERING OPERATIONAL DATA CALCULATIONS */}
       {isTier2 && (
         <div>
+          {/* the Tier 2 layout had no events field, so the form refused every Tier 2 record (F-GUI2-01) */}
+          <Field className="input-group mb-[16px]!" label={t("Completions")}>
+            <Input
+              type="number"
+              min="1"
+              step="1"
+              value={data.amount || data.events || ""}
+              onChange={(e) => {
+                onChange("amount", e.target.value);
+                onChange("events", e.target.value);
+              }}
+              placeholder="1"
+              required
+            />
+          </Field>
           <div className="input-group mb-[16px]!">
             <label>
               {t("Model")}

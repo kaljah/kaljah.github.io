@@ -15,6 +15,9 @@ flagged and replaced by the tier default (BUG-043). Results are reported at 95 %
 import logging
 import math
 from collections import defaultdict
+from functools import partial
+
+from services.consolidation import Weights
 
 from sqlalchemy import func
 
@@ -140,8 +143,8 @@ def inventory_uncertainty(year, allowed_fids=None, facility_id=None, scope="all"
     tier_s1 = defaultdict(float)
     gwp_e = defaultdict(lambda: defaultdict(float))  # category -> gas -> CO2e (one GWP for all: _gwp_variance)
 
-    def restrict(q, model):
-        return _restrict(q, model, year, statuses, fids)
+    weight = Weights()  # the organisational boundary of every total (audit 2026-11 F-AGG-01)
+    restrict = partial(_restrict, year=year, statuses=statuses, fids=fids)
 
     if scope in ("all", "1"):
         rows = restrict(Emission.query, Emission).with_entities(
@@ -149,12 +152,12 @@ def inventory_uncertainty(year, allowed_fids=None, facility_id=None, scope="all"
             Emission.ef_key, Emission.co2_emissions, Emission.ch4_emissions, Emission.n2o_emissions,
             Emission.co2e_total, Emission.uncertainty, Emission.uncertainty_ch4, Emission.uncertainty_n2o,
             Emission.uncertainty_ad, Emission.uncertainty_ef_co2, Emission.uncertainty_ef_ch4,
-            Emission.uncertainty_ef_n2o,
+            Emission.uncertainty_ef_n2o, Emission.facility_id,
         ).all()
         for r in rows:
-            e_gas = {"co2": float(r.co2_emissions or 0), "ch4": float(r.ch4_emissions or 0) * gwp["ch4"],
-                     "n2o": float(r.n2o_emissions or 0) * gwp["n2o"]}
-            e_tot = float(r.co2e_total or 0) or sum(e_gas.values())
+            w = weight(r.facility_id, year)
+            e_gas = {g: float(getattr(r, f"{g}_emissions") or 0) * gwp[g] * w for g in ("co2", "ch4", "n2o")}
+            e_tot = float(r.co2e_total or 0) * w or sum(e_gas.values())
             if e_tot <= 0:
                 continue
             if sum(e_gas.values()) <= 0:
@@ -199,9 +202,9 @@ def inventory_uncertainty(year, allowed_fids=None, facility_id=None, scope="all"
             else model.co2e
         )
         rows = restrict(model.query, model).with_entities(label_col, co2e_col, model.uncertainty,
-                                                          model.emission_factor).all()
-        for lbl, co2e, u, ef in rows:
-            e = float(co2e or 0)
+                                                          model.emission_factor, model.facility_id).all()
+        for lbl, co2e, u, ef, fid in rows:
+            e = float(co2e or 0) * (weight(fid, year) if sc == "2" else 1.0)
             if e <= 0:
                 continue
             key = (f"S{sc}", f"{lbl}|{ef}")  # same grid / same category factor -> correlated

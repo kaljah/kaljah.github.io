@@ -401,7 +401,13 @@ class OnshoreComponentFugitiveCalculator(BaseCalculator):
                 if is_ch4:
                     ch4_kg_hr = count * ef_kg_hr
                 else:
-                    w = w_ch4 if w_ch4 is not None else METHOD21_CH4_WT_DEFAULT.get(service_key)
+                    # the Table 7-12 factor (kg of gas at 81.6 mol % CH4, MW 20: CH4 wt fraction 0.654) keeps its own
+                    # basis; the Table C-1 fractions belong to API 4615 factors and gave +41 % (audit 2026-11 F-FUG-01)
+                    c_key = str(comp_name or "").strip().lower().replace(" ", "_")
+                    t712 = COMPONENT_FACTORS_T7_12.get(f"{aliases.get(c_key, c_key)}_{service_key}")
+                    is_t712 = bool(t712) and abs(ef_kg_hr - t712["kg_gas_hr"]) <= 0.01 * t712["kg_gas_hr"]
+                    w = w_ch4 if w_ch4 is not None else (
+                        t712["ch4_t_hr"] * 1000.0 / t712["kg_gas_hr"] if is_t712 else METHOD21_CH4_WT_DEFAULT.get(service_key))
                     if w is None:
                         raise ValueError(f"Give the CH4 weight fraction of TOC for '{service_norm}' service")
                     ch4_kg_hr = count * ef_kg_hr * w
@@ -548,6 +554,10 @@ class OnshoreScreeningMeasurementCalculator(BaseCalculator):
                 "counts": {"below_10k": n_low, "at_or_above_10k": n_high},
                 "factors_kg_toc_hr": {"below_10k": meta["non_pegged_ef"], "at_or_above_10k": meta["pegged_10k_ef"]},
                 "ch4_wt_fraction": w,
+                # Table C-1 fractions are for API 4615 factors, not the EPA Table 7-26 factors (audit 2026-11
+                # F-FUG-02): a site CH4 weight fraction is the defensible input; the default is labelled as such
+                "ch4_wt_fraction_basis": ("entered" if ch4_content not in (None, "") else
+                                          "Table C-1 default (stated for API 4615 factors): enter the site CH4 wt %"),
                 "total_ch4_tonnes": total_ch4_tonnes,
             },
         }

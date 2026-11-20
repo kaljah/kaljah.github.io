@@ -1,6 +1,7 @@
 """The UNEP / IMEO OGMP 2.0 member disclosure workbook (GET /api/reports/ogmp-export).
 
-Builds all 13 official member disclosure tabs (0–12) plus the SHA-256 Audit Assurance manifest.
+Builds the 13 platform disclosure tabs (0–12) plus the SHA-256 Audit Assurance manifest. It is not the UNEP OGMP 2.0
+official Upstream reporting template (audit 2026-11 F-RPT-08).
 """
 from datetime import datetime, timezone
 
@@ -200,11 +201,17 @@ def sheet_profile(wb, ctx):
         ("Reporting Framework Standard", "OGMP 2.0 Technical Guidance Document (TGD)", "Level 1 to Level 5 Measurement & Reconciliation"),
         ("Operational Boundary Scope", "Operational Control & Material Equity Stakes", "100% of Operated Assets, Equity Share for NOVs"),
         ("Operated Facilities Included", str(len(ctx.facilities)), "Assets actively operated within reporting scope"),
-        ("Upstream Methane Target Intensity", "0.20% of marketed natural gas", "UNEP IMEO Gold Standard Upstream Benchmark"),
-        ("Midstream Methane Target Intensity", "0.05% of natural gas throughput", "UNEP IMEO Gold Standard Midstream Benchmark"),
-        ("Materiality Threshold", "5% of operated methane footprint", "Threshold for detailed source measurement"),
+        # the organisation's own settings, not UNEP benchmarks (the Framework cites OGCI 0.25 % by 2025 and gives no
+        # midstream figure; materiality is NOJVs below 5 % equity, then 95 % of absolute CH4: audit 2026-11 F-RPT-11)
+        ("Upstream Methane Target Intensity", f"{_target('ogmp_upstream_target_pct', 0.20)}% of marketed natural gas",
+         "Organisation setting"),
+        ("Midstream Methane Target Intensity", f"{_target('ogmp_midstream_target_pct', 0.05)}% of natural gas throughput",
+         "Organisation setting"),
+        ("Materiality Threshold", "NOJVs below 5% equity; then 95% of absolute CH4",
+         "OGMP 2.0 Framework s4.5 portfolio materiality"),
         ("Gold Standard Pathway Target", "3 Years (Operated) / 5 Years (Non-Operated)", "Deadline from base year to reach Level 4/5 Gold Standard"),
-        ("GWP Standard Basis", "IPCC AR5 (100-Year CH4 GWP = 28.0)", "IPCC Assessment Report 100-year horizon"),
+        # the active GWP set, not a fixed "AR5 = 28" (audit 2026-11 F-RPT-08)
+        ("GWP Standard Basis", _gwp_basis_label(), "IPCC Assessment Report 100-year horizon"),
     ]
     for r_idx, (attr, val, ref) in enumerate(rows, start=6):
         ws.cell(row=r_idx, column=1, value=attr).font = Styles.bold_font
@@ -241,7 +248,9 @@ def _summary_targets(ws, ctx):
 
 def _loss_rate(bu_ch4, gas_m3, segment, ch4_density):
     ch4_vol_m3 = (bu_ch4 * 1000.0) / ch4_density if bu_ch4 > 0 else 0.0
-    target_rate = 0.20 if "upstream" in (segment or "Upstream").lower() else 0.05
+    target_rate = float(_target("ogmp_upstream_target_pct" if "upstream" in (segment or "Upstream").lower()
+                                else "ogmp_midstream_target_pct", 0.20 if "upstream" in (segment or "Upstream").lower()
+                                else 0.05))
     if gas_m3 > 0:
         rate = ch4_vol_m3 / gas_m3 * 100.0
         return rate, target_rate, "Compliant" if rate <= target_rate else "Non-Compliant"
@@ -264,10 +273,11 @@ def sheet_summary(wb, ctx, ch4_density):
     for row, f in enumerate(ctx.facilities, start=5):
         op_st, b_yr, target_yr = _target_year(f)
         bu_ch4, td_ch4 = ctx.bottom_up_ch4(f), ctx.top_down_ch4(f)
-        prod_q = ProductionData.query.filter(ProductionData.facility_id == f.id)
-        if ctx.year_filter:
-            prod_q = prod_q.filter(ProductionData.year == ctx.year_filter)
-        gas_m3 = sum(production_gas_m3(p) or 0.0 for p in prod_q.all())
+        # the OGCI / OGMP basis is the marketed gas (gross - reinjected - flared - vented - fuel - shrinkage), as the
+        # dashboard; the gas net of reinjection was used (audit 2026-11 F-RPT-12)
+        from services.intensity import intensity_cells
+        cells = intensity_cells(years=[ctx.year_filter] if ctx.year_filter else None, facility_id=[f.id])
+        gas_m3 = sum(c.get("marketed_m3") or 0.0 for c in cells.values())
         rate, target_rate, compliance = _loss_rate(bu_ch4, gas_m3, f.segment, ch4_density)
         level = compute_facility_ogmp_level(f, year=ctx.year_filter, top_down_tch4=td_ch4, bottom_up_tch4=bu_ch4)
         levels[f.id] = level
@@ -335,7 +345,7 @@ def sheet_surveys(wb, ctx):
             ctx.safe(f"OGMP-{s.id}"), ctx.safe(_facility_name(s)), s.year, ctx.safe(s.survey_date),
             ctx.safe(s.survey_type), s.measured_rate_kg_hr, s.operating_hours_year or 8760, s.estimated_annual_tch4,
             ctx.safe(s.detection_threshold or "N/A"), ctx.safe(s.instrument_vendor or "N/A"),
-            ctx.safe(s.reconciliation_status or "Reconciled"), ctx.safe(s.operator_notes or "")])
+            ctx.safe(s.reconciliation_status or "Not recorded"), ctx.safe(s.operator_notes or "")])  # F-RPT-07
     autofit_columns(ws)
 
 
@@ -427,14 +437,16 @@ def sheet_level4(wb, ctx, level4):
         ws.cell(row=5, column=1, value="No direct Level 4 empirical measurements logged for this scope.").font = Styles.sub_title_font
         ws.cell(row=5, column=11, value="Upgrade Level 1-3 sources to Level 4 via OGI/Hi-Flow campaigns.").font = Styles.sub_title_font
     for row, (em, fac_name) in enumerate(level4, start=5):
-        u_pct = em.uncertainty_pct if getattr(em, "uncertainty_pct", None) is not None else 15.0
+        # the record's own uncertainty and method, else "not recorded": a +/-15 % and an "OGI + High-Flow / EPA Method 21"
+        # protocol were printed on every row (audit 2026-11 F-RPT-07)
+        u_pct = em.uncertainty_pct if getattr(em, "uncertainty_pct", None) is not None else None
         _data_row(ws, row, [
             ctx.safe(em.record_id or f"EM-{em.id}"), ctx.safe(fac_name), em.year,
             ctx.safe(process_label(em.process_type, "N/A")),
             ctx.safe(em.source_type_code or em.equipment_id or "Direct Component"),
-            ctx.safe(em.calc_method or "Optical Gas Imaging (OGI) + High-Flow"), em.quantity or 0,
-            ctx.safe(em.unit or ""), round(em.ch4_emissions or 0, 4), f"±{float(u_pct):.1f}%",
-            "EPA Method 21 / OGI EN 15446"])
+            ctx.safe(em.calc_method or "Not recorded"), em.quantity or 0,
+            ctx.safe(em.unit or ""), round(em.ch4_emissions or 0, 4),
+            f"±{float(u_pct):.1f}%" if u_pct is not None else "Not recorded", "Not recorded"])
     autofit_columns(ws)
 
 
@@ -559,7 +571,7 @@ def sheet_uncertainty_reconciliation(wb, ctx):
             round(float(rep.td_ci_high_tch4 or 0.0), 4),
             "Yes (Overlaps)" if rep.ci_overlaps else "No (Disjoint)",
             f"{rep.variance_pct:+.2f}%" if rep.variance_pct is not None else "N/A",
-            ctx.safe(f"Pathway {rep.pathway_code or '1'}"),
+            ctx.safe(f"Pathway {rep.pathway_code}" if rep.pathway_code else "Not recorded"),
             ctx.safe(rep.measurement_mode or "Annualized"),
             ctx.safe(rep.option_mode or "Option 1"),
             round(float(rep.l4_materiality_pct or 0.0), 2),
@@ -666,7 +678,7 @@ def sheet_audit(wb, ctx, sha256):
         name="Calibri", size=12, bold=True, color="334155")
     rows = [
         ("Data Fingerprint (SHA-256)", sha256),
-        ("Covers", "Every cell of all 13 official disclosure sheets (Sheets 0–12) of this UNEP OGMP 2.0 workbook"),
+        ("Covers", "Every cell of the 13 disclosure sheets (Sheets 0–12) of this workbook (not the UNEP official template)"),
         ("Check", "Matches the REPORT entry of the immutable audit log written when exported"),
         ("Export Timestamp (UTC)", datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")),
         ("Exporting Organization", ctx.safe(ctx.company_name)),
@@ -687,7 +699,7 @@ def sheet_audit(wb, ctx, sha256):
 
 
 def build_workbook(ctx, ch4_density):
-    """(workbook, SHA-256 fingerprint of its 13 official disclosure sheets)."""
+    """(workbook, SHA-256 fingerprint of its 13 disclosure sheets)."""
     wb = openpyxl.Workbook()
     wb.remove(wb.active)
     sheet_profile(wb, ctx)
@@ -706,3 +718,17 @@ def build_workbook(ctx, ch4_density):
     sha256 = data_fingerprint([[ws.title, [list(r) for r in ws.iter_rows(values_only=True)]] for ws in wb.worksheets])
     sheet_audit(wb, ctx, sha256)
     return wb, sha256
+
+
+def _gwp_basis_label():
+    from calculations.constants import get_active_gwp
+    from routes.auth_settings import _app_settings
+
+    g = get_active_gwp(horizon="100")
+    return f"IPCC {_app_settings.get('gwp_standard') or 'AR5'} (100-Year CH4 GWP = {float(g['CH4']):g})"
+
+
+def _target(key, default):
+    from routes.auth_settings import _app_settings
+
+    return f"{float(_app_settings.get(key, default)):g}"

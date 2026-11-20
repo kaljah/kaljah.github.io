@@ -437,11 +437,13 @@ const OgmpTab: React.FC<OgmpTabProps> = ({
             <div className="flex flex-col gap-4">
               <Field label={t("Level 4/5 Reconciliation Status")}>
                 <NativeSelect
-                  value={ogmpForm.reconciliation_status || "Reconciled"}
+                  value={ogmpForm.reconciliation_status || ""}
                   onChange={(e) => setOgmpForm({ ...ogmpForm, reconciliation_status: e.target.value })}
                 >
-                  <option value="Reconciled">{t("Reconciled (Within ±20% agreement)")}</option>
-                  <option value="Discrepancy Detected">{t("Discrepancy Detected (> 20% deviation)")}</option>
+                  {/* derived on the server unless an override is chosen with its reason (F-GUI2-06) */}
+                  <option value="">{t("Derived from the measurement (no override)")}</option>
+                  <option value="Reconciled">{t("Reconciled (override: discrepancy explained)")}</option>
+                  <option value="Discrepancy Detected">{t("Discrepancy Detected")}</option>
 
                   <option value="Investigation Pending">{t("Investigation Pending")}</option>
                   <option value="Under Review">{t("Under Review")}</option>

@@ -7,6 +7,7 @@ import datetime
 import hashlib
 from flask import jsonify, request
 from extensions import db
+from input_validation import ValidationError
 from models import Emission, Facility, Scope2Emission, Scope3Emission
 from routes.auth import login_required
 from services.audit_chain import record_report_fingerprint
@@ -70,27 +71,17 @@ def export_emissions():
     search_arg = request.args.get("search")
     export_format = request.args.get("format", "json").lower()
 
-    # Parse numeric filters safely
-    year_int = None
-    if year_arg and year_arg != "all":
-        try:
-            year_int = int(year_arg)
-        except (ValueError, TypeError):
-            pass
+    # a malformed filter is refused: it was dropped, exporting every record (audit 2026-11 F-RPT-23)
+    def _int_arg(raw, name, lo, hi):
+        if not raw or raw == "all":
+            return None
+        if not str(raw).strip().lstrip("-").isdigit() or not lo <= int(raw) <= hi:
+            raise ValidationError(f"Invalid {name} filter '{raw}'", name)
+        return int(raw)
 
-    month_int = None
-    if month_arg and month_arg != "all":
-        try:
-            month_int = int(month_arg)
-        except (ValueError, TypeError):
-            pass
-
-    facility_int = None
-    if facility_arg and facility_arg != "all":
-        try:
-            facility_int = int(facility_arg)
-        except (ValueError, TypeError):
-            pass
+    year_int = _int_arg(year_arg, "year", 1900, 2200)
+    month_int = _int_arg(month_arg, "month", 1, 12)
+    facility_int = _int_arg(facility_arg, "facility_id", 1, 2 ** 31 - 1)
 
     if facility_int is not None and allowed_ids is not None and facility_int not in allowed_ids:
         return jsonify({"error": "Unauthorized facility"}), 403
@@ -126,8 +117,7 @@ def export_emissions():
             q1 = q1.filter(Emission.month == month_int)
         if facility_int:
             q1 = q1.filter(Emission.facility_id == facility_int)
-        if process_arg and process_arg != "all":
-            q1 = q1.filter(Emission.process_type == process_arg)
+        q1 = q1.filter(Emission.process_type == process_arg) if process_arg and process_arg != "all" else q1
         if division_arg and division_arg != "all":
             q1 = q1.filter(Emission.division.ilike(f"%{_escape_like(division_arg.strip())}%", escape="\\"))
         if field_arg and field_arg != "all":
@@ -165,11 +155,12 @@ def export_emissions():
                     "ch4": float(r.ch4_emissions or 0),
                     "n2o": float(r.n2o_emissions or 0),
                     "co2e_total": float(r.co2e_total or 0),
-                    "status": r.status or "Verified",
+                    # the stored values: "Verified", "API-2021.1" and "AR5" were filled in when absent (F-RPT-20)
+                    "status": r.status or "",
                     "data_source_ref": r.data_source_ref or "",
-                    "factor_version": r.factor_version or "API-2021.1",
-                    "factor_source": r.factor_source or "API Compendium 2021",
-                    "gwp_version": r.gwp_version or "AR5",
+                    "factor_version": r.factor_version or "",
+                    "factor_source": r.factor_source or "",
+                    "gwp_version": r.gwp_version or "",
                     "approved_by": r.approved_by_name or (f"User #{r.approved_by}" if r.approved_by else ""),
                     "approved_at": r.approved_at.isoformat() if r.approved_at else "",
                     "is_prior_period_adjustment": bool(getattr(r, "is_prior_period_adjustment", False)),
@@ -177,7 +168,8 @@ def export_emissions():
             )
 
     # 2. SCOPE 2
-    if scope in ["all", "2", "scope2"]:
+    process_filtered = bool(process_arg and process_arg != "all")  # Scope 2 / 3 out, as in the PDFs (F-RPT-16)
+    if scope in ["all", "2", "scope2"] and not process_filtered:
         q2 = Scope2Emission.query.filter(~Scope2Emission.facility_id.in_(test_fids))
         if hasattr(Scope2Emission, "is_test"):
             q2 = q2.filter(Scope2Emission.is_test == False)
@@ -222,14 +214,14 @@ def export_emissions():
                     "fuel": scope2_activity(r)[2],
                     "quantity": scope2_activity(r)[0],
                     "unit": scope2_activity(r)[1],
-                    **gas_split(r),  # grid electricity split into CO2 / CH4 / N2O (ADM-14)
+                    **gas_split(r, co2e_as_co2=False),  # gas masses only (ADM-14, F-E2E-04)
                     "co2e_total": float(r.co2e or 0),
                     "co2e_market_based": float(r.co2e_market_based if r.co2e_market_based is not None else (r.co2e or 0)),
-                    "status": r.status or "Verified",
+                    "status": r.status or "",
                     "data_source_ref": getattr(r, "data_source_ref", "") or "",
-                    "factor_version": getattr(r, "factor_version", None) or "2023.1",
-                    "factor_source": getattr(r, "factor_source", None) or f"Grid ({r.grid_region or 'National'})",
-                    "gwp_version": getattr(r, "gwp_version", None) or "AR5",
+                    "factor_version": getattr(r, "factor_version", None) or "",  # stored values only (F-RPT-20)
+                    "factor_source": getattr(r, "factor_source", None) or (r.grid_region or ""),
+                    "gwp_version": getattr(r, "gwp_version", None) or "",
                     "approved_by": r.approved_by_name or (f"User #{r.approved_by}" if r.approved_by else ""),
                     "approved_at": r.approved_at.isoformat() if r.approved_at else "",
                     "is_prior_period_adjustment": bool(getattr(r, "is_prior_period_adjustment", False)),
@@ -237,7 +229,7 @@ def export_emissions():
             )
 
     # 3. SCOPE 3
-    if scope in ["all", "3", "scope3"]:
+    if scope in ["all", "3", "scope3"] and not process_filtered:
         q3 = Scope3Emission.query.filter(~Scope3Emission.facility_id.in_(test_fids))
         if hasattr(Scope3Emission, "is_test"):
             q3 = q3.filter(Scope3Emission.is_test == False)
@@ -282,11 +274,11 @@ def export_emissions():
                     "ch4": 0.0,
                     "n2o": 0.0,
                     "co2e_total": float(r.co2e or 0),
-                    "status": r.status or "Verified",
+                    "status": r.status or "",
                     "data_source_ref": getattr(r, "data_source_ref", "") or "",
-                    "factor_version": getattr(r, "factor_version", None) or "2023.1",
-                    "factor_source": getattr(r, "factor_source", None) or (r.calculation_method or "GHG Protocol Cat 11"),
-                    "gwp_version": getattr(r, "gwp_version", None) or "AR5",
+                    "factor_version": getattr(r, "factor_version", None) or "",  # stored values only (F-RPT-20)
+                    "factor_source": getattr(r, "factor_source", None) or (r.calculation_method or ""),
+                    "gwp_version": getattr(r, "gwp_version", None) or "",
                     "approved_by": r.approved_by_name or (f"User #{r.approved_by}" if r.approved_by else ""),
                     "approved_at": r.approved_at.isoformat() if r.approved_at else "",
                     "is_prior_period_adjustment": bool(getattr(r, "is_prior_period_adjustment", False)),
@@ -411,6 +403,10 @@ def export_emissions():
 
             ws1.cell(row=row_num, column=17, value=_safe_excel_value(item["status"]))
             ws1.cell(row=row_num, column=18, value=_safe_excel_value(item.get("data_source_ref") or ""))
+            # the five provenance columns had a header and no values (audit 2026-11 F-RPT-19)
+            for col, key in ((19, "factor_version"), (20, "gwp_version"), (21, "approved_by"), (22, "approved_at")):
+                ws1.cell(row=row_num, column=col, value=_safe_excel_value(item.get(key) or ""))
+            ws1.cell(row=row_num, column=23, value="Yes" if item.get("is_prior_period_adjustment") else "No")
 
             for c in range(1, len(headers) + 1):
                 ws1.cell(row=row_num, column=c).border = thin_border

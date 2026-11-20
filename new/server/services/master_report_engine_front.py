@@ -287,7 +287,7 @@ def _build_geology_and_ops_elements(data: Dict[str, Any], styles: Dict[str, Para
         is_fr = str(lang).lower().startswith("fr")
         h1 = TRANSLATIONS_FR.get("gas_comp_headers_r1") if is_fr else TRANSLATIONS_EN.get("gas_comp_headers_r1")
         h2 = TRANSLATIONS_FR.get("gas_comp_headers_r2") if is_fr else TRANSLATIONS_EN.get("gas_comp_headers_r2")
-        r1 = [f"{gc.get('ch4_mol_pct', 0)} mol%", f"{gc.get('c2h6_mol_pct', 0)} mol%", f"{gc.get('c3h8_mol_pct', 0)} mol%", f"{gc.get('co2_mol_pct', 0)} mol%", f"{gc.get('n2_mol_pct', 0)} mol%", f"{gc.get('h2s_ppm', 0)} ppm"]
+        r1 = [f"{gc.get('ch4_mol_pct', 0)} mol%", f"{gc.get('c2h6_mol_pct', 0)} mol%", f"{gc.get('c3h8_mol_pct', 0)} mol%", f"{gc.get('co2_mol_pct', 0)} mol%", f"{gc.get('n2_mol_pct', 0)} mol%", (f"{gc.get('h2s_mol_pct')} mol%" if gc.get('h2s_mol_pct') not in (None, "") else f"{gc.get('h2s_ppm', 0)} ppm")]
         m_keys = ("ch4_mol_pct", "c2h6_mol_pct", "c3h8_mol_pct", "ic4_mol_pct", "nc4_mol_pct", "ic5_mol_pct", "nc5_mol_pct", "c6_plus_mol_pct", "co2_mol_pct", "n2_mol_pct")
         tot = sum(float(gc.get(k, 0) or 0) for k in m_keys)
         r2 = [f"{gc.get('ic4_mol_pct', 0)} mol%", f"{gc.get('nc4_mol_pct', 0)} mol%", f"{gc.get('ic5_mol_pct', 0)} mol%", f"{gc.get('nc5_mol_pct', 0)} mol%", f"{gc.get('c6_plus_mol_pct', 0)} mol%", f"{tot:.2f} mol%"]
@@ -501,15 +501,15 @@ def _build_benchmark_league_elements(data: Dict[str, Any], chart_path: str, styl
         b_cell_l = ParagraphStyle("BenchCellL", fontName=font_reg, fontSize=7.0, leading=8.5, textColor=COLOR_DARK, alignment=0, spaceAfter=0)
         b_headers_fmt = [Paragraph(h, b_hdr_style) for h in b_headers]
         b_rows = []
-        for b in sorted(benchmarks, key=lambda x: x.get("carbon_intensity_kg_boe", 0.0)):
-            stat = get_t("decree_compliant", lang) if b.get("decree_compliant") else get_t("decree_exceeded", lang)
+        for b in sorted(benchmarks, key=lambda x: x.get("carbon_intensity_kg_boe") or 0.0):
+            stat = (get_t("decree_compliant", lang) if b.get("decree_compliant") else get_t("decree_exceeded", lang))                 if b.get("decree_compliant") is not None else "n/a"
             b_rows.append([
                 Paragraph(safe_pdf_text(str(b.get("name", "")).split("(")[0].strip()), b_cell_l),
                 localize_segment(b.get("segment", "Upstream"), lang),
                 str(b.get("facility_count", 1)),
                 f"{b.get('total_mmboe', 0.0):.2f}",
-                f"{b.get('carbon_intensity_kg_boe', 0.0):.1f}",
-                f"{b.get('flaring_intensity_pct', 0.0):.2f}%",
+                f"{b['carbon_intensity_kg_boe']:.1f}" if b.get("carbon_intensity_kg_boe") is not None else "n/a",
+                f"{b['flaring_intensity_pct']:.2f}%" if b.get("flaring_intensity_pct") is not None else "n/a",
                 stat,
             ])
         t_b = Table([b_headers_fmt] + b_rows, colWidths=[140, 56, 62, 62, 66, 66, 68])

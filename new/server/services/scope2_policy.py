@@ -5,7 +5,7 @@
 - Steam of unknown generation: API Compendium 2021 Exhibit 8.3 (LHV basis, CH4 / N2O always added; BA-045 / BA-008).
 """
 from calculations.indirect import DEFAULT_BOILER_EFFICIENCY, DEFAULT_TRANSMISSION_LOSS, heat_to_mmbtu
-from electricity_factors import GRID_FACTORS, grid_entry, grid_factor_kg_co2e_per_kwh
+from electricity_factors import GRID_FACTORS, grid_entry, grid_entry_for_year, grid_factor_kg_co2e_per_kwh
 from extensions import db
 from input_validation import ValidationError, parse_number
 from models import Facility
@@ -24,7 +24,7 @@ _LEGACY_BOILER_EF_KG_PER_MMBTU = 53.06
 MAX_GRID_EF_KG_PER_KWH = 2.0
 
 
-def resolve_electricity_factor(grid_region, facility_id=None):
+def resolve_electricity_factor(grid_region, facility_id=None, year=None):
     """Location-based grid factor of a Scope 2 electricity record, one policy for manual, JSON-import and
     file-bulk paths (BUG-099).
 
@@ -35,7 +35,8 @@ def resolve_electricity_factor(grid_region, facility_id=None):
     method (supplier_market_factor). Returns (factor_kg_per_kwh, resolved_grid_region).
     """
     name = str(grid_region or "").strip()
-    canonical, entry = grid_entry(name) if name else (name, None)
+    # the reporting year's vintage (eGRID2022 from 2022; audit 2026-11 F-S23-09)
+    canonical, entry = grid_entry_for_year(name, year) if name else (name, None)
     if entry is not None:
         return grid_factor_kg_co2e_per_kwh(entry), canonical
     country = None
@@ -45,7 +46,7 @@ def resolve_electricity_factor(grid_region, facility_id=None):
             country = getattr(fac, "country", None) if fac else None
         except (TypeError, ValueError):
             country = None
-    c_name, c_entry = grid_entry(country) if country else (None, None)
+    c_name, c_entry = grid_entry_for_year(country, year) if country else (None, None)
     if c_entry is not None:
         return grid_factor_kg_co2e_per_kwh(c_entry), c_name
     raise ValidationError(
@@ -162,7 +163,8 @@ def apply_electricity_edit(emission, data):
     the market-based factor (it was ignored on a known grid and was the location value on an unknown one)."""
     known = grid_entry(emission.grid_region)[1] is not None
     try:
-        emission.emission_factor, _ = resolve_electricity_factor(emission.grid_region, emission.facility_id)
+        emission.emission_factor, _ = resolve_electricity_factor(emission.grid_region, emission.facility_id,
+                                                                 emission.year)
     except ValidationError:
         db.session.rollback()
         raise
@@ -187,7 +189,7 @@ BTU_PER_TON_HOUR = 12000.0
 BTU_PER_KWH = 3412.142
 
 
-def cooling_factor_from_cop(cop, grid_region, facility_id=None):
+def cooling_factor_from_cop(cop, grid_region, facility_id=None, year=None):
     """kg CO2e per ton-hour of cooling made by an electric chiller (API Compendium 2021 Equation 8-2: electricity =
     cooling x 12,000 Btu/ton-hr / COP / 3,412 Btu/kWh, times the grid factor). Cooling could only be entered with a
     factor per ton-hour (audit 2026-11 F-S23-12). Returns (factor, kWh per ton-hour, resolved grid)."""
@@ -197,7 +199,7 @@ def cooling_factor_from_cop(cop, grid_region, facility_id=None):
         raise ValidationError("The chiller's coefficient of performance (COP) must be a number", "cooling_cop") from None
     if not c > 0:
         raise ValidationError("The chiller's coefficient of performance (COP) must be greater than 0", "cooling_cop")
-    grid_ef, grid = resolve_electricity_factor(grid_region, facility_id)
+    grid_ef, grid = resolve_electricity_factor(grid_region, facility_id, year)
     kwh_per_ton_hour = BTU_PER_TON_HOUR / c / BTU_PER_KWH
     return kwh_per_ton_hour * grid_ef, kwh_per_ton_hour, grid
 
@@ -206,5 +208,6 @@ def cooling_factor(data):
     """kg CO2e per ton-hour of a cooling record: the entered factor, else Equation 8-2 from the chiller COP."""
     raw_ef = data.get("emission_factor") if data.get("emission_factor") not in (None, "") else data.get("ef")
     if raw_ef in (None, "") and data.get("cooling_cop") not in (None, ""):
-        return cooling_factor_from_cop(data.get("cooling_cop"), data.get("grid_region"), data.get("facility_id"))[0]
+        return cooling_factor_from_cop(data.get("cooling_cop"), data.get("grid_region"), data.get("facility_id"),
+                                       data.get("year"))[0]
     return parse_number(raw_ef, "emission_factor", min_value=0)

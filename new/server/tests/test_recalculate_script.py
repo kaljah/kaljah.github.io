@@ -391,5 +391,6 @@ def test_drilling_tier2_plus_reads_as_tier_2_everywhere():
     assert default_rel_1sigma(1, "drilling", "", "tier2_plus") == default_rel_1sigma(1, "drilling", "", "custom")
     lvl = lambda src: ogmp_level_for(SimpleNamespace(factor_source=src, calc_method="", ogmp_level=None))
     assert lvl("tier2_plus") == lvl("custom") == 3
-    assert lvl("tier3") == lvl("specific") == 4 and lvl("default") == 2
+    # catalog defaults are generic source-type factors: Level 3 (Framework s4.4; audit 2026-11 F-RPT-14)
+    assert lvl("tier3") == lvl("specific") == 4 and lvl("default") == 3
     assert "tier2_plus" in tool.TIERS

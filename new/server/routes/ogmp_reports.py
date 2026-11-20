@@ -85,9 +85,18 @@ def run_l4_l5_reconciliation():
     pathway_override = data.get("pathway_code")
     if pathway_override and str(pathway_override).strip() not in VALID_PATHWAYS:
         return jsonify({"error": f"pathway_code must be one of: {', '.join(VALID_PATHWAYS)}"}), 400
+    # Guidance s3.3.2 / s5.2: a Pathway 2 conclusion is the member's documented explanation of the discrepancy; an
+    # override with no explanation gave Level 5 "Reconciled" to a failed reconciliation (audit 2026-11 F-GOGMP-01)
+    explanation = str(data.get("pathway_explanation") or "").strip()
+    if pathway_override and str(pathway_override).strip().startswith("2") and len(explanation) < 10:
+        return jsonify({"error": "A Pathway 2 conclusion needs the explanation of the discrepancy "
+                                 "(pathway_explanation, 10+ characters)", "field": "pathway_explanation"}), 400
 
     sources = OgmpEmissionSource.query.filter_by(facility_id=fid, year=year, tenant_id=tenant_id).all()
     measurements = OgmpSiteMeasurement.query.filter_by(facility_id=fid, year=year, tenant_id=tenant_id).all()
+    if not sources:  # a site-level measurement alone is not a source-level level (F-GOGMP-04: Level 3 was given)
+        return jsonify({"error": "No source inventory for this facility and year: the level cannot be assessed "
+                                 "from a site measurement alone", "field": "facility_id"}), 422
     threshold = parse_number(data.get("threshold_pct", fac.reconciliation_threshold or 20.0), "threshold_pct", required=False, min_value=0.1, max_value=200.0, default=20.0)
 
     result = reconcile_l4_l5(
@@ -178,7 +187,9 @@ def run_l4_l5_reconciliation():
             "RECONCILE_CREATE" if is_new else "RECONCILE_UPDATE",
             "OgmpAnnualReport",
             report.id,
-            f"Reconciled OGMP 2.0 Level {report.reporting_level} ({report.reconciliation_status}, Pathway {report.pathway_code}, L4={report.l4_materiality_pct}%) for facility #{fid} ({year})",
+            f"Reconciled OGMP 2.0 Level {report.reporting_level} ({report.reconciliation_status}, Pathway {report.pathway_code}, "
+            f"computed {result['recommended_pathway_code']}, L4={report.l4_materiality_pct}%) for facility #{fid} ({year})"
+            + (f"; explanation: {explanation[:400]}" if explanation else ""),
             facility_id=fid,
             annual_report_id=report.id,
             before=before,
@@ -237,6 +248,7 @@ def get_portfolio_materiality():
             ).filter(
                 Emission.facility_id.in_(missing),
                 Emission.status == "Verified",
+                Emission.is_test == False,  # noqa: E712  test rows out, as every total (F-RPT-17)
             )
             if year_filter:
                 eq = eq.filter(Emission.year == year_filter)

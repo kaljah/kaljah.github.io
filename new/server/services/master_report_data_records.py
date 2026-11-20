@@ -6,22 +6,11 @@ from models import Emission, Facility, FlaringDetail, ProductionData, Scope2Emis
 from calculations.units import VOLUME_UNITS_TO_M3
 from services.regional_profiles import get_regional_profile
 from utils import tenant_matches
+from services.dashboard_filters import gas_volume_m3, source_category
 
 
-# API Compendium Section 4 stoichiometric combustion ratios (t pollutant / t CO2e)
-DEFAULT_STOICHIOMETRIC_NOX_RATIO = 0.0018
-
-
-DEFAULT_STOICHIOMETRIC_CO_RATIO = 0.0035
-
-
-DEFAULT_STOICHIOMETRIC_SO2_RATIO = 0.0003
-
-
-DEFAULT_STOICHIOMETRIC_VOC_RATIO = 0.0008
-
-
-DEFAULT_STOICHIOMETRIC_PM_RATIO = 0.0002
+# The NOx / CO / SO2 / VOC / PM "stoichiometric ratios" (CO2e x 0.0018 ...) were removed: the Compendium has no such
+# ratios (audit 2026-11 F-RPT-07). Pollutants are the stored record values only, else not recorded.
 
 
 # Standard fuel gas flaring emission factor (t CO2e / m3)
@@ -145,26 +134,15 @@ def _aggregate_emissions_records(em_records: List[Emission], start_year: int, en
         cat = (getattr(e, "process_type", None) or getattr(e, "category", "") or "").lower()
         subcat = (getattr(e, "fuel_type", None) or getattr(e, "sub_category", "") or "").lower()
         stream_str = f"{cat} {subcat}"
-
-        is_flare = "flare" in cat or "flaring" in cat
-        is_vent = "vent" in cat
-        is_fugitive = "fugitive" in cat or "leak" in cat or "ldar" in cat
-        is_combustion = (
-            "combustion" in cat or "fuel" in cat or "turbine" in cat or
-            "engine" in cat or "heater" in cat or "boiler" in cat or
-            (not is_flare and not is_vent and not is_fugitive)
-        )
-
-        if is_combustion:
-            out[y]["combustion_t"] += co2e
-        elif is_flare:
-            out[y]["flaring_t"] += co2e
-            qty = float(getattr(e, "quantity", None) or getattr(e, "activity_data", 0.0) or 0.0)
-            u_c = (e.unit or "").lower().strip()
-            if u_c in VOLUME_UNITS_TO_M3:
-                m3_val = qty * VOLUME_UNITS_TO_M3[u_c]
-            else:
-                m3_val = co2e / DEFAULT_FLARING_EF_TCO2E_PER_M3 if co2e > 0 else 0.0
+        # the dashboard's one source classification: tanks, pneumatics, blowdowns and seals were booked as
+        # combustion and process sources never reached process_t (audit 2026-11 F-RPT-10)
+        src = source_category(cat)
+        key = {"combustion": "combustion_t", "flaring": "flaring_t", "vented": "venting_t", "fugitive": "fugitives_t",
+               "process": "process_t"}.get(src, "process_t")
+        out[y][key] += co2e
+        if src == "flaring":
+            # a flared volume only from a volume record (it was back-computed as CO2e / 0.0024 t/m3: F-RPT-22)
+            m3_val = gas_volume_m3(getattr(e, "quantity", None), e.unit, e.year, getattr(e, "month", None)) or 0.0
             out[y]["total_flaring_m3"] += m3_val
             if "routine" in stream_str and "non" not in stream_str:
                 out[y]["routine_flaring_m3"] += m3_val
@@ -172,18 +150,8 @@ def _aggregate_emissions_records(em_records: List[Emission], start_year: int, en
                 out[y]["safety_flaring_m3"] += m3_val
             else:
                 out[y]["non_routine_flaring_m3"] += m3_val
-        elif is_vent:
-            out[y]["venting_t"] += co2e
-        elif is_fugitive:
-            out[y]["fugitives_t"] += co2e
-
-        is_comb = "combustion" in cat or "flare" in cat or "flaring" in cat
-        co_val = getattr(e, "co_emissions", None)
-        out[y]["co_t"] += float(co_val if co_val is not None and co_val > 0 else ((co2e * DEFAULT_STOICHIOMETRIC_CO_RATIO) if is_comb and co2e > 0 else 0.0))
-        out[y]["nox_t"] += float(getattr(e, "nox_emissions", 0.0) or ((co2e * DEFAULT_STOICHIOMETRIC_NOX_RATIO) if is_comb and co2e > 0 else 0.0))
-        out[y]["so2_t"] += float(getattr(e, "so2_emissions", 0.0) or ((co2e * DEFAULT_STOICHIOMETRIC_SO2_RATIO) if is_comb and co2e > 0 else 0.0))
-        out[y]["voc_t"] += float(getattr(e, "voc_emissions", 0.0) or ((co2e * DEFAULT_STOICHIOMETRIC_VOC_RATIO) if is_comb and co2e > 0 else 0.0))
-        out[y]["pm_t"] += float(getattr(e, "pm_emissions", 0.0) or ((co2e * DEFAULT_STOICHIOMETRIC_PM_RATIO) if is_comb and co2e > 0 else 0.0))
+        for pol in ("co", "nox", "so2", "voc", "pm"):  # stored values only (F-RPT-07)
+            out[y][f"{pol}_t"] += float(getattr(e, f"{pol}_emissions", 0.0) or 0.0)
 
     return out
 
@@ -204,16 +172,26 @@ def _query_emissions_by_year(facility_ids: List[int], start_year: int, end_year:
     return _aggregate_emissions_records(em_records, start_year, end_year, gwp_factors)
 
 
-def _aggregate_scope2_records(records: List[Scope2Emission], start_year: int, end_year: int) -> Dict[int, float]:
-    """Aggregates preloaded Scope 2 records per year."""
+def _aggregate_scope2_records(records: List[Scope2Emission], start_year: int, end_year: int,
+                              gwp_factors=None) -> Dict[int, float]:
+    """Aggregates preloaded Scope 2 records per year, on the report's GWP set when given: the gas masses (stored, or
+    the grid split) re-weighted, as Scope 1 is; it was the stored CO2e whatever the set (audit 2026-11 F-RPT-25)."""
+    from services.scope2_gases import gas_split
+
     out = {y: 0.0 for y in range(start_year, end_year + 1)}
     for r in records:
-        if r.year in out:
-            out[r.year] += float(r.co2e or 0.0)
+        if r.year not in out:
+            continue
+        if gwp_factors:
+            g = gas_split(r)
+            if g["ch4"] or g["n2o"]:
+                out[r.year] += g["co2"] + g["ch4"] * float(gwp_factors["CH4"]) + g["n2o"] * float(gwp_factors["N2O"])
+                continue
+        out[r.year] += float(r.co2e or 0.0)
     return out
 
 
-def _query_scope2_by_year(facility_ids: List[int], start_year: int, end_year: int) -> Dict[int, float]:
+def _query_scope2_by_year(facility_ids: List[int], start_year: int, end_year: int, gwp_factors=None) -> Dict[int, float]:
     """Aggregates Scope 2 indirect emissions (grid electricity, steam) per year."""
     if not facility_ids:
         return {y: 0.0 for y in range(start_year, end_year + 1)}
@@ -224,7 +202,7 @@ def _query_scope2_by_year(facility_ids: List[int], start_year: int, end_year: in
         Scope2Emission.year <= end_year,
         Scope2Emission.status == "Verified",
     ).all()
-    return _aggregate_scope2_records(records, start_year, end_year)
+    return _aggregate_scope2_records(records, start_year, end_year, gwp_factors)
 
 
 def _aggregate_production_records(records: List[ProductionData], start_year: int, end_year: int) -> Dict[int, Dict[str, float]]:
@@ -249,7 +227,7 @@ def _aggregate_production_records(records: List[ProductionData], start_year: int
         # one production basis with the dashboard (services.dashboard_filters): the gas unit is read (500,000
         # Mscf was taken as 0.5 MMSm3 by its size) and the BOE is the platform's 5,686 scf/BOE (it was 170
         # Sm3/BOE); BA-032
-        from services.dashboard_filters import gas_volume_m3, production_boe, production_gas_m3
+        from services.dashboard_filters import production_boe, production_gas_m3
 
         gas_mmsm3 = float(getattr(p, "gross_gas_mmsm3", 0.0) or 0.0)
         if gas_mmsm3 == 0.0 and getattr(p, "gas_amount", None):
@@ -401,18 +379,17 @@ def _compute_gas_properties(comp: Optional[Dict[str, Any]]) -> Dict[str, Any]:
             "density_kg_m3": STANDARD_NATURAL_GAS_DENSITY_KG_M3,
         }
 
+    # the basis comes from the key name (and composition_basis for the short keys), never from the size of the value:
+    # 0.5 mol % CO2 was read as 50 % (audit 2026-11 F-CLIENT-05)
+    short_is_fraction = str(comp.get("composition_basis") or "").strip().lower() in ("fraction", "mole_fraction")
+
     def _frac(pct_key: str, frac_key: Optional[str] = None) -> float:
         try:
-            if frac_key and comp.get(frac_key) is not None:
-                val = comp.get(frac_key)
-                if str(val).strip() != "":
-                    v = float(val)
-                    return v / 100.0 if v > 1.0 else v
-            if comp.get(pct_key) is not None:
-                val = comp.get(pct_key)
-                if str(val).strip() != "":
-                    v = float(val)
-                    return v / 100.0 if v > 1.0 else v
+            if frac_key and comp.get(frac_key) not in (None, ""):
+                v = float(comp.get(frac_key))
+                return v if short_is_fraction else v / 100.0
+            if comp.get(pct_key) not in (None, ""):
+                return float(comp.get(pct_key)) / 100.0
         except (ValueError, TypeError):
             pass
         return 0.0

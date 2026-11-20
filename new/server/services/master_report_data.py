@@ -161,7 +161,7 @@ def aggregate_master_report_data(
 
     gwp_factors = get_active_gwp(standard=gwp_standard)
     em_data = _query_emissions_by_year(fac_ids, start_year, end_year, gwp_factors)
-    s2_data = _query_scope2_by_year(fac_ids, start_year, end_year)
+    s2_data = _query_scope2_by_year(fac_ids, start_year, end_year, gwp_factors)
     prod_data = _query_production_by_year(fac_ids, start_year, end_year)
     flare_detail_data = _query_flaring_breakdown(fac_ids, start_year, end_year, em_data, prod_data)
 
@@ -224,7 +224,8 @@ def aggregate_master_report_data(
 
     governance = _query_governance(tid, start_year, end_year, timeline_summary)
     regional_benchmarks = (
-        _query_regional_benchmarks(facilities, start_year, end_year, allowed_facility_ids, tenant_config, tid)
+        _query_regional_benchmarks(facilities, start_year, end_year, allowed_facility_ids, tenant_config, tid,
+                                   gwp_factors)
         if mode == "comparison" else []
     )
 
@@ -390,25 +391,33 @@ def _query_regional_benchmarks(
     allowed_facility_ids: Optional[List[int]],
     tenant_config: Dict[str, Any],
     tid: str,
+    gwp_factors=None,
 ) -> List[Dict[str, Any]]:
     """Comparison mode: carbon and flaring intensity per regional profile and per other region."""
+    gwp_factors = gwp_factors or get_active_gwp()
     regional_benchmarks = []
     years = range(start_year, end_year + 1)
     bench_matched_ids = set()
 
     def _append_benchmark_bucket(b_key: str, b_name: str, b_basin: str, b_seg: str, r_facs: List[Facility]):
+        # the dashboard's facility-year cells: emissions and production over the same facility-years (all-year
+        # emissions were divided by producing-year BOE, 5.3 x; F-GUI2-09) and one flared volume (metered records,
+        # else the production data; never a CO2e-derived volume: F-GUI2-08)
+        from services.intensity import intensity_cells
         r_ids = [rf.id for rf in r_facs]
-        r_em = _query_emissions_by_year(r_ids, start_year, end_year)
-        r_s2 = _query_scope2_by_year(r_ids, start_year, end_year)
-        r_prod = _query_production_by_year(r_ids, start_year, end_year)
+        all_cells = list(intensity_cells(years=list(years), facility_id=r_ids).values())
+        cells = [c for c in all_cells if c["has_prod"]]
+        # Scope 1 CH4 / N2O re-weighted to the report's GWP set (F-RPT-25)
+        _ga = get_active_gwp()
+        _rw = lambda c: c["s1"] + c["s2"] + c["ch4"] * (float(gwp_factors["CH4"]) - float(_ga["CH4"])) + c["n2o"] * (
+            float(gwp_factors["N2O"]) - float(_ga["N2O"]))
+        tot_co2e = sum(_rw(c) for c in all_cells)  # the bucket's emissions; intensities on matched years
+        tot_boe = sum(c["boe"] for c in cells)
+        tot_gas_m3 = sum(c["gas_m3"] for c in cells)
+        tot_flare_m3 = sum(c["flaring_m3"] for c in cells)
 
-        tot_co2e = sum(r_em[yr]["co2e_direct_t"] + r_s2[yr] for yr in years if yr in r_em)
-        tot_boe = sum(r_prod[yr]["total_boe"] for yr in years if yr in r_prod)
-        tot_gas_m3 = sum(r_prod[yr]["gross_gas_mmsm3"] * 1e6 for yr in years if yr in r_prod)
-        tot_flare_m3 = sum(r_em[yr]["total_flaring_m3"] for yr in years if yr in r_em)
-
-        ci = (tot_co2e * 1000.0 / tot_boe) if tot_boe > 0 else 0.0
-        fi = (tot_flare_m3 / tot_gas_m3 * 100.0) if tot_gas_m3 > 0 else 0.0
+        ci = (sum(_rw(c) for c in cells) * 1000.0 / tot_boe) if tot_boe > 0 else None
+        fi = (tot_flare_m3 / tot_gas_m3 * 100.0) if tot_gas_m3 > 0 else None
 
         regional_benchmarks.append({
             "key": b_key,
@@ -420,7 +429,7 @@ def _query_regional_benchmarks(
             "total_mmboe": tot_boe / 1e6,
             "carbon_intensity_kg_boe": ci,
             "flaring_intensity_pct": fi,
-            "decree_compliant": fi <= 1.00,
+            "decree_compliant": (fi <= 1.00) if fi is not None else None,
         })
 
     for rk in REGIONAL_PROFILES:

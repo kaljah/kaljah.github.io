@@ -183,17 +183,17 @@ def export_national_inventory_report():
 
         dec_fields = [
             ("Organisme Déclarant", company_name),
-            ("Forme Juridique & Statut", "Société par Actions (SPA)"),
-            ("Numéro d'Identification Fiscale (NIF)", "000000000000000"),
-            ("Siège Social", "Algiers, Algeria"),
-            ("Direction Responsable", "Direction Centrale Qualité, Sécurité et Environnement (QSE / HSE)"),
+            ("Forme Juridique & Statut", "Non renseigné"),  # recorded values only (F-RPT-09)
+            ("Numéro d'Identification Fiscale (NIF)", "Non renseigné"),
+            ("Siège Social", "Non renseigné"),
+            ("Direction Responsable", "Non renseigné"),
             ("Responsable de la Déclaration", f"{assessor_name} ({assessor_email})"),
             ("Cadre Juridique National", "Décret exécutif n° 21-330 du 25 septembre 2021 & Loi n° 19-13 sur les hydrocarbures"),
             ("Norme Internationale d'Assurance", "ISO 14064-1:2018 (Spécification et directives de quantification au niveau organisme)"),
             ("Période de Déclaration", rep_year_str),
-            ("Périmètre Organisationnel", "Approche du Contrôle Opérationnel (100% des installations sous régie directe)"),
-            ("Seuil de Matérialité", "5.0% du total de l'inventaire consolidé"),
-            ("Standard de Pouvoir de Réchauffement Global (PRG)", "GIEC Sixième Rapport d'Évaluation (IPCC AR6 - 100 ans)"),
+            ("Périmètre Organisationnel", _boundary_label()),
+            ("Seuil de Matérialité", "Non renseigné"),
+            ("Standard de Pouvoir de Réchauffement Global (PRG)", f"GIEC {_active_gwp_std()} - 100 ans (paramètre actif)"),
             ("Installations Industrielles Recensées", len(facilities)),
             ("Enregistrements Opérationnels Scellés", len(scope1_records) + len(scope2_records) + len(scope3_records)),
         ]
@@ -230,7 +230,8 @@ def export_national_inventory_report():
         tot_s2_loc = sum(_s2(r, "co2e_location_based") for r in scope2_records)
         tot_s2_mkt = sum(_s2(r, "co2e_market_based") for r in scope2_records)
         tot_s3 = sum(float(r.co2e or 0.0) for r in scope3_records)
-        grand_total = tot_s1 + tot_s2_loc + tot_s3
+        market = str(request.args.get("scope2_method") or "").lower() == "market"  # the Scope 2 method (F-RPT-18)
+        grand_total = tot_s1 + (tot_s2_mkt if market else tot_s2_loc) + tot_s3
 
         # gas masses are the Scope 1 masses: a Scope 2 CO2e is not a CO2 mass (it was added in)
         tot_co2 = sum(float(r.co2_emissions or 0.0) for r in scope1_records)
@@ -242,7 +243,7 @@ def export_national_inventory_report():
             ("Scope 2 — Émissions indirectes associées à l'énergie (électricité Sonelgaz, chaleur)", tot_s2_loc, "tCO₂e"),
             ("Scope 2 — Émissions selon méthode contractuelle de marché (market-based)", tot_s2_mkt, "tCO₂e"),
             ("Scope 3 — Autres émissions indirectes de la chaîne de valeur (transport, carburants)", tot_s3, "tCO₂e"),
-            ("Grand Total de l'Empreinte Carbone Nationale", grand_total, "tCO₂e"),
+            (f"Grand Total de l'Empreinte Carbone Nationale (Scope 2 {'marché' if market else 'localisation'})", grand_total, "tCO₂e"),
             ("Masse Brute de Gaz Carbonique (CO₂) — Scope 1", tot_co2, "tonnes CO₂"),
             ("Masse Brute de Méthane Émis (CH₄) — Scope 1", tot_ch4, "tonnes CH₄"),
             ("Masse Brute de Protoxyde d'Azote (N₂O) — Scope 1", tot_n2o, "tonnes N₂O"),
@@ -286,7 +287,8 @@ def export_national_inventory_report():
 
         inv_headers = [
             "Record ID", "Scope", "Year", "Month", "Facility", "Division", "Field", "Group",
-            "Category / Process", "Fuel / Source", "Quantity", "Unit", "CO₂ (t)", "CH₄ (t)", "N₂O (t)", "Total CO₂e (t)", "Status"
+            "Category / Process", "Fuel / Source", "Quantity", "Unit", "CO₂ (t)", "CH₄ (t)", "N₂O (t)", "Total CO₂e (t)", "Status",
+            "IPCC / CRF Category",  # audit 2026-11 F-RPT-21: flaring was grouped with combustion and no code printed
         ]
         for c_idx, h in enumerate(inv_headers, start=1):
             ws_inv.cell(row=4, column=c_idx, value=h)
@@ -320,6 +322,7 @@ def export_national_inventory_report():
             ws_inv.cell(row=curr_row, column=15, value=round(n2o, 4)).number_format = "#,##0.0000"  # 0.0001 t (BA-022)
             ws_inv.cell(row=curr_row, column=16, value=round(tot, 2)).number_format = "#,##0.00"
             ws_inv.cell(row=curr_row, column=17, value=_safe_excel_value(r.status or "")).font = font_regular
+            ws_inv.cell(row=curr_row, column=18, value=_crf_category(r.process_type))
 
             for c in range(1, 18):
                 ws_inv.cell(row=curr_row, column=c).border = thin_border
@@ -367,10 +370,7 @@ def export_national_inventory_report():
             fac_name = fac.name if fac else f"Facility {r.facility_id}"
             qty = float(r.activity_data or 0.0)
             tot = float(r.co2e or 0.0)
-            gc = getattr(r, "gas_composition", None) or {}
-            ch4_s3 = gc.get("ch4_tonnes", 0.0) if isinstance(gc, dict) else 0.0
-            n2o_s3 = gc.get("n2o_tonnes", 0.0) if isinstance(gc, dict) else 0.0
-            co2_s3 = max(0.0, tot - (ch4_s3 * 28.0 + n2o_s3 * 265.0))
+            co2_s3, ch4_s3, n2o_s3 = _s3_gases(r, tot)
 
             ws_inv.cell(row=curr_row, column=1, value=f"S3-{r.id}").font = font_mono
             ws_inv.cell(row=curr_row, column=2, value="Scope 3").font = font_bold
@@ -384,7 +384,7 @@ def export_national_inventory_report():
             ws_inv.cell(row=curr_row, column=10, value=_safe_excel_value(r.sub_category or ""))
             ws_inv.cell(row=curr_row, column=11, value=round(qty, 2)).number_format = "#,##0.00"
             ws_inv.cell(row=curr_row, column=12, value=_safe_excel_value(r.unit or ""))
-            ws_inv.cell(row=curr_row, column=13, value=round(co2_s3, 2)).number_format = "#,##0.00"
+            ws_inv.cell(row=curr_row, column=13, value=round(co2_s3, 2) if co2_s3 is not None else "n/a").number_format = "#,##0.00"
             ws_inv.cell(row=curr_row, column=14, value=round(ch4_s3, 4)).number_format = "#,##0.0000"
             ws_inv.cell(row=curr_row, column=15, value=round(n2o_s3, 4)).number_format = "#,##0.0000"
             ws_inv.cell(row=curr_row, column=16, value=round(tot, 2)).number_format = "#,##0.00"
@@ -645,3 +645,39 @@ def export_national_inventory_report():
     except Exception as e:
         current_app.logger.error(f"Error generating National Inventory report: {e}", exc_info=True)
         return jsonify({"error": "National Inventory export failed. Please try again or contact support."}), 500
+
+
+def _active_gwp_std():
+    from routes.auth_settings import _app_settings
+
+    return str(_app_settings.get("gwp_standard") or "AR5")
+
+
+def _boundary_label():
+    from services.consolidation import current_approach
+
+    return {"equity_share": "Approche de la part de capital (part de l'organisation dans chaque installation)"}.get(
+        current_approach(), "Approche du contrôle opérationnel (100 % des installations exploitées)")
+
+
+def _s3_gases(r, tot):
+    """(CO2, CH4, N2O) t of a Scope 3 record: its stored masses, CO2 = CO2e less CH4 / N2O at the active GWP set (AR5 was
+    hard-coded), and no CO2 without masses (the CO2e was printed as CO2: audit 2026-11 F-RPT-13)."""
+    from calculations.constants import get_active_gwp
+
+    gc = getattr(r, "gas_composition", None) or {}
+    gc = gc if isinstance(gc, dict) else {}
+    ch4, n2o = float(gc.get("ch4_tonnes", 0.0) or 0.0), float(gc.get("n2o_tonnes", 0.0) or 0.0)
+    if not (ch4 or n2o or gc.get("co2_tonnes")):
+        return None, ch4, n2o
+    g = get_active_gwp()
+    return max(0.0, tot - (ch4 * float(g["CH4"]) + n2o * float(g["N2O"]))), ch4, n2o
+
+
+def _crf_category(process_type):
+    """IPCC 2006 / UNFCCC CRF category of a Scope 1 record (Vol 2 ch. 2 and 4; Vol 3 for process sources)."""
+    from services.dashboard_filters import source_category
+
+    return {"combustion": "1.A Fuel combustion", "flaring": "1.B.2 Fugitive - flaring",
+            "vented": "1.B.2 Fugitive - venting", "fugitive": "1.B.2 Fugitive - leaks",
+            "process": "2 Industrial processes"}.get(source_category(process_type), "Not classified")

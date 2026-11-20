@@ -22,7 +22,7 @@ const COMPONENT_DATA: Record<string, ComponentInfo> = {
   nC4H10: { mw: 58.12, c: 4, hhv: 49.5, lhv: 45.75, name: t("n-Butane (nC4)") },
   iC5H12: { mw: 72.15, c: 5, hhv: 48.95, lhv: 45.3, name: t("Isopentane (iC5)") },
   nC5H12: { mw: 72.15, c: 5, hhv: 49.0, lhv: 45.4, name: t("n-Pentane (nC5)") },
-  C6H14: { mw: 86.18, c: 6, hhv: 48.3, lhv: 44.7, name: t("Hexanes+ (C6+)") },
+  C6H14: { mw: 86.18, c: 6, hhv: 48.71, lhv: 45.10, name: t("Hexanes+ (C6+)") },  // GPA 2145 (F-CLIENT-09)
   CO2: { mw: 44.01, c: 1, hhv: 0, lhv: 0, name: t("Carbon Dioxide (CO2)") },
   N2O: { mw: 44.013, c: 0, hhv: 0, lhv: 0, name: t("Nitrous Oxide (N2O)") },
   N2: { mw: 28.01, c: 0, hhv: 0, lhv: 0, name: t("Nitrogen (N2)") },
@@ -178,6 +178,11 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
 
     const ch4MassFraction = (totalCH4Mass / totalMass) * 100;
     const mixtureHHV = totalHHV / totalMass;
+    // a blank or zero molar volume gave an "Infinity" density applied to the form (F-CLIENT-07)
+    if (!(params.molarVolume > 0)) {
+      toast.error(t("Enter the molar volume (m³/kmol) of the reference conditions"));
+      return;
+    }
     const density = mixtureMW / params.molarVolume;
 
     // Process-Specific Emission Factor Calculations
@@ -197,7 +202,8 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
     } else if (activeProcessType === "flaring") {
       // API Compendium 2021 Section 5.1: Flaring
       const combustionEff = params.oxidationFactor || 0.965;
-      const destructionEff = 0.98;
+      // an entered efficiency is the flare's for CH4 too, as the server (it changed CO2 only: F-CLIENT-06)
+      const destructionEff = params.oxidationFactor ? params.oxidationFactor : 0.98;
 
       // CO2 from combustion of hydrocarbons ONLY
       // We use hcCarbonMassFraction here to avoid double counting the CO2 component
@@ -280,9 +286,10 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
     }
 
     onApply({
-      co2: co2Value.toFixed(6),
-      ch4: ch4Value.toFixed(6),
-      n2o: n2oValue.toFixed(6),
+      // six significant figures, not six decimals: a kg/scf CH4 or N2O factor (~1e-6) was rounded away (F-GUI-05)
+      co2: Number(co2Value.toPrecision(6)).toString(),
+      ch4: Number(ch4Value.toPrecision(6)).toString(),
+      n2o: Number(n2oValue.toPrecision(6)).toString(),
       unit: unit,
       raw_composition: composition,
       gas_composition: {
@@ -296,7 +303,7 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
         c6_plus_mol_pct: parseFloat(composition.C6H14) || 0,
         co2_mol_pct: parseFloat(composition.CO2) || 0,
         n2_mol_pct: parseFloat(composition.N2) || 0,
-        h2s_ppm: parseFloat(composition.H2S) || 0,
+        h2s_mol_pct: parseFloat(composition.H2S) || 0,  // the analysis is in mol % (it was sent as ppm: F-CLIENT-05)
       },
     });
   };
@@ -324,7 +331,7 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
           c3h8_mol_pct: parseFloat(composition.C3H8) || 0,
           co2_mol_pct: parseFloat(composition.CO2) || 0,
           n2_mol_pct: parseFloat(composition.N2) || 0,
-          h2s_ppm: parseFloat(composition.H2S) || 0,
+          h2s_mol_pct: parseFloat(composition.H2S) || 0,  // the analysis is in mol % (it was sent as ppm: F-CLIENT-05)
           ic4_mol_pct: parseFloat(composition.iC4H10) || 0,
           nc4_mol_pct: parseFloat(composition.nC4H10) || 0,
           ic5_mol_pct: parseFloat(composition.iC5H12) || 0,

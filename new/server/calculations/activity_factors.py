@@ -269,8 +269,11 @@ class ActivityFactorCalculator(BaseCalculator):
 
         gas = row["gas_scf"]
         if row["toc"]:
+            # Compendium s6.10: 15 wt % CH4 in the TOC of *unstabilized* crude; weathered (stabilized) crude
+            # vapour holds negligible CH4. The 15 % served every TOC row unlabelled (audit 2026-11 F-GSTD-06)
             w = _frac(toc_ch4_wt)
             ch4 = n * row["ch4"] * (w if w is not None else 0.15)
+            toc_basis = "entered" if w is not None else "15 wt % (Compendium s6.10, unstabilized crude)"
             co2 = 0.0
         else:
             ch4_f = row["ch4"]
@@ -305,5 +308,6 @@ class ActivityFactorCalculator(BaseCalculator):
             "results": {"ch4": ch4_res, "co2": co2_res, "n2o": n2o_res},
             "total_co2e": total,
             "intermediate": {"api_table": row["table"], "factor": row["label"], "activity_basis": per,
-                             "normalized_activity": n, "ch4_scale": (x_ch4 / basis) if (x_ch4 and basis) else 1.0},
+                             "normalized_activity": n, "ch4_scale": (x_ch4 / basis) if (x_ch4 and basis) else 1.0,
+                             **({"toc_ch4_basis": toc_basis} if row["toc"] else {})},
         }

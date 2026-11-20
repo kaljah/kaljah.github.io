@@ -57,16 +57,17 @@ def check_period_lock_for_record(
     Returns an error payload and 403 status if the period is locked and the submission
     is not marked as a prior-period adjustment.
     """
-    if is_prior_period_adjustment:
-        return None
-
+    # rule 3: an adjustment is booked in the current, open period and names the closed one (prior_period_year); the
+    # flag let a record be written into the locked period itself (audit 2026-11 F-RPT-31)
     if is_period_locked(year, month, tenant_id=tenant_id):
         return (
             {
                 "error": f"Reporting period {year} is locked after official sign-off. Cannot create, edit, or delete records in a locked period without an authorized unlock.",
                 "code": "PERIOD_LOCKED",
                 "year": year,
-                "hint": "To submit late-arriving activity data for a closed period, flag the submission as a prior-period adjustment (is_prior_period_adjustment: true) or request an administrative unlock.",
+                "hint": ("Book late-arriving activity data in the current, open period as a prior-period adjustment "
+                         "(is_prior_period_adjustment: true, prior_period_year: the closed year) or request an "
+                         "administrative unlock."),
             },
             403,
         )

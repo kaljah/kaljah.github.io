@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import api from "../../api";
 import { useToast } from "../../components/Toast";
-import { Badge, Button, Field, Input, NativeSelect, StatusBadge, Textarea, controlClass } from "../../ui";
+import { Badge, Button, Field, Input, NativeSelect, Textarea, controlClass } from "../../ui";
 import { RecordTable, Td, Tr } from "./MdParts";
 import { t } from "../../i18n";
 import type {
@@ -98,10 +98,11 @@ export const OgmpL4L5Panel: React.FC<OgmpL4L5PanelProps> = ({
     ogmp_level: 4,
     status_flag: "Quantified",
     ch4_tonnes: "",
-    uncertainty_pct: "12.0",
-    emission_factor_ref: "Direct Measurement / Engineering Spec",
-    quantification_method: "Direct Stack / OGI Hi-Flow + Engineering Model",
-    pathway_code: "3",
+    // no hidden defaults saved as measured data (audit 2026-11 F-GOGMP-05)
+    uncertainty_pct: "",
+    emission_factor_ref: "",
+    quantification_method: "",
+    pathway_code: "",
     yoy_explanation: "",
     zero_emission_explanation: "",
   });
@@ -110,20 +111,21 @@ export const OgmpL4L5Panel: React.FC<OgmpL4L5PanelProps> = ({
   const [measForm, setMeasForm] = useState({
     facility_id: defaultFacId,
     year: currentYear,
-    campaign_date: `${currentYear}-06-15`,
+    campaign_date: "",
     survey_type: "Aircraft / Hyperspectral Imaging",
-    instrument_vendor: "GHGSat / Bridger Photonics",
+    instrument_vendor: "",
     measurement_mode: "Annualized",
     option_mode: "Option 1",
     measured_rate_kg_hr: "",
     operating_hours_year: "8760",
-    uncertainty_pct: "20",
-    detection_threshold_kg_hr: "2.0",
+    uncertainty_pct: "",
+    detection_threshold_kg_hr: "",
     meteorological_notes: "",
   });
   const [recParams, setRecParams] = useState({
     option_mode: "Option 1",
     pathway_code: "",
+    pathway_explanation: "",
     threshold_pct: "20",
     l4_justification: "",
   });
@@ -145,8 +147,8 @@ export const OgmpL4L5Panel: React.FC<OgmpL4L5PanelProps> = ({
   const [targetForm, setTargetForm] = useState({
     reporting_entity_id: "",
     target_year: String(currentYear + 2),
-    upstream_target_pct: "0.20",
-    midstream_target_pct: "0.05",
+    upstream_target_pct: "",
+    midstream_target_pct: "",
     notes: "",
   });
 
@@ -162,8 +164,11 @@ export const OgmpL4L5Panel: React.FC<OgmpL4L5PanelProps> = ({
     justification: "",
   });
 
+  // the first facility is chosen on first load only: "All facilities" stays selectable (audit 2026-11 F-GOGMP-11)
+  const facInit = React.useRef(false);
   useEffect(() => {
-    if (!selectedFacilityId && defaultFacId) {
+    if (!facInit.current && !selectedFacilityId && defaultFacId) {
+      facInit.current = true;
       setSelectedFacilityId(defaultFacId);
       setSrcForm((p) => ({ ...p, facility_id: defaultFacId }));
       setMeasForm((p) => ({ ...p, facility_id: defaultFacId }));
@@ -183,7 +188,8 @@ export const OgmpL4L5Panel: React.FC<OgmpL4L5PanelProps> = ({
         api.get("/ogmp/site-measurements").catch(() => ({ data: [] })),
         api.get("/ogmp/annual-reports").catch(() => ({ data: [] })),
         api.get("/ogmp/implementation-plans").catch(() => ({ data: [] })),
-        api.get("/ogmp/portfolio-materiality").catch(() => ({ data: null })),
+        // the selected year's materiality (every year was summed: audit 2026-11 F-GOGMP-06)
+        api.get("/ogmp/portfolio-materiality", { params: { year: selectedYear } }).catch(() => ({ data: null })),
         api.get("/ogmp/audit-trail").catch(() => ({ data: [] })),
       ]);
 
@@ -205,7 +211,7 @@ export const OgmpL4L5Panel: React.FC<OgmpL4L5PanelProps> = ({
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [selectedYear]);
 
   useEffect(() => {
     loadAll();
@@ -296,8 +302,9 @@ export const OgmpL4L5Panel: React.FC<OgmpL4L5PanelProps> = ({
         facility_id: Number(fid),
         year: Number(selectedYear),
         measured_rate_kg_hr: Number(measForm.measured_rate_kg_hr || 0),
-        operating_hours_year: Number(measForm.operating_hours_year || 8760),
-        uncertainty_pct: Number(measForm.uncertainty_pct || 20),
+        // an entered 0 stays 0 (`||` replaced it); the uncertainty is the campaign's own (F-GOGMP-05)
+        operating_hours_year: measForm.operating_hours_year === "" ? 8760 : Number(measForm.operating_hours_year),
+        uncertainty_pct: measForm.uncertainty_pct === "" ? undefined : Number(measForm.uncertainty_pct),
         detection_threshold_kg_hr: measForm.detection_threshold_kg_hr ? Number(measForm.detection_threshold_kg_hr) : null,
       });
       toast.success(t("L5 site measurement campaign logged."));
@@ -331,7 +338,8 @@ export const OgmpL4L5Panel: React.FC<OgmpL4L5PanelProps> = ({
         year: Number(selectedYear),
         option_mode: recParams.option_mode,
         pathway_code: recParams.pathway_code || undefined,
-        threshold_pct: Number(recParams.threshold_pct || 20),
+        pathway_explanation: recParams.pathway_explanation || undefined,
+        threshold_pct: recParams.threshold_pct === "" ? 20 : Number(recParams.threshold_pct),
         l4_justification: recParams.l4_justification,
       });
       const rep = res.data?.annual_report;
@@ -361,7 +369,9 @@ export const OgmpL4L5Panel: React.FC<OgmpL4L5PanelProps> = ({
         membership_year: Number(entityForm.membership_year || 2023),
       });
       toast.success(t("OGMP reporting entity saved."));
-      setEntityForm((p) => ({ ...p, entity_name: "", operating_company: "", exclusion_reason: "" }));
+      // the NOJV flags are reset too: a hidden checked box blocked or corrupted the next entity (F-GOGMP-10)
+      setEntityForm((p) => ({ ...p, entity_name: "", operating_company: "", exclusion_reason: "",
+        is_nojv_material_excluded: false, is_member_reported_nojv: false }));
       await loadAll();
     } catch (err: any) {
       toast.error(err?.response?.data?.error || t("Failed to save reporting entity."));
@@ -730,7 +740,7 @@ export const OgmpL4L5Panel: React.FC<OgmpL4L5PanelProps> = ({
                   <Badge tone={s.ogmp_level >= 4 ? "success" : s.ogmp_level === 3 ? "info" : "warning"}>L{s.ogmp_level}</Badge>
                 </Td>
                 <Td>
-                  <Badge tone={s.status_flag === "Quantified" ? "brand" : "neutral"}>{s.status_flag}</Badge>
+                  <Badge tone={s.status_flag === "Quantified" ? "brand" : "neutral"}>{t(s.status_flag)}</Badge>
                 </Td>
                 <Td className="font-mono font-semibold">{Number(s.ch4_tonnes || 0).toFixed(2)}</Td>
                 <Td className="font-mono">±{Number(s.uncertainty_pct || 0).toFixed(1)}%</Td>
@@ -781,20 +791,30 @@ export const OgmpL4L5Panel: React.FC<OgmpL4L5PanelProps> = ({
                   <option value="Option 2">{t("Option 2 (Source-Aware Campaign)")}</option>
                 </NativeSelect>
               </Field>
-              <Field label={t("Pathway Override")}>
+              {/* only a documented Pathway 2 conclusion can be recorded; it needs its explanation (F-GOGMP-01) */}
+              <Field label={t("Pathway 2 conclusion (explained discrepancy)")}>
                 <NativeSelect
                   className={controlClass}
                   value={recParams.pathway_code}
                   onChange={(e) => setRecParams((p) => ({ ...p, pathway_code: e.target.value }))}
                 >
                   <option value="">{t("Auto-detect from sources & measurements")}</option>
-                  {pathways.map((pw) => (
+                  {pathways.filter((pw) => String(pw.code).startsWith("2")).map((pw) => (
                     <option key={pw.code} value={pw.code}>
-                      {pw.title}
+                      {t(pw.title)}
                     </option>
                   ))}
                 </NativeSelect>
               </Field>
+              {recParams.pathway_code && (
+                <Field label={t("Explanation of the discrepancy")}>
+                  <Input
+                    value={recParams.pathway_explanation}
+                    onChange={(e) => setRecParams((p) => ({ ...p, pathway_explanation: e.target.value }))}
+                    required
+                  />
+                </Field>
+              )}
               <Field label={t("Variance Threshold (±%)")}>
                 <Input
                   type="number"
@@ -835,7 +855,7 @@ export const OgmpL4L5Panel: React.FC<OgmpL4L5PanelProps> = ({
                 <Td>{r.year}</Td>
                 <Td>
                   <Badge tone={r.reporting_level >= 5 ? "success" : r.reporting_level >= 4 ? "info" : "warning"}>
-                    Level {r.reporting_level}
+                    {r.reporting_level != null ? t("Level {{n}}", { n: r.reporting_level }) : t("Not assessable")}
                   </Badge>
                 </Td>
                 <Td>
@@ -865,7 +885,8 @@ export const OgmpL4L5Panel: React.FC<OgmpL4L5PanelProps> = ({
                   )}
                 </Td>
                 <Td>
-                  <StatusBadge status={r.reconciliation_status} size="sm" />
+                  {/* the engine's own outcome text (unknown statuses were shown as "Draft": F-GOGMP-02) */}
+                  <span className="text-xs font-semibold">{t(r.reconciliation_status || "Not recorded")}</span>
                 </Td>
               </Tr>
             ))}
@@ -946,11 +967,27 @@ export const OgmpL4L5Panel: React.FC<OgmpL4L5PanelProps> = ({
                   onChange={(e) => setMeasForm((p) => ({ ...p, uncertainty_pct: e.target.value }))}
                 />
               </Field>
-              <Field label={t("Instrument Vendor / Notes")}>
+              {/* vendor and detection threshold are the campaign's own, entered here (F-GOGMP-05) */}
+              <Field label={t("Instrument Vendor")}>
+                <Input
+                  value={measForm.instrument_vendor}
+                  onChange={(e) => setMeasForm((p) => ({ ...p, instrument_vendor: e.target.value }))}
+                />
+              </Field>
+              <Field label={t("Detection Threshold (kg/h)")}>
+                <Input
+                  type="number"
+                  step="any"
+                  min="0"
+                  value={measForm.detection_threshold_kg_hr}
+                  onChange={(e) => setMeasForm((p) => ({ ...p, detection_threshold_kg_hr: e.target.value }))}
+                />
+              </Field>
+              <Field label={t("Notes (meteorology)")}>
                 <Input
                   value={measForm.meteorological_notes}
                   onChange={(e) => setMeasForm((p) => ({ ...p, meteorological_notes: e.target.value }))}
-                  placeholder={t("Wind 3.4 m/s SW, MDL 2 kg/hr")}
+                  placeholder={t("Wind 3.4 m/s SW")}
                 />
               </Field>
             </div>
@@ -973,7 +1010,7 @@ export const OgmpL4L5Panel: React.FC<OgmpL4L5PanelProps> = ({
                 <Td className="whitespace-nowrap">{m.campaign_date}</Td>
                 <Td>{m.survey_type}</Td>
                 <Td className="text-xs">
-                  {m.measurement_mode} / {m.option_mode}
+                  {t(m.measurement_mode)} / {t(m.option_mode)}
                 </Td>
                 <Td className="font-mono">{Number(m.measured_rate_kg_hr).toFixed(2)}</Td>
                 <Td className="font-mono font-bold text-success-fg">{Number(m.annualized_tch4).toFixed(2)}</Td>
@@ -1256,9 +1293,9 @@ export const OgmpL4L5Panel: React.FC<OgmpL4L5PanelProps> = ({
                   value={planForm.target_level}
                   onChange={(e) => setPlanForm((p) => ({ ...p, target_level: e.target.value }))}
                 >
-                  <option value="3">Level 3</option>
-                  <option value="4">Level 4</option>
-                  <option value="5">Level 5</option>
+                  <option value="3">{t("Level {{n}}", { n: 3 })}</option>
+                  <option value="4">{t("Level {{n}}", { n: 4 })}</option>
+                  <option value="5">{t("Level {{n}}", { n: 5 })}</option>
                 </NativeSelect>
               </Field>
               <Field label={t("Status")}>
@@ -1298,11 +1335,11 @@ export const OgmpL4L5Panel: React.FC<OgmpL4L5PanelProps> = ({
                 <Td className="font-mono">{p.planned_year}</Td>
                 <Td>
                   <Badge tone={p.target_level >= 5 ? "success" : p.target_level === 4 ? "info" : "neutral"}>
-                    Level {p.target_level}
+                    {t("Level {{n}}", { n: p.target_level })}
                   </Badge>
                 </Td>
                 <Td>
-                  <StatusBadge status={p.milestone_status} size="sm" />
+                  <span className="text-xs font-semibold">{t(p.milestone_status || "Not recorded")}</span>
                 </Td>
                 <Td className="text-xs text-text-secondary">{p.methodology_upgrade || p.source_scope || "—"}</Td>
                 <Td>

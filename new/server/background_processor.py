@@ -1239,7 +1239,7 @@ class _ImportRun:
     def _skip(self, line_no, row_errors, mapped_data, row_dict):
         _append_job_list(self.job_id, "skipped", {
             "row": line_no,  # line of the file (header and description rows included)
-            "reason": "; ".join(row_errors),
+            "reason": "; ".join(readable_error(e) for e in row_errors),  # no raw Python messages (F-UPL-10)
             "date": mapped_data.get("date", ""),
             "year": str(mapped_data.get("year") or ""),
             "month": str(mapped_data.get("month") or ""),
@@ -1794,6 +1794,7 @@ def _build_mapping(headers, scope=1):
 
 
 from services.scope2_import_rows import chp_row, cooling_row_factor, steam_row_trans_loss  # noqa: E402
+from services.import_feedback import readable_error  # noqa: E402
 from calculations.units_scope3 import scope3_complete_factor_unit  # noqa: E402
 
 
@@ -1842,7 +1843,7 @@ def _process_row_scope2(
 
         supplied = row.get("factor") if row.get("factor") not in (None, "") else row.get("emission_factor")
         try:
-            ef, grid_region = resolve_electricity_factor(grid_region, facility.id)
+            ef, grid_region = resolve_electricity_factor(grid_region, facility.id, year)
         except ValidationError as err:
             return None, [f"Row {row_idx}: {err.message}"]
 
@@ -1931,7 +1932,7 @@ def _process_row_scope2(
         if unit.lower().replace(" ", "").replace("-", "_") not in COOLING_UNITS:
             return None, [f"Row {row_idx}: cooling is entered in ton-hours of refrigeration (unit 'ton_hour'), not '{unit}'"]
         cooling_ton = val
-        ef, cool_err = cooling_row_factor(row, row_idx, grid_region, facility.id)  # factor or chiller COP (F-S23-12)
+        ef, cool_err = cooling_row_factor(row, row_idx, grid_region, facility.id, year)  # factor or chiller COP (F-S23-12)
         if cool_err:
             return None, [cool_err]
         co2e = (cooling_ton * ef) / 1000.0
@@ -2113,9 +2114,8 @@ def _process_row_scope3_eeio(
     from services.eeio_spend import spend_in_factor_usd
 
     try:
-        spend_usd, spend_notes = spend_in_factor_usd(
-            spend_val, row.get("currency") or row.get("spend_currency"), row.get("fx_rate_to_usd"), year,
-            row.get("deflator_to_2022"))
+        spend_usd, spend_notes = spend_in_factor_usd(spend_val, row.get("currency") or row.get("spend_currency"),
+                                                     row.get("fx_rate_to_usd"), year, row.get("deflator_to_2022"))
     except ValidationError as exc:
         return None, [f"Row {row_idx}: {exc.message}"]
 

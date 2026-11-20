@@ -466,8 +466,8 @@ def save_ogmp_survey():
     threshold = (fac.reconciliation_threshold if fac and fac.reconciliation_threshold else 20.0)
     variance_pct, variance_flag, reconciliation_status = reconcile(estimated_annual_tch4, bottom_up_tch4, threshold)
     if requested_status and requested_status != reconciliation_status:
-        if not override_reason:
-            return jsonify({'error': 'A valid justification is required when overriding the derived reconciliation status.'}), 400
+        if len(str(override_reason or '').strip()) < 10:  # an explanation, not a placeholder (F-GUI2-06)
+            return jsonify({'error': 'Overriding the derived status needs the explanation (10+ characters).'}), 400
         operator_notes = (operator_notes + f"\n[Status override: {reconciliation_status} -> {requested_status}] {override_reason}").strip()
         reconciliation_status = requested_status
 
@@ -802,22 +802,13 @@ def save_cbam_export():
         if quantity_tonnes > 100_000_000:
             return jsonify({'error': 'quantity_tonnes exceeds maximum plausibility threshold (100,000,000 tonnes)', 'field': 'quantity_tonnes'}), 400
 
-        total_direct_tco2e = db.session.query(func.coalesce(func.sum(Emission.co2e_total), 0.0)).filter(
-            Emission.facility_id == facility_id,
-            Emission.year == year,
-            Emission.status == 'Verified',
-            Emission.is_test == False  # noqa: E712
-        ).scalar()
-        
-        from models import Scope2Emission
-        scope2_method = request.args.get("scope2_method", data.get("scope2_method", "location")).lower()
-        s2_col = Scope2Emission.co2e_market_based if scope2_method == "market" else Scope2Emission.co2e_location_based
-        s2_expr = func.coalesce(s2_col, Scope2Emission.co2e, 0.0)
-        total_indirect_tco2e = db.session.query(func.coalesce(func.sum(s2_expr), 0.0)).filter(
-            Scope2Emission.facility_id == facility_id,
-            Scope2Emission.year == year,
-            Scope2Emission.status == 'Verified'
-        ).scalar()
+        # CBAM greenhouse gases only (Reg 2023/956 Annex I): CO2, with N2O for fertilisers (CN 2808, 2814, 31xx); CH4
+        # is not covered. The whole Scope 1 CO2e was used (audit 2026-11 F-RPT-26)
+        from services.cbam_attribution import installation_cbam_ghg_t, installation_electricity_t
+        total_direct_tco2e = installation_cbam_ghg_t(facility_id, year, cn_code)
+        # indirect = electricity consumed x its location-based factor (IR 2023/1773 Annex III): steam / heat count
+        # as direct and contractual instruments are not used (they were included; F-RPT-27)
+        total_indirect_tco2e = installation_electricity_t(facility_id, year)
 
         # EU 2023/1773 Annex III: specific embedded emissions = attributed emissions / activity level, the
         # installation's whole production of the good in the period (exported or not). Each export was divided
@@ -833,16 +824,25 @@ def save_cbam_export():
             return jsonify({'error': 'The activity level (tonnes produced) cannot be below the exported quantity',
                             'field': 'activity_level_tonnes'}), 400
 
+        # the share of the installation's emissions attributed to this good's production process (Annex III s3)
+        share = parse_number(data.get('attribution_share_pct') or data.get('attributionSharePct'),
+                             'attribution_share_pct', required=False, min_value=0, max_value=100, default=100.0) / 100.0
         if specific_embedded_direct > 0:
             se_dir = specific_embedded_direct
         else:
-            net_direct_tco2e = max(0.0, float(total_direct_tco2e) - float(captured_co2_tonnes))
+            net_direct_tco2e = max(0.0, float(total_direct_tco2e) * share - float(captured_co2_tonnes))
             se_dir = round(net_direct_tco2e / activity_level, 4)
+        from services.cbam_attribution import attributed_exceeds_installation
+        if activity_level and attributed_exceeds_installation(facility_id, year, cn_code, se_dir * activity_level,
+                                                              float(total_direct_tco2e), record_id):
+            return jsonify({'error': 'The goods of this installation would carry more direct emissions than it '
+                                     'emitted: give each good its attribution_share_pct (audit 2026-11 F-RPT-26)',
+                            'field': 'attribution_share_pct'}), 400
 
         if specific_embedded_indirect > 0:
             se_ind = specific_embedded_indirect
         else:
-            se_ind = round(float(total_indirect_tco2e) / activity_level, 4)
+            se_ind = round(float(total_indirect_tco2e) * share / activity_level, 4)
 
         if record_id:
             record = db.session.get(CbamProductExport, record_id)

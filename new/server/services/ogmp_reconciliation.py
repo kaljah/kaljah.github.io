@@ -56,7 +56,7 @@ PATHWAY_DEFINITIONS: Dict[str, Dict[str, str]] = {
     "1": {
         "code": "1",
         "title": "Pathway 1 — Direct Agreement (Gold Level 5)",
-        "description": "Bottom-up Level 4 inventory and top-down site measurement 95% CIs overlap and point variance is within threshold.",
+        "description": "Reasonable agreement: the bottom-up central estimate lies within the top-down 95% band, or the reverse (Reconciliation & L5 Guidance s3.3.1).",
     },
     "2a": {
         "code": "2a",
@@ -80,8 +80,8 @@ PATHWAY_DEFINITIONS: Dict[str, Dict[str, str]] = {
     },
     "3": {
         "code": "3",
-        "title": "Pathway 3 — Incomplete / Non-Material Basis",
-        "description": "Missing Level 4 materiality (>=90% or >=70% justified) or missing pair of top-down/bottom-up measurements.",
+        "title": "Pathway 3 — Unresolved",
+        "description": "No reasonable agreement and no explanation recorded, Level 4 materiality not met, or a top-down / bottom-up estimate missing: the asset stays at Level 4.",
     },
 }
 
@@ -152,14 +152,17 @@ def validate_emission_source_payload(
 
     raw_unc = payload.get("uncertainty_pct")
     if raw_unc in (None, ""):
-        default_unc = {1: 60.0, 2: 45.0, 3: 30.0, 4: 15.0}.get(ogmp_level, 30.0)
-        uncertainty_pct = default_unc
+        # no silent 60 / 45 / 30 / 15 % by level (no OGMP source gives them; audit 2026-11 F-RPT-06): a Level 4
+        # source needs its own uncertainty (the Upstream template asks for it), the others may leave it blank
+        if ogmp_level >= 4 and status_flag == "Quantified" and ch4_tonnes > 0:
+            raise ValueError("A Level 4 source needs its measurement uncertainty (uncertainty_pct, 95 %)")
+        uncertainty_pct = None
     else:
         try:
             uncertainty_pct = float(raw_unc)
         except (TypeError, ValueError):
             raise ValueError("uncertainty_pct must be numeric")
-    if uncertainty_pct < 0 or uncertainty_pct > 500 or not math.isfinite(uncertainty_pct):
+    if uncertainty_pct is not None and (uncertainty_pct < 0 or uncertainty_pct > 500 or not math.isfinite(uncertainty_pct)):
         raise ValueError("uncertainty_pct must be between 0 and 500")
 
     zero_explanation = str(payload.get("zero_emission_explanation") or "").strip()
@@ -198,7 +201,7 @@ def validate_emission_source_payload(
         "ogmp_level": ogmp_level,
         "status_flag": status_flag,
         "ch4_tonnes": round(ch4_tonnes, 4),
-        "uncertainty_pct": round(uncertainty_pct, 2),
+        "uncertainty_pct": round(uncertainty_pct, 2) if uncertainty_pct is not None else None,
         "emission_factor_ref": str(payload.get("emission_factor_ref") or "").strip(),
         "quantification_method": str(payload.get("quantification_method") or "").strip(),
         "pathway_code": pathway_code,
@@ -245,7 +248,9 @@ def evaluate_l4_materiality(sources: List[Any], l4_justification: str = "") -> D
             lvl = int(getattr(s, "ogmp_level", 1) or 1)
             val = float(getattr(s, "ch4_tonnes", 0.0) or 0.0)
             share_pct = (val / total_ch4) * 100.0
-            if lvl < 3 and share_pct >= 5.0:
+            # every remaining source must be at least Level 3 (Checklist 2.1); only those >= 5 % were checked and an
+            # L2 source at 4.3 % passed (audit 2026-11 F-RPT-04)
+            if lvl < 3:
                 remaining_material_below_l3.append({
                     "id": getattr(s, "id", None),
                     "source_code": getattr(s, "source_code", ""),
@@ -309,13 +314,14 @@ def compute_bottom_up_rss(sources: List[Any]) -> Dict[str, Any]:
             "source_count": len(quantified),
         }
 
-    rss_sq = 0.0
+    rss_sq, missing = 0.0, 0
     for s in quantified:
         e_i = float(getattr(s, "ch4_tonnes", 0.0) or 0.0)
-        lvl = int(getattr(s, "ogmp_level", 3) or 3)
         raw_u = getattr(s, "uncertainty_pct", None)
-        u_i = float(raw_u) if raw_u is not None else {1: 60.0, 2: 45.0, 3: 30.0, 4: 15.0}.get(lvl, 30.0)
-        rss_sq += (e_i * (u_i / 100.0)) ** 2
+        if raw_u is None:  # not recorded: left out of the band and counted, never a level default (F-RPT-06)
+            missing += 1 if e_i > 0 else 0
+            continue
+        rss_sq += (e_i * (float(raw_u) / 100.0)) ** 2
 
     half_width = math.sqrt(rss_sq)
     rel_pct = (half_width / total) * 100.0
@@ -326,7 +332,18 @@ def compute_bottom_up_rss(sources: List[Any]) -> Dict[str, Any]:
         "ci_low_tch4": round(max(0.0, total - half_width), 4),
         "ci_high_tch4": round(total + half_width, 4),
         "source_count": len(quantified),
+        "sources_without_uncertainty": missing,
     }
+
+
+_T975 = {1: 12.706, 2: 4.303, 3: 3.182, 4: 2.776, 5: 2.571, 6: 2.447, 7: 2.365, 8: 2.306, 9: 2.262, 10: 2.228,
+         11: 2.201, 12: 2.179, 13: 2.160, 14: 2.145, 15: 2.131, 16: 2.120, 17: 2.110, 18: 2.101, 19: 2.093, 20: 2.086,
+         21: 2.080, 22: 2.074, 23: 2.069, 24: 2.064, 25: 2.060, 26: 2.056, 27: 2.052, 28: 2.048, 29: 2.045, 30: 2.042}
+
+
+def _t975(df):
+    """Two-sided 95 % Student t quantile (1.96 beyond 30 degrees of freedom, within 4 %)."""
+    return _T975.get(int(df), 1.96)
 
 
 def compute_top_down_rss(measurements: List[Any], option_mode: Optional[str] = None) -> Dict[str, Any]:
@@ -362,7 +379,7 @@ def compute_top_down_rss(measurements: List[Any], option_mode: Optional[str] = N
         ann = getattr(m, "annualized_tch4", None)
         val = float(ann) if (ann is not None and float(ann) > 0) else (rate * hrs / 1000.0)
         u_pct = getattr(m, "uncertainty_pct", None)
-        u = float(u_pct) if u_pct is not None else (30.0 if (getattr(m, "measurement_mode", "") == "Instantaneous") else 20.0)
+        u = float(u_pct) if u_pct is not None else 0.0  # required at entry; legacy rows without one have no band
         annual_vals.append(val)
         half_widths.append(val * (u / 100.0))
 
@@ -383,10 +400,11 @@ def compute_top_down_rss(measurements: List[Any], option_mode: Optional[str] = N
     # Combine single-campaign uncertainty of mean via RSS
     rss_mean_hw = math.sqrt(sum(hw ** 2 for hw in half_widths)) / n
 
-    # Option 2 incorporates inter-campaign variance (sample standard error * 1.96)
+    # Option 2 incorporates inter-campaign variance: the sample standard error x Student t(0.975, n - 1); z = 1.96 was
+    # used whatever the number of campaigns (audit 2026-11 F-GOGMP-08: 2 campaigns need t = 12.706)
     if effective_opt == "Option 2" and n > 1:
         sample_var = sum((x - mean_td) ** 2 for x in annual_vals) / (n - 1)
-        inter_hw = 1.96 * math.sqrt(sample_var / n)
+        inter_hw = _t975(n - 1) * math.sqrt(sample_var / n)
         combined_hw = math.sqrt(rss_mean_hw ** 2 + inter_hw ** 2)
     else:
         combined_hw = rss_mean_hw
@@ -437,33 +455,41 @@ def reconcile_l4_l5(
         variance_flag = abs(variance_pct) > thr
         ci_overlaps = (bu["ci_high_tch4"] >= td["ci_low_tch4"]) and (td["ci_high_tch4"] >= bu["ci_low_tch4"])
 
-    # Determine UNEP pathway
+    # Reconciliation & L5 Guidance s3.3.1: reasonable agreement (Pathway 1) = one central estimate inside the other's
+    # 95 % band; overlapping bands alone (large uncertainty) are not agreement (Figure 3-5). A discrepancy becomes
+    # Pathway 2 only when the operator explains it (an override 2a-2d); unexplained it is Pathway 3 and the asset
+    # stays at L4. The +/-20 % variance and "CI overlap" rules are not in the Guidance (audit 2026-11 F-RPT-02 / -03).
+    bu_band_ok = not bu.get("sources_without_uncertainty")  # an incomplete bottom-up band is not used
+    # instantaneous snapshots are reconciled per measurement against the L4 estimate at the survey time (Guidance
+    # s3.2.1, Checklist 3.4.1), never averaged into an annual figure: no annual agreement is claimed from them
+    # (they gave Pathway 1 / Level 5: audit 2026-11 F-GOGMP-03)
+    snapshots = td.get("measurement_mode") in ("Instantaneous", "Mixed")
+    agreement = not snapshots and bool(bu_total > 0 and td_total > 0 and (
+        td["ci_low_tch4"] <= bu_total <= td["ci_high_tch4"]
+        or (bu_band_ok and bu["ci_low_tch4"] <= td_total <= bu["ci_high_tch4"])))
     if bu_total <= 0 or td_total <= 0 or not mat["passed"]:
         recommended_pathway = "3"
-    elif not variance_flag and ci_overlaps:
+    elif agreement:
         recommended_pathway = "1"
-    elif ci_overlaps:
-        recommended_pathway = "2a"
-    elif td["measurement_mode"] == "Instantaneous":
-        recommended_pathway = "2d"
-    elif variance_pct is not None and variance_pct > 0:
-        recommended_pathway = "2b"
     else:
-        recommended_pathway = "2c"
-
+        recommended_pathway = "3"  # until the discrepancy is explained (Pathway 2)
+    explained = pathway_override in ("2a", "2b", "2c", "2d")
     pathway_code = pathway_override if pathway_override in VALID_PATHWAYS else recommended_pathway
+    if pathway_code == "1" and not agreement:
+        pathway_code = recommended_pathway  # Pathway 1 cannot be claimed without agreement
     pathway_info = PATHWAY_DEFINITIONS[pathway_code]
 
     # Determine resulting OGMP facility level (1..5)
     if bu_total <= 0:
-        resulting_level = 3 if td_total > 0 else 2
+        # no source inventory: no source-level level can be assessed (Level 3 was given; F-GOGMP-04)
+        resulting_level = _highest_material_bu_level(sources) if sources else None
         reconciliation_status = "No Bottom-Up" if td_total > 0 else "No Activity"
     elif td_total <= 0:
         resulting_level = 4 if mat["passed"] else _highest_material_bu_level(sources)
         reconciliation_status = "No Top-Down"
-    elif mat["passed"] and pathway_code in ("1", "2a") and (ci_overlaps or not variance_flag):
+    elif mat["passed"] and (pathway_code == "1" or (explained and pathway_code.startswith("2"))):
         resulting_level = 5
-        reconciliation_status = "Reconciled"
+        reconciliation_status = "Reconciled" if pathway_code == "1" else "Reconciled (discrepancy explained)"
     elif mat["passed"]:
         resulting_level = 4
         reconciliation_status = "Discrepancy Flagged"
@@ -500,10 +526,13 @@ def _highest_material_bu_level(sources: List[Any]) -> int:
     for s in quantified:
         lvl = int(getattr(s, "ogmp_level", 2) or 2)
         by_lvl[lvl] = by_lvl.get(lvl, 0.0) + float(getattr(s, "ch4_tonnes", 0.0) or 0.0)
-    for target in (4, 3, 2):
-        if sum(v for k, v in by_lvl.items() if k >= target) / total >= 0.5:
-            return target
-    return 1
+    # one rule with evaluate_l4_materiality (a 50 % majority gave L4 where the 90 / 70 % rule did not: F-RPT-05):
+    # L4 needs >= 90 % of the CH4 at L4; L3 needs every source at L3 or above
+    if sum(v for k, v in by_lvl.items() if k >= 4) / total >= 0.90:
+        return 4
+    if all(k >= 3 for k in by_lvl):
+        return 3
+    return 2
 
 
 def compute_portfolio_materiality(
@@ -511,42 +540,47 @@ def compute_portfolio_materiality(
     facility_ch4_map: Dict[int, float],
 ) -> Dict[str, Any]:
     """
-    UNEP OGMP 2.0 Portfolio 95% Equity CH4 Materiality Rule:
-    - Sums equity-weighted methane (total_ch4 * working_interest_pct / 100) across reporting entities.
-    - Operated assets and non-excluded NOJVs must cover >= 95% of total corporate equity methane.
-    - Non-operated JVs individually accounting for <5% of total portfolio equity methane are listed
-      as eligible for materiality exclusion; member-reported NOJVs are explicitly tracked.
+    UNEP OGMP 2.0 portfolio materiality (Framework s4.5, Checklist 1.4 and the Portfolio Materiality template):
+    - a non-operated JV (NOJV) with an equity share below 5 % is immaterial;
+    - the other assets are ranked by their *absolute* CH4 emissions (no equity weighting); those up to a cumulative
+      95 % of the absolute emissions are material, the rest may be excluded.
+    The equity-weighted CH4 and a NOJV test on its share of the portfolio's equity CH4 were used (audit 2026-11
+    F-RPT-01). Equity CH4 is kept in the rows for information.
     """
     rows = []
-    total_eq = 0.0
     for ent in entities:
         fid = getattr(ent, "facility_id", None)
         fac_ch4 = float(facility_ch4_map.get(fid, 0.0) if fid else 0.0)
         raw_wi = getattr(ent, "working_interest_pct", None)
         wi = float(raw_wi) if raw_wi is not None else 100.0
-        eq_ch4 = fac_ch4 * (wi / 100.0)
-        total_eq += eq_ch4
-        rows.append((ent, fac_ch4, wi, eq_ch4))
-
-    enriched = []
-    included_eq = 0.0
-    excluded_eq = 0.0
-    nojv_exclusions = []
-    member_reported_nojvs = []
-
-    for ent, fac_ch4, wi, eq_ch4 in rows:
-        share_pct = round((eq_ch4 / total_eq) * 100.0, 2) if total_eq > 0 else 0.0
         op_st = (getattr(ent, "operator_status", "operated") or "operated").lower()
+        rows.append((ent, fac_ch4, wi, fac_ch4 * (wi / 100.0), op_st))
+
+    total_abs = sum(r[1] for r in rows)
+    total_eq = sum(r[3] for r in rows)
+    immaterial_nojv = {id(r[0]) for r in rows if r[4] != "operated" and r[2] < 5.0}
+    ranked = sorted((r for r in rows if id(r[0]) not in immaterial_nojv), key=lambda r: r[1], reverse=True)
+    ranked_total = sum(r[1] for r in ranked)
+    material, cum = set(), 0.0
+    for r in ranked:
+        before = (cum / ranked_total * 100.0) if ranked_total > 0 else 0.0
+        if before < 95.0:
+            material.add(id(r[0]))
+        cum += r[1]
+
+    enriched, nojv_exclusions, member_reported_nojvs = [], [], []
+    included_abs = excluded_abs = included_eq = excluded_eq = 0.0
+    for ent, fac_ch4, wi, eq_ch4, op_st in rows:
         is_excluded = bool(getattr(ent, "is_nojv_material_excluded", False))
         is_member_reported = bool(getattr(ent, "is_member_reported_nojv", False))
-        eligible_below_5 = (op_st != "operated") and (share_pct < 5.0)
-        exclusion_valid = (not is_excluded) or eligible_below_5
-
+        eligible = id(ent) in immaterial_nojv or id(ent) not in material
+        exclusion_valid = (not is_excluded) or eligible
         if is_excluded and exclusion_valid:
-            excluded_eq += eq_ch4
+            excluded_abs, excluded_eq = excluded_abs + fac_ch4, excluded_eq + eq_ch4
         else:
             included_eq += eq_ch4
-
+            if id(ent) not in immaterial_nojv:
+                included_abs += fac_ch4
         item = {
             "id": getattr(ent, "id", None),
             "facility_id": getattr(ent, "facility_id", None),
@@ -559,8 +593,11 @@ def compute_portfolio_materiality(
             "working_interest_pct": round(wi, 2),
             "facility_ch4_tch4": round(fac_ch4, 4),
             "equity_ch4_tch4": round(eq_ch4, 4),
-            "portfolio_equity_share_pct": share_pct,
-            "eligible_below_5pct_exclusion": eligible_below_5,
+            "portfolio_equity_share_pct": round((eq_ch4 / total_eq) * 100.0, 2) if total_eq > 0 else 0.0,
+            "absolute_share_pct": round((fac_ch4 / total_abs) * 100.0, 2) if total_abs > 0 else 0.0,
+            "material": id(ent) in material,
+            "immaterial_nojv_below_5pct_equity": id(ent) in immaterial_nojv,
+            "eligible_below_5pct_exclusion": eligible,
             "is_nojv_material_excluded": is_excluded,
             "exclusion_valid": exclusion_valid,
             "exclusion_reason": getattr(ent, "exclusion_reason", "") or "",
@@ -572,15 +609,15 @@ def compute_portfolio_materiality(
         if is_member_reported:
             member_reported_nojvs.append(item)
 
-    included_pct = round((included_eq / total_eq) * 100.0, 2) if total_eq > 0 else 100.0
-    meets_95 = (included_pct >= 95.0) or (len(enriched) == 0)
-
+    # coverage of the assets that are not immaterial NOJVs (those are out of the portfolio test by definition)
+    included_pct = round((included_abs / ranked_total) * 100.0, 2) if ranked_total > 0 else 100.0
     return {
         "total_equity_ch4_tch4": round(total_eq, 4),
         "included_equity_ch4_tch4": round(included_eq, 4),
         "excluded_equity_ch4_tch4": round(excluded_eq, 4),
+        "total_absolute_ch4_tch4": round(total_abs, 4),
         "included_coverage_pct": included_pct,
-        "meets_95pct_threshold": meets_95,
+        "meets_95pct_threshold": (included_pct >= 95.0) or (len(enriched) == 0),
         "nojv_exclusion_count": len(nojv_exclusions),
         "nojv_exclusions": nojv_exclusions,
         "member_reported_nojv_count": len(member_reported_nojvs),

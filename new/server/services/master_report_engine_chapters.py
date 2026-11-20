@@ -169,13 +169,15 @@ def _build_ogmp_elements(
 
     if surveys:
         gold_ok = ogmp.get("gold_standard_compliant")
+        # the stored outcome: "Reconciled" surveys only (no Gold Standard claim; audit 2026-11 F-RPT-03)
         status_str = (
-            ("Niveau 5 Réconcilié (Gold Standard)" if is_fr else "Gold Standard Level 5 (Reconciled)")
+            ("Réconcilié (résultat enregistré)" if is_fr else "Reconciled (recorded outcome)")
             if gold_ok else
-            ("Écart Détecté" if is_fr else "Discrepancy Detected")
+            ("Non réconcilié" if is_fr else "Not reconciled")
         )
-        mean_var = float(ogmp.get("mean_variance_pct") or 0.0)
-        kpi_p = get_t("ch5_kpi", lang, status=status_str, variance=f"{mean_var:+.1f}", comp_count=comp_count)
+        mv = ogmp.get("mean_variance_pct")
+        kpi_p = get_t("ch5_kpi", lang, status=status_str, variance=(f"{float(mv):+.1f}" if mv is not None else "n/a"),
+                      comp_count=comp_count)
     else:
         kpi_p = get_t("ch5_empty_kpi", lang, comp_count=comp_count)
 
@@ -208,7 +210,7 @@ def _build_ogmp_elements(
                 s.get("survey_date", ""),
                 f"{s.get('bottom_up_tch4', 0.0):,.1f}",
                 f"{s.get('top_down_tch4', 0.0):,.1f}",
-                f"{s.get('variance_pct', 0.0):+.1f}%",
+                f"{s['variance_pct']:+.1f}%" if s.get("variance_pct") is not None else "n/a",
                 st_text
             ])
         t_ogmp = Table([headers_fmt] + rows, colWidths=[120, 105, 55, 65, 65, 55, 55])

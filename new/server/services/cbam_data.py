@@ -226,7 +226,7 @@ class CbamContext:
         self.assessor_name = getattr(user, "fullName", None) or ""
         self.assessor_email = getattr(user, "email", None) or ""
         self.now_utc = datetime.now(timezone.utc)
-        self.rep_year_str = str(year_filter) if year_filter else "2024-2026"
+        self.rep_year_str = str(year_filter) if year_filter else "All years"  # not an invented 2024-2026 (F-RPT-30)
         self.period_start, self.period_end = cbam_period_dates(year_filter, self.quarter, records)
 
         first_fac = next(iter(facilities.values()), None) if facilities else None
@@ -234,16 +234,12 @@ class CbamContext:
         if str(raw_user_loc).strip().lower() in ("global", "all"):
             raw_user_loc = ""
         self.op_country = getattr(first_fac, "country", None) or raw_user_loc or "Not Specified"
-        oc = self.op_country
-        if "algeria" in oc.lower():
-            self.op_iso = "DZ"
-        elif oc != "Not Specified" and len(oc) >= 2:
-            self.op_iso = oc[:2].upper()
-        else:
-            self.op_iso = "XX"
-
-        clean_org = re.sub(r"[^A-Za-z0-9]", "", self.company_name).upper()[:10] or "OPERATOR"
-        self.op_id = f"{self.op_iso}-{clean_org}-001"
+        # ISO 3166-1 alpha-2 from a table: the first two letters made Germany "GE" (Georgia; audit 2026-11 F-RPT-29)
+        self.op_iso = country_iso(self.op_country) or "Not provided"
+        # the EORI number is the declarant's own (Settings, cbam_eori): it was built from the organisation name
+        # (audit 2026-11 F-E2E-06)
+        from routes.auth_settings import _app_settings
+        self.op_id = str(_app_settings.get("cbam_eori") or "").strip() or "Not provided"
 
         meta = ReportingMetadata.query.filter_by(year=year_filter).first() if year_filter else None
         if meta is None:
@@ -274,7 +270,9 @@ class RecordFigures:
         self.direct = float(getattr(r, "specific_embedded_direct", 0.0) or 0.0)
         self.indirect = float(getattr(r, "specific_embedded_indirect", 0.0) or 0.0)
         self.captured_co2 = float(getattr(r, "captured_co2_tonnes", 0.0) or 0.0)
-        self.ccs_reduction_per_t = (self.captured_co2 / self.qty) if (self.qty > 0 and self.captured_co2 > 0) else 0.0
+        # the captured CO2 per tonne of the activity level (all production), not of the exported quantity (F-RPT-28)
+        al = float(getattr(r, "activity_level_tonnes", None) or 0.0) or self.qty
+        self.ccs_reduction_per_t = (self.captured_co2 / al) if (al > 0 and self.captured_co2 > 0) else 0.0
         self.gross_direct = self.direct + self.ccs_reduction_per_t
         is_complex = bool(getattr(r, "is_complex_good", False))
         self.precursor_direct = (float(getattr(r, "precursor_ratio", 0.0) or 0.0) * float(getattr(r, "precursor_see_dir", 0.0) or 0.0)) if is_complex else 0.0
@@ -512,3 +510,27 @@ def validate_cbam_context(ctx) -> dict:
         },
         "records": validated_records,
     }
+
+
+_ISO = {
+    "algeria": "DZ", "austria": "AT", "belgium": "BE", "bulgaria": "BG", "croatia": "HR", "cyprus": "CY",
+    "czech republic": "CZ", "czechia": "CZ", "denmark": "DK", "estonia": "EE", "finland": "FI", "france": "FR",
+    "germany": "DE", "greece": "GR", "hungary": "HU", "ireland": "IE", "italy": "IT", "latvia": "LV",
+    "lithuania": "LT", "luxembourg": "LU", "malta": "MT", "netherlands": "NL", "poland": "PL", "portugal": "PT",
+    "romania": "RO", "slovakia": "SK", "slovenia": "SI", "spain": "ES", "sweden": "SE", "norway": "NO",
+    "iceland": "IS", "switzerland": "CH", "united kingdom": "GB", "uk": "GB", "united states": "US", "usa": "US",
+    "us": "US", "canada": "CA", "mexico": "MX", "brazil": "BR", "argentina": "AR", "turkey": "TR", "turkiye": "TR",
+    "egypt": "EG", "libya": "LY", "tunisia": "TN", "morocco": "MA", "nigeria": "NG", "angola": "AO",
+    "saudi arabia": "SA", "united arab emirates": "AE", "uae": "AE", "qatar": "QA", "oman": "OM", "kuwait": "KW",
+    "iraq": "IQ", "iran": "IR", "russia": "RU", "ukraine": "UA", "kazakhstan": "KZ", "azerbaijan": "AZ",
+    "georgia": "GE", "india": "IN", "china": "CN", "japan": "JP", "south korea": "KR", "korea": "KR",
+    "indonesia": "ID", "malaysia": "MY", "australia": "AU", "south africa": "ZA", "mozambique": "MZ",
+}
+
+
+def country_iso(name):
+    """ISO 3166-1 alpha-2 code of a country name (a two-letter code is kept), or None when unknown."""
+    n = str(name or "").strip()
+    if len(n) == 2 and n.isalpha():
+        return n.upper()
+    return _ISO.get(n.lower())

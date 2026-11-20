@@ -769,27 +769,27 @@ const DashboardEnhanced: React.FC = () => {
         // BUG-UI-05 FIX: Guard with ?? 0 to prevent .toFixed() on undefined when stats update fails
         {
           name: tr("Combustion"),
-          value: Number((stats.combustion ?? 0).toFixed(2)),
+          value: stats.combustion ?? 0,
           color: "var(--color-green-500)",
         },
         {
           name: tr("Flaring"),
-          value: Number((stats.flaring ?? 0).toFixed(2)),
+          value: stats.flaring ?? 0,
           color: "var(--color-brand-500)",
         },
         {
           name: tr("Venting"),
-          value: Number((stats.venting ?? 0).toFixed(2)),
+          value: stats.venting ?? 0,
           color: "var(--color-amber-500)",
         },
         {
           name: tr("Equipment Leaks"),
-          value: Number((stats.fugitive ?? 0).toFixed(2)),
+          value: stats.fugitive ?? 0,
           color: "var(--color-violet-500)",
         },
         {
           name: tr("Other"),
-          value: Number((stats.other ?? 0).toFixed(2)),
+          value: stats.other ?? 0,
           color: "var(--color-blue-500)",
         },
       ].filter((d) => d.value > 0),
@@ -803,7 +803,8 @@ const DashboardEnhanced: React.FC = () => {
       acting[act] = (acting[act] || 0) + (item.total_emissions || 0);
     });
     const entries = Object.entries(acting)
-      .map(([name, value]) => ({ name, value: Number(value.toFixed(2)) }))
+      // unrounded values: a source under 0.005 t disappeared after rounding to 2 decimals (audit 2026-11 F-CLIENT-15)
+      .map(([name, value]) => ({ name, value: Number(value) }))
       .filter((d) => d.value > 0);
 
     return entries.map((entry, index) => {

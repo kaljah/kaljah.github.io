@@ -32,7 +32,7 @@ from services.ogmp import compute_facility_ogmp_level, ogmp_level_for
 from calculations.units import CONVERSIONS as _CONV
 
 CH4_DENSITY_KG_M3 = _CONV["density_ch4"]  # 60 F, 14.696 psia (API Compendium molar volume)
-WEC_CH4_DENSITY_T_PER_MSCF = 0.0192  # 40 CFR 99.20, density of methane for the waste emissions threshold
+WEC_CH4_DENSITY_T_PER_MSCF = 0.0192  # 40 CFR 98.233(v) methane density; thresholds of 42 USC 7436(f) (F-GSTD-06)
 # CAA s.136 waste emissions charge. Public Law 119-21 (4 July 2025) moved its start from 2024 to methane
 # emitted in 2034 (and EPA's implementing rule was disapproved under the Congressional Review Act in March
 # 2025), so no charge applies to 2024-2033 emissions. The statutory rate from 2026 on is $1,500 per tonne.
@@ -385,14 +385,41 @@ def intensity_cells(years=None, facility_id=None, activity=None, division=None, 
 
     from services.methane_intensity import marketed_gas
 
+    _apply_boundary(cells)
     for c in cells.values():
         if c["flaring_reconciled_m3"] > 0:
             c["flaring_m3"] = c["flaring_reconciled_m3"]
+        elif c["flaring_m3"] <= 0 and c["p_terms"].get("flared"):
+            # one flared volume per facility-year: metered records, else the production data (F-GUI2-08)
+            c["flaring_m3"] = float(c["p_terms"]["flared"])
         c["marketed_m3"], c["marketed_basis"] = marketed_gas(
             c["gas_m3"], c["p_terms"],
             {"flared": c["flaring_m3"], "vented": c["vented_m3"], "fuel": c["fuel_m3"], "shrinkage": None})
 
     return cells
+
+
+def _apply_boundary(cells):
+    """The organisational boundary (services.consolidation; audit 2026-11 F-AGG-01): a facility-year outside it is
+    dropped, an equity share scales its emissions and its production alike (intensities keep their basis)."""
+    from services.consolidation import Weights
+
+    weight = Weights()
+    for key in list(cells):
+        w = weight(*key)
+        if w <= 0:
+            del cells[key]
+        elif w != 1.0:
+            c = cells[key]
+            for k, v in list(c.items()):
+                if isinstance(v, bool) or k in ("s1_count", "prod_unknown_units"):
+                    continue
+                if isinstance(v, (int, float)):
+                    c[k] = v * w  # the survey CH4 (top_down) too: it is compared with the scaled inventory
+                elif isinstance(v, dict):
+                    for kk, vv in list(v.items()):
+                        if isinstance(vv, (int, float)) and not isinstance(vv, bool):
+                            v[kk] = vv * w
 
 
 def _materiality_from_weights(ch4_weights, co2e_weights, s1_count, threshold=0.5):
@@ -435,7 +462,7 @@ def _methane_loss(matched, total_ch4, seg_cat, target, fac=None):
 
 
 def _waste_emissions_charge(matched, total, seg_cat, fac, year_value, cal_year):
-    """(rate, excess t CH4, fee USD, status) of the EPA Waste Emissions Charge (42 USC 7436, 40 CFR Part 99) for a
+    """(rate, excess t CH4, fee USD, status) of the EPA Waste Emissions Charge (42 USC 7436; 40 CFR Part 99 is reserved) for a
     facility-year. Audit 2026-11 F-GREST-03: the threshold is a share of the gas *sent to sale* (marketed gas, not
     the gas net of reinjection), 0.20 % production / 0.05 % processing, LNG and gathering / 0.11 % transmission and
     storage (every midstream facility was 0.05 %), and only facilities reporting more than 25,000 t CO2e are
@@ -450,11 +477,11 @@ def _waste_emissions_charge(matched, total, seg_cat, fac, year_value, cal_year):
     wec_threshold = wec_ts if seg == "transmission_storage" else (wec_mid if seg_cat == "midstream" else wec_up)
     sent_to_sale_m3 = matched.get("marketed_m3") or 0.0
     if sent_to_sale_m3 > 0:
-        # 40 CFR 99.20 Eq B-1 / B-2: threshold x gas sent to sale (Mscf) x 0.0192 mt CH4/Mscf (the rule's own
+        # 42 USC 7436(f): threshold x gas sent to sale (Mscf) x 0.0192 mt CH4/Mscf (40 CFR 98.233(v); the
         # methane density, not the Compendium 0.6772 kg/m3)
         allowed_ch4 = sent_to_sale_m3 * 35.3146667 / 1000.0 * wec_threshold * WEC_CH4_DENSITY_T_PER_MSCF
     elif matched["oil_bbl"] > 0 and seg_cat == "upstream":
-        allowed_ch4 = matched["oil_bbl"] / 1_000_000.0 * 10.0  # 40 CFR 99.20(a)(2)
+        allowed_ch4 = matched["oil_bbl"] / 1_000_000.0 * 10.0  # 42 USC 7436(f)(1)(B): 10 t per million bbl
     else:
         allowed_ch4 = 0.0
     fee_map = _app_settings.get("wec_fee_rates", {})
@@ -678,7 +705,7 @@ def facility_row(fid, cell_list, fac, year_value, gwp_horizon="100", surveys=Non
         "total_scope3_cat11": total["s3_cat11"],
         "scope3_cat11_missing": bool(matched["boe"] > 0 and matched["s3_cat11"] == 0.0),
         "total_co2": total["co2"],
-        "total_ch4": total["ch4"],
+        "total_ch4": total["ch4"], "matched_ch4": matched["ch4"],  # CH4 of the producing years (F-CLIENT-03)
         "total_n2o": total["n2o"],
         "total_co2e_s3": total["s3"],
         "total_co2e_all": total["s1"] + total["s2"] + total["s3"],

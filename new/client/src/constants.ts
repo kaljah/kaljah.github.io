@@ -25,9 +25,9 @@ export const GWP_AR5: GwpEntry = {
 
 export const GWP_AR6: GwpEntry = {
   CO2: 1,
-  CH4: 29.8, // IPCC AR6 WG1 Table 7.15, fossil CH4 (oil and gas methane; non-fossil is 27.9)
+  CH4: 29.8, // IPCC AR6 WG1 Table 7.15, fossil CH4 (oil and gas methane; non-fossil is 27.0)
   N2O: 273,
-  CH4_20: 82.5, // IPCC AR6 WG1 Table 7.15, fossil CH4 GWP-20 (non-fossil is 81.2)
+  CH4_20: 82.5, // IPCC AR6 WG1 Table 7.15, fossil CH4 GWP-20 (non-fossil is 79.7; audit 2026-11 F-CLIENT-12)
   N2O_20: 273,
 };
 
@@ -47,7 +47,9 @@ export interface ActiveGwpFactors {
 }
 
 export const getActiveGwpFactors = (standard: string = "AR5", horizon: string | number = "100"): ActiveGwpFactors => {
-  const std = GWP_STANDARDS[standard] || GWP_AR5;
+  // an unknown standard is an error, as on the server (it fell back to AR5 silently: audit 2026-11 F-CLIENT-12)
+  const std = standard ? GWP_STANDARDS[standard] : GWP_AR5;
+  if (!std) throw new Error(`Unknown GWP standard '${standard}'`);
   if (String(horizon) === "20") {
     return {
       CO2: 1,

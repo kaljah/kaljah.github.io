@@ -92,6 +92,10 @@ def test_reconciliation_awaits_review_whatever_status_is_sent(ctx):
     fac = make_facility(name=uniq("OGMP"))
     with app.test_client() as c:
         login(c, make_user("admin", "Global"))
+        # a source inventory first: no level is assessed from nothing (audit 2026-11 F-GOGMP-04)
+        assert c.post("/api/ogmp/emission-sources", json={
+            "facility_id": fac.id, "year": 2024, "segment": "Upstream", "source_code": "UP-02",
+            "source_name": "Flaring", "ogmp_level": 3, "status_flag": "Quantified", "ch4_tonnes": 10.0}).status_code == 201
         r = c.post("/api/ogmp/reconcile", json={"facility_id": fac.id, "year": 2024, "status": "Verified"})
         assert r.status_code == 200, r.get_data(as_text=True)
         assert r.get_json()["annual_report"]["status"] == "Pending"
@@ -103,7 +107,7 @@ def test_measurement_cannot_link_another_facilitys_annual_report(ctx):
     db.session.add(foreign)
     db.session.commit()
     body = {"facility_id": mine.id, "year": 2024, "campaign_date": "2024-05-01", "survey_type": "Aerial",
-            "measured_rate_kg_hr": 1.0}
+            "measured_rate_kg_hr": 1.0, "uncertainty_pct": 20.0}  # required (audit 2026-11 F-RPT-06)
     with app.test_client() as c:
         login(c, make_user("admin", "Global"))
         r = c.post("/api/ogmp/site-measurements", json={**body, "annual_report_id": foreign.id})

@@ -554,9 +554,9 @@ def generate_regional_benchmark_chart(
         with _PLOT_LOCK:
             fig, ax = plt.subplots(figsize=(7.2, 3.6), dpi=dpi)
             try:
-                sorted_b = sorted(benchmarks, key=lambda b: b.get("carbon_intensity_kg_boe", 0.0))
+                sorted_b = sorted(benchmarks, key=lambda b: b.get("carbon_intensity_kg_boe") or 0.0)
                 names = [b.get("name", "").split("(")[0].strip() for b in sorted_b]
-                ci_vals = [b.get("carbon_intensity_kg_boe", 0.0) for b in sorted_b]
+                ci_vals = [b.get("carbon_intensity_kg_boe") or 0.0 for b in sorted_b]
                 colors_list = [COLOR_SUCCESS if b.get("decree_compliant") else COLOR_DANGER for b in sorted_b]
 
                 y_pos = np.arange(len(names))

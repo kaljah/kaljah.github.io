@@ -127,3 +127,17 @@ def group_skips(skipped, max_rows=20):
         if len(g["rows"]) < max_rows and s.get("row") is not None:
             g["rows"].append(s.get("row"))
     return sorted(groups.values(), key=lambda g: -g["count"])
+
+
+_RAW_FLOAT = re.compile(r"could not convert string to float: '([^']*)'")
+
+
+def readable_error(msg):
+    """A Python conversion error turned into the importer's wording (audit 2026-11 F-UPL-10: '2,5' in a text-matched
+    column was reported as "could not convert string to float")."""
+    m = _RAW_FLOAT.search(str(msg))
+    if not m:
+        return msg
+    v = m.group(1)
+    hint = " (a decimal comma needs the file's decimal mark: choose 'comma' in the wizard)" if "," in v else ""
+    return _RAW_FLOAT.sub(f"'{v}' is not a number{hint}", str(msg))

@@ -313,7 +313,7 @@ def test_forensic_empty_modules_and_charts_honest_states_en_fr():
                 if lang == "en":
                     assert "NO RECORDS / NOT APPLICABLE IN SCOPE" in full_text
                     assert "NO BASE-YEAR RECALCULATIONS LOGGED" in full_text
-                    assert "THEORETICAL SCREENING ESTIMATE" in full_text
+                    assert "METHODOLOGY NOTICE" in full_text  # stored pollutant values only (F-RPT-07)
                     assert "Not Verified — Stack Data Required" in full_text
                     assert "DB facility topology notes" in full_text
                     assert "no multi-year trend inferred for a single period" in full_text
@@ -321,7 +321,7 @@ def test_forensic_empty_modules_and_charts_honest_states_en_fr():
                 else:
                     assert "AUCUNE DONNÉE / NON APPLICABLE DANS CE PÉRIMÈTRE" in full_text
                     assert "AUCUN RECALCUL" in full_text
-                    assert "ESTIMATION THÉORIQUE DE DÉPISTAGE" in full_text
+                    assert "AVIS MÉTHODOLOGIQUE" in full_text  # stored pollutant values only (F-RPT-07)
                     assert "Non vérifié — Mesures cheminée requises" in full_text
                     assert "DB facility topology notes" in full_text
                     assert "sans comparaison pluriannuelle" in full_text

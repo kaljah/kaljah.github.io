@@ -162,7 +162,7 @@ def _glossary_elements(styles: Dict[str, ParagraphStyle], lang: str, is_fr: bool
     else:
         glossary_rows = [
             ["API", "American Petroleum Institute (2021 Compendium)", "AR5", "IPCC Fifth Assessment Report (100-yr GWP metric)"],
-            ["BOE", "Barrel of Oil Equivalent (5,800 scf/bbl)", "CEMS", "Continuous Emission Monitoring System"],
+            ["BOE", "Barrel of Oil Equivalent (5,647.52 scf of gas, API Compendium Table 3-4)", "CEMS", "Continuous Emission Monitoring System"],
             ["CPF", "Central Processing Facility (Production Hub)", "DRE", "Destruction & Removal Efficiency (Flame combustion %)"],
             ["LDAR", "Leak Detection & Repair (Component Monitoring)", "NGSI", "Natural Gas Sustainability Initiative (Methane %)"],
             ["OGMP", "Oil & Gas Methane Partnership (Level 4/5 Reporting)", "VISR", "Video Image Spectral Radiometry Optical Flare Telemetry"],

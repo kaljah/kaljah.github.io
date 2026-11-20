@@ -95,6 +95,7 @@ class TestCbamEmbeddedEmissionsAccounting:
                 quantity=5000.0,
                 unit="m3",
                 co2e_total=4000.0,
+                co2_emissions=3860.0,  # 4,000 t CO2e - 5 t CH4 x 28
                 ch4_emissions=5.0,
                 status="Verified",
             )
@@ -131,8 +132,8 @@ class TestCbamEmbeddedEmissionsAccounting:
         with app.app_context():
             cbam_record = db.session.get(CbamProductExport, export_id)
             assert cbam_record is not None
-            # Expected SE_direct = 4000.0 tCO2e / 4000.0 t = 1.0000 tCO2e/t
-            assert pytest.approx(cbam_record.specific_embedded_direct, rel=1e-4) == 1.0000
+            # CBAM gases only (CO2 for a fuel; CH4 is not covered, audit 2026-11 F-RPT-26): 3,860 t / 4,000 t
+            assert pytest.approx(cbam_record.specific_embedded_direct, rel=1e-4) == 3860.0 / 4000.0
             # Expected SE_indirect = 1000.0 tCO2e / 4000.0 t = 0.2500 tCO2e/t
             assert pytest.approx(cbam_record.specific_embedded_indirect, rel=1e-4) == 0.2500
 

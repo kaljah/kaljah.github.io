@@ -314,9 +314,7 @@ def create_scope3_emission():
         "co2e": co2e_val,
         "emissions": {
             "totalCo2e": co2e_val,
-            "co2": co2e_val,
-            "ch4": 0.0,
-            "n2o": 0.0,
+            "co2": None, "ch4": None, "n2o": None,  # a Scope 3 CO2e has no gas split (it was labelled CO2: F-E2E-04)
             "uncertainty": final_uncertainty,
         },
         "record": {

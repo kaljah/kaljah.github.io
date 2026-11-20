@@ -9,32 +9,48 @@ cooling) stay CO2e reported as CO2.
 from collections import defaultdict
 
 
-def _grid_lookup(source_type, grid_region, electricity_kwh, grid_cache=None):
+def _grid_lookup(source_type, grid_region, electricity_kwh, grid_cache=None, year=None):
+    """The grid row of the record's reporting year (eGRID2022 from 2022; audit 2026-11 F-S23-09)."""
     if "electric" not in str(source_type or "").lower() or not grid_region or not electricity_kwh:
         return None
-    if grid_cache is not None and grid_region in grid_cache:
-        return grid_cache[grid_region]
-    from electricity_factors import grid_entry
+    from electricity_factors import EGRID2022_FIRST_YEAR, grid_entry_for_year
 
-    entry = grid_entry(grid_region)[1]
+    vintage = 2022 if year not in (None, "") and int(year) >= EGRID2022_FIRST_YEAR else None
+    if grid_cache is not None and (grid_region, vintage) in grid_cache:
+        return grid_cache[(grid_region, vintage)]
+    entry = grid_entry_for_year(grid_region, vintage)[1]
     if grid_cache is not None:
-        grid_cache[grid_region] = entry
+        grid_cache[(grid_region, vintage)] = entry
     return entry
 
 
 def _grid(e):
-    return _grid_lookup(e.source_type, e.grid_region, e.electricity_kwh)
+    return _grid_lookup(e.source_type, e.grid_region, e.electricity_kwh, year=getattr(e, "year", None))
 
 
-def gas_split(e):
+def _matches_co2e(g, e):
+    from calculations.constants import get_active_gwp
+
+    gw = get_active_gwp()
+    co2e = g["co2"] + g["ch4"] * float(gw["CH4"]) + g["n2o"] * float(gw["N2O"])
+    ref = float(getattr(e, "co2e_location_based", None) or getattr(e, "co2e", None) or 0.0)
+    return ref > 0 and abs(co2e - ref) <= 1e-3 * ref
+
+
+def gas_split(e, co2e_as_co2=True):
     """{"co2", "ch4", "n2o"} in tonnes for one Scope 2 record (location-based): the masses stored with the
     record when its calculation gave them (steam, BA-009), else the grid split, else the CO2e as CO2."""
-    if getattr(e, "co2_emissions", None) is not None and getattr(e, "ch4_emissions", None) is not None \
-            and "electric" not in str(getattr(e, "source_type", "") or "").lower():
-        return {"co2": float(e.co2_emissions), "ch4": float(e.ch4_emissions), "n2o": float(e.n2o_emissions or 0)}
+    if getattr(e, "co2_emissions", None) is not None and getattr(e, "ch4_emissions", None) is not None:
+        stored = {"co2": float(e.co2_emissions), "ch4": float(e.ch4_emissions), "n2o": float(e.n2o_emissions or 0)}
+        if "electric" not in str(getattr(e, "source_type", "") or "").lower() or _matches_co2e(stored, e):
+            # electricity too, when the stored masses still give the record's CO2e (an edit may have left them
+            # behind); the grid split ignored them (audit 2026-11 F-RPT-15)
+            return stored
     entry = _grid(e)
     if entry is None:
-        return {"co2": float(e.co2e or 0), "ch4": 0.0, "n2o": 0.0}
+        # no split known (CHP, cooling, a supplier factor): the CO2e as CO2, or zeros where a CO2 *mass* column is
+        # printed (the CO2e was put in the CO2 column: audit 2026-11 F-E2E-04)
+        return {"co2": float(e.co2e or 0) if co2e_as_co2 else 0.0, "ch4": 0.0, "n2o": 0.0}
     kwh = float(e.electricity_kwh)
     return {g: kwh * float(entry.get(g) or 0) / 1000.0 for g in ("co2", "ch4", "n2o")}
 
@@ -80,11 +96,11 @@ def yearly_totals(query, by_fac, horizon="100"):
             Scope2Emission.co2e_market_based,
             *_s2_gas_columns(),
         ).all()
-        for yr, fid, src_type, grid_region, kwh, co2e, co2e_mkt, ch4_t, n2o_t, mkt_ef in rows:
+        for yr, fid, src_type, grid_region, kwh, co2e, co2e_mkt, ch4_t, n2o_t, mkt_ef, _yr in rows:
             d = out[(int(yr), fid if by_fac else "total")]
             loc, mkt = record_totals_fields(
                 src_type, grid_region, kwh, co2e, co2e_mkt, horizon,
-                grid_cache=grid_cache, gwp_diff=gwp_diff, ch4_t=ch4_t, n2o_t=n2o_t, market_ef=mkt_ef,
+                grid_cache=grid_cache, gwp_diff=gwp_diff, ch4_t=ch4_t, n2o_t=n2o_t, market_ef=mkt_ef, year=yr,
             )
             d["location"] += loc
             d["market"] += mkt
@@ -112,6 +128,7 @@ def record_totals_fields(
     ch4_t=None,
     n2o_t=None,
     market_ef=None,
+    year=None,
 ):
     """Tuple-friendly counterpart to record_totals() avoiding full ORM hydration in hot paths.
 
@@ -122,7 +139,7 @@ def record_totals_fields(
     delta = 0.0
     is_elec = "electric" in str(source_type or "").lower()
     if str(horizon) == "20":
-        entry = _grid_lookup(source_type, grid_region, electricity_kwh, grid_cache=grid_cache)
+        entry = _grid_lookup(source_type, grid_region, electricity_kwh, grid_cache=grid_cache, year=year)
         if entry is not None:
             kwh = float(electricity_kwh)
             c, n = kwh * float(entry.get("ch4") or 0) / 1000.0, kwh * float(entry.get("n2o") or 0) / 1000.0
@@ -170,7 +187,8 @@ def record_totals(e, horizon="100"):
 def _s2_gas_columns():
     from models import Scope2Emission
 
-    return (Scope2Emission.ch4_emissions, Scope2Emission.n2o_emissions, Scope2Emission.market_emission_factor)
+    return (Scope2Emission.ch4_emissions, Scope2Emission.n2o_emissions, Scope2Emission.market_emission_factor,
+            Scope2Emission.year)
 
 
 def __getattr__(name):  # S2_GAS_COLUMNS, resolved after the models are importable
