@@ -265,14 +265,23 @@ test.describe.serial('Interactive User Business Functionality Deep Audit', () =>
 
     await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'fn08_settings_overview.png') });
 
-    // Look for Save / Update button in Settings
-    const saveBtn = page.locator('button:has-text("Save"), button:has-text("Update Profile")').first();
-    if (await saveBtn.isVisible().catch(() => false)) {
-      console.log('[USER FUNC] Saving settings changes...');
+    // Save is enabled only when a setting changed (the GB RY2022 GB-042 fix keeps the "unsaved" state honest):
+    // change the reconciliation threshold, save, then put it back
+    await page.getByRole('tab', { name: /OGMP 2\.0 Baseline/ }).click();
+    const slider = page.locator('#global-threshold-slider');
+    await expect(slider).toBeVisible({ timeout: 10000 });
+    const before = Number(await slider.inputValue());
+    const changed = before >= 50 ? before - 1 : before + 1;
+    const saveBtn = page.locator('#save-settings-btn');
+    for (const value of [changed, before]) {
+      await slider.fill(String(value));
+      await expect(saveBtn).toBeEnabled({ timeout: 5000 });
+      console.log(`[USER FUNC] Saving reconciliation threshold ${value} %...`);
       await saveBtn.click();
-      await page.waitForTimeout(1000);
-      await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'fn08_settings_saved.png') });
+      await expect(page.getByText('System settings saved successfully!').first()).toBeVisible({ timeout: 10000 });
+      await expect(saveBtn).toBeDisabled({ timeout: 5000 });
     }
+    await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'fn08_settings_saved.png') });
   });
 
 });

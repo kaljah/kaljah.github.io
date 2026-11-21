@@ -85,14 +85,19 @@ def test_production_config_validation(monkeypatch):
         importlib.reload(config)
 
 
-def test_secrets_scan_report_exists_and_clean():
-    """Verify that the secrets scan report exists and reports clean status."""
-    report_path = os.path.join(os.path.dirname(__file__), "..", "reports", "secrets_scan_report.json")
-    assert os.path.exists(report_path), "Secrets scan report must be generated"
-    with open(report_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-    assert data["status"] == "PASS_CLEAN"
-    assert data["real_leak_findings"] == 0
+def test_secrets_scan_is_clean():
+    """The secrets scanner (scripts/scan_secrets.py) finds no real leak in the working tree or the recent history.
+    It ran here instead of reading its report: reports/ is git-ignored, so a clean clone always failed."""
+    import sys
+
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
+    import scan_secrets
+
+    new_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    tree = scan_secrets.scan_target_dirs([os.path.join(new_dir, "server"), os.path.join(new_dir, "client", "src")])
+    history = scan_secrets.scan_git_history(os.path.dirname(new_dir))
+    real = [f for f in tree if not f.get("is_example_or_test")] + history
+    assert not real, [(f["file"], f.get("line"), f["type"]) for f in real]
 
 
 def test_benchmark_p95_report_meets_sla():

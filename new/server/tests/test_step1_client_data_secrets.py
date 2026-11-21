@@ -162,10 +162,15 @@ def test_regional_profiles_and_engine_no_real_client_data():
 
 
 def test_private_fixtures_folder_and_gitignore():
-    private_dir = os.path.join(REPO_ROOT, "tests", "private_fixtures")
-    assert os.path.isdir(private_dir), f"private_fixtures directory not found at {private_dir}"
+    # the folder itself is local and git-ignored (it is absent from a clean clone); what matters is that it can never
+    # be committed
     gitignore_path = os.path.join(REPO_ROOT, ".gitignore")
     assert os.path.isfile(gitignore_path)
     with open(gitignore_path, "r", encoding="utf-8") as f:
         gi_content = f.read()
     assert "tests/private_fixtures" in gi_content
+    import subprocess
+
+    tracked = subprocess.run(["git", "ls-files", "--", "tests/private_fixtures", "**/private_fixtures/**"], cwd=REPO_ROOT,
+                             capture_output=True, text=True).stdout.strip()
+    assert not tracked, f"private fixtures are tracked by git: {tracked}"

@@ -336,8 +336,8 @@ test.describe.serial('Deep User Journey & End-to-End Exploration', () => {
     await ensureAuthenticatedPage(page, '/sbti');
     await page.screenshot({ path: path.join(SCREENSHOT_DIR, '06_sbti_dashboard.png'), fullPage: true });
 
-    // Verify SBTi title
-    await expect(page.locator('text=SBTi & Net-Zero Trajectory').first()).toBeVisible({ timeout: 10000 });
+    // Verify SBTi title (the page was renamed "SBTi-aligned pathway (indicative)")
+    await expect(page.getByRole('heading', { name: /SBTi-aligned pathway/ }).first()).toBeVisible({ timeout: 10000 });
 
     // Open target configuration drawer if present
     const configBtn = page.locator('button:has-text("Configure target"), button:has-text("target settings")').first();
@@ -359,8 +359,8 @@ test.describe.serial('Deep User Journey & End-to-End Exploration', () => {
 
     await page.screenshot({ path: path.join(SCREENSHOT_DIR, '07_methane_map.png'), fullPage: true });
 
-    // Check leaflet map container
-    const leafletMap = page.locator('.leaflet-container, #map, [class*="map"]').first();
+    // Leaflet with a configured basemap (MAP_TILE_URL), else the bundled vector map of offline installs
+    const leafletMap = page.locator('.leaflet-container, [data-testid="offline-vector-map"]').first();
     await expect(leafletMap).toBeVisible({ timeout: 15000 });
 
     // Click marker if available
@@ -455,8 +455,10 @@ test.describe.serial('Deep User Journey & End-to-End Exploration', () => {
     await ensureAuthenticatedPage(page, '/audit-trail');
     await page.screenshot({ path: path.join(SCREENSHOT_DIR, '12_audit_trail_table.png'), fullPage: true });
 
-    // Table rows
+    // the page opens on the timeline view: switch to the table, whose rows load after the page
+    await page.getByRole('radio', { name: 'Table', exact: true }).click();
     const logRows = page.locator('table tbody tr');
+    await expect(logRows.first()).toBeVisible({ timeout: 15000 });
     const count = await logRows.count();
     console.log(`[DEEP TEST] Found ${count} audit trail log records.`);
     expect(count).toBeGreaterThanOrEqual(1);
