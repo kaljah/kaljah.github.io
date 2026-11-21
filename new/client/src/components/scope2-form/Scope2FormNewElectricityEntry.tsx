@@ -39,6 +39,8 @@ export interface Scope2FormNewElectricityEntryProps {
   setHeatEff: (h: string) => void;
   setHeatOutput: (h: string) => void;
   setMarketFactor: (f: string) => void;
+  supplierGases?: { co2: string; ch4: string; n2o: string };
+  setSupplierGases?: (g: { co2: string; ch4: string; n2o: string }) => void;
   setMarketInstrument: (m: string) => void;
   setMonth: (m: any) => void;
   setPowerEff: (p: string) => void;
@@ -118,6 +120,8 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
   setHeatEff,
   setHeatOutput,
   setMarketFactor,
+  supplierGases,
+  setSupplierGases,
   setMarketInstrument,
   setMonth,
   setPowerEff,
@@ -284,9 +288,29 @@ const Scope2FormNewElectricityEntry: React.FC<Scope2FormNewElectricityEntryProps
                 value={marketFactor}
                 onChange={(e) => setMarketFactor(e.target.value)}
                 placeholder={marketInstrument === "REC" ? t("blank = 0 (zero-carbon)") : t("blank = grid factor")}
-                disabled={!marketInstrument}
+                disabled={!marketInstrument || Boolean(supplierGases?.co2)}
               />
             </Field>
+            {supplierGases && setSupplierGases && (
+              // a supplier disclosing its CO2, CH4 and N2O per kWh: the server weights them with the active GWP set
+              // instead of one CO2e figure (GB RY2022 GB-021)
+              <div className="[grid-column:span_2] grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(160px,1fr))]">
+                {(["co2", "ch4", "n2o"] as const).map((g) => (
+                  <Field key={g} className="input-group"
+                    label={t("Supplier {{gas}} (kg/kWh, optional)", { gas: { co2: "CO₂", ch4: "CH₄", n2o: "N₂O" }[g] })}>
+                    <Input
+                      type="number"
+                      step="any"
+                      min={0}
+                      value={supplierGases[g]}
+                      onChange={(e) => setSupplierGases({ ...supplierGases, [g]: e.target.value })}
+                      disabled={!marketInstrument}
+                      placeholder={g === "co2" ? t("replaces the CO2e factor") : ""}
+                    />
+                  </Field>
+                ))}
+              </div>
+            )}
           </div>
         )}
         {sourceType === "indirect_steam" && (

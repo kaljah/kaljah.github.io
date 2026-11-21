@@ -312,3 +312,17 @@ def test_supplier_gases_weighted_with_the_active_gwp(client):
         db.session.delete(db.session.get(Facility, fid))
         db.session.commit()
     assert body
+
+
+# ---------------------------------------------------------------- seed script target
+def test_showcase_seed_follows_database_url(tmp_path):
+    """seed_showcase_data.py wrote to ghg_app.db whatever DATABASE_URL said."""
+    import os
+
+    import seed_showcase_data as s
+
+    target = (tmp_path / "x.db").as_posix()
+    assert s.target_db_path(f"sqlite:///{target}") == target
+    assert s.target_db_path("") == os.path.join(s.SERVER_DIR, "ghg_app.db")
+    with pytest.raises(SystemExit):
+        s.target_db_path("postgresql://u@h/db")

@@ -37,6 +37,8 @@ export const Scope2Form: React.FC = () => {
   const [gridRegion, setGridRegion] = useState<string>("");
   const [marketInstrument, setMarketInstrument] = useState<string>("");
   const [marketFactor, setMarketFactor] = useState<string>("");
+  // a supplier that discloses its gases (kg per kWh): weighted with the active GWP set by the server (GB RY2022 GB-021)
+  const [supplierGases, setSupplierGases] = useState<{ co2: string; ch4: string; n2o: string }>({ co2: "", ch4: "", n2o: "" });
   const [amount, setAmount] = useState<string>("");
   const [unit, setUnit] = useState<string>("kWh");
   const [sourceType, setSourceType] = useState<string>("electricity");
@@ -238,6 +240,17 @@ export const Scope2Form: React.FC = () => {
           return;
         }
       }
+      const gasValues = Object.values(supplierGases).filter((v) => v !== "");
+      if (marketInstrument && gasValues.length > 0) {
+        if (supplierGases.co2 === "") {
+          toast.warning(t("Enter the supplier's CO₂ factor with its CH₄ / N₂O factors"));
+          return;
+        }
+        if (gasValues.some((v) => isNaN(parseFloat(v)) || parseFloat(v) < 0)) {
+          toast.warning(t("Market emission factor cannot be negative"));
+          return;
+        }
+      }
 
       let payload: Record<string, any> = {
         year: parseInt(String(year), 10),
@@ -263,7 +276,12 @@ export const Scope2Form: React.FC = () => {
           electricity_kwh: electricityKwh,
           location: gridRegion,
           ...(marketInstrument && { market_instrument_type: marketInstrument }),
-          ...(marketInstrument && marketFactor !== "" && { market_emission_factor: parseFloat(marketFactor) }),
+          ...(marketInstrument && marketFactor !== "" && supplierGases.co2 === "" && { market_emission_factor: parseFloat(marketFactor) }),
+          ...(marketInstrument && supplierGases.co2 !== "" && {
+            market_co2_factor: parseFloat(supplierGases.co2),
+            ...(supplierGases.ch4 !== "" && { market_ch4_factor: parseFloat(supplierGases.ch4) }),
+            ...(supplierGases.n2o !== "" && { market_n2o_factor: parseFloat(supplierGases.n2o) }),
+          }),
         };
       } else if (sourceType === "indirect_steam") {
         // We'll call the engine directly or simulate the API call structure
@@ -466,6 +484,8 @@ export const Scope2Form: React.FC = () => {
         setHeatEff={setHeatEff}
         setHeatOutput={setHeatOutput}
         setMarketFactor={setMarketFactor}
+        supplierGases={supplierGases}
+        setSupplierGases={setSupplierGases}
         setMarketInstrument={setMarketInstrument}
         setMonth={setMonth}
         setPowerEff={setPowerEff}

@@ -4325,5 +4325,8 @@
   "Level reached by ≥ 90 % of the facility's CH₄": "المستوى الذي تبلغه ≥ 90 % من CH₄ المنشأة",
   "Per BOE:": "لكل برميل مكافئ:",
   "The highest OGMP 2.0 reporting level reached by sources carrying at least 90 % of the facility's CH₄ (its CO₂e when it has no CH₄). A site survey that reconciles with the inventory raises it to Level 5; an unreconciled discrepancy keeps it at 4 at most.": "أعلى مستوى إبلاغ في OGMP 2.0 تبلغه مصادر تمثل 90 % على الأقل من CH₄ المنشأة (أو CO₂e عند غياب CH₄). يرفعه مسح موقعي يتطابق مع الجرد إلى المستوى 5، ويبقيه فارق غير مُسوّى عند المستوى 4 كحد أقصى.",
-  "of gas produced (net of reinjected gas)": "من الغاز المنتج (باستثناء الغاز المعاد حقنه)"
+  "of gas produced (net of reinjected gas)": "من الغاز المنتج (باستثناء الغاز المعاد حقنه)",
+  "Enter the supplier's CO₂ factor with its CH₄ / N₂O factors": "أدخل معامل CO₂ للمورد مع معاملي CH₄ / N₂O",
+  "Supplier {{gas}} (kg/kWh, optional)": "{{gas}} لدى المورد (كغ/كيلوواط ساعة، اختياري)",
+  "replaces the CO2e factor": "يحل محل معامل CO2e"
 }
