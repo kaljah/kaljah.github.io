@@ -11,6 +11,7 @@ import api from "../../api";
 import { useToast } from "../../components/Toast";
 import { apiError } from "../../utils/apiError";
 import { t } from "../../i18n";
+import JvPartnersPanel from "./JvPartnersPanel";
 
 const SEGMENTS = ["Upstream", "Midstream", "Downstream", "Heavy Industry", "Utilities", "Other"];
 
@@ -285,6 +286,7 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
                       setFacilityForm({
                         id: f.id, name: (f as any).region || "", field: f.name || "", activity: f.activity || "",
                         division: f.division || "", location: f.location || "", country: (f as any).country || "",
+                        gas_ch4_mol_pct: (f as any).gas_ch4_mol_pct ?? "", gas_hhv_btu_scf: (f as any).gas_hhv_btu_scf ?? "",
                         boundary_type: (f as any).boundary_type || "", boundary_detail: (f as any).boundary_detail || "",
                         equity_share_pct: (f as any).equity_share_pct ?? "", partner_id: "", agreement_reference: "",
                         segment: f.segment || "", latitude: f.latitude ?? "", longitude: f.longitude ?? "",
@@ -403,6 +405,29 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
                 value={facilityForm.country || ""}
                 onChange={handleFacilityChange}
                 placeholder={t("e.g. Algeria")}
+              />
+            </Field>
+            <Field label={t("Gas CH₄ content (mol %)")} hint={t("Optional: your produced gas analysis, used for NGSI instead of the segment default.")}>
+              <Input
+                type="number"
+                step="any"
+                min="0"
+                max="100"
+                name="gas_ch4_mol_pct"
+                value={facilityForm.gas_ch4_mol_pct ?? ""}
+                onChange={handleFacilityChange}
+                placeholder={t("e.g. 68.4")}
+              />
+            </Field>
+            <Field label={t("Gas heating value (Btu/scf, HHV)")} hint={t("Optional: used for the NGSI production gas ratio instead of 1,235 Btu/scf.")}>
+              <Input
+                type="number"
+                step="any"
+                min="0"
+                name="gas_hhv_btu_scf"
+                value={facilityForm.gas_hhv_btu_scf ?? ""}
+                onChange={handleFacilityChange}
+                placeholder={t("e.g. 1363")}
               />
             </Field>
           </div>
@@ -593,6 +618,10 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
                   </tbody>
                 </table>
               </div>
+            )}
+
+            {user?.role === "admin" && (
+              <JvPartnersPanel onChanged={() => selectedFacilityForEquity && loadEquityData(selectedFacilityForEquity.id)} />
             )}
 
             {canEdit && (

@@ -482,6 +482,27 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
                 ))}
               </div>
 
+              {/* flared volume by flaring type: the flaring split uses it for records not classified routine /
+                  non-routine / safety (GB RY2022 GB-054) */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {([
+                  ["routine_flared_mmsm3", t("Routine flaring (MMSm³)")],
+                  ["non_routine_flared_mmsm3", t("Non-routine flaring (MMSm³)")],
+                  ["safety_flared_mmsm3", t("Safety flaring (MMSm³)")],
+                ] as const).map(([key, label]) => (
+                  <Field key={key} label={label} hint={t("Optional: splits the flared volume by type")}>
+                    <Input
+                      type="number"
+                      step="any"
+                      min="0"
+                      value={prodForm[key] ?? ""}
+                      onChange={(e) => setProdForm({ ...prodForm, [key]: e.target.value })}
+                      placeholder="—"
+                    />
+                  </Field>
+                ))}
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
                 <Field label={t("Crude Oil (MMBOE)")}>
                   <Input

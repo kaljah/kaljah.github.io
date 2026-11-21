@@ -47,6 +47,8 @@ interface RegionalMethaneData {
   methane_loss_rate_pct?: number | null;
   methane_intensity_ngsi_pct?: number | null;
   ngsi_ch4_content?: number;
+  ngsi_numerator_t?: number;
+  ngsi_denominator_t?: number;
   marketed_gas_m3?: number;
   ch4_intensity?: number;
   segment_category?: string;
@@ -250,7 +252,8 @@ const MethaneIntensity: React.FC = () => {
       // loss rate on the OGCI / OGMP basis: CH4 volume / MARKETED gas (gross - reinjected - flared - vented -
       // fuel - shrinkage, server services/methane_intensity.py); NGSI: CH4 / CH4 in the throughput (BA-054)
       let tMarketedM3 = 0,
-        tNgsiCh4InThroughputT = 0;
+        tNgsiCh4InThroughputT = 0,
+        tNgsiNumeratorT = 0;
 
       let assessedYears = 0;
       data.forEach((d) => {
@@ -260,7 +263,15 @@ const MethaneIntensity: React.FC = () => {
         if (gasM3 > 0 && mktM3 > 0) assessedYears += 1; // a loss rate exists only with marketed gas (GB-044)
         if (gasM3 > 0) {
           tMarketedM3 += mktM3;
+        }
+        // NGSI: the server's numerator (CH4 x gas ratio) and denominator (CH4 in the throughput, facility gas or
+        // segment default) summed, so the page shows the facilities' own figure (GB RY2022 GB-061)
+        if (d.ngsi_denominator_t != null) {
+          tNgsiCh4InThroughputT += d.ngsi_denominator_t;
+          tNgsiNumeratorT += d.ngsi_numerator_t ?? 0;
+        } else if (gasM3 > 0) {
           tNgsiCh4InThroughputT += (gasM3 / 28.316846592) * (d.ngsi_ch4_content ?? 0.833) * 0.0192;
+          tNgsiNumeratorT += d.matched_ch4 ?? (d.total_ch4 || 0);
         }
         const ch4Tonnes = d.total_ch4 || 0;
         // the CH4 of the years with production, as the server (all-year CH4 over producing-year gas: F-CLIENT-03)
@@ -300,7 +311,7 @@ const MethaneIntensity: React.FC = () => {
       const totalCh4VolM3 = (tCh4WithGas * 1000.0) / CH4_DENSITY_KG_M3;
       const avgLossRatePct =
         tMarketedM3 > 0 ? (totalCh4VolM3 / tMarketedM3) * 100.0 : 0.0;
-      const ngsiPct = tNgsiCh4InThroughputT > 0 ? (tCh4WithGas / tNgsiCh4InThroughputT) * 100.0 : null;
+      const ngsiPct = tNgsiCh4InThroughputT > 0 ? (tNgsiNumeratorT / tNgsiCh4InThroughputT) * 100.0 : null;
 
       const upCh4VolM3 = (upCh4Tonnes * 1000.0) / CH4_DENSITY_KG_M3;
       const midCh4VolM3 = (midCh4Tonnes * 1000.0) / CH4_DENSITY_KG_M3;

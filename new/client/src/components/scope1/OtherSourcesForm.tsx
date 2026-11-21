@@ -92,11 +92,15 @@ export const OtherSourcesForm: React.FC<OtherSourcesFormProps> = ({ data, onChan
     if (p === "wastewater") {
       if (!data.wastewater_method) onChange("wastewater_method", "aerobic");
       if (!data.flow_unit) onChange("flow_unit", "m3");
+      if (!data.unit) onChange("unit", data.flow_unit || "m3"); // the form refuses a record without a unit
     }
+    if (p === "electrical_equipment" && !data.unit) onChange("unit", "kg");
+    if (p === "refrigerant" && !data.unit) onChange("unit", "units");
     if (p === "refrigerant" && !data.refrigerant_method) onChange("refrigerant_method", "charge");
     if (p === "electrical_equipment" && !data.electrical_method) onChange("electrical_method", "mass_balance");
+    // again after the form is reset following a save (it cleared the unit and the next save was refused)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [p]);
+  }, [p, data.unit, data.flow_unit, data.wastewater_method, data.refrigerant_method, data.electrical_method]);
 
   if (p === "fire_suppression") {
     return (

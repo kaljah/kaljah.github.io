@@ -573,6 +573,7 @@ const ManageDataInner: React.FC = () => {
         gas_amount: '', gas_unit: 'mscf',
         gross_gas_mmsm3: '', gas_without_injected_mmsm3: '', injected_gas_mmsm3: '',
         flared_gas_mmsm3: '', vented_gas_mmsm3: '', fuel_gas_consumed_mmsm3: '', ngl_shrinkage_mmsm3: '',
+        routine_flared_mmsm3: '', non_routine_flared_mmsm3: '', safety_flared_mmsm3: '',
         crude_oil_mmboe: '', condensate_mmboe: '', lpg_mmboe: '',
         total_production_mmboe: '', saleable_production_mmboe: ''
     });
@@ -941,6 +942,11 @@ const ManageDataInner: React.FC = () => {
                 if (body[k] === '' || body[k] === null || body[k] === undefined) delete body[k];
             });
             ['country'].forEach((k) => { if (body[k] === '') delete body[k]; });
+            // the facility's own gas for NGSI (D7): blank clears it
+            ['gas_ch4_mol_pct', 'gas_hhv_btu_scf'].forEach((k) => {
+                if (body[k] === '' || body[k] === undefined) body[k] = null;
+                else body[k] = parseFloat(body[k]);
+            });
             if (facilityForm.id) {
                 const { id, ...upd } = body;
                 ['partner_id', 'agreement_reference'].forEach((k) => delete upd[k]);
@@ -953,6 +959,7 @@ const ManageDataInner: React.FC = () => {
             }
             setFacilityForm({
                 name: '', activity: '', division: '', field: '', location: '', country: '',
+                gas_ch4_mol_pct: '', gas_hhv_btu_scf: '',
                 boundary_type: '', boundary_detail: '', equity_share_pct: '',
                 partner_id: '', agreement_reference: '',
                 segment: '', latitude: '', longitude: ''
@@ -1060,7 +1067,8 @@ const ManageDataInner: React.FC = () => {
                 saleable_production_mmboe: parseFloat(prodForm.saleable_production_mmboe) || 0,
                 // marketed-gas terms: blank stays blank (null) so the emission records are used
                 ...Object.fromEntries(["flared_gas_mmsm3", "vented_gas_mmsm3", "fuel_gas_consumed_mmsm3",
-                    "ngl_shrinkage_mmsm3"].map((k) => [k, prodForm[k] === '' || prodForm[k] == null ? null : parseFloat(prodForm[k])])),
+                    "ngl_shrinkage_mmsm3", "routine_flared_mmsm3", "non_routine_flared_mmsm3",
+                    "safety_flared_mmsm3"].map((k) => [k, prodForm[k] === '' || prodForm[k] == null ? null : parseFloat(prodForm[k])])),
             });
             toast.success(t("Production record saved!"));
             fetchProduction();

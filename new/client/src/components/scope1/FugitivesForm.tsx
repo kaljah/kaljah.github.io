@@ -32,6 +32,17 @@ const TIER1_FACILITIES = [
       { value: "m3", label: t("m³ gas"), t_per_unit: 9.184e-7 },
     ],
   },
+  // Table 7-34 screening method, at 86.8 mol % CH4 (GB RY2022 GB-006 / GB-060, D12)
+  {
+    id: "gas_processing",
+    label: t("Natural Gas Processing Plant"),
+    sub: t("99.2 lb CH₄ per 10⁶ scf processed, or 22,984 kg CH₄ per plant-year"),
+    units: [
+      { value: "MMscf", label: t("MMscf processed"), t_per_unit: 4.507e-2 },
+      { value: "m3", label: t("m³ processed"), t_per_unit: 4.507e-2 / 28316.846592 },
+      { value: "plant", label: t("plants (per plant-year, scaled to the month)"), t_per_unit: 22.98425 },
+    ],
+  },
 ];
 
 // RC-17 / BUG-110: equipment-level factors are the server catalog entries (API Compendium 2021

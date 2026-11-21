@@ -5,6 +5,7 @@ import { Upload, Calculator, Check, Edit2, Archive, Trash2, Plus } from "lucide-
 import PaginationControls from "./PaginationControls";
 import AdvancedSection from "../../components/AdvancedSection";
 import { t } from "../../i18n";
+import GridFactorsPanel from "./GridFactorsPanel";
 
 export interface CustomFactorRecord {
   id: string | number;
@@ -531,6 +532,8 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
           </AdvancedSection>
         </form>
       </Sheet>
+
+      <GridFactorsPanel user={user} />
     </div>
   );
 };
