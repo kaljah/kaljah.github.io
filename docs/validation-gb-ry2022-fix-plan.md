@@ -40,6 +40,17 @@ Where the implementation differs from the table below:
   injected volume; the intensity uses the total excluding reinjected gas.
 - **GB-012:** no code change; the CO2 basis is documented in `docs/calculation-specification.md`.
 - **GB-050:** no change (IPCC 2006 Table 2.12 N2O uncertainty, BA-052).
+- **Follow-up (same day):**
+  - **GB-049:** the dropdown jumps to an option as letters are typed.
+  - **GB-061:** the methane page names the flaring-rate denominator and shows Sm3/BOE.
+  - **GB-061:** the OGMP level card states its rule, the level reached by 90 % of the CH4. The fallback path used 50 %
+    and now uses the same 90 % as `services.ogmp.materiality_level`.
+  - **GB-061:** the regional benchmark renders with production data.
+  - **Market-based Scope 2:** a supplier that discloses its gases (`market_co2_factor`, `market_ch4_factor`,
+    `market_n2o_factor`, kg/kWh; API and CSV) is weighted with the active GWP set.
+  - **Playwright smoke tier:** 12 passed, 2 failed, 7 did not run. Both failures predate this work. FN-8 clicks a
+    Settings "Save" button that is disabled when nothing changed, and it fails with the earlier Settings page too.
+    The SBTi test looks for a heading ("SBTi & Net-Zero Trajectory") that is no longer in the page.
 
 ---
 

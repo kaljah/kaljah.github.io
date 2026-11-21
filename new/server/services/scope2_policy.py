@@ -59,9 +59,26 @@ def resolve_electricity_factor(grid_region, facility_id=None, year=None):
     )
 
 
-def supplier_market_factor(market_ef, supplied_ef):
+def supplier_market_factor(market_ef, supplied_ef, record=None):
     """The contractual factor for the market-based method: market_emission_factor, else a supplier factor given
-    as emission_factor (it was the location value or silently ignored, BA-007 / BA-010). kg CO2e/kWh or None."""
+    as emission_factor (it was the location value or silently ignored, BA-007 / BA-010). kg CO2e/kWh or None.
+
+    A supplier that discloses its gases (`market_co2_factor`, optional `market_ch4_factor` / `market_n2o_factor`, kg per
+    kWh) gets them weighted with the active GWP set, as the grid factors are (GHG Protocol Scope 2 Guidance s6.11:
+    all three gases; GB RY2022 GB-021 / D3)."""
+    rec = record or {}
+    if rec.get("market_co2_factor") not in (None, ""):
+        from calculations.constants import get_active_gwp
+
+        gwp = get_active_gwp()
+        parts = {g: parse_number(rec.get(f"market_{g}_factor"), f"market_{g}_factor", required=(g == "co2"),
+                                 min_value=0, max_value=MAX_GRID_EF_KG_PER_KWH, default=0.0)
+                 for g in ("co2", "ch4", "n2o")}
+        total = parts["co2"] + parts["ch4"] * float(gwp["CH4"]) + parts["n2o"] * float(gwp["N2O"])
+        if total > MAX_GRID_EF_KG_PER_KWH:
+            raise ValidationError(f"Supplier factor {total:.4f} kg CO2e/kWh is above {MAX_GRID_EF_KG_PER_KWH}",
+                                  "market_co2_factor")
+        return total
     raw = market_ef if market_ef not in (None, "") else supplied_ef
     if raw in (None, ""):
         return None

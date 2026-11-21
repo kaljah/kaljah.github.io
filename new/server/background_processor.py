@@ -1940,7 +1940,7 @@ def _process_row_scope2(
                        if row.get(k) not in (None, "")), None)  # a 0 factor is a factor (an `or` chain skipped it)
     try:  # a supplier factor in the factor column is market-based (BA-007), read and bounded as on the manual form
         used_mkt_ef, mkt_ef_val = market_factor(ef, mkt_inst, supplier_market_factor(
-            raw_mkt_ef, supplied if source_type == "electricity" else None), grid_name=grid_region)
+            raw_mkt_ef, supplied if source_type == "electricity" else None, row), grid_name=grid_region)
     except ValidationError as exc:
         return None, [f"Row {row_idx}: {exc}"]
     co2e_mkt = (kwh * used_mkt_ef) / 1000.0 if source_type == "electricity" else co2e

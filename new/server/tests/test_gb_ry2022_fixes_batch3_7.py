@@ -283,3 +283,32 @@ def test_other_sources_are_saved_as_the_form_sends_them(client, extra, gas, expe
         db.session.delete(e)
         db.session.delete(db.session.get(Facility, fid))
         db.session.commit()
+
+
+# ---------------------------------------------------------------- GB-021 / D3: supplier gases, market-based
+def test_supplier_gases_weighted_with_the_active_gwp(client):
+    """A supplier disclosing 0.40 kg CO2, 1e-5 kg CH4 and 2e-6 kg N2O per kWh: market factor
+    0.40 + 1e-5 x GWP_CH4 + 2e-6 x GWP_N2O (AR5 28 / 265) = 0.40081 kg CO2e/kWh; 1,000 MWh = 400.81 t."""
+    _login(client, _user("admin"))
+    with flask_app.app_context():
+        fac = Facility(name=f"GB21 {uuid.uuid4().hex[:6]}", activity="EP", division="DP", country="Algeria")
+        db.session.add(fac)
+        db.session.commit()
+        fid = fac.id
+    r = client.post("/api/scope2", json={"facility_id": fid, "year": 2022, "month": 3, "source_type": "electricity",
+                                         "amount": 1000, "unit": "MWh", "grid_region": "Algerian National Grid",
+                                         "market_instrument_type": "supplier_specific", "market_co2_factor": 0.40,
+                                         "market_ch4_factor": 1e-5, "market_n2o_factor": 2e-6})
+    assert r.status_code == 201, r.get_json()
+    body = r.get_json()
+    from calculations.constants import get_active_gwp
+    with flask_app.app_context():
+        g = get_active_gwp()
+        expected = 1000 * (0.40 + 1e-5 * g["CH4"] + 2e-6 * g["N2O"])
+        from models import Scope2Emission
+        rec = Scope2Emission.query.filter_by(facility_id=fid).one()
+        assert rec.co2e_market_based == pytest.approx(expected, rel=1e-9)
+        db.session.delete(rec)
+        db.session.delete(db.session.get(Facility, fid))
+        db.session.commit()
+    assert body

@@ -284,10 +284,11 @@ def create_scope2_emission():
         # Market-based calculation (GHG Protocol Scope 2 Guidance, services/scope2_market.py)
         raw_mkt_ef = data.get("market_emission_factor")
         used_market_ef, market_ef = market_factor(location_ef, market_instrument_type,
-                                                  supplier_market_factor(raw_mkt_ef, data.get("emission_factor")),
+                                                  supplier_market_factor(raw_mkt_ef, data.get("emission_factor"), data),
                                                   grid_name=grid_resolved or grid_region)
         co2e_market = (electricity_kwh * used_market_ef) / 1000.0
-        has_market_instrument = bool(market_instrument_type) or (raw_mkt_ef not in (None, ""))
+        has_market_instrument = bool(market_instrument_type) or any(data.get(k) not in (None, "") for k in (
+            "market_emission_factor", "market_co2_factor"))
         co2e = co2e_location
         emission_factor = location_ef
 
@@ -835,7 +836,7 @@ def bulk_import_scope2():
             # Market-based calculation for bulk import
             mkt_inst = (rec.get("market_instrument_type") or "").strip() or None
             mkt_ef_raw = rec.get("market_emission_factor")
-            supplier_ef = supplier_market_factor(mkt_ef_raw, rec.get("emission_factor") or rec.get("factor"))
+            supplier_ef = supplier_market_factor(mkt_ef_raw, rec.get("emission_factor") or rec.get("factor"), rec)
             used_mkt_ef, mkt_ef = market_factor(ef, mkt_inst, supplier_ef, grid_name=grid_region)
             co2e_mkt_val = (kwh * used_mkt_ef) / 1000.0
 

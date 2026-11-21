@@ -448,7 +448,7 @@ def _apply_boundary(cells):
                             v[kk] = vv * w
 
 
-def _materiality_from_weights(ch4_weights, co2e_weights, s1_count, threshold=0.5):
+def _materiality_from_weights(ch4_weights, co2e_weights, s1_count, threshold=0.9):  # one rule: services.ogmp 90 %
     if s1_count <= 0:
         return None
     total = sum(ch4_weights.values())
