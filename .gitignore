@@ -246,3 +246,6 @@ scripts/update_audit_report.py
 scripts/update_results_vs_report.py
 scripts/verify_csv_upload.py
 scripts/verify_rollups.py
+
+# GB RY 2022 real-inventory validation working files
+GB_VALIDATION_RY2022/
