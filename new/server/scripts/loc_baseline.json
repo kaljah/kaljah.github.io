@@ -11,7 +11,7 @@
     "routes/data.py": 957,
     "routes/emissions.py": 1254,
     "routes/managedata.py": 1251,
-    "routes/scope2.py": 920
+    "routes/scope2.py": 919
   },
   "functions": {
     "background_processor.py::_process_row": 280,
@@ -51,7 +51,7 @@
     "routes/reports_export.py::export_emissions": 259,
     "routes/reports_national.py::export_national_inventory_report": 588,
     "routes/scope2.py::bulk_import_scope2": 169,
-    "routes/scope2.py::create_scope2_emission": 274,
+    "routes/scope2.py::create_scope2_emission": 273,
     "routes/scope2.py::update_scope2_emission": 193,
     "routes/scope3.py::create_scope3_emission": 198,
     "routes/scope3.py::update_scope3_emission": 174,

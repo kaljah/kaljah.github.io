@@ -287,8 +287,6 @@ def create_scope2_emission():
                                                   supplier_market_factor(raw_mkt_ef, data.get("emission_factor"), data),
                                                   grid_name=grid_resolved or grid_region)
         co2e_market = (electricity_kwh * used_market_ef) / 1000.0
-        has_market_instrument = bool(market_instrument_type) or any(data.get(k) not in (None, "") for k in (
-            "market_emission_factor", "market_co2_factor"))
         co2e = co2e_location
         emission_factor = location_ef
 
