@@ -1056,6 +1056,10 @@ export const PROCESS_TYPES: Record<string, string> = {
   desiccant_dehydrator: "Desiccant Dehydrator",
   co2_eor: "CO₂ EOR Venting",
   thermal_oxidizer: "Thermal Oxidizer",
+  fire_suppression: "Fire Suppression (CO₂ / clean agents)",
+  wastewater: "Wastewater Treatment (Section 7.5)",
+  refrigerant: "Refrigeration / Air Conditioning (HFC)",
+  electrical_equipment: "Electrical Equipment (SF₆)",
 };
 
 export interface ProcessGroupItem {
@@ -1098,6 +1102,10 @@ export const PROCESS_GROUPS: ProcessGroupItem[] = [
       "fugitive",
       "loading",
       "separation",
+      "fire_suppression",
+      "wastewater",
+      "refrigerant",
+      "electrical_equipment",
     ],
   },
   {
@@ -1123,6 +1131,10 @@ export const PROCESS_GROUPS: ProcessGroupItem[] = [
       "mobile",
       "fugitive",
       "loading",
+      "fire_suppression",
+      "wastewater",
+      "refrigerant",
+      "electrical_equipment",
     ],
   },
   {
@@ -1149,6 +1161,10 @@ export const PROCESS_GROUPS: ProcessGroupItem[] = [
       "nitric_acid_production",
       "adipic_acid_production",
       "asphalt_blowing",
+      "fire_suppression",
+      "wastewater",
+      "refrigerant",
+      "electrical_equipment",
     ],
   },
 ];

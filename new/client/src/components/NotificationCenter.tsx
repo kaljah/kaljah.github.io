@@ -426,7 +426,7 @@ const NotificationCenter: React.FC = () => {
 
       // 2. QA/QC Anomalies & Data Health Drop
       if (user?.role && ["admin", "superuser"].includes(user.role)) {
-        const qaRes = await api.get("/qa/dashboard").catch(() => null);
+        const qaRes = await api.get("/qaqc/dashboard").catch(() => null);  // /qa/dashboard does not exist (GB-048)
         if (qaRes?.data) {
           const flagged = qaRes.data.total_flagged_count || qaRes.data.flagged_records?.length || 0;
           if (flagged > 0) {
@@ -456,11 +456,11 @@ const NotificationCenter: React.FC = () => {
       }
 
       // 3. OGMP 2.0 Level 4/5 Discrepancies
-      const ogmpRes = await api.get("/ogmp/surveys").catch(() => null);
+      // the surveys live at /data/ogmp-surveys (/ogmp/surveys returned 404 on every poll, GB-048)
+      const ogmpRes = await api.get("/data/ogmp-surveys").catch(() => null);
       const surveys = Array.isArray(ogmpRes?.data) ? ogmpRes.data : ogmpRes?.data?.surveys || [];
       const discrepancySurveys = surveys.filter((s: any) =>
-        s.reconciliation_status === "discrepancy" ||
-        (s.relative_difference_pct != null && Math.abs(s.relative_difference_pct) > 20)
+        s.variance_flag === true || String(s.reconciliation_status || "").startsWith("Discrepancy")
       );
       if (discrepancySurveys.length > 0) {
         alerts.push({

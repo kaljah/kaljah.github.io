@@ -107,7 +107,7 @@ const MethaneIntensity: React.FC = () => {
     totalFlaringVolume: 0,
     totalFlaringEmissions: 0,
     totalWecFeeUsd: 0,
-    ogmpGoldStatus: "Compliant",
+    ogmpGoldStatus: "",
     upstreamGasM3: 0,
     upstreamCh4Tonnes: 0,
     midstreamGasM3: 0,
@@ -252,10 +252,12 @@ const MethaneIntensity: React.FC = () => {
       let tMarketedM3 = 0,
         tNgsiCh4InThroughputT = 0;
 
+      let assessedYears = 0;
       data.forEach((d) => {
         const boe = d.total_boe || 0;
         const gasM3 = d.total_gas_m3 || (d.total_gas || 0) * 28.3168;
         const mktM3 = d.marketed_gas_m3 ?? gasM3;
+        if (gasM3 > 0 && mktM3 > 0) assessedYears += 1; // a loss rate exists only with marketed gas (GB-044)
         if (gasM3 > 0) {
           tMarketedM3 += mktM3;
           tNgsiCh4InThroughputT += (gasM3 / 28.316846592) * (d.ngsi_ch4_content ?? 0.833) * 0.0192;
@@ -310,8 +312,10 @@ const MethaneIntensity: React.FC = () => {
       const avgFlaringRatePct =
         tGasM3 > 0 ? (tFlaringVol / tGasM3) * 100.0 : 0.0;
 
-      let goldStatus = "Compliant";
-      if (tGasM3 === 0 && tCh4Tonnes > 0) {
+      // "Compliant" only from computed loss rates: with CH4 but no marketed gas there is no loss rate to compare
+      // with the target (GB RY2022 GB-044: the header said Compliant while every loss rate was blank)
+      let goldStatus = assessedYears > 0 ? "Compliant" : "";
+      if (tCh4Tonnes > 0 && assessedYears === 0) {
         goldStatus = "Pending Production";
       } else if (
         (upGasM3 > 0 && upstreamLossRatePct > upstreamTargetPct * 1.25) ||

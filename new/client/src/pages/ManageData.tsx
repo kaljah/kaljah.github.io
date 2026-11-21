@@ -721,9 +721,10 @@ const ManageDataInner: React.FC = () => {
                 division: prev.division || autoFill.division,
                 facility_id: prev.facility_id || autoFill.facility_id,
             }));
+            // the location is not pre-filled from the user's default region (it put "HBNS" in the next facility's
+            // Location, GB RY2022 GB-041)
             setFacilityForm(prev => ({
                 ...prev,
-                location: prev.location || opDefaults.defaultRegion,
                 activity: prev.activity || autoFill.activity,
                 division: prev.division || autoFill.division,
             }));
@@ -914,11 +915,12 @@ const ManageDataInner: React.FC = () => {
         setFactorForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
     };
 
-    const handleAddFacility = async () => {
+    const handleAddFacility = async (): Promise<boolean> => {
         const regionName = (facilityForm.name || '').trim();
         const fieldName = (facilityForm.field || '').trim();
         if (!regionName || !fieldName || !facilityForm.activity || !facilityForm.division) {
-            return toast.error(t("Region Name, Field / Block, Activity, and Division are required"));
+            toast.error(t("Region Name, Field / Block, Activity, and Division are required"));
+            return false;
         }
         try {
             // Construct combined boundary_notes
@@ -932,27 +934,37 @@ const ManageDataInner: React.FC = () => {
                 name: fieldName,
                 region: regionName,
                 field: fieldName,
-                location: (facilityForm.location || regionName).trim(),
+                location: (facilityForm.location || '').trim() || undefined,
                 boundary_notes: fullBoundary
             };
             ['latitude', 'longitude', 'equity_share_pct', 'partner_id', 'agreement_reference'].forEach((k) => {
                 if (body[k] === '' || body[k] === null || body[k] === undefined) delete body[k];
             });
-            await api.post('/facilities', body);
-            toast.success(t("Region added!"));
+            ['country'].forEach((k) => { if (body[k] === '') delete body[k]; });
+            if (facilityForm.id) {
+                const { id, ...upd } = body;
+                ['partner_id', 'agreement_reference'].forEach((k) => delete upd[k]);
+                await api.put(`/facilities/${id}`, upd);
+                toast.success(t("Facility updated!"));
+            } else {
+                delete body.id;
+                await api.post('/facilities', body);
+                toast.success(t("Region added!"));
+            }
             setFacilityForm({
-                name: '', activity: '', division: '', field: '', location: '',
+                name: '', activity: '', division: '', field: '', location: '', country: '',
                 boundary_type: '', boundary_detail: '', equity_share_pct: '',
                 partner_id: '', agreement_reference: '',
                 segment: '', latitude: '', longitude: ''
             });
             fetchFacilities();
-        } catch (err: any) { toast.error(apiError(err, t("Failed to add region"))); }
+            return true;
+        } catch (err: any) { toast.error(apiError(err, t("Failed to add region"))); return false; }
     };
 
-    const handleSaveFactor = async () => {
-        if (!factorForm.factor_name) return toast.error(t("Name required"));
-        if (isSubmitting) return;
+    const handleSaveFactor = async (): Promise<boolean> => {
+        if (!factorForm.factor_name) { toast.error(t("Name required")); return false; }
+        if (isSubmitting) return false;
         setIsSubmitting(true);
         try {
             if (editingFactorId) {
@@ -965,7 +977,8 @@ const ManageDataInner: React.FC = () => {
             setFactorForm({ factor_name: '', parent_fuel: '', unit: 'scf', co2_factor: '', ch4_factor: '', n2o_factor: '', co_factor: '', co2_uncertainty: '', ch4_uncertainty: '', n2o_uncertainty: '', source: '', description: '', justification: '', gas_composition: null });
             setEditingFactorId(null);
             fetchCustomFactors();
-        } catch (err: any) { toast.error(apiError(err, t("Failed to save factor"))); }
+            return true;
+        } catch (err: any) { toast.error(apiError(err, t("Failed to save factor"))); return false; }
         finally { setIsSubmitting(false); }
     };
 
@@ -1041,7 +1054,9 @@ const ManageDataInner: React.FC = () => {
                 crude_oil_mmboe: parseFloat(prodForm.crude_oil_mmboe) || 0,
                 condensate_mmboe: parseFloat(prodForm.condensate_mmboe) || 0,
                 lpg_mmboe: parseFloat(prodForm.lpg_mmboe) || 0,
+                ngl_mmboe: parseFloat(prodForm.ngl_mmboe) || 0,
                 total_production_mmboe: parseFloat(prodForm.total_production_mmboe) || 0,
+                total_production_no_injected_mmboe: parseFloat(prodForm.total_production_no_injected_mmboe) || 0,
                 saleable_production_mmboe: parseFloat(prodForm.saleable_production_mmboe) || 0,
                 // marketed-gas terms: blank stays blank (null) so the emission records are used
                 ...Object.fromEntries(["flared_gas_mmsm3", "vented_gas_mmsm3", "fuel_gas_consumed_mmsm3",
@@ -1049,12 +1064,16 @@ const ManageDataInner: React.FC = () => {
             });
             toast.success(t("Production record saved!"));
             fetchProduction();
+            // every value field is cleared: the flared / vented / fuel / shrinkage terms of the previous facility were
+            // kept and would be saved again on the next one (GB RY2022 GB-040)
             setProdForm(prev => ({
                 ...prev,
                 oil_amount: '', gas_amount: '',
                 gross_gas_mmsm3: '', gas_without_injected_mmsm3: '', injected_gas_mmsm3: '',
-                crude_oil_mmboe: '', condensate_mmboe: '', lpg_mmboe: '',
-                total_production_mmboe: '', saleable_production_mmboe: ''
+                crude_oil_mmboe: '', condensate_mmboe: '', lpg_mmboe: '', ngl_mmboe: '',
+                total_production_mmboe: '', total_production_no_injected_mmboe: '', saleable_production_mmboe: '',
+                flared_gas_mmsm3: '', vented_gas_mmsm3: '', fuel_gas_consumed_mmsm3: '', ngl_shrinkage_mmsm3: '',
+                routine_flared_mmsm3: '', non_routine_flared_mmsm3: '', safety_flared_mmsm3: '',
             }));
         } catch (err: any) { toast.error(apiError(err, t("Failed to save production"))); }
         finally { setIsSubmitting(false); }

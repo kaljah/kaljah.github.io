@@ -1,4 +1,5 @@
 import React from "react";
+import { OTHER_SOURCE_PROCESSES } from "../scope1/OtherSourcesForm";
 import { Input } from "../../ui";
 import { NativeSelect } from "../../ui/NativeSelect";
 import { BookOpen, Calculator, PlusCircle, Info } from "lucide-react";
@@ -79,9 +80,10 @@ export const Scope1ProcessSection: React.FC<Scope1ProcessSectionProps> = ({
       </div>
 
       {/* Hoisted Emission Factor Selection — hidden for stoichiometry and dedicated downstream process forms */}
-      {!["stoichiometry", "chemical_production", "nitric_acid_production", "adipic_acid_production", "asphalt_blowing"].includes(
-        processType,
-      ) && (
+      {![
+        "stoichiometry", "chemical_production", "nitric_acid_production", "adipic_acid_production", "asphalt_blowing",
+        ...OTHER_SOURCE_PROCESSES,
+      ].includes(processType) && (
         <div className="input-group">
           <div className="[display:flex] [flex-direction:column] [align-items:flex-start] [gap:6px] [margin-bottom:12px]">
             <label className="m-[0px]!">{t("Method")}</label>

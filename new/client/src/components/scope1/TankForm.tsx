@@ -12,6 +12,9 @@ export interface Scope1SubFormProps {
 export const TankForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceType }) => {
   const isEngineering = sourceType === "specific";
   const processType = data.process_type || "tank";
+  // produced water (Compendium Table 6-26: separator pressure and salt content), offered with the other tanks; it
+  // was only reachable under "Wastewater / Separation" (GB RY2022 GB-059)
+  const producedWater = data.tank_liquid_type === "produced_water";
 
   return (
     <div className="tank-form">
@@ -50,9 +53,19 @@ export const TankForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceT
               { value: "TankCrudeLarge", label: t("Crude Oil (> 10 bbl/d)") },
               { value: "TankProdSmall", label: t("Condensate (< 10 bbl/d)") },
               { value: "TankProdLarge", label: t("Condensate (> 10 bbl/d)") },
+              { value: "ProducedWater", label: t("Produced water (Table 6-26)") },
             ]}
-            value={data.tank_type || "TankCrudeSmall"}
-            onChange={(val) => onChange("tank_type", val)}
+            value={producedWater ? "ProducedWater" : data.tank_type || "TankCrudeSmall"}
+            onChange={(val) => {
+              if (val === "ProducedWater") {
+                onChange("tank_liquid_type", "produced_water");
+                onChange("tank_method", "produced_water");
+              } else {
+                onChange("tank_liquid_type", undefined);
+                onChange("tank_method", undefined);
+                onChange("tank_type", val);
+              }
+            }}
             placeholder={t("Select Tank Type...")}
           />
         </div>
@@ -62,7 +75,21 @@ export const TankForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceT
       {isEngineering && (
         <>
           {/* Flashing / Working / Breathing Specific Inputs */}
-          {["tank", "tank_flashing", "tank_working", "tank_breathing"].includes(processType) && (
+          {producedWater && (
+            <Field className="input-group" label={t("Salt content")}>
+              <CustomDropdown
+                options={[
+                  { value: "20%", label: "20 %" },
+                  { value: "10%", label: "10 %" },
+                  { value: "2%", label: "2 %" },
+                  { value: "average", label: t("Unknown (average, 250 / 1,000 psi only)") },
+                ]}
+                value={data.salt_content || "20%"}
+                onChange={(val) => onChange("salt_content", val)}
+              />
+            </Field>
+          )}
+          {!producedWater && ["tank", "tank_flashing", "tank_working", "tank_breathing"].includes(processType) && (
             <>
               <Field
                 className="input-group"
@@ -103,16 +130,17 @@ export const TankForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceT
             />
           </Field>
 
-          <Field className="input-group" label={t("Separator pressure (psig)")}>
+          <Field className="input-group" label={producedWater ? <>{t("Separator pressure (psig)")}<span className="text-[color:var(--color-red-700)]! ms-[3px]!">*</span></> : t("Separator pressure (psig)")}>
             <Input
               type="number"
               value={data.tank_sep_pressure || ""}
               onChange={(e) => onChange("tank_sep_pressure", e.target.value)}
               placeholder="e.g. 50"
+              required={producedWater}
             />
           </Field>
 
-          <Field
+          {!producedWater && <Field
             className="input-group"
             label={
               <>
@@ -128,7 +156,7 @@ export const TankForm: React.FC<Scope1SubFormProps> = ({ data, onChange, sourceT
               placeholder="e.g. 85"
               required
             />
-          </Field>
+          </Field>}
 
           <div className="input-group">
             <label>{t("Control Efficiency (%)")}</label>

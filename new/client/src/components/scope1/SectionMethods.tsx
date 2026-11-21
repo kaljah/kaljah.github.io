@@ -91,7 +91,7 @@ const NumUnit: React.FC<NumUnitProps> = ({
   </div>
 );
 
-const GAS_UNITS = ["scf", "Mcf", "MMscf", "m3"];
+const GAS_UNITS = ["scf", "Mcf", "MMscf", "m3", "Nm3", "sm3_15c"];
 const LIQ_UNITS = ["bbl", "gal", "m3", "L"];
 
 const GAS_FUELS = ["Fuel Gas", "Natural Gas", "Associated Gas", "Refinery Gas", "Custom Gas"];
@@ -194,9 +194,17 @@ export const ActivityFactorForm: React.FC<ActivityFactorFormProps> = ({ processT
             <Num label={t("CH₄ in vapour (wt %)")} field="toc_ch4_wt" data={data} onChange={onChange} placeholder="15" />
           </FieldGrid>
         ) : (
-          <MoreOptions label={t("Site gas composition")}>
+          // shown, not folded away: left blank, the table's basis gas applies (Table 6-39: 86.8 % CH4), which
+          // put HBNS's 68.4 % CH4 gas 27 % high (GB RY2022 GB-037)
+          <div className="[display:grid] [gap:6px]">
+            <span className="[font-size:var(--text-sm)] [font-weight:600]">{t("Site gas composition")}</span>
+            <span className="[font-size:var(--text-xs)] [color:var(--text-secondary)]">
+              {row?.basis
+                ? t("Blank uses the table's basis gas ({{pct}} % CH₄). Enter your gas to scale the factor.", { pct: (Number(row.basis) * 100).toFixed(1) })
+                : t("Blank uses the table's basis gas. Enter your gas to scale the factor.")}
+            </span>
             <Composition data={data} onChange={onChange} required={false} />
-          </MoreOptions>
+          </div>
         ))}
     </div>
   );
@@ -437,7 +445,7 @@ export const CombustionMethodForm: React.FC<CombustionMethodFormProps> = ({ data
                 label={t("Gas volume burned")}
                 field="fuel_volume"
                 unitField="fuel_volume_unit"
-                units={["m3", "scf", "Mcf", "MMscf", "Nm3", "Sm3"]}
+                units={["m3", "scf", "Mcf", "MMscf", "Nm3", "sm3_15c"]}
                 data={data}
                 onChange={(f, v) => {
                   onChange(f, v);

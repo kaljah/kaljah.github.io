@@ -43,7 +43,7 @@ export interface FactorsTabProps {
   handleDeleteFactor: (id: string | number) => void;
   handleEditFactor: (factor: CustomFactorRecord) => void;
   handleFactorChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
-  handleSaveFactor: () => void;
+  handleSaveFactor: () => Promise<boolean> | boolean | void;
   isSubmitting?: boolean;
   setCurrentPage: (page: number) => void;
   setEditingFactorId: (id: string | number | null) => void;
@@ -115,10 +115,12 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
     setIsAddDrawerOpen(true);
   };
 
-  const onSave = (e?: React.FormEvent) => {
+  // the panel closes only when the factor was saved: a refused factor (e.g. no source) closed it and every typed
+  // value was lost (GB RY2022 GB-047)
+  const onSave = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    handleSaveFactor();
-    setIsAddDrawerOpen(false);
+    const ok = await handleSaveFactor();
+    if (ok !== false) setIsAddDrawerOpen(false);
   };
 
   const rows = filteredFactors.slice(
@@ -229,26 +231,29 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
                       <Edit2 className="size-3" />
                       {t("Edit")}
                     </Button>
-                    {user?.role && ["admin", "superuser"].includes(user.role) && f.status !== "approved" && handleApproveFactor && (
+                    {user?.role && ["admin", "superuser"].includes(user.role) && String(f.status || "").toLowerCase() !== "approved" && handleApproveFactor && (
                       <Button
                         variant="secondary"
                         size="sm"
                         onClick={() => handleApproveFactor(f.id)}
                         className="gap-1 h-7 px-2 text-xs bg-green-50 text-green-700 hover:bg-green-100"
                         title={t("Approve Factor")}
+                        aria-label={t("Approve Factor")}
                       >
-                        <Check className="size-3" />
+                        <Check className="size-3" aria-hidden="true" />
+                        {t("Approve")}
                       </Button>
                     )}
-                    {f.status !== "archived" && (
+                    {String(f.status || "").toLowerCase() !== "archived" && (
                       <Button
                         variant="secondary"
                         size="sm"
                         onClick={() => handleArchiveFactor(f.id)}
                         className="gap-1 h-7 px-2 text-xs"
                         title={t("Archive")}
+                        aria-label={t("Archive")}
                       >
-                        <Archive className="size-3" />
+                        <Archive className="size-3" aria-hidden="true" />
                       </Button>
                     )}
                     <Button
@@ -257,8 +262,9 @@ const FactorsTab: React.FC<FactorsTabProps> = ({
                       onClick={() => handleDeleteFactor(f.id)}
                       className="gap-1 h-7 px-2 text-xs"
                       title={t("Delete")}
+                      aria-label={t("Delete")}
                     >
-                      <Trash2 className="size-3" />
+                      <Trash2 className="size-3" aria-hidden="true" />
                     </Button>
                   </div>
                 </td>

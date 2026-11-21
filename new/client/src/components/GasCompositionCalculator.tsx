@@ -22,9 +22,13 @@ const COMPONENT_DATA: Record<string, ComponentInfo> = {
   nC4H10: { mw: 58.12, c: 4, hhv: 49.5, lhv: 45.75, name: t("n-Butane (nC4)") },
   iC5H12: { mw: 72.15, c: 5, hhv: 48.95, lhv: 45.3, name: t("Isopentane (iC5)") },
   nC5H12: { mw: 72.15, c: 5, hhv: 49.0, lhv: 45.4, name: t("n-Pentane (nC5)") },
-  C6H14: { mw: 86.18, c: 6, hhv: 48.71, lhv: 45.10, name: t("Hexanes+ (C6+)") },  // GPA 2145 (F-CLIENT-09)
+  C6H14: { mw: 86.18, c: 6, hhv: 48.71, lhv: 45.10, name: t("Hexanes (C6)") },  // GPA 2145 (F-CLIENT-09)
+  // C7 to C10+ (n-alkanes, GPA 2145 gross / net MJ/kg): an analysis to C8 had to be lumped into C6 (GB-051)
+  C7H16: { mw: 100.2, c: 7, hhv: 48.07, lhv: 44.57, name: t("Heptanes (C7)") },
+  C8H18: { mw: 114.23, c: 8, hhv: 47.89, lhv: 44.43, name: t("Octanes (C8)") },
+  C9H20: { mw: 128.26, c: 9, hhv: 47.74, lhv: 44.31, name: t("Nonanes (C9)") },
+  C10H22: { mw: 142.28, c: 10, hhv: 47.64, lhv: 44.24, name: t("Decanes+ (C10+)") },
   CO2: { mw: 44.01, c: 1, hhv: 0, lhv: 0, name: t("Carbon Dioxide (CO2)") },
-  N2O: { mw: 44.013, c: 0, hhv: 0, lhv: 0, name: t("Nitrous Oxide (N2O)") },
   N2: { mw: 28.01, c: 0, hhv: 0, lhv: 0, name: t("Nitrogen (N2)") },
   H2S: { mw: 34.08, c: 0, hhv: 0, lhv: 0, name: t("Hydrogen Sulfide (H2S)") },
 };
@@ -74,8 +78,11 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
     iC5H12: "",
     nC5H12: "",
     C6H14: "",
+    C7H16: "",
+    C8H18: "",
+    C9H20: "",
+    C10H22: "",
     CO2: "",
-    N2O: "",
     N2: "",
     H2S: "",
   });
@@ -95,6 +102,9 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
   const [params, setParams] = useState({
     molarVolume: 23.685,
     oxidationFactor: initialProcessType === "flaring" ? 0.965 : 1.0,
+    // flare CH4 destruction is its own default: 98 % (Compendium 2021 Dec 2025 corrections, production flares); the
+    // 96.5 % carbon-to-CO2 default was applied to CH4 too (3.5 % slip, GB RY2022 GB-035)
+    destructionEff: 0.98,
     specificCO: "",
   });
   const [results, setResults] = useState<ResultsData | null>(null);
@@ -110,6 +120,7 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
     setParams((prev) => ({
       ...prev,
       oxidationFactor: mode === "flaring" ? 0.965 : 1.0, // API Compendium 2021, Dec 2025 corrections
+      destructionEff: 0.98,
     }));
   };
 
@@ -201,9 +212,9 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
       efN2OMass = (mixtureHHV / 1055.05585262) * 0.0001;
     } else if (activeProcessType === "flaring") {
       // API Compendium 2021 Section 5.1: Flaring
-      const combustionEff = params.oxidationFactor || 0.965;
-      // an entered efficiency is the flare's for CH4 too, as the server (it changed CO2 only: F-CLIENT-06)
-      const destructionEff = params.oxidationFactor ? params.oxidationFactor : 0.98;
+      const combustionEff = Number(params.oxidationFactor) || 0.965;
+      // carbon to CO2 and CH4 destroyed are separate (Compendium s5.1.1.3 as corrected December 2025)
+      const destructionEff = Number(params.destructionEff) || 0.98;
 
       // CO2 from combustion of hydrocarbons ONLY
       // We use hcCarbonMassFraction here to avoid double counting the CO2 component
@@ -300,7 +311,12 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
         nc4_mol_pct: parseFloat(composition.nC4H10) || 0,
         ic5_mol_pct: parseFloat(composition.iC5H12) || 0,
         nc5_mol_pct: parseFloat(composition.nC5H12) || 0,
-        c6_plus_mol_pct: parseFloat(composition.C6H14) || 0,
+        c6_plus_mol_pct: ["C6H14", "C7H16", "C8H18", "C9H20", "C10H22"].reduce((a, k) => a + (parseFloat(composition[k]) || 0), 0),
+        c6_mol_pct: parseFloat(composition.C6H14) || 0,
+        c7_mol_pct: parseFloat(composition.C7H16) || 0,
+        c8_mol_pct: parseFloat(composition.C8H18) || 0,
+        c9_mol_pct: parseFloat(composition.C9H20) || 0,
+        c10_mol_pct: parseFloat(composition.C10H22) || 0,
         co2_mol_pct: parseFloat(composition.CO2) || 0,
         n2_mol_pct: parseFloat(composition.N2) || 0,
         h2s_mol_pct: parseFloat(composition.H2S) || 0,  // the analysis is in mol % (it was sent as ppm: F-CLIENT-05)
@@ -336,7 +352,11 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
           nc4_mol_pct: parseFloat(composition.nC4H10) || 0,
           ic5_mol_pct: parseFloat(composition.iC5H12) || 0,
           nc5_mol_pct: parseFloat(composition.nC5H12) || 0,
-          c6_plus_mol_pct: parseFloat(composition.C6H14) || 0,
+          c6_plus_mol_pct: ["C6H14", "C7H16", "C8H18", "C9H20", "C10H22"].reduce((a, k) => a + (parseFloat(composition[k]) || 0), 0),
+          c7_mol_pct: parseFloat(composition.C7H16) || 0,
+          c8_mol_pct: parseFloat(composition.C8H18) || 0,
+          c9_mol_pct: parseFloat(composition.C9H20) || 0,
+          c10_mol_pct: parseFloat(composition.C10H22) || 0,
           mw: results.mw,
           density: results.density,
           hhv: results.hhv,
@@ -432,7 +452,9 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-semibold text-text-secondary">{t("Oxidation Factor")}</label>
+                  <label className="text-xs font-semibold text-text-secondary">
+                    {activeProcessType === "flaring" ? t("Combustion efficiency (carbon to CO₂, fraction)") : t("Oxidation Factor")}
+                  </label>
                   <input
                     type="number"
                     name="oxidationFactor"
@@ -444,6 +466,22 @@ const GasCompositionCalculator: React.FC<GasCompositionCalculatorProps> = ({
                     className="w-full h-10 px-3 text-base font-mono rounded-md border border-border bg-surface text-text focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
                   />
                 </div>
+                {activeProcessType === "flaring" && (
+                  <div className="flex flex-col gap-1.5">
+                    <label htmlFor="gcc-destruction" className="text-xs font-semibold text-text-secondary">{t("CH₄ destruction efficiency (fraction)")}</label>
+                    <input
+                      id="gcc-destruction"
+                      type="number"
+                      name="destructionEff"
+                      value={params.destructionEff}
+                      onChange={handleParamChange}
+                      step="0.001"
+                      min="0"
+                      max="1"
+                      className="w-full h-10 px-3 text-base font-mono rounded-md border border-border bg-surface text-text focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+                    />
+                  </div>
+                )}
               </div>
             </div>
 

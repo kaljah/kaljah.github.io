@@ -334,12 +334,13 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
                 />
               </Field>
 
-              <Field label={t("Month (Optional)")}>
+              <Field label={t("Month")} hint={t("A year is the sum of its months: annual-only data goes into one month.")}>
                 <NativeSelect
                   value={prodForm.month || ""}
                   onChange={(e) => setProdForm({ ...prodForm, month: e.target.value })}
+                  required
                 >
-                  <option value="">{t("Annual / Whole Year")}</option>
+                  <option value="">{t("Select month")}</option>
                   {Array.from({ length: 12 }, (_, i) => (
                     <option key={i + 1} value={i + 1}>
                       {t("Month {{m}}", { m: i + 1 })}
@@ -509,18 +510,28 @@ const ProductionTab: React.FC<ProductionTabProps> = ({
                     placeholder="0.0"
                   />
                 </Field>
-                <Field label={t("Gas (MMBOE)")}>
+                <Field label={t("NGL (MMBOE)")}>
                   <Input
                     type="number"
                     step="any"
-                    value={prodForm.gas_mmboe || ""}
-                    onChange={(e) => setProdForm({ ...prodForm, gas_mmboe: e.target.value })}
+                    value={prodForm.ngl_mmboe || ""}
+                    onChange={(e) => setProdForm({ ...prodForm, ngl_mmboe: e.target.value })}
                     placeholder="0.0"
                   />
                 </Field>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                <Field label={t("Total production excl. reinjected gas (MMBOE)")}
+                  hint={t("Operated-basis intensity denominator (API GHG Reporting Guidance 2.0): wellhead oil, condensate, NGL and gas incl. flared and fuel gas, excl. gas reinjected.")}>
+                  <Input
+                    type="number"
+                    step="any"
+                    value={prodForm.total_production_no_injected_mmboe || ""}
+                    onChange={(e) => setProdForm({ ...prodForm, total_production_no_injected_mmboe: e.target.value })}
+                    placeholder="0.0"
+                  />
+                </Field>
                 <Field label={t("Total Production (MMBOE)")}>
                   <Input
                     type="number"

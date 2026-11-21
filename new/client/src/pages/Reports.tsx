@@ -623,7 +623,12 @@ const Reports: React.FC = () => {
   const [masterRegion, setMasterRegion] = useState<string>("");
   const [masterStartYear, setMasterStartYear] = useState<string>("2023");
   const [masterEndYear, setMasterEndYear] = useState<string>("2025");
-  const [masterGwp, setMasterGwp] = useState<string>("AR5");
+  const [masterGwp, setMasterGwp] = useState<string>(activeGwpStandard || "AR5");
+  const masterGwpTouched = useRef(false);
+  // the wizard opens on the organisation's active standard, as the inventory report does (GB RY2022 GB-043)
+  useEffect(() => {
+    if (activeGwpStandard && !masterGwpTouched.current) setMasterGwp(activeGwpStandard);
+  }, [activeGwpStandard]);
   const [masterLanguage, setMasterLanguage] = useState<"en" | "fr">("en");
   const [masterLoading, setMasterLoading] = useState<boolean>(false);
   const [masterExcelLoading, setMasterExcelLoading] = useState<boolean>(false);
@@ -1088,7 +1093,7 @@ const Reports: React.FC = () => {
           {selectBase(
             tr("GWP Metric Standard"),
             masterGwp,
-            (e) => setMasterGwp(e.target.value),
+            (e) => { masterGwpTouched.current = true; setMasterGwp(e.target.value); },
             gwpOptions("", false),
             { selectId: "master-gwp-select" }
           )}

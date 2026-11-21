@@ -28,6 +28,11 @@ export interface UseGwpStandardResult {
   loaded: boolean;
 }
 
+/** Forget the cached standard (called after the organisation's GWP setting changes, GB RY2022 GB-043). */
+export function resetGwpStandardCache(): void {
+  cachedStandard = null;
+}
+
 export function useGwpStandard(): UseGwpStandardResult {
   const [standard, setStandard] = useState<"AR4" | "AR5" | "AR6" | null>(cachedStandard);
 

@@ -2,6 +2,7 @@ import SettingsIPCCGlobalWarming from "./settings/SettingsIPCCGlobalWarming";
 import SettingsOGMP20Framework from "./settings/SettingsOGMP20Framework";
 import SettingsFacilityLevelOGMPOverrides, { type FacilityItem, type FacilityEdit } from "./settings/SettingsFacilityLevelOGMPOverrides";
 import { Badge, Banner, Button, Card, Tabs, TabsContent, TabsList, TabsTrigger } from "../ui";
+import { resetGwpStandardCache } from "../hooks/useGwpStandard";
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { AlertTriangle, Building2, Globe, Save, SlidersHorizontal, Target } from "lucide-react";
 import api from "../api";
@@ -87,6 +88,9 @@ const Settings: React.FC = () => {
     autoFlagDiscrepancy: true,
   });
   const initialFacilityMapRef = useRef<Record<string | number, FacilityEdit>>({});
+  // bumped when the saved baseline changes: the dirty flags read a ref, which alone does not re-render, so a confirmed
+  // GWP change still showed "Unsaved System Settings" and a leave-page warning (GB RY2022 GB-042)
+  const [baselineVersion, setBaselineVersion] = useState(0);
 
   useEffect(() => {
     loadSettings();
@@ -170,7 +174,8 @@ const Settings: React.FC = () => {
       unitSystem !== init.unitSystem ||
       autoFlagDiscrepancy !== init.autoFlagDiscrepancy
     );
-  }, [gwpStandard, defaultBaseYear, globalThreshold, upstreamTarget, midstreamTarget, unitSystem, autoFlagDiscrepancy]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gwpStandard, defaultBaseYear, globalThreshold, upstreamTarget, midstreamTarget, unitSystem, autoFlagDiscrepancy, baselineVersion]);
 
   const dirtyFacilityIds = useMemo(() => {
     const dirty = new Set<string | number>();
@@ -235,6 +240,8 @@ const Settings: React.FC = () => {
         unitSystem,
         autoFlagDiscrepancy,
       };
+      setBaselineVersion((v) => v + 1);
+      resetGwpStandardCache();
       toast.success(t("System settings saved successfully!"));
     } catch (err: any) {
       console.error("Save failed:", err);

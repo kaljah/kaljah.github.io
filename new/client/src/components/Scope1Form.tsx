@@ -1,3 +1,4 @@
+import { useGwpStandard } from "../hooks/useGwpStandard";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { toCsv } from "../utils/chartExport";
 import { Input, Field, Badge } from "../ui";
@@ -10,6 +11,7 @@ import { useAuth } from "../context/AuthContext";
 import { getUserOperationalDefaults } from "../utils/userDefaults";
 import { PROCESS_TYPES, hideApiCitation, factorTypeLabel, processLabel } from "./scope1-form/shared";
 import Scope1ProcessSection from "./scope1-form/Scope1ProcessSection";
+import OtherSourcesForm, { OTHER_SOURCE_PROCESSES } from "./scope1/OtherSourcesForm";
 import Scope1OptionsSection from "./scope1-form/Scope1OptionsSection";
 import Scope1History, { Scope1HistoryEntry } from "./scope1-form/Scope1History";
 import "./ScopeTables.css";
@@ -80,7 +82,10 @@ interface EmissionSourceItem {
 
 export const Scope1Form: React.FC = () => {
   const { user } = useAuth();
-  const orgGwpStandard = (user as any)?.gwp_standard || "AR5";
+  // the organisation's active standard from the settings (the user object has no gwp_standard, so AR5 was always
+  // shown; GB RY2022 GB-043)
+  const { standard: activeGwp } = useGwpStandard();
+  const orgGwpStandard = activeGwp || (user as any)?.gwp_standard || "AR5";
   const toast = useToast();
   // BUG-082: the inspector label reflects the org's active GWP standard
   const [loading, setLoading] = useState<boolean>(false);
@@ -414,6 +419,7 @@ export const Scope1Form: React.FC = () => {
     ![
       "tank", "tank_flashing", "tank_working", "tank_breathing", "agr", "dehydrator", "pneumatic", "mobile",
       "fugitive", "venting", "drilling", "completions", "unloading", "blowdown", "associated_gas_venting",
+      ...OTHER_SOURCE_PROCESSES,
     ].includes(processType);
 
   useEffect(() => {
@@ -770,7 +776,7 @@ export const Scope1Form: React.FC = () => {
     if (sourceType !== "library" && !sectionActive &&
       (sourceType === "default" || sourceType === "custom") &&
       // fugitives: Tier 1 / 2B use Compendium tables (7-8, 7-12); Tier 2A sets its catalog key itself
-      !["associated_gas_venting", "completions", "unloading", "fugitive"].includes(processType) &&
+      !["associated_gas_venting", "completions", "unloading", "fugitive", ...OTHER_SOURCE_PROCESSES].includes(processType) &&
       !formData.fuel
     ) {
       toast.warning(tr("Please select a fuel or emission factor"));
@@ -830,6 +836,20 @@ export const Scope1Form: React.FC = () => {
             tr("Combustion efficiency (%) is required for stationary combustion"),
           );
           return;
+        }
+        // Tier 3 flaring is a carbon balance on the whole flared gas: with a CH4 content alone the CO2 was the methane
+        // carbon only (GB RY2022 GB-036: 54,693 t instead of 117,968 t). The form asks for the full analysis.
+        if (processType !== "combustion" && processType !== "stationary_combustion") {
+          const n = (k: string) => parseFloat(formData[k]) || 0;
+          const c1 = n("c1") || n("ch4_content");
+          const described = c1 + ["c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "co2_content", "n2", "h2s_mol"]
+            .reduce((s, k) => s + n(k), 0);
+          if (described < 99.5) {
+            toast.warning(
+              tr("Tier 3 flaring needs the full flare gas analysis: the components entered describe {{pct}} % of the gas. Use the gas analysis tool (C1 to C10, CO₂, N₂).", { pct: described.toFixed(1) }),
+            );
+            return;
+          }
         }
       } else if (processType === "unloading") {
         const tier = String(formData.tier || (sourceType === "specific" ? "tier3" : sourceType === "custom" ? "tier2" : "tier1")).toLowerCase();
@@ -1594,8 +1614,9 @@ export const Scope1Form: React.FC = () => {
         status: status,
       };
 
+      let saved: any = null;
       try {
-        await api.post("/emissions", finalPayload);
+        saved = (await api.post("/emissions", finalPayload))?.data;
       } catch (postErr: any) {
         const body = postErr?.response?.data;
         if (!(postErr?.response?.status === 409 && body?.requires_confirmation)) throw postErr;
@@ -1604,12 +1625,18 @@ export const Scope1Form: React.FC = () => {
           tr("A matching record already exists (#{{id}}: same region, month, process, fuel, equipment and source reference). Save this one anyway?", { id: body.duplicate_of }),
         );
         if (!ok) return;
-        await api.post("/emissions", { ...finalPayload, allow_duplicate: true });
+        saved = (await api.post("/emissions", { ...finalPayload, allow_duplicate: true }))?.data;
       }
+      // the confirmation names the facility and period it was booked to, and says when it is already Verified
+      // (GB RY2022 GB-058 / GB-052)
+      const rec = saved?.record || {};
+      const where = rec.facility_name ? `${rec.facility_name} · ${String(rec.month ?? "").padStart(2, "0")}/${rec.year ?? ""}` : "";
       toast.success(
         status === "Draft"
           ? tr("Entry saved as draft")
-          : tr("Submitted for review. It will count in totals after approval."),
+          : rec.status === "Verified"
+            ? tr("Saved as Verified for {{where}}.", { where })
+            : tr("Submitted for review for {{where}}. It will count in totals after approval.", { where }),
       );
 
       // Reset Form (keep identity)
@@ -1797,6 +1824,11 @@ export const Scope1Form: React.FC = () => {
         return <AsphaltBlowingForm {...props} />;
       case "associated_gas_venting":
         return <AssociatedGasVentingForm {...props} />;
+      case "fire_suppression":
+      case "wastewater":
+      case "refrigerant":
+      case "electrical_equipment":
+        return <OtherSourcesForm {...props} data={{ ...props.data, process_type: processType }} />;
       default:
         return <div>{tr("Select a process type")}</div>;
     }
@@ -1906,6 +1938,7 @@ export const Scope1Form: React.FC = () => {
           "nitric_acid_production",
           "adipic_acid_production",
           "asphalt_blowing",
+          ...OTHER_SOURCE_PROCESSES,
         ].includes(process)
       ) {
         setSourceType("default");
@@ -1917,14 +1950,16 @@ export const Scope1Form: React.FC = () => {
   const currentProcessValue = `${streamType}|${processType}`;
 
   const handleGasApply = (res: any) => {
+    // CH4 / N2O factors the user already typed (equipment factors, e.g. a turbine's Table 4-11 values in kg/MMBtu)
+    // are kept: applying the analysis replaced them with the analysis tool's generic factors (GB RY2022 GB-051)
+    const typed = (v: any) => v !== undefined && v !== null && String(v).trim() !== "";
     setSpecFactors((prev) => ({
       ...prev,
       co2: res.co2,
       co2Unit: res.unit,
-      ch4: res.ch4, // Usually 0 or low for pure analysis
-      ch4Unit: res.unit,
+      ...(typed(prev.ch4) ? {} : { ch4: res.ch4, ch4Unit: res.unit }),
       // N2O too: it was dropped when the analysis was applied (audit 2026-11 F-GUI-05)
-      ...(res.n2o != null ? { n2o: res.n2o, n2oUnit: res.unit } : {}),
+      ...(res.n2o != null && !typed(prev.n2o) ? { n2o: res.n2o, n2oUnit: res.unit } : {}),
     }));
 
     // Auto-map composition to engineering forms if raw_composition is provided
@@ -1941,7 +1976,11 @@ export const Scope1Form: React.FC = () => {
       set("c4", pct("iC4H10", "nC4H10"));
       set("c5", pct("iC5H12", "nC5H12"));
       set("c6", pct("C6H14"));
-      set("n2", pct("N2", "N2O")); // N2O is an inert in this analysis; the server reads n2 / co2 / h2s
+      set("c7", pct("C7H16"));
+      set("c8", pct("C8H18"));
+      set("c9", pct("C9H20"));
+      set("c10", pct("C10H22"));
+      set("n2", pct("N2"));
       set("h2s_mol", pct("H2S"));  // H2S is part of the 100 % total (mol %), it used to be dropped
       set("ch4_content", pct("CH4"));
       set("co2_content", pct("CO2"));

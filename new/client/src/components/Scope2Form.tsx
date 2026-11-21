@@ -299,11 +299,14 @@ export const Scope2Form: React.FC = () => {
         };
       }
 
-      await api.post("/scope2", payload);
+      const saved = (await api.post("/scope2", payload))?.data;
+      const savedStatus = saved?.emission?.status ?? saved?.record?.status ?? saved?.status;
       toast.success(
         status === "Draft"
           ? t("Entry saved as draft")
-          : t("Submitted for review. It will count in totals after approval."),
+          : savedStatus === "Verified"
+            ? t("Saved as Verified.")
+            : t("Submitted for review. It will count in totals after approval."),
       );
       setAmount("");
       setCurrentPage(1);

@@ -40,7 +40,7 @@ export interface FacilitiesTabProps {
   facilities: FacilityRecord[];
   facilityForm: Record<string, any>;
   filteredFacilities: FacilityRecord[];
-  handleAddFacility: () => void;
+  handleAddFacility: () => Promise<boolean> | boolean | void;
   handleDeleteFacility: (id: string | number) => void;
   handleFacilityChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
   setCurrentPage: (page: number) => void;
@@ -162,10 +162,10 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
   );
   const rows = filteredFacilities.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
-  const onFormSubmit = (e?: React.FormEvent) => {
+  const onFormSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    handleAddFacility();
-    setIsAddDrawerOpen(false);
+    const ok = await handleAddFacility();
+    if (ok !== false) setIsAddDrawerOpen(false);
   };
 
   return (
@@ -276,6 +276,24 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
                     <Users className="size-3.5 me-1" />
                     {t("JV Partners")}
                   </Button>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    data-testid={`facility-edit-${f.id}`}
+                    onClick={() => {
+                      // GB RY2022 GB-041: a facility could only be deleted, never corrected
+                      setFacilityForm({
+                        id: f.id, name: (f as any).region || "", field: f.name || "", activity: f.activity || "",
+                        division: f.division || "", location: f.location || "", country: (f as any).country || "",
+                        boundary_type: (f as any).boundary_type || "", boundary_detail: (f as any).boundary_detail || "",
+                        equity_share_pct: (f as any).equity_share_pct ?? "", partner_id: "", agreement_reference: "",
+                        segment: f.segment || "", latitude: f.latitude ?? "", longitude: f.longitude ?? "",
+                      });
+                      setIsAddDrawerOpen(true);
+                    }}
+                  >
+                    {t("Edit")}
+                  </Button>
                   <Button variant="danger" size="sm" onClick={() => handleDeleteFacility(f.id)}>
                     {t("Delete")}
                   </Button>
@@ -290,7 +308,7 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
       <Sheet
         open={isAddDrawerOpen}
         onOpenChange={setIsAddDrawerOpen}
-        title={t("Add Operational Region")}
+        title={facilityForm.id ? t("Edit facility") : t("Add Operational Region")}
         description={t("Register a new production facility, block or concession boundary.")}
         icon={Plus}
         width="36rem"
@@ -316,7 +334,7 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
               {t("Essential Information")}
             </h4>
 
-            <Field label={`${t("Region Name")} *`}>
+            <Field label={`${t("Region (basin / area)")} *`}>
               <Input
                 type="text"
                 name="name"
@@ -327,7 +345,7 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
               />
             </Field>
 
-            <Field label={`${t("Field / Block")} *`}>
+            <Field label={`${t("Facility (field / block)")} *`} hint={t("Stored as the facility name used in forms, imports and reports.")}>
               <Input
                 type="text"
                 name="field"
@@ -375,6 +393,16 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
                 value={facilityForm.location || ""}
                 onChange={handleFacilityChange}
                 placeholder={t("e.g. Laghouat")}
+              />
+            </Field>
+
+            <Field label={t("Country")} hint={t("Used for the national grid factor of Scope 2 when no regional grid is chosen.")}>
+              <Input
+                type="text"
+                name="country"
+                value={facilityForm.country || ""}
+                onChange={handleFacilityChange}
+                placeholder={t("e.g. Algeria")}
               />
             </Field>
           </div>
@@ -554,8 +582,9 @@ const FacilitiesTab: React.FC<FacilitiesTabProps> = ({
                         <td className="py-2 text-xs">{s.effective_start_date}</td>
                         {canEdit && (
                           <td className="py-2 text-end">
-                            <Button variant="danger" size="sm" onClick={() => handleDeleteShare(s.id)}>
-                              <Trash2 className="size-3.5" />
+                            <Button variant="danger" size="sm" onClick={() => handleDeleteShare(s.id)}
+                              aria-label={t("Remove {{partner}}'s share", { partner: s.partner_name })} title={t("Remove share")}>
+                              <Trash2 className="size-3.5" aria-hidden="true" />
                             </Button>
                           </td>
                         )}

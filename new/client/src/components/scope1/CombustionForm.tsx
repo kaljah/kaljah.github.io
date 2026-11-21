@@ -12,6 +12,10 @@ const ALL_UNITS = [
   { value: "scf", label: t("scf") },
   { value: "Mcf", label: t("Mcf") },
   { value: "MMscf", label: t("MMscf") },
+  // normal and 15 C standard cubic metres, converted by the server (GB RY2022 GB-038: Nm3 data had to be converted
+  // by hand to the 60 F m3 the form offered)
+  { value: "Nm3", label: t("Nm³ (0 °C)") },
+  { value: "sm3_15c", label: t("Sm³ (15 °C)") },
   { value: "gal", label: t("gal") },
   { value: "bbl", label: t("bbl") },
   { value: "L", label: "L" },
@@ -21,7 +25,7 @@ const ALL_UNITS = [
   { value: "events", label: t("events") },
 ];
 const UNIT_FAMILIES: Record<string, string[]> = {
-  gas: ["m3", "scf", "Mcf", "MMscf"],
+  gas: ["m3", "scf", "Mcf", "MMscf", "Nm3", "sm3_15c"],
   liquid: ["m3", "gal", "bbl", "L"],
   solid: ["kg", "short_ton", "tonne"],
   event: ["events"],
