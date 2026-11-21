@@ -4645,5 +4645,9 @@
   "99.2 lb CH₄ per 10⁶ scf processed, or 22,984 kg CH₄ per plant-year": "99,2 lb de CH₄ par 10⁶ scf traités, ou 22 984 kg de CH₄ par usine et par an",
   "MMscf processed": "MMscf traités",
   "m³ processed": "m³ traités",
-  "plants (per plant-year, scaled to the month)": "usines (par usine-année, rapporté au mois)"
+  "plants (per plant-year, scaled to the month)": "usines (par usine-année, rapporté au mois)",
+  "Level reached by ≥ 90 % of the facility's CH₄": "Niveau atteint par ≥ 90 % du CH₄ de l'installation",
+  "Per BOE:": "Par BEP :",
+  "The highest OGMP 2.0 reporting level reached by sources carrying at least 90 % of the facility's CH₄ (its CO₂e when it has no CH₄). A site survey that reconciles with the inventory raises it to Level 5; an unreconciled discrepancy keeps it at 4 at most.": "Le niveau de déclaration OGMP 2.0 le plus élevé atteint par des sources représentant au moins 90 % du CH₄ de l'installation (son CO₂e sans CH₄). Une campagne de mesure sur site concordant avec l'inventaire le porte au niveau 5 ; un écart non réconcilié le limite au niveau 4.",
+  "of gas produced (net of reinjected gas)": "du gaz produit (hors gaz réinjecté)"
 }

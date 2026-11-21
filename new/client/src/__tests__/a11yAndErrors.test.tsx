@@ -34,6 +34,16 @@ describe("BUG-107 keyboard and labels", () => {
     expect(onChange).toHaveBeenCalledWith("b");
   });
 
+  it("CustomDropdown jumps to an option by typing its first letters (GB RY2022 GB-049)", () => {
+    const onChange = vi.fn();
+    render(<Harness onChange={onChange} />);
+    const trigger = screen.getByRole("button", { name: /region/i });
+    fireEvent.keyDown(trigger, { key: "g" });
+    expect(trigger.getAttribute("aria-expanded")).toBe("true");
+    fireEvent.keyDown(trigger, { key: "Enter" });
+    expect(onChange).toHaveBeenCalledWith("c");
+  });
+
   it("links bare labels to the control in their group", () => {
     const { container } = render(
       <div>

@@ -155,7 +155,32 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
     setActiveIndex(selectableIndexes[next]);
   };
 
+  // Typeahead (WAI-ARIA listbox pattern): letters typed within 600 ms jump to the next option whose label starts
+  // with them; long catalogs could only be scrolled (GB RY2022 GB-049)
+  const typeahead = useRef<{ text: string; at: number }>({ text: "", at: 0 });
+  const jumpTo = (ch: string) => {
+    const now = Date.now();
+    const prev = typeahead.current;
+    const text = (now - prev.at < 600 ? prev.text : "") + ch.toLowerCase();
+    typeahead.current = { text, at: now };
+    const label = (i: number) => String(options[i]?.label ?? options[i]?.value ?? "").trim().toLowerCase();
+    const start = Math.max(0, selectableIndexes.indexOf(activeIndex));
+    const order = [...selectableIndexes.slice(start + (text.length === 1 ? 1 : 0)), ...selectableIndexes.slice(0, start + 1)];
+    const hit = order.find((i) => label(i).startsWith(text));
+    if (hit === undefined) return;
+    if (!isOpen) {
+      updatePosition();
+      setIsOpen(true);
+    }
+    setActiveIndex(hit);
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key.length === 1 && e.key !== " " && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      e.preventDefault();
+      jumpTo(e.key);
+      return;
+    }
     switch (e.key) {
       case "ArrowDown":
         e.preventDefault();

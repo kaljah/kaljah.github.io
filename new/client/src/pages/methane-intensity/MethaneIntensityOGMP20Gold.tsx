@@ -233,6 +233,10 @@ const MethaneIntensityOGMP20Gold: React.FC<MethaneIntensityOGMP20GoldProps> = ({
                   <span className="text-sm font-bold text-text tabular-nums">
                     {t("OGMP Level")} {highestLevel}
                   </span>
+                  {/* how the level is set (GB RY2022 GB-061: two sites with the same kinds of methods showed 3 and 4) */}
+                  <span className="text-[11px] text-text-secondary" title={t("The highest OGMP 2.0 reporting level reached by sources carrying at least 90 % of the facility's CH₄ (its CO₂e when it has no CH₄). A site survey that reconciles with the inventory raises it to Level 5; an unreconciled discrepancy keeps it at 4 at most.")}>
+                    {t("Level reached by ≥ 90 % of the facility's CH₄")}
+                  </span>
                 </div>
                 <div className="flex flex-col gap-0.5">
                   <span className="text-[11px] text-text-secondary font-medium">

@@ -260,8 +260,10 @@ const MethaneIntensityMethaneIntensity: React.FC<MethaneIntensityMethaneIntensit
           <span className="total-value flare">
             {(stats.avgFlaringRatePct ?? 0).toFixed(3)}%
           </span>
-          <span className="kpi-unit">{t("of Gas Volume")}</span>
+          <span className="kpi-unit">{t("of gas produced (net of reinjected gas)")}</span>
         </div>
+        {/* the denominator is stated, and the per-BOE figure the inventory reports print (Table E-5) is shown next to
+            it (GB RY2022 GB-061) */}
         <div className="kpi-footer">
           <span>
             {t("Flared:")}{" "}
@@ -269,6 +271,12 @@ const MethaneIntensityMethaneIntensity: React.FC<MethaneIntensityMethaneIntensit
               {formatNumber(stats.totalFlaringVolume ?? 0, 0)} m³
             </strong>
           </span>
+          {(stats.totalBoe ?? 0) > 0 && (
+            <span>
+              {t("Per BOE:")}{" "}
+              <strong>{formatNumber((stats.totalFlaringVolume ?? 0) / (stats.totalBoe ?? 1), 3)} Sm³/BOE</strong>
+            </span>
+          )}
         </div>
       </div>
     </div>
