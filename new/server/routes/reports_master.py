@@ -475,6 +475,10 @@ def get_master_report_regions():
         nat_copy = dict(national_entry)
         if nat_copy.get("name") == "Demo Operator Group (Consolidated National)":
             nat_copy["name"] = nat_name
+        if "demo operator" in str(nat_copy.get("name") or "").lower():
+            # the list is built from the facilities: an unconfigured install offered the demo group's name as a
+            # basin (GB RY2022 GB-053)
+            nat_copy["name"] = "All facilities (consolidated)"
         nat_copy["facility_count"] = len(facilities)
         present_regions.insert(0, nat_copy)
 

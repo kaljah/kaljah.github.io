@@ -102,7 +102,8 @@ MOBILE_VEHICLES = {
 }
 
 LIQ_TO_GAL = {"gal": 1.0, "gallon": 1.0, "gallons": 1.0, "bbl": 42.0, "l": 1 / L_PER_GAL, "litre": 1 / L_PER_GAL,
-              "liter": 1 / L_PER_GAL, "m3": 1000 / L_PER_GAL, "kgal": 1000.0}
+              "liter": 1 / L_PER_GAL, "liters": 1 / L_PER_GAL, "litres": 1 / L_PER_GAL,  # GB RY2022 GB-008
+              "m3": 1000 / L_PER_GAL, "kgal": 1000.0}
 
 
 def vehicle_row(key):
@@ -135,9 +136,17 @@ def mobile_tier1_factors(res, process_type, factor_source, emission_factors, cat
     CH4 / N2O are stationary factors; an entered or custom factor, a gaseous fuel and a row that already carries its
     Table 4-16 mode (marine diesel) keep theirs."""
     ftype = str(emission_factors.get("type") or catalog.get("type") or "").lower()
-    if (process_type in ("mobile_combustion", "mobile") and str(factor_source).lower() in ("default", "tier1", "tier_1")
-            and ftype in ("liquids", "liquid")
+    src = str(factor_source).lower()
+    if process_type not in ("mobile_combustion", "mobile"):
+        return res
+    if (src in ("default", "tier1", "tier_1") and ftype in ("liquids", "liquid")
             and "table 4-16" not in str(emission_factors.get("source") or catalog.get("source") or "").lower()):
+        return apply_mobile_factors(res, flat_inputs, quantity, unit, gwp_dict)
+    # Compendium 4.6.1 (D11): CO2 from the fuel, CH4 / N2O from Table 4-16 by vehicle type at any tier. A site
+    # (Tier 2 / custom / library) factor kept its own CH4 / N2O even when the vehicle type was given (GB RY2022
+    # GB-020). Applied when the vehicle type is named and the fuel is a liquid volume.
+    if (src in ("custom", "tier2", "tier_2", "library") and first_given(flat_inputs, "vehicle_type") is not None
+            and str(unit or "").strip().lower().replace("³", "3") in LIQ_TO_GAL):
         return apply_mobile_factors(res, flat_inputs, quantity, unit, gwp_dict)
     return res
 

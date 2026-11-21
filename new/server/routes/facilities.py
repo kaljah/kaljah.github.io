@@ -19,6 +19,28 @@ from sqlalchemy.exc import IntegrityError
 from routes.auth import login_required
 
 
+
+
+def _set_country_and_gas(facility, data):
+    if "country" in data:
+        facility.country = data["country"]
+    for k, v in _gas_fields(data).items():
+        setattr(facility, k, v)
+
+
+def _gas_fields(data):
+    """The facility's own gas for NGSI (D7): CH4 content in mol % (0-100) and HHV in Btu/scf, only the keys sent."""
+    out = {}
+    if "gas_ch4_mol_pct" in data:
+        out["gas_ch4_mol_pct"] = parse_number(data.get("gas_ch4_mol_pct"), "gas_ch4_mol_pct", required=False,
+                                              min_value=0, max_value=100)
+        if out["gas_ch4_mol_pct"] == 0:
+            out["gas_ch4_mol_pct"] = None
+    if "gas_hhv_btu_scf" in data:
+        out["gas_hhv_btu_scf"] = parse_number(data.get("gas_hhv_btu_scf"), "gas_hhv_btu_scf", required=False,
+                                              min_value=100, max_value=5000)
+    return out
+
 @facilities_bp.route("", methods=["GET"])
 @facilities_bp.route("/", methods=["GET"])
 @login_required
@@ -66,6 +88,8 @@ def get_facilities():
                 "segment": f.segment,
                 "operator_status": f.operator_status or "operated",
                 "country": f.country or "",
+                "gas_ch4_mol_pct": f.gas_ch4_mol_pct,
+                "gas_hhv_btu_scf": f.gas_hhv_btu_scf,
                 "ogmp_membership_year": f.ogmp_membership_year or 2023,
                 "target_year": (f.ogmp_membership_year or 2023) + (3 if (f.operator_status or "operated") == "operated" else 5),
                 "target_gold_year": (f.ogmp_membership_year or 2023) + (3 if (f.operator_status or "operated") == "operated" else 5),
@@ -306,6 +330,7 @@ def add_facility():
         segment=normalize_segment(data.get("segment")),
         operator_status=op_status,
         country=(str(data.get("country")).strip() or None) if data.get("country") not in (None, "") else None,  # F-E2E-01
+        **_gas_fields(data),
         ogmp_membership_year=parse_year(data.get("ogmp_membership_year"), required=False) or 2023,
         reconciliation_threshold=parse_number(
             data.get("reconciliation_threshold"), "reconciliation_threshold", required=False, min_value=0, max_value=1000, default=20.0
@@ -446,8 +471,7 @@ def update_facility(facility_id):
         facility.segment = normalize_segment(data["segment"])
     if "operator_status" in data:
         facility.operator_status = data["operator_status"]
-    if "country" in data:
-        facility.country = data["country"]
+    _set_country_and_gas(facility, data)
     if "ogmp_membership_year" in data and data["ogmp_membership_year"] is not None:
         facility.ogmp_membership_year = parse_year(data["ogmp_membership_year"], required=False)
     if (

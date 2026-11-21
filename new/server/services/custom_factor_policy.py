@@ -3,8 +3,9 @@
 - a source/method reference is required;
 - a value outside ``PLAUSIBILITY_BOUNDS`` is refused unless a written justification is given, and the
   factor then waits for approval;
-- an admin's own factor is approved by a second administrator (``CUSTOM_FACTOR_SECOND_APPROVER``,
-  on by default).
+- a new factor is Pending until a superuser or administrator approves it; an administrator may approve their own
+  (GB RY2022 decision D10, 2026-11-21), a superuser may not. ``CUSTOM_FACTOR_SECOND_APPROVER=false`` (one-admin install)
+  approves an administrator's in-range factor at creation.
 """
 import os
 
@@ -125,3 +126,26 @@ def visible_factors(query, user):
     if allowed is None:
         return query
     return query.filter(db.or_(CustomFactor.facility_id.is_(None), CustomFactor.facility_id.in_(list(allowed) or [-1])))
+
+
+def import_governance(holder, row, vals, uploader):
+    """HR-06 for a custom factor row of a file import, as on the form and the JSON import (GB RY2022 GB-016: file
+    factors were stored Approved with no source check, no bounds and no approver). Returns (error, row,
+    initial_status, justification); an existing factor whose values change goes back to Pending unless an
+    administrator (one-admin mode) imports it."""
+    gov_data = {"source": row.get("source"), "justification": row.get("justification"), "unit": row.get("unit")}
+    gases = ("co2_factor", "ch4_factor", "n2o_factor")
+    if holder is None:
+        err, status, just = governance(uploader, gov_data, vals["co2_factor"], vals["ch4_factor"], vals["n2o_factor"])
+        return err, row, status, just
+    if any(float(getattr(holder, k) or 0) != float(vals[k] or 0) for k in gases):
+        err, just = check_update(holder, {**gov_data, **{k: vals[k] for k in gases}})
+        if err:
+            return err, row, None, None
+        if not (row.get("source") or holder.source):
+            return "A source or method reference is required for a custom factor", row, None, None
+        if holder.status == "Approved" and (uploader.role != "admin" or second_approver_required()):
+            holder.status, holder.approved_by, holder.approved_at = "Pending", None, None
+        if just:
+            row = dict(row, description=with_justification(row.get("description") or holder.description, just))
+    return None, row, None, None

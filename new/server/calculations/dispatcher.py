@@ -518,17 +518,17 @@ class CalculationDispatcher:
         fac_type = flat_inputs.get("facility_type")
         if fac_type in (None, ""):
             fuel = str(flat_inputs.get("fuel") or "").lower()
-            fac_type = "oil_production" if "oil production" in fuel else ("gas_production" if "gas production" in fuel else None)
+            fac_type = next((k for k in ("oil_production", "gas_production", "gas_processing") if k.replace("_", " ") in fuel), None)
         if fac_type in (None, ""):
-            raise ValueError("Missing required field: facility_type (oil_production or gas_production) for "
-                             "facility-level fugitives")
+            raise ValueError("Missing required field: facility_type (oil_production, gas_production or gas_processing) "
+                             "for facility-level fugitives")
         production = self._require_float(flat_inputs, ["production_volume", "amount", "quantity"], "production volume")
         unit = flat_inputs.get("production_unit") or flat_inputs.get("unit")
         ch4 = flat_inputs.get("ch4_content") if flat_inputs.get("ch4_content") not in (None, "", "-") else (
             None if flat_inputs.get("c1") in (None, "", "-") else float(flat_inputs["c1"]) / 100.0)  # c1 is mol %
         return OnshoreFacilityFugitiveCalculator().calculate(  # co2_content: a fraction (PERCENT_FIELDS; F-FUG-03)
             production=production, production_unit=unit, facility_type=str(fac_type), ch4_content=ch4,
-            uncertainties=uncertainties, gwp_dict=gwp_dict, co2_content=flat_inputs.get("co2_content"))
+            uncertainties=uncertainties, gwp_dict=gwp_dict, co2_content=flat_inputs.get("co2_content"), year_fraction=record_period(flat_inputs)[2])
 
     def _apply_capture(self, res, flat_inputs):
         """CCS: the captured share of the process CO2 is not emitted (CH4 and N2O are unchanged)."""

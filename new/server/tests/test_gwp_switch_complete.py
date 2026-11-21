@@ -108,11 +108,11 @@ def _s2get(app, rid):
 
 
 def test_scope2_branches(app, gworld):
-    from electricity_factors import grid_entry, grid_factor_kg_co2e_per_kwh
+    from electricity_factors import grid_entry_for_year, grid_factor_kg_co2e_per_kwh
     from routes.scope2 import _LEGACY_BOILER_EF_KG_PER_MMBTU as NG  # a record saved before the gas columns (HHV default)
 
     grid = "Algerian National Grid"
-    entry = grid_entry(grid)[1]
+    entry = grid_entry_for_year(grid, 2013)[1]  # the records' year picks the grid vintage (GB-021)
     loc = lambda std: 1e6 * grid_factor_kg_co2e_per_kwh(entry, gwp=AR[std]) / 1000.0
     fid = gworld["fid"]
     base = dict(source_type="electricity", electricity_kwh=1e6, grid_region=grid, co2e=loc("AR5"),

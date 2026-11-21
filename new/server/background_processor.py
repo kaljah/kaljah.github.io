@@ -618,47 +618,7 @@ def _preview_count(pv, row_dict, mapping):
     pv["processes"][proc] = pv["processes"].get(proc, 0) + 1
 
 
-def _preview_summary(pv, rows, skipped_in_sample, headers, mapping, fac_name_map, fac_id_map):
-    from services.scope1_calc import SCOPE2_PROCESS_TYPES, normalize_process_type
-
-    def scope2(name):
-        n = name.strip().lower()
-        return bool(n) and (n in SCOPE2_PROCESS_TYPES or normalize_process_type(n) in SCOPE2_PROCESS_TYPES)
-
-    checked = pv["checked"]
-    ok = max(0, checked - skipped_in_sample)
-    ratio = (ok / checked) if checked else 0.0
-    dates = sorted(pv["dates"])
-
-    def known_fac(name):
-        k = name.strip().lower()
-        return bool(k) and (k in fac_name_map or k in fac_id_map)
-
-    facilities = [{"name": n or "(blank)", "rows": c, "known": known_fac(n)}
-                  for n, c in sorted(pv["facilities"].items(), key=lambda x: -x[1])]
-    processes = [{"name": n or "(blank)", "rows": c, "scope2": scope2(n),
-                  "known": bool(n) and bool(normalize_process_type(n)) and not scope2(n)}
-                 for n, c in sorted(pv["processes"].items(), key=lambda x: -x[1])]
-    matched = [h for h in headers if h and h in set(mapping.values())]
-    return {
-        "rows": rows,
-        "checked": checked,
-        "checked_ok": ok,
-        "checked_skipped": skipped_in_sample,
-        "estimated_ok": int(round(rows * ratio)) if checked < rows else ok,
-        "estimated_skipped": rows - (int(round(rows * ratio)) if checked < rows else ok),
-        "is_estimate": checked < rows,
-        "period": {"from": dates[0] if dates else None, "to": dates[-1] if dates else None,
-                   "months": len(dates), "unreadable_rows": pv["bad_dates"]},
-        "facilities": facilities[:50],
-        "unknown_facility_rows": sum(f["rows"] for f in facilities if not f["known"]),
-        "processes": processes[:50],
-        "unknown_process_rows": sum(p["rows"] for p in processes if not p["known"] and not p["scope2"]),
-        "scope2_rows": sum(p["rows"] for p in processes if p["scope2"]),
-        "example_rows": pv.get("examples", 0),
-        "columns": {"total": len([h for h in headers if h]), "headers": [h for h in headers if h], "matched": matched,
-                    "by_name": [h for h in headers if h and h not in matched]},
-    }
+from services.import_preview import preview_summary as _preview_summary  # noqa: E402
 
 
 def _dedupe(batch_keys, key, overwrite, describe):
@@ -1367,7 +1327,7 @@ class _ImportRun:
         n_skip = self._skipped_count()
         _update_job(self.job_id, processed=self.processed, progress=100, status="completed", dry_run=True,
                     preview=_preview_summary(self.pv, self.processed, n_skip, self.headers, self.mapping,
-                                             self.fac_name_map, self.fac_id_map))
+                                             self.fac_name_map, self.fac_id_map, scope=self.scope))
 
     def commit(self):
         """One commit for the whole file, with one IMPORT summary entry (BUG-058). add_all (not
@@ -2455,6 +2415,10 @@ _MARKETED_GAS_COLUMNS = {
     "vented_gas_mmsm3": ["vented_gas_mmsm3", "vented_gas"],
     "fuel_gas_consumed_mmsm3": ["fuel_gas_consumed_mmsm3", "fuel_gas_consumed", "own_use_gas_mmsm3"],
     "ngl_shrinkage_mmsm3": ["ngl_shrinkage_mmsm3", "ngl_shrinkage", "shrinkage_mmsm3"],
+    # flared volume by flaring type (GB RY2022 GB-054); optional like the deductions
+    "routine_flared_mmsm3": ["routine_flared_mmsm3", "routine_flared", "routine_flaring_mmsm3"],
+    "non_routine_flared_mmsm3": ["non_routine_flared_mmsm3", "non_routine_flared", "non_routine_flaring_mmsm3"],
+    "safety_flared_mmsm3": ["safety_flared_mmsm3", "safety_flared", "safety_flaring_mmsm3"],
 }
 
 def _process_row_production(row, user_id, fac_name_map, fac_id_map, batch_prod_map=None, overwrite_duplicates=False):
@@ -2543,11 +2507,11 @@ def _process_row_production(row, user_id, fac_name_map, fac_id_map, batch_prod_m
             "gas_without_injected_mmsm3": gas_without_injected or 0.0,
         }
         calc_boe = calculate_oil_gas_boe(scratch_prod)
-        if calc_boe > 0:
+        if calc_boe > 0 and not (injected_gas or 0) > 0:  # a total incl. reinjected gas is kept (D5, GB-022)
             is_valid, pct_diff = validate_production_mmboe_consistency(total_production_mmboe, calc_boe)
             if not is_valid:
-                errors.append(
-                    f"total_production_mmboe ({total_production_mmboe} MMBOE) differs by {pct_diff:.1f}% "
+                errors.append(  # pct_diff is a fraction: it printed 1.3 % for 128.3 % (GB-022)
+                    f"total_production_mmboe ({total_production_mmboe} MMBOE) differs by {pct_diff * 100:.1f}% "
                     f"from calculated oil+gas BOE ({calc_boe / 1e6:.4f} MMBOE). Must be within 30% tolerance."
                 )
                 return None, errors
@@ -2797,6 +2761,12 @@ def _process_row_custom_factors(row, user_id, batch_names=None, overwrite_duplic
     except ValueError as err:
         return None, [str(err)]
 
+    from models import utc_now as _utc_now
+    from services.custom_factor_policy import import_governance  # HR-06 on file imports too (GB RY2022 GB-016)
+
+    gov_error, row, initial_status, justification = import_governance(holder, row, vals, uploader)
+    if gov_error:
+        return None, [gov_error]
     if holder is not None:
         holder.co2_factor = float(vals["co2_factor"] or 0)
         holder.ch4_factor = float(vals["ch4_factor"] or 0)
@@ -2840,7 +2810,12 @@ def _process_row_custom_factors(row, user_id, batch_names=None, overwrite_duplic
         n2o_uncertainty=float(row.get("n2o_uncertainty") or 0),
         created_by=user_id,
         tenant_id=caller_tenant,
+        status=initial_status,
+        approved_by=user_id if initial_status == "Approved" else None,
+        approved_at=_utc_now() if initial_status == "Approved" else None,
     )
+    from services.custom_factor_policy import with_justification
+    factor.description = with_justification(row.get("description"), justification) or None
     return factor, errors
 
 
@@ -2943,9 +2918,10 @@ def _process_row_facilities(row, user_id, overwrite_duplicates, batch=None):
                 setattr(existing, fld, normalize_segment(row[fld]) if fld == "segment" else row[fld])
 
         if equity is not None:
+            # the equity share no longer changes the operator status of an existing facility: an operated JV with a
+            # minority share was turned non-operated without a word and dropped from operational-control totals
+            # (GB RY2022 GB-027); the status changes only through the operator_status column
             existing.equity_share_pct = equity
-            if not operator and equity < 50.0 and (existing.operator_status is None or existing.operator_status == "operated"):
-                existing.operator_status = "non_operated"
         if operator:
             existing.operator_status = operator
         if coords["latitude"] is not None:

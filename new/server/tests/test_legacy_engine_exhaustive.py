@@ -30,7 +30,7 @@ from calculations.legacy_engine import (
 def no_dispatch(monkeypatch):
     calls = []
 
-    def record(process, inputs, factor_data, uncertainties, gwp_dict=None):
+    def record(process, inputs, factor_data, uncertainties, gwp_dict=None, gwp_standard=None):
         calls.append((process, inputs))
         return None
 

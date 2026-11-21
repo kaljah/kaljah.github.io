@@ -214,7 +214,9 @@ _EXPLICIT = {"well_testing": "vented", "workovers": "vented", "workover": "vente
              # wastewater (s7.5) is a non-combustion process source (audit 2026-11 F-GAPI-01: all were "other")
              "transmission_non_routine": "vented", "gathering_non_routine": "vented",
              "processing_non_routine": "vented", "distribution_non_routine": "vented",
-             "transmission_compressor": "vented", "gathering_compressor": "vented", "wastewater": "process"}
+             "transmission_compressor": "vented", "gathering_compressor": "vented", "wastewater": "process",
+             # fire suppressant releases (Compendium s5 / 7.6) are not equipment leaks (GB RY2022 GB-055)
+             "fire_suppression": "other"}
 
 
 def source_category(process_type):

@@ -137,6 +137,11 @@ TABLE_7_8 = {
                        "name": "Facility - Onshore Oil Production (Table 7-8)"},
     "gas_production": {"mmscf": 2.601e-02, "mm_m3": 9.184e-01, "basis": 0.788,
                        "name": "Facility - Onshore Gas Production (Table 7-8)"},
+    # Table 7-34 natural gas processing plants, screening (facility-level) method: 99.2 lb CH4 / 10^6 scf processed
+    # (4.507e-2 t/MMscf) or 22,984.25 kg CH4 per plant-year, at 86.8 mol % CH4 (D12, GB RY2022 GB-006 / GB-060)
+    "gas_processing": {"mmscf": 4.507e-02, "mm_m3": 4.507e-02 / 0.028316846592, "plant_year": 22.98425,
+                       "basis": 0.868, "name": "Facility - Natural Gas Processing Plant (Table 7-34)",
+                       "table": "Table 7-34", "u_ef": None},
 }
 FACILITY_TYPE_KEYS = {k: v["name"] for k, v in TABLE_7_8.items()}
 
@@ -155,6 +160,9 @@ class OnshoreFacilityFugitiveCalculator(BaseCalculator):
         from .units import norm_unit
 
         u = norm_unit(unit or "")
+        if ftype == "gas_processing" and str(unit or "").strip().lower() in (
+                "plant", "plants", "plant-year", "plant_year", "plant-years", "facility", "facilities"):
+            return float(production), "plant_year"
         if ftype == "oil_production":
             if u in ("bbl", "bbls", "barrel", "barrels"):
                 return float(production), "bbl"
@@ -168,7 +176,8 @@ class OnshoreFacilityFugitiveCalculator(BaseCalculator):
             return float(production) * 1e-6, "mm_m3"
         if u in ("mm3", "mmm3", "10^6m3", "e6m3"):
             return float(production), "mm_m3"
-        raise ValueError(f"Gas production must be in scf / Mcf / MMscf or m3 (got '{unit}')")
+        raise ValueError(f"Gas production must be in scf / Mcf / MMscf or m3 (got '{unit}')"
+                         + (" or a count of plants" if ftype == "gas_processing" else ""))
 
     def calculate(
         self,
@@ -179,6 +188,7 @@ class OnshoreFacilityFugitiveCalculator(BaseCalculator):
         uncertainties: dict = None,
         gwp_dict: dict = None,
         co2_content: float = None,
+        year_fraction: float = 1.0,
     ) -> dict:
         ftype = str(facility_type or "").strip().lower()
         if ftype not in TABLE_7_8:
@@ -187,13 +197,16 @@ class OnshoreFacilityFugitiveCalculator(BaseCalculator):
         if ftype not in TABLE_7_8:
             raise ValueError(
                 f"Unknown facility type '{facility_type}' for facility-level fugitives; use oil_production "
-                f"or gas_production (API Compendium 2021 Table 7-8, per unit of production)"
+                f", gas_production (API Compendium 2021 Table 7-8, per unit of production) or gas_processing "
+                f"(Table 7-34, per gas processed or per plant)"
             )
         self.validate_inputs({"production": production}, ["production"])  # >= 0
         uncertainties = uncertainties or {}
         row = TABLE_7_8[ftype]
         qty, tunit = self._production_in_table_unit(ftype, production, production_unit)
         ef = row[tunit]
+        if tunit == "plant_year":  # a per plant-year factor covers the record's period (its month)
+            qty = qty * float(year_fraction if year_fraction not in (None, "") else 1.0)
         scale = 1.0
         if ch4_content not in (None, "") and row["basis"]:
             c = float(ch4_content)  # a 0-1 fraction (the dispatcher converts the user's mol % once)
@@ -206,7 +219,8 @@ class OnshoreFacilityFugitiveCalculator(BaseCalculator):
         total_co2 = _co2_from_ch4(total_ch4, co2_content, ch4_content, row["basis"])
 
         _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
-        u_ef = 0.955 if ftype == "oil_production" else 0.529  # Table 7-8, 95 % half-widths
+        # Table 7-8, 95 % half-widths; Table 7-34 prints none, so the normative table applies
+        u_ef = 0.955 if ftype == "oil_production" else (None if ftype == "gas_processing" else 0.529)
         ch4_res = propagate_uncertainty(
             total_ch4,
             resolve_ef_uncertainty("fugitive_facility", "ch4", _tier, uncertainties.get("ch4", u_ef)),
@@ -218,8 +232,8 @@ class OnshoreFacilityFugitiveCalculator(BaseCalculator):
             "results": {"ch4": ch4_res, "co2": co2_res, "n2o": 0.0},
             "total_co2e": total_co2e,
             "intermediate": {
-                "api_section": "Section 7.2.2.1",
-                "api_table": "Table 7-8",
+                "api_section": "Section 7.4" if ftype == "gas_processing" else "Section 7.2.2.1",
+                "api_table": row.get("table", "Table 7-8"),
                 "methodology": "Tier 1: Facility-Level Average Factor (production basis)",
                 "activity_inputs": {"production": production, "production_unit": production_unit,
                                     "facility_type": ftype},

@@ -46,7 +46,7 @@ def resolve_electricity_factor(grid_region, facility_id=None, year=None):
             country = getattr(fac, "country", None) if fac else None
         except (TypeError, ValueError):
             country = None
-    c_name, c_entry = grid_entry_for_year(country, year) if country else (None, None)
+    c_name, c_entry = grid_entry_for_year(None, year, country=country) if country else (None, None)
     if c_entry is not None:
         return grid_factor_kg_co2e_per_kwh(c_entry), c_name
     raise ValidationError(

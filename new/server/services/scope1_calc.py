@@ -60,6 +60,10 @@ PROCESS_LABELS = {
     "desiccant_dehydrator": "Desiccant Dehydrator",
     "co2_eor": "CO₂ EOR Venting",
     "thermal_oxidizer": "Thermal Oxidizer",
+    "fire_suppression": "Fire Suppression (CO₂ / clean agents)",
+    "wastewater": "Wastewater Treatment (Section 7.5)",
+    "refrigerant": "Refrigeration / Air Conditioning (HFC)",
+    "electrical_equipment": "Electrical Equipment (SF₆)",
 }
 
 # names used by the earlier Excel template and import wizard
@@ -363,7 +367,11 @@ def validate_activity(payload, require_unit):
     if amount is None and require_unit and not any(v not in (None, "", {}) for v in ci_all.values()) \
             and ptype not in ENGINEERING_TIER2 and str(payload.get("tier") or "1").strip() != "3":
         raise ValidationError("'quantity' is required", "quantity")
-    if require_unit and amount is not None and not str(payload.get("unit") or "").strip():
+    # every tier: an amount without its unit was calculated in an assumed unit and stored with unit NULL (GB RY2022
+    # GB-046: a Tier 3 turbine record); the method's own calc_inputs unit counts
+    ci_proc = ci_all.get(payload.get("process_type") or "") if isinstance(ci_all, dict) else None
+    ci_unit_given = isinstance(ci_proc, dict) and str(ci_proc.get("unit") or "").strip()
+    if amount is not None and not str(payload.get("unit") or "").strip() and not ci_unit_given:
         raise ValidationError("'unit' is required for the activity amount", "unit")
     # S1K-F6: "Mt" is the SI megatonne but "MT" is often a metric ton; the case-insensitive unit table
     # booked "1 Mt" as 1 tonne. Refused as ambiguous, like a bare "ton" in files.

@@ -74,7 +74,7 @@ def test_flare_n2o_default_is_eq_5_6_not_sangea(site, volume, gas, printed_n2o):
     p, _ = flare(volume, gas)
     em, _ = compute_emissions(dict(p), {}, gwp_dict=GWP_AR4)
     assert float(em["n2o"]) / printed_n2o == pytest.approx(0.12, abs=0.02)
-    em, _ = compute_emissions(dict(p), {"n2o": 3.716e-5, "unit": "kg/Nm3"}, gwp_dict=GWP_AR4)
+    em, _ = compute_emissions({**p, "n2o_factor": 3.716e-5, "n2o_factor_unit": "kg/Nm3"}, {}, gwp_dict=GWP_AR4)
     assert float(em["n2o"]) == pytest.approx(printed_n2o, rel=0.02)
 
 

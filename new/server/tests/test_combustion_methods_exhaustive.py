@@ -156,19 +156,22 @@ def test_equipment_energy_input_options(calc):
 # diesel) are tonne TOC and 9 wt % of the TOC is CH4 (AP-42, Table 4-11 footnote a). N2O: the table value where one is
 # printed, otherwise the fuel factor (natural gas 1.0e-7, diesel and gasoline 6.0e-7 tonne/MMBtu, EPA Part 98).
 PER_PJ = 1.055056e-3   # tonne per MMBtu for 1 tonne per 10^12 J
+# Rows with an AP-42 value use it (lb / 10^6 Btu), as the catalog rows do (F-FAC-06, GB RY2022 GB-015 / 018); the
+# 10^12 J column of Table 4-11 is its rounded conversion. The gathering-station and NSCR rows have no AP-42 value.
+LB = 0.45359237e-3     # tonne per lb
 EQUIPMENT_TABLE_CH4_N2O = {
     "boiler_ng_controlled": (1.0e-6, 2.8e-7),
     "boiler_ng_uncontrolled": (1.0e-6, 9.8e-7),
-    "ic_2s_lean_ng": (0.623 * PER_PJ, 1.0e-7),
-    "ic_4s_lean_ng": (0.537 * PER_PJ, 1.0e-7),
+    "ic_2s_lean_ng": (1.45 * LB, 1.0e-7),
+    "ic_4s_lean_ng": (1.25 * LB, 1.0e-7),
     "ic_4s_lean_ng_vaughn": (0.494 * PER_PJ, 1.0e-7),
-    "ic_4s_rich_ng": (0.10 * PER_PJ, 1.0e-7),
+    "ic_4s_rich_ng": (0.23 * LB, 1.0e-7),
     "ic_4s_rich_ng_nscr": (0.043 * PER_PJ, 1.0e-7),
-    "ic_gasoline": (1.30 * PER_PJ * 0.09, 6.0e-7),
-    "ic_diesel": (0.15 * PER_PJ * 0.09, 6.0e-7),
-    "ic_large_bore_diesel": (0.0035 * PER_PJ, 6.0e-7),
-    "ic_dual_fuel": (0.26 * PER_PJ, 1.0e-7),
-    "turbine_ng_uncontrolled": (0.0037 * PER_PJ, 0.0013 * PER_PJ),
+    "ic_gasoline": (3.03 * LB * 0.09, 6.0e-7),
+    "ic_diesel": (0.36 * LB * 0.09, 6.0e-7),
+    "ic_large_bore_diesel": (0.0081 * LB, 6.0e-7),
+    "ic_dual_fuel": (0.6 * LB, 1.0e-7),
+    "turbine_ng_uncontrolled": (0.0086 * LB, 0.003 * LB),
 }
 
 

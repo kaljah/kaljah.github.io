@@ -54,7 +54,10 @@ _RULES = [
     (r"'year' must be between|'month' must be|Invalid date|date .*not recognised|Missing date|period",
      "Date missing or out of range", "date",
      "Use YYYY-MM or YYYY-MM-DD (or year and month columns) with a real reporting period."),
-    (r"Region|facility .*not found|Facility .*not found|Unknown facility|not in your allowed",
+    # the region / facility lookup messages only: "facility" or "region" inside a method error (facility-level
+    # fugitives, the basin of a factor table) grouped calculation errors as "Facility not found" (GB RY2022 GB-029)
+    (r"Region '[^']*' (not found|exists but)|[Ff]acility '[^']*' not found|Unknown facility|not in your allowed"
+     r"|Unauthorized for facility|Access denied: Region",
      "Facility not found or not allowed", "facility_name",
      "Use the exact facility name from Manage Data, within the regions your account can upload to."),
     (r"carries the unit .* but the unit column says",
@@ -93,10 +96,21 @@ _RULES = [
 _COMPILED = [(re.compile(p, re.I), t, c, f) for p, t, c, f in _RULES]
 
 
+_KEEP_DIGITS = re.compile(r"CH4|CO2|N2O|SF6|H2S|N2\b|C\d+\b|[NS]?m3|ft3|Table \d+-\d+|Eq(?:uation)? \d+-\d+"
+                          r"|Exhibit \d+[.-]\d+")
+
+
 def _normalise(reason):
-    """A message with its values blanked, so rows that fail the same way share one key."""
+    """A message with its values blanked, so rows that fail the same way share one key. Chemical formulas, units
+    and table / equation numbers keep their digits ("CH4" became "CHN": GB RY2022 GB-029)."""
     r = re.sub(r"'[^']*'", "'…'", str(reason or ""))
-    r = re.sub(r"\d[\d.,]*", "N", r)
+    parts, last = [], 0
+    for m in _KEEP_DIGITS.finditer(r):
+        parts.append(re.sub(r"\d[\d.,]*", "N", r[last:m.start()]))
+        parts.append(m.group(0))
+        last = m.end()
+    parts.append(re.sub(r"\d[\d.,]*", "N", r[last:]))
+    r = "".join(parts)
     r = re.sub(r"^Calculation error for '…': ", "", r)
     return r.strip()[:160]
 

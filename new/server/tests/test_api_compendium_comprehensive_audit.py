@@ -401,7 +401,7 @@ class TestLayer2DefaultFactorRegistry:
     def test_audit_all_180_api_factors_integrity(self):
         """Assert no default factor in API_FACTORS is None, NaN, negative, or missing unit metadata."""
         # 180 + the Table C-1 LPG row (audit 2026-11 F-FAC-07)
-        assert len(API_FACTORS) == 181, f"Expected exactly 181 API_FACTORS, found {len(API_FACTORS)}"
+        assert len(API_FACTORS) == 184, f"Expected exactly 184 API_FACTORS, found {len(API_FACTORS)}"  # +3 GB RY2022 rows
         for name, data in API_FACTORS.items():
             unit = data.get("unit") or data.get("factor_unit") or data.get("baseUnit")
             assert unit, f"Missing unit in API_FACTOR '{name}'"

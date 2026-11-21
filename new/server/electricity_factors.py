@@ -165,9 +165,98 @@ EGRID2022_LB_PER_MWH = {
 }
 
 
-def grid_entry_for_year(name, year=None):
-    """grid_entry with the vintage of the reporting year: eGRID2022 for U.S. rows from 2022, else the catalog row."""
+# Dated grid averages of one grid (GHG Protocol Scope 2 Guidance s6.4 / Table 6.2: the location-based method uses
+# the grid-average factor of the reporting year, or the most recent one published before it). Algeria: the IEA
+# national factor for 2019 (as the GB RY 2022 inventory uses) and the 2024 energy-balance derivation above
+# (GB RY2022 GB-003 / GB-021, D3 / D4).
+GRID_VINTAGES = {
+    "Algerian National Grid": [
+        (2019, _grid(0.419, 8.0e-06, 1.005e-06, "Algeria national grid average, 2019 (IEA)",
+                     "IEA Emissions Factors (2019 data), Algeria: 0.419 kg CO2/kWh; CH4 / N2O 8.0e-6 / 1.005e-6 kg/kWh")),
+        (2024, GRID_FACTORS["Algerian National Grid"]),
+    ],
+}
+
+
+def pick_vintage(vintages, year):
+    """The (year, entry) of a list for a reporting year: the most recent vintage at or before it, else the earliest
+    later one; the most recent without a year."""
+    rows = sorted(vintages, key=lambda r: r[0])
+    if not rows:
+        return None
+    if year in (None, ""):
+        return rows[-1]
+    y = int(year)
+    before = [r for r in rows if r[0] <= y]
+    return before[-1] if before else rows[0]
+
+
+_DB_ROWS_CACHE = {}
+_DB_ROWS_TTL_S = 5.0  # dashboards split thousands of records; an approval shows within seconds
+
+
+def clear_grid_cache():
+    _DB_ROWS_CACHE.clear()
+
+
+def _approved_grid_rows(name=None, country=None):
+    import time
+
+    try:
+        from utils import get_current_tenant_id, get_current_user
+        tenant = get_current_tenant_id(get_current_user())
+    except Exception:
+        tenant = "default"
+    key = (tenant, str(name or "").strip().lower(), str(country or "").strip().lower())
+    hit = _DB_ROWS_CACHE.get(key)
+    if hit is not None and time.monotonic() - hit[0] < _DB_ROWS_TTL_S:
+        return hit[1]
+    rows = _approved_grid_rows_uncached(name, country)
+    _DB_ROWS_CACHE[key] = (time.monotonic(), rows)
+    return rows
+
+
+def _approved_grid_rows_uncached(name=None, country=None):
+    """Approved administrator-entered grid averages (models.GridFactor) of a grid name or a country, as (year, entry);
+    [] outside an application context."""
+    try:
+        from models import GridFactor
+        from utils import get_current_tenant_id, get_current_user, tenant_matches
+        q = GridFactor.query.filter(GridFactor.status == "Approved")
+        try:
+            q = q.filter(tenant_matches(GridFactor.tenant_id, get_current_tenant_id(get_current_user())))
+        except Exception:  # no request (scripts, recalculation jobs): the default tenant's rows
+            q = q.filter(tenant_matches(GridFactor.tenant_id, "default"))
+        if name:
+            q = q.filter(GridFactor.name.ilike(str(name).strip()))
+        elif country:
+            q = q.filter(GridFactor.country.ilike(str(country).strip()), GridFactor.level == "national")
+        else:
+            return []
+        rows = q.all()
+    except Exception:  # no app context / table not migrated yet
+        return []
+    return [(int(r.year), {**_grid(r.co2, r.ch4 or 0.0, r.n2o or 0.0, f"{r.name} ({r.year})", r.source), "db_id": r.id,
+                           "name": r.name}) for r in rows]
+
+
+def grid_entry_for_year(name, year=None, country=None):
+    """grid_entry with the vintage of the reporting year: an approved administrator-entered grid of that name, the
+    catalog's dated vintages (GRID_VINTAGES), eGRID2022 for U.S. rows from 2022, else the catalog row. With
+    `country` instead of a name: the country's approved national grid, else its catalog grid."""
+    if country and not name:
+        db_rows = _approved_grid_rows(country=country)
+        if db_rows:
+            y, e = pick_vintage(db_rows, year)
+            return e["name"], e
+        name = country
+    db_rows = _approved_grid_rows(name=name) if name else []
+    if db_rows:
+        y, e = pick_vintage(db_rows, year)
+        return e["name"], e
     canonical, entry = grid_entry(name)
+    if entry is not None and canonical in GRID_VINTAGES and year not in (None, ""):
+        return canonical, pick_vintage(GRID_VINTAGES[canonical], year)[1]
     if entry is None or year in (None, "") or int(year) < EGRID2022_FIRST_YEAR or not canonical.startswith("US"):
         return canonical, entry
     code = "US" if canonical == "US Average" else canonical[3:7]

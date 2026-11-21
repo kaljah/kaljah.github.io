@@ -111,6 +111,7 @@ INDEPENDENT_UNIT_FACTORS = {
     # Volume (to m3)
     "m3": 1.0, "m³": 1.0, "sm3": 1.0, "sm³": 1.0,
     "nm3": REF_STD_TEMP_K / 273.15, "nm³": REF_STD_TEMP_K / 273.15,
+    "sm3_15c": REF_STD_TEMP_K / 288.15, "sm3@15c": REF_STD_TEMP_K / 288.15,
     "ksm3": 1000.0, "mmsm3": 1_000_000.0,
     "cubic_meter": 1.0, "cubic_meters": 1.0,
     "actual_m3": 1.0, "actualm3": 1.0, "am3": 1.0, "acf": 0.028316846592,

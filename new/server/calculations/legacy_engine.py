@@ -97,6 +97,21 @@ def _payload_density(payload):
     return CalculationDispatcher._fuel_density(CalculationDispatcher, payload)
 
 
+def _standard_of(gwp_dict):
+    """The IPCC report a GWP set belongs to (AR4 / AR5 ...), for the provenance trail: compute_emissions passed only
+    the values, so every record's lineage named AR5 whatever was used (GB RY2022 GB-009). None when unknown."""
+    from .constants import GWP_STANDARDS
+
+    if not gwp_dict:
+        return None
+    ch4 = gwp_dict.get("CH4", gwp_dict.get("ch4"))
+    n2o = gwp_dict.get("N2O", gwp_dict.get("n2o"))
+    for name, std in GWP_STANDARDS.items():
+        if ch4 is not None and n2o is not None and float(ch4) == std["CH4"] and float(n2o) == std["N2O"]:
+            return name
+    return None
+
+
 def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standard=None):
     if factor_data is None:
         factor_data = {}
@@ -203,8 +218,7 @@ def _compute_emissions_impl(payload, factor_data=None, gwp_dict=None, gwp_standa
     )
     uncertainties = factor_data.get("uncertainty", {})
     api_res = None if (is_specific and _has_spec) else api2021_dispatcher.dispatch(
-        process, inputs, factor_data, uncertainties, gwp_dict=gwp_dict
-    )
+        process, inputs, factor_data, uncertainties, gwp_dict=gwp_dict, gwp_standard=gwp_standard or _standard_of(gwp_dict))
 
     def get_val(r):
         # BUG-15/16 FIX: handle None results from CH4-only calculators (e.g. MudDegassing, Completions)

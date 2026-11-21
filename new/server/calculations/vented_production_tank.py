@@ -221,8 +221,12 @@ class TankFlashingCalculator(BaseCalculator):
         p = float(p_in)
         key_p = 50 if p <= 150.0 else (1000 if p >= 600.0 else 250)
         s_key = str(salt_content or "average").lower().replace(" ", "").strip()
-        if s_key in ("2", "10", "20"):
-            s_key += "%"
+        try:  # 20, 20.0, "20%", "20 %" are the 20 % row: a file's "20%" arrived as 20.0 and was refused (GB-026)
+            num = float(s_key.rstrip("%"))
+            if num in (2.0, 10.0, 20.0):
+                s_key = f"{int(num)}%"
+        except ValueError:
+            pass
         if s_key not in ("2%", "10%", "20%", "average"):
             raise ValueError("Produced water salt content must be 2 %, 10 %, 20 % or average (Table 6-26)")
         if (key_p, s_key) not in cls.TABLE_6_26_SALT_WATER:

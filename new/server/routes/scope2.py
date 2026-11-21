@@ -910,18 +910,11 @@ def bulk_import_scope2():
 @login_required
 def get_emission_factors():
     """Get emission factors by grid region"""
-    factors = []
-    for region, info in GRID_FACTORS.items():
-        factors.append(
-            {
-                "region": region,
-                "factor": round(grid_factor_kg_co2e_per_kwh(info), 6),
-                "unit": info["unit"],
-                "description": info["description"],
-                "source": info.get("source"),
-                "verified": info.get("verified", True),
-            }
-        )
+    from routes.grid_factors import approved_grid_options
 
+    factors = [{"region": region, "factor": round(grid_factor_kg_co2e_per_kwh(info), 6), "unit": info["unit"],
+                "description": info["description"], "source": info.get("source"),
+                "verified": info.get("verified", True)} for region, info in GRID_FACTORS.items()]
+    factors += approved_grid_options({f["region"].lower() for f in factors})  # admin grids (GB-021)
     return jsonify(factors)
 

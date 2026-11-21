@@ -432,6 +432,7 @@ class TestExhaustiveUnitConversionsAllMatrices:
         groups = {
             1.0: ("m3", "m³", "sm3", "sm³", "cubic_meter", "cubic_meters", "actual_m3", "actualm3", "am3"),
             (273.15 + 15.5556) / 273.15: ("nm3", "nm³"),     # normal m3 (0 C) in standard m3 (60 F)
+            (273.15 + 15.5556) / 288.15: ("sm3_15c", "sm3@15c"),  # standard m3 at 15 C in standard m3 (60 F)
             1e3: ("ksm3",), 1e6: ("mmsm3",),
             ft3: ("acf", "scf", "cf", "ft3"), ft3 * 1e3: ("mscf", "mcf"), ft3 * 1e6: ("mmscf", "mmcf"),
             bbl: ("bbl", "barrel", "barrels"), bbl * 1e3: ("kbbl", "mbbl"), bbl * 1e6: ("mmbbl",),

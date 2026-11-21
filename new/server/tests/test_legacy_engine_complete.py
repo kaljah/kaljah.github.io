@@ -14,7 +14,7 @@ FACTOR = {"co2": 50.0, "ch4": 1.0, "n2o": 0.1, "unit": "kg/m3"}
 def no_dispatch(monkeypatch):
     calls = []
 
-    def record(process, inputs, factor_data, uncertainties, gwp_dict=None):
+    def record(process, inputs, factor_data, uncertainties, gwp_dict=None, gwp_standard=None):
         calls.append((process, inputs))
         return None
 

@@ -13,7 +13,8 @@ contradicted its own examples).
 from dataclasses import dataclass, field
 
 EXAMPLE_MARK = "EXAMPLE"
-DATE_HELP = "Required. Month of the activity: YYYY-MM (e.g. 2024-03). Rows dated EXAMPLE are not imported."
+DATE_HELP = ("Required. Month of the activity: YYYY-MM (e.g. 2024-03). Records are monthly and a year is the sum of its "
+             "months: put annual-only data in one month (D8). Rows dated EXAMPLE are not imported.")
 
 
 def is_example_value(value):
@@ -77,6 +78,11 @@ PROCESS_UNITS = {
     "nitric_acid_production": ("tonne", "kg", "short_ton"),
     "adipic_acid_production": ("tonne", "kg", "short_ton"),
     "asphalt_blowing": ("tonne", "short_ton"),
+    # API Compendium 2021 s5 / 7.5 / 7.6 sources calculated from their own inputs (GB RY2022 GB-031)
+    "fire_suppression": ("kg", "lb", "tonne"),
+    "wastewater": ("m3", "m3/day", "m3/yr", "gal", "gal/day", "ft3"),
+    "refrigerant": ("units", "kg", "lb"),
+    "electrical_equipment": ("kg", "lb"),
 }
 PROCESSES = tuple(PROCESS_UNITS)
 
@@ -95,6 +101,10 @@ def _p(*keys):
 
 
 from calculations.mobile_factors import MOBILE_VEHICLES as _MOBILE_VEHICLES  # noqa: E402
+from calculations.combustion_methods import EQUIPMENT_FACTORS as _EQ  # noqa: E402
+from calculations.fugitive_other import OPERATING_RATE_PCT as _OPR  # noqa: E402
+
+_EQUIPMENT_TYPES = tuple(_EQ) + tuple(_OPR)
 
 # ── Columns ─────────────────────────────────────────────────────────────────────
 CORE = [
@@ -127,6 +137,12 @@ ACTIVITY_TIME = [
     # mobile CH4 / N2O follow the vehicle (API Compendium Table 4-16; audit 2026-11 F-FAC-02)
     Col("vehicle_type", "Mobile, liquid fuel: vehicle type and technology (API Compendium Table 4-16).",
         processes=_p("mobile"), choices=tuple(_MOBILE_VEHICLES)),
+    # the Section 6 activity tables (Table 6-39 etc.): quantity is the table's activity (GB RY2022 GB-031)
+    Col("activity_key", "Tier 1 activity-factor row (see the list of activity factors), e.g. proc_non_routine.",
+        processes=_VENT_GAS | {"pneumatic", "separation"}),
+    Col("facility_type", "Facility-level leak factor: oil_production / gas_production (Table 7-8) or "
+                         "gas_processing (Table 7-34, quantity = gas processed or plants).",
+        processes=_p("fugitive"), choices=("oil_production", "gas_production", "gas_processing")),
 ]
 
 _GASCOMP = [Col("c1", "Methane mol % of the gas.")] + [
@@ -145,7 +161,17 @@ _CH4_CO2 = [Col("ch4_content", "CH4 mol % of the gas."), Col("co2_content", "CO2
 TIER3 = (
     _with(_p("combustion", "flaring"), _GASCOMP)
     + _with(_p("combustion"), [
-        Col("combustion_efficiency", "Combustion: % of carbon oxidised. Blank = 99.5 %."),
+        Col("combustion_efficiency", "Combustion: % of carbon oxidised. Blank = complete combustion (100 %)."),
+        Col("combustion_method", "equipment: CH4 / N2O by equipment type (Tables 4-9 / 4-11).", choices=("equipment",)),
+        Col("equipment_type", "Equipment of the equipment method (Tables 4-9 / 4-11), or the Table 7-83 equipment of a "
+                              "refrigerant charge.", choices=_EQUIPMENT_TYPES),
+        Col("ch4_factor", "Measured or equipment CH4 factor next to the gas analysis (in ch4_factor_unit)."),
+        Col("ch4_factor_unit", "Unit of ch4_factor. Blank = kg/MMBtu.", choices=("kg/MMBtu", "kg/GJ", "kg/m3", "kg/scf")),
+    ])
+    + _with(_p("combustion", "flaring"), [
+        Col("n2o_factor", "Your N2O factor (in n2o_factor_unit). Blank on a flare = Compendium Eq 5-6."),
+        Col("n2o_factor_unit", "Unit of n2o_factor. Blank = kg/MMBtu.",
+            choices=("kg/MMBtu", "kg/GJ", "kg/m3", "kg/Nm3", "kg/scf")),
     ])
     + _with(_p("flaring"), [
         Col("flare_type", "Flare design. Blank = elevated.",
@@ -244,7 +270,8 @@ TIER3 = (
         Col("mud_type", "Drilling mud (quantity = drilling days).", choices=("water_based", "oil_based", "synthetic")),
     ])
     + _with(_p("fugitive"), [
-        Col("fugitive_method", "Leak method.", choices=("screening", "correlation", "ogi", "measurement", "component")),
+        Col("fugitive_method", "Leak method.",
+            choices=("screening", "correlation", "ogi", "measurement", "component", "equipment")),
         Col("component_type", "Component type.",
             choices=("valve", "connector", "flange", "open_ended_line", "pump_seal", "other")),
         Col("service", "Service.", choices=("gas", "light_oil", "heavy_oil", "water_oil")),
@@ -257,6 +284,41 @@ TIER3 = (
     ])
     + _with(_p("stoichiometry"), [
         Col("carbon_content", "Carbon mass fraction of the fuel (0-1, e.g. 0.75)."),
+    ])
+    + _with(_p("fire_suppression"), [
+        Col("agent_type", "Agent released (quantity = kg released).",
+            choices=("co2", "hfc_227ea", "hfc_125", "hfc_236fa", "halon_1301", "fk_5_1_12", "other")),
+    ])
+    + _with(_p("wastewater"), [
+        Col("wastewater_method", "Compendium 7.5 method (quantity = wastewater flow in unit).",
+            choices=("aerobic", "anaerobic_epa", "ipcc")),
+        Col("bod5_mg_l", "aerobic: BOD5 removed (mg/L)."),
+        Col("bod5_lb_ft3", "anaerobic_epa: BOD5 loading (lb/ft3)."),
+        Col("fad_pct", "anaerobic_epa: % anaerobically digested."),
+        Col("cod_kg_m3", "ipcc (or aerobic with an MCF): COD (kg/m3)."),
+        Col("treatment_type", "ipcc: treatment type, or give mcf.",
+            choices=("aerobic_centralized", "anaerobic_reactor", "anaerobic_shallow_lagoon", "anaerobic_deep_lagoon")),
+        Col("mcf", "Methane correction factor (fraction)."),
+        Col("n_effluent_mg_l", "Effluent nitrogen (mg/L), for the N2O (Eq 7-18)."),
+    ])
+    + _with(_p("refrigerant"), [
+        Col("refrigerant_method", "charge (Eq 7-21) or mass_balance (Eq 7-22).", choices=("charge", "mass_balance")),
+        Col("refrigerant", "HFC-134a or a Table 7-84 blend (R-404A ...)."),
+        Col("equipment_count", "charge: number of units."),
+        Col("charge_kg", "charge: full charge per unit (kg)."),
+        Col("operating_rate_pct", "charge: % of charge emitted per year. Blank = Table 7-83 by equipment_type."),
+    ])
+    + _with(_p("refrigerant", "electrical_equipment"), [
+        Col("stock_begin", "mass_balance: stock at the beginning of the year (mass_unit)."),
+        Col("stock_end", "mass_balance: stock at the end of the year."),
+        Col("purchases", "mass_balance: purchases."),
+        Col("sales", "mass_balance: sales and disbursements."),
+        Col("capacity_increase", "mass_balance: net increase in equipment capacity."),
+        Col("mass_unit", "Unit of the masses. Blank = kg.", choices=("kg", "lb", "tonne")),
+    ])
+    + _with(_p("electrical_equipment"), [
+        Col("electrical_method", "mass_balance (Eq 7-23) or recharge (Eq 7-24).", choices=("mass_balance", "recharge")),
+        Col("recharge", "recharge: SF6 recharged in the period (mass_unit)."),
     ])
 )
 

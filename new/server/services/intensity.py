@@ -26,7 +26,7 @@ from models import Emission, Facility, OgmpSurvey, ProductionData, Scope2Emissio
 from services.dashboard_filters import (apply_scope, gas_volume_m3, horizon_delta, production_boe,
                                         production_gas_m3, production_oil_bbl, source_category, statuses,
                                         SCF_PER_BOE)
-from services.methane_intensity import ngsi_ch4_content
+from services.methane_intensity import ngsi_ch4_content, ngsi_fields, ngsi_parts
 from services.ogmp import compute_facility_ogmp_level, ogmp_level_for
 
 from calculations.units import CONVERSIONS as _CONV
@@ -67,7 +67,7 @@ def _blank():
             "ch4_split": defaultdict(float), "records": [], "s1_count": 0,
             "ogmp_ch4_weights": {1: 0.0, 2: 0.0, 3: 0.0, 4: 0.0},
             "ogmp_co2e_weights": {1: 0.0, 2: 0.0, 3: 0.0, 4: 0.0},
-            "boe": 0.0, "gas_m3": 0.0, "oil_bbl": 0.0, "gas_mscf": 0.0, "has_prod": False,
+            "boe": 0.0, "saleable_boe": 0.0, "gas_m3": 0.0, "oil_bbl": 0.0, "gas_mscf": 0.0, "has_prod": False,
             "prod_unknown_units": 0, "top_down": None,
             # marketed-gas deductions (services.methane_intensity): production data (None = not entered) and the
             # emission-record fallbacks
@@ -103,6 +103,7 @@ def _add_production(cells, scope, years):
         ProductionData.vented_gas_mmsm3,
         ProductionData.fuel_gas_consumed_mmsm3,
         ProductionData.ngl_shrinkage_mmsm3,
+        ProductionData.saleable_production_mmboe,
     ).all()
     from services.methane_intensity import PRODUCTION_COLUMNS
 
@@ -112,6 +113,8 @@ def _add_production(cells, scope, years):
             v = getattr(p, col, None)
             if v is not None:
                 c["p_terms"][term] = (c["p_terms"][term] or 0.0) + float(v) * 1e6
+        if getattr(p, "saleable_production_mmboe", None):
+            c["saleable_boe"] += float(p.saleable_production_mmboe) * 1e6
         boe = production_boe(p)
         gas = production_gas_m3(p)
         oil_b = production_oil_bbl(p)
@@ -264,6 +267,9 @@ def _add_vented_and_fuel_gas(cells, s1_base):
                   Emission.unit)
         .all()
     )
+    from calculations.activity_factors import ACTIVITY_FACTORS
+
+    activity_rows = {str(v.get("label") or "").strip().lower(): v for v in ACTIVITY_FACTORS.values()}
     for fid, yr, mo, pt, fuel, unit, qty in rows:
         cat = source_category(pt)
         qty = float(qty or 0.0)
@@ -271,6 +277,20 @@ def _add_vented_and_fuel_gas(cells, s1_base):
             continue
         if cat == "vented" and str(unit or "").strip().lower() in _LIQUID_UNITS:
             continue  # an oil volume is not vented gas (it was deducted as m3 of gas; audit 2026-11 F-GREST-05)
+        row = activity_rows.get(str(fuel or "").strip().lower()) if cat == "vented" else None
+        if row is not None:
+            # an activity-factor record (Compendium Section 6 rows: per MMscf processed, per event, per well ...) has the
+            # throughput or count as its quantity, not the gas vented (GB RY2022 GB-023: 194,132 MMscf processed was
+            # deducted as 5,497 million m3 of vented gas and marketed gas fell to 0). A throughput row vents its
+            # table's whole-gas volume per unit of throughput; a count row (per unit-year) is not a volume here.
+            through_m3 = gas_volume_m3(qty, unit, yr, mo)
+            per = str(row.get("per") or "")
+            if through_m3 and per in ("mmscf", "mm_m3"):
+                per_m3 = 1e6 * 0.028316846592 if per == "mmscf" else 1e6
+                gas_scf = float(row.get("gas_scf") or 0.0)  # whole gas vented, scf per unit of throughput (both rows)
+                vented = through_m3 / per_m3 * gas_scf * 0.028316846592
+                cells[(fid, yr)]["vented_m3"] += vented
+            continue
         if cat == "combustion" and "natural gas" not in str(fuel or "").lower() and "fuel gas" not in str(fuel or "").lower():
             continue
         vol = gas_volume_m3(qty, unit, yr, mo)
@@ -406,6 +426,12 @@ def _apply_boundary(cells):
 
     weight = Weights()
     for key in list(cells):
+        c = cells[key]
+        # API GHG Reporting Guidance 2.0 (2023): the operated basis divides by wellhead production excluding reinjected
+        # gas; the equity basis by the equity share of marketable (saleable) production, when it is recorded (D5,
+        # GB RY2022 GB-005 / GB-025)
+        if weight.approach == "equity_share" and c.get("saleable_boe"):
+            c["boe"] = c["saleable_boe"]
         w = weight(*key)
         if w <= 0:
             del cells[key]
@@ -442,13 +468,13 @@ def _methane_loss(matched, total_ch4, seg_cat, target, fac=None):
     """(loss %, target status, NGSI %) of a facility. The loss rate compared to the OGMP target is on the OGCI /
     OGMP volume basis, CH4 volume / marketed gas (it was / gas produced, BA-054); NGSI is CH4 / CH4 in the
     throughput at the segment's CH4 content."""
-    from services.methane_intensity import gas_ratio, ngsi_intensity_pct, ngsi_segment, volume_intensity_pct
+    from services.methane_intensity import volume_intensity_pct
 
     gas_m3, marketed_m3 = matched["gas_m3"], matched["marketed_m3"]
-    # the NGSI segment, its CH4 content and (production) gas ratio (audit 2026-11 F-AGG-05)
-    seg = ngsi_segment(fac.segment, fac.activity) if fac is not None else seg_cat
-    ngsi = ngsi_intensity_pct(matched["ch4"], gas_m3, ngsi_ch4_content(seg),
-                              gas_ratio(seg, gas_m3, matched.get("oil_bbl")))
+    # the NGSI segment, its CH4 content and (production) gas ratio (audit 2026-11 F-AGG-05); the facility's own gas
+    # when entered (D7, GB RY2022 GB-004 / GB-024)
+    num, den = ngsi_parts(matched, seg_cat, fac)
+    ngsi = num / den * 100.0 if den > 0 else None
     if not (gas_m3 > 0 and marketed_m3 > 0):
         return None, ("Missing Production Data" if total_ch4 > 0 else "No Activity"), ngsi
     loss = volume_intensity_pct(matched["ch4"], marketed_m3)
@@ -665,7 +691,7 @@ def facility_row(fid, cell_list, fac, year_value, gwp_horizon="100", surveys=Non
         "api_flaring_intensity": per_boe(matched["flaring_t"]),
         "methane_loss_rate_pct": r4(loss),  # OGCI / OGMP: CH4 volume / marketed gas
         "methane_intensity_ngsi_pct": r4(ngsi),  # NGSI: CH4 / CH4 in the throughput (0.0192 t/Mcf)
-        "ngsi_ch4_content": ngsi_ch4_content(seg_cat),
+        **ngsi_fields(matched, seg_cat, fac),  # content used, its source, numerator / denominator (GB-061)
         "marketed_gas_m3": marketed_m3,
         "flaring_rate_pct": r4(matched["flaring_m3"] / gas_m3 * 100.0) if gas_m3 > 0 else None,
         "ogmp_gold_standard_target": target,

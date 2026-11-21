@@ -508,6 +508,7 @@ from routes.traceability import traceability_bp
 from routes.tenant import tenant_bp
 from routes.health import health_bp
 from routes.ogmp import ogmp_bp
+from routes.grid_factors import grid_factors_bp
 
 app.register_blueprint(auth_bp, url_prefix="/api/auth")
 app.register_blueprint(emissions_bp, url_prefix="/api/emissions")
@@ -531,6 +532,7 @@ app.register_blueprint(traceability_bp)
 app.register_blueprint(tenant_bp)
 app.register_blueprint(health_bp)
 app.register_blueprint(ogmp_bp)
+app.register_blueprint(grid_factors_bp, url_prefix="/api/grid-factors")
 
 # Swagger UI Configuration (SEC-05 & INFO-01: Disabled in production unless explicitly enabled)
 if (

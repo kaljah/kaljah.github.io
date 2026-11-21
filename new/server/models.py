@@ -64,6 +64,10 @@ class Facility(db.Model):
     # no default country: a facility without one was stored as Algeria and its electricity got the Algerian grid
     # (audit 2026-11 F-E2E-01)
     country = db.Column(db.String(100))
+    # the facility's own gas (NGSI and the methane intensity use it before the segment defaults, D7; migration
+    # n9e4a2b6c1d7): CH4 content in mol % and HHV in Btu/scf
+    gas_ch4_mol_pct = db.Column(db.Float, nullable=True)
+    gas_hhv_btu_scf = db.Column(db.Float, nullable=True)
     equity_share_pct = db.Column(db.Float, default=100.0)
     ogmp_membership_year = db.Column(db.Integer, default=2023)
     reconciliation_threshold = db.Column(db.Float, default=20.0)  # % threshold for variance flagging
@@ -320,6 +324,10 @@ class ProductionData(db.Model):
     vented_gas_mmsm3 = db.Column(db.Float, nullable=True)
     fuel_gas_consumed_mmsm3 = db.Column(db.Float, nullable=True)  # burned on site (turbines, heaters)
     ngl_shrinkage_mmsm3 = db.Column(db.Float, nullable=True)  # gas volume removed as NGL / LPG
+    # flared volume by flaring type (World Bank GFMR / OGMP routine, non-routine, safety), MM Sm3 (GB-054)
+    routine_flared_mmsm3 = db.Column(db.Float, nullable=True)
+    non_routine_flared_mmsm3 = db.Column(db.Float, nullable=True)
+    safety_flared_mmsm3 = db.Column(db.Float, nullable=True)
 
     activity = db.Column(db.String(100), index=True)
     division = db.Column(db.String(100), index=True)
@@ -951,6 +959,29 @@ class JvPartner(db.Model):
     code = db.Column(db.String(50), unique=True, nullable=False)
     country = db.Column(db.String(100), default="Algeria")
     is_operator = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=utc_now)
+    tenant_id = db.Column(db.String(64), nullable=False, default="default", server_default="default", index=True)
+    # archived partners keep their history (equity slices) but are not offered for new shares (D9)
+    is_archived = db.Column(db.Boolean, nullable=False, default=False, server_default="0")
+
+
+class GridFactor(db.Model):
+    """An administrator-entered grid-average electricity factor (location-based Scope 2), dated and cited, used once
+    approved (maker-checker, as custom factors). GHG Protocol Scope 2 Guidance Table 6.2 (D3 / D4)."""
+    __tablename__ = "grid_factors"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False, index=True)  # the grid region name records use
+    country = db.Column(db.String(100), nullable=True, index=True)
+    level = db.Column(db.String(20), nullable=False, default="national")  # national / regional
+    year = db.Column(db.Integer, nullable=False)  # the year the average describes
+    co2 = db.Column(db.Float, nullable=False)  # kg / kWh
+    ch4 = db.Column(db.Float, nullable=True)
+    n2o = db.Column(db.Float, nullable=True)
+    source = db.Column(db.String(255), nullable=False)
+    status = db.Column(db.String(20), nullable=False, default="Pending")  # Pending / Approved / Archived
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    approved_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    approved_at = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(db.DateTime, default=utc_now)
     tenant_id = db.Column(db.String(64), nullable=False, default="default", server_default="default", index=True)
 

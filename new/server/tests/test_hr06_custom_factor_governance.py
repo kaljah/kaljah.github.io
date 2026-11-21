@@ -3,7 +3,7 @@
 - a source/method reference is required;
 - a value outside the plausibility bounds (CO2 > 500, CH4 > 100, N2O > 10 kg/MMBtu) is refused unless a
   written justification is given, and the factor then waits for approval;
-- an admin cannot approve a factor they created.
+- an admin may approve a factor they created (decision D10, 2026-11-21); a superuser may not.
 """
 import uuid
 
@@ -77,16 +77,26 @@ def test_in_range_edit_to_out_of_range_needs_justification(client):
     assert ok.status_code == 200
 
 
-def test_creator_cannot_approve_own_factor_but_another_admin_can(client):
+def test_admin_may_approve_own_factor_superuser_may_not(client):
+    """GB RY2022 decision D10 (2026-11-21): an administrator accepts their own factor; a superuser's needs someone else."""
     creator = _user("admin", "e")
-    other = _user("admin", "f")
     _login(client, creator)
     fid = client.post("/api/custom-factors", json=_body()).get_json()["id"]
     with flask_app.app_context():
         assert db.session.get(CustomFactor, fid).status == "Pending"
-    assert client.post(f"/api/custom-factors/{fid}/approve").status_code == 403
-    _login(client, other)
     assert client.post(f"/api/custom-factors/{fid}/approve").status_code == 200
+    with flask_app.app_context():
+        from models import ActivityLog
+        log = ActivityLog.query.filter_by(entity="CustomFactor", record_id=str(fid), action="APPROVE").one()
+        assert "self-approval" in log.details
+    su = _user("superuser", "f2")
+    with flask_app.app_context():
+        u = User.query.filter_by(email=su).one()
+        u.location = "Field X"
+        db.session.commit()
+    _login(client, su)
+    fid2 = client.post("/api/custom-factors", json=_body()).get_json()["id"]
+    assert client.post(f"/api/custom-factors/{fid2}/approve").status_code == 403
 
 
 def test_second_approver_can_be_switched_off(client, monkeypatch):
@@ -108,3 +118,29 @@ def test_import_skips_rows_without_source_or_justification(client):
     r = client.post("/api/custom-factors/import", json={"factors": rows})
     body = r.get_json()
     assert r.status_code == 200 and body["imported"] == 1 and len(body["skipped"]) == 2
+
+
+def test_file_import_applies_governance(client, tmp_path):
+    """GB RY2022 GB-016: the CSV / Excel import of custom factors goes through the same rules as the form."""
+    import io
+    import time
+    _login(client, _user("admin", "i"))
+    tok = client.get("/api/csrf-token").get_json()["csrf_token"]
+    name_ok, name_nosrc = f"HR06 csv {uuid.uuid4().hex[:6]}", f"HR06 csv {uuid.uuid4().hex[:6]}"
+    csv_text = "\n".join(["name,co2_factor,ch4_factor,n2o_factor,unit,source",
+                          f"{name_ok},69.25,0.003,0.0006,kg/MMBtu,API Compendium 2021 Table 4-5",
+                          f"{name_nosrc},69.25,0.003,0.0006,kg/MMBtu,", ""])
+    r = client.post("/api/emissions/upload/start", data={"scope": "custom_factors", "decimal_mark": "point",
+                    "file": (io.BytesIO(csv_text.encode()), "f.csv")}, content_type="multipart/form-data",
+                    headers={"X-CSRFToken": tok})
+    job = r.get_json()["job_id"]
+    for _ in range(100):
+        st = client.get(f"/api/emissions/upload/status/{job}").get_json()
+        if st.get("status") in ("completed", "failed"):
+            break
+        time.sleep(0.1)
+    with flask_app.app_context():
+        ok = CustomFactor.query.filter_by(name=name_ok).one()
+        assert ok.status == "Pending" and ok.approved_by is None
+        assert CustomFactor.query.filter_by(name=name_nosrc).first() is None
+    assert any("source" in (x.get("reason") or "").lower() for x in st.get("skipped_preview", []))

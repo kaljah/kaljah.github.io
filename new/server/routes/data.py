@@ -18,6 +18,9 @@ from process_categories import NON_OG_ACTIVITIES
 def is_it_role(user):
     return bool(user and getattr(user, 'role', None) in ['it_admin', 'it_manager', 'it'])
 
+_OPTIONAL_GAS_TERMS = ('flared_gas_mmsm3', 'vented_gas_mmsm3', 'fuel_gas_consumed_mmsm3', 'ngl_shrinkage_mmsm3',
+                       'routine_flared_mmsm3', 'non_routine_flared_mmsm3', 'safety_flared_mmsm3')
+
 @data_bp.route('/production', methods=['GET'])
 @data_bp.route('/production/', methods=['GET'])
 @login_required
@@ -63,11 +66,8 @@ def get_production():
         'total_production_no_injected_mmboe': d.total_production_no_injected_mmboe or 0.0,
         'saleable_production_mmboe': d.saleable_production_mmboe or 0.0,
         'fuel_gas_export_mmsm3': d.fuel_gas_export_mmsm3 or 0.0,
-        # marketed-gas deductions (None = not entered: the emission records are used)
-        'flared_gas_mmsm3': d.flared_gas_mmsm3,
-        'vented_gas_mmsm3': d.vented_gas_mmsm3,
-        'fuel_gas_consumed_mmsm3': d.fuel_gas_consumed_mmsm3,
-        'ngl_shrinkage_mmsm3': d.ngl_shrinkage_mmsm3,
+        # marketed-gas deductions (None = not entered: the emission records are used) and the flared split (GB-054)
+        **{k: getattr(d, k) for k in _OPTIONAL_GAS_TERMS},
         'activity': d.activity,
         'division': d.division,
         'field': d.field,
@@ -115,7 +115,7 @@ def add_production():
                     'total_production_no_injected_mmboe', 'saleable_production_mmboe', 'fuel_gas_export_mmsm3')}
     # marketed-gas deductions: optional, blank stays None so the emission records are the fallback
     mm.update({k: parse_number(data.get(k), k, required=False, default=None, min_value=0, max_value=1e5)
-               for k in ('flared_gas_mmsm3', 'vented_gas_mmsm3', 'fuel_gas_consumed_mmsm3', 'ngl_shrinkage_mmsm3')})
+               for k in _OPTIONAL_GAS_TERMS})
 
     oil_unit = data.get('oil_unit', 'bbl')
     gas_unit = data.get('gas_unit', 'mscf')

@@ -128,6 +128,50 @@ COMBUSTION_FACTORS = {
         "type": "liquids",
         "source": "EPA 40 CFR 98 Subpart C Table C-1 (CO2, HHV) and Table C-2 (CH4, N2O), as API Compendium 2021 Table 4-5 reproduces them (Table 4-3 prints 0.3-1 % different rounded values)",
     },
+    # Stationary diesel engines: CO2 / HHV as the Diesel row, CH4 from API Compendium 2021 Table 4-11 (AP-42 3.3-1:
+    # 0.36 lb TOC / 10^6 Btu x 9 wt % CH4; AP-42 3.4-1 large bore: 0.0081 lb CH4 / 10^6 Btu). The Diesel row's CH4 is
+    # the Table C-2 boiler factor, 4.9 x below an engine's (GB RY2022 GB-002). N2O: Table C-2 (none in Table 4-11).
+    "Diesel - IC Engine": {
+        "code": "DSL_ICE",
+        "hhv": 138000,  # Btu/gal
+        "co2": 73.96,
+        "ch4": 0.0146964,
+        "n2o": 0.0006,
+        "uncertainty": {"co2": 0.02, "ch4": 0.25, "n2o": 0.30},
+        "unit": "kg/MMBtu",
+        "usage": ["combustion"],
+        "process_category": "stationary_combustion",
+        "type": "liquids",
+        "source": "API Compendium 2021 Table 4-11 (AP-42 Table 3.3-1, TOC x 9 % CH4); CO2 / HHV EPA Table C-1",
+    },
+    "Diesel - Large Bore Engine (> 600 hp)": {
+        "code": "DSL_LBE",
+        "hhv": 138000,
+        "co2": 73.96,
+        "ch4": 0.0036741,
+        "n2o": 0.0006,
+        "uncertainty": {"co2": 0.02, "ch4": 0.25, "n2o": 0.30},
+        "unit": "kg/MMBtu",
+        "usage": ["combustion"],
+        "process_category": "stationary_combustion",
+        "type": "liquids",
+        "source": "API Compendium 2021 Table 4-11 (AP-42 Table 3.4-1); CO2 / HHV EPA Table C-1",
+    },
+    # Table C-1 aviation gasoline (Compendium Table 4-5): 69.25 kg CO2/MMBtu, 0.120 MMBtu/gal; on a mobile record the
+    # CH4 / N2O come from Table 4-16 by vehicle type (aviation_gasoline) (GB RY2022 GB-007)
+    "Aviation Gasoline": {
+        "code": "AVGAS",
+        "hhv": 120000,
+        "co2": 69.25,
+        "ch4": 0.003,
+        "n2o": 0.0006,
+        "uncertainty": {"co2": 0.02, "ch4": 0.25, "n2o": 0.30},
+        "unit": "kg/MMBtu",
+        "usage": ["combustion", "mobile"],
+        "process_category": "mobile_combustion",
+        "type": "liquids",
+        "source": "EPA 40 CFR 98 Subpart C Table C-1 (CO2, HHV) and Table C-2 (CH4, N2O), API Compendium 2021 Table 4-5",
+    },
     "Residual Fuel Oil (No. 6)": {
         "code": "RFO",
         "hhv": 150000,

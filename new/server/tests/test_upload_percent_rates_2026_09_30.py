@@ -191,8 +191,8 @@ def test_factor_name_matching_is_unambiguous():
 def test_custom_factor_import_percent_uncertainty(user_id):
     wb = openpyxl.Workbook()
     ws = wb.active
-    ws.append(["name", "unit", "co2_factor", "ch4_factor", "uncertainty", "co2_uncertainty"])
-    ws.append(["PR audit factor pct", "scf", 0.0545, 0.00001, 0.05, "3%"])
+    ws.append(["name", "unit", "co2_factor", "ch4_factor", "uncertainty", "co2_uncertainty", "source"])
+    ws.append(["PR audit factor pct", "scf", 0.0545, 0.00001, 0.05, "3%", "Lab report"])
     ws["E2"].number_format = "0%"
     fd, path = tempfile.mkstemp(suffix=".xlsx")
     os.close(fd)  # an open descriptor keeps Windows from deleting the file afterwards

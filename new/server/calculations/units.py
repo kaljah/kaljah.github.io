@@ -239,7 +239,7 @@ NM3_TO_SM3 = STD_TEMP_K / 273.15
 
 VOLUME_UNITS_TO_M3 = {
     "m3": 1.0, "m³": 1.0, "sm3": 1.0, "sm³": 1.0,
-    "nm3": NM3_TO_SM3, "nm³": NM3_TO_SM3,
+    "nm3": NM3_TO_SM3, "nm³": NM3_TO_SM3, "sm3_15c": STD_TEMP_K / 288.15, "sm3@15c": STD_TEMP_K / 288.15,  # 15 C (GB-038)
     "ksm3": 1000.0, "mmsm3": 1_000_000.0,
     "cubic_meter": 1.0, "cubic_meters": 1.0,
     "actual_m3": 1.0, "actualm3": 1.0, "am3": 1.0, "acf": 0.028316846592,
@@ -577,7 +577,7 @@ def norm_unit(unit):
     return _VOLUME_ALIASES.get(u, u)
 
 
-GAS_VOLUME_UNITS = {"m3", "m³", "sm3", "sm³", "nm3", "nm³", "ksm3", "mmsm3", "cubic_meter", "cubic_meters",
+GAS_VOLUME_UNITS = {"m3", "m³", "sm3", "sm³", "nm3", "nm³", "sm3_15c", "sm3@15c", "ksm3", "mmsm3", "cubic_meter", "cubic_meters",
                     "actual_m3", "actualm3", "am3", "acf",
                     "scf", "cf", "ft3", "mscf", "mcf", "mmcf", "mmscf"}
 

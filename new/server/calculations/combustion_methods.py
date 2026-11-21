@@ -45,23 +45,35 @@ def _eq(label, fuel, ch4_pj, n2o_pj=None, toc=False, table="Table 4-11"):
             "n2o": None if n2o_pj is None else n2o_pj * PER_TJ_TO_PER_MMBTU}
 
 
-# tonne / MMBtu (HHV). Table 4-9 is printed per 10^6 Btu; Table 4-11 per 10^12 J.
+T_PER_LB = 0.45359237 / 1000.0
+
+
+def _eq_lb(label, fuel, ch4_lb, n2o_lb=None, toc=False, table="Table 4-11"):
+    """ch4_lb / n2o_lb in lb per 10^6 Btu (HHV), the AP-42 values Table 4-11 is converted from. The catalog rows use
+    them (F-FAC-06); the 10^12 J column is a rounded conversion, so the two paths gave a turbine N2O 0.8 % and a
+    diesel engine CH4 3 % apart (GB RY2022 GB-015 / GB-018)."""
+    return {"label": label, "fuel": fuel, "table": table, "toc": toc,
+            "ch4": ch4_lb * T_PER_LB, "n2o": None if n2o_lb is None else n2o_lb * T_PER_LB}
+
+
+# tonne / MMBtu (HHV). Table 4-9 is printed per 10^6 Btu; Table 4-11 from the AP-42 lb / 10^6 Btu values (the
+# gathering-station and NSCR rows have no AP-42 value and keep the printed 10^12 J figure).
 EQUIPMENT_FACTORS = {
     "boiler_ng_controlled": {"label": "Boiler / furnace / heater, natural gas, low-NOx (controlled)",
                              "fuel": "natural_gas", "table": "Table 4-9", "toc": False, "ch4": 1.0e-6, "n2o": 2.8e-7},
     "boiler_ng_uncontrolled": {"label": "Boiler / furnace / heater, natural gas, uncontrolled",
                                "fuel": "natural_gas", "table": "Table 4-9", "toc": False, "ch4": 1.0e-6, "n2o": 9.8e-7},
-    "ic_2s_lean_ng": _eq("IC engine, 2-stroke lean burn, natural gas", "natural_gas", 0.623),
-    "ic_4s_lean_ng": _eq("IC engine, 4-stroke lean burn, natural gas", "natural_gas", 0.537),
+    "ic_2s_lean_ng": _eq_lb("IC engine, 2-stroke lean burn, natural gas", "natural_gas", 1.45),
+    "ic_4s_lean_ng": _eq_lb("IC engine, 4-stroke lean burn, natural gas", "natural_gas", 1.25),
     "ic_4s_lean_ng_vaughn": _eq("IC engine, 4-stroke lean burn, natural gas (gathering station measurements)",
                                 "natural_gas", 0.494),
-    "ic_4s_rich_ng": _eq("IC engine, 4-stroke rich burn, natural gas, uncontrolled", "natural_gas", 0.10),
+    "ic_4s_rich_ng": _eq_lb("IC engine, 4-stroke rich burn, natural gas, uncontrolled", "natural_gas", 0.23),
     "ic_4s_rich_ng_nscr": _eq("IC engine, 4-stroke rich burn, natural gas, with NSCR", "natural_gas", 0.043),
-    "ic_gasoline": _eq("IC engine, gasoline", "gasoline", 1.30, toc=True),
-    "ic_diesel": _eq("IC engine, diesel", "diesel", 0.15, toc=True),
-    "ic_large_bore_diesel": _eq("IC engine, large-bore diesel (> 600 hp)", "diesel", 0.0035),
-    "ic_dual_fuel": _eq("IC engine, dual fuel (95 % natural gas / 5 % diesel)", "natural_gas", 0.26),
-    "turbine_ng_uncontrolled": _eq("Gas turbine, natural gas, uncontrolled", "natural_gas", 0.0037, 0.0013),
+    "ic_gasoline": _eq_lb("IC engine, gasoline", "gasoline", 3.03, toc=True),
+    "ic_diesel": _eq_lb("IC engine, diesel", "diesel", 0.36, toc=True),
+    "ic_large_bore_diesel": _eq_lb("IC engine, large-bore diesel (> 600 hp)", "diesel", 0.0081),
+    "ic_dual_fuel": _eq_lb("IC engine, dual fuel (95 % natural gas / 5 % diesel)", "natural_gas", 0.6),
+    "turbine_ng_uncontrolled": _eq_lb("Gas turbine, natural gas, uncontrolled", "natural_gas", 0.0086, 0.003),
 }
 TOC_CH4_WT = 0.09  # AP-42: engine exhaust TOC is 9 wt % CH4 (Table 4-11 footnote a)
 # Table 4-2 (HHV basis), internal combustion engine: energy input per hp-hr output, by fuel.
@@ -79,7 +91,8 @@ VEHICLE_FACTORS = {
     for k, v in MOBILE_VEHICLES.items() if v["fuel"] in ("diesel", "gasoline")
 }
 
-LIQ_TO_GAL = {"gal": 1.0, "bbl": 42.0, "m3": 264.172052, "l": 0.264172052}
+LIQ_TO_GAL = {"gal": 1.0, "bbl": 42.0, "m3": 264.172052, "l": 0.264172052, "liter": 0.264172052, "liters": 0.264172052,
+              "litre": 0.264172052, "litres": 0.264172052}  # GB RY2022 GB-008
 GAS_TO_SCF = {"scf": 1.0, "mcf": 1e3, "mscf": 1e3, "mmscf": 1e6, "m3": 1 / SCF_TO_M3, "sm3": 1 / SCF_TO_M3}
 MASS_TO_T = {"t": 1.0, "tonne": 1.0, "tonnes": 1.0, "kg": 1e-3, "lb": 1 / 2204.62,
              "short_ton": 0.90718474}  # a bare "ton" is ambiguous and refused

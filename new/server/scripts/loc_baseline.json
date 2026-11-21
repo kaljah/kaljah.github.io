@@ -1,6 +1,6 @@
 {
   "files": {
-    "background_processor.py": 3340,
+    "background_processor.py": 3316,
     "calculations/dispatcher.py": 1368,
     "calculations/units.py": 890,
     "calculations/vented_downstream.py": 885,
@@ -11,7 +11,7 @@
     "routes/data.py": 957,
     "routes/emissions.py": 1254,
     "routes/managedata.py": 1251,
-    "routes/scope2.py": 927
+    "routes/scope2.py": 920
   },
   "functions": {
     "background_processor.py::_process_row": 280,
@@ -24,7 +24,7 @@
     "calculations/dispatcher.py::CalculationDispatcher._dispatch_impl": 467,
     "calculations/dispatcher_branches_combustion.py::calc_liquids_unloading": 159,
     "calculations/dispatcher_branches_fugitive.py::calc_fugitive": 227,
-    "calculations/legacy_engine.py::_compute_emissions_impl": 280,
+    "calculations/legacy_engine.py::_compute_emissions_impl": 279,
     "calculations/vented_associated_gas.py::AssociatedGasVentingCalculator.calculate": 420,
     "calculations/vented_completion.py::CompletionFlowbackCalculator.calculate": 456,
     "calculations/vented_exploration.py::WellTestingCalculator.calculate": 189,
@@ -45,7 +45,7 @@
     "routes/emissions.py::update_emission": 203,
     "routes/emissions_export.py::export_emissions": 498,
     "routes/emissions_import.py::import_emissions": 224,
-    "routes/facilities.py::update_facility": 158,
+    "routes/facilities.py::update_facility": 157,
     "routes/reports.py::create_pdf_report": 277,
     "routes/reports.py::generate_report": 194,
     "routes/reports_export.py::export_emissions": 259,

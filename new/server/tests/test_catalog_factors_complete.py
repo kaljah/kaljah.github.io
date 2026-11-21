@@ -50,6 +50,9 @@ C1 = {  # key: (HHV in the row's base unit, kg CO2 / MMBtu); natural gas 1,026 B
     "Anthracite Coal": (25090, 103.69), "Bituminous Coal": (24930, 93.28), "Sub-Bituminous Coal": (17250, 97.17),
     "Lignite Coal": (14210, 97.72), "Petroleum Coke": (30000, 102.41), "Blast Furnace Gas": (92, 274.32),
     "Coke Oven Gas": (599, 46.85), "Refinery Fuel Gas": (1388, 59.00),
+    # GB RY2022 GB-002 / GB-007: stationary diesel engines (Diesel row's Table C-1 values) and aviation gasoline
+    "Diesel - IC Engine": (138000, 73.96), "Diesel - Large Bore Engine (> 600 hp)": (138000, 73.96),
+    "Aviation Gasoline": (120000, 69.25),
 }
 pin(*C1)
 
@@ -69,7 +72,8 @@ C2 = {
     **{k: _PET for k in ("Propylene", "Butane", "Isobutane", "Naphtha", "Lubricants", "Waste Oil", "Propane (Gas)",
                           "Propane (Liquid)", "Propane (Liquid/LPG)", "Ethane", "Ethane (Gas)", "Diesel (No. 2 Fuel Oil)",
                           "Residual Fuel Oil (No. 6)", "Kerosene", "Jet Fuel", "Motor Gasoline",
-                          "Crude Oil", "Refinery Fuel Gas", "Acetylene", "Liquefied Petroleum Gas (LPG)")},
+                          "Crude Oil", "Refinery Fuel Gas", "Acetylene", "Liquefied Petroleum Gas (LPG)",
+                          "Aviation Gasoline")},
     **{k: _COAL for k in ("Anthracite Coal", "Bituminous Coal", "Sub-Bituminous Coal", "Lignite Coal")},
     "Tires": _SOLID,   # EPA EF Hub: 32 g CH4, 4.2 g N2O per MMBtu
     "Petroleum Coke": _PET,  # Table C-2 petroleum products / Table 4-8 / Dec 2025 correction (F-FAC-05)
@@ -92,6 +96,9 @@ ENGINES = {  # key: (gas, Table 4-7 t/TJ, AP-42 lb/MMBtu)
     "Natural Gas - 4-Stroke Lean Burn Engine": ("ch4", 0.537, 1.25),
     "Natural Gas - 4-Stroke Rich Burn Engine": ("ch4", 0.10, 0.23),
     "Natural Gas - Turbine": ("ch4", 0.0037, 8.6e-3),
+    # AP-42 3.3-1 diesel engine 0.36 lb TOC x 9 % CH4 (Table 4-11 0.15 t TOC/TJ x 9 %); AP-42 3.4-1 large bore
+    "Diesel - IC Engine": ("ch4", 0.15 * 0.09, 0.36 * 0.09),
+    "Diesel - Large Bore Engine (> 600 hp)": ("ch4", 0.0035, 0.0081),
 }
 
 
@@ -100,7 +107,8 @@ def test_table_4_7_engines_and_ap42(key):
     gas, t_tj, lb = ENGINES[key]
     # the original lb/10^6 Btu column (audit 2026-11 F-FAC-06); the SI column is its rounding
     assert CAT[key][gas] == pytest.approx(lb * LB_TO_KG, rel=1e-4)
-    assert CAT[key][gas] == pytest.approx(t_tj * MMBTU_PER_TJ_KG, rel=0.02)
+    # Table 4-11 prints the diesel engine TOC as 0.15 t/10^12 J, 3.2 % below its AP-42 0.36 lb/10^6 Btu
+    assert CAT[key][gas] == pytest.approx(t_tj * MMBTU_PER_TJ_KG, rel=0.04 if key == "Diesel - IC Engine" else 0.02)
 
 
 def test_turbine_n2o_and_engine_n2o():

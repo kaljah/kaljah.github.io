@@ -51,12 +51,14 @@ def ngsi_segment(segment, activity=None):
     return None
 
 
-def gas_ratio(segment, gas_m3, liquids_bbl):
+def gas_ratio(segment, gas_m3, liquids_bbl, hhv_btu_scf=None):
     """NGSI gas ratio E_ng / (E_ng + E_liq) for the production segment; 1 for the other segments (all gas) or without
-    liquids. It was never applied: an oil-weighted asset showed ~2.8 x its NGSI intensity (F-AGG-05)."""
+    liquids. It was never applied: an oil-weighted asset showed ~2.8 x its NGSI intensity (F-AGG-05). The gas energy
+    uses the facility's own HHV when it is entered, else NGSI's 1.235 MMBtu/Mcf (D7, GB RY2022 GB-004)."""
     if segment != "production" or not liquids_bbl or liquids_bbl <= 0 or not gas_m3 or gas_m3 <= 0:
         return 1.0
-    e_ng = gas_m3 / M3_PER_MCF * NGSI_GAS_MMBTU_PER_MCF
+    mmbtu_per_mcf = float(hhv_btu_scf) / 1000.0 if hhv_btu_scf not in (None, "") and float(hhv_btu_scf) > 0         else NGSI_GAS_MMBTU_PER_MCF
+    e_ng = gas_m3 / M3_PER_MCF * mmbtu_per_mcf
     return e_ng / (e_ng + float(liquids_bbl) * NGSI_LIQ_MMBTU_PER_BBL)
 
 MARKETED_TERMS = ("flared", "vented", "fuel", "shrinkage")
@@ -69,6 +71,15 @@ def ngsi_ch4_content(segment_cat, analysed=None):
     if analysed not in (None, "") and 0 < float(analysed) <= 1:
         return float(analysed)
     return NGSI_DEFAULT_CH4_CONTENT.get(segment_cat or "upstream", NGSI_DEFAULT_CH4_CONTENT["upstream"])
+
+
+def facility_gas(fac):
+    """(CH4 content as a fraction, HHV in Btu/scf) entered for a facility's gas, each None when not entered (D7)."""
+    c = getattr(fac, "gas_ch4_mol_pct", None) if fac is not None else None
+    h = getattr(fac, "gas_hhv_btu_scf", None) if fac is not None else None
+    c = float(c) / 100.0 if c not in (None, "") and 0 < float(c) <= 100 else None
+    h = float(h) if h not in (None, "") and float(h) > 0 else None
+    return c, h
 
 
 def ngsi_intensity_pct(ch4_t, throughput_m3, ch4_content, ratio=1.0):
@@ -100,3 +111,26 @@ def marketed_gas(gross_net_m3, production_terms, record_terms):
             used[t], basis[t] = (float(r), "emission records") if r else (0.0, "not recorded")
     marketed = max(float(gross_net_m3 or 0.0) - sum(used.values()), 0.0)
     return marketed, {"deductions_m3": used, "sources": basis}
+
+
+def ngsi_parts(matched, seg_cat, fac=None):
+    """(CH4 x gas ratio, CH4 contained in the throughput), tonnes, of a facility's matched years: the NGSI numerator
+    and denominator, so a page summing facilities gives the same figure as each facility (GB RY2022 GB-061). The
+    facility's own gas CH4 content and HHV when entered (D7), else the NGSI defaults."""
+    gas_m3 = matched["gas_m3"]
+    if not gas_m3 or gas_m3 <= 0:
+        return 0.0, 0.0
+    seg = ngsi_segment(fac.segment, fac.activity) if fac is not None else seg_cat
+    own_c1, own_hhv = facility_gas(fac)
+    den = gas_m3 / M3_PER_MCF * ngsi_ch4_content(seg, own_c1) * NGSI_CH4_T_PER_MCF
+    num = float(matched["ch4"] or 0.0) * gas_ratio(seg, gas_m3, matched.get("oil_bbl"), own_hhv)
+    return num, den
+
+
+def ngsi_fields(matched, seg_cat, fac=None):
+    """The NGSI inputs a facility row reports: the CH4 content used and where it came from, numerator, denominator."""
+    own = facility_gas(fac)[0]
+    num, den = ngsi_parts(matched, seg_cat, fac)
+    return {"ngsi_ch4_content": ngsi_ch4_content(seg_cat, own),
+            "ngsi_ch4_content_source": "facility gas" if own is not None else "NGSI segment default",
+            "ngsi_numerator_t": num, "ngsi_denominator_t": den}

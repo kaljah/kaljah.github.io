@@ -13,9 +13,9 @@ def _grid_lookup(source_type, grid_region, electricity_kwh, grid_cache=None, yea
     """The grid row of the record's reporting year (eGRID2022 from 2022; audit 2026-11 F-S23-09)."""
     if "electric" not in str(source_type or "").lower() or not grid_region or not electricity_kwh:
         return None
-    from electricity_factors import EGRID2022_FIRST_YEAR, grid_entry_for_year
+    from electricity_factors import grid_entry_for_year
 
-    vintage = 2022 if year not in (None, "") and int(year) >= EGRID2022_FIRST_YEAR else None
+    vintage = int(year) if year not in (None, "") else None  # every dated vintage, not only eGRID2022 (GB-021)
     if grid_cache is not None and (grid_region, vintage) in grid_cache:
         return grid_cache[(grid_region, vintage)]
     entry = grid_entry_for_year(grid_region, vintage)[1]
@@ -52,7 +52,16 @@ def gas_split(e, co2e_as_co2=True):
         # printed (the CO2e was put in the CO2 column: audit 2026-11 F-E2E-04)
         return {"co2": float(e.co2e or 0) if co2e_as_co2 else 0.0, "ch4": 0.0, "n2o": 0.0}
     kwh = float(e.electricity_kwh)
-    return {g: kwh * float(entry.get(g) or 0) / 1000.0 for g in ("co2", "ch4", "n2o")}
+    split = {g: kwh * float(entry.get(g) or 0) / 1000.0 for g in ("co2", "ch4", "n2o")}
+    if not _matches_co2e(split, e):
+        # a record saved before the grid's dated vintages (GB-021) keeps the split of the factor it was saved with
+        from electricity_factors import grid_entry
+        undated = grid_entry(e.grid_region)[1]
+        if undated is not None:
+            alt = {g: kwh * float(undated.get(g) or 0) / 1000.0 for g in ("co2", "ch4", "n2o")}
+            if _matches_co2e(alt, e):
+                return alt
+    return split
 
 
 def list_row_gases(row):

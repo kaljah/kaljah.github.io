@@ -923,7 +923,7 @@ def add_emission():
                     "year": data["year"],
                     "fuel": data.get("fuel"),
                     "amount": data.get("amount"),
-                    "unit": data.get("unit"),
+                    "unit": data.get("unit"), "status": record.status,
                 },
                 "calculation_method": method,
             }

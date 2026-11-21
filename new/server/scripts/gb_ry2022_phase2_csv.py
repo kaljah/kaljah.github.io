@@ -183,6 +183,9 @@ def s1_row(s):
             row[k] = p[k]
         if pt == "flaring":
             row["destruction_efficiency"], row["combustion_efficiency"] = 98, 98
+        else:  # the equipment CH4 / N2O factors next to the analysis (template columns since GB-017 / GB-031)
+            row.update(ch4_factor=factor["ch4"], n2o_factor=factor["n2o"], ch4_factor_unit="kg/MMBtu",
+                       n2o_factor_unit="kg/MMBtu")
     elif pt == "combustion":  # diesel engine: equipment method columns (not in the template)
         row.update(tier="1", fuel="Diesel (No. 2 Fuel Oil)", combustion_method="equipment", equipment_type="ic_diesel")
     elif pt == "mobile":

@@ -91,14 +91,19 @@ def _apply_methane_intensities(timeline, fac_ids, gas_comp_data=None, gwp_factor
     methane_intensity_ngsi_pct, over the facility-years with production. It was CH4 / gas mass at 0.717 kg/m3."""
     from models import Facility
     from services.intensity import intensity_cells, segment_category
-    from services.methane_intensity import (M3_PER_MCF, NGSI_CH4_T_PER_MCF, ngsi_ch4_content,
-                                            volume_intensity_pct)
+    from services.methane_intensity import (M3_PER_MCF, NGSI_CH4_T_PER_MCF, facility_gas, gas_ratio,
+                                            ngsi_ch4_content, ngsi_segment, volume_intensity_pct)
 
     if not fac_ids:
         return
     years = [int(t["year"]) for t in timeline]
     cells = intensity_cells(years=years, allowed_fids=list(fac_ids))
-    seg = {f.id: segment_category(f.segment) for f in Facility.query.filter(Facility.id.in_(fac_ids)).all()}
+    facs = Facility.query.filter(Facility.id.in_(fac_ids)).all()
+    seg = {f.id: segment_category(f.segment) for f in facs}
+    # one NGSI figure everywhere (GB RY2022 GB-044 / GB-061): the NGSI segment, the facility's own gas and the
+    # production gas ratio, as the dashboard and the methane page
+    ngsi_seg = {f.id: ngsi_segment(f.segment, f.activity) for f in facs}
+    own_gas = {f.id: facility_gas(f) for f in facs}
     s1_at_gwp = _scope1_at_gwp(fac_ids, years, gwp_factors) if gwp_factors else {}
     c1 = None
     if isinstance(gas_comp_data, dict):
@@ -112,12 +117,15 @@ def _apply_methane_intensities(timeline, fac_ids, gas_comp_data=None, gwp_factor
         matched = [(k, c) for k, c in cells.items() if k[1] == y and c["has_prod"]]
         ch4 = sum(c["ch4"] for _, c in matched)
         marketed = sum(c["marketed_m3"] for _, c in matched)
-        in_thru = sum(c["gas_m3"] / M3_PER_MCF * ngsi_ch4_content(seg.get(k[0]), c1) * NGSI_CH4_T_PER_MCF
-                      for k, c in matched)
+        in_thru = sum(c["gas_m3"] / M3_PER_MCF
+                      * ngsi_ch4_content(ngsi_seg.get(k[0]), own_gas.get(k[0], (None, None))[0] or c1)
+                      * NGSI_CH4_T_PER_MCF for k, c in matched)
+        ch4_gas = sum(c["ch4"] * gas_ratio(ngsi_seg.get(k[0]), c["gas_m3"], c.get("oil_bbl"),
+                                           own_gas.get(k[0], (None, None))[1]) for k, c in matched)
         vol = volume_intensity_pct(ch4, marketed)
         t["methane_intensity_pct"] = vol or 0.0
         t["methane_intensity_basis"] = "marketed_gas" if vol is not None else "no_gas_production"
-        t["methane_intensity_ngsi_pct"] = (ch4 / in_thru * 100.0) if in_thru > 0 else None
+        t["methane_intensity_ngsi_pct"] = (ch4_gas / in_thru * 100.0) if in_thru > 0 else None
         t["marketed_gas_mmsm3"] = marketed / 1e6
         # Decree 21-330 flaring intensity over the same facility-years (flared / produced gas), as the dashboard:
         # flaring at facilities without production is not divided by other facilities' gas (BA-034 / BA-055)

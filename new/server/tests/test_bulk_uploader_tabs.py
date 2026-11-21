@@ -144,8 +144,9 @@ def test_custom_factors_duplicate_prevention_and_overwrite(logged_client, app):
         db.session.commit()
 
     csv_data = (
-        "name,co2_factor,ch4_factor,n2o_factor,unit\n"
-        "BulkTest Factor Alpha,2.5,0.01,0.001,kg\n"
+        # HR-06: the file import applies the factor governance too, so a source is required (GB RY2022 GB-033)
+        "name,co2_factor,ch4_factor,n2o_factor,unit,source\n"
+        "BulkTest Factor Alpha,2.5,0.01,0.001,kg,Supplier sheet 2022\n"
     )
     mapping = {
         "name": "name",
@@ -153,6 +154,7 @@ def test_custom_factors_duplicate_prevention_and_overwrite(logged_client, app):
         "ch4_factor": "ch4_factor",
         "n2o_factor": "n2o_factor",
         "unit": "unit",
+        "source": "source",
     }
 
     # 1. Initial upload
@@ -186,8 +188,8 @@ def test_custom_factors_duplicate_prevention_and_overwrite(logged_client, app):
 
     # 3. Duplicate upload with overwrite -> update in place
     csv_updated = (
-        "name,co2_factor,ch4_factor,n2o_factor,unit\n"
-        "BulkTest Factor Alpha,3.8,0.02,0.002,kg\n"
+        "name,co2_factor,ch4_factor,n2o_factor,unit,source\n"
+        "BulkTest Factor Alpha,3.8,0.02,0.002,kg,Supplier sheet 2022\n"
     )
     res3 = client.post("/api/emissions/upload/start", data={
         "scope": "custom_factors",

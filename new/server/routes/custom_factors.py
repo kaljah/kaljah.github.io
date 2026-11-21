@@ -708,8 +708,8 @@ def approve_custom_factor(factor_id):
     if getattr(factor, "status", None) == "Approved":
         return jsonify({"message": "Factor is already approved", "id": factor.id}), 200
 
-    # an admin may approve their own factor only in one-admin mode (CUSTOM_FACTOR_SECOND_APPROVER=false)
-    if factor.created_by == user.id and (user.role != "admin" or second_approver_required()):
+    self_approval = factor.created_by == user.id  # an admin may accept their own factor (D10); audited as such
+    if self_approval and user.role != "admin":
         return jsonify({"error": "A different superuser or administrator must approve a factor you created"}), 403
 
     try:
@@ -724,7 +724,7 @@ def approve_custom_factor(factor_id):
             request=request,
             entity="CustomFactor",
             entity_id=str(factor.id),
-            details=f"Approved custom emission factor '{factor.name}' (ID: {factor.id})",
+            details=f"Approved custom emission factor '{factor.name}' (ID: {factor.id})" + (" (self-approval)" * self_approval),
         )
         db.session.commit()
     except Exception as e:

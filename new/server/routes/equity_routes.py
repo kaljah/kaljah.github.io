@@ -1,11 +1,12 @@
 from flask import Blueprint, jsonify, request
 from extensions import db
 from models import JvPartner, FacilityEquityShare, Facility, Emission
-from routes.auth import login_required
+from routes.auth import admin_required, login_required
 from utils import (
     get_allowed_facility_ids,
     get_current_tenant_id,
     get_current_user,
+    log_activity_and_notify,
     normalize_tenant_id,
     require_facility_access,
     tenant_matches,
@@ -23,9 +24,24 @@ DEFAULT_JV_PARTNERS = [
 ]
 
 
+def _seed_demo_partners():
+    """Demo partners are seeded in development, test and demo installs only: a production install starts with no
+    partners and an administrator enters the real ones (D9, GB RY2022 GB-028). SEED_DEMO_DATA=true seeds them in a
+    production-mode demo install."""
+    import os
+
+    from flask import current_app
+
+    try:
+        production = bool(current_app.config.get("IS_PRODUCTION"))
+    except RuntimeError:
+        production = False
+    return not production or str(os.environ.get("SEED_DEMO_DATA", "")).strip().lower() in ("1", "true", "yes")
+
+
 def ensure_default_partners(tenant_id="default"):
-    """Ensure baseline international JV partners are seeded for the default tenant."""
-    if normalize_tenant_id(tenant_id) != "default":
+    """Ensure baseline international JV partners are seeded for the default tenant (demo installs only)."""
+    if normalize_tenant_id(tenant_id) != "default" or not _seed_demo_partners():
         return
     added = False
     for p in DEFAULT_JV_PARTNERS:
@@ -113,21 +129,102 @@ def get_partners():
         return jsonify({"error": "Forbidden: IT roles do not have access to Joint Venture equity data"}), 403
     caller_tenant = get_current_tenant_id(user)
     ensure_default_partners(caller_tenant)
-    partners = (
-        JvPartner.query.filter(tenant_matches(JvPartner.tenant_id, caller_tenant))
-        .order_by(JvPartner.name)
-        .all()
-    )
-    return jsonify([
-        {
-            "id": p.id,
-            "name": p.name,
-            "code": p.code,
-            "country": p.country,
-            "is_operator": p.is_operator,
-        }
-        for p in partners
-    ])
+    q = JvPartner.query.filter(tenant_matches(JvPartner.tenant_id, caller_tenant))
+    if request.args.get("include_archived") not in ("1", "true"):
+        q = q.filter(db.or_(JvPartner.is_archived.is_(False), JvPartner.is_archived.is_(None)))
+    return jsonify([_partner_row(p) for p in q.order_by(JvPartner.name).all()])
+
+
+def _partner_row(p):
+    return {"id": p.id, "name": p.name, "code": p.code, "country": p.country, "is_operator": p.is_operator,
+            "is_archived": bool(getattr(p, "is_archived", False))}
+
+
+def _partner_values(data, partial=False):
+    from input_validation import ValidationError
+
+    out = {}
+    for key, required in (("name", True), ("code", True), ("country", False)):
+        if key in data or not partial:
+            val = str(data.get(key) or "").strip()
+            if required and not val:
+                raise ValidationError(f"'{key}' is required", key)
+            out[key] = val or None
+    if "is_operator" in data:
+        out["is_operator"] = bool(data.get("is_operator"))
+    return out
+
+
+def _partner_conflict(vals, tenant, exclude_id=None):
+    for key in ("name", "code"):
+        if vals.get(key):
+            q = JvPartner.query.filter(db.func.lower(getattr(JvPartner, key)) == vals[key].lower())
+            if exclude_id is not None:
+                q = q.filter(JvPartner.id != exclude_id)
+            if q.first() is not None:
+                return f"A partner with this {key} already exists"
+    return None
+
+
+@equity_bp.route("/partners", methods=["POST"])
+@admin_required
+def create_partner():
+    """Administrators enter the real JV partners (they were a fixed demo list, D9 / GB-028); audited."""
+    user = get_current_user()
+    tenant = get_current_tenant_id(user)
+    vals = _partner_values(request.get_json(silent=True) or {})
+    err = _partner_conflict(vals, tenant)
+    if err:
+        return jsonify({"error": err}), 409
+    p = JvPartner(**vals, tenant_id=tenant)
+    db.session.add(p)
+    db.session.flush()
+    log_activity_and_notify(action="CREATE", record_id=str(p.id), user=user, request=request, entity="JvPartner",
+                            details=f"JV partner added: {p.name} ({p.code})", new_values=_partner_row(p))
+    db.session.commit()
+    return jsonify(_partner_row(p)), 201
+
+
+def _tenant_partner(pid, user):
+    return JvPartner.query.filter(JvPartner.id == pid,
+                                  tenant_matches(JvPartner.tenant_id, get_current_tenant_id(user))).first()
+
+
+@equity_bp.route("/partners/<int:pid>", methods=["PUT"])
+@admin_required
+def update_partner(pid):
+    user = get_current_user()
+    p = _tenant_partner(pid, user)
+    if p is None:
+        return jsonify({"error": "Partner not found"}), 404
+    vals = _partner_values(request.get_json(silent=True) or {}, partial=True)
+    err = _partner_conflict(vals, p.tenant_id, exclude_id=p.id)
+    if err:
+        return jsonify({"error": err}), 409
+    old = _partner_row(p)
+    for k, v in vals.items():
+        setattr(p, k, v)
+    log_activity_and_notify(action="UPDATE", record_id=str(p.id), user=user, request=request, entity="JvPartner",
+                            details=f"JV partner updated: {p.name}", old_values=old, new_values=_partner_row(p))
+    db.session.commit()
+    return jsonify(_partner_row(p))
+
+
+@equity_bp.route("/partners/<int:pid>/archive", methods=["POST"])
+@admin_required
+def archive_partner(pid):
+    """Archived, not deleted: the partner's equity slices stay for past years; it is no longer offered."""
+    user = get_current_user()
+    p = _tenant_partner(pid, user)
+    if p is None:
+        return jsonify({"error": "Partner not found"}), 404
+    restore = bool((request.get_json(silent=True) or {}).get("restore"))
+    p.is_archived = not restore
+    log_activity_and_notify(action="RESTORE" if restore else "ARCHIVE", record_id=str(p.id), user=user,
+                            request=request, entity="JvPartner",
+                            details=f"JV partner {'restored' if restore else 'archived'}: {p.name}")
+    db.session.commit()
+    return jsonify(_partner_row(p))
 
 
 @equity_bp.route("/shares", methods=["GET"])
@@ -264,6 +361,8 @@ def save_equity_share():
     partner = db.session.get(JvPartner, partner_id)
     if partner is None:
         return jsonify({"error": "Unknown partner"}), 400
+    if getattr(partner, "is_archived", False):
+        return jsonify({"error": f"{partner.name} is archived: restore the partner before giving it a share"}), 409
     if normalize_tenant_id(getattr(partner, "tenant_id", None)) != normalize_tenant_id(getattr(fac, "tenant_id", None)):
         return jsonify({"error": "Forbidden: partner belongs to a different tenant"}), 403
 

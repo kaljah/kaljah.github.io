@@ -180,7 +180,7 @@ def test_bare_ton_row_is_refused_and_explicit_units_are_calculated(admin):
 
 def test_gwp_switch_recalculates_scope2(admin):
     from models import Scope2Emission
-    from electricity_factors import grid_entry, grid_factor_kg_co2e_per_kwh
+    from electricity_factors import grid_entry_for_year, grid_factor_kg_co2e_per_kwh
     from calculations.constants import GWP_AR5, GWP_AR6
 
     with flask_app.app_context():
@@ -197,7 +197,7 @@ def test_gwp_switch_recalculates_scope2(admin):
         assert admin.put("/api/auth/settings", json={"gwp_standard": "AR6"}).status_code == 200
         with flask_app.app_context():
             after = {e.month: e.co2e for e in Scope2Emission.query.filter_by(facility_id=fid, year=2015)}
-            entry = grid_entry("Algerian National Grid")[1]
+            entry = grid_entry_for_year("Algerian National Grid", 2015)[1]  # vintage of 2015 (GB-021)
             assert after[1] == pytest.approx(1_000_000 * grid_factor_kg_co2e_per_kwh(entry, gwp=GWP_AR6) / 1000.0)
             k = lambda g: 59.0 + 0.0011 * g["CH4"] + 0.0003 * g["N2O"]  # Exhibit 8.3 boiler (BA-045)
             assert after[2] == pytest.approx(5000 / (0.8 - 0.10) * k(GWP_AR6) / 1000.0, rel=1e-6)

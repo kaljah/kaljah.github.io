@@ -7,6 +7,56 @@ from .combustion import factor_hhv_unit, user_hhv
 from .units import VOLUME_UNITS_TO_M3, is_actual_volume_unit, unit_dimension
 
 
+def _factor_value(raw, gas):
+    """An entered emission factor: a finite number of at least 0, else a readable refusal."""
+    import math
+
+    try:
+        val = float(raw)
+    except (TypeError, ValueError):
+        raise ValueError(f"{gas.upper()} factor is not a number: {raw}") from None
+    if not math.isfinite(val) or val < 0:
+        raise ValueError(f"{gas.upper()} factor must be a finite number of at least 0 (got {raw})")
+    return val
+
+
+def _entered_trace_factors(flat_inputs, emission_factors, ef_unit, fuel_unit, conv):
+    """CH4 / N2O factors entered with a Tier 3 fuel analysis (an equipment factor, e.g. Table 4-9 / 4-11 in kg/MMBtu,
+    `ch4_factor` / `n2o_factor` with `ch4_factor_unit` / `n2o_factor_unit`, default kg/MMBtu). The API and the file
+    import took only the catalog row's CH4 / N2O next to a composition, which the form could override (GB RY2022
+    GB-017). Returned in one factor unit that the calculator applies to the three gases: the row's, or the entered
+    one when there is no catalog row (the composition gives the CO2)."""
+    from .combustion import convert_factor_to_kg_per_unit
+    from .units import UnitError
+
+    entered = {}
+    for gas in ("ch4", "n2o"):
+        raw = flat_inputs.get(f"{gas}_factor")
+        if raw in (None, "", "-"):
+            continue
+        entered[gas] = (_factor_value(raw, gas), flat_inputs.get(f"{gas}_factor_unit") or "kg/MMBtu")
+    if not entered:
+        return emission_factors.get("ch4", 0), emission_factors.get("n2o", 0), ef_unit
+    row_co2 = emission_factors.get("co2") not in (None, "", "-", 0, 0.0)
+    try:
+        per_row_unit = convert_factor_to_kg_per_unit(1.0, ef_unit, fuel_unit, **conv)
+    except UnitError:
+        if row_co2:
+            raise
+        per_row_unit = None
+    if not per_row_unit:  # no usable row: the entered unit becomes the factor unit
+        ef_unit = next(iter(entered.values()))[1]
+        per_row_unit = convert_factor_to_kg_per_unit(1.0, ef_unit, fuel_unit, **conv)
+    out = []
+    for gas in ("ch4", "n2o"):
+        if gas not in entered:
+            out.append(emission_factors.get(gas, 0) if row_co2 else 0)
+            continue
+        val, f_unit = entered[gas]
+        out.append(convert_factor_to_kg_per_unit(val, f_unit, fuel_unit, **conv) / per_row_unit)
+    return out[0], out[1], ef_unit
+
+
 def calc_stationary_combustion(self, calculator, emission_factors, flat_inputs, gwp_dict, quantity, uncertainties, unit):
     hhv_val = self._require_float(
         flat_inputs, ["hhv"], "Higher Heating Value (HHV)"
@@ -49,23 +99,27 @@ def calc_stationary_combustion(self, calculator, emission_factors, flat_inputs, 
         except UnitError as err:
             raise ValueError(str(err))
 
+    ef_unit = flat_inputs.get("ef_unit", emission_factors.get("unit", "kg/unit"))
+    fuel_type = ((emission_factors.get("type") if str(emission_factors.get("type") or "").lower()
+                  in ("gases", "liquids", "solids") else None)
+                 or flat_inputs.get("fuel_type") or emission_factors.get("fuel_type", "unknown"))
+    hhv_unit = t3_hu or factor_hhv_unit(emission_factors)
+    ef_ch4, ef_n2o, ef_unit = _entered_trace_factors(flat_inputs, emission_factors, ef_unit, unit, dict(
+        hhv=t3_hhv, fuel_type=fuel_type, density=self._fuel_density(flat_inputs), hhv_unit=hhv_unit))
+
     return calculator.calculate(
         fuel_quantity=quantity,
         ef_co2=emission_factors.get("co2", 0),
-        ef_ch4=emission_factors.get("ch4", 0),
-        ef_n2o=emission_factors.get("n2o", 0),
+        ef_ch4=ef_ch4,
+        ef_n2o=ef_n2o,
         uncertainties=uncertainties,
         hhv=t3_hhv,
-        ef_unit=flat_inputs.get(
-            "ef_unit", emission_factors.get("unit", "kg/unit")
-        ),
+        ef_unit=ef_unit,
         fuel_unit=unit,
         # S1K-F2: the HHV basis comes from the factor (catalog type / hhv_unit), as at
         # Tier 1; the fuel name made "Coke Oven Gas" a solid (short-ton basis)
-        fuel_type=(emission_factors.get("type") if str(emission_factors.get("type") or "").lower()
-                   in ("gases", "liquids", "solids") else None)
-        or flat_inputs.get("fuel_type") or emission_factors.get("fuel_type", "unknown"),
-        hhv_unit=t3_hu or factor_hhv_unit(emission_factors),
+        fuel_type=fuel_type,
+        hhv_unit=hhv_unit,
         density=self._fuel_density(flat_inputs),
         carbon_wt=carbon_wt,
         combustion_efficiency=comb_eff_frac,
@@ -127,17 +181,28 @@ def calc_flaring(self, calculator, emission_factors, flat_inputs, gwp_dict, unce
         from .flare_defaults import facility_segment, REFINERY_DESTRUCTION
         if facility_segment(flat_inputs) == "downstream":
             dest_eff = REFINERY_DESTRUCTION
-    ef_n2o_val = emission_factors.get("n2o") if emission_factors.get("n2o") not in [None, "", "-"] else (
-        emission_factors.get("ef_n2o") if emission_factors.get("ef_n2o") not in [None, "", "-"] else flat_inputs.get("ef_n2o")
-    )
-    # No N2O factor: the calculator's API Compendium Table 5-3 default (kg/MMBtu of gas
-    # flared) applies. An explicit 0 used to be passed, so Tier 3 flaring had no N2O.
+    # N2O: API Compendium 2021 Eq 5-6 (as corrected December 2025) unless the user gives an N2O factor of their own:
+    # a saved custom factor, or an entered factor (ef_n2o / n2o_factor with its unit). A catalog fuel row's N2O (e.g.
+    # "Natural Gas", Table C-2 x HHV) is not a flare method and no longer replaces Eq 5-6 (GB RY2022 GB-019, D2);
+    # a catalog flare row's N2O is per m3 of ITS gas, so it never applies to the entered gas either (BA-017).
+    entered_n2o = next((flat_inputs.get(k) for k in ("ef_n2o", "n2o_factor") if flat_inputs.get(k) not in (None, "", "-")),
+                       None)
+    # a catalog row (it carries its catalog code / usage / source) is not the user's factor; a saved custom factor or
+    # a factor given with the request is
+    catalog_row = str(emission_factors.get("type") or "").lower() != "custom" and any(
+        emission_factors.get(k) not in (None, "", []) for k in ("code", "usage", "source"))
+    row_n2o = next((emission_factors.get(k) for k in ("n2o", "ef_n2o") if emission_factors.get(k) not in (None, "", "-")),
+                   None)
+    if entered_n2o is not None:
+        ef_n2o_val = _factor_value(entered_n2o, "n2o")
+        n2o_unit = flat_inputs.get("n2o_factor_unit") or flat_inputs.get("ef_n2o_unit") or flat_inputs.get("ef_unit") \
+            or "kg/MMBtu"
+    elif row_n2o is not None and not catalog_row:
+        ef_n2o_val = row_n2o
+        n2o_unit = flat_inputs.get("ef_unit") or emission_factors.get("ef_unit") or emission_factors.get("unit", "kg/unit")
+    else:
+        ef_n2o_val, n2o_unit = None, None
     n2o_given = ef_n2o_val not in (None, "", "-")
-    if n2o_given and emission_factors.get("combustion_efficiency_ch4") not in (None, "") \
-            and ef_n2o_val in (emission_factors.get("n2o"), emission_factors.get("ef_n2o")):
-        # a catalog flare row's N2O is per m3 of ITS gas: at Tier 3 the entered gas sets the CO2 and
-        # Eq 5-6 makes the N2O follow it (the row value was applied to any composition, BA-017)
-        n2o_given = False
 
     return calculator.calculate(
         gas_volume=vol_m3,
@@ -145,9 +210,7 @@ def calc_flaring(self, calculator, emission_factors, flat_inputs, gwp_dict, unce
         flare_type=flare_type,
         uncertainties=uncertainties,
         hhv=float(flare_hhv) if flare_hhv else None,
-        ef_unit=flat_inputs.get(
-            "ef_unit", emission_factors.get("unit", "kg/unit")
-        ) if n2o_given else None,
+        ef_unit=n2o_unit if n2o_given else None,
         # vol_m3 keeps the entered basis: a standard volume (scf, Sm3, MMscf/d) is not corrected
         # for temperature and pressure a second time
         fuel_unit="m3" if is_actual_volume_unit(str(unit or "m3").split("/")[0].strip()) else "sm3",

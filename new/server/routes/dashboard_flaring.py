@@ -12,6 +12,29 @@ from routes.dashboard import dashboard_bp, is_it_role
 from services.tenant_config import get_tenant_config, get_current_tenant_id
 
 
+def _production_flared_split(scope, year_value, detail_fids, out, by_fac):
+    """{facility_id: {routine, non_routine, safety} m3} from the production data's flared volume by type (GB RY2022
+    GB-054), for the facilities without operator stream details: added to the stream totals `out`, the flared volume
+    per facility `by_fac` (the intensity pairs it with the same facilities' gas, BA-034) and `detail_fids`."""
+    from services.dashboard_filters import apply_scope
+
+    pd_q = apply_scope(ProductionData.query, ProductionData, **scope)
+    pd_q = pd_q if year_value is None else pd_q.filter(ProductionData.year == year_value)
+    split = {}
+    for p in pd_q.all():
+        parts = {"routine": p.routine_flared_mmsm3, "non_routine": p.non_routine_flared_mmsm3,
+                 "safety": p.safety_flared_mmsm3}
+        if p.facility_id in detail_fids or not any(parts.values()):
+            continue
+        vols = split.setdefault(p.facility_id, {"routine": 0.0, "non_routine": 0.0, "safety": 0.0})
+        for k, v in parts.items():
+            vols[k] += float(v or 0.0) * 1e6
+            out[k]["m3"] += float(v or 0.0) * 1e6
+            by_fac[p.facility_id] = by_fac.get(p.facility_id, 0.0) + float(v or 0.0) * 1e6
+    detail_fids |= set(split)
+    return split
+
+
 @dashboard_bp.route("/flaring-summary", methods=["GET"])
 @login_required
 def get_flaring_summary():
@@ -61,11 +84,11 @@ def get_flaring_summary():
         # their gas production stayed in the intensity denominator.
         detail_fids = {r.facility_id for r in fd
                        if (r.routine_knm3 or 0) or (r.non_routine_knm3 or 0) or (r.safety_knm3 or 0)}
+        prod_split = _production_flared_split(scope, year_value, detail_fids, out, by_fac := {})  # GB-054
         unconverted = 0
         # BUG-0027: generic "flaring" records of a facility that reports stream volumes are split over
         # those streams by volume (they used to sit in a hidden bucket while every stream showed 0 t)
         unsplit_by_fac = {}
-        by_fac = {}  # flared m3 per facility (the intensity pairs it with the same facilities' gas, BA-034)
         for e in em_q.all():
             if source_category(e.process_type) != "flaring":
                 continue
@@ -85,7 +108,7 @@ def get_flaring_summary():
             else:
                 out[key]["tco2e"] += t
         detail_used = bool(detail_fids)
-        fac_streams = {}
+        fac_streams = {fid: dict(vols) for fid, vols in prod_split.items()}
         for r in fd:
             if r.facility_id in detail_fids:
                 vols = fac_streams.setdefault(r.facility_id, {"routine": 0.0, "non_routine": 0.0, "safety": 0.0})
@@ -258,16 +281,19 @@ def get_granular_intensities():
     # 0.0192 t/Mcf with the segment's default CH4 content (it was CH4 / all-gas mass at 0.92 kg/Sm3), and the
     # OGCI / OGMP volume figure = CH4 volume / marketed gas
     from models import Facility
-    from services.methane_intensity import (M3_PER_MCF, NGSI_CH4_T_PER_MCF, gas_ratio, ngsi_ch4_content,
-                                            ngsi_segment, volume_intensity_pct)
+    from services.methane_intensity import (M3_PER_MCF, NGSI_CH4_T_PER_MCF, facility_gas, gas_ratio,
+                                            ngsi_ch4_content, ngsi_segment, volume_intensity_pct)
 
-    seg_by_fid = {f.id: ngsi_segment(f.segment, f.activity) for f in
-                  Facility.query.filter(Facility.id.in_({k[0] for k, _ in matched} or {-1})).all()}
-    ch4_in_throughput_t = sum(c["gas_m3"] / M3_PER_MCF * ngsi_ch4_content(seg_by_fid.get(k[0])) * NGSI_CH4_T_PER_MCF
-                              for k, c in matched)
+    facs = Facility.query.filter(Facility.id.in_({k[0] for k, _ in matched} or {-1})).all()
+    seg_by_fid = {f.id: ngsi_segment(f.segment, f.activity) for f in facs}
+    gas_by_fid = {f.id: facility_gas(f) for f in facs}  # the facility's own gas when entered (D7)
+    ch4_in_throughput_t = sum(c["gas_m3"] / M3_PER_MCF * ngsi_ch4_content(seg_by_fid.get(k[0]),
+                                                                          gas_by_fid.get(k[0], (None, None))[0])
+                              * NGSI_CH4_T_PER_MCF for k, c in matched)
     marketed_m3 = sum(c["marketed_m3"] for _, c in matched)
     # the gas share of the CH4 by facility-year (NGSI production gas ratio; audit 2026-11 F-AGG-05)
-    ch4_gas = sum(c["ch4"] * gas_ratio(seg_by_fid.get(k[0]), c["gas_m3"], c.get("oil_bbl")) for k, c in matched)
+    ch4_gas = sum(c["ch4"] * gas_ratio(seg_by_fid.get(k[0]), c["gas_m3"], c.get("oil_bbl"),
+                                       gas_by_fid.get(k[0], (None, None))[1]) for k, c in matched)
     ngsi = ch4_gas / ch4_in_throughput_t * 100.0 if ch4_in_throughput_t > 0 else None
     ogci_volume = volume_intensity_pct(ch4, marketed_m3)
 
