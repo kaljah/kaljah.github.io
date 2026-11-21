@@ -341,3 +341,33 @@ Scope 2 market-based method: a record without a contractual instrument (REC, GO,
 uses the grid-average (location) factor, because no residual-mix factors are available. The Scope 2 list
 marks such records `market_basis: "grid average (no residual mix)"` so reports can disclose it (GHG
 Protocol Scope 2 Guidance, section 6.11).
+
+## Notes from the GB RY 2022 real-inventory validation (2026-11-21)
+
+Documented differences against API SANGEA found while running the HBNS / El Merk inventory (no code change):
+
+| Finding | What the platform does | Why |
+|---|---|---|
+| GB-010 Gasoline CO2 | 70.22 kg CO2/MMBtu x 0.125 MMBtu/gal = 8.78 kg/gal (40 CFR 98 Table C-1) | SANGEA uses 8.93 kg/gal (-1.7 %); the catalog follows Table C-1. |
+| GB-011 Fuel-gas CO2 | Volumes are at the 60 F standard (Nm3 x 288.71 / 273.15); compositions as entered | +0.4 % at HBNS from rounded printed compositions; El Merk used monthly compositions. |
+| GB-012 Table 6-39 CO2 | CO2 of an activity-factor row = the row's whole-gas volume (Compendium gas scf per activity) x the site CO2 content x CO2 density (`calculations/activity_factors.py`) | The Compendium tables print the whole-gas volume; the CO2 follows the site gas (no CO2 unless a CO2 content is entered). |
+| GB-013 Produced water | Table 6-26 row chosen by separator pressure (50 / 250 / 1,000 psi) and salt content; "20%", "20 %", 20 and 20.0 are the 20 % row | The report's +2.7 % is its own row choice. |
+| GB-014 Wastewater | Aerobic plants need BOD5 removed (Eq 7-19) | The report prints no BOD5, so its STP rows can only be compared as implied factors. |
+
+Behaviour added by the GB RY 2022 fixes:
+- Flare N2O: Eq 5-6 unless the user gives an N2O factor (`n2o_factor` + `n2o_factor_unit`, or a saved custom factor);
+  a catalog fuel row's N2O never replaces Eq 5-6 (D2).
+- Tier 3 combustion: entered `ch4_factor` / `n2o_factor` (default kg/MMBtu) apply next to a gas analysis (GB-017).
+- Table 4-11 equipment factors are the AP-42 lb / 10^6 Btu values (catalog and equipment method agree, GB-015 / 018);
+  catalog rows "Diesel - IC Engine", "Diesel - Large Bore Engine (> 600 hp)" and "Aviation Gasoline".
+- Mobile CH4 / N2O follow Table 4-16 by `vehicle_type` at Tier 2 / custom too (Compendium 4.6.1, D11).
+- Table 7-34 gas processing plants (`facility_type=gas_processing`): 4.507e-2 t CH4/MMscf or 22,984.25 kg per
+  plant-year at 86.8 % CH4, scaled to the site CH4 content (D12).
+- Location-based Scope 2: each grid can have dated vintages; a record uses the most recent one at or before its
+  reporting year (GHG Protocol Scope 2 Guidance: the inventory year's factor or the latest published before it).
+  Algeria: IEA 2019 (0.419 kg CO2/kWh) for 2019-2023, the 2024 energy-balance derivation from 2024. Approved
+  administrator-entered grid averages (`grid_factors`) come before the catalog (D3 / D4).
+- NGSI uses the facility's own gas CH4 content and HHV when entered (`facilities.gas_ch4_mol_pct`,
+  `gas_hhv_btu_scf`), else the NGSI defaults (D7); the methane page sums the per-facility numerator and denominator.
+- Intensity: operated basis = production excluding reinjected gas; equity share = equity share of saleable
+  production when it is recorded (D5).

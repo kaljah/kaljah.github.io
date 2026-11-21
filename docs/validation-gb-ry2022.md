@@ -176,3 +176,25 @@ New findings: GB-056 to GB-061.
 - GB-044: the methane page says "Compliant" without a loss rate.
 - GB-045: no fire suppression or STP process in the form.
 - GB-040, GB-042, GB-043, GB-046 to GB-051, GB-053 to GB-055: UI, accessibility and labelling issues.
+
+## Re-run after the fixes (2026-11-21)
+
+- **Engine:** the validation suite (`tests/test_gb_inventory_ry2022.py`, 72 checks) passes. The site totals are
+  unchanged within 0.3 %. Entering SANGEA's flare N2O factor (`n2o_factor` 3.716e-5 kg/Nm3) reproduces the report.
+- **CSV import (Phase 2 script, fresh database):**
+  - 52 Scope 1 and 2 Scope 2 rows were imported, with no row refused.
+  - Every reproduced source now equals the engine result exactly: HBNS 1,029,672.4 t and El Merk 1,085,906.0 t
+    CO2e.
+  - The heaters' N2O had been -64 % in the CSV because the file could not carry the equipment factors. It now
+    matches, using the `ch4_factor` / `n2o_factor` columns (GB-017).
+  - The custom factor import needs a source and goes through approval (GB-016).
+- **Browser (fresh database):**
+  - A facility was saved with its own gas analysis (68.4 mol % CH4, 1,362.97 Btu/scf) and read back in the edit form.
+  - A JV partner (Sonatrach) was added and another archived; the archived partner is no longer offered for shares.
+  - An IEA 2019 Algeria grid factor was added, approved by the admin, and is offered in the Scope 2 grid list.
+  - A wastewater record (aerobic, 1,000 m3 at 25 mg/L BOD5) was saved through the new form: 0.04911 t CO2, as by
+    hand.
+  - HBNS 136,270 MWh in 2022 on the Algerian grid gives 57,163.9 t CO2e location-based at AR5. That is the IEA 2019
+    vintage, equal to the report's 57,165.28 t at AR4.
+  - One form bug was found and fixed in the run: the wastewater form did not set the record's unit, so the save was
+    refused with "Please select a unit".

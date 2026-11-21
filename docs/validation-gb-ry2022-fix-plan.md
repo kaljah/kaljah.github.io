@@ -22,6 +22,25 @@ At the end:
 - The Phase 2 script (`scripts/gb_ry2022_phase2_csv.py`) and a browser re-run on a fresh database are repeated.
 - The findings tracker gets an `outcome` per row: fixed / no change (documented) / decision.
 
+## Status (2026-11-21): batches 1 to 7 done
+
+Regression tests: `tests/test_gb_ry2022_fixes_batch1.py`, `_batch2.py`, `_batch3_7.py`; client
+`src/__tests__/GasCompositionFlareDefaults.test.tsx`, `OtherSourcesForm.test.tsx`. Migration `n9e4a2b6c1d7`
+(facility gas, flared split, partner archive, `grid_factors`). Note for the report's authors:
+`docs/validation-gb-ry2022-report-authors-note.md`.
+
+Where the implementation differs from the table below:
+- **GB-036:** the server still accepts a lone CH4 content on a Tier 3 flare. That is the 2026-10-22 decision (a CH4
+  content is a content, not an analysis) and golden case A02. The Tier 3 flare **form** now requires the full
+  analysis (C1 to C10, CO2, N2 at 99.5 to 100.5 %), which is where the GB-036 error was made.
+- **D4 "year nearest":** a record uses the most recent vintage **at or before** its reporting year (the earliest
+  one when none is earlier). The GHG Protocol uses the inventory year's factor or the latest published before it, and
+  a 2024 factor did not exist in 2022. HBNS 2022 therefore gets IEA 2019 0.419 and reproduces 57,165.28 t.
+- **GB-022 / D5:** a file's total production that includes reinjected gas is no longer refused when the row gives the
+  injected volume; the intensity uses the total excluding reinjected gas.
+- **GB-012:** no code change; the CO2 basis is documented in `docs/calculation-specification.md`.
+- **GB-050:** no change (IPCC 2006 Table 2.12 N2O uncertainty, BA-052).
+
 ---
 
 ## Decisions (all answered 2026-11-21)
