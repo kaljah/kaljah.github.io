@@ -198,3 +198,14 @@ New findings: GB-056 to GB-061.
     vintage, equal to the report's 57,165.28 t at AR4.
   - One form bug was found and fixed in the run: the wastewater form did not set the record's unit, so the save was
     refused with "Please select a unit".
+
+### Browser import re-run (2026-11-22)
+
+The Phase 2 files were uploaded through the import wizards on a fresh database (regions, custom factor with approval,
+production, Scope 1 with tiers per row, Scope 2). All 52 Scope 1 and 2 Scope 2 rows were stored, and each one equals the
+CSV/API run record for record: Scope 1 1,916,515.4 t CO2e, Scope 2 location-based 57,165.20 / 141,897.80 t (AR4). The
+production file whose total includes reinjected gas was accepted (GB-022).
+
+One gap was found and fixed. The production wizard did not recognise the `facility_name` and `date` columns that the
+server reads, so the required fields stayed unmapped. Its template now uses them, adds the routine / non-routine /
+safety flared columns, and has a sample row that lines up with its columns again.

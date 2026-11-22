@@ -68,7 +68,8 @@ const SCOPE_OF: Record<string, string> = { activity: "1", activity_scope2: "2", 
 // Sample row appended to the client-side CSV template of each non-emissions type.
 const SAMPLE_ROW: Record<string, string> = {
   custom_factors: "Specialized Generator Gas,Natural Gas,MMBtu,53.06,0.001,0.0001,0,5,50,150,combustion",
-  production: "Basin Alpha,Exploration & Production,Production,Sector Alpha-1,2024,1,50000,bbl,12000,mscf,0.34,0.34,0.0,0.0,0.050,0.0,0.0,0.0,0.052,0.052,0.052",
+  // one value per production template column, in order (the sample had fallen out of step with the columns)
+  production: "Basin Alpha,Exploration & Production,Production,Sector Alpha-1,2024-01,,,50000,bbl,12000,mscf,0.34,0.30,0.04,0.0,0.050,0.0,0.010,0.0,0.030,0.015,0.005,0.050,0.0,0.0,0.0,0.052,0.052,0.050",
   mitigation: "Basin Alpha,Solar Farm A,REC,2024,1500,Active,2024-01-01,,500000,Solar panel installation",
   sources: "Exploration & Production,Production,Basin Alpha,Sector Alpha-1,Combustion Unit A,EQ-001,combustion,Natural Gas,5 MW,2015-06-01,Active,Main export compressor,Laghouat",
   activity_scope2: "Basin Alpha,2024,1,Algerian National Grid,500,MWh,electricity,",

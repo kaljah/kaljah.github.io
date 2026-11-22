@@ -261,12 +261,15 @@ export const TEMPLATES: Record<string, TemplateField[]> = {
     { id: "usage", label: t("Usage"), required: false, hint: t("e.g. combustion") },
   ],
   production: [
-    { id: "facility_id", label: t("Region"), required: true },
+    // the server reads facility_name (or facility_id) and a date column (or year and month): a file with
+    // facility_name / date columns had its required fields unmapped in the wizard (GB RY2022 browser re-run)
+    { id: "facility_name", label: t("Region / Facility"), required: true },
     { id: "activity", label: t("Activity"), required: false },
     { id: "division", label: t("Division"), required: false },
     { id: "field", label: t("Field"), required: false },
-    { id: "year", label: t("Year"), required: true },
-    { id: "month", label: t("Month"), required: true },
+    { id: "date", label: t("Date"), required: true },
+    { id: "year", label: t("Year"), required: false },
+    { id: "month", label: t("Month"), required: false },
     { id: "oil_amount", label: t("Oil Quantity"), required: false },
     { id: "oil_unit", label: t("Oil Unit"), required: false, hint: t("bbl") },
     { id: "gas_amount", label: t("Gas Quantity"), required: false },
@@ -279,6 +282,9 @@ export const TEMPLATES: Record<string, TemplateField[]> = {
     { id: "vented_gas_mmsm3", label: t("Vented Gas (MMSm³)"), required: false, hint: t("MMSm3") },
     { id: "fuel_gas_consumed_mmsm3", label: t("Fuel Gas Burned On Site (MMSm³)"), required: false, hint: t("MMSm3") },
     { id: "ngl_shrinkage_mmsm3", label: t("NGL / LPG Shrinkage (MMSm³)"), required: false, hint: t("MMSm3") },
+    { id: "routine_flared_mmsm3", label: t("Routine flaring (MMSm³)"), required: false, hint: t("MMSm3") },
+    { id: "non_routine_flared_mmsm3", label: t("Non-routine flaring (MMSm³)"), required: false, hint: t("MMSm3") },
+    { id: "safety_flared_mmsm3", label: t("Safety flaring (MMSm³)"), required: false, hint: t("MMSm3") },
     { id: "crude_oil_mmboe", label: t("Crude Oil (MMBOE)"), required: false, hint: t("MMBOE") },
     { id: "condensate_mmboe", label: t("Condensate (MMBOE)"), required: false, hint: t("MMBOE") },
     { id: "lpg_mmboe", label: t("LPG (MMBOE)"), required: false, hint: t("MMBOE") },
